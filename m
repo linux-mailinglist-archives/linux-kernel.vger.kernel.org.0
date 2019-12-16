@@ -2,74 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C5B51203C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C5E120230
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbfLPLYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:24:02 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:49778 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfLPLYA (ORCPT
+        id S1727419AbfLPKTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:19:37 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41125 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727226AbfLPKTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:24:00 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 83BD7200AC3;
-        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id D6FA420608; Mon, 16 Dec 2019 11:18:34 +0100 (CET)
-Date:   Mon, 16 Dec 2019 11:18:34 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Simon Geis <simon.geis@fau.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Colin Ian King <colin.king@canonical.com>,
-        Adam Zerella <adam.zerella@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-kernel@i4.cs.fau.de,
-        Lukas Panzer <lukas.panzer@fau.de>
-Subject: Re: [PATCH v3 01/10] PCMCIA/i82092: use dev_<level> instead of printk
-Message-ID: <20191216101834.GA159459@light.dominikbrodowski.net>
-References: <20191213135311.9111-1-simon.geis@fau.de>
- <20191213135311.9111-2-simon.geis@fau.de>
+        Mon, 16 Dec 2019 05:19:37 -0500
+Received: by mail-qt1-f194.google.com with SMTP id k40so1586712qtk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:19:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ui1c9Y6dD99W6Khx+UM3GayAgwiTKG7dGHroyFCHCFw=;
+        b=BcLYAjEWWxr47Go39e8DSJQ3tIYRI2cNBvmCkh9X4sWOyUqsqa2mo7nzIna/soPCh8
+         lnjE48cuNzRNXrL9jt9gpYyRcI5WS5YIYi+8dZMY8wKfMiM127tpW8Zf9TU5uB8GMR25
+         ojWUui8VTY0woxk5GQN6dPAWN9cWg2L2b0DQE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ui1c9Y6dD99W6Khx+UM3GayAgwiTKG7dGHroyFCHCFw=;
+        b=YQwyUWyNdWGTQwTKYaWzvSSc1WF2xHQrqTm8a88LHht8B2dASzbgo9YypuOFyVcWXn
+         TLwPBZMaGS+GnaeiAYw61m6efJjpJdLtzisA0ae2AGPoAyRr8HbbPjv4jSt2cIpIHg0x
+         Eg+iA4Xad2dnMlkrI5rEJkI8hOL7IIQ0Btp6ne2P3UYdh16MB90jIAh7JpuRxc8F8DdP
+         LXkNbKe1lVPkiBxhENDpuIO9waGE9c+ccQJNVXqdWEVv6cLmYwxsewhGHDaF+4Nax2P1
+         CWxyNmGOrrY4RyrveMrsqZBAm5P9C7XftLh1I14YIciYJL58g25cYNDnijWLq7cUlIGv
+         0t8A==
+X-Gm-Message-State: APjAAAX6dgGuuFLfxjbgDjmaSHzcuCK16Z2SVsWBWFcMzvoGFprNo+eJ
+        HBRh8fCP16VqbRAmDw6aCAQTzFCiWwMWj810qpZhWA==
+X-Google-Smtp-Source: APXvYqx3C2Qa4BrgHElceO35w40MEmAWZKPrgPEQfSGXCQpXZ7aO22lSc8cg3VhqBHMiWjpy6gwDXUi+zTZaeV5kHjk=
+X-Received: by 2002:ac8:4446:: with SMTP id m6mr9731503qtn.159.1576491575693;
+ Mon, 16 Dec 2019 02:19:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213135311.9111-2-simon.geis@fau.de>
+References: <20191211061911.238393-1-hsinyi@chromium.org> <20191211061911.238393-3-hsinyi@chromium.org>
+ <20191213223816.GS4860@pendragon.ideasonboard.com> <CAJMQK-gFn8WeokxGfAZ-akNvdEbQhPj_3Ax2sD7Ti6JcSvjF4g@mail.gmail.com>
+In-Reply-To: <CAJMQK-gFn8WeokxGfAZ-akNvdEbQhPj_3Ax2sD7Ti6JcSvjF4g@mail.gmail.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Mon, 16 Dec 2019 18:19:24 +0800
+Message-ID: <CANMq1KDh=ehp0RDFRLQ5OCTibrK=Uzp2UFVLM+7AhwpVp-X=yQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND 2/4] drm: bridge: anx7688: Add anx7688 bridge
+ driver support.
+To:     Hsin-Yi Wang <hsinyi@chromium.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 02:53:04PM +0100, Simon Geis wrote:
-> Improve the log output by using the
-> device-aware dev_err()/dev_info() functions. While at it, update one
-> remaining printk(KERN_ERR ...) call to the preferred pr_err() call
-> and delete commented out debugging lines.
-> 
-> Co-developed-by: Lukas Panzer <lukas.panzer@fau.de>
-> Signed-off-by: Lukas Panzer <lukas.panzer@fau.de>
-> Signed-off-by: Simon Geis <simon.geis@fau.de>
+On Mon, Dec 16, 2019 at 4:46 PM Hsin-Yi Wang <hsinyi@chromium.org> wrote:
+>
+> On Sat, Dec 14, 2019 at 6:38 AM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> >
+> > Hi Hsin-Yi and Nicolas,
+> >
+> > Thank you for the patch.
+> >
+> > On Wed, Dec 11, 2019 at 02:19:09PM +0800, Hsin-Yi Wang wrote:
+> > > From: Nicolas Boichat <drinkcat@chromium.org>
+> > >
+> > > ANX7688 is a HDMI to DP converter (as well as USB-C port controller),
+> > > that has an internal microcontroller.
+> > >
+> > > The only reason a Linux kernel driver is necessary is to reject
+> > > resolutions that require more bandwidth than what is available on
+> > > the DP side. DP bandwidth and lane count are reported by the bridge
+> > > via 2 registers on I2C.
+> >
+> > How about power, doesn't this chip have power supplies that potentially
+> > need to be controlled ?
+> >
+> Ideally we should add power supplies as well, but the power is
+> supplied by ec in mt8173 oak board. And we only have this board can
+> test this driver. If we add power supplies in driver we can't test it.
 
-Applied, minus the one hunk which didn't serve any purpose:
+To clarify a bit more, this is because this chip is actually a
+TCPC+mux+HDMI=>DP converter
+(https://www.analogix.com/en/products/convertersbridges/anx7688). In
+Chromebook architecture, TCPC+mux is controlled by the EC (including
+power and other control pins), and the only reason we need a driver
+for the HDMI=>DP converter is to get the number of lanes on the DP
+side and filter out resolutions. Also, the converter is on a different
+I2C address and it could almost be considered as a separate device.
 
-> @@ -417,7 +421,9 @@ static int i82092aa_init(struct pcmcia_socket *sock)
->                                                                                                                                                                                                                                                
->  static int i82092aa_get_status(struct pcmcia_socket *socket, u_int *value)
->  {
-> -	unsigned int sock = container_of(socket, struct socket_info, socket)->number;
-> +	struct socket_info *sock_info = container_of(socket, struct socket_info,
-> +						     socket);
-> +	unsigned int sock = sock_info->number;
->  	unsigned int status;
->  	
->  	enter("i82092aa_get_status");
+(of course we could write a kernel driver for the TCPC+mux but we'll
+leave that to others if there's ever a board that is built with the
+TCPC part connected to the AP)
 
-Thanks,
-	Dominik
+> > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > > ---
+> > >  drivers/gpu/drm/bridge/Kconfig            |   9 +
+> > >  drivers/gpu/drm/bridge/Makefile           |   1 +
+> > >  drivers/gpu/drm/bridge/analogix-anx7688.c | 202 ++++++++++++++++++++++
+> > >  3 files changed, 212 insertions(+)
+> > >  create mode 100644 drivers/gpu/drm/bridge/analogix-anx7688.c
+> > >
+> > > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > > index 34362976cd6f..1f3fc6bec842 100644
+> > > --- a/drivers/gpu/drm/bridge/Kconfig
+> > > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > > @@ -16,6 +16,15 @@ config DRM_PANEL_BRIDGE
+> > >  menu "Display Interface Bridges"
+> > >       depends on DRM && DRM_BRIDGE
+> > >
+> > > +config DRM_ANALOGIX_ANX7688
+> > > +     tristate "Analogix ANX7688 bridge"
+> > > +     select DRM_KMS_HELPER
+> > > +     select REGMAP_I2C
+> > > +     ---help---
+> > > +       ANX7688 is a transmitter to support DisplayPort over USB-C for
+> > > +       smartphone and tablets.
+> > > +       This driver only supports the HDMI to DP component of the chip.
+> > > +
+> > >  config DRM_ANALOGIX_ANX78XX
+> > >       tristate "Analogix ANX78XX bridge"
+> > >       select DRM_KMS_HELPER
+> > > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > > index 4934fcf5a6f8..7a1e0ec032e6 100644
+> > > --- a/drivers/gpu/drm/bridge/Makefile
+> > > +++ b/drivers/gpu/drm/bridge/Makefile
+> > > @@ -1,4 +1,5 @@
+> > >  # SPDX-License-Identifier: GPL-2.0
+> > > +obj-$(CONFIG_DRM_ANALOGIX_ANX7688) += analogix-anx7688.o
+> > >  obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+> > >  obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
+> > >  obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+> > > diff --git a/drivers/gpu/drm/bridge/analogix-anx7688.c b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > new file mode 100644
+> > > index 000000000000..baaed48d6201
+> > > --- /dev/null
+> > > +++ b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > @@ -0,0 +1,202 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * ANX7688 HDMI->DP bridge driver
+> > > + *
+> > > + * Copyright 2016 Google LLC
+> > > + */
+> > > +
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <drm/drm_bridge.h>
+> > > +
+> > > +/* Register addresses */
+> > > +#define VENDOR_ID_REG 0x00
+> > > +#define DEVICE_ID_REG 0x02
+> > > +
+> > > +#define FW_VERSION_REG 0x80
+> > > +
+> > > +#define DP_BANDWIDTH_REG 0x85
+> > > +#define DP_LANE_COUNT_REG 0x86
+> >
+> > Are these registers defined by the ANX7688 hardware, or by the firmware
+> > running on the chip (and, I assume, developed by Google) ?
+> >
+> By firmware developed by ANX provided to Google.
+
+We asked for these registers to be added to ANX FW, and this is the FW
+that is used by all elm/hana Chromebooks (I have no idea about other
+ANX customers...). We have facilities to update the ANX FW from
+coreboot/depthcharge on Chromebooks, but that does not really matter:
+the factory FW of all MP Chromebooks does provide these registers.
+
+Thanks.
