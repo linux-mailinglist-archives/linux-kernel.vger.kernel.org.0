@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4741612144A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD69B121374
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730556AbfLPSKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52798 "EHLO mail.kernel.org"
+        id S1728823AbfLPSBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730543AbfLPSKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:01 -0500
+        id S1728756AbfLPSBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99CF2206E0;
-        Mon, 16 Dec 2019 18:10:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAEC620733;
+        Mon, 16 Dec 2019 18:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519801;
-        bh=J9rVZcIibE8KKmf4ktt4ACclYyInwY8C4/rXZDkABj8=;
+        s=default; t=1576519306;
+        bh=35yKDkiE8KL4FQ6IGuKiSvQsrdEoHklWw7BgukhTtfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rk7jJFxR/Cw7CnGBgyi4GtqmI7YiyhjCcB6Keh3aDCzCfzVZ55fcmzpQBBBGIhE+E
-         vYqBLt5jfPPuXGCV1320fTEaEK0KKP5mUhm8pqm/Wq1ZCsSbWl/I2LWI+k1ZvI45Zo
-         9ZPAtzQFVJk4ndgI/EZpbQZWL2vJQNHJNVJpIWTk=
+        b=jAAgM76/M3z/a5jS+zNbnFYuWuJFPo84D4ETugQu48rDU0O7PuE4stdOHSATtMIJP
+         c5+Bwx0ysM3gVuDsntj8mNiDndgWkcf6DQpIbKH0hD6U2Dp/A7rQAvZ19Gm8DVe+9K
+         rQf8nYaS+aP/Gkr6vTfN7UyqOCw6CEhgh+v8RA74=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mircea Caprioru <mircea.caprioru@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.3 033/180] iio: adc: ad7124: Enable internal reference
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.19 005/140] USB: uas: honor flag to avoid CAPACITY16
 Date:   Mon, 16 Dec 2019 18:47:53 +0100
-Message-Id: <20191216174814.591886363@linuxfoundation.org>
+Message-Id: <20191216174749.658842089@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +42,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mircea Caprioru <mircea.caprioru@analog.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 11d7c8d3b1259c303fb52789febed58f0bc35ad1 upstream.
+commit bff000cae1eec750d62e265c4ba2db9af57b17e1 upstream.
 
-When the internal reference was selected by a channel it was not enabled.
-This patch fixes that and enables it.
+Copy the support over from usb-storage to get feature parity
 
-Fixes: b3af341bbd96 ("iio: adc: Add ad7124 support")
-Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191114112758.32747-2-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/ad7124.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/usb/storage/uas.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/iio/adc/ad7124.c
-+++ b/drivers/iio/adc/ad7124.c
-@@ -39,6 +39,8 @@
- #define AD7124_STATUS_POR_FLAG_MSK	BIT(4)
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -832,6 +832,10 @@ static int uas_slave_configure(struct sc
+ 		sdev->wce_default_on = 1;
+ 	}
  
- /* AD7124_ADC_CONTROL */
-+#define AD7124_ADC_CTRL_REF_EN_MSK	BIT(8)
-+#define AD7124_ADC_CTRL_REF_EN(x)	FIELD_PREP(AD7124_ADC_CTRL_REF_EN_MSK, x)
- #define AD7124_ADC_CTRL_PWR_MSK	GENMASK(7, 6)
- #define AD7124_ADC_CTRL_PWR(x)		FIELD_PREP(AD7124_ADC_CTRL_PWR_MSK, x)
- #define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
-@@ -424,7 +426,10 @@ static int ad7124_init_channel_vref(stru
- 		break;
- 	case AD7124_INT_REF:
- 		st->channel_config[channel_number].vref_mv = 2500;
--		break;
-+		st->adc_control &= ~AD7124_ADC_CTRL_REF_EN_MSK;
-+		st->adc_control |= AD7124_ADC_CTRL_REF_EN(1);
-+		return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL,
-+				      2, st->adc_control);
- 	default:
- 		dev_err(&st->sd.spi->dev, "Invalid reference %d\n", refsel);
- 		return -EINVAL;
++	/* Some disks cannot handle READ_CAPACITY_16 */
++	if (devinfo->flags & US_FL_NO_READ_CAPACITY_16)
++		sdev->no_read_capacity_16 = 1;
++
+ 	/*
+ 	 * Some disks return the total number of blocks in response
+ 	 * to READ CAPACITY rather than the highest block number.
 
 
