@@ -2,323 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FC3A1204D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5FF91204DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:07:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfLPMGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:06:37 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33880 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfLPMGe (ORCPT
+        id S1727775AbfLPMGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:06:45 -0500
+Received: from mout.kundenserver.de ([212.227.126.135]:50109 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727335AbfLPMGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:06:34 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l18so4048137lfc.1;
-        Mon, 16 Dec 2019 04:06:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Dv/84AIFghRNFkI/DTk4weWTDUGQ7/AeJooqMaZ6A5g=;
-        b=aJ3vuyOn/N66J4E2rfFt1srz9e3n5elAO1VyCehtUo65ER6pegSk+KQHQxfihvOSwP
-         AJ88nw8s5q1DxbnkDV6l4Pj7ufGnCaBYpFBQJlnS/WYj7EHoNWxQq2e/NWr0QZPvZTB4
-         hnHuNfXaDGCyo7/Zs1R7gCZPq0X5yOvII++mAm0iXoF3cODETklyeS5+uLuA/zUsiIxz
-         7KBY93D5ETNR+kolMcc05YGoxafDqNxOonaDFazD7PFL7sdSa6izPDNw+l9KWE1XHkDv
-         VHwsgsie0nMmDtNInETCLxygpbzd+ilLqc3NGdVjxlnMMT6Ba6l4CTWZxnP7KTr8ytis
-         C6Gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Dv/84AIFghRNFkI/DTk4weWTDUGQ7/AeJooqMaZ6A5g=;
-        b=hcQ2j41t42rzEeTsZC7csxDnh4c+PsCO9bTadOz1GLthuaW+4HViQMoWc3rOndVM/o
-         HlWVKqy+tFIYPbFkKIKY/ZlLj2xKlder7dt+ORwoW9TJOzeyN6R6j4/b8iDyVo/7qU5W
-         iXSvQfa11oh20YSP9v7ZgDC2uKmGz0dZWIo6e3ZDcl6n29lNK2OYK8QsDSTOq2Bzb/Nh
-         1hmGQWhQN99KjZ1Xis2uX4Y9k49V7wqJvp2+dMnctP8lhP/NAOzI535CwScubAdBa+A2
-         ULkYTctmIW13Lps5k9w2CsFcXKCNC1to6kR7fL0cQ1mABEijhL/ZltfVO2i7MMjW2X+0
-         6m+g==
-X-Gm-Message-State: APjAAAWZu69zC92eb2vLyhF56diLV47qd2rOULakEZyYRBdIH31kjjyT
-        qMzybbyuwX5TCK9CrjjOF2k=
-X-Google-Smtp-Source: APXvYqy1m6hUs7Qwi4W/tu509zA+YZTsKcyKj+52kefHAqGDMv3K+21FMvkDXyN0CPIqf6kQdAZqVQ==
-X-Received: by 2002:ac2:51de:: with SMTP id u30mr16236983lfm.69.1576497991527;
-        Mon, 16 Dec 2019 04:06:31 -0800 (PST)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id g6sm10534739lja.10.2019.12.16.04.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 04:06:30 -0800 (PST)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Mon, 16 Dec 2019 13:06:22 +0100
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Uladzislau Rezki <urezki@gmail.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, kernel-team@android.com,
-        kernel-team@lge.com, Byungchul Park <byungchul.park@lge.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        max.byungchul.park@gmail.com, Rao Shoaib <rao.shoaib@oracle.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v4 1/2] rcu/tree: Add basic support for kfree_rcu()
- batching
-Message-ID: <20191216120622.GA12798@pc636>
-References: <20190814160411.58591-1-joel@joelfernandes.org>
- <20190918095811.GA25821@pc636>
- <20191210095348.GA420@pc636>
- <20191211234648.GO2889@paulmck-ThinkPad-P72>
+        Mon, 16 Dec 2019 07:06:43 -0500
+Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MSss2-1iGsog2KTe-00UJfA; Mon, 16 Dec 2019 13:06:40 +0100
+Received: by mail-qk1-f179.google.com with SMTP id j9so4013766qkk.1;
+        Mon, 16 Dec 2019 04:06:40 -0800 (PST)
+X-Gm-Message-State: APjAAAW4VVQq/8xxHABqZCxIIyR96iUxnZ5sDDFMMsS37TtSJlOWMOXj
+        kiu50pXVTDprT8tKFz88BDkvCUPSbxOHoI4Nsf8=
+X-Google-Smtp-Source: APXvYqzaldzKvuGG0VSm+NPjH2zK7pPG6M4z5r7MC0BxVjXSzaHMKlB7/FcMflcuRR66LlFgIuTrrgyX4wxlYfFrPhU=
+X-Received: by 2002:a37:2f02:: with SMTP id v2mr5213363qkh.3.1576497999318;
+ Mon, 16 Dec 2019 04:06:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211234648.GO2889@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <875zimp0ay.fsf@mpe.ellerman.id.au> <20191212080105.GV2844@hirez.programming.kicks-ass.net>
+ <20191212100756.GA11317@willie-the-truck> <20191212104610.GW2827@hirez.programming.kicks-ass.net>
+ <CAHk-=wjUBsH0BYDBv=q36482G-U7c=9bC89L_BViSciTfb8fhA@mail.gmail.com>
+ <20191212180634.GA19020@willie-the-truck> <CAHk-=whRxB0adkz+V7SQC8Ac_rr_YfaPY8M2mFDfJP2FFBNz8A@mail.gmail.com>
+ <20191212193401.GB19020@willie-the-truck> <CAHk-=wiMuHmWzQ7-CRQB6o+SHtA-u-Rp6VZwPcqDbjAaug80rQ@mail.gmail.com>
+ <CAK8P3a2QYpT_u3D7c_w+hoyeO-Stkj5MWyU_LgGOqnMtKLEudg@mail.gmail.com> <20191213144359.GA3826@willie-the-truck>
+In-Reply-To: <20191213144359.GA3826@willie-the-truck>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 16 Dec 2019 13:06:22 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0qgbqKTtRWTh6c0R2E93rehKbkBcB18TL3JX_RWHsTZA@mail.gmail.com>
+Message-ID: <CAK8P3a0qgbqKTtRWTh6c0R2E93rehKbkBcB18TL3JX_RWHsTZA@mail.gmail.com>
+Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL]
+ Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
+To:     Will Deacon <will@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Daniel Axtens <dja@axtens.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:UWsuMcFFlOevk/J313gB6VGz1OHSOZcuLzsKm2jktYu+Jb74c7v
+ n49m3Y0KQsgo99+GYfL9sntR8UJzU4arEcDh5hioSmMMAIp/vdkFPGs7Up456RmIOQ//uw1
+ BphOHIiIc16GAbnyE1VCu/zOyC8vcK9m8tezMoFcX8x3lPP2Cq0u+2b2TMFZ9jHwAuHkJjW
+ PY8LdD75Nibt+cRAbxs8Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sGYUQ7XKE8M=:PCf0CczXYZYmFeBmWDClUw
+ u++4xVt/1nCcJT/59IukYBvqFnz1fPUtXT0YV4bZu1Xbqn43YcAyyxoyIGNi6p8x9H64iTAUQ
+ kQArq0h7o6zMLmPuHv0sw6iT2moeTKTsX880oQd6hrp0E63lwPxngjl0rph/ZvVthq9lhQ3jv
+ tQ238m6uLJBWhXBnOkRtS6Wlp3XcyqNTzlZ4f9AUSCEh/QKzwg8twmGmBWa+tPd6rqv3n8Avh
+ nry587NTetViUPhKpu9NcQTscDwGJ83EHtLZqO6HTMPcAsl70VHsvOtUmv+vcDl/2EdkiPqkV
+ XF6JlnkpzOmX6tfeSwxfRq0SbS437SBm/PTQVF48mds/AaWLrAFj1Ez5vaPFzpDJ4zV5xtdJ9
+ j2oNst+diwEmL2/ry4tbarPY5xK5ubyppptyekYoUwu79jzUq5qfcWS1GCcXcXmBCEFioFnrS
+ mkyOYA9cbd1FDtdEYLGKAVu/7p0J2LvIWNSs9Sf9N59jQKpYbW98q0hnBEMaepaMLr9EwxAAb
+ M6PHcSE7XSip/CPoK97UJ/YnDYUhA5cfkNvTqpB6uPXZ5taktiz0huTKscMwUMqGX+X+ip2s9
+ ksdxfNAxk4+LoIBgrXPlsLQg4Oqo8yVGeV2HMz//hTTSkCOqXatGpXbCj2843BFI3hKU8ybwC
+ w9OkoxSI3JmXVkv4g+6KbNjZXDUFzcbVCG+uqvP09P/cXqaC8UTPmteGSRL6oQ/5d2xbDMRG0
+ HucIL6JCt8wgPR5c1h/dDBJjXNOhdqy/lBgtlfedDrVLjqSNXrkIXdHPekTKwSZ5/fESBcMNe
+ ekvNwnxip4bAzGnjFWyvhUXemHpvojYdvqSxKyvyEIkwhxEFRjDVHGofFbondDYP0kBAIhkqD
+ jgR5RUxFg+LwOhnkOjvQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 03:46:48PM -0800, Paul E. McKenney wrote:
-> On Tue, Dec 10, 2019 at 10:53:48AM +0100, Uladzislau Rezki wrote:
-> > On Wed, Sep 18, 2019 at 11:58:11AM +0200, Uladzislau Rezki wrote:
-> > > > Recently a discussion about stability and performance of a system
-> > > > involving a high rate of kfree_rcu() calls surfaced on the list [1]
-> > > > which led to another discussion how to prepare for this situation.
-> > > > 
-> > > > This patch adds basic batching support for kfree_rcu(). It is "basic"
-> > > > because we do none of the slab management, dynamic allocation, code
-> > > > moving or any of the other things, some of which previous attempts did
-> > > > [2]. These fancier improvements can be follow-up patches and there are
-> > > > different ideas being discussed in those regards. This is an effort to
-> > > > start simple, and build up from there. In the future, an extension to
-> > > > use kfree_bulk and possibly per-slab batching could be done to further
-> > > > improve performance due to cache-locality and slab-specific bulk free
-> > > > optimizations. By using an array of pointers, the worker thread
-> > > > processing the work would need to read lesser data since it does not
-> > > > need to deal with large rcu_head(s) any longer.
-> > > > 
-> > According to https://lkml.org/lkml/2017/12/19/706 there was an attempt
-> > to make use of kfree_bulk() interface. I have done some tests based on
-> > your patch and enhanced kfree_bulk() logic. Basically storing pointers 
-> > in an array with a specific size makes sense to me and seems to others
-> > as well. I mean in comparison with "pointer chasing" way, when there is
-> > probably a cache misses each time the access is done to next element:
-> 
-> Something like this would be good!
-> 
-> The other thing to track besides CPU time savings (which does look good!)
-> is memory footprint.
+On Mon, Dec 16, 2019 at 11:28 AM Will Deacon <will@kernel.org> wrote:
+> On Fri, Dec 13, 2019 at 02:17:08PM +0100, Arnd Bergmann wrote:
+> > On Thu, Dec 12, 2019 at 9:50 PM Linus Torvalds
+> > <torvalds@linux-foundation.org> wrote:
+> > > On Thu, Dec 12, 2019 at 11:34 AM Will Deacon <will@kernel.org> wrote:
+> > > > The root of my concern in all of this, and what started me looking at it in
+> > > > the first place, is the interaction with 'typeof()'. Inheriting 'volatile'
+> > > > for a pointer means that local variables in macros declared using typeof()
+> > > > suddenly start generating *hideous* code, particularly when pointless stack
+> > > > spills get stackprotector all excited.
+> > >
+> > > Yeah, removing volatile can be a bit annoying.
+> > >
+> > > For the particular case of the bitops, though, it's not an issue.
+> > > Since you know the type there, you can just cast it.
+> > >
+> > > And if we had the rule that READ_ONCE() was an arithmetic type, you could do
+> > >
+> > >     typeof(0+(*p)) __var;
+> > >
+> > > since you might as well get the integer promotion anyway (on the
+> > > non-volatile result).
+> > >
+> > > But that doesn't work with structures or unions, of course.
+> > >
+> > > I'm not entirely sure we have READ_ONCE() with a struct. I do know we
+> > > have it with 64-bit entities on 32-bit machines, but that's ok with
+> > > the "0+" trick.
+> >
+> > I'll have my randconfig builder look for instances, so far I found one,
+> > see below. My feeling is that it would be better to enforce at least
+> > the size being a 1/2/4/8, to avoid cases where someone thinks
+> > the access is atomic, but it falls back on a memcpy.
 >
-I will double check how much extra memory it requires, but it depends on
-how many elements we have in "bulk list" and the size of the
-kfree_rcu_bulk_data structure. So, i will run "rcuperf" to see what we
-have.
+> I've been using something similar built on compiletime_assert_atomic_type()
+> and I spotted another instance in the xdp code (xskq_validate_desc()) which
+> tries to READ_ONCE() on a 128-bit descriptor, although a /very/ quick read
+> of the code suggests that this probably can't be concurrently modified if
+> the ring indexes are synchronised properly.
 
-> 
-> And there will also need to be something visible to RCU counting the
-> number of outstanding kfree()s.  But on a per-CPU basis, for example,
-> as an atomic_long_t field in the rcu_data structure or similar.  This
-> is needed to help RCU work out when it needs to work harder to bring
-> grace periods to an end.  But that can be a separate issue.
-> 
-OK, i see that. As far as i see we need to have per-cpu implementation
-first, i mean kfree_rcu() should be per-cpu.
+That's the only other one I found. I have not checked how many are structs
+that are the size of a normal u8/u16/u32/u64, or if there are types that
+have a lower alignment than there size, such as a __u16[2] that might
+span a page boundary.
 
-> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-> > index 1fe0418a5901..4f68662c1568 100644
-> > --- a/kernel/rcu/tree.c
-> > +++ b/kernel/rcu/tree.c
-> > @@ -2595,6 +2595,13 @@ EXPORT_SYMBOL_GPL(call_rcu);
-> > 
-> >  /* Maximum number of jiffies to wait before draining a batch. */
-> >  #define KFREE_DRAIN_JIFFIES (HZ / 50)
-> > +#define KFREE_BULK_MAX_SIZE 64
-> 
-> My guess is that performance does not depend all that much on the
-> exact number.  Does that match your testing?
-> 
-Not really. It does not depend on exact number, whereas it is clear
-that setting it to 1 does not make sense :) Also the size of the
-kfree_rcu_bulk_data struct should not be more then PAGE_SIZE due to
-memory fragmentation problems.
+> However, enabling this for 32-bit ARM is total carnage; as Linus mentioned,
+> a whole bunch of code appears to be relying on atomic 64-bit access of
+> READ_ONCE(); the perf ring buffer, io_uring, the scheduler, pm_runtime,
+> cpuidle, ... :(
+>
+> Unfortunately, at least some of these *do* look like bugs, but I can't see
+> how we can fix them, not least because the first two are user ABI afaict. It
+> may also be that in practice we get 2x32-bit stores, and that works out fine
+> when storing a 32-bit virtual address. I'm not sure what (if anything) the
+> compiler guarantees in these cases.
 
-> > +
-> > +struct kfree_rcu_bulk_data {
-> > +       int nr_records;
-> > +       void *records[KFREE_BULK_MAX_SIZE];
-> > +       struct kfree_rcu_bulk_data *next;
-> > +};
-> > 
-> >  /*
-> >   * Maximum number of kfree(s) to batch, if this limit is hit then the batch of
-> > @@ -2607,15 +2614,24 @@ struct kfree_rcu_cpu {
-> >         struct rcu_work rcu_work;
-> > 
-> >         /* The list of objects being queued in a batch but are not yet
-> > -        * scheduled to be freed.
-> > +        * scheduled to be freed. For emergency path only.
-> >          */
-> >         struct rcu_head *head;
-> > 
-> >         /* The list of objects that have now left ->head and are queued for
-> > -        * freeing after a grace period.
-> > +        * freeing after a grace period. For emergency path only.
-> >          */
-> >         struct rcu_head *head_free;
-> > 
-> > +       /*
-> > +        * It is a block list that keeps pointers in the array of specific
-> > +        * size which are freed by the kfree_bulk() logic. Intends to improve
-> > +        * drain throughput.
-> > +        */
-> > +       struct kfree_rcu_bulk_data *bhead;
-> > +       struct kfree_rcu_bulk_data *bhead_free;
-> > +       struct kfree_rcu_bulk_data *bcached;
-> 
-> So ->bcached keeps at most one kfree_rcu_bulk_data around for later use,
-> correct?  And ->bhead is where new memory is placed, while ->bhead_free
-> contains those waiting for a grace period, right?  (It would be good
-> to make the comment explicit about this.)
-> 
-Correct. I will add some extra comments.
+Would it help if 32-bit architectures use atomic64_read() and atomic64_set()
+to implement a 64-bit READ_ONCE()/WRITE_ONCE(), or would that make it
+worse in other ways?
 
-> > +
-> >         /* Protect concurrent access to this structure. */
-> >         spinlock_t lock;
-> > @@ -2637,23 +2653,39 @@ static void kfree_rcu_work(struct work_struct *work)
-> >  {
-> >         unsigned long flags;
-> >         struct rcu_head *head, *next;
-> > +       struct kfree_rcu_bulk_data *bhead, *bnext;
-> >         struct kfree_rcu_cpu *krcp = container_of(to_rcu_work(work),
-> >                                         struct kfree_rcu_cpu, rcu_work);
-> >  
-> >         spin_lock_irqsave(&krcp->lock, flags);
-> >         head = krcp->head_free;
-> >         krcp->head_free = NULL;
-> > +       bhead = krcp->bhead_free;
-> > +       krcp->bhead_free = NULL;
-> >         spin_unlock_irqrestore(&krcp->lock, flags);
-> >  
-> >         /*
-> >          * The head is detached and not referenced from anywhere, so lockless
-> >          * access is Ok.
-> >          */
-> > +       for (; bhead; bhead = bnext) {
-> > +               bnext = bhead->next;
-> > +               kfree_bulk(bhead->nr_records, bhead->records);
-> > +
-> > +               if (cmpxchg(&krcp->bcached, NULL, bhead))
-> > +                       kfree(bhead);
-> > +
-> > +               cond_resched_tasks_rcu_qs();
-> > +       }
-> > +
-> > +       /*
-> > +        * Emergency case only. It can happen under low
-> > +        * memory condition when kmalloc gets failed, so
-> > +        * the "bulk" path can not be temporary maintained.
-> > +        */
-> >         for (; head; head = next) {
-> >                 next = head->next;
-> > -               /* Could be possible to optimize with kfree_bulk in future */
-> >                 __rcu_reclaim(rcu_state.name, head);
-> > -               cond_resched_tasks_rcu_qs();
-> >         }
-> >  }
-> > 
-> > @@ -2671,11 +2703,15 @@ static inline bool queue_kfree_rcu_work(struct kfree_rcu_cpu *krcp)
-> >          * another one, just refuse the optimization and it will be retried
-> >          * again in KFREE_DRAIN_JIFFIES time.
-> >          */
-> > -       if (krcp->head_free)
-> > +       if (krcp->bhead_free || krcp->head_free)
-> >                 return false;
-> > 
-> >         krcp->head_free = krcp->head;
-> >         krcp->head = NULL;
-> > +
-> > +       krcp->bhead_free = krcp->bhead;
-> > +       krcp->bhead = NULL;
-> > +
-> >         INIT_RCU_WORK(&krcp->rcu_work, kfree_rcu_work);
-> >         queue_rcu_work(system_wq, &krcp->rcu_work);
-> > 
-> > @@ -2747,6 +2783,7 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
-> >  {
-> >         unsigned long flags;
-> >         struct kfree_rcu_cpu *krcp;
-> > +       struct kfree_rcu_bulk_data *bnode;
-> > 
-> >         /* kfree_call_rcu() batching requires timers to be up. If the scheduler
-> >          * is not yet up, just skip batching and do the non-batched version.
-> > @@ -2754,16 +2791,35 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
-> >         if (rcu_scheduler_active != RCU_SCHEDULER_RUNNING)
-> >                 return kfree_call_rcu_nobatch(head, func);
-> > 
-> > -       head->func = func;
-> > -
-> >         local_irq_save(flags);  /* For safely calling this_cpu_ptr(). */
-> >         krcp = this_cpu_ptr(&krc);
-> >         spin_lock(&krcp->lock);
-> > 
-> > +       if (!krcp->bhead ||
-> > +                       krcp->bhead->nr_records == KFREE_BULK_MAX_SIZE) {
-> > +               /* Need a new block. */
-> > +               if (!(bnode = xchg(&krcp->bcached, NULL)))
-> > +                       bnode = kmalloc(sizeof(struct kfree_rcu_bulk_data),
-> > +                               GFP_ATOMIC | __GFP_NOWARN);
-> > +
-> > +               /* If gets failed, maintain the list instead. */
-> > +               if (unlikely(!bnode)) {
-> > +                       head->func = func;
-> > +                       head->next = krcp->head;
-> > +                       krcp->head = head;
-> > +                       goto check_and_schedule;
-> 
-> It should be possible to move this code out to follow the "Queue the
-> next" comment, thus avoiding the goto.  Setting krcp->bhead to NULL
-> here should set up for the check below, right?
-> 
-Yes it should be possible. If we set krcp->bhead to NULL in case of
-failure we can loose previous queued "bulk elements". But i see your
-point and will rework it, trying to get rid of "goto" jump.
+On mips32, riscv32 and some minor 32-bit architectures with SMP support
+(xtensa,  csky, hexagon, openrisc, parisc32, sparc32 and ppc32 AFAICT) this
+ends up using a spinlock for GENERIC_ATOMIC64, but at least ARMv6+,
+i586+ and most ARC should be fine.
 
-> > +               }
-> > +
-> > +               bnode->nr_records = 0;
-> > +               bnode->next = krcp->bhead;
-> > +               krcp->bhead = bnode;
-> > +       }
-> > +
-> >         /* Queue the kfree but don't yet schedule the batch. */
-> > -       head->next = krcp->head;
-> > -       krcp->head = head;
-> > +       krcp->bhead->records[krcp->bhead->nr_records++] =
-> > +               (void *) head - (unsigned long) func;
-> >  
-> > +check_and_schedule:
-> >         /* Schedule monitor for timely drain after KFREE_DRAIN_JIFFIES. */
-> >         if (!xchg(&krcp->monitor_todo, true))
-> >                 schedule_delayed_work(&krcp->monitor_work, KFREE_DRAIN_JIFFIES);
-> > 
-> > See below some test results with/without this patch:
-> > 
-> > # HiKey 960 8xCPUs
-> > rcuperf.ko kfree_loops=200000 kfree_alloc_num=1000 kfree_rcu_test=1
-> > [  159.017771] Total time taken by all kfree'ers: 92783584881 ns, loops: 200000, batches: 5117
-> > [  126.862573] Total time taken by all kfree'ers: 70935580718 ns, loops: 200000, batches: 3953
-> > 
-> > Running the "rcuperf" shows approximately ~23% better throughput in case of using
-> > "bulk" interface, so we have 92783584881 vs 70935580718 as total time. The "drain logic"
-> > or its RCU callback does the work faster that leads to better throughput.
-> > 
-> > I can upload the RFC/PATCH of that change providing the test details and so on. 
-> > 
-> > Any thoughts about it?
-> 
-> Again nice improvement!  Please also check memory footprint.  I would
-> not expect much difference, but...
-> 
-Thank you Paul for your comments! Will check it.
+(Side note: the ARMv7 implementation is suboptimimal for ARMv7VE+
+if LPAE is disabled, I think we need to really add Kconfig options for
+ARMv7VE and 32-bit ARMv8 improve this and things like integer divide).
 
---
-Vlad Rezki
+      Arnd
