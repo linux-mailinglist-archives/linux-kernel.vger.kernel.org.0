@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 628971213F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C692121541
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729657AbfLPSGh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:06:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46852 "EHLO mail.kernel.org"
+        id S1731866AbfLPSUL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbfLPSGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:06:35 -0500
+        id S1732012AbfLPSUD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:20:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD293206E0;
-        Mon, 16 Dec 2019 18:06:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7158221739;
+        Mon, 16 Dec 2019 18:20:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519594;
-        bh=utZknrgf3Zyu4lzfzcGaRaFwjQehVXiBoCs88W728mU=;
+        s=default; t=1576520402;
+        bh=pDM9YgV4ACQyf4D8/DQYrmhcjDCqeiLjgwAC5zEHwIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u5jT0N0JN+Y8th/YpwYCyRW70VM90g1qAz+izIKhP7qL9pxwIB8s4pv3JaSxV+Ehf
-         c7InOHlIxu2mpnRsV9QTtiT9bILZFNp4m07e6Bv/QBlrPg6slHLWkfJeufVVULlx2I
-         7Hn2kAaoar6Y2jm/BayLJNqPiHK0/XId+YsHtSLc=
+        b=MybrmzorL1vVGDsDwQ3Un/sxWHr5cmaFovWq3aDR/lt3IuiL1fRx/4qOANhAuM/pJ
+         wsb9iSyq+vsd1S2wg+63xySKT5kQ1i+XB+n5bGFdhG77ijacH5jodfJyrGLqCmwvic
+         mDhwnL44h/GFGfRpFWl0sI/Fx+CNNlbdZ4OOwX1o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 129/140] powerpc: Avoid clang warnings around setjmp and longjmp
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 5.4 141/177] ppdev: fix PPGETTIME/PPSETTIME ioctls
 Date:   Mon, 16 Dec 2019 18:49:57 +0100
-Message-Id: <20191216174828.373385352@linuxfoundation.org>
+Message-Id: <20191216174846.834159741@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,80 +42,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit c9029ef9c95765e7b63c4d9aa780674447db1ec0 ]
+commit 998174042da229e2cf5841f574aba4a743e69650 upstream.
 
-Commit aea447141c7e ("powerpc: Disable -Wbuiltin-requires-header when
-setjmp is used") disabled -Wbuiltin-requires-header because of a
-warning about the setjmp and longjmp declarations.
+Going through the uses of timeval in the user space API,
+I noticed two bugs in ppdev that were introduced in the y2038
+conversion:
 
-r367387 in clang added another diagnostic around this, complaining
-that there is no jmp_buf declaration.
+* The range check was accidentally moved from ppsettime to
+  ppgettime
 
-  In file included from ../arch/powerpc/xmon/xmon.c:47:
-  ../arch/powerpc/include/asm/setjmp.h:10:13: error: declaration of
-  built-in function 'setjmp' requires the declaration of the 'jmp_buf'
-  type, commonly provided in the header <setjmp.h>.
-  [-Werror,-Wincomplete-setjmp-declaration]
-  extern long setjmp(long *);
-              ^
-  ../arch/powerpc/include/asm/setjmp.h:11:13: error: declaration of
-  built-in function 'longjmp' requires the declaration of the 'jmp_buf'
-  type, commonly provided in the header <setjmp.h>.
-  [-Werror,-Wincomplete-setjmp-declaration]
-  extern void longjmp(long *, long);
-              ^
-  2 errors generated.
+* On sparc64, the microseconds are in the other half of the
+  64-bit word.
 
-We are not using the standard library's longjmp/setjmp implementations
-for obvious reasons; make this clear to clang by using -ffreestanding
-on these files.
+Fix both, and mark the fix for stable backports.
 
-Cc: stable@vger.kernel.org # 4.14+
-Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191119045712.39633-3-natechancellor@gmail.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 3b9ab374a1e6 ("ppdev: convert to y2038 safe")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20191108203435.112759-8-arnd@arndb.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- arch/powerpc/kernel/Makefile | 4 ++--
- arch/powerpc/xmon/Makefile   | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/char/ppdev.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index eac18790d1b15..d450280e5c29c 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -5,8 +5,8 @@
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -619,20 +619,27 @@ static int pp_do_ioctl(struct file *file
+ 		if (copy_from_user(time32, argp, sizeof(time32)))
+ 			return -EFAULT;
  
- CFLAGS_ptrace.o		+= -DUTS_MACHINE='"$(UTS_MACHINE)"'
++		if ((time32[0] < 0) || (time32[1] < 0))
++			return -EINVAL;
++
+ 		return pp_set_timeout(pp->pdev, time32[0], time32[1]);
  
--# Disable clang warning for using setjmp without setjmp.h header
--CFLAGS_crash.o		+= $(call cc-disable-warning, builtin-requires-header)
-+# Avoid clang warnings around longjmp/setjmp declarations
-+CFLAGS_crash.o += -ffreestanding
+ 	case PPSETTIME64:
+ 		if (copy_from_user(time64, argp, sizeof(time64)))
+ 			return -EFAULT;
  
- subdir-ccflags-$(CONFIG_PPC_WERROR) := -Werror
++		if ((time64[0] < 0) || (time64[1] < 0))
++			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] >>= 32;
++
+ 		return pp_set_timeout(pp->pdev, time64[0], time64[1]);
  
-diff --git a/arch/powerpc/xmon/Makefile b/arch/powerpc/xmon/Makefile
-index 9ba44e190e5e4..365e711bebabb 100644
---- a/arch/powerpc/xmon/Makefile
-+++ b/arch/powerpc/xmon/Makefile
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- # Makefile for xmon
+ 	case PPGETTIME32:
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time32[0] = ts.tv_sec;
+ 		time32[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time32[0] < 0) || (time32[1] < 0))
+-			return -EINVAL;
  
--# Disable clang warning for using setjmp without setjmp.h header
--subdir-ccflags-y := $(call cc-disable-warning, builtin-requires-header)
-+# Avoid clang warnings around longjmp/setjmp declarations
-+subdir-ccflags-y := -ffreestanding
+ 		if (copy_to_user(argp, time32, sizeof(time32)))
+ 			return -EFAULT;
+@@ -643,8 +650,9 @@ static int pp_do_ioctl(struct file *file
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time64[0] = ts.tv_sec;
+ 		time64[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time64[0] < 0) || (time64[1] < 0))
+-			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] <<= 32;
  
- subdir-ccflags-$(CONFIG_PPC_WERROR) += -Werror
- 
--- 
-2.20.1
-
+ 		if (copy_to_user(argp, time64, sizeof(time64)))
+ 			return -EFAULT;
 
 
