@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C5D121393
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 497D0121612
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbfLPSC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39188 "EHLO mail.kernel.org"
+        id S1731540AbfLPSQ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfLPSC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:56 -0500
+        id S1731530AbfLPSQ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BB70207FF;
-        Mon, 16 Dec 2019 18:02:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFDA9206EC;
+        Mon, 16 Dec 2019 18:16:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519374;
-        bh=vLGodRCGkCR1avik2p/FRYXEtMWNfbPeLSlc7nWweAA=;
+        s=default; t=1576520186;
+        bh=oIElqBuLqOI3RfPRIwnNyVf1rIaSkOio7IkY6dvHZIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BAH8kWybHUNmOKQ28tUCUguc/nsN+bD7lBX6dQ1nXW/7ZQChMitSERLlAoES+w5W0
-         Vw6Q3M7rEt27punXXkn2oVpKd4y5C1P6AzlDfraghr1TM2YmWa2y1taJkhX3l5nWA5
-         EXsCxk2EtYxsYUcpLn8uaB8psjjNGbzR6J27CyVQ=
+        b=QVEPc3Ty+ho8mvwPddwUyANiBMaWCzAbeDA3c5PCzSP2+bA9mHJMQfqU/hAAM8kpc
+         Rn4HXcnpAVROpbpKwcPn/lhsWyuuedmrqAQuyslQXuxUMheZgyZU/5gVZ99tb9Ppb8
+         m/qWJuC5xmS5Fon0YVU19AEAprYIwMo8nwNIHSp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 039/140] Btrfs: fix negative subv_writers counter and data space leak after buffered write
-Date:   Mon, 16 Dec 2019 18:48:27 +0100
-Message-Id: <20191216174759.596315852@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH 5.4 052/177] tpm: Switch to platform_get_irq_optional()
+Date:   Mon, 16 Dec 2019 18:48:28 +0100
+Message-Id: <20191216174830.514921087@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,86 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit a0e248bb502d5165b3314ac3819e888fdcdf7d9f upstream.
+commit 9c8c5742b6af76a3fd93b4e56d1d981173cf9016 upstream.
 
-When doing a buffered write it's possible to leave the subv_writers
-counter of the root, used for synchronization between buffered nocow
-writers and snapshotting. This happens in an exceptional case like the
-following:
+platform_get_irq() calls dev_err() on an error. As the IRQ usage in the
+tpm_tis driver is optional, this is undesirable.
 
-1) We fail to allocate data space for the write, since there's not
-   enough available data space nor enough unallocated space for allocating
-   a new data block group;
+Specifically this leads to this new false-positive error being logged:
+[    5.135413] tpm_tis MSFT0101:00: IRQ index 0 not found
 
-2) Because of that failure, we try to go to NOCOW mode, which succeeds
-   and therefore we set the local variable 'only_release_metadata' to true
-   and set the root's sub_writers counter to 1 through the call to
-   btrfs_start_write_no_snapshotting() made by check_can_nocow();
+This commit switches to platform_get_irq_optional(), which does not log
+an error, fixing this.
 
-3) The call to btrfs_copy_from_user() returns zero, which is very unlikely
-   to happen but not impossible;
-
-4) No pages are copied because btrfs_copy_from_user() returned zero;
-
-5) We call btrfs_end_write_no_snapshotting() which decrements the root's
-   subv_writers counter to 0;
-
-6) We don't set 'only_release_metadata' back to 'false' because we do
-   it only if 'copied', the value returned by btrfs_copy_from_user(), is
-   greater than zero;
-
-7) On the next iteration of the while loop, which processes the same
-   page range, we are now able to allocate data space for the write (we
-   got enough data space released in the meanwhile);
-
-8) After this if we fail at btrfs_delalloc_reserve_metadata(), because
-   now there isn't enough free metadata space, or in some other place
-   further below (prepare_pages(), lock_and_cleanup_extent_if_need(),
-   btrfs_dirty_pages()), we break out of the while loop with
-   'only_release_metadata' having a value of 'true';
-
-9) Because 'only_release_metadata' is 'true' we end up decrementing the
-   root's subv_writers counter to -1 (through a call to
-   btrfs_end_write_no_snapshotting()), and we also end up not releasing the
-   data space previously reserved through btrfs_check_data_free_space().
-   As a consequence the mechanism for synchronizing NOCOW buffered writes
-   with snapshotting gets broken.
-
-Fix this by always setting 'only_release_metadata' to false at the start
-of each iteration.
-
-Fixes: 8257b2dc3c1a ("Btrfs: introduce btrfs_{start, end}_nocow_write() for each subvolume")
-Fixes: 7ee9e4405f26 ("Btrfs: check if we can nocow if we don't have data space")
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 7723f4c5ecdb ("driver core: platform: Add an error message to platform_get_irq*()"
+Cc: <stable@vger.kernel.org> # 5.4.x
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/file.c |    2 +-
+ drivers/char/tpm/tpm_tis.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1636,6 +1636,7 @@ static noinline ssize_t btrfs_buffered_w
- 			break;
- 		}
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -286,7 +286,7 @@ static int tpm_tis_plat_probe(struct pla
+ 	}
+ 	tpm_info.res = *res;
  
-+		only_release_metadata = false;
- 		sector_offset = pos & (fs_info->sectorsize - 1);
- 		reserve_bytes = round_up(write_bytes + sector_offset,
- 				fs_info->sectorsize);
-@@ -1791,7 +1792,6 @@ again:
- 			set_extent_bit(&BTRFS_I(inode)->io_tree, lockstart,
- 				       lockend, EXTENT_NORESERVE, NULL,
- 				       NULL, GFP_NOFS);
--			only_release_metadata = false;
- 		}
- 
- 		btrfs_drop_pages(pages, num_pages);
+-	tpm_info.irq = platform_get_irq(pdev, 0);
++	tpm_info.irq = platform_get_irq_optional(pdev, 0);
+ 	if (tpm_info.irq <= 0) {
+ 		if (pdev != force_pdev)
+ 			tpm_info.irq = -1;
 
 
