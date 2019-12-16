@@ -2,121 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97C201203B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:22:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FB311203DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:27:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfLPLVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:21:51 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39568 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfLPLVv (ORCPT
+        id S1727400AbfLPL0I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:26:08 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33834 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfLPL0I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:21:51 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b72so4239467wme.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 03:21:49 -0800 (PST)
+        Mon, 16 Dec 2019 06:26:08 -0500
+Received: by mail-io1-f66.google.com with SMTP id z193so2950303iof.1;
+        Mon, 16 Dec 2019 03:26:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
-        b=qC2K4KTYi+HAmeVp1g+GJ7rpwe9o8iLBeAuo+VRD+ciwGilXWVRHxRgwey5RAPE2Cr
-         s8l2O4jNJs1ycBBORqMjWAOsAR7ahxytekVVQssAhlI/VbrD4DhEFIufFQ3Wjl7Vc206
-         XHqWkxoClvveHskQ/V2Z2CPPwkiOAZhzS2bd73KV+vmYNXLQ3d2FBQ469Z91wI4ySqe4
-         p5YBbLd4p+3UDfRCXIGOR2q+taVmR4/f1bnSyHvW/ERADWraiBGfXNjwXYbiblpOZVsq
-         Oc6vI8GQNLd2VFAEPwa3bQymsQnGC77o7jQFOQyYJdzNyw9DfRYkmAOnzb083mrZX9e6
-         An7A==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ELdUONa2ckCb0g92cQe783L5naGON8kZrHYJoYPRMio=;
+        b=XBw5mkBv5ooaIsqGbE/cYqaQZopWtsnyWp6M617AWWh5EAZRLDoGG7nM31k9DZxZr+
+         64gNmCWVlfSEpNVqKyVBxZxhTcuyeP3UW87f8jFHFY6k0mBGKUZ4u+kk10mWnx2Qd7c6
+         xgE3CV7k/tuBGO5qu8fWnKevQpN646HSqPYYfIaPQAVdzmCNA0oBBvMMMfixRqoZf0AN
+         cJilQ7FxTREx4MO73wx1hOMnnRffWlZeMRo5h/kcwbAMx4IrhuxK5HS/eyb6XtiQUfe+
+         uBCeo9VO8HdqE11wzfbLab9U9AQct9YErpfo6OyKRS/OWSs5F3xuOsOYI8zKyfIZLNaq
+         e/qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
-        b=UIEpUSAqJc5zhpHu3//3PDy3sptd7jSojt1uBJ20vh/qZLyzM1r1CIxvZ2LuOMUKNL
-         7aX++iQ4i9F6w30to0ksXbkX71VQWl7k6geMwu2o6IeVrHtBUJETQprwDjDRuHvvs4+a
-         xNRRtn72pnmWvMzlYVEezqPz19RlZxBK/ucpeBBvhgdS52sURC9wIsdsDdxwo8W7LJu+
-         Kc5IhzMY5FOh7Z3B3BhHlRLJ7lbt9uQQSHPL+/dSw1tpw4muscMYSvnK0bkFBag4SvD0
-         /KvhbpD1kF9/bnILs0XxUQd5sYd2+ZvvgckzO8YkiRWJmbRkEC+DjDI86JCWb6l/GT+p
-         hF6g==
-X-Gm-Message-State: APjAAAXdlS8KO84dW+6B+DTTGDHgBQISUcH77t+uhF0gyr53j2QAg6ey
-        j5mQV3v+OMiNfZGX/g7RoMxADQ==
-X-Google-Smtp-Source: APXvYqxC+UeKU5NKi91Br581QakkL4y4s0iWzgxBCk+lvnaus0NdoX9FH6aPCsJEfd8efqNI4k/Fug==
-X-Received: by 2002:a05:600c:507:: with SMTP id i7mr31082793wmc.135.1576495309273;
-        Mon, 16 Dec 2019 03:21:49 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id d16sm22991983wrg.27.2019.12.16.03.21.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 03:21:48 -0800 (PST)
-References: <20191215114705.24401-1-repk@triplefau.lt> <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Remi Pommarel <repk@triplefau.lt>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
-In-reply-to: <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
-Date:   Mon, 16 Dec 2019 12:21:47 +0100
-Message-ID: <1jmubsbjn8.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ELdUONa2ckCb0g92cQe783L5naGON8kZrHYJoYPRMio=;
+        b=qw6ogCaTDf22q/iQX/T+kFMmkJ0XpaYTf6akgwEfIRn7gAwclqXXRDPXdo4o21aRnX
+         6v/4vsNezkl2D24gt81NUX3BVFo2JKkx//KdGBd/WeHiRwzVGENnXi+ddNjteRJOIPO6
+         C5fjHqnKm1HnJRCqzqrMgcySRANW54noiif7ksdyR2GXoK+8kN8JUuKKBIS5kJIcS3U9
+         wjV3N26gUL9OwEp6CslwFuygI/E/6JCPhcVFcb2lUyo5APEDrHuBUpdFxd90UBWoaLY8
+         R3YZEF25Xmn55hpfriBDXPif9V8atgEsSqhUbeJd0ilj6KjUCP4of76g5I47ryu8pb2v
+         B5Dg==
+X-Gm-Message-State: APjAAAVUmW40BdT284IjR8Z2GU4TMEVXj5Izh/u6DUgK4M8A/Ra81koi
+        orzwAdAkaUvBDiO79u2gWgrrI1yXPXrbfwFHsUg=
+X-Google-Smtp-Source: APXvYqyA11cuClnOLO4oeV+SgFJThguY0x2zlrGH9RqOy9cyEprbnVIl37fc0V3tC5HMMwCWqY47vjyKEZER/AJjSDQ=
+X-Received: by 2002:a5e:8505:: with SMTP id i5mr17060768ioj.158.1576495567012;
+ Mon, 16 Dec 2019 03:26:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20191025190723.21105-1-aford173@gmail.com>
+In-Reply-To: <20191025190723.21105-1-aford173@gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 16 Dec 2019 05:25:55 -0600
+Message-ID: <CAHCN7xJZ2oF-vV87RVygLrcDU5tAee5M+btn+m3gHOewHjmv0Q@mail.gmail.com>
+Subject: Re: [PATCH] media: ov5640: Put max framerate into table and simplify check
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Sun 15 Dec 2019 at 21:34, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
-
-> On Sun, Dec 15, 2019 at 12:39 PM Remi Pommarel <repk@triplefau.lt> wrote:
->>
->> Some meson pll registers can be initialized with 0 as N value, introducing
->> the following division by 0 when computing rate :
->>
->>   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
->>   division by zero
->>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
->>   Call trace:
->>    dump_backtrace+0x0/0x1c0
->>    show_stack+0x14/0x20
->>    dump_stack+0xc4/0x100
->>    ubsan_epilogue+0x14/0x68
->>    __ubsan_handle_divrem_overflow+0x98/0xb8
->>    __pll_params_to_rate+0xdc/0x140
->>    meson_clk_pll_recalc_rate+0x278/0x3a0
->>    __clk_register+0x7c8/0xbb0
->>    devm_clk_hw_register+0x54/0xc0
->>    meson_eeclkc_probe+0xf4/0x1a0
->>    platform_drv_probe+0x54/0xd8
->>    really_probe+0x16c/0x438
->>    driver_probe_device+0xb0/0xf0
->>    device_driver_attach+0x94/0xa0
->>    __driver_attach+0x70/0x108
->>    bus_for_each_dev+0xd8/0x128
->>    driver_attach+0x30/0x40
->>    bus_add_driver+0x1b0/0x2d8
->>    driver_register+0xbc/0x1d0
->>    __platform_driver_register+0x78/0x88
->>    axg_driver_init+0x18/0x20
->>    do_one_initcall+0xc8/0x24c
->>    kernel_init_freeable+0x2b0/0x344
->>    kernel_init+0x10/0x128
->>    ret_from_fork+0x10/0x18
->>
->> This checks if N is null before doing the division.
->>
->> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
->> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-Applied with a slightly more detailed comment.
-Thx
-
+On Fri, Oct 25, 2019 at 2:07 PM Adam Ford <aford173@gmail.com> wrote:
 >
-> thank you for the patch Remi!
+> Currently the various modes are placed into a table, but when
+> ov5640_find_mode is called, it has to double check whether
+> or not the requested framerate is tolerated by the mode.
+> The determination is based on checking hact, vact, and frame rate.
 >
+> Only 640x480 is allowed at 60fps and QSXGA is limited to 15fps, but
+> as the number of permitted frame rates change, this will begin to
+> add more and more complexity to the check.
 >
-> Martin
+> This patch simplifies the check by adding the max framerate
+> allowed for each mode into the table of modes.  It then compares
+> the requested framerate to the max permitted in the mode's table.
+> This reduces the number of comparisions to one down from three
+> at run-time.
 
+Gentle nudge on this patch.  It's been nearly two months without any feedback.
+There were some fixes backported to stable kernels which will get ugly
+as this drivers gets more mature and as framerates start to increase.
+
+This patch should simplify the check by adding the max frame rate to
+the table and then only having to do to one check later.
+
+adam
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+> index 5e495c833d32..19e10c59860b 100644
+> --- a/drivers/media/i2c/ov5640.c
+> +++ b/drivers/media/i2c/ov5640.c
+> @@ -189,6 +189,7 @@ struct ov5640_mode_info {
+>         u32 vtot;
+>         const struct reg_value *reg_data;
+>         u32 reg_data_size;
+> +       u32 max_fps;
+>  };
+>
+>  struct ov5640_ctrls {
+> @@ -544,6 +545,7 @@ static const struct ov5640_mode_info ov5640_mode_init_data = {
+>         0, SUBSAMPLING, 640, 1896, 480, 984,
+>         ov5640_init_setting_30fps_VGA,
+>         ARRAY_SIZE(ov5640_init_setting_30fps_VGA),
+> +       OV5640_30_FPS,
+>  };
+>
+>  static const struct ov5640_mode_info
+> @@ -551,39 +553,48 @@ ov5640_mode_data[OV5640_NUM_MODES] = {
+>         {OV5640_MODE_QCIF_176_144, SUBSAMPLING,
+>          176, 1896, 144, 984,
+>          ov5640_setting_QCIF_176_144,
+> -        ARRAY_SIZE(ov5640_setting_QCIF_176_144)},
+> +        ARRAY_SIZE(ov5640_setting_QCIF_176_144),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_QVGA_320_240, SUBSAMPLING,
+>          320, 1896, 240, 984,
+>          ov5640_setting_QVGA_320_240,
+> -        ARRAY_SIZE(ov5640_setting_QVGA_320_240)},
+> +        ARRAY_SIZE(ov5640_setting_QVGA_320_240),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_VGA_640_480, SUBSAMPLING,
+>          640, 1896, 480, 1080,
+>          ov5640_setting_VGA_640_480,
+> -        ARRAY_SIZE(ov5640_setting_VGA_640_480)},
+> +        ARRAY_SIZE(ov5640_setting_VGA_640_480),
+> +        OV5640_60_FPS},
+>         {OV5640_MODE_NTSC_720_480, SUBSAMPLING,
+>          720, 1896, 480, 984,
+>          ov5640_setting_NTSC_720_480,
+> -        ARRAY_SIZE(ov5640_setting_NTSC_720_480)},
+> +        ARRAY_SIZE(ov5640_setting_NTSC_720_480),
+> +       OV5640_30_FPS},
+>         {OV5640_MODE_PAL_720_576, SUBSAMPLING,
+>          720, 1896, 576, 984,
+>          ov5640_setting_PAL_720_576,
+> -        ARRAY_SIZE(ov5640_setting_PAL_720_576)},
+> +        ARRAY_SIZE(ov5640_setting_PAL_720_576),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_XGA_1024_768, SUBSAMPLING,
+>          1024, 1896, 768, 1080,
+>          ov5640_setting_XGA_1024_768,
+> -        ARRAY_SIZE(ov5640_setting_XGA_1024_768)},
+> +        ARRAY_SIZE(ov5640_setting_XGA_1024_768),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_720P_1280_720, SUBSAMPLING,
+>          1280, 1892, 720, 740,
+>          ov5640_setting_720P_1280_720,
+> -        ARRAY_SIZE(ov5640_setting_720P_1280_720)},
+> +        ARRAY_SIZE(ov5640_setting_720P_1280_720),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_1080P_1920_1080, SCALING,
+>          1920, 2500, 1080, 1120,
+>          ov5640_setting_1080P_1920_1080,
+> -        ARRAY_SIZE(ov5640_setting_1080P_1920_1080)},
+> +        ARRAY_SIZE(ov5640_setting_1080P_1920_1080),
+> +        OV5640_30_FPS},
+>         {OV5640_MODE_QSXGA_2592_1944, SCALING,
+>          2592, 2844, 1944, 1968,
+>          ov5640_setting_QSXGA_2592_1944,
+> -        ARRAY_SIZE(ov5640_setting_QSXGA_2592_1944)},
+> +        ARRAY_SIZE(ov5640_setting_QSXGA_2592_1944),
+> +        OV5640_15_FPS},
+>  };
+>
+>  static int ov5640_init_slave_id(struct ov5640_dev *sensor)
+> @@ -1606,14 +1617,8 @@ ov5640_find_mode(struct ov5640_dev *sensor, enum ov5640_frame_rate fr,
+>             (!nearest && (mode->hact != width || mode->vact != height)))
+>                 return NULL;
+>
+> -       /* Only 640x480 can operate at 60fps (for now) */
+> -       if (fr == OV5640_60_FPS &&
+> -           !(mode->hact == 640 && mode->vact == 480))
+> -               return NULL;
+> -
+> -       /* 2592x1944 only works at 15fps max */
+> -       if ((mode->hact == 2592 && mode->vact == 1944) &&
+> -           fr > OV5640_15_FPS)
+> +       /* Check to see if the current mode exceeds the max frame rate */
+> +       if (ov5640_framerates[fr] > ov5640_framerates[mode->max_fps])
+>                 return NULL;
+>
+>         return mode;
+> --
+> 2.17.1
+>
