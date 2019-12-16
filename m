@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9821213A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C4CE121457
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbfLPSDj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40442 "EHLO mail.kernel.org"
+        id S1730608AbfLPSK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729522AbfLPSDe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:34 -0500
+        id S1730231AbfLPSK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCB0520733;
-        Mon, 16 Dec 2019 18:03:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3F6B21582;
+        Mon, 16 Dec 2019 18:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519414;
-        bh=zr40ijXVMEOd8x6/Kipd24NfEl4lgp/N8U1A6J9z/vM=;
+        s=default; t=1576519825;
+        bh=NeQzpFfclPtsz87k4W3jeo/1VKJIkBRQNsBK1c9e4cU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hVp5f+tKESyqbN94VLOemAZoDz5HtyvT3VEiDJ9niEfmIjK66BFTqG04U/f6XYFTs
-         fpxXAGipiqWQ1muzQSOSqxmfGeqpPTcgFgzZLRZUdvMJhIcXCR+SgKTVg4ypdbfTPP
-         S/Asag+b/cDDS94J2154Cxif8R3J3aWlNBkghcvg=
+        b=LKjNIeDvP0vb3i/ZeDfn7/MvQFaa7R0hf32tL1IBw+2oWIk2cGUe/yb2MPjD2dHSe
+         LMpFrvZyj7x2v54qBjvqJsVPTMuXG+L5aMsb1mmh4pOjb2vAeuw13clDGrMWF2G1Sk
+         +556mh1+RmlRAtRRVgIqzvuYTSERsnMFfVt8gOmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pawel Harlozinski <pawel.harlozinski@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 4.19 057/140] ASoC: Jack: Fix NULL pointer dereference in snd_soc_jack_report
+        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 5.3 085/180] media: hantro: Fix s_fmt for dynamic resolution changes
 Date:   Mon, 16 Dec 2019 18:48:45 +0100
-Message-Id: <20191216174803.777135697@linuxfoundation.org>
+Message-Id: <20191216174832.318953840@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
+From: Ezequiel Garcia <ezequiel@collabora.com>
 
-commit 8f157d4ff039e03e2ed4cb602eeed2fd4687a58f upstream.
+commit ae02d49493b5d32bb3e035fdeb1655346f5e1ea5 upstream.
 
-Check for existance of jack before tracing.
-NULL pointer dereference has been reported by KASAN while unloading
-machine driver (snd_soc_cnl_rt274).
+Commit 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
+changed the conditions under S_FMT was allowed for OUTPUT
+CAPTURE buffers.
 
-Signed-off-by: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
-Link: https://lore.kernel.org/r/20191112130237.10141-1-pawel.harlozinski@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+However, and according to the mem-to-mem stateless decoder specification,
+in order to support dynamic resolution changes, S_FMT should be allowed
+even if OUTPUT buffers have been allocated.
+
+Relax decoder S_FMT restrictions on OUTPUT buffers, allowing a
+resolution modification, provided the pixel format stays the same.
+
+Tested on RK3288 platforms using ChromiumOS Video Decode/Encode
+Accelerator Unittests.
+
+[hverkuil: fix typo: In other -> In order]
+
+Fixes: 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: <stable@vger.kernel.org>      # for v5.4 and up
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-jack.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/staging/media/hantro/hantro_v4l2.c |   28 +++++++++++++++++++---------
+ 1 file changed, 19 insertions(+), 9 deletions(-)
 
---- a/sound/soc/soc-jack.c
-+++ b/sound/soc/soc-jack.c
-@@ -100,10 +100,9 @@ void snd_soc_jack_report(struct snd_soc_
- 	unsigned int sync = 0;
- 	int enable;
+--- a/drivers/staging/media/hantro/hantro_v4l2.c
++++ b/drivers/staging/media/hantro/hantro_v4l2.c
+@@ -356,20 +356,27 @@ vidioc_s_fmt_out_mplane(struct file *fil
+ {
+ 	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
+ 	struct hantro_ctx *ctx = fh_to_ctx(priv);
++	struct vb2_queue *vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+ 	const struct hantro_fmt *formats;
+ 	unsigned int num_fmts;
+-	struct vb2_queue *vq;
+ 	int ret;
  
--	trace_snd_soc_jack_report(jack, mask, status);
+-	/* Change not allowed if queue is busy. */
+-	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+-	if (vb2_is_busy(vq))
+-		return -EBUSY;
++	ret = vidioc_try_fmt_out_mplane(file, priv, f);
++	if (ret)
++		return ret;
+ 
+ 	if (!hantro_is_encoder_ctx(ctx)) {
+ 		struct vb2_queue *peer_vq;
+ 
+ 		/*
++		 * In order to support dynamic resolution change,
++		 * the decoder admits a resolution change, as long
++		 * as the pixelformat remains. Can't be done if streaming.
++		 */
++		if (vb2_is_streaming(vq) || (vb2_is_busy(vq) &&
++		    pix_mp->pixelformat != ctx->src_fmt.pixelformat))
++			return -EBUSY;
++		/*
+ 		 * Since format change on the OUTPUT queue will reset
+ 		 * the CAPTURE queue, we can't allow doing so
+ 		 * when the CAPTURE queue has buffers allocated.
+@@ -378,12 +385,15 @@ vidioc_s_fmt_out_mplane(struct file *fil
+ 					  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
+ 		if (vb2_is_busy(peer_vq))
+ 			return -EBUSY;
++	} else {
++		/*
++		 * The encoder doesn't admit a format change if
++		 * there are OUTPUT buffers allocated.
++		 */
++		if (vb2_is_busy(vq))
++			return -EBUSY;
+ 	}
+ 
+-	ret = vidioc_try_fmt_out_mplane(file, priv, f);
+-	if (ret)
+-		return ret;
 -
- 	if (!jack)
- 		return;
-+	trace_snd_soc_jack_report(jack, mask, status);
- 
- 	dapm = &jack->card->dapm;
- 
+ 	formats = hantro_get_formats(ctx, &num_fmts);
+ 	ctx->vpu_src_fmt = hantro_find_format(formats, num_fmts,
+ 					      pix_mp->pixelformat);
 
 
