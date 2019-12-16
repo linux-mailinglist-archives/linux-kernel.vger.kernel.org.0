@@ -2,140 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4157120E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:51:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC6E5120682
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:02:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfLPPtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:49:39 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:35023 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728392AbfLPPti (ORCPT
+        id S1727711AbfLPM76 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:59:58 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:38445 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727553AbfLPM76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:49:38 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 15so4611917lfr.2;
-        Mon, 16 Dec 2019 07:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XLefccWn9eLOZQVYfFnGLvT38QOza41B05dCschHmWs=;
-        b=jS7jD2bCBBvJFfInfLsysA2/SacydhvAKRLPbaCZm9kCX3pEbkU+DyscpMbKooRhZs
-         h544dWURUQyOXo0/bQwEhellGMd/VlQ1/IcSyTS+qUgsTb+ammoM8tYoeKcpP14K50cn
-         CzG2pZnRX/+R+VKhQoR92F2AE926B49SvZBkZK41mZIrcGzX/zczjvwddjAc4tGGr4dE
-         c1SEq/1MlAViqx+mT2+xxjepaaXMZ+LrVn663Yd1HFRTJmq/WpoMUzxo8sUBoxd9sUPk
-         kjNxn2YRCiNFR2aiDMxWrTf0OaHZMHPTKCCcxJpJL5FKJFm3zCmoTjWWQzCfll95dnS+
-         otdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XLefccWn9eLOZQVYfFnGLvT38QOza41B05dCschHmWs=;
-        b=I8CCwJ1Aj6DQrFSgXEnoTrZECWLE5cYS/WJzXxqNo1/xYQOrREPt6mTLVCaoIK6s5R
-         3MoN6ICTyIwaQ45GSSaBngT2moPwsMaBxtpnEawN6wK83kP6n/XG3raOogO4pX5zgQqV
-         Ok+ni9hj9W8k869x9XfC+odgBJ2RW3sBN44GQGELcLVjgkGNeylQAGLCp7gVrxwLfdn0
-         mYk9awcE9BXbhncFiXVdPuxrf18HWWY7z47VyEOOevKG3N4B8LMivxOm4COFOd1HDui3
-         U4i5w6G9ZLWnKEr6stW32KJkDEOcS2dXWCmiww+2RfsFG8N0Zp+k658Q9r/tqHjAqOJ7
-         ql9g==
-X-Gm-Message-State: APjAAAUR2J+irtFut7MlbRUO4heQih639J/O4eRHmvGOARDe0KjUas6X
-        33BTmuzXMvUYNbmrnnLSkAQ=
-X-Google-Smtp-Source: APXvYqwgxkuXc185DH64gccxf2DghtR89KC9lp7fJkIdwOQboVqZO5SyW248v+/giOL9Y7/LPT5P3A==
-X-Received: by 2002:a19:c210:: with SMTP id l16mr17999700lfc.35.1576511375718;
-        Mon, 16 Dec 2019 07:49:35 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id n13sm10730783lji.91.2019.12.16.07.49.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 07:49:34 -0800 (PST)
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mperttunen@nvidia.com, sboyd@kernel.org,
-        gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, allison@lohutok.net, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, horms+renesas@verge.net.au,
-        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
-        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
-        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
-        markz@nvidia.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        alexios.zavras@intel.com, alsa-devel@alsa-project.org
-References: <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
- <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
- <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
- <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
- <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
- <0930a710-174b-859b-294c-e9f81f6a3b5e@gmail.com>
- <20191216122005.GB28289@pdeschrijver-desktop.Nvidia.com>
- <53653719-f8e5-f6d1-a1d1-e53c7ccd7636@gmail.com>
- <20191216151132.GC28289@pdeschrijver-desktop.Nvidia.com>
- <20191216152435.GD28289@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fa538845-cb8e-cf88-34be-3ceb2daa63c2@gmail.com>
-Date:   Mon, 16 Dec 2019 18:49:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 16 Dec 2019 07:59:58 -0500
+X-Greylist: delayed 907 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 07:59:57 EST
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Mon, 16 Dec 2019 04:44:48 -0800
+Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id A3F70401D3;
+        Mon, 16 Dec 2019 04:44:44 -0800 (PST)
+From:   Ajay Kaher <akaher@vmware.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <torvalds@linux-foundation.org>, <punit.agrawal@arm.com>,
+        <akpm@linux-foundation.org>, <kirill.shutemov@linux.intel.com>,
+        <willy@infradead.org>, <will.deacon@arm.com>,
+        <mszeredi@redhat.com>, <stable@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <srivatsab@vmware.com>, <srivatsa@csail.mit.edu>,
+        <amakhalov@vmware.com>, <srinidhir@vmware.com>,
+        <bvikas@vmware.com>, <anishs@vmware.com>, <vsirnapalli@vmware.com>,
+        <srostedt@vmware.com>, <akaher@vmware.com>
+Subject: [PATCH v3 0/8] Backported fixes for 4.4 stable tree
+Date:   Tue, 17 Dec 2019 02:15:40 +0530
+Message-ID: <1576529149-14269-1-git-send-email-akaher@vmware.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20191216152435.GD28289@pdeschrijver-desktop.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: akaher@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-16.12.2019 18:24, Peter De Schrijver пишет:
-> On Mon, Dec 16, 2019 at 05:11:32PM +0200, Peter De Schrijver wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On Mon, Dec 16, 2019 at 05:23:23PM +0300, Dmitry Osipenko wrote:
->>>>> Could you please clarify what do you mean by the "existing users"?
->>>>> AFAIK, nothing in kernel uses mux clocks.
->>>>
->>>> The DT clk bindings allow for parent initialization, so it's certainly
->>>> possible there are some DTs which rely on this. We promised to never
->>>> break the bindings, which changing to 1 clock would do.
->>>
->>> What about this variant:
->>>
->>>   1. Keep the old CaR code in place.
->>>
->>>   2. Make CaR driver to scan whole device-tree for the legacy PMC clocks.
->>>
->>>   3. If legacy clock is found, then register PMC clocks from CaR.
->>>
->>>   4. If legacy clocks are not found, then don't register PMC clocks from
->>> CaR.
->>>
->>>   5. Add clocks support to the PMC driver and only register them if
->>> legacy clocks are not registered by CaR.
->>>
->>> Now both old and new DTBs can co-exist and work, everyone happy.
->>
->> That seems even more work.. Today the only upstream user is audio.
->> Currently these clocks are setup by the CAR clock driver. However
->> as they will move to the PMC driver, this mechanism cannot be used.
->> Hence the plan is to modify the audio driver to check for the PMC clocks
->> in DT and if they are not available use the CAR clocks as fallback.
->> The whole reason the clocks move to the PMC driver, is that when PMC
->> becomes secure, all accesses have to go via an SMC. Given that we don't
->> want SMCs all over the Tegra drivers, it's a good opportunity to move
->> the PMC clock handling into the PMC driver. PMC can be secure with both
->> 'new' and old DTs, so just registering the PMC clocks in the CAR driver
->> if legacy clocks are found in the DT, won't always work.
->>
-> 
-> Given the audio driver needs to change anyway, we can indeed use 1 clock
-> per PMC clk_out_ rather than 2 as we have today. As this models the hw
-> slightly better, I think we should do that as you suggested.
-> 
-> Peter.
-> 
+These patches include few backported fixes for the 4.4 stable
+tree.
+I would appreciate if you could kindly consider including them in the
+next release.
 
-Okay, let's try and see how it will go.
+Ajay
+
+---
+
+[Changes from v2]:
+Merged following changes from Vlastimil's series [1]:
+- Added page_ref_count() in [Patch v3 5/8]
+- Added missing refcount overflow checks on x86 and s390 [Patch v3 5/8]
+- Added [Patch v3 8/8]
+- Removed 7aef4172c795 i.e. [Patch v2 3/8]
+
+[1] https://lore.kernel.org/stable/20191108093814.16032-1-vbabka@suse.cz/
+
+---
+
+[PATCH v3 1/8]:
+Backporting of upstream commit f958d7b528b1:
+mm: make page ref count overflow check tighter and more explicit
+
+[PATCH v3 2/8]:
+Backporting of upstream commit 88b1a17dfc3e:
+mm: add 'try_get_page()' helper function
+
+[PATCH v3 3/8]:
+Backporting of upstream commit a3e328556d41:
+mm, gup: remove broken VM_BUG_ON_PAGE compound check for hugepages
+
+[PATCH v3 4/8]:
+Backporting of upstream commit d63206ee32b6:
+mm, gup: ensure real head page is ref-counted when using hugepages
+
+[PATCH v3 5/8]:
+Backporting of upstream commit 8fde12ca79af:
+mm: prevent get_user_pages() from overflowing page refcount
+
+[PATCH v3 6/8]:
+Backporting of upstream commit 7bf2d1df8082:
+pipe: add pipe_buf_get() helper
+
+[PATCH v3 7/8]:
+Backporting of upstream commit 15fab63e1e57:
+fs: prevent page refcount overflow in pipe_buf_get
+
+[PATCH v3 8/8]:
+x86, mm, gup: prevent get_page() race with munmap in paravirt guest
+
