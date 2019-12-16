@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E027121460
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA6EC1213B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbfLPSKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54276 "EHLO mail.kernel.org"
+        id S1729382AbfLPSEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730665AbfLPSKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:50 -0500
+        id S1729197AbfLPSEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7460E207FF;
-        Mon, 16 Dec 2019 18:10:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A96C920726;
+        Mon, 16 Dec 2019 18:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519849;
-        bh=+mUDm720vOil5NekTWtSXYLAFxEU5F0beangRkvpLQI=;
+        s=default; t=1576519441;
+        bh=CeBwiQdcuprVkYH3v/InYP1u7hVzUfhzPzQkTL2H7Lw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t8cDNcxUVYU/NU+2dM5lLxuLsefCOmyQZOSIq2zwjcZynrpQmJUBEne60KQVKK6Mk
-         Ftg+vg8bUTVT7zGF9JR43+fyyNSTZr0hum3q5QQtc4BLkLfvtVhkpO78hujYeDweyA
-         Y1RzlwJ34Q/aZNgEJ7NrjzWR9iu6LY/JOBuhitwA=
+        b=LuUAuUnZ3rXHpf5YGJfOPRQTwVx+VsPLbK6UfzV1iX98b2f8vrpCivLijzNiHifMy
+         0HjL5dO6O4ZYKa82co/3oNGBPZn9c/PCOrulCbzoPWj6IezEd0Ka2fT+ORyqa/qjHR
+         vnK5T1h0EfBeS2qxzrtmB9Ln3K1Ctkwa9zw2nANU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 5.3 094/180] erofs: zero out when listxattr is called with no xattr
-Date:   Mon, 16 Dec 2019 18:48:54 +0100
-Message-Id: <20191216174835.001737408@linuxfoundation.org>
+Subject: [PATCH 4.19 067/140] erofs: zero out when listxattr is called with no xattr
+Date:   Mon, 16 Dec 2019 18:48:55 +0100
+Message-Id: <20191216174806.072963258@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -71,7 +71,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/staging/erofs/xattr.c
 +++ b/drivers/staging/erofs/xattr.c
-@@ -649,6 +649,8 @@ ssize_t erofs_listxattr(struct dentry *d
+@@ -638,6 +638,8 @@ ssize_t erofs_listxattr(struct dentry *d
  	struct listxattr_iter it;
  
  	ret = init_inode_xattrs(d_inode(dentry));
