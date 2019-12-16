@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 540711217D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:39:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EC81216C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:31:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbfLPSiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:38:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41520 "EHLO mail.kernel.org"
+        id S1730753AbfLPSLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729223AbfLPSET (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:19 -0500
+        id S1730338AbfLPSLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:12 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF83A20700;
-        Mon, 16 Dec 2019 18:04:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F05A2072D;
+        Mon, 16 Dec 2019 18:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519458;
-        bh=Au99viy+X18pYsQ1rPzRNBgVSzZlFq3Aj87KG1CsGg4=;
+        s=default; t=1576519871;
+        bh=KO3vXSYLDbK8UNt87SuJS8TyyPyYA34rfIsJRPBk7ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jMnuJ29ir/K3B845w8I/866ISRTQtlNvu27PHwik6XVSmqfv3Fl46DQDBVqfFkm6V
-         bK4E9An+2CMvo7barRbrB+5Gsdx+OiM3Lc+I+YfVMU4nw6KcQimUEKyUWyQsGV9ON6
-         ozCEy29r4SfQ82RiHqDGXv0GiTrmzOIMmvgjTN1E=
+        b=KQdZPT/8vB+a5dA3E9cTMHkPpNGG9QO/VbXXlrJD6F2hD2E6GUVoBX0X0aFdY8Erh
+         ieNK16ZydFpSYqNFV2QK1IIMtg72jbp1kYpOSPj1/AlkrsOUin0+MGuBBm8w410+BR
+         NxLT3L/OWFV3yLymSO+PT8XLf/ewPT9JgqDF0cVs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Francesco Ruggeri <fruggeri@arista.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 074/140] ACPI: OSL: only free map once in osl.c
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.3 102/180] ALSA: oxfw: fix return value in error path of isochronous resources reservation
 Date:   Mon, 16 Dec 2019 18:49:02 +0100
-Message-Id: <20191216174807.473825782@linuxfoundation.org>
+Message-Id: <20191216174836.660116804@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,111 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Francesco Ruggeri <fruggeri@arista.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-commit 833a426cc471b6088011b3d67f1dc4e147614647 upstream.
+commit 59a126aa3113fc23f03fedcafe3705f1de5aff50 upstream.
 
-acpi_os_map_cleanup checks map->refcount outside of acpi_ioremap_lock
-before freeing the map. This creates a race condition the can result
-in the map being freed more than once.
-A panic can be caused by running
+Even if isochronous resources reservation fails, error code doesn't return
+in pcm.hw_params callback.
 
-for ((i=0; i<10; i++))
-do
-        for ((j=0; j<100000; j++))
-        do
-                cat /sys/firmware/acpi/tables/data/BERT >/dev/null
-        done &
-done
-
-This patch makes sure that only the process that drops the reference
-to 0 does the freeing.
-
-Fixes: b7c1fadd6c2e ("ACPI: Do not use krefs under a mutex in osl.c")
-Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: <stable@vger.kernel.org> #5.3+
+Fixes: 4f380d007052 ("ALSA: oxfw: configure packet format in pcm.hw_params callback")
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Link: https://lore.kernel.org/r/20191209151655.GA8090@workstation
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/osl.c |   28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ sound/firewire/oxfw/oxfw-pcm.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -374,19 +374,21 @@ void *__ref acpi_os_map_memory(acpi_phys
- }
- EXPORT_SYMBOL_GPL(acpi_os_map_memory);
- 
--static void acpi_os_drop_map_ref(struct acpi_ioremap *map)
-+/* Must be called with mutex_lock(&acpi_ioremap_lock) */
-+static unsigned long acpi_os_drop_map_ref(struct acpi_ioremap *map)
- {
--	if (!--map->refcount)
-+	unsigned long refcount = --map->refcount;
-+
-+	if (!refcount)
- 		list_del_rcu(&map->list);
-+	return refcount;
- }
- 
- static void acpi_os_map_cleanup(struct acpi_ioremap *map)
- {
--	if (!map->refcount) {
--		synchronize_rcu_expedited();
--		acpi_unmap(map->phys, map->virt);
--		kfree(map);
--	}
-+	synchronize_rcu_expedited();
-+	acpi_unmap(map->phys, map->virt);
-+	kfree(map);
- }
- 
- /**
-@@ -406,6 +408,7 @@ static void acpi_os_map_cleanup(struct a
- void __ref acpi_os_unmap_iomem(void __iomem *virt, acpi_size size)
- {
- 	struct acpi_ioremap *map;
-+	unsigned long refcount;
- 
- 	if (!acpi_permanent_mmap) {
- 		__acpi_unmap_table(virt, size);
-@@ -419,10 +422,11 @@ void __ref acpi_os_unmap_iomem(void __io
- 		WARN(true, PREFIX "%s: bad address %p\n", __func__, virt);
- 		return;
+--- a/sound/firewire/oxfw/oxfw-pcm.c
++++ b/sound/firewire/oxfw/oxfw-pcm.c
+@@ -255,7 +255,7 @@ static int pcm_playback_hw_params(struct
+ 		mutex_unlock(&oxfw->mutex);
  	}
--	acpi_os_drop_map_ref(map);
-+	refcount = acpi_os_drop_map_ref(map);
- 	mutex_unlock(&acpi_ioremap_lock);
  
--	acpi_os_map_cleanup(map);
-+	if (!refcount)
-+		acpi_os_map_cleanup(map);
+-	return 0;
++	return err;
  }
- EXPORT_SYMBOL_GPL(acpi_os_unmap_iomem);
  
-@@ -457,6 +461,7 @@ void acpi_os_unmap_generic_address(struc
- {
- 	u64 addr;
- 	struct acpi_ioremap *map;
-+	unsigned long refcount;
- 
- 	if (gas->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
- 		return;
-@@ -472,10 +477,11 @@ void acpi_os_unmap_generic_address(struc
- 		mutex_unlock(&acpi_ioremap_lock);
- 		return;
- 	}
--	acpi_os_drop_map_ref(map);
-+	refcount = acpi_os_drop_map_ref(map);
- 	mutex_unlock(&acpi_ioremap_lock);
- 
--	acpi_os_map_cleanup(map);
-+	if (!refcount)
-+		acpi_os_map_cleanup(map);
- }
- EXPORT_SYMBOL(acpi_os_unmap_generic_address);
- 
+ static int pcm_capture_hw_free(struct snd_pcm_substream *substream)
 
 
