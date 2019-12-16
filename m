@@ -2,87 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A74C120528
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:13:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42FB212053A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfLPMNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:13:25 -0500
-Received: from mga18.intel.com ([134.134.136.126]:20168 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727425AbfLPMNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:13:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 04:13:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,321,1571727600"; 
-   d="scan'208";a="217147072"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006.jf.intel.com with ESMTP; 16 Dec 2019 04:13:20 -0800
-Received: from andy by smile with local (Exim 4.93-RC7)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1igpFY-0006Ou-DM; Mon, 16 Dec 2019 14:13:20 +0200
-Date:   Mon, 16 Dec 2019 14:13:20 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Gayatri Kammela <gayatri.kammela@intel.com>
-Cc:     linux-pm@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        alex.hung@canonical.com, linux-acpi@vger.kernel.org,
-        lenb@kernel.org, rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        charles.d.prestopine@intel.com, dvhart@infradead.org,
-        Zhang Rui <rui.zhang@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Subject: Re: [PATCH v2 3/4] platform/x86: intel-hid: Add new Tiger Lake
- hardware ID to support HID driver
-Message-ID: <20191216121320.GQ32742@smile.fi.intel.com>
-References: <cover.1576260216.git.gayatri.kammela@intel.com>
- <a70a856e9a87c89ba92da514c1dda1f46f10b0de.1576260216.git.gayatri.kammela@intel.com>
+        id S1727534AbfLPMOh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:14:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57468 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbfLPMOg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:14:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cJuNyiJ6x2GmYYoz1Gvq9PWu1CKComrXo+DxXGJQ3kE=; b=WkHus4CkcBNFVoG84isWKSEOd
+        RozRAuZWCdoYEDviJCWowXeaBRF2NBjp2g+BCGy2DbC7PxVBPdYxYC/qAoyQIJOe7P6Q7zPC1+W3x
+        mqaVqhCaH6fkD4m5t+4LpI17CQ/4gIAYT8rrRhqSr67/+W5yl8xmfxFI35Ka0AQqf26tWwcArkM+w
+        wPcKnDawJabaXS4XiexrIXicQ2YEHJFqKLfU8aYKGsQe4r8SyCAlzLfH8hkWOdrG72a+hDrm6C1Sl
+        uYBbGjoOufC9SmziLadJpk/RWsLmyf8x9sp2PiMAwvfIz2NMAOzwxiCknWzlbJKiflpdzLncbh6aX
+        LfVG7y3XQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1igpGd-0000r1-I8; Mon, 16 Dec 2019 12:14:32 +0000
+Date:   Mon, 16 Dec 2019 04:14:27 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
+        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
+        yang.shi@linux.alibaba.com, shakeelb@google.com,
+        hannes@cmpxchg.org, Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Roman Gushchin <guro@fb.com>,
+        Chris Down <chris@chrisdown.name>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v6 02/10] mm/lru: replace pgdat lru_lock with lruvec lock
+Message-ID: <20191216121427.GZ32169@bombadil.infradead.org>
+References: <1576488386-32544-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1576488386-32544-3-git-send-email-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a70a856e9a87c89ba92da514c1dda1f46f10b0de.1576260216.git.gayatri.kammela@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1576488386-32544-3-git-send-email-alex.shi@linux.alibaba.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:14:22AM -0800, Gayatri Kammela wrote:
-> Tiger Lake has a new unique hardware ID to support Intel's HID event
-> filter driver. Hence, add it.
-> 
-
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-> Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
-> ---
->  drivers/platform/x86/intel-hid.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/platform/x86/intel-hid.c b/drivers/platform/x86/intel-hid.c
-> index ef6d4bd77b1a..43d590250228 100644
-> --- a/drivers/platform/x86/intel-hid.c
-> +++ b/drivers/platform/x86/intel-hid.c
-> @@ -19,6 +19,7 @@ MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Alex Hung");
+On Mon, Dec 16, 2019 at 05:26:18PM +0800, Alex Shi wrote:
+> -static void lock_page_lru(struct page *page, int *isolated)
+> +static struct lruvec *lock_page_lru(struct page *page, int *isolated)
+>  {
+> -	pg_data_t *pgdat = page_pgdat(page);
+> +	struct lruvec *lruvec = lock_page_lruvec_irq(page);
 >  
->  static const struct acpi_device_id intel_hid_ids[] = {
-> +	{"INT1051", 0},
->  	{"INT33D5", 0},
->  	{"", 0},
->  };
-> -- 
-> 2.17.1
-> 
+> -	spin_lock_irq(&pgdat->lru_lock);
+>  	if (PageLRU(page)) {
+> -		struct lruvec *lruvec;
+>  
+> -		lruvec = mem_cgroup_page_lruvec(page, pgdat);
+>  		ClearPageLRU(page);
+>  		del_page_from_lru_list(page, lruvec, page_lru(page));
+>  		*isolated = 1;
+>  	} else
+>  		*isolated = 0;
+> +
+> +	return lruvec;
+>  }
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+You still didn't fix this function.  Go back and look at my comment from
+the last time you sent this patch set.
