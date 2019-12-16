@@ -2,42 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A2112182A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:41:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50324121798
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:37:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbfLPSlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:41:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36010 "EHLO mail.kernel.org"
+        id S1730220AbfLPShQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:37:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728774AbfLPSBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:01:13 -0500
+        id S1729700AbfLPSG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:06:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C68C206B7;
-        Mon, 16 Dec 2019 18:01:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 883552072B;
+        Mon, 16 Dec 2019 18:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519272;
-        bh=lFMA8F5IsifbE13LGxhgzKLWUnJu7KQspWTXFnixgM8=;
+        s=default; t=1576519587;
+        bh=jA44QCIhfUGgFcdIpEBSy+fLut9ArALwt49l6lBca3o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Rh9zQ51koYjp//NJtVDYf3QM9wq5xsFoR0MeMK8vHayAjRW8r77mTd60wIf0ZwfLN
-         QSbwzaGBMgfTVeRU83iF1eYlrTN9mI2EIak7X3LmLjYJd3Y8UGxT6ji50OsY/9YAaD
-         IDb44slbKfOFRgBPW1jlywZc37vgdfw+jZYOoC3g=
+        b=nKNxZ3jLFjuOE3aQdgQzdgD3mGtTeYZXYqdIBVRGlslM8BdZoBpu2z0HpzkBglbd/
+         JxM4rsdXpvl4BJmgJfNMBmbMqNBlEVu2mODFUQH1g9je0mGNTx/JStFSrpBIf4REOD
+         RX3hQ9xbbf3cX5NBTsZyepYcTZhiILK5lrVFfKww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Daniel Schultz <d.schultz@phytec.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Lee Jones <lee.jones@linaro.org>,
+        stable@vger.kernel.org, Helen Koike <helen.koike@collabora.com>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 265/267] mfd: rk808: Fix RK818 ID template
-Date:   Mon, 16 Dec 2019 18:49:51 +0100
-Message-Id: <20191216174917.360319399@linuxfoundation.org>
+Subject: [PATCH 4.19 126/140] media: vimc: fix component match compare
+Date:   Mon, 16 Dec 2019 18:49:54 +0100
+Message-Id: <20191216174825.133286225@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,42 +46,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Schultz <d.schultz@phytec.de>
+From: Helen Koike <helen.koike@collabora.com>
 
-[ Upstream commit 37ef8c2c15bdc1322b160e38986c187de2b877b2 ]
+[ Upstream commit ee1c71a8e1456ab53fe667281d855849edf26a4d ]
 
-The Rockchip PMIC driver can automatically detect connected component
-versions by reading the ID_MSB and ID_LSB registers. The probe function
-will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
-RK818 template ID is 0x8181.
+If the system has other devices being registered in the component
+framework, the compare function will be called with a device that
+doesn't belong to vimc.
+This device is not necessarily a platform_device, nor have a
+platform_data (which causes a NULL pointer dereference error) and if it
+does have a pdata, it is not necessarily type of struct vimc_platform_data.
+So casting to any of these types is wrong.
 
-This patch changes this value to 0x8180.
+Instead of expecting a given pdev with a given pdata, just expect for
+the device it self. vimc-core is the one who creates them, we know in
+advance exactly which object to expect in the match.
 
-Fixes: 9d6105e19f61 ("mfd: rk808: Fix up the chip id get failed")
-Cc: stable@vger.kernel.org
-Cc: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Joseph Chen <chenjh@rock-chips.com>
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Fixes: 4a29b7090749 ("[media] vimc: Subdevices as modules")
+
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Tested-by: Boris Brezillon <boris.brezillon@collabora.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/mfd/rk808.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vimc/vimc-core.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/mfd/rk808.h b/include/linux/mfd/rk808.h
-index d3156594674c2..338e0f6e2226b 100644
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -443,7 +443,7 @@ enum {
- enum {
- 	RK805_ID = 0x8050,
- 	RK808_ID = 0x0000,
--	RK818_ID = 0x8181,
-+	RK818_ID = 0x8180,
- };
+diff --git a/drivers/media/platform/vimc/vimc-core.c b/drivers/media/platform/vimc/vimc-core.c
+index 27db8835c2410..8548fa93bcf65 100644
+--- a/drivers/media/platform/vimc/vimc-core.c
++++ b/drivers/media/platform/vimc/vimc-core.c
+@@ -243,10 +243,7 @@ static void vimc_comp_unbind(struct device *master)
  
- struct rk808 {
+ static int vimc_comp_compare(struct device *comp, void *data)
+ {
+-	const struct platform_device *pdev = to_platform_device(comp);
+-	const char *name = data;
+-
+-	return !strcmp(pdev->dev.platform_data, name);
++	return comp == data;
+ }
+ 
+ static struct component_match *vimc_add_subdevs(struct vimc_device *vimc)
+@@ -276,7 +273,7 @@ static struct component_match *vimc_add_subdevs(struct vimc_device *vimc)
+ 		}
+ 
+ 		component_match_add(&vimc->pdev.dev, &match, vimc_comp_compare,
+-				    (void *)vimc->pipe_cfg->ents[i].name);
++				    &vimc->subdevs[i]->dev);
+ 	}
+ 
+ 	return match;
 -- 
 2.20.1
 
