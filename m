@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2EB3121705
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 105B41217DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728562AbfLPSdf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:33:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51870 "EHLO mail.kernel.org"
+        id S1729375AbfLPSCn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730114AbfLPSJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:28 -0500
+        id S1728624AbfLPSCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE59A206EC;
-        Mon, 16 Dec 2019 18:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15C3420700;
+        Mon, 16 Dec 2019 18:02:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519767;
-        bh=1H4ky51eCvfkA+t3HWKdQkyac9iCEkW5S//8SSJUL58=;
+        s=default; t=1576519355;
+        bh=KcBt+yw1EEX1lJ66mdf9EzMUbehHmEDYVMVolsts3S0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lp5Samxdfr0IyWlEE+Pdkf3s/7ceLg6mkwZ+dGumGR+S5MViwS7tJxXEtiME1m80s
-         J84zWjrF80GSm4czKemiSVJowGtMxDFU99gNImy/aHGfgTbnYzB0287SLRSvJrcKtQ
-         7H8hiWsE3sGLOkBjOeUonV3jrlYWxqwHEpjwx0/8=
+        b=0ScZ58oZ1fSJZ7ektP6cu4pQLllEOcr2zl8Sc3VkQxbVqYQQMWcMexEyI0sJcA8PD
+         IM7smlzjfJbf4SK9AiArOoXFisFiIHnchPZUTKmKzIjownJ5qlcwiZ7ta6oMddCTLo
+         zOqe1vnjDC84bSyU2dEjjVaHZgY1eaBYVut4oCS0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.3 059/180] btrfs: Avoid getting stuck during cyclic writebacks
-Date:   Mon, 16 Dec 2019 18:48:19 +0100
-Message-Id: <20191216174828.761022157@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH 4.19 032/140] usb: dwc3: pci: add ID for the Intel Comet Lake -H variant
+Date:   Mon, 16 Dec 2019 18:48:20 +0100
+Message-Id: <20191216174758.199333810@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,99 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-commit f7bddf1e27d18fbc7d3e3056ba449cfbe4e20b0a upstream.
+commit 3c3caae4cd6e122472efcf64759ff6392fb6bce2 upstream.
 
-During a cyclic writeback, extent_write_cache_pages() uses done_index
-to update the writeback_index after the current run is over.  However,
-instead of current index + 1, it gets to to the current index itself.
+The original ID that was added for Comet Lake PCH was
+actually for the -LP (low power) variant even though the
+constant for it said CMLH. Changing that while at it.
 
-Unfortunately, this, combined with returning on EOF instead of looping
-back, can lead to the following pathlogical behavior.
-
-1. There is a single file which has accumulated enough dirty pages to
-   trigger balance_dirty_pages() and the writer appending to the file
-   with a series of short writes.
-
-2. balance_dirty_pages kicks in, wakes up background writeback and sleeps.
-
-3. Writeback kicks in and the cursor is on the last page of the dirty
-   file.  Writeback is started or skipped if already in progress.  As
-   it's EOF, extent_write_cache_pages() returns and the cursor is set
-   to done_index which is pointing to the last page.
-
-4. Writeback is done.  Nothing happens till balance_dirty_pages
-   finishes, at which point we go back to #1.
-
-This can almost completely stall out writing back of the file and keep
-the system over dirty threshold for a long time which can mess up the
-whole system.  We encountered this issue in production with a package
-handling application which can reliably reproduce the issue when
-running under tight memory limits.
-
-Reading the comment in the error handling section, this seems to be to
-avoid accidentally skipping a page in case the write attempt on the
-page doesn't succeed.  However, this concern seems bogus.
-
-On each page, the code either:
-
-* Skips and moves onto the next page.
-
-* Fails issue and sets done_index to index + 1.
-
-* Successfully issues and continue to the next page if budget allows
-  and not EOF.
-
-IOW, as long as it's not EOF and there's budget, the code never
-retries writing back the same page.  Only when a page happens to be
-the last page of a particular run, we end up retrying the page, which
-can't possibly guarantee anything data integrity related.  Besides,
-cyclic writes are only used for non-syncing writebacks meaning that
-there's no data integrity implication to begin with.
-
-Fix it by always setting done_index past the current page being
-processed.
-
-Note that this problem exists in other writepages too.
-
-CC: stable@vger.kernel.org # 4.19+
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Acked-by: Felipe Balbi <balbi@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191212093713.60614-1-heikki.krogerus@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/usb/dwc3/dwc3-pci.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -4117,7 +4117,7 @@ retry:
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
+--- a/drivers/usb/dwc3/dwc3-pci.c
++++ b/drivers/usb/dwc3/dwc3-pci.c
+@@ -29,7 +29,8 @@
+ #define PCI_DEVICE_ID_INTEL_BXT_M		0x1aaa
+ #define PCI_DEVICE_ID_INTEL_APL			0x5aaa
+ #define PCI_DEVICE_ID_INTEL_KBP			0xa2b0
+-#define PCI_DEVICE_ID_INTEL_CMLH		0x02ee
++#define PCI_DEVICE_ID_INTEL_CMLLP		0x02ee
++#define PCI_DEVICE_ID_INTEL_CMLH		0x06ee
+ #define PCI_DEVICE_ID_INTEL_GLK			0x31aa
+ #define PCI_DEVICE_ID_INTEL_CNPLP		0x9dee
+ #define PCI_DEVICE_ID_INTEL_CNPH		0xa36e
+@@ -306,6 +307,9 @@ static const struct pci_device_id dwc3_p
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_MRFLD),
+ 	  (kernel_ulong_t) &dwc3_pci_mrfld_properties, },
  
--			done_index = page->index;
-+			done_index = page->index + 1;
- 			/*
- 			 * At this point we hold neither the i_pages lock nor
- 			 * the page lock: the page may be truncated or
-@@ -4152,16 +4152,6 @@ retry:
++	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_CMLLP),
++	  (kernel_ulong_t) &dwc3_pci_intel_properties, },
++
+ 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_CMLH),
+ 	  (kernel_ulong_t) &dwc3_pci_intel_properties, },
  
- 			ret = __extent_writepage(page, wbc, epd);
- 			if (ret < 0) {
--				/*
--				 * done_index is set past this page,
--				 * so media errors will not choke
--				 * background writeout for the entire
--				 * file. This has consequences for
--				 * range_cyclic semantics (ie. it may
--				 * not be suitable for data integrity
--				 * writeout).
--				 */
--				done_index = page->index + 1;
- 				done = 1;
- 				break;
- 			}
 
 
