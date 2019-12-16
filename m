@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8569C1215B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:24:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7834C1213BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732019AbfLPSYE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:24:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48316 "EHLO mail.kernel.org"
+        id S1727876AbfLPSEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731959AbfLPSTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:19:39 -0500
+        id S1729668AbfLPSEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421CB206EC;
-        Mon, 16 Dec 2019 18:19:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00FF320733;
+        Mon, 16 Dec 2019 18:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520378;
-        bh=QA9F+xZ2ekjN/MqhF4t0Gp3icowfE+3Q9boBMFZHcwc=;
+        s=default; t=1576519470;
+        bh=otBDpZ87BqaIW6pX7d16Qi5zR+8a7FPSRZ3kJt1PAHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zpLy/rKvvxpM2vHo10jgZt2QDF9fe2/7tkIkftkSFRiaoCMUipyepZ00P1d8tG07e
-         5sqwBXdcLSf9YfSb/VY1dvJwAIZKWvcQENDmwzVVlcaGPSTgaOFmYeUuZc4XfIhFm1
-         uUEcoybVOAKZwqJ8QsnVKwWz0icCsgEos+U2aFTE=
+        b=fOpvhgPo4C8MZP1DCL11vi5U/IydZWn9wP3A9v8yI6mN9k8PuosfNgYjgKpemL31g
+         dqEruzwRHN3K97zIizBRdOWHCsRByCsN2WxbnCJtQe5l2yVf4Bfm4P2cHD8IXbvWSE
+         EqDXavHO9Rmag7SWTDQawYS4axEOd+t+pB+ODgxc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pawel Harlozinski <pawel.harlozinski@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 089/177] ASoC: Jack: Fix NULL pointer dereference in snd_soc_jack_report
-Date:   Mon, 16 Dec 2019 18:49:05 +0100
-Message-Id: <20191216174838.982882719@linuxfoundation.org>
+        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 078/140] pinctrl: samsung: Add of_node_put() before return in error path
+Date:   Mon, 16 Dec 2019 18:49:06 +0100
+Message-Id: <20191216174808.450047222@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
 
-commit 8f157d4ff039e03e2ed4cb602eeed2fd4687a58f upstream.
+commit 3d2557ab75d4c568c79eefa2e550e0d80348a6bd upstream.
 
-Check for existance of jack before tracing.
-NULL pointer dereference has been reported by KASAN while unloading
-machine driver (snd_soc_cnl_rt274).
+Each iteration of for_each_child_of_node puts the previous node, but in
+the case of a return from the middle of the loop, there is no put, thus
+causing a memory leak. Hence add an of_node_put before the return of
+exynos_eint_wkup_init() error path.
+Issue found with Coccinelle.
 
-Signed-off-by: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
-Link: https://lore.kernel.org/r/20191112130237.10141-1-pawel.harlozinski@linux.intel.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Cc: stable@vger.kernel.org
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 14c255d35b25 ("pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/soc-jack.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/soc/soc-jack.c
-+++ b/sound/soc/soc-jack.c
-@@ -82,10 +82,9 @@ void snd_soc_jack_report(struct snd_soc_
- 	unsigned int sync = 0;
- 	int enable;
- 
--	trace_snd_soc_jack_report(jack, mask, status);
--
- 	if (!jack)
- 		return;
-+	trace_snd_soc_jack_report(jack, mask, status);
- 
- 	dapm = &jack->card->dapm;
- 
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -494,8 +494,10 @@ int exynos_eint_wkup_init(struct samsung
+ 		if (match) {
+ 			irq_chip = kmemdup(match->data,
+ 				sizeof(*irq_chip), GFP_KERNEL);
+-			if (!irq_chip)
++			if (!irq_chip) {
++				of_node_put(np);
+ 				return -ENOMEM;
++			}
+ 			wkup_np = np;
+ 			break;
+ 		}
 
 
