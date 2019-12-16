@@ -2,69 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2289D11FE69
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 07:19:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1A7E11FE78
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 07:29:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726676AbfLPGTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 01:19:00 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42030 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbfLPGS7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 01:18:59 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y19so3326779lfl.9;
-        Sun, 15 Dec 2019 22:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lk0BXIIiWqEO9kfeGGGJrJLDU8Vj1PjkOxOAYcW+QLc=;
-        b=nm3RMFhC0srV1g0QGrUSXww7JWUzdFhBP9sMb8Cx8bQkg/0X9t9KWdLtmTiQyWMFbN
-         pVwjq+Oaws8GRuTysRty6CiMsZOYoYlnZJmsQaFfZufrR0I1gcyz9+ywGYGQE56q0eJL
-         SknHfKC83O/XI6KLc/QbHlrzqgH77ko0UkzYsWSBh0nPOVGZ8lO95dJvVo0e1AoD9Dk5
-         8tKU+O8BbvLcg738ZBOnosvOd64ktIDz9GxAhlhttUIjvEczkaq4opElVI1CR7AmQ5N5
-         Iiu+bJZFrGbR+s5eszBAkdDAdlZr1tFin7jOxWjbAZGh4K0qpAPugrDmPagKxEpxzAGI
-         JVMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lk0BXIIiWqEO9kfeGGGJrJLDU8Vj1PjkOxOAYcW+QLc=;
-        b=ndr+zSPXcyXOJtzsdOuHHEJD303Kup87v3gdICmjaCE7G00rpinFdzTrTc/gqCTdmj
-         Kc54glgi23IaJVeXmTby8xvwiobgCqYnVwECPuCOOc2mmFa4qUaNJxnUCgXtNLeksdc6
-         KUNOWOJHIqACE3riBi8t7GkAiSWDvn7CICN+l9LLz9qDqwpPXA4zJkSg1ZxzO2xyPaZ0
-         6lgVac63uSgKmtIAsgS+D6gp2GD5k/fVEqpS+ohX/Ms3vNBSXx7C9VX4LiP2YG7QyUcf
-         BrJkdeC1vpdkn5VvHY58PsGWLe8p6wEDos5ndeiQHp3mMVCt1u+yoqOQ3JWsUupoxL+H
-         g81Q==
-X-Gm-Message-State: APjAAAXeKnBKWuW0FZh284bcwnZhxVALV3M5BoIPO08GrvqAKvF4ByJ5
-        GoUkiX6E53zfE9wzBtPHJtseuN+8MdOUCdmNHNHvbA==
-X-Google-Smtp-Source: APXvYqzVlFw1aI21I6iZcTCXHbdyY0F1kGU9byOxk6ZA2qRNn21TUTU2wODR03Nic4UFqQ7HYHbGEnO5AciswL3pCbE=
-X-Received: by 2002:ac2:47ec:: with SMTP id b12mr14968038lfp.162.1576477137015;
- Sun, 15 Dec 2019 22:18:57 -0800 (PST)
+        id S1726694AbfLPG3I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 01:29:08 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8127 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726054AbfLPG3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 01:29:08 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6E8FA986D098908E5817;
+        Mon, 16 Dec 2019 14:29:05 +0800 (CST)
+Received: from linux-CPUxgZ.huawei.com (10.175.104.212) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Mon, 16 Dec 2019 14:28:57 +0800
+From:   Heyi Guo <guoheyi@huawei.com>
+To:     <linux-kernel@vger.kernel.org>
+CC:     <wanghaibin.wang@huawei.com>, Heyi Guo <guoheyi@huawei.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>
+Subject: [PATCH] irq-gic-v3: fix NULL dereference of disabled redist_base
+Date:   Mon, 16 Dec 2019 14:27:45 +0800
+Message-ID: <20191216062745.63397-1-guoheyi@huawei.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20191215233046.78212-1-jbi.octave@gmail.com> <dd0b6577-aaf6-a557-4cdd-ddc490995c38@fb.com>
- <9d195192-551f-377c-d440-8156dfe20b7b@fb.com>
-In-Reply-To: <9d195192-551f-377c-d440-8156dfe20b7b@fb.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Sun, 15 Dec 2019 22:18:45 -0800
-Message-ID: <CAADnVQJYnt4WKMV8hDKAhf3w6Ju0Th3qVJCkbLFOnYPdnQe+pw@mail.gmail.com>
-Subject: Re: [PATCH] kernel: bpf: add __release sparse annotation
-To:     Yonghong Song <yhs@fb.com>
-Cc:     Jules Irenge <jbi.octave@gmail.com>,
-        "bokun.feng@gmail.com" <bokun.feng@gmail.com>,
-        Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.104.212]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 15, 2019 at 10:17 PM Yonghong Song <yhs@fb.com> wrote:
->
-> Resend due to incorrect bpf vger email address in the original email.
+If we use ACPI MADT GICC structure to pass single redistributor base,
+and mark some GICC as disabled, we'll get below call trace during
+boot:
 
-This patch is not in patchworks. Cannot be reviewed/applied.
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] GICv3: 256 SPIs implemented
+[    0.000000] GICv3: 0 Extended SPIs implemented
+[    0.000000] GICv3: Distributor has no Range Selector support
+[    0.000000] Unable to handle kernel paging request at virtual address 000000000000ffe8
+[    0.000000] Mem abort info:
+[    0.000000]   ESR = 0x96000004
+[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    0.000000]   SET = 0, FnV = 0
+[    0.000000]   EA = 0, S1PTW = 0
+[    0.000000] Data abort info:
+[    0.000000]   ISV = 0, ISS = 0x00000004
+[    0.000000]   CM = 0, WnR = 0
+[    0.000000] [000000000000ffe8] user address but active_mm is swapper
+[    0.000000] Internal error: Oops: 96000004 [#1] SMP
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc1 #5
+[    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
+[    0.000000] pc : gic_iterate_rdists+0x58/0x130
+[    0.000000] lr : gic_iterate_rdists+0x80/0x130
+[    0.000000] sp : ffff8000113d3cb0
+[    0.000000] x29: ffff8000113d3cb0 x28: 0000000000000000
+[    0.000000] x27: 0000000000000000 x26: 0000000000000018
+[    0.000000] x25: 000000000000ffe8 x24: 000000000000003f
+[    0.000000] x23: ffff800010588040 x22: 00000000000005e8
+[    0.000000] x21: ffff8000113df7d0 x20: 0000030f00003f11
+[    0.000000] x19: 0000000000000000 x18: ffffffffffffffff
+[    0.000000] x17: 0000000014aeb8dc x16: 00000000c3ba0ccf
+[    0.000000] x15: ffff8000113d9908 x14: ffff8000913d3a37
+[    0.000000] x13: ffff8000113d3a45 x12: ffff800011402000
+[    0.000000] x11: ffff8000113d39d0 x10: ffff8000113db980
+[    0.000000] x9 : 00000000ffffffd0 x8 : ffff8000106dca98
+[    0.000000] x7 : 000000000000005b x6 : 0000000000000000
+[    0.000000] x5 : 0000000000000000 x4 : ffff8000128c0000
+[    0.000000] x3 : ffff8000128a0000 x2 : ffff0003fc3c7000
+[    0.000000] x1 : 0000000000000001 x0 : 000000000000ffe8
+[    0.000000] Call trace:
+[    0.000000]  gic_iterate_rdists+0x58/0x130
+[    0.000000]  gic_init_bases+0x200/0x4b4
+[    0.000000]  gic_acpi_init+0x148/0x284
+[    0.000000]  acpi_match_madt+0x4c/0x84
+[    0.000000]  acpi_table_parse_entries_array+0x188/0x278
+[    0.000000]  acpi_table_parse_entries+0x70/0x98
+[    0.000000]  acpi_table_parse_madt+0x40/0x50
+[    0.000000]  __acpi_probe_device_table+0x88/0xe4
+[    0.000000]  irqchip_init+0x38/0x40
+[    0.000000]  init_IRQ+0x168/0x19c
+[    0.000000]  start_kernel+0x328/0x508
+[    0.000000] Code: f90017b6 9b3a7f16 f8766853 8b190260 (b9400000)
+[    0.000000] ---[ end trace ae5cf232d924bfc1 ]---
+[    0.000000] Kernel panic - not syncing: Fatal exception
+[    0.000000] Rebooting in 3 seconds..
+
+In this case, nr_redist_regions counts all GICC structures but only
+enabled ones have redistributor mapped. So add check to avoid NULL
+deference of redist_base.
+
+Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index d6218012097b..bd9d55cadef9 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -781,6 +781,13 @@ static int gic_iterate_rdists(int (*fn)(struct redist_region *, void __iomem *))
+ 		u64 typer;
+ 		u32 reg;
+ 
++		/*
++		 * redist_base may be NULL if we use single_redist and some GICC
++		 * structure is disabled.
++		 */
++		if (!ptr)
++			continue;
++
+ 		reg = readl_relaxed(ptr + GICR_PIDR2) & GIC_PIDR2_ARCH_MASK;
+ 		if (reg != GIC_PIDR2_ARCH_GICv3 &&
+ 		    reg != GIC_PIDR2_ARCH_GICv4) { /* We're in trouble... */
+-- 
+2.19.1
+
