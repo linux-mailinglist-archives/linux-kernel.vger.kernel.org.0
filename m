@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79292121896
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5EF91217E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfLPR4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54952 "EHLO mail.kernel.org"
+        id S1729507AbfLPSDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728259AbfLPR4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:56:38 -0500
+        id S1729280AbfLPSDU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE27C21582;
-        Mon, 16 Dec 2019 17:56:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DE8B2072D;
+        Mon, 16 Dec 2019 18:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518998;
-        bh=NaWavsSZhFlb4xQQSsr5Jhv73K6/rXkLUuFFF1PQqd4=;
+        s=default; t=1576519399;
+        bh=Q6IPlbKphm9Ek82Zr/DSnj+WRQWNrsOn12LL6QQn+jg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZv3eL8jUkRbjtKKwAH1gA6zgijeW/c0Ois3gnqWm2VAMHrISi9Wnc+QFCIFKI3zW
-         TBu6nezakmMs7abFsrqgwmWm+bgQWuvwPQR3jDiM8KFwCmf49Ihq8GMmxiYoGq0j4v
-         5TxWnKI70yCS8H/k0B537g3Or7NPKf18fSa99T30=
+        b=emTF5Qphi2K/Jrj9LNtU7xDYzlzTbqOfIb4oUgY4xN9sn2Oqu8CUaUzYEPm4t0jKm
+         WCO6yFSnKCvF1hLW5ygbE0gCuFWR8VC5DEwh5Htb0Yn9WxBw2eEeB6Qrs9XaYHwusr
+         30iuHiw0UePukD5Dx0UNW2M9UN6xREjofFgos/Cg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+e3f4897236c4eeb8af4f@syzkaller.appspotmail.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Ben Hutchings <ben@decadent.org.uk>
-Subject: [PATCH 4.14 154/267] KVM: x86: fix out-of-bounds write in KVM_GET_EMULATED_CPUID (CVE-2019-19332)
-Date:   Mon, 16 Dec 2019 18:48:00 +0100
-Message-Id: <20191216174910.932121900@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 013/140] staging: gigaset: add endpoint-type sanity check
+Date:   Mon, 16 Dec 2019 18:48:01 +0100
+Message-Id: <20191216174754.265077397@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +42,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 433f4ba1904100da65a311033f17a9bf586b287e upstream.
+commit ed9ed5a89acba51b82bdff61144d4e4a4245ec8a upstream.
 
-The bounds check was present in KVM_GET_SUPPORTED_CPUID but not
-KVM_GET_EMULATED_CPUID.
+Add missing endpoint-type sanity checks to probe.
 
-Reported-by: syzbot+e3f4897236c4eeb8af4f@syzkaller.appspotmail.com
-Fixes: 84cffe499b94 ("kvm: Emulate MOVBE", 2013-10-29)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ben Hutchings <ben@decadent.org.uk>
+This specifically prevents a warning in USB core on URB submission when
+fuzzing USB descriptors.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191202085610.12719-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/cpuid.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/isdn/gigaset/usb-gigaset.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -404,7 +404,7 @@ static inline int __do_cpuid_ent(struct
+--- a/drivers/isdn/gigaset/usb-gigaset.c
++++ b/drivers/isdn/gigaset/usb-gigaset.c
+@@ -708,6 +708,12 @@ static int gigaset_probe(struct usb_inte
  
- 	r = -E2BIG;
+ 	endpoint = &hostif->endpoint[0].desc;
  
--	if (*nent >= maxnent)
-+	if (WARN_ON(*nent >= maxnent))
- 		goto out;
- 
- 	do_cpuid_1_ent(entry, function, index);
-@@ -707,6 +707,9 @@ out:
- static int do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 func,
- 			u32 idx, int *nent, int maxnent, unsigned int type)
- {
-+	if (*nent >= maxnent)
-+		return -E2BIG;
++	if (!usb_endpoint_is_bulk_out(endpoint)) {
++		dev_err(&interface->dev, "missing bulk-out endpoint\n");
++		retval = -ENODEV;
++		goto error;
++	}
 +
- 	if (type == KVM_GET_EMULATED_CPUID)
- 		return __do_cpuid_ent_emulated(entry, func, idx, nent, maxnent);
+ 	buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
+ 	ucs->bulk_out_size = buffer_size;
+ 	ucs->bulk_out_epnum = usb_endpoint_num(endpoint);
+@@ -727,6 +733,12 @@ static int gigaset_probe(struct usb_inte
  
+ 	endpoint = &hostif->endpoint[1].desc;
+ 
++	if (!usb_endpoint_is_int_in(endpoint)) {
++		dev_err(&interface->dev, "missing int-in endpoint\n");
++		retval = -ENODEV;
++		goto error;
++	}
++
+ 	ucs->busy = 0;
+ 
+ 	ucs->read_urb = usb_alloc_urb(0, GFP_KERNEL);
 
 
