@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E62941213D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0382F121528
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:19:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbfLPSF0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:05:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43596 "EHLO mail.kernel.org"
+        id S1731882AbfLPSTC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:19:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729814AbfLPSFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:22 -0500
+        id S1731713AbfLPSS5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:18:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26A8320700;
-        Mon, 16 Dec 2019 18:05:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFAB220CC7;
+        Mon, 16 Dec 2019 18:18:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519521;
-        bh=mlsYVyRYpxK/Wmvw4xz7G9UU4F5LAxJIf71gNKYEono=;
+        s=default; t=1576520337;
+        bh=w8DpnLIqefWHHbyN99Kdhz6nhOOdKYSGyPbX7mF7uQk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2XXNbeiJHYXyFTiThZ4Y1rAPwAg40IeAO95ZnBjE8nElAJp304kab1NDmPTkizRq
-         hBhposkYUKLyNxH8zGF/pR7/kliNO0btrBCfIti58ydzGKR4QCGGnPhNA/Fq0lCuZw
-         oezBKWF0M0jrAdKzZj9kEjXUzkr3NFMg79bO97eQ=
+        b=Sh4UnMfQzz5mrbSiK8/b2zg8EbB/TzuTxvkWDRUoUnqn8Sj52rh6L3lchjzSpK8bD
+         6KTm9FkY2Ro5eIZT2EKZrH78ikI8XTTFcSupg+2Gn7enuj4gdpv0XvJ35ic9j9SU33
+         ZwyUBCcFV5uL1F4XlXonqOpAighpq69uNs7Dxzio=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 101/140] scsi: qla2xxx: Fix qla24xx_process_bidir_cmd()
+        stable@vger.kernel.org,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        "Hariharan T.S." <hari@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 113/177] powerpc/perf: Disable trace_imc pmu
 Date:   Mon, 16 Dec 2019 18:49:29 +0100
-Message-Id: <20191216174813.414503552@linuxfoundation.org>
+Message-Id: <20191216174842.360082287@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,70 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-[ Upstream commit c29282c65d1cf54daeea63be46243d7f69d72f4d ]
+commit 249fad734a25889a4f23ed014d43634af6798063 upstream.
 
-Set the r??_data_len variables before using these instead of after.
+When a root user or a user with CAP_SYS_ADMIN privilege uses any
+trace_imc performance monitoring unit events, to monitor application
+or KVM threads, it may result in a checkstop (System crash).
 
-This patch fixes the following Coverity complaint:
+The cause is frequent switching of the "trace/accumulation" mode of
+the In-Memory Collection hardware (LDBAR).
 
-const: At condition req_data_len != rsp_data_len, the value of req_data_len
-must be equal to 0.
-const: At condition req_data_len != rsp_data_len, the value of rsp_data_len
-must be equal to 0.
-dead_error_condition: The condition req_data_len != rsp_data_len cannot be
-true.
+This patch disables the trace_imc PMU unit entirely to avoid
+triggering the checkstop. A future patch will reenable it at a later
+stage once a workaround has been developed.
 
-Cc: Himanshu Madhani <hmadhani@marvell.com>
-Fixes: a9b6f722f62d ("[SCSI] qla2xxx: Implementation of bidirectional.") # v3.7.
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Tested-by: Himanshu Madhani <hmadhani@marvell.com>
-Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 012ae244845f ("powerpc/perf: Trace imc PMU functions")
+Cc: stable@vger.kernel.org # v5.2+
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Tested-by: Hariharan T.S. <hari@linux.ibm.com>
+[mpe: Add pr_info_once() so dmesg shows the PMU has been disabled]
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191118034452.9939-1-maddy@linux.vnet.ibm.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/qla2xxx/qla_bsg.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/powerpc/platforms/powernv/opal-imc.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_bsg.c b/drivers/scsi/qla2xxx/qla_bsg.c
-index b68a708c67251..47f062e96e62c 100644
---- a/drivers/scsi/qla2xxx/qla_bsg.c
-+++ b/drivers/scsi/qla2xxx/qla_bsg.c
-@@ -1779,8 +1779,8 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
- 	uint16_t nextlid = 0;
- 	uint32_t tot_dsds;
- 	srb_t *sp = NULL;
--	uint32_t req_data_len = 0;
--	uint32_t rsp_data_len = 0;
-+	uint32_t req_data_len;
-+	uint32_t rsp_data_len;
- 
- 	/* Check the type of the adapter */
- 	if (!IS_BIDI_CAPABLE(ha)) {
-@@ -1885,6 +1885,9 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
- 		goto done_unmap_sg;
- 	}
- 
-+	req_data_len = bsg_job->request_payload.payload_len;
-+	rsp_data_len = bsg_job->reply_payload.payload_len;
-+
- 	if (req_data_len != rsp_data_len) {
- 		rval = EXT_STATUS_BUSY;
- 		ql_log(ql_log_warn, vha, 0x70aa,
-@@ -1892,10 +1895,6 @@ qla24xx_process_bidir_cmd(struct bsg_job *bsg_job)
- 		goto done_unmap_sg;
- 	}
- 
--	req_data_len = bsg_job->request_payload.payload_len;
--	rsp_data_len = bsg_job->reply_payload.payload_len;
--
--
- 	/* Alloc SRB structure */
- 	sp = qla2x00_get_sp(vha, &(vha->bidir_fcport), GFP_KERNEL);
- 	if (!sp) {
--- 
-2.20.1
-
+--- a/arch/powerpc/platforms/powernv/opal-imc.c
++++ b/arch/powerpc/platforms/powernv/opal-imc.c
+@@ -285,7 +285,14 @@ static int opal_imc_counters_probe(struc
+ 			domain = IMC_DOMAIN_THREAD;
+ 			break;
+ 		case IMC_TYPE_TRACE:
+-			domain = IMC_DOMAIN_TRACE;
++			/*
++			 * FIXME. Using trace_imc events to monitor application
++			 * or KVM thread performance can cause a checkstop
++			 * (system crash).
++			 * Disable it for now.
++			 */
++			pr_info_once("IMC: disabling trace_imc PMU\n");
++			domain = -1;
+ 			break;
+ 		default:
+ 			pr_warn("IMC Unknown Device type \n");
 
 
