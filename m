@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91937121657
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:28:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6F1B121370
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbfLPS20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:28:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34988 "EHLO mail.kernel.org"
+        id S1728964AbfLPSBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731297AbfLPSOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:14:54 -0500
+        id S1727711AbfLPSBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:39 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4154320717;
-        Mon, 16 Dec 2019 18:14:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D8F32072D;
+        Mon, 16 Dec 2019 18:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520093;
-        bh=1AUrRWkuKd93Vu4XM2xAppPLl4YptojGjXIUS81Acr0=;
+        s=default; t=1576519299;
+        bh=bHY+hH+oy5H5ZMf0BwWbtEFg6DNlTY265tdURzve4P8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m4brXdh4lE5uaLIcIDOA2ErdjbCNkfzuFrIM7B43pDGPJFXralEOrhblIp1tp1aZf
-         6YNKfNozkiuKsBuSiYJYb3UWG5ctfJgVgzE9jJbre4b+A3Qq02nqA9fLPHJnWarRsZ
-         JapF7/bmDRVq8LhlQUOG7B8hzgti5r4DeuTYzl3c=
+        b=DDToMEgJskIG7qHqTCJiKRJOA5JGlnZEKsaxRnhoYFQLmgRzpjyFw/XPZSDARZQ76
+         J8WkyxyLGIXJS+SxQNgO+YvmAXSdi9W31ITN1yMdaH/r5pXrk4K0j7RGNsrLfZXBT6
+         iWeBy66HvEO9pN5d0jGz6varSBMloGm11f4xVJk4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 5.4 014/177] USB: uas: honor flag to avoid CAPACITY16
+        stable@vger.kernel.org, Michal Nazarewicz <mina86@mina86.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 4.19 002/140] usb: gadget: pch_udc: fix use after free
 Date:   Mon, 16 Dec 2019 18:47:50 +0100
-Message-Id: <20191216174815.678668214@linuxfoundation.org>
+Message-Id: <20191216174748.287062615@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,33 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit bff000cae1eec750d62e265c4ba2db9af57b17e1 upstream.
+commit 66d1b0c0580b7f1b1850ee4423f32ac42afa2e92 upstream.
 
-Copy the support over from usb-storage to get feature parity
+Remove pointer dereference after free.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-2-oneukum@suse.com
+pci_pool_free doesn't care about contents of td.
+It's just a void* for it
+
+Addresses-Coverity-ID: 1091173 ("Use after free")
+Cc: stable@vger.kernel.org
+Acked-by: Michal Nazarewicz <mina86@mina86.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Link: https://lore.kernel.org/r/20191106202821.GA20347@embeddedor
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/gadget/udc/pch_udc.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -825,6 +825,10 @@ static int uas_slave_configure(struct sc
- 		sdev->wce_default_on = 1;
+--- a/drivers/usb/gadget/udc/pch_udc.c
++++ b/drivers/usb/gadget/udc/pch_udc.c
+@@ -1520,7 +1520,6 @@ static void pch_udc_free_dma_chain(struc
+ 		td = phys_to_virt(addr);
+ 		addr2 = (dma_addr_t)td->next;
+ 		dma_pool_free(dev->data_requests, td, addr);
+-		td->next = 0x00;
+ 		addr = addr2;
  	}
- 
-+	/* Some disks cannot handle READ_CAPACITY_16 */
-+	if (devinfo->flags & US_FL_NO_READ_CAPACITY_16)
-+		sdev->no_read_capacity_16 = 1;
-+
- 	/*
- 	 * Some disks return the total number of blocks in response
- 	 * to READ CAPACITY rather than the highest block number.
+ 	req->chain_len = 1;
 
 
