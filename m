@@ -2,121 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675B712088E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:24:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE71912089A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:29:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbfLPOYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 09:24:31 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:38152 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfLPOYb (ORCPT
+        id S1728089AbfLPO2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 09:28:09 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42990 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfLPO2I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:24:31 -0500
-Received: by mail-qk1-f193.google.com with SMTP id k6so2977494qki.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 06:24:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=xH7Rh+Sv8Avz1lueVqDT1Yxv5WY/6i233yYPIKANZoU=;
-        b=SjGlrLrVRpqctVtUTbJuGKVyM+K278q3lPCoB2cw5P3GsxKMy4XD8MLY73pfnypDyT
-         UMiohqi+UiQKsTnSJXJqZCnuZmpHYCRs54eY2/jHTlV11oiTn3i40lYYJjgg4Upv9wQo
-         OJCU44hoUhgInVlWVqi/B2/FgPacypA/X8QJGjhMKLEfoQ6ZW6SrItdQ6ptGiNQt1y08
-         aabNxHzHkmB+/2QRYh7zN95D4AhdK1rGPDj+UAUAysbRw1kY59fI3sfFwP5o0VH47qf0
-         yqoSek4eOmZipqQyrqu69FmEufjw+k82bS1zPax1jRsY4vJcTvlqJZZMzLrb0EE51add
-         1i+g==
+        Mon, 16 Dec 2019 09:28:08 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y19so4365984lfl.9;
+        Mon, 16 Dec 2019 06:28:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=xH7Rh+Sv8Avz1lueVqDT1Yxv5WY/6i233yYPIKANZoU=;
-        b=PZ3K8Ecs+25D8rE0vTu85smtt4TE8kpr1JTh15/KtwVRheoGG7OgVTtq5Jt8iGfAM8
-         9A35ZXPoeimGwJyYLAoX10TaYIWEJRv/PScUsi6Jtqn8I5m+IIXpDN1hV3RG3Q0rzjB1
-         KHQ+/11vw8Cbe8k2qnlrcW0hJDAFKSxFZJKuYtlImZMaK6HhWklfAgMkP26T4pqyYjLw
-         vQp54cvdrcbmCKKwwOhMV031wKTHpahDYSvelQECZHGLaG59UPCPnXolokiQq5NoCCHd
-         XZgeRvQatBA1RJbsjV9NVZy4E9vwpH4zWlJnFSynnHqAirEzwXejMkReE/eB4qGFU/SN
-         k5Ug==
-X-Gm-Message-State: APjAAAXYnt3KA5xizTzyBN/3vD+9pe7BmbPAlSUPJzSUUjgSUvNxissB
-        HGGYlN06zZ/oWBTQ4EKto9gF7w==
-X-Google-Smtp-Source: APXvYqyhRC8+rzu6pngzPj+vH8JcT9xSiO4b+vuls4qHAy8CsW5HgNQQyY5CoMVEWlfzrzmgIY5XUg==
-X-Received: by 2002:a05:620a:218a:: with SMTP id g10mr27269472qka.351.1576506270435;
-        Mon, 16 Dec 2019 06:24:30 -0800 (PST)
-Received: from [192.168.1.153] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id c8sm635244qtv.61.2019.12.16.06.24.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2019 06:24:29 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH v3] iommu: fix KASAN use-after-free in
- iommu_insert_resv_region
-From:   Qian Cai <cai@lca.pw>
-In-Reply-To: <20191126102743.3269-1-eric.auger@redhat.com>
-Date:   Mon, 16 Dec 2019 09:24:28 -0500
-Cc:     eric.auger.pro@gmail.com, Joerg Roedel <joro@8bytes.org>,
-        hch@lst.de, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0DE725CD-01CD-4E01-B817-9CC7F4768FBC@lca.pw>
-References: <20191126102743.3269-1-eric.auger@redhat.com>
-To:     Eric Auger <eric.auger@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WJOIxwAEgnSLXlaUUspSrq6fBSD7PUNiSiO3LHKGtnM=;
+        b=MS/WRumo5Kvdy8oj3sZ5/8y1PVYaU4Nxo/tGhjXuPZND6fMzZ6rfFVU897hT2irA2X
+         7jQO/2DSfG1Zr75nO2tw84aFXIMZiaPzgAG0nPNz7MBTcYUGu8wTWFl+t9sPdXpM0SpA
+         8e4OZONaehswU1pY1C2gUHt/CA0Hr6zNq/TmkG38fF29tXyFL56Etd8KAlHnlBCpbyyr
+         YSqYpqZf7r31KsiFYH55VbQCfeR+qgdlmFVMxxs8bpu91SrfhdDhugClTTfUD7loqeBG
+         bW6h55/p7sz0Y7rMYgq2tRE0MUflgtUeG3La1nYdJ8eNUwPWQ+0u+IUOU6OiPewi2O1q
+         096g==
+X-Gm-Message-State: APjAAAUusSL4UA3kIS6FIXsFvZ/9jZ0J0UKFu6Qmo5xs0JsI9gc3Y/tQ
+        nVU3wR+Kyjy9mzJL08bJTPB9z5qp
+X-Google-Smtp-Source: APXvYqz73aVhhcZZM8O6aBQ30eNTzAltzTPWkKENEtP/XGXwIMdgwgsyCbfHqad60okZX+Btibbwhg==
+X-Received: by 2002:ac2:430d:: with SMTP id l13mr17638281lfh.112.1576506486503;
+        Mon, 16 Dec 2019 06:28:06 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id w19sm8891725lfl.55.2019.12.16.06.28.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 06:28:05 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1igrLv-0004Fn-FQ; Mon, 16 Dec 2019 15:28:03 +0100
+Date:   Mon, 16 Dec 2019 15:28:03 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Brant Merryman <Brant.Merryman@silabs.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Proper RTS control when buffers fill
+Message-ID: <20191216142803.GE22665@localhost>
+References: <E0F3E0D5-4652-4DF0-B576-3FDB0274A5CD@silabs.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <E0F3E0D5-4652-4DF0-B576-3FDB0274A5CD@silabs.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+First of all, please use the common "USB: serial: cp210x: " prefix for
+your changes.
 
+On Mon, Dec 09, 2019 at 07:17:26PM +0000, Brant Merryman wrote:
+> Enables usb generic functions for throttle/unthrottle to prevent USB data
+> loss. CP210x hardware disables RTS but leaves CTS when in hardware flow
+> control mode and port is closed. When re-opening the serial port, if CTS
+> is enabled, then RTS must be re-enabled inside the driver.
 
-> On Nov 26, 2019, at 5:27 AM, Eric Auger <eric.auger@redhat.com> wrote:
->=20
-> In case the new region gets merged into another one, the nr
-> list node is freed. Checking its type while completing the
-> merge algorithm leads to a use-after-free. Use new->type
-> instead.
->=20
-> Fixes: 4dbd258ff63e ("iommu: Revisit iommu_insert_resv_region()
-> implementation")
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> Reported-by: Qian Cai <cai@lca.pw>
-> Cc: Stable <stable@vger.kernel.org> #v5.3+
+This took a while to parse, but makes a little more sense after looking
+at the code and remembering that cp210x unlike other drivers is fetching
+the termios settings from the device on every open rather than simply
+reinitialising the device. Perhaps we should change that at some point.  
 
+Please rephrase the above to say "auto-RTS" ("auto-CTS") so it doesn't
+sound like we're controlling the state of the CTS input line (which
+obviously makes no sense). Same for the comment in the code below.
 
-Looks like Joerg is away for a few weeks. Could Andrew or Linus pick up =
-this=20
-use-after-free?
+I also think you should split this in two patches since these are
+strictly two distinct issues; the first one fixing the auto-RTS settings
+after reopening the port, and the second adding the throttle callbacks
+so that the device can tell when the application can't keep up.
 
->=20
+> Signed-off-by: Brant Merryman <brant.merryman@silabs.com>
 > ---
->=20
-> v2 -> v3:
-> - directly use new->type
->=20
-> v1 -> v2:
-> - remove spurious new line
-> ---
-> drivers/iommu/iommu.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index d658c7c6a2ab..285ad4a4c7f2 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -313,7 +313,7 @@ int iommu_insert_resv_region(struct =
-iommu_resv_region *new,
-> 		phys_addr_t top_end, iter_end =3D iter->start + =
-iter->length - 1;
->=20
-> 		/* no merge needed on elements of different types than =
-@nr */
-> -		if (iter->type !=3D nr->type) {
-> +		if (iter->type !=3D new->type) {
-> 			list_move_tail(&iter->list, &stack);
-> 			continue;
-> 		}
-> --=20
-> 2.20.1
->=20
+>  drivers/usb/serial/cp210x.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+> index f5143eedbc48..fd54181e741b 100644
+> --- a/drivers/usb/serial/cp210x.c
+> +++ b/drivers/usb/serial/cp210x.c
+> @@ -272,6 +272,8 @@ static struct usb_serial_driver cp210x_device = {
+>  	.break_ctl		= cp210x_break_ctl,
+>  	.set_termios		= cp210x_set_termios,
+>  	.tx_empty		= cp210x_tx_empty,
+> +	.throttle		= usb_serial_generic_throttle,
+> +	.unthrottle		= usb_serial_generic_unthrottle,
+>  	.tiocmget		= cp210x_tiocmget,
+>  	.tiocmset		= cp210x_tiocmset,
+>  	.attach			= cp210x_attach,
+> @@ -915,6 +917,7 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
+>  	u32 baud;
+>  	u16 bits;
+>  	u32 ctl_hs;
+> +	u32 flow_repl;
+>  
+>  	cp210x_read_u32_reg(port, CP210X_GET_BAUDRATE, &baud);
+>  
+> @@ -1013,8 +1016,24 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
+>  	cp210x_read_reg_block(port, CP210X_GET_FLOW, &flow_ctl,
+>  			sizeof(flow_ctl));
+>  	ctl_hs = le32_to_cpu(flow_ctl.ulControlHandshake);
+> +	flow_repl = le32_to_cpu(flow_ctl.ulFlowReplace);
+> +	/* CP210x hardware disables RTS but leaves CTS when in hardware
+> +	 * flow control mode and port is closed.
+> +	 * This allows data to flow out, but new data will not come into
+> +	 * the port. When re-opening the port, if CTS is enabled, then RTS
+> +	 * must be re-enabled. in the driver
+> +	 */
 
+This isn't strictly true since we assert RTS in cp210x_dtr_rts() after
+open() (but auto-RTS would incorrectly be disabled).
+
+Also can you be a bit more specific here; is it the interface-disable
+call in close() that unconditionally sets the RTS mode to "statically
+inactive"?
+
+Nits: Please fix the full-stop in the last sentence and use the right
+format for multi-line comments, which is:
+
+	/*
+	 * blah, blah
+	 */
+
+Perhaps move the comment inside the if block (after dev_dbg()) as well.
+
+>  	if (ctl_hs & CP210X_SERIAL_CTS_HANDSHAKE) {
+>  		dev_dbg(dev, "%s - flow control = CRTSCTS\n", __func__);
+> +		flow_repl &= ~CP210X_SERIAL_RTS_MASK;
+> +		flow_repl |= CP210X_SERIAL_RTS_SHIFT(
+> +			CP210X_SERIAL_RTS_FLOW_CTL);
+
+Indent continuation lines at least two tabs further, but here I'd
+probably just break the 80-column rule if that's even an issue.
+
+> +
+> +		flow_ctl.ulControlHandshake = cpu_to_le32(ctl_hs);
+
+Not needed, you're only changing flow_repl.
+
+> +		flow_ctl.ulFlowReplace = cpu_to_le32(flow_repl);
+> +		cp210x_write_reg_block(port, CP210X_SET_FLOW,
+> +			&flow_ctl, sizeof(flow_ctl));
+
+At least two tabs here too.
+
+> +
+>  		cflag |= CRTSCTS;
+>  	} else {
+>  		dev_dbg(dev, "%s - flow control = NONE\n", __func__);
+
+Johan
