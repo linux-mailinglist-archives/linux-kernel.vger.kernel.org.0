@@ -2,116 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C55E121102
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:08:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 87388121134
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:09:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbfLPRIF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:08:05 -0500
-Received: from mga05.intel.com ([192.55.52.43]:42270 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbfLPRIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:08:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 09:08:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="247105417"
-Received: from andresma-mobl.amr.corp.intel.com (HELO [10.252.132.232]) ([10.252.132.232])
-  by fmsmga002.fm.intel.com with ESMTP; 16 Dec 2019 09:07:59 -0800
-Subject: Re: [alsa-devel] [PATCH v4 08/15] soundwire: add initial definitions
- for sdw_master_device
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20191213050409.12776-1-pierre-louis.bossart@linux.intel.com>
- <20191213050409.12776-9-pierre-louis.bossart@linux.intel.com>
- <20191213072844.GF1750354@kroah.com>
- <7431d8cf-4a09-42af-14f5-01ab3b15b47b@linux.intel.com>
- <20191213161046.GA2653074@kroah.com>
- <20728848-e0ae-01f6-1c45-c8eef6a6a1f4@linux.intel.com>
- <20191214082742.GA3318534@kroah.com>
- <e9d77c58-e0bd-010c-bbc8-b54c82f065fd@linux.intel.com>
- <20191216162517.GA2258618@kroah.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c8dfb12c-2394-3dfe-571d-dcc5fadb8dc2@linux.intel.com>
-Date:   Mon, 16 Dec 2019 11:07:59 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727565AbfLPRJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:09:29 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43623 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfLPRJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:09:27 -0500
+Received: by mail-qk1-f193.google.com with SMTP id t129so4194836qke.10;
+        Mon, 16 Dec 2019 09:09:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:message-id:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-disposition:content-transfer-encoding;
+        bh=cRdiI5895IHbTdlAPPP3A1KuNzj2PTuHghUKJHQUK7s=;
+        b=kjom40UKwoyBBozt2pTDiwWQD320JRNPsQXGFHG+9sFDnMKM8F96donp2dcl3LlXyW
+         YR1f9oHJwyWOOrkNZMwYre4kxZQNfiyCNgSka/5jAhvLKls5LpIsFcMUtjCv3RcQoekj
+         EGDEirORjghztTDZyhNhM0HjMe/otkPNo8qe9RRXFF2gsTat9gh5lLW3PQlax8gwcYut
+         aP1XhNQBHHFX5m9tbWZvRmzbRxzAVvkLjarNNvu3fETQUB0RKJCooOUmrU1FyD+ITXBS
+         uD4QMfxjzi6E/IAeBve74JxZjTsl+t+/0SEFza8sAbjzhHZ4vq1eAeiSN98qkKcBrYDc
+         HeLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=cRdiI5895IHbTdlAPPP3A1KuNzj2PTuHghUKJHQUK7s=;
+        b=PDxdsAY84cS+hDdwNJjrdOxKJV9nF8v31P4jM6tY/dKDd95kBaCxPzZTF0QO8ROneF
+         yVC1njRjosnCIEA1ZgzbA1nm5YUEYwL91z8eSIOJhzIy2BEjiYoQvkdcirdGlGuuW7ND
+         PyNFLhus9FqcDmJyhYYQEjgImiYE/t4grVIeb3e7SSVoWAAJ2JLZuJqGXyAlb8MWWz+h
+         TzQ8LauoGRDiSfeH7YtJ6difBPBsDCduqn11SECFQ3aqZ0KhS8UD2ZHm6QQj09S9rQH7
+         a7CLX8s3ecRRBw6WxndnC9Wk+9t9yPauwpjrNy/A08/4cMcI60VM+V8RBKZeqkFc2xsb
+         vjdQ==
+X-Gm-Message-State: APjAAAVkuzCf/8/Wpna2tt2qXE5HCM4CpaU815s4OCX4X9Uv9oKYsv1R
+        4hi1lbjQjal7kLkvJC0tOCY=
+X-Google-Smtp-Source: APXvYqxxShGrIzFxlpk3IdPx/vm3r70u8GTI6U+Of9Q8cdoU2xAVM8oRA52j02qEZUKXLGcqdZv2og==
+X-Received: by 2002:ae9:e519:: with SMTP id w25mr300086qkf.260.1576516166519;
+        Mon, 16 Dec 2019 09:09:26 -0800 (PST)
+Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
+        by smtp.gmail.com with ESMTPSA id r37sm7051726qtj.44.2019.12.16.09.09.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 09:09:25 -0800 (PST)
+Date:   Mon, 16 Dec 2019 12:09:24 -0500
+Message-ID: <20191216120924.GG2051941@t480s.localdomain>
+From:   Vivien Didelot <vivien.didelot@gmail.com>
+To:     Oleksij Rempel <o.rempel@pengutronix.de>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Chris Snook <chris.snook@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v5 5/5] net: dsa: add support for Atheros AR9331 built-in
+ switch
+In-Reply-To: <20191216074403.313-6-o.rempel@pengutronix.de>
+References: <20191216074403.313-1-o.rempel@pengutronix.de>
+ <20191216074403.313-6-o.rempel@pengutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20191216162517.GA2258618@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->>>> diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
->>>> index 76a5c52b12b4..5bad8422887e 100644
->>>> --- a/drivers/soundwire/Makefile
->>>> +++ b/drivers/soundwire/Makefile
->>>> @@ -7,9 +7,11 @@ ccflags-y += -DDEBUG
->>>>    #Bus Objs
->>>>    soundwire-bus-objs := bus_type.o bus.o master.o slave.o mipi_disco.o
->>>> stream.o
->>>>    obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
->>>> +ccflags-$(CONFIG_SOUNDWIRE) += -DDEFAULT_SYMBOL_NAMESPACE=SDW_CORE
->>>>
->>>>    soundwire-generic-allocation-objs := generic_bandwidth_allocation.o
->>>>    obj-$(CONFIG_SOUNDWIRE_GENERIC_ALLOCATION) +=
->>>> soundwire-generic-allocation.o
->>>> +ccflags-$(CONFIG_SOUNDWIRE_GENERIC_ALLOCATION) +=
->>>> -DDEFAULT_SYMBOL_NAMESPACE=SDW_CORE
->>>
->>> Don't use ccflags, just use the correct MODULE_EXPORT_NS() tag instead.
->>
->> The documentation [1] states
->>
->> "
->> Defining namespaces for all symbols of a subsystem can be very verbose and
->> may become hard to maintain. Therefore a default define
->> (DEFAULT_SYMBOL_NAMESPACE) is been provided, that, if set, will become the
->> default for all EXPORT_SYMBOL() and EXPORT_SYMBOL_GPL() macro expansions
->> that do not specify a namespace.
->> "
->>
->> If the ccflags option is not supported or no longer desired, it'd be worth
->> updating the documentation for dummies like me. I took the wording as a hint
->> to avoid using MODULE_EXPORT_NS.
+On Mon, 16 Dec 2019 08:44:03 +0100, Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> Provide basic support for Atheros AR9331 built-in switch. So far it
+> works as port multiplexer without any hardware offloading support.
 > 
-> It's supported, and works just fine.  It's just that you really don't
-> have a ton of exports, right?  What's wrong with manually marking them?
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-I don't see a MODULE_EXPORT_NS so we'd have to change every single 
-EXPORT_SYMBOL to EXPORT_SYMBOL_NS.
-
-If we are talking about adding the namespaces just about the top-level 
-functions used by Intel, yes we have less than 10 and since they were 
-renamed it's no big deal.
-
-But if we want to use this namespace for lower-level components of the 
-SoundWire code, we have 17 exports in cadence_master.c and more than 27 
-for the core parts. With the Makefile changes shared last week you'd 
-have 3 changes, I find it more manageable but it's true that the 
-information would be split with the IMPORT_NS in the code and the 
-namespace definition in the Makefile.
-
-
->>> And "SDW_CORE" is odd, "SOUNDWIRE" instead?
->>
->> 'sdw' is the prefix used everywhere for SoundWire symbols.
-> 
-> Ok, I guess that ship has sailed :(
-
-we can still use SOUNDWIRE for the namespaces, that'd be fine. you're 
-right to call us on acronyms, it's a bad habit.
+Reviewed-by: Vivien Didelot <vivien.didelot@gmail.com>
