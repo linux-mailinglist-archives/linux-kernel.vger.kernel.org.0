@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5AC7121299
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5E951212A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfLPRyN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:54:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49348 "EHLO mail.kernel.org"
+        id S1726942AbfLPRyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:54:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727486AbfLPRyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:54:05 -0500
+        id S1727934AbfLPRye (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A7C8206D3;
-        Mon, 16 Dec 2019 17:54:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B81412053B;
+        Mon, 16 Dec 2019 17:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518845;
-        bh=URVkprWfAJWhyxcjKilsS7zegySLeavygfZpeHY4j3s=;
+        s=default; t=1576518874;
+        bh=O30rzoEFJ/04RocXkCd7ju8nhtYDtCID0jSDf58ZXz4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJWtfuUuGJxZRBiaXlsL8elQkEBxJYg0hceXrDARLSb0EUYjoSs4//vZQa4anmRH0
-         zs85zgdNiPsjRN8kPWdYhOOLaq/6XWk227Zw6Eh0hRfqEGKU7Y1d2UdEhAwy5bJ6l9
-         ZbCpywNUw+bMQFTAOX3FrPtqXOu+fZxtzyLFmvwo=
+        b=MgmAiyeVOxhY/YtlK772sLpvHhixsEhxbUM+i32ZcoYI1fPcSooiJnTQdHw0Z5a2h
+         44ky4XBrjhvuHNj6QZZWGkPXcpj/jHljiqGvWsKJXM+bRBlh7I9URZFm2CAQ0tYLdD
+         8FIfQmDoqqlkmGCvzg9+FAumlQiGxGi8Xsmp1xgY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Yunlong Song <yunlong.song@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 063/267] usb: dwc3: dont log probe deferrals; but do log other error codes
-Date:   Mon, 16 Dec 2019 18:46:29 +0100
-Message-Id: <20191216174855.820358372@linuxfoundation.org>
+Subject: [PATCH 4.14 065/267] f2fs: fix count of seg_freed to make sec_freed correct
+Date:   Mon, 16 Dec 2019 18:46:31 +0100
+Message-Id: <20191216174855.973564665@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,35 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Yunlong Song <yunlong.song@huawei.com>
 
-[ Upstream commit 408d3ba006af57380fa48858b39f72fde6405031 ]
+[ Upstream commit d6c66cd19ef322fe0d51ba09ce1b7f386acab04a ]
 
-It's not very useful to repeat a bunch of probe deferral errors. And
-it's also not very useful to log "failed" without telling the error
-code.
+When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
+gc starts, do_garbage_collect will skip counting seg_freed++, and this
+will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/gc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 48755c501201d..a497b878c3e2b 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -1261,7 +1261,8 @@ static int dwc3_probe(struct platform_device *pdev)
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 67120181dc2af..9865f6d52fe48 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -952,9 +952,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 					GET_SUM_BLOCK(sbi, segno));
+ 		f2fs_put_page(sum_page, 0);
  
- 	ret = dwc3_core_init(dwc);
- 	if (ret) {
--		dev_err(dev, "failed to initialize core\n");
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to initialize core: %d\n", ret);
- 		goto err4;
- 	}
+-		if (get_valid_blocks(sbi, segno, false) == 0 ||
+-				!PageUptodate(sum_page) ||
+-				unlikely(f2fs_cp_error(sbi)))
++		if (get_valid_blocks(sbi, segno, false) == 0)
++			goto freed;
++		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+ 			goto next;
  
+ 		sum = page_address(sum_page);
+@@ -981,6 +981,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 
+ 		stat_inc_seg_count(sbi, type, gc_type);
+ 
++freed:
+ 		if (gc_type == FG_GC &&
+ 				get_valid_blocks(sbi, segno, false) == 0)
+ 			seg_freed++;
 -- 
 2.20.1
 
