@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC9B121417
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 01E6A1214CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:15:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730077AbfLPSII (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:08:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49396 "EHLO mail.kernel.org"
+        id S1731149AbfLPSOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:14:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730219AbfLPSIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:08:04 -0500
+        id S1731274AbfLPSOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:14:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 998A6206E0;
-        Mon, 16 Dec 2019 18:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00968206B7;
+        Mon, 16 Dec 2019 18:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519684;
-        bh=zlK8phi/sh4xEBUruI/ErgInYWuipq1OWubLY7IOSrQ=;
+        s=default; t=1576520086;
+        bh=7yDn2V6zu56CJCV4PFrB+CcvjiJrjdv3u4o/Atw8PsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G3LoYbvuzQQx2huoThAwzmBK0rx+aFEElIO5OFy7ybvKYECwJeyl+k+kYVbgsolO6
-         LctwF3PpmQSzIw/Fr7m/y096Xra+JUK7wK61XyWk9dzxZ4vWq7uNRx96UTmsmVoLXA
-         aFyhlBnb1vk+B9ZqKebw3Oizr6qVl9Cs+LpCMp84=
+        b=YNApgVVBC7mKVFKUf9rRMSfW+CFYeZqJKYiJ389noSEENbxzejYL8sml/NF/c+tyB
+         fS25xpJi0VhNO+GNMUDQUtYbSkjWJ/q/dMqNJAv+gea0W82W0En4POtL6onRfdtn3Y
+         M+YsTSMR0VoLe7x9VlNrfPeXKnm8vctzHHvFGvp8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH 5.3 026/180] interconnect: qcom: sdm845: Walk the list safely on node removal
-Date:   Mon, 16 Dec 2019 18:47:46 +0100
-Message-Id: <20191216174811.685771041@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 5.4 011/177] compat_ioctl: add compat_ptr_ioctl()
+Date:   Mon, 16 Dec 2019 18:47:47 +0100
+Message-Id: <20191216174815.127036832@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,38 +42,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Georgi Djakov <georgi.djakov@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit b29b8113bb41285eb7ed55ce0c65017b5c0240f7 upstream.
+commit 2952db0fd51b0890f728df94ac563c21407f4f43 upstream.
 
-As we will remove items off the list using list_del(), we need to use the
-safe version of list_for_each_entry().
+Many drivers have ioctl() handlers that are completely compatible between
+32-bit and 64-bit architectures, except for the argument that is passed
+down from user space and may have to be passed through compat_ptr()
+in order to become a valid 64-bit pointer.
 
-Fixes: b5d2f741077a ("interconnect: qcom: Add sdm845 interconnect provider driver")
-Reported-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: <stable@vger.kernel.org> # v5.3+
-Link: https://lore.kernel.org/r/20191212075332.16202-3-georgi.djakov@linaro.org
+Using ".compat_ptr = compat_ptr_ioctl" in file operations should let
+us simplify a lot of those drivers to avoid #ifdef checks, and convert
+additional drivers that don't have proper compat handling yet.
+
+On most architectures, the compat_ptr_ioctl() just passes all arguments
+to the corresponding ->ioctl handler. The exception is arch/s390, where
+compat_ptr() clears the top bit of a 32-bit pointer value, so user space
+pointers to the second 2GB alias the first 2GB, as is the case for native
+32-bit s390 user space.
+
+The compat_ptr_ioctl() function must therefore be used only with
+ioctl functions that either ignore the argument or pass a pointer to a
+compatible data type.
+
+If any ioctl command handled by fops->unlocked_ioctl passes a plain
+integer instead of a pointer, or any of the passed data types is
+incompatible between 32-bit and 64-bit architectures, a proper handler
+is required instead of compat_ptr_ioctl.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+v3: add a better description
+v2: use compat_ptr_ioctl instead of generic_compat_ioctl_ptrarg,
+as suggested by Al Viro
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/interconnect/qcom/sdm845.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ioctl.c         |   35 +++++++++++++++++++++++++++++++++++
+ include/linux/fs.h |    7 +++++++
+ 2 files changed, 42 insertions(+)
 
---- a/drivers/interconnect/qcom/sdm845.c
-+++ b/drivers/interconnect/qcom/sdm845.c
-@@ -807,9 +807,9 @@ static int qnoc_remove(struct platform_d
+--- a/fs/ioctl.c
++++ b/fs/ioctl.c
+@@ -8,6 +8,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/mm.h>
+ #include <linux/capability.h>
++#include <linux/compat.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
+ #include <linux/security.h>
+@@ -719,3 +720,37 @@ SYSCALL_DEFINE3(ioctl, unsigned int, fd,
  {
- 	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
- 	struct icc_provider *provider = &qp->provider;
--	struct icc_node *n;
-+	struct icc_node *n, *tmp;
+ 	return ksys_ioctl(fd, cmd, arg);
+ }
++
++#ifdef CONFIG_COMPAT
++/**
++ * compat_ptr_ioctl - generic implementation of .compat_ioctl file operation
++ *
++ * This is not normally called as a function, but instead set in struct
++ * file_operations as
++ *
++ *     .compat_ioctl = compat_ptr_ioctl,
++ *
++ * On most architectures, the compat_ptr_ioctl() just passes all arguments
++ * to the corresponding ->ioctl handler. The exception is arch/s390, where
++ * compat_ptr() clears the top bit of a 32-bit pointer value, so user space
++ * pointers to the second 2GB alias the first 2GB, as is the case for
++ * native 32-bit s390 user space.
++ *
++ * The compat_ptr_ioctl() function must therefore be used only with ioctl
++ * functions that either ignore the argument or pass a pointer to a
++ * compatible data type.
++ *
++ * If any ioctl command handled by fops->unlocked_ioctl passes a plain
++ * integer instead of a pointer, or any of the passed data types
++ * is incompatible between 32-bit and 64-bit architectures, a proper
++ * handler is required instead of compat_ptr_ioctl.
++ */
++long compat_ptr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	if (!file->f_op->unlocked_ioctl)
++		return -ENOIOCTLCMD;
++
++	return file->f_op->unlocked_ioctl(file, cmd, (unsigned long)compat_ptr(arg));
++}
++EXPORT_SYMBOL(compat_ptr_ioctl);
++#endif
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1727,6 +1727,13 @@ int vfs_mkobj(struct dentry *, umode_t,
  
--	list_for_each_entry(n, &provider->nodes, node_list) {
-+	list_for_each_entry_safe(n, tmp, &provider->nodes, node_list) {
- 		icc_node_del(n);
- 		icc_node_destroy(n->id);
- 	}
+ extern long vfs_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
+ 
++#ifdef CONFIG_COMPAT
++extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
++					unsigned long arg);
++#else
++#define compat_ptr_ioctl NULL
++#endif
++
+ /*
+  * VFS file helper functions.
+  */
 
 
