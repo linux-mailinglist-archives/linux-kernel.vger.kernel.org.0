@@ -2,100 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F3B7120448
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36CA212044E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:46:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfLPLo5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:44:57 -0500
-Received: from foss.arm.com ([217.140.110.172]:51524 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727316AbfLPLo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:44:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6BFE1FB;
-        Mon, 16 Dec 2019 03:44:56 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3535C3F6CF;
-        Mon, 16 Dec 2019 03:44:56 -0800 (PST)
-Date:   Mon, 16 Dec 2019 11:44:54 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "andrew@aj.id.au" <andrew@aj.id.au>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "joel@jms.id.au" <joel@jms.id.au>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 3/6] dt-bindings: mfd: da9062: add regulator voltage
- selection documentation
-Message-ID: <20191216114454.GB4161@sirena.org.uk>
-References: <20191129172537.31410-1-m.felsch@pengutronix.de>
- <20191129172537.31410-4-m.felsch@pengutronix.de>
- <20191204134631.GT1998@sirena.org.uk>
- <20191210094144.mxximpuouchy3fqu@pengutronix.de>
- <AM5PR1001MB099497419E4DCA69D424EC35805A0@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191211170918.q7kqkd4lrwwp7jl3@pengutronix.de>
- <20191212161019.GF4310@sirena.org.uk>
- <20191212162152.5uu3feacduetysq7@pengutronix.de>
- <20191212165124.GJ4310@sirena.org.uk>
- <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
+        id S1727534AbfLPLpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:45:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58418 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727425AbfLPLpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:45:30 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9077BAD54;
+        Mon, 16 Dec 2019 11:45:28 +0000 (UTC)
+Message-ID: <cc827c6d4ea0d760b7df217a98bdee6b0c684137.camel@suse.de>
+Subject: Re: [PATCH v5 0/6] Raspberry Pi 4 PCIe support
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     maz@kernel.org, linux-kernel@vger.kernel.org,
+        james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Date:   Mon, 16 Dec 2019 12:45:26 +0100
+In-Reply-To: <20191216113646.GT24359@e119886-lin.cambridge.arm.com>
+References: <20191216110113.30436-1-nsaenzjulienne@suse.de>
+         <20191216113646.GT24359@e119886-lin.cambridge.arm.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-DLw2p4RvYw24q5zmQ4Z4"
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
-Content-Disposition: inline
-In-Reply-To: <20191216085525.csr2aglm5md4vtsw@pengutronix.de>
-X-Cookie: Backed up the system lately?
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---oC1+HKm2/end4ao3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-DLw2p4RvYw24q5zmQ4Z4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 16, 2019 at 09:55:25AM +0100, Marco Felsch wrote:
-> On 19-12-12 16:51, Mark Brown wrote:
+On Mon, 2019-12-16 at 11:36 +0000, Andrew Murray wrote:
+> On Mon, Dec 16, 2019 at 12:01:06PM +0100, Nicolas Saenz Julienne wrote:
+> > This series aims at providing support for Raspberry Pi 4's PCIe
+> > controller, which is also shared with the Broadcom STB family of
+> > devices.
+> >=20
+> > There was a previous attempt to upstream this some years ago[1] but was
+> > blocked as most STB PCIe integrations have a sparse DMA mapping[2] whic=
+h
+> > is something currently not supported by the kernel.  Luckily this is no=
+t
+> > the case for the Raspberry Pi 4.
+> >=20
+>=20
+> Hi Nicolas,
+>=20
+> This series looks good to me now. Unless there is further feedback I'll a=
+sk
+> Lorenzo to merge this when he returns in the new year.
 
-> > Something needs to say what that thing is, especially if it's runtime
-> > controllable.  In your case from the point of view of software there is
-> > actually no enable control so we shouldn't be providing an enable
-> > operation to the framework.
+Thanks!
 
-> The enabel control signal is always available, please check [1] table
-> 63. There is a mux in front of the enable pin so:
+> Thanks for the log2.h efforts - perhaps this can be picked up again one d=
+ay.
 
-What I'm saying is that I think the binding needs to explicitly talk
-about that since at the minute it's really confusing reading it as it
-is, it sounds very much like it's trying to override that in a chip
-specific fashion as using gpiolib and the GPIO bindings for pinmuxing is
-really quite unusual.
+I'm not giving up on it yet :)
 
---oC1+HKm2/end4ao3
+Regards,
+Nicolas
+
+
+--=-DLw2p4RvYw24q5zmQ4Z4
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl33bjYACgkQJNaLcl1U
-h9CVdAf+Kp9Gt6jI1smdYRC5q9QzC1/I+pAe/kPYZU9nCkKrN7T/h4QamB0ktmgq
-8ovpP1GU56emAoDhnLgevc9IiJHlvlzog0LL0RWzMb4zf7CuC3hqDt/mIEwKvVqv
-vXueIgBOwgBYjkunL4ECOsMz4I1v5uBCmbJTCQwnZWpzkTdabJmr49W0LX2y/yPI
-9AgCDJBU1mvD78xAlwMiBWHILuSWcja4dXyBFE0Q4IWyFF1HkslkgrBQL7YY0LaI
-wFmnd/nERtjKaTK3ZqL7cXKjz+PbyswmJXT0E1Y4rDRit//tgtJVoUGVmCP5KYpY
-bBjSjH7xodB796EmcMPayWwZ23L96g==
-=MSqr
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl33blYACgkQlfZmHno8
+x/5aYwf+N1/Ua9CzF4VJc5Fs8Q99JDhaoGWxqIBldY6pt0TGhmCO6ao6z9UCUGde
+3n5X7AZwwbVuSQlBbnGxCP4Ji+4O8O/tsc/PmcFN4dt0FALtUD1lbEwFq6khdQqN
+DaeJqlyjvkQkZifOGYjNH2UjzI4dCyxtFDOMSNr8YP3RcSdjwV01zghOdSSjaV05
+X5jUsfAf5AB8eabnkNt+C7FORGf7T8Ll3LdhCgtNJOf3GyIwkotQ2TlqckA8xhqS
+hPRTW9DaXn6IWYAX3kCwrFhoX4/qxddXhz6GOw5HA5Lh25Zq8Zq4KG3xOlsI9HRy
+j0AIKO9Pmg+mDDa936sR1oijKJZm3w==
+=Axoa
 -----END PGP SIGNATURE-----
 
---oC1+HKm2/end4ao3--
+--=-DLw2p4RvYw24q5zmQ4Z4--
+
