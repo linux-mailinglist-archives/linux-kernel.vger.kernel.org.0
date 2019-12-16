@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABEC121506
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93C591213AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731455AbfLPSRb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41224 "EHLO mail.kernel.org"
+        id S1729157AbfLPSDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731648AbfLPSRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:23 -0500
+        id S1729002AbfLPSDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16D38206E0;
-        Mon, 16 Dec 2019 18:17:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F74420733;
+        Mon, 16 Dec 2019 18:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520242;
-        bh=wvXasYD+Dc9YrXfVNDeL1Ftvqof9bT52g7Ve5B1l2vI=;
+        s=default; t=1576519423;
+        bh=tlchDs7TvajlhgCZ7OeyLriVnH9A9S73sL+PYnPpnpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LSqZwzoU3AK/xdcBg7AafJ0DjEEzsPHb/s1wpuPAH4KyuaT4diBW/TSyBO5/Sm5/2
-         WZ4p7pCFW4wXqB2+YjpG4KXEjnoySL+YsiraXlhUop3MnIBSbvewX5r9K49IYkp1H+
-         ipisgxV9+VZR35KurD6FC6b8c4wzXPoIkEfZwgn0=
+        b=vAMv2jDbUj1odzOlcHBV+KuxcFyexbx9TndyfKmgdbZcdVY0w2lua7b+KWSfaKFHH
+         oLIDhfXHOT8Dg/rNiZB8a1/qSQdGuDwxTvj648sCvdixq8l+a3HoIwRXwY9VK8ZdDp
+         XjjQ1RdaCMrH0JImOqefuwYDRomNvpXBeYkG9YoA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Atemu <atemu.main@gmail.com>,
-        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 073/177] Btrfs: send, skip backreference walking for extents with many references
+        stable@vger.kernel.org, Pontus Fuchs <pontus.fuchs@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Denis Efremov <efremov@linux.com>
+Subject: [PATCH 4.19 061/140] ar5523: check NULL before memcpy() in ar5523_cmd()
 Date:   Mon, 16 Dec 2019 18:48:49 +0100
-Message-Id: <20191216174835.279707019@linuxfoundation.org>
+Message-Id: <20191216174804.559449657@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +46,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Denis Efremov <efremov@linux.com>
 
-commit fd0ddbe2509568b00df364156f47561e9f469f15 upstream.
+commit 315cee426f87658a6799815845788fde965ddaad upstream.
 
-Backreference walking, which is used by send to figure if it can issue
-clone operations instead of write operations, can be very slow and use
-too much memory when extents have many references. This change simply
-skips backreference walking when an extent has more than 64 references,
-in which case we fallback to a write operation instead of a clone
-operation. This limit is conservative and in practice I observed no
-signicant slowdown with up to 100 references and still low memory usage
-up to that limit.
+memcpy() call with "idata == NULL && ilen == 0" results in undefined
+behavior in ar5523_cmd(). For example, NULL is passed in callchain
+"ar5523_stat_work() -> ar5523_cmd_write() -> ar5523_cmd()". This patch
+adds ilen check before memcpy() call in ar5523_cmd() to prevent an
+undefined behavior.
 
-This is a temporary workaround until there are speedups in the backref
-walking code, and as such it does not attempt to add extra interfaces or
-knobs to tweak the threshold.
-
-Reported-by: Atemu <atemu.main@gmail.com>
-Link: https://lore.kernel.org/linux-btrfs/CAE4GHgkvqVADtS4AzcQJxo0Q1jKQgKaW3JGp3SGdoinVo=C9eQ@mail.gmail.com/T/#me55dc0987f9cc2acaa54372ce0492c65782be3fa
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Cc: Pontus Fuchs <pontus.fuchs@gmail.com>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Efremov <efremov@linux.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/send.c |   25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ar5523/ar5523.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -25,6 +25,14 @@
- #include "compression.h"
+--- a/drivers/net/wireless/ath/ar5523/ar5523.c
++++ b/drivers/net/wireless/ath/ar5523/ar5523.c
+@@ -255,7 +255,8 @@ static int ar5523_cmd(struct ar5523 *ar,
  
- /*
-+ * Maximum number of references an extent can have in order for us to attempt to
-+ * issue clone operations instead of write operations. This currently exists to
-+ * avoid hitting limitations of the backreference walking code (taking a lot of
-+ * time and using too much memory for extents with large number of references).
-+ */
-+#define SEND_MAX_EXTENT_REFS	64
-+
-+/*
-  * A fs_path is a helper to dynamically build path names with unknown size.
-  * It reallocates the internal buffer on demand.
-  * It allows fast adding of path elements on the right side (normal path) and
-@@ -1302,6 +1310,7 @@ static int find_extent_clone(struct send
- 	struct clone_root *cur_clone_root;
- 	struct btrfs_key found_key;
- 	struct btrfs_path *tmp_path;
-+	struct btrfs_extent_item *ei;
- 	int compressed;
- 	u32 i;
+ 	if (flags & AR5523_CMD_FLAG_MAGIC)
+ 		hdr->magic = cpu_to_be32(1 << 24);
+-	memcpy(hdr + 1, idata, ilen);
++	if (ilen)
++		memcpy(hdr + 1, idata, ilen);
  
-@@ -1349,7 +1358,6 @@ static int find_extent_clone(struct send
- 	ret = extent_from_logical(fs_info, disk_byte, tmp_path,
- 				  &found_key, &flags);
- 	up_read(&fs_info->commit_root_sem);
--	btrfs_release_path(tmp_path);
- 
- 	if (ret < 0)
- 		goto out;
-@@ -1358,6 +1366,21 @@ static int find_extent_clone(struct send
- 		goto out;
- 	}
- 
-+	ei = btrfs_item_ptr(tmp_path->nodes[0], tmp_path->slots[0],
-+			    struct btrfs_extent_item);
-+	/*
-+	 * Backreference walking (iterate_extent_inodes() below) is currently
-+	 * too expensive when an extent has a large number of references, both
-+	 * in time spent and used memory. So for now just fallback to write
-+	 * operations instead of clone operations when an extent has more than
-+	 * a certain amount of references.
-+	 */
-+	if (btrfs_extent_refs(tmp_path->nodes[0], ei) > SEND_MAX_EXTENT_REFS) {
-+		ret = -ENOENT;
-+		goto out;
-+	}
-+	btrfs_release_path(tmp_path);
-+
- 	/*
- 	 * Setup the clone roots.
- 	 */
+ 	cmd->odata = odata;
+ 	cmd->olen = olen;
 
 
