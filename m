@@ -2,167 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A9EF121575
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:22:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62E7912142D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732029AbfLPSWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:22:13 -0500
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:46655 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732160AbfLPSV7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:21:59 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 5FB283338;
-        Mon, 16 Dec 2019 13:21:58 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 16 Dec 2019 13:21:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm2; bh=O
-        9KZEvUpFXncIH94Knnxniibj3heNmy7V3nd1J3VERM=; b=SvBhIWUe/V3wGngKR
-        aVLH+4eb/yehmeU3Z5t2cfVO5yTOjZWOJ8iTjEuLFcrp6C+Ve8a+9N5aiL2Ytnk1
-        WNamFozI/YCVeSzEwpmg5bpvzbWbY0jWW85HkXCLmaEsWnWdKjkxtUTwHHCcJ3mF
-        UNB07fbsk6ed38UHwOP1AXXd2nH6yqk/qtxJdOKXmxr99OLebpyGtENMUKOzle3R
-        apIGxt3njtTMeqsEM2k6ddww6Zw+gRbizIpGt9qfxyipyekjXRXglBDPlvcGDfrh
-        Lm6ontrQn3a/TXPB34QiHziAdrYnxDEhbE82ZPVK5NPUiV3FyxdsR57CuemW1ZzC
-        +3+SA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=O9KZEvUpFXncIH94Knnxniibj3heNmy7V3nd1J3VE
-        RM=; b=BLMVqOReRV4/BfImfG6xp9BloG9FkVfDh8LrxrQzF9VoYdQ9/fOfujqh+
-        6l4O2NrKl7jprwtyoI4AzqtzK3RKFMks7bQ4Jg1m7NQDkoEKAVA3Xq8oHMF17GOc
-        SsIHJ1gzuFxByaj7ZDW4GQu5r2MscmiuAT4KtgIIq7HZBgk5lGxomuMY6mTRcDVh
-        kBIGpTQGsJp9JTaBKIkRhXu2+cr5l7AsW4kqn/a7MOihe18KjwN1D3AksAGiHP1j
-        BzvCIeAsHw0D6rgE06UCZjjtRNu09bw5cFuZhkKSG5qxDc7jT36fVfnur4U/ziNo
-        l1SQamV3ks2NpUdVBuACVjCFb1nyw==
-X-ME-Sender: <xms:Rcv3XexTS_-WLsGxP1hTKHxJP9I6Ezub2DCYTnp3gUwFfSlhyHmbqQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddthedgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrkeelrd
-    dutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:Rcv3XYLJ3d7IoCc0VW7CldZ2stYBhKt36vH2ydVPBGaXGu8_yEa09w>
-    <xmx:Rcv3XZYMJ1PjRfPhUQWvbJSx6nLqBodsiM3IARStb_u4qpG0xrSjKQ>
-    <xmx:Rcv3XVx9ScZPO5SBJ7vjQoIbYwW-x3gXvy_VjPbTQJDPkYb7KoCyLg>
-    <xmx:Rsv3Xbsakt5YFcNo1bCqFfJIcw155lJq1xBVnUEm9MC5Xuf5DLT_Bg>
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B0A8680062;
-        Mon, 16 Dec 2019 13:21:56 -0500 (EST)
-Date:   Mon, 16 Dec 2019 19:06:56 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     cang@codeaurora.org, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] scsi: ufs: Modulize ufs-bsg
-Message-ID: <20191216180656.GB2404915@kroah.com>
-References: <1576054123-16417-1-git-send-email-cang@codeaurora.org>
- <0101016ef425ef65-5c4508cc-5e76-4107-bb27-270f66acaa9a-000000@us-west-2.amazonses.com>
- <20191212045357.GA415177@yoga>
- <0101016ef8b2e2f8-72260b08-e6ad-42fc-bd4b-4a0a72c5c9b3-000000@us-west-2.amazonses.com>
- <20191212063703.GC415177@yoga>
- <5691bfa1-42e5-3c5f-2497-590bcc0cb2b1@acm.org>
- <926dd55d8d0dc762b1f6461495fc747a@codeaurora.org>
- <62933901-fcdf-b5ae-431d-e1fbfc897128@acm.org>
+        id S1730350AbfLPSI4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:08:56 -0500
+Received: from nbd.name ([46.4.11.11]:35344 "EHLO nbd.name"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730322AbfLPSIu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:08:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
+        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=RUMFaI4CEo7DlvBHv1ccL8MoXo+yyDJGppBym2tES8I=; b=sTxC35+kOxbi3fl8lfAhb/fJwu
+        l22U++CgSUDV6mUyQpM1bu6Kpz5wQyXSZjtgD63qW6Z4wLsdYkQmr25+kk6tjoIP86nNNKeM3Rtfc
+        vYnhn7BCXf/iX1+SGUsm7ceaB6nclikYm1FUkrH26lxx1VmDMfsKnN0SbAcYuUgYx+/w=;
+Received: from p4ff13e83.dip0.t-ipconnect.de ([79.241.62.131] helo=nf.local)
+        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <nbd@nbd.name>)
+        id 1igunQ-0000HK-Ad; Mon, 16 Dec 2019 19:08:40 +0100
+Subject: Re: [PATCH 07/55] staging: wfx: ensure that retry policy always
+ fallbacks to MCS0 / 1Mbps
+To:     =?UTF-8?B?SsOpcsO0bWUgUG91aWxsZXI=?= <Jerome.Pouiller@silabs.com>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>
+References: <20191216170302.29543-1-Jerome.Pouiller@silabs.com>
+ <20191216170302.29543-8-Jerome.Pouiller@silabs.com>
+From:   Felix Fietkau <nbd@nbd.name>
+Autocrypt: addr=nbd@nbd.name; prefer-encrypt=mutual; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCfTKx80VvCR/PvsUlrvdOLsIgeRGAAn1ee
+ RjMaxwtSdaCKMw3j33ZbsWS4
+Message-ID: <0777ef33-e1f4-148a-40cb-cfe7b42d5364@nbd.name>
+Date:   Mon, 16 Dec 2019 19:08:39 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20191216170302.29543-8-Jerome.Pouiller@silabs.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <62933901-fcdf-b5ae-431d-e1fbfc897128@acm.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 09:22:21AM -0800, Bart Van Assche wrote:
-> On 12/15/19 8:36 PM, cang@codeaurora.org wrote:
-> > On 2019-12-16 05:49, Bart Van Assche wrote:
-> > > On 2019-12-11 22:37, Bjorn Andersson wrote:
-> > > > It's the asymmetry that I don't like.
-> > > > 
-> > > > Perhaps if you instead make ufshcd platform_device_register_data() the
-> > > > bsg device you would solve the probe ordering, the remove will be
-> > > > symmetric and module autoloading will work as well (although then you
-> > > > need a MODULE_ALIAS of platform:device-name).
-> > > 
-> > > Hi Bjorn,
-> > > 
-> > > From Documentation/driver-api/driver-model/platform.rst:
-> > > "Platform devices are devices that typically appear as autonomous
-> > > entities in the system. This includes legacy port-based devices and
-> > > host bridges to peripheral buses, and most controllers integrated
-> > > into system-on-chip platforms.� What they usually have in common
-> > > is direct addressing from a CPU bus.� Rarely, a platform_device will
-> > > be connected through a segment of some other kind of bus; but its
-> > > registers will still be directly addressable."
-> > > 
-> > > Do you agree that the above description is not a good match for the
-> > > ufs-bsg kernel module?
-> > 
-> > I missed this one.
-> > How about making it a plain device and add it from ufs driver?
+On 2019-12-16 18:03, Jérôme Pouiller wrote:
+> From: Jérôme Pouiller <jerome.pouiller@silabs.com>
 > 
-> Hi Can,
+> When not using HT mode, minstrel always includes 1Mbps as fallback rate.
+> But, when using HT mode, this fallback is not included. Yet, it seems
+> that it could save some frames. So, this patch add it unconditionally.
 > 
-> Since the ufs_bsg kernel module already creates one device node under
-> /dev/bsg for each UFS host I don't think that we need to create any
-> additional device nodes for ufs-bsg devices. My proposal is to modify the
-> original patch 2/3 from this series as follows:
-> * Use module_init() instead of late_initcall_sync().
-> * Remove the ufshcd_get_hba_list_lock() and
->   ufshcd_put_hba_list_unlock() functions.
-> * Implement a notification mechanism in the UFS core that invokes a
->   callback function after an UFS host has been created and also after an
->   UFS host has been removed.
+> Signed-off-by: Jérôme Pouiller <jerome.pouiller@silabs.com>
+Are you sure that's a good idea? Sometimes a little packet loss can be
+preferable over a larger amount of airtime wasted through using really
+low rates. Especially when you consider bufferbloat.
 
-You want to be a bus and have a device on it.
-
-> * Register for these notifications from inside the ufs-bsg driver.
-
-You want to be a bus.
-
-> * During registration for notifications, invoke the UFS host creation
->   callback function for all known UFS hosts.
-
-You want to be a bus.
-
-> * If the UFS core is unloaded, invoke the UFS host removal callback
->   function for all known UFS hosts.
-
-Again, a bus would do all of this for you "for free", right?
-
-Take a look at the crazy "virtual bus" code that the RDMA people are
-proposing if you want to try to use something like that, or just take
-200 lines of code and be your own bus and devices that hang off of it.
-That sounds exactly what you are looking for here.
-
-> I think there are several examples of similar notification mechanisms in the
-> Linux kernel, e.g. the probe and remove callback functions in struct
-> pci_driver.
-
-Look, a bus!  :)
-
-thanks,
-
-greg k-h
+- Felix
