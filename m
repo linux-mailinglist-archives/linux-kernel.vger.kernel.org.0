@@ -2,435 +2,440 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50248120853
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:16:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F23120898
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:29:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfLPOPa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 09:15:30 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:41585 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728117AbfLPOP0 (ORCPT
+        id S1728116AbfLPOZt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 09:25:49 -0500
+Received: from faui03.informatik.uni-erlangen.de ([131.188.30.103]:40492 "EHLO
+        faui03.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727579AbfLPOZr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:15:26 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N94uf-1hatDG2NuR-0163zy; Mon, 16 Dec 2019 15:15:17 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, mchehab@kernel.org,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org, arnd@arndb.de
-Subject: [PATCH v6 8/8] media: v4l2-core: fix compat v4l2_buffer handling for time64 ABI
-Date:   Mon, 16 Dec 2019 15:15:06 +0100
-Message-Id: <20191216141506.121728-9-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191216141506.121728-1-arnd@arndb.de>
-References: <20191216141506.121728-1-arnd@arndb.de>
+        Mon, 16 Dec 2019 09:25:47 -0500
+X-Greylist: delayed 583 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 09:25:44 EST
+Received: from faui04i.informatik.uni-erlangen.de (faui04i.informatik.uni-erlangen.de [131.188.30.139])
+        by faui03.informatik.uni-erlangen.de (Postfix) with ESMTP id 86B53241656;
+        Mon, 16 Dec 2019 15:16:27 +0100 (CET)
+Received: by faui04i.informatik.uni-erlangen.de (Postfix, from userid 66565)
+        id 79EF1C808D6; Mon, 16 Dec 2019 15:16:27 +0100 (CET)
+From:   Julian Preis <julian.preis@fau.de>
+Cc:     valdis.kletnieks@vt.edu, gregkh@linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, Julian Preis <julian.preis@fau.de>,
+        Johannes Weidner <johannes.weidner@fau.de>
+Subject: [PATCH v2] drivers/staging/exfat/exfat_super.c: Clean up ffsCamelCase function names
+Date:   Mon, 16 Dec 2019 15:16:23 +0100
+Message-Id: <20191216141623.22379-1-julian.preis@fau.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <y>
+References: <y>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:K7RdIe5XuU3l5a8tW8CoHF/dAYBWzcUTSNj1wVftXzQ4NLfECmh
- 9PRy4zE2H1HoX53vP9MqU5cwsZvivBx2/16gp0r7VVLRH//z05sFq9SNuNXyyl38XZworzx
- 53w+LT6LmNiRzccoJdUwKO2wUgQvFHFYzMuD24EvStQUAww/4kuK6j+INwrVn3OqpefL/+j
- L3PZ19VImb530W05hswMA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8c8UypDb5sg=:4nqV0Mrs3JFU7UBiG8J0rR
- unuIZHj07pchqwCcnwGeYiDTcdKQ0hVUd94Ue547eXwbVa9Y+Q1up+cO3nv3LJEcdnXMq2bG/
- X0lEHyplDlwJtZS6rKYEf+7ndkrFaDcYr9keVkmY+Dxgl0WU/qO7BVhbfOm3tjWVJLYxfmxKV
- NiVHfn1Aiae4a6tlECcAk5QzjupUjUXsgGl/3qXJMBmefz0pYUC508ZhCJUXdia1vjqUtXQzV
- V+GEfAejqCepfN/1DQn4shGmAymPaSZUvU9BrsjmwRdx2cGQfPAEXDMzT9Alt6QcrwUY1/ycB
- oMVpoe29e+epsIrQ6V64LdpjB/avq74UOjmn2qKweyKKUItVjFeKdiokavclzUSOaKbxPMxmk
- lb0VUnbg4ICD5t18Z6GZ4+dV4YHjfKta+CHweKlQUf58egQ/lmEAXUc+nfAdUi9pAsrJ9lWaj
- 7/rzGlLU6SOeezTGBcSUEgRIq/p+waCXOG/AUnXoNPhe/WPZUmU+uxSvwAOVQqve45lXkS70m
- 5pqOtdrPxJg6ibJiNmm5Upk9Jgo97MNzqUfvom0bLsZeZA3Uc6Hw48rSOAQhjoOh0VioTN0Hl
- 3brrm5HMm85XbA7cCl/Aaao1NPt0U8E0bh71ir3BF7GOA6h1PY6dH6rwRwzb82/DOV6K/8zAH
- Qa8mu++KA6vIl4nnYz1DoWio+REXjNQgyFSgoblsE66J1gNV4AoEhSgoFdM7OmaUQEPwO2Gaf
- UxoLcpv5bufEm/V39SOCpsp9HHOxs7chvmXb/7/IGNT0J1tE1jEokYEEjtl5o9KxR95B87Hej
- ++0nhqtu3nZn249shFRk1C8Qh6Y22yp1VkxplIrPz5evfCCbn7etgYfBcbbyH3LiVTTPR1C3C
- 75nrFNxRsud8XNUTL9ug==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the four new variants of ioctl commands for 64-bit time_t
-in v4l2_buffer.
+Rename every instance of <ffsCamelCaseExample> to <ffs_camel_case_example>
+in file exfat_super.c. Fix resulting overlong lines.
 
-The existing v4l2_buffer32 structure for the traditional format gets
-changed to match the new v4l2_buffer format, and the old layout is
-now called v4l2_buffer32_time32. Neither of these matches the native
-64-bit architecture format of v4l2_buffer, so both require special
-handling in compat code.
-
-Duplicating the existing handlers for the new types is a safe conversion
-for now, but unfortunately this may turn into a maintenance burden
-later. A larger-scale rework of the compat code might be a better
-alternative, but is out of scope of the y2038 work.
-
-Note: x32 support for v4l2_buffer32 has always been broken and remains
-so after this change, fixing it would have required even more duplication,
-and apparently nobody has cared so far.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Johannes Weidner <johannes.weidner@fau.de>
+Signed-off-by: Johannes Weidner <johannes.weidner@fau.de>
+Signed-off-by: Julian Preis <julian.preis@fau.de>
 ---
- drivers/media/v4l2-core/v4l2-compat-ioctl32.c | 269 +++++++++++++++++-
- 1 file changed, 268 insertions(+), 1 deletion(-)
+Changes in v2:
+- Add email recipients according to get_maintainer.pl
+- Add patch versions
+- Use in-reply-to
 
-diff --git a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-index f8a4b0ddd47d..381d29e45a49 100644
---- a/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-+++ b/drivers/media/v4l2-core/v4l2-compat-ioctl32.c
-@@ -468,13 +468,43 @@ struct v4l2_plane32 {
- 	__u32			reserved[11];
- };
- 
-+/*
-+ * This is correct for all architectures including i386, but not x32,
-+ * which has different alignment requirements for timestamp
-+ */
- struct v4l2_buffer32 {
- 	__u32			index;
- 	__u32			type;	/* enum v4l2_buf_type */
- 	__u32			bytesused;
- 	__u32			flags;
- 	__u32			field;	/* enum v4l2_field */
--	struct compat_timeval	timestamp;
-+	struct {
-+		compat_s64	tv_sec;
-+		compat_s64	tv_usec;
-+	}			timestamp;
-+	struct v4l2_timecode	timecode;
-+	__u32			sequence;
-+
-+	/* memory location */
-+	__u32			memory;	/* enum v4l2_memory */
-+	union {
-+		__u32           offset;
-+		compat_long_t   userptr;
-+		compat_caddr_t  planes;
-+		__s32		fd;
-+	} m;
-+	__u32			length;
-+	__u32			reserved2;
-+	__s32			request_fd;
-+};
-+
-+struct v4l2_buffer32_time32 {
-+	__u32			index;
-+	__u32			type;	/* enum v4l2_buf_type */
-+	__u32			bytesused;
-+	__u32			flags;
-+	__u32			field;	/* enum v4l2_field */
-+	struct old_timeval32	timestamp;
- 	struct v4l2_timecode	timecode;
- 	__u32			sequence;
- 
-@@ -581,6 +611,31 @@ static int bufsize_v4l2_buffer(struct v4l2_buffer32 __user *p32, u32 *size)
- 	return 0;
+ drivers/staging/exfat/exfat_super.c | 99 +++++++++++++++--------------
+ 1 file changed, 51 insertions(+), 48 deletions(-)
+
+diff --git a/drivers/staging/exfat/exfat_super.c b/drivers/staging/exfat/exfat_super.c
+index 6e481908c59f..14ff3fce70fb 100644
+--- a/drivers/staging/exfat/exfat_super.c
++++ b/drivers/staging/exfat/exfat_super.c
+@@ -343,7 +343,7 @@ static inline void exfat_save_attr(struct inode *inode, u32 attr)
+ 		EXFAT_I(inode)->fid.attr = attr & (ATTR_RWMASK | ATTR_READONLY);
  }
  
-+static int bufsize_v4l2_buffer_time32(struct v4l2_buffer32_time32 __user *p32, u32 *size)
-+{
-+	u32 type;
-+	u32 length;
-+
-+	if (!access_ok(p32, sizeof(*p32)) ||
-+	    get_user(type, &p32->type) ||
-+	    get_user(length, &p32->length))
-+		return -EFAULT;
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(type)) {
-+		if (length > VIDEO_MAX_PLANES)
-+			return -EINVAL;
-+
-+		/*
-+		 * We don't really care if userspace decides to kill itself
-+		 * by passing a very big length value
-+		 */
-+		*size = length * sizeof(struct v4l2_plane);
-+	} else {
-+		*size = 0;
-+	}
-+	return 0;
-+}
-+
- static int get_v4l2_buffer32(struct v4l2_buffer __user *p64,
- 			     struct v4l2_buffer32 __user *p32,
- 			     void __user *aux_buf, u32 aux_space)
-@@ -681,6 +736,106 @@ static int get_v4l2_buffer32(struct v4l2_buffer __user *p64,
- 	return 0;
- }
- 
-+static int get_v4l2_buffer32_time32(struct v4l2_buffer_time32 __user *p64,
-+				    struct v4l2_buffer32_time32 __user *p32,
-+				    void __user *aux_buf, u32 aux_space)
-+{
-+	u32 type;
-+	u32 length;
-+	s32 request_fd;
-+	enum v4l2_memory memory;
-+	struct v4l2_plane32 __user *uplane32;
-+	struct v4l2_plane __user *uplane;
-+	compat_caddr_t p;
-+	int ret;
-+
-+	if (!access_ok(p32, sizeof(*p32)) ||
-+	    assign_in_user(&p64->index, &p32->index) ||
-+	    get_user(type, &p32->type) ||
-+	    put_user(type, &p64->type) ||
-+	    assign_in_user(&p64->flags, &p32->flags) ||
-+	    get_user(memory, &p32->memory) ||
-+	    put_user(memory, &p64->memory) ||
-+	    get_user(length, &p32->length) ||
-+	    put_user(length, &p64->length) ||
-+	    get_user(request_fd, &p32->request_fd) ||
-+	    put_user(request_fd, &p64->request_fd))
-+		return -EFAULT;
-+
-+	if (V4L2_TYPE_IS_OUTPUT(type))
-+		if (assign_in_user(&p64->bytesused, &p32->bytesused) ||
-+		    assign_in_user(&p64->field, &p32->field) ||
-+		    assign_in_user(&p64->timestamp.tv_sec,
-+				   &p32->timestamp.tv_sec) ||
-+		    assign_in_user(&p64->timestamp.tv_usec,
-+				   &p32->timestamp.tv_usec))
-+			return -EFAULT;
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(type)) {
-+		u32 num_planes = length;
-+
-+		if (num_planes == 0) {
-+			/*
-+			 * num_planes == 0 is legal, e.g. when userspace doesn't
-+			 * need planes array on DQBUF
-+			 */
-+			return put_user(NULL, &p64->m.planes);
-+		}
-+		if (num_planes > VIDEO_MAX_PLANES)
-+			return -EINVAL;
-+
-+		if (get_user(p, &p32->m.planes))
-+			return -EFAULT;
-+
-+		uplane32 = compat_ptr(p);
-+		if (!access_ok(uplane32,
-+			       num_planes * sizeof(*uplane32)))
-+			return -EFAULT;
-+
-+		/*
-+		 * We don't really care if userspace decides to kill itself
-+		 * by passing a very big num_planes value
-+		 */
-+		if (aux_space < num_planes * sizeof(*uplane))
-+			return -EFAULT;
-+
-+		uplane = aux_buf;
-+		if (put_user_force(uplane, &p64->m.planes))
-+			return -EFAULT;
-+
-+		while (num_planes--) {
-+			ret = get_v4l2_plane32(uplane, uplane32, memory);
-+			if (ret)
-+				return ret;
-+			uplane++;
-+			uplane32++;
-+		}
-+	} else {
-+		switch (memory) {
-+		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
-+			if (assign_in_user(&p64->m.offset, &p32->m.offset))
-+				return -EFAULT;
-+			break;
-+		case V4L2_MEMORY_USERPTR: {
-+			compat_ulong_t userptr;
-+
-+			if (get_user(userptr, &p32->m.userptr) ||
-+			    put_user((unsigned long)compat_ptr(userptr),
-+				     &p64->m.userptr))
-+				return -EFAULT;
-+			break;
-+		}
-+		case V4L2_MEMORY_DMABUF:
-+			if (assign_in_user(&p64->m.fd, &p32->m.fd))
-+				return -EFAULT;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int put_v4l2_buffer32(struct v4l2_buffer __user *p64,
- 			     struct v4l2_buffer32 __user *p32)
+-static int ffsMountVol(struct super_block *sb)
++static int ffs_mount_vol(struct super_block *sb)
  {
-@@ -761,6 +916,87 @@ static int put_v4l2_buffer32(struct v4l2_buffer __user *p64,
+ 	int i, ret;
+ 	struct pbr_sector_t *p_pbr;
+@@ -439,7 +439,7 @@ static int ffsMountVol(struct super_block *sb)
+ 	return ret;
+ }
+ 
+-static int ffsUmountVol(struct super_block *sb)
++static int ffs_umount_vol(struct super_block *sb)
+ {
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+ 	int err = 0;
+@@ -479,7 +479,7 @@ static int ffsUmountVol(struct super_block *sb)
+ 	return err;
+ }
+ 
+-static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
++static int ffs_get_vol_info(struct super_block *sb, struct vol_info_t *info)
+ {
+ 	int err = 0;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -509,7 +509,7 @@ static int ffsGetVolInfo(struct super_block *sb, struct vol_info_t *info)
+ 	return err;
+ }
+ 
+-static int ffsSyncVol(struct super_block *sb, bool do_sync)
++static int ffs_sync_vol(struct super_block *sb, bool do_sync)
+ {
+ 	int err = 0;
+ 	struct fs_info_t *p_fs = &(EXFAT_SB(sb)->fs_info);
+@@ -534,7 +534,8 @@ static int ffsSyncVol(struct super_block *sb, bool do_sync)
+ /*  File Operation Functions                                            */
+ /*----------------------------------------------------------------------*/
+ 
+-static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
++static int ffs_lookup_file(struct inode *inode, char *path,
++			   struct file_id_t *fid)
+ {
+ 	int ret, dentry, num_entries;
+ 	struct chain_t dir;
+@@ -621,8 +622,8 @@ static int ffsLookupFile(struct inode *inode, char *path, struct file_id_t *fid)
+ 	return ret;
+ }
+ 
+-static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+-			 struct file_id_t *fid)
++static int ffs_create_file(struct inode *inode, char *path, u8 mode,
++			   struct file_id_t *fid)
+ {
+ 	struct chain_t dir;
+ 	struct uni_name_t uni_name;
+@@ -662,8 +663,8 @@ static int ffsCreateFile(struct inode *inode, char *path, u8 mode,
+ 	return ret;
+ }
+ 
+-static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
+-		       u64 count, u64 *rcount)
++static int ffs_read_file(struct inode *inode, struct file_id_t *fid,
++			 void *buffer, u64 count, u64 *rcount)
+ {
+ 	s32 offset, sec_offset, clu_offset;
+ 	u32 clu;
+@@ -788,8 +789,8 @@ static int ffsReadFile(struct inode *inode, struct file_id_t *fid, void *buffer,
+ 	return ret;
+ }
+ 
+-static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+-			void *buffer, u64 count, u64 *wcount)
++static int ffs_write_file(struct inode *inode, struct file_id_t *fid,
++			  void *buffer, u64 count, u64 *wcount)
+ {
+ 	bool modified = false;
+ 	s32 offset, sec_offset, clu_offset;
+@@ -1031,7 +1032,7 @@ static int ffsWriteFile(struct inode *inode, struct file_id_t *fid,
+ 	return ret;
+ }
+ 
+-static int ffsTruncateFile(struct inode *inode, u64 old_size, u64 new_size)
++static int ffs_truncate_file(struct inode *inode, u64 old_size, u64 new_size)
+ {
+ 	s32 num_clusters;
+ 	u32 last_clu = CLUSTER_32(0);
+@@ -1167,8 +1168,9 @@ static void update_parent_info(struct file_id_t *fid,
+ 	}
+ }
+ 
+-static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+-		       struct inode *new_parent_inode, struct dentry *new_dentry)
++static int ffs_move_file(struct inode *old_parent_inode, struct file_id_t *fid,
++			 struct inode *new_parent_inode,
++			 struct dentry *new_dentry)
+ {
+ 	s32 ret;
+ 	s32 dentry;
+@@ -1296,7 +1298,7 @@ static int ffsMoveFile(struct inode *old_parent_inode, struct file_id_t *fid,
+ 	return ret;
+ }
+ 
+-static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
++static int ffs_remove_file(struct inode *inode, struct file_id_t *fid)
+ {
+ 	s32 dentry;
+ 	int ret = 0;
+@@ -1360,7 +1362,7 @@ static int ffsRemoveFile(struct inode *inode, struct file_id_t *fid)
+ 
+ #if 0
+ /* Not currently wired up */
+-static int ffsSetAttr(struct inode *inode, u32 attr)
++static int ffs_set_attr(struct inode *inode, u32 attr)
+ {
+ 	u32 type;
+ 	int ret = 0;
+@@ -1435,7 +1437,7 @@ static int ffsSetAttr(struct inode *inode, u32 attr)
+ }
+ #endif
+ 
+-static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
++static int ffs_read_stat(struct inode *inode, struct dir_entry_t *info)
+ {
+ 	s32 count;
+ 	int ret = 0;
+@@ -1565,7 +1567,7 @@ static int ffsReadStat(struct inode *inode, struct dir_entry_t *info)
+ 	return ret;
+ }
+ 
+-static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
++static int ffs_write_stat(struct inode *inode, struct dir_entry_t *info)
+ {
+ 	int ret = 0;
+ 	struct timestamp_t tm;
+@@ -1638,7 +1640,7 @@ static int ffsWriteStat(struct inode *inode, struct dir_entry_t *info)
+ 	return ret;
+ }
+ 
+-static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
++static int ffs_map_cluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ {
+ 	s32 num_clusters, num_alloced;
+ 	bool modified = false;
+@@ -1778,7 +1780,8 @@ static int ffsMapCluster(struct inode *inode, s32 clu_offset, u32 *clu)
+ /*  Directory Operation Functions                                       */
+ /*----------------------------------------------------------------------*/
+ 
+-static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
++static int ffs_create_dir(struct inode *inode, char *path,
++			  struct file_id_t *fid)
+ {
+ 	int ret = 0;
+ 	struct chain_t dir;
+@@ -1818,7 +1821,7 @@ static int ffsCreateDir(struct inode *inode, char *path, struct file_id_t *fid)
+ 	return ret;
+ }
+ 
+-static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
++static int ffs_read_dir(struct inode *inode, struct dir_entry_t *dir_entry)
+ {
+ 	int i, dentry, clu_offset;
+ 	int ret = 0;
+@@ -2005,7 +2008,7 @@ static int ffsReadDir(struct inode *inode, struct dir_entry_t *dir_entry)
+ 	return ret;
+ }
+ 
+-static int ffsRemoveDir(struct inode *inode, struct file_id_t *fid)
++static int ffs_remove_dir(struct inode *inode, struct file_id_t *fid)
+ {
+ 	s32 dentry;
+ 	int ret = 0;
+@@ -2114,7 +2117,7 @@ static int exfat_readdir(struct file *filp, struct dir_context *ctx)
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 	EXFAT_I(inode)->fid.rwoffset = cpos >> DENTRY_SIZE_BITS;
+ 
+-	err = ffsReadDir(inode, &de);
++	err = ffs_read_dir(inode, &de);
+ 	if (err) {
+ 		/* at least we tried to read a sector
+ 		 * move cpos to next sector position (should be aligned)
+@@ -2235,7 +2238,7 @@ static int exfat_create(struct inode *dir, struct dentry *dentry, umode_t mode,
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
++	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_REGULAR, &fid);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2282,7 +2285,7 @@ static int exfat_find(struct inode *dir, struct qstr *qname,
+ 	if (qname->len == 0)
+ 		return -ENOENT;
+ 
+-	err = ffsLookupFile(dir, (u8 *)qname->name, fid);
++	err = ffs_lookup_file(dir, (u8 *)qname->name, fid);
+ 	if (err)
+ 		return -ENOENT;
+ 
+@@ -2332,8 +2335,8 @@ static struct dentry *exfat_lookup(struct inode *dir, struct dentry *dentry,
+ 			err = -ENOMEM;
+ 			goto error;
+ 		}
+-		ffsReadFile(dir, &fid, EXFAT_I(inode)->target,
+-			    i_size_read(inode), &ret);
++		ffs_read_file(dir, &fid, EXFAT_I(inode)->target,
++			      i_size_read(inode), &ret);
+ 		*(EXFAT_I(inode)->target + i_size_read(inode)) = '\0';
+ 	}
+ 
+@@ -2402,7 +2405,7 @@ static int exfat_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 
+-	err = ffsRemoveFile(dir, &(EXFAT_I(inode)->fid));
++	err = ffs_remove_file(dir, &(EXFAT_I(inode)->fid));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2444,15 +2447,15 @@ static int exfat_symlink(struct inode *dir, struct dentry *dentry,
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateFile(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
++	err = ffs_create_file(dir, (u8 *)dentry->d_name.name, FM_SYMLINK, &fid);
+ 	if (err)
+ 		goto out;
+ 
+ 
+-	err = ffsWriteFile(dir, &fid, (char *)target, len, &ret);
++	err = ffs_write_file(dir, &fid, (char *)target, len, &ret);
+ 
+ 	if (err) {
+-		ffsRemoveFile(dir, &fid);
++		ffs_remove_file(dir, &fid);
+ 		goto out;
+ 	}
+ 
+@@ -2508,7 +2511,7 @@ static int exfat_mkdir(struct inode *dir, struct dentry *dentry, umode_t mode)
+ 
+ 	pr_debug("%s entered\n", __func__);
+ 
+-	err = ffsCreateDir(dir, (u8 *)dentry->d_name.name, &fid);
++	err = ffs_create_dir(dir, (u8 *)dentry->d_name.name, &fid);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2559,7 +2562,7 @@ static int exfat_rmdir(struct inode *dir, struct dentry *dentry)
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+ 
+-	err = ffsRemoveDir(dir, &(EXFAT_I(inode)->fid));
++	err = ffs_remove_dir(dir, &(EXFAT_I(inode)->fid));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2608,8 +2611,8 @@ static int exfat_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 
+ 	EXFAT_I(old_inode)->fid.size = i_size_read(old_inode);
+ 
+-	err = ffsMoveFile(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
+-			  new_dentry);
++	err = ffs_move_file(old_dir, &(EXFAT_I(old_inode)->fid), new_dir,
++			    new_dentry);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2766,7 +2769,7 @@ static void exfat_truncate(struct inode *inode, loff_t old_size)
+ 	if (EXFAT_I(inode)->fid.start_clu == 0)
+ 		goto out;
+ 
+-	err = ffsTruncateFile(inode, old_size, i_size_read(inode));
++	err = ffs_truncate_file(inode, old_size, i_size_read(inode));
+ 	if (err)
+ 		goto out;
+ 
+@@ -2902,7 +2905,7 @@ static int exfat_file_release(struct inode *inode, struct file *filp)
+ 	struct super_block *sb = inode->i_sb;
+ 
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
+-	ffsSyncVol(sb, false);
++	ffs_sync_vol(sb, false);
  	return 0;
  }
  
-+
-+static int put_v4l2_buffer32_time32(struct v4l2_buffer_time32 __user *p64,
-+				    struct v4l2_buffer32_time32 __user *p32)
-+{
-+	u32 type;
-+	u32 length;
-+	enum v4l2_memory memory;
-+	struct v4l2_plane32 __user *uplane32;
-+	struct v4l2_plane *uplane;
-+	compat_caddr_t p;
-+	int ret;
-+
-+	if (!access_ok(p32, sizeof(*p32)) ||
-+	    assign_in_user(&p32->index, &p64->index) ||
-+	    get_user(type, &p64->type) ||
-+	    put_user(type, &p32->type) ||
-+	    assign_in_user(&p32->flags, &p64->flags) ||
-+	    get_user(memory, &p64->memory) ||
-+	    put_user(memory, &p32->memory))
-+		return -EFAULT;
-+
-+	if (assign_in_user(&p32->bytesused, &p64->bytesused) ||
-+	    assign_in_user(&p32->field, &p64->field) ||
-+	    assign_in_user(&p32->timestamp.tv_sec, &p64->timestamp.tv_sec) ||
-+	    assign_in_user(&p32->timestamp.tv_usec, &p64->timestamp.tv_usec) ||
-+	    copy_in_user(&p32->timecode, &p64->timecode, sizeof(p64->timecode)) ||
-+	    assign_in_user(&p32->sequence, &p64->sequence) ||
-+	    assign_in_user(&p32->reserved2, &p64->reserved2) ||
-+	    assign_in_user(&p32->request_fd, &p64->request_fd) ||
-+	    get_user(length, &p64->length) ||
-+	    put_user(length, &p32->length))
-+		return -EFAULT;
-+
-+	if (V4L2_TYPE_IS_MULTIPLANAR(type)) {
-+		u32 num_planes = length;
-+
-+		if (num_planes == 0)
-+			return 0;
-+		/* We need to define uplane without __user, even though
-+		 * it does point to data in userspace here. The reason is
-+		 * that v4l2-ioctl.c copies it from userspace to kernelspace,
-+		 * so its definition in videodev2.h doesn't have a
-+		 * __user markup. Defining uplane with __user causes
-+		 * smatch warnings, so instead declare it without __user
-+		 * and cast it as a userspace pointer to put_v4l2_plane32().
-+		 */
-+		if (get_user(uplane, &p64->m.planes))
-+			return -EFAULT;
-+		if (get_user(p, &p32->m.planes))
-+			return -EFAULT;
-+		uplane32 = compat_ptr(p);
-+
-+		while (num_planes--) {
-+			ret = put_v4l2_plane32((void __user *)uplane,
-+					       uplane32, memory);
-+			if (ret)
-+				return ret;
-+			++uplane;
-+			++uplane32;
-+		}
-+	} else {
-+		switch (memory) {
-+		case V4L2_MEMORY_MMAP:
-+		case V4L2_MEMORY_OVERLAY:
-+			if (assign_in_user(&p32->m.offset, &p64->m.offset))
-+				return -EFAULT;
-+			break;
-+		case V4L2_MEMORY_USERPTR:
-+			if (assign_in_user(&p32->m.userptr, &p64->m.userptr))
-+				return -EFAULT;
-+			break;
-+		case V4L2_MEMORY_DMABUF:
-+			if (assign_in_user(&p32->m.fd, &p64->m.fd))
-+				return -EFAULT;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- struct v4l2_framebuffer32 {
- 	__u32			capability;
- 	__u32			flags;
-@@ -1150,10 +1386,13 @@ static int put_v4l2_edid32(struct v4l2_edid __user *p64,
- #define VIDIOC_G_FMT32		_IOWR('V',  4, struct v4l2_format32)
- #define VIDIOC_S_FMT32		_IOWR('V',  5, struct v4l2_format32)
- #define VIDIOC_QUERYBUF32	_IOWR('V',  9, struct v4l2_buffer32)
-+#define VIDIOC_QUERYBUF32_TIME32 _IOWR('V',  9, struct v4l2_buffer32_time32)
- #define VIDIOC_G_FBUF32		_IOR ('V', 10, struct v4l2_framebuffer32)
- #define VIDIOC_S_FBUF32		_IOW ('V', 11, struct v4l2_framebuffer32)
- #define VIDIOC_QBUF32		_IOWR('V', 15, struct v4l2_buffer32)
-+#define VIDIOC_QBUF32_TIME32	_IOWR('V', 15, struct v4l2_buffer32_time32)
- #define VIDIOC_DQBUF32		_IOWR('V', 17, struct v4l2_buffer32)
-+#define VIDIOC_DQBUF32_TIME32	_IOWR('V', 17, struct v4l2_buffer32_time32)
- #define VIDIOC_ENUMSTD32	_IOWR('V', 25, struct v4l2_standard32)
- #define VIDIOC_ENUMINPUT32	_IOWR('V', 26, struct v4l2_input32)
- #define VIDIOC_G_EDID32		_IOWR('V', 40, struct v4l2_edid32)
-@@ -1166,6 +1405,7 @@ static int put_v4l2_edid32(struct v4l2_edid __user *p64,
- #define	VIDIOC_DQEVENT32_TIME32	_IOR ('V', 89, struct v4l2_event32_time32)
- #define VIDIOC_CREATE_BUFS32	_IOWR('V', 92, struct v4l2_create_buffers32)
- #define VIDIOC_PREPARE_BUF32	_IOWR('V', 93, struct v4l2_buffer32)
-+#define VIDIOC_PREPARE_BUF32_TIME32 _IOWR('V', 93, struct v4l2_buffer32_time32)
+@@ -2957,7 +2960,7 @@ static int exfat_bmap(struct inode *inode, sector_t sector, sector_t *phys,
  
- #define VIDIOC_OVERLAY32	_IOW ('V', 14, s32)
- #define VIDIOC_STREAMON32	_IOW ('V', 18, s32)
-@@ -1235,10 +1475,13 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 	case VIDIOC_G_FMT32: ncmd = VIDIOC_G_FMT; break;
- 	case VIDIOC_S_FMT32: ncmd = VIDIOC_S_FMT; break;
- 	case VIDIOC_QUERYBUF32: ncmd = VIDIOC_QUERYBUF; break;
-+	case VIDIOC_QUERYBUF32_TIME32: ncmd = VIDIOC_QUERYBUF_TIME32; break;
- 	case VIDIOC_G_FBUF32: ncmd = VIDIOC_G_FBUF; break;
- 	case VIDIOC_S_FBUF32: ncmd = VIDIOC_S_FBUF; break;
- 	case VIDIOC_QBUF32: ncmd = VIDIOC_QBUF; break;
-+	case VIDIOC_QBUF32_TIME32: ncmd = VIDIOC_QBUF_TIME32; break;
- 	case VIDIOC_DQBUF32: ncmd = VIDIOC_DQBUF; break;
-+	case VIDIOC_DQBUF32_TIME32: ncmd = VIDIOC_DQBUF_TIME32; break;
- 	case VIDIOC_ENUMSTD32: ncmd = VIDIOC_ENUMSTD; break;
- 	case VIDIOC_ENUMINPUT32: ncmd = VIDIOC_ENUMINPUT; break;
- 	case VIDIOC_TRY_FMT32: ncmd = VIDIOC_TRY_FMT; break;
-@@ -1258,6 +1501,7 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 	case VIDIOC_S_OUTPUT32: ncmd = VIDIOC_S_OUTPUT; break;
- 	case VIDIOC_CREATE_BUFS32: ncmd = VIDIOC_CREATE_BUFS; break;
- 	case VIDIOC_PREPARE_BUF32: ncmd = VIDIOC_PREPARE_BUF; break;
-+	case VIDIOC_PREPARE_BUF32_TIME32: ncmd = VIDIOC_PREPARE_BUF_TIME32; break;
- 	case VIDIOC_G_EDID32: ncmd = VIDIOC_G_EDID; break;
- 	case VIDIOC_S_EDID32: ncmd = VIDIOC_S_EDID; break;
- 	default: ncmd = cmd; break;
-@@ -1339,6 +1583,22 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 		compatible_arg = 0;
- 		break;
+ 	EXFAT_I(inode)->fid.size = i_size_read(inode);
  
-+	case VIDIOC_PREPARE_BUF32_TIME32:
-+	case VIDIOC_QUERYBUF32_TIME32:
-+	case VIDIOC_QBUF32_TIME32:
-+	case VIDIOC_DQBUF32_TIME32:
-+		err = bufsize_v4l2_buffer_time32(p32, &aux_space);
-+		if (!err)
-+			err = alloc_userspace(sizeof(struct v4l2_buffer),
-+					      aux_space, &new_p64);
-+		if (!err) {
-+			aux_buf = new_p64 + sizeof(struct v4l2_buffer);
-+			err = get_v4l2_buffer32_time32(new_p64, p32,
-+						       aux_buf, aux_space);
-+		}
-+		compatible_arg = 0;
-+		break;
-+
- 	case VIDIOC_S_FBUF32:
- 		err = alloc_userspace(sizeof(struct v4l2_framebuffer), 0,
- 				      &new_p64);
-@@ -1487,6 +1747,13 @@ static long do_video_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 		err = put_v4l2_buffer32(new_p64, p32);
- 		break;
+-	err = ffsMapCluster(inode, clu_offset, &cluster);
++	err = ffs_map_cluster(inode, clu_offset, &cluster);
  
-+	case VIDIOC_PREPARE_BUF32_TIME32:
-+	case VIDIOC_QUERYBUF32_TIME32:
-+	case VIDIOC_QBUF32_TIME32:
-+	case VIDIOC_DQBUF32_TIME32:
-+		err = put_v4l2_buffer32_time32(new_p64, p32);
-+		break;
-+
- 	case VIDIOC_ENUMSTD32:
- 		err = put_v4l2_standard32(new_p64, p32);
- 		break;
+ 	if (!err && (cluster != CLUSTER_32(~0))) {
+ 		*phys = START_SECTOR(cluster) + sec_offset;
+@@ -3150,7 +3153,7 @@ static int exfat_fill_inode(struct inode *inode, struct file_id_t *fid)
+ 
+ 	memcpy(&(EXFAT_I(inode)->fid), fid, sizeof(struct file_id_t));
+ 
+-	ffsReadStat(inode, &info);
++	ffs_read_stat(inode, &info);
+ 
+ 	EXFAT_I(inode)->i_pos = 0;
+ 	EXFAT_I(inode)->target = NULL;
+@@ -3266,7 +3269,7 @@ static int exfat_write_inode(struct inode *inode, struct writeback_control *wbc)
+ 	exfat_time_unix2fat(&inode->i_ctime, &info.CreateTimestamp);
+ 	exfat_time_unix2fat(&inode->i_atime, &info.AccessTimestamp);
+ 
+-	ffsWriteStat(inode, &info);
++	ffs_write_stat(inode, &info);
+ 
+ 	return 0;
+ }
+@@ -3304,7 +3307,7 @@ static void exfat_put_super(struct super_block *sb)
+ 	if (__is_sb_dirty(sb))
+ 		exfat_write_super(sb);
+ 
+-	ffsUmountVol(sb);
++	ffs_umount_vol(sb);
+ 
+ 	sb->s_fs_info = NULL;
+ 	exfat_free_super(sbi);
+@@ -3317,7 +3320,7 @@ static void exfat_write_super(struct super_block *sb)
+ 	__set_sb_clean(sb);
+ 
+ 	if (!sb_rdonly(sb))
+-		ffsSyncVol(sb, true);
++		ffs_sync_vol(sb, true);
+ 
+ 	__unlock_super(sb);
+ }
+@@ -3329,7 +3332,7 @@ static int exfat_sync_fs(struct super_block *sb, int wait)
+ 	if (__is_sb_dirty(sb)) {
+ 		__lock_super(sb);
+ 		__set_sb_clean(sb);
+-		err = ffsSyncVol(sb, true);
++		err = ffs_sync_vol(sb, true);
+ 		__unlock_super(sb);
+ 	}
+ 
+@@ -3344,7 +3347,7 @@ static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	struct vol_info_t info;
+ 
+ 	if (p_fs->used_clusters == UINT_MAX) {
+-		if (ffsGetVolInfo(sb, &info) == -EIO)
++		if (ffs_get_vol_info(sb, &info) == -EIO)
+ 			return -EIO;
+ 
+ 	} else {
+@@ -3646,7 +3649,7 @@ static int exfat_read_root(struct inode *inode)
+ 
+ 	EXFAT_I(inode)->target = NULL;
+ 
+-	ffsReadStat(inode, &info);
++	ffs_read_stat(inode, &info);
+ 
+ 	inode->i_uid = sbi->options.fs_uid;
+ 	inode->i_gid = sbi->options.fs_gid;
+@@ -3713,10 +3716,10 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	sb_min_blocksize(sb, 512);
+ 	sb->s_maxbytes = 0x7fffffffffffffffLL;    /* maximum file size */
+ 
+-	ret = ffsMountVol(sb);
++	ret = ffs_mount_vol(sb);
+ 	if (ret) {
+ 		if (!silent)
+-			pr_err("[EXFAT] ffsMountVol failed\n");
++			pr_err("[EXFAT] ffs_mount_vol failed\n");
+ 
+ 		goto out_fail;
+ 	}
+@@ -3756,7 +3759,7 @@ static int exfat_fill_super(struct super_block *sb, void *data, int silent)
+ 	return 0;
+ 
+ out_fail2:
+-	ffsUmountVol(sb);
++	ffs_umount_vol(sb);
+ out_fail:
+ 	if (root_inode)
+ 		iput(root_inode);
 -- 
-2.20.0
+2.20.1
 
