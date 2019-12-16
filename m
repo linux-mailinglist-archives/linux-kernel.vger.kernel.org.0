@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 491A01212D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25E721212A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:55:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfLPR4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:56:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54340 "EHLO mail.kernel.org"
+        id S1727184AbfLPRy6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:54:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727790AbfLPR4T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:56:19 -0500
+        id S1727105AbfLPRyy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED5824672;
-        Mon, 16 Dec 2019 17:56:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 469532053B;
+        Mon, 16 Dec 2019 17:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518978;
-        bh=E7QH1DALMVMiTDVbaIxq+PDoDMC7JVVXWQNHq71LvSU=;
+        s=default; t=1576518893;
+        bh=9yhvzDax4rRGNjaYevYMMTVtZveT6fA2Z5l48Eag30o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otN4W2zG7Clj13EpjWgnZRCwM0fi2kZE4xq1XFlV0Ie8J8+o/7w/2HaLRmHKDjxrH
-         qDwfQx3/Y9AEHg6eaVKNJDKRb0AbtNrsaQaVCezQZk/HdYEL7b8JiWH3r71LW9jpoQ
-         1icQGSURLYYg5NT2c1i+OZ0U8czebI8KYvsbBoPM=
+        b=otanHXhVZBGQQ+hIutJk4z257T4XMq6UmksUXwbSgXVwLl/bFyu7Lkp81RpYM8FnG
+         lH4BPIaA45OL45JDMIB1F+y8ScsonJuhtemlHc0pOEWpECOpGdsPXlLcCPEe3x3QHz
+         euHKohr5a0OfmwTndbfH/QwUHFmuMyzyeE4/kn+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhengbin <zhengbin13@huawei.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 107/267] nfsd: Return EPERM, not EACCES, in some SETATTR cases
-Date:   Mon, 16 Dec 2019 18:47:13 +0100
-Message-Id: <20191216174902.581497762@linuxfoundation.org>
+Subject: [PATCH 4.14 111/267] mlxsw: spectrum_router: Relax GRE decap matching check
+Date:   Mon, 16 Dec 2019 18:47:17 +0100
+Message-Id: <20191216174902.794020169@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,55 +45,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: zhengbin <zhengbin13@huawei.com>
+From: Nir Dotan <nird@mellanox.com>
 
-[ Upstream commit 255fbca65137e25b12bced18ec9a014dc77ecda0 ]
+[ Upstream commit da93d2913fdf43d5cde3c5a53ac9cc29684d5c7c ]
 
-As the man(2) page for utime/utimes states, EPERM is returned when the
-second parameter of utime or utimes is not NULL, the caller's effective UID
-does not match the owner of the file, and the caller is not privileged.
+GRE decap offload is configured when local routes prefix correspond to the
+local address of one of the offloaded GRE tunnels. The matching check was
+found to be too strict, such that for a flat GRE configuration, in which
+the overlay and underlay traffic share the same non-default VRF, decap flow
+was not offloaded.
 
-However, in a NFS directory mounted from knfsd, it will return EACCES
-(from nfsd_setattr-> fh_verify->nfsd_permission).  This patch fixes
-that.
+Relax the check for decap flow offloading. A match occurs if the local
+address of the tunnel matches the local route address while both share the
+same VRF table.
 
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Fixes: 4607f6d26950 ("mlxsw: spectrum_router: Support IPv4 underlay decap")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/vfs.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index f55527ef21e84..06d1f2edf2ec6 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -396,10 +396,23 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
- 	bool		get_write_count;
- 	bool		size_change = (iap->ia_valid & ATTR_SIZE);
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+index 3ed4fb346f235..5b9a5c3834d9e 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_router.c
+@@ -1252,15 +1252,12 @@ mlxsw_sp_ipip_entry_matches_decap(struct mlxsw_sp *mlxsw_sp,
+ {
+ 	u32 ul_tb_id = l3mdev_fib_table(ul_dev) ? : RT_TABLE_MAIN;
+ 	enum mlxsw_sp_ipip_type ipipt = ipip_entry->ipipt;
+-	struct net_device *ipip_ul_dev;
  
--	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME | ATTR_SIZE))
-+	if (iap->ia_valid & ATTR_SIZE) {
- 		accmode |= NFSD_MAY_WRITE|NFSD_MAY_OWNER_OVERRIDE;
--	if (iap->ia_valid & ATTR_SIZE)
- 		ftype = S_IFREG;
-+	}
-+
-+	/*
-+	 * If utimes(2) and friends are called with times not NULL, we should
-+	 * not set NFSD_MAY_WRITE bit. Otherwise fh_verify->nfsd_permission
-+	 * will return EACCESS, when the caller's effective UID does not match
-+	 * the owner of the file, and the caller is not privileged. In this
-+	 * situation, we should return EPERM(notify_change will return this).
-+	 */
-+	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME)) {
-+		accmode |= NFSD_MAY_OWNER_OVERRIDE;
-+		if (!(iap->ia_valid & (ATTR_ATIME_SET | ATTR_MTIME_SET)))
-+			accmode |= NFSD_MAY_WRITE;
-+	}
+ 	if (mlxsw_sp->router->ipip_ops_arr[ipipt]->ul_proto != ul_proto)
+ 		return false;
  
- 	/* Callers that do fh_verify should do the fh_want_write: */
- 	get_write_count = !fhp->fh_dentry;
+-	ipip_ul_dev = __mlxsw_sp_ipip_netdev_ul_dev_get(ipip_entry->ol_dev);
+ 	return mlxsw_sp_ipip_entry_saddr_matches(mlxsw_sp, ul_proto, ul_dip,
+-						 ul_tb_id, ipip_entry) &&
+-	       (!ipip_ul_dev || ipip_ul_dev == ul_dev);
++						 ul_tb_id, ipip_entry);
+ }
+ 
+ /* Given decap parameters, find the corresponding IPIP entry. */
 -- 
 2.20.1
 
