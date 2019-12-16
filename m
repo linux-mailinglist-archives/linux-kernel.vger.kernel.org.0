@@ -2,111 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE2B1218B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A48131218BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbfLPSpE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:45:04 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:49103 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728015AbfLPSpD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:45:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576521901;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TRtADKzTFs1Qp6frXK2BKRNuHXrenGJCtn+oRTbET5s=;
-        b=RT6fMZIfAyU0ajEDL3GPn5tjwkaJqJB6b/FFZAJfZV9+J43I5eQpv60cZQSsL1pXpFmt0J
-        HVw0HENZLF6tXmcCocKSs7vsVrPDeeEKniIttJ7Bj99InPoruMRofFM2zf21z91Y97PRUS
-        SDo2khm8++EGVHCV4eNVXyv5dWrHDuo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-238-spawUSm_O2mMRRbRhFQ_Cw-1; Mon, 16 Dec 2019 13:44:59 -0500
-X-MC-Unique: spawUSm_O2mMRRbRhFQ_Cw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727046AbfLPSpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:45:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726227AbfLPSpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:45:39 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 60EB8800D41;
-        Mon, 16 Dec 2019 18:44:58 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 873A619427;
-        Mon, 16 Dec 2019 18:44:54 +0000 (UTC)
-Subject: Re: [PATCH v2] mm/hugetlb: defer free_huge_page() to a workqueue
-From:   Waiman Long <longman@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.ibm.com, Jarod Wilson <jarod@redhat.com>
-References: <20191211194615.18502-1-longman@redhat.com>
- <4fbc39a9-2c9c-4c2c-2b13-a548afe6083c@oracle.com>
- <32d2d4f2-83b9-2e40-05e2-71cd07e01b80@redhat.com>
- <0fcce71f-bc20-0ea3-b075-46592c8d533d@oracle.com>
- <20191212060650.ftqq27ftutxpc5hq@linux-p48b>
- <20191212063050.ufrpij6s6jkv7g7j@linux-p48b>
- <20191212190427.ouyohviijf5inhur@linux-p48b>
- <d6b9743c-776c-d740-73af-a600f15b910a@oracle.com>
- <79d3a7e1-384b-b759-cd84-56253fb9ed40@redhat.com>
- <20191216132658.GG30281@dhcp22.suse.cz>
- <98ac628d-f8be-270d-80bc-bf2373299caf@redhat.com>
-Organization: Red Hat
-Message-ID: <21a92649-bb9f-b024-e52b-4ce9355f973b@redhat.com>
-Date:   Mon, 16 Dec 2019 13:44:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        by mail.kernel.org (Postfix) with ESMTPSA id 67990206A5;
+        Mon, 16 Dec 2019 18:45:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576521938;
+        bh=fpaCt0GYwvbYwJ3eh6N+PCq5xTQcRR4ff/NnakrUkAU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u2lJ/upO8pc5vU1W1k3LwrOjCXrYbiPDcHR42ey+AuN6WlF3gHneTNxagBNrs0egb
+         lfvXXxf8xoYmlw2vGmTq0sTYsgwjKMZLyp3jaAUdwd96rtR3fFAAfYHQoLxkPBpwbk
+         twPfXANYfK27HEOZMrfhwcOacLxa94BZOu8Y2y5o=
+Date:   Mon, 16 Dec 2019 19:45:36 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andrea Merello <andrea.merello@gmail.com>,
+        Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 4.19 106/140] iio: ad7949: kill pointless
+ "readback"-handling code
+Message-ID: <20191216184536.GB2411653@kroah.com>
+References: <20191216174747.111154704@linuxfoundation.org>
+ <20191216174815.749524432@linuxfoundation.org>
+ <CAN8YU5NrEbJx3yxBNoRWnwUiAYWffDp6gEcCcGUK+g4zjbHwEg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <98ac628d-f8be-270d-80bc-bf2373299caf@redhat.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAN8YU5NrEbJx3yxBNoRWnwUiAYWffDp6gEcCcGUK+g4zjbHwEg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/19 10:38 AM, Waiman Long wrote:
-> On 12/16/19 8:26 AM, Michal Hocko wrote:
->> On Thu 12-12-19 15:52:20, Waiman Long wrote:
->>> On 12/12/19 2:22 PM, Mike Kravetz wrote:
->>>> On 12/12/19 11:04 AM, Davidlohr Bueso wrote:
->>>>> There have been deadlock reports[1, 2] where put_page is called
->>>>> from softirq context and this causes trouble with the hugetlb_lock,
->>>>> as well as potentially the subpool lock.
->>>>>
->>>>> For such an unlikely scenario, lets not add irq dancing overhead
->>>>> to the lock+unlock operations, which could incur in expensive
->>>>> instruction dependencies, particularly when considering hard-irq
->>>>> safety. For example PUSHF+POPF on x86.
->>>>>
->>>>> Instead, just use a workqueue and do the free_huge_page() in regular
->>>>> task context.
->>>>>
->>>>> [1] https://lore.kernel.org/lkml/20191211194615.18502-1-longman@redhat.com/
->>>>> [2] https://lore.kernel.org/lkml/20180905112341.21355-1-aneesh.kumar@linux.ibm.com/
->>>>>
->>>>> Reported-by: Waiman Long <longman@redhat.com>
->>>>> Reported-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
->>>>> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
->>>> Thank you Davidlohr.
->>>>
->>>> The patch does seem fairly simple and straight forward.  I need to brush up
->>>> on my workqueue knowledge to provide a full review.
->>>>
->>>> Longman,
->>>> Do you have a test to reproduce the issue?  If so, can you try running with
->>>> this patch.
->>> Yes, I do have a test that can reproduce the issue. I will run it with
->>> the patch and report the status tomorrow.
->> Can you extract guts of the testcase and integrate them into hugetlb
->> test suite?
+On Mon, Dec 16, 2019 at 07:31:31PM +0100, Andrea Merello wrote:
+> Something nasty seems happening here: it looks like the commit message
+> and the actual diff have nothing to do one wrt the other; the commit
+> message is from one of my patches, the diff is against some unrelated
+> file.
+> 
+> Il giorno lun 16 dic 2019 alle ore 19:05 Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> ha scritto:
+> >
+> > From: Meng Li <Meng.Li@windriver.com>
+> >
+> > [ Upstream commit c270bbf7bb9ddc4e2a51b3c56557c377c9ac79bc ]
+> >
+> > The device could be configured to spit out also the configuration word
+> > while reading the AD result value (in the same SPI xfer) - this is called
+> > "readback" in the device datasheet.
+> >
+> > The driver checks if readback is enabled and it eventually adjusts the SPI
+> > xfer length and it applies proper shifts to still get the data, discarding
+> > the configuration word.
+> >
+> > The readback option is actually never enabled (the driver disables it), so
+> > the said checks do not serve for any purpose.
+> >
+> > Since enabling the readback option seems not to provide any advantage (the
+> > driver entirely sets the configuration word without relying on any default
+> > value), just kill the said, unused, code.
+> >
+> > Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> > Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > ---
+> >  drivers/edac/altera_edac.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> > index 56de378ad13dc..c9108906bcdc0 100644
+> > --- a/drivers/edac/altera_edac.c
+> > +++ b/drivers/edac/altera_edac.c
+> > @@ -600,6 +600,7 @@ static const struct regmap_config s10_sdram_regmap_cfg = {
+> >         .reg_read = s10_protected_reg_read,
+> >         .reg_write = s10_protected_reg_write,
+> >         .use_single_rw = true,
+> > +       .fast_io = true,
+> >  };
+> >
+> >  static int altr_s10_sdram_probe(struct platform_device *pdev)
+> > --
+> > 2.20.1
+> >
+> >
+> >
 
-BTW, what hugetlb test suite are you talking about?
+Wow, something went wrong.
 
-Cheers,
-Longman
+Sasha, can you look into this?
 
+thanks,
+
+greg k-h
