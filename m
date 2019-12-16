@@ -2,150 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD8012000C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:41:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57F54120017
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:43:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfLPIlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:41:24 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:54592 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfLPIlY (ORCPT
+        id S1727014AbfLPIne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:43:34 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:53423 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfLPIne (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:41:24 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBG8fDeg028547;
-        Mon, 16 Dec 2019 02:41:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576485673;
-        bh=GQ0EO7q8Lqa3xSoXIC84Xc5lNVaeufWJSswA3pvWUWg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=PkkVrt+qL5LYRULFUkL/FepG6A+SwwwgV1+hEB3D2vdHT4J0FnY40thn6e3ldQL83
-         fL0RiSuSxSfae81A/YqNCD7fhto9Y+DCHgoZ/h4ie8tvj1E7I7n9DwJUnlLNXEJ0v8
-         hbWrUrv6+uYtVoE+gw5wDHcJuaK06IysXhoZ6ctw=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBG8fDx6008225
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 16 Dec 2019 02:41:13 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
- Dec 2019 02:41:13 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 16 Dec 2019 02:41:13 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBG8f9Sv078293;
-        Mon, 16 Dec 2019 02:41:10 -0600
-Subject: Re: [PATCH v3 4/7] mmc: sdhci: Add quirk for disabling DTO during
- erase command
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <kishon@ti.com>, <mark.rutland@arm.com>, <robh+dt@kernel.org>,
-        <ulf.hansson@linaro.org>, <zhang.chunyan@linaro.org>,
-        <tony@atomide.com>
-References: <20191210095151.15441-1-faiz_abbas@ti.com>
- <20191210095151.15441-5-faiz_abbas@ti.com>
- <003f7e7a-a762-5355-9404-4a6655754fb0@intel.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <09bb8f31-534d-c278-45c3-e0314286819c@ti.com>
-Date:   Mon, 16 Dec 2019 14:12:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <003f7e7a-a762-5355-9404-4a6655754fb0@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Mon, 16 Dec 2019 03:43:34 -0500
+Received: from orion.localdomain ([77.2.44.177]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N2jO8-1hiOOQ3fYa-0137DZ; Mon, 16 Dec 2019 09:43:02 +0100
+From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] drivers: char: tpm: remove unneeded MODULE_VERSION() usage
+Date:   Mon, 16 Dec 2019 09:42:30 +0100
+Message-Id: <20191216084230.31412-1-info@metux.net>
+X-Mailer: git-send-email 2.11.0
+X-Provags-ID: V03:K1:ZRMRCvGtq21lbtgskvbS5prFUgst+5RwJZEQW66QiN+qjkuMlBc
+ uGZLISeYLgQ9heOIGqmejXQW6EJ1Yj9dlSn4uQwVBS1GCATDsnRMdpuN2L0Y/QUQihyF0/5
+ Py17FBwzilsZjijPn/vtG8iHe13gTG4QALNK+LcHtpbLNoRNZbWECYtzyjqi0Lcjg6loX+I
+ NHKQcxcT7bFsh1zJN5JKA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Vjz3eEF+RtM=:F0xI2+yKDrF/uAcYVylI+4
+ ahqQZRJcfO3yYU1eNu6//nO3A6Ja3NgWdT9Nc0GvRRrlI4wnqJCBw5wuAPKMKaGzyld0IL5St
+ J9D92bkdON63U8qjqD1sZkeLSj8Qmc9EhmWtstpsHfeOrVDb7D0V19qwrQNJTwIMlwzfMLe3I
+ cJaYKAmHjbNyjk6Q64WnKRg5GFFVlVwZmMyVOckx3/sD2MyJLgBrbqPvEBROBDJJgNDw8nnUe
+ kEFF05o6SpkkOjCuZUYVZOL+aD4SaAbmeyn/ZuNesS4j30Qj3XMU89WnQC6r/PT+IZf7wX4iX
+ m46zrRlJ1bx49wb/yBxbWbn6JK0F1zK9VZXpJpDLzccyjsVmvGCl9vWVZXEduyj94+mjCzT31
+ jYOzPuGa8V5aOcBXAb0zpReZwFAt2IC4tB3byXiP7g7wUWhVuRTpVEBiUl4patVJzzpwRy0hk
+ c5wllrnS1XY9Nq04xi6kK/2Qw/XzoKPKpydCQ8jW8ej2lhJCxpZEHtkTGxbQl5VW3LqPtnuZv
+ VZqUp/x+JicXB9T8BVb9Nzf2Oj3NONihS5xbJI0CCbXIgdB/BQSE1D1nVZOy2WZgWcwY2yFno
+ VQscnZT3NyJo4ev9PifZVok1856aobhigBtC0lyS1au2onN2P0dvdCdz+Z6hVY0hD0jir/F21
+ /9q3/Oao7UyStGt3D4DJz3oDlX/pf0In9Iasp4HBcLtEUkqgqR6U754W+XX+Tf/cyG2JjB9qA
+ KRvyBWA7jdZAyv6MJdsjja897fr69VHC02t1JPSbZUQO+kkOAVdWg3ZaM/uAXmXMxUvMa8Szn
+ msY6NWOyGD9r64v0G6KPQeiLMug3ZEqarR12hTPzvc7w306zwmigf+dX8vM4f9re/a8GbP5UN
+ gFgHs04gu0r0wfJ2MTnA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Adrian,
+Remove MODULE_VERSION(), as it isn't needed at all: the only version
+making sense is the kernel version.
 
+See also: https://lkml.org/lkml/2017/11/22/480
 
-On 13/12/19 3:10 pm, Adrian Hunter wrote:
-> On 10/12/19 11:51 am, Faiz Abbas wrote:
->> Some controllers might prematurely issue a data timeout during an erase
->> command. Add a quirk to disable the interrupt when an erase command is
->> issued.
->>
->> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
->> ---
->>  drivers/mmc/host/sdhci.c | 5 +++++
->>  drivers/mmc/host/sdhci.h | 2 ++
->>  2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 6f3d4991bee1..b8934c50b9c4 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -1532,6 +1532,11 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
->>  	/* Initially, a command has no error */
->>  	cmd->error = 0;
->>  
->> +	if (cmd->opcode == MMC_ERASE &&
->> +	    (host->quirks2 & SDHCI_QUIRK2_DISABLE_DTO_FOR_ERASE)) {
->> +		sdhci_set_data_timeout_irq(host, false);
->> +	}
-> 
-> If you factor out __sdhci_set_timeout() like below then
-> you could implement ->set_timeout() to do this.
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index ad6d2f93aa0b..389e3239eadc 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1002,27 +1002,28 @@ static void sdhci_set_data_timeout_irq(struct sdhci_host *host, bool enable)
->  	sdhci_writel(host, host->ier, SDHCI_SIGNAL_ENABLE);
->  }
->  
-> -static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
-> +void __sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
->  {
-> -	u8 count;
-> -
-> -	if (host->ops->set_timeout) {
-> -		host->ops->set_timeout(host, cmd);
-> -	} else {
-> -		bool too_big = false;
-> -
-> -		count = sdhci_calc_timeout(host, cmd, &too_big);
-> +	bool too_big = false;
-> +	u8 count = sdhci_calc_timeout(host, cmd, &too_big);
-> +
-> +	if (too_big && host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
-> +		sdhci_calc_sw_timeout(host, cmd);
-> +		sdhci_set_data_timeout_irq(host, false);
-> +	} else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
-> +		sdhci_set_data_timeout_irq(host, true);
-> +	}
->  
-> -		if (too_big &&
-> -		    host->quirks2 & SDHCI_QUIRK2_DISABLE_HW_TIMEOUT) {
-> -			sdhci_calc_sw_timeout(host, cmd);
-> -			sdhci_set_data_timeout_irq(host, false);
-> -		} else if (!(host->ier & SDHCI_INT_DATA_TIMEOUT)) {
-> -			sdhci_set_data_timeout_irq(host, true);
-> -		}
-> +	sdhci_writeb(host, count, SDHCI_TIMEOUT_CONTROL);
-> +}
-> +EXPORT_SYMBOL_GPL(__sdhci_set_timeout);
->  
-> -		sdhci_writeb(host, count, SDHCI_TIMEOUT_CONTROL);
-> -	}
-> +static void sdhci_set_timeout(struct sdhci_host *host, struct mmc_command *cmd)
-> +{
-> +	if (host->ops->set_timeout)
-> +		host->ops->set_timeout(host, cmd);
-> +	else
-> +		__sdhci_set_timeout(host, cmd);
->  }
+Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+---
+ drivers/char/tpm/st33zp24/i2c.c      | 1 -
+ drivers/char/tpm/st33zp24/spi.c      | 1 -
+ drivers/char/tpm/st33zp24/st33zp24.c | 1 -
+ drivers/char/tpm/tpm-interface.c     | 1 -
+ drivers/char/tpm/tpm_atmel.c         | 1 -
+ drivers/char/tpm/tpm_crb.c           | 1 -
+ drivers/char/tpm/tpm_i2c_infineon.c  | 1 -
+ drivers/char/tpm/tpm_ibmvtpm.c       | 1 -
+ drivers/char/tpm/tpm_infineon.c      | 1 -
+ drivers/char/tpm/tpm_nsc.c           | 1 -
+ drivers/char/tpm/tpm_tis.c           | 1 -
+ drivers/char/tpm/tpm_tis_core.c      | 1 -
+ drivers/char/tpm/tpm_vtpm_proxy.c    | 1 -
+ 13 files changed, 13 deletions(-)
 
-Ok. I'll add the refactoring as a separate patch.
+diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
+index 35333b65acd1..71df056f14c9 100644
+--- a/drivers/char/tpm/st33zp24/i2c.c
++++ b/drivers/char/tpm/st33zp24/i2c.c
+@@ -313,5 +313,4 @@ module_i2c_driver(st33zp24_i2c_driver);
+ 
+ MODULE_AUTHOR("TPM support (TPMsupport@list.st.com)");
+ MODULE_DESCRIPTION("STM TPM 1.2 I2C ST33 Driver");
+-MODULE_VERSION("1.3.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
+index 26e09de50f1e..94ceced4d57d 100644
+--- a/drivers/char/tpm/st33zp24/spi.c
++++ b/drivers/char/tpm/st33zp24/spi.c
+@@ -430,5 +430,4 @@ module_spi_driver(st33zp24_spi_driver);
+ 
+ MODULE_AUTHOR("TPM support (TPMsupport@list.st.com)");
+ MODULE_DESCRIPTION("STM TPM 1.2 SPI ST33 Driver");
+-MODULE_VERSION("1.3.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/st33zp24/st33zp24.c b/drivers/char/tpm/st33zp24/st33zp24.c
+index 37bb13f516be..60269b6ac470 100644
+--- a/drivers/char/tpm/st33zp24/st33zp24.c
++++ b/drivers/char/tpm/st33zp24/st33zp24.c
+@@ -646,5 +646,4 @@ EXPORT_SYMBOL(st33zp24_pm_resume);
+ 
+ MODULE_AUTHOR("TPM support (TPMsupport@list.st.com)");
+ MODULE_DESCRIPTION("ST33ZP24 TPM 1.2 driver");
+-MODULE_VERSION("1.3.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index a438b1206fcb..91d4584f399d 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -514,5 +514,4 @@ module_exit(tpm_exit);
+ 
+ MODULE_AUTHOR("Leendert van Doorn (leendert@watson.ibm.com)");
+ MODULE_DESCRIPTION("TPM Driver");
+-MODULE_VERSION("2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_atmel.c b/drivers/char/tpm/tpm_atmel.c
+index 54a6750a6757..35bf249cc95a 100644
+--- a/drivers/char/tpm/tpm_atmel.c
++++ b/drivers/char/tpm/tpm_atmel.c
+@@ -231,5 +231,4 @@ module_exit(cleanup_atmel);
+ 
+ MODULE_AUTHOR("Leendert van Doorn (leendert@watson.ibm.com)");
+ MODULE_DESCRIPTION("TPM Driver");
+-MODULE_VERSION("2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index a9dcf31eadd2..3e72b7b99cce 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -748,5 +748,4 @@ static struct acpi_driver crb_acpi_driver = {
+ module_acpi_driver(crb_acpi_driver);
+ MODULE_AUTHOR("Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>");
+ MODULE_DESCRIPTION("TPM2 Driver");
+-MODULE_VERSION("0.1");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
+index a19d32cb4e94..8920b7c19fcb 100644
+--- a/drivers/char/tpm/tpm_i2c_infineon.c
++++ b/drivers/char/tpm/tpm_i2c_infineon.c
+@@ -731,5 +731,4 @@ static struct i2c_driver tpm_tis_i2c_driver = {
+ module_i2c_driver(tpm_tis_i2c_driver);
+ MODULE_AUTHOR("Peter Huewe <peter.huewe@infineon.com>");
+ MODULE_DESCRIPTION("TPM TIS I2C Infineon Driver");
+-MODULE_VERSION("2.2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
+index 78cc52690177..034d24758915 100644
+--- a/drivers/char/tpm/tpm_ibmvtpm.c
++++ b/drivers/char/tpm/tpm_ibmvtpm.c
+@@ -723,5 +723,4 @@ module_exit(ibmvtpm_module_exit);
+ 
+ MODULE_AUTHOR("adlai@us.ibm.com");
+ MODULE_DESCRIPTION("IBM vTPM Driver");
+-MODULE_VERSION("1.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+index 9c924a1440a9..8a58966c5c9b 100644
+--- a/drivers/char/tpm/tpm_infineon.c
++++ b/drivers/char/tpm/tpm_infineon.c
+@@ -621,5 +621,4 @@ module_pnp_driver(tpm_inf_pnp_driver);
+ 
+ MODULE_AUTHOR("Marcel Selhorst <tpmdd@sirrix.com>");
+ MODULE_DESCRIPTION("Driver for Infineon TPM SLD 9630 TT 1.1 / SLB 9635 TT 1.2");
+-MODULE_VERSION("1.9.2");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_nsc.c b/drivers/char/tpm/tpm_nsc.c
+index 038701d48351..6ab2fe7e8782 100644
+--- a/drivers/char/tpm/tpm_nsc.c
++++ b/drivers/char/tpm/tpm_nsc.c
+@@ -412,5 +412,4 @@ module_exit(cleanup_nsc);
+ 
+ MODULE_AUTHOR("Leendert van Doorn (leendert@watson.ibm.com)");
+ MODULE_DESCRIPTION("TPM Driver");
+-MODULE_VERSION("2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+index e7df342a317d..713773ebff81 100644
+--- a/drivers/char/tpm/tpm_tis.c
++++ b/drivers/char/tpm/tpm_tis.c
+@@ -397,5 +397,4 @@ module_init(init_tis);
+ module_exit(cleanup_tis);
+ MODULE_AUTHOR("Leendert van Doorn (leendert@watson.ibm.com)");
+ MODULE_DESCRIPTION("TPM Driver");
+-MODULE_VERSION("2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 8af2cee1a762..1aeb11e5fd5b 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -1150,5 +1150,4 @@ EXPORT_SYMBOL_GPL(tpm_tis_resume);
+ 
+ MODULE_AUTHOR("Leendert van Doorn (leendert@watson.ibm.com)");
+ MODULE_DESCRIPTION("TPM Driver");
+-MODULE_VERSION("2.0");
+ MODULE_LICENSE("GPL");
+diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+index 91c772e38bb5..18f14162d1c1 100644
+--- a/drivers/char/tpm/tpm_vtpm_proxy.c
++++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+@@ -729,5 +729,4 @@ module_exit(vtpm_module_exit);
+ 
+ MODULE_AUTHOR("Stefan Berger (stefanb@us.ibm.com)");
+ MODULE_DESCRIPTION("vTPM Driver");
+-MODULE_VERSION("0.1");
+ MODULE_LICENSE("GPL");
+-- 
+2.11.0
 
-Thanks,
-Faiz
