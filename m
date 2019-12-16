@@ -2,73 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 612B11203A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBD0E1203AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfLPLUj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:20:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:50650 "EHLO foss.arm.com"
+        id S1727469AbfLPLUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:20:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727086AbfLPLUj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:20:39 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA0091FB;
-        Mon, 16 Dec 2019 03:20:38 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 493DF3F6CF;
-        Mon, 16 Dec 2019 03:20:38 -0800 (PST)
-Date:   Mon, 16 Dec 2019 11:20:36 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jim Quinlan <james.quinlan@broadcom.com>
-Cc:     linux-spi@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: bcm2835: don't print error on clk_get() DEFER
-Message-ID: <20191216112036.GA4161@sirena.org.uk>
-References: <20191212231213.29061-1-jquinlan@broadcom.com>
- <20191213114138.GB4644@sirena.org.uk>
- <CA+-6iNz4WVJzfntJ5CUXBYvqQG4kEj8g8g_HOxZN5rFWTUvv3g@mail.gmail.com>
+        id S1727086AbfLPLUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:20:47 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77993206CB;
+        Mon, 16 Dec 2019 11:20:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576495247;
+        bh=Mpc6KplCorpdPPjd389Z2K1v+WF0Ie2Wk28APYU3EIs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UGMeVmTnoijpaXf0URFSEnCAv2QMv1w4vRp1RBYhvOjr4CWEskkLNUgDf2fd+/91T
+         u9eHV45b6wdXZsbDBv6MufHf+l5akQjQKX51yICGrGeVg8jgDQZilSbp6BAom+IqcC
+         Y7wsZm3BFQcwZ8XuLl9OoumuAFnRAITIuNShN1oI=
+Date:   Mon, 16 Dec 2019 12:20:42 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>
+Subject: Re: [PATCH v12 1/7] dt-bindings: sun6i-dsi: Document A64 MIPI-DSI
+ controller
+Message-ID: <20191216112042.f4xvlgnbm4dk6wkq@gilmour.lan>
+References: <20191203134816.5319-1-jagan@amarulasolutions.com>
+ <20191203134816.5319-2-jagan@amarulasolutions.com>
+ <20191204133600.gnv6dnhk6upe7xod@gilmour.lan>
+ <CAMty3ZDU57Hj3ZSBC6sSMFWN9-HQadA03hmXUNUVS1W0UQQ3DA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="j7bmzwiznwnaw3ax"
 Content-Disposition: inline
-In-Reply-To: <CA+-6iNz4WVJzfntJ5CUXBYvqQG4kEj8g8g_HOxZN5rFWTUvv3g@mail.gmail.com>
-X-Cookie: Backed up the system lately?
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAMty3ZDU57Hj3ZSBC6sSMFWN9-HQadA03hmXUNUVS1W0UQQ3DA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---TB36FDmn/VVEgNH/
+--j7bmzwiznwnaw3ax
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Dec 13, 2019 at 10:33:41AM -0500, Jim Quinlan wrote:
+On Mon, Dec 16, 2019 at 04:37:20PM +0530, Jagan Teki wrote:
+> On Wed, Dec 4, 2019 at 7:06 PM Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > On Tue, Dec 03, 2019 at 07:18:10PM +0530, Jagan Teki wrote:
+> > > The MIPI DSI controller in Allwinner A64 is similar to A33.
+> > >
+> > > But unlike A33, A64 doesn't have DSI_SCLK gating so it is valid
+> > > to have separate compatible for A64 on the same driver.
+> > >
+> > > DSI_SCLK uses mod clock-names on dt-bindings, so the same
+> > > is not required for A64.
+> > >
+> > > On that note
+> > > - A64 require minimum of 1 clock like the bus clock
+> > > - A33 require minimum of 2 clocks like both bus, mod clocks
+> > >
+> > > So, update dt-bindings so-that it can document both A33,
+> > > A64 bindings requirements.
+> > >
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v12:
+> > > - Use 'enum' instead of oneOf+const
+> > >
+> > >  .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 20 +++++++++++++++++--
+> > >  1 file changed, 18 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> > > index dafc0980c4fa..b91446475f35 100644
+> > > --- a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> > > +++ b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
+> > > @@ -15,7 +15,9 @@ properties:
+> > >    "#size-cells": true
+> > >
+> > >    compatible:
+> > > -    const: allwinner,sun6i-a31-mipi-dsi
+> > > +    enum:
+> > > +      - allwinner,sun6i-a31-mipi-dsi
+> > > +      - allwinner,sun50i-a64-mipi-dsi
+> > >
+> > >    reg:
+> > >      maxItems: 1
+> > > @@ -24,6 +26,8 @@ properties:
+> > >      maxItems: 1
+> > >
+> > >    clocks:
+> > > +    minItems: 1
+> > > +    maxItems: 2
+> > >      items:
+> > >        - description: Bus Clock
+> > >        - description: Module Clock
+> > > @@ -63,13 +67,25 @@ required:
+> > >    - reg
+> > >    - interrupts
+> > >    - clocks
+> > > -  - clock-names
+> > >    - phys
+> > >    - phy-names
+> > >    - resets
+> > >    - vcc-dsi-supply
+> > >    - port
+> > >
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +         compatible:
+> > > +           contains:
+> > > +             const: allwinner,sun6i-a31-mipi-dsi
+> > > +      then:
+> > > +        properties:
+> > > +          clocks:
+> > > +            minItems: 2
+> > > +        required:
+> > > +          - clock-names
+> > > +
+> >
+> > Your else condition should check that the number of clocks items is 1
+> > on the A64
+>
+> But the minItems mentioned as 1 in clocks, which is unchanged number
+> by default. doesn't it sufficient?
 
-> Understood; I could do a dev_dbg() on -EPROBE_DEFER and dev_err() on
-> all other errors -- would that work for you?
+In the main schema, it's said that the clocks property can have one or
+two elements (to cover the A31 case that has one, and the A64 case
+that has 2).
 
-Yes, that sounds good.
+This is fine.
 
---TB36FDmn/VVEgNH/
+Later on, you enforce that the A64 has two elements, and this is fine
+too.
+
+However, you never check that on the A31 you only have one clock, and
+you could very well have two and no one would notice.
+
+Maxime
+
+--j7bmzwiznwnaw3ax
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl33aIEACgkQJNaLcl1U
-h9AC6wf/R5j2jqumwfRVO/ylQSKn8tJJydGHwHAhVQa0OkQU0O+BqOeMBYdKfgJO
-bN4q07uuvPEXt/IAhHh3RGvlQmVjCjmsh4fi+cErbP94Vq4RQKk0C8Oz43mYDAdd
-N0L0RT3ZaL3Lx8VB9zpBOcoVIlnvxp5NsadklXFomNw0jPODBmZigQ2JozKGrQJg
-JNPxPpJZbSm2CIiX+mov8XYMYY65n5RGj2VN2EfN2vlkoLyCG5KG81OwC+dfj0UN
-+5pC/lfxyOh7mLgdPOpbN8JyGBp+ZmZQCMVMI9VXohBg3O38xiKoc/VX3kmhxGER
-diLze8h6JB5EC49xjFrPPHxauD0IQw==
-=rvrz
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfdoigAKCRDj7w1vZxhR
+xeS/AP9UV7Xns9t5VOhLEF+tbuQ+jcstzHVAz1d0xXveWqK7uAEAqK1mC/scTm09
+qaYD48OkBiF38cUHEBrXBJdLGSE9gQI=
+=7xiu
 -----END PGP SIGNATURE-----
 
---TB36FDmn/VVEgNH/--
+--j7bmzwiznwnaw3ax--
