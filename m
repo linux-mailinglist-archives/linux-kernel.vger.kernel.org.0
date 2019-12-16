@@ -2,130 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8801209BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:31:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 553861209C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:32:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfLPPbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:31:09 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34815 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbfLPPbJ (ORCPT
+        id S1728435AbfLPPcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:32:00 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:33225 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728248AbfLPPb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:31:09 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t2so7812269wrr.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:31:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=F7qxJLY2B0q2S9xWqYQhOGVkpLg1b0U2h68SKIpYOSM=;
-        b=ZQf1ByAmTqQWYrXd/L/q1azTVA3vCJAg4DgVgTEvElv+S0USzhiaovMwqkHiVWz5Zr
-         kdgo2xjU2VKrukZA2Y3G9F0BaJn1cGMlJHEbLcD/rfdgsk5qcSjvrDsgDpMXwNMl0xcj
-         IU5RiIoHNXVOhpsLIlFmT2Sd8Loyb1APb+nlzEk2uTINsYuL/wN+ktFD6wOFMwpzmfAN
-         E97qqYqiPMia2UzBfFzaQl2jvKP0phVv34LdrbErwwjPr+5eIJ+n3CSC2vNG2MuT2ziB
-         R9Ke340k9MtgEAJmAX6liOEadzi90oEM4LsBju+Xywo1SHhrdCDn9Nq5dOd4vBSBk1V0
-         AhwA==
+        Mon, 16 Dec 2019 10:31:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576510317;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=b4ukn9jg5iLQIvGzXAVPG9KPLZpvMGtjikA+c6QsDvA=;
+        b=hJVc+R9+/TiZe3hnaBI2XKmeoRfJMqiFauOZYEqYCoBVofozMsSBIeK1Y7W+Tdy/HeZjcG
+        XLTrtuWVt/+WWbTmpd/40i9dFSaySlsQhF2AUU5mcjelVGHDptfCsC7rtJ/62jrQvP6TYE
+        1S7h76RqMCuBBJjYvVYWyfNpjICaGIc=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-76-4E2355ysOluWgkCT4CS3Zw-1; Mon, 16 Dec 2019 10:31:56 -0500
+X-MC-Unique: 4E2355ysOluWgkCT4CS3Zw-1
+Received: by mail-wr1-f70.google.com with SMTP id z14so3935771wrs.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:31:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=F7qxJLY2B0q2S9xWqYQhOGVkpLg1b0U2h68SKIpYOSM=;
-        b=RxKLUT37WRRUu2NCeXlJr5p7eOmF8XrDKhTGPmDaEJWL7IZOc9Bx1FZhpbRtXyncoh
-         vLnp0JbsqJBtniKo3hRaj7KPDiK7+rB79MqNSdiOIId7mXhmi2JcJ8jxUwA/cpMKbjte
-         pWPUacnGe6G2LIp+8R+Pz8w9OVoy4gNSwekzV3yd+5C7A1OMsuuo8/EvznvayZPDxBCx
-         vTD4GOgb/Yz0m/pPFk9l0V0UACxmEfOtIbjlKOIdlFrTF3ji7NnZQbxqMaR6/HJjrt0C
-         DgxSAOGXkC5Xoq5P5cJ08dBhEMjvC5GRKFjB4Ylzi/KbFmA/ZYupmJuzfnPJvv9qFULh
-         NTcw==
-X-Gm-Message-State: APjAAAW3xTaOYv38czmKMSCjC/6Gj5gHPynurZI2EBxaB2PzZHsTcAvK
-        /54bYh6l1uheeK4Uw/F/KuMRkQ==
-X-Google-Smtp-Source: APXvYqzXaCm+VcadKjSIjeuwTuxX1mlnsuNzVNjfB1+gqraaFYRglw7XZsHB6451b/EXWV+RRXhjaw==
-X-Received: by 2002:adf:e887:: with SMTP id d7mr29983243wrm.162.1576510267203;
-        Mon, 16 Dec 2019 07:31:07 -0800 (PST)
-Received: from dell ([185.17.149.202])
-        by smtp.gmail.com with ESMTPSA id u24sm14478768wml.10.2019.12.16.07.31.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 07:31:06 -0800 (PST)
-Date:   Mon, 16 Dec 2019 15:31:06 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH v4 4/5] mfd: rn5t618: add more subdevices
-Message-ID: <20191216153106.GK2369@dell>
-References: <20191211215409.32764-1-andreas@kemnade.info>
- <20191211215409.32764-5-andreas@kemnade.info>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=b4ukn9jg5iLQIvGzXAVPG9KPLZpvMGtjikA+c6QsDvA=;
+        b=DN5mdBSu9VatUsfejBf3wg6LolcILeCWAT1XmQ7Lqe2/2bAYnwSag1RwiPYSFCfHUq
+         V8WQWfDX11IG/Bkyf/+rZ0lJo246uk5BAwxWDcdJSym82GXQSBwSlapyCRY/E6Pb0H5g
+         iUJP1xdcY/oVBu0JXNUqN6dt9XixZeKt2ljF+7xyxNzGPgYaNnKFsyXhIEZIxQhVrIf5
+         IpcJsRO6v5q7VEbzDXIhnhBi1VXD6cVAlg3Y8I/hPXhOdSU+3DGCodmMK07x7H/K0ZlR
+         SC1wPPgncZBHk/eeY3OTKleJqOegS5qvq94asynlIg1l/DAfad4JIons5saCMw6gd505
+         t4XA==
+X-Gm-Message-State: APjAAAXmo3JuQq+bQSZP0keWXrVBXnpt0VROrQ0KRh+q2r1v6nKdeUB3
+        C+LqCEvT3683z2RkRXZ3TVbomkNtZA+sGcisovjvVCSVTilnFzstjTxnwtr0+RSmlJh2eDWgHFq
+        czc+ARXplo7PILNw6teOxktP7
+X-Received: by 2002:a5d:4c85:: with SMTP id z5mr30176063wrs.42.1576510312161;
+        Mon, 16 Dec 2019 07:31:52 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzSt8LzC5weKbJysR0X7nBKyx8pcDL+THj78l8aUphiEurT2I+K1QUcSiZnvcelJLAhVItfpA==
+X-Received: by 2002:a5d:4c85:: with SMTP id z5mr30176037wrs.42.1576510311911;
+        Mon, 16 Dec 2019 07:31:51 -0800 (PST)
+Received: from ?IPv6:2001:b07:6468:f312:cde8:2463:95a9:1d81? ([2001:b07:6468:f312:cde8:2463:95a9:1d81])
+        by smtp.gmail.com with ESMTPSA id t190sm12991878wmt.44.2019.12.16.07.31.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2019 07:31:51 -0800 (PST)
+Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Christophe de Dinechin <christophe.de.dinechin@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+References: <20191129213505.18472-1-peterx@redhat.com>
+ <20191129213505.18472-5-peterx@redhat.com> <m1lfrihj2n.fsf@dinechin.org>
+ <20191213202324.GI16429@xz-x1>
+ <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
+ <20191214162644.GK16429@xz-x1>
+ <0f084179-2a5d-e8d9-5870-3cc428105596@redhat.com>
+ <20191216152647.GD83861@xz-x1>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Message-ID: <fa25d729-a2fb-85af-a968-1dedc754a55d@redhat.com>
+Date:   Mon, 16 Dec 2019 16:31:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <20191216152647.GD83861@xz-x1>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191211215409.32764-5-andreas@kemnade.info>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Dec 2019, Andreas Kemnade wrote:
-
-> The RC5T619 has a RTC which is missing in the
-> RN5T618. Add it as subdevice to prepare for their implementation
+On 16/12/19 16:26, Peter Xu wrote:
+> On Mon, Dec 16, 2019 at 10:29:36AM +0100, Paolo Bonzini wrote:
+>> On 14/12/19 17:26, Peter Xu wrote:
+>>> On Sat, Dec 14, 2019 at 08:57:26AM +0100, Paolo Bonzini wrote:
+>>>> On 13/12/19 21:23, Peter Xu wrote:
+>>>>>> What is the benefit of using u16 for that? That means with 4K pages, you
+>>>>>> can share at most 256M of dirty memory each time? That seems low to me,
+>>>>>> especially since it's sufficient to touch one byte in a page to dirty it.
+>>>>>>
+>>>>>> Actually, this is not consistent with the definition in the code ;-)
+>>>>>> So I'll assume it's actually u32.
+>>>>> Yes it's u32 now.  Actually I believe at least Paolo would prefer u16
+>>>>> more. :)
+>>>>
+>>>> It has to be u16, because it overlaps the padding of the first entry.
+>>>
+>>> Hmm, could you explain?
+>>>
+>>> Note that here what Christophe commented is on dirty_index,
+>>> reset_index of "struct kvm_dirty_ring", so imho it could really be
+>>> anything we want as long as it can store a u32 (which is the size of
+>>> the elements in kvm_dirty_ring_indexes).
+>>>
+>>> If you were instead talking about the previous union definition of
+>>> "struct kvm_dirty_gfns" rather than "struct kvm_dirty_ring", iiuc I've
+>>> moved those indices out of it and defined kvm_dirty_ring_indexes which
+>>> we expose via kvm_run, so we don't have that limitation as well any
+>>> more?
+>>
+>> Yeah, I meant that since the size has (had) to be u16 in the union, it
+>> need not be bigger in kvm_dirty_ring.
+>>
+>> I don't think having more than 2^16 entries in the *per-CPU* ring buffer
+>> makes sense; lagging in recording dirty memory by more than 256 MiB per
+>> CPU would mean a large pause later on resetting the ring buffers (your
+>> KVM_CLEAR_DIRTY_LOG patches found the sweet spot to be around 1 GiB for
+>> the whole system).
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v3:
-> - alignment cleanup
->  drivers/mfd/rn5t618.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
+> That's right, 1G could probably be a "common flavor" for guests in
+> that case.
 > 
-> diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
-> index d78eb29b94a4..18d56a732b20 100644
-> --- a/drivers/mfd/rn5t618.c
-> +++ b/drivers/mfd/rn5t618.c
-> @@ -22,6 +22,12 @@ static const struct mfd_cell rn5t618_cells[] = {
->  	{ .name = "rn5t618-wdt" },
->  };
->  
-> +static const struct mfd_cell rc5t619_cells[] = {
-> +	{ .name = "rn5t618-regulator" },
-> +	{ .name = "rc5t619-rtc" },
-> +	{ .name = "rn5t618-wdt" },
-> +};
-> +
->  static bool rn5t618_volatile_reg(struct device *dev, unsigned int reg)
->  {
->  	switch (reg) {
-> @@ -173,8 +179,14 @@ static int rn5t618_i2c_probe(struct i2c_client *i2c,
->  		return ret;
->  	}
->  
-> -	ret = devm_mfd_add_devices(&i2c->dev, -1, rn5t618_cells,
-> -				   ARRAY_SIZE(rn5t618_cells), NULL, 0, NULL);
-> +	if (priv->variant == RC5T619)
-> +		ret = devm_mfd_add_devices(&i2c->dev, -1, rc5t619_cells,
+> Though I wanted to use u64 only because I wanted to prepare even
+> better for future potential changes as long as it won't hurt much.
 
-Ref: The "-1", please use this as an opportunity to use the defines.
+No u64, please.  u32 I can agree with, 16-bit *should* be enough but it
+is a bit tight, so let's make it 32-bit if we drop the union idea.
 
-> +					   ARRAY_SIZE(rc5t619_cells),
-> +					   NULL, 0, NULL);
-> +	else
+Paolo
 
-Are you sure it's not possible for 'variant' to be an unsupported
-device?
-
-> +		ret = devm_mfd_add_devices(&i2c->dev, -1, rn5t618_cells,
-> +					   ARRAY_SIZE(rn5t618_cells),
-> +					   NULL, 0, NULL);
->  	if (ret) {
->  		dev_err(&i2c->dev, "failed to add sub-devices: %d\n", ret);
->  		return ret;
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
