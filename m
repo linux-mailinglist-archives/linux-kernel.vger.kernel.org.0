@@ -2,88 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6961121B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DA70121B93
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:12:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfLPVHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 16:07:38 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37024 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfLPVHi (ORCPT
+        id S1726852AbfLPVMc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 16:12:32 -0500
+Received: from mail-pg1-f201.google.com ([209.85.215.201]:44474 "EHLO
+        mail-pg1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfLPVMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 16:07:38 -0500
-Received: by mail-oi1-f194.google.com with SMTP id h19so358218oih.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:07:37 -0800 (PST)
+        Mon, 16 Dec 2019 16:12:32 -0500
+Received: by mail-pg1-f201.google.com with SMTP id o21so4712053pgm.11
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:12:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=Xf+PaVfK+fxzSPWZXkO3BuD6UEDzGPf8/U5sJKPnSqc=;
-        b=j8lbUXIylU6AeuPYIm+5uxBq5U6RJpNmZZMLo5ctDECJri01nRMDpJ5qRfxwwPLKRh
-         oumhJo/nkLVN3J+uYBGhFb7psH4p92UqoS8mv3UClvK2Rj8Hfce7HwlbKt3mkFhRdAkP
-         TnIu+WS+NFDon5qVreiiJZ9yN5AOPtE73Nw0iuHl+i9MUoZYD5COw6VuUSjQ31RCI8BC
-         FrP54MUwtkLp1q8MMg6IunDKh79oT6fC7Af9xdCCICHERafZPC+KyUgtaj6kxewFTu4n
-         /mDrkysePXG5mRQudXLKdRO6CdfBN6Fb/JcCBLQ58167AzGCHTZf2a5HXnOT/ZA3qYSe
-         7LSw==
+        bh=9y78Nkgcr0rFazEi3lkzksbWvy3PwZ64nocKC8qyZAo=;
+        b=cYa9EI274JIRQVbIgi3maMgKVcS+usMKroHNF+v6wrxHGyZjvfzKlpTkLFSAHsVZuU
+         mu1Imsuic3lrLqfSw7GgejFmc0YlJwv2NSfjtTpc0Ms2KKD42uJI5QJFyVovMlzCIw7e
+         jpEj2EqAbp+YBRYJe6tkj7tq6vrC79ddedqgneklA5rzKh1aD3D50VZcsNN+N0hrVGzl
+         Mg/5sK50a9U7hTr3NMp0NaBlb2znTdFR392MnuOhJEoetQQ3k8I/tg3Vz0TzsEXVdxfF
+         4E475LBNK+Bo3YVzCDlwWT3ra1+z8EdakdER6Lhg0adCeq1nTPmU2m+hoIAd0TJWdHZ/
+         5A5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xf+PaVfK+fxzSPWZXkO3BuD6UEDzGPf8/U5sJKPnSqc=;
-        b=b0LC3zVkEJCP1Paakyn7RcDVkhOX+mame5v1Z0UYtnujPTJgBnnuWaUhr79jyHJ+TR
-         JUS+h5K+NOxTEosj/s3oi+8iFZTJ+iff491bDYLMfrA/BzmOI6wKHaqcGieczuF215Da
-         6vtnq8vyYaOVNbBMfmAM8TeKCDg01+XoP8KGWB1kdw5nQigyfdDLC1rxK3gYyAW4puZO
-         7nFpeC5XHw9LWU5rWNaKh6F8zX/Qv0YWoie6ktV+WodZH9YZVQ6jrRSHYcfoJOgMkcFJ
-         2Y+vb3BbmZ3HDR93vbk2paEWNuC5ZFSXPTsFfn4IMFzEffCbnGEUk6SM14+zs2gsqjIa
-         1gsQ==
-X-Gm-Message-State: APjAAAXsfxwJv42tHZMGYmYWS8GP5vbFqOe9h0rTVh/gDIxub4fvsk2s
-        wg7T2OBh1URegqjy/cUEp4i6tjHvUXwCtmiACjP+/Q==
-X-Google-Smtp-Source: APXvYqzWzDWclkNVDspqgaIn1PCLoKAhYWLJAEqeDwyrdeQGyKLOwB+UvmXjFNWeRKfvZFp0VvkubgYEQrTULqVw92E=
-X-Received: by 2002:aca:c551:: with SMTP id v78mr600481oif.161.1576530457340;
- Mon, 16 Dec 2019 13:07:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20191216161059.269492-1-colin.king@canonical.com>
-In-Reply-To: <20191216161059.269492-1-colin.king@canonical.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Mon, 16 Dec 2019 13:07:26 -0800
-Message-ID: <CALAqxLVsFr6LLKvz9a5CRdddqhmMXUwKmfwqf3LRBbhksk5gHg@mail.gmail.com>
-Subject: Re: [PATCH][next] dma-buf: fix resource leak on -ENOTTY error return path
-To:     Colin King <colin.king@canonical.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Sandeep Patil <sspatil@android.com>,
-        linux-media@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "moderated list:DMA BUFFER SHARING FRAMEWORK" 
-        <linaro-mm-sig@lists.linaro.org>, kernel-janitors@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=9y78Nkgcr0rFazEi3lkzksbWvy3PwZ64nocKC8qyZAo=;
+        b=WabRKmUqJQT8w/rojfnus5blrJc0fdsIBhQJAF1NnmzbWe2J/VOUDOsqAakeXjjP/T
+         3aftsOGDUyibAtUfMDqlf8uI806VhdKfr1rFT8NgzSKWTDIZzZ2HSPeAn2uKzIrnG3nU
+         DBEybxjWCS/x5t3dO/KX0xoIvZUHkGn+x7Qzs6cig8x+Hq48oec67k4ThxBb46XJyzhz
+         AznVr60r60JY+RqaK6vak5lCVpmC6JQWtaIsmZrRiLNXaM05uiKtXiAUS7Uw7cNcIyOT
+         O3VGfaujV1BBI61HLVUXQrrmWw+bSEbl+eoPWJ0XzNkGMIlAMfn+Pbq8IhE9auIwa/Q3
+         /BAQ==
+X-Gm-Message-State: APjAAAWM3NGdm1+Y8zIr+E/LgJwzWFMBLfwvXAZ6ym4GbTxK6HgE9yK6
+        NTeEVemLeylxE6y0WZlDN7hG/+/AZsXGdDQoJ5U=
+X-Google-Smtp-Source: APXvYqzM6OEojY4VCiFd1sv/7bsVMZYLRqU+GCmZI8SZ+41MiloF4U9reK02kVuWF1zkYsIn/8n8u+A8EOwCZ5AYzrk=
+X-Received: by 2002:a63:5b0e:: with SMTP id p14mr21436286pgb.315.1576530751321;
+ Mon, 16 Dec 2019 13:12:31 -0800 (PST)
+Date:   Mon, 16 Dec 2019 13:12:28 -0800
+In-Reply-To: <20191212135724.331342-4-linux@dominikbrodowski.net>
+Message-Id: <20191216211228.153485-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+References: <20191212135724.331342-4-linux@dominikbrodowski.net>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+Subject: Re: [PATCH 3/3] init: use do_mount() instead of ksys_mount()
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     linux@dominikbrodowski.net
+Cc:     akpm@linux-foundation.org, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, rafael@kernel.org,
+        torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
+        clang-built-linux@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 8:11 AM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The -ENOTTY error return path does not free the allocated
-> kdata as it returns directly. Fix this by returning via the
-> error handling label err.
->
-> Addresses-Coverity: ("Resource leak")
-> Fixes: c02a81fba74f ("dma-buf: Add dma-buf heaps framework")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Shouldn't patches bake for a while in -next? (That way we catch regressions
+before they hit mainline?)
 
-Acked-by: John Stultz <john.stultz@linaro.org>
+This lit up our CI this morning.
 
-Thanks so much for submitting this!
+https://travis-ci.com/ClangBuiltLinux/continuous-integration/builds
 
-Sumit, do you mind queueing this up for drm-misc-next?
-
-thanks
--john
+(Apologies for missing context, replying via lore.kernel.org directions.)
+https://lore.kernel.org/lkml/20191212135724.331342-4-linux@dominikbrodowski.net/
