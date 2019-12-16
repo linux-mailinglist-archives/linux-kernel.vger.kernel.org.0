@@ -2,82 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4F821203D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:24:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A25B712030B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:57:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfLPLYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:24:43 -0500
-Received: from isilmar-4.linta.de ([136.243.71.142]:49676 "EHLO
-        isilmar-4.linta.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfLPLYA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:24:00 -0500
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-X-isilmar-external: YES
-Received: from light.dominikbrodowski.net (brodo.linta [10.1.0.102])
-        by isilmar-4.linta.de (Postfix) with ESMTPSA id 165DF200A62;
-        Mon, 16 Dec 2019 11:23:58 +0000 (UTC)
-Received: by light.dominikbrodowski.net (Postfix, from userid 1000)
-        id 7AEA020BC9; Mon, 16 Dec 2019 11:53:38 +0100 (CET)
-Date:   Mon, 16 Dec 2019 11:53:38 +0100
-From:   Dominik Brodowski <linux@dominikbrodowski.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        kvm list <kvm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
+        id S1727541AbfLPK5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:57:00 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:60582 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727403AbfLPK5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:57:00 -0500
+Received: from zn.tnic (p4FED3450.dip0.t-ipconnect.de [79.237.52.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4F9C71EC09F1;
+        Mon, 16 Dec 2019 11:56:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576493815;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QJiNMAg/GcgzaQCJvUqpS4i6rcn+NVQocqxvPz+M2GE=;
+        b=Gb2IOJSJuu/dh35XxyYuJc/OY2oU4XlmL4iWtLXcpQe3Ob3vcNvsPSHRvcrU4l0IAT01Xx
+        UP/4ENS+Rgl3XEL3f3W7Qp1+XaLCxHzbd+rchK+GG0MNJlJTzQh3xLOg27Ep9mAOUOwETN
+        JV14P8JYiSbuVvGIfuJsJQkCibzfSH8=
+Date:   Mon, 16 Dec 2019 11:54:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chris Clayton <chris2553@googlemail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: mainline-5.5.0-rc1: do_mount_root+0x6c/0x10d - kernel crash
- while mounting rootfs
-Message-ID: <20191216105338.GA163642@light.dominikbrodowski.net>
-References: <CA+G9fYuO7vMjsqkyXHZSU-pKEk0L0t9kQTfnd5xopVADyGwprw@mail.gmail.com>
- <CAK8P3a38ZhQcA0Vj-EtNzmH7+iuoOhPrQUzN-avxJn9iU2K5=Q@mail.gmail.com>
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: Oops booting 5.5.0-rc2
+Message-ID: <20191216105439.GB32241@zn.tnic>
+References: <3f2f9d0a-887a-6d44-994c-c53bd1c6a4e8@googlemail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a38ZhQcA0Vj-EtNzmH7+iuoOhPrQUzN-avxJn9iU2K5=Q@mail.gmail.com>
+In-Reply-To: <3f2f9d0a-887a-6d44-994c-c53bd1c6a4e8@googlemail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 11:22:04AM +0100, Arnd Bergmann wrote:
-> On Mon, Dec 16, 2019 at 10:15 AM Naresh Kamboju
-> <naresh.kamboju@linaro.org> wrote:
-> >
-> > The following kernel crash reported on qemu_x86_64 boot running
-> > 5.5.0-rc1 mainline kernel.
-> 
-> I looked for too long at v5.5-rc1 completely puzzled by how you got to this
-> object code before realizing that this is a git snapshot between -rc1 and -rc2.
-> 
-> The code in question was changed by a recent series from Dominik Brodowski,
-> the main difference being commit cccaa5e33525 ("init: use do_mount() instead
-> of ksys_mount()").
-> 
-> It looks like the NULL-check in ksys_mount()/copy_mount_options() is missing
-> from the new mount_block_root, so it passes a NULL pointer into strncpy().
-> 
-> Something like this should fix it (not tested):
+On Mon, Dec 16, 2019 at 10:41:18AM +0000, Chris Clayton wrote:
+> I get an oops during boot of 5.5.0-rc2. My root partition is on an SSD - /dev/nvme0n1p5.
 
-This equivalent patch by Linus already got some testing:
+Here's the fix:
 
 https://lore.kernel.org/lkml/CAHk-=wh8VLe3AEKhz=1bzSO=1fv4EM71EhufxuC=Gp=+bLhXoA@mail.gmail.com/
 
-Thanks,
-	Dominik
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
