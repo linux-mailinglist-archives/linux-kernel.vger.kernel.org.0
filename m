@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C586F121905
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:48:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAEA41218FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:48:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728275AbfLPSsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:48:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
+        id S1727948AbfLPRys (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:54:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbfLPRyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:54:32 -0500
+        id S1727056AbfLPRyo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:54:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4464120733;
-        Mon, 16 Dec 2019 17:54:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 790D72053B;
+        Mon, 16 Dec 2019 17:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518871;
-        bh=7b7jS37hdbkIbafvVGOIgdZ/TibNlW9EEmrV6xUZF9c=;
+        s=default; t=1576518884;
+        bh=ndc3JGPeqpyfTpYiqJ1JDgwtPbybME6dlFSWnvP9Yfs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U7Mlcjm+uDIVmzcWNVGqBMzbOOanepLz2CbDzE9rsN5p6Rk82R3z95+1DFEGqxZXZ
-         rC4uD+Spu6VEYJGDignL+Gax4rEVrOGizICIbrIEhplaGJt+trnYsmzCfduZ6k4l3E
-         ZbAPWH+UpA40r/UbXK9XRwjUu08ZldvDdkKRPjA0=
+        b=17QAzoRcxqysA/wGJej/DuAL0v6Ky/3NWFz+QdO77J6mXggGWAaLJakIR760ovaxp
+         86SySZnquLpdpxi8IxChy+KExbIdiWL/Hvhc6zmPoThc2cWTY3UcuPMdqvjq44UBqp
+         nMTUkEGGVKuOtAzoPx/B7vZ9WvvHNR/37eityw9A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 064/267] ACPI: fix acpi_find_child_device() invocation in acpi_preset_companion()
-Date:   Mon, 16 Dec 2019 18:46:30 +0100
-Message-Id: <20191216174855.893939339@linuxfoundation.org>
+Subject: [PATCH 4.14 069/267] f2fs: fix to allow node segment for GC by ioctl path
+Date:   Mon, 16 Dec 2019 18:46:35 +0100
+Message-Id: <20191216174856.327374391@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,33 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit f8c6d1402b89f22a3647705d63cbd171aa19a77e ]
+[ Upstream commit 08ac9a3870f6babb2b1fff46118536ca8a71ef19 ]
 
-acpi_find_child_device() accepts boolean not pointer as last argument.
+Allow node type segments also to be GC'd via f2fs ioctl
+F2FS_IOC_GARBAGE_COLLECT_RANGE.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-[ rjw: Subject ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/acpi.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/f2fs/gc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-index d7a9700b93339..4bb3bca75004d 100644
---- a/include/linux/acpi.h
-+++ b/include/linux/acpi.h
-@@ -99,7 +99,7 @@ static inline bool has_acpi_companion(struct device *dev)
- static inline void acpi_preset_companion(struct device *dev,
- 					 struct acpi_device *parent, u64 addr)
- {
--	ACPI_COMPANION_SET(dev, acpi_find_child_device(parent, addr, NULL));
-+	ACPI_COMPANION_SET(dev, acpi_find_child_device(parent, addr, false));
- }
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index 9865f6d52fe48..c2e4c6ce2cf79 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -330,8 +330,7 @@ static int get_victim_by_default(struct f2fs_sb_info *sbi,
+ 	p.min_cost = get_max_cost(sbi, &p);
  
- static inline const char *acpi_dev_name(struct acpi_device *adev)
+ 	if (*result != NULL_SEGNO) {
+-		if (IS_DATASEG(get_seg_entry(sbi, *result)->type) &&
+-			get_valid_blocks(sbi, *result, false) &&
++		if (get_valid_blocks(sbi, *result, false) &&
+ 			!sec_usage_check(sbi, GET_SEC_FROM_SEG(sbi, *result)))
+ 			p.min_segno = *result;
+ 		goto out;
 -- 
 2.20.1
 
