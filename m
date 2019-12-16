@@ -2,141 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52B5512067B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:59:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF8712068A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:03:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfLPM7P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:59:15 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:58838 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfLPM7O (ORCPT
+        id S1727816AbfLPNBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 08:01:36 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:49268 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbfLPNBg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:59:14 -0500
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBGCwlAi060893;
-        Mon, 16 Dec 2019 21:58:47 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp);
- Mon, 16 Dec 2019 21:58:47 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav403.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBGCwiwo060701
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Mon, 16 Dec 2019 21:58:46 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] kconfig: Add yes2modconfig and mod2yesconfig targets.
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-References: <5a473c6c-cc1f-6648-31ec-3b40e415a836@infradead.org>
- <20191207014238.5507-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <CAK7LNATj5RBHov_w05q1XSiOPN7fYQCKhVMDzHNwHSB1Eq2rmQ@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <cedbe416-844e-2bb8-5d05-4cd34eae8619@i-love.sakura.ne.jp>
-Date:   Mon, 16 Dec 2019 21:58:43 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Mon, 16 Dec 2019 08:01:36 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBGD1GEB035729;
+        Mon, 16 Dec 2019 07:01:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576501276;
+        bh=qu4CX1xmsIJKNsiSCd4Q7cKnvTPwSjXkFWKSo8iJ+4U=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=IUjovb1voNOw0bGSYt1NM92Pnj8HaGhWHOB/Uf6pgKUahW5o8SeeoMDpJIK5mvJW5
+         SAFt0dkaf5/hQWLjucnoz03cLLQqhlFXLcYDtaJR7Tc8c/NLZNmX8D5s0jHg2AmD/U
+         zLgnkN/DPxAibbOMwYSdxreD4egLXB9aJgPSWWCM=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBGD1Gsn098541
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 16 Dec 2019 07:01:16 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 16
+ Dec 2019 07:01:16 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 16 Dec 2019 07:01:16 -0600
+Received: from [10.250.79.55] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBGD1EGl118008;
+        Mon, 16 Dec 2019 07:01:14 -0600
+Subject: Re: [PATCH] dma-heap: Make the symbol 'dma_heap_ioctl_cmds' static
+To:     zhong jiang <zhongjiang@huawei.com>, <sumit.semwal@linaro.org>,
+        <benjamin.gaignard@linaro.org>
+CC:     <lmark@codeaurora.org>, <labbott@redhat.com>,
+        <Brian.Starkey@arm.com>, <john.stultz@linaro.org>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1576490904-18069-1-git-send-email-zhongjiang@huawei.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <c1244a5f-b82a-baee-262a-7241531036ad@ti.com>
+Date:   Mon, 16 Dec 2019 08:01:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNATj5RBHov_w05q1XSiOPN7fYQCKhVMDzHNwHSB1Eq2rmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1576490904-18069-1-git-send-email-zhongjiang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for reviewing.
-
-On 2019/12/16 20:10, Masahiro Yamada wrote:
-> BTW, I have never contributed to the syzbot bug shooting.
-> So, please teach me if you know this:
-> Is there a a specific reason why the config set for syzbot
-> is close to allyesconfig instead of allmodconfig?
-
-I don't know. But I guess that all-in-one vmlinux file is easier to use
-(e.g. no need to copy .ko files into initramfs nor /lib/modules/ directory
-in the root filesystem image, no need to fetch .ko files when calculating
-locations in the source code from kernel addresses, no need to worry about
-availability of .ko loader program and request_module() dependency).
-
->> @@ -669,6 +684,8 @@ int main(int ac, char **av)
->>         case listnewconfig:
->>         case helpnewconfig:
->>         case syncconfig:
->> +       case yes2modconfig:
->> +       case mod2yesconfig:
+On 12/16/19 5:08 AM, zhong jiang wrote:
+> Fix the following sparse warning.
 > 
-> This looks like
-> yes2mod/mod2yesconfig are interactive modes.
-> Why do you need this?
+> drivers/gpu/drm/ast/ast_main.c:391:22: warning: symbol 'ast_mode_config_mode_valid' was not declared. Should it be static?
 > 
-> I believe yes2mod/mod2yesconfig
-> should work non-interactively.
 
-I worried that simple s/=y$/=m/ or s/=m$/=y/ on tristate config fails to satisfy
-requirement/dependency. And I assumed that
 
-  /* Update until a loop caused no more changes */
-  do {
-  	conf_cnt = 0;
-  	check_conf(&rootmenu);
-  } while (conf_cnt);
+The patch looks valid, but this commit message does not seem to match..
 
-is the location to make modifications in order to adjust requirement/dependency.
-But I might be wrong. I just assumed that we should behave as if "make oldconfig"
-after doing simple s/=y$/=m/ or s/=m$/=y/ on tristate config.
+Andrew
 
-Does some later function automatically adjust requirement/dependency ? If yes,
 
->> @@ -638,6 +648,11 @@ int main(int ac, char **av)
->>                 }
->>         }
->>
->> +       if (input_mode == yes2modconfig)
->> +               conf_rewrite_mod_or_yes(def_y2m);
->> +       else if (input_mode == mod2yesconfig)
->> +               conf_rewrite_mod_or_yes(def_m2y);
->> +
+> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+> ---
+>  drivers/dma-buf/dma-heap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> For consistency, why not put these lines into the switch statement below?
-
-conf_rewrite_mod_or_yes() should be put into the switch statement.
-
->> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
->> index 3569d2dec37c..6832a04a1aa4 100644
->> --- a/scripts/kconfig/confdata.c
->> +++ b/scripts/kconfig/confdata.c
->> @@ -1362,3 +1362,29 @@ bool conf_set_all_new_symbols(enum conf_def_mode mode)
->>
->>         return has_changed;
->>  }
->> +
->> +bool conf_rewrite_mod_or_yes(enum conf_def_mode mode)
+> diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+> index 4f04d10..da2090e 100644
+> --- a/drivers/dma-buf/dma-heap.c
+> +++ b/drivers/dma-buf/dma-heap.c
+> @@ -106,7 +106,7 @@ static long dma_heap_ioctl_allocate(struct file *file, void *data)
+>  	return 0;
+>  }
+>  
+> -unsigned int dma_heap_ioctl_cmds[] = {
+> +static unsigned int dma_heap_ioctl_cmds[] = {
+>  	DMA_HEAP_IOC_ALLOC,
+>  };
+>  
 > 
-> If you do not use the return value of this function,
-> could you make it into a void function?
-
-OK.
-
->> +{
->> +       struct symbol *sym;
->> +       int i;
->> +       bool has_changed = false;
->> +
->> +       if (mode == def_y2m) {
->> +               for_all_symbols(i, sym) {
->> +                       if (sym_get_type(sym) == S_TRISTATE &&
->> +                           sym->def[S_DEF_USER].tri == yes) {
->> +                               sym->def[S_DEF_USER].tri = mod;
->> +                               has_changed = true;
-> 
-> sym_add_change_count(1); seems the convention way
-> to inform kconfig of some options being updated.
-
-Then, we can do "sym_add_change_count(1);" instead of "return has_changed;".
-
