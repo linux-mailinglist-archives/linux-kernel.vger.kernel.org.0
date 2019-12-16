@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10274121729
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:34:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 253301217FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730403AbfLPSJQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:09:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        id S1729328AbfLPSCW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730388AbfLPSJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:13 -0500
+        id S1729314AbfLPSCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1844F2166E;
-        Mon, 16 Dec 2019 18:09:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE996207FF;
+        Mon, 16 Dec 2019 18:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519752;
-        bh=IXpBmKx0KAyoZiN8CC06cqY2NS0+d/5UaucNXV6Fj+Y=;
+        s=default; t=1576519338;
+        bh=Bcyfsom547QGU5e7VQvQpY+Cvi9D3GQGIU6yVL4/iB0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4GbzhZH/9nXg8504o8SipQU747qS8+ZHklVhEo6NvoN3RXv6zBnm3wiMv/IyGy9i
-         9GbqD1+8tHtpF7E/cq4svhLRNR+6ce3Whoc1XfrQpR21RkCHVPgga30pIGcpFRT9XE
-         DI14cClnbLigsAQ26xCdzwyghZra7WifHM5kOzZI=
+        b=bxd7ewy0kW5ihCTyEQE10DyGax/8orY95WuxXCgkKpqUWzD0ybg1wbO2760QbwWXi
+         sekZTwJOWTergMk5JCLqQr6gIYr8/xbbKL5tdN0Kv8aXSAcEWdhWJTRjy1QkzHXJJJ
+         OSIjxNvKxfUjCVn7A0QUeAIPKzELCI407XybhH2U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 5.3 054/180] iwlwifi: pcie: fix support for transmitting SKBs with fraglist
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 026/140] USB: adutux: fix interface sanity check
 Date:   Mon, 16 Dec 2019 18:48:14 +0100
-Message-Id: <20191216174826.118104634@linuxfoundation.org>
+Message-Id: <20191216174757.164784224@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,60 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 4f4925a7b23428d5719af5a2816586b2a0e6fd19 upstream.
+commit 3c11c4bed02b202e278c0f5c319ae435d7fb9815 upstream.
 
-When the implementation of SKBs with fraglist was sent upstream, a
-merge-damage occurred and half the patch was not applied.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-This causes problems in high-throughput situations with AX200 devices,
-including low throughput and FW crashes.
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
 
-Introduce the part that was missing from the original patch.
-
-Fixes: 0044f1716c4d ("iwlwifi: pcie: support transmitting SKBs with fraglist")
-Cc: stable@vger.kernel.org # 4.20+
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-[ This patch was created by me, but the original author of this code
-  is Johannes, so his s-o-b is here and he's marked as the author of
-  the patch. ]
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: 03270634e242 ("USB: Add ADU support for Ontrak ADU devices")
+Cc: stable <stable@vger.kernel.org>     # 2.6.19
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191210112601.3561-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/usb/misc/adutux.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-@@ -469,6 +469,7 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
- 	dma_addr_t tb_phys;
- 	int len, tb1_len, tb2_len;
- 	void *tb1_addr;
-+	struct sk_buff *frag;
+--- a/drivers/usb/misc/adutux.c
++++ b/drivers/usb/misc/adutux.c
+@@ -671,7 +671,7 @@ static int adu_probe(struct usb_interfac
+ 	init_waitqueue_head(&dev->read_wait);
+ 	init_waitqueue_head(&dev->write_wait);
  
- 	tb_phys = iwl_pcie_get_first_tb_dma(txq, idx);
- 
-@@ -517,6 +518,19 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
- 	if (iwl_pcie_gen2_tx_add_frags(trans, skb, tfd, out_meta))
- 		goto out_err;
- 
-+	skb_walk_frags(skb, frag) {
-+		tb_phys = dma_map_single(trans->dev, frag->data,
-+					 skb_headlen(frag), DMA_TO_DEVICE);
-+		if (unlikely(dma_mapping_error(trans->dev, tb_phys)))
-+			goto out_err;
-+		iwl_pcie_gen2_set_tb(trans, tfd, tb_phys, skb_headlen(frag));
-+		trace_iwlwifi_dev_tx_tb(trans->dev, skb,
-+					frag->data,
-+					skb_headlen(frag));
-+		if (iwl_pcie_gen2_tx_add_frags(trans, frag, tfd, out_meta))
-+			goto out_err;
-+	}
-+
- 	return tfd;
- 
- out_err:
+-	res = usb_find_common_endpoints_reverse(&interface->altsetting[0],
++	res = usb_find_common_endpoints_reverse(interface->cur_altsetting,
+ 			NULL, NULL,
+ 			&dev->interrupt_in_endpoint,
+ 			&dev->interrupt_out_endpoint);
 
 
