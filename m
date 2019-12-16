@@ -2,64 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69166121BBA
+	by mail.lfdr.de (Postfix) with ESMTP id D8AB6121BBB
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:32:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbfLPVbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727291AbfLPVbf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 16 Dec 2019 16:31:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:38183 "EHLO
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56035 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726646AbfLPVbc (ORCPT
+        with ESMTP id S1727110AbfLPVbc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Dec 2019 16:31:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576531891;
+        s=mimecast20190719; t=1576531892;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=wA2v5bd7y9zj1BvwWA29iyklcyeaUYmEU8VPY6Cu/no=;
-        b=Y1xKDPk3/L6vvRt5VIGPJvpDob9zpE5aGdETXOmc3XzfYwBwatYR/O6ZTiJtgEeoFLeh+W
-        0e9PA/5auA51Lqn0sKDotgikptWZec9zH5evmRI9Z/WBwNDzLLDZDQuGXIovihvZpgeunp
-        mJNOmbReutfjgx+ME3TZZuSm/rgg5CY=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-359-sglaArxnN8Kz2JA3dEZdIw-1; Mon, 16 Dec 2019 16:31:29 -0500
-X-MC-Unique: sglaArxnN8Kz2JA3dEZdIw-1
-Received: by mail-qk1-f199.google.com with SMTP id u30so5560791qke.13
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:31:29 -0800 (PST)
+        bh=RH1+AViO4EoL9+jCeRxJJWq+wAQu3tyekrBf+r+c33M=;
+        b=P8jFen51V+FCK97fQEEo/eU+U4/YgGB81BpnRVcRljIbHZJKoTVOARnd0aRXeX2aqMCb3Q
+        wN/bYSWs1bPFLqMu3sk3sDcPW13Etoa4Vjfp3dZ8eHPB6hSrJ3/3B+GYmhP+rMpXAOzuKS
+        DF9hP406aj2b2BDaW/4nkXUlTTr2H5E=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-425-r-1ApwKBPMGdmo2Ya6bEFQ-1; Mon, 16 Dec 2019 16:31:31 -0500
+X-MC-Unique: r-1ApwKBPMGdmo2Ya6bEFQ-1
+Received: by mail-qk1-f200.google.com with SMTP id g28so5531058qkl.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 13:31:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wA2v5bd7y9zj1BvwWA29iyklcyeaUYmEU8VPY6Cu/no=;
-        b=PvRPxCIOBCc0iHu0LEjuelQQSxoHfa5gabtORv3Z9e7la09D9X1Adeh7eIKKoECC1d
-         FD7XHHp+U0eAWky1Q5laih3e5AmnhAmKvhUGOIpM9Sra1jyq66DugWi9QUKxbScAQFjZ
-         uIojwYc7Wu6GlhkXnvrr0+rBcF30HqpsjPzzDnCzNHck5Hb3dK2wmwpShz94JHWbhjTr
-         kfHmUAEBjdFkPPa/bPoq8c1z9ra47kGUY8f92vkXIUBSMxfTw5ULCpydJuioYa1tjQTq
-         Ozkm/pSiDJUgQhR4b8qKPffM7UDkesE3ZJFr/2+MKp+DisF8r1KuodkVWl3z3wxF82hG
-         Fpow==
-X-Gm-Message-State: APjAAAW9Z8n2gb53bWCoxextfFMrw67lxfLPa55U5aYWBwG40MSpfv9S
-        16AVHx9OD78SWw7MB7MEw0hSRMrN+eURfSpDdv3kC4YIW1MGL4evVvJYZJ5PvY7YMpSwYCxaOro
-        Vjpy2aGgmbMzAoPsxp3K65eFX
-X-Received: by 2002:a05:620a:849:: with SMTP id u9mr1656702qku.414.1576531889002;
-        Mon, 16 Dec 2019 13:31:29 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw0XqeB/TuNLAQr0FBxOvF5dzgyHAEK6FuNubrHUTDjBDQndcnXlkovgOPZUNEQ5Ia7DSUbRw==
-X-Received: by 2002:a05:620a:849:: with SMTP id u9mr1656672qku.414.1576531888754;
-        Mon, 16 Dec 2019 13:31:28 -0800 (PST)
+        bh=RH1+AViO4EoL9+jCeRxJJWq+wAQu3tyekrBf+r+c33M=;
+        b=dJ17QBiczF3qAwOFyw6AK6JFlgQeFK99YAXUHAXCBW93LA6sdpFH/xE7CGfIW+jBSA
+         14twEnf0Luynl8YEUVqh8rBWbN25PDHLgmYwbA18rmLFjghXJMAJQMkCseHq5D3QKEYL
+         DqinOU7YR6/LhXyKtAsa35y4Nvl7OdNCr5Ao3J3ZEhzpDyObQ/17c0GoOHC5EXoSl22q
+         41BzLrl25AXkpTNHS64Lf8byaFD7Y3T3EPfT7t6qMgYG1VlGc1JWMF0Qjbkw1K6WLcFY
+         9qejqYO4q7X8vIpHFAnccQZ3Q8wMujNGnuUOnSKJToBfsaNAb0cWQk6g6BSvDg0qHgyK
+         SFgA==
+X-Gm-Message-State: APjAAAWPoLmDurfWB2x2PQqBLPY1DfwOM4+ABPBeZwer5gRSr5LVZKSt
+        PQb80EwBMspuFKwwXE/XFbxvpAKDRHqmG9ARbCO++DlelUjQ4zU74nOCcwKyuGkic7bj6dlgHoo
+        IcXoAN2ZJppnwwL4aAdgdBTRe
+X-Received: by 2002:aed:30e2:: with SMTP id 89mr1467484qtf.355.1576531890419;
+        Mon, 16 Dec 2019 13:31:30 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzs/VMYgoqhoiLGAmOXY5S9INg3jdWsZ9ngLkLfrfQtS12COJC294q65nOffgqO/bYEKrj+aQ==
+X-Received: by 2002:aed:30e2:: with SMTP id 89mr1467475qtf.355.1576531890253;
+        Mon, 16 Dec 2019 13:31:30 -0800 (PST)
 Received: from xz-x1.yyz.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id y184sm6321943qkd.128.2019.12.16.13.31.27
+        by smtp.gmail.com with ESMTPSA id y184sm6321943qkd.128.2019.12.16.13.31.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 13:31:27 -0800 (PST)
+        Mon, 16 Dec 2019 13:31:29 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Juri Lelli <juri.lelli@redhat.com>, peterx@redhat.com,
         Marcelo Tosatti <mtosatti@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH v2 1/3] smp: Allow smp_call_function_single_async() to insert locked csd
-Date:   Mon, 16 Dec 2019 16:31:23 -0500
-Message-Id: <20191216213125.9536-2-peterx@redhat.com>
+Subject: [PATCH v2 2/3] MIPS: smp: Remove tick_broadcast_count
+Date:   Mon, 16 Dec 2019 16:31:24 -0500
+Message-Id: <20191216213125.9536-3-peterx@redhat.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191216213125.9536-1-peterx@redhat.com>
 References: <20191216213125.9536-1-peterx@redhat.com>
@@ -70,68 +70,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously we will raise an warning if we want to insert a csd object
-which is with the LOCK flag set, and if it happens we'll also wait for
-the lock to be released.  However, this operation does not match
-perfectly with how the function is named - the name with "_async"
-suffix hints that this function should not block, while we will.
-
-This patch changed this behavior by simply return -EBUSY instead of
-waiting, at the meantime we allow this operation to happen without
-warning the user to change this into a feature when the caller wants
-to "insert a csd object, if it's there, just wait for that one".
-
-This is pretty safe because in flush_smp_call_function_queue() for
-async csd objects (where csd->flags&SYNC is zero) we'll first do the
-unlock then we call the csd->func().  So if we see the csd->flags&LOCK
-is true in smp_call_function_single_async(), then it's guaranteed that
-csd->func() will be called after this smp_call_function_single_async()
-returns -EBUSY.
-
-Update the comment of the function too to refect this.
+Now smp_call_function_single_async() provides the protection that
+we'll return with -EBUSY if the csd object is still pending, then we
+don't need the tick_broadcast_count counter any more.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- kernel/smp.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ arch/mips/kernel/smp.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 7dbcb402c2fc..dd31e8228218 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -329,6 +329,11 @@ EXPORT_SYMBOL(smp_call_function_single);
-  * (ie: embedded in an object) and is responsible for synchronizing it
-  * such that the IPIs performed on the @csd are strictly serialized.
-  *
-+ * If the function is called with one csd which has not yet been
-+ * processed by previous call to smp_call_function_single_async(), the
-+ * function will return immediately with -EBUSY showing that the csd
-+ * object is still in progress.
-+ *
-  * NOTE: Be careful, there is unfortunately no current debugging facility to
-  * validate the correctness of this serialization.
-  */
-@@ -338,14 +343,17 @@ int smp_call_function_single_async(int cpu, call_single_data_t *csd)
+diff --git a/arch/mips/kernel/smp.c b/arch/mips/kernel/smp.c
+index f510c00bda88..0678901c214d 100644
+--- a/arch/mips/kernel/smp.c
++++ b/arch/mips/kernel/smp.c
+@@ -696,21 +696,16 @@ EXPORT_SYMBOL(flush_tlb_one);
  
- 	preempt_disable();
+ #ifdef CONFIG_GENERIC_CLOCKEVENTS_BROADCAST
  
--	/* We could deadlock if we have to wait here with interrupts disabled! */
--	if (WARN_ON_ONCE(csd->flags & CSD_FLAG_LOCK))
--		csd_lock_wait(csd);
-+	if (csd->flags & CSD_FLAG_LOCK) {
-+		err = -EBUSY;
-+		goto out;
-+	}
+-static DEFINE_PER_CPU(atomic_t, tick_broadcast_count);
+ static DEFINE_PER_CPU(call_single_data_t, tick_broadcast_csd);
  
- 	csd->flags = CSD_FLAG_LOCK;
- 	smp_wmb();
+ void tick_broadcast(const struct cpumask *mask)
+ {
+-	atomic_t *count;
+ 	call_single_data_t *csd;
+ 	int cpu;
  
- 	err = generic_exec_single(cpu, csd, csd->func, csd->info);
-+
-+out:
- 	preempt_enable();
+ 	for_each_cpu(cpu, mask) {
+-		count = &per_cpu(tick_broadcast_count, cpu);
+ 		csd = &per_cpu(tick_broadcast_csd, cpu);
+-
+-		if (atomic_inc_return(count) == 1)
+-			smp_call_function_single_async(cpu, csd);
++		smp_call_function_single_async(cpu, csd);
+ 	}
+ }
  
- 	return err;
+@@ -718,7 +713,6 @@ static void tick_broadcast_callee(void *info)
+ {
+ 	int cpu = smp_processor_id();
+ 	tick_receive_broadcast();
+-	atomic_set(&per_cpu(tick_broadcast_count, cpu), 0);
+ }
+ 
+ static int __init tick_broadcast_init(void)
 -- 
 2.23.0
 
