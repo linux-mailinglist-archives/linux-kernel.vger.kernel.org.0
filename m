@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA4712183C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144FB1217A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbfLPSmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:42:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34864 "EHLO mail.kernel.org"
+        id S1729887AbfLPSFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728483AbfLPSAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:00:39 -0500
+        id S1729028AbfLPSFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A8B0205C9;
-        Mon, 16 Dec 2019 18:00:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC3AB2072D;
+        Mon, 16 Dec 2019 18:05:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519238;
-        bh=WlaGsvSqozUh/F0uCzyw6u/3FTIovZt1FXOX8anM9sU=;
+        s=default; t=1576519548;
+        bh=Xp4VK4g8z7ehO2iTZkFT1vXBhhdanHJk21j08fBiBs4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCmXN6Q5z4a5kq5fzlkTTvkA9Z/KufsPdVwzruaA34xZpyWFRqaW+URhWSNr8WFxk
-         UbyUB9D5xzNZqJSDDcbhc98XrVwfJeinL3jJNoln6q83xP9EuTLWDKwTA5GTaCKYav
-         DKLdLtvPTHUwUBB5MBq0YWs3OT9SBnRf96QT4n7c=
+        b=v8KFpcIXLp1nO+z5ITuiTgxeIRYM++tglrzlnX0aCdG5kdjsJNgBylCCEHW+5xdg4
+         QU0z+v7oqCmFk73tLcvFop8TfxjIGPxJSEYWJa7gqSDTuPP21UHbdbXon5JFvx5cbd
+         sUQ4ZxgLRC+IuXJGQ3LlBzS52Q2Q7HN5ReWZ2igM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 252/267] e100: Fix passing zero to PTR_ERR warning in e100_load_ucode_wait
-Date:   Mon, 16 Dec 2019 18:49:38 +0100
-Message-Id: <20191216174916.446817992@linuxfoundation.org>
+Subject: [PATCH 4.19 111/140] scsi: lpfc: Correct topology type reporting on G7 adapters
+Date:   Mon, 16 Dec 2019 18:49:39 +0100
+Message-Id: <20191216174816.975135592@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit cd0d465bb697a9c7bf66a9fe940f7981232f1676 ]
+[ Upstream commit 76558b25733140a0c6bd53ea8af04b2811c92ec3 ]
 
-Fix a static code checker warning:
-drivers/net/ethernet/intel/e100.c:1349
- e100_load_ucode_wait() warn: passing zero to 'PTR_ERR'
+Driver missed classifying the chip type for G7 when reporting supported
+topologies. This resulted in loop being shown as supported on FC links that
+are not supported per the standard.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Add the chip classifications to the topology checks in the driver.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/e100.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_attr.c | 5 +++--
+ drivers/scsi/lpfc/lpfc_mbox.c | 6 +++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/e100.c b/drivers/net/ethernet/intel/e100.c
-index 4d10270ddf8fb..90974462743b5 100644
---- a/drivers/net/ethernet/intel/e100.c
-+++ b/drivers/net/ethernet/intel/e100.c
-@@ -1370,8 +1370,8 @@ static inline int e100_load_ucode_wait(struct nic *nic)
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index 1e9002138d31c..fe084d47ed9e5 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -3849,8 +3849,9 @@ lpfc_topology_store(struct device *dev, struct device_attribute *attr,
+ 				val);
+ 			return -EINVAL;
+ 		}
+-		if (phba->pcidev->device == PCI_DEVICE_ID_LANCER_G6_FC &&
+-			val == 4) {
++		if ((phba->pcidev->device == PCI_DEVICE_ID_LANCER_G6_FC ||
++		     phba->pcidev->device == PCI_DEVICE_ID_LANCER_G7_FC) &&
++		    val == 4) {
+ 			lpfc_printf_vlog(vport, KERN_ERR, LOG_INIT,
+ 				"3114 Loop mode not supported\n");
+ 			return -EINVAL;
+diff --git a/drivers/scsi/lpfc/lpfc_mbox.c b/drivers/scsi/lpfc/lpfc_mbox.c
+index deb094fdbb793..e6bf5e8bc7670 100644
+--- a/drivers/scsi/lpfc/lpfc_mbox.c
++++ b/drivers/scsi/lpfc/lpfc_mbox.c
+@@ -513,9 +513,9 @@ lpfc_init_link(struct lpfc_hba * phba,
+ 		break;
+ 	}
  
- 	fw = e100_request_firmware(nic);
- 	/* If it's NULL, then no ucode is required */
--	if (!fw || IS_ERR(fw))
--		return PTR_ERR(fw);
-+	if (IS_ERR_OR_NULL(fw))
-+		return PTR_ERR_OR_ZERO(fw);
- 
- 	if ((err = e100_exec_cb(nic, (void *)fw, e100_setup_ucode)))
- 		netif_err(nic, probe, nic->netdev,
+-	if (phba->pcidev->device == PCI_DEVICE_ID_LANCER_G6_FC &&
+-		mb->un.varInitLnk.link_flags & FLAGS_TOPOLOGY_MODE_LOOP) {
+-		/* Failover is not tried for Lancer G6 */
++	if ((phba->pcidev->device == PCI_DEVICE_ID_LANCER_G6_FC ||
++	     phba->pcidev->device == PCI_DEVICE_ID_LANCER_G7_FC) &&
++	    mb->un.varInitLnk.link_flags & FLAGS_TOPOLOGY_MODE_LOOP) {
+ 		mb->un.varInitLnk.link_flags = FLAGS_TOPOLOGY_MODE_PT_PT;
+ 		phba->cfg_topology = FLAGS_TOPOLOGY_MODE_PT_PT;
+ 	}
 -- 
 2.20.1
 
