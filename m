@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A661214FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5266B121482
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:12:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731629AbfLPSRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40232 "EHLO mail.kernel.org"
+        id S1730875AbfLPSL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731429AbfLPSQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:58 -0500
+        id S1730866AbfLPSL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C275206EC;
-        Mon, 16 Dec 2019 18:16:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CFD0206E0;
+        Mon, 16 Dec 2019 18:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520218;
-        bh=zJCOqmJyuSeJGxNNSUsgQII3CyhLR6EHjhTErZkdbLU=;
+        s=default; t=1576519915;
+        bh=/e3NT3D/oOcYk73D5vg3cZsVrFVEhzX+Py48eq6U8rY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qBQcbfuvBVamgj+S6Pf9kHQ5Qt9lVz9+wQPyoAntTy/FOoZkK81FnM2DM8cNFPR0l
-         OERc/8wEn/OX8wjaw9RIGndwRvEPDeqybZJh9bbYIbTKpcbFgzXnPYMxx4/Xjb3bBh
-         9azV8bo4OxKAbdkJaA8XerFekzXIm4W+Ga3yTdx4=
+        b=2DW1/VnlDCZaMqeqcnMaMqXNrqW2t99c8lQOROZI0gxHC0jOcV0LpYIbbuTVpns+i
+         +PwsLrKBKVoHuLdpIjGG5S0Fan96thSGdeB6bzyMdMRZMn+S1G7cpDkbFN93cOefKF
+         3xGGcNJsYi16T+YHYNozKzHHPfh7FStv4pI00t90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        linux-usb@vger.kernel.org,
-        =?UTF-8?q?Heikki=20Krogerus=C2=A0?= 
-        <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 5.4 064/177] usb: typec: fix use after free in typec_register_port()
-Date:   Mon, 16 Dec 2019 18:48:40 +0100
-Message-Id: <20191216174832.699676929@linuxfoundation.org>
+        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 5.3 081/180] cgroup: pids: use atomic64_t for pids->limit
+Date:   Mon, 16 Dec 2019 18:48:41 +0100
+Message-Id: <20191216174831.366662424@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,45 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Aleksa Sarai <cyphar@cyphar.com>
 
-commit 5c388abefda0d92355714010c0199055c57ab6c7 upstream.
+commit a713af394cf382a30dd28a1015cbe572f1b9ca75 upstream.
 
-We can't use "port->sw" and/or "port->mux" after it has been freed.
+Because pids->limit can be changed concurrently (but we don't want to
+take a lock because it would be needlessly expensive), use atomic64_ts
+instead.
 
-Fixes: 23481121c81d ("usb: typec: class: Don't use port parent for getting mux handles")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Cc: stable <stable@vger.kernel.org>
-Cc: linux-usb@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Link: https://lore.kernel.org/r/20191126140452.14048-1-wenyang@linux.alibaba.com
+Fixes: commit 49b786ea146f ("cgroup: implement the PIDs subsystem")
+Cc: stable@vger.kernel.org # v4.3+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/typec/class.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ kernel/cgroup/pids.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/usb/typec/class.c
-+++ b/drivers/usb/typec/class.c
-@@ -1592,14 +1592,16 @@ struct typec_port *typec_register_port(s
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -45,7 +45,7 @@ struct pids_cgroup {
+ 	 * %PIDS_MAX = (%PID_MAX_LIMIT + 1).
+ 	 */
+ 	atomic64_t			counter;
+-	int64_t				limit;
++	atomic64_t			limit;
  
- 	port->sw = typec_switch_get(&port->dev);
- 	if (IS_ERR(port->sw)) {
-+		ret = PTR_ERR(port->sw);
- 		put_device(&port->dev);
--		return ERR_CAST(port->sw);
-+		return ERR_PTR(ret);
+ 	/* Handle for "pids.events" */
+ 	struct cgroup_file		events_file;
+@@ -73,8 +73,8 @@ pids_css_alloc(struct cgroup_subsys_stat
+ 	if (!pids)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pids->limit = PIDS_MAX;
+ 	atomic64_set(&pids->counter, 0);
++	atomic64_set(&pids->limit, PIDS_MAX);
+ 	atomic64_set(&pids->events_limit, 0);
+ 	return &pids->css;
+ }
+@@ -146,13 +146,14 @@ static int pids_try_charge(struct pids_c
+ 
+ 	for (p = pids; parent_pids(p); p = parent_pids(p)) {
+ 		int64_t new = atomic64_add_return(num, &p->counter);
++		int64_t limit = atomic64_read(&p->limit);
+ 
+ 		/*
+ 		 * Since new is capped to the maximum number of pid_t, if
+ 		 * p->limit is %PIDS_MAX then we know that this test will never
+ 		 * fail.
+ 		 */
+-		if (new > p->limit)
++		if (new > limit)
+ 			goto revert;
  	}
  
- 	port->mux = typec_mux_get(&port->dev, NULL);
- 	if (IS_ERR(port->mux)) {
-+		ret = PTR_ERR(port->mux);
- 		put_device(&port->dev);
--		return ERR_CAST(port->mux);
-+		return ERR_PTR(ret);
- 	}
+@@ -277,7 +278,7 @@ set_limit:
+ 	 * Limit updates don't need to be mutex'd, since it isn't
+ 	 * critical that any racing fork()s follow the new limit.
+ 	 */
+-	pids->limit = limit;
++	atomic64_set(&pids->limit, limit);
+ 	return nbytes;
+ }
  
- 	ret = device_add(&port->dev);
+@@ -285,7 +286,7 @@ static int pids_max_show(struct seq_file
+ {
+ 	struct cgroup_subsys_state *css = seq_css(sf);
+ 	struct pids_cgroup *pids = css_pids(css);
+-	int64_t limit = pids->limit;
++	int64_t limit = atomic64_read(&pids->limit);
+ 
+ 	if (limit >= PIDS_MAX)
+ 		seq_printf(sf, "%s\n", PIDS_MAX_STR);
 
 
