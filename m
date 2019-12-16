@@ -2,135 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53B69121232
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D102B12125E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfLPRuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:50:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
+        id S1727357AbfLPRwG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725805AbfLPRuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:50:16 -0500
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1726438AbfLPRwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:02 -0500
+Received: from localhost (unknown [5.29.147.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A642206EC;
-        Mon, 16 Dec 2019 17:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B64202072D;
+        Mon, 16 Dec 2019 17:52:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518615;
-        bh=g8/rjNCZq7LbHvZLvTNNpjZ1plcZnKZdtSsnrwvnKXs=;
-        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
-        b=hyJriL7F96LxiYiCXXD6CLjvtW73yKVQDMHGaYpoy1QPMrmgRBbgjZQ2CFT5CAg+W
-         +KrAVw6jQMk7TdXrDODjsWdn7uaXccTJfRVXit4cex32jK7jAeY7lAXuMDrm0lEvfi
-         xm/9xn40U82jAhw/4ZBRdSf9wMSNHaoWdmQdIbhE=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1576518721;
+        bh=Ax9FX6mkAiMSD2E503wbhkyltTzj2mc0isu/CrNmJ3k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GyUKL1atiewyOIgNqC/Ykcz1HvUb/Jttc0W8Hz7wfDucBV2GUWnlrFE5mQ35f47yN
+         HVdBTfnXxraBxcjQzDTIDd8f8geB7bomYASzdvxPbuSCetdmxaUOVmNaIBCMi8o8hz
+         xV6xWdyoEKMaXqoDCVde3pexb5dEVRUUe6Qmp3RI=
+Date:   Mon, 16 Dec 2019 19:51:58 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Prabhath Sajeepa <psajeepa@purestorage.com>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Roland Dreier <roland@purestorage.com>,
+        Ashish Karkare <ashishk@purestorage.com>
+Subject: Re: [PATCH] IB/mlx5: Fix outstanding_pi index for GSI qps
+Message-ID: <20191216175158.GC66555@unreal>
+References: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com>
+ <20191215185500.GA6097@unreal>
+ <CAE=VkfD0Ywey6wW_rOZ=4qGyW347kTXH_MM17NvQhy6bkT=+tw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
-References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Dec 2019 09:50:14 -0800
-Message-Id: <20191216175015.2A642206EC@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAE=VkfD0Ywey6wW_rOZ=4qGyW347kTXH_MM17NvQhy6bkT=+tw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2019-12-16 01:13:31)
->=20
-> On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@goo=
-glemail.com> wrote:
->=20
-> > While playing with devfreq support for the lima driver I experienced
-> > sporadic (random) system lockups. It turned out that this was in
-> > certain cases when changing the mali clock.
+Please don't send HTML emails, they are marked as SPAM and dropped from
+ML, and please don't do top-posting.
+
+Can you please resend so we will be able to read it?
+
+My question is still valid, what is the difference between
+"gsi->outstanding_pi = (gsi->outstanding_pi - 1)" in original code
+and "gsi->outstanding_pi--" in proposed patch.
+
+Thanks
+
+On Mon, Dec 16, 2019 at 09:21:53AM -0800, Prabhath Sajeepa wrote:
+> Hi Leon,
+>
+> This patch needs to be considered in conjunction with the below change done
+> by Slava Shwartsman
+>
+> commit b0ffeb537f3a726931d962ab6d03e34a2f070ea4
+>
+> Author: Slava Shwartsman <slavash@mellanox.com>
+>
+> Date:   Sun Jul 3 06:28:19 2016
+>
+>     IB/mlx5: Fix iteration overrun in GSI qps
+>
+>         Number of outstanding_pi may overflow and as a result may indicate that
+>
+>     there are no elements in the queue. The effect of doing this is that the
+>
+>     MAD layer will get stuck waiting for completions. The MAD layer will
+>
+>     think that the QP is full - because it didn't receive these completions.
+>
+>         This fix changes it so the outstanding_pi number is increased
+>
+>     with 32-bit wraparound and is not limited to max_send_wr so
+>
+>     that the difference between outstanding_pi and outstanding_ci will
+>
+>     really indicate the number of outstanding completions.
+>
+>         Cc: Stable <stable@vger.kernel.org>
+>
+>     Fixes: ea6dc2036224 ('IB/mlx5: Reorder GSI completions')
+>
+>     Signed-off-by: Slava Shwartsman <slavash@mellanox.com>
+>
+>     Signed-off-by: Leon Romanovsky <leon@kernel.org>
+>
+>     Reviewed-by: Haggai Eran <haggaie@mellanox.com>
+>
+>     Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+>
+>     Signed-off-by: Doug Ledford <dledford@redhat.com>
+>
+> diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
+>
+> index 53e03c8..79e6309 100644
+>
+> --- a/drivers/infiniband/hw/mlx5/gsi.c
+>
+> +++ b/drivers/infiniband/hw/mlx5/gsi.c
+>
+> @@ -69,15 +69,6 @@ static bool mlx5_ib_deth_sqpn_cap(struct mlx5_ib_dev *dev)
+>
+>         return MLX5_CAP_GEN(dev->mdev, set_deth_sqpn);
+>
+>  }
+>
+>
+>
+> -static u32 next_outstanding(struct mlx5_ib_gsi_qp *gsi, u32 index)
+>
+> -{
+>
+> -       return ++index % gsi->cap.max_send_wr;
+>
+> -}
+>
+> -
+>
+> -#define for_each_outstanding_wr(gsi, index) \
+>
+> -       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi; \
+>
+> -            index = next_outstanding(gsi, index))
+>
+> -
+>
+>  /* Call with gsi->lock locked */
+>
+>  static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
+>
+>  {
+>
+> @@ -85,8 +76,9 @@ static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
+>
+>         struct mlx5_ib_gsi_wr *wr;
+>
+>         u32 index;
+>
+>
+>
+> -       for_each_outstanding_wr(gsi, index) {
+>
+> -               wr = &gsi->outstanding_wrs[index];
+>
+> +       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi;
+>
+> +            index++) {
+>
+> +               wr = &gsi->outstanding_wrs[index % gsi->cap.max_send_wr];
+>
+>
+>
+>                 if (!wr->completed)
+>
+>                         break;
+>
+> @@ -430,8 +422,9 @@ static int mlx5_ib_add_outstanding_wr(struct
+> mlx5_ib_gsi_qp *gsi,
+>
+>                 return -ENOMEM;
+>
+>         }
+>
+>
+>
+> -       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi];
+>
+> -       gsi->outstanding_pi = next_outstanding(gsi, gsi->outstanding_pi);
+>
+> +       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi %
+>
+> +                                      gsi->cap.max_send_wr];
+>
+> +       gsi->outstanding_pi++;
+>
+>
+>
+>         if (!wc) {
+>
+>                 memset(&gsi_wr->wc, 0, sizeof(gsi_wr->wc));
+>
+>
+>
+> The above fix was incomplete since it did not fix the ib_send_post
+> failure case, which is fixed by the patch I submitted.
+>
+>
+> Thanks,
+>
+> Prabhath.
+>
+>
+> On Sun, Dec 15, 2019 at 10:55 AM Leon Romanovsky <leon@kernel.org> wrote:
+>
+> > On Thu, Dec 12, 2019 at 05:11:29PM -0700, Prabhath Sajeepa wrote:
+> > > b0ffeb537f3a changed the way how outstanding WRs are tracked for GSI QP.
+> > But the
+> > > fix did not cover the case when a call to ib_post_send fails and index
+> > > to track outstanding WRs need to be updated correctly.
+> > >
+> > > Fixes: b0ffeb537f3a ('IB/mlx5: Fix iteration overrun in GSI qps ')
+> > > Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
+> > > ---
+> > >  drivers/infiniband/hw/mlx5/gsi.c | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/infiniband/hw/mlx5/gsi.c
+> > b/drivers/infiniband/hw/mlx5/gsi.c
+> > > index ac4d8d1..1ae6fd9 100644
+> > > --- a/drivers/infiniband/hw/mlx5/gsi.c
+> > > +++ b/drivers/infiniband/hw/mlx5/gsi.c
+> > > @@ -507,8 +507,7 @@ int mlx5_ib_gsi_post_send(struct ib_qp *qp, const
+> > struct ib_send_wr *wr,
+> > >               ret = ib_post_send(tx_qp, &cur_wr.wr, bad_wr);
+> > >               if (ret) {
+> > >                       /* Undo the effect of adding the outstanding wr */
+> > > -                     gsi->outstanding_pi = (gsi->outstanding_pi - 1) %
+> > > -                                           gsi->cap.max_send_wr;
+> > > +                     gsi->outstanding_pi--;
 > >
-> > The Amlogic vendor GPU platform driver (which is responsible for
-> > changing the clock frequency) uses the following pattern when updating
-> > the mali clock rate:
-> > - at initialization: initialize the two mali_0 and mali_1 clock trees
-> >   with a default setting and enable both clocks
-> > - when changing the clock frequency:
-> > -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
-> > -- update the mali_0 clock tree (set the mux, divider, etc.)
-> > -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
->                                       ^ no final setting then ? :P
-> >    output again
+> > I'm a little bit confused, what is the difference before and after
+> > except dropping "gsi->cap.max_send_wr"?
 > >
-> > With the common clock framework we can even do better:
-> > by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
->                 ^
-> From your patch, I guess you mean CLK_SET_RATE_GATE ?
->=20
-> > we can force the common clock framework to update the "inactive" clock
-> > and then switch to it's output.
+> > Thanks
 > >
-> > I only tested this patch for a limited time only (approx. 2 hours).
-> > So far I couldn't reproduce the sporadic system lockups with it.
-> > However, broader testing would be great so I would like this to be
-> > applied for -next.
->=20
-> CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
-> use. While it works at your advantage here, I'm not sure CCF guarantees
-> the assumption this implementation is based on. Some explanation below:
->=20
-> In your case, if it works as you expect when calling set_rate() on the
-> top clock, it goes as this:
->=20
-> - mali0 is use with rate X:
-> - =3D> set_rate(mali_top, Y)
-> - mali0 is in use, cannot change, will round rate Y to X
-> - mali1 is not in use, can provide Y
-> - mali1 is determined to be the new best parent for mali top
->=20
-> So far so good.
->=20
-> - CCF pick the mali1 subtree
->   *start updating the clock from the root to the leaf*
->=20
-> So the mali top mux, which choose between mali0 and mali1, will be
-> *updated last* which crucial to your use case.
->=20
-> I just wonder if this crucial part something CCF guarantee and you can
-> rely on it ... or if it might break in the future.
->=20
-> Stephen, any thoughts on this ?
-
-We have problems with the order in which we call the set_rate clk_op.
-Sometimes clk providers want us to call from leaf to root but instead we
-call from root to leaf because of implementation reasons. Controlling
-the order in which clk operations are done is an unsolved problem. But
-yes, in the future I'd like to see us introduce the vaporware that is
-coordinated clk rates that would allow clk providers to decide what this
-order should be, instead of having to do this "root-to-leaf" update.
-Doing so would help us with the clk dividers that have some parent
-changing rate that causes the downstream device to be overclocked while
-we change the parent before the divider.
-
-If there are more assumptions like this about how the CCF is implemented
-then we'll have to be extra careful to not disturb the "normal" order of
-operations when introducing something that allows clk providers to
-modify it.
-
-Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
-isn't called on that particular clk? I seem to recall that the flag only
-matters when it's applied to the "leaf" or entry point into the CCF from
-a consumer API. I've wanted to fix that but never gotten around to it.
-The whole flag sort of irks me because I don't understand what consumers
-are supposed to do when this flag is set on a clk. How do they discover
-it? They're supposed to "just know" and turn off the clk first and then
-call clk_set_rate()? Why can't the framework do this all in the
-clk_set_rate() call?
-
->=20
-> PS: If CCF does guarantee "root-to-leaf" updates, I think this
-> implementation is a clever trick to solve this usual glitch free clock
-> update issue ... much more elegant that the notifier solution we have
-> been using so far.
+> > >                       goto err;
+> > >               }
+> > >               spin_unlock_irqrestore(&gsi->lock, flags);
+> > > --
+> > > 2.7.4
+> > >
+> >
+>
+>
+> --
+> Thanks,
+> Prabhath
