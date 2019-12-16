@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93CBA121843
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0B31217AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbfLPSmd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34222 "EHLO mail.kernel.org"
+        id S1727050AbfLPSFb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbfLPSAR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:00:17 -0500
+        id S1729821AbfLPSF1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EFE4207FF;
-        Mon, 16 Dec 2019 18:00:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F412E20700;
+        Mon, 16 Dec 2019 18:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519216;
-        bh=c3op8XXqjMLB5WUnGVDuddbg3J5XoBfQlQDNADyb73s=;
+        s=default; t=1576519526;
+        bh=MKyl0gKesEgMEYBiDy75wdvVTVZlDkSAwpBgTUQzn88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nv360pR/ADI0WvFIbhFpLOTq16ZOUcXCHCNmDbcmiHJUd8abtYnvDvjDtujbgFgXO
-         KDhEKM26fz+vCJR3lWL7+Ab2IYjocxZ+Uu293g8EEUqwCZS+LJFzunXFF4Njh669L6
-         XK3FsMD8UzzmDGoa6mrP4dvf3U4eg4PvCjf7vTAU=
+        b=QsufllJMiqBiQc/wvfBAKcpqFSf9HHAE/+VuOFHG6HC9Uj63AsZTL+8laffHc0UL9
+         SNgMVIuYgsn7cyY3X7nXarf3C+eKDRhEDmDkfbiL+yhEmsQgtwil3bT8y03QSdkZ/E
+         r6rjOLWuBBScmvoM8eg87vf10+Y3ODGVHovyc14s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        stable@vger.kernel.org, Himanshu Madhani <hmadhani@marvell.com>,
+        "Ewan D. Milne" <emilne@redhat.com>, Lee Duncan <lduncan@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 244/267] xhci: Fix memory leak in xhci_add_in_port()
-Date:   Mon, 16 Dec 2019 18:49:30 +0100
-Message-Id: <20191216174915.921810425@linuxfoundation.org>
+Subject: [PATCH 4.19 103/140] scsi: qla2xxx: Fix message indicating vectors used by driver
+Date:   Mon, 16 Dec 2019 18:49:31 +0100
+Message-Id: <20191216174815.384947838@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,88 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Himanshu Madhani <hmadhani@marvell.com>
 
-[ Upstream commit ce91f1a43b37463f517155bdfbd525eb43adbd1a ]
+[ Upstream commit da48b82425b8bf999fb9f7c220e967c4d661b5f8 ]
 
-When xHCI is part of Alpine or Titan Ridge Thunderbolt controller and
-the xHCI device is hot-removed as a result of unplugging a dock for
-example, the driver leaks memory it allocates for xhci->usb3_rhub.psi
-and xhci->usb2_rhub.psi in xhci_add_in_port() as reported by kmemleak:
+This patch updates log message which indicates number of vectors used by
+the driver instead of displaying failure to get maximum requested
+vectors. Driver will always request maximum vectors during
+initialization. In the event driver is not able to get maximum requested
+vectors, it will adjust the allocated vectors. This is normal and does not
+imply failure in driver.
 
-unreferenced object 0xffff922c24ef42f0 (size 16):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 16 bytes):
-    21 00 0c 00 12 00 dc 05 23 00 e0 01 00 00 00 00  !.......#.......
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
-unreferenced object 0xffff922c24ef3318 (size 8):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 8 bytes):
-    34 01 05 00 35 41 0a 00                          4...5A..
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
-
-Fix this by calling kfree() for the both psi objects in
-xhci_mem_cleanup().
-
-Cc: <stable@vger.kernel.org> # 4.4+
-Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-2-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Link: https://lore.kernel.org/r/20190830222402.23688-2-hmadhani@marvell.com
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-mem.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/scsi/qla2xxx/qla_isr.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1866,10 +1866,14 @@ no_bw:
- 	kfree(xhci->port_array);
- 	kfree(xhci->rh_bw);
- 	kfree(xhci->ext_caps);
-+	kfree(xhci->usb2_rhub.psi);
-+	kfree(xhci->usb3_rhub.psi);
- 
- 	xhci->usb2_ports = NULL;
- 	xhci->usb3_ports = NULL;
- 	xhci->port_array = NULL;
-+	xhci->usb2_rhub.psi = NULL;
-+	xhci->usb3_rhub.psi = NULL;
- 	xhci->rh_bw = NULL;
- 	xhci->ext_caps = NULL;
- 
+diff --git a/drivers/scsi/qla2xxx/qla_isr.c b/drivers/scsi/qla2xxx/qla_isr.c
+index 8fa7242dbb437..afe15b3e45fbf 100644
+--- a/drivers/scsi/qla2xxx/qla_isr.c
++++ b/drivers/scsi/qla2xxx/qla_isr.c
+@@ -3418,10 +3418,8 @@ qla24xx_enable_msix(struct qla_hw_data *ha, struct rsp_que *rsp)
+ 		    ha->msix_count, ret);
+ 		goto msix_out;
+ 	} else if (ret < ha->msix_count) {
+-		ql_log(ql_log_warn, vha, 0x00c6,
+-		    "MSI-X: Failed to enable support "
+-		     "with %d vectors, using %d vectors.\n",
+-		    ha->msix_count, ret);
++		ql_log(ql_log_info, vha, 0x00c6,
++		    "MSI-X: Using %d vectors\n", ret);
+ 		ha->msix_count = ret;
+ 		/* Recalculate queue values */
+ 		if (ha->mqiobase && (ql2xmqsupport || ql2xnvmeenable)) {
+-- 
+2.20.1
+
 
 
