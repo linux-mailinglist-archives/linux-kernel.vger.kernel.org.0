@@ -2,122 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05A84121ACF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D859121AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:24:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbfLPUVS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 15:21:18 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41664 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbfLPUVS (ORCPT
+        id S1727453AbfLPUYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 15:24:38 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43123 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfLPUYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 15:21:18 -0500
-Received: by mail-lj1-f194.google.com with SMTP id h23so8222131ljc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 12:21:17 -0800 (PST)
+        Mon, 16 Dec 2019 15:24:38 -0500
+Received: by mail-qt1-f195.google.com with SMTP id b3so6811561qti.10
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 12:24:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=Coj/0TiMCvz30A/R8txuCVhc5n1pm41RNaOjJUWUaS0=;
-        b=fPZkCIk0sJHFLthoSa2l0yCn2V8lLSwii17NEqkwT98ikRbJYd1twQVIIGQw7ltrH6
-         J6doHz2eDuvnDERtdF9jYiFBsZs/SpGZwOcVAugBoU9E3jT41G/1ZigNahbIa1J8rg5K
-         kSbJqo+ITbb2zxFaZluYltZ1isGPfKYAAXcte6U5wo82/wR2RXiPcnHGvaAKqPXV0Dnk
-         NKG2rqg84KUceg2vu6AL70Z+Ieyhw9hnEIQ5ol8TGm1ChMs4pc0/vpjrVAQGMVZuPzes
-         sXe0f9brx+3rHfDB2mBiVtY6XH6BhzvHiPtE68xp98dm6LygxTRY0c3DDKJPoAoGnVLW
-         xjPw==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=R4UYSQzkIFfH3s4ufaPN31AWD9fAmlfxBXpiRYzSUTXvP3ON5pGrFSDRNqDKRNBnZv
+         VRfFNyIifCKtzfz6goh1eUHpiqtIaKcn601mJZ80jF33e/nuLPNbkrNhHp+cSrkxKH4e
+         iRqbhqY4/JRkj+BvqKNWUpZuthZXP/7bHtzGYll4ruwtxoju2jq11Zcan9H4HjIvD3BT
+         XzbB1wFIWI/uUYMAJFGEtouUA6NGkRQsyWKeC6ZP9eOMkzm5Tzhu3wF/JNM9oDDM5Fkk
+         QrW+rf8TW9bn1kZw2uwj74r848uCTk7middbn/6Zq3Q1HVDGdcN4hNFOk4lJsLZGbkHQ
+         5Y2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=Coj/0TiMCvz30A/R8txuCVhc5n1pm41RNaOjJUWUaS0=;
-        b=FnPKwzroueh0LiRAV5kWZ64yOVL2BRZHdlHNLjQw/xIDC7td/lYTulm8PAYgantTuk
-         Mndc8HiGH8+mzrM+GilGRcLZlFeV3kLFNLF1e/wE+KoyUxzaMgXR6wf7ADb4laQFtZzV
-         WH2EOnx5I0+CcYPczKIXXjsS7DXxZkqc8Evq2AXYukd4VXN+HQLtkpHMsHx5ZHSk9Ysu
-         ziptUWO74re0JI3mg4SUR5eZI1+aX10Jmn4ago3XXtYsESYM6AqeMCQ/pUjdr8v/v51d
-         pp9eQ5s4jyf0ET4IqhzzFEoPrL2Mb0cFV0lkmYHkgmcoKejJDaFC5sZ82DwWBtFelapJ
-         2jLg==
-X-Gm-Message-State: APjAAAVzlkBdHtD81vR9/GmVNXnrwfQuBXl/r8HA38f1jDz2edljFQgi
-        0go4R883Mt5Xxx5cl84c3GRN8g==
-X-Google-Smtp-Source: APXvYqwvffi+Q+fIIrfBgnRjuyf8h/Vz0+Y6j1dBgFciwrLYs7AYC/zjAUfMezy6GLiXnMwUcjT2XQ==
-X-Received: by 2002:a05:651c:c4:: with SMTP id 4mr644180ljr.131.1576527676330;
-        Mon, 16 Dec 2019 12:21:16 -0800 (PST)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id r26sm9508344lfm.82.2019.12.16.12.21.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 12:21:16 -0800 (PST)
-Date:   Mon, 16 Dec 2019 12:21:06 -0800
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Jose Abreu <Jose.Abreu@synopsys.com>
-Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 0/8] net: stmmac: Fixes for -net
-Message-ID: <20191216122106.582b6cc9@cakuba.netronome.com>
-In-Reply-To: <BN8PR12MB326639325F465266DEACAA64D3510@BN8PR12MB3266.namprd12.prod.outlook.com>
-References: <cover.1576005975.git.Jose.Abreu@synopsys.com>
-        <20191213162216.2dc8a108@cakuba.netronome.com>
-        <BN8PR12MB326639325F465266DEACAA64D3510@BN8PR12MB3266.namprd12.prod.outlook.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
+        b=nG34nuNVOe69kQ4toZx5lWeeIfNFUy28d0ygjkr54MhI5PfiwbHFAz/OfJqKZOkwV3
+         GYYfKQPF0IMp8uHxOmxg6wq03QBZzgRg55OC27kgxEW3km5cgIZqWAYLTTXQxxP64/K/
+         uun8gbRWcCBAt0zd3Ew9BdTyfhEWzvhnIMNU6lMe3SFt2O78vrzTTG13rlCvKgmEy3wT
+         UjsLQR2zNDEm2ZtU2vXoMTiB8mZvjKQxDdlTH4YU6T4aYKKqvrM646jKs7in0cuanLxj
+         bB9zBXq1EIkGH7Ilr+bLIVJtNCeMOs2SLX9oV6yw7Q3r9SicLgeRzaGq8k0mIOCmz8W8
+         QSmw==
+X-Gm-Message-State: APjAAAWAVPkXA283mZ2EWigZVKK1xBmjDwZyBEmnLwZL6XGj1TRmIlqI
+        uACi4wULiZqxnDi8W42DTJpLHUM3caJarEuNkaE=
+X-Google-Smtp-Source: APXvYqwJAEgq9YCfF9PBij2N1T8dNyWG2CHn5760YultRz9/KNAcVhSNFAinYu6rWOtJjT1UNvICELChU5z7U+x+pKc=
+X-Received: by 2002:ac8:47c1:: with SMTP id d1mr1166095qtr.84.1576527877444;
+ Mon, 16 Dec 2019 12:24:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac8:7b4f:0:0:0:0:0 with HTTP; Mon, 16 Dec 2019 12:24:36
+ -0800 (PST)
+Reply-To: eddywilliam0002@gmail.com
+From:   eddy william <pagentsif6@gmail.com>
+Date:   Mon, 16 Dec 2019 21:24:36 +0100
+Message-ID: <CAKiDfoUNukXSd6_nQDskezuFXzC=XEF8G+b3Emz5k_YcHB_ftQ@mail.gmail.com>
+Subject: hello
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019 09:26:22 +0000, Jose Abreu wrote:
-> From: Jakub Kicinski <jakub.kicinski@netronome.com>
-> Date: Dec/14/2019, 00:22:16 (UTC+00:00)
-> 
-> > On Tue, 10 Dec 2019 20:33:52 +0100, Jose Abreu wrote:  
-> > > Fixes for stmmac.
-> > > 
-> > > 1) Fixes the filtering selftests (again) for cases when the number of multicast
-> > > filters are not enough.
-> > > 
-> > > 2) Fixes SPH feature for MTU > default.
-> > > 
-> > > 3) Fixes the behavior of accepting invalid MTU values.
-> > > 
-> > > 4) Fixes FCS stripping for multi-descriptor packets.
-> > > 
-> > > 5) Fixes the change of RX buffer size in XGMAC.
-> > > 
-> > > 6) Fixes RX buffer size alignment.
-> > > 
-> > > 7) Fixes the 16KB buffer alignment.
-> > > 
-> > > 8) Fixes the enabling of 16KB buffer size feature.  
-> > 
-> > Hi Jose!
-> > 
-> > Patches directed at net should have a Fixes tag identifying the commit
-> > which introduced the problem. The commit messages should also describe
-> > user-visible outcomes of the bugs. Without those two its hard to judge
-> > which patches are important for stable backports.
-> > 
-> > Could you please repost with appropriate Fixes tags?  
-> 
-> I agree with you Jakub but although these are bugs they are either for 
-> recently introduced features (such as SPH and selftests), or for 
-> features that are not commonly used. I can dig into the GIT history and 
-> provide fixes tag for them all or I can always provide a backport fix if 
-> any user requires so. Can you please comment on which one you prefer ?
+Hallo
 
-I think Fixes tags helps either way, if the fix is not important enough
-upstream maintainers should be able to figure that out based on the
-commit message (or you can give advice on backporting below the ---
-line, like "Probably not worth backporting").
+Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
+Ihnen anbieten
+die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
+($8,5 Millionen US-Dollar)
+Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
 
-For the recent features it's quite useful to see the fixes tag so both
-humans and bots can immediately see its a recent feature and we don't
-have to worry about backports.
+Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
+bei einem Autounfall ums Leben gekommen ist
+und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
+nd 50%
+sein f=C3=BCr dich.
+Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
+Informationen: eddywilliam0002gmail.com
+
+Vielen Dank im Voraus,
+Mr. Eddy William,
+
+
+
+Hello
+
+My name is Eddy William I am a lawyer by profession. I wish to offer you
+the next of kin to my client. You will inherit the sum of ($8.5 Million)
+dollars my client left in the bank before his death.
+
+My client is a citizen of your country who died in auto crash with his wife
+and only son. I will be entitled with 50% of the total fund while 50% will
+be for you.
+Please contact my private email here for more details:eddywilliam0002gmail.=
+com
+
+Many thanks in advance,
+Mr.Eddy William,
