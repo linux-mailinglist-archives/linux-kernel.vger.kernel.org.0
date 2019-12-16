@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BCC412130A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB7712130D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:58:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbfLPR6S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:58:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57912 "EHLO mail.kernel.org"
+        id S1728603AbfLPR6V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:58:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728193AbfLPR6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:16 -0500
+        id S1726795AbfLPR6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:58:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2885A205ED;
-        Mon, 16 Dec 2019 17:58:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 899FB205ED;
+        Mon, 16 Dec 2019 17:58:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519095;
-        bh=vT09+Y2atmoIbCV7QqkXaUqPrSgl4UOEZ/3qeExbu4w=;
+        s=default; t=1576519098;
+        bh=cts9hQU6RDSllwnvrD8+2cVbraLSzWAdx02sFOkz9fY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Otk9GxeA93sIA9D4av6nDh3XjtcRQhKNszXA6+br1fEItZJObOBud4FRN1nX4H5o/
-         5hpxz+WzxUdzs2SLlwqoEoQzZ+o11k1xUNblDUExS35oISh3DN1VPVNk65bPwwypZ2
-         gyxZlZTs50sRCQ9C1gis2RCGizcms+CdBdc6lCp0=
+        b=R/FMrPnRjlmRjpKusoTb6bTqBNn9hmy4Kqm8Q1NWRusUzdj9Ba11WNA+7Gp1+dRR+
+         Jb0qdGRCtq7HQ5TBmkqWOJun8PO2A4Gwmy1HgyxNNFgTNwQ8uOgAvXu3RY/1Q87C35
+         LiIqB7MNzKP9xnbL0HAXnbfy/UGZAIMGW62WhKuc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 194/267] lib: raid6: fix awk build warnings
-Date:   Mon, 16 Dec 2019 18:48:40 +0100
-Message-Id: <20191216174913.155001468@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com,
+        Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 4.14 195/267] ovl: relax WARN_ON() on rename to self
+Date:   Mon, 16 Dec 2019 18:48:41 +0100
+Message-Id: <20191216174913.208905465@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -42,38 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 702600eef73033ddd4eafcefcbb6560f3e3a90f7 upstream.
+commit 6889ee5a53b8d969aa542047f5ac8acdc0e79a91 upstream.
 
-Newer versions of awk spit out these fun warnings:
-	awk: ../lib/raid6/unroll.awk:16: warning: regexp escape sequence `\#' is not a known regexp operator
+In ovl_rename(), if new upper is hardlinked to old upper underneath
+overlayfs before upper dirs are locked, user will get an ESTALE error
+and a WARN_ON will be printed.
 
-As commit 700c1018b86d ("x86/insn: Fix awk regexp warnings") showed, it
-turns out that there are a number of awk strings that do not need to be
-escaped and newer versions of awk now warn about this.
+Changes to underlying layers while overlayfs is mounted may result in
+unexpected behavior, but it shouldn't crash the kernel and it shouldn't
+trigger WARN_ON() either, so relax this WARN_ON().
 
-Fix the string up so that no warning is produced.  The exact same kernel
-module gets created before and after this patch, showing that it wasn't
-needed.
-
-Link: https://lore.kernel.org/r/20191206152600.GA75093@kroah.com
+Reported-by: syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com
+Fixes: 804032fabb3b ("ovl: don't check rename to self")
+Cc: <stable@vger.kernel.org> # v4.9+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/raid6/unroll.awk |    2 +-
+ fs/overlayfs/dir.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/lib/raid6/unroll.awk
-+++ b/lib/raid6/unroll.awk
-@@ -13,7 +13,7 @@ BEGIN {
- 	for (i = 0; i < rep; ++i) {
- 		tmp = $0
- 		gsub(/\$\$/, i, tmp)
--		gsub(/\$\#/, n, tmp)
-+		gsub(/\$#/, n, tmp)
- 		gsub(/\$\*/, "$", tmp)
- 		print tmp
- 	}
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -1042,7 +1042,7 @@ static int ovl_rename(struct inode *oldd
+ 	if (newdentry == trap)
+ 		goto out_dput;
+ 
+-	if (WARN_ON(olddentry->d_inode == newdentry->d_inode))
++	if (olddentry->d_inode == newdentry->d_inode)
+ 		goto out_dput;
+ 
+ 	err = 0;
 
 
