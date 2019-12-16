@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AFE312138E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F40FE121644
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:28:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729405AbfLPSCu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38970 "EHLO mail.kernel.org"
+        id S1731363AbfLPSPS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:15:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfLPSCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:48 -0500
+        id S1731352AbfLPSPQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 327C8207FF;
-        Mon, 16 Dec 2019 18:02:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA7920717;
+        Mon, 16 Dec 2019 18:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519367;
-        bh=pMddC1IxYZNUa4z6kDPSLVuBkG4EzoSj4SwhIGjUhYw=;
+        s=default; t=1576520115;
+        bh=1ZYy98CPAyq93GUIgcw6UU4FpMPiCZDurkn4EcsWQtw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=15LnTijuZD8GrpcuKWc8Ba0+PvB6qSmq037fP4YlqRJu2ZER0r4UpLguhBhbR09JD
-         RsKJY9tfd9dh2/y7pbXJcuJDWQ+vOLSu3bAMQluFCsdpSC/Iudg9D4nzlPTV1JX242
-         t6eJrn6fWadwQOBlGwbzSM9j/kHcFUhHnSLM9VMU=
+        b=P9iQhcOzuH878yp/Vl6IvC5a2MrnavA4hDroU9FU6WSwRvgYrarEEZAloVHUf8BcB
+         xp8t/druUfdgJaeJgnfe4OBXlmB5Sm0OMKMVruB2dBJcgbIdNlsQzIwPTN5nLU4l+H
+         iRYEZHGZsf0jrJLsjf7naxnjRW8f8RISoPJlMz00=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 010/140] staging: rtl8712: fix interface sanity check
+Subject: [PATCH 5.4 022/177] staging: rtl8712: fix interface sanity check
 Date:   Mon, 16 Dec 2019 18:47:58 +0100
-Message-Id: <20191216174751.753302920@linuxfoundation.org>
+Message-Id: <20191216174818.777829449@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,10 +64,10 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/staging/rtl8712/usb_intf.c
 +++ b/drivers/staging/rtl8712/usb_intf.c
-@@ -275,7 +275,7 @@ static uint r8712_usb_dvobj_init(struct
+@@ -247,7 +247,7 @@ static uint r8712_usb_dvobj_init(struct
  
  	pdvobjpriv->padapter = padapter;
- 	padapter->EepromAddressSize = 6;
+ 	padapter->eeprom_address_size = 6;
 -	phost_iface = &pintf->altsetting[0];
 +	phost_iface = pintf->cur_altsetting;
  	piface_desc = &phost_iface->desc;
