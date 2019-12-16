@@ -2,200 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA08120014
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F15DE12001A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfLPImz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:42:55 -0500
-Received: from zimbra2.kalray.eu ([92.103.151.219]:55486 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfLPImz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:42:55 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 7EEE827E06A1;
-        Mon, 16 Dec 2019 09:42:52 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id NQCUBw1mJnlk; Mon, 16 Dec 2019 09:42:52 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id E710F27E06A4;
-        Mon, 16 Dec 2019 09:42:51 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu E710F27E06A4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1576485772;
-        bh=gR7DBMPuqguujsqKIqRecEZSem6IJvNPYFmN412TxpE=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=jbh0NrtOycOeLM+mv/6Qm0MWzA3LsgKaAoDSSzCTSuBJuLPu4hyxbyDzv4+u2dAqd
-         Ut/+P9QcfH1yqk208VSPQ/f42Me7Iazu7MYNL3ZLD/8/rUFa3Y2IcYUfZape/+Au4P
-         55rQF+HRulYfMLAvhF2py1Q8opFZfxQvN/I3+628=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id JDFXdj145mgC; Mon, 16 Dec 2019 09:42:51 +0100 (CET)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id C66D827E0650;
-        Mon, 16 Dec 2019 09:42:51 +0100 (CET)
-Date:   Mon, 16 Dec 2019 09:42:51 +0100 (CET)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Fabien DESSENNE <fabien.dessenne@st.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, od@zcrc.me,
-        linux-remoteproc <linux-remoteproc@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1428337657.96784882.1576485771590.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <1576362603.3.5@crapouillou.net>
-References: <20191210164014.50739-1-paul@crapouillou.net> <20191210164014.50739-3-paul@crapouillou.net> <f25180f2-7c6d-0022-12b2-cd9c202f39d3@st.com> <1576362603.3.5@crapouillou.net>
-Subject: Re: [PATCH v4 3/5] remoteproc: Add prepare/unprepare callbacks
+        id S1727020AbfLPIoN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:44:13 -0500
+Received: from mout.web.de ([212.227.17.12]:46903 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726808AbfLPIoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 03:44:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576485833;
+        bh=+PPbIlgj/jy3PI1TwRvB8BjPTFOceJ1biaOGTKC1qeg=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=iKnnmMbWzwzy4R6J2dgyxZRMfavVe2zZKvXmdrViZiIhV9uHoRskU4cBb52EX6PW8
+         106N40cS9E5jv8D2u1T0XqMgOgyRBa9a2bRsglWD8LKQZ0Q3ZmD0vINh1NcO9Af/YO
+         qIl9uUpuOhwuIhpUpXafJS0fzKgVefPni3Q0Ht/s=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.181.202]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MKa6N-1ieqhq1UZT-001zO6; Mon, 16
+ Dec 2019 09:43:53 +0100
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Chas Williams <3chas3@gmail.com>, Kangjie Lu <kjlu@umn.edu>
+References: <20191215161451.24221-1-pakki001@umn.edu>
+Subject: Re: [PATCH] fore200e: Fix incorrect checks of NULL pointer
+ dereference
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Aditya Pakki <pakki001@umn.edu>,
+        linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org
+Message-ID: <47757327-f6df-9146-03a1-2b32b23a37e6@web.de>
+Date:   Mon, 16 Dec 2019 09:43:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <20191215161451.24221-1-pakki001@umn.edu>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - GC75 (Linux)/8.8.12_GA_3794)
-Thread-Topic: remoteproc: Add prepare/unprepare callbacks
-Thread-Index: uueckZt7bHlt5Prq/c0hmSkfQsRjRg==
+X-Provags-ID: V03:K1:sVy/fXwIzJJRTix6pcw7mQIpl623Gf0miVdWobIiWboF0ElQZIh
+ P2wjT+npLvNiNv6kT6YrS8Wv6EIH0r8WzBnlqOSxqGPQVeatngJB5Yzl0JKb1M6BacE2eqb
+ 0xM9sWiU+mWVS52u15jJ6k9Jlql//6bGJEE/1uiSJ3DUxM4hnChQG5IT0/pJ/uywgmFrvFt
+ VQfrM+io7XF1e0oco0RKQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GUNuTZ3PO1w=:Ob4pfiD4QMwL+LRCNaBv6Q
+ SVsNhb7eVc8ekStl5WBLFFcItXq+Ah1ptWEa3mwhsh9SDy2NzCrKvDJsEbLqOYOGaDfFzf9bS
+ sCZSqOXHmPPzXW8cZmy+kE+QnzZaRynDCmj1prwa58iQlH+1edbBKiadSRg5jwW+nMK21IISy
+ d0O1dc1L5uVOsv6RgmNo6NIZ19jxTH/EFmGWgnGmg9ZL94RPBMnWT1Ul7OLxiTNDcxwC0QaTg
+ IA9deXWDUulWgqi6q0AkuIGRJ8JWTnpvPrBCefDdBMn4V8CxaWvFsOMODhmmT2ugM8QAMCNp/
+ MxrV3BYWjx3pc7inmrJcrpPuQd7s0sciZOsSbhYycvyKAAdnlVb3NUnKjRjddIprXZIlz4UcK
+ 9LPmfn/4PEujFWl8P/Scq2pBwLJQHb175+meQ1KxYCGtwDVYlDhAqtc8BoXnglbdhVdBv6mCJ
+ bqeaFqAr0w/bELDt+w98TpbPM+z6ZGjrUK4PWdj1Nk1w0YdLHwONuv8mgsg7XeKXi+f/axyoc
+ DVdASo8E8fcQiYYayjLdv6fB9yFPO5OEv/OnJZ1+A6BhB8Dl2ahtVEohBuJL1K0igiQHSjbD7
+ HVgKPZcfoPyxsgQXr/S6cR7zu6m+ySc+q0h2X33Z6rIxaO5qodqJZy6Xd5eWA0Rt/yK+wVidN
+ mzVc+Civg/PzF0VKwtcyYWrmFBelegCBsF53B9JnUAPKzmUmPqIdhjtj0Uyn9WI030k1QZfOc
+ RSB7t85RkFoVPGCOyckX1vaNIQAyM23W0PZfcaK92TxRU9Nk2EN/+ud+sRDLuSdW3AhMo93r8
+ jAaumxwRbLj4Dr1RLyccFbFxdQNv8FBLjE1DmjgvfT4FDuvWKss6oA42vJxlvnvmyTFg1APr2
+ b+os1sEXhO6srYheln7k9NMNgHSe1xX2pjdVrtxk+77QXdlc4My3ULs1svx8+GaMkKtlJb7En
+ HqFNRu4QDS2vGEa+9JxSeFfxWKpTSCPqEnlXEr5XguV7FB9AA1fZFWoM7kCOyQY2jQajUOCzs
+ Uo+KFV+RmepdtIH2EB8hlnOcOaZUY/OWCez8BIASqmBIdQkFilXWyQkyPv5dLvQgvcxSy1uhO
+ ecKnxxMFkffXMW3LEpEc8XrEGHV5MdqXmmZ7FSQq8ZJYj7TE98QlpeBETX6dbNVhW0kAiWD8l
+ MsoExuNuV+1slDutyrm+vF9aXzUCLBGtCqvnGqA550T9VzmRaHTuCAuX/Iy6KDp/w3NnGyeMm
+ Li1YFMcmpW87wrjhio9GeiBQluK6tIkMefA1cO0e5qOuQ6lBh9Q50F7PD6JY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul
+> The patch fixes these issues by avoiding NULL pointer dereferences.
 
------ On 14 Dec, 2019, at 23:30, Paul Cercueil paul@crapouillou.net wrote:
+I suggest to choose a better wording for this change description.
 
-> Hi Fabien,
->=20
->=20
-> Le jeu., d=C3=A9c. 12, 2019 at 10:03, Fabien DESSENNE
-> <fabien.dessenne@st.com> a =C3=A9crit :
->> Hi Paul
->>=20
->>=20
->> On 10/12/2019 5:40 PM, Paul Cercueil wrote:
->>>  The .prepare() callback is called before the firmware is loaded to
->>>  memory. This is useful for instance in the case where some setup is
->>>  required for the memory to be accessible.
->>=20
->>=20
->> I am trying to figure out what king of 'setup' may be required. From
->> the
->> ingenic driver I understand that you need to enable clocks to allow
->> some
->> memory access.
->>=20
->> Instead of adding this new ops, why not enabling clocks in probe()?
->=20
-> Enabling the clocks in the probe means that the clocks will be
-> unconditionally enabled until the driver is removed, even if the remote
-> processor end up being unused. That would be a waste of power.
+Will the tag =E2=80=9CFixes=E2=80=9D become helpful here?
 
-We have the same kind of "problem" for k1c remoteproc driver (not yet
-upstream, depends on new arch). We need to enable clocks to load code
-into remote processor memory and currently we do that in probe.
-However, as you stated, we would like to enable them as late as possible
-(just before loading code) to avoid wasting power unnecessarily. So the
-"prepare" callback totally makes sense.
+
+=E2=80=A6
+> +++ b/drivers/atm/fore200e.c
+=E2=80=A6
+> @@ -1480,9 +1482,18 @@ fore200e_send(struct atm_vcc *vcc, struct sk_buff=
+ *skb)
+=E2=80=A6
+> +    fore200e =3D FORE200E_DEV(vcc->dev);
+> +    fore200e_vcc =3D FORE200E_VCC(vcc);
+> +
+> +    if (!fore200e)
+> +        return -EINVAL;
+> +
+> +    txq =3D &fore200e->host_txq;
+> +    if (!fore200e_vcc)
+> +        return -EINVAL;
+>
+>      if (!test_bit(ATM_VF_READY, &vcc->flags)) {
+=E2=80=A6
+
+
+Can the following adjustment be nicer?
+
++    fore200e_vcc =3D FORE200E_VCC(vcc);
++    if (!fore200e_vcc)
++        return -EINVAL;
++
++    fore200e =3D FORE200E_DEV(vcc->dev);
++    if (!fore200e)
++        return -EINVAL;
++
++    txq =3D &fore200e->host_txq;
+
 
 Regards,
-
-Cl=C3=A9ment
-
->=20
-> Cheers,
-> -Paul
->=20
->=20
->>=20
->> BR
->>=20
->> Fabien
->>=20
->>=20
->>>=20
->>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>>  ---
->>>=20
->>>  Notes:
->>>       v2-v4: No change
->>>=20
->>>    drivers/remoteproc/remoteproc_core.c | 16 +++++++++++++++-
->>>    include/linux/remoteproc.h           |  4 ++++
->>>    2 files changed, 19 insertions(+), 1 deletion(-)
->>>=20
->>>  diff --git a/drivers/remoteproc/remoteproc_core.c
->>> b/drivers/remoteproc/remoteproc_core.c
->>>  index 0a9fc7fdd1c3..3ea5f675a148 100644
->>>  --- a/drivers/remoteproc/remoteproc_core.c
->>>  +++ b/drivers/remoteproc/remoteproc_core.c
->>>  @@ -1299,11 +1299,19 @@ static int rproc_start(struct rproc *rproc,
->>> const struct firmware *fw)
->>>    =09struct device *dev =3D &rproc->dev;
->>>    =09int ret;
->>>=20
->>>  +=09if (rproc->ops->prepare) {
->>>  +=09=09ret =3D rproc->ops->prepare(rproc);
->>>  +=09=09if (ret) {
->>>  +=09=09=09dev_err(dev, "Failed to prepare rproc: %d\n", ret);
->>>  +=09=09=09return ret;
->>>  +=09=09}
->>>  +=09}
->>>  +
->>>    =09/* load the ELF segments to memory */
->>>    =09ret =3D rproc_load_segments(rproc, fw);
->>>    =09if (ret) {
->>>    =09=09dev_err(dev, "Failed to load program segments: %d\n", ret);
->>>  -=09=09return ret;
->>>  +=09=09goto unprepare_rproc;
->>>    =09}
->>>=20
->>>    =09/*
->>>  @@ -1354,6 +1362,9 @@ static int rproc_start(struct rproc *rproc,
->>> const struct firmware *fw)
->>>    =09rproc_unprepare_subdevices(rproc);
->>>    reset_table_ptr:
->>>    =09rproc->table_ptr =3D rproc->cached_table;
->>>  +unprepare_rproc:
->>>  +=09if (rproc->ops->unprepare)
->>>  +=09=09rproc->ops->unprepare(rproc);
->>>=20
->>>    =09return ret;
->>>    }
->>>  @@ -1483,6 +1494,9 @@ static int rproc_stop(struct rproc *rproc,
->>> bool crashed)
->>>=20
->>>    =09rproc->state =3D RPROC_OFFLINE;
->>>=20
->>>  +=09if (rproc->ops->unprepare)
->>>  +=09=09rproc->ops->unprepare(rproc);
->>>  +
->>>    =09dev_info(dev, "stopped remote processor %s\n", rproc->name);
->>>=20
->>>    =09return 0;
->>>  diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
->>>  index 5f201f0c86c3..a6272d1ba384 100644
->>>  --- a/include/linux/remoteproc.h
->>>  +++ b/include/linux/remoteproc.h
->>>  @@ -355,6 +355,8 @@ enum rsc_handling_status {
->>>=20
->>>    /**
->>>     * struct rproc_ops - platform-specific device handlers
->>>  + * @prepare:=09prepare the device for power up (before the firmware
->>> is loaded)
->>>  + * @unprepare:=09unprepare the device after it is stopped
->>>     * @start:=09power on the device and boot it
->>>     * @stop:=09power off the device
->>>     * @kick:=09kick a virtqueue (virtqueue id given as a parameter)
->>>  @@ -371,6 +373,8 @@ enum rsc_handling_status {
->>>     * @get_boot_addr:=09get boot address to entry point specified in
->>> firmware
->>>     */
->>>    struct rproc_ops {
->>>  +=09int (*prepare)(struct rproc *rproc);
->>>  +=09void (*unprepare)(struct rproc *rproc);
->>>    =09int (*start)(struct rproc *rproc);
->>>    =09int (*stop)(struct rproc *rproc);
-> >>    =09void (*kick)(struct rproc *rproc, int vqid);
+Markus
