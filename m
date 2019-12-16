@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ED571215E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DEC71213C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731791AbfLPSSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:18:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43530 "EHLO mail.kernel.org"
+        id S1729732AbfLPSEv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731765AbfLPSSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:18:16 -0500
+        id S1729713AbfLPSEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C7B1206EC;
-        Mon, 16 Dec 2019 18:18:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1346720700;
+        Mon, 16 Dec 2019 18:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520295;
-        bh=1Ry6fVqGGoMfQSSnMpOkMUW3urorG2fuGbiPNMrl9Hg=;
+        s=default; t=1576519487;
+        bh=F4vKAhEQ4KlxcVKJdkavRAZ3Pz5qXOCTJJxmKXUdaDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oxGRIDPZp3MT/FuCjgM54x68jotL0+n4y/na8QqhY0hVk3hkdHUx7PkaVR6kUYxji
-         ldrbTHkDAHMt4fXsZVqi1JgodWQKQ6jnXK5mszetlAhN611GHnevmjNhQI2d0+hTJq
-         SYdZvxjxTqEaSLLW5E7UVkjGkyvZjN7jygWz1bLI=
+        b=NAzByhfiWas7vCgCAdXNa4pgc8CfIdI6GpE+p8DjscYdBZbJKGgVsoiNRiNY1Aumk
+         BqjsOC/HIgQMJGtR+S/pU5J35IvOVwuyIQfGIqYdm7y+QZQEoAEMqdHkft3HY+bQXb
+         0nh0Du2CLpf+Jvx0jQHyngZg7RQwToGGnz3/BcKg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ezequiel Garcia <ezequiel@collabora.com>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 5.4 097/177] media: hantro: Fix s_fmt for dynamic resolution changes
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.19 085/140] ppdev: fix PPGETTIME/PPSETTIME ioctls
 Date:   Mon, 16 Dec 2019 18:49:13 +0100
-Message-Id: <20191216174840.433340622@linuxfoundation.org>
+Message-Id: <20191216174810.427565881@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,92 +42,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ezequiel Garcia <ezequiel@collabora.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit ae02d49493b5d32bb3e035fdeb1655346f5e1ea5 upstream.
+commit 998174042da229e2cf5841f574aba4a743e69650 upstream.
 
-Commit 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
-changed the conditions under S_FMT was allowed for OUTPUT
-CAPTURE buffers.
+Going through the uses of timeval in the user space API,
+I noticed two bugs in ppdev that were introduced in the y2038
+conversion:
 
-However, and according to the mem-to-mem stateless decoder specification,
-in order to support dynamic resolution changes, S_FMT should be allowed
-even if OUTPUT buffers have been allocated.
+* The range check was accidentally moved from ppsettime to
+  ppgettime
 
-Relax decoder S_FMT restrictions on OUTPUT buffers, allowing a
-resolution modification, provided the pixel format stays the same.
+* On sparc64, the microseconds are in the other half of the
+  64-bit word.
 
-Tested on RK3288 platforms using ChromiumOS Video Decode/Encode
-Accelerator Unittests.
+Fix both, and mark the fix for stable backports.
 
-[hverkuil: fix typo: In other -> In order]
-
-Fixes: 953aaa1492c53 ("media: rockchip/vpu: Prepare things to support decoders")
-Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: <stable@vger.kernel.org>      # for v5.4 and up
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 3b9ab374a1e6 ("ppdev: convert to y2038 safe")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20191108203435.112759-8-arnd@arndb.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/media/hantro/hantro_v4l2.c |   28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
+ drivers/char/ppdev.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/staging/media/hantro/hantro_v4l2.c
-+++ b/drivers/staging/media/hantro/hantro_v4l2.c
-@@ -367,20 +367,27 @@ vidioc_s_fmt_out_mplane(struct file *fil
- {
- 	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
- 	struct hantro_ctx *ctx = fh_to_ctx(priv);
-+	struct vb2_queue *vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
- 	const struct hantro_fmt *formats;
- 	unsigned int num_fmts;
--	struct vb2_queue *vq;
- 	int ret;
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -623,20 +623,27 @@ static int pp_do_ioctl(struct file *file
+ 		if (copy_from_user(time32, argp, sizeof(time32)))
+ 			return -EFAULT;
  
--	/* Change not allowed if queue is busy. */
--	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
--	if (vb2_is_busy(vq))
--		return -EBUSY;
-+	ret = vidioc_try_fmt_out_mplane(file, priv, f);
-+	if (ret)
-+		return ret;
++		if ((time32[0] < 0) || (time32[1] < 0))
++			return -EINVAL;
++
+ 		return pp_set_timeout(pp->pdev, time32[0], time32[1]);
  
- 	if (!hantro_is_encoder_ctx(ctx)) {
- 		struct vb2_queue *peer_vq;
+ 	case PPSETTIME64:
+ 		if (copy_from_user(time64, argp, sizeof(time64)))
+ 			return -EFAULT;
  
- 		/*
-+		 * In order to support dynamic resolution change,
-+		 * the decoder admits a resolution change, as long
-+		 * as the pixelformat remains. Can't be done if streaming.
-+		 */
-+		if (vb2_is_streaming(vq) || (vb2_is_busy(vq) &&
-+		    pix_mp->pixelformat != ctx->src_fmt.pixelformat))
-+			return -EBUSY;
-+		/*
- 		 * Since format change on the OUTPUT queue will reset
- 		 * the CAPTURE queue, we can't allow doing so
- 		 * when the CAPTURE queue has buffers allocated.
-@@ -389,12 +396,15 @@ vidioc_s_fmt_out_mplane(struct file *fil
- 					  V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
- 		if (vb2_is_busy(peer_vq))
- 			return -EBUSY;
-+	} else {
-+		/*
-+		 * The encoder doesn't admit a format change if
-+		 * there are OUTPUT buffers allocated.
-+		 */
-+		if (vb2_is_busy(vq))
-+			return -EBUSY;
- 	}
++		if ((time64[0] < 0) || (time64[1] < 0))
++			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] >>= 32;
++
+ 		return pp_set_timeout(pp->pdev, time64[0], time64[1]);
  
--	ret = vidioc_try_fmt_out_mplane(file, priv, f);
--	if (ret)
--		return ret;
--
- 	formats = hantro_get_formats(ctx, &num_fmts);
- 	ctx->vpu_src_fmt = hantro_find_format(formats, num_fmts,
- 					      pix_mp->pixelformat);
+ 	case PPGETTIME32:
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time32[0] = ts.tv_sec;
+ 		time32[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time32[0] < 0) || (time32[1] < 0))
+-			return -EINVAL;
+ 
+ 		if (copy_to_user(argp, time32, sizeof(time32)))
+ 			return -EFAULT;
+@@ -647,8 +654,9 @@ static int pp_do_ioctl(struct file *file
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time64[0] = ts.tv_sec;
+ 		time64[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time64[0] < 0) || (time64[1] < 0))
+-			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] <<= 32;
+ 
+ 		if (copy_to_user(argp, time64, sizeof(time64)))
+ 			return -EFAULT;
 
 
