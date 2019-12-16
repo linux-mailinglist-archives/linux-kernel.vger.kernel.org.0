@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06ECF1218DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0919F12176A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728107AbfLPRzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:55:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53368 "EHLO mail.kernel.org"
+        id S1730129AbfLPSfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:35:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728099AbfLPRzu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:55:50 -0500
+        id S1730160AbfLPSHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:07:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DDDE21582;
-        Mon, 16 Dec 2019 17:55:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2F8C206E0;
+        Mon, 16 Dec 2019 18:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518949;
-        bh=bOEKlkM0Bu6aFMQUWVJmuPimpJcF6y2YbSZcnZpYxnM=;
+        s=default; t=1576519662;
+        bh=fpAEy/YlMC1GNufn/ZFQUk52cY7rvvFsflZbfotl9z0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V5CQahxj5rKT+gRt8xL7Fm23KznkplBT1SthDbUghrd1SnrfwmsxfZmi/t68+8RK5
-         Ona5G5/nzrP9pUEam+gyeSnOKFwL25apPfJJ7BjcFJszspQIjx0D1f2UuZTe7L1lSC
-         t5mbHh/ITm3jSMZi+26BqSotswXPypOKX3I81LQk=
+        b=ViUom/UUPSIkx5tjd8SRVtA9p2vQnPpX2B/M75++WN0mO06S9ETWXLXHdyWhUcXoa
+         kOKj2TuRlK+lxMDzXVKsL0VHXZ9sAjnPPQJJ18KkPq0uHVhGckWJWxHiXReTC1cPNL
+         v7Lg51sVJKiq3XTTV9T8G7Uk6Fv8Fn4wn/vZnTBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4.14 132/267] x86/PCI: Avoid AMD FCH XHCI USB PME# from D0 defect
+        stable@vger.kernel.org, Tilman Schmidt <tilman@imap.cc>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 018/180] staging: gigaset: fix illegal free on probe errors
 Date:   Mon, 16 Dec 2019 18:47:38 +0100
-Message-Id: <20191216174907.382680758@linuxfoundation.org>
+Message-Id: <20191216174810.064538604@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 7e8ce0e2b036dbc6617184317983aea4f2c52099 upstream.
+commit 84f60ca7b326ed8c08582417493982fe2573a9ad upstream.
 
-The AMD FCH USB XHCI Controller advertises support for generating PME#
-while in D0.  When in D0, it does signal PME# for USB 3.0 connect events,
-but not for USB 2.0 or USB 1.1 connect events, which means the controller
-doesn't wake correctly for those events.
+The driver failed to initialise its receive-buffer pointer, something
+which could lead to an illegal free on late probe errors.
 
-  00:10.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] FCH USB XHCI Controller [1022:7914] (rev 20) (prog-if 30 [XHCI])
-        Subsystem: Dell FCH USB XHCI Controller [1028:087e]
-        Capabilities: [50] Power Management version 3
-                Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1-,D2-,D3hot+,D3cold+)
+Fix this by making sure to clear all driver data at allocation.
 
-Clear PCI_PM_CAP_PME_D0 in dev->pme_support to indicate the device will not
-assert PME# from D0 so we don't rely on it.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=203673
-Link: https://lore.kernel.org/r/20190902145252.32111-1-kai.heng.feng@canonical.com
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org
+Fixes: 2032e2c2309d ("usb_gigaset: code cleanup")
+Cc: stable <stable@vger.kernel.org>     # 2.6.33
+Cc: Tilman Schmidt <tilman@imap.cc>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191202085610.12719-3-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/pci/fixup.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/staging/isdn/gigaset/usb-gigaset.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/arch/x86/pci/fixup.c
-+++ b/arch/x86/pci/fixup.c
-@@ -589,6 +589,17 @@ static void pci_fixup_amd_ehci_pme(struc
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x7808, pci_fixup_amd_ehci_pme);
+--- a/drivers/staging/isdn/gigaset/usb-gigaset.c
++++ b/drivers/staging/isdn/gigaset/usb-gigaset.c
+@@ -571,8 +571,7 @@ static int gigaset_initcshw(struct cards
+ {
+ 	struct usb_cardstate *ucs;
  
- /*
-+ * Device [1022:7914]
-+ * When in D0, PME# doesn't get asserted when plugging USB 2.0 device.
-+ */
-+static void pci_fixup_amd_fch_xhci_pme(struct pci_dev *dev)
-+{
-+	dev_info(&dev->dev, "PME# does not work under D0, disabling it\n");
-+	dev->pme_support &= ~(PCI_PM_CAP_PME_D0 >> PCI_PM_CAP_PME_SHIFT);
-+}
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_AMD, 0x7914, pci_fixup_amd_fch_xhci_pme);
-+
-+/*
-  * Apple MacBook Pro: Avoid [mem 0x7fa00000-0x7fbfffff]
-  *
-  * Using the [mem 0x7fa00000-0x7fbfffff] region, e.g., by assigning it to
+-	cs->hw.usb = ucs =
+-		kmalloc(sizeof(struct usb_cardstate), GFP_KERNEL);
++	cs->hw.usb = ucs = kzalloc(sizeof(struct usb_cardstate), GFP_KERNEL);
+ 	if (!ucs) {
+ 		pr_err("out of memory\n");
+ 		return -ENOMEM;
+@@ -584,9 +583,6 @@ static int gigaset_initcshw(struct cards
+ 	ucs->bchars[3] = 0;
+ 	ucs->bchars[4] = 0x11;
+ 	ucs->bchars[5] = 0x13;
+-	ucs->bulk_out_buffer = NULL;
+-	ucs->bulk_out_urb = NULL;
+-	ucs->read_urb = NULL;
+ 	tasklet_init(&cs->write_tasklet,
+ 		     gigaset_modem_fill, (unsigned long) cs);
+ 
 
 
