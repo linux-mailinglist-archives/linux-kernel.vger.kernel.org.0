@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 967B2121275
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08124121278
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbfLPRwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45330 "EHLO mail.kernel.org"
+        id S1727001AbfLPRw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727599AbfLPRws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:48 -0500
+        id S1727634AbfLPRwz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 748062166E;
-        Mon, 16 Dec 2019 17:52:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9FEE2176D;
+        Mon, 16 Dec 2019 17:52:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518767;
-        bh=ywhXN+HJfsulce61425f3+1m5MPyG+UikMDELQHp+rk=;
+        s=default; t=1576518775;
+        bh=PV0xUFIbqSUM/QVO5CU1Hx7+eOyNGkb2FSCxaY8XQJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WyTjB2hHYNBr174nDdJnUfY5qNb756gvETzWtyknMPWLx0PGpI2oicIN6Lf9h0l/z
-         VkVQ9u/dCboCmlRTpKXwqHgb0vrPIH4t2UPta0jPgxBw9/NMbEq9A/3zo6ylF5BmMY
-         yfpa3egfbbTNz3YPYdTehoKE6Izic+SACsUfht2g=
+        b=wz0LqbOxKZk0ILNNgt6mgdvwSSa4Foj2+spJBY/fCwcpTNkxfr1xYBTjQABWiduou
+         UIVuaBG7Kh/+8Z+3lNTZMvlSJXdvshJMrEGuYmGCzEmaUaXyrrTyfWaYnSzDdreoAG
+         IXu/PF5ImbWdKAJC5SGMUTs823xCsbAWe/d7cK9o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 057/267] media: pulse8-cec: return 0 when invalidating the logical address
-Date:   Mon, 16 Dec 2019 18:46:23 +0100
-Message-Id: <20191216174854.910030149@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 059/267] dmaengine: coh901318: Fix a double-lock bug
+Date:   Mon, 16 Dec 2019 18:46:25 +0100
+Message-Id: <20191216174855.519703388@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -46,37 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 2e84eb9affac43eeaf834992888b72426a8cd442 ]
+[ Upstream commit 627469e4445b9b12e0229b3bdf8564d5ce384dd7 ]
 
-Return 0 when invalidating the logical address. The cec core produces
-a warning for drivers that do this.
+The function coh901318_alloc_chan_resources() calls spin_lock_irqsave()
+before calling coh901318_config().
+But coh901318_config() calls spin_lock_irqsave() again in its
+definition, which may cause a double-lock bug.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reported-by: Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Because coh901318_config() is only called by
+coh901318_alloc_chan_resources(), the bug fix is to remove the
+calls to spin-lock and -unlock functions in coh901318_config().
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/usb/pulse8-cec/pulse8-cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/coh901318.c |    4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/media/usb/pulse8-cec/pulse8-cec.c b/drivers/media/usb/pulse8-cec/pulse8-cec.c
-index 50146f263d904..12da631c0fda0 100644
---- a/drivers/media/usb/pulse8-cec/pulse8-cec.c
-+++ b/drivers/media/usb/pulse8-cec/pulse8-cec.c
-@@ -585,7 +585,7 @@ unlock:
+--- a/drivers/dma/coh901318.c
++++ b/drivers/dma/coh901318.c
+@@ -1802,8 +1802,6 @@ static int coh901318_config(struct coh90
+ 	int channel = cohc->id;
+ 	void __iomem *virtbase = cohc->base->virtbase;
+ 
+-	spin_lock_irqsave(&cohc->lock, flags);
+-
+ 	if (param)
+ 		p = param;
  	else
- 		pulse8->config_pending = true;
- 	mutex_unlock(&pulse8->config_lock);
--	return err;
-+	return log_addr == CEC_LOG_ADDR_INVALID ? 0 : err;
+@@ -1823,8 +1821,6 @@ static int coh901318_config(struct coh90
+ 	coh901318_set_conf(cohc, p->config);
+ 	coh901318_set_ctrl(cohc, p->ctrl_lli_last);
+ 
+-	spin_unlock_irqrestore(&cohc->lock, flags);
+-
+ 	return 0;
  }
  
- static int pulse8_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
--- 
-2.20.1
-
 
 
