@@ -2,119 +2,200 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEBC91215D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E299C1215EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732130AbfLPSYr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:24:47 -0500
-Received: from mail-eopbgr700101.outbound.protection.outlook.com ([40.107.70.101]:5344
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732052AbfLPSYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:24:44 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YHujkp7CVVUQ8P3v7tV3AFFHghGlqfYv6Q05yNJPDnjtXzMp3kfxyhvw2sg9fNlj4obtYg+KOc2yyi6Vjnc1UtDERxdnEpnVhm8Zs60DwfPP8/d/2cw2D+BOFOvWbQsCOX1M/V2sSos38hz0ppx4z6HYqnan8w28GsNiWWKGnoof5zI70CVYIhhU11Q+ivUxxdThW/V5vVNT+Nh2nFXeadUFfyQ3OYs2/T6KYWtHH64urNLLOzZ/DLxaNtgwAYZdBE7GauMQzFd1CKEXkUGGXVIxYSNkjgzg69gW0LjoKXho3ggLhas1xuKOVkXOTCK44vVIHqheKdJ47jaxflMhYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/0fhl52scLtKcu/Z3lmmF87F0BKFSk7u7oqP+jP2hss=;
- b=IgAgf57RhOgg9uPLhFQiXJ7Ky6S6Ddhxg0IQ9KFuG2jPYMvEqCOM/Zbg7Qyt79JTv4Oy2jDadgvFcg1D2SHWAS/8gLhrtfKpih5oVwo42Q3cWpEmmQt4g8mTRGvQhxkwzzGupKhamyZFjbNYMA2skKCIKem54EkVLaDD1FQsDBZ6bGb3z7b3XdzjAJ7rB48V4+In+7Fq9bVEyOR0JmSLJSHJCws8xo73w2B+fCJPR7zwk7+IXGJa7CwP8fkoCyewXvribMRKJgrFbzmtycN6SGEfEeE2LhGjcEXL48yc7d6Tk7GZ39g6UCwJVfd034un3b5Zsex+EHWDBHcsSE0PUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=hammerspace.com; dmarc=pass action=none
- header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/0fhl52scLtKcu/Z3lmmF87F0BKFSk7u7oqP+jP2hss=;
- b=d6zgnrFu9bwcow02H/COZ92NZvqNya/fszdSOjb/wT8B9BLx4kHH5yK1UlMkZ2bTlbbeLEray3j3uso6KhIpsci/Y/A4XkPfo1WiDsAxWZng1nBMaeJg0Dw9D9VUEUKJvm0LQFR3dOnPIBONl7eOSHwKtKMSZfktFcjWDYt7Jcc=
-Received: from DM5PR1301MB2108.namprd13.prod.outlook.com (10.174.186.34) by
- DM5PR1301MB2060.namprd13.prod.outlook.com (10.174.186.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.8; Mon, 16 Dec 2019 18:24:40 +0000
-Received: from DM5PR1301MB2108.namprd13.prod.outlook.com
- ([fe80::2d23:b456:d67:f230]) by DM5PR1301MB2108.namprd13.prod.outlook.com
- ([fe80::2d23:b456:d67:f230%6]) with mapi id 15.20.2559.012; Mon, 16 Dec 2019
- 18:24:39 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "rmilkowski@gmail.com" <rmilkowski@gmail.com>
-CC:     "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] NFSv4: nfs4_do_fsinfo() should not do implicit lease
- renewals
-Thread-Topic: [PATCH] NFSv4: nfs4_do_fsinfo() should not do implicit lease
- renewals
-Thread-Index: AdW0MytZJzbanD9yTZ+e0zLvCdtxJAACuc6A
-Date:   Mon, 16 Dec 2019 18:24:39 +0000
-Message-ID: <dea30ea3f0fc31e40b311c4d110c26cf40658dca.camel@hammerspace.com>
-References: <056501d5b437$91f1c6c0$b5d55440$@gmail.com>
-In-Reply-To: <056501d5b437$91f1c6c0$b5d55440$@gmail.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [68.40.189.247]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: da240dad-5650-4da3-4458-08d78255369f
-x-ms-traffictypediagnostic: DM5PR1301MB2060:
-x-microsoft-antispam-prvs: <DM5PR1301MB206066E3505DC18C6523B300B8510@DM5PR1301MB2060.namprd13.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6430;
-x-forefront-prvs: 02530BD3AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39840400004)(136003)(396003)(346002)(376002)(189003)(199004)(66946007)(64756008)(66446008)(4001150100001)(6512007)(66556008)(66476007)(36756003)(76116006)(316002)(54906003)(110136005)(71200400001)(2906002)(81166006)(6506007)(2616005)(86362001)(5660300002)(186003)(8676002)(4326008)(6486002)(81156014)(8936002)(508600001)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR1301MB2060;H:DM5PR1301MB2108.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5vR7QDjBEe6tY4bm4B+qWigmsw+/P9qzKlnfM+BnZKXc2IP58IesYE6DhmKaV0N4GUl+8tWQ38TJ9mYT+/xTuCnblJF44hUL79dIKxlX1qXlQKc2eGrf5+vPAcnfpP8hHJizZ3Q7NT5pLShVaFLlBbWYrtSJSQlIjZy6f+Lhj8SzAu1GMjiRTyGn5Oj7243tHrODGne56X+cXaSFsSrzoSrsx6HRSSELc1FOvr0BYzSIGLh+bumfDjdV+xu9kiCSXCnOJkPocqxKC5xIzuA0zC6+gsd7j57k89YWcYeWCYfOXz9fXNrQlZjCoi7dZ6T6y2YiG1ucdTpvSrev5ZfNpUqftd4EHIvHD1s8kE2VZ8wZWmjuiii9OjGogdCpxFaK1t7ROHCV4f+yU/79axBPea1mIFCyNTtyEFzO9Ch0JaYTorCH7gAiPQ27g3VR1yyA
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <5778E02CA2275C47AE02D3E15C6799A9@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1731915AbfLPSZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:25:25 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:37687 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731953AbfLPSZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:25:21 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 21so3284385qky.4
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 10:25:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=FWv9JbMsQZWcHgr3Y7gPkAtO8jwEzaE649iak91Bmts=;
+        b=jjOrTQb8SYHaFZHILqDRmsF8b/h7ejI/AfFstavkuXkdh78Pjwl+RMaArmbEUuiLf6
+         oNDxl7mEbWzutIThNJHH71DiGrB+YbtIMhKletH3+LaOpQ7kXFEKU0yVkECMgJssvu/z
+         IkWr8F95Vk+K1WJqdvWs2RGRP7C1c/cgwDBAwYnZu11a/sHQfQqld9bIugthM2/GGZ5r
+         M/PlHt9effc6/sgbf1T0mzN1MK6vCXfmYy2Di1r3HYP1CHyhbOmwl7uvoaJ1QiFf80Ob
+         YvMw+p+W29yt3SJjj7QinbCp4Q138xYj4+pkVfF1NSluWjpcRgMweEbBdb0tqgV0PApv
+         d3VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FWv9JbMsQZWcHgr3Y7gPkAtO8jwEzaE649iak91Bmts=;
+        b=hyOYr/JNNgRRq38/BNvqox2vOeOr0vcoVrItW9jMPXZ7fci3mdQmKqKK/ShPmgxvF4
+         KsEreSvAJuDIyyD/aq0OFzknaP/bgBd8TEzU2bIg+GJqT4pLQBQWZ/It0D7sIYrV8Om8
+         E4TwA4Z+qj/h5awU4W5DfeCfldbXALphQ9ZmEWce9kkfWSMKcTWEh9yk6pdHxEB0tcqs
+         X8JBDQwtOe9ssix+gh0F24cJ/0WMmysfKrIJGm60sX7bAIOKwz5FZE2A4WFeRuKm3bv2
+         8NT9LkCgtEIKt7TwmjUHETbGJcIWr4gciQuA09ep7KZdosc7JZHykqcTOrguTFQ/ZHdJ
+         81yA==
+X-Gm-Message-State: APjAAAWdtRN5DczMqSgq1MzRFwNyBzgw/T07jh8REkQ63679Uj3vO3oR
+        DwWH3XhU10fdQlSiiwfWdZukuQ==
+X-Google-Smtp-Source: APXvYqyEiPIX0EGFk7dqZs2NpFRBXExye6lf0SDEIJhj1+LuaQWMj4Y3ijjD5gMqqWy+kTqIh1dtoA==
+X-Received: by 2002:a05:620a:1324:: with SMTP id p4mr627167qkj.497.1576520719843;
+        Mon, 16 Dec 2019 10:25:19 -0800 (PST)
+Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
+        by smtp.gmail.com with ESMTPSA id w29sm7322762qtc.72.2019.12.16.10.25.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 10:25:19 -0800 (PST)
+Date:   Mon, 16 Dec 2019 13:25:18 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Tejun Heo <tj@kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH 1/3] mm: memcontrol: fix memory.low proportional
+ distribution
+Message-ID: <20191216182518.GA209920@cmpxchg.org>
+References: <20191213192158.188939-1-hannes@cmpxchg.org>
+ <20191213192158.188939-2-hannes@cmpxchg.org>
+ <20191213204026.GA6830@localhost.localdomain>
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da240dad-5650-4da3-4458-08d78255369f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 18:24:39.4963
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zGZ7oru2Q8L9bxpTRJsaob7+q9vzNl+cuLHvqoglhgoT0KCopsPgxepA6f9tU0h0fc6kU/el73ThrXvFF5b1bg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR1301MB2060
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191213204026.GA6830@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gTW9uLCAyMDE5LTEyLTE2IGF0IDE3OjM4ICswMDAwLCBSb2JlcnQgTWlsa293c2tpIHdyb3Rl
-Og0KPiBGcm9tOiBSb2JlcnQgTWlsa293c2tpIDxybWlsa293c2tpQGdtYWlsLmNvbT4NCj4gDQo+
-IEN1cnJlbnRseSwgZWFjaCB0aW1lIG5mczRfZG9fZnNpbmZvKCkgaXMgY2FsbGVkIGl0IHdpbGwg
-ZG8gYW4NCj4gaW1wbGljaXQNCj4gTkZTNCBsZWFzZSByZW5ld2FsLCB3aGljaCBpcyBub3QgY29t
-cGxpYW50IHdpdGggdGhlIE5GUzQNCj4gc3BlY2lmaWNhdGlvbi4NCj4gVGhpcyBjYW4gcmVzdWx0
-IGluIGEgbGVhc2UgYmVpbmcgZXhwaXJlZCBieSBORlMgc2VydmVyIHdoaWNoIHdpbGwNCj4gdGhl
-bg0KPiByZXR1cm4gTkZTNEVSUl9FWFBJUkVEIG9yIE5GUzRFUlJfU1RBTEVfQ0xJRU5USUQuDQo+
-IA0KPiBTaWduZWQtb2ZmLWJ5OiBSb2JlcnQgTWlsa293c2tpIDxybWlsa293c2tpQGdtYWlsLmNv
-bT4NCj4gLS0tDQo+ICBmcy9uZnMvbmZzNHByb2MuYyB8IDcgKysrKystLQ0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
-YS9mcy9uZnMvbmZzNHByb2MuYyBiL2ZzL25mcy9uZnM0cHJvYy5jDQo+IGluZGV4IDc2ZDM3MTYu
-LmFhZDY1ZGQgMTAwNjQ0DQo+IC0tLSBhL2ZzL25mcy9uZnM0cHJvYy5jDQo+ICsrKyBiL2ZzL25m
-cy9uZnM0cHJvYy5jDQo+IEBAIC01MDE5LDE2ICs1MDE5LDE5IEBAIHN0YXRpYyBpbnQgbmZzNF9k
-b19mc2luZm8oc3RydWN0IG5mc19zZXJ2ZXINCj4gKnNlcnZlciwNCj4gc3RydWN0IG5mc19maCAq
-ZmhhbmRsZSwgc3RyDQo+ICAJc3RydWN0IG5mczRfZXhjZXB0aW9uIGV4Y2VwdGlvbiA9IHsNCj4g
-IAkJLmludGVycnVwdGlibGUgPSB0cnVlLA0KPiAgCX07DQo+IC0JdW5zaWduZWQgbG9uZyBub3cg
-PSBqaWZmaWVzOw0KPiArCXVuc2lnbmVkIGxvbmcgbGFzdF9yZW5ld2FsID0gamlmZmllczsNCj4g
-IAlpbnQgZXJyOw0KPiAgDQo+ICAJZG8gew0KPiAgCQllcnIgPSBfbmZzNF9kb19mc2luZm8oc2Vy
-dmVyLCBmaGFuZGxlLCBmc2luZm8pOw0KPiAgCQl0cmFjZV9uZnM0X2ZzaW5mbyhzZXJ2ZXIsIGZo
-YW5kbGUsIGZzaW5mby0+ZmF0dHIsIGVycik7DQo+ICAJCWlmIChlcnIgPT0gMCkgew0KPiArCQkJ
-Lyogbm8gaW1wbGljaXQgbGVhc2UgcmVuZXdhbCBhbGxvd2VkIGhlcmUgKi8NCj4gKwkJCWlmIChz
-ZXJ2ZXItPm5mc19jbGllbnQtPmNsX2xhc3RfcmVuZXdhbCAhPSAwKQ0KPiArCQkJCWxhc3RfcmVu
-ZXdhbCA9DQo+IHNlcnZlci0+bmZzX2NsaWVudC0+Y2xfbGFzdF9yZW5ld2FsOw0KPiAgCQkJbmZz
-NF9zZXRfbGVhc2VfcGVyaW9kKHNlcnZlci0+bmZzX2NsaWVudCwNCj4gIAkJCQkJZnNpbmZvLT5s
-ZWFzZV90aW1lICogSFosDQo+IC0JCQkJCW5vdyk7DQo+ICsJCQkJCWxhc3RfcmVuZXdhbCk7DQo+
-ICAJCQlicmVhazsNCj4gIAkJfQ0KPiAgCQllcnIgPSBuZnM0X2hhbmRsZV9leGNlcHRpb24oc2Vy
-dmVyLCBlcnIsICZleGNlcHRpb24pOw0KDQpOQUNLLiBUaGUgYWJvdmUgYXJndW1lbnQgb25seSBh
-cHBsaWVzIHRvIGxlZ2FjeSBtaW5vciB2ZXJzaW9uIDAgc2V0dXBzLA0KYW5kIGRvZXMgbm90IGFw
-cGx5IHRvIE5GU3Y0LjEgb3IgbmV3ZXIuDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpMaW51eCBO
-RlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVy
-c3BhY2UuY29tDQoNCg0K
+On Fri, Dec 13, 2019 at 08:40:31PM +0000, Roman Gushchin wrote:
+> On Fri, Dec 13, 2019 at 02:21:56PM -0500, Johannes Weiner wrote:
+> > When memory.low is overcommitted - i.e. the children claim more
+> > protection than their shared ancestor grants them - the allowance is
+> > distributed in proportion to each siblings's utilized protection:
+> > 
+> > 	low_usage = min(low, usage)
+> > 	elow = parent_elow * (low_usage / siblings_low_usage)
+> > 
+> > However, siblings_low_usage is not the sum of all low_usages. It sums
+> > up the usages of *only those cgroups that are within their memory.low*
+> > That means that low_usage can be *bigger* than siblings_low_usage, and
+> > consequently the total protection afforded to the children can be
+> > bigger than what the ancestor grants the subtree.
+> > 
+> > Consider three groups where two are in excess of their protection:
+> > 
+> >   A/memory.low = 10G
+> >   A/A1/memory.low = 10G, A/memory.current = 20G
+> >   A/A2/memory.low = 10G, B/memory.current = 20G
+> >   A/A3/memory.low = 10G, C/memory.current =  8G
+> > 
+> >   siblings_low_usage = 8G (only A3 contributes)
+> >   A1/elow = parent_elow(10G) * low_usage(20G) / siblings_low_usage(8G) = 25G
+> > 
+> > The 25G are then capped to A1's own memory.low setting, i.e. 10G. The
+> > same is true for A2. And A3 would also receive 10G. The combined
+> > protection of A1, A2 and A3 is 30G, when A limits the tree to 10G.
+> > 
+> > What does this mean in practice? A1 and A2 would still be in excess of
+> > their 10G allowance and would be reclaimed, whereas A3 would not. As
+> > they eventually drop below their protection setting, they would be
+> > counted in siblings_low_usage again and the error would right itself.
+> > 
+> > When reclaim is applied in a binary fashion - cgroup is reclaimed when
+> > it's above its protection, otherwise it's skipped - this could work
+> > actually work out just fine - although it's not quite clear to me why
+> > we'd introduce this error in the first place.
+> 
+> This complication is not simple an error, it protects cgroups under
+> their low limits if there is unprotected memory.
+> 
+> So, here is an example:
+> 
+>       A      A/memory.low = 2G, A/memory.current = 4G
+>      / \
+>     B   C    B/memory.low = 3G  B/memory.current = 2G
+>              C/memory.low = 1G  C/memory.current = 2G
+> 
+> as now:
+> 
+> B/elow = 2G * 2G / 2G = 2G == B/memory.current
+> C/elow = 2G * 1G / 2G = 1G < C/memory.current
+> 
+> with this fix:
+> 
+> B/elow = 2G * 2G / 3G = 4/3 G < B/memory.current
+> C/elow = 2G * 1G / 3G = 2/3 G < C/memory.current
+> 
+> So in other words, currently B won't be scanned at all, because
+> there is 1G of unprotected memory in C. With your patch both B and C
+> will be scanned.
+
+Looking at the B and C numbers alone: C is bigger than what it claims
+for protection and B is smaller than what it claims for protection.
+
+However, A doesn't provide 4G to its children. It provides 2G to be
+distributed between the two. So how can B claim 3G and be exempted
+from reclaim?
+
+But more importantly, it isn't in either case! The end result is the
+same in both implementations. Because as soon as C is reclaimed down
+to below 1G, A is still in excess of its memory.low (because it's
+overcommitted!), and they both will be reclaimed proportionally.
+
+From the example in the current code:
+
+ * For example, if there are memcgs A, A/B, A/C, A/D and A/E:
+ *
+ *     A      A/memory.low = 2G, A/memory.current = 6G
+ *    //\\
+ *   BC  DE   B/memory.low = 3G  B/memory.current = 2G
+ *            C/memory.low = 1G  C/memory.current = 2G
+ *            D/memory.low = 0   D/memory.current = 2G
+ *            E/memory.low = 10G E/memory.current = 0
+ *
+ * and the memory pressure is applied, the following memory distribution
+ * is expected (approximately):
+ *
+ *     A/memory.current = 2G
+ *
+ *     B/memory.current = 1.3G
+ *     C/memory.current = 0.6G
+ *     D/memory.current = 0
+ *     E/memory.current = 0
+
+Even though B starts out within whatever it claims to be its
+protection, A is overcommitted and so B and C converge on their
+proportional share of the parent's allowance.
+
+So to go back to the example chosen above:
+
+>       A      A/memory.low = 2G, A/memory.current = 4G
+>      / \
+>     B   C    B/memory.low = 3G  B/memory.current = 2G
+>              C/memory.low = 1G  C/memory.current = 2G
+
+With either implementation we'd expect the distribution to be about
+1.5G and 0.5G for B and C, respectively.
+
+And they'd have to be, too. Otherwise the semantics would be
+completely unpredictable to anyone trying to configure this.
+
+So I think mixing proportional distribution with absolute thresholds
+like this makes the implementation unnecessarily hard to reason
+about. It's also clearly buggy as pointed out in the changelog.
+
+> > However, since
+> > 1bc63fb1272b ("mm, memcg: make scan aggression always exclude
+> > protection"), reclaim pressure is scaled to how much a cgroup is above
+> > its protection. As a result this calculation error unduly skews
+> > pressure away from A1 and A2 toward the rest of the system.
+> 
+> It could be that with 1bc63fb1272b the target memory distribution
+> will be fine. However the patch will change the memory pressure in B and C
+> (in the example above). Maybe it's ok, but at least it should be discussed
+> and documented.
+
+I'll try to improve the changelog based on this, thanks for filling in
+the original motivation. But I do think it's a change we want to make.
