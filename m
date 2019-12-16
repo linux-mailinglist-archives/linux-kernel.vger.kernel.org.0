@@ -2,123 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E47A12003A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:50:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A8BE12003F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:50:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfLPItV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:49:21 -0500
-Received: from mail-ot1-f50.google.com ([209.85.210.50]:33031 "EHLO
-        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfLPItV (ORCPT
+        id S1727007AbfLPItv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:49:51 -0500
+Received: from mail-ot1-f47.google.com ([209.85.210.47]:41117 "EHLO
+        mail-ot1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfLPItv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:49:21 -0500
-Received: by mail-ot1-f50.google.com with SMTP id d17so8274140otc.0
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:49:20 -0800 (PST)
+        Mon, 16 Dec 2019 03:49:51 -0500
+Received: by mail-ot1-f47.google.com with SMTP id r27so8211115otc.8;
+        Mon, 16 Dec 2019 00:49:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4xOLwi7XGa06O+FcZfECpskN3Lf2VXslN2VEftJlRvg=;
+        b=dJ58NKxpobcoCFcVrixIygWkFd2lRYRcK62+F0oqTQy0PfcLrohbjZ/4794t+zXWew
+         6YLPUjhuSc++1fWNSHL/u93PNyCv2AvGz6o5coEvJZP3/hXPveU7fhP50DZUhQl1cz7m
+         V5fbw5287Yw5Yh7oHOP+LKFl2v6NCNjzpdDHSpDJqcHwSxuqAjcA54zuTxIvsu+dfUvy
+         UjipEEgIYB2tmihK3Vq8xjpTJ7WIBIUSWu1i2WoVVYyGSEL2gBFGJRoiUBwuf9+OYdfq
+         fv/+7QQ5mAQxYsEukysEKYsNNsRRs/bU9NflxHI5EA4lz+ZI6DUvHdRkPSA7tteynrLD
+         HAbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=t3tpSwE7m7poBVzPd8EZu474xjqUfv4oG2KZ3IU+yZc=;
-        b=BcDMLd0BosYKEPsNx6SbLfgHzIppqC23l4MUEV7F9RishE/dK+8kb8qtTpkTdGgiRf
-         N6bk5DacCRn91mHbsj3DopRK0JYyCLrSZdpvQ54Zgxe9qclgvP+ZctOMlPylBcueqQoI
-         Z34Ye11czpEasaQcgOAn9JN5NIia2d3Fy8QaFILrLHAgLX8fYqmJhvx2u4hQ4B8ANM7h
-         39kHFGl3s/XGEOFCieVj0AJX+MpBHcnP/HUc/y2kWPq9Jt4bfEuvPJ9lEqBtQkKQ8m8z
-         n9P3gG2yl2At5k7We+PdksfLAY4K6s4zATZQZSk01dA2NnklqYRVTB520Hu7g26AHbNg
-         y3qw==
-X-Gm-Message-State: APjAAAXK4mmv3uSo7XpsWzT/4dvRtZ8RKiGUFn2/k7ccNISmcYUvEwI1
-        kmwtdK/4dI0mlaA/++mEXEJ1jR9ioT8LshAzu+a30FTB
-X-Google-Smtp-Source: APXvYqzRKELwCr0XO/6x7gN8sFTvhH3qjoyCLrwzYNnLz1qIygqROXs6kzATz14rUugVvJ+VzO/0TaipbKfb6l72Q2k=
-X-Received: by 2002:a9d:2073:: with SMTP id n106mr30701941ota.145.1576486159745;
- Mon, 16 Dec 2019 00:49:19 -0800 (PST)
+        bh=4xOLwi7XGa06O+FcZfECpskN3Lf2VXslN2VEftJlRvg=;
+        b=Nfe4K/bYqsEzecM5mGaT1laPBKUT0gxjznuZ8Zoc0U04SFNPoxLReKv++1M1m65073
+         guSmbiC9WaJst9L6wc7WPeVzSo/kK3GPxJtkIukzkN/Eu3B18iQw9CF4H3yfvuHVhNxo
+         efDEEEkdLHXt+/P8be1q1lQnkfJ7GKdXrFnqtfCDAQgyu/jZFrnnAZzqWisIikHniNSo
+         SNLoHQN2D2JMTvm8sbufodDw9l5WUdb7NuSE7Moa1ePnAyuMlJ9FcbIclt79rY0P42lm
+         xEJa9DMiW135os1/fRglkqv33+TFiQcN5ejCkcaFdz/wcDq4xwYqnKBzWt4ZTFP3+LkS
+         JYDA==
+X-Gm-Message-State: APjAAAWVndGIal8uv+3/eXXmGtT69aW8hwwgb2dp0enbGiD/4aECeqZT
+        lyN4h5uPrT6fM9tTMHWJuiNRJRHnp5iV+6WB/2A=
+X-Google-Smtp-Source: APXvYqwlbGXOP54hraUBXqLyvcB1sZC55s35DdLDVTvMlWDnFYSYzIpnhC0yoc7BBbnE7hMFzhGGWwdDVzlod+Kll6g=
+X-Received: by 2002:a05:6830:16d0:: with SMTP id l16mr31683433otr.176.1576486189948;
+ Mon, 16 Dec 2019 00:49:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20191216083658.21386-1-geert@linux-m68k.org>
-In-Reply-To: <20191216083658.21386-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 16 Dec 2019 09:49:08 +0100
-Message-ID: <CAMuHMdUaRdyRigwS+fdju1_PQCahONVFPKu0DbX6hhb7=JXmLA@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v5.5-rc2
-To:     Greg Ungerer <gerg@linux-m68k.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20191213084748.11210-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAL_JsqLSYroDZGWksJJ=E+01X=3Tji4+GmK8s3i+d2BJphqiLQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLSYroDZGWksJJ=E+01X=3Tji4+GmK8s3i+d2BJphqiLQ@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 16 Dec 2019 08:49:23 +0000
+Message-ID: <CA+V-a8uKBuVUQvkoJ9pJYX97Qy3JazTyLCy-2T35gOX77AP8vg@mail.gmail.com>
+Subject: Re: [v2 3/6] of: address: add support to parse PCI outbound-ranges
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        PCI <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+Hi Rob,
 
-On Mon, Dec 16, 2019 at 9:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v5.5-rc2[1] compared to v5.4[2].
+Thank you for the review.
 
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/d1eef1c619749b2a57e514a3fa67d9a516ffa919/ (all 232 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
+On Fri, Dec 13, 2019 at 8:37 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Fri, Dec 13, 2019 at 2:48 AM Lad Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> >
+> > From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > this patch adds support to parse PCI outbound-ranges, the
+> > outbound-regions are similar to pci ranges except it doesn't
+> > have pci address, below is the format for bar-ranges:
+> >
+> > outbound-ranges = <flags upper32_cpuaddr lower32_cpuaddr
+> >                    upper32_size lower32_size>;
+>
+> You can't just make up a new ranges property. Especially one that
+> doesn't follow how 'ranges' works. We already have 'dma-ranges' to
+> translate device to memory addresses.
+>
+> Explain the problem or feature you need, not the solution you came up
+> with. Why do you need this and other endpoint bindings haven't?
+>
+rcar SoC's supports multiple outbound region for mapping the PCI address
+locally to the system. This lead to discussion where there exist controllers
+which support regions for high/low priority transfer and similarly regions
+for large/small memory allocations, as a result a new ranges property was
+added, where we can specify the flags which would indicate how the outbound
+region can be used during requests.
 
->   + /kisskb/src/arch/m68k/include/asm/string.h: warning: '__builtin_memcpy' forming offset [3, 4] is out of the bounds [0, 2] of object '__gu_val' with type 'short unsigned int' [-Warray-bounds]:  => 72:25
+The current endpoint controller drivers just support  single region.
 
-The upgrade from gcc 4.6.3 to 81.0 seems to have revealed a potential
-issue in get_user() in arch/m68k/include/asm/uaccess_no.h.
-
-        #define get_user(x, ptr)                                        \
-        ({                                                              \
-            int __gu_err = 0;                                           \
-            typeof(x) __gu_val = 0;                                     \
-            ^^^^^^^^^
-            This is the type of the destination
-
-            switch (sizeof(*(ptr))) {                                   \
-            case 1:                                                     \
-                __get_user_asm(__gu_err, __gu_val, ptr, b, "=d");       \
-                break;                                                  \
-            case 2:                                                     \
-                __get_user_asm(__gu_err, __gu_val, ptr, w, "=r");       \
-                break;                                                  \
-            case 4:                                                     \
-                __get_user_asm(__gu_err, __gu_val, ptr, l, "=r");       \
-                break;                                                  \
-            case 8:                                                     \
-                memcpy((void *) &__gu_val, ptr, sizeof (*(ptr)));       \
-                break;                                                  \
-            default:                                                    \
-                __gu_val = 0;                                           \
-                __gu_err = __get_user_bad();                            \
-                break;                                                  \
-            }                                                           \
-            (x) = (typeof(*(ptr))) __gu_val;                            \
-            __gu_err;                                                   \
-        })
-
-ext2_ioctl() calls this like
-
-        unsigned short rsv_window_size;
-        if (get_user(rsv_window_size, (int __user *)arg)) { ... }
-
-So a 32-bit value is being copied to an unsigned short value, leading
-to the warning (for the memcpy() in the non-taken "case 8" branch).
-
-Fortunately the compiler emits a register move for this, so no real harm
-is done:
-
-        | fs/ext2/ioctl.c:123:          if (get_user(rsv_window_size,
-(int __user *)arg))
-                move.l 48(%sp),%a0      | arg,
-        #APP
-        | 123 "fs/ext2/ioctl.c" 1
-                movel (%a0),%d2 | *arg.32_43, __gu_val
-
-The corresponding code in arch/m68k/include/asm/uaccess_mm.h
-uses a temporary __gu_val of the right sized type based on the source
-type to avoid this.
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+--Prabhakar
