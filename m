@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E6231213B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0804D1215F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbfLPSD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40974 "EHLO mail.kernel.org"
+        id S1731558AbfLPSRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729585AbfLPSDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:54 -0500
+        id S1731670AbfLPSRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41CE720733;
-        Mon, 16 Dec 2019 18:03:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 245FE206E0;
+        Mon, 16 Dec 2019 18:17:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519433;
-        bh=QjRFcHf8Bi/1I3pfsuukgrDsxgYbyrHesBPlsk46Kqc=;
+        s=default; t=1576520254;
+        bh=vT09+Y2atmoIbCV7QqkXaUqPrSgl4UOEZ/3qeExbu4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p5hWZG0AZJv3VSGMR84GFRErE3e8eB8pQ1839hbJAdwEwpJ6VfKipItrW3LJlo4RG
-         dnWvnsLGwUAmzeSP8hqmycTwsdCPq7rieXa+V5Ib6WrRx7r9jS96xSgqnofbh9XXdX
-         L0o3AYFydXhjiSTeU3Lb+qlSUWPiWm3v3DibO41A=
+        b=Btck0qHFFapIsGM3nE/j0HlQK3WAQxCe3xdXHNuA1CvT6D8gyjEU4cHESB7UQ9Jf9
+         qVUNcUWezlDNwtGqQfH8SlkSIaJIXzF+wYD9SOxvGXRlpEaomaXZxcqDSwcXsTjB0a
+         DqIGvOR1WfbUWiXD15a5dsvgHGOATnvyzqqlbJms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jiunn Chang <c0d1n61at3@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 065/140] media: cec.h: CEC_OP_REC_FLAG_ values were swapped
-Date:   Mon, 16 Dec 2019 18:48:53 +0100
-Message-Id: <20191216174805.410177666@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 5.4 078/177] lib: raid6: fix awk build warnings
+Date:   Mon, 16 Dec 2019 18:48:54 +0100
+Message-Id: <20191216174836.455110074@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +42,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 806e0cdfee0b99efbb450f9f6e69deb7118602fc upstream.
+commit 702600eef73033ddd4eafcefcbb6560f3e3a90f7 upstream.
 
-CEC_OP_REC_FLAG_NOT_USED is 0 and CEC_OP_REC_FLAG_USED is 1, not the
-other way around.
+Newer versions of awk spit out these fun warnings:
+	awk: ../lib/raid6/unroll.awk:16: warning: regexp escape sequence `\#' is not a known regexp operator
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reported-by: Jiunn Chang <c0d1n61at3@gmail.com>
-Cc: <stable@vger.kernel.org>      # for v4.10 and up
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+As commit 700c1018b86d ("x86/insn: Fix awk regexp warnings") showed, it
+turns out that there are a number of awk strings that do not need to be
+escaped and newer versions of awk now warn about this.
+
+Fix the string up so that no warning is produced.  The exact same kernel
+module gets created before and after this patch, showing that it wasn't
+needed.
+
+Link: https://lore.kernel.org/r/20191206152600.GA75093@kroah.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/uapi/linux/cec.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/raid6/unroll.awk |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/uapi/linux/cec.h
-+++ b/include/uapi/linux/cec.h
-@@ -767,8 +767,8 @@ struct cec_event {
- #define CEC_MSG_SELECT_DIGITAL_SERVICE			0x93
- #define CEC_MSG_TUNER_DEVICE_STATUS			0x07
- /* Recording Flag Operand (rec_flag) */
--#define CEC_OP_REC_FLAG_USED				0
--#define CEC_OP_REC_FLAG_NOT_USED			1
-+#define CEC_OP_REC_FLAG_NOT_USED			0
-+#define CEC_OP_REC_FLAG_USED				1
- /* Tuner Display Info Operand (tuner_display_info) */
- #define CEC_OP_TUNER_DISPLAY_INFO_DIGITAL		0
- #define CEC_OP_TUNER_DISPLAY_INFO_NONE			1
+--- a/lib/raid6/unroll.awk
++++ b/lib/raid6/unroll.awk
+@@ -13,7 +13,7 @@ BEGIN {
+ 	for (i = 0; i < rep; ++i) {
+ 		tmp = $0
+ 		gsub(/\$\$/, i, tmp)
+-		gsub(/\$\#/, n, tmp)
++		gsub(/\$#/, n, tmp)
+ 		gsub(/\$\*/, "$", tmp)
+ 		print tmp
+ 	}
 
 
