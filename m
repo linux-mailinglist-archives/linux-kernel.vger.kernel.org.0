@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F7CD121362
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AAE61213F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfLPSBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:01:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35910 "EHLO mail.kernel.org"
+        id S1729969AbfLPSGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:06:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729108AbfLPSBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:01:11 -0500
+        id S1729961AbfLPSGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:06:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA82E2166E;
-        Mon, 16 Dec 2019 18:01:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B629206E0;
+        Mon, 16 Dec 2019 18:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519270;
-        bh=NJg064XV9VxiRqIe6ZJtZWzA9SXnDH5W0GUGvDVe/SM=;
+        s=default; t=1576519579;
+        bh=EEn8CzlLCp3Pd/uC7W36bYetZik14ppH0QAecFCzcsU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0mf+06oVzmx0sc14EUCclB9FbGVqqi6wDXutmdnosqp1JwAG2YtpOqNAyqijiHTYi
-         6tASojo29jz25mL9PXaOvAkHGclP7zMPe/RZmZPDDXJYQ1F/LyVOQyTP6CQlZJyPl/
-         tysuKseiNqia0IVhmhUvoW9Ev0L+XFpciEU1M9dE=
+        b=oPuXv3naqxbiX0eIiNDctGZBKXzKsHPICPxRxpf7fAsdRRRulPkPLvHatTUff/oPB
+         RAXpkncEBCA1RhlTEqOMZIb+nCgTRkYziJ4gixmcUM9ETACxBNtitsr8uzTM8JpTDo
+         xZ9HNo5DNY4YyVVWgSBhMdUN6T2aSF/tgz/Xiuj0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        yangerkun <yangerkun@huawei.com>, Jan Kara <jack@suse.cz>,
-        Theodore Tso <tytso@mit.edu>
-Subject: [PATCH 4.14 264/267] ext4: fix a bug in ext4_wait_for_tail_page_commit
-Date:   Mon, 16 Dec 2019 18:49:50 +0100
-Message-Id: <20191216174917.289112040@linuxfoundation.org>
+        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Yazen Ghannam <yazen.ghannam@amd.com>, x86-ml <x86@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 123/140] x86/MCE/AMD: Carve out the MC4_MISC thresholding quirk
+Date:   Mon, 16 Dec 2019 18:49:51 +0100
+Message-Id: <20191216174823.068255825@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,120 +50,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yangerkun <yangerkun@huawei.com>
+From: Shirish S <Shirish.S@amd.com>
 
-commit 565333a1554d704789e74205989305c811fd9c7a upstream.
+[ Upstream commit 30aa3d26edb0f3d7992757287eec0ca588a5c259 ]
 
-No need to wait for any commit once the page is fully truncated.
-Besides, it may confuse e.g. concurrent ext4_writepage() with the page
-still be dirty (will be cleared by truncate_pagecache() in
-ext4_setattr()) but buffers has been freed; and then trigger a bug
-show as below:
+The MC4_MISC thresholding quirk needs to be applied during S5 -> S0 and
+S3 -> S0 state transitions, which follow different code paths. Carve it
+out into a separate function and call it mce_amd_feature_init() where
+the two code paths of the state transitions converge.
 
-[   26.057508] ------------[ cut here ]------------
-[   26.058531] kernel BUG at fs/ext4/inode.c:2134!
-...
-[   26.088130] Call trace:
-[   26.088695]  ext4_writepage+0x914/0xb28
-[   26.089541]  writeout.isra.4+0x1b4/0x2b8
-[   26.090409]  move_to_new_page+0x3b0/0x568
-[   26.091338]  __unmap_and_move+0x648/0x988
-[   26.092241]  unmap_and_move+0x48c/0xbb8
-[   26.093096]  migrate_pages+0x220/0xb28
-[   26.093945]  kernel_mbind+0x828/0xa18
-[   26.094791]  __arm64_sys_mbind+0xc8/0x138
-[   26.095716]  el0_svc_common+0x190/0x490
-[   26.096571]  el0_svc_handler+0x60/0xd0
-[   26.097423]  el0_svc+0x8/0xc
+ [ bp: massage commit message and the carved out function. ]
 
-Run the procedure (generate by syzkaller) parallel with ext3.
-
-void main()
-{
-	int fd, fd1, ret;
-	void *addr;
-	size_t length = 4096;
-	int flags;
-	off_t offset = 0;
-	char *str = "12345";
-
-	fd = open("a", O_RDWR | O_CREAT);
-	assert(fd >= 0);
-
-	/* Truncate to 4k */
-	ret = ftruncate(fd, length);
-	assert(ret == 0);
-
-	/* Journal data mode */
-	flags = 0xc00f;
-	ret = ioctl(fd, _IOW('f', 2, long), &flags);
-	assert(ret == 0);
-
-	/* Truncate to 0 */
-	fd1 = open("a", O_TRUNC | O_NOATIME);
-	assert(fd1 >= 0);
-
-	addr = mmap(NULL, length, PROT_WRITE | PROT_READ,
-					MAP_SHARED, fd, offset);
-	assert(addr != (void *)-1);
-
-	memcpy(addr, str, 5);
-	mbind(addr, length, 0, 0, 0, MPOL_MF_MOVE);
-}
-
-And the bug will be triggered once we seen the below order.
-
-reproduce1                         reproduce2
-
-...                            |   ...
-truncate to 4k                 |
-change to journal data mode    |
-                               |   memcpy(set page dirty)
-truncate to 0:                 |
-ext4_setattr:                  |
-...                            |
-ext4_wait_for_tail_page_commit |
-                               |   mbind(trigger bug)
-truncate_pagecache(clean dirty)|   ...
-...                            |
-
-mbind will call ext4_writepage() since the page still be dirty, and then
-report the bug since the buffers has been free. Fix it by return
-directly once offset equals to 0 which means the page has been fully
-truncated.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: yangerkun <yangerkun@huawei.com>
-Link: https://lore.kernel.org/r/20190919063508.1045-1-yangerkun@huawei.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1547651417-23583-3-git-send-email-shirish.s@amd.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ext4/inode.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c     | 29 ----------------------
+ arch/x86/kernel/cpu/mcheck/mce_amd.c | 36 ++++++++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 29 deletions(-)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5305,11 +5305,15 @@ static void ext4_wait_for_tail_page_comm
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index a0bc7f7570814..87ed8462a5c72 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1631,35 +1631,6 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 		if (c->x86 == 0x15 && c->x86_model <= 0xf)
+ 			mce_flags.overflow_recov = 1;
  
- 	offset = inode->i_size & (PAGE_SIZE - 1);
- 	/*
--	 * All buffers in the last page remain valid? Then there's nothing to
--	 * do. We do the check mainly to optimize the common PAGE_SIZE ==
--	 * blocksize case
-+	 * If the page is fully truncated, we don't need to wait for any commit
-+	 * (and we even should not as __ext4_journalled_invalidatepage() may
-+	 * strip all buffers from the page but keep the page dirty which can then
-+	 * confuse e.g. concurrent ext4_writepage() seeing dirty page without
-+	 * buffers). Also we don't need to wait for any commit if all buffers in
-+	 * the page remain valid. This is most beneficial for the common case of
-+	 * blocksize == PAGESIZE.
- 	 */
--	if (offset > PAGE_SIZE - i_blocksize(inode))
-+	if (!offset || offset > (PAGE_SIZE - i_blocksize(inode)))
- 		return;
- 	while (1) {
- 		page = find_lock_page(inode->i_mapping,
+-		/*
+-		 * Turn off MC4_MISC thresholding banks on all models since
+-		 * they're not supported there.
+-		 */
+-		if (c->x86 == 0x15) {
+-			int i;
+-			u64 hwcr;
+-			bool need_toggle;
+-			u32 msrs[] = {
+-				0x00000413, /* MC4_MISC0 */
+-				0xc0000408, /* MC4_MISC1 */
+-			};
+-
+-			rdmsrl(MSR_K7_HWCR, hwcr);
+-
+-			/* McStatusWrEn has to be set */
+-			need_toggle = !(hwcr & BIT(18));
+-
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
+-
+-			/* Clear CntP bit safely */
+-			for (i = 0; i < ARRAY_SIZE(msrs); i++)
+-				msr_clear_bit(msrs[i], 62);
+-
+-			/* restore old settings */
+-			if (need_toggle)
+-				wrmsrl(MSR_K7_HWCR, hwcr);
+-		}
+ 	}
+ 
+ 	if (c->x86_vendor == X86_VENDOR_INTEL) {
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index 9f915a8791cc7..5bdfe52b2c9d9 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -545,6 +545,40 @@ out:
+ 	return offset;
+ }
+ 
++/*
++ * Turn off MC4_MISC thresholding banks on all family 0x15 models since
++ * they're not supported there.
++ */
++void disable_err_thresholding(struct cpuinfo_x86 *c)
++{
++	int i;
++	u64 hwcr;
++	bool need_toggle;
++	u32 msrs[] = {
++		0x00000413, /* MC4_MISC0 */
++		0xc0000408, /* MC4_MISC1 */
++	};
++
++	if (c->x86 != 0x15)
++		return;
++
++	rdmsrl(MSR_K7_HWCR, hwcr);
++
++	/* McStatusWrEn has to be set */
++	need_toggle = !(hwcr & BIT(18));
++
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
++
++	/* Clear CntP bit safely */
++	for (i = 0; i < ARRAY_SIZE(msrs); i++)
++		msr_clear_bit(msrs[i], 62);
++
++	/* restore old settings */
++	if (need_toggle)
++		wrmsrl(MSR_K7_HWCR, hwcr);
++}
++
+ /* cpu init entry point, called from mce.c with preempt off */
+ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ {
+@@ -552,6 +586,8 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 	unsigned int bank, block, cpu = smp_processor_id();
+ 	int offset = -1;
+ 
++	disable_err_thresholding(c);
++
+ 	for (bank = 0; bank < mca_cfg.banks; ++bank) {
+ 		if (mce_flags.smca)
+ 			smca_configure(bank, cpu);
+-- 
+2.20.1
+
 
 
