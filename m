@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 794D3121287
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1570E121289
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfLPRx0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:53:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47012 "EHLO mail.kernel.org"
+        id S1727763AbfLPRxc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:53:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727726AbfLPRxT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:53:19 -0500
+        id S1727241AbfLPRx3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:53:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAB4B2166E;
-        Mon, 16 Dec 2019 17:53:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50473206D3;
+        Mon, 16 Dec 2019 17:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518799;
-        bh=XOTApJkCiuammR73DmCm1PlS4Vhi+iv3evwzFFAsCI4=;
+        s=default; t=1576518808;
+        bh=mcG230k4lamzWpW3NpAe1KHV2HqJzW67mkEHLprDO9Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4I0oztdaeZ3cS2uk/3U4x/YBMWQcjiU9OFwZWGFigdLVXdjUgzGtgf63O20vVKpK
-         k2ArtyCDjykAog8zwUqdLeL1JrHxG1okcmZrJy+IBqnwPWxXscbIofr5FuW3one1SB
-         xug0j53oaJJw0yozYOok9AGkLW5ky6zwokoZf2DE=
+        b=BnBcZxcncbTrL0OOxPJf6Uv89dcYHev6XMmGRf3fGkU6X64l96lzFiBK9g1WF+e52
+         Pmwn8kQcMOVZ6rty6iyfkXOSJc3eEjjwS5XOZtFHCPwQmvtctMawHfcPCb7xM4D5Vp
+         XXpjpCdvpvlI6mrY/TcTuGTEJw2VbF1wY3zZSwvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org,
+        Nguyen Viet Dung <dung.nguyen.aj@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 072/267] altera-stapl: check for a null key before strcasecmping it
-Date:   Mon, 16 Dec 2019 18:46:38 +0100
-Message-Id: <20191216174856.598207705@linuxfoundation.org>
+Subject: [PATCH 4.14 076/267] ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()
+Date:   Mon, 16 Dec 2019 18:46:42 +0100
+Message-Id: <20191216174856.947138993@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -43,39 +47,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 9ccb645683ef46e3c52c12c088a368baa58447d4 ]
+[ Upstream commit 9c698e8481a15237a5b1db5f8391dd66d59e42a4 ]
 
-Currently the null check on key is occurring after the strcasecmp on
-the key, hence there is a potential null pointer dereference on key.
-Fix this by checking if key is null first. Also replace the == 0
-check on strcasecmp with just the ! operator.
+Current rsnd dvc.c is using flags to avoid duplicating register for
+MIXer case. OTOH, commit e894efef9ac7 ("ASoC: core: add support to card
+rebind") allows to rebind sound card without rebinding all drivers.
 
-Detected by CoverityScan, CID#1248787 ("Dereference before null check")
+Because of above patch and dvc.c flags, it can't re-register kctrl if
+only sound card was rebinded, because dvc is keeping old flags.
+(Of course it will be no problem if rsnd driver also be rebinded,
+but it is not purpose of above patch).
 
-Fixes: fa766c9be58b ("[media] Altera FPGA firmware download module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+This patch checks current card registered kctrl when registering.
+In MIXer case, it can avoid duplicate register if card already has same
+kctrl. In rebind case, it can re-register kctrl because card registered
+kctl had been removed when unbinding.
+
+This patch is updated version of commit b918f1bc7f1ce ("ASoC: rsnd: DVC
+kctrl sets once")
+
+Reported-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <dung.nguyen.aj@renesas.com>
+Cc: Hiroyuki Yokoyama <hiroyuki.yokoyama.vx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/altera-stapl/altera.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/sh/rcar/core.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
-index f53e217e963f5..494e263daa748 100644
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@ -2176,8 +2176,7 @@ static int altera_get_note(u8 *p, s32 program_size,
- 			key_ptr = &p[note_strings +
- 					get_unaligned_be32(
- 					&p[note_table + (8 * i)])];
--			if ((strncasecmp(key, key_ptr, strlen(key_ptr)) == 0) &&
--						(key != NULL)) {
-+			if (key && !strncasecmp(key, key_ptr, strlen(key_ptr))) {
- 				status = 0;
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index ab0bbef7eb48a..bb06dd72ca9a7 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1278,6 +1278,18 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
+ 	};
+ 	int ret;
  
- 				value_ptr = &p[note_strings +
++	/*
++	 * 1) Avoid duplicate register (ex. MIXer case)
++	 * 2) re-register if card was rebinded
++	 */
++	list_for_each_entry(kctrl, &card->controls, list) {
++		struct rsnd_kctrl_cfg *c = kctrl->private_data;
++
++		if (strcmp(kctrl->id.name, name) == 0 &&
++		    c->mod == mod)
++			return 0;
++	}
++
+ 	if (size > RSND_MAX_CHANNELS)
+ 		return -EINVAL;
+ 
 -- 
 2.20.1
 
