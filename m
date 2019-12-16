@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A602F121489
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CE0E121525
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730914AbfLPSMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56748 "EHLO mail.kernel.org"
+        id S1731868AbfLPSSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:18:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730901AbfLPSMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:09 -0500
+        id S1731858AbfLPSSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:18:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EBA0206EC;
-        Mon, 16 Dec 2019 18:12:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE427207FF;
+        Mon, 16 Dec 2019 18:18:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519927;
-        bh=TE/kABcyzpWjrfLjULG4nenC1gq2QetzcRXtWGYidxE=;
+        s=default; t=1576520332;
+        bh=wwlmxGK47+3NKt/tCyF1WitVXEn7YD87pa8sUS9EE8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JHHmcE/BRDGDDZhE6Zq1ybSxkr1Ipq6x+sxyOiSP2gMfRTPIqa6ShL1L9mqZmqyr0
-         LVR/V/eLhW9BAMlkC41wv/+MNYoRFSnBoldEl0K/bL05zLjCII6o6FrWWWfqeW8E55
-         /U8Lc7M0bEbCwRCNeNmR9bLcSJbkmqGZWoan18Bo=
+        b=actTZaSAtAlkWvsRA8QMeGxhX3/mtNZybOInMhK/8cs2ZndyYb2yXFz31+Londt/n
+         xRf8CO7qIiE832uiHTI9FOTzSXcQLGBL0PQiuVimDTjsF/lHgtYyNpGqvm0+++p2wA
+         29+LJQHRSeZ2XVNy0pfuXhPlCO0I/LJtu9B0c0mk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Daniel Axtens <dja@axtens.net>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 5.3 127/180] powerpc/xive: Skip ioremap() of ESB pages for LSI interrupts
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 5.4 111/177] perf tests: Fix out of bounds memory access
 Date:   Mon, 16 Dec 2019 18:49:27 +0100
-Message-Id: <20191216174841.417623141@linuxfoundation.org>
+Message-Id: <20191216174842.136673983@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,97 +50,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cédric Le Goater <clg@kaod.org>
+From: Leo Yan <leo.yan@linaro.org>
 
-commit b67a95f2abff0c34e5667c15ab8900de73d8d087 upstream.
+commit af8490eb2b33684e26a0a927a9d93ae43cd08890 upstream.
 
-The PCI INTx interrupts and other LSI interrupts are handled differently
-under a sPAPR platform. When the interrupt source characteristics are
-queried, the hypervisor returns an H_INT_ESB flag to inform the OS
-that it should be using the H_INT_ESB hcall for interrupt management
-and not loads and stores on the interrupt ESB pages.
+The test case 'Read backward ring buffer' failed on 32-bit architectures
+which were found by LKFT perf testing.  The test failed on arm32 x15
+device, qemu_arm32, qemu_i386, and found intermittent failure on i386;
+the failure log is as below:
 
-A default -1 value is returned for the addresses of the ESB pages. The
-driver ignores this condition today and performs a bogus IO mapping.
-Recent changes and the DEBUG_VM configuration option make the bug
-visible with :
+  50: Read backward ring buffer                  :
+  --- start ---
+  test child forked, pid 510
+  Using CPUID GenuineIntel-6-9E-9
+  mmap size 1052672B
+  mmap size 8192B
+  Finished reading overwrite ring buffer: rewind
+  free(): invalid next size (fast)
+  test child interrupted
+  ---- end ----
+  Read backward ring buffer: FAILED!
 
-  kernel BUG at arch/powerpc/include/asm/book3s/64/pgtable.h:612!
-  Oops: Exception in kernel mode, sig: 5 [#1]
-  LE PAGE_SIZE=64K MMU=Radix MMU=Hash SMP NR_CPUS=1024 NUMA pSeries
-  Modules linked in:
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-0.rc6.git0.1.fc32.ppc64le #1
-  NIP:  c000000000f63294 LR: c000000000f62e44 CTR: 0000000000000000
-  REGS: c0000000fa45f0d0 TRAP: 0700   Not tainted  (5.4.0-0.rc6.git0.1.fc32.ppc64le)
-  ...
-  NIP ioremap_page_range+0x4c4/0x6e0
-  LR  ioremap_page_range+0x74/0x6e0
-  Call Trace:
-    ioremap_page_range+0x74/0x6e0 (unreliable)
-    do_ioremap+0x8c/0x120
-    __ioremap_caller+0x128/0x140
-    ioremap+0x30/0x50
-    xive_spapr_populate_irq_data+0x170/0x260
-    xive_irq_domain_map+0x8c/0x170
-    irq_domain_associate+0xb4/0x2d0
-    irq_create_mapping+0x1e0/0x3b0
-    irq_create_fwspec_mapping+0x27c/0x3e0
-    irq_create_of_mapping+0x98/0xb0
-    of_irq_parse_and_map_pci+0x168/0x230
-    pcibios_setup_device+0x88/0x250
-    pcibios_setup_bus_devices+0x54/0x100
-    __of_scan_bus+0x160/0x310
-    pcibios_scan_phb+0x330/0x390
-    pcibios_init+0x8c/0x128
-    do_one_initcall+0x60/0x2c0
-    kernel_init_freeable+0x290/0x378
-    kernel_init+0x2c/0x148
-    ret_from_kernel_thread+0x5c/0x80
+The log hints there have issue for memory usage, thus free() reports
+error 'invalid next size' and directly exit for the case.  Finally, this
+issue is root caused as out of bounds memory access for the data array
+'evsel->id'.
 
-Fixes: bed81ee181dd ("powerpc/xive: introduce H_INT_ESB hcall")
-Cc: stable@vger.kernel.org # v4.14+
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
-Tested-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191203163642.2428-1-clg@kaod.org
+The backward ring buffer test invokes do_test() twice.  'evsel->id' is
+allocated at the first call with the flow:
+
+  test__backward_ring_buffer()
+    `-> do_test()
+	  `-> evlist__mmap()
+	        `-> evlist__mmap_ex()
+	              `-> perf_evsel__alloc_id()
+
+So 'evsel->id' is allocated with one item, and it will be used in
+function perf_evlist__id_add():
+
+   evsel->id[0] = id
+   evsel->ids   = 1
+
+At the second call for do_test(), it skips to initialize 'evsel->id'
+and reuses the array which is allocated in the first call.  But
+'evsel->ids' contains the stale value.  Thus:
+
+   evsel->id[1] = id    -> out of bound access
+   evsel->ids   = 2
+
+To fix this issue, we will use evlist__open() and evlist__close() pair
+functions to prepare and cleanup context for evlist; so 'evsel->id' and
+'evsel->ids' can be initialized properly when invoke do_test() and avoid
+the out of bounds memory access.
+
+Fixes: ee74701ed8ad ("perf tests: Add test to check backward ring buffer")
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: stable@vger.kernel.org # v4.10+
+Link: http://lore.kernel.org/lkml/20191107020244.2427-1-leo.yan@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/sysdev/xive/spapr.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ tools/perf/tests/backward-ring-buffer.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/arch/powerpc/sysdev/xive/spapr.c
-+++ b/arch/powerpc/sysdev/xive/spapr.c
-@@ -356,20 +356,28 @@ static int xive_spapr_populate_irq_data(
- 	data->esb_shift = esb_shift;
- 	data->trig_page = trig_page;
- 
-+	data->hw_irq = hw_irq;
-+
- 	/*
- 	 * No chip-id for the sPAPR backend. This has an impact how we
- 	 * pick a target. See xive_pick_irq_target().
- 	 */
- 	data->src_chip = XIVE_INVALID_CHIP_ID;
- 
-+	/*
-+	 * When the H_INT_ESB flag is set, the H_INT_ESB hcall should
-+	 * be used for interrupt management. Skip the remapping of the
-+	 * ESB pages which are not available.
-+	 */
-+	if (data->flags & XIVE_IRQ_FLAG_H_INT_ESB)
-+		return 0;
-+
- 	data->eoi_mmio = ioremap(data->eoi_page, 1u << data->esb_shift);
- 	if (!data->eoi_mmio) {
- 		pr_err("Failed to map EOI page for irq 0x%x\n", hw_irq);
- 		return -ENOMEM;
+--- a/tools/perf/tests/backward-ring-buffer.c
++++ b/tools/perf/tests/backward-ring-buffer.c
+@@ -147,6 +147,15 @@ int test__backward_ring_buffer(struct te
+ 		goto out_delete_evlist;
  	}
  
--	data->hw_irq = hw_irq;
--
- 	/* Full function page supports trigger */
- 	if (flags & XIVE_SRC_TRIGGER) {
- 		data->trig_mmio = data->eoi_mmio;
++	evlist__close(evlist);
++
++	err = evlist__open(evlist);
++	if (err < 0) {
++		pr_debug("perf_evlist__open: %s\n",
++			 str_error_r(errno, sbuf, sizeof(sbuf)));
++		goto out_delete_evlist;
++	}
++
+ 	err = do_test(evlist, 1, &sample_count, &comm_count);
+ 	if (err != TEST_OK)
+ 		goto out_delete_evlist;
 
 
