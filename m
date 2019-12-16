@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4421213F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B3EB121542
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730032AbfLPSGq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:06:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47156 "EHLO mail.kernel.org"
+        id S1731832AbfLPSUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730020AbfLPSGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:06:44 -0500
+        id S1728634AbfLPSUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:20:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6687120CC7;
-        Mon, 16 Dec 2019 18:06:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4A0F206EC;
+        Mon, 16 Dec 2019 18:20:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519603;
-        bh=i5XtLVMmI+2dJcN0KwB7A+BvEXbQvtvFuu2za7XVIY0=;
+        s=default; t=1576520410;
+        bh=wCDWB/bRhXepO1riftMcvU3VSqlqFKrfo5G149GN9SM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hqzJ78b//Nu9812SeC5kvOPphbbir27/Jr/Je1XW5Q9PjqDIxaYc1jayY1WikvRKA
-         +khqnOmtHcSuSiIjnWpIYrOHVhPRMsYTODx6+3zcMvS/mEwOXFZCG5B3cb67VfSt1E
-         48qxOhBGY9yMVOfjo2gSsTAvSS9q5+LR0d0Y7Iek=
+        b=NhWOECb8D+tO20iSb/EW0ZZtxcRVeFp/boaoNPLpTw/XBHOtCFrt4/ZhGLFa6JMd9
+         JiwrxK3gN2YvMUWLjvlon0RMUdpcF0m2uhRC81Hw+VJPqFhVuUUtVwaCBVARstL1M4
+         sbJp2IEDI0MYIIMLSFWLc/jAcHXseu8EfbWAUtxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Will Deacon <will@kernel.org>
-Subject: [PATCH 4.19 132/140] firmware: qcom: scm: Ensure a0 status code is treated as signed
+        stable@vger.kernel.org, Alastair DSilva <alastair@d-silva.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 5.4 144/177] powerpc: Allow 64bit VDSO __kernel_sync_dicache to work across ranges >4GB
 Date:   Mon, 16 Dec 2019 18:50:00 +0100
-Message-Id: <20191216174828.754810295@linuxfoundation.org>
+Message-Id: <20191216174847.126558417@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Alastair D'Silva <alastair@d-silva.org>
 
-commit ff34f3cce278a0982a7b66b1afaed6295141b1fc upstream.
+commit f9ec11165301982585e5e5f606739b5bae5331f3 upstream.
 
-The 'a0' member of 'struct arm_smccc_res' is declared as 'unsigned long',
-however the Qualcomm SCM firmware interface driver expects to receive
-negative error codes via this field, so ensure that it's cast to 'long'
-before comparing to see if it is less than 0.
+When calling __kernel_sync_dicache with a size >4GB, we were masking
+off the upper 32 bits, so we would incorrectly flush a range smaller
+than intended.
 
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+This patch replaces the 32 bit shifts with 64 bit ones, so that
+the full size is accounted for.
+
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191104023305.9581-3-alastair@au1.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/firmware/qcom_scm-64.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/vdso64/cacheflush.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/firmware/qcom_scm-64.c
-+++ b/drivers/firmware/qcom_scm-64.c
-@@ -158,7 +158,7 @@ static int qcom_scm_call(struct device *
- 		kfree(args_virt);
- 	}
- 
--	if (res->a0 < 0)
-+	if ((long)res->a0 < 0)
- 		return qcom_scm_remap_error(res->a0);
- 
- 	return 0;
+--- a/arch/powerpc/kernel/vdso64/cacheflush.S
++++ b/arch/powerpc/kernel/vdso64/cacheflush.S
+@@ -35,7 +35,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
+ 	subf	r8,r6,r4		/* compute length */
+ 	add	r8,r8,r5		/* ensure we get enough */
+ 	lwz	r9,CFG_DCACHE_LOGBLOCKSZ(r10)
+-	srw.	r8,r8,r9		/* compute line count */
++	srd.	r8,r8,r9		/* compute line count */
+ 	crclr	cr0*4+so
+ 	beqlr				/* nothing to do? */
+ 	mtctr	r8
+@@ -52,7 +52,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
+ 	subf	r8,r6,r4		/* compute length */
+ 	add	r8,r8,r5
+ 	lwz	r9,CFG_ICACHE_LOGBLOCKSZ(r10)
+-	srw.	r8,r8,r9		/* compute line count */
++	srd.	r8,r8,r9		/* compute line count */
+ 	crclr	cr0*4+so
+ 	beqlr				/* nothing to do? */
+ 	mtctr	r8
 
 
