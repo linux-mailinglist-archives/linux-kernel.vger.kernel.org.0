@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47076121448
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60125121398
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbfLPSKB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52710 "EHLO mail.kernel.org"
+        id S1729235AbfLPSDJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730178AbfLPSJ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:59 -0500
+        id S1729447AbfLPSDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28350206EC;
-        Mon, 16 Dec 2019 18:09:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42D5C207FF;
+        Mon, 16 Dec 2019 18:03:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519798;
-        bh=IWANP2m/HdiV9PxPUQGlMOT2EXU8H0Be69ffeLkXblc=;
+        s=default; t=1576519384;
+        bh=cEdxnPGO5e/nVkeBVm+zWYxNq4dqFhKR5zKWnqFg0vc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f6/J5QEmmw2c6y2ptCI6bpe1zw40it43KTDYK9Y3nBWhHafAu7WCNm69JPS+s4HY2
-         BDe3b7s0tQU70xvYbumbUoAA/uNR1QO3GooCUYWCglWYkNwpNrOYPNw+EoFX+cmb03
-         FeUsTBb5hO8Oc5SJjrk7gibY7xGHdR8goQdlfwMA=
+        b=eTwc6XQpcGvQFhPqgwdVs0SRmH+IFFKMRvqKHZLebn9tS3wqfETf0f9h7SO/bPHva
+         7/V64wewxApYD1O+8jyb0yLgEIKfYqmTC90yL25yFv3qjQ1xxxTh7kRDLiwpD3Udq+
+         BEKVsNfcqIPZIna/TobMwPfVrszS+JKIsEGLXaiY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maged Mokhtar <mmokhtar@petasan.org>,
-        Mikulas Patocka <mpatocka@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.3 071/180] dm writecache: handle REQ_FUA
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 4.19 043/140] btrfs: record all roots for rename exchange on a subvol
 Date:   Mon, 16 Dec 2019 18:48:31 +0100
-Message-Id: <20191216174830.280901804@linuxfoundation.org>
+Message-Id: <20191216174800.488351870@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,33 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maged Mokhtar <mmokhtar@petasan.org>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit c1005322ff02110a4df7f0033368ea015062b583 upstream.
+commit 3e1740993e43116b3bc71b0aad1e6872f6ccf341 upstream.
 
-Call writecache_flush() on REQ_FUA in writecache_map().
+Testing with the new fsstress support for subvolumes uncovered a pretty
+bad problem with rename exchange on subvolumes.  We're modifying two
+different subvolumes, but we only start the transaction on one of them,
+so the other one is not added to the dirty root list.  This is caught by
+btrfs_cow_block() with a warning because the root has not been updated,
+however if we do not modify this root again we'll end up pointing at an
+invalid root because the root item is never updated.
 
-Cc: stable@vger.kernel.org # 4.18+
-Signed-off-by: Maged Mokhtar <mmokhtar@petasan.org>
-Acked-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fix this by making sure we add the destination root to the trans list,
+the same as we do with normal renames.  This fixes the corruption.
+
+Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
+CC: stable@vger.kernel.org # 4.9+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-writecache.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/md/dm-writecache.c
-+++ b/drivers/md/dm-writecache.c
-@@ -1218,7 +1218,8 @@ bio_copy:
- 			}
- 		} while (bio->bi_iter.bi_size);
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9510,6 +9510,9 @@ static int btrfs_rename_exchange(struct
+ 		goto out_notrans;
+ 	}
  
--		if (unlikely(wc->uncommitted_blocks >= wc->autocommit_blocks))
-+		if (unlikely(bio->bi_opf & REQ_FUA ||
-+			     wc->uncommitted_blocks >= wc->autocommit_blocks))
- 			writecache_flush(wc);
- 		else
- 			writecache_schedule_autocommit(wc);
++	if (dest != root)
++		btrfs_record_root_in_trans(trans, dest);
++
+ 	/*
+ 	 * We need to find a free sequence number both in the source and
+ 	 * in the destination directory for the exchange.
 
 
