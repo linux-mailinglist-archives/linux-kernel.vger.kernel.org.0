@@ -2,162 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 577BD121C5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:07:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECBE9121C73
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:11:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbfLPWHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 17:07:08 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:47631 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727835AbfLPWHF (ORCPT
+        id S1727539AbfLPWKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 17:10:07 -0500
+Received: from mail-qv1-f66.google.com ([209.85.219.66]:35470 "EHLO
+        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbfLPWKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:07:05 -0500
-Received: by mail-pf1-f201.google.com with SMTP id e62so7755449pfh.14
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 14:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=Q0qe2kR+bAay0VBCKejOtYmpF3XJORWe/2Y7Sg9amhw=;
-        b=KXEdzR5sEfYW47IOMB4cZpps1PEpUNY54j1THILz0FDue58d4xDTo4xEyITzycC8WI
-         cty59wubaPPbwA/praz2PhIRWbMoNlSfJ5HI5lCRKkz8ZEl+1Q+Mgi5nnUk4hwIMFFyK
-         o9a7hgBtcB2M5nWh7oleILEiPMeC9wsSl3JvL9uyI3jcWOWl2HiNpuPS3tm/2kuzXz/2
-         ZwrcD9NIwbP+TD9B5epGkERp4xEk54xjjIh2KP3BOzg2dWatvs23FcGoe18LGv9tigsN
-         zk7enm6BbQ+IPvYpT59CVbQcLcAbQsDC1kmQ7hMOW4aOh6ehkNGuohUloJyoEOImpdB0
-         og2A==
+        Mon, 16 Dec 2019 17:10:06 -0500
+Received: by mail-qv1-f66.google.com with SMTP id d17so3402710qvs.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 14:10:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=Q0qe2kR+bAay0VBCKejOtYmpF3XJORWe/2Y7Sg9amhw=;
-        b=l53p2mGUsITpDxUyuXmqO4ZpBrfMTKSy5IKnKPAVVIySrZLTWG+whoraTAm2gMZZOY
-         GLRbxNcx3TyqF9DJ3CfqfnEeCSqz4Y9Z+G6PVFQzVh0zEq0eTWju7P/umrgaOoZgC5lj
-         pBiU4uKAStJyziFybSy8j7vm8Nd1Gj9d/GJSeHsem6cxxzZSUrFHphhXH5OLUgMif4OD
-         dPHqKZ+iljin3QoMCNE+WVWkL9CeUB7VFNLCE2ua46HY7c9/D3sJqyJxshOdvQb1KSJT
-         qAJbAWpaZrq4CGcOvCFttq5FDkBtutfMV1rwbFVOXpBKYr2eN+ko+PaQYyy/FPC5uFYw
-         VbEQ==
-X-Gm-Message-State: APjAAAWaoJpS0R5IxYPQkEgIUXr82Eb2kp9+OIVka2QrBz00nUvbdAYf
-        VuYnBWXNNQMxDJH+O03jPv7socV/z244cspcOkBT+w==
-X-Google-Smtp-Source: APXvYqxRhQSngjdpwvFolaB1SLzzXTDEa/g1lTeVrAduuwj0fvc+F3k5fBaVV1qGODXsFPGnv0IqlV0v+/1bKZjWCdvWlA==
-X-Received: by 2002:a63:9548:: with SMTP id t8mr9143009pgn.205.1576534024897;
- Mon, 16 Dec 2019 14:07:04 -0800 (PST)
-Date:   Mon, 16 Dec 2019 14:05:55 -0800
-In-Reply-To: <20191216220555.245089-1-brendanhiggins@google.com>
-Message-Id: <20191216220555.245089-7-brendanhiggins@google.com>
-Mime-Version: 1.0
-References: <20191216220555.245089-1-brendanhiggins@google.com>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [RFC v1 6/6] kunit: Add 'kunit_shutdown' option
-From:   Brendan Higgins <brendanhiggins@google.com>
-To:     jdike@addtoit.com, richard@nod.at, anton.ivanov@cambridgegreys.com,
-        arnd@arndb.de, keescook@chromium.org, skhan@linuxfoundation.org,
-        alan.maguire@oracle.com, yzaikin@google.com, davidgow@google.com,
-        akpm@linux-foundation.org, rppt@linux.ibm.com
-Cc:     gregkh@linuxfoundation.org, sboyd@kernel.org, logang@deltatee.com,
-        mcgrof@kernel.org, knut.omang@oracle.com,
-        linux-um@lists.infradead.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=46QQbf/7xY0XXnmz2tYswXMRkkq1sq4i40/0AAKflts=;
+        b=QSiOU+pfI4f+UJm2z1CzpcpKmqj26ZlNgOcYQ3KjSysXN5CKNkxQKs+xvlMtWz0/Zj
+         EOGJjNfKii+RJriaqUvQDf78DcuafWd6FalNHrGquX6O9t9+5bca5QP2Zq1Cpg81Ck82
+         f+rTn0mjzALJ5BW7X46ErHxIH/T0c6GR9uczHBXgiLcpWHO9iNqZIJ/jnxg7p4R4ChTZ
+         vB2/WeFFKlCvZXX0a/OuhtRlAC1bMskckFz/sSMlE9xpkajek+LEZPIStFBX2/H6pJNG
+         hcfMZjiylbyM5ouODaL4s1gi9ZU1EUlROChG71/Dihl5tAXElKon2Vi2KbQczi6GDq1m
+         Cb9A==
+X-Gm-Message-State: APjAAAUwesKtwV6JUv4aEzAM5VAafAH+sl8Rl/LYDSyD3PE2cFUWliMW
+        zB1XzkXIAjPHOi/VcHuAhxzrWN6S
+X-Google-Smtp-Source: APXvYqytMlnnar7QuVPkVRQVszjjwk6cMDWOgFJ3w/bKs4JskQxoBNFifPVjqkR3vqHWOoJXI0o/0g==
+X-Received: by 2002:a05:6214:1348:: with SMTP id b8mr1671598qvw.137.1576534205387;
+        Mon, 16 Dec 2019 14:10:05 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id o17sm7125900qtq.93.2019.12.16.14.10.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 14:10:04 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] sparc/console: kill off obsolete declarations
+Date:   Mon, 16 Dec 2019 17:10:04 -0500
+Message-Id: <20191216221004.3476562-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Gow <davidgow@google.com>
+commit 09d3f3f0e02c ("sparc: Kill PROM console driver.") missed removing
+the declarations of the deleted prom_con structure and prom_con_init
+function from console.h. Kill them off now.
 
-Add a new kernel command-line option, 'kunit_shutdown', which allows the
-user to specify that the kernel poweroff, halt, or reboot after
-completing all KUnit tests; this is very handy for running KUnit tests
-on UML or a VM so that the UML/VM process exits cleanly immediately
-after running all tests without needing a special initramfs.
-
-Signed-off-by: David Gow <davidgow@google.com>
-Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- lib/kunit/executor.c                | 18 ++++++++++++++++++
- tools/testing/kunit/kunit_kernel.py |  2 +-
- tools/testing/kunit/kunit_parser.py |  2 +-
- 3 files changed, 20 insertions(+), 2 deletions(-)
+ include/linux/console.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
-index d5f1d07f2f817..32462ecb94eb6 100644
---- a/lib/kunit/executor.c
-+++ b/lib/kunit/executor.c
-@@ -7,7 +7,9 @@
-  */
+diff --git a/include/linux/console.h b/include/linux/console.h
+index d09951d5a94e..f33016b3a401 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -101,7 +101,6 @@ extern const struct consw *conswitchp;
+ extern const struct consw dummy_con;	/* dummy console buffer */
+ extern const struct consw vga_con;	/* VGA text console */
+ extern const struct consw newport_con;	/* SGI Newport console  */
+-extern const struct consw prom_con;	/* SPARC PROM console */
  
- #include <linux/init.h>
-+#include <linux/moduleparam.h>
- #include <linux/printk.h>
-+#include <linux/reboot.h>
- #include <kunit/test.h>
+ int con_is_bound(const struct consw *csw);
+ int do_unregister_con_driver(const struct consw *csw);
+@@ -201,7 +200,6 @@ extern void suspend_console(void);
+ extern void resume_console(void);
  
- /*
-@@ -17,6 +19,9 @@
- extern struct kunit_suite *__kunit_suites_start[];
- extern struct kunit_suite *__kunit_suites_end[];
+ int mda_console_init(void);
+-void prom_con_init(void);
  
-+static char *kunit_shutdown;
-+core_param(kunit_shutdown, kunit_shutdown, charp, 0644);
-+
- static void kunit_print_tap_header(void)
- {
- 	size_t num_of_suites;
-@@ -30,6 +35,17 @@ static void kunit_print_tap_header(void)
- 	pr_info("1..%zd\n", num_of_suites);
- }
- 
-+static void kunit_handle_shutdown(void)
-+{
-+	if (!strcmp(kunit_shutdown, "poweroff")) {
-+		kernel_power_off();
-+	} else if (!strcmp(kunit_shutdown, "halt")) {
-+		kernel_halt();
-+	} else if (!strcmp(kunit_shutdown, "reboot")) {
-+		kernel_restart(NULL);
-+	}
-+}
-+
- static bool kunit_run_all_tests(void)
- {
- 	struct kunit_suite **suite;
-@@ -44,6 +60,8 @@ static bool kunit_run_all_tests(void)
- 			has_test_failed = true;
- 	}
- 
-+	kunit_handle_shutdown();
-+
- 	return !has_test_failed;
- }
- 
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
-index bf38768353313..0070c6b807d2a 100644
---- a/tools/testing/kunit/kunit_kernel.py
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -141,7 +141,7 @@ class LinuxSourceTree(object):
- 		return True
- 
- 	def run_kernel(self, args=[], timeout=None, build_dir=None):
--		args.extend(['mem=256M'])
-+		args.extend(['mem=256M', 'kunit_shutdown=halt'])
- 		process = self._ops.linux_bin(args, timeout, build_dir)
- 		with open('test.log', 'w') as f:
- 			for line in process.stdout:
-diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-index 78b3bdd03b1e4..633811dd9bce8 100644
---- a/tools/testing/kunit/kunit_parser.py
-+++ b/tools/testing/kunit/kunit_parser.py
-@@ -48,7 +48,7 @@ class TestStatus(Enum):
- 	FAILURE_TO_PARSE_TESTS = auto()
- 
- kunit_start_re = re.compile(r'^TAP version [0-9]+$')
--kunit_end_re = re.compile('List of all partitions:')
-+kunit_end_re = re.compile(r'reboot: System halted')
- 
- def isolate_kunit_output(kernel_output):
- 	started = False
+ void vcs_make_sysfs(int index);
+ void vcs_remove_sysfs(int index);
 -- 
-2.24.1.735.g03f4e72817-goog
+2.24.1
 
