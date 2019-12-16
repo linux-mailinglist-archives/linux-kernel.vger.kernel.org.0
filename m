@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5EAB12133A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8A9D1213CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbfLPR74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:59:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
+        id S1729750AbfLPSE4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728544AbfLPR7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:53 -0500
+        id S1729361AbfLPSEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F07C12072D;
-        Mon, 16 Dec 2019 17:59:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA4A520700;
+        Mon, 16 Dec 2019 18:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519192;
-        bh=7mRFTYdpvzYAcFWBhOAiS0xHJf71bodlxLxqU1DILj0=;
+        s=default; t=1576519492;
+        bh=ONcg6CTAx3FqBRp5JTfX2yR3lHqPGYWNzzkOB9RhOLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OC2FTtog/Kr3QsMdLLNAwHvO3+Vsr475+7kBT2QlZXnOUcSEIZ3m6WmLJ09dy0DPe
-         pFcj+4WThPiypdMqHaiuhdUXGmqCLTpLPjUv+9171D7iRv9q2rKUe4NYXo7cOnVQE2
-         FZXFOsEK9mD3Nn/7CO75bAmJxbrneJz9eRi4xUTU=
+        b=YUtpz3uz+hbfFBIXPlUlO6ayKMjuE4NYFhfQrBvN94HyNpEZhBjsUyHTUIUMTk6ff
+         w6Y7k9EjPhnyW+u9y9uREctNjji61WRLW+Ni1aPxG0UXope1gpDTRjwRJPveBEKAYj
+         SYTScCgWoLb1tO5BpOz3c8+p9KPzGRTSlSgE/UE4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.14 192/267] rtlwifi: rtl8192de: Fix missing callback that tests for hw release of buffer
-Date:   Mon, 16 Dec 2019 18:48:38 +0100
-Message-Id: <20191216174913.045536152@linuxfoundation.org>
+        stable@vger.kernel.org, Maged Mokhtar <mmokhtar@petasan.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.19 051/140] dm writecache: handle REQ_FUA
+Date:   Mon, 16 Dec 2019 18:48:39 +0100
+Message-Id: <20191216174802.558576404@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,72 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Maged Mokhtar <mmokhtar@petasan.org>
 
-commit 3155db7613edea8fb943624062baf1e4f9cfbfd6 upstream.
+commit c1005322ff02110a4df7f0033368ea015062b583 upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), a callback needed to check if the hardware has released
-a buffer indicating that a DMA operation is completed was not added.
+Call writecache_flush() on REQ_FUA in writecache_map().
 
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org>	# v3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: stable@vger.kernel.org # 4.18+
+Signed-off-by: Maged Mokhtar <mmokhtar@petasan.org>
+Acked-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    1 +
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |   17 +++++++++++++++++
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h |    2 ++
- 3 files changed, 20 insertions(+)
+ drivers/md/dm-writecache.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-@@ -237,6 +237,7 @@ static struct rtl_hal_ops rtl8192de_hal_
- 	.led_control = rtl92de_led_control,
- 	.set_desc = rtl92de_set_desc,
- 	.get_desc = rtl92de_get_desc,
-+	.is_tx_desc_closed = rtl92de_is_tx_desc_closed,
- 	.tx_polling = rtl92de_tx_polling,
- 	.enable_hw_sec = rtl92de_enable_hw_security_config,
- 	.set_key = rtl92de_set_key,
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -858,6 +858,23 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
- 	return ret;
- }
+--- a/drivers/md/dm-writecache.c
++++ b/drivers/md/dm-writecache.c
+@@ -1223,7 +1223,8 @@ bio_copy:
+ 			}
+ 		} while (bio->bi_iter.bi_size);
  
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index)
-+{
-+	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
-+	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
-+	u8 *entry = (u8 *)(&ring->desc[ring->idx]);
-+	u8 own = (u8)rtl92de_get_desc(entry, true, HW_DESC_OWN);
-+
-+	/* a beacon packet will only use the first
-+	 * descriptor by defaut, and the own bit may not
-+	 * be cleared by the hardware
-+	 */
-+	if (own)
-+		return false;
-+	return true;
-+}
-+
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-@@ -736,6 +736,8 @@ bool rtl92de_rx_query_desc(struct ieee80
- void rtl92de_set_desc(struct ieee80211_hw *hw, u8 *pdesc, bool istx,
- 		      u8 desc_name, u8 *val);
- u32 rtl92de_get_desc(u8 *pdesc, bool istx, u8 desc_name);
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index);
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue);
- void rtl92de_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
- 			     bool b_firstseg, bool b_lastseg,
+-		if (unlikely(wc->uncommitted_blocks >= wc->autocommit_blocks))
++		if (unlikely(bio->bi_opf & REQ_FUA ||
++			     wc->uncommitted_blocks >= wc->autocommit_blocks))
+ 			writecache_flush(wc);
+ 		else
+ 			writecache_schedule_autocommit(wc);
 
 
