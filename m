@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0EDD121458
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B17DA121602
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730629AbfLPSKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53666 "EHLO mail.kernel.org"
+        id S1732040AbfLPS0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:26:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730231AbfLPSKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:31 -0500
+        id S1731502AbfLPSRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D615D206EC;
-        Mon, 16 Dec 2019 18:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30849206E0;
+        Mon, 16 Dec 2019 18:17:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519830;
-        bh=7dCGIPm6GYG4d8q0NsGFaaUy2fuhwEoIC+B+G6NlFKw=;
+        s=default; t=1576520237;
+        bh=LULC68LBkDNs5bIj3iC2ZbhDy2Wb0evTtTqr154+a8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TJPJlbD7AZWSbriodRZQQA1c4pvCl7MGT+d4RZZsLEoWuSCPfsz0MMDcSPl57m6bU
-         vjESdoTl0a2tTOpYqu6BM5DTldfQ2PoLmjTYHA7evn48IsOzH4WNrz7Q+C/MOwynlp
-         WV7yObmY6sZfxtHQuZYSMSg7Cf3sROCkHsTyx5Yg=
+        b=0nKX4DgMlMT2RESRQTsVmKcT4ATkS5tA1UFYf1tDe9LUIR+tG7xMORVk3HwnHxqk2
+         K9DZIdHcVa5bC2wjgk5xaFPNeT/Up4+B5ARruvxdhrUHjBAzd+vuaLxoGjnzY8q60B
+         XWS72AjXtGIHGugYCmSAS6K9JOu4CsKgYPre/7BE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matti Aaltonen <matti.j.aaltonen@nokia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 5.3 087/180] media: radio: wl1273: fix interrupt masking on release
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.4 071/177] btrfs: Avoid getting stuck during cyclic writebacks
 Date:   Mon, 16 Dec 2019 18:48:47 +0100
-Message-Id: <20191216174833.096217681@linuxfoundation.org>
+Message-Id: <20191216174835.004018583@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +43,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Tejun Heo <tj@kernel.org>
 
-commit 1091eb830627625dcf79958d99353c2391f41708 upstream.
+commit f7bddf1e27d18fbc7d3e3056ba449cfbe4e20b0a upstream.
 
-If a process is interrupted while accessing the radio device and the
-core lock is contended, release() could return early and fail to update
-the interrupt mask.
+During a cyclic writeback, extent_write_cache_pages() uses done_index
+to update the writeback_index after the current run is over.  However,
+instead of current index + 1, it gets to to the current index itself.
 
-Note that the return value of the v4l2 release file operation is
-ignored.
+Unfortunately, this, combined with returning on EOF instead of looping
+back, can lead to the following pathlogical behavior.
 
-Fixes: 87d1a50ce451 ("[media] V4L2: WL1273 FM Radio: TI WL1273 FM radio driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.38
-Cc: Matti Aaltonen <matti.j.aaltonen@nokia.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+1. There is a single file which has accumulated enough dirty pages to
+   trigger balance_dirty_pages() and the writer appending to the file
+   with a series of short writes.
+
+2. balance_dirty_pages kicks in, wakes up background writeback and sleeps.
+
+3. Writeback kicks in and the cursor is on the last page of the dirty
+   file.  Writeback is started or skipped if already in progress.  As
+   it's EOF, extent_write_cache_pages() returns and the cursor is set
+   to done_index which is pointing to the last page.
+
+4. Writeback is done.  Nothing happens till balance_dirty_pages
+   finishes, at which point we go back to #1.
+
+This can almost completely stall out writing back of the file and keep
+the system over dirty threshold for a long time which can mess up the
+whole system.  We encountered this issue in production with a package
+handling application which can reliably reproduce the issue when
+running under tight memory limits.
+
+Reading the comment in the error handling section, this seems to be to
+avoid accidentally skipping a page in case the write attempt on the
+page doesn't succeed.  However, this concern seems bogus.
+
+On each page, the code either:
+
+* Skips and moves onto the next page.
+
+* Fails issue and sets done_index to index + 1.
+
+* Successfully issues and continue to the next page if budget allows
+  and not EOF.
+
+IOW, as long as it's not EOF and there's budget, the code never
+retries writing back the same page.  Only when a page happens to be
+the last page of a particular run, we end up retrying the page, which
+can't possibly guarantee anything data integrity related.  Besides,
+cyclic writes are only used for non-syncing writebacks meaning that
+there's no data integrity implication to begin with.
+
+Fix it by always setting done_index past the current page being
+processed.
+
+Note that this problem exists in other writepages too.
+
+CC: stable@vger.kernel.org # 4.19+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/radio/radio-wl1273.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ fs/btrfs/extent_io.c |   12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
---- a/drivers/media/radio/radio-wl1273.c
-+++ b/drivers/media/radio/radio-wl1273.c
-@@ -1148,8 +1148,7 @@ static int wl1273_fm_fops_release(struct
- 	if (radio->rds_users > 0) {
- 		radio->rds_users--;
- 		if (radio->rds_users == 0) {
--			if (mutex_lock_interruptible(&core->lock))
--				return -EINTR;
-+			mutex_lock(&core->lock);
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -4121,7 +4121,7 @@ retry:
+ 		for (i = 0; i < nr_pages; i++) {
+ 			struct page *page = pvec.pages[i];
  
- 			radio->irq_flags &= ~WL1273_RDS_EVENT;
+-			done_index = page->index;
++			done_index = page->index + 1;
+ 			/*
+ 			 * At this point we hold neither the i_pages lock nor
+ 			 * the page lock: the page may be truncated or
+@@ -4156,16 +4156,6 @@ retry:
  
+ 			ret = __extent_writepage(page, wbc, epd);
+ 			if (ret < 0) {
+-				/*
+-				 * done_index is set past this page,
+-				 * so media errors will not choke
+-				 * background writeout for the entire
+-				 * file. This has consequences for
+-				 * range_cyclic semantics (ie. it may
+-				 * not be suitable for data integrity
+-				 * writeout).
+-				 */
+-				done_index = page->index + 1;
+ 				done = 1;
+ 				break;
+ 			}
 
 
