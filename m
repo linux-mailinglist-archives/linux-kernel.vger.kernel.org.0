@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1D151213BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5EAB12133A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:00:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbfLPSEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41720 "EHLO mail.kernel.org"
+        id S1728852AbfLPR74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:59:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729647AbfLPSE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:26 -0500
+        id S1728544AbfLPR7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:59:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2877B20700;
-        Mon, 16 Dec 2019 18:04:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F07C12072D;
+        Mon, 16 Dec 2019 17:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519465;
-        bh=QBrHzF/bDur2YZKXK3pZ0+nH4CtHkNb06QOzdb7jU/I=;
+        s=default; t=1576519192;
+        bh=7mRFTYdpvzYAcFWBhOAiS0xHJf71bodlxLxqU1DILj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LhTxaiFez0aTjhncBod7a+3i3s4Koyc3B5SXAPBaOTZebf5u5fNeazRODa32P5WT/
-         ExU0rEq/ejk5NUuJs+c4wXgCN8qd8DVBsN/HWfzPJohJJ+O1tJkweyyU68yxh536pc
-         q8/2L2XlVj6Qf6mse8u3mW139U+6WX1uiby5tw4I=
+        b=OC2FTtog/Kr3QsMdLLNAwHvO3+Vsr475+7kBT2QlZXnOUcSEIZ3m6WmLJ09dy0DPe
+         pFcj+4WThPiypdMqHaiuhdUXGmqCLTpLPjUv+9171D7iRv9q2rKUe4NYXo7cOnVQE2
+         FZXFOsEK9mD3Nn/7CO75bAmJxbrneJz9eRi4xUTU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 050/140] hwrng: omap - Fix RNG wait loop timeout
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 192/267] rtlwifi: rtl8192de: Fix missing callback that tests for hw release of buffer
 Date:   Mon, 16 Dec 2019 18:48:38 +0100
-Message-Id: <20191216174802.353047701@linuxfoundation.org>
+Message-Id: <20191216174913.045536152@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,49 +43,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sumit Garg <sumit.garg@linaro.org>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit be867f987a4e1222114dd07a01838a17c26f3fff upstream.
+commit 3155db7613edea8fb943624062baf1e4f9cfbfd6 upstream.
 
-Existing RNG data read timeout is 200us but it doesn't cover EIP76 RNG
-data rate which takes approx. 700us to produce 16 bytes of output data
-as per testing results. So configure the timeout as 1000us to also take
-account of lack of udelay()'s reliability.
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback needed to check if the hardware has released
+a buffer indicating that a DMA operation is completed was not added.
 
-Fixes: 383212425c92 ("hwrng: omap - Add device variant for SafeXcel IP-76 found in Armada 8K")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org>	# v3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/hw_random/omap-rng.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    1 +
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |   17 +++++++++++++++++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h |    2 ++
+ 3 files changed, 20 insertions(+)
 
---- a/drivers/char/hw_random/omap-rng.c
-+++ b/drivers/char/hw_random/omap-rng.c
-@@ -66,6 +66,13 @@
- #define OMAP4_RNG_OUTPUT_SIZE			0x8
- #define EIP76_RNG_OUTPUT_SIZE			0x10
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
+@@ -237,6 +237,7 @@ static struct rtl_hal_ops rtl8192de_hal_
+ 	.led_control = rtl92de_led_control,
+ 	.set_desc = rtl92de_set_desc,
+ 	.get_desc = rtl92de_get_desc,
++	.is_tx_desc_closed = rtl92de_is_tx_desc_closed,
+ 	.tx_polling = rtl92de_tx_polling,
+ 	.enable_hw_sec = rtl92de_enable_hw_security_config,
+ 	.set_key = rtl92de_set_key,
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -858,6 +858,23 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
+ 	return ret;
+ }
  
-+/*
-+ * EIP76 RNG takes approx. 700us to produce 16 bytes of output data
-+ * as per testing results. And to account for the lack of udelay()'s
-+ * reliability, we keep the timeout as 1000us.
-+ */
-+#define RNG_DATA_FILL_TIMEOUT			100
++bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
++			       u8 hw_queue, u16 index)
++{
++	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
++	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
++	u8 *entry = (u8 *)(&ring->desc[ring->idx]);
++	u8 own = (u8)rtl92de_get_desc(entry, true, HW_DESC_OWN);
 +
- enum {
- 	RNG_OUTPUT_0_REG = 0,
- 	RNG_OUTPUT_1_REG,
-@@ -176,7 +183,7 @@ static int omap_rng_do_read(struct hwrng
- 	if (max < priv->pdata->data_size)
- 		return 0;
- 
--	for (i = 0; i < 20; i++) {
-+	for (i = 0; i < RNG_DATA_FILL_TIMEOUT; i++) {
- 		present = priv->pdata->data_present(priv);
- 		if (present || !wait)
- 			break;
++	/* a beacon packet will only use the first
++	 * descriptor by defaut, and the own bit may not
++	 * be cleared by the hardware
++	 */
++	if (own)
++		return false;
++	return true;
++}
++
+ void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
+@@ -736,6 +736,8 @@ bool rtl92de_rx_query_desc(struct ieee80
+ void rtl92de_set_desc(struct ieee80211_hw *hw, u8 *pdesc, bool istx,
+ 		      u8 desc_name, u8 *val);
+ u32 rtl92de_get_desc(u8 *pdesc, bool istx, u8 desc_name);
++bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
++			       u8 hw_queue, u16 index);
+ void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue);
+ void rtl92de_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
+ 			     bool b_firstseg, bool b_lastseg,
 
 
