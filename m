@@ -2,85 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE34E120297
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9570612029D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfLPKaY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:30:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbfLPKaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:30:24 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73AD7206CB;
-        Mon, 16 Dec 2019 10:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576492223;
-        bh=KmOjsO485jZWPyMI0JTSr6CCJZxWMYYXDKFUfapkW0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KcB9P/2h/9Ud9VmZpuZ737sZN6xDA/T/iKVKsFkI4QgKMissDmHwcz+tU8/zU0XuQ
-         e+5y+DSi5/tXT/uWOXMRg8j/ooYnhFd8jg+rFGOr8hn7kjhv3h+/p8/uyQsirCdQJB
-         uWqhnBl7t1rYareJCRlX0yeY6o6vVqWhtmh/+AQ0=
-Date:   Mon, 16 Dec 2019 11:30:21 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 01/14] dt-bindings: media: sun4i-csi: Add compatible for
- CSI1 on A10/A20
-Message-ID: <20191216103021.z4zmd5wz3fbt6p76@gilmour.lan>
-References: <20191215165924.28314-1-wens@kernel.org>
- <20191215165924.28314-2-wens@kernel.org>
+        id S1727550AbfLPKbB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:31:01 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40059 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbfLPKbA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:31:00 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s22so6195132ljs.7
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:30:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R2CAqD7yphVxKpqpK+F/eAr7MRlAfENWVqw0CFqAnoY=;
+        b=F98ofzZswi1ON1bAKTPSWd5+Icm6mrMRcWlGoNTeahpUdZxvSM6qFcZqGN4zAN4Osp
+         NdlLEy7XHE0zbPmUPi2zZq5/U5/a9Ue2B+XfIh+EluUE+NoHaOMSjoxvxpExuwNfwwOs
+         2oTEoPYR/rTYGmGXHzgc0Pr/FAj3QmcuhcAhTsRGt6RmxDIqCHgnOQMkUTOAHb4I3u1R
+         m/2YQVrcDL+DR1UUH/SkmD8dEzpXTM4KzvF07eOk6LXi/nqEznJiz6kcl0yeiO3Lfg0O
+         dcea358D79Zrq3wRs5ExA4+mnB0OVo8ZagEMOi3YmF/JKgrNYhNQ40lRqBXcsKfb/BZy
+         RfWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R2CAqD7yphVxKpqpK+F/eAr7MRlAfENWVqw0CFqAnoY=;
+        b=A1/P7UQN4jw1RbSsnkUSiOBv4BmIeFz2OIGSZspTVkEQtUd01SCrTHnDpH7yv3U57T
+         ayYgmsbrLKcAhIRKDLOsmE8fOgNrBTvDNzZHTDz41hvxCNNueROvRAifaZsvMUcglHhQ
+         qjTmO3J1cH9+Leaa6DiEHX4P80i/DTNgMHfPbn0S7/YLQ8nvP2fVnIeKV1BtzVL/4wws
+         fsOSNxl6uNNNWMi5X4bPzuqhuajygO6rrVK8y0rV0q0LVBGA4L+3D10P34WUIQBoXNWg
+         17/nhsO3ywxyrxcE3TUVWh1GsgdW5SbA+dA2iWRQSUa3DNcHmN29dCjs5/hXkbongeD+
+         O/pA==
+X-Gm-Message-State: APjAAAVVbvL4XuuoysIKLYuDSvdxcb7ZQZdkiaAWH7GwFpVrZuZZPatV
+        tRqo0BkxYv3onryWeT3nhmCyif3z634t2tj/bKoazA==
+X-Google-Smtp-Source: APXvYqycu9hlE1s4S+Sge2Bqv8D+k87tga/cDOXtTcuobEYzip+IsUlyb9ENhVmckOFQwM0Ke6RmQOIym8zJ1np0yPg=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr18594833ljm.233.1576492258842;
+ Mon, 16 Dec 2019 02:30:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c5dhr4zeahfmg3rc"
-Content-Disposition: inline
-In-Reply-To: <20191215165924.28314-2-wens@kernel.org>
+References: <20191215163810.52356-1-hdegoede@redhat.com> <20191215163810.52356-5-hdegoede@redhat.com>
+In-Reply-To: <20191215163810.52356-5-hdegoede@redhat.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 11:30:46 +0100
+Message-ID: <CACRpkdYLXU9SmrNZfk9vrJuai9O-evAoq_c1oPJ7Q=NQU8=gng@mail.gmail.com>
+Subject: Re: [PATCH 4/5] drm/i915/dsi: Move Crystal Cove PMIC panel GPIO
+ lookup from mfd to the i915 driver
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 15, 2019 at 5:38 PM Hans de Goede <hdegoede@redhat.com> wrote:
 
---c5dhr4zeahfmg3rc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Dec 16, 2019 at 12:59:11AM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
+> Move the Crystal Cove PMIC panel GPIO lookup-table from
+> drivers/mfd/intel_soc_pmic_core.c to the i915 driver.
 >
-> The CSI1 block has the same structure and layout as the CSI0 block.
-> Differences include:
+> The moved looked-up table is adding a GPIO lookup to the i915 PCI
+> device and the GPIO subsys allows only one lookup table per device,
 >
->   - Only one channel in BT.656 instead of four in CSI0
->   - 10-bit raw data input vs 8-bit in CSI0
->   - 24-bit RGB888/YUV444 input vs 16-bit RGB565/YUV422 in CSI0
->   - No ISP hardware
+> The intel_soc_pmic_core.c code only adds lookup-table entries for the
+> PMIC panel GPIO (as it deals only with the PMIC), but we also need to be
+> able to access some GPIOs on the SoC itself, which requires entries for
+> these GPIOs in the lookup-table.
 >
-> The hardware found in the A20 is the same as in the A10.
+> Since the lookup-table is attached to the i915 PCI device it really
+> should be part of the i915 driver, this will also allow us to extend
+> it with GPIOs from other sources when necessary.
 >
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Looks OK to me
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Maxime
+But Lee & Andy should have a final word on this.
 
---c5dhr4zeahfmg3rc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfdcvQAKCRDj7w1vZxhR
-xT3dAQCxY6xWEXeQcYr/d7+QSenbOtBVqgdSzjafmezoosWGJQEAzy+LF9CQBWZn
-xOxhZnZen3CAWEOsFLZ6ul8WsuPC6AM=
-=C0Mw
------END PGP SIGNATURE-----
-
---c5dhr4zeahfmg3rc--
+Yours,
+Linus Walleij
