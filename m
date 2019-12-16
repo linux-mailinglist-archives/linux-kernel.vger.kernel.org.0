@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0919F12176A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FCA12173F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfLPSfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:35:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48886 "EHLO mail.kernel.org"
+        id S1730019AbfLPSHt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:07:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730160AbfLPSHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:07:42 -0500
+        id S1730180AbfLPSHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:07:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2F8C206E0;
-        Mon, 16 Dec 2019 18:07:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FE7F20700;
+        Mon, 16 Dec 2019 18:07:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519662;
-        bh=fpAEy/YlMC1GNufn/ZFQUk52cY7rvvFsflZbfotl9z0=;
+        s=default; t=1576519664;
+        bh=mg2DCLQ8QFo+1Hd5CR7rqVt1ibBM/8B3A2AtloUxIbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ViUom/UUPSIkx5tjd8SRVtA9p2vQnPpX2B/M75++WN0mO06S9ETWXLXHdyWhUcXoa
-         kOKj2TuRlK+lxMDzXVKsL0VHXZ9sAjnPPQJJ18KkPq0uHVhGckWJWxHiXReTC1cPNL
-         v7Lg51sVJKiq3XTTV9T8G7Uk6Fv8Fn4wn/vZnTBw=
+        b=G/p8yfaHeKpWiT29rIG68THUlgrkiNNy8zf5kTICWZ0AGr/moV26j/V2gnuxD6jhc
+         r7/9Mben0X7fzcn/xC4vIPYkLgBtf9C5bPSGo5HJjcW4AidBmO1P2FXGdnsgQZNHBZ
+         tHS/bE3ntFP7cURxHGRTEJlAZi0Ax2ZVKWBiLn0M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tilman Schmidt <tilman@imap.cc>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.3 018/180] staging: gigaset: fix illegal free on probe errors
-Date:   Mon, 16 Dec 2019 18:47:38 +0100
-Message-Id: <20191216174810.064538604@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 5.3 019/180] staging: gigaset: add endpoint-type sanity check
+Date:   Mon, 16 Dec 2019 18:47:39 +0100
+Message-Id: <20191216174810.567713865@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
 References: <20191216174806.018988360@linuxfoundation.org>
@@ -45,45 +44,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Johan Hovold <johan@kernel.org>
 
-commit 84f60ca7b326ed8c08582417493982fe2573a9ad upstream.
+commit ed9ed5a89acba51b82bdff61144d4e4a4245ec8a upstream.
 
-The driver failed to initialise its receive-buffer pointer, something
-which could lead to an illegal free on late probe errors.
+Add missing endpoint-type sanity checks to probe.
 
-Fix this by making sure to clear all driver data at allocation.
+This specifically prevents a warning in USB core on URB submission when
+fuzzing USB descriptors.
 
-Fixes: 2032e2c2309d ("usb_gigaset: code cleanup")
-Cc: stable <stable@vger.kernel.org>     # 2.6.33
-Cc: Tilman Schmidt <tilman@imap.cc>
 Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191202085610.12719-3-johan@kernel.org
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191202085610.12719-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/isdn/gigaset/usb-gigaset.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/staging/isdn/gigaset/usb-gigaset.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
 --- a/drivers/staging/isdn/gigaset/usb-gigaset.c
 +++ b/drivers/staging/isdn/gigaset/usb-gigaset.c
-@@ -571,8 +571,7 @@ static int gigaset_initcshw(struct cards
- {
- 	struct usb_cardstate *ucs;
+@@ -705,6 +705,12 @@ static int gigaset_probe(struct usb_inte
  
--	cs->hw.usb = ucs =
--		kmalloc(sizeof(struct usb_cardstate), GFP_KERNEL);
-+	cs->hw.usb = ucs = kzalloc(sizeof(struct usb_cardstate), GFP_KERNEL);
- 	if (!ucs) {
- 		pr_err("out of memory\n");
- 		return -ENOMEM;
-@@ -584,9 +583,6 @@ static int gigaset_initcshw(struct cards
- 	ucs->bchars[3] = 0;
- 	ucs->bchars[4] = 0x11;
- 	ucs->bchars[5] = 0x13;
--	ucs->bulk_out_buffer = NULL;
--	ucs->bulk_out_urb = NULL;
--	ucs->read_urb = NULL;
- 	tasklet_init(&cs->write_tasklet,
- 		     gigaset_modem_fill, (unsigned long) cs);
+ 	endpoint = &hostif->endpoint[0].desc;
  
++	if (!usb_endpoint_is_bulk_out(endpoint)) {
++		dev_err(&interface->dev, "missing bulk-out endpoint\n");
++		retval = -ENODEV;
++		goto error;
++	}
++
+ 	buffer_size = le16_to_cpu(endpoint->wMaxPacketSize);
+ 	ucs->bulk_out_size = buffer_size;
+ 	ucs->bulk_out_epnum = usb_endpoint_num(endpoint);
+@@ -724,6 +730,12 @@ static int gigaset_probe(struct usb_inte
+ 
+ 	endpoint = &hostif->endpoint[1].desc;
+ 
++	if (!usb_endpoint_is_int_in(endpoint)) {
++		dev_err(&interface->dev, "missing int-in endpoint\n");
++		retval = -ENODEV;
++		goto error;
++	}
++
+ 	ucs->busy = 0;
+ 
+ 	ucs->read_urb = usb_alloc_urb(0, GFP_KERNEL);
 
 
