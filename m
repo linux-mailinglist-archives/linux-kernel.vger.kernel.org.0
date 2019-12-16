@@ -2,116 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41A2D120F95
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:34:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2452120F76
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:31:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbfLPQeP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:34:15 -0500
-Received: from mga14.intel.com ([192.55.52.115]:56463 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbfLPQeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:34:14 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 08:10:11 -0800
-X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
-   d="scan'208";a="389503026"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 08:10:11 -0800
-Message-ID: <0a7a6e978960fd6d02a7ba2584d72e58fe1b3a05.camel@linux.intel.com>
-Subject: Re: [PATCH v15 4/7] mm: Introduce Reported pages
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, mgorman@techsingularity.net,
-        vbabka@suse.cz
-Cc:     yang.zhang.wz@gmail.com, konrad.wilk@oracle.com, david@redhat.com,
-        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
-        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
-        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de
-Date:   Mon, 16 Dec 2019 08:10:11 -0800
-In-Reply-To: <34abf700-bdb0-e01b-c7c2-3eab8d058c22@redhat.com>
-References: <20191205161928.19548.41654.stgit@localhost.localdomain>
-         <20191205162238.19548.68238.stgit@localhost.localdomain>
-         <34abf700-bdb0-e01b-c7c2-3eab8d058c22@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.5 (3.32.5-1.fc30) 
+        id S1726281AbfLPQbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 11:31:22 -0500
+Received: from mout.kundenserver.de ([217.72.192.74]:47097 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfLPQbW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 11:31:22 -0500
+Received: from mail-qt1-f179.google.com ([209.85.160.179]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1N33AR-1hi1pd1iLl-013NI2; Mon, 16 Dec 2019 17:31:20 +0100
+Received: by mail-qt1-f179.google.com with SMTP id j5so6222442qtq.9;
+        Mon, 16 Dec 2019 08:31:20 -0800 (PST)
+X-Gm-Message-State: APjAAAX8r4JFFfDb+URF2+0dv9wpxYsfc6tPwgTB3pNYceSUqK5U8lM1
+        mEzo1YaW1xqu1O1Nuwo+LboE3ILCP3ehXEgiyv0=
+X-Google-Smtp-Source: APXvYqyDdl4YObPLYJ8R0MeObOKirvavLeNWBoY3j+5T4cY33rojfyImnRl+bBhsXB9ZfA7RUwOnAcwR4yfhS80V0kU=
+X-Received: by 2002:ac8:47d3:: with SMTP id d19mr82497qtr.142.1576513879287;
+ Mon, 16 Dec 2019 08:31:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20191213204936.3643476-1-arnd@arndb.de> <20191213205417.3871055-10-arnd@arndb.de>
+ <20191213211840.GM99875@magnolia>
+In-Reply-To: <20191213211840.GM99875@magnolia>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 16 Dec 2019 17:31:02 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0x6E7PjtFVi9UW9_61c_AQbRVSyU=+YGaVTn2W0PgtzQ@mail.gmail.com>
+Message-ID: <CAK8P3a0x6E7PjtFVi9UW9_61c_AQbRVSyU=+YGaVTn2W0PgtzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 19/24] xfs: rename compat_time_t to old_time32_t
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Nick Bowler <nbowler@draconx.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:H7fMeyzbYOCqjgAcpR4WxQVcP/KjmTWIG1zY7p7sRuMOpcB6XxH
+ TloYBnCEJ4TYVnRd5j1tco6aDGOFgBSI8S1G3mK6bAVgwWG5ZzwhsMM3xzQb0ESbiqGWufH
+ SsoVynB9iLdphoRpUicOQtoquSvwK/z/bpmGjnlb2Rqh5WRvMoTyo+P0mzT06gmvmd9biw1
+ MyqRHBTf6U759Bu7njsYw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ioG57M6zXYo=:ZK4QKZDKnhV4rm+cisNDRP
+ RuNCYDi5icTgReDFx9cXUQTiBj2PhBNeCFh72HwoGcvVbbFF5HQqDChnPlKH7WMH5taEcFiyl
+ t4639rW00EptkkwTjEEVvnxc8A49qoWagofrI0PFsIfEabJ9WROpulxKba6Tq6QJc1FjEjwX9
+ mJ/ZAhkFlxm89YXCkFzxHDjh4sAQITGmAq0ViSHo3OWI+jY/0r/s3+7t/y6PuoLrBB8hoMSpr
+ 6zN5gxYVTS+LVIqtJ7OsHq2g0u7nUoDYvaLZInXzb5kUYRrqaCuN2xedrmwy6HHZBOP+Tm55O
+ Z/r5AiYPXq+qVeNLB6lcmsT/49v2cNnKBkGQvJ2+xiXzIFzUlfAGR25Vz/M/8PBLBV9o2rRJH
+ nogbJLyp8EOULb1RuQ1bSs9UQFalu9HwnE5zSDznaVSKbrkzZTjobs4gD4A48Td9dcvllfZiI
+ IpKc8rtPUcnEzqmpKk402Nmw7p/rnn1Ek2l3ekglAhNwga+1nJ+4sqGTCx6Z15xkgHJmDyApN
+ znAVVSmEeVH8TcdQihpcVeWuGcDFsvHqHJZ9DZx87cKEJMptojjWij2T59VcujDyiBAHs4bdg
+ v1AYOBTa9DBSl1bx6iiqoI8LbFLYFZ+G7vVhRE69vLFfZRi7w4npE/IFFhfjKcYrr56qiwsqw
+ iwdShckXCCqFiLWUlIN9bmxTN+wTuz+SdXVTe2Nr7TDMHTa6CRUffI6Jbh2QUpOBTffyMGLYJ
+ AGjs7foTcjJfc4MyUFTuJXKur3R3LKcoO5HPF4oFy3XDpNpD58aEsZ4IGlkzyuYQpMgsdBCvx
+ eAZylywPDUJOrjIIfD3uRNjDhH7NfIecab6a1FwGWPLLqeb8icbDEgztlATGrbCrSOkThIGuI
+ h+pjUe627bXK47Ds9tjQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-16 at 06:44 -0500, Nitesh Narayan Lal wrote:
-> On 12/5/19 11:22 AM, Alexander Duyck wrote:
-> > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > 
-> > In order to pave the way for free page reporting in virtualized
-> > environments we will need a way to get pages out of the free lists and
-> > identify those pages after they have been returned. To accomplish this,
-> > this patch adds the concept of a Reported Buddy, which is essentially
-> > meant to just be the Uptodate flag used in conjunction with the Buddy
-> > page type.
-> > 
-> > To prevent the reported pages from leaking outside of the buddy lists I
-> > added a check to clear the PageReported bit in the del_page_from_free_list
-> > function. As a result any reported page that is split, merged, or
-> > allocated will have the flag cleared prior to the PageBuddy value being
-> > cleared.
-> > 
-> > The process for reporting pages is fairly simple. Once we free a page that
-> > meets the minimum order for page reporting we will schedule a worker thread
-> > to start 2s or more in the future. That worker thread will begin working
-> > from the lowest supported page reporting order up to MAX_ORDER - 1 pulling
-> > unreported pages from the free list and storing them in the scatterlist.
-> > 
-> > When processing each individual free list it is necessary for the worker
-> > thread to release the zone lock when it needs to stop and report the full
-> > scatterlist of pages. To reduce the work of the next iteration the worker
-> > thread will rotate the free list so that the first unreported page in the
-> > free list becomes the first entry in the list.
-> 
-> [...]
-> 
-> > k);
-> > +
-> > +	return err;
-> > +}
-> > +
-> > +static int
-> > +page_reporting_process_zone(struct page_reporting_dev_info *prdev,
-> > +			    struct scatterlist *sgl, struct zone *zone)
-> > +{
-> > +	unsigned int order, mt, leftover, offset = PAGE_REPORTING_CAPACITY;
-> > +	unsigned long watermark;
-> > +	int err = 0;
-> > +
-> > +	/* Generate minimum watermark to be able to guarantee progress */
-> > +	watermark = low_wmark_pages(zone) +
-> > +		    (PAGE_REPORTING_CAPACITY << PAGE_REPORTING_MIN_ORDER);
-> > +
-> > +	/*
-> > +	 * Cancel request if insufficient free memory or if we failed
-> > +	 * to allocate page reporting statistics for the zone.
-> > +	 */
-> > +	if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
-> > +		return err;
-> > +
-> 
-> Will it not make more sense to check the low watermark condition before every
-> reporting request generated for a bunch of 32 isolated pages?
-> or will that be too costly?
+On Fri, Dec 13, 2019 at 10:18 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+>
+> On Fri, Dec 13, 2019 at 09:53:47PM +0100, Arnd Bergmann wrote:
+> > The compat_time_t type has been removed everywhere else,
+> > as most users rely on old_time32_t for both native and
+> > compat mode handling of 32-bit time_t.
+> >
+> > Remove the last one in xfs.
+> >
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Looks fine to me, assuming that compat_time_t -> old_time32_t.
 
-My thought is to wait until we are actually processing the request. That
-way we are only performing this check once every 2 seconds instead of
-every time we are thinking about requesting page reporting.
+Yes, that's the idea. Christoph asked for the global change last year
+as a cleanup,
+but I left out xfs and a few others at the time when I was missing
+other patches.
 
-Keep in mind I removed the reported_pages tracking statistics so we now
-are requesting as soon as we free any page. So if we moved the check tot
-he request itself it would mean that a low memory condition would result
-in us repeatedly checking the low water mark and failing the test.
+> Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
 
+Thanks,
+
+     Arnd
