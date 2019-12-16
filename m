@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45EFD1215C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:24:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4181213DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbfLPSY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:24:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46714 "EHLO mail.kernel.org"
+        id S1729837AbfLPSFf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731737AbfLPSTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:19:12 -0500
+        id S1727459AbfLPSFe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A6BA207FF;
-        Mon, 16 Dec 2019 18:19:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4041820700;
+        Mon, 16 Dec 2019 18:05:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520351;
-        bh=P1W7VsLg1ccfrXtluoSlXoEz9xd4qtjEQuc9NOvlP5Y=;
+        s=default; t=1576519533;
+        bh=i3SKMPZGX2kcISt1DIStMe09VN88qHoD/EJ9Rd1LWYw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fW138bzxVLueSJigiJeTcuRNnVw3HZ5CANubNQgLyCXA3pzNtLEvu+8eQWpqTDuyk
-         0M3OaXOJ5x+XDTyV/rBo081f1EZTuBcFINODiIHXqNSdvfXOd9VEJ0QHMh7iVzW1qH
-         RBRYRZVUSSLCWYMo3SR0h5IM0t24PUp68df6oZlM=
+        b=0fZxY1Udk1Ok8t2+zAlAxUxmH1b5J8CBHQf2NwR+Uzu/2Nz3gyYAHCxGz0SjRGvKy
+         DcJcgXQpmIpaG8u2pGFftatr+Z5Pfli/elhiLu97KX5mX+TKE2+5QOkq0/SVD4usW6
+         jU3Gm0PhxA2uJ+iIs78HfPbQIc1cccQAU3uR9KV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 118/177] cpufreq: powernv: fix stack bloat and hard limit on number of CPUs
+        stable@vger.kernel.org, Andrea Merello <andrea.merello@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 106/140] iio: ad7949: kill pointless "readback"-handling code
 Date:   Mon, 16 Dec 2019 18:49:34 +0100
-Message-Id: <20191216174842.951300479@linuxfoundation.org>
+Message-Id: <20191216174815.749524432@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,81 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
+From: Meng Li <Meng.Li@windriver.com>
 
-commit db0d32d84031188443e25edbd50a71a6e7ac5d1d upstream.
+[ Upstream commit c270bbf7bb9ddc4e2a51b3c56557c377c9ac79bc ]
 
-The following build warning occurred on powerpc 64-bit builds:
+The device could be configured to spit out also the configuration word
+while reading the AD result value (in the same SPI xfer) - this is called
+"readback" in the device datasheet.
 
-drivers/cpufreq/powernv-cpufreq.c: In function 'init_chip_info':
-drivers/cpufreq/powernv-cpufreq.c:1070:1: warning: the frame size of
-1040 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+The driver checks if readback is enabled and it eventually adjusts the SPI
+xfer length and it applies proper shifts to still get the data, discarding
+the configuration word.
 
-This is with a cross-compiler based on gcc 8.1.0, which I got from:
-  https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/8.1.0/
+The readback option is actually never enabled (the driver disables it), so
+the said checks do not serve for any purpose.
 
-The warning is due to putting 1024 bytes on the stack:
+Since enabling the readback option seems not to provide any advantage (the
+driver entirely sets the configuration word without relying on any default
+value), just kill the said, unused, code.
 
-    unsigned int chip[256];
-
-...and it's also undesirable to have a hard limit on the number of
-CPUs here.
-
-Fix both problems by dynamically allocating based on num_possible_cpus,
-as recommended by Michael Ellerman.
-
-Fixes: 053819e0bf840 ("cpufreq: powernv: Handle throttling due to Pmax capping at chip level")
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: 4.10+ <stable@vger.kernel.org> # 4.10+
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/powernv-cpufreq.c |   17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/edac/altera_edac.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/cpufreq/powernv-cpufreq.c
-+++ b/drivers/cpufreq/powernv-cpufreq.c
-@@ -1041,9 +1041,14 @@ static struct cpufreq_driver powernv_cpu
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index 56de378ad13dc..c9108906bcdc0 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -600,6 +600,7 @@ static const struct regmap_config s10_sdram_regmap_cfg = {
+ 	.reg_read = s10_protected_reg_read,
+ 	.reg_write = s10_protected_reg_write,
+ 	.use_single_rw = true,
++	.fast_io = true,
+ };
  
- static int init_chip_info(void)
- {
--	unsigned int chip[256];
-+	unsigned int *chip;
- 	unsigned int cpu, i;
- 	unsigned int prev_chip_id = UINT_MAX;
-+	int ret = 0;
-+
-+	chip = kcalloc(num_possible_cpus(), sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
- 
- 	for_each_possible_cpu(cpu) {
- 		unsigned int id = cpu_to_chip_id(cpu);
-@@ -1055,8 +1060,10 @@ static int init_chip_info(void)
- 	}
- 
- 	chips = kcalloc(nr_chips, sizeof(struct chip), GFP_KERNEL);
--	if (!chips)
--		return -ENOMEM;
-+	if (!chips) {
-+		ret = -ENOMEM;
-+		goto free_and_return;
-+	}
- 
- 	for (i = 0; i < nr_chips; i++) {
- 		chips[i].id = chip[i];
-@@ -1066,7 +1073,9 @@ static int init_chip_info(void)
- 			per_cpu(chip_info, cpu) =  &chips[i];
- 	}
- 
--	return 0;
-+free_and_return:
-+	kfree(chip);
-+	return ret;
- }
- 
- static inline void clean_chip_info(void)
+ static int altr_s10_sdram_probe(struct platform_device *pdev)
+-- 
+2.20.1
+
 
 
