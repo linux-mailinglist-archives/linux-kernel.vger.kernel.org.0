@@ -2,271 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9912E120377
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:14:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF27612037D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfLPLOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:14:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44878 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727059AbfLPLOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:14:37 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EA17FACE1;
-        Mon, 16 Dec 2019 11:14:33 +0000 (UTC)
-Subject: Re: [PATCH v5 1/6] dt-bindings: PCI: Add bindings for brcmstb's PCIe
- device
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        andrew.murray@arm.com, maz@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     james.quinlan@broadcom.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20191216110113.30436-1-nsaenzjulienne@suse.de>
- <20191216110113.30436-2-nsaenzjulienne@suse.de>
-From:   Matthias Brugger <mbrugger@suse.com>
-Autocrypt: addr=mbrugger@suse.com; prefer-encrypt=mutual; keydata=
- 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
- HxUCQ9Y1Y/Ct
-Message-ID: <39a8ab96-2b32-1d9c-63cd-8114a58f723c@suse.com>
-Date:   Mon, 16 Dec 2019 12:14:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727316AbfLPLO5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:14:57 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:50853 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727059AbfLPLO5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:14:57 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1igoL0-0004mc-FG; Mon, 16 Dec 2019 12:14:54 +0100
+To:     Heyi Guo <guoheyi@huawei.com>
+Subject: Re: [PATCH] irq-gic-v3: fix NULL dereference of disabled  =?UTF-8?Q?redist=5Fbase?=
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-In-Reply-To: <20191216110113.30436-2-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 16 Dec 2019 11:14:54 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <linux-kernel@vger.kernel.org>, <wanghaibin.wang@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+In-Reply-To: <20191216062745.63397-1-guoheyi@huawei.com>
+References: <20191216062745.63397-1-guoheyi@huawei.com>
+Message-ID: <36a042f6bcea5b5d5bfd9f6e6f01d6f5@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: guoheyi@huawei.com, linux-kernel@vger.kernel.org, wanghaibin.wang@huawei.com, tglx@linutronix.de, jason@lakedaemon.net
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Heyi,
 
-
-On 16/12/2019 12:01, Nicolas Saenz Julienne wrote:
-> From: Jim Quinlan <james.quinlan@broadcom.com>
-> 
-> The DT bindings description of the brcmstb PCIe device is described.
-> This node can only be used for now on the Raspberry Pi 4.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> Co-developed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-> 
+On 2019-12-16 06:27, Heyi Guo wrote:
+> If we use ACPI MADT GICC structure to pass single redistributor base,
+> and mark some GICC as disabled, we'll get below call trace during
+> boot:
+>
+> [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+> [    0.000000] GICv3: 256 SPIs implemented
+> [    0.000000] GICv3: 0 Extended SPIs implemented
+> [    0.000000] GICv3: Distributor has no Range Selector support
+> [    0.000000] Unable to handle kernel paging request at virtual
+> address 000000000000ffe8
+> [    0.000000] Mem abort info:
+> [    0.000000]   ESR = 0x96000004
+> [    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    0.000000]   SET = 0, FnV = 0
+> [    0.000000]   EA = 0, S1PTW = 0
+> [    0.000000] Data abort info:
+> [    0.000000]   ISV = 0, ISS = 0x00000004
+> [    0.000000]   CM = 0, WnR = 0
+> [    0.000000] [000000000000ffe8] user address but active_mm is 
+> swapper
+> [    0.000000] Internal error: Oops: 96000004 [#1] SMP
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc1 #5
+> [    0.000000] pstate: 20000085 (nzCv daIf -PAN -UAO)
+> [    0.000000] pc : gic_iterate_rdists+0x58/0x130
+> [    0.000000] lr : gic_iterate_rdists+0x80/0x130
+> [    0.000000] sp : ffff8000113d3cb0
+> [    0.000000] x29: ffff8000113d3cb0 x28: 0000000000000000
+> [    0.000000] x27: 0000000000000000 x26: 0000000000000018
+> [    0.000000] x25: 000000000000ffe8 x24: 000000000000003f
+> [    0.000000] x23: ffff800010588040 x22: 00000000000005e8
+> [    0.000000] x21: ffff8000113df7d0 x20: 0000030f00003f11
+> [    0.000000] x19: 0000000000000000 x18: ffffffffffffffff
+> [    0.000000] x17: 0000000014aeb8dc x16: 00000000c3ba0ccf
+> [    0.000000] x15: ffff8000113d9908 x14: ffff8000913d3a37
+> [    0.000000] x13: ffff8000113d3a45 x12: ffff800011402000
+> [    0.000000] x11: ffff8000113d39d0 x10: ffff8000113db980
+> [    0.000000] x9 : 00000000ffffffd0 x8 : ffff8000106dca98
+> [    0.000000] x7 : 000000000000005b x6 : 0000000000000000
+> [    0.000000] x5 : 0000000000000000 x4 : ffff8000128c0000
+> [    0.000000] x3 : ffff8000128a0000 x2 : ffff0003fc3c7000
+> [    0.000000] x1 : 0000000000000001 x0 : 000000000000ffe8
+> [    0.000000] Call trace:
+> [    0.000000]  gic_iterate_rdists+0x58/0x130
+> [    0.000000]  gic_init_bases+0x200/0x4b4
+> [    0.000000]  gic_acpi_init+0x148/0x284
+> [    0.000000]  acpi_match_madt+0x4c/0x84
+> [    0.000000]  acpi_table_parse_entries_array+0x188/0x278
+> [    0.000000]  acpi_table_parse_entries+0x70/0x98
+> [    0.000000]  acpi_table_parse_madt+0x40/0x50
+> [    0.000000]  __acpi_probe_device_table+0x88/0xe4
+> [    0.000000]  irqchip_init+0x38/0x40
+> [    0.000000]  init_IRQ+0x168/0x19c
+> [    0.000000]  start_kernel+0x328/0x508
+> [    0.000000] Code: f90017b6 9b3a7f16 f8766853 8b190260 (b9400000)
+> [    0.000000] ---[ end trace ae5cf232d924bfc1 ]---
+> [    0.000000] Kernel panic - not syncing: Fatal exception
+> [    0.000000] Rebooting in 3 seconds..
+>
+> In this case, nr_redist_regions counts all GICC structures but only
+> enabled ones have redistributor mapped. So add check to avoid NULL
+> deference of redist_base.
+>
+> Signed-off-by: Heyi Guo <guoheyi@huawei.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <maz@kernel.org>
 > ---
-> 
-> Changes since v2:
->   - Add pci reference schema
->   - Drop all default properties
->   - Assume msi-controller and msi-parent are properly defined
->   - Add num entries on multiple properties
->   - use unevaluatedProperties
->   - Update required properties
->   - Fix license
-> 
-> Changes since v1:
->   - Fix commit Subject
->   - Remove linux,pci-domain
-> 
-> This was based on Jim's original submission[1], converted to yaml and
-> adapted to the RPi4 case.
-> 
-> [1] https://patchwork.kernel.org/patch/10605937/
-> 
->  .../bindings/pci/brcm,stb-pcie.yaml           | 97 +++++++++++++++++++
->  1 file changed, 97 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> new file mode 100644
-> index 000000000000..77d3e81a437b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> @@ -0,0 +1,97 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/brcm,stb-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  drivers/irqchip/irq-gic-v3.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/irqchip/irq-gic-v3.c 
+> b/drivers/irqchip/irq-gic-v3.c
+> index d6218012097b..bd9d55cadef9 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -781,6 +781,13 @@ static int gic_iterate_rdists(int (*fn)(struct
+> redist_region *, void __iomem *))
+>  		u64 typer;
+>  		u32 reg;
+>
+> +		/*
+> +		 * redist_base may be NULL if we use single_redist and some GICC
+> +		 * structure is disabled.
+> +		 */
+> +		if (!ptr)
+> +			continue;
 > +
-> +title: Brcmstb PCIe Host Controller Device Tree Bindings
-> +
-> +maintainers:
-> +  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> +
-> +allOf:
-> +  - $ref: /schemas/pci/pci-bus.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: brcm,bcm2711-pcie # The Raspberry Pi 4
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: PCIe host controller
-> +      - description: builtin MSI controller
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: pcie
-> +      - const: msi
-> +
-> +  ranges:
-> +    maxItems: 1
-> +
-> +  dma-ranges:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: sw_pcie
-> +
-> +  msi-controller:
-> +    description: Identifies the node as an MSI controller.
+>  		reg = readl_relaxed(ptr + GICR_PIDR2) & GIC_PIDR2_ARCH_MASK;
+>  		if (reg != GIC_PIDR2_ARCH_GICv3 &&
+>  		    reg != GIC_PIDR2_ARCH_GICv4) { /* We're in trouble... */
 
-are you missing "type: boolean" here?
+This feels like the wrong fix. The redistributor region array should
+be completely populated, and there is an assumption all over this 
+driver
+that there is no junk in these structures.
 
-Regards,
-Matthias
+You're seeing this because we don't track the number of *enabled* 
+rdists,
+and allocate the number of regions based on the number of overall GICC
+entries instead of the number of enabled redistributors.
 
+How about this instead?
 
-> +
-> +  msi-parent:
-> +    description: MSI controller the device is capable of using.
-> +
-> +  brcm,enable-ssc:
-> +    description: Indicates usage of spread-spectrum clocking.
-> +    type: boolean
-> +
-> +required:
-> +  - reg
-> +  - dma-ranges
-> +  - "#interrupt-cells"
-> +  - interrupts
-> +  - interrupt-names
-> +  - interrupt-map-mask
-> +  - interrupt-map
-> +  - msi-controller
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    scb {
-> +            #address-cells = <2>;
-> +            #size-cells = <1>;
-> +            pcie0: pcie@7d500000 {
-> +                    compatible = "brcm,bcm2711-pcie";
-> +                    reg = <0x0 0x7d500000 0x9310>;
-> +                    device_type = "pci";
-> +                    #address-cells = <3>;
-> +                    #size-cells = <2>;
-> +                    #interrupt-cells = <1>;
-> +                    interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
-> +                                 <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>;
-> +                    interrupt-names = "pcie", "msi";
-> +                    interrupt-map-mask = <0x0 0x0 0x0 0x7>;
-> +                    interrupt-map = <0 0 0 1 &gicv2 GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>;
-> +                    msi-parent = <&pcie0>;
-> +                    msi-controller;
-> +                    ranges = <0x02000000 0x0 0xf8000000 0x6 0x00000000 0x0 0x04000000>;
-> +                    dma-ranges = <0x02000000 0x0 0x00000000 0x0 0x00000000 0x0 0x80000000>;
-> +                    brcm,enable-ssc;
-> +            };
-> +    };
-> 
+         M.
+
+diff --git a/drivers/irqchip/irq-gic-v3.c 
+b/drivers/irqchip/irq-gic-v3.c
+index 3a1866682dd0..9b26a860340b 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -1861,6 +1861,7 @@ static struct
+  	struct redist_region *redist_regs;
+  	u32 nr_redist_regions;
+  	bool single_redist;
++	int enabled_rdists;
+  	u32 maint_irq;
+  	int maint_irq_mode;
+  	phys_addr_t vcpu_base;
+@@ -1955,8 +1956,10 @@ static int __init gic_acpi_match_gicc(union 
+acpi_subtable_headers *header,
+  	 * If GICC is enabled and has valid gicr base address, then it means
+  	 * GICR base is presented via GICC
+  	 */
+-	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address)
++	if ((gicc->flags & ACPI_MADT_ENABLED) && gicc->gicr_base_address) {
++		acpi_data.enabled_rdists++;
+  		return 0;
++	}
+
+  	/*
+  	 * It's perfectly valid firmware can pass disabled GICC entry, driver
+@@ -1986,8 +1989,10 @@ static int __init 
+gic_acpi_count_gicr_regions(void)
+
+  	count = acpi_table_parse_madt(ACPI_MADT_TYPE_GENERIC_INTERRUPT,
+  				      gic_acpi_match_gicc, 0);
+-	if (count > 0)
++	if (count > 0) {
+  		acpi_data.single_redist = true;
++		count = acpi_data.enabled_rdists;
++	}
+
+  	return count;
+  }
+
+-- 
+Jazz is not dead. It just smells funny...
