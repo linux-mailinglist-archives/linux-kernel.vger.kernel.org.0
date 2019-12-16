@@ -2,72 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF18E120EE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:11:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FFCE120EEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:13:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbfLPQLM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:11:12 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55668 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfLPQLK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:11:10 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1igsxX-0003nJ-Vx; Mon, 16 Dec 2019 16:11:00 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Sumit Semwal <sumit.semwal@linaro.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Sandeep Patil <sspatil@android.com>,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dma-buf: fix resource leak on -ENOTTY error return path
-Date:   Mon, 16 Dec 2019 16:10:59 +0000
-Message-Id: <20191216161059.269492-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726402AbfLPQNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 11:13:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbfLPQNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 11:13:02 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02A1C20717;
+        Mon, 16 Dec 2019 16:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576512781;
+        bh=Jef9w4OjkRq1icyigJOT8xylp8Mo2WzDKjHr6uAiULc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bRGG0YcSlJmTEk9EfbMd4tusYJTP9xGT22BF+SgJByObFOByPlN0xPhbXAhWIPSrR
+         VUVb8gOZYb3cH7+/Ox7rA5EbXd2s3MxEMgmUJcuBmQ2QyTSdSaJEe4856ukG1N6uIA
+         fA9XmLS6WVgfrTRO2HlRJRca+A+/LF5G8GaTrAdo=
+Date:   Mon, 16 Dec 2019 17:12:58 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Stefan Mavrodiev <stefan@olimex.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "open list:DRM DRIVERS FOR ALLWINNER A10" 
+        <dri-devel@lists.freedesktop.org>,
+        "moderated list:ARM/Allwinner sunXi SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/1] drm/sun4i: hdmi: Check for null pointer before
+ cleanup
+Message-ID: <20191216161258.lmkq2ersfm746t7q@gilmour.lan>
+References: <20191216144348.7540-1-stefan@olimex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tv26vsw7yc2hguuf"
+Content-Disposition: inline
+In-Reply-To: <20191216144348.7540-1-stefan@olimex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
 
-The -ENOTTY error return path does not free the allocated
-kdata as it returns directly. Fix this by returning via the
-error handling label err.
+--tv26vsw7yc2hguuf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Addresses-Coverity: ("Resource leak")
-Fixes: c02a81fba74f ("dma-buf: Add dma-buf heaps framework")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/dma-buf/dma-heap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
-index 4f04d104ae61..80f2f5eac1e4 100644
---- a/drivers/dma-buf/dma-heap.c
-+++ b/drivers/dma-buf/dma-heap.c
-@@ -157,7 +157,8 @@ static long dma_heap_ioctl(struct file *file, unsigned int ucmd,
- 		ret = dma_heap_ioctl_allocate(file, kdata);
- 		break;
- 	default:
--		return -ENOTTY;
-+		ret = -ENOTTY;
-+		goto err;
- 	}
- 
- 	if (copy_to_user((void __user *)arg, kdata, out_size) != 0)
--- 
-2.24.0
+On Mon, Dec 16, 2019 at 04:43:48PM +0200, Stefan Mavrodiev wrote:
+> It's possible hdmi->connector and hdmi->encoder divices to be NULL.
+> This can happen when building as kernel module and you try to remove
+> the module.
+>
+> This patch make simple null check, before calling the cleanup functions.
+>
+> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> index a7c4654445c7..b61e00f2ecb8 100644
+> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+> @@ -685,8 +685,10 @@ static void sun4i_hdmi_unbind(struct device *dev, struct device *master,
+>  	struct sun4i_hdmi *hdmi = dev_get_drvdata(dev);
+>
+>  	cec_unregister_adapter(hdmi->cec_adap);
+> -	drm_connector_cleanup(&hdmi->connector);
+> -	drm_encoder_cleanup(&hdmi->encoder);
+> +	if (hdmi->connector.dev)
+> +		drm_connector_cleanup(&hdmi->connector);
+> +	if (hdmi->encoder.dev)
+> +		drm_encoder_cleanup(&hdmi->encoder);
 
+Hmmm, this doesn't look right. Do you have more information on how you
+can reproduce it?
+
+Maxime
+
+--tv26vsw7yc2hguuf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfetCgAKCRDj7w1vZxhR
+xSlzAQCy4c+CBbNxGZLR/c23Wqh2wxxJFng5CLDPuXkQzWCfYAEA2J3Ojg/qotg0
+t+szQiO+c0e2z1mtbxDkSMg9ZtyIVwQ=
+=fjFy
+-----END PGP SIGNATURE-----
+
+--tv26vsw7yc2hguuf--
