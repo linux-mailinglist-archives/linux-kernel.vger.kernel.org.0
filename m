@@ -2,73 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ED3F1203AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:21:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F9F01203B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:22:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfLPLUq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:20:46 -0500
-Received: from foss.arm.com ([217.140.110.172]:50666 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727086AbfLPLUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:20:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B9901FB;
-        Mon, 16 Dec 2019 03:20:45 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 144D73F6CF;
-        Mon, 16 Dec 2019 03:20:44 -0800 (PST)
-Date:   Mon, 16 Dec 2019 11:20:43 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     David Engraf <david.engraf@sysgo.com>
-Cc:     thierry.reding@gmail.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: tegra: Fix return value check of
- pm_runtime_get_sync
-Message-ID: <20191216112043.GS24359@e119886-lin.cambridge.arm.com>
-References: <20191216102208.GO24359@e119886-lin.cambridge.arm.com>
- <20191216111825.28136-1-david.engraf@sysgo.com>
+        id S1727508AbfLPLUz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:20:55 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:61473 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbfLPLUx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:20:53 -0500
+Received: from 79.184.253.1.ipv4.supernova.orange.pl (79.184.253.1) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
+ id 8f1ea1b690dcc29b; Mon, 16 Dec 2019 12:20:50 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Yangtao Li <tiny.windzz@gmail.com>, daniel.lezcano@linaro.org
+Cc:     shc_work@mail.ru, linux-pm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: clps711x: convert to devm_platform_ioremap_resource
+Date:   Mon, 16 Dec 2019 12:20:50 +0100
+Message-ID: <5309821.Xs2qqjuCkx@kreacher>
+In-Reply-To: <20191215130206.30265-1-tiny.windzz@gmail.com>
+References: <20191215130206.30265-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216111825.28136-1-david.engraf@sysgo.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 12:18:25PM +0100, David Engraf wrote:
-> pm_runtime_get_sync() returns the device's usage counter. This might
-> be >0 if the device is already powered up or CONFIG_PM is disabled.
+On Sunday, December 15, 2019 2:02:05 PM CET Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
 > 
-> Abort probe function on real error only.
-> 
-> Fixes: da76ba50963b ("PCI: tegra: Add power management support")
-> Signed-off-by: David Engraf <david.engraf@sysgo.com>
-
-Thanks for this - apologies my feedback wasn't as quick as your respin.
-
-Acked-by: Andrew Murray <andrew.murray@arm.com>
-
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
->  drivers/pci/controller/pci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpuidle/cpuidle-clps711x.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pci-tegra.c b/drivers/pci/controller/pci-tegra.c
-> index 673a1725ef38..090b632965e2 100644
-> --- a/drivers/pci/controller/pci-tegra.c
-> +++ b/drivers/pci/controller/pci-tegra.c
-> @@ -2798,7 +2798,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+> diff --git a/drivers/cpuidle/cpuidle-clps711x.c b/drivers/cpuidle/cpuidle-clps711x.c
+> index 6e36740f5719..fc22c59b6c73 100644
+> --- a/drivers/cpuidle/cpuidle-clps711x.c
+> +++ b/drivers/cpuidle/cpuidle-clps711x.c
+> @@ -37,10 +37,7 @@ static struct cpuidle_driver clps711x_idle_driver = {
 >  
->  	pm_runtime_enable(pcie->dev);
->  	err = pm_runtime_get_sync(pcie->dev);
-> -	if (err) {
-> +	if (err < 0) {
->  		dev_err(dev, "fail to enable pcie controller: %d\n", err);
->  		goto teardown_msi;
->  	}
-> -- 
-> 2.17.1
+>  static int __init clps711x_cpuidle_probe(struct platform_device *pdev)
+>  {
+> -	struct resource *res;
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	clps711x_halt = devm_ioremap_resource(&pdev->dev, res);
+> +	clps711x_halt = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(clps711x_halt))
+>  		return PTR_ERR(clps711x_halt);
+>  
 > 
+
+Daniel, any concerns here?
+
+
+
