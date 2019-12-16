@@ -2,140 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAF0121293
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A211212C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:56:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfLPRx5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:53:57 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41206 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727825AbfLPRxu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:53:50 -0500
-Received: by mail-ot1-f68.google.com with SMTP id r27so10123833otc.8;
-        Mon, 16 Dec 2019 09:53:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aBXY62WKg7TVrV/PrvfxtQolVM/NjuBDVHTt/R6DLuE=;
-        b=UgHxp/5nS1XO/xpYRPc8yH795Td/Hb0q1sdMrfCiQD2pONJNXoxOFeTKNAX1Ome5za
-         9fNsbsHK1TI04xhedLMhBFHGsfchft/k2a684a74LEb/nsf62r/yRCew6p3BHoFTg7Ee
-         7uKUJBnml+pYd3pouslQzwgaV4Lc6Uwp/5xvSKd9Cr5GFUgHGTnHpac4/GORRvRe1TKK
-         +25CkaVnuoowu2/uygN7j8wBoU4SDBIYV5ksjH1KTW/naNwlocIufZ5W8yp9TOMgDT3j
-         mNrc7lkpoG5+EF0i8Q+EnQL43S7NuTWp34ojTcl3aaMLtYx6wu2rnUXbEie8dXQ/+9wA
-         W88A==
-X-Gm-Message-State: APjAAAXnauYDfYbn+kE+3TBT+JsENo+xGSylvx/H3OmEn4EP0t9YIB0C
-        GN+F+/KbExDqtGjbkIX+KA==
-X-Google-Smtp-Source: APXvYqyvQQhFHfBUrNhwpcX+S7tO+0IFqa6VhHfOEkR78UZtjxvAtAexqLGRaE8IhXrJrj6Fbo87yg==
-X-Received: by 2002:a9d:65cf:: with SMTP id z15mr34322760oth.238.1576518829512;
-        Mon, 16 Dec 2019 09:53:49 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r10sm6964864otn.37.2019.12.16.09.53.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 09:53:49 -0800 (PST)
-Date:   Mon, 16 Dec 2019 11:53:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kishon@ti.com, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
-Subject: Re: [PATCH v9 1/2] dt-bindings: phy: intel-emmc-phy: Add YAML schema
- for LGM eMMC PHY
-Message-ID: <20191216175348.GA18405@bogus>
-References: <20191216034838.21875-1-vadivel.muruganx.ramuthevar@linux.intel.com>
- <20191216034838.21875-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+        id S1727697AbfLPRzs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:55:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727907AbfLPRzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:55:44 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2C60206B7;
+        Mon, 16 Dec 2019 17:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576518944;
+        bh=1mV3/yNh0GSIc3le4APUDwgLnHAoG5ix4puzI6eZqdk=;
+        h=In-Reply-To:References:To:From:Subject:Date:From;
+        b=fGcixwDaIx9KQmcQ0FuaB2h1kXmJF52KbQSo+72cuAAZ12ydjmYtZR9/nC1Ni4f75
+         TQbZGhEmrtrFr+1bzMU79jw16HsVPSU8DCJKfrOvsIp+RtX4PJz51qXFteOvQG61cb
+         /C4/dDxXIc1M6hx7xf6Y1Zy+G7GTThMjiaR+qUZ0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216034838.21875-2-vadivel.muruganx.ramuthevar@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <F2C21019-79F4-450F-A575-9621E5747C4E@walle.cc>
+References: <20191205072653.34701-1-wen.he_1@nxp.com> <20191205072653.34701-2-wen.he_1@nxp.com> <20191212221817.B7FF1206DA@mail.kernel.org> <F2C21019-79F4-450F-A575-9621E5747C4E@walle.cc>
+To:     Li Yang <leoyang.li@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Michael Walle <michael@walle.cc>,
+        Rob Herring <robh+dt@kernel.org>, Wen He <wen.he_1@nxp.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [v11 2/2] clk: ls1028a: Add clock driver for Display output interface
+User-Agent: alot/0.8.1
+Date:   Mon, 16 Dec 2019 09:55:43 -0800
+Message-Id: <20191216175543.F2C60206B7@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 11:48:37AM +0800, Ramuthevar,Vadivel MuruganX wrote:
-> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> 
-> Add a YAML schema to use the host controller driver with the
-> eMMC PHY on Intel's Lightning Mountain SoC.
-> 
-> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> ---
->  .../bindings/phy/intel,lgm-emmc-phy.yaml           | 58 ++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> new file mode 100644
-> index 000000000000..a7d4224b2001
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/intel,lgm-emmc-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Intel Lightning Mountain(LGM) eMMC PHY Device Tree Bindings
-> +
-> +maintainers:
-> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-> +
-> +description: |+
-> +  Bindings for eMMC PHY on Intel's Lightning Mountain SoC, syscon
-> +  node is used to reference the base address of eMMC phy registers.
-> +
-> +  The eMMC PHY node should be the child of a syscon node with the
-> +  required property:
-> +
-> +  - compatible:         Should be one of the following:
-> +                        "intel,lgm-syscon", "syscon"
-> +  - reg:
-> +      maxItems: 1
-> +
-> +properties:
-> +  compatible:
-> +      const: intel,lgm-emmc-phy
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +required:
-> +  - "#phy-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
+Quoting Michael Walle (2019-12-12 16:06:16)
+> Am 12. Dezember 2019 23:18:16 MEZ schrieb Stephen Boyd <sboyd@kernel.org>:
+> >Quoting Wen He (2019-12-04 23:26:53)
+> >> Add clock driver for QorIQ LS1028A Display output interfaces(LCD,
+> >DPHY),
+> >> as implemented in TSMC CLN28HPM PLL, this PLL supports the
+> >programmable
+> >> integer division and range of the display output pixel clock's
+> >27-594MHz.
+> >>=20
+> >> Signed-off-by: Wen He <wen.he_1@nxp.com>
+> >> Signed-off-by: Michael Walle <michael@walle.cc>
+> >
+> >Is Michael the author? SoB chain is backwards here.
+>=20
+> the original driver was from Wen. I've just supplied some code and
+> the vco frequency stuff. so its basically a sob of us both.=20
+>=20
+> -michael=20
 
-Need to drop clock-names here too and in the example.
+Ok. That's a Co-developed-by: tag then. Thanks for letting us know.
 
-> +
-> +examples:
-> +  - |
-> +    sysconf: chiptop@e0200000 {
-> +      compatible = "intel,lgm-syscon", "syscon";
-> +      reg = <0xe0200000 0x100>;
-> +
-> +      emmc-phy: emmc-phy@a8 {
-> +        compatible = "intel,lgm-emmc-phy";
-> +        reg = <0x00a8 0x10>;
-> +        clocks = <&emmc>;
-> +        clock-names = "emmcclk";
-> +        #phy-cells = <0>;
-> +      };
-> +    };
-> +...
-> -- 
-> 2.11.0
-> 
