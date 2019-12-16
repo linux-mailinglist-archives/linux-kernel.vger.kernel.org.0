@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 594A2121379
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9650F1214DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729264AbfLPSCC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37604 "EHLO mail.kernel.org"
+        id S1731424AbfLPSPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:15:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbfLPSCB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:01 -0500
+        id S1731227AbfLPSPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:15:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A816D20CC7;
-        Mon, 16 Dec 2019 18:02:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70857206EC;
+        Mon, 16 Dec 2019 18:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519321;
-        bh=sYP6a1qIWAROYWDT3OJif2kJPunlIqYiRnV/nOd2lKs=;
+        s=default; t=1576520139;
+        bh=LmkIYTRoq1puurBJPSSi6hdYB2es2hW23ta6JZXP8dM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tGZsluPI0MyLhIXYHfcRz8FAm89b8oIs1UomBqub3N5uW/NiKBBrGsOfWXzJkfUT0
-         RPz05jn1UirvWUZd4WlOLkIOwKhPieGOsl/jgETShuOxMcpQjLKd7xKzsM062O604I
-         LDE1uplsc7v8Cl35K3QQ7spfHDW3UGpMhsJ+qQuA=
+        b=0JhXlgslmnVNsucXbc6sZ9pQSQpw9h5gj+btk7MHgF8+OEjtW7SNd4PusbWk1gqhT
+         7kPKotzo771YJRNkT3glxMDKSEohDbsSGD//gC5RVIeR6sZI2wUrv+adaS8OTxfdiT
+         E/4iv0nd35GaD7tnXBSR7c+P3JPrHiwUwgb8swP8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 019/140] iio: adis16480: Add debugfs_reg_access entry
+        stable@vger.kernel.org, Eli Billauer <eli.billauer@gmail.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: [PATCH 5.4 031/177] xhci: handle some XHCI_TRUST_TX_LENGTH quirks cases as default behaviour.
 Date:   Mon, 16 Dec 2019 18:48:07 +0100
-Message-Id: <20191216174755.837735242@linuxfoundation.org>
+Message-Id: <20191216174824.601464541@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nuno Sá <nuno.sa@analog.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-commit 4c35b7a51e2f291471f7221d112c6a45c63e83bc upstream.
+commit 7ff11162808cc2ec66353fc012c58bb449c892c3 upstream.
 
-The driver is defining debugfs entries by calling
-`adis16480_debugfs_init()`. However, those entries are attached to the
-iio_dev debugfs entry which won't exist if no debugfs_reg_access
-callback is provided.
+xhci driver claims it needs XHCI_TRUST_TX_LENGTH quirk for both
+Broadcom/Cavium and a Renesas xHC controllers.
 
-Fixes: 2f3abe6cbb6c ("iio:imu: Add support for the ADIS16480 and similar IMUs")
-Signed-off-by: Nuno Sá <nuno.sa@analog.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+The quirk was inteded for handling false "success" complete event for
+transfers that had data left untransferred.
+These transfers should complete with "short packet" events instead.
+
+In these two new cases the false "success" completion is reported
+after a "short packet" if the TD consists of several TRBs.
+xHCI specs 4.10.1.1.2 say remaining TRBs should report "short packet"
+as well after the first short packet in a TD, but this issue seems so
+common it doesn't make sense to add the quirk for all vendors.
+
+Turn these events into short packets automatically instead.
+
+This gets rid of the  "The WARN Successful completion on short TX for
+slot 1 ep 1: needs XHCI_TRUST_TX_LENGTH quirk" warning in many cases.
+
+Cc: <stable@vger.kernel.org>
+Reported-by: Eli Billauer <eli.billauer@gmail.com>
+Reported-by: Ard Biesheuvel <ardb@kernel.org>
+Tested-by: Eli Billauer <eli.billauer@gmail.com>
+Tested-by: Ard Biesheuvel <ardb@kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Link: https://lore.kernel.org/r/20191211142007.8847-6-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/adis16480.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/host/xhci-ring.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/imu/adis16480.c
-+++ b/drivers/iio/imu/adis16480.c
-@@ -727,6 +727,7 @@ static const struct iio_info adis16480_i
- 	.read_raw = &adis16480_read_raw,
- 	.write_raw = &adis16480_write_raw,
- 	.update_scan_mode = adis_update_scan_mode,
-+	.debugfs_reg_access = adis_debugfs_reg_access,
- };
- 
- static int adis16480_stop_device(struct iio_dev *indio_dev)
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -2377,7 +2377,8 @@ static int handle_tx_event(struct xhci_h
+ 	case COMP_SUCCESS:
+ 		if (EVENT_TRB_LEN(le32_to_cpu(event->transfer_len)) == 0)
+ 			break;
+-		if (xhci->quirks & XHCI_TRUST_TX_LENGTH)
++		if (xhci->quirks & XHCI_TRUST_TX_LENGTH ||
++		    ep_ring->last_td_was_short)
+ 			trb_comp_code = COMP_SHORT_PACKET;
+ 		else
+ 			xhci_warn_ratelimited(xhci,
 
 
