@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40B60121497
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:13:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 42F0E1213DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfLPSMn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57734 "EHLO mail.kernel.org"
+        id S1729869AbfLPSFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730572AbfLPSMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:35 -0500
+        id S1729677AbfLPSFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CFA6206B7;
-        Mon, 16 Dec 2019 18:12:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7570A21582;
+        Mon, 16 Dec 2019 18:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519954;
-        bh=2oSPk7Am9vJP6YaoyozVS/wigGzoum5Po323ansRbRo=;
+        s=default; t=1576519540;
+        bh=oBdUceBh9iji2lhiwMRLh5mwNhI8r7frfSTtgbxrcEE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4gPVigcdEJcj7VChHGUfKgYfDaAc9BOIPx/HQpG3+akr1zfim0JxeekwA3Fj297X
-         76YBOMfgvBpNoP+fOFnPa8eRwEZGcfeBnv6X6o1MWy/XDdm2EzatSkOH4YDYRNX1C8
-         f/R1NN0xY37XF+buWxF/KR86DYivxSZ+Se38sUNQ=
+        b=NHAGgZHGVzHgD1mSzOqG5bUIPqY/W9kdBSt/urSVU9cPeMkEusJ3buTXaGuDMLClI
+         +wtxStoeOZ98ZJEA0av59n6HVWp1QxISvqenYe4eR2HVTZMW6cCl7IX80UAzf4IDad
+         p4zzg/cXuVcBoCAul7aO0mw7jkzY9HG1K7UwX2KE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
+        stable@vger.kernel.org, Dick Kennedy <dick.kennedy@broadcom.com>,
+        James Smart <jsmart2021@gmail.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 137/180] scsi: qla2xxx: Do command completion on abort timeout
+Subject: [PATCH 4.19 109/140] scsi: lpfc: Cap NPIV vports to 256
 Date:   Mon, 16 Dec 2019 18:49:37 +0100
-Message-Id: <20191216174842.564991975@linuxfoundation.org>
+Message-Id: <20191216174816.549065385@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,84 +45,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 71c80b75ce8f08c0978ce9a9816b81b5c3ce5e12 ]
+[ Upstream commit 8b47ae69e049ae0b3373859d901f0334322f9fe9 ]
 
-On switch, fabric and mgt command timeout, driver send Abort to tell FW to
-return the original command.  If abort is timeout, then return both Abort
-and original command for cleanup.
+Depending on the chipset, the number of NPIV vports may vary and be in
+excess of what most switches support (256). To avoid confusion with the
+users, limit the reported NPIV vports to 256.
 
-Fixes: 219d27d7147e0 ("scsi: qla2xxx: Fix race conditions in the code for aborting SCSI commands")
-Cc: stable@vger.kernel.org # 5.2
-Link: https://lore.kernel.org/r/20191105150657.8092-3-hmadhani@marvell.com
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
+Additionally correct the 16G adapter which is reporting a bogus NPIV vport
+number if the link is down.
+
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_def.h  |  1 +
- drivers/scsi/qla2xxx/qla_init.c | 18 ++++++++++++++++++
- 2 files changed, 19 insertions(+)
+ drivers/scsi/lpfc/lpfc.h      |  3 ++-
+ drivers/scsi/lpfc/lpfc_attr.c | 12 ++++++++++--
+ drivers/scsi/lpfc/lpfc_init.c |  3 +++
+ 3 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_def.h b/drivers/scsi/qla2xxx/qla_def.h
-index bb1c7b2d0ac1f..674ee2afe2b52 100644
---- a/drivers/scsi/qla2xxx/qla_def.h
-+++ b/drivers/scsi/qla2xxx/qla_def.h
-@@ -543,6 +543,7 @@ typedef struct srb {
- 	const char *name;
- 	int iocbs;
- 	struct qla_qpair *qpair;
-+	struct srb *cmd_sp;
- 	struct list_head elem;
- 	u32 gen1;	/* scratch */
- 	u32 gen2;	/* scratch */
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 5df604fae7593..a75a40b14140a 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -103,8 +103,22 @@ static void qla24xx_abort_iocb_timeout(void *data)
- 	u32 handle;
- 	unsigned long flags;
+diff --git a/drivers/scsi/lpfc/lpfc.h b/drivers/scsi/lpfc/lpfc.h
+index a62e85cb62eb2..706aca3f7c253 100644
+--- a/drivers/scsi/lpfc/lpfc.h
++++ b/drivers/scsi/lpfc/lpfc.h
+@@ -966,7 +966,8 @@ struct lpfc_hba {
+ 	struct list_head port_list;
+ 	struct lpfc_vport *pport;	/* physical lpfc_vport pointer */
+ 	uint16_t max_vpi;		/* Maximum virtual nports */
+-#define LPFC_MAX_VPI 0xFFFF		/* Max number of VPI supported */
++#define LPFC_MAX_VPI	0xFF		/* Max number VPI supported 0 - 0xff */
++#define LPFC_MAX_VPORTS	0x100		/* Max vports per port, with pport */
+ 	uint16_t max_vports;            /*
+ 					 * For IOV HBAs max_vpi can change
+ 					 * after a reset. max_vports is max
+diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
+index 3f69a5e4e470a..1e9002138d31c 100644
+--- a/drivers/scsi/lpfc/lpfc_attr.c
++++ b/drivers/scsi/lpfc/lpfc_attr.c
+@@ -1632,6 +1632,9 @@ lpfc_get_hba_info(struct lpfc_hba *phba,
+ 		max_vpi = (bf_get(lpfc_mbx_rd_conf_vpi_count, rd_config) > 0) ?
+ 			(bf_get(lpfc_mbx_rd_conf_vpi_count, rd_config) - 1) : 0;
  
-+	if (sp->cmd_sp)
-+		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
-+		    "Abort timeout - cmd hdl=%x, cmd type=%x hdl=%x, type=%x\n",
-+		    sp->cmd_sp->handle, sp->cmd_sp->type,
-+		    sp->handle, sp->type);
-+	else
-+		ql_dbg(ql_dbg_async, sp->vha, 0x507c,
-+		    "Abort timeout 2 - hdl=%x, type=%x\n",
-+		    sp->handle, sp->type);
-+
- 	spin_lock_irqsave(qpair->qp_lock_ptr, flags);
- 	for (handle = 1; handle < qpair->req->num_outstanding_cmds; handle++) {
-+		if (sp->cmd_sp && (qpair->req->outstanding_cmds[handle] ==
-+		    sp->cmd_sp))
-+			qpair->req->outstanding_cmds[handle] = NULL;
-+
- 		/* removing the abort */
- 		if (qpair->req->outstanding_cmds[handle] == sp) {
- 			qpair->req->outstanding_cmds[handle] = NULL;
-@@ -113,6 +127,9 @@ static void qla24xx_abort_iocb_timeout(void *data)
++		/* Limit the max we support */
++		if (max_vpi > LPFC_MAX_VPI)
++			max_vpi = LPFC_MAX_VPI;
+ 		if (mvpi)
+ 			*mvpi = max_vpi;
+ 		if (avpi)
+@@ -1647,8 +1650,13 @@ lpfc_get_hba_info(struct lpfc_hba *phba,
+ 			*axri = pmb->un.varRdConfig.avail_xri;
+ 		if (mvpi)
+ 			*mvpi = pmb->un.varRdConfig.max_vpi;
+-		if (avpi)
+-			*avpi = pmb->un.varRdConfig.avail_vpi;
++		if (avpi) {
++			/* avail_vpi is only valid if link is up and ready */
++			if (phba->link_state == LPFC_HBA_READY)
++				*avpi = pmb->un.varRdConfig.avail_vpi;
++			else
++				*avpi = pmb->un.varRdConfig.max_vpi;
++		}
  	}
- 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
  
-+	if (sp->cmd_sp)
-+		sp->cmd_sp->done(sp->cmd_sp, QLA_OS_TIMER_EXPIRED);
-+
- 	abt->u.abt.comp_status = CS_TIMEOUT;
- 	sp->done(sp, QLA_OS_TIMER_EXPIRED);
- }
-@@ -147,6 +164,7 @@ static int qla24xx_async_abort_cmd(srb_t *cmd_sp, bool wait)
- 	sp->type = SRB_ABT_CMD;
- 	sp->name = "abort";
- 	sp->qpair = cmd_sp->qpair;
-+	sp->cmd_sp = cmd_sp;
- 	if (wait)
- 		sp->flags = SRB_WAKEUP_ON_COMP;
- 
+ 	mempool_free(pmboxq, phba->mbox_mem_pool);
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index da63c026ba460..57510a831735b 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -7766,6 +7766,9 @@ lpfc_sli4_read_config(struct lpfc_hba *phba)
+ 			bf_get(lpfc_mbx_rd_conf_xri_base, rd_config);
+ 		phba->sli4_hba.max_cfg_param.max_vpi =
+ 			bf_get(lpfc_mbx_rd_conf_vpi_count, rd_config);
++		/* Limit the max we support */
++		if (phba->sli4_hba.max_cfg_param.max_vpi > LPFC_MAX_VPORTS)
++			phba->sli4_hba.max_cfg_param.max_vpi = LPFC_MAX_VPORTS;
+ 		phba->sli4_hba.max_cfg_param.vpi_base =
+ 			bf_get(lpfc_mbx_rd_conf_vpi_base, rd_config);
+ 		phba->sli4_hba.max_cfg_param.max_rpi =
 -- 
 2.20.1
 
