@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5266B121482
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F177912160B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbfLPSL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56374 "EHLO mail.kernel.org"
+        id S1731536AbfLPS0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:26:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730866AbfLPSL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:56 -0500
+        id S1731618AbfLPSRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CFD0206E0;
-        Mon, 16 Dec 2019 18:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12A33206E0;
+        Mon, 16 Dec 2019 18:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519915;
-        bh=/e3NT3D/oOcYk73D5vg3cZsVrFVEhzX+Py48eq6U8rY=;
+        s=default; t=1576520220;
+        bh=PwdgbR5BzzcUXuLZZnz4X5SVfhL6xSdUlCGJ9zVV9Ig=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DW1/VnlDCZaMqeqcnMaMqXNrqW2t99c8lQOROZI0gxHC0jOcV0LpYIbbuTVpns+i
-         +PwsLrKBKVoHuLdpIjGG5S0Fan96thSGdeB6bzyMdMRZMn+S1G7cpDkbFN93cOefKF
-         3xGGcNJsYi16T+YHYNozKzHHPfh7FStv4pI00t90=
+        b=I0p4t7IedcG2GjtUKNXF65U3bTddws/lY6zlKwq33JRQape2Z8EeTbNDUAPPmYoy9
+         tbsNPd3jfmO2ucsZr7l4D7YyKyx5JJKvTQHhUJCbB4p4ybiG3rjweFGpG6UpT83VyL
+         iPTkU0SSNCXCVt/7Y+khtiBJwmvnYmuMeyWN9idE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH 5.3 081/180] cgroup: pids: use atomic64_t for pids->limit
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>
+Subject: [PATCH 5.4 065/177] iwlwifi: pcie: fix support for transmitting SKBs with fraglist
 Date:   Mon, 16 Dec 2019 18:48:41 +0100
-Message-Id: <20191216174831.366662424@linuxfoundation.org>
+Message-Id: <20191216174832.865784429@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,78 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aleksa Sarai <cyphar@cyphar.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-commit a713af394cf382a30dd28a1015cbe572f1b9ca75 upstream.
+commit 4f4925a7b23428d5719af5a2816586b2a0e6fd19 upstream.
 
-Because pids->limit can be changed concurrently (but we don't want to
-take a lock because it would be needlessly expensive), use atomic64_ts
-instead.
+When the implementation of SKBs with fraglist was sent upstream, a
+merge-damage occurred and half the patch was not applied.
 
-Fixes: commit 49b786ea146f ("cgroup: implement the PIDs subsystem")
-Cc: stable@vger.kernel.org # v4.3+
-Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
-Signed-off-by: Tejun Heo <tj@kernel.org>
+This causes problems in high-throughput situations with AX200 devices,
+including low throughput and FW crashes.
+
+Introduce the part that was missing from the original patch.
+
+Fixes: 0044f1716c4d ("iwlwifi: pcie: support transmitting SKBs with fraglist")
+Cc: stable@vger.kernel.org # 4.20+
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+[ This patch was created by me, but the original author of this code
+  is Johannes, so his s-o-b is here and he's marked as the author of
+  the patch. ]
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/cgroup/pids.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c |   14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
---- a/kernel/cgroup/pids.c
-+++ b/kernel/cgroup/pids.c
-@@ -45,7 +45,7 @@ struct pids_cgroup {
- 	 * %PIDS_MAX = (%PID_MAX_LIMIT + 1).
- 	 */
- 	atomic64_t			counter;
--	int64_t				limit;
-+	atomic64_t			limit;
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
+@@ -468,6 +468,7 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
+ 	dma_addr_t tb_phys;
+ 	int len, tb1_len, tb2_len;
+ 	void *tb1_addr;
++	struct sk_buff *frag;
  
- 	/* Handle for "pids.events" */
- 	struct cgroup_file		events_file;
-@@ -73,8 +73,8 @@ pids_css_alloc(struct cgroup_subsys_stat
- 	if (!pids)
- 		return ERR_PTR(-ENOMEM);
+ 	tb_phys = iwl_pcie_get_first_tb_dma(txq, idx);
  
--	pids->limit = PIDS_MAX;
- 	atomic64_set(&pids->counter, 0);
-+	atomic64_set(&pids->limit, PIDS_MAX);
- 	atomic64_set(&pids->events_limit, 0);
- 	return &pids->css;
- }
-@@ -146,13 +146,14 @@ static int pids_try_charge(struct pids_c
+@@ -516,6 +517,19 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
+ 	if (iwl_pcie_gen2_tx_add_frags(trans, skb, tfd, out_meta))
+ 		goto out_err;
  
- 	for (p = pids; parent_pids(p); p = parent_pids(p)) {
- 		int64_t new = atomic64_add_return(num, &p->counter);
-+		int64_t limit = atomic64_read(&p->limit);
++	skb_walk_frags(skb, frag) {
++		tb_phys = dma_map_single(trans->dev, frag->data,
++					 skb_headlen(frag), DMA_TO_DEVICE);
++		if (unlikely(dma_mapping_error(trans->dev, tb_phys)))
++			goto out_err;
++		iwl_pcie_gen2_set_tb(trans, tfd, tb_phys, skb_headlen(frag));
++		trace_iwlwifi_dev_tx_tb(trans->dev, skb,
++					frag->data,
++					skb_headlen(frag));
++		if (iwl_pcie_gen2_tx_add_frags(trans, frag, tfd, out_meta))
++			goto out_err;
++	}
++
+ 	return tfd;
  
- 		/*
- 		 * Since new is capped to the maximum number of pid_t, if
- 		 * p->limit is %PIDS_MAX then we know that this test will never
- 		 * fail.
- 		 */
--		if (new > p->limit)
-+		if (new > limit)
- 			goto revert;
- 	}
- 
-@@ -277,7 +278,7 @@ set_limit:
- 	 * Limit updates don't need to be mutex'd, since it isn't
- 	 * critical that any racing fork()s follow the new limit.
- 	 */
--	pids->limit = limit;
-+	atomic64_set(&pids->limit, limit);
- 	return nbytes;
- }
- 
-@@ -285,7 +286,7 @@ static int pids_max_show(struct seq_file
- {
- 	struct cgroup_subsys_state *css = seq_css(sf);
- 	struct pids_cgroup *pids = css_pids(css);
--	int64_t limit = pids->limit;
-+	int64_t limit = atomic64_read(&pids->limit);
- 
- 	if (limit >= PIDS_MAX)
- 		seq_printf(sf, "%s\n", PIDS_MAX_STR);
+ out_err:
 
 
