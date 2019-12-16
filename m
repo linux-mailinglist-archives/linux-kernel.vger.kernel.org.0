@@ -2,153 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F56121AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4961121ACA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 21:21:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLPUSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 15:18:48 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:38818 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727016AbfLPUSs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 15:18:48 -0500
-Received: by mail-il1-f196.google.com with SMTP id f5so6469231ilq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 12:18:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KyCUVV3rdpr7tDeSg76g9nK9b781278O7KA2xbZ0dR0=;
-        b=iHHL7O+as7eWolVxsmxzpxUyxvjNe8LFILfa7HkOK3iS7jup4IU/ntb2NK2sS1LAdZ
-         YUvpju6Hy0xYjRvu0i18C3RxHU8A4ywJcP213xDCLThJteRskHpFGfq4zC9blpJzR8e5
-         Kd43QUsSdDR3WU4L/dLU5D8TX6fJvEHMgUcFLH3bJdI35YopTcDXxT64L7GxyLjs4++W
-         eWMlt8U5wKEs5/QFSgJhG79Qg4Pj5iqPMJ+MQet720XPq4NfPpcO5DuDuZ8qhrC7eVDn
-         r+UWbDsF1gLq8Z2P+t8FLkB1Y5Vhj2/ZIQ2aob4JBnVSZy5cUTfiF06/fbyqSld4PJLe
-         QfIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KyCUVV3rdpr7tDeSg76g9nK9b781278O7KA2xbZ0dR0=;
-        b=b1lV93LHjmqLEoinWkZ2TPLwbfSuyYlqlbkHRkKjZTkSKjN7Vvu/RVgX3t8X6vUe5j
-         3yfJP90A/CoDzT04YDdbLKUnSfWzCdhm4XMlnmf7rWK1zkbrzuYCeUzHlCaj41k5dmyf
-         l6sclaUFIrQjQUwdnuPiDL1mSXSijGuIphIlfvR0XOT1b6q7jVhF9CYnYWMTUZpSZkd+
-         s06SVa3+SGaT2E2VIt9RtxJFx9PsM5fwgqT9yZX3AdyjYFDfjfUtcv6FDVKO/yQTzn0G
-         0qb1itRl2AbWXH0Otvz+Z3DFnIbBrVNtnVywFHUvZP5JjrX/GoPC+PrcIgGwqWOb8KWh
-         ULZQ==
-X-Gm-Message-State: APjAAAXQeAN138vZRTvb5OloqohN2iNSkRpaL0IQ947nN+KJva+OXZkw
-        IZlpXxOnsLcg2lz8NUPwhx1XhoJ8MwrXNGU+Vfk=
-X-Google-Smtp-Source: APXvYqzSEzu9t2auDYj+3nxgS4a5/G+lOTRzSkjO0L50ebyLT6+kDt8bpDOMCXv7X1n602yk6tYppRZnPhdejAau5WY=
-X-Received: by 2002:a92:89c2:: with SMTP id w63mr13740064ilk.252.1576527527066;
- Mon, 16 Dec 2019 12:18:47 -0800 (PST)
+        id S1727655AbfLPUU5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 15:20:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42314 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727016AbfLPUU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 15:20:57 -0500
+Received: from [192.168.1.37] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2FC52082E;
+        Mon, 16 Dec 2019 20:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576527656;
+        bh=hmnXgG+nuVbuFMvNlKiLO65Ck2pIEJTMLtm4NV3bQwU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=wNxxO5tBWrt3GxRjRi3i6qBJSdppQfmInusBrk8ighJ+vYpijvbffBQboNrsM2qVq
+         UeqTswiZIyietPKXKKMkxbasJmS82DiK3/132DIeHAgi39AEBKQMgFF3vmfjCCn1p4
+         +RNBSscagqEZEobwyPpBmLUxbkdqiKfm2bVgI0AE=
+Subject: Re: [PATCH 12/17] clk: socfpga: convert to
+ devm_platform_ioremap_resource
+To:     Yangtao Li <tiny.windzz@gmail.com>, afaerber@suse.de,
+        manivannan.sadhasivam@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, Eugeniy.Paltsev@synopsys.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-imx@nxp.com, agross@kernel.org,
+        s.nawrocki@samsung.com, tomasz.figa@gmail.com,
+        cw00.choi@samsung.com, kgene@kernel.org, krzk@kernel.org,
+        palmer@sifive.com, paul.walmsley@sifive.com, mripard@kernel.org,
+        wens@csie.org, emilio@elopez.com.ar, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, matthias.bgg@gmail.com, rfontana@redhat.com,
+        gregkh@linuxfoundation.org, t-kristo@ti.com, john@phrozen.org,
+        tglx@linutronix.de, allison@lohutok.net,
+        kstewart@linuxfoundation.org, swinslow@gmail.com,
+        aisheng.dong@nxp.com, robh@kernel.org, daniel.baluta@nxp.com,
+        weiyongjun1@huawei.com, wangyan.wang@mediatek.com,
+        chunhui.dai@mediatek.com, miquel.raynal@bootlin.com,
+        heiko@sntech.de, jcmvbkbc@gmail.com, nsekhar@ti.com,
+        geert+renesas@glider.be
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20191209195749.868-1-tiny.windzz@gmail.com>
+ <20191209195749.868-12-tiny.windzz@gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2ebd88a1-7b04-a6e6-cffc-59353a6846dc@kernel.org>
+Date:   Mon, 16 Dec 2019 14:20:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191215013306.18880-1-navid.emamdoost@gmail.com> <6159c10a-2f5f-e6ef-7a64-4b613e422efa@mev.co.uk>
-In-Reply-To: <6159c10a-2f5f-e6ef-7a64-4b613e422efa@mev.co.uk>
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Date:   Mon, 16 Dec 2019 14:18:35 -0600
-Message-ID: <CAEkB2ERefAPHerg=F2V_-OHDH4P8sq2QjiP8+W=0HVgcCQNscw@mail.gmail.com>
-Subject: Re: [PATCH] staging: comedi: drivers: Fix memory leak in gsc_hpdi_auto_attach
-To:     Ian Abbott <abbotti@mev.co.uk>
-Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>,
-        Navid Emamdoost <emamd001@umn.edu>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191209195749.868-12-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ian, thanks for your feedback.
-
-On Mon, Dec 16, 2019 at 4:36 AM Ian Abbott <abbotti@mev.co.uk> wrote:
->
-> On 15/12/2019 01:33, Navid Emamdoost wrote:
-> > In the implementation of gsc_hpdi_auto_attach(), the allocated dma
-> > description is leaks in case of alignment error, or failure of
-> > gsc_hpdi_setup_dma_descriptors() or comedi_alloc_subdevices(). Release
-> > devpriv->dma_desc via dma_free_coherent().
-> >
-> > Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
->
-> Actually, there is no memory leak (although there is another problem
-> that I'll mention below).  If the "auto_attach" handler
-> gsc_hpdi_auto_attach() returns an error, then the "detach" handler
-> gsc_hpdi_detach() will be called automatically to clean up.  (This is
-> true for all comedi drivers).  gsc_hpdi_detach() calls
-> gsc_hpdi_free_dma() to free the DMA buffers and DMA descriptors.
->
-I was aware that comedi_alloc_devpriv() is a resource managed
-allocation, but was not sure how subsequent dma_desc allocation will
-be handled when device detach.
-
-> > ---
-> >   drivers/staging/comedi/drivers/gsc_hpdi.c | 16 +++++++++++++---
-> >   1 file changed, 13 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/staging/comedi/drivers/gsc_hpdi.c b/drivers/staging/comedi/drivers/gsc_hpdi.c
-> > index 4bdf44d82879..c0c7047a6d1b 100644
-> > --- a/drivers/staging/comedi/drivers/gsc_hpdi.c
-> > +++ b/drivers/staging/comedi/drivers/gsc_hpdi.c
-> > @@ -633,16 +633,17 @@ static int gsc_hpdi_auto_attach(struct comedi_device *dev,
-> >       if (devpriv->dma_desc_phys_addr & 0xf) {
-> >               dev_warn(dev->class_dev,
-> >                        " dma descriptors not quad-word aligned (bug)\n");
-> > -             return -EIO;
-> > +             retval = -EIO;
-> > +             goto release_dma_desc;
-> >       }
-> >
-> >       retval = gsc_hpdi_setup_dma_descriptors(dev, 0x1000);
-> >       if (retval < 0)
-> > -             return retval;
-> > +             goto release_dma_desc;
-> >
-> >       retval = comedi_alloc_subdevices(dev, 1);
-> >       if (retval)
-> > -             return retval;
-> > +             goto release_dma_desc;
-> >
-> >       /* Digital I/O subdevice */
-> >       s = &dev->subdevices[0];
-> > @@ -660,6 +661,15 @@ static int gsc_hpdi_auto_attach(struct comedi_device *dev,
-> >       s->cancel       = gsc_hpdi_cancel;
-> >
-> >       return gsc_hpdi_init(dev);
-> > +
-> > +release_dma_desc:
-> > +     if (devpriv->dma_desc)
-> > +             dma_free_coherent(&pcidev->dev,
-> > +                               sizeof(struct plx_dma_desc) *
-> > +                             NUM_DMA_DESCRIPTORS,
-> > +                             devpriv->dma_desc,
-> > +                             devpriv->dma_desc_phys_addr);
-> > +     return retval;
-> >   }
-> >
-> >   static void gsc_hpdi_detach(struct comedi_device *dev)
-> >
->
-> This patch could actually result in devpriv->dma_desc being freed twice
-> - once in the 'release_dma_desc:' code and again when gsc_hpdi_detach()
-> is called externally as part of the clean-up.
->
-> The real bug in the original code is that it does not check whether any
-> of the calls to dma_alloc_coherent() returned NULL.  If any of the calls
-> to dma_alloc_coherent() returns NULL, gsc_hpdi_auto_attach() needs to
-> return an error (-ENOMEM).  The subsequent call to gsc_hpdi_detach()
-> will then free whatever DMA coherent buffers where allocated.
->
-Yes, this potential null deref is another type of bug, which I will
-send a patch for separately.
-
-> --
-> -=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
-> -=( MEV Ltd. is a company registered in England & Wales. )=-
-> -=( Registered number: 02862268.  Registered address:    )=-
-> -=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
 
 
+On 12/9/19 1:57 PM, Yangtao Li wrote:
+> Use devm_platform_ioremap_resource() to simplify code.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/clk/socfpga/clk-s10.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+> index 993f3a73c71e..85055fc56404 100644
+> --- a/drivers/clk/socfpga/clk-s10.c
+> +++ b/drivers/clk/socfpga/clk-s10.c
+> @@ -276,11 +276,9 @@ static struct stratix10_clock_data *__socfpga_s10_clk_init(struct platform_devic
+>  	struct device *dev = &pdev->dev;
+>  	struct stratix10_clock_data *clk_data;
+>  	struct clk **clk_table;
+> -	struct resource *res;
+>  	void __iomem *base;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base)) {
+>  		pr_err("%s: failed to map clock registers\n", __func__);
+>  		return ERR_CAST(base);
+> 
 
--- 
-Navid.
+Tested-by: Dinh Nguyen <dinguyen@kernel.org>
