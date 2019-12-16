@@ -2,65 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3260121E2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:34:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47549121E83
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:42:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfLPWee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 17:34:34 -0500
-Received: from mga01.intel.com ([192.55.52.88]:55889 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727728AbfLPWec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:34:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 14:34:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
-   d="scan'208";a="365172648"
-Received: from andresma-mobl.amr.corp.intel.com (HELO [10.252.132.232]) ([10.252.132.232])
-  by orsmga004.jf.intel.com with ESMTP; 16 Dec 2019 14:34:29 -0800
-Subject: Re: [alsa-devel] [PATCH v4 08/15] soundwire: add initial definitions
- for sdw_master_device
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        linux-kernel@vger.kernel.org,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com, Sanyog Kale <sanyog.r.kale@intel.com>,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>
-References: <20191213050409.12776-1-pierre-louis.bossart@linux.intel.com>
- <20191213050409.12776-9-pierre-louis.bossart@linux.intel.com>
- <20191213072844.GF1750354@kroah.com>
- <7431d8cf-4a09-42af-14f5-01ab3b15b47b@linux.intel.com>
- <20191213161046.GA2653074@kroah.com>
- <a838eed1-9d55-d1b4-c790-22bdd0a97370@linux.intel.com>
-Message-ID: <a4e918c3-8d5c-9f89-903e-a34707cb6f0e@linux.intel.com>
-Date:   Mon, 16 Dec 2019 16:34:29 -0600
+        id S1727882AbfLPWlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 17:41:47 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:37494 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726947AbfLPWlq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 17:41:46 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBGMY7F5085443;
+        Mon, 16 Dec 2019 22:40:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=utHCjfqt2C6hjz6GKGBiHdj8ODiq5ltxzbVwQ8evxhE=;
+ b=fpQ2xygmJhFW6M1fivA5ceukacwOJRe3dsaprlTZzIGO0yZKyauj+7IU4Da/2P6KoXKg
+ kWXb73NLHdiDOrqm4Cgiht72ifB2iueMGpgNVjyazURXyENGtXfN4VEyJSZjZsuT4OtG
+ TSjIGYCFpb5iYP5bBjsQ75Y0+oSGeb16lmOnpchQ2ufr71WiqqYB9SKuPYnWv6yFaNtt
+ 1xg6zUk0HnAMG93mdV7+/xxQVGoBFdxh2erSmVN3h0xi0k68Hyi8EI0eN+UQa+yoRwbt
+ ieBEHJsGKJgDAoDEVMc9hxSXWtj0ZX5O5YBFX/zJx53unKn6nvaevvkITxs01olsvire Dw== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2wvqpq2n86-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Dec 2019 22:40:27 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBGMdHGn042093;
+        Mon, 16 Dec 2019 22:40:27 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3020.oracle.com with ESMTP id 2ww98tpv13-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Dec 2019 22:40:27 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBGMeNRW003056;
+        Mon, 16 Dec 2019 22:40:23 GMT
+Received: from [192.168.1.206] (/71.63.128.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 16 Dec 2019 14:40:23 -0800
+Subject: Re: [PATCH] mm/hugetlb: Defer freeing of huge pages if in non-task
+ context
+To:     Waiman Long <longman@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andi Kleen <ak@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <20191216182739.26880-1-longman@redhat.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <530afa00-4da9-61cd-d1f3-66803bcd30e6@oracle.com>
+Date:   Mon, 16 Dec 2019 14:40:22 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <a838eed1-9d55-d1b4-c790-22bdd0a97370@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191216182739.26880-1-longman@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9473 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912160189
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9473 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912160189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->> No, I mean the new MODULE_NAMESPACE() support that is in the kernel.
->> I'll move the greybus code to use it too, but when you are adding new
->> apis, it just makes sense to use it then as well.
+On 12/16/19 10:27 AM, Waiman Long wrote:
+> The following lockdep splat was observed when a certain hugetlbfs test
+> was run:
+<snip>
+> This patch implements the deferred freeing by adding a
+> free_hpage_workfn() work function to do the actual freeing. The
+> free_huge_page() call in a non-task context saves the page to be freed
+> in the hpage_freelist linked list in a lockless manner.
 > 
-> ok, thanks for the pointer, will look into this.
+> The generic workqueue is used to process the work, but a dedicated
+> workqueue can be used instead if it is desirable to have the huge page
+> freed ASAP.
+> 
+<snip>
+>  
+> +/*
+> + * As free_huge_page() can be called from a non-task context, we have
+> + * to defer the actual freeing in a workqueue to prevent potential
+> + * hugetlb_lock deadlock.
+> + *
+> + * free_hpage_workfn() locklessly retrieves the linked list of pages to
+> + * be freed and frees them one-by-one. As the page->mapping pointer is
+> + * going to be cleared in __free_huge_page() anyway, it is reused as the
+> + * next pointer of a singly linked list of huge pages to be freed.
+> + */
+> +#define NEXT_PENDING	((struct page *)-1)
+> +static struct page *hpage_freelist;
+> +
+> +static void free_hpage_workfn(struct work_struct *work)
+> +{
+> +	struct page *curr, *next;
+> +	int cnt = 0;
+> +
+> +	do {
+> +		curr = xchg(&hpage_freelist, NULL);
+> +		if (!curr)
+> +			break;
+> +
+> +		while (curr) {
+> +			next = (struct page *)READ_ONCE(curr->mapping);
+> +			if (next == NEXT_PENDING) {
+> +				cpu_relax();
+> +				continue;
+> +			}
+> +			__free_huge_page(curr);
+> +			curr = next;
+> +			cnt++;
+> +		}
+> +	} while (!READ_ONCE(hpage_freelist));
+> +
+> +	if (!cnt)
+> +		return;
+> +	pr_debug("HugeTLB: free_hpage_workfn() frees %d huge page(s)\n", cnt);
+> +}
+> +static DECLARE_WORK(free_hpage_work, free_hpage_workfn);
+> +
+> +void free_huge_page(struct page *page)
+> +{
+> +	/*
+> +	 * Defer freeing if in non-task context to avoid hugetlb_lock deadlock.
+> +	 */
+> +	if (!in_task()) {
+> +		struct page *next;
+> +
+> +		page->mapping = (struct address_space *)NEXT_PENDING;
+> +		next = xchg(&hpage_freelist, page);
+> +		WRITE_ONCE(page->mapping, (struct address_space *)next);
+> +		schedule_work(&free_hpage_work);
+> +		return;
+> +	}
 
-This namespace check already saved me a lot of time. I found an issue in 
-our latest code (not submitted for review yet) with a new functionality 
-added to the wrong module and without the proper abstraction required...
-Really nice tool, I can already see how useful it will be for on-going 
-code partitioning (SOF multi-client work and virtualization support).
+As Andrew mentioned, the design for the lockless queueing could use more
+explanation.  I had to draw some diagrams before I felt relatively confident
+in the design.
+
+> +
+> +	/*
+> +	 * Racing may prevent some deferred huge pages in hpage_freelist
+> +	 * from being freed. Check here and call schedule_work() if that
+> +	 * is the case.
+> +	 */
+> +	if (unlikely(hpage_freelist && !work_pending(&free_hpage_work)))
+> +		schedule_work(&free_hpage_work);
+
+Can you describe the race which would leave deferred huge pages on
+hpage_freelist?  I am having a hard time determining how that can happen.
+
+And, if this indeed can happen then I would have to ask what happens if
+a page is 'stuck' and we do not call free_huge_page?  Do we need to take
+that case into account?
+
+Overall, I like the design and hope this will work.  I have been testing
+a 'modified' version of the patch to always do the deferred freeing.  The
+modification is simply to stress the code.   So far, I have not found any
+issues in any of my testing.
+-- 
+Mike Kravetz
