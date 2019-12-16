@@ -2,198 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D33581205F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CDC41205F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 13:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbfLPMik (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 07:38:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:53874 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727512AbfLPMik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:38:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B77C1FB;
-        Mon, 16 Dec 2019 04:38:39 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2708C3F719;
-        Mon, 16 Dec 2019 04:38:38 -0800 (PST)
-Subject: Re: [PATCH 4/4] mfd: rk808: Convert RK805 to syscore/PM ops
-To:     Anand Moon <linux.amoon@gmail.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Soeren Moch <smoch@web.de>, linux-rockchip@lists.infradead.org
-References: <cover.1575932654.git.robin.murphy@arm.com>
- <8642045f0657c9e782cd698eb08777c9d4c10c8d.1575932654.git.robin.murphy@arm.com>
- <CANAwSgTtzAZJqpsD7uVKskTnDmrT1bs=JuHxnPrkpQKtnZLhvQ@mail.gmail.com>
- <2681192.H4ySjFOPB8@diego>
- <CANAwSgTL-9VCFFj-+4xsLZOxKCHtjyN4P6fYnuRSOe7cZRiWew@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f29fbb91-ffd0-5650-30b4-5791c970a834@arm.com>
-Date:   Mon, 16 Dec 2019 12:38:51 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727709AbfLPMjS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 07:39:18 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34023 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbfLPMjR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 07:39:17 -0500
+Received: by mail-lj1-f196.google.com with SMTP id m6so6650791ljc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 04:39:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RKf0W4NjHQUiuvilYzfhj/3BW1yQqhyv7Ie5yqLaNQ8=;
+        b=MqrTUt/wNyR0oRK72R+OH1Iev1NCQHbs+HmJMh9trhvx66GQV6e8XMNoMpJIJt1GK7
+         3HjKJJPiGkfCjMFx7SAdooUO+NKMGDEba2QL1oHoz/CTtvTG8KHjShw83YIVi1F0XehQ
+         HzZ2INzezWvhnBc1QQpH+oUHi+cQ1Mz+3PItLc+QLSPk+1IsRWpYnBCruNCWEULoFUMo
+         C6vFC4WhZ1walcKdCpSPP3rw71Y31p7g/c/anlOlpeBoOfXejmlLDj8CA4KjXs9koI36
+         9H76TYtzKSY2Q3j+W+5Ac3aSYSiJJdC9OTU1FnpK9WH7M3gD4aKOnmXPKZSdEPZ1KNOL
+         ETtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RKf0W4NjHQUiuvilYzfhj/3BW1yQqhyv7Ie5yqLaNQ8=;
+        b=oJhoF5xGwoZ3QCU04tqYiHVmFm6DQRDUzMqbD29qakXV1IbJDFS2oFaLplnkgsK1+u
+         jW6VJzDl+j13w9vacc0gSJ2TxT+vYMQiR92Spy9o/qjtHh08CtYG6q1/UGG7B5BP0Ym/
+         8Loub9v6zMxh8Oj0LHGbBWzDbO/w4824+1LcBC46w6MUzDIZTPmhEK4qBTCRYPmBz3V3
+         UrxMoDbPqXu1+U6Q6yJCrnGMJABKxH+1xB/tk8oeiyrfJNmEQtuifAHvpfJ2WG5WNTdm
+         XwiFqiE7OaOfq2rwZgh5oRCcbXKodjpG9gDVWwOz/i7WrgMZuqVecI/cLajvJ5ZAroiV
+         eXuQ==
+X-Gm-Message-State: APjAAAUooXtgMAf1lauX0pwe0vtdd99l4+9Wphh/mEotWYQnqiGD4R1C
+        oh3TAxEtnYdyOTb58x7poEInAA==
+X-Google-Smtp-Source: APXvYqwPveZoSiBcunAIimbnrqhqNcQFq0uZY6i9c+Em0aJ9NR1qxf7gSPBFZVgGtJuk9KKxrra9eQ==
+X-Received: by 2002:a2e:144b:: with SMTP id 11mr19475576lju.216.1576499954726;
+        Mon, 16 Dec 2019 04:39:14 -0800 (PST)
+Received: from jax (h-249-223.A175.priv.bahnhof.se. [98.128.249.223])
+        by smtp.gmail.com with ESMTPSA id v7sm8754292lfa.10.2019.12.16.04.39.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 16 Dec 2019 04:39:14 -0800 (PST)
+Date:   Mon, 16 Dec 2019 13:39:12 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     "Thomas, Rijo-john" <Rijo-john.Thomas@amd.com>
+Cc:     tee-dev@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>
+Subject: Re: [RFC PATCH v3 0/4] TEE driver for AMD APUs
+Message-ID: <20191216123911.GA11788@jax>
+References: <cover.1575608819.git.Rijo-john.Thomas@amd.com>
+ <f7803de4-b09d-cfb7-9289-7abf5dde37c0@amd.com>
 MIME-Version: 1.0
-In-Reply-To: <CANAwSgTL-9VCFFj-+4xsLZOxKCHtjyN4P6fYnuRSOe7cZRiWew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f7803de4-b09d-cfb7-9289-7abf5dde37c0@amd.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-16 9:50 am, Anand Moon wrote:
-> Hi Heiko / Robin / Soeren,
-> 
-> On Mon, 16 Dec 2019 at 01:57, Heiko Stübner <heiko@sntech.de> wrote:
->>
->> Hi Anand,
->>
->> Am Sonntag, 15. Dezember 2019, 19:51:50 CET schrieb Anand Moon:
->>> On Tue, 10 Dec 2019 at 18:54, Robin Murphy <robin.murphy@arm.com> wrote:
->>>>
->>>> RK805 has the same kind of dual-role sleep/shutdown pin as RK809/RK817,
->>>> so it makes little sense for the driver to have to have two completely
->>>> different mechanisms to handle essentially the same thing. Bring RK805
->>>> in line with the RK809/RK817 flow to clean things up.
->>>>
->>>> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
->>>> ---
->>
->> [...]
->>
->>> I am sill getting the kernel warning on issue poweroff see below.
->>> on my Rock960 Model A
->>> I feel the reason for this is we now have two poweroff callback
->>> 1  pm_power_off = rk808_device_shutdown
->>> 2  rk8xx_syscore_shutdown
->>
->> Nope, the issue is just the i2c subsystem complaining that the
->> Rocckhip i2c drives does not provide an atomic-transfer function, see
->>          "No atomic I2C transfer handler for 'i2c-0'"
->> in your warning.
->>
->> Somewhere it was suggested that the current transfer function just
->> works as atomic as well.
->>
->>
->>> In my investigation earlier common function for shutdown solve
->>> the issue of clean shutdown.
->>
->> This is simply a result of your syscore-shutdown function running way to
->> early, before the i2c subsystem switched to using atomic transfers.
->>
->> This also indicates that this would really be way to early, as other parts
->> of the kernel could also still be running.
->>
-> 
-> Yes, you are correct syscore-shutdown initiates
-> shutdown before all the device do clean shutdown.
-> 
-> So for best approach for clean atomic shutdown is to use
->    /* driver model interfaces that don't relate to enumeration  */
->          void (*shutdown)(struct i2c_client *client);
-> drop the registration of syscore and use core .i2c_shutdown.
+Hi Rijo,
 
-Huh? If you understand that the syscore shutdown hook is too early, why 
-would it seem a good idea to pull the plug even earlier from driver 
-shutdown? Not to mention that your patch as proposed breaks all the 
-GPIO-based shutdown flows.
-
-If you really care about avoiding the spurious warning, implement the 
-expected polled-mode transfer function in the I2C driver. Trying to hack 
-around it by issuing I2C-based shutdown from anywhere other than 
-pm_power_off is a waste of everyone's time.
-
-> I have prepare this patch on top of this series for RTF
-> This patch dose clean shutdown of all the devices before poweroff.
-> see the log below.
+On Thu, Dec 12, 2019 at 06:04:24PM +0530, Thomas, Rijo-john wrote:
+> Hi Jens,
 > 
-> *Note*: This feature will likely break the clean reboot feature.
-> Rockchip device do not perform clean reboot as some of the IP
-> block are not released before clean reboot and it's remain stuck.
-> Like PCIe and MMC, We need to look into this as well.
+> Please let me know if there are any comments for this patch series. I
+> shall address them, if any, and post for next review.
 
-As mentioned before, that likely has nothing to do with the PMIC, and 
-really sounds like the issue with Trusted Firmware not reenabling all 
-the SoC power domains before reset - a fix for that has already been 
-identified, see here: 
-https://forum.armbian.com/topic/7552-roc-rk3399-pc-renegade-elite/?do=findComment&comment=90289
+This looks good, I have no further comments.
 
-Robin.
+How do you intend to upstream this? There's the dependency towards "Add
+TEE interface support to AMD Secure Processor driver"
+(https://lkml.org/lkml/2019/12/4/42) to take into account too.
 
-> Shutdown log of my RK3399 Rock960 Model A
-> [0] https://pastebin.com/peYxmzb7
-> ------------------------------------------------------------------------
-> [  OK  ] Stopped LVM2 metadata daemon.
-> [  OK  ] Reached target Shutdown.
-> [  OK  ] Reached target Final Step.
-> [  OK  ] Closed LVM2 metadata daemon socket.
-> [  OK  ] Started Power-Off.
-> [  OK  ] Reached target Power-Off.
-> [  542.715237] systemd-shutdown[1]: Syncing filesystems and block devices.
-> [  543.158314] systemd-shutdown[1]: Sending SIGTERM to remaining processes...
-> [  543.168469] systemd-journald[280]: Received SIGTERM from PID 1
-> (systemd-shutdow).
-> [  543.202968] systemd-shutdown[1]: Sending SIGKILL to remaining processes...
-> [  543.212365] systemd-shutdown[1]: Unmounting file systems.
-> [  543.214708] [535]: Remounting '/' read-only in with options '(null)'.
-> [  543.229661] EXT4-fs (mmcblk1p1): re-mounted. Opts: (null)
-> [  543.239978] systemd-shutdown[1]: All filesystems unmounted.
-> [  543.240481] systemd-shutdown[1]: Deactivating swaps.
-> [  543.241052] systemd-shutdown[1]: All swaps deactivated.
-> [  543.241514] systemd-shutdown[1]: Detaching loop devices.
-> [  543.244806] systemd-shutdown[1]: All loop devices detached.
-> [  543.245307] systemd-shutdown[1]: Detaching DM devices.
-> [  543.245994] systemd-shutdown[1]: All DM devices detached.
-> [  543.246474] systemd-shutdown[1]: All filesystems, swaps, loop
-> devices and DM devices detached.
-> [  543.302732] systemd-shutdown[1]: Successfully changed into root pivot.
-> [  543.303356] systemd-shutdown[1]: Returning to initrd...
-> [  543.339679] shutdown[1]: Syncing filesystems and block devices.
-> [  543.341084] shutdown[1]: Sending SIGTERM to remaining processes...
-> [  543.348948] shutdown[1]: Sending SIGKILL to remaining processes...
-> [  543.356551] shutdown[1]: Unmounting file systems.
-> [  543.359097] sd-umoun[541]: Unmounting '/oldroot/sys/kernel/config'.
-> [  543.361716] sd-umoun[542]: Unmounting '/oldroot/sys/kernel/debug'.
-> [  543.364333] sd-umoun[543]: Unmounting '/oldroot/dev/mqueue'.
-> [  543.366765] sd-umoun[544]: Unmounting '/oldroot/dev/hugepages'.
-> [  543.369426] sd-umoun[545]: Unmounting '/oldroot/sys/fs/cgroup/memory'.
-> [  543.372338] sd-umoun[546]: Unmounting '/oldroot/sys/fs/cgroup/perf_event'.
-> [  543.375030] sd-umoun[547]: Unmounting '/oldroot/sys/fs/cgroup/cpu,cpuacct'.
-> [  543.377744] sd-umoun[548]: Unmounting '/oldroot/sys/fs/cgroup/pids'.
-> [  543.380620] sd-umoun[549]: Unmounting '/oldroot/sys/fs/cgroup/blkio'.
-> [  543.383256] sd-umoun[550]: Unmounting '/oldroot/sys/fs/cgroup/hugetlb'.
-> [  543.386015] sd-umoun[551]: Unmounting '/oldroot/sys/fs/cgroup/devices'.
-> [  543.389114] sd-umoun[552]: Unmounting '/oldroot/sys/fs/cgroup/cpuset'.
-> [  543.391817] sd-umoun[553]: Unmounting '/oldroot/sys/fs/pstore'.
-> [  543.394401] sd-umoun[554]: Unmounting '/oldroot/sys/fs/cgroup/systemd'.
-> [  543.397245] sd-umoun[555]: Unmounting '/oldroot/sys/fs/cgroup/unified'.
-> [  543.400083] sd-umoun[556]: Unmounting '/oldroot/sys/fs/cgroup'.
-> [  543.402654] sd-umoun[557]: Unmounting '/oldroot/dev/pts'.
-> [  543.405351] sd-umoun[558]: Unmounting '/oldroot/dev/shm'.
-> [  543.407876] sd-umoun[559]: Unmounting '/oldroot/sys/kernel/security'.
-> [  543.410313] sd-umoun[560]: Unmounting '/oldroot'.
-> [  543.410886] sd-umoun[560]: Failed to unmount /oldroot: Device or
-> resource busy
-> [  543.413355] sd-umoun[561]: Unmounting '/oldroot/run'.
-> [  543.415750] sd-umoun[562]: Unmounting '/oldroot/dev'.
-> [  543.418013] sd-umoun[563]: Unmounting '/oldroot/sys'.
-> [  543.420892] sd-umoun[564]: Unmounting '/oldroot/proc'.
-> [  543.423833] sd-umoun[565]: Unmounting '/oldroot'.
-> [  543.486268] shutdown[1]: All filesystems unmounted.
-> [  543.486710] shutdown[1]: Deactivating swaps.
-> [  543.487153] shutdown[1]: All swaps deactivated.
-> [  543.487556] shutdown[1]: Detaching loop devices.
-> [  543.490300] shutdown[1]: All loop devices detached.
-> [  543.490735] shutdown[1]: Detaching DM devices.
-> [  543.491382] shutdown[1]: All DM devices detached.
-> [  543.491801] shutdown[1]: All filesystems, swaps, loop devices and
-> DM devices detached.
-> [  543.494678] shutdown[1]: Syncing filesystems and block devices.
-> [  543.495770] shutdown[1]: Powering off.
-> [  543.496112] kvm: exiting hardware virtualization
+Thanks,
+Jens
+
 > 
-> -Anand
+> Thanks,
+> Rijo
 > 
+> On 06/12/19 10:48 am, Rijo Thomas wrote:
+> > This patch series introduces Trusted Execution Environment (TEE) driver
+> > for AMD APU enabled systems. The TEE is a secure area of a processor which
+> > ensures that sensitive data is stored, processed and protected in an
+> > isolated and trusted environment. The AMD Secure Processor is a dedicated
+> > processor which provides TEE to enable HW platform security. It offers
+> > protection against software attacks generated in Rich Operating
+> > System (Rich OS) such as Linux running on x86. The AMD-TEE Trusted OS
+> > running on AMD Secure Processor allows loading and execution of security
+> > sensitive applications called Trusted Applications (TAs). An example of
+> > a TA would be a DRM (Digital Rights Management) TA written to enforce
+> > content protection.
+> > 
+> > Linux already provides a tee subsystem, which is described in [1]. The tee
+> > subsystem provides a generic TEE ioctl interface which can be used by user
+> > space to talk to a TEE driver. AMD-TEE driver registers with tee subsystem
+> > and implements tee function callbacks in an AMD platform specific manner.
+> > 
+> > The following TEE commands are recognized by AMD-TEE Trusted OS:
+> > 1. TEE_CMD_ID_LOAD_TA : Load Trusted Application (TA) binary into TEE
+> >    environment
+> > 2. TEE_CMD_ID_UNLOAD_TA : Unload TA binary from TEE environment
+> > 3. TEE_CMD_ID_OPEN_SESSION : Open session with loaded TA
+> > 4. TEE_CMD_ID_CLOSE_SESSION : Close session with loaded TA
+> > 5. TEE_CMD_ID_INVOKE_CMD : Invoke a command with loaded TA
+> > 6. TEE_CMD_ID_MAP_SHARED_MEM : Map shared memory
+> > 7. TEE_CMD_ID_UNMAP_SHARED_MEM : Unmap shared memory
+> > 
+> > Each command has its own payload format. The AMD-TEE driver creates a
+> > command buffer payload for submission to AMD-TEE Trusted OS.
+> > 
+> > This patch series has a dependency on another patch set titled - Add TEE
+> > interface support to AMD Secure Processor driver.
+> > Link: https://lkml.org/lkml/2019/12/4/42
+> > 
+> > v3:
+> > * Updated [1] with driver details
+> > 
+> > v2:
+> > * Added a helper API in AMD Secure Processor driver, which can be
+> >   called by AMD-TEE driver during module init to check if TEE is
+> >   present on the device
+> > * Added proper checks for parameter attribute variable
+> > * Used tee_shm_pool_alloc() to allocate struct tee_shm_pool data structure
+> > * Removed all references to tee_private.h header file in driver code,
+> >   except for the file drivers/tee/amdtee/core.c. The driver loads TA binary
+> >   by calling request_firmware(), which takes struct device* as one of its
+> >   arguments. The device 'dev' field is part of struct tee_device, defined
+> >   in tee_private.h
+> > 
+> > [1] https://www.kernel.org/doc/Documentation/tee.txt
+> > 
+> > Rijo Thomas (4):
+> >   tee: allow compilation of tee subsystem for AMD CPUs
+> >   tee: add AMD-TEE driver
+> >   tee: amdtee: check TEE status during driver initialization
+> >   Documentation: tee: add AMD-TEE driver details
+> > 
+> >  Documentation/tee.txt               |  81 ++++++
+> >  drivers/crypto/ccp/tee-dev.c        |  11 +
+> >  drivers/tee/Kconfig                 |   4 +-
+> >  drivers/tee/Makefile                |   1 +
+> >  drivers/tee/amdtee/Kconfig          |   8 +
+> >  drivers/tee/amdtee/Makefile         |   5 +
+> >  drivers/tee/amdtee/amdtee_if.h      | 183 +++++++++++++
+> >  drivers/tee/amdtee/amdtee_private.h | 159 +++++++++++
+> >  drivers/tee/amdtee/call.c           | 373 ++++++++++++++++++++++++++
+> >  drivers/tee/amdtee/core.c           | 516 ++++++++++++++++++++++++++++++++++++
+> >  drivers/tee/amdtee/shm_pool.c       |  93 +++++++
+> >  include/linux/psp-tee.h             |  18 ++
+> >  include/uapi/linux/tee.h            |   1 +
+> >  13 files changed, 1451 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/tee/amdtee/Kconfig
+> >  create mode 100644 drivers/tee/amdtee/Makefile
+> >  create mode 100644 drivers/tee/amdtee/amdtee_if.h
+> >  create mode 100644 drivers/tee/amdtee/amdtee_private.h
+> >  create mode 100644 drivers/tee/amdtee/call.c
+> >  create mode 100644 drivers/tee/amdtee/core.c
+> >  create mode 100644 drivers/tee/amdtee/shm_pool.c
+> > 
+> > --
+> > 1.9.1
+> > 
