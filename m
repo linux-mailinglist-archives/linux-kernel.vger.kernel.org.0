@@ -2,92 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5ADF5120FA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EAD120FC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:41:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726448AbfLPQhI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:37:08 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39174 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfLPQhI (ORCPT
+        id S1726718AbfLPQiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 11:38:12 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:52952 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726437AbfLPQiI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:37:08 -0500
-Received: by mail-pl1-f193.google.com with SMTP id z3so3167127plk.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 08:37:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6aEadTXeV9eOfz7zCR3LM3ty396F0SeFOiA5X+VDTXA=;
-        b=Sz0azdPmlMiOffCRFSAxCImt6KS6crQJErhXpFf2WTP84q3lvvEZhjHN9hjXVfY98N
-         sAwk1GyMU9Q53owqMyMeN+MjH1wM+J+q0OC5JN/Q4jB/p3Sn+NJ0LtL8eQ3PdY9uzWGu
-         nZOydGqkTSUoXU0GW3ou0sLymh6WXz7e3gGjJ72QIdWeu3nC4ny44JNpV6ZxolQb8xRW
-         Iyfe/N0CDkp/f1EPBfFr/WQaMCfvq/N/gs/XtA0ThVq05cs5WBRt1RvlPHr9PWztYk7l
-         AJivIjrLiZu41fZ3ClNoaEfDEF+L2Cb4g2V31htdW/1AeGGQiFMoKNQll82IGlyStVz8
-         2Qeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=6aEadTXeV9eOfz7zCR3LM3ty396F0SeFOiA5X+VDTXA=;
-        b=c6NEaTfhSd7Tp0mC1OJEW4mRIyJ3WpMpiWcUYq88KLR0TyMnZLIp/9+SDUcHgNtaYn
-         ruyAKeqZlqIn/aQASdNdW401JyroGv9EYx6AQF8eXgUxwtVxStVHE1NQKZLvtOe+0xxy
-         BxsglMGTvfbmpBgoH7Wj3dH9IUEIiFdTmvf1kwQWdSWKeV+RmafVkfToGWXt4DgA9cKp
-         9ifmVkbq8z7JdvFn36N7iQiGGlfEtNyC+Jtq7B1nrVEZahBWQ5XQK4PkUT8HOgm7dFqz
-         D2C63GozyatH0IXEbnweBWwQuSC3/TMogYIJ7XDtaHnXqgcKwVlcvi25o0yChxk7crU9
-         Up3w==
-X-Gm-Message-State: APjAAAXnjSNKff6z6f2Z5r1eliyO+Zuu/TMrgqRf8q+xs/Lx7/baJDCw
-        KFllnhSU1yQvq3qavSjLCTh7pQ==
-X-Google-Smtp-Source: APXvYqyl2z2yM6D5pjBtyVe86j0BP2QA+T0oBROFf+RteV+8ztQzwuUB8iVsmrNCU3wkKwRiqZOmjw==
-X-Received: by 2002:a17:90a:bc05:: with SMTP id w5mr18549291pjr.64.1576514227516;
-        Mon, 16 Dec 2019 08:37:07 -0800 (PST)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id i11sm19914780pjg.0.2019.12.16.08.37.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 08:37:06 -0800 (PST)
-Subject: Re: [PATCH 33/58] serial/f81534: Don't check port->sysrq
-To:     Johan Hovold <johan@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Mon, 16 Dec 2019 11:38:08 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576514287; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=Vr7DeB6UN1uAvIEGB/iA7hx6Y0Q4rdMGj2xmO945Nsw=; b=Ui6I3XWykzrFhL+sjpXa+/sFWi/6DM4mxkrC359C1d6dtEWqNKPWGzXYh6f3HAf2SkPf1Uxr
+ /7dYFq56eV5g6nZdrPTlLOzOwxBpg5/ojT/+VlNfOwMA1MU1FM6mYp+uhaco+ovL9ldeMJq9
+ 9ehqiQKlv6Cg+At3I05CtZsxvc8=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df7b2ea.7f6221e54490-smtp-out-n03;
+ Mon, 16 Dec 2019 16:38:02 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D1352C447A3; Mon, 16 Dec 2019 16:37:59 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DE5A9C433CB;
+        Mon, 16 Dec 2019 16:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DE5A9C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     robin.murphy@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>,
+        Fritz Koenig <frkoenig@google.com>,
+        David Airlie <airlied@linux.ie>,
+        Joerg Roedel <joro@8bytes.org>,
+        Allison Randal <allison@lohutok.net>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Douglas Anderson <dianders@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Vasiliy Khoruzhick <vasilykh@arista.com>,
-        linux-serial@vger.kernel.org
-References: <20191213000657.931618-1-dima@arista.com>
- <20191213000657.931618-34-dima@arista.com> <20191216121050.GD22665@localhost>
-From:   Dmitry Safonov <dima@arista.com>
-Message-ID: <8318fa54-91c5-7c7b-cc97-53dd34c617e2@arista.com>
-Date:   Mon, 16 Dec 2019 16:36:56 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191216121050.GD22665@localhost>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Wen Yang <wen.yang99@zte.com.cn>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        zhengbin <zhengbin13@huawei.com>, linux-kernel@vger.kernel.org,
+        Brian Masney <masneyb@onstation.org>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        freedreno@lists.freedesktop.org,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v3 0/5] iommu/arm-smmu: Split pagetable support for arm-smmu-v2
+Date:   Mon, 16 Dec 2019 09:37:46 -0700
+Message-Id: <1576514271-15687-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+Another refresh to support split pagetables for Adreno GPUs as part of an
+incremental process to enable per-context pagetables.
 
-On 12/16/19 12:10 PM, Johan Hovold wrote:
-> On Fri, Dec 13, 2019 at 12:06:32AM +0000, Dmitry Safonov wrote:
->> -		if (port->port.console && port->sysrq) {
->> -			if (usb_serial_handle_sysrq_char(port, data[i]))
->> -				continue;
->> -		}
->> +		if (usb_serial_handle_sysrq_char(port, data[i]))
->> +			continue;
-> 
-> This is unrelated to the rest of the series.
+In order to support per-context pagetables the GPU needs to enable split tables
+so that we can store global buffers in the TTBR1 space leaving the GPU free to
+program the TTBR0 register with the address of a context specific pagetable.
 
-Right, will drop it from v2.
+This patchset adds split pagetable support if requested by the domain owner
+via the DOMAIN_ATTR_SPLIT_TABLES attribute. If the attribute is non zero at
+attach time, the implementation will set up the TTBR0 and TTBR1 spaces with
+identical configurations and program the domain pagetable into the TTBR1
+register. The TTBR0 register will be unused.
 
-> 
-> Please break all usb-serial patches out of this series and submit them
-> to me and the usb list for review.
-Thanks,
-          Dmitry
+The driver can determine if split pagetables were programmed by querying
+DOMAIN_ATTR_SPLIT_TABLES after attaching. The domain geometry will also be
+updated to reflect the virtual address space for the TTBR1 range.
+
+These patches are on based on top of linux-next-20191216 with [1], [2], and [3]
+from Robin on the iommu list.
+
+Change log:
+
+v3: Remove the implementation specific and make split pagetable support
+part of the generic configuration
+
+[1] https://lists.linuxfoundation.org/pipermail/iommu/2019-October/039718.html
+[2] https://lists.linuxfoundation.org/pipermail/iommu/2019-October/039719.html
+[3] https://lists.linuxfoundation.org/pipermail/iommu/2019-October/039720.html
+
+
+Jordan Crouse (5):
+  iommu: Add DOMAIN_ATTR_SPLIT_TABLES
+  iommu/arm-smmu: Add support for split pagetables
+  drm/msm: Attach the IOMMU device during initialization
+  drm/msm: Refactor address space initialization
+  drm/msm/a6xx: Support split pagetables
+
+ drivers/gpu/drm/msm/adreno/a2xx_gpu.c    | 16 ++++++++++
+ drivers/gpu/drm/msm/adreno/a3xx_gpu.c    |  1 +
+ drivers/gpu/drm/msm/adreno/a4xx_gpu.c    |  1 +
+ drivers/gpu/drm/msm/adreno/a5xx_gpu.c    |  1 +
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c    | 51 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c  | 23 ++++++++++----
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h  |  8 +++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c  | 18 ++++-------
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 18 +++++------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c |  4 ---
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_kms.c | 18 +++++------
+ drivers/gpu/drm/msm/msm_drv.h            |  8 ++---
+ drivers/gpu/drm/msm/msm_gem_vma.c        | 37 +++++------------------
+ drivers/gpu/drm/msm/msm_gpu.c            | 49 ++----------------------------
+ drivers/gpu/drm/msm/msm_gpu.h            |  4 +--
+ drivers/gpu/drm/msm/msm_gpummu.c         |  6 ----
+ drivers/gpu/drm/msm/msm_iommu.c          | 18 ++++++-----
+ drivers/gpu/drm/msm/msm_mmu.h            |  1 -
+ drivers/iommu/arm-smmu.c                 | 40 +++++++++++++++++++++----
+ drivers/iommu/arm-smmu.h                 | 45 ++++++++++++++++++++++++----
+ include/linux/iommu.h                    |  1 +
+ 21 files changed, 215 insertions(+), 153 deletions(-)
+
+-- 
+2.7.4
