@@ -2,237 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A1C612199B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E49C512199A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 20:02:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfLPTBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 14:01:31 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39374 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726859AbfLPTB3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 14:01:29 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y1so5060090lfb.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 11:01:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j8zv1CiPH593sjJeuXjnKC5zw4ZEGW4qNjfHHVhMY3Y=;
-        b=ezPwBt9pUMGZXAfLdBdvnrmdpl1zWlUKRl7w5W1F0CBO0BZjbIoARtDcId4cwYQVoJ
-         x6deawPEIIjhrfIYzC7E3RnmFJPoPe+o4Tpp0m4KWbTXmqmXuilZniU4wGMH521vhenO
-         Fyb+whsXeMgRu2l2jULJPCi1SVUHPGeRtYiGA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j8zv1CiPH593sjJeuXjnKC5zw4ZEGW4qNjfHHVhMY3Y=;
-        b=qe15QNyc0shpXxm62eMYrYYPY+SWuMWkHZa6JB2jjSxzs6PC3MqXdk3TjefRtW8GPV
-         h5fk9MjJm+R4FgdiFGuYPIOL+wuBm3XMP/z7FFa/eGVcyNDgUV+qbHv3+HTSt+O90FkG
-         TME4J0HAvlZDxfURu0dv3AGWN89G7xMfiCVonUmRYOnIZ6bY4RS0WZD8wtkKP44191iA
-         sliwpJlnixog/j4V8sPzPjdWTsvGjDglwhx0EcR6OKjaqbYcndIyDUvgGVvltMsRrevu
-         O1zC4j9eyDOOCWaTaToDduYOMBoiCzgUC72UH8er+6Z7dcyeolf7PA+35lApTFHEi0rq
-         lesQ==
-X-Gm-Message-State: APjAAAWBbVBzDPuOHFX96pY9iCU6zkWZGTfzCVtyNNZSX5iMrDLUWOU4
-        WlI3P25+s9Ic2QNnXzHYd/+u2aqHo+sTFWszCO1WGQ==
-X-Google-Smtp-Source: APXvYqz7K/UCHxkFWnkPVaboJEEgUEvs787WcXzp6l8eUvEdNbEIL+niAGbE/zeLTUwQA96F6RqcRb0xCxq1xsIoOKc=
-X-Received: by 2002:a19:a408:: with SMTP id q8mr335591lfc.174.1576522886867;
- Mon, 16 Dec 2019 11:01:26 -0800 (PST)
+        id S1726729AbfLPTB0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 14:01:26 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:34940 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726454AbfLPTBZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 14:01:25 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1igvcR-0005jC-3e; Mon, 16 Dec 2019 12:01:24 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1igvcQ-0005ZY-2x; Mon, 16 Dec 2019 12:01:22 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Kit Chow <kchow@gigaio.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Mon, 16 Dec 2019 12:01:15 -0700
+Message-Id: <20191216190120.21374-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com> <20191215185500.GA6097@unreal>
-In-Reply-To: <20191215185500.GA6097@unreal>
-From:   Prabhath Sajeepa <psajeepa@purestorage.com>
-Date:   Mon, 16 Dec 2019 11:01:15 -0800
-Message-ID: <CAE=VkfCzi3ooh7Cg8NqDNdVE4cwPvjO6JNjKCiAJQC37KyWJag@mail.gmail.com>
-Subject: Re: [PATCH] IB/mlx5: Fix outstanding_pi index for GSI qps
-To:     Leon Romanovsky <leon@kernel.org>
-Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roland Dreier <roland@purestorage.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, vkoul@kernel.org, dan.j.williams@intel.com, dave.jiang@intel.com, kchow@gigaio.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-6.5 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        MYRULES_FREE,MYRULES_NO_TEXT autolearn=no autolearn_force=no
+        version=3.4.2
+Subject: [PATCH 0/5] Support hot-unbind in IOAT
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 15, 2019 at 10:55 AM Leon Romanovsky <leon@kernel.org> wrote:
->
-> On Thu, Dec 12, 2019 at 05:11:29PM -0700, Prabhath Sajeepa wrote:
-> > b0ffeb537f3a changed the way how outstanding WRs are tracked for GSI QP. But the
-> > fix did not cover the case when a call to ib_post_send fails and index
-> > to track outstanding WRs need to be updated correctly.
-> >
-> > Fixes: b0ffeb537f3a ('IB/mlx5: Fix iteration overrun in GSI qps ')
-> > Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
-> > ---
-> >  drivers/infiniband/hw/mlx5/gsi.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
-> > index ac4d8d1..1ae6fd9 100644
-> > --- a/drivers/infiniband/hw/mlx5/gsi.c
-> > +++ b/drivers/infiniband/hw/mlx5/gsi.c
-> > @@ -507,8 +507,7 @@ int mlx5_ib_gsi_post_send(struct ib_qp *qp, const struct ib_send_wr *wr,
-> >               ret = ib_post_send(tx_qp, &cur_wr.wr, bad_wr);
-> >               if (ret) {
-> >                       /* Undo the effect of adding the outstanding wr */
-> > -                     gsi->outstanding_pi = (gsi->outstanding_pi - 1) %
-> > -                                           gsi->cap.max_send_wr;
-> > +                     gsi->outstanding_pi--;
->
-> I'm a little bit confused, what is the difference before and after
-> except dropping "gsi->cap.max_send_wr"?
->
-> Thanks
->
-> >                       goto err;
-> >               }
-> >               spin_unlock_irqrestore(&gsi->lock, flags);
-> > --
-> > 2.7.4
-> >
+Hey,
 
-This patch needs to be considered in conjunction with the below patch
-done by Slava Shwartsman
+This patchset creates some common infrastructure which I will use in the
+next version of the PLX driver. It adds a reference count to the
+dma_device struct which is taken and released every time a channel
+is allocated or freed. A call back is used to allow the driver to
+free the underlying memory and do any final cleanup.
 
-commit b0ffeb537f3a726931d962ab6d03e34a2f070ea4
+For a use-case, I've adjusted the ioat driver to properly support
+hot-unbind. The driver was already pretty close as it already had
+a shutdown state; so it mostly only required freeing the memory
+correctly and calling ioat_shutdown at the correct time.
 
-Author: Slava Shwartsman <slavash@mellanox.com>
+This patchset is based on v5.5-rc2 and a git branch is available here:
 
-Date:   Sun Jul 3 06:28:19 2016
+https://github.com/sbates130272/linux-p2pmem/ ioat-hot-unbind
 
-    IB/mlx5: Fix iteration overrun in GSI qps
-
-
-
-    Number of outstanding_pi may overflow and as a result may indicate that
-
-    there are no elements in the queue. The effect of doing this is that the
-
-    MAD layer will get stuck waiting for completions. The MAD layer will
-
-    think that the QP is full - because it didn't receive these completions.
-
-
-
-    This fix changes it so the outstanding_pi number is increased
-
-    with 32-bit wraparound and is not limited to max_send_wr so
-
-    that the difference between outstanding_pi and outstanding_ci will
-
-    really indicate the number of outstanding completions.
-
-
-    Cc: Stable <stable@vger.kernel.org>
-
-    Fixes: ea6dc2036224 ('IB/mlx5: Reorder GSI completions')
-
-    Signed-off-by: Slava Shwartsman <slavash@mellanox.com>
-
-    Signed-off-by: Leon Romanovsky <leon@kernel.org>
-
-    Reviewed-by: Haggai Eran <haggaie@mellanox.com>
-
-    Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-
-    Signed-off-by: Doug Ledford <dledford@redhat.com>
-
-diff --git a/drivers/infiniband/hw/mlx5/gsi.c b/drivers/infiniband/hw/mlx5/gsi.c
-
-index 53e03c8..79e6309 100644
-
---- a/drivers/infiniband/hw/mlx5/gsi.c
-
-+++ b/drivers/infiniband/hw/mlx5/gsi.c
-
-@@ -69,15 +69,6 @@ static bool mlx5_ib_deth_sqpn_cap(struct mlx5_ib_dev *dev)
-
-        return MLX5_CAP_GEN(dev->mdev, set_deth_sqpn);
-
- }
-
-
-
--static u32 next_outstanding(struct mlx5_ib_gsi_qp *gsi, u32 index)
-
--{
-
--       return ++index % gsi->cap.max_send_wr;
-
--}
-
--
-
--#define for_each_outstanding_wr(gsi, index) \
-
--       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi; \
-
--            index = next_outstanding(gsi, index))
-
--
-
- /* Call with gsi->lock locked */
-
- static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
-
- {
-
-@@ -85,8 +76,9 @@ static void generate_completions(struct mlx5_ib_gsi_qp *gsi)
-
-        struct mlx5_ib_gsi_wr *wr;
-
-        u32 index;
-
-
-
--       for_each_outstanding_wr(gsi, index) {
-
--               wr = &gsi->outstanding_wrs[index];
-
-+       for (index = gsi->outstanding_ci; index != gsi->outstanding_pi;
-
-+            index++) {
-
-+               wr = &gsi->outstanding_wrs[index % gsi->cap.max_send_wr];
-
-
-
-                if (!wr->completed)
-
-                        break;
-
-@@ -430,8 +422,9 @@ static int mlx5_ib_add_outstanding_wr(struct
-mlx5_ib_gsi_qp *gsi,
-
-                return -ENOMEM;
-
-        }
-
-
-
--       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi];
-
--       gsi->outstanding_pi = next_outstanding(gsi, gsi->outstanding_pi);
-
-+       gsi_wr = &gsi->outstanding_wrs[gsi->outstanding_pi %
-
-+                                      gsi->cap.max_send_wr];
-
-+       gsi->outstanding_pi++;
-
-
-
-        if (!wc) {
-
-                memset(&gsi_wr->wc, 0, sizeof(gsi_wr->wc));
-
-
-
-The above fix was incomplete since it did not fix the ib_post_send
-failure case, which is fixed by the patch I submitted.
-
-
--- 
 Thanks,
-Prabhath
+
+Logan
+
+--
+
+Logan Gunthorpe (5):
+  dmaengine: Store module owner in dma_device struct
+  dmaengine: Call module_put() after device_free_chan_resources()
+  dmaengine: Move dma_channel_rebalance() infrastructure up in code
+  dmaengine: Add reference counting to dma_device struct
+  dmaengine: ioat: Support in-use unbind
+
+ drivers/dma/dmaengine.c   | 352 +++++++++++++++++++++-----------------
+ drivers/dma/ioat/init.c   |  38 ++--
+ include/linux/dmaengine.h |  10 +-
+ 3 files changed, 233 insertions(+), 167 deletions(-)
+
+--
+2.20.1
