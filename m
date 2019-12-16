@@ -2,38 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E367C121395
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A8A51214EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfLPSDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
+        id S1731550AbfLPSQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729422AbfLPSC6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:58 -0500
+        id S1731535AbfLPSQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2C342082E;
-        Mon, 16 Dec 2019 18:02:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35BA8207FF;
+        Mon, 16 Dec 2019 18:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519377;
-        bh=5eg2YcqqPkF+ZVxBI6vJskYLMY48vuTua1oTbHV4arg=;
+        s=default; t=1576520188;
+        bh=o5DgSwACQn3g13+wAyuxHX+E7BQK/uk71Z4ObQXjzYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KJIcTpPnz66frN509RJd7ecKkC3Gd6SdnZlbxQ4sfBCiDz+ncIPqnzMPvQqt7Cvtg
-         RUpfFyn3m8Qvh5jCoMrIvesjMoaYet3yDyy0UilJpIQ+b1WVfctAsEycLqd0xImMXP
-         C3vzhjTVoqN402JDr9vjLeHuttgSREKVojb5Uymc=
+        b=JZKoJYzFyKGvWckqmZcrAm/p78wFbI7zTGEVb5qVjz8jHp+r6UphP0P5LdwSE5d+P
+         /C9hSVobbxbJFxxWVBD0AvKjYXrwjmo1rjLNzqI/CpruFGS77yYONRrP/7NS2OmrNp
+         fDy5WSjXT4EdBQql//ZQcEVC0C7Ix9qrsfF/4Pdg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 040/140] btrfs: Avoid getting stuck during cyclic writebacks
-Date:   Mon, 16 Dec 2019 18:48:28 +0100
-Message-Id: <20191216174759.787610721@linuxfoundation.org>
+        stable@vger.kernel.org, Meng Li <Meng.Li@windriver.com>,
+        Thor Thayer <thor.thayer@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        James Morse <james.morse@arm.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Robert Richter <rrichter@marvell.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: [PATCH 5.4 053/177] EDAC/altera: Use fast register IO for S10 IRQs
+Date:   Mon, 16 Dec 2019 18:48:29 +0100
+Message-Id: <20191216174830.591722289@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,99 +49,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Meng Li <Meng.Li@windriver.com>
 
-commit f7bddf1e27d18fbc7d3e3056ba449cfbe4e20b0a upstream.
+commit 56d9e7bd3fa0f105b6670021d167744bc50ae4fe upstream.
 
-During a cyclic writeback, extent_write_cache_pages() uses done_index
-to update the writeback_index after the current run is over.  However,
-instead of current index + 1, it gets to to the current index itself.
+When an IRQ occurs, regmap_{read,write,...}() is invoked in atomic
+context. Regmap must indicate register IO is fast so that a spinlock is
+used instead of a mutex to avoid sleeping in atomic context:
 
-Unfortunately, this, combined with returning on EOF instead of looping
-back, can lead to the following pathlogical behavior.
+  lock_acquire
+  __mutex_lock
+  mutex_lock_nested
+  regmap_lock_mutex
+  regmap_write
+  a10_eccmgr_irq_unmask
+  unmask_irq.part.0
+  irq_enable
+  __irq_startup
+  irq_startup
+  __setup_irq
+  request_threaded_irq
+  devm_request_threaded_irq
+  altr_sdram_probe
 
-1. There is a single file which has accumulated enough dirty pages to
-   trigger balance_dirty_pages() and the writer appending to the file
-   with a series of short writes.
+Mark it so.
 
-2. balance_dirty_pages kicks in, wakes up background writeback and sleeps.
+ [ bp: Massage. ]
 
-3. Writeback kicks in and the cursor is on the last page of the dirty
-   file.  Writeback is started or skipped if already in progress.  As
-   it's EOF, extent_write_cache_pages() returns and the cursor is set
-   to done_index which is pointing to the last page.
-
-4. Writeback is done.  Nothing happens till balance_dirty_pages
-   finishes, at which point we go back to #1.
-
-This can almost completely stall out writing back of the file and keep
-the system over dirty threshold for a long time which can mess up the
-whole system.  We encountered this issue in production with a package
-handling application which can reliably reproduce the issue when
-running under tight memory limits.
-
-Reading the comment in the error handling section, this seems to be to
-avoid accidentally skipping a page in case the write attempt on the
-page doesn't succeed.  However, this concern seems bogus.
-
-On each page, the code either:
-
-* Skips and moves onto the next page.
-
-* Fails issue and sets done_index to index + 1.
-
-* Successfully issues and continue to the next page if budget allows
-  and not EOF.
-
-IOW, as long as it's not EOF and there's budget, the code never
-retries writing back the same page.  Only when a page happens to be
-the last page of a particular run, we end up retrying the page, which
-can't possibly guarantee anything data integrity related.  Besides,
-cyclic writes are only used for non-syncing writebacks meaning that
-there's no data integrity implication to begin with.
-
-Fix it by always setting done_index past the current page being
-processed.
-
-Note that this problem exists in other writepages too.
-
-CC: stable@vger.kernel.org # 4.19+
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 3dab6bd52687 ("EDAC, altera: Add support for Stratix10 SDRAM EDAC")
+Reported-by: Meng Li <Meng.Li@windriver.com>
+Signed-off-by: Meng Li <Meng.Li@windriver.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: James Morse <james.morse@arm.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Robert Richter <rrichter@marvell.com>
+Cc: stable <stable@vger.kernel.org>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/1574361048-17572-2-git-send-email-thor.thayer@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/extent_io.c |   12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/edac/altera_edac.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3956,7 +3956,7 @@ retry:
- 		for (i = 0; i < nr_pages; i++) {
- 			struct page *page = pvec.pages[i];
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -560,6 +560,7 @@ static const struct regmap_config s10_sd
+ 	.reg_write = s10_protected_reg_write,
+ 	.use_single_read = true,
+ 	.use_single_write = true,
++	.fast_io = true,
+ };
  
--			done_index = page->index;
-+			done_index = page->index + 1;
- 			/*
- 			 * At this point we hold neither the i_pages lock nor
- 			 * the page lock: the page may be truncated or
-@@ -3993,16 +3993,6 @@ retry:
- 				ret = 0;
- 			}
- 			if (ret < 0) {
--				/*
--				 * done_index is set past this page,
--				 * so media errors will not choke
--				 * background writeout for the entire
--				 * file. This has consequences for
--				 * range_cyclic semantics (ie. it may
--				 * not be suitable for data integrity
--				 * writeout).
--				 */
--				done_index = page->index + 1;
- 				done = 1;
- 				break;
- 			}
+ /************** </Stratix10 EDAC Memory Controller Functions> ***********/
 
 
