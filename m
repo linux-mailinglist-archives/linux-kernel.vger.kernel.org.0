@@ -2,81 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECBE9121C73
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:11:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F8AC121C8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 23:16:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727539AbfLPWKH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 17:10:07 -0500
-Received: from mail-qv1-f66.google.com ([209.85.219.66]:35470 "EHLO
-        mail-qv1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfLPWKG (ORCPT
+        id S1727972AbfLPWQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 17:16:32 -0500
+Received: from rnd-relay.smtp.broadcom.com ([192.19.229.170]:59210 "EHLO
+        rnd-relay.smtp.broadcom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726545AbfLPWQc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:10:06 -0500
-Received: by mail-qv1-f66.google.com with SMTP id d17so3402710qvs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 14:10:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=46QQbf/7xY0XXnmz2tYswXMRkkq1sq4i40/0AAKflts=;
-        b=QSiOU+pfI4f+UJm2z1CzpcpKmqj26ZlNgOcYQ3KjSysXN5CKNkxQKs+xvlMtWz0/Zj
-         EOGJjNfKii+RJriaqUvQDf78DcuafWd6FalNHrGquX6O9t9+5bca5QP2Zq1Cpg81Ck82
-         f+rTn0mjzALJ5BW7X46ErHxIH/T0c6GR9uczHBXgiLcpWHO9iNqZIJ/jnxg7p4R4ChTZ
-         vB2/WeFFKlCvZXX0a/OuhtRlAC1bMskckFz/sSMlE9xpkajek+LEZPIStFBX2/H6pJNG
-         hcfMZjiylbyM5ouODaL4s1gi9ZU1EUlROChG71/Dihl5tAXElKon2Vi2KbQczi6GDq1m
-         Cb9A==
-X-Gm-Message-State: APjAAAUwesKtwV6JUv4aEzAM5VAafAH+sl8Rl/LYDSyD3PE2cFUWliMW
-        zB1XzkXIAjPHOi/VcHuAhxzrWN6S
-X-Google-Smtp-Source: APXvYqytMlnnar7QuVPkVRQVszjjwk6cMDWOgFJ3w/bKs4JskQxoBNFifPVjqkR3vqHWOoJXI0o/0g==
-X-Received: by 2002:a05:6214:1348:: with SMTP id b8mr1671598qvw.137.1576534205387;
-        Mon, 16 Dec 2019 14:10:05 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id o17sm7125900qtq.93.2019.12.16.14.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 14:10:04 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     "David S . Miller" <davem@davemloft.net>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] sparc/console: kill off obsolete declarations
-Date:   Mon, 16 Dec 2019 17:10:04 -0500
-Message-Id: <20191216221004.3476562-1-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 16 Dec 2019 17:16:32 -0500
+Received: from mail-irv-17.broadcom.com (mail-irv-17.lvn.broadcom.net [10.75.242.48])
+        by rnd-relay.smtp.broadcom.com (Postfix) with ESMTP id 340DD30C2DA;
+        Mon, 16 Dec 2019 14:11:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 rnd-relay.smtp.broadcom.com 340DD30C2DA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+        s=dkimrelay; t=1576534303;
+        bh=c/wouBtv91PTKkOxRyp61Efr8gRVBG7WS5ajBeXOp4c=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GPq2VwE9QNLUYvrq04bC1r3z1+LhdAmvQ9qr6JmtLOVnStfxwVIfT0yT1z7AtmloZ
+         NVOaZ5PZjJYmOUB1SChdGUbPSZ1hoSpL+7L6ZuY5zOc+MK8ltHOls4L2J6te1jGKh9
+         MBge094ODcsDczzp7TPlnerp40Ys7rrgtZDtrWh0=
+Received: from stbsrv-and-01.and.broadcom.net (stbsrv-and-01.and.broadcom.net [10.28.16.211])
+        by mail-irv-17.broadcom.com (Postfix) with ESMTP id CC569140069;
+        Mon, 16 Dec 2019 14:16:29 -0800 (PST)
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+To:     lukasz.luba@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, rostedt@goodmis.org, sudeep.holla@arm.com
+Subject: [PATCH 1/2] include: trace: Add SCMI header with trace events
+Date:   Mon, 16 Dec 2019 17:15:54 -0500
+Message-Id: <20191216161650.21844-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191216161650.21844-1-lukasz.luba@arm.com>
+References: <20191216161650.21844-1-lukasz.luba@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 09d3f3f0e02c ("sparc: Kill PROM console driver.") missed removing
-the declarations of the deleted prom_con structure and prom_con_init
-function from console.h. Kill them off now.
+From: Lukasz Luba <lukasz.luba@arm.com>
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- include/linux/console.h | 2 --
- 1 file changed, 2 deletions(-)
++
++TRACE_EVENT(scmi_xfer_begin,
++	TP_PROTO(u8 id, u8 protocol_id, u16 seq, bool poll),
++	TP_ARGS(id, protocol_id, seq, poll),
++
++	TP_STRUCT__entry(
++		__field(u8, id)
++		__field(u8, protocol_id)
++		__field(u16, seq)
++		__field(bool, poll)
++	),
++
++	TP_fast_assign(
++		__entry->id = id;
++		__entry->protocol_id = protocol_id;
++		__entry->seq = seq;
++		__entry->poll = poll;
++	),
++
++	TP_printk("id=%u protocol_id=%u seq=%u poll=%u", __entry->id,
++		__entry->protocol_id, __entry->seq, __entry->poll)
++);
++
++TRACE_EVENT(scmi_xfer_end,
++	TP_PROTO(u8 id, u8 protocol_id, u16 seq, u32 status),
++	TP_ARGS(id, protocol_id, seq, status),
++
++	TP_STRUCT__entry(
++		__field(u8, id)
++		__field(u8, protocol_id)
++		__field(u16, seq)
++		__field(u32, status)
++	),
++
++	TP_fast_assign(
++		__entry->id = id;
++		__entry->protocol_id = protocol_id;
++		__entry->seq = seq;
++		__entry->status = status;
++	),
++
++	TP_printk("id=%u protocol_id=%u seq=%u status=%u", __entry->id,
++		__entry->protocol_id, __entry->seq, __entry->status)
++);
 
-diff --git a/include/linux/console.h b/include/linux/console.h
-index d09951d5a94e..f33016b3a401 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -101,7 +101,6 @@ extern const struct consw *conswitchp;
- extern const struct consw dummy_con;	/* dummy console buffer */
- extern const struct consw vga_con;	/* VGA text console */
- extern const struct consw newport_con;	/* SGI Newport console  */
--extern const struct consw prom_con;	/* SPARC PROM console */
- 
- int con_is_bound(const struct consw *csw);
- int do_unregister_con_driver(const struct consw *csw);
-@@ -201,7 +200,6 @@ extern void suspend_console(void);
- extern void resume_console(void);
- 
- int mda_console_init(void);
--void prom_con_init(void);
- 
- void vcs_make_sysfs(int index);
- void vcs_remove_sysfs(int index);
--- 
-2.24.1
+Hello,
 
+When there are multiple messages in the mbox queue, I've found it
+a chore matching up the 'begin' event with the 'end' event for each
+SCMI msg.  The id (command) may not be unique, the proto_id may not be
+unique, and the seq may not be unique.  The combination of the three
+may not be unique.  Would it make sense to assign a monotonically
+increasing ID to each msg so that one can easily match the two events
+for each msg?  This id could be the result of an atomic increment and
+could be stored in the xfer structure.  Of course, it would be one of
+the values printed out in the events.
+
+Also, would you consider a third event, right after the
+scmi_fetch_response() invocation in scmi_rx_callback()?  I've found
+this to be insightful in situations where we were debugging a timeout.
+
+I'm fine if you elect not to do the above; I just wanted to post
+this for your consideration.
+
+Thanks,
+Jim Quinlan
+Broadcom
