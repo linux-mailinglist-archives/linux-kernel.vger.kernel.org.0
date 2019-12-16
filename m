@@ -2,144 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DE6012068C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:03:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37075120E77
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:55:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfLPNBv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 08:01:51 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:42531 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727639AbfLPNBv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:01:51 -0500
-Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Mon, 16 Dec 2019 04:46:34 -0800
-Received: from akaher-lnx-dev.eng.vmware.com (unknown [10.110.19.203])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 30E75402B8;
-        Mon, 16 Dec 2019 04:46:27 -0800 (PST)
-From:   Ajay Kaher <akaher@vmware.com>
-To:     <gregkh@linuxfoundation.org>, <stable@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <punit.agrawal@arm.com>,
-        <akpm@linux-foundation.org>, <kirill.shutemov@linux.intel.com>,
-        <willy@infradead.org>, <will.deacon@arm.com>,
-        <mszeredi@redhat.com>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <srivatsab@vmware.com>,
-        <srivatsa@csail.mit.edu>, <amakhalov@vmware.com>,
-        <srinidhir@vmware.com>, <bvikas@vmware.com>, <anishs@vmware.com>,
-        <vsirnapalli@vmware.com>, <srostedt@vmware.com>,
-        <akaher@vmware.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Juergen Gross <jgross@suse.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v3 8/8] x86, mm, gup: prevent get_page() race with munmap in paravirt guest
-Date:   Tue, 17 Dec 2019 02:15:48 +0530
-Message-ID: <1576529149-14269-9-git-send-email-akaher@vmware.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576529149-14269-1-git-send-email-akaher@vmware.com>
-References: <1576529149-14269-1-git-send-email-akaher@vmware.com>
+        id S1728472AbfLPPvv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:51:51 -0500
+Received: from sauhun.de ([88.99.104.3]:41906 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728328AbfLPPvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:51:50 -0500
+Received: from localhost (p54B33297.dip0.t-ipconnect.de [84.179.50.151])
+        by pokefinder.org (Postfix) with ESMTPSA id C22C32C04DF;
+        Mon, 16 Dec 2019 16:51:47 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-media@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND 00/16] media: use new API for creating client devices
+Date:   Mon, 16 Dec 2019 16:51:27 +0100
+Message-Id: <20191216155146.8803-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: akaher@vmware.com does not
- designate permitted sender hosts)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vlastimil Babka <vbabka@suse.cz>
+These media drivers create a new I2C client device with the deprecated
+i2c_new_device() and check afterwards if the client exists and if a
+driver is bound to it.
 
-The x86 version of get_user_pages_fast() relies on disabled interrupts to
-synchronize gup_pte_range() between gup_get_pte(ptep); and get_page() against
-a parallel munmap. The munmap side nulls the pte, then flushes TLBs, then
-releases the page. As TLB flush is done synchronously via IPI disabling
-interrupts blocks the page release, and get_page(), which assumes existing
-reference on page, is thus safe.
-However when TLB flush is done by a hypercall, e.g. in a Xen PV guest, there is
-no blocking thanks to disabled interrupts, and get_page() can succeed on a page
-that was already freed or even reused.
+This series changes the drivers to use the now suggested
+i2c_new_client_device() call and a new helper to check if the driver is
+bound. This helper supports (for now) the old and the new API and is
+also more readable.
 
-We have recently seen this happen with our 4.4 and 4.12 based kernels, with
-userspace (java) that exits a thread, where mm_release() performs a futex_wake()
-on tsk->clear_child_tid, and another thread in parallel unmaps the page where
-tsk->clear_child_tid points to. The spurious get_page() succeeds, but futex code
-immediately releases the page again, while it's already on a freelist. Symptoms
-include a bad page state warning, general protection faults acessing a poisoned
-list prev/next pointer in the freelist, or free page pcplists of two cpus joined
-together in a single list. Oscar has also reproduced this scenario, with a
-patch inserting delays before the get_page() to make the race window larger.
+The drivers were converted with the following coccinelle script:
 
-Fix this by removing the dependency on TLB flush interrupts the same way as the
-generic get_user_pages_fast() code by using page_cache_add_speculative() and
-revalidating the PTE contents after pinning the page. Mainline is safe since
-4.13 where the x86 gup code was removed in favor of the common code. Accessing
-the page table itself safely also relies on disabled interrupts and TLB flush
-IPIs that don't happen with hypercalls, which was acknowledged in commit
-9e52fc2b50de ("x86/mm: Enable RCU based page table freeing
-(CONFIG_HAVE_RCU_TABLE_FREE=y)"). That commit with follups should also be
-backported for full safety, although our reproducer didn't hit a problem
-without that backport.
+@@
+expression client;
+statement S;
+@@
+        client =
+-               i2c_new_device
++               i2c_new_client_device
+                        (...);
+        ... when != client
+        if (
+-               \( !client \| client == NULL \) || \( !client->dev.driver \| client->dev.driver == NULL \)
++               !i2c_client_has_driver(client)
+                        ) {
+                        S
+                }
 
-Reproduced-by: Oscar Salvador <osalvador@suse.de>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
+The helper has been tested on a Renesas Salvator-XS board (R-Car M3-N).
+The rest was build tested by me and buildbot.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- arch/x86/mm/gup.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+This series is based on v5.5-rc2 where the new helper was added. A
+branch can be found here:
 
-diff --git a/arch/x86/mm/gup.c b/arch/x86/mm/gup.c
-index 6612d532e42e..6379a4883c0a 100644
---- a/arch/x86/mm/gup.c
-+++ b/arch/x86/mm/gup.c
-@@ -9,6 +9,7 @@
- #include <linux/vmstat.h>
- #include <linux/highmem.h>
- #include <linux/swap.h>
-+#include <linux/pagemap.h>
- 
- #include <asm/pgtable.h>
- 
-@@ -95,10 +96,23 @@ static noinline int gup_pte_range(pmd_t pmd, unsigned long addr,
- 		}
- 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
- 		page = pte_page(pte);
--		if (unlikely(!try_get_page(page))) {
-+
-+		if (WARN_ON_ONCE(page_ref_count(page) < 0)) {
-+			pte_unmap(ptep);
-+			return 0;
-+		}
-+
-+		if (!page_cache_get_speculative(page)) {
- 			pte_unmap(ptep);
- 			return 0;
- 		}
-+
-+		if (unlikely(pte_val(pte) != pte_val(*ptep))) {
-+			put_page(page);
-+			pte_unmap(ptep);
-+			return 0;
-+		}
-+
- 		SetPageReferenced(page);
- 		pages[*nr] = page;
- 		(*nr)++;
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/new_device_with_driver
+
+This series is largely the same as the last one sent out in November. It
+was rebased to v5.5-rc2 and one Rev-tag added. The patch for v4l2-core
+has been extended to use more new API. This series can be applied as is.
+I think it should go via the media-tree.
+
+Looking forward to comments.
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+Wolfram Sang (16):
+  media: dvb-core: dvbdev: convert to use i2c_new_client_device()
+  media: dvb-frontends: cxd2820r_core: convert to use
+    i2c_new_client_device()
+  media: dvb-frontends: lgdt330x: convert to use i2c_new_client_device()
+  media: dvb-frontends: m88ds3103: convert to use
+    i2c_new_client_device()
+  media: dvb-frontends: ts2020: convert to use i2c_new_client_device()
+  media: pci: cx23885: cx23885-dvb: convert to use
+    i2c_new_client_device()
+  media: pci: saa7164: saa7164-dvb: convert to use
+    i2c_new_client_device()
+  media: pci: smipcie: smipcie-main: convert to use
+    i2c_new_client_device()
+  media: platform: sti: c8sectpfe: c8sectpfe-dvb: convert to use
+    i2c_new_client_device()
+  media: usb: dvb-usb-v2: af9035: convert to use i2c_new_client_device()
+  media: usb: dvb-usb-v2: anysee: convert to use i2c_new_client_device()
+  media: usb: dvb-usb-v2: rtl28xxu: convert to use
+    i2c_new_client_device()
+  media: usb: dvb-usb-v2: zd1301: convert to use i2c_new_client_device()
+  media: usb: dvb-usb: dib0700_devices: convert to use
+    i2c_new_client_device()
+  media: usb: dvb-usb: dw2102: convert to use i2c_new_client_device()
+  media: v4l2-core: v4l2-i2c: convert to new API with ERRPTR
+
+ drivers/media/dvb-core/dvbdev.c               |   4 +-
+ drivers/media/dvb-frontends/cxd2820r_core.c   |   4 +-
+ drivers/media/dvb-frontends/lgdt330x.c        |   4 +-
+ drivers/media/dvb-frontends/m88ds3103.c       |   4 +-
+ drivers/media/dvb-frontends/ts2020.c          |   4 +-
+ drivers/media/pci/cx23885/cx23885-dvb.c       | 114 +++++++++---------
+ drivers/media/pci/saa7164/saa7164-dvb.c       |  20 +--
+ drivers/media/pci/smipcie/smipcie-main.c      |   4 +-
+ .../platform/sti/c8sectpfe/c8sectpfe-dvb.c    |   4 +-
+ drivers/media/usb/dvb-usb-v2/af9035.c         |   4 +-
+ drivers/media/usb/dvb-usb-v2/anysee.c         |   4 +-
+ drivers/media/usb/dvb-usb-v2/rtl28xxu.c       |  36 +++---
+ drivers/media/usb/dvb-usb-v2/zd1301.c         |   4 +-
+ drivers/media/usb/dvb-usb/dib0700_devices.c   |   8 +-
+ drivers/media/usb/dvb-usb/dw2102.c            |   8 +-
+ drivers/media/v4l2-core/v4l2-i2c.c            |  10 +-
+ 16 files changed, 115 insertions(+), 121 deletions(-)
+
 -- 
-2.23.0
+2.20.1
+
