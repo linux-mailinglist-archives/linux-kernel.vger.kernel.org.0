@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F177912160B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE5E41214FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731536AbfLPS0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:26:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40306 "EHLO mail.kernel.org"
+        id S1731489AbfLPSRN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731618AbfLPSRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:01 -0500
+        id S1731622AbfLPSRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12A33206E0;
-        Mon, 16 Dec 2019 18:16:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 802BA207FF;
+        Mon, 16 Dec 2019 18:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520220;
-        bh=PwdgbR5BzzcUXuLZZnz4X5SVfhL6xSdUlCGJ9zVV9Ig=;
+        s=default; t=1576520223;
+        bh=8Zq4DPHZWhYTXypB/u/8KmEgA6SgVcttkjX8RIwVA84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0p4t7IedcG2GjtUKNXF65U3bTddws/lY6zlKwq33JRQape2Z8EeTbNDUAPPmYoy9
-         tbsNPd3jfmO2ucsZr7l4D7YyKyx5JJKvTQHhUJCbB4p4ybiG3rjweFGpG6UpT83VyL
-         iPTkU0SSNCXCVt/7Y+khtiBJwmvnYmuMeyWN9idE=
+        b=MXfnzcqPkYVNGG07VMsVTu6esCUWbvLxFSBOsSTakt+OhlNFFmVpbuZlnNIeSumJt
+         yGfUcpF2M59wcyaAxeGamtjyC3mWEdm+qM79s1f/2Po8oRGydvQCxU23mkll4bsx/J
+         iM8Wjr+ZSGehsOf6CpUKiN/1Ya8M26V5aaqn13P8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: [PATCH 5.4 065/177] iwlwifi: pcie: fix support for transmitting SKBs with fraglist
-Date:   Mon, 16 Dec 2019 18:48:41 +0100
-Message-Id: <20191216174832.865784429@linuxfoundation.org>
+        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.4 066/177] btrfs: check page->mapping when loading free space cache
+Date:   Mon, 16 Dec 2019 18:48:42 +0100
+Message-Id: <20191216174834.408988203@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
 References: <20191216174811.158424118@linuxfoundation.org>
@@ -43,60 +45,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Josef Bacik <josef@toxicpanda.com>
 
-commit 4f4925a7b23428d5719af5a2816586b2a0e6fd19 upstream.
+commit 3797136b626ad4b6582223660c041efdea8f26b2 upstream.
 
-When the implementation of SKBs with fraglist was sent upstream, a
-merge-damage occurred and half the patch was not applied.
+While testing 5.2 we ran into the following panic
 
-This causes problems in high-throughput situations with AX200 devices,
-including low throughput and FW crashes.
+[52238.017028] BUG: kernel NULL pointer dereference, address: 0000000000000001
+[52238.105608] RIP: 0010:drop_buffers+0x3d/0x150
+[52238.304051] Call Trace:
+[52238.308958]  try_to_free_buffers+0x15b/0x1b0
+[52238.317503]  shrink_page_list+0x1164/0x1780
+[52238.325877]  shrink_inactive_list+0x18f/0x3b0
+[52238.334596]  shrink_node_memcg+0x23e/0x7d0
+[52238.342790]  ? do_shrink_slab+0x4f/0x290
+[52238.350648]  shrink_node+0xce/0x4a0
+[52238.357628]  balance_pgdat+0x2c7/0x510
+[52238.365135]  kswapd+0x216/0x3e0
+[52238.371425]  ? wait_woken+0x80/0x80
+[52238.378412]  ? balance_pgdat+0x510/0x510
+[52238.386265]  kthread+0x111/0x130
+[52238.392727]  ? kthread_create_on_node+0x60/0x60
+[52238.401782]  ret_from_fork+0x1f/0x30
 
-Introduce the part that was missing from the original patch.
+The page we were trying to drop had a page->private, but had no
+page->mapping and so called drop_buffers, assuming that we had a
+buffer_head on the page, and then panic'ed trying to deref 1, which is
+our page->private for data pages.
 
-Fixes: 0044f1716c4d ("iwlwifi: pcie: support transmitting SKBs with fraglist")
-Cc: stable@vger.kernel.org # 4.20+
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-[ This patch was created by me, but the original author of this code
-  is Johannes, so his s-o-b is here and he's marked as the author of
-  the patch. ]
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+This is happening because we're truncating the free space cache while
+we're trying to load the free space cache.  This isn't supposed to
+happen, and I'll fix that in a followup patch.  However we still
+shouldn't allow those sort of mistakes to result in messing with pages
+that do not belong to us.  So add the page->mapping check to verify that
+we still own this page after dropping and re-acquiring the page lock.
+
+This page being unlocked as:
+btrfs_readpage
+  extent_read_full_page
+    __extent_read_full_page
+      __do_readpage
+        if (!nr)
+	   unlock_page  <-- nr can be 0 only if submit_extent_page
+			    returns an error
+
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Nikolay Borisov <nborisov@suse.com>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+[ add callchain ]
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ fs/btrfs/free-space-cache.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c
-@@ -468,6 +468,7 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
- 	dma_addr_t tb_phys;
- 	int len, tb1_len, tb2_len;
- 	void *tb1_addr;
-+	struct sk_buff *frag;
- 
- 	tb_phys = iwl_pcie_get_first_tb_dma(txq, idx);
- 
-@@ -516,6 +517,19 @@ iwl_tfh_tfd *iwl_pcie_gen2_build_tx(stru
- 	if (iwl_pcie_gen2_tx_add_frags(trans, skb, tfd, out_meta))
- 		goto out_err;
- 
-+	skb_walk_frags(skb, frag) {
-+		tb_phys = dma_map_single(trans->dev, frag->data,
-+					 skb_headlen(frag), DMA_TO_DEVICE);
-+		if (unlikely(dma_mapping_error(trans->dev, tb_phys)))
-+			goto out_err;
-+		iwl_pcie_gen2_set_tb(trans, tfd, tb_phys, skb_headlen(frag));
-+		trace_iwlwifi_dev_tx_tb(trans->dev, skb,
-+					frag->data,
-+					skb_headlen(frag));
-+		if (iwl_pcie_gen2_tx_add_frags(trans, frag, tfd, out_meta))
-+			goto out_err;
-+	}
-+
- 	return tfd;
- 
- out_err:
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -385,6 +385,12 @@ static int io_ctl_prepare_pages(struct b
+ 		if (uptodate && !PageUptodate(page)) {
+ 			btrfs_readpage(NULL, page);
+ 			lock_page(page);
++			if (page->mapping != inode->i_mapping) {
++				btrfs_err(BTRFS_I(inode)->root->fs_info,
++					  "free space cache page truncated");
++				io_ctl_drop_pages(io_ctl);
++				return -EIO;
++			}
+ 			if (!PageUptodate(page)) {
+ 				btrfs_err(BTRFS_I(inode)->root->fs_info,
+ 					   "error reading free space cache");
 
 
