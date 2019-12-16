@@ -2,70 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 193A4120402
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A15120409
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 12:35:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbfLPLex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 06:34:53 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:49632 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfLPLex (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 06:34:53 -0500
-Received: from 79.184.253.1.ipv4.supernova.orange.pl (79.184.253.1) (HELO kreacher.localnet)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.320)
- id 3930d591b1240d67; Mon, 16 Dec 2019 12:34:51 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Linux ACPI <linux-acpi@vger.kernel.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Subject: [PATCH] ACPI: processor: Make ACPI_PROCESSOR_CSTATE depend on ACPI_PROCESSOR
-Date:   Mon, 16 Dec 2019 12:34:50 +0100
-Message-ID: <16614264.JRhOIQ9zEg@kreacher>
+        id S1727491AbfLPLfB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 06:35:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54246 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727377AbfLPLe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 06:34:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5CED7ACC9;
+        Mon, 16 Dec 2019 11:34:56 +0000 (UTC)
+Message-ID: <c52eac760b84b5518453df501fcbefe332109b7c.camel@suse.de>
+Subject: Re: [PATCH 2/9] spi: bcm2835: Release the DMA channel if probe
+ fails after dma_init
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>, broonie@kernel.org,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, baohua@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com
+Cc:     vkoul@kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Date:   Mon, 16 Dec 2019 12:34:54 +0100
+In-Reply-To: <20191212135550.4634-3-peter.ujfalusi@ti.com>
+References: <20191212135550.4634-1-peter.ujfalusi@ti.com>
+         <20191212135550.4634-3-peter.ujfalusi@ti.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-sXE7sJg+XY/TFzJstkte"
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-To avoid build errors when CONFIG_ACPI_PROCESSOR_CSTATE is set and
-CONFIG_ACPI_PROCESSOR is not (that may appear in randconfig builds),
-make the former depend on the latter.
+--=-sXE7sJg+XY/TFzJstkte
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+On Thu, 2019-12-12 at 15:55 +0200, Peter Ujfalusi wrote:
+> The DMA channel was not released if either devm_request_irq() or
+> devm_spi_register_controller() failed.
+>=20
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
 
-The build issues addressed by this patch are exposed by the series adding ACPI
-support to intel_idle:
+Thanks!
 
-https://lore.kernel.org/linux-pm/3950312.2WmFeOdZGY@kreacher/T/#t
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-so it has been added to the intel_idle+acpi branch (which has been rebased on
-top of 5.5-rc2).
-
----
- drivers/acpi/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
-
-Index: linux-pm/drivers/acpi/Kconfig
-===================================================================
---- linux-pm.orig/drivers/acpi/Kconfig
-+++ linux-pm/drivers/acpi/Kconfig
-@@ -241,6 +241,7 @@ config ACPI_CPU_FREQ_PSS
- 
- config ACPI_PROCESSOR_CSTATE
- 	def_bool y
-+	depends on ACPI_PROCESSOR
- 	depends on IA64 || X86
- 
- config ACPI_PROCESSOR_IDLE
+Regards,
+Nicolas
 
 
+--=-sXE7sJg+XY/TFzJstkte
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl33a94ACgkQlfZmHno8
+x/6CCAf7B+B8hZxRZRMeLVd8ul40vOlcF9rYKCysCJeIolLp9Y2o4IzUDv0K1mel
+0z35UloEsK0lerWCQzf9nH6RbxBqfEE5NbQ/N2ewB9/+Ko1YXB/JkhbMx8ApqqoR
+DFhBiIS9MjrKzpffIY1Wa8f2TRngNKJAGbUVYX2lpW2zhRpqDSaa61WWra+KzbNK
+vBfmnO3NwN69bN7vqN//ES4MonAbxXm7HGwyI8okIzlwc+rZWympTUBgpwXfGGeC
+R1OHlJZiexWOW1LID7wjOPAeYbbGEatKio3MBTOAU+Ccx1JTDzjlKx0AtwIqyKTd
+Oc2YpUm1LThjhmtRyLB1OXGc+8edpw==
+=JoZp
+-----END PGP SIGNATURE-----
+
+--=-sXE7sJg+XY/TFzJstkte--
 
