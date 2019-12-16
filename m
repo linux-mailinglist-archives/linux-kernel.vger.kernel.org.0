@@ -2,120 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2D7D12122D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 463671212D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfLPRsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:48:02 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41560 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLPRsB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:48:01 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bd4so4775704plb.8
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 09:48:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=67RnPKw63+A5B3mWKU81b+vfdJ8KYwSGtoL1kew422s=;
-        b=rHVK/Ju0g15r+TRIbS2kezdGsHO37G24hm0K36ZYbAlHspIVlXS4Ys59i8GgAGUaBo
-         4Otfi12AJqW/wV46QUynw6JkAr1d7J/IK/zQ/HojllVeIiX7ao2zKhm+pzp/DFP42FeE
-         wVO8n2xTycRSGXty5gg+VNYHFHaSgOgftBJhw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=67RnPKw63+A5B3mWKU81b+vfdJ8KYwSGtoL1kew422s=;
-        b=hYeJF3Lv0c7PFGHm7Qz7dyrEk4U0O/WHDEXQqN0EYmzxm37+61jZ1IYkg2MmCeGhwe
-         S6d4IIgc/Z2cxBx+tUvWFk4mBc38JY/UB9bZOEZbktpLfgU05wduIol3hhOdieYgOS+e
-         q7SxM3a4J3BZNYblO+QIsbclerMZzv7AcV0Dv/Toutuhc5svd+G1Y9WQVF2pKnkjTfyk
-         KH216+dzEC+bPgDye5ISVQMWi4FCvArdHx1P6GDe1kAEPjmgg5Dr5RLZzKWDxuZp0126
-         Y37QhPVoFXNl6AIYxoBzeJAjNBWzeQ0ie3YvlXi5V0OI37xFJSnfmqQYMNyCaQ9Y9hSM
-         G5JQ==
-X-Gm-Message-State: APjAAAVQ7xEPn444hskVbFmOZrnt6eApSjpAEnexJIkXKZfgn0WmjKaG
-        4VYUgXqVd4lUQsOVWehI0y4sJQ==
-X-Google-Smtp-Source: APXvYqyAjAO4jnA4QyilqZkqXP3DoPuztugJ8Cps8+XwWEzUX1N4xsK5btgsHHZlP9temsP5T3pDDQ==
-X-Received: by 2002:a17:902:d883:: with SMTP id b3mr16392991plz.231.1576518480927;
-        Mon, 16 Dec 2019 09:48:00 -0800 (PST)
-Received: from localhost.localdomain ([2405:201:c809:c7d5:6d28:a89:f9e1:1506])
-        by smtp.gmail.com with ESMTPSA id a6sm22342924pgg.25.2019.12.16.09.47.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 09:48:00 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Akash Gajjar <akash@openedev.com>, Tom Cubie <tom@radxa.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 4/4] arm64: dts: rockchip: Add Radxa Rock Pi N10 initial support
-Date:   Mon, 16 Dec 2019 23:17:11 +0530
-Message-Id: <20191216174711.17856-5-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20191216174711.17856-1-jagan@amarulasolutions.com>
-References: <20191216174711.17856-1-jagan@amarulasolutions.com>
+        id S1728195AbfLPR4U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:56:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54228 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727398AbfLPR4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:56:16 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB12218AC;
+        Mon, 16 Dec 2019 17:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576518976;
+        bh=NzS+thb2zRhKzX02D+ejkXOi1iRJq/6D5XAXZ6VOCSc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U9eHUxI1W4k/yFY9b1B7rHQLO77KTeompxt0sJdskGPrRcKW9IcjDJtpHb/xukGMA
+         hEzQgXMpElmAm/wJxvQfAoD+kOnmYYCZZOX6rrklVfGCNmO77V8l80lPWnbclam4ec
+         CzZtdexetTOzvV4/jjmYHfwM7Cx+U0pmjNUynfx0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 106/267] MIPS: OCTEON: cvmx_pko_mem_debug8: use oldest forward compatible definition
+Date:   Mon, 16 Dec 2019 18:47:12 +0100
+Message-Id: <20191216174902.528657263@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rock Pi N10 is a Rockchip RK3399Pro based SBC, which has
-- VMARC RK3399Pro SOM (as per SMARC standard) from Vamrs.
-- Compatible carrier board from Radxa.
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-VAMRC RK3399Pro SOM need to mount on top of radxa dalang
-carrier board for making Rock Pi N10 SBC.
+[ Upstream commit 1c6121c39677175bd372076020948e184bad4b6b ]
 
-So, add initial support for Rock Pi N10 by including rk3399,
-rk3399pro vamrc-som and raxda dalang carrier board dtsi files.
+cn58xx is compatible with cn50xx, so use the latter.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+[paul.burton@mips.com: s/cn52xx/cn50xx/ in commit message.]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Changes for v3:
-- none
+ arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c | 2 +-
+ arch/mips/include/asm/octeon/cvmx-pko.h            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm64/boot/dts/rockchip/Makefile           |  1 +
- .../boot/dts/rockchip/rk3399pro-rock-pi-n10.dts | 17 +++++++++++++++++
- 2 files changed, 18 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 48fb631d5451..433033b18170 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -36,3 +36,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rock960.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-rockpro64.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399-sapphire-excavator.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3399pro-rock-pi-n10.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-new file mode 100644
-index 000000000000..b42f94179538
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3399pro-rock-pi-n10.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2019 Fuzhou Rockchip Electronics Co., Ltd
-+ * Copyright (c) 2019 Radxa Limited
-+ * Copyright (c) 2019 Amarula Solutions(India)
-+ */
-+
-+/dts-v1/;
-+#include "rk3399.dtsi"
-+#include "rk3399-opp.dtsi"
-+#include "rk3399pro-vmarc-som.dtsi"
-+#include <arm/rockchip-radxa-dalang-carrier.dtsi>
-+
-+/ {
-+	model = "Radxa ROCK Pi N10";
-+	compatible = "radxa,rockpi-n10", "rockchip,rk3399pro";
-+};
+diff --git a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
+index 8241fc6aa17d8..3839feba68f20 100644
+--- a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
+@@ -266,7 +266,7 @@ int cvmx_cmd_queue_length(cvmx_cmd_queue_id_t queue_id)
+ 		} else {
+ 			union cvmx_pko_mem_debug8 debug8;
+ 			debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
+-			return debug8.cn58xx.doorbell;
++			return debug8.cn50xx.doorbell;
+ 		}
+ 	case CVMX_CMD_QUEUE_ZIP:
+ 	case CVMX_CMD_QUEUE_DFA:
+diff --git a/arch/mips/include/asm/octeon/cvmx-pko.h b/arch/mips/include/asm/octeon/cvmx-pko.h
+index 5f47f76ed510a..20eb9c46a75ab 100644
+--- a/arch/mips/include/asm/octeon/cvmx-pko.h
++++ b/arch/mips/include/asm/octeon/cvmx-pko.h
+@@ -611,7 +611,7 @@ static inline void cvmx_pko_get_port_status(uint64_t port_num, uint64_t clear,
+ 		pko_reg_read_idx.s.index = cvmx_pko_get_base_queue(port_num);
+ 		cvmx_write_csr(CVMX_PKO_REG_READ_IDX, pko_reg_read_idx.u64);
+ 		debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
+-		status->doorbell = debug8.cn58xx.doorbell;
++		status->doorbell = debug8.cn50xx.doorbell;
+ 	}
+ }
+ 
 -- 
-2.18.0.321.gffc6fa0e3
+2.20.1
+
+
 
