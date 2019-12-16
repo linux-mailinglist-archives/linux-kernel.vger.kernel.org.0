@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC82C12192D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C376B121931
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfLPRwm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44890 "EHLO mail.kernel.org"
+        id S1727642AbfLPRw4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726840AbfLPRwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:41 -0500
+        id S1727620AbfLPRwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D6A92166E;
-        Mon, 16 Dec 2019 17:52:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CA502166E;
+        Mon, 16 Dec 2019 17:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518760;
-        bh=YitMJak+QJ5u7f/nA4YofkormATrSvmkfaTtgbRZJzM=;
+        s=default; t=1576518772;
+        bh=rDrWEFPlw/zmsNcazXUyUrysqrnelma9cR2EgBlJnSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OlxVg5bB5cCpkSafGvvS/lrFfoBfbhwjkpsVjjBi/Pdh2YovUlc6OUE2WwqbJRERB
-         C+aukKDprrYOA0XL23kAP73OA+rj20ck/BPGQpkpyV/lLGRZeY1krdPRggkNttNgLR
-         rXJDkpIrGeNaCox9kzQOKHriWPC//jguHhLAS8cI=
+        b=IRqNThU/kRYAxuu2jXW4UCQcZbOftyLBYMIer+28WR/ExCDthX8FqQZAZnxnsvKxX
+         BOb/rU7+RSdgWnBBkao/zey6ySBtpdNT3vRRHnXlsD9DBEzmjNG3VE8MVEfMOc7C7j
+         ObI7XXu4u8Uazs9d7Rp47c0eA7J0LMnmc1yOnd4E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 054/267] rtc: max8997: Fix the returned value in case of error in max8997_rtc_read_alarm()
-Date:   Mon, 16 Dec 2019 18:46:20 +0100
-Message-Id: <20191216174854.421022206@linuxfoundation.org>
+Subject: [PATCH 4.14 058/267] media: cec: report Vendor ID after initialization
+Date:   Mon, 16 Dec 2019 18:46:24 +0100
+Message-Id: <20191216174855.421885798@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -45,34 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit 41ef3878203cd9218d92eaa07df4b85a2cb128fb ]
+[ Upstream commit 7f02ac77c768ba2bcdd0ce719c1fca0870ffe2fb ]
 
-In case of error, we return 0.
-This is spurious and not consistent with the other functions of the driver.
-Propagate the error code instead.
+The CEC specification requires that the Vendor ID (if any) is reported
+after a logical address was claimed.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This was never done, so add support for this.
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-max8997.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/cec/cec-adap.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-index db984d4bf9526..4cce5bd448f65 100644
---- a/drivers/rtc/rtc-max8997.c
-+++ b/drivers/rtc/rtc-max8997.c
-@@ -221,7 +221,7 @@ static int max8997_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
- 
- out:
- 	mutex_unlock(&info->lock);
--	return 0;
-+	return ret;
- }
- 
- static int max8997_rtc_stop_alarm(struct max8997_rtc_info *info)
+diff --git a/drivers/media/cec/cec-adap.c b/drivers/media/cec/cec-adap.c
+index f8a808d45034e..27e57915eb4d1 100644
+--- a/drivers/media/cec/cec-adap.c
++++ b/drivers/media/cec/cec-adap.c
+@@ -1403,6 +1403,13 @@ configured:
+ 			las->log_addr[i],
+ 			cec_phys_addr_exp(adap->phys_addr));
+ 		cec_transmit_msg_fh(adap, &msg, NULL, false);
++
++		/* Report Vendor ID */
++		if (adap->log_addrs.vendor_id != CEC_VENDOR_ID_NONE) {
++			cec_msg_device_vendor_id(&msg,
++						 adap->log_addrs.vendor_id);
++			cec_transmit_msg_fh(adap, &msg, NULL, false);
++		}
+ 	}
+ 	adap->kthread_config = NULL;
+ 	complete(&adap->config_completion);
 -- 
 2.20.1
 
