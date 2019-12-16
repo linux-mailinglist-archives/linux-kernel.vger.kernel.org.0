@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03C571202DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:46:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9848F1202D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:42:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727494AbfLPKpg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:45:36 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:49178 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727099AbfLPKpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:45:36 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D9DA3F80D36F74ABAD7E;
-        Mon, 16 Dec 2019 18:45:33 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 16 Dec 2019 18:45:25 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <acme@redhat.com>, <jolsa@redhat.com>
-CC:     <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
-Subject: [PATCH] perf c2c: remove unneeded semicolon
-Date:   Mon, 16 Dec 2019 18:42:09 +0800
-Message-ID: <20191216104209.2818-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727511AbfLPKmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:42:51 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37973 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727391AbfLPKmv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:42:51 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u2so6132159wmc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:42:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=++Lt5Fr+RwIy1Ndr73jFO/gA9fjeqgMoPVWGoy6+iBA=;
+        b=hIqxrVZIYiC6WKAtC1ImBqJ2ksj72SS90RjWVGpzSu+WVWxOxXjy5t8owPEiX8d9F/
+         fRxEgPEdq1nGU5o228ROMHVcnbwXhyqghCoiNMO8dfnatxvmBl2WHHL2JZrvrg8QOizZ
+         9yc+T6QudxtwpsoQ1O5EwLFzh8UumMtaAGar/nq8jwvagrSqVrCbaOa8mV5WrWSvltPB
+         whlx7Qr1zRqf+wzhGbNSgnrBbjQza9N4zXxkPfca068hdfr4zH1Ddao77q0x6KInu4ml
+         W9TsGVbyEFMTOPf2Q9TJAVwyXEoI+nSdJkEl3It2ulu+t5aLcfjp13dB1vipbXSxTVpo
+         pQtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=++Lt5Fr+RwIy1Ndr73jFO/gA9fjeqgMoPVWGoy6+iBA=;
+        b=enEjPUb21f1iQkddx71mrFmLlHqaZgNSFmYtZytM5RKt1R89udeSurRb635FREx7In
+         4hW43cY3Xcv3CTugmljpBThntC1UTi+rFmY5Up+3QDH2SdMs/GLwv3mAFzxbn1YZOprw
+         IoK+rF7N+F7fI3clWFyq6M9gHdyRxGe6gouBOK33l9S5F9DDlk/dyvFeKHufQrubwXtg
+         tezuOssbjICY1tj0yvaliZlbi2/Fyqrr+UhVjHkblWPePFFooY8I6rza9uJcbO5adj8j
+         /SQlNkm+Y9OO3TG6TdM7OlFFZAoos8MvInH+Q3M6gQigRj3sAt6CfiMmG/437AQXKhLg
+         v6Yw==
+X-Gm-Message-State: APjAAAVMtY+WsHntqeguhQ8zHr8IiBJlOJ1rGyZ/zxg67q6y+iLUXlfo
+        JxQ4iyR3xXNwbKExr6a7DkSDRJ/jwIA=
+X-Google-Smtp-Source: APXvYqzzwkX1ps0/zgn1aMQHOpmA2TSJ2eZ63E3HwGB4lr0SQVll7z6EkkJ2AHAdRx3f+aHoIWg9TQ==
+X-Received: by 2002:a1c:407:: with SMTP id 7mr28746768wme.29.1576492968976;
+        Mon, 16 Dec 2019 02:42:48 -0800 (PST)
+Received: from dell ([2.27.35.132])
+        by smtp.gmail.com with ESMTPSA id y20sm19628749wmi.25.2019.12.16.02.42.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 02:42:48 -0800 (PST)
+Date:   Mon, 16 Dec 2019 10:42:48 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Stephan Gerhold <stephan@gerhold.net>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: ab8500: Document AB8505 bindings
+Message-ID: <20191216104248.GE3601@dell>
+References: <20191117221053.278415-1-stephan@gerhold.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191117221053.278415-1-stephan@gerhold.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
+On Sun, 17 Nov 2019, Stephan Gerhold wrote:
 
-./tools/perf/builtin-c2c.c:1706:2-3: Unneeded semicolon
-./tools/perf/builtin-c2c.c:1922:2-3: Unneeded semicolon
-./tools/perf/builtin-c2c.c:2948:2-3: Unneeded semicolon
+> AB8505 can now be configured from the device tree.
+> The configuration is almost identical to AB8500, so just add a note
+> for the nodes/compatibles that differ between the two revisions.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+> ---
+>  Documentation/devicetree/bindings/mfd/ab8500.txt | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- tools/perf/builtin-c2c.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Applied, thanks.
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index e69f449..545f1f9 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -1703,7 +1703,7 @@ static struct c2c_dimension *get_dimension(const char *name)
- 
- 		if (!strcmp(dim->name, name))
- 			return dim;
--	};
-+	}
- 
- 	return NULL;
- }
-@@ -1919,7 +1919,7 @@ static bool he__display(struct hist_entry *he, struct c2c_stats *stats)
- 		FILTER_HITM(tot_hitm);
- 	default:
- 		break;
--	};
-+	}
- 
- #undef FILTER_HITM
- 
-@@ -2945,7 +2945,7 @@ static int perf_c2c__record(int argc, const char **argv)
- 
- 		rec_argv[i++] = "-e";
- 		rec_argv[i++] = perf_mem_events__name(j);
--	};
-+	}
- 
- 	if (all_user)
- 		rec_argv[i++] = "--all-user";
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
