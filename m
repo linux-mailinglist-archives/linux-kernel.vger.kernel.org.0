@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1A68121924
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFBD12195C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfLPRw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44216 "EHLO mail.kernel.org"
+        id S1727289AbfLPStt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726734AbfLPRw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:26 -0500
+        id S1727491AbfLPRwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 995362166E;
-        Mon, 16 Dec 2019 17:52:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75F1F21582;
+        Mon, 16 Dec 2019 17:52:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518746;
-        bh=cZRXYZr3dnqdd2ZANv1oCOypDbcNrsP6ksZp+LUmUVU=;
+        s=default; t=1576518750;
+        bh=+b85Q3IuwN2B1SvKEht/4LqRT39WLKgJ77aDG63+KuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e5DAQhB1lCE1PQSJBd2cVVWhjrYqF+PDTw0v5GCnxNfLfwvBRt6fZsrSQ03DQme/S
-         8cn1byg90qOcY1aLAhKXbF2g4yS3pYInIq5/gaHYmW3SPNS5Pxf/iK90LKzEqIDSwQ
-         YAJUkr/vlwIf3sy1JHa+i3TnYmJCKjYkP1iPwke0=
+        b=XzJV+E51lpY9EFm2t0IpItc0htt0C+gAQBHbAAXyiM7a2gF/r8fLBj106ib3/IOUa
+         YtUdmR/x/0QfN1kcOf3oTbGTAyEcmq9gOAyCrbx8oXEKvw7qPWxrYtzicYX6Q/HVIn
+         FzgaNDQZ4IQe9Y/jKajY9cr8V6AgLUfjaoDJv8v0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng-Yi Chiang <cychiang@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
+        stable@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 048/267] regulator: Fix return value of _set_load() stub
-Date:   Mon, 16 Dec 2019 18:46:14 +0100
-Message-Id: <20191216174853.876135512@linuxfoundation.org>
+Subject: [PATCH 4.14 050/267] iomap: sub-block dio needs to zeroout beyond EOF
+Date:   Mon, 16 Dec 2019 18:46:16 +0100
+Message-Id: <20191216174854.051108610@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -45,37 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Brown <broonie@kernel.org>
+From: Dave Chinner <dchinner@redhat.com>
 
-[ Upstream commit f1abf67217de91f5cd3c757ae857632ca565099a ]
+[ Upstream commit b450672fb66b4a991a5b55ee24209ac7ae7690ce ]
 
-The stub implementation of _set_load() returns a mode value which is
-within the bounds of valid return codes for success (the documentation
-just says that failures are negative error codes) but not sensible or
-what the actual implementation does.  Fix it to just return 0.
+If we are doing sub-block dio that extends EOF, we need to zero
+the unused tail of the block to initialise the data in it it. If we
+do not zero the tail of the block, then an immediate mmap read of
+the EOF block will expose stale data beyond EOF to userspace. Found
+with fsx running sub-block DIO sizes vs MAPREAD/MAPWRITE operations.
 
-Reported-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fix this by detecting if the end of the DIO write is beyond EOF
+and zeroing the tail if necessary.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/regulator/consumer.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/iomap.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 25602afd48447..f3f76051e8b00 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -508,7 +508,7 @@ static inline int regulator_get_error_flags(struct regulator *regulator,
+diff --git a/fs/iomap.c b/fs/iomap.c
+index 467d98bf70542..1cf160ced0d46 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -941,7 +941,14 @@ iomap_dio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 		dio->submit.cookie = submit_bio(bio);
+ 	} while (nr_pages);
  
- static inline int regulator_set_load(struct regulator *regulator, int load_uA)
- {
--	return REGULATOR_MODE_NORMAL;
-+	return 0;
- }
- 
- static inline int regulator_allow_bypass(struct regulator *regulator,
+-	if (need_zeroout) {
++	/*
++	 * We need to zeroout the tail of a sub-block write if the extent type
++	 * requires zeroing or the write extends beyond EOF. If we don't zero
++	 * the block tail in the latter case, we can expose stale data via mmap
++	 * reads of the EOF block.
++	 */
++	if (need_zeroout ||
++	    ((dio->flags & IOMAP_DIO_WRITE) && pos >= i_size_read(inode))) {
+ 		/* zero out from the end of the write to the end of the block */
+ 		pad = pos & (fs_block_size - 1);
+ 		if (pad)
 -- 
 2.20.1
 
