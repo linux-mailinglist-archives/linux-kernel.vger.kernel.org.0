@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0691E121687
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E54AB1213F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731301AbfLPS3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59678 "EHLO mail.kernel.org"
+        id S1729825AbfLPSGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:06:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731097AbfLPSN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:13:27 -0500
+        id S1729818AbfLPSGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:06:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8646721582;
-        Mon, 16 Dec 2019 18:13:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59C7E206E0;
+        Mon, 16 Dec 2019 18:06:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520006;
-        bh=oh5IHH2oVaapGKTkdsmXeNccwkFKjNXFbOdFd0qesaw=;
+        s=default; t=1576519591;
+        bh=pLnYl+1UmRwuAdwhBN5NkuD9Nu/Q41VUUiohA3ym19g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mAvp6bLr7LeucXX7MXH0cdTKRf1dkfo2TTlDcz2SKfanRJ2hRB3orFMP3TWnDJdOg
-         JOa6AvKElQlmIOOSSsiI1i7csXRZCBOxT41bG9OlCYQgrWh1olRwefzwqGo5CCNuj3
-         S3agxZLVhka/bZkWTipREACXFlv9R9rQZtBd7MlA=
+        b=buoNUAzOCQ5Feggr/Prarb9YBKzAfGg5xiLbDqerhYcLP81pjTwxZvleWQ/kW7vpp
+         cez0T9Mqps5Gv7vQfl66ziVGX+DK395Borr89cAx4UxJDpEm9Ih2zL0RHCQvjZXrIL
+         dsyWvYf3abvVPhbDT7RDFtZFfuZ7SrfqhMWW7IEA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
-        Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Anders Roxell <anders.roxell@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 156/180] scsi: qla2xxx: Fix SRB leak on switch command timeout
+Subject: [PATCH 4.19 128/140] regulator: 88pm800: fix warning same module names
 Date:   Mon, 16 Dec 2019 18:49:56 +0100
-Message-Id: <20191216174844.785440139@linuxfoundation.org>
+Message-Id: <20191216174828.185156004@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,159 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit af2a0c51b1205327f55a7e82e530403ae1d42cbb ]
+[ Upstream commit 6f10419187d0d5fe395e2a2f2a64370961bf02a3 ]
 
-when GPSC/GPDB switch command fails, driver just returns without doing a
-proper cleanup. This patch fixes this memory leak by calling sp->free() in
-the error path.
+When building with CONFIG_MFD_88PM800 and CONFIG_REGULATOR_88PM800
+enabled as loadable modules, we see the following warning:
 
-Link: https://lore.kernel.org/r/20191105150657.8092-4-hmadhani@marvell.com
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+warning: same module names found:
+  drivers/regulator/88pm800.ko
+  drivers/mfd/88pm800.ko
+
+Rework so that the file is named 88pm800-regulator.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_gs.c   |  2 +-
- drivers/scsi/qla2xxx/qla_init.c | 11 +++++------
- drivers/scsi/qla2xxx/qla_mbx.c  |  4 ----
- drivers/scsi/qla2xxx/qla_mid.c  | 11 ++++-------
- drivers/scsi/qla2xxx/qla_os.c   |  7 ++++++-
- 5 files changed, 16 insertions(+), 19 deletions(-)
+ drivers/regulator/{88pm800.c => 88pm800-regulator.c} | 0
+ drivers/regulator/Makefile                           | 2 +-
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename drivers/regulator/{88pm800.c => 88pm800-regulator.c} (100%)
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index dec521d726d91..97ca95cd174bc 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3029,7 +3029,7 @@ static void qla24xx_async_gpsc_sp_done(void *s, int res)
- 	fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
+diff --git a/drivers/regulator/88pm800.c b/drivers/regulator/88pm800-regulator.c
+similarity index 100%
+rename from drivers/regulator/88pm800.c
+rename to drivers/regulator/88pm800-regulator.c
+diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+index 801d9a34a2037..bba9c4851faf3 100644
+--- a/drivers/regulator/Makefile
++++ b/drivers/regulator/Makefile
+@@ -11,7 +11,7 @@ obj-$(CONFIG_REGULATOR_VIRTUAL_CONSUMER) += virtual.o
+ obj-$(CONFIG_REGULATOR_USERSPACE_CONSUMER) += userspace-consumer.o
  
- 	if (res == QLA_FUNCTION_TIMEOUT)
--		return;
-+		goto done;
- 
- 	if (res == (DID_ERROR << 16)) {
- 		/* entry status error */
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index d4e381f81997b..b84afef37f70b 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1169,13 +1169,11 @@ void qla24xx_async_gpdb_sp_done(void *s, int res)
- 	    "Async done-%s res %x, WWPN %8phC mb[1]=%x mb[2]=%x \n",
- 	    sp->name, res, fcport->port_name, mb[1], mb[2]);
- 
--	if (res == QLA_FUNCTION_TIMEOUT) {
--		dma_pool_free(sp->vha->hw->s_dma_pool, sp->u.iocb_cmd.u.mbx.in,
--			sp->u.iocb_cmd.u.mbx.in_dma);
--		return;
--	}
--
- 	fcport->flags &= ~(FCF_ASYNC_SENT | FCF_ASYNC_ACTIVE);
-+
-+	if (res == QLA_FUNCTION_TIMEOUT)
-+		goto done;
-+
- 	memset(&ea, 0, sizeof(ea));
- 	ea.event = FCME_GPDB_DONE;
- 	ea.fcport = fcport;
-@@ -1183,6 +1181,7 @@ void qla24xx_async_gpdb_sp_done(void *s, int res)
- 
- 	qla2x00_fcport_event_handler(vha, &ea);
- 
-+done:
- 	dma_pool_free(ha->s_dma_pool, sp->u.iocb_cmd.u.mbx.in,
- 		sp->u.iocb_cmd.u.mbx.in_dma);
- 
-diff --git a/drivers/scsi/qla2xxx/qla_mbx.c b/drivers/scsi/qla2xxx/qla_mbx.c
-index 45548628c6f3e..8601e63e4698f 100644
---- a/drivers/scsi/qla2xxx/qla_mbx.c
-+++ b/drivers/scsi/qla2xxx/qla_mbx.c
-@@ -6285,17 +6285,13 @@ int qla24xx_send_mb_cmd(struct scsi_qla_host *vha, mbx_cmd_t *mcp)
- 	case  QLA_SUCCESS:
- 		ql_dbg(ql_dbg_mbx, vha, 0x119d, "%s: %s done.\n",
- 		    __func__, sp->name);
--		sp->free(sp);
- 		break;
- 	default:
- 		ql_dbg(ql_dbg_mbx, vha, 0x119e, "%s: %s Failed. %x.\n",
- 		    __func__, sp->name, rval);
--		sp->free(sp);
- 		break;
- 	}
- 
--	return rval;
--
- done_free_sp:
- 	sp->free(sp);
- done:
-diff --git a/drivers/scsi/qla2xxx/qla_mid.c b/drivers/scsi/qla2xxx/qla_mid.c
-index b2977e49356ba..0341dc0e06510 100644
---- a/drivers/scsi/qla2xxx/qla_mid.c
-+++ b/drivers/scsi/qla2xxx/qla_mid.c
-@@ -934,7 +934,7 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
- 
- 	sp = qla2x00_get_sp(base_vha, NULL, GFP_KERNEL);
- 	if (!sp)
--		goto done;
-+		return rval;
- 
- 	sp->type = SRB_CTRL_VP;
- 	sp->name = "ctrl_vp";
-@@ -950,7 +950,7 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
- 		ql_dbg(ql_dbg_async, vha, 0xffff,
- 		    "%s: %s Failed submission. %x.\n",
- 		    __func__, sp->name, rval);
--		goto done_free_sp;
-+		goto done;
- 	}
- 
- 	ql_dbg(ql_dbg_vport, vha, 0x113f, "%s hndl %x submitted\n",
-@@ -968,16 +968,13 @@ int qla24xx_control_vp(scsi_qla_host_t *vha, int cmd)
- 	case QLA_SUCCESS:
- 		ql_dbg(ql_dbg_vport, vha, 0xffff, "%s: %s done.\n",
- 		    __func__, sp->name);
--		goto done_free_sp;
-+		break;
- 	default:
- 		ql_dbg(ql_dbg_vport, vha, 0xffff, "%s: %s Failed. %x.\n",
- 		    __func__, sp->name, rval);
--		goto done_free_sp;
-+		break;
- 	}
- done:
--	return rval;
--
--done_free_sp:
- 	sp->free(sp);
- 	return rval;
- }
-diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
-index 0f51387ceebdf..d2e7a4e7b3a9a 100644
---- a/drivers/scsi/qla2xxx/qla_os.c
-+++ b/drivers/scsi/qla2xxx/qla_os.c
-@@ -1030,7 +1030,7 @@ qla2xxx_mqueuecommand(struct Scsi_Host *host, struct scsi_cmnd *cmd,
- 		ql_dbg(ql_dbg_io + ql_dbg_verbose, vha, 0x3078,
- 		    "Start scsi failed rval=%d for cmd=%p.\n", rval, cmd);
- 		if (rval == QLA_INTERFACE_ERROR)
--			goto qc24_fail_command;
-+			goto qc24_free_sp_fail_command;
- 		goto qc24_host_busy_free_sp;
- 	}
- 
-@@ -1047,6 +1047,11 @@ qc24_host_busy:
- qc24_target_busy:
- 	return SCSI_MLQUEUE_TARGET_BUSY;
- 
-+qc24_free_sp_fail_command:
-+	sp->free(sp);
-+	CMD_SP(cmd) = NULL;
-+	qla2xxx_rel_qpair_sp(sp->qpair, sp);
-+
- qc24_fail_command:
- 	cmd->scsi_done(cmd);
- 
+ obj-$(CONFIG_REGULATOR_88PG86X) += 88pg86x.o
+-obj-$(CONFIG_REGULATOR_88PM800) += 88pm800.o
++obj-$(CONFIG_REGULATOR_88PM800) += 88pm800-regulator.o
+ obj-$(CONFIG_REGULATOR_88PM8607) += 88pm8607.o
+ obj-$(CONFIG_REGULATOR_CPCAP) += cpcap-regulator.o
+ obj-$(CONFIG_REGULATOR_AAT2870) += aat2870-regulator.o
 -- 
 2.20.1
 
