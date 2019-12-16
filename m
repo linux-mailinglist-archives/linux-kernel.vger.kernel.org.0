@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0759712136E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BF21215E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfLPSBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:01:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36694 "EHLO mail.kernel.org"
+        id S1731950AbfLPSZO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:25:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729175AbfLPSBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:01:34 -0500
+        id S1731642AbfLPSSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:18:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4AAC207FF;
-        Mon, 16 Dec 2019 18:01:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 485C7207FF;
+        Mon, 16 Dec 2019 18:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519294;
-        bh=hvjL24Mlxa/zyxzP4Llii51+D5DmhlYB/3tFpUR1fiU=;
+        s=default; t=1576520300;
+        bh=/NHO/ohMsAOzW+98SBxccfqI4V7e9Zzwpgpq+pT90G4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lwy+XBIuDBOunLEKo+WRQU5u0qI1Uuiu6VYGYtKPC9hW0j0JZ4IFRsilp3IKPaNkJ
-         Yj6/B0U9W7ukDaKzaJ65AtgdSVkUf2lDeikgOEsHlvZIbqIE9LsSRuN4U7/IjFxCsc
-         /6Z4ZLEwaG4PzJbc+Mp+vQkUzaF1u9S713jsdwBk=
+        b=GW0QUta6TdXeNEE4r2HluQRc0MSMQekMngm3XrWLqyv7m2lMgekc7B5EvyEcgIQHi
+         8LV/vBRz+XUL+V3jW9YnDEk8zdacIZVdDw4CSfvNJ5mmXaBzL1ubyIpOzwUPKpVeen
+         lAnoosWy3KdNLRAlmf/Ur+VWd4DbLZTVNxUPzuvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Greg Kurz <groug@kaod.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 228/267] powerpc/xive: Prevent page fault issues in the machine crash handler
-Date:   Mon, 16 Dec 2019 18:49:14 +0100
-Message-Id: <20191216174915.047602027@linuxfoundation.org>
+        Francois Buergisser <fbuergisser@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 5.4 099/177] media: hantro: Fix picture order count table enable
+Date:   Mon, 16 Dec 2019 18:49:15 +0100
+Message-Id: <20191216174840.911533538@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +48,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cédric Le Goater <clg@kaod.org>
+From: Francois Buergisser <fbuergisser@chromium.org>
 
-commit 1ca3dec2b2dff9d286ce6cd64108bda0e98f9710 upstream.
+commit 58c93a548b0248fad6437f8c8921f9b031c3892a upstream.
 
-When the machine crash handler is invoked, all interrupts are masked
-but interrupts which have not been started yet do not have an ESB page
-mapped in the Linux address space. This crashes the 'crash kexec'
-sequence on sPAPR guests.
+The picture order count table only makes sense for profiles
+higher than Baseline. This is confirmed by the H.264 specification
+(See 8.2.1 Decoding process for picture order count), which
+clarifies how POC are used for features not present in Baseline.
 
-To fix, force the mapping of the ESB page when an interrupt is being
-mapped in the Linux IRQ number space. This is done by setting the
-initial state of the interrupt to OFF which is not necessarily the
-case on PowerNV.
+"""
+Picture order counts are used to determine initial picture orderings
+for reference pictures in the decoding of B slices, to represent picture
+order differences between frames or fields for motion vector derivation
+in temporal direct mode, for implicit mode weighted prediction in B slices,
+and for decoder conformance checking.
+"""
 
-Fixes: 243e25112d06 ("powerpc/xive: Native exploitation of the XIVE interrupt controller")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191031063100.3864-1-clg@kaod.org
+As a side note, this change matches various vendors downstream codebases,
+including ChromiumOS and IMX VPU libraries.
+
+Fixes: dea0a82f3d22 ("media: hantro: Add support for H264 decoding on G1")
+Signed-off-by: Francois Buergisser <fbuergisser@chromium.org>
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+Tested-by: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: <stable@vger.kernel.org>      # for v5.4 and up
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/sysdev/xive/common.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/staging/media/hantro/hantro_g1_h264_dec.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -967,6 +967,15 @@ static int xive_irq_alloc_data(unsigned
- 	xd->target = XIVE_INVALID_TARGET;
- 	irq_set_handler_data(virq, xd);
+--- a/drivers/staging/media/hantro/hantro_g1_h264_dec.c
++++ b/drivers/staging/media/hantro/hantro_g1_h264_dec.c
+@@ -34,9 +34,11 @@ static void set_params(struct hantro_ctx
+ 	reg = G1_REG_DEC_CTRL0_DEC_AXI_WR_ID(0x0);
+ 	if (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD)
+ 		reg |= G1_REG_DEC_CTRL0_SEQ_MBAFF_E;
+-	reg |= G1_REG_DEC_CTRL0_PICORD_COUNT_E;
+-	if (sps->profile_idc > 66 && dec_param->nal_ref_idc)
+-		reg |= G1_REG_DEC_CTRL0_WRITE_MVS_E;
++	if (sps->profile_idc > 66) {
++		reg |= G1_REG_DEC_CTRL0_PICORD_COUNT_E;
++		if (dec_param->nal_ref_idc)
++			reg |= G1_REG_DEC_CTRL0_WRITE_MVS_E;
++	}
  
-+	/*
-+	 * Turn OFF by default the interrupt being mapped. A side
-+	 * effect of this check is the mapping the ESB page of the
-+	 * interrupt in the Linux address space. This prevents page
-+	 * fault issues in the crash handler which masks all
-+	 * interrupts.
-+	 */
-+	xive_esb_read(xd, XIVE_ESB_SET_PQ_01);
-+
- 	return 0;
- }
- 
+ 	if (!(sps->flags & V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY) &&
+ 	    (sps->flags & V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD ||
 
 
