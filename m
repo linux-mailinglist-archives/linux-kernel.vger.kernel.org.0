@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA3E1217CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7F58121875
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:44:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfLPSE0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41602 "EHLO mail.kernel.org"
+        id S1728926AbfLPSng (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:43:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729635AbfLPSEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:21 -0500
+        id S1728742AbfLPR7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:59:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45F2720733;
-        Mon, 16 Dec 2019 18:04:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13CCD205ED;
+        Mon, 16 Dec 2019 17:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519460;
-        bh=cgjz6Wv8tggC67K/BxQoYWo0M/mYdFUOGMyW4ou0Hjs=;
+        s=default; t=1576519158;
+        bh=zyNlqw6jJ6qg9js0GhHFIqJdmR13Z9w1iavST+dBeFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NsAH64G9wPFfnOPzAPAyku9yRHx9rz+UkpHb/F0UtItVii7uNISoq14si5plHZot4
-         Z6hY3Txg2adUE1ti6x/PNBQU1194GajJqinga4V5Arz4mq2rl8JYMFD8HzNP1QqDmt
-         OVagynIkgKO5uyR1ry8kM6YaoBHZHWHwAlKK5SKU=
+        b=UJy27Pbdr1lxYjK26OV601Zjr3WgES6izgn+T6K29Fmm3+lRGy+SsyglNe9JAJNFR
+         LRl76WDZ/RigeVdI0dEmWgYQHbAVo0t6Acht/NmVaSRUpg+OVmOyReiDHd26NnWiyV
+         cD+Ekmwj8kkcq78BeGazBiS7L5KLHUxygLwdh7qI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>,
         "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 075/140] ACPI: bus: Fix NULL pointer check in acpi_bus_get_private_data()
-Date:   Mon, 16 Dec 2019 18:49:03 +0100
-Message-Id: <20191216174807.918859159@linuxfoundation.org>
+Subject: [PATCH 4.14 218/267] ACPI: bus: Fix NULL pointer check in acpi_bus_get_private_data()
+Date:   Mon, 16 Dec 2019 18:49:04 +0100
+Message-Id: <20191216174914.501153972@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -89,7 +89,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/acpi/bus.c
 +++ b/drivers/acpi/bus.c
-@@ -166,7 +166,7 @@ int acpi_bus_get_private_data(acpi_handl
+@@ -196,7 +196,7 @@ int acpi_bus_get_private_data(acpi_handl
  {
  	acpi_status status;
  
