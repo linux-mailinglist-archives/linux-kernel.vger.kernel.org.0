@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69A9F121888
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D3821217EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726616AbfLPSoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:44:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58414 "EHLO mail.kernel.org"
+        id S1729552AbfLPSDq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728477AbfLPR6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:58:33 -0500
+        id S1729541AbfLPSDm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21AE02166E;
-        Mon, 16 Dec 2019 17:58:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09B2620726;
+        Mon, 16 Dec 2019 18:03:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519112;
-        bh=0j3ZluLBGgo15F+76C2SbklVfa3ZlRGGW1Y6cDHAVnc=;
+        s=default; t=1576519421;
+        bh=I1pM00sAx1NXWrBCRm+Y2c8vbUDiPb+MHsbOUbAf5Rk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gVHuIkBvjJvQ3mvNtTGu/LB6lwx/J/0d4am7ffOXe8SUMTn54hY0qJ0PvmCcbhZks
-         6J0Ex2lFH2V6+yW/ui1t2S9ppqrW4rjNsoW6JxElqwZOm9qTrUIhhPnX/ZmtnGj+tY
-         9ZyomrVYiPz+4iIT0cEzReg7GD2sRBKqOfeUTMeQ=
+        b=ad4xR9Pidmdih2o77bMF8+X7EFxMpH31wvlSMBpcF7+QwRmYCJdyYHRdX2hV7qQSU
+         CHF/XJMk9pPtfQq/BHtekyn0zDeRoWuRVEsK3zZMtNPZMJpteOoCi7vGW8BtltmxQP
+         j7xgAR7E5OT59bqVhzFEfcLUKQoOtG0UdmABo3Rg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Marcin Pawlowski <mpawlowski@fb.com>,
-        "Williams, Gerald S" <gerald.s.williams@intel.com>
-Subject: [PATCH 4.14 201/267] workqueue: Fix spurious sanity check failures in destroy_workqueue()
-Date:   Mon, 16 Dec 2019 18:48:47 +0100
-Message-Id: <20191216174913.544913052@linuxfoundation.org>
+        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.19 060/140] cgroup: pids: use atomic64_t for pids->limit
+Date:   Mon, 16 Dec 2019 18:48:48 +0100
+Message-Id: <20191216174804.341263986@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,83 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Aleksa Sarai <cyphar@cyphar.com>
 
-commit def98c84b6cdf2eeea19ec5736e90e316df5206b upstream.
+commit a713af394cf382a30dd28a1015cbe572f1b9ca75 upstream.
 
-Before actually destrying a workqueue, destroy_workqueue() checks
-whether it's actually idle.  If it isn't, it prints out a bunch of
-warning messages and leaves the workqueue dangling.  It unfortunately
-has a couple issues.
+Because pids->limit can be changed concurrently (but we don't want to
+take a lock because it would be needlessly expensive), use atomic64_ts
+instead.
 
-* Mayday list queueing increments pwq's refcnts which gets detected as
-  busy and fails the sanity checks.  However, because mayday list
-  queueing is asynchronous, this condition can happen without any
-  actual work items left in the workqueue.
-
-* Sanity check failure leaves the sysfs interface behind too which can
-  lead to init failure of newer instances of the workqueue.
-
-This patch fixes the above two by
-
-* If a workqueue has a rescuer, disable and kill the rescuer before
-  sanity checks.  Disabling and killing is guaranteed to flush the
-  existing mayday list.
-
-* Remove sysfs interface before sanity checks.
-
+Fixes: commit 49b786ea146f ("cgroup: implement the PIDs subsystem")
+Cc: stable@vger.kernel.org # v4.3+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Marcin Pawlowski <mpawlowski@fb.com>
-Reported-by: "Williams, Gerald S" <gerald.s.williams@intel.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/workqueue.c |   24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ kernel/cgroup/pids.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4084,9 +4084,28 @@ void destroy_workqueue(struct workqueue_
- 	struct pool_workqueue *pwq;
- 	int node;
+--- a/kernel/cgroup/pids.c
++++ b/kernel/cgroup/pids.c
+@@ -48,7 +48,7 @@ struct pids_cgroup {
+ 	 * %PIDS_MAX = (%PID_MAX_LIMIT + 1).
+ 	 */
+ 	atomic64_t			counter;
+-	int64_t				limit;
++	atomic64_t			limit;
  
-+	/*
-+	 * Remove it from sysfs first so that sanity check failure doesn't
-+	 * lead to sysfs name conflicts.
-+	 */
-+	workqueue_sysfs_unregister(wq);
-+
- 	/* drain it before proceeding with destruction */
- 	drain_workqueue(wq);
+ 	/* Handle for "pids.events" */
+ 	struct cgroup_file		events_file;
+@@ -76,8 +76,8 @@ pids_css_alloc(struct cgroup_subsys_stat
+ 	if (!pids)
+ 		return ERR_PTR(-ENOMEM);
  
-+	/* kill rescuer, if sanity checks fail, leave it w/o rescuer */
-+	if (wq->rescuer) {
-+		struct worker *rescuer = wq->rescuer;
-+
-+		/* this prevents new queueing */
-+		spin_lock_irq(&wq_mayday_lock);
-+		wq->rescuer = NULL;
-+		spin_unlock_irq(&wq_mayday_lock);
-+
-+		/* rescuer will empty maydays list before exiting */
-+		kthread_stop(rescuer->task);
-+	}
-+
- 	/* sanity checks */
- 	mutex_lock(&wq->mutex);
- 	for_each_pwq(pwq, wq) {
-@@ -4118,11 +4137,6 @@ void destroy_workqueue(struct workqueue_
- 	list_del_rcu(&wq->list);
- 	mutex_unlock(&wq_pool_mutex);
+-	pids->limit = PIDS_MAX;
+ 	atomic64_set(&pids->counter, 0);
++	atomic64_set(&pids->limit, PIDS_MAX);
+ 	atomic64_set(&pids->events_limit, 0);
+ 	return &pids->css;
+ }
+@@ -149,13 +149,14 @@ static int pids_try_charge(struct pids_c
  
--	workqueue_sysfs_unregister(wq);
--
--	if (wq->rescuer)
--		kthread_stop(wq->rescuer->task);
--
- 	if (!(wq->flags & WQ_UNBOUND)) {
+ 	for (p = pids; parent_pids(p); p = parent_pids(p)) {
+ 		int64_t new = atomic64_add_return(num, &p->counter);
++		int64_t limit = atomic64_read(&p->limit);
+ 
  		/*
- 		 * The base ref is never dropped on per-cpu pwqs.  Directly
+ 		 * Since new is capped to the maximum number of pid_t, if
+ 		 * p->limit is %PIDS_MAX then we know that this test will never
+ 		 * fail.
+ 		 */
+-		if (new > p->limit)
++		if (new > limit)
+ 			goto revert;
+ 	}
+ 
+@@ -280,7 +281,7 @@ set_limit:
+ 	 * Limit updates don't need to be mutex'd, since it isn't
+ 	 * critical that any racing fork()s follow the new limit.
+ 	 */
+-	pids->limit = limit;
++	atomic64_set(&pids->limit, limit);
+ 	return nbytes;
+ }
+ 
+@@ -288,7 +289,7 @@ static int pids_max_show(struct seq_file
+ {
+ 	struct cgroup_subsys_state *css = seq_css(sf);
+ 	struct pids_cgroup *pids = css_pids(css);
+-	int64_t limit = pids->limit;
++	int64_t limit = atomic64_read(&pids->limit);
+ 
+ 	if (limit >= PIDS_MAX)
+ 		seq_printf(sf, "%s\n", PIDS_MAX_STR);
 
 
