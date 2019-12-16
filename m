@@ -2,81 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13280121703
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0D0E1216D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbfLPSdY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:33:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39216 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730458AbfLPSJl (ORCPT
+        id S1730605AbfLPScU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:32:20 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36868 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730363AbfLPSKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:09:41 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 2so6012736pfx.6
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 10:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc:user-agent:date;
-        bh=uTZ9jD6XcU5csDtmDm0A4lEi/ET7Er5jr9WSb1EMelk=;
-        b=jyyXYbhQgJvFoH/gkE8wmpD3skyYKQ7NOFesPHXGsZrxJc9FUF39kXCisPYSVTzGH5
-         XfprSHFhYdHkCCIcBitR0qWWWt/V9TEhaHrbqEckar9UuCp+Jsl7qVmxq8BZtEsNxyir
-         KSiD+A7sa97Cd257ghc22sKZBvGAGw9UYoEQM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc
-         :user-agent:date;
-        bh=uTZ9jD6XcU5csDtmDm0A4lEi/ET7Er5jr9WSb1EMelk=;
-        b=VINT1TMjN8+BcQklHQdxAOqiZ2I1Jy1xietNB0OHcxerQLA6RxIYyKi1YcguRppxWZ
-         6f1jr2fvSxIv28ONjxTprCHDuuF+Y2OHJAtXek+pCml18aSxnUfk2EUvYejPuALNKgxI
-         lktDohXycE5LBTAt7zumocj7XSsJTodpZOSO43ymOz1qm8T8/2NKzMa5u+dE6wsg+Sjm
-         7Mm3UXTqAnioTaBt+q447mYyXUwNx3zim+xTcFjf3uA54fkqnOAwej81VEyJwsEuti+y
-         tzRq0d9IPKToz0+YVtwd9VH8QLQJPZmpcEDKPwIU9Mrk067/CdZxkHedrhk3GMR0mOKJ
-         GsaQ==
-X-Gm-Message-State: APjAAAXVAvobGfNh91tACL/L/8loUBU/a+OvUHyB4cI4lNktddWVbyIe
-        xJn91RkP61dgp+heUuOuAIAG+A==
-X-Google-Smtp-Source: APXvYqwgYd4Qk+VgNW5yogq7vFaECby6SdTTUamWheo+l1m4itfak+lUZHj4qp1Cai9JxJJVFmcP4w==
-X-Received: by 2002:a62:5202:: with SMTP id g2mr17177463pfb.43.1576519780253;
-        Mon, 16 Dec 2019 10:09:40 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id k23sm23348452pgg.7.2019.12.16.10.09.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 10:09:39 -0800 (PST)
-Message-ID: <5df7c863.1c69fb81.91ce4.37b3@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Mon, 16 Dec 2019 13:10:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576519823;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=h6VrGNpFemlDLaD9vxutvKkD8W8dnGU6FQoXLjmTtYc=;
+        b=Ur2FCRa5ldHn1bGSA7y8wOdn0rHqi03DYNEdOFWOMAdt4E92ljsXf979jxLw4fuFgUfIng
+        Uer9ueFsgrPzWI5WQ0Ju84psCGsaEIXQsB43WayNglhP++C8jTssYFGXInpUxoFG7O/RFM
+        U6O3mc686KtHaTZrwR8m7NAZ7X7i7u8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-172-hZe2nHW0NpqB8uv36jRMYQ-1; Mon, 16 Dec 2019 13:10:21 -0500
+X-MC-Unique: hZe2nHW0NpqB8uv36jRMYQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C0F91800D7B;
+        Mon, 16 Dec 2019 18:10:20 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.35])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 03A7D68863;
+        Mon, 16 Dec 2019 18:10:15 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 7F15F220A24; Mon, 16 Dec 2019 13:10:14 -0500 (EST)
+Date:   Mon, 16 Dec 2019 13:10:14 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 01/19] dax: remove block device dependencies
+Message-ID: <20191216181014.GA30106@redhat.com>
+References: <20190821175720.25901-1-vgoyal@redhat.com>
+ <20190821175720.25901-2-vgoyal@redhat.com>
+ <20190826115152.GA21051@infradead.org>
+ <20190827163828.GA6859@redhat.com>
+ <20190828065809.GA27426@infradead.org>
+ <20190828175843.GB912@redhat.com>
+ <20190828225322.GA7777@dread.disaster.area>
+ <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1576474742-23409-3-git-send-email-sanm@codeaurora.org>
-References: <1576474742-23409-1-git-send-email-sanm@codeaurora.org> <1576474742-23409-3-git-send-email-sanm@codeaurora.org>
-Subject: Re: [PATCH v3 2/2] dt-bindings: usb: qcom,dwc3: Add compatible for SC7180
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Dec 2019 10:09:38 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Sandeep Maheswaram (2019-12-15 21:39:02)
-> Add compatible for SC7180 in usb dwc3 bindings.
->=20
-> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> Acked-by: Rob Herring <robh@kernel.org>
-> ---
+On Wed, Aug 28, 2019 at 05:04:11PM -0700, Dan Williams wrote:
+> On Wed, Aug 28, 2019 at 3:53 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > On Wed, Aug 28, 2019 at 01:58:43PM -0400, Vivek Goyal wrote:
+> > > On Tue, Aug 27, 2019 at 11:58:09PM -0700, Christoph Hellwig wrote:
+> > > > On Tue, Aug 27, 2019 at 12:38:28PM -0400, Vivek Goyal wrote:
+> > > > > > For bdev_dax_pgoff
+> > > > > > I'd much rather have the partition offset if there is on in the daxdev
+> > > > > > somehow so that we can get rid of the block device entirely.
+> > > > >
+> > > > > IIUC, there is one block_device per partition while there is only one
+> > > > > dax_device for the whole disk. So we can't directly move bdev logical
+> > > > > offset into dax_device.
+> > > >
+> > > > Well, then we need to find a way to get partitions for dax devices,
+> > > > as we really should not expect a block device hiding behind a dax
+> > > > dev.  That is just a weird legacy assumption - block device need to
+> > > > layer on top of the dax device optionally.
+> > > >
+> > > > >
+> > > > > We probably could put this in "iomap" and leave it to filesystems to
+> > > > > report offset into dax_dev in iomap that way dax generic code does not
+> > > > > have to deal with it. But that probably will be a bigger change.
+> > > >
+> > > > And where would the file system get that information from?
+> > >
+> > > File system knows about block device, can it just call get_start_sect()
+> > > while filling iomap->addr. And this means we don't have to have
+> > > parition information in dax device. Will something like following work?
+> > > (Just a proof of concept patch).
+> > >
+> > >
+> > > ---
+> > >  drivers/dax/super.c |   11 +++++++++++
+> > >  fs/dax.c            |    6 +++---
+> > >  fs/ext4/inode.c     |    6 +++++-
+> > >  include/linux/dax.h |    1 +
+> > >  4 files changed, 20 insertions(+), 4 deletions(-)
+> > >
+> > > Index: rhvgoyal-linux/fs/ext4/inode.c
+> > > ===================================================================
+> > > --- rhvgoyal-linux.orig/fs/ext4/inode.c       2019-08-28 13:51:16.051937204 -0400
+> > > +++ rhvgoyal-linux/fs/ext4/inode.c    2019-08-28 13:51:44.453937204 -0400
+> > > @@ -3589,7 +3589,11 @@ retry:
+> > >                       WARN_ON_ONCE(1);
+> > >                       return -EIO;
+> > >               }
+> > > -             iomap->addr = (u64)map.m_pblk << blkbits;
+> > > +             if (IS_DAX(inode))
+> > > +                     iomap->addr = ((u64)map.m_pblk << blkbits) +
+> > > +                                   (get_start_sect(iomap->bdev) * 512);
+> > > +             else
+> > > +                     iomap->addr = (u64)map.m_pblk << blkbits;
+> >
+> > I'm not a fan of returning a physical device sector address from an
+> > interface where ever other user/caller expects this address to be a
+> > logical block address into the block device. It creates a landmine
+> > in the iomap API that callers may not be aware of and that's going
+> > to cause bugs. We're trying really hard to keep special case hacks
+> > like this out of the iomap infrastructure, so on those grounds alone
+> > I'd suggest this is a dead end approach.
+> >
+> > Hence I think that if the dax device needs a physical offset from
+> > the start of the block device the filesystem sits on, it should be
+> > set up at dax device instantiation time and so the filesystem/bdev
+> > never needs to be queried again for this information.
+> >
+> 
+> Agree. In retrospect it was my laziness in the dax-device
+> implementation to expect the block-device to be available.
+> 
+> It looks like fs_dax_get_by_bdev() is an intercept point where a
+> dax_device could be dynamically created to represent the subset range
+> indicated by the block-device partition. That would open up more
+> cleanup opportunities.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Hi Dan,
+
+After a long time I got time to look at it again. Want to work on this
+cleanup so that I can make progress with virtiofs DAX paches.
+
+I am not sure I understand the requirements fully. I see that right now
+dax_device is created per device and all block partitions refer to it. If
+we want to create one dax_device per partition, then it looks like this
+will be structured more along the lines how block layer handles disk and
+partitions. (One gendisk for disk and block_devices for partitions,
+including partition 0). That probably means state belong to whole device
+will be in common structure say dax_device_common, and per partition state
+will be in dax_device and dax_device can carry a pointer to
+dax_device_common.
+
+I am also not sure what does it mean to partition dax devices. How will
+partitions be exported to user space.
+
+Thanks
+Vivek
 
