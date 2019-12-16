@@ -2,100 +2,168 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC4F112020D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:11:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E00B4120213
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 11:14:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfLPKL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 05:11:27 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37060 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727099AbfLPKL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:11:27 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5C003AB98;
-        Mon, 16 Dec 2019 10:11:25 +0000 (UTC)
-Subject: Re: [PATCH] x86-64/entry: add instruction suffix to SYSRET
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <cbecab05-9e95-5dec-ef81-499617c153a6@suse.com>
- <08B92B44-CCA9-4B83-B9CC-F1601D44B73F@amacapital.net>
- <0053f606-f4f7-3951-f40b-b7bd08703590@suse.com>
- <CALCETrWHNunMzP1xHmOhvHG20_baoeXhNbCcEJgCgm5xzGM5Tw@mail.gmail.com>
- <ed9d8df6-0fe7-ca15-bab2-4d9cbbfe62f0@suse.com>
- <CALCETrXoK+6gNn=3_yZdkHScd=N-a2f_VPC-svkFfHVsiVusVw@mail.gmail.com>
-From:   Jan Beulich <jbeulich@suse.com>
-Message-ID: <62d9f87d-de55-3fb4-664d-d24897f4dd9b@suse.com>
-Date:   Mon, 16 Dec 2019 11:11:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727330AbfLPKN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 05:13:57 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34797 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbfLPKN5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:13:57 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t2so6531610wrr.1
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 02:13:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eBj5vDAhcxQNM9h83BAs5ytrCGULuIqcoVqUpd5RXFk=;
+        b=Quv3jFqysyJ/6lmdrPmhuLct+POkHO/NdCIW5wdrnXBWjZ/v0XiPCpZuJTo0iufgxS
+         lJf4tVqDE3M0Sem7rjACmd/3YxIXUjOL9u1UbtMYPsQKKjBgAay1seCy2qNG+K2ZCD7L
+         BTYHDmxWBnacij1qZUlVD0muEPVv4qC4L2EcNtrFua0sXynl6PzlZAr5rt13jkLpTNmt
+         YYd+KRfmqhd3KNdFSI0/+SCgLVDfv4lb6AAHhyLg7/NRPciQJGALsF9IkqRgCYyX8DV1
+         IspCOaj+qN4mdUpbYTpa9Q24fky/KVydhoeXTQut24fu1tRg916udxQ40AjVrSq0fMcG
+         qgKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eBj5vDAhcxQNM9h83BAs5ytrCGULuIqcoVqUpd5RXFk=;
+        b=cyPk7rYc/utoz71bjrGhB2z8pwlkn6C0KKhGztEhzn0AwLLNmdrr5GYtVIu7ZDLDjJ
+         nQK2UQm8TPO3xxVFkfJgGJxWoAigTHjORhS1I/3DUkkrTM3YvgTEiljUhgh4R7oePS5f
+         hXL6OmJGrpEveKGQ95SmbPfqAimCDE2G3NIyHJUqt0BZ9VVVBy3l0m01NpsVkg2QOj85
+         8QMVgr0aXhKTKpeb9rasvw3tH6hA5CwBpTRvvZmSXWYsKOpqu90vPmpHALyVnLtl81cx
+         ytonFeZzirAMTCuC+U5Cpm+puGSJwljYFbeaCrObpMw6PALXljU0gyx9zbMEMMSitoTC
+         bDog==
+X-Gm-Message-State: APjAAAUMYpSaqzBJ8tz7r0hdh+StQrXWU0DipSVWpFsT4/wpG5DOOHq8
+        Qr+3RnJLJ0dP5jxbQQgUWc6xiw==
+X-Google-Smtp-Source: APXvYqzOQAkTF8ma2KJBme5Jd1WneX81bLhbknZI3Sc4bGSIqpT+g/0/pJArgq0fvPs/TzLMcVYsUg==
+X-Received: by 2002:adf:a141:: with SMTP id r1mr29685031wrr.285.1576491234354;
+        Mon, 16 Dec 2019 02:13:54 -0800 (PST)
+Received: from apalos.home (ppp-94-66-130-5.home.otenet.gr. [94.66.130.5])
+        by smtp.gmail.com with ESMTPSA id z3sm20936283wrs.94.2019.12.16.02.13.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 02:13:53 -0800 (PST)
+Date:   Mon, 16 Dec 2019 12:13:50 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     "Li,Rongqing" <lirongqing@baidu.com>
+Cc:     Yunsheng Lin <linyunsheng@huawei.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "jonathan.lemon@gmail.com" <jonathan.lemon@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn.topel@intel.com>
+Subject: Re: =?utf-8?B?562U5aSNOiBbUEFUQ0hdW3Yy?= =?utf-8?Q?=5D?= page_pool:
+ handle page recycle for NUMA_NO_NODE condition
+Message-ID: <20191216101350.GA6939@apalos.home>
+References: <20191211194933.15b53c11@carbon>
+ <831ed886842c894f7b2ffe83fe34705180a86b3b.camel@mellanox.com>
+ <0a252066-fdc3-a81d-7a36-8f49d2babc01@huawei.com>
+ <20191212111831.2a9f05d3@carbon>
+ <7c555cb1-6beb-240d-08f8-7044b9087fe4@huawei.com>
+ <1d4f10f4c0f1433bae658df8972a904f@baidu.com>
+ <079a0315-efea-9221-8538-47decf263684@huawei.com>
+ <20191213094845.56fb42a4@carbon>
+ <15be326d-1811-329c-424c-6dd22b0604a8@huawei.com>
+ <a5dea60221d84886991168781361b591@baidu.com>
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXoK+6gNn=3_yZdkHScd=N-a2f_VPC-svkFfHVsiVusVw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a5dea60221d84886991168781361b591@baidu.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.12.2019 18:49, Andy Lutomirski wrote:
-> On Fri, Dec 13, 2019 at 1:55 AM Jan Beulich <jbeulich@suse.com> wrote:
->>
->> On 12.12.2019 22:43, Andy Lutomirski wrote:
->>> On Tue, Dec 10, 2019 at 7:40 AM Jan Beulich <jbeulich@suse.com> wrote:
->>>>
->>>> On 10.12.2019 16:29, Andy Lutomirski wrote:
->>>>>> On Dec 10, 2019, at 2:48 AM, Jan Beulich <JBeulich@suse.com> wrote:
->>>>>>
->>>>>> ﻿Omitting suffixes from instructions in AT&T mode is bad practice when
->>>>>> operand size cannot be determined by the assembler from register
->>>>>> operands, and is likely going to be warned about by upstream gas in the
->>>>>> future. Add the missing suffix here.
->>>>>>
->>>>>> Signed-off-by: Jan Beulich <jbeulich@suse.com>
->>>>>>
->>>>>> --- a/arch/x86/entry/entry_64.S
->>>>>> +++ b/arch/x86/entry/entry_64.S
->>>>>> @@ -1728,7 +1728,7 @@ END(nmi)
->>>>>> SYM_CODE_START(ignore_sysret)
->>>>>>    UNWIND_HINT_EMPTY
->>>>>>    mov    $-ENOSYS, %eax
->>>>>> -    sysret
->>>>>> +    sysretl
->>>>>
->>>>> Isn’t the default sysretq?  sysretl looks more correct, but that suggests
->>>>> that your changelog is wrong.
->>>>
->>>> No, this is different from ret, and more like iret and lret.
->>>>
->>>>> Is this code even reachable?
->>>>
->>>> Yes afaict, supported by the comment ahead of the symbol. syscall_init()
->>>> puts its address into MSR_CSTAR when !IA32_EMULATION.
->>>>
->>>
->>> What I meant was: can a program actually get itself into 32-bit mode
->>> to execute a 32-bit SYSCALL instruction?
->>
->> Why not? It can set up a 32-bit code segment descriptor, far-branch
->> into it, and then execute SYSCALL. I can't see anything preventing
->> this in the logic involved in descriptor adjustment system calls. In
->> fact it looks to be at least partly the opposite - fill_ldt()
->> disallows creation of 64-bit code segments (oddly enough
->> fill_user_desc() then still copies the bit back, despite there
->> apparently being no way for it to get set).
+On Mon, Dec 16, 2019 at 04:02:04AM +0000, Li,Rongqing wrote:
 > 
-> Do we allow creation of 32-bit code segments on !IA32_EMULATION
-> kernels?
+> 
+> > -----邮件原件-----
+> > 发件人: Yunsheng Lin [mailto:linyunsheng@huawei.com]
+> > 发送时间: 2019年12月16日 9:51
+> > 收件人: Jesper Dangaard Brouer <brouer@redhat.com>
+> > 抄送: Li,Rongqing <lirongqing@baidu.com>; Saeed Mahameed
+> > <saeedm@mellanox.com>; ilias.apalodimas@linaro.org;
+> > jonathan.lemon@gmail.com; netdev@vger.kernel.org; mhocko@kernel.org;
+> > peterz@infradead.org; Greg Kroah-Hartman <gregkh@linuxfoundation.org>;
+> > bhelgaas@google.com; linux-kernel@vger.kernel.org; Björn Töpel
+> > <bjorn.topel@intel.com>
+> > 主题: Re: [PATCH][v2] page_pool: handle page recycle for NUMA_NO_NODE
+> > condition
+> > 
+> > On 2019/12/13 16:48, Jesper Dangaard Brouer wrote:> You are basically saying
+> > that the NUMA check should be moved to
+> > > allocation time, as it is running the RX-CPU (NAPI).  And eventually
+> > > after some time the pages will come from correct NUMA node.
+> > >
+> > > I think we can do that, and only affect the semi-fast-path.
+> > > We just need to handle that pages in the ptr_ring that are recycled
+> > > can be from the wrong NUMA node.  In __page_pool_get_cached() when
+> > > consuming pages from the ptr_ring (__ptr_ring_consume_batched), then
+> > > we can evict pages from wrong NUMA node.
+> > 
+> > Yes, that's workable.
+> > 
+> > >
+> > > For the pool->alloc.cache we either accept, that it will eventually
+> > > after some time be emptied (it is only in a 100% XDP_DROP workload that
+> > > it will continue to reuse same pages).   Or we simply clear the
+> > > pool->alloc.cache when calling page_pool_update_nid().
+> > 
+> > Simply clearing the pool->alloc.cache when calling page_pool_update_nid()
+> > seems better.
+> > 
+> 
+> How about the below codes, the driver can configure p.nid to any, which will be adjusted in NAPI polling, irq migration will not be problem, but it will add a check into hot path.
 
-As per above - I think so.
+We'll have to check the impact on some high speed (i.e 100gbit) interface
+between doing anything like that. Saeed's current patch runs once per NAPI. This
+runs once per packet. The load might be measurable. 
+The READ_ONCE is needed in case all producers/consumers run on the same CPU
+right?
 
->  I think we shouldn't, but I'm not really sure.
 
-It may be a little exotic, but I can't see any reason to disallow
-a 64-bit process to switch to compatibility mode temporarily. One
-contrived use case could be to be able to invoke INTO or BOUND.
-
-Jan
+Thanks
+/Ilias
+> 
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index a6aefe989043..4374a6239d17 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -108,6 +108,10 @@ static struct page *__page_pool_get_cached(struct page_pool *pool)
+>                 if (likely(pool->alloc.count)) {
+>                         /* Fast-path */
+>                         page = pool->alloc.cache[--pool->alloc.count];
+> +
+> +                       if (unlikely(READ_ONCE(pool->p.nid) != numa_mem_id()))
+> +                               WRITE_ONCE(pool->p.nid, numa_mem_id());
+> +
+>                         return page;
+>                 }
+>                 refill = true;
+> @@ -155,6 +159,10 @@ static struct page *__page_pool_alloc_pages_slow(struct page_pool *pool,
+>         if (pool->p.order)
+>                 gfp |= __GFP_COMP;
+>  
+> +
+> +       if (unlikely(READ_ONCE(pool->p.nid) != numa_mem_id()))
+> +               WRITE_ONCE(pool->p.nid, numa_mem_id());
+> +
+>         /* FUTURE development:
+>          *
+>          * Current slow-path essentially falls back to single page
+> Thanks
+> 
+> -Li
+> > >
+> 
