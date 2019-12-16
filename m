@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45431121477
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F408D1213C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730787AbfLPSLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55426 "EHLO mail.kernel.org"
+        id S1729690AbfLPSEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730364AbfLPSL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:27 -0500
+        id S1729440AbfLPSEf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 040602072D;
-        Mon, 16 Dec 2019 18:11:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E243620700;
+        Mon, 16 Dec 2019 18:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519886;
-        bh=k7xBRQGwFZT0l2WQ2lzq2M6iEO5KUqq5Nksao5BGViA=;
+        s=default; t=1576519475;
+        bh=vQ+eRiIY2UwYOBrhgsHle4m1zP2RSoGVKwaTLJoB/Ug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mV8jOa1k4Vp0UNaFwS3qxJ7lzS61RXVoTGoBK6MpL69KX8TqD9dY3KRWZvplmQi5U
-         qBF8hRdp/pMAE0+JmAm5fKEbVhS/3Bnv+7dPzS75243FHKSujiZt06hjmFuz/HNEwv
-         jooH9lBM6WRr8B2s8wpn2Zm/DaLEqYs+WggvdDCk=
+        b=YabEwnC5ck9KXQB1kU/opb9zHCumgVZILkibXOmMUOO0bNxDN/6JIGT4sSIRVRahm
+         /inQhMv1qJemsN6eXMCsZ92LGMxP9rNib4zSvbrlSBRQT9VxAK8Awi4iDeKFBbMgHz
+         sSCkdkyUCLr1xFbT1Rfuc6tPGctEFPdLRtKD0ovI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Francesco Ruggeri <fruggeri@arista.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.3 108/180] ACPI: OSL: only free map once in osl.c
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 080/140] pinctrl: samsung: Fix device node refcount leaks in S3C24xx wakeup controller init
 Date:   Mon, 16 Dec 2019 18:49:08 +0100
-Message-Id: <20191216174838.239581788@linuxfoundation.org>
+Message-Id: <20191216174808.848506251@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,111 +42,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Francesco Ruggeri <fruggeri@arista.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 833a426cc471b6088011b3d67f1dc4e147614647 upstream.
+commit 6fbbcb050802d6ea109f387e961b1dbcc3a80c96 upstream.
 
-acpi_os_map_cleanup checks map->refcount outside of acpi_ioremap_lock
-before freeing the map. This creates a race condition the can result
-in the map being freed more than once.
-A panic can be caused by running
+In s3c24xx_eint_init() the for_each_child_of_node() loop is used with a
+break to find a matching child node.  Although each iteration of
+for_each_child_of_node puts the previous node, but early exit from loop
+misses it.  This leads to leak of device node.
 
-for ((i=0; i<10; i++))
-do
-        for ((j=0; j<100000; j++))
-        do
-                cat /sys/firmware/acpi/tables/data/BERT >/dev/null
-        done &
-done
-
-This patch makes sure that only the process that drops the reference
-to 0 does the freeing.
-
-Fixes: b7c1fadd6c2e ("ACPI: Do not use krefs under a mutex in osl.c")
-Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
-Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: af99a7507469 ("pinctrl: Add pinctrl-s3c24xx driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/osl.c |   28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -360,19 +360,21 @@ void *__ref acpi_os_map_memory(acpi_phys
- }
- EXPORT_SYMBOL_GPL(acpi_os_map_memory);
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -490,8 +490,10 @@ static int s3c24xx_eint_init(struct sams
+ 		return -ENODEV;
  
--static void acpi_os_drop_map_ref(struct acpi_ioremap *map)
-+/* Must be called with mutex_lock(&acpi_ioremap_lock) */
-+static unsigned long acpi_os_drop_map_ref(struct acpi_ioremap *map)
- {
--	if (!--map->refcount)
-+	unsigned long refcount = --map->refcount;
-+
-+	if (!refcount)
- 		list_del_rcu(&map->list);
-+	return refcount;
- }
+ 	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
+-	if (!eint_data)
++	if (!eint_data) {
++		of_node_put(eint_np);
+ 		return -ENOMEM;
++	}
  
- static void acpi_os_map_cleanup(struct acpi_ioremap *map)
- {
--	if (!map->refcount) {
--		synchronize_rcu_expedited();
--		acpi_unmap(map->phys, map->virt);
--		kfree(map);
--	}
-+	synchronize_rcu_expedited();
-+	acpi_unmap(map->phys, map->virt);
-+	kfree(map);
- }
+ 	eint_data->drvdata = d;
  
- /**
-@@ -392,6 +394,7 @@ static void acpi_os_map_cleanup(struct a
- void __ref acpi_os_unmap_iomem(void __iomem *virt, acpi_size size)
- {
- 	struct acpi_ioremap *map;
-+	unsigned long refcount;
+@@ -503,12 +505,14 @@ static int s3c24xx_eint_init(struct sams
+ 		irq = irq_of_parse_and_map(eint_np, i);
+ 		if (!irq) {
+ 			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
++			of_node_put(eint_np);
+ 			return -ENXIO;
+ 		}
  
- 	if (!acpi_permanent_mmap) {
- 		__acpi_unmap_table(virt, size);
-@@ -405,10 +408,11 @@ void __ref acpi_os_unmap_iomem(void __io
- 		WARN(true, PREFIX "%s: bad address %p\n", __func__, virt);
- 		return;
+ 		eint_data->parents[i] = irq;
+ 		irq_set_chained_handler_and_data(irq, handlers[i], eint_data);
  	}
--	acpi_os_drop_map_ref(map);
-+	refcount = acpi_os_drop_map_ref(map);
- 	mutex_unlock(&acpi_ioremap_lock);
++	of_node_put(eint_np);
  
--	acpi_os_map_cleanup(map);
-+	if (!refcount)
-+		acpi_os_map_cleanup(map);
- }
- EXPORT_SYMBOL_GPL(acpi_os_unmap_iomem);
- 
-@@ -443,6 +447,7 @@ void acpi_os_unmap_generic_address(struc
- {
- 	u64 addr;
- 	struct acpi_ioremap *map;
-+	unsigned long refcount;
- 
- 	if (gas->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
- 		return;
-@@ -458,10 +463,11 @@ void acpi_os_unmap_generic_address(struc
- 		mutex_unlock(&acpi_ioremap_lock);
- 		return;
- 	}
--	acpi_os_drop_map_ref(map);
-+	refcount = acpi_os_drop_map_ref(map);
- 	mutex_unlock(&acpi_ioremap_lock);
- 
--	acpi_os_map_cleanup(map);
-+	if (!refcount)
-+		acpi_os_map_cleanup(map);
- }
- EXPORT_SYMBOL(acpi_os_unmap_generic_address);
- 
+ 	bank = d->pin_banks;
+ 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
 
 
