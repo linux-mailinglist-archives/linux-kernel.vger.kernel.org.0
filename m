@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E86FD12196A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D7BE121925
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfLPRvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:51:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
+        id S1727495AbfLPRwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726691AbfLPRvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:51:01 -0500
+        id S1726736AbfLPRwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A27F92072B;
-        Mon, 16 Dec 2019 17:51:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3590F20733;
+        Mon, 16 Dec 2019 17:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518661;
-        bh=OnbOsaeBVK501x9mbF35rRsIQ+wqt3/KG2OhFuOEqWE=;
+        s=default; t=1576518743;
+        bh=jDfD+CL5wDqvqEFQmPaEED4yz67Luv316LwnHkstN0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pJYQaKaBk9AqhnG4iEP7ykHHQKErFqcjiL8e5HqC4UPEe+h+7sLUtkQJfTxAbUXqH
-         8Q5XHecNYRgOOQbjSVq+o4JqGMDxlejr6TDKWOMDJIVu5izijCtjX+F5nn91qiMIaE
-         ELQUUqF0V5Yxmfojx05dl039NRexHvT8xO3xnMck=
+        b=fS/BchNahk2mY7UeIzaUl9PwHDr9hG3A0sd61a2NlQ+rEzczZunqRSG9dnl+iOhGW
+         yyB/M4RrsnjH+y1vtffNudZJV271hA12UeIKh7hG1iZ8ymJ2JQlourI7lkp+tTjl18
+         cahiVOVjKpwS/rJKzghkz8mPa9jx76XvTMVL51aU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xiaodong Xu <stid.smth@gmail.com>,
-        Bo Chen <chenborfc@163.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
+        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 015/267] xfrm: release device reference for invalid state
-Date:   Mon, 16 Dec 2019 18:45:41 +0100
-Message-Id: <20191216174850.684802456@linuxfoundation.org>
+Subject: [PATCH 4.14 021/267] i2c: core: fix use after free in of_i2c_notify
+Date:   Mon, 16 Dec 2019 18:45:47 +0100
+Message-Id: <20191216174851.301369225@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -45,60 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiaodong Xu <stid.smth@gmail.com>
+From: Wen Yang <wenyang@linux.alibaba.com>
 
-[ Upstream commit 4944a4b1077f74d89073624bd286219d2fcbfce3 ]
+[ Upstream commit a4c2fec16f5e6a5fee4865e6e0e91e2bc2d10f37 ]
 
-An ESP packet could be decrypted in async mode if the input handler for
-this packet returns -EINPROGRESS in xfrm_input(). At this moment the device
-reference in skb is held. Later xfrm_input() will be invoked again to
-resume the processing.
-If the transform state is still valid it would continue to release the
-device reference and there won't be a problem; however if the transform
-state is not valid when async resumption happens, the packet will be
-dropped while the device reference is still being held.
-When the device is deleted for some reason and the reference to this
-device is not properly released, the kernel will keep logging like:
+We can't use "adap->dev" after it has been freed.
 
-unregister_netdevice: waiting for ppp2 to become free. Usage count = 1
-
-The issue is observed when running IPsec traffic over a PPPoE device based
-on a bridge interface. By terminating the PPPoE connection on the server
-end for multiple times, the PPPoE device on the client side will eventually
-get stuck on the above warning message.
-
-This patch will check the async mode first and continue to release device
-reference in async resumption, before it is dropped due to invalid state.
-
-v2: Do not assign address family from outer_mode in the transform if the
-state is invalid
-
-v3: Release device reference in the error path instead of jumping to resume
-
-Fixes: 4ce3dbe397d7b ("xfrm: Fix xfrm_input() to verify state is valid when (encap_type < 0)")
-Signed-off-by: Xiaodong Xu <stid.smth@gmail.com>
-Reported-by: Bo Chen <chenborfc@163.com>
-Tested-by: Bo Chen <chenborfc@163.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: 5bf4fa7daea6 ("i2c: break out OF support into separate file")
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_input.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/i2c/i2c-core-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index fc0a9ce1be18f..311597401b821 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -245,6 +245,9 @@ int xfrm_input(struct sk_buff *skb, int nexthdr, __be32 spi, int encap_type)
- 			else
- 				XFRM_INC_STATS(net,
- 					       LINUX_MIB_XFRMINSTATEINVALID);
-+
-+			if (encap_type == -1)
-+				dev_put(skb->dev);
- 			goto drop;
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index 8d474bb1dc157..17d727e0b8424 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -238,14 +238,14 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
  		}
  
+ 		client = of_i2c_register_device(adap, rd->dn);
+-		put_device(&adap->dev);
+-
+ 		if (IS_ERR(client)) {
+ 			dev_err(&adap->dev, "failed to create client for '%pOF'\n",
+ 				 rd->dn);
++			put_device(&adap->dev);
+ 			of_node_clear_flag(rd->dn, OF_POPULATED);
+ 			return notifier_from_errno(PTR_ERR(client));
+ 		}
++		put_device(&adap->dev);
+ 		break;
+ 	case OF_RECONFIG_CHANGE_REMOVE:
+ 		/* already depopulated? */
 -- 
 2.20.1
 
