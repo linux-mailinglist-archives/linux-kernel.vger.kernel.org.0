@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E4CB121490
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E068121349
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:01:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730954AbfLPSM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57334 "EHLO mail.kernel.org"
+        id S1728967AbfLPSAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:00:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730574AbfLPSMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:25 -0500
+        id S1728949AbfLPSA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57191206E0;
-        Mon, 16 Dec 2019 18:12:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D12520717;
+        Mon, 16 Dec 2019 18:00:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519944;
-        bh=oJ9a1tnZCcKXQqFC175MTuVch94WhcBWqBAPqgXi03k=;
+        s=default; t=1576519229;
+        bh=jCcds+R4TRriDObhC7+3/nn/Q7KoNi9RwFqQibwtl3U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FRLI55MKpt23sdlpYlkfei0MiIkSLg/l1TlXqPbJfg1X1pLx+IffI2Vl8i3+33Cvs
-         F8vdnmbJCYcURSBiMJ9cnuCnOiZkkuPZhPBjXKfkObnoD7tmYKgWibajAYR+MLDGbQ
-         qkgXkgHXfFsSKacCthphB455CcTOM1shs1MBZA98=
+        b=I/td3XiSK1g05GDL+wyhlKB+2Kjxx68euDMPorGbJUNc/GloYu0u0dcz076txJund
+         D6B7ZD25Nw8dejX6u2JNGWUmM3U70iUeOKuPT6HXAklgs98yuTottK339IyBrLdkDl
+         yVCBxZOBPi1C1pVW/A2OlBTHRrCNnYg78gaKSWRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Mahoney <jeffm@suse.com>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 5.3 134/180] reiserfs: fix extended attributes on the root directory
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 248/267] omap: pdata-quirks: remove openpandora quirks for mmc3 and wl1251
 Date:   Mon, 16 Dec 2019 18:49:34 +0100
-Message-Id: <20191216174842.201644933@linuxfoundation.org>
+Message-Id: <20191216174916.176895952@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,197 +45,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeff Mahoney <jeffm@suse.com>
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-commit 60e4cf67a582d64f07713eda5fcc8ccdaf7833e6 upstream.
+[ Upstream commit 2398c41d64321e62af54424fd399964f3d48cdc2 ]
 
-Since commit d0a5b995a308 (vfs: Add IOP_XATTR inode operations flag)
-extended attributes haven't worked on the root directory in reiserfs.
+With a wl1251 child node of mmc3 in the device tree decoded
+in omap_hsmmc.c to handle special wl1251 initialization, we do
+no longer need to instantiate the mmc3 through pdata quirks.
 
-This is due to reiserfs conditionally setting the sb->s_xattrs handler
-array depending on whether it located or create the internal privroot
-directory.  It necessarily does this after the root inode is already
-read in.  The IOP_XATTR flag is set during inode initialization, so
-it never gets set on the root directory.
+We also can remove the wlan regulator and reset/interrupt definitions
+and do them through device tree.
 
-This commit unconditionally assigns sb->s_xattrs and clears IOP_XATTR on
-internal inodes.  The old return values due to the conditional assignment
-are handled via open_xa_root, which now returns EOPNOTSUPP as the VFS
-would have done.
-
-Link: https://lore.kernel.org/r/20191024143127.17509-1-jeffm@suse.com
-CC: stable@vger.kernel.org
-Fixes: d0a5b995a308 ("vfs: Add IOP_XATTR inode operations flag")
-Signed-off-by: Jeff Mahoney <jeffm@suse.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: <stable@vger.kernel.org> # v4.7+
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/inode.c     |   12 ++++++++++--
- fs/reiserfs/namei.c     |    7 +++++--
- fs/reiserfs/reiserfs.h  |    2 ++
- fs/reiserfs/super.c     |    2 ++
- fs/reiserfs/xattr.c     |   19 ++++++++++++-------
- fs/reiserfs/xattr_acl.c |    4 +---
- 6 files changed, 32 insertions(+), 14 deletions(-)
+ arch/arm/mach-omap2/pdata-quirks.c | 93 ------------------------------
+ 1 file changed, 93 deletions(-)
 
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -2097,6 +2097,15 @@ int reiserfs_new_inode(struct reiserfs_t
- 		goto out_inserted_sd;
- 	}
- 
-+	/*
-+	 * Mark it private if we're creating the privroot
-+	 * or something under it.
-+	 */
-+	if (IS_PRIVATE(dir) || dentry == REISERFS_SB(sb)->priv_root) {
-+		inode->i_flags |= S_PRIVATE;
-+		inode->i_opflags &= ~IOP_XATTR;
-+	}
-+
- 	if (reiserfs_posixacl(inode->i_sb)) {
- 		reiserfs_write_unlock(inode->i_sb);
- 		retval = reiserfs_inherit_default_acl(th, dir, dentry, inode);
-@@ -2111,8 +2120,7 @@ int reiserfs_new_inode(struct reiserfs_t
- 		reiserfs_warning(inode->i_sb, "jdm-13090",
- 				 "ACLs aren't enabled in the fs, "
- 				 "but vfs thinks they are!");
--	} else if (IS_PRIVATE(dir))
--		inode->i_flags |= S_PRIVATE;
-+	}
- 
- 	if (security->name) {
- 		reiserfs_write_unlock(inode->i_sb);
---- a/fs/reiserfs/namei.c
-+++ b/fs/reiserfs/namei.c
-@@ -377,10 +377,13 @@ static struct dentry *reiserfs_lookup(st
- 
- 		/*
- 		 * Propagate the private flag so we know we're
--		 * in the priv tree
-+		 * in the priv tree.  Also clear IOP_XATTR
-+		 * since we don't have xattrs on xattr files.
- 		 */
--		if (IS_PRIVATE(dir))
-+		if (IS_PRIVATE(dir)) {
- 			inode->i_flags |= S_PRIVATE;
-+			inode->i_opflags &= ~IOP_XATTR;
-+		}
- 	}
- 	reiserfs_write_unlock(dir->i_sb);
- 	if (retval == IO_ERROR) {
---- a/fs/reiserfs/reiserfs.h
-+++ b/fs/reiserfs/reiserfs.h
-@@ -1168,6 +1168,8 @@ static inline int bmap_would_wrap(unsign
- 	return bmap_nr > ((1LL << 16) - 1);
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+index 6b433fce65a5b..2477f6086de4b 100644
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -307,108 +307,15 @@ static void __init omap3_logicpd_torpedo_init(void)
  }
  
-+extern const struct xattr_handler *reiserfs_xattr_handlers[];
-+
- /*
-  * this says about version of key of all items (but stat data) the
-  * object consists of
---- a/fs/reiserfs/super.c
-+++ b/fs/reiserfs/super.c
-@@ -2046,6 +2046,8 @@ static int reiserfs_fill_super(struct su
- 	if (replay_only(s))
- 		goto error_unlocked;
+ /* omap3pandora legacy devices */
+-#define PANDORA_WIFI_IRQ_GPIO		21
+-#define PANDORA_WIFI_NRESET_GPIO	23
  
-+	s->s_xattr = reiserfs_xattr_handlers;
-+
- 	if (bdev_read_only(s->s_bdev) && !sb_rdonly(s)) {
- 		SWARN(silent, s, "clm-7000",
- 		      "Detected readonly device, marking FS readonly");
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -122,13 +122,13 @@ static struct dentry *open_xa_root(struc
- 	struct dentry *xaroot;
+ static struct platform_device pandora_backlight = {
+ 	.name	= "pandora-backlight",
+ 	.id	= -1,
+ };
  
- 	if (d_really_is_negative(privroot))
--		return ERR_PTR(-ENODATA);
-+		return ERR_PTR(-EOPNOTSUPP);
- 
- 	inode_lock_nested(d_inode(privroot), I_MUTEX_XATTR);
- 
- 	xaroot = dget(REISERFS_SB(sb)->xattr_root);
- 	if (!xaroot)
--		xaroot = ERR_PTR(-ENODATA);
-+		xaroot = ERR_PTR(-EOPNOTSUPP);
- 	else if (d_really_is_negative(xaroot)) {
- 		int err = -ENODATA;
- 
-@@ -619,6 +619,10 @@ int reiserfs_xattr_set(struct inode *ino
- 	int error, error2;
- 	size_t jbegin_count = reiserfs_xattr_nblocks(inode, buffer_size);
- 
-+	/* Check before we start a transaction and then do nothing. */
-+	if (!d_really_is_positive(REISERFS_SB(inode->i_sb)->priv_root))
-+		return -EOPNOTSUPP;
-+
- 	if (!(flags & XATTR_REPLACE))
- 		jbegin_count += reiserfs_xattr_jcreate_nblocks(inode);
- 
-@@ -841,8 +845,7 @@ ssize_t reiserfs_listxattr(struct dentry
- 	if (d_really_is_negative(dentry))
- 		return -EINVAL;
- 
--	if (!dentry->d_sb->s_xattr ||
--	    get_inode_sd_version(d_inode(dentry)) == STAT_DATA_V1)
-+	if (get_inode_sd_version(d_inode(dentry)) == STAT_DATA_V1)
- 		return -EOPNOTSUPP;
- 
- 	dir = open_xa_dir(d_inode(dentry), XATTR_REPLACE);
-@@ -882,6 +885,7 @@ static int create_privroot(struct dentry
- 	}
- 
- 	d_inode(dentry)->i_flags |= S_PRIVATE;
-+	d_inode(dentry)->i_opflags &= ~IOP_XATTR;
- 	reiserfs_info(dentry->d_sb, "Created %s - reserved for xattr "
- 		      "storage.\n", PRIVROOT_NAME);
- 
-@@ -895,7 +899,7 @@ static int create_privroot(struct dentry
- #endif
- 
- /* Actual operations that are exported to VFS-land */
--static const struct xattr_handler *reiserfs_xattr_handlers[] = {
-+const struct xattr_handler *reiserfs_xattr_handlers[] = {
- #ifdef CONFIG_REISERFS_FS_XATTR
- 	&reiserfs_xattr_user_handler,
- 	&reiserfs_xattr_trusted_handler,
-@@ -966,8 +970,10 @@ int reiserfs_lookup_privroot(struct supe
- 	if (!IS_ERR(dentry)) {
- 		REISERFS_SB(s)->priv_root = dentry;
- 		d_set_d_op(dentry, &xattr_lookup_poison_ops);
--		if (d_really_is_positive(dentry))
-+		if (d_really_is_positive(dentry)) {
- 			d_inode(dentry)->i_flags |= S_PRIVATE;
-+			d_inode(dentry)->i_opflags &= ~IOP_XATTR;
-+		}
- 	} else
- 		err = PTR_ERR(dentry);
- 	inode_unlock(d_inode(s->s_root));
-@@ -996,7 +1002,6 @@ int reiserfs_xattr_init(struct super_blo
- 	}
- 
- 	if (d_really_is_positive(privroot)) {
--		s->s_xattr = reiserfs_xattr_handlers;
- 		inode_lock(d_inode(privroot));
- 		if (!REISERFS_SB(s)->xattr_root) {
- 			struct dentry *dentry;
---- a/fs/reiserfs/xattr_acl.c
-+++ b/fs/reiserfs/xattr_acl.c
-@@ -320,10 +320,8 @@ reiserfs_inherit_default_acl(struct reis
- 	 * would be useless since permissions are ignored, and a pain because
- 	 * it introduces locking cycles
- 	 */
--	if (IS_PRIVATE(dir)) {
--		inode->i_flags |= S_PRIVATE;
-+	if (IS_PRIVATE(inode))
- 		goto apply_umask;
+-static struct regulator_consumer_supply pandora_vmmc3_supply[] = {
+-	REGULATOR_SUPPLY("vmmc", "omap_hsmmc.2"),
+-};
+-
+-static struct regulator_init_data pandora_vmmc3 = {
+-	.constraints = {
+-		.valid_ops_mask		= REGULATOR_CHANGE_STATUS,
+-	},
+-	.num_consumer_supplies	= ARRAY_SIZE(pandora_vmmc3_supply),
+-	.consumer_supplies	= pandora_vmmc3_supply,
+-};
+-
+-static struct fixed_voltage_config pandora_vwlan = {
+-	.supply_name		= "vwlan",
+-	.microvolts		= 1800000, /* 1.8V */
+-	.gpio			= PANDORA_WIFI_NRESET_GPIO,
+-	.startup_delay		= 50000, /* 50ms */
+-	.enable_high		= 1,
+-	.init_data		= &pandora_vmmc3,
+-};
+-
+-static struct platform_device pandora_vwlan_device = {
+-	.name		= "reg-fixed-voltage",
+-	.id		= 1,
+-	.dev = {
+-		.platform_data = &pandora_vwlan,
+-	},
+-};
+-
+-static void pandora_wl1251_init_card(struct mmc_card *card)
+-{
+-	/*
+-	 * We have TI wl1251 attached to MMC3. Pass this information to
+-	 * SDIO core because it can't be probed by normal methods.
+-	 */
+-	if (card->type == MMC_TYPE_SDIO || card->type == MMC_TYPE_SD_COMBO) {
+-		card->quirks |= MMC_QUIRK_NONSTD_SDIO;
+-		card->cccr.wide_bus = 1;
+-		card->cis.vendor = 0x104c;
+-		card->cis.device = 0x9066;
+-		card->cis.blksize = 512;
+-		card->cis.max_dtr = 24000000;
+-		card->ocr = 0x80;
 -	}
+-}
+-
+-static struct omap2_hsmmc_info pandora_mmc3[] = {
+-	{
+-		.mmc		= 3,
+-		.caps		= MMC_CAP_4_BIT_DATA | MMC_CAP_POWER_OFF_CARD,
+-		.gpio_cd	= -EINVAL,
+-		.gpio_wp	= -EINVAL,
+-		.init_card	= pandora_wl1251_init_card,
+-	},
+-	{}	/* Terminator */
+-};
+-
+-static void __init pandora_wl1251_init(void)
+-{
+-	struct wl1251_platform_data pandora_wl1251_pdata;
+-	int ret;
+-
+-	memset(&pandora_wl1251_pdata, 0, sizeof(pandora_wl1251_pdata));
+-
+-	pandora_wl1251_pdata.power_gpio = -1;
+-
+-	ret = gpio_request_one(PANDORA_WIFI_IRQ_GPIO, GPIOF_IN, "wl1251 irq");
+-	if (ret < 0)
+-		goto fail;
+-
+-	pandora_wl1251_pdata.irq = gpio_to_irq(PANDORA_WIFI_IRQ_GPIO);
+-	if (pandora_wl1251_pdata.irq < 0)
+-		goto fail_irq;
+-
+-	pandora_wl1251_pdata.use_eeprom = true;
+-	ret = wl1251_set_platform_data(&pandora_wl1251_pdata);
+-	if (ret < 0)
+-		goto fail_irq;
+-
+-	return;
+-
+-fail_irq:
+-	gpio_free(PANDORA_WIFI_IRQ_GPIO);
+-fail:
+-	pr_err("wl1251 board initialisation failed\n");
+-}
+-
+ static void __init omap3_pandora_legacy_init(void)
+ {
+ 	platform_device_register(&pandora_backlight);
+-	platform_device_register(&pandora_vwlan_device);
+-	omap_hsmmc_init(pandora_mmc3);
+-	omap_hsmmc_late_init(pandora_mmc3);
+-	pandora_wl1251_init();
+ }
+ #endif /* CONFIG_ARCH_OMAP3 */
  
- 	err = posix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
- 	if (err)
+-- 
+2.20.1
+
 
 
