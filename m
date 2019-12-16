@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ACC81214AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:14:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 312B31215A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:23:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbfLPSNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:13:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59592 "EHLO mail.kernel.org"
+        id S1732010AbfLPSUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730741AbfLPSNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:13:24 -0500
+        id S1731669AbfLPST7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:19:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AEDC20CC7;
-        Mon, 16 Dec 2019 18:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0805207FF;
+        Mon, 16 Dec 2019 18:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520003;
-        bh=xM3l1nyEPHhbbcxD8IHwnFt40y0AFFRwzfxMpW0VxSY=;
+        s=default; t=1576520398;
+        bh=B3uDbUr2ZpsvlyW0xfEfaHDX65/k0MXfJxDbDhI7W+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EpbqIvHL0qQ8AwZOY/291iZd3tBV1MFkJX+2/TfQnCM5+Yf7t1qXC6ky9Mp9Awdz0
-         meZ/lZIvCxSDSrIyRcQdzEgZl6KV0zdm2r4JBV133BqLZ7MW2zQgP8gERkNs2WRbWL
-         PCadzWnxuLTEBV8i3FY/urfTvX+QrOGVL/ugWC9M=
+        b=DIU33QCSjjgPHK48/QpQmeL7XFET1WCGv9caMRXEkAHn4VoK9AnIVaOOXhqsbCQ3/
+         gr28ZI9xJe5oGVMckxu+O0dLS+ctBC316lF/VDM/TSWK3yf7s23i/fKcyWDCagN/em
+         YVTOcK1nP/D+i33WsvIuKrOi5WOOyp2YH6Z2ew6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 155/180] scsi: qla2xxx: Fix stale session
+        stable@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 5.4 139/177] ARM: dts: omap3-tao3530: Fix incorrect MMC card detection GPIO polarity
 Date:   Mon, 16 Dec 2019 18:49:55 +0100
-Message-Id: <20191216174844.675793574@linuxfoundation.org>
+Message-Id: <20191216174846.386269041@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +43,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Jarkko Nikula <jarkko.nikula@bitmer.com>
 
-[ Upstream commit 2037ce49d30a0d07348df406ef78f6664f4bc899 ]
+commit 287897f9aaa2ad1c923d9875914f57c4dc9159c8 upstream.
 
-On fast cable pull, where driver is unable to detect device has disappeared
-and came back based on switch info, qla2xxx would not re-login while remote
-port has already invalidated the session.  This causes IO timeout.  This
-patch would relogin to remote device for RSCN affected port.
+The MMC card detection GPIO polarity is active low on TAO3530, like in many
+other similar boards. Now the card is not detected and it is unable to
+mount rootfs from an SD card.
 
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Link: https://lore.kernel.org/r/20190830222402.23688-6-hmadhani@marvell.com
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fix this by using the correct polarity.
+
+This incorrect polarity was defined already in the commit 30d95c6d7092
+("ARM: dts: omap3: Add Technexion TAO3530 SOM omap3-tao3530.dtsi") in v3.18
+kernel and later changed to use defined GPIO constants in v4.4 kernel by
+the commit 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags
+cell for OMAP2+ boards").
+
+While the latter commit did not introduce the issue I'm marking it with
+Fixes tag due the v4.4 kernels still being maintained.
+
+Fixes: 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags cell for OMAP2+ boards")
+Cc: linux-stable <stable@vger.kernel.org> # 4.4+
+Signed-off-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/qla2xxx/qla_gs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/omap3-tao3530.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index ebf223cfebbc5..dec521d726d91 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -3674,7 +3674,6 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, srb_t *sp)
- 		list_for_each_entry(fcport, &vha->vp_fcports, list) {
- 			if (memcmp(rp->port_name, fcport->port_name, WWN_SIZE))
- 				continue;
--			fcport->scan_needed = 0;
- 			fcport->scan_state = QLA_FCPORT_FOUND;
- 			found = true;
- 			/*
-@@ -3683,10 +3682,12 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, srb_t *sp)
- 			if ((fcport->flags & FCF_FABRIC_DEVICE) == 0) {
- 				qla2x00_clear_loop_id(fcport);
- 				fcport->flags |= FCF_FABRIC_DEVICE;
--			} else if (fcport->d_id.b24 != rp->id.b24) {
-+			} else if (fcport->d_id.b24 != rp->id.b24 ||
-+				fcport->scan_needed) {
- 				qlt_schedule_sess_for_deletion(fcport);
- 			}
- 			fcport->d_id.b24 = rp->id.b24;
-+			fcport->scan_needed = 0;
- 			break;
- 		}
+--- a/arch/arm/boot/dts/omap3-tao3530.dtsi
++++ b/arch/arm/boot/dts/omap3-tao3530.dtsi
+@@ -222,7 +222,7 @@
+ 	pinctrl-0 = <&mmc1_pins>;
+ 	vmmc-supply = <&vmmc1>;
+ 	vqmmc-supply = <&vsim>;
+-	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_HIGH>;
++	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_LOW>;
+ 	bus-width = <8>;
+ };
  
--- 
-2.20.1
-
 
 
