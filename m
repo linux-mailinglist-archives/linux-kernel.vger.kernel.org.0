@@ -2,71 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52D7012187F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E4141218B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:46:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbfLPSoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:44:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49984 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729337AbfLPSoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:44:10 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 429272082E;
-        Mon, 16 Dec 2019 18:44:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576521849;
-        bh=jmhYJRlG0dVhezOLycSJD8VQfUhuInPDwJOoYXGVzn8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Hlx3mIjQGjt/OM4U7YMpfQ/IBw4KdIAfd+p2dTIKm2/6sctwRcfNd9YFrZN9KDxkP
-         0lT+zBT6UMB2V8HIUv+sli0MMjHKCygNskJ2J2yJ0WB55IPaxTHIjW1jrzIyaPFn7e
-         MHzhAzvadS2tH0MHir97WjYxTlCdGrqF2oPC0vvI=
-Date:   Mon, 16 Dec 2019 19:44:07 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.19 139/140] mm/memory.c: fix a huge pud insertion race
- during faulting
-Message-ID: <20191216184407.GA2411653@kroah.com>
-References: <20191216174747.111154704@linuxfoundation.org>
- <20191216174829.761116794@linuxfoundation.org>
- <MN2PR05MB6141D3283B5D4365CBA0A497A1510@MN2PR05MB6141.namprd05.prod.outlook.com>
+        id S1729269AbfLPSo6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:44:58 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40363 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728896AbfLPSoz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:44:55 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q8so6071973pfh.7;
+        Mon, 16 Dec 2019 10:44:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=565fc6trZy4bzYebyeRmDvS9Y4aKY1nHDQfb3rsmedc=;
+        b=AAA97LcKasXFutNj5F1JGuGjWcAsQtLV8CuOAdqhawOKa6Ix8fu+Ra+L7Ns88YBaS9
+         15VMHT0pMQ8aLnrW7bHTZeUq5/Ky5t93EpLesvGEqlvtuQ0JQdSc8XLgMxQACs8sbP14
+         8EEV8Cx4zfpN7sd/YOLiGxlNEg+nTKXU30AAJfDy1f3Z3rHwM3griO2thdqdVtGa1R+x
+         D6P8lStO/sZvl8hUkjKsMkH2Tg0JRKY2dGURD/cfhUjsEMJ6r3ezDxDvXUDk0cHyshsN
+         gtABy7blMfJMJfkipxFDafTe+L0n3ViO/h8sh+tEgihKxLxxh1C0F77i3ciXwsbks5qV
+         DmcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=565fc6trZy4bzYebyeRmDvS9Y4aKY1nHDQfb3rsmedc=;
+        b=eNYXtsrWa+FFn5xIMk1NxB1kPeYkHGbY+/cWi4htj3kalK+uY69wlJRqzvScNn4her
+         nTzut7eD82sS1c4Bjlqyzi4c3CwLO39Uy/Ay/cLMwZsaLjJn/L4BfFAPGeeFJ1g4ssIF
+         1Qb6u4J9aa0CTvRMUN/oXrnqoCkwPs6hnSvv8EqPq84zkOukIjE+9yIfTVyiIa0BWWyr
+         sAf0Vuc2tHtxnlti/SZq4mLTb6m3Cw2jTSuvHt5u+FoxJ+nugdDB8dQ3wAMKGfRN4QCV
+         c3IP1gwkcUrBm6yQR2aQhajy9dBDkKGKqxYe1Dd4Ud3HUYJNHIuYQRmUhZeDlRV2tnDX
+         XCFQ==
+X-Gm-Message-State: APjAAAXZacM7Hpl+NcUIiFklPTvfbUH5QTRVFB/pDJkpn4tUZsoqWh6p
+        fgSX8zeGz0QI3zx6pB+slV/S6NOz
+X-Google-Smtp-Source: APXvYqxihnLNPEcDTkUZq/Nw6sBPnbaVIkoTnU+2z38SN+fG3whW1DDIt5Qe51JlPLBUKdW9k9t2Wg==
+X-Received: by 2002:a62:ed19:: with SMTP id u25mr17938033pfh.173.1576521894681;
+        Mon, 16 Dec 2019 10:44:54 -0800 (PST)
+Received: from [10.69.49.110] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id a26sm23650190pfo.5.2019.12.16.10.44.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 16 Dec 2019 10:44:53 -0800 (PST)
+Subject: Re: [PATCH] scsi: lpfc: fix build failure with DEBUGFS disabled
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Hannes Reinecke <hare@suse.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191216131701.3125077-1-arnd@arndb.de>
+From:   James Smart <jsmart2021@gmail.com>
+Message-ID: <459ba3b4-8f8e-1eb1-a9d2-fb1f866db600@gmail.com>
+Date:   Mon, 16 Dec 2019 10:44:52 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MN2PR05MB6141D3283B5D4365CBA0A497A1510@MN2PR05MB6141.namprd05.prod.outlook.com>
+In-Reply-To: <20191216131701.3125077-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:36:57PM +0000, Thomas Hellstrom wrote:
-> Greg, Sasha
+On 12/16/2019 5:16 AM, Arnd Bergmann wrote:
+> A recent change appears to have moved an #endif by accident:
 > 
-> On 12/16/19 7:07 PM, Greg Kroah-Hartman wrote:
-> > From: Thomas Hellstrom <thellstrom@vmware.com>
-> >
-> > [ Upstream commit 625110b5e9dae9074d8a7e67dd07f821a053eed7 ]
-> >
+> drivers/scsi/lpfc/lpfc_debugfs.c:5393:18: error: 'lpfc_debugfs_dumpHBASlim_open' undeclared here (not in a function); did you mean 'lpfc_debugfs_op_dumpHBASlim'?
+> drivers/scsi/lpfc/lpfc_debugfs.c:5394:18: error: 'lpfc_debugfs_lseek' undeclared here (not in a function); did you mean 'lpfc_debugfs_nvme_trc'?
+> drivers/scsi/lpfc/lpfc_debugfs.c:5395:18: error: 'lpfc_debugfs_read' undeclared here (not in a function); did you mean 'lpfc_debug_dump_q'?
+> drivers/scsi/lpfc/lpfc_debugfs.c:5396:18: error: 'lpfc_debugfs_release' undeclared here (not in a function); did you mean 'lpfc_debugfs_terminate'?
+> drivers/scsi/lpfc/lpfc_debugfs.c:5402:18: error: 'lpfc_debugfs_dumpHostSlim_open' undeclared here (not in a function); did you mean 'lpfc_debugfs_op_dumpHostSlim'?
 > 
-> Just repeating to make sure it's dropped, since it re-appeared again.
+> Move it back to where it was previously.
 > 
-> Could we please drop this patch from -stable for now. I'll re-nominate
-> for stable with the correct dependencies when it's seen some more
-> testing. It's depending on another patch and it's touching a code path
-> we definitely don't want to break with unforeseen corner-cases.
+> Fixes: 95bfc6d8ad86 ("scsi: lpfc: Make FW logging dynamically configurable")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Ugh, somehow Sasha added this one back in :(
+Thank You
 
-I'll go drop it again, thanks for noticing and letting me know.
+Reviewed-by: James Smart <james.smart@broadcom.com>
 
-greg k-h
+-- james
+
