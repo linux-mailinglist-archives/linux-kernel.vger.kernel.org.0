@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 664911215FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B8C7E12145B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731674AbfLPSRf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41326 "EHLO mail.kernel.org"
+        id S1730648AbfLPSKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731359AbfLPSRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:25 -0500
+        id S1730636AbfLPSKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E79720717;
-        Mon, 16 Dec 2019 18:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 249E7206B7;
+        Mon, 16 Dec 2019 18:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520245;
-        bh=h6h2iKDlws2XsM3EJFa8ad3Lcnw7rBJHFhzCA/7wLyg=;
+        s=default; t=1576519837;
+        bh=Fd7ChdYtx6FGdMpsIhsq6sadR6GKedj+dYkI6xfVanY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N2ohEk6nNTvaidl6n5EHFj0GA4lHmw0YVYtp4WFvZd4Kh8cfuUWByLp7QRUV3f/9+
-         2R80CwPgUNpw1ceLG6M7aV8uubA3xL72r8JwF8FFxRWEuXS6rymTKzoT0JFe89A5Bg
-         1jinT71E4QeKyD510/aI5a18MT7Wm4VdOsRks3fY=
+        b=GYgaNzf6f31wGO6Sgk4zCJQz8UaORVX+Hj3wvVv+H52HW3ZfBx8WBKEJU6jCq473R
+         nT6zXXcj0tRkbgEvpU4vU3wFiIjqiKQRk6vq9Yp//RFKKd/Nbww8O/9EbyKgGxre9F
+         4uY8FDROySz5z7su4pNXCl+0mV2DWg23b7I2d8YI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 074/177] btrfs: record all roots for rename exchange on a subvol
+        stable@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 090/180] cpuidle: teo: Ignore disabled idle states that are too deep
 Date:   Mon, 16 Dec 2019 18:48:50 +0100
-Message-Id: <20191216174835.561413372@linuxfoundation.org>
+Message-Id: <20191216174834.567028096@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 3e1740993e43116b3bc71b0aad1e6872f6ccf341 upstream.
+commit 069ce2ef1a6dd84cbd4d897b333e30f825e021f0 upstream.
 
-Testing with the new fsstress support for subvolumes uncovered a pretty
-bad problem with rename exchange on subvolumes.  We're modifying two
-different subvolumes, but we only start the transaction on one of them,
-so the other one is not added to the dirty root list.  This is caught by
-btrfs_cow_block() with a warning because the root has not been updated,
-however if we do not modify this root again we'll end up pointing at an
-invalid root because the root item is never updated.
+Prevent disabled CPU idle state with target residencies beyond the
+anticipated idle duration from being taken into account by the TEO
+governor.
 
-Fix this by making sure we add the destination root to the trans list,
-the same as we do with normal renames.  This fixes the corruption.
-
-Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: b26bf6ab716f ("cpuidle: New timer events oriented governor for tickless systems")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: 5.1+ <stable@vger.kernel.org> # 5.1+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpuidle/governors/teo.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9554,6 +9554,9 @@ static int btrfs_rename_exchange(struct
- 		goto out_notrans;
- 	}
+--- a/drivers/cpuidle/governors/teo.c
++++ b/drivers/cpuidle/governors/teo.c
+@@ -266,6 +266,13 @@ static int teo_select(struct cpuidle_dri
  
-+	if (dest != root)
-+		btrfs_record_root_in_trans(trans, dest);
+ 		if (s->disabled || su->disable) {
+ 			/*
++			 * Ignore disabled states with target residencies beyond
++			 * the anticipated idle duration.
++			 */
++			if (s->target_residency > duration_us)
++				continue;
 +
- 	/*
- 	 * We need to find a free sequence number both in the source and
- 	 * in the destination directory for the exchange.
++			/*
+ 			 * If the "early hits" metric of a disabled state is
+ 			 * greater than the current maximum, it should be taken
+ 			 * into account, because it would be a mistake to select
 
 
