@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD6D0121554
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BCF1213EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731850AbfLPSUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:20:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
+        id S1729449AbfLPSGK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:06:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732138AbfLPSUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:20:47 -0500
+        id S1729548AbfLPSGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:06:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A06C8206EC;
-        Mon, 16 Dec 2019 18:20:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4974D20700;
+        Mon, 16 Dec 2019 18:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520446;
-        bh=skTilK/llaI7fcauRZugLWg7Pht6YdgHTaPLDoFMAn8=;
+        s=default; t=1576519567;
+        bh=q9fg2RGYUfCx8OVfkcI7VQQW/sZ7MeV3AOZm5gBVNBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x6IpCUfT2FzwaxIdw21FR+BnQ/UxA+PdTafRZfUZ/LLiMIYqDVZFxUhwQe/QNVMoo
-         lenM9KbiadpzbCzh3M7LjU0Ri6tEpTwNhq8RCqUb94jwAu1dNjRfWEWJRn23wtq6Ro
-         twWByTe/Gtd3DdsyK/xI7MUrmnrLUUIAD+cNmAX0=
+        b=aJXdqi5a9Zp4u2bvW54bgTwRNnfWdgANWNND8XRoz6Ra+i47tCUoJjHT6kSXhkgpp
+         Erz+VOidXkffcv0LG0lcE9UdXtMUwcWTx+eLNZOgOjA0UKKbPOR706KwSFUS+qPiA6
+         Ldjd2OKddAO/GtLfZpEVh8FiGJY04l0MKXbXPcs0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5.4 131/177] pinctrl: rza2: Fix gpio name typos
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 119/140] net: hns3: Check variable is valid before assigning it to another
 Date:   Mon, 16 Dec 2019 18:49:47 +0100
-Message-Id: <20191216174844.525961043@linuxfoundation.org>
+Message-Id: <20191216174820.206660974@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,37 +46,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Brandt <chris.brandt@renesas.com>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-commit 930d3a4907ae6cdb476db23fc7caa86e9de1e557 upstream.
+[ Upstream commit 676131f7c53ecdd79e29fc8cfcdefe6f9f2485e8 ]
 
-Fix apparent copy/paste errors that were overlooked in the original driver.
-  "P0_4" -> "PF_4"
-  "P0_3" -> "PG_3"
+In hnae3_register_ae_dev(), ae_algo->ops is assigned to ae_dev->ops
+before check that ae_algo->ops is valid.
 
-Fixes: b59d0e782706 ("pinctrl: Add RZ/A2 pin and gpio controller")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-Link: https://lore.kernel.org/r/20190930145804.30497-1-chris.brandt@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+And in hnae3_register_ae_algo(), missing check for ae_algo->ops.
 
+This patch fixes them.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-rza2.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
---- a/drivers/pinctrl/pinctrl-rza2.c
-+++ b/drivers/pinctrl/pinctrl-rza2.c
-@@ -213,8 +213,8 @@ static const char * const rza2_gpio_name
- 	"PC_0", "PC_1", "PC_2", "PC_3", "PC_4", "PC_5", "PC_6", "PC_7",
- 	"PD_0", "PD_1", "PD_2", "PD_3", "PD_4", "PD_5", "PD_6", "PD_7",
- 	"PE_0", "PE_1", "PE_2", "PE_3", "PE_4", "PE_5", "PE_6", "PE_7",
--	"PF_0", "PF_1", "PF_2", "PF_3", "P0_4", "PF_5", "PF_6", "PF_7",
--	"PG_0", "PG_1", "PG_2", "P0_3", "PG_4", "PG_5", "PG_6", "PG_7",
-+	"PF_0", "PF_1", "PF_2", "PF_3", "PF_4", "PF_5", "PF_6", "PF_7",
-+	"PG_0", "PG_1", "PG_2", "PG_3", "PG_4", "PG_5", "PG_6", "PG_7",
- 	"PH_0", "PH_1", "PH_2", "PH_3", "PH_4", "PH_5", "PH_6", "PH_7",
- 	/* port I does not exist */
- 	"PJ_0", "PJ_1", "PJ_2", "PJ_3", "PJ_4", "PJ_5", "PJ_6", "PJ_7",
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.c b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
+index f98bff60bec37..f9259e568fa05 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.c
+@@ -173,8 +173,12 @@ void hnae3_register_ae_algo(struct hnae3_ae_algo *ae_algo)
+ 		if (!id)
+ 			continue;
+ 
+-		/* ae_dev init should set flag */
++		if (!ae_algo->ops) {
++			dev_err(&ae_dev->pdev->dev, "ae_algo ops are null\n");
++			continue;
++		}
+ 		ae_dev->ops = ae_algo->ops;
++
+ 		ret = ae_algo->ops->init_ae_dev(ae_dev);
+ 		if (ret) {
+ 			dev_err(&ae_dev->pdev->dev,
+@@ -182,6 +186,7 @@ void hnae3_register_ae_algo(struct hnae3_ae_algo *ae_algo)
+ 			continue;
+ 		}
+ 
++		/* ae_dev init should set flag */
+ 		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_INITED_B, 1);
+ 
+ 		/* check the client list for the match with this ae_dev type and
+@@ -256,15 +261,13 @@ int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 		if (!id)
+ 			continue;
+ 
+-		ae_dev->ops = ae_algo->ops;
+-
+-		if (!ae_dev->ops) {
+-			dev_err(&ae_dev->pdev->dev, "ae_dev ops are null\n");
++		if (!ae_algo->ops) {
++			dev_err(&ae_dev->pdev->dev, "ae_algo ops are null\n");
+ 			ret = -EOPNOTSUPP;
+ 			goto out_err;
+ 		}
++		ae_dev->ops = ae_algo->ops;
+ 
+-		/* ae_dev init should set flag */
+ 		ret = ae_dev->ops->init_ae_dev(ae_dev);
+ 		if (ret) {
+ 			dev_err(&ae_dev->pdev->dev,
+@@ -272,6 +275,7 @@ int hnae3_register_ae_dev(struct hnae3_ae_dev *ae_dev)
+ 			goto out_err;
+ 		}
+ 
++		/* ae_dev init should set flag */
+ 		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_INITED_B, 1);
+ 		break;
+ 	}
+-- 
+2.20.1
+
 
 
