@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F5312127C
+	by mail.lfdr.de (Postfix) with ESMTP id 7D2BD12127D
 	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLPRxE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:53:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45976 "EHLO mail.kernel.org"
+        id S1727689AbfLPRxG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:53:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfLPRxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:53:00 -0500
+        id S1726587AbfLPRxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:53:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85D272166E;
-        Mon, 16 Dec 2019 17:52:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA4DD2166E;
+        Mon, 16 Dec 2019 17:53:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518780;
-        bh=l8vmj9ogPn3skiz7aMXSpTKDK2qnZilRS/XoaFSQH+o=;
+        s=default; t=1576518782;
+        bh=F6Es1BuajYIgx8BEuUhlLy6ao+ax7jsso5MbpJV84QQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z66n1GUZEHICxigzWn7OJ6lEf96Tm26RSwJO4ewL6Jtxk5Ac5K/BvUPL/ZlI2xMU7
-         h0/fk8XDp6ZzxEp5/BWjJk3ifuZsINcS7gN9ZV/kmXSaIGm6H54SapKoCrhCp0to/7
-         KhAxfRk7x7WmfhUi18189pM2AYJ+fF5Jc7nZSBRU=
+        b=2iyHfKwP7lF/WEimBV4JqrPEOozm0VpvC60STOpAZzLU8ojAEGde/hrZgzCUvMHKK
+         zW05f64oA3I6ZZL8yHw+lKPo+UYQsoHoY8Hk77lM4CA8iGi9RzSnslYl5jwCyx9Ysw
+         eNc7iwwedjsd+vyc+gFjmf31dRYlhEZ3HxicT/JA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org,
+        Andrei Otcheretianski <andrei.otcheretianski@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 024/267] iwlwifi: mvm: synchronize TID queue removal
-Date:   Mon, 16 Dec 2019 18:45:50 +0100
-Message-Id: <20191216174851.549379891@linuxfoundation.org>
+Subject: [PATCH 4.14 025/267] iwlwifi: mvm: Send non offchannel traffic via AP sta
+Date:   Mon, 16 Dec 2019 18:45:51 +0100
+Message-Id: <20191216174851.652368117@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,45 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 
-[ Upstream commit 06bc6f6ed4ae0246a5e52094d1be90906a1361c7 ]
+[ Upstream commit dc1aca22f8f38b7e2ad7b118db87404d11e68771 ]
 
-When we mark a TID as no longer having a queue, there's no
-guarantee the TX path isn't using this txq_id right now,
-having accessed it just before we reset the value. To fix
-this, add synchronize_net() when we change the TIDs from
-having a queue to not having one, so that we can then be
-sure that the TX path is no longer accessing that queue.
+TDLS discovery response frame is a unicast direct frame to the peer.
+Since we don't have a STA for this peer, this frame goes through
+iwl_tx_skb_non_sta(). As the result aux_sta and some completely
+arbitrary queue would be selected for this frame, resulting in a queue
+hang.  Fix that by sending such frames through AP sta instead.
 
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Andrei Otcheretianski <andrei.otcheretianski@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/sta.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-index d16e2ed4419fe..0cfdbaa2af3a7 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/sta.c
-@@ -436,6 +436,16 @@ static int iwl_mvm_remove_sta_queue_marking(struct iwl_mvm *mvm, int queue)
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+index 77ed6ecf5ee54..b86c7a36d3f17 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c
+@@ -822,6 +822,21 @@ static void iwl_mvm_mac_tx(struct ieee80211_hw *hw,
+ 	    !ieee80211_is_bufferable_mmpdu(hdr->frame_control))
+ 		sta = NULL;
  
- 	rcu_read_unlock();
- 
-+	/*
-+	 * The TX path may have been using this TXQ_ID from the tid_data,
-+	 * so make sure it's no longer running so that we can safely reuse
-+	 * this TXQ later. We've set all the TIDs to IWL_MVM_INVALID_QUEUE
-+	 * above, but nothing guarantees we've stopped using them. Thus,
-+	 * without this, we could get to iwl_mvm_disable_txq() and remove
-+	 * the queue while still sending frames to it.
-+	 */
-+	synchronize_net();
++	/* If there is no sta, and it's not offchannel - send through AP */
++	if (info->control.vif->type == NL80211_IFTYPE_STATION &&
++	    info->hw_queue != IWL_MVM_OFFCHANNEL_QUEUE && !sta) {
++		struct iwl_mvm_vif *mvmvif =
++			iwl_mvm_vif_from_mac80211(info->control.vif);
++		u8 ap_sta_id = READ_ONCE(mvmvif->ap_sta_id);
 +
- 	return disable_agg_tids;
- }
- 
++		if (ap_sta_id < IWL_MVM_STATION_COUNT) {
++			/* mac80211 holds rcu read lock */
++			sta = rcu_dereference(mvm->fw_id_to_mac_id[ap_sta_id]);
++			if (IS_ERR_OR_NULL(sta))
++				goto drop;
++		}
++	}
++
+ 	if (sta) {
+ 		if (iwl_mvm_defer_tx(mvm, sta, skb))
+ 			return;
 -- 
 2.20.1
 
