@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA10121409
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A30F12140A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:08:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfLPSH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:07:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48368 "EHLO mail.kernel.org"
+        id S1729973AbfLPSHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:07:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729967AbfLPSHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:07:23 -0500
+        id S1730155AbfLPSH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:07:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 192252166E;
-        Mon, 16 Dec 2019 18:07:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97D2220700;
+        Mon, 16 Dec 2019 18:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519642;
-        bh=vVxJ+FxthJfmbcChelrHumybQHmC1SgZuN0K7KSHf2Q=;
+        s=default; t=1576519645;
+        bh=U6YWtXAxb1IANk8Fw+3nBtvsaEQNegkekwempGPnrBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D3w/U1dHi9sYs5CZYurodNaVhos1aUf5z94yuXc9bHf15kVGzvtwCACfufyU8Hs3R
-         izXnXm2pndgmx/TeK6Po6z360sCznGRkIttaZ3oFtPiQTEDgXwdDxy1KIL6pWRP+lf
-         DnTHsv0CLjIJLgXzrXbYojbS3vs4j9CxmlHptIxU=
+        b=WNvsNhiefVAk5NTWUZLmcVTF3ePuHMAF5JvvveSqB9fQrn69dVl4AewoPsJEPWmgt
+         9FfcTBxBsbc75VG+WRRIKPjAg8SFHfHHxHByLRnMhGobcXHRn4FNG0DwZXPI+Tingi
+         HUmSMvnNI6MMVuKl7ax8CziBnPC9kmFx6yCJjrYI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 5.3 010/180] USB: documentation: flags on usb-storage versus UAS
-Date:   Mon, 16 Dec 2019 18:47:30 +0100
-Message-Id: <20191216174808.192985780@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 5.3 011/180] usb: Allow USB device to be warm reset in suspended state
+Date:   Mon, 16 Dec 2019 18:47:31 +0100
+Message-Id: <20191216174808.336792649@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
 References: <20191216174806.018988360@linuxfoundation.org>
@@ -42,74 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit 65cc8bf99349f651a0a2cee69333525fe581f306 upstream.
+commit e76b3bf7654c3c94554c24ba15a3d105f4006c80 upstream.
 
-Document which flags work storage, UAS or both
+On Dell WD15 dock, sometimes USB ethernet cannot be detected after plugging
+cable to the ethernet port, the hub and roothub get runtime resumed and
+runtime suspended immediately:
+...
+[  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
+[  433.315204] usb usb4: usb auto-resume
+[  433.315226] hub 4-0:1.0: hub_resume
+[  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
+[  433.315264] usb usb4-port1: status 0343 change 0001
+[  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
+[  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
+[  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
+[  433.422307] usb usb4-port1: do warm reset
+[  433.422311] usb 4-1: device reset not allowed in state 8
+[  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
+[  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
+[  433.422356] usb usb4-port1: do warm reset
+[  433.422358] usb 4-1: device reset not allowed in state 8
+[  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
+[  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
+[  433.422465] hub 4-0:1.0: hub_suspend
+[  433.422475] usb usb4: bus auto-suspend, wakeup 1
+[  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
+[  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
+[  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
+[  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
+[  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
+[  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
+[  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
+[  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
+[  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
+[  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
+[  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
+[  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
+[  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
+[  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
+[  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
+[  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
+[  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
+[  433.902919] usb usb4: usb wakeup-resume
+[  433.902942] usb usb4: usb auto-resume
+[  433.902966] hub 4-0:1.0: hub_resume
+...
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
+As Mathias pointed out, the hub enters Cold Attach Status state and
+requires a warm reset. However usb_reset_device() bails out early when
+the device is in suspended state, as its callers port_event() and
+hub_event() don't always resume the device.
+
+Since there's nothing wrong to reset a suspended device, allow
+usb_reset_device() to do so to solve the issue.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-4-oneukum@suse.com
+Link: https://lore.kernel.org/r/20191106062710.29880-1-kai.heng.feng@canonical.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/admin-guide/kernel-parameters.txt |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ drivers/usb/core/hub.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -5066,13 +5066,13 @@
- 			Flags is a set of characters, each corresponding
- 			to a common usb-storage quirk flag as follows:
- 				a = SANE_SENSE (collect more than 18 bytes
--					of sense data);
-+					of sense data, not on uas);
- 				b = BAD_SENSE (don't collect more than 18
--					bytes of sense data);
-+					bytes of sense data, not on uas);
- 				c = FIX_CAPACITY (decrease the reported
- 					device capacity by one sector);
- 				d = NO_READ_DISC_INFO (don't use
--					READ_DISC_INFO command);
-+					READ_DISC_INFO command, not on uas);
- 				e = NO_READ_CAPACITY_16 (don't use
- 					READ_CAPACITY_16 command);
- 				f = NO_REPORT_OPCODES (don't use report opcodes
-@@ -5087,17 +5087,18 @@
- 				j = NO_REPORT_LUNS (don't use report luns
- 					command, uas only);
- 				l = NOT_LOCKABLE (don't try to lock and
--					unlock ejectable media);
-+					unlock ejectable media, not on uas);
- 				m = MAX_SECTORS_64 (don't transfer more
--					than 64 sectors = 32 KB at a time);
-+					than 64 sectors = 32 KB at a time,
-+					not on uas);
- 				n = INITIAL_READ10 (force a retry of the
--					initial READ(10) command);
-+					initial READ(10) command, not on uas);
- 				o = CAPACITY_OK (accept the capacity
--					reported by the device);
-+					reported by the device, not on uas);
- 				p = WRITE_CACHE (the device cache is ON
--					by default);
-+					by default, not on uas);
- 				r = IGNORE_RESIDUE (the device reports
--					bogus residue values);
-+					bogus residue values, not on uas);
- 				s = SINGLE_LUN (the device has only one
- 					Logical Unit);
- 				t = NO_ATA_1X (don't allow ATA(12) and ATA(16)
-@@ -5106,7 +5107,8 @@
- 				w = NO_WP_DETECT (don't test whether the
- 					medium is write-protected).
- 				y = ALWAYS_SYNC (issue a SYNCHRONIZE_CACHE
--					even if the device claims no cache)
-+					even if the device claims no cache,
-+					not on uas)
- 			Example: quirks=0419:aaf5:rl,0421:0433:rc
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -5814,7 +5814,7 @@ re_enumerate_no_bos:
  
- 	user_debug=	[KNL,ARM]
+ /**
+  * usb_reset_device - warn interface drivers and perform a USB port reset
+- * @udev: device to reset (not in SUSPENDED or NOTATTACHED state)
++ * @udev: device to reset (not in NOTATTACHED state)
+  *
+  * Warns all drivers bound to registered interfaces (using their pre_reset
+  * method), performs the port reset, and then lets the drivers know that
+@@ -5842,8 +5842,7 @@ int usb_reset_device(struct usb_device *
+ 	struct usb_host_config *config = udev->actconfig;
+ 	struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);
+ 
+-	if (udev->state == USB_STATE_NOTATTACHED ||
+-			udev->state == USB_STATE_SUSPENDED) {
++	if (udev->state == USB_STATE_NOTATTACHED) {
+ 		dev_dbg(&udev->dev, "device reset not allowed in state %d\n",
+ 				udev->state);
+ 		return -EINVAL;
 
 
