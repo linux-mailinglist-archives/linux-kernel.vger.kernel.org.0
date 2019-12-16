@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07376121509
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFC4012143C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:09:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbfLPSRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42038 "EHLO mail.kernel.org"
+        id S1730462AbfLPSJf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731686AbfLPSRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:42 -0500
+        id S1730087AbfLPSJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:09:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 795B5206E0;
-        Mon, 16 Dec 2019 18:17:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB85206EC;
+        Mon, 16 Dec 2019 18:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520261;
-        bh=sZYzOaNs38wQo5GUKCCaexcvEt1QQRuJfESUnu7g+jU=;
+        s=default; t=1576519772;
+        bh=CSkMkbAQHvbf3OvhgdHQ69JduefQW+VG7LOBoaRfl6s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BSEDZOiNfuU/JDafsxmRfVQiha4w9w4nokF4zz1ZjdpVncA6P5gaYCUhRXtDFGDSZ
-         c6Lye9VQCEFbPVuOleBPrCPa1ehheUnovnVVbCnQD6HJI3wpcGEauv/+yY+o/ExREY
-         H7ZU9mK3SdUE5BVjzfxrR+oxB+DSLnsSGYRMKCXU=
+        b=FWfGmk1mOFRtkp3ntHs/HjECKBX3ppAXwgSkyw52jR6pNvSE9QvmuvftAqEwZZMoy
+         gf83hM3BKdLeUQf/KZqfRab00GQPgl17o8vp2ns+wS+Z+Bn5i21UcKbNeMqpz2Rob5
+         8H4+IwXzTZ3bV0ZXF9SxvxVaBiH14LMMHR2nACiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 5.4 045/177] USB: idmouse: fix interface sanity checks
+        stable@vger.kernel.org, Atemu <atemu.main@gmail.com>,
+        Qu Wenruo <wqu@suse.com>, Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>
+Subject: [PATCH 5.3 061/180] Btrfs: send, skip backreference walking for extents with many references
 Date:   Mon, 16 Dec 2019 18:48:21 +0100
-Message-Id: <20191216174829.900738821@linuxfoundation.org>
+Message-Id: <20191216174829.191462609@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,36 +44,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Filipe Manana <fdmanana@suse.com>
 
-commit 59920635b89d74b9207ea803d5e91498d39e8b69 upstream.
+commit fd0ddbe2509568b00df364156f47561e9f469f15 upstream.
 
-Make sure to use the current alternate setting when verifying the
-interface descriptors to avoid binding to an invalid interface.
+Backreference walking, which is used by send to figure if it can issue
+clone operations instead of write operations, can be very slow and use
+too much memory when extents have many references. This change simply
+skips backreference walking when an extent has more than 64 references,
+in which case we fallback to a write operation instead of a clone
+operation. This limit is conservative and in practice I observed no
+signicant slowdown with up to 100 references and still low memory usage
+up to that limit.
 
-Failing to do so could cause the driver to misbehave or trigger a WARN()
-in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+This is a temporary workaround until there are speedups in the backref
+walking code, and as such it does not attempt to add extra interfaces or
+knobs to tweak the threshold.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Link: https://lore.kernel.org/r/20191210112601.3561-4-johan@kernel.org
+Reported-by: Atemu <atemu.main@gmail.com>
+Link: https://lore.kernel.org/linux-btrfs/CAE4GHgkvqVADtS4AzcQJxo0Q1jKQgKaW3JGp3SGdoinVo=C9eQ@mail.gmail.com/T/#me55dc0987f9cc2acaa54372ce0492c65782be3fa
+CC: stable@vger.kernel.org # 4.4+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/misc/idmouse.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/send.c |   25 ++++++++++++++++++++++++-
+ 1 file changed, 24 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/misc/idmouse.c
-+++ b/drivers/usb/misc/idmouse.c
-@@ -337,7 +337,7 @@ static int idmouse_probe(struct usb_inte
- 	int result;
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -25,6 +25,14 @@
+ #include "compression.h"
  
- 	/* check if we have gotten the data or the hid interface */
--	iface_desc = &interface->altsetting[0];
-+	iface_desc = interface->cur_altsetting;
- 	if (iface_desc->desc.bInterfaceClass != 0x0A)
- 		return -ENODEV;
+ /*
++ * Maximum number of references an extent can have in order for us to attempt to
++ * issue clone operations instead of write operations. This currently exists to
++ * avoid hitting limitations of the backreference walking code (taking a lot of
++ * time and using too much memory for extents with large number of references).
++ */
++#define SEND_MAX_EXTENT_REFS	64
++
++/*
+  * A fs_path is a helper to dynamically build path names with unknown size.
+  * It reallocates the internal buffer on demand.
+  * It allows fast adding of path elements on the right side (normal path) and
+@@ -1287,6 +1295,7 @@ static int find_extent_clone(struct send
+ 	struct clone_root *cur_clone_root;
+ 	struct btrfs_key found_key;
+ 	struct btrfs_path *tmp_path;
++	struct btrfs_extent_item *ei;
+ 	int compressed;
+ 	u32 i;
  
+@@ -1334,7 +1343,6 @@ static int find_extent_clone(struct send
+ 	ret = extent_from_logical(fs_info, disk_byte, tmp_path,
+ 				  &found_key, &flags);
+ 	up_read(&fs_info->commit_root_sem);
+-	btrfs_release_path(tmp_path);
+ 
+ 	if (ret < 0)
+ 		goto out;
+@@ -1343,6 +1351,21 @@ static int find_extent_clone(struct send
+ 		goto out;
+ 	}
+ 
++	ei = btrfs_item_ptr(tmp_path->nodes[0], tmp_path->slots[0],
++			    struct btrfs_extent_item);
++	/*
++	 * Backreference walking (iterate_extent_inodes() below) is currently
++	 * too expensive when an extent has a large number of references, both
++	 * in time spent and used memory. So for now just fallback to write
++	 * operations instead of clone operations when an extent has more than
++	 * a certain amount of references.
++	 */
++	if (btrfs_extent_refs(tmp_path->nodes[0], ei) > SEND_MAX_EXTENT_REFS) {
++		ret = -ENOENT;
++		goto out;
++	}
++	btrfs_release_path(tmp_path);
++
+ 	/*
+ 	 * Setup the clone roots.
+ 	 */
 
 
