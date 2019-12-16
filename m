@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 358CE1217C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DF1112185D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:43:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbfLPSip (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:38:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41768 "EHLO mail.kernel.org"
+        id S1728782AbfLPR7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:59:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729658AbfLPSE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:28 -0500
+        id S1728769AbfLPR72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:59:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88F282072D;
-        Mon, 16 Dec 2019 18:04:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3F5A21582;
+        Mon, 16 Dec 2019 17:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519468;
-        bh=J3ODutVrZsPdiTMVNV1fo4/+fpdWuhjHzTH1YZDgb/Y=;
+        s=default; t=1576519168;
+        bh=sRaGSy+8FdAqGaH6XBe/JTP4pm6si35gdWrw7STTI28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pIMUIdMvwiiDMKjb8oQrTF5qfn4vSjEpk7LQ+AqQvuYh1XtTWBupdIb9fG4au8faH
-         5eqRNg5GbMCtp7w0mUWpuLS/Fouqqc6eFpXuLjv6qISUqhzm7/oG5WCIMsIuSbz1Bu
-         j14K3pvqIhuAub3S4CcBEdoxn1bzYU9MI+9TVBKU=
+        b=ctKBsIcwAj/o5gL2+LVKeDK2hghtAG2kV9aUl/kkcFTVfJN8pJ6dcEQ9KCWlSE63r
+         1PRbZTn6x0ciRsQp9NV8jSTGoYR8S14VS9f/p1lQ7AiwExW1zERHLJB1DzTRgT34a2
+         bev6kcSNKCe/cIbTh5qzvSlzehEAqURx8ifiK4DE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.19 077/140] pinctrl: armada-37xx: Fix irq mask access in armada_37xx_irq_set_type()
-Date:   Mon, 16 Dec 2019 18:49:05 +0100
-Message-Id: <20191216174808.282066907@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.14 222/267] pinctrl: samsung: Fix device node refcount leaks in init code
+Date:   Mon, 16 Dec 2019 18:49:08 +0100
+Message-Id: <20191216174914.720020696@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,44 +42,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 04fb02757ae5188031eb71b2f6f189edb1caf5dc upstream.
+commit a322b3377f4bac32aa25fb1acb9e7afbbbbd0137 upstream.
 
-As explained in the following commit a9a1a4833613 ("pinctrl:
-armada-37xx: Fix gpio interrupt setup") the armada_37xx_irq_set_type()
-function can be called before the initialization of the mask field.
+Several functions use for_each_child_of_node() loop with a break to find
+a matching child node.  Although each iteration of
+for_each_child_of_node puts the previous node, but early exit from loop
+misses it.  This leads to leak of device node.
 
-That means that we can't use this field in this function and need to
-workaround it using hwirq.
-
-Fixes: 30ac0d3b0702 ("pinctrl: armada-37xx: Add edge both type gpio irq support")
-Cc: stable@vger.kernel.org
-Reported-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Link: https://lore.kernel.org/r/20191115155752.2562-1-gregory.clement@bootlin.com
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 9a2c1c3b91aa ("pinctrl: samsung: Allow grouping multiple pinmux/pinconf nodes")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/mvebu/pinctrl-armada-37xx.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-+++ b/drivers/pinctrl/mvebu/pinctrl-armada-37xx.c
-@@ -592,10 +592,10 @@ static int armada_37xx_irq_set_type(stru
- 		regmap_read(info->regmap, in_reg, &in_val);
- 
- 		/* Set initial polarity based on current input level. */
--		if (in_val & d->mask)
--			val |= d->mask;		/* falling */
-+		if (in_val & BIT(d->hwirq % GPIO_PER_REG))
-+			val |= BIT(d->hwirq % GPIO_PER_REG);	/* falling */
- 		else
--			val &= ~d->mask;	/* rising */
-+			val &= ~(BIT(d->hwirq % GPIO_PER_REG));	/* rising */
- 		break;
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -277,6 +277,7 @@ static int samsung_dt_node_to_map(struct
+ 						&reserved_maps, num_maps);
+ 		if (ret < 0) {
+ 			samsung_dt_free_map(pctldev, *map, *num_maps);
++			of_node_put(np);
+ 			return ret;
+ 		}
  	}
- 	default:
+@@ -761,8 +762,10 @@ static struct samsung_pmx_func *samsung_
+ 		if (!of_get_child_count(cfg_np)) {
+ 			ret = samsung_pinctrl_create_function(dev, drvdata,
+ 							cfg_np, func);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(cfg_np);
+ 				return ERR_PTR(ret);
++			}
+ 			if (ret > 0) {
+ 				++func;
+ 				++func_cnt;
+@@ -773,8 +776,11 @@ static struct samsung_pmx_func *samsung_
+ 		for_each_child_of_node(cfg_np, func_np) {
+ 			ret = samsung_pinctrl_create_function(dev, drvdata,
+ 						func_np, func);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(func_np);
++				of_node_put(cfg_np);
+ 				return ERR_PTR(ret);
++			}
+ 			if (ret > 0) {
+ 				++func;
+ 				++func_cnt;
 
 
