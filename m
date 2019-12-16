@@ -2,191 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7B00121047
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 17:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C55512111A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:08:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfLPQ7W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 11:59:22 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45845 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfLPQ7V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 11:59:21 -0500
-Received: by mail-io1-f67.google.com with SMTP id i11so4570338ioi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 08:59:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wT7SZ+OLO630PVI5NYrvDjy+jNlP7/vPSuqmUxImjRI=;
-        b=mvCGoG390lkQhIGt10C5uJOnQlDLqM7ckcj5+vO5/E5UBpBhaLT0+k2/e7I4DLcEeY
-         2ifgfrg+zjpexA6m1T2Ge1sRCpRRTyvEIhEZTAMP9J664HhTWziOuDAb1+iyH7srY7PA
-         ozqRWgCYhHDvJDJ5yuT6pDwnFshn+bjNE7YmA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wT7SZ+OLO630PVI5NYrvDjy+jNlP7/vPSuqmUxImjRI=;
-        b=B41oQut99KneaL0QIwK1b9AhDBU3T4zZR8il6+iRhzF3O2oP8gzWvbQ4lIJFt0ab5r
-         jzhp0ERUjIOFZUDVdIU6TEUvKdYJZ8ikebah/LYq/9bYqjkbEeq7gcQcNKCtY7yayQ1p
-         3TSg1B6p+6axj+oZwq6GPsjIBV+Y4FMK33K/Yr3Nh67un+mBAXHbysr1LUgWOIJEjqWJ
-         qtl6G5/JXAiyUFvL0jBwofOvAZg8TfiUBgzDL1eEclIXQ8vIEHB0E38rllgY3TYTDcwf
-         lg6uf3aiQoA7lfDM/S+WUM2A/1QFsbqIH4b+Qa0svuA28tEgBvnVpMw4+PPE9+idMEWd
-         zgTQ==
-X-Gm-Message-State: APjAAAXzamcOaTWYLWmSKUsBTmTMnJWNCTYr13iYoBCVp8WAPdI216r4
-        T21SeRllOyefxTE0qIFRLr8azovV1RG9l+WULOquzA==
-X-Google-Smtp-Source: APXvYqxdRoeWD1Tywgum5/3SAGtinVvAq8t3n49rScn14Yz2lW3axKTMURLW3omvXjZ5mdfPRnnhCaLiPDyJLxS1qSY=
-X-Received: by 2002:a05:6602:2504:: with SMTP id i4mr19060859ioe.173.1576515559642;
- Mon, 16 Dec 2019 08:59:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20191203134816.5319-1-jagan@amarulasolutions.com>
- <20191203134816.5319-2-jagan@amarulasolutions.com> <20191204133600.gnv6dnhk6upe7xod@gilmour.lan>
- <CAMty3ZDU57Hj3ZSBC6sSMFWN9-HQadA03hmXUNUVS1W0UQQ3DA@mail.gmail.com> <20191216112042.f4xvlgnbm4dk6wkq@gilmour.lan>
-In-Reply-To: <20191216112042.f4xvlgnbm4dk6wkq@gilmour.lan>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 16 Dec 2019 22:29:08 +0530
-Message-ID: <CAMty3ZBU-XaxR_vM5L2yVbhR5ftfbtDn3jP00qCxBF+owVyqDQ@mail.gmail.com>
-Subject: Re: [PATCH v12 1/7] dt-bindings: sun6i-dsi: Document A64 MIPI-DSI controller
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        id S1728167AbfLPRIs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:08:48 -0500
+Received: from mga14.intel.com ([192.55.52.115]:59257 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727788AbfLPRIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:08:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 08:33:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,322,1571727600"; 
+   d="scan'208";a="240090657"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Dec 2019 08:33:57 -0800
+Received: from [10.251.95.214] (abudanko-mobl.ccr.corp.intel.com [10.251.95.214])
+        by linux.intel.com (Postfix) with ESMTP id 52C38580458;
+        Mon, 16 Dec 2019 08:33:49 -0800 (PST)
+Subject: Re: [PATCH v2 2/7] perf/core: open access for CAP_SYS_PERFMON
+ privileged process
+To:     "Lubashev, Igor" <ilubashe@akamai.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "serge@hallyn.com" <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "bgregg@netflix.com" <bgregg@netflix.com>,
+        Song Liu <songliubraving@fb.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <26101427-c0a3-db9f-39e9-9e5f4ddd009c@linux.intel.com>
+ <fd6ffb43-ed43-14cd-b286-6ab4b199155b@linux.intel.com>
+ <9316a1ab21f6441eb2b421acb818a2a1@ustx2ex-dag1mb6.msg.corp.akamai.com>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <3f2ac76c-6108-7769-4b99-a7a2da31af3d@linux.intel.com>
+Date:   Mon, 16 Dec 2019 19:33:48 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <9316a1ab21f6441eb2b421acb818a2a1@ustx2ex-dag1mb6.msg.corp.akamai.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 4:50 PM Maxime Ripard <mripard@kernel.org> wrote:
->
-> On Mon, Dec 16, 2019 at 04:37:20PM +0530, Jagan Teki wrote:
-> > On Wed, Dec 4, 2019 at 7:06 PM Maxime Ripard <mripard@kernel.org> wrote:
-> > >
-> > > On Tue, Dec 03, 2019 at 07:18:10PM +0530, Jagan Teki wrote:
-> > > > The MIPI DSI controller in Allwinner A64 is similar to A33.
-> > > >
-> > > > But unlike A33, A64 doesn't have DSI_SCLK gating so it is valid
-> > > > to have separate compatible for A64 on the same driver.
-> > > >
-> > > > DSI_SCLK uses mod clock-names on dt-bindings, so the same
-> > > > is not required for A64.
-> > > >
-> > > > On that note
-> > > > - A64 require minimum of 1 clock like the bus clock
-> > > > - A33 require minimum of 2 clocks like both bus, mod clocks
-> > > >
-> > > > So, update dt-bindings so-that it can document both A33,
-> > > > A64 bindings requirements.
-> > > >
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > ---
-> > > > Changes for v12:
-> > > > - Use 'enum' instead of oneOf+const
-> > > >
-> > > >  .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 20 +++++++++++++++++--
-> > > >  1 file changed, 18 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-> > > > index dafc0980c4fa..b91446475f35 100644
-> > > > --- a/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-> > > > +++ b/Documentation/devicetree/bindings/display/allwinner,sun6i-a31-mipi-dsi.yaml
-> > > > @@ -15,7 +15,9 @@ properties:
-> > > >    "#size-cells": true
-> > > >
-> > > >    compatible:
-> > > > -    const: allwinner,sun6i-a31-mipi-dsi
-> > > > +    enum:
-> > > > +      - allwinner,sun6i-a31-mipi-dsi
-> > > > +      - allwinner,sun50i-a64-mipi-dsi
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -24,6 +26,8 @@ properties:
-> > > >      maxItems: 1
-> > > >
-> > > >    clocks:
-> > > > +    minItems: 1
-> > > > +    maxItems: 2
-> > > >      items:
-> > > >        - description: Bus Clock
-> > > >        - description: Module Clock
-> > > > @@ -63,13 +67,25 @@ required:
-> > > >    - reg
-> > > >    - interrupts
-> > > >    - clocks
-> > > > -  - clock-names
-> > > >    - phys
-> > > >    - phy-names
-> > > >    - resets
-> > > >    - vcc-dsi-supply
-> > > >    - port
-> > > >
-> > > > +allOf:
-> > > > +  - if:
-> > > > +      properties:
-> > > > +         compatible:
-> > > > +           contains:
-> > > > +             const: allwinner,sun6i-a31-mipi-dsi
-> > > > +      then:
-> > > > +        properties:
-> > > > +          clocks:
-> > > > +            minItems: 2
-> > > > +        required:
-> > > > +          - clock-names
-> > > > +
-> > >
-> > > Your else condition should check that the number of clocks items is 1
-> > > on the A64
-> >
-> > But the minItems mentioned as 1 in clocks, which is unchanged number
-> > by default. doesn't it sufficient?
->
-> In the main schema, it's said that the clocks property can have one or
-> two elements (to cover the A31 case that has one, and the A64 case
-> that has 2).
->
-> This is fine.
->
-> Later on, you enforce that the A64 has two elements, and this is fine
-> too.
+On 16.12.2019 19:12, Lubashev, Igor wrote:
+> On Mon, Dec 16, 2019 at 2:15 AM, Alexey Budankov <alexey.budankov@linux.intel.com> wrote:
+>>
+>> Open access to perf_events monitoring for CAP_SYS_PERFMON privileged
+>> processes.
+>> For backward compatibility reasons access to perf_events subsystem remains
+>> open for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage
+>> for secure perf_events monitoring is discouraged with respect to
+>> CAP_SYS_PERFMON capability.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>>  include/linux/perf_event.h | 9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h index
+>> 34c7c6910026..52313d2cc343 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -1285,7 +1285,8 @@ static inline int perf_is_paranoid(void)
+>>
+>>  static inline int perf_allow_kernel(struct perf_event_attr *attr)  {
+>> -	if (sysctl_perf_event_paranoid > 1 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > 1 &&
+>> +	   !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
+>>  		return -EACCES;
+>>
+>>  	return security_perf_event_open(attr, PERF_SECURITY_KERNEL); @@
+>> -1293,7 +1294,8 @@ static inline int perf_allow_kernel(struct
+>> perf_event_attr *attr)
+>>
+>>  static inline int perf_allow_cpu(struct perf_event_attr *attr)  {
+>> -	if (sysctl_perf_event_paranoid > 0 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > 0 &&
+>> +	    !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
+>>  		return -EACCES;
+>>
+>>  	return security_perf_event_open(attr, PERF_SECURITY_CPU); @@ -
+>> 1301,7 +1303,8 @@ static inline int perf_allow_cpu(struct perf_event_attr
+>> *attr)
+>>
+>>  static inline int perf_allow_tracepoint(struct perf_event_attr *attr)  {
+>> -	if (sysctl_perf_event_paranoid > -1 && !capable(CAP_SYS_ADMIN))
+>> +	if (sysctl_perf_event_paranoid > -1 &&
+>> +	    !(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)))
+>>  		return -EPERM;
+>>
+>>  	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+>> --
+>> 2.20.1
+> 
+> Thanks.  I like the idea of CAP_SYS_PERFMON that does not require CAP_SYS_ADMIN.  It makes granting users ability to run perf a bit safer.
+> 
+> I see a lot of "(capable(CAP_SYS_PERFMON) || capable(CAP_SYS_ADMIN)" constructs now.  Maybe wrapping it in an " inline bool perfmon_capable()" defined somewhere (like in /include/linux/capability.h)?
 
-Actually A31 case has 2 and A64 case has 1.
+Yes, it makes sense.
 
->
-> However, you never check that on the A31 you only have one clock, and
-> you could very well have two and no one would notice.
+Thanks,
+Alexey
 
-I did check A31 case for 2 but not in A64. this is what you mean? so
-adding A64 check like below would fine?
-
-allOf:
-  - if:
-      properties:
-         compatible:
-           contains:
-             const: allwinner,sun6i-a31-mipi-dsi
-      then:
-        properties:
-          clocks:
-            minItems: 2
-        required:
-          - clock-names
-  - if:
-      properties:
-         compatible:
-           contains:
-             const: allwinner,sun50i-a64-mipi-dsi
-      then:
-        properties:
-          clocks:
-            minItems: 1
+> 
+> - Igor
+> 
