@@ -2,264 +2,268 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F9EA12003C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:50:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7D37120049
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:52:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfLPItj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:49:39 -0500
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:38704 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726772AbfLPItj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:49:39 -0500
-Received: by mail-wr1-f53.google.com with SMTP id y17so6186392wrh.5;
-        Mon, 16 Dec 2019 00:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nk5RB9MHnWUtibrgUGdRjcIBI8GFWEkbYG/7hhbiY24=;
-        b=KyC/nVID96hVSM3nFFoXZE3Mr/W0s5taO80yHpoqiS4OL85lcB29/Nf/5BZ6pvQHwH
-         UbnBVJaiYdhDanfrbGrdAtLxFmKZP1nv+CJCxXl8mpl45+e6Uqv593IUqr9bL4zHxjOw
-         4Z2oPBal44A73zcdt+4T5GU5ACjVjx81jazdVpwAfpG+SlxQQdw5oHQoOef6iBzo8Q23
-         rWta2uvlJSVwkpYXHE0Hs8fNXpq9RLJSmZYuc7QTgsY2eqYjfQhAnVLaAeLT9T0Gx0h8
-         phfGcYxJlVPtCTeUSbI4gr6ljHCu5cvKhmjG9Y8I3iyXEpY/RheXE2/GrpaPnzq5QK1d
-         7o3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nk5RB9MHnWUtibrgUGdRjcIBI8GFWEkbYG/7hhbiY24=;
-        b=hOfABWcvxU07vu6OGrIZM/HLd8permQgpnm33D3LYgDELd8E4f4++3EoERyaCaDBMP
-         tHfOGG14ShaE9KkJpJ7GmPRnruTxY9/foKBZs85pwW6UpU4jjkBmdWrXPjaI99Ztpq3R
-         f7KT6VpXMFJS08TeCEkK51e+7aJVF0v68CA1jnL28MzhiZYL5qg1eX0Y2io9sPObUmZx
-         oXekRqSD+mYD1kznhgR/e/740xusA4mun2LoDP86tuXoW2E9QzuFz7jXNlyXiaPZnHCJ
-         fSm1c2Y0Q5/HIsjFPq54Ux0V78brboPxV9W/x+Cv93j4Rn3SYFF/iahjVeIeFFH74xL/
-         DGkQ==
-X-Gm-Message-State: APjAAAWGLlXJtk7AKyhmmBPqfOIYRIAIDYoxYKLNke1xj5El2Yoy6JZC
-        5a5XdRaP7tWh59l7lNAtbsk=
-X-Google-Smtp-Source: APXvYqydi5bzU5CF4eThWT1KcBsi3mSp1l7mIoNh1CV5dLzOJMqYj5NBjCwiTvP6Fw+fS5NrhKpeyg==
-X-Received: by 2002:adf:f2c1:: with SMTP id d1mr28140521wrp.111.1576486175357;
-        Mon, 16 Dec 2019 00:49:35 -0800 (PST)
-Received: from ziggy.stardust ([37.223.145.31])
-        by smtp.gmail.com with ESMTPSA id h2sm20683008wrv.66.2019.12.16.00.49.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 00:49:34 -0800 (PST)
-Subject: Re: linux-next: build failure after merge of the mediatek tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Macpaul Lin <macpaul.lin@mediatek.com>
-References: <20191216090337.4b4cfb42@canb.auug.org.au>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a2518673-f77f-806c-0bd0-dfb2f6f64da2@gmail.com>
-Date:   Mon, 16 Dec 2019 09:49:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726891AbfLPIwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:52:07 -0500
+Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:5966
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726772AbfLPIwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 03:52:06 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nBadlTk2gqgmhS9+F0v2NDK382C813pebZsgngYR+u18s1bE6LC8hQpdmhHOuwLO3SNwdAzruGlQq/Go6GotUz86f/qB4ldmae56ZHF9dSbcKS1tzZkhHay2+B/UlNh/GP1K2GFyF6ZuAVkCokdLieaoDm29J8Mv+sg23uNWaH+ctcF+9H7zLx+hioR4p9TkKfTJBeFeoq93jToTnwcEYNBM4y+Kn6FHExTE65O/yN8aW60zstc9CifMMDp8PdfdQrVMDDaodtuQd6fWyQO33gstkpBcVXZPX42COnazR089l8nPA3OwhltYwEQiDHP33dSaiTEI/s5LWL99lScRvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FCzWi5HtwPTZi4DJz5Mk10lsec7d56j86AZ9hON9Zb8=;
+ b=ULhIbnv5BFZpi7RLCsaSf13d4lHZ9p4uqSn7Dd1KMQ3oSdMfhVFMHbavtmf6odlZ8TH7ZOFYhqAoAyX6FM3oOvILD3BWZNpPkQzJbVkcy1FFuLjAHaSoKT29Y+TF1zL9RyaJGVTEwBPT7ReyJMubZ/E+Nx0m91lfMKeajVZqAQvE5lsqaw6aS85xDIyReaxaWwNCN8bs6RopN3UdE5zy/3dotRZK3a/m11LC6wGZVu8X/fFINAAkAoH3m5LhIpGFxMVcuJW09mR4psHJ0tQMXu/pYwZbK8nlU4VnV0VpEze8QPtBK2svrg6OquqRbIlcjBIhhOXJ8AN7ag7eckK3iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 188.184.36.50) smtp.rcpttodomain=gmail.com smtp.mailfrom=cern.ch;
+ dmarc=bestguesspass action=none header.from=cern.ch; dkim=none (message not
+ signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector2-cern-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FCzWi5HtwPTZi4DJz5Mk10lsec7d56j86AZ9hON9Zb8=;
+ b=Ev4o/97+9fsy0KM6sO85lFwIdVIcLqPDghK+zT8FSdvOfXa87MKNX7QgqjZ1HTw3ZxbV9GZuoitDUJADrh/V0nmIeQV7PetABR0iFB4kepNTDADvScdxIuLZn/nRaxUWbh1V4V4a31mu6XTYjPHM8+/e1NGDgw0dGVK9wZfA1HE=
+Received: from HE1PR06CA0138.eurprd06.prod.outlook.com (2603:10a6:7:16::25) by
+ AM0PR06MB3987.eurprd06.prod.outlook.com (2603:10a6:208:b1::19) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.19; Mon, 16 Dec 2019 08:52:00 +0000
+Received: from VE1EUR02FT018.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e06::206) by HE1PR06CA0138.outlook.office365.com
+ (2603:10a6:7:16::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.17 via Frontend
+ Transport; Mon, 16 Dec 2019 08:51:59 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.50)
+ smtp.mailfrom=cern.ch; gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=bestguesspass action=none header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
+ VE1EUR02FT018.mail.protection.outlook.com (10.152.12.67) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2538.14 via Frontend Transport; Mon, 16 Dec 2019 08:51:59 +0000
+Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
+ (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 16 Dec
+ 2019 09:51:58 +0100
+Received: from cwe-513-vol689.cern.ch (2001:1458:d00:7::100:1c8) by
+ smtp.cern.ch (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Mon, 16 Dec 2019 09:51:57 +0100
+Date:   Mon, 16 Dec 2019 09:51:56 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
+        Denis Efremov <efremov@linux.com>,
+        <linux-kernel@vger.kernel.org>, Pat Riehecky <riehecky@fnal.gov>,
+        Alessandro Rubini <rubini@gnudd.com>,
+        Ralf Ramsauer <ralf.ramsauer@oth-regensburg.de>,
+        Sebastian Duda <sebastian.duda@fau.de>
+Subject: Re: [PATCH] fmc: remove left-over ipmi-fru.h after fmc deletion
+Message-ID: <20191216085156.rkvy3n7slblhnclc@cwe-513-vol689.cern.ch>
+References: <20191214114913.8610-1-lukas.bulwahn@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191216090337.4b4cfb42@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191214114913.8610-1-lukas.bulwahn@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Originating-IP: [2001:1458:d00:7::100:1c8]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(199004)(189003)(40224003)(2906002)(4326008)(246002)(1076003)(86362001)(70586007)(55016002)(7636002)(356004)(26005)(7696005)(70206006)(16526019)(186003)(8936002)(478600001)(316002)(54906003)(5660300002)(6916009)(336012)(426003)(44832011)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR06MB3987;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;A:1;MX:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5f0f579f-f7ff-4304-1fc7-08d782053677
+X-MS-TrafficTypeDiagnostic: AM0PR06MB3987:
+X-Microsoft-Antispam-PRVS: <AM0PR06MB398703DCF906A7A1EC96DA55EF510@AM0PR06MB3987.eurprd06.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:7691;
+X-Forefront-PRVS: 02530BD3AA
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: L0NnCXVOuQ5K5Zt4TtIounHEPt4EJm7Aj8Am9azyTsio8gzHuR8vYeIAbwy8bCGUnSnDt9TESFHwzQjtqWa1cHj08TdUt3N0c7xqcLkfRhDkkOA5xcN6d06IbWYrZ3AOW8grt+9u27GIjiKX496FCVdJHVT7J92hnReI3EzHdVCpGKLEZQJxzqrmLVzfGD0Wl9mNPhiyY6DFn5IJq4a4qanROXglzhx5lrtHwWTlrBZcN9cKLLUrHUGzRXJk+OdrRtpsKe0b6+TwaIwU552rIugSG2CXv9ScjPhDd+Q6I6nos5FX3fBvvkrS0Z/JMMPSOtHyaH8QuB744HndnEaJhGJxvzM/YeSUXl2QY22KAktmznSvZb/i4+hFgiHyzWE2uyCQM829s+6oUm2m9hXif0jrMd7SVNEv6fqcDygMYktejhyPQRnfI7DBVrJZPcnB66HBBY0RLlxbwi6ULNbpsoVAsz31qZgW2wDfHQebCizvAqh8JT1FYOTsAFLKoBlY0ucqGr0do6y5ZQnhg+U2PWUi9/cMxf7GQrWxaltLqLE=
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Dec 2019 08:51:59.3736
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f0f579f-f7ff-4304-1fc7-08d782053677
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR06MB3987
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Acked-by: Federico Vaga <federico.vaga@cern.ch>
 
-On 15/12/2019 23:03, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the mediatek tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/soc/mediatek/mtk-scpsys.c:773:4: error: 'const struct scp_domain_data' has no member named 'subsys_clk_prefix'
->   773 |   .subsys_clk_prefix = "isp",
->       |    ^~~~~~~~~~~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:773:24: warning: initialization of 'unsigned int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
->   773 |   .subsys_clk_prefix = "isp",
->       |                        ^~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:773:24: note: (near initialization for 'scp_domain_data_mt6765[3].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:774:4: error: 'const struct scp_domain_data' has no member named 'bp_table'
->   774 |   .bp_table = {
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:775:4: error: implicit declaration of function 'BUS_PROT' [-Werror=implicit-function-declaration]
->   775 |    BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:775:13: error: 'IFR_TYPE' undeclared here (not in a function)
->   775 |    BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
->       |             ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:777:13: error: 'SMI_TYPE' undeclared here (not in a function)
->   777 |    BUS_PROT(SMI_TYPE, 0x3C4, 0x3C8, 0, 0x3C0,
->       |             ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:787:4: error: 'const struct scp_domain_data' has no member named 'basic_clk_id'
->   787 |   .basic_clk_id = {"mm"},
->       |    ^~~~~~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:787:3: warning: braces around scalar initializer
->   787 |   .basic_clk_id = {"mm"},
->       |   ^
-> drivers/soc/mediatek/mtk-scpsys.c:787:3: note: (near initialization for 'scp_domain_data_mt6765[1].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:787:20: warning: initialization of 'u32' {aka 'unsigned int'} from 'char *' makes integer from pointer without a cast [-Wint-conversion]
->   787 |   .basic_clk_id = {"mm"},
->       |                    ^~~~
-> drivers/soc/mediatek/mtk-scpsys.c:787:20: note: (near initialization for 'scp_domain_data_mt6765[1].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:788:4: error: 'const struct scp_domain_data' has no member named 'subsys_clk_prefix'
->   788 |   .subsys_clk_prefix = "mm",
->       |    ^~~~~~~~~~~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:788:24: error: cannot initialize array of 'enum clk_id' from a string literal with type array of 'char'
->   788 |   .subsys_clk_prefix = "mm",
->       |                        ^~~~
-> drivers/soc/mediatek/mtk-scpsys.c:788:24: note: (near initialization for 'scp_domain_data_mt6765[1].clk_id')
-> drivers/soc/mediatek/mtk-scpsys.c:789:4: error: 'const struct scp_domain_data' has no member named 'bp_table'
->   789 |   .bp_table = {
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:789:3: warning: braces around scalar initializer
->   789 |   .bp_table = {
->       |   ^
-> drivers/soc/mediatek/mtk-scpsys.c:789:3: note: (near initialization for 'scp_domain_data_mt6765[1].caps')
-> drivers/soc/mediatek/mtk-scpsys.c:792:4: warning: excess elements in scalar initializer
->   792 |    BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:792:4: note: (near initialization for 'scp_domain_data_mt6765[1].caps')
-> drivers/soc/mediatek/mtk-scpsys.c:794:4: warning: excess elements in scalar initializer
->   794 |    BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:794:4: note: (near initialization for 'scp_domain_data_mt6765[1].caps')
-> drivers/soc/mediatek/mtk-scpsys.c:804:4: error: 'const struct scp_domain_data' has no member named 'bp_table'
->   804 |   .bp_table = {
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:804:3: warning: braces around scalar initializer
->   804 |   .bp_table = {
->       |   ^
-> drivers/soc/mediatek/mtk-scpsys.c:804:3: note: (near initialization for 'scp_domain_data_mt6765[0].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:807:4: warning: excess elements in scalar initializer
->   807 |    BUS_PROT(IFR_TYPE, 0x2A8, 0x2AC, 0, 0x258,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:807:4: note: (near initialization for 'scp_domain_data_mt6765[0].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:809:4: warning: excess elements in scalar initializer
->   809 |    BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:809:4: note: (near initialization for 'scp_domain_data_mt6765[0].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:819:4: error: 'const struct scp_domain_data' has no member named 'basic_clk_id'
->   819 |   .basic_clk_id = {"mfg"},
->       |    ^~~~~~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:819:3: warning: braces around scalar initializer
->   819 |   .basic_clk_id = {"mfg"},
->       |   ^
-> drivers/soc/mediatek/mtk-scpsys.c:819:3: note: (near initialization for 'scp_domain_data_mt6765[2].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:819:20: warning: initialization of 'u32' {aka 'unsigned int'} from 'char *' makes integer from pointer without a cast [-Wint-conversion]
->   819 |   .basic_clk_id = {"mfg"},
->       |                    ^~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:819:20: note: (near initialization for 'scp_domain_data_mt6765[2].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:827:4: error: 'const struct scp_domain_data' has no member named 'bp_table'
->   827 |   .bp_table = {
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:827:3: warning: braces around scalar initializer
->   827 |   .bp_table = {
->       |   ^
-> drivers/soc/mediatek/mtk-scpsys.c:827:3: note: (near initialization for 'scp_domain_data_mt6765[4].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:830:4: warning: excess elements in scalar initializer
->   830 |    BUS_PROT(IFR_TYPE, 0x2A0, 0x2A4, 0, 0x228,
->       |    ^~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:830:4: note: (near initialization for 'scp_domain_data_mt6765[4].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:840:4: error: 'const struct scp_domain_data' has no member named 'subsys_clk_prefix'
->   840 |   .subsys_clk_prefix = "cam",
->       |    ^~~~~~~~~~~~~~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:840:24: warning: initialization of 'unsigned int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
->   840 |   .subsys_clk_prefix = "cam",
->       |                        ^~~~~
-> drivers/soc/mediatek/mtk-scpsys.c:840:24: note: (near initialization for 'scp_domain_data_mt6765[6].bus_prot_mask')
-> drivers/soc/mediatek/mtk-scpsys.c:841:4: error: 'const struct scp_domain_data' has no member named 'bp_table'
->   841 |   .bp_table = {
->       |    ^~~~~~~~
-> 
-> Caused by commit
-> 
->   3742fd77013f ("soc: mediatek: add MT6765 scpsys and subdomain support")
-> 
-> I have used the mediatek tree from next-20191213 for today.
-> 
-
-Thanks for the heads-up. I dropped the patch for now until it's dependencies are
-all merged. Sorry for the oversight.
-
-Regards
-Matthias
+On Sat, Dec 14, 2019 at 12:49:13PM +0100, Lukas Bulwahn wrote:
+>Commit 6a80b30086b8 ("fmc: Delete the FMC subsystem") from Linus Walleij
+>deleted the obsolete FMC subsystem, but missed the MAINTAINERS entry and
+>include/linux/ipmi-fru.h mentioned in the MAINTAINERS entry.
+>
+>Later, commit d5d4aa1ec198 ("MAINTAINERS: Remove FMC subsystem") from
+>Denis Efremov cleaned up the MAINTAINERS entry, but actually also missed
+>that include/linux/ipmi-fru.h should also be deleted while deleting its
+>reference in MAINTAINERS.
+>
+>So, deleting include/linux/ipmi-fru.h slipped through the previous
+>clean-ups.
+>
+>As there is no further use for include/linux/ipmi-fru.h, finally delete
+>include/linux/ipmi-fru.h for good now.
+>
+>Fixes: d5d4aa1ec198 ("MAINTAINERS: Remove FMC subsystem")
+>Fixes: 6a80b30086b8 ("fmc: Delete the FMC subsystem")
+>Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+>---
+>Linus, please pick this patch.
+>Federico, Denis, please ack.
+>
+> include/linux/ipmi-fru.h | 134 ---------------------------------------
+> 1 file changed, 134 deletions(-)
+> delete mode 100644 include/linux/ipmi-fru.h
+>
+>diff --git a/include/linux/ipmi-fru.h b/include/linux/ipmi-fru.h
+>deleted file mode 100644
+>index 05c9422624c6..000000000000
+>--- a/include/linux/ipmi-fru.h
+>+++ /dev/null
+>@@ -1,134 +0,0 @@
+>-/* SPDX-License-Identifier: GPL-2.0+ */
+>-/*
+>- * Copyright (C) 2012 CERN (www.cern.ch)
+>- * Author: Alessandro Rubini <rubini@gnudd.com>
+>- *
+>- * This work is part of the White Rabbit project, a research effort led
+>- * by CERN, the European Institute for Nuclear Research.
+>- */
+>-#ifndef __LINUX_IPMI_FRU_H__
+>-#define __LINUX_IPMI_FRU_H__
+>-#ifdef __KERNEL__
+>-#  include <linux/types.h>
+>-#  include <linux/string.h>
+>-#else
+>-#  include <stdint.h>
+>-#  include <string.h>
+>-#endif
+>-
+>-/*
+>- * These structures match the unaligned crap we have in FRU1011.pdf
+>- * (http://download.intel.com/design/servers/ipmi/FRU1011.pdf)
+>- */
+>-
+>-/* chapter 8, page 5 */
+>-struct fru_common_header {
+>-	uint8_t format;			/* 0x01 */
+>-	uint8_t internal_use_off;	/* multiple of 8 bytes */
+>-	uint8_t chassis_info_off;	/* multiple of 8 bytes */
+>-	uint8_t board_area_off;		/* multiple of 8 bytes */
+>-	uint8_t product_area_off;	/* multiple of 8 bytes */
+>-	uint8_t multirecord_off;	/* multiple of 8 bytes */
+>-	uint8_t pad;			/* must be 0 */
+>-	uint8_t checksum;		/* sum modulo 256 must be 0 */
+>-};
+>-
+>-/* chapter 9, page 5 -- internal_use: not used by us */
+>-
+>-/* chapter 10, page 6 -- chassis info: not used by us */
+>-
+>-/* chapter 13, page 9 -- used by board_info_area below */
+>-struct fru_type_length {
+>-	uint8_t type_length;
+>-	uint8_t data[0];
+>-};
+>-
+>-/* chapter 11, page 7 */
+>-struct fru_board_info_area {
+>-	uint8_t format;			/* 0x01 */
+>-	uint8_t area_len;		/* multiple of 8 bytes */
+>-	uint8_t language;		/* I hope it's 0 */
+>-	uint8_t mfg_date[3];		/* LSB, minutes since 1996-01-01 */
+>-	struct fru_type_length tl[0];	/* type-length stuff follows */
+>-
+>-	/*
+>-	 * the TL there are in order:
+>-	 * Board Manufacturer
+>-	 * Board Product Name
+>-	 * Board Serial Number
+>-	 * Board Part Number
+>-	 * FRU File ID (may be null)
+>-	 * more manufacturer-specific stuff
+>-	 * 0xc1 as a terminator
+>-	 * 0x00 pad to a multiple of 8 bytes - 1
+>-	 * checksum (sum of all stuff module 256 must be zero)
+>-	 */
+>-};
+>-
+>-enum fru_type {
+>-	FRU_TYPE_BINARY		= 0x00,
+>-	FRU_TYPE_BCDPLUS	= 0x40,
+>-	FRU_TYPE_ASCII6		= 0x80,
+>-	FRU_TYPE_ASCII		= 0xc0, /* not ascii: depends on language */
+>-};
+>-
+>-/*
+>- * some helpers
+>- */
+>-static inline struct fru_board_info_area *fru_get_board_area(
+>-	const struct fru_common_header *header)
+>-{
+>-	/* we know for sure that the header is 8 bytes in size */
+>-	return (struct fru_board_info_area *)(header + header->board_area_off);
+>-}
+>-
+>-static inline int fru_type(struct fru_type_length *tl)
+>-{
+>-	return tl->type_length & 0xc0;
+>-}
+>-
+>-static inline int fru_length(struct fru_type_length *tl)
+>-{
+>-	return (tl->type_length & 0x3f) + 1; /* len of whole record */
+>-}
+>-
+>-/* assume ascii-latin1 encoding */
+>-static inline int fru_strlen(struct fru_type_length *tl)
+>-{
+>-	return fru_length(tl) - 1;
+>-}
+>-
+>-static inline char *fru_strcpy(char *dest, struct fru_type_length *tl)
+>-{
+>-	int len = fru_strlen(tl);
+>-	memcpy(dest, tl->data, len);
+>-	dest[len] = '\0';
+>-	return dest;
+>-}
+>-
+>-static inline struct fru_type_length *fru_next_tl(struct fru_type_length *tl)
+>-{
+>-	return tl + fru_length(tl);
+>-}
+>-
+>-static inline int fru_is_eof(struct fru_type_length *tl)
+>-{
+>-	return tl->type_length == 0xc1;
+>-}
+>-
+>-/*
+>- * External functions defined in fru-parse.c.
+>- */
+>-extern int fru_header_cksum_ok(struct fru_common_header *header);
+>-extern int fru_bia_cksum_ok(struct fru_board_info_area *bia);
+>-
+>-/* All these 4 return allocated strings by calling fru_alloc() */
+>-extern char *fru_get_board_manufacturer(struct fru_common_header *header);
+>-extern char *fru_get_product_name(struct fru_common_header *header);
+>-extern char *fru_get_serial_number(struct fru_common_header *header);
+>-extern char *fru_get_part_number(struct fru_common_header *header);
+>-
+>-/* This must be defined by the caller of the above functions */
+>-extern void *fru_alloc(size_t size);
+>-
+>-#endif /* __LINUX_IMPI_FRU_H__ */
+>-- 
+>2.17.1
+>
