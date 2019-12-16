@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD979121330
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4444121332
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:59:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfLPR7k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:59:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60938 "EHLO mail.kernel.org"
+        id S1728825AbfLPR7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:59:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbfLPR7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:38 -0500
+        id S1728812AbfLPR7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:59:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6877D206B7;
-        Mon, 16 Dec 2019 17:59:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 326FA206EC;
+        Mon, 16 Dec 2019 17:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519177;
-        bh=+KemWMjYWqW5eB6SarUG9NR0qSuKGeP0JUY4NkGsTYY=;
+        s=default; t=1576519182;
+        bh=Z8anMrWmTZjHIUgn0N7JaWIaabcZ42ch5MZ7XopHJD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMHFhTyv/gHFxKH4QiYDR9drRMM1gfLMkve1poOZsGdmYUUXQ4gKF3aVJfsJv1vrK
-         HbR7r+100Tfxhp0GQU51xLe5AldxGF2KDt67O0l5QSQV/ILEEEuMkVytSYj/nlJSP8
-         Pk8baBFj/oKzheDdELtZ01tr+6Z76di1mL8iQ10g=
+        b=LqzvU3gf2/Mrsor7HsbD2+XxnxqHvSFQNQv65C6U3vj5B8Wp/vLcyf+CAXUoLq7np
+         7kETh5nZNFnxLxs5yrbGLHklJznDXI4A+Mn+sBd/5Cwb9cHVvhbgYSlnPyXi7yH9xj
+         0tHgWo8lQlztnanYo/QTDhLyw8v/Rg3+E5C8E2L4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 225/267] ARM: dts: omap3-tao3530: Fix incorrect MMC card detection GPIO polarity
-Date:   Mon, 16 Dec 2019 18:49:11 +0100
-Message-Id: <20191216174914.882537948@linuxfoundation.org>
+        stable@vger.kernel.org, Alastair DSilva <alastair@d-silva.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.14 227/267] powerpc: Allow 64bit VDSO __kernel_sync_dicache to work across ranges >4GB
+Date:   Mon, 16 Dec 2019 18:49:13 +0100
+Message-Id: <20191216174914.994592683@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -43,45 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jarkko Nikula <jarkko.nikula@bitmer.com>
+From: Alastair D'Silva <alastair@d-silva.org>
 
-commit 287897f9aaa2ad1c923d9875914f57c4dc9159c8 upstream.
+commit f9ec11165301982585e5e5f606739b5bae5331f3 upstream.
 
-The MMC card detection GPIO polarity is active low on TAO3530, like in many
-other similar boards. Now the card is not detected and it is unable to
-mount rootfs from an SD card.
+When calling __kernel_sync_dicache with a size >4GB, we were masking
+off the upper 32 bits, so we would incorrectly flush a range smaller
+than intended.
 
-Fix this by using the correct polarity.
+This patch replaces the 32 bit shifts with 64 bit ones, so that
+the full size is accounted for.
 
-This incorrect polarity was defined already in the commit 30d95c6d7092
-("ARM: dts: omap3: Add Technexion TAO3530 SOM omap3-tao3530.dtsi") in v3.18
-kernel and later changed to use defined GPIO constants in v4.4 kernel by
-the commit 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags
-cell for OMAP2+ boards").
-
-While the latter commit did not introduce the issue I'm marking it with
-Fixes tag due the v4.4 kernels still being maintained.
-
-Fixes: 3a637e008e54 ("ARM: dts: Use defined GPIO constants in flags cell for OMAP2+ boards")
-Cc: linux-stable <stable@vger.kernel.org> # 4.4+
-Signed-off-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20191104023305.9581-3-alastair@au1.ibm.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/omap3-tao3530.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/kernel/vdso64/cacheflush.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/omap3-tao3530.dtsi
-+++ b/arch/arm/boot/dts/omap3-tao3530.dtsi
-@@ -224,7 +224,7 @@
- 	pinctrl-0 = <&mmc1_pins>;
- 	vmmc-supply = <&vmmc1>;
- 	vqmmc-supply = <&vsim>;
--	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_HIGH>;
-+	cd-gpios = <&twl_gpio 0 GPIO_ACTIVE_LOW>;
- 	bus-width = <8>;
- };
- 
+--- a/arch/powerpc/kernel/vdso64/cacheflush.S
++++ b/arch/powerpc/kernel/vdso64/cacheflush.S
+@@ -39,7 +39,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
+ 	subf	r8,r6,r4		/* compute length */
+ 	add	r8,r8,r5		/* ensure we get enough */
+ 	lwz	r9,CFG_DCACHE_LOGBLOCKSZ(r10)
+-	srw.	r8,r8,r9		/* compute line count */
++	srd.	r8,r8,r9		/* compute line count */
+ 	crclr	cr0*4+so
+ 	beqlr				/* nothing to do? */
+ 	mtctr	r8
+@@ -56,7 +56,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
+ 	subf	r8,r6,r4		/* compute length */
+ 	add	r8,r8,r5
+ 	lwz	r9,CFG_ICACHE_LOGBLOCKSZ(r10)
+-	srw.	r8,r8,r9		/* compute line count */
++	srd.	r8,r8,r9		/* compute line count */
+ 	crclr	cr0*4+so
+ 	beqlr				/* nothing to do? */
+ 	mtctr	r8
 
 
