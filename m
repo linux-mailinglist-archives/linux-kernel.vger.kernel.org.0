@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C51B91217BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:38:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC327121809
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:41:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfLPSiZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:38:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42592 "EHLO mail.kernel.org"
+        id S1729140AbfLPSBY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:01:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729368AbfLPSEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:55 -0500
+        id S1726741AbfLPSBU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:01:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 501002072D;
-        Mon, 16 Dec 2019 18:04:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35FCF206B7;
+        Mon, 16 Dec 2019 18:01:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519494;
-        bh=140WJj6EyLddBXjufsKxRaq1jtOvqlNrf61LR1W3RG4=;
+        s=default; t=1576519279;
+        bh=i4gAvKs121LiDWofI0Qx/fKnNA3MI2OySE18wyl/BxI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cbO4/E4Gpzg9RONqQzOl6ngNuWFoVyzQOfB0iDhWcFNOwP8dZuWCNQMRaGNDCgJVG
-         Dpj+D6PmiPawzFCfy3PRp8ov+xq6RLqSDJW0Jt2FrfyY+DCl67ufx+2FkzAluBHpTL
-         yj+xxPJsYBUWQ3+nIvRkFXfNSBsOhD99h2PdAS5U=
+        b=Nr+No7/wndnr/VN4SQtd5lMN4VlMMIJSC92zx4jvNKgyT/pC9Qb7Z+ZEeEI7Me0ot
+         0PcIKU1Jbc3FlQv3WcoXwKbvZE1dxjvCJ3NVK6CVowIswYM5nb7FDw7hFw0X4CCSpA
+         1qt7y7mKLjsm4AbX2H9LV9jGj17SEsvFspg/afcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        =?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
-        Greg Kurz <groug@kaod.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.19 087/140] powerpc/xive: Prevent page fault issues in the machine crash handler
-Date:   Mon, 16 Dec 2019 18:49:15 +0100
-Message-Id: <20191216174810.764407091@linuxfoundation.org>
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 232/267] quota: Check that quota is not dirty before release
+Date:   Mon, 16 Dec 2019 18:49:18 +0100
+Message-Id: <20191216174915.269272193@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +44,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cédric Le Goater <clg@kaod.org>
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-commit 1ca3dec2b2dff9d286ce6cd64108bda0e98f9710 upstream.
+commit df4bb5d128e2c44848aeb36b7ceceba3ac85080d upstream.
 
-When the machine crash handler is invoked, all interrupts are masked
-but interrupts which have not been started yet do not have an ESB page
-mapped in the Linux address space. This crashes the 'crash kexec'
-sequence on sPAPR guests.
+There is a race window where quota was redirted once we drop dq_list_lock inside dqput(),
+but before we grab dquot->dq_lock inside dquot_release()
 
-To fix, force the mapping of the ESB page when an interrupt is being
-mapped in the Linux IRQ number space. This is done by setting the
-initial state of the interrupt to OFF which is not necessarily the
-case on PowerNV.
+TASK1                                                       TASK2 (chowner)
+->dqput()
+  we_slept:
+    spin_lock(&dq_list_lock)
+    if (dquot_dirty(dquot)) {
+          spin_unlock(&dq_list_lock);
+          dquot->dq_sb->dq_op->write_dquot(dquot);
+          goto we_slept
+    if (test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
+          spin_unlock(&dq_list_lock);
+          dquot->dq_sb->dq_op->release_dquot(dquot);
+                                                            dqget()
+							    mark_dquot_dirty()
+							    dqput()
+          goto we_slept;
+        }
+So dquot dirty quota will be released by TASK1, but on next we_sleept loop
+we detect this and call ->write_dquot() for it.
+XFSTEST: https://github.com/dmonakhov/xfstests/commit/440a80d4cbb39e9234df4d7240aee1d551c36107
 
-Fixes: 243e25112d06 ("powerpc/xive: Native exploitation of the XIVE interrupt controller")
-Cc: stable@vger.kernel.org # v4.12+
-Signed-off-by: Cédric Le Goater <clg@kaod.org>
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191031063100.3864-1-clg@kaod.org
+Link: https://lore.kernel.org/r/20191031103920.3919-2-dmonakhov@openvz.org
+CC: stable@vger.kernel.org
+Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/sysdev/xive/common.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/ocfs2/quota_global.c  |    2 +-
+ fs/quota/dquot.c         |    2 +-
+ include/linux/quotaops.h |   10 ++++++++++
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -968,6 +968,15 @@ static int xive_irq_alloc_data(unsigned
- 	xd->target = XIVE_INVALID_TARGET;
- 	irq_set_handler_data(virq, xd);
+--- a/fs/ocfs2/quota_global.c
++++ b/fs/ocfs2/quota_global.c
+@@ -727,7 +727,7 @@ static int ocfs2_release_dquot(struct dq
  
-+	/*
-+	 * Turn OFF by default the interrupt being mapped. A side
-+	 * effect of this check is the mapping the ESB page of the
-+	 * interrupt in the Linux address space. This prevents page
-+	 * fault issues in the crash handler which masks all
-+	 * interrupts.
-+	 */
-+	xive_esb_read(xd, XIVE_ESB_SET_PQ_01);
-+
- 	return 0;
+ 	mutex_lock(&dquot->dq_lock);
+ 	/* Check whether we are not racing with some other dqget() */
+-	if (atomic_read(&dquot->dq_count) > 1)
++	if (dquot_is_busy(dquot))
+ 		goto out;
+ 	/* Running from downconvert thread? Postpone quota processing to wq */
+ 	if (current == osb->dc_task) {
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -491,7 +491,7 @@ int dquot_release(struct dquot *dquot)
+ 
+ 	mutex_lock(&dquot->dq_lock);
+ 	/* Check whether we are not racing with some other dqget() */
+-	if (atomic_read(&dquot->dq_count) > 1)
++	if (dquot_is_busy(dquot))
+ 		goto out_dqlock;
+ 	if (dqopt->ops[dquot->dq_id.type]->release_dqblk) {
+ 		ret = dqopt->ops[dquot->dq_id.type]->release_dqblk(dquot);
+--- a/include/linux/quotaops.h
++++ b/include/linux/quotaops.h
+@@ -51,6 +51,16 @@ static inline struct dquot *dqgrab(struc
+ 	atomic_inc(&dquot->dq_count);
+ 	return dquot;
  }
- 
++
++static inline bool dquot_is_busy(struct dquot *dquot)
++{
++	if (test_bit(DQ_MOD_B, &dquot->dq_flags))
++		return true;
++	if (atomic_read(&dquot->dq_count) > 1)
++		return true;
++	return false;
++}
++
+ void dqput(struct dquot *dquot);
+ int dquot_scan_active(struct super_block *sb,
+ 		      int (*fn)(struct dquot *dquot, unsigned long priv),
 
 
