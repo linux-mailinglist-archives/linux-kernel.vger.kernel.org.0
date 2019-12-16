@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C97312169C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B92F9121834
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730968AbfLPSMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57520 "EHLO mail.kernel.org"
+        id S1728997AbfLPSAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730956AbfLPSMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:30 -0500
+        id S1728624AbfLPSAf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53577206B7;
-        Mon, 16 Dec 2019 18:12:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7453220717;
+        Mon, 16 Dec 2019 18:00:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519949;
-        bh=AEN01YZ8NVHmNiKwZzA9bUlX/f3KQSWQ6gZ5yHDG2eA=;
+        s=default; t=1576519233;
+        bh=n7PqSwoJjQXmFCR1Rqf7AvkCzyPbm8XeHudT4zxom2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NWhedt6QqzEpx17yz3a3HVxnyHrTUiHemD7Ziv7+1Gsnn+hOmzFNDsmRxAx9iN8D+
-         vrsUv62pJnBQChevGDVyd2lSHi917gOG1TX9/zLi/1q+Od8fSaKqTuagUoerjr/RwC
-         3xbUCgBGal1iY0DKku6wEb4seSPMijT2dAyozP14=
+        b=bBXEcPHk3pou2wYY1eu6L8Dc1jMbiocP9o0hBqztjwo+zlS0iq0HkrO+N7zK2EHPj
+         gXje/JdVTtnfSLFDQ1oDWAobMzVcFLQYccB7ZV78b0eYZbR+ea/YauPLBfcV1876Jz
+         kgpSp75lMiSVjA1RGriVryCdCFJjCMZiMmLPKW+A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         James Smart <jsmart2021@gmail.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 135/180] scsi: lpfc: Fix bad ndlp ptr in xri aborted handling
-Date:   Mon, 16 Dec 2019 18:49:35 +0100
-Message-Id: <20191216174842.314039855@linuxfoundation.org>
+Subject: [PATCH 4.14 250/267] scsi: lpfc: Correct code setting non existent bits in sli4 ABORT WQE
+Date:   Mon, 16 Dec 2019 18:49:36 +0100
+Message-Id: <20191216174916.311797196@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,124 +47,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 324e1c402069e8d277d2a2b18ce40bde1265b96a ]
+[ Upstream commit 1c36833d82ff24d0d54215fd956e7cc30fffce54 ]
 
-In cases where I/O may be aborted, such as driver unload or link bounces,
-the system will crash based on a bad ndlp pointer.
+Driver is setting bits in word 10 of the SLI4 ABORT WQE (the wqid).  The
+field was a carry over from a prior SLI revision. The field does not exist
+in SLI4, and the action may result in an overlap with future definition of
+the WQE.
 
-Example:
-  RIP: 0010:lpfc_sli4_abts_err_handler+0x15/0x140 [lpfc]
-  ...
-  lpfc_sli4_io_xri_aborted+0x20d/0x270 [lpfc]
-  lpfc_sli4_sp_handle_abort_xri_wcqe.isra.54+0x84/0x170 [lpfc]
-  lpfc_sli4_fp_handle_cqe+0xc2/0x480 [lpfc]
-  __lpfc_sli4_process_cq+0xc6/0x230 [lpfc]
-  __lpfc_sli4_hba_process_cq+0x29/0xc0 [lpfc]
-  process_one_work+0x14c/0x390
+Remove the setting of WQID in the ABORT WQE.
 
-Crash was caused by a bad ndlp address passed to I/O indicated by the XRI
-aborted CQE.  The address was not NULL so the routine deferenced the ndlp
-ptr. The bad ndlp also caused the lpfc_sli4_io_xri_aborted to call an
-erroneous io handler.  Root cause for the bad ndlp was an lpfc_ncmd that
-was aborted, put on the abort_io list, completed, taken off the abort_io
-list, sent to lpfc_release_nvme_buf where it was put back on the abort_io
-list because the lpfc_ncmd->flags setting LPFC_SBUF_XBUSY was not cleared
-on the final completion.
+Also cleaned up WQE field settings - initialize to zero, don't bother to
+set fields to zero.
 
-Rework the exchange busy handling to ensure the flags are properly set for
-both scsi and nvme.
-
-Fixes: c490850a0947 ("scsi: lpfc: Adapt partitioned XRI lists to efficient sharing")
-Cc: <stable@vger.kernel.org> # v5.1+
-Link: https://lore.kernel.org/r/20191018211832.7917-6-jsmart2021@gmail.com
 Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
 Signed-off-by: James Smart <jsmart2021@gmail.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_scsi.c | 11 +++++++----
- drivers/scsi/lpfc/lpfc_sli.c  |  5 ++++-
- drivers/scsi/lpfc/lpfc_sli.h  |  3 +--
- 3 files changed, 12 insertions(+), 7 deletions(-)
+ drivers/scsi/lpfc/lpfc_nvme.c |  2 --
+ drivers/scsi/lpfc/lpfc_sli.c  | 14 +++-----------
+ 2 files changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-index f9df800e70672..6ba4a741a8053 100644
---- a/drivers/scsi/lpfc/lpfc_scsi.c
-+++ b/drivers/scsi/lpfc/lpfc_scsi.c
-@@ -583,7 +583,7 @@ lpfc_sli4_fcp_xri_aborted(struct lpfc_hba *phba,
- 		if (psb->cur_iocbq.sli4_xritag == xri) {
- 			list_del(&psb->list);
- 			qp->abts_scsi_io_bufs--;
--			psb->exch_busy = 0;
-+			psb->flags &= ~LPFC_SBUF_XBUSY;
- 			psb->status = IOSTAT_SUCCESS;
- 			spin_unlock(
- 				&qp->abts_scsi_buf_list_lock);
-@@ -615,7 +615,7 @@ lpfc_sli4_fcp_xri_aborted(struct lpfc_hba *phba,
- 		if (iocbq->sli4_xritag != xri)
- 			continue;
- 		psb = container_of(iocbq, struct lpfc_io_buf, cur_iocbq);
--		psb->exch_busy = 0;
-+		psb->flags &= ~LPFC_SBUF_XBUSY;
- 		spin_unlock_irqrestore(&phba->hbalock, iflag);
- 		if (!list_empty(&pring->txq))
- 			lpfc_worker_wake_up(phba);
-@@ -834,7 +834,7 @@ lpfc_release_scsi_buf_s4(struct lpfc_hba *phba, struct lpfc_io_buf *psb)
- 	psb->prot_seg_cnt = 0;
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 6c4499db969c1..fcf4b4175d771 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -1544,7 +1544,6 @@ lpfc_nvme_fcp_abort(struct nvme_fc_local_port *pnvme_lport,
+ 	bf_set(abort_cmd_criteria, &abts_wqe->abort_cmd, T_XRI_TAG);
  
- 	qp = psb->hdwq;
--	if (psb->exch_busy) {
-+	if (psb->flags & LPFC_SBUF_XBUSY) {
- 		spin_lock_irqsave(&qp->abts_scsi_buf_list_lock, iflag);
- 		psb->pCmd = NULL;
- 		list_add_tail(&psb->list, &qp->lpfc_abts_scsi_buf_list);
-@@ -3679,7 +3679,10 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
- 	lpfc_cmd->result = (pIocbOut->iocb.un.ulpWord[4] & IOERR_PARAM_MASK);
- 	lpfc_cmd->status = pIocbOut->iocb.ulpStatus;
- 	/* pick up SLI4 exhange busy status from HBA */
--	lpfc_cmd->exch_busy = pIocbOut->iocb_flag & LPFC_EXCHANGE_BUSY;
-+	if (pIocbOut->iocb_flag & LPFC_EXCHANGE_BUSY)
-+		lpfc_cmd->flags |= LPFC_SBUF_XBUSY;
-+	else
-+		lpfc_cmd->flags &= ~LPFC_SBUF_XBUSY;
+ 	/* word 7 */
+-	bf_set(wqe_ct, &abts_wqe->abort_cmd.wqe_com, 0);
+ 	bf_set(wqe_cmnd, &abts_wqe->abort_cmd.wqe_com, CMD_ABORT_XRI_CX);
+ 	bf_set(wqe_class, &abts_wqe->abort_cmd.wqe_com,
+ 	       nvmereq_wqe->iocb.ulpClass);
+@@ -1559,7 +1558,6 @@ lpfc_nvme_fcp_abort(struct nvme_fc_local_port *pnvme_lport,
+ 	       abts_buf->iotag);
  
- #ifdef CONFIG_SCSI_LPFC_DEBUG_FS
- 	if (lpfc_cmd->prot_data_type) {
+ 	/* word 10 */
+-	bf_set(wqe_wqid, &abts_wqe->abort_cmd.wqe_com, nvmereq_wqe->hba_wqidx);
+ 	bf_set(wqe_qosd, &abts_wqe->abort_cmd.wqe_com, 1);
+ 	bf_set(wqe_lenloc, &abts_wqe->abort_cmd.wqe_com, LPFC_WQE_LENLOC_NONE);
+ 
 diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index c7027ecd4d19e..6f6e306ff1e6c 100644
+index 62bea4ffdc25a..d3bad0dbfaf7f 100644
 --- a/drivers/scsi/lpfc/lpfc_sli.c
 +++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -11768,7 +11768,10 @@ lpfc_sli_wake_iocb_wait(struct lpfc_hba *phba,
- 		!(cmdiocbq->iocb_flag & LPFC_IO_LIBDFC)) {
- 		lpfc_cmd = container_of(cmdiocbq, struct lpfc_io_buf,
- 			cur_iocbq);
--		lpfc_cmd->exch_busy = rspiocbq->iocb_flag & LPFC_EXCHANGE_BUSY;
-+		if (rspiocbq && (rspiocbq->iocb_flag & LPFC_EXCHANGE_BUSY))
-+			lpfc_cmd->flags |= LPFC_SBUF_XBUSY;
-+		else
-+			lpfc_cmd->flags &= ~LPFC_SBUF_XBUSY;
- 	}
+@@ -10722,19 +10722,12 @@ lpfc_sli4_abort_nvme_io(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
  
- 	pdone_q = cmdiocbq->context_un.wait_queue;
-diff --git a/drivers/scsi/lpfc/lpfc_sli.h b/drivers/scsi/lpfc/lpfc_sli.h
-index 467b8270f7fdd..9449236c231d5 100644
---- a/drivers/scsi/lpfc/lpfc_sli.h
-+++ b/drivers/scsi/lpfc/lpfc_sli.h
-@@ -375,14 +375,13 @@ struct lpfc_io_buf {
+ 	/* Complete prepping the abort wqe and issue to the FW. */
+ 	abts_wqe = &abtsiocbp->wqe;
+-	bf_set(abort_cmd_ia, &abts_wqe->abort_cmd, 0);
+-	bf_set(abort_cmd_criteria, &abts_wqe->abort_cmd, T_XRI_TAG);
+-
+-	/* Explicitly set reserved fields to zero.*/
+-	abts_wqe->abort_cmd.rsrvd4 = 0;
+-	abts_wqe->abort_cmd.rsrvd5 = 0;
  
- 	struct lpfc_nodelist *ndlp;
- 	uint32_t timeout;
--	uint16_t flags;  /* TBD convert exch_busy to flags */
-+	uint16_t flags;
- #define LPFC_SBUF_XBUSY		0x1	/* SLI4 hba reported XB on WCQE cmpl */
- #define LPFC_SBUF_BUMP_QDEPTH	0x2	/* bumped queue depth counter */
- 					/* External DIF device IO conversions */
- #define LPFC_SBUF_NORMAL_DIF	0x4	/* normal mode to insert/strip */
- #define LPFC_SBUF_PASS_DIF	0x8	/* insert/strip mode to passthru */
- #define LPFC_SBUF_NOT_POSTED    0x10    /* SGL failed post to FW. */
--	uint16_t exch_busy;     /* SLI4 hba reported XB on complete WCQE */
- 	uint16_t status;	/* From IOCB Word 7- ulpStatus */
- 	uint32_t result;	/* From IOCB Word 4. */
+-	/* WQE Common - word 6.  Context is XRI tag.  Set 0. */
+-	bf_set(wqe_xri_tag, &abts_wqe->abort_cmd.wqe_com, 0);
+-	bf_set(wqe_ctxt_tag, &abts_wqe->abort_cmd.wqe_com, 0);
++	/* Clear any stale WQE contents */
++	memset(abts_wqe, 0, sizeof(union lpfc_wqe));
++	bf_set(abort_cmd_criteria, &abts_wqe->abort_cmd, T_XRI_TAG);
+ 
+ 	/* word 7 */
+-	bf_set(wqe_ct, &abts_wqe->abort_cmd.wqe_com, 0);
+ 	bf_set(wqe_cmnd, &abts_wqe->abort_cmd.wqe_com, CMD_ABORT_XRI_CX);
+ 	bf_set(wqe_class, &abts_wqe->abort_cmd.wqe_com,
+ 	       cmdiocb->iocb.ulpClass);
+@@ -10749,7 +10742,6 @@ lpfc_sli4_abort_nvme_io(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 	       abtsiocbp->iotag);
+ 
+ 	/* word 10 */
+-	bf_set(wqe_wqid, &abts_wqe->abort_cmd.wqe_com, cmdiocb->hba_wqidx);
+ 	bf_set(wqe_qosd, &abts_wqe->abort_cmd.wqe_com, 1);
+ 	bf_set(wqe_lenloc, &abts_wqe->abort_cmd.wqe_com, LPFC_WQE_LENLOC_NONE);
  
 -- 
 2.20.1
