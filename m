@@ -2,75 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFFA6121803
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF571217FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:40:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729305AbfLPSk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:40:26 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:44936 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729077AbfLPSCV (ORCPT
+        id S1729340AbfLPSC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:27 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38808 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729086AbfLPSCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:21 -0500
-Received: by mail-oi1-f196.google.com with SMTP id d62so3998451oia.11;
-        Mon, 16 Dec 2019 10:02:21 -0800 (PST)
+        Mon, 16 Dec 2019 13:02:24 -0500
+Received: by mail-qk1-f195.google.com with SMTP id k6so3622581qki.5;
+        Mon, 16 Dec 2019 10:02:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=/wgIjX1dU2wQH6kmt/wxBh8DEI9OC0fPRFaMU5c+19U=;
+        b=aK5FHjDX78JdmIlmY7UGSEKLyK+plDswCHD9EfXisDUKQelP/XMkWce0lfrZkZUJyg
+         3UC66szQcE7PNLgccwlf59/DU2/S88c323rKOwvOimcYvXbcQq3jftigRUrw3yGgwfKO
+         aK6zJH123/LmhoYyEpo/YBOtBw4tmQhG00QBrrosLUg83ENlpU3hsJBrdo7YfPPYJKzB
+         zmIwmJUdhuBtX5+FYq/fg1mUZGgxJGJK/0qoZBbGbdyukYxJ2vaDyRkd7nNJYGx5UO3y
+         zcmoJ9rieShg9yFWklosDfWp4SLtbQW1n5szZ8uNw2Cd9Rlq5mgoro/6us+dNZ2+H2RM
+         uB5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=J0Ye3heezTLCH4+67gtqBGARVM5JPXQ6ZAyCvxeGrk0=;
-        b=Zo2A5TSfWISX2Qba8wRAbkeq2hHOLGInBAN79sbFsyrwVhzQ8cgMVAFm9x/Nx0C/CK
-         PVsrBeSMiUMzqpDjtgdHpOefqDCnId3UazNNqzh+JRXuzqtxeoQFBz5Obt9kQUVaZ738
-         NEvF8YlwgrFReHEWMlgvNSy4ODkltZcZZciDeE9jWU/NI0ikPFlVMsLxp21aBgslO30k
-         lUgtlEGsa2ZdGzqH6guac3MDs71AfTpa4rJy+5yWdBFxnPOHPEm57sRg2h2uZgYmzSeM
-         KYFu9qcEssgXeAZc67yWfO3TqNJmSD+uLjlLEaL7v78oHVYIo+PKyMSNDnR+K9AArAQS
-         Qkpw==
-X-Gm-Message-State: APjAAAV8tjJflkoHTUcDqTxg5VSYS7mhmQnp3bkH5UUM4bzdo1D0twli
-        1wIdKMCXisUir4BoUgX+2g==
-X-Google-Smtp-Source: APXvYqx8PFxe+WYzPYFarvmtkpwauTlh4e8QaG3TMcwH4A0Yno5Ur0RNASmV37L9QyPeAT0ozN1ngg==
-X-Received: by 2002:aca:ec45:: with SMTP id k66mr139352oih.179.1576519340758;
-        Mon, 16 Dec 2019 10:02:20 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n19sm5828686oig.57.2019.12.16.10.02.20
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=/wgIjX1dU2wQH6kmt/wxBh8DEI9OC0fPRFaMU5c+19U=;
+        b=E6XaYTUysM5GJojTbuA+SSAwMQN0i4HyRW/8LPgUr/oDDWI4Xh9ylRY5013KekdVB1
+         8fy+JfmKfwNHAsQrYwQx0OJHUIV/9LNdUJ7i6TCb2SnmS7U5I/ClWosgrHD2FZYFkRfP
+         XFUzcAFvMjGtDfQDPN83LA+K9X+XO44wpcg4GATF0rm4akiH9SjBsa1KcisyKjSjwkLb
+         3X97L/8Mtf7kNmMPCTHbReBYLrQUkjc2aCtxgT1jIrjFRq3Jio3Xix6R82ZVpSej0x/t
+         obqBEMEGsT5Duwdq4mImp5bvRCi/0fmXp7A43pWVv6+7KXdaVZnbAe4k5+O5q0lMfckT
+         r4zQ==
+X-Gm-Message-State: APjAAAXFxLeM4cOCowm1L0fn06JQNqOIDX5ZmJOCosRZoFl0fCPZ8QdB
+        BguEtTdcR59cyncOYsmuzWc=
+X-Google-Smtp-Source: APXvYqzdu1sTCj4NZqYSRC6slwAaJGOIFip0P2vewuNZ7htej3nWePVTXo/8UzTYLV9SDoAn/6Sq9A==
+X-Received: by 2002:a37:9f94:: with SMTP id i142mr582854qke.244.1576519343375;
+        Mon, 16 Dec 2019 10:02:23 -0800 (PST)
+Received: from iclxps (c-73-129-26-117.hsd1.md.comcast.net. [73.129.26.117])
+        by smtp.gmail.com with ESMTPSA id r41sm7101996qtc.6.2019.12.16.10.02.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 10:02:20 -0800 (PST)
-Date:   Mon, 16 Dec 2019 12:02:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, robh+dt@kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 2/3] dt-bindings: clock: Introduce QCOM Modem clock
-  bindings
-Message-ID: <20191216180219.GA32620@bogus>
-References: <1575447687-9296-1-git-send-email-tdas@codeaurora.org>
- <0101016ed0008a4d-e7c6d3fc-1020-48e6-a515-762c71bcedff-000000@us-west-2.amazonses.com>
+        Mon, 16 Dec 2019 10:02:22 -0800 (PST)
+Message-ID: <2e689322e9c07a062454eed51b318d4c0b29799c.camel@gmail.com>
+Subject: Re: [PATCH v5 2/4] lib: devres: add a helper function for ioremap_uc
+From:   Tuowen Zhao <ztuowen@gmail.com>
+To:     Greg KH <greg@kroah.com>
+Cc:     Sasha Levin <sashal@kernel.org>, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
+        mika.westerberg@linux.intel.com, stable@vger.kernel.org,
+        linux@roeck-us.net
+Date:   Mon, 16 Dec 2019 13:02:21 -0500
+In-Reply-To: <20191216130634.GA1563846@kroah.com>
+References: <20191016210629.1005086-3-ztuowen@gmail.com>
+         <20191017143144.9985421848@mail.kernel.org>
+         <b113dd8da86934acc90859dc592e0234fa88cfdc.camel@gmail.com>
+         <20191018164738.GY31224@sasha-vm>
+         <7eb0ed7d51b53f7d720a78d9b959c462adb850d4.camel@gmail.com>
+         <20191216130634.GA1563846@kroah.com>
+Content-Type: text/plain
+User-Agent: Evolution 3.34.2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0101016ed0008a4d-e7c6d3fc-1020-48e6-a515-762c71bcedff-000000@us-west-2.amazonses.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 4 Dec 2019 08:22:06 +0000, Taniya Das wrote:
-> Add device tree bindings for modem clock controller for
-> Qualcomm Technology Inc's SC7180 SoCs.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  include/dt-bindings/clock/qcom,gcc-sc7180.h |  5 +++++
->  include/dt-bindings/clock/qcom,mss-sc7180.h | 12 ++++++++++++
->  2 files changed, 17 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
-> 
+Thanks, sorry for the trouble.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Tuowen
+
