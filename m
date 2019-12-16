@@ -2,90 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43CB41209D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B09F01209E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:40:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728445AbfLPPif (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:38:35 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43219 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728322AbfLPPif (ORCPT
+        id S1728576AbfLPPkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:40:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35125 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728395AbfLPPkF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:38:35 -0500
-Received: by mail-ot1-f67.google.com with SMTP id p8so9651396oth.10;
-        Mon, 16 Dec 2019 07:38:34 -0800 (PST)
+        Mon, 16 Dec 2019 10:40:05 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g17so7836427wro.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:40:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aMcR8IvhqwKdqvk3MOsa4sjnCibF6aBm6/rKYId8yOU=;
+        b=aYemngY8sm3R+2gECU80Pbl0HOOlN6o06z/NUXwrdu0PyIkLRmYO+UOoyiah7BBfE2
+         fEfUdpJMcVhsPLGDiIX95S+Gd4837h9qPLAsR0UJUvwRkoCBm9KlMJLYNlexqBRTmgFv
+         1rDtuv1aVdu24JT2Qje03YAiu93Ls0llB1Am0O3Rw1CwuTlGY+6l/vMEPOf7lJj/omHS
+         77q58xghbmWK0T/pZiCvvltNmeLpFcMkZj8/hLSHr3s0AUI0pwpFcUR3VL0KTFrMIabX
+         gtjTJk3iQ38HjQvUZkr9pEk2eGyIeYoS69J/HBXPnRoqlirIIuhj+dPaeo93KyCbvT6c
+         DPHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wnkOsuCyZ6LgZA6WK8OXgo4HhYM+KMZyOo083tpZJdo=;
-        b=DHWXi3B2EuQPj2acgSTCsKNdEERZM6dWeMROsadeuqeymcjaVl0cjfk42U7Tq191dx
-         qbSrD1RCDGjEwuANHB4IvGXnuL8sMTt0ZMsHAoN05V8AQgAnehk+xYN4VnB1L17333QM
-         i1mAJL2vsQn/0ff5yBt/cGyf3acsz1pfcP8HIR2QAM8u6DfNq6NA9tegY/jD98KUI+7v
-         /4b/z/z2ui+iL4CTpBXzP0vD6AWhCdtSXmK69z3Q+GZFX8gQnsxAnT0P8N6OkSH9bTmZ
-         NDd4OnXfkfXWXNVdjVCKsmi4QUIqAMYpIcgVN7E3RGJj8InXe/kJVSc4yYeOdkrL3wEt
-         QyBQ==
-X-Gm-Message-State: APjAAAXAQbGakSz8by6TUqoYtlZwp1enXcbO9ZHghjv9pevonyOEPftx
-        e/ORijXYZwqRi7pcR4hf8g==
-X-Google-Smtp-Source: APXvYqya7T3obFF+cjuSfK72FvIz81CcveEAuSaKiMd+yY6Eg9+cGk/LensHd5maeRqxLJRZ1Bd7pg==
-X-Received: by 2002:a05:6830:2110:: with SMTP id i16mr31523282otc.337.1576510714277;
-        Mon, 16 Dec 2019 07:38:34 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t3sm6863170otq.32.2019.12.16.07.38.33
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=aMcR8IvhqwKdqvk3MOsa4sjnCibF6aBm6/rKYId8yOU=;
+        b=PBfwkq/A/AE72VjCPF2bLZ+MHJOK4JvB7yZ+FQ6eaBH+JSviS64yk/5rpjwKPccr00
+         pL8/Y/aubo6l+m0YcOvoUPBA1FWNPwNM/VFlW46Kc8xIcgqDHHo41ydRTAAdLMTOoLRa
+         wseYliLwllq7YLcEOcvjijnBMKvRD2VVmqIle+UaZ0lYayvSBQKrEyQilvEauTSczkwB
+         hfE+Y4bHc5WVdaef5Zp8HQmM2rO17bkkNsY8eVw4Jug5is1qeXQKR/nHtQNjZ9Bv8F/z
+         IAxOoMbDehBNWNIbBgLTMugfEkcS2zxZZfOCKo+hirXpP3u5xyBmGx/IPUcwPAbV/UHj
+         rzbw==
+X-Gm-Message-State: APjAAAXP3DYZfMAaTfbdk3yOduk1ZLwGLlXwUfBeLQtUeGqewOnrZGU5
+        Ki/K2ZazvWrtT8hHpohydQ==
+X-Google-Smtp-Source: APXvYqz1HW3jI0abUFjkNtrzG17hAYe+n0BOF4YTLhBJSmgVD71P1zeLJz+yC1ay/UhACnzoEMSHZw==
+X-Received: by 2002:adf:f1d0:: with SMTP id z16mr29913158wro.209.1576510803796;
+        Mon, 16 Dec 2019 07:40:03 -0800 (PST)
+Received: from ninjahub.lan (host-92-15-174-53.as43234.net. [92.15.174.53])
+        by smtp.googlemail.com with ESMTPSA id u24sm14504514wml.10.2019.12.16.07.40.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 07:38:33 -0800 (PST)
-Date:   Mon, 16 Dec 2019 09:38:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ikjoon Jang <ikjn@chromium.org>
-Cc:     devicetree@vger.kernel.org,
-        GregKroah-Hartman <gregkh@linuxfoundation.org>,
-        MarkRutland <mark.rutland@arm.com>,
-        AlanStern <stern@rowland.harvard.edu>,
-        SuwanKim <suwan.kim027@gmail.com>,
-        "GustavoA . R . Silva" <gustavo@embeddedor.com>,
-        JohanHovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, drinkcat@chromium.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: usb: add "hub,interval" property
-Message-ID: <20191216153833.GA18715@bogus>
-References: <20191203101536.199222-1-ikjn@chromium.org>
+        Mon, 16 Dec 2019 07:40:03 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+To:     boqun.feng@gmail.com
+Cc:     peterz@infradead.org, mingo@redhat.com, will@kernel.org,
+        linux-kernel@vger.kernel.org, Jules Irenge <jbi.octave@gmail.com>
+Subject: [PATCH] kernel: locking: add releases(lock) annotation
+Date:   Mon, 16 Dec 2019 15:39:52 +0000
+Message-Id: <20191216153952.37038-1-jbi.octave@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203101536.199222-1-ikjn@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 03, 2019 at 06:15:36PM +0800, Ikjoon Jang wrote:
-> Add "hub,interval" property to usb-device, so hub device can override
-> endpoint descriptor's bInterval.
-> 
-> When we know reducing autosuspend delay for built-in HIDs is better for
-> power saving, we can reduce it to the optimal value. But if a parent hub
-> has a long bInterval, mouse lags a lot from more frequent autosuspend.
-> So this enables overriding bInterval for a hard wired hub device only
-> when we know that reduces the power consumption.
-> 
-> Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
-> ---
->  Documentation/devicetree/bindings/usb/usb-device.txt | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/usb/usb-device.txt b/Documentation/devicetree/bindings/usb/usb-device.txt
-> index 036be172b1ae..44bef2ff2704 100644
-> --- a/Documentation/devicetree/bindings/usb/usb-device.txt
-> +++ b/Documentation/devicetree/bindings/usb/usb-device.txt
-> @@ -66,6 +66,9 @@ Required properties for host-controller nodes with device nodes:
->  - #size-cells: shall be 0
->  
->  
-> +Optional properties for hub nodes
-> +- hub,interval: bInterval of status change endpoint. The range is 1-255.
+Add releases(lock) annotation to remove issue detected by sparse tool.
+warning: context imbalance in xxxxxxx() - unexpected unlock
 
-'hub' is not a vendor.
+Signed-off-by: Jules Irenge <jbi.octave@gmail.com>
+---
+ kernel/locking/spinlock.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-'b-interval' instead.
+diff --git a/kernel/locking/spinlock.c b/kernel/locking/spinlock.c
+index 0ff08380f531..bb088fcf2be5 100644
+--- a/kernel/locking/spinlock.c
++++ b/kernel/locking/spinlock.c
+@@ -187,6 +187,7 @@ EXPORT_SYMBOL(_raw_spin_unlock);
+ 
+ #ifndef CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE
+ void __lockfunc _raw_spin_unlock_irqrestore(raw_spinlock_t *lock, unsigned long flags)
++	__releases(lock)
+ {
+ 	__raw_spin_unlock_irqrestore(lock, flags);
+ }
+@@ -203,6 +204,7 @@ EXPORT_SYMBOL(_raw_spin_unlock_irq);
+ 
+ #ifndef CONFIG_INLINE_SPIN_UNLOCK_BH
+ void __lockfunc _raw_spin_unlock_bh(raw_spinlock_t *lock)
++	__releases(lock)
+ {
+ 	__raw_spin_unlock_bh(lock);
+ }
+@@ -275,6 +277,7 @@ EXPORT_SYMBOL(_raw_read_unlock_irq);
+ 
+ #ifndef CONFIG_INLINE_READ_UNLOCK_BH
+ void __lockfunc _raw_read_unlock_bh(rwlock_t *lock)
++	__releases(lock)
+ {
+ 	__raw_read_unlock_bh(lock);
+ }
+@@ -331,6 +334,7 @@ EXPORT_SYMBOL(_raw_write_unlock);
+ 
+ #ifndef CONFIG_INLINE_WRITE_UNLOCK_IRQRESTORE
+ void __lockfunc _raw_write_unlock_irqrestore(rwlock_t *lock, unsigned long flags)
++	__releases(lock)
+ {
+ 	__raw_write_unlock_irqrestore(lock, flags);
+ }
+@@ -347,6 +351,7 @@ EXPORT_SYMBOL(_raw_write_unlock_irq);
+ 
+ #ifndef CONFIG_INLINE_WRITE_UNLOCK_BH
+ void __lockfunc _raw_write_unlock_bh(rwlock_t *lock)
++	__releases(lock)
+ {
+ 	__raw_write_unlock_bh(lock);
+ }
+-- 
+2.23.0
 
-Rob
