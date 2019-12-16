@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 191391213AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA7B1121507
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfLPSDu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:03:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40764 "EHLO mail.kernel.org"
+        id S1731299AbfLPSRj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:17:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728949AbfLPSDq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:46 -0500
+        id S1731659AbfLPSR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:17:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7FA320700;
-        Mon, 16 Dec 2019 18:03:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D51AC207FF;
+        Mon, 16 Dec 2019 18:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519426;
-        bh=7sFZgH0GHz1uqutiu9syMlI4HQ+LzFR3DWImJL7Q/4E=;
+        s=default; t=1576520247;
+        bh=5TQRcs3ecqEAJWonY7FMDAfQjZlXz7Y3PYJHeOYi2r0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mTgWUEwxGrWiAWEOV0XTaqO9E9eej/bk7RLtJRHeaCWXp5uSOkYec7oemWE9EEGeU
-         UYHE8C6+Pd3olJHOsu5gsFjMHOYfQ3AH/ALGHBqJ9EY5ETbJzRGuoifK5Y3+U4DUKu
-         5i5uUNoQbAaowIUuZWHhK7cWZbBZUAoRHVEljNOc=
+        b=UZeEvJvlY70KVAcBKeGkLm5kq8FtFrDQBmXVP8jg0mGf7eCoFAnIYbhKw2LfqXneK
+         SdL2Bld/h8XORBLSAGXG8ZsC0X+IukFaPF4SClEZUbRPULGomSieI5D7TgnUJY9k/n
+         Yo56QtRz25OmRuZ1sBmFPdneSh4hCj+uU5cMV8VM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-Subject: [PATCH 4.19 062/140] s390/mm: properly clear _PAGE_NOEXEC bit when it is not supported
-Date:   Mon, 16 Dec 2019 18:48:50 +0100
-Message-Id: <20191216174804.746911582@linuxfoundation.org>
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.4 075/177] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
+Date:   Mon, 16 Dec 2019 18:48:51 +0100
+Message-Id: <20191216174835.725530675@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,65 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit ab874f22d35a8058d8fdee5f13eb69d8867efeae upstream.
+commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
 
-On older HW or under a hypervisor, w/o the instruction-execution-
-protection (IEP) facility, and also w/o EDAT-1, a translation-specification
-exception may be recognized when bit 55 of a pte is one (_PAGE_NOEXEC).
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback to get the RX buffer address was added to
+the PCI driver. Unfortunately, driver rtl8192de was not modified
+appropriately and the code runs into a WARN_ONCE() call. The use
+of an incorrect array is also fixed.
 
-The current code tries to prevent setting _PAGE_NOEXEC in such cases,
-by removing it within set_pte_at(). However, ptep_set_access_flags()
-will modify a pte directly, w/o using set_pte_at(). There is at least
-one scenario where this can result in an active pte with _PAGE_NOEXEC
-set, which would then lead to a panic due to a translation-specification
-exception (write to swapped out page):
-
-do_swap_page
-  pte = mk_pte (with _PAGE_NOEXEC bit)
-  set_pte_at   (will remove _PAGE_NOEXEC bit in page table, but keep it
-                in local variable pte)
-  vmf->orig_pte = pte (pte still contains _PAGE_NOEXEC bit)
-  do_wp_page
-    wp_page_reuse
-      entry = vmf->orig_pte (still with _PAGE_NOEXEC bit)
-      ptep_set_access_flags (writes entry with _PAGE_NOEXEC bit)
-
-Fix this by clearing _PAGE_NOEXEC already in mk_pte_phys(), where the
-pgprot value is applied, so that no pte with _PAGE_NOEXEC will ever be
-visible, if it is not supported. The check in set_pte_at() can then also
-be removed.
-
-Cc: <stable@vger.kernel.org> # 4.11+
-Fixes: 57d7f939e7bd ("s390: add no-execute support")
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org> # 3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/include/asm/pgtable.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -1150,8 +1150,6 @@ void gmap_pmdp_idte_global(struct mm_str
- static inline void set_pte_at(struct mm_struct *mm, unsigned long addr,
- 			      pte_t *ptep, pte_t entry)
- {
--	if (!MACHINE_HAS_NX)
--		pte_val(entry) &= ~_PAGE_NOEXEC;
- 	if (pte_present(entry))
- 		pte_val(entry) &= ~_PAGE_UNUSED;
- 	if (mm_has_pgste(mm))
-@@ -1168,6 +1166,8 @@ static inline pte_t mk_pte_phys(unsigned
- {
- 	pte_t __pte;
- 	pte_val(__pte) = physpage + pgprot_val(pgprot);
-+	if (!MACHINE_HAS_NX)
-+		pte_val(__pte) &= ~_PAGE_NOEXEC;
- 	return pte_mkyoung(__pte);
- }
- 
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -804,13 +804,15 @@ u64 rtl92de_get_desc(struct ieee80211_hw
+ 			break;
+ 		}
+ 	} else {
+-		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
+ 		switch (desc_name) {
+ 		case HW_DESC_OWN:
+-			ret = GET_RX_DESC_OWN(pdesc);
++			ret = GET_RX_DESC_OWN(p_desc);
+ 			break;
+ 		case HW_DESC_RXPKT_LEN:
+-			ret = GET_RX_DESC_PKT_LEN(pdesc);
++			ret = GET_RX_DESC_PKT_LEN(p_desc);
++			break;
++		case HW_DESC_RXBUFF_ADDR:
++			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
+ 			break;
+ 		default:
+ 			WARN_ONCE(true, "rtl8192de: ERR rxdesc :%d not processed\n",
 
 
