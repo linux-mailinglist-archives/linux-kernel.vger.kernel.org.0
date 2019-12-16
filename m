@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0804D1215F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:25:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8868E1213B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731558AbfLPSRl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41740 "EHLO mail.kernel.org"
+        id S1729602AbfLPSEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731670AbfLPSRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:17:35 -0500
+        id S1729585AbfLPSD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 245FE206E0;
-        Mon, 16 Dec 2019 18:17:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A34F120700;
+        Mon, 16 Dec 2019 18:03:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520254;
-        bh=vT09+Y2atmoIbCV7QqkXaUqPrSgl4UOEZ/3qeExbu4w=;
+        s=default; t=1576519436;
+        bh=F2n07ws10lQmM2LodegTTQfMXCbscbF5aBDGHTmAry4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Btck0qHFFapIsGM3nE/j0HlQK3WAQxCe3xdXHNuA1CvT6D8gyjEU4cHESB7UQ9Jf9
-         qVUNcUWezlDNwtGqQfH8SlkSIaJIXzF+wYD9SOxvGXRlpEaomaXZxcqDSwcXsTjB0a
-         DqIGvOR1WfbUWiXD15a5dsvgHGOATnvyzqqlbJms=
+        b=RLbAPXU3HOAXoiZAnPZncFJvpesWBsh0KYhtJRb5yXJdeV2ixdJom6Hx4orxoWCTc
+         w9JB8wTOC2TxxXqC0CxIk5Jd+3TWBfEq/xKbMLCYHcvpEEN3JQYT0JmLaF15Ena5Xq
+         PhUBlJLThcN8AI0zH3kGy+LZV/PLXFMaxVGxeCQY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 5.4 078/177] lib: raid6: fix awk build warnings
+        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 066/140] cpuidle: Do not unset the driver if it is there already
 Date:   Mon, 16 Dec 2019 18:48:54 +0100
-Message-Id: <20191216174836.455110074@linuxfoundation.org>
+Message-Id: <20191216174805.779293182@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,38 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
 
-commit 702600eef73033ddd4eafcefcbb6560f3e3a90f7 upstream.
+commit 918c1fe9fbbe46fcf56837ff21f0ef96424e8b29 upstream.
 
-Newer versions of awk spit out these fun warnings:
-	awk: ../lib/raid6/unroll.awk:16: warning: regexp escape sequence `\#' is not a known regexp operator
+Fix __cpuidle_set_driver() to check if any of the CPUs in the mask has
+a driver different from drv already and, if so, return -EBUSY before
+updating any cpuidle_drivers per-CPU pointers.
 
-As commit 700c1018b86d ("x86/insn: Fix awk regexp warnings") showed, it
-turns out that there are a number of awk strings that do not need to be
-escaped and newer versions of awk now warn about this.
-
-Fix the string up so that no warning is produced.  The exact same kernel
-module gets created before and after this patch, showing that it wasn't
-needed.
-
-Link: https://lore.kernel.org/r/20191206152600.GA75093@kroah.com
+Fixes: 82467a5a885d ("cpuidle: simplify multiple driver support")
+Cc: 3.11+ <stable@vger.kernel.org> # 3.11+
+Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+[ rjw: Subject & changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/raid6/unroll.awk |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/cpuidle/driver.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
---- a/lib/raid6/unroll.awk
-+++ b/lib/raid6/unroll.awk
-@@ -13,7 +13,7 @@ BEGIN {
- 	for (i = 0; i < rep; ++i) {
- 		tmp = $0
- 		gsub(/\$\$/, i, tmp)
--		gsub(/\$\#/, n, tmp)
-+		gsub(/\$#/, n, tmp)
- 		gsub(/\$\*/, "$", tmp)
- 		print tmp
- 	}
+--- a/drivers/cpuidle/driver.c
++++ b/drivers/cpuidle/driver.c
+@@ -62,24 +62,23 @@ static inline void __cpuidle_unset_drive
+  * __cpuidle_set_driver - set per CPU driver variables for the given driver.
+  * @drv: a valid pointer to a struct cpuidle_driver
+  *
+- * For each CPU in the driver's cpumask, unset the registered driver per CPU
+- * to @drv.
+- *
+- * Returns 0 on success, -EBUSY if the CPUs have driver(s) already.
++ * Returns 0 on success, -EBUSY if any CPU in the cpumask have a driver
++ * different from drv already.
+  */
+ static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
+ {
+ 	int cpu;
+ 
+ 	for_each_cpu(cpu, drv->cpumask) {
++		struct cpuidle_driver *old_drv;
+ 
+-		if (__cpuidle_get_cpu_driver(cpu)) {
+-			__cpuidle_unset_driver(drv);
++		old_drv = __cpuidle_get_cpu_driver(cpu);
++		if (old_drv && old_drv != drv)
+ 			return -EBUSY;
+-		}
++	}
+ 
++	for_each_cpu(cpu, drv->cpumask)
+ 		per_cpu(cpuidle_drivers, cpu) = drv;
+-	}
+ 
+ 	return 0;
+ }
 
 
