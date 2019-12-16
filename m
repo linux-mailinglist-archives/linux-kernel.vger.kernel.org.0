@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79C6A121672
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D334312158A
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:23:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731306AbfLPS3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:29:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
+        id S1732134AbfLPSUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:20:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731013AbfLPSNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:13:55 -0500
+        id S1731952AbfLPSUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:20:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B831B20CC7;
-        Mon, 16 Dec 2019 18:13:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA643206EC;
+        Mon, 16 Dec 2019 18:20:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520035;
-        bh=RpOfKwscbcP3jTQZONthTaLFEsK4492fK/8v35MsLPw=;
+        s=default; t=1576520441;
+        bh=VMJt5NBnVWEBZ6OIVNBHveWFXukZL1cWBAtk60f6bgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CqLGn8D6t/VO1YZf4taGkGIpJ5bFLbEdLkgnZTM00B3/pBPkiyIONjOGagaHUQXyX
-         rJy7mJJvU/LyvT7j49TYvvKguCA3DqoC3WuetqTagbmCVIJgGk+zuaaAjAvgolgAmF
-         tN/uYHcHgZtxW4vELP5ctRjT/gZheq5Yx+3hVxG0=
+        b=PXo0e/xqN8t5xMeOlYj59j/uU1hhASmHAm2Zo1MR/TkCsliG6VRgvtTWriukNKe9j
+         C9dWSparqDocT9RVjtqcUfM99FCyeG7Y3Jjw0owzNcbbR8L1fF1ybqhxekjN7B1qLB
+         FYsCX5M5MM+iDDaS9iNNftMbRSs47PaXvjSgaPhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Elaine Zhang <zhangqing@rock-chips.com>,
-        Joseph Chen <chenjh@rock-chips.com>,
-        Daniel Schultz <d.schultz@phytec.de>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 5.3 171/180] mfd: rk808: Fix RK818 ID template
-Date:   Mon, 16 Dec 2019 18:50:11 +0100
-Message-Id: <20191216174847.644291124@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Hernandez <mhernandez@marvell.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        Martin Wilck <mwilck@suse.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 156/177] scsi: qla2xxx: Fix a dma_pool_free() call
+Date:   Mon, 16 Dec 2019 18:50:12 +0100
+Message-Id: <20191216174848.606775145@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,40 +47,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Schultz <d.schultz@phytec.de>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 37ef8c2c15bdc1322b160e38986c187de2b877b2 upstream.
+[ Upstream commit 162b805e38327135168cb0938bd37b131b481cb0 ]
 
-The Rockchip PMIC driver can automatically detect connected component
-versions by reading the ID_MSB and ID_LSB registers. The probe function
-will always fail with RK818 PMICs because the ID_MSK is 0xFFF0 and the
-RK818 template ID is 0x8181.
+This patch fixes the following kernel warning:
 
-This patch changes this value to 0x8180.
+DMA-API: qla2xxx 0000:00:0a.0: device driver frees DMA memory with different size [device address=0x00000000c7b60000] [map size=4088 bytes] [unmap size=512 bytes]
+WARNING: CPU: 3 PID: 1122 at kernel/dma/debug.c:1021 check_unmap+0x4d0/0xbd0
+CPU: 3 PID: 1122 Comm: rmmod Tainted: G           O      5.4.0-rc1-dbg+ #1
+RIP: 0010:check_unmap+0x4d0/0xbd0
+Call Trace:
+ debug_dma_free_coherent+0x123/0x173
+ dma_free_attrs+0x76/0xe0
+ qla2x00_mem_free+0x329/0xc40 [qla2xxx_scst]
+ qla2x00_free_device+0x170/0x1c0 [qla2xxx_scst]
+ qla2x00_remove_one+0x4f0/0x6d0 [qla2xxx_scst]
+ pci_device_remove+0xd5/0x1f0
+ device_release_driver_internal+0x159/0x280
+ driver_detach+0x8b/0xf2
+ bus_remove_driver+0x9a/0x15a
+ driver_unregister+0x51/0x70
+ pci_unregister_driver+0x2d/0x130
+ qla2x00_module_exit+0x1c/0xbc [qla2xxx_scst]
+ __x64_sys_delete_module+0x22a/0x300
+ do_syscall_64+0x6f/0x2e0
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 9d6105e19f61 ("mfd: rk808: Fix up the chip id get failed")
-Cc: stable@vger.kernel.org
-Cc: Elaine Zhang <zhangqing@rock-chips.com>
-Cc: Joseph Chen <chenjh@rock-chips.com>
-Signed-off-by: Daniel Schultz <d.schultz@phytec.de>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 3f006ac342c0 ("scsi: qla2xxx: Secure flash update support for ISP28XX") # v5.2-rc1~130^2~270.
+Cc: Michael Hernandez <mhernandez@marvell.com>
+Cc: Himanshu Madhani <hmadhani@marvell.com>
+Link: https://lore.kernel.org/r/20191106044226.5207-3-bvanassche@acm.org
+Reviewed-by: Martin Wilck <mwilck@suse.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/mfd/rk808.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/qla2xxx/qla_os.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/include/linux/mfd/rk808.h
-+++ b/include/linux/mfd/rk808.h
-@@ -610,7 +610,7 @@ enum {
- 	RK808_ID = 0x0000,
- 	RK809_ID = 0x8090,
- 	RK817_ID = 0x8170,
--	RK818_ID = 0x8181,
-+	RK818_ID = 0x8180,
- };
+diff --git a/drivers/scsi/qla2xxx/qla_os.c b/drivers/scsi/qla2xxx/qla_os.c
+index 23c3927751637..0bbc6a82470a5 100644
+--- a/drivers/scsi/qla2xxx/qla_os.c
++++ b/drivers/scsi/qla2xxx/qla_os.c
+@@ -4680,7 +4680,8 @@ qla2x00_mem_free(struct qla_hw_data *ha)
+ 	ha->sfp_data = NULL;
  
- struct rk808 {
+ 	if (ha->flt)
+-		dma_free_coherent(&ha->pdev->dev, SFP_DEV_SIZE,
++		dma_free_coherent(&ha->pdev->dev,
++		    sizeof(struct qla_flt_header) + FLT_REGIONS_SIZE,
+ 		    ha->flt, ha->flt_dma);
+ 	ha->flt = NULL;
+ 	ha->flt_dma = 0;
+-- 
+2.20.1
+
 
 
