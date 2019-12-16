@@ -2,122 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29FD412012B
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85BDC12012E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 10:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfLPJ3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 04:29:44 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36737 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726937AbfLPJ3n (ORCPT
+        id S1727144AbfLPJaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 04:30:19 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35720 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727053AbfLPJaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 04:29:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576488582;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=D+soKtjNipH8IpDTofIGrq0aj+9fNzPNczOVUstfi40=;
-        b=GeK+Bj/uKgosw892qxigAaBMbkiJ8wM6KWk0F45ziFEebaX3Kq+mRNTzdGvTLnt/zip/VH
-        a8vD7RrLjvyuf7cWUe5FvQ7206qRryGsO9tkKwnfG2rNQBjG9U83LTw1T9X0K6DnGPRog5
-        joAovHva9vU2uXgk2HqOCNXV3FIWGBQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-Esuma3D8M7SQ4SInaisa_g-1; Mon, 16 Dec 2019 04:29:39 -0500
-X-MC-Unique: Esuma3D8M7SQ4SInaisa_g-1
-Received: by mail-wr1-f70.google.com with SMTP id f10so3466473wro.14
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 01:29:39 -0800 (PST)
+        Mon, 16 Dec 2019 04:30:18 -0500
+Received: by mail-wr1-f66.google.com with SMTP id g17so6351439wro.2
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 01:30:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=Qa3rJnhJbTcROjMKp121dlZfgwfeX0Vh5JSjU4DOTw4=;
+        b=ucY3lk6kSKWb8WI8WYYykhbuCjOXeHofj9fsa35CoZnZbnzTkKgxvFUwQWDWih9Yh/
+         S3X48gi697HVj1p61iRLoLyIm8Jhgc2ByjKs7nimotgLP7PSDRP3qH0eJkwl290U+T/5
+         i4tIW8nxv6bY/VEZd2lunf8iHrg22LjAd5C6iLUYfGzl2Yowgj1d6t3LNm++IZqZoAYx
+         V4ZyAHz3y/KH2XTIW+8lIu+3gqo8jw327Qh/65fyhWJ9O2ht9o2efNhQkT4ZWYxFS64D
+         u0H2S9H84GZa6s0JVOr0Ndrs66NbYGMWICVzxH1coajOWm5oHoJSb/0UYE/cipuoU9GK
+         RsTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=D+soKtjNipH8IpDTofIGrq0aj+9fNzPNczOVUstfi40=;
-        b=PADSJHNGBpY4l5Ef/3ABCEH1IrnTtB9s74NeMZqxxHXiBolfoHNN8DhRldp+oQKtq/
-         6Enhh+lX+vmaERuCFWboQR8flSM6kVI/lkUN+4EmZR0qVSWhGy8IQMo+8lfIA9Lp9lTW
-         W9k1ZH9UoDPCAyhGb0265xa0TUjtN26rX/4IrG2JnU4AgVnS/8s20XvYetrz9ay1TB8c
-         Eoc3hh11ufnxHD/qyEsnGKIDVoEeKalpqC5/u9lT4bRuesxz2BYhTYeCWqrv2Wunjwq3
-         NmbNbHIzRj/dwYFXcblIqD+s/Ire9SzGLTb+U6Eer3ga5QJOBLo3ewRmfHtBlmceDBLe
-         Pr1g==
-X-Gm-Message-State: APjAAAU19uzpFV1GK53eZKFacAPx7HW60TwQjbtZ762p2QnaqyaB93Qx
-        JnOYs7DJoJkUCBdSovrv2FPwWrF6PL3C6gGGGutGc8c8RmOP/lwZAq/ZbfFpMKhs0AFg4KsDm1d
-        4N5oSNlCOP8xo70zg9aP72pxa
-X-Received: by 2002:a05:6000:12:: with SMTP id h18mr27350891wrx.87.1576488578199;
-        Mon, 16 Dec 2019 01:29:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxcZPae2fpcmqbfNpMEm7htf9LRZYX5o97SGgIiTkAX1Z/FX+jXlRQPGctSI6IqUy1eUKeLNg==
-X-Received: by 2002:a05:6000:12:: with SMTP id h18mr27350870wrx.87.1576488577987;
-        Mon, 16 Dec 2019 01:29:37 -0800 (PST)
-Received: from ?IPv6:2001:b07:6468:f312:cde8:2463:95a9:1d81? ([2001:b07:6468:f312:cde8:2463:95a9:1d81])
-        by smtp.gmail.com with ESMTPSA id v14sm20958683wrm.28.2019.12.16.01.29.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 01:29:37 -0800 (PST)
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Christophe de Dinechin <christophe.de.dinechin@gmail.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com> <m1lfrihj2n.fsf@dinechin.org>
- <20191213202324.GI16429@xz-x1>
- <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
- <20191214162644.GK16429@xz-x1>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <0f084179-2a5d-e8d9-5870-3cc428105596@redhat.com>
-Date:   Mon, 16 Dec 2019 10:29:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=Qa3rJnhJbTcROjMKp121dlZfgwfeX0Vh5JSjU4DOTw4=;
+        b=U88lZHteZ3S8YxMIS6WllMf13DIwpvMqDvd5HF4w/CtDwGxrMFOGwSB2mOQG1rRY/S
+         5ShqZqyavAwi+LM9St7F8R7tJnX/l3zXIsZCUl6iJeEa165pNV6oEf/qzNTA1aqR01LW
+         u3uLtLomL7jyR8U6fCtcLUcHHxr30Q2DZJ24E9b3p4IKdFF231UnxbGehVaaDqgiiQmB
+         ZFsNEK7uPVVEEulwIFBwPQfhPtJ30YS4XUtRGZXlr9NFsKB/VT0/P7rCaznzTes6SDbI
+         IgkOTK/4Ra2kZXDP2KEZ4qEoUhfYs8AXeLR0cwPYAB6j/Uirxge387+Y02VciPMxvzun
+         iPfA==
+X-Gm-Message-State: APjAAAUVybb+MRwqxW8rO7nlDVyqQrJFHR5FFML4f4STVrEurPEbc7Em
+        etAGlY64NXWjk+tJGyuoYW2ragz+D1M=
+X-Google-Smtp-Source: APXvYqw0Oq5EvD7tniwfOWliXttZ46sD5RoIB8+aIXMEBzjm4iXlYItK0hdJX7LShDNOWedUKQ+hfA==
+X-Received: by 2002:a5d:6886:: with SMTP id h6mr28736169wru.154.1576488616925;
+        Mon, 16 Dec 2019 01:30:16 -0800 (PST)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id s16sm20951366wrn.78.2019.12.16.01.30.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 01:30:16 -0800 (PST)
+References: <20191213103304.12867-1-jbrunet@baylibre.com> <7h1rt89nuf.fsf@baylibre.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
+Subject: Re: [PATCH] clk: meson: g12a: fix missing uart2 in regmap table
+In-reply-to: <7h1rt89nuf.fsf@baylibre.com>
+Date:   Mon, 16 Dec 2019 10:30:15 +0100
+Message-ID: <1jo8w8bot4.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20191214162644.GK16429@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/12/19 17:26, Peter Xu wrote:
-> On Sat, Dec 14, 2019 at 08:57:26AM +0100, Paolo Bonzini wrote:
->> On 13/12/19 21:23, Peter Xu wrote:
->>>> What is the benefit of using u16 for that? That means with 4K pages, you
->>>> can share at most 256M of dirty memory each time? That seems low to me,
->>>> especially since it's sufficient to touch one byte in a page to dirty it.
->>>>
->>>> Actually, this is not consistent with the definition in the code ;-)
->>>> So I'll assume it's actually u32.
->>> Yes it's u32 now.  Actually I believe at least Paolo would prefer u16
->>> more. :)
+
+On Fri 13 Dec 2019 at 17:44, Kevin Hilman <khilman@baylibre.com> wrote:
+
+> Jerome Brunet <jbrunet@baylibre.com> writes:
+>
+>> UART2 peripheral is missing from the regmap fixup table of the g12a family
+>> clock controller. As it is, any access to this clock would Oops, which is
+>> not great.
 >>
->> It has to be u16, because it overlaps the padding of the first entry.
-> 
-> Hmm, could you explain?
-> 
-> Note that here what Christophe commented is on dirty_index,
-> reset_index of "struct kvm_dirty_ring", so imho it could really be
-> anything we want as long as it can store a u32 (which is the size of
-> the elements in kvm_dirty_ring_indexes).
-> 
-> If you were instead talking about the previous union definition of
-> "struct kvm_dirty_gfns" rather than "struct kvm_dirty_ring", iiuc I've
-> moved those indices out of it and defined kvm_dirty_ring_indexes which
-> we expose via kvm_run, so we don't have that limitation as well any
-> more?
+>> Add the clock to the table to fix the problem.
+>>
+>> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
+>> Reported-by: Dmitry Shmidt <dimitrysh@google.com>
+>> Tested-by: Dmitry Shmidt <dimitrysh@google.com>
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-Yeah, I meant that since the size has (had) to be u16 in the union, it
-need not be bigger in kvm_dirty_ring.
-
-I don't think having more than 2^16 entries in the *per-CPU* ring buffer
-makes sense; lagging in recording dirty memory by more than 256 MiB per
-CPU would mean a large pause later on resetting the ring buffers (your
-KVM_CLEAR_DIRTY_LOG patches found the sweet spot to be around 1 GiB for
-the whole system).
-
-So I liked the union, but if you removed it you might as well align the
-producer and consumer indices to 64 bytes so that they are in separate
-cache lines.
-
-Paolo
-
+Applied for fixes
