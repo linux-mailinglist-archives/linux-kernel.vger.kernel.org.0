@@ -2,143 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA4531209A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:28:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D681E1209A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:28:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbfLPP0w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:26:52 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:44538 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728173AbfLPP0w (ORCPT
+        id S1728426AbfLPP1U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:27:20 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46081 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728392AbfLPP1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:26:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576510010;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=iGwZfkSSJJnwVp/7Ati+2Sz+85Pj+b7tepwX8oznNuk=;
-        b=EXcuPiepVCmoQOdqSBUA9VAzf8EVZI0IfmVD1ILFrAiPRaSW157lgp6vYt5f9JTzzjy+p4
-        3cqCeBbIRE83TYRJVqrxasZ0AgYydBMzqH0N/mTGxlrNQ+17zQTXDwvGcx/+/JUFWBymKy
-        2fFwypLv5ZQ4hz85AXXZ4Lp8wk+Jo/I=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-15-Mrm8-0GpNWqb7ulUkUOjIQ-1; Mon, 16 Dec 2019 10:26:48 -0500
-X-MC-Unique: Mrm8-0GpNWqb7ulUkUOjIQ-1
-Received: by mail-qt1-f198.google.com with SMTP id l4so4804979qte.18
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:26:48 -0800 (PST)
+        Mon, 16 Dec 2019 10:27:20 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z7so7721996wrl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:27:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=q3MgqIM7Lebzkf8JO0ojhPzDqiRHLK5vJzUfeZMc1zU=;
+        b=zrI8kgBBoboagFSLXfmTf0mbONsvoKKFbRJjR42YqaEaWnlMrQyzcWb1XMd3mJDIDA
+         XEZRkQ8P8pAI2TuMYE0eBA7sLbLxsitGBmzo66TAenENXpkSFTIFTH0BiQJz45X9zJoE
+         H4pmwfVFQeaforibR4y0VCfdsHWTqBW+kukg7d1cOXYSeCS7D/lHY2Uhncb2P8QqzA70
+         QSUUf4iuWxxGW1iyZsIULB6RumULY/boFuV9T8RrnUAG3Ab1ce71ZAZH6Wte3H9d3TUM
+         oKjbW/zgqasVXHvbr6TC5orVS8GePjn2BhNh9z4+f09Xp+aUnWtHm6yqFLV/d/iNoCV9
+         h5Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iGwZfkSSJJnwVp/7Ati+2Sz+85Pj+b7tepwX8oznNuk=;
-        b=qm6JnWthiV+FZsb891UelrXTndY94OBkJxXwGvcoVJa2/0/uB6FxDWrRTL9Kr2yFJZ
-         wLXVMziYTjct9HGVFI/GYBIMZIy3yLX3ug66E8UaA17iKvyURL/79Ozee6zuMu2QP/nV
-         Q2Uz8UqIDw+Y+R6hobLNtMu/30xqdr57DnOlrayElY+9j1znCHKqGvULjLMtI+0zqgqg
-         dxz6wXLF/UKL04Crrx9xJoqBCSaEcOAlOSxtqKUtJ9E4v1u8/qlJLczl4S9myMEDy+tt
-         DMCAHl5+VQzhKlxaeqTXx3arR28UV2hrUtKBUXR000uCXn4XFEH8HaOCy0iWeZAk/LVg
-         28Og==
-X-Gm-Message-State: APjAAAU1ZKgNFkrumOoU1WvAuaevCYokrIKeSnF2JEo8/Nf6eUVY/HHc
-        qpvYj52X4aEykjbLYlGE2O5GeldniqXsgX6X+7iXuH5GRYp4IFzzV/DUbq5aEQPwIAbVHwmbfVU
-        HEQmqzr4NNcNyGT+ccQ2Mpbkr
-X-Received: by 2002:ac8:5257:: with SMTP id y23mr12518064qtn.88.1576510008518;
-        Mon, 16 Dec 2019 07:26:48 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzjZKLtqnKl3UUpSm2cxHKwBagl6vJ99FCgj6lDTxMrEQ4zqr3hHWPw+ZrHloqvoZLMECC06A==
-X-Received: by 2002:ac8:5257:: with SMTP id y23mr12518048qtn.88.1576510008236;
-        Mon, 16 Dec 2019 07:26:48 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c0:3f::2])
-        by smtp.gmail.com with ESMTPSA id u15sm6007057qku.67.2019.12.16.07.26.46
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=q3MgqIM7Lebzkf8JO0ojhPzDqiRHLK5vJzUfeZMc1zU=;
+        b=ezT7wN2XBXjjsU0hrB0RjYGRnUCqk7uoPc2+FylT0AS5waqJDTslwsUOg8fNz55XNk
+         ZM0blAfup5cGHSHplLn8uMu1cxijDXJtkTiPyO+CxCX4gi7X04nNtf+rJ7pQazbWTbm+
+         8eZl1BG/S0HtGZvVQsCe2mKz3HtipAjf2TAcL84sUObiBpbwqjqxhxFemJa9un4Ltfxq
+         eTKw4nuQvi6t9X7SRxFAyotxxc3x9RwTu624dghNIk7kL3aenJZb9xV6Gg+FaAFTdcao
+         RKKFv2Yh92ok3soASk+NhQ5nBfZR2ng5oaLZvcgmRUO3ma6LcuiLxUZj5w+5BKGV2lYN
+         et7Q==
+X-Gm-Message-State: APjAAAW0ns4oAZdDDDfD2MT3xpuHR2QzePxsyKEFtebwvXV8rwLnmjrR
+        BzSzBi7+WZHCdhr9DzymjjOfNw==
+X-Google-Smtp-Source: APXvYqzUTemS2PAuC/RnjCOMgKkGPqFGklDx/Gs//sa0fLFQ2EuYXh0JOOt4jLFQ6QC7CwPooTMy4g==
+X-Received: by 2002:a5d:6b82:: with SMTP id n2mr30708752wrx.153.1576510037406;
+        Mon, 16 Dec 2019 07:27:17 -0800 (PST)
+Received: from dell ([185.17.149.202])
+        by smtp.gmail.com with ESMTPSA id o66sm17974890wmo.20.2019.12.16.07.27.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 07:26:46 -0800 (PST)
-Date:   Mon, 16 Dec 2019 10:26:47 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Christophe de Dinechin <christophe.de.dinechin@gmail.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191216152647.GD83861@xz-x1>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com>
- <m1lfrihj2n.fsf@dinechin.org>
- <20191213202324.GI16429@xz-x1>
- <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
- <20191214162644.GK16429@xz-x1>
- <0f084179-2a5d-e8d9-5870-3cc428105596@redhat.com>
+        Mon, 16 Dec 2019 07:27:16 -0800 (PST)
+Date:   Mon, 16 Dec 2019 15:27:15 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH v4 2/5] mfd: rn5t618: add IRQ support
+Message-ID: <20191216152715.GH2369@dell>
+References: <20191211215409.32764-1-andreas@kemnade.info>
+ <20191211215409.32764-3-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0f084179-2a5d-e8d9-5870-3cc428105596@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191211215409.32764-3-andreas@kemnade.info>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 10:29:36AM +0100, Paolo Bonzini wrote:
-> On 14/12/19 17:26, Peter Xu wrote:
-> > On Sat, Dec 14, 2019 at 08:57:26AM +0100, Paolo Bonzini wrote:
-> >> On 13/12/19 21:23, Peter Xu wrote:
-> >>>> What is the benefit of using u16 for that? That means with 4K pages, you
-> >>>> can share at most 256M of dirty memory each time? That seems low to me,
-> >>>> especially since it's sufficient to touch one byte in a page to dirty it.
-> >>>>
-> >>>> Actually, this is not consistent with the definition in the code ;-)
-> >>>> So I'll assume it's actually u32.
-> >>> Yes it's u32 now.  Actually I believe at least Paolo would prefer u16
-> >>> more. :)
-> >>
-> >> It has to be u16, because it overlaps the padding of the first entry.
-> > 
-> > Hmm, could you explain?
-> > 
-> > Note that here what Christophe commented is on dirty_index,
-> > reset_index of "struct kvm_dirty_ring", so imho it could really be
-> > anything we want as long as it can store a u32 (which is the size of
-> > the elements in kvm_dirty_ring_indexes).
-> > 
-> > If you were instead talking about the previous union definition of
-> > "struct kvm_dirty_gfns" rather than "struct kvm_dirty_ring", iiuc I've
-> > moved those indices out of it and defined kvm_dirty_ring_indexes which
-> > we expose via kvm_run, so we don't have that limitation as well any
-> > more?
+On Wed, 11 Dec 2019, Andreas Kemnade wrote:
+
+> This adds support for IRQ handling in the RC5T619 which is required
+> for properly implementing subdevices like RTC.
+> For now only definitions for the variant RC5T619 are included.
 > 
-> Yeah, I meant that since the size has (had) to be u16 in the union, it
-> need not be bigger in kvm_dirty_ring.
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> Changes in v4:
+> merge rn5t618-irq.c into rn5t618.c
+> use macros for IRQ table
 > 
-> I don't think having more than 2^16 entries in the *per-CPU* ring buffer
-> makes sense; lagging in recording dirty memory by more than 256 MiB per
-> CPU would mean a large pause later on resetting the ring buffers (your
-> KVM_CLEAR_DIRTY_LOG patches found the sweet spot to be around 1 GiB for
-> the whole system).
-
-That's right, 1G could probably be a "common flavor" for guests in
-that case.
-
-Though I wanted to use u64 only because I wanted to prepare even
-better for future potential changes as long as it won't hurt much.
-Here I'm just afraid 16bit might not be big enough for this 64bit
-world, at the meantime I'd confess some of the requirement could be
-really unimaginable before we know it..  I'm trying to forge one here:
-what if the customer wants to handle 4G burst dirtying workload during
-a migration (besides the burst IOs, mostly idle guests), while the
-customer also want good responsiveness during the burst dirtying?  In
-that case even if we use 256MiB ring we'll still need to freqently
-pause for the harvesting, but actually this case really suites for a
-8G ring size.
-
-My example could be nonsense actually, just to show that if we can
-extend something to u64 from u16 without paying much, then why not. :-)
-
+> Changes in v3:
+> alignment cleanup
 > 
-> So I liked the union, but if you removed it you might as well align the
-> producer and consumer indices to 64 bytes so that they are in separate
-> cache lines.
+> Changes in v2:
+> - no dead code, did some more testing and thinking for that
+> - remove extra empty lines
+>  drivers/mfd/Kconfig         |  1 +
+>  drivers/mfd/rn5t618.c       | 88 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/rn5t618.h | 15 ++++++++
+>  3 files changed, 104 insertions(+)
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index ae24d3ea68ea..522e068d0082 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1057,6 +1057,7 @@ config MFD_RN5T618
+>  	depends on OF
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+> +	select REGMAP_IRQ
+>  	help
+>  	  Say yes here to add support for the Ricoh RN5T567,
+>  	  RN5T618, RC5T619 PMIC.
+> diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
+> index da5cd9c92a59..76d997c0cfe4 100644
+> --- a/drivers/mfd/rn5t618.c
+> +++ b/drivers/mfd/rn5t618.c
+> @@ -8,6 +8,8 @@
+>  
+>  #include <linux/delay.h>
+>  #include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/rn5t618.h>
+>  #include <linux/module.h>
+> @@ -45,9 +47,63 @@ static const struct regmap_config rn5t618_regmap_config = {
+>  	.cache_type	= REGCACHE_RBTREE,
+>  };
+>  
+> +static const struct regmap_irq rc5t619_irqs[] = {
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_SYS, 0, BIT(0)),
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_DCDC, 0, BIT(1)),
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_RTC, 0, BIT(2)),
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_ADC, 0, BIT(3)),
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_GPIO, 0, BIT(4)),
+> +	REGMAP_IRQ_REG(RN5T618_IRQ_CHG, 0, BIT(6)),
+> +};
+> +
+> +static const struct regmap_irq_chip rc5t619_irq_chip = {
+> +	.name = "rc5t619",
+> +	.irqs = rc5t619_irqs,
+> +	.num_irqs = ARRAY_SIZE(rc5t619_irqs),
+> +	.num_regs = 1,
+> +	.status_base = RN5T618_INTMON,
+> +	.mask_base = RN5T618_INTEN,
+> +	.mask_invert = true,
+> +};
+> +
+>  static struct rn5t618 *rn5t618_pm_power_off;
+>  static struct notifier_block rn5t618_restart_handler;
+>  
+> +int rn5t618_irq_init(struct rn5t618 *rn5t618)
 
-Yeh that I can do.  Thanks,
+Static?
 
 -- 
-Peter Xu
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
