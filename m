@@ -2,87 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4444121332
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53B69121232
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:50:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfLPR7r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:59:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32904 "EHLO mail.kernel.org"
+        id S1726320AbfLPRuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728812AbfLPR7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:59:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1725805AbfLPRuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:50:16 -0500
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 326FA206EC;
-        Mon, 16 Dec 2019 17:59:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A642206EC;
+        Mon, 16 Dec 2019 17:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519182;
-        bh=Z8anMrWmTZjHIUgn0N7JaWIaabcZ42ch5MZ7XopHJD4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LqzvU3gf2/Mrsor7HsbD2+XxnxqHvSFQNQv65C6U3vj5B8Wp/vLcyf+CAXUoLq7np
-         7kETh5nZNFnxLxs5yrbGLHklJznDXI4A+Mn+sBd/5Cwb9cHVvhbgYSlnPyXi7yH9xj
-         0tHgWo8lQlztnanYo/QTDhLyw8v/Rg3+E5C8E2L4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alastair DSilva <alastair@d-silva.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 227/267] powerpc: Allow 64bit VDSO __kernel_sync_dicache to work across ranges >4GB
-Date:   Mon, 16 Dec 2019 18:49:13 +0100
-Message-Id: <20191216174914.994592683@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1576518615;
+        bh=g8/rjNCZq7LbHvZLvTNNpjZ1plcZnKZdtSsnrwvnKXs=;
+        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
+        b=hyJriL7F96LxiYiCXXD6CLjvtW73yKVQDMHGaYpoy1QPMrmgRBbgjZQ2CFT5CAg+W
+         +KrAVw6jQMk7TdXrDODjsWdn7uaXccTJfRVXit4cex32jK7jAeY7lAXuMDrm0lEvfi
+         xm/9xn40U82jAhw/4ZBRdSf9wMSNHaoWdmQdIbhE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Mon, 16 Dec 2019 09:50:14 -0800
+Message-Id: <20191216175015.2A642206EC@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+Quoting Jerome Brunet (2019-12-16 01:13:31)
+>=20
+> On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@goo=
+glemail.com> wrote:
+>=20
+> > While playing with devfreq support for the lima driver I experienced
+> > sporadic (random) system lockups. It turned out that this was in
+> > certain cases when changing the mali clock.
+> >
+> > The Amlogic vendor GPU platform driver (which is responsible for
+> > changing the clock frequency) uses the following pattern when updating
+> > the mali clock rate:
+> > - at initialization: initialize the two mali_0 and mali_1 clock trees
+> >   with a default setting and enable both clocks
+> > - when changing the clock frequency:
+> > -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
+> > -- update the mali_0 clock tree (set the mux, divider, etc.)
+> > -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
+>                                       ^ no final setting then ? :P
+> >    output again
+> >
+> > With the common clock framework we can even do better:
+> > by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
+>                 ^
+> From your patch, I guess you mean CLK_SET_RATE_GATE ?
+>=20
+> > we can force the common clock framework to update the "inactive" clock
+> > and then switch to it's output.
+> >
+> > I only tested this patch for a limited time only (approx. 2 hours).
+> > So far I couldn't reproduce the sporadic system lockups with it.
+> > However, broader testing would be great so I would like this to be
+> > applied for -next.
+>=20
+> CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
+> use. While it works at your advantage here, I'm not sure CCF guarantees
+> the assumption this implementation is based on. Some explanation below:
+>=20
+> In your case, if it works as you expect when calling set_rate() on the
+> top clock, it goes as this:
+>=20
+> - mali0 is use with rate X:
+> - =3D> set_rate(mali_top, Y)
+> - mali0 is in use, cannot change, will round rate Y to X
+> - mali1 is not in use, can provide Y
+> - mali1 is determined to be the new best parent for mali top
+>=20
+> So far so good.
+>=20
+> - CCF pick the mali1 subtree
+>   *start updating the clock from the root to the leaf*
+>=20
+> So the mali top mux, which choose between mali0 and mali1, will be
+> *updated last* which crucial to your use case.
+>=20
+> I just wonder if this crucial part something CCF guarantee and you can
+> rely on it ... or if it might break in the future.
+>=20
+> Stephen, any thoughts on this ?
 
-commit f9ec11165301982585e5e5f606739b5bae5331f3 upstream.
+We have problems with the order in which we call the set_rate clk_op.
+Sometimes clk providers want us to call from leaf to root but instead we
+call from root to leaf because of implementation reasons. Controlling
+the order in which clk operations are done is an unsolved problem. But
+yes, in the future I'd like to see us introduce the vaporware that is
+coordinated clk rates that would allow clk providers to decide what this
+order should be, instead of having to do this "root-to-leaf" update.
+Doing so would help us with the clk dividers that have some parent
+changing rate that causes the downstream device to be overclocked while
+we change the parent before the divider.
 
-When calling __kernel_sync_dicache with a size >4GB, we were masking
-off the upper 32 bits, so we would incorrectly flush a range smaller
-than intended.
+If there are more assumptions like this about how the CCF is implemented
+then we'll have to be extra careful to not disturb the "normal" order of
+operations when introducing something that allows clk providers to
+modify it.
 
-This patch replaces the 32 bit shifts with 64 bit ones, so that
-the full size is accounted for.
+Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
+isn't called on that particular clk? I seem to recall that the flag only
+matters when it's applied to the "leaf" or entry point into the CCF from
+a consumer API. I've wanted to fix that but never gotten around to it.
+The whole flag sort of irks me because I don't understand what consumers
+are supposed to do when this flag is set on a clk. How do they discover
+it? They're supposed to "just know" and turn off the clk first and then
+call clk_set_rate()? Why can't the framework do this all in the
+clk_set_rate() call?
 
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191104023305.9581-3-alastair@au1.ibm.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/powerpc/kernel/vdso64/cacheflush.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/powerpc/kernel/vdso64/cacheflush.S
-+++ b/arch/powerpc/kernel/vdso64/cacheflush.S
-@@ -39,7 +39,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5		/* ensure we get enough */
- 	lwz	r9,CFG_DCACHE_LOGBLOCKSZ(r10)
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	crclr	cr0*4+so
- 	beqlr				/* nothing to do? */
- 	mtctr	r8
-@@ -56,7 +56,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5
- 	lwz	r9,CFG_ICACHE_LOGBLOCKSZ(r10)
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	crclr	cr0*4+so
- 	beqlr				/* nothing to do? */
- 	mtctr	r8
-
-
+>=20
+> PS: If CCF does guarantee "root-to-leaf" updates, I think this
+> implementation is a clever trick to solve this usual glitch free clock
+> update issue ... much more elegant that the notifier solution we have
+> been using so far.
