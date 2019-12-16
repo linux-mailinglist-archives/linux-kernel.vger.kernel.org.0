@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D0CA1212B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B2881212B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:55:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfLPRz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:55:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52618 "EHLO mail.kernel.org"
+        id S1728041AbfLPRzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:55:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727831AbfLPRzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:55:25 -0500
+        id S1728025AbfLPRz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:55:28 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C907421739;
-        Mon, 16 Dec 2019 17:55:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4622820663;
+        Mon, 16 Dec 2019 17:55:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518925;
-        bh=UQisbW21guMhH61Y06kxcCsAqRUxiW3QoLc961NUAZM=;
+        s=default; t=1576518927;
+        bh=YOOKKu7KZKalCYc9fcrbvluf+Q6hWobR9h7/kUaryYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OKnH/V6j/Z41ePAz8U/Ghfb/b60XoV3peY+zKdH0Y8JnaNJcEpvZ6h7NfW9zs8gO2
-         zvMb4iYppotu+d4242yD5fFFKiCWc5r/DBB5T9SvNhXQ3zM3aGCAtw32FBF3ax8KYq
-         ywd25dhm2E+k5LdHyqhxafV199m0eltGU2TVrOuc=
+        b=x+g/5iGxQ5raqEPv6wOzQGp877Zdxtm9LVSh1szIq2hgODJRz/5qctVfZnQIaEjkh
+         hT5fIG2h8EzaCfLroWGSVAe/nPgJ8Yy/P1brFtwuDhgmA1pQXzPoDl4cgILr45bZhb
+         ScNLfaklev847MN1TSk5un/+wMGkN4RJpQ6vq4EM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        stable@vger.kernel.org,
+        syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 123/267] ALSA: hda/realtek - Dell headphone has noise on unmute for ALC236
-Date:   Mon, 16 Dec 2019 18:47:29 +0100
-Message-Id: <20191216174903.456736566@linuxfoundation.org>
+Subject: [PATCH 4.14 124/267] ALSA: pcm: oss: Avoid potential buffer overflows
+Date:   Mon, 16 Dec 2019 18:47:30 +0100
+Message-Id: <20191216174903.510811312@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -43,49 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kailang Yang <kailang@realtek.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e1e8c1fdce8b00fce08784d9d738c60ebf598ebc upstream.
+commit 4cc8d6505ab82db3357613d36e6c58a297f57f7c upstream.
 
-headphone have noise even the volume is very small.
-Let it fill up pcbeep hidden register to default value.
-The issue was gone.
+syzkaller reported an invalid access in PCM OSS read, and this seems
+to be an overflow of the internal buffer allocated for a plugin.
+Since the rate plugin adjusts its transfer size dynamically, the
+calculation for the chained plugin might be bigger than the given
+buffer size in some extreme cases, which lead to such an buffer
+overflow as caught by KASAN.
 
-Fixes: 4344aec84bd8 ("ALSA: hda/realtek - New codec support for ALC256")
-Fixes: 736f20a70608 ("ALSA: hda/realtek - Add support for ALC236/ALC3204")
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+Fix it by limiting the max transfer size properly by checking against
+the destination size in each plugin transfer callback.
+
+Reported-by: syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com
 Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/9ae47f23a64d4e41a9c81e263cd8a250@realtek.com
+Link: https://lore.kernel.org/r/20191204144824.17801-1-tiwai@suse.de
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/core/oss/linear.c |    2 ++
+ sound/core/oss/mulaw.c  |    2 ++
+ sound/core/oss/route.c  |    2 ++
+ 3 files changed, 6 insertions(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -333,9 +333,7 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0215:
- 	case 0x10ec0233:
- 	case 0x10ec0235:
--	case 0x10ec0236:
- 	case 0x10ec0255:
--	case 0x10ec0256:
- 	case 0x10ec0257:
- 	case 0x10ec0282:
- 	case 0x10ec0283:
-@@ -347,6 +345,11 @@ static void alc_fill_eapd_coef(struct hd
- 	case 0x10ec0300:
- 		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
- 		break;
-+	case 0x10ec0236:
-+	case 0x10ec0256:
-+		alc_write_coef_idx(codec, 0x36, 0x5757);
-+		alc_update_coef_idx(codec, 0x10, 1<<9, 0);
-+		break;
- 	case 0x10ec0275:
- 		alc_update_coef_idx(codec, 0xe, 0, 1<<0);
- 		break;
+--- a/sound/core/oss/linear.c
++++ b/sound/core/oss/linear.c
+@@ -107,6 +107,8 @@ static snd_pcm_sframes_t linear_transfer
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	convert(plugin, src_channels, dst_channels, frames);
+ 	return frames;
+ }
+--- a/sound/core/oss/mulaw.c
++++ b/sound/core/oss/mulaw.c
+@@ -269,6 +269,8 @@ static snd_pcm_sframes_t mulaw_transfer(
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	data = (struct mulaw_priv *)plugin->extra_data;
+ 	data->func(plugin, src_channels, dst_channels, frames);
+ 	return frames;
+--- a/sound/core/oss/route.c
++++ b/sound/core/oss/route.c
+@@ -57,6 +57,8 @@ static snd_pcm_sframes_t route_transfer(
+ 		return -ENXIO;
+ 	if (frames == 0)
+ 		return 0;
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 
+ 	nsrcs = plugin->src_format.channels;
+ 	ndsts = plugin->dst_format.channels;
 
 
