@@ -2,138 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7130611FE24
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 06:40:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A0A911FE32
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 06:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfLPFkU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 00:40:20 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:34010 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726446AbfLPFkS (ORCPT
+        id S1726634AbfLPFqD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 00:46:03 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:57452 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726252AbfLPFqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 00:40:18 -0500
-X-UUID: b83c995ee2664b2ab22617f9491e5ee6-20191216
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=ZFK5ya63Cy6wgpbjF8WuGV2/7oL5ZesSkDZ/6F6akns=;
-        b=URuXVQ6rEfU70mCz7AhPi2espcq0sh73aLPTTTNiFNhvgqbo3R+//uGoo20HDq62wvq4EZnmIgZI9LreEAz1u3NfJOLD9cKVfvzcItZyn102ixKKiLu4obWhzPEQHRs8FdrSGXPtUfmuxQvI/S39hrN83egTm8WRlM9Ne9e/m5s=;
-X-UUID: b83c995ee2664b2ab22617f9491e5ee6-20191216
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1769448215; Mon, 16 Dec 2019 13:40:09 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 16 Dec 2019 13:40:30 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 16 Dec 2019 13:39:22 +0800
-From:   Biao Huang <biao.huang@mediatek.com>
-To:     <davem@davemloft.net>, Rob Herring <robh+dt@kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Biao Huang <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <yt.shen@mediatek.com>
-Subject: [v2, PATCH 2/2] net-next: dt-binding: dwmac-mediatek: add more description for RMII
-Date:   Mon, 16 Dec 2019 13:39:58 +0800
-Message-ID: <20191216053958.26130-3-biao.huang@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20191216053958.26130-1-biao.huang@mediatek.com>
-References: <20191216053958.26130-1-biao.huang@mediatek.com>
+        Mon, 16 Dec 2019 00:46:02 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576475162; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=qg/crsYJ805SaB7SnWEp5NQgL9nFr3ZPMXuozq5iHo0=;
+ b=YWRemNp812iNg/4jSZZBo731FJdZUraFZIPbpuDv9RXmovsWN/29UsiQK/6MV3ZB8mK2+XNk
+ zVJjzDMZrYNoEiCT1mMJGmZpqpKg6sxXQIHximCEKlI/wt4XKHOd3HgOJE45QLrJoxUBf8e1
+ NS2nr8U/Vyqj6I4WnQKCwfiwdik=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df71a19.7f0224643bc8-smtp-out-n02;
+ Mon, 16 Dec 2019 05:46:01 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 1F4F9C447B3; Mon, 16 Dec 2019 05:46:01 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2E280C447A3;
+        Mon, 16 Dec 2019 05:46:00 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 16 Dec 2019 13:46:00 +0800
+From:   cang@codeaurora.org
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
+        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
+        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
+In-Reply-To: <0419d33a1ea98a2da9263131aba2ca71@codeaurora.org>
+References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
+ <1576328616-30404-2-git-send-email-cang@codeaurora.org>
+ <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
+ <5aa3a266e3db3403e663b36ddfdc4d60@codeaurora.org>
+ <2956b9c7-b019-e2b3-7a1b-7b796b724add@acm.org>
+ <3afbe71cc9f0626edf66f7bc13b331f4@codeaurora.org>
+ <5b77c25f-3cc7-f90b-fcd7-dd4c1e2f46d2@acm.org>
+ <0419d33a1ea98a2da9263131aba2ca71@codeaurora.org>
+Message-ID: <3c289f786dd09d84bc1a8b0b3d855784@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TVQyNzEyIFNvQyBjYW4gcHJvdmlkZSBSTUlJIHJlZmVyZW5jZSBjbG9jaywNCnNvIGFkZCBjb3Jy
-ZXNwb25kaW5nIGRlc2NyaXB0aW9uIGluIGR0LWJpbmRpbmcuDQoNClNpZ25lZC1vZmYtYnk6IEJp
-YW8gSHVhbmcgPGJpYW8uaHVhbmdAbWVkaWF0ZWsuY29tPg0KLS0tDQogLi4uL2JpbmRpbmdzL25l
-dC9tZWRpYXRlay1kd21hYy50eHQgICAgICAgICAgIHwgMzMgKysrKysrKysrKysrKy0tLS0tLQ0K
-IDEgZmlsZSBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkNCg0KZGlm
-ZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvbWVkaWF0ZWst
-ZHdtYWMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9tZWRpYXRl
-ay1kd21hYy50eHQNCmluZGV4IDhhMDg2MjFhNWI1NC4uYWZiY2FlYmYwNjJlIDEwMDY0NA0KLS0t
-IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL25ldC9tZWRpYXRlay1kd21hYy50
-eHQNCisrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9uZXQvbWVkaWF0ZWst
-ZHdtYWMudHh0DQpAQCAtMTQsNyArMTQsNyBAQCBSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KIAlTaG91
-bGQgYmUgIm1hY2lycSIgZm9yIHRoZSBtYWluIE1BQyBJUlENCiAtIGNsb2NrczogTXVzdCBjb250
-YWluIGEgcGhhbmRsZSBmb3IgZWFjaCBlbnRyeSBpbiBjbG9jay1uYW1lcy4NCiAtIGNsb2NrLW5h
-bWVzOiBUaGUgbmFtZSBvZiB0aGUgY2xvY2sgbGlzdGVkIGluIHRoZSBjbG9ja3MgcHJvcGVydHku
-IFRoZXNlIGFyZQ0KLQkiYXhpIiwgImFwYiIsICJtYWNfbWFpbiIsICJwdHBfcmVmIiBmb3IgTVQy
-NzEyIFNvQw0KKwkiYXhpIiwgImFwYiIsICJtYWNfbWFpbiIsICJwdHBfcmVmIiwgInJtaWlfaW50
-ZXJuYWwiIGZvciBNVDI3MTIgU29DLg0KIC0gbWFjLWFkZHJlc3M6IFNlZSBldGhlcm5ldC50eHQg
-aW4gdGhlIHNhbWUgZGlyZWN0b3J5DQogLSBwaHktbW9kZTogU2VlIGV0aGVybmV0LnR4dCBpbiB0
-aGUgc2FtZSBkaXJlY3RvcnkNCiAtIG1lZGlhdGVrLHBlcmljZmc6IEEgcGhhbmRsZSB0byB0aGUg
-c3lzY29uIG5vZGUgdGhhdCBjb250cm9sIGV0aGVybmV0DQpAQCAtMjMsOCArMjMsMTAgQEAgUmVx
-dWlyZWQgcHJvcGVydGllczoNCiBPcHRpb25hbCBwcm9wZXJ0aWVzOg0KIC0gbWVkaWF0ZWssdHgt
-ZGVsYXktcHM6IFRYIGNsb2NrIGRlbGF5IG1hY3JvIHZhbHVlLiBEZWZhdWx0IGlzIDAuDQogCUl0
-IHNob3VsZCBiZSBkZWZpbmVkIGZvciBSR01JSS9NSUkgaW50ZXJmYWNlLg0KKwlJdCBzaG91bGQg
-YmUgZGVmaW5lZCBmb3IgUk1JSSBpbnRlcmZhY2Ugd2hlbiB0aGUgcmVmZXJlbmNlIGNsb2NrIGlz
-IGZyb20gTVQyNzEyIFNvQy4NCiAtIG1lZGlhdGVrLHJ4LWRlbGF5LXBzOiBSWCBjbG9jayBkZWxh
-eSBtYWNybyB2YWx1ZS4gRGVmYXVsdCBpcyAwLg0KLQlJdCBzaG91bGQgYmUgZGVmaW5lZCBmb3Ig
-UkdNSUkvTUlJL1JNSUkgaW50ZXJmYWNlLg0KKwlJdCBzaG91bGQgYmUgZGVmaW5lZCBmb3IgUkdN
-SUkvTUlJIGludGVyZmFjZS4NCisJSXQgc2hvdWxkIGJlIGRlZmluZWQgZm9yIFJNSUkgaW50ZXJm
-YWNlLg0KIEJvdGggZGVsYXkgcHJvcGVydGllcyBuZWVkIHRvIGJlIGEgbXVsdGlwbGUgb2YgMTcw
-IGZvciBSR01JSSBpbnRlcmZhY2UsDQogb3Igd2lsbCByb3VuZCBkb3duLiBSYW5nZSAwfjMxKjE3
-MC4NCiBCb3RoIGRlbGF5IHByb3BlcnRpZXMgbmVlZCB0byBiZSBhIG11bHRpcGxlIG9mIDU1MCBm
-b3IgTUlJL1JNSUkgaW50ZXJmYWNlLA0KQEAgLTM0LDEzICszNiwyMCBAQCBvciB3aWxsIHJvdW5k
-IGRvd24uIFJhbmdlIDB+MzEqNTUwLg0KIAlyZWZlcmVuY2UgY2xvY2ssIHdoaWNoIGlzIGZyb20g
-ZXh0ZXJuYWwgUEhZcywgaXMgY29ubmVjdGVkIHRvIFJYQyBwaW4NCiAJb24gTVQyNzEyIFNvQy4N
-CiAJT3RoZXJ3aXNlLCBpcyBjb25uZWN0ZWQgdG8gVFhDIHBpbi4NCistIG1lZGlhdGVrLHJtaWkt
-Y2xrLWZyb20tbWFjOiBib29sZWFuIHByb3BlcnR5LCBpZiBwcmVzZW50IGluZGljYXRlcyB0aGF0
-DQorCU1UMjcxMiBTb0MgcHJvdmlkZXMgdGhlIFJNSUkgcmVmZXJlbmNlIGNsb2NrLCB3aGljaCBv
-dXRwdXRzIHRvIFRYQyBwaW4gb25seS4NCiAtIG1lZGlhdGVrLHR4Yy1pbnZlcnNlOiBib29sZWFu
-IHByb3BlcnR5LCBpZiBwcmVzZW50IGluZGljYXRlcyB0aGF0DQogCTEuIHR4IGNsb2NrIHdpbGwg
-YmUgaW52ZXJzZWQgaW4gTUlJL1JHTUlJIGNhc2UsDQogCTIuIHR4IGNsb2NrIGluc2lkZSBNQUMg
-d2lsbCBiZSBpbnZlcnNlZCByZWxhdGl2ZSB0byByZWZlcmVuY2UgY2xvY2sNCiAJICAgd2hpY2gg
-aXMgZnJvbSBleHRlcm5hbCBQSFlzIGluIFJNSUkgY2FzZSwgYW5kIGl0IHJhcmVseSBoYXBwZW4u
-DQorCTMuIHRoZSByZWZlcmVuY2UgY2xvY2ssIHdoaWNoIG91dHB1dHMgdG8gVFhDIHBpbiB3aWxs
-IGJlIGludmVyc2VkIGluIFJNSUkgY2FzZQ0KKwkgICB3aGVuIHRoZSByZWZlcmVuY2UgY2xvY2sg
-aXMgZnJvbSBNVDI3MTIgU29DLg0KIC0gbWVkaWF0ZWsscnhjLWludmVyc2U6IGJvb2xlYW4gcHJv
-cGVydHksIGlmIHByZXNlbnQgaW5kaWNhdGVzIHRoYXQNCiAJMS4gcnggY2xvY2sgd2lsbCBiZSBp
-bnZlcnNlZCBpbiBNSUkvUkdNSUkgY2FzZS4NCi0JMi4gcmVmZXJlbmNlIGNsb2NrIHdpbGwgYmUg
-aW52ZXJzZWQgd2hlbiBhcnJpdmVkIGF0IE1BQyBpbiBSTUlJIGNhc2UuDQorCTIuIHJlZmVyZW5j
-ZSBjbG9jayB3aWxsIGJlIGludmVyc2VkIHdoZW4gYXJyaXZlZCBhdCBNQUMgaW4gUk1JSSBjYXNl
-LCB3aGVuDQorCSAgIHRoZSByZWZlcmVuY2UgY2xvY2sgaXMgZnJvbSBleHRlcm5hbCBQSFlzLg0K
-KwkzLiB0aGUgaW5zaWRlIGNsb2NrLCB3aGljaCBiZSBzZW50IHRvIE1BQywgd2lsbCBiZSBpbnZl
-cnNlZCBpbiBSTUlJIGNhc2Ugd2hlbg0KKwkgICB0aGUgcmVmZXJlbmNlIGNsb2NrIGlzIGZyb20g
-TVQyNzEyIFNvQy4NCiAtIGFzc2lnbmVkLWNsb2NrczogbWFjX21haW4gYW5kIHB0cF9yZWYgY2xv
-Y2tzDQogLSBhc3NpZ25lZC1jbG9jay1wYXJlbnRzOiBwYXJlbnQgY2xvY2tzIG9mIHRoZSBhc3Np
-Z25lZCBjbG9ja3MNCiANCkBAIC01MCwyOSArNTksMzMgQEAgRXhhbXBsZToNCiAJCXJlZyA9IDww
-IDB4MTEwMWMwMDAgMCAweDEzMDA+Ow0KIAkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDIzNyBJUlFf
-VFlQRV9MRVZFTF9MT1c+Ow0KIAkJaW50ZXJydXB0LW5hbWVzID0gIm1hY2lycSI7DQotCQlwaHkt
-bW9kZSA9InJnbWlpIjsNCisJCXBoeS1tb2RlID0icmdtaWktcnhpZCI7DQogCQltYWMtYWRkcmVz
-cyA9IFswMCA1NSA3YiBiNSA3ZCBmN107DQogCQljbG9jay1uYW1lcyA9ICJheGkiLA0KIAkJCSAg
-ICAgICJhcGIiLA0KIAkJCSAgICAgICJtYWNfbWFpbiIsDQogCQkJICAgICAgInB0cF9yZWYiLA0K
-LQkJCSAgICAgICJwdHBfdG9wIjsNCisJCQkgICAgICAicm1paV9pbnRlcm5hbCI7DQogCQljbG9j
-a3MgPSA8JnBlcmljZmcgQ0xLX1BFUklfR01BQz4sDQogCQkJIDwmcGVyaWNmZyBDTEtfUEVSSV9H
-TUFDX1BDTEs+LA0KIAkJCSA8JnRvcGNrZ2VuIENMS19UT1BfRVRIRVJfMTI1TV9TRUw+LA0KLQkJ
-CSA8JnRvcGNrZ2VuIENMS19UT1BfRVRIRVJfNTBNX1NFTD47DQorCQkJIDwmdG9wY2tnZW4gQ0xL
-X1RPUF9FVEhFUl81ME1fU0VMPiwNCisJCQkgPCZ0b3Bja2dlbiBDTEtfVE9QX0VUSEVSXzUwTV9S
-TUlJX1NFTD47DQogCQlhc3NpZ25lZC1jbG9ja3MgPSA8JnRvcGNrZ2VuIENMS19UT1BfRVRIRVJf
-MTI1TV9TRUw+LA0KLQkJCQkgIDwmdG9wY2tnZW4gQ0xLX1RPUF9FVEhFUl81ME1fU0VMPjsNCisJ
-CQkJICA8JnRvcGNrZ2VuIENMS19UT1BfRVRIRVJfNTBNX1NFTD4sDQorCQkJCSAgPCZ0b3Bja2dl
-biBDTEtfVE9QX0VUSEVSXzUwTV9STUlJX1NFTD47DQogCQlhc3NpZ25lZC1jbG9jay1wYXJlbnRz
-ID0gPCZ0b3Bja2dlbiBDTEtfVE9QX0VUSEVSUExMXzEyNU0+LA0KLQkJCQkJIDwmdG9wY2tnZW4g
-Q0xLX1RPUF9BUExMMV9EMz47DQorCQkJCQkgPCZ0b3Bja2dlbiBDTEtfVE9QX0FQTEwxX0QzPiwN
-CisJCQkJCSA8JnRvcGNrZ2VuIENMS19UT1BfRVRIRVJQTExfNTBNPjsNCisJCXBvd2VyLWRvbWFp
-bnMgPSA8JnNjcHN5cyBNVDI3MTJfUE9XRVJfRE9NQUlOX0FVRElPPjsNCiAJCW1lZGlhdGVrLHBl
-cmljZmcgPSA8JnBlcmljZmc+Ow0KIAkJbWVkaWF0ZWssdHgtZGVsYXktcHMgPSA8MTUzMD47DQog
-CQltZWRpYXRlayxyeC1kZWxheS1wcyA9IDwxNTMwPjsNCiAJCW1lZGlhdGVrLHJtaWktcnhjOw0K
-IAkJbWVkaWF0ZWssdHhjLWludmVyc2U7DQogCQltZWRpYXRlayxyeGMtaW52ZXJzZTsNCi0JCXNu
-cHMsdHhwYmwgPSA8MzI+Ow0KLQkJc25wcyxyeHBibCA9IDwzMj47DQorCQlzbnBzLHR4cGJsID0g
-PDE+Ow0KKwkJc25wcyxyeHBibCA9IDwxPjsNCiAJCXNucHMscmVzZXQtZ3BpbyA9IDwmcGlvIDg3
-IEdQSU9fQUNUSVZFX0xPVz47DQogCQlzbnBzLHJlc2V0LWFjdGl2ZS1sb3c7DQogCX07DQotLSAN
-CjIuMTguMA0K
+On 2019-12-16 11:12, cang@codeaurora.org wrote:
+> On 2019-12-16 10:39, Bart Van Assche wrote:
+>> On 2019-12-15 17:34, cang@codeaurora.org wrote:
+>>> This is applied to 5.5/scsi-queue. The two changes I patsed from you 
+>>> are
+>>> not merged yet, I am still doing code review to them, so there is no
+>>> blk_cleanup_queue() calls in my code base. I am just saying you may 
+>>> move
+>>> your blk_cleanup_queue() calls below cancel_work_sync(&hba->eh_work) 
+>>> if
+>>> my change applies. How do you think?
+>>> 
+>>> scsi_host_put() was there before but explicitly removed by
+>>> afa3dfd42d205b106787476647735aa1de1a5d02. I agree with you, without 
+>>> this
+>>> change, there is memory leak.
+>> 
+>> Hi Can,
+>> 
+>> Since your patch restores a call that was removed earlier, please
+>> consider adding a Fixes: tag to your patch.
+>> 
+>> Please also have a look at
+>> https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git/log/?h=5.6/scsi-queue.
+>> As one can see my patches that introduce blk_cleanup_queue() and
+>> blk_mq_free_tag_set() calls have already been queued on Martin's
+>> 5.6/scsi-queue branch.
+>> 
+>> Bart.
+> 
+> Hi Bart,
+> 
+> Sure, I will add the Fixes tag and rebase my changes. How about the 
+> logic
+> part of this change? Does it look good to you?
+> 
+> Sorry I was not aware of that your changes have been applied to 
+> 5.6/scsi-queue.
+> I am still trying to get it tested on my setups...
+> Anyways, aside of hba->cmd_queue, tearing down hba->tmf_queue before
+> scsi_remove_host() may be problem too. Requests can still be
+> sent before and during scsi_remove_host(). If a request timed out,
+> task abort will be invoked to abort the request, during which
+> hba->tmf_queue is expected to be present. Please correct me if I am 
+> wrong.
+> 
+> Thanks,
+> 
+> Can Guo.
 
+Hi Bart
+
+Just found that I should also remove the ufshcd_dealloc_host() called
+in ufshcd_pci_remove() to make sure the deallocation is only handled by
+ufshcd_remove().
+
+Thanks,
+
+Can Guo.
