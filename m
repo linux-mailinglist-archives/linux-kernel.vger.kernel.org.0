@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6463612191A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAAFA12191F
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfLPRvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:51:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42264 "EHLO mail.kernel.org"
+        id S1727411AbfLPRwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:52:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727148AbfLPRvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:51:45 -0500
+        id S1727384AbfLPRwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:52:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EFEB206EC;
-        Mon, 16 Dec 2019 17:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 734612072D;
+        Mon, 16 Dec 2019 17:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518704;
-        bh=erO8LhwmHYx3npdBVv16b3/mLdZ9ho5gPtx775lkmY0=;
+        s=default; t=1576518728;
+        bh=HcUYgSYlUCITTOZa8rSIH+WdoK4E/zfacRzSELwWZYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lS4M5ik+OdDWHmVeIfKG4S71MmGf1YzEEyw2rXsV0jK4zJZHai581QUkhg56AZMJ6
-         lYhTkqy0jGMsGvlm5qY83Ez3jlDMqRNOllb9tNEVHl5rEwz0AZFc+L8gZ9MWmL8wc/
-         6mfIHlWcKwmczlHQhKU/fb33BSo6fMf6U0wYR2ws=
+        b=wnN1yWqsj1eOMJjqtjKXGrD/FL8J14VxygUAxFdcUL+Rgl+Xer6g/lBDkkSV4sxG0
+         AdHhpJlJXleKQeBMK49yCjqthpEMIarw8gnuR88SoB0h20DyRNdOZ4hfDwGVjQ3s/W
+         TMhv4cfLLHw8Y2KY9lV6fTM8I4b0Ynu8W9uqWXqI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mitch Williams <mitch.a.williams@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 033/267] i40e: dont restart nway if autoneg not supported
-Date:   Mon, 16 Dec 2019 18:45:59 +0100
-Message-Id: <20191216174852.666955803@linuxfoundation.org>
+Subject: [PATCH 4.14 042/267] crypto: bcm - fix normal/non key hash algorithm failure
+Date:   Mon, 16 Dec 2019 18:46:08 +0100
+Message-Id: <20191216174853.435520386@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -46,65 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mitch Williams <mitch.a.williams@intel.com>
+From: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
 
-[ Upstream commit 7c3758f7839377ab67529cc50264a640636c47af ]
+[ Upstream commit 4f0129d13e69bad0363fd75553fb22897b32c379 ]
 
-On link types that do not support autoneg, we cannot attempt to restart
-nway negotiation. This results in a dead link that requires a power
-cycle to remedy.
+Remove setkey() callback handler for normal/non key
+hash algorithms and keep it for AES-CBC/CMAC which needs key.
 
-Fix this by saving off the autoneg state and checking this value before
-we try to restart nway.
-
-Signed-off-by: Mitch Williams <mitch.a.williams@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
+Signed-off-by: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/crypto/bcm/cipher.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-index ef22793d6a032..751ac56168843 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_ethtool.c
-@@ -969,6 +969,7 @@ static int i40e_set_pauseparam(struct net_device *netdev,
- 	i40e_status status;
- 	u8 aq_failures;
- 	int err = 0;
-+	u32 is_an;
+diff --git a/drivers/crypto/bcm/cipher.c b/drivers/crypto/bcm/cipher.c
+index b6be383a51a6a..84422435f39b4 100644
+--- a/drivers/crypto/bcm/cipher.c
++++ b/drivers/crypto/bcm/cipher.c
+@@ -4637,12 +4637,16 @@ static int spu_register_ahash(struct iproc_alg_s *driver_alg)
+ 	hash->halg.statesize = sizeof(struct spu_hash_export_s);
  
- 	/* Changing the port's flow control is not supported if this isn't the
- 	 * port's controlling PF
-@@ -981,15 +982,14 @@ static int i40e_set_pauseparam(struct net_device *netdev,
- 	if (vsi != pf->vsi[pf->lan_vsi])
- 		return -EOPNOTSUPP;
- 
--	if (pause->autoneg != ((hw_link_info->an_info & I40E_AQ_AN_COMPLETED) ?
--	    AUTONEG_ENABLE : AUTONEG_DISABLE)) {
-+	is_an = hw_link_info->an_info & I40E_AQ_AN_COMPLETED;
-+	if (pause->autoneg != is_an) {
- 		netdev_info(netdev, "To change autoneg please use: ethtool -s <dev> autoneg <on|off>\n");
- 		return -EOPNOTSUPP;
- 	}
- 
- 	/* If we have link and don't have autoneg */
--	if (!test_bit(__I40E_DOWN, pf->state) &&
--	    !(hw_link_info->an_info & I40E_AQ_AN_COMPLETED)) {
-+	if (!test_bit(__I40E_DOWN, pf->state) && !is_an) {
- 		/* Send message that it might not necessarily work*/
- 		netdev_info(netdev, "Autoneg did not complete so changing settings may not result in an actual change.\n");
- 	}
-@@ -1040,7 +1040,7 @@ static int i40e_set_pauseparam(struct net_device *netdev,
- 		err = -EAGAIN;
- 	}
- 
--	if (!test_bit(__I40E_DOWN, pf->state)) {
-+	if (!test_bit(__I40E_DOWN, pf->state) && is_an) {
- 		/* Give it a little more time to try to come back */
- 		msleep(75);
- 		if (!test_bit(__I40E_DOWN, pf->state))
+ 	if (driver_alg->auth_info.mode != HASH_MODE_HMAC) {
+-		hash->setkey = ahash_setkey;
+ 		hash->init = ahash_init;
+ 		hash->update = ahash_update;
+ 		hash->final = ahash_final;
+ 		hash->finup = ahash_finup;
+ 		hash->digest = ahash_digest;
++		if ((driver_alg->auth_info.alg == HASH_ALG_AES) &&
++		    ((driver_alg->auth_info.mode == HASH_MODE_XCBC) ||
++		    (driver_alg->auth_info.mode == HASH_MODE_CMAC))) {
++			hash->setkey = ahash_setkey;
++		}
+ 	} else {
+ 		hash->setkey = ahash_hmac_setkey;
+ 		hash->init = ahash_hmac_init;
 -- 
 2.20.1
 
