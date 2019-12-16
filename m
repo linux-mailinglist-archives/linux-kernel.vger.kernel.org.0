@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6B301216D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E049D121762
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730584AbfLPSKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53152 "EHLO mail.kernel.org"
+        id S1730240AbfLPSfF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:35:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730577AbfLPSKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:13 -0500
+        id S1730272AbfLPSI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:08:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B349C206EC;
-        Mon, 16 Dec 2019 18:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 117C3206EC;
+        Mon, 16 Dec 2019 18:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519813;
-        bh=uvmuwkss42ULQYKZk7SlI3MEFf+rMhPfU9Iz/mewulQ=;
+        s=default; t=1576519708;
+        bh=c3b11KuKTlf4EQDY08ikTupWIKHuZkP4FzwML715AYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nkoARiuPs9FubjzvWzXlQqVN1z5z7hh6mTKD/NXlOgc1oK7+5Wr6PmLDB+rGBuEcZ
-         SzWrDxoVKi5e3t7gyzMndkxDesEXWNtD2UzAVtggH3B7U+R0zgX0wz3ZxrJJ+92Ve8
-         CZLdx7FqD+ED1obom67tgWQfcR+wGhdJ1eZkuE9I=
+        b=cUeo3Dq/QjaKBfsh9bUrpH4IZAD6DtbG5jyA9U9oiXO/wenwLUOpdSvIAExj8V25D
+         uyHNaImtg/154p2XG7Rdp6XElIoShnCpe0zLQe/bdorPj+0XyfCnc4CBitPmjv2Mzw
+         FXpesQv6qBQrChCRNrs1h45lWqI2+DtBd4n8KsW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,9 +30,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         =?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
         Stable@vger.kernel.org,
         Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 5.3 028/180] iio: adis16480: Add debugfs_reg_access entry
-Date:   Mon, 16 Dec 2019 18:47:48 +0100
-Message-Id: <20191216174812.511806453@linuxfoundation.org>
+Subject: [PATCH 5.3 029/180] iio: adis16480: Fix scales factors
+Date:   Mon, 16 Dec 2019 18:47:49 +0100
+Message-Id: <20191216174812.660167158@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
 References: <20191216174806.018988360@linuxfoundation.org>
@@ -47,32 +47,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Nuno Sá <nuno.sa@analog.com>
 
-commit 4c35b7a51e2f291471f7221d112c6a45c63e83bc upstream.
+commit 49549cb23a2926eba70bb634e361daea0f319794 upstream.
 
-The driver is defining debugfs entries by calling
-`adis16480_debugfs_init()`. However, those entries are attached to the
-iio_dev debugfs entry which won't exist if no debugfs_reg_access
-callback is provided.
+This patch fixes the scales for the gyroscope, accelerometer and
+barometer. The pressure scale was just wrong. For the others, the scale
+factors were not taking into account that a 32bit word is being read
+from the device.
 
-Fixes: 2f3abe6cbb6c ("iio:imu: Add support for the ADIS16480 and similar IMUs")
+Fixes: 7abad1063deb ("iio: adis16480: Fix scale factors")
+Fixes: 82e7a1b25017 ("iio: imu: adis16480: Add support for ADIS1649x family of devices")
 Signed-off-by: Nuno Sá <nuno.sa@analog.com>
 Cc: <Stable@vger.kernel.org>
 Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/imu/adis16480.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/iio/imu/adis16480.c |   77 +++++++++++++++++++++++---------------------
+ 1 file changed, 41 insertions(+), 36 deletions(-)
 
 --- a/drivers/iio/imu/adis16480.c
 +++ b/drivers/iio/imu/adis16480.c
-@@ -919,6 +919,7 @@ static const struct iio_info adis16480_i
- 	.read_raw = &adis16480_read_raw,
- 	.write_raw = &adis16480_write_raw,
- 	.update_scan_mode = adis_update_scan_mode,
-+	.debugfs_reg_access = adis_debugfs_reg_access,
- };
- 
- static int adis16480_stop_device(struct iio_dev *indio_dev)
+@@ -623,9 +623,13 @@ static int adis16480_read_raw(struct iio
+ 			*val2 = (st->chip_info->temp_scale % 1000) * 1000;
+ 			return IIO_VAL_INT_PLUS_MICRO;
+ 		case IIO_PRESSURE:
+-			*val = 0;
+-			*val2 = 4000; /* 40ubar = 0.004 kPa */
+-			return IIO_VAL_INT_PLUS_MICRO;
++			/*
++			 * max scale is 1310 mbar
++			 * max raw value is 32767 shifted for 32bits
++			 */
++			*val = 131; /* 1310mbar = 131 kPa */
++			*val2 = 32767 << 16;
++			return IIO_VAL_FRACTIONAL;
+ 		default:
+ 			return -EINVAL;
+ 		}
+@@ -786,13 +790,14 @@ static const struct adis16480_chip_info
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+ 		/*
+-		 * storing the value in rad/degree and the scale in degree
+-		 * gives us the result in rad and better precession than
+-		 * storing the scale directly in rad.
++		 * Typically we do IIO_RAD_TO_DEGREE in the denominator, which
++		 * is exactly the same as IIO_DEGREE_TO_RAD in numerator, since
++		 * it gives better approximation. However, in this case we
++		 * cannot do it since it would not fit in a 32bit variable.
+ 		 */
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(22887),
+-		.gyro_max_scale = 300,
+-		.accel_max_val = IIO_M_S_2_TO_G(21973),
++		.gyro_max_val = 22887 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(300),
++		.accel_max_val = IIO_M_S_2_TO_G(21973 << 16),
+ 		.accel_max_scale = 18,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
+ 		.int_clk = 2460000,
+@@ -802,9 +807,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16480] = {
+ 		.channels = adis16480_channels,
+ 		.num_channels = ARRAY_SIZE(adis16480_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
+-		.gyro_max_scale = 450,
+-		.accel_max_val = IIO_M_S_2_TO_G(12500),
++		.gyro_max_val = 22500 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
++		.accel_max_val = IIO_M_S_2_TO_G(12500 << 16),
+ 		.accel_max_scale = 10,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
+ 		.int_clk = 2460000,
+@@ -814,9 +819,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16485] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
+-		.gyro_max_scale = 450,
+-		.accel_max_val = IIO_M_S_2_TO_G(20000),
++		.gyro_max_val = 22500 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
++		.accel_max_val = IIO_M_S_2_TO_G(20000 << 16),
+ 		.accel_max_scale = 5,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
+ 		.int_clk = 2460000,
+@@ -826,9 +831,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16488] = {
+ 		.channels = adis16480_channels,
+ 		.num_channels = ARRAY_SIZE(adis16480_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(22500),
+-		.gyro_max_scale = 450,
+-		.accel_max_val = IIO_M_S_2_TO_G(22500),
++		.gyro_max_val = 22500 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
++		.accel_max_val = IIO_M_S_2_TO_G(22500 << 16),
+ 		.accel_max_scale = 18,
+ 		.temp_scale = 5650, /* 5.65 milli degree Celsius */
+ 		.int_clk = 2460000,
+@@ -838,9 +843,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16495_1] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
+-		.gyro_max_scale = 125,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 20000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(125),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
+@@ -851,9 +856,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16495_2] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
+-		.gyro_max_scale = 450,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 18000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
+@@ -864,9 +869,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16495_3] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
+-		.gyro_max_scale = 2000,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 20000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(2000),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 8,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
+@@ -877,9 +882,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16497_1] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
+-		.gyro_max_scale = 125,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 20000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(125),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
+@@ -890,9 +895,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16497_2] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(18000),
+-		.gyro_max_scale = 450,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 18000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(450),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
+@@ -903,9 +908,9 @@ static const struct adis16480_chip_info
+ 	[ADIS16497_3] = {
+ 		.channels = adis16485_channels,
+ 		.num_channels = ARRAY_SIZE(adis16485_channels),
+-		.gyro_max_val = IIO_RAD_TO_DEGREE(20000),
+-		.gyro_max_scale = 2000,
+-		.accel_max_val = IIO_M_S_2_TO_G(32000),
++		.gyro_max_val = 20000 << 16,
++		.gyro_max_scale = IIO_DEGREE_TO_RAD(2000),
++		.accel_max_val = IIO_M_S_2_TO_G(32000 << 16),
+ 		.accel_max_scale = 40,
+ 		.temp_scale = 12500, /* 12.5 milli degree Celsius */
+ 		.int_clk = 4250000,
 
 
