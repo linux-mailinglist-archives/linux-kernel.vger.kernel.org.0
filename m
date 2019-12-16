@@ -2,139 +2,183 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F42F121261
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98346121224
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:49:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbfLPRwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726438AbfLPRwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:07 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726448AbfLPRqY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:46:24 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:23251 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725805AbfLPRqY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:46:24 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576518383; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=rzuAqWFdTzrWO4clWvy7mwhpSIFXq93mC1ouQT7d0SU=; b=i+RmSP29LGcKHFfGNyrdMulgcQoTL1fMWa+2g56A1ijBU+6wW1OHXRPy3p/ayLbTInSiXXjv
+ suGv1hY4/MWcWERJpeqc0TuCDF7HwNrC6n5F8PjcOvfHMUWDygDwa9+e6mcvqGUjOwx7c0zx
+ PjNdaSR6xmUyWHfQM4GVYrkxfpo=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df7c2ee.7f4ad81ac420-smtp-out-n02;
+ Mon, 16 Dec 2019 17:46:22 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 0A126C447A2; Mon, 16 Dec 2019 17:46:22 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from [10.79.43.230] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D9902166E;
-        Mon, 16 Dec 2019 17:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518726;
-        bh=/0oP2aOmkN4YPfnfmuZKKa5D6e4/N1L0vU89h5RbObk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cZy6slkSskF6yqk1d3lkA7Sq61sxj563aQTyFz0FzyAZ3nkVbxKLgBHXJWqooOOhm
-         bXqbdR8RkzghTLMpi3ndwiPUk5Mj2KnwqD++ARFSO9y9IoWH+29Ua91JSjongrjVDJ
-         SxReNY+M9DlwldLrCcdOeyqOjKY4VMnbDoaO9Aec=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Chikunov <vt@altlinux.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 041/267] crypto: ecc - check for invalid values in the key verification test
-Date:   Mon, 16 Dec 2019 18:46:07 +0100
-Message-Id: <20191216174853.358885933@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
-References: <20191216174848.701533383@linuxfoundation.org>
-User-Agent: quilt/0.66
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5C946C433A2;
+        Mon, 16 Dec 2019 17:46:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5C946C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+Subject: Re: [PATCH 2/3] dt-bindings: soc: qcom: apr: Add protection domain
+ bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org,
+        tsoni@codeaurora.org, agross@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        rnayak@codeaurora.org
+References: <20191118142728.30187-1-sibis@codeaurora.org>
+ <0101016e7ee9c591-d04928e8-6440-488c-a956-3b5c9b8988bf-000000@us-west-2.amazonses.com>
+ <20191203215248.GA1688@bogus>
+From:   Sibi Sankar <sibis@codeaurora.org>
+Message-ID: <a19623d4-ab33-d87e-5925-d0411d7479dd@codeaurora.org>
+Date:   Mon, 16 Dec 2019 23:16:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191203215248.GA1688@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Chikunov <vt@altlinux.org>
+Hey Rob,
+Thanks for the review :)
 
-[ Upstream commit 2eb4942b6609d35a4e835644a33203b0aef7443d ]
+On 12/4/19 3:22 AM, Rob Herring wrote:
+> On Mon, Nov 18, 2019 at 02:28:00PM +0000, Sibi Sankar wrote:
+>> Add optional "qcom,protection-domain" bindings for APR services. This
+>> helps to capture the dependencies between APR services and the PD on
+>> which each apr service run.
+>>
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/soc/qcom/qcom,apr.txt | 59 +++++++++++++++++++
+>>   1 file changed, 59 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+>> index db501269f47b8..f87c0b2a48de4 100644
+>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,apr.txt
+>> @@ -45,6 +45,12 @@ by the individual bindings for the specific service
+>>   			12 - Ultrasound stream manager.
+>>   			13 - Listen stream manager.
+>>   
+>> +- qcom,protection-domain
+>> +	Usage: optional
+>> +	Value type: <stringlist>
+>> +	Definition: Must list the protection domain service name and path
+>> +		    that the particular apr service has a dependency on.
+> 
+> Is name and path 2 values? Length is always 2?
 
-Currently used scalar multiplication algorithm (Matthieu Rivain, 2011)
-have invalid values for scalar == 1, n-1, and for regularized version
-n-2, which was previously not checked. Verify that they are not used as
-private keys.
+Yes the length is always 2 values i.e service name and the path where
+the service is hosted.
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- crypto/ecc.c | 42 ++++++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 16 deletions(-)
+> 
+> You've got the same values for every case in the example. Is there a
+> defined list of possible values?
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 18f32f2a5e1c9..3b422e24e647e 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -904,30 +904,43 @@ static inline void ecc_swap_digits(const u64 *in, u64 *out,
- 		out[i] = __swab64(in[ndigits - 1 - i]);
- }
- 
--int ecc_is_key_valid(unsigned int curve_id, unsigned int ndigits,
--		     const u64 *private_key, unsigned int private_key_len)
-+static int __ecc_is_key_valid(const struct ecc_curve *curve,
-+			      const u64 *private_key, unsigned int ndigits)
- {
--	int nbytes;
--	const struct ecc_curve *curve = ecc_get_curve(curve_id);
-+	u64 one[ECC_MAX_DIGITS] = { 1, };
-+	u64 res[ECC_MAX_DIGITS];
- 
- 	if (!private_key)
- 		return -EINVAL;
- 
--	nbytes = ndigits << ECC_DIGITS_TO_BYTES_SHIFT;
--
--	if (private_key_len != nbytes)
-+	if (curve->g.ndigits != ndigits)
- 		return -EINVAL;
- 
--	if (vli_is_zero(private_key, ndigits))
-+	/* Make sure the private key is in the range [2, n-3]. */
-+	if (vli_cmp(one, private_key, ndigits) != -1)
- 		return -EINVAL;
--
--	/* Make sure the private key is in the range [1, n-1]. */
--	if (vli_cmp(curve->n, private_key, ndigits) != 1)
-+	vli_sub(res, curve->n, one, ndigits);
-+	vli_sub(res, res, one, ndigits);
-+	if (vli_cmp(res, private_key, ndigits) != 1)
- 		return -EINVAL;
- 
- 	return 0;
- }
- 
-+int ecc_is_key_valid(unsigned int curve_id, unsigned int ndigits,
-+		     const u64 *private_key, unsigned int private_key_len)
-+{
-+	int nbytes;
-+	const struct ecc_curve *curve = ecc_get_curve(curve_id);
-+
-+	nbytes = ndigits << ECC_DIGITS_TO_BYTES_SHIFT;
-+
-+	if (private_key_len != nbytes)
-+		return -EINVAL;
-+
-+	return __ecc_is_key_valid(curve, private_key, ndigits);
-+}
-+
- /*
-  * ECC private keys are generated using the method of extra random bits,
-  * equivalent to that described in FIPS 186-4, Appendix B.4.1.
-@@ -971,11 +984,8 @@ int ecc_gen_privkey(unsigned int curve_id, unsigned int ndigits, u64 *privkey)
- 	if (err)
- 		return err;
- 
--	if (vli_is_zero(priv, ndigits))
--		return -EINVAL;
--
--	/* Make sure the private key is in the range [1, n-1]. */
--	if (vli_cmp(curve->n, priv, ndigits) != 1)
-+	/* Make sure the private key is in the valid range. */
-+	if (__ecc_is_key_valid(curve, priv, ndigits))
- 		return -EINVAL;
- 
- 	ecc_swap_digits(priv, privkey, ndigits);
+apr bus is expected to track just the "avs/audio" running on
+msm/adsp/audio_pd on msm8998 and sdm845 SoCs. So shouldn't
+make much sense to list all possible service names:paths here.
+
+However the qcom,protection-domain is expected to be used
+on fastrpc compute bank nodes as well, where they track other
+services:paths. I'll make sure to include all the possible
+values that fastrpc cb nodes depend on.
+
+> 
+>> +
+>>   = EXAMPLE
+>>   The following example represents a QDSP based sound card on a MSM8996 device
+>>   which uses apr as communication between Apps and QDSP.
+>> @@ -82,3 +88,56 @@ which uses apr as communication between Apps and QDSP.
+>>   			...
+>>   		};
+>>   	};
+>> +
+>> += EXAMPLE 2
+>> +The following example represents a QDSP based sound card on SDM845 device.
+>> +Here the apr services are dependent on "avs/audio" service running on AUDIO
+>> +Protection Domain hosted on ADSP remote processor.
+>> +
+>> +	apr {
+>> +		compatible = "qcom,apr-v2";
+>> +		qcom,glink-channels = "apr_audio_svc";
+>> +		qcom,apr-domain = <APR_DOMAIN_ADSP>;
+>> +
+>> +		q6core {
+>> +			compatible = "qcom,q6core";
+>> +			reg = <APR_SVC_ADSP_CORE>;
+>> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+>> +		};
+>> +
+>> +		q6afe: q6afe {
+>> +			compatible = "qcom,q6afe";
+>> +			reg = <APR_SVC_AFE>;
+>> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+>> +			q6afedai: dais {
+>> +				compatible = "qcom,q6afe-dais";
+>> +				#sound-dai-cells = <1>;
+>> +
+>> +				qi2s@22 {
+>> +					reg = <22>;
+>> +					qcom,sd-lines = <3>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		q6asm: q6asm {
+>> +			compatible = "qcom,q6asm";
+>> +			reg = <APR_SVC_ASM>;
+>> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+>> +			q6asmdai: dais {
+>> +				compatible = "qcom,q6asm-dais";
+>> +				#sound-dai-cells = <1>;
+>> +				iommus = <&apps_smmu 0x1821 0x0>;
+>> +			};
+>> +		};
+>> +
+>> +		q6adm: q6adm {
+>> +			compatible = "qcom,q6adm";
+>> +			reg = <APR_SVC_ADM>;
+>> +			qcom,protection-domain = "avs/audio", "msm/adsp/audio_pd";
+>> +			q6routing: routing {
+>> +				compatible = "qcom,q6adm-routing";
+>> +				#sound-dai-cells = <0>;
+>> +			};
+>> +		};
+>> +	};
+>> -- 
+>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> a Linux Foundation Collaborative Project
+>>
+
 -- 
-2.20.1
-
-
-
+Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc, is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
