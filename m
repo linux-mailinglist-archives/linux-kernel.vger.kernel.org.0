@@ -2,73 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B04D121B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCC9121B86
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 22:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLPVEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 16:04:11 -0500
-Received: from muru.com ([72.249.23.125]:48520 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbfLPVEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 16:04:10 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 84397810D;
-        Mon, 16 Dec 2019 21:04:49 +0000 (UTC)
-Date:   Mon, 16 Dec 2019 13:04:07 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: OMAP: Use ARM SMC Calling Convention when OP-TEE is
- available
-Message-ID: <20191216210407.GR35479@atomide.com>
-References: <9e15c170-c9fa-778c-d998-bd1111a6390d@ti.com>
- <20191119183247.GN35479@atomide.com>
- <a351461a-f6a1-334b-6bdd-a56626914fb3@ti.com>
- <20191119190721.GO35479@atomide.com>
- <7fa11037-8d33-2274-c8cc-80e9630b38b0@ti.com>
- <20191119192029.GP35479@atomide.com>
- <0ad31b32-712e-5bef-5645-0336dfec99cc@ti.com>
- <20191119194425.GQ35479@atomide.com>
- <f2f53e5e-6c95-e32f-d67a-284bb88e73e0@ti.com>
- <1ff8ae4b-5de3-4fdf-7318-d33398dc7fc8@ti.com>
+        id S1727310AbfLPVH5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 16:07:57 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:65414 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfLPVH4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 16:07:56 -0500
+Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBGL6td0036251;
+        Tue, 17 Dec 2019 06:06:55 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
+ Tue, 17 Dec 2019 06:06:55 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
+Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBGL6tM0036247
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Tue, 17 Dec 2019 06:06:55 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jiri Slaby <jslaby@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20191216114636.GB1515069@kroah.com>
+ <ce36371b-0ca6-5819-2604-65627ce58fc8@i-love.sakura.ne.jp>
+ <20191216201834.GA785904@mit.edu>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <46e8f6b3-46ac-6600-ba40-9545b7e44016@i-love.sakura.ne.jp>
+Date:   Tue, 17 Dec 2019 06:06:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ff8ae4b-5de3-4fdf-7318-d33398dc7fc8@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191216201834.GA785904@mit.edu>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andrew F. Davis <afd@ti.com> [191216 20:57]:
-> Looks like the TI quirk idea is not moving forward, even the QCOM quirk
-> looks like it may get kicked out. arm_smccc_smc() will remain only for
-> SMCCC compliant calls, but it looks like a generic arm_smc() wouldn't be
-> too opposed upstream.
+On 2019/12/17 5:18, Theodore Y. Ts'o wrote:
+>> this case was too hard to blacklist, as explained at
+>> https://lore.kernel.org/lkml/4d1a4b51-999b-63c6-5ce3-a704013cecb6@i-love.sakura.ne.jp/ .
+>> syz_execute_func() can find deeper bug by executing arbitrary binary code, but
+>> we cannot blacklist specific syscalls/arguments for syz_execute_func() testcases.
+>> Unless we guard on the kernel side, we won't be able to re-enable syz_execute_func()
+>> testcases.
+> 
+> I looked at the reference, but I didn't see the explanation in the
+> above link about why it was "too hard to blacklist".  In fact, it
+> looks like a bit earlier in the thread, Dmitry stated that adding this
+> find of blacklist "is not hard"?
+> 
+> https://lore.kernel.org/lkml/CACT4Y+Z_+H09iOPzSzJfs=_D=dczk22gL02FjuZ6HXO+p0kRyA@mail.gmail.com/
+> 
 
-Yes so it seems.
+That thread handled two bugs which disabled console output.
 
-> Either way this patch would still be valid as when OP-TEE is present
-> then arm_smccc_smc() will be the right call to make, how we handle the
-> legacy calls can be sorted out later if a generic SMC call is implemented.
+The former bug (March 2019) was that fuzzer was calling syslog(SYSLOG_ACTION_CONSOLE_LEVEL) and
+was fixed by blacklisting syslog(SYSLOG_ACTION_CONSOLE_LEVEL). This case was easy to blacklist.
 
-Please see my comment regarding this patch earlier in this thread
-pasted below for convenience:
+The latter bug (May 2019) was that fuzzer was calling binary code (via syz_execute_func()) which
+emdebbed a system call that changes console loglevel. Since it was too difficult to blacklist,
+syzkaller gave up use of syz_execute_func().
 
-* Tony Lindgren <tony@atomide.com> [191119 16:22]:
-> In any case, you should do the necessary checks for HAVE_ARM_SMCCC
-> only once during init. I'm not sure how much checking for
-> "/firmware/optee" helps here, sounds like we have a broken system
-> if the firmware is not there while the arm_smccc_smc() should
-> still work just fine :)
-
-So only check once during init. And during init, you should probably
-also check that arm_smccc_smc() actually infd optee if
-"/firmware/optee" is set, and only then set set the right function
-pointer or some flag.
-
-Regards,
-
-Tony
