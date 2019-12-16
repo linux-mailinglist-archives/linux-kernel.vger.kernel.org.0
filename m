@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7834C1213BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A389121475
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfLPSEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41838 "EHLO mail.kernel.org"
+        id S1730783AbfLPSLY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729668AbfLPSEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:04:30 -0500
+        id S1730776AbfLPSLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00FF320733;
-        Mon, 16 Dec 2019 18:04:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 266B1206E0;
+        Mon, 16 Dec 2019 18:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519470;
-        bh=otBDpZ87BqaIW6pX7d16Qi5zR+8a7FPSRZ3kJt1PAHU=;
+        s=default; t=1576519881;
+        bh=ftSUF9rQfpuhuW0x47/BZ8HPE4U+C48zwwL/o4E7juw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fOpvhgPo4C8MZP1DCL11vi5U/IydZWn9wP3A9v8yI6mN9k8PuosfNgYjgKpemL31g
-         dqEruzwRHN3K97zIizBRdOWHCsRByCsN2WxbnCJtQe5l2yVf4Bfm4P2cHD8IXbvWSE
-         EqDXavHO9Rmag7SWTDQawYS4axEOd+t+pB+ODgxc=
+        b=NKliEucnlTP7amgVp0Ai1yTNrLc2/yL++gvDomnF4LyQqcQTz58zfwqMGndX6Cj+4
+         MjkdSPc7lNX7t2PDAD89jGJnqv9OxF2YQWxRzMBoRzKMi4ra4QsmSsWEeFPtAPvhAW
+         82vf7L/Us8rU326FqwVoieOcarz3K7uwUXwK3cvo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.19 078/140] pinctrl: samsung: Add of_node_put() before return in error path
+        stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 5.3 106/180] ACPI: LPSS: Add dmi quirk for skipping _DEP check for some device-links
 Date:   Mon, 16 Dec 2019 18:49:06 +0100
-Message-Id: <20191216174808.450047222@linuxfoundation.org>
+Message-Id: <20191216174837.828612295@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 3d2557ab75d4c568c79eefa2e550e0d80348a6bd upstream.
+commit 6025e2fae3dde3c3d789d08f8ceacbdd9f90d471 upstream.
 
-Each iteration of for_each_child_of_node puts the previous node, but in
-the case of a return from the middle of the loop, there is no put, thus
-causing a memory leak. Hence add an of_node_put before the return of
-exynos_eint_wkup_init() error path.
-Issue found with Coccinelle.
+The iGPU / GFX0 device's _PS0 method on the ASUS T200TA depends on the
+I2C1 controller (which is connected to the embedded controller). But unlike
+in the T100TA/T100CHI this dependency is not listed in the _DEP of the GFX0
+device.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc: <stable@vger.kernel.org>
-Fixes: 14c255d35b25 ("pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+This results in the dev_WARN_ONCE(..., "Transfer while suspended\n") call
+in i2c-designware-master.c triggering and the AML code not working as it
+should.
+
+This commit fixes this by adding a dmi based quirk mechanism for devices
+which miss a _DEP, and adding a quirk for the LNXVIDEO depending on the
+I2C1 device on the Asus T200TA.
+
+Fixes: 2d71ee0ce72f ("ACPI / LPSS: Add a device link from the GPU to the BYT I2C5 controller")
+Tested-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: 4.20+ <stable@vger.kernel.org> # 4.20+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/samsung/pinctrl-exynos.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/acpi/acpi_lpss.c |   22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
 
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -494,8 +494,10 @@ int exynos_eint_wkup_init(struct samsung
- 		if (match) {
- 			irq_chip = kmemdup(match->data,
- 				sizeof(*irq_chip), GFP_KERNEL);
--			if (!irq_chip)
-+			if (!irq_chip) {
-+				of_node_put(np);
- 				return -ENOMEM;
-+			}
- 			wkup_np = np;
- 			break;
- 		}
+--- a/drivers/acpi/acpi_lpss.c
++++ b/drivers/acpi/acpi_lpss.c
+@@ -10,6 +10,7 @@
+ #include <linux/acpi.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
++#include <linux/dmi.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/mutex.h>
+@@ -463,6 +464,18 @@ struct lpss_device_links {
+ 	const char *consumer_hid;
+ 	const char *consumer_uid;
+ 	u32 flags;
++	const struct dmi_system_id *dep_missing_ids;
++};
++
++/* Please keep this list sorted alphabetically by vendor and model */
++static const struct dmi_system_id i2c1_dep_missing_dmi_ids[] = {
++	{
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "T200TA"),
++		},
++	},
++	{}
+ };
+ 
+ /*
+@@ -478,7 +491,8 @@ static const struct lpss_device_links lp
+ 	/* CHT iGPU depends on PMIC I2C controller */
+ 	{"808622C1", "7", "LNXVIDEO", NULL, DL_FLAG_PM_RUNTIME},
+ 	/* BYT iGPU depends on the Embedded Controller I2C controller (UID 1) */
+-	{"80860F41", "1", "LNXVIDEO", NULL, DL_FLAG_PM_RUNTIME},
++	{"80860F41", "1", "LNXVIDEO", NULL, DL_FLAG_PM_RUNTIME,
++	 i2c1_dep_missing_dmi_ids},
+ 	/* BYT CR iGPU depends on PMIC I2C controller (UID 5 on CR) */
+ 	{"80860F41", "5", "LNXVIDEO", NULL, DL_FLAG_PM_RUNTIME},
+ 	/* BYT iGPU depends on PMIC I2C controller (UID 7 on non CR) */
+@@ -577,7 +591,8 @@ static void acpi_lpss_link_consumer(stru
+ 	if (!dev2)
+ 		return;
+ 
+-	if (acpi_lpss_dep(ACPI_COMPANION(dev2), ACPI_HANDLE(dev1)))
++	if ((link->dep_missing_ids && dmi_check_system(link->dep_missing_ids))
++	    || acpi_lpss_dep(ACPI_COMPANION(dev2), ACPI_HANDLE(dev1)))
+ 		device_link_add(dev2, dev1, link->flags);
+ 
+ 	put_device(dev2);
+@@ -592,7 +607,8 @@ static void acpi_lpss_link_supplier(stru
+ 	if (!dev2)
+ 		return;
+ 
+-	if (acpi_lpss_dep(ACPI_COMPANION(dev1), ACPI_HANDLE(dev2)))
++	if ((link->dep_missing_ids && dmi_check_system(link->dep_missing_ids))
++	    || acpi_lpss_dep(ACPI_COMPANION(dev1), ACPI_HANDLE(dev2)))
+ 		device_link_add(dev1, dev2, link->flags);
+ 
+ 	put_device(dev2);
 
 
