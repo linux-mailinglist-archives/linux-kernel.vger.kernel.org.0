@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AF3B1213D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31BA9121452
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbfLPSFL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:05:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43166 "EHLO mail.kernel.org"
+        id S1730598AbfLPSKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729776AbfLPSFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:05:09 -0500
+        id S1728339AbfLPSKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:10:18 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFADA206EC;
-        Mon, 16 Dec 2019 18:05:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99DD0206EC;
+        Mon, 16 Dec 2019 18:10:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519509;
-        bh=ijubuqzniGt2PKEzrQHg6y/PnF9gic4B/UqCN5qjFXA=;
+        s=default; t=1576519818;
+        bh=Y4iET9vI16486tsdjHkxtgL0h01ixTEhKDNcbp5kogY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U9vJnLbO0FrbjKlua9+z+WchHv8sB89oKojCQQouQccwaUWqmC/0r43YYKde81AN/
-         HrYuvm+ip/fesoC9fXn/Wf7dZ24bYVp8OqH1wh4LsXPFaTNHsR7XNsQ0CRO/xTpxtJ
-         yPR6yzCp3VJBfQ0OjHIu0cQnb8QDsTj9NbAwBZaI=
+        b=VKgOEa71qf7meO6l2KqGbJuNg5rDJ1k4E7z2SdRkfJ0CnhJi+FPNeQ8bsp8fDbxZa
+         T9XqHbjT06pK9djyR8KT5AxyLw7Nlii1SQ7lIfa211AzchIT5EbSUowiMhKaXnNEZZ
+         nobo62nKt+zo02g1P5Y8Mv+XctlAkPys1oYOurlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        "Williams, Gerald S" <gerald.s.williams@intel.com>,
-        NeilBrown <neilb@suse.de>
-Subject: [PATCH 4.19 054/140] workqueue: Fix pwq ref leak in rescuer_thread()
+        stable@vger.kernel.org, Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Denis Efremov <efremov@linux.com>
+Subject: [PATCH 5.3 082/180] wil6210: check len before memcpy() calls
 Date:   Mon, 16 Dec 2019 18:48:42 +0100
-Message-Id: <20191216174803.141256519@linuxfoundation.org>
+Message-Id: <20191216174831.479468128@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,60 +45,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Denis Efremov <efremov@linux.com>
 
-commit e66b39af00f426b3356b96433d620cb3367ba1ff upstream.
+commit 2c840676be8ffc624bf9bb4490d944fd13c02d71 upstream.
 
-008847f66c3 ("workqueue: allow rescuer thread to do more work.") made
-the rescuer worker requeue the pwq immediately if there may be more
-work items which need rescuing instead of waiting for the next mayday
-timer expiration.  Unfortunately, it doesn't check whether the pwq is
-already on the mayday list and unconditionally gets the ref and moves
-it onto the list.  This doesn't corrupt the list but creates an
-additional reference to the pwq.  It got queued twice but will only be
-removed once.
+memcpy() in wmi_set_ie() and wmi_update_ft_ies() is called with
+src == NULL and len == 0. This is an undefined behavior. Fix it
+by checking "ie_len > 0" before the memcpy() calls.
 
-This leak later can trigger pwq refcnt warning on workqueue
-destruction and prevent freeing of the workqueue.
+As suggested by GCC documentation:
+"The pointers passed to memmove (and similar functions in <string.h>)
+must be non-null even when nbytes==0, so GCC can use that information
+to remove the check after the memmove call." [1]
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: "Williams, Gerald S" <gerald.s.williams@intel.com>
-Cc: NeilBrown <neilb@suse.de>
-Cc: stable@vger.kernel.org # v3.19+
+[1] https://gcc.gnu.org/gcc-4.9/porting_to.html
+
+Cc: Maya Erez <merez@codeaurora.org>
+Cc: Kalle Valo <kvalo@codeaurora.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Denis Efremov <efremov@linux.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/workqueue.c |   13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/wil6210/wmi.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -2413,8 +2413,14 @@ repeat:
- 			 */
- 			if (need_to_create_worker(pool)) {
- 				spin_lock(&wq_mayday_lock);
--				get_pwq(pwq);
--				list_move_tail(&pwq->mayday_node, &wq->maydays);
-+				/*
-+				 * Queue iff we aren't racing destruction
-+				 * and somebody else hasn't queued it already.
-+				 */
-+				if (wq->rescuer && list_empty(&pwq->mayday_node)) {
-+					get_pwq(pwq);
-+					list_add_tail(&pwq->mayday_node, &wq->maydays);
-+				}
- 				spin_unlock(&wq_mayday_lock);
- 			}
- 		}
-@@ -4478,7 +4484,8 @@ static void show_pwq(struct pool_workque
- 	pr_info("  pwq %d:", pool->id);
- 	pr_cont_pool_info(pool);
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -2478,7 +2478,8 @@ int wmi_set_ie(struct wil6210_vif *vif,
+ 	cmd->mgmt_frm_type = type;
+ 	/* BUG: FW API define ieLen as u8. Will fix FW */
+ 	cmd->ie_len = cpu_to_le16(ie_len);
+-	memcpy(cmd->ie_info, ie, ie_len);
++	if (ie_len)
++		memcpy(cmd->ie_info, ie, ie_len);
+ 	rc = wmi_send(wil, WMI_SET_APPIE_CMDID, vif->mid, cmd, len);
+ 	kfree(cmd);
+ out:
+@@ -2514,7 +2515,8 @@ int wmi_update_ft_ies(struct wil6210_vif
+ 	}
  
--	pr_cont(" active=%d/%d%s\n", pwq->nr_active, pwq->max_active,
-+	pr_cont(" active=%d/%d refcnt=%d%s\n",
-+		pwq->nr_active, pwq->max_active, pwq->refcnt,
- 		!list_empty(&pwq->mayday_node) ? " MAYDAY" : "");
+ 	cmd->ie_len = cpu_to_le16(ie_len);
+-	memcpy(cmd->ie_info, ie, ie_len);
++	if (ie_len)
++		memcpy(cmd->ie_info, ie, ie_len);
+ 	rc = wmi_send(wil, WMI_UPDATE_FT_IES_CMDID, vif->mid, cmd, len);
+ 	kfree(cmd);
  
- 	hash_for_each(pool->busy_hash, bkt, worker, hentry) {
 
 
