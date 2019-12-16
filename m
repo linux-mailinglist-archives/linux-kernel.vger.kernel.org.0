@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71C471212E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 671F01212E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbfLPR4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:56:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55324 "EHLO mail.kernel.org"
+        id S1728349AbfLPR47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:56:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbfLPR4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:56:53 -0500
+        id S1728085AbfLPR46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:56:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B09C20733;
-        Mon, 16 Dec 2019 17:56:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28A7020733;
+        Mon, 16 Dec 2019 17:56:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519012;
-        bh=2qsDb3uYXabTjglgCrsX28LgWcVWJRMwmsnRQjxE+5I=;
+        s=default; t=1576519017;
+        bh=35yKDkiE8KL4FQ6IGuKiSvQsrdEoHklWw7BgukhTtfY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D5vQIQ8/w/QIyNrS3PPwTOwYg6J6oLRbS/P3p/p1T6s8Q2HF5fy7gaE3j1GppwgFt
-         Yy9jdJQX7Nv1tuHDSAhCnKCQO0aJl0kIvWe7bg8T8ZRCLt+oGR4HdtOkZk4YaCQEoM
-         07yBcHTzM4AwZi89Tr++X+oB6mcG3PEevn21/Vc8=
+        b=UL+tO/Uv1tTJjCzU32BEVg+HV4PYzIkqP4/JqF2omZsTK/jYmvBdC+dtJKHzOT8Xm
+         JfaoH5aN+g9//wlSvp5u3QbaJn9/3iDIiEJglDTwBMpZeBDoy0gNTWRRJoRL3aovUz
+         AiXIg4BnC7BSy1jRUI/DPZcRSmPHZQMxnyGZeHs4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.14 160/267] media: venus: remove invalid compat_ioctl32 handler
-Date:   Mon, 16 Dec 2019 18:48:06 +0100
-Message-Id: <20191216174911.271324041@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.14 161/267] USB: uas: honor flag to avoid CAPACITY16
+Date:   Mon, 16 Dec 2019 18:48:07 +0100
+Message-Id: <20191216174911.324131759@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -45,54 +42,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 4adc0423de92cf850d1ef5c0e7cb28fd7a38219e upstream.
+commit bff000cae1eec750d62e265c4ba2db9af57b17e1 upstream.
 
-v4l2_compat_ioctl32() is the function that calls into
-v4l2_file_operations->compat_ioctl32(), so setting that back to the same
-function leads to a trivial endless loop, followed by a kernel
-stack overrun.
+Copy the support over from usb-storage to get feature parity
 
-Remove the incorrect assignment.
-
-Cc: stable@vger.kernel.org
-Fixes: 7472c1c69138 ("[media] media: venus: vdec: add video decoder files")
-Fixes: aaaa93eda64b ("[media] media: venus: venc: add video encoder files")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191114112758.32747-2-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/platform/qcom/venus/vdec.c |    3 ---
- drivers/media/platform/qcom/venus/venc.c |    3 ---
- 2 files changed, 6 deletions(-)
+ drivers/usb/storage/uas.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -1060,9 +1060,6 @@ static const struct v4l2_file_operations
- 	.unlocked_ioctl = video_ioctl2,
- 	.poll = v4l2_m2m_fop_poll,
- 	.mmap = v4l2_m2m_fop_mmap,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl32 = v4l2_compat_ioctl32,
--#endif
- };
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -832,6 +832,10 @@ static int uas_slave_configure(struct sc
+ 		sdev->wce_default_on = 1;
+ 	}
  
- static int vdec_probe(struct platform_device *pdev)
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -1166,9 +1166,6 @@ static const struct v4l2_file_operations
- 	.unlocked_ioctl = video_ioctl2,
- 	.poll = v4l2_m2m_fop_poll,
- 	.mmap = v4l2_m2m_fop_mmap,
--#ifdef CONFIG_COMPAT
--	.compat_ioctl32 = v4l2_compat_ioctl32,
--#endif
- };
- 
- static int venc_probe(struct platform_device *pdev)
++	/* Some disks cannot handle READ_CAPACITY_16 */
++	if (devinfo->flags & US_FL_NO_READ_CAPACITY_16)
++		sdev->no_read_capacity_16 = 1;
++
+ 	/*
+ 	 * Some disks return the total number of blocks in response
+ 	 * to READ CAPACITY rather than the highest block number.
 
 
