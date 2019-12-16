@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D7BE121925
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B013121935
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:51:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfLPRwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:52:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44068 "EHLO mail.kernel.org"
+        id S1726757AbfLPRxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:53:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726736AbfLPRwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:52:24 -0500
+        id S1726587AbfLPRxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:53:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3590F20733;
-        Mon, 16 Dec 2019 17:52:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1A402176D;
+        Mon, 16 Dec 2019 17:53:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576518743;
-        bh=jDfD+CL5wDqvqEFQmPaEED4yz67Luv316LwnHkstN0E=;
+        s=default; t=1576518787;
+        bh=OgBV3uZboKY7VS0dIaO/DQcdbWFS5IWy4G5k6+2p64w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fS/BchNahk2mY7UeIzaUl9PwHDr9hG3A0sd61a2NlQ+rEzczZunqRSG9dnl+iOhGW
-         yyB/M4RrsnjH+y1vtffNudZJV271hA12UeIKh7hG1iZ8ymJ2JQlourI7lkp+tTjl18
-         cahiVOVjKpwS/rJKzghkz8mPa9jx76XvTMVL51aU=
+        b=GcZ0bCdhBn5GieRuxiR8B2+l9z2Qlb+3uOem/bvhcn851Zb1/anOXrt/GfxhWINn6
+         ExIXS6fyaCcTk8o7NSKnY6dEf5JNt4Pgnbtb+0Br62zE6masUxUYXr3NEbS1I/MU0G
+         d/4C/E5PUzy8+71lF2kuYOq0BxZjD2L/+GucOXIY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wenyang@linux.alibaba.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Moni Shoua <monis@mellanox.com>,
+        Majd Dibbiny <majd@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 021/267] i2c: core: fix use after free in of_i2c_notify
-Date:   Mon, 16 Dec 2019 18:45:47 +0100
-Message-Id: <20191216174851.301369225@linuxfoundation.org>
+Subject: [PATCH 4.14 027/267] net/mlx5: Release resource on error flow
+Date:   Mon, 16 Dec 2019 18:45:53 +0100
+Message-Id: <20191216174851.886549015@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,41 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wenyang@linux.alibaba.com>
+From: Moni Shoua <monis@mellanox.com>
 
-[ Upstream commit a4c2fec16f5e6a5fee4865e6e0e91e2bc2d10f37 ]
+[ Upstream commit 698114968a22f6c0c9f42e983ba033cc36bb7217 ]
 
-We can't use "adap->dev" after it has been freed.
+Fix reference counting leakage when the event handler aborts due to an
+unsupported event for the resource type.
 
-Fixes: 5bf4fa7daea6 ("i2c: break out OF support into separate file")
-Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: a14c2d4beee5 ("net/mlx5_core: Warn on unsupported events of QP/RQ/SQ")
+Signed-off-by: Moni Shoua <monis@mellanox.com>
+Reviewed-by: Majd Dibbiny <majd@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/i2c-core-of.c | 4 ++--
+ drivers/net/ethernet/mellanox/mlx5/core/qp.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
-index 8d474bb1dc157..17d727e0b8424 100644
---- a/drivers/i2c/i2c-core-of.c
-+++ b/drivers/i2c/i2c-core-of.c
-@@ -238,14 +238,14 @@ static int of_i2c_notify(struct notifier_block *nb, unsigned long action,
- 		}
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/qp.c b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+index 889130edb7152..5f091c6ea049d 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/qp.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/qp.c
+@@ -124,7 +124,7 @@ void mlx5_rsc_event(struct mlx5_core_dev *dev, u32 rsn, int event_type)
+ 	if (!is_event_type_allowed((rsn >> MLX5_USER_INDEX_LEN), event_type)) {
+ 		mlx5_core_warn(dev, "event 0x%.2x is not allowed on resource 0x%.8x\n",
+ 			       event_type, rsn);
+-		return;
++		goto out;
+ 	}
  
- 		client = of_i2c_register_device(adap, rd->dn);
--		put_device(&adap->dev);
+ 	switch (common->res) {
+@@ -138,7 +138,7 @@ void mlx5_rsc_event(struct mlx5_core_dev *dev, u32 rsn, int event_type)
+ 	default:
+ 		mlx5_core_warn(dev, "invalid resource type for 0x%x\n", rsn);
+ 	}
 -
- 		if (IS_ERR(client)) {
- 			dev_err(&adap->dev, "failed to create client for '%pOF'\n",
- 				 rd->dn);
-+			put_device(&adap->dev);
- 			of_node_clear_flag(rd->dn, OF_POPULATED);
- 			return notifier_from_errno(PTR_ERR(client));
- 		}
-+		put_device(&adap->dev);
- 		break;
- 	case OF_RECONFIG_CHANGE_REMOVE:
- 		/* already depopulated? */
++out:
+ 	mlx5_core_put_rsc(common);
+ }
+ 
 -- 
 2.20.1
 
