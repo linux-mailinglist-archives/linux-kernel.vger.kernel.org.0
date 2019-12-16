@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2E5A12153A
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:20:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1DB71213BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731656AbfLPSTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:19:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
+        id S1729455AbfLPSEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731968AbfLPSTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:19:41 -0500
+        id S1729474AbfLPSEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6B00207FF;
-        Mon, 16 Dec 2019 18:19:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73B9520700;
+        Mon, 16 Dec 2019 18:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520381;
-        bh=ykyXuBjdrvDsfkhIUrb1x8jlBJIu+YyjtsYEWvJ6v0M=;
+        s=default; t=1576519472;
+        bh=5fUVMK8lM38GtgNfl95ndPnU9/CVLhMujqLgWV6OkpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZOr5Lk4qOIc2nvxIJxRYk2dD2L96sYASTtCda+BPDF/UihAxGcHQ2DTTBLDwOOg7
-         n58gBQbX1xbnULzGCTF33qPLv9du8VDQ9zOZ1Cg0xZqaSUjyyQ85OSm0S+Z3rVTlsi
-         QWoNQDgHZYbn0ih98BIV1oiE19r6ACKXTKiICyAU=
+        b=TAdPIujFY0AVn5WE73BfyEfROy6RIXxpI09S8XVbRQEf+yWtgKgj7cHM/GBvXtIKE
+         HT9lXt4AFg5aPtLn6Sy+jsDFx23U+jNKeN5mPjgaHJUYLXczrs0E1+u6NXwZGNEPgC
+         BqZbrWut83Oj9YCjmtKvObL3b7Rd7Jq1JvPYnQiQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Mark Brown <broonie@kernel.org>
-Subject: [PATCH 5.4 090/177] ASoC: fsl_audmix: Add spin lock to protect tdms
-Date:   Mon, 16 Dec 2019 18:49:06 +0100
-Message-Id: <20191216174839.092227511@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 079/140] pinctrl: samsung: Fix device node refcount leaks in Exynos wakeup controller init
+Date:   Mon, 16 Dec 2019 18:49:07 +0100
+Message-Id: <20191216174808.616542721@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,75 +42,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit fe965096c9495ddcf78ec163348105e2baf8d185 upstream.
+commit 5c7f48dd14e892e3e920dd6bbbd52df79e1b3b41 upstream.
 
-Audmix support two substream, When two substream start
-to run, the trigger function may be called by two substream
-in same time, that the priv->tdms may be updated wrongly.
+In exynos_eint_wkup_init() the for_each_child_of_node() loop is used
+with a break to find a matching child node.  Although each iteration of
+for_each_child_of_node puts the previous node, but early exit from loop
+misses it.  This leads to leak of device node.
 
-The expected priv->tdms is 0x3, but sometimes the
-result is 0x2, or 0x1.
-
-Fixes: be1df61cf06e ("ASoC: fsl: Add Audio Mixer CPU DAI driver")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/1e706afe53fdd1fbbbc79277c48a98f8416ba873.1573458378.git.shengjiu.wang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
 Cc: <stable@vger.kernel.org>
+Fixes: 43b169db1841 ("pinctrl: add exynos4210 specific extensions for samsung pinctrl driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/soc/fsl/fsl_audmix.c |    6 ++++++
- sound/soc/fsl/fsl_audmix.h |    1 +
- 2 files changed, 7 insertions(+)
+ drivers/pinctrl/samsung/pinctrl-exynos.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/sound/soc/fsl/fsl_audmix.c
-+++ b/sound/soc/fsl/fsl_audmix.c
-@@ -286,6 +286,7 @@ static int fsl_audmix_dai_trigger(struct
- 				  struct snd_soc_dai *dai)
- {
- 	struct fsl_audmix *priv = snd_soc_dai_get_drvdata(dai);
-+	unsigned long lock_flags;
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -514,6 +514,7 @@ int exynos_eint_wkup_init(struct samsung
+ 				bank->nr_pins, &exynos_eint_irqd_ops, bank);
+ 		if (!bank->irq_domain) {
+ 			dev_err(dev, "wkup irq domain add failed\n");
++			of_node_put(wkup_np);
+ 			return -ENXIO;
+ 		}
  
- 	/* Capture stream shall not be handled */
- 	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
-@@ -295,12 +296,16 @@ static int fsl_audmix_dai_trigger(struct
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		spin_lock_irqsave(&priv->lock, lock_flags);
- 		priv->tdms |= BIT(dai->driver->id);
-+		spin_unlock_irqrestore(&priv->lock, lock_flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		spin_lock_irqsave(&priv->lock, lock_flags);
- 		priv->tdms &= ~BIT(dai->driver->id);
-+		spin_unlock_irqrestore(&priv->lock, lock_flags);
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -491,6 +496,7 @@ static int fsl_audmix_probe(struct platf
- 		return PTR_ERR(priv->ipg_clk);
+@@ -528,8 +529,10 @@ int exynos_eint_wkup_init(struct samsung
+ 		weint_data = devm_kcalloc(dev,
+ 					  bank->nr_pins, sizeof(*weint_data),
+ 					  GFP_KERNEL);
+-		if (!weint_data)
++		if (!weint_data) {
++			of_node_put(wkup_np);
+ 			return -ENOMEM;
++		}
+ 
+ 		for (idx = 0; idx < bank->nr_pins; ++idx) {
+ 			irq = irq_of_parse_and_map(bank->of_node, idx);
+@@ -546,10 +549,13 @@ int exynos_eint_wkup_init(struct samsung
+ 		}
  	}
  
-+	spin_lock_init(&priv->lock);
- 	platform_set_drvdata(pdev, priv);
- 	pm_runtime_enable(dev);
+-	if (!muxed_banks)
++	if (!muxed_banks) {
++		of_node_put(wkup_np);
+ 		return 0;
++	}
  
---- a/sound/soc/fsl/fsl_audmix.h
-+++ b/sound/soc/fsl/fsl_audmix.h
-@@ -96,6 +96,7 @@ struct fsl_audmix {
- 	struct platform_device *pdev;
- 	struct regmap *regmap;
- 	struct clk *ipg_clk;
-+	spinlock_t lock; /* Protect tdms */
- 	u8 tdms;
- };
- 
+ 	irq = irq_of_parse_and_map(wkup_np, 0);
++	of_node_put(wkup_np);
+ 	if (!irq) {
+ 		dev_err(dev, "irq number for muxed EINTs not found\n");
+ 		return 0;
 
 
