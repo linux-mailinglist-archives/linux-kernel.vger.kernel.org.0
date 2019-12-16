@@ -2,144 +2,368 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7554A11FC01
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:06:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35BB911FC03
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 01:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726528AbfLPAGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 19:06:09 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:19304 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbfLPAGJ (ORCPT
+        id S1726478AbfLPAP3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 19:15:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:8340 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726260AbfLPAP2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 19:06:09 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191216000603epoutp04932893bdc7ee2401fc20065c86164e5b~gsUFLeB4i1835218352epoutp04a
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:06:03 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191216000603epoutp04932893bdc7ee2401fc20065c86164e5b~gsUFLeB4i1835218352epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576454763;
-        bh=yiZ2VagM8HQOxVfhO1tU2xkE4O7iWivvMoYcoWs9/co=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=QQGWYhJpqLx1u0TBnVvZeIz8cZd8yI/KunSJU6bTlEWjbmSqvNTQRdGEUt9LDmBHW
-         LAqVw4YFx0jP9jwxOOpalhDtuTwi5ZumqPdphTR7YGmVgQ20kwxqFZODMhZ34tL68K
-         OLFr6LTEVhDcQKaJ044NAGadCrD4GZeyFv4PNk7c=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191216000602epcas1p10a7aa2bd1d5ff5310c1200db1fd2a49c~gsUEMmMTR0396103961epcas1p1c;
-        Mon, 16 Dec 2019 00:06:02 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 47bhPg3ySvzMqYkc; Mon, 16 Dec
-        2019 00:05:59 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        1C.E2.48019.66AC6FD5; Mon, 16 Dec 2019 09:05:58 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191216000557epcas1p1f82e6da04e99a0299a67a95f9abbfe7a~gsT-PEuY41073410734epcas1p1F;
-        Mon, 16 Dec 2019 00:05:57 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191216000557epsmtrp2747362009f1df9cf95c20b48d088a95b~gsT-LeGz72725127251epsmtrp2R;
-        Mon, 16 Dec 2019 00:05:57 +0000 (GMT)
-X-AuditID: b6c32a38-257ff7000001bb93-05-5df6ca66be89
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        2C.66.10238.46AC6FD5; Mon, 16 Dec 2019 09:05:57 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191216000556epsmtip29edfa6046ffefe886e1ef5c8fd3a4e63~gsT_-5Ikl0780607806epsmtip2R;
-        Mon, 16 Dec 2019 00:05:56 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-pm@vger.kernel.org
-Cc:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] PM / devfreq: rk3399_dmc: Add COMPILE_TEST and
- HAVE_ARM_SMCCC dependency
-Date:   Mon, 16 Dec 2019 09:12:28 +0900
-Message-Id: <20191216001228.5258-1-cw00.choi@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7bCmnm7aqW+xBjO3iFpc//Kc1eJs0xt2
-        i8u75rBZfO49wmhxu3EFmwOrR9+WVYwenzfJBTBFZdtkpCampBYppOYl56dk5qXbKnkHxzvH
-        m5oZGOoaWlqYKynkJeam2iq5+AToumXmAG1TUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gq
-        pRak5BRYFugVJ+YWl+al6yXn51oZGhgYmQIVJmRnvFiyka1gEm/F4RdPmRsYO7i7GDk5JARM
-        JObs/83SxcjFISSwg1Hixfsj7CAJIYFPjBLvXjBCJL4xStw+f40dpuPx/7OsEIm9jBKf+7ZB
-        tX9hlDiytosVpIpNQEti/4sbbCC2iICMxNQr+8HizAJ5Emuv7AKLCwvESTSun8QIYrMIqEr8
-        erMcLM4rYCmx8tclJoht8hKrNxxgBlkgIfCQVaKv5zvUGS4Sz56vhrKFJV4d3wJlS0l8freX
-        DcKullh58ggbRHMHo8SW/RdYIRLGEvuXTgbawAF0kabE+l36EGFFiZ2/5zJCHMon8e5rDytI
-        iYQAr0RHmxBEibLE5Qd3oW6TlFjc3skGUeIh8XV1OSTkYiUeTfzBOoFRdhbC/AWMjKsYxVIL
-        inPTU4sNC0yQI2kTIzgBaVnsYNxzzucQowAHoxIP74uMb7FCrIllxZW5hxglOJiVRHhTtT/H
-        CvGmJFZWpRblxxeV5qQWH2I0BQbeRGYp0eR8YHLMK4k3NDUyNja2MDE0MzU0VBLn5fhxMVZI
-        ID2xJDU7NbUgtQimj4mDU6qB0fLHS9ZC7n07vm723Glib2z0mqVfxuBcx+KA1I06mVvPmy0J
-        vD1/duiUZ+sN5s1dv+/EFjPnuCVcLJcLr8W1OW7TlHXTmn0nS57x7rEFxdvCOvaGt0X/uON3
-        dWr8Zc1pWTkq377m31fXvWqR1/kpbfnvX5fiDAUFLx+TLvgxydIrNuBGzRTZPUosxRmJhlrM
-        RcWJAGTjS5ZWAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAJMWRmVeSWpSXmKPExsWy7bCSvG7qqW+xBut3MFlc//Kc1eJs0xt2
-        i8u75rBZfO49wmhxu3EFmwOrR9+WVYwenzfJBTBFcdmkpOZklqUW6dslcGW8WLKRrWASb8Xh
-        F0+ZGxg7uLsYOTkkBEwkHv8/ywpiCwnsZpR4vFgfIi4pMe3iUeYuRg4gW1ji8OHiLkYuoJJP
-        jBLHvh0Aq2cT0JLY/+IGG4gtIiAjMfXKfrA4s0CRxMntD9hBeoUFYiT2LHAFCbMIqEr8erMc
-        rJxXwFJi5a9LTBCr5CVWbzjAPIGRZwEjwypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxN
-        jOBw0NLcwXh5SfwhRgEORiUeXofsb7FCrIllxZW5hxglOJiVRHhTtT/HCvGmJFZWpRblxxeV
-        5qQWH2KU5mBREud9mncsUkggPbEkNTs1tSC1CCbLxMEp1cCYc0fUh9/CS/uY91fnlX8Ofnv8
-        MmNbO5ds3eneKd2b1+x5rxMr80/2d67XszO7ddfuedl+ZE/NhM55P/rrjDi+vHSpOTOH+VS4
-        4FwuneMvnm9/8sOFx25p1PM3J16bzZmnnP8/zfH5t/QfiesPn7nMnRIvwHixMIL5xd8mP30Z
-        cY/YuxybNweLK7EUZyQaajEXFScCAH0wsRMDAgAA
-X-CMS-MailID: 20191216000557epcas1p1f82e6da04e99a0299a67a95f9abbfe7a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191216000557epcas1p1f82e6da04e99a0299a67a95f9abbfe7a
-References: <CGME20191216000557epcas1p1f82e6da04e99a0299a67a95f9abbfe7a@epcas1p1.samsung.com>
+        Sun, 15 Dec 2019 19:15:28 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBG0CHmK144665
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 19:15:27 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2wwe4jaaq1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Dec 2019 19:15:26 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Mon, 16 Dec 2019 00:15:24 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 16 Dec 2019 00:15:17 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBG0FGtv36241512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Dec 2019 00:15:16 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C46DAE051;
+        Mon, 16 Dec 2019 00:15:16 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8DC2AE045;
+        Mon, 16 Dec 2019 00:15:15 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 16 Dec 2019 00:15:15 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id F1A04A011F;
+        Mon, 16 Dec 2019 11:15:12 +1100 (AEDT)
+Subject: Re: [PATCH v2 25/27] nvdimm/ocxl: Expose SMART data via ndctl
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Anton Blanchard <anton@ozlabs.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        =?ISO-8859-1?Q?C=E9dric?= Le Goater <clg@kaod.org>,
+        Anju T Sudhakar <anju@linux.vnet.ibm.com>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kurz <groug@kaod.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org
+Date:   Mon, 16 Dec 2019 11:15:14 +1100
+In-Reply-To: <20191203034655.51561-26-alastair@au1.ibm.com>
+References: <20191203034655.51561-1-alastair@au1.ibm.com>
+         <20191203034655.51561-26-alastair@au1.ibm.com>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.2 (3.34.2-1.fc31) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19121600-0016-0000-0000-000002D5288B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19121600-0017-0000-0000-00003337596E
+Message-Id: <d41d89b8d5ac00d583931381754eee64f2058a68.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-15_07:2019-12-13,2019-12-15 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 clxscore=1015 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1912160000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To build test, add COMPILE_TEST depedency to both ARM_RK3399_DMC_DEVFREQ
-and DEVFREQ_EVENT_ROCKCHIP_DFI configuration. And ARM_RK3399_DMC_DEVFREQ
-used the SMCCC interface so that add HAVE_ARM_SMCCC dependency to prevent
-the build break.
+On Tue, 2019-12-03 at 14:46 +1100, Alastair D'Silva wrote:
+> From: Alastair D'Silva <alastair@d-silva.org>
+> 
+> This patch retrieves proprietary formatted SMART data and makes it
+> available via ndctl. A later contribution will be made to ndctl to
+> parse this data.
+> 
+> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-Changes from v1:
-- Add HAVE_ARM_SMCCC dependency because this driver used SMCCC interface.
-  It was reportd from kbuild test robot.
+Dan,
 
- drivers/devfreq/Kconfig       | 3 ++-
- drivers/devfreq/event/Kconfig | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+I should ask, is there a defined format that ND_CMD_SMART should be
+returning data in, or is it reasonable to have this implementation
+dependent?
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 8485f948caeb..1526f758daeb 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -125,7 +125,8 @@ config ARM_TEGRA20_DEVFREQ
- 
- config ARM_RK3399_DMC_DEVFREQ
- 	tristate "ARM RK3399 DMC DEVFREQ Driver"
--	depends on ARCH_ROCKCHIP
-+	depends on (ARCH_ROCKCHIP && HAVE_ARM_SMCCC) || \
-+		(COMPILE_TEST && HAVE_ARM_SMCCC)
- 	select DEVFREQ_EVENT_ROCKCHIP_DFI
- 	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select PM_DEVFREQ_EVENT
-diff --git a/drivers/devfreq/event/Kconfig b/drivers/devfreq/event/Kconfig
-index cef2cf5347ca..a53e0a6ffdfe 100644
---- a/drivers/devfreq/event/Kconfig
-+++ b/drivers/devfreq/event/Kconfig
-@@ -34,7 +34,7 @@ config DEVFREQ_EVENT_EXYNOS_PPMU
- 
- config DEVFREQ_EVENT_ROCKCHIP_DFI
- 	tristate "ROCKCHIP DFI DEVFREQ event Driver"
--	depends on ARCH_ROCKCHIP
-+	depends on ARCH_ROCKCHIP || COMPILE_TEST
- 	help
- 	  This add the devfreq-event driver for Rockchip SoC. It provides DFI
- 	  (DDR Monitor Module) driver to count ddr load.
+
+> ---
+>  drivers/nvdimm/ocxl/scm.c          | 156
+> +++++++++++++++++++++++++++++
+>  drivers/nvdimm/ocxl/scm_internal.h |  21 ++++
+>  2 files changed, 177 insertions(+)
+> 
+> diff --git a/drivers/nvdimm/ocxl/scm.c b/drivers/nvdimm/ocxl/scm.c
+> index 8deb7862793c..77b9e68870a3 100644
+> --- a/drivers/nvdimm/ocxl/scm.c
+> +++ b/drivers/nvdimm/ocxl/scm.c
+> @@ -94,6 +94,157 @@ static int scm_ndctl_config_size(struct
+> nd_cmd_get_config_size *command)
+>  	return 0;
+>  }
+>  
+> +static int read_smart_attrib(struct scm_data *scm_data, u16 offset,
+> +			     struct scm_smart_attribs *attribs)
+> +{
+> +	u64 val;
+> +	int rc;
+> +	struct scm_smart_attrib *attrib;
+> +	u8 attrib_id;
+> +
+> +	rc = ocxl_global_mmio_read64(scm_data->ocxl_afu, offset,
+> OCXL_LITTLE_ENDIAN,
+> +				     &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	attrib_id = (val >> 56) & 0xff;
+> +	switch (attrib_id) {
+> +	case SCM_SMART_ATTR_POWER_ON_HOURS:
+> +		attrib = &attribs->power_on_hours;
+> +		break;
+> +
+> +	case SCM_SMART_ATTR_TEMPERATURE:
+> +		attrib = &attribs->temperature;
+> +		break;
+> +
+> +	case SCM_SMART_ATTR_LIFE_REMAINING:
+> +		attrib = &attribs->life_remaining;
+> +		break;
+> +
+> +	default:
+> +		dev_warn(&scm_data->dev, "Unknown smart attrib '%d'",
+> attrib_id);
+> +		return -ENOENT;
+> +	}
+> +
+> +	attrib->id = attrib_id;
+> +	attrib->attribute_flags = (val >> 40) & 0xffff;
+> +	attrib->current_val = (val >> 32) & 0xff;
+> +	attrib->threshold_val = (val >> 24) & 0xff;
+> +	attrib->worst_val = (val >> 16) & 0xff;
+> +
+> +	rc = ocxl_global_mmio_read64(scm_data->ocxl_afu, offset + 0x08,
+> +				     OCXL_LITTLE_ENDIAN, &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	attrib->raw_val = val;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * scm_smart_header_parse() - Parse the first 64 bits of the SMART
+> admin command response
+> + * @scm_data: the SCM metadata
+> + * @length: out, returns the number of bytes in the response
+> (excluding the 64 bit header)
+> + */
+> +static int scm_smart_header_parse(struct scm_data *scm_data, u32
+> *length)
+> +{
+> +	int rc;
+> +	u64 val;
+> +
+> +	u16 data_identifier;
+> +	u32 data_length;
+> +
+> +	rc = ocxl_global_mmio_read64(scm_data->ocxl_afu,
+> +				     scm_data-
+> >admin_command.data_offset,
+> +				     OCXL_LITTLE_ENDIAN, &val);
+> +	if (rc)
+> +		return rc;
+> +
+> +	data_identifier = val >> 48;
+> +	data_length = val & 0xFFFFFFFF;
+> +
+> +	if (data_identifier != 0x534D) {
+> +		dev_err(&scm_data->dev,
+> +			"Bad data identifier for smart data, expected
+> 'SM', got '%-.*s'\n",
+> +			2, (char *)&data_identifier);
+> +		return -EINVAL;
+> +	}
+> +
+> +	*length = data_length;
+> +	return 0;
+> +}
+> +
+> +static int scm_smart_update(struct scm_data *scm_data)
+> +{
+> +	u32 length, i;
+> +	int rc;
+> +
+> +	mutex_lock(&scm_data->admin_command.lock);
+> +
+> +	rc = scm_admin_command_request(scm_data, ADMIN_COMMAND_SMART);
+> +	if (rc)
+> +		goto out;
+> +
+> +	rc = scm_admin_command_execute(scm_data);
+> +	if (rc)
+> +		goto out;
+> +
+> +	rc = scm_admin_command_complete_timeout(scm_data,
+> ADMIN_COMMAND_SMART);
+> +	if (rc < 0) {
+> +		dev_err(&scm_data->dev, "SMART timeout\n");
+> +		goto out;
+> +	}
+> +
+> +	rc = scm_admin_response(scm_data);
+> +	if (rc < 0)
+> +		goto out;
+> +	if (rc != STATUS_SUCCESS) {
+> +		scm_warn_status(scm_data, "Unexpected status from
+> SMART", rc);
+> +		goto out;
+> +	}
+> +
+> +	rc = scm_smart_header_parse(scm_data, &length);
+> +	if (rc)
+> +		goto out;
+> +
+> +	length /= 0x10; // Length now contains the number of attributes
+> +
+> +	for (i = 0; i < length; i++)
+> +		read_smart_attrib(scm_data,
+> +				  scm_data->admin_command.data_offset +
+> 0x08 + i * 0x10,
+> +				  &scm_data->smart);
+> +
+> +	rc = scm_admin_response_handled(scm_data);
+> +	if (rc)
+> +		goto out;
+> +
+> +	rc = 0;
+> +	goto out;
+> +
+> +out:
+> +	mutex_unlock(&scm_data->admin_command.lock);
+> +	return rc;
+> +}
+> +
+> +static int scm_ndctl_smart(struct scm_data *scm_data, void *buf,
+> +			   unsigned int buf_len)
+> +{
+> +	int rc;
+> +
+> +	if (buf_len != sizeof(scm_data->smart))
+> +		return -EINVAL;
+> +
+> +	rc = scm_smart_update(scm_data);
+> +	if (rc)
+> +		return rc;
+> +
+> +	memcpy(buf, &scm_data->smart, buf_len);
+> +
+> +	return 0;
+> +}
+> +
+> +
+>  static int scm_ndctl(struct nvdimm_bus_descriptor *nd_desc,
+>  		     struct nvdimm *nvdimm,
+>  		     unsigned int cmd, void *buf, unsigned int buf_len,
+> int *cmd_rc)
+> @@ -101,6 +252,10 @@ static int scm_ndctl(struct
+> nvdimm_bus_descriptor *nd_desc,
+>  	struct scm_data *scm_data = container_of(nd_desc, struct
+> scm_data, bus_desc);
+>  
+>  	switch (cmd) {
+> +	case ND_CMD_SMART:
+> +		*cmd_rc = scm_ndctl_smart(scm_data, buf, buf_len);
+> +		return 0;
+> +
+>  	case ND_CMD_GET_CONFIG_SIZE:
+>  		*cmd_rc = scm_ndctl_config_size(buf);
+>  		return 0;
+> @@ -300,6 +455,7 @@ static int scm_register_lpc_mem(struct scm_data
+> *scm_data)
+>  	set_bit(ND_CMD_GET_CONFIG_SIZE, &nvdimm_cmd_mask);
+>  	set_bit(ND_CMD_GET_CONFIG_DATA, &nvdimm_cmd_mask);
+>  	set_bit(ND_CMD_SET_CONFIG_DATA, &nvdimm_cmd_mask);
+> +	set_bit(ND_CMD_SMART, &nvdimm_cmd_mask);
+>  
+>  	set_bit(NDD_ALIASING, &nvdimm_flags);
+>  
+> diff --git a/drivers/nvdimm/ocxl/scm_internal.h
+> b/drivers/nvdimm/ocxl/scm_internal.h
+> index 4a29088612a9..d593fefe38d5 100644
+> --- a/drivers/nvdimm/ocxl/scm_internal.h
+> +++ b/drivers/nvdimm/ocxl/scm_internal.h
+> @@ -115,6 +115,26 @@ enum overwrite_state {
+>  	SCM_OVERWRITE_FAILED
+>  };
+>  
+> +#define SCM_SMART_ATTR_POWER_ON_HOURS	0x09
+> +#define SCM_SMART_ATTR_TEMPERATURE	0xC2
+> +#define SCM_SMART_ATTR_LIFE_REMAINING	0xCA
+> +
+> +struct scm_smart_attrib {
+> +	__u8 id; /* See defines above */
+> +	__u16 attribute_flags;
+> +	__u8 current_val;
+> +	__u8 threshold_val;
+> +	__u8 worst_val;
+> +	__u8 reserved;
+> +	__u64 raw_val;
+> +};
+> +
+> +struct scm_smart_attribs {
+> +	struct scm_smart_attrib power_on_hours;
+> +	struct scm_smart_attrib temperature;
+> +	struct scm_smart_attrib life_remaining;
+> +};
+> +
+>  struct scm_data {
+>  	struct device dev;
+>  	struct pci_dev *pdev;
+> @@ -136,6 +156,7 @@ struct scm_data {
+>  	struct resource scm_res;
+>  	struct nd_region *nd_region;
+>  	struct eventfd_ctx *ev_ctx;
+> +	struct scm_smart_attribs smart;
+>  	char fw_version[8+1];
+>  	u32 timeouts[ADMIN_COMMAND_MAX+1];
+>  
 -- 
-2.17.1
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
