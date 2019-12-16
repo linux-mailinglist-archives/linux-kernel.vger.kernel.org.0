@@ -2,121 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A836F120789
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:47:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF27D12078E
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:48:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfLPNrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 08:47:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:40188 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfLPNrw (ORCPT
+        id S1728023AbfLPNsb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 08:48:31 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.71]:55638 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727579AbfLPNsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:47:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=2KLAN4ZBm7mQw6EPErstooeuDqde0MxZ8aeQqGLKk1U=; b=3iCBytLQJTNQKbERk1Ou0Oa8r
-        OxTzGqtSGn15JzRVQE+Jmcq1kQjgF/gMYSzRaMsauBjxCsMymuuB42kedoFb3sPqYMRCcuiS+CPrH
-        bfgZW35CWZDsTbAb94g/W98U+aVd++jAj/rmwOtuzSbWq9EXcnOQ6s9ll94fdKB+W9NcgGZwnwhtQ
-        VVYAlw3UUyFSymkgWjUjb0vpLgMQjHMOa/2aHAV8jc3NhPJ3/uL4KXHR0ryqpOuApmYZxZMqx89g2
-        kjsuH5c+qV6pHm39ajE6tLHJhEE9BX7G0nu7YyFLSguEwedR+yqXezfy5OgEaAqXySQ1HgMTs33Ck
-        LceJjZakA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1igqid-0007BC-11; Mon, 16 Dec 2019 13:47:27 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 319D83007F2;
-        Mon, 16 Dec 2019 14:46:03 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5CB252B2A010B; Mon, 16 Dec 2019 14:47:25 +0100 (CET)
-Date:   Mon, 16 Dec 2019 14:47:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Ajay Kaher <akaher@vmware.com>, gregkh@linuxfoundation.org,
-        stable@vger.kernel.org, torvalds@linux-foundation.org,
-        punit.agrawal@arm.com, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, willy@infradead.org,
-        will.deacon@arm.com, mszeredi@redhat.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, srivatsab@vmware.com,
-        srivatsa@csail.mit.edu, amakhalov@vmware.com, srinidhir@vmware.com,
-        bvikas@vmware.com, anishs@vmware.com, vsirnapalli@vmware.com,
-        srostedt@vmware.com, Vlastimil Babka <vbabka@suse.cz>,
-        Oscar Salvador <osalvador@suse.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 8/8] x86, mm, gup: prevent get_page() race with munmap
- in paravirt guest
-Message-ID: <20191216134725.GE2827@hirez.programming.kicks-ass.net>
-References: <1576529149-14269-1-git-send-email-akaher@vmware.com>
- <1576529149-14269-9-git-send-email-akaher@vmware.com>
- <20191216130443.GN2844@hirez.programming.kicks-ass.net>
- <87lfrc9z3v.fsf@vitty.brq.redhat.com>
+        Mon, 16 Dec 2019 08:48:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ts.fujitsu.com;
+        s=200619tsfj; t=1576504107; i=@ts.fujitsu.com;
+        bh=WAoiOLVLnfRZHjvIM34WJoYjoSRik6RjAJThWwiCBpk=;
+        h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
+         Content-Transfer-Encoding:Content-Type;
+        b=jrCab8U7Sy0MExL0pvFBhIDrmnNm/SzwDfIQCGbMVfPfeMid4sALcf+JkHebFzCjg
+         FVF3zVZkgDRSiDC1lUTAA3uD2WnIdAbI8CgZtw40yR3aEJ9AKRbq9M/skSnWEtfwmc
+         dwMJIqA2ytR+EGhhO50Bk1/WdpjKYBarDd988fAYOCp5R/+seO4whf+iMiBfxfkhaR
+         eVD1aSnj+rt55KMAs41zttgXIOkZ2L1C0W8uDEUnO/fH4YlKi/dIs/JN8rhY4iBC/K
+         PhTklxPamdJicn/Xsaa5XnQSDkDv25Tu86/PIe7RdGc7ujggNzoAmp1J0IMqyLxVEO
+         sXbDDT6eh02jg==
+Received: from [46.226.52.199] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-7.bemta.az-b.eu-west-1.aws.symcld.net id 79/B1-22075-B2B87FD5; Mon, 16 Dec 2019 13:48:27 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrMIsWRWlGSWpSXmKPExsViZ8MRqqvW/T3
+  W4O5kbYs9e0+yWFzeNYfNYlLnMTYHZo+WzdEenzfJBTBFsWbmJeVXJLBmTO9fwFLwUK7i2OUF
+  rA2MtyW7GLk4hATmMEosu3GBEcKZzyhx9fYZpi5GTg42AQOJXa8OMXcxcnCICChKXH7vBBJmF
+  nCUWDvjFwtIWFjARWLXjyyQMIuAqsSVRTeYQWxeAUOJTU+XsULYghInZz5hgWiVl+i43MgKYe
+  tILNj9iW0CI/csJGWzkJTNQlK2gJF5FaNFUlFmekZJbmJmjq6hgYGuoaGRrqGlORCb6SVW6Sb
+  ppZbqlqcWl+ga6iWWF+sVV+Ym56To5aWWbGIEhldKwdEjOxjffX2rd4hRkoNJSZQ35Oa3WCG+
+  pPyUyozE4oz4otKc1OJDjDIcHEoSvGvav8cKCRalpqdWpGXmAEMdJi3BwaMkwhvTCZTmLS5Iz
+  C3OTIdInWLU5Vj1f94iZiGWvPy8VClxXs4uoCIBkKKM0jy4EbC4u8QoKyXMy8jAwCDEU5BalJ
+  tZgir/ilGcg1FJmLcIZBVPZl4J3KZXQEcwAR1h5PcN5IiSRISUVAOTQTHXDB7GsPyYHYWf7Py
+  Xb2Dtjqy7crJC7NCc/P1pO4rDthXM5fXI56rbqKcl9lrhRQvXh6Ky/62N3658r5suech/po+K
+  1yfbMzLVTHPn5z+z3P+XezWL/fy/+ZWhn/onLt4o1L/YYO3dNEOjL4dXffm+0+xKas96xWc8f
+  Unn5CerObY03buW0GwasvbIM8Yd7gd2aiU2pn+a1bIok9txQQHr9m2qvvFf1fLzp7KxlGS/vP
+  Fv4hMzveidDFIHlfczLprIuqpjxdOQqc98//36oRHta6oj7DZfz6CJY+/LqTmFEep2b9b+va9
+  xYrFOzd3bX5ML71bP/BJ7sbfkzWVHu81arzoiHt1k/fCsudxAiaU4I9FQi7moOBEAyksHKDYD
+  AAA=
+X-Env-Sender: dietmar.hahn@ts.fujitsu.com
+X-Msg-Ref: server-5.tower-287.messagelabs.com!1576504102!563365!1
+X-Originating-IP: [62.60.8.85]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.22; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 31400 invoked from network); 16 Dec 2019 13:48:22 -0000
+Received: from unknown (HELO mailhost4.uk.fujitsu.com) (62.60.8.85)
+  by server-5.tower-287.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 16 Dec 2019 13:48:22 -0000
+Received: from sanpedro.mch.fsc.net ([172.17.20.6])
+        by mailhost4.uk.fujitsu.com (8.14.5/8.14.5) with SMTP id xBGDmGSC018441;
+        Mon, 16 Dec 2019 13:48:16 GMT
+Received: from amur.mch.fsc.net (unknown [10.172.102.15])
+        by sanpedro.mch.fsc.net (Postfix) with ESMTP id D9A7A9D00C7C;
+        Mon, 16 Dec 2019 14:48:07 +0100 (CET)
+From:   Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@ftp.linux.org.uk>
+Subject: [PATCH] Fix a panic when core_pattern is set to "| prog..."
+Date:   Mon, 16 Dec 2019 14:48:07 +0100
+Message-ID: <2996767.y7E8ffpIOs@amur.mch.fsc.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87lfrc9z3v.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 02:30:44PM +0100, Vitaly Kuznetsov wrote:
-> Peter Zijlstra <peterz@infradead.org> writes:
-> 
-> > On Tue, Dec 17, 2019 at 02:15:48AM +0530, Ajay Kaher wrote:
-> >> From: Vlastimil Babka <vbabka@suse.cz>
-> >> 
-> >> The x86 version of get_user_pages_fast() relies on disabled interrupts to
-> >> synchronize gup_pte_range() between gup_get_pte(ptep); and get_page() against
-> >> a parallel munmap. The munmap side nulls the pte, then flushes TLBs, then
-> >> releases the page. As TLB flush is done synchronously via IPI disabling
-> >> interrupts blocks the page release, and get_page(), which assumes existing
-> >> reference on page, is thus safe.
-> >> However when TLB flush is done by a hypercall, e.g. in a Xen PV guest, there is
-> >> no blocking thanks to disabled interrupts, and get_page() can succeed on a page
-> >> that was already freed or even reused.
-> >> 
-> >> We have recently seen this happen with our 4.4 and 4.12 based kernels, with
-> >> userspace (java) that exits a thread, where mm_release() performs a futex_wake()
-> >> on tsk->clear_child_tid, and another thread in parallel unmaps the page where
-> >> tsk->clear_child_tid points to. The spurious get_page() succeeds, but futex code
-> >> immediately releases the page again, while it's already on a freelist. Symptoms
-> >> include a bad page state warning, general protection faults acessing a poisoned
-> >> list prev/next pointer in the freelist, or free page pcplists of two cpus joined
-> >> together in a single list. Oscar has also reproduced this scenario, with a
-> >> patch inserting delays before the get_page() to make the race window larger.
-> >> 
-> >> Fix this by removing the dependency on TLB flush interrupts the same way as the
-> >
-> > This is suppsed to be fixed by:
-> >
-> > arch/x86/Kconfig:       select HAVE_RCU_TABLE_FREE              if PARAVIRT
-> >
-> 
-> Yes,
-> 
-> but HAVE_RCU_TABLE_FREE was enabled on x86 only in 4.14:
-> 
-> commit 9e52fc2b50de3a1c08b44f94c610fbe998c0031a
-> Author: Vitaly Kuznetsov <vkuznets@redhat.com>
-> Date:   Mon Aug 28 10:22:51 2017 +0200
-> 
->     x86/mm: Enable RCU based page table freeing (CONFIG_HAVE_RCU_TABLE_FREE=y)
-> 
-> and, if I understood correctly, Ajay is suggesting the patch for older
-> stable kernels (4.9 and 4.4 I would guess).
+Hi,
 
-It wasn't at all clear this was targeted at old kernels (I only got this
-one patch).
+if the /proc/sys/kernel/core_pattern is set with a space between '|' and the
+program and later a core file should be written the kernel panics.
+This happens because in format_corename() the first part of cn.corename
+is set to '\0' and later call_usermodehelper_exec() exits because of an
+empty command path but with return 0. But no pipe is created and thus
+cprm.file == NULL.
+This leads in file_start_write() to the panic because of dereferencing
+file_inode(file)->i_mode.
 
-And why can't those necro kernels do backports of the upstream solution?
+Thanks,
+Dietmar.
+
+[  432.431005] BUG: kernel NULL pointer dereference, address: 0000000000000020
+[  432.431006] #PF: supervisor read access in kernel mode
+[  432.431006] #PF: error_code(0x0000) - not-present page
+[  432.431007] PGD 102ad73067 P4D 102ad73067 PUD 105b898067 PMD 0 
+[  432.431010] Oops: 0000 [#1] SMP NOPTI
+[  432.431012] CPU: 0 PID: 20114 Comm: a Kdump: loaded Tainted: G            E     5.5.0-rc2-10.g62d06a0-default+ #15
+[  432.431013] Hardware name: FUJITSU SE SERVER SU310 M1/D3753-C1, BIOS V5.0.0.14 R1.12.0 for D3753-C1x                    07/22/2019
+[  432.431020] RIP: 0010:do_coredump+0x7b8/0x1128
+[  432.431021] Code: 00 48 8b bd 18 ff ff ff 48 85 ff 74 05 e8 60 04 fa ff 65 48 8b 04 25 c0 ab 01 00 48 8b 00 48 8b 4d a0 a8 04 0f 85 16 01 00 00 <48> 8b 51 20 0f b7 02 66 25 00 f0 66 3d 00 80 75 13 48 8b 7a 28 be
+[  432.431022] RSP: 0018:ffffab39081dfcc0 EFLAGS: 00010246
+[  432.431023] RAX: 0000000000004008 RBX: ffff8e77df3e6e80 RCX: 0000000000000000
+[  432.431024] RDX: 0000000000000000 RSI: ffffab39081dfc90 RDI: 0000000000000000
+[  432.431024] RBP: ffffab39081dfdf8 R08: 0000000000000000 R09: ffffab39081dfc18
+[  432.431025] R10: ffff8e6fd9020000 R11: 0000000000000000 R12: ffff8e6fb16eb080
+[  432.431026] R13: 0000000000000000 R14: ffffffff8f878400 R15: ffffffff8ff21860
+[  432.431027] FS:  00007f8ad3468700(0000) GS:ffff8e6fdfe00000(0000) knlGS:0000000000000000
+[  432.431027] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  432.431028] CR2: 0000000000000020 CR3: 000000105ef26002 CR4: 00000000007606f0
+[  432.431028] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  432.431029] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  432.431029] PKRU: 55555554
+[  432.431030] Call Trace:
+[  432.431040]  get_signal+0x13c/0x860
+[  432.431046]  ? __switch_to_asm+0x34/0x70
+[  432.431047]  ? __switch_to_asm+0x40/0x70
+[  432.431048]  ? __switch_to_asm+0x34/0x70
+[  432.431055]  do_signal+0x36/0x630
+[  432.431065]  ? finish_task_switch+0x7c/0x2a0
+[  433.237753]  exit_to_usermode_loop+0x95/0x130
+[  433.237755]  prepare_exit_to_usermode+0xa7/0xf0
+[  433.237758]  ret_from_intr+0x2a/0x3a
+[  433.237761] RIP: 0033:0x7f8ad2f05381
+[  433.237763] Code: 4c 8b 85 28 fb ff ff 44 29 e8 48 98 49 39 c1 0f 87 a2 f7 ff ff 44 03 ad 20 fb ff ff e9 02 ec ff ff 31 c0 48 83 c9 ff 4c 89 d7 <f2> ae c7 85 28 fb ff ff 00 00 00 00 48 89 ce 48 f7 d6 4c 8d 4e ff
+[  433.237763] RSP: 002b:00007fff72daa6a0 EFLAGS: 00010286
+[  433.237764] RAX: 0000000000000000 RBX: 00007f8ad325b2a0 RCX: ffffffffffffffff
+[  433.237765] RDX: 0000000000000010 RSI: 00007fff72daabf8 RDI: 0000000000000001
+[  433.237765] RBP: 00007fff72daac30 R08: 00000000004005fa R09: 0000000000000073
+[  433.237766] R10: 0000000000000001 R11: 0000000000000000 R12: 00000000004005f4
+[  433.237766] R13: 0000000000000006 R14: 0000000000000000 R15: 00007fff72daac48
+
+
+Signed-off-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+
+---
+ fs/coredump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index b1ea7dfbd149..106c1c5f542a 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -628,7 +628,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 		char **helper_argv;
+ 		struct subprocess_info *sub_info;
+ 
+-		if (ispipe < 0) {
++		if (ispipe < 0 || !*cn.corename) {
+ 			printk(KERN_WARNING "format_corename failed\n");
+ 			printk(KERN_WARNING "Aborting core\n");
+ 			goto fail_unlock;
+-- 
+2.16.4
+
+
+
+
