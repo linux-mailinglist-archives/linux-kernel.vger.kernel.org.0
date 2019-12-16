@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51B9C11FF85
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:18:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 248F711FF94
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 09:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfLPISv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 03:18:51 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40979 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbfLPISv (ORCPT
+        id S1726873AbfLPIUK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 03:20:10 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:39635 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726722AbfLPIUK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 03:18:51 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iglaW-0007fX-In; Mon, 16 Dec 2019 09:18:44 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iglaV-0003S5-5C; Mon, 16 Dec 2019 09:18:43 +0100
-Date:   Mon, 16 Dec 2019 09:18:43 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        CK Hu <ck.hu@mediatek.com>, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org, sj.huang@mediatek.com
-Subject: Re: [PATCH v2 1/2] pwm: fine tune pwm-mtk-disp clock control flow
-Message-ID: <20191216081843.yxe3vm674jwurwri@pengutronix.de>
-References: <20191216070123.114719-1-jitao.shi@mediatek.com>
- <20191216070123.114719-2-jitao.shi@mediatek.com>
+        Mon, 16 Dec 2019 03:20:10 -0500
+Received: by mail-ua1-f67.google.com with SMTP id q22so1768128uam.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 00:20:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4ejdI6l2MpiYe782h59jIGE5FMUmgtUe4qzVwYNXmww=;
+        b=zNhA6sQIvrirlHCC9+lV8lwZmYIThF6Cb5/e10jRvCda1SodrIGyW+1y1FRxISYeqt
+         ymjut6ALn0lrVMeyzd0+Wq5TK73LF/UmbntZSTE9+HDYoHZzjMkMfFVWskPN3ePSbaSm
+         Rhp5nBqj+mVFO+JZSBBZsmiMg46Xoa7lxa0A4zIzuj9RLdtazLXsimA1mhiYn+Byk2ic
+         ZfEAwaDeDohDz18BHRUzfZHvQkhnPUaTP/eCjcihcbpl2twLfFUvg3T9/WvkDqfekzIo
+         lY5jMNMerytVgatLCjJcUkR14W9DYj/i3K7Xmj6dJsVsLnQ3SkDBa+d2qyALhl9Fw0TW
+         FChQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4ejdI6l2MpiYe782h59jIGE5FMUmgtUe4qzVwYNXmww=;
+        b=r1ro+2XeMQFiP5xjHt2+BztFamXzxJftoPLoMWC3GgERwyQsgbib7+F/pMb36X+Ccs
+         pUrstN/TqLUQPpu4aPb4zPN0Sf2qgETI2sbr8Gg+87w5D9FShMJ874nk5PEJLbR5ZR/c
+         sNawRg0yWTEKXdpOZAM9hP1fB/b++OKb6nhMriEP39kpD79XnHw6HwgAn8k4roupD2Cy
+         R1yrBaWZb8a7bzKYnIH3G4MFlDMJMIsM+TIIgt3gnllJHVERM2VhDvD0hXu0LiM933by
+         O65Udc2th3WA45XiREn3NrRL8/LEVFbVLx8Z7Cp7PWvYkTKXt9pkZ5Kof4RAL76xfjL4
+         gUUA==
+X-Gm-Message-State: APjAAAXZc6asX9qbEy0/OAenzSQ0T9vSR++woWto5pn3g2dFv2AsmFdV
+        wORlfR5EpQBzZ36z0jBsk1bMCeBgUpQzVUxgVOKAWw==
+X-Google-Smtp-Source: APXvYqyMIA/7VP13JucpywWenFRwuvJQzwyVI4uVwVCF1oD8d8lLCXdxOD2nx2LY/dqipJEgihXFLTAgCEdx8FIQays=
+X-Received: by 2002:ab0:32ce:: with SMTP id f14mr5108941uao.54.1576484409083;
+ Mon, 16 Dec 2019 00:20:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191216070123.114719-2-jitao.shi@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <1572419178-5750-1-git-send-email-mkshah@codeaurora.org> <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
+In-Reply-To: <1572419178-5750-2-git-send-email-mkshah@codeaurora.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 16 Dec 2019 09:19:58 +0100
+Message-ID: <CACRpkdZtbViGmGr=L3C4ibx3RVvB0tsv6JamvOPzo2mRmfk1FQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: qcom: sc7180: Add GPIO wakeup interrupt map
+To:     Maulik Shah <mkshah@codeaurora.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Lina Iyer <ilina@codeaurora.org>, lsrao@codeaurora.org,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Oct 30, 2019 at 8:07 AM Maulik Shah <mkshah@codeaurora.org> wrote:
 
-On Mon, Dec 16, 2019 at 03:01:22PM +0800, Jitao Shi wrote:
-> Match pwm clock when suspend and resume.
-> Prepare and enable disp_pwm clock when disp_pwm enable.
-> Disable and unprepare disp_pwm clock when disp_pwm disable.
+> GPIOs that can be configured as wakeup sources, have their
+> interrupt lines routed to PDC interrupt controller.
+>
+> Provide the interrupt map of the GPIO to its wakeup capable
+> interrupt parent.
+>
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 
-Assuming you catched all clock operations (I didn't check), the patch
-looks fine. The commit log could however be improved. Additional to
-describing what the patch does, some words about the motivation would be
-good. Does this fix a bug? Is it to save some power while the PWM isn't
-in use?
+Patch applied for v5.6 with the ACKs!
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+Yours,
+Linus Walleij
