@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 308F7121479
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 026321213C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfLPSLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55490 "EHLO mail.kernel.org"
+        id S1729703AbfLPSEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728074AbfLPSL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:29 -0500
+        id S1729694AbfLPSEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70754206E0;
-        Mon, 16 Dec 2019 18:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB3AC20700;
+        Mon, 16 Dec 2019 18:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519888;
-        bh=6xdm1M0tEeY7At1h5MvDfHcXQcl135ewA0mZSxi3U78=;
+        s=default; t=1576519480;
+        bh=PHBl7xJvR/pmjiITQEmO7ueYAFIPDrnVsE5yaoW6tvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ersp7mrqlDdzSXx8XEHM3H78g6dzPoimNsnrfdDGLonCo8U7iOB+XCfphcXI1Q2b7
-         RM9t7aogpCqphemrnW+/SAwl0pZyKpTK0sHPL4gZftYujg46ZDV/H/qo+CUP0iFl+i
-         1FXn7IMAFOibHXfNumXfdCirzNwnZJcvIAe3V0/o=
+        b=EhDZWQp1uOwzSKOLuEtpenpkEuFWsC+FFj+F50RBN3tXI0Hq2Cgc1M7IYowHDEUjm
+         vuiS142lMcyhs4CpU28hjaUdMgl36eDhDky5JZuP/wgQYa9hnxWbm2iagpVkjTOFzZ
+         ealkGEWD1h3Wnz5ANw8teTWDM6gpqM/9UaTLvFAU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.3 109/180] ACPI: bus: Fix NULL pointer check in acpi_bus_get_private_data()
-Date:   Mon, 16 Dec 2019 18:49:09 +0100
-Message-Id: <20191216174838.344695631@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 082/140] pinctrl: samsung: Fix device node refcount leaks in S3C64xx wakeup controller init
+Date:   Mon, 16 Dec 2019 18:49:10 +0100
+Message-Id: <20191216174809.322177377@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +42,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 627ead724eff33673597216f5020b72118827de4 upstream.
+commit 7f028caadf6c37580d0f59c6c094ed09afc04062 upstream.
 
-kmemleak reported backtrace:
-    [<bbee0454>] kmem_cache_alloc_trace+0x128/0x260
-    [<6677f215>] i2c_acpi_install_space_handler+0x4b/0xe0
-    [<1180f4fc>] i2c_register_adapter+0x186/0x400
-    [<6083baf7>] i2c_add_adapter+0x4e/0x70
-    [<a3ddf966>] intel_gmbus_setup+0x1a2/0x2c0 [i915]
-    [<84cb69ae>] i915_driver_probe+0x8d8/0x13a0 [i915]
-    [<81911d4b>] i915_pci_probe+0x48/0x160 [i915]
-    [<4b159af1>] pci_device_probe+0xdc/0x160
-    [<b3c64704>] really_probe+0x1ee/0x450
-    [<bc029f5a>] driver_probe_device+0x142/0x1b0
-    [<d8829d20>] device_driver_attach+0x49/0x50
-    [<de71f045>] __driver_attach+0xc9/0x150
-    [<df33ac83>] bus_for_each_dev+0x56/0xa0
-    [<80089bba>] driver_attach+0x19/0x20
-    [<cc73f583>] bus_add_driver+0x177/0x220
-    [<7b29d8c7>] driver_register+0x56/0xf0
+In s3c64xx_eint_eint0_init() the for_each_child_of_node() loop is used
+with a break to find a matching child node.  Although each iteration of
+for_each_child_of_node puts the previous node, but early exit from loop
+misses it.  This leads to leak of device node.
 
-In i2c_acpi_remove_space_handler(), a leak occurs whenever the
-"data" parameter is initialized to 0 before being passed to
-acpi_bus_get_private_data().
-
-This is because the NULL pointer check in acpi_bus_get_private_data()
-(condition->if(!*data)) returns EINVAL and, in consequence, memory is
-never freed in i2c_acpi_remove_space_handler().
-
-Fix the NULL pointer check in acpi_bus_get_private_data() to follow
-the analogous check in acpi_get_data_full().
-
-Signed-off-by: Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: <stable@vger.kernel.org>
+Fixes: 61dd72613177 ("pinctrl: Add pinctrl-s3c64xx driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/bus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -153,7 +153,7 @@ int acpi_bus_get_private_data(acpi_handl
- {
- 	acpi_status status;
+--- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
+@@ -704,8 +704,10 @@ static int s3c64xx_eint_eint0_init(struc
+ 		return -ENODEV;
  
--	if (!*data)
-+	if (!data)
- 		return -EINVAL;
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+-	if (!data)
++	if (!data) {
++		of_node_put(eint0_np);
+ 		return -ENOMEM;
++	}
+ 	data->drvdata = d;
  
- 	status = acpi_get_data(handle, acpi_bus_private_data_handler, data);
+ 	for (i = 0; i < NUM_EINT0_IRQ; ++i) {
+@@ -714,6 +716,7 @@ static int s3c64xx_eint_eint0_init(struc
+ 		irq = irq_of_parse_and_map(eint0_np, i);
+ 		if (!irq) {
+ 			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
++			of_node_put(eint0_np);
+ 			return -ENXIO;
+ 		}
+ 
+@@ -721,6 +724,7 @@ static int s3c64xx_eint_eint0_init(struc
+ 						 s3c64xx_eint0_handlers[i],
+ 						 data);
+ 	}
++	of_node_put(eint0_np);
+ 
+ 	bank = d->pin_banks;
+ 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
 
 
