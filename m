@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC50121630
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92528121381
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731638AbfLPS13 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:27:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37356 "EHLO mail.kernel.org"
+        id S1728832AbfLPSCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:02:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731227AbfLPSPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:15:47 -0500
+        id S1728871AbfLPSCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:02:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB25E21739;
-        Mon, 16 Dec 2019 18:15:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7997920726;
+        Mon, 16 Dec 2019 18:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520147;
-        bh=tHbKCpPiGecCPTCgk3V5tn9r2fHfaJe0rvIkRctlIjc=;
+        s=default; t=1576519330;
+        bh=sZYzOaNs38wQo5GUKCCaexcvEt1QQRuJfESUnu7g+jU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OgtUP2OYOC6AJcdiuVCAg1NiRGRcvcJw34yQP2Ai3aukBvdeDTS9EhhWxugA9Nq6I
-         5YOn4s82p+yUUwJN2Fp6RF/5OBIK4Si6UDYuDfvf1fEaSv/OFBVM2pgKJ/NZUvlOUG
-         M9YNHyrcpEDLdldYf02ivVhd0RNWaRtTWndr90iU=
+        b=MJ3wpyO3KswNXZCF12P0+QWXS8i69Zuz28jr0Ii1zMCwbdCwl/uxWjMbkRfB6mcNi
+         FnW+8hae4xAtwd1PP5St/41P1Y3mOviQHC9xu9cbGxlAeWZRHtDB4G3WLDRLHVIiyP
+         fdGQyR7HXwVUqmBlblx6oozCWpOIuI1sXcd3EdiI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dmitry Osipenko <digetx@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: [PATCH 5.4 034/177] interconnect: qcom: qcs404: Walk the list safely on node removal
-Date:   Mon, 16 Dec 2019 18:48:10 +0100
-Message-Id: <20191216174828.234103663@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.19 023/140] USB: idmouse: fix interface sanity checks
+Date:   Mon, 16 Dec 2019 18:48:11 +0100
+Message-Id: <20191216174756.635335823@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,56 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Georgi Djakov <georgi.djakov@linaro.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit f39488ea2a75c49634c8611090f58734f61eee7c upstream.
+commit 59920635b89d74b9207ea803d5e91498d39e8b69 upstream.
 
-As we will remove items off the list using list_del(), we need to use the
-safe version of list_for_each_entry().
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-Reported-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: <stable@vger.kernel.org> # v5.4
-Link: https://lore.kernel.org/r/20191212075332.16202-4-georgi.djakov@linaro.org
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191210112601.3561-4-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/interconnect/qcom/qcs404.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/misc/idmouse.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/interconnect/qcom/qcs404.c
-+++ b/drivers/interconnect/qcom/qcs404.c
-@@ -414,7 +414,7 @@ static int qnoc_probe(struct platform_de
- 	struct icc_provider *provider;
- 	struct qcom_icc_node **qnodes;
- 	struct qcom_icc_provider *qp;
--	struct icc_node *node;
-+	struct icc_node *node, *tmp;
- 	size_t num_nodes, i;
- 	int ret;
+--- a/drivers/usb/misc/idmouse.c
++++ b/drivers/usb/misc/idmouse.c
+@@ -337,7 +337,7 @@ static int idmouse_probe(struct usb_inte
+ 	int result;
  
-@@ -494,7 +494,7 @@ static int qnoc_probe(struct platform_de
+ 	/* check if we have gotten the data or the hid interface */
+-	iface_desc = &interface->altsetting[0];
++	iface_desc = interface->cur_altsetting;
+ 	if (iface_desc->desc.bInterfaceClass != 0x0A)
+ 		return -ENODEV;
  
- 	return 0;
- err:
--	list_for_each_entry(node, &provider->nodes, node_list) {
-+	list_for_each_entry_safe(node, tmp, &provider->nodes, node_list) {
- 		icc_node_del(node);
- 		icc_node_destroy(node->id);
- 	}
-@@ -508,9 +508,9 @@ static int qnoc_remove(struct platform_d
- {
- 	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
- 	struct icc_provider *provider = &qp->provider;
--	struct icc_node *n;
-+	struct icc_node *n, *tmp;
- 
--	list_for_each_entry(n, &provider->nodes, node_list) {
-+	list_for_each_entry_safe(n, tmp, &provider->nodes, node_list) {
- 		icc_node_del(n);
- 		icc_node_destroy(n->id);
- 	}
 
 
