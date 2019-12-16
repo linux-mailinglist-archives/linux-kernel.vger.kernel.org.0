@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6BF812163D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:27:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B462D1214E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731732AbfLPS1s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:27:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36812 "EHLO mail.kernel.org"
+        id S1731460AbfLPSQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731095AbfLPSPf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:15:35 -0500
+        id S1731447AbfLPSQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983F6206E0;
-        Mon, 16 Dec 2019 18:15:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A25D206E0;
+        Mon, 16 Dec 2019 18:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520135;
-        bh=GBpi+2jc9TM5PgxUcdAcZ9oSk3/lTAFmaEpX0O4ukaA=;
+        s=default; t=1576520161;
+        bh=cEZh9YHc/EX4a5v+m12JLY6mEnJM216KP215sTVz/CQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JccahedrrOWP+wz+oOPkt3dmSA0ww0CT5mxly/9hMDoN2Ykg39sa+ctrc0Be5Kg7f
-         xZGmQQxXUWjVjjkF338EbhvRTWx52TPOMkDVmGjE9aMQxxQKRS1c8z0Yli+uJQaLjP
-         g5zn0RVYHEXK0NnQ2DQiuRrcOMDFPd2hV0McwblI=
+        b=uQ48wwmxf7d/hfXKorrkVxighjbaMv5/oL1yk6JeTl6tVnBVeDrB1cptanpOoACQx
+         LwGaJXNgC1tR8UwX0DxxpbpxYjw5QXkTwowbxLJ4KwCFP886OWsfEtP6yaUo0VPcIm
+         I3c1ohq4hqJKympALslmLwV0LygIi7V63/OFND6g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Brunberg <ingo_brunberg@web.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
-Subject: [PATCH 5.4 003/177] nvme: Namepace identification descriptor list is optional
-Date:   Mon, 16 Dec 2019 18:47:39 +0100
-Message-Id: <20191216174811.740598147@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 5.4 004/177] Revert "nvme: Add quirk for Kingston NVME SSD running FW E8FK11.T"
+Date:   Mon, 16 Dec 2019 18:47:40 +0100
+Message-Id: <20191216174812.052920441@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
 References: <20191216174811.158424118@linuxfoundation.org>
@@ -44,42 +44,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit 22802bf742c25b1e2473c70b3b99da98af65ef4d upstream.
+commit 655e7aee1f0398602627a485f7dca6c29cc96cae upstream.
 
-Despite NVM Express specification 1.3 requires a controller claiming to
-be 1.3 or higher implement Identify CNS 03h (Namespace Identification
-Descriptor list), the driver doesn't really need this identification in
-order to use a namespace. The code had already documented in comments
-that we're not to consider an error to this command.
+Since e045fa29e893 ("PCI/MSI: Fix incorrect MSI-X masking on resume") is
+merged, we can revert the previous quirk now.
 
-Return success if the controller provided any response to an
-namespace identification descriptors command.
+This reverts commit 19ea025e1d28c629b369c3532a85b3df478cc5c6.
 
-Fixes: 538af88ea7d9de24 ("nvme: make nvme_report_ns_ids propagate error back")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=205679
-Reported-by: Ingo Brunberg <ingo_brunberg@web.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: stable@vger.kernel.org # 5.4+
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=204887
+Fixes: 19ea025e1d28 ("nvme: Add quirk for Kingston NVME SSD running FW E8FK11.T")
+Link: https://lore.kernel.org/r/20191031093408.9322-1-jian-hong@endlessm.com
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nvme/host/core.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/nvme/host/core.c |   10 ----------
+ 1 file changed, 10 deletions(-)
 
 --- a/drivers/nvme/host/core.c
 +++ b/drivers/nvme/host/core.c
-@@ -1727,6 +1727,8 @@ static int nvme_report_ns_ids(struct nvm
- 		if (ret)
- 			dev_warn(ctrl->device,
- 				 "Identify Descriptors failed (%d)\n", ret);
-+		if (ret > 0)
-+			ret = 0;
+@@ -2406,16 +2406,6 @@ static const struct nvme_core_quirk_entr
+ 		.vid = 0x14a4,
+ 		.fr = "22301111",
+ 		.quirks = NVME_QUIRK_SIMPLE_SUSPEND,
+-	},
+-	{
+-		/*
+-		 * This Kingston E8FK11.T firmware version has no interrupt
+-		 * after resume with actions related to suspend to idle
+-		 * https://bugzilla.kernel.org/show_bug.cgi?id=204887
+-		 */
+-		.vid = 0x2646,
+-		.fr = "E8FK11.T",
+-		.quirks = NVME_QUIRK_SIMPLE_SUSPEND,
  	}
- 	return ret;
- }
+ };
+ 
 
 
