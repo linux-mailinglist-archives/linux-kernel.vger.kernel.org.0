@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C23121476
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:11:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D94012153B
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfLPSL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:11:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55350 "EHLO mail.kernel.org"
+        id S1731983AbfLPSTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:19:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730782AbfLPSLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:24 -0500
+        id S1731797AbfLPSTp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:19:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9276820700;
-        Mon, 16 Dec 2019 18:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 183232072D;
+        Mon, 16 Dec 2019 18:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519884;
-        bh=vWpec5VhB3CUngkYh6UIiOcmKJ4jFbjxAXQH3GFI/AE=;
+        s=default; t=1576520383;
+        bh=R4t4K/v0gQgdoe10GW0bUIjW0HScjWPzxjzu0bYh/ow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vfOTC2OmNsK+sdKIJVl9Rm1f5/YhN78L6WdaC5569KRPJ9KzmXlTtIvRwkQuG94Fr
-         LqDo+WeJ+dc5BIfhkO0/rffk84EWngXYvN6rsp4/5n5P1mk0MH/2ctyzJtAlvC9fo1
-         pM3X4sQPdeeEXNnuV7PUD9bwTVz/Xb4NmHfZcXd8=
+        b=e/poPdQkbk9dcK/rlHLfnmnmflBabAgCPDa4Hn6LthG5CT3vNrlfGF/YVL0Fq68Ww
+         8QN0ITpbY6QMRSgq9qJStei8ebH3kLMvdZdo5kp/O8to8+DeT7SVCqGLHPdCZSBxvR
+         dRp+Vz+tQ6oxDr6WBbdV+27O5sc4avCkFb+sBZr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Valerio Passini <passini.valerio@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.3 107/180] ACPI / hotplug / PCI: Allocate resources directly under the non-hotplug bridge
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        David Jeffery <djeffery@redhat.com>, Xiao Ni <xni@redhat.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 5.4 091/177] md: improve handling of bio with REQ_PREFLUSH in md_flush_request()
 Date:   Mon, 16 Dec 2019 18:49:07 +0100
-Message-Id: <20191216174838.070778396@linuxfoundation.org>
+Message-Id: <20191216174839.189163378@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,110 +44,182 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: David Jeffery <djeffery@redhat.com>
 
-commit 77adf9355304f8dcf09054280af5e23fc451ab3d upstream.
+commit 775d78319f1ceb32be8eb3b1202ccdc60e9cb7f1 upstream.
 
-Valerio and others reported that commit 84c8b58ed3ad ("ACPI / hotplug /
-PCI: Don't scan bridges managed by native hotplug") prevents some recent
-LG and HP laptops from booting with endless loop of:
+If pers->make_request fails in md_flush_request(), the bio is lost. To
+fix this, pass back a bool to indicate if the original make_request call
+should continue to handle the I/O and instead of assuming the flush logic
+will push it to completion.
 
-  ACPI Error: No handler or method for GPE 08, disabling event (20190215/evgpe-835)
-  ACPI Error: No handler or method for GPE 09, disabling event (20190215/evgpe-835)
-  ACPI Error: No handler or method for GPE 0A, disabling event (20190215/evgpe-835)
-  ...
+Convert md_flush_request to return a bool and no longer calls the raid
+driver's make_request function.  If the return is true, then the md flush
+logic has or will complete the bio and the md make_request call is done.
+If false, then the md make_request function needs to keep processing like
+it is a normal bio. Let the original call to md_handle_request handle any
+need to retry sending the bio to the raid driver's make_request function
+should it be needed.
 
-What seems to happen is that during boot, after the initial PCI enumeration
-when EC is enabled the platform triggers ACPI Notify() to one of the root
-ports. The root port itself looks like this:
+Also mark md_flush_request and the make_request function pointer as
+__must_check to issue warnings should these critical return values be
+ignored.
 
-  pci 0000:00:1b.0: PCI bridge to [bus 02-3a]
-  pci 0000:00:1b.0:   bridge window [mem 0xc4000000-0xda0fffff]
-  pci 0000:00:1b.0:   bridge window [mem 0x80000000-0xa1ffffff 64bit pref]
-
-The BIOS has configured the root port so that it does not have I/O bridge
-window.
-
-Now when the ACPI Notify() is triggered ACPI hotplug handler calls
-acpiphp_native_scan_bridge() for each non-hotplug bridge (as this system is
-using native PCIe hotplug) and pci_assign_unassigned_bridge_resources() to
-allocate resources.
-
-The device connected to the root port is a PCIe switch (Thunderbolt
-controller) with two hotplug downstream ports. Because of the hotplug ports
-__pci_bus_size_bridges() tries to add "additional I/O" of 256 bytes to each
-(DEFAULT_HOTPLUG_IO_SIZE). This gets further aligned to 4k as that's the
-minimum I/O window size so each hotplug port gets 4k I/O window and the
-same happens for the root port (which is also hotplug port). This means
-3 * 4k = 12k I/O window.
-
-Because of this pci_assign_unassigned_bridge_resources() ends up opening a
-I/O bridge window for the root port at first available I/O address which
-seems to be in range 0x1000 - 0x3fff. Normally this range is used for ACPI
-stuff such as GPE bits (below is part of /proc/ioports):
-
-    1800-1803 : ACPI PM1a_EVT_BLK
-    1804-1805 : ACPI PM1a_CNT_BLK
-    1808-180b : ACPI PM_TMR
-    1810-1815 : ACPI CPU throttle
-    1850-1850 : ACPI PM2_CNT_BLK
-    1854-1857 : pnp 00:05
-    1860-187f : ACPI GPE0_BLK
-
-However, when the ACPI Notify() happened this range was not yet reserved
-for ACPI/PNP (that happens later) so PCI gets it. It then starts writing to
-this range and accidentally stomps over GPE bits among other things causing
-the endless stream of messages about missing GPE handler.
-
-This problem does not happen if "pci=hpiosize=0" is passed in the kernel
-command line. The reason is that then the kernel does not try to allocate
-the additional 256 bytes for each hotplug port.
-
-Fix this by allocating resources directly below the non-hotplug bridges
-where a new device may appear as a result of ACPI Notify(). This avoids the
-hotplug bridges and prevents opening the additional I/O window.
-
-Fixes: 84c8b58ed3ad ("ACPI / hotplug / PCI: Don't scan bridges managed by native hotplug")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=203617
-Link: https://lore.kernel.org/r/20191030150545.19885-1-mika.westerberg@linux.intel.com
-Reported-by: Valerio Passini <passini.valerio@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: stable@vger.kernel.org
+Fixes: 2bc13b83e629 ("md: batch flush requests.")
+Cc: stable@vger.kernel.org # # v4.19+
+Cc: NeilBrown <neilb@suse.com>
+Signed-off-by: David Jeffery <djeffery@redhat.com>
+Reviewed-by: Xiao Ni <xni@redhat.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/hotplug/acpiphp_glue.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/md/md-linear.c    |    5 ++---
+ drivers/md/md-multipath.c |    5 ++---
+ drivers/md/md.c           |   11 +++++++++--
+ drivers/md/md.h           |    4 ++--
+ drivers/md/raid0.c        |    5 ++---
+ drivers/md/raid1.c        |    5 ++---
+ drivers/md/raid10.c       |    5 ++---
+ drivers/md/raid5.c        |    4 ++--
+ 8 files changed, 23 insertions(+), 21 deletions(-)
 
---- a/drivers/pci/hotplug/acpiphp_glue.c
-+++ b/drivers/pci/hotplug/acpiphp_glue.c
-@@ -449,8 +449,15 @@ static void acpiphp_native_scan_bridge(s
+--- a/drivers/md/md-linear.c
++++ b/drivers/md/md-linear.c
+@@ -244,10 +244,9 @@ static bool linear_make_request(struct m
+ 	sector_t start_sector, end_sector, data_offset;
+ 	sector_t bio_sector = bio->bi_iter.bi_sector;
  
- 	/* Scan non-hotplug bridges that need to be reconfigured */
- 	for_each_pci_bridge(dev, bus) {
--		if (!hotplug_is_native(dev))
--			max = pci_scan_bridge(bus, dev, max, 1);
-+		if (hotplug_is_native(dev))
-+			continue;
-+
-+		max = pci_scan_bridge(bus, dev, max, 1);
-+		if (dev->subordinate) {
-+			pcibios_resource_survey_bus(dev->subordinate);
-+			pci_bus_size_bridges(dev->subordinate);
-+			pci_bus_assign_resources(dev->subordinate);
-+		}
+-	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-		md_flush_request(mddev, bio);
++	if (unlikely(bio->bi_opf & REQ_PREFLUSH)
++	    && md_flush_request(mddev, bio))
+ 		return true;
+-	}
+ 
+ 	tmp_dev = which_dev(mddev, bio_sector);
+ 	start_sector = tmp_dev->end_sector - tmp_dev->rdev->sectors;
+--- a/drivers/md/md-multipath.c
++++ b/drivers/md/md-multipath.c
+@@ -104,10 +104,9 @@ static bool multipath_make_request(struc
+ 	struct multipath_bh * mp_bh;
+ 	struct multipath_info *multipath;
+ 
+-	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-		md_flush_request(mddev, bio);
++	if (unlikely(bio->bi_opf & REQ_PREFLUSH)
++	    && md_flush_request(mddev, bio))
+ 		return true;
+-	}
+ 
+ 	mp_bh = mempool_alloc(&conf->pool, GFP_NOIO);
+ 
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -550,7 +550,13 @@ static void md_submit_flush_data(struct
  	}
  }
  
-@@ -480,7 +487,6 @@ static void enable_slot(struct acpiphp_s
- 			if (PCI_SLOT(dev->devfn) == slot->device)
- 				acpiphp_native_scan_bridge(dev);
+-void md_flush_request(struct mddev *mddev, struct bio *bio)
++/*
++ * Manages consolidation of flushes and submitting any flushes needed for
++ * a bio with REQ_PREFLUSH.  Returns true if the bio is finished or is
++ * being finished in another context.  Returns false if the flushing is
++ * complete but still needs the I/O portion of the bio to be processed.
++ */
++bool md_flush_request(struct mddev *mddev, struct bio *bio)
+ {
+ 	ktime_t start = ktime_get_boottime();
+ 	spin_lock_irq(&mddev->lock);
+@@ -575,9 +581,10 @@ void md_flush_request(struct mddev *mdde
+ 			bio_endio(bio);
+ 		else {
+ 			bio->bi_opf &= ~REQ_PREFLUSH;
+-			mddev->pers->make_request(mddev, bio);
++			return false;
  		}
--		pci_assign_unassigned_bridge_resources(bus->self);
- 	} else {
- 		LIST_HEAD(add_list);
- 		int max, pass;
+ 	}
++	return true;
+ }
+ EXPORT_SYMBOL(md_flush_request);
+ 
+--- a/drivers/md/md.h
++++ b/drivers/md/md.h
+@@ -550,7 +550,7 @@ struct md_personality
+ 	int level;
+ 	struct list_head list;
+ 	struct module *owner;
+-	bool (*make_request)(struct mddev *mddev, struct bio *bio);
++	bool __must_check (*make_request)(struct mddev *mddev, struct bio *bio);
+ 	/*
+ 	 * start up works that do NOT require md_thread. tasks that
+ 	 * requires md_thread should go into start()
+@@ -703,7 +703,7 @@ extern void md_error(struct mddev *mddev
+ extern void md_finish_reshape(struct mddev *mddev);
+ 
+ extern int mddev_congested(struct mddev *mddev, int bits);
+-extern void md_flush_request(struct mddev *mddev, struct bio *bio);
++extern bool __must_check md_flush_request(struct mddev *mddev, struct bio *bio);
+ extern void md_super_write(struct mddev *mddev, struct md_rdev *rdev,
+ 			   sector_t sector, int size, struct page *page);
+ extern int md_super_wait(struct mddev *mddev);
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -575,10 +575,9 @@ static bool raid0_make_request(struct md
+ 	unsigned chunk_sects;
+ 	unsigned sectors;
+ 
+-	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-		md_flush_request(mddev, bio);
++	if (unlikely(bio->bi_opf & REQ_PREFLUSH)
++	    && md_flush_request(mddev, bio))
+ 		return true;
+-	}
+ 
+ 	if (unlikely((bio_op(bio) == REQ_OP_DISCARD))) {
+ 		raid0_handle_discard(mddev, bio);
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1567,10 +1567,9 @@ static bool raid1_make_request(struct md
+ {
+ 	sector_t sectors;
+ 
+-	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-		md_flush_request(mddev, bio);
++	if (unlikely(bio->bi_opf & REQ_PREFLUSH)
++	    && md_flush_request(mddev, bio))
+ 		return true;
+-	}
+ 
+ 	/*
+ 	 * There is a limit to the maximum size, but
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -1525,10 +1525,9 @@ static bool raid10_make_request(struct m
+ 	int chunk_sects = chunk_mask + 1;
+ 	int sectors = bio_sectors(bio);
+ 
+-	if (unlikely(bio->bi_opf & REQ_PREFLUSH)) {
+-		md_flush_request(mddev, bio);
++	if (unlikely(bio->bi_opf & REQ_PREFLUSH)
++	    && md_flush_request(mddev, bio))
+ 		return true;
+-	}
+ 
+ 	if (!md_write_start(mddev, bio))
+ 		return false;
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -5592,8 +5592,8 @@ static bool raid5_make_request(struct md
+ 		if (ret == 0)
+ 			return true;
+ 		if (ret == -ENODEV) {
+-			md_flush_request(mddev, bi);
+-			return true;
++			if (md_flush_request(mddev, bi))
++				return true;
+ 		}
+ 		/* ret == -EAGAIN, fallback */
+ 		/*
 
 
