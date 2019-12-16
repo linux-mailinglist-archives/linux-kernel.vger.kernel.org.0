@@ -2,84 +2,230 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54CDF11FCC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 760A111FCE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 03:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbfLPCRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 21:17:05 -0500
-Received: from mga06.intel.com ([134.134.136.31]:20303 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726299AbfLPCRF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 21:17:05 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Dec 2019 18:17:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,320,1571727600"; 
-   d="scan'208";a="297549621"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by orsmga001.jf.intel.com with ESMTP; 15 Dec 2019 18:17:02 -0800
-Date:   Mon, 16 Dec 2019 10:18:16 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, yu.c.zhang@linux.intel.com,
-        yu-cheng.yu@intel.com
-Subject: Re: [PATCH v8 3/7] KVM: VMX: Pass through CET related MSRs
-Message-ID: <20191216021816.GA10764@local-michael-cet-test>
-References: <20191101085222.27997-1-weijiang.yang@intel.com>
- <20191101085222.27997-4-weijiang.yang@intel.com>
- <20191210211821.GL15758@linux.intel.com>
+        id S1726530AbfLPCeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 21:34:04 -0500
+Received: from regular1.263xmail.com ([211.150.70.205]:36250 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbfLPCeE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 15 Dec 2019 21:34:04 -0500
+X-Greylist: delayed 371 seconds by postgrey-1.27 at vger.kernel.org; Sun, 15 Dec 2019 21:34:02 EST
+Received: from localhost (unknown [192.168.167.8])
+        by regular1.263xmail.com (Postfix) with ESMTP id D931830B;
+        Mon, 16 Dec 2019 10:27:27 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [192.168.30.14] (42.17.110.36.static.bjtelecom.net [36.110.17.42])
+        by smtp.263.net (postfix) whith ESMTP id P17319T140438588901120S1576463244936062_;
+        Mon, 16 Dec 2019 10:27:28 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <342511b45ad3cafeca5a7222a80a4930>
+X-RL-SENDER: chengang@emindsoft.com.cn
+X-SENDER: chengang@emindsoft.com.cn
+X-LOGIN-NAME: chengang@emindsoft.com.cn
+X-FST-TO: lvlisong@emindsoft.com.cn
+X-SENDER-IP: 36.110.17.42
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 5
+Subject: Re: [PATCH] drivers: tty: serial: 8250: fintek: Can enable or disable
+ irq sharing based on isa or pci bus
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com, sr@denx.de,
+        mika.westerberg@linux.intel.com, yegorslists@googlemail.com,
+        yuehaibing@huawei.com, haolee.swjtu@gmail.com, dsterba@suse.com,
+        mojha@codeaurora.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lv Li-song <lvlisong@emindsoft.com.cn>
+References: <20191213051717.2058-1-chengang@emindsoft.com.cn>
+ <20191213105033.GT32742@smile.fi.intel.com>
+From:   Chen Gang <chengang@emindsoft.com.cn>
+Message-ID: <758a0ca9-8f81-1a10-d9e1-11f86fac3de1@emindsoft.com.cn>
+Date:   Mon, 16 Dec 2019 10:27:23 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191210211821.GL15758@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20191213105033.GT32742@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 10, 2019 at 01:18:21PM -0800, Sean Christopherson wrote:
-> On Fri, Nov 01, 2019 at 04:52:18PM +0800, Yang Weijiang wrote:
-> > CET MSRs pass through Guest directly to enhance performance.
-> > CET runtime control settings are stored in MSR_IA32_{U,S}_CET,
-> > Shadow Stack Pointer(SSP) are stored in MSR_IA32_PL{0,1,2,3}_SSP,
-> > SSP table base address is stored in MSR_IA32_INT_SSP_TAB,
-> > these MSRs are defined in kernel and re-used here.
-> > 
- > +
-> >  static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
-> >  {
-> >  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > @@ -7025,6 +7087,9 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
-> >  	if (boot_cpu_has(X86_FEATURE_INTEL_PT) &&
-> >  			guest_cpuid_has(vcpu, X86_FEATURE_INTEL_PT))
-> >  		update_intel_pt_cfg(vcpu);
-> > +
-> > +	if (!is_guest_mode(vcpu))
-> > +		vmx_pass_cet_msrs(vcpu);
+Thank you for your reply.
+
+I guess, this patch has to be refactored to match the related linux
+versions. And excuse me, my orignal hardware environments has been gone,
+so I can not give the new refactored patch additional test.
+
+It is necessary to continue discussing and reviewing this patch to let
+it be known completely, but I guess I am not the suitable persion to
+refactor the patch.
+
+After finish discussing and reviewing, if anyone still wants me to
+refactor the patch, please let me know, I shall try.
+
+The contents below are my reply, pelease check, thanks.
+
+On 2019/12/13 下午6:50, Andy Shevchenko wrote:
+> On Fri, Dec 13, 2019 at 01:17:17PM +0800, chengang@emindsoft.com.cn wrote:
+>> From: Chen Gang <chengang@emindsoft.com.cn>
+>> Sorry for this patch being too late, which is for linux-next 20151127 (
+>> about linux 4.4-rc2).  After 4 years, much things have been changed. But
+>> I think it might be still valuable for some old versions. Welcome anyone
+>> to refact this patch for their own.
 > 
-> Hmm, this looks insufficent, e.g. deliberately toggling CET from on->off
-> while in guest mode would put KVM in a weird state as the msr bitmap for
-> L1 would still allow L1 to access the CET MSRs.
->
-Hi, Sean,
-I don't get you, there's guest mode check before access CET msrs, it'll
-fail if it's in guest mode.
+> This part should go after '---' line below.
+> 
+>> Fintek serial ports can share irq, but they need be enabled firstly, so
+>> enable or disable irq sharing based on isa or pci bus. From kconfig, it
+> 
+> irq -> IRQ
+> isa -> ISA
+> pci -> PCI
+> kconfig -> Kconfig
+> 
+>> can be configured.
+>>
+>> For integrated 8250 drivers, kernel always calls pnp driver, which will
+>> not use integrated fintek driver for ever. So let pnp driver try the
+> 
+> fintek -> Fintek or Fintek 8250
+> 
+>> other drivers firstly (e.g. fintek), if fail, try pnp driver its own.
+> 
+> Ditto.
+> 
 
-> Allowing KVM_SET_CPUID{2} while running a nested guest seems bogus, can we
-> kill that path entirely with -EINVAL?
->
-Do you mean don't expose CET cpuids to L2 guest?
-thanks!
+OK, thanks.
 
-> >  }
-> >  
-> >  static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
-> > -- 
-> > 2.17.2
-> > 
+> 
+>> --- a/drivers/tty/serial/8250/8250.h
+>> +++ b/drivers/tty/serial/8250/8250.h
+>> @@ -14,6 +14,7 @@
+>>  #include <linux/serial_8250.h>
+>>  #include <linux/serial_reg.h>
+>>  #include <linux/dmaengine.h>
+> 
+>> +#include <linux/pnp.h>
+> 
+> The changes below doesn't require a header.
+> Pointers are known to the compiler. Names of data structures can be forward
+> declared. Moreover, these declarations may go inside respective #ifdef.
+> 
+
+OK. I guess, originally, I forgot to remove it.
+
+> 
+>> +#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING)
+>> +
+>> +static void set_icsr(u16 base_port, u8 index)
+>> +{
+>> +	uint8_t icsr = 0;
+>> +
+>> +	outb(LDN, base_port + ADDR_PORT);
+>> +	outb(index, base_port + DATA_PORT);
+>> +	outb(ICSR, base_port + ADDR_PORT);
+>> +	icsr = inb(base_port + DATA_PORT);
+>> +
+>> +	if (icsr != 0xff) {
+> 
+> 	if (icsr == 0xff)
+> 		return;
+> 
+
+It'll be OK.
+
+> 
+>> +		icsr |= IRQ_SHARING_MOD;
+>> +#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING_ISA)
+>> +		icsr |= ISA_IRQ_SHARING;
+>> +#else
+>> +		icsr |= PCI_IRQ_SHARING;
+>> +#endif
+>> +		outb(ICSR, base_port + ADDR_PORT);
+>> +		outb(icsr, base_port + DATA_PORT);
+>> +	}
+>> +}
+>> +
+>> +#endif
+> 
+> ..
+> 
+>>  				aux |= inb(addr[i] + DATA_PORT) << 8;
+>>  				if (aux != io_address)
+>>  					continue;
+> 
+>> -
+> 
+> What the point?
+> 
+>> +#if IS_ENABLED(CONFIG_SERIAL_8250_FINTEK_IRQ_SHARING)
+>> +				set_icsr(addr[i], k);
+>> +#endif
+>>  				fintek_8250_exit_key(addr[i]);
+>>  				*key = keys[j];
+>>  				*index = k;
+>> @@ -179,53 +212,6 @@ static int fintek_8250_base_port(u16 io_address, u8 *key, u8 *index)
+>>  	return -ENODEV;
+>>  }
+>>  
+
+In my case at that time, for fintex irq sharing, it needed additional
+initinalization, or it could not work well. I wrote the related code
+based on the fintek data-sheet which was downloaded from internet.
+
+>> -static int
+>> -fintek_8250_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+> 
+> Why did you move this function?
+> It's now not only hard to follow what has been changed, and to review.
+> 
+>> --- a/drivers/tty/serial/8250/8250_pnp.c
+>> +++ b/drivers/tty/serial/8250/8250_pnp.c
+>> @@ -438,8 +438,13 @@ static int
+>>  serial_pnp_probe(struct pnp_dev *dev, const struct pnp_device_id *dev_id)
+>>  {
+>>  	struct uart_8250_port uart, *port;
+>> -	int ret, line, flags = dev_id->driver_data;
+>> +	int ret, line, flags;
+>>  
+> 
+
+I thought locating the main probe function at the end of the source file
+was better for normal code reading (maybe it need be a seperate patch).
+But if we don't mind, we can still remain its orignal position.
+
+>> +#if IS_BUILTIN(CONFIG_SERIAL_8250_FINTEK)
+>> +	if (!fintek_8250_probe(dev, dev_id))
+>> +		return 0;
+>> +#endif
+>> +	flags = dev_id->driver_data;
+> 
+> Oh, I don't like this.
+> It needs a bit more refactoring done first.
+> 
+> The idea that we are not going to pollute generic driver(s) with quirks anymore
+> (only when it's really unavoidable).
+> 
+
+At that time, for me, I could not get any new better ways in a short
+time, and the issue had to be fixed in time, so the code was not good
+engough.
+
+At present, Linux version has been changed much, welcome any one to
+refactor it for current linux version or another related old linux
+versions if this patch is valuable more or less.
+
+
+Thanks.
+
+
