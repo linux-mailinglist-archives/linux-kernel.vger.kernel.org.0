@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 265071213B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EDCD8121338
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:00:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbfLPSEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41082 "EHLO mail.kernel.org"
+        id S1728845AbfLPR7w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:59:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729599AbfLPSD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:03:59 -0500
+        id S1728646AbfLPR7u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:59:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 324CD20700;
-        Mon, 16 Dec 2019 18:03:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BBD2206EC;
+        Mon, 16 Dec 2019 17:59:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519438;
-        bh=FkDwqSX2U3Zi6u1zSLl0ekZoB6wGScHpf/uAMixefME=;
+        s=default; t=1576519190;
+        bh=tlsq84Sjw04k/4K1GPsBwrxcrthZHeY7gccHOEHnC7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ly8nJfBubQhbrPehHejxOIlJa44TIdI8hVN/bqs2/hyFfgunnzWGtCgJC2EZT4T42
-         WZ5/B/0FG4qS7XkAwgd8DMz1EaqR+KoQILRcYW75YVIfSGYF3sISednO4zsvLj+sjS
-         LEcJ/WCv/RiUHO/lDew/jQ0wxM0gx3nYgiJyrEQ0=
+        b=rusY+goO97eKHBR5/OihqrIyAzmznjQQnUSkjMiSPBvG0XgCxtuouVxMz6IvX9IoY
+         8iLuc29TUyn06VRRH/758kEvds8DSlJoJNLxoyKG1fMpB9zm832vGOvaG4jqhhE96u
+         0DNG5nHg66SinJHjY67qPvvO9767cDaxkMIovNtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.19 049/140] ovl: relax WARN_ON() on rename to self
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.14 191/267] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
 Date:   Mon, 16 Dec 2019 18:48:37 +0100
-Message-Id: <20191216174802.043464455@linuxfoundation.org>
+Message-Id: <20191216174912.989877268@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 6889ee5a53b8d969aa542047f5ac8acdc0e79a91 upstream.
+commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
 
-In ovl_rename(), if new upper is hardlinked to old upper underneath
-overlayfs before upper dirs are locked, user will get an ESTALE error
-and a WARN_ON will be printed.
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback to get the RX buffer address was added to
+the PCI driver. Unfortunately, driver rtl8192de was not modified
+appropriately and the code runs into a WARN_ONCE() call. The use
+of an incorrect array is also fixed.
 
-Changes to underlying layers while overlayfs is mounted may result in
-unexpected behavior, but it shouldn't crash the kernel and it shouldn't
-trigger WARN_ON() either, so relax this WARN_ON().
-
-Reported-by: syzbot+bb1836a212e69f8e201a@syzkaller.appspotmail.com
-Fixes: 804032fabb3b ("ovl: don't check rename to self")
-Cc: <stable@vger.kernel.org> # v4.9+
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org> # 3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/overlayfs/dir.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1174,7 +1174,7 @@ static int ovl_rename(struct inode *oldd
- 	if (newdentry == trap)
- 		goto out_dput;
- 
--	if (WARN_ON(olddentry->d_inode == newdentry->d_inode))
-+	if (olddentry->d_inode == newdentry->d_inode)
- 		goto out_dput;
- 
- 	err = 0;
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -839,13 +839,15 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
+ 			break;
+ 		}
+ 	} else {
+-		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
+ 		switch (desc_name) {
+ 		case HW_DESC_OWN:
+-			ret = GET_RX_DESC_OWN(pdesc);
++			ret = GET_RX_DESC_OWN(p_desc);
+ 			break;
+ 		case HW_DESC_RXPKT_LEN:
+-			ret = GET_RX_DESC_PKT_LEN(pdesc);
++			ret = GET_RX_DESC_PKT_LEN(p_desc);
++			break;
++		case HW_DESC_RXBUFF_ADDR:
++			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
+ 			break;
+ 		default:
+ 			WARN_ONCE(true, "rtl8192de: ERR rxdesc :%d not processed\n",
 
 
