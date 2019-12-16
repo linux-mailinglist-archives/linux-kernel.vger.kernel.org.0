@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB3C912151F
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C3941213D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:07:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731562AbfLPSSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:18:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44482 "EHLO mail.kernel.org"
+        id S1729816AbfLPSFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:05:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731380AbfLPSSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:18:35 -0500
+        id S1729808AbfLPSFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:05:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAC44207FF;
-        Mon, 16 Dec 2019 18:18:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7E5E206EC;
+        Mon, 16 Dec 2019 18:05:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520315;
-        bh=F2n07ws10lQmM2LodegTTQfMXCbscbF5aBDGHTmAry4=;
+        s=default; t=1576519519;
+        bh=tQnQ7eGrRB4decAAN2WbhDaaCkvZX5ZKgulZVP1wGHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kWbkW2tUiXiz/191GieDSrP8VZ71NHtPtW4UZCjdktAtX1XgfC8hxsGQQftcNErDk
-         Np+AP8apvHM6H0g32VMlMcWJlYL4dCUxjjqVI/1Aq1v8wWClTyqWo3CtnuzYzifczN
-         wpcG29cwQqC4WPzxzFX0j+VdMyODSekxi5JNAGr0=
+        b=MxeSRn3MHK3PPKSghVvkDgEC0Ce1yCdxrciTYQr3WHW+fSj7Y/Fcddgc4KxtH72M2
+         ISDRLcM+MQpqusRpAPUq2y6UYbAZVTyyJSsVkKEbQ7VHoR80PFlCiRlGglVmcFXiA1
+         sjTWWrz3maSBpPhc5pUx2SQDnnMVcF9L/Km+oNPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 5.4 104/177] cpuidle: Do not unset the driver if it is there already
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.19 092/140] ext2: check err when partial != NULL
 Date:   Mon, 16 Dec 2019 18:49:20 +0100
-Message-Id: <20191216174841.364350808@linuxfoundation.org>
+Message-Id: <20191216174811.515507769@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +43,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Chengguang Xu <cgxu519@mykernel.net>
 
-commit 918c1fe9fbbe46fcf56837ff21f0ef96424e8b29 upstream.
+commit e705f4b8aa27a59f8933e8f384e9752f052c469c upstream.
 
-Fix __cpuidle_set_driver() to check if any of the CPUs in the mask has
-a driver different from drv already and, if so, return -EBUSY before
-updating any cpuidle_drivers per-CPU pointers.
+Check err when partial == NULL is meaningless because
+partial == NULL means getting branch successfully without
+error.
 
-Fixes: 82467a5a885d ("cpuidle: simplify multiple driver support")
-Cc: 3.11+ <stable@vger.kernel.org> # 3.11+
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-[ rjw: Subject & changelog ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CC: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191105045100.7104-1-cgxu519@mykernel.net
+Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpuidle/driver.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/ext2/inode.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/cpuidle/driver.c
-+++ b/drivers/cpuidle/driver.c
-@@ -62,24 +62,23 @@ static inline void __cpuidle_unset_drive
-  * __cpuidle_set_driver - set per CPU driver variables for the given driver.
-  * @drv: a valid pointer to a struct cpuidle_driver
-  *
-- * For each CPU in the driver's cpumask, unset the registered driver per CPU
-- * to @drv.
-- *
-- * Returns 0 on success, -EBUSY if the CPUs have driver(s) already.
-+ * Returns 0 on success, -EBUSY if any CPU in the cpumask have a driver
-+ * different from drv already.
-  */
- static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
- {
- 	int cpu;
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -699,10 +699,13 @@ static int ext2_get_blocks(struct inode
+ 		if (!partial) {
+ 			count++;
+ 			mutex_unlock(&ei->truncate_mutex);
+-			if (err)
+-				goto cleanup;
+ 			goto got_it;
+ 		}
++
++		if (err) {
++			mutex_unlock(&ei->truncate_mutex);
++			goto cleanup;
++		}
+ 	}
  
- 	for_each_cpu(cpu, drv->cpumask) {
-+		struct cpuidle_driver *old_drv;
- 
--		if (__cpuidle_get_cpu_driver(cpu)) {
--			__cpuidle_unset_driver(drv);
-+		old_drv = __cpuidle_get_cpu_driver(cpu);
-+		if (old_drv && old_drv != drv)
- 			return -EBUSY;
--		}
-+	}
- 
-+	for_each_cpu(cpu, drv->cpumask)
- 		per_cpu(cpuidle_drivers, cpu) = drv;
--	}
- 
- 	return 0;
- }
+ 	/*
 
 
