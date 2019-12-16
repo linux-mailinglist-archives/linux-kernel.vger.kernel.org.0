@@ -2,135 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E41E61207CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:01:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 039111207CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 15:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfLPOAq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 09:00:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44580 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727895AbfLPOAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:00:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=s54BERw2fpNV/hAfXK6/L7r6aYOnHlfMZty4DDidJZU=; b=N/+wLlRFtWeb0dRIfQxHTqs9S
-        JxPUPv9IcCx5VM/r8on0VzQ06MmfYsipd+yvTi07w+SgN4KvJQQURi/95PxAN9dtnkXyJ7C6sCFhc
-        vqHd7ci8UqxfleA3GzMgebj8vpPcVSgwDnxJO0AdElZqvEnC3ICsk0WQ2OHT422xr/N+kRzll85dA
-        CW/f0fLoGvcLnsi/kBBVUZicfl7bebPeFLEz7Q0QjAGZ94QMHTZnKrlvjw4rZ1+D5SzYaWQL7hUhU
-        j7U009QLh2JvBz2Ry7TjaBry6Bk/1fywM4dTqSlDKcwsrCVGiBZLmHwVv8zPc0PUZ+nE55HWSJOtj
-        qa78h1r2w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1igqv5-0007cS-Tp; Mon, 16 Dec 2019 14:00:20 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1728027AbfLPOA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 09:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727895AbfLPOA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 09:00:29 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5A0EB3007F2;
-        Mon, 16 Dec 2019 14:58:54 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2044C29D747A1; Mon, 16 Dec 2019 15:00:17 +0100 (CET)
-Date:   Mon, 16 Dec 2019 15:00:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Piggin <npiggin@gmail.com>, linux-arch@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Helge Deller <deller@gmx.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Paul Burton <paulburton@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Richard Henderson <rth@twiddle.net>,
-        Nick Hu <nickhu@andestech.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH 05/17] asm-generic/tlb: Rename
- HAVE_RCU_TABLE_NO_INVALIDATE
-Message-ID: <20191216140017.GF2827@hirez.programming.kicks-ass.net>
-References: <20191211120713.360281197@infradead.org>
- <20191211122955.940455408@infradead.org>
- <87woawzc1t.fsf@linux.ibm.com>
- <20191216123752.GM2844@hirez.programming.kicks-ass.net>
- <d52ea890-c2ea-88f3-9d62-b86e60ee77ae@linux.ibm.com>
- <20191216132004.GO2844@hirez.programming.kicks-ass.net>
- <a9ae27c8-aa84-cda3-355c-7abb3b450d38@linux.ibm.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6FF220684;
+        Mon, 16 Dec 2019 14:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576504828;
+        bh=jdFxBKgT93c3jWBHm8m4ZNJqE+g91z3/HhdnxSdPqNs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2MtKvPzn98o3Zde83TLKGVd+xDbArRelFftBwc4hJgoFOq4ZUxwNBRDKkPUuUB/9G
+         c2GG1mAcpt/gchMK2fkzpckK2B1hcMkqg/W2NL/BoDoZTjZPpkfBaWosvLXSyWaS4O
+         nJcWWO3X8ePpccLyO9K5a+audJq7aT6i7koZLXsA=
+Date:   Mon, 16 Dec 2019 15:00:25 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 1/8] clk: sunxi-ng: Mark msgbox clocks as critical
+Message-ID: <20191216140025.6sfmqneiyxjqe6v7@gilmour.lan>
+References: <20191215042455.51001-1-samuel@sholland.org>
+ <20191215042455.51001-2-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="orhnilvx6yyc5lzw"
 Content-Disposition: inline
-In-Reply-To: <a9ae27c8-aa84-cda3-355c-7abb3b450d38@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191215042455.51001-2-samuel@sholland.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 07:10:30PM +0530, Aneesh Kumar K.V wrote:
-> On 12/16/19 6:50 PM, Peter Zijlstra wrote:
-> > On Mon, Dec 16, 2019 at 06:43:53PM +0530, Aneesh Kumar K.V wrote:
-> > > On 12/16/19 6:07 PM, Peter Zijlstra wrote:
-> > 
-> > > > I'm confused, are you saing you're happy to have PowerPC eat the extra
-> > > > TLB invalidates? I thought you cared about PPC performance :-)
-> > > > 
-> > > > 
-> > > 
-> > > Instead can we do
-> > > 
-> > > static inline void tlb_table_invalidate(struct mmu_gather *tlb)
-> > > {
-> > > #ifndef CONFIG_MMU_GATHER_RCU_TABLE_FREE
-> > > 	 * Invalidate page-table caches used by hardware walkers. Then we still
-> > > 	 * need to RCU-sched wait while freeing the pages because software
-> > > 	 * walkers can still be in-flight.
-> > > 	 */
-> > > 	tlb_flush_mmu_tlbonly(tlb);
-> > > #endif
-> > > }
-> > 
-> > How does that not break ARM/ARM64/s390 and x86 ?
-> > 
-> 
-> Hmm I missed that usage of RCU_TABLE_NO_INVALIDATE.
 
-What use? Only PPC and SPARC64 use that option. The reason they can use
-it is because they don't have a hardware walker (with exception of
-PPC-Radix, which I suppose your below patch fudges ?!).
+--orhnilvx6yyc5lzw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-So HAVE_RCU_TABLE_FREE will provide tlb_remove_table() for the use of
-freeing page-tables/directories. This is required for all architectures
-that have software walkers and !IPI TLBI.
+On Sat, Dec 14, 2019 at 10:24:48PM -0600, Samuel Holland wrote:
+> The msgbox clock is critical because the hardware it controls is shared
+> between Linux and system firmware. The message box may be used by the
+> EL3 secure monitor's PSCI implementation. On 64-bit sunxi SoCs, this is
+> provided by ARM TF-A; 32-bit SoCs use a different implementation. The
+> secure monitor uses the message box to forward requests to power
+> management firmware running on a separate CPU.
+>
+> It is not enough for the secure monitor to enable the clock each time
+> Linux performs a SMC into EL3, as both the firmware and Linux can run
+> concurrently on separate CPUs. So it is never safe for Linux to turn
+> this clock off, and it should be marked as critical.
+>
+> At this time, such power management firmware only exists for the A64 and
+> H5 SoCs.  However, it makes sense to take care of all CCU drivers now
+> for consistency, and to ease the transition in the future once firmware
+> is ported to the other SoCs.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Arm, Arm64, Power, Sparc64, s390 and x86 use this option. While x86
-natively has IPI based TLBI, a bunch of the virtualization solutions got
-rid of the IPI for performance.
+This is pretty much the same case than for the AR100 clock though,
+right?
 
-Of those, Arm, Arm64, s390, x86 (and PPC-Radix) also have hardware
-walkers on those page-tables, and thus _must_ TLBI in between unhooking
-and freeing these pages.
+I'm still not sure about why we should enable it that clock all the
+time, even if you're not using the ARISC.
 
-PPC-Hash and Sparc64 OTOH only ever access the linux page-tables through
-the software walker and thus can forgo this TLBI, and _THAT_ is what
-TABLE_NO_INVALIDATE is about (there actually is a comment that clearly
-states this).
+Maxime
 
-> Ok I guess we need to revert this change that went upstream this merge
-> window then
-> 
-> commit 52162ec784fa05f3a4b1d8e84421279998be3773
-> Author: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Date:   Thu Oct 24 13:28:00 2019 +0530
-> 
->     powerpc/mm/book3s64/radix: Use freed_tables instead of need_flush_all
-> 
+--orhnilvx6yyc5lzw
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This really looks like you've got PPC-Radix wrong. As soon as you got
-hardware walkers on the linux page-tables, you must not use
-TABLE_NO_INVALIDATE.
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfeN+QAKCRDj7w1vZxhR
+xZBuAP9Ia+0yr/oIdBQG1t+E3BzWwHMnlV5Sjd2kxueCGpo/HQD/bOzlGVC7h/lX
+e+NB4e8WsigEdVU31jCtR+QPP4lVzQo=
+=bWXY
+-----END PGP SIGNATURE-----
+
+--orhnilvx6yyc5lzw--
