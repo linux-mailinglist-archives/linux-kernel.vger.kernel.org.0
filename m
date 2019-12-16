@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C61D5121388
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEDC01214EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfLPSCb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:02:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38398 "EHLO mail.kernel.org"
+        id S1731529AbfLPSQ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:16:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729344AbfLPSC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:02:28 -0500
+        id S1731498AbfLPSQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:16:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A07FC20733;
-        Mon, 16 Dec 2019 18:02:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8619206EC;
+        Mon, 16 Dec 2019 18:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519348;
-        bh=RyVyHX5MP+hvyFuV/2fAADMX1ycY5ZEMPHXFdKpKjfw=;
+        s=default; t=1576520181;
+        bh=3Qd5hzpmn3rrcoWEHRcr2ign7r0UPPijDyHlYd44t70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ju+IcJDpMMVwTozhEDTF/0hkXT+BvHE0Z2lhobsjAFXReLqUSzDViNhQQ1gXJvmTo
-         B7Kd62eBa1FXYZQL6W0WAP3LUUhwlvteHs45CbyEH5jhMO+tCY7D4kRgBrWQJyqBgK
-         TTaqffzftUP5i6R2DKSmY+nD7+fsZQflfNMXQxMQ=
+        b=w3BiCqKW7grnV2sfnujT/AEy4IPikejqcZ5Poe5bAbYLimoE1JJqhQT8fVVvaImt0
+         gR2NCLRCli14BURJq6VswevTWzRwjIINvBz0wntHX6FExjM2BfQAJvmMYjaYHi+DYv
+         S40cSLfQS8F1UWhL4oJXWNU/rx7W98m4j8te7ov0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tadeusz Struk <tadeusz.struk@intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: [PATCH 4.19 029/140] tpm: add check after commands attribs tab allocation
-Date:   Mon, 16 Dec 2019 18:48:17 +0100
-Message-Id: <20191216174757.744044348@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Robert=20W=C3=B6rle?= <rwoerle@mibtec.de>,
+        Beniamin Bia <beniamin.bia@analog.com>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.4 042/177] iio: adc: ad7606: fix reading unnecessary data from device
+Date:   Mon, 16 Dec 2019 18:48:18 +0100
+Message-Id: <20191216174829.672720972@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
-References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+References: <20191216174811.158424118@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tadeusz Struk <tadeusz.struk@intel.com>
+From: Beniamin Bia <beniamin.bia@analog.com>
 
-commit f1689114acc5e89a196fec6d732dae3e48edb6ad upstream.
+commit 341826a065660d1b77d89e6335b6095cd654271c upstream.
 
-devm_kcalloc() can fail and return NULL so we need to check for that.
+When a conversion result is being read from ADC, the driver reads the
+number of channels + 1 because it thinks that IIO_CHAN_SOFT_TIMESTAMP
+is also a physical channel. This patch fixes this issue.
 
-Cc: stable@vger.kernel.org
-Fixes: 58472f5cd4f6f ("tpm: validate TPM 2.0 commands")
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Fixes: 2985a5d88455 ("staging: iio: adc: ad7606: Move out of staging")
+Reported-by: Robert Wörle <rwoerle@mibtec.de>
+Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/char/tpm/tpm2-cmd.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/iio/adc/ad7606.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -938,6 +938,10 @@ static int tpm2_get_cc_attrs_tbl(struct
+--- a/drivers/iio/adc/ad7606.c
++++ b/drivers/iio/adc/ad7606.c
+@@ -85,7 +85,7 @@ err_unlock:
  
- 	chip->cc_attrs_tbl = devm_kcalloc(&chip->dev, 4, nr_commands,
- 					  GFP_KERNEL);
-+	if (!chip->cc_attrs_tbl) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
+ static int ad7606_read_samples(struct ad7606_state *st)
+ {
+-	unsigned int num = st->chip_info->num_channels;
++	unsigned int num = st->chip_info->num_channels - 1;
+ 	u16 *data = st->data;
+ 	int ret;
  
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
- 	if (rc)
 
 
