@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D9DC11214FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:17:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D71C7121481
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:12:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731620AbfLPSRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:17:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40160 "EHLO mail.kernel.org"
+        id S1730864AbfLPSLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731443AbfLPSQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:56 -0500
+        id S1730149AbfLPSLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:11:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 355A2206E0;
-        Mon, 16 Dec 2019 18:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B00222072D;
+        Mon, 16 Dec 2019 18:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520215;
-        bh=40JMI6VQBZQYGPRBCqC1Q5JsXnBsyZXglDSKlZdoUug=;
+        s=default; t=1576519913;
+        bh=7OlzjaWYrNlZkBYMjW7YaLZgbyz7GzE2h/34B75E5tE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aqqvwAxuMbYF0xWA12S/VjZ66uQ8xv0srKRv31D0lm4xvQTeBZWjnN1TNZSidzG5D
-         7vMOXp19t0qRADgL8hLf1TbTyn0zMdXKwf8KH9LTWc6F2NgHyPOv8sza5oeww4SrH/
-         x58MMnJTgGD1HCrLeCQtzDiT4L8Wp3UniwTOyGS0=
+        b=st5i5J8b1xsDJuj2lr11Ip6rlip1xNL+PSrWVS392veNS6S/zKSqnpmIh8SvKNCMX
+         Ubpu1M8AWtLoqe1IeslMpzpcX5YIbqCT504YsHRSJvArsVTyJUHuZWGMRcO3me2nyC
+         f9mbpST/sS+kOyQhj0QMuT947Dv044PJcQDLUtzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Machek <pavel@denx.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Subject: [PATCH 5.4 063/177] phy: renesas: rcar-gen3-usb2: Fix sysfs interface of "role"
-Date:   Mon, 16 Dec 2019 18:48:39 +0100
-Message-Id: <20191216174832.207394103@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.3 080/180] blk-mq: avoid sysfs buffer overflow with too many CPU cores
+Date:   Mon, 16 Dec 2019 18:48:40 +0100
+Message-Id: <20191216174831.264582626@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
+References: <20191216174806.018988360@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,48 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 4bd5ead82d4b877ebe41daf95f28cda53205b039 upstream.
+commit 8962842ca5abdcf98e22ab3b2b45a103f0408b95 upstream.
 
-Since the role_store() uses strncmp(), it's possible to refer
-out-of-memory if the sysfs data size is smaller than strlen("host").
-This patch fixes it by using sysfs_streq() instead of strncmp().
+It is reported that sysfs buffer overflow can be triggered if the system
+has too many CPU cores(>841 on 4K PAGE_SIZE) when showing CPUs of
+hctx via /sys/block/$DEV/mq/$N/cpu_list.
 
-Reported-by: Pavel Machek <pavel@denx.de>
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Cc: <stable@vger.kernel.org> # v4.10+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Pavel Machek <pavel@denx.de>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Use snprintf to avoid the potential buffer overflow.
+
+This version doesn't change the attribute format, and simply stops
+showing CPU numbers if the buffer is going to overflow.
+
+Cc: stable@vger.kernel.org
+Fixes: 676141e48af7("blk-mq: don't dump CPU -> hw queue map on driver load")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ block/blk-mq-sysfs.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/string.h>
- #include <linux/usb/of.h>
- #include <linux/workqueue.h>
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -166,20 +166,25 @@ static ssize_t blk_mq_hw_sysfs_nr_reserv
  
-@@ -320,9 +321,9 @@ static ssize_t role_store(struct device
- 	if (!ch->is_otg_channel || !rcar_gen3_is_any_rphy_initialized(ch))
- 		return -EIO;
+ static ssize_t blk_mq_hw_sysfs_cpus_show(struct blk_mq_hw_ctx *hctx, char *page)
+ {
++	const size_t size = PAGE_SIZE - 1;
+ 	unsigned int i, first = 1;
+-	ssize_t ret = 0;
++	int ret = 0, pos = 0;
  
--	if (!strncmp(buf, "host", strlen("host")))
-+	if (sysfs_streq(buf, "host"))
- 		new_mode = PHY_MODE_USB_HOST;
--	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
-+	else if (sysfs_streq(buf, "peripheral"))
- 		new_mode = PHY_MODE_USB_DEVICE;
- 	else
- 		return -EINVAL;
+ 	for_each_cpu(i, hctx->cpumask) {
+ 		if (first)
+-			ret += sprintf(ret + page, "%u", i);
++			ret = snprintf(pos + page, size - pos, "%u", i);
+ 		else
+-			ret += sprintf(ret + page, ", %u", i);
++			ret = snprintf(pos + page, size - pos, ", %u", i);
++
++		if (ret >= size - pos)
++			break;
+ 
+ 		first = 0;
++		pos += ret;
+ 	}
+ 
+-	ret += sprintf(ret + page, "\n");
+-	return ret;
++	ret = snprintf(pos + page, size - pos, "\n");
++	return pos + ret;
+ }
+ 
+ static struct blk_mq_hw_ctx_sysfs_entry blk_mq_hw_sysfs_nr_tags = {
 
 
