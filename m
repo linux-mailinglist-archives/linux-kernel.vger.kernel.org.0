@@ -2,165 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0D0E1216D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78DB61216CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730605AbfLPScU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:32:20 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:36868 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730363AbfLPSKY (ORCPT
+        id S1729371AbfLPSbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:31:48 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46505 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730365AbfLPSbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:10:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576519823;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=h6VrGNpFemlDLaD9vxutvKkD8W8dnGU6FQoXLjmTtYc=;
-        b=Ur2FCRa5ldHn1bGSA7y8wOdn0rHqi03DYNEdOFWOMAdt4E92ljsXf979jxLw4fuFgUfIng
-        Uer9ueFsgrPzWI5WQ0Ju84psCGsaEIXQsB43WayNglhP++C8jTssYFGXInpUxoFG7O/RFM
-        U6O3mc686KtHaTZrwR8m7NAZ7X7i7u8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-hZe2nHW0NpqB8uv36jRMYQ-1; Mon, 16 Dec 2019 13:10:21 -0500
-X-MC-Unique: hZe2nHW0NpqB8uv36jRMYQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2C0F91800D7B;
-        Mon, 16 Dec 2019 18:10:20 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 03A7D68863;
-        Mon, 16 Dec 2019 18:10:15 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 7F15F220A24; Mon, 16 Dec 2019 13:10:14 -0500 (EST)
-Date:   Mon, 16 Dec 2019 13:10:14 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        virtio-fs@redhat.com, Stefan Hajnoczi <stefanha@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 01/19] dax: remove block device dependencies
-Message-ID: <20191216181014.GA30106@redhat.com>
-References: <20190821175720.25901-1-vgoyal@redhat.com>
- <20190821175720.25901-2-vgoyal@redhat.com>
- <20190826115152.GA21051@infradead.org>
- <20190827163828.GA6859@redhat.com>
- <20190828065809.GA27426@infradead.org>
- <20190828175843.GB912@redhat.com>
- <20190828225322.GA7777@dread.disaster.area>
- <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
+        Mon, 16 Dec 2019 13:31:44 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z124so4169492pgb.13;
+        Mon, 16 Dec 2019 10:31:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=q6wgY7fQy1m4FBOYKfnwYqVpu2I96z7LmDo1JYpVKmA=;
+        b=oHAUq9CJWPu2x9rms0fDdTAm6ul0RPmQhldrsN5OLylWRT0QAkNMoiBg+qldjqhuVE
+         pC01WYcRZcqbql2Xk1TZeLGh/t9abXxANyNKi6ScykT5hqJ6VQHqIoyeOhIiNsnNxpmS
+         gYVIr9ogXexsFc5vP2kdujTRDAnuhVX8OcC9sEQ3WCLX2/0G6DBgAMnxj4EZpxH1fsiJ
+         h8Ue9p1vYopiP2M3k2mG90lwVZbF4bPwEoIWprXHXcRoHTevhwMdiHw/kN99BtaNLFV9
+         8WPiL2i0bskE5hz4kpEgdKG2o9zplIG0/a6L5jR8VjF6CCUgEF6hvVUUVjElXwucWa7n
+         fatg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=q6wgY7fQy1m4FBOYKfnwYqVpu2I96z7LmDo1JYpVKmA=;
+        b=jbi2ICbbxcMiGyE7fkzeyiNIjORZHo/VI8XIHIng9mAUg6Gbs2BFM3SGOa7KuQZ66n
+         uONJKdr2nrtvNaB2gmvhycPov+CvcjqURAsuVM4imhTI61nMV2/1u2stXP1YBQQjofU2
+         IeMWvMTnQuNusiPhkwY6BYBbrp/oQX2InswApC0nywEQup63/54gFmJDG5nt79NC+1ac
+         b7eC+tKE7Z5CfCwqM4uP8RnTs/ZirrurmyCNOpHp9Jt25FHa0n1nEf57lnpdm3YG0v2l
+         YM4o4tu+JG0j+9LhyABlVQqWNorV639P7XL7YXRvWicdrJFwP8x+5HVudTwxuQldRG/y
+         DuZg==
+X-Gm-Message-State: APjAAAVUY3efypcKyRyhbFhzhd+bt10liHxrIqrNp/PX/AI0mN5L+bdB
+        DG8PzjCvvgufWtJZy05brEbBe6jh0dvBXqTAWUBNnQ==
+X-Google-Smtp-Source: APXvYqxsNamYDluy4MU6SGf4xgUn04QcfrEm+7mgsyXt1Aa1RCnnLKK8DURIStGo/unIqvJuRCAO2zGEMOPD6Nn2h30=
+X-Received: by 2002:a63:364d:: with SMTP id d74mr19952282pga.408.1576521103641;
+ Mon, 16 Dec 2019 10:31:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jGEAbYSJef2zLzgg6Arozsuz7eN_vZL1iTcd1XQuNT4Q@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+References: <20191216174747.111154704@linuxfoundation.org> <20191216174815.749524432@linuxfoundation.org>
+In-Reply-To: <20191216174815.749524432@linuxfoundation.org>
+Reply-To: andrea.merello@gmail.com
+From:   Andrea Merello <andrea.merello@gmail.com>
+Date:   Mon, 16 Dec 2019 19:31:31 +0100
+Message-ID: <CAN8YU5NrEbJx3yxBNoRWnwUiAYWffDp6gEcCcGUK+g4zjbHwEg@mail.gmail.com>
+Subject: Re: [PATCH 4.19 106/140] iio: ad7949: kill pointless
+ "readback"-handling code
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 05:04:11PM -0700, Dan Williams wrote:
-> On Wed, Aug 28, 2019 at 3:53 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > On Wed, Aug 28, 2019 at 01:58:43PM -0400, Vivek Goyal wrote:
-> > > On Tue, Aug 27, 2019 at 11:58:09PM -0700, Christoph Hellwig wrote:
-> > > > On Tue, Aug 27, 2019 at 12:38:28PM -0400, Vivek Goyal wrote:
-> > > > > > For bdev_dax_pgoff
-> > > > > > I'd much rather have the partition offset if there is on in the daxdev
-> > > > > > somehow so that we can get rid of the block device entirely.
-> > > > >
-> > > > > IIUC, there is one block_device per partition while there is only one
-> > > > > dax_device for the whole disk. So we can't directly move bdev logical
-> > > > > offset into dax_device.
-> > > >
-> > > > Well, then we need to find a way to get partitions for dax devices,
-> > > > as we really should not expect a block device hiding behind a dax
-> > > > dev.  That is just a weird legacy assumption - block device need to
-> > > > layer on top of the dax device optionally.
-> > > >
-> > > > >
-> > > > > We probably could put this in "iomap" and leave it to filesystems to
-> > > > > report offset into dax_dev in iomap that way dax generic code does not
-> > > > > have to deal with it. But that probably will be a bigger change.
-> > > >
-> > > > And where would the file system get that information from?
-> > >
-> > > File system knows about block device, can it just call get_start_sect()
-> > > while filling iomap->addr. And this means we don't have to have
-> > > parition information in dax device. Will something like following work?
-> > > (Just a proof of concept patch).
-> > >
-> > >
-> > > ---
-> > >  drivers/dax/super.c |   11 +++++++++++
-> > >  fs/dax.c            |    6 +++---
-> > >  fs/ext4/inode.c     |    6 +++++-
-> > >  include/linux/dax.h |    1 +
-> > >  4 files changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > Index: rhvgoyal-linux/fs/ext4/inode.c
-> > > ===================================================================
-> > > --- rhvgoyal-linux.orig/fs/ext4/inode.c       2019-08-28 13:51:16.051937204 -0400
-> > > +++ rhvgoyal-linux/fs/ext4/inode.c    2019-08-28 13:51:44.453937204 -0400
-> > > @@ -3589,7 +3589,11 @@ retry:
-> > >                       WARN_ON_ONCE(1);
-> > >                       return -EIO;
-> > >               }
-> > > -             iomap->addr = (u64)map.m_pblk << blkbits;
-> > > +             if (IS_DAX(inode))
-> > > +                     iomap->addr = ((u64)map.m_pblk << blkbits) +
-> > > +                                   (get_start_sect(iomap->bdev) * 512);
-> > > +             else
-> > > +                     iomap->addr = (u64)map.m_pblk << blkbits;
-> >
-> > I'm not a fan of returning a physical device sector address from an
-> > interface where ever other user/caller expects this address to be a
-> > logical block address into the block device. It creates a landmine
-> > in the iomap API that callers may not be aware of and that's going
-> > to cause bugs. We're trying really hard to keep special case hacks
-> > like this out of the iomap infrastructure, so on those grounds alone
-> > I'd suggest this is a dead end approach.
-> >
-> > Hence I think that if the dax device needs a physical offset from
-> > the start of the block device the filesystem sits on, it should be
-> > set up at dax device instantiation time and so the filesystem/bdev
-> > never needs to be queried again for this information.
-> >
-> 
-> Agree. In retrospect it was my laziness in the dax-device
-> implementation to expect the block-device to be available.
-> 
-> It looks like fs_dax_get_by_bdev() is an intercept point where a
-> dax_device could be dynamically created to represent the subset range
-> indicated by the block-device partition. That would open up more
-> cleanup opportunities.
+Something nasty seems happening here: it looks like the commit message
+and the actual diff have nothing to do one wrt the other; the commit
+message is from one of my patches, the diff is against some unrelated
+file.
 
-Hi Dan,
-
-After a long time I got time to look at it again. Want to work on this
-cleanup so that I can make progress with virtiofs DAX paches.
-
-I am not sure I understand the requirements fully. I see that right now
-dax_device is created per device and all block partitions refer to it. If
-we want to create one dax_device per partition, then it looks like this
-will be structured more along the lines how block layer handles disk and
-partitions. (One gendisk for disk and block_devices for partitions,
-including partition 0). That probably means state belong to whole device
-will be in common structure say dax_device_common, and per partition state
-will be in dax_device and dax_device can carry a pointer to
-dax_device_common.
-
-I am also not sure what does it mean to partition dax devices. How will
-partitions be exported to user space.
-
-Thanks
-Vivek
-
+Il giorno lun 16 dic 2019 alle ore 19:05 Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> ha scritto:
+>
+> From: Meng Li <Meng.Li@windriver.com>
+>
+> [ Upstream commit c270bbf7bb9ddc4e2a51b3c56557c377c9ac79bc ]
+>
+> The device could be configured to spit out also the configuration word
+> while reading the AD result value (in the same SPI xfer) - this is called
+> "readback" in the device datasheet.
+>
+> The driver checks if readback is enabled and it eventually adjusts the SPI
+> xfer length and it applies proper shifts to still get the data, discarding
+> the configuration word.
+>
+> The readback option is actually never enabled (the driver disables it), so
+> the said checks do not serve for any purpose.
+>
+> Since enabling the readback option seems not to provide any advantage (the
+> driver entirely sets the configuration word without relying on any default
+> value), just kill the said, unused, code.
+>
+> Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
+> Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  drivers/edac/altera_edac.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> index 56de378ad13dc..c9108906bcdc0 100644
+> --- a/drivers/edac/altera_edac.c
+> +++ b/drivers/edac/altera_edac.c
+> @@ -600,6 +600,7 @@ static const struct regmap_config s10_sdram_regmap_cfg = {
+>         .reg_read = s10_protected_reg_read,
+>         .reg_write = s10_protected_reg_write,
+>         .use_single_rw = true,
+> +       .fast_io = true,
+>  };
+>
+>  static int altr_s10_sdram_probe(struct platform_device *pdev)
+> --
+> 2.20.1
+>
+>
+>
