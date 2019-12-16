@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 273091214D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0743C1213A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731407AbfLPSPi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:15:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
+        id S1729530AbfLPSDh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731393AbfLPSPb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:15:31 -0500
+        id S1729491AbfLPSD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA490206EC;
-        Mon, 16 Dec 2019 18:15:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6454820726;
+        Mon, 16 Dec 2019 18:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520130;
-        bh=/L3ZLsmnkEAzY4IF0kVxdx6uxvNTHirXKdj/uKXUDC0=;
+        s=default; t=1576519406;
+        bh=tvOIjDCxD7/z37ZjVf2gcMsRlUyrETBdTSr/zPhHUUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LlgToVjgsiS0hM7J8xNIrBN8Pe/YOT90n2bmatAfk/j42lx2bl/JTWj0+I69PLNn1
-         jhgYiaMW3x/1F1XasT6sX79hiNZAx/dEr2ZSWS32ZnzaK3GZGUVHqBgSgivdVmchQa
-         15dx6w3tIW2cM1Velz8np5jMsQMeTHzwgjlgFO30=
+        b=sFZWtIB65KYXwvwk9EQfBJ6PFZGv17jmNiFGMWvtkyEkxyLMUW8voOVZEUkIMpIdr
+         JWqd+uaXbzofaez0lbI9/pIXu4on6piHS3fnTX39f5coXWmVWWT/7pE/ywGKCKlWsc
+         XtPtcMhRVDn/SzmGdiaPF7pyI3UggX9qapnpyeng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: [PATCH 5.4 028/177] xhci: Fix memory leak in xhci_add_in_port()
+Subject: [PATCH 4.19 016/140] xhci: Increase STS_HALT timeout in xhci_suspend()
 Date:   Mon, 16 Dec 2019 18:48:04 +0100
-Message-Id: <20191216174822.583887553@linuxfoundation.org>
+Message-Id: <20191216174754.928800087@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,91 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit ce91f1a43b37463f517155bdfbd525eb43adbd1a upstream.
+commit 7c67cf6658cec70d8a43229f2ce74ca1443dc95e upstream.
 
-When xHCI is part of Alpine or Titan Ridge Thunderbolt controller and
-the xHCI device is hot-removed as a result of unplugging a dock for
-example, the driver leaks memory it allocates for xhci->usb3_rhub.psi
-and xhci->usb2_rhub.psi in xhci_add_in_port() as reported by kmemleak:
+I've recently observed failed xHCI suspend attempt on AMD Raven Ridge
+system:
+kernel: xhci_hcd 0000:04:00.4: WARN: xHC CMD_RUN timeout
+kernel: PM: suspend_common(): xhci_pci_suspend+0x0/0xd0 returns -110
+kernel: PM: pci_pm_suspend(): hcd_pci_suspend+0x0/0x30 returns -110
+kernel: PM: dpm_run_callback(): pci_pm_suspend+0x0/0x150 returns -110
+kernel: PM: Device 0000:04:00.4 failed to suspend async: error -110
 
-unreferenced object 0xffff922c24ef42f0 (size 16):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 16 bytes):
-    21 00 0c 00 12 00 dc 05 23 00 e0 01 00 00 00 00  !.......#.......
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
-unreferenced object 0xffff922c24ef3318 (size 8):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 8 bytes):
-    34 01 05 00 35 41 0a 00                          4...5A..
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
+Similar to commit ac343366846a ("xhci: Increase STS_SAVE timeout in
+xhci_suspend()") we also need to increase the HALT timeout to make it be
+able to suspend again.
 
-Fix this by calling kfree() for the both psi objects in
-xhci_mem_cleanup().
-
-Cc: <stable@vger.kernel.org> # 4.4+
-Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: <stable@vger.kernel.org> # 5.2+
+Fixes: f7fac17ca925 ("xhci: Convert xhci_handshake() to use readl_poll_timeout_atomic()")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
 Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-2-mathias.nyman@linux.intel.com
+Link: https://lore.kernel.org/r/20191211142007.8847-5-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-mem.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/host/xhci.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1909,13 +1909,17 @@ no_bw:
- 	xhci->usb3_rhub.num_ports = 0;
- 	xhci->num_active_eps = 0;
- 	kfree(xhci->usb2_rhub.ports);
-+	kfree(xhci->usb2_rhub.psi);
- 	kfree(xhci->usb3_rhub.ports);
-+	kfree(xhci->usb3_rhub.psi);
- 	kfree(xhci->hw_ports);
- 	kfree(xhci->rh_bw);
- 	kfree(xhci->ext_caps);
- 
- 	xhci->usb2_rhub.ports = NULL;
-+	xhci->usb2_rhub.psi = NULL;
- 	xhci->usb3_rhub.ports = NULL;
-+	xhci->usb3_rhub.psi = NULL;
- 	xhci->hw_ports = NULL;
- 	xhci->rh_bw = NULL;
- 	xhci->ext_caps = NULL;
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
+@@ -960,7 +960,7 @@ static bool xhci_pending_portevent(struc
+ int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup)
+ {
+ 	int			rc = 0;
+-	unsigned int		delay = XHCI_MAX_HALT_USEC;
++	unsigned int		delay = XHCI_MAX_HALT_USEC * 2;
+ 	struct usb_hcd		*hcd = xhci_to_hcd(xhci);
+ 	u32			command;
+ 	u32			res;
 
 
