@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C0E012160D
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:26:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D151213BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbfLPSQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:16:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40054 "EHLO mail.kernel.org"
+        id S1729667AbfLPSEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:04:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731369AbfLPSQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:16:53 -0500
+        id S1729647AbfLPSE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:04:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9B0D206E0;
-        Mon, 16 Dec 2019 18:16:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2877B20700;
+        Mon, 16 Dec 2019 18:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576520213;
-        bh=NwxrMIBvLQ1k8xz/dopXirh2vs38YyqGeyRGmwIJV6Y=;
+        s=default; t=1576519465;
+        bh=QBrHzF/bDur2YZKXK3pZ0+nH4CtHkNb06QOzdb7jU/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GuZ94/AD4w4wsBvph9UYkUSX7DZ+6fbLp5Wp6Ns8ypDAZYsZAKrvhIJl1Lh5oa722
-         /N7KuLdRScuIu99/gwkmrUkNtBePS79zFPdE8dfhD/HUZ/2IFN4AzXx2dooWGmO7NX
-         T1jwGRKCCM7/Hxlshqpf42jvUOKCsWpv8PU4VGAg=
+        b=LhTxaiFez0aTjhncBod7a+3i3s4Koyc3B5SXAPBaOTZebf5u5fNeazRODa32P5WT/
+         ExU0rEq/ejk5NUuJs+c4wXgCN8qd8DVBsN/HWfzPJohJJ+O1tJkweyyU68yxh536pc
+         q8/2L2XlVj6Qf6mse8u3mW139U+6WX1uiby5tw4I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thinh Nguyen <thinhn@synopsys.com>,
-        Felipe Balbi <balbi@kernel.org>
-Subject: [PATCH 5.4 062/177] usb: dwc3: ep0: Clear started flag on completion
+        stable@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 050/140] hwrng: omap - Fix RNG wait loop timeout
 Date:   Mon, 16 Dec 2019 18:48:38 +0100
-Message-Id: <20191216174831.724164372@linuxfoundation.org>
+Message-Id: <20191216174802.353047701@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-References: <20191216174811.158424118@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,47 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+From: Sumit Garg <sumit.garg@linaro.org>
 
-commit 2d7b78f59e020b07fc6338eefe286f54ee2d6773 upstream.
+commit be867f987a4e1222114dd07a01838a17c26f3fff upstream.
 
-Clear ep0's DWC3_EP_TRANSFER_STARTED flag if the END_TRANSFER command is
-completed. Otherwise, we can't start control transfer again after
-END_TRANSFER.
+Existing RNG data read timeout is 200us but it doesn't cover EIP76 RNG
+data rate which takes approx. 700us to produce 16 bytes of output data
+as per testing results. So configure the timeout as 1000us to also take
+account of lack of udelay()'s reliability.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
-Signed-off-by: Felipe Balbi <balbi@kernel.org>
+Fixes: 383212425c92 ("hwrng: omap - Add device variant for SafeXcel IP-76 found in Armada 8K")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/dwc3/ep0.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/char/hw_random/omap-rng.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/dwc3/ep0.c
-+++ b/drivers/usb/dwc3/ep0.c
-@@ -1117,6 +1117,9 @@ static void dwc3_ep0_xfernotready(struct
- void dwc3_ep0_interrupt(struct dwc3 *dwc,
- 		const struct dwc3_event_depevt *event)
- {
-+	struct dwc3_ep	*dep = dwc->eps[event->endpoint_number];
-+	u8		cmd;
+--- a/drivers/char/hw_random/omap-rng.c
++++ b/drivers/char/hw_random/omap-rng.c
+@@ -66,6 +66,13 @@
+ #define OMAP4_RNG_OUTPUT_SIZE			0x8
+ #define EIP76_RNG_OUTPUT_SIZE			0x10
+ 
++/*
++ * EIP76 RNG takes approx. 700us to produce 16 bytes of output data
++ * as per testing results. And to account for the lack of udelay()'s
++ * reliability, we keep the timeout as 1000us.
++ */
++#define RNG_DATA_FILL_TIMEOUT			100
 +
- 	switch (event->endpoint_event) {
- 	case DWC3_DEPEVT_XFERCOMPLETE:
- 		dwc3_ep0_xfer_complete(dwc, event);
-@@ -1129,7 +1132,12 @@ void dwc3_ep0_interrupt(struct dwc3 *dwc
- 	case DWC3_DEPEVT_XFERINPROGRESS:
- 	case DWC3_DEPEVT_RXTXFIFOEVT:
- 	case DWC3_DEPEVT_STREAMEVT:
-+		break;
- 	case DWC3_DEPEVT_EPCMDCMPLT:
-+		cmd = DEPEVT_PARAMETER_CMD(event->parameters);
-+
-+		if (cmd == DWC3_DEPCMD_ENDTRANSFER)
-+			dep->flags &= ~DWC3_EP_TRANSFER_STARTED;
- 		break;
- 	}
- }
+ enum {
+ 	RNG_OUTPUT_0_REG = 0,
+ 	RNG_OUTPUT_1_REG,
+@@ -176,7 +183,7 @@ static int omap_rng_do_read(struct hwrng
+ 	if (max < priv->pdata->data_size)
+ 		return 0;
+ 
+-	for (i = 0; i < 20; i++) {
++	for (i = 0; i < RNG_DATA_FILL_TIMEOUT; i++) {
+ 		present = priv->pdata->data_present(priv);
+ 		if (present || !wait)
+ 			break;
 
 
