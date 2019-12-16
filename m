@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 671F01212E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93CA21212E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 18:57:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728349AbfLPR47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 12:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55486 "EHLO mail.kernel.org"
+        id S1727452AbfLPR5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 12:57:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbfLPR46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:56:58 -0500
+        id S1728085AbfLPR5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:57:00 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28A7020733;
-        Mon, 16 Dec 2019 17:56:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8318F21582;
+        Mon, 16 Dec 2019 17:56:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519017;
-        bh=35yKDkiE8KL4FQ6IGuKiSvQsrdEoHklWw7BgukhTtfY=;
+        s=default; t=1576519020;
+        bh=SLLA6soTRudvRmoUb9fkFaD2Y3fKHbuYA00w0PGg8UI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UL+tO/Uv1tTJjCzU32BEVg+HV4PYzIkqP4/JqF2omZsTK/jYmvBdC+dtJKHzOT8Xm
-         JfaoH5aN+g9//wlSvp5u3QbaJn9/3iDIiEJglDTwBMpZeBDoy0gNTWRRJoRL3aovUz
-         AiXIg4BnC7BSy1jRUI/DPZcRSmPHZQMxnyGZeHs4=
+        b=YOrACA8yOJeRhU3fpDqS4MDZxuxBkWUs1uweFokndBIJc/bkj6xUmFR1X2is8ikBU
+         7l7PxkGiEZJTlsHYmPsUbav3utNx6JiS8f+mrKO4QS1QD0RZ5EN9ynRQq7XMKCOyf4
+         mmDVG/WjTyxAJhJQSOYOLwpJjxXqwAUQxOp1ko64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.14 161/267] USB: uas: honor flag to avoid CAPACITY16
-Date:   Mon, 16 Dec 2019 18:48:07 +0100
-Message-Id: <20191216174911.324131759@linuxfoundation.org>
+Subject: [PATCH 4.14 162/267] USB: uas: heed CAPACITY_HEURISTICS
+Date:   Mon, 16 Dec 2019 18:48:08 +0100
+Message-Id: <20191216174911.377392511@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 References: <20191216174848.701533383@linuxfoundation.org>
@@ -44,31 +44,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oliver Neukum <oneukum@suse.com>
 
-commit bff000cae1eec750d62e265c4ba2db9af57b17e1 upstream.
+commit 335cbbd5762d5e5c67a8ddd6e6362c2aa42a328f upstream.
 
-Copy the support over from usb-storage to get feature parity
+There is no need to ignore this flag. We should be as close
+to storage in that regard as makes sense, so honor flags whose
+cost is tiny.
 
 Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-2-oneukum@suse.com
+Link: https://lore.kernel.org/r/20191114112758.32747-3-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/storage/uas.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
 --- a/drivers/usb/storage/uas.c
 +++ b/drivers/usb/storage/uas.c
-@@ -832,6 +832,10 @@ static int uas_slave_configure(struct sc
- 		sdev->wce_default_on = 1;
- 	}
+@@ -845,6 +845,12 @@ static int uas_slave_configure(struct sc
+ 		sdev->fix_capacity = 1;
  
-+	/* Some disks cannot handle READ_CAPACITY_16 */
-+	if (devinfo->flags & US_FL_NO_READ_CAPACITY_16)
-+		sdev->no_read_capacity_16 = 1;
-+
  	/*
- 	 * Some disks return the total number of blocks in response
- 	 * to READ CAPACITY rather than the highest block number.
++	 * in some cases we have to guess
++	 */
++	if (devinfo->flags & US_FL_CAPACITY_HEURISTICS)
++		sdev->guess_capacity = 1;
++
++	/*
+ 	 * Some devices don't like MODE SENSE with page=0x3f,
+ 	 * which is the command used for checking if a device
+ 	 * is write-protected.  Now that we tell the sd driver
 
 
