@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1FF8121483
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:12:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B476912139D
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:03:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfLPSMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56438 "EHLO mail.kernel.org"
+        id S1729469AbfLPSDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:03:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730876AbfLPSL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:11:59 -0500
+        id S1729221AbfLPSDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:03:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A29EB206EC;
-        Mon, 16 Dec 2019 18:11:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8A8320700;
+        Mon, 16 Dec 2019 18:03:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519918;
-        bh=18Ylpm478twVvDnmH9CUFB2PCxMFe4y4fQT3DJfe8ho=;
+        s=default; t=1576519387;
+        bh=oqGTqd72PD79SesB2W3lERHEhT9QXB09SKLSXyGlIF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nLpxoombziteAXqhem33Rq+wfLNJKv6frGci3sS8VxcbVrr2rVozxOt0fkkfCv1IA
-         o7bTgWpMYALbXlG+wKzL2hzoKX/dQtZ1cEaTNYdGDODR3F+709ceWGDoaS2OO/kzov
-         1i7ZPBMV1MGJfX1N8tcrrm3pWzBdJT2JGlH8l7hY=
+        b=dizV+6zd2tlMAOTDdgaYJAvdw/UAoA8znI/7gS18nkOQ+c2HQZt0HCT1hdY4ajF4g
+         U5woMJ9SsJZEmHxOp+Klayx0TcnTxZhPF/F7d5bE4f57xvKQbuHg0lqTA9bE/5Y+fK
+         Fs3MTFBRX2nPmc5ZAwf1YNpGc1BdTBO2bUzXYaNI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, zhangxiaoxu <zhangxiaoxu5@huawei.com>,
-        Dmitry Fomichev <dmitry.fomichev@wdc.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.3 072/180] dm zoned: reduce overhead of backing device checks
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.19 044/140] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
 Date:   Mon, 16 Dec 2019 18:48:32 +0100
-Message-Id: <20191216174830.362408132@linuxfoundation.org>
+Message-Id: <20191216174800.757144799@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+References: <20191216174747.111154704@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,261 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Fomichev <dmitry.fomichev@wdc.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit e7fad909b68aa37470d9f2d2731b5bec355ee5d6 upstream.
+commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
 
-Commit 75d66ffb48efb3 added backing device health checks and as a part
-of these checks, check_events() block ops template call is invoked in
-dm-zoned mapping path as well as in reclaim and flush path. Calling
-check_events() with ATA or SCSI backing devices introduces a blocking
-scsi_test_unit_ready() call being made in sd_check_events(). Even though
-the overhead of calling scsi_test_unit_ready() is small for ATA zoned
-devices, it is much larger for SCSI and it affects performance in a very
-negative way.
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback to get the RX buffer address was added to
+the PCI driver. Unfortunately, driver rtl8192de was not modified
+appropriately and the code runs into a WARN_ONCE() call. The use
+of an incorrect array is also fixed.
 
-Fix this performance regression by executing check_events() only in case
-of any I/O errors. The function dmz_bdev_is_dying() is modified to call
-only blk_queue_dying(), while calls to check_events() are made in a new
-helper function, dmz_check_bdev().
-
-Reported-by: zhangxiaoxu <zhangxiaoxu5@huawei.com>
-Fixes: 75d66ffb48efb3 ("dm zoned: properly handle backing device failure")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Fomichev <dmitry.fomichev@wdc.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org> # 3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-zoned-metadata.c |   29 ++++++++++++++--------
- drivers/md/dm-zoned-reclaim.c  |    8 +-----
- drivers/md/dm-zoned-target.c   |   54 ++++++++++++++++++++++++++++-------------
- drivers/md/dm-zoned.h          |    2 +
- 4 files changed, 61 insertions(+), 32 deletions(-)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/md/dm-zoned-metadata.c
-+++ b/drivers/md/dm-zoned-metadata.c
-@@ -554,6 +554,7 @@ static struct dmz_mblock *dmz_get_mblock
- 		       TASK_UNINTERRUPTIBLE);
- 	if (test_bit(DMZ_META_ERROR, &mblk->state)) {
- 		dmz_release_mblock(zmd, mblk);
-+		dmz_check_bdev(zmd->dev);
- 		return ERR_PTR(-EIO);
- 	}
- 
-@@ -625,6 +626,8 @@ static int dmz_rdwr_block(struct dmz_met
- 	ret = submit_bio_wait(bio);
- 	bio_put(bio);
- 
-+	if (ret)
-+		dmz_check_bdev(zmd->dev);
- 	return ret;
- }
- 
-@@ -691,6 +694,7 @@ static int dmz_write_dirty_mblocks(struc
- 			       TASK_UNINTERRUPTIBLE);
- 		if (test_bit(DMZ_META_ERROR, &mblk->state)) {
- 			clear_bit(DMZ_META_ERROR, &mblk->state);
-+			dmz_check_bdev(zmd->dev);
- 			ret = -EIO;
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -840,13 +840,15 @@ u64 rtl92de_get_desc(struct ieee80211_hw
+ 			break;
  		}
- 		nr_mblks_submitted--;
-@@ -768,7 +772,7 @@ int dmz_flush_metadata(struct dmz_metada
- 	/* If there are no dirty metadata blocks, just flush the device cache */
- 	if (list_empty(&write_list)) {
- 		ret = blkdev_issue_flush(zmd->dev->bdev, GFP_NOIO, NULL);
--		goto out;
-+		goto err;
- 	}
- 
- 	/*
-@@ -778,7 +782,7 @@ int dmz_flush_metadata(struct dmz_metada
- 	 */
- 	ret = dmz_log_dirty_mblocks(zmd, &write_list);
- 	if (ret)
--		goto out;
-+		goto err;
- 
- 	/*
- 	 * The log is on disk. It is now safe to update in place
-@@ -786,11 +790,11 @@ int dmz_flush_metadata(struct dmz_metada
- 	 */
- 	ret = dmz_write_dirty_mblocks(zmd, &write_list, zmd->mblk_primary);
- 	if (ret)
--		goto out;
-+		goto err;
- 
- 	ret = dmz_write_sb(zmd, zmd->mblk_primary);
- 	if (ret)
--		goto out;
-+		goto err;
- 
- 	while (!list_empty(&write_list)) {
- 		mblk = list_first_entry(&write_list, struct dmz_mblock, link);
-@@ -805,16 +809,20 @@ int dmz_flush_metadata(struct dmz_metada
- 
- 	zmd->sb_gen++;
- out:
--	if (ret && !list_empty(&write_list)) {
--		spin_lock(&zmd->mblk_lock);
--		list_splice(&write_list, &zmd->mblk_dirty_list);
--		spin_unlock(&zmd->mblk_lock);
--	}
--
- 	dmz_unlock_flush(zmd);
- 	up_write(&zmd->mblk_sem);
- 
- 	return ret;
-+
-+err:
-+	if (!list_empty(&write_list)) {
-+		spin_lock(&zmd->mblk_lock);
-+		list_splice(&write_list, &zmd->mblk_dirty_list);
-+		spin_unlock(&zmd->mblk_lock);
-+	}
-+	if (!dmz_check_bdev(zmd->dev))
-+		ret = -EIO;
-+	goto out;
- }
- 
- /*
-@@ -1244,6 +1252,7 @@ static int dmz_update_zone(struct dmz_me
- 	if (ret) {
- 		dmz_dev_err(zmd->dev, "Get zone %u report failed",
- 			    dmz_id(zmd, zone));
-+		dmz_check_bdev(zmd->dev);
- 		return ret;
- 	}
- 
---- a/drivers/md/dm-zoned-reclaim.c
-+++ b/drivers/md/dm-zoned-reclaim.c
-@@ -82,6 +82,7 @@ static int dmz_reclaim_align_wp(struct d
- 			    "Align zone %u wp %llu to %llu (wp+%u) blocks failed %d",
- 			    dmz_id(zmd, zone), (unsigned long long)wp_block,
- 			    (unsigned long long)block, nr_blocks, ret);
-+		dmz_check_bdev(zrc->dev);
- 		return ret;
- 	}
- 
-@@ -489,12 +490,7 @@ static void dmz_reclaim_work(struct work
- 	ret = dmz_do_reclaim(zrc);
- 	if (ret) {
- 		dmz_dev_debug(zrc->dev, "Reclaim error %d\n", ret);
--		if (ret == -EIO)
--			/*
--			 * LLD might be performing some error handling sequence
--			 * at the underlying device. To not interfere, do not
--			 * attempt to schedule the next reclaim run immediately.
--			 */
-+		if (!dmz_check_bdev(zrc->dev))
- 			return;
- 	}
- 
---- a/drivers/md/dm-zoned-target.c
-+++ b/drivers/md/dm-zoned-target.c
-@@ -80,6 +80,8 @@ static inline void dmz_bio_endio(struct
- 
- 	if (status != BLK_STS_OK && bio->bi_status == BLK_STS_OK)
- 		bio->bi_status = status;
-+	if (bio->bi_status != BLK_STS_OK)
-+		bioctx->target->dev->flags |= DMZ_CHECK_BDEV;
- 
- 	if (refcount_dec_and_test(&bioctx->ref)) {
- 		struct dm_zone *zone = bioctx->zone;
-@@ -565,32 +567,52 @@ out:
- }
- 
- /*
-- * Check the backing device availability. If it's on the way out,
-+ * Check if the backing device is being removed. If it's on the way out,
-  * start failing I/O. Reclaim and metadata components also call this
-  * function to cleanly abort operation in the event of such failure.
-  */
- bool dmz_bdev_is_dying(struct dmz_dev *dmz_dev)
- {
--	struct gendisk *disk;
-+	if (dmz_dev->flags & DMZ_BDEV_DYING)
-+		return true;
- 
--	if (!(dmz_dev->flags & DMZ_BDEV_DYING)) {
--		disk = dmz_dev->bdev->bd_disk;
--		if (blk_queue_dying(bdev_get_queue(dmz_dev->bdev))) {
--			dmz_dev_warn(dmz_dev, "Backing device queue dying");
--			dmz_dev->flags |= DMZ_BDEV_DYING;
--		} else if (disk->fops->check_events) {
--			if (disk->fops->check_events(disk, 0) &
--					DISK_EVENT_MEDIA_CHANGE) {
--				dmz_dev_warn(dmz_dev, "Backing device offline");
--				dmz_dev->flags |= DMZ_BDEV_DYING;
--			}
--		}
-+	if (dmz_dev->flags & DMZ_CHECK_BDEV)
-+		return !dmz_check_bdev(dmz_dev);
-+
-+	if (blk_queue_dying(bdev_get_queue(dmz_dev->bdev))) {
-+		dmz_dev_warn(dmz_dev, "Backing device queue dying");
-+		dmz_dev->flags |= DMZ_BDEV_DYING;
- 	}
- 
- 	return dmz_dev->flags & DMZ_BDEV_DYING;
- }
- 
- /*
-+ * Check the backing device availability. This detects such events as
-+ * backing device going offline due to errors, media removals, etc.
-+ * This check is less efficient than dmz_bdev_is_dying() and should
-+ * only be performed as a part of error handling.
-+ */
-+bool dmz_check_bdev(struct dmz_dev *dmz_dev)
-+{
-+	struct gendisk *disk;
-+
-+	dmz_dev->flags &= ~DMZ_CHECK_BDEV;
-+
-+	if (dmz_bdev_is_dying(dmz_dev))
-+		return false;
-+
-+	disk = dmz_dev->bdev->bd_disk;
-+	if (disk->fops->check_events &&
-+	    disk->fops->check_events(disk, 0) & DISK_EVENT_MEDIA_CHANGE) {
-+		dmz_dev_warn(dmz_dev, "Backing device offline");
-+		dmz_dev->flags |= DMZ_BDEV_DYING;
-+	}
-+
-+	return !(dmz_dev->flags & DMZ_BDEV_DYING);
-+}
-+
-+/*
-  * Process a new BIO.
-  */
- static int dmz_map(struct dm_target *ti, struct bio *bio)
-@@ -902,8 +924,8 @@ static int dmz_prepare_ioctl(struct dm_t
- {
- 	struct dmz_target *dmz = ti->private;
- 
--	if (dmz_bdev_is_dying(dmz->dev))
--		return -ENODEV;
-+	if (!dmz_check_bdev(dmz->dev))
-+		return -EIO;
- 
- 	*bdev = dmz->dev->bdev;
- 
---- a/drivers/md/dm-zoned.h
-+++ b/drivers/md/dm-zoned.h
-@@ -72,6 +72,7 @@ struct dmz_dev {
- 
- /* Device flags. */
- #define DMZ_BDEV_DYING		(1 << 0)
-+#define DMZ_CHECK_BDEV		(2 << 0)
- 
- /*
-  * Zone descriptor.
-@@ -255,5 +256,6 @@ void dmz_schedule_reclaim(struct dmz_rec
-  * Functions defined in dm-zoned-target.c
-  */
- bool dmz_bdev_is_dying(struct dmz_dev *dmz_dev);
-+bool dmz_check_bdev(struct dmz_dev *dmz_dev);
- 
- #endif /* DM_ZONED_H */
+ 	} else {
+-		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
+ 		switch (desc_name) {
+ 		case HW_DESC_OWN:
+-			ret = GET_RX_DESC_OWN(pdesc);
++			ret = GET_RX_DESC_OWN(p_desc);
+ 			break;
+ 		case HW_DESC_RXPKT_LEN:
+-			ret = GET_RX_DESC_PKT_LEN(pdesc);
++			ret = GET_RX_DESC_PKT_LEN(p_desc);
++			break;
++		case HW_DESC_RXBUFF_ADDR:
++			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
+ 			break;
+ 		default:
+ 			WARN_ONCE(true, "rtl8192de: ERR rxdesc :%d not processed\n",
 
 
