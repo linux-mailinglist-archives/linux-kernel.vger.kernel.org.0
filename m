@@ -2,144 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3361512099C
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 663EB1209A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 16:28:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfLPPZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 10:25:12 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:50177 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728322AbfLPPZM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 10:25:12 -0500
-Received: by mail-io1-f72.google.com with SMTP id e13so5969068iob.17
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 07:25:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=t7KLeeGHAQU+IfhPXlUYZnaYXa0avOmf8P/RRgGivPY=;
-        b=qj1qHwqbtP3UeUYG8YdTvQBgSNqvvsCxYA9UbBgqcwAvVCKezHDnBK2qcIET4X0Qg3
-         AjtJ86OIfR/uWDWYW33zvgMSLjMCKEkTpeC2g1Xe+G4Lq2+yZWAFo3oHswgHZJUvsZH+
-         kFX/bQVdFQRr4XzG8pDveSj0FqRPOONAT+MZmj/ijIjlCCY7q37fgQHcp2J5OqeaJ8al
-         Qks5LJxN6ujUz4DwAl0CkH4X580jos+dWxomy+hwlUtcOqbsCVBtbwyvHi7Txgv4Tp7w
-         BRrFz7tIfFWK9s3+GR2TdZOBgazvUzhu1zh7Y2SiJkHhf+1GjGo6Own82fxyk2HzP0If
-         HhDQ==
-X-Gm-Message-State: APjAAAVrZcylxgqeASivp5qZbVRnaiJSGqSQ0FwCytP3TML2bJYdgtMu
-        tUN7152dOm/cYIp/OHVYr5/t8m4U71bdG2wIk1c7L6icQZ91
-X-Google-Smtp-Source: APXvYqxIG5w0KqPgovhJhP5e7TaZ7DIVJV+bqbUePz2yqOaSRDfukAuXlxhWqIajh2m81bDfCxk7jVklYLCx7AZl/LWfB7RYdGOO
+        id S1728394AbfLPP0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 10:26:54 -0500
+Received: from mout.web.de ([212.227.17.11]:46573 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728259AbfLPP0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:26:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576509998;
+        bh=bX6ezpgPKnZz7gXv6Z70uAvDUPR/OQwEjr37+ely8/4=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=oRZSc2g27iG8oOUDh5xGeaHdgEhX8L5cBKVPu7AjFVKUsVhx0jyZ/UPdvHJy0SsUr
+         +9VKPAkBTW0ycfBJHsCax6rXGRrDKmYY1yqMLlPET4NYA3ftq7fTNGk/YD2fdf222W
+         u/LJEVrX3nUKcjjiim+OX6nubcIEhbePYmxPUzYY=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.181.202]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LrJse-1hiHx42Amq-0137js; Mon, 16
+ Dec 2019 16:26:38 +0100
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
+References: <20191213055028.5574-2-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v7 01/13] exfat: add in-memory and on-disk structures and
+ headers
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Message-ID: <4aedc5e0-17e3-f0c5-9c47-8d1300e0af3f@web.de>
+Date:   Mon, 16 Dec 2019 16:26:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Received: by 2002:a92:901:: with SMTP id y1mr11977034ilg.274.1576509911135;
- Mon, 16 Dec 2019 07:25:11 -0800 (PST)
-Date:   Mon, 16 Dec 2019 07:25:11 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003cffc30599d3d1a0@google.com>
-Subject: kernel BUG at arch/x86/kvm/mmu/mmu.c:LINE!
-From:   syzbot <syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com>
-To:     bp@alien8.de, hpa@zytor.com, jmattson@google.com, joro@8bytes.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
-        sean.j.christopherson@intel.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, vkuznets@redhat.com, wanpengli@tencent.com,
-        x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191213055028.5574-2-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:33DO9kAi1XCUVZ6W1UO14ulKknd/vu8psU5mBGNcHnJL8PUFSzT
+ WPcc62OcJOilaM69r69WqHLU0sdTe6C1FFZjbixRELf4ub2TSnawkjYd3HTRRp+s3WDKle8
+ GJOOgWwwEKNoF+UGqoVM9UULkVbJDk3ASkFPRbMMKd79AX8TzXczcAC+f4W1Lpz/b7DJ4W8
+ 61YfuEWIl94ow4WuUoV6Q==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:uwE6IeKaNFY=:8qCfO7melHxdnpPgUaOQSb
+ 1N0wnoAUZW/bvKSlms+w5evBLiIy0VZ2WB7hA0frgX9eJvo1cGeNnEv+rGxCTYRLsCLNWrAus
+ 0oftlMROZaXC0GUko6dK+Y7lqi/rJGvsNVMOMPPEKNEsRgrtic70LpS0P/29LczbyFRwA3b+R
+ FF4EbJL1yTyKRTsnQhEIeW+0q6qvhmwfR2GlQ4Z5jyJWwqVXEBADhP/THCS6AeP70ZTnfB9u9
+ ++uuevNg5KE0aTROrokH8Mh/H9yntIcyD5PHGAuOxvi3ZKZwWMZGWlyYkZnBpcdOaOSO1buda
+ QDfpoZ9XjgRp17b4cFlJkG93bVHfhWORFMTO5P4jMg5oF9o+l5o7SZBrFF9hG7Rse7p/Y2kU9
+ sAlRkCiD7KDF0oaTCs6I81suiXxelKp3hQc8VdnZZsifijiKwuPeNemvxL9ul6P41mcebVWyt
+ uq0gp8uI9RAz8euB9keaIyeaxBwpk4gMPtQ9dZLobnZVVFc2zgy5Wxghy2Ck0LP3SAdWS62qN
+ 9jiVUC8p5QBUO16Cd0aFwDtsd4ViWcyWrj/GDEYMAu73huFsoZ091sCpLSV1OfEvZGHnV1xBE
+ XVfRpfNbv3SKeGslxbokzoKfJRxa3xLu8O4bFR1GJcA60blrd3IFTPzB9i1PfbTFkTic2Il3V
+ BeMh35NAqD06Ouxi2x/Huh38kpBzTwOdLW5vv/wY6bkyButCFMA+smSbKtGWMaul+gzOaIhYk
+ H01Vsb9l6fSrafaIyBU6x1ZAvrAF39jbWaGiVfg8vgUQ9HpBUdHTviAH8bsv1TgnwlOuvgEeC
+ LjdtVNGcCaqKL9tCSQcbDz3haVjUX64sAiJkkvCJVhgJNARL8IGDtbJLYEbZXpskbKPJ22bau
+ yIL/xFv8hpxg+DehHq3ojGkBX6Sd90kU+ZukhvjToqkyQX34/rOfSbQ3gjMJmwwdB2xVkkwPz
+ CooblE7vTam/beFR/B6b1C/1Ci2JlgFBg6Ds2eGupYjBw8CMkqYRjKRf6KFEjiOG7NB6nKdg6
+ 75sSqkQrvQja5HBw3Ujs+hG7epy5HdeapoUffNG08jf2vxi+h5GUVsvGQQg/12BW6H5PoV/6y
+ X3nH8TCGryZ0bYrHPCYhT9D2mUvAe6hnfEtGf1vPv3JeUHmPrph3ybeLy+hioLbhPNLdkWxO7
+ WwIV9isHy0K9ztEn3C1UlgJHBPvlQ7gZrCZNx2aAdiUS+wD8BoLQv5Ujm4Q1u6+dfHSIhF/ZM
+ pH9/0b1XVtjyzI18Anjk45hbEr3z/C7ODGQoxFb/dQkISZNzoLwePcHctq+4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+=E2=80=A6
+> +++ b/fs/exfat/exfat_fs.h
+=E2=80=A6
+> +/* type values */
 
-syzbot found the following crash on:
+How do you think about to convert the specification =E2=80=9C#define TYPE_=
+=E2=80=A6=E2=80=9D
+into enumerations?
 
-HEAD commit:    ae4b064e Merge tag 'afs-fixes-20191211' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149c0cfae00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79f79de2a27d3e3d
-dashboard link: https://syzkaller.appspot.com/bug?extid=c9d1fb51ac9d0d10c39d
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a97b7ee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15128396e00000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c9d1fb51ac9d0d10c39d@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at arch/x86/kvm/mmu/mmu.c:3416!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 9988 Comm: syz-executor218 Not tainted 5.5.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:transparent_hugepage_adjust+0x4c8/0x550  
-arch/x86/kvm/mmu/mmu.c:3416
-Code: ff ff e8 eb 5d 5e 00 48 8b 45 b8 48 83 e8 01 48 89 45 c8 e9 a3 fd ff  
-ff 48 89 df e8 c2 f8 9b 00 e9 7b fb ff ff e8 c8 5d 5e 00 <0f> 0b 48 8b 7d  
-c8 e8 ad f8 9b 00 e9 ba fc ff ff 49 8d 7f 30 e8 7f
-RSP: 0018:ffffc90001f27678 EFLAGS: 00010293
-RAX: ffff8880a875a200 RBX: ffffc90001f27768 RCX: ffffffff8116cc87
-RDX: 0000000000000000 RSI: ffffffff8116cdc8 RDI: 0000000000000007
-RBP: ffffc90001f276c0 R08: ffff8880a875a200 R09: ffffed1010d79682
-R10: ffffed1010d79681 R11: ffff888086bcb40b R12: 00000000000001d3
-R13: 0000000000094dd3 R14: 0000000000094dd1 R15: 0000000000000000
-FS:  0000000000fff880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000009af1b000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  tdp_page_fault+0x580/0x6a0 arch/x86/kvm/mmu/mmu.c:4315
-  kvm_mmu_page_fault+0x1dd/0x1800 arch/x86/kvm/mmu/mmu.c:5539
-  handle_ept_violation+0x259/0x560 arch/x86/kvm/vmx/vmx.c:5163
-  vmx_handle_exit+0x29f/0x1730 arch/x86/kvm/vmx/vmx.c:5921
-  vcpu_enter_guest+0x334f/0x6110 arch/x86/kvm/x86.c:8290
-  vcpu_run arch/x86/kvm/x86.c:8354 [inline]
-  kvm_arch_vcpu_ioctl_run+0x430/0x17b0 arch/x86/kvm/x86.c:8561
-  kvm_vcpu_ioctl+0x4dc/0xfc0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:2847
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440359
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc16334278 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440359
-RDX: 0000000000000000 RSI: 000000000000ae80 RDI: 0000000000000006
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000246 R12: 0000000000401be0
-R13: 0000000000401c70 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace e1a5b9c09fef2e33 ]---
-RIP: 0010:transparent_hugepage_adjust+0x4c8/0x550  
-arch/x86/kvm/mmu/mmu.c:3416
-Code: ff ff e8 eb 5d 5e 00 48 8b 45 b8 48 83 e8 01 48 89 45 c8 e9 a3 fd ff  
-ff 48 89 df e8 c2 f8 9b 00 e9 7b fb ff ff e8 c8 5d 5e 00 <0f> 0b 48 8b 7d  
-c8 e8 ad f8 9b 00 e9 ba fc ff ff 49 8d 7f 30 e8 7f
-RSP: 0018:ffffc90001f27678 EFLAGS: 00010293
-RAX: ffff8880a875a200 RBX: ffffc90001f27768 RCX: ffffffff8116cc87
-RDX: 0000000000000000 RSI: ffffffff8116cdc8 RDI: 0000000000000007
-RBP: ffffc90001f276c0 R08: ffff8880a875a200 R09: ffffed1010d79682
-R10: ffffed1010d79681 R11: ffff888086bcb40b R12: 00000000000001d3
-R13: 0000000000094dd3 R14: 0000000000094dd1 R15: 0000000000000000
-FS:  0000000000fff880(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 000000009af1b000 CR4: 00000000001426f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Regards,
+Markus
