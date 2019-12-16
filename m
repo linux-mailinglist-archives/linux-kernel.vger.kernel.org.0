@@ -2,88 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4766120748
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:37:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B41412074C
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 14:37:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfLPNhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 08:37:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46068 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727788AbfLPNhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 08:37:06 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00E49206A5;
-        Mon, 16 Dec 2019 13:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576503425;
-        bh=OlLjTfGQi5/U4jUE0lWUYWNrQUVkF9ABRFYEb3H6wRM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UN3eg7bkh56gQzbPJKX92DS2oPbfzk/s8NFCYvwapn+olTsxbwocauo+FhEgEbHcQ
-         oVENs8AlxstW3j1z2VhLfYFGQ6Xhmp7LZh1iQ3H4OC9FogVfZVkmRrIBpGFIyKVQQt
-         e6d4Og6pZ0miFTtZaa0ZOojvY10otamRfSr8r9r8=
-Date:   Mon, 16 Dec 2019 14:37:03 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: Re: [PATCH 04/14] media: sun4i-csi: Fix [HV]sync polarity handling
-Message-ID: <20191216133703.4udteob37py5s3ms@gilmour.lan>
-References: <20191215165924.28314-1-wens@kernel.org>
- <20191215165924.28314-5-wens@kernel.org>
+        id S1727966AbfLPNhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 08:37:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36270 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727892AbfLPNhR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 08:37:17 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z3so7292330wru.3
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 05:37:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=1zfuGQ1qe2hDELfu6AsH16OXoBlMUxIDB6zTtky9aok=;
+        b=mfQG1YAO5lpvU1Vr+JWzkRLUL4+MLvwVQCju5dR95vK39ickxPreTV8cjyqfC1RZ7A
+         P/jZgKsY1nfx1sZCQXpAlfcDLWO4sdXcv47WSQxchMkgLOvv0pF9ml9So0Ce+DsQ4sld
+         A4SwecqkQjpflZQPlp7jveQTwfWmlTRehY9QtN2J50MX4HDNMjiNsfbc9tayDT6HhFSM
+         0d4bTBihpuGzJ0/x3asu+wlk1maQDvp0wIordAZMWPsHIj/FTEEhQyfuDnzaXHOhoJk4
+         k0u0PtWl2gBjV2DhALyBegf6uEGro5SPOUvGfmjknYS2KdMTmoglU64YAQciXYUwOv7y
+         fz/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=1zfuGQ1qe2hDELfu6AsH16OXoBlMUxIDB6zTtky9aok=;
+        b=bVijFWdWrk0kGpYjzThD9CmTmcT6v6hu1LPCKijcFLwV1MS9IX5Xn95vW4SLs9qyCZ
+         EkAFTjd54uPixzhpB9PnJsIm+p/z6xdQt+WPcbmb20guwJNhKBv1ygUBzuG1gUza9AKX
+         pg8ZuKNu3NHhvOutmVgF37q3dUKY4kIWjz2U6iuavBGTQv1ed+BcRPcNbLVzgp/tw1OF
+         RJROwK26RTamLGiHbdKU0Wa8HqwmP8CpRion17EDBpDRk4zH5wB+xkfhY21a9++VeS7X
+         LhjmzJ1uU8Q2XATYec9ToB0LmRFOYxq13GzhDPJKe3r+jHkFWshORa7v9wI9mH/jkeEx
+         Mzow==
+X-Gm-Message-State: APjAAAUbibpGTUNj7NGxzHJjqFZMrzTi3RX5Ne0RU1nwOsANb3yoaufJ
+        HS8K2ZV0HIMJ5MMQFL4Ryw==
+X-Google-Smtp-Source: APXvYqwpwv6Xs2Lty1Kg3w+du/QWBucDPrAljXRXjF0XXtRvy9m0xrq3s68FKBgDgKLHkBnGQXZYPw==
+X-Received: by 2002:adf:dfd2:: with SMTP id q18mr30194212wrn.152.1576503436233;
+        Mon, 16 Dec 2019 05:37:16 -0800 (PST)
+Received: from ninjahub.lan (host-92-15-174-53.as43234.net. [92.15.174.53])
+        by smtp.gmail.com with ESMTPSA id e8sm21495101wrt.7.2019.12.16.05.37.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 05:37:15 -0800 (PST)
+From:   Jules Irenge <jbi.octave@gmail.com>
+X-Google-Original-From: Jules Irenge <maxx@ninjahub.org>
+Date:   Mon, 16 Dec 2019 13:37:08 +0000 (GMT)
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Jules Irenge <jbi.octave@gmail.com>, bokun.feng@gmail.com,
+        mingo@redhat.com, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel: events: add releases() notation
+In-Reply-To: <20191216083128.GI2844@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.LFD.2.21.1912161335320.23578@ninjahub.org>
+References: <20191216002400.89985-1-jbi.octave@gmail.com> <20191216083128.GI2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2fe4ttno4f4fmseg"
-Content-Disposition: inline
-In-Reply-To: <20191215165924.28314-5-wens@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---2fe4ttno4f4fmseg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Mon, Dec 16, 2019 at 12:59:14AM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> The Allwinner camera sensor interface has a different definition of
-> [HV]sync. While the timing diagram uses the names HSYNC and VSYNC,
-> the note following the diagram and register names use HREF and VREF.
-> Combined they imply the hardware uses either [HV]REF or inverted
-> [HV]SYNC. There are also registers to set horizontal skip lengths
-> in pixels and vertical skip lengths in lines, also known as back
-> porches.
->
-> Fix the polarity handling by using the opposite polarity flag for
-> the checks. Also rename `[hv]sync_pol` to `[hv]ref_pol` to better
-> match the hardware register description.
->
-> Fixes: 577bbf23b758 ("media: sunxi: Add A10 CSI driver")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+On Mon, 16 Dec 2019, Peter Zijlstra wrote:
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+> On Mon, Dec 16, 2019 at 12:24:00AM +0000, Jules Irenge wrote:
+> > Add releases() notation to remove issue detected by sparse
+> > context imbalance in perf_output_end() - unexpected unlock
+> 
+> None of the perf code uses the __acquire / __release annotations crud.
+> Also, your annotation is broken, I think it should be __releases(RCU) or
+> something like that.
+> 
+> 
 
-Thanks!
-Maxime
-
---2fe4ttno4f4fmseg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfeIfwAKCRDj7w1vZxhR
-xRA/AP4vF6S6Kyoc+sq1NvPSmvANUDxkredIbI6JCHlMsiFG3QD9H7FUVTe0FnrF
-Al8s9SSOmN2Cb9+DM0+mq5Jb6GxZyQQ=
-=u2Iv
------END PGP SIGNATURE-----
-
---2fe4ttno4f4fmseg--
+Thanks for the response. I already updated. 
