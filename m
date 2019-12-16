@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FF66121695
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:30:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A46F9121836
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 19:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731005AbfLPSMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 13:12:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58002 "EHLO mail.kernel.org"
+        id S1729192AbfLPSmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 13:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730988AbfLPSMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 13:12:42 -0500
+        id S1728985AbfLPSAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 13:00:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E304206E0;
-        Mon, 16 Dec 2019 18:12:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8027F20726;
+        Mon, 16 Dec 2019 18:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576519962;
-        bh=0meya3MA2lOI1CtkbdB1xT+Fow3FlBRZRoOpoYC2tGg=;
+        s=default; t=1576519246;
+        bh=Nnc60p4++HB5zuwxelEQemkFzKWE5A60MedJJEkJqyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wwmqZRPUEY0kOsdcaBOoKpF3uVGwvN2UZr7WgFJ2CfKGwhonMSoy60IA27pVwQ8+E
-         ES5PWU1rVsFpoq6bwAzxe+goCa2ZesqxlVSGvXTYCHW5wjlM0vhntX21rC/piXDC+N
-         Q5WtZUFgEHK7aRE2XscdvFQhVvjZQqrd9B0qN5Ao=
+        b=yndj8aJPoEm2l1/2wzsDf+y87FiskYhgS8lHYDHubJdwkCMduJBsH0RQCdubnV1pF
+         BR3v2V++DD2QsDNOKaJac69fotou+pSpueggld2fuqY1q16qAWNYDqfkgkeYt3qsqv
+         5+XMtCivHAZOULcJJgqBxcz28cZO7HHHKoNW1CiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Quinn Tran <qutran@marvell.com>,
-        Himanshu Madhani <hmadhani@marvell.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Tony Lindgren <tony@atomide.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 140/180] scsi: qla2xxx: Fix different size DMA Alloc/Unmap
-Date:   Mon, 16 Dec 2019 18:49:40 +0100
-Message-Id: <20191216174842.923126364@linuxfoundation.org>
+Subject: [PATCH 4.14 255/267] power: supply: cpcap-battery: Fix signed counter sample register
+Date:   Mon, 16 Dec 2019 18:49:41 +0100
+Message-Id: <20191216174916.649511828@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191216174806.018988360@linuxfoundation.org>
-References: <20191216174806.018988360@linuxfoundation.org>
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
+References: <20191216174848.701533383@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quinn Tran <qutran@marvell.com>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit d376dbda187317d06d3a2d495b43a7983e4a3250 ]
+[ Upstream commit c68b901ac4fa969db8917b6a9f9b40524a690d20 ]
 
-[   17.177276] qla2xxx 0000:05:00.0: DMA-API: device driver frees DMA memory
-    with different size [device address=0x00000006198b0000] [map size=32784 bytes]
-    [unmap size=8208 bytes]
-[   17.177390] RIP: 0010:check_unmap+0x7a2/0x1750
-[   17.177425] Call Trace:
-[   17.177438]  debug_dma_free_coherent+0x1b5/0x2d5
-[   17.177470]  dma_free_attrs+0x7f/0x140
-[   17.177489]  qla24xx_sp_unmap+0x1e2/0x610 [qla2xxx]
-[   17.177509]  qla24xx_async_gnnft_done+0x9c6/0x17d0 [qla2xxx]
-[   17.177535]  qla2x00_do_work+0x514/0x2200 [qla2xxx]
+The accumulator sample register is signed 32-bits wide register on
+droid 4. And only the earlier version of cpcap has a signed 24-bits
+wide register. We're currently passing it around as unsigned, so
+let's fix that and use sign_extend32() for the earlier revision.
 
-Fixes: b5f3bc39a0e8 ("scsi: qla2xxx: Fix inconsistent DMA mem alloc/free")
-Signed-off-by: Quinn Tran <qutran@marvell.com>
-Signed-off-by: Himanshu Madhani <hmadhani@marvell.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/qla2xxx/qla_gs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/power/supply/cpcap-battery.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
-index 9f58e591666da..ebf223cfebbc5 100644
---- a/drivers/scsi/qla2xxx/qla_gs.c
-+++ b/drivers/scsi/qla2xxx/qla_gs.c
-@@ -4152,7 +4152,7 @@ int qla24xx_async_gpnft(scsi_qla_host_t *vha, u8 fc4_type, srb_t *sp)
- 								rspsz,
- 								&sp->u.iocb_cmd.u.ctarg.rsp_dma,
- 								GFP_KERNEL);
--		sp->u.iocb_cmd.u.ctarg.rsp_allocated_size = sizeof(struct ct_sns_pkt);
-+		sp->u.iocb_cmd.u.ctarg.rsp_allocated_size = rspsz;
- 		if (!sp->u.iocb_cmd.u.ctarg.rsp) {
- 			ql_log(ql_log_warn, vha, 0xffff,
- 			    "Failed to allocate ct_sns request.\n");
+diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cpcap-battery.c
+index fe7fcf3a2ad03..7df9d432ee421 100644
+--- a/drivers/power/supply/cpcap-battery.c
++++ b/drivers/power/supply/cpcap-battery.c
+@@ -82,7 +82,7 @@ struct cpcap_battery_config {
+ };
+ 
+ struct cpcap_coulomb_counter_data {
+-	s32 sample;		/* 24-bits */
++	s32 sample;		/* 24 or 32 bits */
+ 	s32 accumulator;
+ 	s16 offset;		/* 10-bits */
+ };
+@@ -213,7 +213,7 @@ static int cpcap_battery_get_current(struct cpcap_battery_ddata *ddata)
+  * TI or ST coulomb counter in the PMIC.
+  */
+ static int cpcap_battery_cc_raw_div(struct cpcap_battery_ddata *ddata,
+-				    u32 sample, s32 accumulator,
++				    s32 sample, s32 accumulator,
+ 				    s16 offset, u32 divider)
+ {
+ 	s64 acc;
+@@ -224,7 +224,6 @@ static int cpcap_battery_cc_raw_div(struct cpcap_battery_ddata *ddata,
+ 	if (!divider)
+ 		return 0;
+ 
+-	sample &= 0xffffff;		/* 24-bits, unsigned */
+ 	offset &= 0x7ff;		/* 10-bits, signed */
+ 
+ 	switch (ddata->vendor) {
+@@ -259,7 +258,7 @@ static int cpcap_battery_cc_raw_div(struct cpcap_battery_ddata *ddata,
+ 
+ /* 3600000μAms = 1μAh */
+ static int cpcap_battery_cc_to_uah(struct cpcap_battery_ddata *ddata,
+-				   u32 sample, s32 accumulator,
++				   s32 sample, s32 accumulator,
+ 				   s16 offset)
+ {
+ 	return cpcap_battery_cc_raw_div(ddata, sample,
+@@ -268,7 +267,7 @@ static int cpcap_battery_cc_to_uah(struct cpcap_battery_ddata *ddata,
+ }
+ 
+ static int cpcap_battery_cc_to_ua(struct cpcap_battery_ddata *ddata,
+-				  u32 sample, s32 accumulator,
++				  s32 sample, s32 accumulator,
+ 				  s16 offset)
+ {
+ 	return cpcap_battery_cc_raw_div(ddata, sample,
+@@ -312,6 +311,8 @@ cpcap_battery_read_accumulated(struct cpcap_battery_ddata *ddata,
+ 	/* Sample value CPCAP_REG_CCS1 & 2 */
+ 	ccd->sample = (buf[1] & 0x0fff) << 16;
+ 	ccd->sample |= buf[0];
++	if (ddata->vendor == CPCAP_VENDOR_TI)
++		ccd->sample = sign_extend32(24, ccd->sample);
+ 
+ 	/* Accumulator value CPCAP_REG_CCA1 & 2 */
+ 	ccd->accumulator = ((s16)buf[3]) << 16;
 -- 
 2.20.1
 
