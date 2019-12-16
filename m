@@ -2,115 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BEDF11FD9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 05:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE4111FDAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 16 Dec 2019 05:50:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfLPEgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 15 Dec 2019 23:36:19 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:34739 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726638AbfLPEgT (ORCPT
+        id S1726846AbfLPEuB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 15 Dec 2019 23:50:01 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:36044 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfLPEuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Dec 2019 23:36:19 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576470978; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=1IOCtn9qRak1dMm874uHU1b5mpiz11s+B6M7qcU1U20=;
- b=ptTGsjWJiPhuc+kIkNDEKEG0XaBaC4YAuziuODHud8ucJClccDiPDen7WZUfmXv7i9vLTaeB
- uyXvRISj2wtcFBbTtGjHNKrpjpYSasbyUyeBQTrer28rbrXxZacQvFkDlqFLYkoFSybgZqXV
- PvFnKAbrAtIrtS74Lvr1YnKe1+0=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df709bd.7f17c1ea4b90-smtp-out-n01;
- Mon, 16 Dec 2019 04:36:13 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4C25CC447A2; Mon, 16 Dec 2019 04:36:11 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 69947C433CB;
-        Mon, 16 Dec 2019 04:36:10 +0000 (UTC)
+        Sun, 15 Dec 2019 23:50:00 -0500
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id xBG4nstr010686;
+        Mon, 16 Dec 2019 13:49:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xBG4nstr010686
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576471795;
+        bh=5/7EtpYysHXSpkosM3HRCkSpxTMVEjj1QJPpob2x148=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=UkWkxvBEaIfR2P9nc9Rn4RGtqDGe+VvgoxSnvfANZoYzMkLtcXjfVVK/fsVDHDeEu
+         3vBMLZROVuiftulpUeCgZR09Q8RvCs/cMORXilEs/HGgZlVue7Wq2/2li6PC3fuwDu
+         IYUpa2xE99GixAgVU+dKlmC/JUp35VOIuBSvZ/MCWZyghCJC6hUN/mkDZbYXr3+nG7
+         KVc/CE7i0PI6DlzAVsSKBYJGbbqnAVPYyoLPz3zHusfRdd6sJwIEgC5Dso3Ki98BsS
+         C35t5zMOShRJLfakDWjhn4dwOdPP+/9/I38DgOjNO1lNs4C+COcjAfAgljjU+obR4K
+         kUM/oU15dD1Ow==
+X-Nifty-SrcIP: [209.85.221.178]
+Received: by mail-vk1-f178.google.com with SMTP id d17so901295vke.5;
+        Sun, 15 Dec 2019 20:49:54 -0800 (PST)
+X-Gm-Message-State: APjAAAWBhP2JcZpO00qx/vI0gr/QvxOtiUOx8xghPTCPIP/Hn6vpd4vA
+        uXgIomOFuZeXj3CyZWmrfdqaoZeZ1nP5VlG0S7I=
+X-Google-Smtp-Source: APXvYqz35kOLUZ2z+OuiTtbn2CHp56wPlFE2bzoPB78j9pXor4kPi41IeSe4cHug5H0b0brmIToB41xZkiyYqevu5m0=
+X-Received: by 2002:a1f:72c3:: with SMTP id n186mr10233164vkc.12.1576471793202;
+ Sun, 15 Dec 2019 20:49:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Dec 2019 12:36:10 +0800
-From:   cang@codeaurora.org
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] scsi: ufs: Modulize ufs-bsg
-In-Reply-To: <5691bfa1-42e5-3c5f-2497-590bcc0cb2b1@acm.org>
-References: <1576054123-16417-1-git-send-email-cang@codeaurora.org>
- <0101016ef425ef65-5c4508cc-5e76-4107-bb27-270f66acaa9a-000000@us-west-2.amazonses.com>
- <20191212045357.GA415177@yoga>
- <0101016ef8b2e2f8-72260b08-e6ad-42fc-bd4b-4a0a72c5c9b3-000000@us-west-2.amazonses.com>
- <20191212063703.GC415177@yoga>
- <5691bfa1-42e5-3c5f-2497-590bcc0cb2b1@acm.org>
-Message-ID: <926dd55d8d0dc762b1f6461495fc747a@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+References: <cover.1575879069.git.tommyhebb@gmail.com> <1eaa4143fdb000563cde114bb7e0166b1fc229bf.1575879069.git.tommyhebb@gmail.com>
+In-Reply-To: <1eaa4143fdb000563cde114bb7e0166b1fc229bf.1575879069.git.tommyhebb@gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 16 Dec 2019 13:49:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARHuMaKUtsX8qJx2XiH+OciNFo+w_WBqZHKHV+ZQSvAwg@mail.gmail.com>
+Message-ID: <CAK7LNARHuMaKUtsX8qJx2XiH+OciNFo+w_WBqZHKHV+ZQSvAwg@mail.gmail.com>
+Subject: Re: [PATCH 1/4] kconfig: list all definitions of a symbol in help text
+To:     Thomas Hebb <tommyhebb@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-16 05:49, Bart Van Assche wrote:
-> On 2019-12-11 22:37, Bjorn Andersson wrote:
->> It's the asymmetry that I don't like.
->> 
->> Perhaps if you instead make ufshcd platform_device_register_data() the
->> bsg device you would solve the probe ordering, the remove will be
->> symmetric and module autoloading will work as well (although then you
->> need a MODULE_ALIAS of platform:device-name).
-> 
-> Hi Bjorn,
-> 
-> From Documentation/driver-api/driver-model/platform.rst:
-> "Platform devices are devices that typically appear as autonomous
-> entities in the system. This includes legacy port-based devices and
-> host bridges to peripheral buses, and most controllers integrated
-> into system-on-chip platforms.  What they usually have in common
-> is direct addressing from a CPU bus.  Rarely, a platform_device will
-> be connected through a segment of some other kind of bus; but its
-> registers will still be directly addressable."
-> 
-> Do you agree that the above description is not a good match for the
-> ufs-bsg kernel module?
-> 
-> Thanks,
-> 
-> Bart.
+On Mon, Dec 9, 2019 at 5:19 PM Thomas Hebb <tommyhebb@gmail.com> wrote:
+>
+> In Kconfig, each symbol (representing a config option) can be defined in
+> multiple places. Each definition may or may not have a prompt, which
+> allows the option to be set via an interface like menuconfig. Each
+> definition has a set of dependencies, which determine whether its prompt
+> is visible and whether other pieces of the definition, like a default
+> value, take effect.
+>
+> Historically, a symbol's help text (i.e. what's shown when a user
+> presses '?' in menuconfig) contained some symbol-wide information not
+> tied to any particular definition (e.g. what other symbols it selects)
+> as well as the location (file name and line number) and dependencies of
+> each prompt. Notably, the help text did not show the location or
+> dependencies of definitions without prompts.
+>
+> Because this made it hard to reason about symbols that had no prompts,
+> bcdedcc1afd6 ("menuconfig: print more info for symbol without prompts")
+> changed the help text so that, instead of containing the location and
+> dependencies of each prompt, it contained the location and dependencies
+> of the symbol's first definition, regardless of whether or not that
+> definition had a prompt.
+>
+> For symbols with only one definition, that change makes sense. However,
+> it breaks down for symbols with multiple definitions: each definition
+> has its own set of dependencies (the `dep` field of `struct menu`), and
+> those dependencies are ORed together to get the symbol's dependency list
+> (the `dir_dep` field of `struct symbol`). By printing only the
+> dependencies of the first definition, the help text misleads users into
+> believing that an option is more narrowly-applicable than it actually
+> is.
+>
+> For an extreme example of this, we can look at the SYS_TEXT_BASE symbol
+> in the Das U-Boot project, which also uses Kconfig. (I could not find an
 
-Hi Bart,
+"Das U-Boot" is a moving reference.
 
-I missed this one.
-How about making it a plain device and add it from ufs driver?
+Could you explicitly say the release version (e.g. v2019.10)
+from which you took the example?
 
-Thanks,
 
-Can Guo.
+> illustrative example in the Linux source, unfortunately). This config
+> option specifies the load address of the built binary and, as such, is
+> applicable to basically every configuration possible. And yet, without
+> this patch, its help text is as follows:
+>
+>   Symbol: SYS_TEXT_BASE [=0x00200000]
+>   Type  : hex
+>   Prompt: Text Base
+>     Location:
+>       -> Boot images
+>     Defined at arch/arm/mach-aspeed/Kconfig:9
+>     Depends on: ARM [=y] && ARCH_ASPEED [=n]
+>
+> The help text indicates that the option only applicable for a specific
+> unselected architecture (aspeed), because that architecture's promptless
+> definition (which just sets a default value), happens to be the first
+> one seen.
+>
+> Because source locations and dependencies are fundamentally properties
+> of definitions and not of symbols, we should treat them as such. This
+> patch brings back the pre-bcdedcc1afd6 behavior for definitions with
+> prompts but also separately prints the location and dependencies of
+> those without prompts, solving the original problem in a different way.
+> With this change, our SYS_TEXT_BASE example becomes
+>
+>   Symbol: SYS_TEXT_BASE [=0x00200000]
+>   Type  : hex
+>   Defined with prompt at Kconfig:548
+>     Prompt: Text Base
+>     Depends on: !NIOS2 [=n] && !XTENSA [=n] && !EFI_APP [=n]
+>     Location:
+>       -> Boot images
+>   Defined without prompt at arch/arm/mach-aspeed/Kconfig:9
+>     Depends on: ARM [=y] && ARCH_ASPEED [=n]
+>   Defined without prompt at arch/arm/mach-socfpga/Kconfig:28
+>     Depends on: ARM [=y] && ARCH_SOCFPGA [=n]
+>   <snip>
+>   Defined without prompt at board/sifive/fu540/Kconfig:15
+>     Depends on: RISCV [=n] && TARGET_SIFIVE_FU540 [=n]
+>
+> which is a much more accurate representation.
+
+This is nice improvement (fix).
+
+Just a nit about the help format.
+I think "with prompt" / "without prompt" is redundant information,
+and a bit annoying.
+
+For the definition "with prompt",
+the next line is always " Prompt: ... ".
+
+For the definition "without prompt",
+the " Prompt: ... " line is missing.
+
+So, we can know the presence of the prompt, anyway.
+
+
+To simplify the for-loop, how about the code like this?
+
+        /* Print the definitions with prompts before the ones without */
+        for_all_properties(sym, prop, P_SYMBOL) {
+                str_printf(r, "Defined at %s:%d\n",
+                                prop->menu->file->name, prop->menu->lineno);
+
+                if (prop->menu->prompt)
+                        get_prompt_str(r, prop->menu->prompt, head);
+                else
+                        get_dep_str(r, prop->menu->dep, "  Depends on: ");
+        }
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
