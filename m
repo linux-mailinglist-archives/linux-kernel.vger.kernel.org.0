@@ -2,625 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E4F01239FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 23:28:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC66A123A06
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 23:29:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfLQW2d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 17:28:33 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:47908 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbfLQW2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 17:28:31 -0500
-Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=phil.sntech)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ihLKI-0001H9-AA; Tue, 17 Dec 2019 23:28:22 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     dri-devel@lists.freedesktop.org
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        christoph.muellner@theobroma-systems.com, heiko@sntech.de,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH v2 3/3] drm/panel: add panel driver for Leadtek LTK500HD1829
-Date:   Tue, 17 Dec 2019 23:28:12 +0100
-Message-Id: <20191217222812.19872-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191217222812.19872-1-heiko@sntech.de>
-References: <20191217222812.19872-1-heiko@sntech.de>
+        id S1726744AbfLQW3T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 17:29:19 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57830 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfLQW3S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 17:29:18 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHMT4QX084634;
+        Tue, 17 Dec 2019 22:29:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=WinYCZ/RHcEQP5GUOI5SFMAS3SdpMxoM5iaMD28Lx8U=;
+ b=k7XGpINcjCLf5XAOrXKHTVx/ZHVsue9yEyN/KKr1a+CQBNTECo1sAneTg5+WsW4sWXKT
+ 56k77uZaBpUOkNv+LztXxyXW/2AMBK3hfvTILs5NBnLOiUQmoApEX9u/8Ugpswk+V+w5
+ uK7rfwe6XsIsB1BW/swJ+HLbLjGmOgMcOCXoxus/Y0GaoKoQnr2zhmJbS48FW+uyKbD9
+ Aj1Wbw/d6vWunLA8hSMrcTm0dLw/pjA+qGlVZQxPrzJHxLeTgvWTvoBIJrlLltLFD7ib
+ dBwfwUhBNX0LpH0ShKpS9PGXD3hxL9dNxPq9yOS6Op3kxXDMUIXAS5N7WAjYP82s7aA0 mg== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2wvrcr9mhv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 22:29:13 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHMSvEO028614;
+        Tue, 17 Dec 2019 22:29:12 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wxm4wdppd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 22:29:08 +0000
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBHMSVxp026592;
+        Tue, 17 Dec 2019 22:28:31 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Dec 2019 14:28:31 -0800
+To:     Michal Suchanek <msuchanek@suse.de>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] scsi: blacklist: add VMware ESXi cdrom - broken tray emulation
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191217180840.9414-1-msuchanek@suse.de>
+Date:   Tue, 17 Dec 2019 17:28:28 -0500
+In-Reply-To: <20191217180840.9414-1-msuchanek@suse.de> (Michal Suchanek's
+        message of "Tue, 17 Dec 2019 19:08:40 +0100")
+Message-ID: <yq1bls6h9ir.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=961
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912170179
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912170179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-The LTK500HD1829 is 5.5" DSI display.
+Michal,
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
----
- drivers/gpu/drm/panel/Kconfig                 |  11 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../drm/panel/panel-leadtek-ltk500hd1829.c    | 533 ++++++++++++++++++
- 3 files changed, 545 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
+> +	{"VMware", "VMware", NULL, BLIST_NO_MATCH_VENDOR | BLIST_NO_TRAY},
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index fb1ded47677e..2ba8f4241680 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -98,6 +98,17 @@ config DRM_PANEL_KINGDISPLAY_KD097D04
- 	  24 bit RGB per pixel. It provides a MIPI DSI interface to
- 	  the host and has a built-in LED backlight.
- 
-+config DRM_PANEL_LEADTEK_LTK500HD1829
-+	tristate "Leadtek LTK500HD1829 panel"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y here if you want to enable support for Kingdisplay kd097d04
-+	  TFT-LCD modules. The panel has a 1536x2048 resolution and uses
-+	  24 bit RGB per pixel. It provides a MIPI DSI interface to
-+	  the host and has a built-in LED backlight.
-+
- config DRM_PANEL_SAMSUNG_LD9040
- 	tristate "Samsung LD9040 RGB/SPI panel"
- 	depends on OF && SPI
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 71d7722146a7..42d6679b156d 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -8,6 +8,7 @@ obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
- obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
- obj-$(CONFIG_DRM_PANEL_JDI_LT070ME05000) += panel-jdi-lt070me05000.o
- obj-$(CONFIG_DRM_PANEL_KINGDISPLAY_KD097D04) += panel-kingdisplay-kd097d04.o
-+obj-$(CONFIG_DRM_PANEL_LEADTEK_LTK500HD1829) += panel-leadtek-ltk500hd1829.o
- obj-$(CONFIG_DRM_PANEL_LG_LB035Q02) += panel-lg-lb035q02.o
- obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
- obj-$(CONFIG_DRM_PANEL_NEC_NL8048HL11) += panel-nec-nl8048hl11.o
-diff --git a/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c b/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
-new file mode 100644
-index 000000000000..e3b4fce357e1
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-leadtek-ltk500hd1829.c
-@@ -0,0 +1,533 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 Theobroma Systems Design und Consulting GmbH
-+ *
-+ * base on panel-kingdisplay-kd097d04.c
-+ * Copyright (c) 2017, Fuzhou Rockchip Electronics Co., Ltd
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <video/mipi_display.h>
-+
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_print.h>
-+
-+struct ltk500hd1829 {
-+	struct device *dev;
-+	struct drm_panel panel;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator *vcc;
-+	struct regulator *iovcc;
-+	bool prepared;
-+};
-+
-+struct ltk500hd1829_cmd {
-+	char cmd;
-+	char data;
-+};
-+
-+/*
-+ * There is no description in the Reference Manual about these commands.
-+ * We received them from the vendor, so just use them as is.
-+ */
-+static const struct ltk500hd1829_cmd init_code[] = {
-+	{ 0xE0, 0x00 },
-+	{ 0xE1, 0x93 },
-+	{ 0xE2, 0x65 },
-+	{ 0xE3, 0xF8 },
-+	{ 0x80, 0x03 },
-+	{ 0xE0, 0x04 },
-+	{ 0x2D, 0x03 },
-+	{ 0xE0, 0x01 },
-+	{ 0x00, 0x00 },
-+	{ 0x01, 0xB6 },
-+	{ 0x03, 0x00 },
-+	{ 0x04, 0xC5 },
-+	{ 0x17, 0x00 },
-+	{ 0x18, 0xBF },
-+	{ 0x19, 0x01 },
-+	{ 0x1A, 0x00 },
-+	{ 0x1B, 0xBF },
-+	{ 0x1C, 0x01 },
-+	{ 0x1F, 0x7C },
-+	{ 0x20, 0x26 },
-+	{ 0x21, 0x26 },
-+	{ 0x22, 0x4E },
-+	{ 0x37, 0x09 },
-+	{ 0x38, 0x04 },
-+	{ 0x39, 0x08 },
-+	{ 0x3A, 0x1F },
-+	{ 0x3B, 0x1F },
-+	{ 0x3C, 0x78 },
-+	{ 0x3D, 0xFF },
-+	{ 0x3E, 0xFF },
-+	{ 0x3F, 0x00 },
-+	{ 0x40, 0x04 },
-+	{ 0x41, 0xA0 },
-+	{ 0x43, 0x0F },
-+	{ 0x44, 0x0A },
-+	{ 0x45, 0x24 },
-+	{ 0x55, 0x01 },
-+	{ 0x56, 0x01 },
-+	{ 0x57, 0xA5 },
-+	{ 0x58, 0x0A },
-+	{ 0x59, 0x4A },
-+	{ 0x5A, 0x38 },
-+	{ 0x5B, 0x10 },
-+	{ 0x5C, 0x19 },
-+	{ 0x5D, 0x7C },
-+	{ 0x5E, 0x64 },
-+	{ 0x5F, 0x54 },
-+	{ 0x60, 0x48 },
-+	{ 0x61, 0x44 },
-+	{ 0x62, 0x35 },
-+	{ 0x63, 0x3A },
-+	{ 0x64, 0x24 },
-+	{ 0x65, 0x3B },
-+	{ 0x66, 0x39 },
-+	{ 0x67, 0x37 },
-+	{ 0x68, 0x56 },
-+	{ 0x69, 0x41 },
-+	{ 0x6A, 0x47 },
-+	{ 0x6B, 0x2F },
-+	{ 0x6C, 0x23 },
-+	{ 0x6D, 0x13 },
-+	{ 0x6E, 0x02 },
-+	{ 0x6F, 0x08 },
-+	{ 0x70, 0x7C },
-+	{ 0x71, 0x64 },
-+	{ 0x72, 0x54 },
-+	{ 0x73, 0x48 },
-+	{ 0x74, 0x44 },
-+	{ 0x75, 0x35 },
-+	{ 0x76, 0x3A },
-+	{ 0x77, 0x22 },
-+	{ 0x78, 0x3B },
-+	{ 0x79, 0x39 },
-+	{ 0x7A, 0x38 },
-+	{ 0x7B, 0x52 },
-+	{ 0x7C, 0x41 },
-+	{ 0x7D, 0x47 },
-+	{ 0x7E, 0x2F },
-+	{ 0x7F, 0x23 },
-+	{ 0x80, 0x13 },
-+	{ 0x81, 0x02 },
-+	{ 0x82, 0x08 },
-+	{ 0xE0, 0x02 },
-+	{ 0x00, 0x57 },
-+	{ 0x01, 0x77 },
-+	{ 0x02, 0x44 },
-+	{ 0x03, 0x46 },
-+	{ 0x04, 0x48 },
-+	{ 0x05, 0x4A },
-+	{ 0x06, 0x4C },
-+	{ 0x07, 0x4E },
-+	{ 0x08, 0x50 },
-+	{ 0x09, 0x55 },
-+	{ 0x0A, 0x52 },
-+	{ 0x0B, 0x55 },
-+	{ 0x0C, 0x55 },
-+	{ 0x0D, 0x55 },
-+	{ 0x0E, 0x55 },
-+	{ 0x0F, 0x55 },
-+	{ 0x10, 0x55 },
-+	{ 0x11, 0x55 },
-+	{ 0x12, 0x55 },
-+	{ 0x13, 0x40 },
-+	{ 0x14, 0x55 },
-+	{ 0x15, 0x55 },
-+	{ 0x16, 0x57 },
-+	{ 0x17, 0x77 },
-+	{ 0x18, 0x45 },
-+	{ 0x19, 0x47 },
-+	{ 0x1A, 0x49 },
-+	{ 0x1B, 0x4B },
-+	{ 0x1C, 0x4D },
-+	{ 0x1D, 0x4F },
-+	{ 0x1E, 0x51 },
-+	{ 0x1F, 0x55 },
-+	{ 0x20, 0x53 },
-+	{ 0x21, 0x55 },
-+	{ 0x22, 0x55 },
-+	{ 0x23, 0x55 },
-+	{ 0x24, 0x55 },
-+	{ 0x25, 0x55 },
-+	{ 0x26, 0x55 },
-+	{ 0x27, 0x55 },
-+	{ 0x28, 0x55 },
-+	{ 0x29, 0x41 },
-+	{ 0x2A, 0x55 },
-+	{ 0x2B, 0x55 },
-+	{ 0x2C, 0x57 },
-+	{ 0x2D, 0x77 },
-+	{ 0x2E, 0x4F },
-+	{ 0x2F, 0x4D },
-+	{ 0x30, 0x4B },
-+	{ 0x31, 0x49 },
-+	{ 0x32, 0x47 },
-+	{ 0x33, 0x45 },
-+	{ 0x34, 0x41 },
-+	{ 0x35, 0x55 },
-+	{ 0x36, 0x53 },
-+	{ 0x37, 0x55 },
-+	{ 0x38, 0x55 },
-+	{ 0x39, 0x55 },
-+	{ 0x3A, 0x55 },
-+	{ 0x3B, 0x55 },
-+	{ 0x3C, 0x55 },
-+	{ 0x3D, 0x55 },
-+	{ 0x3E, 0x55 },
-+	{ 0x3F, 0x51 },
-+	{ 0x40, 0x55 },
-+	{ 0x41, 0x55 },
-+	{ 0x42, 0x57 },
-+	{ 0x43, 0x77 },
-+	{ 0x44, 0x4E },
-+	{ 0x45, 0x4C },
-+	{ 0x46, 0x4A },
-+	{ 0x47, 0x48 },
-+	{ 0x48, 0x46 },
-+	{ 0x49, 0x44 },
-+	{ 0x4A, 0x40 },
-+	{ 0x4B, 0x55 },
-+	{ 0x4C, 0x52 },
-+	{ 0x4D, 0x55 },
-+	{ 0x4E, 0x55 },
-+	{ 0x4F, 0x55 },
-+	{ 0x50, 0x55 },
-+	{ 0x51, 0x55 },
-+	{ 0x52, 0x55 },
-+	{ 0x53, 0x55 },
-+	{ 0x54, 0x55 },
-+	{ 0x55, 0x50 },
-+	{ 0x56, 0x55 },
-+	{ 0x57, 0x55 },
-+	{ 0x58, 0x40 },
-+	{ 0x59, 0x00 },
-+	{ 0x5A, 0x00 },
-+	{ 0x5B, 0x10 },
-+	{ 0x5C, 0x09 },
-+	{ 0x5D, 0x30 },
-+	{ 0x5E, 0x01 },
-+	{ 0x5F, 0x02 },
-+	{ 0x60, 0x30 },
-+	{ 0x61, 0x03 },
-+	{ 0x62, 0x04 },
-+	{ 0x63, 0x06 },
-+	{ 0x64, 0x6A },
-+	{ 0x65, 0x75 },
-+	{ 0x66, 0x0F },
-+	{ 0x67, 0xB3 },
-+	{ 0x68, 0x0B },
-+	{ 0x69, 0x06 },
-+	{ 0x6A, 0x6A },
-+	{ 0x6B, 0x10 },
-+	{ 0x6C, 0x00 },
-+	{ 0x6D, 0x04 },
-+	{ 0x6E, 0x04 },
-+	{ 0x6F, 0x88 },
-+	{ 0x70, 0x00 },
-+	{ 0x71, 0x00 },
-+	{ 0x72, 0x06 },
-+	{ 0x73, 0x7B },
-+	{ 0x74, 0x00 },
-+	{ 0x75, 0xBC },
-+	{ 0x76, 0x00 },
-+	{ 0x77, 0x05 },
-+	{ 0x78, 0x2E },
-+	{ 0x79, 0x00 },
-+	{ 0x7A, 0x00 },
-+	{ 0x7B, 0x00 },
-+	{ 0x7C, 0x00 },
-+	{ 0x7D, 0x03 },
-+	{ 0x7E, 0x7B },
-+	{ 0xE0, 0x04 },
-+	{ 0x09, 0x10 },
-+	{ 0x2B, 0x2B },
-+	{ 0x2E, 0x44 },
-+	{ 0xE0, 0x00 },
-+	{ 0xE6, 0x02 },
-+	{ 0xE7, 0x02 },
-+	{ 0x35, 0x00 },
-+};
-+
-+static inline
-+struct ltk500hd1829 *panel_to_ltk500hd1829(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct ltk500hd1829, panel);
-+}
-+
-+static int ltk500hd1829_unprepare(struct drm_panel *panel)
-+{
-+	struct ltk500hd1829 *ctx = panel_to_ltk500hd1829(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (!ctx->prepared)
-+		return 0;
-+
-+	ret = mipi_dsi_dcs_set_display_off(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
-+			      ret);
-+
-+	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(panel->dev, "failed to enter sleep mode: %d\n",
-+			      ret);
-+	}
-+
-+	/* 120ms to enter sleep mode */
-+	msleep(120);
-+
-+	regulator_disable(ctx->iovcc);
-+	regulator_disable(ctx->vcc);
-+
-+	ctx->prepared = false;
-+
-+	return 0;
-+}
-+
-+static int ltk500hd1829_prepare(struct drm_panel *panel)
-+{
-+	struct ltk500hd1829 *ctx = panel_to_ltk500hd1829(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	unsigned int i;
-+	int ret;
-+
-+	if (ctx->prepared)
-+		return 0;
-+
-+	ret = regulator_enable(ctx->vcc);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable vci supply: %d\n", ret);
-+		return ret;
-+	}
-+	ret = regulator_enable(ctx->iovcc);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable iovcc supply: %d\n", ret);
-+		goto disable_vcc;
-+	}
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	/* tRW: 10us */
-+	usleep_range(10, 20);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+
-+	/* tRT: >= 5ms */
-+	usleep_range(5000, 6000);
-+
-+	for (i = 0; i < ARRAY_SIZE(init_code); i++) {
-+		ret = mipi_dsi_generic_write(dsi, &init_code[i],
-+					sizeof(struct ltk500hd1829_cmd));
-+		if (ret < 0) {
-+			DRM_DEV_ERROR(panel->dev, "failed towrite init cmds: %d\n",
-+				      ret);
-+			goto disable_iovcc;
-+		}
-+	}
-+
-+	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(panel->dev, "failed to exit sleep mode: %d\n",
-+			      ret);
-+		goto disable_iovcc;
-+	}
-+
-+	/* 120ms to exit sleep mode */
-+	msleep(120);
-+
-+	ret = mipi_dsi_dcs_set_display_on(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(panel->dev, "failed to set display on: %d\n",
-+			      ret);
-+		goto disable_iovcc;
-+	}
-+
-+	ctx->prepared = true;
-+
-+	return 0;
-+
-+disable_iovcc:
-+	regulator_disable(ctx->iovcc);
-+disable_vcc:
-+	regulator_disable(ctx->vcc);
-+	return ret;
-+}
-+
-+static const struct drm_display_mode default_mode = {
-+	.hdisplay	= 720,
-+	.hsync_start	= 720 + 50,
-+	.hsync_end	= 720 + 50 + 50,
-+	.htotal		= 720 + 50 + 50 + 50,
-+	.vdisplay	= 1280,
-+	.vsync_start	= 1280 + 30,
-+	.vsync_end	= 1280 + 30 + 4,
-+	.vtotal		= 1280 + 30 + 4 + 12,
-+	.vrefresh	= 60,
-+	.clock		= 41600,
-+	.width_mm	= 62,
-+	.height_mm	= 110,
-+};
-+
-+static int ltk500hd1829_get_modes(struct drm_panel *panel,
-+				  struct drm_connector *connector)
-+{
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(connector->dev, &default_mode);
-+	if (!mode) {
-+		DRM_DEV_ERROR(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
-+			      default_mode.hdisplay, default_mode.vdisplay,
-+			      default_mode.vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs ltk500hd1829_funcs = {
-+	.unprepare = ltk500hd1829_unprepare,
-+	.prepare = ltk500hd1829_prepare,
-+	.get_modes = ltk500hd1829_get_modes,
-+};
-+
-+static int ltk500hd1829_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct ltk500hd1829 *ctx;
-+	struct device *dev = &dsi->dev;
-+	int ret;
-+
-+	ctx = devm_kzalloc(&dsi->dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+							   GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		DRM_DEV_ERROR(dev, "cannot get reset gpio\n");
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+
-+	ctx->vcc = devm_regulator_get(dev, "vcc");
-+	if (IS_ERR(ctx->vcc)) {
-+		ret = PTR_ERR(ctx->vcc);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request vcc regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	ctx->iovcc = devm_regulator_get(dev, "iovcc");
-+	if (IS_ERR(ctx->iovcc)) {
-+		ret = PTR_ERR(ctx->iovcc);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request iovcc regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ctx->dev = dev;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
-+
-+	drm_panel_init(&ctx->panel, &dsi->dev, &ltk500hd1829_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "Failed to find backlight: %d\n", ret);
-+		return ret;
-+	}
-+
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed: %d\n", ret);
-+		drm_panel_remove(&ctx->panel);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void ltk500hd1829_shutdown(struct mipi_dsi_device *dsi)
-+{
-+	struct ltk500hd1829 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = drm_panel_unprepare(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to unprepare panel: %d\n",
-+			      ret);
-+
-+	ret = drm_panel_disable(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to disable panel: %d\n",
-+			      ret);
-+}
-+
-+static int ltk500hd1829_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct ltk500hd1829 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ltk500hd1829_shutdown(dsi);
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "failed to detach from DSI host: %d\n",
-+			      ret);
-+
-+	drm_panel_remove(&ctx->panel);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ltk500hd1829_of_match[] = {
-+	{ .compatible = "leadtek,ltk500hd1829", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, ltk500hd1829_of_match);
-+
-+static struct mipi_dsi_driver ltk500hd1829_driver = {
-+	.driver = {
-+		.name = "panel-leadtek-ltk500hd1829",
-+		.of_match_table = ltk500hd1829_of_match,
-+	},
-+	.probe = ltk500hd1829_probe,
-+	.remove = ltk500hd1829_remove,
-+	.shutdown = ltk500hd1829_shutdown,
-+};
-+module_mipi_dsi_driver(ltk500hd1829_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@theobroma-systems.com>");
-+MODULE_DESCRIPTION("Leadtek LTK500HD1829 panel driver");
-+MODULE_LICENSE("GPL v2");
+Please don't introduce a blist flag to work around deficiencies in the
+matching interface. I suggest you tweak the matching functions so they
+handle a NULL vendor string correctly.
+
 -- 
-2.24.0
-
+Martin K. Petersen	Oracle Linux Engineering
