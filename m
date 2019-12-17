@@ -2,62 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95B57123575
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8778123568
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:08:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727708AbfLQTOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:14:39 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55370 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbfLQTOf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:14:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 8A1FDADA1;
-        Tue, 17 Dec 2019 19:14:34 +0000 (UTC)
-Date:   Tue, 17 Dec 2019 11:08:03 -0800
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-Subject: Re: [PATCH v3] mm/hugetlb: Defer freeing of huge pages if in
- non-task context
-Message-ID: <20191217190803.xs6xkmm4struzmru@linux-p48b>
-Mail-Followup-To: Waiman Long <longman@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>, Michal Hocko <mhocko@kernel.org>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>
-References: <20191217170331.30893-1-longman@redhat.com>
- <20191217185557.tgtsvaad24j745gf@linux-p48b>
- <4f7b23c9-6e05-3b71-9a94-f8d494d8b0e1@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <4f7b23c9-6e05-3b71-9a94-f8d494d8b0e1@redhat.com>
-User-Agent: NeoMutt/20180716
+        id S1727241AbfLQTIt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:08:49 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46280 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfLQTIt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 14:08:49 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z124so6161016pgb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 11:08:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=M6ODtAK/kSPelKWo8qlr9AI1paG4/5fDCdQdMGc8cow=;
+        b=ZZTVTJg+L/PA6VmNqIt/3FCmTOg4djZsQiSvscUk3zZc5nQjBWomowCzIXvBlzUXNd
+         mxj6r/CCoBn8hRs9dEO4PnnnM2thQdnOs2ev8XTLU9OTaRdpbbxn56TudNEblGV0SMyf
+         5oaI2e6PKqeBpqrvW8nbu6yM3lY36oKKVE+VAGu4W6eAaoqAa+NnNVEHDE+jMgrysBL1
+         L384H7mgWGRUH4ry94uE7pU1QHSEFMwP/vPmNGoFWLr7VuKTIBXjoTMMDoWdksJ7QKzZ
+         etwMVRDuZDwlHtviWS2hmKY5uTqNt0BwulsdGwsWvZh8toG3F/rqoOGhedu4VQrZjq2f
+         OnAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=M6ODtAK/kSPelKWo8qlr9AI1paG4/5fDCdQdMGc8cow=;
+        b=aQ6ij6Rm66T8ffw1ZjMdUgY4U2cL3sV1BXnB+MaSWkrIhEw4gHcobdqll0orc0fEgr
+         6ZZ3duvmamx5DpXntJJAX1L+5lgi0FWATxVuhRwA16Yn8TKHq7BWpXyQw7Oog3JzIYHK
+         5GIvdWRbJdwPSv8Q5GXN2NYzOerP6WgP9oUQeQUH/Hap1CbLKA3ENJwN3q4DV9hlDOsG
+         +KUAbu0ASfn0xcmBgJpli4L6r2SFz4W5Fns66VeoC+vZUlos3q66fMrXMv7QlUIgfqdQ
+         BGu6kf+WQbScziG9AHHo+B+/6KUxYMECLe0pnGirdBddsMxaUFtNvsKHhW2Qiwt9pGr9
+         yJkQ==
+X-Gm-Message-State: APjAAAUjUcAbkBB2vU0LFFJScr0vqiJ+E8SWCPc714Jzzk5LkSEseCju
+        zFW+/L2OkZpQF3IdlEgvwUoblg==
+X-Google-Smtp-Source: APXvYqwwYwEW8UujHenDnM3HGny/IvVE2Z/yHHlmaPBn+WxMZ+NHOf6z5+i7m2NFWdAv96HkaHfebA==
+X-Received: by 2002:a63:f743:: with SMTP id f3mr26884769pgk.28.1576609728600;
+        Tue, 17 Dec 2019 11:08:48 -0800 (PST)
+Received: from nagraj.local ([49.206.21.239])
+        by smtp.gmail.com with ESMTPSA id 12sm1697085pfn.177.2019.12.17.11.08.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 11:08:47 -0800 (PST)
+From:   Sumit Semwal <sumit.semwal@linaro.org>
+To:     sumit.semwal@linaro.org
+Cc:     afd@ti.com, benjamin.gaignard@linaro.org, lmark@codeaurora.org,
+        labbott@redhat.com, Brian.Starkey@arm.com, john.stultz@linaro.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        zhong jiang <zhongjiang@huawei.com>
+Subject: [PATCH] dma-heap: Make the symbol 'dma_heap_ioctl_cmds' static
+Date:   Wed, 18 Dec 2019 00:38:22 +0530
+Message-Id: <20191217190822.1969-1-sumit.semwal@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019, Waiman Long wrote:
+From: zhong jiang <zhongjiang@huawei.com>
 
->I could use this helper, but the statement is simple enough to understand.
+Fix the following sparse warning.
 
-Yes, but I'm mainly thinking for the sake of anyone looking through
-llist users in the future, which can easily miss this when grepping
-for example. Anyway, yes probably does not merit a v4 unless akpm wants
-to fold it in or something.
+drivers/dma-buf/dma-heap.c:109:14: warning: symbol 'dma_heap_ioctl_cmds'
+was not declared. Should it be static?
 
-Thanks,
-Davidlohr
+Acked-by: Andrew F. Davis <afd@ti.com>
+Acked-by: John Stultz <john.stultz@linaro.org>
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Sumit Semwal <sumit.semwal@linaro.org>
+ [sumits: rebased over IOCTL rename patches]
+---
+ drivers/dma-buf/dma-heap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.c
+index 1886aee46131..afd22c9dbdcf 100644
+--- a/drivers/dma-buf/dma-heap.c
++++ b/drivers/dma-buf/dma-heap.c
+@@ -106,7 +106,7 @@ static long dma_heap_ioctl_allocate(struct file *file, void *data)
+ 	return 0;
+ }
+ 
+-unsigned int dma_heap_ioctl_cmds[] = {
++static unsigned int dma_heap_ioctl_cmds[] = {
+ 	DMA_HEAP_IOCTL_ALLOC,
+ };
+ 
+-- 
+2.18.0
+
