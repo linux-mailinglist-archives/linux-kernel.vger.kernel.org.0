@@ -2,176 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB41B122AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:09:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2083122B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfLQMJU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:09:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:39944 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfLQMJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:09:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:09:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="389803981"
-Received: from unknown (HELO linuxpc.iind.intel.com) ([10.223.107.129])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 04:09:16 -0800
-From:   Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
-To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, rfontana@redhat.com, allison@lohutok.net,
-        jacob.jun.pan@linux.intel.com
-Cc:     rui.zhang@intel.com, srinivas.pandruvada@linux.intel.com,
-        andriy.shevchenko@intel.com, sumeet.r.pawnikar@intel.com
-Subject: [PATCH v3] tools/thermal: tmon: replace error message SIGINT with SIGTERM
-Date:   Tue, 17 Dec 2019 17:45:31 +0530
-Message-Id: <1576584931-2063-1-git-send-email-sumeet.r.pawnikar@intel.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1727806AbfLQMPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:15:41 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:56022 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726690AbfLQMPl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:15:41 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHCFX20050766;
+        Tue, 17 Dec 2019 06:15:33 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576584933;
+        bh=tiBTZBVZZUyfG1wtAQA0cbMS1Uad3ftsgVbxfku27BA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rDdNNzxMLMOiRS1WpGu33OEooLiBoWmayuhWEVcEl8xD4kephNvZ6WMOpBiVbvgF4
+         NIpyvCFdqzef4VJxFzxJelT5lMPiLS3S2GxlK/eJzgeIXBLMwXt9zWUYjZIWnagyYI
+         WNlIfoXDcDtukgFfwn7ijPLyYqTj6egtX2mvlVvU=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHCFXK5008159
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Dec 2019 06:15:33 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 06:15:33 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 06:15:33 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHCFUbD038749;
+        Tue, 17 Dec 2019 06:15:31 -0600
+Subject: Re: [PATCH] mmc: bcm2835: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        <ulf.hansson@linaro.org>, <f.fainelli@gmail.com>,
+        <rjui@broadcom.com>, <sbranden@broadcom.com>
+CC:     <vkoul@kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <bcm-kernel-feedback-list@broadcom.com>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20191217112625.30715-1-peter.ujfalusi@ti.com>
+ <cd316378273d18b93b5dcad8b357821a708c7805.camel@suse.de>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <1eecb651-cce7-b099-e2d2-65dcde357a71@ti.com>
+Date:   Tue, 17 Dec 2019 14:15:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <cd316378273d18b93b5dcad8b357821a708c7805.camel@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the wrong error message reporting by replacing SIGINT with SIGTERM.
-Fix multiple checkpatch errors and warnings.
 
-Signed-off-by: Sumeet Pawnikar <sumeet.r.pawnikar@intel.com>
----
- tools/thermal/tmon/tmon.c | 26 +++++++++-----------------
- 1 file changed, 9 insertions(+), 17 deletions(-)
 
-diff --git a/tools/thermal/tmon/tmon.c b/tools/thermal/tmon/tmon.c
-index 83ec6e482f12..7eb3216a27f4 100644
---- a/tools/thermal/tmon/tmon.c
-+++ b/tools/thermal/tmon/tmon.c
-@@ -46,7 +46,7 @@ static void	start_daemon_mode(void);
- 
- pthread_t event_tid;
- pthread_mutex_t input_lock;
--void usage()
-+void usage(void)
- {
- 	printf("Usage: tmon [OPTION...]\n");
- 	printf("  -c, --control         cooling device in control\n");
-@@ -62,7 +62,7 @@ void usage()
- 	exit(0);
- }
- 
--void version()
-+void version(void)
- {
- 	printf("TMON version %s\n", VERSION);
- 	exit(EXIT_SUCCESS);
-@@ -70,7 +70,6 @@ void version()
- 
- static void tmon_cleanup(void)
- {
--
- 	syslog(LOG_INFO, "TMON exit cleanup\n");
- 	fflush(stdout);
- 	refresh();
-@@ -96,7 +95,6 @@ static void tmon_cleanup(void)
- 	exit(1);
- }
- 
--
- static void tmon_sig_handler(int sig)
- {
- 	syslog(LOG_INFO, "TMON caught signal %d\n", sig);
-@@ -120,7 +118,6 @@ static void tmon_sig_handler(int sig)
- 	tmon_exit = true;
- }
- 
--
- static void start_syslog(void)
- {
- 	if (debug_on)
-@@ -167,7 +164,6 @@ static void prepare_logging(void)
- 		return;
- 	}
- 
--
- 	fprintf(tmon_log, "#----------- THERMAL SYSTEM CONFIG -------------\n");
- 	for (i = 0; i < ptdata.nr_tz_sensor; i++) {
- 		char binding_str[33]; /* size of long + 1 */
-@@ -175,7 +171,7 @@ static void prepare_logging(void)
- 
- 		memset(binding_str, 0, sizeof(binding_str));
- 		for (j = 0; j < 32; j++)
--			binding_str[j] = (ptdata.tzi[i].cdev_binding & 1<<j) ?
-+			binding_str[j] = (ptdata.tzi[i].cdev_binding & (1 << j)) ?
- 				'1' : '0';
- 
- 		fprintf(tmon_log, "#thermal zone %s%02d cdevs binding: %32s\n",
-@@ -187,7 +183,6 @@ static void prepare_logging(void)
- 				trip_type_name[ptdata.tzi[i].tp[j].type],
- 				ptdata.tzi[i].tp[j].temp);
- 		}
--
- 	}
- 
- 	for (i = 0; i <	ptdata.nr_cooling_dev; i++)
-@@ -219,7 +214,6 @@ static struct option opts[] = {
- 	{ 0, 0, NULL, 0 }
- };
- 
--
- int main(int argc, char **argv)
- {
- 	int err = 0;
-@@ -283,7 +277,7 @@ int main(int argc, char **argv)
- 	if (signal(SIGINT, tmon_sig_handler) == SIG_ERR)
- 		syslog(LOG_DEBUG, "Cannot handle SIGINT\n");
- 	if (signal(SIGTERM, tmon_sig_handler) == SIG_ERR)
--		syslog(LOG_DEBUG, "Cannot handle SIGINT\n");
-+		syslog(LOG_DEBUG, "Cannot handle SIGTERM\n");
- 
- 	if (probe_thermal_sysfs()) {
- 		pthread_mutex_destroy(&input_lock);
-@@ -328,8 +322,7 @@ int main(int argc, char **argv)
- 			show_cooling_device();
- 		}
- 		time_elapsed += ticktime;
--		controller_handler(trec[0].temp[target_tz_index] / 1000,
--				&yk);
-+		controller_handler(trec[0].temp[target_tz_index] / 1000, &yk);
- 		trec[0].pid_out_pct = yk;
- 		if (!dialogue_on)
- 			show_control_w();
-@@ -340,14 +333,15 @@ int main(int argc, char **argv)
- 	return 0;
- }
- 
--static void start_daemon_mode()
-+static void start_daemon_mode(void)
- {
- 	daemon_mode = 1;
- 	/* fork */
- 	pid_t	sid, pid = fork();
--	if (pid < 0) {
-+
-+	if (pid < 0)
- 		exit(EXIT_FAILURE);
--	} else if (pid > 0)
-+	else if (pid > 0)
- 		/* kill parent */
- 		exit(EXIT_SUCCESS);
- 
-@@ -366,11 +360,9 @@ static void start_daemon_mode()
- 	if ((chdir("/")) < 0)
- 		exit(EXIT_FAILURE);
- 
--
- 	sleep(10);
- 
- 	close(STDIN_FILENO);
- 	close(STDOUT_FILENO);
- 	close(STDERR_FILENO);
--
- }
--- 
-2.17.1
+On 17/12/2019 13.37, Nicolas Saenz Julienne wrote:
+> Hi Peter,
+> 
+> On Tue, 2019-12-17 at 13:26 +0200, Peter Ujfalusi wrote:
+>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+>> eating up the error code.
+>>
+>> By using dma_request_chan() directly the driver can support deferred
+>> probing against DMA.
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>>  drivers/mmc/host/bcm2835.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+>> index 99f61fd2a658..3821f159d36d 100644
+>> --- a/drivers/mmc/host/bcm2835.c
+>> +++ b/drivers/mmc/host/bcm2835.c
+>> @@ -1393,7 +1393,15 @@ static int bcm2835_probe(struct platform_device *pdev)
+>>  	host->dma_chan = NULL;
+>>  	host->dma_desc = NULL;
+>>  
+>> -	host->dma_chan_rxtx = dma_request_slave_channel(dev, "rx-tx");
+>> +	host->dma_chan_rxtx = dma_request_chan(dev, "rx-tx");
+>> +	if (IS_ERR(host->dma_chan_rxtx)) {
+>> +		if (PTR_ERR(host->dma_chan_rxtx) == -EPROBE_DEFER)
+>> +			return -EPROBE_DEFER;
+> 
+> I think you should 'goto err' here, as you have to free the mmc host structure
+> allocated earlier in the probe function.
 
+You are right.
+
+> Other than that the patch looks good to me.
+> 
+> Regards,
+> Nicolas
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
