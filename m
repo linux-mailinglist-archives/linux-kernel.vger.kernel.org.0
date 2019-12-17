@@ -2,160 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7846512355A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:05:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08D0212355E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:06:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfLQTFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:05:44 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:39067 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726623AbfLQTFo (ORCPT
+        id S1727787AbfLQTGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:06:22 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44161 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfLQTGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:05:44 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1ihIA9-0004hk-CM; Tue, 17 Dec 2019 20:05:41 +0100
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v2 7/7] arm64: nofpsmid: Handle =?UTF-8?Q?TIF=5FFOREIG?=  =?UTF-8?Q?N=5FFPSTATE=20flag=20cleanly?=
-X-PHP-Originating-Script: 0:main.inc
+        Tue, 17 Dec 2019 14:06:22 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v201so7720537lfa.11
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 11:06:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0Ot2v/dbw1SUHMmXwBLstSNPNheDv1TXN9bQInDFN7E=;
+        b=LTuQlJ5r8Jxu7pBZudU42TBMrRjt9vba2RyiTlgEfs36AOeEsEcToirt9lzqXpJwKh
+         kwPnYF5aIgWiX6r9iBjqyUsufjqF7AkbUnXay/VfQbQGzwitZsz3FB3tL2AZAcLKOymc
+         rn+4WGCrGxe0+9+fX6GzLSyaGP36uj9m4k+0w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0Ot2v/dbw1SUHMmXwBLstSNPNheDv1TXN9bQInDFN7E=;
+        b=C2jUHuXAbl9zIpgyt2oWjDx+uOTy1+iA7DiGopOoZqYINoHzDSYoW6ZGAUNfrl1bD2
+         p5i3Xpps521EUElKrD8zLdvrOCzYmqKfK9Glkam0uTkm6qxHFWGpKRQDx+MINyCyD2l8
+         cBxyzXhB/o33+mejjUPkn+I5+RXNwFQqgbJDdw1TfNlVqAOdHfogw/FUpfFY3iY7ztIh
+         PgJd5bo4Y7sP2v7cB5/3v50B3Fpx8LnQa8p1d5spb85F2QBdmff4gnNa5ZEnG/fJaQ2+
+         ifYhX9sg7/XWiqbUJVentoDEziyleZIjZGWS8et9asfhFrCaILAwtXPfeMHBKVtMCZwH
+         SZUg==
+X-Gm-Message-State: APjAAAWcXdZXls11KFV+hFTyV3dNwcPaYMcHuaquyvL0OnoJTu8n0IqK
+        eTTnsh76o7KN+/u6ca5HzV134K+EQ8k=
+X-Google-Smtp-Source: APXvYqyP+Q7ZsGhVDzVURr9L/ZmM/LONZs+zO7Vuljv6SRatB8ccEJI5i+EZJU/L8UoDsqQLDxDBJg==
+X-Received: by 2002:a19:4351:: with SMTP id m17mr3819181lfj.61.1576609579566;
+        Tue, 17 Dec 2019 11:06:19 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id r21sm2624609ljn.64.2019.12.17.11.06.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 11:06:17 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id 15so7770615lfr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 11:06:17 -0800 (PST)
+X-Received: by 2002:ac2:4946:: with SMTP id o6mr3733141lfi.170.1576609577028;
+ Tue, 17 Dec 2019 11:06:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 17 Dec 2019 19:05:41 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <will@kernel.org>,
-        <mark.rutland@arm.com>, <dave.martin@arm.com>,
-        <catalin.marinas@arm.com>, <ard.biesheuvel@linaro.org>,
-        <christoffer.dall@arm.com>, Marc Zyngier <marc.zyngier@arm.com>
-In-Reply-To: <20191217183402.2259904-8-suzuki.poulose@arm.com>
-References: <20191217183402.2259904-1-suzuki.poulose@arm.com>
- <20191217183402.2259904-8-suzuki.poulose@arm.com>
-Message-ID: <94c0bdd9f26c3262ff8a885d13a64d22@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, mark.rutland@arm.com, dave.martin@arm.com, catalin.marinas@arm.com, ard.biesheuvel@linaro.org, christoffer.dall@arm.com, marc.zyngier@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+References: <20191217113425.GA78787@gmail.com>
+In-Reply-To: <20191217113425.GA78787@gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Dec 2019 11:06:00 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgO0KzB-j8_1GAwkM68nLiWNsK6s1FBXKqKj_62VtDMMQ@mail.gmail.com>
+Message-ID: <CAHk-=wgO0KzB-j8_1GAwkM68nLiWNsK6s1FBXKqKj_62VtDMMQ@mail.gmail.com>
+Subject: Re: [GIT PULL] perf fixes
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
+On Tue, Dec 17, 2019 at 3:34 AM Ingo Molnar <mingo@kernel.org> wrote:
+>
+> Note that the large CPU count related fixes go beyond regression fixes -
+> but the IPI-flood symptoms are severe enough that I think justifies their
+> inclusion. If it's too much we'll redo the branch.
 
-On 2019-12-17 18:34, Suzuki K Poulose wrote:
-> We detect the absence of FP/SIMD after an incapable CPU is brought 
-> up,
-> and by then we have kernel threads running already with
-> TIF_FOREIGN_FPSTATE set
-> which could be set for early userspace applications (e.g, modprobe 
-> triggered
-> from initramfs) and init. This could cause the applications to loop
-> forever in
-> do_nofity_resume() as we never clear the TIF flag, once we now know 
-> that
-> we don't support FP.
->
-> Fix this by making sure that we clear the TIF_FOREIGN_FPSTATE flag
-> for tasks which may have them set, as we would have done in the 
-> normal
-> case, but avoiding touching the hardware state (since we don't 
-> support any).
->
-> Also to make sure we handle the cases seemlessly we categorise the
-> helper functions to two :
->  1) Helpers for common core code, which calls into take appropriate
->     actions without knowing the current FPSIMD state of the CPU/task.
->
->     e.g fpsimd_restore_current_state(), fpsimd_flush_task_state(),
->         fpsimd_save_and_flush_cpu_state().
->
->     We bail out early for these functions, taking any appropriate 
-> actions
->     (e.g, clearing the TIF flag) where necessary to hide the handling
->     from core code.
->
->  2) Helpers used when the presence of FP/SIMD is apparent.
->     i.e, save/restore the FP/SIMD register state, modify the CPU/task
->     FP/SIMD state.
->     e.g,
->
->     fpsimd_save(), task_fpsimd_load() - save/restore task FP/SIMD 
-> registers
->
->     fpsimd_bind_task_to_cpu()  \
->                                 - Update the "state" metadata for 
-> CPU/task.
->     fpsimd_bind_state_to_cpu() /
->
->     fpsimd_update_current_state() - Update the fp/simd state for the 
-> current
->                                     task from memory.
->
->     These must not be called in the absence of FP/SIMD. Put in a 
-> WARNING
->     to make sure they are not invoked in the absence of FP/SIMD.
->
-> KVM also uses the TIF_FOREIGN_FPSTATE flag to manage the FP/SIMD 
-> state
-> on the CPU. However, without FP/SIMD support we trap all accesses and
-> inject undefined instruction. Thus we should never "load" guest 
-> state.
-> Add a sanity check to make sure this is valid.
+I'm much less sensitive to the perf _tooling_ changes than I am to
+actual kernel code changes.
 
-Yes, but no, see below.
+Of course, if you start having a history of breaking things during the
+rc kernels, that may change, but at least for now, I tend to look at
+diffstats and go "oh, this is perf tooling", and not worry too much
+about it...
 
->
-> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-
-No idea who that guy is. It's a fake! ;-)
-
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> ---
->  arch/arm64/kernel/fpsimd.c  | 31 +++++++++++++++++++++++++++----
->  arch/arm64/kvm/hyp/switch.c |  9 +++++++++
->  2 files changed, 36 insertions(+), 4 deletions(-)
->
-
-[...]
-
-> diff --git a/arch/arm64/kvm/hyp/switch.c 
-> b/arch/arm64/kvm/hyp/switch.c
-> index 72fbbd86eb5e..9696ebb5c13a 100644
-> --- a/arch/arm64/kvm/hyp/switch.c
-> +++ b/arch/arm64/kvm/hyp/switch.c
-> @@ -28,10 +28,19 @@
->  /* Check whether the FP regs were dirtied while in the host-side run
-> loop: */
->  static bool __hyp_text update_fp_enabled(struct kvm_vcpu *vcpu)
->  {
-> +	/*
-> +	 * When the system doesn't support FP/SIMD, we cannot rely on
-> +	 * the state of _TIF_FOREIGN_FPSTATE. However, we will never
-> +	 * set the KVM_ARM64_FP_ENABLED, as the FP/SIMD accesses always
-> +	 * inject an abort into the guest. Thus we always trap the
-> +	 * accesses.
-> +	 */
->  	if (vcpu->arch.host_thread_info->flags & _TIF_FOREIGN_FPSTATE)
->  		vcpu->arch.flags &= ~(KVM_ARM64_FP_ENABLED |
->  				      KVM_ARM64_FP_HOST);
->
-> +	WARN_ON(!system_supports_fpsimd() &&
-> +		(vcpu->arch.flags & KVM_ARM64_FP_ENABLED));
-
-Careful, this will panic the host if it happens on a !VHE host
-(calling non-inline stuff from a __hyp_text function is usually
-not a good idea).
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+                     Linus
