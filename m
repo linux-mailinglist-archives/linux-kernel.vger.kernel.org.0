@@ -2,234 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5EFE122D5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:46:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8B5C122D47
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:46:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbfLQNqq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:46:46 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:16496 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728508AbfLQNqp (ORCPT
+        id S1728565AbfLQNqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:46:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38508 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728556AbfLQNqT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:46:45 -0500
-X-IronPort-AV: E=Sophos;i="5.69,325,1571670000"; 
-   d="scan'208";a="34658791"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Dec 2019 22:46:43 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A444A4841A4D;
-        Tue, 17 Dec 2019 22:46:38 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sean Paul <sean@poorly.run>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        ebiharaml@si-linux.co.jp
-Subject: [PATCH v6 6/6] arm64: dts: renesas: Add EK874 board with idk-2121wr display support
-Date:   Tue, 17 Dec 2019 13:46:01 +0000
-Message-Id: <1576590361-28244-7-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576590361-28244-1-git-send-email-fabrizio.castro@bp.renesas.com>
-References: <1576590361-28244-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Tue, 17 Dec 2019 08:46:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u2so3234801wmc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kZuWd/3jkSU468vrZtKybTAjJX1Jep24XVi1Wi4q33k=;
+        b=XK994wVVrkzFy0kYAn6YNVPCGij+VqhuMZC2yPF2zmpoSL1t182ncy8nuiNo5zng4Z
+         WPFfdmKerYYyv2faiAywqYmjUlJWN8c8sDMRIiX2QhGVIqH9X2zcK+ROViyaRiDUZfjN
+         MS46kihklyILLInJAkBt/mjzCwvf4dpgp0yac7AA3B1aclCBtqlsVz1qRWbAJUzDd6Wp
+         walFi+txkCkoY1p6ZAmsmDSUtNZN4W9uvEoo1yOW0pXVuhMT3ppXifn3dvN1DFIBG6hT
+         /2vATZu+R8Iuq8zTRgwX1otltmSndbWvbKrOSQtab37hC5Xokm6YJYdFkuILS1JKU5S4
+         RQMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kZuWd/3jkSU468vrZtKybTAjJX1Jep24XVi1Wi4q33k=;
+        b=UOhYWiygcHdS7GgBEG8IcwDa4Yn/6D8/64BJVioptkQO6Pu9H6PWJdALKeRXjSLSBj
+         25wIgGssSM1wRclLxPqMVSwfidky8OWJwo1PIKKT7sDcs/kd39fScWeicoqqm2DsHfm6
+         XT8zfMPjqOkthg0Acvg4S0J2mKDFjb9j9f98pOnqAWxVdPRKn9Qwob82VZqrnnJxn2E+
+         SLcYK5bWH3fxqpH82KN2XBCMNRYNSdh/aDMjxlOvSG8UQ2YiZ8Rl3lcoHib7MLZ25qU/
+         bQfOWYcivYmhS4ofibGkkMLaQ9l92bf5EWyp9iKW0EwNqa1PNObcVXGX/EWMLFagVNxi
+         Wy4w==
+X-Gm-Message-State: APjAAAWhr+JMKM1D/TbO9R0dgCdCD6SAWnoSky3O7i5W8Lrqfk/h/8Lp
+        leuggw5oz26P5tZ/e/NaIBs/eA==
+X-Google-Smtp-Source: APXvYqyNCklkEVENRexg11/lVsAZF67JMyMSJB9/s1vxBi0hQ6lOnAJ1HSWjhfQSwKh/52Z4A1/krA==
+X-Received: by 2002:a1c:3d07:: with SMTP id k7mr5986321wma.79.1576590377924;
+        Tue, 17 Dec 2019 05:46:17 -0800 (PST)
+Received: from dell ([2.27.35.132])
+        by smtp.gmail.com with ESMTPSA id r15sm2967823wmh.21.2019.12.17.05.46.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 05:46:17 -0800 (PST)
+Date:   Tue, 17 Dec 2019 13:46:17 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
+Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
+Message-ID: <20191217134617.GK18955@dell>
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-8-daniel@zonque.org>
+ <20191217133952.GJ18955@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191217133952.GJ18955@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The EK874 is advertised as compatible with panel IDK-2121WR from
-Advantech, however the panel isn't sold alongside the board.
-A new dts, adding everything that's required to get the panel to
-to work with the EK874, is the most convenient way to support the
-EK874 when it's connected to the IDK-2121WR.
+On Tue, 17 Dec 2019, Lee Jones wrote:
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> On Mon, 09 Dec 2019, Daniel Mack wrote:
+> 
+> > The core driver for these devices is split into several parts.
+> > 
+> > The master node driver is an I2C client. It is responsible for
+> > bringing up the bus topology and discovering the slave nodes.
+> > This process requries some knowlegde of the slave node configuration
+> > to program the bus timings correctly, so the master drivers walks
+> > the tree of nodes in the devicetree. The slave driver handles platform
+> > devices that are instantiated by the master node driver after
+> > discovery has finished.
+> > 
+> > Master nodes expose two addresses on the I2C bus, one (referred to as
+> > 'BASE' in the datasheet) for accessing registers on the transceiver
+> > node itself, and one (referred to as 'BUS') for accessing remote
+> > registers, either on the remote transceiver itself, or on I2C hardware
+> > connected to that remote transceiver, which then acts as a remote I2C
+> > bus master.
+> > 
+> > In order to allow MFD sub-devices to be registered as children of
+> > either the master or any slave node, the details on how to access the
+> > registers are hidden behind a regmap config. A pointer to the regmap
+> > is then exposed in the struct shared with the sub-devices.
+> > 
+> > The ad242x-bus driver is a simple proxy that occupies the BUS I2C
+> > address and which is referred to through a devicetree handle by the
+> > master driver.
+> > 
+> > For the discovery process, the driver has to wait for an interrupt
+> > to occur. In case no interrupt is configured in DT, the driver falls
+> > back to interrupt polling. After the discovery phase is completed,
+> > interrupts are only needed for error handling and GPIO handling,
+> > both of which is not currenty implemented.
+> > 
+> > Code common to both the master and the slave driver lives in
+> > 'ad242x-node.c'.
+> > 
+> > Signed-off-by: Daniel Mack <daniel@zonque.org>
+> > 
+> > mfd
+> 
+> ?
+> 
+> > ---
+> >  drivers/mfd/Kconfig         |  11 +
+> >  drivers/mfd/Makefile        |   1 +
+> >  drivers/mfd/ad242x-bus.c    |  42 +++
+> >  drivers/mfd/ad242x-master.c | 611 ++++++++++++++++++++++++++++++++++++
+> >  drivers/mfd/ad242x-node.c   | 262 ++++++++++++++++
+> >  drivers/mfd/ad242x-slave.c  | 234 ++++++++++++++
+> >  include/linux/mfd/ad242x.h  | 400 +++++++++++++++++++++++
+> 
+> This device, or at least the way it's been coded is batty!
+> 
+> It's going to need a lot of massaging before being accepted.
 
----
-Hi Geert,
+One thing I should mention upfront; there is too much code "doing
+things" in here for it to be an MFD.  MFDs don't care about; syncs,
+slots, TDM, inverting lines, upstreams, downstreams, etc etc etc.
+Anything remotely technical or functional, the code that "does things"
+should be moved out to the relevant areas.  In the case of this
+device, that's looking like one of the Audio related subsystems.
 
-I think it is now safe for you to have a look at this patch.
-
-Thanks,
-Fab
-
-v5->v6:
-* No change
-
-v4->v5:
-* No change
-
-v3->v4:
-* No change
-
-v2->v3:
-* Removed renesas,swap-data property
-* Added dual-lvds-odd-pixels and dual-lvds-even-pixels properties
-
-v1->v2:
-* Added comment for lvds-connector-en-gpio
-* Renamed &lvds0_panel_in to panel_in0
-* Renamed &lvds1_panel_in to panel_in1
----
- arch/arm64/boot/dts/renesas/Makefile               |   3 +-
- .../boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 116 +++++++++++++++++++++
- 2 files changed, 118 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index d4cc332..ab2c799 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -3,7 +3,8 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
--dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb
-+dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb r8a774c0-ek874.dtb \
-+			       r8a774c0-ek874-idk-2121wr.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-x.dtb r8a7795-h3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-salvator-xs.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
-new file mode 100644
-index 0000000..a7b27d0
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
-@@ -0,0 +1,116 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Silicon Linux RZ/G2E evaluation kit (EK874),
-+ * connected to an Advantech IDK-2121WR 21.5" LVDS panel
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+
-+#include "r8a774c0-ek874.dts"
-+
-+/ {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm5 0 50000>;
-+
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+
-+		power-supply = <&reg_12p0v>;
-+		enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	panel-lvds {
-+		compatible = "advantech,idk-2121wr", "panel-lvds";
-+
-+		width-mm = <476>;
-+		height-mm = <268>;
-+
-+		data-mapping = "vesa-24";
-+
-+		panel-timing {
-+			clock-frequency = <148500000>;
-+			hactive = <1920>;
-+			vactive = <1080>;
-+			hsync-len = <44>;
-+			hfront-porch = <88>;
-+			hback-porch = <148>;
-+			vfront-porch = <4>;
-+			vback-porch = <36>;
-+			vsync-len = <5>;
-+		};
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				dual-lvds-odd-pixels;
-+				panel_in0: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				dual-lvds-even-pixels;
-+				panel_in1: endpoint {
-+					remote-endpoint = <&lvds1_out>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
-+&gpio0 {
-+	/*
-+	 * When GP0_17 is low LVDS[01] are connected to the LVDS connector
-+	 * When GP0_17 is high LVDS[01] are connected to the LT8918L
-+	 */
-+	lvds-connector-en-gpio{
-+		gpio-hog;
-+		gpios = <17 GPIO_ACTIVE_HIGH>;
-+		output-low;
-+		line-name = "lvds-connector-en-gpio";
-+	};
-+};
-+
-+&lvds0 {
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&panel_in0>;
-+			};
-+		};
-+	};
-+};
-+
-+&lvds1 {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 727>, <&x13_clk>, <&extal_clk>;
-+	clock-names = "fck", "dclkin.0", "extal";
-+
-+	ports {
-+		port@1 {
-+			lvds1_out: endpoint {
-+				remote-endpoint = <&panel_in1>;
-+			};
-+		};
-+	};
-+};
-+
-+&pfc {
-+	pwm5_pins: pwm5 {
-+		groups = "pwm5_a";
-+		function = "pwm5";
-+	};
-+};
-+
-+&pwm5 {
-+	pinctrl-0 = <&pwm5_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+};
 -- 
-2.7.4
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
