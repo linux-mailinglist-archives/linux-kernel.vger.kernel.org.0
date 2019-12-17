@@ -2,97 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7578E122214
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCF612221E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:51:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfLQCos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 21:44:48 -0500
-Received: from mga07.intel.com ([134.134.136.100]:28074 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbfLQCos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 21:44:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 18:44:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
-   d="scan'208";a="221643930"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Dec 2019 18:44:47 -0800
-Received: from fmsmsx116.amr.corp.intel.com (10.18.116.20) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 16 Dec 2019 18:44:47 -0800
-Received: from shsmsx154.ccr.corp.intel.com (10.239.6.54) by
- fmsmsx116.amr.corp.intel.com (10.18.116.20) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 16 Dec 2019 18:44:47 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.90]) by
- SHSMSX154.ccr.corp.intel.com ([169.254.7.71]) with mapi id 14.03.0439.000;
- Tue, 17 Dec 2019 10:44:45 +0800
-From:   "Liu, Yi L" <yi.l.liu@intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "David Woodhouse" <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-CC:     "Raj, Ashok" <ashok.raj@intel.com>,
-        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        "Sun, Yi Y" <yi.y.sun@intel.com>, Peter Xu <peterx@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova
- over first level
-Thread-Topic: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova
- over first level
-Thread-Index: AQHVr8iiJX/bvAPmK0eIArQDcTD6yKe33K3QgACZjICAAndaMIACHLkAgAAFFACAAACDAIAAl1Vg
-Date:   Tue, 17 Dec 2019 02:44:44 +0000
-Message-ID: <A2975661238FB949B60364EF0F2C25743A135D50@SHSMSX104.ccr.corp.intel.com>
-References: <20191211021219.8997-1-baolu.lu@linux.intel.com>
- <20191211021219.8997-6-baolu.lu@linux.intel.com>
- <A2975661238FB949B60364EF0F2C25743A130C08@SHSMSX104.ccr.corp.intel.com>
- <f1e5cfea-8b11-6d72-8e57-65daea51c050@linux.intel.com>
- <A2975661238FB949B60364EF0F2C25743A132C50@SHSMSX104.ccr.corp.intel.com>
- <6a5f6695-d1fd-e7d1-3ea3-f222a1ef0e54@linux.intel.com>
- <b4a879b2-a5c7-b0bf-8cd4-7397aeebc381@linux.intel.com>
- <2b024c1e-79bd-6827-47e6-ae9457054c79@linux.intel.com>
-In-Reply-To: <2b024c1e-79bd-6827-47e6-ae9457054c79@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2JiZjNhYjctY2IyNi00NjcxLTkxYjEtZTQ0ZWY2ZWQ0MjQzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic3k5R2ljVUpuY3REWVlQOHl0b01hQnZkSnhUbWtPUXcreEY4c3hMQlJKMDdaMHU3M2UzdHZ0UWpPTkRPT2QyVSJ9
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726802AbfLQCtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 21:49:40 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:41848 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726526AbfLQCtk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 21:49:40 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBH2nBuE100388;
+        Tue, 17 Dec 2019 02:49:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=6Dw/6QEafOj9ykXN3RsietDgQiqYwUUa6oCGWlOI9fs=;
+ b=ZJbSmQl+XH3G2lwSkWZa3gaZGw20awPAyLL+jFuZUQ6ULqkVokJoxMQWoAiD8SQo3zy2
+ OsnQqQ0fa1YUksLR+gm5rWZ5A7FBkUMawhXvn6ZPmWjZShz1yk2k2gTvyjwW04GLwh9O
+ 5eBtE02PAKs40mnebuYG/p4NGIQKi4SlhXrQiyRPFZMt+2eAipbDR2kd4i0d3K5PokhC
+ IwmIzrwXrSMIOmXCXfZ08Ura5OFL1OCoeWbBIUT69WIXzq26bBfI+rLIrk//nvIFhE3u
+ ltKXJu4loZDVDSODA6ESD0xjSZPseMr9/mELJUn621GbT2FKHUL60rv+ENR3WZQ9ujMA ug== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2wvq5ubpy1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 02:49:15 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBH2i9A6105960;
+        Tue, 17 Dec 2019 02:47:15 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3030.oracle.com with ESMTP id 2wxm5j5bu1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 02:47:15 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBH2lDq9013230;
+        Tue, 17 Dec 2019 02:47:14 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 16 Dec 2019 18:47:13 -0800
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH 1/1] hwmon: Driver for temperature sensors on SATA drives
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191209052119.32072-1-linux@roeck-us.net>
+        <20191209052119.32072-2-linux@roeck-us.net>
+        <CACRpkdYjidQHB0=S_brDxH3k+qJ2mfXCTF9A3SVZkPvBaVg6JQ@mail.gmail.com>
+        <yq1wob1jfjm.fsf@oracle.com>
+        <541a7ddd-f4c9-5d5f-4f43-0ae5bc46aef6@roeck-us.net>
+Date:   Mon, 16 Dec 2019 21:47:10 -0500
+In-Reply-To: <541a7ddd-f4c9-5d5f-4f43-0ae5bc46aef6@roeck-us.net> (Guenter
+        Roeck's message of "Thu, 12 Dec 2019 20:18:11 -0800")
+Message-ID: <yq1tv5zhdn5.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9473 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912170023
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9473 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912170024
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBMdSBCYW9sdSBbbWFpbHRvOmJhb2x1Lmx1QGxpbnV4LmludGVsLmNvbV0NCj4gU2Vu
-dDogVHVlc2RheSwgRGVjZW1iZXIgMTcsIDIwMTkgOTozOSBBTQ0KPiBUbzogTGl1LCBZaSBMIDx5
-aS5sLmxpdUBpbnRlbC5jb20+OyBKb2VyZyBSb2VkZWwgPGpvcm9AOGJ5dGVzLm9yZz47IERhdmlk
-DQo+IFdvb2Rob3VzZSA8ZHdtdzJAaW5mcmFkZWFkLm9yZz47IEFsZXggV2lsbGlhbXNvbg0KPiA8
-YWxleC53aWxsaWFtc29uQHJlZGhhdC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjMgNS82
-XSBpb21tdS92dC1kOiBGbHVzaCBQQVNJRC1iYXNlZCBpb3RsYiBmb3IgaW92YSBvdmVyIGZpcnN0
-DQo+IGxldmVsDQo+IA0KPiBIaSwNCj4gDQo+IE9uIDEyLzE3LzE5IDk6MzcgQU0sIEx1IEJhb2x1
-IHdyb3RlOg0KPiA+IFlvdSBhcmUgcmlnaHQuIEkgd2lsbCBjaGFuZ2UgaXQgYWNjb3JkaW5nbHku
-IFRoZSBsb2dpYyBzaG91bGQgbG9vaw0KPiA+IGxpa2U6DQo+ID4NCj4gPiBpZiAoZG9tYWluIGF0
-dGFjaGVkIHRvIHBoeXNpY2FsIGRldmljZSkNCj4gPiAgwqDCoMKgwqBmbHVzaF9waW90bGJfd2l0
-aF9SSUQyUEFTSUQoKQ0KPiA+IGVsc2UgaWYgKGRvbWFpbl9hdHRhY2hlZF90b19tZGV2X2Rldmlj
-ZSkNCj4gPiAgwqDCoMKgwqBmbHVzaF9waW90bGJfd2l0aF9kZWZhdWx0X3Bhc2lkKCkNCj4gPg0K
-PiANCj4gQm90aCEgc28gbm8gImVsc2UiIGhlcmUuDQoNCmFoYSwgaWYgd2Ugd2FudCB0byBmbHVz
-aCBtb3JlIHByZWNpc2VseSwgd2UgbWF5IGNoZWNrIHdoZXRoZXINCmRvbWFpbi0+ZGVmYXVsdF9w
-YXNpZCBpcyBhbGxvY2F0ZWQuIElmIG5vdCwgaXQgbWVhbnMgbm8gbWRldiBpcw0KaW52b2x2ZWQs
-IHRoZW4gd2UgbWF5IHNhdmUgYSBwX2lvdGxiX2ludl9kc2Mgc3VibWlzc2lvbiBhbmQgYWxzbw0K
-c2F2ZSBWVC1kIGhhcmR3YXJlIGNpcmNsZXMgZnJvbSBkb2luZyB1c2VsZXNzIGZsdXNoLiBUaGlz
-IGlzIGp1c3QNCm9wdGltaXphdGlvbiwgaXQncyB1cCB0byB5b3UgdG8gcGljayBpdCBvciBub3Qg
-aW4gdGhpcyBwYXRjaHNldC4gSSdtDQpmaW5lIHdpdGggZmx1c2ggImJvdGgiIHNpbmNlIGl0IGd1
-YXJhbnRlZXMgY29ycmVjdG5lc3MuDQoNClJlZ2FyZHMsDQpZaSBMaXUNCg==
+
+Guenter,
+
+> Not sure I understand what you mean with 'bazillions of sensors' and
+> 'sensor per scsi_device'. Can you elaborate ? I see one sensor per
+> drive, which is what I would expect.
+
+Yes, but for storage arrays, hanging off of struct scsi_device means you
+would get a sensor for each volume you create. Even though you
+presumably only have one physical "box" to monitor (ignoring for a
+moment that the drives inside the box may have their own sensors that
+may or may not be visible to the host).
+
+Also, multi-actuator disk drives are shipping. They present themselves
+to the host as a target with multiple LUNs. Once again you'll probably
+have one temperature sensor for the physical drive but many virtual
+disks being presented to the OS. So you'd end up with for instance 4
+sensors in hwmon even though there physically only is one.
+
+It's a tough call since there may be hardware configurations where
+distinct per-LUN temperature is valid (some quirky JBODs represent disk
+drives as different LUNs instead of different targets, for instance).
+
+How expensive will it be to have - say - 100 hwmon sensors instantiated
+for a drive tray?
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
