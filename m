@@ -2,40 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 930A5122BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BECFF122C04
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfLQMkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:40:25 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55287 "EHLO
+        id S1728364AbfLQMkm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:40:42 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55241 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728275AbfLQMkG (ORCPT
+        with ESMTP id S1727029AbfLQMj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:40:06 -0500
+        Tue, 17 Dec 2019 07:39:58 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ihC8l-0001o0-6M; Tue, 17 Dec 2019 13:39:51 +0100
+        id 1ihC8n-0001pd-8A; Tue, 17 Dec 2019 13:39:53 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 896D61C2A3C;
-        Tue, 17 Dec 2019 13:39:50 +0100 (CET)
-Date:   Tue, 17 Dec 2019 12:39:50 -0000
-From:   "tip-bot2 for Alexander Shishkin" <tip-bot2@linutronix.de>
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 057C41C2A3E;
+        Tue, 17 Dec 2019 13:39:52 +0100 (CET)
+Date:   Tue, 17 Dec 2019 12:39:51 -0000
+From:   "tip-bot2 for Yangtao Li" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/x86/intel: Fix PT PMI handling
-Cc:     Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Subject: [tip: sched/core] stop_machine: remove try_stop_cpus helper
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191210105101.77210-1-alexander.shishkin@linux.intel.com>
-References: <20191210105101.77210-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <20191214195107.26480-1-tiny.windzz@gmail.com>
+References: <20191214195107.26480-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Message-ID: <157658639044.30329.8671733952601494347.tip-bot2@tip-bot2>
+Message-ID: <157658639188.30329.17994429919156860695.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -49,77 +45,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the perf/urgent branch of tip:
+The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     92ca7da4bdc24d63bb0bcd241c11441ddb63b80a
-Gitweb:        https://git.kernel.org/tip/92ca7da4bdc24d63bb0bcd241c11441ddb63b80a
-Author:        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-AuthorDate:    Tue, 10 Dec 2019 12:51:01 +02:00
+Commit-ID:     a5e37de90e67ac1072a9a44bd0cec9f5e98ded08
+Gitweb:        https://git.kernel.org/tip/a5e37de90e67ac1072a9a44bd0cec9f5e98ded08
+Author:        Yangtao Li <tiny.windzz@gmail.com>
+AuthorDate:    Sat, 14 Dec 2019 19:51:07 
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 17 Dec 2019 13:32:46 +01:00
+CommitterDate: Tue, 17 Dec 2019 13:32:51 +01:00
 
-perf/x86/intel: Fix PT PMI handling
+stop_machine: remove try_stop_cpus helper
 
-Commit:
+try_stop_cpus is not used after this:
 
-  ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
+commit c190c3b16c0f ("rcu: Switch synchronize_sched_expedited() to
+stop_one_cpu()")
 
-skips the PT/LBR exclusivity check on CPUs where PT and LBRs coexist, but
-also inadvertently skips the active_events bump for PT in that case, which
-is a bug. If there aren't any hardware events at the same time as PT, the
-PMI handler will ignore PT PMIs, as active_events reads zero in that case,
-resulting in the "Uhhuh" spurious NMI warning and PT data loss.
+So remove it.
 
-Fix this by always increasing active_events for PT events.
-
-Fixes: ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
-Reported-by: Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: https://lkml.kernel.org/r/20191210105101.77210-1-alexander.shishkin@linux.intel.com
+Link: https://lkml.kernel.org/r/20191214195107.26480-1-tiny.windzz@gmail.com
 ---
- arch/x86/events/core.c |  9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ include/linux/stop_machine.h |  7 -------
+ kernel/stop_machine.c        | 30 ------------------------------
+ 2 files changed, 37 deletions(-)
 
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 84fe1be..f118af9 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -376,7 +376,7 @@ int x86_add_exclusive(unsigned int what)
- 	 * LBR and BTS are still mutually exclusive.
- 	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
--		return 0;
-+		goto out;
- 
- 	if (!atomic_inc_not_zero(&x86_pmu.lbr_exclusive[what])) {
- 		mutex_lock(&pmc_reserve_mutex);
-@@ -388,6 +388,7 @@ int x86_add_exclusive(unsigned int what)
- 		mutex_unlock(&pmc_reserve_mutex);
- 	}
- 
-+out:
- 	atomic_inc(&active_events);
- 	return 0;
- 
-@@ -398,11 +399,15 @@ fail_unlock:
- 
- void x86_del_exclusive(unsigned int what)
- {
-+	atomic_dec(&active_events);
-+
-+	/*
-+	 * See the comment in x86_add_exclusive().
-+	 */
- 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
- 		return;
- 
- 	atomic_dec(&x86_pmu.lbr_exclusive[what]);
--	atomic_dec(&active_events);
+diff --git a/include/linux/stop_machine.h b/include/linux/stop_machine.h
+index f9a0c61..648298f 100644
+--- a/include/linux/stop_machine.h
++++ b/include/linux/stop_machine.h
+@@ -33,7 +33,6 @@ int stop_two_cpus(unsigned int cpu1, unsigned int cpu2, cpu_stop_fn_t fn, void *
+ bool stop_one_cpu_nowait(unsigned int cpu, cpu_stop_fn_t fn, void *arg,
+ 			 struct cpu_stop_work *work_buf);
+ int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+-int try_stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg);
+ void stop_machine_park(int cpu);
+ void stop_machine_unpark(int cpu);
+ void stop_machine_yield(const struct cpumask *cpumask);
+@@ -90,12 +89,6 @@ static inline int stop_cpus(const struct cpumask *cpumask,
+ 	return -ENOENT;
  }
  
- int x86_setup_perfctr(struct perf_event *event)
+-static inline int try_stop_cpus(const struct cpumask *cpumask,
+-				cpu_stop_fn_t fn, void *arg)
+-{
+-	return stop_cpus(cpumask, fn, arg);
+-}
+-
+ #endif	/* CONFIG_SMP */
+ 
+ /*
+diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
+index 1fe34a9..5d68ec4 100644
+--- a/kernel/stop_machine.c
++++ b/kernel/stop_machine.c
+@@ -453,36 +453,6 @@ int stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
+ 	return ret;
+ }
+ 
+-/**
+- * try_stop_cpus - try to stop multiple cpus
+- * @cpumask: cpus to stop
+- * @fn: function to execute
+- * @arg: argument to @fn
+- *
+- * Identical to stop_cpus() except that it fails with -EAGAIN if
+- * someone else is already using the facility.
+- *
+- * CONTEXT:
+- * Might sleep.
+- *
+- * RETURNS:
+- * -EAGAIN if someone else is already stopping cpus, -ENOENT if
+- * @fn(@arg) was not executed at all because all cpus in @cpumask were
+- * offline; otherwise, 0 if all executions of @fn returned 0, any non
+- * zero return value if any returned non zero.
+- */
+-int try_stop_cpus(const struct cpumask *cpumask, cpu_stop_fn_t fn, void *arg)
+-{
+-	int ret;
+-
+-	/* static works are used, process one request at a time */
+-	if (!mutex_trylock(&stop_cpus_mutex))
+-		return -EAGAIN;
+-	ret = __stop_cpus(cpumask, fn, arg);
+-	mutex_unlock(&stop_cpus_mutex);
+-	return ret;
+-}
+-
+ static int cpu_stop_should_run(unsigned int cpu)
+ {
+ 	struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
