@@ -2,29 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CFAC122234
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B14C812223B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfLQCwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 21:52:40 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:38898 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726987AbfLQCwk (ORCPT
+        id S1727173AbfLQCws (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 21:52:48 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:25011 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727106AbfLQCwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 21:52:40 -0500
+        Mon, 16 Dec 2019 21:52:46 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576551160; h=References: In-Reply-To: References:
+ s=smtp; t=1576551165; h=References: In-Reply-To: References:
  In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=IWOe5PsNdgKGqLtW5omXyBv5zFlS7VV8mc290wNfifs=; b=JydyafUKVGOI7XfG8gpRgJTcR4yjFHYlDrJmTsCe2z8XenihnpoffHg5/Fbx5c87Him2MRwf
- PQStzyN2kPw+X6krwaX40qpU1PZ4KDw8+u3gJwriKaBFeUzXv520EvSTvkANGmIMDUJqYdjb
- Wdlb5yX8QwJ732k/OuqnNAvi2fg=
-X-Mailgun-Sending-Ip: 104.130.122.25
+ bh=i+lqutq77CSCW+Va4i3in2E5g8ytBPYH4T/8wrRI3Xk=; b=nq87AV2ngySvrP4S0ye5mSwrla234LI6dYyy3R9veY4f4XPgApLW3fAPw1fTndxqUEJUKWDa
+ kEVeRW2H99RNz9AkLfNKjjWPnhj/NVLLOFTkUnyzay0tnfBzhmLu3cuDrMzuZIS+gzO7FctH
+ mgVKZByzM6B51l50hWsab36Vgxo=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df842f7.7f65a87180d8-smtp-out-n02;
- Tue, 17 Dec 2019 02:52:39 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5df842f9.7f382a4b9030-smtp-out-n03;
+ Tue, 17 Dec 2019 02:52:41 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 206D3C433A2; Tue, 17 Dec 2019 02:52:39 +0000 (UTC)
+        id 92F45C4479C; Tue, 17 Dec 2019 02:52:41 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
@@ -34,21 +34,20 @@ Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.10
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: nguyenb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C1CE0C43383;
-        Tue, 17 Dec 2019 02:52:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C1CE0C43383
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83802C43383;
+        Tue, 17 Dec 2019 02:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83802C43383
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=nguyenb@codeaurora.org
 From:   "Bao D. Nguyen" <nguyenb@codeaurora.org>
 To:     ulf.hansson@linaro.org, robh+dt@kernel.org
 Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         asutoshd@codeaurora.org, cang@codeaurora.org,
-        Vijay Viswanath <vviswana@codeaurora.org>,
-        Ram Prakash Gupta <rampraka@codeaurora.org>,
+        Sayali Lokhande <sayalil@codeaurora.org>,
         "Bao D. Nguyen" <nguyenb@codeaurora.org>
-Subject: [<PATCH v1> 3/9] mmc: host: Add device_prepare pm for mmc_host
-Date:   Mon, 16 Dec 2019 18:50:36 -0800
-Message-Id: <7dede0ae6c0574ea38cc71b166f3ca0b05856931.1576540907.git.nguyenb@codeaurora.org>
+Subject: [<PATCH v1> 4/9] mmc: core: fix SD card request queue refcount underflow during shutdown
+Date:   Mon, 16 Dec 2019 18:50:37 -0800
+Message-Id: <afdbf5eff1918f4004f2418e90bd08400d40ed1b.1576540907.git.nguyenb@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1576540906.git.nguyenb@codeaurora.org>
 References: <cover.1576540906.git.nguyenb@codeaurora.org>
@@ -59,82 +58,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vijay Viswanath <vviswana@codeaurora.org>
+From: Can Guo <cang@codeaurora.org>
 
-mmc_host is a virtual device and it doesn't have any pm ops and so during
-pm registration of device, no_pm_callback gets set as true. The
-mmc_host device is not runtime enabled as it is a virtual device and
-mmc_host is the parent device of mmc_card. As the mmc_host is runtime
-disabled, mmc_card can runtime suspend/resume without depending on
-state of mmc_host during normal operations. During system suspend, the
-direct_complete flag of mmc_host device gets set as it has no pm_ops.
-When mmc_card successfully suspends, it clears the direct_complete flag
-of its parent (mmc_host).
+When system shutdown, kernel shall call shutdown function of mmc to stop
+its request queue and clean it up, during which the request queue's kobject
+shall be put once. In normal cases, if the SD card is removed, the
+mmc_blk_remove routine releases all the resources and kobjects related to
+the disk and request queue by decreasing their kref counts to 0. But if the
+SD card is removed after its shutdown function is called, below kref count
+underflow error shall be thrown out because the kref count was decreased
+once during request queue cleanup by the shutdown function in advance. This
+change fixes it by skipping request queue cleanup in the mmc blk routine if
+the queue has been marked as dead.
 
-But in certain cases during dpm_suspend, an async error can occur after
-suspend work for mmc_card is scheduled and before it gets executed. In
-that case, mmc_card suspend work will not clear the direct_complete flag
-of mmc_host. When mmc_host suspend comes after that of mmc_card,
-it too will skip all actions.
+[  166.187211] refcount_t: underflow; use-after-free.
+[  166.187277] ------------[ cut here ]------------
+[  166.187321] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP
+[  166.187542] Workqueue: events_freezable mmc_rescan
+[  166.187558] task: ffffffe673b96680 task.stack: ffffff8008418000
+[  166.187579] pc : refcount_sub_and_test+0x64/0x78
+[  166.187593] lr : refcount_sub_and_test+0x64/0x78
+[  166.187605] sp : ffffff800841ba20 pstate : 60c00145
+[  166.188319] Call trace:
+[  166.188331]  refcount_sub_and_test+0x64/0x78
+[  166.188343]  refcount_dec_and_test+0x18/0x24
+[  166.188355]  kobject_put+0x5c/0x74
+[  166.188374]  blk_put_queue+0x1c/0x28
+[  166.188388]  disk_release+0x70/0x90
+[  166.188402]  device_release+0x38/0x90
+[  166.188429]  kobject_cleanup+0xc4/0x1c0
+[  166.188441]  kobject_put+0x68/0x74
+[  166.188455]  put_disk+0x20/0x2c
+[  166.188467]  mmc_blk_put+0x9c/0xdc
+[  166.188480]  mmc_blk_remove_req+0x110/0x120
+[  166.188493]  mmc_blk_remove+0x14c/0x22c
+[  166.188505]  mmc_bus_remove+0x24/0x34
+[  166.188517]  device_release_driver_internal+0x13c/0x1e0
+[  166.188528]  device_release_driver+0x24/0x30
+[  166.188540]  bus_remove_device+0xdc/0x120
+[  166.188552]  device_del+0x1e0/0x284
+[  166.188564]  mmc_remove_card+0x68/0x7c
+[  166.188577]  mmc_sd_remove+0x24/0x48
+[  166.188588]  mmc_sd_detect+0x120/0x1a4
+[  166.188600]  mmc_rescan+0xf4/0x384
+[  166.188613]  process_one_work+0x1c0/0x3d4
+[  166.188625]  worker_thread+0x224/0x344
+[  166.188637]  kthread+0x120/0x130
+[  166.188649]  ret_from_fork+0x10/0x18.
 
-But by this time, the mmc_host device has been added to device_suspended
-list. So during resume, mmc_host resume will do dpm resume of mmc_host.
-In dpm_resume, all devices which has direct_complete flag set will be
-runtime_enabled. This is because, in dpm_suspend, any device with
-direct_complete flag will be runtime_disabled. Thus, mmc_host which has
-direct_complete flag set, will get runtime enabled during dpm_resume.
-This is a problem in pm framework with direct_complete flag
-(runtime enabling a device in resume when it was not runtime disabled
-in suspend path).
-
-Now that mmc_host device is runtime enabled, to runtime resume the
-mmc_card, the pm framework will try to runtime resume the mmc_host
-device as well and will fail. This prevents mmc_card from runtime
-resuming after a runtime_suspend.
-
-Fix this by adding a dummy suspend_prepare() fn for mmc_host. This
-prevents the direct_complete flag of mmc_host device from getting set.
-
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-Signed-off-by: Ram Prakash Gupta <rampraka@codeaurora.org>
+Signed-off-by: Can Guo <cang@codeaurora.org>
+Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
 ---
- drivers/mmc/core/host.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/mmc/core/queue.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/core/host.c b/drivers/mmc/core/host.c
-index 105b7a7..242657b 100644
---- a/drivers/mmc/core/host.c
-+++ b/drivers/mmc/core/host.c
-@@ -40,9 +40,28 @@ static void mmc_host_classdev_release(struct device *dev)
- 	kfree(host);
- }
+diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+index 9edc086..846557b 100644
+--- a/drivers/mmc/core/queue.c
++++ b/drivers/mmc/core/queue.c
+@@ -506,7 +506,8 @@ void mmc_cleanup_queue(struct mmc_queue *mq)
+ 	if (blk_queue_quiesced(q))
+ 		blk_mq_unquiesce_queue(q);
  
-+static int mmc_host_prepare(struct device *dev)
-+{
-+	/*
-+	 * Since mmc_host is a virtual device, we don't have to do anything.
-+	 * If we return a positive value, the pm framework will consider that
-+	 * the runtime suspend and system suspend of this device is same and
-+	 * will set direct_complete flag as true. We don't want this as the
-+	 * mmc_host always has positive disable_depth and setting the flag
-+	 * will not speed up the suspend process.
-+	 * So return 0.
-+	 */
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops mmc_pm_ops = {
-+	.prepare = mmc_host_prepare,
-+};
-+
- static struct class mmc_host_class = {
- 	.name		= "mmc_host",
- 	.dev_release	= mmc_host_classdev_release,
-+	.pm		= &mmc_pm_ops,
- };
+-	blk_cleanup_queue(q);
++	if (likely(!blk_queue_dead(q)))
++		blk_cleanup_queue(q);
+ 	blk_mq_free_tag_set(&mq->tag_set);
  
- int mmc_register_host_class(void)
+ 	/*
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
