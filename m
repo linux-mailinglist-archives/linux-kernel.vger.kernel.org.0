@@ -2,73 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23FBD122D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CF9122D97
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfLQN4V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:56:21 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:43689 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfLQN4V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:56:21 -0500
-Received: from orion.localdomain ([95.114.21.161]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MeTsQ-1i8yVi3lOG-00aWiV; Tue, 17 Dec 2019 14:56:11 +0100
-From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     masahiroy@kernel.org, michal.lkml@markovi.net,
-        linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: [PATCH v2] scripts: package: mkdebian: add missing rsync dependency
-Date:   Tue, 17 Dec 2019 14:55:39 +0100
-Message-Id: <20191217135539.17157-1-info@metux.net>
-X-Mailer: git-send-email 2.11.0
-X-Provags-ID: V03:K1:WUPSATQufwv3g8sriCrzFFny9krz3puHsUsVhC/8qZCoO8QvHna
- pcDXn1rS776PGDUel6/bOG0/+NOXCUi2FtJwRiCp3RFiPENrDV3ByJxTMEXhjHxWSP7D614
- r080F0CHrFXg2C6rt3G1UhEueRdXw1uUmK8fSeWTUre4BMxuKFKSGezkv6DWc4Uax9sXT6S
- xHb/wFVa4HCiOcM5MuFxA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:akmmA8gGnfA=:gadcc7LVAR0Su+9V+MKzLc
- PPWOhg5p2ou9NQ1kL8GR4JDM6/n/Ea7aMJrX6RA64ny8ARrQr5qQ1GOJeDqNL6AXQ8KU5xbC6
- wKGIvoOUqEKLQsPW2a6C1CcRgJzZEkKMZSQCYOMJlFIvVD534smOJvxZe1WSXT6kraaAPNZnT
- yX2Fcj1AbZmXR4m+gq/TmRxXS7rBzqRx5Tv1Ud1q9NMrmoopN87B/DT7aYq5T2ybFdUFbcvFS
- 0LWhTuc+tGaoopq/yDLGXNBTQrZbPjpxc/Z4ysA1UAuA5N6PT4lapB5MLYGza04BqR43sPjPx
- 2+kb9rcHA1skoadqOoD7f0TUqxUursjfxmMocZiPAC3dYOy467gw/6ci8qepH+fVpLSzwE212
- m8i3PxqFn/HWDOCiGv8alZKy7m0fM+4BrJGiuity7N0j21ZfuX4KrKxMKwBQEN1IFwR0L/KDw
- Zqed4ehrbW5tdFFe+KqMWJrPJ7rOS79T39PffLiqUAubZTBWA0gkjqJ5EmsS4pxzWpGftzsdC
- EC6t032IC7/VD8//MkIcHCXf6IOtJ9b6u5BrN2qGfBv22BBxESN3zEqeDyUNzJTB/aghmqsuA
- 26wpLNBrFwTDOMGGqF021X7n4N474+P1WIpb5xkrL14FkAx27M6sOYOvfQa47mSgou9wBsOz8
- 9gK5Eus47BXB3IPGIF1M61rQEZpQ5pFkHyQOgcRjI/HUcI3wXnnuiKYwPHtfP/VOBCh6RiJPC
- OSZDGCSnTy9858bEi725NL8ZjbMMRkAOk7z8Pz+jwP3M64C0v6nom9cyRnelx7AVRTUSb7LVS
- neW8I2kQKR89MrnXepuAnmXO74YUJ/a6HhU/CDvL8LLVJyAghLA3eGiqybEVbnjbGmCobqX+k
- bhgflO3FhirHN9ARfrRw==
+        id S1728686AbfLQN4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:56:36 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8136 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728573AbfLQN4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:56:34 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7104DDED043953C7AA42;
+        Tue, 17 Dec 2019 21:56:30 +0800 (CST)
+Received: from DESKTOP-1NISPDV.china.huawei.com (10.173.221.248) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 17 Dec 2019 21:56:21 +0800
+From:   <yezengruan@huawei.com>
+To:     <yezengruan@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <kvm@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>,
+        <virtualization@lists.linux-foundation.org>
+CC:     <maz@kernel.org>, <james.morse@arm.com>, <linux@armlinux.org.uk>,
+        <suzuki.poulose@arm.com>, <julien.thierry.kdev@gmail.com>,
+        <catalin.marinas@arm.com>, <mark.rutland@arm.com>,
+        <will@kernel.org>, <steven.price@arm.com>,
+        <daniel.lezcano@linaro.org>
+Subject: [PATCH 0/5] KVM: arm64: vcpu preempted check support
+Date:   Tue, 17 Dec 2019 21:55:44 +0800
+Message-ID: <20191217135549.3240-1-yezengruan@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.173.221.248]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We've missed the dependency to rsync, so build fails on
-minimal containers.
+From: Zengruan Ye <yezengruan@huawei.com>
 
-Fixes: 59b2bd05f5f4 ("kbuild: add 'headers' target to build up uapi headers in usr/include")
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
----
- scripts/package/mkdebian | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch set aims to support the vcpu_is_preempted() functionality
+under KVM/arm64, which allowing the guest to obtain the vcpu is
+currently running or not. This will enhance lock performance on
+overcommitted hosts (more runnable vcpus than physical cpus in the
+system) as doing busy waits for preempted vcpus will hurt system
+performance far worse than early yielding.
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index e0750b70453f..7c230016b08d 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -174,7 +174,7 @@ Source: $sourcename
- Section: kernel
- Priority: optional
- Maintainer: $maintainer
--Build-Depends: bc, kmod, cpio, bison, flex | flex:native $extra_build_depends
-+Build-Depends: bc, rsync, kmod, cpio, bison, flex | flex:native $extra_build_depends
- Homepage: http://www.kernel.org/
- 
- Package: $packagename
+We have observed some performace improvements in uninx benchmark tests.
+
+unix benchmark result:
+  host:  kernel 5.5.0-rc1, HiSilicon Kunpeng920, 8 cpus
+  guest: kernel 5.5.0-rc1, 16 vcpus
+
+               test-case                |    after-patch    |   before-patch
+----------------------------------------+-------------------+------------------
+ Dhrystone 2 using register variables   | 334600751.0 lps   | 335319028.3 lps
+ Double-Precision Whetstone             |     32856.1 MWIPS |   32849.6 MWIPS
+ Execl Throughput                       |      3662.1 lps   |    2718.0 lps
+ File Copy 1024 bufsize 2000 maxblocks  |    432906.4 KBps  |  158011.8 KBps
+ File Copy 256 bufsize 500 maxblocks    |    116023.0 KBps  |   37664.0 KBps
+ File Copy 4096 bufsize 8000 maxblocks  |   1432769.8 KBps  |  441108.8 KBps
+ Pipe Throughput                        |   6405029.6 lps   | 6021457.6 lps
+ Pipe-based Context Switching           |    185872.7 lps   |  184255.3 lps
+ Process Creation                       |      4025.7 lps   |    3706.6 lps
+ Shell Scripts (1 concurrent)           |      6745.6 lpm   |    6436.1 lpm
+ Shell Scripts (8 concurrent)           |       998.7 lpm   |     931.1 lpm
+ System Call Overhead                   |   3913363.1 lps   | 3883287.8 lps
+----------------------------------------+-------------------+------------------
+ System Benchmarks Index Score          |      1835.1       |    1327.6
+
+Zengruan Ye (5):
+  KVM: arm64: Document PV-lock interface
+  KVM: arm64: Implement PV_LOCK_FEATURES call
+  KVM: arm64: Support pvlock preempted via shared structure
+  KVM: arm64: Add interface to support vcpu preempted check
+  KVM: arm64: Support the vcpu preemption check
+
+ Documentation/virt/kvm/arm/pvlock.rst  | 31 +++++++++
+ arch/arm/include/asm/kvm_host.h        | 13 ++++
+ arch/arm64/include/asm/kvm_host.h      | 17 +++++
+ arch/arm64/include/asm/paravirt.h      | 15 ++++
+ arch/arm64/include/asm/pvlock-abi.h    | 16 +++++
+ arch/arm64/include/asm/spinlock.h      |  7 ++
+ arch/arm64/kernel/Makefile             |  2 +-
+ arch/arm64/kernel/paravirt-spinlocks.c | 13 ++++
+ arch/arm64/kernel/paravirt.c           | 95 +++++++++++++++++++++++++-
+ arch/arm64/kernel/setup.c              |  2 +
+ arch/arm64/kvm/Makefile                |  1 +
+ include/linux/arm-smccc.h              | 13 ++++
+ include/linux/cpuhotplug.h             |  1 +
+ virt/kvm/arm/arm.c                     |  8 +++
+ virt/kvm/arm/hypercalls.c              |  7 ++
+ virt/kvm/arm/pvlock.c                  | 21 ++++++
+ 16 files changed, 260 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/virt/kvm/arm/pvlock.rst
+ create mode 100644 arch/arm64/include/asm/pvlock-abi.h
+ create mode 100644 arch/arm64/kernel/paravirt-spinlocks.c
+ create mode 100644 virt/kvm/arm/pvlock.c
+
 -- 
-2.11.0
+2.19.1
+
 
