@@ -2,124 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AB912332D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:08:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A98123339
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbfLQRIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 12:08:22 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47194 "EHLO mx2.suse.de"
+        id S1727785AbfLQRK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 12:10:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47944 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727198AbfLQRIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 12:08:21 -0500
+        id S1726623AbfLQRKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 12:10:25 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6D88BACCA;
-        Tue, 17 Dec 2019 17:08:19 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id AA7AEDA791; Tue, 17 Dec 2019 18:08:17 +0100 (CET)
-From:   David Sterba <dsterba@suse.com>
-To:     torvalds@linux-foundation.org
-Cc:     David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs fixes for 5.5-rc3
-Date:   Tue, 17 Dec 2019 18:08:16 +0100
-Message-Id: <cover.1576601647.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.24.0
+        by mx2.suse.de (Postfix) with ESMTP id B13D5AC23;
+        Tue, 17 Dec 2019 17:10:22 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH v11 2/6] xenbus/backend: Protect xenbus
+ callback with lock
+To:     SeongJae Park <sjpark@amazon.com>
+Cc:     axboe@kernel.dk, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        linux-block@vger.kernel.org, pdurrant@amazon.com,
+        SeongJae Park <sjpark@amazon.de>, linux-kernel@vger.kernel.org,
+        sj38.park@gmail.com, xen-devel@lists.xenproject.org
+References: <20191217162406.4711-1-sjpark@amazon.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <f9a601af-4413-ed1d-f7f4-89343118a2f1@suse.com>
+Date:   Tue, 17 Dec 2019 18:10:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20191217162406.4711-1-sjpark@amazon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 17.12.19 17:24, SeongJae Park wrote:
+> On Tue, 17 Dec 2019 17:13:42 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
+> 
+>> On 17.12.19 17:07, SeongJae Park wrote:
+>>> From: SeongJae Park <sjpark@amazon.de>
+>>>
+>>> 'reclaim_memory' callback can race with a driver code as this callback
+>>> will be called from any memory pressure detected context.  To deal with
+>>> the case, this commit adds a spinlock in the 'xenbus_device'.  Whenever
+>>> 'reclaim_memory' callback is called, the lock of the device which passed
+>>> to the callback as its argument is locked.  Thus, drivers registering
+>>> their 'reclaim_memory' callback should protect the data that might race
+>>> with the callback with the lock by themselves.
+>>>
+>>> Signed-off-by: SeongJae Park <sjpark@amazon.de>
+>>> ---
+>>>    drivers/xen/xenbus/xenbus_probe.c         |  1 +
+>>>    drivers/xen/xenbus/xenbus_probe_backend.c | 10 ++++++++--
+>>>    include/xen/xenbus.h                      |  2 ++
+>>>    3 files changed, 11 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+>>> index 5b471889d723..b86393f172e6 100644
+>>> --- a/drivers/xen/xenbus/xenbus_probe.c
+>>> +++ b/drivers/xen/xenbus/xenbus_probe.c
+>>> @@ -472,6 +472,7 @@ int xenbus_probe_node(struct xen_bus_type *bus,
+>>>    		goto fail;
+>>>    
+>>>    	dev_set_name(&xendev->dev, "%s", devname);
+>>> +	spin_lock_init(&xendev->reclaim_lock);
+>>>    
+>>>    	/* Register with generic device framework. */
+>>>    	err = device_register(&xendev->dev);
+>>> diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+>>> index 7e78ebef7c54..516aa64b9967 100644
+>>> --- a/drivers/xen/xenbus/xenbus_probe_backend.c
+>>> +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+>>> @@ -251,12 +251,18 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
+>>>    static int backend_reclaim_memory(struct device *dev, void *data)
+>>>    {
+>>>    	const struct xenbus_driver *drv;
+>>> +	struct xenbus_device *xdev;
+>>> +	unsigned long flags;
+>>>    
+>>>    	if (!dev->driver)
+>>>    		return 0;
+>>>    	drv = to_xenbus_driver(dev->driver);
+>>> -	if (drv && drv->reclaim_memory)
+>>> -		drv->reclaim_memory(to_xenbus_device(dev));
+>>> +	if (drv && drv->reclaim_memory) {
+>>> +		xdev = to_xenbus_device(dev);
+>>> +		spin_trylock_irqsave(&xdev->reclaim_lock, flags);
+>>
+>> You need spin_lock_irqsave() here. Or maybe spin_lock() would be fine,
+>> too? I can't see a reason why you'd want to disable irqs here.
+> 
+> I needed to diable irq here as this is called from the memory shrinker context.
 
-a mix of regression fixes and regular fixes for stable trees. Please
-pull. Thanks.
+Okay.
 
-Changes:
+> 
+> Also, used 'trylock' because the 'probe()' and 'remove()' code of the driver
+> might include memory allocation.  And the xen-blkback actually does.  If the
+> allocation shows a memory pressure during the allocation, it will trigger this
+> shrinker callback again and then deadlock.
 
-- fix swapped error messages for qgroup enable/rescan
+In that case you need to either return when you didn't get the lock or
 
-- fixes for NO_HOLES feature with clone range
+- when obtaining the lock during probe() and remove() set a variable
+   containing the current cpu number
+- and reset that to e.g NR_CPUS before releasing the lock again
+- in the shrinker callback do trylock, and if you didn't get the lock
+   test whether the cpu-variable above is set to your current cpu and
+   continue only if yes; if not, redo the the trylock
 
-- fix deadlock between iget/srcu lock/synchronize srcu while freeing an
-  inode
 
-- fix double lock on subvolume cross-rename
-
-- tree log fixes
-  - fix missing data checksums after replaying a log tree
-  - also teach tree-checker about this problem
-  - skip log replay on orphaned roots
-
-- fix maximum devices constraints for RAID1C -3 and -4
-
-- send: don't print warning on read-only mount regarding orphan cleanup
-
-- error handling fixes
-
-----------------------------------------------------------------
-The following changes since commit fa17ed069c61286b26382e23b57a62930657b9c1:
-
-  btrfs: drop bdev argument from submit_extent_page (2019-11-18 23:43:58 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-5.5-rc2-tag
-
-for you to fetch changes up to fbd542971aa1e9ec33212afe1d9b4f1106cd85a1:
-
-  btrfs: send: remove WARN_ON for readonly mount (2019-12-13 14:10:46 +0100)
-
-----------------------------------------------------------------
-Anand Jain (1):
-      btrfs: send: remove WARN_ON for readonly mount
-
-Andreas Färber (1):
-      btrfs: tree-checker: Fix error format string for size_t
-
-Dan Carpenter (1):
-      btrfs: return error pointer from alloc_test_extent_buffer
-
-David Sterba (1):
-      btrfs: fix devs_max constraints for raid1c3 and raid1c4
-
-Filipe Manana (5):
-      Btrfs: fix cloning range with a hole when using the NO_HOLES feature
-      Btrfs: fix missing data checksums after replaying a log tree
-      Btrfs: make tree checker detect checksum items with overlapping ranges
-      Btrfs: fix removal logic of the tree mod log that leads to use-after-free issues
-      Btrfs: fix hole extent items with a zero size after range cloning
-
-Josef Bacik (7):
-      btrfs: do not call synchronize_srcu() in inode_tree_del
-      btrfs: handle error in btrfs_cache_block_group
-      btrfs: don't double lock the subvol_sem for rename exchange
-      btrfs: abort transaction after failed inode updates in create_subvol
-      btrfs: handle ENOENT in btrfs_uuid_tree_iterate
-      btrfs: skip log replay on orphaned roots
-      btrfs: do not leak reloc root if we fail to read the fs root
-
-Nikolay Borisov (1):
-      btrfs: Fix error messages in qgroup_rescan_init
-
- fs/btrfs/ctree.c                       |  2 +-
- fs/btrfs/ctree.h                       |  2 +-
- fs/btrfs/extent-tree.c                 | 27 ++++++++++++++----
- fs/btrfs/extent_io.c                   |  6 ++--
- fs/btrfs/file-item.c                   |  7 +++--
- fs/btrfs/file.c                        |  4 +--
- fs/btrfs/inode.c                       | 12 +++-----
- fs/btrfs/ioctl.c                       | 26 ++++++++---------
- fs/btrfs/qgroup.c                      |  4 +--
- fs/btrfs/relocation.c                  |  1 +
- fs/btrfs/send.c                        |  6 ----
- fs/btrfs/tests/free-space-tree-tests.c |  4 +--
- fs/btrfs/tests/qgroup-tests.c          |  4 +--
- fs/btrfs/tree-checker.c                | 20 +++++++++++--
- fs/btrfs/tree-log.c                    | 52 ++++++++++++++++++++++++++++++----
- fs/btrfs/uuid-tree.c                   |  2 ++
- fs/btrfs/volumes.c                     |  4 +--
- 17 files changed, 127 insertions(+), 56 deletions(-)
+Juergen
