@@ -2,104 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95DFB122CAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CC42122CB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbfLQNPl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:15:41 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44896 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727736AbfLQNPl (ORCPT
+        id S1728251AbfLQNRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:17:01 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3873 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726962AbfLQNRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:15:41 -0500
-Received: by mail-pl1-f196.google.com with SMTP id az3so6080784plb.11
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:15:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PaUSE0i/E4dAKUPfsxcD2yIPlQcR3DFv2n8z6uzKeUA=;
-        b=aU8hKUArC7YGPpcFfOhvJ1VhZ2D9uXK4x2Gu0P2UMxxReV/EVjOTKD9DCEcxFpc0qm
-         JhB1Jc0j04r4FyqR9A75qkJi4o61xqSbYA/QJJniSniyDMyxa1m1OvqvRNmyJfQzrEY9
-         PU/jWoCpMtp7l4L2zzGEZfoO7bUVfKXuHU2ECXhy8NmgIvLULkoTl28002drQiJqxTeu
-         1LOD3bffSvv+nnWNXYpOM+1DHSgX5RWhcA/5zRrLYhO1k34VpHxLU5/PR5LDcBKoLE6y
-         5Wnqw2zjXGUXkO3o4jbYny8b1LEMiwEpwRt6NATX1Slm7B3qJLJgkSHtou46BR+c/PkU
-         kQdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PaUSE0i/E4dAKUPfsxcD2yIPlQcR3DFv2n8z6uzKeUA=;
-        b=XGUflD+NX8WyEdhobR84NXkdMBfOl1QU4XV+SplcS+ul/Mya1LcffRCEDECaRaVAXi
-         YM4QzIsPufBhwVXjbj27lMgdjQVMK/qTUPC4SweTO02TrXxK7QK9zRE7A+waE+O0v4iC
-         yfWnm1dbXYEz4xTWdGlT5ckoUlFNt010rFcYUDpMh3OQoSAtb/t8cm7YQjVgwqJmlwRQ
-         Z2B7/MYRrBeqNHfCVNCXg2fgrHHM5IMTfEeQNZ7d2SOvNW1JBAOfWa5a8cpIgl07nCl7
-         gHHmNqEQMYS4ZJu+QOSrUe4nERB9oHEMaM5+WQqCXlUnyt7YpEuh3k5d+w8rDcDXxW3P
-         k16g==
-X-Gm-Message-State: APjAAAU74ME1F2C9cdG/LpKtmGz9ilsLHlKs9KzjFEFkHptHkJv1P+s2
-        b5ZX7lgI9Cta+e3wOomcgl1/R8WOtwZYBpkJ6Stfmg==
-X-Google-Smtp-Source: APXvYqySbnyo1U6H2RCB8pDbqOvuRYm9QgEOPUUhy2kDCoMm8Dd5Ss0BoUuE7nRR/WOJ8ht57ESPFePrZwwAUayUEIE=
-X-Received: by 2002:a17:902:6b03:: with SMTP id o3mr1655529plk.252.1576588540116;
- Tue, 17 Dec 2019 05:15:40 -0800 (PST)
+        Tue, 17 Dec 2019 08:17:01 -0500
+X-UUID: 0713f54e692d49e39fe00badcde6bed5-20191217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=U0vU+LIZLIDQVGTtq7rkZrJ2CEwoWECUcbI4MOvmIQk=;
+        b=mbrzBAE+dtlGeeUtRqeJyBOsRDaiIEJL8vglradYzhEo+Ne7u+WUL+1mIz/zq2pnxYSh0w9EToa6A4j1WuTZb/4yrJAyVeKu5Osi3UtIgm9tyGDda59WuPiSPNO47zj8Rtfo1jlmQ7TYSahKUtPU0YWfjmq2rGPiY/UxgFz17mM=;
+X-UUID: 0713f54e692d49e39fe00badcde6bed5-20191217
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 338058259; Tue, 17 Dec 2019 21:16:57 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 17 Dec 2019 21:16:33 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 17 Dec 2019 21:16:31 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [v2,0/1] Add mt7629 pwm support
+Date:   Tue, 17 Dec 2019 21:16:52 +0800
+Message-ID: <1576588613-11530-1-git-send-email-sam.shih@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-References: <000000000000029d340599e61e11@google.com>
-In-Reply-To: <000000000000029d340599e61e11@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 17 Dec 2019 14:15:29 +0100
-Message-ID: <CAAeHK+xOzKuNU0GNtqqdgx=rfrJhu4=yd_knBTBuDA5MKDu10A@mail.gmail.com>
-Subject: Re: BUG: bad host security descriptor; not enough data (3 vs 5 left)
-To:     syzbot <syzbot+7b2f76fab6cdba59689b@syzkaller.appspotmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 2:15 PM syzbot
-<syzbot+7b2f76fab6cdba59689b@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    4cc037ec usb: gadget: add raw-gadget interface
-> git tree:       https://github.com/google/kasan.git usb-fuzzer
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17597049e00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a2d3f61a19fd0cf1
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7b2f76fab6cdba59689b
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1724ae99e00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ed23a6e00000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+7b2f76fab6cdba59689b@syzkaller.appspotmail.com
->
-> usb 1-1: config 0 interface 0 altsetting 0 has 3 endpoint descriptors,
-> different from the interface descriptor's value: 4
-> usb 1-1: New USB device found, idVendor=13dc, idProduct=5611,
-> bcdDevice=2f.15
-> usb 1-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
-> usb 1-1: config 0 descriptor??
-> hwa-hc 1-1:0.0: Wire Adapter v106.52 newer than groked v1.0
-> hwa-hc 1-1:0.0: FIXME: USB_MAXCHILDREN too low for WUSB adapter (194 ports)
-> usb 1-1: BUG: bad host security descriptor; not enough data (3 vs 5 left)
-> usb 1-1: supported encryption types:
-> usb 1-1: E: host doesn't support CCM-1 crypto
-> hwa-hc 1-1:0.0: Wireless USB HWA host controller
-> hwa-hc 1-1:0.0: new USB bus registered, assigned bus number 11
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+VGhpcyBhZGRzIHB3bSBzdXBwb3J0IGZvciBNVDc2MjkuDQoNCkNoYW5nZSBzaW5jZSB2MToNCnJl
+bW92ZSB1bnVzZWQgcHJvcGVydHkgbnVtLXB3bQ0KDQpVc2VkOg0KaHR0cHM6Ly9wYXRjaHdvcmsu
+a2VybmVsLm9yZy9wYXRjaC8xMTE2MDg1MS8NCg0KUmVsYXRlZCBkZXBlbmRlbnQgZHJpdmVyIHVw
+ZGF0ZXMgaGF2ZSBiZWVuIG1lcmdlZCBpbnRvIG1haW50YWluZXIncyBrZXJuZWwNCnNvdXJjZSB0
+cmVlLg0KDQoNClNhbSBTaGloICgxKToNCiAgYXJtOiBkdHM6IG1lZGlhdGVrOiBhZGQgbXQ3NjI5
+IHB3bSBzdXBwb3J0DQoNCiBhcmNoL2FybS9ib290L2R0cy9tdDc2MjkuZHRzaSB8IDE0ICsrKysr
+KysrKysrKysrDQogMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykNCg0KLS0gDQoyLjE3
+LjENCg==
 
-#syz dup: BUG: bad host security descriptor; not enough data (4 vs 5 left)
