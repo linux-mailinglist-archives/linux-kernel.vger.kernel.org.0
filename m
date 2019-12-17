@@ -2,91 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B48F122C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:10:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE8C122C96
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:11:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727901AbfLQNKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:10:34 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35671 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727576AbfLQNKd (ORCPT
+        id S1728092AbfLQNLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:11:36 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:45603 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfLQNLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:10:33 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 15so6945909lfr.2;
-        Tue, 17 Dec 2019 05:10:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9jk39L8RgpYiTrld7dSlOIM7xyFzKKS6lSCI/KcHWZk=;
-        b=Gsj7ZKltUMuYF0Ggx/KiJ1fsaIQaYjAxnQgADAj5o13RV0RaBOUb5mOBd6isWfIGEq
-         oHKz5YCSfrd7GIDR/8B8bGv4Gb6Qu1U8BqLG7zhh723dz9A94DSNakk/TfT2mO7wFBoX
-         kDe/afzHPqFNsYpGdfcEM2Aj2zsygDnUo6UjomhX58VDd9/Nabb7cr9NJ7cMNVSp4Cl/
-         veUa5Lxf/UTw8d49VAWnS18pfOyXh2QbTCwU79NywB30U2m0AkZV/h4S+wZPIxAYEqmU
-         ofzoIsSx74pG5d3Fxot++GzF1gDArbVNTVl3hledBXRoWw0R1YXIFdp5cvP9n/04qFCs
-         dydA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9jk39L8RgpYiTrld7dSlOIM7xyFzKKS6lSCI/KcHWZk=;
-        b=OC1aOKFApnoQ63jNUZMkNrss8PuoRgzg0qb3vzSSSOLe4V8H9WCithXMoZPZzTtRBA
-         SVndPlsNt9gihcOah4pJlGgh1EGnFr+yN3ifaZmL99BHIewZpAdwanmaZQaGuv3Rl9aq
-         mv6QdK7sdCkqaQ7IzYrkLKtFQyQzkAP1W7UYqFDgN2vF1hWO+U9hpxPgnmPXXXHViuhW
-         N3jSlzD9Uk/sHj6V3en3YXlKEmN4YTKArZpVOYvHa3GdywSj5+vRj/N8JhAzjDi4A5rx
-         XAMGauyDV/4rVtRruPluEAZohGeUqzU2t4yzDO7AbSTnIdvDEk5qvdyTW1mZfHioZZ1X
-         oH3g==
-X-Gm-Message-State: APjAAAW2XJqWx7nYTu7D2Q8PxDHp/iYdjt9lEEaFoQzrpmUXZYXUft+a
-        EE7MJsvvRiSmiAlRx8UZ/zbZ2Akm
-X-Google-Smtp-Source: APXvYqx0SUti1aF3Yq6Y7m+qSFkDDVrvqKoaKj+P6rWZ8vzlLHdRnKn5vmD5Wa9Ke3xg8KQ5QC53mQ==
-X-Received: by 2002:ac2:455c:: with SMTP id j28mr2806295lfm.184.1576588230944;
-        Tue, 17 Dec 2019 05:10:30 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id q14sm12539756ljm.68.2019.12.17.05.10.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 05:10:30 -0800 (PST)
-Subject: Re: [PATCH v1 2/2] dt-bindings: net: broadcom-bluetooth: Document
- BCM4329 support
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191215185253.14024-1-digetx@gmail.com>
- <20191215185253.14024-2-digetx@gmail.com>
- <E971B7A3-B5F2-4F21-B0F4-B7D289080D9A@holtmann.org>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e59a6d98-eef0-3473-add3-ac6b2fae02a8@gmail.com>
-Date:   Tue, 17 Dec 2019 16:10:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 17 Dec 2019 08:11:36 -0500
+Received: from [192.168.1.155] ([95.114.21.161]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1McpW6-1i8PmK0D1G-00a12l; Tue, 17 Dec 2019 14:11:22 +0100
+Subject: Re: [PATCH v7 01/13] exfat: add in-memory and on-disk structures and
+ headers
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        'Markus Elfring' <Markus.Elfring@web.de>
+Cc:     linux-kernel@vger.kernel.org, 'Christoph Hellwig' <hch@lst.de>,
+        'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>,
+        'Sungjong Seo' <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?=27Valdis_Kl=c4=93tnieks=27?= <valdis.kletnieks@vt.edu>,
+        linux-fsdevel@vger.kernel.org
+References: <20191213055028.5574-2-namjae.jeon@samsung.com>
+ <CGME20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e@epcas5p3.samsung.com>
+ <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
+ <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <c6698d0c-d909-c9dc-5608-0b986d63a471@metux.net>
+Date:   Tue, 17 Dec 2019 14:10:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <E971B7A3-B5F2-4F21-B0F4-B7D289080D9A@holtmann.org>
+In-Reply-To: <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: tl
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:mh372I7jZZSLHn3TFj2C4vjsq8xUP2bJNTgyJkEC5Ux0+Q+dvGX
+ xduxo7XdAI059eJX9/44Yq1irmLdP5UBBY+ObsaLvHjYn95DPmiz+YTuxxHDBmv6SCQv55G
+ U4uujJDDY6ac+c4b+1mjOokJtGGEX++sEOpJyzMJPrbHHZqDKy48brfkVNi21uuE8m906G5
+ omOFg0/1HD//Avp3Jp33w==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yv7qDD8T/Ss=:C85R98w7NY3LaLz4fH72+J
+ CO+BMGRbLbJDjY5Qga2WpvOMLY6UgQ4UYeqy33ixeCYRvRjnIaOdbHwDFoJOdJm5Pdm2VsFn3
+ zWh3DNIIRqL7Xxj4sINX4W3BBKXUvdlwx10/jJVucKdSA0sJtckKA46mw8xu/AlR04f1htgyG
+ 7hlQv8gg3AIfxTg1RFVJwG9DjF7ZumWA2eIEXg7v6Jc1qYT7XgsDhTuxkl37gtPpMbUgm5vLc
+ 9QyVbWaIEg6j+WA1asbMiRM/0o2yif70shJk2UUl4nwAlRqsgZToERDMJS6rSeNLJfhnE/vnx
+ ISWWxLubVufrIw9SL5ve5Ap6DkikkqAcI1yP+gYHyLvTIZPhmjZ0SI7r9xUYwTE5Bs2zxvDoW
+ GJhhG+QskV7GFVX1Gw/McK66cWz6+SLrnHgoIdSKpw6zXl/IXurqUxPdaEQK28Fd2vmT7ZP6O
+ PNok5eT2CzxlZFGvlBzl1QByynWUMve0PVV3SYx0cZomauHCotpfRizVrLyQvgLsSRiCU09ay
+ M9r/VFccNmwmc4hgwwZUYqLAlcWYk+aXbFw4EaPGKqLoqeMVi40neS8AJVWVd9UgU1rVI+dP3
+ mpMnPWJ+Uu/cbOQ7e5N/TrTctlcgDWT1CGnlBHlnakHAtEVEUrPSvOX+47HX0T310S6HgP2gp
+ jouZliDWWxccY4D4zrktZshUO/bZaEkEJeS0Po9biAY4C7k1Rr/94iyPwTMW8Tq9BtWiNFchW
+ L2ZD+2uO4Q9OOnsh7pyaOQvN1pEgqQNUr8jJJ88+tOUzfYNi6J3wF5+ejcjL6yV5txECnYAW8
+ cqlKSewU9wHqvFFBbH8AR52mTyd7ss4xyJjq5CLtmnLgNCLteSP1RNGrI/mh4OGemypiI/W1u
+ 0sNQoSx5ojcEPZs5MYBg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-17.12.2019 10:40, Marcel Holtmann пишет:
-> Hi Dmitry,
-> 
->> The BCM4329 is a 802.11 a/b/g/n WiFi + Bluetooth 2.1 chip which is found
->> in Azurewave AW-NH611 WiFi+BT module.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->> Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 1 +
->> 1 file changed, 1 insertion(+)
-> 
-> patch has been applied to bluetooth-next tree.
-> 
-> Regards
-> 
-> Marcel
-> 
+On 17.12.19 01:02, Namjae Jeon wrote:
+>> 2. Which source file should provide the corresponding implementation?
+>>    (I did not find it in the update step “[PATCH v7 06/13] exfat: add exfat
+>>    entry operations” so far.)
+> Good catch, I will move it on next version.
 
-Thank you very much!
+By the way: do you think the driver is already stable enough for
+production use ? Are there any limitations we have to consider ?
+
+I just have a client, who wants to use it in a semi-embedded (telemetry)
+device, for recording to an external USB drive.
+
+
+--mtx
+
+
+-- 
+---
+Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
+werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
+GPG/PGP-Schlüssel zu.
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
