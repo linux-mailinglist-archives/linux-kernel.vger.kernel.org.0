@@ -2,56 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6BC2121F3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21D10121F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:10:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbfLQAIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:08:53 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:57564 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbfLQAIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:08:52 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id EF7AD1556D1E2;
-        Mon, 16 Dec 2019 16:08:51 -0800 (PST)
-Date:   Mon, 16 Dec 2019 16:08:51 -0800 (PST)
-Message-Id: <20191216.160851.2100757770455570941.davem@davemloft.net>
-To:     f.fainelli@gmail.com
-Cc:     netdev@vger.kernel.org, andrew@lunn.ch, vivien.didelot@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: dsa: b53: Fix egress flooding settings
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191213200027.20803-1-f.fainelli@gmail.com>
-References: <20191213200027.20803-1-f.fainelli@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Dec 2019 16:08:52 -0800 (PST)
+        id S1727696AbfLQAJN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:09:13 -0500
+Received: from muru.com ([72.249.23.125]:48576 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727569AbfLQAJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 19:09:13 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id B9F45810D;
+        Tue, 17 Dec 2019 00:09:51 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     "Andrew F . Davis" <afd@ti.com>, Dave Gerlach <d-gerlach@ti.com>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Roger Quadros <rogerq@ti.com>, Suman Anna <s-anna@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] ARM: OMAP2+: Fix ti_sysc_find_one_clockdomain to check for to_clk_hw_omap
+Date:   Mon, 16 Dec 2019 16:09:05 -0800
+Message-Id: <20191217000906.43658-1-tony@atomide.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Fri, 13 Dec 2019 12:00:27 -0800
+We must bail out early if the clock is not hw_omap. Otherwise we will
+try to access invalid address with hwclk->clkdm_name:
 
-> There were several issues with 53568438e381 ("net: dsa: b53: Add support for port_egress_floods callback") that resulted in breaking connectivity for standalone ports:
-> 
-> - both user and CPU ports must allow unicast and multicast forwarding by
->   default otherwise this just flat out breaks connectivity for
->   standalone DSA ports
-> - IP multicast is treated similarly as multicast, but has separate
->   control registers
-> - the UC, MC and IPMC lookup failure register offsets were wrong, and
->   instead used bit values that are meaningful for the
->   B53_IP_MULTICAST_CTRL register
-> 
-> Fixes: 53568438e381 ("net: dsa: b53: Add support for port_egress_floods callback")
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Unable to handle kernel paging request at virtual address ffffffff
+Internal error: Oops: 27 [#1] ARM
+...
+(strcmp) from [<c011b348>] (clkdm_lookup+0x40/0x60)
+[<c011b348>] (clkdm_lookup) from [<c011cb84>] (ti_sysc_clkdm_init+0x5c/0x64)
+[<c011cb84>] (ti_sysc_clkdm_init) from [<c03680a8>] (sysc_probe+0x948/0x117c)
+[<c03680a8>] (sysc_probe) from [<c03d0af4>] (platform_drv_probe+0x48/0x98)
+...
 
-Applied and queued up for v5.4 -stable, thanks.
+Fixes: 2b2f7def058a ("bus: ti-sysc: Add support for missing clockdomain handling")
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/mach-omap2/pdata-quirks.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/pdata-quirks.c b/arch/arm/mach-omap2/pdata-quirks.c
+--- a/arch/arm/mach-omap2/pdata-quirks.c
++++ b/arch/arm/mach-omap2/pdata-quirks.c
+@@ -306,10 +306,14 @@ static void __init dra7x_evm_mmc_quirk(void)
+ 
+ static struct clockdomain *ti_sysc_find_one_clockdomain(struct clk *clk)
+ {
++	struct clk_hw *hw = __clk_get_hw(clk);
+ 	struct clockdomain *clkdm = NULL;
+ 	struct clk_hw_omap *hwclk;
+ 
+-	hwclk = to_clk_hw_omap(__clk_get_hw(clk));
++	hwclk = to_clk_hw_omap(hw);
++	if (!omap2_clk_is_hw_omap(hw))
++		return NULL;
++
+ 	if (hwclk && hwclk->clkdm_name)
+ 		clkdm = clkdm_lookup(hwclk->clkdm_name);
+ 
+-- 
+2.24.1
