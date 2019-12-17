@@ -2,84 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BEB6122AF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:07:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 700DC122AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfLQMHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:07:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbfLQMHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:07:09 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 263BF20733;
-        Tue, 17 Dec 2019 12:07:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576584428;
-        bh=xln5+huOJ+nrvh0qFGTI6Ch286BBnjAm0h9svAjmdRg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CNwSShe6yoclbRTf51HFSsZFz1hYi2CkeMGZs4LG7fMYiQ3VoCDeIZvMKNG8hYtz+
-         hzkAn8S5f8rR1C/Nn01SAgZ1D3VrtEr7hGkh5XI0X8a1rMZ1y+80GCMhD75H24W7Pw
-         1X41mxgF5XYs0c1M3jsss1P9tdqqVlv4t7eSXxJ4=
-Date:   Tue, 17 Dec 2019 13:07:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
-Message-ID: <20191217120706.GC3156341@kroah.com>
-References: <20191216174811.158424118@linuxfoundation.org>
- <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+        id S1727652AbfLQMKg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:10:36 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7693 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726275AbfLQMKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:10:36 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 884F7B0CB0E29F044E8B;
+        Tue, 17 Dec 2019 20:10:34 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 17 Dec 2019
+ 20:10:23 +0800
+To:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+        <hpa@zytor.com>, <x86@kernel.org>, <luto@kernel.org>,
+        <riel@surriel.com>, <dave.hansen@intel.com>,
+        <yeyunfeng@huawei.com>, <longman@redhat.com>,
+        <mtosatti@redhat.com>, <linux-kernel@vger.kernel.org>,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Subject: [PATCH] x86/process: remove unused variable in __switch_to_xtra()
+Message-ID: <0efac42a-1631-d93d-d8a2-e6cf65cdf16b@huawei.com>
+Date:   Tue, 17 Dec 2019 20:09:08 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:28:17AM +0000, Jon Hunter wrote:
-> 
-> On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.4 release.
-> > There are 177 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.4-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> > -------------
-> 
-> All tests are passing for Tegra ...
-> 
-> Test results for stable-v5.4:
->     13 builds:	13 pass, 0 fail
->     22 boots:	22 pass, 0 fail
->     38 tests:	38 pass, 0 fail
-> 
-> Linux version:	5.4.4-rc1-gfffa88522363
-> Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
->                 tegra194-p2972-0000, tegra20-ventana,
->                 tegra210-p2371-2180, tegra30-cardhu-a04
-> 
+After the commit ecc7e37d4dad ("x86/io: Speedup schedule out of I/O
+bitmap user") and commit 22fe5b0439dd ("x86/ioperm: Move TSS bitmap
+update to exit to user work"), warning is found:
 
-Wonderful, thanks for testing all of these and letting me know.
+arch/x86/kernel/process.c: In function ‘__switch_to_xtra’:
+arch/x86/kernel/process.c:618:31: warning: variable ‘next’ set but not
+used [-Wunused-but-set-variable]
+  struct thread_struct *prev, *next;
+                               ^~~~
+arch/x86/kernel/process.c:618:24: warning: variable ‘prev’ set but not
+used [-Wunused-but-set-variable]
+  struct thread_struct *prev, *next;
+                        ^~~~
+Fix this by removing the unused variable @prev and @next;
 
-greg k-h
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+---
+ arch/x86/kernel/process.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 61e93a318983..839b5244e3b7 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -615,12 +615,8 @@ void speculation_ctrl_update_current(void)
+
+ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p)
+ {
+-	struct thread_struct *prev, *next;
+ 	unsigned long tifp, tifn;
+
+-	prev = &prev_p->thread;
+-	next = &next_p->thread;
+-
+ 	tifn = READ_ONCE(task_thread_info(next_p)->flags);
+ 	tifp = READ_ONCE(task_thread_info(prev_p)->flags);
+
+-- 
+2.7.4
+
