@@ -2,171 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F28A51238DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:50:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5F11238EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:56:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfLQVuc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:50:32 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2035 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726764AbfLQVub (ORCPT
+        id S1726463AbfLQV4q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:56:46 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:55483 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfLQV4q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:50:31 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df94d9d0001>; Tue, 17 Dec 2019 13:50:21 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 17 Dec 2019 13:50:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 17 Dec 2019 13:50:30 -0800
-Received: from rcampbell-dev.nvidia.com (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Dec
- 2019 21:50:25 +0000
-Subject: Re: [PATCH v5 1/2] mm/mmu_notifier: make interval notifier updates
- safe
-To:     Jason Gunthorpe <jgg@mellanox.com>
-CC:     "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        "John Hubbard" <jhubbard@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <20191216195733.28353-1-rcampbell@nvidia.com>
- <20191216195733.28353-2-rcampbell@nvidia.com>
- <20191217205147.GI16762@mellanox.com>
-X-Nvconfidentiality: public
-From:   Ralph Campbell <rcampbell@nvidia.com>
-Message-ID: <59d4ea9e-3f6b-11c2-75d1-5baecd5b4ae2@nvidia.com>
-Date:   Tue, 17 Dec 2019 13:50:24 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.0
+        Tue, 17 Dec 2019 16:56:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576619805;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=hSE8d84YfV0TRBuqIE3TvHfXXVwzC5/7L6224fyao4A=;
+        b=LvpzlZ+kXIX45TFS9VWNBeWodmqFhaCP6Ekk9bpi1m6soIhOQm7Tx01mPsh+XgV/EbQ4Pi
+        TVxdJJf92h5RX2WVoLmsWDYhrZsw6mtYtfZB4StBZ67XGYojYTVrE40h8CKq0PAVNlxaf/
+        aMP7UCRRtNyalXiV33lDuJeaHUxujRE=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-1-iDj4rPYbOgOH_GzecYf1fw-1; Tue, 17 Dec 2019 16:56:43 -0500
+X-MC-Unique: iDj4rPYbOgOH_GzecYf1fw-1
+Received: by mail-qv1-f72.google.com with SMTP id v17so79992qvi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 13:56:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hSE8d84YfV0TRBuqIE3TvHfXXVwzC5/7L6224fyao4A=;
+        b=h/lozjRjf+dUQm5JXKGJx2evBY7X1CbQ/OS/XcbOAK+odvq3GR9InWgBcZhWAQn8GA
+         65kOS2CtmRBqO1X2f226PXiKCADO8NjkTPCdROLDPrP858YPcu3SMgcMgfnFUFVW8kYh
+         u4toLW41NrIucuwrsHmI/ddYUCq3XyefVggAPoO/xVWEgZtnqsQBzYIvsSDlm4c5y7cj
+         FXnV3NtFuB+75+x+AgH++7fZQxSdBz2QmtseY/p9Uh0HeyQw1CY5+IRK0kscmJ6ybckV
+         ZwSb3OAYoGUjXqivvbiEdnVn2lWQdTrNb66epu09L/AIPTiBeyCw+KuLTbh1zZunNs4x
+         8Ikg==
+X-Gm-Message-State: APjAAAUBF7CTTlHKi6mPipDUfaRj+49/jHAGldHOftvLvYxR4JNGj/0g
+        uPD/EIgxX7RkX4ie+fd1WZbu0TT0FmNUo1/k/V8o7FAbHclfVxjMExNXKHQWWvmhS1rAsnZF3o+
+        dlHLP0zKFanRVH4Cm3zVV7oGy
+X-Received: by 2002:a05:6214:707:: with SMTP id b7mr6932309qvz.97.1576619803180;
+        Tue, 17 Dec 2019 13:56:43 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxkJVTx6R82PYxH8CBMYAk4P1dJ5EjDAy6gossam+XsRnSgvrFRKTM01bOCNWxLxn1nVLa7oA==
+X-Received: by 2002:a05:6214:707:: with SMTP id b7mr6932279qvz.97.1576619802834;
+        Tue, 17 Dec 2019 13:56:42 -0800 (PST)
+Received: from xz-x1 ([104.156.64.74])
+        by smtp.gmail.com with ESMTPSA id t198sm7534281qke.6.2019.12.17.13.56.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 13:56:41 -0800 (PST)
+Date:   Tue, 17 Dec 2019 16:56:40 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <f4bug@amsat.org>,
+        kvm@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Cornelia Huck <cohuck@redhat.com>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        kvmarm@lists.cs.columbia.edu, Jim Mattson <jmattson@google.com>,
+        David Gibson <david@gibson.dropbear.id.au>
+Subject: Re: [PATCH v4 01/19] KVM: x86: Allocate new rmap and large page
+ tracking when moving memslot
+Message-ID: <20191217215640.GI7258@xz-x1>
+References: <20191217204041.10815-1-sean.j.christopherson@intel.com>
+ <20191217204041.10815-2-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20191217205147.GI16762@mellanox.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576619421; bh=ubRwwOL58AcjmKU930Mo4/AFRBsWefx09sMu3dEEirc=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=o9X58MhU1lozHt8qde/Q5U6KjYd3qMmrQyCLe2/+dszqfziDR3n8ceyKtdUt/KX2T
-         TqANXJM1PO5DhmjicCs066E7UMKoUTge6kuelmVtI2V9U/sGPLHcT03CF66JpnjXip
-         enuLbXhSPdGSMkoV24owjgKJgocKN8sCz5K5vOie5/e5qQDxECTI6zFOuSfSwGJhVo
-         8zFisarGWYrEei1T7nwS6gVgSyZ7TWeD3NMJnTuAWn1zGKaZPOjLQvlqMmJtbUg9Pi
-         kGfdoBRjEL93SOfMYpJQYz1+bIA1eSUOemZh5H0qWX7H3nPekrmfWwJMbg4pMuWy7r
-         BUPx+RMAK+nOA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191217204041.10815-2-sean.j.christopherson@intel.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/17/19 12:51 PM, Jason Gunthorpe wrote:
-> On Mon, Dec 16, 2019 at 11:57:32AM -0800, Ralph Campbell wrote:
->> mmu_interval_notifier_insert() and mmu_interval_notifier_remove() can't
->> be called safely from inside the invalidate() callback. This is fine for
->> devices with explicit memory region register and unregister calls but it
->> is desirable from a programming model standpoint to not require explicit
->> memory region registration. Regions can be registered based on device
->> address faults but without a mechanism for updating or removing the mmu
->> interval notifiers in response to munmap(), the invalidation callbacks
->> will be for regions that are stale or apply to different mmaped regions.
+On Tue, Dec 17, 2019 at 12:40:23PM -0800, Sean Christopherson wrote:
+> Reallocate a rmap array and recalcuate large page compatibility when
+> moving an existing memslot to correctly handle the alignment properties
+> of the new memslot.  The number of rmap entries required at each level
+> is dependent on the alignment of the memslot's base gfn with respect to
+> that level, e.g. moving a large-page aligned memslot so that it becomes
+> unaligned will increase the number of rmap entries needed at the now
+> unaligned level.
 > 
-> What we do in RDMA is drive the removal from a work queue, as we need
-> a synchronize_srcu anyhow to serialize everything to do with
-> destroying a part of the address space mirror.
+> Not updating the rmap array is the most obvious bug, as KVM accesses
+> garbage data beyond the end of the rmap.  KVM interprets the bad data as
+> pointers, leading to non-canonical #GPs, unexpected #PFs, etc...
 > 
-> Is it really necessary to have all this stuff just to save doing
-> something like a work queue?
-
-Well, the invalidates already have to use the driver lock to synchronize
-so handling the range tracking updates semi-synchronously seems more
-straightforward to me.
-
-Do you feel strongly that adding a work queue is the right way to handle
-this?
-
-> Also, I think we are not taking core kernel APIs like this with out an
-> in-kernel user??
-
-Right. I was looking for feedback before updating nouveau to use it.
-
->> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
->> index 9e6caa8ecd19..55fbefcdc564 100644
->> +++ b/include/linux/mmu_notifier.h
->> @@ -233,11 +233,18 @@ struct mmu_notifier {
->>    * @invalidate: Upon return the caller must stop using any SPTEs within this
->>    *              range. This function can sleep. Return false only if sleeping
->>    *              was required but mmu_notifier_range_blockable(range) is false.
->> + * @release:	This function will be called when the mmu_interval_notifier
->> + *		is removed from the interval tree. Defining this function also
->> + *		allows mmu_interval_notifier_remove() and
->> + *		mmu_interval_notifier_update() to be called from the
->> + *		invalidate() callback function (i.e., they won't block waiting
->> + *		for invalidations to finish.
+>   general protection fault: 0000 [#1] SMP
+>   CPU: 0 PID: 1909 Comm: move_memory_reg Not tainted 5.4.0-rc7+ #139
+>   Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
+>   RIP: 0010:rmap_get_first+0x37/0x50 [kvm]
+>   Code: <48> 8b 3b 48 85 ff 74 ec e8 6c f4 ff ff 85 c0 74 e3 48 89 d8 5b c3
+>   RSP: 0018:ffffc9000021bbc8 EFLAGS: 00010246
+>   RAX: ffff00617461642e RBX: ffff00617461642e RCX: 0000000000000012
+>   RDX: ffff88827400f568 RSI: ffffc9000021bbe0 RDI: ffff88827400f570
+>   RBP: 0010000000000000 R08: ffffc9000021bd00 R09: ffffc9000021bda8
+>   R10: ffffc9000021bc48 R11: 0000000000000000 R12: 0030000000000000
+>   R13: 0000000000000000 R14: ffff88827427d700 R15: ffffc9000021bce8
+>   FS:  00007f7eda014700(0000) GS:ffff888277a00000(0000) knlGS:0000000000000000
+>   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>   CR2: 00007f7ed9216ff8 CR3: 0000000274391003 CR4: 0000000000162eb0
+>   Call Trace:
+>    kvm_mmu_slot_set_dirty+0xa1/0x150 [kvm]
+>    __kvm_set_memory_region.part.64+0x559/0x960 [kvm]
+>    kvm_set_memory_region+0x45/0x60 [kvm]
+>    kvm_vm_ioctl+0x30f/0x920 [kvm]
+>    do_vfs_ioctl+0xa1/0x620
+>    ksys_ioctl+0x66/0x70
+>    __x64_sys_ioctl+0x16/0x20
+>    do_syscall_64+0x4c/0x170
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>   RIP: 0033:0x7f7ed9911f47
+>   Code: <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 21 6f 2c 00 f7 d8 64 89 01 48
+>   RSP: 002b:00007ffc00937498 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>   RAX: ffffffffffffffda RBX: 0000000001ab0010 RCX: 00007f7ed9911f47
+>   RDX: 0000000001ab1350 RSI: 000000004020ae46 RDI: 0000000000000004
+>   RBP: 000000000000000a R08: 0000000000000000 R09: 00007f7ed9214700
+>   R10: 00007f7ed92149d0 R11: 0000000000000246 R12: 00000000bffff000
+>   R13: 0000000000000003 R14: 00007f7ed9215000 R15: 0000000000000000
+>   Modules linked in: kvm_intel kvm irqbypass
+>   ---[ end trace 0c5f570b3358ca89 ]---
 > 
-> Having a function called remove that doesn't block seems like very
-> poor choice of language, we've tended to use put to describe that
-> operation.
+> The disallow_lpage tracking is more subtle.  Failure to update results
+> in KVM creating large pages when it shouldn't, either due to stale data
+> or again due to indexing beyond the end of the metadata arrays, which
+> can lead to memory corruption and/or leaking data to guest/userspace.
 > 
-> The difference is meaningful as people often create use after free
-> bugs in drivers when presented with interfaces named 'remove' or
-> 'destroy' that don't actually guarentee there is not going to be
-> continued accesses to the memory.
-
-OK. I can rename it put().
-
->>    */
->>   struct mmu_interval_notifier_ops {
->>   	bool (*invalidate)(struct mmu_interval_notifier *mni,
->>   			   const struct mmu_notifier_range *range,
->>   			   unsigned long cur_seq);
->> +	void (*release)(struct mmu_interval_notifier *mni);
->>   };
->>   
->>   struct mmu_interval_notifier {
->> @@ -246,6 +253,8 @@ struct mmu_interval_notifier {
->>   	struct mm_struct *mm;
->>   	struct hlist_node deferred_item;
->>   	unsigned long invalidate_seq;
->> +	unsigned long deferred_start;
->> +	unsigned long deferred_last;
+> Note, the arrays for the old memslot are freed by the unconditional call
+> to kvm_free_memslot() in __kvm_set_memory_region().
 > 
-> I couldn't quite understand how something like this can work, what is
-> preventing parallel updates?
+> Fixes: 05da45583de9b ("KVM: MMU: large page support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-It is serialized by the struct mmu_notifier_mm lock.
-If there are no tasks walking the interval tree, the update
-happens synchronously under the lock. If there are walkers,
-the start/last values are stored under the lock and the last caller's
-values are used to update the interval tree when the last walker
-finishes (under the lock again).
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
->> +/**
->> + * mmu_interval_notifier_update - Update interval notifier end
->> + * @mni: Interval notifier to update
->> + * @start: New starting virtual address to monitor
->> + * @length: New length of the range to monitor
->> + *
->> + * This function updates the range being monitored.
->> + * If there is no release() function defined, the call will wait for the
->> + * update to finish before returning.
->> + */
->> +int mmu_interval_notifier_update(struct mmu_interval_notifier *mni,
->> +				 unsigned long start, unsigned long length)
->> +{
-> 
-> Update should probably be its own patch
-> 
-> Jason
+I think the error-prone part is:
 
-OK.
-Thanks for the review.
+	new = old = *slot;
+
+Where IMHO it would be better if we only copy pointers explicitly when
+under control, rather than blindly copying all the pointers in the
+structure which even contains sub-structures.
+
+For example, I see PPC has this:
+
+struct kvm_arch_memory_slot {
+#ifdef CONFIG_KVM_BOOK3S_HV_POSSIBLE
+	unsigned long *rmap;
+#endif /* CONFIG_KVM_BOOK3S_HV_POSSIBLE */
+};
+
+I started to look into HV code of it a bit, then I see...
+
+ - kvm_arch_create_memslot(kvmppc_core_create_memslot_hv) init slot->arch.rmap,
+ - kvm_arch_flush_shadow_memslot(kvmppc_core_flush_memslot_hv) didn't free it,
+ - kvm_arch_prepare_memory_region(kvmppc_core_prepare_memory_region_hv) is nop.
+
+So Does it have similar issue?
+
+-- 
+Peter Xu
+
