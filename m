@@ -2,98 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69E1B122182
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:30:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B1712218A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfLQBaX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 20:30:23 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:49797 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726591AbfLQBaW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:30:22 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R291e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=38;SR=0;TI=SMTPD_---0Tl9Rv9Q_1576546213;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Tl9Rv9Q_1576546213)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 17 Dec 2019 09:30:14 +0800
-Subject: Re: [PATCH v6 02/10] mm/lru: replace pgdat lru_lock with lruvec lock
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, akpm@linux-foundation.org,
-        mgorman@techsingularity.net, tj@kernel.org, hughd@google.com,
-        khlebnikov@yandex-team.ru, daniel.m.jordan@oracle.com,
-        yang.shi@linux.alibaba.com, shakeelb@google.com,
-        hannes@cmpxchg.org, Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Roman Gushchin <guro@fb.com>,
-        Chris Down <chris@chrisdown.name>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vlastimil Babka <vbabka@suse.cz>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Yafang Shao <laoar.shao@gmail.com>
-References: <1576488386-32544-1-git-send-email-alex.shi@linux.alibaba.com>
- <1576488386-32544-3-git-send-email-alex.shi@linux.alibaba.com>
- <20191216121427.GZ32169@bombadil.infradead.org>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <286c11c2-480f-37d6-e9fe-91822f862cd6@linux.alibaba.com>
-Date:   Tue, 17 Dec 2019 09:30:13 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:60.0)
- Gecko/20100101 Thunderbird/60.9.1
+        id S1726733AbfLQBaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 20:30:39 -0500
+Received: from mga17.intel.com ([192.55.52.151]:4933 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbfLQBaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 20:30:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 17:30:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
+   d="scan'208";a="415282141"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga005.fm.intel.com with ESMTP; 16 Dec 2019 17:30:37 -0800
+Received: from [10.226.38.59] (unknown [10.226.38.59])
+        by linux.intel.com (Postfix) with ESMTP id AC2185802E5;
+        Mon, 16 Dec 2019 17:30:35 -0800 (PST)
+Subject: Re: [PATCH v9 1/2] dt-bindings: phy: intel-emmc-phy: Add YAML schema
+ for LGM eMMC PHY
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kishon@ti.com, andriy.shevchenko@intel.com,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        peter.harliman.liem@intel.com
+References: <20191216034838.21875-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191216034838.21875-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20191216175348.GA18405@bogus>
+From:   "Ramuthevar, Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Message-ID: <5a59e7a4-dd3a-1719-9ec6-a2b0354ce842@linux.intel.com>
+Date:   Tue, 17 Dec 2019 09:30:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191216121427.GZ32169@bombadil.infradead.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191216175348.GA18405@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-ÔÚ 2019/12/16 ÏÂÎç8:14, Matthew Wilcox Ð´µÀ:
-> On Mon, Dec 16, 2019 at 05:26:18PM +0800, Alex Shi wrote:
->> -static void lock_page_lru(struct page *page, int *isolated)
->> +static struct lruvec *lock_page_lru(struct page *page, int *isolated)
->>  {
->> -	pg_data_t *pgdat = page_pgdat(page);
->> +	struct lruvec *lruvec = lock_page_lruvec_irq(page);
->>  
->> -	spin_lock_irq(&pgdat->lru_lock);
->>  	if (PageLRU(page)) {
->> -		struct lruvec *lruvec;
->>  
->> -		lruvec = mem_cgroup_page_lruvec(page, pgdat);
->>  		ClearPageLRU(page);
->>  		del_page_from_lru_list(page, lruvec, page_lru(page));
->>  		*isolated = 1;
->>  	} else
->>  		*isolated = 0;
+On 17/12/2019 1:53 AM, Rob Herring wrote:
+> On Mon, Dec 16, 2019 at 11:48:37AM +0800, Ramuthevar,Vadivel MuruganX wrote:
+>> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>>
+>> Add a YAML schema to use the host controller driver with the
+>> eMMC PHY on Intel's Lightning Mountain SoC.
+>>
+>> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> ---
+>>   .../bindings/phy/intel,lgm-emmc-phy.yaml           | 58 ++++++++++++++++++++++
+>>   1 file changed, 58 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+>> new file mode 100644
+>> index 000000000000..a7d4224b2001
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+>> @@ -0,0 +1,58 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/phy/intel,lgm-emmc-phy.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >> +
->> +	return lruvec;
->>  }
-> 
-> You still didn't fix this function.  Go back and look at my comment from
-> the last time you sent this patch set.
-> 
+>> +title: Intel Lightning Mountain(LGM) eMMC PHY Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>> +
+>> +description: |+
+>> +  Bindings for eMMC PHY on Intel's Lightning Mountain SoC, syscon
+>> +  node is used to reference the base address of eMMC phy registers.
+>> +
+>> +  The eMMC PHY node should be the child of a syscon node with the
+>> +  required property:
+>> +
+>> +  - compatible:         Should be one of the following:
+>> +                        "intel,lgm-syscon", "syscon"
+>> +  - reg:
+>> +      maxItems: 1
+>> +
+>> +properties:
+>> +  compatible:
+>> +      const: intel,lgm-emmc-phy
+>> +
+>> +  "#phy-cells":
+>> +    const: 0
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - "#phy-cells"
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+> Need to drop clock-names here too and in the example.
 
-Sorry for the misunderstanding. I guess what your want is fold the patch 9th into this, is that right?
-Any comments for the 9th patch?
+Thanks for pointing out, Drop it in both places.
 
-Thanks
-Alex
+With Best Regards
+Vadivel
+>> +
+>> +examples:
+>> +  - |
+>> +    sysconf: chiptop@e0200000 {
+>> +      compatible = "intel,lgm-syscon", "syscon";
+>> +      reg = <0xe0200000 0x100>;
+>> +
+>> +      emmc-phy: emmc-phy@a8 {
+>> +        compatible = "intel,lgm-emmc-phy";
+>> +        reg = <0x00a8 0x10>;
+>> +        clocks = <&emmc>;
+>> +        clock-names = "emmcclk";
+>> +        #phy-cells = <0>;
+>> +      };
+>> +    };
+>> +...
+>> -- 
+>> 2.11.0
+>>
