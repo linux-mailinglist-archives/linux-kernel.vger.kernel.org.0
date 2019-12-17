@@ -2,77 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20287122540
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20059122556
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:24:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfLQHTq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 02:19:46 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34220 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727160AbfLQHTq (ORCPT
+        id S1728016AbfLQHX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 02:23:56 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47675 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727334AbfLQHXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 02:19:46 -0500
-Received: by mail-pf1-f194.google.com with SMTP id l127so5255944pfl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 23:19:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:to:from:subject:user-agent:date;
-        bh=QzyD4fDBzuaA1wIHJrNGEEBy+sHP/QLbZfm+HTOKkR4=;
-        b=cZ1UC4FU3oudipQIsRudGn7YYFzZwyRBr1Zx7UQVgiVjQGSZdJX35BExXyDtla7LwV
-         jej5EkyALQChYmnfdvo1zM5HQcVSNKaSG9JnD+NXcHzxhZDCOWCLFopoCTe0+htP0CWa
-         qtqcPwfOBdZJ3wCN8hDIukHxFgBwycoLJVA1w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
-         :user-agent:date;
-        bh=QzyD4fDBzuaA1wIHJrNGEEBy+sHP/QLbZfm+HTOKkR4=;
-        b=WOBWAJF7TavmyxNWvKzARlbiXRv8AwhlSd+13eroqVV0LRrJ31vBKmv+iv9Ja24/uO
-         Xi9a6C2FD6pPQGhsT/WxKsb3HsPAXm7I+ncRqod/49kFk92Gd/lKLStc5FlY6rADzxvG
-         g9pQYzIGe0V/zczvArXBRq4HSrYh7x0Vy7qRpHm/35wL+lGzDiECI1UiErkVHmseXcB7
-         H9G4gxdtO7AzVLi9f0IAKpCTqkfN3IgG0HemtgaKQ8LYUD5CrgSiYCij7zjNoSxB/pU6
-         6iUOpisBqhhU4VZPoo1cTlI890c95C9ag/afRfn8IeUGvR85cNT8BBasY9qNQx2xcaXY
-         +whQ==
-X-Gm-Message-State: APjAAAV3gRvtUCkklM2w/8mxO9PRIwmA9brK39n2sqgQtwm84wP3xANO
-        nnfA8yAYP795cfxsqIaMQ8ZgMg==
-X-Google-Smtp-Source: APXvYqz8hXemqVKZ6ua+7ANmnhFp0S8vFyVnswmIUvKNq9CdU6rmkd75hMilfxjn3EFucyUHU5xjxw==
-X-Received: by 2002:a62:51c3:: with SMTP id f186mr21387191pfb.163.1576567185644;
-        Mon, 16 Dec 2019 23:19:45 -0800 (PST)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id o12sm26225089pfg.152.2019.12.16.23.19.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 23:19:45 -0800 (PST)
-Message-ID: <5df88191.1c69fb81.3b35e.c8d1@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        Tue, 17 Dec 2019 02:23:39 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ih7Cd-0002Xl-M1; Tue, 17 Dec 2019 08:23:31 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ih7CY-00016M-Uu; Tue, 17 Dec 2019 08:23:26 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Andrew Lunn <andrew@lunn.ch>, Chris Snook <chris.snook@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivien Didelot <vivien.didelot@gmail.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v6 0/5] add dsa switch support for ar9331
+Date:   Tue, 17 Dec 2019 08:23:20 +0100
+Message-Id: <20191217072325.4177-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191216222021.1.I684f124a05a1c3f0b113c8d06d5f9da5d69b801e@changeid>
-References: <20191216222021.1.I684f124a05a1c3f0b113c8d06d5f9da5d69b801e@changeid>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Rename gic-its node to msi-controller
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Dec 2019 23:19:44 -0800
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2019-12-16 22:20:25)
-> This is just like commit ac00546a6780 ("arm64: dts: qcom: sc7180:
-> Rename gic-its node to msi-controller") but for sdm845.  This fixes
-> all arm64/qcom device trees that I could find.
->=20
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+changes v6:
+- rebase against net-next
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+changes v5:
+- remote support for port5. The effort of using this port is
+  questionable. Currently, it is better to not use it at all, then
+  adding buggy support.
+- remove port enable call back. There is nothing what we actually need
+  to enable.
+- rebase it against v5.5-rc1 
+
+changes v4:
+- ag71xx: ag71xx_mac_validate fix always false comparison (&& -> ||)
+- tag_ar9331: use skb_pull_rcsum() instead of skb_pull().
+- tag_ar9331: drop skb_set_mac_header()
+
+changes v3:
+- ag71xx: ag71xx_mac_config: ignore MLO_AN_INBAND mode. It is not
+  supported by HW and SW.
+- ag71xx: ag71xx_mac_validate: return all supported bits on
+  PHY_INTERFACE_MODE_NA
+
+changes v2:
+- move Atheros AR9331 TAG format to separate patch
+- use netdev_warn_once in the tag driver to reduce potential message spam
+- typo fixes
+- reorder tag driver alphabetically 
+- configure switch to maximal frame size
+- use mdiobus_read/write
+- fail if mdio sub node is not found
+- add comment for post reset state
+- remove deprecated comment about device id
+- remove phy-handle option for node with fixed-link
+- ag71xx: set 1G support only for GMII mode
+
+This patch series provides dsa switch support for Atheros ar9331 WiSoC.
+As side effect ag71xx needed to be ported to phylink to make the switch
+driver (as well phylink based) work properly.
+
+Oleksij Rempel (5):
+  net: ag71xx: port to phylink
+  dt-bindings: net: dsa: qca,ar9331 switch documentation
+  MIPS: ath79: ar9331: add ar9331-switch node
+  net: dsa: add support for Atheros AR9331 TAG format
+  net: dsa: add support for Atheros AR9331 built-in switch
+
+ .../devicetree/bindings/net/dsa/ar9331.txt    | 148 ++++
+ arch/mips/boot/dts/qca/ar9331.dtsi            | 119 ++-
+ arch/mips/boot/dts/qca/ar9331_dpt_module.dts  |  13 +
+ drivers/net/dsa/Kconfig                       |   2 +
+ drivers/net/dsa/Makefile                      |   1 +
+ drivers/net/dsa/qca/Kconfig                   |  11 +
+ drivers/net/dsa/qca/Makefile                  |   2 +
+ drivers/net/dsa/qca/ar9331.c                  | 817 ++++++++++++++++++
+ drivers/net/ethernet/atheros/Kconfig          |   2 +-
+ drivers/net/ethernet/atheros/ag71xx.c         | 147 ++--
+ include/net/dsa.h                             |   2 +
+ net/dsa/Kconfig                               |   6 +
+ net/dsa/Makefile                              |   1 +
+ net/dsa/tag_ar9331.c                          |  96 ++
+ 14 files changed, 1307 insertions(+), 60 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/ar9331.txt
+ create mode 100644 drivers/net/dsa/qca/Kconfig
+ create mode 100644 drivers/net/dsa/qca/Makefile
+ create mode 100644 drivers/net/dsa/qca/ar9331.c
+ create mode 100644 net/dsa/tag_ar9331.c
+
+-- 
+2.24.0
 
