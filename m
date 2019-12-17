@@ -2,117 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58436122B12
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:16:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C958122B16
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727821AbfLQMQh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:16:37 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:44592 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726690AbfLQMQg (ORCPT
+        id S1727846AbfLQMRB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:17:01 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38769 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbfLQMRB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:16:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576584995;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eA9cywrEHDbWRbwjH2I9YMr5mKq56yt7dElxC/Ko4cE=;
-        b=ZhrwXrymHlSjsJfi1hFOK97Uom8cJytNBNxvxtIpL63NQpoh3i6IzqFxG27S/S2J7rtnRf
-        1oEFWw0P240xFb/vBCG9wORaj8wcYt/YwhmIg+RfGSA7pGiWlb0XISszPVZ9or5UZh9Ycb
-        e+U6Km8CEcbrRbam2FwPl48qTOziYxM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-96-At3ycamsN2GKXC38UdHDZA-1; Tue, 17 Dec 2019 07:16:34 -0500
-X-MC-Unique: At3ycamsN2GKXC38UdHDZA-1
-Received: by mail-wm1-f71.google.com with SMTP id g26so513032wmk.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 04:16:33 -0800 (PST)
+        Tue, 17 Dec 2019 07:17:01 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u2so2895628wmc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 04:16:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uvkcmzWWNz9+vvDl5lj9jSidtFGQN7sTpNsfRZj6iOc=;
+        b=p1fpn1woHPX0xistfLZ2FIMnrxMkOwvBnFdqRaqUrUsBTdUGddlqaXaKDbVYA58saV
+         zl4sFWG3x9FKyHmdSfAgHZmnMHwYTOqFKWgXE7npDUO++TaANqqJR5flItwqSW3BVsk+
+         NIb49F2bDT/Zgn7DjYYgTL90X/8JXIZE3IfTXG7sgltuT/ypstmEu8TPxCZ7ol/6jaYm
+         /pubBnp85lw3s0/l89Ume7f/ZrdoXf6EKE7r1fHAzSaDdTm/A8qV5wbjuYb27WgyUSNo
+         yXR3QckcV4o3dfR3LiTUfkvLb93D0WfClTushCMklkeaH2kulnoQlxiJhckYwASPk+6+
+         C2Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=eA9cywrEHDbWRbwjH2I9YMr5mKq56yt7dElxC/Ko4cE=;
-        b=UjZuGplVSqqi5urjXd9Q9sOH+KYA3DL4OEj8z0vdMdOQBtHD9ZdacP6FwqGJRfj2s7
-         ogVr9oHbZ+N/erOfSkNTHRSEpFWQpSMRNyNzVdA37PV8Hd3LPLQra3tI865MqKkFMdR5
-         WdOlE6e5cCWOTLTzy95rS2hzJgyz+1VRDFdI9IcJgia9PCTwPn1QWUobebkK0+PubTxo
-         fsli02EHBB9RMEe0818hjoNeKFpiRSo3qIXydz9M/y5lZ6rwACFAiAkchptpocEsKyIO
-         9BqlGdENeWMN5rXwQYhdUdEptQl8qJvEzp6dvqZrZf4PxPdd6TGMXK3/OqRvHOtU+nWv
-         TQAw==
-X-Gm-Message-State: APjAAAW0hyDpykoezNRvXREFlLsss8pTv1ZWzCVgR0I1JEG6sxP4CHmB
-        Vy6omEd4vOh8sFl7TGeC7zkA7ALc7S/KavZJ1EIsmdXIPLi9L6ughtYy8FKs33Gw+yY70GUF1kq
-        McBN3icQFQ/cWD7H1TTTNpeiz
-X-Received: by 2002:adf:f5cf:: with SMTP id k15mr37639349wrp.182.1576584992756;
-        Tue, 17 Dec 2019 04:16:32 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxxWL8dD6dQVsaIoKdm9DusWguRhjNW6D90fK9ygyz/qJ0RxmKHJAr+6737sYsXEYzYZkoekw==
-X-Received: by 2002:adf:f5cf:: with SMTP id k15mr37639314wrp.182.1576584992501;
-        Tue, 17 Dec 2019 04:16:32 -0800 (PST)
-Received: from ?IPv6:2a01:e0a:466:71c0:1c42:ed63:2256:4add? ([2a01:e0a:466:71c0:1c42:ed63:2256:4add])
-        by smtp.gmail.com with ESMTPSA id z83sm2863437wmg.2.2019.12.17.04.16.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Dec 2019 04:16:31 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-From:   Christophe de Dinechin <dinechin@redhat.com>
-In-Reply-To: <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
-Date:   Tue, 17 Dec 2019 13:16:31 +0100
-Cc:     Peter Xu <peterx@redhat.com>,
-        Christophe de Dinechin <christophe.de.dinechin@gmail.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E167A793-B42A-422D-8D46-B992CB6EBE69@redhat.com>
-References: <20191129213505.18472-1-peterx@redhat.com>
- <20191129213505.18472-5-peterx@redhat.com> <m1lfrihj2n.fsf@dinechin.org>
- <20191213202324.GI16429@xz-x1>
- <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-X-Mailer: Apple Mail (2.3608.40.2.2.4)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uvkcmzWWNz9+vvDl5lj9jSidtFGQN7sTpNsfRZj6iOc=;
+        b=CfRFLA1Ut9iHAvPMI18ggYgvvUaq3FRns1C1wn17VEup1oSZOLB3/veBfg+jFmixP8
+         J8XWAiToMTM7uIYdvBg3kFf5s3ZySc2ug0CHpKzXX/L+OuKS1a5crEdszKpKYa3ASWz7
+         br17n0Qm2jd1frzulQRv3CDA3G1hMYKwxuZUeHamNHYGEQamiYg4Nme/Fqu08EruHKKH
+         Asna8fQjaLQRtDR94OKKxa+BhqjVuhJoTQnkmAdBYtA+ntjlr4OFqiToZtQUosRdqTyJ
+         dLmGi0gum03DsSi4v2yeE8fMuXgMLREqPXzAE0vDLhK1xAmNiKWUjdDqOyw1CFooC8vz
+         DBKw==
+X-Gm-Message-State: APjAAAV4IKhXKvtZO1ecnSbbhN5fNOdVjXmfFMDH57dDSMee6e6M5pfv
+        LgMiWbSjw8bRk0qj8UVjSrxcXw==
+X-Google-Smtp-Source: APXvYqy0Y+iBxxIqL2VTzMcQpKB1C0uzPqguqaHBeN0RjsFa/n7TfiB/n92Yqnot3rrj/anxAG05Wg==
+X-Received: by 2002:a1c:7508:: with SMTP id o8mr5038469wmc.74.1576585019035;
+        Tue, 17 Dec 2019 04:16:59 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id f1sm25087270wru.6.2019.12.17.04.16.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 04:16:58 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     robh@kernel.org, broonie@kernel.org, lee.jones@linaro.org,
+        linus.walleij@linaro.org
+Cc:     vinod.koul@linaro.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        linux-gpio@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v5 00/11] ASoC: Add support to WCD9340/WCD9341 codec
+Date:   Tue, 17 Dec 2019 12:16:31 +0000
+Message-Id: <20191217121642.28534-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patchset adds support to Qualcomm WCD9340/WCD9341 Codec which
+is a standalone Hi-Fi audio codec IC.
+This codec supports both I2S/I2C and SLIMbus audio interfaces.
+On slimbus interface it supports two data lanes; 16 Tx ports
+and 8 Rx ports. It has Five DACs and seven dedicated interpolators,
+Multibutton headset control (MBHC), Active noise cancellation,
+Sidetone paths, MAD (mic activity detection) and codec processing engine.
+It supports Class-H differential earpiece out and stereo single
+ended headphones out.
 
+This codec also has integrated SoundWire controller.
+Patchset for this is already sent for review at
+https://patchwork.kernel.org/cover/11185769/
+    
+This patchset has been tested on SDM845 based DragonBoard DB845c and
+Lenovo Yoga C630 laptop with WSA881x smart speaker amplifiers via
+soundwire and 4 DMICs.
 
-> On 14 Dec 2019, at 08:57, Paolo Bonzini <pbonzini@redhat.com> wrote:
->=20
-> On 13/12/19 21:23, Peter Xu wrote:
->>> What is the benefit of using u16 for that? That means with 4K pages, =
-you
->>> can share at most 256M of dirty memory each time? That seems low to =
-me,
->>> especially since it's sufficient to touch one byte in a page to =
-dirty it.
->>>=20
->>> Actually, this is not consistent with the definition in the code ;-)
->>> So I'll assume it's actually u32.
->> Yes it's u32 now.  Actually I believe at least Paolo would prefer u16
->> more. :)
->=20
-> It has to be u16, because it overlaps the padding of the first entry.
+gpio controller patch does not have any link dependency, it can go by its own.
 
-Wow, now that=E2=80=99s subtle.
+Most of the code in this driver is rework of Qualcomm downstream drivers
+used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
 
-That definitely needs a union with the padding to make this explicit.
+Thanks,
+srini
 
-(My guess is you do that to page-align the whole thing and avoid adding =
-a
-page just for the counters)
+Changes since v4:
+ - updated microvolt bindings as suggested by Rob.
+ - slimbus optional property patch already applied.
 
->=20
-> Paolo
->=20
->> I think even u16 would be mostly enough (if you see, the maximum
->> allowed value currently is 64K entries only, not a big one).  Again,
->> the thing is that the userspace should be collecting the dirty bits,
->> so the ring shouldn't reach full easily.  Even if it does, we should
->> probably let it stop for a while as explained above.  It'll be
->> inefficient only if we set it to a too-small value, imho.
->>=20
->=20
+Srinivas Kandagatla (11):
+  ASoC: dt-bindings: add dt bindings for WCD9340/WCD9341 audio codec
+  mfd: wcd934x: add support to wcd9340/wcd9341 codec
+  ASoC: wcd934x: add support to wcd9340/wcd9341 codec
+  ASoC: wcd934x: add basic controls
+  ASoC: wcd934x: add playback dapm widgets
+  ASoC: wcd934x: add capture dapm widgets
+  ASoC: wcd934x: add audio routings
+  dt-bindings: gpio: wcd934x: Add bindings for gpio
+  gpio: wcd934x: Add support to wcd934x gpio controller
+  ASoC: qcom: dt-bindings: Add compatible for DB845c and Lenovo Yoga
+  ASoC: qcom: sdm845: add support to DB845c and Lenovo Yoga
+
+ .../bindings/gpio/qcom,wcd934x-gpio.yaml      |   47 +
+ .../devicetree/bindings/sound/qcom,sdm845.txt |    5 +-
+ .../bindings/sound/qcom,wcd934x.yaml          |  175 +
+ drivers/gpio/Kconfig                          |    8 +
+ drivers/gpio/Makefile                         |    1 +
+ drivers/gpio/gpio-wcd934x.c                   |  104 +
+ drivers/mfd/Kconfig                           |   12 +
+ drivers/mfd/Makefile                          |    1 +
+ drivers/mfd/wcd934x.c                         |  306 +
+ include/linux/mfd/wcd934x/registers.h         |  531 ++
+ include/linux/mfd/wcd934x/wcd934x.h           |   31 +
+ sound/soc/codecs/Kconfig                      |   10 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/wcd934x.c                    | 5084 +++++++++++++++++
+ sound/soc/qcom/sdm845.c                       |   86 +-
+ 15 files changed, 6401 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/qcom,wcd934x-gpio.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
+ create mode 100644 drivers/gpio/gpio-wcd934x.c
+ create mode 100644 drivers/mfd/wcd934x.c
+ create mode 100644 include/linux/mfd/wcd934x/registers.h
+ create mode 100644 include/linux/mfd/wcd934x/wcd934x.h
+ create mode 100644 sound/soc/codecs/wcd934x.c
+
+-- 
+2.21.0
 
