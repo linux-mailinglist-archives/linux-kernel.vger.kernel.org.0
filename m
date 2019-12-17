@@ -2,116 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E280122AA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 398A5122AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727717AbfLQLwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:52:32 -0500
-Received: from foss.arm.com ([217.140.110.172]:34378 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfLQLwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:52:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91CC631B;
-        Tue, 17 Dec 2019 03:52:31 -0800 (PST)
-Received: from [10.1.196.56] (e112269-lin.cambridge.arm.com [10.1.196.56])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E8ED3F6CF;
-        Tue, 17 Dec 2019 03:52:30 -0800 (PST)
-From:   Steven Price <steven.price@arm.com>
-Subject: Re: linux-next: Tree for Dec 16 (drm_panel & intel_panel)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-References: <20191216162209.5b5256dd@canb.auug.org.au>
- <d92bec2a-62cb-004e-7f8c-01fc12a53a74@infradead.org>
- <20191217054255.GA26868@ravnborg.org>
- <65c9dc7b-3c61-8204-07da-212632732791@infradead.org>
-Message-ID: <aede39a0-3469-130d-f416-0e9426ebcec9@arm.com>
-Date:   Tue, 17 Dec 2019 11:52:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726920AbfLQLxd convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Dec 2019 06:53:33 -0500
+Received: from szxga03-in.huawei.com ([45.249.212.189]:2107 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726141AbfLQLxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:53:32 -0500
+Received: from DGGEML402-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id 5AAA6FC76425F2D8B827;
+        Tue, 17 Dec 2019 19:53:28 +0800 (CST)
+Received: from DGGEML505-MBX.china.huawei.com ([169.254.12.46]) by
+ DGGEML402-HUB.china.huawei.com ([fe80::fca6:7568:4ee3:c776%31]) with mapi id
+ 14.03.0439.000; Tue, 17 Dec 2019 19:53:22 +0800
+From:   "wubo (T)" <wubo40@huawei.com>
+To:     "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Mingfangsen <mingfangsen@huawei.com>
+Subject: [PATCH] scsi:remove unreachable code on scsi_decide_disposition func
+Thread-Topic: [PATCH] scsi:remove unreachable code on
+ scsi_decide_disposition func
+Thread-Index: AdW0zylDYYuhZep7QPWk1qrXegsGRA==
+Date:   Tue, 17 Dec 2019 11:53:21 +0000
+Message-ID: <EDBAAA0BBBA2AC4E9C8B6B81DEEE1D6915E9A7FD@dggeml505-mbx.china.huawei.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.173.221.252]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <65c9dc7b-3c61-8204-07da-212632732791@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/12/2019 06:37, Randy Dunlap wrote:
-> On 12/16/19 9:42 PM, Sam Ravnborg wrote:
->> Hi Randy.
->>
->> On Mon, Dec 16, 2019 at 08:25:11AM -0800, Randy Dunlap wrote:
->>> On 12/15/19 9:22 PM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20191213:
->>>>
->>>
->>> on x86_64:
->>>
->>> ld: drivers/gpu/drm/drm_panel.o: in function `drm_panel_of_backlight':
->>> (.text+0x2ee): undefined reference to `devm_of_find_backlight'
->>>
->>> ld: drivers/gpu/drm/i915/display/intel_panel.o: in function `intel_backlight_device_register':
->>> intel_panel.c:(.text+0x593e): undefined reference to `backlight_device_register'
->>> ld: drivers/gpu/drm/i915/display/intel_panel.o: in function `intel_backlight_device_unregister':
->>> intel_panel.c:(.text+0x5a04): undefined reference to `backlight_device_unregister'
->>>
->>> CONFIG_DRM_PANEL=y
->>> CONFIG_BACKLIGHT_CLASS_DEVICE=m
->>> CONFIG_DRM_I915=y
->>>
->>> Full randconfig file is attached.
->>
->> Can you please verify if you have:
->> 907aa265fde6589b8059dc51649c6d1f49ade2f3
->> ("drm/drm_panel: fix EXPORT of drm_panel_of_backlight")
->>
->> This commit is supposed to fix it.
->>
->> 	Sam
->>
-> 
-> Hi Sam,
-> I don't have the linux-next.git tree so I can't check that.
-> I just built whatever is in linux-next of 20191216.
-> 
+From: Wu Bo <wubo40@huawei.com>
 
-907aa265fde6589b8059dc51649c6d1f49ade2f3 ("drm/drm_panel: fix EXPORT of
-drm_panel_of_backlight") is fixing drm_panel_of_backlight(), but the
-error above is for backlight_device_register().
+Remove unreachable code on scsi_decide_disposition func.
 
-From what I can tell, that commit is actually the cause of the error -
-now intel_backlight_device_register() is being included in the kernel
-even though it calls backlight_device_register() which is in a module.
-Of course it also fixed the original error, so reverting it isn't any
-use.
+Signed-off-by: Wu Bo <wubo40@huawei.com>
+---
+ drivers/scsi/scsi_error.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-The below Kconfig change fixes the build for me, but I've no idea
-whether this is the correct fix.
+diff --git a/drivers/scsi/scsi_error.c b/drivers/scsi/scsi_error.c
+index ae2fa17..c5e05c4 100644
+--- a/drivers/scsi/scsi_error.c
++++ b/drivers/scsi/scsi_error.c
+@@ -1934,7 +1934,6 @@ int scsi_decide_disposition(struct scsi_cmnd *scmd)
+        default:
+                return FAILED;
+        }
+-       return FAILED;
 
-Steve
+ maybe_retry:
 
-----8<-----
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index ba9595960bbe..6b69dab683ae 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -16,7 +16,7 @@ config DRM_I915
- 	select IRQ_WORK
- 	# i915 depends on ACPI_VIDEO when ACPI is enabled
- 	# but for select to work, need to select ACPI_VIDEO's dependencies, ick
--	select BACKLIGHT_CLASS_DEVICE if ACPI
-+	select BACKLIGHT_CLASS_DEVICE
- 	select INPUT if ACPI
- 	select ACPI_VIDEO if ACPI
- 	select ACPI_BUTTON if ACPI
+--
+1.8.3.1
