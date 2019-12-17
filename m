@@ -2,102 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6281234F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60CB21234EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:34:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbfLQSeY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:34:24 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:43926 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfLQSeV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:34:21 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHIO4NX077747;
-        Tue, 17 Dec 2019 18:33:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=Nb3oRT5xQ7YhNFQhNAEMUTbWOzUZaQIt06N5VoFfOHk=;
- b=chjhR3l445a4eGlY3WXhLCoJJwqMSzrK3M+2t7gtvUM4adPrRcQ8urAYx9VeC1A/beX8
- x+YwMibzDX1DODh0m1Q0oLj4+ujKY/LloDyO09yYHwWf3V9NegdijVdZT3bjKzUXo/SZ
- lMmnZhxKLuCQ2wVU4O3KVvJLkO9STUSZnkEycDxTjdOlAGMGRPkgmcSvxyHH0X3RergF
- +4CUQN1oIiyx+N5T4zDYEcHBHjBzlAggDPoPOMddV7LSY86zyPLX9uQzMja7I3Hts6DG
- Fifk2yCfgZeDxKdq0OwNWt1HX9rj6+QUTauCSwjjqj6YBWzj+vxkb/znI3FhBQpDDrvf AQ== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2wvrcr8exu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Dec 2019 18:33:05 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHITDYl130379;
-        Tue, 17 Dec 2019 18:33:05 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2wxm4w3pe3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 17 Dec 2019 18:33:04 +0000
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBHIX35B001830;
-        Tue, 17 Dec 2019 18:33:03 GMT
-Received: from [192.168.1.206] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 17 Dec 2019 10:33:03 -0800
-Subject: Re: [PATCH v2] mm/hugetlb: Defer freeing of huge pages if in non-task
- context
-To:     Michal Hocko <mhocko@kernel.org>, Waiman Long <longman@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Matthew Wilcox <willy@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-References: <20191217012508.31495-1-longman@redhat.com>
- <20191217093143.GC31063@dhcp22.suse.cz>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <e153119f-036c-7479-9f27-e8d043ee3d2f@oracle.com>
-Date:   Tue, 17 Dec 2019 10:33:01 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728124AbfLQSeR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:34:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:44744 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726874AbfLQSeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 13:34:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0E3730E;
+        Tue, 17 Dec 2019 10:34:16 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6115B3F67D;
+        Tue, 17 Dec 2019 10:34:15 -0800 (PST)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, will@kernel.org, maz@kernel.org,
+        mark.rutland@arm.com, dave.martin@arm.com, catalin.marinas@arm.com,
+        ard.biesheuvel@linaro.org, christoffer.dall@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v2 0/7] arm64: Fix support for no FP/SIMD
+Date:   Tue, 17 Dec 2019 18:33:55 +0000
+Message-Id: <20191217183402.2259904-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191217093143.GC31063@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912170145
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912170145
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 1:31 AM, Michal Hocko wrote:
-> On Mon 16-12-19 20:25:08, Waiman Long wrote:
-> [...]
->> Both the hugetbl_lock and the subpool lock can be acquired in
->> free_huge_page(). One way to solve the problem is to make both locks
->> irq-safe.
-> 
-> Please document why we do not take this, quite natural path and instead
-> we have to come up with an elaborate way instead. I believe the primary
-> motivation is that some operations under those locks are quite
-> expensive. Please add that to the changelog and ideally to the code as
-> well. We probably want to fix those anyway and then this would be a
-> temporary workaround.
+This series fixes the support for systems without FP/SIMD unit.
 
-We may have talked in the past about how hugetlbfs locking is not ideal.
-However, there are many things in hugetlbfs that are not ideal. :(  The
-thought was to avoid making changes unless they showed up as real problems.
-Looks like the locking is now a real issue.
+We detect the absence of FP/SIMD after the SMP cpus are brought
+online (i.e, SYSTEM scope). This means, we allow a hotplugged
+CPU to boot successfully even if it doesn't have the FP/SIMD
+when we have decided otherwise at boot and have now advertised
+the ELF HWCAP for the userspace. Fix this by turning this to a
+BOOT_RESTRICTED_CPU_LOCAL feature to allow the detection of the
+feature the very moment a CPU turns up without FP/SIMD and also
+prevent a conflict after SMP boot.
 
-I'll start work on restructuring at least this part of the locking.  But,
-let's move forward with the deferred freeing approach until that is ready.
+The COMPAT ELF_HWCAPs were statically set to indicate the
+availability of VFP. Make it dynamic to set the appropriate
+bits.
+
+Also, some of the early kernel threads (including init) could run
+with their TIF_FOREIGN_FPSTATE flag set which might be inherited
+by applications forked by them (e.g, modprobe from initramfs).
+Now, if we detect the absence of FP/SIMD we stop clearing the
+TIF flag in fpsimd_restore_current_state(). This could cause
+the applications stuck in do_notify_resume() looping forever
+to clear the flag. Fix this by clearing the TIF flag in
+fpsimd_restore_current_state() for the tasks that may
+have it set.
+
+This series also categorises the functions dealing with fpsimd
+into two :
+
+ - Call permitted with missing FP/SIMD support. But we bail
+   out early in the function. This is for functions exposed
+   to the generic kernel code.
+
+ - Calls not permitted with missing FP/SIMD support. These
+   are functions which deal with the CPU/Task FP/SIMD registers
+   and/or meta-data. The callers must check for the support
+   before invoking them.
+
+See the last patch in the series for details. 
+
+Also make sure that the SVE is initialised where supported,
+before the FP/SIMD is used by the kernel.
+
+Tested with debian armel initramfs and rootfs. The arm64 doesn't
+have a soft-float ABI, thus haven't tested it with 64bit userspace.
+
+Applies on v5.5-rc2.
+
+Suzuki K Poulose (7):
+  arm64: Introduce system_capabilities_finalized() marker
+  arm64: fpsimd: Make sure SVE setup is complete before SIMD is used
+  arm64: cpufeature: Fix the type of no FP/SIMD capability
+  arm64: cpufeature: Set the FP/SIMD compat HWCAP bits properly
+  arm64: ptrace: nofpsimd: Fail FP/SIMD regset operations
+  arm64: signal: nofpsimd: Handle fp/simd context for signal frames
+  arm64: nofpsmid: Handle TIF_FOREIGN_FPSTATE flag cleanly
+
+ arch/arm64/include/asm/cpufeature.h |  5 +++
+ arch/arm64/include/asm/kvm_host.h   |  2 +-
+ arch/arm64/include/asm/mmu.h        |  2 +-
+ arch/arm64/include/asm/simd.h       |  8 +++-
+ arch/arm64/kernel/cpufeature.c      | 65 +++++++++++++++++++----------
+ arch/arm64/kernel/fpsimd.c          | 32 ++++++++++++--
+ arch/arm64/kernel/process.c         |  2 +-
+ arch/arm64/kernel/ptrace.c          | 12 ++++++
+ arch/arm64/kernel/signal.c          | 17 +++++++-
+ arch/arm64/kernel/signal32.c        | 12 +++++-
+ arch/arm64/kvm/hyp/switch.c         |  9 ++++
+ 11 files changed, 132 insertions(+), 34 deletions(-)
+
 -- 
-Mike Kravetz
+2.23.0
+
