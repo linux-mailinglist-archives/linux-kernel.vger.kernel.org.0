@@ -2,80 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17F11122FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:17:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5250122FF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:17:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfLQPRO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:17:14 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:37105 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbfLQPRN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:17:13 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 21so5789175qky.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 07:17:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=QBbJhTwA/z9GheRdVz6DmV0ve21qD4tE529ywgzTv4I=;
-        b=d9bCdpSbGIQ2bZQYmFNSt27dYg2M8iWZwhztIVSpbfasIXUPfe9wfODDgBXYwS+JyO
-         Gv3TTGJk82AvVWFURXKuscdcGA0HsfV01pD/QIDsVJmelRXOfAde709zspdbcG8ICcc7
-         7TNB7KXnhm1FIo4TfOcfXQvk5nlWUU9HlOKjB4BCaP67Vuf1CgtKnicQw9mirkKllLU2
-         M/a7YslEdG6U+m8J2FZ77M+8bRBnh3JeZWOf4vPXkFIzi7HAeKhBmRNHQe1i7gyA1pzn
-         a8+ey1AIdl0lgF0SWzVjIXgYk2NCOn6AkDxukN3hUDa+fNb/qaSLFPWl6523TIa7FcdY
-         zL8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=QBbJhTwA/z9GheRdVz6DmV0ve21qD4tE529ywgzTv4I=;
-        b=dz+1Ed0pW8gAzENXNgdyD1OUcil2GcJIPEQIA7f1XL37Pe/1Nscce546uNpwPMfKjr
-         I3D2g/vyn4yy4YawH2ofDO08CAT0ZVODDc4EloQQTnoPS4OkD4DBLeB31Q19XArildxn
-         KPR3JcIwu0VGigUvxGHQprqbp0GxtYbAOZaaLmQ3XZ/FVCKPuwm3/t1HlYV3oWaIyXwt
-         tPdatT+BsOVV7F3K8U2qAjgz5SjaK4ZTnBXy9LEor/xmXmK1HULiZyEjCtbTkZ/+Nz67
-         Xi6B7gGj3GIsaURcvaWqqalocDsQKtPNTqxY2tyPbVQjG2SHb5o9n4jrk09LoGo8Myk5
-         JQpw==
-X-Gm-Message-State: APjAAAW2ScZjO5+GZGCWByDn/3O0j6NHJjZyv9KP/6gxdlX83in0l4pW
-        fUWWV5/dXId/xPmJDnLVI5Fs+Q==
-X-Google-Smtp-Source: APXvYqxc4OvUcMuruBVNLedZUEl90a9Pdz8xXR4S1pf38oV2+oQQJTx99hLJYlWM6tZGPH1Gp7jarA==
-X-Received: by 2002:a37:6294:: with SMTP id w142mr5114586qkb.284.1576595832242;
-        Tue, 17 Dec 2019 07:17:12 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id t7sm7120087qkm.136.2019.12.17.07.17.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 07:17:11 -0800 (PST)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] mm: memcontrol.c: move mem_cgroup_id_get_many under CONFIG_MMU
-Date:   Tue, 17 Dec 2019 10:17:10 -0500
-Message-Id: <E7311A37-F5D9-4248-A51A-9B105A49A923@lca.pw>
-References: <20191217151343.GC7272@dhcp22.suse.cz>
-Cc:     Chris Down <chris@chrisdown.name>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191217151343.GC7272@dhcp22.suse.cz>
-To:     Michal Hocko <mhocko@kernel.org>
-X-Mailer: iPhone Mail (17C54)
+        id S1728244AbfLQPRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:17:55 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40798 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726560AbfLQPRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:17:54 -0500
+Received: from zn.tnic (p200300EC2F0BBF00B1FF9AA6AAA46E12.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:bf00:b1ff:9aa6:aaa4:6e12])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E7211EC0ABC;
+        Tue, 17 Dec 2019 16:17:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576595873;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=eMPRb1cz3Nt28bOIAgvze0vVdLfDNbhPiLCjieiXvPg=;
+        b=IgvRwOM0qg8wEd4JMvkhf5NcFcChnH2T+nAaI8DilOhfGUq/o51WiLa8tL5G3bV7q7eDZj
+        YN3wzHwN3uisJTfNImBcWCzTgf7LymqJflfElCgg1g6+v3SuE6of3/fouMnEPaPsYQsNbr
+        E/0wOJ3MIYeFtXVSrxFfD8e/Z2HFiVc=
+Date:   Tue, 17 Dec 2019 16:17:44 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
+        puiterwijk@redhat.com
+Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
+Message-ID: <20191217151744.GG28788@zn.tnic>
+References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
+ <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 30, 2019 at 01:13:09AM +0200, Jarkko Sakkinen wrote:
 
+Typo in the subject:
 
-> On Dec 17, 2019, at 10:13 AM, Michal Hocko <mhocko@kernel.org> wrote:
->=20
-> I do understand the general purpose of the warning. I am simply not sure
-> the kernel tree is a good candidate with a huge number of different
-> config combinations that might easily result in warnings which would
-> tend to result in even more ifdeferry than we have.
+Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
+							 ^^^^^^
+> From: Sean Christopherson <sean.j.christopherson@intel.com>
+> 
+> When the CPU supports SGX, check that the BIOS has enabled SGX and SGX1
+> opcodes are available. Otherwise, all the SGX related capabilities.
+> 
+> In addition, clear X86_FEATURE_SGX_LC also in the case when the launch
+> enclave are read-only. This way the feature bit reflects the level that
+> Linux supports the launch control.
+> 
+> The check is done for every CPU, not just BSP, in order to verify that
+> MSR_IA32_FEATURE_CONTROL is correctly configured on all CPUs. The other
+> parts of the kernel, like the enclave driver, expect the same
+> configuration from all CPUs.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/intel.c | 41 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
 
-Yes, compiling test without real-world use case is evil. Once we ignore the e=
-vil, it becomes much more manageable.=
+...
+
+> @@ -761,6 +797,11 @@ static void init_intel(struct cpuinfo_x86 *c)
+>  	if (cpu_has(c, X86_FEATURE_TME))
+>  		detect_tme(c);
+>  
+> +#ifdef CONFIG_INTEL_SGX
+> +	if (cpu_has(c, X86_FEATURE_SGX))
+> +		detect_sgx(c);
+> +#endif
+
+You can remove the ifdeffery here and put the ifdef around the function
+body and drop the __maybe_unused tag:
+
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index ef41431b3f70..2f3414eff99d 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -624,8 +624,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
+ 	c->x86_phys_bits -= keyid_bits;
+ }
+ 
+-static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
++static void detect_sgx(struct cpuinfo_x86 *c)
+ {
++#ifdef CONFIG_INTEL_SGX
+ 	unsigned long long fc;
+ 
+ 	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
+@@ -658,6 +659,7 @@ static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
+ 
+ err_msrs_rdonly:
+ 	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
++#endif
+ }
+ 
+ static void init_cpuid_fault(struct cpuinfo_x86 *c)
+@@ -797,10 +799,8 @@ static void init_intel(struct cpuinfo_x86 *c)
+ 	if (cpu_has(c, X86_FEATURE_TME))
+ 		detect_tme(c);
+ 
+-#ifdef CONFIG_INTEL_SGX
+ 	if (cpu_has(c, X86_FEATURE_SGX))
+ 		detect_sgx(c);
+-#endif
+ 
+ 	init_intel_misc_features(c);
+ 
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
