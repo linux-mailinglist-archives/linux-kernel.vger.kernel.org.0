@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA900122138
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:01:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92FDE122140
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:01:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfLQBBb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 20:01:31 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34482 "EHLO
+        id S1728239AbfLQBBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 20:01:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34464 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726383AbfLQAva (ORCPT
+        by vger.kernel.org with ESMTP id S1726181AbfLQAva (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 16 Dec 2019 19:51:30 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15D-0003IP-TP; Tue, 17 Dec 2019 00:51:27 +0000
+        id 1ih15E-0003IT-5M; Tue, 17 Dec 2019 00:51:28 +0000
 Received: from ben by deadeye with local (Exim 4.93-RC7)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15D-0005RT-2g; Tue, 17 Dec 2019 00:51:27 +0000
+        id 1ih15D-0005Rd-9p; Tue, 17 Dec 2019 00:51:27 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,17 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        "Preeti U Murthy" <preeti@linux.vnet.ibm.com>,
-        "Andreas Sandberg" <andreas.sandberg@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-Date:   Tue, 17 Dec 2019 00:45:37 +0000
-Message-ID: <lsq.1576543535.759354087@decadent.org.uk>
+        "Eric Dumazet" <edumazet@google.com>,
+        "syzbot" <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Date:   Tue, 17 Dec 2019 00:45:39 +0000
+Message-ID: <lsq.1576543535.656545696@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 003/136] tick: hrtimer-broadcast: Prevent endless
- restarting when broadcast device is unused
+Subject: [PATCH 3.16 005/136] sch_cbq: validate TCA_CBQ_WRROPT to avoid crash
 In-Reply-To: <lsq.1576543534.33060804@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -51,61 +48,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Sandberg <andreas.sandberg@arm.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 38d23a6cc16c02f7b0c920266053f340b5601735 upstream.
+commit e9789c7cc182484fc031fd88097eb14cb26c4596 upstream.
 
-The hrtimer callback in the hrtimer's tick broadcast code sometimes
-incorrectly ends up scheduling events at the current tick causing the
-kernel to hang servicing the same hrtimer forever. This typically
-happens when a device is swapped out by
-tick_install_broadcast_device(), which replaces the event handler with
-clock_events_handle_noop() and sets the device mode to
-CLOCK_EVT_MODE_UNUSED. If the timer is scheduled when this happens,
-the next_event field will not be updated and the hrtimer ends up being
-restarted at the current tick. To prevent this from happening, only
-try to restart the hrtimer if the broadcast clock event device is in
-one of the active modes and try to cancel the timer when entering the
-CLOCK_EVT_MODE_UNUSED mode.
+syzbot reported a crash in cbq_normalize_quanta() caused
+by an out of range cl->priority.
 
-Signed-off-by: Andreas Sandberg <andreas.sandberg@arm.com>
-Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Preeti U Murthy <preeti@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/1429880765-5558-1-git-send-email-andreas.sandberg@arm.com
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 3.16 as dependency of commit b9023b91dd02
- "tick: broadcast-hrtimer: Fix a race in bc_set_next"]
+iproute2 enforces this check, but malicious users do not.
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN PTI
+Modules linked in:
+CPU: 1 PID: 26447 Comm: syz-executor.1 Not tainted 5.3+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:cbq_normalize_quanta.part.0+0x1fd/0x430 net/sched/sch_cbq.c:902
+RSP: 0018:ffff8801a5c333b0 EFLAGS: 00010206
+RAX: 0000000020000003 RBX: 00000000fffffff8 RCX: ffffc9000712f000
+RDX: 00000000000043bf RSI: ffffffff83be8962 RDI: 0000000100000018
+RBP: ffff8801a5c33420 R08: 000000000000003a R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000000002ef
+R13: ffff88018da95188 R14: dffffc0000000000 R15: 0000000000000015
+FS:  00007f37d26b1700(0000) GS:ffff8801dad00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004c7cec CR3: 00000001bcd0a006 CR4: 00000000001626f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ [<ffffffff83be9d57>] cbq_normalize_quanta include/net/pkt_sched.h:27 [inline]
+ [<ffffffff83be9d57>] cbq_addprio net/sched/sch_cbq.c:1097 [inline]
+ [<ffffffff83be9d57>] cbq_set_wrr+0x2d7/0x450 net/sched/sch_cbq.c:1115
+ [<ffffffff83bee8a7>] cbq_change_class+0x987/0x225b net/sched/sch_cbq.c:1537
+ [<ffffffff83b96985>] tc_ctl_tclass+0x555/0xcd0 net/sched/sch_api.c:2329
+ [<ffffffff83a84655>] rtnetlink_rcv_msg+0x485/0xc10 net/core/rtnetlink.c:5248
+ [<ffffffff83cadf0a>] netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2510
+ [<ffffffff83a7db6d>] rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5266
+ [<ffffffff83cac2c6>] netlink_unicast_kernel net/netlink/af_netlink.c:1324 [inline]
+ [<ffffffff83cac2c6>] netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1350
+ [<ffffffff83cacd4a>] netlink_sendmsg+0x89a/0xd50 net/netlink/af_netlink.c:1939
+ [<ffffffff8399d46e>] sock_sendmsg_nosec net/socket.c:673 [inline]
+ [<ffffffff8399d46e>] sock_sendmsg+0x12e/0x170 net/socket.c:684
+ [<ffffffff8399f1fd>] ___sys_sendmsg+0x81d/0x960 net/socket.c:2359
+ [<ffffffff839a2d05>] __sys_sendmsg+0x105/0x1d0 net/socket.c:2397
+ [<ffffffff839a2df9>] SYSC_sendmsg net/socket.c:2406 [inline]
+ [<ffffffff839a2df9>] SyS_sendmsg+0x29/0x30 net/socket.c:2404
+ [<ffffffff8101ccc8>] do_syscall_64+0x528/0x770 arch/x86/entry/common.c:305
+ [<ffffffff84400091>] entry_SYSCALL_64_after_hwframe+0x42/0xb7
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[bwh: Backported to 3.16:
+ - netlink doesn't support error messages
+ - Keep calling nla_parse_nested()
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/time/tick-broadcast-hrtimer.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ net/sched/sch_cbq.c | 43 +++++++++++++++++++++++++++++--------------
+ 1 file changed, 29 insertions(+), 14 deletions(-)
 
---- a/kernel/time/tick-broadcast-hrtimer.c
-+++ b/kernel/time/tick-broadcast-hrtimer.c
-@@ -22,6 +22,7 @@ static void bc_set_mode(enum clock_event
- 			struct clock_event_device *bc)
- {
- 	switch (mode) {
-+	case CLOCK_EVT_MODE_UNUSED:
- 	case CLOCK_EVT_MODE_SHUTDOWN:
- 		/*
- 		 * Note, we cannot cancel the timer here as we might
-@@ -101,10 +102,13 @@ static enum hrtimer_restart bc_handler(s
- {
- 	ce_broadcast_hrtimer.event_handler(&ce_broadcast_hrtimer);
+--- a/net/sched/sch_cbq.c
++++ b/net/sched/sch_cbq.c
+@@ -1357,6 +1357,27 @@ static const struct nla_policy cbq_polic
+ 	[TCA_CBQ_POLICE]	= { .len = sizeof(struct tc_cbq_police) },
+ };
  
--	if (ce_broadcast_hrtimer.next_event.tv64 == KTIME_MAX)
-+	switch (ce_broadcast_hrtimer.mode) {
-+	case CLOCK_EVT_MODE_ONESHOT:
-+		if (ce_broadcast_hrtimer.next_event.tv64 != KTIME_MAX)
-+			return HRTIMER_RESTART;
-+	default:
- 		return HRTIMER_NORESTART;
--
--	return HRTIMER_RESTART;
++static int cbq_opt_parse(struct nlattr *tb[TCA_CBQ_MAX + 1],
++			 struct nlattr *opt)
++{
++	int err;
++
++	if (!opt)
++		return -EINVAL;
++
++	err = nla_parse_nested(tb, TCA_CBQ_MAX, opt, cbq_policy);
++	if (err < 0)
++		return err;
++
++	if (tb[TCA_CBQ_WRROPT]) {
++		const struct tc_cbq_wrropt *wrr = nla_data(tb[TCA_CBQ_WRROPT]);
++
++		if (wrr->priority > TC_CBQ_MAXPRIO)
++			err = -EINVAL;
 +	}
- }
++	return err;
++}
++
+ static int cbq_init(struct Qdisc *sch, struct nlattr *opt)
+ {
+ 	struct cbq_sched_data *q = qdisc_priv(sch);
+@@ -1368,10 +1389,7 @@ static int cbq_init(struct Qdisc *sch, s
+ 	hrtimer_init(&q->delay_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
+ 	q->delay_timer.function = cbq_undelay;
  
- void tick_setup_hrtimer_broadcast(void)
+-	if (!opt)
+-		return -EINVAL;
+-
+-	err = nla_parse_nested(tb, TCA_CBQ_MAX, opt, cbq_policy);
++	err = cbq_opt_parse(tb, opt);
+ 	if (err < 0)
+ 		return err;
+ 
+@@ -1751,10 +1769,7 @@ cbq_change_class(struct Qdisc *sch, u32
+ 	struct cbq_class *parent;
+ 	struct qdisc_rate_table *rtab = NULL;
+ 
+-	if (opt == NULL)
+-		return -EINVAL;
+-
+-	err = nla_parse_nested(tb, TCA_CBQ_MAX, opt, cbq_policy);
++	err = cbq_opt_parse(tb, opt);
+ 	if (err < 0)
+ 		return err;
+ 
 
