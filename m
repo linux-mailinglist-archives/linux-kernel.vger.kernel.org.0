@@ -2,126 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07202122844
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:05:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0572112284B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:06:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfLQKFd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:05:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:60072 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbfLQKFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:05:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DE8330E;
-        Tue, 17 Dec 2019 02:05:32 -0800 (PST)
-Received: from [10.37.12.145] (unknown [10.37.12.145])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A870D3F6CF;
-        Tue, 17 Dec 2019 02:05:30 -0800 (PST)
-Subject: Re: [PATCH 1/2] include: trace: Add SCMI header with trace events
-To:     Jim Quinlan <james.quinlan@broadcom.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, rostedt@goodmis.org, sudeep.holla@arm.com
-References: <20191216161650.21844-1-lukasz.luba@arm.com>
- <20191216161650.21844-1-lukasz.luba@arm.com>
-From:   Lukasz Luba <lukasz.luba@arm.com>
-Message-ID: <99cea477-d776-1723-162b-f12ca64fce6e@arm.com>
-Date:   Tue, 17 Dec 2019 10:05:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191216161650.21844-1-lukasz.luba@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1727420AbfLQKGC convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 17 Dec 2019 05:06:02 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:52361 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727407AbfLQKGB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 05:06:01 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-181-91tMbDSqP32pfc1jdznfwg-1; Tue, 17 Dec 2019 10:05:58 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 17 Dec 2019 10:05:57 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 17 Dec 2019 10:05:57 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Steven Rostedt' <rostedt@goodmis.org>
+CC:     'Tom Zanussi' <zanussi@kernel.org>,
+        Sven Schnelle <svens@stackframe.org>,
+        "linux-trace-devel@vger.kernel.org" 
+        <linux-trace-devel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: ftrace histogram sorting broken on BE architecures
+Thread-Topic: ftrace histogram sorting broken on BE architecures
+Thread-Index: AQHVsSDKonZphcun20Oca4kHPqdeCKe87LwAgAAGU4CAAA+FUIAAGKMAgAEFJCA=
+Date:   Tue, 17 Dec 2019 10:05:57 +0000
+Message-ID: <b4f7cbd8653e4e8eba5405b533c13469@AcuMS.aculab.com>
+References: <20191211123316.GD12147@stackframe.org>
+        <20191211103557.7bed6928@gandalf.local.home>
+        <20191211110959.2baeb70f@gandalf.local.home>
+        <1576178241.3309.2.camel@kernel.org>
+        <4805b40c3e1547f8a26eeac6932f6499@AcuMS.aculab.com>
+        <20191216110539.2b268d86@gandalf.local.home>
+        <548eb8ae4b8742e4bf122af98b208925@AcuMS.aculab.com>
+ <20191216132922.1bf6d5cd@gandalf.local.home>
+In-Reply-To: <20191216132922.1bf6d5cd@gandalf.local.home>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: 91tMbDSqP32pfc1jdznfwg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jim,
-
-On 12/16/19 10:15 PM, Jim Quinlan wrote:
-> From: Lukasz Luba <lukasz.luba@arm.com>
+From: Steven Rostedt
+> Sent: 16 December 2019 18:29
+> On Mon, 16 Dec 2019 17:06:50 +0000
+> David Laight <David.Laight@ACULAB.COM> wrote:
 > 
-> +
-> +TRACE_EVENT(scmi_xfer_begin,
-> +	TP_PROTO(u8 id, u8 protocol_id, u16 seq, bool poll),
-> +	TP_ARGS(id, protocol_id, seq, poll),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(u8, id)
-> +		__field(u8, protocol_id)
-> +		__field(u16, seq)
-> +		__field(bool, poll)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->id = id;
-> +		__entry->protocol_id = protocol_id;
-> +		__entry->seq = seq;
-> +		__entry->poll = poll;
-> +	),
-> +
-> +	TP_printk("id=%u protocol_id=%u seq=%u poll=%u", __entry->id,
-> +		__entry->protocol_id, __entry->seq, __entry->poll)
-> +);
-> +
-> +TRACE_EVENT(scmi_xfer_end,
-> +	TP_PROTO(u8 id, u8 protocol_id, u16 seq, u32 status),
-> +	TP_ARGS(id, protocol_id, seq, status),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(u8, id)
-> +		__field(u8, protocol_id)
-> +		__field(u16, seq)
-> +		__field(u32, status)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->id = id;
-> +		__entry->protocol_id = protocol_id;
-> +		__entry->seq = seq;
-> +		__entry->status = status;
-> +	),
-> +
-> +	TP_printk("id=%u protocol_id=%u seq=%u status=%u", __entry->id,
-> +		__entry->protocol_id, __entry->seq, __entry->status)
-> +);
+> > > Where original_val_a could be a byte, short, int, long or long long.
+> >
+> > I'd sort of guessed that, but then the pointer type passed to tracing_map_cmp_##type()
+> > will always be 'u64 *' (since the field the address is taken of must be that type).
+> > Then the (u64 *) casts are no longer needed.
+> >
+> > Possibly you can just pass the u64 values to:
+> > tracing_map_cmp_##type(type a, type b)
+> > {
+> > 	return a > b ? 1 : a < b ? -1 : 0;
+> > }
+> >
+> > The high bit masking and sign extension is then implicit in the call.
 > 
-> Hello,
-> 
-> When there are multiple messages in the mbox queue, I've found it
-> a chore matching up the 'begin' event with the 'end' event for each
-> SCMI msg.  The id (command) may not be unique, the proto_id may not be
-> unique, and the seq may not be unique.  The combination of the three
-> may not be unique.  Would it make sense to assign a monotonically
-> increasing ID to each msg so that one can easily match the two events
-> for each msg?  This id could be the result of an atomic increment and
-> could be stored in the xfer structure.  Of course, it would be one of
-> the values printed out in the events.
+> But these are used to pass into a compare function that takes compare
+> functions that are something other than numbers. They can be pointers
+> to strings.
 
-Hmmm, an atomic variable in this code might be too heavy, especially in
-case of fast_switch from cpufreq. Let me think about it and experiment.
+In that case I think I'd embed the u64 inside a structure and pass the structure
+address to the compare function.
 
-> 
-> Also, would you consider a third event, right after the
-> scmi_fetch_response() invocation in scmi_rx_callback()?  I've found
-> this to be insightful in situations where we were debugging a timeout.
+	David
 
-Yes, of course. It would be really useful. Thank you for the
-suggestion.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-> 
-> I'm fine if you elect not to do the above; I just wanted to post
-> this for your consideration.
-
-Thant's a valuable feedback. I will definitely consider it.
-
-Regards,
-Lukasz
-
-> 
-> Thanks,
-> Jim Quinlan
-> Broadcom
-> 
