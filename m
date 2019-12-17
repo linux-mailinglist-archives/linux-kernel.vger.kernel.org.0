@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C69A12228E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:22:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 788AB122290
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:22:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbfLQDV3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 22:21:29 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:40048 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfLQDV0 (ORCPT
+        id S1727680AbfLQDVd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 22:21:33 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:46652 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727648AbfLQDV3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 22:21:26 -0500
-Received: by mail-pj1-f68.google.com with SMTP id s35so3904609pjb.7
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 19:21:25 -0800 (PST)
+        Mon, 16 Dec 2019 22:21:29 -0500
+Received: by mail-pj1-f67.google.com with SMTP id z21so3891521pjq.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 19:21:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=w7BgC38Q++csLgKFC6p+4OJvyrlb3C/SOyZ7s22Frw0=;
-        b=D6qNRxrNiByaYF3P2krgxc9qaMsAGuWOVyPKI+3IaZScIOd1bmthdyxh6cUySj7BoJ
-         Gt7WM70dDxw55NQLonwaLHDv5sAiNSlwcxBtiFYufj7u47QEpb+59IChUhHUkRgUS5ku
-         +IedKtqVE5v5xywRdfu1HByIpKnlv1C6JO1ao=
+        bh=gLtgY/i7b05+S0YBZciCIKSTFFVYN6319xkmCCskTpQ=;
+        b=oZeCVq/hPIb3xxcfajQ5UCYzJhDjrTKoI88hT6q9n5jtZhfAczWwh2b87k3RDH/L7x
+         VtpK3IlBurnJzyYXucvjKhimVHVfjHzNnAP2J7W5g1XoMGLLsLf2tr5vWsanGgKjQSVN
+         ZVeIy69+i79n+vQdHPu0kw/MSdgWwPmQd+yGY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=w7BgC38Q++csLgKFC6p+4OJvyrlb3C/SOyZ7s22Frw0=;
-        b=OjeVO2DaEynCdXfYtXASw7GPrFaLavkxPRgp3eK+/czREs149aavlStKbxrhNeoEjb
-         LRUu76Wbr8vZawLTdkF5UB7y88SpbVjzQqgDKe6GGv8RgyQmHILm4pJRbdvc7zhKhNfD
-         RLLomu+oYHVZghSQVeKhH8x4zS8xIh6OHlSTBPXImUqUCxDnx7AFZa7PDXDRk5ZpsOeO
-         tA6Gi3D2zRo/M5wG8E3vTjXyIGgOMrZJ4CQ2cGyXg+9Zdew8vmqCjBhXo8nhyBs84Q8k
-         qADscdiob7Z/rETXHINyIYa9+7l/uKMryRMb7yugCASGByyjGk9KpWE+umB039r8z+Nb
-         rEOA==
-X-Gm-Message-State: APjAAAVx10K6ecVKsYc1gPGJzWUadDAGDsmO9G80MtpZ4rvmKUV5yRHI
-        aqgRKMHP4wTBrM17joLPmoVbbRGXauI=
-X-Google-Smtp-Source: APXvYqzG2MAqV6YaHs0r4AKBZp8nz4G5wu16YR6deYslM0U/r044lJfXdUNlSJk7wL5nlXggt+GmlQ==
-X-Received: by 2002:a17:902:b418:: with SMTP id x24mr20126099plr.85.1576552885537;
-        Mon, 16 Dec 2019 19:21:25 -0800 (PST)
+        bh=gLtgY/i7b05+S0YBZciCIKSTFFVYN6319xkmCCskTpQ=;
+        b=a7LoWrjQKYhCFyzxaIZa5J4+fKbVOAcdFQOWJmzCAVyYLuTEi9OheUFOIg3qAUBXUM
+         Xr2KmRjtVMx11QyZgCfNHzzJN2Apax8HyaRxS+2Fnb2zzRcwFOM2bS5iACa/EM+BNC+o
+         +h+EyWW+1tUkALfxHqWKbLzszD+9OuHtQcur5URzB1XzxmEiI9JHv+2E9aOlfPgd0QZJ
+         3xQWerEIIANgMM8kN93Pot201kp7JFWrBP7wYUF0kzFwKX1Jc57J9ZJ4dDLfoNWUPk+3
+         wHMKCorWccUMFYJRmPCj2bQi0PDCNNqmhDTGJRJrV/p4J802XeN406qNUnmB+KzWfn7y
+         ADZg==
+X-Gm-Message-State: APjAAAUfUzS7tZU7Ezg6Mf6Nfm3nkkarLH+S4g4JgnGYDw26O4hq2Aqw
+        18mqeNr5OUxmfwgl8QlZg85gbg==
+X-Google-Smtp-Source: APXvYqy9neE00p2QbLZnLgRtVcCyK+YWY7iVQlwytjfc2kPnP1pU+M0e4nObBdie3cLEqsIJ7ZArgw==
+X-Received: by 2002:a17:902:fe05:: with SMTP id g5mr20418282plj.3.1576552889059;
+        Mon, 16 Dec 2019 19:21:29 -0800 (PST)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
-        by smtp.gmail.com with ESMTPSA id j3sm24387455pfi.8.2019.12.16.19.21.22
+        by smtp.gmail.com with ESMTPSA id j3sm24387455pfi.8.2019.12.16.19.21.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 19:21:25 -0800 (PST)
+        Mon, 16 Dec 2019 19:21:28 -0800 (PST)
 From:   Sergey Senozhatsky <senozhatsky@chromium.org>
 To:     Hans Verkuil <hans.verkuil@cisco.com>,
         Tomasz Figa <tfiga@chromium.org>,
@@ -53,9 +53,9 @@ Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
         Pawel Osciak <posciak@chromium.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [RFC][PATCH 12/15] videobuf2: add begin/end cpu_access callbacks to dma-sg
-Date:   Tue, 17 Dec 2019 12:20:31 +0900
-Message-Id: <20191217032034.54897-13-senozhatsky@chromium.org>
+Subject: [RFC][PATCH 13/15] videobuf2: do not sync buffers for DMABUF queues
+Date:   Tue, 17 Dec 2019 12:20:32 +0900
+Message-Id: <20191217032034.54897-14-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 In-Reply-To: <20191217032034.54897-1-senozhatsky@chromium.org>
 References: <20191217032034.54897-1-senozhatsky@chromium.org>
@@ -66,54 +66,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide begin_cpu_access() and end_cpu_access() dma_buf_ops
-callbacks for cache synchronisation on exported buffers.
+DMA-exporter is supposed to handle cache syncs, so we can
+avoid ->prepare()/->finish() syncs from videobuf2 core for
+DMABUF buffers.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- .../media/common/videobuf2/videobuf2-dma-sg.c | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/media/common/videobuf2/videobuf2-v4l2.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-index 6db60e9d5183..bfc99a0cb7b9 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-@@ -470,6 +470,26 @@ static void vb2_dma_sg_dmabuf_ops_release(struct dma_buf *dbuf)
- 	vb2_dma_sg_put(dbuf->priv);
- }
- 
-+static int vb2_dma_sg_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
-+					enum dma_data_direction direction)
-+{
-+	struct vb2_dma_sg_buf *buf = dbuf->priv;
-+	struct sg_table *sgt = buf->dma_sgt;
-+
-+	dma_sync_sg_for_cpu(buf->dev, sgt->sgl, sgt->nents, buf->dma_dir);
-+	return 0;
-+}
-+
-+static int vb2_dma_sg_dmabuf_ops_end_cpu_access(struct dma_buf *dbuf,
-+					enum dma_data_direction direction)
-+{
-+	struct vb2_dma_sg_buf *buf = dbuf->priv;
-+	struct sg_table *sgt = buf->dma_sgt;
-+
-+	dma_sync_sg_for_device(buf->dev, sgt->sgl, sgt->nents, buf->dma_dir);
-+	return 0;
-+}
-+
- static void *vb2_dma_sg_dmabuf_ops_vmap(struct dma_buf *dbuf)
+diff --git a/drivers/media/common/videobuf2/videobuf2-v4l2.c b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+index 1762849288ae..2b9d3318e6fb 100644
+--- a/drivers/media/common/videobuf2/videobuf2-v4l2.c
++++ b/drivers/media/common/videobuf2/videobuf2-v4l2.c
+@@ -341,8 +341,22 @@ static void set_buffer_cache_hints(struct vb2_queue *q,
+ 				   struct vb2_buffer *vb,
+ 				   struct v4l2_buffer *b)
  {
- 	struct vb2_dma_sg_buf *buf = dbuf->priv;
-@@ -488,6 +508,8 @@ static const struct dma_buf_ops vb2_dma_sg_dmabuf_ops = {
- 	.detach = vb2_dma_sg_dmabuf_ops_detach,
- 	.map_dma_buf = vb2_dma_sg_dmabuf_ops_map,
- 	.unmap_dma_buf = vb2_dma_sg_dmabuf_ops_unmap,
-+	.begin_cpu_access = vb2_dma_sg_dmabuf_ops_begin_cpu_access,
-+	.end_cpu_access = vb2_dma_sg_dmabuf_ops_end_cpu_access,
- 	.vmap = vb2_dma_sg_dmabuf_ops_vmap,
- 	.mmap = vb2_dma_sg_dmabuf_ops_mmap,
- 	.release = vb2_dma_sg_dmabuf_ops_release,
+-	vb->need_cache_sync_on_prepare = 1;
++	/*
++	 * DMA exporter should take care of cache syncs, so we can avoid
++	 * explicit ->prepare()/->finish() syncs.
++	 */
++	if (q->memory == VB2_MEMORY_DMABUF) {
++		vb->need_cache_sync_on_finish = 0;
++		vb->need_cache_sync_on_prepare = 0;
++		return;
++	}
+ 
++	/*
++	 * For other ->memory types we always need ->prepare() cache
++	 * sync. ->finish() cache sync, however, can be avoided when queue
++	 * direction is TO_DEVICE.
++	 */
++	vb->need_cache_sync_on_prepare = 1;
+ 	if (q->dma_dir != DMA_TO_DEVICE)
+ 		vb->need_cache_sync_on_finish = 1;
+ 	else
 -- 
 2.24.1.735.g03f4e72817-goog
 
