@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F4BC12200C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:56:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B886B122101
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:59:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfLQAvo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:51:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34596 "EHLO
+        id S1728292AbfLQA7u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:59:50 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34684 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726551AbfLQAvc (ORCPT
+        by vger.kernel.org with ESMTP id S1726692AbfLQAvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:51:32 -0500
+        Mon, 16 Dec 2019 19:51:35 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15G-0003Jh-0b; Tue, 17 Dec 2019 00:51:30 +0000
+        id 1ih15G-0003Jx-Hx; Tue, 17 Dec 2019 00:51:30 +0000
 Received: from ben by deadeye with local (Exim 4.93-RC7)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15F-0005Sc-Bi; Tue, 17 Dec 2019 00:51:29 +0000
+        id 1ih15F-0005Sp-Oy; Tue, 17 Dec 2019 00:51:29 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johan Hovold" <johan@kernel.org>,
+        "Tomoki Sekiyama" <tomoki.sekiyama@gmail.com>,
+        "Alan Stern" <stern@rowland.harvard.edu>,
         "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Date:   Tue, 17 Dec 2019 00:45:51 +0000
-Message-ID: <lsq.1576543535.825704292@decadent.org.uk>
+Date:   Tue, 17 Dec 2019 00:45:54 +0000
+Message-ID: <lsq.1576543535.478659069@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 017/136] USB: serial: keyspan: fix NULL-derefs on
- open() and write()
+Subject: [PATCH 3.16 020/136] USB: yurex: Don't retry on unexpected errors
 In-Reply-To: <lsq.1576543534.33060804@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,71 +48,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-commit 7d7e21fafdbc7fcf0854b877bd0975b487ed2717 upstream.
+commit 32a0721c6620b77504916dac0cea8ad497c4878a upstream.
 
-Fix NULL-pointer dereferences on open() and write() which can be
-triggered by a malicious USB device.
+According to Greg KH, it has been generally agreed that when a USB
+driver encounters an unknown error (or one it can't handle directly),
+it should just give up instead of going into a potentially infinite
+retry loop.
 
-The current URB allocation helper would fail to initialise the newly
-allocated URB if the device has unexpected endpoint descriptors,
-something which could lead NULL-pointer dereferences in a number of
-open() and write() paths when accessing the URB. For example:
+The three codes -EPROTO, -EILSEQ, and -ETIME fall into this category.
+They can be caused by bus errors such as packet loss or corruption,
+attempting to communicate with a disconnected device, or by malicious
+firmware.  Nowadays the extent of packet loss or corruption is
+negligible, so it should be safe for a driver to give up whenever one
+of these errors occurs.
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:usb_clear_halt+0x11/0xc0
-	...
-	Call Trace:
-	 ? tty_port_open+0x4d/0xd0
-	 keyspan_open+0x70/0x160 [keyspan]
-	 serial_port_activate+0x5b/0x80 [usbserial]
-	 tty_port_open+0x7b/0xd0
-	 ? check_tty_count+0x43/0xa0
-	 tty_open+0xf1/0x490
+Although the yurex driver handles -EILSEQ errors in this way, it
+doesn't do the same for -EPROTO (as discovered by the syzbot fuzzer)
+or other unrecognized errors.  This patch adjusts the driver so that
+it doesn't log an error message for -EPROTO or -ETIME, and it doesn't
+retry after any errors.
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:keyspan_write+0x14e/0x1f3 [keyspan]
-	...
-	Call Trace:
-	 serial_write+0x43/0xa0 [usbserial]
-	 n_tty_write+0x1af/0x4f0
-	 ? do_wait_intr_irq+0x80/0x80
-	 ? process_echoes+0x60/0x60
-	 tty_write+0x13f/0x2f0
+Reported-and-tested-by: syzbot+b24d736f18a1541ad550@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: Tomoki Sekiyama <tomoki.sekiyama@gmail.com>
 
-	BUG: kernel NULL pointer dereference, address: 0000000000000000
-	...
-	RIP: 0010:keyspan_usa26_send_setup+0x298/0x305 [keyspan]
-	...
-	Call Trace:
-	 keyspan_open+0x10f/0x160 [keyspan]
-	 serial_port_activate+0x5b/0x80 [usbserial]
-	 tty_port_open+0x7b/0xd0
-	 ? check_tty_count+0x43/0xa0
-	 tty_open+0xf1/0x490
-
-Fixes: fdcba53e2d58 ("fix for bugzilla #7544 (keyspan USB-to-serial converter)")
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1909171245410.1590-100000@iolanthe.rowland.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/keyspan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/misc/yurex.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/keyspan.c
-+++ b/drivers/usb/serial/keyspan.c
-@@ -1249,8 +1249,8 @@ static struct urb *keyspan_setup_urb(str
- 
- 	ep_desc = find_ep(serial, endpoint);
- 	if (!ep_desc) {
--		/* leak the urb, something's wrong and the callers don't care */
--		return urb;
-+		usb_free_urb(urb);
-+		return NULL;
+--- a/drivers/usb/misc/yurex.c
++++ b/drivers/usb/misc/yurex.c
+@@ -136,6 +136,7 @@ static void yurex_interrupt(struct urb *
+ 	switch (status) {
+ 	case 0: /*success*/
+ 		break;
++	/* The device is terminated or messed up, give up */
+ 	case -EOVERFLOW:
+ 		dev_err(&dev->interface->dev,
+ 			"%s - overflow with length %d, actual length is %d\n",
+@@ -144,12 +145,13 @@ static void yurex_interrupt(struct urb *
+ 	case -ENOENT:
+ 	case -ESHUTDOWN:
+ 	case -EILSEQ:
+-		/* The device is terminated, clean up */
++	case -EPROTO:
++	case -ETIME:
+ 		return;
+ 	default:
+ 		dev_err(&dev->interface->dev,
+ 			"%s - unknown status received: %d\n", __func__, status);
+-		goto exit;
++		return;
  	}
- 	if (usb_endpoint_xfer_int(ep_desc)) {
- 		ep_type_name = "INT";
+ 
+ 	/* handle received message */
+@@ -181,7 +183,6 @@ static void yurex_interrupt(struct urb *
+ 		break;
+ 	}
+ 
+-exit:
+ 	retval = usb_submit_urb(dev->urb, GFP_ATOMIC);
+ 	if (retval) {
+ 		dev_err(&dev->interface->dev, "%s - usb_submit_urb failed: %d\n",
 
