@@ -2,88 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A0F122493
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:21:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77F6B122499
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfLQGUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 01:20:43 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38279 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfLQGUn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 01:20:43 -0500
-Received: by mail-pg1-f193.google.com with SMTP id a33so5079897pgm.5
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:20:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k/4+dE6TBvtAZbiMIIRV67E0nc4u23eKs5qpkR7aBsc=;
-        b=Zf8bJkaoXvahdNySVN74ycCQmLoxy4e5zh/QEjLuVcb/JCf6/qKAIx/QIxOu2AylUF
-         NMV/DOrOPmOeOmY0f/G/FTwuHzSTsno4nQwSkTeTsttDr6a+VEguvb69NOqt354udB5u
-         3NVNEK2lBA0XKrW2irpwFs6w6ounikv/qY/RU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k/4+dE6TBvtAZbiMIIRV67E0nc4u23eKs5qpkR7aBsc=;
-        b=K5lUJMCzh/4/0kM5MpxANRe7KDu9Niu7+x+wAO9zmptdi/UPuQ6EPn2SAEcHGcgySs
-         YXuMM4+z/HVY6IpgcReFSQjVaj75zdVTUKc/CYi97j+eXqgjKfT7eXgUb7wdxkubnIJk
-         8i9AU2XHrwLQX63w+2yagSyBB38Ax9VtQo89m8VCVycG/GdieCnuhT+SlnwNatNuIYWl
-         7GKAkNSzecJeLiq+EbA6AycNDfgS/96CQ74R+Sm1A+HXhRBIunOFkjp9tCxLIjcFct1D
-         szSPfWEHWZsfL689Y3IgD01IcJYlSAqu0tXZK00uidFf/VMfy/Qc4SaxXm0l1lxzlAx8
-         c85A==
-X-Gm-Message-State: APjAAAXSmb22zXQuy9YZEy7ELAWA4qLVOaMiO9uLg/5GPL1kgk5asfLy
-        h64vLmQUxgLCK+f4DiNHFcc5UA==
-X-Google-Smtp-Source: APXvYqyEClKB5KveoH1dz7RJn9lqOw2w9s8Xx0dDnRonMN4XFIC7VrXPxnzpn33/nSEKlc6SZb1QQQ==
-X-Received: by 2002:a63:360a:: with SMTP id d10mr22663260pga.366.1576563642808;
-        Mon, 16 Dec 2019 22:20:42 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id 100sm1682030pjo.17.2019.12.16.22.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 22:20:42 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, swboyd@chromium.org,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] arm64: dts: qcom: sdm845: Rename gic-its node to msi-controller
-Date:   Mon, 16 Dec 2019 22:20:25 -0800
-Message-Id: <20191216222021.1.I684f124a05a1c3f0b113c8d06d5f9da5d69b801e@changeid>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+        id S1727923AbfLQGXS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 01:23:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46738 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725812AbfLQGXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 01:23:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 06E4FB25B;
+        Tue, 17 Dec 2019 06:23:14 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH v10 2/4] xen/blkback: Squeeze page pools if a
+ memory pressure is detected
+To:     SeongJae Park <sj38.park@gmail.com>
+Cc:     axboe@kernel.dk, konrad.wilk@oracle.com, roger.pau@citrix.com,
+        linux-block@vger.kernel.org, xen-devel@lists.xenproject.org,
+        pdurrant@amazon.com, linux-kernel@vger.kernel.org
+References: <20191216194803.6294-1-sj38.park@gmail.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <c4efaabf-a925-0af0-b772-49a2e15623e7@suse.com>
+Date:   Tue, 17 Dec 2019 07:23:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
+In-Reply-To: <20191216194803.6294-1-sj38.park@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is just like commit ac00546a6780 ("arm64: dts: qcom: sc7180:
-Rename gic-its node to msi-controller") but for sdm845.  This fixes
-all arm64/qcom device trees that I could find.
+On 16.12.19 20:48, SeongJae Park wrote:
+> On on, 16 Dec 2019 17:23:44 +0100, Jürgen Groß wrote:
+> 
+>> On 16.12.19 17:15, SeongJae Park wrote:
+>>> On Mon, 16 Dec 2019 15:37:20 +0100 SeongJae Park <sjpark@amazon.com> wrote:
+>>>
+>>>> On Mon, 16 Dec 2019 13:45:25 +0100 SeongJae Park <sjpark@amazon.com> wrote:
+>>>>
+>>>>> From: SeongJae Park <sjpark@amazon.de>
+>>>>>
+>>> [...]
+>>>>> --- a/drivers/block/xen-blkback/xenbus.c
+>>>>> +++ b/drivers/block/xen-blkback/xenbus.c
+>>>>> @@ -824,6 +824,24 @@ static void frontend_changed(struct xenbus_device *dev,
+>>>>>    }
+>>>>>    
+>>>>>    
+>>>>> +/* Once a memory pressure is detected, squeeze free page pools for a while. */
+>>>>> +static unsigned int buffer_squeeze_duration_ms = 10;
+>>>>> +module_param_named(buffer_squeeze_duration_ms,
+>>>>> +		buffer_squeeze_duration_ms, int, 0644);
+>>>>> +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
+>>>>> +"Duration in ms to squeeze pages buffer when a memory pressure is detected");
+>>>>> +
+>>>>> +/*
+>>>>> + * Callback received when the memory pressure is detected.
+>>>>> + */
+>>>>> +static void reclaim_memory(struct xenbus_device *dev)
+>>>>> +{
+>>>>> +	struct backend_info *be = dev_get_drvdata(&dev->dev);
+>>>>> +
+>>>>> +	be->blkif->buffer_squeeze_end = jiffies +
+>>>>> +		msecs_to_jiffies(buffer_squeeze_duration_ms);
+>>>>
+>>>> This callback might race with 'xen_blkbk_probe()'.  The race could result in
+>>>> __NULL dereferencing__, as 'xen_blkbk_probe()' sets '->blkif' after it links
+>>>> 'be' to the 'dev'.  Please _don't merge_ this patch now!
+>>>>
+>>>> I will do more test and share results.  Meanwhile, if you have any opinion,
+>>>> please let me know.
+> 
+> I reduced system memory and attached bunch of devices in short time so that
+> memory pressure occurs while device attachments are ongoing.  Under this
+> circumstance, I was able to see the race.
+> 
+>>>
+>>> Not only '->blkif', but 'be' itself also coule be a NULL.  As similar
+>>> concurrency issues could be in other drivers in their way, I suggest to change
+>>> the reclaim callback ('->reclaim_memory') to be called for each driver instead
+>>> of each device.  Then, each driver could be able to deal with its concurrency
+>>> issues by itself.
+>>
+>> Hmm, I don't like that. This would need to be changed back in case we
+>> add per-guest quota.
+> 
+> Extending this callback in that way would be still not too hard.  We could use
+> the argument to the callback.  I would keep the argument of the callback to
+> 'struct device *' as is, and will add a comment saying 'NULL' value of the
+> argument means every devices.  As an example, xenbus would pass NULL-ending
+> array of the device pointers that need to free its resources.
+> 
+> After seeing this race, I am now also thinking it could be better to delegate
+> detailed control of each device to its driver, as some drivers have some
+> complicated and unique relation with its devices.
+> 
+>>
+>> Wouldn't a get_device() before calling the callback and a put_device()
+>> afterwards avoid that problem?
+> 
+> I didn't used the reference count manipulation operations because other similar
+> parts also didn't.  But, if there is no implicit reference count guarantee, it
+> seems those operations are indeed necessary.
+> 
+> That said, as get/put operations only adjust the reference count, those will
+> not make the callback to wait until the linking of the 'backend' and 'blkif' to
+> the device (xen_blkbk_probe()) is finished.  Thus, the race could still happen.
+> Or, am I missing something?
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+No, I think we need a xenbus lock per device which will need to be
+taken in xen_blkbk_probe(), xenbus_dev_remove() and while calling the
+callback.
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 407d26e92fcc..5d3b470f1be5 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -3203,7 +3203,7 @@ intc: interrupt-controller@17a00000 {
- 			      <0 0x17a60000 0 0x100000>;    /* GICR * 8 */
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 
--			gic-its@17a40000 {
-+			msi-controller@17a40000 {
- 				compatible = "arm,gic-v3-its";
- 				msi-controller;
- 				#msi-cells = <1>;
--- 
-2.24.1.735.g03f4e72817-goog
-
+Juergen
