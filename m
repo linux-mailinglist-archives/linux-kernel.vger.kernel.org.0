@@ -2,70 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54EB6122AFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:11:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB010122AE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:06:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727794AbfLQMLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:11:07 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:37388 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726383AbfLQMLG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:11:06 -0500
-Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1ihBgt-00062E-Iw; Tue, 17 Dec 2019 12:11:03 +0000
-Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.3)
-        (envelope-from <ben@rainbowdash.codethink.co.uk>)
-        id 1ihBgt-008xPS-Aj; Tue, 17 Dec 2019 12:11:03 +0000
-From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-To:     ben.dooks@codethink.co.uk
-Cc:     Boris Brezillon <bbrezillon@kernel.org>,
-        linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] i3c: make 'i3c_bus_set_mode' static
-Date:   Tue, 17 Dec 2019 12:01:50 +0000
-Message-Id: <20191217120150.2134326-1-ben.dooks@codethink.co.uk>
-X-Mailer: git-send-email 2.24.0
+        id S1727762AbfLQMG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:06:28 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46177 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726747AbfLQMG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:06:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:06:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
+   d="scan'208";a="221746459"
+Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
+  by fmsmga001.fm.intel.com with ESMTP; 17 Dec 2019 04:06:24 -0800
+Message-ID: <9991700815c02b3227a5902e4cae1afe5200b0ff.camel@linux.intel.com>
+Subject: Re: [PATCH V3] tpm_tis_spi: use new 'delay' structure for SPI
+ transfer delays
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
+        arnd@arndb.de
+In-Reply-To: <20191217091615.12764-1-alexandru.ardelean@analog.com>
+References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
+         <20191217091615.12764-1-alexandru.ardelean@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
+ Espoo
+Content-Type: text/plain; charset="UTF-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Tue, 17 Dec 2019 14:04:29 +0200
+User-Agent: Evolution 3.34.1-2 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function i3c_bus_set_mode() is not declared or
-exported, so make it static to avoid the following
-warning:
+On Tue, 2019-12-17 at 11:16 +0200, Alexandru Ardelean wrote:
+> In a recent change to the SPI subsystem [1], a new 'delay' struct was added
+> to replace the 'delay_usecs'. This change replaces the current
+> 'delay_usecs' with 'delay' for this driver.
+> 
+> The 'spi_transfer_delay_exec()' function [in the SPI framework] makes sure
+> that both 'delay_usecs' & 'delay' are used (in this order to preserve
+> backwards compatibility).
+> 
+> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
+> `spi_transfer` + spi_transfer_delay_exec()")
+> 
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 
-drivers/i3c/master.c:530:5: warning: symbol 'i3c_bus_set_mode' was not declared. Should it be static?
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-If it is needed in the future, then it should be declared
-and suitably exported.
-
-Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
----
-Cc: Boris Brezillon <bbrezillon@kernel.org>
-Cc: linux-i3c@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/i3c/master.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 043691656245..7f8f896fa0c3 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -527,8 +527,8 @@ static const struct device_type i3c_masterdev_type = {
- 	.groups	= i3c_masterdev_groups,
- };
- 
--int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
--		     unsigned long max_i2c_scl_rate)
-+static int i3c_bus_set_mode(struct i3c_bus *i3cbus, enum i3c_bus_mode mode,
-+			    unsigned long max_i2c_scl_rate)
- {
- 	struct i3c_master_controller *master = i3c_bus_to_i3c_master(i3cbus);
- 
--- 
-2.24.0
+/Jarkko
 
