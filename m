@@ -2,83 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B87A81225F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:55:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AEB81225F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:54:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfLQHzU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 02:55:20 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:12670 "EHLO
-        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725794AbfLQHzT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 02:55:19 -0500
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 17 Dec 2019 13:25:17 +0530
-Received: from dikshita-linux.qualcomm.com ([10.204.65.237])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 17 Dec 2019 13:25:00 +0530
-Received: by dikshita-linux.qualcomm.com (Postfix, from userid 347544)
-        id 767E2342E; Tue, 17 Dec 2019 13:24:59 +0530 (IST)
-From:   Dikshita Agarwal <dikshita@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org, Dikshita Agarwal <dikshita@codeaurora.org>
-Subject: [PATCH] arm64: dts: sc7180: Enable video node
-Date:   Tue, 17 Dec 2019 13:23:38 +0530
-Message-Id: <1576569218-24817-1-git-send-email-dikshita@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726808AbfLQHyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 02:54:05 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40972 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726446AbfLQHyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 02:54:04 -0500
+Received: from zn.tnic (p200300EC2F0BBF00D423EC4793E13B2B.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:bf00:d423:ec47:93e1:3b2b])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C4441EC0C9C;
+        Tue, 17 Dec 2019 08:54:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576569243;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bRRPLwpHzOt2xZPhIDBu2caULRFpQfO1a3EOTMqwHkQ=;
+        b=LQJUaOR99M4qnR1l+1odlkzq+fcdJ98rsUfalrcAaypsEVG2cHk0OHYs8LK/QA33NVFjgV
+        Lt6ex9BOiRnb8jGtqCX0REh/rvwH2KDCspkdWuvq5zfMB1XiRf0fLWy0eb7RR6WdwXrDFW
+        rzrIMmgY2VAEClX9ZrhCjh634wObLPo=
+Date:   Tue, 17 Dec 2019 08:53:55 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Cc:     Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        linux-edac@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/MCE/AMD: fix warning about sleep-in-atomic at early
+ boot
+Message-ID: <20191217075355.GA15129@zn.tnic>
+References: <157252708836.3876.4604398213417262402.stgit@buzz>
+ <20191031142955.GA23693@nazgul.tnic>
+ <ad7a25d9-1ca5-0791-ae0a-63c524040bcb@yandex-team.ru>
+ <20191107105310.GD19501@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191107105310.GD19501@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation gerrit to enable video node for sc7180.
-This change depends on patch series Venus new features.
+On Thu, Nov 07, 2019 at 11:53:10AM +0100, Borislav Petkov wrote:
+> On Fri, Nov 01, 2019 at 04:39:17PM +0300, Konstantin Khlebnikov wrote:
+> > I tried 5.4 once but there was no warning.
+> > Code in 4.19 and in mainline almost the same.
+> 
+> Yes, but early boot code has changed a lot since 4.19. If you can't
+> trigger it on 5.4, then I'll drop the BUG splat from your commit message
+> and change it to talk about replacing the IPI-sending function, which is
+> a good cleanup in itself.
 
-Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Ok, I was able to trigger it myself:
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index 52a5861..ccf9ef5 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -1297,6 +1297,34 @@
- 
- 			#freq-domain-cells = <1>;
- 		};
-+
-+		venus: video-codec@aa00000 {
-+			compatible = "qcom,sc7180-venus";
-+			reg = <0 0x0aa00000 0 0xff000>;
-+			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-+			power-domains = <&videocc VENUS_GDSC>,
-+					<&videocc VCODEC0_GDSC>;
-+
-+			power-domain-names = "venus", "vcodec0";
-+			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
-+				<&videocc VIDEO_CC_VENUS_AHB_CLK>,
-+				<&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
-+				<&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-+				<&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-+			clock-names = "core", "iface", "bus",
-+					"vcodec0_core", "vcodec0_bus";
-+			iommus = <&apps_smmu 0x0C00 0x60>;
-+			memory-region = <&venus_mem>;
-+			video-core0 {
-+					compatible = "venus-decoder";
-+			};
-+			video-core1 {
-+					compatible = "venus-encoder";
-+			};
-+			video-firmware {
-+					iommus = <&apps_smmu 0x0C42 0x0>;
-+			};
-+		};
- 	};
- 
- 	thermal-zones {
+[    0.822602] BUG: sleeping function called from invalid context at kernel/sched/completion.c:99
+[    0.822602] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 0, name: swapper/1
+[    0.822602] no locks held by swapper/1/0.
+[    0.822602] irq event stamp: 0
+[    0.822602] hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+[    0.822602] hardirqs last disabled at (0): [<ffffffff8106dda9>] copy_process+0x8b9/0x1ca0
+[    0.822602] softirqs last  enabled at (0): [<ffffffff8106dda9>] copy_process+0x8b9/0x1ca0
+[    0.822602] softirqs last disabled at (0): [<0000000000000000>] 0x0
+[    0.822602] Preemption disabled at:
+[    0.822602] [<ffffffff8104703b>] start_secondary+0x3b/0x190
+[    0.822602] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.5.0-rc2+ #1
+[    0.822602] Hardware name: GIGABYTE MZ01-CE1-00/MZ01-CE1-00, BIOS F02 08/29/2018
+[    0.822602] Call Trace:
+[    0.822602]  dump_stack+0x71/0xa0
+[    0.822602]  ___might_sleep.cold.92+0xf7/0x11f
+[    0.822602]  wait_for_completion+0x3c/0x180
+[    0.822602]  ? generic_exec_single+0xca/0x100
+[    0.822602]  rdmsr_safe_on_cpu+0xe8/0x100
+[    0.822602]  ? wrmsr_on_cpus+0x20/0x20
+[    0.822602]  mce_amd_feature_init+0x2ab/0x590
+[    0.822602]  mcheck_cpu_init+0x17a/0x4d0
+[    0.822602]  identify_cpu+0x3f0/0x750
+[    0.822602]  identify_secondary_cpu+0x13/0x80
+[    0.822602]  smp_store_cpu_info+0x45/0x50
+[    0.822602]  start_secondary+0x50/0x190
+[    0.822602]  secondary_startup_64+0xa4/0xb0
+
+Rerouting patch...
+
+Thx.
+
 -- 
-1.9.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
