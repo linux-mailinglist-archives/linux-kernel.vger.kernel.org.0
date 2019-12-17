@@ -2,55 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4A9E1221B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:55:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD09B1221BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:57:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfLQBzc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 20:55:32 -0500
-Received: from mga07.intel.com ([134.134.136.100]:25607 "EHLO mga07.intel.com"
+        id S1726548AbfLQB5D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 20:57:03 -0500
+Received: from mga11.intel.com ([192.55.52.93]:57635 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfLQBzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:55:32 -0500
+        id S1726133AbfLQB5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 20:57:03 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 17:55:31 -0800
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 17:57:02 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
-   d="scan'208";a="217360620"
-Received: from chauvina-mobl1.ger.corp.intel.com ([10.251.85.48])
-  by orsmga006.jf.intel.com with ESMTP; 16 Dec 2019 17:55:26 -0800
-Message-ID: <bba89735e69aec88889a95d759024bead69d7e5a.camel@linux.intel.com>
-Subject: Re: [PATCH =v2 2/3] tpm: selftest: add test covering async mode
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Tadeusz Struk <tadeusz.struk@intel.com>
-Cc:     peterz@infradead.org, linux-kernel@vger.kernel.org, jgg@ziepe.ca,
-        mingo@redhat.com, jeffrin@rajagiritech.edu.in,
-        linux-integrity@vger.kernel.org, will@kernel.org, peterhuewe@gmx.de
-Date:   Tue, 17 Dec 2019 03:55:25 +0200
-In-Reply-To: <157617293389.8172.8156104731485294664.stgit@tstruk-mobl1>
-References: <157617292787.8172.9586296287013438621.stgit@tstruk-mobl1>
-         <157617293389.8172.8156104731485294664.stgit@tstruk-mobl1>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+   d="scan'208";a="227323430"
+Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
+  by orsmga002.jf.intel.com with ESMTP; 16 Dec 2019 17:57:00 -0800
+From:   "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+To:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        kishon@ti.com
+Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com, peter.harliman.liem@intel.com,
+        "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Subject: [PATCH v10 0/2] phy: intel-lgm-emmc: Add support for eMMC PHY
+Date:   Tue, 17 Dec 2019 09:56:56 +0800
+Message-Id: <20191217015658.23017-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-12-12 at 09:48 -0800, Tadeusz Struk wrote:
-> Add a test that sends a tpm cmd in an async mode.
-> Currently there is a gap in test coverage with regards
-> to this functionality.
-> 
-> Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+Add eMMC-PHY support for Intel LGM SoC
 
-LGTM, thank you.
+changes in v10:
+  - Rob's review comments update in YAML
+  - drop clock-names since it is single entry
+ 
+changes in v9:
+  - Rob's review comments update in YAML
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+changes in v8:
+ Remove the extra Signed-of-by
 
-/Jarkko
+changes in v7:
+ Rebased to maintainer kernel tree phy-tag-5.5
+
+changes in v6:
+   - cobined comaptible strings
+   - added as contiguous and can be a single entry for reg properties
+changes in v5:
+   - earlier Review-by tag given by Rob
+   - rework done with syscon parent node.
+
+ changes in v4:
+   - As per Rob's review: validate 5.2 and 5.3
+   - drop unrelated items.
+
+ changes in v3:
+   - resolve 'make dt_binding_check' warnings
+
+ changes in v2:
+   As per Rob Herring review comments, the following updates
+  - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
+  - filename is the compatible string plus .yaml
+  - LGM: Lightning Mountain
+  - update maintainer
+  - add intel,syscon under property list
+  - keep one example instead of two
+
+
+
+Ramuthevar Vadivel Murugan (2):
+  dt-bindings: phy: intel-emmc-phy: Add YAML schema for LGM eMMC PHY
+  phy: intel-lgm-emmc: Add support for eMMC PHY
+
+ .../bindings/phy/intel,lgm-emmc-phy.yaml           |  56 ++++
+ drivers/phy/Kconfig                                |   1 +
+ drivers/phy/Makefile                               |   1 +
+ drivers/phy/intel/Kconfig                          |   9 +
+ drivers/phy/intel/Makefile                         |   2 +
+ drivers/phy/intel/phy-intel-emmc.c                 | 283 +++++++++++++++++++++
+ 6 files changed, 352 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
+ create mode 100644 drivers/phy/intel/Kconfig
+ create mode 100644 drivers/phy/intel/Makefile
+ create mode 100644 drivers/phy/intel/phy-intel-emmc.c
+
+-- 
+2.11.0
 
