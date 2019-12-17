@@ -2,169 +2,227 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08530123637
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 640A4123671
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728274AbfLQUEf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:04:35 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:22703 "EHLO
+        id S1728427AbfLQUFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:05:32 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36389 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728146AbfLQUEe (ORCPT
+        with ESMTP id S1728126AbfLQUF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:04:34 -0500
+        Tue, 17 Dec 2019 15:05:29 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576613073;
+        s=mimecast20190719; t=1576613128;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:mime-version:mime-version:content-type:content-type:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=0gPdkIyRZAJvPSTRoX5H5XEW5mX5l3b5f1jVxA8POtI=;
-        b=Jt6dXC3hfK/jlF3yvvvNcWAswgI5A+6jMIlCe/MJTREKpvrmOk8qkZt4r+NGRuVQ3szDPa
-        M/tuPP7Fv2SL6YiiDlk4MlWo16mcxyJFmp66ovOq/hgTwTlo8k4uQEZVK9DBkX0C1iW/16
-        Cm/Lp54smkoLJiGAd+ZxtW+mram6sqU=
+        bh=r9zDOVhpgif2r8wUOSynylPPUD8w13YV6BIbZ8Cxr3I=;
+        b=VEIA4q3xLdaTvnttoVaUqvgc/66g8iLrMHNJPLGXmZu9iYVGfgfiUEkL/u6BDX8p+UV60Q
+        FciEVHn0y2W+ysY0EOkJrFdxzoPV3JYZkpe15twinx9sKpuhGA9ZfTNwUnLtwc7jotrEhl
+        7GuZ4hnS8/NKjFDg4pXajfVS/hb3/co=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-38-IGbNvfqiPMGdUhHJ0W6UOQ-1; Tue, 17 Dec 2019 15:04:29 -0500
-X-MC-Unique: IGbNvfqiPMGdUhHJ0W6UOQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+ us-mta-224-9W2NCPbKMJqPR5OnkoERkQ-1; Tue, 17 Dec 2019 15:05:20 -0500
+X-MC-Unique: 9W2NCPbKMJqPR5OnkoERkQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 96AD01005512;
-        Tue, 17 Dec 2019 20:04:28 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-12.phx2.redhat.com [10.3.112.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DD66468877;
-        Tue, 17 Dec 2019 20:04:27 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 95070244; Tue, 17 Dec 2019 17:04:20 -0300 (BRT)
-Date:   Tue, 17 Dec 2019 17:04:20 -0300
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        stable@vger.kernel.org, acme@kernel.org
-Subject: Re: [PATCH] tools lib: Disable redundant-delcs error for strlcpy
-Message-ID: <20191217200420.GD7095@redhat.com>
-References: <20191208214607.20679-1-vt@altlinux.org>
- <20191217122331.4g5atx7in6njjlw4@altlinux.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1DFE108598D;
+        Tue, 17 Dec 2019 20:05:16 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-123-81.rdu2.redhat.com [10.10.123.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A9C7B5D9E1;
+        Tue, 17 Dec 2019 20:05:13 +0000 (UTC)
+Subject: Re: [PATCH v7 5/5] locking/qspinlock: Introduce the shuffle reduction
+ optimization into CNA
+To:     Alex Kogan <alex.kogan@oracle.com>
+Cc:     rahul.x.yadav@oracle.com, tglx@linutronix.de,
+        linux@armlinux.org.uk, hpa@zytor.com, dave.dice@oracle.com,
+        mingo@redhat.com, will.deacon@arm.com, arnd@arndb.de,
+        jglauber@marvell.com, guohanjun@huawei.com, x86@kernel.org,
+        daniel.m.jordan@oracle.com, steven.sistare@oracle.com,
+        bp@alien8.de, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        linux-arch@vger.kernel.org
+References: <f1164ae9-ebcf-41f0-8395-224cdb0f249d@default>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <64c7b7fd-079c-55d1-258c-8c23802b992d@redhat.com>
+Date:   Tue, 17 Dec 2019 15:05:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <f1164ae9-ebcf-41f0-8395-224cdb0f249d@default>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191217122331.4g5atx7in6njjlw4@altlinux.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Dec 17, 2019 at 03:23:32PM +0300, Vitaly Chikunov escreveu:
-> Arnaldo,
->=20
-> Ping. Can you accept or comment on this patch? There is further
-> explanations of it:
+On 12/10/19 1:56 PM, Alex Kogan wrote:
+> ----- longman@redhat.com wrote:
+>
+>> On 11/25/19 4:07 PM, Alex Kogan wrote:
+>>> @@ -234,12 +263,13 @@ __always_inline u32 cna_pre_scan(struct
+>> qspinlock *lock,
+>>>  	struct cna_node *cn =3D (struct cna_node *)node;
+>>> =20
+>>>  	/*
+>>> -	 * setting @pre_scan_result to 1 indicates that no post-scan
+>>> +	 * setting @pre_scan_result to 1 or 2 indicates that no post-scan
+>>>  	 * should be made in cna_pass_lock()
+>>>  	 */
+>>>  	cn->pre_scan_result =3D
+>>> -		cn->intra_count =3D=3D intra_node_handoff_threshold ?
+>>> -			1 : cna_scan_main_queue(node, node);
+>>> +		(node->locked <=3D 1 && probably(SHUFFLE_REDUCTION_PROB_ARG)) ?
+>>> +			1 : cn->intra_count =3D=3D intra_node_handoff_threshold ?
+>>> +			2 : cna_scan_main_queue(node, node);
+>>> =20
+>>>  	return 0;
+>>>  }
+>>> @@ -253,12 +283,15 @@ static inline void cna_pass_lock(struct
+>> mcs_spinlock *node,
+>>> =20
+>>>  	u32 scan =3D cn->pre_scan_result;
+>>> =20
+>>> +	if (scan =3D=3D 1)
+>>> +		goto pass_lock;
+>>> +
+>>>  	/*
+>>>  	 * check if a successor from the same numa node has not been found
+>> in
+>>>  	 * pre-scan, and if so, try to find it in post-scan starting from
+>> the
+>>>  	 * node where pre-scan stopped (stored in @pre_scan_result)
+>>>  	 */
+>>> -	if (scan > 1)
+>>> +	if (scan > 2)
+>>>  		scan =3D cna_scan_main_queue(node, decode_tail(scan));
+>>> =20
+>>>  	if (!scan) { /* if found a successor from the same numa node */
+>>> @@ -281,5 +314,6 @@ static inline void cna_pass_lock(struct
+>> mcs_spinlock *node,
+>>>  		tail_2nd->next =3D next;
+>>>  	}
+>>> =20
+>>> +pass_lock:
+>>>  	arch_mcs_pass_lock(&next_holder->locked, val);
+>>>  }
+>> I think you might have mishandled the proper accounting of
+>> intra_count.
+>> How about something like:
+>>
+>> diff --git a/kernel/locking/qspinlock_cna.h
+>> b/kernel/locking/qspinlock_cna.h
+>> index f1eef6bece7b..03f8fdec2b80 100644
+>> --- a/kernel/locking/qspinlock_cna.h
+>> +++ b/kernel/locking/qspinlock_cna.h
+>> @@ -268,7 +268,7 @@ __always_inline u32 cna_pre_scan(struct qspinlock
+>> *lock,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cn->pre_scan_result =3D
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 (node->locked <=3D 1 &&
+>> probably(SHUFFLE_REDUCTION_PROB_ARG)) ?
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 : cn->i=
+ntra_count =3D=3D
+>> intra_node_handoff_threshold ?
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 : cn->i=
+ntra_count >=3D
+>> intra_node_handoff_threshold ?
+> We reset =E2=80=98intra_count' in cna_init_node(), which is called befo=
+re we enter=20
+> the slow path, and set it at most once when we pass the internal (CNA) =
+lock
+> by taking the owner=E2=80=99s value + 1. Only after we get the internal=
+ lock, we
+> call this cna_pre_scan() function, where we check the threshold.=20
+> IOW, having 'intra_count > intra_node_handoff_threshold' would mean a b=
+ug,=20
+> and having =E2=80=9C>=3D=E2=80=9C would mask it.=20
+> Perhaps I can add WARN_ON(cn->intra_count > intra_node_handoff_threshol=
+d)
+> here instead, although I'm not sure if that is a good idea performance-=
+wise.
 
-Will this work when building with clang
+The code that I added below could have the possibility of making
+intra_count > intra_node_handoff_threshold. I agree with your assessment
+of the current code. This conditional check is fine if no further change
+is made.
 
-- Arnaldo
-=20
-> 1. It seems that people putting strlcpy() into the tools was already aw=
-are of
-> the problems it causes and tried to solve them. Probably, that's why th=
-ey put
-> `__weak` attribute on it (so it would be linkable in the presence of an=
-other
-> strlcpy). Then `#ifndef __UCLIBC__`ed and later `#if defined(__GLIBC__)=
- &&
-> !defined(__UCLIBC__)` its declaration. But, solution was incomplete and=
- could
-> be improved to make kernel buildable on more systems (where libc contai=
-ns
-> strlcpy).
->=20
-> There is not need to make `redundant redeclaration` warning an error in
-> this case.
->=20
-> 2. `#pragma GCC diagnostic ignored` trick is already used multiple time=
-s
-> in the kernel:
->=20
->   $ git grep  '#pragma GCC diagnostic ignored'
->   arch/arm/lib/xor-neon.c:#pragma GCC diagnostic ignored "-Wunused-vari=
-able"
->   tools/build/feature/test-gtk2-infobar.c:#pragma GCC diagnostic ignore=
-d "-Wstrict-prototypes"
->   tools/build/feature/test-gtk2.c:#pragma GCC diagnostic ignored "-Wstr=
-ict-prototypes"
->   tools/include/linux/string.h:#pragma GCC diagnostic ignored "-Wredund=
-ant-decls"
->   tools/lib/bpf/libbpf.c:#pragma GCC diagnostic ignored "-Wformat-nonli=
-teral"
->   tools/perf/ui/gtk/gtk.h:#pragma GCC diagnostic ignored "-Wstrict-prot=
-otypes"
->   tools/testing/selftests/kvm/lib/assert.c:#pragma GCC diagnostic ignor=
-ed "-Wunused-result"
->   tools/usb/ffs-test.c:#pragma GCC diagnostic ignored "-Wdeprecated-dec=
-larations"
->=20
-> So the solution does not seem alien in the kernel and should be accepta=
-ble.
->=20
-> (I also send this to another of your emails in case I used wrong one be=
-fore.)
->=20
-> Thanks,
->=20
->=20
-> On Mon, Dec 09, 2019 at 12:46:07AM +0300, Vitaly Chikunov wrote:
-> > Disable `redundant-decls' error for strlcpy declaration and solve bui=
-ld
-> > error allowing users to compile vanilla kernels.
-> >=20
-> > When glibc have strlcpy (such as in ALT linux since 2004) objtool and
-> > perf build fails with something like:
-> >=20
-> >   In file included from exec-cmd.c:3:
-> >   tools/include/linux/string.h:20:15: error: redundant redeclaration =
-of =E2=80=98strlcpy=E2=80=99 [-Werror=3Dredundant-decls]
-> >      20 | extern size_t strlcpy(char *dest, const char *src, size_t s=
-ize);
-> > 	|               ^~~~~~~
-> >=20
-> > It's very hard to produce a perfect fix for that since it is a header
-> > file indirectly pulled from many sources from different Makefile buil=
-ds.
-> >=20
-> > Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/st=
-ring.c")
-> > Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __U=
-CLIBC__")
-> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> > Cc: Dmitry V. Levin <ldv@altlinux.org>
-> > Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> > Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  tools/include/linux/string.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/tools/include/linux/string.h b/tools/include/linux/strin=
-g.h
-> > index 980cb9266718..99ede7f5dfb8 100644
-> > --- a/tools/include/linux/string.h
-> > +++ b/tools/include/linux/string.h
-> > @@ -17,7 +17,10 @@ int strtobool(const char *s, bool *res);
-> >   * However uClibc headers also define __GLIBC__ hence the hack below
-> >   */
-> >  #if defined(__GLIBC__) && !defined(__UCLIBC__)
-> > +#pragma GCC diagnostic push
-> > +#pragma GCC diagnostic ignored "-Wredundant-decls"
-> >  extern size_t strlcpy(char *dest, const char *src, size_t size);
-> > +#pragma GCC diagnostic pop
-> >  #endif
-> > =20
-> >  char *str_error_r(int errnum, char *buf, size_t buflen);
+
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2 : cn=
+a_scan_main_queue(node, node);
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> @@ -283,9 +283,6 @@ static inline void cna_pass_lock(struct
+>> mcs_spinlock
+>> *node,
+>> =C2=A0
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 scan =3D cn->pre_scan_r=
+esult;
+>> =C2=A0
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan =3D=3D 1)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 goto pass_lock;
+>> -
+> The thing is that we want to avoid as much of the shuffling-related ove=
+rhead
+> as we can when the spinlock is only lightly contended. That's why we ha=
+ve this
+> early exit here that avoids the rest of the logic of triaging through p=
+ossible
+> 'scan' values.
+That is a valid point. Maybe you can document that fact you are
+optimizing for performance instead of better correctness.
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * check if a successo=
+r from the same numa node has not been
+>> found in
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * pre-scan, and if so=
+, try to find it in post-scan starting
+>> from the
+>> @@ -294,7 +291,13 @@ static inline void cna_pass_lock(struct
+>> mcs_spinlock *node,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan > 2)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 scan =3D cna_scan_main_queue(node, decode_tail(scan));
+>> =C2=A0
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!scan) { /* if found a succe=
+ssor from the same numa node
+>> */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan <=3D 1) { /* if found a=
+ successor from the same numa
+>> node */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 /* inc @intra_count if the secondary queue is not
+>> empty */
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 ((struct cna_node *)next_holder)->intra_count =3D
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cn->intra=
+_count + (node->locked > 1);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 if ((scan =3D=3D 1)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto pass=
+_lock;
+>> +
+> Hmm, I am not sure this makes the code any better/more readable,
+> while this does add the overhead of going through 3 branches before
+> jumping to 'pass_lock'.
+>
+This is just a suggestion for improving the correctness of the code. I
+am fine if you opt for better performance.
+
+Cheers,
+Longman
 
