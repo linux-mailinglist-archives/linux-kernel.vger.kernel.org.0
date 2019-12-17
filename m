@@ -2,193 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79B0412243D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 06:53:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41D1212246E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:01:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfLQFvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 00:51:40 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:41284 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727810AbfLQFvM (ORCPT
+        id S1727907AbfLQF7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 00:59:55 -0500
+Received: from rcdn-iport-9.cisco.com ([173.37.86.80]:25393 "EHLO
+        rcdn-iport-9.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfLQF7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 00:51:12 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191217055110epoutp02cb38ca921470bb011392dbdc3236d74a~hEqsTfutJ1006510065epoutp02P
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:51:10 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191217055110epoutp02cb38ca921470bb011392dbdc3236d74a~hEqsTfutJ1006510065epoutp02P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576561870;
-        bh=X+3c4eWtnhc/wznu8yi8b2cClbqwmxlDm2znKapn0f8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HK0PttloJPSZGkm2HOam4m6COdIFX3az4tH/84FvBuGkNxvnn1MOv7vtj9VCP7/e8
-         yFLcGhWxFGc5NqNkKVpCZ75rGORaTTtVRE0LJlqUMpay5zVqYCBGb1wbONBf5MVjuK
-         ZN643ehFHJe+JzIlzhh2ICc1dG2pW4M+3P6iMkGY=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191217055109epcas1p2fe070e79dde850225f8097f2757ef8b6~hEqrjfr242687526875epcas1p2g;
-        Tue, 17 Dec 2019 05:51:09 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.158]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 47cS1R3lVjzMqYkq; Tue, 17 Dec
-        2019 05:51:07 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BC.0D.51241.BCC68FD5; Tue, 17 Dec 2019 14:51:07 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20191217055107epcas1p44d46bdea7b326b86689f326742f5444a~hEqpBiy6C1997419974epcas1p4a;
-        Tue, 17 Dec 2019 05:51:07 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191217055106epsmtrp2474ac40aa2f41c24ce1585a5371746bf~hEqpAprtW1905819058epsmtrp2A;
-        Tue, 17 Dec 2019 05:51:06 +0000 (GMT)
-X-AuditID: b6c32a39-163ff7000001c829-4d-5df86ccb17e9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7F.5D.10238.ACC68FD5; Tue, 17 Dec 2019 14:51:06 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191217055106epsmtip15cd0260d03155575fcab99c904638b56~hEqolNbTZ3193831938epsmtip1Y;
-        Tue, 17 Dec 2019 05:51:06 +0000 (GMT)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        heiko@sntech.de, leonard.crestez@nxp.com, lukasz.luba@arm.com
-Cc:     a.swigon@samsung.com, m.szyprowski@samsung.com, kgene@kernel.org,
-        cw00.choi@samsung.com, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com, linux-pm@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH 9/9] arm64: dts: exynos: Replace deprecated property for
- Exynos bus
-Date:   Tue, 17 Dec 2019 14:57:38 +0900
-Message-Id: <20191217055738.28445-10-cw00.choi@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191217055738.28445-1-cw00.choi@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmru7pnB+xBnNuy1jcn9fKaHH9y3NW
-        i/lHzrFa/H/0mtWi//FrZovz5zewW5xtesNuseLuR1aLTY+vsVpc3jWHzeJz7xFGi08P/jNb
-        zDi/j8liYVMLu8XaI3fZLZZev8hkcbtxBZtF694j7A5CHmvmrWH02LSqk81j85J6j43vdjB5
-        9G1Zxeix/do8Zo/Pm+QC2KOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPIS
-        c1NtlVx8AnTdMnOA3lBSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX
-        5qXrJefnWhkaGBiZAhUmZGe8WLeQueC0QMWUDyvZGxiP8HYxcnJICJhI/Lx2ha2LkYtDSGAH
-        o8T1BVdYIZxPjBLzzs5mhnC+MUq83P+WBaald+stdojEXkaJ7zePQVV9YZQ4tOcsM0gVm4CW
-        xP4XN9hAbBGBOon5h3cwgRQxC9xkkthz6RYrSEJYIFTix5l7YEUsAqoS/9u/gDXzClhL/Jq1
-        hglinbzE6g0HwOKcQPHn216DDZIQ+M0m8WvydUaIIheJrpdLoWxhiVfHt7BD2FISn9/tZYOw
-        qyVWnjzCBtHcwSixZf8FVoiEscT+pZOBpnIAnacpsX6XPkRYUWLn77lgM5kF+CTefe1hBSmR
-        EOCV6GgTgihRlrj84C7UnZISi9s7oVZ5SNzfPQEakH2MErPWPmKcwCg3C2HDAkbGVYxiqQXF
-        uempxYYFpsiRtokRnFK1LHcwHjvnc4hRgINRiYdXouR7rBBrYllxZe4hRgkOZiUR3h0KQCHe
-        lMTKqtSi/Pii0pzU4kOMpsCgnMgsJZqcD0z3eSXxhqZGxsbGFiaGZqaGhkrivBw/LsYKCaQn
-        lqRmp6YWpBbB9DFxcEo1MNpymfLu4D6ZuErzxNLtrz94W/opvctPqTphlXPUXaF934RKsfev
-        ZzRKL5F6KSIpxqIv/M41vPXmYvNGH5tVrVeP+zz0Pb2ZJbJc5fyU129v7TWdfrpqdu0r+4W3
-        XONDLXivRql6mZ3qre7ZcSvlS/mZ7y9FXVbGKUpKSHTmbPkw7WGE/AvlvUosxRmJhlrMRcWJ
-        ALLxzCa/AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrELMWRmVeSWpSXmKPExsWy7bCSnO6pnB+xBg/eWFjcn9fKaHH9y3NW
-        i/lHzrFa/H/0mtWi//FrZovz5zewW5xtesNuseLuR1aLTY+vsVpc3jWHzeJz7xFGi08P/jNb
-        zDi/j8liYVMLu8XaI3fZLZZev8hkcbtxBZtF694j7A5CHmvmrWH02LSqk81j85J6j43vdjB5
-        9G1Zxeix/do8Zo/Pm+QC2KO4bFJSczLLUov07RK4Ml6sW8hccFqgYsqHlewNjEd4uxg5OSQE
-        TCR6t95iB7GFBHYzSjzpMoWIS0pMu3iUuYuRA8gWljh8uLiLkQuo5BOjxKMr78Hq2QS0JPa/
-        uMEGYosItDFKLPkuB2IzCzxnktjXZQZiCwsES3RcOMYKYrMIqEr8b//CDGLzClhL/Jq1hgli
-        l7zE6g0HwOKcQPHn214zQdxjJfFz6jPWCYx8CxgZVjFKphYU56bnFhsWGOallusVJ+YWl+al
-        6yXn525iBIe8luYOxstL4g8xCnAwKvHwSpR8jxViTSwrrsw9xCjBwawkwrtDASjEm5JYWZVa
-        lB9fVJqTWnyIUZqDRUmc92nesUghgfTEktTs1NSC1CKYLBMHp1QDY9/qFp1Dv7qNp5/du/f0
-        DN3NjEYf10ldVg6bt+b9rsemyTz6mjfls4/8KHONW/Iuy95aWy8n06htfZR80PR/f09P2BGj
-        sMGI2fbW5dBPLku7K6SV9YpmX1ZU7J3Nvmhlt2CCU52RANNFs97KgP5bfUvCQ+cbxEo9D+7K
-        PXyDT833ymzmr1G9SizFGYmGWsxFxYkArvwDlnUCAAA=
-X-CMS-MailID: 20191217055107epcas1p44d46bdea7b326b86689f326742f5444a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191217055107epcas1p44d46bdea7b326b86689f326742f5444a
-References: <20191217055738.28445-1-cw00.choi@samsung.com>
-        <CGME20191217055107epcas1p44d46bdea7b326b86689f326742f5444a@epcas1p4.samsung.com>
+        Tue, 17 Dec 2019 00:59:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=5700; q=dns/txt; s=iport;
+  t=1576562392; x=1577771992;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=EByTS1NeHg5rIZQojn0N2gp7tLRr+BgsY7QmVpevBI4=;
+  b=jR1nFrx1Z6a7HA921CI5DOhFUSdQRMkRzeZE28fTWoQ6bdRCII2vjvbc
+   cNBC+lTjWu09oFTaAIHxSxRtGOSlUnYPJ949ziU+bNBj4wWVkuNkDLSdS
+   T6A3Ma+wkBB8J+TxNj5dDg6DN1GpG+dpy/HhK14JZwAfZ1Pc0rLUDjATp
+   A=;
+X-IronPort-AV: E=Sophos;i="5.69,324,1571702400"; 
+   d="scan'208";a="597724430"
+Received: from rcdn-core-12.cisco.com ([173.37.93.148])
+  by rcdn-iport-9.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 17 Dec 2019 05:52:46 +0000
+Received: from sjc-ads-7483.cisco.com (sjc-ads-7483.cisco.com [10.30.221.19])
+        by rcdn-core-12.cisco.com (8.15.2/8.15.2) with ESMTP id xBH5qjXT012240;
+        Tue, 17 Dec 2019 05:52:46 GMT
+Received: by sjc-ads-7483.cisco.com (Postfix, from userid 838444)
+        id AA81E1679; Mon, 16 Dec 2019 21:52:45 -0800 (PST)
+From:   Aviraj CJ <acj@cisco.com>
+To:     peppe.cavallaro@st.com, gregkh@linuxfoundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, xe-linux-external@cisco.com, acj@cisco.com
+Subject: [PATCH stable v4.4 1/2] net: stmmac: use correct DMA buffer size in the RX descriptor
+Date:   Mon, 16 Dec 2019 21:52:27 -0800
+Message-Id: <20191217055228.57282-1-acj@cisco.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.30.221.19, sjc-ads-7483.cisco.com
+X-Outbound-Node: rcdn-core-12.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the property related to devfreq and devfreq-event device
-to remove the deprecated property name.
-- Replace 'devfreq' with 'exynos,parent-bus' property
-  for getting the parent devfreq device of exynos-bus.
-- Replace 'devfreq-events' with 'exynos,ppmu-device' property
-  for getting the devfreq-event device to monitor bus utilization.
+upstream 583e6361414903c5206258a30e5bd88cb03c0254 commit
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+We always program the maximum DMA buffer size into the receive descriptor,
+although the allocated size may be less. E.g. with the default MTU size
+we allocate only 1536 bytes. If somebody sends us a bigger frame, then
+memory may get corrupted.
+
+Program DMA using exact buffer sizes.
+
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[acj: backport to v4.4 -stable :
+- Modified patch since v4.4 driver has no support for Big endian
+- Skipped the section modifying non-existent functions in dwmac4_descs.c and
+dwxgmac2_descs.c ]
+Signed-off-by: Aviraj CJ <acj@cisco.com>
 ---
- .../dts/exynos/exynos5433-tm2-common.dtsi     | 20 +++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/common.h      |  2 +-
+ drivers/net/ethernet/stmicro/stmmac/descs_com.h   | 14 ++++++++++----
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c    | 10 +++++++---
+ drivers/net/ethernet/stmicro/stmmac/norm_desc.c   | 10 +++++++---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  4 ++--
+ 5 files changed, 27 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index 6f90b0e62cba..6bdd5b0940a5 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -166,54 +166,54 @@
- };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index 623c6ed8764a..803df6a32ba9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -301,7 +301,7 @@ struct dma_features {
+ struct stmmac_desc_ops {
+ 	/* DMA RX descriptor ring initialization */
+ 	void (*init_rx_desc) (struct dma_desc *p, int disable_rx_ic, int mode,
+-			      int end);
++			      int end, int bfsize);
+ 	/* DMA TX descriptor ring initialization */
+ 	void (*init_tx_desc) (struct dma_desc *p, int mode, int end);
  
- &bus_g2d_400 {
--	devfreq-events = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
-+	exynos,ppmu-device = <&ppmu_event0_d0_general>, <&ppmu_event0_d1_general>;
- 	vdd-supply = <&buck4_reg>;
- 	exynos,saturation-ratio = <10>;
- 	status = "okay";
- };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+index 6f2cc78c5cf5..6b83fc8e6fbe 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
++++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+@@ -33,9 +33,10 @@
+ /* Specific functions used for Ring mode */
  
- &bus_g2d_266 {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ /* Enhanced descriptors */
+-static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
++static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end, int bfsize)
+ {
+-	p->des01.erx.buffer2_size = BUF_SIZE_8KiB - 1;
++	if (bfsize == BUF_SIZE_16KiB)
++		p->des01.erx.buffer2_size = BUF_SIZE_8KiB - 1;
+ 	if (end)
+ 		p->des01.erx.end_ring = 1;
+ }
+@@ -61,9 +62,14 @@ static inline void enh_set_tx_desc_len_on_ring(struct dma_desc *p, int len)
+ }
  
- &bus_gscl {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ /* Normal descriptors */
+-static inline void ndesc_rx_set_on_ring(struct dma_desc *p, int end)
++static inline void ndesc_rx_set_on_ring(struct dma_desc *p, int end, int bfsize)
+ {
+-	p->des01.rx.buffer2_size = BUF_SIZE_2KiB - 1;
++	int size;
++
++	if (bfsize >= BUF_SIZE_2KiB) {
++		size = min(bfsize - BUF_SIZE_2KiB + 1, BUF_SIZE_2KiB - 1);
++		p->des01.rx.buffer2_size = size;
++	}
+ 	if (end)
+ 		p->des01.rx.end_ring = 1;
+ }
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index 7d944449f5ef..9ecb3a948f86 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -238,16 +238,20 @@ static int enh_desc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ }
  
- &bus_hevc {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
+-				  int mode, int end)
++				  int mode, int end, int bfsize)
+ {
++	int bfsize1;
++
+ 	p->des01.all_flags = 0;
+ 	p->des01.erx.own = 1;
+-	p->des01.erx.buffer1_size = BUF_SIZE_8KiB - 1;
++
++	bfsize1 = min(bfsize, BUF_SIZE_8KiB - 1);
++	p->des01.erx.buffer1_size = bfsize1;
  
- &bus_jpeg {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ehn_desc_rx_set_on_chain(p, end);
+ 	else
+-		ehn_desc_rx_set_on_ring(p, end);
++		ehn_desc_rx_set_on_ring(p, end, bfsize);
  
- &bus_mfc {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ 	if (disable_rx_ic)
+ 		p->des01.erx.disable_ic = 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
+index 48c3456445b2..07e0c03cfb10 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/norm_desc.c
+@@ -121,16 +121,20 @@ static int ndesc_get_rx_status(void *data, struct stmmac_extra_stats *x,
+ }
  
- &bus_mscl {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ static void ndesc_init_rx_desc(struct dma_desc *p, int disable_rx_ic, int mode,
+-			       int end)
++			       int end, int bfsize)
+ {
++	int bfsize1;
++
+ 	p->des01.all_flags = 0;
+ 	p->des01.rx.own = 1;
+-	p->des01.rx.buffer1_size = BUF_SIZE_2KiB - 1;
++
++	bfsize1 = min(bfsize, (BUF_SIZE_2KiB - 1));
++	p->des01.rx.buffer1_size = bfsize1;
  
- &bus_noc0 {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ndesc_rx_set_on_chain(p, end);
+ 	else
+-		ndesc_rx_set_on_ring(p, end);
++		ndesc_rx_set_on_ring(p, end, bfsize);
  
- &bus_noc1 {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
- 
- &bus_noc2 {
--	devfreq = <&bus_g2d_400>;
-+	exynos,parent-bus = <&bus_g2d_400>;
- 	status = "okay";
- };
- 
+ 	if (disable_rx_ic)
+ 		p->des01.rx.disable_ic = 1;
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index f4d6512f066c..e9d41e03121c 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -964,11 +964,11 @@ static void stmmac_clear_descriptors(struct stmmac_priv *priv)
+ 		if (priv->extend_desc)
+ 			priv->hw->desc->init_rx_desc(&priv->dma_erx[i].basic,
+ 						     priv->use_riwt, priv->mode,
+-						     (i == rxsize - 1));
++						     (i == rxsize - 1), priv->dma_buf_sz);
+ 		else
+ 			priv->hw->desc->init_rx_desc(&priv->dma_rx[i],
+ 						     priv->use_riwt, priv->mode,
+-						     (i == rxsize - 1));
++						     (i == rxsize - 1), priv->dma_buf_sz);
+ 	for (i = 0; i < txsize; i++)
+ 		if (priv->extend_desc)
+ 			priv->hw->desc->init_tx_desc(&priv->dma_etx[i].basic,
 -- 
-2.17.1
+2.19.1
 
