@@ -2,116 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88077122E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:17:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD72122E51
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728866AbfLQORb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:17:31 -0500
-Received: from relay.sw.ru ([185.231.240.75]:46920 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728554AbfLQORa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:17:30 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ihDeB-0005aE-AS; Tue, 17 Dec 2019 17:16:23 +0300
-Subject: Re: [PATCH RFC 0/3] block,ext4: Introduce REQ_OP_ASSIGN_RANGE to
- reflect extents allocation in block device internals
-To:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, axboe@kernel.dk
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, ming.lei@redhat.com,
-        osandov@fb.com, jthumshirn@suse.de, minwoo.im.dev@gmail.com,
-        damien.lemoal@wdc.com, andrea.parri@amarulasolutions.com,
-        hare@suse.com, tj@kernel.org, ajay.joshi@wdc.com, sagi@grimberg.me,
-        dsterba@suse.com, chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
-        dhowells@redhat.com, asml.silence@gmail.com
-References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <750538f7-33af-d98d-47d1-9753fd87e8fd@virtuozzo.com>
-Date:   Tue, 17 Dec 2019 17:16:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1728792AbfLQOQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:16:41 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:36602 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728554AbfLQOQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:16:40 -0500
+Received: by mail-qk1-f195.google.com with SMTP id a203so7340700qkc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 06:16:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=ZkdzLix0g7TLx3w5KL71e42yAFa7G9Wu3yCJiO5zBhs=;
+        b=R4VeKMX5z+UpczXH2iwhnXxVtV/oF7T7YQHHVdhLWz3zDT3WeJr7l93DvuR8yvVTv1
+         b8K8T6PxnmokRbgIrYOjdgQoidBrClvkj/ONfMxQ5qwk5O8VdAzKcNBZJRcqHTxrR9fv
+         6oZkLQMCNFUQ5RqfDFqqCiEYcPxcbVXU0GWa+V3TiQSvhU1WYhVdc+Wyyy3uWM0/S5EK
+         hEiB9TnfsOs25eWmyhQX7mf8iQrlU2obMGSU/PBQ/Kdp7Cpq5otTFcelPh4cIsg5+vi1
+         l7/uWYHT18DpZM2q2zh8DATf6vrIqr3vrPVB6SD6pC+LUQX8NwBm0Pev0kzsqmMQ18g+
+         1smA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=ZkdzLix0g7TLx3w5KL71e42yAFa7G9Wu3yCJiO5zBhs=;
+        b=gWEy2EjwfUwdzNLM1n233erSAp/e3JrByZbD/gWVh9CTrFJQZEb5Ek4Bw4sDJzfXqS
+         +GcPuQCpUUvQ99xCDfkKrZE93YZg3x4mIV7k+cmJmu7/qWbWLMU0A1FlTFRTWof8j9jR
+         sSKUndiUll+CiOZropcBlGMPRHPZPeLGsHHRApZADQq+0+BbXniMOVV0sIHqagsPHq8C
+         9g1vowWnenAzD/WQ/msUfM4p4DQv6jXQjzMOUJ4a3BzAY7WDWi94wWHnbP6eyZUoWNKJ
+         IJkOORKmJiUYnUiKoqwTSUj5Rk2oOwwREKIoUFlQ+2qd/ds3fc3/MFnYU7trgVLxQ+ta
+         qtqQ==
+X-Gm-Message-State: APjAAAVviZO99BgEkq9Qc7HrmWCz4fv0lbv8M23odL3tDdvj9YssW0cQ
+        VAUgesfdi5zpTo206I5GCpsVzw==
+X-Google-Smtp-Source: APXvYqyIaW9SH9dIo0nTwluwbMjOkaOIBAywH/CZvwYvSZJusUJQDeyKQIEbOh3B2HI/AZvYCG2apQ==
+X-Received: by 2002:a37:a807:: with SMTP id r7mr5369874qke.346.1576592197757;
+        Tue, 17 Dec 2019 06:16:37 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id v2sm7089372qkj.29.2019.12.17.06.16.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 06:16:37 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm: memcontrol.c: move mem_cgroup_id_get_many under CONFIG_MMU
+Date:   Tue, 17 Dec 2019 09:16:36 -0500
+Message-Id: <392D7C59-5538-4A9B-8974-DB0B64880C2C@lca.pw>
+References: <20191217135440.GB58496@chrisdown.name>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <20191217135440.GB58496@chrisdown.name>
+To:     Chris Down <chris@chrisdown.name>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
 
-Any comments on this?
 
-Thanks
+> On Dec 17, 2019, at 8:54 AM, Chris Down <chris@chrisdown.name> wrote:
+>=20
+> Let's just add __maybe_unused, since it seems like what we want in this sc=
+enario -- it avoids new users having to enter preprocessor madness, while al=
+so not polluting the build output.
 
-On 10.12.2019 19:56, Kirill Tkhai wrote:
-> Information about continuous extent placement may be useful
-> for some block devices. Say, distributed network filesystems,
-> which provide block device interface, may use this information
-> for better blocks placement over the nodes in their cluster,
-> and for better performance. Block devices, which map a file
-> on another filesystem (loop), may request the same length extent
-> on underlining filesystem for less fragmentation and for batching
-> allocation requests. Also, hypervisors like QEMU may use this
-> information for optimization of cluster allocations.
-> 
-> This patchset introduces REQ_OP_ASSIGN_RANGE, which is going
-> to be used for forwarding user's fallocate(0) requests into
-> block device internals. It rather similar to existing
-> REQ_OP_DISCARD, REQ_OP_WRITE_ZEROES, etc. The corresponding
-> exported primitive is called blkdev_issue_assign_range().
-> See [1/3] for the details.
-> 
-> Patch [2/3] teaches loop driver to handle REQ_OP_ASSIGN_RANGE
-> requests by calling fallocate(0).
-> 
-> Patch [3/3] makes ext4 to notify a block device about fallocate(0).
-> 
-> Here is a simple test I did:
-> https://gist.github.com/tkhai/5b788651cdb74c1dbff3500745878856
-> 
-> I attached a file on ext4 to loop. Then, created ext4 partition
-> on loop device and started the test in the partition. Direct-io
-> is enabled on loop.
-> 
-> The test fallocates 4G file and writes from some offset with
-> given step, then it chooses another offset and repeats. After
-> the test all the blocks in the file become written.
-> 
-> The results shows that batching extents-assigning requests improves
-> the performance:
-> 
-> Before patchset: real ~ 1min 27sec
-> After patchset:  real ~ 1min 16sec (18% better)
-> 
-> Ordinary fallocate() before writes improves the performance
-> by batching the requests. These results just show, the same
-> is in case of forwarding extents information to underlining
-> filesystem.
-> ---
-> 
-> Kirill Tkhai (3):
->       block: Add support for REQ_OP_ASSIGN_RANGE operation
->       loop: Forward REQ_OP_ASSIGN_RANGE into fallocate(0)
->       ext4: Notify block device about fallocate(0)-assigned blocks
-> 
-> 
->  block/blk-core.c          |    4 +++
->  block/blk-lib.c           |   70 +++++++++++++++++++++++++++++++++++++++++++++
->  block/blk-merge.c         |   21 ++++++++++++++
->  block/bounce.c            |    1 +
->  drivers/block/loop.c      |    5 +++
->  fs/ext4/ext4.h            |    1 +
->  fs/ext4/extents.c         |   11 ++++++-
->  include/linux/bio.h       |    3 ++
->  include/linux/blk_types.h |    2 +
->  include/linux/blkdev.h    |   29 +++++++++++++++++++
->  10 files changed, 145 insertions(+), 2 deletions(-)
-> 
-> --
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> 
-
+__maybe_unused should only be used in the last resort as it mark the compile=
+r to catch the real issues in the future. In this case, it might be better j=
+ust ignore it as only non-realistic compiling test would use !CONFIG_MMU in t=
+his case.=
