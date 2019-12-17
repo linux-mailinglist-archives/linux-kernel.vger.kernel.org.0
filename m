@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC749123869
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:08:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7000D123880
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfLQVI1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:08:27 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39897 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfLQVI1 (ORCPT
+        id S1728089AbfLQVPR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:15:17 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40783 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727723AbfLQVPP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:08:27 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihK4q-0005qM-2e; Tue, 17 Dec 2019 22:08:20 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihK4o-0006Wv-It; Tue, 17 Dec 2019 22:08:18 +0100
-Date:   Tue, 17 Dec 2019 22:08:18 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dan Murphy <dmurphy@ti.com>,
-        kernel@pengutronix.de, Jiri Slaby <jslaby@suse.com>,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] leds: trigger: implement a tty trigger
-Message-ID: <20191217210818.rbwmrz3fsnobo7nj@pengutronix.de>
-References: <20191217150736.1479-1-u.kleine-koenig@pengutronix.de>
- <20191217150736.1479-4-u.kleine-koenig@pengutronix.de>
- <20191217152724.GA3667595@kroah.com>
- <20191217162313.5n3v7va5nw5lxloh@pengutronix.de>
- <20191217172102.GB3829986@kroah.com>
- <b2844f63-d580-ddc2-b4ed-817eaa89a2c6@gmail.com>
+        Tue, 17 Dec 2019 16:15:15 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u1so1698671ljk.7
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 13:15:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=miIxpQ/Ljqg/1nvvnERImSZJGAAMIhMIrlQ3MRCjAF0=;
+        b=DQpT/HDqDEnXfuTHalEnH7z0eHJ9zRmDVgQR+3sMlGUq2uVljvCZCRD71oPnT7JE1j
+         sxYQOl2ad2Dy8B6VfwMkYmYcQSSdkvT9u0z41CapTmKJMf+VFVLo2LX/00xAnRCtYeRM
+         Wi8Sn7atlRHf0teoKy6kSdg018cHdY4DHM7o4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=miIxpQ/Ljqg/1nvvnERImSZJGAAMIhMIrlQ3MRCjAF0=;
+        b=XyFx/D/ZTNXPsOZ9TKXqa1dI/HcHTReXRWiecSqqUJ1nBYQjDDqedOQoviBQzSU/h3
+         XVSdojrHF9z1zZmNn3YDdaDatO7/zh4ZWnAX9ZyAClST09zYClLAcht/HJJC4eih0Fb6
+         52cKIfcY9mKhijCbpQf2BIz3SPRVlyyX4pJUCcNgbrIniD3/uWz+IvqAPccq1rssJyya
+         rI61bbcMaeAQZxtqwg1+rT0mHXhHE9qmTirlFIx5Ty+1YL/l4OsmnpP71bTPCvP+PuIw
+         C53ZwLkLXO9WYQkpSbAFoyNCkxcKmP33MO/EecRrsd9d4hjO24oCqfbvnV2JqRkeAZHF
+         LoMA==
+X-Gm-Message-State: APjAAAXg9vO7U92CUDG3NU5/xy0X7D2VSmpIDX/cJCc/gBZUL2vYUBPw
+        mkpD7TevzfgwHbPbrLFY4HNcEUc5Exc=
+X-Google-Smtp-Source: APXvYqwGtLjzp2ML7AfhPBwkRVm4wOZ4HZ00LAQIWYqnkq7A/Pqiksv/IP7JGeRoGyP6g/Q/hr7Blw==
+X-Received: by 2002:a2e:7d01:: with SMTP id y1mr4899708ljc.100.1576617313042;
+        Tue, 17 Dec 2019 13:15:13 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id y25sm11240553lfy.59.2019.12.17.13.15.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 13:15:12 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id 15so62023lfr.2
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 13:15:11 -0800 (PST)
+X-Received: by 2002:ac2:4946:: with SMTP id o6mr4054922lfi.170.1576617311430;
+ Tue, 17 Dec 2019 13:15:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2844f63-d580-ddc2-b4ed-817eaa89a2c6@gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20191212181422.31033-1-linux@dominikbrodowski.net>
+ <20191217051751.7998-1-youling257@gmail.com> <20191217064254.GB3247@light.dominikbrodowski.net>
+ <CAOzgRdZR0bO14fyOk5jLBUkWwgsf7fx41JMQr-Hr6nss1KSmLw@mail.gmail.com>
+In-Reply-To: <CAOzgRdZR0bO14fyOk5jLBUkWwgsf7fx41JMQr-Hr6nss1KSmLw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 17 Dec 2019 13:14:55 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whN00UTq76bDT-WXm72VhttLv8tcchqEkcUoGXt38XXRg@mail.gmail.com>
+Message-ID: <CAHk-=whN00UTq76bDT-WXm72VhttLv8tcchqEkcUoGXt38XXRg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] init: unify opening /dev/console as stdin/stdout/stderr
+To:     youling 257 <youling257@gmail.com>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 09:27:13PM +0100, Jacek Anaszewski wrote:
-> On 12/17/19 6:21 PM, Greg Kroah-Hartman wrote:
-> > On Tue, Dec 17, 2019 at 05:23:13PM +0100, Uwe Kleine-König wrote:
-> >> On Tue, Dec 17, 2019 at 04:27:24PM +0100, Greg Kroah-Hartman wrote:
-> >>> On Tue, Dec 17, 2019 at 04:07:36PM +0100, Uwe Kleine-König wrote:
-> >>>> Usage is as follows:
-> >>>>
-> >>>> 	myled=ledname
-> >>>> 	tty=ttyS0
-> >>>>
-> >>>> 	echo tty > /sys/class/leds/$myled/trigger
-> >>>> 	cat /sys/class/tty/$tty/dev > /sys/class/leds/$myled/dev
-> >>>
-> >>> Is this the correct instructions?  Aren't you looking for a major/minor
-> >>> number instead in your sysfs file?
-> >>
-> >> This is correct, yes, at least it works as intended on my machine.
-> >>
-> >> /sys/class/tty/$tty/dev produces $major:$minor and that's what the
-> >> led-trigger consumes.
-> > 
-> > Ugh, nevermind, I totally read that wrong, I was thinking "echo" instead
-> > of cat.  My fault, what you wrote is correct.  Should that be documented
-> > somewhere in a Documentation/ABI/ file so that people know how to use
-> > this new sysfs file?  How are led triggers documented?
-> 
-> LED triggers have their corresponding entries in Documentation/ABI.
-> 
-> Uwe, you already did that for netdev trigger:
-> 
-> Documentation/ABI/testing/sysfs-class-led-trigger-netdev
-> 
-> It would be nice to have one for this too.
-> 
-> There are also less formal docs in Documentation/leds, e.g.:
-> 
-> Documentation/leds/ledtrig-usbport.rst
+This should be fixed by 2d3145f8d280 ("early init: fix error handling
+when opening /dev/console")
 
-I'd put into Documentation/ABI/testing/sysfs-class-led-trigger-tty:
+I'm not sure what you did to trigger that bug, but it was a bug.
 
-	What:           /sys/class/leds/<led>/dev
-	Date:           Dec 2019
-	KernelVersion:  5.6
-	Contact:        linux-leds@vger.kernel.org
-	Description:
-			Specifies $major:$minor of the triggering tty
+              Linus
 
-Does this look reasonable?
 
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+On Tue, Dec 17, 2019 at 1:34 AM youling 257 <youling257@gmail.com> wrote:
+>
+> I had been Revert "fs: remove ksys_dup()" Revert "init: unify opening
+> /dev/console as stdin/stdout/stderr", test boot, n the system/bin/sh
+> warning.
