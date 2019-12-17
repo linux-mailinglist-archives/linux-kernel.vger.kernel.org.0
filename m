@@ -2,87 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA06123403
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:57:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F4C3123409
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:59:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfLQR5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 12:57:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44050 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726722AbfLQR5v (ORCPT
+        id S1727767AbfLQR7z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 12:59:55 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34165 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbfLQR7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 12:57:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q10so12288719wrm.11;
-        Tue, 17 Dec 2019 09:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=/veVuxGSNZ6vYt8Kjkt9fU6DsI7r6dl8u0XAVHaGrcg=;
-        b=f3WvUd6ikw3G1bFlEBfT7KHmgufnclAxHFqMsSQiLDChE00tf1+cFKvrGlZcGdvq6r
-         uVwRBPyq7Gq7uvNs2fi2trO95U7rSFJsQkJ5sJMnEzNe1bUS9f51mAYuS7d+omlZhCZ1
-         ldjK6qyUmwiYCxffMSDw57MI71y6h+v6S7wo9ZTHPl8Gl77QqemXXZLz33dCqorlwv58
-         QPdWzqBoH0JSK1bjE9ZkVYK8opFCbY4oZa4XJAxxHRWc9ssj5oLfXLESlaaCkFYa7DdA
-         Wgix5epNPW4vrMP++zl32v6jKJzyIRW4aarlPFctI0sCTFl4K5JYpUplJLCZzt3snFD8
-         XjoA==
+        Tue, 17 Dec 2019 12:59:55 -0500
+Received: by mail-ot1-f68.google.com with SMTP id a15so1702017otf.1;
+        Tue, 17 Dec 2019 09:59:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/veVuxGSNZ6vYt8Kjkt9fU6DsI7r6dl8u0XAVHaGrcg=;
-        b=AJOeH56U8wyNAozLdYaLxHQiobdutGUo+vbtkRgTmVUxWUusneRqG2VYfSGRkOiCDf
-         L+9Ha3o5NUEjYj32j2qmEarv48GW98k8Z2KMSJEDQk6d2DRVO9YLI6KZbgpiLh/U6EeV
-         gwlmzH2XXtRauU1pfA5LT6fx6xHGIrd32yQ4YzXxpasstzyIfjPEQH8OhFvxLekR2XpP
-         NM5eGI7EOCBmp2pvfSYgeG1m7Z3WwzutMNeQylLIMwVkZN9oiMwgaztbKyj35ybzrrwB
-         FRqveCVssE52ClhEPX8v/zihiXPhY2mEEUvt4EBBQdwU7pnfJZvyzUsq8xWtNukVRSG6
-         b/sg==
-X-Gm-Message-State: APjAAAWeI2U6PtTJqqMR2ifULdxLWEd/CeyGhxQroTllqWWsCyiaYH0O
-        YJOQolLGTqKdt4BR2yUdBZQ=
-X-Google-Smtp-Source: APXvYqyLTN3dFvqiJkcm/MgGQwIOBoYmUuQjRL8j3JY3p4ln+YyFqtnPDDsZoWtGgYD1LMgqZ3yhiQ==
-X-Received: by 2002:adf:81e3:: with SMTP id 90mr37921736wra.23.1576605468725;
-        Tue, 17 Dec 2019 09:57:48 -0800 (PST)
-Received: from localhost.localdomain ([109.126.149.134])
-        by smtp.gmail.com with ESMTPSA id z8sm26466192wrq.22.2019.12.17.09.57.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 09:57:48 -0800 (PST)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH for-5.5] io_uring: make HARDLINK imply LINK
-Date:   Tue, 17 Dec 2019 20:57:05 +0300
-Message-Id: <4d08ae851e48c030b726e00def4451466475b7e9.1576605351.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1576605351.git.asml.silence@gmail.com>
-References: <cover.1576605351.git.asml.silence@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wK7RpCiVdVyaaZCOMN25L+DZY2FpzdO9c3L/eVcc0/k=;
+        b=ARk1YcVOE+nRODrHDPY8vE3mpAcPxutQmYQ/mVnhaKVLjyk3cO5LZjqfEpYhAO450X
+         PGYbRky920eAyLJPVhAQFat6sAMgv9jxhLGVJA9mSxyuL5mmHK07/QgVWWZpSPJ9FlBj
+         e78O4wYJsld7EaMif0Uj0oIUst+bHSozRoi5QgnyVCPcD3VU1LPTqQ0XY1rKktPmzSo/
+         ML8Op9KYFcLmJPUaeUHoU2czaoXYWGgN9oyKwrOCbD3jfz5L19sPQjZuAxpZ9n1Ghehb
+         k8og97qRlLaT8eFuhhXCfbdbh+C60jcUUgC+ptGzoSzNFvdZW+J6DUoRjzxr9aiNsnSu
+         UEng==
+X-Gm-Message-State: APjAAAVVg8rBOQd4Lown6WlGp3fnAnDvhInLYgGeBmyfzn/Gh7FPnDoH
+        9SPbGEvf/mXc/Rz2uzl17pgpsWiCbLZZk+fBrsryGqJD
+X-Google-Smtp-Source: APXvYqy76pypOvmXMlSj6fN8IDUrZ+NRfMvj3jokpd1MPvEWP4uV2AVQ3JHTyazdJmpB9NsQCNbl0iZC0HTuVGr6gt0=
+X-Received: by 2002:a05:6830:18e2:: with SMTP id d2mr9264567otf.107.1576605594480;
+ Tue, 17 Dec 2019 09:59:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191217142150.10392-1-rppt@kernel.org> <20191217142150.10392-3-rppt@kernel.org>
+In-Reply-To: <20191217142150.10392-3-rppt@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 17 Dec 2019 18:59:43 +0100
+Message-ID: <CAMuHMdXYp7EBK446EsDt_HLDvc96TPP9oPZmsLtFL5VvhSejjw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] sh: add support for folded p4d page tables
+To:     Mike Rapoport <rppt@kernel.org>
+Cc:     Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The rules are as follows, if IOSQE_IO_HARDLINK is specified, then it's a
-link and there is no need in IOSQE_IO_LINK, though it could be there.
-Add proper check.
+Hi Mike,
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- fs/io_uring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Dec 17, 2019 at 3:23 PM Mike Rapoport <rppt@kernel.org> wrote:
+> From: Mike Rapoport <rppt@linux.ibm.com>
+>
+> Implement primitives necessary for the 4th level folding, add walks of p4d
+> level where appropriate and remove usage of __ARCH_USE_5LEVEL_HACK.
+>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 339b57aac5ca..eb6d897ea087 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -3577,7 +3577,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
- 		 * If previous wasn't linked and we have a linked command,
- 		 * that's the end of the chain. Submit the previous link.
- 		 */
--		if (!(sqe_flags & IOSQE_IO_LINK) && link) {
-+		if (!(sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) && link) {
- 			io_queue_link_head(link);
- 			link = NULL;
- 		}
+Thanks for your patch!
+
+> --- a/arch/sh/mm/fault.c
+> +++ b/arch/sh/mm/fault.c
+> @@ -65,7 +66,20 @@ static void show_pte(struct mm_struct *mm, unsigned long addr)
+>                         break;
+>                 }
+>
+> -               pud = pud_offset(pgd, addr);
+> +               p4d = p4d_offset(pgd, addr);
+> +               if (PTRS_PER_P4D != 1)
+> +                       printk(", *p4d=%0*Lx", (u32)(sizeof(*p4d) * 2),
+> +                              (u64)p4d_val(*p4d));
+
+This (and the prints below) is gonna cause lots of broken output lines.
+You should use pr_cont() instead, and probably rebase on top of  my
+"[PATCH 7/7] sh: fault: Modernize printing of kernel messages"
+(https://lore.kernel.org/lkml/20191203162645.19950-8-geert+renesas@glider.be/).
+
+> +
+> +               if (p4d_none(*p4d))
+> +                       break;
+> +
+> +               if (p4d_bad(*p4d)) {
+> +                       printk("(bad)");
+> +                       break;
+> +               }
+> +
+> +               pud = pud_offset(p4d, addr);
+>                 if (PTRS_PER_PUD != 1)
+>                         printk(", *pud=%0*Lx", (u32)(sizeof(*pud) * 2),
+>                                (u64)pud_val(*pud));
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.24.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
