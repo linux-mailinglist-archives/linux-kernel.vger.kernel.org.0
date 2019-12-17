@@ -2,66 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9BA125278
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 20:58:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DDA5125284
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbfLRT62 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 14:58:28 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:55624 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfLRT62 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 14:58:28 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1AE2E153CA105;
-        Wed, 18 Dec 2019 11:58:27 -0800 (PST)
-Date:   Wed, 18 Dec 2019 11:58:24 -0800 (PST)
-Message-Id: <20191218.115824.2176259916744178647.davem@davemloft.net>
-To:     baijiaju1990@gmail.com
-Cc:     gregkh@linuxfoundation.org, tglx@linutronix.de,
-        allison@lohutok.net, alexios.zavras@intel.com,
-        alexandru.ardelean@analog.com, albin_yang@163.com,
-        dan.carpenter@oracle.com, netdev@vger.kernel.org,
+        id S1727506AbfLRUAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:00:38 -0500
+Received: from mga02.intel.com ([134.134.136.20]:47580 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726699AbfLRUAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:00:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 12:00:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="248005702"
+Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
+  by fmsmga002.fm.intel.com with ESMTP; 18 Dec 2019 12:00:30 -0800
+Message-ID: <10be346c204016547fee0323cbf2ab4688dd2859.camel@linux.intel.com>
+Subject: Re: [PATCH] KEYS: trusted: fix type warnings in ntohl/nthos
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: nfc: nci: fix a possible sleep-in-atomic-context
- bug in nci_uart_tty_receive()
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191218092155.5030-1-baijiaju1990@gmail.com>
-References: <20191218092155.5030-1-baijiaju1990@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+In-Reply-To: <20191217110939.2067979-1-ben.dooks@codethink.co.uk>
+References: <20191217110939.2067979-1-ben.dooks@codethink.co.uk>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
+ Espoo
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Date:   Tue, 17 Dec 2019 16:35:58 +0200
+User-Agent: Evolution 3.34.1-2 
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 18 Dec 2019 11:58:27 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
-Date: Wed, 18 Dec 2019 17:21:55 +0800
+On Tue, 2019-12-17 at 11:09 +0000, Ben Dooks (Codethink) wrote:
+> The ntohl takes a __be32 and ntohs takes __be16, so cast to
+> those types before passing it to the byte swapping functions.
 
-> The kernel may sleep while holding a spinlock.
-> The function call path (from bottom to top) in Linux 4.19 is:
-> 
-> net/nfc/nci/uart.c, 349: 
-> 	nci_skb_alloc in nci_uart_default_recv_buf
-> net/nfc/nci/uart.c, 255: 
-> 	(FUNC_PTR)nci_uart_default_recv_buf in nci_uart_tty_receive
-> net/nfc/nci/uart.c, 254: 
-> 	spin_lock in nci_uart_tty_receive
-> 
-> nci_skb_alloc(GFP_KERNEL) can sleep at runtime.
-> (FUNC_PTR) means a function pointer is called.
-> 
-> To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC for
-> nci_skb_alloc().
-> 
-> This bug is found by a static analysis tool STCheck written by myself.
-> 
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Thanks!
 
-Applied and queued up for -stable, thanks.
+> Note, would be32_to_cpu and be16_to_cpu be better here?
+
+Yes, I think that should work too.
+
+/Jarkko
+
