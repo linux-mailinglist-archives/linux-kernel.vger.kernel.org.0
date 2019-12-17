@@ -2,191 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2E611237A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE97012377C
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:40:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728608AbfLQUlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:41:00 -0500
-Received: from mga07.intel.com ([134.134.136.100]:63047 "EHLO mga07.intel.com"
+        id S1728385AbfLQUki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:40:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbfLQUkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:40:46 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 12:40:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
-   d="scan'208";a="389952609"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 12:40:43 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
-Subject: [PATCH v4 12/19] KVM: Move memslot deletion to helper function
-Date:   Tue, 17 Dec 2019 12:40:34 -0800
-Message-Id: <20191217204041.10815-13-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191217204041.10815-1-sean.j.christopherson@intel.com>
-References: <20191217204041.10815-1-sean.j.christopherson@intel.com>
+        id S1727070AbfLQUki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 15:40:38 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 335DE2053B;
+        Tue, 17 Dec 2019 20:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576615237;
+        bh=W7Gx1YSBqt1c/dRzxqvrcZqCfmKdcTQWle02bnpMazs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0Umn/e1iEpsgGlS3jcGKxYl8lw9UIUtc2wlhej4xKRlrua2cVas+hubBykgUzXbR+
+         zxShiAhx2Wp3UVBS0Gl/jTj1/plch6FTeqTIz0W1WSZ4E9dMkpMLafs9UC/NbHdFmV
+         W6H2G4BaXqsWbrcQsv1MslXBzR5+Ka7cDVuxAP94=
+Date:   Tue, 17 Dec 2019 21:40:35 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
+Subject: Re: Linux 4.19.90
+Message-ID: <20191217204035.GB4152841@kroah.com>
+References: <20191217203954.GA4152841@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217203954.GA4152841@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move memslot deletion into its own routine so that the success path for
-other memslot updates does not need to use kvm_free_memslot(), i.e. can
-explicitly destroy the dirty bitmap when necessary.  This paves the way
-for dropping @dont from kvm_free_memslot(), i.e. all callers now pass
-NULL for @dont.
+On Tue, Dec 17, 2019 at 09:39:54PM +0100, Greg KH wrote:
+> I'm announcing the release of the 4.19.90 kernel.
+> 
+> All users of the 4.19 kernel series must upgrade.
+> 
+> The updated 4.19.y git tree can be found at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.19.y
+> and can be browsed at the normal kernel.org git web browser:
+> 	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> ------------
+> 
+>  Makefile |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Add a comment above the code to make a copy of the existing memslot
-prior to deletion, it is not at all obvious that the pointer will become
-stale during sorting and/or installation of new memslots.
+That's not right, let me do this again...
 
-Note, kvm_arch_commit_memory_region() allows an architecture to free
-resources when moving a memslot or changing its flags, e.g. x86 frees
-its arch specific memslot metadata during commit_memory_region().
-
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Tested-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- virt/kvm/kvm_main.c | 73 +++++++++++++++++++++++++++------------------
- 1 file changed, 44 insertions(+), 29 deletions(-)
-
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index acf52fa16500..50e5aec0c15c 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1046,6 +1046,27 @@ static int kvm_set_memslot(struct kvm *kvm,
- 	return r;
- }
- 
-+static int kvm_delete_memslot(struct kvm *kvm,
-+			      const struct kvm_userspace_memory_region *mem,
-+			      struct kvm_memory_slot *old, int as_id)
-+{
-+	struct kvm_memory_slot new;
-+	int r;
-+
-+	if (!old->npages)
-+		return -EINVAL;
-+
-+	memset(&new, 0, sizeof(new));
-+	new.id = old->id;
-+
-+	r = kvm_set_memslot(kvm, mem, old, &new, as_id, KVM_MR_DELETE);
-+	if (r)
-+		return r;
-+
-+	kvm_free_memslot(kvm, old, NULL);
-+	return 0;
-+}
-+
- /*
-  * Allocate some memory and give it an address in the guest physical address
-  * space.
-@@ -1095,7 +1116,15 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	if (npages > KVM_MEM_MAX_NR_PAGES)
- 		return -EINVAL;
- 
--	new = old = *slot;
-+	/*
-+	 * Make a full copy of the old memslot, the pointer will become stale
-+	 * when the memslots are re-sorted by update_memslots().
-+	 */
-+	old = *slot;
-+	if (!mem->memory_size)
-+		return kvm_delete_memslot(kvm, mem, &old, as_id);
-+
-+	new = old;
- 
- 	new.id = id;
- 	new.base_gfn = base_gfn;
-@@ -1103,29 +1132,20 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	new.flags = mem->flags;
- 	new.userspace_addr = mem->userspace_addr;
- 
--	if (npages) {
--		if (!old.npages)
--			change = KVM_MR_CREATE;
--		else { /* Modify an existing slot. */
--			if ((new.userspace_addr != old.userspace_addr) ||
--			    (npages != old.npages) ||
--			    ((new.flags ^ old.flags) & KVM_MEM_READONLY))
--				return -EINVAL;
--
--			if (base_gfn != old.base_gfn)
--				change = KVM_MR_MOVE;
--			else if (new.flags != old.flags)
--				change = KVM_MR_FLAGS_ONLY;
--			else /* Nothing to change. */
--				return 0;
--		}
--	} else {
--		if (!old.npages)
-+	if (!old.npages) {
-+		change = KVM_MR_CREATE;
-+	} else { /* Modify an existing slot. */
-+		if ((new.userspace_addr != old.userspace_addr) ||
-+		    (npages != old.npages) ||
-+		    ((new.flags ^ old.flags) & KVM_MEM_READONLY))
- 			return -EINVAL;
- 
--		change = KVM_MR_DELETE;
--		new.base_gfn = 0;
--		new.flags = 0;
-+		if (base_gfn != old.base_gfn)
-+			change = KVM_MR_MOVE;
-+		else if (new.flags != old.flags)
-+			change = KVM_MR_FLAGS_ONLY;
-+		else /* Nothing to change. */
-+			return 0;
- 	}
- 
- 	if ((change == KVM_MR_CREATE) || (change == KVM_MR_MOVE)) {
-@@ -1148,17 +1168,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 			return r;
- 	}
- 
--	/* actual memory is freed via old in kvm_free_memslot below */
--	if (change == KVM_MR_DELETE) {
--		new.dirty_bitmap = NULL;
--		memset(&new.arch, 0, sizeof(new.arch));
--	}
--
- 	r = kvm_set_memslot(kvm, mem, &old, &new, as_id, change);
- 	if (r)
- 		goto out_bitmap;
- 
--	kvm_free_memslot(kvm, &old, &new);
-+	if (old.dirty_bitmap && !new.dirty_bitmap)
-+		kvm_destroy_dirty_bitmap(&old);
- 	return 0;
- 
- out_bitmap:
--- 
-2.24.1
 
