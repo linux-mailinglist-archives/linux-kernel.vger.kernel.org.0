@@ -2,114 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B431C122C95
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:11:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C69122C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:12:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfLQNLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:11:32 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:46319 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfLQNLc (ORCPT
+        id S1728128AbfLQNMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:12:33 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33693 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfLQNMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:11:32 -0500
-Received: by mail-pj1-f67.google.com with SMTP id z21so4558125pjq.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:11:31 -0800 (PST)
+        Tue, 17 Dec 2019 08:12:33 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z16so678901pfk.0;
+        Tue, 17 Dec 2019 05:12:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0bLDwlFhAjD8JtsYFaAWxIGU/Ti65IuVrutK0Wnwgh8=;
-        b=TAuRvIkzOJHjpRc9awnY0e6r2IWU7Gi6v5PV5CP94fu2+VtCKjM3XUqifVueOckKUH
-         d2fFSdNG/i1T2MBK+fy4evxJfUr+28/JP7AWL7Hw7ohz9G4msyEW3Rijby9DSxA473L8
-         IhAfQ2+HULliz+DFiHPXcNFDSKKXiwjTDE2qJ/SFTh8ww9dvEvSrDdWFu3ObuWoXxM33
-         IbALuXs5eSJpO3ubPWz6kdZe4g+GwJcX+m4llBnivP6OIM9VvK3UTtZmQrWdh5MNj/ht
-         vJ8TColPBA4quSZpBWOIn164XGwHC4ko+vSs4NOu7BhRN/oMEDZp0OOJIZTD+sHKCe9/
-         EbyQ==
+        h=from:to:cc:subject:date:message-id;
+        bh=u2gQDT9BoTQYVHqNCMfqXHowcwkXNSs7eSdPihh5x8o=;
+        b=nO9uy19tNhfxpeeBf/iDyu4FWIypmIRyX0nL/adv0kaGPEML1CYXZXAe8S9ZM2wR2G
+         8L6RcsIatBQL70rieRCJdUOqTtXoNhji++FOIyb3dj/GoB5bmQt32nDsXD2KtDP/7Yec
+         SQboHy3m+Yx3zW/Agk4/FXvGmS8NjqTeUVDp6eya2szKDT6QEV7mQoX3la/crsa/wphL
+         uKOZRPiaPmjux3ajd03e9eU0q+mfQDRqucRwIODUwz5KVbFm/nYgnpmglUtnfVPsSpKY
+         uj3GH2UOKrFY30hGoaBK8MgJi4Pb5jTYO5BFHQCTTPJ7ZgJ9P+apfipdNMflaonm57US
+         2RwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0bLDwlFhAjD8JtsYFaAWxIGU/Ti65IuVrutK0Wnwgh8=;
-        b=tm8Cf5AqBvfYahcXaQbtV12HzjTjz4YLEhbm3pYhMKNMCzrT/NqTGY6d8fpgiqtYt9
-         YecTllbZi1vvlFtXRRb32BTWx2j8cm0Ivkc0fUSJHW8wYbHBVL6efGJfpKkXOy7r+2px
-         H24azFGVYt36zo9FyMRWonbeEG7CmCOxhmmdcAZ0biNu1BK0+QP8NjKPMhegqCOW9WMc
-         7g/e5Xq38xjeAlUmq0QYRtux+KaUvhx57ttE8eAIe28//bKlII202pwo5fR41Dciqm88
-         QfaaakEPf1njCme/Iv8nsQDWT4ALkqY0vTqvIC1mmtYtQDsoqzYVoZinLQoWPTguc8mr
-         J4ZQ==
-X-Gm-Message-State: APjAAAXZwMDC25R72EZvu3KrhMJGeHtx+++GmOYEf6DT7IjwVG6ICCMs
-        Qdy6pAOAxlk6ZwSiz/kssmG6oHluqGc=
-X-Google-Smtp-Source: APXvYqy5Zw08hhM6pxUoWPxI6pHme3hvlON8SIHpX4hJW6WIeLwb+ViJQ7OCiWtEWvmYyhTdC6xyug==
-X-Received: by 2002:a17:902:b609:: with SMTP id b9mr22592307pls.70.1576588291234;
-        Tue, 17 Dec 2019 05:11:31 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.139.134? ([2402:f000:1:1501:200:5efe:a66f:8b86])
-        by smtp.gmail.com with ESMTPSA id x65sm23435167pfb.171.2019.12.17.05.11.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Dec 2019 05:11:30 -0800 (PST)
-Subject: Re: [BUG] kernel: kcov: a possible sleep-in-atomic-context bug in
- kcov_ioctl()
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Hans Liljestrand <ishkamiel@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <3c4608bc-9c84-d79b-de76-b1a1a2a4fb6d@gmail.com>
- <CACT4Y+b3nvFAgM32SF0Bv46EOO4UFEK3M99pqYzEwmsmLvmhTQ@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=u2gQDT9BoTQYVHqNCMfqXHowcwkXNSs7eSdPihh5x8o=;
+        b=MDGzYIVId3EDEAKiq0WZt+1h9VcN1FNPTD1lGpjcNmQIuXbH4OdavmesJud8ucKjXE
+         U8zcNax8H90z1+YqMmIRr6zVzTcQfwUsKCqAKH25M3glC5mGhoJzeWsUBVLSmRt4WPT0
+         8WI/BiqzS6GfTuSOvwhW4G7TjU6OuiIMlaXYJ2i5KxMhDYz8kfN62H/lV1LIAdI91OHj
+         FfXUTCBnJlRbi/e0g7xHc3ty0tG7BwdKP5fq+HSjg609Qu84lTFbCjZm35/YODXgRraW
+         oZ5lAEUpuWYxHIcS4kmHTxq8haK9fNHb3TSSRejt2KdVDnJ3o+Ru0YlIbeMyeDQa6WXz
+         bQtA==
+X-Gm-Message-State: APjAAAWC3KEgHvQhYM3OYYy1FQEIB0FUqR2NeX6bKS7GivfZ3UrXPMsM
+        Jf2H9ubXomPG26bO4qpt6+bmZnfXQjY=
+X-Google-Smtp-Source: APXvYqzio5b7ZVeoF3ExORkr9Hku+099pWaUmc1E6m+Q6GSUqSLcjZQxaaFX0f9Yazz6ZWr3wGOUDQ==
+X-Received: by 2002:a63:e84d:: with SMTP id a13mr25871781pgk.274.1576588352680;
+        Tue, 17 Dec 2019 05:12:32 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id r6sm26720976pfh.91.2019.12.17.05.12.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 05:12:32 -0800 (PST)
 From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <e0305f5c-ae52-c144-fe50-00f3f815ad82@gmail.com>
-Date:   Tue, 17 Dec 2019 21:11:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b3nvFAgM32SF0Bv46EOO4UFEK3M99pqYzEwmsmLvmhTQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+To:     john.johansen@canonical.com, jmorris@namei.org, serge@hallyn.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] security: apparmor: Fix a possible sleep-in-atomic-context bug in find_attach()
+Date:   Tue, 17 Dec 2019 21:12:20 +0800
+Message-Id: <20191217131220.11613-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The kernel may sleep while holding a RCU lock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
+security/apparmor/domain.c, 331: 
+	vfs_getxattr_alloc(GFP_KERNEL) in aa_xattrs_match
+security/apparmor/domain.c, 425: 
+	aa_xattrs_match in __attach_match
+security/apparmor/domain.c, 485: 
+	__attach_match in find_attach
+security/apparmor/domain.c, 484:
+    rcu_read_lock in find_attach
 
-On 2019/12/17 21:02, Dmitry Vyukov wrote:
-> On Tue, Dec 17, 2019 at 1:56 PM Jia-Ju Bai <baijiaju1990@gmail.com> wrote:
->> The kernel may sleep while holding a spinlock.
->> The function call path (from bottom to top) in Linux 4.19 is:
->>
->> kernel/kcov.c, 237:
->>       vfree in kcov_put
->> kernel/kcov.c, 413:
->>       kcov_put in kcov_ioctl_locked
->> kernel/kcov.c, 427:
->>       kcov_ioctl_locked in kcov_ioctl
->> kernel/kcov.c, 426:
->>       spin_lock in kcov_ioctl
->>
->> vfree() can sleep at runtime.
->>
->> I am not sure how to properly fix this possible bug, so I only report it.
->> A possible way is to replace vfree() with kfree(), and replace related
->> calls to vmalloc() with kmalloc().
->>
->> This bug is found by a static analysis tool STCheck written by myself.
-> Hi Jia-Ju,
->
-> Are you sure kcov_ioctl_locked can really release the descriptor? It
-> happens in the context of ioctl, which means there is an open
-> reference for the file descriptor. So ioctl should not do vfree I
-> would assume.
+vfs_getxattr_alloc(GFP_KERNEL) can sleep at runtime.
 
-Thanks for the reply :)
-I am not sure, because I am not familiar with kcov.
-But looking at the code, if the reference count of kcov is 1, vfree() 
-could be called.
+To fix this possible bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+vfs_getxattr_alloc().
 
+This bug is found by a static analysis tool STCheck written by myself. 
 
-Best wishes,
-Jia-Ju Bai
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ security/apparmor/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 9be7ccb8379e..60b54ce57d1f 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -325,7 +325,7 @@ static int aa_xattrs_match(const struct linux_binprm *bprm,
+ 
+ 	for (i = 0; i < profile->xattr_count; i++) {
+ 		size = vfs_getxattr_alloc(d, profile->xattrs[i], &value,
+-					  value_size, GFP_KERNEL);
++					  value_size, GFP_ATOMIC);
+ 		if (size >= 0) {
+ 			u32 perm;
+ 
+-- 
+2.17.1
+
