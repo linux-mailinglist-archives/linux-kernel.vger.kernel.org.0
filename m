@@ -2,129 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 669F6121FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:46:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B107F1220FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:59:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfLQAqE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:46:04 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:17808 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726556AbfLQAqE (ORCPT
+        id S1728256AbfLQA7n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:59:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34670 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726670AbfLQAvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:46:04 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576543563; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=ykcUs/EViOpCxoK1Xh5e32ZUk+bAyurgZ958r4iU0Mc=;
- b=lCn6/tA8L214hSZSq+No+T9I/eejEgPfRFF4aVZSK/D0d3xjeEGiX0jYnzoDx7km4OIRqStY
- poMoKp5JcGepFn71e1TCex3YW1UPK8I76lOR62u26asoWg7Ud4CqtkEmnB9fWsXEqWYuYyM1
- 1qqEW2DBj+fQZkhDOMZkYgqyEkA=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df8254a.7f94a45f1dc0-smtp-out-n01;
- Tue, 17 Dec 2019 00:46:02 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D8FC0C447AC; Tue, 17 Dec 2019 00:46:01 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 21BFBC433CB;
-        Tue, 17 Dec 2019 00:46:00 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+        Mon, 16 Dec 2019 19:51:35 -0500
+Received: from [192.168.4.242] (helo=deadeye)
+        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1ih15G-0003KG-PC; Tue, 17 Dec 2019 00:51:30 +0000
+Received: from ben by deadeye with local (Exim 4.93-RC7)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1ih15G-0005TS-6M; Tue, 17 Dec 2019 00:51:30 +0000
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Date:   Tue, 17 Dec 2019 08:46:00 +0800
-From:   cang@codeaurora.org
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     asutoshd@codeaurora.org, nguyenb@codeaurora.org,
-        rnayak@codeaurora.org, linux-scsi@vger.kernel.org,
-        kernel-team@android.com, saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
-In-Reply-To: <cf4915df-5ae4-0dfd-5d44-1fe959d141e2@acm.org>
-References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
- <1576328616-30404-2-git-send-email-cang@codeaurora.org>
- <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
- <cd6dc7c90d43b8ca8254a43da48334fc@codeaurora.org>
- <cf4915df-5ae4-0dfd-5d44-1fe959d141e2@acm.org>
-Message-ID: <0343644f49adee06e6b2f3f631fe1637@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+MIME-Version: 1.0
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
+        "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date:   Tue, 17 Dec 2019 00:46:01 +0000
+Message-ID: <lsq.1576543535.227515843@decadent.org.uk>
+X-Mailer: LinuxStableQueue (scripts by bwh)
+X-Patchwork-Hint: ignore
+Subject: [PATCH 3.16 027/136] USB: legousbtower: fix open after failed
+ reset request
+In-Reply-To: <lsq.1576543534.33060804@decadent.org.uk>
+X-SA-Exim-Connect-IP: 192.168.4.242
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-17 01:39, Bart Van Assche wrote:
-> On 12/16/19 6:31 AM, cang@codeaurora.org wrote:
->> As SCSI host is allocated in ufshcd_platform_init() during platform
->> drive probe, it is much more appropriate if platform driver calls
->> ufshcd_dealloc_host() in their own drv->remove() path. How do you
->> think if I change it as below? If it is OK to you, please ignore my
->> previous mails.
->> 
->> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
->> index 3d4582e..ea45756 100644
->> --- a/drivers/scsi/ufs/ufs-qcom.c
->> +++ b/drivers/scsi/ufs/ufs-qcom.c
->> @@ -3239,6 +3239,7 @@ static int ufs_qcom_remove(struct 
->> platform_device *pdev)
->> 
->>          pm_runtime_get_sync(&(pdev)->dev);
->>          ufshcd_remove(hba);
->> +       ufshcd_dealloc_host(hba);
->>          return 0;
->>   }
-> 
-> Hi Can,
-> 
-> Apparently some UFS drivers call ufshcd_remove() only and others
-> (PCIe) call both ufshcd_remove() and ufshcd_dealloc_host(). I think
-> that the above change will cause trouble for the PCIe driver unless
-> the ufshcd_dealloc_host() call is removed from ufshcd_pci_remove().
-> 
-> Thanks,
-> 
-> Bart.
+3.16.80-rc1 review patch.  If anyone has any objections, please let me know.
 
-Hi Bart,
+------------------
 
-You may get me wrong. I mean we should do like what ufshcd-pci.c does.
-As driver probe routine allocates SCSI host, then driver remove() should
-de-allocate it. Meaning ufs_qcom_remove() should call both 
-ufshcd_remove()
-and ufshcd_dealloc_host().
+From: Johan Hovold <johan@kernel.org>
 
-diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
-index 3d4582e..ea45756 100644
---- a/drivers/scsi/ufs/ufs-qcom.c
-+++ b/drivers/scsi/ufs/ufs-qcom.c
-@@ -3239,6 +3239,7 @@ static int ufs_qcom_remove(struct platform_device 
-*pdev)
+commit 0b074f6986751361ff442bc1127c1648567aa8d6 upstream.
 
-           pm_runtime_get_sync(&(pdev)->dev);
-           ufshcd_remove(hba);
-  +       ufshcd_dealloc_host(hba);
-           return 0;
-    }
+The driver would return with a nonzero open count in case the reset
+control request failed. This would prevent any further attempts to open
+the char dev until the device was disconnected.
 
-Thanks,
+Fix this by incrementing the open count only on successful open.
 
-Can Guo.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20190919083039.30898-5-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+ drivers/usb/misc/legousbtower.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/usb/misc/legousbtower.c
++++ b/drivers/usb/misc/legousbtower.c
+@@ -354,7 +354,6 @@ static int tower_open (struct inode *ino
+ 		retval = -EBUSY;
+ 		goto unlock_exit;
+ 	}
+-	dev->open_count = 1;
+ 
+ 	/* reset the tower */
+ 	result = usb_control_msg (dev->udev,
+@@ -394,13 +393,14 @@ static int tower_open (struct inode *ino
+ 		dev_err(&dev->udev->dev,
+ 			"Couldn't submit interrupt_in_urb %d\n", retval);
+ 		dev->interrupt_in_running = 0;
+-		dev->open_count = 0;
+ 		goto unlock_exit;
+ 	}
+ 
+ 	/* save device in the file's private structure */
+ 	file->private_data = dev;
+ 
++	dev->open_count = 1;
++
+ unlock_exit:
+ 	mutex_unlock(&dev->lock);
+ 
+
