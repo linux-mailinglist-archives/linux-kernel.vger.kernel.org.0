@@ -2,184 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 617BE122F1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B0E122F28
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:48:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbfLQOqk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:46:40 -0500
-Received: from foss.arm.com ([217.140.110.172]:39380 "EHLO foss.arm.com"
+        id S1729225AbfLQOsw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbfLQOqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:46:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD0901FB;
-        Tue, 17 Dec 2019 06:46:39 -0800 (PST)
-Received: from p8cg001049571a15.arm.com (unknown [10.163.1.79])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7BA513F67D;
-        Tue, 17 Dec 2019 06:46:34 -0800 (PST)
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
-Subject: [PATCH V2] arm64: Introduce ID_ISAR6 CPU register
-Date:   Tue, 17 Dec 2019 20:17:32 +0530
-Message-Id: <1576594052-10285-1-git-send-email-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.7.4
+        id S1728573AbfLQOsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:48:52 -0500
+Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDA112072D;
+        Tue, 17 Dec 2019 14:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576594131;
+        bh=DouMnEypPivoifXJFz6hce+F4/UFWoqpLTMz/a0CnHE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=2f1TmzgeEmH/ZpKizBnhPS2kNtzsJzOIbOViS79//0yUB1+tmze+v4TPfnoRLjY/Q
+         qrd81jjz4MyovTEX8w//Lngzaz+uZmGRhkTWK9BeL63rxMgI3MbhpeSWIJsbjmWHjD
+         CYeiYOvimdAET2umKmWiuS3gBSF8O6oE0ijCyGaU=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Kan Liang <kan.liang@intel.com>
+Subject: [RFC] perf report/top with callchain fixes improvements
+Date:   Tue, 17 Dec 2019 11:48:16 -0300
+Message-Id: <20191217144828.2460-1-acme@kernel.org>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds basic building blocks required for ID_ISAR6 CPU register which
-identifies support for various instruction implementation on AArch32 state.
+Hi,
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: kvmarm@lists.cs.columbia.edu
-Acked-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-Changes in V2:
+	These patches try to address inconsistencies in the navigation
+in the 'perf report' and 'perf top' when callchains are present.
 
-- Added an explicit ftr_id_isar6[] instead of using ftr_generic_32bits per Mark
-- Dropped ID_ISAR6_SPECRES_SHIFT exposure in ftr_id_isar6[] per Mark
-- Reversed ID_ISAR6_* definitions sequence to meet existing pattern in the file
+ 	Linus reported that when pressing ENTER with callchains enabled
+it no longer shows the popup menu, instead it toggles the callchains,
+which is surprising and rather annoying.
 
- arch/arm64/include/asm/cpu.h    |  1 +
- arch/arm64/include/asm/sysreg.h |  9 +++++++++
- arch/arm64/kernel/cpufeature.c  | 15 +++++++++++++++
- arch/arm64/kernel/cpuinfo.c     |  1 +
- arch/arm64/kvm/sys_regs.c       |  2 +-
- 5 files changed, 27 insertions(+), 1 deletion(-)
+	So this patchset makes it consistent by presenting the popup
+menu when ENTER is pressed and callchains are present, and then an
+extra menu entry, associated with the new '+' toggle is added and
+appears proeminently in the popup menu, together with suggestions about
+using 'e' to toogle all the callchains for the top level entry,
 
-diff --git a/arch/arm64/include/asm/cpu.h b/arch/arm64/include/asm/cpu.h
-index d72d995..b4a4053 100644
---- a/arch/arm64/include/asm/cpu.h
-+++ b/arch/arm64/include/asm/cpu.h
-@@ -39,6 +39,7 @@ struct cpuinfo_arm64 {
- 	u32		reg_id_isar3;
- 	u32		reg_id_isar4;
- 	u32		reg_id_isar5;
-+	u32		reg_id_isar6;
- 	u32		reg_id_mmfr0;
- 	u32		reg_id_mmfr1;
- 	u32		reg_id_mmfr2;
-diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index 6e919fa..7a176e1 100644
---- a/arch/arm64/include/asm/sysreg.h
-+++ b/arch/arm64/include/asm/sysreg.h
-@@ -146,6 +146,7 @@
- #define SYS_ID_ISAR4_EL1		sys_reg(3, 0, 0, 2, 4)
- #define SYS_ID_ISAR5_EL1		sys_reg(3, 0, 0, 2, 5)
- #define SYS_ID_MMFR4_EL1		sys_reg(3, 0, 0, 2, 6)
-+#define SYS_ID_ISAR6_EL1		sys_reg(3, 0, 0, 2, 7)
- 
- #define SYS_MVFR0_EL1			sys_reg(3, 0, 0, 3, 0)
- #define SYS_MVFR1_EL1			sys_reg(3, 0, 0, 3, 1)
-@@ -679,6 +680,14 @@
- #define ID_ISAR5_AES_SHIFT		4
- #define ID_ISAR5_SEVL_SHIFT		0
- 
-+#define ID_ISAR6_I8MM_SHIFT		24
-+#define ID_ISAR6_BF16_SHIFT		20
-+#define ID_ISAR6_SPECRES_SHIFT		16
-+#define ID_ISAR6_SB_SHIFT		12
-+#define ID_ISAR6_FHM_SHIFT		8
-+#define ID_ISAR6_DP_SHIFT		4
-+#define ID_ISAR6_JSCVT_SHIFT		0
-+
- #define MVFR0_FPROUND_SHIFT		28
- #define MVFR0_FPSHVEC_SHIFT		24
- #define MVFR0_FPSQRT_SHIFT		20
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 04cf64e..6cec9aad 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -313,6 +313,16 @@ static const struct arm64_ftr_bits ftr_id_mmfr4[] = {
- 	ARM64_FTR_END,
- };
- 
-+static const struct arm64_ftr_bits ftr_id_isar6[] = {
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_I8MM_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_BF16_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_SB_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_FHM_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_DP_SHIFT, 4, 0),
-+	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_ISAR6_JSCVT_SHIFT, 4, 0),
-+	ARM64_FTR_END,
-+};
-+
- static const struct arm64_ftr_bits ftr_id_pfr0[] = {
- 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 12, 4, 0),		/* State3 */
- 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, 8, 4, 0),		/* State2 */
-@@ -396,6 +406,7 @@ static const struct __ftr_reg_entry {
- 	ARM64_FTR_REG(SYS_ID_ISAR4_EL1, ftr_generic_32bits),
- 	ARM64_FTR_REG(SYS_ID_ISAR5_EL1, ftr_id_isar5),
- 	ARM64_FTR_REG(SYS_ID_MMFR4_EL1, ftr_id_mmfr4),
-+	ARM64_FTR_REG(SYS_ID_ISAR6_EL1, ftr_id_isar6),
- 
- 	/* Op1 = 0, CRn = 0, CRm = 3 */
- 	ARM64_FTR_REG(SYS_MVFR0_EL1, ftr_generic_32bits),
-@@ -600,6 +611,7 @@ void __init init_cpu_features(struct cpuinfo_arm64 *info)
- 		init_cpu_ftr_reg(SYS_ID_ISAR3_EL1, info->reg_id_isar3);
- 		init_cpu_ftr_reg(SYS_ID_ISAR4_EL1, info->reg_id_isar4);
- 		init_cpu_ftr_reg(SYS_ID_ISAR5_EL1, info->reg_id_isar5);
-+		init_cpu_ftr_reg(SYS_ID_ISAR6_EL1, info->reg_id_isar6);
- 		init_cpu_ftr_reg(SYS_ID_MMFR0_EL1, info->reg_id_mmfr0);
- 		init_cpu_ftr_reg(SYS_ID_MMFR1_EL1, info->reg_id_mmfr1);
- 		init_cpu_ftr_reg(SYS_ID_MMFR2_EL1, info->reg_id_mmfr2);
-@@ -753,6 +765,8 @@ void update_cpu_features(int cpu,
- 					info->reg_id_isar4, boot->reg_id_isar4);
- 		taint |= check_update_ftr_reg(SYS_ID_ISAR5_EL1, cpu,
- 					info->reg_id_isar5, boot->reg_id_isar5);
-+		taint |= check_update_ftr_reg(SYS_ID_ISAR6_EL1, cpu,
-+					info->reg_id_isar6, boot->reg_id_isar6);
- 
- 		/*
- 		 * Regardless of the value of the AuxReg field, the AIFSR, ADFSR, and
-@@ -831,6 +845,7 @@ static u64 __read_sysreg_by_encoding(u32 sys_id)
- 	read_sysreg_case(SYS_ID_ISAR3_EL1);
- 	read_sysreg_case(SYS_ID_ISAR4_EL1);
- 	read_sysreg_case(SYS_ID_ISAR5_EL1);
-+	read_sysreg_case(SYS_ID_ISAR6_EL1);
- 	read_sysreg_case(SYS_MVFR0_EL1);
- 	read_sysreg_case(SYS_MVFR1_EL1);
- 	read_sysreg_case(SYS_MVFR2_EL1);
-diff --git a/arch/arm64/kernel/cpuinfo.c b/arch/arm64/kernel/cpuinfo.c
-index 56bba74..e4e212f 100644
---- a/arch/arm64/kernel/cpuinfo.c
-+++ b/arch/arm64/kernel/cpuinfo.c
-@@ -360,6 +360,7 @@ static void __cpuinfo_store_cpu(struct cpuinfo_arm64 *info)
- 		info->reg_id_isar3 = read_cpuid(ID_ISAR3_EL1);
- 		info->reg_id_isar4 = read_cpuid(ID_ISAR4_EL1);
- 		info->reg_id_isar5 = read_cpuid(ID_ISAR5_EL1);
-+		info->reg_id_isar6 = read_cpuid(ID_ISAR6_EL1);
- 		info->reg_id_mmfr0 = read_cpuid(ID_MMFR0_EL1);
- 		info->reg_id_mmfr1 = read_cpuid(ID_MMFR1_EL1);
- 		info->reg_id_mmfr2 = read_cpuid(ID_MMFR2_EL1);
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 9f21659..3e909b1 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1424,7 +1424,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	ID_SANITISED(ID_ISAR4_EL1),
- 	ID_SANITISED(ID_ISAR5_EL1),
- 	ID_SANITISED(ID_MMFR4_EL1),
--	ID_UNALLOCATED(2,7),
-+	ID_SANITISED(ID_ISAR6_EL1),
- 
- 	/* CRm=3 */
- 	ID_SANITISED(MVFR0_EL1),
+	Other changes in this patchkit allows for using those suggested
+hotkeys directly from the popup menu and add a new 'k' hotkey to zoom
+straight into the main kernel map. Pressing it again works just like
+using the popup menu via ENTER + "Zoom out of the kernel" or using ESC
+to Zoom out from the last filtering operation.
+
+	While working on this I noticed some other oddities like in
+the default --children mode where the Annotation popup option appeared
+even for entries where no samples were taken, i.e. something that
+appeared just on some callchain, suppressing the Annotation popup entry
+for those cases. If the user insists in using the 'a' hotkey on such an
+entry, a popup warning is showed.
+
+	Also a fix for kernel maps for ranges that seldom appear in
+samples, like "[kernel.vmlinux].init.text", that didn't a pointer back
+to the kernel maps data structure and thus was causing an assertion
+falure were found and fix, please test, available at:
+
+	Available at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git perf/hists_browser
+
+Best regards,
+
+- Arnaldo
+
+Arnaldo Carvalho de Melo (12):
+  perf hists browser: Restore ESC as "Zoom out" of DSO/thread/etc
+  perf report/top: Make ENTER consistently bring up menu
+  perf report/top: Add menu entry for toggling callchain expansion
+  perf report/top: Improve toggle callchain menu option
+  perf hists browser: Generalize the do_zoom_dso() function
+  perf report/top: Add 'k' hotkey to zoom directly into the kernel map
+  perf hists browser: Allow passing an initial hotkey
+  tools ui popup: Allow returning hotkeys
+  perf report/top: Allow pressing hotkeys in the options popup menu
+  perf report/top: Do not offer annotation for symbols without samples
+  perf report/top: Make 'e' visible in the help and make it toggle showing callchains
+  perf maps: Set maps pointer in the kmap area for kernel maps
+
+ tools/perf/builtin-c2c.c            |   4 +-
+ tools/perf/tests/maps.c             |   8 +-
+ tools/perf/ui/browsers/hists.c      | 141 ++++++++++++++++++++++++----
+ tools/perf/ui/browsers/hists.h      |   2 +-
+ tools/perf/ui/browsers/res_sample.c |   2 +-
+ tools/perf/ui/browsers/scripts.c    |   2 +-
+ tools/perf/ui/tui/util.c            |  12 ++-
+ tools/perf/ui/util.h                |   2 +-
+ tools/perf/util/auxtrace.c          |   2 +-
+ tools/perf/util/dso.c               |   4 +-
+ tools/perf/util/dso.h               |   4 +-
+ tools/perf/util/machine.c           |  10 +-
+ tools/perf/util/map.c               |  15 ++-
+ tools/perf/util/map.h               |   2 +-
+ tools/perf/util/probe-event.c       |  10 +-
+ tools/perf/util/sort.c              |   3 +-
+ tools/perf/util/sort.h              |   2 +
+ tools/perf/util/symbol-elf.c        |   2 +-
+ tools/perf/util/symbol.c            |   6 +-
+ 19 files changed, 178 insertions(+), 55 deletions(-)
+
 -- 
-2.7.4
+2.21.0
 
