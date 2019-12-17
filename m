@@ -2,103 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 367CC123317
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:01:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEC73123321
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 18:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfLQRBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 12:01:33 -0500
-Received: from vern.gendns.com ([98.142.107.122]:35790 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbfLQRBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 12:01:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=y7ZEAcmZPxFwg+aGOU54UCujclnLtD57QbAxYvqOMRQ=; b=gtbQJaictnRaTNkCxdck5VVg2H
-        LGqleXJD3bKMyrPr2ARsd9cPSVspytbXmTApXBo063i9jieYAXn426jEWKo6Zi1c1H+kiuoqmTLT4
-        yab2SEEa/7iruaUEfF8slxX3lUJEvX16T330+qjVUEQLDTZpYCNCkxcSVs+zcUtxj0q7JU1jbeiiO
-        7LYlVP8962lr+Kec4YHd4TF7MvEvOWFjfH1kSRHIw/GLB2j/M76CSczf+kT1yJw2rjDbM5qmZXdBJ
-        so5oaj3ZmDD6fxreuqGJ3reCn47VUo9t/EIXS3MxhaTl7PQMr4muVJl2PK2z8hIF/EWHjfWOAF2+o
-        SQuOrvxg==;
-Received: from [2600:1700:4830:165f::fb2] (port=57660)
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.92)
-        (envelope-from <david@lechnology.com>)
-        id 1ihGDx-0002LF-EA; Tue, 17 Dec 2019 12:01:29 -0500
-Subject: Re: [PATCH 1/3] clocksource: davinci: work around a clocksource
- problem on dm365 SoC
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20191213162453.15691-1-brgl@bgdev.pl>
- <20191213162453.15691-2-brgl@bgdev.pl>
- <b9a28314-4fce-ebbd-be20-b0ffa2f1f15f@lechnology.com>
- <CAMRc=McRKwYkUcY9J8cEkwoMnGYxs7SkTnOnFsVMDZD2DkJ1Zw@mail.gmail.com>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <a68ca8a5-77c6-4aac-f3b6-67edbf42a9bf@lechnology.com>
-Date:   Tue, 17 Dec 2019 11:01:28 -0600
+        id S1727642AbfLQREZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 12:04:25 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49488 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfLQREZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 12:04:25 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4G98059831;
+        Tue, 17 Dec 2019 11:04:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576602256;
+        bh=c5aNDJdm202QVz/ei0pWBemlPhzJ5FDI2ojZ/hTof/o=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ldwTZP2cZVtzeLKa5fQRMrGwhb6feqtwReIfenzbmy3hJD6PwxgDbf31IH1a4daAm
+         MPmbDOcKX/gwjUb9z4sivTnO/cRw+dujLC658BTWxRMaaADnTVDiAD1ISgcHEBlWH+
+         3syxJb63H6OrRvq5fCJTWNlXewsYk9jJJCa7G7qo=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4F5f018559;
+        Tue, 17 Dec 2019 11:04:15 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 11:04:15 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 11:04:15 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHH4F6D060212;
+        Tue, 17 Dec 2019 11:04:15 -0600
+Subject: Re: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>
+CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <cover.1576499103.git.agx@sigxcpu.org>
+ <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
+ <3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com>
+ <20191217154059.GA3929@bogon.m.sigxcpu.org>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <1c233937-5d99-bd9d-b8ac-290fca8305d5@ti.com>
+Date:   Tue, 17 Dec 2019 11:01:49 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CAMRc=McRKwYkUcY9J8cEkwoMnGYxs7SkTnOnFsVMDZD2DkJ1Zw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20191217154059.GA3929@bogon.m.sigxcpu.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 2:00 AM, Bartosz Golaszewski wrote:
-> pon., 16 gru 2019 o 18:58 David Lechner <david@lechnology.com> napisał(a):
->>
->>>
->>> +static unsigned int davinci_clocksource_tim32_mode;
->>
->> static unsigned bool davinci_clocksource_initialized;
->>
->>> +
->>>    static struct davinci_clockevent *
->>>    to_davinci_clockevent(struct clock_event_device *clockevent)
->>>    {
->>> @@ -94,7 +96,7 @@ static void davinci_tim12_shutdown(void __iomem *base)
->>>         * halves. In this case TIM34 runs in periodic mode and we must
->>>         * not modify it.
->>>         */
->>> -     tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
->>> +     tcr |= davinci_clocksource_tim32_mode <<
->>>                DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
->>
->>          if (davinci_clocksource_initialized)
->>                  tcr |= DAVINCI_TIMER_ENAMODE_PERIODIC <<
->>                          DAVINCI_TIMER_ENAMODE_SHIFT_TIM34;
-> 
-> I thought about doing this initially, but then figured this code would
-> be called a lot, so why not avoid branching and just store the right
-> value? Alternatively we can do:
-> 
->      if (likely(davinci_clocksource_initialized)
->          ....
-> 
+Guido
 
-Unless there is a measurable performance difference, I think it
-would be better with if/likely.
+On 12/17/19 9:40 AM, Guido Günther wrote:
+> Hi Dan,
+> On Tue, Dec 17, 2019 at 06:53:45AM -0600, Dan Murphy wrote:
+>> Guido
+>>
+>> On 12/16/19 6:28 AM, Guido Günther wrote:
+>>> Overvoltage protection and brightness mode are currently hardcoded
+>>> as disabled in the driver. Make these configurable via DT.
+>> Can we split these up to two separate patch series?
+> Sure, should the binding doc updates be split as well?
+
+Yes.
+
+<snip>
+>> extra debug statement
+> They're not extra but meant to ease debugging the driver long therm but
+> i can drop these if that's not wanted. The rest makes a lot of sense.
+> Thanks a lot for having a look so promptly!
+
+Yes please remove those we don't need extra noise in the log.
+
+If someone wants to debug this then they can add the statements themselves
+
+Dan
 
