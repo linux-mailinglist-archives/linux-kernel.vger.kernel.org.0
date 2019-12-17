@@ -2,95 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFD31122F08
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:43:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30963122F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbfLQOm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:42:57 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:60648 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728532AbfLQOm4 (ORCPT
+        id S1728996AbfLQOop (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:44:45 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:36969 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728573AbfLQOoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:42:56 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHEgliP008098;
-        Tue, 17 Dec 2019 08:42:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576593767;
-        bh=NJtBk/dGuHmYEJrEP7nO7ApfX+m+JO+r6K26fO3v6j4=;
-        h=Date:From:To:Subject:References:In-Reply-To;
-        b=m0TtVy0hw+Hujrbk70nHOmcfaSOfowMCUglRNHSpq9q5cpT4nB61sJOkJUiKRJ4sv
-         8wQb+XHg/vxqZ5axZAnltjb9pfAsj9rGFIY0cFSvKD0OEMQNRXjDJ+fd9QPcf3IPix
-         RiVtsIkgsrv9QDnozLM4vw8H/S+u8w94bbw4bWb0=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHEglYi044197
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Dec 2019 08:42:47 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 08:42:47 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 08:42:47 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHEgli2041553;
-        Tue, 17 Dec 2019 08:42:47 -0600
-Date:   Tue, 17 Dec 2019 08:42:06 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, <od@zcrc.me>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-Subject: Re: [PATCH v3 2/7] usb: musb: dma: Add support for shared IRQ
-Message-ID: <20191217144206.GM16429@iaqt7>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Artur Rojek <contact@artur-rojek.eu>
-References: <20191210171110.62141-1-paul@crapouillou.net>
- <20191210171110.62141-2-paul@crapouillou.net>
- <20191211185224.GD16429@iaqt7>
+        Tue, 17 Dec 2019 09:44:44 -0500
+Received: from [192.168.1.155] ([95.114.21.161]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MuUvS-1hqm5e2k0Q-00rXXn; Tue, 17 Dec 2019 15:44:28 +0100
+Subject: Re: [PATCH] RFC: platform driver registering via initcall tables
+To:     Greg KH <greg@kroah.com>
+Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, dmitry.torokhov@gmail.com,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        arnd@arndb.de, masahiroy@kernel.org, michal.lkml@markovi.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
+        linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+References: <20191217102219.29223-1-info@metux.net>
+ <20191217103152.GB2914497@kroah.com>
+ <6422bc88-6d0a-7b51-aaa7-640c6961b177@metux.net>
+ <20191217140646.GC3489463@kroah.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Message-ID: <d938b8e1-d9ce-9ad6-4178-86219e99d4df@metux.net>
+Date:   Tue, 17 Dec 2019 15:43:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191211185224.GD16429@iaqt7>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191217140646.GC3489463@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: tl
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:w0io69mBkaf+1h5xS2clNhiKVEe0x4xPMiO1d6eDOgUuj5grIk6
+ So0gw1+GpivSUVTFQR/DDSbg+QPfwUh7WmxUQSwRGfkUPGn5UuLFc7ZXrVgMiGCWcvV7EnZ
+ YcouJJBHv4s14A2UoTWwsoWv1v7AXM1bV8eKUMEFutfAUA0OO6kYs7L0qW0jC11eMqimXtO
+ a6XJNpIUDfbJJ14c1ttfw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sYdPWCf9KOc=:0AdzDPaTOQKhydTgTxPD3i
+ 7vxT1r6DXk1q3sntultkN3yeyfwZO1L5/I1tey9mzWV4VA+QtLhy8j/GxOIkVoro6LseGlci6
+ W12X0KPN6zHyzUFSEN+WudCDKhMSlfHeKZFry+8utzzVh6X9+igOSGELwhRWwdqQJiZOcu0oO
+ QZ05ieWKgwvl2Uh/MTg3RL2rBdrdsEAyemNTcVIECVbSPuHPq8auHKLK93V7iegjvA0alhL1U
+ /WaxrxT+hXtjLC5Y831LJC9pTnymxqwddhRor0yitiemCO20+Mt4kNnapMMvBDlgit3U9kCWQ
+ ghGaWfk2sB8r7OhNMqgF4AcETtelNyx8ZQjuxDdhj3ikLhlIf4dSz/5U1KyusXwnJ7lk0EX8V
+ dPLRb30N/xbIpSx44Lhd6/rgXBKpZ7FH12J/8gAAyWIKwO+w0pwFu8U8MTiUnCLlpDB7s67q8
+ Tq14Jj4cBz5vzTEHK1X6ZMsayDQl4Lm9NCbf+JrbqipltyHENFei9Roxzr27MBzuTGO7qSiT+
+ IDmX9O+smuMCUheOjOxXAWdsli6m+5yHIx4jWjyt9GNlGerF+YvMktccX/fSzS+5MhHH9zJqy
+ DgtqxPSJhnAd5M/YSfD7Ivsjhoxx6G5V2BHwwGwEhVxZWIK6leQxc9x7ntbA+ploa4GgA/8Mv
+ AOdgb5DGJbfqvDiIjJyE3Kq6vR97PhyIOT4HY9flUCSa1gKkPC5p/WvWC6mpXlfXCRgzt3IF+
+ 3oVArTRk9F1Kc+K0wuTuPBtt4Kgs+Un9XjZUDiZdMnIqH1J2Ed29wURCgNhD6S8guCL7jAL7I
+ Z0z8+jHTBIU3qT6HA9SqRQtKynKLt5/00XkPx6phElHcm7JrtRgFPVAz1gTlfHSQr6qUSFbrz
+ q03NkMAgx3EPRvOQwR7w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+On 17.12.19 15:06, Greg KH wrote:
 
-On Wed, Dec 11, 2019 at 12:52:24PM -0600, Bin Liu wrote:
-> On Tue, Dec 10, 2019 at 06:11:05PM +0100, Paul Cercueil wrote:
-> > The implementation of the Inventra IP in some of the Ingenic JZ47xx SoCs
-> > does not use a separate IRQ line for DMA transfers.
-> > 
-> > Allow these SoCs to be supported by adding a flag 'dma_share_usb_irq'
-> > in the struct musb. If set, no extra IRQ line is required, and the musb
-> > glue will need to call the API function musbhs_dma_controller_irq()
-> > within its interrupt handler.
-> > 
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> > ---
->  
-> Queued for usb-next. Thanks.
+> That's not needed, and you are going to break the implicit ordering we
+> already have with link order.  
 
-I removed this and the next patch [3/7] in this series from my queue.
-Sorry. Ming Guo has posted a series "Add MediaTek MUSB Controller
-Driver" which has done the similar implementation [1] but without adding
-the flag in struct musb. Can you please check if you can use Ming's
-implementation instead? The patch of his musb glue driver which uses the
-implementation is [2], just for your reference.
+Ups, 10 points for you - I didn't consider that.
 
-[1] https://marc.info/?l=linux-usb&m=157602930627195&w=2
-[2] https://marc.info/?l=linux-usb&m=157602932427210&w=2
+> You are going to have to figure out what
+> bus type the driver is, to determine what segment it was in, to figure
+> out what was loaded before what.
 
-Thanks,
--Bin.
+hmm, if it's just the ordering by bus type (but not within one bus
+type), then it shouldn't be the big deal to fix, as I'll need one table
+and register-loop per bus-type anyways.
+
+By the way: how is there init order ensured with dynamically loaded
+modules ? (for cases where there aren't explicit symbol dependencies)
+
+
+--mtx
+
+---
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
