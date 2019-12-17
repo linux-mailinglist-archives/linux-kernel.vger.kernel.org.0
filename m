@@ -2,82 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4EAD1222D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 05:02:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ABF51222D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 05:03:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727329AbfLQECl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 23:02:41 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:55599 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727089AbfLQECk (ORCPT
+        id S1727472AbfLQEDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 23:03:11 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:36589 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfLQEDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 23:02:40 -0500
-X-UUID: 7094b7437bbe449a9a45173f66eee083-20191217
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=tZYQtktGRy8Who+pLVHW/cHqPk4WeYEvryM79MNiedY=;
-        b=e6H7lO7zW+21JvQCmHwBvWYy+w3pSqnwPNF5tYSlMt827/aLAi21rkazOIrHYVzJdeY0LZDBuCulCx7nAlcMDKQibOtjTAqCIxJajOlLtXbpIWzyr/ymJLJgZE2aM8n3d3IybrJolHridRzOVNuEn2CZ1QnJIS8X4NaXnQ9rwpY=;
-X-UUID: 7094b7437bbe449a9a45173f66eee083-20191217
-Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1127974747; Tue, 17 Dec 2019 12:02:35 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N2.mediatek.inc
- (172.27.4.76) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 17 Dec
- 2019 12:02:54 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
- MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Tue, 17 Dec 2019 12:02:12 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-pwm@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, CK Hu <ck.hu@mediatek.com>
-CC:     <linux-mediatek@lists.infradead.org>, <sj.huang@mediatek.com>,
-        Jitao Shi <jitao.shi@mediatek.com>
-Subject: [PATCH v4 2/2] pwm: mtk_disp: keep the trigger register after pwm setting.
-Date:   Tue, 17 Dec 2019 12:02:37 +0800
-Message-ID: <20191217040237.28238-3-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191217040237.28238-1-jitao.shi@mediatek.com>
-References: <20191217040237.28238-1-jitao.shi@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 3E0F6F0913388D23C7EBEF8FEBBD9736E8493E1439D04217FAD8B691804CC4792000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+        Mon, 16 Dec 2019 23:03:10 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id xBH42mj7022153;
+        Tue, 17 Dec 2019 13:02:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com xBH42mj7022153
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576555368;
+        bh=QtwtpsIrblHUJGhyD5ODjIkuJWwwT4XJdanpt+Mk7pk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=l8QqBNCbi4848JF9pgsfT0Wo0Et+aRy86X/Ve+k+yoZx0sYABm5t8z6o944SN96LW
+         v5xl23q9dFS0HGZftGKpWXQwuXDle21Cky7YiKlcykjfKNyCJ9aHRSo5QhK97cjxUm
+         tO+Gvw5RqFZl456R42LTR2egl8icMZYiDv+aGR5ofY16jzY2H0XEItoIKMyDtoR7g7
+         8eKlOpzhWDsYZRGoyywHYNir/U+l0vG4oDLekUZ2KxAFAelDS13WM39NmM0jAlNEs9
+         nNrx33Y+vkEV/5k/t9A9P5D+FOIs1sFTM7ed1Sy0TvnPCjDEm2Yh6eGymrrp3OjFd0
+         Di3k1ilpWUuIw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: warn nested choice
+Date:   Tue, 17 Dec 2019 13:02:45 +0900
+Message-Id: <20191217040245.24441-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TW92ZSB0aGUgdHJpZ2dlciBhZnRlciBwd20gc2V0dGluZyB0byBhdm9pZCB0aGUgcHdtIHdyb25n
-IHNpZ25hbA0Kb3V0cHV0Lg0KDQpSZW1vdmUgdGhlIHJlZ2lzdCBlbmFibGUgdHJpZ2dlciBzZXR0
-aW5nIGluIHByb2JlLg0KTW92ZSB0aGUgdHJpZ2dlciB0byBlbmQgb2YgbXRrX2Rpc3BfcHdtX2Nv
-bmZpZygpLg0KDQpTaWduZWQtb2ZmLWJ5OiBKaXRhbyBTaGkgPGppdGFvLnNoaUBtZWRpYXRlay5j
-b20+DQotLS0NCiBkcml2ZXJzL3B3bS9wd20tbXRrLWRpc3AuYyB8IDIwICsrKysrKystLS0tLS0t
-LS0tLS0tDQogMSBmaWxlIGNoYW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgMTMgZGVsZXRpb25zKC0p
-DQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3B3bS9wd20tbXRrLWRpc3AuYyBiL2RyaXZlcnMvcHdt
-L3B3bS1tdGstZGlzcC5jDQppbmRleCBjN2IxNGFjYzkzMTYuLmMxYWFlNWI1NjkzYiAxMDA2NDQN
-Ci0tLSBhL2RyaXZlcnMvcHdtL3B3bS1tdGstZGlzcC5jDQorKysgYi9kcml2ZXJzL3B3bS9wd20t
-bXRrLWRpc3AuYw0KQEAgLTEyMiw2ICsxMjIsMTMgQEAgc3RhdGljIGludCBtdGtfZGlzcF9wd21f
-Y29uZmlnKHN0cnVjdCBwd21fY2hpcCAqY2hpcCwgc3RydWN0IHB3bV9kZXZpY2UgKnB3bSwNCiAJ
-CW10a19kaXNwX3B3bV91cGRhdGVfYml0cyhtZHAsIG1kcC0+ZGF0YS0+Y29tbWl0LA0KIAkJCQkJ
-IG1kcC0+ZGF0YS0+Y29tbWl0X21hc2ssDQogCQkJCQkgMHgwKTsNCisJfSBlbHNlIHsNCisJCW10
-a19kaXNwX3B3bV91cGRhdGVfYml0cyhtZHAsIG1kcC0+ZGF0YS0+YmxzX2RlYnVnLA0KKwkJCQkJ
-IG1kcC0+ZGF0YS0+YmxzX2RlYnVnX21hc2ssDQorCQkJCQkgbWRwLT5kYXRhLT5ibHNfZGVidWdf
-bWFzayk7DQorCQltdGtfZGlzcF9wd21fdXBkYXRlX2JpdHMobWRwLCBtZHAtPmRhdGEtPmNvbjAs
-DQorCQkJCQkgbWRwLT5kYXRhLT5jb24wX3NlbCwNCisJCQkJCSBtZHAtPmRhdGEtPmNvbjBfc2Vs
-KTsNCiAJfQ0KIA0KIAljbGtfZGlzYWJsZV91bnByZXBhcmUobWRwLT5jbGtfbW0pOw0KQEAgLTIw
-NywxOSArMjE0LDYgQEAgc3RhdGljIGludCBtdGtfZGlzcF9wd21fcHJvYmUoc3RydWN0IHBsYXRm
-b3JtX2RldmljZSAqcGRldikNCiANCiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgbWRwKTsN
-CiANCi0JLyoNCi0JICogRm9yIE1UMjcwMSwgZGlzYWJsZSBkb3VibGUgYnVmZmVyIGJlZm9yZSB3
-cml0aW5nIHJlZ2lzdGVyDQotCSAqIGFuZCBzZWxlY3QgbWFudWFsIG1vZGUgYW5kIHVzZSBQV01f
-UEVSSU9EL1BXTV9ISUdIX1dJRFRILg0KLQkgKi8NCi0JaWYgKCFtZHAtPmRhdGEtPmhhc19jb21t
-aXQpIHsNCi0JCW10a19kaXNwX3B3bV91cGRhdGVfYml0cyhtZHAsIG1kcC0+ZGF0YS0+YmxzX2Rl
-YnVnLA0KLQkJCQkJIG1kcC0+ZGF0YS0+YmxzX2RlYnVnX21hc2ssDQotCQkJCQkgbWRwLT5kYXRh
-LT5ibHNfZGVidWdfbWFzayk7DQotCQltdGtfZGlzcF9wd21fdXBkYXRlX2JpdHMobWRwLCBtZHAt
-PmRhdGEtPmNvbjAsDQotCQkJCQkgbWRwLT5kYXRhLT5jb24wX3NlbCwNCi0JCQkJCSBtZHAtPmRh
-dGEtPmNvbjBfc2VsKTsNCi0JfQ0KLQ0KIAlyZXR1cm4gMDsNCiB9DQogDQotLSANCjIuMjEuMA0K
+If you create a 'choice' inside another 'choice', I do not know how
+it should work.
+
+I applied this patch onto v5.5-rc1, and I see one warning:
+
+  drivers/usb/gadget/legacy/Kconfig:458: warning: nested choice. previous choice entry is drivers/usb/gadget/Kconfig:486
+
+This is because entire drivers/usb/gadget/legacy/Kconfig is in the
+choice context.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/parser.y | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+index b3eff9613cf8..86e75ea74731 100644
+--- a/scripts/kconfig/parser.y
++++ b/scripts/kconfig/parser.y
+@@ -30,6 +30,9 @@ struct symbol *symbol_hash[SYMBOL_HASHSIZE];
+ 
+ static struct menu *current_menu, *current_entry;
+ 
++/* while in the choice block, this points to the location of the choice entry */
++static struct menu *current_choice_menu;
++
+ %}
+ 
+ %union
+@@ -239,6 +242,14 @@ choice: T_CHOICE word_opt T_EOL
+ 	menu_add_entry(sym);
+ 	menu_add_expr(P_CHOICE, NULL, NULL);
+ 	free($2);
++
++	if (current_choice_menu)
++		zconfprint("warning: nested choice. previous choice entry is %s:%d",
++			   current_choice_menu->file->name,
++			   current_choice_menu->lineno);
++
++	current_choice_menu = current_entry;
++
+ 	printd(DEBUG_PARSE, "%s:%d:choice\n", zconf_curname(), zconf_lineno());
+ };
+ 
+@@ -439,7 +450,7 @@ prompt:	  T_WORD
+ ;
+ 
+ end:	  T_ENDMENU T_EOL	{ $$ = "menu"; }
+-	| T_ENDCHOICE T_EOL	{ $$ = "choice"; }
++	| T_ENDCHOICE T_EOL	{ $$ = "choice"; current_choice_menu = NULL; }
+ 	| T_ENDIF T_EOL		{ $$ = "if"; }
+ ;
+ 
+-- 
+2.17.1
 
