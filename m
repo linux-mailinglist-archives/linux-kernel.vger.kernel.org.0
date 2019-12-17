@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B6F3122939
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:51:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8311E12293B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfLQKvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:51:02 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:41801 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfLQKvB (ORCPT
+        id S1727517AbfLQKvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 05:51:09 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:41965 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbfLQKvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:51:01 -0500
-Received: by mail-pj1-f65.google.com with SMTP id ca19so4403068pjb.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 02:51:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=aKRVFVGKklhJeX7J8DfGTFKZ6BQ4sSTjBtpY0lq/GLY=;
-        b=i207vYVIyCSPdwtw9gUxE1SQdkKrbZefw9FiMtvmBG2xEopwaOydQvN4nO4Ika3nBF
-         9OJTmF7yv2223hQ7JGS2bqgYXy0lRPOPmd09SlmsHKc0pShZfr7X7lI6ga+6exSaczxQ
-         0H1XV2G+F9Q+YbHW9RgWvOxnxvv61GKOPA8Kt+av8fQ6YmvuhQSPjzDo+AUyZYFBLznC
-         4C2DbLricso1V0ofKbeO6rjiWh4+gjFH0L9CaNJJjaWGZB8RKspqXibOuPVECqJ8J8U5
-         uLoZ+iVyFy8TqxK1UYzjeIaRglxLYog45caSjFBGMwt8ggvatFyUjN5bfIPPJgNnqmcr
-         m4RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=aKRVFVGKklhJeX7J8DfGTFKZ6BQ4sSTjBtpY0lq/GLY=;
-        b=tzjdd7NebD8172xDxTUWyVpdy+BVdaT8zyy1F3Mhvc6kQD7HaQuuVj8vzBqgupVUOW
-         6nW5oDBoM6MGTIvK1qfoqF9b+QVna91lCc3eKUI5w3jY5fliIJer2hexevNS76W5Vvd0
-         kg2Zdjm8zfg9YN+KXkMNm/+jevBlOJZhlK5bQN/FIDEIsvNjpB9/YqGzo3NgA8DkjOr9
-         X4B8to4cjtpkEVN3FBgGr70wZ1n1FDtlEGqVuwzt4lQAoVcPIRSMvjyP9EwDXAZ2hR9o
-         Va1eePA4wyxjp2sclaOvi+emtoC9s7n9ZPtVOi3/XbJ/2zqd8vTftA7wgjIeJQ4XiqAW
-         gKfg==
-X-Gm-Message-State: APjAAAXy0nVIa3L2FM5k8EPKJf4JreYYIlkv+OKa1D1UQGwpjZXU6JPh
-        drP5BhrPZ12eQ052qsKcBLGpgQlkr3K4gHf8P5c=
-X-Google-Smtp-Source: APXvYqxpTkPFBaLdDLWRUTmdNGxGJOUgPhOHgu2TZDZwg3uTwcQlFRdwzs9LbYa+SvPOIl6alJSdoCSlWVCKL8UgDh4=
-X-Received: by 2002:a17:902:b589:: with SMTP id a9mr20217147pls.256.1576579861244;
- Tue, 17 Dec 2019 02:51:01 -0800 (PST)
+        Tue, 17 Dec 2019 05:51:08 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihARS-000152-O1; Tue, 17 Dec 2019 11:51:02 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihARR-0004u2-SF; Tue, 17 Dec 2019 11:51:01 +0100
+Date:   Tue, 17 Dec 2019 11:51:01 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/3] tty: new helper function tty_kopen_shared
+Message-ID: <20191217105101.fd23zsxxi2e42ltt@pengutronix.de>
+References: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
+ <20191217081718.23807-2-u.kleine-koenig@pengutronix.de>
+ <20191217082733.GA2672708@kroah.com>
 MIME-Version: 1.0
-Received: by 2002:a17:90a:5803:0:0:0:0 with HTTP; Tue, 17 Dec 2019 02:51:00
- -0800 (PST)
-Reply-To: stellar074maoris@gmail.com
-From:   "Mrs.Stellar Maoris" <mrsalimaculu@gmail.com>
-Date:   Tue, 17 Dec 2019 10:51:00 +0000
-Message-ID: <CALpC2+LhuO77pNs2Jo0houQjAC-byKt21fJFjOk_w5rvgNUm1g@mail.gmail.com>
-Subject: Hello Dear Friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191217082733.GA2672708@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Friend.
+Hello Greg,
 
-I=E2=80=99m Mrs. Stellar Maoris from united state of America a manger in
-HSBC bank in Spain Madrid, 39 years old of age, single, I am
-sending
-this brief letter to seek for your partnership and long term relationship,
-I have an important and urgent issue I want to discuss with you privately a=
-bout
-Transaction fund worth the sum of $9.5m America dollars left by most
-of the greedy
-Asia Kuwait politician in our bank here in Spain Madrid A fund which
-suppose to have been use to develop the continent.
+all feedback I don't respond to is planned to be fixed in v3.
 
-If you know that you can invest this fund into a profitable business
-in your country by the end we shall have 50%50 share each, kindly get
-back to me for more detail and procedures.
+On Tue, Dec 17, 2019 at 09:27:33AM +0100, Greg Kroah-Hartman wrote:
+> On Tue, Dec 17, 2019 at 09:17:16AM +0100, Uwe Kleine-König wrote:
+> > +struct tty_struct *tty_kopen_shared(dev_t device)
+> > +{
+> > +	struct tty_struct *tty;
+> > +	struct tty_driver *driver;
+> > +	int index = -1;
+> > +
+> > +	mutex_lock(&tty_mutex);
+> > +	driver = tty_lookup_driver(device, NULL, &index);
+> > +	if (IS_ERR(driver)) {
+> > +		tty = ERR_CAST(driver);
+> > +		goto err_lookup_driver;
+> > +	}
+> > +
+> > +	tty = tty_driver_lookup_tty(driver, NULL, index);
+> 
+> No error check?
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Stellar Maoris
-Email: stellar074maoris@gmail.com
-Phone Number: +34(62) 768 5146
+Well, the caller of tty_kopen_shared is supposed to check for error
+returns. Do you think an error message here would be approriate? I'd do
+this in the caller similar to how tty_kopen works.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
