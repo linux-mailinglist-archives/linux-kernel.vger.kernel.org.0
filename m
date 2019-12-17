@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39ADD123843
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:05:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDDDD123842
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:05:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfLQVEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:04:05 -0500
+        id S1728642AbfLQVEA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:04:00 -0500
 Received: from mga04.intel.com ([192.55.52.120]:15675 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728527AbfLQVDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:03:45 -0500
+        id S1728548AbfLQVDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 16:03:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 13:03:44 -0800
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 13:03:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
-   d="scan'208";a="240561082"
+   d="scan'208";a="240561092"
 Received: from smcdonal-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.83.42])
-  by fmsmga004.fm.intel.com with ESMTP; 17 Dec 2019 13:03:43 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 17 Dec 2019 13:03:45 -0800
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [PATCH v5 16/17] soundwire: intel_init: use EXPORT_SYMBOL_NS
-Date:   Tue, 17 Dec 2019 15:03:13 -0600
-Message-Id: <20191217210314.20410-17-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v5 17/17] soundwire: intel: use EXPORT_SYMBOL_NS
+Date:   Tue, 17 Dec 2019 15:03:14 -0600
+Message-Id: <20191217210314.20410-18-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
 References: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
@@ -43,71 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure all symbols in this soundwire-intel-init module are exported
-with a namespace.
+The soundwire-intel module exports an 'intel_sdw_driver' structure,
+which is declared with a namespace explicitly imported by the
+soundwire-intel-init module.
 
-The MODULE_IMPORT_NS will be used in Intel/SOF HDaudio modules to be
-posted in a separate series.
-
-Namespaces are only introduced for the Intel parts of the SoundWire
-code at this time, in future patches we should also add namespaces for
-Cadence parts and the SoundWire core.
+The use of namespaces might be deemed overkill here, but it did help
+enforce a proper code partitioning for follow-up patches on clock-stop
+support.
 
 Suggested-by: Greg KH <gregkh@linuxfoundation.org>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel_init.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/soundwire/intel.c      | 2 +-
+ drivers/soundwire/intel_init.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index 0e77df0a7760..c24b5f30789d 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -1225,7 +1225,7 @@ struct sdw_md_driver intel_sdw_driver = {
+ 	.startup = intel_master_startup,
+ 	.remove = intel_master_remove,
+ };
+-EXPORT_SYMBOL(intel_sdw_driver);
++EXPORT_SYMBOL_NS(intel_sdw_driver, SOUNDWIRE_INTEL);
+ 
+ MODULE_LICENSE("Dual BSD/GPL");
+ MODULE_ALIAS("platform:int-sdw");
 diff --git a/drivers/soundwire/intel_init.c b/drivers/soundwire/intel_init.c
-index 391e8763638f..0f83907e1bc7 100644
+index 0f83907e1bc7..0acb92a3c6d1 100644
 --- a/drivers/soundwire/intel_init.c
 +++ b/drivers/soundwire/intel_init.c
-@@ -159,7 +159,7 @@ void sdw_intel_enable_irq(void __iomem *mmio_base, bool enable)
- 
- 	writel(val, mmio_base + HDA_DSP_REG_ADSPIC2);
- }
--EXPORT_SYMBOL(sdw_intel_enable_irq);
-+EXPORT_SYMBOL_NS(sdw_intel_enable_irq, SOUNDWIRE_INTEL_INIT);
- 
- static struct sdw_intel_ctx
- *sdw_intel_probe_controller(struct sdw_intel_res *res)
-@@ -346,7 +346,7 @@ int sdw_intel_acpi_scan(acpi_handle *parent_handle,
- 
- 	return sdw_intel_scan_controller(info);
- }
--EXPORT_SYMBOL(sdw_intel_acpi_scan);
-+EXPORT_SYMBOL_NS(sdw_intel_acpi_scan, SOUNDWIRE_INTEL_INIT);
- 
- /**
-  * sdw_intel_probe() - SoundWire Intel probe routine
-@@ -362,7 +362,7 @@ struct sdw_intel_ctx
- {
- 	return sdw_intel_probe_controller(res);
- }
--EXPORT_SYMBOL(sdw_intel_probe);
-+EXPORT_SYMBOL_NS(sdw_intel_probe, SOUNDWIRE_INTEL_INIT);
- 
- /**
-  * sdw_intel_startup() - SoundWire Intel startup
-@@ -373,7 +373,7 @@ int sdw_intel_startup(struct sdw_intel_ctx *ctx)
- {
- 	return sdw_intel_startup_controller(ctx);
- }
--EXPORT_SYMBOL(sdw_intel_startup);
-+EXPORT_SYMBOL_NS(sdw_intel_startup, SOUNDWIRE_INTEL_INIT);
- /**
-  * sdw_intel_exit() - SoundWire Intel exit
-  * @ctx: SoundWire context allocated in the probe
-@@ -386,7 +386,7 @@ void sdw_intel_exit(struct sdw_intel_ctx *ctx)
- 	driver_unregister(&intel_sdw_driver.driver);
- 	kfree(ctx);
- }
--EXPORT_SYMBOL(sdw_intel_exit);
-+EXPORT_SYMBOL_NS(sdw_intel_exit, SOUNDWIRE_INTEL_INIT);
+@@ -390,3 +390,4 @@ EXPORT_SYMBOL_NS(sdw_intel_exit, SOUNDWIRE_INTEL_INIT);
  
  MODULE_LICENSE("Dual BSD/GPL");
  MODULE_DESCRIPTION("Intel Soundwire Init Library");
++MODULE_IMPORT_NS(SOUNDWIRE_INTEL);
 -- 
 2.20.1
 
