@@ -2,87 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 21C141234C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:25:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4BE11234CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfLQSZh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:25:37 -0500
-Received: from muru.com ([72.249.23.125]:49036 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726742AbfLQSZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:25:37 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id BF2D38116;
-        Tue, 17 Dec 2019 18:26:16 +0000 (UTC)
-Date:   Tue, 17 Dec 2019 10:25:34 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Dave Gerlach <d-gerlach@ti.com>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
-Message-ID: <20191217182534.GD35479@atomide.com>
-References: <20191212040314.14753-1-d-gerlach@ti.com>
+        id S1727802AbfLQS2C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:28:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:37239 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfLQS2C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 13:28:02 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihHZb-0004GW-Ap; Tue, 17 Dec 2019 19:27:55 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihHZa-0007ij-7F; Tue, 17 Dec 2019 19:27:54 +0100
+Date:   Tue, 17 Dec 2019 19:27:54 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@pengutronix.de,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] tty: rename tty_kopen() and add new function
+ tty_kopen_shared()
+Message-ID: <20191217182754.rji5p3npzc2z4gv3@pengutronix.de>
+References: <20191217165816.19324-1-u.kleine-koenig@pengutronix.de>
+ <20191217165816.19324-2-u.kleine-koenig@pengutronix.de>
+ <c83b364b-3494-cf3d-0429-61ec3b502be0@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191212040314.14753-1-d-gerlach@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c83b364b-3494-cf3d-0429-61ec3b502be0@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Jacek,
 
-* Dave Gerlach <d-gerlach@ti.com> [191211 20:02]:
-> Any user of wkup_m3_ipc calls wkup_m3_ipc_get to get a handle and this
-> checks the value of the static variable m3_ipc_state to see if the
-> wkup_m3 is ready. Currently this is populated during probe before
-> rproc_boot has been called, meaning there is a window of time that
-> wkup_m3_ipc_get can return a valid handle but the wkup_m3 itself is not
-> ready, leading to invalid IPC calls to the wkup_m3 and system
-> instability.
+On Tue, Dec 17, 2019 at 07:08:47PM +0100, Jacek Anaszewski wrote:
+> I wanted to test the set but unfortunately this
+> patch does not apply. See below for the apparent reason.
+>
+> > [...]
+> > -struct tty_struct *tty_kopen(dev_t device)
+> > +static struct tty_struct *tty_kopen(dev_t device, int shared)
+> >  {
+> >  	struct tty_struct *tty;
+> >  	struct tty_driver *driver;
 > 
-> To avoid this, move the population of the m3_ipc_state variable until
-> after rproc_boot has succeeded to guarantee a valid and usable handle
-> is always returned.
-
-Santosh, do you want me to pick this one into my fixes branch?
-
-Regards,
-
-Tony
-
-
-> Reported-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-> ---
->  drivers/soc/ti/wkup_m3_ipc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> In mainline, even in v5.5-rc2 we have here NULL assignment:
 > 
-> diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
-> index 378369d9364a..e9ece45d7a33 100644
-> --- a/drivers/soc/ti/wkup_m3_ipc.c
-> +++ b/drivers/soc/ti/wkup_m3_ipc.c
-> @@ -419,6 +419,8 @@ static void wkup_m3_rproc_boot_thread(struct wkup_m3_ipc *m3_ipc)
->  	ret = rproc_boot(m3_ipc->rproc);
->  	if (ret)
->  		dev_err(dev, "rproc_boot failed\n");
-> +	else
-> +		m3_ipc_state = m3_ipc;
->  
->  	do_exit(0);
->  }
-> @@ -505,8 +507,6 @@ static int wkup_m3_ipc_probe(struct platform_device *pdev)
->  		goto err_put_rproc;
->  	}
->  
-> -	m3_ipc_state = m3_ipc;
-> -
->  	return 0;
->  
->  err_put_rproc:
-> -- 
-> 2.20.1
-> 
+> struct tty_driver *driver = NULL;
+
+Yeah, if you don't want to wait for Greg's tree to appear in next, this
+is the patch you're missing:
+
+	https://lkml.org/lkml/2019/12/17/101
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
