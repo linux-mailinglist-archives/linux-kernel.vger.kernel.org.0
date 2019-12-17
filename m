@@ -2,93 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3267B123854
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 493BB123862
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbfLQVEy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:04:54 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:48736 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbfLQVEw (ORCPT
+        id S1728400AbfLQVGZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:06:25 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:34940 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfLQVGZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:04:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1576616688; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=0QOCv7eVNMACKKz7lfH6wYRKxNtDZzpuNrspVQ6O0QQ=;
-        b=mKw9XDiMoPdJp+qPGz4pc9mh/sJyqsiCv9+SX2ZpGxifxy5pYgdgWaT7Ytb2a2uuLWHO0R
-        V+97nxHzSFtE9owWbIqk1jz2Z5P5ebHzuUdV5l2WGcIko4h2akD2/lOzxzllWu6bxabJvx
-        DYI899pw4n6b6p9UCOVKXedJCaHaC+I=
-Date:   Tue, 17 Dec 2019 22:04:38 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3 2/7] usb: musb: dma: Add support for shared IRQ
-To:     Bin Liu <b-liu@ti.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Artur Rojek <contact@artur-rojek.eu>
-Message-Id: <1576616678.3.0@crapouillou.net>
-In-Reply-To: <20191217144206.GM16429@iaqt7>
-References: <20191210171110.62141-1-paul@crapouillou.net>
-        <20191210171110.62141-2-paul@crapouillou.net> <20191211185224.GD16429@iaqt7>
-        <20191217144206.GM16429@iaqt7>
+        Tue, 17 Dec 2019 16:06:25 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 47crKX2v95z9vbXw
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 21:06:24 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id IWvmopA0X948 for <linux-kernel@vger.kernel.org>;
+        Tue, 17 Dec 2019 15:06:24 -0600 (CST)
+Received: from mail-yw1-f72.google.com (mail-yw1-f72.google.com [209.85.161.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 47crKX1k2Hz9vbY8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 15:06:24 -0600 (CST)
+Received: by mail-yw1-f72.google.com with SMTP id 199so8742954ywe.20
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 13:06:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RVnukGaiui+du4+M3rktd/RcuLA80ABz3WVIbi2xHtI=;
+        b=KBmfJyYowdx1h9k2Ktvy/CuZa7KBLKl+kv2WSWq4E1LLh/iGH1BZ2uKtukY/W2uzVo
+         TpOpE0M/TjXJBydFNILe7JcWTtYgiVQq2UeznWuReLZCjbu5K78i6Cls+VL3XtsWT2fQ
+         XqEb708qgSlCd/b2D+Rd3w2WrFn4lkITSTNECAMlkziteLnFv3NCZJMSGRpMZxt7LFwz
+         qrHA64qCQ192u2heFfyU9uhQM/LWbb68NUezxaKZnEDdVrKoyC2KtmnmQWcdvb07iARW
+         PMlTvvt7+lbf30tRWppvhTekxCkugnWrCjXMRCIrRGISPvcs/vncRp/4eZWU732GnxE0
+         U0gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RVnukGaiui+du4+M3rktd/RcuLA80ABz3WVIbi2xHtI=;
+        b=q9HYqJafwG1JemueSNhiFNxATNZSDONNZ6ayhlZPDRha5mt2lvMC5+isKUvU60G25G
+         yvQd6eeuSJivP+IPJ5sVRZEioOn24Xa/iYzX42qGKeOVqeFJ4NMBcp5V5xG58jFrk4KW
+         Zg+ndPCxuH4dasNTkC0vtDubV8zPHHFV6oJih43+pRmbtlOCoB+CfeYafeLIu9eYeCS3
+         655+rD8UlYlE/p5L0Rr3aTLSTEKpGMSLLIZfBYFzoV9x2m4d8yuFT+Xr82DpnIw2Ivpe
+         V/R135rxWyW3ZSaBLGROVLyfgWd1FWbcQUs8SfCgjCVHG62+q2eBOPq2BO+GBkMI3I4U
+         g42A==
+X-Gm-Message-State: APjAAAU/TwiRT4LQ3e8zhHvRUnpR8uZwgKQxSwXJKbjZZfncnNCyum3Y
+        FD4gIFmVojUwMsFtbPyS99bNacju7M4rMxD8s/qk2N58r7Yd1c0BoD3ftjcsipUwORFbTEhdjZH
+        2+jABXwrtkBMCov6kV2/7WXU0aguK
+X-Received: by 2002:a0d:dbd5:: with SMTP id d204mr640591ywe.22.1576616783709;
+        Tue, 17 Dec 2019 13:06:23 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxobVgJolFCbVUp/qKSoQ1G1fQbOomuh913hWdYuOGTVfl6p/BvJ6GamqZF59q/3T4hYM6AfA==
+X-Received: by 2002:a0d:dbd5:: with SMTP id d204mr640571ywe.22.1576616783505;
+        Tue, 17 Dec 2019 13:06:23 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id w138sm6913670ywd.89.2019.12.17.13.06.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 13:06:23 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Markus Elfring <elfring@users.sourceforge.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] hdlcdrv: replace unnecessary assertion in hdlcdrv_register
+Date:   Tue, 17 Dec 2019 15:06:19 -0600
+Message-Id: <20191217210620.29775-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bin,
+In hdlcdrv_register, failure to register the driver causes a crash.
+The three callers of hdlcdrv_register all pass valid pointers and
+do not fail. The patch eliminates the unnecessary BUG_ON assertion.
 
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+v1: Changed from returning -EINVAL to deleting BUG_ON as identified
+by Stephen Hemminger.
+---
+ drivers/net/hamradio/hdlcdrv.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Le mar., d=E9c. 17, 2019 at 08:42, Bin Liu <b-liu@ti.com> a =E9crit :
-> Hi Paul,
->=20
-> On Wed, Dec 11, 2019 at 12:52:24PM -0600, Bin Liu wrote:
->>  On Tue, Dec 10, 2019 at 06:11:05PM +0100, Paul Cercueil wrote:
->>  > The implementation of the Inventra IP in some of the Ingenic=20
->> JZ47xx SoCs
->>  > does not use a separate IRQ line for DMA transfers.
->>  >
->>  > Allow these SoCs to be supported by adding a flag=20
->> 'dma_share_usb_irq'
->>  > in the struct musb. If set, no extra IRQ line is required, and=20
->> the musb
->>  > glue will need to call the API function=20
->> musbhs_dma_controller_irq()
->>  > within its interrupt handler.
->>  >
->>  > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->>  > Tested-by: Artur Rojek <contact@artur-rojek.eu>
->>  > ---
->>=20
->>  Queued for usb-next. Thanks.
->=20
-> I removed this and the next patch [3/7] in this series from my queue.
-> Sorry. Ming Guo has posted a series "Add MediaTek MUSB Controller
-> Driver" which has done the similar implementation [1] but without=20
-> adding
-> the flag in struct musb. Can you please check if you can use Ming's
-> implementation instead? The patch of his musb glue driver which uses=20
-> the
-> implementation is [2], just for your reference.
-
-Sure. Were these patches merged? What tree do they apply to? They don't=20
-apply cleanly on -rc2.
-
--Paul
-
-
->=20
-> [1] https://marc.info/?l=3Dlinux-usb&m=3D157602930627195&w=3D2
-> [2] https://marc.info/?l=3Dlinux-usb&m=3D157602932427210&w=3D2
->=20
-> Thanks,
-> -Bin.
-
-=
+diff --git a/drivers/net/hamradio/hdlcdrv.c b/drivers/net/hamradio/hdlcdrv.c
+index df495b5595f5..e7413a643929 100644
+--- a/drivers/net/hamradio/hdlcdrv.c
++++ b/drivers/net/hamradio/hdlcdrv.c
+@@ -687,8 +687,6 @@ struct net_device *hdlcdrv_register(const struct hdlcdrv_ops *ops,
+ 	struct hdlcdrv_state *s;
+ 	int err;
+ 
+-	BUG_ON(ops == NULL);
+-
+ 	if (privsize < sizeof(struct hdlcdrv_state))
+ 		privsize = sizeof(struct hdlcdrv_state);
+ 
+-- 
+2.20.1
 
