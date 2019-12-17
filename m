@@ -2,206 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE644122999
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:12:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4073C1229A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:16:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727459AbfLQLMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:12:20 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39470 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfLQLMS (ORCPT
+        id S1727298AbfLQLQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:16:03 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33247 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726730AbfLQLQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:12:18 -0500
-Received: by mail-pj1-f66.google.com with SMTP id v11so503677pjb.6;
-        Tue, 17 Dec 2019 03:12:18 -0800 (PST)
+        Tue, 17 Dec 2019 06:16:02 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c13so5970981pls.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 03:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=J0n454KnKg0Yc+bUS3no/ANTSoAZTXltdRIhNnO6eoo=;
-        b=bIesV/oYgstBVWDyuwRFe1X6bV0ShbctC64iI0sR5AKtWNOJBE5AALWlLCl4o72vnP
-         q56oRYjZNy2HjQ1jkibmnYdf+SL0qxADvzHAn/hJ1+wF7oHtgs0hEjF/7N2DByTqOTZS
-         W+chM93scIqJj1Vg7SguhrGlwDiCOsGeWkTvfbG6GGR0xa0ciBal+cM20HSXWNCcxJPQ
-         sEKGRHZ3XMUj1tDGUQ8bMSNAMrRShgezyfTKLq0fNZ+Qv4OOOJ41VauGb7TB7HWt+FmI
-         vk5wPe+O1iSF1Qcr45jMRauOIiB/eiUt1/7k+7/2GdiAx0c7H2+qSj9rho7821IeuE0t
-         6IdA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+awUKio9p4Gf8NY2FGLOxx315Fg31QJAQkkFLDdf2qk=;
+        b=vhLu684VYkAnZb2xIOi86+7krc1q5YZ391ygeuZ9ZFGk8CW9UIuDfYWehfwbeiDZJs
+         zE8jqRSy1XKVmGfPq3vfOcQRs72krLoF9Ph8WhX9lmNXeq70KSxDB7TthL4yy0iJg2oT
+         2wfVzqz0V6Hv95ZE2bceCFg06TNpytRoAdLARpOfOHgM4MD+jWg64x7Gwp5vw9P+ge6K
+         AXguuUV8/aAHK7qC5AO4XjFMnxSuqzcC+tNIBYFrKESHtXVtd7fjxGWcWe1orSEY1KAQ
+         XEH9KzcETJBV6kmE4rdCGYaLK69z0UhCnNjlv3v3cT6zgX5DYuVfaY1EItVtJvaFF093
+         HY1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=J0n454KnKg0Yc+bUS3no/ANTSoAZTXltdRIhNnO6eoo=;
-        b=c3Sp81wDb2yIhT4KX35GogENm1AKG3mnIuJOb+ONMPdCWVSbcwEVZbvCn+NRnOigb/
-         3Bcq5oBWK0ZSRIybE+6jdejllh+G7/xw9A+Eqhw7CSvsE6MjuhcScvPL8wUj9y0r90Cd
-         VDICnpMtS3AyOVr3L4+2aTLqP2qWafi208MiTr4MZ1/zIE6632jXZ8gSi9m/H8zu1/Gi
-         SaExVHsJuMN5ZZ5dJ+m+HTh9YXv/vhFKO/t9Mii+oBhmoVvxz1J1Yf4/0TzwMUdodtv1
-         FGOInHgju2y6oQdl2U6fui1NUbMBFpszaOTqp3UP3RclqOjiVIfRTtjZ66yAfGzwBWyy
-         N/xw==
-X-Gm-Message-State: APjAAAXxab7O3Xyg8pYpmx/5kzfWQFBu04S8GEr5RN9nhkYA7WJnat0G
-        i0q/fnS/aMugIdVB1PeAXO8=
-X-Google-Smtp-Source: APXvYqz3ETSIvhjvJN/qT4R3kYd+peU/mNtmbK96NtL5LTuU+DeVmBRk0OVJOE0sPObNFMQbDQHDqQ==
-X-Received: by 2002:a17:90a:20c4:: with SMTP id f62mr5470172pjg.70.1576581137900;
-        Tue, 17 Dec 2019 03:12:17 -0800 (PST)
-Received: from brcpsddjunho-l.padtec.com.br (apolo.padtec.com.br. [200.228.158.130])
-        by smtp.gmail.com with ESMTPSA id 81sm25855190pfx.73.2019.12.17.03.12.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 03:12:17 -0800 (PST)
-From:   Daniel Junho <djunho@gmail.com>
-To:     "Jonathan Cameron" <jic23@kernel.org>,
-        "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
-        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
-        "lkcamp@lists.libreplanetbr.org" <lkcamp@lists.libreplanetbr.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "lars@metafoo.de" <lars@metafoo.de>
-Subject: [PATCH v3 4/4] iio: adc: ad7923: Add support for the ad7908/ad7918/ad7928
-Date:   Tue, 17 Dec 2019 08:11:58 -0300
-Message-Id: <20191217111158.30888-5-djunho@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191217111158.30888-1-djunho@gmail.com>
-References: <20191217111158.30888-1-djunho@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+awUKio9p4Gf8NY2FGLOxx315Fg31QJAQkkFLDdf2qk=;
+        b=DAOAVq+LSyOHEVC3LsOZtePBDy1syiNE/0bJ2XJ8uH8+lTmsZvczMzCIvO5nVtLsHp
+         dH3WJv2jR6wR4cfB2S+P5DA8jGKrKw9Ejpn3J4gbSkgeXUgi04d+Kd99+ceeGKnaVX2z
+         VpfsdSdc53qSRv8avblsbFUOfk6fDATtkwLmCUkEFv2Qg+z/GugwfphPkCrS6qh28RRC
+         qPUnqpLG1TTfk1ZaiITOlgSz+aI9b9ig1idqUg5UFBNstO0DMAl7IpglvgzxRJGSWXID
+         AwDTzKmQvYxIWvvkxgx7fyp/KJfrkiK7YN0D+9JXtY9cmTD2nPcF4rsQl+ZW5YIDvssz
+         0hfw==
+X-Gm-Message-State: APjAAAUh8FDUY7MZfE7x1ShcIO74i7IpzWH0IakPqN0A19QMqrLEbwGx
+        q3/zo1CdHPO5RloBLvd6iJ5YNvzSOjq9A8OqlxG8Uw==
+X-Google-Smtp-Source: APXvYqw1BghZmCWqP60myjxjEs6YuRq3Mo3lYtfOqhdxaPe8CxHGvSNj0WzKtKxsdl9oPTsLP3S4j8Jna1S2/v9ahic=
+X-Received: by 2002:a17:90b:150:: with SMTP id em16mr5195492pjb.123.1576581361710;
+ Tue, 17 Dec 2019 03:16:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <95e7a12ac909e7de584133772efc7ef982a16bbb.1576170740.git.andreyknvl@google.com>
+ <Pine.LNX.4.44L0.1912121313030.1352-100000@iolanthe.rowland.org>
+ <CAAeHK+yOBcNz_iopRs6PEu=1-rZn6Gkm+Urq+iVBFQeSjSXqNA@mail.gmail.com> <CACT4Y+aN20NXxXhe9qv_WRLntAHbL98Shj8NAvg0WafDw8C=jA@mail.gmail.com>
+In-Reply-To: <CACT4Y+aN20NXxXhe9qv_WRLntAHbL98Shj8NAvg0WafDw8C=jA@mail.gmail.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 17 Dec 2019 12:15:50 +0100
+Message-ID: <CAAeHK+xyVh6QkbUp6z+fLrv5f9sODkgFuvmBU1jB8borQ9M65g@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] kcov: collect coverage from interrupts
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Alexander Potapenko <glider@google.com>,
+        Marco Elver <elver@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ad7928 is software compatible with the ad7923.
-The ad7908 and ad7918 are the 8 and 10-bit versions of the ad7928.
+On Tue, Dec 17, 2019 at 12:00 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Fri, Dec 13, 2019 at 1:09 PM Andrey Konovalov <andreyknvl@google.com> wrote:
+> >
+> > On Thu, Dec 12, 2019 at 7:15 PM Alan Stern <stern@rowland.harvard.edu> wrote:
+> > >
+> > > On Thu, 12 Dec 2019, Andrey Konovalov wrote:
+> > >
+> > > > This change extends kcov remote coverage support to allow collecting
+> > > > coverage from interrupts in addition to kernel background threads.
+> > > >
+> > > > To collect coverage from code that is executed in interrupt context, a
+> > > > part of that code has to be annotated with kcov_remote_start/stop() in a
+> > > > similar way as how it is done for global kernel background threads. Then
+> > > > the handle used for the annotations has to be passed to the
+> > > > KCOV_REMOTE_ENABLE ioctl.
+> > > >
+> > > > Internally this patch adjusts the __sanitizer_cov_trace_pc() compiler
+> > > > inserted callback to not bail out when called from interrupt context.
+> > > > kcov_remote_start/stop() are updated to save/restore the current per
+> > > > task kcov state in a per-cpu area (in case the interrupt came when the
+> > > > kernel was already collecting coverage in task context). Coverage from
+> > > > interrupts is collected into pre-allocated per-cpu areas, whose size is
+> > > > controlled by the new CONFIG_KCOV_IRQ_AREA_SIZE.
+> > > >
+> > > > This patch also cleans up some of kcov debug messages.
+> > > >
+> > > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > > > ---
+> > >
+> > > > diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
+> > > > index 4c9d1e49d5ed..faf84ada71a5 100644
+> > > > --- a/drivers/usb/gadget/udc/dummy_hcd.c
+> > > > +++ b/drivers/usb/gadget/udc/dummy_hcd.c
+> > > > @@ -38,6 +38,7 @@
+> > > >  #include <linux/usb/gadget.h>
+> > > >  #include <linux/usb/hcd.h>
+> > > >  #include <linux/scatterlist.h>
+> > > > +#include <linux/kcov.h>
+> > > >
+> > > >  #include <asm/byteorder.h>
+> > > >  #include <linux/io.h>
+> > >
+> > > That's the only change to this driver.  As such, it doesn't appear to
+> > > be needed, judging by the patch description.
+> >
+> > Right, will fix in the next version, thanks!
+>
+> Please also post a github or gerrit link. These small scraps of
+> changes without context and better visualisation are extremely hard to
+> review meaningfully.
 
-Signed-off-by: Daniel Junho <djunho@gmail.com>
----
- drivers/iio/adc/ad7923.c | 57 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 7 deletions(-)
+The link is in the cover letter:
 
-diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-index 6d56fa0b9e30..1077036d1ed8 100644
---- a/drivers/iio/adc/ad7923.c
-+++ b/drivers/iio/adc/ad7923.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * AD7904/AD7914/AD7923/AD7924 SPI ADC driver
-+ * AD7904/AD7914/AD7923/AD7924/AD7908/AD7918/AD7928 SPI ADC driver
-  *
-  * Copyright 2011 Analog Devices Inc (from AD7923 Driver)
-  * Copyright 2012 CS Systemes d'Information
-@@ -29,11 +29,13 @@
- #define AD7923_PM_MODE_AS	(1)		/* auto shutdown */
- #define AD7923_PM_MODE_FS	(2)		/* full shutdown */
- #define AD7923_PM_MODE_OPS	(3)		/* normal operation */
--#define AD7923_SEQUENCE_OFF	(0)		/* no sequence fonction */
--#define AD7923_SEQUENCE_PROTECT	(2)		/* no interrupt write cycle */
--#define AD7923_SEQUENCE_ON	(3)		/* continuous sequence */
- 
--#define AD7923_MAX_CHAN		4
-+#define AD7923_SEQUENCE_OFF	(0x00)		/* no sequence function */
-+#define AD7908_SEQUENCE_SHADOW	(0x01)		/* use the shadow register
-+						 * for programming
-+						 */
-+#define AD7923_SEQUENCE_PROTECT	(0x10)		/* no interrupt write cycle */
-+#define AD7923_SEQUENCE_ON	(0x11)		/* continuous sequence */
- 
- #define AD7923_PM_MODE_WRITE(mode)	((mode) << 4)	 /* write mode */
- #define AD7923_CHANNEL_WRITE(channel)	((channel) << 6) /* write channel */
-@@ -74,6 +76,9 @@ enum ad7923_id {
- 	AD7904,
- 	AD7914,
- 	AD7924,
-+	AD7908,
-+	AD7918,
-+	AD7928
- };
- 
- #define AD7923_V_CHAN(index, bits)					\
-@@ -102,9 +107,25 @@ const struct iio_chan_spec name ## _channels[] = { \
- 	IIO_CHAN_SOFT_TIMESTAMP(4), \
- }
- 
-+#define DECLARE_AD7908_CHANNELS(name, bits) \
-+const struct iio_chan_spec name ## _channels[] = { \
-+	AD7923_V_CHAN(0, bits), \
-+	AD7923_V_CHAN(1, bits), \
-+	AD7923_V_CHAN(2, bits), \
-+	AD7923_V_CHAN(3, bits), \
-+	AD7923_V_CHAN(4, bits), \
-+	AD7923_V_CHAN(5, bits), \
-+	AD7923_V_CHAN(6, bits), \
-+	AD7923_V_CHAN(7, bits), \
-+	IIO_CHAN_SOFT_TIMESTAMP(8), \
-+}
-+
- static DECLARE_AD7923_CHANNELS(ad7904, 8);
- static DECLARE_AD7923_CHANNELS(ad7914, 10);
- static DECLARE_AD7923_CHANNELS(ad7924, 12);
-+static DECLARE_AD7908_CHANNELS(ad7908, 8);
-+static DECLARE_AD7908_CHANNELS(ad7918, 10);
-+static DECLARE_AD7908_CHANNELS(ad7928, 12);
- 
- static const struct ad7923_chip_info ad7923_chip_info[] = {
- 	[AD7904] = {
-@@ -119,6 +140,18 @@ static const struct ad7923_chip_info ad7923_chip_info[] = {
- 		.channels = ad7924_channels,
- 		.num_channels = ARRAY_SIZE(ad7924_channels),
- 	},
-+	[AD7908] = {
-+		.channels = ad7908_channels,
-+		.num_channels = ARRAY_SIZE(ad7908_channels),
-+	},
-+	[AD7918] = {
-+		.channels = ad7918_channels,
-+		.num_channels = ARRAY_SIZE(ad7918_channels),
-+	},
-+	[AD7928] = {
-+		.channels = ad7928_channels,
-+		.num_channels = ARRAY_SIZE(ad7928_channels),
-+	},
- };
- 
- /**
-@@ -131,7 +164,11 @@ static int ad7923_update_scan_mode(struct iio_dev *indio_dev,
- 	int i, cmd, len;
- 
- 	len = 0;
--	for_each_set_bit(i, active_scan_mask, AD7923_MAX_CHAN) {
-+	/*
-+	 * For this driver the last channel is always the software timestamp so
-+	 * skip that one.
-+	 */
-+	for_each_set_bit(i, active_scan_mask, indio_dev->num_channels - 1) {
- 		cmd = AD7923_WRITE_CR | AD7923_CHANNEL_WRITE(i) |
- 			AD7923_SEQUENCE_WRITE(AD7923_SEQUENCE_OFF) |
- 			st->settings;
-@@ -344,6 +381,9 @@ static const struct spi_device_id ad7923_id[] = {
- 	{"ad7914", AD7914},
- 	{"ad7923", AD7924},
- 	{"ad7924", AD7924},
-+	{"ad7908", AD7908},
-+	{"ad7918", AD7918},
-+	{"ad7928", AD7928},
- 	{}
- };
- MODULE_DEVICE_TABLE(spi, ad7923_id);
-@@ -353,6 +393,9 @@ static const struct of_device_id ad7923_of_match[] = {
- 	{ .compatible = "adi,ad7914", },
- 	{ .compatible = "adi,ad7923", },
- 	{ .compatible = "adi,ad7924", },
-+	{ .compatible = "adi,ad7908", },
-+	{ .compatible = "adi,ad7918", },
-+	{ .compatible = "adi,ad7928", },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, ad7923_of_match);
-@@ -370,5 +413,5 @@ module_spi_driver(ad7923_driver);
- 
- MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
- MODULE_AUTHOR("Patrick Vasseur <patrick.vasseur@c-s.fr>");
--MODULE_DESCRIPTION("Analog Devices AD7904/AD7914/AD7923/AD7924 ADC");
-+MODULE_DESCRIPTION("Analog Devices AD7923 and similar ADC");
- MODULE_LICENSE("GPL v2");
--- 
-2.24.1
-
+https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2224/1
