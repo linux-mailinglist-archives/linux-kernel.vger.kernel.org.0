@@ -2,172 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73003123108
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 17:01:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A214312310E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 17:04:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727956AbfLQQBa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 11:01:30 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35511 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726858AbfLQQB3 (ORCPT
+        id S1728083AbfLQQEa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 11:04:30 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56842 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfLQQEa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 11:01:29 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 57EC5214CE;
-        Tue, 17 Dec 2019 11:01:26 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 17 Dec 2019 11:01:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm1; bh=Y
-        HIMCc3/SwCjYhzOqSCPEnWxTwNP453CayjjOfzEEEA=; b=DEshovlqPlbPnnl9W
-        rWoscm41p9R2HT2FQnZBMF4K0Mpu56k1+I9PssBwz8lAzJvBnluCvLnhLc7dqoeL
-        51vb/t1EAhPtWEEa90JLYh+KIzs0rqEW2XLvNRZqrmERzvzjqL1Cqphon1Fw5Ycj
-        AeZ71M9TU6bNOM1xV9iJmsxN4Wktw43AVts4EjK3itzRCEHfAaYNVPZEvDxyJDwB
-        czWGpI/RnGNKTZv6GPd/SoAjZIuCIWt2GCoq1Bgu83hbglfBkskhnm/812sw09Vy
-        jmKJj+aCByaAnC4QrCvfs2vk1YlDpE6C7itDOLq+iI99l6mjDpAMV0n3YY3oyfFZ
-        9Ylzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=YHIMCc3/SwCjYhzOqSCPEnWxTwNP453CayjjOfzEE
-        EA=; b=SSfPjRs0n/teT+8ELHDjqJexAvfcNzNmZXDYI7Mo0h4yKN1C2Mssv7OjL
-        c8LYIqcqAExc4nubBM7ACNdlf6K3gOEADVaFFB10PlwZstixjjPHJ5V8DNtKvlUI
-        3W0GbmK1V7iE3C+MIKFCzulP7mJ73AV1x9TpV1jA/p6vqKT1bdxCDZJhcfw5LJ5R
-        y+Kqhe2r816Qi/FQe4201wPVOrsZpuCYm+wxQBvH4O98+D50QA83W9jsTgPaxghO
-        wgtSPJqE1k7+PNxd2FMsvfi1WpxqFDoUsmNZ+Eyyc3Nr1YWBkR3WS/UEUfiWZLbz
-        Qj9okuoKoasEkoLrSalsjxmAQm0sg==
-X-ME-Sender: <xms:1Pv4Xdd_GwUuGLKbzYRLs9N4olWgj3iJRHwAiBQw6ecosSp_wgtHtw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtjedgkedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtugfgjgesthhqredttddtudenucfhrhhomhepofgrgihi
-    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucffohhmrg
-    hinhepuggvvhhitggvthhrvggvrdhorhhgnecukfhppeeltddrkeelrdeikedrjeeinecu
-    rfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghhnecuve
-    hluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:1Pv4XQesoeRACw8dYH21Py4H-7RCKANRMLsA7d0IE6GAye0-PUzZaw>
-    <xmx:1Pv4XZLYJGYeWjURFkBwAnS09OKATB7Ih86x8BvrwriOnPIOmq-zMg>
-    <xmx:1Pv4XWp-opwi82fJNStAcAVPMPxNXGd5_klApx4v54kev_5BUv-NlQ>
-    <xmx:1vv4XZIX-GxCFKrlIxmkBMRJBCLp8nccp0qQgjyGeC6lKVhRBkku9w>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 84A338005A;
-        Tue, 17 Dec 2019 11:01:24 -0500 (EST)
-Date:   Tue, 17 Dec 2019 17:01:22 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc:     dri-devel@lists.freedesktop.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        thierry.reding@gmail.com, sam@ravnborg.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: display: panel: Add binding document
- for Xinpeng XPP055C272
-Message-ID: <20191217160122.psxwdd6accn7soed@gilmour.lan>
-References: <20191217140703.23867-1-heiko@sntech.de>
- <20191217140703.23867-2-heiko@sntech.de>
- <20191217142446.yexcmh5ox4336qmd@gilmour.lan>
- <1823876.MjdJyG0ANN@diego>
+        Tue, 17 Dec 2019 11:04:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8pz2TWNx/nYHSnb/3v/c/XUDOnHlIu5NwAdxkQteJrQ=; b=ghEfgYlhDr7qiiNNbCkaK1FGg
+        Bh+3P6BA8Uvi66XxHM6UyhadULk5T9fu+dMgimux+e/KPIbYTv/vvIB4M4Rgs3kV2uBaRGe9JL7DX
+        T/mmRCI3DGEPyQBdClpL6FLBtHimCtpDAneO+AzQaJBF8PcS1tMxffLIuxFzjbBysOjZD2P6gjImW
+        1dws1VEHxdiyXAzLPuBkfd0mS1CvqNaun0mUR6gA+4AXjF0VyRdXTXIkQIWbvssSlxhv/MJ66sY2C
+        ouYIv5QVzw4Yi8wihvqpZYhzpqNTaQ2ZdhvgEKpkaOKyquYEmy8L/2UkMUx6W31UAGLJHA7dzGX4q
+        ibKKSvEqg==;
+Received: from [2601:1c0:6280:3f0::fee9]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihFKj-00034V-UO; Tue, 17 Dec 2019 16:04:25 +0000
+Subject: Re: linux-next: Tree for Dec 17
+ (sound/soc/intel/boards/cml_rt1011_rt5682.o)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        moderated for non-subscribers <alsa-devel@alsa-project.org>,
+        Cezary Rojewski <cezary.rojewski@intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>
+References: <20191217130829.6a66b404@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <c4fd86fb-586a-0fbc-74b0-97e6b99ef2ca@infradead.org>
+Date:   Tue, 17 Dec 2019 08:04:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1823876.MjdJyG0ANN@diego>
+In-Reply-To: <20191217130829.6a66b404@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 04:08:49PM +0100, Heiko St=FCbner wrote:
-> Am Dienstag, 17. Dezember 2019, 15:24:46 CET schrieb Maxime Ripard:
-> > Hi,
-> >
-> > On Tue, Dec 17, 2019 at 03:07:02PM +0100, Heiko Stuebner wrote:
-> > > From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> > >
-> > > The XPP055C272 is a 5.5" 720x1280 DSI display.
-> > >
-> > > changes in v2:
-> > > - add size info into binding title (Sam)
-> > > - add more required properties (Sam)
-> > >
-> > > Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> > > Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> > > ---
-> > >  .../display/panel/xinpeng,xpp055c272.yaml     | 48 +++++++++++++++++=
-++
-> > >  1 file changed, 48 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/panel/x=
-inpeng,xpp055c272.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/panel/xinpeng,=
-xpp055c272.yaml b/Documentation/devicetree/bindings/display/panel/xinpeng,x=
-pp055c272.yaml
-> > > new file mode 100644
-> > > index 000000000000..2d0fc97d735c
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c=
-272.yaml
-> > > @@ -0,0 +1,48 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/panel/sony,acx424akp.yaml#
-> >
-> > The ID doesn't match the file name.
-> >
-> > Did you run dt_bindings_check?
->
-> Thanks for that pointer ... I did run dtbs_check on the binding and was
-> sooo happy to not find any panel errors in the pages of other dt errors
-> but till now didn't realize that there's also a dtbinding_check.
+On 12/16/19 6:08 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20191216:
+> 
 
-dt_bindings_check is a sanity check on the bindings
-themselves. dtbs_check is using those bindings to check the device
-trees.
+on x86_64:
 
-dtbs_check used to have a dependency on dt_bindings_check, but it got
-removed recently.
+  CC      sound/soc/intel/boards/cml_rt1011_rt5682.o
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:4: error: ‘struct snd_soc_codec_conf’ has no member named ‘dev_name’
+   .dev_name = "i2c-10EC1011:00",
+    ^~~~~~~~
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:407:50: warning: missing braces around initializer [-Wmissing-braces]
+ static struct snd_soc_codec_conf rt1011_conf[] = {
+                                                  ^
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:15:
+   .dev_name = "i2c-10EC1011:00",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:413:4: error: ‘struct snd_soc_codec_conf’ has no member named ‘dev_name’
+   .dev_name = "i2c-10EC1011:01",
+    ^~~~~~~~
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:407:50: warning: missing braces around initializer [-Wmissing-braces]
+ static struct snd_soc_codec_conf rt1011_conf[] = {
+                                                  ^
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:15:
+   .dev_name = "i2c-10EC1011:00",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:413:15:
+   .dev_name = "i2c-10EC1011:01",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:417:4: error: ‘struct snd_soc_codec_conf’ has no member named ‘dev_name’
+   .dev_name = "i2c-10EC1011:02",
+    ^~~~~~~~
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:407:50: warning: missing braces around initializer [-Wmissing-braces]
+ static struct snd_soc_codec_conf rt1011_conf[] = {
+                                                  ^
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:15:
+   .dev_name = "i2c-10EC1011:00",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:413:15:
+   .dev_name = "i2c-10EC1011:01",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:417:15:
+   .dev_name = "i2c-10EC1011:02",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:421:4: error: ‘struct snd_soc_codec_conf’ has no member named ‘dev_name’
+   .dev_name = "i2c-10EC1011:03",
+    ^~~~~~~~
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:407:50: warning: missing braces around initializer [-Wmissing-braces]
+ static struct snd_soc_codec_conf rt1011_conf[] = {
+                                                  ^
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:15:
+   .dev_name = "i2c-10EC1011:00",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:413:15:
+   .dev_name = "i2c-10EC1011:01",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:417:15:
+   .dev_name = "i2c-10EC1011:02",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:421:15:
+   .dev_name = "i2c-10EC1011:03",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:407:50: warning: missing braces around initializer [-Wmissing-braces]
+ static struct snd_soc_codec_conf rt1011_conf[] = {
+                                                  ^
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:409:15:
+   .dev_name = "i2c-10EC1011:00",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:413:15:
+   .dev_name = "i2c-10EC1011:01",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:417:15:
+   .dev_name = "i2c-10EC1011:02",
+               {                }
+../sound/soc/intel/boards/cml_rt1011_rt5682.c:421:15:
+   .dev_name = "i2c-10EC1011:03",
+               {                }
+make[5]: *** [../scripts/Makefile.build:266: sound/soc/intel/boards/cml_rt1011_rt5682.o] Error 1
 
-Maxime
 
->
-> Will keep that in mind for future bindings  - and of course fix things
-> in the next version.
->
->
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Xinpeng XPP055C272 5.5in 720x1280 DSI panel
-> > > +
-> > > +maintainers:
-> > > +  - Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> > > +
-> > > +allOf:
-> > > +  - $ref: panel-common.yaml#
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: xinpeng,xpp055c272
-> > > +  reg: true
-> > > +  backlight: true
-> > > +  port: true
-> >
-> > What is the port supposed to be doing?
->
-> Hooking the display up to the dsi controller. But you're right,
-> works without port as well with these single-dsi displays.
->
-> I just remember needing one for the Gru-Scarlet display that needed
-> to connect to two dsi controllers.
->
-> So I'll drop the port node here and from my board devicetree.
-
-It's not really what I meant though :)
-
-If it's needed then we should definitely have it, but we should
-document our expectations here: is it the input port ? output? in
-which case do we want to use it since it's optional, etc.
-
-Maxime
+-- 
+~Randy
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
