@@ -2,109 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3446F123773
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:40:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2D9A12377F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbfLQUk0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:40:26 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37952 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727531AbfLQUk0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:40:26 -0500
-Received: by mail-lf1-f65.google.com with SMTP id r14so7954102lfm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:40:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b1UVWu00nZlnL+gSKSf+cYvswvY2Irci1SeQ3MCQ5Q0=;
-        b=abj0IKuOCgcU6SWlN3sX6zMFg345ZVN2DnXZ9SRr4NYFVRrccR9oTW9nm41eaSIqTB
-         bK0MSdhqYdHm25aPG53SYvLba08MJIScLkS9CwO2/Z6VvfU4vlxKSL783ucCUEwm9LEw
-         mc7PshrW4thetnIpE/uEjUH08H5ySbZdktI4I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b1UVWu00nZlnL+gSKSf+cYvswvY2Irci1SeQ3MCQ5Q0=;
-        b=czEXFBw8SGOEun/UCRQGFB+NxNjbTRrXBZcqBVotV1KHJvFMPX3D4DlfobH2nVIEKR
-         3IgQ1fRaaSEogO2RIugFJUOntXXZ2KC4S4NH+xEARzZm4zk776Gkv25sHqSUmnAcvz00
-         H7F960ISzOoNDgjBil5Cu814KPc/nKRPbkivynwlBd9ydpBNDM+7E61NxP0Vr28Sd3Pu
-         o6GPaXX2MdqkBMIWI3ON4oN7YtxfGWx1sKkd7zEP4R0Rx9cktur5qVwEjcl0SBiiqGx7
-         5huXs3Vh+91NiEnOo5zpbO0vKv3cZMRD3u727m3wEiym0/Ejn+IW+GOfRM5uGuZ05y5S
-         xIhA==
-X-Gm-Message-State: APjAAAUtV6rAaY/aTt+pw9ZPZV6LPk0RVHaMSJ0f54TgIowIxWYBBMge
-        Mm3Zkp0E//12PODzSTOEdNnmxTHvOC8=
-X-Google-Smtp-Source: APXvYqwxYOc+8FsrVMk7fECuzjA+akqaoP7hmfG8dGB+hK/cCtc8ApNCQw5ZB827PRVzn/lfxFvhuw==
-X-Received: by 2002:a05:6512:c7:: with SMTP id c7mr4160210lfp.120.1576615224129;
-        Tue, 17 Dec 2019 12:40:24 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id h24sm13077194ljl.80.2019.12.17.12.40.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 12:40:23 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id j6so12491383lja.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:40:23 -0800 (PST)
-X-Received: by 2002:a2e:99d0:: with SMTP id l16mr4701887ljj.1.1576615222887;
- Tue, 17 Dec 2019 12:40:22 -0800 (PST)
+        id S1728417AbfLQUkn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:40:43 -0500
+Received: from mga12.intel.com ([192.55.52.136]:4185 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727070AbfLQUkn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 15:40:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 12:40:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
+   d="scan'208";a="389952569"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 12:40:42 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        =?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <f4bug@amsat.org>
+Subject: [PATCH v4 00/19] KVM: Dynamically size memslot arrays
+Date:   Tue, 17 Dec 2019 12:40:22 -0800
+Message-Id: <20191217204041.10815-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <20191212181422.31033-1-linux@dominikbrodowski.net>
- <157644301187.32474.6697415383792507785.pr-tracker-bot@kernel.org> <CAJmaN=ksaH5AgRUdVPGWKZzjEinU+goaCqedH1PW6OmKYc_TuA@mail.gmail.com>
-In-Reply-To: <CAJmaN=ksaH5AgRUdVPGWKZzjEinU+goaCqedH1PW6OmKYc_TuA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Dec 2019 12:40:07 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgjNqEfaVssn1Bd897dGFMVAjeg3tiDWZ7-z886fBCTLA@mail.gmail.com>
-Message-ID: <CAHk-=wgjNqEfaVssn1Bd897dGFMVAjeg3tiDWZ7-z886fBCTLA@mail.gmail.com>
-Subject: Re: [GIT PULL] remove ksys_mount() and ksys_dup()
-To:     Jesse Barnes <jsbarnes@google.com>
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:33 AM Jesse Barnes <jsbarnes@google.com> wrote:
->
-> Still debugging, but this causes a panic in console_on_rootfs() when we try to dup the fds for stderr and stdout.
+The end goal of this series is to dynamically size the memslot array so
+that KVM allocates memory based on the number of memslots in use, as
+opposed to unconditionally allocating memory for the maximum number of
+memslots.  On x86, each memslot consumes 88 bytes, and so with 2 address
+spaces of 512 memslots, each VM consumes ~90k bytes for the memslots.
+E.g. given a VM that uses a total of 30 memslots, dynamic sizing reduces
+the memory footprint from 90k to ~2.6k bytes.
 
-Duh.
+The changes required to support dynamic sizing are relatively small,
+e.g. are essentially contained in patches 17/19 and 18/19.
 
-That series was incredibly buggy, and there's another bug in there.
+Patches 2-16 clean up the memslot code, which has gotten quite crusty,
+especially __kvm_set_memory_region().  The clean up is likely not strictly
+necessary to switch to dynamic sizing, but I didn't have a remotely
+reasonable level of confidence in the correctness of the dynamic sizing
+without first doing the clean up.
 
-I think this should fix it:
+The only functional change in v4 is the addition of an x86-specific bug
+fix in x86's handling of KVM_MR_MOVE.  The bug fix is not directly related
+to dynamically allocating memslots, but it has subtle and hidden conflicts
+with the cleanup patches, and the fix is higher priority than anything
+else in the series, i.e. should be merged first.
 
-  diff --git a/init/main.c b/init/main.c
-  index ec3a1463ac69..1ecfd43ed464 100644
-  --- a/init/main.c
-  +++ b/init/main.c
-  @@ -1163,7 +1163,7 @@ void console_on_rootfs(void)
+On non-x86 architectures, v3 and v4 should be functionally equivalent,
+the only non-x86 change in v4 is the dropping of a "const" in
+kvm_arch_commit_memory_region().
 
-          /* Open /dev/console in kernelspace, this should never fail */
-          file = filp_open("/dev/console", O_RDWR, 0);
-  -       if (!file)
-  +       if (IS_ERR(file))
-                  goto err_out;
+v4:
+  - Add patch 01 to fix an x86 rmap/lpage bug, and patches 10 and 11 to
+    resolve hidden conflicts with the bug fix.
+  - Collect tags [Christian, Marc, Philippe].
+  - Rebase to kvm/queue, commit e41a90be9659 ("KVM: x86/mmu: WARN if
+    root_hpa is invalid when handling a page fault").
+v3:
+  - Fix build errors on PPC and MIPS due to missed params during
+    refactoring [kbuild test robot].
+  - Rename the helpers for update_memslots() and add comments describing
+    the new algorithm and how it interacts with searching [Paolo].
+  - Remove the unnecessary and obnoxious warning regarding memslots being
+    a flexible array [Paolo].
+  - Fix typos in the changelog of patch 09/15 [Christoffer].
+  - Collect tags [Christoffer].
 
-          /* create stdin/stdout/stderr, this should never fail */
+v2:
+  - Split "Drop kvm_arch_create_memslot()" into three patches to move
+    minor functional changes to standalone patches [Janosch].
+  - Rebase to latest kvm/queue (f0574a1cea5b, "KVM: x86: fix ...")
+  - Collect an Acked-by and a Reviewed-by
 
-and yes,that particular problem only triggers when you have some odd
-root filesystem without a /dev/console. Or a kernel config that
-doesn't have those devices enabled at all.
+Sean Christopherson (19):
+  KVM: x86: Allocate new rmap and large page tracking when moving
+    memslot
+  KVM: Reinstall old memslots if arch preparation fails
+  KVM: Don't free new memslot if allocation of said memslot fails
+  KVM: PPC: Move memslot memory allocation into prepare_memory_region()
+  KVM: x86: Allocate memslot resources during prepare_memory_region()
+  KVM: Drop kvm_arch_create_memslot()
+  KVM: Explicitly free allocated-but-unused dirty bitmap
+  KVM: Refactor error handling for setting memory region
+  KVM: Move setting of memslot into helper routine
+  KVM: Drop "const" attribute from old memslot in commit_memory_region()
+  KVM: x86: Free arrays for old memslot when moving memslot's base gfn
+  KVM: Move memslot deletion to helper function
+  KVM: Simplify kvm_free_memslot() and all its descendents
+  KVM: Clean up local variable usage in __kvm_set_memory_region()
+  KVM: Provide common implementation for generic dirty log functions
+  KVM: Ensure validity of memslot with respect to kvm_get_dirty_log()
+  KVM: Terminate memslot walks via used_slots
+  KVM: Dynamically size memslot array based on number of used slots
+  KVM: selftests: Add test for KVM_SET_USER_MEMORY_REGION
 
-I delayed pulling it for a couple of days, but the branch was not in
-linux-next, so my delay didn't make any difference, and all these
-things only became obvious after I pulled. And while it was all
-horribly buggy, it was only buggy for the "these cases don't happen in
-a normal distro" case, so the regular use didn't show them.
+ arch/mips/include/asm/kvm_host.h              |   2 +-
+ arch/mips/kvm/mips.c                          |  71 +-
+ arch/powerpc/include/asm/kvm_ppc.h            |  17 +-
+ arch/powerpc/kvm/book3s.c                     |  22 +-
+ arch/powerpc/kvm/book3s_hv.c                  |  36 +-
+ arch/powerpc/kvm/book3s_pr.c                  |  20 +-
+ arch/powerpc/kvm/booke.c                      |  17 +-
+ arch/powerpc/kvm/powerpc.c                    |  15 +-
+ arch/s390/include/asm/kvm_host.h              |   2 +-
+ arch/s390/kvm/kvm-s390.c                      |  23 +-
+ arch/x86/include/asm/kvm_page_track.h         |   3 +-
+ arch/x86/kvm/mmu/page_track.c                 |  15 +-
+ arch/x86/kvm/x86.c                            | 114 +---
+ include/linux/kvm_host.h                      |  48 +-
+ tools/testing/selftests/kvm/.gitignore        |   1 +
+ tools/testing/selftests/kvm/Makefile          |   3 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   1 +
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  30 +
+ .../selftests/kvm/set_memory_region_test.c    | 142 ++++
+ virt/kvm/arm/arm.c                            |  48 +-
+ virt/kvm/arm/mmu.c                            |  20 +-
+ virt/kvm/kvm_main.c                           | 621 ++++++++++++------
+ 22 files changed, 736 insertions(+), 535 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/set_memory_region_test.c
 
-My bad. I shouldn't have pulled this, but it all looked very obvious
-and trivial.
+-- 
+2.24.1
 
-              Linus
