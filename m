@@ -2,58 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 325A8122FAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D0A6122FAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:07:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfLQPHf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:07:35 -0500
-Received: from muru.com ([72.249.23.125]:48918 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfLQPHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:07:35 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id DF34D8116;
-        Tue, 17 Dec 2019 15:08:14 +0000 (UTC)
-Date:   Tue, 17 Dec 2019 07:07:32 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: OMAP: Use ARM SMC Calling Convention when OP-TEE is
- available
-Message-ID: <20191217150732.GW35479@atomide.com>
-References: <7fa11037-8d33-2274-c8cc-80e9630b38b0@ti.com>
- <20191119192029.GP35479@atomide.com>
- <0ad31b32-712e-5bef-5645-0336dfec99cc@ti.com>
- <20191119194425.GQ35479@atomide.com>
- <f2f53e5e-6c95-e32f-d67a-284bb88e73e0@ti.com>
- <1ff8ae4b-5de3-4fdf-7318-d33398dc7fc8@ti.com>
- <20191216210407.GR35479@atomide.com>
- <9adad579-98b4-f228-caf3-f4996dcaecda@ti.com>
- <20191216224105.GS35479@atomide.com>
- <35e4b682-0d2f-23b1-6df4-428c6bcb4d59@ti.com>
+        id S1727580AbfLQPHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:07:46 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39751 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfLQPHp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:07:45 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihERp-0008EA-9l; Tue, 17 Dec 2019 16:07:41 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihERn-0000VM-24; Tue, 17 Dec 2019 16:07:39 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH v3 0/3] tty/leds: implement a trigger for ttys
+Date:   Tue, 17 Dec 2019 16:07:33 +0100
+Message-Id: <20191217150736.1479-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <35e4b682-0d2f-23b1-6df4-428c6bcb4d59@ti.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Andrew F. Davis <afd@ti.com> [191217 13:14]:
-> On 12/16/19 5:41 PM, Tony Lindgren wrote:
-> > Please just add omap_early_initcall() to omap-secure.c while at it
-> > to deal with this.
->
-> omap_early_initcall()s are not called until after all the SMC calls have
-> already happened.
+Hello,
 
-Oh OK. Then let's just add omap_secure_init() that's called from
-*_init_early() as late as possible. We will have more use for that
-init later on too.
+next iteration of the tty-led-trigger series. This addresses the review
+comments I got from Greg.
 
-Regards,
+This depends on patch "tty: drop useless variable initialisation in
+tty_kopen()" which is already on tty-testing.
 
-Tony
+Best regards
+Uwe
+
+Uwe Kleine-König (3):
+  tty: rename tty_kopen() and add new function tty_kopen_shared()
+  tty: new helper function tty_get_icount()
+  leds: trigger: implement a tty trigger
+
+ drivers/leds/trigger/Kconfig        |   7 ++
+ drivers/leds/trigger/Makefile       |   1 +
+ drivers/leds/trigger/ledtrig-tty.c  | 159 ++++++++++++++++++++++++++++
+ drivers/staging/speakup/spk_ttyio.c |   2 +-
+ drivers/tty/tty_io.c                |  87 +++++++++++----
+ include/linux/tty.h                 |   7 +-
+ 6 files changed, 238 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/leds/trigger/ledtrig-tty.c
+
+-- 
+2.24.0
+
