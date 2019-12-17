@@ -2,62 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB010122AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:06:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF7D5122ADD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:04:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbfLQMG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:06:28 -0500
-Received: from mga18.intel.com ([134.134.136.126]:46177 "EHLO mga18.intel.com"
+        id S1727443AbfLQMEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:04:38 -0500
+Received: from mga12.intel.com ([192.55.52.136]:27305 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLQMG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:06:28 -0500
+        id S1726275AbfLQMEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:04:37 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:06:27 -0800
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 04:04:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="221746459"
-Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
-  by fmsmga001.fm.intel.com with ESMTP; 17 Dec 2019 04:06:24 -0800
-Message-ID: <9991700815c02b3227a5902e4cae1afe5200b0ff.camel@linux.intel.com>
-Subject: Re: [PATCH V3] tpm_tis_spi: use new 'delay' structure for SPI
- transfer delays
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, peterhuewe@gmx.de, jgg@ziepe.ca,
-        arnd@arndb.de
-In-Reply-To: <20191217091615.12764-1-alexandru.ardelean@analog.com>
-References: <20191204080049.32701-1-alexandru.ardelean@analog.com>
-         <20191217091615.12764-1-alexandru.ardelean@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
- Espoo
-Content-Type: text/plain; charset="UTF-8"
+   d="scan'208";a="212346469"
+Received: from um.fi.intel.com (HELO um) ([10.237.72.57])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Dec 2019 04:04:36 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, alexander.shishkin@linux.intel.com
+Subject: Re: [GIT PULL 0/4] intel_th: Fixes for v5.5
+In-Reply-To: <20191217115527.74383-1-alexander.shishkin@linux.intel.com>
+References: <20191217115527.74383-1-alexander.shishkin@linux.intel.com>
+Date:   Tue, 17 Dec 2019 14:04:34 +0200
+Message-ID: <87tv5zb1kd.fsf@ashishki-desk.ger.corp.intel.com>
 MIME-Version: 1.0
-Date:   Tue, 17 Dec 2019 14:04:29 +0200
-User-Agent: Evolution 3.34.1-2 
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-17 at 11:16 +0200, Alexandru Ardelean wrote:
-> In a recent change to the SPI subsystem [1], a new 'delay' struct was added
-> to replace the 'delay_usecs'. This change replaces the current
-> 'delay_usecs' with 'delay' for this driver.
-> 
-> The 'spi_transfer_delay_exec()' function [in the SPI framework] makes sure
-> that both 'delay_usecs' & 'delay' are used (in this order to preserve
-> backwards compatibility).
-> 
-> [1] commit bebcfd272df6485 ("spi: introduce `delay` field for
-> `spi_transfer` + spi_transfer_delay_exec()")
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Alexander Shishkin <alexander.shishkin@linux.intel.com> writes:
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Hi Greg,
+>
+> These are the fixes I have so far. Both fixes are for commits in v5.2, so
+> stable is CC'd: one is incorrect irq freeing and one is a NULL dereference
+> from unintended use. Also included 2 new PCI IDs. Signed tag below,
+> individual patches follow. Please consider applying or pullyng. Thanks!
 
-/Jarkko
+The tag is wrong, apologies. Should be:
 
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/intel_th-fixes-for-greg-20191216
+
+for you to fetch changes up to 6958619f52e9bc47d7aee0475e9d2c1ae2fcda75:
+
+  intel_th: msu: Fix window switching without windows (2019-12-17 13:36:01 +0200)
+
+----------------------------------------------------------------
+intel_th: Fixes for v5.5
+
+These are:
+ * 2 new PCI IDs
+ * 2 bugfixes for bugs added in v5.2
+
+----------------------------------------------------------------
+Alexander Shishkin (4):
+      intel_th: pci: Add Comet Lake PCH-V support
+      intel_th: pci: Add Elkhart Lake SOC support
+      intel_th: Fix freeing IRQs
+      intel_th: msu: Fix window switching without windows
+
+ drivers/hwtracing/intel_th/core.c     |  7 ++++---
+ drivers/hwtracing/intel_th/intel_th.h |  2 ++
+ drivers/hwtracing/intel_th/msu.c      | 14 +++++++++-----
+ drivers/hwtracing/intel_th/pci.c      | 10 ++++++++++
+ 4 files changed, 25 insertions(+), 8 deletions(-)
