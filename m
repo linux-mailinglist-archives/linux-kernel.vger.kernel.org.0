@@ -2,266 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F90A121F26
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:00:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA811121F2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:04:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfLQAAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:00:54 -0500
-Received: from mx0b-00190b01.pphosted.com ([67.231.157.127]:15052 "EHLO
-        mx0b-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726454AbfLQAAx (ORCPT
+        id S1727370AbfLQADD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:03:03 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:19144 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfLQADC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:00:53 -0500
-Received: from pps.filterd (m0050102.ppops.net [127.0.0.1])
-        by m0050102.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id xBH00hTM032714;
-        Tue, 17 Dec 2019 00:00:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=Z+1zvFT5VI/kYrrjCOyCjCH3zfW7cuIb2lDJKy081hY=;
- b=AIXeNOkPzmsAeAJMC1eFLAGOfcXGZRNPNRTvHcabDerwhZQa9zIGDyHV3msy4VrFRkO3
- 9e2Fkn7JMIH9+f+KrQHW7IMXBBKzMbKbv7d8pgo10hIrj7TRjr/xk/umIH4klxyq4b3S
- hH418bX4iAsq2Gj0BNjof7cS01sTw5Da80hThzet1AvN3+c6t11Zs00HXQb0XY3s2yX/
- tfrxRVSVwqTtQDhQ2IXdumBtH0IoMJEVXFLz3Wo2eDK6bABnTrA5NnFaOHKSas2+iJsV
- 9einbOTZd+by2ouj5dXeCwuxILx65hJvEP5SsTv6z8cvpEg2lHGafqkhwHt3Dg/ofaX7 Gw== 
-Received: from prod-mail-ppoint4 (prod-mail-ppoint4.akamai.com [96.6.114.87] (may be forged))
-        by m0050102.ppops.net-00190b01. with ESMTP id 2wvnpjacty-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 Dec 2019 00:00:47 +0000
-Received: from pps.filterd (prod-mail-ppoint4.akamai.com [127.0.0.1])
-        by prod-mail-ppoint4.akamai.com (8.16.0.27/8.16.0.27) with SMTP id xBGNlWgX010545;
-        Mon, 16 Dec 2019 19:00:46 -0500
-Received: from prod-mail-relay14.akamai.com ([172.27.17.39])
-        by prod-mail-ppoint4.akamai.com with ESMTP id 2wvuy4nus0-1;
-        Mon, 16 Dec 2019 19:00:45 -0500
-Received: from [172.28.3.123] (bos-lp8gj.145bw.corp.akamai.com [172.28.3.123])
-        by prod-mail-relay14.akamai.com (Postfix) with ESMTP id 8B97981355;
-        Tue, 17 Dec 2019 00:00:14 +0000 (GMT)
-Subject: Re: [PATCH AUTOSEL 4.19 010/209] tcp: up initial rmem to 128KB and
- SYN rwin to around 64KB
-To:     Sasha Levin <sashal@kernel.org>
-References: <20191113015025.9685-1-sashal@kernel.org>
- <20191113015025.9685-10-sashal@kernel.org>
- <CAP12E-JHedm+OA9Zaf6PaZBuNw5ddmeMn4RMcSWFFNrH=MpOhA@mail.gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable@vger.kernel.org, Yuchung Cheng <ycheng@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        "Hunt, Joshua" <johunt@akamai.com>
-From:   Vishwanath Pai <vpai@akamai.com>
-Message-ID: <14a09720-902f-b4ce-6c8f-98f1667a94ec@akamai.com>
-Date:   Mon, 16 Dec 2019 19:00:14 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 16 Dec 2019 19:03:02 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191217000258epoutp0296853d0293fa76ba783b731ff8dc13d3~g-6q3qzot2640726407epoutp02W
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 00:02:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191217000258epoutp0296853d0293fa76ba783b731ff8dc13d3~g-6q3qzot2640726407epoutp02W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576540978;
+        bh=ciQbpU1wunt+IIv+D/PXz4k6+WkURdQNkPVZxzGbpOI=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=QMGwfqu9kCk9sKA6SqHB4sFpyFMcGRU3054IyOG6K70zI7z/Ven+av1NruNMuLmfw
+         NOEmia3uCzr9hWAF/zklSidZMdw6ShOHbywFut1RbU6Jc/P+O5Yqu+j9tJ7wYMSaBu
+         Zy7AzYky1NifMYbENrEQ9EQqbCP3WSOFHG8oxOXA=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191217000257epcas1p35fe0c177852e302bca3c42d30ddfc98e~g-6qe0hof3031030310epcas1p3M;
+        Tue, 17 Dec 2019 00:02:57 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.161]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47cJHh6WnzzMqYkc; Tue, 17 Dec
+        2019 00:02:56 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CA.FD.57028.D2B18FD5; Tue, 17 Dec 2019 09:02:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20191217000253epcas1p4d2962765c6b1f3cba1648e7bf414f034~g-6mD0A6B2424724247epcas1p4D;
+        Tue, 17 Dec 2019 00:02:53 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191217000253epsmtrp2df7d895f11db90df1595e53aa23ffcb2~g-6mDIXxr2255822558epsmtrp2W;
+        Tue, 17 Dec 2019 00:02:53 +0000 (GMT)
+X-AuditID: b6c32a35-4f3ff7000001dec4-5f-5df81b2da7be
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2E.AF.10238.C2B18FD5; Tue, 17 Dec 2019 09:02:52 +0900 (KST)
+Received: from DONAMJAEJEO06 (unknown [10.88.104.63]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191217000252epsmtip1c210904c1390d89e2f37ef1d13f932b4~g-6lzv4BX0178801788epsmtip1O;
+        Tue, 17 Dec 2019 00:02:52 +0000 (GMT)
+From:   "Namjae Jeon" <namjae.jeon@samsung.com>
+To:     "'Markus Elfring'" <Markus.Elfring@web.de>
+Cc:     <linux-kernel@vger.kernel.org>, "'Christoph Hellwig'" <hch@lst.de>,
+        "'Greg Kroah-Hartman'" <gregkh@linuxfoundation.org>,
+        "'Sungjong Seo'" <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?'Valdis_Kl=C4=93tnieks'?= <valdis.kletnieks@vt.edu>,
+        <linux-fsdevel@vger.kernel.org>
+In-Reply-To: <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
+Subject: RE: [PATCH v7 01/13] exfat: add in-memory and on-disk structures
+ and headers
+Date:   Tue, 17 Dec 2019 09:02:53 +0900
+Message-ID: <002401d5b46d$543f7ee0$fcbe7ca0$@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <CAP12E-JHedm+OA9Zaf6PaZBuNw5ddmeMn4RMcSWFFNrH=MpOhA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-16_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912160199
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-16_07:2019-12-16,2019-12-16 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
- adultscore=0 impostorscore=0 malwarescore=0 clxscore=1031 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912160201
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 14.0
+Content-Language: ko
+Thread-Index: AQFm2LC/h6nQOwj4JCuWUtKX9oQxIwE+vU/YAbPr/rCog5NBAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+XkfXqXFbVqeVtS6EmIy3Zyzq7SIihhYYARFgtlFL5u1l7tT
+        sv5IknyM0YuoXNoDK9Ie2pRcK1luWUgvKii0oLeZlppSGoV1513kf5/z5XvO75zzOxQmbyIV
+        VLHVyTusnJkhY/HroWS1SrVgMl/92pfAVja2kGzTpe4o9lZnD84+89eT7B/PJ4Jtn7pDsE9H
+        RvFV0YZAw+Vow83eCtJwoL0ZGca9iwzBji+k4WX/dTyXzDOvMPFcEe9Q8tZCW1Gx1ahncjYV
+        rCnQZao1Kk0Wu5xRWjkLr2fWrs9VrSs2i70wyjLOXCpKuZwgMGkrVzhspU5eabIJTj3D24vM
+        do3anipwFqHUakwttFmyNWp1uk50bjebAkebkL0O2zXuTqxAE1EuFEMBnQEdNWOEC8VSctqH
+        oDbYgEnBGIL7zQO4FPwQg1O30b+Un3+qIimdCNrujkRcgwg+93QTYRdJq2Dqd4AMczydCke+
+        hKZ1jHZHwdnnc8IcQ2eDf3/ltB5Hb4GDtd14mHF6KVwcqMfCLKOzwHt+HyHxHOip+4BLdVLg
+        wtkhTOpICb6HQ0jS4+FkbRUmvbsaTn/tmp4H6BESej++I6WEtTDceYqQOA4G77VHS6yA8eFO
+        0UOJvAe+BSL1axAMTOgl1kJvSysRtmB0MrT40yR5Cdz41RBpYTYMf3cTUhUZ1FTJJctSOPA0
+        FFn7AnBVj0YfQoxnxmCeGYN5Zgzj+f/YGYQ3o3m8XbAYeUFj18z8ay+aPtNlOh86+mh9ENEU
+        YmbJ7GUT+XKCKxPKLUEEFMbEy3xKUZIVceW7eYetwFFq5oUg0ol7P4wp5hbaxKO3Ogs0unSt
+        VstmZC7P1GmZBBk1+SRfThs5J7+T5+28419eFBWjqECLk0OZW/cmBfsfPPfwL4yNjqv+yo4u
+        16231WbSpG8LTaV4FSUH09YtQYHtrVRGdk1G3VfXlTeJJfMHsrrPBfL6Gj9uSHz32P844XDJ
+        +/RXoznHh8ovldRXb762IxDTn/xowjPW92uE2rjtStJg0rycCxfdR45tTV14KC/O9MR9YtLL
+        4IKJ0yzDHAL3F0EwwhO8AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnK6O9I9Yg0tXrC2aF69ns1i5+iiT
+        xZ69J1ksLu+aw2bxf9ZzVost/46wWlx6/4HFgd1j/9w17B67bzawefRtWcXo8XmTnMeh7W/Y
+        PG4/28YSwBbFZZOSmpNZllqkb5fAlbFhyh+Wgk1MFW0/XrI3ML5l7GLk5JAQMJH4+b+NtYuR
+        i0NIYDejxIkNq5ggEtISx06cYe5i5ACyhSUOHy6GqHnBKNG2eyELSA2bgK7Evz/72UBsEQE9
+        iUlvDoMNYhaYwCSxaVInM9zUlmdT2UGqOAWsJHa1NrOC2MICoRIrDj8C62YRUJVY8WIOM4jN
+        K2ApsWlpEyuELShxcuYTsG3MAtoSvQ9bGWHsZQtfM0NcqiCx4+xrqLiIxOzONmaIi5wk5r89
+        yDyBUXgWklGzkIyahWTULCTtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBMeW
+        luYOxstL4g8xCnAwKvHwSpR8jxViTSwrrsw9xCjBwawkwrtDASjEm5JYWZValB9fVJqTWnyI
+        UZqDRUmc92nesUghgfTEktTs1NSC1CKYLBMHp1QDo9As2d0MswwN8jnuXpszPfEXz12tFSay
+        sxhNy6ICopbWb5RVv65lqRtxt339+SbNrgXZCbwPr5yff8CfbRa70aNTmpUFditOTHtSuj3m
+        zE6efycfZfFJPZk5LS3bTz95SUzgU/M5R6bmf7dOfV58YML2UwZHTDU3uRVrKU51cLtT2u52
+        Iu35JiWW4oxEQy3mouJEAGp270ypAgAA
+X-CMS-MailID: 20191217000253epcas1p4d2962765c6b1f3cba1648e7bf414f034
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e
+References: <20191213055028.5574-2-namjae.jeon@samsung.com>
+        <CGME20191216135033epcas5p3f2ec096506b1a48535ce0796fef23b9e@epcas5p3.samsung.com>
+        <088a50ad-dc67-4ff6-624d-a1ac2008b420@web.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 9:30 PM Sasha Levin <sashal@kernel.org> wrote:
-> 
-> From: Yuchung Cheng <ycheng@google.com>
-> 
-> [ Upstream commit a337531b942bd8a03e7052444d7e36972aac2d92 ]
-> 
-> Previously TCP initial receive buffer is ~87KB by default and
-> the initial receive window is ~29KB (20 MSS). This patch changes
-> the two numbers to 128KB and ~64KB (rounding down to the multiples
-> of MSS) respectively. The patch also simplifies the calculations s.t.
-> the two numbers are directly controlled by sysctl tcp_rmem[1]:
-> 
->   1) Initial receiver buffer budget (sk_rcvbuf): while this should
->      be configured via sysctl tcp_rmem[1], previously tcp_fixup_rcvbuf()
->      always override and set a larger size when a new connection
->      establishes.
-> 
->   2) Initial receive window in SYN: previously it is set to 20
->      packets if MSS <= 1460. The number 20 was based on the initial
->      congestion window of 10: the receiver needs twice amount to
->      avoid being limited by the receive window upon out-of-order
->      delivery in the first window burst. But since this only
->      applies if the receiving MSS <= 1460, connection using large MTU
->      (e.g. to utilize receiver zero-copy) may be limited by the
->      receive window.
-> 
-> With this patch TCP memory configuration is more straight-forward and
-> more properly sized to modern high-speed networks by default. Several
-> popular stacks have been announcing 64KB rwin in SYNs as well.
-> 
-> Signed-off-by: Yuchung Cheng <ycheng@google.com>
-> Signed-off-by: Wei Wang <weiwan@google.com>
-> Signed-off-by: Neal Cardwell <ncardwell@google.com>
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Reviewed-by: Soheil Hassas Yeganeh <soheil@google.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  net/ipv4/tcp.c        |  4 ++--
->  net/ipv4/tcp_input.c  | 25 ++-----------------------
->  net/ipv4/tcp_output.c | 25 ++++---------------------
->  3 files changed, 8 insertions(+), 46 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index 611ba174265c8..1a1fcb32c4917 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -3910,8 +3910,8 @@ void __init tcp_init(void)
->         init_net.ipv4.sysctl_tcp_wmem[2] = max(64*1024, max_wshare);
-> 
->         init_net.ipv4.sysctl_tcp_rmem[0] = SK_MEM_QUANTUM;
-> -       init_net.ipv4.sysctl_tcp_rmem[1] = 87380;
-> -       init_net.ipv4.sysctl_tcp_rmem[2] = max(87380, max_rshare);
-> +       init_net.ipv4.sysctl_tcp_rmem[1] = 131072;
-> +       init_net.ipv4.sysctl_tcp_rmem[2] = max(131072, max_rshare);
-> 
->         pr_info("Hash tables configured (established %u bind %u)\n",
->                 tcp_hashinfo.ehash_mask + 1, tcp_hashinfo.bhash_size);
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index 14a6a489937c1..0e2b07be08585 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -426,26 +426,7 @@ static void tcp_grow_window(struct sock *sk,
-> const struct sk_buff *skb)
->         }
->  }
-> 
-> -/* 3. Tuning rcvbuf, when connection enters established state. */
-> -static void tcp_fixup_rcvbuf(struct sock *sk)
-> -{
-> -       u32 mss = tcp_sk(sk)->advmss;
-> -       int rcvmem;
-> -
-> -       rcvmem = 2 * SKB_TRUESIZE(mss + MAX_TCP_HEADER) *
-> -                tcp_default_init_rwnd(mss);
-> -
-> -       /* Dynamic Right Sizing (DRS) has 2 to 3 RTT latency
-> -        * Allow enough cushion so that sender is not limited by our window
-> -        */
-> -       if (sock_net(sk)->ipv4.sysctl_tcp_moderate_rcvbuf)
-> -               rcvmem <<= 2;
-> -
-> -       if (sk->sk_rcvbuf < rcvmem)
-> -               sk->sk_rcvbuf = min(rcvmem,
-> sock_net(sk)->ipv4.sysctl_tcp_rmem[2]);
-> -}
-> -
-> -/* 4. Try to fixup all. It is made immediately after connection enters
-> +/* 3. Try to fixup all. It is made immediately after connection enters
->   *    established state.
->   */
->  void tcp_init_buffer_space(struct sock *sk)
-> @@ -454,8 +435,6 @@ void tcp_init_buffer_space(struct sock *sk)
->         struct tcp_sock *tp = tcp_sk(sk);
->         int maxwin;
-> 
-> -       if (!(sk->sk_userlocks & SOCK_RCVBUF_LOCK))
-> -               tcp_fixup_rcvbuf(sk);
->         if (!(sk->sk_userlocks & SOCK_SNDBUF_LOCK))
->                 tcp_sndbuf_expand(sk);
-> 
-> @@ -485,7 +464,7 @@ void tcp_init_buffer_space(struct sock *sk)
->         tp->snd_cwnd_stamp = tcp_jiffies32;
->  }
-> 
-> -/* 5. Recalculate window clamp after socket hit its memory bounds. */
-> +/* 4. Recalculate window clamp after socket hit its memory bounds. */
->  static void tcp_clamp_window(struct sock *sk)
->  {
->         struct tcp_sock *tp = tcp_sk(sk);
-> diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-> index 2697e4397e46c..53f910bb55087 100644
-> --- a/net/ipv4/tcp_output.c
-> +++ b/net/ipv4/tcp_output.c
-> @@ -179,21 +179,6 @@ static inline void tcp_event_ack_sent(struct sock
-> *sk, unsigned int pkts,
->         inet_csk_clear_xmit_timer(sk, ICSK_TIME_DACK);
->  }
-> 
-> -
-> -u32 tcp_default_init_rwnd(u32 mss)
-> -{
-> -       /* Initial receive window should be twice of TCP_INIT_CWND to
-> -        * enable proper sending of new unsent data during fast recovery
-> -        * (RFC 3517, Section 4, NextSeg() rule (2)). Further place a
-> -        * limit when mss is larger than 1460.
-> -        */
-> -       u32 init_rwnd = TCP_INIT_CWND * 2;
-> -
-> -       if (mss > 1460)
-> -               init_rwnd = max((1460 * init_rwnd) / mss, 2U);
-> -       return init_rwnd;
-> -}
-> -
->  /* Determine a window scaling and initial window to offer.
->   * Based on the assumption that the given amount of space
->   * will be offered. Store the results in the tp structure.
-> @@ -228,7 +213,10 @@ void tcp_select_initial_window(const struct sock
-> *sk, int __space, __u32 mss,
->         if (sock_net(sk)->ipv4.sysctl_tcp_workaround_signed_windows)
->                 (*rcv_wnd) = min(space, MAX_TCP_WINDOW);
->         else
-> -               (*rcv_wnd) = space;
-> +               (*rcv_wnd) = min_t(u32, space, U16_MAX);
-> +
-> +       if (init_rcv_wnd)
-> +               *rcv_wnd = min(*rcv_wnd, init_rcv_wnd * mss);
-> 
->         (*rcv_wscale) = 0;
->         if (wscale_ok) {
-> @@ -241,11 +229,6 @@ void tcp_select_initial_window(const struct sock
-> *sk, int __space, __u32 mss,
->                         (*rcv_wscale)++;
->                 }
->         }
-> -
-> -       if (!init_rcv_wnd) /* Use default unless specified otherwise */
-> -               init_rcv_wnd = tcp_default_init_rwnd(mss);
-> -       *rcv_wnd = min(*rcv_wnd, init_rcv_wnd * mss);
-> -
->         /* Set the clamp no higher than max representable value */
->         (*window_clamp) = min_t(__u32, U16_MAX << (*rcv_wscale), *window_clamp);
->  }
-> --
-> 2.20.1
-> 
-
-Hi Sasha,
-
-Apologies for not bringing this up during the review period, I only just
-noticed this patch when updating to v4.19.89. Can you please clarify why
-this patch was selected for a LTS update? This doesn't look like a bug
-fix and it makes significant changes to core tcp settings. The patch is
-also fairly old (Sep 2018) and we generally don't expect a change like
-this from a stable kernel update.
-
-A follow up patch (tcp: start receiver buffer autotuning sooner) was
-also included in v4.19.86.
-
-Both of the patches were selected by the auto selector based on the
-AUTOSEL tag. It looks like this tag only shows up in the email, have you
-thought about placing the tag in commit messages as well so that we can
-easily identify AUTOSEL patches?
-
-Thanks,
-Vishwanath
+> 2. Which source file should provide the corresponding implementation?
+>    (I did not find it in the update step =E2=80=9C=5BPATCH=20v7=2006/13=
+=5D=20exfat:=20add=20exfat=0D=0A>=20=20=20=20entry=20operations=E2=80=9D=20=
+so=20far.)=0D=0AGood=20catch,=20I=20will=20move=20it=20on=20next=20version.=
+=0D=0A=0D=0AThanks=20for=20your=20review=21=0D=0A>=20=0D=0A>=20Regards,=0D=
+=0A>=20Markus=0D=0A=0D=0A
