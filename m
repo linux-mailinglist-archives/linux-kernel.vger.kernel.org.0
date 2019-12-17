@@ -2,88 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F70F1235B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:29:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 195C81235F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:54:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbfLQT27 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:28:59 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42780 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbfLQT26 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:28:58 -0500
-Received: by mail-pg1-f193.google.com with SMTP id s64so6196759pgb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 11:28:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=i/zpLv8lE1Uei6Q5Sx7cAmMDb3bT/fGYajv7dIvOKeE=;
-        b=hmFyP9YpwXdycSUewYe/UXs3bnMml8U1T7bYOZ707V0rFHcuCRD2nLhbeYGTE8+QE6
-         YeODZNO4iHpY74xxfg8h3QIrN5+e2rmLTf4zCWzmdD8QLQkKIYPfRFr3uRQXAPXdjMOO
-         FV5KcXU4rccMrDCxXAkxmXOOwEkYKu3j6Agfc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=i/zpLv8lE1Uei6Q5Sx7cAmMDb3bT/fGYajv7dIvOKeE=;
-        b=JBUNdD5ZjWjrqJ5UlT4W7L3TeTt1ItO8BcbcyCHiqZcs8cK1inpYvL05qJ67o6fyb/
-         p5Y90m6xQjwoHuQHDoE2fogeW899FQAAm7zTT44zW/BOhkKm00C9GnaV85eKVWdkeZjt
-         GvT0ng8j65PxZ5PLDpyLSQXYSJGx2VuWq/U8UtJUXsT+EiQnRG6kF8v9IoZMTD74mAaM
-         ZhYAFgO4g69IWYxLZscgrJEodRoZX5YTKgDR5nfczssCXlMJ7fTrkwIdIUXf2pb9nkCt
-         Ld9lROqrafx64JLxDvfEVqaiHKdq6r6hhsY3QSuuLawassRqJPzOxHt2kCQnIOjyLZgt
-         DvLw==
-X-Gm-Message-State: APjAAAVPjxRGKmK0n0wLyJCp4MYQy+5EOpqQ4Uq8t3Ax3cPbSZoB9qvX
-        H1Mz1nlsTo3oQVXxVEN3Z9gbHxxNJAxNWg==
-X-Google-Smtp-Source: APXvYqxiTyHBI09mSIZ7WxUE/kaAZ+419iXHJeFYLdYs35fJkGC4N7ohu7jcUgy7taZPaKRwKqVlBQ==
-X-Received: by 2002:a63:d041:: with SMTP id s1mr27414886pgi.363.1576610938241;
-        Tue, 17 Dec 2019 11:28:58 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id k1sm18812089pgq.70.2019.12.17.11.28.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 11:28:57 -0800 (PST)
-Date:   Tue, 17 Dec 2019 11:28:56 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Dikshita Agarwal <dikshita@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vgarodia@codeaurora.org
-Subject: Re: [PATCH] arm64: dts: sc7180: Enable video node
-Message-ID: <20191217192856.GV228856@google.com>
-References: <1576569218-24817-1-git-send-email-dikshita@codeaurora.org>
+        id S1728128AbfLQTyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:54:01 -0500
+Received: from mga02.intel.com ([134.134.136.20]:22025 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727492AbfLQTyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 14:54:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 11:54:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
+   d="scan'208";a="389942445"
+Received: from vramados-mobl.amr.corp.intel.com (HELO [10.254.1.250]) ([10.254.1.250])
+  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 11:53:59 -0800
+Subject: Re: [alsa-devel] [PATCH 06/10] mfd: Add core driver for AD242x A2B
+ transceivers
+To:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
+        lee.jones@linaro.org
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-8-daniel@zonque.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c3885b01-e6ec-1b67-6e48-69e3fc40bb62@linux.intel.com>
+Date:   Tue, 17 Dec 2019 13:16:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1576569218-24817-1-git-send-email-dikshita@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191209183511.3576038-8-daniel@zonque.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 01:23:38PM +0530, Dikshita Agarwal wrote:
-> This is a preparation gerrit to enable video node for sc7180.
-> This change depends on patch series Venus new features.
-> 
-> Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sc7180.dtsi | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 52a5861..ccf9ef5 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -1297,6 +1297,34 @@
->  
->  			#freq-domain-cells = <1>;
->  		};
-> +
-> +		venus: video-codec@aa00000 {
 
-Per convention nodes should be sorted by address, so this one
-should be between system-cache-controller@9200000 and
-thermal-sensor@c263000. If new nodes are always added to the
-end conflicts are virtually guaranteed, especially in the early
-phase of adding support for a SoC.
+> +config MFD_AD242X
+> +	bool "Analog Devices AD242x A2B support"
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	depends on I2C=y && OF
+
+is there a specific reason why I2C needs to be built-in (as opposed to 'm')?
+
+> +/* See Table 3-2 in the datasheet */
+
+is the datasheet public? I thought it was only available under NDA.
+
+> +	master->sync_clk = devm_clk_get(dev, "sync");
+> +	if (IS_ERR(master->sync_clk)) {
+> +		ret = PTR_ERR(master->sync_clk);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to get sync clk: %d\n", ret);
+> +
+> +		return ret;
+> +	}
+> +
+> +	if (of_property_read_u32(dev->of_node, "clock-frequency",
+> +				 &master->sync_clk_rate)) {
+> +		ret = clk_set_rate(master->sync_clk, master->sync_clk_rate);
+
+shouldn't you check the rate before setting it?
+
+> +		if (ret < 0) {
+> +			dev_err(dev, "Cannot set sync clock rate: %d\n", ret);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	master->sync_clk_rate = clk_get_rate(master->sync_clk);
+> +	if (master->sync_clk_rate != 44100 && master->sync_clk_rate != 48000) {
+> +		dev_err(dev, "SYNC clock rate %d is invalid\n",
+> +			master->sync_clk_rate);
+> +		return -EINVAL;
+> +	}
+
+this is a bit odd, you set the rate in case there is a property but get 
+it anyways. the last block could be an else?
+
+> +
+> +	ret = clk_prepare_enable(master->sync_clk);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to enable sync clk: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Master node setup */
+> +
+> +	ret = regmap_write(regmap, AD242X_CONTROL,
+> +			   AD242X_CONTROL_MSTR | AD242X_CONTROL_SOFTRST);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = ad242x_wait_for_irq(master, &master->run_completion, 10);
+
+what is 10?
+
+
+> +static int ad242x_master_remove(struct i2c_client *i2c)
+> +{
+> +	struct ad242x_master *master = i2c_get_clientdata(i2c);
+> +
+> +	if (master->sync_clk)
+> +		clk_disable_unprepare(master->sync_clk);
+
+earlier you tested for IS_ERR(master->sync_clk)?
+
+> +	for (i = 0; i < 4; i++) {
+
+what is 4? 4 hops?
+
