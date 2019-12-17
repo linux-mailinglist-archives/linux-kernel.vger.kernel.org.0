@@ -2,74 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1711B122DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:00:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34823122DE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:01:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbfLQOAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:00:02 -0500
-Received: from out28-53.mail.aliyun.com ([115.124.28.53]:56526 "EHLO
-        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728546AbfLQOAA (ORCPT
+        id S1728682AbfLQOBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:01:08 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:28239 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728573AbfLQOBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:00:00 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.3617134|-1;CH=green;DM=SPAM|CONTINUE|true|0.912045-0.000889018-0.087066;DS=CONTINUE|ham_system_inform|0.0175439-0.000412785-0.982043;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16367;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.GJ3eyQr_1576591147;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GJ3eyQr_1576591147)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Tue, 17 Dec 2019 21:59:35 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, paulburton@kernel.org, mark.rutland@arm.com,
-        paul@crapouillou.net, vkoul@kernel.org, Zubair.Kakakhel@imgtec.com,
-        dan.j.williams@intel.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, 2374286503@qq.com
-Subject: [PATCH 2/2] dmaengine: JZ4780: Add support for the X1830.
-Date:   Tue, 17 Dec 2019 21:59:00 +0800
-Message-Id: <1576591140-125668-4-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576591140-125668-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1576591140-125668-1-git-send-email-zhouyanjie@wanyeetech.com>
+        Tue, 17 Dec 2019 09:01:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576591266;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=uwJQ1dZUryn91uRJBuAlpM0T0gwPgs8B9ULHpt/Vuc4=;
+        b=WPbOKcS1dMp7hmcD6Lxx00C6LL1W7dH4qUNELlyFt8JF4fzzUqsShRRj1aUXowgy4TSLb4
+        jlX7epOL/+psCJ39qd9I1EfLnInAkmASuCNrkyo9/X1ZEULUSIhFrBPYblD4tfQbn5KAFM
+        HqiHITN+dfMp9VRQ4AOkgUp5tQ8xVZk=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-283-nQmLEYpTOua68PthYW3UWA-1; Tue, 17 Dec 2019 09:01:03 -0500
+X-MC-Unique: nQmLEYpTOua68PthYW3UWA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 7E413107ACC5;
+        Tue, 17 Dec 2019 14:01:01 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-123-81.rdu2.redhat.com [10.10.123.81])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 04E2360FC2;
+        Tue, 17 Dec 2019 14:00:59 +0000 (UTC)
+Subject: Re: [PATCH v2] mm/hugetlb: Defer freeing of huge pages if in non-task
+ context
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+References: <20191217012508.31495-1-longman@redhat.com>
+ <20191217093143.GC31063@dhcp22.suse.cz>
+ <87c2ff49-999e-3196-791f-36e3d42ad79c@virtuozzo.com>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0b8a59a0-517f-1387-ad00-cb47fb5fc50c@redhat.com>
+Date:   Tue, 17 Dec 2019 09:00:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <87c2ff49-999e-3196-791f-36e3d42ad79c@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probing the dma-jz4780 driver on the X1830 Soc.
+On 12/17/19 5:50 AM, Kirill Tkhai wrote:
+> On 17.12.2019 12:31, Michal Hocko wrote:
+>> On Mon 16-12-19 20:25:08, Waiman Long wrote:
+>> [...]
+>>> Both the hugetbl_lock and the subpool lock can be acquired in
+>>> free_huge_page(). One way to solve the problem is to make both locks
+>>> irq-safe.
+>> Please document why we do not take this, quite natural path and instead
+>> we have to come up with an elaborate way instead. I believe the primary
+>> motivation is that some operations under those locks are quite
+>> expensive. Please add that to the changelog and ideally to the code as
+>> well. We probably want to fix those anyway and then this would be a
+>> temporary workaround.
+>>
+>>> Another alternative is to defer the freeing to a workqueue job.
+>>>
+>>> This patch implements the deferred freeing by adding a
+>>> free_hpage_workfn() work function to do the actual freeing. The
+>>> free_huge_page() call in a non-task context saves the page to be freed
+>>> in the hpage_freelist linked list in a lockless manner.
+>> Do we need to over complicate this (presumably) rare event by a lockless
+>> algorithm? Why cannot we use a dedicated spin lock for for the linked
+>> list manipulation? This should be really a trivial code without an
+>> additional burden of all the lockless subtleties.
+> Why not llist_add()/llist_del_all() ?
+>
+The llist_add() and llist_del_all() are just simple helpers. Because
+this lockless case involve synchronization of two variables, the llist
+helpers do not directly apply here. So the rests cannot be used. It will
+look awkward it is partially converted to use the helpers. If we convert
+to use a lock as suggested by Michal, using the helpers will be an
+overkill as xchg() will not be needed.
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
- drivers/dma/dma-jz4780.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/dma/dma-jz4780.c b/drivers/dma/dma-jz4780.c
-index fa626ac..f8ee4b7 100644
---- a/drivers/dma/dma-jz4780.c
-+++ b/drivers/dma/dma-jz4780.c
-@@ -1020,12 +1020,19 @@ static const struct jz4780_dma_soc_data x1000_dma_soc_data = {
- 	.flags = JZ_SOC_DATA_PROGRAMMABLE_DMA,
- };
- 
-+static const struct jz4780_dma_soc_data x1830_dma_soc_data = {
-+	.nb_channels = 32,
-+	.transfer_ord_max = 7,
-+	.flags = JZ_SOC_DATA_PROGRAMMABLE_DMA,
-+};
-+
- static const struct of_device_id jz4780_dma_dt_match[] = {
- 	{ .compatible = "ingenic,jz4740-dma", .data = &jz4740_dma_soc_data },
- 	{ .compatible = "ingenic,jz4725b-dma", .data = &jz4725b_dma_soc_data },
- 	{ .compatible = "ingenic,jz4770-dma", .data = &jz4770_dma_soc_data },
- 	{ .compatible = "ingenic,jz4780-dma", .data = &jz4780_dma_soc_data },
- 	{ .compatible = "ingenic,x1000-dma", .data = &x1000_dma_soc_data },
-+	{ .compatible = "ingenic,x1830-dma", .data = &x1830_dma_soc_data },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, jz4780_dma_dt_match);
--- 
-2.7.4
+Cheers,
+Longman
 
