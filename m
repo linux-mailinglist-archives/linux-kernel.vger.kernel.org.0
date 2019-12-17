@@ -2,123 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AAF9123733
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:22:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DC3123739
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:24:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfLQUWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:22:12 -0500
-Received: from ozlabs.org ([203.11.71.1]:38737 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727036AbfLQUWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:22:12 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47cqLP4KnCz9sR4;
-        Wed, 18 Dec 2019 07:22:05 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576614128;
-        bh=HNE5QHDUpxYl9Gzpb/l907YVIFjvEkK/+MtEopkr4DA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=rv6PmcXHfNhTSM8MDTyYiTm/oeNrBYgP6Y96EF/L825FjFNR52ZF2cF7QHb2ATXce
-         SMhAj85MStFfrhdi6xUfYjth0bBc/USrqLnDXEODzD7AFCYRgPre9kar4oW/Z21d0S
-         wS2InJKRaDB3x0yuEYoQHy+i9VBRw/pG219TntpTFxpVfGhKCxAoL0xWQUMD85qDDE
-         V6X7Q8e2aQq3MuD/MxIymsXlzeUuaT4tYTXQFmbRNMIo9W8rXtqSFPAaST1xuZkTM2
-         Xgf6d4Pl35ZYFoc0dhssM1cf7wts60hsYV1whyHkl15lCCTtQIEUY8JQfrRzlM7VJC
-         ujSQIxs1cyFYA==
-Date:   Wed, 18 Dec 2019 07:22:04 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20191218072204.06ca0cd9@canb.auug.org.au>
-In-Reply-To: <20191217131937.GZ624164@phenom.ffwll.local>
-References: <20191216122331.43c766f1@canb.auug.org.au>
-        <20191217131937.GZ624164@phenom.ffwll.local>
+        id S1728315AbfLQUYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:24:03 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57788 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727804AbfLQUYB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 15:24:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=+VcbmUHkikhltbhd384iXiV0e3cBMTK3Pkyk6nNtzPI=; b=QEmNHA5sBmmnxttmG/iNlHW8S
+        vCiuejabmHLvSp8H7RzhXtzasihDG+G815h8cGG7oCPPiSErs1K4z7+M6pmYp08N0CCq/uzKzW/f1
+        jXswpWrzKgnGltC7AoTQIVnYxnfMjCTXaWFPXu3ISEdrvkd7U1182hukxDUPvNCIDiPBTCH4k1TDf
+        5a7YSczdMrvtXb5ps8bNhNhpg0orECp/HaY9sG3mDB3DcvXL7mbVA/dskrNq95EICpAL/qpd9zSkP
+        kvzaS6jv+GHHtKQ+vsleFCmTSQOrvarNEmqN+i18bte7fxYGFtJR/XL6fylGghvytbDFHzE91OQZK
+        YFZsKMpYg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihJNp-0005u0-RB; Tue, 17 Dec 2019 20:23:54 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 6BC1E300F29;
+        Tue, 17 Dec 2019 21:22:29 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 2D7202B2CEC1A; Tue, 17 Dec 2019 21:23:52 +0100 (CET)
+Date:   Tue, 17 Dec 2019 21:23:52 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <namit@vmware.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] smp: Allow smp_call_function_single_async() to insert
+ locked csd
+Message-ID: <20191217202352.GH2844@hirez.programming.kicks-ass.net>
+References: <20191204204823.1503-1-peterx@redhat.com>
+ <20191211154058.GO2827@hirez.programming.kicks-ass.net>
+ <20191211162925.GD48697@xz-x1>
+ <20191216203705.GV2844@hirez.programming.kicks-ass.net>
+ <20191216205833.GB161272@xz-x1>
+ <20191217095156.GZ2844@hirez.programming.kicks-ass.net>
+ <20191217153128.GB7258@xz-x1>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qP.7snxCKhckK3Gxq8N8hHT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217153128.GB7258@xz-x1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/qP.7snxCKhckK3Gxq8N8hHT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 17, 2019 at 10:31:28AM -0500, Peter Xu wrote:
+> On Tue, Dec 17, 2019 at 10:51:56AM +0100, Peter Zijlstra wrote:
+> > On Mon, Dec 16, 2019 at 03:58:33PM -0500, Peter Xu wrote:
+> > > On Mon, Dec 16, 2019 at 09:37:05PM +0100, Peter Zijlstra wrote:
+> > > > On Wed, Dec 11, 2019 at 11:29:25AM -0500, Peter Xu wrote:
+> > 
+> > > > > (3) Others:
+> > > > > 
+> > > > > *** arch/mips/kernel/process.c:
+> > > > > raise_backtrace[713]           smp_call_function_single_async(cpu, csd);
+> > > > 
+> > > > per-cpu csd data, seems perfectly fine usage.
+> > > 
+> > > I'm not sure whether I get the point, I just feel like it could still
+> > > trigger as long as we do it super fast, before IPI handled,
+> > > disregarding whether it's per-cpu csd or not.
+> > 
+> > No, I wasn't paying attention last night. I'm thinking this one might
+> > maybe be in 1). It does the state check using that bitmap.
+> 
+> Indeed.  Though I'm not very certain to change this one too, since I'm
+> not sure whether that pr_warn is really intended:
+> 
+>         if (cpumask_test_and_set_cpu(cpu, &backtrace_csd_busy)) {
+>                 pr_warn("Unable to send backtrace IPI to CPU%u - perhaps it hung?\n",
+>                         cpu);
+>                 continue;
+>         }
+> 
+> I mean, that should depend on if it can really hang somehow (or it's
+> the same issue as what we're trying to fix)...  If it won't hang, then
+> it should be safe I think, and this pr_warn could be helpless after all.
 
-Hi Daniel,
+Yeah, leave it.
 
-On Tue, 17 Dec 2019 14:19:37 +0100 Daniel Vetter <daniel@ffwll.ch> wrote:
->
-> On Mon, Dec 16, 2019 at 12:23:31PM +1100, Stephen Rothwell wrote:
-> >=20
-> > After merging the drm-misc tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > drivers/gpu/drm/bridge/analogix/analogix-anx6345.c: In function 'anx634=
-5_i2c_probe':
-> > drivers/gpu/drm/bridge/analogix/analogix-anx6345.c:738:30: error: impli=
-cit declaration of function 'i2c_new_dummy' [-Werror=3Dimplicit-function-de=
-claration]
-> >   738 |    anx6345->i2c_clients[i] =3D i2c_new_dummy(client->adapter,
-> >       |                              ^~~~~~~~~~~~~
-> > drivers/gpu/drm/bridge/analogix/analogix-anx6345.c:738:28: warning: ass=
-ignment to 'struct i2c_client *' from 'int' makes pointer from integer with=
-out a cast [-Wint-conversion]
-> >   738 |    anx6345->i2c_clients[i] =3D i2c_new_dummy(client->adapter,
-> >       |                            ^
-> >=20
-> > Caused by commit
-> >=20
-> >   6aa192698089 ("drm/bridge: Add Analogix anx6345 support")
-> >=20
-> > interacting with commit
-> >=20
-> >   2c2f00ab1641 ("i2c: remove i2c_new_dummy() API")
-> >=20
-> > From Linus' tree.
-> >=20
-> > I have applied the following fix up patch for today:
-> >=20
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Mon, 16 Dec 2019 12:11:19 +1100
-> > Subject: [PATCH] drm/bridge: fix up for removal of i2c_new_dummy()
-> >=20
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au> =20
->=20
-> Thanks pulled into drm-next since I just processed the first drm-misc-next
-> pull.
+> > I suspect to be nice for virt. Both CPUID and MSR accesses can trap. but
+> > now I'm confused, because it is mostly WRMSR that traps.
+> > 
+> > Anyway, see the commit here: 07cde313b2d2 ("x86/msr: Allow rdmsr_safe_on_cpu() to schedule")
+> 
+> Yes that makes sense.  Thanks for the pointer.
+> 
+> However, then my next confusion is why they can't provide a common
+> solution to the smp code again... I feel like it could be even easier
+> (please see below).  I'm not very familiar with smp code yet, but if
+> it works it should benefit all callers imho.
 
-Thanks.  For the future, though, merge fixes like this should be part
-of the actual merge commit to avoid bisection problems.
+Ah, so going to sleep on wait_for_completion() is _much_ more expensive
+than a short spin. So it all depends on the expected behaviour of the
+IPI I suppose.
 
---=20
-Cheers,
-Stephen Rothwell
+In general we expect these IPIs to be 'quick'.
 
---Sig_/qP.7snxCKhckK3Gxq8N8hHT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl35OOwACgkQAVBC80lX
-0GyJpAf/ZAQL39Fy+xbh/QKHNPjpxIBNkCwgsPMRTUIUT/rkDwmYQSHdjFWhOdHH
-zG/io4ZNhuqtAjttARJgAVzeT9JBKlCEVFABGRZE6C5VrTRbeCsjN6uU/+jqk0sx
-xkBxXz7y/sld8dFFsmJb7NxutkanUeVAGKzhjHMOEwrf33tEaGKWjnODtzc2y1TB
-3e62mnjllvYR04jEMJhOLW6HJoFXM5CsXlTUVaQ3vw6P9lPXTSQ7+9q8FkDeQfyc
-VbrI9HUJpsjt25Nz+XSPCBoS1sEt79FvpgkxjI7sZDrnmVcyeoZSWetl1aO/GFA/
-/NxVcfb1iWbgF4q83MtZq9mwqZRT2A==
-=PKb0
------END PGP SIGNATURE-----
-
---Sig_/qP.7snxCKhckK3Gxq8N8hHT--
+Also, as is, you're allowed to use the smp_call_function*() family with
+preemption disabled, which pretty much precludes using
+wait_for_completion().
