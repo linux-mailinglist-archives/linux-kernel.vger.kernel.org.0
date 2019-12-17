@@ -2,215 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E4312223E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F77612222A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:51:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfLQCwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 21:52:55 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:46181 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727174AbfLQCwt (ORCPT
+        id S1726935AbfLQCuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 21:50:55 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:25223 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726616AbfLQCuz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 21:52:49 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576551168; h=References: In-Reply-To: References:
- In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=5VMsqS8lIHVcSH7kLp2T46tPeWOdiEfYDpNCPsaN/uQ=; b=pa+X0noeMDMJ8ER+Amh88324cFE3B+AagAs8MItuBoRA6I1KcqaFr/KOI534jq5hpmAt1lAe
- apUwzU+vvAbuomfXDwkSMmJi95nK84ja3N0wrdULBK7YdPoieon+hYbA/eB/rWLyUBAwOLR0
- XoRR/8xO4hp40FK9aLeE5FhyDMA=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df842ff.7f896be25030-smtp-out-n03;
- Tue, 17 Dec 2019 02:52:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B71D2C447A0; Tue, 17 Dec 2019 02:52:47 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: nguyenb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 773F6C4479C;
-        Tue, 17 Dec 2019 02:52:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 773F6C4479C
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=nguyenb@codeaurora.org
-From:   "Bao D. Nguyen" <nguyenb@codeaurora.org>
-To:     ulf.hansson@linaro.org, robh+dt@kernel.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        asutoshd@codeaurora.org, cang@codeaurora.org,
-        "Bao D. Nguyen" <nguyenb@quicinc.com>,
-        "Bao D. Nguyen" <nguyenb@codeaurora.org>
-Subject: [<PATCH v1> 9/9] mmc: sd: Fix trivial SD card issues
-Date:   Mon, 16 Dec 2019 18:50:42 -0800
-Message-Id: <25f3b41fb4950cad5cf075b245d0ac4010cd1aac.1576540908.git.nguyenb@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1576540906.git.nguyenb@codeaurora.org>
-References: <cover.1576540906.git.nguyenb@codeaurora.org>
-In-Reply-To: <cover.1576540906.git.nguyenb@codeaurora.org>
-References: <cover.1576540906.git.nguyenb@codeaurora.org>
+        Mon, 16 Dec 2019 21:50:55 -0500
+X-UUID: d03b831c095c4d30afbbd12e2b0bcea0-20191217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=LX30lj8mLQVTtpAKiV/zXtanwXXaFbc1xBxLxcZmnMQ=;
+        b=nrIaNHV2yuAOhrQ9+Ghww+UVVXb5yvtWfuGMafMjUxEYhNf/Vb+/ZPwIF7LvutddoqIHvD66wo3YAWEVxBEP2Tj7AxyOvaTrTKRp6YUJyKEj421IwFXFTIHn4NNQ7yFZ7H1hlCzjNENgMHxu+RNApAy2HOdRADS2Q1nxa82GjTc=;
+X-UUID: d03b831c095c4d30afbbd12e2b0bcea0-20191217
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1851522241; Tue, 17 Dec 2019 10:50:50 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 17 Dec 2019 10:50:13 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 17 Dec 2019 10:49:57 +0800
+Message-ID: <1576551044.14035.18.camel@mtksdaap41>
+Subject: Re: [PATCH v9 3/9] soc: mediatek: Add basic_clk_id to scp_power_data
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Yong Wu <yong.wu@mediatek.com>
+Date:   Tue, 17 Dec 2019 10:50:44 +0800
+In-Reply-To: <CANMq1KC4Qz8yKNTqfjYb335RCY8t5pdRa09Bvroo_BNXv19hWQ@mail.gmail.com>
+References: <1575960413-6900-1-git-send-email-weiyi.lu@mediatek.com>
+         <1575960413-6900-4-git-send-email-weiyi.lu@mediatek.com>
+         <CANMq1KC4Qz8yKNTqfjYb335RCY8t5pdRa09Bvroo_BNXv19hWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: 642B78DF808E55FC0C5C4E033F841D60DDCD4CB0A219E378767E8FE960F53DE02000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Bao D. Nguyen" <nguyenb@quicinc.com>
+T24gTW9uLCAyMDE5LTEyLTE2IGF0IDE1OjAxICswODAwLCBOaWNvbGFzIEJvaWNoYXQgd3JvdGU6
+DQo+IE9uIFR1ZSwgRGVjIDEwLCAyMDE5IGF0IDI6NDcgUE0gV2VpeWkgTHUgPHdlaXlpLmx1QG1l
+ZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBUcnkgdG8gc3RvcCBleHRlbmRpbmcgdGhlIGNs
+a19pZCBvciBjbGtfbmFtZXMgaWYgdGhlcmUgYXJlDQo+ID4gbW9yZSBhbmQgbW9yZSBuZXcgQkFT
+SUMgY2xvY2tzLiBUbyBnZXQgaXRzIG93biBjbG9ja3MgYnkgdGhlDQo+ID4gYmFzaWNfY2xrX2lk
+IG9mIGVhY2ggcG93ZXIgZG9tYWluLg0KPiANCj4gTG9va2luZyBhdCB0aGlzIGEgYml0IG1vcmUs
+IEknbSBub3Qgc3VyZSB3aHkgd2UgbWFrZSB0aGlzIGFuIG9wdGlvbi4uLg0KPiANCj4gVGhlIGVh
+c2llc3Qgd2F5IHRvIG1ha2UgdGhpcyBjb25zaXN0ZW50IHdpdGggbm9uLU1UODE4MyBzY3BzeXMg
+ZHJpdmVycw0KPiBpcyB0byBhZGQgeW91ciBtaXNzaW5nIGNsb2NrcyB0byAiZW51bSBjbGtfaWQi
+IGFuZCBjbGtfbmFtZXMsIGJ1dCBJDQo+IHVuZGVyc3RhbmQgaXQncyBub3QgZGVzaXJlZCAobnVt
+YmVyIG9mIGNsb2NrcyB3b3VsZCBibG93IHVwKS4NCj4gDQo+IENhbiB3ZSwgaW5zdGVhZCwgY29u
+dmVydCBhbGwgZXhpc3Rpbmcgc2Nwc3lzIGRyaXZlcnMgdG8gdXNlICJjaGFyICoiDQo+IGNsb2Nr
+IG5hbWVzIGluc3RlYWQ/DQo+IEkgbWFkZSBhbiBhdHRlbXB0IGhlcmUgYW5kIGl0IHNlZW1zIHNp
+bXBsZSBlbm91Z2g6DQo+IGh0dHBzOi8vY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20v
+Yy9jaHJvbWl1bW9zL3RoaXJkX3BhcnR5L2tlcm5lbC8rLzE5NjkxMDMNCj4gDQoNClRoYXQncyB3
+aGF0IHdlJ2QgbGlrZSB0byBkbyBpbiB0aGUgZnV0dXJlLiBCdXQgeW91J3JlIHJpZ2h0ISBJIHNo
+b3VsZA0KY29tcGxldGUgaXQgYXQgb25lIGdvLg0KDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBX
+ZWl5aSBMdSA8d2VpeWkubHVAbWVkaWF0ZWsuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL3Nv
+Yy9tZWRpYXRlay9tdGstc2Nwc3lzLmMgfCAyOSArKysrKysrKysrKysrKysrKysrKystLS0tLS0t
+LQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkN
+Cj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstc2Nwc3lzLmMg
+Yi9kcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstc2Nwc3lzLmMNCj4gPiBpbmRleCBmNjY5ZDM3Li45
+MTVkNjM1IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1zY3BzeXMu
+Yw0KPiA+ICsrKyBiL2RyaXZlcnMvc29jL21lZGlhdGVrL210ay1zY3BzeXMuYw0KPiA+IEBAIC0x
+MTcsNiArMTE3LDggQEAgZW51bSBjbGtfaWQgew0KPiA+ICAgKiBAc3JhbV9wZG5fYWNrX2JpdHM6
+IFRoZSBtYXNrIGZvciBzcmFtIHBvd2VyIGNvbnRyb2wgYWNrZWQgYml0cy4NCj4gPiAgICogQGJ1
+c19wcm90X21hc2s6IFRoZSBtYXNrIGZvciBzaW5nbGUgc3RlcCBidXMgcHJvdGVjdGlvbi4NCj4g
+PiAgICogQGNsa19pZDogVGhlIGJhc2ljIGNsb2NrcyByZXF1aXJlZCBieSB0aGlzIHBvd2VyIGRv
+bWFpbi4NCj4gPiArICogQGJhc2ljX2Nsa19pZDogcHJvdmlkZSB0aGUgc2FtZSBwdXJwb3NlIHdp
+dGggZmllbGQgImNsa19pZCINCj4gPiArICogICAgICAgICAgICAgICAgYnkgZGVjbGFyaW5nIGJh
+c2ljIGNsb2NrIHByZWZpeCBuYW1lIHJhdGhlciB0aGFuIGNsa19pZC4NCj4gDQo+IEFjdHVhbGx5
+LCBJIHByZWZlciB0aGUgbmFtZSBjbGtfbmFtZSwgbm90IHN1cmUgd2h5IEkgcHVzaGVkIHlvdSBp
+bg0KPiB0aGF0IGRpcmVjdGlvbi4uLg0KPiANCg0KT0ssIEknbGwgZml4IGl0IGluIG5leHQgdmVy
+c2lvbi4gQnV0IEknZCBsaWtlIHRvIHVzZSAiYmFzaWNfY2xrX25hbWUiDQpiZWNhdXNlIHdlIHdp
+bGwgYWRkICJzdWJzeXNfY2xrX3ByZWZpeCIgaW4gZm9sbG93aW5nIHBhdGNoLg0KDQo+ID4gICAq
+IEBjYXBzOiBUaGUgZmxhZyBmb3IgYWN0aXZlIHdha2UtdXAgYWN0aW9uLg0KPiA+ICAgKi8NCj4g
+PiAgc3RydWN0IHNjcF9kb21haW5fZGF0YSB7DQo+ID4gQEAgLTEyNyw2ICsxMjksNyBAQCBzdHJ1
+Y3Qgc2NwX2RvbWFpbl9kYXRhIHsNCj4gPiAgICAgICAgIHUzMiBzcmFtX3Bkbl9hY2tfYml0czsN
+Cj4gPiAgICAgICAgIHUzMiBidXNfcHJvdF9tYXNrOw0KPiA+ICAgICAgICAgZW51bSBjbGtfaWQg
+Y2xrX2lkW01BWF9DTEtTXTsNCj4gPiArICAgICAgIGNvbnN0IGNoYXIgKmJhc2ljX2Nsa19pZFtN
+QVhfQ0xLU107DQo+ID4gICAgICAgICB1OCBjYXBzOw0KPiA+ICB9Ow0KPiA+DQo+ID4gQEAgLTQ5
+MywxNiArNDk2LDI2IEBAIHN0YXRpYyBzdHJ1Y3Qgc2NwICppbml0X3NjcChzdHJ1Y3QgcGxhdGZv
+cm1fZGV2aWNlICpwZGV2LA0KPiA+DQo+ID4gICAgICAgICAgICAgICAgIHNjcGQtPmRhdGEgPSBk
+YXRhOw0KPiA+DQo+ID4gLSAgICAgICAgICAgICAgIGZvciAoaiA9IDA7IGogPCBNQVhfQ0xLUyAm
+JiBkYXRhLT5jbGtfaWRbal07IGorKykgew0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIHN0
+cnVjdCBjbGsgKmMgPSBjbGtbZGF0YS0+Y2xrX2lkW2pdXTsNCj4gPiArICAgICAgICAgICAgICAg
+aWYgKGRhdGEtPmNsa19pZFswXSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIFdBUk5f
+T04oZGF0YS0+YmFzaWNfY2xrX2lkWzBdKTsNCj4gPg0KPiA+IC0gICAgICAgICAgICAgICAgICAg
+ICAgIGlmIChJU19FUlIoYykpIHsNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IGRldl9lcnIoJnBkZXYtPmRldiwgIiVzOiBjbGsgdW5hdmFpbGFibGVcbiIsDQo+ID4gLSAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRhdGEtPm5hbWUpOw0KPiA+IC0gICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9DQVNUKGMpOw0KPiA+IC0gICAg
+ICAgICAgICAgICAgICAgICAgIH0NCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBmb3IgKGog
+PSAwOyBqIDwgTUFYX0NMS1MgJiYgZGF0YS0+Y2xrX2lkW2pdOyBqKyspIHsNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBjbGsgKmMgPSBjbGtbZGF0YS0+Y2xrX2lk
+W2pdXTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoSVNf
+RVJSKGMpKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRl
+dl9lcnIoJnBkZXYtPmRldiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAiJXM6IGNsayB1bmF2YWlsYWJsZVxuIiwNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkYXRhLT5uYW1lKTsNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9DQVNUKGMpOw0K
+PiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KPiA+DQo+ID4gLSAgICAgICAg
+ICAgICAgICAgICAgICAgc2NwZC0+Y2xrW2pdID0gYzsNCj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIHNjcGQtPmNsa1tqXSA9IGM7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAg
+ICAgfQ0KPiA+ICsgICAgICAgICAgICAgICB9IGVsc2UgaWYgKGRhdGEtPmJhc2ljX2Nsa19pZFsw
+XSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGZvciAoaiA9IDA7IGogPCBNQVhfQ0xL
+UyAmJg0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkYXRhLT5i
+YXNpY19jbGtfaWRbal07IGorKykNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHNjcGQtPmNsa1tqXSA9IGRldm1fY2xrX2dldCgmcGRldi0+ZGV2LA0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGRhdGEtPmJhc2ljX2Nsa19pZFtq
+XSk7DQo+ID4gICAgICAgICAgICAgICAgIH0NCj4gPg0KPiA+ICAgICAgICAgICAgICAgICBnZW5w
+ZC0+bmFtZSA9IGRhdGEtPm5hbWU7DQo+ID4gLS0NCj4gPiAxLjguMS4xLmRpcnR5DQoNCg==
 
-Fix various trivial SD card issues.
-
-Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
----
- drivers/mmc/core/block.c |  4 ++--
- drivers/mmc/core/bus.c   | 13 +++++++++++++
- drivers/mmc/core/core.c  | 13 ++++++++-----
- drivers/mmc/core/sd.c    |  9 ++++++---
- 4 files changed, 29 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 95b41c0..200882d 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -653,13 +653,13 @@ static int mmc_blk_ioctl_cmd(struct mmc_blk_data *md,
- 	struct request *req;
- 
- 	idata = mmc_blk_ioctl_copy_from_user(ic_ptr);
--	if (IS_ERR(idata))
-+	if (IS_ERR_OR_NULL(idata))
- 		return PTR_ERR(idata);
- 	/* This will be NULL on non-RPMB ioctl():s */
- 	idata->rpmb = rpmb;
- 
- 	card = md->queue.card;
--	if (IS_ERR(card)) {
-+	if (IS_ERR_OR_NULL(card)) {
- 		err = PTR_ERR(card);
- 		goto cmd_done;
- 	}
-diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-index 74de3f2..fb17d21 100644
---- a/drivers/mmc/core/bus.c
-+++ b/drivers/mmc/core/bus.c
-@@ -131,6 +131,16 @@ static void mmc_bus_shutdown(struct device *dev)
- 	struct mmc_host *host = card->host;
- 	int ret;
- 
-+	if (!drv) {
-+		pr_debug("%s: %s: drv is NULL\n", dev_name(dev), __func__);
-+		return;
-+	}
-+
-+	if (!card) {
-+		pr_debug("%s: %s: card is NULL\n", dev_name(dev), __func__);
-+		return;
-+	}
-+
- 	if (dev->driver && drv->shutdown)
- 		drv->shutdown(card);
- 
-@@ -247,12 +257,15 @@ void mmc_unregister_driver(struct mmc_driver *drv)
- static void mmc_release_card(struct device *dev)
- {
- 	struct mmc_card *card = mmc_dev_to_card(dev);
-+	struct mmc_host *host = card->host;
- 
- 	sdio_free_common_cis(card);
- 
- 	kfree(card->info);
- 
- 	kfree(card);
-+	if (host)
-+		host->card = NULL;
- }
- 
- /*
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 38b0cec..13d496e 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -399,7 +399,7 @@ void mmc_wait_for_req_done(struct mmc_host *host, struct mmc_request *mrq)
- 	struct mmc_command *cmd;
- 
- 	while (1) {
--		wait_for_completion(&mrq->completion);
-+		wait_for_completion_io(&mrq->completion);
- 
- 		cmd = mrq->cmd;
- 
-@@ -666,6 +666,10 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
- {
- 	unsigned int mult;
- 
-+	if (!card) {
-+		WARN_ON(1);
-+		return;
-+	}
- 	/*
- 	 * SDIO cards only define an upper 1 s limit on access.
- 	 */
-@@ -2341,17 +2345,16 @@ void mmc_rescan(struct work_struct *work)
- 
- void mmc_start_host(struct mmc_host *host)
- {
-+	mmc_claim_host(host);
- 	host->f_init = max(freqs[0], host->f_min);
- 	host->rescan_disable = 0;
- 	host->ios.power_mode = MMC_POWER_UNDEFINED;
- 
--	if (!(host->caps2 & MMC_CAP2_NO_PRESCAN_POWERUP)) {
--		mmc_claim_host(host);
-+	if (!(host->caps2 & MMC_CAP2_NO_PRESCAN_POWERUP))
- 		mmc_power_up(host, host->ocr_avail);
--		mmc_release_host(host);
--	}
- 
- 	mmc_gpiod_request_cd_irq(host);
-+	mmc_release_host(host);
- 	_mmc_detect_change(host, 0, false);
- }
- 
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 5938caf..e163f0e 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -989,6 +989,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 		err = mmc_send_relative_addr(host, &card->rca);
- 		if (err)
- 			goto free_card;
-+		host->card = card;
- 	}
- 
- 	if (!oldcard) {
-@@ -1090,13 +1091,13 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 		goto free_card;
- 	}
- done:
--	host->card = card;
- 	return 0;
- 
- free_card:
--	if (!oldcard)
-+	if (!oldcard) {
-+		host->card = NULL;
- 		mmc_remove_card(card);
--
-+	}
- 	return err;
- }
- 
-@@ -1106,7 +1107,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- static void mmc_sd_remove(struct mmc_host *host)
- {
- 	mmc_remove_card(host->card);
-+	mmc_claim_host(host);
- 	host->card = NULL;
-+	mmc_release_host(host);
- }
- 
- /*
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
