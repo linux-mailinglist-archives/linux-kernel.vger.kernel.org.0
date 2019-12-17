@@ -2,100 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE835122AE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:05:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C02AC122AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:06:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbfLQMFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:05:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36100 "EHLO mail.kernel.org"
+        id S1727786AbfLQMGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:06:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727656AbfLQMFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:05:18 -0500
+        id S1726747AbfLQMGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:06:32 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941B7207FF;
-        Tue, 17 Dec 2019 12:05:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A63D320733;
+        Tue, 17 Dec 2019 12:06:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576584318;
-        bh=b7idOAhKkeMMLcy66bx1nIPNb7SOC12CKcpdNoBbzrQ=;
+        s=default; t=1576584392;
+        bh=RjgUGBgUy2NtgHKCHL8YjSlU/UigZOy/kWLUuA6Wlvg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ha9fregj8WHmJhnFO1fnhqZ7phuKEyTTasFGOHha+PtGCSFPbynTGWmCOcEAmtdmM
-         r8Xav1LFqxbiT5VwJQS6pLNp6LA+kSdnXKkOWDpsOYg9XiU/jQyTavISQYFS4iefWs
-         rnhT0UiSC4znajoS8KNZeR6EgTXbjXiUv+/A4qzU=
-Date:   Tue, 17 Dec 2019 13:05:15 +0100
+        b=1yJ8sG97LN0NIiNu9Hk8z3/RMqM+OlEITld/tX3epwroZWk4DUSpp5MiyjUvq49ri
+         kg7MNf0XhB5pxm6XKqNcDyy7yWHWircN4HSzyl04vUk24Mh+noQ56QYOWHxDdSK0WS
+         lLzCS5dNj3ZD0EvMurad/ivvDDVfuj7fU0nBXrcw=
+Date:   Tue, 17 Dec 2019 13:06:29 +0100
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] tty: use tty_init_dev_retry() to workaround a
- race condition
-Message-ID: <20191217120515.GA3156341@kroah.com>
-References: <20191121152239.28405-1-sudipm.mukherjee@gmail.com>
- <20191121152239.28405-2-sudipm.mukherjee@gmail.com>
- <20191121164138.GD651886@kroah.com>
- <20191121210155.limd7v6cpd5yz2e7@debian>
- <eef58b47-f208-2ac5-6e02-a87f9568c70f@suse.com>
- <20191210114147.ivple4ccr4bj6c4h@debian>
- <20191212111519.GA1534818@kroah.com>
- <CADVatmMK=dCaAzdHbmQ6Qj5gqcvSiL3BRZDL6jnEM2G_C3pUpw@mail.gmail.com>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Ammy Yi <ammy.yi@intel.com>, stable@vger.kernel.org
+Subject: Re: [GIT PULL 4/4] intel_th: msu: Fix window switching without
+ windows
+Message-ID: <20191217120629.GB3156341@kroah.com>
+References: <20191217115527.74383-1-alexander.shishkin@linux.intel.com>
+ <20191217115527.74383-5-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADVatmMK=dCaAzdHbmQ6Qj5gqcvSiL3BRZDL6jnEM2G_C3pUpw@mail.gmail.com>
+In-Reply-To: <20191217115527.74383-5-alexander.shishkin@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:47:25AM +0000, Sudip Mukherjee wrote:
-> Hi Greg,
-> 
-> On Thu, Dec 12, 2019 at 11:15 AM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Dec 10, 2019 at 11:41:47AM +0000, Sudip Mukherjee wrote:
-> > > Hi Jiri,
-> > >
-> > > On Fri, Nov 22, 2019 at 10:05:09AM +0100, Jiri Slaby wrote:
-> > > > On 21. 11. 19, 22:01, Sudip Mukherjee wrote:
-> > > > > Hi Greg,
-> > > > >
-> > > > > On Thu, Nov 21, 2019 at 05:41:38PM +0100, Greg Kroah-Hartman wrote:
-> > > > >> On Thu, Nov 21, 2019 at 03:22:39PM +0000, Sudip Mukherjee wrote:
-> > > > >>> There seems to be a race condition in tty drivers and I could see on
-> > > > >>> many boot cycles a NULL pointer dereference as tty_init_dev() tries to
-> > > > >>> do 'tty->port->itty = tty' even though tty->port is NULL.
-> > > <snip>
-> > > > >>>
-> > > > >>> uart_add_one_port() registers the console, as soon as it registers, the
-> > > > >>> userspace tries to use it and that leads to tty_open() but
-> > > > >>> uart_add_one_port() has not yet done tty_port_link_device() and so
-> > > > >>> tty->port is not yet configured when control reaches tty_init_dev().
-> > > > >>
-> > > > >> Shouldn't we do tty_port_link_device() before uart_add_one_port() to
-> > > > >> remove that race?  Once you register the console, yes, tty_open() can
-> > > > >> happen, so the driver had better be ready to go at that point in time.
-> > > > >>
-> > > > >
-> > > > > But tty_port_link_device() is done by uart_add_one_port() itself.
-> > > > > After registering the console uart_add_one_port() will call
-> > > > > tty_port_register_device_attr_serdev() and tty_port_link_device() is
-> > > > > called from this. Thats still tty core.
-> > > >
-> > > > Interferences of console vs tty code are ugly. Does it help to simply
-> > > > put tty_port_link_device to uart_add_one_port before uart_configure_port?
-> > >
-> > > sorry for the late response, got busy with an out-of-tree driver.
-> > >
-> > > It fixes the problem if I put tty_port_link_device() before
-> > > uart_configure_port(). Please check the attached patch and that
-> > > completely fixes the problem. Do you want me to send a proper patch for
-> > > it or do you want me to check more into it?
-> >
-> > This looks a lot more sane to me, can you resend it in proper format so
-> > that I can apply it?
-> 
-> https://lore.kernel.org/lkml/20191212131602.29504-1-sudipm.mukherjee@gmail.com/
+On Tue, Dec 17, 2019 at 01:55:27PM +0200, Alexander Shishkin wrote:
+> Commit 6cac7866c2741 ("intel_th: msu: Add a sysfs attribute to trigger
+> window switch") adds a NULL pointer dereference in the case when there are
+> no windows allocated:
 
-It's in my "to review" queue, don't worry, not lost :)
+Commit ids should only be specified in 12 digits, not 13 :)
+
+
+> 
+> > BUG: kernel NULL pointer dereference, address: 0000000000000000
+> > #PF: supervisor read access in kernel mode
+> > #PF: error_code(0x0000) - not-present page
+> > PGD 0 P4D 0
+> > Oops: 0000 1 SMP
+> > CPU: 5 PID: 1110 Comm: bash Not tainted 5.5.0-rc1+ #1
+> > RIP: 0010:msc_win_switch+0xa/0x80 [intel_th_msu]
+> > Call Trace:
+> > ? win_switch_store+0x9b/0xc0 [intel_th_msu]
+> > dev_attr_store+0x17/0x30
+> > sysfs_kf_write+0x3e/0x50
+> > kernfs_fop_write+0xda/0x1b0
+> > __vfs_write+0x1b/0x40
+> > vfs_write+0xb9/0x1a0
+> > ksys_write+0x67/0xe0
+> > __x64_sys_write+0x1a/0x20
+> > do_syscall_64+0x57/0x1d0
+> > entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> Fix that by disallowing window switching with multiwindow buffers without
+> windows.
+> 
+> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Fixes: 6cac7866c2741 ("intel_th: msu: Add a sysfs attribute to trigger window switch")
+
+Same here.
+
+I can go edit it by hand...
+
