@@ -2,147 +2,256 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784F8121FFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:50:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96F18122025
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:56:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfLQAuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:50:16 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:16612 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726556AbfLQAuQ (ORCPT
+        id S1727663AbfLQAw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:52:27 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34300 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLQAwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:50:16 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576543815; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=qLNr/gHCAFeczYVPQATrRfokdlGVpsfEFr/rEsngAro=;
- b=FbimDjNUVnBbnY+p7ZHU24MzZ+remt7fYn5j1OUZGzHTAxNtaE3/Kj/yQ8DiuS9q9mZkE95d
- PaMDT2YFsv4DiJItDWNE1Z3P10Uv1KssrtaC/yRTmG7s3UF51UiV1VwvY8y9id8i8zLd1/V/
- ac5PBIby/41EK49ZKCOK9nk23eA=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df82641.7f84f811cf10-smtp-out-n02;
- Tue, 17 Dec 2019 00:50:09 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C7E1FC447A2; Tue, 17 Dec 2019 00:50:09 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF84DC433CB;
-        Tue, 17 Dec 2019 00:50:08 +0000 (UTC)
+        Mon, 16 Dec 2019 19:52:23 -0500
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A76B29C5;
+        Tue, 17 Dec 2019 01:52:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1576543939;
+        bh=Auran4AEtzQcZ74tZQ+FMOP1jc+xEIC1R3S08A5RxPM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vYTPjkEUWWFYMhirYYx+hIIMFmoD2Vb5ek8jaUu4vLISHHH6SB8SBIymCtRx8ZN6f
+         uS3n4LvTX/YRRybWQtKFtmxboqa7flin8zWMdVJHOgfTm/gFvW+1oJ20RWhSiG6rKh
+         rwifL1TDFkTYXlo4utssDvK1nq3oC4NWa7mOa/8M=
+Date:   Tue, 17 Dec 2019 02:52:09 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: Re: [PATCH RESEND 2/4] drm: bridge: anx7688: Add anx7688 bridge
+ driver support.
+Message-ID: <20191217005209.GL4856@pendragon.ideasonboard.com>
+References: <20191211061911.238393-1-hsinyi@chromium.org>
+ <20191211061911.238393-3-hsinyi@chromium.org>
+ <20191213223816.GS4860@pendragon.ideasonboard.com>
+ <CAJMQK-gFn8WeokxGfAZ-akNvdEbQhPj_3Ax2sD7Ti6JcSvjF4g@mail.gmail.com>
+ <CANMq1KDh=ehp0RDFRLQ5OCTibrK=Uzp2UFVLM+7AhwpVp-X=yQ@mail.gmail.com>
+ <20191216163910.GC14502@pendragon.ideasonboard.com>
+ <CANMq1KA1OMMzwLVMhFeb-zLuPLJsXrvVMji=u0RZ_kWnQprvoA@mail.gmail.com>
+ <CANMq1KABX4RwNHDYaXHTpJXOQdO1HdnNy8=aAfaZTVPJaSfpfQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 17 Dec 2019 08:50:08 +0800
-From:   cang@codeaurora.org
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Bart Van Assche <bvanassche@acm.org>, asutoshd@codeaurora.org,
-        nguyenb@codeaurora.org, rnayak@codeaurora.org,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, salyzyn@google.com,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Stanley Chu <stanley.chu@mediatek.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
-In-Reply-To: <20191216180502.GA2404915@kroah.com>
-References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
- <1576328616-30404-2-git-send-email-cang@codeaurora.org>
- <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
- <cd6dc7c90d43b8ca8254a43da48334fc@codeaurora.org>
- <20191216180502.GA2404915@kroah.com>
-Message-ID: <bd900a0b3fdb8dd8b2cdb42a039f938b@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANMq1KABX4RwNHDYaXHTpJXOQdO1HdnNy8=aAfaZTVPJaSfpfQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-17 02:05, Greg KH wrote:
-> On Mon, Dec 16, 2019 at 10:31:29PM +0800, cang@codeaurora.org wrote:
->> On 2019-12-15 02:32, Bart Van Assche wrote:
->> > On 12/14/19 8:03 AM, Can Guo wrote:
->> > > In ufshcd_remove(), after SCSI host is removed, put it once so that
->> > > its
->> > > resources can be released.
->> > >
->> > > Signed-off-by: Can Guo <cang@codeaurora.org>
->> > >
->> > > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
->> > > index b5966fa..a86b0fd 100644
->> > > --- a/drivers/scsi/ufs/ufshcd.c
->> > > +++ b/drivers/scsi/ufs/ufshcd.c
->> > > @@ -8251,6 +8251,7 @@ void ufshcd_remove(struct ufs_hba *hba)
->> > >   	ufs_bsg_remove(hba);
->> > >   	ufs_sysfs_remove_nodes(hba->dev);
->> > >   	scsi_remove_host(hba->host);
->> > > +	scsi_host_put(hba->host);
->> > >   	/* disable interrupts */
->> > >   	ufshcd_disable_intr(hba, hba->intr_mask);
->> > >   	ufshcd_hba_stop(hba, true);
->> >
->> > Hi Can,
->> >
->> > The UFS driver may queue work asynchronously and that asynchronous
->> > work may refer to the SCSI host, e.g. ufshcd_err_handler(). Is it
->> > guaranteed that all that asynchronous work has finished before
->> > scsi_host_put() is called?
->> >
->> > Thanks,
->> >
->> > Bart.
->> 
->> Hi Bart,
->> 
->> As SCSI host is allocated in ufshcd_platform_init() during platform
->> drive probe, it is much more appropriate if platform driver calls
->> ufshcd_dealloc_host() in their own drv->remove() path. How do you
->> think if I change it as below? If it is OK to you, please ignore my
->> previous mails.
->> 
->> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
->> index 3d4582e..ea45756 100644
->> --- a/drivers/scsi/ufs/ufs-qcom.c
->> +++ b/drivers/scsi/ufs/ufs-qcom.c
->> @@ -3239,6 +3239,7 @@ static int ufs_qcom_remove(struct 
->> platform_device
->> *pdev)
->> 
->>         pm_runtime_get_sync(&(pdev)->dev);
->>         ufshcd_remove(hba);
->> +       ufshcd_dealloc_host(hba);
->>         return 0;
->>  }
+Hi Nicolas,
+
+On Tue, Dec 17, 2019 at 08:40:51AM +0800, Nicolas Boichat wrote:
+> (Brilliant, I managed to accidentally send the email below, and send
+> it as HTML, sorry about that... ASCII art in gmail is hard ,-(
+
+No worries. I have been told it's indeed painful.
+
+> Take 2:)
 > 
-> Wait, why is this a platform device?  Don't you hang off of a pci
-> device?  Or am I missing something earlier in this patchset?
+> Hi Laurent,
 > 
-> thanks,
+> > On Tue, Dec 17, 2019 at 12:39 AM Laurent Pinchart wrote:
+> > > On Mon, Dec 16, 2019 at 06:19:24PM +0800, Nicolas Boichat wrote:
+> > > > On Mon, Dec 16, 2019 at 4:46 PM Hsin-Yi Wang wrote:
+> > > > > On Sat, Dec 14, 2019 at 6:38 AM Laurent Pinchart wrote:
+> > > > > > On Wed, Dec 11, 2019 at 02:19:09PM +0800, Hsin-Yi Wang wrote:
+> > > > > > > From: Nicolas Boichat <drinkcat@chromium.org>
+> > > > > > >
+> > > > > > > ANX7688 is a HDMI to DP converter (as well as USB-C port controller),
+> > > > > > > that has an internal microcontroller.
+> > > > > > >
+> > > > > > > The only reason a Linux kernel driver is necessary is to reject
+> > > > > > > resolutions that require more bandwidth than what is available on
+> > > > > > > the DP side. DP bandwidth and lane count are reported by the bridge
+> > > > > > > via 2 registers on I2C.
+> > > > > >
+> > > > > > How about power, doesn't this chip have power supplies that potentially
+> > > > > > need to be controlled ?
+> > > > > >
+> > > > > Ideally we should add power supplies as well, but the power is
+> > > > > supplied by ec in mt8173 oak board. And we only have this board can
+> > > > > test this driver. If we add power supplies in driver we can't test it.
+> > > >
+> > > > To clarify a bit more, this is because this chip is actually a
+> > > > TCPC+mux+HDMI=>DP converter
+> > > > (https://www.analogix.com/en/products/convertersbridges/anx7688). In
+> > > > Chromebook architecture, TCPC+mux is controlled by the EC (including
+> > > > power and other control pins), and the only reason we need a driver
+> > > > for the HDMI=>DP converter is to get the number of lanes on the DP
+> > > > side and filter out resolutions. Also, the converter is on a different
+> > > > I2C address and it could almost be considered as a separate device.
+> > > >
+> > > > (of course we could write a kernel driver for the TCPC+mux but we'll
+> > > > leave that to others if there's ever a board that is built with the
+> > > > TCPC part connected to the AP)
+> > >
+> > > Is the mux the one that is handled through a gpio-mux driver in this
+> > > series, or a different mux ?
+> >
 > 
-> greg k-h
+> It's a different mux: it's the usual USB-C mux that takes in USB 3.0
+> and DP (internally converted from HDMI), and decides which 2 lanes to
+> use for each (4 lanes in total, but DP can only take 2 with this
+> converter), and flip if necessary. This is all controlled by the EC
+> (like on most other Chromebooks), so this is transparent to the kernel
+> on this hardware.
+> 
+> > > It would really, really help if you could
+> > > show a block diagram of the related hardware (including the EC), as this
+> > > is quite confusing. With every e-mail exchanged there's a bit more
+> > > information that change my understanding of the issue, I can't really
+> > > provide guidance without a full overview.
+> 
+> https://lkml.org/lkml/2019/12/9/548 that you drew is accurate for the
+> display part of the problem.
+> 
+> You can just add a USB3 connection to the above (there's also I2C
+> interface to the EC of course to control the TCPC/mux aspect of it,
+> but that's on different I2C addresses). Something like this:
+> 
+>                                       +-----------+
+>  +---------+         +------+    /--> | HDMI      |
+>  | MT8173  |  HDMI   |   -->| --/     | Connector |
+>  |  HDMI   | ------> |--/   |         +-----------+
+>  | Encoder |         |    ->| --\     +-----------+      +-----------+
+>  +---------+         +------+    \--> | ANX7688   | ---> | USB-C     |
+>                                       | Bridge    |      | Connector |
+>                               USB3--> | + mux     |      |           |
+>                                       +-----------+      +-----------+
+>                                          ^     ^
+>                                    (I2C) |     | (I2C)
+>    MT8173 (DP lane count/bw readback) -- +     + -- EC (TCPC+mux control)
+> 
+> Power is also fully controlled by the EC.
 
-Hi Greg,
+Could I ask you to also explain how the HDMI mux is controlled, and
+where the HPD-related signals for the HDMI connector and USB-C connector
+are routed to ?
 
-I am not saying someone is a platform device here. My point is
-whoever allocates the SCSI host in its drv->probe(), should
-de-allocate it in its own drv->remove(), just like what ufshcd-pci.c
-does.
+> (the product brief has a good diagram of the internals of the ANX7688:
+> https://www.analogix.com/en/system/files/AA-002281-PB-6-ANX7688_Product_Brief.pdf)
+> 
+> The ANX7688 bridge could _almost_ work driverless (and it does
+> already), the _only_ thing that the driver is doing is filtering out
+> impossible resolution based on DP (over USB-C) number of lanes and
+> bandwidth. This is required to support, for example, old monitors that
+> may only do RBR over DP (so we can't drive the full resolution over 2
+> DP lanes, we'd need 4 lanes, and we need to filter out the higher
+> resolution modes).
+> 
+> > > > > > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > > > > > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > > > > > > ---
+> > > > > > >  drivers/gpu/drm/bridge/Kconfig            |   9 +
+> > > > > > >  drivers/gpu/drm/bridge/Makefile           |   1 +
+> > > > > > >  drivers/gpu/drm/bridge/analogix-anx7688.c | 202 ++++++++++++++++++++++
+> > > > > > >  3 files changed, 212 insertions(+)
+> > > > > > >  create mode 100644 drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > >
+> > > > > > > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > index 34362976cd6f..1f3fc6bec842 100644
+> > > > > > > --- a/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > @@ -16,6 +16,15 @@ config DRM_PANEL_BRIDGE
+> > > > > > >  menu "Display Interface Bridges"
+> > > > > > >       depends on DRM && DRM_BRIDGE
+> > > > > > >
+> > > > > > > +config DRM_ANALOGIX_ANX7688
+> > > > > > > +     tristate "Analogix ANX7688 bridge"
+> > > > > > > +     select DRM_KMS_HELPER
+> > > > > > > +     select REGMAP_I2C
+> > > > > > > +     ---help---
+> > > > > > > +       ANX7688 is a transmitter to support DisplayPort over USB-C for
+> > > > > > > +       smartphone and tablets.
+> > > > > > > +       This driver only supports the HDMI to DP component of the chip.
+> > > > > > > +
+> > > > > > >  config DRM_ANALOGIX_ANX78XX
+> > > > > > >       tristate "Analogix ANX78XX bridge"
+> > > > > > >       select DRM_KMS_HELPER
+> > > > > > > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > > > > > > index 4934fcf5a6f8..7a1e0ec032e6 100644
+> > > > > > > --- a/drivers/gpu/drm/bridge/Makefile
+> > > > > > > +++ b/drivers/gpu/drm/bridge/Makefile
+> > > > > > > @@ -1,4 +1,5 @@
+> > > > > > >  # SPDX-License-Identifier: GPL-2.0
+> > > > > > > +obj-$(CONFIG_DRM_ANALOGIX_ANX7688) += analogix-anx7688.o
+> > > > > > >  obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+> > > > > > >  obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
+> > > > > > >  obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+> > > > > > > diff --git a/drivers/gpu/drm/bridge/analogix-anx7688.c b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > > new file mode 100644
+> > > > > > > index 000000000000..baaed48d6201
+> > > > > > > --- /dev/null
+> > > > > > > +++ b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > > @@ -0,0 +1,202 @@
+> > > > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > > > +/*
+> > > > > > > + * ANX7688 HDMI->DP bridge driver
+> > > > > > > + *
+> > > > > > > + * Copyright 2016 Google LLC
+> > > > > > > + */
+> > > > > > > +
+> > > > > > > +#include <linux/i2c.h>
+> > > > > > > +#include <linux/module.h>
+> > > > > > > +#include <linux/regmap.h>
+> > > > > > > +#include <drm/drm_bridge.h>
+> > > > > > > +
+> > > > > > > +/* Register addresses */
+> > > > > > > +#define VENDOR_ID_REG 0x00
+> > > > > > > +#define DEVICE_ID_REG 0x02
+> > > > > > > +
+> > > > > > > +#define FW_VERSION_REG 0x80
+> > > > > > > +
+> > > > > > > +#define DP_BANDWIDTH_REG 0x85
+> > > > > > > +#define DP_LANE_COUNT_REG 0x86
+> > > > > >
+> > > > > > Are these registers defined by the ANX7688 hardware, or by the firmware
+> > > > > > running on the chip (and, I assume, developed by Google) ?
+> > > > > >
+> > > > > By firmware developed by ANX provided to Google.
+> > > >
+> > > > We asked for these registers to be added to ANX FW, and this is the FW
+> > > > that is used by all elm/hana Chromebooks (I have no idea about other
+> > > > ANX customers...). We have facilities to update the ANX FW from
+> > > > coreboot/depthcharge on Chromebooks, but that does not really matter:
+> > > > the factory FW of all MP Chromebooks does provide these registers.
+> > >
+> > > So the driver is specific to Chromebooks, it doesn't support all
+> > > ANX7688. Sweet :-(
+> 
+> FWIW, this is a 3+ year old part, so it appears that nobody else cares anyway?
 
-Thanks,
+That's good news :-)
 
-Can Guo.
+> Also, this driver is only required to implement the mode filtering,
+> which, possibly, is only supported by the Google version of the FW (I
+> have no idea what other customers ANX has for this part, if they care
+> about this problem, and if so, how they solve it).
+
+-- 
+Regards,
+
+Laurent Pinchart
