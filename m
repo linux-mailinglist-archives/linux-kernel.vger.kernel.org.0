@@ -2,121 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B49C5122DC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 423AC122DBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:58:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728723AbfLQN7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:59:42 -0500
-Received: from out28-51.mail.aliyun.com ([115.124.28.51]:36487 "EHLO
-        out28-51.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728539AbfLQN7l (ORCPT
+        id S1728666AbfLQN6c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:58:32 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36398 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728345AbfLQN6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:59:41 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.5030352|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.125786-0.00881845-0.865395;DS=CONTINUE|ham_regular_dialog|0.00918173-0.000436435-0.990382;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03300;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.GJ3eyQr_1576591147;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GJ3eyQr_1576591147)
-          by smtp.aliyun-inc.com(10.147.41.137);
-          Tue, 17 Dec 2019 21:59:33 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, paulburton@kernel.org, mark.rutland@arm.com,
-        paul@crapouillou.net, vkoul@kernel.org, Zubair.Kakakhel@imgtec.com,
-        dan.j.williams@intel.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, 2374286503@qq.com
-Subject: [PATCH 1/2] dt-bindings: dmaengine: Add X1830 bindings.
-Date:   Tue, 17 Dec 2019 21:58:59 +0800
-Message-Id: <1576591140-125668-3-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576591140-125668-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1576591140-125668-1-git-send-email-zhouyanjie@wanyeetech.com>
+        Tue, 17 Dec 2019 08:58:32 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z3so3872170wru.3;
+        Tue, 17 Dec 2019 05:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=THIo9+Njw2AjrCPqK5WUOyXgr+Ut9xXnH2Hdz6HGu/Q=;
+        b=iREclmrUHnzVezvv+UEMvsy4Ds/03128d2oU76dT9jS4PRgwxPmLsodlsALIFH1se8
+         4Vf0QgEC+iKEhlMyNkiEYm7pu6Toe9QnCxZAVfXZYhy61alyMBcCji6Xr3qxLT5nd+2s
+         j4WC1S//1X/IPF09eDUYw6jWuF2tVbRQYfcRzQ6LWTKlKp/elleACcGU+a/8f5cvDeW/
+         McwTRUfjy2OZrb6OQ6+ERHnMp/k1CzeILhe+//7WML0hYRfcfh6pgv7t0K1yyFHYqY0E
+         x/3G7CP0ksE1AMbZkGxlAX907SWzNn7W/Qy78GW1GGKlz0Gscd+Uo8d+lKKtTeO+IJvu
+         UQug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=THIo9+Njw2AjrCPqK5WUOyXgr+Ut9xXnH2Hdz6HGu/Q=;
+        b=DTjI2JsnHvi4dJXbWi/u7CR2OC5aquw5gAKWxrK5e80FwzqE4a7CpVUEZ/WH0jCW1U
+         oRCEIH8ZIXKy0s7LVN0z82OMIdJ1PVJN6eBCkB1+tSG3qeIAh2gSxV39RhkH6AK87o9d
+         4z15ofaAY8sbF7Vx95tiCcABPetdkKrnvXzyK1SjFF6EokO9v3Ub8SVaBM+yHf55FdvJ
+         16GI3r5ROnuq/oaiw88xdTgyv1Fg74GFthuubA66e2CUk7UF01tjijS9A1Hbeu4j6q5E
+         YwkumXh6dcbQLqKyE8smUW9XIYEiOG9eNdtJC6Udwb9ZrHC5pKiuHPt9CIGxqV2R4j3A
+         Lvcg==
+X-Gm-Message-State: APjAAAVP4JyQnzX+CW2LzuGkVCQqRWJP3bYcTi3BqWYg1YmJIjYip7IA
+        z18TnWtaFZZ2PNYA8eZ60S0=
+X-Google-Smtp-Source: APXvYqxwbzUOvuz0ARMygmrZLqxEyZcyyT8nPw+81ozxGV30TcNmk5KwGqg5QrdwtrQFXV7x/DASdw==
+X-Received: by 2002:adf:f606:: with SMTP id t6mr35770657wrp.85.1576591110424;
+        Tue, 17 Dec 2019 05:58:30 -0800 (PST)
+Received: from localhost ([185.85.220.194])
+        by smtp.gmail.com with ESMTPSA id a1sm3007098wmj.40.2019.12.17.05.58.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Dec 2019 05:58:29 -0800 (PST)
+Date:   Tue, 17 Dec 2019 15:00:57 +0100
+From:   Dmitry Dolgov <9erthalion6@gmail.com>
+To:     Pavel Begunkov <asml.silence@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] io_uring: move *queue_link_head() from common path
+Message-ID: <20191217140057.vswyslavkmrbcebz@localhost>
+References: <cover.1576538176.git.asml.silence@gmail.com>
+ <eda17f0736faff0876c580f1cd841b61c92d7e39.1576538176.git.asml.silence@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eda17f0736faff0876c580f1cd841b61c92d7e39.1576538176.git.asml.silence@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the dmaengine bindings for the X1830 Soc from Ingenic.
+> On Tue, Dec 17, 2019 at 02:22:09AM +0300, Pavel Begunkov wrote:
+>
+> Move io_queue_link_head() to links handling code in io_submit_sqe(),
+> so it wouldn't need extra checks and would have better data locality.
+>
+> ---
+>  fs/io_uring.c | 32 ++++++++++++++------------------
+>  1 file changed, 14 insertions(+), 18 deletions(-)
+>
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index bac9e711e38d..a880ed1409cb 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -3373,13 +3373,15 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+>  			  struct io_kiocb **link)
+>  {
+>  	struct io_ring_ctx *ctx = req->ctx;
+> +	unsigned int sqe_flags;
+>  	int ret;
+>
+> +	sqe_flags = READ_ONCE(req->sqe->flags);
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
- .../devicetree/bindings/dma/jz4780-dma.txt         |  6 ++--
- include/dt-bindings/dma/x1830-dma.h                | 39 ++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/dma/x1830-dma.h
+Just out of curiosity, why READ_ONCE it necessary here? I though, that
+since io_submit_sqes happens within a uring_lock, it's already
+protected. Do I miss something?
 
-diff --git a/Documentation/devicetree/bindings/dma/jz4780-dma.txt b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-index ec89782..3459e77 100644
---- a/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-+++ b/Documentation/devicetree/bindings/dma/jz4780-dma.txt
-@@ -1,4 +1,4 @@
--* Ingenic JZ4780 DMA Controller
-+* Ingenic XBurst DMA Controller
- 
- Required properties:
- 
-@@ -8,10 +8,12 @@ Required properties:
-   * ingenic,jz4770-dma
-   * ingenic,jz4780-dma
-   * ingenic,x1000-dma
-+  * ingenic,x1830-dma
- - reg: Should contain the DMA channel registers location and length, followed
-   by the DMA controller registers location and length.
- - interrupts: Should contain the interrupt specifier of the DMA controller.
--- clocks: Should contain a clock specifier for the JZ4780/X1000 PDMA clock.
-+- clocks: Should contain a clock specifier for the JZ4780/X1000/X1830 PDMA
-+  clock.
- - #dma-cells: Must be <2>. Number of integer cells in the dmas property of
-   DMA clients (see below).
- 
-diff --git a/include/dt-bindings/dma/x1830-dma.h b/include/dt-bindings/dma/x1830-dma.h
-new file mode 100644
-index 00000000..35bcb89
---- /dev/null
-+++ b/include/dt-bindings/dma/x1830-dma.h
-@@ -0,0 +1,39 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * This header provides macros for X1830 DMA bindings.
-+ *
-+ * Copyright (c) 2019 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-+ */
-+
-+#ifndef __DT_BINDINGS_DMA_X1830_DMA_H__
-+#define __DT_BINDINGS_DMA_X1830_DMA_H__
-+
-+/*
-+ * Request type numbers for the X1830 DMA controller (written to the DRTn
-+ * register for the channel).
-+ */
-+#define X1830_DMA_I2S0_TX	0x6
-+#define X1830_DMA_I2S0_RX	0x7
-+#define X1830_DMA_AUTO		0x8
-+#define X1830_DMA_SADC_RX	0x9
-+#define X1830_DMA_UART1_TX	0x12
-+#define X1830_DMA_UART1_RX	0x13
-+#define X1830_DMA_UART0_TX	0x14
-+#define X1830_DMA_UART0_RX	0x15
-+#define X1830_DMA_SSI0_TX	0x16
-+#define X1830_DMA_SSI0_RX	0x17
-+#define X1830_DMA_SSI1_TX	0x18
-+#define X1830_DMA_SSI1_RX	0x19
-+#define X1830_DMA_MSC0_TX	0x1a
-+#define X1830_DMA_MSC0_RX	0x1b
-+#define X1830_DMA_MSC1_TX	0x1c
-+#define X1830_DMA_MSC1_RX	0x1d
-+#define X1830_DMA_DMIC_RX	0x21
-+#define X1830_DMA_SMB0_TX	0x24
-+#define X1830_DMA_SMB0_RX	0x25
-+#define X1830_DMA_SMB1_TX	0x26
-+#define X1830_DMA_SMB1_RX	0x27
-+#define X1830_DMA_DES_TX	0x2e
-+#define X1830_DMA_DES_RX	0x2f
-+
-+#endif /* __DT_BINDINGS_DMA_X1830_DMA_H__ */
--- 
-2.7.4
+> @@ -3421,9 +3423,15 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
+>  		}
+>  		trace_io_uring_link(ctx, req, head);
+>  		list_add_tail(&req->link_list, &head->link_list);
+> -	} else if (req->sqe->flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
+> +
+> +		/* last request of a link, enqueue the link */
+> +		if (!(sqe_flags & IOSQE_IO_LINK)) {
 
+Yes, as you mentioned in the previous email, it seems correct that if
+IOSQE_IO_HARDLINK imply IOSQE_IO_LINK, then here we need to check both.
+
+> +			io_queue_link_head(head);
+> +			*link = NULL;
+> +		}
+> +	} else if (sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
