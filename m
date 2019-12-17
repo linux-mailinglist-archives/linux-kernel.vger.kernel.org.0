@@ -2,151 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A30A312236D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 06:12:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C77BA122376
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 06:12:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfLQFM0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 00:12:26 -0500
-Received: from mxout2.idt.com ([157.165.5.26]:54554 "EHLO mxout2.idt.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725836AbfLQFMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 00:12:23 -0500
-X-Greylist: delayed 540 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Dec 2019 00:12:21 EST
-Received: from mail3.idt.com (localhost [127.0.0.1])
-        by mxout2.idt.com (8.14.4/8.14.4) with ESMTP id xBH53I3G031495;
-        Mon, 16 Dec 2019 21:03:18 -0800
-Received: from corpml1.corp.idt.com (corpml1.corp.idt.com [157.165.140.20])
-        by mail3.idt.com (8.14.4/8.14.4) with ESMTP id xBH53I4e026492;
-        Mon, 16 Dec 2019 21:03:18 -0800
-Received: from vcheng-VirtualBox.localdomain (corpimss2.corp.idt.com [157.165.141.30])
-        by corpml1.corp.idt.com (8.11.7p1+Sun/8.11.7) with ESMTP id xBH53GV16998;
-        Mon, 16 Dec 2019 21:03:16 -0800 (PST)
-From:   vincent.cheng.xh@renesas.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, richardcochran@gmail.com
-Cc:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vincent Cheng <vincent.cheng.xh@renesas.com>
-Subject: [PATCH net-next 3/3] ptp: clockmatrix: Rework clockmatrix version information.
-Date:   Tue, 17 Dec 2019 00:03:08 -0500
-Message-Id: <1576558988-20837-4-git-send-email-vincent.cheng.xh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576558988-20837-1-git-send-email-vincent.cheng.xh@renesas.com>
-References: <1576558988-20837-1-git-send-email-vincent.cheng.xh@renesas.com>
-X-TM-AS-MML: disable
+        id S1727705AbfLQFMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 00:12:40 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41288 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbfLQFMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 00:12:37 -0500
+Received: by mail-pl1-f194.google.com with SMTP id bd4so5522002plb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 21:12:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=q8uq0G/0a7n6wpCfthraliInM8bWXiLfDNBWtuDMtJ8=;
+        b=Fl0v2lo28eToo5OfamdynpU3VUKelWk576MTDeGbgaSOPoSF2oP2NxvPiIVhkqlZOr
+         BpXQcvAl9FcaDO0W3hxow/LxKBn42CFXGVcqL0CpCkE2B97xXAn5IdEF0c/1u1tLoj1K
+         8UXxO1U3y6FSZTdkb/w2FvSSqRrKmDH5oXOHifjDJMzTwvZC4Nv4s1fj4kwc4p6PaGlL
+         ig2WtwUSRnJeYgM/FkBfxu7095yTFvrIeCWV3wTci61MDNOdSl+Blv1oY0FZphxNk8TL
+         vkHCEAiG4dHcY5/QVvlaSAIaFCAbO5ryV3f2FmrcV9LsfALEZsq7Nhp7hruvOO9U3DQs
+         tJHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=q8uq0G/0a7n6wpCfthraliInM8bWXiLfDNBWtuDMtJ8=;
+        b=JzR25eGcpaaggpGffcLtaqauc7KT5ZtBlNvxx5xkzjZA6LpozFgaoj8FpbOD8dwb98
+         5NJsPTwTZ9T6v0DCbBBdvqVo/DZKC6w0S0HwBUR2SKyyNek+AtNnXUnU1qCUuU6SHd9G
+         yYdyup2tzgBc1XyUIypD1KNuPjtB5VuzlBBenZXqP1Ns/FgZa+224GdK0LdqM0RqYkij
+         s1evllzLP8UpmulclzBNSY4ZYJXByYSC+YyFV06FqnaK6mHHwuFBhMYFglm+rJKwbx9q
+         ZR7sdNgpkkzmPcsqr09BzagQAb52PkPiPK6scv7334z1dWExj5KSK/93aEIAERjDXVvF
+         u4Mg==
+X-Gm-Message-State: APjAAAXNvOe6Kt2aMwAbJLPHb7a63paJGaNQZslKnN1xGw9UT3FMEpWD
+        FCuBDnzLgYAfbhgurKZ3e9c=
+X-Google-Smtp-Source: APXvYqy3lSJKhLaFlrkVPcy3/Kqv3W5CFnC949J5w5xHpyX1wYGi6RcSMBAP13o4qK5uFE3FiiAr0w==
+X-Received: by 2002:a17:902:b083:: with SMTP id p3mr20066966plr.141.1576559557194;
+        Mon, 16 Dec 2019 21:12:37 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
+        by smtp.gmail.com with ESMTPSA id 16sm24569625pfh.182.2019.12.16.21.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 21:12:36 -0800 (PST)
+Date:   Tue, 17 Dec 2019 14:12:34 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
+Message-ID: <20191217051234.GA54407@google.com>
+References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Cheng <vincent.cheng.xh@renesas.com>
+On (19/12/16 18:59), Tetsuo Handa wrote:
+[..]
+> +++ b/kernel/printk/printk.c
+> @@ -1198,6 +1198,14 @@ MODULE_PARM_DESC(ignore_loglevel,
+>  
+>  static bool suppress_message_printing(int level)
+>  {
+> +#ifdef CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING
+> +	/*
+> +	 * Changing console_loglevel causes "no output". But ignoring
+> +	 * console_loglevel is easier than preventing change of
+> +	 * console_loglevel.
+> +	 */
+> +	return (level >= CONSOLE_LOGLEVEL_DEFAULT && !ignore_loglevel);
+> +#endif
+>  	return (level >= console_loglevel && !ignore_loglevel);
+>  }
 
-Remove pipeline id, bond id, csr id, and irq id.
-Changes source register for reading HW rev id.
-Add OTP config select.
+Can you fuzz test with `ignore_loglevel'?
 
-Signed-off-by: Vincent Cheng <vincent.cheng.xh@renesas.com>
----
- drivers/ptp/ptp_clockmatrix.c | 63 ++++++++-----------------------------------
- 1 file changed, 11 insertions(+), 52 deletions(-)
-
-diff --git a/drivers/ptp/ptp_clockmatrix.c b/drivers/ptp/ptp_clockmatrix.c
-index 66e3266..4ba5ea48 100644
---- a/drivers/ptp/ptp_clockmatrix.c
-+++ b/drivers/ptp/ptp_clockmatrix.c
-@@ -597,36 +597,7 @@ static int cm_state_machine_reset(struct cm *cm)
- 
- static int cm_read_hw_rev_id(struct cm *cm, u8 *hw_rev_id)
- {
--	return cm_read(cm, GENERAL_STATUS, HW_REV_ID, hw_rev_id, sizeof(u8));
--}
--
--static int cm_read_bond_id(struct cm *cm, u8 *bond_id)
--{
--	return cm_read(cm, GENERAL_STATUS, BOND_ID, bond_id, sizeof(u8));
--}
--
--static int cm_read_hw_csr_id(struct cm *cm, u16 *hw_csr_id)
--{
--	int err;
--	u8 buf[2] = {0};
--
--	err = cm_read(cm, GENERAL_STATUS, HW_CSR_ID, buf, sizeof(buf));
--
--	*hw_csr_id = (buf[1] << 8) | buf[0];
--
--	return err;
--}
--
--static int cm_read_hw_irq_id(struct cm *cm, u16 *hw_irq_id)
--{
--	int err;
--	u8 buf[2] = {0};
--
--	err = cm_read(cm, GENERAL_STATUS, HW_IRQ_ID, buf, sizeof(buf));
--
--	*hw_irq_id = (buf[1] << 8) | buf[0];
--
--	return err;
-+	return cm_read(cm, HW_REVISION, REV_ID, hw_rev_id, sizeof(u8));
- }
- 
- static int cm_read_product_id(struct cm *cm, u16 *product_id)
-@@ -663,16 +634,10 @@ static int cm_read_hotfix_release(struct cm *cm, u8 *hotfix)
- 	return cm_read(cm, GENERAL_STATUS, HOTFIX_REL, hotfix, sizeof(u8));
- }
- 
--static int cm_read_pipeline(struct cm *cm, u32 *pipeline)
-+static int cm_read_otp_scsr_config_select(struct cm *cm, u8 *config_select)
- {
--	int err;
--	u8 buf[4] = {0};
--
--	err = cm_read(cm, GENERAL_STATUS, PIPELINE_ID, &buf[0], sizeof(buf));
--
--	*pipeline = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
--
--	return err;
-+	return cm_read(cm, GENERAL_STATUS, OTP_SCSR_CONFIG_SELECT,
-+		       config_select, sizeof(u8));
- }
- 
- static int process_pll_mask(struct cm *cm, u32 addr, u8 val, u8 *mask)
-@@ -1062,28 +1027,22 @@ static void cm_display_version_info(struct cm *cm)
- 	u8 major;
- 	u8 minor;
- 	u8 hotfix;
--	u32 pipeline;
- 	u16 product_id;
--	u16 csr_id;
--	u16 irq_id;
- 	u8 hw_rev_id;
--	u8 bond_id;
-+	u8 config_select;
-+	char *fmt = "%d.%d.%d, Id: 0x%04x  HW Rev: %d  OTP Config Select: %d\n";
- 
- 	cm_read_major_release(cm, &major);
- 	cm_read_minor_release(cm, &minor);
- 	cm_read_hotfix_release(cm, &hotfix);
--	cm_read_pipeline(cm, &pipeline);
- 
- 	cm_read_product_id(cm, &product_id);
- 	cm_read_hw_rev_id(cm, &hw_rev_id);
--	cm_read_bond_id(cm, &bond_id);
--	cm_read_hw_csr_id(cm, &csr_id);
--	cm_read_hw_irq_id(cm, &irq_id);
--
--	dev_info(&cm->client->dev, "Version:  %d.%d.%d, Pipeline %u\t"
--		 "0x%04x, Rev %d, Bond %d, CSR %d, IRQ %d\n",
--		 major, minor, hotfix, pipeline,
--		 product_id, hw_rev_id, bond_id, csr_id, irq_id);
-+
-+	cm_read_otp_scsr_config_select(cm, &config_select);
-+
-+	dev_info(&cm->client->dev, fmt, major, minor, hotfix, product_id,
-+		 hw_rev_id, config_select);
- }
- 
- static struct ptp_clock_info cm_caps = {
--- 
-2.7.4
-
+	-ss
