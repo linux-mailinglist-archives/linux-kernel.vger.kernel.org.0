@@ -2,79 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC03122400
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 06:46:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77669122402
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 06:46:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbfLQFnE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 00:43:04 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:39280 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbfLQFnE (ORCPT
+        id S1726963AbfLQFpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 00:45:19 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45140 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfLQFpT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 00:43:04 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 24D5C20023;
-        Tue, 17 Dec 2019 06:42:57 +0100 (CET)
-Date:   Tue, 17 Dec 2019 06:42:55 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx <intel-gfx@lists.freedesktop.org>
-Subject: Re: linux-next: Tree for Dec 16 (drm_panel & intel_panel)
-Message-ID: <20191217054255.GA26868@ravnborg.org>
-References: <20191216162209.5b5256dd@canb.auug.org.au>
- <d92bec2a-62cb-004e-7f8c-01fc12a53a74@infradead.org>
+        Tue, 17 Dec 2019 00:45:19 -0500
+Received: by mail-pf1-f193.google.com with SMTP id 2so6896097pfg.12
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 21:45:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wfrN/rZcexgOtVdjDxoUvjNUMsDg+9GTHwLKXMJB6OE=;
+        b=ok5ZndZqbdzT+n4aXHxDzOFxBdDtA4GkjyyGXB5IQqqSqIc1n3nbT+HTQHrjj38KG1
+         3ROrba07sGe9zVDooPo8lwUfdkbXD7AseV/8SaGn8nPrqOVkk1mLXLPmYdPzJpno4s6C
+         EFBIqEOZIsEjmKRITIEWLqn92jDBOdRLx2gXTo1fYzqVE048/dR/as8/o9GuCL3W/nhC
+         GGDWc4uVumOyhl8Zy7P68UcVWF55DZ0BXN9sbsVpF9sWynkyPQjHlFgxRn9EXlu8cboK
+         g+hToWP/7D2GiCNMZj0IKamZmYTByHqRBdOVVZ1TGFdIILcX1dggnqEC8H8kXiOV5pBg
+         weuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wfrN/rZcexgOtVdjDxoUvjNUMsDg+9GTHwLKXMJB6OE=;
+        b=HL/F8/vGc7hQfRMN8ih1jtWoeDLKidQvdxUDRHknnKaEuGTeio0nuOALwJMuSfDdR9
+         sqIcgIkmswb1cH33bI2HWD6r9+v9imucZ99dtsQIJmY77SN4ACnzRGMIJ6SiR/qRkmLJ
+         l4sOPSIbn39XvW083U6zgu1Zk+7fdTqDvpqs6B5TkT6iPrwynhX/Hx0E5Y5VfzuWgMk9
+         tFRAG47Ts5KVqHK7AQVvcCuc6misI9WVzbW9vixGhTrzDNu+j9oCAjMUbrZQ8cuWhIWU
+         oiTeYqST0Rp00osgwoxUyosnExW4DBKB3yuyEc23tleh9nSipTIHJMMJdoKQpQPJWqDY
+         DGvg==
+X-Gm-Message-State: APjAAAUgJtowM66X3Vc96j2aPcEMJ1HSWEDfeZn248geTdyeCtlBlqRx
+        FFCqMYwxz+bNqAHrVfgi9Yo=
+X-Google-Smtp-Source: APXvYqyfX/1IDat9rsde9SvozIGGj7ikL/4og0PV7qeQ/S+T04Gfuh6h4A7T1uDnUMFPfbZt21fkUQ==
+X-Received: by 2002:a63:ce50:: with SMTP id r16mr23083911pgi.32.1576561518330;
+        Mon, 16 Dec 2019 21:45:18 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
+        by smtp.gmail.com with ESMTPSA id w3sm24411420pfd.161.2019.12.16.21.45.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 21:45:17 -0800 (PST)
+Date:   Tue, 17 Dec 2019 14:45:15 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] printk: Fix preferred console selection with multiple
+ matches
+Message-ID: <20191217054515.GB54407@google.com>
+References: <2712d7e2fb68bca06a33e2e062fc8e65a2652410.camel@kernel.crashing.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d92bec2a-62cb-004e-7f8c-01fc12a53a74@infradead.org>
+In-Reply-To: <2712d7e2fb68bca06a33e2e062fc8e65a2652410.camel@kernel.crashing.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
-        a=4kOG7-xGWyIPk-DUqGkA:9 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Randy.
-
-On Mon, Dec 16, 2019 at 08:25:11AM -0800, Randy Dunlap wrote:
-> On 12/15/19 9:22 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20191213:
-> > 
+On (19/12/16 12:08), Benjamin Herrenschmidt wrote:
+[..]
 > 
-> on x86_64:
+> This tentative fix changes the loop in register_console to scan first
+> for consoles specified on the command line, and only if none is found,
+> to then scan for consoles specified by the architecture.
 > 
-> ld: drivers/gpu/drm/drm_panel.o: in function `drm_panel_of_backlight':
-> (.text+0x2ee): undefined reference to `devm_of_find_backlight'
-> 
-> ld: drivers/gpu/drm/i915/display/intel_panel.o: in function `intel_backlight_device_register':
-> intel_panel.c:(.text+0x593e): undefined reference to `backlight_device_register'
-> ld: drivers/gpu/drm/i915/display/intel_panel.o: in function `intel_backlight_device_unregister':
-> intel_panel.c:(.text+0x5a04): undefined reference to `backlight_device_unregister'
-> 
-> CONFIG_DRM_PANEL=y
-> CONFIG_BACKLIGHT_CLASS_DEVICE=m
-> CONFIG_DRM_I915=y
-> 
-> Full randconfig file is attached.
+[..]
 
-Can you please verify if you have:
-907aa265fde6589b8059dc51649c6d1f49ade2f3
-("drm/drm_panel: fix EXPORT of drm_panel_of_backlight")
+Looks good to me.
 
-This commit is supposed to fix it.
-
-	Sam
-
+	-ss
