@@ -2,104 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1AF123005
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76AB212300F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:20:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfLQPTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:19:55 -0500
-Received: from mail-oi1-f179.google.com ([209.85.167.179]:35785 "EHLO
-        mail-oi1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728118AbfLQPTy (ORCPT
+        id S1728457AbfLQPUY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:20:24 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:29358 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728276AbfLQPUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:19:54 -0500
-Received: by mail-oi1-f179.google.com with SMTP id k4so1274307oik.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 07:19:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H8azu2o1Iq/reNcvhoSocAVOxEQHSQBRnVTNzbUF3Uc=;
-        b=Yuunl+mVntpbKZNnHvL9W6ngR9Q38K7dedOy3fCB93uINumpD90/kZQ/2RLGaPHbC1
-         CvBMy+fFpjk2nNyMJE2AxBIwfktv2bKuixUmH9TrEcMswxMblocMPZ/JKfLNCKSM9ZhL
-         MLo5cmftOn3npenO+04AoRAATq6eJ6sKqscCEDbKOBRTk2rys5pAmtqEY9CrLerGgWS9
-         akbOV5beLokCnkf9QywhLyvUEvRel/4GsydJB3f55LLDIq0d89eCCSKe9Ul8ilnB5CNC
-         EiGpdWYwQJj6exlFfowi32SwRnIRqMSXfmtPsbHbUWauwZ4E18TVjG9haaE9yD0/1MjC
-         y16g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H8azu2o1Iq/reNcvhoSocAVOxEQHSQBRnVTNzbUF3Uc=;
-        b=ae22SQv1FHbj0djgCWjLNqAPttn25laEBL2SoYR9yAODZKUKH+vwrrvjLhT1pKnGfP
-         vHpvoivqjM1opAQhas33GUuNTU4qKWQPBzaPbVMkW/gDWh1AulEKvd2Yo4yPKlKJoPbs
-         Z4b/uY4AsZSHF9mrIFfD1gfdRE83YkdSwGwH9tSWSN8blGjsv3EAIqiDmRof9nhuLkw7
-         QcYulXnmqlp64v1eeqdQy35XhD/oyAoNvLF4sHyc2ZDwoEHX2U2xqz6LXBaN23vdLPy0
-         lttHoffVSl2a1/wMYA/Qm2y5UsVoOVgDNzKBB23268zRfTngT9AXftVMoUw7ul92J8k8
-         Ysvg==
-X-Gm-Message-State: APjAAAVSyHSFF4Mzt/00Y6rij1mhB5Z2r6h6sHFY9mzS8DR2KhSP2Xx3
-        pFiNHdFvr/Gj0FBe/mVFczy4EQqJ
-X-Google-Smtp-Source: APXvYqx1GPeMIumZLhZkdd4Qm8fAnZjPDCzJ3pnTmxK4rc+3eBXq7XAczpUtVEkagQ+aQ3M8RsdVEg==
-X-Received: by 2002:aca:4a08:: with SMTP id x8mr1794024oia.39.1576595993424;
-        Tue, 17 Dec 2019 07:19:53 -0800 (PST)
-Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
-        by smtp.gmail.com with ESMTPSA id n25sm7966735oic.6.2019.12.17.07.19.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 07:19:52 -0800 (PST)
-Subject: Re: VirtualBox module build breakage since commit 39808e451fdf
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <392d86d2-76a4-03d2-5517-3c22bcf3e535@lwfinger.net>
- <CAK7LNARUhrC92HM7DVBVUbPVpS9Q_svb-h6EZ496fpr5JFdPdg@mail.gmail.com>
-From:   Larry Finger <Larry.Finger@lwfinger.net>
-Message-ID: <6a0f3245-eaaf-ebff-1122-89d56baf4b1d@lwfinger.net>
-Date:   Tue, 17 Dec 2019 09:19:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNARUhrC92HM7DVBVUbPVpS9Q_svb-h6EZ496fpr5JFdPdg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Dec 2019 10:20:23 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576596023; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=PeUBldwfg7nCHCKJvZtlT5BQ/Bx4+9edoBFRqZKZ76g=; b=nkESICxXYnaTnwFWi0yMTkJegZwByxU2kGPN5D2svfN0LNx6fhvPF7n4L6yHKCQD2f/p8nod
+ YTE/ysKZTCHe/ehuoJeyA48Q6dRdAVBXEEL+yq8m45mvglOXVkbcncsVIhTAtrraVHISxxjn
+ ase4LN4XHg30rEm4gv8CcykIoi4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df8f22f.7fd0bdd18810-smtp-out-n01;
+ Tue, 17 Dec 2019 15:20:15 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D555DC447A5; Tue, 17 Dec 2019 15:20:14 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DDCA2C43383;
+        Tue, 17 Dec 2019 15:20:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDCA2C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v11 2/4] dt-bindings: clock: Convert qcom,mmcc to DT schema
+Date:   Tue, 17 Dec 2019 08:20:03 -0700
+Message-Id: <1576596003-10093-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1576595954-9991-1-git-send-email-jhugo@codeaurora.org>
+References: <1576595954-9991-1-git-send-email-jhugo@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/19 11:11 PM, Masahiro Yamada wrote:
-> Hi.
-> 
-> On Mon, Dec 16, 2019 at 11:48 AM Larry Finger <Larry.Finger@lwfinger.net> wrote:
->>
->> Hi,
->>
->> Since commit 39808e451fdf ("kbuild: do not read
->> $(KBUILD_EXTMOD)/Module.symvers"), some of the modules for VirtualBox have
->> failed to build. There are at least 3 such modules, namely vboxdrv, vboxnetflt,
->> and vboxnetadp.
-> 
-> As the section 6.3 of Documentation/kbuild/modules.rst says,
-> the best practice is to put the related modules into the same source
-> tree, and then do like this:
-> 
->    obj-m := vboxdrv/  vboxnetfit/  vboxnetadp/
-> 
-> 
-> 
-> If you want to maintain the three separately,
-> as 39808e451fdf mentions, you can useKBUILD_EXTRA_SYMBOLS.
-> KBUILD_EXTRA_SYMBOLS was added more than a decade.
-> So, you should be able to use it for your modules.
-> 
-> I think it is a cleaner solution than
-> copying around Module.symvers in your build tree.
+Convert the qcom,mmcc-X clock controller binding to DT schema.  Add the
+protected-clocks property to the schema to show that is it explicitly
+allowed, instead of relying on the generic, pre-schema binding.
 
-Masahiro,
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/qcom,mmcc.txt        | 28 ----------
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       | 60 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
 
-Thank you for your prompt reply. Once I got it right, the KBUILD_EXTRA_SYMBOLS 
-method works. The debugging was slow due to the problem area happening near the 
-end of a 45-minute build, but I now have a solution that works for all kernels.
-
-Thanks again,
-
-Larry
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+deleted file mode 100644
+index 8b0f784..0000000
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-Qualcomm Multimedia Clock & Reset Controller Binding
+-----------------------------------------------------
+-
+-Required properties :
+-- compatible : shall contain only one of the following:
+-
+-			"qcom,mmcc-apq8064"
+-			"qcom,mmcc-apq8084"
+-			"qcom,mmcc-msm8660"
+-			"qcom,mmcc-msm8960"
+-			"qcom,mmcc-msm8974"
+-			"qcom,mmcc-msm8996"
+-
+-- reg : shall contain base register location and length
+-- #clock-cells : shall contain 1
+-- #reset-cells : shall contain 1
+-
+-Optional properties :
+-- #power-domain-cells : shall contain 1
+-
+-Example:
+-	clock-controller@4000000 {
+-		compatible = "qcom,mmcc-msm8960";
+-		reg = <0x4000000 0x1000>;
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-		#power-domain-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+new file mode 100644
+index 0000000..78b1a22
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,mmcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Multimedia Clock & Reset Controller Binding
++
++maintainers:
++  - Jeffrey Hugo <jhugo@codeaurora.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description: |
++  Qualcomm multimedia clock control module which supports the clocks, resets and
++  power domains.
++
++properties:
++  compatible :
++    enum:
++       - qcom,mmcc-apq8064
++       - qcom,mmcc-apq8084
++       - qcom,mmcc-msm8660
++       - qcom,mmcc-msm8960
++       - qcom,mmcc-msm8974
++       - qcom,mmcc-msm8996
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++       Protected clock specifier list as per common clock binding
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++examples:
++  # Example for MMCC for MSM8960:
++  - |
++    clock-controller@4000000 {
++      compatible = "qcom,mmcc-msm8960";
++      reg = <0x4000000 0x1000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+-- 
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
