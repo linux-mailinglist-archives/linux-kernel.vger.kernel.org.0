@@ -2,75 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BFEA122273
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:18:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E775D122277
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfLQDSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 22:18:21 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44485 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbfLQDSV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 22:18:21 -0500
-Received: by mail-pl1-f196.google.com with SMTP id az3so5390773plb.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 19:18:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=agmeJJwHgutPi6V5jPwGQYgXQ3xxL76EKh3hWRk6sjs=;
-        b=V4TfRhRgroa8mXVVJXnFeVpyJc7ZKoYOuJQZF0r7WNOZSRM1GzwRQmStlmQRL1VXLP
-         WkVEzqzQQYZUUpUWZ5njli4dzPmcmc7fVCibo8MOa7uTpRh3gYCgm8nwaH7LxS9xeIQk
-         IMHpMPq07rkPzxwbh9bHYhiL99ufOnYTS1geio+okGkzkSnFqcrRqaY9WyoQgqNa5FRP
-         uNu8UOeiz7nIS/5jWwzruK53Fgdxe3MurwZJQlEHiDjiJr37CLoBc5yPLhZN4MGHDPXN
-         RdKKugfMMFpH9BdQROAe7Onyvcvz0OpSPQDqH372xCckxwhrgkgiyYmfJBF/Ek1vfCZf
-         Pilg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=agmeJJwHgutPi6V5jPwGQYgXQ3xxL76EKh3hWRk6sjs=;
-        b=o9/RWl1ZC2QFCNYomFpClHyxuXqH7NOXrXyI2UgsTeeI9+OjnmFVftygxUs5eUOlh2
-         sxhHrBFaXw3XDLfDZWlMLAMpG20UHKPeZYCeQ5QqR6HOeJi6B/47xa/0ppgcS013uftQ
-         xtGWzIeB0ETwrtN/YaktZD+j57l0XRFEc2uRF1c35mUTuviwF5oyA3gX6a4S0nB3/2FY
-         GXVc5yuiynSYN4b3AwNXVRb7HlM3Rg5CYfrycpDUEVn9SyYYc4Esugb5BJpE5bvAdy0s
-         JE7buO2zygbExxhYFe6Jt5fgfWoDTWeFkg3jfXGB2UfcA9YNhvl5m4EhwE1stO8mAMni
-         1f3g==
-X-Gm-Message-State: APjAAAXX5zNn8oETdXYuGIoYJ/YRgTHJCp/d1E5oO1B/Du9kTCHXR3AG
-        VwbWMZqm1fqkVlCb1Lx+DbLX+Q==
-X-Google-Smtp-Source: APXvYqxy02HSPh49Ch9sM24x3WbbcqSACRNLlkhhrwG6Omk42qWsbbJC2iHqcV+NpsLXw+rlfCLQqg==
-X-Received: by 2002:a17:902:9a92:: with SMTP id w18mr19975363plp.91.1576552699188;
-        Mon, 16 Dec 2019 19:18:19 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id 24sm24713060pfn.101.2019.12.16.19.18.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 19:18:18 -0800 (PST)
-Date:   Mon, 16 Dec 2019 19:18:15 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-cc:     Christoph Hellwig <hch@lst.de>, Anup Patel <anup@brainfault.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/12] riscv: add nommu support
-In-Reply-To: <CAEn-LToO9MjMr6ipXO1pCGG7H-bunHHAVyYkknOZ2dixOOG4+w@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.9999.1912161917350.64438@viisi.sifive.com>
-References: <20191028121043.22934-1-hch@lst.de> <20191028121043.22934-11-hch@lst.de> <alpine.DEB.2.21.9999.1911171511170.5296@viisi.sifive.com> <CAEn-LToO9MjMr6ipXO1pCGG7H-bunHHAVyYkknOZ2dixOOG4+w@mail.gmail.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1726907AbfLQDTY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 22:19:24 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58328 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725836AbfLQDTX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 22:19:23 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CF0AF7CC6665C0E49E48;
+        Tue, 17 Dec 2019 11:19:21 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Tue, 17 Dec 2019
+ 11:19:13 +0800
+Subject: [PATCH v3] async: Let kfree() out of the critical area of the lock
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     <gregkh@linuxfoundation.org>, <bvanassche@acm.org>,
+        <alexander.h.duyck@linux.intel.com>, <bhelgaas@google.com>,
+        <sakari.ailus@linux.intel.com>, <linux-kernel@vger.kernel.org>,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+References: <89da0082-ebad-25c0-d82f-4a2feae628e6@huawei.com>
+Message-ID: <8a8b27c2-60ac-5702-02dd-7950898e0a0d@huawei.com>
+Date:   Tue, 17 Dec 2019 11:18:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <89da0082-ebad-25c0-d82f-4a2feae628e6@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019, David Abdurachmanov wrote:
+The async_lock is big global lock, and kfree() is not always cheap, it
+will increase lock contention. it's better let kfree() outside the lock
+to keep the critical area as short as possible.
 
-> This seems to break kernel (5.5-rc2) compilation in Fedora/RISCV. The
-> function above needed vmemmap macro.
+Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+---
+v2 -> v3:
+ - move kfree() after wake_up(&async_done)
 
-Thanks, will take a look.
+v1 -> v2:
+ - update the description
+ - add "Reviewed-by"
+
+ kernel/async.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/async.c b/kernel/async.c
+index 4f9c1d614016..d2ab75e8b1ab 100644
+--- a/kernel/async.c
++++ b/kernel/async.c
+@@ -135,14 +135,14 @@ static void async_run_entry_fn(struct work_struct *work)
+ 	list_del_init(&entry->domain_list);
+ 	list_del_init(&entry->global_list);
+
+-	/* 3) free the entry */
+-	kfree(entry);
+ 	atomic_dec(&entry_count);
+-
+ 	spin_unlock_irqrestore(&async_lock, flags);
+
+-	/* 4) wake up any waiters */
++	/* 3) wake up any waiters */
+ 	wake_up(&async_done);
++
++	/* 4) free the entry */
++	kfree(entry);
+ }
+
+ /**
+-- 
+2.7.4
 
 
-- Paul
