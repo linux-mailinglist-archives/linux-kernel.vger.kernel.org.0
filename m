@@ -2,89 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF261122C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:42:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B7A7122C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbfLQMmn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:42:43 -0500
-Received: from foss.arm.com ([217.140.110.172]:35818 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727519AbfLQMml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:42:41 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DFF531B;
-        Tue, 17 Dec 2019 04:42:41 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A9D143F718;
-        Tue, 17 Dec 2019 04:42:40 -0800 (PST)
-Date:   Tue, 17 Dec 2019 12:42:39 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH 08/13] PCI: cadence: Use local management register to
- configure Vendor ID
-Message-ID: <20191217124238.GE24359@e119886-lin.cambridge.arm.com>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-9-kishon@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209092147.22901-9-kishon@ti.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+        id S1728456AbfLQMrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:47:01 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.87.133]:38922 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728028AbfLQMqV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:46:21 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 5AF8BC00AE;
+        Tue, 17 Dec 2019 12:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1576586780; bh=JfzLeaD7F4WW4TsqwGILNTOHGkhNnPEwK2ItB4zHXlk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dKVErmsvICyvIYUNQzYHD0yQcMGdDCyqaa/xKB06F2qxDLCwqvCO2hff1lxqcDlBk
+         5UOH+nu0exSiCkL5g6ChAtZZrjI29qjtL7QEcppuF2R5XsFfkNw5eS4QJOa011/rVY
+         SKYDfGOq6PD27OIzPt+mt6ojSDsBtqUQosPL4/iZYqieX7LrMbwLHr1bCSvREV3jAW
+         bPoI6CberKXSmELcrXhmoiVLltos0AxZlqZmtBu+tPhJa7+uLxCz0jjm8XUq/uCW4i
+         5HH+VhCtSkjIK6c59p5S3hsfuC57GNcS7WRH5v1vyHsdkUbeOKgC3+eoFif0u8bCbo
+         SUqXaKGGfTB/Q==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 6D72FA0075;
+        Tue, 17 Dec 2019 12:46:16 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v2 0/7] net: stmmac: Improvements for -next
+Date:   Tue, 17 Dec 2019 13:46:04 +0100
+Message-Id: <cover.1576586602.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 02:51:42PM +0530, Kishon Vijay Abraham I wrote:
-> PCI_VENDOR_ID in root port configuration space is read-only register
-> and writing to it will have no effect. Use local management register to
-> configure Vendor ID and Subsystem Vendor ID.
+Improvements for stmmac.
 
-Is this a bug fix? Can you add a Fixes tag and make that clearer?
+1) Adds more information regarding HW Caps in the DebugFS file.
 
-Thanks,
+2) Prevents incostant bandwidth because of missed interrupts.
 
-Andrew Murray
+3) Allows interrupts to be independently enabled or disabled so that we don't
+have to schedule both TX and RX NAPIs.
 
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> ---
->  drivers/pci/controller/cadence/pcie-cadence-host.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> index cf817be237af..afb2c96a6538 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> @@ -71,6 +71,7 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
->  {
->  	struct cdns_pcie *pcie = &rc->pcie;
->  	u32 value, ctrl;
-> +	u32 id;
->  
->  	/*
->  	 * Set the root complex BAR configuration register:
-> @@ -90,8 +91,12 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
->  	cdns_pcie_writel(pcie, CDNS_PCIE_LM_RC_BAR_CFG, value);
->  
->  	/* Set root port configuration space */
-> -	if (rc->vendor_id != 0xffff)
-> -		cdns_pcie_rp_writew(pcie, PCI_VENDOR_ID, rc->vendor_id);
-> +	if (rc->vendor_id != 0xffff) {
-> +		id = CDNS_PCIE_LM_ID_VENDOR(rc->vendor_id) |
-> +			CDNS_PCIE_LM_ID_SUBSYS(rc->vendor_id);
-> +		cdns_pcie_writel(pcie, CDNS_PCIE_LM_ID, id);
-> +	}
-> +
->  	if (rc->device_id != 0xffff)
->  		cdns_pcie_rp_writew(pcie, PCI_DEVICE_ID, rc->device_id);
->  
-> -- 
-> 2.17.1
-> 
+4) Stops using a magic number in coalesce timer re-arm.
+
+5) and 6) Implements the EST feature for GMAC5+ and XGMAC3+ cores which leads
+to 7) that integrates EST feature with TAPRIO API.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (7):
+  net: stmmac: Print more information in DebugFS DMA Capabilities file
+  net: stmmac: Always arm TX Timer at end of transmission start
+  net: stmmac: Let TX and RX interrupts be independently
+    enabled/disabled
+  net: stmmac: Always use TX coalesce timer value when rescheduling
+  net: stmmac: Add basic EST support for GMAC5+
+  net: stmmac: Add basic EST support for XGMAC
+  net: stmmac: Integrate EST with TAPRIO scheduler API
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   4 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c  |  24 ++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |   9 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   2 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |   3 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.h   |  11 ++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |  47 +++++++--
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c       |  95 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h       |  19 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwmac_dma.h    |   6 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac_lib.c    |  22 ++++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  21 ++++
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  52 ++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  27 +++++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  16 ++-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   1 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  96 ++++++++++++------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    | 108 +++++++++++++++++++++
+ include/linux/stmmac.h                             |  11 +++
+ 19 files changed, 519 insertions(+), 55 deletions(-)
+
+-- 
+2.7.4
+
