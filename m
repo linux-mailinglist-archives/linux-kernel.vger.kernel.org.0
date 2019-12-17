@@ -2,82 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA371234DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF93E1234E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfLQScC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:32:02 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40922 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfLQScC (ORCPT
+        id S1728132AbfLQScd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:32:33 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:59434 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfLQScd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:32:02 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g6so6479854plp.7;
-        Tue, 17 Dec 2019 10:32:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Jt9igp/vb3Q4imVycGHAIChk8Rd9kKBHmsaYFmp6Y7o=;
-        b=N7LjdDasH4+CqBepfgfMlE44vLxYadjQ67o+oL4zFoXyrMfU7okw0uW4mSe5x3Htfo
-         UkAiTrsYVYfxgqDvIuH+2KQyQ0ERJKbUJx5/5bWr+b+lXGSCx1rVdWnGJBdDVZ23dVpS
-         mmk87XHA+7PvbKmkqc8uLcer8HcL6Slcn1s00QmAZxR8kyIXOyVuI7dxt0PBMJu9mkp6
-         z30iHL3T8qBoYehiyo3jaI9+BmLori12ZbIKe2V+oHALmcQQa2Yz/P94/yKIM2DNShrw
-         6P+KLDPEVLWXEsRU4GxUsQdM5z8KWnFklXH09NBSEb7OjR6g1xfLQTFGnWLfe6dXpMme
-         oUwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Jt9igp/vb3Q4imVycGHAIChk8Rd9kKBHmsaYFmp6Y7o=;
-        b=ef4ez/MgN/NnuNB1UHV6o0Op7es+4Q3vWzgQQMjcXurDThv5VfXST/R4zM5k8iYfdn
-         s2vGXzon9WErEmnTGo4Brmt4qXxxgj1T6NbtJft29K6QMShtl/tP+TfASSSq5qzfQOca
-         SM4bdeSU3X72HePKRLrBrvUtv5H7ma+O0ZFoCWoYYnXD4NZMaA77I8A8NgrRVfNVWfP0
-         qbiqbNbkiw3OxRy+mMrUmpTehzPc45rnSprIJoIxhZi5wz/W1QbzO/fmAw2EABDrU9yk
-         EyO6Yd9talPfEmiR+/SByl1vIs6tZhNwdVrMxrcd4oCkG7A07gh0/4GuJDTdx3Ohkn1V
-         Dk2w==
-X-Gm-Message-State: APjAAAXbEn6UOuiwoAn55xacAyZEKAk99yQys1xF/O3GU35Jsfionc5A
-        X3aEyIFnQw72iJSgwq7052679/3C
-X-Google-Smtp-Source: APXvYqytROhdFNm7gtHFIYzQThGI9Cm4KPk4pN7Lte39uDB9Dpss2233RTNPTm5a05S1YiowJ/D9Fw==
-X-Received: by 2002:a17:90a:6587:: with SMTP id k7mr7540210pjj.40.1576607521697;
-        Tue, 17 Dec 2019 10:32:01 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r6sm27579405pfh.91.2019.12.17.10.32.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Dec 2019 10:32:00 -0800 (PST)
-Date:   Tue, 17 Dec 2019 10:31:59 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
-Message-ID: <20191217183159.GB29679@roeck-us.net>
-References: <20191216174811.158424118@linuxfoundation.org>
+        Tue, 17 Dec 2019 13:32:33 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHIOKsX101532;
+        Tue, 17 Dec 2019 18:32:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=VLXwZ5VzJPq80xqOoJ02BnfrcnEH06ja95rpjsHRG9o=;
+ b=FktRscK/S0i8JKAK3RlJ0FnUPSu36bjwinHPITvDmRbICU3pb/ck31N+H0J0JiLx9KP6
+ PY3WKLkgU7tzyTISWX/fBsamdb/glH3lsurxfEivGnebbrUfjevNQYSw7dICPhUBe2fP
+ x46rwR3NNBFjQSSQjgbH40Px6HfBRKPBKyO+OlCCWW/cliCTbpnjt9m9YxRcCN4pG7p5
+ 1DP8S+SPJqj1VLg5grBe2T8B9t2tzkbsI/ugIhTIRjYYtHBrXnlb3nWPtw/Zo34pwIb1
+ mjUs7lhUTbe6m54laArBlrXvHVDUrAfchsqiOu4Gs9Ahr6LWMHC5twmQtcUwMZqrkzOa zw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2wvq5ugnp1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 18:32:18 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBHITItG081367;
+        Tue, 17 Dec 2019 18:32:18 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wxm5nng97-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 17 Dec 2019 18:32:18 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBHIWFSH006455;
+        Tue, 17 Dec 2019 18:32:17 GMT
+Received: from [10.10.32.221] (/10.10.32.221)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 17 Dec 2019 10:32:15 -0800
+Subject: Re: [PATCH] soc: ti: wkup_m3_ipc: Fix race condition with rproc_boot
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Dave Gerlach <d-gerlach@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
+References: <20191212040314.14753-1-d-gerlach@ti.com>
+ <20191217182534.GD35479@atomide.com>
+From:   santosh.shilimkar@oracle.com
+Organization: Oracle Corporation
+Message-ID: <05b9f0ff-bbc2-d8a7-3261-54c03a149db8@oracle.com>
+Date:   Tue, 17 Dec 2019 10:32:14 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191217182534.GD35479@atomide.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=867
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912170145
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9474 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=930 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912170145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:47:36PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.4 release.
-> There are 177 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 12/17/19 10:25 AM, Tony Lindgren wrote:
+> Hi,
 > 
-> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
-> Anything received after that time might be too late.
+> * Dave Gerlach <d-gerlach@ti.com> [191211 20:02]:
+>> Any user of wkup_m3_ipc calls wkup_m3_ipc_get to get a handle and this
+>> checks the value of the static variable m3_ipc_state to see if the
+>> wkup_m3 is ready. Currently this is populated during probe before
+>> rproc_boot has been called, meaning there is a window of time that
+>> wkup_m3_ipc_get can return a valid handle but the wkup_m3 itself is not
+>> ready, leading to invalid IPC calls to the wkup_m3 and system
+>> instability.
+>>
+>> To avoid this, move the population of the m3_ipc_state variable until
+>> after rproc_boot has succeeded to guarantee a valid and usable handle
+>> is always returned.
 > 
+> Santosh, do you want me to pick this one into my fixes branch?
+> 
+Sure, go ahead.
 
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 387 pass: 387 fail: 0
-
-Guenter
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
