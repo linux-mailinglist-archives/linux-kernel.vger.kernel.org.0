@@ -2,105 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2D3E1236F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B70F1236E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:17:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728807AbfLQURV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:17:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41680 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbfLQURP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:17:15 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2B4021D7D;
-        Tue, 17 Dec 2019 20:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576613835;
-        bh=eSnrJ3ULyj/dIp5UshGbVzKSGuZxeQBMGCY5ozG3p0s=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nnzdojYF3IPphkWlxtjfsqRtWQU9lkiKJtG/LsbGpezBacaLtJfc1vTW6UCEWaJLC
-         fWC99UhmpDMnZwc1+dG8ubGoyR6gsCfO2StjzHyDQfDB1pueqlBc89HALHEHk0l3dv
-         ZVxqqbTlwd44nalfFygUXYJDyKrEXgA5kGm4/ME4=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.3 25/25] xdp: obtain the mem_id mutex before trying to remove an entry.
-Date:   Tue, 17 Dec 2019 21:16:24 +0100
-Message-Id: <20191217200913.325570261@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191217200903.179327435@linuxfoundation.org>
-References: <20191217200903.179327435@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728506AbfLQUQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:16:51 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:45479 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728387AbfLQUQq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 15:16:46 -0500
+Received: by mail-yw1-f67.google.com with SMTP id d7so3771139ywl.12
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:16:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SLo3YgqfZWpHDaMVADfGw84K9zVEXzo6Zsavpri7aPQ=;
+        b=QFWhJc01yHhJRElEVrRbuDSLdYLW4e/DomuRGPS7+TgiAG5tLiXXQUd/gKy6INrIm1
+         TceSyMUKrXEjyizJCqxZmzNEF8EOat0RoJMdEVuQmRhuIyLzm1PdAR/oQhli8xOdCPGl
+         SZZlYfr3z085wEbaubUcyq3IiE9SV0w4Hn6fpKJEyQcojS22MmB3usam/KPc3bNNGGOS
+         sNCIyFMBVHcyq2fOQWJlhsRU7mzW3BmCx8/rJ6IoDaaIGvWeYOZ4dVyyfsxIZBXiYxej
+         K18acyzqbO9fzfoVZe48a92pt0Dxym3cC1eqVxICQGpYwPOlP1Xp//s7NzTshYTEvu0W
+         FgYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SLo3YgqfZWpHDaMVADfGw84K9zVEXzo6Zsavpri7aPQ=;
+        b=Ef+eX52Tg4VTOs1Q++xWesPPHa9moRb316FFIDk1FGiZRH0UGq9YfTAFTYFMcx2orZ
+         w1E3evbeqJoF04kPo5Mv7ViNgYyLbfM1S+XWa25u6AiM8SkBFzAqPCCYitMbMeaU74A5
+         Z3x5IZ0/UaQHZL6IpR28gYQm+n4CrWOqzlE7dqE/1AO8Tn6Sba7oybGMG9g86I7AyNTN
+         doxWEAc/Dw2RrPn82rbwr466/aHldX0/GThRGd6cEt4cxkQE48SQs7IFRAPdC9I/D+ot
+         FNhIcfWIjXlz/OYg3iP8h2aHqnVN3PmhVaY1sLqVtYblaVJ+m9LmmKxKTyyYXzktzGN3
+         zV2w==
+X-Gm-Message-State: APjAAAWbYFsEfMQXYfvIeqi+Y/2GueJW6RAoT3h7Gk8pqCpr58J4+Rtz
+        4FhkCBYl0gdtAgRfBPWnPBV0kc29v8g8z768z591JA==
+X-Google-Smtp-Source: APXvYqygLxcZT4RRwxuu51o/BOxORqqsBOLQuavkikYPkbT2Lo7OhQ82WGBQRolJvBB2ad6h5lw4tsI3/fmzZu2zgFI=
+X-Received: by 2002:a81:2708:: with SMTP id n8mr357745ywn.437.1576613804857;
+ Tue, 17 Dec 2019 12:16:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20191128125100.14291-1-patrick.rudolph@9elements.com>
+ <20191128125100.14291-2-patrick.rudolph@9elements.com> <CAODwPW8Koy1BvKGJU6PKexYx+PNE+WY7+m69gcxT689vBy+AoQ@mail.gmail.com>
+ <CAOxpaSXUgNXaZ40ScZKZQ+iDEQ=vqPytLgicBx==hxp5uL_+dA@mail.gmail.com>
+ <CAL_quvScPUuocogrghzH_vNb2uxyBupBKYikG0Bwf4OcfSRWsQ@mail.gmail.com> <5df87d6e.1c69fb81.f0643.a6b6@mx.google.com>
+In-Reply-To: <5df87d6e.1c69fb81.f0643.a6b6@mx.google.com>
+From:   Mat King <mathewk@google.com>
+Date:   Tue, 17 Dec 2019 13:16:33 -0700
+Message-ID: <CAL_quvS_3o7UNmqP+QDCcHosw8JkQ03Kx5NjgUxFhO5FO=_-Mg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] firmware: google: Expose CBMEM over sysfs
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Julius Werner <jwerner@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Samuel Holland <samuel@sholland.org>,
+        heikki.krogerus@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Lemon <jonathan.lemon@gmail.com>
+On Tue, Dec 17, 2019 at 12:02 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Mat King (2019-12-13 13:31:46)
+> > On Mon, Dec 9, 2019 at 11:57 PM Julius Werner <jwerner@chromium.org> wrote:
+> > > > +static int cbmem_probe(struct coreboot_device *cdev)
+> > > > +{
+> > > > +       struct device *dev = &cdev->dev;
+> > > > +       struct cb_priv *priv;
+> > > > +       int err;
+> > > > +
+> > > > +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> > > > +       if (!priv)
+> > > > +               return -ENOMEM;
+> > > > +
+> > > > +       memcpy(&priv->entry, &cdev->cbmem_entry, sizeof(priv->entry));
+> > > > +
+> > > > +       priv->remap = memremap(priv->entry.address,
+> > > > +                              priv->entry.entry_size, MEMREMAP_WB);
+> > >
+> > > We've just been discussing some problems with CBMEM areas and memory
+> > > mapping types in Chrome OS. CBMEM is not guaranteed to be page-aligned
+> > > (at least not the "small" entries), but the kernel can only assign
+> > > memory attributes for a page at a time (and refuses to map the same
+> > > area twice with two different memory types, for good reason). So if
+> > > CBMEM entries sharing a page are mapped as writeback by one driver but
+> > > uncached by the other, things break.
+> > >
+> > > There are some CBMEM entries that need to be mapped uncached (e.g. the
+> > > ACPI UCSI table, which isn't even handled by anything using this CBMEM
+> > > code) and others for which it would make more sense (e.g. the memory
+> > > console, where firmware may add more lines at runtime), but I don't
+> > > think there are any regions that really *need* to be writeback. None
+> > > of the stuff accessing these areas should access them often enough
+> > > that caching matters, and I think it's generally more common to map
+> > > firmware memory areas as uncached anyway. So how about we standardize
+> > > on mapping it all uncached to avoid any attribute clashes? (That would
+> > > mean changing the existing VPD and memconsole drivers to use
+> > > ioremap(), too.)
+> >
+> > I don't think that uncached would work here either because the acpi
+> > driver will have already mapped some of these regions as write-back
+> > before this driver is loaded so the mapping will fail.
+>
+> Presumably the ucsi driver is drivers/usb/typec/ucsi/ucsi_acpi.c? Is
+> that right? And on ACPI based systems is this I/O memory or just some
+> carved out memory region that is used to communicate something to the
+> ACPI firmware? From looking at the ucsi driver it seems like it should
+> be mapped with memremap() instead of ioremap() given that it's not
+> actual I/O memory that has any sort of memory barrier or access width
+> constraints. It looks more like some sort of memory region that is being
+> copied into and out of while triggering some DSM. Can it at least be
+> memremap()ed with MEMREMAP_WT?
 
-[ Upstream commit 86c76c09898332143be365c702cf8d586ed4ed21 ]
+Yes this is the ucsi_acpi.c driver that has caused this issue to come
+up. It does just use a region of memory carved in the BIOS out for the
+purpose of this device. The kernel can write to this memory and call a
+_DSM to push data to an EC or call the _DSM to pull from the EC into
+this memory region. See
+https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/bios-implementation-of-ucsi.pdf
+. The driver is very explicit about using uncached memory and I
+suspect that is why memremap() was not used, but I am not sure why
+uncahed memory is needed. The only consumers of this memory are the
+driver itself and the ACPI asl code in the _DSM which as far as I know
+is being exectued by the kernel directly. Are there any other reasons
+to use uncached memory when dealing with ACPI asl code?
 
-A lockdep splat was observed when trying to remove an xdp memory
-model from the table since the mutex was obtained when trying to
-remove the entry, but not before the table walk started:
-
-Fix the splat by obtaining the lock before starting the table walk.
-
-Fixes: c3f812cea0d7 ("page_pool: do not release pool until inflight == 0.")
-Reported-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Jonathan Lemon <jonathan.lemon@gmail.com>
-Tested-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Acked-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/xdp.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -85,12 +85,8 @@ static void mem_xa_remove(struct xdp_mem
- {
- 	trace_mem_disconnect(xa);
- 
--	mutex_lock(&mem_id_lock);
--
- 	if (!rhashtable_remove_fast(mem_id_ht, &xa->node, mem_id_rht_params))
- 		call_rcu(&xa->rcu, __xdp_mem_allocator_rcu_free);
--
--	mutex_unlock(&mem_id_lock);
- }
- 
- static void mem_allocator_disconnect(void *allocator)
-@@ -98,6 +94,8 @@ static void mem_allocator_disconnect(voi
- 	struct xdp_mem_allocator *xa;
- 	struct rhashtable_iter iter;
- 
-+	mutex_lock(&mem_id_lock);
-+
- 	rhashtable_walk_enter(mem_id_ht, &iter);
- 	do {
- 		rhashtable_walk_start(&iter);
-@@ -111,6 +109,8 @@ static void mem_allocator_disconnect(voi
- 
- 	} while (xa == ERR_PTR(-EAGAIN));
- 	rhashtable_walk_exit(&iter);
-+
-+	mutex_unlock(&mem_id_lock);
- }
- 
- static void mem_id_disconnect(int id)
-
-
+>
+> It also looks like this sort of problem has come up before, see commit
+> 1f9f9d168ce6 ("usb: typec: ucsi: acpi: Workaround for cache mode
+> issue"). Ugh.
+>
+> >
+> > Perhaps the best way to make this work is to not call memremap at all
+> > in the probe function but instead call memremap and memunmap every
+> > time that data_read is called. memremap can take multiple caching mode
+> > flags and will try each until one succeeds. So if you call it with
+> > MEMREMAP_WB | MEMREMAP_WT in data_read it should succeed no matter how
+> > it has been mapped by other drivers which should already be loaded
+> > when it is called.
+>
+> I've been wanting to change memremap() to be a "just give me memory"
+> type of API but haven't finished that task. It got hung up on mapping
+> memory specially for UEFI framebuffers to match whatever the UEFI mmap
+> table tells us.
+>
