@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1C3122BE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:40:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 930A5122BFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbfLQMj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:39:56 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55226 "EHLO
+        id S1728333AbfLQMkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:40:25 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55287 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfLQMj4 (ORCPT
+        with ESMTP id S1728275AbfLQMkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:39:56 -0500
+        Tue, 17 Dec 2019 07:40:06 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ihC8l-0001nm-6A; Tue, 17 Dec 2019 13:39:51 +0100
+        id 1ihC8l-0001o0-6M; Tue, 17 Dec 2019 13:39:51 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 55FB31C2A3B;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 896D61C2A3C;
         Tue, 17 Dec 2019 13:39:50 +0100 (CET)
 Date:   Tue, 17 Dec 2019 12:39:50 -0000
-From:   "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Alexander Shishkin" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/core: Add SRCU annotation for pmus list walk
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+Subject: [tip: perf/urgent] perf/x86/intel: Fix PT PMI handling
+Cc:     Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191119121429.zhcubzdhm672zasg@linutronix.de>
-References: <20191119121429.zhcubzdhm672zasg@linutronix.de>
+In-Reply-To: <20191210105101.77210-1-alexander.shishkin@linux.intel.com>
+References: <20191210105101.77210-1-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Message-ID: <157658639017.30329.2861654231460722207.tip-bot2@tip-bot2>
+Message-ID: <157658639044.30329.8671733952601494347.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,43 +51,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/urgent branch of tip:
 
-Commit-ID:     9f0bff1180efc9ea988fed3fd93da7647151ac8b
-Gitweb:        https://git.kernel.org/tip/9f0bff1180efc9ea988fed3fd93da7647151ac8b
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Tue, 19 Nov 2019 13:14:29 +01:00
+Commit-ID:     92ca7da4bdc24d63bb0bcd241c11441ddb63b80a
+Gitweb:        https://git.kernel.org/tip/92ca7da4bdc24d63bb0bcd241c11441ddb63b80a
+Author:        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+AuthorDate:    Tue, 10 Dec 2019 12:51:01 +02:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
 CommitterDate: Tue, 17 Dec 2019 13:32:46 +01:00
 
-perf/core: Add SRCU annotation for pmus list walk
+perf/x86/intel: Fix PT PMI handling
 
-Since commit
-   28875945ba98d ("rcu: Add support for consolidated-RCU reader checking")
+Commit:
 
-there is an additional check to ensure that a RCU related lock is held
-while the RCU list is iterated.
-This section holds the SRCU reader lock instead.
+  ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
 
-Add annotation to list_for_each_entry_rcu() that pmus_srcu must be
-acquired during the list traversal.
+skips the PT/LBR exclusivity check on CPUs where PT and LBRs coexist, but
+also inadvertently skips the active_events bump for PT in that case, which
+is a bug. If there aren't any hardware events at the same time as PT, the
+PMI handler will ignore PT PMIs, as active_events reads zero in that case,
+resulting in the "Uhhuh" spurious NMI warning and PT data loss.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Fix this by always increasing active_events for PT events.
+
+Fixes: ccbebba4c6bf ("perf/x86/intel/pt: Bypass PT vs. LBR exclusivity if the core supports it")
+Reported-by: Vitaly Slobodskoy <vitaly.slobodskoy@intel.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Link: https://lkml.kernel.org/r/20191119121429.zhcubzdhm672zasg@linutronix.de
+Acked-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://lkml.kernel.org/r/20191210105101.77210-1-alexander.shishkin@linux.intel.com
 ---
- kernel/events/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/core.c |  9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 4ff86d5..a1f8bde 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -10523,7 +10523,7 @@ again:
- 		goto unlock;
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 84fe1be..f118af9 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -376,7 +376,7 @@ int x86_add_exclusive(unsigned int what)
+ 	 * LBR and BTS are still mutually exclusive.
+ 	 */
+ 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
+-		return 0;
++		goto out;
+ 
+ 	if (!atomic_inc_not_zero(&x86_pmu.lbr_exclusive[what])) {
+ 		mutex_lock(&pmc_reserve_mutex);
+@@ -388,6 +388,7 @@ int x86_add_exclusive(unsigned int what)
+ 		mutex_unlock(&pmc_reserve_mutex);
  	}
  
--	list_for_each_entry_rcu(pmu, &pmus, entry) {
-+	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
- 		ret = perf_try_init_event(pmu, event);
- 		if (!ret)
- 			goto unlock;
++out:
+ 	atomic_inc(&active_events);
+ 	return 0;
+ 
+@@ -398,11 +399,15 @@ fail_unlock:
+ 
+ void x86_del_exclusive(unsigned int what)
+ {
++	atomic_dec(&active_events);
++
++	/*
++	 * See the comment in x86_add_exclusive().
++	 */
+ 	if (x86_pmu.lbr_pt_coexist && what == x86_lbr_exclusive_pt)
+ 		return;
+ 
+ 	atomic_dec(&x86_pmu.lbr_exclusive[what]);
+-	atomic_dec(&active_events);
+ }
+ 
+ int x86_setup_perfctr(struct perf_event *event)
