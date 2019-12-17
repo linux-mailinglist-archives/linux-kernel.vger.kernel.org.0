@@ -2,85 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 271C0123705
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:17:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BE2A12371F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:19:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfLQURv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:17:51 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:54939 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728753AbfLQURQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:17:16 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1728640AbfLQUTW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:19:22 -0500
+Received: from mta-p5.oit.umn.edu ([134.84.196.205]:48618 "EHLO
+        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfLQUTV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 15:19:21 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 47cqHF41xFz9vfRM
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:19:21 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p5.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4GV1WNQvR2nS for <linux-kernel@vger.kernel.org>;
+        Tue, 17 Dec 2019 14:19:21 -0600 (CST)
+Received: from mail-yw1-f72.google.com (mail-yw1-f72.google.com [209.85.161.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47cqDl6MQVz9sRM;
-        Wed, 18 Dec 2019 07:17:11 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576613834;
-        bh=to3nAIMJMhJTiwo/9pBgTcO1nHmn5+b/bWSIpM3ItcM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lw1Y5EhldrOoOxqSZgOHnSNQg2+ApiWHLuF5q8KtPhhpBI0ZDXKLdLtS6AvATKnuF
-         EBABxHtaDz4PFxQEFaPA2vYRupsa6GqzoGqOBGvJSwtFd9T8u0QyeWgEvnL5iXB8KE
-         PmszQwUBp7TyDC1H7gq4WKpoM5CvyOoJ+cI60hxY8GxDb00hI+tZAU21mfWYjNTSGx
-         Fkd16yVuE6zTTP1QHdSEKCtDKBoAalC/89walxTXnJMDHUEwkf1IQA1QcuRe1JlAwl
-         XZTosMKoTjU9syOvgQJpaLRNxdAvsCNKadvwfdsdwismu6DaO0X0r3Y1ks2zDunX6T
-         8nSkHlwa6ySDw==
-Date:   Wed, 18 Dec 2019 07:17:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
-Subject: linux-next: Fixes tag needs some work in the pm tree
-Message-ID: <20191218071710.61602251@canb.auug.org.au>
+        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 47cqHF2jC0z9vfRB
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 14:19:21 -0600 (CST)
+Received: by mail-yw1-f72.google.com with SMTP id y188so8045542ywa.4
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:19:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fJwaMd0fevbKHZRU0DLVKij8pzUPa0WqyxtmIkNc4nI=;
+        b=BIIiesenVHGdLybihTNSiz9akMOJgqJB/KZrr41D83IdTw8S0npY8pyX2dVEpFz9Bk
+         D+jOWBkFBTbSLx38QGtySEZDRO92UNW6FKZctKpjaZEvmYqsE6UFNtBFMkgOSWLSVa4b
+         vlGy1LRip6Glu//0b8mCBwqJDen3NFPPBjXRnv0g+wAcOuIwczEu7NdgWiYDK4PPxKhz
+         wydldm2ye3vqXiKsqn+1XZHV+sl9eUrYaUACEqXywqybpsYDjFZ0bXo9vt61gQncKv4p
+         5ANWcVURre3pINJzU10Sprls62+dJjaywt4r5teZ9Xjev6LwDDRtI+EfdvQkSe9E3JXq
+         n8NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fJwaMd0fevbKHZRU0DLVKij8pzUPa0WqyxtmIkNc4nI=;
+        b=JvFqlKy8bRlL2LEtxFasEQJsFwiXLHK0NtyzZHqTPTP76xOhJmE8LVyjYOdITM1gYt
+         YNHRxEK98IrQkoOVqBWhnTj/mYV96rGLkdrT2OHdHYfc79wkeAntegUPqhQOmQzfpOl0
+         echw3Tfm+UfwyJbrtaoQTphMZzx9yWOX4+0QaUNlrdie6C4beUi9HtujtekpXe1t+4uw
+         42j+W/hUngVr2xb6p/vpRjsM8sULbzyw95VPfidLWloEljfFNgGKobDABgmgKToBDuLL
+         AVw3izDlWPo+tySfIQxiAKLY7H0VsgWIFNwjFOMipqXqsoE0uLbX+yAXvVUyX4krw+j3
+         w/6w==
+X-Gm-Message-State: APjAAAWnk9iza/iBJZ7saKDCFBxiOxAYC2GaQEy6qd74zQot8COoMJPj
+        NdGacTO3jjkXvjzE4sE6+J4P6c5bZT2hPFkDUTcIycmeHaOZombvwSCS1hX0U5irH1+gTKstBvb
+        ULAiiRkh0kAau11I9baqIUcf9EaLd
+X-Received: by 2002:a0d:cc88:: with SMTP id o130mr417357ywd.498.1576613960857;
+        Tue, 17 Dec 2019 12:19:20 -0800 (PST)
+X-Google-Smtp-Source: APXvYqxKBAqrOGl8Ps9Kd5+AyKOknjkvcMjbw0ckO8Lbf0tbis1QNrvjC6bGBJxzmqXoYdaNOLVOuQ==
+X-Received: by 2002:a0d:cc88:: with SMTP id o130mr417339ywd.498.1576613960611;
+        Tue, 17 Dec 2019 12:19:20 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id w74sm3184157ywa.71.2019.12.17.12.19.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 12:19:20 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Allison Randal <allison@lohutok.net>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: aic94xx: remove unnecessary assertion
+Date:   Tue, 17 Dec 2019 14:19:12 -0600
+Message-Id: <20191217201914.27672-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ip44PrA7z9g_nx5J8I_SBQB";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ip44PrA7z9g_nx5J8I_SBQB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In asd_unbuild_smp_ascb, the task is never NULL when called from
+asd_execute_task and asd_task_tasklet_complete. The BUG_ON assertion
+is thus unnecessary and can be removed.
 
-Hi all,
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/scsi/aic94xx/aic94xx_task.c | 1 -
+ 1 file changed, 1 deletion(-)
 
+diff --git a/drivers/scsi/aic94xx/aic94xx_task.c b/drivers/scsi/aic94xx/aic94xx_task.c
+index f923ed019d4a..6aa75777fff1 100644
+--- a/drivers/scsi/aic94xx/aic94xx_task.c
++++ b/drivers/scsi/aic94xx/aic94xx_task.c
+@@ -452,7 +452,6 @@ static void asd_unbuild_smp_ascb(struct asd_ascb *a)
+ {
+ 	struct sas_task *task = a->uldd_task;
+ 
+-	BUG_ON(!task);
+ 	dma_unmap_sg(&a->ha->pcidev->dev, &task->smp_task.smp_req, 1,
+ 		     DMA_TO_DEVICE);
+ 	dma_unmap_sg(&a->ha->pcidev->dev, &task->smp_task.smp_resp, 1,
+-- 
+2.20.1
 
-  78d3e7c19e2d ("tools/power/acpi: fix compilation error")
-
-Fixes tag
-
-  Fixes: d5a4b1a540b ("tools/power/acpi: Remove direct kernel source includ=
-e reference")
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ip44PrA7z9g_nx5J8I_SBQB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl35N8YACgkQAVBC80lX
-0Gz8MAf9FEzIt9+SX7HvQSQA3T+1g4qEpxARPRfUwkPaGy0g+VmgTY+h0C1T50UR
-ZjXjYRrrQCA0KjTxcXnqrXm8uOpfyCxSMmg1VYq2up8ZP+ooj9Nm6SxfhPCjvL5x
-kgWDXGwk6jufo5NSJW0VMmaEQuvhnAPrSHvFpBwxTzw8JRElyJmX7DsGzqhlSh6V
-M7sTZgN33SVGA55Q/NmgOgvCJLc1d0lcd41jglWHlzy0zM2HGFYzSm7g/7XYcrWZ
-SG/JdUrYYFm+frWDh/hEOV9+KZgHHzOiSuaxpzn6QMiI/DzUvSbOb/uKdc55y6/Y
-KiZKX4geU/WYs6+90ujDKzn937TQWg==
-=Kutr
------END PGP SIGNATURE-----
-
---Sig_/ip44PrA7z9g_nx5J8I_SBQB--
