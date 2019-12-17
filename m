@@ -2,62 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14455122D4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:46:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 140AE122D31
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:43:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbfLQNq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:46:26 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:34098 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728556AbfLQNqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:46:25 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id AFEDE552BDB1ED8734B6;
-        Tue, 17 Dec 2019 21:46:22 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 17 Dec 2019 21:46:12 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH next] scsi: initio: make initio_state_7() static
-Date:   Tue, 17 Dec 2019 21:43:09 +0800
-Message-ID: <20191217134309.41649-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+        id S1728474AbfLQNnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:43:55 -0500
+Received: from foss.arm.com ([217.140.110.172]:37530 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726962AbfLQNny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:43:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F04331FB;
+        Tue, 17 Dec 2019 05:43:53 -0800 (PST)
+Received: from e123648.arm.com (unknown [10.37.12.145])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 373813F719;
+        Tue, 17 Dec 2019 05:43:52 -0800 (PST)
+From:   lukasz.luba@arm.com
+To:     linux-kernel@vger.kernel.org, sudeep.holla@arm.com,
+        linux-arm-kernel@lists.infradead.org
+Cc:     rostedt@goodmis.org, mingo@redhat.com, james.quinlan@broadcom.com,
+        Lukasz Luba <lukasz.luba@arm.com>
+Subject: [PATCH v2 1/2] include: trace: Add SCMI header with trace events
+Date:   Tue, 17 Dec 2019 13:43:44 +0000
+Message-Id: <20191217134345.14004-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix sparse warning:
+From: Lukasz Luba <lukasz.luba@arm.com>
 
-drivers/scsi/initio.c:1643:5: warning: symbol 'initio_state_7' was not declared. Should it be static?
+Adding trace events would help to measure the speed of the communication
+channel. It can be also potentially used helpful during investigation
+of some issues platforms which use different transport layer.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+Update also MAINTAINERS file with information that the new trace events
+are maintained.
+
+Suggested-by: Jim Quinlan <james.quinlan@broadcom.com>
+Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
 ---
- drivers/scsi/initio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS                 |  1 +
+ include/trace/events/scmi.h | 90 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+)
+ create mode 100644 include/trace/events/scmi.h
 
-diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
-index 41fd64c..1d39628 100644
---- a/drivers/scsi/initio.c
-+++ b/drivers/scsi/initio.c
-@@ -1640,7 +1640,7 @@ static int initio_state_6(struct initio_host * host)
-  *
-  */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cc0a4a8ae06a..0182315226fc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15966,6 +15966,7 @@ F:	drivers/firmware/arm_scpi.c
+ F:	drivers/firmware/arm_scmi/
+ F:	drivers/reset/reset-scmi.c
+ F:	include/linux/sc[mp]i_protocol.h
++F:	include/trace/events/scmi.h
  
--int initio_state_7(struct initio_host * host)
-+static int initio_state_7(struct initio_host * host)
- {
- 	int cnt, i;
- 
+ SYSTEM RESET/SHUTDOWN DRIVERS
+ M:	Sebastian Reichel <sre@kernel.org>
+diff --git a/include/trace/events/scmi.h b/include/trace/events/scmi.h
+new file mode 100644
+index 000000000000..f076c430d243
+--- /dev/null
++++ b/include/trace/events/scmi.h
+@@ -0,0 +1,90 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM scmi
++
++#if !defined(_TRACE_SCMI_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_SCMI_H
++
++#include <linux/tracepoint.h>
++
++TRACE_EVENT(scmi_xfer_begin,
++	TP_PROTO(int transfer_id, u8 msg_id, u8 protocol_id, u16 seq,
++		 bool poll),
++	TP_ARGS(transfer_id, msg_id, protocol_id, seq, poll),
++
++	TP_STRUCT__entry(
++		__field(int, transfer_id)
++		__field(u8, msg_id)
++		__field(u8, protocol_id)
++		__field(u16, seq)
++		__field(bool, poll)
++	),
++
++	TP_fast_assign(
++		__entry->transfer_id = transfer_id;
++		__entry->msg_id = msg_id;
++		__entry->protocol_id = protocol_id;
++		__entry->seq = seq;
++		__entry->poll = poll;
++	),
++
++	TP_printk("transfer_id=%d msg_id=%u protocol_id=%u seq=%u poll=%u",
++		__entry->transfer_id, __entry->msg_id, __entry->protocol_id,
++		__entry->seq, __entry->poll)
++);
++
++TRACE_EVENT(scmi_xfer_end,
++	TP_PROTO(int transfer_id, u8 msg_id, u8 protocol_id, u16 seq,
++		 u32 status),
++	TP_ARGS(transfer_id, msg_id, protocol_id, seq, status),
++
++	TP_STRUCT__entry(
++		__field(int, transfer_id)
++		__field(u8, msg_id)
++		__field(u8, protocol_id)
++		__field(u16, seq)
++		__field(u32, status)
++	),
++
++	TP_fast_assign(
++		__entry->transfer_id = transfer_id;
++		__entry->msg_id = msg_id;
++		__entry->protocol_id = protocol_id;
++		__entry->seq = seq;
++		__entry->status = status;
++	),
++
++	TP_printk("transfer_id=%d msg_id=%u protocol_id=%u seq=%u status=%u",
++		__entry->transfer_id, __entry->msg_id, __entry->protocol_id,
++		__entry->seq, __entry->status)
++);
++
++TRACE_EVENT(scmi_rx_done,
++	TP_PROTO(int transfer_id, u8 msg_id, u8 protocol_id, u16 seq,
++		 u8 msg_type),
++	TP_ARGS(transfer_id, msg_id, protocol_id, seq, msg_type),
++
++	TP_STRUCT__entry(
++		__field(int, transfer_id)
++		__field(u8, msg_id)
++		__field(u8, protocol_id)
++		__field(u16, seq)
++		__field(u8, msg_type)
++	),
++
++	TP_fast_assign(
++		__entry->transfer_id = transfer_id;
++		__entry->msg_id = msg_id;
++		__entry->protocol_id = protocol_id;
++		__entry->seq = seq;
++		__entry->msg_type = msg_type;
++	),
++
++	TP_printk("transfer_id=%d msg_id=%u protocol_id=%u seq=%u msg_type=%u",
++		__entry->transfer_id, __entry->msg_id, __entry->protocol_id,
++		__entry->seq, __entry->msg_type)
++);
++#endif /* _TRACE_SCMI_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
 -- 
-2.7.4
+2.17.1
 
