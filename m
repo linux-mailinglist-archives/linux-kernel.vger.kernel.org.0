@@ -2,104 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9146D122158
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD548122161
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbfLQBSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 20:18:12 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33851 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725805AbfLQBSM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:18:12 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l136so4874934oig.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 17:18:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gQlxuukx7ZYSQZmNiora65lLQtsKLdrcwl34+cNn20I=;
-        b=ZML1YlPfc4X1lcJ2MEbwwuNUKRegQeZ1YWVhElf9aNxBihtxGgtQUSJL6yDQFiM2rL
-         y/lqLODFRtPxZRmMnuW9B1kUabr/9AGAClBFwX0znrz0wJsyiRGYNjaCepLaxTeWBNBX
-         SiVi4m+QZl/9PWp2i/Gej2UCGi0YWW8IAKtvPz0U5FZS7Amc68+vfcu8BwfvUeSscuVF
-         kUfLmgSgMrtPuf0Vc+yijMqQUx6yzFsgm3vk0Y0emxOOEaff735UHNk7VQWa65n7NFlF
-         8COOeab+RZx6zAqGm2MLWzNGm3Zrmk68eKfmuXeXklk3Q1r3cMwqb0r/fmpqOyWsTBPs
-         vwMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gQlxuukx7ZYSQZmNiora65lLQtsKLdrcwl34+cNn20I=;
-        b=sl/3Tk1vJSEXq1fiavhlg5daHY4lztepXB92OtR+RLRvEZCpNuv8jm6dy7xK14i6Pc
-         AiOiSTG6UoNf/bTvsaeySIAs316CPxPksJfVf1MkSExyt0LjAaTK/PU9nYJShWwJgoiJ
-         DKSly4aEva8hrvt9mgpyy0fNjv/nTZivzvzI9gg6U2bcbYhnQpJG1lfuDmlqgpm8euEv
-         Xa1N7dH2kmcBkYGHzpH4cOIpZKBzHYdWoXQNnKTYZIVEe8+50UGPJmQ7UiFg/El/hA/5
-         +k+UgVvnVUTFeueBWmkA3/Yka8Vr8kr1s0P+8QaOaVy4DAeWMxKGILeyvN/ZcJEQHmO/
-         Er3A==
-X-Gm-Message-State: APjAAAUjP2JOLE/dFP+lRt+xBWdKJjwzho+2mx9tgSAF+bXRWlpXI903
-        nH+ihNEUNzj/1eH8A4N85Vd+fGT/q/hfluPrrdRzZw==
-X-Google-Smtp-Source: APXvYqyALUz6qMsfZ8CPqN2DhPrepKX8K+FY6z1DAn5DPLETrrCCRCs0bMrUATx7fxnThIB2URczhSpUKLEZ1cMtY+s=
-X-Received: by 2002:aca:c354:: with SMTP id t81mr1065974oif.149.1576545490980;
- Mon, 16 Dec 2019 17:18:10 -0800 (PST)
+        id S1726637AbfLQBUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 20:20:08 -0500
+Received: from mga06.intel.com ([134.134.136.31]:26552 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725805AbfLQBUI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 20:20:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 17:20:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
+   d="scan'208";a="227316776"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 16 Dec 2019 17:20:03 -0800
+Cc:     baolu.lu@linux.intel.com, "Raj, Ashok" <ashok.raj@intel.com>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>, Peter Xu <peterx@redhat.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 5/6] iommu/vt-d: Flush PASID-based iotlb for iova over
+ first level
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20191211021219.8997-1-baolu.lu@linux.intel.com>
+ <20191211021219.8997-6-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C25743A130C08@SHSMSX104.ccr.corp.intel.com>
+ <f1e5cfea-8b11-6d72-8e57-65daea51c050@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C25743A132C50@SHSMSX104.ccr.corp.intel.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <6a5f6695-d1fd-e7d1-3ea3-f222a1ef0e54@linux.intel.com>
+Date:   Tue, 17 Dec 2019 09:19:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-References: <20191211231758.22263-1-jsnitsel@redhat.com> <20191211235455.24424-1-jsnitsel@redhat.com>
- <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
-In-Reply-To: <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 16 Dec 2019 17:18:00 -0800
-Message-ID: <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
-Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of tpm_tis_core_init
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christian Bundy <christianbundy@fraction.io>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <A2975661238FB949B60364EF0F2C25743A132C50@SHSMSX104.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 4:59 PM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Wed, 2019-12-11 at 16:54 -0700, Jerry Snitselaar wrote:
-> > Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
-> > issuing commands to the tpm during initialization, just reserve the
-> > chip after wait_startup, and release it when we are ready to call
-> > tpm_chip_register.
-> >
-> > Cc: Christian Bundy <christianbundy@fraction.io>
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Cc: Peter Huewe <peterhuewe@gmx.de>
-> > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
-> > Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
-> > Cc: stable@vger.kernel.org
-> > Cc: linux-integrity@vger.kernel.org
-> > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
-> > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
-> > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
->
-> I pushed to my master with minor tweaks and added my tags.
->
-> Please check before I put it to linux-next.
+Hi Yi,
 
-I don't see it yet here:
+On 12/15/19 5:22 PM, Liu, Yi L wrote:
+> Ok, let me explain more... default pasid is meaningful only when
+> the domain has been attached to a device as an aux-domain. right?
 
-http://git.infradead.org/users/jjs/linux-tpmdd.git/shortlog/refs/heads/master
+No exactly. Each domain has a specific default pasid, no matter normal
+domain (RID based) or aux-domain (PASID based). The difference is for a
+normal domain RID2PASID value is used, for an aux-domain the pasid is
+allocated from a global pool.
 
-However, I wanted to make sure you captured that this does *not* fix
-the interrupt issue. I.e. make sure you remove the "Fixes:
-5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")"
-tag.
+The same concept used in VT-d 3.x scalable mode. For RID based DMA
+translation RID2PASID value is used when walking the tables; For PASID
+based DMA translation a real pasid in the transaction is used.
 
-With that said, are you going to include the revert of:
+> If a domain only has one device, and it is attached to this device as
+> normal domain (normal domain means non aux-domain here). Then
+> you should flush cache with domain-id and RID2PASID value.
+> If a domain has one device, and it is attached to this device as
+> aux-domain. Then you may want to flush cache with domain-id
+> and default pasid. right?
 
-1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
-5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
+A domain's counterpart is IOMMU group. So we say attach/detach domain
+to/from devices in a group. We don't allow devices with different
+default pasid sitting in a same group, right?
 
-...in your -rc3 pull?
+> Then let's come to the case I mentioned in previous email. a mdev
+> and another device assigned to a single VM. In host, you will have
+> a domain which has two devices, one device(deva) is attached as
+
+No. We will have two IOMMU groups and two domains. Correct me if my
+understanding is not right.
+
+Best regards,
+baolu
+
+> normal domain, another one (devB) is attached as aux-domain. Then
+> which pasid should be used when the mapping in IOVA page table is
+> modified? RID2PASID or default pasid? I think both should be used
+> since the domain means differently to the two devices. If you just
+> use default pasid, then deva may still be able to use stale caches.
+> 
+> Regards,
+> Yi Liu
