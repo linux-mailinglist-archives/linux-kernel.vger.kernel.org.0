@@ -2,94 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97342122A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D061122A7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfLQLnD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:43:03 -0500
-Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:48824 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727626AbfLQLmz (ORCPT
+        id S1727833AbfLQLnu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:43:50 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36384 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbfLQLnt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:42:55 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9863C4266E;
-        Tue, 17 Dec 2019 11:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1576582974; bh=bM8T9PSP5GnAoUaQXQaEg95xhnvdUPdNYJTNEqJMPNo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=iyb7DJjqreUutfvIo0Kn0KK0dzIjdXKCcY4xXyPbtZskqAKeK+LMwgtUvjiUtKzaG
-         1EhWj+M1LZv8WwEs3mXb/eZBNjxPni+p76G7boxlYguceuUySL6vHqQs92NAe1ittp
-         pUS/ySlg/gQCWABqyiaZM8xShvH1hxWGcdEPILGMyKHNxDcUFEyUuD3ExN79gvtkcz
-         zpDKMBjIxF6NdKMz7ngc4eWb6V0J/hv4T7I4PrCKGX5BGy56Z4Gi6WBLBFIXF/4hCl
-         WaTmeOdq3V7mpjFq1T7f+3UzLd49OBe+vfJE3jzT+glH2vXfkp9pwG2+O4wonouyNQ
-         qOrNtFQJL6fZw==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2A42FA00AE;
-        Tue, 17 Dec 2019 11:42:51 +0000 (UTC)
-From:   Jose Abreu <Jose.Abreu@synopsys.com>
-To:     netdev@vger.kernel.org
-Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <Jose.Abreu@synopsys.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net v2 8/8] net: stmmac: Enable 16KB buffer size
-Date:   Tue, 17 Dec 2019 12:42:38 +0100
-Message-Id: <54641d0f06e56ff2470f0575fc901477306a54c6.1576581853.git.Jose.Abreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1576581853.git.Jose.Abreu@synopsys.com>
-References: <cover.1576581853.git.Jose.Abreu@synopsys.com>
-In-Reply-To: <cover.1576581853.git.Jose.Abreu@synopsys.com>
-References: <cover.1576581853.git.Jose.Abreu@synopsys.com>
+        Tue, 17 Dec 2019 06:43:49 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p17so2787106wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 03:43:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=X/S+8zEUBS7YPWXh0mAqGVkUFdobNHA//t57aWOlO+4=;
+        b=uiHGsBGPY4Zn8I5fXuBLbY+pNHLuauUCd09bD4LQS3nnDHbm25XUp7gCaqTjdf4u9I
+         l1rU/BmE4qvIQ+mFxd4OIHc/OnEy5NSfcLDbrGGcGOzK8VH1OlBcCovlvZwP08FPCiwE
+         YK2rqumlhVXbX6kn+M/85Gy/j3cTkI43avbbWeq5vS45ImCN3DCBIdLFSqBe+4yMYdt1
+         4TF1v3ejSh5qjtAVlI//sw72d+aLLDEQH53ldEDTiycoLvJW2Lq9e2gDuHF184+xBpZX
+         xZ7+g/oa8DbSiaAUFiLcWFejHJ/w4mDd+cAT+1SCfvXgeUrDMFtrP3t3OZ6oQ1oF2sYI
+         /zaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=X/S+8zEUBS7YPWXh0mAqGVkUFdobNHA//t57aWOlO+4=;
+        b=fcKi/TKVz6bqTVv2Mp513Q3UNbp12ul2xdaZa0LEuSCA1iydtp/K5nCMcUnGkGKmbB
+         3SxCGEfa4/xtGfRaWyb3pPkE4Ce+RZGyxh1wcI+8fmGDV/f/fex+ki9SZ6Tla+ttahF8
+         s/itFDEgWmsPOCdvLdTGXWKg8KMt6RE3StRGfASXba3JfliDbFIe7IoSC2kLRAobB380
+         61bRM4G2GoZ/MAc3/vMr0bMmsGVb+l9LwGG8AxGvjUazQdCrXY/bKFjXSn8B/m8lTi6i
+         +9Empm/sMizRe7mQrpbXbAxZ207YRic7/LMHTYAZJY9tQyM4DRYEEG04aBVL+y4z6d1/
+         Crfw==
+X-Gm-Message-State: APjAAAXBspR5xHG8mtCK1DP6MpsFaV9ErLt8SNO+b1ecHKYYhN6dsehP
+        sBgEiuC/egFfYX/WF5/tkVt35RTwzL6fI4WaG8OdSw==
+X-Google-Smtp-Source: APXvYqznkISjUcXtLp+VkfjA6pxHi4B1lny+rN+Akp/yO+kT7twW3hkaC0kEiE9XwLmGt3T5jChCJ0NAh9DVMIZAEd4=
+X-Received: by 2002:a7b:c5d8:: with SMTP id n24mr4897335wmk.124.1576583027108;
+ Tue, 17 Dec 2019 03:43:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20191217040704.91995-1-olof@lixom.net>
+In-Reply-To: <20191217040704.91995-1-olof@lixom.net>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 17 Dec 2019 17:13:35 +0530
+Message-ID: <CAAhSdy03Y7Xj5K-c2-ubBxb2Z=UXnifCSPaUDpAiLewMo6s43w@mail.gmail.com>
+Subject: Re: [PATCH] riscv: export flush_icache_all to modules
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-XGMAC supports maximum MTU that can go to 16KB. Lets add this check in
-the calculation of RX buffer size.
+On Tue, Dec 17, 2019 at 9:37 AM Olof Johansson <olof@lixom.net> wrote:
+>
+> This is needed by LKDTM (crash dump test module), it calls
+> flush_icache_range(), which on RISC-V turns into flush_icache_all(). On
+> other architectures, the actual implementation is exported, so follow
+> that precedence and export it here too.
+>
+> Fixes build of CONFIG_LKDTM that fails with:
+> ERROR: "flush_icache_all" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+>
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>  arch/riscv/mm/cacheflush.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+> index 8f19006866405..8930ab7278e6d 100644
+> --- a/arch/riscv/mm/cacheflush.c
+> +++ b/arch/riscv/mm/cacheflush.c
+> @@ -22,6 +22,7 @@ void flush_icache_all(void)
+>         else
+>                 on_each_cpu(ipi_remote_fence_i, NULL, 1);
+>  }
+> +EXPORT_SYMBOL(flush_icache_all);
+>
+>  /*
+>   * Performs an icache flush for the given MM context.  RISC-V has no direct
+> --
+> 2.11.0
+>
 
-Fixes: 7ac6653a085b ("stmmac: Move the STMicroelectronics driver")
-Signed-off-by: Jose Abreu <Jose.Abreu@synopsys.com>
+LGTM.
 
----
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Jose Abreu <joabreu@synopsys.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-Cc: netdev@vger.kernel.org
-Cc: linux-stm32@st-md-mailman.stormreply.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index eb31d7fb321c..082eeff9f54b 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -1109,7 +1109,9 @@ static int stmmac_set_bfsize(int mtu, int bufsize)
- {
- 	int ret = bufsize;
- 
--	if (mtu >= BUF_SIZE_4KiB)
-+	if (mtu >= BUF_SIZE_8KiB)
-+		ret = BUF_SIZE_16KiB;
-+	else if (mtu >= BUF_SIZE_4KiB)
- 		ret = BUF_SIZE_8KiB;
- 	else if (mtu >= BUF_SIZE_2KiB)
- 		ret = BUF_SIZE_4KiB;
--- 
-2.7.4
-
+Regards,
+Anup
