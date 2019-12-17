@@ -2,110 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 999361237EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:43:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0121B1237F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:43:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbfLQUnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:43:06 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:33474 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727460AbfLQUnG (ORCPT
+        id S1728504AbfLQUnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:43:11 -0500
+Received: from mail-il1-f198.google.com ([209.85.166.198]:47363 "EHLO
+        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728381AbfLQUnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:43:06 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 47cqpd3Tbmz9vYVL
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:43:05 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ggquj8QYgGIm for <linux-kernel@vger.kernel.org>;
-        Tue, 17 Dec 2019 14:43:05 -0600 (CST)
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 47cqpd1ZMzz9vYVC
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 14:43:05 -0600 (CST)
-Received: by mail-yb1-f198.google.com with SMTP id 7so10276336ybc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LHRpA8yRAnpMeohn/UFdPWTBWzHvpiDJXOI1dqhcReE=;
-        b=CTtWiJ7ZynxyBiVgl7haMTiSAZMraAf25CTEbBmXZbWSCpGPk9w4OP1unNmqZPcLu7
-         T1rvwMQoHik5BXZOa6QZ0yKouot0SnzJaqzc0VcAjeywu13qAUPUE13DQOfaiF+WSUc+
-         3kKYtLMazrzTRA8evIeSWobfHCmwnmjQ/fvbSahMt+s/2Y0GaiijGYD8+WQWzTAU7AOh
-         f8yGtNCKjHZcG4e8ldpSrAT6+yXUe5kPJh+nLdlqAI7blqf+YTJL0OQQTpd61jv2Y7Ej
-         jXmhGBiCVILebE2E5pu267FKYXC5TSJ1o84GNr5zwjSu2+V+SZXIU4oNHDJ3pC30+woi
-         9Sig==
+        Tue, 17 Dec 2019 15:43:09 -0500
+Received: by mail-il1-f198.google.com with SMTP id x69so10403279ill.14
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:43:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LHRpA8yRAnpMeohn/UFdPWTBWzHvpiDJXOI1dqhcReE=;
-        b=dg+teeg86uLM2+2GdmpqlbGXVliuXTfhLNaix5cmWW6rQZ8g9PT7IkkB5RyWy+qfGt
-         ER4xr73fXSVwJIXkEwGZubfC+1Ymv6Hp/1ho2o6xPOOmXaQ1QzkcP42+hEm2pk7Tj0Fk
-         1nQQ/YKjjB6dO4JjP93GX5LegAaTP0hmxXmgFp0XwMEERGpXTfgCCA3g2vN+o0F+jVYf
-         pNTbEuO4rpJFhzHKO5v/4087BVZ5N8l9W4XxEew31fTip332nb+GPvJr092KvrlqiBPE
-         mzQqg7TpseyVrgxo3MllmsEyC7vebUAjksA38FdZmxm2kCH+M42vz7rhdhkAZkcR6ejT
-         6n7Q==
-X-Gm-Message-State: APjAAAUBGEQBXK2HjEajAYKm7BJ/hF8JvXbzobEg6nPyvfpDfxsF63x0
-        pjxZySCe7hoH/JI+Y0G+Do2mkzDd4Fk2x6dvmxTa6VXSKWC4B5Mkwa28Q+XupkhKV1wbEg9KAqg
-        my/vhbrAf7JT9ZE4QJ/0alyLGUfuD
-X-Received: by 2002:a81:a8c1:: with SMTP id f184mr500679ywh.29.1576615384708;
-        Tue, 17 Dec 2019 12:43:04 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyXIOXh9OMCS6/U1az+abjHX1IWifPSH0LicBhZb60OQ7I/lxSkDp2DHmDJ21iYOY8fXBSOkQ==
-X-Received: by 2002:a81:a8c1:: with SMTP id f184mr500638ywh.29.1576615384392;
-        Tue, 17 Dec 2019 12:43:04 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id p62sm10125054ywc.44.2019.12.17.12.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 12:43:04 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Robert Baldyga <r.baldyga@samsung.com>,
-        Krzysztof Opasiak <k.opasiak@samsung.com>,
-        linux-nfc@lists.01.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] nfc: s3fwrn5: replace the assertion with a WARN_ON
-Date:   Tue, 17 Dec 2019 14:43:00 -0600
-Message-Id: <20191217204300.28616-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ZsG4GGhI1HdtobOHo0iYGQ381sBQZXGjK6JsTLf54tI=;
+        b=qBo9DZYJXhToZKKS3EQHdl2dlDTnPC0/j4O4lkqUOlyRT0M596PVbdSWV7qLGzF5lS
+         kD2fEq9z2ucynMot8QicNY739/AclPgAAkzeqM74Mx53eIWLNL6ZAXWFW3J8KMTzuWsF
+         IHmwdGWqa+zGP9x/Fx1nxpHqoZiLvW+KACW6b2zWlDJCRG+bL9+UqV3eDNDEaAh6F9GA
+         53deii8fC2LIzGGB9BNdK1QOQ5h+3eKFn4SaVthv2M/yUH9aRGy8mFZwDyOfKEa5BDt7
+         FItfjEUtAsAwLTGis6QzXb5D0aIgw4czEMZNsdhNIh9GOKuEQ4iEctLUi2w0bCYhcVrt
+         NDyg==
+X-Gm-Message-State: APjAAAUeMC2QiXWalabCFQ76wHnuell1qZ97lEmrzyHaKlUlkUEVQNT7
+        Bc0AKvwiOkUxqT2e43GMRD81ZCrJk6IaC8oi1UZdlT4N/0MO
+X-Google-Smtp-Source: APXvYqyu7jeTkwiEQsSvZo2qq1J2Cge2aNKRqMbtsXfHs+JssScBIJRW+W5oExAps69/GWTSttKC9a6p9iUPVSEaeSZY/T6eo+Tx
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5e:8417:: with SMTP id h23mr5163006ioj.17.1576615388758;
+ Tue, 17 Dec 2019 12:43:08 -0800 (PST)
+Date:   Tue, 17 Dec 2019 12:43:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000031cefb0599ec600b@google.com>
+Subject: KCSAN: data-race in poll_schedule_timeout.constprop.0 / pollwake (3)
+From:   syzbot <syzbot+9b3fb64bcc8c1d807595@syzkaller.appspotmail.com>
+To:     elver@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In s3fwrn5_fw_recv_frame, if fw_info->rsp is not empty, the
-current code causes a crash via BUG_ON. However, s3fwrn5_fw_send_msg
-does not crash in such a scenario. The patch replaces the BUG_ON
-by returning the error to the callers and frees up skb.
+Hello,
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+syzbot found the following crash on:
+
+HEAD commit:    245a4300 Merge branch 'rcu/kcsan' into tip/locking/kcsan
+git tree:       https://github.com/google/ktsan.git kcsan
+console output: https://syzkaller.appspot.com/x/log.txt?x=11beba8ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a38292766f8efdaa
+dashboard link: https://syzkaller.appspot.com/bug?extid=9b3fb64bcc8c1d807595
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9b3fb64bcc8c1d807595@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in poll_schedule_timeout.constprop.0 / pollwake
+
+write to 0xffffc90001043c30 of 4 bytes by task 17695 on cpu 0:
+  __pollwake fs/select.c:197 [inline]
+  pollwake+0xe3/0x140 fs/select.c:217
+  __wake_up_common+0x7b/0x180 kernel/sched/wait.c:93
+  __wake_up_common_lock+0x77/0xb0 kernel/sched/wait.c:123
+  __wake_up+0xe/0x10 kernel/sched/wait.c:142
+  signalfd_notify include/linux/signalfd.h:22 [inline]
+  signalfd_notify include/linux/signalfd.h:19 [inline]
+  __send_signal+0x70e/0x870 kernel/signal.c:1158
+  send_signal+0x224/0x2b0 kernel/signal.c:1236
+  __group_send_sig_info kernel/signal.c:1275 [inline]
+  do_notify_parent+0x55b/0x5e0 kernel/signal.c:1992
+  exit_notify kernel/exit.c:670 [inline]
+  do_exit+0x16ef/0x18c0 kernel/exit.c:818
+  do_group_exit+0xb4/0x1c0 kernel/exit.c:895
+  __do_sys_exit_group kernel/exit.c:906 [inline]
+  __se_sys_exit_group kernel/exit.c:904 [inline]
+  __x64_sys_exit_group+0x2e/0x30 kernel/exit.c:904
+  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+read to 0xffffc90001043c30 of 4 bytes by task 15995 on cpu 1:
+  poll_schedule_timeout.constprop.0+0x50/0xc0 fs/select.c:242
+  do_poll fs/select.c:951 [inline]
+  do_sys_poll+0x66d/0x990 fs/select.c:1001
+  __do_sys_poll fs/select.c:1059 [inline]
+  __se_sys_poll fs/select.c:1047 [inline]
+  __x64_sys_poll+0x10f/0x250 fs/select.c:1047
+  do_syscall_64+0xcc/0x3a0 arch/x86/entry/common.c:294
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 15995 Comm: udevd Not tainted 5.5.0-rc1-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+==================================================================
+
+
 ---
-v1: Failed to free memory of skb, identified by David Miller
----
- drivers/nfc/s3fwrn5/firmware.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/nfc/s3fwrn5/firmware.c b/drivers/nfc/s3fwrn5/firmware.c
-index be110d9cef02..de613c623a2c 100644
---- a/drivers/nfc/s3fwrn5/firmware.c
-+++ b/drivers/nfc/s3fwrn5/firmware.c
-@@ -507,7 +507,10 @@ int s3fwrn5_fw_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
- 	struct s3fwrn5_info *info = nci_get_drvdata(ndev);
- 	struct s3fwrn5_fw_info *fw_info = &info->fw_info;
- 
--	BUG_ON(fw_info->rsp);
-+	if (WARN_ON(fw_info->rsp)) {
-+		kfree_skb(skb);
-+		return -EINVAL;
-+	}
- 
- 	fw_info->rsp = skb;
- 
--- 
-2.20.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
