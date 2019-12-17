@@ -2,56 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDAC2122747
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 10:02:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A373112274B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 10:05:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbfLQJCN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 04:02:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56366 "EHLO mx2.suse.de"
+        id S1726989AbfLQJFw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 04:05:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726759AbfLQJCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 04:02:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E81F2AE17;
-        Tue, 17 Dec 2019 09:02:10 +0000 (UTC)
-Date:   Tue, 17 Dec 2019 10:02:10 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     jpoimboe@redhat.com, jikos@kernel.org, mbenes@suse.cz,
-        joe.lawrence@redhat.com, shuah@kernel.org,
-        live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] selftests: livepatch: Fix it to do root uid check and
- skip
-Message-ID: <20191217090210.ky3il3qu4jkr2vaa@pathway.suse.cz>
-References: <20191216191840.15188-1-skhan@linuxfoundation.org>
+        id S1726571AbfLQJFw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 04:05:52 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B8B42072D;
+        Tue, 17 Dec 2019 09:05:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576573550;
+        bh=j2u35ZvOuGh/FWG8sPe1wmowTjFy2Ma66k7JgIV7ffc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D91beYh9FInH4r4CtdFHpG2aeIlQUcZ6GaRPD0JoVxnwkv6kxQGmaa8ltVSmqHjH2
+         8jW5x0DThwo1SHVXamilOprQ2GdXTfzQCpCFg4q9hMLbuD7CrWDqTQx0t2dkxaWy98
+         bOOAbLPldeNAGl61JyAbWalVJpxq76svHv5uCKp4=
+Date:   Tue, 17 Dec 2019 10:05:48 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.14 000/267] 4.14.159-stable review
+Message-ID: <20191217090548.GA2801817@kroah.com>
+References: <20191216174848.701533383@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191216191840.15188-1-skhan@linuxfoundation.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20191216174848.701533383@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 2019-12-16 12:18:40, Shuah Khan wrote:
-> livepatch test configures the system and debug environment to run
-> tests. Some of these actions fail without root access and test
-> dumps several permission denied messages before it exits.
+On Mon, Dec 16, 2019 at 06:45:26PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.159 release.
+> There are 267 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Fix test-state.sh to call setup_config instead of set_dynamic_debug
-> as suggested by Petr Mladek <pmladek@suse.com>
+> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
+> Anything received after that time might be too late.
 > 
-> Fix it to check root uid and exit with skip code instead.
-> 
-> Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.159-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+There is a -rc2 out now to resolve some reported issues:
+ 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.159-rc2.gz
 
-Shuah, I assume that you will push this fix via linux-kselftest tree.
-Please, tell us if you have other preference.
-
-Best Regards,
-Petr
