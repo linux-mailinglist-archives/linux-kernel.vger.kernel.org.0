@@ -2,174 +2,216 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ACDC1123AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 00:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0E7B123AB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 00:17:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfLQXQl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 18:16:41 -0500
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:43310 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726694AbfLQXQh (ORCPT
+        id S1726609AbfLQXRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 18:17:50 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:46016 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725892AbfLQXRs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 18:16:37 -0500
-Received: by mail-pl1-f201.google.com with SMTP id p16so46774plq.10
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 15:16:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=FDkTMVipAVEM2oYEaIDiMHcnRsGkEprqH/g1uso18v0=;
-        b=Szx8SvtgGW397p6ntWPEc3OpmOTatK0fqb2QBbHtnTpfv1rzEt8maIi1s/Hfuw1VRm
-         ZtB3AhgTUT9EmC5yHHgg3NsKkKJdxbchH2E/862SdXfeMDO+QiwWshasmmHEjTGL4+/3
-         rs+5Zpvg8cvQ/FW/2eNZ+bZl/QTVa8lsxcloMPCa6BMVmxDi5i85hIlpvxflSLJ2+DEV
-         /h8lRdRwV/AuW+qiL06i0BvmgS7fYwgBcbfhX2AzHDGGV2Ox5huBqBira7KXoqG4Mx3C
-         dHYx+JcGqZlUoldeOLyLVmFcLErBHFdRWY4ExU18KYOu0wxfTuo3VfuJg7wMexqMktda
-         4M5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=FDkTMVipAVEM2oYEaIDiMHcnRsGkEprqH/g1uso18v0=;
-        b=bEEboi4ZF0rLFFoJ7QieaPjs3L5hebOdsvfUG5ao/Qm45IZNYZvDhsBl65Kt5k/kja
-         lvLD9lXMFYGOVXVP3RFgYTw6XEyw6oG4GrsY8PEIa+X2ujKzirReY+Gx9Hhv048CgQwQ
-         uvjMFUbtEgduTCXaoJLcHmZhggTIS5sKjiVi4nMmIlEDwX2lwYWwZqdAm4tfyYuItW4M
-         t27/Z/r9a2Ktmkcx8iElYRNXE0jTVxX3JXc+FVz0UR8XKwt8KUKt7v1nh0F7PvB23t6a
-         xbjG9q+TPbHmeZdl+ZJO19Hb1SElz+7AajmWm/6asLH7bamAq8MTI9Jx/JFyyuRwgbZt
-         ymrw==
-X-Gm-Message-State: APjAAAWCdPaztf7DJsYuSJL2HocKgJNtiPoQLGqYNH2v0yKfbF/v/RRR
-        FA5UePSLAd1+MwdtJw2GPjSTNwb4jRfpvr3w6A==
-X-Google-Smtp-Source: APXvYqzwT3Z0rnODEkWeFuISUFMcJR8vLx9KJGGJxlN2WCBv1J/nE2VbtGHACnmLnrK21yQXTT5aweRVUSJiuRgH+Q==
-X-Received: by 2002:a63:1e23:: with SMTP id e35mr28758023pge.219.1576624596330;
- Tue, 17 Dec 2019 15:16:36 -0800 (PST)
-Date:   Tue, 17 Dec 2019 15:16:15 -0800
-In-Reply-To: <20191217231615.164161-1-almasrymina@google.com>
-Message-Id: <20191217231615.164161-8-almasrymina@google.com>
-Mime-Version: 1.0
-References: <20191217231615.164161-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-Subject: [PATCH v9 8/8] hugetlb_cgroup: Add hugetlb_cgroup reservation docs
-From:   Mina Almasry <almasrymina@google.com>
-To:     mike.kravetz@oracle.com
-Cc:     shuah@kernel.org, almasrymina@google.com, rientjes@google.com,
-        shakeelb@google.com, gthelen@google.com, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org, cgroups@vger.kernel.org,
-        aneesh.kumar@linux.vnet.ibm.com, mkoutny@suse.com,
-        Hillf Danton <hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 17 Dec 2019 18:17:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576624666;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6vRPlHz1BtYlsRl4iL0a42PQZIs+OZkdPOBgCK2qhEw=;
+        b=P42pRDpfxnMKVL9xlVH9lSfFDNe3txlR2FUhl10qWjt1bYaSREysQzvImujcZTvAXykjDv
+        RKmzZNgNcwmk2xsucwgNb7foITsJBEzAcM88nI9mf9Crmf71ps82t2m0lTMCmNVgbHodir
+        6vUpZ2u0qwfvPLhmYaijOAr6k99nLVI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-277-J8TN0XzFMPelNY6EPhZ_hw-1; Tue, 17 Dec 2019 18:17:43 -0500
+X-MC-Unique: J8TN0XzFMPelNY6EPhZ_hw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 621418017DF;
+        Tue, 17 Dec 2019 23:17:41 +0000 (UTC)
+Received: from firesoul.localdomain (ovpn-200-28.brq.redhat.com [10.40.200.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 606DD7C856;
+        Tue, 17 Dec 2019 23:17:38 +0000 (UTC)
+Received: from [192.168.42.3] (localhost [IPv6:::1])
+        by firesoul.localdomain (Postfix) with ESMTP id 1107830736C73;
+        Wed, 18 Dec 2019 00:17:37 +0100 (CET)
+Subject: [net-next v3 PATCH] page_pool: handle page recycle for NUMA_NO_NODE
+ condition
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, lirongqing@baidu.com,
+        linyunsheng@huawei.com,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Saeed Mahameed <saeedm@mellanox.com>, mhocko@kernel.org,
+        peterz@infradead.org, linux-kernel@vger.kernel.org
+Date:   Wed, 18 Dec 2019 00:17:36 +0100
+Message-ID: <157662465670.141017.5588210646574716982.stgit@firesoul>
+User-Agent: StGit/0.19
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add docs for how to use hugetlb_cgroup reservations, and their behavior.
+The check in pool_page_reusable (page_to_nid(page) == pool->p.nid) is
+not valid if page_pool was configured with pool->p.nid = NUMA_NO_NODE.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-Acked-by: Hillf Danton <hdanton@sina.com>
+The goal of the NUMA changes in commit d5394610b1ba ("page_pool: Don't
+recycle non-reusable pages"), were to have RX-pages that belongs to the
+same NUMA node as the CPU processing RX-packet during softirq/NAPI. As
+illustrated by the performance measurements.
 
+This patch moves the NAPI checks out of fast-path, and at the same time
+solves the NUMA_NO_NODE issue.
+
+First realize that alloc_pages_node() with pool->p.nid = NUMA_NO_NODE
+will lookup current CPU nid (Numa ID) via numa_mem_id(), which is used
+as the the preferred nid.  It is only in rare situations, where
+e.g. NUMA zone runs dry, that page gets doesn't get allocated from
+preferred nid.  The page_pool API allows drivers to control the nid
+themselves via controlling pool->p.nid.
+
+This patch moves the NAPI check to when alloc cache is refilled, via
+dequeuing/consuming pages from the ptr_ring. Thus, we can allow placing
+pages from remote NUMA into the ptr_ring, as the dequeue/consume step
+will check the NUMA node. All current drivers using page_pool will
+alloc/refill RX-ring from same CPU running softirq/NAPI process.
+
+Drivers that control the nid explicitly, also use page_pool_update_nid
+when changing nid runtime.  To speed up transision to new nid the alloc
+cache is now flushed on nid changes.  This force pages to come from
+ptr_ring, which does the appropate nid check.
+
+For the NUMA_NO_NODE case, when a NIC IRQ is moved to another NUMA
+node, then ptr_ring will be emptied in 65 (PP_ALLOC_CACHE_REFILL+1)
+chunks per allocation and allocation fall-through to the real
+page-allocator with the new nid derived from numa_mem_id(). We accept
+that transitioning the alloc cache doesn't happen immediately.
+
+Fixes: d5394610b1ba ("page_pool: Don't recycle non-reusable pages")
+Reported-by: Li RongQing <lirongqing@baidu.com>
+Reported-by: Yunsheng Lin <linyunsheng@huawei.com>
+Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
 ---
+ net/core/page_pool.c |   64 ++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 49 insertions(+), 15 deletions(-)
 
-Changes in v6:
-- Updated docs to reflect the new design based on a new counter that
-tracks both reservations and faults.
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index a6aefe989043..37316ea66937 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -96,19 +96,22 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
+ }
+ EXPORT_SYMBOL(page_pool_create);
+ 
++static void __page_pool_return_page(struct page_pool *pool, struct page *page);
++
+ /* fast path */
+ static struct page *__page_pool_get_cached(struct page_pool *pool)
+ {
+ 	struct ptr_ring *r = &pool->ring;
++	struct page *first_page, *page;
+ 	bool refill = false;
+-	struct page *page;
++	int i, curr_nid;
+ 
+ 	/* Test for safe-context, caller should provide this guarantee */
+ 	if (likely(in_serving_softirq())) {
+ 		if (likely(pool->alloc.count)) {
+ 			/* Fast-path */
+-			page = pool->alloc.cache[--pool->alloc.count];
+-			return page;
++			first_page = pool->alloc.cache[--pool->alloc.count];
++			return first_page;
+ 		}
+ 		refill = true;
+ 	}
+@@ -117,17 +120,42 @@ static struct page *__page_pool_get_cached(struct page_pool *pool)
+ 	if (__ptr_ring_empty(r))
+ 		return NULL;
+ 
+-	/* Slow-path: Get page from locked ring queue,
+-	 * refill alloc array if requested.
++	/* Softirq guarantee CPU and thus NUMA node is stable. This,
++	 * assumes CPU refilling driver RX-ring will also run RX-NAPI.
+ 	 */
++	curr_nid = numa_mem_id();
++
++	/* Slower-path: Get pages from locked ring queue */
+ 	spin_lock(&r->consumer_lock);
+-	page = __ptr_ring_consume(r);
+-	if (refill)
+-		pool->alloc.count = __ptr_ring_consume_batched(r,
+-							pool->alloc.cache,
+-							PP_ALLOC_CACHE_REFILL);
++	first_page = __ptr_ring_consume(r);
++
++	/* Fallback to page-allocator if NUMA node doesn't match */
++	if (first_page && unlikely(!(page_to_nid(first_page) == curr_nid))) {
++		__page_pool_return_page(pool, first_page);
++		first_page = NULL;
++	}
++
++	if (unlikely(!refill))
++		goto out;
++
++	/* Refill alloc array, but only if NUMA node match */
++	for (i = 0; i < PP_ALLOC_CACHE_REFILL; i++) {
++		page = __ptr_ring_consume(r);
++		if (unlikely(!page))
++			break;
++
++		if (likely(page_to_nid(page) == curr_nid)) {
++			pool->alloc.cache[pool->alloc.count++] = page;
++		} else {
++			/* Release page to page-allocator, assume
++			 * refcnt == 1 invariant of cached pages
++			 */
++			__page_pool_return_page(pool, page);
++		}
++	}
++out:
+ 	spin_unlock(&r->consumer_lock);
+-	return page;
++	return first_page;
+ }
+ 
+ static void page_pool_dma_sync_for_device(struct page_pool *pool,
+@@ -311,13 +339,10 @@ static bool __page_pool_recycle_direct(struct page *page,
+ 
+ /* page is NOT reusable when:
+  * 1) allocated when system is under some pressure. (page_is_pfmemalloc)
+- * 2) belongs to a different NUMA node than pool->p.nid.
+- *
+- * To update pool->p.nid users must call page_pool_update_nid.
+  */
+ static bool pool_page_reusable(struct page_pool *pool, struct page *page)
+ {
+-	return !page_is_pfmemalloc(page) && page_to_nid(page) == pool->p.nid;
++	return !page_is_pfmemalloc(page);
+ }
+ 
+ void __page_pool_put_page(struct page_pool *pool, struct page *page,
+@@ -484,7 +509,16 @@ EXPORT_SYMBOL(page_pool_destroy);
+ /* Caller must provide appropriate safe context, e.g. NAPI. */
+ void page_pool_update_nid(struct page_pool *pool, int new_nid)
+ {
++	struct page *page;
++
++	WARN_ON(!in_serving_softirq());
+ 	trace_page_pool_update_nid(pool, new_nid);
+ 	pool->p.nid = new_nid;
++
++	/* Flush pool alloc cache, as refill will check NUMA node */
++	while (pool->alloc.count) {
++		page = pool->alloc.cache[--pool->alloc.count];
++		__page_pool_return_page(pool, page);
++	}
+ }
+ EXPORT_SYMBOL(page_pool_update_nid);
 
----
- .../admin-guide/cgroup-v1/hugetlb.rst         | 64 +++++++++++++++----
- 1 file changed, 53 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v1/hugetlb.rst b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-index a3902aa253a96..efb94e4db9d5a 100644
---- a/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-+++ b/Documentation/admin-guide/cgroup-v1/hugetlb.rst
-@@ -2,13 +2,6 @@
- HugeTLB Controller
- ==================
-
--The HugeTLB controller allows to limit the HugeTLB usage per control group and
--enforces the controller limit during page fault. Since HugeTLB doesn't
--support page reclaim, enforcing the limit at page fault time implies that,
--the application will get SIGBUS signal if it tries to access HugeTLB pages
--beyond its limit. This requires the application to know beforehand how much
--HugeTLB pages it would require for its use.
--
- HugeTLB controller can be created by first mounting the cgroup filesystem.
-
- # mount -t cgroup -o hugetlb none /sys/fs/cgroup
-@@ -28,10 +21,14 @@ process (bash) into it.
-
- Brief summary of control files::
-
-- hugetlb.<hugepagesize>.limit_in_bytes     # set/show limit of "hugepagesize" hugetlb usage
-- hugetlb.<hugepagesize>.max_usage_in_bytes # show max "hugepagesize" hugetlb  usage recorded
-- hugetlb.<hugepagesize>.usage_in_bytes     # show current usage for "hugepagesize" hugetlb
-- hugetlb.<hugepagesize>.failcnt		   # show the number of allocation failure due to HugeTLB limit
-+ hugetlb.<hugepagesize>.reservation_limit_in_bytes     # set/show limit of "hugepagesize" hugetlb reservations
-+ hugetlb.<hugepagesize>.reservation_max_usage_in_bytes # show max "hugepagesize" hugetlb reservations and no-reserve faults.
-+ hugetlb.<hugepagesize>.reservation_usage_in_bytes     # show current reservations and no-reserve faults for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.reservation_failcnt            # show the number of allocation failure due to HugeTLB reservation limit
-+ hugetlb.<hugepagesize>.limit_in_bytes                 # set/show limit of "hugepagesize" hugetlb faults
-+ hugetlb.<hugepagesize>.max_usage_in_bytes             # show max "hugepagesize" hugetlb  usage recorded
-+ hugetlb.<hugepagesize>.usage_in_bytes                 # show current usage for "hugepagesize" hugetlb
-+ hugetlb.<hugepagesize>.failcnt                        # show the number of allocation failure due to HugeTLB usage limit
-
- For a system supporting three hugepage sizes (64k, 32M and 1G), the control
- files include::
-@@ -40,11 +37,56 @@ files include::
-   hugetlb.1GB.max_usage_in_bytes
-   hugetlb.1GB.usage_in_bytes
-   hugetlb.1GB.failcnt
-+  hugetlb.1GB.reservation_limit_in_bytes
-+  hugetlb.1GB.reservation_max_usage_in_bytes
-+  hugetlb.1GB.reservation_usage_in_bytes
-+  hugetlb.1GB.reservation_failcnt
-   hugetlb.64KB.limit_in_bytes
-   hugetlb.64KB.max_usage_in_bytes
-   hugetlb.64KB.usage_in_bytes
-   hugetlb.64KB.failcnt
-+  hugetlb.64KB.reservation_limit_in_bytes
-+  hugetlb.64KB.reservation_max_usage_in_bytes
-+  hugetlb.64KB.reservation_usage_in_bytes
-+  hugetlb.64KB.reservation_failcnt
-   hugetlb.32MB.limit_in_bytes
-   hugetlb.32MB.max_usage_in_bytes
-   hugetlb.32MB.usage_in_bytes
-   hugetlb.32MB.failcnt
-+  hugetlb.32MB.reservation_limit_in_bytes
-+  hugetlb.32MB.reservation_max_usage_in_bytes
-+  hugetlb.32MB.reservation_usage_in_bytes
-+  hugetlb.32MB.reservation_failcnt
-+
-+
-+1. Reservation limits
-+
-+The HugeTLB controller allows to limit the HugeTLB reservations per control
-+group and enforces the controller limit at reservation time and at the fault of
-+hugetlb memory for which no reservation exists. Reservation limits
-+are superior to Page fault limits (see section 2), since Reservation limits are
-+enforced at reservation time (on mmap or shget), and never causes the
-+application to get SIGBUS signal if the memory was reserved before hand. For
-+MAP_NORESERVE allocations, the reservation limit behaves the same as the fault
-+limit, enforcing memory usage at fault time and causing the application to
-+receive a SIGBUS if it's crossing its limit.
-+
-+2. Page fault limits
-+
-+The HugeTLB controller allows to limit the HugeTLB usage (page fault) per
-+control group and enforces the controller limit during page fault. Since HugeTLB
-+doesn't support page reclaim, enforcing the limit at page fault time implies
-+that, the application will get SIGBUS signal if it tries to access HugeTLB
-+pages beyond its limit. This requires the application to know beforehand how
-+much HugeTLB pages it would require for its use.
-+
-+
-+3. Caveats with shared memory
-+
-+For shared hugetlb memory, both hugetlb reservation and page faults are charged
-+to the first task that causes the memory to be reserved or faulted, and all
-+subsequent uses of this reserved or faulted memory is done without charging.
-+
-+Shared hugetlb memory is only uncharged when it is unreserved or deallocated.
-+This is usually when the hugetlbfs file is deleted, and not when the task that
-+caused the reservation or fault has exited.
---
-2.24.1.735.g03f4e72817-goog
