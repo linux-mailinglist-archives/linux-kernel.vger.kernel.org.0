@@ -2,110 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 523DB122294
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C56C12229D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:23:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbfLQDVk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 22:21:40 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:44285 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbfLQDVg (ORCPT
+        id S1727217AbfLQDUu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 22:20:50 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:59272 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbfLQDUr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 22:21:36 -0500
-Received: by mail-pj1-f65.google.com with SMTP id w5so3896243pjh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 19:21:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=b2nJ0J7FGVQs+cpVk65h/j8h/oCaBmyGaNfS1BBVfwU=;
-        b=VOwSHww64UK8lVnbq0iie30j1G3kCzbmqDSOhcMLrOe1O+CLUVhFWniqYW7RexNBge
-         nBo2pt0lpjO6GvdrKabkT2piCGI88RcSxWH3bpSny9qWrYjuqDmoiDmhe/6CIfeLvSxg
-         Z91V+OE6M3KYE5Cl5zKnukl8t0LV2JfH5n3ms=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=b2nJ0J7FGVQs+cpVk65h/j8h/oCaBmyGaNfS1BBVfwU=;
-        b=ossd0AQIRa5P9WMOf6hm1Gr0guZW2YNaJkqOsL3X405wxwlbF1g0/DN/OE0qoOPSt8
-         L8mRJgpz6HSV84QOKSTbwcNOSn3IzmmRwEtGsqRilOPaFglfxEXcOk7fOhY6pIZbuX6T
-         a8ybkFConw7QHDSGJFrGRacz4Ha3F5iBn1n6a1yRuwmIV0ZezICw29IiaQ2+0NGotCxf
-         DPFqaAhI41rUF6E+dqPayqqpmkN76kAqNqrHEx/tdKRbSTvpgNCcoPO769AUAHUl1gtO
-         pwWSGkFJhddD6/Guql9c9wYzMlrFDUI7NOVkn9O8180QEMLaQDXuoxfbG0UfyoqK45dg
-         3poQ==
-X-Gm-Message-State: APjAAAVVrXeTq5TUcfUVl6aGffIWTMgzoXoIQ/vJ8NjXZ5okyMDXnBM3
-        ziyhNFmBIcZgkbH0lRzRV+/ytA==
-X-Google-Smtp-Source: APXvYqxAjpVAxx2qEeWMjQAtg7fvYC66i2cf6WUgxx/HIt3Z3bLSSdGnEBg84jo3LiW5Fp8gRLMzXw==
-X-Received: by 2002:a17:90a:f005:: with SMTP id bt5mr3433452pjb.16.1576552896240;
-        Mon, 16 Dec 2019 19:21:36 -0800 (PST)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
-        by smtp.gmail.com with ESMTPSA id j3sm24387455pfi.8.2019.12.16.19.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 19:21:35 -0800 (PST)
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [RFC][PATCH 15/15] videobuf2: don't test db_attach in dma-sg prepare and finish
-Date:   Tue, 17 Dec 2019 12:20:34 +0900
-Message-Id: <20191217032034.54897-16-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-In-Reply-To: <20191217032034.54897-1-senozhatsky@chromium.org>
-References: <20191217032034.54897-1-senozhatsky@chromium.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 16 Dec 2019 22:20:47 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4BBC414249633;
+        Mon, 16 Dec 2019 19:20:46 -0800 (PST)
+Date:   Mon, 16 Dec 2019 19:20:45 -0800 (PST)
+Message-Id: <20191216.192045.2284012320875217079.davem@davemloft.net>
+To:     o.rempel@pengutronix.de
+Cc:     jcliburn@gmail.com, chris.snook@gmail.com, andrew@lunn.ch,
+        kernel@pengutronix.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] net: ag71xx: fix compile warnings
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20191216064407.32310-1-o.rempel@pengutronix.de>
+References: <20191216064407.32310-1-o.rempel@pengutronix.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Dec 2019 19:20:46 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We moved cache management decision making to the upper layer and
-rely on buffer's need_cache_sync flags and videobuf2 core. If the
-upper layer (core) has decided to invoke ->prepare() or ->finish()
-then we must sync.
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+Date: Mon, 16 Dec 2019 07:44:07 +0100
 
-For DMABUF ->need_cache_sync_on_prepare and ->need_cache_sync_on_flush
-are always false so videobuf core does not call ->prepare() and
-->finish() on such buffers.
+> drivers/net/ethernet/atheros/ag71xx.c: In function 'ag71xx_probe':
+> drivers/net/ethernet/atheros/ag71xx.c:1776:30: warning: passing argument 2 of
+>  'of_get_phy_mode' makes pointer from integer without a cast [-Wint-conversion]
+> In file included from drivers/net/ethernet/atheros/ag71xx.c:33:
+> ./include/linux/of_net.h:15:69: note: expected 'phy_interface_t *'
+>  {aka 'enum <anonymous> *'} but argument is of type 'int'
+> 
+> Fixes: 0c65b2b90d13c1 ("net: of_get_phy_mode: Change API to solve int/unit warnings")
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
-Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
----
- drivers/media/common/videobuf2/videobuf2-dma-sg.c | 8 --------
- 1 file changed, 8 deletions(-)
-
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-sg.c b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-index bfc99a0cb7b9..1fd25eda0bf2 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-sg.c
-@@ -198,10 +198,6 @@ static void vb2_dma_sg_prepare(void *buf_priv)
- 	struct vb2_dma_sg_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (buf->db_attach)
--		return;
--
- 	dma_sync_sg_for_device(buf->dev, sgt->sgl, sgt->orig_nents,
- 			       buf->dma_dir);
- }
-@@ -211,10 +207,6 @@ static void vb2_dma_sg_finish(void *buf_priv)
- 	struct vb2_dma_sg_buf *buf = buf_priv;
- 	struct sg_table *sgt = buf->dma_sgt;
- 
--	/* DMABUF exporter will flush the cache for us */
--	if (buf->db_attach)
--		return;
--
- 	dma_sync_sg_for_cpu(buf->dev, sgt->sgl, sgt->orig_nents, buf->dma_dir);
- }
- 
--- 
-2.24.1.735.g03f4e72817-goog
-
+This patch does not apply to the net tree.
