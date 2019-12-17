@@ -2,80 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37AFE12297F
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A58B122982
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfLQLF6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:05:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42624 "EHLO mail.kernel.org"
+        id S1727144AbfLQLGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:06:07 -0500
+Received: from mga07.intel.com ([134.134.136.100]:22434 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726905AbfLQLF5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:05:57 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4652064B;
-        Tue, 17 Dec 2019 11:05:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576580757;
-        bh=ePf090R+2Dq3LbKbJzt3r0Wjqrbb4htnAyrTB+GuTDE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kKcA9yrkQIcxlAkHIulAj5FktfHG2J23b1YVkpXpm+WuRNRKHh3yP8PS2Hd0KSmX3
-         7mEM6jh4ONZYcCNlWeURalD295M1vDWMQAedgCnripeLdFKw7MWzuUtG/Um8fszY1L
-         VktBelSHw6Q7pceceqaqgIGEnWW4DXDJDK3AeFgM=
-Date:   Tue, 17 Dec 2019 12:05:54 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH v2 1/3] tty: new helper function tty_kopen_shared
-Message-ID: <20191217110554.GA3055718@kroah.com>
-References: <20191217081718.23807-1-u.kleine-koenig@pengutronix.de>
- <20191217081718.23807-2-u.kleine-koenig@pengutronix.de>
- <20191217082733.GA2672708@kroah.com>
- <20191217105101.fd23zsxxi2e42ltt@pengutronix.de>
+        id S1726383AbfLQLGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:06:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:06:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
+   d="scan'208";a="212525575"
+Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
+  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2019 03:06:03 -0800
+Message-ID: <fab70737263a076ce6a853e9f554e190f3cfb883.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm/ppi: replace assertion code with recovery in
+ tpm_eval_dsm
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     kjlu@umn.edu, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 17 Dec 2019 13:06:02 +0200
+In-Reply-To: <20191215182314.32208-1-pakki001@umn.edu>
+References: <20191215182314.32208-1-pakki001@umn.edu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217105101.fd23zsxxi2e42ltt@pengutronix.de>
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:51:01AM +0100, Uwe Kleine-König wrote:
-> Hello Greg,
+On Sun, 2019-12-15 at 12:23 -0600, Aditya Pakki wrote:
+> In tpm_eval_dsm, BUG_ON on ppi_handle is used as an assertion.
+> By returning NULL to the callers, instead of crashing, the error
+> can be better handled.
 > 
-> all feedback I don't respond to is planned to be fixed in v3.
-> 
-> On Tue, Dec 17, 2019 at 09:27:33AM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Dec 17, 2019 at 09:17:16AM +0100, Uwe Kleine-König wrote:
-> > > +struct tty_struct *tty_kopen_shared(dev_t device)
-> > > +{
-> > > +	struct tty_struct *tty;
-> > > +	struct tty_driver *driver;
-> > > +	int index = -1;
-> > > +
-> > > +	mutex_lock(&tty_mutex);
-> > > +	driver = tty_lookup_driver(device, NULL, &index);
-> > > +	if (IS_ERR(driver)) {
-> > > +		tty = ERR_CAST(driver);
-> > > +		goto err_lookup_driver;
-> > > +	}
-> > > +
-> > > +	tty = tty_driver_lookup_tty(driver, NULL, index);
-> > 
-> > No error check?
-> 
-> Well, the caller of tty_kopen_shared is supposed to check for error
-> returns. Do you think an error message here would be approriate? I'd do
-> this in the caller similar to how tty_kopen works.
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 
-Ah, you are passing it on to the caller, ok, nevermind.
+Thanks.
 
-greg k-h
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+
+/Jarkko
+
