@@ -2,120 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84BD7122933
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:50:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 142D912293A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:51:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbfLQKuM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:50:12 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58439 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726655AbfLQKuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:50:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576579811;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Rt3wBXjdkOLTAGZAw3Tafg9k0wX1EERiUeh4YXdvZFw=;
-        b=Qrn+3EgAZPFBLLyg2ECXeAk+dJeF5fBFO5P2JugKSba2jI6UlNpUqArs8627tm6BpV//b5
-        PW0XPLTlI5WHKRMiaJAMIUT3yoeHDbtp7m7sTk6WzeVgVxrjucY5y2jxz3LXP6FTBt8eKC
-        t5yzt8dXn3LpKVcjvxvpUamnn/YxvtY=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-178-IfRpNcThPD-zI8UXpqFZLg-1; Tue, 17 Dec 2019 05:50:06 -0500
-X-MC-Unique: IfRpNcThPD-zI8UXpqFZLg-1
-Received: by mail-qk1-f197.google.com with SMTP id 143so6577151qkg.12
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 02:50:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Rt3wBXjdkOLTAGZAw3Tafg9k0wX1EERiUeh4YXdvZFw=;
-        b=XQSjnIbvbBSkFDZzxoZ/bHmvYe8McnSxjFcvvY6dWm+i7V5QuNnMSwEr0o2yaJjEAT
-         UagYQIZegzfPjZtfEsCLGJOATBD55H/yXKrFTwSXolqwtQF07Sq8y9zb35N3CMcCIp7O
-         EB9zouB8pYQlQJ4BhsL+yr5vBmCdcXF1LCsjE18JWcPpAs62qX593A/t73mxpUzbqsD4
-         X6W7JI58IHUUyxRyiQyIb9bVH5gEodqiOtZ07Uou/shC9XWY7iCTp6drzZSda/KFEQM9
-         BPO5YcTO9pQ9C3Faa37NfQY0B6ArAxoYnu0DgbQmQG9p43cGHbvk1MOKtJf1Ib1QwdBM
-         Im0Q==
-X-Gm-Message-State: APjAAAXHZzUiDev0xxFwL1lF39G7r0GcPfwjZUcX1K/jxIugAl71XOUA
-        OzMjIBACEwgPPjLSQjFiouHPVEFUIKLckzS5mhtIN63BWUIHup3dCojFpc7RRMLztHJyVpE+jey
-        hUpDaAYacxvoMSFmXlD+jANONWD5e/BmPSws1EzG9
-X-Received: by 2002:ad4:46ce:: with SMTP id g14mr3904989qvw.67.1576579805655;
-        Tue, 17 Dec 2019 02:50:05 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw/VLutc07+0j4Bx9/r9IYnqLdnpclrVJSO4VZrNxQqBV6UHMzCpcyo2Ftqj81CkaG3aSoCQu3p0VvOw1+5D9I=
-X-Received: by 2002:ad4:46ce:: with SMTP id g14mr3904970qvw.67.1576579805418;
- Tue, 17 Dec 2019 02:50:05 -0800 (PST)
+        id S1727497AbfLQKvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 05:51:07 -0500
+Received: from relay.sw.ru ([185.231.240.75]:37746 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727489AbfLQKvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 05:51:06 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ihAQi-0003L8-8F; Tue, 17 Dec 2019 13:50:16 +0300
+Subject: Re: Re: [PATCH v2] mm/hugetlb: Defer freeing of huge pages if in
+ non-task context
+To:     Michal Hocko <mhocko@kernel.org>, Waiman Long <longman@redhat.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+References: <20191217012508.31495-1-longman@redhat.com>
+ <20191217093143.GC31063@dhcp22.suse.cz>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <87c2ff49-999e-3196-791f-36e3d42ad79c@virtuozzo.com>
+Date:   Tue, 17 Dec 2019 13:50:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <1576551722-16966-1-git-send-email-zhangpan26@huawei.com>
-In-Reply-To: <1576551722-16966-1-git-send-email-zhangpan26@huawei.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Tue, 17 Dec 2019 11:49:54 +0100
-Message-ID: <CAO-hwJ+5Ch02fPQ+XF=A4iEcH81V5PrCdV2qGQDZ8HxnQAoEog@mail.gmail.com>
-Subject: Re: [PATCH] drivers/hid/hid-multitouch.c: fix a possible null pointer access.
-To:     z00417012 <zhangpan26@huawei.com>
-Cc:     hushiyuan@huawei.com, Jiri Kosina <jikos@kernel.org>,
-        Henrik Rydberg <rydberg@bitmath.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191217093143.GC31063@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 17.12.2019 12:31, Michal Hocko wrote:
+> On Mon 16-12-19 20:25:08, Waiman Long wrote:
+> [...]
+>> Both the hugetbl_lock and the subpool lock can be acquired in
+>> free_huge_page(). One way to solve the problem is to make both locks
+>> irq-safe.
+> 
+> Please document why we do not take this, quite natural path and instead
+> we have to come up with an elaborate way instead. I believe the primary
+> motivation is that some operations under those locks are quite
+> expensive. Please add that to the changelog and ideally to the code as
+> well. We probably want to fix those anyway and then this would be a
+> temporary workaround.
+> 
+>> Another alternative is to defer the freeing to a workqueue job.
+>>
+>> This patch implements the deferred freeing by adding a
+>> free_hpage_workfn() work function to do the actual freeing. The
+>> free_huge_page() call in a non-task context saves the page to be freed
+>> in the hpage_freelist linked list in a lockless manner.
+> 
+> Do we need to over complicate this (presumably) rare event by a lockless
+> algorithm? Why cannot we use a dedicated spin lock for for the linked
+> list manipulation? This should be really a trivial code without an
+> additional burden of all the lockless subtleties.
 
-On Tue, Dec 17, 2019 at 4:17 AM z00417012 <zhangpan26@huawei.com> wrote:
-
-Can you add at the beginning of your commit message:
-From: Pan Zhang <zhangpan26@huawei.com>
-
-This way we have the commit author that matches the signature, which
-is a requirement for the kernel.
-
->
-> 1002     if ((quirks & MT_QUIRK_IGNORE_DUPLICATES) && mt) {
-> 1003         struct input_mt_slot *i_slot = &mt->slots[slotnum];
-> 1004
-> 1005         if (input_mt_is_active(i_slot) &&
-> 1006             input_mt_is_used(mt, i_slot))
-> 1007             return -EAGAIN;
-> 1008     }
->
-> We previously assumed 'mt' could be null (see line 1002).
->
-> The following situation is similar, so add a judgement.
->
-> Signed-off-by: Pan Zhang <zhangpan26@huawei.com>
-> ---
->  drivers/hid/hid-multitouch.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-> index 3cfeb16..368de81 100644
-> --- a/drivers/hid/hid-multitouch.c
-> +++ b/drivers/hid/hid-multitouch.c
-> @@ -1019,7 +1019,7 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
->                 tool = MT_TOOL_DIAL;
->         else if (unlikely(!confidence_state)) {
->                 tool = MT_TOOL_PALM;
-> -               if (!active &&
-> +               if (!active && mt
-
-Ack on the principle, but this doesn't even compile. You are missing a
-`&&` at the end of the line.
-
-Can you send a v2 with the comments above? And we will queue the v2
-for 5.5 I think.
-
-Cheers,
-Benjamin
-
->                     input_mt_is_active(&mt->slots[slotnum])) {
->                         /*
->                          * The non-confidence was reported for
-> --
-> 2.7.4
->
-
+Why not llist_add()/llist_del_all() ?
