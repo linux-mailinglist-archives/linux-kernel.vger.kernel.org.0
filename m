@@ -2,88 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77331122BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:40:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23742122C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbfLQMkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:40:05 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55269 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728250AbfLQMkB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:40:01 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ihC8r-0001sK-8T; Tue, 17 Dec 2019 13:39:57 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5F2631C2A42;
-        Tue, 17 Dec 2019 13:39:53 +0100 (CET)
-Date:   Tue, 17 Dec 2019 12:39:53 -0000
-From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Spare resched IPI when prio changes on a
- single fair task
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191203160106.18806-2-frederic@kernel.org>
-References: <20191203160106.18806-2-frederic@kernel.org>
+        id S1728372AbfLQMkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:40:55 -0500
+Received: from foss.arm.com ([217.140.110.172]:35756 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727029AbfLQMky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:40:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02C0C31B;
+        Tue, 17 Dec 2019 04:40:54 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7057C3F718;
+        Tue, 17 Dec 2019 04:40:53 -0800 (PST)
+Date:   Tue, 17 Dec 2019 12:40:51 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH 07/13] PCI: cadence: Add new *ops* for CPU addr fixup
+Message-ID: <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
+References: <20191209092147.22901-1-kishon@ti.com>
+ <20191209092147.22901-8-kishon@ti.com>
 MIME-Version: 1.0
-Message-ID: <157658639317.30329.4178285376901273238.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209092147.22901-8-kishon@ti.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the sched/core branch of tip:
+On Mon, Dec 09, 2019 at 02:51:41PM +0530, Kishon Vijay Abraham I wrote:
+> Cadence driver uses "mem" memory resource to obtain the offset of
+> configuration space address region, memory space address region and
+> message space address region. The obtained offset is used to program
+> the Address Translation Unit (ATU). However certain platforms like TI's
+> J721E SoC require the absolute address to be programmed in the ATU and not
+> just the offset.
+> 
+> The same problem was solved in designware driver using a platform specific
+> ops for CPU addr fixup in commit a660083eb06c5bb0 ("PCI: dwc: designware:
 
-Commit-ID:     7c2e8bbd87db661122e92d71a394dd7bb3ada4d3
-Gitweb:        https://git.kernel.org/tip/7c2e8bbd87db661122e92d71a394dd7bb3ada4d3
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Tue, 03 Dec 2019 17:01:05 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 17 Dec 2019 13:32:50 +01:00
+Thanks for this reference, though this doesn't need to be in the commit
+log, please put such comments underneath a ---.
 
-sched: Spare resched IPI when prio changes on a single fair task
+> Add new *ops* for CPU addr fixup"). Follow a similar mechanism in
+> Cadence too instead of directly using "mem" memory resource in Cadence
+> PCIe core.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../pci/controller/cadence/pcie-cadence-host.c    | 15 ++++-----------
+>  drivers/pci/controller/cadence/pcie-cadence.c     |  8 ++++++--
+>  drivers/pci/controller/cadence/pcie-cadence.h     |  1 +
+>  3 files changed, 11 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> index 2efc33b1cade..cf817be237af 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+> @@ -105,15 +105,14 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
+>  static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>  {
+>  	struct cdns_pcie *pcie = &rc->pcie;
+> -	struct resource *mem_res = pcie->mem_res;
+>  	struct resource *bus_range = rc->bus_range;
+>  	struct resource *cfg_res = rc->cfg_res;
+>  	struct device *dev = pcie->dev;
+>  	struct device_node *np = dev->of_node;
+>  	struct of_pci_range_parser parser;
+> +	u64 cpu_addr = cfg_res->start;
+>  	struct of_pci_range range;
+>  	u32 addr0, addr1, desc1;
+> -	u64 cpu_addr;
+>  	int r, err;
+>  
+>  	/*
+> @@ -126,7 +125,9 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
+>  
+> -	cpu_addr = cfg_res->start - mem_res->start;
+> +	if (pcie->ops->cpu_addr_fixup)
+> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+> +
 
-The runqueue of a fair task being remotely reniced is going to get a
-resched IPI in order to reassess which task should be the current
-running on the CPU. However that evaluation is useless if the fair task
-is running alone, in which case we can spare that IPI, preventing
-nohz_full CPUs from being disturbed.
+Won't this patch cause a breakage for existing users that won't have defined a
+cpu_addr_fixup? The offset isn't being calculated and so cpu_addr will be wrong?
 
-Reported-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Link: https://lkml.kernel.org/r/20191203160106.18806-2-frederic@kernel.org
----
- kernel/sched/fair.c | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks,
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 08a233e..846f50b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -10322,6 +10322,9 @@ prio_changed_fair(struct rq *rq, struct task_struct *p, int oldprio)
- 	if (!task_on_rq_queued(p))
- 		return;
- 
-+	if (rq->cfs.nr_running == 1)
-+		return;
-+
- 	/*
- 	 * Reschedule if we are currently running on this runqueue and
- 	 * our priority decreased, or if we are not currently running on
+Andrew Murray
+
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
+>  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+>  	addr1 = upper_32_bits(cpu_addr);
+> @@ -264,14 +265,6 @@ int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
+>  	}
+>  	rc->cfg_res = res;
+>  
+> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mem");
+> -	if (!res) {
+> -		dev_err(dev, "missing \"mem\"\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	pcie->mem_res = res;
+> -
+>  	ret = cdns_pcie_start_link(pcie, true);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to start link\n");
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
+> index de5b3b06f2d0..bd93d0f92f55 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
+> @@ -113,7 +113,9 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 fn,
+>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
+>  
+>  	/* Set the CPU address */
+> -	cpu_addr -= pcie->mem_res->start;
+> +	if (pcie->ops->cpu_addr_fixup)
+> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+> +
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
+>  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+>  	addr1 = upper_32_bits(cpu_addr);
+> @@ -140,7 +142,9 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie, u8 fn,
+>  	}
+>  
+>  	/* Set the CPU address */
+> -	cpu_addr -= pcie->mem_res->start;
+> +	if (pcie->ops->cpu_addr_fixup)
+> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+> +
+>  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
+>  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
+>  	addr1 = upper_32_bits(cpu_addr);
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
+> index c879dd3d2893..ffa8b9f78ff8 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence.h
+> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
+> @@ -233,6 +233,7 @@ struct cdns_pcie_ops {
+>  	void	(*write)(void __iomem *addr, int size, u32 value);
+>  	int	(*start_link)(struct cdns_pcie *pcie, bool start);
+>  	bool	(*is_link_up)(struct cdns_pcie *pcie);
+> +	u64     (*cpu_addr_fixup)(struct cdns_pcie *pcie, u64 cpu_addr);
+>  };
+>  
+>  /**
+> -- 
+> 2.17.1
+> 
