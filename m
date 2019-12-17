@@ -2,90 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8373D1236F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:17:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 271C0123705
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:17:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbfLQURQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728919AbfLQURv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:17:51 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:54939 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728753AbfLQURQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 17 Dec 2019 15:17:16 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36471 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728718AbfLQURM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:17:12 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n12so7909630lfe.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:17:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XAjeERk50YhDeYT1JOW5M/FgClTa6Imxci6PQByuhDw=;
-        b=BpI4Cx3VyDVOZ4EPyO3hjdxg3/2CzYOdLTwYIUHWWCcq73CwUM4wszAAN+ldrL0+bB
-         8R+3ipV3FaxJu6uIhbljBiAFWXXU7/pTjyoWd7Ae/vpY9V90ICMAADQnOReqmRb24gtP
-         cxBovGWS7tf3AdnmbqcJp9hkDnBrrMHrEiOh0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XAjeERk50YhDeYT1JOW5M/FgClTa6Imxci6PQByuhDw=;
-        b=JdIEirkOjO/ZcLBcHz5jmNXZjPqhwrDCluG+AXI3+NHCxKDAjsUCc8JYwnQOnGBJHG
-         9MypAi7ZLz3wWnvCo9Z1PuNQQO+qZu6M+z4w2YsgoMx76vU6h/A1m/0SwSZqd2Z2u19s
-         4XjJ+f76Z5qFvoqPoZfWLsYGMwlEA8f1TFSas9g3G4cyDmscqT2UoJz7NL/o1k1hzXGk
-         K/XexScaTYm8GSZK+gfgudWIa636hb0h3ZF9nEUdMk/y2n3H8v5wi9l8ue9dH+XrUsgL
-         hIc/aaaZoBPiHTUnL5C1IdJqNjoR0usq+DuMmYfle+8Y2GrN+lKvkQ/TauMZp0OTA8Ay
-         enXA==
-X-Gm-Message-State: APjAAAXUxdm7wSgYCgG+dgnxpx1aj9k/bb26KaARPbkeDplSj/6kNYZ6
-        DXmwFbH8KHSxXvesNcG/YR5lmEEPQkk=
-X-Google-Smtp-Source: APXvYqxnwDS0O41sCJ5xZUI3g+3lBkZ1oaBI/xz2/dHVAfxRMXXFRrFjAfVyjEq51oizvfLdFf3pPw==
-X-Received: by 2002:ac2:4884:: with SMTP id x4mr3851949lfc.92.1576613829904;
-        Tue, 17 Dec 2019 12:17:09 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id m13sm11173505lfo.40.2019.12.17.12.17.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 12:17:09 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id 15so7918564lfr.2
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:17:08 -0800 (PST)
-X-Received: by 2002:ac2:465e:: with SMTP id s30mr4008826lfo.134.1576613828695;
- Tue, 17 Dec 2019 12:17:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20191217115547.GA68104@gmail.com> <CAHk-=wiVZMU69qB7nmkkyvjtDenQ+89V94V=3mmdY88uWYrZiQ@mail.gmail.com>
- <20191217193039.GF2844@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191217193039.GF2844@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 17 Dec 2019 12:16:52 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgH8bSsgxnUAjuoUyDwHPKZwdVirH__=mJQu7RCFfCwZA@mail.gmail.com>
-Message-ID: <CAHk-=wgH8bSsgxnUAjuoUyDwHPKZwdVirH__=mJQu7RCFfCwZA@mail.gmail.com>
-Subject: Re: [GIT PULL] timer fixes
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47cqDl6MQVz9sRM;
+        Wed, 18 Dec 2019 07:17:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1576613834;
+        bh=to3nAIMJMhJTiwo/9pBgTcO1nHmn5+b/bWSIpM3ItcM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lw1Y5EhldrOoOxqSZgOHnSNQg2+ApiWHLuF5q8KtPhhpBI0ZDXKLdLtS6AvATKnuF
+         EBABxHtaDz4PFxQEFaPA2vYRupsa6GqzoGqOBGvJSwtFd9T8u0QyeWgEvnL5iXB8KE
+         PmszQwUBp7TyDC1H7gq4WKpoM5CvyOoJ+cI60hxY8GxDb00hI+tZAU21mfWYjNTSGx
+         Fkd16yVuE6zTTP1QHdSEKCtDKBoAalC/89walxTXnJMDHUEwkf1IQA1QcuRe1JlAwl
+         XZTosMKoTjU9syOvgQJpaLRNxdAvsCNKadvwfdsdwismu6DaO0X0r3Y1ks2zDunX6T
+         8nSkHlwa6ySDw==
+Date:   Wed, 18 Dec 2019 07:17:10 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+        Zhengyuan Liu <liuzhengyuan@kylinos.cn>
+Subject: linux-next: Fixes tag needs some work in the pm tree
+Message-ID: <20191218071710.61602251@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/ip44PrA7z9g_nx5J8I_SBQB";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:30 AM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> What alternatives are there? That is, we normally only use HPET to
-> double check nobody messed up the TSC.
+--Sig_/ip44PrA7z9g_nx5J8I_SBQB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The thing is HPET seems to be _less_ reliable than the TSC we're
-checking these days.
+Hi all,
 
-If that's the only use-case for HPET, we should just stop doing it.
 
-> We can't just blindly trust TSC across everything x86.
+  78d3e7c19e2d ("tools/power/acpi: fix compilation error")
 
-No, but we can trust it when it's a modern CPU.
+Fixes tag
 
-The HPET seems to get disabled on all the modern platforms, why do we
-even have it enabled by default?
+  Fixes: d5a4b1a540b ("tools/power/acpi: Remove direct kernel source includ=
+e reference")
 
-We should do the HPET cross-check only when we know the TSC might be
-unreliable, I suspect.
+has these problem(s):
 
-           Linus
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ip44PrA7z9g_nx5J8I_SBQB
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl35N8YACgkQAVBC80lX
+0Gz8MAf9FEzIt9+SX7HvQSQA3T+1g4qEpxARPRfUwkPaGy0g+VmgTY+h0C1T50UR
+ZjXjYRrrQCA0KjTxcXnqrXm8uOpfyCxSMmg1VYq2up8ZP+ooj9Nm6SxfhPCjvL5x
+kgWDXGwk6jufo5NSJW0VMmaEQuvhnAPrSHvFpBwxTzw8JRElyJmX7DsGzqhlSh6V
+M7sTZgN33SVGA55Q/NmgOgvCJLc1d0lcd41jglWHlzy0zM2HGFYzSm7g/7XYcrWZ
+SG/JdUrYYFm+frWDh/hEOV9+KZgHHzOiSuaxpzn6QMiI/DzUvSbOb/uKdc55y6/Y
+KiZKX4geU/WYs6+90ujDKzn937TQWg==
+=Kutr
+-----END PGP SIGNATURE-----
+
+--Sig_/ip44PrA7z9g_nx5J8I_SBQB--
