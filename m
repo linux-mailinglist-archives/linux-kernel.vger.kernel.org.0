@@ -2,141 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2C28122618
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 09:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 303A4122627
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 09:03:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfLQIBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 03:01:48 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34179 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726666AbfLQIBs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 03:01:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t2so10219600wrr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 00:01:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=RYcPZBxNs0LR8aI9ut6hb3/+3nGM5FU0mpuZVJVKBqM=;
-        b=FXp9LRcrDVkA8WcZNt2DGB5je9rP0L5nXs3II0LD3mnz5nxHRMKsTZDw7Rh7CVsHnd
-         Trf/CAJzgiDWE9gsqQS8mcfLBVv/grKk5XvYMo1D0ZvTjsCRtgoJMWjYF/he3STC5esP
-         vuuF0AhTDWnNwTsVc0tSPOmJcXGvngA4IOnO3g35RrvgMZr4z9J05nYyAngrwSYYUmg7
-         Prk/Vzr8zNT27ztxarf9DrfMY7RCTX0H+lZsQ74pe1HPifj6EZlkhjt7lBFTj8cGuHcN
-         diJwgVe1gqW8cgZgNi2TQgIyfUNGpCBYiGOHNnJ4EIpvKuN6PdZM5Aawlms+ugwxNBnJ
-         2XhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=RYcPZBxNs0LR8aI9ut6hb3/+3nGM5FU0mpuZVJVKBqM=;
-        b=AdVfmcdFbY14wCioDZF0w1MbaxTCcL0nXGaHkNWMAyWTvLnCV5yoDiHLessy5tWoGA
-         CFz2eAXDdenfEdieVGeaKS9IWACsxh/cPAToaxgr3Kx5MMU40rxfbW4z1zmF8BkymC5y
-         /dqqBI88uekWFqnvlpqsDgZ84DX+lfu551WQyvdzhKuncgznbphvpPprtEA4YZQwEB8E
-         mR3uH/Ra/k0vqLTYoM1J4YNxTlNN6Ce9XaHxAL2VqGtL22fBX1CZdHUALOnFfggVV06e
-         bMw+I+0uAlUoSIuRVWp1iseETWLE+FtwW5qxmeJWUnkrr/CW3Ligavevrhq93Tvqe/1Z
-         skNw==
-X-Gm-Message-State: APjAAAVmfIvHPQoRlFZqUstMMeLZySAkSLfSGo2Xo9+JkReGDC5xLcsh
-        RuNoq0chd4pujXIIDBYQEf8auQ==
-X-Google-Smtp-Source: APXvYqxRCna04c3LCNHy/aOTiZ+ysA7HIsZXfmIuviSjkwuNxXEkaWZmYBaJ5/NmY97Bk79fZC35CA==
-X-Received: by 2002:a5d:4749:: with SMTP id o9mr34127834wrs.242.1576569706892;
-        Tue, 17 Dec 2019 00:01:46 -0800 (PST)
-Received: from dell (h185-20-99-142.host.redstation.co.uk. [185.20.99.142])
-        by smtp.gmail.com with ESMTPSA id p26sm2020498wmc.24.2019.12.17.00.01.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 00:01:46 -0800 (PST)
-Date:   Tue, 17 Dec 2019 08:01:46 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        stefan@agner.ch, b.galvani@gmail.com, phh@phh.me,
-        letux-kernel@openphoenux.org
-Subject: Re: [PATCH v4 4/5] mfd: rn5t618: add more subdevices
-Message-ID: <20191217080146.GE18955@dell>
-References: <20191211215409.32764-1-andreas@kemnade.info>
- <20191211215409.32764-5-andreas@kemnade.info>
- <20191216153106.GK2369@dell>
- <20191216170000.022a4c31@kemnade.info>
+        id S1727024AbfLQIDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 03:03:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbfLQIDI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 03:03:08 -0500
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 672EA21D7D;
+        Tue, 17 Dec 2019 08:03:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576569787;
+        bh=25HsI9t+Bqog4y9A5SHa9MC0k7uJ8M9CNTOiEeQd6Js=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=DvMpZbB7IMXqeX4QWcO8IidCczC9xn9mkLwwqoYLgM5vsug6dsyrsPkNlUjElcdjj
+         o7hy5AimWrV23+EW+uPpkq77mQ7qWPhxDGeFqm4k5dgwaFkhibUekR6YfYCfhrZZsp
+         wyJwXhekHJQfP01vpqFUQkUgm9WV1sjfrFo2bYIw=
+Received: by mail-wr1-f49.google.com with SMTP id w15so10224332wru.4;
+        Tue, 17 Dec 2019 00:03:07 -0800 (PST)
+X-Gm-Message-State: APjAAAVVrMW1Qcj9xvbCUQF6/3K0eGjAVTxKjKexu0rU+MxL14AMcRAE
+        X7cDs/r0MjYy4zzfPJb/Tk/cE4tEAxnNYpbq4SE=
+X-Google-Smtp-Source: APXvYqzf3OsaJa9aVxYfyxYMjeroNjRrzOjIIzFzUrGof8GRCCHuk/JVJP69n/Ph+I/wKcqIgvXDGi2L7XlZJ9tfLAY=
+X-Received: by 2002:a05:6000:11c6:: with SMTP id i6mr36083863wrx.178.1576569785910;
+ Tue, 17 Dec 2019 00:03:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191216170000.022a4c31@kemnade.info>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191217052328.25633-1-wens@kernel.org> <7f2be28d-9bf5-79a8-8720-4615a4e9f463@linaro.org>
+In-Reply-To: <7f2be28d-9bf5-79a8-8720-4615a4e9f463@linaro.org>
+From:   Chen-Yu Tsai <wens@kernel.org>
+Date:   Tue, 17 Dec 2019 16:02:53 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65TA0patyNO_xw0gpWR62N4Q_40amFW9OUh7jat3f9J8g@mail.gmail.com>
+Message-ID: <CAGb2v65TA0patyNO_xw0gpWR62N4Q_40amFW9OUh7jat3f9J8g@mail.gmail.com>
+Subject: Re: [PATCH] thermal: rockchip: enable hwmon
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Chen-Yu Tsai <wens@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019, Andreas Kemnade wrote:
+On Tue, Dec 17, 2019 at 4:01 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+>
+> Hi Chen-Yu,
+>
+> On 17/12/2019 06:23, Chen-Yu Tsai wrote:
+> > From: Chen-Yu Tsai <wens@csie.org>
+> >
+> > By default of-based thermal driver do not have hwmon entries registered=
+.
+> >
+> > Do this explicitly so users can use standard hwmon interfaces and tools
+> > to read the temperature.
+> >
+> > This is based on similar changes for bcm2835_thermal in commit
+> > d56c19d07e0b ("thermal: bcm2835: enable hwmon explicitly").
+>
+> Thanks for submitting this patch, but it is duplicate with:
+>
+> https://lore.kernel.org/linux-arm-kernel/20191212061702.BFE2D6E85603@coro=
+na.crabdance.com/
+>
+> which I picked up.
 
-> On Mon, 16 Dec 2019 15:31:06 +0000
-> Lee Jones <lee.jones@linaro.org> wrote:
-> 
-> > On Wed, 11 Dec 2019, Andreas Kemnade wrote:
-> > 
-> > > The RC5T619 has a RTC which is missing in the
-> > > RN5T618. Add it as subdevice to prepare for their implementation
-> > > 
-> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > ---
-> > > Changes in v3:
-> > > - alignment cleanup
-> > >  drivers/mfd/rn5t618.c | 16 ++++++++++++++--
-> > >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/mfd/rn5t618.c b/drivers/mfd/rn5t618.c
-> > > index d78eb29b94a4..18d56a732b20 100644
-> > > --- a/drivers/mfd/rn5t618.c
-> > > +++ b/drivers/mfd/rn5t618.c
-> > > @@ -22,6 +22,12 @@ static const struct mfd_cell rn5t618_cells[] = {
-> > >  	{ .name = "rn5t618-wdt" },
-> > >  };
-> > >  
-> > > +static const struct mfd_cell rc5t619_cells[] = {
-> > > +	{ .name = "rn5t618-regulator" },
-> > > +	{ .name = "rc5t619-rtc" },
-> > > +	{ .name = "rn5t618-wdt" },
-> > > +};
-> > > +
-> > >  static bool rn5t618_volatile_reg(struct device *dev, unsigned int reg)
-> > >  {
-> > >  	switch (reg) {
-> > > @@ -173,8 +179,14 @@ static int rn5t618_i2c_probe(struct i2c_client *i2c,
-> > >  		return ret;
-> > >  	}
-> > >  
-> > > -	ret = devm_mfd_add_devices(&i2c->dev, -1, rn5t618_cells,
-> > > -				   ARRAY_SIZE(rn5t618_cells), NULL, 0, NULL);
-> > > +	if (priv->variant == RC5T619)
-> > > +		ret = devm_mfd_add_devices(&i2c->dev, -1, rc5t619_cells,  
-> > 
-> > Ref: The "-1", please use this as an opportunity to use the defines.
-> > 
-> > > +					   ARRAY_SIZE(rc5t619_cells),
-> > > +					   NULL, 0, NULL);
-> > > +	else  
-> > 
-> > Are you sure it's not possible for 'variant' to be an unsupported
-> > device?
-> > 
-> Well, does it change the behavior for devices other than the rc5t619?
-> I do not think so. If the mfd driver is bound to unsupported devices,
-> rn5t618_of_match is wrong.
+No problem. Thanks for the pointer.
 
-Right, and can you catch that?
+ChenYu
 
-> Or do you want separate cell arrays for each of the three variant now to
-> ease future extensions?
-
-No need for that, thank you.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>   -- Daniel
+>
+>
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  drivers/thermal/rockchip_thermal.c | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockc=
+hip_thermal.c
+> > index 9ed8085bb792..d53ba7dabf16 100644
+> > --- a/drivers/thermal/rockchip_thermal.c
+> > +++ b/drivers/thermal/rockchip_thermal.c
+> > @@ -19,6 +19,8 @@
+> >  #include <linux/mfd/syscon.h>
+> >  #include <linux/pinctrl/consumer.h>
+> >
+> > +#include "thermal_hwmon.h"
+> > +
+> >  /*
+> >   * If the temperature over a period of time High,
+> >   * the resulting TSHUT gave CRU module,let it reset the entire chip,
+> > @@ -1210,7 +1212,11 @@ rockchip_thermal_register_sensor(struct platform=
+_device *pdev,
+> >               return error;
+> >       }
+> >
+> > -     return 0;
+> > +     /* thermal_zone doesn't enable hwmon as default, enable it here *=
+/
+> > +     sensor->tzd->tzp->no_hwmon =3D false;
+> > +     error =3D thermal_add_hwmon_sysfs(sensor->tzd);
+> > +
+> > +     return error;
+> >  }
+> >
+> >  /**
+> >
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
