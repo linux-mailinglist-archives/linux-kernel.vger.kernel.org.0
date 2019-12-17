@@ -2,97 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FC9B122F1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:46:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15BC4122F22
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:47:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfLQOp5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:45:57 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35976 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbfLQOp4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:45:56 -0500
-Received: from zn.tnic (p200300EC2F0BBF00B1FF9AA6AAA46E12.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:bf00:b1ff:9aa6:aaa4:6e12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 53EF31EC0C98;
-        Tue, 17 Dec 2019 15:45:55 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576593955;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=4Z3n2EH/Q0VRUKMKsCjrgjVpECFcgut+s/l07f0q4KQ=;
-        b=KzqHlTMnAxbxCs4KE/SDF5ei56nQeE+tLbIS3dTJN7rDw1vGM3hz6vyYTX8HdiUSntYNG6
-        TBze4+Fy7qr6GDN20idaL3ly5eYL1IqNv7ekgn3Dqw0UshJMok7GIj8z4Mis1UNsHR+Y6O
-        pgmSPsocd1sn6GhNrFCczQafMRXNFbU=
-Date:   Tue, 17 Dec 2019 15:45:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        puiterwijk@redhat.com
-Subject: Re: [PATCH v24 06/24] x86/sgx: Add wrappers for ENCLS leaf functions
-Message-ID: <20191217144548.GF28788@zn.tnic>
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
+        id S1729206AbfLQOrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:47:05 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8138 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728573AbfLQOrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:47:04 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5B53CFE0FA289D2C1F80;
+        Tue, 17 Dec 2019 22:47:02 +0800 (CST)
+Received: from [127.0.0.1] (10.177.251.225) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Tue, 17 Dec 2019
+ 22:46:56 +0800
+Subject: Re: [PATCH] ext4: fix Wunused-but-set-variable warning in
+ ext4_add_entry()
+To:     Ritesh Harjani <riteshh@linux.ibm.com>, <tytso@mit.edu>,
+        <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "hushiyuan@huawei.com" <hushiyuan@huawei.com>,
+        "linfeilong@huawei.com" <linfeilong@huawei.com>
+References: <c351e548-f094-aa90-bf8e-b267284c493e@huawei.com>
+ <20191217143807.E8F1D4C058@d06av22.portsmouth.uk.ibm.com>
+From:   Yunfeng Ye <yeyunfeng@huawei.com>
+Message-ID: <4e0f0042-0c4a-3b36-d83a-147e55507338@huawei.com>
+Date:   Tue, 17 Dec 2019 22:46:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191217143807.E8F1D4C058@d06av22.portsmouth.uk.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.251.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 01:13:08AM +0200, Jarkko Sakkinen wrote:
-> +/**
-> + * encls_failed() - Check if an ENCLS leaf function failed
-> + * @ret:	the return value of an ENCLS leaf function call
-> + *
-> + * Check if an ENCLS leaf function failed. This happens when the leaf function
-> + * causes a fault that is not caused by an EPCM conflict or when the leaf
-> + * function returns a non-zero value.
-> + */
-> +static inline bool encls_failed(int ret)
-> +{
-> +	int epcm_trapnr =
-> +		boot_cpu_has(X86_FEATURE_SGX2) ? X86_TRAP_PF : X86_TRAP_GP;
-> +	bool fault = ret & ENCLS_FAULT_FLAG;
-> +
-> +	return (fault && ENCLS_TRAPNR(ret) != epcm_trapnr) || (!fault && ret);
-> +}
 
-Can we make this function more readable?
 
-static inline bool encls_failed(int ret)
-{
-        int epcm_trapnr;
+On 2019/12/17 22:38, Ritesh Harjani wrote:
+> 
+> 
+> On 12/17/19 5:41 PM, Yunfeng Ye wrote:
+>> Warning is found when compile with "-Wunused-but-set-variable":
+>>
+>> fs/ext4/namei.c: In function ‘ext4_add_entry’:
+>> fs/ext4/namei.c:2167:23: warning: variable ‘sbi’ set but not used
+>> [-Wunused-but-set-variable]
+>>    struct ext4_sb_info *sbi;
+>>                         ^~~
+>> Fix this by moving the variable @sbi under CONFIG_UNICODE.
+>>
+>> Signed-off-by: Yunfeng Ye <yeyunfeng@huawei.com>
+> 
+> Looks good to me. You may add:
+> 
+> Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> 
+ok, thanks.
 
-        if (boot_cpu_has(X86_FEATURE_SGX2))
-                epcm_trapnr = X86_TRAP_PF;
-        else
-                epcm_trapnr = X86_TRAP_GP;
+> 
+> 
+>> ---
+>>   fs/ext4/namei.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+>> index a856997d87b5..617349be460f 100644
+>> --- a/fs/ext4/namei.c
+>> +++ b/fs/ext4/namei.c
+>> @@ -2164,7 +2164,9 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+>>       struct buffer_head *bh = NULL;
+>>       struct ext4_dir_entry_2 *de;
+>>       struct super_block *sb;
+>> +#ifdef CONFIG_UNICODE
+>>       struct ext4_sb_info *sbi;
+>> +#endif
+>>       struct ext4_filename fname;
+>>       int    retval;
+>>       int    dx_fallback=0;
+>> @@ -2176,12 +2178,12 @@ static int ext4_add_entry(handle_t *handle, struct dentry *dentry,
+>>           csum_size = sizeof(struct ext4_dir_entry_tail);
+>>
+>>       sb = dir->i_sb;
+>> -    sbi = EXT4_SB(sb);
+>>       blocksize = sb->s_blocksize;
+>>       if (!dentry->d_name.len)
+>>           return -EINVAL;
+>>
+>>   #ifdef CONFIG_UNICODE
+>> +    sbi = EXT4_SB(sb);
+>>       if (ext4_has_strict_mode(sbi) && IS_CASEFOLDED(dir) &&
+>>           sbi->s_encoding && utf8_validate(sbi->s_encoding, &dentry->d_name))
+>>           return -EINVAL;
+>>
+> 
+> 
+> .
+> 
 
-        if (ret & ENCLS_FAULT_FLAG)
-                return ENCLS_TRAPNR(ret) != epcm_trapnr;
-
-        return !!ret;
-}
-
-I hope I've converted it correctly but I might've missed some corner
-case...
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
