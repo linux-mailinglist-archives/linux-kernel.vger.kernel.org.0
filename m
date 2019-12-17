@@ -2,223 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F5A122E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:15:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10C5C122E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:08:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbfLQOPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:15:44 -0500
-Received: from esa2.hc3370-68.iphmx.com ([216.71.145.153]:49037 "EHLO
-        esa2.hc3370-68.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbfLQOPj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:15:39 -0500
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Dec 2019 09:15:37 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=citrix.com; s=securemail; t=1576592138;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=b7PHopwiI8FTRQ2z00n5oKK2oEvlSkqsLikVXS8JZHg=;
-  b=DVGaCe8AR+Z3A6g2PNyUdJcjfNvxlShiJNDLabMo9BpqOGyHTanv1usx
-   +Q2LgDBcqABw48ZIAN4iii/Zq1N9XLZdIsoToX/KHE5OYsc1GyxNghjdJ
-   AdlO2h3UASxy9wMzFNQRng/2mN0rz/8MvblpSgm2qyxtl8sfbVuQnIdXe
-   0=;
-Authentication-Results: esa2.hc3370-68.iphmx.com; dkim=none (message not signed) header.i=none; spf=None smtp.pra=sergey.dyasli@citrix.com; spf=Pass smtp.mailfrom=sergey.dyasli@citrix.com; spf=None smtp.helo=postmaster@mail.citrix.com
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  sergey.dyasli@citrix.com) identity=pra;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible
-Received-SPF: Pass (esa2.hc3370-68.iphmx.com: domain of
-  sergey.dyasli@citrix.com designates 162.221.158.21 as
-  permitted sender) identity=mailfrom;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="sergey.dyasli@citrix.com";
-  x-conformance=sidf_compatible; x-record-type="v=spf1";
-  x-record-text="v=spf1 ip4:209.167.231.154 ip4:178.63.86.133
-  ip4:195.66.111.40/30 ip4:85.115.9.32/28 ip4:199.102.83.4
-  ip4:192.28.146.160 ip4:192.28.146.107 ip4:216.52.6.88
-  ip4:216.52.6.188 ip4:162.221.158.21 ip4:162.221.156.83
-  ip4:168.245.78.127 ~all"
-Received-SPF: None (esa2.hc3370-68.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@mail.citrix.com) identity=helo;
-  client-ip=162.221.158.21; receiver=esa2.hc3370-68.iphmx.com;
-  envelope-from="sergey.dyasli@citrix.com";
-  x-sender="postmaster@mail.citrix.com";
-  x-conformance=sidf_compatible
-IronPort-SDR: c65bE5BcO9T8b9RJhnirPK271/3uK8BZrOgCVjCsLdfABV/XxAMsPzl2UkjdtDcZ/Gg6QeSIkH
- ySnzwPhtaZYva01O+x4zrVmCY/qs5XpOLaQ78Qlg4y8rtiDpHMriZIBFBQ0SfRntFUUpCvvUD0
- PduTQgXJZNLk6WxApDPLJKDEkWdHqvvxvSL6XEbKovKaE2nYXDZSxAAk5IjBb3IXGRGzbz46wJ
- VzBt50j8MfHcrTQk63No93tIdkXQY2ji13iPuOtnB4uH+NeAoDHKk/kb0/AgSZAMGf2+8cDon4
- VS4=
-X-SBRS: 2.7
-X-MesageID: 9817028
-X-Ironport-Server: esa2.hc3370-68.iphmx.com
-X-Remote-IP: 162.221.158.21
-X-Policy: $RELAYED
-X-IronPort-AV: E=Sophos;i="5.69,325,1571716800"; 
-   d="scan'208";a="9817028"
-From:   Sergey Dyasli <sergey.dyasli@citrix.com>
-To:     <xen-devel@lists.xen.org>, <kasan-dev@googlegroups.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        "Stefano Stabellini" <sstabellini@kernel.org>,
-        George Dunlap <george.dunlap@citrix.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Sergey Dyasli <sergey.dyasli@citrix.com>
-Subject: [RFC PATCH 3/3] xen/netback: Fix grant copy across page boundary with KASAN
-Date:   Tue, 17 Dec 2019 14:08:04 +0000
-Message-ID: <20191217140804.27364-4-sergey.dyasli@citrix.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191217140804.27364-1-sergey.dyasli@citrix.com>
-References: <20191217140804.27364-1-sergey.dyasli@citrix.com>
+        id S1728770AbfLQOIP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:08:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728575AbfLQOIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:08:14 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9702D21582;
+        Tue, 17 Dec 2019 14:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576591693;
+        bh=ms+aXOE3EdejqpGn+s3s9ci5ddw4kV2jIv1YOjsFUks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IZf3rYkXbIEYiApuYswptT8vlxYzci3pkhoMeBz5u/K9mft/ZYrtxZBRrciWm/exV
+         LH7MUCTS4pevFSn6oMbLL1kmud09E3YGeBKdzxP/ZBH14EbCSwwTX7zC4J5uBXh3BY
+         u1UKy/m0ucZPyTm1RdNmqD73DNVtlwqeqah80uDM=
+Date:   Tue, 17 Dec 2019 15:08:10 +0100
+From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v6 05/15] mfd: bd71828: Support ROHM BD71828 PMIC - core
+Message-ID: <20191217140810.GD3489463@kroah.com>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <252de5646fedfec7c575269843a47091fe199c79.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191216164641.GC18955@dell>
+ <5593db6b3328c0a1a7069d839f5c777b4b3822b6.camel@fi.rohmeurope.com>
+ <20191217135430.GM18955@dell>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217135430.GM18955@dell>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+On Tue, Dec 17, 2019 at 01:54:30PM +0000, Lee Jones wrote:
+> On Tue, 17 Dec 2019, Vaittinen, Matti wrote:
+> 
+> > Hello Lee,
+> > 
+> > On Mon, 2019-12-16 at 16:46 +0000, Lee Jones wrote:
+> > > On Wed, 11 Dec 2019, Matti Vaittinen wrote:
+> > > 
+> > > > BD71828GW is a single-chip power management IC for battery-powered
+> > > > portable
+> > > > devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500 mA
+> > > > single-cell linear charger. Also included is a Coulomb counter, a
+> > > > real-time
+> > > > clock (RTC), 3 GPO/regulator control pins, HALL input and a 32.768
+> > > > kHz
+> > > > clock gate.
+> > > > 
+> > > > Add MFD core driver providing interrupt controller facilities and
+> > > > i2c
+> > > > access to sub device drivers.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > ---
+> > > > 
+> > > > Changes since v5:
+> > > > - No changes
+> > > > 
+> > > >  drivers/mfd/Kconfig              |  15 ++
+> > > >  drivers/mfd/Makefile             |   2 +-
+> > > >  drivers/mfd/rohm-bd71828.c       | 319 +++++++++++++++++++++++
+> > > >  include/linux/mfd/rohm-bd71828.h | 425
+> > > > +++++++++++++++++++++++++++++++
+> > > >  include/linux/mfd/rohm-generic.h |   1 +
+> > > >  5 files changed, 761 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 drivers/mfd/rohm-bd71828.c
+> > > >  create mode 100644 include/linux/mfd/rohm-bd71828.h
+> > > 
+> > > Couple of small nits.  Once fixed, please apply my:
+> > > 
+> > > For my own reference:
+> > >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+> > > 
+> > > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > > index 420900852166..c3c9432ef51c 100644
+> > > > --- a/drivers/mfd/Kconfig
+> > > > +++ b/drivers/mfd/Kconfig
+> > > > @@ -1906,6 +1906,21 @@ config MFD_ROHM_BD70528
+> > > >  	  10 bits SAR ADC for battery temperature monitor and 1S
+> > > > battery
+> > > >  	  charger.
+> > > >  
+> > > > +config MFD_ROHM_BD71828
+> > > > +	tristate "ROHM BD71828 Power Management IC"
+> > > > +	depends on I2C=y
+> > > > +	depends on OF
+> > > > +	select REGMAP_I2C
+> > > > +	select REGMAP_IRQ
+> > > > +	select MFD_CORE
+> > > > +	help
+> > > > +	  Select this option to get support for the ROHM BD71828 Power
+> > > > +	  Management IC. BD71828GW is a single-chip power management IC
+> > > > for
+> > > > +	  battery-powered portable devices. The IC integrates 7 buck
+> > > > +	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
+> > > > +	  Also included is a Coulomb counter, a real-time clock (RTC),
+> > > > and
+> > > > +	  a 32.768 kHz clock gate.
+> > > > +
+> > > >  config MFD_STM32_LPTIMER
+> > > >  	tristate "Support for STM32 Low-Power Timer"
+> > > >  	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> > > > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > > > index aed99f08739f..ca2d55c679c5 100644
+> > > > --- a/drivers/mfd/Makefile
+> > > > +++ b/drivers/mfd/Makefile
+> > > > @@ -252,6 +252,6 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+> > > >  obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+> > > >  obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
+> > > >  obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
+> > > > +obj-$(CONFIG_MFD_ROHM_BD71828)	+= rohm-bd71828.o
+> > > >  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+> > > >  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
+> > > > -
+> > > 
+> > > Nit: This is an unrelated change and should not really be in this
+> > > patch.
+> > 
+> > Ok. Will get rid of it.
+> > 
+> > > 
+> > > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-
+> > > > bd71828.c
+> > > > new file mode 100644
+> > > > index 000000000000..7f445d699fd9
+> > > > --- /dev/null
+> > > > +++ b/drivers/mfd/rohm-bd71828.c
+> > > > @@ -0,0 +1,319 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > +//
+> > > > +// Copyright (C) 2019 ROHM Semiconductors
+> > > > +//
+> > > > +// ROHM BD71828 PMIC driver
+> > > > +
+> > 
+> > //snip
+> > 
+> > > > +
+> > > > +static struct i2c_driver bd71828_drv = {
+> > > > +	.driver = {
+> > > > +		.name = "rohm-bd71828",
+> > > > +		.of_match_table = bd71828_of_match,
+> > > > +	},
+> > > > +	.probe_new = &bd71828_i2c_probe,
+> > > > +};
+> > > > +
+> > > 
+> > > Nit: You can remove this line.
+> > 
+> > Will do.
+> > 
+> > > 
+> > > > +module_i2c_driver(bd71828_drv);
+> > > > +
+> > > > +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > > ");
+> > > > +MODULE_DESCRIPTION("ROHM BD71828 Power Management IC driver");
+> > > > +MODULE_LICENSE("GPL");
+> > > 
+> > > This does not match the header.
+> > 
+> > How is that? This is what is stated in module.h for the 
+> > MODULE_LICENSE:
+> > 
+> > /*
+> >  * The following license idents are currently accepted as indicating
+> > free
+> >  * software modules
+> >  *
+> >  *	"GPL"				[GNU Public License v2]
+> >  *	"GPL v2"			[GNU Public License v2]
+> >  *	"GPL and additional rights"	[GNU Public License v2 rights
+> > and more]
+> >  *	"Dual BSD/GPL"			[GNU Public License v2
+> >  *					 or BSD license choice]
+> >  *	"Dual MIT/GPL"			[GNU Public License v2
+> >  *					 or MIT license choice]
+> >  *	"Dual MPL/GPL"			[GNU Public License v2
+> >  *					 or Mozilla license choice]
+> >  *
+> >  * The following other idents are available
+> >  *
+> >  *	"Proprietary"			[Non free products]
+> >  *
+> >  * Both "GPL v2" and "GPL" (the latter also in dual licensed strings)
+> > are
+> >  * merely stating that the module is licensed under the GPL v2, but are
+> > not
+> >  * telling whether "GPL v2 only" or "GPL v2 or later". The reason why
+> > there
+> >  * are two variants is a historic and failed attempt to convey more
+> >  * information in the MODULE_LICENSE string. For module loading the
+> >  * "only/or later" distinction is completely irrelevant and does
+> > neither
+> >  * replace the proper license identifiers in the corresponding source
+> > file
+> >  * nor amends them in any way. The sole purpose is to make the
+> >  * 'Proprietary' flagging work and to refuse to bind symbols which are
+> >  * exported with EXPORT_SYMBOL_GPL when a non free module is loaded.
+> >  *
+> >  * In the same way "BSD" is not a clear license information. It merely
+> >  * states, that the module is licensed under one of the compatible BSD
+> >  * license variants. The detailed and correct license information is
+> > again
+> >  * to be found in the corresponding source files.
+> >  *
+> >  * There are dual licensed components, but when running with Linux it
+> > is the
+> >  * GPL that is relevant so this is a non issue. Similarly LGPL linked
+> > with GPL
+> >  * is a GPL combined work.
+> >  *
+> >  * This exists for several reasons
+> >  * 1.	So modinfo can show license info for users wanting to vet their
+> > setup
+> >  *	is free
+> >  * 2.	So the community can ignore bug reports including proprietary
+> > modules
+> >  * 3.	So vendors can do likewise based on their own policies
+> >  */
+> > #define MODULE_LICENSE(_license) MODULE_INFO(license, _license)
+> > 
+> > I have no objections on changing the license if needed but can you
+> > please tell me what is Ok combos then - I am having hard time when
+> > trying to select licenses which are acceptable for all.
+> 
+> If you have this in your header:
+> 
+>   GPL-2.0-only
+> 
+> Your MODULE tags should read:
+> 
+> MODULE_LICENSE("GPL v2");
 
-When KASAN (or SLUB_DEBUG) is turned on, the normal expectation that
-allocations are aligned to the next power of 2 of the size does not
-hold. Therefore, handle grant copies that cross page boundaries.
+Nope, as per module.h, which is quoted here, either:
+	MODULE_LICENSE("GPL");
+or:
+	MODULE_LICENSE("GPL v2");
+mean the exact same thing.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
----
- drivers/net/xen-netback/common.h  |  2 +-
- drivers/net/xen-netback/netback.c | 55 ++++++++++++++++++++++++-------
- 2 files changed, 45 insertions(+), 12 deletions(-)
+thanks,
 
-diff --git a/drivers/net/xen-netback/common.h b/drivers/net/xen-netback/common.h
-index 05847eb91a1b..e57684415edd 100644
---- a/drivers/net/xen-netback/common.h
-+++ b/drivers/net/xen-netback/common.h
-@@ -155,7 +155,7 @@ struct xenvif_queue { /* Per-queue data for xenvif */
- 	struct pending_tx_info pending_tx_info[MAX_PENDING_REQS];
- 	grant_handle_t grant_tx_handle[MAX_PENDING_REQS];
- 
--	struct gnttab_copy tx_copy_ops[MAX_PENDING_REQS];
-+	struct gnttab_copy tx_copy_ops[MAX_PENDING_REQS * 2];
- 	struct gnttab_map_grant_ref tx_map_ops[MAX_PENDING_REQS];
- 	struct gnttab_unmap_grant_ref tx_unmap_ops[MAX_PENDING_REQS];
- 	/* passed to gnttab_[un]map_refs with pages under (un)mapping */
-diff --git a/drivers/net/xen-netback/netback.c b/drivers/net/xen-netback/netback.c
-index 0020b2e8c279..1541b6e0cc62 100644
---- a/drivers/net/xen-netback/netback.c
-+++ b/drivers/net/xen-netback/netback.c
-@@ -320,6 +320,7 @@ static int xenvif_count_requests(struct xenvif_queue *queue,
- 
- struct xenvif_tx_cb {
- 	u16 pending_idx;
-+	u8 copies;
- };
- 
- #define XENVIF_TX_CB(skb) ((struct xenvif_tx_cb *)(skb)->cb)
-@@ -439,6 +440,7 @@ static int xenvif_tx_check_gop(struct xenvif_queue *queue,
- {
- 	struct gnttab_map_grant_ref *gop_map = *gopp_map;
- 	u16 pending_idx = XENVIF_TX_CB(skb)->pending_idx;
-+	u8 copies = XENVIF_TX_CB(skb)->copies;
- 	/* This always points to the shinfo of the skb being checked, which
- 	 * could be either the first or the one on the frag_list
- 	 */
-@@ -450,23 +452,27 @@ static int xenvif_tx_check_gop(struct xenvif_queue *queue,
- 	int nr_frags = shinfo->nr_frags;
- 	const bool sharedslot = nr_frags &&
- 				frag_get_pending_idx(&shinfo->frags[0]) == pending_idx;
--	int i, err;
-+	int i, err = 0;
- 
--	/* Check status of header. */
--	err = (*gopp_copy)->status;
--	if (unlikely(err)) {
--		if (net_ratelimit())
--			netdev_dbg(queue->vif->dev,
-+	while (copies) {
-+		/* Check status of header. */
-+		int newerr = (*gopp_copy)->status;
-+		if (unlikely(newerr)) {
-+			if (net_ratelimit())
-+				netdev_dbg(queue->vif->dev,
- 				   "Grant copy of header failed! status: %d pending_idx: %u ref: %u\n",
- 				   (*gopp_copy)->status,
- 				   pending_idx,
- 				   (*gopp_copy)->source.u.ref);
--		/* The first frag might still have this slot mapped */
--		if (!sharedslot)
--			xenvif_idx_release(queue, pending_idx,
--					   XEN_NETIF_RSP_ERROR);
-+			/* The first frag might still have this slot mapped */
-+			if (!sharedslot && !err)
-+				xenvif_idx_release(queue, pending_idx,
-+						   XEN_NETIF_RSP_ERROR);
-+			err = newerr;
-+		}
-+		(*gopp_copy)++;
-+		copies--;
- 	}
--	(*gopp_copy)++;
- 
- check_frags:
- 	for (i = 0; i < nr_frags; i++, gop_map++) {
-@@ -910,6 +916,7 @@ static void xenvif_tx_build_gops(struct xenvif_queue *queue,
- 			xenvif_tx_err(queue, &txreq, extra_count, idx);
- 			break;
- 		}
-+		XENVIF_TX_CB(skb)->copies = 0;
- 
- 		skb_shinfo(skb)->nr_frags = ret;
- 		if (data_len < txreq.size)
-@@ -933,6 +940,7 @@ static void xenvif_tx_build_gops(struct xenvif_queue *queue,
- 						   "Can't allocate the frag_list skb.\n");
- 				break;
- 			}
-+			XENVIF_TX_CB(nskb)->copies = 0;
- 		}
- 
- 		if (extras[XEN_NETIF_EXTRA_TYPE_GSO - 1].type) {
-@@ -990,6 +998,31 @@ static void xenvif_tx_build_gops(struct xenvif_queue *queue,
- 
- 		queue->tx_copy_ops[*copy_ops].len = data_len;
- 		queue->tx_copy_ops[*copy_ops].flags = GNTCOPY_source_gref;
-+		XENVIF_TX_CB(skb)->copies++;
-+
-+		if (offset_in_page(skb->data) + data_len > XEN_PAGE_SIZE) {
-+			unsigned int extra_len = offset_in_page(skb->data) +
-+					     data_len - XEN_PAGE_SIZE;
-+
-+			queue->tx_copy_ops[*copy_ops].len -= extra_len;
-+			(*copy_ops)++;
-+
-+			queue->tx_copy_ops[*copy_ops].source.u.ref = txreq.gref;
-+			queue->tx_copy_ops[*copy_ops].source.domid =
-+				queue->vif->domid;
-+			queue->tx_copy_ops[*copy_ops].source.offset =
-+				txreq.offset + data_len - extra_len;
-+
-+			queue->tx_copy_ops[*copy_ops].dest.u.gmfn =
-+				virt_to_gfn(skb->data + data_len - extra_len);
-+			queue->tx_copy_ops[*copy_ops].dest.domid = DOMID_SELF;
-+			queue->tx_copy_ops[*copy_ops].dest.offset = 0;
-+
-+			queue->tx_copy_ops[*copy_ops].len = extra_len;
-+			queue->tx_copy_ops[*copy_ops].flags = GNTCOPY_source_gref;
-+
-+			XENVIF_TX_CB(skb)->copies++;
-+		}
- 
- 		(*copy_ops)++;
- 
--- 
-2.17.1
-
+greg k-h
