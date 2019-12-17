@@ -2,81 +2,222 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80F83121FD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:35:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A359C121FDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:38:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfLQAe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:34:57 -0500
-Received: from muru.com ([72.249.23.125]:48846 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726556AbfLQAe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:34:57 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 5DD0A810D;
-        Tue, 17 Dec 2019 00:35:35 +0000 (UTC)
-Date:   Mon, 16 Dec 2019 16:34:53 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "Andrew F . Davis" <afd@ti.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        "H . Nikolaus Schaller" <hns@goldelico.com>,
-        Vignesh R <vigneshr@ti.com>
-Subject: Re: [PATCHv2] w1: omap-hdq: Simplify driver with PM runtime
- autosuspend
-Message-ID: <20191217003453.GU35479@atomide.com>
-References: <20191216145359.28219-1-tony@atomide.com>
- <20191216164335.GP35479@atomide.com>
- <CAHCN7xLYRm3Lstb=-r6hguDOrxwi-dT0nTzkhYM0S5GYtEzckw@mail.gmail.com>
+        id S1727932AbfLQAhZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:37:25 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:40416 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726556AbfLQAhY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 19:37:24 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576543043; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=qRX079jE/itaclnaKIpdviMGMfL0EtHGbhwevzdypMU=;
+ b=FoLn2yxcdM71sY6lPtTRhv9E7U+dkkcIqCM8lXAm5HEXJMwPWCuibINhdjx9zYv84e9x0oNC
+ 9Rxj6sidPHle8saqBI/MQOWuXnQdBWpvKhoUs5sJGw7+GVunBUHFiu49EKbwyzlCT+ENiuH6
+ KNi16SEiDjSiI3oO9pcPw//dd7o=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df8233d.7fe30a3131b8-smtp-out-n03;
+ Tue, 17 Dec 2019 00:37:17 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9BD36C4479F; Tue, 17 Dec 2019 00:37:15 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DE4BC43383;
+        Tue, 17 Dec 2019 00:37:14 +0000 (UTC)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHCN7xLYRm3Lstb=-r6hguDOrxwi-dT0nTzkhYM0S5GYtEzckw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 17 Dec 2019 08:37:14 +0800
+From:   cang@codeaurora.org
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, asutoshd@codeaurora.org,
+        nguyenb@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com,
+        Andy Gross <agross@kernel.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/7] scsi: ufs-qcom: Add reset control support for host
+ controller
+In-Reply-To: <CAOCk7NpAp+DHBp-owyKGgJFLRajfSQR6ff1XMmAj6A4nM3VnMQ@mail.gmail.com>
+References: <1573798172-20534-1-git-send-email-cang@codeaurora.org>
+ <1573798172-20534-3-git-send-email-cang@codeaurora.org>
+ <20191216190415.GL2536@vkoul-mobl>
+ <CAOCk7NpAp+DHBp-owyKGgJFLRajfSQR6ff1XMmAj6A4nM3VnMQ@mail.gmail.com>
+Message-ID: <091562cbe7d88ca1c30638bc10197074@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Adam Ford <aford173@gmail.com> [191216 19:04]:
-> On Mon, Dec 16, 2019 at 10:43 AM Tony Lindgren <tony@atomide.com> wrote:
-> >
-> > * Tony Lindgren <tony@atomide.com> [191216 14:54]:
-> > > Vignesh, any comments on the ti,mode = "1w" and removal of the call to
-> > > hdq_disable_interrupt()? Is there some specific section where we need
-> > > to have interrupts disabled and then re-enabled?
-> >
-> > OK I got "1w" mode working too now. We need to clear the irqstatus before
-> > calling wait_event_timeout() on it, and we're now missing it in the
-> > hdq_read_byte().
-> >
-> > Looks like we should not tinker with the actual irstatus register though,
-> > that's up to the hdq_isr() to manage.
-> >
-> > So the following helper is probably what we want to do additionally.
-> > I'll be posting v3 of the $subject patch.
+On 2019-12-17 03:12, Jeffrey Hugo wrote:
+> On Mon, Dec 16, 2019 at 12:05 PM Vinod Koul <vkoul@kernel.org> wrote:
+>> 
+>> Hi Can,
+>> 
+>> On 14-11-19, 22:09, Can Guo wrote:
+>> > Add reset control for host controller so that host controller can be reset
+>> > as required in its power up sequence.
+>> 
+>> I am seeing a regression on UFS on SM8150-mtp with this patch. I think
+>> Jeff is seeing same one lenove laptop on 8998.
 > 
-> I manually attempted to apply the patches.  I 'think' I did it right.
+> Confirmed.
 > 
-> For testing, I ran:
->   watch cat /sys/devices/w1_bus_master1/01-000000000000/power_supply/bq27000-battery/voltage_now
-> 
-> I inserted and removed the power cable several times and observed the
-> voltage readings with the battery connected.
-> The numbers looked reasonable.
-> 
-> I then put the board to suspend, waited a few seconds and woke the
-> board from sleep.  I resumed my 'watch' function from above and it
-> worked just fine.
-> If there is nothing else you want me to test, go ahead and add:
-> 
-> Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
+>> 
+>> 845 does not seem to have this issue and only thing I can see is that 
+>> on
+>> sm8150 and 8998 we define reset as:
+>> 
+>>                         resets = <&gcc GCC_UFS_BCR>;
+>>                         reset-names = "rst";
+>> 
+>> Thanks
+>> 
+>> >
+>> > Signed-off-by: Can Guo <cang@codeaurora.org>
+>> > ---
+>> >  drivers/scsi/ufs/ufs-qcom.c | 53 +++++++++++++++++++++++++++++++++++++++++++++
+>> >  drivers/scsi/ufs/ufs-qcom.h |  3 +++
+>> >  2 files changed, 56 insertions(+)
+>> >
+>> > diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+>> > index a5b7148..c69c29a1c 100644
+>> > --- a/drivers/scsi/ufs/ufs-qcom.c
+>> > +++ b/drivers/scsi/ufs/ufs-qcom.c
+>> > @@ -246,6 +246,44 @@ static void ufs_qcom_select_unipro_mode(struct ufs_qcom_host *host)
+>> >       mb();
+>> >  }
+>> >
+>> > +/**
+>> > + * ufs_qcom_host_reset - reset host controller and PHY
+>> > + */
+>> > +static int ufs_qcom_host_reset(struct ufs_hba *hba)
+>> > +{
+>> > +     int ret = 0;
+>> > +     struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> > +
+>> > +     if (!host->core_reset) {
+>> > +             dev_warn(hba->dev, "%s: reset control not set\n", __func__);
+>> > +             goto out;
+>> > +     }
+>> > +
+>> > +     ret = reset_control_assert(host->core_reset);
+>> > +     if (ret) {
+>> > +             dev_err(hba->dev, "%s: core_reset assert failed, err = %d\n",
+>> > +                              __func__, ret);
+>> > +             goto out;
+>> > +     }
+>> > +
+>> > +     /*
+>> > +      * The hardware requirement for delay between assert/deassert
+>> > +      * is at least 3-4 sleep clock (32.7KHz) cycles, which comes to
+>> > +      * ~125us (4/32768). To be on the safe side add 200us delay.
+>> > +      */
+>> > +     usleep_range(200, 210);
+>> > +
+>> > +     ret = reset_control_deassert(host->core_reset);
+>> > +     if (ret)
+>> > +             dev_err(hba->dev, "%s: core_reset deassert failed, err = %d\n",
+>> > +                              __func__, ret);
+>> > +
+>> > +     usleep_range(1000, 1100);
+>> > +
+>> > +out:
+>> > +     return ret;
+>> > +}
+>> > +
+>> >  static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+>> >  {
+>> >       struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>> > @@ -254,6 +292,12 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+>> >       bool is_rate_B = (UFS_QCOM_LIMIT_HS_RATE == PA_HS_MODE_B)
+>> >                                                       ? true : false;
+>> >
+>> > +     /* Reset UFS Host Controller and PHY */
+>> > +     ret = ufs_qcom_host_reset(hba);
+>> > +     if (ret)
+>> > +             dev_warn(hba->dev, "%s: host reset returned %d\n",
+>> > +                               __func__, ret);
+>> > +
+>> >       if (is_rate_B)
+>> >               phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+>> >
+>> > @@ -1101,6 +1145,15 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+>> >       host->hba = hba;
+>> >       ufshcd_set_variant(hba, host);
+>> >
+>> > +     /* Setup the reset control of HCI */
+>> > +     host->core_reset = devm_reset_control_get(hba->dev, "rst");
+>> > +     if (IS_ERR(host->core_reset)) {
+>> > +             err = PTR_ERR(host->core_reset);
+>> > +             dev_warn(dev, "Failed to get reset control %d\n", err);
+>> > +             host->core_reset = NULL;
+>> > +             err = 0;
+>> > +     }
+>> > +
+>> >       /* Fire up the reset controller. Failure here is non-fatal. */
+>> >       host->rcdev.of_node = dev->of_node;
+>> >       host->rcdev.ops = &ufs_qcom_reset_ops;
+>> > diff --git a/drivers/scsi/ufs/ufs-qcom.h b/drivers/scsi/ufs/ufs-qcom.h
+>> > index d401f17..2d95e7c 100644
+>> > --- a/drivers/scsi/ufs/ufs-qcom.h
+>> > +++ b/drivers/scsi/ufs/ufs-qcom.h
+>> > @@ -6,6 +6,7 @@
+>> >  #define UFS_QCOM_H_
+>> >
+>> >  #include <linux/reset-controller.h>
+>> > +#include <linux/reset.h>
+>> >
+>> >  #define MAX_UFS_QCOM_HOSTS   1
+>> >  #define MAX_U32                 (~(u32)0)
+>> > @@ -233,6 +234,8 @@ struct ufs_qcom_host {
+>> >       u32 dbg_print_en;
+>> >       struct ufs_qcom_testbus testbus;
+>> >
+>> > +     /* Reset control of HCI */
+>> > +     struct reset_control *core_reset;
+>> >       struct reset_controller_dev rcdev;
+>> >
+>> >       struct gpio_desc *device_reset;
+>> > --
+>> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>> > a Linux Foundation Collaborative Project
+>> 
+>> --
+>> ~Vinod
 
-Thanks for testing, will post v3  shortly with the acks.
+Hi Jeffrey and Vinod,
 
-Regards,
+Thanks for reporting this. May I know what kind of regression do you see 
+on
+8150 and 8998?
+BTW, do you have reset control for UFS PHY in your DT?
+See 71278b058a9f8752e51030e363b7a7306938f64e.
 
-Tony
+FYI, we use reset control on all of our platforms and it is
+a must during our power up sequence.
+
+Thanks,
+Can Guo.
