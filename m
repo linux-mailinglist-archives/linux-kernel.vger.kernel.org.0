@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E1DB122BFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FBA3122C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfLQMk2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:40:28 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:55284 "EHLO
+        id S1728357AbfLQMki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:40:38 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55280 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728264AbfLQMkF (ORCPT
+        with ESMTP id S1727935AbfLQMkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:40:05 -0500
+        Tue, 17 Dec 2019 07:40:02 -0500
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1ihC8q-0001pe-Ce; Tue, 17 Dec 2019 13:39:56 +0100
+        id 1ihC8s-0001ro-UJ; Tue, 17 Dec 2019 13:39:59 +0100
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 36EE71C2A3D;
-        Tue, 17 Dec 2019 13:39:52 +0100 (CET)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 15EDB1C2A40;
+        Tue, 17 Dec 2019 13:39:53 +0100 (CET)
 Date:   Tue, 17 Dec 2019 12:39:52 -0000
-From:   "tip-bot2 for Peng Wang" <tip-bot2@linutronix.de>
+From:   "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] schied/fair: Skip calculating @contrib without load
-Cc:     Peng Wang <rocking@linux.alibaba.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
-References: <1576208740-35609-1-git-send-email-rocking@linux.alibaba.com>
+Subject: [tip: sched/core] sched: Use fair:prio_changed() instead of ad-hoc
+ implementation
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191203160106.18806-3-frederic@kernel.org>
+References: <20191203160106.18806-3-frederic@kernel.org>
 MIME-Version: 1.0
-Message-ID: <157658639209.30329.5550277285445533985.tip-bot2@tip-bot2>
+Message-ID: <157658639295.30329.4061098261424663170.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -48,107 +49,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the sched/core branch of tip:
 
-Commit-ID:     d040e0734fb3dedfe24c3d94f5a32b4812eca610
-Gitweb:        https://git.kernel.org/tip/d040e0734fb3dedfe24c3d94f5a32b4812eca610
-Author:        Peng Wang <rocking@linux.alibaba.com>
-AuthorDate:    Fri, 13 Dec 2019 11:45:40 +08:00
+Commit-ID:     5443a0be6121d557e12951537e10159e4c61035d
+Gitweb:        https://git.kernel.org/tip/5443a0be6121d557e12951537e10159e4c61035d
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Tue, 03 Dec 2019 17:01:06 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 17 Dec 2019 13:32:51 +01:00
+CommitterDate: Tue, 17 Dec 2019 13:32:50 +01:00
 
-schied/fair: Skip calculating @contrib without load
+sched: Use fair:prio_changed() instead of ad-hoc implementation
 
-Because of the:
+set_user_nice() implements its own version of fair::prio_changed() and
+therefore misses a specific optimization towards nohz_full CPUs that
+avoid sending an resched IPI to a reniced task running alone. Use the
+proper callback instead.
 
-	if (!load)
-		runnable = running = 0;
-
-clause in ___update_load_sum(), all the actual users of @contrib in
-accumulate_sum():
-
-	if (load)
-		sa->load_sum += load * contrib;
-	if (runnable)
-		sa->runnable_load_sum += runnable * contrib;
-	if (running)
-		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
-
-don't happen, and therefore we don't care what @contrib actually is and
-calculating it is pointless.
-
-If we count the times when @load equals zero and not as below:
-
-	if (load) {
-		load_is_not_zero_count++;
-		contrib = __accumulate_pelt_segments(periods,
-				1024 - sa->period_contrib,delta);
-	} else
-		load_is_zero_count++;
-
-As we can see, load_is_zero_count is much bigger than
-load_is_zero_count, and the gap is gradually widening:
-
-	load_is_zero_count:            6016044 times
-	load_is_not_zero_count:         244316 times
-	19:50:43 up 1 min,  1 user,  load average: 0.09, 0.06, 0.02
-
-	load_is_zero_count:            7956168 times
-	load_is_not_zero_count:         261472 times
-	19:51:42 up 2 min,  1 user,  load average: 0.03, 0.05, 0.01
-
-	load_is_zero_count:           10199896 times
-	load_is_not_zero_count:         278364 times
-	19:52:51 up 3 min,  1 user,  load average: 0.06, 0.05, 0.01
-
-	load_is_zero_count:           14333700 times
-	load_is_not_zero_count:         318424 times
-	19:54:53 up 5 min,  1 user,  load average: 0.01, 0.03, 0.00
-
-Perhaps we can gain some performance advantage by saving these
-unnecessary calculation.
-
-Signed-off-by: Peng Wang <rocking@linux.alibaba.com>
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Vincent Guittot < vincent.guittot@linaro.org>
-Link: https://lkml.kernel.org/r/1576208740-35609-1-git-send-email-rocking@linux.alibaba.com
+Cc: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20191203160106.18806-3-frederic@kernel.org
 ---
- kernel/sched/pelt.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ kernel/sched/core.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index a96db50..bd006b7 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -129,8 +129,20 @@ accumulate_sum(u64 delta, struct sched_avg *sa,
- 		 * Step 2
- 		 */
- 		delta %= 1024;
--		contrib = __accumulate_pelt_segments(periods,
--				1024 - sa->period_contrib, delta);
-+		if (load) {
-+			/*
-+			 * This relies on the:
-+			 *
-+			 * if (!load)
-+			 *	runnable = running = 0;
-+			 *
-+			 * clause from ___update_load_sum(); this results in
-+			 * the below usage of @contrib to dissapear entirely,
-+			 * so no point in calculating it.
-+			 */
-+			contrib = __accumulate_pelt_segments(periods,
-+					1024 - sa->period_contrib, delta);
-+		}
- 	}
- 	sa->period_contrib = delta;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 90e4b00..15508c2 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4540,17 +4540,17 @@ void set_user_nice(struct task_struct *p, long nice)
+ 	p->prio = effective_prio(p);
+ 	delta = p->prio - old_prio;
  
-@@ -205,7 +217,9 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
- 	 * This means that weight will be 0 but not running for a sched_entity
- 	 * but also for a cfs_rq if the latter becomes idle. As an example,
- 	 * this happens during idle_balance() which calls
--	 * update_blocked_averages()
-+	 * update_blocked_averages().
-+	 *
-+	 * Also see the comment in accumulate_sum().
- 	 */
- 	if (!load)
- 		runnable = running = 0;
+-	if (queued) {
++	if (queued)
+ 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
+-		/*
+-		 * If the task increased its priority or is running and
+-		 * lowered its priority, then reschedule its CPU:
+-		 */
+-		if (delta < 0 || (delta > 0 && task_running(rq, p)))
+-			resched_curr(rq);
+-	}
+ 	if (running)
+ 		set_next_task(rq, p);
++
++	/*
++	 * If the task increased its priority or is running and
++	 * lowered its priority, then reschedule its CPU:
++	 */
++	p->sched_class->prio_changed(rq, p, old_prio);
++
+ out_unlock:
+ 	task_rq_unlock(rq, p, &rf);
+ }
