@@ -2,123 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4073C1229A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C54D1229A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:16:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfLQLQD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:16:03 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:33247 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726730AbfLQLQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:16:02 -0500
-Received: by mail-pl1-f193.google.com with SMTP id c13so5970981pls.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 03:16:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+awUKio9p4Gf8NY2FGLOxx315Fg31QJAQkkFLDdf2qk=;
-        b=vhLu684VYkAnZb2xIOi86+7krc1q5YZ391ygeuZ9ZFGk8CW9UIuDfYWehfwbeiDZJs
-         zE8jqRSy1XKVmGfPq3vfOcQRs72krLoF9Ph8WhX9lmNXeq70KSxDB7TthL4yy0iJg2oT
-         2wfVzqz0V6Hv95ZE2bceCFg06TNpytRoAdLARpOfOHgM4MD+jWg64x7Gwp5vw9P+ge6K
-         AXguuUV8/aAHK7qC5AO4XjFMnxSuqzcC+tNIBYFrKESHtXVtd7fjxGWcWe1orSEY1KAQ
-         XEH9KzcETJBV6kmE4rdCGYaLK69z0UhCnNjlv3v3cT6zgX5DYuVfaY1EItVtJvaFF093
-         HY1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+awUKio9p4Gf8NY2FGLOxx315Fg31QJAQkkFLDdf2qk=;
-        b=DAOAVq+LSyOHEVC3LsOZtePBDy1syiNE/0bJ2XJ8uH8+lTmsZvczMzCIvO5nVtLsHp
-         dH3WJv2jR6wR4cfB2S+P5DA8jGKrKw9Ejpn3J4gbSkgeXUgi04d+Kd99+ceeGKnaVX2z
-         VpfsdSdc53qSRv8avblsbFUOfk6fDATtkwLmCUkEFv2Qg+z/GugwfphPkCrS6qh28RRC
-         qPUnqpLG1TTfk1ZaiITOlgSz+aI9b9ig1idqUg5UFBNstO0DMAl7IpglvgzxRJGSWXID
-         AwDTzKmQvYxIWvvkxgx7fyp/KJfrkiK7YN0D+9JXtY9cmTD2nPcF4rsQl+ZW5YIDvssz
-         0hfw==
-X-Gm-Message-State: APjAAAUh8FDUY7MZfE7x1ShcIO74i7IpzWH0IakPqN0A19QMqrLEbwGx
-        q3/zo1CdHPO5RloBLvd6iJ5YNvzSOjq9A8OqlxG8Uw==
-X-Google-Smtp-Source: APXvYqw1BghZmCWqP60myjxjEs6YuRq3Mo3lYtfOqhdxaPe8CxHGvSNj0WzKtKxsdl9oPTsLP3S4j8Jna1S2/v9ahic=
-X-Received: by 2002:a17:90b:150:: with SMTP id em16mr5195492pjb.123.1576581361710;
- Tue, 17 Dec 2019 03:16:01 -0800 (PST)
-MIME-Version: 1.0
-References: <95e7a12ac909e7de584133772efc7ef982a16bbb.1576170740.git.andreyknvl@google.com>
- <Pine.LNX.4.44L0.1912121313030.1352-100000@iolanthe.rowland.org>
- <CAAeHK+yOBcNz_iopRs6PEu=1-rZn6Gkm+Urq+iVBFQeSjSXqNA@mail.gmail.com> <CACT4Y+aN20NXxXhe9qv_WRLntAHbL98Shj8NAvg0WafDw8C=jA@mail.gmail.com>
-In-Reply-To: <CACT4Y+aN20NXxXhe9qv_WRLntAHbL98Shj8NAvg0WafDw8C=jA@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Tue, 17 Dec 2019 12:15:50 +0100
-Message-ID: <CAAeHK+xyVh6QkbUp6z+fLrv5f9sODkgFuvmBU1jB8borQ9M65g@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/2] kcov: collect coverage from interrupts
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Alexander Potapenko <glider@google.com>,
-        Marco Elver <elver@google.com>
+        id S1727412AbfLQLQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:16:16 -0500
+Received: from mga06.intel.com ([134.134.136.31]:42449 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726824AbfLQLQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:16:15 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:16:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
+   d="scan'208";a="389789917"
+Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
+  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 03:16:12 -0800
+Message-ID: <1a68db2aee382a1b0472cf0b81a809bc089e622d.camel@linux.intel.com>
+Subject: Re: [PATCH] drivers: char: tpm: remove unneeded MODULE_VERSION()
+ usage
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 17 Dec 2019 13:16:11 +0200
+In-Reply-To: <20191216084230.31412-1-info@metux.net>
+References: <20191216084230.31412-1-info@metux.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 12:00 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Fri, Dec 13, 2019 at 1:09 PM Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> > On Thu, Dec 12, 2019 at 7:15 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > >
-> > > On Thu, 12 Dec 2019, Andrey Konovalov wrote:
-> > >
-> > > > This change extends kcov remote coverage support to allow collecting
-> > > > coverage from interrupts in addition to kernel background threads.
-> > > >
-> > > > To collect coverage from code that is executed in interrupt context, a
-> > > > part of that code has to be annotated with kcov_remote_start/stop() in a
-> > > > similar way as how it is done for global kernel background threads. Then
-> > > > the handle used for the annotations has to be passed to the
-> > > > KCOV_REMOTE_ENABLE ioctl.
-> > > >
-> > > > Internally this patch adjusts the __sanitizer_cov_trace_pc() compiler
-> > > > inserted callback to not bail out when called from interrupt context.
-> > > > kcov_remote_start/stop() are updated to save/restore the current per
-> > > > task kcov state in a per-cpu area (in case the interrupt came when the
-> > > > kernel was already collecting coverage in task context). Coverage from
-> > > > interrupts is collected into pre-allocated per-cpu areas, whose size is
-> > > > controlled by the new CONFIG_KCOV_IRQ_AREA_SIZE.
-> > > >
-> > > > This patch also cleans up some of kcov debug messages.
-> > > >
-> > > > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> > > > ---
-> > >
-> > > > diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
-> > > > index 4c9d1e49d5ed..faf84ada71a5 100644
-> > > > --- a/drivers/usb/gadget/udc/dummy_hcd.c
-> > > > +++ b/drivers/usb/gadget/udc/dummy_hcd.c
-> > > > @@ -38,6 +38,7 @@
-> > > >  #include <linux/usb/gadget.h>
-> > > >  #include <linux/usb/hcd.h>
-> > > >  #include <linux/scatterlist.h>
-> > > > +#include <linux/kcov.h>
-> > > >
-> > > >  #include <asm/byteorder.h>
-> > > >  #include <linux/io.h>
-> > >
-> > > That's the only change to this driver.  As such, it doesn't appear to
-> > > be needed, judging by the patch description.
-> >
-> > Right, will fix in the next version, thanks!
->
-> Please also post a github or gerrit link. These small scraps of
-> changes without context and better visualisation are extremely hard to
-> review meaningfully.
+On Mon, 2019-12-16 at 09:42 +0100, Enrico Weigelt, metux IT consult wrote:
+> Remove MODULE_VERSION(), as it isn't needed at all: the only version
+> making sense is the kernel version.
 
-The link is in the cover letter:
+Take the following line away:
 
-https://linux-review.googlesource.com/c/linux/kernel/git/torvalds/linux/+/2224/1
+> See also: https://lkml.org/lkml/2017/11/22/480
+
+And just before SOB:
+
+Link: https://lkml.org/lkml/2017/11/22/480
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+
+You have some extra cruft there. It should be:
+
+Signed-off-by: Enrico Weigelt <info@metux.net>
+
+/Jarkko
+
