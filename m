@@ -2,123 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1E6B12384B
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D31123858
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:05:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbfLQVEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:04:25 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54915 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728399AbfLQVDf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:03:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b19so4322671wmj.4;
-        Tue, 17 Dec 2019 13:03:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3xyP56jfldk/QOafjRLnUwDKDDtqv9xmwev/LMdHDz4=;
-        b=IepK1T4eyRa/Fd+JEJACkzRNKWN1Mi65wb9Z/timiiFdWrYIV4mpLb6KSJFxeO7pSB
-         0+D8H2z738RcaY6hMbUQdLG4KlneBfkoLKDSwUw/trV5H9rp816xzLJUvzlNWdJ67Z3x
-         myjRFDYiumHaR6otSdbWyiBFRYBaOLm38WVBEMNBgh5LBUG/rbFdR+RcMBVTQ/eEP63w
-         1+1kb/lhj9wKzHbzMpy2dVerl/Kv5znE91r+3OEamPsJs3p4guhZWDH+jlIUPzP+yg5R
-         wgOS+ynUchrx+dKkoYi4ixxPZk3dRxhh2wue53MIP56XTF5sXzXjejB1CdkV042zNwq9
-         nq1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=3xyP56jfldk/QOafjRLnUwDKDDtqv9xmwev/LMdHDz4=;
-        b=FkW7sRroOKGJZIzEeg0Eh4ByRq7lfhbxs94qN0XtxpQ8iuEEkLYTd2Kcp/mcZg3DAN
-         6sqMdjcA0e8lFP4s2cTF0bdHZffxD95AbWt0TZZCLmsjSz5M92sly1EddDcyLJ8IrML9
-         /MWUY+bNM6F3nJIqJ/mv32zdm3dqKFSTPSpFjKTb1oyYQ00lmPD7PCz37Y6d/fEFSykh
-         uw2LxxiQI82YAcz14pZUlG1IVRDnThdqBvJ1LOC9MqjdJHkZLrgmZd1YkozLltQpc3Eh
-         JlW8lytNgW/a4bE4ffe9rzSWRnmihjIUD9g9oOIo43FbsxH+clmShv/XV1b2q95wqnea
-         /5Vg==
-X-Gm-Message-State: APjAAAXYCG7m6j7NuFp/SjCt8DczjURKgTtU5SzmCWfuepjFidc2tc+b
-        HWMB3ufE8RIHLRzTW1Ed2fk=
-X-Google-Smtp-Source: APXvYqx6FXdGu1uMMrx6xqysMukshZBb05oMC7T5qwh/o6DLubYhJW5yLiDondYhhFYgINnWAChviw==
-X-Received: by 2002:a1c:c919:: with SMTP id f25mr7554275wmb.49.1576616613191;
-        Tue, 17 Dec 2019 13:03:33 -0800 (PST)
-Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id i5sm37856wml.31.2019.12.17.13.03.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Dec 2019 13:03:32 -0800 (PST)
-From:   Doug Berger <opendmb@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
-Subject: [PATCH net-next 8/8] net: bcmgenet: Add software counters to track reallocations
-Date:   Tue, 17 Dec 2019 13:02:29 -0800
-Message-Id: <1576616549-39097-9-git-send-email-opendmb@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576616549-39097-1-git-send-email-opendmb@gmail.com>
-References: <1576616549-39097-1-git-send-email-opendmb@gmail.com>
+        id S1727594AbfLQVDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:03:19 -0500
+Received: from mga04.intel.com ([192.55.52.120]:15620 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726634AbfLQVDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 16:03:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 13:03:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
+   d="scan'208";a="240560928"
+Received: from smcdonal-mobl2.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.255.83.42])
+  by fmsmga004.fm.intel.com with ESMTP; 17 Dec 2019 13:03:17 -0800
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     alsa-devel@alsa-project.org
+Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
+        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v5 00/17] soundwire: intel: implement new ASoC interfaces
+Date:   Tue, 17 Dec 2019 15:02:57 -0600
+Message-Id: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When inserting the TSB, keep track of how many times we had to do
-it and if there was a failure in doing so, this helps profile the
-driver for possibly incorrect headroom settings.
+This patchset applies on top of soundwire/next, now that the interface
+definitions are merged.
 
-Signed-off-by: Doug Berger <opendmb@gmail.com>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c | 6 ++++++
- drivers/net/ethernet/broadcom/genet/bcmgenet.h | 2 ++
- 2 files changed, 8 insertions(+)
+The changes are essentially a removal of the platform devices,
+replaced by explicit device(s)/driver for the SoundWire Master(s), and
+the implementation of the new interfaces required to scan the ACPI
+tables, probe the links and start them.
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index 0280e76bb60f..e0109b86c054 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -861,6 +861,9 @@ static const struct bcmgenet_stats bcmgenet_gstrings_stats[] = {
- 	STAT_GENET_SOFT_MIB("alloc_rx_buff_failed", mib.alloc_rx_buff_failed),
- 	STAT_GENET_SOFT_MIB("rx_dma_failed", mib.rx_dma_failed),
- 	STAT_GENET_SOFT_MIB("tx_dma_failed", mib.tx_dma_failed),
-+	STAT_GENET_SOFT_MIB("tx_realloc_tsb", mib.tx_realloc_tsb),
-+	STAT_GENET_SOFT_MIB("tx_realloc_tsb_failed",
-+			    mib.tx_realloc_tsb_failed),
- 	/* Per TX queues */
- 	STAT_GENET_Q(0),
- 	STAT_GENET_Q(1),
-@@ -1487,6 +1490,7 @@ static void bcmgenet_tx_reclaim_all(struct net_device *dev)
- static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
- 					    struct sk_buff *skb)
- {
-+	struct bcmgenet_priv *priv = netdev_priv(dev);
- 	struct status_64 *status = NULL;
- 	struct sk_buff *new_skb;
- 	u16 offset;
-@@ -1501,11 +1505,13 @@ static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
- 		new_skb = skb_realloc_headroom(skb, sizeof(*status));
- 		if (!new_skb) {
- 			dev_kfree_skb_any(skb);
-+			priv->mib.tx_realloc_tsb_failed++;
- 			dev->stats.tx_dropped++;
- 			return NULL;
- 		}
- 		dev_consume_skb_any(skb);
- 		skb = new_skb;
-+		priv->mib.tx_realloc_tsb++;
- 	}
- 
- 	skb_push(skb, sizeof(*status));
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.h b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-index 11645cccc207..178d000e462f 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -144,6 +144,8 @@ struct bcmgenet_mib_counters {
- 	u32	alloc_rx_buff_failed;
- 	u32	rx_dma_failed;
- 	u32	tx_dma_failed;
-+	u32	tx_realloc_tsb;
-+	u32	tx_realloc_tsb_failed;
- };
- 
- #define UMAC_HD_BKP_CTRL		0x004
+The missing prepare, trigger and setup ASoC callbacks are also
+implemented. The hw_params and free callbacks use the new interfaces
+as well.
+
+While there are quite a few lines of code changed, this is mostly
+about interface changes. The next series will contain more functional
+changes and deal with race conditions on probe, enumeration and
+suspend/resume issues.
+
+Thanks to Vinod Kould and GregKH for the reviews on previous versions,
+much appreciated.
+
+Changes since v4: (feedback from GregKH except last point flagged by
+Intel validation)
+
+Clarified error handling with uevents
+Added better commit messages and rationale behind exposing a Master Device.
+Used 'master_device' instead of 'md' when possible (kept the shortcut
+with really long function names)
+Added namespace check support for Intel code (the Cadence and core
+stuff should be done in a separate patchset).
+Fixed GPLv2 license/EXPORT_SYMBOL_GPL error for the Master Device code.
+Fixed missing error handling in sdw_md_add
+Added kerneldoc comments for sdw_md_driver structure (with explanation
+on what 'md' stands for)
+Fixed NULL pointer assignment leading to issues with driver_unregister
+
+Changes since v3:
+One line change to re-add EXPORT_SYMBOL
+Add missing driver_registration 
+
+Changes since v2:
+moved uevent handling to slave_type (Vinod)
+
+Changes since v1:
+fix typo (Vinod)
+removed uevent open for Master (Vinod)
+clarified commit messages (Cezary)
+no functionality change
+
+Bard Liao (1):
+  soundwire: register master device driver
+
+Pierre-Louis Bossart (13):
+  soundwire: renames to prepare support for master drivers/devices
+  soundwire: rename dev_to_sdw_dev macro
+  soundwire: rename drv_to_sdw_slave_driver macro
+  soundwire: bus_type: rename sdw_drv_ to sdw_slave_drv
+  soundwire: intel: rename res field as link_res
+  soundwire: add support for sdw_slave_type
+  soundwire: slave: move uevent handling to slave device level
+  soundwire: add initial definitions for sdw_master_device
+  soundwire: intel: remove platform devices and use 'Master Devices'
+    instead
+  soundwire: intel: free all resources on hw_free()
+  soundwire: intel_init: add implementation of sdw_intel_enable_irq()
+  soundwire: intel_init: use EXPORT_SYMBOL_NS
+  soundwire: intel: use EXPORT_SYMBOL_NS
+
+Rander Wang (3):
+  soundwire: intel: add prepare support in sdw dai driver
+  soundwire: intel: add trigger support in sdw dai driver
+  soundwire: intel: add sdw_stream_setup helper for .startup callback
+
+ drivers/base/regmap/regmap-sdw.c   |   4 +-
+ drivers/soundwire/Makefile         |   2 +-
+ drivers/soundwire/bus.c            |   2 +-
+ drivers/soundwire/bus.h            |   2 +
+ drivers/soundwire/bus_type.c       |  70 ++++---
+ drivers/soundwire/intel.c          | 281 +++++++++++++++++++++-----
+ drivers/soundwire/intel.h          |   8 +-
+ drivers/soundwire/intel_init.c     | 312 ++++++++++++++++++++++-------
+ drivers/soundwire/master.c         |  64 ++++++
+ drivers/soundwire/slave.c          |  10 +-
+ include/linux/soundwire/sdw.h      |  42 +++-
+ include/linux/soundwire/sdw_type.h |  34 +++-
+ 12 files changed, 668 insertions(+), 163 deletions(-)
+ create mode 100644 drivers/soundwire/master.c
+
 -- 
-2.7.4
+2.20.1
 
