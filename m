@@ -2,233 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B188123AE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 00:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E72123AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 00:35:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725940AbfLQXe0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 18:34:26 -0500
-Received: from mga07.intel.com ([134.134.136.100]:8302 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfLQXeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 18:34:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 15:34:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,327,1571727600"; 
-   d="scan'208";a="365570860"
-Received: from djiang5-desk3.ch.intel.com ([143.182.136.137])
-  by orsmga004.jf.intel.com with ESMTP; 17 Dec 2019 15:34:24 -0800
-Subject: [PATCH RFC v3 14/14] dmaengine: idxd: add sysfs ABI for idxd driver
-From:   Dave Jiang <dave.jiang@intel.com>
-To:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org
-Cc:     dan.j.williams@intel.com, tony.luck@intel.com, jing.lin@intel.com,
-        ashok.raj@intel.com, sanjay.k.kumar@intel.com, megha.dey@intel.com,
-        jacob.jun.pan@intel.com, yi.l.liu@intel.com, axboe@kernel.dk,
-        akpm@linux-foundation.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, fenghua.yu@intel.com, hpa@zytor.com
-Date:   Tue, 17 Dec 2019 16:34:23 -0700
-Message-ID: <157662566387.51652.12421105518888107804.stgit@djiang5-desk3.ch.intel.com>
-In-Reply-To: <157662541786.51652.7666763291600764054.stgit@djiang5-desk3.ch.intel.com>
-References: <157662541786.51652.7666763291600764054.stgit@djiang5-desk3.ch.intel.com>
-User-Agent: StGit/unknown-version
+        id S1726633AbfLQXfX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 18:35:23 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35927 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfLQXfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 18:35:23 -0500
+Received: by mail-oi1-f195.google.com with SMTP id c16so107536oic.3;
+        Tue, 17 Dec 2019 15:35:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BI73ZBRjjqR0+V9ow7XsG6Zpq8G1O7yVR3mkt4nqq1I=;
+        b=GeQ97sb5pTHYufmxnSh1mGTrLIGA0VEm5cCQTzx6hOjm9HXI+q+bgcyxPcD7Zm+7oX
+         i8v+mwYN/Psm01C3OjEXtIua0dX6OrAc7/PhY5PhNCToV8ztVLXfLu3QIa5H5Tz+X+pM
+         TvGPBcrPDAKMSoCjVM/HJtoSI40ga2HXG0hWeQHwo4Rug4fC+bwv4A7Q3TxKi99WTjQK
+         W+WckxTS6Mwe1/3lqDTBY4Zbjn8EkXYWh4QRQdf0X2/ctX0QSyQfQ8ffKbgycxQfX/ed
+         JcCC8FZgNvo/Fql6YMGJuQNXW8Rp22GWwVcr6btWx/3b9nVDVMSuZpFewjCf6wlni1zp
+         yN0w==
+X-Gm-Message-State: APjAAAUXQRX0A5UF/79PRPLfoQflqM+l+AGD0RnG4oliFNMPe5sRe4GQ
+        +I+tnuyuxTm5L9V2roZVFQ==
+X-Google-Smtp-Source: APXvYqyRMza5p9FcM6gHlmpJkzd8vwIoG+HS9nMq49ZnmHNRYgI1aLev14QmXW//C7ZTMozv5ATcsw==
+X-Received: by 2002:a05:6808:3ca:: with SMTP id o10mr3165499oie.14.1576625722498;
+        Tue, 17 Dec 2019 15:35:22 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o16sm17262oic.7.2019.12.17.15.35.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 15:35:21 -0800 (PST)
+Date:   Tue, 17 Dec 2019 17:35:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Pascal Paillet <p.paillet@st.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, p.paillet@st.com
+Subject: Re: [PATCH v3] regulator: Convert stm32-pwr regulator to json-schema
+Message-ID: <20191217233520.GA31425@bogus>
+References: <20191205161359.20755-1-p.paillet@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205161359.20755-1-p.paillet@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jing Lin <jing.lin@intel.com>
+On Thu, 5 Dec 2019 17:13:59 +0100, Pascal Paillet wrote:
+> Convert the stm32-pwr regulator binding to DT schema format using
+> json-schema.
+> 
+> Signed-off-by: Pascal Paillet <p.paillet@st.com>
+> ---
+> Changes since v2:
+> remove /schemas/types.yaml#/definitions/phandle-array for supply
+> 
+>  .../regulator/st,stm32mp1-pwr-reg.txt         | 43 -------------
+>  .../regulator/st,stm32mp1-pwr-reg.yaml        | 64 +++++++++++++++++++
+>  2 files changed, 64 insertions(+), 43 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.txt
+>  create mode 100644 Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
+> 
 
-Add the sysfs ABI information for idxd driver in
-Documentation/ABI/stable directory.
-
-Signed-off-by: Jing Lin <jing.lin@intel.com>
-Signed-off-by: Dave Jiang <dave.jiang@intel.com>
----
- Documentation/ABI/stable/sysfs-driver-dma-idxd |  171 ++++++++++++++++++++++++
- 1 file changed, 171 insertions(+)
- create mode 100644 Documentation/ABI/stable/sysfs-driver-dma-idxd
-
-diff --git a/Documentation/ABI/stable/sysfs-driver-dma-idxd b/Documentation/ABI/stable/sysfs-driver-dma-idxd
-new file mode 100644
-index 000000000000..f4be46cc6cb6
---- /dev/null
-+++ b/Documentation/ABI/stable/sysfs-driver-dma-idxd
-@@ -0,0 +1,171 @@
-+What:           sys/bus/dsa/devices/dsa<m>/cdev_major
-+Date:           Oct 25, 2019
-+KernelVersion: 	5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:	The major number that the character device driver assigned to
-+		this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/errors
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The error information for this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_batch_size
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The largest number of work descriptors in a batch.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_work_queues_size
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The maximum work queue size supported by this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_engines
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The maximum number of engines supported by this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_groups
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The maximum number of groups can be created under this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_tokens
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The total number of bandwidth tokens supported by this device.
-+		The bandwidth tokens represent resources within the DSA
-+		implementation, and these resources are allocated by engines to
-+		support operations.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_transfer_size
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The number of bytes to be read from the source address to
-+		perform the operation. The maximum transfer size is dependent on
-+		the workqueue the descriptor was submitted to.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/max_work_queues
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The maximum work queue number that this device supports.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/numa_node
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The numa node number for this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/op_cap
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The operation capability bit mask specify the operation types
-+		supported by the this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/state
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The state information of this device. It can be either enabled
-+		or disabled.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/group<m>.<n>
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The assigned group under this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/engine<m>.<n>
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The assigned engine under this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/wq<m>.<n>
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The assigned work queue under this device.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/configurable
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    To indicate if this device is configurable or not.
-+
-+What:           sys/bus/dsa/devices/dsa<m>/token_limit
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The maximum number of bandwidth tokens that may be in use at
-+		one time by operations that access low bandwidth memory in the
-+		device.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/group_id
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The group id that this work queue belongs to.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/size
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The work queue size for this work queue.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/type
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The type of this work queue, it can be "kernel" type for work
-+		queue usages in the kernel space or "user" type for work queue
-+		usages by applications in user space.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/cdev_minor
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The minor number assigned to this work queue by the character
-+		device driver.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/mode
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The work queue mode type for this work queue.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/priority
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The priority value of this work queue, it is a vlue relative to
-+		other work queue in the same group to control quality of service
-+		for dispatching work from multiple workqueues in the same group.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/state
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The current state of the work queue.
-+
-+What:           sys/bus/dsa/devices/wq<m>.<n>/threshold
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The number of entries in this work queue that may be filled
-+		via a limited portal.
-+
-+What:           sys/bus/dsa/devices/engine<m>.<n>/group_id
-+Date:           Oct 25, 2019
-+KernelVersion:  5.6.0
-+Contact:        dmaengine@vger.kernel.org
-+Description:    The group that this engine belongs to.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
