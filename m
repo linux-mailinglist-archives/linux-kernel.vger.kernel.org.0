@@ -2,67 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD87C122D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14455122D4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:46:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfLQNmj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:42:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39874 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbfLQNmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:42:38 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1AB220717;
-        Tue, 17 Dec 2019 13:42:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576590158;
-        bh=gJ8rVUCztw8szvbFFB6ChRg1w1nBW7WHuA2nM6G+gEg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G/7OlukgjIYXWMiAYP+RpVQ09G0T4Q8OBkrDufcj6C3MhUQI7k0M+is1IKfT6hRuI
-         g+L3m5nUdyPYYnXvzPiYC7JW4JgcPFiWzKaewa/LFUhaA01Z3O1LIihKH/z5/Ibwkp
-         aNNCv2Zl4a/r5cDzC7vNR3oAxLTd8Cg2HRo59PNI=
-Date:   Tue, 17 Dec 2019 14:42:36 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Jiri Slaby <jslaby@suse.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tty: vt: move conmakehash to drivers/tty/vt/ from
- scripts/
-Message-ID: <20191217134236.GA3365333@kroah.com>
-References: <20191217110633.8796-1-masahiroy@kernel.org>
+        id S1728591AbfLQNq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:46:26 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34098 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728556AbfLQNqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:46:25 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id AFEDE552BDB1ED8734B6;
+        Tue, 17 Dec 2019 21:46:22 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 17 Dec 2019 21:46:12 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <chenzhou10@huawei.com>
+Subject: [PATCH next] scsi: initio: make initio_state_7() static
+Date:   Tue, 17 Dec 2019 21:43:09 +0800
+Message-ID: <20191217134309.41649-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217110633.8796-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 08:06:33PM +0900, Masahiro Yamada wrote:
-> scripts/conmakehash is only used for generating
-> drivers/tty/vt/consolemap_deftbl.c
-> 
-> Move it to the related directory.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  drivers/tty/vt/.gitignore                 | 1 +
->  drivers/tty/vt/Makefile                   | 6 ++++--
->  {scripts => drivers/tty/vt}/conmakehash.c | 0
->  scripts/.gitignore                        | 1 -
->  scripts/Makefile                          | 3 ---
->  5 files changed, 5 insertions(+), 6 deletions(-)
->  rename {scripts => drivers/tty/vt}/conmakehash.c (100%)
+Fix sparse warning:
 
-I thought we wanted scripts to be in the scripts directory :)
+drivers/scsi/initio.c:1643:5: warning: symbol 'initio_state_7' was not declared. Should it be static?
 
-Anyway, this is fine, I'll take it in my tree.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/scsi/initio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/scsi/initio.c b/drivers/scsi/initio.c
+index 41fd64c..1d39628 100644
+--- a/drivers/scsi/initio.c
++++ b/drivers/scsi/initio.c
+@@ -1640,7 +1640,7 @@ static int initio_state_6(struct initio_host * host)
+  *
+  */
+ 
+-int initio_state_7(struct initio_host * host)
++static int initio_state_7(struct initio_host * host)
+ {
+ 	int cnt, i;
+ 
+-- 
+2.7.4
 
-greg k-h
