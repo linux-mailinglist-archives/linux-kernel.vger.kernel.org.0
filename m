@@ -2,77 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D7B122A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:38:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B72DB122A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:39:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbfLQLh7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:37:59 -0500
-Received: from foss.arm.com ([217.140.110.172]:33914 "EHLO foss.arm.com"
+        id S1727602AbfLQLjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:39:07 -0500
+Received: from mga14.intel.com ([192.55.52.115]:17567 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725940AbfLQLh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:37:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49C2631B;
-        Tue, 17 Dec 2019 03:37:58 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCDB83F6CF;
-        Tue, 17 Dec 2019 03:37:57 -0800 (PST)
-Date:   Tue, 17 Dec 2019 11:37:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jim Quinlan <james.quinlan@broadcom.com>
-Cc:     linux-spi@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <ray.jui@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/1] spi: bcm2835: no dev_err() on clk_get()
- -EPROBE_DEFER
-Message-ID: <20191217113756.GA4755@sirena.org.uk>
-References: <20191216230802.45715-1-jquinlan@broadcom.com>
+        id S1726560AbfLQLjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:39:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:39:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
+   d="scan'208";a="209664859"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 17 Dec 2019 03:39:04 -0800
+Received: from [10.125.252.241] (abudanko-mobl.ccr.corp.intel.com [10.125.252.241])
+        by linux.intel.com (Postfix) with ESMTP id 48BEC580458;
+        Tue, 17 Dec 2019 03:38:57 -0800 (PST)
+Subject: Re: [Intel-gfx] [PATCH v3 4/7] drm/i915/perf: open access for
+ CAP_SYS_PERFMON privileged process
+To:     Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Cc:     songliubraving@fb.com, Andi Kleen <ak@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        intel-gfx@lists.freedesktop.org,
+        Igor Lubashev <ilubashe@akamai.com>,
+        linux-kernel@vger.kernel.org,
+        Stephane Eranian <eranian@google.com>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>
+References: <b175f283-d256-e37e-f447-6ba4ab4f3d3a@linux.intel.com>
+ <bc5b2a0d-a185-91b6-5deb-a4b6e1dc3d3e@linux.intel.com>
+ <503ad40c-d94e-df1d-1541-730c002ad3b7@intel.com>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <d71943f5-9c2d-7d08-5c45-2be1be98eb73@linux.intel.com>
+Date:   Tue, 17 Dec 2019 14:38:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <20191216230802.45715-1-jquinlan@broadcom.com>
-X-Cookie: Thufir's a Harkonnen now.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <503ad40c-d94e-df1d-1541-730c002ad3b7@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 17.12.2019 12:45, Lionel Landwerlin wrote:
+> On 16/12/2019 22:03, Alexey Budankov wrote:
+>> Open access to i915_perf monitoring for CAP_SYS_PERFMON privileged processes.
+>> For backward compatibility reasons access to i915_perf subsystem remains open
+>> for CAP_SYS_ADMIN privileged processes but CAP_SYS_ADMIN usage for secure
+>> i915_perf monitoring is discouraged with respect to CAP_SYS_PERFMON capability.
+>>
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> 
+> 
+> Assuming people are fine with this new cap, I like this idea of a lighter privilege for i915-perf.
 
-On Mon, Dec 16, 2019 at 06:08:01PM -0500, Jim Quinlan wrote:
-> Changes in v2:
-> - use dev_dbg() for -EPROBE_DEFER, dev_err() for other errors.
+Lionel, thanks for your meaningful input!
+Appreciate your collaboration.
 
+Regards,
+Alexey
 
-Please don't send cover letters for single patches, if there is anything
-that needs saying put it in the changelog of the patch or after the ---
-if it's administrative stuff.  This reduces mail volume and ensures that=20
-any important information is recorded in the changelog rather than being
-lost.=20
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl34vhAACgkQJNaLcl1U
-h9DCKgf/YoplvcJ+ZiZKO2wNQyrsGbxzLwXcrNuR0JNdf93xNNeuOwmXU7pl6aNy
-QnA+W+ezVelzur13szkX/XNF1/l7r2plXRjxKGk8h9pZgcgeevaoBVXvBwckDb8l
-GmGbvUHgrUUcS3u62tX6swaWq7qr5EXAmJu2yRjJBV33QCcLsMJM+XBavhHPLMLD
-I5JaTqeSomiHfsMOngOSpP+TmbYc93g2q/nLW3ljwGHW8ke0N+AqPvVtnQGCOAvP
-YfxqsNQZQFsApVh+jh/80CqF+sqSKtGQXBPs/a9BQ6dFVZTbTyJlUsX1YONwKzrk
-7UPnQt9K4d905TxNkxjkXhPVqWkNiA==
-=nV6Y
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+> 
+> 
+> -Lionel
+> 
+> 
+> 
