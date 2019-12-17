@@ -2,94 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BD2D1229EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:28:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F8A21229F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:28:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbfLQL1z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:27:55 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39476 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfLQL1y (ORCPT
+        id S1727529AbfLQL2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:28:23 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12987 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbfLQL2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:27:54 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHBRqda070976;
-        Tue, 17 Dec 2019 05:27:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576582072;
-        bh=oFT2vKaK/f9ASvdOK2ke2gYmYaB30b49K4lQJ8g+btU=;
-        h=From:To:CC:Subject:Date;
-        b=tnFIA5jbEh1gN1a2eL0w9MR3q5VhCmgRO6fA9Zq6xWIzmSjSyP3xZ6q8lrpU0HsDw
-         ZGJHhF8IdMk/aT1T1FXrZlX4vQTGNDO5M0kJ03Fo1uBHJ26Hr+JOIdv87p72Y1Q38V
-         kFXtxPU+c71rcdYlky6g6eKkt2vXVoVLdJk8qLk4=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHBRqao117370
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Dec 2019 05:27:52 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 05:27:50 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 05:27:50 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHBRmNu083008;
-        Tue, 17 Dec 2019 05:27:49 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <ulf.hansson@linaro.org>
-CC:     <vkoul@kernel.org>, <linux-mmc@vger.kernel.org>,
+        Tue, 17 Dec 2019 06:28:23 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df8bbcc0000>; Tue, 17 Dec 2019 03:28:13 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 17 Dec 2019 03:28:22 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 17 Dec 2019 03:28:22 -0800
+Received: from [10.21.133.51] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Dec
+ 2019 11:28:19 +0000
+Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mmc: mxcmmc: Use dma_request_chan() instead dma_request_slave_channel()
-Date:   Tue, 17 Dec 2019 13:28:03 +0200
-Message-ID: <20191217112803.31161-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20191216174811.158424118@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b0514e98-0238-b226-de8d-865394a8c6f3@nvidia.com>
+Date:   Tue, 17 Dec 2019 11:28:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576582093; bh=QxxLWs26ZbD1guhwQwQsDkMiRykZ0nt21dSycWY2nAY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=JioxTie0538wBNl6OJA9vDQLciwAJyM4RVYRo+CtEvH3axs7QU52t1iUDRgm5+O3/
+         RSxTEny6nwxYeWpGucYgSMTqdlKp7GIpgUnsznssypVEsZJ5eYJVhG7+DuFBBS6kZs
+         3rH5oPHjFDDhq5NO+IhfDwXpUNA/ApLgEmfHYCQQ2nhk9MDW+8wv0KsmP7hB0OVtDD
+         /i9jJNPagfAOrEQvcocDdlm43HhKkP76pbi7XsxY0YmYfatCx60UiaEEVLxyKm12V9
+         bHjqe0olE2BkSPFOD+tyyiw8EnLX/Sv8P9fL1TmKWqjrcEyENVIb0knpM58b8ZwY56
+         ZaO7Rg2P57PcA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-eating up the error code.
 
-By using dma_request_chan() directly the driver can support deferred
-probing against DMA.
+On 16/12/2019 17:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.4 release.
+> There are 177 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/mmc/host/mxcmmc.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+All tests are passing for Tegra ...
 
-diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
-index 011b59a3602e..b3d654c688e5 100644
---- a/drivers/mmc/host/mxcmmc.c
-+++ b/drivers/mmc/host/mxcmmc.c
-@@ -1121,7 +1121,16 @@ static int mxcmci_probe(struct platform_device *pdev)
- 	mxcmci_writel(host, host->default_irq_mask, MMC_REG_INT_CNTR);
- 
- 	if (!host->pdata) {
--		host->dma = dma_request_slave_channel(&pdev->dev, "rx-tx");
-+		host->dma = dma_request_chan(&pdev->dev, "rx-tx");
-+		if (IS_ERR(host->dma)) {
-+			if (PTR_ERR(host->dma) == -EPROBE_DEFER) {
-+				ret = -EPROBE_DEFER;
-+				goto out_clk_put;
-+			}
-+
-+			/* Ignore errors to fall back to PIO mode */
-+			host->dma = NULL;
-+		}
- 	} else {
- 		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 		if (res) {
+Test results for stable-v5.4:
+    13 builds:	13 pass, 0 fail
+    22 boots:	22 pass, 0 fail
+    38 tests:	38 pass, 0 fail
+
+Linux version:	5.4.4-rc1-gfffa88522363
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
+
+Cheers
+Jon
+
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+nvpublic
