@@ -2,54 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66A4E123887
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:16:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F04E112388E
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 22:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728150AbfLQVQf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 16:16:35 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:43032 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727490AbfLQVQe (ORCPT
+        id S1727677AbfLQVRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 16:17:55 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:59470 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726764AbfLQVRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 16:16:34 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DC21014325EFA;
-        Tue, 17 Dec 2019 13:16:33 -0800 (PST)
-Date:   Tue, 17 Dec 2019 13:16:31 -0800 (PST)
-Message-Id: <20191217.131631.2246524906428878009.davem@davemloft.net>
-To:     opendmb@gmail.com
-Cc:     f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/8] net: bcmgenet: use CHECKSUM_COMPLETE for
- NETIF_F_RXCSUM
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1576616549-39097-4-git-send-email-opendmb@gmail.com>
-References: <1576616549-39097-1-git-send-email-opendmb@gmail.com>
-        <1576616549-39097-4-git-send-email-opendmb@gmail.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 17 Dec 2019 13:16:34 -0800 (PST)
+        Tue, 17 Dec 2019 16:17:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576617473;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8EUwU0NKx9PEFE1/mdJWHDaQT2bQr/AQjmCTI7nYuTs=;
+        b=L+nSwUgxt3Xrkoic9Pscn4t94KKjj0vn6SSdeMSyR2CuXh1gl9MJyjIn+xjkJG5CvLU/Bk
+        AtT4AgmiImcfz27DbUWCVJdHTKpg/VihzmG8F16XSo+9+/WPZNdn9p23YZmxfGZYb2K9zB
+        /A0rSU74CLjwzOIlp7OP4ozbr8eWMz0=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-307-eALN0hAEOJKXe1snJGl-4A-1; Tue, 17 Dec 2019 16:17:49 -0500
+X-MC-Unique: eALN0hAEOJKXe1snJGl-4A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A4ACB800D41;
+        Tue, 17 Dec 2019 21:17:47 +0000 (UTC)
+Received: from redhat.com (ovpn-126-8.rdu2.redhat.com [10.10.126.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E55935D9E1;
+        Tue, 17 Dec 2019 21:17:46 +0000 (UTC)
+Date:   Tue, 17 Dec 2019 18:17:45 -0300
+From:   "Herton R. Krzesinski" <herton@redhat.com>
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>,
+        akpm@linux-foundation.org, arnd@arndb.de, catalin.marinas@arm.com,
+        malat@debian.org, joel@joelfernandes.org, gustavo@embeddedor.com,
+        linux-kernel@vger.kernel.org, jay.vosburgh@canonical.com,
+        ioanna.alifieraki@gmail.com
+Subject: Re: [PATCH] Revert "ipc,sem: remove uneeded sem_undo_list lock usage
+ in exit_sem()"
+Message-ID: <20191217211745.GT7463@unknown>
+References: <20191211191318.11860-1-ioanna-maria.alifieraki@canonical.com>
+ <d66d41fe-212f-effd-905a-5966a96ddb6e@colorfullife.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d66d41fe-212f-effd-905a-5966a96ddb6e@colorfullife.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
-Date: Tue, 17 Dec 2019 13:02:24 -0800
-
-> This commit updates the Rx checksum offload behavior of the driver
-> to use the more generic CHECKSUM_COMPLETE method that supports all
-> protocols over the CHECKSUM_UNNECESSARY method that only applies
-> to some protocols known by the hardware.
+On Mon, Dec 16, 2019 at 08:04:53PM +0100, Manfred Spraul wrote:
+> Hi Ioanna,
 > 
-> This behavior is perceived to be superior.
+> On 12/11/19 8:13 PM, Ioanna Alifieraki wrote:
+> > This reverts commit a97955844807e327df11aa33869009d14d6b7de0.
+> > 
+> > Commit a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage
+> > in exit_sem()") removes a lock that is needed.
 > 
-> Signed-off-by: Doug Berger <opendmb@gmail.com>
+> Yes, you are right, the lock is needed.
+> 
+> The documentation is already correct:
+> 
+> sem_undo_list.list_proc: undo_list->lock for write.
+> 
+> [...]
+> > Removing elements from list_id is safe for both exit_sem() and freeary()
+> > due to sem_lock().  Removing elements from list_proc is not safe;
+> 
+> Correct, removing elements is not safe.
+> 
+> Removing one element would be ok, as we hold sem_lock.
+> 
+> But if there are two elements, then we don't hold sem_lock for the 2nd
+> element, and thus the list is corrupted.
 
-This has to be done in the same patch that you change to use
-the NETIF_F_HW_CSUM feature flag.
+I think that's what I overlooked/missed back then, sorry for the bug.
+
+> 
+> > [1] https://bugzilla.redhat.com/show_bug.cgi?id=1694779
+> > 
+> > Fixes: a97955844807 ("ipc,sem: remove uneeded sem_undo_list lock usage in exit_sem()")
+> > Signed-off-by: Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>
+> Acked-by: Manfred Spraul <manfred@colorfullife.com>
+
+Acked-by: Herton R. Krzesinski <herton@redhat.com>
+
+> > ---
+> >   ipc/sem.c | 6 ++----
+> >   1 file changed, 2 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/ipc/sem.c b/ipc/sem.c
+> > index ec97a7072413..fe12ea8dd2b3 100644
+> > --- a/ipc/sem.c
+> > +++ b/ipc/sem.c
+> > @@ -2368,11 +2368,9 @@ void exit_sem(struct task_struct *tsk)
+> >   		ipc_assert_locked_object(&sma->sem_perm);
+> >   		list_del(&un->list_id);
+> > -		/* we are the last process using this ulp, acquiring ulp->lock
+> > -		 * isn't required. Besides that, we are also protected against
+> > -		 * IPC_RMID as we hold sma->sem_perm lock now
+> > -		 */
+> > +		spin_lock(&ulp->lock);
+> >   		list_del_rcu(&un->list_proc);
+> > +		spin_unlock(&ulp->lock);
+> >   		/* perform adjustments registered in un */
+> >   		for (i = 0; i < sma->sem_nsems; i++) {
+> 
+> 
+
+-- 
+[]'s
+Herton
+
