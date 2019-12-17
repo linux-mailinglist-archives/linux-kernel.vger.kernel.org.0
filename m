@@ -2,65 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F163B122CEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 59BE8122CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:33:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfLQNcj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:32:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728242AbfLQNch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:32:37 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50BAC21835;
-        Tue, 17 Dec 2019 13:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576589556;
-        bh=mvCghyXyT3m3xPpZSVWQxeClciJdGR78AaD6vID+Tts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZQ0YjU90nud327u6aB8jE146D/+Jk8jT9bx3SwCTJZpTwBKeebYauC4RlOP5DHK44
-         wlca5fmMVgSz3FjFDcacqR2bF9iJ7idEJoto9C4fgyx4DL8BLCI/AX0FJd+6NepfZt
-         RcE+pVXSal7VmL88qyU5MKlj5WHYDUC84I+WxvUc=
-Date:   Tue, 17 Dec 2019 14:32:34 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Dave Kim <david.kim@ncipher.com>
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
-        Tim Magee <tim.magee@ncipher.com>
-Subject: Re: [PATCH 1/1] drivers: misc: Add support for nCipher HSM devices
-Message-ID: <20191217133234.GB3362771@kroah.com>
-References: <20191217132244.14768-1-david.kim@ncipher.com>
- <20191217132244.14768-2-david.kim@ncipher.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217132244.14768-2-david.kim@ncipher.com>
+        id S1728392AbfLQNdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:33:36 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:40278 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfLQNdf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:33:35 -0500
+Received: by mail-pj1-f68.google.com with SMTP id s35so4595723pjb.7;
+        Tue, 17 Dec 2019 05:33:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=44FjkOn/XLQ+zFbEeie+qKzDhgYPpksuKEmuM6SY0/I=;
+        b=KEu6GFBqmNG75zG+7przID6KXw0HQFuiUppkDgzIlWE2qT3An6oQ1vSrurEma9+Gb0
+         ipZtrAmgrDptjpW0ECWaTJ+RLq45ng9p24QjN8P17nScRfQZZhWD8CHztIWpuvV4CxHM
+         QtPvvhFy/jd8MHFXStxNJ47HVUq2nrK3SbY1elm0enS0BVvYKGTaQy3C2S9YwnrznQHk
+         LhZenTNkPIxi/1hOWb/dHM0l2Sb2Du+s8lqpLx+A9k9xuZtTwbw+VKFe2hpaiJ1eJCCg
+         8ws9qjAFfaAPpaKATNpzVG4KA1q9IZ4uNaGuA+qX2tCI5zp3nzdWc1nN21l6RxV0p6AF
+         xwvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=44FjkOn/XLQ+zFbEeie+qKzDhgYPpksuKEmuM6SY0/I=;
+        b=snpVa/RSJAqebgn1Fdq5tZlWVUUY0IMvhKHqqTteyN0innCWjvFiiKauH/NSpGFQGa
+         iluC+5zY2miDhxHbgCQxTFt4E8xcsO6p23y9S4DIPN4x6SGoGridAQrxHyxqVQWMcTZH
+         X1mpHCHfSu/THJn7joeYQmFR0vX0rsVUpTFLurZvbx0XBYm7AUh6UbRACk+f4Bbp6gYG
+         DesD7wWVy2rD5iYv2cIbqKZV5w/5mOTaLYqrZDcBDHytBmm9/Xyi91hZgMx6E230j1dS
+         j9cT09NKiYeEszXoA8myE1bB+gVr6uqQuSCKGbqJblc40FnYi3Cw1/PnKO4agX/rAr8/
+         kl9Q==
+X-Gm-Message-State: APjAAAWdjbQQD/YKatBp+Gu79eOJkhN0Rfc4bU3uvIXfxT2yqIicIIRt
+        j34HZex6JHw6tQCMYEut+WY=
+X-Google-Smtp-Source: APXvYqwmroYp//z/XHkQUr6PxhbEQKH1be7LwohqimmimSV+Vml4gldj7Xb9tUuBFkW3WeBWY3y2uQ==
+X-Received: by 2002:a17:902:724b:: with SMTP id c11mr22367771pll.177.1576589615158;
+        Tue, 17 Dec 2019 05:33:35 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id d13sm3367619pjx.21.2019.12.17.05.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 05:33:34 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
+Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] fs: nfs: fix a possible sleep-in-atomic-context bug in _pnfs_grab_empty_layout()
+Date:   Tue, 17 Dec 2019 21:33:19 +0800
+Message-Id: <20191217133319.11861-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 01:22:44PM +0000, Dave Kim wrote:
-> ﻿From: David Kim <david.kim@ncipher.com>
-> 
-> Introduce the driver for nCipher's Solo and Solo XC range of PCIe hardware
-> security modules (HSM), which provide key creation/management and
-> cryptography services.
+The filesystem may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-A bit more description of exactly _what_ these devices do would be
-helpful.
+fs/nfs/pnfs.c, 2052: 
+	pnfs_find_alloc_layout(GFP_KERNEL) in _pnfs_grab_empty_layout
+fs/nfs/pnfs.c, 2051: 
+	spin_lock in _pnfs_grab_empty_layout
 
-Also, how does userspace interact with the driver?  What api(s) are you
-using/creating?  What userspace tools work with the device?
+pnfs_find_alloc_layout(GFP_KERNEL) can sleep at runtime.
 
-In short, we need more than just a one sentance description to be able
-to properly review the code and provide text for a user to know what to
-do with this driver.
+To fix this possible bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+pnfs_find_alloc_layout().
 
-Can you fix all that up and send a v2?
+This bug is found by a static analysis tool STCheck written by myself.
 
-thanks,
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ fs/nfs/pnfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+index cec3070ab577..cfbe170f0651 100644
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -2138,7 +2138,7 @@ _pnfs_grab_empty_layout(struct inode *ino, struct nfs_open_context *ctx)
+ 	struct pnfs_layout_hdr *lo;
+ 
+ 	spin_lock(&ino->i_lock);
+-	lo = pnfs_find_alloc_layout(ino, ctx, GFP_KERNEL);
++	lo = pnfs_find_alloc_layout(ino, ctx, GFP_ATOMIC);
+ 	if (!lo)
+ 		goto out_unlock;
+ 	if (!test_bit(NFS_LAYOUT_INVALID_STID, &lo->plh_flags))
+-- 
+2.17.1
+
