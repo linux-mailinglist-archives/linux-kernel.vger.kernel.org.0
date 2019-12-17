@@ -2,151 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3A27122D71
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:51:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 788EA122D75
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728599AbfLQNvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:51:43 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39801 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728573AbfLQNvm (ORCPT
+        id S1728626AbfLQNwg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:52:36 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46967 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728388AbfLQNwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:51:42 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y11so11371121wrt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:51:41 -0800 (PST)
+        Tue, 17 Dec 2019 08:52:36 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y8so146319pll.13
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 05:52:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=UpDwTP6xUYOJn/p4VO1T9tIwMyJ+3s44ALkmuaBYU3U=;
-        b=guHBR27yvZI1WGUgGNV0FTbLksEs26VjD6okj2KrEUZ7Ia9/PrXNaZQYES9kx2u57m
-         oVvQTfRwGfahNrqlqQBPDj+2O2vZZNokYrE/qiQnQkopHSabr32d+bsO5z+DnsUOdIxI
-         hIGI4d4ordTo242Ptbjn4jXZv42nuGRgWDqBW1Dl4/AerEzcjhNjT01J78z299Lq3xz8
-         3W+IguJOnYqVJpr8AFwmLUoh22IRK2t6d2f5eBSCw33X9fQFT2oi44TUaaNtoMkfE18H
-         itAbZTJ38FVK5VxN7K+nXcf1UH6RI2VMB7XSMWy/HDHJRC/wMzvzy6qPjYwn290DwdaS
-         Rciw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=4Ab3Q/X4ZX5gMws9nUNXBeFR4zcomqzcsyRHhrq8jyw=;
+        b=bjOyv4WFNA4Oiymym030hvCTlXDF88KMh8GhOROZW1CBvNWjeEu7md9vnE2vrZU2DH
+         eijW5Zxcylr10kqvF7gxoPPnxI/oNVp3NDQ9QDAOT/hlaKFBKCwEqMnS/lAHvFfI9+Tf
+         5uiFyBRmQI6dcgpafCAxYmxoK6OGOU5pD6m7aiirOkUDVXkNqHlEexV6RXhMa7IuMH29
+         omWFCSFF6Sqnui+mmfa6bbchqDIVjg3vr86PyR9DHuNEvyPMtebB4EMHyUnd7ONy/ZmU
+         sqL7MJzUEMUga2WjtTjUqIUEjklL510v4ADYm/+0jXnczO4vsOzQWDPwdQ1ZywAZ4RB0
+         qZdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=UpDwTP6xUYOJn/p4VO1T9tIwMyJ+3s44ALkmuaBYU3U=;
-        b=hANub0lINckexy0RZEFioPAIjVmt2r6HcCDP8wlXp3g3d1BNgirxoyP6s4tiMXcDtO
-         5Q6JNYTp7Rlt36BzOKoHy/jlCcySP0BSGU0sk84Y+knFZyeVf4WEc3vBhgsn2lG3iO0r
-         bBXtKOBwcgNH5+Jo6+VCnBkEZWdxF3BVs1a94vnSx0fOyV7L+nfjUTB3yqPfnoIFnpmw
-         vxYeGRiL9KvasGzdFScPPStPMD8HBiUKjNpKFE8dHV5LHvobIfURNvoZ2bvJOhaW4tpk
-         HPdNjZ2SU2Td0ktLstIafFr4WW/Ho5UtY7n9S+s3RBUNWHiODMkfGUIIDw+OQMPYv7f1
-         ijFQ==
-X-Gm-Message-State: APjAAAV4VMjLyXCqlQjjkJ7+RlRh51LZPONOlyIT1kbTsN1ZUFj86Vcl
-        +xqbyaSl5hXa6cz8wGKyToxM4g==
-X-Google-Smtp-Source: APXvYqzWqTHQ/8Hj1jyKQHKlahN+h3FSMhKarcDhsgeUhMP0afvTz0/tlTOqBvWUYAzzGTWaWT4WIg==
-X-Received: by 2002:a05:6000:12c9:: with SMTP id l9mr39105103wrx.304.1576590700711;
-        Tue, 17 Dec 2019 05:51:40 -0800 (PST)
-Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id n189sm3191999wme.33.2019.12.17.05.51.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4Ab3Q/X4ZX5gMws9nUNXBeFR4zcomqzcsyRHhrq8jyw=;
+        b=DZMnPub3pe2dh2uvatHG4thkUib9j+yLRJ3AQpBU2gBBGA/Jll/L5GCUdLDkpsScKA
+         vKC/wIRxEG8ByIt5tj/epMlIEeEbh1uAsvV8uwp9+o55ljOKvwhvg5HrUoMMeYNaMEWV
+         kV/Kz7P+eqKmrgpf3OTzyJIsL5uQ/yp/5lmuzb3GwEzv3C2N47xg2pTWXJuEFeBfTZYv
+         /p5Ci06W3YkiICG+GtnLikSB9DmtV36Yv1es1xPC0+SmeIUouukQLWnFPbjakvEExxOy
+         53WBYfFy4we7nKrJTbr3G6PG77NiQu8nNzZSUD7QS6iRqLXhU0rkzTH3XB5aq07AUwZT
+         80PQ==
+X-Gm-Message-State: APjAAAXz4Hxq1qtcngArECWRmXUkXC9htN7FdGYAP2L6w0khqZOqXATx
+        14n7jGyXjzE0qwrtylfo/94=
+X-Google-Smtp-Source: APXvYqwg7iJqE7pkEx8c34mv/h5j38/Pvrmvpcu6TQkHXieFxOzdarytJCM8d0HbKBYvVOBk6zJV2w==
+X-Received: by 2002:a17:902:bf0b:: with SMTP id bi11mr2085843plb.282.1576590755583;
+        Tue, 17 Dec 2019 05:52:35 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id k1sm18091229pgq.70.2019.12.17.05.52.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 05:51:40 -0800 (PST)
-Date:   Tue, 17 Dec 2019 13:51:40 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: intel_soc_pmic: Rename pwm_backlight pwm-lookup
- to pwm_pmic_backlight
-Message-ID: <20191217135140.GL18955@dell>
-References: <20191212084546.GA3468@dell>
- <d22e9a04-da09-0f41-a78e-ac17a947650a@redhat.com>
- <20191212155209.GC3468@dell>
- <4d07445d-98b1-f23c-0aac-07709b45df78@redhat.com>
- <20191213082734.GE3468@dell>
- <d648794d-4c76-cfa1-dcbd-16c34d409c51@redhat.com>
- <20191216093016.GE3648@dell>
- <fc3c29da-528d-a6b6-d13b-92e6469eadea@redhat.com>
- <20191217081127.GI18955@dell>
- <87immfyth2.fsf@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87immfyth2.fsf@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 17 Dec 2019 05:52:35 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     dwmw2@infradead.org, richard@nod.at
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] fs: jffs2: fix possible sleep-in-atomic-context bugs
+Date:   Tue, 17 Dec 2019 21:51:43 +0800
+Message-Id: <20191217135143.12875-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019, Jani Nikula wrote:
+The filesystem may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-> On Tue, 17 Dec 2019, Lee Jones <lee.jones@linaro.org> wrote:
-> > On Mon, 16 Dec 2019, Hans de Goede wrote:
-> >
-> >> Hi,
-> >> 
-> >> Doing immutable branches assumes that there is a base point,
-> >> e.g. 5.5-rc1 where the immutable branch can then be based on and
-> >> that the branch can then be merged without issues into both subsystems.
-> >> 
-> >> drm is constantly evolving to deal with and mostly catch up with new
-> >> hardware as both GPUs and display-pipelines are evolving quite rapidly
-> >> atm drm-intel-next has about 400 commits on top of 5.5-rc1 so for an
-> >> immutable branch I can either base it on drm-intel-next which
-> >> violates your request for a clean minimal branch to merge; or I can
-> >> base it on 5.5-rc1 which leads to a big chance of problems when
-> >> merging it given to large amount of churn in drm-intel-next.
-> >
-> > This is a *slightly* more compelling reason than the ones you've
-> > previously provided.
-> >
-> >> So instead of the normal case of 2 subsystems seeing some changes
-> >> on both side the case we have here is a part of a file which has
-> >> not changed since 2015-06-26 in one subsys (and changing only
-> >> a single line there!) and OTOH we have bigger changes to a subsys
-> >> which see 400 patches land in the first week since rc1 .
-> >
-> > This is not.
-> >
-> >> I hope that you agree that in this case given the large amount of
-> >> churn in drm-intel-next it makes since to just straight forward
-> >> apply these patches on top of drm-intel-next.
-> >
-> > I have Acked this patch, but remember *this* is the exception rather
-> > than the rule.  If/when we have a case where a contributor works
-> > cross-subsystem with DRM and the code/file adapted is live (more
-> > likely to change), I will have to insist on an immutable branch
-> > strategy.  DRM will have to deal with that appropriately.
-> 
-> Hi, thanks for the ack and reaching an agreement with Hans, and sorry
-> for not responding earlier.
-> 
-> It's not unusual for us to have topic branches for cross-subsystem or
-> cross-driver changes, and I think usually we try to be accommodating in
-> merging stuff through whichever tree it makes most sense. In fact my ack
-> to do just that was my first response on this series [1].
-> 
-> So I don't really know why the fuss. We'll anyway deal with any
-> cross-subsystem series on a case by case basis, depending on what makes
-> most sense, and what suits all maintainers involved.
+fs/jffs2/malloc.c, 188: 
+	kmem_cache_alloc(GFP_KERNEL) in jffs2_alloc_refblock
+fs/jffs2/malloc.c, 221: 
+	jffs2_alloc_refblock in jffs2_prealloc_raw_node_refs
+fs/jffs2/wbuf.c, 164: 
+	jffs2_prealloc_raw_node_refs in jffs2_block_refile
+fs/jffs2/wbuf.c, 291: 
+	jffs2_block_refile in jffs2_wbuf_recover
+fs/jffs2/wbuf.c, 287: 
+	spin_lock in jffs2_wbuf_recover
 
-Perfect.  Thanks for the clarification.  I look forward to working
-with you guys in the future.
+fs/jffs2/malloc.c, 188: 
+    kmem_cache_alloc(GFP_KERNEL) in jffs2_alloc_refblock
+fs/jffs2/malloc.c, 221: 
+    jffs2_alloc_refblock in jffs2_prealloc_raw_node_refs
+fs/jffs2/wbuf.c, 164: 
+    jffs2_prealloc_raw_node_refs in jffs2_block_refile
+fs/jffs2/wbuf.c, 927: 
+	jffs2_block_refile in jffs2_flash_writev
+fs/jffs2/wbuf.c, 924: 
+	spin_lock in jffs2_flash_writev
 
-Hans was making the case that this was impractical for DRM, due to the
-amount of churn you guys receive, hence the discussion.  I'm very
-pleased that this is not the case.
+kmem_cache_alloc(GFP_KERNEL) can sleep at runtime.
 
+To fix these possible bugs, GFP_KERNEL is replaced with GFP_ATOMIC for
+kmem_cache_alloc().
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ fs/jffs2/malloc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/jffs2/malloc.c b/fs/jffs2/malloc.c
+index ce1189793288..66496ef09716 100644
+--- a/fs/jffs2/malloc.c
++++ b/fs/jffs2/malloc.c
+@@ -185,7 +185,7 @@ static struct jffs2_raw_node_ref *jffs2_alloc_refblock(void)
+ {
+ 	struct jffs2_raw_node_ref *ret;
+ 
+-	ret = kmem_cache_alloc(raw_node_ref_slab, GFP_KERNEL);
++	ret = kmem_cache_alloc(raw_node_ref_slab, GFP_ATOMIC);
+ 	if (ret) {
+ 		int i = 0;
+ 		for (i=0; i < REFS_PER_BLOCK; i++) {
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.17.1
+
