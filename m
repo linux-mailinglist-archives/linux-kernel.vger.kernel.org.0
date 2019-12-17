@@ -2,97 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F6D1122936
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B6F3122939
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:51:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbfLQKum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:50:42 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:32930 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726655AbfLQKum (ORCPT
+        id S1727483AbfLQKvC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 05:51:02 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:41801 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726655AbfLQKvB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:50:42 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHAoZOM117616;
-        Tue, 17 Dec 2019 04:50:35 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576579835;
-        bh=mNFMFcC05t4v52oPlhk2o6wWbxZw16JxfddIxoRlzLQ=;
-        h=From:To:CC:Subject:Date;
-        b=dLt0JBQrhwTctsIJomqlhk94hZBf00U4vfjLrTkD2hZT8dsDOVeg5n1KzqkJwVgV2
-         BPZLhIo+WrCvly5FIBFBUWTwvAqEn74fVeNclog2EnbqRqO6wADZ6OtvWCO2zr2e+T
-         ktWFro6uHeTo4jG8HYhswGbspp24AOOdInn4EVF4=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHAoZTm065630
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Dec 2019 04:50:35 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 04:50:35 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 04:50:35 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHAoX3N044630;
-        Tue, 17 Dec 2019 04:50:33 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <vireshk@kernel.org>, <b.zolnierkie@samsung.com>, <axboe@kernel.dk>
-CC:     <vkoul@kernel.org>, <linux-ide@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] ata: pata_arasam_cf: Use dma_request_chan() instead dma_request_slave_channel()
-Date:   Tue, 17 Dec 2019 12:50:48 +0200
-Message-ID: <20191217105048.25327-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 17 Dec 2019 05:51:01 -0500
+Received: by mail-pj1-f65.google.com with SMTP id ca19so4403068pjb.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 02:51:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=aKRVFVGKklhJeX7J8DfGTFKZ6BQ4sSTjBtpY0lq/GLY=;
+        b=i207vYVIyCSPdwtw9gUxE1SQdkKrbZefw9FiMtvmBG2xEopwaOydQvN4nO4Ika3nBF
+         9OJTmF7yv2223hQ7JGS2bqgYXy0lRPOPmd09SlmsHKc0pShZfr7X7lI6ga+6exSaczxQ
+         0H1XV2G+F9Q+YbHW9RgWvOxnxvv61GKOPA8Kt+av8fQ6YmvuhQSPjzDo+AUyZYFBLznC
+         4C2DbLricso1V0ofKbeO6rjiWh4+gjFH0L9CaNJJjaWGZB8RKspqXibOuPVECqJ8J8U5
+         uLoZ+iVyFy8TqxK1UYzjeIaRglxLYog45caSjFBGMwt8ggvatFyUjN5bfIPPJgNnqmcr
+         m4RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=aKRVFVGKklhJeX7J8DfGTFKZ6BQ4sSTjBtpY0lq/GLY=;
+        b=tzjdd7NebD8172xDxTUWyVpdy+BVdaT8zyy1F3Mhvc6kQD7HaQuuVj8vzBqgupVUOW
+         6nW5oDBoM6MGTIvK1qfoqF9b+QVna91lCc3eKUI5w3jY5fliIJer2hexevNS76W5Vvd0
+         kg2Zdjm8zfg9YN+KXkMNm/+jevBlOJZhlK5bQN/FIDEIsvNjpB9/YqGzo3NgA8DkjOr9
+         X4B8to4cjtpkEVN3FBgGr70wZ1n1FDtlEGqVuwzt4lQAoVcPIRSMvjyP9EwDXAZ2hR9o
+         Va1eePA4wyxjp2sclaOvi+emtoC9s7n9ZPtVOi3/XbJ/2zqd8vTftA7wgjIeJQ4XiqAW
+         gKfg==
+X-Gm-Message-State: APjAAAXy0nVIa3L2FM5k8EPKJf4JreYYIlkv+OKa1D1UQGwpjZXU6JPh
+        drP5BhrPZ12eQ052qsKcBLGpgQlkr3K4gHf8P5c=
+X-Google-Smtp-Source: APXvYqxpTkPFBaLdDLWRUTmdNGxGJOUgPhOHgu2TZDZwg3uTwcQlFRdwzs9LbYa+SvPOIl6alJSdoCSlWVCKL8UgDh4=
+X-Received: by 2002:a17:902:b589:: with SMTP id a9mr20217147pls.256.1576579861244;
+ Tue, 17 Dec 2019 02:51:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:a17:90a:5803:0:0:0:0 with HTTP; Tue, 17 Dec 2019 02:51:00
+ -0800 (PST)
+Reply-To: stellar074maoris@gmail.com
+From:   "Mrs.Stellar Maoris" <mrsalimaculu@gmail.com>
+Date:   Tue, 17 Dec 2019 10:51:00 +0000
+Message-ID: <CALpC2+LhuO77pNs2Jo0houQjAC-byKt21fJFjOk_w5rvgNUm1g@mail.gmail.com>
+Subject: Hello Dear Friend
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-eating up the error code.
+Hello Dear Friend.
 
-By using dma_request_chan() directly the driver can support deferred
-probing against DMA.
+I=E2=80=99m Mrs. Stellar Maoris from united state of America a manger in
+HSBC bank in Spain Madrid, 39 years old of age, single, I am
+sending
+this brief letter to seek for your partnership and long term relationship,
+I have an important and urgent issue I want to discuss with you privately a=
+bout
+Transaction fund worth the sum of $9.5m America dollars left by most
+of the greedy
+Asia Kuwait politician in our bank here in Spain Madrid A fund which
+suppose to have been use to develop the continent.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/ata/pata_arasan_cf.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+If you know that you can invest this fund into a profitable business
+in your country by the end we shall have 50%50 share each, kindly get
+back to me for more detail and procedures.
 
-diff --git a/drivers/ata/pata_arasan_cf.c b/drivers/ata/pata_arasan_cf.c
-index 135173c8d138..69b555d83f68 100644
---- a/drivers/ata/pata_arasan_cf.c
-+++ b/drivers/ata/pata_arasan_cf.c
-@@ -526,9 +526,10 @@ static void data_xfer(struct work_struct *work)
- 
- 	/* request dma channels */
- 	/* dma_request_channel may sleep, so calling from process context */
--	acdev->dma_chan = dma_request_slave_channel(acdev->host->dev, "data");
--	if (!acdev->dma_chan) {
-+	acdev->dma_chan = dma_request_chan(acdev->host->dev, "data");
-+	if (IS_ERR(acdev->dma_chan)) {
- 		dev_err(acdev->host->dev, "Unable to get dma_chan\n");
-+		acdev->dma_chan = NULL;
- 		goto chan_request_fail;
- 	}
- 
-@@ -539,6 +540,7 @@ static void data_xfer(struct work_struct *work)
- 	}
- 
- 	dma_release_channel(acdev->dma_chan);
-+	acdev->dma_chan = NULL;
- 
- 	/* data xferred successfully */
- 	if (!ret) {
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+Your urgent respond will be highly appreciated
+Awaiting to hear from you asap.
+My Regard.
+Stellar Maoris
+Email: stellar074maoris@gmail.com
+Phone Number: +34(62) 768 5146
