@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA55A1234F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:35:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AB4631234F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:35:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728308AbfLQSe1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:34:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:44800 "EHLO foss.arm.com"
+        id S1728361AbfLQSee (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:34:34 -0500
+Received: from foss.arm.com ([217.140.110.172]:44814 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfLQSeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:34:25 -0500
+        id S1728299AbfLQSe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 13:34:27 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC20131B;
-        Tue, 17 Dec 2019 10:34:24 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5426D30E;
+        Tue, 17 Dec 2019 10:34:26 -0800 (PST)
 Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 41E893F67D;
-        Tue, 17 Dec 2019 10:34:23 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DF1B43F67D;
+        Tue, 17 Dec 2019 10:34:24 -0800 (PST)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, will@kernel.org, maz@kernel.org,
@@ -24,9 +24,9 @@ Cc:     linux-kernel@vger.kernel.org, will@kernel.org, maz@kernel.org,
         ard.biesheuvel@linaro.org, christoffer.dall@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 5/7] arm64: ptrace: nofpsimd: Fail FP/SIMD regset operations
-Date:   Tue, 17 Dec 2019 18:34:00 +0000
-Message-Id: <20191217183402.2259904-6-suzuki.poulose@arm.com>
+Subject: [PATCH v2 6/7] arm64: signal: nofpsimd: Handle fp/simd context for signal frames
+Date:   Tue, 17 Dec 2019 18:34:01 +0000
+Message-Id: <20191217183402.2259904-7-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191217183402.2259904-1-suzuki.poulose@arm.com>
 References: <20191217183402.2259904-1-suzuki.poulose@arm.com>
@@ -37,62 +37,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When fp/simd is not supported on the system, fail the operations
-of FP/SIMD regsets.
+Make sure we try to save/restore the vfp/fpsimd context for signal
+handling only when the fp/simd support is available. Otherwise, skip
+the frames.
 
-Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/ptrace.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/kernel/signal.c   | 17 +++++++++++++++--
+ arch/arm64/kernel/signal32.c | 11 +++++++++--
+ 2 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-index 6771c399d40c..0135b944b8db 100644
---- a/arch/arm64/kernel/ptrace.c
-+++ b/arch/arm64/kernel/ptrace.c
-@@ -637,6 +637,9 @@ static int fpr_get(struct task_struct *target, const struct user_regset *regset,
- 		   unsigned int pos, unsigned int count,
- 		   void *kbuf, void __user *ubuf)
- {
-+	if (!system_supports_fpsimd())
+diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+index dd2cdc0d5be2..c648f7627035 100644
+--- a/arch/arm64/kernel/signal.c
++++ b/arch/arm64/kernel/signal.c
+@@ -173,6 +173,10 @@ static int preserve_fpsimd_context(struct fpsimd_context __user *ctx)
+ 		&current->thread.uw.fpsimd_state;
+ 	int err;
+ 
++	/* This must not be called when FP/SIMD support is missing */
++	if (WARN_ON(!system_supports_fpsimd()))
 +		return -EINVAL;
 +
- 	if (target == current)
- 		fpsimd_preserve_current_state();
+ 	/* copy the FP and status/control registers */
+ 	err = __copy_to_user(ctx->vregs, fpsimd->vregs, sizeof(fpsimd->vregs));
+ 	__put_user_error(fpsimd->fpsr, &ctx->fpsr, err);
+@@ -191,6 +195,10 @@ static int restore_fpsimd_context(struct fpsimd_context __user *ctx)
+ 	__u32 magic, size;
+ 	int err = 0;
  
-@@ -676,6 +679,9 @@ static int fpr_set(struct task_struct *target, const struct user_regset *regset,
- {
- 	int ret;
- 
-+	if (!system_supports_fpsimd())
++	/* This must not be called when FP/SIMD support is missing */
++	if (WARN_ON(!system_supports_fpsimd()))
 +		return -EINVAL;
 +
- 	ret = __fpr_set(target, regset, pos, count, kbuf, ubuf, 0);
- 	if (ret)
- 		return ret;
-@@ -1348,6 +1354,9 @@ static int compat_vfp_get(struct task_struct *target,
+ 	/* check the magic/size information */
+ 	__get_user_error(magic, &ctx->head.magic, err);
+ 	__get_user_error(size, &ctx->head.size, err);
+@@ -261,6 +269,9 @@ static int restore_sve_fpsimd_context(struct user_ctxs *user)
+ 	struct user_fpsimd_state fpsimd;
+ 	struct sve_context sve;
+ 
++	if (WARN_ON(!system_supports_fpsimd()))
++		return -EINVAL;
++
+ 	if (__copy_from_user(&sve, user->sve, sizeof(sve)))
+ 		return -EFAULT;
+ 
+@@ -371,6 +382,8 @@ static int parse_user_sigframe(struct user_ctxs *user,
+ 			goto done;
+ 
+ 		case FPSIMD_MAGIC:
++			if (!system_supports_fpsimd())
++				goto invalid;
+ 			if (user->fpsimd)
+ 				goto invalid;
+ 
+@@ -506,7 +519,7 @@ static int restore_sigframe(struct pt_regs *regs,
+ 	if (err == 0)
+ 		err = parse_user_sigframe(&user, sf);
+ 
+-	if (err == 0) {
++	if (err == 0 && system_supports_fpsimd()) {
+ 		if (!user.fpsimd)
+ 			return -EINVAL;
+ 
+@@ -623,7 +636,7 @@ static int setup_sigframe(struct rt_sigframe_user_layout *user,
+ 
+ 	err |= __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set));
+ 
+-	if (err == 0) {
++	if (err == 0 && system_supports_fpsimd()) {
+ 		struct fpsimd_context __user *fpsimd_ctx =
+ 			apply_user_offset(user, user->fpsimd_offset);
+ 		err |= preserve_fpsimd_context(fpsimd_ctx);
+diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
+index 12a585386c2f..97ace6919bc2 100644
+--- a/arch/arm64/kernel/signal32.c
++++ b/arch/arm64/kernel/signal32.c
+@@ -100,6 +100,9 @@ static int compat_preserve_vfp_context(struct compat_vfp_sigframe __user *frame)
+ 	compat_ulong_t fpscr, fpexc;
+ 	int i, err = 0;
+ 
++	/* This must not be called when the FP/SIMD is missing */
++	if (WARN_ON(!system_supports_fpsimd()))
++		return -EINVAL;
+ 	/*
+ 	 * Save the hardware registers to the fpsimd_state structure.
+ 	 * Note that this also saves V16-31, which aren't visible
+@@ -149,6 +152,10 @@ static int compat_restore_vfp_context(struct compat_vfp_sigframe __user *frame)
  	compat_ulong_t fpscr;
- 	int ret, vregs_end_pos;
+ 	int i, err = 0;
  
-+	if (!system_supports_fpsimd())
++	/* This must not be called when the FP/SIMD is missing */
++	if (WARN_ON(!system_supports_fpsimd()))
 +		return -EINVAL;
 +
- 	uregs = &target->thread.uw.fpsimd_state;
+ 	__get_user_error(magic, &frame->magic, err);
+ 	__get_user_error(size, &frame->size, err);
  
- 	if (target == current)
-@@ -1381,6 +1390,9 @@ static int compat_vfp_set(struct task_struct *target,
- 	compat_ulong_t fpscr;
- 	int ret, vregs_end_pos;
+@@ -223,7 +230,7 @@ static int compat_restore_sigframe(struct pt_regs *regs,
+ 	err |= !valid_user_regs(&regs->user_regs, current);
  
-+	if (!system_supports_fpsimd())
-+		return -EINVAL;
-+
- 	uregs = &target->thread.uw.fpsimd_state;
+ 	aux = (struct compat_aux_sigframe __user *) sf->uc.uc_regspace;
+-	if (err == 0)
++	if (err == 0 && system_supports_fpsimd())
+ 		err |= compat_restore_vfp_context(&aux->vfp);
  
- 	vregs_end_pos = VFP_STATE_SIZE - sizeof(compat_ulong_t);
+ 	return err;
+@@ -419,7 +426,7 @@ static int compat_setup_sigframe(struct compat_sigframe __user *sf,
+ 
+ 	aux = (struct compat_aux_sigframe __user *) sf->uc.uc_regspace;
+ 
+-	if (err == 0)
++	if (err == 0 && system_supports_fpsimd())
+ 		err |= compat_preserve_vfp_context(&aux->vfp);
+ 	__put_user_error(0, &aux->end_magic, err);
+ 
 -- 
 2.23.0
 
