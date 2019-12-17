@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E2A122A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 081BD122A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:32:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfLQLbL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:31:11 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39778 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726164AbfLQLbL (ORCPT
+        id S1727727AbfLQLcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:32:25 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:55071 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727632AbfLQLcJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:31:11 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHBV4ff071868;
-        Tue, 17 Dec 2019 05:31:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576582264;
-        bh=b1QfEFC8XibZPfBlM2ytgyPKblISPpf+cmA5Wv2xaEQ=;
-        h=From:To:CC:Subject:Date;
-        b=M51kOXzhk8PhiQEHN2mA4YaE/jcZjA5n2O1mPDyCsNKUbTC2XmZRkiolbVyTDx8Td
-         uvp/eloJiQl01+gh8S7ndSHKkRUvSw/kqrRt0QZ63aY+q6v9gF0J1/MqZbyZ88HplL
-         Da3DLAqG03fv6bP82mMI9GM/JRIzTghHEi/ljgv0=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHBV4qk130069;
-        Tue, 17 Dec 2019 05:31:04 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 05:31:02 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 05:31:02 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHBUxJR113247;
-        Tue, 17 Dec 2019 05:31:00 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <ulf.hansson@linaro.org>, <jesper.nilsson@axis.com>,
-        <lars.persson@axis.com>
-CC:     <vkoul@kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@axis.com>
-Subject: [PATCH] mmc: usdhi6rol0: Use dma_request_chan() instead dma_request_slave_channel()
-Date:   Tue, 17 Dec 2019 13:31:14 +0200
-Message-ID: <20191217113114.32085-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 17 Dec 2019 06:32:09 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ihB4z-0007MI-Ry; Tue, 17 Dec 2019 12:31:53 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id F3A6F1C2A34;
+        Tue, 17 Dec 2019 12:31:52 +0100 (CET)
+Date:   Tue, 17 Dec 2019 11:31:52 -0000
+From:   "tip-bot2 for Ed Maste" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf vendor events s390: Remove name from
+ L1D_RO_EXCL_WRITES description
+Cc:     Ed Maste <emaste@freebsd.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Greentime Hu <green.hu@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Nick Hu <nickhu@andestech.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        x86 <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191212145346.5026-1-emaste@freefall.freebsd.org>
+References: <20191212145346.5026-1-emaste@freefall.freebsd.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-ID: <157658231276.30329.18331050645912292704.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-eating up the error code.
+The following commit has been merged into the perf/urgent branch of tip:
 
-By using dma_request_chan() directly the driver can support deferred
-probing against DMA if needed.
+Commit-ID:     58b3bafff8257c6946df5d6aeb215b8ac839ed2a
+Gitweb:        https://git.kernel.org/tip/58b3bafff8257c6946df5d6aeb215b8ac839ed2a
+Author:        Ed Maste <emaste@freebsd.org>
+AuthorDate:    Thu, 12 Dec 2019 14:53:46 
+Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitterDate: Mon, 16 Dec 2019 13:40:26 -03:00
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+perf vendor events s390: Remove name from L1D_RO_EXCL_WRITES description
+
+In 7fcfa9a2d9 an unintended prefix "Counter:18 Name:" was removed from
+the description for L1D_RO_EXCL_WRITES, but the extra name remained in
+the description.  Remove it too.
+
+Fixes: 7fcfa9a2d9a7 ("perf list: Fix s390 counter long description for L1D_RO_EXCL_WRITES")
+Signed-off-by: Ed Maste <emaste@freebsd.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Nick Hu <nickhu@andestech.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
+Link: http://lore.kernel.org/lkml/20191212145346.5026-1-emaste@freefall.freebsd.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/mmc/host/usdhi6rol0.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ tools/perf/pmu-events/arch/s390/cf_z14/extended.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-index 969a34e698f2..9a0b1e4e405d 100644
---- a/drivers/mmc/host/usdhi6rol0.c
-+++ b/drivers/mmc/host/usdhi6rol0.c
-@@ -676,12 +676,14 @@ static void usdhi6_dma_request(struct usdhi6_host *host, phys_addr_t start)
- 	};
- 	int ret;
- 
--	host->chan_tx = dma_request_slave_channel(mmc_dev(host->mmc), "tx");
-+	host->chan_tx = dma_request_chan(mmc_dev(host->mmc), "tx");
- 	dev_dbg(mmc_dev(host->mmc), "%s: TX: got channel %p\n", __func__,
- 		host->chan_tx);
- 
--	if (!host->chan_tx)
-+	if (IS_ERR(host->chan_tx)) {
-+		host->chan_tx = NULL;
- 		return;
-+	}
- 
- 	cfg.direction = DMA_MEM_TO_DEV;
- 	cfg.dst_addr = start + USDHI6_SD_BUF0;
-@@ -691,12 +693,14 @@ static void usdhi6_dma_request(struct usdhi6_host *host, phys_addr_t start)
- 	if (ret < 0)
- 		goto e_release_tx;
- 
--	host->chan_rx = dma_request_slave_channel(mmc_dev(host->mmc), "rx");
-+	host->chan_rx = dma_request_chan(mmc_dev(host->mmc), "rx");
- 	dev_dbg(mmc_dev(host->mmc), "%s: RX: got channel %p\n", __func__,
- 		host->chan_rx);
- 
--	if (!host->chan_rx)
-+	if (IS_ERR(host->chan_rx)) {
-+		host->chan_rx = NULL;
- 		goto e_release_tx;
-+	}
- 
- 	cfg.direction = DMA_DEV_TO_MEM;
- 	cfg.src_addr = cfg.dst_addr;
--- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+diff --git a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+index 6861815..89e0707 100644
+--- a/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
++++ b/tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+@@ -4,7 +4,7 @@
+ 		"EventCode": "128",
+ 		"EventName": "L1D_RO_EXCL_WRITES",
+ 		"BriefDescription": "L1D Read-only Exclusive Writes",
+-		"PublicDescription": "L1D_RO_EXCL_WRITES A directory write to the Level-1 Data cache where the line was originally in a Read-Only state in the cache but has been updated to be in the Exclusive state that allows stores to the cache line"
++		"PublicDescription": "A directory write to the Level-1 Data cache where the line was originally in a Read-Only state in the cache but has been updated to be in the Exclusive state that allows stores to the cache line"
+ 	},
+ 	{
+ 		"Unit": "CPU-M-CF",
