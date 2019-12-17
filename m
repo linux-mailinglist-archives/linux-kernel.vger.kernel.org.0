@@ -2,89 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 391FC123012
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:20:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFE63123017
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:20:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfLQPUa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:20:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728276AbfLQPU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:20:29 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 927A82146E;
-        Tue, 17 Dec 2019 15:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576596029;
-        bh=vQ/2Y+RGdZ5UonD6kZewB56CrR9lah1YrWL4h7Pxm+4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=wo1qqZbQYTGDvoz5/c1hl0BzEkyD8GhwOZSZVF5rypSxAuUbYoJLC9LKVmzHdsq4L
-         MhDuHDdUsNRhwNFc6SAbQPWc2HRwHgJbw0AcAsTfUYhL8j1MpEO/CruEe5aD8pOBll
-         1gztnWUHMWB8i4Gp9q/ZKGpaxN0MuNjUwyJma7SA=
-Subject: Re: [PATCH v2 1/2] usbip: Fix receive error in vhci-hcd when using
- scatter-gather
-To:     Suwan Kim <suwan.kim027@gmail.com>, valentina.manea.m@gmail.com,
-        gregkh@linuxfoundation.org, marmarek@invisiblethingslab.com
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, stern@rowland.harvard.edu,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        shuah <shuah@kernel.org>
-References: <20191213023055.19933-1-suwan.kim027@gmail.com>
- <20191213023055.19933-2-suwan.kim027@gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <51515368-52e9-7d72-959c-b1f1dd5333f4@kernel.org>
-Date:   Tue, 17 Dec 2019 08:20:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728537AbfLQPUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:20:44 -0500
+Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:50476 "EHLO
+        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727809AbfLQPUn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:20:43 -0500
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1ihEdz-0003vi-6E; Tue, 17 Dec 2019 15:20:15 +0000
+Message-ID: <f0e7384f3eb6203eb72b36433b0666150cf560ff.camel@codethink.co.uk>
+Subject: Re: [Y2038] [PATCH 10/24] compat_ioctl: cdrom: handle
+ CDROM_LAST_WRITTEN
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-block@vger.kernel.org
+Cc:     Jonathan Corbet <corbet@lwn.net>, y2038@lists.linaro.org,
+        linux-kernel@vger.kernel.org,
+        Diego Elio =?ISO-8859-1?Q?Petten=F2?= <flameeyes@flameeyes.com>,
+        Hannes Reinecke <hare@suse.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Martin Wilck <mwilck@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Date:   Tue, 17 Dec 2019 15:20:14 +0000
+In-Reply-To: <20191211204306.1207817-11-arnd@arndb.de>
+References: <20191211204306.1207817-1-arnd@arndb.de>
+         <20191211204306.1207817-11-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-In-Reply-To: <20191213023055.19933-2-suwan.kim027@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/19 7:30 PM, Suwan Kim wrote:
-> When vhci uses SG and receives data whose size is smaller than SG
-> buffer size, it tries to receive more data even if it acutally
-> receives all the data from the server. If then, it erroneously adds
-> error event and triggers connection shutdown.
-> 
-> vhci-hcd should check if it received all the data even if there are
-> more SG entries left. So, check if it receivces all the data from
-> the server in for_each_sg() loop.
-> 
-> Fixes: ea44d190764b ("usbip: Implement SG support to vhci-hcd and stub driver")
-> Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
-> Tested-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
-> Signed-off-by: Suwan Kim <suwan.kim027@gmail.com>
-> ---
->   drivers/usb/usbip/usbip_common.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/usb/usbip/usbip_common.c b/drivers/usb/usbip/usbip_common.c
-> index 6532d68e8808..e4b96674c405 100644
-> --- a/drivers/usb/usbip/usbip_common.c
-> +++ b/drivers/usb/usbip/usbip_common.c
-> @@ -727,6 +727,9 @@ int usbip_recv_xbuff(struct usbip_device *ud, struct urb *urb)
->   
->   			copy -= recv;
->   			ret += recv;
-> +
-> +			if (!copy)
-> +				break;
->   		}
->   
->   		if (ret != size)
-> 
+On Wed, 2019-12-11 at 21:42 +0100, Arnd Bergmann wrote:
+> This is the only ioctl command that does not have a proper
+> compat handler. Making the normal implementation do the
+> right thing is actually very simply, so just do that by
+> using an in_compat_syscall() check to avoid the special
+> case in the pkcdvd driver.
+[...]
 
-Thanks Marek and Suwan for taking care of this.
+Since this uses blkdev_compat_ptr_ioctl() it needs to be moved after
+the following patch.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+Ben.
 
-thanks,
--- Shuah
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
