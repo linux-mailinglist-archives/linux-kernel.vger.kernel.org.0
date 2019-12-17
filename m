@@ -2,82 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F49A12299C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 924E21229A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:17:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfLQLOa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:14:30 -0500
-Received: from mga07.intel.com ([134.134.136.100]:22879 "EHLO mga07.intel.com"
+        id S1727433AbfLQLRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:17:12 -0500
+Received: from mga07.intel.com ([134.134.136.100]:23166 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbfLQLOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:14:30 -0500
+        id S1726824AbfLQLRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:17:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:14:29 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 03:17:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="298015511"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 17 Dec 2019 03:14:27 -0800
-Subject: Re: [PATCH v2 2/2] USB: core: Attempt power cycle port when it's in
- eSS.Disabled state
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Mathias Nyman <mathias.nyman@intel.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-References: <Pine.LNX.4.44L0.1912111006280.1549-100000@iolanthe.rowland.org>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <c8fc54db-9037-3635-f6a7-d6220e5d02cb@linux.intel.com>
-Date:   Tue, 17 Dec 2019 13:16:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+   d="scan'208";a="205441884"
+Received: from pbroex-mobl1.ger.corp.intel.com ([10.251.85.107])
+  by orsmga007.jf.intel.com with ESMTP; 17 Dec 2019 03:17:09 -0800
+Message-ID: <8e3a747111a60ec4e4b8b0ce5f079eade9750735.camel@linux.intel.com>
+Subject: Re: [PATCH] drivers: char: tpm: remove unneeded MODULE_VERSION()
+ usage
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        linux-kernel@vger.kernel.org
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 17 Dec 2019 13:17:07 +0200
+In-Reply-To: <1a68db2aee382a1b0472cf0b81a809bc089e622d.camel@linux.intel.com>
+References: <20191216084230.31412-1-info@metux.net>
+         <1a68db2aee382a1b0472cf0b81a809bc089e622d.camel@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <Pine.LNX.4.44L0.1912111006280.1549-100000@iolanthe.rowland.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11.12.2019 17.08, Alan Stern wrote:
-> On Wed, 11 Dec 2019, Kai-Heng Feng wrote:
+On Tue, 2019-12-17 at 13:16 +0200, Jarkko Sakkinen wrote:
+> On Mon, 2019-12-16 at 09:42 +0100, Enrico Weigelt, metux IT consult wrote:
+> > Remove MODULE_VERSION(), as it isn't needed at all: the only version
+> > making sense is the kernel version.
 > 
->>
->>
->>> On Nov 30, 2019, at 01:41, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
->>>
->>> On Dell TB16, Realtek USB ethernet (r8152) connects to an SMSC hub which
->>> then connects to ASMedia xHCI's root hub:
->>>
->>> /:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 5000M
->>>     |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
->>>             |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
->>>
->>> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
->>> Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp. USB5537B
->>> Bus 004 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
->>>
->>> The SMSC hub may disconnect after system resume from suspend. When this
->>> happens, the reset resume attempt fails, and the last resort to disable
->>> the port and see something comes up later, also fails.
->>>
->>> When the issue occurs, the link state stays in eSS.Disabled state
->>> despite the warm reset attempts. Accoding to spec this can be caused by
->>> invalid VBus, after some expiremets, the SMSC hub can be brought back
->>> after a powercycle.
+> Take the following line away:
+> 
+> > See also: https://lkml.org/lkml/2017/11/22/480
+> 
+> And just before SOB:
+> 
+> Link: https://lkml.org/lkml/2017/11/22/480
+> > Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> 
+> You have some extra cruft there. It should be:
+> 
+> Signed-off-by: Enrico Weigelt <info@metux.net>
 
-Could you open up a bit more how this happens, mainly codepaths how the
-USB3 port ends up in eSS.Disabled state
+Also, the email that you are sending this patch from incorrectly
+formatted email address. Please configure your email client to
+have just Firstname Lastname as the email.
 
-There might be something else wrong here.
-My impression is that port should only end up in eSS.Disabled when directed
-to with a Set_Port_Feature(PORT_LINK_STATE, eSS.Disabled) Request.
-After this we shouldn't attempt warm resets, they won't work for USB3 ports in
-ss.Disabled state.
+/Jarkko
 
--Mathias
