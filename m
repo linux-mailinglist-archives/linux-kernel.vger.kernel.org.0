@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 741CD122F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 927C2122F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:49:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfLQOtk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41352 "EHLO mail.kernel.org"
+        id S1729329AbfLQOtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:49:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729294AbfLQOtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:49:15 -0500
+        id S1729316AbfLQOtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:49:19 -0500
 Received: from quaco.ghostprotocols.net (unknown [179.97.35.50])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA7E24655;
-        Tue, 17 Dec 2019 14:49:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AC3724672;
+        Tue, 17 Dec 2019 14:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576594155;
-        bh=XVpHmNreLLNB+QbMt8qUng6dJKnd7LnmO8+bZHGXAgo=;
+        s=default; t=1576594158;
+        bh=tdHs1oYNdxlAXP274vD9Exa8++0/n2QNWUc9yKX5P0M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2iaWDT/Mnc1M1kazFmjyxvoYpQtliqxaj+V8MKrsEWxvi18UA76eVJx4Me2JeGDZn
-         duGZ6+I7R0Bwgf+vhmY4doyjOfNOMLW12EUUTdWmsOxfajp4fXwsj0N6y0d2+16Z99
-         sTiVN5vtYHYyaKO11XN6vOK2TM6IhksrjSt0ij80=
+        b=g9dmdHLPGO/w7BvOaq83NUqwYHnH4mTiGORyYtOOjxI7rKz7yT0w+ag10V7C1IDG6
+         4byGdUxfrhX750ZE0pkqtL/DOIUWrGlq2G7C/d3pYUK8Qx8/XH+ISLPPfkEAuzQ+3Y
+         aCMGXUB+mSZxTmODIDY7x6Iipfo5dxJBaMH/t2+w=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>
 Cc:     Ingo Molnar <mingo@kernel.org>,
@@ -35,9 +35,9 @@ Cc:     Ingo Molnar <mingo@kernel.org>,
         Jin Yao <yao.jin@linux.intel.com>,
         Kan Liang <kan.liang@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 07/12] perf hists browser: Allow passing an initial hotkey
-Date:   Tue, 17 Dec 2019 11:48:23 -0300
-Message-Id: <20191217144828.2460-8-acme@kernel.org>
+Subject: [PATCH 08/12] tools ui popup: Allow returning hotkeys
+Date:   Tue, 17 Dec 2019 11:48:24 -0300
+Message-Id: <20191217144828.2460-9-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191217144828.2460-1-acme@kernel.org>
 References: <20191217144828.2460-1-acme@kernel.org>
@@ -50,11 +50,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Sometimes we're in an outer code, like the main hists browser popup menu
-and the user follows a suggestion about using some hotkey, and that
-hotkey is really handled by hists_browser__run(), so allow for calling
-it with that hotkey, making it handle it instead of waiting for the user
-to press one.
+With this patch if an optional pointer is passed to ui__popup_menu()
+then when any key that is not being handled (ENTER, ESC, etc) is typed,
+it'll record that key in the pointer and return, allowing for hotkey
+processing on the caller.
+
+If NULL is passed, no change in logic, unhandled keys continue to be
+ignored.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
@@ -63,97 +65,121 @@ Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Kan Liang <kan.liang@intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-i0kwpuicoy4p1tyrw5k054zq@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-6ojn19mqzgmrdm8kdoigic0m@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-c2c.c       |  4 ++--
- tools/perf/ui/browsers/hists.c | 13 +++++++------
- tools/perf/ui/browsers/hists.h |  2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ tools/perf/ui/browsers/hists.c      |  4 ++--
+ tools/perf/ui/browsers/res_sample.c |  2 +-
+ tools/perf/ui/browsers/scripts.c    |  2 +-
+ tools/perf/ui/tui/util.c            | 12 ++++++++----
+ tools/perf/ui/util.h                |  2 +-
+ 5 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index e69f44941aad..346351260c0b 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -2384,7 +2384,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
- 	c2c_browser__update_nr_entries(browser);
- 
- 	while (1) {
--		key = hist_browser__run(browser, "? - help", true);
-+		key = hist_browser__run(browser, "? - help", true, 0);
- 
- 		switch (key) {
- 		case 's':
-@@ -2453,7 +2453,7 @@ static int perf_c2c__hists_browse(struct hists *hists)
- 	c2c_browser__update_nr_entries(browser);
- 
- 	while (1) {
--		key = hist_browser__run(browser, "? - help", true);
-+		key = hist_browser__run(browser, "? - help", true, 0);
- 
- 		switch (key) {
- 		case 'q':
 diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-index 6dfdd8d5a743..3b7af5a8d101 100644
+index 3b7af5a8d101..da7de49b3553 100644
 --- a/tools/perf/ui/browsers/hists.c
 +++ b/tools/perf/ui/browsers/hists.c
-@@ -673,9 +673,8 @@ static int hist_browser__title(struct hist_browser *browser, char *bf, size_t si
+@@ -2389,7 +2389,7 @@ static int switch_data_file(void)
+ 	closedir(pwd_dir);
+ 
+ 	if (nr_options) {
+-		choice = ui__popup_menu(nr_options, options);
++		choice = ui__popup_menu(nr_options, options, NULL);
+ 		if (choice < nr_options && choice >= 0) {
+ 			tmp = strdup(abs_path[choice]);
+ 			if (tmp) {
+@@ -3275,7 +3275,7 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
+ 		do {
+ 			struct popup_action *act;
+ 
+-			choice = ui__popup_menu(nr_options, options);
++			choice = ui__popup_menu(nr_options, options, NULL);
+ 			if (choice == -1 || choice >= nr_options)
+ 				break;
+ 
+diff --git a/tools/perf/ui/browsers/res_sample.c b/tools/perf/ui/browsers/res_sample.c
+index 76d356a18790..7cb2d6678039 100644
+--- a/tools/perf/ui/browsers/res_sample.c
++++ b/tools/perf/ui/browsers/res_sample.c
+@@ -56,7 +56,7 @@ int res_sample_browse(struct res_sample *res_samples, int num_res,
+ 			return -1;
+ 		}
+ 	}
+-	choice = ui__popup_menu(num_res, names);
++	choice = ui__popup_menu(num_res, names, NULL);
+ 	for (i = 0; i < num_res; i++)
+ 		zfree(&names[i]);
+ 	free(names);
+diff --git a/tools/perf/ui/browsers/scripts.c b/tools/perf/ui/browsers/scripts.c
+index fc733a6354d4..47d2c7a8cbe1 100644
+--- a/tools/perf/ui/browsers/scripts.c
++++ b/tools/perf/ui/browsers/scripts.c
+@@ -126,7 +126,7 @@ static int list_scripts(char *script_name, bool *custom,
+ 			SCRIPT_FULLPATH_LEN);
+ 	if (num < 0)
+ 		num = 0;
+-	choice = ui__popup_menu(num + max_std, (char * const *)names);
++	choice = ui__popup_menu(num + max_std, (char * const *)names, NULL);
+ 	if (choice < 0) {
+ 		ret = -1;
+ 		goto out;
+diff --git a/tools/perf/ui/tui/util.c b/tools/perf/ui/tui/util.c
+index b98dd0e31dc1..0f562e2cb1e8 100644
+--- a/tools/perf/ui/tui/util.c
++++ b/tools/perf/ui/tui/util.c
+@@ -23,7 +23,7 @@ static void ui_browser__argv_write(struct ui_browser *browser,
+ 	ui_browser__write_nstring(browser, *arg, browser->width);
  }
  
- int hist_browser__run(struct hist_browser *browser, const char *help,
--		      bool warn_lost_event)
-+		      bool warn_lost_event, int key)
+-static int popup_menu__run(struct ui_browser *menu)
++static int popup_menu__run(struct ui_browser *menu, int *keyp)
  {
--	int key;
- 	char title[160];
- 	struct hist_browser_timer *hbt = browser->hbt;
- 	int delay_secs = hbt ? hbt->refresh : 0;
-@@ -688,9 +687,12 @@ int hist_browser__run(struct hist_browser *browser, const char *help,
- 	if (ui_browser__show(&browser->b, title, "%s", help) < 0)
- 		return -1;
+ 	int key;
  
-+	if (key)
-+		goto do_hotkey;
-+
- 	while (1) {
- 		key = ui_browser__run(&browser->b, delay_secs);
+@@ -45,6 +45,11 @@ static int popup_menu__run(struct ui_browser *menu)
+ 			key = -1;
+ 			break;
+ 		default:
++			if (keyp) {
++				*keyp = key;
++				key = menu->nr_entries;
++				break;
++			}
+ 			continue;
+ 		}
+ 
+@@ -55,7 +60,7 @@ static int popup_menu__run(struct ui_browser *menu)
+ 	return key;
+ }
+ 
+-int ui__popup_menu(int argc, char * const argv[])
++int ui__popup_menu(int argc, char * const argv[], int *keyp)
+ {
+ 	struct ui_browser menu = {
+ 		.entries    = (void *)argv,
+@@ -64,8 +69,7 @@ int ui__popup_menu(int argc, char * const argv[])
+ 		.write	    = ui_browser__argv_write,
+ 		.nr_entries = argc,
+ 	};
 -
-+do_hotkey:
- 		switch (key) {
- 		case K_TIMER: {
- 			u64 nr_entries;
-@@ -2994,8 +2996,7 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
+-	return popup_menu__run(&menu);
++	return popup_menu__run(&menu, keyp);
+ }
  
- 		nr_options = 0;
+ int ui_browser__input_window(const char *title, const char *text, char *input,
+diff --git a/tools/perf/ui/util.h b/tools/perf/ui/util.h
+index 40891942f465..e30cea807564 100644
+--- a/tools/perf/ui/util.h
++++ b/tools/perf/ui/util.h
+@@ -5,7 +5,7 @@
+ #include <stdarg.h>
  
--		key = hist_browser__run(browser, helpline,
--					warn_lost_event);
-+		key = hist_browser__run(browser, helpline, warn_lost_event, 0);
- 
- 		if (browser->he_selection != NULL) {
- 			thread = hist_browser__selected_thread(browser);
-@@ -3573,7 +3574,7 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
- 	memset(&action, 0, sizeof(action));
- 
- 	while (1) {
--		key = hist_browser__run(browser, "? - help", true);
-+		key = hist_browser__run(browser, "? - help", true, 0);
- 
- 		switch (key) {
- 		case 'q':
-diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/hists.h
-index 078f2f2c7abd..1e938d9ffa5e 100644
---- a/tools/perf/ui/browsers/hists.h
-+++ b/tools/perf/ui/browsers/hists.h
-@@ -34,7 +34,7 @@ struct hist_browser {
- struct hist_browser *hist_browser__new(struct hists *hists);
- void hist_browser__delete(struct hist_browser *browser);
- int hist_browser__run(struct hist_browser *browser, const char *help,
--		      bool warn_lost_event);
-+		      bool warn_lost_event, int key);
- void hist_browser__init(struct hist_browser *browser,
- 			struct hists *hists);
- #endif /* _PERF_UI_BROWSER_HISTS_H_ */
+ int ui__getch(int delay_secs);
+-int ui__popup_menu(int argc, char * const argv[]);
++int ui__popup_menu(int argc, char * const argv[], int *keyp);
+ int ui__help_window(const char *text);
+ int ui__dialog_yesno(const char *msg);
+ void __ui__info_window(const char *title, const char *text, const char *exit_msg);
 -- 
 2.21.0
 
