@@ -2,59 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2711123602
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:54:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 007E41235B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbfLQTyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:54:10 -0500
-Received: from mga02.intel.com ([134.134.136.20]:22025 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfLQTyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:54:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 11:54:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
-   d="scan'208";a="389942477"
-Received: from vramados-mobl.amr.corp.intel.com (HELO [10.254.1.250]) ([10.254.1.250])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 11:54:05 -0800
-Subject: Re: [alsa-devel] [PATCH 00/10] mfd: Add support for Analog Devices
- A2B transceiver
-To:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
-        lee.jones@linaro.org
-References: <20191209183511.3576038-1-daniel@zonque.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
-Date:   Tue, 17 Dec 2019 13:29:20 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727717AbfLQTav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:30:51 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57272 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbfLQTav (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 14:30:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4Y+l+qhRX82wNX6+96r8AekxTBZHO3NyqH8i08v//ic=; b=I0yTPH9PqNzkbnYw5oHkxqfZV
+        JShDIrdEjFa2vyW56mqcBkjoxXZmlp3Cd3M8TYaYvtHfhL2gVdYE0LiFWRmpRg/0imbuVu5ohetcG
+        cP56HrseOQ+UaH6aHigkFXz4evsNqGfsnVOW7xIrdL+rT68le4kMC4Jq5UWh1oC48nitMXbwb1Usg
+        Kqd2Jn7ZJ15UqomNZLHNkkeEXCkD0EbLhWYzGA+vqg02SqTsBDagb9aDECM5izb5f6jQ2QNIRDPCt
+        n/ooyQejYP5zQCmMRY8CAtWQODh04RFhtYYGLrW5f7fhPkHa54zCyPhuHDANJ82mcmLye+z44XXLm
+        pDgz6jGgQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihIYL-00054y-Oa; Tue, 17 Dec 2019 19:30:42 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5DC5630038D;
+        Tue, 17 Dec 2019 20:29:16 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 0EEE22B2B0509; Tue, 17 Dec 2019 20:30:39 +0100 (CET)
+Date:   Tue, 17 Dec 2019 20:30:39 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] timer fixes
+Message-ID: <20191217193039.GF2844@hirez.programming.kicks-ass.net>
+References: <20191217115547.GA68104@gmail.com>
+ <CAHk-=wiVZMU69qB7nmkkyvjtDenQ+89V94V=3mmdY88uWYrZiQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191209183511.3576038-1-daniel@zonque.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiVZMU69qB7nmkkyvjtDenQ+89V94V=3mmdY88uWYrZiQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 17, 2019 at 11:14:48AM -0800, Linus Torvalds wrote:
+> On Tue, Dec 17, 2019 at 3:55 AM Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > Add HPET quirks for the Intel "Coffee Lake H" and "Ice Lake" platforms.
+> 
+> Is there any reason we don't force-disable HPET by default if there
+> are alternatives?
 
-> Transceivers can both receive and provide audio, and streams can be
-> routed from one node to any other, including many others. The tricky
-> bit is how to expose the audio routing in DT in a sane way.
-> The way it is implemented here, the slave nodes specify the number of
-> slots they each consume and generate, and which thereof they forward
-> from one side to the other. This mimics the internal register
-> structure and should allow for even exotic setups.
+What alternatives are there? That is, we normally only use HPET to
+double check nobody messed up the TSC.
 
-It was my understanding that the A2B bus is bidirectional but with 
-separate time windows allocated for host->device and device->host 
-transmission. The wording seems to hint at device-to-device 
-communication but I wonder if this is really what you meant.
+Now it (fingers crossed) seems to be getting better in that more recent
+firmware is less likely to wreck TSC, but we're still running this on
+plenty of old machines where TSC really isn't all that sane.
+
+We can't just blindly trust TSC across everything x86.
