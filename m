@@ -2,227 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 640A4123671
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:05:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0C7D12367B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 21:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfLQUFc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 15:05:32 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36389 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728126AbfLQUF3 (ORCPT
+        id S1727780AbfLQUGE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 15:06:04 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43791 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfLQUGD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 15:05:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576613128;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=r9zDOVhpgif2r8wUOSynylPPUD8w13YV6BIbZ8Cxr3I=;
-        b=VEIA4q3xLdaTvnttoVaUqvgc/66g8iLrMHNJPLGXmZu9iYVGfgfiUEkL/u6BDX8p+UV60Q
-        FciEVHn0y2W+ysY0EOkJrFdxzoPV3JYZkpe15twinx9sKpuhGA9ZfTNwUnLtwc7jotrEhl
-        7GuZ4hnS8/NKjFDg4pXajfVS/hb3/co=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-224-9W2NCPbKMJqPR5OnkoERkQ-1; Tue, 17 Dec 2019 15:05:20 -0500
-X-MC-Unique: 9W2NCPbKMJqPR5OnkoERkQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C1DFE108598D;
-        Tue, 17 Dec 2019 20:05:16 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-123-81.rdu2.redhat.com [10.10.123.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A9C7B5D9E1;
-        Tue, 17 Dec 2019 20:05:13 +0000 (UTC)
-Subject: Re: [PATCH v7 5/5] locking/qspinlock: Introduce the shuffle reduction
- optimization into CNA
-To:     Alex Kogan <alex.kogan@oracle.com>
-Cc:     rahul.x.yadav@oracle.com, tglx@linutronix.de,
-        linux@armlinux.org.uk, hpa@zytor.com, dave.dice@oracle.com,
-        mingo@redhat.com, will.deacon@arm.com, arnd@arndb.de,
-        jglauber@marvell.com, guohanjun@huawei.com, x86@kernel.org,
-        daniel.m.jordan@oracle.com, steven.sistare@oracle.com,
-        bp@alien8.de, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        linux-arch@vger.kernel.org
-References: <f1164ae9-ebcf-41f0-8395-224cdb0f249d@default>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <64c7b7fd-079c-55d1-258c-8c23802b992d@redhat.com>
-Date:   Tue, 17 Dec 2019 15:05:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Tue, 17 Dec 2019 15:06:03 -0500
+Received: by mail-ot1-f67.google.com with SMTP id p8so15077595oth.10
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 12:06:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EgcM3vc0ZSfajVYBW3jpsISkfHzXaQbZ2787YmHbQ6c=;
+        b=OHiLswZP/NI5ZTrjsWcf3N5aSKGxVSU34yUgdVuDV2cftv6HYQb+PLBoymqeOqMxP+
+         D5qc+EN9YFueg4RiLwD5M+WsD25yBv6JC7A2P4j5UBLRNiMDiaugwfbqdw/CWFyahPXZ
+         zZ8oRgJZeNBXStl7HTfdf9Ae9hcvYGh6pDVjj9q4vbtdwiB+pUf2zAWf6HfcwFd+jUrv
+         aIoTsEkx1MK6nomOBiRH89FZ+BDIQipj+7pHfvIElupDBtRecWPv9H0Dbj+4fjlDgXVo
+         6rwKF/g2otXn/wIqzB8DPrJuQX7MhbURYk21VUSkrEMZiFxCp+57WbaPVi2KLoYF+1QO
+         2r3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EgcM3vc0ZSfajVYBW3jpsISkfHzXaQbZ2787YmHbQ6c=;
+        b=Yg9Kr1IisBvZpEhbU5fhl5Rns5U6grk4Nxu6ztgNs0BCoaUhnijck0YbljdKubG5dJ
+         +uxmfsNBub/6wmLbee+qXB58SDaFdcVFnhEPm6eeJVrSEd+pfaPy5Gn4gTl+PgSYMDSl
+         ksmVrBtPEu68QHW7ejZlqg/KQ8IpQwKdliTykBFE1VUhCd89cFOV42mwHZmC8hwBpK/s
+         CGvWSlh58imdKOWmKHUSKSnBUNjqQZl7U0nMQjnSvoex0UFNNz4S0NPLPLd3GIMjJFNy
+         gdBzs1KAltCk6HjPF0BIJvMm/boVeM4h88wospr1t/cPnXdLIa9tOoSA5gQgeua7duRU
+         802Q==
+X-Gm-Message-State: APjAAAUEZ5VZzHPgc9LFwWnmcjYQEpPBOtnsv70F5T0DoPvabwni70qV
+        2VNsY0JHqgiILCRloefLJCJunXzrPJTAcXHJ5q/tMw==
+X-Google-Smtp-Source: APXvYqz1EBmRWccePNkjo39wUIVivMFlFzt6nqIufy0Ymh7XqrHk183/c4rF9JFEi2L6arjokRalY8S3b7lsAdfkhV8=
+X-Received: by 2002:a05:6830:154c:: with SMTP id l12mr39578362otp.275.1576613162751;
+ Tue, 17 Dec 2019 12:06:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f1164ae9-ebcf-41f0-8395-224cdb0f249d@default>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-Content-Transfer-Encoding: quoted-printable
+References: <20191212181422.31033-1-linux@dominikbrodowski.net>
+ <157644301187.32474.6697415383792507785.pr-tracker-bot@kernel.org>
+ <CAJmaN=ksaH5AgRUdVPGWKZzjEinU+goaCqedH1PW6OmKYc_TuA@mail.gmail.com> <20191217193755.GA4075755@kroah.com>
+In-Reply-To: <20191217193755.GA4075755@kroah.com>
+From:   Jesse Barnes <jsbarnes@google.com>
+Date:   Tue, 17 Dec 2019 12:05:51 -0800
+Message-ID: <CAJmaN=kxg3O+dss2ccfFAP85wAce2a5KS+4ednt71JHOe7CvqQ@mail.gmail.com>
+Subject: Re: [GIT PULL] remove ksys_mount() and ksys_dup()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     pr-tracker-bot@kernel.org,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/19 1:56 PM, Alex Kogan wrote:
-> ----- longman@redhat.com wrote:
+On Tue, Dec 17, 2019 at 11:38 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
->> On 11/25/19 4:07 PM, Alex Kogan wrote:
->>> @@ -234,12 +263,13 @@ __always_inline u32 cna_pre_scan(struct
->> qspinlock *lock,
->>>  	struct cna_node *cn =3D (struct cna_node *)node;
->>> =20
->>>  	/*
->>> -	 * setting @pre_scan_result to 1 indicates that no post-scan
->>> +	 * setting @pre_scan_result to 1 or 2 indicates that no post-scan
->>>  	 * should be made in cna_pass_lock()
->>>  	 */
->>>  	cn->pre_scan_result =3D
->>> -		cn->intra_count =3D=3D intra_node_handoff_threshold ?
->>> -			1 : cna_scan_main_queue(node, node);
->>> +		(node->locked <=3D 1 && probably(SHUFFLE_REDUCTION_PROB_ARG)) ?
->>> +			1 : cn->intra_count =3D=3D intra_node_handoff_threshold ?
->>> +			2 : cna_scan_main_queue(node, node);
->>> =20
->>>  	return 0;
->>>  }
->>> @@ -253,12 +283,15 @@ static inline void cna_pass_lock(struct
->> mcs_spinlock *node,
->>> =20
->>>  	u32 scan =3D cn->pre_scan_result;
->>> =20
->>> +	if (scan =3D=3D 1)
->>> +		goto pass_lock;
->>> +
->>>  	/*
->>>  	 * check if a successor from the same numa node has not been found
->> in
->>>  	 * pre-scan, and if so, try to find it in post-scan starting from
->> the
->>>  	 * node where pre-scan stopped (stored in @pre_scan_result)
->>>  	 */
->>> -	if (scan > 1)
->>> +	if (scan > 2)
->>>  		scan =3D cna_scan_main_queue(node, decode_tail(scan));
->>> =20
->>>  	if (!scan) { /* if found a successor from the same numa node */
->>> @@ -281,5 +314,6 @@ static inline void cna_pass_lock(struct
->> mcs_spinlock *node,
->>>  		tail_2nd->next =3D next;
->>>  	}
->>> =20
->>> +pass_lock:
->>>  	arch_mcs_pass_lock(&next_holder->locked, val);
->>>  }
->> I think you might have mishandled the proper accounting of
->> intra_count.
->> How about something like:
->>
->> diff --git a/kernel/locking/qspinlock_cna.h
->> b/kernel/locking/qspinlock_cna.h
->> index f1eef6bece7b..03f8fdec2b80 100644
->> --- a/kernel/locking/qspinlock_cna.h
->> +++ b/kernel/locking/qspinlock_cna.h
->> @@ -268,7 +268,7 @@ __always_inline u32 cna_pre_scan(struct qspinlock
->> *lock,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cn->pre_scan_result =3D
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 (node->locked <=3D 1 &&
->> probably(SHUFFLE_REDUCTION_PROB_ARG)) ?
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 : cn->i=
-ntra_count =3D=3D
->> intra_node_handoff_threshold ?
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 : cn->i=
-ntra_count >=3D
->> intra_node_handoff_threshold ?
-> We reset =E2=80=98intra_count' in cna_init_node(), which is called befo=
-re we enter=20
-> the slow path, and set it at most once when we pass the internal (CNA) =
-lock
-> by taking the owner=E2=80=99s value + 1. Only after we get the internal=
- lock, we
-> call this cna_pre_scan() function, where we check the threshold.=20
-> IOW, having 'intra_count > intra_node_handoff_threshold' would mean a b=
-ug,=20
-> and having =E2=80=9C>=3D=E2=80=9C would mask it.=20
-> Perhaps I can add WARN_ON(cn->intra_count > intra_node_handoff_threshol=
-d)
-> here instead, although I'm not sure if that is a good idea performance-=
-wise.
-
-The code that I added below could have the possibility of making
-intra_count > intra_node_handoff_threshold. I agree with your assessment
-of the current code. This conditional check is fine if no further change
-is made.
-
-
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2 : cn=
-a_scan_main_queue(node, node);
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->> @@ -283,9 +283,6 @@ static inline void cna_pass_lock(struct
->> mcs_spinlock
->> *node,
->> =C2=A0
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 scan =3D cn->pre_scan_r=
-esult;
->> =C2=A0
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan =3D=3D 1)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 goto pass_lock;
->> -
-> The thing is that we want to avoid as much of the shuffling-related ove=
-rhead
-> as we can when the spinlock is only lightly contended. That's why we ha=
-ve this
-> early exit here that avoids the rest of the logic of triaging through p=
-ossible
-> 'scan' values.
-That is a valid point. Maybe you can document that fact you are
-optimizing for performance instead of better correctness.
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * check if a successo=
-r from the same numa node has not been
->> found in
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * pre-scan, and if so=
-, try to find it in post-scan starting
->> from the
->> @@ -294,7 +291,13 @@ static inline void cna_pass_lock(struct
->> mcs_spinlock *node,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan > 2)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 scan =3D cna_scan_main_queue(node, decode_tail(scan));
->> =C2=A0
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!scan) { /* if found a succe=
-ssor from the same numa node
->> */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (scan <=3D 1) { /* if found a=
- successor from the same numa
->> node */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 /* inc @intra_count if the secondary queue is not
->> empty */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 ((struct cna_node *)next_holder)->intra_count =3D
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cn->intra=
-_count + (node->locked > 1);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 if ((scan =3D=3D 1)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto pass=
-_lock;
->> +
-> Hmm, I am not sure this makes the code any better/more readable,
-> while this does add the overhead of going through 3 branches before
-> jumping to 'pass_lock'.
+> On Tue, Dec 17, 2019 at 11:33:38AM -0800, Jesse Barnes wrote:
+> > Still debugging, but this causes a panic in console_on_rootfs() when we try
+> > to dup the fds for stderr and stdout.  Probably because in my config I have
+> > VT and framebuffer console disabled?
+> > Reverting 8243186f0cc7c57cf9d6a110cd7315c44e3e0be8
+> > and b49a733d684e0096340b93e9dfd471f0e3ddc06d worked around it for now...
 >
-This is just a suggestion for improving the correctness of the code. I
-am fine if you opt for better performance.
+> Should already be fixed in Linus's tree.
 
-Cheers,
-Longman
+Arg sorry for the html mail.  I see the reverts now.
 
+Thanks,
+Jesse
