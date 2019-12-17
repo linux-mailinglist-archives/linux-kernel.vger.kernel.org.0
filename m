@@ -2,178 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F2A123252
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 17:24:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CDA45123256
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 17:24:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbfLQQYM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 11:24:12 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:29704 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728135AbfLQQYM (ORCPT
+        id S1728523AbfLQQYo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 11:24:44 -0500
+Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:52712 "EHLO
+        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728245AbfLQQYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 11:24:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576599850;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sBtizMbTglHAVgP9sAvfiVMx/37lk14Twc9yWt9Vr3U=;
-        b=AX2h+P9AzmnS7VbrBCRKt6eo/TVfMoVWjYfysL+lkWH8BcZvFuVkJr8ZUVCSHLz8+OwTyZ
-        R6p+1MUKvWtEQ0w7otBUrQ70H4SMKJgq1vILoBWZTgna45T9Sg7MIJRuOzfpYzF+AbB9Um
-        IVotxbNkmJJD/i8cEVs+4rEloYaFteE=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-61-eokKlQ3MNzioGlPPrhbsFw-1; Tue, 17 Dec 2019 11:24:08 -0500
-X-MC-Unique: eokKlQ3MNzioGlPPrhbsFw-1
-Received: by mail-qt1-f198.google.com with SMTP id l25so7283042qtu.0
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 08:24:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sBtizMbTglHAVgP9sAvfiVMx/37lk14Twc9yWt9Vr3U=;
-        b=uQqGZtysBhgAltRxRQCqcblUfNsT1OPcCfBQ2PzEnCaaLpBDkMCut+taL2M3n7olQr
-         mlQs1KdaXVUKo+g4qtZTOzp3HGCeMdpgdsxL5DfjE2aXceEy5GnxX251uiKLE869oX+B
-         enD+T2B0IIlkZWAuxxjbZ/+AJg3/B/Nk5+TlaWQe/yZ4RG9/qnJAuYLzJrwtr9pAANVM
-         vkNj6D4ffx2pmGJvjbk1OMKlSBUzjLKSbY8dLDU66eLBtUHn1IFvmndtstYxyNr0B1mx
-         TL98iUbzip7SXIGGIL/j3PKZIj/hk+tVHuAcAcGQZgpoiYbJLu7pQpDLJGS8p5tSgzsE
-         sWfA==
-X-Gm-Message-State: APjAAAVIYjFlPQMtJKGtP8nHxrEqnuA9+VrQDbyDVrIVLgD80G+2UyBh
-        cjbeQuOeB0G/bmbjt9/Be/a5f8xUq56cJHnpfguueoYiPm7J7IZeBNNXhHiBX72EY8U5J5E2ER4
-        iB2cJCcPmVJt+CvQDWNtOS7gR
-X-Received: by 2002:a37:a18b:: with SMTP id k133mr5955200qke.83.1576599847688;
-        Tue, 17 Dec 2019 08:24:07 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxAz74+chwPsWG0gYw0+NJ9gVdBbukEfTyvbr5tdg+B2YknGFiVYEg3aGaatgue+hYqx5FOKw==
-X-Received: by 2002:a37:a18b:: with SMTP id k133mr5955164qke.83.1576599847290;
-        Tue, 17 Dec 2019 08:24:07 -0800 (PST)
-Received: from xz-x1 ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id l184sm6933473qkc.107.2019.12.17.08.24.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 08:24:06 -0800 (PST)
-Date:   Tue, 17 Dec 2019 11:24:05 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191217162405.GD7258@xz-x1>
-References: <20191203184600.GB19877@linux.intel.com>
- <374f18f1-0592-9b70-adbb-0a72cc77d426@redhat.com>
- <20191209215400.GA3352@xz-x1>
- <affd9d84-1b84-0c25-c431-a075c58c33dc@redhat.com>
- <20191210155259.GD3352@xz-x1>
- <3e6cb5ec-66c0-00ab-b75e-ad2beb1d216d@redhat.com>
- <20191215172124.GA83861@xz-x1>
- <f117d46a-7528-ce32-8e46-4f3f35937079@redhat.com>
- <20191216185454.GG83861@xz-x1>
- <815923d9-2d48-2915-4acb-97eb90996403@redhat.com>
+        Tue, 17 Dec 2019 11:24:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1576599884; x=1608135884;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   in-reply-to:content-transfer-encoding;
+  bh=6CjLT/jXM24rz/CtEsr3sfgvACZw7Z+OWO4pwc33DNA=;
+  b=DF1XF4tpPFRfpi5PB+Nzc6esRN/lmuTrT630ln4dVUqiPWUNCGp020kL
+   kq2DgD5HEM/4+VvPsCP2Hwki23CPZ+9V77gpzRgqqpNuB9FbAT8jih/d8
+   9eflJ5kLxTPYHawNDofoH/SL8GBtyNjUSx1ZScF2wqnyBgjXxV4iTcmsa
+   s=;
+IronPort-SDR: l/5bBVqxQm+PGBhtTf/q0S//8Ztt3FG2SPwySz7BkUjYe4bKLQS0PyvVYKwTQiZO1BdfSZNFme
+ t5zCG84erTug==
+X-IronPort-AV: E=Sophos;i="5.69,326,1571702400"; 
+   d="scan'208";a="9474974"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 17 Dec 2019 16:24:43 +0000
+Received: from EX13MTAUEA002.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-2c665b5d.us-east-1.amazon.com (Postfix) with ESMTPS id 3F287A221F;
+        Tue, 17 Dec 2019 16:24:40 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
+ id 15.0.1236.3; Tue, 17 Dec 2019 16:24:39 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.161.205) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 17 Dec 2019 16:24:34 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     =?UTF-8?q?J=C3=BCrgen=20Gro=C3=9F?= <jgross@suse.com>
+CC:     SeongJae Park <sjpark@amazon.com>, <axboe@kernel.dk>,
+        <konrad.wilk@oracle.com>, <roger.pau@citrix.com>,
+        <linux-block@vger.kernel.org>, <pdurrant@amazon.com>,
+        SeongJae Park <sjpark@amazon.de>,
+        <linux-kernel@vger.kernel.org>, <sj38.park@gmail.com>,
+        <xen-devel@lists.xenproject.org>
+Subject: Re: Re: [Xen-devel] [PATCH v11 2/6] xenbus/backend: Protect xenbus callback with lock
+Date:   Tue, 17 Dec 2019 17:24:06 +0100
+Message-ID: <20191217162406.4711-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <815923d9-2d48-2915-4acb-97eb90996403@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <44327bf3-45ed-3e5a-3984-36ea40f53fc5@suse.com> (raw)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.43.161.205]
+X-ClientProxiedBy: EX13D02UWB004.ant.amazon.com (10.43.161.11) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 10:01:40AM +0100, Paolo Bonzini wrote:
-> On 16/12/19 19:54, Peter Xu wrote:
-> > On Mon, Dec 16, 2019 at 11:08:15AM +0100, Paolo Bonzini wrote:
-> >>> Although now because we have kvm_get_running_vcpu() all cases for [&]
-> >>> should be fine without changing anything, but I tend to add another
-> >>> patch in the next post to convert all the [&] cases explicitly to pass
-> >>> vcpu pointer instead of kvm pointer to be clear if no one disagrees,
-> >>> then we verify that against kvm_get_running_vcpu().
-> >>
-> >> This is a good idea but remember not to convert those to
-> >> kvm_vcpu_write_guest, because you _don't_ want these writes to touch
-> >> SMRAM (most of the addresses are OS-controlled rather than
-> >> firmware-controlled).
+On Tue, 17 Dec 2019 17:13:42 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
+
+> On 17.12.19 17:07, SeongJae Park wrote:
+> > From: SeongJae Park <sjpark@amazon.de>
 > > 
-> > OK.  I think I only need to pass in vcpu* instead of kvm* in
-> > kvm_write_guest_page() just like kvm_vcpu_write_guest(), however we
-> > still keep to only write to address space id==0 for that.
-> 
-> No, please pass it all the way down to the [&] functions but not to
-> kvm_write_guest_page.  Those should keep using vcpu->kvm.
-
-Actually I even wanted to refactor these helpers.  I mean, we have two
-sets of helpers now, kvm_[vcpu]_{read|write}*(), so one set is per-vm,
-the other set is per-vcpu.  IIUC the only difference of these two are
-whether we should consider ((vcpu)->arch.hflags & HF_SMM_MASK) or we
-just write to address space zero always.  Could we unify them into a
-single set of helper (I'll just drop the *_vcpu_* helpers because it's
-longer when write) but we always pass in vcpu* as the first parameter?
-Then we add another parameter "vcpu_smm" to show whether we want to
-consider the HF_SMM_MASK flag.
-
-Kvmgt is of course special here because it does not have vcpu context,
-but as we're going to rework that, I'd like to know whether you agree
-with above refactoring if without the kvmgt caller.
-
-> 
-> >>> init_rmode_tss or init_rmode_identity_map.  But I've marked them as
-> >>> unimportant because they should only happen once at boot.
-> >>
-> >> We need to check if userspace can add an arbitrary number of entries by
-> >> calling KVM_SET_TSS_ADDR repeatedly.  I think it can; we'd have to
-> >> forbid multiple calls to KVM_SET_TSS_ADDR which is not a problem in general.
+> > 'reclaim_memory' callback can race with a driver code as this callback
+> > will be called from any memory pressure detected context.  To deal with
+> > the case, this commit adds a spinlock in the 'xenbus_device'.  Whenever
+> > 'reclaim_memory' callback is called, the lock of the device which passed
+> > to the callback as its argument is locked.  Thus, drivers registering
+> > their 'reclaim_memory' callback should protect the data that might race
+> > with the callback with the lock by themselves.
 > > 
-> > Will do that altogether with the series.  I can further change both of
-> > these calls to not track dirty at all, which shouldn't be hard, after
-> > all userspace didn't even know them, as you mentioned below.
+> > Signed-off-by: SeongJae Park <sjpark@amazon.de>
+> > ---
+> >   drivers/xen/xenbus/xenbus_probe.c         |  1 +
+> >   drivers/xen/xenbus/xenbus_probe_backend.c | 10 ++++++++--
+> >   include/xen/xenbus.h                      |  2 ++
+> >   3 files changed, 11 insertions(+), 2 deletions(-)
 > > 
-> > Is there anything to explain what KVM_SET_TSS_ADDR is used for?  This
-> > is the thing I found that is closest to useful (from api.txt):
+> > diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+> > index 5b471889d723..b86393f172e6 100644
+> > --- a/drivers/xen/xenbus/xenbus_probe.c
+> > +++ b/drivers/xen/xenbus/xenbus_probe.c
+> > @@ -472,6 +472,7 @@ int xenbus_probe_node(struct xen_bus_type *bus,
+> >   		goto fail;
+> >   
+> >   	dev_set_name(&xendev->dev, "%s", devname);
+> > +	spin_lock_init(&xendev->reclaim_lock);
+> >   
+> >   	/* Register with generic device framework. */
+> >   	err = device_register(&xendev->dev);
+> > diff --git a/drivers/xen/xenbus/xenbus_probe_backend.c b/drivers/xen/xenbus/xenbus_probe_backend.c
+> > index 7e78ebef7c54..516aa64b9967 100644
+> > --- a/drivers/xen/xenbus/xenbus_probe_backend.c
+> > +++ b/drivers/xen/xenbus/xenbus_probe_backend.c
+> > @@ -251,12 +251,18 @@ static int backend_probe_and_watch(struct notifier_block *notifier,
+> >   static int backend_reclaim_memory(struct device *dev, void *data)
+> >   {
+> >   	const struct xenbus_driver *drv;
+> > +	struct xenbus_device *xdev;
+> > +	unsigned long flags;
+> >   
+> >   	if (!dev->driver)
+> >   		return 0;
+> >   	drv = to_xenbus_driver(dev->driver);
+> > -	if (drv && drv->reclaim_memory)
+> > -		drv->reclaim_memory(to_xenbus_device(dev));
+> > +	if (drv && drv->reclaim_memory) {
+> > +		xdev = to_xenbus_device(dev);
+> > +		spin_trylock_irqsave(&xdev->reclaim_lock, flags);
 > 
-> The best description is probably at https://lwn.net/Articles/658883/:
-> 
-> They are needed for unrestricted_guest=0. Remember that, in that case,
-> the VM always runs in protected mode and with paging enabled. In order
-> to emulate real mode you put the guest in a vm86 task, so you need some
-> place for a TSS and for a page table, and they must be in guest RAM
-> because the guest's TR and CR3 points to it. They are invisible to the
-> guest, because the STR and MOV-from-CR instructions are invalid in vm86
-> mode, but it must be there.
-> 
-> If you don't call KVM_SET_TSS_ADDR you actually get a complaint in
-> dmesg, and the TR stays at 0. I am not really sure what kind of bad
-> things can happen with unrestricted_guest=0, probably you just get a VM
-> Entry failure. The TSS takes 3 pages of memory. An interesting point is
-> that you actually don't need to set the TR selector to a valid value (as
-> you would do when running in "normal" vm86 mode), you can simply set the
-> base and limit registers that are hidden in the processor, and generally
-> inaccessible except through VMREAD/VMWRITE or system management mode. So
-> KVM needs to set up a TSS but not a GDT.
-> 
-> For paging, instead, 1 page is enough because we have only 4GB of memory
-> to address. KVM disables CR4.PAE (page address extensions, aka 8-byte
-> entries in each page directory or page table) and enables CR4.PSE (page
-> size extensions, aka 4MB huge pages support with 4-byte page directory
-> entries). One page then fits 1024 4-byte page directory entries, each
-> for a 4MB huge pages, totaling exactly 4GB. Here if you don't set it the
-> page table is at address 0xFFFBC000. QEMU changes it to 0xFEFFC000 so
-> that the BIOS can be up to 16MB in size (the default only allows 256k
-> between 0xFFFC0000 and 0xFFFFFFFF).
-> 
-> The different handling, where only the page table has a default, is
-> unfortunate, but so goes life...
-> 
-> > So... has it really popped into existance somewhere?  It would be good
-> > at least to know why it does not need to be migrated.
-> 
-> It does not need to be migrated just because the contents are constant.
+> You need spin_lock_irqsave() here. Or maybe spin_lock() would be fine,
+> too? I can't see a reason why you'd want to disable irqs here.
 
-OK, thanks!  IIUC they should likely be all zeros then.
+I needed to diable irq here as this is called from the memory shrinker context.
 
-Do you think it's time to add most of these to kvm/api.txt? :)  I can
-do that too if you like.
+Also, used 'trylock' because the 'probe()' and 'remove()' code of the driver
+might include memory allocation.  And the xen-blkback actually does.  If the
+allocation shows a memory pressure during the allocation, it will trigger this
+shrinker callback again and then deadlock.
 
--- 
-Peter Xu
 
+Thanks,
+SeongJae Park
+
+> 
+> > +		drv->reclaim_memory(xdev);
+> > +		spin_unlock_irqrestore(&xdev->reclaim_lock, flags);
+> > +	}
+> >   	return 0;
+> >   }
+> >   
+> > diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+> > index c861cfb6f720..d9468313061d 100644
+> > --- a/include/xen/xenbus.h
+> > +++ b/include/xen/xenbus.h
+> > @@ -76,6 +76,8 @@ struct xenbus_device {
+> >   	enum xenbus_state state;
+> >   	struct completion down;
+> >   	struct work_struct work;
+> > +	/* 'reclaim_memory' callback is called while this lock is acquired */
+> > +	spinlock_t reclaim_lock;
+> >   };
+> >   
+> >   static inline struct xenbus_device *to_xenbus_device(struct device *dev)
+> > 
+> 
+> 
+> Juergen
+> 
