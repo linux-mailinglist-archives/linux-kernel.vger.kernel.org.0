@@ -2,71 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F53F122A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:50:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BE5122AA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 12:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfLQLt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 06:49:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39104 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfLQLt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 06:49:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5504DACA7;
-        Tue, 17 Dec 2019 11:49:56 +0000 (UTC)
-Subject: Re: [PATCH] lib: crc64: include <linux/crc64.h> for 'crc64_be'
-To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20191217112633.2108845-1-ben.dooks@codethink.co.uk>
-From:   Coly Li <colyli@suse.de>
-Organization: SUSE Labs
-Message-ID: <2a06908d-8dc4-5c7f-a40c-e9fb9ec96e70@suse.de>
-Date:   Tue, 17 Dec 2019 19:49:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191217112633.2108845-1-ben.dooks@codethink.co.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1727747AbfLQLwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 06:52:34 -0500
+Received: from conuserg-09.nifty.com ([210.131.2.76]:29448 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfLQLwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 06:52:32 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id xBHBpwpM016333;
+        Tue, 17 Dec 2019 20:51:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com xBHBpwpM016333
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576583519;
+        bh=a+hfI4JORzXhpsCVcvfC7LTXQBulUva6+4DpZgrovXU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lrEFZnVSRjXeMh9fEwvw/xmNHZpuarjJTBDtaj2Wc8veQzxEUncv1CToyU4pGugnv
+         v9hef7f0ewG04UQoIKzE121VfJbNB42/3FvbJsCCTb3qfMDQ36x1+bEUqLpsG4Gqud
+         FxBaYqL9sHa5ekvFU7kqpXP9zORpsPjPIcZPz3r2UHRHsfF8eU260cpdGFB4XBJ48l
+         DMMDfBGIn3P0FSoGriBNxtCH0fKNETcl54A7DiyMHgNKfwOV/aaO+LPQIco1yui6eZ
+         F9fLyif0n2NbZuQ8ELzSYaPyhw7YvVWhc56r3aIRibk7qz7xF7FKcmN7NAECJq3E4x
+         R2M8nilKL0x4Q==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Ulf Magnusson <ulfalizer@gmail.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: remove ---help--- from documentation
+Date:   Tue, 17 Dec 2019 20:51:51 +0900
+Message-Id: <20191217115151.12465-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/17 7:26 下午, Ben Dooks (Codethink) wrote:
-> The crc64_be() is declared in <linux/crc64.h> so include
-> this where the symbol is defined to avoid the following
-> warning:
-> 
-> lib/crc64.c:43:12: warning: symbol 'crc64_be' was not declared. Should it be static?
-> 
-> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
+Commit 84af7a6194e4 ("checkpatch: kconfig: prefer 'help' over
+'---help---'"), scripts/checkpatch.pl warns the use of ---help---.
 
-It is good to me. Added to my for-test patches. Thanks.
+This still exists, but new code should avoid using it.
+Let's stop advertising it in documentation.
 
-Coly Li
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-> ---
-> Cc: Coly Li <colyli@suse.de>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  lib/crc64.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/lib/crc64.c b/lib/crc64.c
-> index 0ef8ae6ac047..f8928ce28280 100644
-> --- a/lib/crc64.c
-> +++ b/lib/crc64.c
-> @@ -28,6 +28,7 @@
->  
->  #include <linux/module.h>
->  #include <linux/types.h>
-> +#include <linux/crc64.h>
->  #include "crc64table.h"
->  
->  MODULE_DESCRIPTION("CRC64 calculations");
-> 
+ Documentation/kbuild/kconfig-language.rst | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/Documentation/kbuild/kconfig-language.rst b/Documentation/kbuild/kconfig-language.rst
+index 74bef19f69f0..231e6a64957f 100644
+--- a/Documentation/kbuild/kconfig-language.rst
++++ b/Documentation/kbuild/kconfig-language.rst
+@@ -196,14 +196,11 @@ applicable everywhere (see syntax).
+   or equal to the first symbol and smaller than or equal to the second
+   symbol.
+ 
+-- help text: "help" or "---help---"
++- help text: "help"
+ 
+   This defines a help text. The end of the help text is determined by
+   the indentation level, this means it ends at the first line which has
+   a smaller indentation than the first line of the help text.
+-  "---help---" and "help" do not differ in behaviour, "---help---" is
+-  used to help visually separate configuration logic from help within
+-  the file as an aid to developers.
+ 
+ - misc options: "option" <symbol>[=<value>]
+ 
+-- 
+2.17.1
+
