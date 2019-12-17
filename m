@@ -2,82 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 082F5123066
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA8CF123077
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfLQPe6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:34:58 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40552 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbfLQPe5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:34:57 -0500
-Received: by mail-qk1-f194.google.com with SMTP id c17so7778725qkg.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 07:34:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=content-transfer-encoding:from:mime-version:subject:date:message-id
-         :references:cc:in-reply-to:to;
-        bh=WIcgHN30dR2crDNHrX3sAimvrkTmgj4IY/+nrOsfb9k=;
-        b=PywzVWBsXibwF9hDhJCdPW2VL32SQKqTUSKd6D+9UIqoIV7pmnlbaOJ+qTm0m1E0uT
-         zFgW0p2F9QnGu1M/DylWPZyV5hnHz7D+ap0nWhNkLi86F7Q3MwF5Kbll87NdUFwBqgWX
-         wXv0O7g9neyrEpeGc6JNk9zpV1O7hOjyaDdTtePzsVisZH/y5QHKU890sIAYZJ9TXJsz
-         Zr/T/HpH6iUXsgmwVIILdLkrupJGp6j8eHGk2ibc3KSXeDV67Lr2jTB05m6geLtaJcXr
-         UuumkHs7gyxZeREiJ/AOjM8DSejbrBZvtPQRT3oVIWlugpNoxcFSHGMhQCfMKr4QF7mE
-         GdWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=WIcgHN30dR2crDNHrX3sAimvrkTmgj4IY/+nrOsfb9k=;
-        b=F/6OWpK93zXoCr/7zJPY35Q/WTbyT081E5egfkyUx9nyujdaNcbFgNDGLlPBOD26Z7
-         XGlfZqHrBxMmc69ne6ibnxXezMPxW5UQespprlDo2YQ84FWXIe/YpI4xuf7zu2NpolcC
-         BdhKvVC6lDsEhORVLoU8ZbQANaCx5HxIbjaZsLAciIe91PQPvlCLCsEwkDBSvIj2fHb8
-         Zvl3cdQ0/5qbC4lXs8W1BBHtIl/pkz8k3IMu5mCwc3iBHRTVzj+/cZP1o4DFPePCvNzv
-         lL1HYw6/6pi8AHg1WKY5gwbznuc3JcT2A+Ptk1yhkqikqz32KdyxXDOQue/ZTNkjNCHh
-         FKeA==
-X-Gm-Message-State: APjAAAVHZWes8L5AED+qSr5KvSztClG3RrSJYWz9bq4fuC+iPKKC6kA9
-        GbGIujHbA4MAhjxDuuqxej4pqQ==
-X-Google-Smtp-Source: APXvYqwvEuSRz1JrJXykeUpICkmJqlku5cTmZZfJ3EItoZnLotOClF6h+hnfPLEg0+oc3Xm2j+KD4A==
-X-Received: by 2002:ae9:e206:: with SMTP id c6mr5684828qkc.105.1576596896651;
-        Tue, 17 Dec 2019 07:34:56 -0800 (PST)
-Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id a66sm7220772qkb.27.2019.12.17.07.34.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 07:34:56 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   Qian Cai <cai@lca.pw>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] mm: memcontrol.c: move mem_cgroup_id_get_many under CONFIG_MMU
-Date:   Tue, 17 Dec 2019 10:34:55 -0500
-Message-Id: <CE79F821-F17D-489D-81A9-CD87AEA9C0ED@lca.pw>
-References: <20191217152814.GB136178@chrisdown.name>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <20191217152814.GB136178@chrisdown.name>
-To:     Chris Down <chris@chrisdown.name>
-X-Mailer: iPhone Mail (17C54)
+        id S1727873AbfLQPg7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:36:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33164 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727786AbfLQPg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:36:58 -0500
+Received: from rapoport-lnx (nesher1.haifa.il.ibm.com [195.110.40.7])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10E6D24650;
+        Tue, 17 Dec 2019 15:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576597018;
+        bh=9jZda11QUDAhqz9398m+GSMQFxNT4iopEeMhtjrMgyI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NH41AYB9/8GFEVCPKVDhcG2wQUXtFJ1TNKXDwSST/RWAfiHZcrYnqXljgFuylj11X
+         kOvMVkov690wSAdpRfV7l/Ep66t7Q8pyDzEXeJD8cI0ThsIffzs4qT7JbZGbvJU246
+         j12ugDJcKd4dH2cKnV0TDET6JeFzKy1Rh6FsAQic=
+Date:   Tue, 17 Dec 2019 17:36:52 +0200
+From:   Mike Rapoport <rppt@kernel.org>
+To:     Rich Felker <dalias@libc.org>
+Cc:     linux-sh@vger.kernel.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Rapoport <rppt@kernel.org>
+Subject: Re: [PATCH 0/2] sh: get rid of __ARCH_USE_5LEVEL_HACK
+Message-ID: <20191217153651.GB4094@rapoport-lnx>
+References: <20191217142150.10392-1-rppt@kernel.org>
+ <20191217151549.GH1666@brightrain.aerifal.cx>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217151549.GH1666@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 17, 2019 at 10:15:49AM -0500, Rich Felker wrote:
+> On Tue, Dec 17, 2019 at 04:21:48PM +0200, Mike Rapoport wrote:
+> > From: Mike Rapoport <rppt@linux.ibm.com>
+> > 
+> > Hi,
+> > 
+> > These patches update the SuperH page table folding/unfolding to take into
+> > account the 5th level.
+> 
+> Is this only for 64-bit/sh5? If so, I'd really like to avoid having
+> patch churn that nominally keeps it working, since it doesn't; GCC
+> dropped support a long time ago and it was experimental to begin with,
+> never appeared in production. Has anyone looked lately at what it
+> would take to remove it?
 
+This is a part of a generic cleanup of page table manipulations and removal
+of __ARCH_USE_5LEVEL_HACK and the related code from the kernel. So this is
+not related to a particular sh variant.
+ 
+> Rich
 
-> On Dec 17, 2019, at 10:28 AM, Chris Down <chris@chrisdown.name> wrote:
->=20
-> Maybe Qian is right and we should just ignore such patches, but I think th=
-at comes with its own risks that we will alienate perfectly well intentioned=
- new contributors to mm without them having any idea why we did that.
-
-Yes, that is a good point, but in reality is that there are many subsystems h=
-ave already done the same. We even have some famous introduction document fo=
-r kernel development put in the way that if =E2=80=9Cthe maintainers (or Lin=
-us) ignored your patches after the resend, they probably don=E2=80=99t like i=
-t.=E2=80=9D=
+-- 
+Sincerely yours,
+Mike.
