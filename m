@@ -2,128 +2,298 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 582C312246C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFA3122479
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:04:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfLQF7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 00:59:53 -0500
-Received: from rcdn-iport-4.cisco.com ([173.37.86.75]:53298 "EHLO
-        rcdn-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbfLQF7x (ORCPT
+        id S1727687AbfLQGEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 01:04:15 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:46721 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbfLQGEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 00:59:53 -0500
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Dec 2019 00:59:51 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2634; q=dns/txt; s=iport;
-  t=1576562391; x=1577771991;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=bGXWBeyhHcB2dqzyzM3uIDWKAkmJQndzdgQJb340dK0=;
-  b=URcB7Kd0MUZLLGhqLpxzQmYYdrgGTZEue+jCQLzIfQZ5TLUUACRgsgBg
-   3axP+Ayv6GcKvFVX1xXdUk14n2ywUVt+lM1g5SdtqmwLoUxY99E5RSsuz
-   y+Gw6bCrLxaTDY7Ksr8RD6YGV/0liHrUscQ5guO2+51H5kH2SdcWu8l47
-   o=;
-X-IronPort-AV: E=Sophos;i="5.69,324,1571702400"; 
-   d="scan'208";a="686174188"
-Received: from rcdn-core-2.cisco.com ([173.37.93.153])
-  by rcdn-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 17 Dec 2019 05:52:46 +0000
-Received: from sjc-ads-7483.cisco.com (sjc-ads-7483.cisco.com [10.30.221.19])
-        by rcdn-core-2.cisco.com (8.15.2/8.15.2) with ESMTP id xBH5qjqo030490;
-        Tue, 17 Dec 2019 05:52:46 GMT
-Received: by sjc-ads-7483.cisco.com (Postfix, from userid 838444)
-        id ACFE8128F; Mon, 16 Dec 2019 21:52:45 -0800 (PST)
-From:   Aviraj CJ <acj@cisco.com>
-To:     peppe.cavallaro@st.com, gregkh@linuxfoundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, xe-linux-external@cisco.com, acj@cisco.com
-Subject: [PATCH stable v4.4 2/2] net: stmmac: don't stop NAPI processing when dropping a packet
-Date:   Mon, 16 Dec 2019 21:52:28 -0800
-Message-Id: <20191217055228.57282-2-acj@cisco.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191217055228.57282-1-acj@cisco.com>
-References: <20191217055228.57282-1-acj@cisco.com>
+        Tue, 17 Dec 2019 01:04:15 -0500
+Received: by mail-qv1-f67.google.com with SMTP id t9so3727080qvh.13
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:04:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zm53ylP0p2qT9FgYhSZkybHEn/98akjmEu/E1W0fUBk=;
+        b=nelL45CNZYQldQYvjqK9KImSG39R8/LuJQGlrcuRzqZzZ0dnBybngEBUs/uC3uI+dT
+         pWkH83y/6iMV0k5ZoM1iFE3ZKadECKrmVQPF267uT2uUF4NULWRX/CoVMs5v3YkaorQN
+         slb6q3qUkkZZF0WXxN+4GpvBR/USYs+2W7z0c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zm53ylP0p2qT9FgYhSZkybHEn/98akjmEu/E1W0fUBk=;
+        b=sT7g1VohV1w0fpk2btpH8X6QtCV7SWpkTZZt9AUUC1wmHI0alkAcVCY8r1VtKMra6/
+         qLVSsD3LxdwbrqI+rWYm2MtgtF8POCHLGTcxUH/OOXWJ/XjBtMIfKmi4nfgqwb+A9Vjc
+         sVJUkXdRxKhKIncS6XkrvVdCylOZZNDo8e1wP9Pg0whGUqIlcO8oN+OhJuzXRZRzompV
+         pM4qGT9cHBGtweS4GqmflkuZLMofYyT7jMnneJszXMMU105ybu+IJMEU5Qyl9Gs8jQ8W
+         chMla70RrFOX5SfPX6L0HQs7SbFLbyMzOc/TocSB8DiK7rbpKf9uZp/4PB0A4gpZPdW8
+         H0Kw==
+X-Gm-Message-State: APjAAAXoK+aJ1igl9yEpZ75FgiGmsfxQeLUNvtH/6zuZ8oZiCPYnSy9G
+        fpC7Grzo1MMT++hGmiknKHjjQyHLNbIHtq4R/xCxJw==
+X-Google-Smtp-Source: APXvYqwDj8Xp/NtDVmLRrvy4l/nWgIQcpd0QEKmntAabZWclUxugBY7dVtpriVXG4KNjM2OeI1YmA2sRddbPo+Hl/ds=
+X-Received: by 2002:ad4:4182:: with SMTP id e2mr3068056qvp.187.1576562653270;
+ Mon, 16 Dec 2019 22:04:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.30.221.19, sjc-ads-7483.cisco.com
-X-Outbound-Node: rcdn-core-2.cisco.com
+References: <20191211061911.238393-1-hsinyi@chromium.org> <20191211061911.238393-3-hsinyi@chromium.org>
+ <20191213223816.GS4860@pendragon.ideasonboard.com> <CAJMQK-gFn8WeokxGfAZ-akNvdEbQhPj_3Ax2sD7Ti6JcSvjF4g@mail.gmail.com>
+ <CANMq1KDh=ehp0RDFRLQ5OCTibrK=Uzp2UFVLM+7AhwpVp-X=yQ@mail.gmail.com>
+ <20191216163910.GC14502@pendragon.ideasonboard.com> <CANMq1KA1OMMzwLVMhFeb-zLuPLJsXrvVMji=u0RZ_kWnQprvoA@mail.gmail.com>
+ <CANMq1KABX4RwNHDYaXHTpJXOQdO1HdnNy8=aAfaZTVPJaSfpfQ@mail.gmail.com> <20191217005209.GL4856@pendragon.ideasonboard.com>
+In-Reply-To: <20191217005209.GL4856@pendragon.ideasonboard.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Tue, 17 Dec 2019 14:04:02 +0800
+Message-ID: <CANMq1KDDEzPWhByEtn-EjNcg+ofVT2MW-hOXANGooYFOYJ35VA@mail.gmail.com>
+Subject: Re: [PATCH RESEND 2/4] drm: bridge: anx7688: Add anx7688 bridge
+ driver support.
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Russell King <rmk+kernel@arm.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-upstream 07b3975352374c3f5ebb4a42ef0b253fe370542d commit
+Hi,
 
-Currently, if we drop a packet, we exit from NAPI loop before the budget
-is consumed. In some situations this will make the RX processing stall
-e.g. when flood pinging the system with oversized packets, as the
-errorneous packets are not dropped efficiently.
+On Tue, Dec 17, 2019 at 8:52 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Nicolas,
+>
+> On Tue, Dec 17, 2019 at 08:40:51AM +0800, Nicolas Boichat wrote:
+> > (Brilliant, I managed to accidentally send the email below, and send
+> > it as HTML, sorry about that... ASCII art in gmail is hard ,-(
+>
+> No worries. I have been told it's indeed painful.
+>
+> > Take 2:)
+> >
+> > Hi Laurent,
+> >
+> > > On Tue, Dec 17, 2019 at 12:39 AM Laurent Pinchart wrote:
+> > > > On Mon, Dec 16, 2019 at 06:19:24PM +0800, Nicolas Boichat wrote:
+> > > > > On Mon, Dec 16, 2019 at 4:46 PM Hsin-Yi Wang wrote:
+> > > > > > On Sat, Dec 14, 2019 at 6:38 AM Laurent Pinchart wrote:
+> > > > > > > On Wed, Dec 11, 2019 at 02:19:09PM +0800, Hsin-Yi Wang wrote:
+> > > > > > > > From: Nicolas Boichat <drinkcat@chromium.org>
+> > > > > > > >
+> > > > > > > > ANX7688 is a HDMI to DP converter (as well as USB-C port controller),
+> > > > > > > > that has an internal microcontroller.
+> > > > > > > >
+> > > > > > > > The only reason a Linux kernel driver is necessary is to reject
+> > > > > > > > resolutions that require more bandwidth than what is available on
+> > > > > > > > the DP side. DP bandwidth and lane count are reported by the bridge
+> > > > > > > > via 2 registers on I2C.
+> > > > > > >
+> > > > > > > How about power, doesn't this chip have power supplies that potentially
+> > > > > > > need to be controlled ?
+> > > > > > >
+> > > > > > Ideally we should add power supplies as well, but the power is
+> > > > > > supplied by ec in mt8173 oak board. And we only have this board can
+> > > > > > test this driver. If we add power supplies in driver we can't test it.
+> > > > >
+> > > > > To clarify a bit more, this is because this chip is actually a
+> > > > > TCPC+mux+HDMI=>DP converter
+> > > > > (https://www.analogix.com/en/products/convertersbridges/anx7688). In
+> > > > > Chromebook architecture, TCPC+mux is controlled by the EC (including
+> > > > > power and other control pins), and the only reason we need a driver
+> > > > > for the HDMI=>DP converter is to get the number of lanes on the DP
+> > > > > side and filter out resolutions. Also, the converter is on a different
+> > > > > I2C address and it could almost be considered as a separate device.
+> > > > >
+> > > > > (of course we could write a kernel driver for the TCPC+mux but we'll
+> > > > > leave that to others if there's ever a board that is built with the
+> > > > > TCPC part connected to the AP)
+> > > >
+> > > > Is the mux the one that is handled through a gpio-mux driver in this
+> > > > series, or a different mux ?
+> > >
+> >
+> > It's a different mux: it's the usual USB-C mux that takes in USB 3.0
+> > and DP (internally converted from HDMI), and decides which 2 lanes to
+> > use for each (4 lanes in total, but DP can only take 2 with this
+> > converter), and flip if necessary. This is all controlled by the EC
+> > (like on most other Chromebooks), so this is transparent to the kernel
+> > on this hardware.
+> >
+> > > > It would really, really help if you could
+> > > > show a block diagram of the related hardware (including the EC), as this
+> > > > is quite confusing. With every e-mail exchanged there's a bit more
+> > > > information that change my understanding of the issue, I can't really
+> > > > provide guidance without a full overview.
+> >
+> > https://lkml.org/lkml/2019/12/9/548 that you drew is accurate for the
+> > display part of the problem.
+> >
+> > You can just add a USB3 connection to the above (there's also I2C
+> > interface to the EC of course to control the TCPC/mux aspect of it,
+> > but that's on different I2C addresses). Something like this:
+> >
+> >                                       +-----------+
+> >  +---------+         +------+    /--> | HDMI      |
+> >  | MT8173  |  HDMI   |   -->| --/     | Connector |
+> >  |  HDMI   | ------> |--/   |         +-----------+
+> >  | Encoder |         |    ->| --\     +-----------+      +-----------+
+> >  +---------+         +------+    \--> | ANX7688   | ---> | USB-C     |
+> >                                       | Bridge    |      | Connector |
+> >                               USB3--> | + mux     |      |           |
+> >                                       +-----------+      +-----------+
+> >                                          ^     ^
+> >                                    (I2C) |     | (I2C)
+> >    MT8173 (DP lane count/bw readback) -- +     + -- EC (TCPC+mux control)
+> >
+> > Power is also fully controlled by the EC.
+>
+> Could I ask you to also explain how the HDMI mux is controlled,
 
-If we drop a packet, we should just continue to the next one as long as
-the budget allows.
+Priority to HDMI. If the HDMI is connected (looking at its HPD
+signal), then the HDMI signals are routed to HDMI connector. Else HDMI
+is routed to ANX7688/USB-C.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[acj: backport v4.4 -stable
--adjust context]
-Signed-off-by: Aviraj CJ <acj@cisco.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+> and
+> where the HPD-related signals for the HDMI connector and USB-C connector
+> are routed to ?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index e9d41e03121c..28a6b7764044 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2176,8 +2176,7 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv)
- static int stmmac_rx(struct stmmac_priv *priv, int limit)
- {
- 	unsigned int rxsize = priv->dma_rx_size;
--	unsigned int entry = priv->cur_rx % rxsize;
--	unsigned int next_entry;
-+	unsigned int next_entry = priv->cur_rx % rxsize;
- 	unsigned int count = 0;
- 	int coe = priv->hw->rx_csum;
- 
-@@ -2189,9 +2188,11 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit)
- 			stmmac_display_ring((void *)priv->dma_rx, rxsize, 0);
- 	}
- 	while (count < limit) {
--		int status;
-+		int status, entry;
- 		struct dma_desc *p;
- 
-+		entry = next_entry;
-+
- 		if (priv->extend_desc)
- 			p = (struct dma_desc *)(priv->dma_erx + entry);
- 		else
-@@ -2239,7 +2240,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit)
- 			/*  check if frame_len fits the preallocated memory */
- 			if (frame_len > priv->dma_buf_sz) {
- 				priv->dev->stats.rx_length_errors++;
--				break;
-+				continue;
- 			}
- 
- 			/* ACS is set; GMAC core strips PAD/FCS for IEEE 802.3
-@@ -2260,7 +2261,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit)
- 				pr_err("%s: Inconsistent Rx descriptor chain\n",
- 				       priv->dev->name);
- 				priv->dev->stats.rx_dropped++;
--				break;
-+				continue;
- 			}
- 			prefetch(skb->data - NET_IP_ALIGN);
- 			priv->rx_skbuff[entry] = NULL;
-@@ -2291,7 +2292,6 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit)
- 			priv->dev->stats.rx_packets++;
- 			priv->dev->stats.rx_bytes += frame_len;
- 		}
--		entry = next_entry;
- 	}
- 
- 	stmmac_rx_refill(priv);
--- 
-2.19.1
+HPD is also muxed by the mux, between the 2 inputs.
+(http://www.ti.com/lit/ds/symlink/ts3dv642.pdf, if you are curious,
+9.2.3 is basically how things are wired, with one of the HPD_A/B
+connected to SEL2)
 
+My memory is fading away now, but I think at some point we considered
+having hardware send an HPD pulse when the input changes, but decided
+against it (for cost/complexity reasons). So that means that if both
+HDMI and USB-C monitors are plugged, and you unplug HDMI, the mux
+would switch but you would not get an HPD pulse. That's one of the
+reason we need to react to edges on the mux SEL signal to ask the
+kernel to re-read the EDID (that's in the other driver that Hsin-Yi is
+trying (again) to upstream in this series).
+
+(IIRC, that's also why HDMI HPD pulse work if both connectors are
+plugged, we get the edge on the SEL signal an re-read the EDID).
+
+Thanks.
+
+
+> > (the product brief has a good diagram of the internals of the ANX7688:
+> > https://www.analogix.com/en/system/files/AA-002281-PB-6-ANX7688_Product_Brief.pdf)
+> >
+> > The ANX7688 bridge could _almost_ work driverless (and it does
+> > already), the _only_ thing that the driver is doing is filtering out
+> > impossible resolution based on DP (over USB-C) number of lanes and
+> > bandwidth. This is required to support, for example, old monitors that
+> > may only do RBR over DP (so we can't drive the full resolution over 2
+> > DP lanes, we'd need 4 lanes, and we need to filter out the higher
+> > resolution modes).
+> >
+> > > > > > > > Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> > > > > > > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > > > > > > > ---
+> > > > > > > >  drivers/gpu/drm/bridge/Kconfig            |   9 +
+> > > > > > > >  drivers/gpu/drm/bridge/Makefile           |   1 +
+> > > > > > > >  drivers/gpu/drm/bridge/analogix-anx7688.c | 202 ++++++++++++++++++++++
+> > > > > > > >  3 files changed, 212 insertions(+)
+> > > > > > > >  create mode 100644 drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > > index 34362976cd6f..1f3fc6bec842 100644
+> > > > > > > > --- a/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > > +++ b/drivers/gpu/drm/bridge/Kconfig
+> > > > > > > > @@ -16,6 +16,15 @@ config DRM_PANEL_BRIDGE
+> > > > > > > >  menu "Display Interface Bridges"
+> > > > > > > >       depends on DRM && DRM_BRIDGE
+> > > > > > > >
+> > > > > > > > +config DRM_ANALOGIX_ANX7688
+> > > > > > > > +     tristate "Analogix ANX7688 bridge"
+> > > > > > > > +     select DRM_KMS_HELPER
+> > > > > > > > +     select REGMAP_I2C
+> > > > > > > > +     ---help---
+> > > > > > > > +       ANX7688 is a transmitter to support DisplayPort over USB-C for
+> > > > > > > > +       smartphone and tablets.
+> > > > > > > > +       This driver only supports the HDMI to DP component of the chip.
+> > > > > > > > +
+> > > > > > > >  config DRM_ANALOGIX_ANX78XX
+> > > > > > > >       tristate "Analogix ANX78XX bridge"
+> > > > > > > >       select DRM_KMS_HELPER
+> > > > > > > > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> > > > > > > > index 4934fcf5a6f8..7a1e0ec032e6 100644
+> > > > > > > > --- a/drivers/gpu/drm/bridge/Makefile
+> > > > > > > > +++ b/drivers/gpu/drm/bridge/Makefile
+> > > > > > > > @@ -1,4 +1,5 @@
+> > > > > > > >  # SPDX-License-Identifier: GPL-2.0
+> > > > > > > > +obj-$(CONFIG_DRM_ANALOGIX_ANX7688) += analogix-anx7688.o
+> > > > > > > >  obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
+> > > > > > > >  obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
+> > > > > > > >  obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
+> > > > > > > > diff --git a/drivers/gpu/drm/bridge/analogix-anx7688.c b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..baaed48d6201
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/drivers/gpu/drm/bridge/analogix-anx7688.c
+> > > > > > > > @@ -0,0 +1,202 @@
+> > > > > > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > > > > > +/*
+> > > > > > > > + * ANX7688 HDMI->DP bridge driver
+> > > > > > > > + *
+> > > > > > > > + * Copyright 2016 Google LLC
+> > > > > > > > + */
+> > > > > > > > +
+> > > > > > > > +#include <linux/i2c.h>
+> > > > > > > > +#include <linux/module.h>
+> > > > > > > > +#include <linux/regmap.h>
+> > > > > > > > +#include <drm/drm_bridge.h>
+> > > > > > > > +
+> > > > > > > > +/* Register addresses */
+> > > > > > > > +#define VENDOR_ID_REG 0x00
+> > > > > > > > +#define DEVICE_ID_REG 0x02
+> > > > > > > > +
+> > > > > > > > +#define FW_VERSION_REG 0x80
+> > > > > > > > +
+> > > > > > > > +#define DP_BANDWIDTH_REG 0x85
+> > > > > > > > +#define DP_LANE_COUNT_REG 0x86
+> > > > > > >
+> > > > > > > Are these registers defined by the ANX7688 hardware, or by the firmware
+> > > > > > > running on the chip (and, I assume, developed by Google) ?
+> > > > > > >
+> > > > > > By firmware developed by ANX provided to Google.
+> > > > >
+> > > > > We asked for these registers to be added to ANX FW, and this is the FW
+> > > > > that is used by all elm/hana Chromebooks (I have no idea about other
+> > > > > ANX customers...). We have facilities to update the ANX FW from
+> > > > > coreboot/depthcharge on Chromebooks, but that does not really matter:
+> > > > > the factory FW of all MP Chromebooks does provide these registers.
+> > > >
+> > > > So the driver is specific to Chromebooks, it doesn't support all
+> > > > ANX7688. Sweet :-(
+> >
+> > FWIW, this is a 3+ year old part, so it appears that nobody else cares anyway?
+>
+> That's good news :-)
+>
+> > Also, this driver is only required to implement the mode filtering,
+> > which, possibly, is only supported by the Google version of the FW (I
+> > have no idea what other customers ANX has for this part, if they care
+> > about this problem, and if so, how they solve it).
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
