@@ -2,74 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 16D9A1235EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:46:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0A8A12360F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbfLQTqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:46:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56264 "EHLO mail.kernel.org"
+        id S1727508AbfLQT4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:56:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbfLQTqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:46:33 -0500
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1727036AbfLQT4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 14:56:17 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE6FC2146E;
-        Tue, 17 Dec 2019 19:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5623620716;
+        Tue, 17 Dec 2019 19:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576611993;
-        bh=CF9QKJaQ9DJ6x/TTz4g2ABsgpHdQolqZOBba2q9djQM=;
-        h=In-Reply-To:References:To:From:Subject:Cc:Date:From;
-        b=PyxzARwQMbWFON1uohCy1VDYTURiHALizTOeni4E3S0Ax5Kr5M/hLIZQF/qCNnC9e
-         ZvTWCFdGip1KE1vkzwJXmtpGN12QTsVuNP5Dxwdxibv/4va6wFEJ5Z8EorkmaNksUJ
-         UBEsYTRHCewiLOwg5329QG35PfWneQgTOOB5keVw=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1576612576;
+        bh=hd4cH8IbYkeM0tBUNDdElhYaMjG1+McopALX9rBJrMA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=i17VwzGB1Ibwv7zq4kFod+YOQHxxpYbh/kvmyLn5CrQDs4HtDy5Sbo+a0ImeH+K2t
+         udYZKn3rX2Q6QXUInDEfI6DDeCfvauJ8YM+Vi+ymUfHShLUciaCyxE24isTCEX1Xgr
+         opAD4BLYdLozUaZvK5ORYrYsXU7IUeXhOcpqypQI=
+Date:   Tue, 17 Dec 2019 20:56:14 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] random: don't forget compat_ioctl on unrandom
+Message-ID: <20191217195614.GA4124759@kroah.com>
+References: <20191217172455.186395-1-Jason@zx2c4.com>
+ <CAK8P3a00O6_XjUd33_4esaEXu4fEf4+3fvrttXMzx=-1ruFaAQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAOesGMj2qRM3YhTWQubRqmjP2TgMgXVyLxHs5D=bWfd4sKnNrw@mail.gmail.com>
-References: <20191217044146.127200-1-olof@lixom.net> <20191217044635.127912-1-olof@lixom.net> <20191217082501.424892072D@mail.kernel.org> <CAOesGMj2qRM3YhTWQubRqmjP2TgMgXVyLxHs5D=bWfd4sKnNrw@mail.gmail.com>
-To:     Olof Johansson <olof@lixom.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: declare clk_core_reparent_orphans() inline
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 17 Dec 2019 11:46:32 -0800
-Message-Id: <20191217194632.DE6FC2146E@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a00O6_XjUd33_4esaEXu4fEf4+3fvrttXMzx=-1ruFaAQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Olof Johansson (2019-12-17 10:01:15)
-> On Tue, Dec 17, 2019 at 12:25 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Tue, Dec 17, 2019 at 08:36:48PM +0100, Arnd Bergmann wrote:
+> On Tue, Dec 17, 2019 at 6:25 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
 > >
-> > Quoting Olof Johansson (2019-12-16 20:46:35)
-> > > A recent addition exposed a helper that is only used for
-> > > CONFIG_OF. Instead of figuring out best place to have it in the order
-> > > of various functions, just declare it as explicitly inline, and the
-> > > compiler will happily handle it without warning.
-> > >
-> > > (Also fixup of a single stray empty line while I was looking at the c=
-ode)
-> > >
-> > > Fixes: 66d9506440bb ("clk: walk orphan list on clock provider registr=
-ation")
-> > > Signed-off-by: Olof Johansson <olof@lixom.net>
-> > > ---
-> > >
-> > > v3: ACTUALLY amend this time. Sigh. Time to go home.
-> > >
+> > Recently, there's been some compat ioctl cleanup, in which large
+> > hardcoded lists were replaced with compat_ptr_ioctl. One of these
+> > changes involved removing the random.c hardcoded list entries and adding
+> > a compat ioctl function pointer to the random.c fops. In the process,
+> > urandom was forgotten about, so this commit fixes that oversight.
 > >
-> > Isn't it simple enough to just move the function down to CONFIG_OF in
-> > drivers/clk/clk.c?
->=20
-> "Simple" in a 5000 line file is maybe not the right word to use, but
-> yeah, sure, do with it what you want.
->=20
-> Seems like clk.c could do with some refactoring? :)
->=20
+> > Fixes: 507e4e2b430b ("compat_ioctl: remove /dev/random commands")
+> > Cc: Arnd Bergmann <arnd@arndb.de>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> 
+> Thanks for debugging this. I had already sent the same
+> patch a few days ago after the first report:
+> 
+> https://lore.kernel.org/lkml/20191207185837.4030699-1-arnd@arndb.de/
+> 
+> Greg, can you please apply one of these and send it to Linus for 5.5-rc3?
 
-Ok.
+Ugh, I missed your first one, sorry, I thought that was for Ted and
+missed that it was due to a patch that came from my tree.  I've queued
+Jason's patch up now.
 
+thanks,
+
+greg k-h
