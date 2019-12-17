@@ -2,63 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 782B1123541
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:48:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5041123545
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:52:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfLQSsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:48:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38916 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726939AbfLQSsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:48:06 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BED8320733;
-        Tue, 17 Dec 2019 18:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576608486;
-        bh=PoKhT8q9qjRq2hvgxJe+3C+fbnYLKYLriC+Q/oiU9Sk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oZz8Zu0uHS+eF8771wS+/8eLF1A7B60EFhpshiPTIsBffqLqynToI8307G01gHQJR
-         V6y7gcyj8WOjdl/OnS7M2+LK2kYYeMKcmWmdjwNaprlZUV95CoVXJl1cY7jFzLAuUh
-         pqRUAg2UWmEgp7rlMOjwbfpBH0MEyTjk5jv8hV+0=
-Date:   Tue, 17 Dec 2019 19:48:03 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
-Message-ID: <20191217184803.GA3867407@kroah.com>
-References: <20191216174811.158424118@linuxfoundation.org>
- <20191217183159.GB29679@roeck-us.net>
+        id S1727241AbfLQSwZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:52:25 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57918 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbfLQSwZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 13:52:25 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHIqL36024838;
+        Tue, 17 Dec 2019 12:52:21 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576608741;
+        bh=AXaa6NM1Y1kK/uPavMRBuIpfHjldkEwMha0pCdMWBkc=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=Cg260NvMtYA2V3RdYJF6AYWLY/whiQ3xC+HguErXW6YNkyqJN0cCmwv4kYJgTe7xS
+         B7S+2WtdtqnXo0Q6oyNcI2JgRzbiYSQ6jNZ3RWJHPQJoGqIaWiRPYNLqHF8FpnTJoQ
+         s2hu0cWINkqyarPkd6qbBHEb45S8jmgNrtNxrx6A=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHIqL3g026715
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Dec 2019 12:52:21 -0600
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 12:52:21 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 12:52:21 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHIqLtW109793;
+        Tue, 17 Dec 2019 12:52:21 -0600
+Date:   Tue, 17 Dec 2019 12:51:39 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+CC:     <gregkh@linuxfoundation.org>, <vkoul@kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: musb/ux500: Use dma_request_chan() instead
+ dma_request_slave_channel()
+Message-ID: <20191217185139.GE14499@iaqt7>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, gregkh@linuxfoundation.org,
+        vkoul@kernel.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191217110030.26887-1-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20191217183159.GB29679@roeck-us.net>
+In-Reply-To: <20191217110030.26887-1-peter.ujfalusi@ti.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 10:31:59AM -0800, Guenter Roeck wrote:
-> On Mon, Dec 16, 2019 at 06:47:36PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.4 release.
-> > There are 177 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
-> > Anything received after that time might be too late.
-> > 
+On Tue, Dec 17, 2019 at 01:00:30PM +0200, Peter Ujfalusi wrote:
+> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> eating up the error code.
 > 
-> Build results:
-> 	total: 158 pass: 158 fail: 0
-> Qemu test results:
-> 	total: 387 pass: 387 fail: 0
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
 
-Thanks for testing all of these and letting me know.
+Applied. Thanks.
 
-greg k-h
+-Bin.
