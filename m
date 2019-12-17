@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F37061220DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C5D04122012
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:56:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbfLQA6j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:58:39 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34822 "EHLO
+        id S1727289AbfLQAvq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:51:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:34948 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726757AbfLQAvi (ORCPT
+        by vger.kernel.org with ESMTP id S1726830AbfLQAvk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:51:38 -0500
+        Mon, 16 Dec 2019 19:51:40 -0500
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15I-0003Kl-1m; Tue, 17 Dec 2019 00:51:32 +0000
+        id 1ih15I-0003Ky-1y; Tue, 17 Dec 2019 00:51:32 +0000
 Received: from ben by deadeye with local (Exim 4.93-RC7)
         (envelope-from <ben@decadent.org.uk>)
-        id 1ih15H-0005Wf-OX; Tue, 17 Dec 2019 00:51:31 +0000
+        id 1ih15H-0005Wp-Ph; Tue, 17 Dec 2019 00:51:31 +0000
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -27,14 +27,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "Ilya Dryomov" <idryomov@gmail.com>
-Date:   Tue, 17 Dec 2019 00:46:39 +0000
-Message-ID: <lsq.1576543535.764911256@decadent.org.uk>
+        "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Date:   Tue, 17 Dec 2019 00:46:40 +0000
+Message-ID: <lsq.1576543535.110927165@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 065/136] ceph: just skip unrecognized info in
- ceph_reply_info_extra
+Subject: [PATCH 3.16 066/136] USB: ldusb: fix memleak on disconnect
 In-Reply-To: <lsq.1576543534.33060804@decadent.org.uk>
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -48,77 +47,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jeff Layton <jlayton@kernel.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit 1d3f87233e26362fc3d4e59f0f31a71b570f90b9 upstream.
+commit b14a39048c1156cfee76228bf449852da2f14df8 upstream.
 
-In the future, we're going to want to extend the ceph_reply_info_extra
-for create replies. Currently though, the kernel code doesn't accept an
-extra blob that is larger than the expected data.
+If disconnect() races with release() after a process has been
+interrupted, release() could end up returning early and the driver would
+fail to free its driver data.
 
-Change the code to skip over any unrecognized fields at the end of the
-extra blob, rather than returning -EIO.
-
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 2824bd250f0b ("[PATCH] USB: add ldusb driver")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191010125835.27031-2-johan@kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ceph/mds_client.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/usb/misc/ldusb.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -199,8 +199,8 @@ static int parse_reply_info_dir(void **p
+--- a/drivers/usb/misc/ldusb.c
++++ b/drivers/usb/misc/ldusb.c
+@@ -394,10 +394,7 @@ static int ld_usb_release(struct inode *
+ 		goto exit;
  	}
  
- done:
--	if (*p != end)
--		goto bad;
-+	/* Skip over any unrecognized fields */
-+	*p = end;
- 	return 0;
+-	if (mutex_lock_interruptible(&dev->mutex)) {
+-		retval = -ERESTARTSYS;
+-		goto exit;
+-	}
++	mutex_lock(&dev->mutex);
  
- bad:
-@@ -221,12 +221,10 @@ static int parse_reply_info_filelock(voi
- 		goto bad;
- 
- 	info->filelock_reply = *p;
--	*p += sizeof(*info->filelock_reply);
- 
--	if (unlikely(*p != end))
--		goto bad;
-+	/* Skip over any unrecognized fields */
-+	*p = end;
- 	return 0;
--
- bad:
- 	return -EIO;
- }
-@@ -239,18 +237,21 @@ static int parse_reply_info_create(void
- 				  u64 features)
- {
- 	if (features & CEPH_FEATURE_REPLY_CREATE_INODE) {
-+		/* Malformed reply? */
- 		if (*p == end) {
- 			info->has_create_ino = false;
- 		} else {
- 			info->has_create_ino = true;
--			info->ino = ceph_decode_64(p);
-+			ceph_decode_64_safe(p, end, info->ino, bad);
- 		}
-+	} else {
-+		if (*p != end)
-+			goto bad;
- 	}
- 
--	if (unlikely(*p != end))
--		goto bad;
-+	/* Skip over any unrecognized fields */
-+	*p = end;
- 	return 0;
--
- bad:
- 	return -EIO;
- }
+ 	if (dev->open_count != 1) {
+ 		retval = -ENODEV;
 
