@@ -2,499 +2,479 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B39C5123A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 23:29:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A41D123A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 23:34:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfLQW33 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 17:29:29 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:48046 "EHLO gloria.sntech.de"
+        id S1726494AbfLQWeI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 17:34:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726704AbfLQW3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 17:29:25 -0500
-Received: from ip5f5a5f74.dynamic.kabel-deutschland.de ([95.90.95.116] helo=phil.sntech)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ihLLB-0001IQ-97; Tue, 17 Dec 2019 23:29:17 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     dri-devel@lists.freedesktop.org
-Cc:     thierry.reding@gmail.com, sam@ravnborg.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        christoph.muellner@theobroma-systems.com, maxime@cerno.tech,
-        heiko@sntech.de,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: [PATCH v4 3/3] drm/panel: add panel driver for Xinpeng XPP055C272 panels
-Date:   Tue, 17 Dec 2019 23:29:06 +0100
-Message-Id: <20191217222906.19943-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191217222906.19943-1-heiko@sntech.de>
-References: <20191217222906.19943-1-heiko@sntech.de>
+        id S1725886AbfLQWeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 17:34:07 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A47A921582;
+        Tue, 17 Dec 2019 22:34:05 +0000 (UTC)
+Date:   Tue, 17 Dec 2019 17:34:03 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: ftrace trace_raw_pipe format
+Message-ID: <20191217173403.61f4e2d8@gandalf.local.home>
+In-Reply-To: <e8f9744ddffc4527b222ce72d41c61a1@AcuMS.aculab.com>
+References: <e8f9744ddffc4527b222ce72d41c61a1@AcuMS.aculab.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="MP_/3h3h=_Tt4nYu/iqRNCVGTR0"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+--MP_/3h3h=_Tt4nYu/iqRNCVGTR0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
 
-Base on the somewhat similar Rocktech driver but adapted for
-panel-specific init of the XPP055C272.
+On Tue, 17 Dec 2019 17:44:40 +0000
+David Laight <David.Laight@ACULAB.COM> wrote:
 
-changes in v3:
-- remove wrong negative sync flags from display-mode to fix a display
-  artifact of the output getting move a tiny bit to the right
-changes in v2:
-- move to drm-panel-internal backlight handling (Sam)
-- adapt to changes that happened to drm_panel structs+functions (Sam)
-- sort includes (Sam)
-- drop unnecessary DRV_NAME constant (Sam)
-- do mipi_dsi_dcs_exit_sleep_mode and mipi_dsi_dcs_set_display_on
-  in panel prepare (not init_sequence) to keep symmetric (Sam)
+> I'm trying to 'grok' the trace_raw_pipe data that ftrace generates.
+> I've some 3rd party code that post-processes it, but doesn't like wrapped traces
+> because (I think) the traces from different cpus start at different times.
+> 
+> I can't seem to find any documentation at all...
+> 
+> I can find the format of the trace entries (I only need the length) from the 'format' files.
+> There seems to be 4 bytes between the entries that looks like a time difference.
+> I presume this is the interval before the trace item that follows.
+> (There is a time-delta of 1 before the first entry.)
+> 
+> The overall file seems to be a series of 4k blocks.
+> All but the first have a 16 byte header (possibly) described by 'header_page'
+> that has a timestamp and length (and a sign extended flag).
+> 
+> The first 4k page is confusing me.
+> The first 8 bytes might be the time the actual trace started.
+> The next 8 contain a length (short for a wrapped trace).
+> I've no idea what the next 8 are, they look like count of something.
+> 
+> Given that I've stopped tracing before reading the files I'd
+> expect the last buffer to be the partial one, not the first.
+> I'm also pretty sure the partial block contains the last trace data
+> (it seems to refer to the shell script sleep used to time the trace.)
+> 
+> I did find some old mailing list messages about these files being
+> corrupt - but that was about the time the splice code was
+> added to read them out - best part of 10 years ago.
+> 
+> If I can sort the headers for the 4k block (and reorder them??),
+> then delete entries so the start times match I should be able to
+> make the post-processing code work.
+>
 
-Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
----
- drivers/gpu/drm/panel/Kconfig                 |  10 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-xinpeng-xpp055c272.c  | 400 ++++++++++++++++++
- 3 files changed, 411 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
+You may want to use libtraceevent (which will, hopefully, soon
+be in debian!). Attached is a simple program that reads the data using
+it and prints out the format.
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index f152bc4eeb53..fb1ded47677e 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -355,4 +355,14 @@ config DRM_PANEL_TRULY_NT35597_WQXGA
- 	help
- 	  Say Y here if you want to enable support for Truly NT35597 WQXGA Dual DSI
- 	  Video Mode panel
-+
-+config DRM_PANEL_XINPENG_XPP055C272
-+	tristate "Xinpeng XPP055C272 panel driver"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y here if you want to enable support for the Xinpeng
-+	  XPP055C272 controller for 720x1280 LCD panels with MIPI/RGB/SPI
-+	  system interfaces.
- endmenu
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index b6cd39fe0f20..71d7722146a7 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -38,3 +38,4 @@ obj-$(CONFIG_DRM_PANEL_TPO_TD028TTEC1) += panel-tpo-td028ttec1.o
- obj-$(CONFIG_DRM_PANEL_TPO_TD043MTEA1) += panel-tpo-td043mtea1.o
- obj-$(CONFIG_DRM_PANEL_TPO_TPG110) += panel-tpo-tpg110.o
- obj-$(CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA) += panel-truly-nt35597.o
-+obj-$(CONFIG_DRM_PANEL_XINPENG_XPP055C272) += panel-xinpeng-xpp055c272.o
-diff --git a/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-new file mode 100644
-index 000000000000..1a7ded012344
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-xinpeng-xpp055c272.c
-@@ -0,0 +1,400 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Xinpeng xpp055c272 5.5" MIPI-DSI panel driver
-+ * Copyright (C) 2019 Theobroma Systems Design und Consulting GmbH
-+ *
-+ * based on
-+ *
-+ * Rockteck jh057n00900 5.5" MIPI-DSI panel driver
-+ * Copyright (C) Purism SPC 2019
-+ */
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_print.h>
-+
-+#include <video/display_timing.h>
-+#include <video/mipi_display.h>
-+
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/media-bus-format.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+/* Manufacturer specific Commands send via DSI */
-+#define XPP055C272_CMD_ALL_PIXEL_OFF	0x22
-+#define XPP055C272_CMD_ALL_PIXEL_ON	0x23
-+#define XPP055C272_CMD_SETDISP		0xb2
-+#define XPP055C272_CMD_SETRGBIF		0xb3
-+#define XPP055C272_CMD_SETCYC		0xb4
-+#define XPP055C272_CMD_SETBGP		0xb5
-+#define XPP055C272_CMD_SETVCOM		0xb6
-+#define XPP055C272_CMD_SETOTP		0xb7
-+#define XPP055C272_CMD_SETPOWER_EXT	0xb8
-+#define XPP055C272_CMD_SETEXTC		0xb9
-+#define XPP055C272_CMD_SETMIPI		0xbA
-+#define XPP055C272_CMD_SETVDC		0xbc
-+#define XPP055C272_CMD_SETPCR		0xbf
-+#define XPP055C272_CMD_SETSCR		0xc0
-+#define XPP055C272_CMD_SETPOWER		0xc1
-+#define XPP055C272_CMD_SETECO		0xc6
-+#define XPP055C272_CMD_SETPANEL		0xcc
-+#define XPP055C272_CMD_SETGAMMA		0xe0
-+#define XPP055C272_CMD_SETEQ		0xe3
-+#define XPP055C272_CMD_SETGIP1		0xe9
-+#define XPP055C272_CMD_SETGIP2		0xea
-+
-+struct xpp055c272 {
-+	struct device *dev;
-+	struct drm_panel panel;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator *vci;
-+	struct regulator *iovcc;
-+	bool prepared;
-+};
-+
-+static inline struct xpp055c272 *panel_to_xpp055c272(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct xpp055c272, panel);
-+}
-+
-+#define dsi_generic_write_seq(dsi, cmd, seq...) do {			\
-+		static const u8 d[] = { seq };				\
-+		int ret;						\
-+		ret = mipi_dsi_dcs_write(dsi, cmd, d, ARRAY_SIZE(d));	\
-+		if (ret < 0)						\
-+			return ret;					\
-+	} while (0)
-+
-+static int xpp055c272_init_sequence(struct xpp055c272 *ctx)
-+{
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	struct device *dev = ctx->dev;
-+
-+	/*
-+	 * Init sequence was supplied by the panel vendor without much
-+	 * documentation.
-+	 */
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEXTC, 0xf1, 0x12, 0x83);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETMIPI,
-+			      0x33, 0x81, 0x05, 0xf9, 0x0e, 0x0e, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x44, 0x25,
-+			      0x00, 0x91, 0x0a, 0x00, 0x00, 0x02, 0x4f, 0x01,
-+			      0x00, 0x00, 0x37);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPOWER_EXT, 0x25);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPCR, 0x02, 0x11, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETRGBIF,
-+			      0x0c, 0x10, 0x0a, 0x50, 0x03, 0xff, 0x00, 0x00,
-+			      0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETSCR,
-+			      0x73, 0x73, 0x50, 0x50, 0x00, 0x00, 0x08, 0x70,
-+			      0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETVDC, 0x46);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPANEL, 0x0b);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETCYC, 0x80);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETDISP, 0xc8, 0x12, 0x30);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETEQ,
-+			      0x07, 0x07, 0x0B, 0x0B, 0x03, 0x0B, 0x00, 0x00,
-+			      0x00, 0x00, 0xFF, 0x00, 0xC0, 0x10);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETPOWER,
-+			      0x53, 0x00, 0x1e, 0x1e, 0x77, 0xe1, 0xcc, 0xdd,
-+			      0x67, 0x77, 0x33, 0x33);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETECO, 0x00, 0x00, 0xff,
-+			      0xff, 0x01, 0xff);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETBGP, 0x09, 0x09);
-+	msleep(20);
-+
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETVCOM, 0x87, 0x95);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGIP1,
-+			      0xc2, 0x10, 0x05, 0x05, 0x10, 0x05, 0xa0, 0x12,
-+			      0x31, 0x23, 0x3f, 0x81, 0x0a, 0xa0, 0x37, 0x18,
-+			      0x00, 0x80, 0x01, 0x00, 0x00, 0x00, 0x00, 0x80,
-+			      0x01, 0x00, 0x00, 0x00, 0x48, 0xf8, 0x86, 0x42,
-+			      0x08, 0x88, 0x88, 0x80, 0x88, 0x88, 0x88, 0x58,
-+			      0xf8, 0x87, 0x53, 0x18, 0x88, 0x88, 0x81, 0x88,
-+			      0x88, 0x88, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGIP2,
-+			      0x00, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x1f, 0x88, 0x81, 0x35,
-+			      0x78, 0x88, 0x88, 0x85, 0x88, 0x88, 0x88, 0x0f,
-+			      0x88, 0x80, 0x24, 0x68, 0x88, 0x88, 0x84, 0x88,
-+			      0x88, 0x88, 0x23, 0x10, 0x00, 0x00, 0x1c, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+			      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x05,
-+			      0xa0, 0x00, 0x00, 0x00, 0x00);
-+	dsi_generic_write_seq(dsi, XPP055C272_CMD_SETGAMMA,
-+			      0x00, 0x06, 0x08, 0x2a, 0x31, 0x3f, 0x38, 0x36,
-+			      0x07, 0x0c, 0x0d, 0x11, 0x13, 0x12, 0x13, 0x11,
-+			      0x18, 0x00, 0x06, 0x08, 0x2a, 0x31, 0x3f, 0x38,
-+			      0x36, 0x07, 0x0c, 0x0d, 0x11, 0x13, 0x12, 0x13,
-+			      0x11, 0x18);
-+
-+	msleep(60);
-+
-+	DRM_DEV_DEBUG_DRIVER(dev, "Panel init sequence done\n");
-+	return 0;
-+}
-+
-+static int xpp055c272_unprepare(struct drm_panel *panel)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (!ctx->prepared)
-+		return 0;
-+
-+	ret = mipi_dsi_dcs_set_display_off(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(ctx->dev, "failed to set display off: %d\n",
-+			      ret);
-+
-+	mipi_dsi_dcs_enter_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "failed to enter sleep mode: %d\n",
-+			      ret);
-+		return ret;
-+	}
-+
-+	regulator_disable(ctx->iovcc);
-+	regulator_disable(ctx->vci);
-+
-+	ctx->prepared = false;
-+
-+	return 0;
-+}
-+
-+static int xpp055c272_prepare(struct drm_panel *panel)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
-+	int ret;
-+
-+	if (ctx->prepared)
-+		return 0;
-+
-+	DRM_DEV_DEBUG_DRIVER(ctx->dev, "Resetting the panel\n");
-+	ret = regulator_enable(ctx->vci);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable vci supply: %d\n", ret);
-+		return ret;
-+	}
-+	ret = regulator_enable(ctx->iovcc);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev,
-+			      "Failed to enable iovcc supply: %d\n", ret);
-+		goto disable_vci;
-+	}
-+
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	/* T6: 10us */
-+	usleep_range(10, 20);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+
-+	/* T8: 20ms */
-+	msleep(20);
-+
-+	ret = xpp055c272_init_sequence(ctx);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Panel init sequence failed: %d\n",
-+			      ret);
-+		goto disable_iovcc;
-+	}
-+
-+	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to exit sleep mode: %d\n", ret);
-+		goto disable_iovcc;
-+	}
-+
-+	/* T9: 120ms */
-+	msleep(120);
-+
-+	ret = mipi_dsi_dcs_set_display_on(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to set display on: %d\n", ret);
-+		goto disable_iovcc;
-+	}
-+
-+	msleep(50);
-+
-+	ctx->prepared = true;
-+
-+	return 0;
-+
-+disable_iovcc:
-+	regulator_disable(ctx->iovcc);
-+disable_vci:
-+	regulator_disable(ctx->vci);
-+	return ret;
-+}
-+
-+static const struct drm_display_mode default_mode = {
-+	.hdisplay	= 720,
-+	.hsync_start	= 720 + 40,
-+	.hsync_end	= 720 + 40 + 10,
-+	.htotal		= 720 + 40 + 10 + 40,
-+	.vdisplay	= 1280,
-+	.vsync_start	= 1280 + 22,
-+	.vsync_end	= 1280 + 22 + 4,
-+	.vtotal		= 1280 + 22 + 4 + 11,
-+	.vrefresh	= 60,
-+	.clock		= 64000,
-+	.width_mm	= 68,
-+	.height_mm	= 121,
-+};
-+
-+static int xpp055c272_get_modes(struct drm_panel *panel,
-+				struct drm_connector *connector)
-+{
-+	struct xpp055c272 *ctx = panel_to_xpp055c272(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(connector->dev, &default_mode);
-+	if (!mode) {
-+		DRM_DEV_ERROR(ctx->dev, "Failed to add mode %ux%u@%u\n",
-+			      default_mode.hdisplay, default_mode.vdisplay,
-+			      default_mode.vrefresh);
-+		return -ENOMEM;
-+	}
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs xpp055c272_funcs = {
-+	.unprepare	= xpp055c272_unprepare,
-+	.prepare	= xpp055c272_prepare,
-+	.get_modes	= xpp055c272_get_modes,
-+};
-+
-+static int xpp055c272_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct xpp055c272 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		DRM_DEV_ERROR(dev, "cannot get reset gpio\n");
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+
-+	ctx->vci = devm_regulator_get(dev, "vci");
-+	if (IS_ERR(ctx->vci)) {
-+		ret = PTR_ERR(ctx->vci);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request vci regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	ctx->iovcc = devm_regulator_get(dev, "iovcc");
-+	if (IS_ERR(ctx->iovcc)) {
-+		ret = PTR_ERR(ctx->iovcc);
-+		if (ret != -EPROBE_DEFER)
-+			DRM_DEV_ERROR(dev,
-+				      "Failed to request iovcc regulator: %d\n",
-+				      ret);
-+		return ret;
-+	}
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	ctx->dev = dev;
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_EOT_PACKET;
-+
-+	drm_panel_init(&ctx->panel, &dsi->dev, &xpp055c272_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret) {
-+		DRM_DEV_ERROR(dev, "Failed to find backlight: %d\n", ret);
-+		return ret;
-+	}
-+
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		DRM_DEV_ERROR(dev, "mipi_dsi_attach failed: %d\n", ret);
-+		drm_panel_remove(&ctx->panel);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void xpp055c272_shutdown(struct mipi_dsi_device *dsi)
-+{
-+	struct xpp055c272 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	ret = drm_panel_unprepare(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to unprepare panel: %d\n",
-+			      ret);
-+
-+	ret = drm_panel_disable(&ctx->panel);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to disable panel: %d\n",
-+			      ret);
-+}
-+
-+static int xpp055c272_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct xpp055c272 *ctx = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	xpp055c272_shutdown(dsi);
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		DRM_DEV_ERROR(&dsi->dev, "Failed to detach from DSI host: %d\n",
-+			      ret);
-+
-+	drm_panel_remove(&ctx->panel);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id xpp055c272_of_match[] = {
-+	{ .compatible = "xinpeng,xpp055c272" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, xpp055c272_of_match);
-+
-+static struct mipi_dsi_driver xpp055c272_driver = {
-+	.driver = {
-+		.name = "panel-xinpeng-xpp055c272",
-+		.of_match_table = xpp055c272_of_match,
-+	},
-+	.probe	= xpp055c272_probe,
-+	.remove = xpp055c272_remove,
-+	.shutdown = xpp055c272_shutdown,
-+};
-+module_mipi_dsi_driver(xpp055c272_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko.stuebner@theobroma-systems.com>");
-+MODULE_DESCRIPTION("DRM driver for Xinpeng xpp055c272 MIPI DSI panel");
-+MODULE_LICENSE("GPL v2");
--- 
-2.24.0
+I should add this file to the libtraceevent source code, which is found
+in the Linux kernel source under tools/lib/traceevent. To build this,
+use:
 
+ $ cd linux.git/tools/lib/traceevent
+ $ make
+ $ sudo make install
+ $ cd to-path-of-attached-file
+ $ gcc -g -Wall read-trace-pipe-raw.c -o read-trace-pipe-raw -ltraceevent -ldl
+
+Now you may need to add the path of libtraceevent into /etc/ld.so.conf
+and run ldconfig to get it to work.
+
+Let me know if this helps.
+
+Note, this tool requires there to be data in the ring buffers (all of
+them, as it will block on the first empty buffer). I just wrote this
+for sample code. I'll fix this blocking and also add more comments for
+when I add this to the source code.
+
+-- Steve
+
+--MP_/3h3h=_Tt4nYu/iqRNCVGTR0
+Content-Type: text/x-c++src
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename=read-trace-pipe-raw.c
+
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/mount.h>
+#include <traceevent/event-parse.h>
+#include <traceevent/kbuffer.h>
+#include <traceevent/trace-seq.h>
+
+struct tep_handle *tep;
+struct kbuffer *kbuf;
+static int page_size;
+
+#define __weak __attribute__((weak))
+#define __noreturn __attribute__((noreturn))
+
+#define TRACEFS_PATH "/sys/kernel/tracing"
+
+#define _STR(x) #x
+#define STR(x) _STR(x)
+
+static int ignore_warning;
+
+void warning(const char *fmt, ...)
+{
+	va_list ap;
+
+	if (ignore_warning)
+		return;
+
+	va_start(ap, fmt);
+	fprintf(stderr, "Warning:  ");
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+
+	fprintf(stderr, "\n");
+}
+
+void __noreturn __vdie(const char *fmt, va_list ap)
+{
+	int ret = errno ? errno : -1;
+
+	fprintf(stderr, "Error:  ");
+	vfprintf(stderr, fmt, ap);
+
+	fprintf(stderr, "\n");
+	exit(ret);
+}
+
+void __noreturn __die(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	__vdie(fmt, ap);
+	va_end(ap);
+}
+
+void __weak __noreturn die(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	__vdie(fmt, ap);
+	va_end(ap);
+}
+
+void __weak __noreturn pdie(const char *fmt, ...)
+{
+	va_list ap;
+
+	if (errno)
+		perror("read-trace-pipe-raw");
+
+	va_start(ap, fmt);
+	__vdie(fmt, ap);
+	va_end(ap);
+}
+
+static int mount_tracefs(void)
+{
+	struct stat st;
+	int ret;
+
+	/* make sure debugfs exists */
+	ret = stat(TRACEFS_PATH, &st);
+	if (ret < 0)
+		return -1;
+
+	ret = mount("nodev", TRACEFS_PATH,
+		    "tracefs", 0, NULL);
+
+	return ret;
+}
+
+static char *find_tracing_dir(void)
+{
+	char fspath[PATH_MAX+1];
+	char *tracing_dir;
+	char type[100];
+	FILE *fp;
+
+	if ((fp = fopen("/proc/mounts","r")) == NULL) {
+		warning("Can't open /proc/mounts for read");
+		return NULL;
+	}
+
+	while (fscanf(fp, "%*s %"
+		      STR(PATH_MAX)
+		      "s %99s %*s %*d %*d\n",
+		      fspath, type) == 2) {
+		if (strcmp(type, "tracefs") == 0)
+			break;
+	}
+	fclose(fp);
+
+	if (strcmp(type, "tracefs") != 0) {
+		if (mount_tracefs() < 0) {
+			warning("tracefs not mounted, please mount");
+			return NULL;
+		} else
+			strcpy(fspath, TRACEFS_PATH);
+	}
+	tracing_dir = strdup(fspath);
+	if (!tracing_dir)
+		return NULL;
+
+	return tracing_dir;
+}
+
+static void load_format(const char *system, const char *format)
+{
+	char *line;
+	char *buf = NULL;
+	FILE *fp;
+	size_t len = 0;
+	size_t size = 0;
+	int s;
+	int ret;
+
+	fp = fopen(format, "r");
+	if (!fp)
+		die("Could not open %s to read", format);
+
+	while ((ret = getline(&line, &len, fp)) > 0) {
+		s = strlen(line);
+		buf = realloc(buf, size + s + 1);
+		if (!buf)
+			pdie("Allocating memory to read %s\n", format);
+		strcpy(buf + size, line);
+		size += s;
+	}
+	free(line);
+	ignore_warning = 1;
+	tep_parse_event(tep, buf, size, system);
+	ignore_warning = 0;
+	free(buf);
+	fclose(fp);
+}
+
+static void read_event(const char *system, const char *event)
+{
+	struct stat st;
+	char *format;
+	int ret;
+
+	ret = asprintf(&format, "%s/format", event);
+	if (ret < 0)
+		pdie("Could not allocate memory for %s format\n", event);
+
+	ret = stat(format, &st);
+	if (ret < 0 /* ? */ || !S_ISREG(st.st_mode))
+		return;
+
+	load_format(system, format);
+	free(format);
+}
+
+static void read_system(const char *system)
+{
+	struct dirent *dent;
+	struct stat st;
+	DIR *dir;
+	int ret;
+
+	dir = opendir(system);
+	if (!dir)
+		pdie("Can't read directory '%s'", system);
+
+	while ((dent = readdir(dir))) {
+		char *event;
+
+		if (strcmp(dent->d_name, ".") == 0 ||
+		    strcmp(dent->d_name, "..") == 0)
+			continue;
+
+		ret = asprintf(&event, "%s/%s", system, dent->d_name);
+		if (ret < 0)
+			pdie("could not allocate memory for event name %s\n",
+			     dent->d_name);
+		ret = stat(event, &st);
+		if (ret < 0 /* ? */ || !S_ISDIR(st.st_mode))
+			continue;
+
+		read_event(system, event);
+		free(event);
+	}
+}
+
+static void read_raw_buffer(int i, const char *buffer)
+{
+	struct trace_seq s;
+	char buf[page_size];
+	int fd;
+	int r;
+
+	printf("Parsing CPU %d buffer\n", i);
+
+	fd = open(buffer, O_RDONLY);
+	if (fd < 0)
+		pdie("Failed to open %s", buffer);
+
+	while ((r = read(fd, buf, page_size)) > 0) {
+		kbuffer_load_subbuffer(kbuf, buf);
+
+		for (;;) {
+			struct tep_record record;
+
+			record.data = kbuffer_read_event(kbuf, &record.ts);
+			if (!record.data)
+				break;
+			kbuffer_next_event(kbuf, NULL);
+
+			trace_seq_init(&s);
+			tep_print_event(tep, &s, &record,
+					"%s-%d %9d\t%s: %s\n",
+					TEP_PRINT_COMM,
+					TEP_PRINT_PID,
+					TEP_PRINT_TIME,
+					TEP_PRINT_NAME,
+					TEP_PRINT_INFO);
+			trace_seq_do_printf(&s);
+		}
+	}
+
+	close(fd);
+}
+
+static void load_cmdlines(const char *cmdlines)
+{
+	FILE *fp;
+	char *line = NULL;
+	size_t len = 0;
+	char comm[1024];
+	int pid;
+	int ret;
+
+	printf("read %s\n", cmdlines);
+	fp = fopen(cmdlines, "r");
+	if (!fp)
+		pdie("Opening %s", cmdlines);
+
+	while ((ret = getline(&line, &len, fp)) > 0) {
+		if (sscanf(line, "%d %1024s", &pid, comm) == 2)
+			tep_register_comm(tep, comm, pid);
+	}
+
+	free(line);
+	fclose(fp);
+}
+
+int main(int argc, char *argv[])
+{
+	char *tracefs = find_tracing_dir();
+	enum kbuffer_long_size lsize;
+	enum kbuffer_endian endian;
+	struct dirent *dent;
+	struct stat st;
+	char *per_cpu;
+	char *events;
+	char *comms;
+	DIR *dir;
+	int ret;
+	int i;
+
+	page_size = getpagesize();
+
+	if (!tracefs)
+		die("Can not find tracefs");
+
+	tep = tep_alloc();
+	if (!tep)
+		pdie("Could not allocate tep handle");
+
+	lsize = sizeof(long) == 4 ? KBUFFER_LSIZE_4 : KBUFFER_LSIZE_8;
+	endian = tep_is_bigendian() ? KBUFFER_ENDIAN_BIG : KBUFFER_ENDIAN_LITTLE;
+
+	kbuf = kbuffer_alloc(lsize, endian);
+	if (!kbuf)
+		pdie("Could not allocate kbuffer handle");
+
+	ret = asprintf(&comms, "%s/saved_cmdlines", tracefs);
+	if (ret < 0)
+		pdie("Could not allocate saved_cmdlines path name");
+
+	load_cmdlines(comms);
+	free(comms);
+
+	ret = asprintf(&events, "%s/events", tracefs);
+	if (ret < 0)
+		pdie("Could not allocate memory for events path");
+
+	dir = opendir(events);
+	if (!dir)
+		pdie("Can't read directory '%s'", events);
+
+	while ((dent = readdir(dir))) {
+		char *system;
+
+		if (strcmp(dent->d_name, ".") == 0 ||
+		    strcmp(dent->d_name, "..") == 0)
+			continue;
+
+		ret = asprintf(&system, "%s/%s", events, dent->d_name);
+		if (ret < 0)
+			pdie("could not allocate memory for system name %s\n",
+			     dent->d_name);
+		ret = stat(system, &st);
+		if (ret < 0 /* ? */ || !S_ISDIR(st.st_mode))
+			continue;
+
+		read_system(system);
+		free(system);
+	}
+	closedir(dir);
+	free(events);
+
+	asprintf(&per_cpu, "%s/per_cpu", tracefs);
+	if (!per_cpu)
+		pdie("Could not allocate memory for per_cpu path");
+
+	for (i = 0; ; i++) {
+		char *raw_buf;
+		char *cpu;
+
+		ret = asprintf(&cpu, "%s/cpu%d", per_cpu, i);
+		if (ret < 0)
+			pdie("Could not allocate memory for cpu buffer %d name", i);
+
+		ret = stat(cpu, &st);
+		if (ret < 0 || !S_ISDIR(st.st_mode))
+			break;
+
+		ret = asprintf(&raw_buf, "%s/trace_pipe_raw", cpu);
+		if (ret < 0)
+			pdie("Could not allocate memory for cpu %d raw buffer name", i);
+
+		read_raw_buffer(i, raw_buf);
+		free(raw_buf);
+		free(cpu);
+	}
+	free(per_cpu);
+}
+
+--MP_/3h3h=_Tt4nYu/iqRNCVGTR0--
