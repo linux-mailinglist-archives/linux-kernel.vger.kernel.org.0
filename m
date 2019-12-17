@@ -2,100 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B620E1228B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:31:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 35FEE1228BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:32:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfLQKbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:31:02 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33598 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfLQKbB (ORCPT
+        id S1727264AbfLQKb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 05:31:58 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:38269 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725940AbfLQKb5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:31:01 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHAUm5u050488;
-        Tue, 17 Dec 2019 04:30:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576578648;
-        bh=wn9on6RN9KiGYb9rI8S4DAOXkDSo3d7fRdwU9g+FaTA=;
-        h=From:To:CC:Subject:Date;
-        b=x7sLPKbcxzPWH+usRT26UK5EUqUbEGPxt5+9yxa99u7YYP70x3Y4QNNcE1GJD+YCL
-         WVcIaapLCfoK9Fb3JddvNT5XPQp2PipwghNDWKL3WjlEPZobdQ660nVyVqoF8D6+lJ
-         xZk6P9Eq3j53FrOcvN8hpRxjeCMZJwO84tdq4Kc0=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHAUmVR114748
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Dec 2019 04:30:48 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 04:30:48 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 04:30:48 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHAUjHU114386;
-        Tue, 17 Dec 2019 04:30:45 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <jic23@kernel.org>
-CC:     <vkoul@kernel.org>, <ludovic.desroches@microchip.com>,
-        <eugen.hristev@microchip.com>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] iio: adc: at91-sama5d2_adc: Use dma_request_chan() instead dma_request_slave_channel()
-Date:   Tue, 17 Dec 2019 12:31:00 +0200
-Message-ID: <20191217103100.21737-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
+        Tue, 17 Dec 2019 05:31:57 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id CBD7B6C1D;
+        Tue, 17 Dec 2019 05:31:55 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Tue, 17 Dec 2019 05:31:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=WVOKI5Xa8ynfxOHUH8uTfezXeuU
+        ofMPbouYAeeiBwfo=; b=bmijsgR9pBP2Ebh5XRA1uJIvaotKaT0uunVjVlY8l1C
+        aoxODXf2Z/oIfgaiOn3GfxvN12hOlmxSVrt/DaUn2ui5y4YWSoDc09CpwSTSPvtv
+        EpCAVbR4ENthlY2tusERvGdA4V9WukWKml4U8LbisXwsFqGk1MgOy+dKLHjxHdSZ
+        tyhvxw41ZOLsopmAjnd9nL0d0uAsWaB51tldwy0lqX74f4dbGKrZ/mRVPrNLxV+M
+        svbfpDgHzf/aKOcs6RlMmOlKIh1N8lDoWOt+0RBjBAS6nPLpU/KfKRRvelNIHB04
+        GM/lHpfosT7/ny01Wzi9gelg9d+2McwmJLd6HiJHazw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=WVOKI5
+        Xa8ynfxOHUH8uTfezXeuUofMPbouYAeeiBwfo=; b=JQpNJtE7YDoUUklw9zvFjP
+        wZ9Ih3qPBkDVD9rCoT5gWFxZZMwAusismfQXbuYWFxuPirAhMF5u+liubo54g2f9
+        VSPkmDIF7Z97Skk7gKtoH/EFJbwhbIq5myFJfZ1wZMfnXUVwYdTnTdbRYh7eeVJZ
+        gJr09v+76QbaX2xWEI3SPIzQs13zYK+p0ljuNvrE/AQuYI3MW6dLZmiD5Z7rxO48
+        XkEdENERvqJHzLTz0PGGUNfi9qhPrrHD1byP+9dNJtTDnPd2NMWkBFlCPwUsYFit
+        JZjF92wtLbfZEF63mps1svac1aKgx7nquB1ubhn+c8c1T9KtwpDHE9SUMhQ+u0pA
+        ==
+X-ME-Sender: <xms:mq74XbTn4Mg9VZkNfMUDm5tvQnvEyJ2uURgkgoUYXKa8WCLK8XbTTw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtjedgudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesthdtre
+    dttddtvdenucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheq
+    necukfhppeekfedrkeeirdekledruddtjeenucfrrghrrghmpehmrghilhhfrhhomhepgh
+    hrvghgsehkrhhorghhrdgtohhmnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:mq74XU4x3XQ7_I5tSP0AKITnKCi65jdaYkOmpNjBtanvDdZYLiOoiQ>
+    <xmx:mq74XQUg-13Hasut9Vfn0iVM61swGMfn27ddmuXCObXilt8-pdnw2g>
+    <xmx:mq74Xa-et88YfpMZI-Zc-HV_sTQU6ySLnoywFpS3bcb4zJHuXMgkdg>
+    <xmx:m674Xe8EJYjeh9FVPEltY81zCiKvaT4ZKJ8GAjBTR6L8hMaNwuJDaQ>
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4E5FF8005C;
+        Tue, 17 Dec 2019 05:31:54 -0500 (EST)
+Date:   Tue, 17 Dec 2019 11:31:52 +0100
+From:   Greg KH <greg@kroah.com>
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com, dmitry.torokhov@gmail.com,
+        jacek.anaszewski@gmail.com, pavel@ucw.cz, dmurphy@ti.com,
+        arnd@arndb.de, masahiroy@kernel.org, michal.lkml@markovi.net,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
+        linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: Re: [PATCH] RFC: platform driver registering via initcall tables
+Message-ID: <20191217103152.GB2914497@kroah.com>
+References: <20191217102219.29223-1-info@metux.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217102219.29223-1-info@metux.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-eating up the error code.
+On Tue, Dec 17, 2019 at 11:22:19AM +0100, Enrico Weigelt, metux IT consult wrote:
+> A large portion of platform drivers doesn't need their own init/exit
+> functions. At source level, the boilerplate is already replaced by
+> module_platform_driver() macro call, which creates this code under
+> the hood. But in the binary, the code is still there.
+> 
+> This patch is an attempt to remove them it, by the same approach
+> already used for the init functions: collect pointers to the driver
+> structs in special sections, which are then processed by the init
+> code which already calls the init function vectors. For each level,
+> the structs are processed right after the init funcs, so we guarantee
+> the existing order, and explicit inits always come before the automatic
+> registering.
 
-By using dma_request_chan() directly the driver can support deferred
-probing against DMA.
+No, what is so "special" about platform drivers that they require this?
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
-Hi,
+If anything, we should be moving _AWAY_ from platform drivers and use
+real bus drivers instead.
 
-Changes since v1:
-- Subject prefix is corrected to "iio: adc: at91-sama5d2_adc:"
+> Downside of apprach: cluttering init code w/ a little bit knowledge
+> about driver related stuff (calls to platform_driver_register(), etc).
 
-Regards,
-Peter
+Exactly, don't.
 
- drivers/iio/adc/at91-sama5d2_adc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> For now, only implemented for the built-in case (modules still go the
+> old route). The module case is a little bit trickier: either we have to
+> extend the module header (and modpost tool) or do some dynamic symbol
+> lookup.
+> 
+> This patch is just a PoC for further discussions, not ready for mainline.
+> It also changes a few drivers, just for illustration. In case the general
+> approach is accepted, it will be cleaned up and splitted.
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index e1850f3d5cf3..a5c7771227d5 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -1444,10 +1444,10 @@ static void at91_adc_dma_init(struct platform_device *pdev)
- 	if (st->dma_st.dma_chan)
- 		return;
- 
--	st->dma_st.dma_chan = dma_request_slave_channel(&pdev->dev, "rx");
--
--	if (!st->dma_st.dma_chan)  {
-+	st->dma_st.dma_chan = dma_request_chan(&pdev->dev, "rx");
-+	if (IS_ERR(st->dma_st.dma_chan))  {
- 		dev_info(&pdev->dev, "can't get DMA channel\n");
-+		st->dma_st.dma_chan = NULL;
- 		goto dma_exit;
- 	}
- 
--- 
-Peter
+Please no, I don't see why this is even needed.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+greg k-h
