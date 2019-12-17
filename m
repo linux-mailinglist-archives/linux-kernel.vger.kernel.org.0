@@ -2,110 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8133B122485
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15A64122495
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:21:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfLQGNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 01:13:32 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:38275 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725856AbfLQGNc (ORCPT
+        id S1727943AbfLQGVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 01:21:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39656 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfLQGVP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 01:13:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576563210;
-        h=from:from:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:mime-version:mime-version:
-         content-type:content-type:in-reply-to:in-reply-to:  references:references;
-        bh=SiU3iojc8KztiOx21hGe4lTyBXAFozx9uHjLevKXtxs=;
-        b=S65UElUd38xbejY709c/isPmnzPvpoolLKhdbukBOGFMzMoVPFGs4t+ZY+ZRd8hLPRatKD
-        yx26Az3Ly4V4TQY+zzgMRbeDIwp6S8SACw/jNmhc99JsUG03f+scJpKuIoOEY0HoynRkMY
-        paKnRN4HLWyblzoKJMmJAwOYp9Cuedc=
-Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com
- [209.85.161.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-168-WntPusbYNA-up1L7EFtWcw-1; Tue, 17 Dec 2019 01:13:29 -0500
-X-MC-Unique: WntPusbYNA-up1L7EFtWcw-1
-Received: by mail-yw1-f70.google.com with SMTP id u199so4305865ywc.10
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:13:28 -0800 (PST)
+        Tue, 17 Dec 2019 01:21:15 -0500
+Received: by mail-pf1-f193.google.com with SMTP id q10so105542pfs.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:21:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fwHTfnJaI9qnMvf2gSHfOz3OAkZOCzCGX5TYMPhWqUA=;
+        b=dFn7VKlHM/jteR5MfqGleAz/hb1y6mlIHXAhvp1Jq7TNAdwfpl0D30IIVXK32ytp6Q
+         +YAo0OOlee56Yr5UTweg+CKiB565URXCbLnmw4B8JBfXVDOngHrK8DX0OPk6m5eVc0nE
+         b9VPMLnT2AxEfHM/z5N53rqS/4C2J1ciUc/x8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=SiU3iojc8KztiOx21hGe4lTyBXAFozx9uHjLevKXtxs=;
-        b=rk6KonHJ8WkD5v6k0LYLuyTTf8nChb/hf55l3UjskmK+n1lfxez+Dd5EYedpePIPP1
-         XBeezUXyLbJEm1YYQXKz6e5fDpGQRL2UwZ8rUO/Qg9nMbNi4Mk/fVI4sVe779XmA2TFw
-         8AAxUNLDlsqwXHlBCoeZHmEsG9u97l2PUaJaNKIwBSUadfDxXr7nAlUB9fqwBqSJ4iOX
-         aNOasAUwepShfug0qyXlz1T3EqWMT8ryho0aHMIM3//hL+3IrCzvyPAEoMzS+W0WHVA8
-         As7XHmQaxfHkqwLiyhEAtUOaLRzB1NGJjyDq9k9G8PYCC7AbRztWVChfXmgSkz2rAWOr
-         O2lQ==
-X-Gm-Message-State: APjAAAUTkpP5OL/+FWi/VWVN6VFoYEiEBW1R3GxqCzBs4DEUuZVNm9ce
-        5hv5Ien/w3D48WtL8m4aps4L8kGqj+QO+jiWWKtf+cDqLEK1u4mQdp7S+IxZrhw2/WvN+Lr88qs
-        woJgZ3vA8bDOolMeCoUhuxoP3
-X-Received: by 2002:a25:3803:: with SMTP id f3mr23248221yba.144.1576563208268;
-        Mon, 16 Dec 2019 22:13:28 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxoB5IjXGTbrM0Ii2yTe96Xko4hQNa6W9HaJcW2UvIjEDQcue5di77FK6VsGF+OdaPWhJQlPw==
-X-Received: by 2002:a25:3803:: with SMTP id f3mr23248212yba.144.1576563208012;
-        Mon, 16 Dec 2019 22:13:28 -0800 (PST)
-Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
-        by smtp.gmail.com with ESMTPSA id x84sm9173071ywg.47.2019.12.16.22.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 22:13:27 -0800 (PST)
-Date:   Mon, 16 Dec 2019 23:13:25 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     iommu@lists.linux-foundation.org,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: panic in dmar_remove_one_dev_info
-Message-ID: <20191217061325.fbzcxgh4sng5lkn7@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: iommu@lists.linux-foundation.org,
-        Lu Baolu <baolu.lu@linux.intel.com>, linux-kernel@vger.kernel.org
-References: <20191216205757.x4hewnduopbo4mpv@cantor>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fwHTfnJaI9qnMvf2gSHfOz3OAkZOCzCGX5TYMPhWqUA=;
+        b=tpjtFnx/6Fh69ElM5+vvLNcmnDC0igOgFC00lP+AUEZUnG7i3cqKsKAOxzbxfvHBj2
+         jbvjWrMdO25IPa+VXZuFR5u2J9+PriWVrfrr72BiGXm1MeIurAtCR8xEBv1czGujO+tt
+         6I81s59YxyUuu8ry+DV5Wc+JbtPG9zSAoNYcyN9qjpiAFtPyf0nw94gpPh//VOrir1Vc
+         cwWBdWJKld+JehLlvghh8azrWyCkc+M6hHQMFTTQ7WNzBbS3aykeBCbhNf5wItVCJACA
+         jPba9s3Zz13fNc6htvT9t7Ly0XNfzZ7w7dpwW9ai/Qj9nr/J6eYWmD195EbHgPx73EaJ
+         HxKg==
+X-Gm-Message-State: APjAAAX2S0KSnDgBiWEK/fbihyLyYALDo8mX9pFrTdOuR5t8AFw0cWDe
+        gfMsDeAYhOkz/AGdm7TP2dSmAPuajOU=
+X-Google-Smtp-Source: APXvYqwxES5aBvLx0gBZPoQ4uf9OPrXMPXj76HdARJWVjDzl5iECGlwFNrhuI6ftbaxuc8XBOAWO+g==
+X-Received: by 2002:aa7:9205:: with SMTP id 5mr20889973pfo.213.1576563674196;
+        Mon, 16 Dec 2019 22:21:14 -0800 (PST)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com. [209.85.210.176])
+        by smtp.gmail.com with ESMTPSA id s18sm25538894pfs.20.2019.12.16.22.21.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2019 22:21:14 -0800 (PST)
+Received: by mail-pf1-f176.google.com with SMTP id q10so105528pfs.6
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:21:13 -0800 (PST)
+X-Received: by 2002:a6b:be84:: with SMTP id o126mr2416373iof.269.1576563289206;
+ Mon, 16 Dec 2019 22:14:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20191216205757.x4hewnduopbo4mpv@cantor>
+References: <20191212193544.80640-1-dianders@chromium.org> <20191212113540.7.Ia9bd3fca24ad34a5faaf1c3e58095c74b38abca1@changeid>
+ <5df2b752.1c69fb81.77c46.0f9a@mx.google.com>
+In-Reply-To: <5df2b752.1c69fb81.77c46.0f9a@mx.google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 16 Dec 2019 22:14:35 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UGRqeAr8vVUfx3ADyxNLJRz3g=YhWNX1adgepx_kADrA@mail.gmail.com>
+Message-ID: <CAD=FV=UGRqeAr8vVUfx3ADyxNLJRz3g=YhWNX1adgepx_kADrA@mail.gmail.com>
+Subject: Re: [PATCH 7/7] arm64: dts: qcom: sc7180: Use 'ranges' in
+ arm,armv7-timer-mem node
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kiran Gunda <kgunda@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Maulik Shah <mkshah@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon Dec 16 19, Jerry Snitselaar wrote:
->HP is seeing a panic on gen9 dl360 and dl560 while testing these other
->changes we've been eorking on. I just took an initial look, but have
->to run to a dentist appointment so couldn't dig too deep. It looks
->like the device sets dev->archdata.iommu to DEFER_DEVICE_DOMAIN_INFO
->in intel_iommu_add_device, and then it needs a private domain so
->dmar_remove_one_dev_info gets called. That code path ends up trying to
->use DEFER_DEVICE_DOMAIN_INFO as a pointer.  I don't need if there just
->needs to be a check in there to bail out if it sees
->DEFER_DEVICE_DOMAIN_INFO, or if something more is needed. I'll look
->at it some more when I get back home.
+Hi,
+
+On Thu, Dec 12, 2019 at 1:55 PM Stephen Boyd <swboyd@chromium.org> wrote:
 >
->Regards,
->Jerry
+> Quoting Douglas Anderson (2019-12-12 11:35:43)
+> > Running `make dtbs_check` yells:
+> >
+> >   arch/arm64/boot/dts/qcom/sc7180-idp.dt.yaml: timer@17c20000: #size-cells:0:0: 1 was expected
+> >
+> > It appears that someone was trying to assert the fact that sub-nodes
+> > describing frames would never have a size that's more than 32-bits
+> > big.  That's certainly true in the case of sc7180.
+> >
+> > I guess this is a hint that it's time to do the thing that nobody
+> > seems to do but that "writing-bindings.txt" says we should all do.
+> > Specifically it says: "DO use non-empty 'ranges' to limit the size of
+> > child buses/devices".  That means we should probably limit the
+>
+> It got cut off here. I'm waiting to find out what it is!!
 
-Hi Baolu,
-
-Does this look sane?
-
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5163,7 +5163,8 @@ static void dmar_remove_one_dev_info(struct device *dev)
-  
-         spin_lock_irqsave(&device_domain_lock, flags);
-         info = dev->archdata.iommu;
--       if (info)
-+       if (info && info != DEFER_DEVICE_DOMAIN_INFO
-+           && info != DUMMY_DEVICE_DOMAIN_INFO)
-                 __dmar_remove_one_dev_info(info);
-         spin_unlock_irqrestore(&device_domain_lock, flags);
-  }
-
-
+I was going to say that I should use ranges to limit the address cells
+in addition to the size cells, but then I think I must have got
+distracted and forgot to finish my
 
 
-Regards,
-Jerry
+> > I believe that this patch is the way to do it and there should be no
+> > bad side effects here.  I believe that since we're far enough down
+> > (not trying to describe an actual device, just some sub-pieces) that
+> > this won't cause us to run into the problems that caused us to
+> > increase the soc-level #address-cells and #size-cells to 2 in sdm845
+> > in commit bede7d2dc8f3 ("arm64: dts: qcom: sdm845: Increase address
+> > and size cells for soc").
+> >
+> > I can at least confirm that "arch_mem_timer" seems to keep getting
+> > interrupts in "/proc/interrupts" after this change.
+> >
+> > Fixes: 90db71e48070 ("arm64: dts: sc7180: Add minimal dts/dtsi files for SC7180 soc")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+>
+> This pattern exists in most of the qcom dts files. Can you fix all the
+> arm,armv7-timer-mem nodes. Maybe the binding has the same problem too in
+> the example.
 
+Yeah.  I'm a little scared to go and do this for every qcom device
+tree file since I have no good way to test them, but I suppose I can
+give it a shot.  I was kinda thinking that, in general, it would make
+sense for folks to tackle one SoC at a time and make that SoC clean
+and test it.
+
+In any case, your idea about updating the example seemed wise to me,
+so I sent out:
+
+https://lore.kernel.org/r/20191216220512.1.I7dbd712cfe0bdf7b53d9ef9791072b7e9c6d3c33@changeid
+
+I'll put this patch on hold until Rob gives his thoughts on that one
+so we can really make sure we're supposed to be using ranges in this
+way.
+
+-Doug
