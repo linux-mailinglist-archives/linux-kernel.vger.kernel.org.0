@@ -2,50 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE153122C54
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BBFD122C50
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:54:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfLQMzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:55:01 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63654 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfLQMzB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:55:01 -0500
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBHCs3Gj062399;
-        Tue, 17 Dec 2019 21:54:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp);
- Tue, 17 Dec 2019 21:54:03 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav404.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBHCs2LC062394
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 17 Dec 2019 21:54:03 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <CACT4Y+b6ZMfLCSe_x8_ME4hyKB9hz9B84LiNV8-u1SVDzqLCHA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <a62a6576-940b-31a8-1d37-8b4c0828d86b@i-love.sakura.ne.jp>
-Date:   Tue, 17 Dec 2019 21:54:02 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727370AbfLQMyV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:54:21 -0500
+Received: from foss.arm.com ([217.140.110.172]:36156 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726411AbfLQMyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:54:21 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89F7C31B;
+        Tue, 17 Dec 2019 04:54:20 -0800 (PST)
+Received: from [192.168.0.9] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 920BF3F719;
+        Tue, 17 Dec 2019 04:54:18 -0800 (PST)
+Subject: Re: [Patch v6 1/7] sched/pelt.c: Add support to track thermal
+ pressure
+To:     Thara Gopinath <thara.gopinath@linaro.org>, mingo@redhat.com,
+        peterz@infradead.org, ionela.voinescu@arm.com,
+        vincent.guittot@linaro.org, rui.zhang@intel.com,
+        qperret@google.com, daniel.lezcano@linaro.org,
+        viresh.kumar@linaro.org
+Cc:     linux-kernel@vger.kernel.org, amit.kachhap@gmail.com,
+        javi.merino@kernel.org, amit.kucheria@verdurent.com
+References: <1576123908-12105-1-git-send-email-thara.gopinath@linaro.org>
+ <1576123908-12105-2-git-send-email-thara.gopinath@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <cdaf2c1f-63bb-2430-c53a-f19a45035fc5@arm.com>
+Date:   Tue, 17 Dec 2019 13:54:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+b6ZMfLCSe_x8_ME4hyKB9hz9B84LiNV8-u1SVDzqLCHA@mail.gmail.com>
+In-Reply-To: <1576123908-12105-2-git-send-email-thara.gopinath@linaro.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -54,62 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/17 17:41, Dmitry Vyukov wrote:
->> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
->> index 90655910b0c7..367b92ad598b 100644
->> --- a/drivers/tty/serial/8250/8250_port.c
->> +++ b/drivers/tty/serial/8250/8250_port.c
->> @@ -519,11 +519,14 @@ serial_port_out_sync(struct uart_port *p, int offset, int value)
->>         case UPIO_MEM32:
->>         case UPIO_MEM32BE:
->>         case UPIO_AU:
->> -               p->serial_out(p, offset, value);
->> +               /* Writing to random kernel address causes crash. */
->> +               if (!IS_ENABLED(CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING))
->> +                       p->serial_out(p, offset, value);
-> 
-> Does this do the same as LOCKDOWN_TIOCSSERIAL? How is it different?
+On 12/12/2019 05:11, Thara Gopinath wrote:
 
-I don't know. If there were an oversight in condition of lines 852-858,
-uart_startup() might be called due to "goto check_and_exit;" without
-hitting security_locked_down(LOCKDOWN_TIOCSSERIAL) check.
+minor: in subject: s/sched/pelt.c/sched/pelt
 
-846:    old_flags = uport->flags;
-847:    new_flags = (__force upf_t)new_info->flags;
-848:    old_custom_divisor = uport->custom_divisor;
-849:
-850:    if (!capable(CAP_SYS_ADMIN)) {
-851:            retval = -EPERM;
-852:            if (change_irq || change_port ||
-853:                (new_info->baud_base != uport->uartclk / 16) ||
-854:                (close_delay != port->close_delay) ||
-855:                (closing_wait != port->closing_wait) ||
-856:                (new_info->xmit_fifo_size &&
-857:                 new_info->xmit_fifo_size != uport->fifosize) ||
-858:                (((new_flags ^ old_flags) & ~UPF_USR_MASK) != 0))
-859:                    goto exit;
-860:            uport->flags = ((uport->flags & ~UPF_USR_MASK) |
-861:                           (new_flags & UPF_USR_MASK));
-862:            uport->custom_divisor = new_info->custom_divisor;
-863:            goto check_and_exit;
-864:    }
-865:
-866:    retval = security_locked_down(LOCKDOWN_TIOCSSERIAL);
-867:    if (retval && (change_irq || change_port))
-868:            goto exit;
+[...]
 
-> 
->>                 p->serial_in(p, UART_LCR);      /* safe, no side-effects */
->>                 break;
->>         default:
->> -               p->serial_out(p, offset, value);
->> +               if (!IS_ENABLED(CONFIG_KERNEL_BUILT_FOR_FUZZ_TESTING))
->> +                       p->serial_out(p, offset, value);
->>         }
->>  }
+> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
+> index a96db50..9aac3b7 100644
+> --- a/kernel/sched/pelt.c
+> +++ b/kernel/sched/pelt.c
+> @@ -353,6 +353,28 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * thermal:
+> + *
+> + *   load_sum = \Sum se->avg.load_sum
 
-But I came think that "BUG: unable to handle kernel NULL pointer dereference in
-mem_serial_out" is a real kernel bug which should be fixed. It seems that crash
-occurs only when "struct serial_struct"->iomem_base == NULL, and EBUSY is
-returned otherwise. That is, some sanity check is wrong.
+Why not '\Sum rq->avg.load_sum' ?
 
+> + *
+> + *   util_avg and runnable_load_avg are not supported and meaningless.
+> + *
+> + */
+> +int update_thermal_load_avg(u64 now, struct rq *rq, u64 capacity)
+> +{
+> +	if (___update_load_sum(now, &rq->avg_thermal,
+> +			       capacity,
+> +			       capacity,
+> +			       capacity)) {
+> +		___update_load_avg(&rq->avg_thermal, 1, 1);
+> +		trace_pelt_thermal_tp(rq);
+> +		return 1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+[...]
