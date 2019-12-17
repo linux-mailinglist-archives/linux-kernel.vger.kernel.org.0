@@ -2,133 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5250122FF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:17:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0193123004
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 16:19:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbfLQPRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 10:17:55 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:40798 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbfLQPRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 10:17:54 -0500
-Received: from zn.tnic (p200300EC2F0BBF00B1FF9AA6AAA46E12.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:bf00:b1ff:9aa6:aaa4:6e12])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728371AbfLQPTv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 10:19:51 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:64432 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728346AbfLQPTv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 10:19:51 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576595989; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=rL62ogSm89mxzqo5jGWrbCifh9fRJzz4WrEa353v4VY=; b=gvYAtqEbyXFKc2a0vGATqIKFSsaEJPdQFQ6QFzqm0naLuxc89it893RAqFXHWLmGFhoTdjqa
+ M08S75WOlcLt11eKi1UuXki+wJRfJyztv7oJe4dlT/rOkEj4wH7G8ysMpmme/11TdxryKSJ6
+ vs3o3JErtdRMJ4IWqmCQ9qWM+1M=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df8f203.7f3c7a516e30-smtp-out-n03;
+ Tue, 17 Dec 2019 15:19:31 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 259B5C433A2; Tue, 17 Dec 2019 15:19:31 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3E7211EC0ABC;
-        Tue, 17 Dec 2019 16:17:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576595873;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=eMPRb1cz3Nt28bOIAgvze0vVdLfDNbhPiLCjieiXvPg=;
-        b=IgvRwOM0qg8wEd4JMvkhf5NcFcChnH2T+nAaI8DilOhfGUq/o51WiLa8tL5G3bV7q7eDZj
-        YN3wzHwN3uisJTfNImBcWCzTgf7LymqJflfElCgg1g6+v3SuE6of3/fouMnEPaPsYQsNbr
-        E/0wOJ3MIYeFtXVSrxFfD8e/Z2HFiVc=
-Date:   Tue, 17 Dec 2019 16:17:44 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        puiterwijk@redhat.com
-Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
-Message-ID: <20191217151744.GG28788@zn.tnic>
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
- <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191129231326.18076-8-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        (Authenticated sender: jhugo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72CADC43383;
+        Tue, 17 Dec 2019 15:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72CADC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v11 0/4] MSM8998 Multimedia Clock Controller
+Date:   Tue, 17 Dec 2019 08:19:14 -0700
+Message-Id: <1576595954-9991-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 30, 2019 at 01:13:09AM +0200, Jarkko Sakkinen wrote:
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-Typo in the subject:
+v11:
+-rebsed to 5.5-rc1
+-picked up review tags
 
-Subject: Re: [PATCH v24 07/24] x86/cpu/intel: Detect SGX supprt
-							 ^^^^^^
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> When the CPU supports SGX, check that the BIOS has enabled SGX and SGX1
-> opcodes are available. Otherwise, all the SGX related capabilities.
-> 
-> In addition, clear X86_FEATURE_SGX_LC also in the case when the launch
-> enclave are read-only. This way the feature bit reflects the level that
-> Linux supports the launch control.
-> 
-> The check is done for every CPU, not just BSP, in order to verify that
-> MSR_IA32_FEATURE_CONTROL is correctly configured on all CPUs. The other
-> parts of the kernel, like the enclave driver, expect the same
-> configuration from all CPUs.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/intel.c | 41 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
+v10:
+-Add Taniya Das as co-maintainer as she indicated a willingness to do so
+-Add sleep clock
+-Add a gcc example per request
+-Pick up tags
 
-...
+v9:
+-expand the commit text for the DT changes a bit more to explain some of the
+extra changes
 
-> @@ -761,6 +797,11 @@ static void init_intel(struct cpuinfo_x86 *c)
->  	if (cpu_has(c, X86_FEATURE_TME))
->  		detect_tme(c);
->  
-> +#ifdef CONFIG_INTEL_SGX
-> +	if (cpu_has(c, X86_FEATURE_SGX))
-> +		detect_sgx(c);
-> +#endif
+v8:
+-drop dts changes from series per Stephen's request
+-fix the mislabeled mmcc example
+-drop Stephen as maintainer of the mmcc binding
 
-You can remove the ifdeffery here and put the ifdef around the function
-body and drop the __maybe_unused tag:
+v7:
+-port to gcc.yaml.  Drop reviewed-by for DT changes as they got completely
+rewritten
+-drop "clk: qcom: smd: Add XO clock for MSM8998".  Will need to find another
+solution and this is not blocking right now
+-convert mmcc to yaml
+-drop errant clk.h include
+-use blank entries in the DT when no clock is available
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index ef41431b3f70..2f3414eff99d 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -624,8 +624,9 @@ static void detect_tme(struct cpuinfo_x86 *c)
- 	c->x86_phys_bits -= keyid_bits;
- }
- 
--static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
-+static void detect_sgx(struct cpuinfo_x86 *c)
- {
-+#ifdef CONFIG_INTEL_SGX
- 	unsigned long long fc;
- 
- 	rdmsrl(MSR_IA32_FEATURE_CONTROL, fc);
-@@ -658,6 +659,7 @@ static void __maybe_unused detect_sgx(struct cpuinfo_x86 *c)
- 
- err_msrs_rdonly:
- 	setup_clear_cpu_cap(X86_FEATURE_SGX_LC);
-+#endif
- }
- 
- static void init_cpuid_fault(struct cpuinfo_x86 *c)
-@@ -797,10 +799,8 @@ static void init_intel(struct cpuinfo_x86 *c)
- 	if (cpu_has(c, X86_FEATURE_TME))
- 		detect_tme(c);
- 
--#ifdef CONFIG_INTEL_SGX
- 	if (cpu_has(c, X86_FEATURE_SGX))
- 		detect_sgx(c);
--#endif
- 
- 	init_intel_misc_features(c);
- 
+v6:
+-drop clk_get from mmcc clock provider
+
+v5:
+-handle the case where gcc uses rpmcc for xo, but the link is not specified in dt
+-have gcc select rpmcc
+
+v4:
+-fix makefile to use correct config item
+-pick up tags
+-fix ordering of clocks and clock-names in dt
+-drop MODULE_ALIAS
+-wait for xo in mmcc since that was found to be useful in some debug configs
+
+v3:
+-Rebase onto linux-next to get the final version of the clk parent rewrite
+series
+-Moved the bindings header to the bindings patch per Rob
+-Made xo manditory for GCC to work around the lack of clk orphan probe defer
+to avoid the uart console glitch
+
+v2:
+-Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+mechanisms introduced there.
+-Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+"incorrectly" during late init
+-Corrected the name of the XO clock to "xo"
+-Dropped the fake XO clock in GCC to prevent a namespace conflict
+-Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+-Cleaned up the weird newlines in the added DT node
+-Added DT header file to msm8998 DT for future clients
+
+Jeffrey Hugo (4):
+  dt-bindings: clock: Document external clocks for MSM8998 gcc
+  dt-bindings: clock: Convert qcom,mmcc to DT schema
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml        |   73 +-
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |   28 -
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       |   98 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/mmcc-msm8998.c                    | 2913 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h      |  210 ++
+ 7 files changed, 3290 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
