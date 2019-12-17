@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E4E122235
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4292012223A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:54:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfLQCwo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 21:52:44 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:46181 "EHLO
+        id S1727140AbfLQCwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 21:52:47 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:38898 "EHLO
         mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726798AbfLQCwo (ORCPT
+        by vger.kernel.org with ESMTP id S1727089AbfLQCwp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 21:52:44 -0500
+        Mon, 16 Dec 2019 21:52:45 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576551162; h=References: In-Reply-To: References:
+ s=smtp; t=1576551164; h=References: In-Reply-To: References:
  In-Reply-To: Message-Id: Date: Subject: Cc: To: From: Sender;
- bh=3ECQl9XMxsad4PSl6zFfkC79rWSYCYJDuUPFfcf9x9o=; b=K3gwDTcYbxZN9qeGOQ2qH8KXKa/OtCIr7XEL7GTcB8N55hGinQVrRf4Jhib6HByr6+HOrZyh
- 7Hjcqa61Bkht2YuDCOkxLmLlR1FdAdaLLwBW60yxvDOdYaSL11B8R7lOe10EQcqGlpKfenzd
- oNj5P30hUdQpRq2d99cajslcLaA=
+ bh=CI6IVlVS4tT6rEmE0t64F3K7dLcEuCRxMVil12OQwn0=; b=IEOnxz/YudVKaUaQs8jvy4zlFCh8LSLAYnDlyQ4BJsHxnqt/fxm2Hj2iPAeGSmc67axw/Eaj
+ poJgqs8AH8ufRGCDDfzltjKcCHjx1CNR+V6miAr/911ckAiMnRUJcom0oSFE4JjQPqP/aVbm
+ b+7XlAbzNPH+JS2pNLf28TejHd4=
 X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5df842fa.7fd2679c1b58-smtp-out-n01;
- Tue, 17 Dec 2019 02:52:42 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5df842fb.7f73b8035420-smtp-out-n03;
+ Tue, 17 Dec 2019 02:52:43 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7492AC43383; Tue, 17 Dec 2019 02:52:42 +0000 (UTC)
+        id 947CCC4479F; Tue, 17 Dec 2019 02:52:43 +0000 (UTC)
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
         aws-us-west-2-caf-mail-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from pacamara-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: nguyenb)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE6BEC447A2;
-        Tue, 17 Dec 2019 02:52:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE6BEC447A2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E05EAC43383;
+        Tue, 17 Dec 2019 02:52:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E05EAC43383
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=nguyenb@codeaurora.org
 From:   "Bao D. Nguyen" <nguyenb@codeaurora.org>
 To:     ulf.hansson@linaro.org, robh+dt@kernel.org
 Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         asutoshd@codeaurora.org, cang@codeaurora.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
         "Bao D. Nguyen" <nguyenb@codeaurora.org>
-Subject: [<PATCH v1> 5/9] mmc: core: fix one NULL pointer dereference after SD card is removed
-Date:   Mon, 16 Dec 2019 18:50:38 -0800
-Message-Id: <6373c3574eb80f2a760f23883196c309dacfa163.1576540908.git.nguyenb@codeaurora.org>
+Subject: [<PATCH v1> 6/9] mmc: sdhci-msm: Ignore data timeout error for R1B commands
+Date:   Mon, 16 Dec 2019 18:50:39 -0800
+Message-Id: <22061d3479b876e8590b966162d6385a47f851b1.1576540908.git.nguyenb@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <cover.1576540906.git.nguyenb@codeaurora.org>
 References: <cover.1576540906.git.nguyenb@codeaurora.org>
@@ -58,71 +58,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Can Guo <cang@codeaurora.org>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-After SD card is removed, the driver would mark its queue DYING to try to
-block further more requests from coming into the queue, then clean up its
-queue's queuedata by setting it to NULL. However, there can still be new
-requests come in right before the DYING mark is set after SD card is
-removed. When one new request is allocated and initialized, the queuedata
-would be accessed. If queuedata has been cleaned up already, NULL pointer
-dereference would happen. This change fixes it by checking if queuedata is
-NULL before accessing it, if yes, then bails out with error.
+Ignore data timeout error for R1B commands as there will be no
+data associated and the busy timeout value for these commands
+could be lager than the maximum timeout value that controller
+can handle.
 
-mmc0: card aaaa removed
-Buffer I/O error on dev mmcblk0p1, logical block 1, lost async page write
-Unable to handle kernel NULL pointer dereference at virtual address
-00000000
-Mem abort info:
-Exception class = DABT (current EL), IL = 32 bits
-SET = 0, FnV = 0
-EA = 0, S1PTW = 0
-Data abort info:
-ISV = 0, ISS = 0x00000006
-CM = 0, WnR = 0
-user pgtable: 4k pages, 39-bit VAs, pgd = ffffffd7bbafa000
-[0000000000000000] *pgd=0000000134331003, *pud=0000000134331003,
-*pmd=0000000000000000
-Internal error: Oops: 96000006 [#1] PREEMPT SMP
-task: ffffffd77d193380 task.stack: ffffff8047e30000
-pc : mmc_init_request+0x28/0x74
-lr : alloc_request_size+0x4c/0x70
-...
-Process MediaScannerSer (pid: 4710, stack limit = 0xffffff8047e30000)
-Call trace:
-mmc_init_request+0x28/0x74
-alloc_request_size+0x4c/0x70
-mempool_alloc+0x104/0x184
-get_request+0x324/0x75c
-blk_queue_bio+0x154/0x398
-generic_make_request+0xcc/0x228
-submit_bio+0x13c/0x1d4.
-
-Signed-off-by: Can Guo <cang@codeaurora.org>
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
 Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
 ---
- drivers/mmc/core/queue.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/mmc/host/sdhci.c | 15 +++++++++------
+ drivers/mmc/host/sdhci.h |  7 +++++++
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 846557b..a1de5f7 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -211,8 +211,11 @@ static int __mmc_init_request(struct mmc_queue *mq, struct request *req,
- 			      gfp_t gfp)
- {
- 	struct mmc_queue_req *mq_rq = req_to_mmc_queue_req(req);
--	struct mmc_card *card = mq->card;
--	struct mmc_host *host = card->host;
-+	struct mmc_host *host;
-+
-+	if (!mq)
-+		return -ENODEV;
-+	host = mq->card->host;
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index c04e1ac..0a05d74 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -2925,12 +2925,6 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+ 		 * above in sdhci_cmd_irq().
+ 		 */
+ 		if (data_cmd && (data_cmd->flags & MMC_RSP_BUSY)) {
+-			if (intmask & SDHCI_INT_DATA_TIMEOUT) {
+-				host->data_cmd = NULL;
+-				data_cmd->error = -ETIMEDOUT;
+-				__sdhci_finish_mrq(host, data_cmd->mrq);
+-				return;
+-			}
+ 			if (intmask & SDHCI_INT_DATA_END) {
+ 				host->data_cmd = NULL;
+ 				/*
+@@ -2944,6 +2938,15 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+ 				__sdhci_finish_mrq(host, data_cmd->mrq);
+ 				return;
+ 			}
++			if (host->quirks2 &
++				SDHCI_QUIRK2_IGNORE_DATATOUT_FOR_R1BCMD)
++				return;
++			if (intmask & SDHCI_INT_DATA_TIMEOUT) {
++				host->data_cmd = NULL;
++				data_cmd->error = -ETIMEDOUT;
++				__sdhci_finish_mrq(host, data_cmd->mrq);
++				return;
++			}
+ 		}
  
- 	mq_rq->sg = mmc_alloc_sg(mmc_get_max_segments(host), gfp);
- 	if (!mq_rq->sg)
+ 		/*
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 0ed3e0e..1a88f74 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -482,6 +482,13 @@ struct sdhci_host {
+  * block count.
+  */
+ #define SDHCI_QUIRK2_USE_32BIT_BLK_CNT			(1<<18)
++/*
++ * Ignore data timeout error for R1B commands as there will be no
++ * data associated and the busy timeout value for these commands
++ * could be lager than the maximum timeout value that controller
++ * can handle.
++ */
++#define SDHCI_QUIRK2_IGNORE_DATATOUT_FOR_R1BCMD         (1<<19)
+ 
+ 	int irq;		/* Device IRQ */
+ 	void __iomem *ioaddr;	/* Mapped address */
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
