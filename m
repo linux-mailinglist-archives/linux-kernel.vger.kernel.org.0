@@ -2,104 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C926E12202C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:56:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 784F8121FFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:50:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726559AbfLQAwl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:52:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:35632 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727256AbfLQAvp (ORCPT
+        id S1727932AbfLQAuQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:50:16 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:16612 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726556AbfLQAuQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:51:45 -0500
-Received: from [192.168.4.242] (helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1ih15O-0003Py-Gh; Tue, 17 Dec 2019 00:51:38 +0000
-Received: from ben by deadeye with local (Exim 4.93-RC7)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1ih15M-0005gV-1t; Tue, 17 Dec 2019 00:51:36 +0000
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Mon, 16 Dec 2019 19:50:16 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576543815; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=qLNr/gHCAFeczYVPQATrRfokdlGVpsfEFr/rEsngAro=;
+ b=FbimDjNUVnBbnY+p7ZHU24MzZ+remt7fYn5j1OUZGzHTAxNtaE3/Kj/yQ8DiuS9q9mZkE95d
+ PaMDT2YFsv4DiJItDWNE1Z3P10Uv1KssrtaC/yRTmG7s3UF51UiV1VwvY8y9id8i8zLd1/V/
+ ac5PBIby/41EK49ZKCOK9nk23eA=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df82641.7f84f811cf10-smtp-out-n02;
+ Tue, 17 Dec 2019 00:50:09 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id C7E1FC447A2; Tue, 17 Dec 2019 00:50:09 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF84DC433CB;
+        Tue, 17 Dec 2019 00:50:08 +0000 (UTC)
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "" <stable@vger.kernel.org>, "zhangyi (F)" <yi.zhang@huawei.com>
-Date:   Tue, 17 Dec 2019 00:47:50 +0000
-Message-ID: <lsq.1576543535.856402608@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 136/136] fs/dcache: move  security_d_instantiate()
- behind attaching dentry to inode
-In-Reply-To: <lsq.1576543534.33060804@decadent.org.uk>
-X-SA-Exim-Connect-IP: 192.168.4.242
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 17 Dec 2019 08:50:08 +0800
+From:   cang@codeaurora.org
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>, asutoshd@codeaurora.org,
+        nguyenb@codeaurora.org, rnayak@codeaurora.org,
+        linux-scsi@vger.kernel.org, kernel-team@android.com,
+        saravanak@google.com, salyzyn@google.com,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanley Chu <stanley.chu@mediatek.com>,
+        Bean Huo <beanhuo@micron.com>,
+        Venkat Gopalakrishnan <venkatg@codeaurora.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] scsi: ufs: Put SCSI host after remove it
+In-Reply-To: <20191216180502.GA2404915@kroah.com>
+References: <1576328616-30404-1-git-send-email-cang@codeaurora.org>
+ <1576328616-30404-2-git-send-email-cang@codeaurora.org>
+ <85475247-efd5-732e-ae74-6d9a11e1bdf2@acm.org>
+ <cd6dc7c90d43b8ca8254a43da48334fc@codeaurora.org>
+ <20191216180502.GA2404915@kroah.com>
+Message-ID: <bd900a0b3fdb8dd8b2cdb42a039f938b@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.80-rc1 review patch.  If anyone has any objections, please let me know.
+On 2019-12-17 02:05, Greg KH wrote:
+> On Mon, Dec 16, 2019 at 10:31:29PM +0800, cang@codeaurora.org wrote:
+>> On 2019-12-15 02:32, Bart Van Assche wrote:
+>> > On 12/14/19 8:03 AM, Can Guo wrote:
+>> > > In ufshcd_remove(), after SCSI host is removed, put it once so that
+>> > > its
+>> > > resources can be released.
+>> > >
+>> > > Signed-off-by: Can Guo <cang@codeaurora.org>
+>> > >
+>> > > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+>> > > index b5966fa..a86b0fd 100644
+>> > > --- a/drivers/scsi/ufs/ufshcd.c
+>> > > +++ b/drivers/scsi/ufs/ufshcd.c
+>> > > @@ -8251,6 +8251,7 @@ void ufshcd_remove(struct ufs_hba *hba)
+>> > >   	ufs_bsg_remove(hba);
+>> > >   	ufs_sysfs_remove_nodes(hba->dev);
+>> > >   	scsi_remove_host(hba->host);
+>> > > +	scsi_host_put(hba->host);
+>> > >   	/* disable interrupts */
+>> > >   	ufshcd_disable_intr(hba, hba->intr_mask);
+>> > >   	ufshcd_hba_stop(hba, true);
+>> >
+>> > Hi Can,
+>> >
+>> > The UFS driver may queue work asynchronously and that asynchronous
+>> > work may refer to the SCSI host, e.g. ufshcd_err_handler(). Is it
+>> > guaranteed that all that asynchronous work has finished before
+>> > scsi_host_put() is called?
+>> >
+>> > Thanks,
+>> >
+>> > Bart.
+>> 
+>> Hi Bart,
+>> 
+>> As SCSI host is allocated in ufshcd_platform_init() during platform
+>> drive probe, it is much more appropriate if platform driver calls
+>> ufshcd_dealloc_host() in their own drv->remove() path. How do you
+>> think if I change it as below? If it is OK to you, please ignore my
+>> previous mails.
+>> 
+>> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+>> index 3d4582e..ea45756 100644
+>> --- a/drivers/scsi/ufs/ufs-qcom.c
+>> +++ b/drivers/scsi/ufs/ufs-qcom.c
+>> @@ -3239,6 +3239,7 @@ static int ufs_qcom_remove(struct 
+>> platform_device
+>> *pdev)
+>> 
+>>         pm_runtime_get_sync(&(pdev)->dev);
+>>         ufshcd_remove(hba);
+>> +       ufshcd_dealloc_host(hba);
+>>         return 0;
+>>  }
+> 
+> Wait, why is this a platform device?  Don't you hang off of a pci
+> device?  Or am I missing something earlier in this patchset?
+> 
+> thanks,
+> 
+> greg k-h
 
-------------------
+Hi Greg,
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+I am not saying someone is a platform device here. My point is
+whoever allocates the SCSI host in its drv->probe(), should
+de-allocate it in its own drv->remove(), just like what ufshcd-pci.c
+does.
 
-During backport 1e2e547a93a "do d_instantiate/unlock_new_inode
-combinations safely", there was a error instantiating sequence of
-attaching dentry to inode and calling security_d_instantiate().
+Thanks,
 
-Before commit ce23e640133 "->getxattr(): pass dentry and inode as
-separate arguments" and b96809173e9 "security_d_instantiate(): move to
-the point prior to attaching dentry to inode", security_d_instantiate()
-should be called beind __d_instantiate(), otherwise it will trigger
-below problem when CONFIG_SECURITY_SMACK on ext4 was enabled because
-d_inode(dentry) used by ->getxattr() is NULL before __d_instantiate()
-instantiate inode.
-
-[   31.858026] BUG: unable to handle kernel paging request at ffffffffffffff70
-...
-[   31.882024] Call Trace:
-[   31.882378]  [<ffffffffa347f75c>] ext4_xattr_get+0x8c/0x3e0
-[   31.883195]  [<ffffffffa3489454>] ext4_xattr_security_get+0x24/0x40
-[   31.884086]  [<ffffffffa336a56b>] generic_getxattr+0x5b/0x90
-[   31.884907]  [<ffffffffa3700514>] smk_fetch+0xb4/0x150
-[   31.885634]  [<ffffffffa3700772>] smack_d_instantiate+0x1c2/0x550
-[   31.886508]  [<ffffffffa36f9a5a>] security_d_instantiate+0x3a/0x80
-[   31.887389]  [<ffffffffa3353b26>] d_instantiate_new+0x36/0x130
-[   31.888223]  [<ffffffffa342b1ef>] ext4_mkdir+0x4af/0x6a0
-[   31.888928]  [<ffffffffa3343470>] vfs_mkdir+0x100/0x280
-[   31.889536]  [<ffffffffa334b086>] SyS_mkdir+0xb6/0x170
-[   31.890255]  [<ffffffffa307c855>] ? trace_do_page_fault+0x95/0x2b0
-[   31.891134]  [<ffffffffa3c5e078>] entry_SYSCALL_64_fastpath+0x18/0x73
-
-Cc: <stable@vger.kernel.org> # 3.16, 4.4
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/dcache.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1685,7 +1685,6 @@ void d_instantiate_new(struct dentry *en
- 	BUG_ON(!hlist_unhashed(&entry->d_u.d_alias));
- 	BUG_ON(!inode);
- 	lockdep_annotate_inode_mutex_key(inode);
--	security_d_instantiate(entry, inode);
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode->i_state & I_NEW));
-@@ -1693,6 +1692,7 @@ void d_instantiate_new(struct dentry *en
- 	smp_mb();
- 	wake_up_bit(&inode->i_state, __I_NEW);
- 	spin_unlock(&inode->i_lock);
-+	security_d_instantiate(entry, inode);
- }
- EXPORT_SYMBOL(d_instantiate_new);
- 
-
+Can Guo.
