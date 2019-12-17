@@ -2,166 +2,277 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B620C123410
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:01:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2002112341B
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 19:02:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfLQSBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 13:01:21 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37427 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727813AbfLQSBV (ORCPT
+        id S1727934AbfLQSCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 13:02:03 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:31411 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727754AbfLQSCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 13:01:21 -0500
-Received: by mail-io1-f67.google.com with SMTP id k24so10370326ioc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 10:01:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=uGsOqnUo6JdssnVcWsXaoer452mQ2VyC4E+orTj0tPU=;
-        b=P/xz0Kxm9DCGVzJZCodObxZFaIjKhuO7WZf4EuxvlLwlYSeZ/3skdGJlB9ZDXuIKyy
-         ih46Vavia00cJH0Nny4tma0Bj9mMFvZ0hqzKsYFI+aWnBc4JzdFljQOwAICDYH+ywBEq
-         CfB4neA4ItJbuyqHye24xtQlTuTSIPdAEWH94Pj10zP/mpqRdZqNqHTGYzXA7ntuImOe
-         UnVS9PeAJqC+I+eNwd70tWMP9Wle9GfSB+S9WKFW47MKygzOPqoYrfEZeyIgKJtaUrtl
-         rfM7ANGbku1CkySHQeUyOlLffAXaNj1oGuPPQPGMSuAZr5XS+2daW+GHtBzlH8j76OyN
-         OOkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uGsOqnUo6JdssnVcWsXaoer452mQ2VyC4E+orTj0tPU=;
-        b=XzTHiid3T6Ubczvy4lCqDrDRprBwiMYMhy91rfiSph+ixeLYaguZKtv4zAy3AC6bIx
-         x+YJuLclbx8v7AZwDjTSDdhs+a1YhA9SsMk4Dp16oU1yc+28gvkXlogX8aJih2bfYzTU
-         grDU+rkKNrmm0WKwCw/Atm+xHpVIzd+KWU2NYVGlghMT/c8DCgA1cniqVOq4SfZKGJ9G
-         EAdgdEbxdPRDQmqFxk0thogRw7SZV8gGUqokIWGeNjvuwSm+ZyyLpL+nm9pbvihYMBrY
-         Yw+Ycnc9bLEbnTizU5JczakM7PC03qMvCQxxrL1M5zfZGjcTc4mv3khkEoxC3DXSVLCm
-         /85w==
-X-Gm-Message-State: APjAAAUvzeotTLrqUnkowKmAVL8O6BBypji2ST+x0gL9z6+GtUFdMali
-        hr8EqSPkOZ3CJA+t58rEX4WihWaaLkyVWg==
-X-Google-Smtp-Source: APXvYqzhl4p5P7Av3q4saBACrZiB4KgHat9V/dIkKE8qUwOTme4LjfXR+58O/mijh9KSgwASAtHSZA==
-X-Received: by 2002:a02:8587:: with SMTP id d7mr18291845jai.39.1576605679832;
-        Tue, 17 Dec 2019 10:01:19 -0800 (PST)
-Received: from [192.168.1.159] ([65.144.74.34])
-        by smtp.gmail.com with ESMTPSA id i83sm7009347ilf.65.2019.12.17.10.01.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 10:01:19 -0800 (PST)
-Subject: Re: [PATCH 3/3] io_uring: move *queue_link_head() from common path
-To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1576538176.git.asml.silence@gmail.com>
- <eda17f0736faff0876c580f1cd841b61c92d7e39.1576538176.git.asml.silence@gmail.com>
- <17f7900c-385f-0dfa-11bf-af99d080f894@gmail.com>
- <76917820-052d-9597-133d-424fee3edade@kernel.dk>
- <5d4af2f6-26a2-b241-5131-3a0155cbbf22@kernel.dk>
- <3b5100a7-2922-a9f2-e4e2-76252318959d@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <7edd6631-326c-ac9c-7c5b-fa4bab3932d3@kernel.dk>
-Date:   Tue, 17 Dec 2019 11:01:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <3b5100a7-2922-a9f2-e4e2-76252318959d@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 17 Dec 2019 13:02:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1576605718;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=BCgViyEUHggaH/2A66pubiKAk00tvESIUfyUxBf6x1Q=;
+        b=iXuhNMyjRKgn0uxt9a3yu2BD8nmJTbz/gAFVRWihO6ZPtR+jzPtXetamJVy6RDA3oF
+        RmmYqRri0f3UGQB3XehlV9XeR8/NnrX2H5W2+77tbEBW7XXFRtd0hXKxsrWz0j3L5vFU
+        +J63856OM/bRhL+EpocPBPhbaLj2Qt/trohPDpSjZA70w+QJE2Ew5MBQdy/+N5Gug7iT
+        bGHEyMrL2r9T14aPTSQfoCWmWn0pHx3NZxBTctbc0dsKTUvtR3d86YMbs8rRVTcNRalw
+        Owr09WkSciJGaQVSDpjyoy5ACWr4UNwdaTbLhesEO8jupaZBEGVP7CAIJa+n82Sut1P3
+        AAOQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlWeXA4JZbo="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 46.0.7 DYNA|AUTH)
+        with ESMTPSA id q020e2vBHI1h2dM
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Tue, 17 Dec 2019 19:01:43 +0100 (CET)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH v3 1/8] dt-bindings: add img,pvrsgx.yaml for Imagination GPUs
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20191205170113.GA853@bogus>
+Date:   Tue, 17 Dec 2019 19:01:42 +0100
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        openpvrsgx-devgroup@letux.org, letux-kernel@openphoenux.org,
+        kernel@pyra-handheld.com, linux-mips@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A9C93118-7E78-4910-8446-AF1E7827C23E@goldelico.com>
+References: <cover.1574595627.git.hns@goldelico.com> <c93eff41b4a85ec01fa01819af8a380b7465e01c.1574595627.git.hns@goldelico.com> <20191205170113.GA853@bogus>
+To:     Rob Herring <robh@kernel.org>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 10:52 AM, Pavel Begunkov wrote:
-> On 17/12/2019 20:37, Jens Axboe wrote:
->> On 12/17/19 9:45 AM, Jens Axboe wrote:
->>> On 12/16/19 4:38 PM, Pavel Begunkov wrote:
->>>> On 17/12/2019 02:22, Pavel Begunkov wrote:
->>>>> Move io_queue_link_head() to links handling code in io_submit_sqe(),
->>>>> so it wouldn't need extra checks and would have better data locality.
->>>>>
->>>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->>>>> ---
->>>>>  fs/io_uring.c | 32 ++++++++++++++------------------
->>>>>  1 file changed, 14 insertions(+), 18 deletions(-)
->>>>>
->>>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
->>>>> index bac9e711e38d..a880ed1409cb 100644
->>>>> --- a/fs/io_uring.c
->>>>> +++ b/fs/io_uring.c
->>>>> @@ -3373,13 +3373,15 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
->>>>>  			  struct io_kiocb **link)
->>>>>  {
->>>>>  	struct io_ring_ctx *ctx = req->ctx;
->>>>> +	unsigned int sqe_flags;
->>>>>  	int ret;
->>>>>  
->>>>> +	sqe_flags = READ_ONCE(req->sqe->flags);
->>>>>  	req->user_data = READ_ONCE(req->sqe->user_data);
->>>>>  	trace_io_uring_submit_sqe(ctx, req->user_data, true, req->in_async);
->>>>>  
->>>>>  	/* enforce forwards compatibility on users */
->>>>> -	if (unlikely(req->sqe->flags & ~SQE_VALID_FLAGS)) {
->>>>> +	if (unlikely(sqe_flags & ~SQE_VALID_FLAGS)) {
->>>>>  		ret = -EINVAL;
->>>>>  		goto err_req;
->>>>>  	}
->>>>> @@ -3402,10 +3404,10 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
->>>>>  	if (*link) {
->>>>>  		struct io_kiocb *head = *link;
->>>>>  
->>>>> -		if (req->sqe->flags & IOSQE_IO_DRAIN)
->>>>> +		if (sqe_flags & IOSQE_IO_DRAIN)
->>>>>  			head->flags |= REQ_F_DRAIN_LINK | REQ_F_IO_DRAIN;
->>>>>  
->>>>> -		if (req->sqe->flags & IOSQE_IO_HARDLINK)
->>>>> +		if (sqe_flags & IOSQE_IO_HARDLINK)
->>>>>  			req->flags |= REQ_F_HARDLINK;
->>>>>  
->>>>>  		if (io_alloc_async_ctx(req)) {
->>>>> @@ -3421,9 +3423,15 @@ static bool io_submit_sqe(struct io_kiocb *req, struct io_submit_state *state,
->>>>>  		}
->>>>>  		trace_io_uring_link(ctx, req, head);
->>>>>  		list_add_tail(&req->link_list, &head->link_list);
->>>>> -	} else if (req->sqe->flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK)) {
->>>>> +
->>>>> +		/* last request of a link, enqueue the link */
->>>>> +		if (!(sqe_flags & IOSQE_IO_LINK)) {
->>>>
->>>> This looks suspicious (as well as in the current revision). Returning back
->>>> to my questions a few days ago can sqe->flags have IOSQE_IO_HARDLINK, but not
->>>> IOSQE_IO_LINK? I don't find any check.
->>>>
->>>> In other words, should it be as follows?
->>>> !(sqe_flags & (IOSQE_IO_LINK|IOSQE_IO_HARDLINK))
->>>
->>> Yeah, I think that should check for both. I'm fine with either approach
->>> in general:
->>>
->>> - IOSQE_IO_HARDLINK must have IOSQE_IO_LINK set
->>>
->>> or
->>>
->>> - IOSQE_IO_HARDLINK implies IOSQE_IO_LINK
->>>
->>> Seems like the former is easier to verify in terms of functionality,
->>> since we can rest easy if we check this early and -EINVAL if that isn't
->>> the case.
->>>
->>> What do you think?
->>
->> If you agree, want to send in a patch for that for 5.5? Then I can respin
->> for-5.6/io_uring on top of that, and we can apply your cleanups there.
->>
-> Yes, that's the idea. Already got a patch, if you haven't done it yet.
+Hi Rob,
+sorry for the delay. I wanted to wait for v5.5-rc1 and it did take =
+longer...
 
-I haven't.
+> Am 05.12.2019 um 18:01 schrieb Rob Herring <robh@kernel.org>:
+>=20
+> On Sun, Nov 24, 2019 at 12:40:21PM +0100, H. Nikolaus Schaller wrote:
+>> The Imagination PVR/SGX GPU is part of several SoC from
+>> multiple vendors, e.g. TI OMAP, Ingenic JZ4780, Intel Poulsbo
+>> and others.
+>>=20
+>> With this binding, we describe how the SGX processor is
+>> interfaced to the SoC (registers, interrupt etc.).
+>>=20
+>> In most cases, Clock, Reset and power management is handled
+>> by a parent node or elsewhere.
+>>=20
+>> Tested by make dt_binding_check dtbs_check
+>>=20
+>> Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+>> ---
+>> .../devicetree/bindings/gpu/img,pvrsgx.yaml   | 83 =
++++++++++++++++++++
+>> 1 file changed, 83 insertions(+)
+>> create mode 100644 =
+Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>>=20
+>> diff --git a/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml =
+b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>> new file mode 100644
+>> index 000000000000..fe206a53cbe1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/gpu/img,pvrsgx.yaml
+>> @@ -0,0 +1,83 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>=20
+> Dual license new bindings: (GPL-2.0-only OR BSD-2-Clause)
 
-> Just was thinking, whether to add a check for not setting both flags
-> at the same moment in the "imply" case. Would give us 1 state in 2 bits
-> for future use.
+What are the consequences?
 
-Not sure I follow what you're saying here, can you elaborate?
+>=20
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/gpu/img,pvrsgx.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Imagination PVR/SGX GPU
+>> +
+>> +maintainers:
+>> +  - H. Nikolaus Schaller <hns@goldelico.com>
+>> +
+>> +description: |+
+>> +  This binding describes the Imagination SGX5 series of 3D =
+accelerators which
+>> +  are found in several different SoC like TI OMAP, Sitara, Ingenic =
+JZ4780,
+>> +  Allwinner A83, and Intel Poulsbo and CedarView and more.
+>> +
+>> +  For an almost complete list see: =
+https://en.wikipedia.org/wiki/PowerVR#Implementations
+>> + =20
+>> +  Only the Imagination SGX530, SGX540 and SGX544 GPUs are currently =
+covered by
+>> +  this binding but the extension of the pattern is straightforward.
+>> + =20
+>> +  The SGX node is usually a child node of some DT node belonging to =
+the SoC
+>> +  which handles clocks, reset and general address space mapping of =
+the SGX
+>> +  register area.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +    # BeagleBoard ABC, OpenPandora 600MHz
+>=20
+> I'd expect compatibles to be per SoC, not per board.
+
+Yes.
+
+The boards are examples I can test, but any board with the same SoC =
+should work.
+I have added "Example: " in front of all these comments.
+
+>=20
+>> +      - ti,omap3-sgx530-121, img,sgx530-121, img,sgx530, img,sgx5
+>=20
+> 4 compatibles is probably a bit much. Are there not any version or=20
+> feature registers that some of this could be detected?
+
+Well, there are hints that they exist but there is no good documentation
+about it. This means that at the moment the user-space must be able to
+identify the correct blobs that are to be used for a specific SoC. And
+we need different variants compiled as .ko and loaded on demand.
+
+The first one is also used to match different .ko builds from the same
+source tree with different macro definitions for the individual SoC.
+
+It may be possible that we end up in a more generic driver that only =
+matches
+on one of the second to fourth compatible record, and asks runtime API =
+about
+the SoC, but at the moment this does not exist.
+
+> If there are, I'd=20
+> assume the middle 2 strings could be dropped. If not, drop the last =
+one=20
+> and just match on the 3rd string. It's not a long list.
+
+The fourth one is intended to be able distinguish between sgx5 and sgx6.
+
+I also found that I have not defined it in most of the device tree =
+patches.
+
+But yes, we can drop it since AFAIK there are no activities for sgx6.
+And if they start, we can update bindings and boards.
 
 
--- 
-Jens Axboe
+>=20
+>> +    # BeagleBoard XM, GTA04, OpenPandora 1GHz
+>> +      - ti,omap3-sgx530-125, img,sgx530-125, img,sgx530, img,sgx5
+>> +    # BeagleBone Black
+>> +      - ti,am3352-sgx530-125, img,sgx530-125, img,sgx530, img,sgx5
+>> +    # Pandaboard, Pandaboard ES
+>> +      - ti,omap4-sgx540-120, img,sgx540-120, img,sgx540, img,sgx5
+>> +      - ti,omap4-sgx544-112, img,sgx544-112, img,sgx544, img,sgx5
+>> +    # OMAP5 UEVM, Pyra Handheld
+>> +      - ti,omap5-sgx544-116, img,sgx544-116, img,sgx544, img,sgx5
+>> +      - ti,dra7-sgx544-116, img,sgx544-116, img,sgx544, img,sgx5
+>> +    # CI20
+>> +      - ingenic,jz4780-sgx540-120, img,sgx540-120, img,sgx540, =
+img,sgx5
+>> +    # the following entries are not validated with real hardware
+>> +    # more TI
+>> +      - ti,am3517-sgx530-125, img,sgx530-125, img,sgx530, img,sgx5
+>> +      - ti,am4-sgx530-125, img,sgx530-125, img,sgx530, img,sgx5
+>> +      - ti,ti81xx-sgx530-125, img,sgx530-125, img,sgx530, img,sgx5
+>> +    # Banana-Pi-M3 (Allwinner A83T)
+>> +      - allwinner,sun8i-a83t-sgx544-116, img,sgx544-116, img,sgx544, =
+img,sgx5
+>> +    # Atom Z5xx
+>> +      - intel,poulsbo-gma500-sgx535, img,sgx535-116, img,sgx535, =
+img,sgx5
+>> +    # Atom Z24xx
+>> +      - intel,medfield-gma-sgx540, img,sgx540-116, img,sgx540, =
+img,sgx5
+>> +    # Atom N2600, D2500
+>> +      - intel,cedarview-gma3600-sgx545, img,sgx545-116, img,sgx545, =
+img,sgx5
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description: physical base address and length of the register =
+area
+>=20
+> No need to give a generic description of a standard property.
+
+Ok. Dropped.
+
+>=20
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description: interrupt line from SGX subsystem to core processor
+>=20
+> Same here.
+
+Ok. Dropped.
+
+>=20
+>> +
+>> +  clocks:
+>> +    description: optional clocks
+>=20
+> Need to define how many and what they are. Or drop until you know.
+
+It differs depending on the integration of the SoC. OMAP does not need
+any clock defintions on the gpu node (clocks are handled by sysc parent)
+while JZ4780 needs one (at least in the v3.18 vendor kernel with working
+SGX).
+
+>=20
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupts
+>=20
+> Add:
+>=20
+> additionalProperties: false
+
+Ok.
+
+>=20
+>> +
+>> +examples:
+>> +  - |+
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    gpu@fe00 {
+>> +      compatible =3D "ti,omap-omap5-sgx544-116", "img,sgx544-116", =
+"img,sgx544", "img,sgx5";
+>> +      reg =3D <0xfe00 0x200>;
+>> +      interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+>> +    };
+>> +
+>> +...
+>> --=20
+>> 2.23.0
+>>=20
+
+[PATCH v4] coming.
+
+BR and thanks,
+Nikolaus
 
