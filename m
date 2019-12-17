@@ -2,53 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD3F122079
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:56:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 589741220A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:57:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbfLQAzM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:55:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42348 "EHLO mail.kernel.org"
+        id S1727812AbfLQA4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:56:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfLQAzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:55:10 -0500
-Subject: Re: [GIT PULL] ARM: SoC fixes
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576544110;
-        bh=m6hVQe8WURdeNVv8WpGJ6FgnxA+hW/x7FkFdnmQoEy8=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=AT51RbhfddUZAFLHZne1purg3rhYWDIHGFKZN2IDgMc7tRto6UOhmloKyQh52P4PB
-         Z0mX7UzYKxuULmttiOIdne2rluum2V2lbYSBQwvIdiAG/r8EvX63zEDK3mNN+GoJfo
-         bBp0itxfZqhP5glGvWauPa3jBgtgnduhXlyGTJXA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191216215320.li7x45fhkrkolvbk@localhost>
-References: <20191216215320.li7x45fhkrkolvbk@localhost>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191216215320.li7x45fhkrkolvbk@localhost>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
-X-PR-Tracked-Commit-Id: e3992af1256a4fe0b83ac790d4caa58ff731609d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ea200dec51285c82655e50ddb774fdb6b97e784d
-Message-Id: <157654411012.23539.5840718912186133096.pr-tracker-bot@kernel.org>
-Date:   Tue, 17 Dec 2019 00:55:10 +0000
-To:     Olof Johansson <olof@lixom.net>
-Cc:     torvalds@linux-foundation.org, olof@lixom.net, arm@kernel.org,
-        soc@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        id S1727774AbfLQA4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 19:56:44 -0500
+Received: from [10.44.0.22] (unknown [103.48.210.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A48BE206D3;
+        Tue, 17 Dec 2019 00:56:42 +0000 (UTC)
+Subject: Re: Build regressions/improvements in v5.5-rc2
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20191216083658.21386-1-geert@linux-m68k.org>
+ <CAMuHMdUaRdyRigwS+fdju1_PQCahONVFPKu0DbX6hhb7=JXmLA@mail.gmail.com>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <cfc86b96-9d28-eebc-c7f7-1ed9a1e28458@linux-m68k.org>
+Date:   Tue, 17 Dec 2019 10:56:39 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdUaRdyRigwS+fdju1_PQCahONVFPKu0DbX6hhb7=JXmLA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Mon, 16 Dec 2019 13:53:20 -0800:
+Hi Geert,
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/armsoc-fixes
+On 16/12/19 6:49 pm, Geert Uytterhoeven wrote:
+> Hi Greg,
+> 
+> On Mon, Dec 16, 2019 at 9:38 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Below is the list of build error/warning regressions/improvements in
+>> v5.5-rc2[1] compared to v5.4[2].
+> 
+>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/d1eef1c619749b2a57e514a3fa67d9a516ffa919/ (all 232 configs)
+>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
+> 
+>>    + /kisskb/src/arch/m68k/include/asm/string.h: warning: '__builtin_memcpy' forming offset [3, 4] is out of the bounds [0, 2] of object '__gu_val' with type 'short unsigned int' [-Warray-bounds]:  => 72:25
+> 
+> The upgrade from gcc 4.6.3 to 81.0 seems to have revealed a potential
+> issue in get_user() in arch/m68k/include/asm/uaccess_no.h.
+> 
+>          #define get_user(x, ptr)                                        \
+>          ({                                                              \
+>              int __gu_err = 0;                                           \
+>              typeof(x) __gu_val = 0;                                     \
+>              ^^^^^^^^^
+>              This is the type of the destination
+> 
+>              switch (sizeof(*(ptr))) {                                   \
+>              case 1:                                                     \
+>                  __get_user_asm(__gu_err, __gu_val, ptr, b, "=d");       \
+>                  break;                                                  \
+>              case 2:                                                     \
+>                  __get_user_asm(__gu_err, __gu_val, ptr, w, "=r");       \
+>                  break;                                                  \
+>              case 4:                                                     \
+>                  __get_user_asm(__gu_err, __gu_val, ptr, l, "=r");       \
+>                  break;                                                  \
+>              case 8:                                                     \
+>                  memcpy((void *) &__gu_val, ptr, sizeof (*(ptr)));       \
+>                  break;                                                  \
+>              default:                                                    \
+>                  __gu_val = 0;                                           \
+>                  __gu_err = __get_user_bad();                            \
+>                  break;                                                  \
+>              }                                                           \
+>              (x) = (typeof(*(ptr))) __gu_val;                            \
+>              __gu_err;                                                   \
+>          })
+> 
+> ext2_ioctl() calls this like
+> 
+>          unsigned short rsv_window_size;
+>          if (get_user(rsv_window_size, (int __user *)arg)) { ... }
+> 
+> So a 32-bit value is being copied to an unsigned short value, leading
+> to the warning (for the memcpy() in the non-taken "case 8" branch).
+> 
+> Fortunately the compiler emits a register move for this, so no real harm
+> is done:
+> 
+>          | fs/ext2/ioctl.c:123:          if (get_user(rsv_window_size,
+> (int __user *)arg))
+>                  move.l 48(%sp),%a0      | arg,
+>          #APP
+>          | 123 "fs/ext2/ioctl.c" 1
+>                  movel (%a0),%d2 | *arg.32_43, __gu_val
+> 
+> The corresponding code in arch/m68k/include/asm/uaccess_mm.h
+> uses a temporary __gu_val of the right sized type based on the source
+> type to avoid this.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ea200dec51285c82655e50ddb774fdb6b97e784d
+Yeah, your right. I will put a change together to fix.
 
-Thank you!
+Regards
+Greg
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
