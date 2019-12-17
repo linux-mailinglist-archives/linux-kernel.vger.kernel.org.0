@@ -2,89 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA8F9122BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:37:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 463C6122BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:39:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfLQMhl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:37:41 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42858 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727948AbfLQMhk (ORCPT
+        id S1727965AbfLQMjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:39:06 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:34210 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727406AbfLQMjG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:37:40 -0500
-Received: by mail-pl1-f193.google.com with SMTP id p9so1809587plk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 04:37:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MRudvmKhJDWYtzneDuCIws5zDLnO7yoUHBs3dAUugWc=;
-        b=jF/qD4BknEFRCtTNqmrtKXztOwg8qDq5/1np9XgRXSq/6WBXUR3hZLMz5Ag/uGmzxv
-         baxZHfit28ov6PRGnkNNgThDdFE7MHeypi7bLi4FNYh2CYlU83KVj3RGN/HCGwzm3noc
-         /7SEarI0b9E7r5BoWrXihFoBkSGYFmQzrltwz0Gx3BA7NdXIs5Kzn5JtR+sWbBTf75EL
-         LRRm2fB7wWk7qRVGPjPQ6HXPo39rH8fpaDC2jhhozINJnqT//0qpKgntXM+zZSPP/WT/
-         g/+2XLHmvhe+u7VVsy52blYmo2B/Nqfz5Rd+wmFkoo132R0ZU1wPzaKn/qPj7k/MJpBJ
-         z4kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MRudvmKhJDWYtzneDuCIws5zDLnO7yoUHBs3dAUugWc=;
-        b=UZOe+HNpMnH/jMR48hLwXKImGqNxid56VGtrAG6TC+A/P+ejKKxBzehsNfsHIvzazo
-         FcYXeHzWdTfBCparp1BoL/M8LHHkCm9SToIpm52GjjphE7HD7NyhulBstQtdGzrBO89w
-         tolXdYbkgm2DOkmTWtntwFqlmgPeV089Sa1KJZCb4coywif9SkjZncGmr9tpvR01PbBv
-         IFnVa488qJu/0vcl1QkPxuarfwsDGL+gIYG6KZekO3dLsFcU9D1NO9PD5jIJxvJ9lg9m
-         7LvdXCZIwGyxHVi7IiIhZnnGpbCgC+DdiKjYl2a6eq0ReY5/wXoHqKJm8oyKbL2vYtXY
-         /k7w==
-X-Gm-Message-State: APjAAAWZHm0760xH84go6yfrLSmuC9M2GyX9DJ28L8BYlQa7tXZq1vq4
-        nUz647BKG4xnjvAIx1xatazQM0rO+AE=
-X-Google-Smtp-Source: APXvYqwhUF3RlGnGikHc4pNISjJk5YxydwinKeNP1wBXzeE9lF9vDsz5YnzP44Qkb9ZLo7Y+iTOjwA==
-X-Received: by 2002:a17:90a:17e3:: with SMTP id q90mr5601351pja.139.1576586260124;
-        Tue, 17 Dec 2019 04:37:40 -0800 (PST)
-Received: from debian ([122.174.84.27])
-        by smtp.gmail.com with ESMTPSA id k5sm3258658pju.5.2019.12.17.04.37.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 04:37:39 -0800 (PST)
-Date:   Tue, 17 Dec 2019 18:07:32 +0530
-From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        jeffrin@rajagiritech.edu.in
-Subject: Re: [PATCH 5.4 000/177] 5.4.4-stable review
-Message-ID: <20191217123732.GA3492@debian>
-References: <20191216174811.158424118@linuxfoundation.org>
+        Tue, 17 Dec 2019 07:39:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576586344;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6/+/rP4yVcVCmqqAdPWGNeQB+QcVV+9W2swAIqchAZ8=;
+        b=OB47TxYSprW5Yde5WgyM8wlNbGzrv2aCwbrquu2D6i/tUovsEIBGBuyn4V9PmNnwqhVqzi
+        /S0g58mUdlo12lPGnnyB9MaFJnR+0P9T+2Gy36dxS/90iCnghX8OgG1ClGxB7mBTJ7ALd4
+        qraVvsrEijFkxdTWuFA0wqk3txNr6Js=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-428-69guOL_oM8Ge5FQcEp_K6A-1; Tue, 17 Dec 2019 07:39:01 -0500
+X-MC-Unique: 69guOL_oM8Ge5FQcEp_K6A-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 07544800D4E;
+        Tue, 17 Dec 2019 12:38:58 +0000 (UTC)
+Received: from t480s.redhat.com (unknown [10.36.118.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E50671000329;
+        Tue, 17 Dec 2019 12:38:51 +0000 (UTC)
+From:   David Hildenbrand <david@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
+        Allison Randal <allison@lohutok.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH RFC v1 0/3] powerpc/memtrace: Don't offline memory blocks via offline_pages()
+Date:   Tue, 17 Dec 2019 13:38:48 +0100
+Message-Id: <20191217123851.8854-1-david@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216174811.158424118@linuxfoundation.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:47:36PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.4 release.
-> There are 177 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.4-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
+This RFC is based on linux-next and
+- 2 patches from "PATCH RFC v4 00/13] virtio-mem: paravirtualized memory"
+ -> "mm: Allow to offline unmovable PageOffline() pages via
+     MEM_GOING_OFFLINE" [1]
+ -> "mm/memory_hotplug: Introduce offline_and_remove_memory()" [2]
+- "mm/memory_hotplug: Don't free usage map when removing a re-added early
+   section" [3]
 
-No new errors from "dmesg -l err" on a typical kernel configuration on my laptop.
+A branch with all patches (kept updated) is available at:
+	https://github.com/davidhildenbrand/linux.git memtrace
 
---
-software engineer
-rajagiri school of engineering and technology
+Stop using offline_pages() to offline memory blocks. Allocate the memory
+blocks using alloc_contig_pages() first and offline+remove the allcoated
+memory blocks using a clean MM interface. Offlining of allocated memory i=
+s
+made possible by using PageOffline() in combination with a memory notifie=
+r
+(similar to virto-mem).
+
+Note: In the future, we might want to switch to only removing/readding th=
+e
+page tables of the allocated memory (while still marking it PageOffline()=
+).
+However, that might have other implications, and requires work from PPC
+people (IOW, I won't fiddle with that :) ).
+
+[1] https://lkml.kernel.org/r/20191212171137.13872-8-david@redhat.com
+[2] https://lkml.kernel.org/r/20191212171137.13872-10-david@redhat.com
+[3] https://lkml.kernel.org/r/20191217104637.5509-1-david@redhat.com
+
+
+David Hildenbrand (3):
+  powerpc/memtrace: Enforce power of 2 for memory buffer size
+  powerpc/memtrace: Factor out readding memory into memtrace_free_node()
+  powerpc/memtrace: Don't offline memory blocks via offline_pages()
+
+ arch/powerpc/platforms/powernv/Kconfig    |   1 +
+ arch/powerpc/platforms/powernv/memtrace.c | 217 ++++++++++++++--------
+ 2 files changed, 136 insertions(+), 82 deletions(-)
+
+--=20
+2.23.0
+
