@@ -2,145 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AAD5122D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A00F122D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 14:53:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728615AbfLQNvx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 08:51:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48134 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728573AbfLQNvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 08:51:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id B5CBDAB91;
-        Tue, 17 Dec 2019 13:51:50 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH v10 2/4] xen/blkback: Squeeze page pools if a
- memory pressure is detected
-To:     SeongJae Park <sjpark@amazon.com>,
-        =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>
-Cc:     SeongJae Park <sj38.park@gmail.com>, sjpark@amazon.de,
-        axboe@kernel.dk, konrad.wilk@oracle.com, pdurrant@amazon.com,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        xen-devel@lists.xenproject.org
-References: <20191217131526.17300-1-sjpark@amazon.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <9c465967-3bbf-595b-b61c-c44fa95e41d5@suse.com>
-Date:   Tue, 17 Dec 2019 14:51:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191217131526.17300-1-sjpark@amazon.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1728637AbfLQNxL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 08:53:11 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.69]:41569 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728388AbfLQNxK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 08:53:10 -0500
+Received: from [46.226.52.196] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-5.bemta.az-b.eu-west-1.aws.symcld.net id F5/18-19908-4CDD8FD5; Tue, 17 Dec 2019 13:53:08 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRWlGSWpSXmKPExsVyU+ECq+6Ruz9
+  iDb7P0ba4vGsOmwOjx+dNcgGMUayZeUn5FQmsGS8/72EruMlXca/7J0sD4wG+LkZODiGBfYwS
+  pztVIeyzjBLNG8tBbDYBLYkZW6cygtgiAhoSL4/eYuli5OJgFuhklLj9+gBYQljAW+JRwzE2i
+  CIfifb5X6EarCSW9k0Hs1kEVCXeN29kAbF5BXwl5nf2M4IMEhLoZ5TYcaeJFSTBKWAosf3bRi
+  YQm1FAVuLRyl/sIDazgLjErSfzweISAgISS/acZ4awRSVePv7HCmEbSGxduo8FwlaUuLH6BFC
+  cA8i2lrjxgB/EZBbQlFi/Sx9ioqLElO6H7BDnCEqcnPmEZQKj2Cwky2YhdMxC0jELSccCRpZV
+  jOZJRZnpGSW5iZk5uoYGBrqGhka6hpYWukYWeolVukl6qaW65anFJbqGeonlxXrFlbnJOSl6e
+  aklmxiB8ZVScExmB2PHp7d6hxglOZiURHnf7vwRK8SXlJ9SmZFYnBFfVJqTWnyIUYaDQ0mCN+
+  sOUE6wKDU9tSItMwcY6zBpCQ4eJRFefZA0b3FBYm5xZjpE6hSjJceEl3MXMXMcPDoPSB6Zu3Q
+  RsxBLXn5eqpQ470mQBgGQhozSPLhxsHR0iVFWSpiXkYGBQYinILUoN7MEVf4VozgHo5IwbzvI
+  FJ7MvBK4ra+ADmICOsjI7xvIQSWJCCmpBqa5q0/ucjvqHHxHP6Jpk/nnRedj/+zR2dy/sbDE6
+  cuvX4XMWi80PsxMa6/46fj6v5b0nHnOIYzSz3jubEvRW8nCsNIi6E78EQNt++e7esS8DX8963
+  f/9jQ7SCR7w9efPXv7q1zs/lXlLJjGuDpkR98ay00RH1dc9ZuR+yyjznPFXOs5e08J/zxSaXB
+  2e4GIwtZHaadZ+v9Kr3Q232V4cvr/NM+LWb2P503hszqUtMk70UWq+/mER8rSh54LPb15gMNw
+  q7wVX/arJPUP0xSag6Yf39t5nO/v7d4Twt/sniQtjz8tufPfCfduLfMfm/8VWO9/9PzzewbjX
+  nnB6IinK/quFf3hZrk0b8q+h1K9l9aXK7EUZyQaajEXFScCAM9uV6fCAwAA
+X-Env-Sender: david.kim@ncipher.com
+X-Msg-Ref: server-33.tower-284.messagelabs.com!1576590788!695443!2
+X-Originating-IP: [217.32.208.5]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.44.22; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 22366 invoked from network); 17 Dec 2019 13:53:08 -0000
+Received: from unknown (HELO exukdagfar01.INTERNAL.ROOT.TES) (217.32.208.5)
+  by server-33.tower-284.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 17 Dec 2019 13:53:08 -0000
+Received: from exukdagfar01.INTERNAL.ROOT.TES (10.194.2.70) by
+ exukdagfar01.INTERNAL.ROOT.TES (10.194.2.70) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Tue, 17 Dec 2019 13:53:07 +0000
+Received: from exukdagfar01.INTERNAL.ROOT.TES ([fe80::48de:aa33:fc4c:d1f5]) by
+ exukdagfar01.INTERNAL.ROOT.TES ([fe80::48de:aa33:fc4c:d1f5%14]) with mapi id
+ 15.00.1497.000; Tue, 17 Dec 2019 13:53:07 +0000
+From:   "Kim, David" <david.kim@ncipher.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Magee, Tim" <tim.magee@ncipher.com>
+Subject: Re: [PATCH 1/1] drivers: misc: Add support for nCipher HSM devices
+Thread-Topic: [PATCH 1/1] drivers: misc: Add support for nCipher HSM devices
+Thread-Index: AQHVtN0iUtD2ObauYk2ExPz0BKUZFqe+UyYAgAAAZ/Y=
+Date:   Tue, 17 Dec 2019 13:53:06 +0000
+Message-ID: <823cb0c0263c441aaaf256169de5a816@exukdagfar01.INTERNAL.ROOT.TES>
+References: <20191217132244.14768-1-david.kim@ncipher.com>
+ <20191217132244.14768-2-david.kim@ncipher.com>,<20191217133234.GB3362771@kroah.com>
+In-Reply-To: <20191217133234.GB3362771@kroah.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.194.37.115]
+x-exclaimer-md-config: 7ae4f661-56ee-4cc7-9363-621ce9eeb65f
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.12.19 14:15, SeongJae Park wrote:
-> On Tue, 17 Dec 2019 12:39:15 +0100 "Roger Pau Monné" <roger.pau@citrix.com> wrote:
-> 
->> On Mon, Dec 16, 2019 at 08:48:03PM +0100, SeongJae Park wrote:
->>> On on, 16 Dec 2019 17:23:44 +0100, Jürgen Groß wrote:
->>>
->>>> On 16.12.19 17:15, SeongJae Park wrote:
->>>>> On Mon, 16 Dec 2019 15:37:20 +0100 SeongJae Park <sjpark@amazon.com> wrote:
->>>>>
->>>>>> On Mon, 16 Dec 2019 13:45:25 +0100 SeongJae Park <sjpark@amazon.com> wrote:
->>>>>>
->>>>>>> From: SeongJae Park <sjpark@amazon.de>
->>>>>>>
->>>>> [...]
->>>>>>> --- a/drivers/block/xen-blkback/xenbus.c
->>>>>>> +++ b/drivers/block/xen-blkback/xenbus.c
->>>>>>> @@ -824,6 +824,24 @@ static void frontend_changed(struct xenbus_device *dev,
->>>>>>>    }
->>>>>>>    
->>>>>>>    
->>>>>>> +/* Once a memory pressure is detected, squeeze free page pools for a while. */
->>>>>>> +static unsigned int buffer_squeeze_duration_ms = 10;
->>>>>>> +module_param_named(buffer_squeeze_duration_ms,
->>>>>>> +		buffer_squeeze_duration_ms, int, 0644);
->>>>>>> +MODULE_PARM_DESC(buffer_squeeze_duration_ms,
->>>>>>> +"Duration in ms to squeeze pages buffer when a memory pressure is detected");
->>>>>>> +
->>>>>>> +/*
->>>>>>> + * Callback received when the memory pressure is detected.
->>>>>>> + */
->>>>>>> +static void reclaim_memory(struct xenbus_device *dev)
->>>>>>> +{
->>>>>>> +	struct backend_info *be = dev_get_drvdata(&dev->dev);
->>>>>>> +
->>>>>>> +	be->blkif->buffer_squeeze_end = jiffies +
->>>>>>> +		msecs_to_jiffies(buffer_squeeze_duration_ms);
->>>>>>
->>>>>> This callback might race with 'xen_blkbk_probe()'.  The race could result in
->>>>>> __NULL dereferencing__, as 'xen_blkbk_probe()' sets '->blkif' after it links
->>>>>> 'be' to the 'dev'.  Please _don't merge_ this patch now!
->>>>>>
->>>>>> I will do more test and share results.  Meanwhile, if you have any opinion,
->>>>>> please let me know.
->>>
->>> I reduced system memory and attached bunch of devices in short time so that
->>> memory pressure occurs while device attachments are ongoing.  Under this
->>> circumstance, I was able to see the race.
->>>
->>>>>
->>>>> Not only '->blkif', but 'be' itself also coule be a NULL.  As similar
->>>>> concurrency issues could be in other drivers in their way, I suggest to change
->>>>> the reclaim callback ('->reclaim_memory') to be called for each driver instead
->>>>> of each device.  Then, each driver could be able to deal with its concurrency
->>>>> issues by itself.
->>>>
->>>> Hmm, I don't like that. This would need to be changed back in case we
->>>> add per-guest quota.
->>>
->>> Extending this callback in that way would be still not too hard.  We could use
->>> the argument to the callback.  I would keep the argument of the callback to
->>> 'struct device *' as is, and will add a comment saying 'NULL' value of the
->>> argument means every devices.  As an example, xenbus would pass NULL-ending
->>> array of the device pointers that need to free its resources.
->>>
->>> After seeing this race, I am now also thinking it could be better to delegate
->>> detailed control of each device to its driver, as some drivers have some
->>> complicated and unique relation with its devices.
->>>
->>>>
->>>> Wouldn't a get_device() before calling the callback and a put_device()
->>>> afterwards avoid that problem?
->>>
->>> I didn't used the reference count manipulation operations because other similar
->>> parts also didn't.  But, if there is no implicit reference count guarantee, it
->>> seems those operations are indeed necessary.
->>>
->>> That said, as get/put operations only adjust the reference count, those will
->>> not make the callback to wait until the linking of the 'backend' and 'blkif' to
->>> the device (xen_blkbk_probe()) is finished.  Thus, the race could still happen.
->>> Or, am I missing something?
->>
->> I would expect the device is not added to the list of backend devices
->> until the probe hook has finished with a non-error return code. Ie:
->> bus_for_each_dev should _not_ iterate over devices for which the probe
->> function hasn't been run to competition without errors.
->>
->> The same way I would expect the remove hook to first remove the device
->> from the list of backend devices and then run the remove hook.
->>
->> blkback uses an ad-hoc reference counting mechanism, but if the above
->> assumptions are true I think it would be enough to take an extra
->> reference in xen_blkbk_probe and drop it in xen_blkbk_remove.
-> 
-> Well, if the assumption is true, wouldn't the Juergen's approach solved the
-> problem?  As previously said, I tried the approach but failed to solve this
-> race.  The assumption is wrong or I missed something.  I think Juergen also
-> think the assumption is not true as he suggested use of locking but not sure.
-> Juergen, if I misunderstood, please let me know.
-
-bus_for_each_dev() does no locking at all. All it does is
-taking krefs on the iterated objects in order to avoid them
-to be freed under its feet.
-
-
-Juergen
+SGkgR3JlZywNCg0KVGhhbmtzIGZvciB0aGUgc3BlZWR5IHJlcGxpZXMuIFllcywgSSB3aWxsIGFk
+ZCBtb3JlIGJhY2tncm91bmQgaW5mb3JtYXRpb24gYW5kIG1ha2UgdGhlIHF1aWNrIGZvcm1hdHRp
+bmcgY2hhbmdlcyBmb3IgYSB2Mi4gV2UnbGwgcmVwbHkgdG8geW91ciBvdGhlciBlbWFpbCBjb21t
+ZW50cyBhbmQgZ2V0IHRob3NlIHJlc29sdmVkIGFzIHdlbGwuIEkgd2FzIHRyeWluZyB0byBiZSB0
+ZXJzZSBidXQgbG9va3MgbGlrZSBJIHdhcyB0b28gdGVyc2UuIEkgdGhvdWdodCB0aGUgY2hhbmdl
+bG9nIHRleHQgc2hvdWxkIGJlIGJyaWVmIGFuZCB0aGUgY292ZXIgbGV0dGVyIHdvdWxkIGJlIG1v
+cmUgdmVyYm9zZT8NCg0KUmVnYXJkcywNCkRhdmUNCg0KX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXw0KRnJvbTogR3JlZyBLSCA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmc+DQpTZW50OiBUdWVzZGF5LCBEZWNlbWJlciAxNywgMjAxOSAxOjMyIFBNDQpUbzogS2ltLCBE
+YXZpZA0KQ2M6IGFybmRAYXJuZGIuZGU7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IE1h
+Z2VlLCBUaW0NClN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8xXSBkcml2ZXJzOiBtaXNjOiBBZGQgc3Vw
+cG9ydCBmb3IgbkNpcGhlciBIU00gZGV2aWNlcw0KDQpPbiBUdWUsIERlYyAxNywgMjAxOSBhdCAw
+MToyMjo0NFBNICswMDAwLCBEYXZlIEtpbSB3cm90ZToNCj4g77u/RnJvbTogRGF2aWQgS2ltIDxk
+YXZpZC5raW1AbmNpcGhlci5jb20+DQo+DQo+IEludHJvZHVjZSB0aGUgZHJpdmVyIGZvciBuQ2lw
+aGVyJ3MgU29sbyBhbmQgU29sbyBYQyByYW5nZSBvZiBQQ0llIGhhcmR3YXJlDQo+IHNlY3VyaXR5
+IG1vZHVsZXMgKEhTTSksIHdoaWNoIHByb3ZpZGUga2V5IGNyZWF0aW9uL21hbmFnZW1lbnQgYW5k
+DQo+IGNyeXB0b2dyYXBoeSBzZXJ2aWNlcy4NCg0KQSBiaXQgbW9yZSBkZXNjcmlwdGlvbiBvZiBl
+eGFjdGx5IF93aGF0XyB0aGVzZSBkZXZpY2VzIGRvIHdvdWxkIGJlDQpoZWxwZnVsLg0KDQpBbHNv
+LCBob3cgZG9lcyB1c2Vyc3BhY2UgaW50ZXJhY3Qgd2l0aCB0aGUgZHJpdmVyPyAgV2hhdCBhcGko
+cykgYXJlIHlvdQ0KdXNpbmcvY3JlYXRpbmc/ICBXaGF0IHVzZXJzcGFjZSB0b29scyB3b3JrIHdp
+dGggdGhlIGRldmljZT8NCg0KSW4gc2hvcnQsIHdlIG5lZWQgbW9yZSB0aGFuIGp1c3QgYSBvbmUg
+c2VudGFuY2UgZGVzY3JpcHRpb24gdG8gYmUgYWJsZQ0KdG8gcHJvcGVybHkgcmV2aWV3IHRoZSBj
+b2RlIGFuZCBwcm92aWRlIHRleHQgZm9yIGEgdXNlciB0byBrbm93IHdoYXQgdG8NCmRvIHdpdGgg
+dGhpcyBkcml2ZXIuDQoNCkNhbiB5b3UgZml4IGFsbCB0aGF0IHVwIGFuZCBzZW5kIGEgdjI/DQoN
+CnRoYW5rcywNCg0KZ3JlZyBrLWgNCg==
