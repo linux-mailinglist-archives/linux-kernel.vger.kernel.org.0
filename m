@@ -2,162 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23742122C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:41:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 453CE122C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:44:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfLQMkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:40:55 -0500
-Received: from foss.arm.com ([217.140.110.172]:35756 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbfLQMky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:40:54 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02C0C31B;
-        Tue, 17 Dec 2019 04:40:54 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7057C3F718;
-        Tue, 17 Dec 2019 04:40:53 -0800 (PST)
-Date:   Tue, 17 Dec 2019 12:40:51 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH 07/13] PCI: cadence: Add new *ops* for CPU addr fixup
-Message-ID: <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-8-kishon@ti.com>
+        id S1728214AbfLQMoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:44:03 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:46968 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbfLQMoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:44:02 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBHChk1p096977;
+        Tue, 17 Dec 2019 06:43:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576586626;
+        bh=fBE++3ilO6IUmK3o0yQscRjirNExl2DOv8fz3sakjvo=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=E3QhkF8ybUKO93tbkloFLpppJfdXzD0bjEgghZNSYUsXyGsgtZU6vjmG86jLFsPyd
+         Eb+qlxWfnNDrttCV4h+QdwhB4ULlJICecsoOn9kiE0l9bK+msMVxFXetBQaFIhwxnJ
+         uDfmTETbgWGN5Vz13Nf+KN5UYDjSM8cV1Yy6S8os=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBHChkR2098566
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Dec 2019 06:43:46 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 06:43:45 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 06:43:45 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBHChjMt109382;
+        Tue, 17 Dec 2019 06:43:45 -0600
+Subject: Re: [PATCH 1/2] dt: bindings: lm3692x: Document new properties
+To:     =?UTF-8?Q?Guido_G=c3=bcnther?= <agx@sigxcpu.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <cover.1576499103.git.agx@sigxcpu.org>
+ <35a23315938909c80e7772838e1de0d2d46302f2.1576499103.git.agx@sigxcpu.org>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <c523ccf6-6958-7457-c47b-f98e08588cfe@ti.com>
+Date:   Tue, 17 Dec 2019 06:41:19 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209092147.22901-8-kishon@ti.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <35a23315938909c80e7772838e1de0d2d46302f2.1576499103.git.agx@sigxcpu.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 02:51:41PM +0530, Kishon Vijay Abraham I wrote:
-> Cadence driver uses "mem" memory resource to obtain the offset of
-> configuration space address region, memory space address region and
-> message space address region. The obtained offset is used to program
-> the Address Translation Unit (ATU). However certain platforms like TI's
-> J721E SoC require the absolute address to be programmed in the ATU and not
-> just the offset.
-> 
-> The same problem was solved in designware driver using a platform specific
-> ops for CPU addr fixup in commit a660083eb06c5bb0 ("PCI: dwc: designware:
+Guido
 
-Thanks for this reference, though this doesn't need to be in the commit
-log, please put such comments underneath a ---.
+Thanks for the patch
 
-> Add new *ops* for CPU addr fixup"). Follow a similar mechanism in
-> Cadence too instead of directly using "mem" memory resource in Cadence
-> PCIe core.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+On 12/16/19 6:28 AM, Guido Günther wrote:
+> We allow configuration of brightness mode and over voltage
+> protection.
+>
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
 > ---
->  .../pci/controller/cadence/pcie-cadence-host.c    | 15 ++++-----------
->  drivers/pci/controller/cadence/pcie-cadence.c     |  8 ++++++--
->  drivers/pci/controller/cadence/pcie-cadence.h     |  1 +
->  3 files changed, 11 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> index 2efc33b1cade..cf817be237af 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> @@ -105,15 +105,14 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
->  static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->  {
->  	struct cdns_pcie *pcie = &rc->pcie;
-> -	struct resource *mem_res = pcie->mem_res;
->  	struct resource *bus_range = rc->bus_range;
->  	struct resource *cfg_res = rc->cfg_res;
->  	struct device *dev = pcie->dev;
->  	struct device_node *np = dev->of_node;
->  	struct of_pci_range_parser parser;
-> +	u64 cpu_addr = cfg_res->start;
->  	struct of_pci_range range;
->  	u32 addr0, addr1, desc1;
-> -	u64 cpu_addr;
->  	int r, err;
->  
->  	/*
-> @@ -126,7 +125,9 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
->  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
->  
-> -	cpu_addr = cfg_res->start - mem_res->start;
-> +	if (pcie->ops->cpu_addr_fixup)
-> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> +
+>   Documentation/devicetree/bindings/leds/leds-lm3692x.txt | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> index 4c2d923f8758..f195e8b45d85 100644
+> --- a/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> +++ b/Documentation/devicetree/bindings/leds/leds-lm3692x.txt
+> @@ -18,6 +18,10 @@ Required properties:
+>   Optional properties:
+>   	- enable-gpios : gpio pin to enable/disable the device.
+>   	- vled-supply : LED supply
+> +	- ti,brightness-mapping-exponential: Whether to use exponential
+> +	    brightness mapping
+> +	- ti,overvoltage-volts: Overvoltage protection in Volts, can
+> +	    be 0 (unprotected), 21, 25 or 29V
+>   
 
-Won't this patch cause a breakage for existing users that won't have defined a
-cpu_addr_fixup? The offset isn't being calculated and so cpu_addr will be wrong?
+Can you show examples of these in the DT binding?
 
-Thanks,
+Dan
 
-Andrew Murray
 
->  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
->  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
->  	addr1 = upper_32_bits(cpu_addr);
-> @@ -264,14 +265,6 @@ int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
->  	}
->  	rc->cfg_res = res;
->  
-> -	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "mem");
-> -	if (!res) {
-> -		dev_err(dev, "missing \"mem\"\n");
-> -		return -EINVAL;
-> -	}
-> -
-> -	pcie->mem_res = res;
-> -
->  	ret = cdns_pcie_start_link(pcie, true);
->  	if (ret) {
->  		dev_err(dev, "Failed to start link\n");
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
-> index de5b3b06f2d0..bd93d0f92f55 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
-> @@ -113,7 +113,9 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 fn,
->  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
->  
->  	/* Set the CPU address */
-> -	cpu_addr -= pcie->mem_res->start;
-> +	if (pcie->ops->cpu_addr_fixup)
-> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> +
->  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
->  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
->  	addr1 = upper_32_bits(cpu_addr);
-> @@ -140,7 +142,9 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie, u8 fn,
->  	}
->  
->  	/* Set the CPU address */
-> -	cpu_addr -= pcie->mem_res->start;
-> +	if (pcie->ops->cpu_addr_fixup)
-> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
-> +
->  	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
->  		(lower_32_bits(cpu_addr) & GENMASK(31, 8));
->  	addr1 = upper_32_bits(cpu_addr);
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-> index c879dd3d2893..ffa8b9f78ff8 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.h
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
-> @@ -233,6 +233,7 @@ struct cdns_pcie_ops {
->  	void	(*write)(void __iomem *addr, int size, u32 value);
->  	int	(*start_link)(struct cdns_pcie *pcie, bool start);
->  	bool	(*is_link_up)(struct cdns_pcie *pcie);
-> +	u64     (*cpu_addr_fixup)(struct cdns_pcie *pcie, u64 cpu_addr);
->  };
->  
->  /**
-> -- 
-> 2.17.1
-> 
