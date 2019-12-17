@@ -2,145 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D4909122136
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:01:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30131122143
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 02:04:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727892AbfLQBB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 20:01:27 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37826 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727487AbfLQBBZ (ORCPT
+        id S1726496AbfLQBEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 20:04:15 -0500
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:26519 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbfLQBEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 20:01:25 -0500
-Received: by mail-io1-f67.google.com with SMTP id k24so7476621ioc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 17:01:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=toA0jzwuketdr2e1YvJhPtQZTwWvbzIQDMih6NbAho0=;
-        b=Vux6gcbDzir2dvv72u14dZyT7A+Xu//TUpa4d8Q262GwSxLJmt+V15Z/jfeB+txgJc
-         qIZ6FQoD4QleBDoeLZJZoFaSx1gkf+MFzeqkjO3RomC124M8P/QEyG0SszkbAv6uiLBR
-         R36L6QmDCO0E5jbRr/S0Y+Bt1snK25AU0uPqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=toA0jzwuketdr2e1YvJhPtQZTwWvbzIQDMih6NbAho0=;
-        b=JmfkNm9rn+azgnaMxMMUvBmAyC+RhVJwyAqiOcpFHPz1syXdPT3lPrc2k6SeqVIKq3
-         otTOHEM41pqKuli0UTCXwdRzP+MX9kqgyZ+dP3jiCBMolaB6EUV0nIEqQDoMMFEDDk+k
-         7yDa7wxkUzBfsvHjIiiYiTZOUeXUGTOoPdmkhtw4vDFVn4aQRNPgNZrScx+hI3CUlJLB
-         X6fQkNlp6GnFEU0TKHvDqK7fYDYn8wVySMmm9XzMHajO9YWikLeL71r+ZsumBoSnwqIX
-         Rd7HcT6k67G8Z58voR3H44UBf4k8icqBGE2VLvikxTYNbYNF0sBlENXIdBAtesbEZg6X
-         6now==
-X-Gm-Message-State: APjAAAWUnHMvTAiFeTn7mZWGf8z5/cV0LQGUfoz4j/fzcK9HlsuVUKZ6
-        pG3LOpv/vnM8CX1Z6G1rO4Q0AEu4Aaq5eA==
-X-Google-Smtp-Source: APXvYqw7XFCaDfOkRDKO1vqm5NO1I4w3iLozscNNT7OpT7LMGnda1O0Xl6WJYAMAUltY1ohkkANcug==
-X-Received: by 2002:a5d:9046:: with SMTP id v6mr1727984ioq.302.1576544483409;
-        Mon, 16 Dec 2019 17:01:23 -0800 (PST)
-Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
-        by smtp.gmail.com with ESMTPSA id t203sm4684121iod.15.2019.12.16.17.01.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2019 17:01:23 -0800 (PST)
-Date:   Tue, 17 Dec 2019 01:01:21 +0000
-From:   Sargun Dhillon <sargun@sargun.me>
-To:     linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     tycho@tycho.ws, jannh@google.com, cyphar@cyphar.com,
-        christian.brauner@ubuntu.com, oleg@redhat.com, luto@amacapital.net,
-        viro@zeniv.linux.org.uk, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, fweimer@redhat.com, jld@mozilla.com
-Subject: [PATCH v3 1/4] vfs, fdtable: Add get_task_file helper
-Message-ID: <20191217010119.GA14488@ircssh-2.c.rugged-nimbus-611.internal>
+        Mon, 16 Dec 2019 20:04:15 -0500
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id xBH1419o018538;
+        Tue, 17 Dec 2019 10:04:02 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com xBH1419o018538
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576544642;
+        bh=2OnRthpOwSo522anatNV+uWjOKMmK1+KveEbc/gDwOI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mfd5l/TuUCyr6QW+mysB6/yg/8dhv6xZzGeqKLIK9bgIuyBcYE6RrzHpFViC/ZfZ/
+         nQAaStInEQYW/U+VbqNfKysdv+g4ejRu6574aU+eM6Iy+vqQmJM2nDo1XphEgLtwHE
+         18nyqs1bAMZffmlnE96BIBpyxHAz1iaiPFPJff1EKfhQVRSI/EadU9u7LBh1all/hm
+         EQz5ZRzV/zD4t5bSHpHlWT23WX7S1Fuk/ZpBmztB/6l4fjJRsSLWpJ5D6BxuX+btOj
+         6vLv6i+vLz+0OmFotglH7oPI1S4Zz6Ef4h2olhKac2fEdeVa8YYEGLrkHs2GRBW3/g
+         uKmAeX0VVqqEw==
+X-Nifty-SrcIP: [209.85.221.179]
+Received: by mail-vk1-f179.google.com with SMTP id o187so2219247vka.2;
+        Mon, 16 Dec 2019 17:04:02 -0800 (PST)
+X-Gm-Message-State: APjAAAWEVb5cJ8SWwy9fZqwBtLVJMEp2iEPPUccfp75QOw83tEvQ2b58
+        FwUXDk8v43yOCXvlThv0f4YO64Z4cLE/BUT4pVE=
+X-Google-Smtp-Source: APXvYqw8SOsqcXAe0bfHk2zMem79fKTNwrDNACKWGXoX9M7Y4DjQi//2YVgNo58T16JPzJPetJFr+CpIkPJ5Ft8FkMY=
+X-Received: by 2002:a1f:72c3:: with SMTP id n186mr1543259vkc.12.1576544640779;
+ Mon, 16 Dec 2019 17:04:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <5a473c6c-cc1f-6648-31ec-3b40e415a836@infradead.org>
+ <20191207014238.5507-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <CAK7LNATj5RBHov_w05q1XSiOPN7fYQCKhVMDzHNwHSB1Eq2rmQ@mail.gmail.com> <cedbe416-844e-2bb8-5d05-4cd34eae8619@i-love.sakura.ne.jp>
+In-Reply-To: <cedbe416-844e-2bb8-5d05-4cd34eae8619@i-love.sakura.ne.jp>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 17 Dec 2019 10:03:23 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATpAbRVbCuHQjq2e493aP0p1F9=Nd8+goQm-JnHzMEesw@mail.gmail.com>
+Message-ID: <CAK7LNATpAbRVbCuHQjq2e493aP0p1F9=Nd8+goQm-JnHzMEesw@mail.gmail.com>
+Subject: Re: [PATCH v2] kconfig: Add yes2modconfig and mod2yesconfig targets.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces a function which can be used to fetch a file, given an
-arbitrary task. As long as the user holds a reference (refcnt) to the
-task_struct it is safe to call, and will either return NULL on failure,
-or a pointer to the file, with a refcnt.
+On Mon, Dec 16, 2019 at 9:59 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Thank you for reviewing.
+>
+> On 2019/12/16 20:10, Masahiro Yamada wrote:
+> > BTW, I have never contributed to the syzbot bug shooting.
+> > So, please teach me if you know this:
+> > Is there a a specific reason why the config set for syzbot
+> > is close to allyesconfig instead of allmodconfig?
+>
+> I don't know. But I guess that all-in-one vmlinux file is easier to use
+> (e.g. no need to copy .ko files into initramfs nor /lib/modules/ directory
+> in the root filesystem image, no need to fetch .ko files when calculating
+> locations in the source code from kernel addresses, no need to worry about
+> availability of .ko loader program and request_module() dependency).
 
-Signed-off-by: Sargun Dhillon <sargun@sargun.me>
----
- fs/file.c            | 22 ++++++++++++++++++++--
- include/linux/file.h |  2 ++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+OK.
+I just thought allmodconfig would be more convenient to trim
+unrelated code without switching yes/mod back and forth.
+Anyway...
 
-diff --git a/fs/file.c b/fs/file.c
-index 3da91a112bab..63272d15be61 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -706,9 +706,9 @@ void do_close_on_exec(struct files_struct *files)
- 	spin_unlock(&files->file_lock);
- }
- 
--static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
-+static struct file *__fget_files(struct files_struct *files, unsigned int fd,
-+				 fmode_t mask, unsigned int refs)
- {
--	struct files_struct *files = current->files;
- 	struct file *file;
- 
- 	rcu_read_lock();
-@@ -729,6 +729,11 @@ static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
- 	return file;
- }
- 
-+static struct file *__fget(unsigned int fd, fmode_t mask, unsigned int refs)
-+{
-+	return __fget_files(current->files, fd, mask, refs);
-+}
-+
- struct file *fget_many(unsigned int fd, unsigned int refs)
- {
- 	return __fget(fd, FMODE_PATH, refs);
-@@ -746,6 +751,19 @@ struct file *fget_raw(unsigned int fd)
- }
- EXPORT_SYMBOL(fget_raw);
- 
-+struct file *fget_task(struct task_struct *task, unsigned int fd)
-+{
-+	struct file *file = NULL;
-+
-+	task_lock(task);
-+	if (task->files)
-+		file = __fget_files(task->files, fd, 0, 1);
-+
-+	task_unlock(task);
-+
-+	return file;
-+}
-+
- /*
-  * Lightweight file lookup - no refcnt increment if fd table isn't shared.
-  *
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 3fcddff56bc4..c6c7b24ea9f7 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -16,6 +16,7 @@ extern void fput(struct file *);
- extern void fput_many(struct file *, unsigned int);
- 
- struct file_operations;
-+struct task_struct;
- struct vfsmount;
- struct dentry;
- struct inode;
-@@ -47,6 +48,7 @@ static inline void fdput(struct fd fd)
- extern struct file *fget(unsigned int fd);
- extern struct file *fget_many(unsigned int fd, unsigned int refs);
- extern struct file *fget_raw(unsigned int fd);
-+extern struct file *fget_task(struct task_struct *task, unsigned int fd);
- extern unsigned long __fdget(unsigned int fd);
- extern unsigned long __fdget_raw(unsigned int fd);
- extern unsigned long __fdget_pos(unsigned int fd);
--- 
-2.20.1
+> >> @@ -669,6 +684,8 @@ int main(int ac, char **av)
+> >>         case listnewconfig:
+> >>         case helpnewconfig:
+> >>         case syncconfig:
+> >> +       case yes2modconfig:
+> >> +       case mod2yesconfig:
+> >
+> > This looks like
+> > yes2mod/mod2yesconfig are interactive modes.
+> > Why do you need this?
+> >
+> > I believe yes2mod/mod2yesconfig
+> > should work non-interactively.
+>
+> I worried that simple s/=y$/=m/ or s/=m$/=y/ on tristate config fails to satisfy
+> requirement/dependency.
 
+conf_write() calls sym_calc_value() for every symbol
+before writing them to the .config file.
+
+
+> And I assumed that
+>
+>   /* Update until a loop caused no more changes */
+>   do {
+>         conf_cnt = 0;
+>         check_conf(&rootmenu);
+>   } while (conf_cnt);
+>
+> is the location to make modifications in order to adjust requirement/dependency.
+
+This is not the place to meet requirement/dependency.
+
+This loop requires the user to input his/her preference
+for all visible symbols.
+
+oldaskconfig, oldconfig and syncconfig are meant to be
+interactive  (it shows a prompt for every new symbol),
+that is why they runs this loop.
+
+
+
+> But I might be wrong. I just assumed that we should behave as if "make oldconfig"
+> after doing simple s/=y$/=m/ or s/=m$/=y/ on tristate config.
+> Does some later function automatically adjust requirement/dependency ?
+
+Yes, conf_write().
+
+Thanks.
+
+
+
+> If yes,
+>
+> >> @@ -638,6 +648,11 @@ int main(int ac, char **av)
+> >>                 }
+> >>         }
+> >>
+> >> +       if (input_mode == yes2modconfig)
+> >> +               conf_rewrite_mod_or_yes(def_y2m);
+> >> +       else if (input_mode == mod2yesconfig)
+> >> +               conf_rewrite_mod_or_yes(def_m2y);
+> >> +
+> >
+> > For consistency, why not put these lines into the switch statement below?
+>
+> conf_rewrite_mod_or_yes() should be put into the switch statement.
+>
+> >> diff --git a/scripts/kconfig/confdata.c b/scripts/kconfig/confdata.c
+> >> index 3569d2dec37c..6832a04a1aa4 100644
+> >> --- a/scripts/kconfig/confdata.c
+> >> +++ b/scripts/kconfig/confdata.c
+> >> @@ -1362,3 +1362,29 @@ bool conf_set_all_new_symbols(enum conf_def_mode mode)
+> >>
+> >>         return has_changed;
+> >>  }
+> >> +
+> >> +bool conf_rewrite_mod_or_yes(enum conf_def_mode mode)
+> >
+> > If you do not use the return value of this function,
+> > could you make it into a void function?
+>
+> OK.
+>
+> >> +{
+> >> +       struct symbol *sym;
+> >> +       int i;
+> >> +       bool has_changed = false;
+> >> +
+> >> +       if (mode == def_y2m) {
+> >> +               for_all_symbols(i, sym) {
+> >> +                       if (sym_get_type(sym) == S_TRISTATE &&
+> >> +                           sym->def[S_DEF_USER].tri == yes) {
+> >> +                               sym->def[S_DEF_USER].tri = mod;
+> >> +                               has_changed = true;
+> >
+> > sym_add_change_count(1); seems the convention way
+> > to inform kconfig of some options being updated.
+>
+> Then, we can do "sym_add_change_count(1);" instead of "return has_changed;".
+>
+
+
+--
+Best Regards
+Masahiro Yamada
