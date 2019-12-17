@@ -2,92 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 255571225D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:51:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D4351225E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfLQHul (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 02:50:41 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:53716 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfLQHul (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 02:50:41 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBH7oVs8082175;
-        Tue, 17 Dec 2019 01:50:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576569031;
-        bh=MaH2sErLpxeYmngtjI6q6hiIGh8Im8kVUfACGcBFcxM=;
-        h=From:To:CC:Subject:Date;
-        b=PedRStQaXUiBsqBd4AfT4VL/96DIog1txXfMnHGsrybqDCxfPSyzFld91tz8U6+DR
-         13N1UVnHNBYrgp8zJ/Mg9lJuefHkWDkIvWvGdGFtype1chQL2ENwJTgzLooUjFC5lg
-         +2U/4y1ERYRNd6ikLtR7D99HljeV9y2Ib0PzjRDI=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBH7oVOT047317
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 17 Dec 2019 01:50:31 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
- Dec 2019 01:50:30 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 17 Dec 2019 01:50:30 -0600
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBH7oSVU088646;
-        Tue, 17 Dec 2019 01:50:29 -0600
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <jic23@kernel.org>
-CC:     <vkoul@kernel.org>, <ludovic.desroches@microchip.com>,
-        <eugen.hristev@microchip.com>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] iio: adc: at91: Use dma_request_chan() instead dma_request_slave_channel()
-Date:   Tue, 17 Dec 2019 09:50:43 +0200
-Message-ID: <20191217075043.23539-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726733AbfLQHvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 02:51:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725730AbfLQHvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 02:51:35 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B26F206D8;
+        Tue, 17 Dec 2019 07:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576569094;
+        bh=1E8uWoPIbWivZlT6LMDRe7vHB1L2KARa+dNYQ093htA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t5cTRKtVmcgVlKyPf/+Fq4NZ+a142ya2cOGUf2jqac16wYpl17JcmEhE6lVbW1E0G
+         TSAw+4C26bJwSP5USnIf9leKB2cR/wpxTUlPIQ6G35x7YXAqB/QIA4vD8vHL/AmExi
+         MOjHYC52jYgvFRzZXvvXHkENMJtJY04E6KPegZB0=
+Date:   Tue, 17 Dec 2019 08:51:32 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Aviraj CJ <acj@cisco.com>
+Cc:     peppe.cavallaro@st.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        xe-linux-external@cisco.com
+Subject: Re: [PATCH stable v4.4 1/2] net: stmmac: use correct DMA buffer size
+ in the RX descriptor
+Message-ID: <20191217075132.GC2474507@kroah.com>
+References: <20191217055228.57282-1-acj@cisco.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217055228.57282-1-acj@cisco.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-eating up the error code.
+On Mon, Dec 16, 2019 at 09:52:27PM -0800, Aviraj CJ wrote:
+> upstream 583e6361414903c5206258a30e5bd88cb03c0254 commit
+> 
+> We always program the maximum DMA buffer size into the receive descriptor,
+> although the allocated size may be less. E.g. with the default MTU size
+> we allocate only 1536 bytes. If somebody sends us a bigger frame, then
+> memory may get corrupted.
+> 
+> Program DMA using exact buffer sizes.
+> 
+> Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> [acj: backport to v4.4 -stable :
+> - Modified patch since v4.4 driver has no support for Big endian
+> - Skipped the section modifying non-existent functions in dwmac4_descs.c and
+> dwxgmac2_descs.c ]
+> Signed-off-by: Aviraj CJ <acj@cisco.com>
 
-By using dma_request_chan() directly the driver can support deferred
-probing against DMA.
+I can't take stable patches for an older tree and have it "skip" newer
+stable trees.  To be specific, this patch is already in the 4.19.41
+release, but if I were to take it into the 4.4.y tree, then anyone
+upgrading to 4.9.y or 4.14.y afterward would run into the same issue.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
----
- drivers/iio/adc/at91-sama5d2_adc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+So can you also send backports to 4.9.y and 4.14.y so that I can take
+this fix into all trees?
 
-diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
-index e1850f3d5cf3..a5c7771227d5 100644
---- a/drivers/iio/adc/at91-sama5d2_adc.c
-+++ b/drivers/iio/adc/at91-sama5d2_adc.c
-@@ -1444,10 +1444,10 @@ static void at91_adc_dma_init(struct platform_device *pdev)
- 	if (st->dma_st.dma_chan)
- 		return;
- 
--	st->dma_st.dma_chan = dma_request_slave_channel(&pdev->dev, "rx");
--
--	if (!st->dma_st.dma_chan)  {
-+	st->dma_st.dma_chan = dma_request_chan(&pdev->dev, "rx");
-+	if (IS_ERR(st->dma_st.dma_chan))  {
- 		dev_info(&pdev->dev, "can't get DMA channel\n");
-+		st->dma_st.dma_chan = NULL;
- 		goto dma_exit;
- 	}
- 
--- 
-Peter
+Same for patch 2/2.
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+thanks,
 
+greg k-h
