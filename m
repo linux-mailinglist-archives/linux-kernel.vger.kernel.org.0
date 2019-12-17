@@ -2,54 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A448121FE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D37F121FEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 01:44:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727950AbfLQAm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 19:42:57 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:57908 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbfLQAm5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 19:42:57 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 69398157B2DDE;
-        Mon, 16 Dec 2019 16:42:56 -0800 (PST)
-Date:   Mon, 16 Dec 2019 16:42:55 -0800 (PST)
-Message-Id: <20191216.164255.98881482203698707.davem@davemloft.net>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, r.baldyga@samsung.com, k.opasiak@samsung.com,
-        linux-nfc@lists.01.org, netdev@vger.kernel.org,
+        id S1727959AbfLQAn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 19:43:59 -0500
+Received: from mga12.intel.com ([192.55.52.136]:40685 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727282AbfLQAn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 19:43:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 16:43:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
+   d="scan'208";a="365200915"
+Received: from chauvina-mobl1.ger.corp.intel.com ([10.251.85.48])
+  by orsmga004.jf.intel.com with ESMTP; 16 Dec 2019 16:43:54 -0800
+Message-ID: <8afc1bc6551c81ff84b8ac9fd86aed14ed7b7240.camel@linux.intel.com>
+Subject: Re: [PATCH] tpm_tis: reserve chip for duration of tpm_tis_core_init
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jerry Snitselaar <jsnitsel@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfc: s3fwrn5: replace the assertion with a WARN_ON
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20191215190129.1587-1-pakki001@umn.edu>
-References: <20191215190129.1587-1-pakki001@umn.edu>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Cc:     Christian Bundy <christianbundy@fraction.io>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable@vger.kernel.org, linux-intergrity@vger.kernel.org
+In-Reply-To: <20191211231758.22263-1-jsnitsel@redhat.com>
+References: <20191211231758.22263-1-jsnitsel@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
+ Espoo
+Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Date:   Tue, 17 Dec 2019 02:43:50 +0200
+User-Agent: Evolution 3.34.1-2 
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 16 Dec 2019 16:42:56 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
-Date: Sun, 15 Dec 2019 13:01:29 -0600
+On Wed, 2019-12-11 at 16:17 -0700, Jerry Snitselaar wrote:
+> Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
+> issuing commands to the tpm during initialization, just reserve the
+> chip after wait_startup, and release it when we are ready to call
+> tpm_chip_register.
+> 
+> Cc: Christian Bundy <christianbundy@fraction.io>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Peter Huewe <peterhuewe@gmx.de>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
+> Cc: stable@vger.kernel.org
+> Cc: linux-intergrity@vger.kernel.org
+> Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+> Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
 
-> @@ -507,7 +507,8 @@ int s3fwrn5_fw_recv_frame(struct nci_dev *ndev, struct sk_buff *skb)
->  	struct s3fwrn5_info *info = nci_get_drvdata(ndev);
->  	struct s3fwrn5_fw_info *fw_info = &info->fw_info;
->  
-> -	BUG_ON(fw_info->rsp);
-> +	if (WARN_ON(fw_info->rsp))
-> +		return -EINVAL;
->  
->  	fw_info->rsp = skb;
+Sorry for the latency.
 
-This leaks "skb" and you can even see that this might be the case
-purely by looking at the context of the patch.
+For me this looks good for putting to my rc3 PR with a minor twist:
+
+1. Rename out_err as err_probe.
+2. Rename out_start as err_start.
+
+/Jarkko
+
