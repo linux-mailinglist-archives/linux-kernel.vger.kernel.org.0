@@ -2,149 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2393F1222C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 04:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5EF31222DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 05:12:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfLQD5h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 22:57:37 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46097 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfLQD5g (ORCPT
+        id S1727469AbfLQELq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 23:11:46 -0500
+Received: from ybironout4.netvigator.com ([210.87.250.77]:63575 "EHLO
+        ybironout4.netvigator.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726296AbfLQELq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 22:57:36 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y14so6756206pfm.13;
-        Mon, 16 Dec 2019 19:57:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iCxYfSe4wfh5Oa268U6X7/B5eWsDv/JbGRRyvV87dDA=;
-        b=uHcqm7W3PzpQu2wXLlo4vlInUiEOW1NW0HRrtfokI3T2/O6wtgcmbRjOQG3F0ks8J2
-         UU1yGhmsq1uf6vX6kyu/Cg/X2dJSAjVi+3WBQAPjE2LsohRsR80Yx6O9RKAhmnchdmRd
-         58/JYZS1v3AGwzP0V6ez8ryQ0A+cjh/+KzkEzFJ5nlOH+fA1ZxoCkw45BXj4b1wZT9BI
-         6OuKZHqMh3uheN+xo/dL8tSU8DytbAUt709MyVg+JfTgaGkjKWgpFeViQenhRgENiz53
-         kyjR1e5ivK0EHyYNTY1z+48hBh2auVjWcmNNTxjuLlw52nJ6ih49uHt+xnoy1dnSwQAF
-         n6xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iCxYfSe4wfh5Oa268U6X7/B5eWsDv/JbGRRyvV87dDA=;
-        b=liPz62p4MMYBQJ1bFzfHOyooYGHvo/+bvIPDyk1vvWxnc5jSJpzEn+z1J82aplHTrz
-         EAoLzI6NQdRRn7wKi3avlNYi9JcodHW3GCkk7+9aXULTAERVs1/ipk8GJOOCiOCzd6JA
-         QCXyPqmRBzejWcksbZ9GKb3XwSpf7XCT2xK3D76DP2POlcf5kz/PPW0F7vkJbQ1In8x1
-         AFQh6knYUknEfo5ZpHC1W8uHOCjGbkprywVDqTXcZ853O0h0hKsHn05EZGaeaEYm2As4
-         0XZoMC5H2BnH0sGzDVa5NpYLsphqFFDa1H6hsgD9kEnTgYnv7bgPaQsDsqAVOS6HZFfF
-         d8tQ==
-X-Gm-Message-State: APjAAAVRY22/ufvfbUg0l5JTeYBY1Aor8HwZHd/mPqr0WT+XT6oyf6Va
-        ayxR733Xacejthx9/Rcv6crroozI
-X-Google-Smtp-Source: APXvYqxWfrO+VkUtpr7Mu+1RYEbPbCCigVRj4dF8yKxw2ueMgAOyXi/Y+7TLPLC6K+Y43BudQixSuQ==
-X-Received: by 2002:a63:5407:: with SMTP id i7mr22917017pgb.330.1576555055209;
-        Mon, 16 Dec 2019 19:57:35 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d85sm24508645pfd.146.2019.12.16.19.57.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 19:57:32 -0800 (PST)
-Subject: Re: [PATCH 0/1] Summary: hwmon driver for temperature sensors on SATA
- drives
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org
-References: <20191209052119.32072-1-linux@roeck-us.net>
- <yq15zinmrmj.fsf@oracle.com>
- <67b75394-801d-ce91-55f2-f0c0db9cfffc@roeck-us.net>
- <yq1y2vbhe6i.fsf@oracle.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <83d528fc-42b7-aa3f-5dd9-a000268da38e@roeck-us.net>
-Date:   Mon, 16 Dec 2019 19:57:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <yq1y2vbhe6i.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 16 Dec 2019 23:11:46 -0500
+X-Greylist: delayed 612 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 23:11:44 EST
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DoBgDqUvhd/5YXxstkHgELHIFzC4Igg?=
+ =?us-ascii?q?UEgEhoQlTuOeoUShSiBewkBAQE7AgEBgy2BEwKCFCQ1CA4CEAEBBAEBAQIBBQR?=
+ =?us-ascii?q?thGtYhVYJBidSEBgIJgtXGVuCRwGCdgavfjMaAoo3gTaHP4RZFAY/gUGBR4Ioc?=
+ =?us-ascii?q?4dtgkoEl1CXMQqCNJYIAhmOZwOLXi2oZoIAATaBWIEFgVkKgURQEY0yFxWOGzQ?=
+ =?us-ascii?q?zgQSRZgE?=
+X-IronPort-AV: E=Sophos;i="5.69,324,1571673600"; 
+   d="scan'208";a="170931205"
+Received: from unknown (HELO ybironoah03.netvigator.com) ([203.198.23.150])
+  by ybironout4v1.netvigator.com with ESMTP; 17 Dec 2019 12:01:29 +0800
+Received: from unknown (HELO rhel76.localdomain) ([42.200.157.25])
+  by ybironoah03.netvigator.com with ESMTP; 17 Dec 2019 12:01:29 +0800
+From:   "Chan Shu Tak, Alex" <alexchan@task.com.hk>
+Cc:     "Chan Shu Tak, Alex" <alexchan@task.com.hk>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] llc2: Remove the condition operator in llc_stat_ev_rx_null_dsap_xid_c and llc_stat_ev_rx_null_dsap_test_c.
+Date:   Tue, 17 Dec 2019 12:00:36 +0800
+Message-Id: <1576555237-4037-1-git-send-email-alexchan@task.com.hk>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1576340820-4929-1-git-send-email-alexchan@task.com.hk>
+References: <1576340820-4929-1-git-send-email-alexchan@task.com.hk>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/19 6:35 PM, Martin K. Petersen wrote:
-> 
-> Guenter,
-> 
->> If and when drives are detected which report bad information, such
->> drives can be added to a blacklist without impact on the core SCSI or
->> ATA code. Until that happens, not loading the driver solves the
->> problem on any affected system.
-> 
-> My only concern with that is that we'll have blacklisting several
-> places. We already have ATA and SCSI blacklists. If we now add a third
-> place, that's going to be a maintenance nightmare.
-> 
-> More on that below.
-> 
->>> My concerns are wrt. identifying whether SMART data is available for
->>> USB/UAS. I am not too worried about ATA and "real" SCSI (ignoring RAID
->>> controllers that hide the real drives in various ways).
-> 
-> OK, so I spent my weekend tinkering with 15+ years of accumulated USB
-> devices. And my conclusion is that no, we can't in any sensible manner,
-> support USB storage monitoring in the kernel. There is no heuristic that
-> I can find that identifies that "this is a hard drive or an SSD and
-> attempting one of the various SMART methods may be safe". As opposed to
-> "this is a USB key that's likely to lock up if you try". And that's
-> ignoring the drives with USB-ATA bridges that I managed to wedge in my
-> attempt at sending down commands.
-> 
-> Even smartmontools is failing to work on a huge part of my vintage
-> collection.  Thanks to a wide variety of bridges with random, custom
-> interfaces.
-> 
-> So my stance on all this is that I'm fine with your general approach for
-> ATA. I will post a patch adding the required bits for SCSI. And if a
-> device does not implement either of the two standard methods, people
-> should use smartmontools.
-> 
-> Wrt. name, since I've added SCSI support, satatemp is a bit of a
-> misnomer. drivetemp, maybe? No particular preference.
-> 
-Agreed, if we extend this to SCSI, satatemp is less than perfect.
-drivetemp ? disktemp ? I am open to suggestions, with maybe a small
-personal preference for disktemp out of those two.
+From: "Chan Shu Tak, Alex" <alexchan@task.com.hk>
 
->> The one USB/UAS connected SATA drive I have (a WD passport) reports
->> itself as "WD      ", not as "ATA     ". I would expect other drives
->> to do the same.
-> 
-> Yes. Most vendors are too fond of their brand names to put "ATA" in
-> there. So my suggestion is to relax the heuristic to trigger on the ATA
-> Information VPD page only and ignore the name.
-> 
+When a frame with NULL DSAP is received, llc_station_rcv is called.
+In turn, llc_stat_ev_rx_null_dsap_xid_c is called to check if it is a NULL
+XID frame. The original condition operator returns 1 when the incoming
+frame is not a NULL XID frame and 0 otherwise. As a result, an incoming
+NULL TEST frame would trigger an XID response instead.
 
-Fine with me. I wanted to be as restrictive as possible.
+To fix the error, we just need to remove the condition operator.
 
-> Also, there are some devices that will lock up the way you access that
-> VPD page. So a tweak is also required there.
-> 
-Do you have details ? Do I need to add a call to scsi_device_supports_vpd(),
-maybe ?
+The same error is found in llc_stat_ev_rx_null_dsap_test_c and fixed.
 
-> To avoid the multiple blacklists and heuristic collections my suggestion
-> is that I introduce a helper function in SCSI (based on what I did in
-> the disk driver) that can be called to identify whether something is an
-> ATA device. And then the hwmon driver can call that and we can keep the
-> heuristics in one place.
-> 
-> If a device turns out to be problematic wrt. getting the ATA VPD for the
-> purpose of SMART, for instance, it will also need to be blacklisted for
-> other reasons in SCSI. So I would really like to keep the heuristics in
-> one place.
-> 
-Fine with me. My only concern is that I don't want the driver to disappear
-into nowhere-land (again).
+Signed-off-by: Chan Shu Tak, Alex <alexchan@task.com.hk>
+---
+ net/llc/llc_station.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-Guenter
+diff --git a/net/llc/llc_station.c b/net/llc/llc_station.c
+index 90955d7..c29170e 100644
+--- a/net/llc/llc_station.c
++++ b/net/llc/llc_station.c
+@@ -32,7 +32,7 @@ static int llc_stat_ev_rx_null_dsap_xid_c(struct sk_buff *skb)
+ 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
+ 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
+ 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_XID &&
+-	       !pdu->dsap ? 1 : 0;			/* NULL DSAP value */
++	       !pdu->dsap;				/* NULL DSAP value */
+ }
+ 
+ static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
+@@ -42,7 +42,7 @@ static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
+ 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
+ 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
+ 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_TEST &&
+-	       !pdu->dsap ? 1 : 0;			/* NULL DSAP */
++	       !pdu->dsap;				/* NULL DSAP */
+ }
+ 
+ static int llc_station_ac_send_xid_r(struct sk_buff *skb)
+-- 
+1.8.3.1
+
