@@ -2,152 +2,393 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 028C212260C
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1691B122615
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 09:01:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfLQH7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 02:59:42 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:48474 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfLQH7l (ORCPT
+        id S1726945AbfLQIBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 03:01:09 -0500
+Received: from se15e.web-hosting.com ([198.54.122.209]:44809 "EHLO
+        se15e.web-hosting.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfLQIBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 02:59:41 -0500
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Eugen.Hristev@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="Eugen.Hristev@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Eugen.Hristev@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: cyMCWzrN6h2l6bDxjeHh/cByJ3EWmOy/j+coNbeXZ8Kd/kZWcQumwNRDLc7vds1KaRZs/X8JBf
- ZenltYZFh4IJvCp9wHgX/JRthUBEF2MbM+Btd/iYHGh95tD80EGR2Zg4qDK4nusNL3neE902qh
- zjA/eNkWumZ+KX1mG8xA16fv48ZfdMks7q1k1NbOZyBIc4xhNHgOVhVWDuOoYtyRCwvOqasNZE
- bKlUJ0YxcqXbXcxGEFbqJrVuuYTsnGDU+UUn16ptI2dhaZ70FLzmuGwqZhJT9edqjQraSyeSaQ
- I3A=
-X-IronPort-AV: E=Sophos;i="5.69,324,1571727600"; 
-   d="scan'208";a="59239123"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Dec 2019 00:59:40 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 17 Dec 2019 00:59:42 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Tue, 17 Dec 2019 00:59:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BUl751Zgh5RhWX5CXiZb+k1d6d4PCpqE5t57MkOZuP9jUhsn1M9ikZxeLsg8JZ4kEI2JTDrf9qHf7B/yJLM5hoAgiviHq3x45+WEn52ean2AHh9QDuqoDz2cytMp+mzr1w5Uy2DZ9A9kwiORsZl0bPQkVYDQBjVHSISUVblRy2Ui6YbmgPxPeEA4G8zWZBu631u5sHoexeLg3mmnu/DsN5gTCTlj7SP+Ojd1a19Uh7eATXSYv2PTse8aj6suM+s49I6Tu/GrTRDHPDBWjEx/XpnYcM4i8bs24GJn38ElEdP26PCqSsiH/xJuxoez2tma3mA/mGkLaPdHIwBOkYYxyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BltOCjsnQ+CYpVZ1XekLJqThIT44rFTQB2ZX/wHBjoY=;
- b=cAsoBu6fO+GNZpZR6wVtOwU7GUUWJJHJos1jBMdeKLLGjyJpR6L94MQrEo3qE/L+GZkeUseS0O2AsE9m7mwNBjrfuGYwNDPXKhLA9yzdoz2PE2nBN8TKlx7LR14/MNSC1uDEp+GeMM+hTzYElZZM7SnIJrWhD/UzmN846VebC8bTQTtPiFtFZGMUPRDia5XXpjoT6yWkBfCnht6RVo2Zl0Q3WHG9mS0bMBjSBftWr/C/j6568mQb25mNkWyT5mrGf87U531UrhHe2Bcp/5ScXcQHRTPGAtK9+6GXbbHZkOhZgQnW9vrJ6S/tHlxSf2VkhepZ3nAvLXAZig8M1cLPdg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BltOCjsnQ+CYpVZ1XekLJqThIT44rFTQB2ZX/wHBjoY=;
- b=HcfQwS/gvXSR9YLSoLzb9+o+Nt2i8G9ZmRnYlxokeLdgGIf9b65QcSQSq/OI5ABSY+W7DI58XTXVhWJC7MxKHDFayxz28+rLiEGz3cYb+T9Z3kpcrkOijbmht1pRBYK1cOwUvRG2BDxQATw6f1T6+tWvzl+lkSdFYQIXQ5Gvk5c=
-Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
- DM5PR11MB1993.namprd11.prod.outlook.com (10.168.107.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.17; Tue, 17 Dec 2019 07:59:35 +0000
-Received: from DM5PR11MB1242.namprd11.prod.outlook.com
- ([fe80::9039:e0e8:9032:20c1]) by DM5PR11MB1242.namprd11.prod.outlook.com
- ([fe80::9039:e0e8:9032:20c1%12]) with mapi id 15.20.2538.019; Tue, 17 Dec
- 2019 07:59:34 +0000
-From:   <Eugen.Hristev@microchip.com>
-To:     <peter.ujfalusi@ti.com>, <jic23@kernel.org>
-CC:     <vkoul@kernel.org>, <Ludovic.Desroches@microchip.com>,
-        <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: adc: at91: Use dma_request_chan() instead
- dma_request_slave_channel()
-Thread-Topic: [PATCH] iio: adc: at91: Use dma_request_chan() instead
- dma_request_slave_channel()
-Thread-Index: AQHVtK62ARE9EHW0SkuabQ9x+H8R5Ke99mWA
-Date:   Tue, 17 Dec 2019 07:59:34 +0000
-Message-ID: <102e71da-8b9c-8528-3bec-b4a22895fb44@microchip.com>
-References: <20191217075043.23539-1-peter.ujfalusi@ti.com>
-In-Reply-To: <20191217075043.23539-1-peter.ujfalusi@ti.com>
-Accept-Language: en-US, ro-RO
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 20bab96c-8d2c-4511-1abe-08d782c70e86
-x-ms-traffictypediagnostic: DM5PR11MB1993:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM5PR11MB19930214EE9715101DB2DC69E8500@DM5PR11MB1993.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02543CD7CD
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(136003)(396003)(346002)(376002)(189003)(199004)(66446008)(64756008)(66946007)(66556008)(66476007)(36756003)(76116006)(316002)(54906003)(26005)(110136005)(71200400001)(81166006)(2906002)(6512007)(86362001)(6506007)(2616005)(53546011)(31696002)(5660300002)(478600001)(31686004)(186003)(8936002)(91956017)(8676002)(81156014)(4326008)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1993;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: rlqCXOo33f6YZlH18pxM005qbLsOmxdEQbbAQ3Mv6IrmhCOBhJ57yb3ttfUUJka6d8MUgyduv0lnRE1K0svHOIKSRyGncBMBCpYaoOxTMnvcyCqAaQb0puO2kL1B1kyWKsZ1wpIV8g+ACfLrcrUTl7i+R1u7IASLfxIgLvLOfyJL3ufKSgBoBkK/ks2CNzB/kkZuH1+sbAIMh5U9av4p/zCxN9qqpOtOI2kSwY2W4KLYv7k9Ge4iB1qRDa4e6aJkjNeDsr/l/8ENvj95C+bOGoLKU/4fdY6tpnUIokTHwiQQp32CQ+GugsNTTuSKbEt3dXb4cvHui4pAPmnOEC50t9eJmwL3/JXRdGjkR7uOJNIGcDzObPCcruivYaiSxbpUEFKv/vqfHcvRWoycTdZd5ijiL8fwZvSiKlAcC1cXWK+F/vwqcVxi3FUBhQ1U6u0a
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D2D76EEC08250F4591517B12BACDF2B7@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20bab96c-8d2c-4511-1abe-08d782c70e86
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2019 07:59:34.8887
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Wryc3MqQY86XP5M3g3avWNnG72BjcoOLPqDf9kGkLHtnKj0ApRefMCDv0pGyCLtb5SemxOOtDH7cdG0e5AqTyc02k+3p+GlrwDMUEqSMxAE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1993
+        Tue, 17 Dec 2019 03:01:08 -0500
+Received: from [68.65.123.203] (helo=server153.web-hosting.com)
+        by se15.registrar-servers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <akash@openedev.com>)
+        id 1ih7mh-0005Al-SA; Tue, 17 Dec 2019 00:00:55 -0800
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=openedev.com; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WOid7yOYhAStMyzrZCpDkHHegb1R4RrVPY+V1fImCcI=; b=L1CT0zKoybft8bUx8N5fwwrYR+
+        bPnnAo+Q8Ix7svNn1f28DRnQcIb+BFoEaZZ73+Qsq90cJPzqeSAYbw9MdMKOgOidlCIuvEIRgL7Ul
+        YpJlYe25Q1yKniaT4ozvVCWpEJrlYs2GmY77FJanEEMfpx6TJKaX1Q6aFVgtzwbj02P8w4ApYENmx
+        odPonaTmqffeRrb5UU65HUzQA4LJYj86A1/OP5iF/yTnoeulPCirvVWRr3xTDx9+AhtriXeSe3+95
+        Sn0A88VVil6ZMj4ZgE54trevP8jEU4AUP34CC/IBKRXkmXImVdP3nSkTlZ0DUfT+70jCo3IdmPpQH
+        Up9i5nJw==;
+Received: from nat-inn.mentorg.com ([192.94.34.34]:31382 helo=akash-vm.inn-wifi.mentorg.com)
+        by server153.web-hosting.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <akash@openedev.com>)
+        id 1ih7mb-003E6s-Kr; Tue, 17 Dec 2019 03:00:46 -0500
+From:   Akash Gajjar <akash@openedev.com>
+To:     heiko@sntech.de
+Cc:     jagan@openedev.com, tom@radxa.com, kever.yang@rock-chips.com,
+        Akash Gajjar <akash@openedev.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Vivek Unune <npcomplete13@gmail.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Nick Xie <nick@khadas.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [V2 1/1 PATCH] arm64: dts: rockchip: add ROCK Pi S DTS support
+Date:   Tue, 17 Dec 2019 13:30:02 +0530
+Message-Id: <20191217080014.11756-1-akash@openedev.com>
+X-Mailer: git-send-email 2.17.1
+X-OutGoing-Spam-Status: No, score=-1.0
+X-Originating-IP: 68.65.123.203
+X-SpamExperts-Domain: nctest.net
+X-SpamExperts-Username: whmcalls3
+Authentication-Results: registrar-servers.com; auth=pass (login) smtp.auth=whmcalls3@nctest.net
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: SB/global_tokens (0.00498862226523)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0c2Pj46HODYmpAMVAv0J1pOpSDasLI4SayDByyq9LIhVcOsCkbaPqqHd
+ rQKl0ndNRETNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3Kk502M/hntTzIKfCMISdhHQGg
+ t7nAtP8WjkKKy9v/mXRkty7kshl0qfjNTiHz6D+lTs1OFZCJnqICuBP35KwNAqV1skaPpkRmI7Oy
+ xmK4vHEEpuEZQtkapPDwKmQVhwwYLCrYOizJvpoze6cTUad230/3kECQPZPKWDOpUxCPzd5brlHW
+ Xai14aDDSG6NxoO+kAqUrZRsi/CLoANte1i+ZgxRweM0HJUf31LvnjlI4h1yiQ0vVhO9IB8pOv2j
+ 9a/9yYOoB3Edt2PSJXWVDbWpnXV+HMjlK4mNe7AOtesc9x/qiGiNChwP2OJjdXJuRUzjfFZND2tA
+ 8JA0IWUZhgwtNisXK3nCt88eEtbjFEe4wotPve0USYLcdEyH7ZfqVbq/SSW8WTkFJKrk3QCrr40r
+ 15F3Rm8ytD0IqrihDfnyCUa3wL2Y4F0412ezGCyTUPan2AUIlBctiMvX5F8XBiwx5Rs40cmSL9tP
+ fD9p0Q30Opo+bd5lBrozqCj+0HE/yRZixXNOUX3LUkv9SqakBdzhOOUvg5TIg80/EueZoip8aHbu
+ 4ONX+wVRdCv4IOs1C4geIT5LUm075ewdrul30woFSUGlz8CJSOMrvzx9TVg3RkXwFZn17vRHGlcT
+ iMGaPpxhI3+BNO/vWxLUxUxbR529+jcSGt6GKtM6B+u5NgVXVJx8AoRwxB3UXPpqW9YYMmJAiIwb
+ dFqdboRlBgJOYFBIvuemT8zhVocbayAhVgkqXg+DBuG4NXpcGX0BewE6kCMGUa3FdyXge5giNlzZ
+ jmssnacbGwN9oPEGphWQkRzetKPpxOsB8gG0slV7ra6jI4BSTwrYfJFsGsxM5/ek60XeHiIhiBbv
+ 1wt8gji8ewfaR3A21jAytTM7ul2pus+MytmYMPHvc6+8qs7qroeV5HFWgQskaPHAtLJBxO9AXoKm
+ PqZHBQQL7n9+OTZ37LZfI/sWwyJSOSGKlUBLYSbGwjymBMs+y2lddnrRl/tSPbCh7uprC4QcUKGu
+ TX/23E8AyqKqJt2lL6TNy1dtcXTis6Dsj8hzB3NHYhYaYo0xHDICv1Yx6b3cWXoC6UmizshdZtj8
+ cxw3qqhc+N6cuEg4XWh5Fn4+lLgwzoFrDlzunWdf0LZdg/BKPqUSdnYelyQNvR+dkJlReKZlZpWU
+ gNiTvwv7ZcXIdc0MLkzSqE63qJ+zngn7m6CAstID+vrS5Thb0c/s7mun+E/RGrGHGDuwRkuP1qh7
+ YyoiU7NMbzmxUlDjlFLe1QlsqnWpvw1TU8J/E3GJyRN+IxZ/hz0zmaxV1xPWjLie3fMgkIagEDDY
+ 4gfnEZ4doHEpKKo/b09r+um3pKaKeKIVtFIy9LlOZCNnSGcq99Dbe7/IbgyY4V1IcY73X0gZcGQT
+ bPM5zqrjMI79CjbRoqLnS70LPBISpYNOps7qsSzkj4d0bp8lX/ci14DI8fLw5N/ojaomCoWWiTto
+ l8oIToKHMVx7fTUwDt8WIXPmYakRLzBY3AuXWIccBDJTaBcDik4cfyhwRfSZqBUJ2eng
+X-Report-Abuse-To: spam@se16.registrar-servers.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDE3LjEyLjIwMTkgMDk6NTAsIFBldGVyIFVqZmFsdXNpIHdyb3RlOg0KDQo+IGRtYV9y
-ZXF1ZXN0X3NsYXZlX2NoYW5uZWwoKSBpcyBhIHdyYXBwZXIgb24gdG9wIG9mIGRtYV9yZXF1ZXN0
-X2NoYW4oKQ0KPiBlYXRpbmcgdXAgdGhlIGVycm9yIGNvZGUuDQo+IA0KPiBCeSB1c2luZyBkbWFf
-cmVxdWVzdF9jaGFuKCkgZGlyZWN0bHkgdGhlIGRyaXZlciBjYW4gc3VwcG9ydCBkZWZlcnJlZA0K
-PiBwcm9iaW5nIGFnYWluc3QgRE1BLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUGV0ZXIgVWpmYWx1
-c2kgPHBldGVyLnVqZmFsdXNpQHRpLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9paW8vYWRjL2F0
-OTEtc2FtYTVkMl9hZGMuYyB8IDYgKysrLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0
-aW9ucygrKSwgMyBkZWxldGlvbnMoLSkNCg0KSGkgUGV0ZXIsDQoNClRoYW5rIHlvdSBmb3IgdGhl
-IHBhdGNoLg0KTml0cGljayA6IGF0OTEgaXMgYW5vdGhlciBkcml2ZXIgKG9sZCBvbmUgZm9yIGRp
-ZmZlcmVudCBwbGF0Zm9ybXMpLCBzbyANCmNhbiB5b3UgcGxlYXNlIGNoYW5nZSB0aGUgY29tbWl0
-IG9uZWxpbmUgdG8gaWlvOiBhZGM6IGF0OTEtc2FtYTVkMl9hZGM6IA0KdG8gbm90IGJlIGNvbmZ1
-c2VkIGFib3V0IHdoaWNoIGRyaXZlciBpcyBhZmZlY3RlZC4NCg0KVGhhbmtzICENCkV1Z2VuDQoN
-Cj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lpby9hZGMvYXQ5MS1zYW1hNWQyX2FkYy5jIGIv
-ZHJpdmVycy9paW8vYWRjL2F0OTEtc2FtYTVkMl9hZGMuYw0KPiBpbmRleCBlMTg1MGYzZDVjZjMu
-LmE1Yzc3NzEyMjdkNSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9paW8vYWRjL2F0OTEtc2FtYTVk
-Ml9hZGMuYw0KPiArKysgYi9kcml2ZXJzL2lpby9hZGMvYXQ5MS1zYW1hNWQyX2FkYy5jDQo+IEBA
-IC0xNDQ0LDEwICsxNDQ0LDEwIEBAIHN0YXRpYyB2b2lkIGF0OTFfYWRjX2RtYV9pbml0KHN0cnVj
-dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ICAgICAgICAgIGlmIChzdC0+ZG1hX3N0LmRtYV9j
-aGFuKQ0KPiAgICAgICAgICAgICAgICAgIHJldHVybjsNCj4gDQo+IC0gICAgICAgc3QtPmRtYV9z
-dC5kbWFfY2hhbiA9IGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWwoJnBkZXYtPmRldiwgInJ4Iik7
-DQo+IC0NCj4gLSAgICAgICBpZiAoIXN0LT5kbWFfc3QuZG1hX2NoYW4pICB7DQo+ICsgICAgICAg
-c3QtPmRtYV9zdC5kbWFfY2hhbiA9IGRtYV9yZXF1ZXN0X2NoYW4oJnBkZXYtPmRldiwgInJ4Iik7
-DQo+ICsgICAgICAgaWYgKElTX0VSUihzdC0+ZG1hX3N0LmRtYV9jaGFuKSkgIHsNCj4gICAgICAg
-ICAgICAgICAgICBkZXZfaW5mbygmcGRldi0+ZGV2LCAiY2FuJ3QgZ2V0IERNQSBjaGFubmVsXG4i
-KTsNCj4gKyAgICAgICAgICAgICAgIHN0LT5kbWFfc3QuZG1hX2NoYW4gPSBOVUxMOw0KPiAgICAg
-ICAgICAgICAgICAgIGdvdG8gZG1hX2V4aXQ7DQo+ICAgICAgICAgIH0NCj4gDQo+IC0tDQo+IFBl
-dGVyDQo+IA0KPiBUZXhhcyBJbnN0cnVtZW50cyBGaW5sYW5kIE95LCBQb3Jra2FsYW5rYXR1IDIy
-LCAwMDE4MCBIZWxzaW5raS4NCj4gWS10dW5udXMvQnVzaW5lc3MgSUQ6IDA2MTU1MjEtNC4gS290
-aXBhaWtrYS9Eb21pY2lsZTogSGVsc2lua2kNCj4gDQo+IA==
+ROCK Pi S is RK3308 based SBC from radxa.com. ROCK Pi S has a,
+- 256MB/512MB DDR3 RAM
+- SD, NAND flash (optional on board 1/2/4/8Gb)
+- 100MB ethernet, PoE (optional)
+- Onboard 802.11 b/g/n wifi + Bluetooth 4.0 Module
+- USB2.0 Type-A HOST x1
+- USB3.0 Type-C OTG x1
+- 26-pin expansion header
+- USB Type-C DC 5V Power Supply
+
+This patch enables
+- Console
+- NAND Flash
+- SD Card
+- USB2.0
+
+Signed-off-by: Akash Gajjar <akash@openedev.com>
+---
+Changes for v2
+- Use pwm-supply for vdd_core node instead of vi-supply
+- Add USB2.0 node support
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../boot/dts/rockchip/rk3308-rock-pi-S.dts    | 237 ++++++++++++++++++
+ 3 files changed, 243 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
+
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index d9847b306b83..48d40c928d45 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -422,6 +422,11 @@ properties:
+           - const: radxa,rockpi4
+           - const: rockchip,rk3399
+ 
++      - description: Radxa ROCK Pi S
++        items:
++          - const: radxa,rockpis
++          - const: rockchip,rk3308
++
+       - description: Radxa Rock2 Square
+         items:
+           - const: radxa,rock2-square
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index 48fb631d5451..cc9e8c824980 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -2,6 +2,7 @@
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += px30-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-roc-cc.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3308-rock-pi-S.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-a1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts b/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
+new file mode 100644
+index 000000000000..0afb24ec1cdf
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3308-rock-pi-S.dts
+@@ -0,0 +1,237 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright (c) 2019 Akash Gajjar <akash@openedev.com>
++ * Copyright (c) 2019 Jagan Teki <jagan@openedev.com>
++ */
++
++/dts-v1/;
++#include "rk3308.dtsi"
++
++/ {
++	model = "Radxa ROCK Pi S";
++	compatible = "radxa,rockpis", "rockchip,rk3308";
++
++	chosen {
++		stdout-path = "serial0:1500000n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&green_led_gio>, <&heartbeat_led_gpio>;
++
++		green-led {
++			label = "rockpis:green:power";
++			gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "default-on";
++			default-state = "on";
++		};
++
++		blue-led {
++			label = "rockpis:blue:user";
++			gpios = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_enable_h>;
++		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
++	};
++
++	vcc5v0_sys: vcc5v0-sys {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_sys";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++	};
++
++	vdd_core: vdd-core {
++		compatible = "pwm-regulator";
++		pwms = <&pwm0 0 5000 1>;
++		regulator-name = "vdd_core";
++		regulator-min-microvolt = <827000>;
++		regulator-max-microvolt = <1340000>;
++		regulator-init-microvolt = <1015000>;
++		regulator-settling-time-up-us = <250>;
++		regulator-always-on;
++		regulator-boot-on;
++		pwm-supply = <&vcc5v0_sys>
++	};
++
++	vdd_log: vdd-log {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd_log";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1050000>;
++		regulator-max-microvolt = <1050000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_ddr: vcc-ddr {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_ddr";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1500000>;
++		regulator-max-microvolt = <1500000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc_1v8: vcc-1v8 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_1v8";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		vin-supply = <&vcc_io>;
++	};
++
++	vcc_io: vcc-io {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_io";
++		regulator-always-on;
++		regulator-boot-on;
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++
++	vcc5v0_otg: vcc5v0-otg {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc5v0_otg";
++		regulator-always-on;
++		gpio = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		pinctrl-names = "default";
++		pinctrl-0 = <&otg_vbus_drv>;
++		vin-supply = <&vcc5v0_sys>;
++	};
++};
++
++&cpu0 {
++	cpu-supply = <&vdd_core>;
++};
++
++&emmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	supports-sd;
++	disable-wp;
++	non-removable;
++	num-slots = <1>;
++	vin-supply = <&vcc_io>;
++	status = "okay";
++};
++
++&i2c1 {
++	status = "okay";
++};
++
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	max-frequeency = <150000000>;
++	supports-sd;
++	disable-wp;
++	num-slots = <1>;
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4>;
++	card-detect-delay = <800>;
++	status = "okay";
++};
++
++&spi2 {
++	status = "okay";
++	max-freq = <10000000>;
++};
++
++&pinctrl {
++	pinctrl-names = "default";
++	pinctrl-0 = <&rtc_32k>;
++
++	leds {
++		green_led_gio: green-led-gpio {
++			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		heartbeat_led_gpio: heartbeat-led-gpio {
++			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	usb {
++		otg_vbus_drv: otg-vbus-drv {
++			rockchip,pins = <0 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	sdio-pwrseq {
++		wifi_enable_h: wifi-enable-h {
++			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wifi_host_wake: wifi-host-wake {
++			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++	};
++};
++
++&pwm0 {
++	status = "okay";
++	pinctrl-0 = <&pwm0_pin_pull_down>;
++};
++
++&saradc {
++	vref-supply = <&vcc_1v8>;
++	status = "okay";
++};
++
++&sdio {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	bus-width = <4>;
++	max-frequency = <1000000>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	supports-sdio;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	sd-uhs-sdr104;
++	status = "okay";
++};
++
++&u2phy {
++	status = "okay";
++
++	u2phy_host: host-port {
++		status = "okay";
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart4_xfer &uart4_rts &uart4_cts>;
++	status = "okay";
++};
++
++&usb_host_ehci {
++	status = "okay";
++};
++
++&usb_host_ohci {
++	status = "okay";
++};
+-- 
+2.17.1
+
