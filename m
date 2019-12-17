@@ -2,96 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E6AD1221DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1792D1221C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 03:00:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLQCHn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 21:07:43 -0500
-Received: from mga14.intel.com ([192.55.52.115]:36892 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfLQCHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 21:07:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Dec 2019 17:37:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,323,1571727600"; 
-   d="scan'208";a="217616412"
-Received: from rzhang1-mobile.sh.intel.com ([10.239.195.243])
-  by orsmga003.jf.intel.com with ESMTP; 16 Dec 2019 17:37:09 -0800
-Message-ID: <2dcde56646eea0a8d8002d0b07b1702d64284034.camel@intel.com>
-Subject: Re: [PATCH v3 5/5] thermal: int340x_thermal: Add new Tiger Lake
- hardware IDs to support thermal driver
-From:   Zhang Rui <rui.zhang@intel.com>
-To:     Gayatri Kammela <gayatri.kammela@intel.com>,
-        linux-pm@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org, alex.hung@canonical.com,
-        linux-acpi@vger.kernel.org, lenb@kernel.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com, charles.d.prestopine@intel.com,
-        dvhart@infradead.org, "Rafael J . Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-Date:   Tue, 17 Dec 2019 09:37:09 +0800
-In-Reply-To: <354062a481f1b8b207fa7035abb50fcb80e8ce32.1576520244.git.gayatri.kammela@intel.com>
-References: <cover.1576520244.git.gayatri.kammela@intel.com>
-         <354062a481f1b8b207fa7035abb50fcb80e8ce32.1576520244.git.gayatri.kammela@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726526AbfLQCAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 21:00:30 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:47312 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726180AbfLQCAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 16 Dec 2019 21:00:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576548029;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:in-reply-to:in-reply-to:  references:references;
+        bh=rPjKUP3c5OBgFxjGzOJRPYxmS5qHOOKhkgjmkw+YN2I=;
+        b=Tm1I36OiIFq/QZzccKweDyHULLc1YkRbaknYVBgtMkYQApd5VUVWV0WIzC3o4o1oQnDvi/
+        GqEFE5k1WTjj7z0bd/Xb4MR+UPN3dLGCfLjfi2a3P9fD2aa4k/JqVueKvYFikFvIjAsAQr
+        cibYedeZEGGqEpCH2L5EFg3FLLHUjIE=
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com
+ [209.85.161.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-363-0F2LHWcmNpa0xjdqwvduhw-1; Mon, 16 Dec 2019 21:00:26 -0500
+X-MC-Unique: 0F2LHWcmNpa0xjdqwvduhw-1
+Received: by mail-yw1-f70.google.com with SMTP id 16so6992485ywz.5
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 18:00:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=rPjKUP3c5OBgFxjGzOJRPYxmS5qHOOKhkgjmkw+YN2I=;
+        b=DjjxEcJnQ888D/IVoC4LJngedSINLBNO2ZhQ4IEBwghtKHViVGAeozV05AeEgGWavE
+         uxDDCpwlGn0UVcwjxMR0iO8IfJnroKW0yektjhGdps8NoKaugTZxDTg3NiS0v6RY5D2b
+         K6LVcarstJPh4eULOxFPvShqKxCBZsGSSAQO4K4UkhWba/C50pP/1ZFRO9Fq1UyGI1Co
+         VoOLy6eg1mY0/UB9qEXAK4wTIO6lki4sKEtvUR4EOQ817Wz3EvkbXTK4qUvA4NKtMYfI
+         o8CBnNOcgLnhG1e22myXDdU0TROAN+zaesHYNzLyDpRSbN4xexzc4NPSnIpdITSmZons
+         ATew==
+X-Gm-Message-State: APjAAAUhtud0JSeSFO8DdFAKWQApJf3+QXbYqA3QN9TgzTwYFFkaDqDI
+        lmPvdFcr5rRSxc3alF6ua9+29dAGqddMXYQKBTObWkJ2v/+Hqg4rDqncldGRkEYHGjh4OckuAKr
+        Ttjw5kRSIe3SI7LsMbhx9ZsJN
+X-Received: by 2002:a25:8c9:: with SMTP id 192mr4617222ybi.328.1576548025512;
+        Mon, 16 Dec 2019 18:00:25 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzSHXlqGOcOwe8mrQawvzd98LxvqAZaVnHrkCZ/xB8ek5ZKZOwysxZHuTASPJ2GCZv3Avp1zw==
+X-Received: by 2002:a25:8c9:: with SMTP id 192mr4617202ybi.328.1576548025222;
+        Mon, 16 Dec 2019 18:00:25 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id n1sm2256975ywe.78.2019.12.16.18.00.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 18:00:24 -0800 (PST)
+Date:   Mon, 16 Dec 2019 19:00:22 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
+ tpm_tis_core_init
+Message-ID: <20191217020022.knh7uxt4pn77wk5m@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+References: <20191211231758.22263-1-jsnitsel@redhat.com>
+ <20191211235455.24424-1-jsnitsel@redhat.com>
+ <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
+ <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-16 at 10:31 -0800, Gayatri Kammela wrote:
-> Tiger Lake has a new unique hardware IDs to support thermal driver.
-> Hence, add them.
-> 
-> Cc: Rafael J. Wysocki <rafael@kernel.org>
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Cc: Zhang rui <rui.zhang@intel.com>
-> Cc: Srinivas Pandruvada <srinivas.pandruvada@intel.com>
-> Reviewed-by: Pandruvada, Srinivas <srinivas.pandruvada@intel.com>
-> Signed-off-by: Gayatri Kammela <gayatri.kammela@intel.com>
+On Mon Dec 16 19, Dan Williams wrote:
+>On Mon, Dec 16, 2019 at 4:59 PM Jarkko Sakkinen
+><jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>> On Wed, 2019-12-11 at 16:54 -0700, Jerry Snitselaar wrote:
+>> > Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
+>> > issuing commands to the tpm during initialization, just reserve the
+>> > chip after wait_startup, and release it when we are ready to call
+>> > tpm_chip_register.
+>> >
+>> > Cc: Christian Bundy <christianbundy@fraction.io>
+>> > Cc: Dan Williams <dan.j.williams@intel.com>
+>> > Cc: Peter Huewe <peterhuewe@gmx.de>
+>> > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>> > Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> > Cc: stable@vger.kernel.org
+>> > Cc: linux-integrity@vger.kernel.org
+>> > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+>> > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
+>> > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>>
+>> I pushed to my master with minor tweaks and added my tags.
+>>
+>> Please check before I put it to linux-next.
+>
+>I don't see it yet here:
+>
+>http://git.infradead.org/users/jjs/linux-tpmdd.git/shortlog/refs/heads/master
+>
+>However, I wanted to make sure you captured that this does *not* fix
+>the interrupt issue. I.e. make sure you remove the "Fixes:
+>5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")"
+>tag.
+>
+>With that said, are you going to include the revert of:
+>
+>1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
 
-Acked-by: Zhang Rui <rui.zhang@intel.com>
+Dan, with the above reverted do you still get the screaming interrupt?
 
-thanks,
-rui
-> ---
->  drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 1 +
->  drivers/thermal/intel/int340x_thermal/int3403_thermal.c | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> index 3517883b5cdb..efae0c02d898 100644
-> --- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> +++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
-> @@ -369,6 +369,7 @@ static int int3400_thermal_remove(struct
-> platform_device *pdev)
->  }
->  
->  static const struct acpi_device_id int3400_thermal_match[] = {
-> +	{"INT1040", 0},
->  	{"INT3400", 0},
->  	{}
->  };
-> diff --git a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> index a7bbd8584ae2..aeece1e136a5 100644
-> --- a/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> +++ b/drivers/thermal/intel/int340x_thermal/int3403_thermal.c
-> @@ -282,6 +282,7 @@ static int int3403_remove(struct platform_device
-> *pdev)
->  }
->  
->  static const struct acpi_device_id int3403_device_ids[] = {
-> +	{"INT1043", 0},
->  	{"INT3403", 0},
->  	{"", 0},
->  };
+>5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
+>
+>...in your -rc3 pull?
+>
 
