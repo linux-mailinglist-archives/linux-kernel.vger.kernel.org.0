@@ -2,79 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773871224CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:40:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 464091224DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 07:41:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfLQGkP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 01:40:15 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:47411 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726167AbfLQGkO (ORCPT
+        id S1727197AbfLQGlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 01:41:00 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42572 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfLQGk7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 01:40:14 -0500
-Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ih6Wg-0006mX-3m; Tue, 17 Dec 2019 07:40:10 +0100
-Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mfe@pengutronix.de>)
-        id 1ih6Wf-0001MH-Gn; Tue, 17 Dec 2019 07:40:09 +0100
-Date:   Tue, 17 Dec 2019 07:40:09 +0100
-From:   Marco Felsch <m.felsch@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-        Support Opensource <Support.Opensource@diasemi.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [RESEND PATCH v3 3/3] pinctrl: da9062: add driver support
-Message-ID: <20191217064009.GB31182@pengutronix.de>
-References: <20191212160413.15232-1-m.felsch@pengutronix.de>
- <20191212160413.15232-4-m.felsch@pengutronix.de>
- <AM5PR1001MB0994E2D72A95E4AC4796F80A80550@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <20191216074734.ctjxx6rqtj6mt2dw@pengutronix.de>
- <CACRpkdbZ67jp64oMS0Q=aDuo18i_fT22grST0qSVjk_9EV=4hw@mail.gmail.com>
+        Tue, 17 Dec 2019 01:40:59 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y19so6096394lfl.9
+        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 22:40:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ZzbVgb0Dsc1MnhDpYFuAmdtYBehM6wFQjI2gRgSINqU=;
+        b=Zj+IxevzHy0cniNQF1XM329WmC/mEHJ6bVqLYiolS6BCzCQYIS80V0Ay+zq45WAEq1
+         /d+PM7m7EM/K9JqGTbV+hYCbCruQkT3CIvMhhFYmaLutNBtiZCyXoHO88vjFHBD8Vc4Z
+         V6UXm7oOMsl5k1i8WL4bUXrjCBwJ4Lg0nYN3Yo7DRae1Ir3gow+mS8VSRK9R8TRErr1P
+         PRpsuqYr3TmH29WlF3asaFmJUnApFdH5K4dYVgDC9MLbtiVJ0FnCHcJ+FYC5iAl7VeMK
+         m9RxKdGx7/zzW31Q1bpDQj60G3FLz+ROuOHomzHvS8Sll++BN9chP0sqneCFmTg+Jfe3
+         evxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZzbVgb0Dsc1MnhDpYFuAmdtYBehM6wFQjI2gRgSINqU=;
+        b=KcUCnXgHUDd4wSt92CVpbl4FgXwu5V3vLkWOJXVxfjvl0jAL5/dvAj8pUcyVSG4VDm
+         oduu+K/L/2U8Mkel+Gzt/z9Ndwt5ciGAW2w1V+tXXjlCT10ftYYHAqrilRaRmf2XgjKV
+         weveTla99hbCUlvLW9kgOb5P1bLKMhNtBHsj6KuJzoWD67VhDrOGAeDlhIs6UDxCTHsp
+         lLQQtvgjpUWQVhFLHPptf19GjuApNYaZP2zhy5nsegnF7fW9yqH+j5QuNzt+geCo80fW
+         mddW03JITvLeKHcB6QMYZVeS/3o+6rWfsAJonywGQaexbR8CB2cgsF1Sk/bt1hjt62E3
+         fN9w==
+X-Gm-Message-State: APjAAAWD3mnkizBu7m3Z6zd9zP6nqI2J7dUyD2W+cWnMJLfhXbqp7Jq3
+        zy8t2squKwosAtxToseASmE2zgFu/HOK1m6d56dVQg==
+X-Google-Smtp-Source: APXvYqyb73zwNv3ziW7+e9hRPvnZdExviQMYWdITo3G7CKWq6hPnOC6EIBQlYWoq/vh+8BOBYsy23JgHCyUPJ0f7tdY=
+X-Received: by 2002:ac2:5337:: with SMTP id f23mr1690949lfh.192.1576564857544;
+ Mon, 16 Dec 2019 22:40:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbZ67jp64oMS0Q=aDuo18i_fT22grST0qSVjk_9EV=4hw@mail.gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 07:38:49 up 109 days, 18:52, 74 users,  load average: 0.32, 0.49,
- 0.49
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20191216174747.111154704@linuxfoundation.org>
+In-Reply-To: <20191216174747.111154704@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 17 Dec 2019 12:10:46 +0530
+Message-ID: <CA+G9fYtyVeFfOGAPcCPCwDKayFLc2_niPJfi=5-x+hbwHg3UVg@mail.gmail.com>
+Subject: Re: [PATCH 4.19 000/140] 4.19.90-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-12-16 11:33, Linus Walleij wrote:
-> On Mon, Dec 16, 2019 at 8:47 AM Marco Felsch <m.felsch@pengutronix.de> wrote:
-> 
-> > Nice catch, Linus is it okay to add this as follow up patch? The current
-> > patch isn't wrong without the 'PIN_CONFIG_BIAS_DISABLE' case.
-> 
-> No strong opinion on that as long as the result is running code.
+On Mon, 16 Dec 2019 at 23:31, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.90 release.
+> There are 140 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 18 Dec 2019 17:41:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.90-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Of course the code is running and was tested. Just didn't covered this
-use case.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Adam is this okay with you?
+Summary
+------------------------------------------------------------------------
 
-Regards,
-  Marco
+kernel: 4.19.90-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: 9cc8b117a9932aaa067980374b1de1145afc4645
+git describe: v4.19.89-140-g9cc8b117a993
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.89-140-g9cc8b117a993
 
-> Yours,
-> Linus Walleij
-> 
+No regressions (compared to build v4.19.89)
+
+No fixes (compared to build v4.19.89)
+
+Ran 22793 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* linux-log-parser
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-hugetlb-tests
+* ltp-mm-tests
+* spectre-meltdown-checker-test
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-cpuhotplug-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* perf
+* v4l2-compliance
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
