@@ -2,100 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1CF1122BA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:34:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AC8F122BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 13:34:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfLQMe2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 07:34:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:35402 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbfLQMdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 07:33:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0756D328;
-        Tue, 17 Dec 2019 04:33:52 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7BE303F718;
-        Tue, 17 Dec 2019 04:33:51 -0800 (PST)
-Date:   Tue, 17 Dec 2019 12:33:49 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>
-Subject: [GIT PULL] regulator fixes for v5.5
-Message-ID: <20191217123349.GE4755@sirena.org.uk>
+        id S1727929AbfLQMeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 07:34:36 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:53330 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728189AbfLQMee (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 07:34:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8mJuCyKjbY4p5hrL3FaFjHlnxABVvtHNpVH8k6QqFE0=; b=lN7ggJsd/PhLseMxdiALXg3R/
+        4uvOheP59jmS2XidPb6H3ByQ2nZalq8GMhm2utOOQjYpdwsI58MstKlwnjNkiHKEnZ8uLhMASfJ7c
+        E5/W85KbHse6owyrhCS0DfMhnYcSSNdnoKv/eEbX+6I3O5XujZmeUma7YV+9Jc5XzuuBhDUeOZgCA
+        iUL2xvkoULaw5Vmp5lYrEO7nQPLLiXvcvf3pGP7onL4btwDxfiwQ5OBJ92zvsCJ1OmxSHWoes/FR7
+        KHbQI3aBIAoOVK+uZSBTLzvQyhhTJp1hpN7Ox1wcgJK4hSVTftFYIEAX25EdeeiUP4RLFQEgEqyV0
+        rpSU1zp/g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihC3Q-0006oK-7G; Tue, 17 Dec 2019 12:34:20 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5D3B830658B;
+        Tue, 17 Dec 2019 13:32:54 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A7FAB2B2CF993; Tue, 17 Dec 2019 13:34:16 +0100 (CET)
+Date:   Tue, 17 Dec 2019 13:34:16 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     akpm@linux-foundation.org, npiggin@gmail.com, mpe@ellerman.id.au,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [RFC PATCH 2/2] mm/mmu_gather: Avoid multiple page walk cache
+ flush
+Message-ID: <20191217123416.GH2827@hirez.programming.kicks-ass.net>
+References: <20191217071713.93399-1-aneesh.kumar@linux.ibm.com>
+ <20191217071713.93399-2-aneesh.kumar@linux.ibm.com>
+ <20191217085854.GW2844@hirez.programming.kicks-ass.net>
+ <32404765-ad4f-6612-d1a9-43f9acdc8a62@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xJK8B5Wah2CMJs8h"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Cookie: Thufir's a Harkonnen now.
+In-Reply-To: <32404765-ad4f-6612-d1a9-43f9acdc8a62@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 17, 2019 at 03:45:36PM +0530, Aneesh Kumar K.V wrote:
+> On 12/17/19 2:28 PM, Peter Zijlstra wrote:
+> > On Tue, Dec 17, 2019 at 12:47:13PM +0530, Aneesh Kumar K.V wrote:
+> > > On tlb_finish_mmu() kernel does a tlb flush before  mmu gather table invalidate.
+> > > The mmu gather table invalidate depending on kernel config also does another
+> > > TLBI. Avoid the later on tlb_finish_mmu().
+> > 
+> > That is already avoided, if you look at tlb_flush_mmu_tlbonly() it does
+> > __tlb_range_reset(), which results in ->end = 0, which then triggers the
+> > early exit on the next invocation:
+> > 
+> > 	if (!tlb->end)
+> > 		return;
+> > 
+> 
+> Is that true for tlb->fulmm flush?
 
---xJK8B5Wah2CMJs8h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hmm, no, but I'm thinking you patch is broken, even for that case. We
+must issue the TLBI before call_rcu().
 
-The following changes since commit c15d5a645875bc9b89f68f5d3fb608f691ac78d7:
+Perhaps if we replace !tlb->end with something like:
 
-  regulator: da9062: Return REGULATOR_MODE_INVALID for invalid mode (2019-11-22 19:52:42 +0000)
+  !tlb->freed_tables && !tlb->cleared_p*
 
-are available in the Git repository at:
+(which GCC should be able to do with a single load and mask)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v5.5-rc2
-
-for you to fetch changes up to 62a1923cc8fe095912e6213ed5de27abbf1de77e:
-
-  regulator: rn5t618: fix module aliases (2019-12-16 11:53:37 +0000)
-
-----------------------------------------------------------------
-regulator: Fixes for v5.5
-
-A small set of fixes for mostly minor issues here, the only real code
-ones are Wen Yang's fixes for error handling in the core and Christian
-Marussi's list_voltage() change which is a fix for disruptively bad
-performance for regulators with continuous voltage control (which are
-rare).
-
-----------------------------------------------------------------
-Andreas Kemnade (1):
-      regulator: rn5t618: fix module aliases
-
-Bartosz Golaszewski (1):
-      regulator: max77650: add of_match table
-
-Christophe JAILLET (1):
-      regulator: s5m8767: Fix a warning message
-
-Cristian Marussi (1):
-      regulator: core: avoid unneeded .list_voltage calls
-
-Wen Yang (2):
-      regulator: fix use after free issue
-      regulator: core: fix regulator_register() error paths to properly release rdev
-
- drivers/regulator/core.c               | 16 ++++++++++++----
- drivers/regulator/max77650-regulator.c |  7 +++++++
- drivers/regulator/rn5t618-regulator.c  |  1 +
- drivers/regulator/s5m8767.c            |  2 +-
- 4 files changed, 21 insertions(+), 5 deletions(-)
-
---xJK8B5Wah2CMJs8h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl34yy0ACgkQJNaLcl1U
-h9ARAgf+JowpR10+rAafrIw0nGTLnzWltpA2O6BcVDR//4AX6H1DKy4gzxu9VHUQ
-0qJ3Vm5uoGg3Od/QhU7lTFo/H5+iO+aMl+xJFdoDlGkHwP0cAmoZk35bEuAu6hJu
-biKih5HvRg00QLuAg4SPBgt7+GqbMW1nUraHEBAuzUrzwBLObihQzE2+EwOv1tQU
-EwKDNsOO94bstv8bjbyNSTmCHUO4Mxwf9p+339REc/04Lj4Wg7fQ73NEtk4Tl/T9
-umOHOMqBttU1UhAhNFQLCiPruJr/s8XlAX00LDnvTs0b6TID8kvLy09u5lb4lP+D
-3uiCEZO5wFIpnV1CHYDKrzmEdnSegg==
-=LBpn
------END PGP SIGNATURE-----
-
---xJK8B5Wah2CMJs8h--
+I've not really thought too hard about it yet, I need to run some
+errands, but I'll look at it more closely when I get back.
