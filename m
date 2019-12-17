@@ -2,84 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5EF31222DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 05:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9BE91222CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 05:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLQELq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 16 Dec 2019 23:11:46 -0500
-Received: from ybironout4.netvigator.com ([210.87.250.77]:63575 "EHLO
-        ybironout4.netvigator.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbfLQELq (ORCPT
+        id S1727197AbfLQECj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 16 Dec 2019 23:02:39 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:55599 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726296AbfLQECi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 16 Dec 2019 23:11:46 -0500
-X-Greylist: delayed 612 seconds by postgrey-1.27 at vger.kernel.org; Mon, 16 Dec 2019 23:11:44 EST
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0DoBgDqUvhd/5YXxstkHgELHIFzC4Igg?=
- =?us-ascii?q?UEgEhoQlTuOeoUShSiBewkBAQE7AgEBgy2BEwKCFCQ1CA4CEAEBBAEBAQIBBQR?=
- =?us-ascii?q?thGtYhVYJBidSEBgIJgtXGVuCRwGCdgavfjMaAoo3gTaHP4RZFAY/gUGBR4Ioc?=
- =?us-ascii?q?4dtgkoEl1CXMQqCNJYIAhmOZwOLXi2oZoIAATaBWIEFgVkKgURQEY0yFxWOGzQ?=
- =?us-ascii?q?zgQSRZgE?=
-X-IronPort-AV: E=Sophos;i="5.69,324,1571673600"; 
-   d="scan'208";a="170931205"
-Received: from unknown (HELO ybironoah03.netvigator.com) ([203.198.23.150])
-  by ybironout4v1.netvigator.com with ESMTP; 17 Dec 2019 12:01:29 +0800
-Received: from unknown (HELO rhel76.localdomain) ([42.200.157.25])
-  by ybironoah03.netvigator.com with ESMTP; 17 Dec 2019 12:01:29 +0800
-From:   "Chan Shu Tak, Alex" <alexchan@task.com.hk>
-Cc:     "Chan Shu Tak, Alex" <alexchan@task.com.hk>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] llc2: Remove the condition operator in llc_stat_ev_rx_null_dsap_xid_c and llc_stat_ev_rx_null_dsap_test_c.
-Date:   Tue, 17 Dec 2019 12:00:36 +0800
-Message-Id: <1576555237-4037-1-git-send-email-alexchan@task.com.hk>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1576340820-4929-1-git-send-email-alexchan@task.com.hk>
-References: <1576340820-4929-1-git-send-email-alexchan@task.com.hk>
-To:     unlisted-recipients:; (no To-header on input)
+        Mon, 16 Dec 2019 23:02:38 -0500
+X-UUID: 7d3e697c2aef4f319a6c993d55f4d381-20191217
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=LcLrXW4EHYAgtWmQrzXHi1JpCH+lQx2E8V9kumhc1ek=;
+        b=ZIs74pl5lssvFLZCzD4ajsXIu7IcqrRovCUTYrRZuSmWkbhdneIG4hEoZyjqTr8txuA/BUgPzn4lOzFAcXLMwyP8WHMzeNBFjH/HoqFm2OW+UQmGzc2RyfkBLgu79oq7SnHNn4vb1HcrhgxXh6mQUvIF7kN6U0oDpyZCamHiqE0=;
+X-UUID: 7d3e697c2aef4f319a6c993d55f4d381-20191217
+Received: from mtkcas34.mediatek.inc [(172.27.4.253)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1300660505; Tue, 17 Dec 2019 12:02:33 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 17 Dec
+ 2019 12:01:37 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (172.27.4.253) by
+ MTKCAS36.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Tue, 17 Dec 2019 12:02:10 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-pwm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, CK Hu <ck.hu@mediatek.com>
+CC:     <linux-mediatek@lists.infradead.org>, <sj.huang@mediatek.com>,
+        Jitao Shi <jitao.shi@mediatek.com>
+Subject: [PATCH v4 0/2] clocks aren't disable when pwm_mtk_disp suspend 
+Date:   Tue, 17 Dec 2019 12:02:35 +0800
+Message-ID: <20191217040237.28238-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: C18B4FA8F365099FC353D7DEAA8518A47E29E60775599306885E0B2F2365AEAE2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Chan Shu Tak, Alex" <alexchan@task.com.hk>
-
-When a frame with NULL DSAP is received, llc_station_rcv is called.
-In turn, llc_stat_ev_rx_null_dsap_xid_c is called to check if it is a NULL
-XID frame. The original condition operator returns 1 when the incoming
-frame is not a NULL XID frame and 0 otherwise. As a result, an incoming
-NULL TEST frame would trigger an XID response instead.
-
-To fix the error, we just need to remove the condition operator.
-
-The same error is found in llc_stat_ev_rx_null_dsap_test_c and fixed.
-
-Signed-off-by: Chan Shu Tak, Alex <alexchan@task.com.hk>
----
- net/llc/llc_station.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/llc/llc_station.c b/net/llc/llc_station.c
-index 90955d7..c29170e 100644
---- a/net/llc/llc_station.c
-+++ b/net/llc/llc_station.c
-@@ -32,7 +32,7 @@ static int llc_stat_ev_rx_null_dsap_xid_c(struct sk_buff *skb)
- 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
- 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
- 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_XID &&
--	       !pdu->dsap ? 1 : 0;			/* NULL DSAP value */
-+	       !pdu->dsap;				/* NULL DSAP value */
- }
- 
- static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
-@@ -42,7 +42,7 @@ static int llc_stat_ev_rx_null_dsap_test_c(struct sk_buff *skb)
- 	return LLC_PDU_IS_CMD(pdu) &&			/* command PDU */
- 	       LLC_PDU_TYPE_IS_U(pdu) &&		/* U type PDU */
- 	       LLC_U_PDU_CMD(pdu) == LLC_1_PDU_CMD_TEST &&
--	       !pdu->dsap ? 1 : 0;			/* NULL DSAP */
-+	       !pdu->dsap;				/* NULL DSAP */
- }
- 
- static int llc_station_ac_send_xid_r(struct sk_buff *skb)
--- 
-1.8.3.1
+Q2hhbmdlcyBzaW5jZSB0byB2MzoNCiAtIEFkZCBwcmVmaXggInB3bTogbXRrX2Rpc3AiIGluIGNv
+bW1pdCBtc2cgdGl0bGUuDQoNCkNoYW5nZXMgc2luY2UgdG8gdjI6DQogLSBFZGl0IGNvbW1pdCBt
+c2cuDQoNCkNoYW5nZXMgc2luY2UgdG8gdjE6DQogLSBFZGl0IGNvbW1pdCBtc2cuDQogLSBSZW1v
+dmUgdGhlIHJlZ2lzdGVyIHRyaWdnZXIgaW4gcHJvYmUuDQogLSBSZWJhc2UgdG8gdjUuNS1yYzEu
+DQoNCkNoYW5nZXMgaW4gcGF0Y2hlczoNCiAtIG1hdGNoIHB3bV9tdGtfZGlzcCBjbG9jayB3aGVu
+IHN1c3BlbmQvcmVzdW1lDQogLSB0cmlnZ2VyIHB3bV9tdGtfZGlzcCByZWcgd29ya2luZyBhZnRl
+ciBjb25maWcNCg0KSml0YW8gU2hpICgyKToNCiAgcHdtOiBtdGtfZGlzcDogZml4IHB3bSBjbG9j
+a3Mgbm90IHBvd2Vyb2ZmIHdoZW4gZGlzYWJsZSBwd20NCiAgcHdtOiBtdGtfZGlzcDoga2VlcCB0
+aGUgdHJpZ2dlciByZWdpc3RlciBhZnRlciBwd20gc2V0dGluZy4NCg0KIGRyaXZlcnMvcHdtL3B3
+bS1tdGstZGlzcC5jIHwgNjMgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
+CiAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgNDQgZGVsZXRpb25zKC0pDQoNCi0t
+IA0KMi4yMS4wDQo=
 
