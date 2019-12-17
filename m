@@ -2,171 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 934A812271E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 09:55:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58BAC122726
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 09:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfLQIzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 03:55:01 -0500
-Received: from mout.kundenserver.de ([212.227.126.135]:49117 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfLQIzA (ORCPT
+        id S1727053AbfLQI4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 03:56:22 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39366 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726571AbfLQI4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 03:55:00 -0500
-Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MXop2-1iBKX82BI4-00YBbm; Tue, 17 Dec 2019 09:54:58 +0100
-Received: by mail-qk1-f171.google.com with SMTP id x129so174943qke.8;
-        Tue, 17 Dec 2019 00:54:58 -0800 (PST)
-X-Gm-Message-State: APjAAAXNG2+9NUH4Fcy7Or18esGaQdcU/0HUKwazUmvLn9WIJropDTPy
-        znb/Iw88weMWhDetMx/fRco63HDyaVmLehppnTA=
-X-Google-Smtp-Source: APXvYqzKiLsbZVrfvGk9+cg1ubafjtbflqD9p/VamlqKp16D5EdmeX1UgRWAb1NnN5heyvsziKaivNRpaH1iYITOlvM=
-X-Received: by 2002:a37:2f02:: with SMTP id v2mr3750201qkh.3.1576572897205;
- Tue, 17 Dec 2019 00:54:57 -0800 (PST)
+        Tue, 17 Dec 2019 03:56:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576572979;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references:openpgp:openpgp:autocrypt:autocrypt;
+        bh=Nmdze11AL16+HLGGZDjTrGIbNj6DzVn9f7A6ACZiEI0=;
+        b=LGh7O+/9kDUiTiKM39WGhuV8R01mX5LHHX7LveKkKvABjm7QI1NpkRWg8oXwcLAE+hBGT3
+        bufoxhdgslGPaXok3U6WgkELE0bhWDo3l07Tzec5qVK+bzRi7P24LarhIil80YaxkrMH/M
+        A/yHDmPP7zZfZ5EDKtA40o9fNAXZqnY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-274-N3kHs_50NUaLZeERtOe-OQ-1; Tue, 17 Dec 2019 03:56:15 -0500
+X-MC-Unique: N3kHs_50NUaLZeERtOe-OQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E87C9593AE;
+        Tue, 17 Dec 2019 08:56:12 +0000 (UTC)
+Received: from [10.40.204.182] (ovpn-204-182.brq.redhat.com [10.40.204.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B690C19C4F;
+        Tue, 17 Dec 2019 08:55:52 +0000 (UTC)
+Subject: Re: [PATCH v15 4/7] mm: Introduce Reported pages
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
+        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        vbabka@suse.cz
+Cc:     yang.zhang.wz@gmail.com, konrad.wilk@oracle.com, david@redhat.com,
+        pagupta@redhat.com, riel@surriel.com, lcapitulino@redhat.com,
+        dave.hansen@intel.com, wei.w.wang@intel.com, aarcange@redhat.com,
+        pbonzini@redhat.com, dan.j.williams@intel.com, osalvador@suse.de
+References: <20191205161928.19548.41654.stgit@localhost.localdomain>
+ <20191205162238.19548.68238.stgit@localhost.localdomain>
+ <0bb29ec2-9dcb-653c-dda5-0825aea7d4b0@redhat.com>
+ <537e970f062e0c7f89723f63fc1f3ec6e53614a5.camel@linux.intel.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <06ca452e-90b3-c1b5-f2c0-e8da2444bcfe@redhat.com>
+Date:   Tue, 17 Dec 2019 03:55:49 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20191217010001.GA14461@ircssh-2.c.rugged-nimbus-611.internal>
- <20191217015001.sp6mrhuiqrivkq3u@wittgenstein> <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
-In-Reply-To: <CAMp4zn8fzeiJVSn6EtRi6UAGh6AL3QWu=PZxw+=TAYJORjn_Sw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 17 Dec 2019 09:54:40 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
-Message-ID: <CAK8P3a3G-W8s0G2-XKuDw9dRmupZSyiF6FRRAnvDt9=kMMzS8w@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
-        jld@mozilla.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:HRAACjC5zp8lxNpo/BksdLlwiLLHqEgHh0jsn+k4S+2Eh5Uv53p
- C9bFh5wXL+Ju5zWDstGOtRlYMtrjwfZ8garW/jHChtuDow7fI3r16tRRGedKQpUV3L18ETu
- yI1dmiiZG89YnQ/Uh+YEoa6qfcpPzo5agoss9tX7MfCVL13uPPYcSa0HevOPwcq5CO2DeV+
- rvBWzQVDBrRIzj8OofEEA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ewGeybDoAh4=:QfLyBhyd5Jll7i1z3Q7vNn
- 1kgevxEMDqrLzxfQVkK9qVir47KyAfs1CrUroOSId9jmjVWLXxIR417SaAm9fCsrUDNkshAhl
- JCZicW9jpmJ3wUnMCnvWGavQYEK9pFw/FLcKckTHs9Hz7SfzKkRT5oEUP55T6ucuenLlLgds7
- xJvOgc1Wf5MryhB0Hq3+1cOZHgZ/wwkSU9L3SpvoLYABbzHNn7pvMYkJkb7K9TJdT21krgD4Y
- 4YFZAI0veXXh1COcA/JwwHg9SpoXBr+Yk7PldiIiBOyya6NooxZn56uywBuXQ6ksU/I+wsgs1
- mXHGQ/J9oqSook9Fg2c7xDeSja55fq6mE/On0sj5Xb3MhoRbtLPUkuupUrqBhewpgxdA/zOFr
- rTGYOniuUQI5kd8T2WyoOTaFuQS/Afe3mOjQiVDqmS7cO6qgZiFUygRFq17sHHiNmRaDxmBSD
- MZ/VOMCKA/+xjvZrJBjvT4DOWPjBQl1cdMIwBVAJQf0R4OaF/xcHR3BAO1qDH3txyVLLcVuaI
- 2li9HRDNuK/pMBIAfUvb3L0bAEFbSzc0Zhtb4ZpJDhBspN/wR+lC2iuUIwQzL9LJ//9unnxYt
- sABx7gtMdv0SIU4KKQOkIp56VK3TtLCp9/HnH0TAT1eQ6kPn1JH7ByaUwCjwec1ryzvHReOBh
- n97qVTTU5W8sKOoEBgTQqGiQ4FISnzK+ltko21PTuCwrzjTfT91EwGSlVDT+8rUA/HZCYymid
- 2d2sgCkAeALEf4JQHena2ky5zu/87i2wNp1NVICd8drY72i6S4D6JnhFp5MYM84fGjfOzUDEF
- HBM8RGxK0atTnFC1BPpEgvRmKOjfFlQSyvojNuFxv29a6cF044YHkdodF7e49TgFCyu6Q9mpk
- B2dCO8sC42gON0AMrVGg==
+In-Reply-To: <537e970f062e0c7f89723f63fc1f3ec6e53614a5.camel@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 3:50 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> On Mon, Dec 16, 2019 at 5:50 PM Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > > +
-> > > +#include <linux/types.h>
-> > > +#include <linux/ioctl.h>
-> > > +
-> > > +/* options to pass in to pidfd_getfd_args flags */
-> > > +#define PIDFD_GETFD_CLOEXEC (1 << 0) /* open the fd with cloexec */
-> >
-> > Please, make them cloexec by default unless there's a very good reason
-> > not to.
-> >
-> For now then, should I have flags, and just say "reserved for future usage",
-> or would you prefer that I drop flags entirely?
 
-There is no need for adding reserved fields in an ioctl, just add a new ioctl
-number if you need it later.
+On 12/16/19 11:28 AM, Alexander Duyck wrote:
+> On Mon, 2019-12-16 at 05:17 -0500, Nitesh Narayan Lal wrote:
+>> On 12/5/19 11:22 AM, Alexander Duyck wrote:
+>>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>
+>>> In order to pave the way for free page reporting in virtualized
+>>> environments we will need a way to get pages out of the free lists an=
+d
+>>> identify those pages after they have been returned. To accomplish thi=
+s,
+>>> this patch adds the concept of a Reported Buddy, which is essentially=
 
-> > > +
-> > > +struct pidfd_getfd_args {
-> > > +     __u32 size;             /* sizeof(pidfd_getfd_args) */
-> > > +     __u32 fd;       /* the tracee's file descriptor to get */
-> > > +     __u32 flags;
-> > > +};
-> >
-> > I think you want to either want to pad this
-> >
-> > +struct pidfd_getfd_args {
-> > +       __u32 size;             /* sizeof(pidfd_getfd_args) */
-> > +       __u32 fd;       /* the tracee's file descriptor to get */
-> > +       __u32 flags;
-> >         __u32 reserved;
-> > +};
-> >
-> > or use __aligned_u64 everywhere which I'd personally prefer instead of
-> > this manual padding everywhere.
+>>> meant to just be the Uptodate flag used in conjunction with the Buddy=
 
-No, don't make ioctl structures extensible. If there is no 64-bit member
-in it, 32-bit alignment is sufficient.
-
-Also, having implicit padding is dangerous because it makes it easier to
-leave it uninitialized, leaking kernel stack information on the copy_to_user().
-
-Please drop the '__u32 size' argument, too: the size is fixed by definition
-(through the _IOWR macro) and if you need to extend it you get a new
-command anyway.
-
-> Wouldn't __attribute__((packed)) achieve a similar thing of making sure
-> the struct is a constant size across all compilers?
+>>> page type.
+>> [...]
+>>
+>>> +enum {
+>>> +	PAGE_REPORTING_IDLE =3D 0,
+>>> +	PAGE_REPORTING_REQUESTED,
+>>> +	PAGE_REPORTING_ACTIVE
+>>> +};
+>>> +
+>>> +/* request page reporting */
+>>> +static void
+>>> +__page_reporting_request(struct page_reporting_dev_info *prdev)
+>>> +{
+>>> +	unsigned int state;
+>>> +
+>>> +	/* Check to see if we are in desired state */
+>>> +	state =3D atomic_read(&prdev->state);
+>>> +	if (state =3D=3D PAGE_REPORTING_REQUESTED)
+>>> +		return;
+>>> +
+>>> +	/*
+>>> +	 *  If reporting is already active there is nothing we need to do.
+>>> +	 *  Test against 0 as that represents PAGE_REPORTING_IDLE.
+>>> +	 */
+>>> +	state =3D atomic_xchg(&prdev->state, PAGE_REPORTING_REQUESTED);
+>>> +	if (state !=3D PAGE_REPORTING_IDLE)
+>>> +		return;
+>>> +
+>>> +	/*
+>>> +	 * Delay the start of work to allow a sizable queue to build. For
+>>> +	 * now we are limiting this to running no more than once every
+>>> +	 * couple of seconds.
+>>> +	 */
+>>> +	schedule_delayed_work(&prdev->work, PAGE_REPORTING_DELAY);
+>>> +}
+>>> +
+>> I think you recently switched to using an atomic variable for maintain=
+ing page
+>> reporting status as I was doing in v12.
+>> Which is good, as we will not have a disagreement on it now.
+> There is still some differences between our approaches if I am not
+> mistaken. Specifically I have code in place so that any requests to rep=
+ort
+> while we are actively working on reporting will trigger another pass be=
+ing
+> scheduled after we completed. I still believe you were lacking any logi=
+c
+> like that as I recall.
 >
-> I'll go with __aligned_u64 instead of packed, if you don't want to use packed.
 
-__attribute__((packed)) is worse because it forces compilers to use byte
-access on architectures that have no fast unaligned 32-bit load/store.
-Basically you should never put __packed on a structure, but instead add
-it to members that need to be unaligned within a sturct for compatibility
-reasons.
+Yes, I was specifically referring to the atomic state variable.
+Though I am wondering if having an atomic variable to track page reportin=
+g state
+is better than having a page reporting specific unsigned long flag, which=
+ we can
+manipulate via __set_bit() and __clear_bit().
 
-> > > +
-> > > +#define PIDFD_IOC_MAGIC                      'p'
-> > > +#define PIDFD_IO(nr)                 _IO(PIDFD_IOC_MAGIC, nr)
-> > > +#define PIDFD_IOR(nr, type)          _IOR(PIDFD_IOC_MAGIC, nr, type)
-> > > +#define PIDFD_IOW(nr, type)          _IOW(PIDFD_IOC_MAGIC, nr, type)
-> > > +#define PIDFD_IOWR(nr, type)         _IOWR(PIDFD_IOC_MAGIC, nr, type)
+>> On a side note, apologies for not getting involved actively in the
+>> discussions/reviews as I am on PTO.
+> No problem. I've been mostly looking for input from the core MM
+> maintainers anyway as we sorted most of the virtualization pieces some
+> time ago.
+>
+--=20
+Thanks
+Nitesh
 
-Drop these macros, they just make it harder to grep or script around the use
-of _IOWR/_IOR/_IOW
-
-> > > +#define PIDFD_IOCTL_GETFD            PIDFD_IOWR(0xb0, \
-> > > +                                             struct pidfd_getfd_args)
-
-Without the size and flag members, this can become the simpler
-
-#define PIDFD_IOCTL_GETFD  _IOWR('p', 0xb0, __u32)
-
-> > > +
-> > >  const struct file_operations pidfd_fops = {
-> > >       .release = pidfd_release,
-> > >       .poll = pidfd_poll,
-> > > +     .unlocked_ioctl = pidfd_ioctl,
-
-This needs
-
-+    .compat_ioctl = compat_ptr_ioctl,
-
-To work on compat tasks.
-
-Finally, there is the question whether this should be an ioctl
-operation at all, or
-if it would better be done as a proper syscall. Functionally the two
-are the same
-here, but doing such a fundamental operation as an ioctl doesn't feel
-quite right
-to me. As a system call, this could be something like
-
-int pidfd_get_fd(int pidfd, int their_fd, int flags);
-
-along the lines of dup3().
-
-        Arnd
