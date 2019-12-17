@@ -2,75 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D3A512359E
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 496701235A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 20:27:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfLQT0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 14:26:54 -0500
-Received: from mta-p7.oit.umn.edu ([134.84.196.207]:41442 "EHLO
-        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbfLQT0x (ORCPT
+        id S1728025AbfLQT1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 14:27:35 -0500
+Received: from mail-wr1-f53.google.com ([209.85.221.53]:44783 "EHLO
+        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbfLQT1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:26:53 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 47cp6j0M2Xz9vpbW
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 19:26:53 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p7.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oefFbZIGSUvx for <linux-kernel@vger.kernel.org>;
-        Tue, 17 Dec 2019 13:26:52 -0600 (CST)
-Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com [209.85.219.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 47cp6h6Q0Lz9vpZx
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 13:26:52 -0600 (CST)
-Received: by mail-yb1-f198.google.com with SMTP id v186so10084154ybc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 11:26:52 -0800 (PST)
+        Tue, 17 Dec 2019 14:27:35 -0500
+Received: by mail-wr1-f53.google.com with SMTP id q10so12559543wrm.11;
+        Tue, 17 Dec 2019 11:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=RTtM8DgoTYeomLpAB4HP6QUtZc/12vcFjV+hqAPb2JA=;
-        b=JMRMfVjdaC3RYJNHwnXub+ZSawvRo+0REws/XPzbXdE15VrnCgJHhpm2yilPHn9sRu
-         zuRYmp8T+/ZKT+7RcoW0zzy+IGmNBLi9nWg/iV5w+/iyl/E/ksnxD8lQ9P9V7qoR/Pq7
-         icvO6xv3kPqaptf9FBx6+BKBpP4Sm09WGi3ongTQZdqtSbICpjK/8SP6IeCpMQFAFD9V
-         eOxs9CWJmHHKO9gfSA+0LwjLxX+E784sq+mm3cxIeA0US7GRxEHxKNsQlS/8SswVY7E8
-         uWJaHdqJDH75PWdrLMlpaNXeMb1ljZxByamn9DVUHGqIulL+D0G0XTahjxGkYurn5Cjo
-         m+tw==
+        bh=xEUG81URhogGWuZA8LPYVy7kVF90IzAqZihwg0LU3h0=;
+        b=KRKsb9jBr/LuQCoKPkYF4vBZtiJ5xJa95LeQUfcvdwEz2wnXwBRFgO+DGJ2TU5lBUf
+         8whgtWhDcScZu4L3utihWI3W3CTu1DWsr2XNBW4dDdEAMdyidsTrJyY73z1BdpOqGXJD
+         98cqFMApAKCnsufrsR0zTtZxQ8guNq8OxCUoQR96oPs2TV/G7/c6AGEqnruyG0exSebs
+         y78B8/C4VxkgtmKeSQCxS0CM37KdQHseMRpGdg0rnXDuUvsAY0LQKKTTvTg5CHkojvmx
+         WQjN1bb3s1JshFma0txoU2rHozm0RDhZLGVK8Q4fqVG76pH58j7po7V1ZBXq6LezBeey
+         Upnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RTtM8DgoTYeomLpAB4HP6QUtZc/12vcFjV+hqAPb2JA=;
-        b=OkiFL4eGbV6o86HZLwIv5Sh+vP39rwBtcPwYqU/p97Db4FYdQXDBlv0Q7eFBtn560Q
-         A0g13e/KCOUxFI8gOanT4XOJOM3OR7VBnSkpsqvT1vBtFDxFaFESd8uwh2azibwfMGbp
-         0jGC50ZNHQIzqDcFnDHtobaBIDMLEZf5snihEvupZfMsxqD47GKzz0Jmpeo3AzyhsASS
-         zvclz3pQWWfOs7U0+hDC4SmYWwWuUZzwVFdbOirGoM5svLH8UKWKk8kjBe/r51GxXk7h
-         H+/IjQ2hsg6EJdUa0gROWVRQecO0LHUV9FzSq8NtFc4RdxttYFvADr9hsHz/hUZv+VRg
-         2/Fg==
-X-Gm-Message-State: APjAAAWeUJCLH67ng+8Ct6NzDa8dScfM3kUs1Y6JIphqYZERhgBN8fPY
-        DTJ1p3wZo9unycHP5AgtwqX1iYGuIrXpkQnL16zoKoeTHQjyR+gWm+XltHzcFaVBuf5mxRRj4H0
-        09LyVomsUJ14NTOrOqXqV/hn4lxCG
-X-Received: by 2002:a81:8785:: with SMTP id x127mr151813ywf.455.1576610812346;
-        Tue, 17 Dec 2019 11:26:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzgHpky9NVFPlztSbQ7vnaNKGoWCoY5ZJfFY1EWtEFon5WLK7ZI2IrVnQNR9SnF12NFAuyBng==
-X-Received: by 2002:a81:8785:: with SMTP id x127mr151793ywf.455.1576610812101;
-        Tue, 17 Dec 2019 11:26:52 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id i127sm10126017ywe.65.2019.12.17.11.26.51
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xEUG81URhogGWuZA8LPYVy7kVF90IzAqZihwg0LU3h0=;
+        b=GdX24PfCo9gnMcaUhTk1W4E2SfM9d/9TLO1b/h13uCcDd8Vv3Oe3ryBnT9NMk0QScr
+         XhnYPrCw469lXYMtbq+ZX72iSJ9JLzO2y4UBeNjW25u/xOltmAV3+MDQ1vN8Sedkef1Z
+         GnFM5MhRFmlt3B9KjwIza/tzDkSB2aVr+E22gWs3fnSzr58UgAyS2CVhUNrs+NXGN4OD
+         XL6cOumHBS4ke5NY8vC2uNI1RGME0iKPrySrMMjJPr2AuUnO8F5SUlENxQe/K1q5Wwvk
+         F1rP+Kx1RBUQ1Nl3+NGgE2BY07yjQIHTsB7Nz1RLLubUanUoHKkKj/pSVxcT8ZfjMylL
+         CLZA==
+X-Gm-Message-State: APjAAAW+upEoz7HqL/xp9zBxoJm7rIIz3/q2rucZ4UTU9V8YGOB582Pf
+        Z8dHNCN7gToM0ykKIm1yxzI=
+X-Google-Smtp-Source: APXvYqzCF+sd8fQR/RTm9CF4W6DF8PNdlBvLhMGZwhFRiksObjDXkveAncZlVutEcMgiXcCPadwu8Q==
+X-Received: by 2002:adf:c746:: with SMTP id b6mr37146849wrh.298.1576610852716;
+        Tue, 17 Dec 2019 11:27:32 -0800 (PST)
+Received: from localhost.localdomain ([109.126.149.134])
+        by smtp.gmail.com with ESMTPSA id w13sm26711822wru.38.2019.12.17.11.27.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 11:26:51 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Bart Van Assche <bvanassche@acm.org>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: RDMA/srpt: Fix incorrect pointer dereference
-Date:   Tue, 17 Dec 2019 13:26:49 -0600
-Message-Id: <20191217192649.24212-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
+        Tue, 17 Dec 2019 11:27:32 -0800 (PST)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/3] io_uring: submission path cleanup
+Date:   Tue, 17 Dec 2019 22:26:55 +0300
+Message-Id: <cover.1576610536.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <cover.1576538176.git.asml.silence@gmail.com>
+References: <cover.1576538176.git.asml.silence@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,41 +61,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In srpt_queue_response(), the rdma channel ch is first
-dereferenced and then checked for NULL. This renders the
-assertion ineffective. This patch removes the assertion and
-avoids potential NULL pointer dereference.
+Pretty straighforward cleanups. The last patch saves the exact behaviour,
+but do link enqueuing from a more suitable place.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- drivers/infiniband/ulp/srpt/ib_srpt.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+v2: rebase
 
-diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-index 23c782e3d49a..bbc6729c81c0 100644
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2803,15 +2803,17 @@ static void srpt_queue_response(struct se_cmd *cmd)
- 	struct srpt_send_ioctx *ioctx =
- 		container_of(cmd, struct srpt_send_ioctx, cmd);
- 	struct srpt_rdma_ch *ch = ioctx->ch;
--	struct srpt_device *sdev = ch->sport->sdev;
- 	struct ib_send_wr send_wr, *first_wr = &send_wr;
--	struct ib_sge sge;
- 	enum srpt_command_state state;
-+	struct srpt_device *sdev;
- 	int resp_len, ret, i;
-+	struct ib_sge sge;
- 	u8 srp_tm_status;
- 
--	BUG_ON(!ch);
-+	if (WARN_ON(!ch))
-+		return;
- 
-+	sdev = ch->sport->sdev;
- 	state = ioctx->state;
- 	switch (state) {
- 	case SRPT_STATE_NEW:
+Pavel Begunkov (3):
+  io_uring: rename prev to head
+  io_uring: move trace_submit_sqe into submit_sqe
+  io_uring: move *queue_link_head() from common path
+
+ fs/io_uring.c | 47 +++++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 26 deletions(-)
+
 -- 
-2.20.1
+2.24.0
 
