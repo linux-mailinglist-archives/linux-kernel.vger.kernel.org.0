@@ -2,81 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9719E122F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 714E3122F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 15:59:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfLQO4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 09:56:39 -0500
-Received: from mga12.intel.com ([192.55.52.136]:40919 "EHLO mga12.intel.com"
+        id S1727906AbfLQO72 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 09:59:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbfLQO4j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:56:39 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 06:56:38 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,325,1571727600"; 
-   d="scan'208";a="221779419"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
-  by fmsmga001.fm.intel.com with SMTP; 17 Dec 2019 06:56:33 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 17 Dec 2019 16:56:32 +0200
-Date:   Tue, 17 Dec 2019 16:56:32 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Rajmohan Mani <rajmohan.mani@intel.com>,
-        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
-        Lukas Wunner <lukas@wunner.de>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Christian Kellner <ckellner@redhat.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/9] thunderbolt: Populate PG field in hot plug
- acknowledgment packet
-Message-ID: <20191217145632.GM2913417@lahna.fi.intel.com>
-References: <20191217123345.31850-1-mika.westerberg@linux.intel.com>
- <20191217123345.31850-4-mika.westerberg@linux.intel.com>
- <20191217124745.GC3175457@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217124745.GC3175457@kroah.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726560AbfLQO72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 09:59:28 -0500
+Received: from devnote2 (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C1432146E;
+        Tue, 17 Dec 2019 14:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576594766;
+        bh=X1PiVxcDVotj0DhdvGj1bIfqqxEYbzQbmZ7rzefwzlI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nr0K06QNQmm1n9qx+9jVB2d+Ydzi4sALusD8JzCqB3ntD3yvFbLJNuPHAptIVLsF+
+         PDs806kXbdNEAiy/H7HLANWQHb4WI5T2N345xg8/syBy4SMsutm/n6ctLJ9sEI3da3
+         HgtLDZWf/zydqfQ+j3AHA3IguZqFxvBe8fuWClG4=
+Date:   Tue, 17 Dec 2019 23:59:21 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     paulmck@kernel.org
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        "Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        David Miller <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH -tip] kprobes: Lock rcu_read_lock() while searching
+ kprobe
+Message-Id: <20191217235921.01cecb379e5e58493a0815af@kernel.org>
+In-Reply-To: <20191209033910.GD2889@paulmck-ThinkPad-P72>
+References: <157527193358.11113.14859628506665612104.stgit@devnote2>
+        <20191202210854.GD17234@google.com>
+        <20191203071329.GC115767@gmail.com>
+        <20191203175712.GI2889@paulmck-ThinkPad-P72>
+        <20191204100549.GB114697@gmail.com>
+        <20191204161239.GL2889@paulmck-ThinkPad-P72>
+        <20191206011137.GB142442@google.com>
+        <20191206031151.GY2889@paulmck-ThinkPad-P72>
+        <20191208000842.GA62607@google.com>
+        <20191209033910.GD2889@paulmck-ThinkPad-P72>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 01:47:45PM +0100, Greg Kroah-Hartman wrote:
-> On Tue, Dec 17, 2019 at 03:33:39PM +0300, Mika Westerberg wrote:
-> > USB4 1.0 section 6.4.2.7 specifies a new field (PG) in notification
-> > packet that is sent as response of hot plug/unplug events. This field
-> > tells whether the acknowledgment is for plug or unplug event. This needs
-> > to be set accordingly in order the router to send further hot plug
-> > notifications.
+Hi,
+
+On Sun, 8 Dec 2019 19:39:11 -0800
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
+
+> On Sat, Dec 07, 2019 at 07:08:42PM -0500, Joel Fernandes wrote:
+> > On Thu, Dec 05, 2019 at 07:11:51PM -0800, Paul E. McKenney wrote:
+> > > On Thu, Dec 05, 2019 at 08:11:37PM -0500, Joel Fernandes wrote:
+> > > > On Wed, Dec 04, 2019 at 08:12:39AM -0800, Paul E. McKenney wrote:
+> > > > > On Wed, Dec 04, 2019 at 11:05:50AM +0100, Ingo Molnar wrote:
+> > > > > > 
+> > > > > > * Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > > > > 
+> > > > > > > >  * This list-traversal primitive may safely run concurrently with
+> > > > > > > >  * the _rcu list-mutation primitives such as hlist_add_head_rcu()
+> > > > > > > >  * as long as the traversal is guarded by rcu_read_lock().
+> > > > > > > >  */
+> > > > > > > > #define hlist_for_each_entry_rcu(pos, head, member, cond...)            \
+> > > > > > > > 
+> > > > > > > > is actively harmful. Why is it there?
+> > > > > > > 
+> > > > > > > For cases where common code might be invoked both from the reader
+> > > > > > > (with RCU protection) and from the updater (protected by some
+> > > > > > > lock).  This common code can then use the optional argument to
+> > > > > > > hlist_for_each_entry_rcu() to truthfully tell lockdep that it might be
+> > > > > > > called with either form of protection in place.
+> > > > > > > 
+> > > > > > > This also combines with the __rcu tag used to mark RCU-protected
+> > > > > > > pointers, in which case sparse complains when a non-RCU API is applied
+> > > > > > > to these pointers, to get back to your earlier question about use of
+> > > > > > > hlist_for_each_entry_rcu() within the update-side lock.
+> > > > > > > 
+> > > > > > > But what are you seeing as actively harmful about all of this?
+> > > > > > > What should we be doing instead?
+> > > > > > 
+> > > > > > Yeah, so basically in the write-locked path hlist_for_each_entry() 
+> > > > > > generates (slightly) more efficient code than hlist_for_each_entry_rcu(), 
+> > > > > > correct?
+> > > > > 
+> > > > > Potentially yes, if the READ_ONCE() constrains the compiler.  Or not,
+> > > > > depending of course on the compiler and the surrounding code.
+> > > > > 
+> > > > > > Also, the principle of passing warning flags around is problematic - but 
+> > > > > > I can see the point in this specific case.
+> > > > > 
+> > > > > Would it help to add an hlist_for_each_entry_protected() that expected
+> > > > > RCU-protected pointers and write-side protection, analogous to
+> > > > > rcu_dereference_protected()?  Or would that expansion of the RCU API
+> > > > > outweigh any benefits?
+> > > > 
+> > > > Personally, I like keeping the same API and using the optional argument like
+> > > > we did thus preventing too many APIs / new APIs.
+> > > 
+> > > Would you be willing to put together a prototype patch so that people
+> > > can see exactly how it would look?
 > > 
-> > To make it simpler we fill the field unconditionally. Legacy devices do
-> > not look at this field so there should be no problems with them.
+> > Hi Paul,
 > > 
-> > While there rename tb_cfg_error() to tb_cfg_ack_plug() and update the
-> > log message accordingly. The function is only used to ack plug/unplug
-> > events.
+> > I was referring to the same API we have at the moment (that is
+> > hlist_for_each_entry_rcu() with the additional cond parameter). I was saying
+> > let us keep that and not add a hlist_for_each_entry_protected() instead, so
+> > as to not proliferate the number of APIs.
 > > 
-> > Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> > Or did I miss the point?
 > 
-> First 3 patches look "trivial" enough for me to take right now, any
-> objection to that?
+> This would work for me.  The only concern would be inefficiency, but we
+> have heard from people saying that the unnecessary inefficiency is only
+> on code paths that they do not care about, so we should be good.
 
-No objections from my side :)
+So, what will be the conclusion here, Ingo?
 
-> Should I be using my usb tree for this?
+I faced other warnings in tracing subsystem, so I need to add more
+lockdep_is_held()s there to suppress warnings.
 
-Yes, I think it makes sense now that this is also under USB IF umbrella.
+Thank you,
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
