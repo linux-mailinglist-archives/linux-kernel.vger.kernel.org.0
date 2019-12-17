@@ -2,107 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AC43122831
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:01:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA68412283A
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 11:02:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbfLQKBs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 05:01:48 -0500
-Received: from zimbra2.kalray.eu ([92.103.151.219]:40092 "EHLO
-        zimbra2.kalray.eu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726824AbfLQKBs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 05:01:48 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 9727927E1650;
-        Tue, 17 Dec 2019 11:01:46 +0100 (CET)
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S2QYEGo2Co_s; Tue, 17 Dec 2019 11:01:46 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 37FBC27E1660;
-        Tue, 17 Dec 2019 11:01:46 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.10.3 zimbra2.kalray.eu 37FBC27E1660
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalray.eu;
-        s=32AE1B44-9502-11E5-BA35-3734643DEF29; t=1576576906;
-        bh=J6UvZCqnt+1FaLsYt26jhq2jShGIHN4B8Z5QlxdoSr4=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=OxkvjrxE9+L7MQ0ve+xpOzkswW9uZAKGd3LP8Q8vy56gRlEodZLl/mBSByuNcrC0E
-         CASgrF7MUaRyWD/KKbflXf+QmUGgLHB9C3j2SM7TQizeD220RSP+NhEUYjuiKxU8Us
-         Cqeeq8ryRFtMh7T9QL4CBNIIC4+QjCoJ/CVsKVIE=
-X-Virus-Scanned: amavisd-new at zimbra2.kalray.eu
-Received: from zimbra2.kalray.eu ([127.0.0.1])
-        by localhost (zimbra2.kalray.eu [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZT01oR6xFUjb; Tue, 17 Dec 2019 11:01:46 +0100 (CET)
-Received: from zimbra2.kalray.eu (localhost [127.0.0.1])
-        by zimbra2.kalray.eu (Postfix) with ESMTP id 1E77727E1650;
-        Tue, 17 Dec 2019 11:01:46 +0100 (CET)
-Date:   Tue, 17 Dec 2019 11:01:45 +0100 (CET)
-From:   =?utf-8?Q?Cl=C3=A9ment?= Leger <cleger@kalray.eu>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hoan Tran <hoan@os.amperecomputing.com>,
-        "open list, GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Message-ID: <1686073939.96973784.1576576905628.JavaMail.zimbra@kalray.eu>
-In-Reply-To: <20191216213959.GA957@bogus>
-References: <20191204101042.4275-6-cleger@kalray.eu> <CAHp75VcqqqAv1iiwjNqGVcadmdzbjHt8f_ap7DKd3LWC=wwkhw@mail.gmail.com> <696316719.95315119.1575467579136.JavaMail.zimbra@kalray.eu> <20191216213959.GA957@bogus>
-Subject: Re: [PATCH 5/5] dt-bindings: pinctrl: dw: move sps,dwapb-gpio.txt
- to pinctrl
+        id S1727491AbfLQKCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 05:02:20 -0500
+Received: from 8bytes.org ([81.169.241.247]:57650 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727120AbfLQKCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 05:02:20 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 13033286; Tue, 17 Dec 2019 11:02:19 +0100 (CET)
+Date:   Tue, 17 Dec 2019 11:02:17 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Xiaotao Yin <xiaotao.yin@windriver.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Kexin.Hao@windriver.com
+Subject: Re: [PATCH V2] iommu/iova: Init the struct iova to fix the possible
+ memleak
+Message-ID: <20191217100217.GH8689@8bytes.org>
+References: <20191209082404.40166-1-xiaotao.yin@windriver.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Originating-IP: [192.168.40.202]
-X-Mailer: Zimbra 8.8.12_GA_3794 (ZimbraWebClient - GC75 (Linux)/8.8.12_GA_3794)
-Thread-Topic: dt-bindings: pinctrl: dw: move sps,dwapb-gpio.txt to pinctrl
-Thread-Index: R4uog0tu9bwnlu1QxaRaSzHOJ2tCkA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209082404.40166-1-xiaotao.yin@windriver.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,=20
+On Mon, Dec 09, 2019 at 04:24:04PM +0800, Xiaotao Yin wrote:
+> The reason:
+> When alloc_iova_mem() without initial with Zero, sometimes fpn_lo will equal to
+> IOVA_ANCHOR by chance, so when return from __alloc_and_insert_iova_range() with
+> -ENOMEM(iova32_full), the new_iova will not be freed in free_iova_mem().
+> 
+> Fixes: bb68b2fbfbd6 ("iommu/iova: Add rbtree anchor node")
+> Signed-off-by: Xiaotao Yin <xiaotao.yin@windriver.com>
+> ---
+>  drivers/iommu/iova.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Indeed, I could do that if you think that's a better option. Andy however s=
-uggested to always register a pinctrl controller.
-Both options suits me. Let me know what option you want me to implement.
-
-Thanks,
-
-Cl=C3=A9ment
-
------ On 16 Dec, 2019, at 22:39, Rob Herring robh@kernel.org wrote:
-
-> On Wed, Dec 04, 2019 at 02:52:59PM +0100, Cl=C3=A9ment Leger wrote:
->>=20
->> ----- On 4 Dec, 2019, at 13:45, Andy Shevchenko andy.shevchenko@gmail.co=
-m wrote:
->>=20
->> > On Wed, Dec 4, 2019 at 12:13 PM Clement Leger <cleger@kalray.eu> wrote=
-:
->> >>
->> >> Since the driver has been moved to pinctrl and now supports it, move =
-the
->> >> documentation into pinctrl folder. In the same time, add documentatio=
-n
->> >> for pinctrl properties such has snps,has-pinctrl and description of p=
-in
->> >> alternate functions.
->> >=20
->> >> +- snps,has-pinctrl : If present, register the pinctrl controller.
->> >=20
->> > I'm wondering why we can't always assume pin control?
->>=20
->> This hardware IP is configured when instantiated to include support for
->> muxing. If configured without support, the registers will exists but won=
-'t
->> configure anything.
->> I guess that it's not really a problem but it will lead to unusable
->> pin muxing.
->=20
-> Can't you determine this by the presence of child nodes?
->=20
-> Rob
+Applied for v5.5, thanks.
