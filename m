@@ -2,109 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E96E012257D
-	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:32:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B5AC122580
+	for <lists+linux-kernel@lfdr.de>; Tue, 17 Dec 2019 08:32:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfLQHcS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 02:32:18 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:34066 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfLQHcS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 02:32:18 -0500
-Received: by mail-pl1-f195.google.com with SMTP id x17so5711235pln.1
-        for <linux-kernel@vger.kernel.org>; Mon, 16 Dec 2019 23:32:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=o9tdHWD77Msphb5SbcvlIXbnBZel1oX6S1JFAOa66jk=;
-        b=axjmwqup/aTMRSMjYm9Y4TMXli/UJbEdrCgDaWuDLXZyudjg4JqCq2YLSixQQXLpZI
-         u3n5Zj+orwoh/T3W6A+mv5iLa6ZODqfgr4EpW0ikcqxLvcbQ+VAyrhctvx80Hz+mRw1j
-         SIAFrHqPR1zQaLO+QUuMPFeVBUAvZ/TXhmYVYF6vx7AUqSm79rddQWndwiqa7GZDpqVX
-         PKnoTdLZU6Hx0xF9t6pzeqe+I4rPlXSM7/fRizcsGG2xADBhlZxNPsCqU1cm6rPpQESQ
-         5Eg5zzRJaiLfyt67p5kLe5XU+gMbh9hrrZV4pA+e39a5+z10GXps3YXxgALbVZLUdwrT
-         eBAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=o9tdHWD77Msphb5SbcvlIXbnBZel1oX6S1JFAOa66jk=;
-        b=blYsX/VbPHmDLzYqy92NjH3rPZVX8geUg0zMAUp7I2eQxN3/e6edpPM0/Y92X78vbk
-         0BoIC9Ua8B+DE8Szj2OaXEF/yRDxZ1TKIPP47TNJGlOFAt69p87pUeCG0HxHYczdUw8a
-         TSEeg11iL7IAN7Z21NsuEufGJVCldq2fujaoe9ijxFLIyldKWOnIvc5wFJSmYsoBZMYc
-         26yZV8qBHBqm6xJKavyHLTkpKLl2E0gbR07CEskzm16cycsJUMyvJD8vormd+F62x/VB
-         OaAz73lL0PmnwNLHY2IJW9UuAoTPZfZ1+axvbtBnD6OOFyp63GOe7mEvNvfOirdiF2tA
-         y5nw==
-X-Gm-Message-State: APjAAAXuVri/7uegJN5S7WhjBdVXHWhTbmvHHD11NlC7DyQxfT+lBKrf
-        pwVSeHw2oQwjHaj9fmdZPSx/bA==
-X-Google-Smtp-Source: APXvYqwbWVbjdimlaICgxarJlVLr9XYaYHenzi5D4IY0YOKA2AKxdGHJCXGkGpje4RlsT1I2khpObw==
-X-Received: by 2002:a17:90b:4396:: with SMTP id in22mr4114328pjb.111.1576567937402;
-        Mon, 16 Dec 2019 23:32:17 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id d23sm24799629pfo.176.2019.12.16.23.32.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 23:32:16 -0800 (PST)
-Date:   Mon, 16 Dec 2019 23:32:16 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
+        id S1727892AbfLQHcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 02:32:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbfLQHcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 02:32:25 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 834222067C;
+        Tue, 17 Dec 2019 07:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576567945;
+        bh=QzuPXnrkCynVSV/PypAUk5qfNo2RQg1vcacokLEhrH8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=T7VzoQ4fv/U8Ve/Il0VoFYq4ZW9NRa3MDDG0TA+LnoSfAhBVdumZ7q2Mwoj4xF/64
+         OeiWDl4BPIEu3XMDRaA8aHbl87Qn88ZJ5S7EA9vsJWCnZxWrK+51MlxmM3ER+ZNnRo
+         76AHdn+OyL76wI3/00/Lafeo3rjOEBJEqbXK2qOc=
+Date:   Tue, 17 Dec 2019 08:32:22 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Pan Zhang <zhangpan26@huawei.com>
-cc:     hushiyuan@huawei.com, ulf.hansson@linaro.org, allison@lohutok.net,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mmc: host: use kzalloc instead of kmalloc and
- memset
-In-Reply-To: <1576567086-11469-1-git-send-email-zhangpan26@huawei.com>
-Message-ID: <alpine.DEB.2.21.1912162331110.168267@chino.kir.corp.google.com>
-References: <1576567086-11469-1-git-send-email-zhangpan26@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+Cc:     hushiyuan@huawei.com, ulf.hansson@linaro.org, allison@lohutok.net,
+        tglx@linutronix.de, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mmc: host: use kzalloc instead of kmalloc and memset
+Message-ID: <20191217073222.GA2472756@kroah.com>
+References: <1576566037-29837-1-git-send-email-zhangpan26@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576566037-29837-1-git-send-email-zhangpan26@huawei.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019, Pan Zhang wrote:
-
+On Tue, Dec 17, 2019 at 03:00:37PM +0800, Pan Zhang wrote:
 > Signed-off-by: Pan Zhang <zhangpan26@huawei.com>
 > ---
->  drivers/mmc/host/vub300.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/vub300.c b/drivers/mmc/host/vub300.c
-> index 6ced1b7..e18931d 100644
-> --- a/drivers/mmc/host/vub300.c
-> +++ b/drivers/mmc/host/vub300.c
-> @@ -1227,12 +1227,10 @@ static void __download_offload_pseudocode(struct vub300_mmc_host *vub300,
->  	size -= 1;
->  	if (interrupt_size < size) {
->  		u16 xfer_length = roundup_to_multiple_of_64(interrupt_size);
-> -		u8 *xfer_buffer = kmalloc(xfer_length, GFP_KERNEL);
-> +		u8 *xfer_buffer = kzalloc(xfer_length, GFP_KERNEL);
->  		if (xfer_buffer) {
->  			int retval;
->  			memcpy(xfer_buffer, data, interrupt_size);
-> -			memset(xfer_buffer + interrupt_size, 0,
-> -			       xfer_length - interrupt_size);
->  			size -= interrupt_size;
->  			data += interrupt_size;
->  			retval =
-> @@ -1270,12 +1268,10 @@ static void __download_offload_pseudocode(struct vub300_mmc_host *vub300,
->  	size -= 1;
->  	if (ts < size) {
->  		u16 xfer_length = roundup_to_multiple_of_64(ts);
-> -		u8 *xfer_buffer = kmalloc(xfer_length, GFP_KERNEL);
-> +		u8 *xfer_buffer = kzalloc(xfer_length, GFP_KERNEL);
->  		if (xfer_buffer) {
->  			int retval;
->  			memcpy(xfer_buffer, data, ts);
-> -			memset(xfer_buffer + ts, 0,
-> -			       xfer_length - ts);
->  			size -= ts;
->  			data += ts;
->  			retval =
+>  drivers/mmc/host/vub300.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-I think the previous code is an optimization since the first 
-interrupt_size bytes or ts bytes of xfer_buffer would otherwise 
-unnecessarily be zeroed and then copied to.
+I know I can not take patches without any changelog text, hopefully
+other maintainers also do the same.
+
+Please fix,
+
+greg k-h
