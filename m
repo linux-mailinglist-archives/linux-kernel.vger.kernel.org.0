@@ -2,95 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BABDC123C70
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 329A9123C7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:36:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbfLRBcK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 20:32:10 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:45823 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726072AbfLRBcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 20:32:10 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 47cyD72b80z9sR4;
-        Wed, 18 Dec 2019 12:32:06 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1576632727;
-        bh=X7zeR8tDH1dzwRzZD1XqaXw2O2I5zVhAdgRg08YwIe0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=KUs203s6MhshnFSZieElEyOrsqcmCKo2YNtxgtW8iQ3Vx/eYtPZqnybPlZ5c90tag
-         rYvBCaBTb8A5ulvL22LcENJ8B2GolzJKwow/X+ATODqzBWXsInJL40os5pYPiBpxDX
-         dy4OCFOyBLNnkIiNetFSlE1izvQWzsdBTlMr2JZcfkSie40SPUeqZ+g0aujwpl8ZZJ
-         mrmCFz0MgPkZDRdzcZr4NJ1vMxtm/68rlDG8McjgnvXX/ePpvKHopC+btj/rqPRPXo
-         dIt82G4fbap/UhEZBbhXDLUDx+5PnT+DpQH0DKSVaiePoXWWgNoDNhKx+i3BSzeoJa
-         7sJELmI5xnl4g==
-Date:   Wed, 18 Dec 2019 12:32:05 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Christoph Hellwig <hch@lst.de>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: manual merge of the generic-ioremap tree with the
- nvdimm-fixes tree
-Message-ID: <20191218123205.3fb9c793@canb.auug.org.au>
+        id S1726510AbfLRBgo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 20:36:44 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43028 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfLRBgo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 20:36:44 -0500
+Received: by mail-oi1-f196.google.com with SMTP id x14so255068oic.10;
+        Tue, 17 Dec 2019 17:36:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7We/VEpgPiMO8619gdnlWocsaTJDXOtjnUr1/nSx8fc=;
+        b=o5sn19xYpsolLUaVkAhovodFsZ6cH479qBZHqe8Sd4qEQq8R7uKRLI8d1Y3ujEPwuC
+         QSYoAYPqDfS9uR+QpH0vvw47Vc335cPD0qXi97g5xHuyl6QAHyTilCPG0qnAHoEbPknx
+         VyzS6XGPd//b2SovmNEcNj9dyOW4VV8tlcO0HYfwCqxZm6mq+9EJCFYeit4plT/V+K8Z
+         ogf14LiwD1lKm4sS9Mb2TcpL3GGKIi2fdCney7o4q4lHN+g+tzWM9ZaC1LPhbUFFNqB5
+         jWb7CWBbRBC9TnvbZhgAVJlzBSue2D2Heim/a35fVllyjiz1y+3WxGY94m36N/neI5AU
+         EvzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7We/VEpgPiMO8619gdnlWocsaTJDXOtjnUr1/nSx8fc=;
+        b=End1jk61cNSLn8/Jn1I0Mf0JdBUP0mkKog4QOi78ktPWCx2gebCHqrPZvJfz/YSLXq
+         FVOZzaDFXfYB2cue23xfm8Ep+4WXI02A1c9hKzjYCwQdIcDLknE3rMhr52726wF12QOY
+         +p5h0y/f8F5f9J67JupRkY4eoPox7J84vcSLZFdjo64xvJPi1xodu9iDeoDcnfoXn5Pt
+         716/VBMQQU+PyJvW1fMF9v9fI890T5MyyhVI1B5vyHsMcT4pzM1t9riQjdBmnv11NwRu
+         JXIXAmmrHnQcrNeObhoYWWZr+b6Zq5BVUrI2VOiQM8cj40WeqEPJZoQuzxLPlQFax9jo
+         bEng==
+X-Gm-Message-State: APjAAAVG2YK4xxKUseP8cstsdvVi0Mp9+s1sq46j3TeKhQ93YlP8HYIJ
+        v4t6UKkq5c8WXI6rxpnfVVI=
+X-Google-Smtp-Source: APXvYqxfBKcwX8aeW0HewfvN2cqmu2c2ajYXbN+QgfEowi0MlYsJjMGfXm1hIlLrOKU+SJzHeeobjQ==
+X-Received: by 2002:aca:1c09:: with SMTP id c9mr60123oic.85.1576633002813;
+        Tue, 17 Dec 2019 17:36:42 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id 15sm253487oix.46.2019.12.17.17.36.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 17:36:42 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] phy: qualcomm: Adjust indentation in read_poll_timeout
+Date:   Tue, 17 Dec 2019 18:36:37 -0700
+Message-Id: <20191218013637.29123-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/xYBdxsUlJukQA6RU6UX2hxr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/xYBdxsUlJukQA6RU6UX2hxr
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Clang warns:
 
-Hi all,
+../drivers/phy/qualcomm/phy-qcom-apq8064-sata.c:83:4: warning:
+misleading indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+                 usleep_range(DELAY_INTERVAL_US, DELAY_INTERVAL_US + 50);
+                 ^
+../drivers/phy/qualcomm/phy-qcom-apq8064-sata.c:80:3: note: previous
+statement is here
+                if (readl_relaxed(addr) & mask)
+                ^
+1 warning generated.
 
-Today's linux-next merge of the generic-ioremap tree got a conflict in:
+This warning occurs because there is a space after the tab on this line.
+Remove it so that the indentation is consistent with the Linux kernel
+coding style and clang no longer warns.
 
-  tools/testing/nvdimm/Kbuild
+Fixes: 1de990d8a169 ("phy: qcom: Add driver for QCOM APQ8064 SATA PHY")
+Link: https://github.com/ClangBuiltLinux/linux/issues/816
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/phy/qualcomm/phy-qcom-apq8064-sata.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-between commit:
+diff --git a/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c b/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
+index 42bc5150dd92..febe0aef68d4 100644
+--- a/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
++++ b/drivers/phy/qualcomm/phy-qcom-apq8064-sata.c
+@@ -80,7 +80,7 @@ static int read_poll_timeout(void __iomem *addr, u32 mask)
+ 		if (readl_relaxed(addr) & mask)
+ 			return 0;
+ 
+-		 usleep_range(DELAY_INTERVAL_US, DELAY_INTERVAL_US + 50);
++		usleep_range(DELAY_INTERVAL_US, DELAY_INTERVAL_US + 50);
+ 	} while (!time_after(jiffies, timeout));
+ 
+ 	return (readl_relaxed(addr) & mask) ? 0 : -ETIMEDOUT;
+-- 
+2.24.1
 
-  c14685547762 ("tools/testing/nvdimm: Fix mock support for ioremap")
-
-from the nvdimm-fixes tree and commit:
-
-  1188dd7d3fbd ("remove ioremap_nocache and devm_ioremap_nocache")
-
-from the generic-ioremap tree.
-
-I fixed it up (the latter is a superset of the former) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xYBdxsUlJukQA6RU6UX2hxr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl35gZUACgkQAVBC80lX
-0GyuFAgAje7evSUN9BTHsEob2etfDNNngoT/JRGv+dbN7gETIzTarPyOHkiBN7vc
-lle78q817LaDp6X2hV4u6LG9VLYuEl2Pzxrf5847J9WsxJwAc32CDGpsc+dkRA0U
-QLFP7yJvU5bNoyf7AOCtIejuB1GZZp+JDd5eHFndHwIX0+wjNNWltAW3CX7lYzrT
-9zPFqwr1GZ9Y4BJndvohSyKvcOfBz7Z4rZxkvaAchMs8KPTnLzbkIF/LqN56Fp3C
-lmYFA3+LZBBQjiq+aitlfzoqUQYFRln/iCx5dpTUh9E3PqN0jv9wyPJSGC+WKnfy
-8cjEQWGWKaldYvT3D8EfdQTpHBHeNg==
-=JMP1
------END PGP SIGNATURE-----
-
---Sig_/xYBdxsUlJukQA6RU6UX2hxr--
