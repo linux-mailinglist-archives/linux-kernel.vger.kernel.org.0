@@ -2,184 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7379124E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:45:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E469124E25
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:44:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfLRQou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:44:50 -0500
-Received: from mout.kundenserver.de ([212.227.126.133]:35725 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbfLRQos (ORCPT
+        id S1727535AbfLRQom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:44:42 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:45124 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726955AbfLRQol (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:44:48 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MGgRW-1iTsus1Nac-00Dsp6; Wed, 18 Dec 2019 17:44:20 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Brian Foster <bfoster@redhat.com>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Pavel Reichl <preichl@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Dave Chinner <dchinner@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] xfs: quota: move to time64_t interfaces
-Date:   Wed, 18 Dec 2019 17:44:05 +0100
-Message-Id: <20191218164418.463467-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191218163954.296726-1-arnd@arndb.de>
-References: <20191218163954.296726-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FUskByiXnCTH70Q8n4XCuCHT4CPOpZnVwrXf6WYJO0e75Nr0PkI
- /3qYAc9i1Gb0z3DV7SD6P0CowGHqfFUAgc1InUWAjgphQascqxFczuBbwL/GN7Z76TUNqnK
- yv7bOtCBDc+pBvCXVUXOZ3Ig3NsqRZn6fRK7lkW3QFrj4Wuf8Xf2gp1UrycHD7XJ5MQsQ8C
- StzNKoNY4xo73FADLxmUA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:CJHPKKZvaj8=:951edUD5nPzOwVPTUhUzTo
- Na8wsKech0H1SPSyDKfyESXK+qPEGA6OnlRj0aHs5dOX3SoOLrUqx8HzJQ6aglzju7+HIncJT
- yBRJgnGP7JRUgHk2tksC0ucChGYjSUJqsPkbFrDlXo18m5COvHH9u6mVbSBVCGpgjLHGZyyDE
- rLcVEiz+OWpFFSFXQdTlNYAm4gFYn2Mj0fvk/s/82K7He1tfA+JlL4WJNq4Vpnzy+ZcYDZpCv
- 9eSZ+gmFRGhWXeTc+6RUVeJ5cDSk0K2DPSb8KSnCW5GvqSucWZWSz6CDKEOPtsVI89k8AW8h1
- Hy2WhVUpuaKGbWcqUs3OAmBtHqNnSOP5BMsE9u4E553ADYtzFgzRnQM4MCWcR/L+R59lgStGg
- JI0F0C29gdeTnrGRKWpaj7Gv9tW5LeQPGRSlqOovqnJbSOSRV6ZwAs/cQSmn4E9r/78ZYOrff
- Yu7ooH71Xb18C0F9KF/kJrZPVeapR4OnXCVRzZgdDoFeynb62+5TpICCNl+ISo/A6S5so2vs7
- WKXoR7fWfHUlPqNryVYikAVwLrIRNDKZ44vVwuAjDCfIpZZye+rw+0wjMrnI93MpAOmoy2P+/
- V0dH7JFrIWu6rVPhdMDLrKV/UasnYN7sLDmdw+Vexi7CTbS5s9gRZpeazWHLC6RlYcrmdiv0o
- 1zAHJrJqaVlGfqldsCksKwh0i6OnEaoBfWSnZeP1OCljlz3gbm2Cce2PIsXD1uSFkeq3beX7R
- /zx/jI4DDP1d4MUr/kiojBi0h4qOzEE+psQzHOLYVBypfxwAkD+pVLiqehJ/gvmM44bhzkObA
- QcyKcWjd71X3+kXy7nZYqn2DsoSfhSD93OWyCbRmau7YIpcm4+8h7VKgty1JAxfMFAa1778bp
- 1gxy1cBGfoEw15O0qs9w==
+        Wed, 18 Dec 2019 11:44:41 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id CAE152008713;
+        Wed, 18 Dec 2019 08:44:39 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CAE152008713
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576687479;
+        bh=a7xuBf5Ive82IP27XtSElh0HyfR+06ON7XFvftGE0Wc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GbISrtFcZTdmutO/nY95S0wpsX1WmzMUNz9/YnYqFPAbjtRYExPALZudQsVOhLJoC
+         MI/Zb169RO5tKVTqAgUJzr2e/in2T55u4v/3JKIR8nMQKb5ZRFFNAHgHcPpFggb2c7
+         Uhwj2XWlBvhPBGzkILYNQla1dTqnY6Y0UrZct2Ro=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH v5 0/2] IMA: Deferred measurement of keys
+Date:   Wed, 18 Dec 2019 08:44:32 -0800
+Message-Id: <20191218164434.2877-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a preparation for removing the 32-bit time_t type and
-all associated interfaces, change xfs to use time64_t and
-ktime_get_real_seconds() for the quota housekeeping.
+This patchset extends the previous version[1] by adding support for
+deferred processing of keys.
 
-This avoids one difference between 32-bit and 64-bit kernels,
-raising the theoretical limit for the quota grace period
-to year 2106 on 32-bit instead of year 2038.
+With the patchset referenced above, the IMA subsystem supports
+measuring asymmetric keys when the key is created or updated.
+But keys created or updated before a custom IMA policy is loaded
+are currently not measured. This includes keys added to, for instance,
+.builtin_trusted_keys which happens early in the boot process.
 
-Note that common user space tools using the XFS quotactl
-interface instead of the generic one still use the y2038
-dates.
+This change adds support for queuing keys created or updated before
+a custom IMA policy is loaded. The queued keys are processed when
+a custom policy is loaded. Keys created or updated after a custom policy
+is loaded are measured immediately (not queued).
 
-To fix quotas properly, both the on-disk format and user
-space still need to be changed.
+If the kernel is built with both CONFIG_IMA and
+CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE enabled then the IMA policy
+must be applied as a custom policy. Not providing a custom policy
+in the above configuration would result in asymmeteric keys being queued
+until a custom policy is loaded. This is by design.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/xfs/xfs_dquot.c       | 6 +++---
- fs/xfs/xfs_qm.h          | 6 +++---
- fs/xfs/xfs_quotaops.c    | 6 +++---
- fs/xfs/xfs_trans_dquot.c | 8 +++++---
- 4 files changed, 14 insertions(+), 12 deletions(-)
+[1] https://lore.kernel.org/linux-integrity/20191211164707.4698-1-nramas@linux.microsoft.com/
 
-diff --git a/fs/xfs/xfs_dquot.c b/fs/xfs/xfs_dquot.c
-index 2bff21ca9d78..9cfd3209f52b 100644
---- a/fs/xfs/xfs_dquot.c
-+++ b/fs/xfs/xfs_dquot.c
-@@ -137,7 +137,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_blk_hardlimit &&
- 		     (be64_to_cpu(d->d_bcount) >
- 		      be64_to_cpu(d->d_blk_hardlimit)))) {
--			d->d_btimer = cpu_to_be32(get_seconds() +
-+			d->d_btimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_btimelimit);
- 		} else {
- 			d->d_bwarns = 0;
-@@ -160,7 +160,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_ino_hardlimit &&
- 		     (be64_to_cpu(d->d_icount) >
- 		      be64_to_cpu(d->d_ino_hardlimit)))) {
--			d->d_itimer = cpu_to_be32(get_seconds() +
-+			d->d_itimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_itimelimit);
- 		} else {
- 			d->d_iwarns = 0;
-@@ -183,7 +183,7 @@ xfs_qm_adjust_dqtimers(
- 		    (d->d_rtb_hardlimit &&
- 		     (be64_to_cpu(d->d_rtbcount) >
- 		      be64_to_cpu(d->d_rtb_hardlimit)))) {
--			d->d_rtbtimer = cpu_to_be32(get_seconds() +
-+			d->d_rtbtimer = cpu_to_be32(ktime_get_real_seconds() +
- 					mp->m_quotainfo->qi_rtbtimelimit);
- 		} else {
- 			d->d_rtbwarns = 0;
-diff --git a/fs/xfs/xfs_qm.h b/fs/xfs/xfs_qm.h
-index 7823af39008b..4e57edca8bce 100644
---- a/fs/xfs/xfs_qm.h
-+++ b/fs/xfs/xfs_qm.h
-@@ -64,9 +64,9 @@ struct xfs_quotainfo {
- 	struct xfs_inode	*qi_pquotaip;	/* project quota inode */
- 	struct list_lru	 qi_lru;
- 	int		 qi_dquots;
--	time_t		 qi_btimelimit;	 /* limit for blks timer */
--	time_t		 qi_itimelimit;	 /* limit for inodes timer */
--	time_t		 qi_rtbtimelimit;/* limit for rt blks timer */
-+	time64_t	 qi_btimelimit;	 /* limit for blks timer */
-+	time64_t	 qi_itimelimit;	 /* limit for inodes timer */
-+	time64_t	 qi_rtbtimelimit;/* limit for rt blks timer */
- 	xfs_qwarncnt_t	 qi_bwarnlimit;	 /* limit for blks warnings */
- 	xfs_qwarncnt_t	 qi_iwarnlimit;	 /* limit for inodes warnings */
- 	xfs_qwarncnt_t	 qi_rtbwarnlimit;/* limit for rt blks warnings */
-diff --git a/fs/xfs/xfs_quotaops.c b/fs/xfs/xfs_quotaops.c
-index c7de17deeae6..38669e827206 100644
---- a/fs/xfs/xfs_quotaops.c
-+++ b/fs/xfs/xfs_quotaops.c
-@@ -37,9 +37,9 @@ xfs_qm_fill_state(
- 	tstate->flags |= QCI_SYSFILE;
- 	tstate->blocks = ip->i_d.di_nblocks;
- 	tstate->nextents = ip->i_d.di_nextents;
--	tstate->spc_timelimit = q->qi_btimelimit;
--	tstate->ino_timelimit = q->qi_itimelimit;
--	tstate->rt_spc_timelimit = q->qi_rtbtimelimit;
-+	tstate->spc_timelimit = (u32)q->qi_btimelimit;
-+	tstate->ino_timelimit = (u32)q->qi_itimelimit;
-+	tstate->rt_spc_timelimit = (u32)q->qi_rtbtimelimit;
- 	tstate->spc_warnlimit = q->qi_bwarnlimit;
- 	tstate->ino_warnlimit = q->qi_iwarnlimit;
- 	tstate->rt_spc_warnlimit = q->qi_rtbwarnlimit;
-diff --git a/fs/xfs/xfs_trans_dquot.c b/fs/xfs/xfs_trans_dquot.c
-index a6fe2d8dc40f..d1b9869bc5fa 100644
---- a/fs/xfs/xfs_trans_dquot.c
-+++ b/fs/xfs/xfs_trans_dquot.c
-@@ -580,7 +580,7 @@ xfs_trans_dqresv(
- {
- 	xfs_qcnt_t		hardlimit;
- 	xfs_qcnt_t		softlimit;
--	time_t			timer;
-+	time64_t		timer;
- 	xfs_qwarncnt_t		warns;
- 	xfs_qwarncnt_t		warnlimit;
- 	xfs_qcnt_t		total_count;
-@@ -635,7 +635,8 @@ xfs_trans_dqresv(
- 				goto error_return;
- 			}
- 			if (softlimit && total_count > softlimit) {
--				if ((timer != 0 && get_seconds() > timer) ||
-+				if ((timer != 0 &&
-+				     ktime_get_real_seconds() > timer) ||
- 				    (warns != 0 && warns >= warnlimit)) {
- 					xfs_quota_warn(mp, dqp,
- 						       QUOTA_NL_BSOFTLONGWARN);
-@@ -662,7 +663,8 @@ xfs_trans_dqresv(
- 				goto error_return;
- 			}
- 			if (softlimit && total_count > softlimit) {
--				if  ((timer != 0 && get_seconds() > timer) ||
-+				if  ((timer != 0 &&
-+				      ktime_get_real_seconds() > timer) ||
- 				     (warns != 0 && warns >= warnlimit)) {
- 					xfs_quota_warn(mp, dqp,
- 						       QUOTA_NL_ISOFTLONGWARN);
+Testing performed:
+
+  * Booted the kernel with this change.
+  * Added .builtin_trusted_keys in "keyrings=" option in
+    the IMA policy and verified the keys added to this
+    keyring are measured.
+  * Specified only func=KEY_CHECK and not "keyrings=" option,
+    and verified the keys added to builtin_trusted_keys keyring
+    are processed.
+  * Added keys at runtime and verified they are measured
+    if the IMA policy permitted.
+      => For example, added keys to .ima keyring and verified.
+
+Changelog:
+
+  v5
+
+  => Removed temp keys list in ima_process_queued_keys()
+
+  v4
+
+  => Check and set ima_process_keys flag with mutex held.
+
+  v3
+
+  => Defined ima_process_keys flag to be static.
+  => Set ima_process_keys with ima_keys_mutex held.
+  => Added a comment in ima_process_queued_keys() function
+     to state the use of temporary list for keys.
+
+  v2
+
+  => Rebased the changes to v5.5-rc1
+  => Updated function names, variable names, and code comments
+     to be less verbose.
+
+  v1
+
+  => Code cleanup
+
+  v0
+
+  => Based changes on v5.4-rc8
+  => The following patchsets should be applied in that order
+     https://lore.kernel.org/linux-integrity/1572492694-6520-1-git-send-email-zohar@linux.ibm.com
+     https://lore.kernel.org/linux-integrity/20191204224131.3384-1-nramas@linux.microsoft.com/
+  => Added functions to queue and dequeue keys, and process
+     the queued keys when custom IMA policies are applied.
+
+Lakshmi Ramasubramanian (2):
+  IMA: Define workqueue for early boot key measurements
+  IMA: Call workqueue functions to measure queued keys
+
+ security/integrity/ima/ima.h                 |  15 +++
+ security/integrity/ima/ima_asymmetric_keys.c | 123 +++++++++++++++++++
+ security/integrity/ima/ima_policy.c          |   3 +
+ 3 files changed, 141 insertions(+)
+
 -- 
-2.20.0
+2.17.1
 
