@@ -2,87 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87B701247C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:12:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1A51247CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:13:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfLRNMx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 08:12:53 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39756 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfLRNMw (ORCPT
+        id S1727070AbfLRNNM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 08:13:12 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:32975 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfLRNNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:12:52 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y1so1664668lfb.6;
-        Wed, 18 Dec 2019 05:12:51 -0800 (PST)
+        Wed, 18 Dec 2019 08:13:12 -0500
+Received: by mail-ua1-f68.google.com with SMTP id a12so612746uan.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 05:13:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Rbi/0HS4TN9MANgwRP5JBMfuN16L4USYE1XV5828ilU=;
+        b=QS5rfGtpIAE7RMx4aEDqVVyni4Jt33kyj74vqBpxxDEy0qJ56cgdREeAgUckhQjgkU
+         w2pHwQ+VJsSFKxOXu3H1nUPRTeSauBTCiaaCJpi0kxfXaAXYMcY19wusHwhhkWTANvKB
+         K2hLxeJt7edjP6ojGxL3drL3zHxTx/nj44PO6MDTu2sloOIEMl9+BydQeSXduSWfQ9Ij
+         MRhq+RRVYg3oMw1kzq4YUIP1uNcLjW+kw/oYAie8bgtuMjjlnIayML/P1IWM8Va5/VBD
+         lPjezShzglR8RFzkQjF53Z0J7932VOQkcC7WXcxV4j94etq+KVIxDGbwifBsHOjYpjI3
+         yAqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=nnikZguWA1RXd3FXpDoBBFmrN7lLJJJG6TIoC5TI72o=;
-        b=OfBrhVulOMGgsGB8mYCCKlhN+39CNnci4vHjOuuPKpdfofqM2LQ7XgYTVouA/b91dm
-         3Un961lD5UNiL/vH7ZsnSgQn5HzkzZE+z6eUeAJW6fPcOnPn+/Mr37ea3Y+57YQHorPg
-         kIzMTNn85gjOUrY+4f+molSIgQ9cEpgMEJLV/gD0DLQfE9QdtSyb51NswLdf9oEDZPW5
-         HeVTJxwEblElO52Yy3IJEt2UtSi+UtRGHZz5Kzqf6fXm+7UcRG7xrrmmL7Nuz+5UgTUM
-         0EuIWiSeQqyOKEfUrwcdk4Z7j40IzlOxBgbKODTRE7NgvBlQtLkQRnh4B9TGEHjYmBis
-         UJ5w==
-X-Gm-Message-State: APjAAAWC88NfIA7aaYq0Wst47VeHH/R5hK/vVJie4k0O0qZegRCsBoWY
-        fgL9oDwNUauoNqpgCTAkAuc=
-X-Google-Smtp-Source: APXvYqyDro71G9Jpnt8Wut4mtlSk2cZ4uT7ukhBZljHm9ZO9hpduk+CJYVjT8KddyJM7wwCoL1To6A==
-X-Received: by 2002:ac2:599c:: with SMTP id w28mr1785854lfn.78.1576674768749;
-        Wed, 18 Dec 2019 05:12:48 -0800 (PST)
-Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
-        by smtp.gmail.com with ESMTPSA id c27sm1104077lfh.62.2019.12.18.05.12.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 05:12:48 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.92.3)
-        (envelope-from <johan@xi.terra>)
-        id 1ihZ88-0003Zx-RI; Wed, 18 Dec 2019 14:12:44 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        kbuild test robot <lkp@intel.com>
-Subject: [PATCH] Revert "serdev: simplify Makefile"
-Date:   Wed, 18 Dec 2019 14:11:54 +0100
-Message-Id: <20191218131154.13702-1-johan@kernel.org>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Rbi/0HS4TN9MANgwRP5JBMfuN16L4USYE1XV5828ilU=;
+        b=Q/9KWsG10WtG0eQ3TxfxFj5EID4vImn5TzhRRdLoYf+656qMbVZVVwqUKetLqBwyMx
+         rIpLfPiifnBXlD8E9dCA4hQXXnfj21JnvWmVwOhgLHF+DFHAWU3T8opcKvLHEi4bgASd
+         KQ2OWPiobB4qD46P2/kALvWvE5cBkhmDspS5p2EL4EBy3Q894P3B2bm76o0VC7B15oDl
+         CtI1uP3bCCGAc73Fpj15rV9htj+POLOioXzFtdq/TwPWRSNbsGDjjZ3TmvDAoXLTU58A
+         ugF2/jXxZLvJP6DN6t1xJmalY77X8zjDro+ZNXKgEv3na4h0M33SJJcDop+LTtI/Za1R
+         N4SQ==
+X-Gm-Message-State: APjAAAWCflJ4QmmNfCNQwVz9FYD70ssA129dfrmoTHFRLQGuCaLhZniQ
+        D+0tHJPBUCbn8G5+R63EasjIcoB2HG2SqIcHAEUWqA==
+X-Google-Smtp-Source: APXvYqyR53PC7G7Sq2/BZL7+v9/D5h4WFmyLKQAuV03T6MvOhfFYh9bqmrFmZaB8B7BPsOHxDL9DdD5N3aor9uIcIao=
+X-Received: by 2002:ab0:e16:: with SMTP id g22mr1208910uak.129.1576674790843;
+ Wed, 18 Dec 2019 05:13:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1576540906.git.nguyenb@codeaurora.org> <68b936a67e67cd25597915cbd76b73ed046d1ce4.1576540908.git.nguyenb@codeaurora.org>
+ <20191218083448.GE1554871@kroah.com> <CAPDyKFr2t3w1wXY+DD27vHF23mSjnUwCh7iZyuQ=ua=s+KvyVA@mail.gmail.com>
+ <20191218120454.GA15400@kroah.com>
+In-Reply-To: <20191218120454.GA15400@kroah.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 18 Dec 2019 14:12:34 +0100
+Message-ID: <CAPDyKFo929cnz9GS23B2vdDdd1RpJpYFeRwXaMFcTCEMxjS-5g@mail.gmail.com>
+Subject: Re: [<PATCH v1> 7/9] mmc: core: Skip frequency retries for SDCC slots
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     "Bao D. Nguyen" <nguyenb@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Asutosh Das <asutoshd@codeaurora.org>, cang@codeaurora.org,
+        Sujith Reddy Thumma <sthumma@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Xiaonian Wang <xiaonian@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 54edb425346a4d5e17f7e54e8c97c0d0eac26315.
+On Wed, 18 Dec 2019 at 13:04, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Dec 18, 2019 at 12:48:20PM +0100, Ulf Hansson wrote:
+> > On Wed, 18 Dec 2019 at 09:34, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Mon, Dec 16, 2019 at 06:50:40PM -0800, Bao D. Nguyen wrote:
+> > > > From: Sujith Reddy Thumma <sthumma@codeaurora.org>
+> > > >
+> > > > Qualcomm SDCC controller supports minimum SD clock frequency
+> > > > which is required for card initialization. This information is
+> > > > exported through platform data for each SDCC controller. There is
+> > > > no need of retrying higher frequencies than the minimum supported
+> > > > by controller for Qualcomm chipsets which inturn add delay in
+> > > > detection process if there is no card during suspend/resume cycles.
+> > > > Hence, skip multiple frequency retries.
+> > > >
+> > > > Signed-off-by: Sujith Reddy Thumma <sthumma@codeaurora.org>
+> > > > Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> > > > Signed-off-by: Xiaonian Wang <xiaonian@codeaurora.org>
+> > > > Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
+> > > > ---
+> > > >  drivers/mmc/core/core.c | 9 +--------
+> > > >  1 file changed, 1 insertion(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> > > > index 1e37f78..38b0cec 100644
+> > > > --- a/drivers/mmc/core/core.c
+> > > > +++ b/drivers/mmc/core/core.c
+> > > > @@ -2281,7 +2281,6 @@ void mmc_rescan(struct work_struct *work)
+> > > >  {
+> > > >       struct mmc_host *host =
+> > > >               container_of(work, struct mmc_host, detect.work);
+> > > > -     int i;
+> > > >
+> > > >       if (host->rescan_disable)
+> > > >               return;
+> > > > @@ -2332,13 +2331,7 @@ void mmc_rescan(struct work_struct *work)
+> > > >               mmc_release_host(host);
+> > > >               goto out;
+> > > >       }
+> > > > -
+> > > > -     for (i = 0; i < ARRAY_SIZE(freqs); i++) {
+> > > > -             if (!mmc_rescan_try_freq(host, max(freqs[i], host->f_min)))
+> > > > -                     break;
+> > > > -             if (freqs[i] <= host->f_min)
+> > > > -                     break;
+> > > > -     }
+> > > > +     mmc_rescan_try_freq(host, host->f_min);
+> > >
+> > > What about for non-qualcomm controllers?  Did this just break their
+> > > functionality?
+> >
+> > Yes it does, obviously.
+> >
+> > Greg, thanks for providing some valuable feedback for Bao for a couple
+> > of the patches in this series.
+> >
+> > I have also browsed through the series, but stopped providing feedback
+> > after patch1, when I realized that these are all just downstream
+> > vendor specific hacks.
+>
+> That's all kernel drivers are, vendor-specific quirks/hacks around
+> broken hardware :)
+>
+> Splitting this out into logical fixes, like some of these are here, is
+> great.  But breaking non-qualcomm hardware like this patch would do, is
+> obviously not ok.
+>
+> > Sure, I guess most of the patches can be reworked as upstreamable
+> > solutions,
+>
+> They have to be upstreamable, you don't want these in random vendor
+> trees as they go no where and atrophy and break users.  We want them in
+> our main tree for everyone to use for the obvious reason that they are
+> needed to get real hardware working.
 
-The offending commit caused serdev core to always be built-in, something
-which breaks the build of dependent modules when serdev is being built
-as a module:
+I fully agree and I am willing to help!
 
-ERROR: "__serdev_device_driver_register" [drivers/gnss/gnss-ubx.ko] undefined!
-...
-make[2]: *** [/home/johan/work/omicron/src/linux/scripts/Makefile.modpost:94: __modpost] Error 1
+Just didn't want to waste my time reviewing all at once in great
+detail - if it turns out that the submitter don't care to re-spin, as
+that has happened before (not by Bao).
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
----
- drivers/tty/serdev/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serdev/Makefile b/drivers/tty/serdev/Makefile
-index f71bb931735b..078417e5b068 100644
---- a/drivers/tty/serdev/Makefile
-+++ b/drivers/tty/serdev/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- serdev-objs := core.o
- 
--obj-y += serdev.o
-+obj-$(CONFIG_SERIAL_DEV_BUS) += serdev.o
- 
- obj-$(CONFIG_SERIAL_DEV_CTRL_TTYPORT) += serdev-ttyport.o
--- 
-2.24.1
-
+Kind regards
+Uffe
