@@ -2,87 +2,162 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E656D123D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 03:59:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46F76123DA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 04:00:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfLRC7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 21:59:44 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:57032 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfLRC7o (ORCPT
+        id S1726666AbfLRDAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 22:00:32 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39883 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfLRDAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 21:59:44 -0500
-Received: from [10.137.112.111] (unknown [131.107.147.111])
-        by linux.microsoft.com (Postfix) with ESMTPSA id D0DA320106B3;
-        Tue, 17 Dec 2019 18:59:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D0DA320106B3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576637984;
-        bh=Z44wdEIcJtKPFcY3vbh8wsiIFch8YhhPxMzvPWXXNjY=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=ZNbUAdYjtY9qgyFgDaZsasSYZuLl6ChuL25ub8ag3UA0ZP3DGCH3CTxI88c8qErM0
-         3g+fTf/eUCEmvAVROLyBjsIaZUfq7GobLfEXufnuCp1YAUtn0udiejKb7LVDOyVF/8
-         xU1XvBAUKei+HlozOahrn1Jm5w44Up1xq1lHJGZc=
-Subject: Re: [PATCH v4 2/2] IMA: Call workqueue functions to measure queued
- keys
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        zohar@linux.ibm.com, linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191213171827.28657-1-nramas@linux.microsoft.com>
- <20191213171827.28657-3-nramas@linux.microsoft.com>
- <1576257955.8504.20.camel@HansenPartnership.com>
- <39624b97-245c-ed05-27c5-588787aacc00@linux.microsoft.com>
- <1576423353.3343.3.camel@HansenPartnership.com>
- <1568ff14-316f-f2c4-84d4-7ca4c0a1936a@linux.microsoft.com>
- <1576479187.3784.1.camel@HansenPartnership.com>
- <8844a360-6d1e-1435-db7c-fd7739487168@linux.microsoft.com>
- <1576531022.3365.6.camel@HansenPartnership.com>
- <35a6c241-9a46-2657-51d1-0c04d32a9fae@linux.microsoft.com>
- <f25b7299-1530-2e43-cdf4-2208c82fc768@linux.microsoft.com>
- <152580f3-2a1f-fa33-cc25-f25747a470a5@linux.microsoft.com>
- <1576634499.14900.10.camel@HansenPartnership.com>
- <edda07dc-c615-58f1-5689-4692c3fb3315@linux.microsoft.com>
-Message-ID: <95606a84-ea7d-dda2-5ced-7418fe802ecf@linux.microsoft.com>
-Date:   Tue, 17 Dec 2019 19:00:10 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Tue, 17 Dec 2019 22:00:32 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 77so515844oty.6;
+        Tue, 17 Dec 2019 19:00:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kwTUvw7XaRz2SlqwuKp+LVG2T88wKaGXcyDmN7449mo=;
+        b=M/qv0ZCZkJmxKvIbZ4PXNPWC/fhpd48XEONEmvva4ejd2BHXSxvrlhZ7SCIYEmuoFv
+         Ik5Xu3mWH63/5iHKxKWWHrTFKDsSQESLrupFeEt0xZb8NwQOwIGFJav3ttaH0m6GNW51
+         XHYXeh1pHCczyCjIBveXYhH4SNvpZfTuggOrRzKdUnSpnpuAn9NDAbupV8pQE8C6v/Eo
+         yMIEMVS+FeOGTWwjy801kTD5c/BB8fQJHqdlGXk/oqCu4max09GZAxwLb7LzQLLemhcP
+         oBdSSOspGKJk6mKm7uFQ6W0wt16uOedOnliZPdJ67Iv1R6PGlT18n48Pe7xj7+Ppm5sf
+         GwLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kwTUvw7XaRz2SlqwuKp+LVG2T88wKaGXcyDmN7449mo=;
+        b=B+ukqtv9jQw5x1oTtHPEUWjZIY5hMbEcWi47hSmV/UNPRMHy3xFHa01UDr/3z83UXF
+         F61ZZ15O6y8JZBQhpdgcgdKBaoXOQCwsOIMRdgPBmiFXIPuW/jwRs8H/pOIbEZCzF/vQ
+         PIew/LN5EuFyXISedyOqDvP6L2a4k/ZTv+DhaUQ6+6PuS82wAYRrLMFsWPfQQtOSvNFE
+         p7gJYMHwbdxs23BFHOy0ICfMj+gA0/cIrRJDQi5RYOah5dFffj3hO7NBQ+Nx90icW+FC
+         Ne60E/tchZtBX1qEr5AGIaajMK77id9+zWiVHKYjHSTsc6gCcSyrWCxGH1rkNBUA40C/
+         B+pA==
+X-Gm-Message-State: APjAAAXZQoL+phcRnrSufRKzPmKlM3q54I3qD71ajXlA9/iS3I2OIsbD
+        UJECX1AVWoxriAxFdc7gv/E=
+X-Google-Smtp-Source: APXvYqwi52DW7BTH/Joy63L2i6a/L8NgInTxr1fjqelbSr7NB6xlsFO0WENr+MWp3f3/50zFaX0Qbg==
+X-Received: by 2002:a05:6830:1442:: with SMTP id w2mr29328otp.143.1576638030607;
+        Tue, 17 Dec 2019 19:00:30 -0800 (PST)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id b3sm327530oie.25.2019.12.17.19.00.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 19:00:30 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] fbmem: Adjust indentation in fb_prepare_logo and fb_blank
+Date:   Tue, 17 Dec 2019 20:00:25 -0700
+Message-Id: <20191218030025.10064-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <edda07dc-c615-58f1-5689-4692c3fb3315@linux.microsoft.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/2019 6:44 PM, Lakshmi Ramasubramanian wrote:
+Clang warns:
 
->>
->> The direct implication of the comment and the lock dance with the
->> temporary list and the processed flag is that stuff can be added to the
->> ima_keys list after you drop the mutex.  Your explanation in the prior
->> couple of emails says that nothing can be added because the
->> ima_process_keys flag setting prevents it.  If the latter is true, you
->> can simply drop the lock after setting the flag and rely on ima_keys
->> not changing to run it through process_buffer_measurement without
->> needing any of the intermediate list or the processed flag.  If the
->> latter isn't true then any key added to ima_keys after the mutex is
->> dropped is never processed.
->>
->> James
+../drivers/video/fbdev/core/fbmem.c:665:3: warning: misleading
+indentation; statement is not part of the previous 'else'
+[-Wmisleading-indentation]
+        if (fb_logo.depth > 4 && depth > 4) {
+        ^
+../drivers/video/fbdev/core/fbmem.c:661:2: note: previous statement is
+here
+        else
+        ^
+../drivers/video/fbdev/core/fbmem.c:1075:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        return ret;
+        ^
+../drivers/video/fbdev/core/fbmem.c:1072:2: note: previous statement is
+here
+        if (!ret)
+        ^
+2 warnings generated.
 
-One more scenario needs to be taken care - that still doesn't require a 
-temp list, but will need a local flag.
+This warning occurs because there are spaces before the tabs on these
+lines. Normalize the indentation in these functions so that it is
+consistent with the Linux kernel coding style and clang no longer warns.
 
-Say, two threads race to call ima_process_queued_keys().
-Both find ima_process_keys flag is false.
-They now race to take to the lock.
-Only the 1st one setting the flag to true should process queued keys.
+Fixes: 1692b37c99d5 ("fbdev: Fix logo if logo depth is less than framebuffer depth")
+Link: https://github.com/ClangBuiltLinux/linux/issues/825
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/video/fbdev/core/fbmem.c | 36 ++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 18 deletions(-)
 
-  -lakshmi
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 0662b61fdb50..bf63cc0e6b65 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -662,20 +662,20 @@ int fb_prepare_logo(struct fb_info *info, int rotate)
+ 		fb_logo.depth = 1;
+ 
+ 
+- 	if (fb_logo.depth > 4 && depth > 4) {
+- 		switch (info->fix.visual) {
+- 		case FB_VISUAL_TRUECOLOR:
+- 			fb_logo.needs_truepalette = 1;
+- 			break;
+- 		case FB_VISUAL_DIRECTCOLOR:
+- 			fb_logo.needs_directpalette = 1;
+- 			fb_logo.needs_cmapreset = 1;
+- 			break;
+- 		case FB_VISUAL_PSEUDOCOLOR:
+- 			fb_logo.needs_cmapreset = 1;
+- 			break;
+- 		}
+- 	}
++	if (fb_logo.depth > 4 && depth > 4) {
++		switch (info->fix.visual) {
++		case FB_VISUAL_TRUECOLOR:
++			fb_logo.needs_truepalette = 1;
++			break;
++		case FB_VISUAL_DIRECTCOLOR:
++			fb_logo.needs_directpalette = 1;
++			fb_logo.needs_cmapreset = 1;
++			break;
++		case FB_VISUAL_PSEUDOCOLOR:
++			fb_logo.needs_cmapreset = 1;
++			break;
++		}
++	}
+ 
+ 	height = fb_logo.logo->height;
+ 	if (fb_center_logo)
+@@ -1060,19 +1060,19 @@ fb_blank(struct fb_info *info, int blank)
+ 	struct fb_event event;
+ 	int ret = -EINVAL;
+ 
+- 	if (blank > FB_BLANK_POWERDOWN)
+- 		blank = FB_BLANK_POWERDOWN;
++	if (blank > FB_BLANK_POWERDOWN)
++		blank = FB_BLANK_POWERDOWN;
+ 
+ 	event.info = info;
+ 	event.data = &blank;
+ 
+ 	if (info->fbops->fb_blank)
+- 		ret = info->fbops->fb_blank(blank, info);
++		ret = info->fbops->fb_blank(blank, info);
+ 
+ 	if (!ret)
+ 		fb_notifier_call_chain(FB_EVENT_BLANK, &event);
+ 
+- 	return ret;
++	return ret;
+ }
+ EXPORT_SYMBOL(fb_blank);
+ 
+-- 
+2.24.1
 
