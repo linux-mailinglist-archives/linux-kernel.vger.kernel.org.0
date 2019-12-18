@@ -2,230 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8E41252AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15AF41252AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfLRUGj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:06:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34068 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbfLRUGg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727704AbfLRUGg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 18 Dec 2019 15:06:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9rC2lluhWmst6sPoNa1SifEs6p/w43BDs1gIkal0A94=; b=uP96Nmt2mIS6jVz44ULow1++Z
-        uMaPwxNRhr16G++pXzw634K3bHHTzhlB5V81DznjL6xTzstcJNHAV4S+jFru2GNSoyxI+NVf/rBsQ
-        SeBCyyp2aROSulVjYk2pxG37fDzCaGE2/ZDH5bz1vR7j9Y133q1xGDqbXmuXzGlg3lZHMwDqC6iOs
-        x3x8BcPQ3Uad9jgOXJ627YSnbjoRAVYmrZ7punGyQil000cQonTNvU262y5OghDYu0CGU+iZ4445R
-        HZgsxQr7i6AyNobzJCWk2zObwcTQRhERypEE8iK1FLX4Z6gK0kefIJzfbDhjj7SUirz5F0T4S8I9N
-        O47ytvwZg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihfaU-0006rf-MK; Wed, 18 Dec 2019 20:06:26 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 54C49980E35; Wed, 18 Dec 2019 21:06:24 +0100 (CET)
-Date:   Wed, 18 Dec 2019 21:06:24 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Giovanni Gherdovich <ggherdovich@suse.cz>
-Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Len Brown <lenb@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>
-Subject: Re: [PATCH v4 2/6] x86,sched: Add support for frequency invariance
- on SKYLAKE_X
-Message-ID: <20191218200624.GI11457@worktop.programming.kicks-ass.net>
-References: <20191113124654.18122-1-ggherdovich@suse.cz>
- <20191113124654.18122-3-ggherdovich@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191113124654.18122-3-ggherdovich@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: from foss.arm.com ([217.140.110.172]:59524 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727541AbfLRUGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:06:36 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9665A31B;
+        Wed, 18 Dec 2019 12:06:35 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1112B3F67D;
+        Wed, 18 Dec 2019 12:06:34 -0800 (PST)
+Date:   Wed, 18 Dec 2019 20:06:33 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: Applied "regulator: axp20x: Fix AXP22x ELDO2 regulator enable bitmask" to the regulator tree
+In-Reply-To: <20191218044720.21990-1-wens@kernel.org>
+Message-Id: <applied-20191218044720.21990-1-wens@kernel.org>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 01:46:50PM +0100, Giovanni Gherdovich wrote:
-> The scheduler needs the ratio freq_curr/freq_max for frequency-invariant
-> accounting. On SKYLAKE_X CPUs set freq_max to the highest frequency that can
-> be sustained by a group of at least 4 cores.
-> 
-> From the changelog of commit 31e07522be56 ("tools/power turbostat: fix
-> decoding for GLM, DNV, SKX turbo-ratio limits"):
-> 
-> >   Newer processors do not hard-code the the number of cpus in each bin
-> >   to {1, 2, 3, 4, 5, 6, 7, 8}  Rather, they can specify any number
-> >   of CPUS in each of the 8 bins:
-> >
-> >   eg.
-> >
-> >   ...
-> >   37 * 100.0 = 3600.0 MHz max turbo 4 active cores
-> >   38 * 100.0 = 3700.0 MHz max turbo 3 active cores
-> >   39 * 100.0 = 3800.0 MHz max turbo 2 active cores
-> >   39 * 100.0 = 3900.0 MHz max turbo 1 active cores
-> >
-> >   could now look something like this:
-> >
-> >   ...
-> >   37 * 100.0 = 3600.0 MHz max turbo 16 active cores
-> >   38 * 100.0 = 3700.0 MHz max turbo 8 active cores
-> >   39 * 100.0 = 3800.0 MHz max turbo 4 active cores
-> >   39 * 100.0 = 3900.0 MHz max turbo 2 active cores
-> 
-> This encoding of turbo levels applies to both SKYLAKE_X and GOLDMONT/GOLDMONT_D,
-> but we treat these two classes in separate commits because their freq_max
-> values need to be different. For SKX we prefer a lower freq_max in the ratio
-> freq_curr/freq_max, allowing load and utilization to overshoot and the
-> schedutil governor to be more performance-oriented. Models from the Atom
-> series (such as GOLDMONT*) are handled in a forthcoming commit as they have to
-> favor power-efficiency over performance.
+The patch
 
-Can we at least use a single function to decode both? A little like the
-below. I'm not married to the naming, but I think it is a little silly
-to have 2 different functions to decode the exact same MSRs.
+   regulator: axp20x: Fix AXP22x ELDO2 regulator enable bitmask
 
-(one could even go as far as to make a boot param to override the {1,4}
-default core count for these things)
+has been applied to the regulator tree at
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.5
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f40ddaa059fdfb472e3aeb733c6220d8e0633a47 Mon Sep 17 00:00:00 2001
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 18 Dec 2019 12:47:20 +0800
+Subject: [PATCH] regulator: axp20x: Fix AXP22x ELDO2 regulator enable bitmask
+
+A copy-paste error was introduced when bitmasks were converted to
+macros, incorrectly setting the enable bitmask for ELDO2 to the one
+for ELDO1 for the AXP22x units.
+
+Fix it by using the correct macro.
+
+On affected boards, ELDO1 and/or ELDO2 are used to power the camera,
+which is currently unsupported.
+
+Fixes: db4a555f7c4c ("regulator: axp20x: use defines for masks")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Link: https://lore.kernel.org/r/20191218044720.21990-1-wens@kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ drivers/regulator/axp20x-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Index: linux-2.6/arch/x86/kernel/smpboot.c
-===================================================================
---- linux-2.6.orig/arch/x86/kernel/smpboot.c
-+++ linux-2.6/arch/x86/kernel/smpboot.c
-@@ -1863,27 +1863,6 @@ static const struct x86_cpu_id has_glm_t
- 	{}
- };
-
--static bool glm_set_cpu_max_freq(u64 *ratio, u64 *turbo_ratio)
--{
--	int err;
--
--	if (!x86_match_cpu(has_glm_turbo_ratio_limits))
--		return false;
--
--	err = rdmsrl_safe(MSR_PLATFORM_INFO, ratio);
--	if (err)
--		return false;
--
--	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT, turbo_ratio);
--	if (err)
--		return false;
--
--	*ratio = (*ratio >> 8) & 0xFF;        /* max P state ratio */
--	*turbo_ratio = *turbo_ratio & 0xFF;   /* highest turbo ratio */
--
--	return true;
--}
--
- static int get_knl_turbo_ratio(u64 *turbo_ratio)
- {
- 	u64 msr;
-@@ -1933,53 +1912,35 @@ static bool knl_set_cpu_max_freq(u64 *ra
- 	return true;
- }
-
--static int get_turbo_ratio_group(u64 *turbo_ratio)
-+static bool skx_set_cpu_max_freq(u64 *ratio, u64 *turbo_ratio, int size)
- {
--	u64 ratio, core_counts;
--	u32 group_size = 0;
--	int err, i, found = 0;
-+	u64 ratios, counts;
-+	u32 group_size;
-+	int err, i;
-
--	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT, &ratio);
--	if (err)
--		return err;
--
--	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT1, &core_counts);
-+	err = rdmsrl_safe(MSR_PLATFORM_INFO, ratio);
- 	if (err)
--		return err;
--
--	for (i = 0; i < 64; i += 8) {
--		group_size = (core_counts >> i) & 0xFF;
--		if (group_size >= 4) {
--			*turbo_ratio = (ratio >> i) & 0xFF;
--			found = 1;
--			break;
--		}
--	}
--
--	if (!found)
--		return 1;
--
--	return 0;
--}
--
--static bool skx_set_cpu_max_freq(u64 *ratio, u64 *turbo_ratio)
--{
--	int err;
--
--	if (!x86_match_cpu(has_skx_turbo_ratio_limits))
- 		return false;
-
--	err = rdmsrl_safe(MSR_PLATFORM_INFO, ratio);
-+	*ratio = (*ratio >> 8) & 0xFF;                /* max P state ratio */
-+
-+	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT, &ratios);
- 	if (err)
- 		return false;
-
--	err = get_turbo_ratio_group(turbo_ratio);  /* 4C (circa) turbo ratio */
-+	err = rdmsrl_safe(MSR_TURBO_RATIO_LIMIT1, &counts);
- 	if (err)
- 		return false;
-
--	*ratio = (*ratio >> 8) & 0xFF;                /* max P state ratio */
-+	for (i = 0; i < 64; i += 8) {
-+		group_size = (counts >> i) & 0xFF;
-+		if (group_size >= size) {
-+			*turbo_ratio = (ratios >> i) & 0xFF;
-+			return true;
-+		}
-+	}
-
--	return true;
-+	return false;
- }
-
- static bool core_set_cpu_max_freq(u64 *ratio, u64 *turbo_ratio)
-@@ -2010,13 +1971,15 @@ static void intel_set_cpu_max_freq(void)
- 	if (slv_set_cpu_max_freq(&ratio, &turbo_ratio))
- 		goto set_value;
-
--	if (glm_set_cpu_max_freq(&ratio, &turbo_ratio))
-+	if (x86_match_cpu(has_glm_turbo_ratio_limits) &&
-+	    skx_set_cpu_max_freq(&ratio, &turbo_ratio, 1))
- 		goto set_value;
-
- 	if (knl_set_cpu_max_freq(&ratio, &turbo_ratio))
- 		goto set_value;
-
--	if (skx_set_cpu_max_freq(&ratio, &turbo_ratio))
-+	if (x86_match_cpu(has_skx_turbo_ratio_limits) &&
-+	    skx_set_cpu_max_freq(&ratio, &turbo_ratio, 4))
- 		goto set_value;
-
- 	core_set_cpu_max_freq(&ratio, &turbo_ratio);
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 989506bd90b1..fe369cba34fb 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -605,7 +605,7 @@ static const struct regulator_desc axp22x_regulators[] = {
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO1_MASK),
+ 	AXP_DESC(AXP22X, ELDO2, "eldo2", "eldoin", 700, 3300, 100,
+ 		 AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
+-		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO1_MASK),
++		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
+ 	AXP_DESC(AXP22X, ELDO3, "eldo3", "eldoin", 700, 3300, 100,
+ 		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
+-- 
+2.20.1
 
