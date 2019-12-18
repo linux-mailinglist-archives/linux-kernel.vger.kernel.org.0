@@ -2,188 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F9CF1240E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EBCB1240F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:03:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfLRICR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 03:02:17 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45824 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfLRICQ (ORCPT
+        id S1726906AbfLRICz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 03:02:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55967 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726774AbfLRIC2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 03:02:16 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b9so819287pgk.12;
-        Wed, 18 Dec 2019 00:02:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=n363ckt80OC6w9Gla54BO6ui4m8bnWsgDlZFAMHXc0w=;
-        b=W8z2T1d4GwL9jbI1cnNLj+IrMd2q4U8J/2ceDn65wufGtPxsRdVevPpduhlbWU8OEE
-         5wUPDM1BrG8A7XUWiQmsK/K05J0xdxoy+UMW69kxI7hnJ0AuqeEQHAHuKH/TMUsPKMpG
-         4dTxKOkSkmXZfyGFnsD7ueGXnmJKJnhCRxovFhOE4IF4etzugDd3AqLj2CZLfGuXIZaT
-         7jkgEj4YY1EkTsxCgjtR05eaqQ1Z+byhoyCCroX5A5FSJFsqULP6CD+6i23MDiQmT7zS
-         HQP9k/gBZ31czJthgHWlNAcsqhMF3uEAbQOpL2d0GblKnTuHmHX/8wr5PbUcZ3jiQ90b
-         l4ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=n363ckt80OC6w9Gla54BO6ui4m8bnWsgDlZFAMHXc0w=;
-        b=sz4LBoxF0azXwRg+cRjwzp1SI8orFgwTyyF/DW6NCuB+eN3zvczEPc925qjli8MXvL
-         c7xk2hSIDvNvmVmZ6BUShhZi8eqsAMj4NrHLl39BVPN/WU/xdV7kgw/aoRxI9tRaPpkm
-         oU5J6Pfr6ah0jai6zMlFFkqI3Srz67nBk1sm6zPgYlbsEFXmG0ejd56sJ5JzMoRk/jHY
-         uZy7FCW1/LtO5UUaxiHzNcEbgCsjo2NsuK4Q2d33b1SbF81c6iGpan3hmKQVb/b7Mn8G
-         fqOxwip545PfukL4lMS/51HlltkXSBPEVyU3tI77dPBx9UHAY4d6OHiMESmDRTGlV8YG
-         ZjOw==
-X-Gm-Message-State: APjAAAXX4/ENRfbUlw7ZddBcM+emir5umnpblZUePMqH8F+7ahx6a8jS
-        z5yO43err0DpUMVUsmGPLoTHVTtoiRS+fw==
-X-Google-Smtp-Source: APXvYqyepGVLKB4Cj/YWyjabdX/jvjgmd4g6+3rv+6HhyWk73LFUKohNcDCVUebsKWUUzgJzorptrA==
-X-Received: by 2002:a62:3141:: with SMTP id x62mr1634189pfx.214.1576656135864;
-        Wed, 18 Dec 2019 00:02:15 -0800 (PST)
-Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
-        by smtp.gmail.com with ESMTPSA id 11sm1886442pfz.25.2019.12.18.00.02.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 00:02:15 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     bonbons@linux-vserver.org, jikos@kernel.org,
-        benjamin.tissoires@redhat.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] hid: hid-picolcd: fix possible sleep-in-atomic-context bug
-Date:   Wed, 18 Dec 2019 16:02:01 +0800
-Message-Id: <20191218080201.2508-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 18 Dec 2019 03:02:28 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ihUHj-0004ei-JI; Wed, 18 Dec 2019 09:02:19 +0100
+Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ihUHg-0000Ze-C8; Wed, 18 Dec 2019 09:02:16 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Andrew Lunn <andrew@lunn.ch>, Chris Snook <chris.snook@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jay Cliburn <jcliburn@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Vivien Didelot <vivien.didelot@gmail.com>
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mips@vger.kernel.org, Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v7 0/4] add dsa switch support for ar9331
+Date:   Wed, 18 Dec 2019 09:02:11 +0100
+Message-Id: <20191218080215.2151-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep while holding a read lock.
-The function call path (from bottom to top) in Linux 4.19 is:
+changes v6:
+- remove ag71xx changes from this patch set. It needs more work.
+- ar9331: fix register definition and add ASCII art switch documentation.
 
-drivers/hid/hid-core.c, 1459: 
-	hid_alloc_report_buf(GFP_KERNEL) in __hid_request
-./include/linux/hid.h, 1051: 
-	__hid_request in hid_hw_request
-drivers/hid/hid-picolcd_leds.c, 56:
-	hid_hw_request in picolcd_leds_set
-drivers/hid/hid-picolcd_leds.c, 53:
-	_raw_spin_lock_irqsave in picolcd_leds_set
+changes v6:
+- rebase against net-next
 
-drivers/hid/hid-core.c, 1459: 
-	hid_alloc_report_buf(GFP_KERNEL) in __hid_request
-./include/linux/hid.h, 1051: 
-	__hid_request in hid_hw_request
-drivers/hid/hid-picolcd_lcd.c, 49: 
-	hid_hw_request in picolcd_set_contrast
-drivers/hid/hid-picolcd_lcd.c, 46: 
-	_raw_spin_lock_irqsave in picolcd_set_contrast
+changes v5:
+- remote support for port5. The effort of using this port is
+  questionable. Currently, it is better to not use it at all, then
+  adding buggy support.
+- remove port enable call back. There is nothing what we actually need
+  to enable.
+- rebase it against v5.5-rc1 
 
-drivers/hid/hid-core.c, 1459: 
-	hid_alloc_report_buf(GFP_KERNEL) in __hid_request
-./include/linux/hid.h, 1051: 
-	__hid_request in hid_hw_request
-drivers/hid/hid-picolcd_core.c, 245: 
-	hid_hw_request in picolcd_reset
-drivers/hid/hid-picolcd_core.c, 235: 
-	_raw_spin_lock_irqsave in picolcd_reset
+changes v4:
+- ag71xx: ag71xx_mac_validate fix always false comparison (&& -> ||)
+- tag_ar9331: use skb_pull_rcsum() instead of skb_pull().
+- tag_ar9331: drop skb_set_mac_header()
 
-drivers/hid/hid-core.c, 1459: 
-	hid_alloc_report_buf(GFP_KERNEL) in __hid_request
-./include/linux/hid.h, 1051: 
-	__hid_request in hid_hw_request
-drivers/hid/hid-picolcd_core.c, 111: 
-	hid_hw_request in picolcd_send_and_wait
-drivers/hid/hid-picolcd_core.c, 100: 
-	_raw_spin_lock_irqsave in picolcd_send_and_wait
+changes v3:
+- ag71xx: ag71xx_mac_config: ignore MLO_AN_INBAND mode. It is not
+  supported by HW and SW.
+- ag71xx: ag71xx_mac_validate: return all supported bits on
+  PHY_INTERFACE_MODE_NA
 
-hid_alloc_report_buf(GFP_KERNEL) can sleep at runtime.
+changes v2:
+- move Atheros AR9331 TAG format to separate patch
+- use netdev_warn_once in the tag driver to reduce potential message spam
+- typo fixes
+- reorder tag driver alphabetically 
+- configure switch to maximal frame size
+- use mdiobus_read/write
+- fail if mdio sub node is not found
+- add comment for post reset state
+- remove deprecated comment about device id
+- remove phy-handle option for node with fixed-link
+- ag71xx: set 1G support only for GMII mode
 
-To fix these bugs, hid_hw_request() is called without holding the
-spinlock.
+This patch series provides dsa switch support for Atheros ar9331 WiSoC.
+As side effect ag71xx needed to be ported to phylink to make the switch
+driver (as well phylink based) work properly.
 
-These bugs are found by a static analysis tool STCheck written by myself.
+Oleksij Rempel (4):
+  dt-bindings: net: dsa: qca,ar9331 switch documentation
+  MIPS: ath79: ar9331: add ar9331-switch node
+  net: dsa: add support for Atheros AR9331 TAG format
+  net: dsa: add support for Atheros AR9331 built-in switch
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/hid/hid-picolcd_core.c | 4 ++--
- drivers/hid/hid-picolcd_lcd.c  | 6 ++++--
- drivers/hid/hid-picolcd_leds.c | 6 ++++--
- 3 files changed, 10 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/net/dsa/ar9331.txt    | 148 +++
+ arch/mips/boot/dts/qca/ar9331.dtsi            | 119 ++-
+ arch/mips/boot/dts/qca/ar9331_dpt_module.dts  |  13 +
+ drivers/net/dsa/Kconfig                       |   2 +
+ drivers/net/dsa/Makefile                      |   1 +
+ drivers/net/dsa/qca/Kconfig                   |  11 +
+ drivers/net/dsa/qca/Makefile                  |   2 +
+ drivers/net/dsa/qca/ar9331.c                  | 855 ++++++++++++++++++
+ include/net/dsa.h                             |   2 +
+ net/dsa/Kconfig                               |   6 +
+ net/dsa/Makefile                              |   1 +
+ net/dsa/tag_ar9331.c                          |  96 ++
+ 12 files changed, 1255 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/net/dsa/ar9331.txt
+ create mode 100644 drivers/net/dsa/qca/Kconfig
+ create mode 100644 drivers/net/dsa/qca/Makefile
+ create mode 100644 drivers/net/dsa/qca/ar9331.c
+ create mode 100644 net/dsa/tag_ar9331.c
 
-diff --git a/drivers/hid/hid-picolcd_core.c b/drivers/hid/hid-picolcd_core.c
-index 1b5c63241af0..55d1892daa15 100644
---- a/drivers/hid/hid-picolcd_core.c
-+++ b/drivers/hid/hid-picolcd_core.c
-@@ -99,8 +99,8 @@ struct picolcd_pending *picolcd_send_and_wait(struct hid_device *hdev,
- 		work = NULL;
- 	} else {
- 		data->pending = work;
--		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
- 		spin_unlock_irqrestore(&data->lock, flags);
-+		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
- 		wait_for_completion_interruptible_timeout(&work->ready, HZ*2);
- 		spin_lock_irqsave(&data->lock, flags);
- 		data->pending = NULL;
-@@ -233,8 +233,8 @@ int picolcd_reset(struct hid_device *hdev)
- 		spin_unlock_irqrestore(&data->lock, flags);
- 		return -ENODEV;
- 	}
--	hid_hw_request(hdev, report, HID_REQ_SET_REPORT);
- 	spin_unlock_irqrestore(&data->lock, flags);
-+	hid_hw_request(hdev, report, HID_REQ_SET_REPORT);
- 
- 	error = picolcd_check_version(hdev);
- 	if (error)
-diff --git a/drivers/hid/hid-picolcd_lcd.c b/drivers/hid/hid-picolcd_lcd.c
-index 0c4b76de8ae5..1fd291674ffe 100644
---- a/drivers/hid/hid-picolcd_lcd.c
-+++ b/drivers/hid/hid-picolcd_lcd.c
-@@ -26,6 +26,7 @@ static int picolcd_get_contrast(struct lcd_device *ldev)
- static int picolcd_set_contrast(struct lcd_device *ldev, int contrast)
- {
- 	struct picolcd_data *data = lcd_get_data(ldev);
-+	int status;
- 	struct hid_report *report = picolcd_out_report(REPORT_CONTRAST, data->hdev);
- 	unsigned long flags;
- 
-@@ -35,9 +36,10 @@ static int picolcd_set_contrast(struct lcd_device *ldev, int contrast)
- 	data->lcd_contrast = contrast & 0x0ff;
- 	spin_lock_irqsave(&data->lock, flags);
- 	hid_set_field(report->field[0], 0, data->lcd_contrast);
--	if (!(data->status & PICOLCD_FAILED))
--		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
-+	status = data->status;
- 	spin_unlock_irqrestore(&data->lock, flags);
-+	if (!(status & PICOLCD_FAILED))
-+		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
- 	return 0;
- }
- 
-diff --git a/drivers/hid/hid-picolcd_leds.c b/drivers/hid/hid-picolcd_leds.c
-index 6b505a753511..6652aa6b98dd 100644
---- a/drivers/hid/hid-picolcd_leds.c
-+++ b/drivers/hid/hid-picolcd_leds.c
-@@ -32,6 +32,7 @@
- void picolcd_leds_set(struct picolcd_data *data)
- {
- 	struct hid_report *report;
-+	int status;
- 	unsigned long flags;
- 
- 	if (!data->led[0])
-@@ -42,9 +43,10 @@ void picolcd_leds_set(struct picolcd_data *data)
- 
- 	spin_lock_irqsave(&data->lock, flags);
- 	hid_set_field(report->field[0], 0, data->led_state);
--	if (!(data->status & PICOLCD_FAILED))
--		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
-+	status = data->status;
- 	spin_unlock_irqrestore(&data->lock, flags);
-+	if (!(status & PICOLCD_FAILED))
-+		hid_hw_request(data->hdev, report, HID_REQ_SET_REPORT);
- }
- 
- static void picolcd_led_set_brightness(struct led_classdev *led_cdev,
 -- 
-2.17.1
+2.24.0
 
