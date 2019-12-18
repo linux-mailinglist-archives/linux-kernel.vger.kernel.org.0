@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA83C125508
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9503A1254F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfLRVpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:45:52 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35503 "EHLO
+        id S1726916AbfLRVpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:45:25 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33643 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfLRVpX (ORCPT
+        with ESMTP id S1726777AbfLRVpY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:45:23 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e12so3221736qto.2
+        Wed, 18 Dec 2019 16:45:24 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d5so3231324qto.0
         for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:45:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=smdZf1o+sX783B1zfvINLQ+T4hhryNo5pnaWNDicN+w=;
-        b=Nkh5Ip7SZmbZymYjXgRNVT8hpuP+H+1DBCUm/eKcvPvLxx7kk5kKSVpdVxRQvw6vE5
-         XUN4tHnqhpiulhSwI2M5CjYdZ7TQIE27ECW1vNb3xZY5+SxJGnDegaRFIDXKiX5JD0BU
-         xDTceFkS+XR4xN1zwz870FqoLsrll4zA7Y/7AuSP70RGBOBnLKZy2UMUnezJo5xTxu8P
-         2h8/ykDV1y6K0Lq43IxfaVM1o1w8vGxEWS1raLCpHwewNI7VpjHKbymAKQIpzh5k9307
-         ObwA4p8c7OJ51PoSpnb/Hz/6czF39gpK+2Af2u8VIIRE/Fq9FrBfqOFaxajGyt+QbS70
-         L1+g==
-X-Gm-Message-State: APjAAAWpIQKnrTU77N0w4Uo+bO+4bDC8+HInIhIZTVnHDpWHa8dcyxoy
-        jBPi5Uz5QPGzIZjThC5jNi4=
-X-Google-Smtp-Source: APXvYqxz4aQkah1tsveWVSYFDT41z4OhxIBGwyXDIbTrnzGGHpMUzLrAUNC4vouWn/W/tjlWDjiKCw==
-X-Received: by 2002:ac8:4257:: with SMTP id r23mr4223243qtm.126.1576705522731;
-        Wed, 18 Dec 2019 13:45:22 -0800 (PST)
+        bh=D9pT2S8k/algrgf4ExBtGqGPejHqjkU67Sg1NKhWPfA=;
+        b=C9LTwtb8ICVt3jFPjRB63z0JTmq5jCFBlc8nt/CGw3cMz7Z9QOWSNCA9wtlYu9XSUY
+         Pbggtd/owU1N28N2Pi8xceFFNGsR+NII/av95+8tW+Kbx7MS6kIWN34rPP/0Pr65qAnw
+         9vN0tvrZ7Ikp5M336DWmLcN9FjluwLdImw1wJMT6wlUMh9bI4lNNdLRnidF27v8wIRVm
+         tbQ6U+Zg7Wrgog7mJLjGHSlNZGTo4aMIjNrBNRTxjnb7UZ6iG9j6nasOqlA9mcjbJvTT
+         0K3CLMPPThDkT/hmADKkaCkTnaP+r4FDMgjNci7zGASuo8a4pzELL3t8W85IzKM4p54u
+         3rcw==
+X-Gm-Message-State: APjAAAX8WVsBkuIjiXh0MoJB1TRP+y7So2707SYqw+6uvOG/V7q+J500
+        /Nx1sYfaDoEDhv6PgdIqCEM=
+X-Google-Smtp-Source: APXvYqxgM9DLUoP4ysfbHmTDmTMxLtRgelR3zOIU1ZoMj0aWbBmkxr5is/UTyQ8Ycb++OmklUh0flA==
+X-Received: by 2002:ac8:3526:: with SMTP id y35mr4043668qtb.97.1576705523447;
+        Wed, 18 Dec 2019 13:45:23 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.21
+        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 18 Dec 2019 13:45:22 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 18/24] arch/riscv/setup: Drop dummy_con initialization
-Date:   Wed, 18 Dec 2019 16:45:00 -0500
-Message-Id: <20191218214506.49252-19-nivedita@alum.mit.edu>
+Subject: [PATCH v2 19/24] arch/s390/setup: Drop dummy_con initialization
+Date:   Wed, 18 Dec 2019 16:45:01 -0500
+Message-Id: <20191218214506.49252-20-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191218214506.49252-1-nivedita@alum.mit.edu>
 References: <20191218211231.GA918900@kroah.com>
@@ -57,23 +57,22 @@ Drop it from arch setup code.
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- arch/riscv/kernel/setup.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/s390/kernel/setup.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-index 365ff8420bfe..9babfcf3bb70 100644
---- a/arch/riscv/kernel/setup.c
-+++ b/arch/riscv/kernel/setup.c
-@@ -78,9 +78,5 @@ void __init setup_arch(char **cmdline_p)
- 	setup_smp();
+diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+index 9cbf490fd162..703cfbca2d25 100644
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -241,8 +241,6 @@ static void __init conmode_default(void)
+ 		SET_CONSOLE_SCLP;
  #endif
- 
--#ifdef CONFIG_DUMMY_CONSOLE
--	conswitchp = &dummy_con;
--#endif
--
- 	riscv_fill_hwcap();
+ 	}
+-	if (IS_ENABLED(CONFIG_VT) && IS_ENABLED(CONFIG_DUMMY_CONSOLE))
+-		conswitchp = &dummy_con;
  }
+ 
+ #ifdef CONFIG_CRASH_DUMP
 -- 
 2.24.1
 
