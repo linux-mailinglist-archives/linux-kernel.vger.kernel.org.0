@@ -2,57 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB00123E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C949123E9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfLREkS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 23:40:18 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46371 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLREkS (ORCPT
+        id S1726636AbfLREkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 23:40:22 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33494 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfLREkU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 23:40:18 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z124so528672pgb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:40:18 -0800 (PST)
+        Tue, 17 Dec 2019 23:40:20 -0500
+Received: by mail-pl1-f196.google.com with SMTP id c13so408157pls.0
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:40:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HQJWlXLG6wIwMc0aEcbqaUZ0sC986f7UTtyRAVS20kc=;
-        b=UL0PfpNM1vMMyCDUHBSnIFUHHrh3Vn6JWSKqsuKHxs34u58j2OEtg87+kqO/Fb0rNh
-         NPFKLSPkfBl0slk9ERABT+HIp+YdWrEgxoroON1zDP/qhCOhurrsNhaL2isRr3rSJqj/
-         Mpi2hqGwLa88m2W8+iX8YoOAJu7Pv0sPPdISUvl7y+0BNwfbydadsDOcLHEuwk28OwC4
-         Lv2GbBcl1EGV5GvvXJQVWlMQKIrfRmFUJ0IciOmvObSVcO7BxFAGQLTeCfvVJIqa7oFr
-         Lmo0wGhulCkYiVAjcLUcQfO6QwepXR8rks5XeNepM0CSJjFjWqCQYqW670YjSvNj1mlQ
-         PVNA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ch1xpBs7tWZiDXbLKgnS0zrW6JPy9+Lj1zi5nVSNmf0=;
+        b=i5vbLQU4qpVW5MGMSWfK+XMYKjxF2VPs4XfcTcMhcVIKpGJBe7PGcCxZpxAc8P5Fd7
+         gZDAGvqSHgS6NKmEEv8zXuUI8q2kkkUODMXUK7FULz2j0p0L3yP7vhw6rVzyE7cfD65l
+         rMnAdLpehDb9coTaVHTVJGiLjvVzH0a9p7d1cVlleDRwNq2ky7Jym1FUPjX3U478oWog
+         JsJQbZPD870IFKg04kAcMV0Zz5KlumrEOGEm70pkAtq3SAuXbTM4CcCTp8tmPXuiyjkk
+         MFfiLf5mosvUWYu6rtu83enHYlAQBLWMpRI5VaqInKHp5sonhQ+1VCbM4TrsVjtrHhLZ
+         fzsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HQJWlXLG6wIwMc0aEcbqaUZ0sC986f7UTtyRAVS20kc=;
-        b=udXacIclLVwjF0T/HqShY2PoBjO6al5tgbC4tHx7DBQ0+iHkJ6P+ksgB5qr9js0JAt
-         BPYH1Go47nImxuIeeYLRnGII+PzvuTGhg37Zv+/ury8XdzNFroQ11eEjcrQVjkUwPneV
-         kzvf4GoprykJ5ZSh7FFoGJadZaC/46y+SrE/yJ4LCjQOOJqpTd8Nf89bG7G3JjGsN/PR
-         QO4sZ1cDeRSvDbN6uzrKoQ3weFc+v6Je34fS+aJ5gs+gcg6kf2/xjQLuyxhXKVCqBZ9s
-         znShDlHn38aGRRhUn8jrn0RJx4+ptYoBsqpEU41P0WZNU3NkydycMOzKzya5uy74l3Oo
-         kq/A==
-X-Gm-Message-State: APjAAAVvGEg+JX1JKIUPjkEjyS0MMFuBB0qE1zHNgu3HC7QC83UKn1Qa
-        YJd50jmW10FAbz+6srPpdQDVhZ0q0so=
-X-Google-Smtp-Source: APXvYqx4iNPHn22Lr5oaFHZmr8Lnu+1lktiB7oRLjpeOEOd9kUF651mdDGt88/A5DCgd46IlHm3fVQ==
-X-Received: by 2002:a63:f202:: with SMTP id v2mr679275pgh.420.1576644017839;
-        Tue, 17 Dec 2019 20:40:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ch1xpBs7tWZiDXbLKgnS0zrW6JPy9+Lj1zi5nVSNmf0=;
+        b=NnDerVJQo9u4owpDekUx5NYjOVZPi03fcdPKEoFAXBOzmRdPhAxpgMX9gylULBLAV4
+         7bklr63HNlOvN/KRbxb3Vr5ppb4NQDmnKyN9/cTsTCyEZLf4KBaa6qZWpjUqoEPNqpgx
+         e/9juTMJtCvfW/cuQyPi3ZrvHwWnosj0HkADNqdW1bmczteu+NwrEQZN46fhFs1duLq3
+         xPi45VB38tXwmqgMCVXTc1xRiSz+qSfm72RX76dCmRJxT1wAAuKRgTYmx2W02mkV/whU
+         lhyXyZF163MRY5appYJvn4OE2Bw0Gi2ElDw7caPm5GwCLC0AobVRNXAy0WCOhx3mIKLP
+         BNgg==
+X-Gm-Message-State: APjAAAXKuDLwkjIenBH8tdirdKKYdDe8ppQYatELHN6U5f0EUiDOaoLU
+        drrvROB9YCi4drZAUKqzDso=
+X-Google-Smtp-Source: APXvYqy4jD0JjiT4VzPGi+Jz6Zn6cuxjRyWsHALLTYtWmuxVm7k4EjjcyWpARRZpVPPL25gDilrueg==
+X-Received: by 2002:a17:902:6a87:: with SMTP id n7mr338770plk.273.1576644018804;
+        Tue, 17 Dec 2019 20:40:18 -0800 (PST)
 Received: from tw-172-25-31-76.office.twttr.net ([8.25.197.24])
-        by smtp.gmail.com with ESMTPSA id j21sm781105pfe.175.2019.12.17.20.40.16
+        by smtp.gmail.com with ESMTPSA id j21sm781105pfe.175.2019.12.17.20.40.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 20:40:17 -0800 (PST)
+        Tue, 17 Dec 2019 20:40:18 -0800 (PST)
 From:   Cong Wang <xiyou.wangcong@gmail.com>
 To:     iommu@lists.linux-foundation.org
 Cc:     robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, Cong Wang <xiyou.wangcong@gmail.com>
-Subject: [Patch v3 0/3] iommu: reduce spinlock contention on fast path
-Date:   Tue, 17 Dec 2019 20:39:48 -0800
-Message-Id: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
+        joro@8bytes.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [Patch v3 1/3] iommu: avoid unnecessary magazine allocations
+Date:   Tue, 17 Dec 2019 20:39:49 -0800
+Message-Id: <20191218043951.10534-2-xiyou.wangcong@gmail.com>
 X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
+References: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,24 +63,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset contains three small optimizations for the global spinlock
-contention in IOVA cache. Our memcache perf test shows this reduced its
-p999 latency down by 45% on AMD when IOMMU is enabled.
+The IOVA cache algorithm implemented in IOMMU code does not
+exactly match the original algorithm described in the paper
+"Magazines and Vmem: Extending the Slab Allocator to Many
+CPUs and Arbitrary Resources".
 
-(Resending v3 on Joerg's request.)
+Particularly, it doesn't need to free the loaded empty magazine
+when trying to put it back to global depot. To make it work, we
+have to pre-allocate magazines in the depot and only recycle them
+when all of them are full.
 
-Cong Wang (3):
-  iommu: avoid unnecessary magazine allocations
-  iommu: optimize iova_magazine_free_pfns()
-  iommu: avoid taking iova_rbtree_lock twice
+Before this patch, rcache->depot[] contains either full or
+freed entries, after this patch, it contains either full or
+empty (but allocated) entries.
 
+Together with a few other changes to make it exactly match
+the pseudo code in the paper.
+
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: John Garry <john.garry@huawei.com>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 ---
-v3: improve changelog, no code change
-v2: fix a memory leak
+ drivers/iommu/iova.c | 45 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 28 insertions(+), 17 deletions(-)
 
- drivers/iommu/iova.c | 75 ++++++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 41c605b0058f..cb473ddce4cf 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -862,12 +862,16 @@ static void init_iova_rcaches(struct iova_domain *iovad)
+ 	struct iova_cpu_rcache *cpu_rcache;
+ 	struct iova_rcache *rcache;
+ 	unsigned int cpu;
+-	int i;
++	int i, j;
+ 
+ 	for (i = 0; i < IOVA_RANGE_CACHE_MAX_SIZE; ++i) {
+ 		rcache = &iovad->rcaches[i];
+ 		spin_lock_init(&rcache->lock);
+ 		rcache->depot_size = 0;
++		for (j = 0; j < MAX_GLOBAL_MAGS; ++j) {
++			rcache->depot[j] = iova_magazine_alloc(GFP_KERNEL);
++			WARN_ON(!rcache->depot[j]);
++		}
+ 		rcache->cpu_rcaches = __alloc_percpu(sizeof(*cpu_rcache), cache_line_size());
+ 		if (WARN_ON(!rcache->cpu_rcaches))
+ 			continue;
+@@ -900,24 +904,30 @@ static bool __iova_rcache_insert(struct iova_domain *iovad,
+ 
+ 	if (!iova_magazine_full(cpu_rcache->loaded)) {
+ 		can_insert = true;
+-	} else if (!iova_magazine_full(cpu_rcache->prev)) {
++	} else if (iova_magazine_empty(cpu_rcache->prev)) {
+ 		swap(cpu_rcache->prev, cpu_rcache->loaded);
+ 		can_insert = true;
+ 	} else {
+-		struct iova_magazine *new_mag = iova_magazine_alloc(GFP_ATOMIC);
++		spin_lock(&rcache->lock);
++		if (rcache->depot_size < MAX_GLOBAL_MAGS) {
++			swap(rcache->depot[rcache->depot_size], cpu_rcache->prev);
++			swap(cpu_rcache->prev, cpu_rcache->loaded);
++			rcache->depot_size++;
++			can_insert = true;
++		} else {
++			mag_to_free = cpu_rcache->loaded;
++		}
++		spin_unlock(&rcache->lock);
++
++		if (mag_to_free) {
++			struct iova_magazine *new_mag = iova_magazine_alloc(GFP_ATOMIC);
+ 
+-		if (new_mag) {
+-			spin_lock(&rcache->lock);
+-			if (rcache->depot_size < MAX_GLOBAL_MAGS) {
+-				rcache->depot[rcache->depot_size++] =
+-						cpu_rcache->loaded;
++			if (new_mag) {
++				cpu_rcache->loaded = new_mag;
++				can_insert = true;
+ 			} else {
+-				mag_to_free = cpu_rcache->loaded;
++				mag_to_free = NULL;
+ 			}
+-			spin_unlock(&rcache->lock);
+-
+-			cpu_rcache->loaded = new_mag;
+-			can_insert = true;
+ 		}
+ 	}
+ 
+@@ -963,14 +973,15 @@ static unsigned long __iova_rcache_get(struct iova_rcache *rcache,
+ 
+ 	if (!iova_magazine_empty(cpu_rcache->loaded)) {
+ 		has_pfn = true;
+-	} else if (!iova_magazine_empty(cpu_rcache->prev)) {
++	} else if (iova_magazine_full(cpu_rcache->prev)) {
+ 		swap(cpu_rcache->prev, cpu_rcache->loaded);
+ 		has_pfn = true;
+ 	} else {
+ 		spin_lock(&rcache->lock);
+ 		if (rcache->depot_size > 0) {
+-			iova_magazine_free(cpu_rcache->loaded);
+-			cpu_rcache->loaded = rcache->depot[--rcache->depot_size];
++			swap(rcache->depot[rcache->depot_size - 1], cpu_rcache->prev);
++			swap(cpu_rcache->prev, cpu_rcache->loaded);
++			rcache->depot_size--;
+ 			has_pfn = true;
+ 		}
+ 		spin_unlock(&rcache->lock);
+@@ -1019,7 +1030,7 @@ static void free_iova_rcaches(struct iova_domain *iovad)
+ 			iova_magazine_free(cpu_rcache->prev);
+ 		}
+ 		free_percpu(rcache->cpu_rcaches);
+-		for (j = 0; j < rcache->depot_size; ++j)
++		for (j = 0; j < MAX_GLOBAL_MAGS; ++j)
+ 			iova_magazine_free(rcache->depot[j]);
+ 	}
+ }
 -- 
 2.21.0
 
