@@ -2,73 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0575D124FAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AD4124FAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:51:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLRRuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 12:50:35 -0500
-Received: from foss.arm.com ([217.140.110.172]:55570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbfLRRue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 12:50:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1309B1FB;
-        Wed, 18 Dec 2019 09:50:34 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 856C13F67D;
-        Wed, 18 Dec 2019 09:50:33 -0800 (PST)
-Date:   Wed, 18 Dec 2019 17:50:31 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH 2/4] ASoC: meson: axg-fifo: add fifo depth to the
- bindings documentation
-Message-ID: <20191218175031.GM3219@sirena.org.uk>
-References: <20191218172420.1199117-1-jbrunet@baylibre.com>
- <20191218172420.1199117-3-jbrunet@baylibre.com>
+        id S1727324AbfLRRuz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 12:50:55 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:55726 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726960AbfLRRuz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 12:50:55 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576691454; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=bFXvzXoFTxvglZdtYZicMRuOxhYqT/9wAIQNclYB/7Y=;
+ b=XVy5uyzWklDOgpaM+0/RTZV/Gd8Ygf3H2S74Wk0vFI6EkpqdhYyiKPflr9nakmLx+iI+iHWy
+ kBmWw50C5+ID4TyMLAwRmtdq5PhIP05h/3akwpSSl34gWN3NidGVcMkSySiY70iiw2KNup/U
+ p4M8Kv5J6Wv/riP0jtJr2BQrOiI=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfa66fd.7f7b8042da40-smtp-out-n02;
+ Wed, 18 Dec 2019 17:50:53 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 099A7C4479C; Wed, 18 Dec 2019 17:50:52 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC4D0C433CB;
+        Wed, 18 Dec 2019 17:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC4D0C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="KSyhVCl2eeZHT0Rn"
-Content-Disposition: inline
-In-Reply-To: <20191218172420.1199117-3-jbrunet@baylibre.com>
-X-Cookie: Power is poison.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH][next] ath11k: fix several spelling mistakes
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191211083443.372506-1-colin.king@canonical.com>
+References: <20191211083443.372506-1-colin.king@canonical.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        ath11k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191218175052.099A7C4479C@smtp.codeaurora.org>
+Date:   Wed, 18 Dec 2019 17:50:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Colin King <colin.king@canonical.com> wrote:
 
---KSyhVCl2eeZHT0Rn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> There are several spelling mistakes in warning and debug messages,
+> fix them.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-On Wed, Dec 18, 2019 at 06:24:18PM +0100, Jerome Brunet wrote:
+Patch applied to ath-next branch of ath.git, thanks.
 
-> Add a new property with the depth of the fifo in bytes. This is useful
-> since some instance of the fifo, even on the same SoC, may have different
-> depth. The depth is useful is set some parameters of the fifo.
+345a4f223a7c ath11k: fix several spelling mistakes
 
-Can't we figure this out from the compatible strings?  They look SoC
-specific (which is good).  That means we don't need to add new
-properties for each quirk that separates the variants.
+-- 
+https://patchwork.kernel.org/patch/11284409/
 
---KSyhVCl2eeZHT0Rn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36ZucACgkQJNaLcl1U
-h9DwRAf/XO9oHDzn1VThOJNKz5nrgTjAgtf51hmSYc2qC4bFBEPQmKXHTQJwgxhC
-7Q+4EV0qC+zkHdnDBl9RM5HgwVFirK2Bq106WvVMJizoEWf0D5B2C8vp8vMhCOXA
-yquL9sijTzs79Z2+/wM05/OaaQ+nrKBZpBv6IOGYYkgZ+z4x7Jp8HQ9EhPW25EsU
-am8nea9rtuvWkEDskXQ541gQw38hPicim+pS37hD/BzhTstwLpU7LqnyyFq6O+OE
-ZtatzXOFXvOohYrOK4yGFUnT74rg6wE6shFbq3E4NNwnRtwh9TCCpUjS43JrNOZT
-DJ6vG/tnjzlofd9ok9LwVvNZ2d4xQg==
-=9adF
------END PGP SIGNATURE-----
-
---KSyhVCl2eeZHT0Rn--
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
