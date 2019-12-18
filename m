@@ -2,157 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D7B1249F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:44:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF7321249FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:45:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfLROoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:44:24 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:28648 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727035AbfLROoY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:44:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576680263;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=joJVqPDloIrR1QDlqpej3wOFdp1Q41SUYVLzur/FTuo=;
-        b=DBCVn91pDVjd2srODsEoaifW94Jpq8qHimAvVUJBw0D63/48fEa29e7r4jV13FAO5rUxHe
-        unzcYlf2Q7jsobARw1DlOzgoGz8fSC6h/aEJFVvagvFoItK52m9xh7yQEBBVCTeZB39bm/
-        kbrNWWllilbeBmRfcmIlV4zSmQxCkJk=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-250-IkSxuJSCO_eN4ge_8engNA-1; Wed, 18 Dec 2019 09:44:21 -0500
-X-MC-Unique: IkSxuJSCO_eN4ge_8engNA-1
-Received: by mail-qv1-f71.google.com with SMTP id c22so1473059qvc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 06:44:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=joJVqPDloIrR1QDlqpej3wOFdp1Q41SUYVLzur/FTuo=;
-        b=YN65yiZSNcvbCYiJDwG0Jp4neabxOksLGiNl59e2jW6hPBaRGkqnvy+u6u7PXWw0y5
-         DbvtqTND1MOTtaJ2rVmTSKeNWzSad/YJYsH+LIanxnytqWvvR4idnsa6QA273oBIv9Qw
-         SRWZPvxD/BH1YVTgWqA5oncpbUQuyX/hrI5R6yhQ3g1jlMCGNaOuILg+MtNzzV6Mn44Z
-         xdHIdThLKw02ajVxOlNc17fBf32we9Ow6noAJ4TyxRqlW6o6dguAVT0IU56WyQk5RRHs
-         f5oduhlqbtoSvXAmoXytBXHsGBECDmd4hKHWRPt/9D5qEEqMhxgyf3EYlbQcIfYjYA0D
-         fY9w==
-X-Gm-Message-State: APjAAAWD3teYCiKp/aR60esh65MD+PBtUwoZnJHusr1uz6BBZPwgy2g/
-        N+Zlqkc4xygzM/AA1TwqZU7CAVHUMPMST8RBBtGLE4vp0QFnMD+g04gduuxsZfi6KoHvad1kMOp
-        TyF7reuIgSysrch22IUpLD7JmNsOKMm69MfgwGTSt
-X-Received: by 2002:aed:20e5:: with SMTP id 92mr2466769qtb.294.1576680261087;
-        Wed, 18 Dec 2019 06:44:21 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwA2D58EayAhd0q01/R0PSPIzaG/BmW2J4URFqns/k5EB204vHrkCQjlDW8Kc73wq9TI84QwNIle+XiOgNEkFc=
-X-Received: by 2002:aed:20e5:: with SMTP id 92mr2466752qtb.294.1576680260854;
- Wed, 18 Dec 2019 06:44:20 -0800 (PST)
+        id S1727313AbfLROpR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:45:17 -0500
+Received: from mail-eopbgr1300114.outbound.protection.outlook.com ([40.107.130.114]:31232
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727124AbfLROpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:45:15 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aSf8GX82JKN+dKqVgW9DJvV+GP26ssGbttZhWA9h7+Fe3nNlX4EzENRPzPsEHcFaC0M4lKS2BKh/IVdVpLwaKGcNQLBtPMWz+patkRfnvU1q6oqYhp3za/FCZMEVrhN2ojKpDaXi+zVH79R0j+Rl6AU68I2TIHq1I0s0C1SwGuEKoq77XTO7J8lOxBBqwlTMJykViXnWqoa0o1+CTlnaOesDeVw4n7lTndcSrNEMW7/SHaeUbuK9tR68a2BU0kuT1RnyJIK+oCNbYINC4htyxLPO7PgqvsinwSgv5mHR/nZaA+Z+YCXrPVcBs0pWZIbiL0lGfKKW9OLh4J3itJhg1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w56rNYklMyDb4+UMqLtzXRxkVrz8NNDx10zONddieb8=;
+ b=W0OO/ZwBcEKqAZrJT74ahB5tY56CmVC+0RPrOEUTqg0SzkgzV6gmfQD9E1tZpnNbIMo7wjYGBEtrLHHiozk+fMJFPa5u4XSODvCSAGdb0uOZKRTDNck8ilyx2SdRxwXQEF1V7krguKCn+orqJirdHcncuMOxZtKe6IRt+tm0gleZdk1B9/3IMy1EcfwSeoLVfV/y3GtABfK1QFN2UraKpfILDRbWJm8KLHcbUIR3XWRz3yUIN9dRhfqnxnwPZ8y0/UK5gqMfCea7NlgZ+UHK8mLPbYhWuNNrIDhsx12Bmes+LDT/95MvD2Gs7xj/bjdgMsc+Di9tRbz33/l4c6YetQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w56rNYklMyDb4+UMqLtzXRxkVrz8NNDx10zONddieb8=;
+ b=Vv7tf+wzl7dR3hgKZdGnVWaxZbv2M7lqFXMIToGrAdlgytGCe39vFPVsRYManxCGkXsbpkj2BmV3Mot5TvY6YWZq1ZyjFrGYcn1RdYBXXlj+Qw8JrmrIASClJ02hUzttBMkBX1QVE8mMwazsCx5Vk0oskKasNt90EG62IlcOf4A=
+Received: from TY2PR01MB3034.jpnprd01.prod.outlook.com (20.177.100.140) by
+ TY2PR01MB1946.jpnprd01.prod.outlook.com (52.133.182.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.14; Wed, 18 Dec 2019 14:45:10 +0000
+Received: from TY2PR01MB3034.jpnprd01.prod.outlook.com
+ ([fe80::1d79:83d3:7ac:5f77]) by TY2PR01MB3034.jpnprd01.prod.outlook.com
+ ([fe80::1d79:83d3:7ac:5f77%7]) with mapi id 15.20.2538.019; Wed, 18 Dec 2019
+ 14:45:10 +0000
+From:   Vincent Cheng <vincent.cheng.xh@renesas.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "richardcochran@gmail.com" <richardcochran@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/3] ptp: clockmatrix: Remove IDT references or
+ replace with Renesas.
+Thread-Topic: [PATCH net-next 2/3] ptp: clockmatrix: Remove IDT references or
+ replace with Renesas.
+Thread-Index: AQHVtJdPQLsXSAa04E+zgCKnuq8IvKe/b/IAgACKQwA=
+Date:   Wed, 18 Dec 2019 14:45:09 +0000
+Message-ID: <20191218144446.GA25453@renesas.com>
+References: <1576558988-20837-1-git-send-email-vincent.cheng.xh@renesas.com>
+ <1576558988-20837-3-git-send-email-vincent.cheng.xh@renesas.com>
+ <20191217.222956.2055609890870202125.davem@davemloft.net>
+In-Reply-To: <20191217.222956.2055609890870202125.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [173.195.53.163]
+x-clientproxiedby: BY5PR17CA0027.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::40) To TY2PR01MB3034.jpnprd01.prod.outlook.com
+ (2603:1096:404:7c::12)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=vincent.cheng.xh@renesas.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 9ae435c1-fb7b-454d-9ab3-08d783c8e17a
+x-ms-traffictypediagnostic: TY2PR01MB1946:
+x-microsoft-antispam-prvs: <TY2PR01MB1946DE763CCD29081FD86DD6D2530@TY2PR01MB1946.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0255DF69B9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(136003)(39860400002)(376002)(366004)(346002)(199004)(189003)(2906002)(1076003)(6486002)(5660300002)(478600001)(66476007)(66946007)(66446008)(54906003)(64756008)(66556008)(316002)(6506007)(86362001)(6916009)(26005)(36756003)(186003)(2616005)(52116002)(8676002)(4326008)(81156014)(81166006)(71200400001)(33656002)(6512007)(8936002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB1946;H:TY2PR01MB3034.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dXhKKfiw9rCYAkqAsd/iH/lbakJO+W4ovPLYBy1BDgQJp8IC8swcKL/mvdiJESHfJT7ghzss1ZtnJ1ReTfI0fQmPQusmDnAYan8HD8/cZitrvLc8MBrLQAfjelgzQlw9ffrSoBkuetobullzG8zTlEkHxgjUosSYK8TCjJAOgJ8Au4LaDjXLvAVwsGDbFWuijclGyh7lcQVvxUuV3eE1/lXP7bggWHC8qm/pZywzC3KBC2SiQf1kzxWBvQHoRe+tcQSWKkJAONxvdx2wDhZHm4K/YFPohxC5w0Qzo1dZYIe253czdM//ygH4BMjyxjwpEsBs3Frh5WCl4p46DIRA8eBlLkLOQzp7WVEXRwBgjAJ8lw2gqcb6lfp2idiYxHI6ChZS41KtGI1Ze1uJMUjhsbyQDcBHvOX2b7xDvc7nBzq9iIZbn11JjUSiQ6nL2UkW
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A4FAE28E19B274439C211D2C7F8B496D@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <_0snBXtGhwWiRLYmuVIeDLYkvksMVMxiBv1lW_bTTaFpcVN45l6yCU5gWZ_5oJr8SQOZA6qCZSkVskkEX0ZePpboYtDYRsTdVg3xfcwmw6M=@protonmail.com>
- <haSzI6CpbhKWB-YGuSryCNj3sW6YXUkBlN1LZyy6pyoYPUD-Z7DwCkoRnVY-1iHX3FlxpsydH2YF_effQsePpDZnTp7937mNgvLVPjneUYY=@protonmail.com>
-In-Reply-To: <haSzI6CpbhKWB-YGuSryCNj3sW6YXUkBlN1LZyy6pyoYPUD-Z7DwCkoRnVY-1iHX3FlxpsydH2YF_effQsePpDZnTp7937mNgvLVPjneUYY=@protonmail.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Wed, 18 Dec 2019 15:44:09 +0100
-Message-ID: <CAO-hwJJWwu3O1_qCdhEZ_yzd366x9JDvWFXpqb7=60LrDNWbxQ@mail.gmail.com>
-Subject: Re: [PATCH v8 0/2] Logitech HID++ Bluetooth LE support
-To:     Mazin Rezk <mnrzk@protonmail.com>
-Cc:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "jikos@kernel.org" <jikos@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ae435c1-fb7b-454d-9ab3-08d783c8e17a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 14:45:09.8559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xFi2JjbjnjqfXRqxE92ffcNXwJ4JkuQFMdt2F8BZaE4Pq8dVnpSE/SgaDw7Ipkc2uSYVt1Rnk1E+Kxg5SUVFDYDD+T5b5r7usrJYU+HmR2o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB1946
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mazin,
-
-On Sun, Nov 24, 2019 at 10:05 PM Mazin Rezk <mnrzk@protonmail.com> wrote:
->
-> On Sunday, October 27, 2019 1:44 PM, Mazin Rezk <mnrzk@protonmail.com> wrote:
->
-> > This series allows hid-logitech-hidpp to support Bluetooth LE HID++
-> > devices. Only the MX Master (b012 and b01e) is added right now but more
-> > HID++ Bluetooth LE devices can be added once they are tested.
-> >
-> > Changes since [v7]:
-> > - Squashed "HID: logitech-hidpp: Support MX Master (b012, b01e)
-> > over Bluetooth" into "HID: logitech-hidpp: Support translations
-> > from short to long reports"
-> >
-> > Changes since [v6]:
-> >
-> > - Based patch on "HID: logitech-hidpp: rework device validation"
-> >
-> > - Removed the need for additional quirks
-> >
-> > Changes since [v5]:
-> >
-> > - Fixed bug where added quirks would overflow an unsigned long
-> >
-> > - Changed the reserved quirk class bits from 0..20 to 0..15
-> >
-> > Changes since [v4]:
-> >
-> > - Omitted "HID: logitech: Add feature 0x0001: FeatureSet"
-> >
-> > - Stored WirelessDeviceStatus feature index in hidpp_device
-> >
-> > - Made Bluetooth quirk class alias quirks instead of vice versa
-> >
-> > - Omitted non-tested devices
-> >
-> > Changes since [v3]:
-> >
-> > - Renamed hidpp20_featureset_get_feature to
-> > hidpp20_featureset_get_feature_id.
-> >
-> > - Re-ordered hidpp20_featureset_get_count and
-> > hidpp20_featureset_get_feature_id based on their command IDs.
-> >
-> > - Made feature_count initialize to 0 before running
-> > hidpp20_get_features.
-> >
-> > Changes since [v2]:
-> >
-> > - Split up the single patch into a series
-> >
-> > Changes since [v1]:
-> >
-> > - Added WirelessDeviceStatus support
-> >
-> > [v7] https://lore.kernel.org/lkml/t5LOL-A4W7aknqQdC-3TavitC94BY_Ra1qyxCZMh_nprrDNSl4UF-jYpWtaDSU-0oQ5xzRyAo9o_mvSnA78bib_p6I3ePSJnTrp3Eb0X_yg=@protonmail.com
-> > [v6] https://lore.kernel.org/lkml/ggKipcQplIlTFmoP3hPnrQ-7_5-C0PKGd5feFymts3uenIBA8zOwz47YmKheD34H1rpkguDAGdx5YbS9UqpwfjT5Ir0Lji941liLVp--QtQ=@protonmail.com
-> > [v5] https://lore.kernel.org/lkml/Mbf4goGxXZTfWwWtQQUke_rNf8kezpNOS9DVEVHf6RnnmjS1oRtMOJf4r14WfCC6GRYVs7gi0uZcIJ18Va2OJowzSbyMUGwLrl6I5fjW48o=@protonmail.com
-> > [v4] https://lore.kernel.org/lkml/uBbIS3nFJ1jdYNLHcqjW5wxQAwmZv0kmYEoeoPrxNhfzi6cHwmCOY-ewdqe7S1hNEj-p4Hd9D0_Y3PymUTdh_6WFXuMmIYUkV2xaKCPMYz0=@protonmail.com
-> > [v3] https://lore.kernel.org/lkml/l7xYjnA9EGfZe03FsrFhnH2aMq8qS8plWhHVvOtY_l4ShZ1NV6HA6hn9aI-jAzbLYUGFCIQCIKkx9z42Uoj4-AZDwBfRcAecYIn-0ZA5upE=@protonmail.com
-> > [v2] https://www.spinics.net/lists/linux-input/msg63467.html
-> > [v1] https://www.spinics.net/lists/linux-input/msg63317.html
-> >
-> > Mazin Rezk (2):
-> > HID: logitech-hidpp: Support translations from short to long reports
-> > HID: logitech-hidpp: Support WirelessDeviceStatus connect events
-> >
-> > drivers/hid/hid-logitech-hidpp.c | 69 +++++++++++++++++++++++++++-----
-> > 1 file changed, 59 insertions(+), 10 deletions(-)
-> >
-> > ---
-> > 2.23.0
->
-> I recently saw "HID: logitech-hidpp: Silence intermittent
-> get_battery_capacity errors" get applied into the kernel, would I need to
-> rebase this patch on top of https://patchwork.kernel.org/patch/11243871/
-
-No worries, your series still applies cleanly (git magic).
-
-I am in the process of doing some final tests for this series, and I
-plan to merge it for 5.6. Sorry we missed 5.5.
-
-Cheers,
-Benjamin
-
->
-> Thanks,
-> Mazin
->
-
+T24gV2VkLCBEZWMgMTgsIDIwMTkgYXQgMDE6Mjk6NTZBTSBFU1QsIERhdmlkIE1pbGxlciB3cm90
+ZToNCj5Gcm9tOiB2aW5jZW50LmNoZW5nLnhoQHJlbmVzYXMuY29tDQo+RGF0ZTogVHVlLCAxNyBE
+ZWMgMjAxOSAwMDowMzowNyAtMDUwMA0KPg0KPj4gRnJvbTogVmluY2VudCBDaGVuZyA8dmluY2Vu
+dC5jaGVuZy54aEByZW5lc2FzLmNvbT4NCj4+IA0KPj4gUmVuZXNhcyBFbGVjdHJvbmljcyBDb3Jw
+b3JhdGlvbiBjb21wbGV0ZWQgYWNxdWlzaXRpb24gb2YgSURUIGluIDIwMTkuDQo+PiANCj4+IFRo
+aXMgcGF0Y2ggcmVtb3ZlcyBJRFQgcmVmZXJlbmNlcyBvciByZXBsYWNlcyBJRFQgd2l0aCBSZW5l
+c2FzLg0KPj4gUmVuYW1lZCBpZHQ4YTM0MF9yZWcuaCB0byBjbG9ja21hdHJpeF9yZWcuaC4NCj4+
+IFRoZXJlIHdlcmUgbm8gZnVuY3Rpb25hbCBjaGFuZ2VzLg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5
+OiBWaW5jZW50IENoZW5nIDx2aW5jZW50LmNoZW5nLnhoQHJlbmVzYXMuY29tPg0KPg0KPlNvcnJ5
+LCB3ZSBkb24ndCBkbyBzdHVmZiBsaWtlIHRoaXMuDQo+DQo+VGhlIGRyaXZlciBzaGFsbCBrZWVw
+IHRoZSByZWZlcmVuY2UgdG8gaXQncyBvbGQgdmVuZG9yIG5hbWUsIGFuZA0KPnRoaXMgaXMgaG93
+IHdlJ3ZlIGhhbmRsZWQgc2ltaWxhciBzaXR1YXRpb25zIGluIHRoZSBwYXN0Lg0KDQpTb3JyeSwg
+d2FzIG5vdCBhd2FyZS4NCg0KPkFuZCBkbyB5b3Uga25vdyB0aGUgd29yc3QgcGFydCBhYm91dCB0
+aGlzPyAgWW91IERJRCBpbiBmYWN0DQo+ZnVuY3Rpb25hbGx5IGNoYW5nZSB0aGlzIGRyaXZlcjoN
+Cj4NCj4+IC0jZGVmaW5lIEZXX0ZJTEVOQU1FCSJpZHRjbS5iaW4iDQo+PiArI2RlZmluZSBGV19G
+SUxFTkFNRQkiY21fdGNzLmJpbiINCj4NCj5Ob3cgZXZlcnlvbmUgd291bGQgaGF2ZSBtaXNzaW5n
+IGZpcm13YXJlLg0KPg0KPlNvIG5vdCBvbmx5IGlzIHRoaXMgdW5hY2NlcHRhYmxlIG9uIHByZWNl
+ZGVuY2UgZ3JvdW5kcywgYW5kIGhvdyB3ZQ0KPmFsd2F5cyBoYW5kbGUgc2l0dWF0aW9ucyBsaWtl
+IHRoaXMsIGl0J3MgZnVuY3Rpb25hbGx5IHdyb25nIGFuZCB3b3VsZA0KPmJyZWFrIHRoaW5ncyBm
+b3IgdXNlcnMuDQo+DQo+UGxlYXNlIHJlbW92ZSB0aGlzIHBhdGNoIGFuZCByZXN1Ym1pdCAjMSBh
+bmQgIzMgYXMgYSBzZXJpZXMgZm9yDQo+cmUtcmV2aWV3Lg0KDQpXaGF0IGlzIHRoZSBwcm9wZXIg
+d2F5IHRvIHJlbW92ZSBhIHBhdGNoIHN1Ym1pc3Npb24/DQoNClJlZ2FyZHMsDQpWaW5jZW50DQo=
