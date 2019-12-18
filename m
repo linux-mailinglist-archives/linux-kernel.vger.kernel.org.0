@@ -2,64 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C7D125797
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 00:16:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0CED125778
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 00:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfLRXQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 18:16:31 -0500
-Received: from mga14.intel.com ([192.55.52.115]:40402 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfLRXQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 18:16:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 15:16:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="228051246"
-Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
-  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2019 15:16:25 -0800
-Message-ID: <b31c7eca8be9922f47a176f5a6ec5de030b713a5.camel@linux.intel.com>
-Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
- tpm_tis_core_init
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christian Bundy <christianbundy@fraction.io>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
-In-Reply-To: <20191217172612.5hxyt7w3wtbrkypm@cantor>
-References: <20191211231758.22263-1-jsnitsel@redhat.com>
-         <20191211235455.24424-1-jsnitsel@redhat.com>
-         <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
-         <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
-         <20191217020022.knh7uxt4pn77wk5m@cantor>
-         <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
-         <5d0763334def7d7ae1e7cf931ef9b14184dce238.camel@linux.intel.com>
-         <20191217171844.huqlj5csr262zkkk@cantor>
-         <20191217172612.5hxyt7w3wtbrkypm@cantor>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160
- Espoo
+        id S1726701AbfLRXML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 18:12:11 -0500
+Received: from mail-wr1-f74.google.com ([209.85.221.74]:35150 "EHLO
+        mail-wr1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726561AbfLRXMK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 18:12:10 -0500
+Received: by mail-wr1-f74.google.com with SMTP id f15so1525828wrr.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 15:12:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=XROsw98/jioxNmwaFa5qgGIGTXokTI7dQ4xiPx1pCR8=;
+        b=cTTdgQH0MvqJtv3XgkF7BwJ0fhE1oQf8dNov06qeFTb90oP+3wyb92mfnHER/86ku4
+         au5i8n2NYtj/JgXC5iRJLoE36b3cqdGhdGlvXnn7j6JsWwM9ref6fkAET06M3ItdqnM2
+         QYZ7AE6tVQ31gYQcpTDhRCDD4mYpGhfqElSC1DxchrgjN+iPu6xsJXOvhqnlwoIh8ZWx
+         fV4Yk0Y+E+T9hRWuUa4i9m4DF3s83Giyr4O6hMIzoEwOp7mlYCYBcjvlE447HQcAO7zB
+         GPyORKpggMHDSSgH5SWYKiBxrVM52lKmUqegO+xJa6GWBqSKteZD38PjPGvaR/QDwu+G
+         ViMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=XROsw98/jioxNmwaFa5qgGIGTXokTI7dQ4xiPx1pCR8=;
+        b=nWudpooBsKX9HrNExHgKaCBzXeuM1JfYNHArt2Z4HzfX01bdr0YEJJu3P8JW9cx8ig
+         DxhDu+9KpH1NEtUFC5ZUCuBtLbbTJ7/C1juqr5LIXSBjbKp1itV3zrEyEMmXkFpCVT6T
+         +7e8Po7CGaN5GGbHaabBX2gGjAxwcl6s9+hm1O0Pkg+ghKr4cdTJxL4yMyrH98K5pNAj
+         kIwrf4zEJm7c3LeEtEkyMRkPxhio6e6f2lARg7S4Vw10q6M05XEfuzOBKhyiJk2qQ2uM
+         zIX3ghhTHoYJ2XFg4J6gmn+7wnaX6Bh9a5wCJgUdhGhkgyKb0pxXyFGrSocaghdApt4W
+         h3yQ==
+X-Gm-Message-State: APjAAAVRTF6bzExsnzIB/f+tk9DFuqaijLEJIdr/9AnFyWPDC4lfhAV9
+        1oKgKihdh6HGBBnEYQr60KBioS8Fwg==
+X-Google-Smtp-Source: APXvYqxoPij0nnAS8v6D2DsSQ+4qDQ1m6ZB8u3SVZ565Xa2k6xMp3WfPH21sRHSEo0wj+iuxoSRvNvy7OQ==
+X-Received: by 2002:a5d:62d0:: with SMTP id o16mr5452607wrv.197.1576710725585;
+ Wed, 18 Dec 2019 15:12:05 -0800 (PST)
+Date:   Thu, 19 Dec 2019 00:11:47 +0100
+Message-Id: <20191218231150.12139-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+Subject: [PATCH v7 1/4] x86/insn-eval: Add support for 64-bit kernel mode
+From:   Jann Horn <jannh@google.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        jannh@google.com
+Cc:     linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-MIME-Version: 1.0
-Date:   Thu, 19 Dec 2019 01:09:52 +0200
-User-Agent: Evolution 3.34.1-2 
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-17 at 10:26 -0700, Jerry Snitselaar wrote:
-> It appears he is out of the office until January, so I doubt I will hear
-> anything back until then.
+To support evaluating 64-bit kernel mode instructions:
 
-Unless we have access to a platform to sanely validate a fix
-before that, we will have to wait until January then.
+Replace existing checks for user_64bit_mode() with a new helper that
+checks whether code is being executed in either 64-bit kernel mode or
+64-bit user mode.
 
-/Jarkko
+Select the GS base depending on whether the instruction is being
+evaluated in kernel mode.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+
+Notes:
+    v2-v7:
+      no changes
+
+ arch/x86/include/asm/ptrace.h | 13 +++++++++++++
+ arch/x86/lib/insn-eval.c      | 26 +++++++++++++++-----------
+ 2 files changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/arch/x86/include/asm/ptrace.h b/arch/x86/include/asm/ptrace.h
+index 5057a8ed100b..ac45b06941a5 100644
+--- a/arch/x86/include/asm/ptrace.h
++++ b/arch/x86/include/asm/ptrace.h
+@@ -159,6 +159,19 @@ static inline bool user_64bit_mode(struct pt_regs *regs)
+ #endif
+ }
+ 
++/*
++ * Determine whether the register set came from any context that is running in
++ * 64-bit mode.
++ */
++static inline bool any_64bit_mode(struct pt_regs *regs)
++{
++#ifdef CONFIG_X86_64
++	return !user_mode(regs) || user_64bit_mode(regs);
++#else
++	return false;
++#endif
++}
++
+ #ifdef CONFIG_X86_64
+ #define current_user_stack_pointer()	current_pt_regs()->sp
+ #define compat_user_stack_pointer()	current_pt_regs()->sp
+diff --git a/arch/x86/lib/insn-eval.c b/arch/x86/lib/insn-eval.c
+index 306c3a0902ba..31600d851fd8 100644
+--- a/arch/x86/lib/insn-eval.c
++++ b/arch/x86/lib/insn-eval.c
+@@ -155,7 +155,7 @@ static bool check_seg_overrides(struct insn *insn, int regoff)
+  */
+ static int resolve_default_seg(struct insn *insn, struct pt_regs *regs, int off)
+ {
+-	if (user_64bit_mode(regs))
++	if (any_64bit_mode(regs))
+ 		return INAT_SEG_REG_IGNORE;
+ 	/*
+ 	 * Resolve the default segment register as described in Section 3.7.4
+@@ -266,7 +266,7 @@ static int resolve_seg_reg(struct insn *insn, struct pt_regs *regs, int regoff)
+ 	 * which may be invalid at this point.
+ 	 */
+ 	if (regoff == offsetof(struct pt_regs, ip)) {
+-		if (user_64bit_mode(regs))
++		if (any_64bit_mode(regs))
+ 			return INAT_SEG_REG_IGNORE;
+ 		else
+ 			return INAT_SEG_REG_CS;
+@@ -289,7 +289,7 @@ static int resolve_seg_reg(struct insn *insn, struct pt_regs *regs, int regoff)
+ 	 * In long mode, segment override prefixes are ignored, except for
+ 	 * overrides for FS and GS.
+ 	 */
+-	if (user_64bit_mode(regs)) {
++	if (any_64bit_mode(regs)) {
+ 		if (idx != INAT_SEG_REG_FS &&
+ 		    idx != INAT_SEG_REG_GS)
+ 			idx = INAT_SEG_REG_IGNORE;
+@@ -646,23 +646,27 @@ unsigned long insn_get_seg_base(struct pt_regs *regs, int seg_reg_idx)
+ 		 */
+ 		return (unsigned long)(sel << 4);
+ 
+-	if (user_64bit_mode(regs)) {
++	if (any_64bit_mode(regs)) {
+ 		/*
+ 		 * Only FS or GS will have a base address, the rest of
+ 		 * the segments' bases are forced to 0.
+ 		 */
+ 		unsigned long base;
+ 
+-		if (seg_reg_idx == INAT_SEG_REG_FS)
++		if (seg_reg_idx == INAT_SEG_REG_FS) {
+ 			rdmsrl(MSR_FS_BASE, base);
+-		else if (seg_reg_idx == INAT_SEG_REG_GS)
++		} else if (seg_reg_idx == INAT_SEG_REG_GS) {
+ 			/*
+ 			 * swapgs was called at the kernel entry point. Thus,
+ 			 * MSR_KERNEL_GS_BASE will have the user-space GS base.
+ 			 */
+-			rdmsrl(MSR_KERNEL_GS_BASE, base);
+-		else
++			if (user_mode(regs))
++				rdmsrl(MSR_KERNEL_GS_BASE, base);
++			else
++				rdmsrl(MSR_GS_BASE, base);
++		} else {
+ 			base = 0;
++		}
+ 		return base;
+ 	}
+ 
+@@ -703,7 +707,7 @@ static unsigned long get_seg_limit(struct pt_regs *regs, int seg_reg_idx)
+ 	if (sel < 0)
+ 		return 0;
+ 
+-	if (user_64bit_mode(regs) || v8086_mode(regs))
++	if (any_64bit_mode(regs) || v8086_mode(regs))
+ 		return -1L;
+ 
+ 	if (!sel)
+@@ -948,7 +952,7 @@ static int get_eff_addr_modrm(struct insn *insn, struct pt_regs *regs,
+ 	 * following instruction.
+ 	 */
+ 	if (*regoff == -EDOM) {
+-		if (user_64bit_mode(regs))
++		if (any_64bit_mode(regs))
+ 			tmp = regs->ip + insn->length;
+ 		else
+ 			tmp = 0;
+@@ -1250,7 +1254,7 @@ static void __user *get_addr_ref_32(struct insn *insn, struct pt_regs *regs)
+ 	 * After computed, the effective address is treated as an unsigned
+ 	 * quantity.
+ 	 */
+-	if (!user_64bit_mode(regs) && ((unsigned int)eff_addr > seg_limit))
++	if (!any_64bit_mode(regs) && ((unsigned int)eff_addr > seg_limit))
+ 		goto out;
+ 
+ 	/*
+-- 
+2.24.1.735.g03f4e72817-goog
 
