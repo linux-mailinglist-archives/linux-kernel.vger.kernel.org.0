@@ -2,99 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7AC8612491D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC5F112492C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:11:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfLROJ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:09:56 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40034 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfLROJz (ORCPT
+        id S1727193AbfLROK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:10:58 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:49692 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfLROK6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:09:55 -0500
-Received: by mail-wr1-f66.google.com with SMTP id c14so2444562wrn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 06:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=dxjsGjatY6ZbcTCcZP76IfB6Z3ogOgfOc4zopQ9KHZw=;
-        b=PNyhx+AOrNKPg3eDV8ybExNCbharLbfTnb/QPJsivs4Drc+dFrkWLrZiSpJzm/dOol
-         5cwzbkNc0l3rz6AIjkIRe7L/lvDQUdnn4yZCYUv6VZJkKbn7U9Nyh7g83AWJylEcGA3W
-         d4ZLDHApZ7hFNqnvcOOIs2oZSjbuNQKWIlnAw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dxjsGjatY6ZbcTCcZP76IfB6Z3ogOgfOc4zopQ9KHZw=;
-        b=MnJUWM5j5OMlpELELzPxXh1+1FCAlYDwRAETdnp1/xpFYtr2fOWjYW6LVLWdQxOxgq
-         Iqn3zVL6xbcyyqkGIKb/RRSJcNzEPyMsKrI3g+TSzOx+SqqJnGBuBYa6Oz5xRgARWF9V
-         20a7VrNrPNk1kzwsTZwq9XUpFXPPtQ69D/uCqkiX9kI5vG721W1OlNCzjnkP0bOA4OQs
-         6z50ruFvYlg/HgB81Qm98QWew0moVFMICX6EZAZMDVMSTl0NJ14qj3ltpfdhXg29ZEQD
-         riuvEfZ0gT10SDqytsiY6hHZTsDVvz3OjZZ6Mn3P+693uhidUKNvE8vj46FjF7BXZRVa
-         mlQA==
-X-Gm-Message-State: APjAAAU78eX7ntCSxnlljQzbhYT/gpVBSEdBCMC714NA6o2gJ+nPdCf3
-        pl8jINHvM3JtyTuMlsbRzcam/Q==
-X-Google-Smtp-Source: APXvYqxbgaqnKp6+tHcSJR0Hg+KDMISaNFHSKVH0qfn81gYVnqcpO9RInQXrM6+/f4otf0uySVZMdA==
-X-Received: by 2002:adf:b591:: with SMTP id c17mr3068382wre.108.1576678193639;
-        Wed, 18 Dec 2019 06:09:53 -0800 (PST)
-Received: from localhost ([2a01:4b00:8432:8a00:63de:dd93:20be:f460])
-        by smtp.gmail.com with ESMTPSA id o194sm2641065wme.45.2019.12.18.06.09.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 06:09:53 -0800 (PST)
-Date:   Wed, 18 Dec 2019 14:09:52 +0000
-From:   Chris Down <chris@chrisdown.name>
-To:     Hui Zhu <teawaterz@linux.alibaba.com>
-Cc:     hannes@cmpxchg.org, mhocko@kernel.org, vdavydov.dev@gmail.com,
-        akpm@linux-foundation.org, guro@fb.com, shakeelb@google.com,
-        yang.shi@linux.alibaba.com, tj@kernel.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] mm: vmscan: memcg: Add global shrink priority
-Message-ID: <20191218140952.GA255739@chrisdown.name>
-References: <1576662179-16861-1-git-send-email-teawaterz@linux.alibaba.com>
+        Wed, 18 Dec 2019 09:10:58 -0500
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id xBIEAaqO031760;
+        Wed, 18 Dec 2019 23:10:37 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com xBIEAaqO031760
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576678237;
+        bh=ZtHoWzlWv4Nggpiz4JYJ0ktQQgL8zQr082eHKmhq0sA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y8IH6ikPKkZ91TfmMDmbLnCku2cKcFxE58DmglIwpn99HQzVP0ZgoP1YHXWG4K9tq
+         Mt454eRcKY4Lo4HjJxr/lsGyAEMsFxOEZgakqmzincCPM7nmXAvOfJYHzciHJE8s2e
+         6//kBXRQkxo/BuWPUiPDbkFb/5/l7rF8HHWJ0T6WtfnScNDNLfCGe4MXlpbYcNuDI0
+         dTOvC3rlM1AGNbPHRWJO8KHLUzGxH+oOk4YN/Bn+nPwCWsMj1Ere+y+1uy5zDupZIm
+         aBjpFvxpDPxs9QFY7/Ya4O8wJhWLEBgPbxqG/9/1Tgh8PRiSacy2R7I5qzMWgXxJkN
+         9HWIChs8b86sQ==
+X-Nifty-SrcIP: [209.85.222.42]
+Received: by mail-ua1-f42.google.com with SMTP id v18so668237uaq.7;
+        Wed, 18 Dec 2019 06:10:36 -0800 (PST)
+X-Gm-Message-State: APjAAAUH6tqw3rjpz5c1wjBiVbmiVdGACLsouF7QC5GsNcbNkvzk5+/v
+        d3eTzE9a5HM1Q9c3tmroOS+5+gUtzyYNgUMAacs=
+X-Google-Smtp-Source: APXvYqw9cT8Od3W7kctCPwiC5X53fct0hh2cQ9AwQ0K101fOwa4G9Y/YaVZbIWbz6ZgR4YnRDQddC6j+idk0VSoEamk=
+X-Received: by 2002:ab0:63c7:: with SMTP id i7mr1393678uap.109.1576678235726;
+ Wed, 18 Dec 2019 06:10:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <1576662179-16861-1-git-send-email-teawaterz@linux.alibaba.com>
+References: <20191217135539.17157-1-info@metux.net>
+In-Reply-To: <20191217135539.17157-1-info@metux.net>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 18 Dec 2019 23:09:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASVmO3i3BVSHHLAE3p10E5+POhBn9m9HpYqG5VeR1_NAw@mail.gmail.com>
+Message-ID: <CAK7LNASVmO3i3BVSHHLAE3p10E5+POhBn9m9HpYqG5VeR1_NAw@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts: package: mkdebian: add missing rsync dependency
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hui,
-
-In general cgroup v1 is in maintenance mode -- that is, excepting specific 
-bugfixes, we don't plan to add new features.
-
-Hui Zhu writes:
->Currently, memcg has some config to limit memory usage and config
->the shrink behavior.
->In the memory-constrained environment, put different priority tasks
->into different cgroups with different memory limits to protect the
->performance of the high priority tasks.  Because the global memory
->shrink will affect the performance of all tasks.  The memory limit
->cgroup can make shrink happen inside the cgroup.  Then it can decrease
->the memory shrink of the high priority task to protect its performance.
+On Tue, Dec 17, 2019 at 10:56 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
 >
->But the memory footprint of the task is not static.  It will change as
->the working pressure changes.  And the version changes will affect it too.
->Then set the appropriate memory limit to decrease the global memory shrink
->is a difficult job and lead to wasted memory or performance loss sometimes.
+> We've missed the dependency to rsync, so build fails on
+> minimal containers.
 >
->This commit adds global shrink priority to memcg to try to handle this
->problem.
+> Fixes: 59b2bd05f5f4 ("kbuild: add 'headers' target to build up uapi headers in usr/include")
+> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
+> ---
 
-I have significant concerns with exposing scan priority to userspace. This is 
-an incredibly difficult metric for users to reason about since it's a reclaim 
-implementation feature and would add to an already confusing and fragmented API 
-in v1.
+Applied to linux-kbuild .Thanks.
 
-Have you considered using memory protection (memory.low, memory.min) for this 
-instead? It sounds like it can achieve the results you want, in that it allows 
-you to direct and prioritise reclaim in a way that allows for ballparking (ie. 
-it is compatible with applications with variable memory footprints).
+>  scripts/package/mkdebian | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index e0750b70453f..7c230016b08d 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -174,7 +174,7 @@ Source: $sourcename
+>  Section: kernel
+>  Priority: optional
+>  Maintainer: $maintainer
+> -Build-Depends: bc, kmod, cpio, bison, flex | flex:native $extra_build_depends
+> +Build-Depends: bc, rsync, kmod, cpio, bison, flex | flex:native $extra_build_depends
+>  Homepage: http://www.kernel.org/
+>
+>  Package: $packagename
+> --
+> 2.11.0
+>
 
-Thanks,
 
-Chris
+-- 
+Best Regards
+Masahiro Yamada
