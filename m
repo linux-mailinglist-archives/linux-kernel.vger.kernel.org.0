@@ -2,294 +2,504 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19E4A123F81
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:23:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A289123F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:22:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfLRGXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 01:23:20 -0500
-Received: from mail-dm6nam12on2065.outbound.protection.outlook.com ([40.107.243.65]:20496
-        "EHLO NAM12-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725799AbfLRGXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 01:23:19 -0500
+        id S1726616AbfLRGWk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 01:22:40 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:12990 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725881AbfLRGWk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 01:22:40 -0500
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBI6DHwi030320;
+        Tue, 17 Dec 2019 22:22:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pfpt0818; bh=YvpeL6sla+x7RZEsbEu88TiZkol/R1rij0QdtGBnrrM=;
+ b=cSSPXVOL13l8i12namosVnNGZmP4kAnZQmYYHxYXOvgfowMBClLe22tNKuP6Kzw7f41M
+ 7bpFKHojtcavwG2XewhznBefnoI/5FLle8IhhxbcIbyAlS3gAQa19yT7Bf5lLhpku5Fi
+ WJigWrf1ajRJua8lmmXtzTn2dWXZf2CU2l1WHkK8CDt61BPPEgTl8BXP29r7c2LCEays
+ Aerhm7UyHH8rj7RxenfLJaTn0dy5EJf8O/2CrcnBAhu/3+2/0vnlXxKH6qVMscHLnq1f
+ FDlYYIoNKsKd2zQJD6hlDtNSs4NBK45+jE+anCvGCD1Kmh0MwND0ND1I1JzQxpkL+zd0 wA== 
+Received: from sc-exch03.marvell.com ([199.233.58.183])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2wxn0wnfcw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 17 Dec 2019 22:22:13 -0800
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH03.marvell.com
+ (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 17 Dec
+ 2019 22:22:11 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.36.59) by
+ SC-EXCH03.marvell.com (10.93.176.83) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Tue, 17 Dec 2019 22:22:11 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zcvgc+3Je49z+91Yb67ytrBPSQw3ia4hPHqWAQHJWpv93bR6O8LEN0o/70hru73ikGHpuFpy8+327Q0n2QEgiI7QnwPfCdZjDeFJsNEFyHaAWAByz/j2fn7+CkXCARibmbbul21ijbrLBpgIkVIae5MCScJIOkGroeIPy2PsvyQKpUts4ZkXFxudnyjGTJ7mB1LhoB2UKQwcRT1KYUlWhPeKjeY9LliT4IyusZ+9x0C1azXvj7jMnDYrIG9pu9D2GpAXdHJfIpwPDfHMUJBorNXoMynSsxMRTeBN4Ra0aOU+HMcxGcSwv3mdohomC63sihR2Q5EWmwyHr/BAL+EE0Q==
+ b=AYpelCSWjNgybg4WeK7lUa6BG/R5Fzj1dZ3VY6tuICdForZnRKx4o6MXt9qxHGUV4EmXOxuJRyos79+TNRROIF+KdExGzvFpIZUbLS9n8J7zb2X8uwrlsWdIjtX/tfi0hvRbWskPnWtwwoicSYHIn0WR8jR98D3cvywrx6hB1sYHDSXk8wSqODmH69z2qwoiIlKlFjon3nUmmMjzyI2nSPySi71Jx0x5kNCGmt71qaRzUXSz506F8P7opG9CXZD2UXm9/SGkRm6THXwqBuIrZkty6ak37xAtxAH9H6U5F2+ZlSCUPkcSaSrB+Il4ZriLi5PuYTtwKkX89001gCCbjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVFMYCjfmirfAAcyRjXfNs/7E+qJAMSbXMmCNKCrdIE=;
- b=dNGqpZSUa5aGGqVkElF6FqYETbarxTgtqgCv4BeMvNzLaVii6C7OTi6X6KUZIPvX6UwkyGPotsBU9i39zhVkKfDY9jJ2X1+EI+vN9Eakwpl5wDhsIj/1kdSacZcDrIIXXO3+I4RkCxrQJEQ/6dd1JJjT8wQ1QDLWehh6flGpYNZzwHodZPqk7pJsmpfBIvbfjCudTYoiu7f9cXyrYL5hDWHncUsP5eTIF2L8WoFkFIYIKO6/tGuycPjgJJAHfGhj4PhcTdILQ1ivdYZdQ5ANwFgh5meBkuFSHo+lg7868474mkip+GVkkhOftFQ2cHuM4QFuUsfmW3i8zImkLMWsZg==
+ bh=YvpeL6sla+x7RZEsbEu88TiZkol/R1rij0QdtGBnrrM=;
+ b=BDTXs9xEbKxMf4ygdP9ZM2vy80c7mLzJSD/ge71IgqDal67hKsndNyDWmlzy5obDKWnNYViahTzIwwM0QS0DY1HyLie0oOvtB5wSx0rwhfliMxCkQUniHzA3ylo6so2zEr+qOjduUidenboEIUGXc8lt90y7OwOc92WIAydttVNy2KVBE7BY8P4/P7Tm7ukxT+/eS6gxwfpeHuWIqFSgLGmwuNQy0syWWk0irBU4rb4Tviqq2Yke1IF+L7o0rNoG0y/obz9bg4iEvcGrvwPKM0S+GNp34Rq2fz/yUFPPh2GIe+iyfC5N/iV0gL5Qem9rzA/I0iyOispqzZKyiZgUSQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JVFMYCjfmirfAAcyRjXfNs/7E+qJAMSbXMmCNKCrdIE=;
- b=PfZYClxec+8lrMTWucTTMSrgDpIpG0hZ9xUx4byB6un/yy7Io3CcqJuQXf58hgHn4mo8N7CV/xzevpsgjdcwIFl9bQOa0OYHZFsh1uQyycMPW4no9MEA1TgoYoEQQN2olgBDBKaSyL71GeJrIw3WViiZuKhM02JlSfNwqS16dEU=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.93.213) by
- BYAPR03MB3909.namprd03.prod.outlook.com (20.177.124.32) with Microsoft SMTP
+ bh=YvpeL6sla+x7RZEsbEu88TiZkol/R1rij0QdtGBnrrM=;
+ b=k0pA62eZk9h6QJTIO9UY1+8565YyqdlAdLt0OAsNvpxdmVwzc57G3Uz+V7dn7NOQY1iWtYJUjRVrolYiwsKhl8sZvHPlKn0PbuI+JLhWdTrUbA9drhNa/8ib8xJEqwFWkeaOSEDkmko0prcHP8ij6u48W7U2hrajsOtK2y0URpU=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
+ MN2PR18MB3325.namprd18.prod.outlook.com (10.255.86.28) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.17; Wed, 18 Dec 2019 06:21:36 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::708d:91cc:79a7:9b9a]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::708d:91cc:79a7:9b9a%6]) with mapi id 15.20.2538.019; Wed, 18 Dec 2019
- 06:21:36 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will@kernel.org" <will@kernel.org>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "corbet@lwn.net" <corbet@lwn.net>
-CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+ 15.20.2559.13; Wed, 18 Dec 2019 06:22:09 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::b96d:5663:6402:82ea]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::b96d:5663:6402:82ea%7]) with mapi id 15.20.2559.012; Wed, 18 Dec 2019
+ 06:22:08 +0000
+Received: from rric.localdomain (31.208.96.227) by HE1PR08CA0057.eurprd08.prod.outlook.com (2603:10a6:7:2a::28) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Wed, 18 Dec 2019 06:22:06 +0000
+From:   Robert Richter <rrichter@marvell.com>
+To:     Borislav Petkov <bp@alien8.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Luck <tony.luck@intel.com>
+CC:     James Morse <james.morse@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v6] arm64: implement KPROBES_ON_FTRACE
-Thread-Topic: [PATCH v6] arm64: implement KPROBES_ON_FTRACE
-Thread-Index: AQHVtWtmR90OKS0v9Um1jpVbBvlnOA==
-Date:   Wed, 18 Dec 2019 06:21:35 +0000
-Message-ID: <20191218140622.57bbaca5@xhacker.debian>
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] EDAC/mc: Fix use-after-free and memleaks during device
+ removal
+Thread-Topic: [PATCH] EDAC/mc: Fix use-after-free and memleaks during device
+ removal
+Thread-Index: AQHVtWt5ZGGyT2BLhUiTk8PdUHU8VA==
+Date:   Wed, 18 Dec 2019 06:22:08 +0000
+Message-ID: <20191218062129.7400-1-rrichter@marvell.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TYAPR01CA0175.jpnprd01.prod.outlook.com
- (2603:1096:404:ba::19) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:139::21)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-clientproxiedby: HE1PR08CA0057.eurprd08.prod.outlook.com
+ (2603:10a6:7:2a::28) To MN2PR18MB3408.namprd18.prod.outlook.com
+ (2603:10b6:208:165::10)
 x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-mailer: git-send-email 2.20.1
+x-originating-ip: [31.208.96.227]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e548014c-2484-46e1-c8a5-08d783828897
-x-ms-traffictypediagnostic: BYAPR03MB3909:
-x-microsoft-antispam-prvs: <BYAPR03MB390940BAFAA59720EB2E62F0ED530@BYAPR03MB3909.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-ms-office365-filtering-correlation-id: 848d689a-3116-4779-34bb-08d783829c00
+x-ms-traffictypediagnostic: MN2PR18MB3325:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR18MB3325DF793525FC0CE88FA8C8D9530@MN2PR18MB3325.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:639;
 x-forefront-prvs: 0255DF69B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39860400002)(366004)(189003)(199004)(54534003)(52116002)(5660300002)(26005)(7416002)(86362001)(186003)(66946007)(64756008)(66476007)(316002)(81156014)(66556008)(4326008)(6506007)(81166006)(66446008)(71200400001)(6486002)(1076003)(2906002)(6512007)(8936002)(110136005)(54906003)(478600001)(9686003)(8676002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3909;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(396003)(366004)(39860400002)(199004)(189003)(54906003)(110136005)(8936002)(86362001)(1076003)(5660300002)(30864003)(478600001)(2906002)(316002)(2616005)(956004)(81166006)(8676002)(6512007)(81156014)(52116002)(16526019)(186003)(53546011)(6506007)(26005)(4326008)(71200400001)(6486002)(66946007)(64756008)(66556008)(66476007)(36756003)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB3325;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: marvell.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 0WLHUq2BTkx5vHX5LtOg5gt59+kRKt2CGibUe5bYtwXIeXK5aQ5H8CRRoqLXN8AuuboRZwUN8LDy/iapZOrzEjZDTq1NQvEfff09/vVnEDNSzy/GXFj/v711pEC10hg/AW+UuudNuuRMGo0GLTLMryPwhe5VinmQwqnYvoYebT1j4LqEI2jBbpjQ9I8Zu+Mr7uPRr2mUN3CtSh4Xn0h/ymqAelI+cWX00UUcFFAFVzpU80jrLsc9tj0UFe1JE6uAl0WfJFCGaxb6eG7FVJXpPJSGoaA/i9IC+jVtzEQAteVHan2iXFuoBJFLlT8TEEZ5k6rApL9suZJIrCq45Vejt6M8LuhJUu/U3AvPN7ll2MRWlOBMihOw6rqBZMXGBMUVlMmIkxecBlGdU9XFaK+XAGWQOTYhh+HHrntm/DVhwalm854o4CibZOqTZVwqeW2zvXHysmYQ3cJ3p9tqiBXpaqDP88nJhW9wglASO3GQrwX+hJts/+gAZYLHNwNJXxhQ1OjA3P5LP6um0kVvRdU3Eg==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5D0886A77B09D14889EAFB84B771BDAB@namprd03.prod.outlook.com>
+x-microsoft-antispam-message-info: 4DzpsGreObo+FIJhpTsXpbqLYMZHgVuUqFEHt9GuUTE7eg95T4EDY+F2ImGiN0P8QMUXXVoOnQsFpIfJtWs5vakqAFdXlFvGlkwvyoOYuP6MlWWP97zCJ2eIjMirhKWKwn5Rx+wWLEuK2Nl5bzGrjT25aNqQGKz3kJApw0/fqi4iwePMp2BnfaAukDq8np6UTJUO3/DxulavFP0/g351ntFM+Xg1ULC0uaw93ccqV/DMA/VIeLYR0Ch9qZ55mumCsHkAabgAKPqjNrGPIiAvuePqtr8fEKsu0+RDxy0Ef+qJnKGcOUNf/+ba/R/ejWlVQvP6Oyxh/mc7N4GiHuDBv8fQ6Ne4BzU022aetYVFtGTDIBMnF7FY78i9+JIu5+UtFrDjw+83nRF98PlQ+PmOOwggctII5fSHr2bs+U0idNcs7cNskdxDZDo+BBE/+t+G
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e548014c-2484-46e1-c8a5-08d783828897
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 06:21:35.9049
+X-MS-Exchange-CrossTenant-Network-Message-Id: 848d689a-3116-4779-34bb-08d783829c00
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 06:22:08.6478
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7iIHKjh20d3VH1qJYYae01V1bkW19TQ097TACcYqrXh4zfhrKz/dPHFwHf78+yJWPV3dpGzZ8dACHxmenx6msQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3909
+X-MS-Exchange-CrossTenant-userprincipalname: 4Jl7Rayo8d/BRMLAfH6mDAc02s2hwzCm3WxaVXkh1nePgfKogHwxJ0yuplHWK5Td+3yVesfacBLErNviPmeG1g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB3325
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-18_01:2019-12-17,2019-12-18 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KPROBES_ON_FTRACE avoids much of the overhead with regular kprobes as it
-eliminates the need for a trap, as well as the need to emulate or
-single-step instructions.
+A test kernel with the options set below revealed several issues when
+removing a mci device:
 
-Tested on berlin arm64 platform.
+ DEBUG_TEST_DRIVER_REMOVE
+ KASAN
+ DEBUG_KMEMLEAK
 
-~ # mount -t debugfs debugfs /sys/kernel/debug/
-~ # cd /sys/kernel/debug/
-/sys/kernel/debug # echo 'p _do_fork' > tracing/kprobe_events
+Issues seen:
 
-before the patch:
+1) Use-after-free:
 
-/sys/kernel/debug # cat kprobes/list
-ffffff801009fe28  k  _do_fork+0x0    [DISABLED]
+On 27.11.19 17:07:33, John Garry wrote:
+> [   22.104498] BUG: KASAN: use-after-free in
+> edac_remove_sysfs_mci_device+0x148/0x180
 
-after the patch:
+The use-after-free is triggered in edac_remove_sysfs_mci_device(). It
+became an issue with commit c498afaf7df8 ("EDAC: Introduce an
+mci_for_each_dimm() iterator").
 
-/sys/kernel/debug # cat kprobes/list
-ffffff801009ff54  k  _do_fork+0x4    [DISABLED][FTRACE]
+The reason for it is that device_unregister(&dimm->dev) not only
+removes the sysfs entry, it also frees the dimm struct in
+dimm_attr_release(). When incrementing the loop in
+mci_for_each_dimm(), the dimm struct is accessed again by the loop
+iterator which causes the use-after-free.
 
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+In function edac_remove_sysfs_mci_device() all the mci device's
+subsequent dimm and csrow objects are removed. When unregistering from
+sysfs, instead of removing that data it should be kept until it is
+removed together with the mci device. This keeps the data structures
+intact and the mci device can be fully used until it will be removed.
+
+2) Memory leaks:
+
+Following memory leaks have been detected:
+
+ # grep edac /sys/kernel/debug/kmemleak | sort | uniq -c
+       1     [<000000003c0f58f9>] edac_mc_alloc+0x3bc/0x9d0      # mci->csr=
+ows
+      16     [<00000000bb932dc0>] edac_mc_alloc+0x49c/0x9d0      # csr->cha=
+nnels
+      16     [<00000000e2734dba>] edac_mc_alloc+0x518/0x9d0      # csr->cha=
+nnels[chn]
+       1     [<00000000eb040168>] edac_mc_alloc+0x5c8/0x9d0      # mci->dim=
+ms
+      34     [<00000000ef737c29>] ghes_edac_register+0x1c8/0x3f8 # see edac=
+_mc_alloc()
+
+There are two implementions for device removal in the driver. One is
+used before edac_mc_add_mc(), the other afterwards after the device
+had been registered in sysfs. The later lacks the removal of some data
+allocated in edac_mc_alloc(). All the above issues are fixed as
+follows:
+
+Unify release code in a single mci_release() function and use this one
+together with put_device() to release the struct mci once there are no
+users. Free all subsequent data structures of the children devices in
+that release function too. An effect of this is that no data is freed
+in edac_mc_sysfs.c (except the "mc" sysfs root node). All sysfs
+entries have the mci device as a parent, so its refcount will keep the
+struct from being removed as long as sysfs entries exist. Before
+freeing struct mci, all sysfs entries are removed now in edac_remove_
+sysfs_mci_device(). With the changes made the mci_for_each_dimm() loop
+is now save to remove dimm devices from sysfs.
+
+The patch has been tested with the above kernel options, no issues
+seen any longer.
+
+This patch should be marked as stable.
+
+Reported-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Robert Richter <rrichter@marvell.com>
 ---
-KPROBES_ON_FTRACE avoids much of the overhead with regular kprobes as it
-eliminates the need for a trap, as well as the need to emulate or
-single-step instructions.
+ drivers/edac/edac_mc.c       |  20 +++----
+ drivers/edac/edac_mc_sysfs.c | 100 +++++++++++++----------------------
+ drivers/edac/edac_module.h   |   1 -
+ 3 files changed, 49 insertions(+), 72 deletions(-)
 
-Changes since v5:
-  - rebase v5.5-rc1
-  - collect Acked-by and Reviewed-by tags
-
-Changes since v4:
-  - correct reg->pc: probed on foo, then pre_handler see foo+0x4, while
-    post_handler see foo+0x8
-
-Changes since v3:
-  - move kprobe_lookup_name() and arch_kprobe_on_func_entry to ftrace.c sin=
-ce
-    we only want to choose the ftrace entry for KPROBES_ON_FTRACE.
-  - only choose ftrace entry if (addr && !offset)
-
-Changes since v2:
-  - remove patch1, make it a single cleanup patch
-  - remove "This patch" in the change log
-  - implement arm64's kprobe_lookup_name() and arch_kprobe_on_func_entry in=
-stead
-    of patching the common kprobes code
-
-Changes since v1:
-  - make the kprobes/x86: use instruction_pointer and instruction_pointer_s=
-et
-    as patch1
-  - add Masami's ACK to patch1
-  - add some description about KPROBES_ON_FTRACE and why we need it on
-    arm64
-  - correct the log before the patch
-  - remove the consolidation patch, make it as TODO
-  - only adjust kprobe's addr when KPROBE_FLAG_FTRACE is set
-  - if KPROBES_ON_FTRACE, ftrace_call_adjust() the kprobe's addr before
-    calling ftrace_location()
-  - update the kprobes-on-ftrace/arch-support.txt in doc
- .../debug/kprobes-on-ftrace/arch-support.txt  |  2 +-
- arch/arm64/Kconfig                            |  1 +
- arch/arm64/kernel/probes/Makefile             |  1 +
- arch/arm64/kernel/probes/ftrace.c             | 83 +++++++++++++++++++
- 4 files changed, 86 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm64/kernel/probes/ftrace.c
-
-diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.tx=
-t b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-index 4fae0464ddff..f9dd9dd91e0c 100644
---- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-+++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-@@ -9,7 +9,7 @@
-     |       alpha: | TODO |
-     |         arc: | TODO |
-     |         arm: | TODO |
--    |       arm64: | TODO |
-+    |       arm64: |  ok  |
-     |         c6x: | TODO |
-     |        csky: | TODO |
-     |       h8300: | TODO |
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index b1b4476ddb83..92b9882889ac 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -166,6 +166,7 @@ config ARM64
- 	select HAVE_STACKPROTECTOR
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_KPROBES
-+	select HAVE_KPROBES_ON_FTRACE
- 	select HAVE_KRETPROBES
- 	select HAVE_GENERIC_VDSO
- 	select IOMMU_DMA if IOMMU_SUPPORT
-diff --git a/arch/arm64/kernel/probes/Makefile b/arch/arm64/kernel/probes/M=
-akefile
-index 8e4be92e25b1..4020cfc66564 100644
---- a/arch/arm64/kernel/probes/Makefile
-+++ b/arch/arm64/kernel/probes/Makefile
-@@ -4,3 +4,4 @@ obj-$(CONFIG_KPROBES)		+=3D kprobes.o decode-insn.o	\
- 				   simulate-insn.o
- obj-$(CONFIG_UPROBES)		+=3D uprobes.o decode-insn.o	\
- 				   simulate-insn.o
-+obj-$(CONFIG_KPROBES_ON_FTRACE)	+=3D ftrace.o
-diff --git a/arch/arm64/kernel/probes/ftrace.c b/arch/arm64/kernel/probes/f=
-trace.c
-new file mode 100644
-index 000000000000..9f80905f02fa
---- /dev/null
-+++ b/arch/arm64/kernel/probes/ftrace.c
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Dynamic Ftrace based Kprobes Optimization
-+ *
-+ * Copyright (C) Hitachi Ltd., 2012
-+ * Copyright (C) 2019 Jisheng Zhang <jszhang@kernel.org>
-+ *		      Synaptics Incorporated
-+ */
+diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+index 7243b88f81d8..058efcd9032e 100644
+--- a/drivers/edac/edac_mc.c
++++ b/drivers/edac/edac_mc.c
+@@ -278,6 +278,12 @@ void *edac_align_ptr(void **p, unsigned int size, int =
+n_elems)
+=20
+ static void _edac_mc_free(struct mem_ctl_info *mci)
+ {
++	put_device(&mci->dev);
++}
 +
-+#include <linux/kprobes.h>
-+
-+/* Ftrace callback handler for kprobes -- called under preepmt disabed */
-+void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
-+			   struct ftrace_ops *ops, struct pt_regs *regs)
++static void mci_release(struct device *dev)
 +{
-+	struct kprobe *p;
-+	struct kprobe_ctlblk *kcb;
++	struct mem_ctl_info *mci =3D container_of(dev, struct mem_ctl_info, dev);
+ 	struct csrow_info *csr;
+ 	int i, chn, row;
+=20
+@@ -371,6 +377,9 @@ struct mem_ctl_info *edac_mc_alloc(unsigned int mc_num,
+ 	if (mci =3D=3D NULL)
+ 		return NULL;
+=20
++	mci->dev.release =3D mci_release;
++	device_initialize(&mci->dev);
 +
-+	/* Preempt is disabled by ftrace */
-+	p =3D get_kprobe((kprobe_opcode_t *)ip);
-+	if (unlikely(!p) || kprobe_disabled(p))
+ 	/* Adjust pointers so they point within the memory we just allocated
+ 	 * rather than an imaginary chunk of memory located at address 0.
+ 	 */
+@@ -505,16 +514,9 @@ void edac_mc_free(struct mem_ctl_info *mci)
+ {
+ 	edac_dbg(1, "\n");
+=20
+-	/* If we're not yet registered with sysfs free only what was allocated
+-	 * in edac_mc_alloc().
+-	 */
+-	if (!device_is_registered(&mci->dev)) {
+-		_edac_mc_free(mci);
+-		return;
+-	}
++	edac_remove_sysfs_mci_device(mci);
+=20
+-	/* the mci instance is freed here, when the sysfs object is dropped */
+-	edac_unregister_sysfs(mci);
++	_edac_mc_free(mci);
+ }
+ EXPORT_SYMBOL_GPL(edac_mc_free);
+=20
+diff --git a/drivers/edac/edac_mc_sysfs.c b/drivers/edac/edac_mc_sysfs.c
+index 0367554e7437..408bace699dc 100644
+--- a/drivers/edac/edac_mc_sysfs.c
++++ b/drivers/edac/edac_mc_sysfs.c
+@@ -274,17 +274,8 @@ static const struct attribute_group *csrow_attr_groups=
+[] =3D {
+ 	NULL
+ };
+=20
+-static void csrow_attr_release(struct device *dev)
+-{
+-	struct csrow_info *csrow =3D container_of(dev, struct csrow_info, dev);
+-
+-	edac_dbg(1, "device %s released\n", dev_name(dev));
+-	kfree(csrow);
+-}
+-
+ static const struct device_type csrow_attr_type =3D {
+ 	.groups		=3D csrow_attr_groups,
+-	.release	=3D csrow_attr_release,
+ };
+=20
+ /*
+@@ -390,6 +381,14 @@ static const struct attribute_group *csrow_dev_groups[=
+] =3D {
+ 	NULL
+ };
+=20
++static void csrow_release(struct device *dev)
++{
++	/*
++	 * Nothing to do. We just unregister sysfs here. The mci
++	 * device owns the data and will also release it.
++	 */
++}
++
+ static inline int nr_pages_per_csrow(struct csrow_info *csrow)
+ {
+ 	int chan, nr_pages =3D 0;
+@@ -408,6 +407,7 @@ static int edac_create_csrow_object(struct mem_ctl_info=
+ *mci,
+=20
+ 	csrow->dev.type =3D &csrow_attr_type;
+ 	csrow->dev.groups =3D csrow_dev_groups;
++	csrow->dev.release =3D csrow_release;
+ 	device_initialize(&csrow->dev);
+ 	csrow->dev.parent =3D &mci->dev;
+ 	csrow->mci =3D mci;
+@@ -444,11 +444,8 @@ static int edac_create_csrow_objects(struct mem_ctl_in=
+fo *mci)
+=20
+ error:
+ 	for (--i; i >=3D 0; i--) {
+-		csrow =3D mci->csrows[i];
+-		if (!nr_pages_per_csrow(csrow))
+-			continue;
+-
+-		device_del(&mci->csrows[i]->dev);
++		if (device_is_registered(&mci->csrows[i]->dev))
++			device_unregister(&mci->csrows[i]->dev);
+ 	}
+=20
+ 	return err;
+@@ -457,15 +454,13 @@ static int edac_create_csrow_objects(struct mem_ctl_i=
+nfo *mci)
+ static void edac_delete_csrow_objects(struct mem_ctl_info *mci)
+ {
+ 	int i;
+-	struct csrow_info *csrow;
+=20
+-	for (i =3D mci->nr_csrows - 1; i >=3D 0; i--) {
+-		csrow =3D mci->csrows[i];
+-		if (!nr_pages_per_csrow(csrow))
+-			continue;
+-		device_unregister(&mci->csrows[i]->dev);
++	for (i =3D 0; i < mci->nr_csrows; i++) {
++		if (device_is_registered(&mci->csrows[i]->dev))
++			device_unregister(&mci->csrows[i]->dev);
+ 	}
+ }
++
+ #endif
+=20
+ /*
+@@ -606,19 +601,18 @@ static const struct attribute_group *dimm_attr_groups=
+[] =3D {
+ 	NULL
+ };
+=20
+-static void dimm_attr_release(struct device *dev)
+-{
+-	struct dimm_info *dimm =3D container_of(dev, struct dimm_info, dev);
+-
+-	edac_dbg(1, "device %s released\n", dev_name(dev));
+-	kfree(dimm);
+-}
+-
+ static const struct device_type dimm_attr_type =3D {
+ 	.groups		=3D dimm_attr_groups,
+-	.release	=3D dimm_attr_release,
+ };
+=20
++static void dimm_release(struct device *dev)
++{
++	/*
++	 * Nothing to do. We just unregister sysfs here. The mci
++	 * device owns the data and will also release it.
++	 */
++}
++
+ /* Create a DIMM object under specifed memory controller device */
+ static int edac_create_dimm_object(struct mem_ctl_info *mci,
+ 				   struct dimm_info *dimm)
+@@ -627,6 +621,7 @@ static int edac_create_dimm_object(struct mem_ctl_info =
+*mci,
+ 	dimm->mci =3D mci;
+=20
+ 	dimm->dev.type =3D &dimm_attr_type;
++	dimm->dev.release =3D dimm_release;
+ 	device_initialize(&dimm->dev);
+=20
+ 	dimm->dev.parent =3D &mci->dev;
+@@ -891,17 +886,8 @@ static const struct attribute_group *mci_attr_groups[]=
+ =3D {
+ 	NULL
+ };
+=20
+-static void mci_attr_release(struct device *dev)
+-{
+-	struct mem_ctl_info *mci =3D container_of(dev, struct mem_ctl_info, dev);
+-
+-	edac_dbg(1, "device %s released\n", dev_name(dev));
+-	kfree(mci);
+-}
+-
+ static const struct device_type mci_attr_type =3D {
+ 	.groups		=3D mci_attr_groups,
+-	.release	=3D mci_attr_release,
+ };
+=20
+ /*
+@@ -920,8 +906,6 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *m=
+ci,
+=20
+ 	/* get the /sys/devices/system/edac subsys reference */
+ 	mci->dev.type =3D &mci_attr_type;
+-	device_initialize(&mci->dev);
+-
+ 	mci->dev.parent =3D mci_pdev;
+ 	mci->dev.groups =3D groups;
+ 	dev_set_name(&mci->dev, "mc%d", mci->mc_idx);
+@@ -931,7 +915,7 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info *m=
+ci,
+ 	err =3D device_add(&mci->dev);
+ 	if (err < 0) {
+ 		edac_dbg(1, "failure: create device %s\n", dev_name(&mci->dev));
+-		put_device(&mci->dev);
++		/* no put_device() here, free mci with _edac_mc_free() */
+ 		return err;
+ 	}
+=20
+@@ -947,24 +931,20 @@ int edac_create_sysfs_mci_device(struct mem_ctl_info =
+*mci,
+=20
+ 		err =3D edac_create_dimm_object(mci, dimm);
+ 		if (err)
+-			goto fail_unregister_dimm;
++			goto fail;
+ 	}
+=20
+ #ifdef CONFIG_EDAC_LEGACY_SYSFS
+ 	err =3D edac_create_csrow_objects(mci);
+ 	if (err < 0)
+-		goto fail_unregister_dimm;
++		goto fail;
+ #endif
+=20
+ 	edac_create_debugfs_nodes(mci);
+ 	return 0;
+=20
+-fail_unregister_dimm:
+-	mci_for_each_dimm(mci, dimm) {
+-		if (device_is_registered(&dimm->dev))
+-			device_unregister(&dimm->dev);
+-	}
+-	device_unregister(&mci->dev);
++fail:
++	edac_remove_sysfs_mci_device(mci);
+=20
+ 	return err;
+ }
+@@ -976,6 +956,9 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info *=
+mci)
+ {
+ 	struct dimm_info *dimm;
+=20
++	if (!device_is_registered(&mci->dev))
 +		return;
 +
-+	kcb =3D get_kprobe_ctlblk();
-+	if (kprobe_running()) {
-+		kprobes_inc_nmissed_count(p);
-+	} else {
-+		unsigned long orig_ip =3D instruction_pointer(regs);
-+
-+		instruction_pointer_set(regs, ip);
-+		__this_cpu_write(current_kprobe, p);
-+		kcb->kprobe_status =3D KPROBE_HIT_ACTIVE;
-+		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-+			/*
-+			 * Emulate singlestep (and also recover regs->pc)
-+			 * as if there is a nop
-+			 */
-+			instruction_pointer_set(regs,
-+				(unsigned long)p->addr + MCOUNT_INSN_SIZE);
-+			if (unlikely(p->post_handler)) {
-+				kcb->kprobe_status =3D KPROBE_HIT_SSDONE;
-+				p->post_handler(p, regs, 0);
-+			}
-+			instruction_pointer_set(regs, orig_ip);
-+		}
-+		/*
-+		 * If pre_handler returns !0, it changes regs->pc. We have to
-+		 * skip emulating post_handler.
-+		 */
-+		__this_cpu_write(current_kprobe, NULL);
-+	}
-+}
-+NOKPROBE_SYMBOL(kprobe_ftrace_handler);
-+
-+kprobe_opcode_t *kprobe_lookup_name(const char *name, unsigned int offset)
-+{
-+	unsigned long addr =3D kallsyms_lookup_name(name);
-+
-+	if (addr && !offset) {
-+		unsigned long faddr;
-+		/*
-+		 * with -fpatchable-function-entry=3D2, the first 4 bytes is the
-+		 * LR saver, then the actual call insn. So ftrace location is
-+		 * always on the first 4 bytes offset.
-+		 */
-+		faddr =3D ftrace_location_range(addr,
-+					      addr + AARCH64_INSN_SIZE);
-+		if (faddr)
-+			return (kprobe_opcode_t *)faddr;
-+	}
-+	return (kprobe_opcode_t *)addr;
-+}
-+
-+bool arch_kprobe_on_func_entry(unsigned long offset)
-+{
-+	return offset <=3D AARCH64_INSN_SIZE;
-+}
-+
-+int arch_prepare_kprobe_ftrace(struct kprobe *p)
-+{
-+	p->ainsn.api.insn =3D NULL;
-+	return 0;
-+}
+ 	edac_dbg(0, "\n");
+=20
+ #ifdef CONFIG_EDAC_DEBUG
+@@ -986,17 +969,14 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info=
+ *mci)
+ #endif
+=20
+ 	mci_for_each_dimm(mci, dimm) {
+-		if (dimm->nr_pages =3D=3D 0)
++		if (!device_is_registered(&dimm->dev))
+ 			continue;
+ 		edac_dbg(1, "unregistering device %s\n", dev_name(&dimm->dev));
+ 		device_unregister(&dimm->dev);
+ 	}
+-}
+=20
+-void edac_unregister_sysfs(struct mem_ctl_info *mci)
+-{
+-	edac_dbg(1, "unregistering device %s\n", dev_name(&mci->dev));
+-	device_unregister(&mci->dev);
++	/* only remove the device, but keep mci */
++	device_del(&mci->dev);
+ }
+=20
+ static void mc_attr_release(struct device *dev)
+@@ -1010,9 +990,6 @@ static void mc_attr_release(struct device *dev)
+ 	kfree(dev);
+ }
+=20
+-static const struct device_type mc_attr_type =3D {
+-	.release	=3D mc_attr_release,
+-};
+ /*
+  * Init/exit code for the module. Basically, creates/removes /sys/class/rc
+  */
+@@ -1025,11 +1002,10 @@ int __init edac_mc_sysfs_init(void)
+ 		return -ENOMEM;
+=20
+ 	mci_pdev->bus =3D edac_get_sysfs_subsys();
+-	mci_pdev->type =3D &mc_attr_type;
+-	device_initialize(mci_pdev);
+-	dev_set_name(mci_pdev, "mc");
++	mci_pdev->release =3D mc_attr_release;
++	mci_pdev->init_name =3D "mc";
+=20
+-	err =3D device_add(mci_pdev);
++	err =3D device_register(mci_pdev);
+ 	if (err < 0) {
+ 		edac_dbg(1, "failure: create device %s\n", dev_name(mci_pdev));
+ 		put_device(mci_pdev);
+diff --git a/drivers/edac/edac_module.h b/drivers/edac/edac_module.h
+index 388427d378b1..aa1f91688eb8 100644
+--- a/drivers/edac/edac_module.h
++++ b/drivers/edac/edac_module.h
+@@ -28,7 +28,6 @@ void edac_mc_sysfs_exit(void);
+ extern int edac_create_sysfs_mci_device(struct mem_ctl_info *mci,
+ 					const struct attribute_group **groups);
+ extern void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci);
+-void edac_unregister_sysfs(struct mem_ctl_info *mci);
+ extern int edac_get_log_ue(void);
+ extern int edac_get_log_ce(void);
+ extern int edac_get_panic_on_ue(void);
 --=20
-2.24.1
+2.20.1
 
