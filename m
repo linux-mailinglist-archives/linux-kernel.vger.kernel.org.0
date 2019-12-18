@@ -2,75 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F5012460B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:46:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD0FF12463F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:55:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfLRLq1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:46:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:43340 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfLRLq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:46:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0DC430E;
-        Wed, 18 Dec 2019 03:46:26 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4AE713F6CF;
-        Wed, 18 Dec 2019 03:46:26 -0800 (PST)
-Date:   Wed, 18 Dec 2019 11:46:24 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org,
-        vinod.koul@linaro.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        spapothi@codeaurora.org, bgoswami@codeaurora.org,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v5 03/11] ASoC: wcd934x: add support to wcd9340/wcd9341
- codec
-Message-ID: <20191218114624.GB3219@sirena.org.uk>
-References: <20191217121642.28534-1-srinivas.kandagatla@linaro.org>
- <20191217121642.28534-4-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
-Content-Disposition: inline
-In-Reply-To: <20191217121642.28534-4-srinivas.kandagatla@linaro.org>
-X-Cookie: Power is poison.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726912AbfLRLzS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:55:18 -0500
+Received: from mxwww.masterlogin.de ([95.129.51.220]:42554 "EHLO
+        mxwww.masterlogin.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726141AbfLRLzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 06:55:17 -0500
+X-Greylist: delayed 509 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Dec 2019 06:55:16 EST
+Received: from mxout1.routing.net (unknown [192.168.10.81])
+        by new.mxwww.masterlogin.de (Postfix) with ESMTPS id 51E8196385;
+        Wed, 18 Dec 2019 11:46:44 +0000 (UTC)
+Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
+        by mxout1.routing.net (Postfix) with ESMTP id B137E3FC84;
+        Wed, 18 Dec 2019 11:46:44 +0000 (UTC)
+Received: from localhost.localdomain (fttx-pool-185.76.99.135.bambit.de [185.76.99.135])
+        by mxbox4.masterlogin.de (Postfix) with ESMTPSA id 21E728099B;
+        Wed, 18 Dec 2019 11:46:44 +0000 (UTC)
+From:   Frank Wunderlich <frank-w@public-files.de>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] kbuild: Add DTC_CPP_FLAGS
+Date:   Wed, 18 Dec 2019 12:46:25 +0100
+Message-Id: <20191218114625.28438-1-frank-w@public-files.de>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+With this Patch we are able to change cpp-preprocessor options
+(e.g. -D...) for using conditions (#ifdef) in devicetree files
+and dynamically add include searchpaths
 
---uQr8t48UFsdbeI+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+ scripts/Makefile.lib | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Dec 17, 2019 at 12:16:34PM +0000, Srinivas Kandagatla wrote:
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 3fa32f83b2d7..c722a6c7786a 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -177,7 +177,7 @@ DTC_INCLUDE    := $(srctree)/scripts/dtc/include-prefixes
+ 
+ dtc_cpp_flags  = -Wp,-MD,$(depfile).pre.tmp -nostdinc                    \
+ 		 $(addprefix -I,$(DTC_INCLUDE))                          \
+-		 -undef -D__DTS__
++		 -undef -D__DTS__ $(DTC_CPP_FLAGS)
+ 
+ # Useful for describing the dependency of composite objects
+ # Usage:
+-- 
+2.17.1
 
-> +config SND_SOC_WCD934X
-> +	tristate "WCD9340/WCD9341 Codec"
-> +	depends on SLIMBUS
-> +	select REGMAP_SLIMBUS
-> +	select REGMAP_IRQ
-> +	help
-
-Why does this not depend on the MFD change?
-
---uQr8t48UFsdbeI+V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36EY8ACgkQJNaLcl1U
-h9CJewf/UNyw0O0xrJ7lqLqOtpx2X0NT8thQQh2NcyNp4m8qbmYDJ15qmTMAM+yj
-mP+3wP/Qf8hD8sTAidpOg9krTC5rCGi8k7lHizePkZEkmxilFp6IEr4xPSFimHhR
-bp2p/9XvAgJcXlsDTaRRknBtErDfSIfcNmPjC9Lz0Q9jAlQKMjPVj9K7Wm4o96zQ
-L/Cz3jQOHeNSRCBQKjkMDUSesDQIzZUAAEShRq82RT+dxa8K531f8AoFQKf+D2KZ
-3EmrYGye3MJgMTZ+8elie/8uBaRKqhCei3zZecF05lN43KThV/U5aEGY/p/RW6O4
-xnnuzr+hkC5Hu7jMR8DbzcNHfEuS+g==
-=vos4
------END PGP SIGNATURE-----
-
---uQr8t48UFsdbeI+V--
