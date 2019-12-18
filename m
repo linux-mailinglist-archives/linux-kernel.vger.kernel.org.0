@@ -2,111 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC7E1241FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:42:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2C212420A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:43:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfLRImA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 03:42:00 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35240 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726526AbfLRImA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 03:42:00 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9772F88D824058336E49;
-        Wed, 18 Dec 2019 16:41:57 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Wed, 18 Dec 2019
- 16:41:47 +0800
-Subject: Re: [PATCH v2] PCI: Add quirk for HiSilicon NP 5896 devices
-To:     <andrew.murray@arm.com>, <bhelgaas@google.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <wangkefeng.wang@huawei.com>, <huawei.libin@huawei.com>,
-        <guohanjun@huawei.com>
-References: <1575615705-30716-1-git-send-email-wangxiongfeng2@huawei.com>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <60c0001e-3753-6e3f-b114-ddc62e5d50ac@huawei.com>
-Date:   Wed, 18 Dec 2019 16:41:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1726754AbfLRInW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 03:43:22 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56981 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfLRInV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 03:43:21 -0500
+Received: from [82.43.126.140] (helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ihUvO-00038G-Ne; Wed, 18 Dec 2019 08:43:18 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: lpfc: fix spelling mistakes of asynchronous
+Date:   Wed, 18 Dec 2019 08:43:01 +0000
+Message-Id: <20191218084301.627555-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <1575615705-30716-1-git-send-email-wangxiongfeng2@huawei.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+There are spelling mistakes of asynchronous in a lpfc_printf_log
+message and comments. Fix these.
 
-On 2019/12/6 15:01, Xiongfeng Wang wrote:
-> HiSilicon PCI Network Processor 5896 devices misreport the class type as
-> 'NOT_DEFINED', but it is actually a network device. Also the size of
-> BAR3 is reported as 265T, but this BAR is actually unused.
-> This patch modify the class type to 'CLASS_NETWORK' and disable the
-> unused BAR3.
-> 
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> ---
->  drivers/pci/quirks.c    | 29 +++++++++++++++++++++++++++++
->  include/linux/pci_ids.h |  1 +
->  2 files changed, 30 insertions(+)
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index 4937a08..b9adebb 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -5431,3 +5431,32 @@ static void quirk_reset_lenovo_thinkpad_p50_nvgpu(struct pci_dev *pdev)
->  DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, 0x13b1,
->  			      PCI_CLASS_DISPLAY_VGA, 8,
->  			      quirk_reset_lenovo_thinkpad_p50_nvgpu);
-> +
-> +static void quirk_hisi_fixup_np_class(struct pci_dev *pdev)
-> +{
-> +	u32 class = pdev->class;
-> +
-> +	pdev->class = PCI_BASE_CLASS_NETWORK << 8;
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_init.c |  2 +-
+ drivers/scsi/lpfc/lpfc_sli.c  | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-It should be  pdev->class = PCI_CLASS_NETWORK_ETHERNET << 8;
-I will change it in the next version.
-
-> +	pci_info(pdev, "PCI class overriden (%#08x -> %#08x)\n",
-> +		 class, pdev->class);
-> +}
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HISI_5896,
-> +			quirk_hisi_fixup_np_class);
-> +
-> +/*
-> + * HiSilicon NP 5896 devices BAR3 size is reported as 256T and causes problem
-> + * when assigning the resources. But this BAR is actually unused by the driver,
-> + * so let's disable it.
-> + */
-> +static void quirk_hisi_fixup_np_bar(struct pci_dev *pdev)
-> +{
-> +	struct resource *r = &pdev->resource[3];
-> +
-> +	r->start = 0;
-> +	r->end = 0;
-> +	r->flags = 0;
-> +
-> +	pci_info(pdev, "Disabling invalid BAR 3\n");
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_HUAWEI, PCI_DEVICE_ID_HISI_5896,
-> +			 quirk_hisi_fixup_np_bar);
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 2302d133..f21cd8b 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2558,6 +2558,7 @@
->  #define PCI_DEVICE_ID_KORENIX_JETCARDF3	0x17ff
->  
->  #define PCI_VENDOR_ID_HUAWEI		0x19e5
-> +#define PCI_DEVICE_ID_HISI_5896        0x5896 /* HiSilicon NP 5896 devices */
->  
->  #define PCI_VENDOR_ID_NETRONOME		0x19ee
->  #define PCI_DEVICE_ID_NETRONOME_NFP4000	0x4000
-> 
+diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
+index 6298b1729098..6a04fdb3fbf2 100644
+--- a/drivers/scsi/lpfc/lpfc_init.c
++++ b/drivers/scsi/lpfc/lpfc_init.c
+@@ -5883,7 +5883,7 @@ void lpfc_sli4_async_event_proc(struct lpfc_hba *phba)
+ 			break;
+ 		default:
+ 			lpfc_printf_log(phba, KERN_ERR, LOG_SLI,
+-					"1804 Invalid asynchrous event code: "
++					"1804 Invalid asynchronous event code: "
+ 					"x%x\n", bf_get(lpfc_trailer_code,
+ 					&cq_event->cqe.mcqe_cmpl));
+ 			break;
+diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
+index c82b5792da98..625c046ac4ef 100644
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -8555,7 +8555,7 @@ lpfc_sli4_async_mbox_unblock(struct lpfc_hba *phba)
+ 	psli->sli_flag &= ~LPFC_SLI_ASYNC_MBX_BLK;
+ 	spin_unlock_irq(&phba->hbalock);
+ 
+-	/* wake up worker thread to post asynchronlous mailbox command */
++	/* wake up worker thread to post asynchronous mailbox command */
+ 	lpfc_worker_wake_up(phba);
+ }
+ 
+@@ -8823,7 +8823,7 @@ lpfc_sli_issue_mbox_s4(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq,
+ 		return rc;
+ 	}
+ 
+-	/* Now, interrupt mode asynchrous mailbox command */
++	/* Now, interrupt mode asynchronous mailbox command */
+ 	rc = lpfc_mbox_cmd_check(phba, mboxq);
+ 	if (rc) {
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_MBOX | LOG_SLI,
+@@ -13112,11 +13112,11 @@ lpfc_cq_event_setup(struct lpfc_hba *phba, void *entry, int size)
+ }
+ 
+ /**
+- * lpfc_sli4_sp_handle_async_event - Handle an asynchroous event
++ * lpfc_sli4_sp_handle_async_event - Handle an asynchronous event
+  * @phba: Pointer to HBA context object.
+  * @cqe: Pointer to mailbox completion queue entry.
+  *
+- * This routine process a mailbox completion queue entry with asynchrous
++ * This routine process a mailbox completion queue entry with asynchronous
+  * event.
+  *
+  * Return: true if work posted to worker thread, otherwise false.
+@@ -13270,7 +13270,7 @@ lpfc_sli4_sp_handle_mbox_event(struct lpfc_hba *phba, struct lpfc_mcqe *mcqe)
+  * @cqe: Pointer to mailbox completion queue entry.
+  *
+  * This routine process a mailbox completion queue entry, it invokes the
+- * proper mailbox complete handling or asynchrous event handling routine
++ * proper mailbox complete handling or asynchronous event handling routine
+  * according to the MCQE's async bit.
+  *
+  * Return: true if work posted to worker thread, otherwise false.
+-- 
+2.24.0
 
