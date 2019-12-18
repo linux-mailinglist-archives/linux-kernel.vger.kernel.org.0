@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90F851254B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:32:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B55261254BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:32:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfLRVcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:32:12 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34371 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbfLRVcM (ORCPT
+        id S1726716AbfLRVcs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:32:48 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34410 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbfLRVcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:32:12 -0500
-Received: by mail-ot1-f68.google.com with SMTP id a15so4249865otf.1;
-        Wed, 18 Dec 2019 13:32:11 -0800 (PST)
+        Wed, 18 Dec 2019 16:32:47 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l136so1991141oig.1;
+        Wed, 18 Dec 2019 13:32:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l6cR5cjWXquCfRvE+W/pPG29nvQyejfq0BlN6fGgdbw=;
-        b=jr5GvkzNPczebNW/nwJGdU+gdblg455Cz4chtB+YXOpapRdJsLV3xFEEg++8z9PhaI
-         BufOipJ5+0Tsp1u8dqFm2/dQyoJxXBd+c1Y0uMtV5IjMLOA7pusShNY6eb80P+iM1719
-         nogwATsPsVKUy3hY+IOBiO4+rWeTU4J4kAANjVJK8h1Sn8B5OdxAPjqbagVqkcIe1nLt
-         vs4rzvLehD/U/t7djhJ3j9hvGLVuiE5UnWdtFDA4St+Ci6SufbNH3yFO3qF6lWhDgazh
-         97X2sGR7lUUF09jFcuHxtUn+1nqoJmlN03xyeB/KgXyRW1qsmgov1AuZb5I9rOcLfFy/
-         azFw==
-X-Gm-Message-State: APjAAAXOAeMfrv0Ic1aMsYF1l+fgkh9NWF5nUggmui8V8Fg6n+f6Y4TB
-        1u+AdCdm+BX0kVOCO1pZvA==
-X-Google-Smtp-Source: APXvYqziswJF3btCEwJOSoHjnpI0T4gtWdT1setdMlPdpGVDpGEr7eLPr9bhTavr8JiYrl6CNXL1jA==
-X-Received: by 2002:a05:6830:1407:: with SMTP id v7mr5015553otp.58.1576704731228;
-        Wed, 18 Dec 2019 13:32:11 -0800 (PST)
+        bh=ExRyZF/HT35yVWV944MHnvHyOox+9HKzQszoyRT+kgo=;
+        b=A3qDz8WjfPOxcRhh4aTDV0wfsLxCmyVw3sz92sK5g4vyhoPnlMGAiVkGC6wpz0QZ0f
+         Ieh1Qrv4Q4sCL7QzkMnD2SnzZjc6qJIUMlxWHBKONyStEhrdlS66csD9pkWftR39odqy
+         V4I8lhUrvdkJ+vSOa/11ZOsIPp+/AmUGPd7SFZz0OXd0PNqnOWA7RZOF5E69kJIigz57
+         gFZKAF0teQHAyEyh3A/P2nL+nGK+Llw4O1BVOXx03huqOcaVsORpEXeLIh9o3bJVxECQ
+         b4R0p1DY8nPO4taskDcl3ScNUhQYAQh7jJE8x5ZRXQyicr5WL+bB6ys1W5+uB/gyhnLj
+         xPhg==
+X-Gm-Message-State: APjAAAXbwLwEJIkN4fMVfoRUmWAVa+wjw7pn2/qDDD8RdfiQBu+GlHan
+        etCuDHg+VSOy3qM63org4w==
+X-Google-Smtp-Source: APXvYqwM8S9+AzrNrHA74otnIP6JBmDMXRocmfVFFFcvwlrOBmtc64wp73828FrIwJ04oiTPlEJDMQ==
+X-Received: by 2002:aca:b7c5:: with SMTP id h188mr1533371oif.100.1576704766553;
+        Wed, 18 Dec 2019 13:32:46 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c19sm1153616otj.6.2019.12.18.13.32.10
+        by smtp.gmail.com with ESMTPSA id a74sm1255077oii.37.2019.12.18.13.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:32:10 -0800 (PST)
-Date:   Wed, 18 Dec 2019 15:32:09 -0600
+        Wed, 18 Dec 2019 13:32:46 -0800 (PST)
+Date:   Wed, 18 Dec 2019 15:32:45 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     skomatineni@nvidia.com, thierry.reding@gmail.com,
@@ -45,36 +45,33 @@ Cc:     skomatineni@nvidia.com, thierry.reding@gmail.com,
         mmaddireddy@nvidia.com, markz@nvidia.com,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/19] dt-bindings: clock: tegra: Remove pmc clock ids
- from clock dt-bindings
-Message-ID: <20191218213209.GA22981@bogus>
+Subject: Re: [PATCH v4 19/19] ASoC: nau8825: change Tegra clk_out_2 provider
+ from tegra_car to pmc
+Message-ID: <20191218213245.GA23867@bogus>
 References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-11-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-20-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1576613046-17159-11-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1576613046-17159-20-git-send-email-skomatineni@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019 12:03:57 -0800, Sowjanya Komatineni wrote:
-> clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra PMC block and
-> these clocks are moved to Tegra PMC driver with pmc as clock provider
-> and uses clock ids from dt-bindings/soc/tegra-pmc.h
+On Tue, 17 Dec 2019 12:04:06 -0800, Sowjanya Komatineni wrote:
+> Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
+> these clocks are moved from clock drvier to pmc driver with pmc as
+> a provider for these clocks.
 > 
-> So, this patch removes ids for these clocks from Tegra clock dt-bindings.
+> Update bindings document to use pmc as clock provider for clk_out_2 and
+> change id to pmc clock id.
 > 
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
->  include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
->  include/dt-bindings/clock/tegra20-car.h         |  2 +-
->  include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
->  include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
->  5 files changed, 29 insertions(+), 29 deletions(-)
+>  Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
