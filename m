@@ -2,67 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD0112472E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:46:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24C9912473A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfLRMqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 07:46:15 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38718 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726743AbfLRMqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 07:46:15 -0500
-Received: from zn.tnic (p200300EC2F0B8B004C237F05E7CC242C.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:8b00:4c23:7f05:e7cc:242c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DA5171EC09F1;
-        Wed, 18 Dec 2019 13:46:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576673170;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=yXwLnW+PoY25pshD8Wq5cZaWHHz1WD1asE9i3LHbFgo=;
-        b=CObDVqosp5y7Z8sELy68i2YofwvsnqQOrexIoHXuwx4iBrrN1Ec2LK/g2G2LFmAiahNTHg
-        KIiIEFVVTQ/7/vwqbtJd3690sOFs622Qt+IGBBhv3TTl1kj/mGgkbqwxQazwVNQmuphqqd
-        SBLhof85IDWs90nsRlzcY4JsHr0Bl6I=
-Date:   Wed, 18 Dec 2019 13:46:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Thomas Garnier <thgarnie@chromium.org>
-Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        keescook@chromium.org, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 01/11] x86/crypto: Adapt assembly for PIE support
-Message-ID: <20191218124604.GE24886@zn.tnic>
-References: <20191205000957.112719-1-thgarnie@chromium.org>
- <20191205000957.112719-2-thgarnie@chromium.org>
+        id S1726931AbfLRMs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 07:48:56 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40838 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfLRMs4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 07:48:56 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i23so1606692lfo.7;
+        Wed, 18 Dec 2019 04:48:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=puVqjGfUZqc69p5IbHMBZvLnH8lealCUIRVLLSvyh68=;
+        b=CegjZJQnDRhZvA19wS9NRPHXrPax+EW+aA5TzuSzoe7qytrGuF4nV6ZBgCWjEAfinb
+         KodRF8cIryYDy/YcH8FDDqXlRwgavUGskCHIfW0ROEVvLv922pvgyVl+m0N5Ynw7P0ll
+         EbsknU1E8T8x0olITC2gY5Nib0H3R5yURtYeHIfA2JzMGkwyFXB4ywGNtyAdHAiHWUN0
+         z9NBzJD+SjKwrh3T6GN0TYxniafqDKSbCJbVjac3ZIP1jw+dmulOtSrw8Rm5QHi/lE6Q
+         b60rpMTQPA4YNm+R7HdKB2crWn5DBw19hbq6k7EXfmwDtKVR2hV3pwYZ/zBmZRSZhMUD
+         2McA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=puVqjGfUZqc69p5IbHMBZvLnH8lealCUIRVLLSvyh68=;
+        b=jWdHO1XkUxirKTmCuEMpbzMqaFqVNkL6lMKkpWCnrvzCx1DwfE0PFqqgGH3C9EOFyD
+         9yFsFQ16Ls96TLBFYlb11ZAz3GPYZVluZ3FX424sCjY36ZNOih40SZqJC7xRsLSujW+b
+         4JBqW9+mNFhaATLQfMY9CoyUE+Hcb0rPL7NII+pwGe6jGECZ+lOqAiXlyZSj8vM3RdUO
+         AyX5iuEoHMdtCWy6tX+P/KNSTxqbauBRa5Fe2VniK2s4BJIuZYg+FnW035scDxbigq9/
+         ZIHUXnplF4YD34VfgFb1KHZHWYX2Oqn5mC6H0pfpCcabGw6hJw6kmaFkxq9+KE16xNSP
+         bg5A==
+X-Gm-Message-State: APjAAAULpHCs9k6Sw5zzHHUNVqYCaNQGjFJeZRb2uX6m0UIPbnXrgXYL
+        b+iKZJPtZijvfD3GqgY4up5mijUJuXKK+vDDTgY=
+X-Google-Smtp-Source: APXvYqxxr2ycXk2c/95HhTuw//BhWhwZCbDPO1lc7OiIlgU4kqTzX6dC1NiHbs00RN13nBGSqf36KHHnaQUo36J/HmA=
+X-Received: by 2002:ac2:50da:: with SMTP id h26mr1594397lfm.80.1576673333979;
+ Wed, 18 Dec 2019 04:48:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191205000957.112719-2-thgarnie@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 18 Dec 2019 09:48:49 -0300
+Message-ID: <CAOMZO5DeA24EUjr-E=V=tGNaZ7UkOEi+F5-kEBqEB288DSNSoA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mripard@kernel.org" <mripard@kernel.org>,
+        "wens@csie.org" <wens@csie.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 04, 2019 at 04:09:38PM -0800, Thomas Garnier wrote:
-> Change the assembly code to use only relative references of symbols for the
-> kernel to be PIE compatible.
-> 
-> Position Independent Executable (PIE) support will allow to extend the
-> KASLR randomization range below 0xffffffff80000000.
+On Wed, Dec 18, 2019 at 9:44 AM Peng Fan <peng.fan@nxp.com> wrote:
 
-FFS, how many times do we have to talk about this auto-sprinkled
-sentence?!
+> -       nr_irq_parent = of_irq_count(np);
+> +       nr_irq_parent = platform_irq_count(pdev);
+> +       if (nr_irq_parent < 0) {
+> +               if (nr_irq_parent != -EPROBE_DEFER)
+> +                       dev_err(dev, "Couldn't determine irq count: %pe\n",
+> +                               ERR_PTR(nr_irq_parent));
 
-https://lkml.kernel.org/r/20190805163202.GD18785@zn.tnic
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Why do you return ERR_PTR(nr_irq_parent) instead of simply nr_irq_parent?
