@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBFC8123E9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA8C123E9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLREkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 23:40:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38648 "EHLO
+        id S1726696AbfLREk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 23:40:29 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41569 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbfLREkU (ORCPT
+        with ESMTP id S1726613AbfLREkV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 23:40:20 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x185so495984pfc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:40:20 -0800 (PST)
+        Tue, 17 Dec 2019 23:40:21 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w62so488907pfw.8
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7tnHP49bcbdj6wbVlgmEh/i8N9jDvFKi9kaAZwgRO58=;
-        b=O0yzhS23HGtIJZbs0zAM+mSOkQxGOG6AvwAEalcJQrw8ZovBcuay4V1Al0Dj1xAO1f
-         wVwcbxEVekcuUvSyh+zo6MysMZ5iBMzSPyuDESXnLF9rM2PPdJsmgWA5pMB+8Diot1EN
-         lSQGr0HWcuk9CMYUxTzT93IL2wrD4zOvVqK+OCMm/TxxvRsmeo/R8X13p7tTvk0jwo+f
-         j9Uqkm+lpWXaZU7IkuGF6CpBWm39tcrP5N/RouvlnfyqEr7T1O97IH7dS5E/4zZeiggR
-         nYUMan99mW+H1e5ehvAYcsf1mOavIMEUaJRhZJv0wLFajDCMFAdkVribcE+GJNceDZkj
-         D3NQ==
+        bh=buvyJgIJY0R4gHfuaJpwEN38gwzHGwHEA+PtuFw57xs=;
+        b=fSA6/OU6RZ4QSFkEveLrXMk7xfGo5Yml/4SapAlwGdyCNgt6hZvHpVJXueStFSsHRU
+         E8cFUeFs80hq2ijU88iVgMzJbyAijs5ff9wE+NkkPiF2iJ9XGAthOz03SFgeQWN93Knc
+         sxUokcCF+H9YitQqotepfn0/Z+vKvmrvDGp4PEfaS7oVzHaxx05dJjcuH1bLCw0F3GqB
+         lBkVZB4XUJaRNgt7fr2Hd2Q8sbpoGUwVLYsgo6nGcVoUf+zHKWshZZBBA+L+Wcw3OsUZ
+         B1eLZ2zD8Fs8xMcZ7wPwo4dThIhjfnksWJgczgKpxlIh5m6nPrk12rGDUrhJgCbdp9tY
+         aWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7tnHP49bcbdj6wbVlgmEh/i8N9jDvFKi9kaAZwgRO58=;
-        b=TGENLqkYt8uZ2M7O6lm5ul2xHjA6UqEY6Nfhrk1fFIO7BfMxL4/P5RYnleRj7hdGRg
-         5r6eV39zqrl1kbbw4TfuSsQ3viMpbZ5P5/qrMDEdbNpn2Xo0vzxZrl+V3aeS2ozhgUT7
-         UeCDn2b6Hb6W6WmR9/Dtp0KUcGvlcDUqG7op7/GTSt6Lzwh44sZ9vVlOc163WiPmMfuv
-         dkXRqu6bpPVKqEiNj0ouus8rvGqgqiRTMEoZ5FN+Rw6eu1Ey1fp3Supoq3FdiH+m2wAI
-         g/eE7HMUx9BPKAaqzMrmERtFc2+qqneYfTpyQKwEPb0W5+qY2JbEIfpcZ1by+UlAZxf/
-         mvtw==
-X-Gm-Message-State: APjAAAVsxU0nSmCb/A33i0NGqoACMONxXiBnHOkZnGdB+lE0sRrYlWiu
-        uyJBE15iHmrTccGT6ZD0vZy/QJxqSPc=
-X-Google-Smtp-Source: APXvYqzSQ8EkWQ17u7mqdOiOyZaCadH8FPwTAgfdXevSealYbYZ5TAeFeSKvd1+6TyOxHGnOE1UJ0w==
-X-Received: by 2002:a63:1d1d:: with SMTP id d29mr617092pgd.387.1576644019834;
-        Tue, 17 Dec 2019 20:40:19 -0800 (PST)
+        bh=buvyJgIJY0R4gHfuaJpwEN38gwzHGwHEA+PtuFw57xs=;
+        b=IkfY01iVJ7ZmLkyiNSE1JPsqH2NwOsUCynbNvq18tmSKUDBr06ucJp4Dahjo0RXr/n
+         VFrV1XdUt5gmB1d6VFxnSh9OlZAfqCkCdlfrflvU2VxZCz26STKQzi/rrNjTDD7GIcQ+
+         n+uD0fILEAAHvuG5ITNbeK8MBreIka9U+eIpcC78XDLNt2lbv4wsJ06NOa86bErzatc5
+         LKhqNXGQjAgTFuQihX8djKBw5MmQsInPoP+hTAotx1DdRk5WEd1k8NB92EoSq+5H0hZy
+         xCUHIZGA4tZmj8xkyRM/DHLYLfR6T7TMUcqvi9y7ncMmH9q/6AMYLJzCuR/+Nubavxwx
+         IpEA==
+X-Gm-Message-State: APjAAAVBFxqN1Mlb6vd4uhHycpbrBc47p+zIHmpA0StJ0mk3fr7+lHJY
+        2I5h9aArInZG3DBlPdTIc6E=
+X-Google-Smtp-Source: APXvYqzYkNMV1tAM39yw129obSP47Du+yTcT5HVPg0cGDvNIcUAUzXmE7cRKZdrBA9z1l687aXPNXA==
+X-Received: by 2002:a62:8205:: with SMTP id w5mr831686pfd.136.1576644020754;
+        Tue, 17 Dec 2019 20:40:20 -0800 (PST)
 Received: from tw-172-25-31-76.office.twttr.net ([8.25.197.24])
-        by smtp.gmail.com with ESMTPSA id j21sm781105pfe.175.2019.12.17.20.40.18
+        by smtp.gmail.com with ESMTPSA id j21sm781105pfe.175.2019.12.17.20.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 20:40:19 -0800 (PST)
+        Tue, 17 Dec 2019 20:40:20 -0800 (PST)
 From:   Cong Wang <xiyou.wangcong@gmail.com>
 To:     iommu@lists.linux-foundation.org
 Cc:     robin.murphy@arm.com, linux-kernel@vger.kernel.org,
         joro@8bytes.org, Cong Wang <xiyou.wangcong@gmail.com>,
         John Garry <john.garry@huawei.com>
-Subject: [Patch v3 2/3] iommu: optimize iova_magazine_free_pfns()
-Date:   Tue, 17 Dec 2019 20:39:50 -0800
-Message-Id: <20191218043951.10534-3-xiyou.wangcong@gmail.com>
+Subject: [Patch v3 3/3] iommu: avoid taking iova_rbtree_lock twice
+Date:   Tue, 17 Dec 2019 20:39:51 -0800
+Message-Id: <20191218043951.10534-4-xiyou.wangcong@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
 References: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
@@ -63,66 +63,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the magazine is empty, iova_magazine_free_pfns() should
-be a nop, however it misses the case of mag->size==0. So we
-should just call iova_magazine_empty().
+Both find_iova() and __free_iova() take iova_rbtree_lock,
+there is no reason to take and release it twice inside
+free_iova().
 
-This should reduce the contention on iovad->iova_rbtree_lock
-a little bit, not much at all.
+Fold them into one critical section by calling the unlock
+versions instead.
 
 Cc: Joerg Roedel <joro@8bytes.org>
 Cc: John Garry <john.garry@huawei.com>
 Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 ---
- drivers/iommu/iova.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ drivers/iommu/iova.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index cb473ddce4cf..184d4c0e20b5 100644
+index 184d4c0e20b5..f46f8f794678 100644
 --- a/drivers/iommu/iova.c
 +++ b/drivers/iommu/iova.c
-@@ -797,13 +797,23 @@ static void iova_magazine_free(struct iova_magazine *mag)
- 	kfree(mag);
- }
- 
-+static bool iova_magazine_full(struct iova_magazine *mag)
-+{
-+	return (mag && mag->size == IOVA_MAG_SIZE);
-+}
-+
-+static bool iova_magazine_empty(struct iova_magazine *mag)
-+{
-+	return (!mag || mag->size == 0);
-+}
-+
- static void
- iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
+@@ -390,10 +390,14 @@ EXPORT_SYMBOL_GPL(__free_iova);
+ void
+ free_iova(struct iova_domain *iovad, unsigned long pfn)
  {
- 	unsigned long flags;
- 	int i;
+-	struct iova *iova = find_iova(iovad, pfn);
++	unsigned long flags;
++	struct iova *iova;
  
--	if (!mag)
-+	if (iova_magazine_empty(mag))
- 		return;
++	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
++	iova = private_find_iova(iovad, pfn);
+ 	if (iova)
+-		__free_iova(iovad, iova);
++		private_free_iova(iovad, iova);
++	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
  
- 	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-@@ -820,16 +830,6 @@ iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
- 	mag->size = 0;
  }
- 
--static bool iova_magazine_full(struct iova_magazine *mag)
--{
--	return (mag && mag->size == IOVA_MAG_SIZE);
--}
--
--static bool iova_magazine_empty(struct iova_magazine *mag)
--{
--	return (!mag || mag->size == 0);
--}
--
- static unsigned long iova_magazine_pop(struct iova_magazine *mag,
- 				       unsigned long limit_pfn)
- {
+ EXPORT_SYMBOL_GPL(free_iova);
 -- 
 2.21.0
 
