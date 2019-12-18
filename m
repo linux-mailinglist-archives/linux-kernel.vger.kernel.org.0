@@ -2,90 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A0C124060
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:31:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2E41124075
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:37:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbfLRHbo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:31:44 -0500
-Received: from outbound-smtp38.blacknight.com ([46.22.139.221]:52833 "EHLO
-        outbound-smtp38.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726674AbfLRHbo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:31:44 -0500
-Received: from mail.blacknight.com (unknown [81.17.255.152])
-        by outbound-smtp38.blacknight.com (Postfix) with ESMTPS id 846A3DCA
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:31:42 +0000 (GMT)
-Received: (qmail 21674 invoked from network); 18 Dec 2019 07:31:42 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[84.203.18.57])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 18 Dec 2019 07:31:42 -0000
-Date:   Wed, 18 Dec 2019 07:31:39 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>,
-        kvm@vger.kernel.org, mst@redhat.com, linux-kernel@vger.kernel.org,
-        willy@infradead.org, mhocko@kernel.org, linux-mm@kvack.org,
-        akpm@linux-foundation.org, vbabka@suse.cz, yang.zhang.wz@gmail.com,
-        konrad.wilk@oracle.com, david@redhat.com, pagupta@redhat.com,
-        riel@surriel.com, lcapitulino@redhat.com, dave.hansen@intel.com,
-        wei.w.wang@intel.com, aarcange@redhat.com, pbonzini@redhat.com,
-        dan.j.williams@intel.com, osalvador@suse.de
-Subject: Re: [PATCH v15 4/7] mm: Introduce Reported pages
-Message-ID: <20191218073139.GE3178@techsingularity.net>
-References: <20191205161928.19548.41654.stgit@localhost.localdomain>
- <20191205162238.19548.68238.stgit@localhost.localdomain>
- <0bb29ec2-9dcb-653c-dda5-0825aea7d4b0@redhat.com>
- <537e970f062e0c7f89723f63fc1f3ec6e53614a5.camel@linux.intel.com>
- <06ca452e-90b3-c1b5-f2c0-e8da2444bcfe@redhat.com>
- <03e1e95c2cc8d6e3206212df48a971e9696d3b20.camel@linux.intel.com>
+        id S1726730AbfLRHhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:37:43 -0500
+Received: from spam01.hygon.cn ([110.188.70.11]:40211 "EHLO spam2.hygon.cn"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726682AbfLRHhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:37:43 -0500
+Received: from MK-DB.hygon.cn ([172.23.18.60])
+        by spam2.hygon.cn with ESMTP id xBI7YsLc029176;
+        Wed, 18 Dec 2019 15:34:54 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from cncheex01.Hygon.cn ([172.23.18.10])
+        by MK-DB.hygon.cn with ESMTP id xBI7YjaX044964;
+        Wed, 18 Dec 2019 15:34:45 +0800 (GMT-8)
+        (envelope-from linjiasen@hygon.cn)
+Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
+ (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 18 Dec
+ 2019 15:34:54 +0800
+Subject: Re: [PATCH] NTB: ntb_perf: Add more debugfs entries for ntb_perf
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
+        <jdmason@kudzu.us>
+CC:     <allenbh@gmail.com>, <dave.jiang@intel.com>, <sanju.mehta@amd.com>
+References: <1576550536-84697-1-git-send-email-linjiasen@hygon.cn>
+ <d4f679cd-739b-fd80-8344-7da475937835@deltatee.com>
+From:   Jiasen Lin <linjiasen@hygon.cn>
+Message-ID: <fd3efeba-40f0-3933-af48-d74486ddea86@hygon.cn>
+Date:   Wed, 18 Dec 2019 15:32:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <03e1e95c2cc8d6e3206212df48a971e9696d3b20.camel@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d4f679cd-739b-fd80-8344-7da475937835@deltatee.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.18.44]
+X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
+ (172.23.18.10)
+X-MAIL: spam2.hygon.cn xBI7YsLc029176
+X-DNSRBL: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 08:31:59AM -0800, Alexander Duyck wrote:
-> > > > I think you recently switched to using an atomic variable for maintaining page
-> > > > reporting status as I was doing in v12.
-> > > > Which is good, as we will not have a disagreement on it now.
-> > >
-> > > There is still some differences between our approaches if I am not
-> > > mistaken. Specifically I have code in place so that any requests to report
-> > > while we are actively working on reporting will trigger another pass being
-> > > scheduled after we completed. I still believe you were lacking any logic
-> > > like that as I recall.
-> > > 
-> > 
-> > Yes, I was specifically referring to the atomic state variable.
-> > Though I am wondering if having an atomic variable to track page reporting state
-> > is better than having a page reporting specific unsigned long flag, which we can
-> > manipulate via __set_bit() and __clear_bit().
+
+
+On 2019/12/18 0:42, Logan Gunthorpe wrote:
 > 
-> So the reason for using an atomic state variable is because I only really
-> have 3 possible states; idle, active, and requested. It allows for a
-> pretty simple state machine as any transition from idle indicates that we
-> need to schedule the worker, transition from requested to active when the
-> worker starts, and if at the end of a pass if we are still in the active
-> state it means we can transition back to idle, otherwise we reschedule the
-> worker.
 > 
-> In order to do the same sort of thing using the bitops would require at
-> least 2 bits. In addition with the requirement that I cannot use the zone
-> lock for protection of the state I cannot use the non-atomic versions of
-> things such as __set_bit and __clear_bit so they would require additional
-> locking protections.
+> On 2019-12-16 7:42 p.m., Jiasen Lin wrote:
+>> Currently, read input and output buffer is not supported yet in
+>> debugfs of ntb_perf. We can not confirm whether the output data is
+>> transmitted to the input buffer at peer memory through NTB.
+>>
+>> This patch add new entries in debugfs which implement interface to read
+>> a part of input and out buffer. User can dump output and input data at
+>> local and peer system by hexdump command, and then compare them manually.
+> 
+> Do we even initialize inbuf and outbuf? Probably not a good idea to
+> expose them to userspace if it's not initialized.
 > 
 
-I completely agree with this. I had pointed out in an earlier review
-that expanding the scope of the zone lock was inappropriate, the
-non-atomic operations on separate flags potentially misses updates and
-in general, I prefer the atomic variable approach a lot more than the
-previous zone->flag based approach.
+Good catch! Input buffer(peer->inbuf) should be initialized after call
+dma_alloc_coherent in perf_setup_inbuf, but output buffer(peer->outbuf)
+that point to NTB BARx MMIO address can not be initialized. The address 
+of memory request that fall in NTB memory windown will be translated 
+into an address that point to input buffer at peer memory system through 
+NTB XLAT register in ntb_perf. In other words, only input buffer should 
+be initialized.
+Will fix it for v2 as a separate patch.
 
--- 
-Mel Gorman
-SUSE Labs
+> Really, ntb_tool should be used to check if memory windows work,
+> ntb_perf is just to see the maximum transfer rate.
+> 
+
+Yes, you are right! ntb_tool could be used to check memory window
+by hexdmup mw and peer_mw after write mw_trans and peer_mw_trans,
+but this is only one ntb client be probed although we can insmod both
+ntb_tool.ko and ntb_perf.ko, That's to say, only one modulue can create
+files in debugFS. So, I suggest that add debugfs entries that can read
+input and output buffer in ntb_perf.
+
+Thanks,
+Jiasen Lin
+
+> Logan
+> 
