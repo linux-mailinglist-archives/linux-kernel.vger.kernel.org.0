@@ -2,101 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0820612432A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:29:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0214D12431F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:28:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfLRJ3S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 04:29:18 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54430 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfLRJ3R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:29:17 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBI9SFbt030551;
-        Wed, 18 Dec 2019 03:28:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576661295;
-        bh=iGk7YRT+kPnqstyHZEl2eYWpUaNqZx8s0Pjx38SCwGo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=M0503mgOmC+63+lhfjTAtturSJzFirhFDnzpQjn4VuFPV9r/pRlTAzS2AQKuysbEV
-         WVUzj8nTNILNsZJmzW7LJf62u6tY3T9krMHZ3Yvak26fJ83EO0ajFVxVX1ua68asny
-         47Zc1haxMdZHMJ7LD5Xf6xJyf90PZ9aXphTaOfSE=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBI9SFxW120738
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Dec 2019 03:28:15 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
- Dec 2019 03:28:15 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 18 Dec 2019 03:28:15 -0600
-Received: from [10.24.69.35] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBI9S8be074543;
-        Wed, 18 Dec 2019 03:28:12 -0600
-Subject: Re: [PATCH 1/3] clocksource: davinci: work around a clocksource
- problem on dm365 SoC
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        id S1726758AbfLRJ2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 04:28:23 -0500
+Received: from mga03.intel.com ([134.134.136.65]:53309 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725785AbfLRJ2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:28:23 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 01:28:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,329,1571727600"; 
+   d="scan'208";a="212654018"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Dec 2019 01:28:20 -0800
+Received: from [10.125.252.219] (abudanko-mobl.ccr.corp.intel.com [10.125.252.219])
+        by linux.intel.com (Postfix) with ESMTP id 779115803E4;
+        Wed, 18 Dec 2019 01:28:11 -0800 (PST)
+Subject: [PATCH v4 5/9] trace/bpf_trace: open access for CAP_SYS_PERFMON
+ privileged process
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        "jani.nikula@linux.intel.com" <jani.nikula@linux.intel.com>,
+        "joonas.lahtinen@linux.intel.com" <joonas.lahtinen@linux.intel.com>,
+        "rodrigo.vivi@intel.com" <rodrigo.vivi@intel.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "james.bottomley@hansenpartnership.com" 
+        <james.bottomley@hansenpartnership.com>,
+        Serge Hallyn <serge@hallyn.com>,
+        James Morris <jmorris@namei.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Robert Richter <rric@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Igor Lubashev <ilubashe@akamai.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        David Lechner <david@lechnology.com>,
-        Kevin Hilman <khilman@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20191213162453.15691-1-brgl@bgdev.pl>
- <20191213162453.15691-2-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <51eb10e9-245e-7b3e-51ff-578e06e0759b@ti.com>
-Date:   Wed, 18 Dec 2019 14:58:07 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org, oprofile-list@lists.sf.net
+References: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <1d46cc07-ced7-9a29-a9a3-3cba6ef2df21@linux.intel.com>
+Date:   Wed, 18 Dec 2019 12:28:10 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <20191213162453.15691-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <c0460c78-b1a6-b5f7-7119-d97e5998f308@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bart,
 
-On 13/12/19 9:54 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The DM365 platform has a strange quirk (only present when using ancient
-> u-boot - mainline u-boot v2013.01 and later works fine) where if we
-> enable the second half of the timer in periodic mode before we do its
-> initialization - the time won't start flowing and we can't boot.
-> 
-> When using more recent u-boot, we can enable the timer, then reinitialize
-> it and all works fine.
-> 
-> I've been unable to figure out why that is, but a workaround for this
-> is straightforward - just cache the enable bits for tim34.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Open access to bpf_trace monitoring for CAP_SYS_PERFMON privileged
+processes. For backward compatibility reasons access to bpf_trace
+monitoring remains open for CAP_SYS_ADMIN privileged processes but
+CAP_SYS_ADMIN usage for secure bpf_trace monitoring is discouraged
+with respect to CAP_SYS_PERFMON capability.
 
-Timer Global Control Register (TGCR) has bits to reset both halves of
-timer. Does placing both halves in reset, waiting a bit (say 10ms) and
-then taking them out of reset help solve the this problem?
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ kernel/trace/bpf_trace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also, there are LPSCs controlling the timers. As an experiment, can you
-see if using LPSC_STATE_SWRSTDISABLE instead of LPSC_STATE_DISABLE in
-davinci_lpsc_clk_disable() and then doing a clk_disable() + clk_enable()
-on timer can get the timer out of this bad state.
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 44bd08f2443b..bafe21ac6d92 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1272,7 +1272,7 @@ int perf_event_query_prog_array(struct perf_event *event, void __user *info)
+ 	u32 *ids, prog_cnt, ids_len;
+ 	int ret;
+ 
+-	if (!capable(CAP_SYS_ADMIN))
++	if (!perfmon_capable())
+ 		return -EPERM;
+ 	if (event->attr.type != PERF_TYPE_TRACEPOINT)
+ 		return -EINVAL;
+-- 
+2.20.1
 
-We need some way for Linux to start on a clean state after bootloader is
-done. And trying to reset the timer before use seems to be a better way
-to accomplish it.
 
-I assume the original code was just lucky in not hitting this case?
-
-Thanks,
-Sekhar
