@@ -2,107 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D417F1250EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:44:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D88471250F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:45:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfLRSof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 13:44:35 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41821 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfLRSoc (ORCPT
+        id S1727205AbfLRSpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 13:45:46 -0500
+Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:34720 "EHLO
+        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726699AbfLRSpp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:44:32 -0500
-Received: by mail-lf1-f65.google.com with SMTP id m30so2434884lfp.8;
-        Wed, 18 Dec 2019 10:44:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=v+s6MmvX7icUw9PqvAbzROxUfy5WGSHxEQBNGekKk1M=;
-        b=eWu5k4UPSPnWt4SB9moFHFObPD8046g6FCMmloy9PcnDk3ptLRirVJw/39qIgsG0XO
-         Lg4DZR/G2w4/834Cu8ZgnkBEcxXME7FuU1t5tfxAnkHHUKKWE999HQwuqSswry8kH5GH
-         SNDlu/gQxRDqJhvrtPu0i7pzQtCb/kMGxOEzbG1DVzCKyqnKk25l3yHlTcZJKMczHdVU
-         Zh/PhVy5A37OxRuSgZ17oHqAtxUCCbQHycGb2dRq8F103P/BgFVrakfALjnVHOhFLM7r
-         coo6lqANCUQL06x2ggbSFlkSnrGwYUUWOWOzoGe7OMDW0s0uBaG2KoEoWcKi59SuShjP
-         4Evw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=v+s6MmvX7icUw9PqvAbzROxUfy5WGSHxEQBNGekKk1M=;
-        b=AFMsR8lois2J3IcIlcMCpNm57L9Tc7FU+saQJ3jLgpons0bpgricuEC/IYO8a5B5w8
-         Cl27HH9/AYd2VM6jo+MpN6lPCyJj0R7nL9A3AeXKsslCr4SmI+A2TGODGVTQsrt2S9i7
-         wO8Xvy2bVroV8rz19p5UuHQJHXIHfFefNscMCmuDRcYuOhBLE1wSF5UvUn0KhcRkdwMJ
-         4iKEentshy2MxZ1fFmJzx3FFjpYqY8TA/Hk5ax3nXjY6r7AZ8peKtz75L0Bdoy67Vk7A
-         UMcf6BIf4rr6i527ESok0bk/7qD6kYYFAYLntxXFB+fZeJJ73UpKAS1aDKugbz64rwiE
-         Xt5g==
-X-Gm-Message-State: APjAAAUrLxJLsKE6huqBDr2EXSnLXC0Or9P1W4njYiwb3EMrBHxEoAZ5
-        YMb1oGnHWv5tKa00iqY2u4k=
-X-Google-Smtp-Source: APXvYqx3pUFK4C9rEvv0I4zncfw0HhZuOlzK0cBQdhYTb2NqAe4bgmQqGDfSVjwRV67Eu/OOEAyKhQ==
-X-Received: by 2002:a19:4f46:: with SMTP id a6mr2765387lfk.143.1576694669901;
-        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id j204sm1553354lfj.38.2019.12.18.10.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND for 5.6 v1 3/3] clk: tegra20/30: Explicitly set parent clock for Video Decoder
-Date:   Wed, 18 Dec 2019 21:44:07 +0300
-Message-Id: <20191218184407.25790-3-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191218184407.25790-1-digetx@gmail.com>
-References: <20191218184407.25790-1-digetx@gmail.com>
+        Wed, 18 Dec 2019 13:45:45 -0500
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
+        id 1iheKH-0007I2-Gm; Wed, 18 Dec 2019 18:45:37 +0000
+Message-ID: <22903f0af805452bfabf9c0b476a1b67646e544c.camel@codethink.co.uk>
+Subject: Re: [PATCH v2 17/27] compat_ioctl: ide: floppy: add handler
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-doc@vger.kernel.org,
+        corbet@lwn.net, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Date:   Wed, 18 Dec 2019 18:45:36 +0000
+In-Reply-To: <20191217221708.3730997-18-arnd@arndb.de>
+References: <20191217221708.3730997-1-arnd@arndb.de>
+         <20191217221708.3730997-18-arnd@arndb.de>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The VDE parent won't be changed automatically to PLLC if bootloader
-didn't do that for us, hence let's explicitly set the parent for
-consistency.
+On Tue, 2019-12-17 at 23:16 +0100, Arnd Bergmann wrote:
+> Rather than relying on fs/compat_ioctl.c, this adds support
+> for a compat_ioctl() callback in the ide-floppy driver directly,
+> which lets it translate the scsi commands.
+[...]
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 2 +-
- drivers/clk/tegra/clk-tegra30.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+After this, and before "compat_ioctl: move HDIO ioctl handling into
+drivers/ide", compat ioctls on an IDE hard drive will result in a null
+pointer dereference in ide_gd_compat_ioctl().  Not sure how much that
+really matters though.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 0c14fb570343..fff5cba87637 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1048,7 +1048,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
--	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-+	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
- };
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index bd4d42005897..b20891489e11 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1256,7 +1256,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
--	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
- 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+Ben.
+
 -- 
-2.24.0
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
 
