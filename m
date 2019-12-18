@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 744E7124C19
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:47:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47345124C16
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:47:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfLRPrN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:47:13 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37889 "EHLO
+        id S1727135AbfLRPq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:46:58 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53403 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbfLRPqv (ORCPT
+        with ESMTP id S1727403AbfLRPqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:46:51 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u2so2427831wmc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:46:49 -0800 (PST)
+        Wed, 18 Dec 2019 10:46:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m24so2332531wmc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:46:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BH6e3bahFkWBTjXwfWXdljOGokLAIKV+wnWDzABNP74=;
-        b=omVWiHXLRaPV/ydWfQBU04NH95kIXEj2dP02jegjAK8kLmWE1KU9Sv2MygDYSmBgkL
-         1ySn1Eg/LgD5mL9l+KRkxDFRz2gv953PmMSDRsrQBAo/F7O/W5q6KD0uoxxGGcDekonL
-         DGuBsISgSk8tB2EIOvreCPHyC7I7P2x8fa387bjQ/3VKRFNOZAiMEsS/C6eYzEuAumNh
-         veZmmKEcVuNhypTLKgeCF2HQS6he78ot8MfdB+D2QeKM2llpVOKFk4zo9P48fsL2C0QH
-         4vv1KTfy0eq2bDMXcB9bWw0GHBf1bGZAh4xXpKb/nNhlCAHnJg0GhFwhYEFD3oNbHwA1
-         Ul1g==
+        bh=NjOOFQdSNiNtcA78fpvmgoeWK/L30H20RCXuDVGLGWk=;
+        b=SCzrCgd7A/mhydyrOjE2A2Yt2mi0XL9Zxh4shELUwCSwzhMP6ZFuYlFrAteEuN+Tqn
+         4x6BZ/qgQD/dt2wxoJIUFVqBeuuxLmqPMAU1Sxszs2UkM0AYEKdLqWjplKFzhhp1qH7j
+         9jiUd+mhf9TJUH/QwRq9lI2LW7uLd2QNVlq8ZU4Rg9tW/MNDOczsxUBY8iE2JA1XyITX
+         39ASx0i4pihsxSlL3CkOoCs+/PCizYRXMg+TKnH/Sghd9IZBfnX0luEO/GJz6e5vmiN2
+         9LHCJtqIjVLfUOh41u+mLJ2+e6RYjdgCmReGMPioBx8Mpa5Lf2BGniyXv9a7kbdCJsYI
+         Isdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BH6e3bahFkWBTjXwfWXdljOGokLAIKV+wnWDzABNP74=;
-        b=pnvMIPwj+PiO4cNixQKzceZ+ZMWMwdC/yFmE966DruSArhisBRc5ajLUGyPbMOSCxU
-         r0hj938ueaUmrFl1oZq2lHRzBLU0q6psIRWJcOL9TZbz1BkCfeP5Ewez6F7IZMZudYvs
-         H8Fbx75Vz96E/6cRzixpbS05FX7vHpInxxQNC6FKVGacUzDnXSD4DaFQOBLDe1DPDkKM
-         ZLx9FLu31xuXk0HX3fVptoC620u1hPXJEUq+hmDyGj/ZLgyLCrv9gTtqr7z+/f/jWTkw
-         Z6Gl3ylMj5XtRgoknwucnRAZfXMaDKJ0ikUh84n3I0yXaH6b73KbuD91F8EyJf0z3AV6
-         5/vA==
-X-Gm-Message-State: APjAAAWLZMIiXb6gNQVwz+aPK0h2tMohG8WkYT5vN+YIu/EvyRxUqaOR
-        Z2C7of0JCJEORrZ9pBcXyYHNXg==
-X-Google-Smtp-Source: APXvYqwiMmPBuwhf+2rWRor3F5AMIaAs7w/h+pInq8Kwk/3+4ZeaOmiz1xHepKTgUKges0nOG5L2Hw==
-X-Received: by 2002:a7b:c318:: with SMTP id k24mr4206960wmj.54.1576684008490;
-        Wed, 18 Dec 2019 07:46:48 -0800 (PST)
+        bh=NjOOFQdSNiNtcA78fpvmgoeWK/L30H20RCXuDVGLGWk=;
+        b=PmOGjjxrNmocNf04dzaTf7JT+R6m8GzSlCkmmI1846esIxy3wpg6Ol/IlY0AYD203D
+         X6Kbu4uib88lgeEQd8vwN5iSKppSudQD5xaHtjcMrWH5r3QCjMUNfFD9V+x2Jvxp8QOP
+         MoEcICf9tDKFRJsBfhI7naO3JBlplvGAX0mLdXyM7SVGPdIG8YJvXEt4dKRPjZLVuIok
+         ibIRZnjVIuzHtxEvzWw+Oi2bwMrf+CJRcQnP6dhZ87chWGVfHsYFEbnSqPjnIQj/F3jF
+         MNb4E68adH6Xrf87C2qHl63phmhlK9WaIAIgR+VyBti5mjUJpXkmDSFSMxmzFWlGKZaH
+         sn6w==
+X-Gm-Message-State: APjAAAWppOOQ133EK50u0AMICVPqX+o8hdBdTqisjCcsPJktZruZzzmW
+        DzvBt1aWuxTlvbdknp2bOoEmDw==
+X-Google-Smtp-Source: APXvYqxwN39hr8n85naTomf2oUyuNzi2UuPO9o3Rx5iWF8EiBja9k87BGB2BEHXH8ee3dQ6ZxLfy0Q==
+X-Received: by 2002:a1c:7e02:: with SMTP id z2mr4181458wmc.25.1576684009707;
+        Wed, 18 Dec 2019 07:46:49 -0800 (PST)
 Received: from bender.baylibre.local (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
-        by smtp.gmail.com with ESMTPSA id x1sm2891492wru.50.2019.12.18.07.46.47
+        by smtp.gmail.com with ESMTPSA id x1sm2891492wru.50.2019.12.18.07.46.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:46:47 -0800 (PST)
+        Wed, 18 Dec 2019 07:46:48 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         jonas@kwiboo.se, jernej.skrabec@siol.net,
@@ -52,9 +52,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 08/10] drm/meson: venc: add support for YUV420 setup
-Date:   Wed, 18 Dec 2019 16:46:35 +0100
-Message-Id: <20191218154637.17509-9-narmstrong@baylibre.com>
+Subject: [PATCH v3 09/10] drm/meson: vclk: add support for YUV420 setup
+Date:   Wed, 18 Dec 2019 16:46:36 +0100
+Message-Id: <20191218154637.17509-10-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191218154637.17509-1-narmstrong@baylibre.com>
 References: <20191218154637.17509-1-narmstrong@baylibre.com>
@@ -65,7 +65,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds encoding support for the YUV420 output from the
+This patch adds clocking support for the YUV420 output from the
 Amlogic Meson SoCs Video Processing Unit to the HDMI Controller.
 
 The YUV420 is obtained by generating a YUV444 pixel stream like
@@ -73,74 +73,349 @@ the classic HDMI display modes, but then the Video Encoder output
 can be configured to down-sample the YUV444 pixel stream to a YUV420
 stream.
 
-In addition if pixel stream down-sampling, the Y Cb Cr components must
-also be mapped differently to align with the HDMI2.0 specifications.
+This mode needs a different clock generation scheme since the TMDS PHY
+clock must match the 10x ratio with the YUV420 pixel clock, but
+the video encoder must run at 2x the pixel clock.
+
+This patch adds the TMDS PHY clock value in all the video clock setup
+in order to better support these specific uses cases and switch
+to the Common Clock framework for clocks handling in the future.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 3 ++-
- drivers/gpu/drm/meson/meson_venc.c    | 8 +++++---
- drivers/gpu/drm/meson/meson_venc.h    | 2 ++
- 3 files changed, 9 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c   | 24 ++++---
+ drivers/gpu/drm/meson/meson_vclk.c      | 93 +++++++++++++++++++------
+ drivers/gpu/drm/meson/meson_vclk.h      |  7 +-
+ drivers/gpu/drm/meson/meson_venc_cvbs.c |  3 +-
+ 4 files changed, 93 insertions(+), 34 deletions(-)
 
 diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index 69926d5d8756..75c133a048d3 100644
+index 75c133a048d3..ce27dfde509e 100644
 --- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
 +++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -772,7 +772,8 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_bridge *bridge,
- 	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
- 
- 	/* VENC + VENC-DVI Mode setup */
--	meson_venc_hdmi_mode_set(priv, vic, mode);
-+	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, false,
-+				 VPU_HDMI_OUTPUT_CBYCR);
- 
- 	/* VCLK Set clock */
- 	dw_hdmi_set_vclk(dw_hdmi, mode);
-diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-index a9ab78970bfe..f93c725b6f02 100644
---- a/drivers/gpu/drm/meson/meson_venc.c
-+++ b/drivers/gpu/drm/meson/meson_venc.c
-@@ -946,6 +946,8 @@ bool meson_venc_hdmi_venc_repeat(int vic)
- EXPORT_SYMBOL_GPL(meson_venc_hdmi_venc_repeat);
- 
- void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
-+			      unsigned int ycrcb_map,
-+			      bool yuv420_mode,
- 			      const struct drm_display_mode *mode)
+@@ -376,15 +376,19 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
  {
- 	union meson_hdmi_venc_mode *vmode = NULL;
-@@ -1528,14 +1530,14 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
- 	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
- 		reg |= VPU_HDMI_INV_VSYNC;
+ 	struct meson_drm *priv = dw_hdmi->priv;
+ 	int vic = drm_match_cea_mode(mode);
++	unsigned int phy_freq;
+ 	unsigned int vclk_freq;
+ 	unsigned int venc_freq;
+ 	unsigned int hdmi_freq;
  
--	/* Output data format: CbYCr */
--	reg |= VPU_HDMI_OUTPUT_CBYCR;
-+	/* Output data format */
-+	reg |= ycrcb_map;
+ 	vclk_freq = mode->clock;
  
- 	/*
- 	 * Write rate to the async FIFO between VENC and HDMI.
- 	 * One write every 2 wr_clk.
- 	 */
--	if (venc_repeat)
-+	if (venc_repeat || yuv420_mode)
- 		reg |= VPU_HDMI_WR_RATE(2);
++	/* TMDS clock is pixel_clock * 10 */
++	phy_freq = vclk_freq * 10;
++
+ 	if (!vic) {
+-		meson_vclk_setup(priv, MESON_VCLK_TARGET_DMT, vclk_freq,
+-				 vclk_freq, vclk_freq, false);
++		meson_vclk_setup(priv, MESON_VCLK_TARGET_DMT, phy_freq,
++				 vclk_freq, vclk_freq, vclk_freq, false);
+ 		return;
+ 	}
  
- 	/*
-diff --git a/drivers/gpu/drm/meson/meson_venc.h b/drivers/gpu/drm/meson/meson_venc.h
-index 1abdcbdf51c0..9138255ffc9e 100644
---- a/drivers/gpu/drm/meson/meson_venc.h
-+++ b/drivers/gpu/drm/meson/meson_venc.h
-@@ -60,6 +60,8 @@ extern struct meson_cvbs_enci_mode meson_cvbs_enci_ntsc;
- void meson_venci_cvbs_mode_set(struct meson_drm *priv,
- 			       struct meson_cvbs_enci_mode *mode);
- void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
-+			      unsigned int ycrcb_map,
-+			      bool yuv420_mode,
- 			      const struct drm_display_mode *mode);
- unsigned int meson_venci_get_field(struct meson_drm *priv);
+@@ -402,11 +406,11 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		venc_freq /= 2;
  
+-	DRM_DEBUG_DRIVER("vclk:%d venc=%d hdmi=%d enci=%d\n",
+-		vclk_freq, venc_freq, hdmi_freq,
++	DRM_DEBUG_DRIVER("vclk:%d phy=%d venc=%d hdmi=%d enci=%d\n",
++		phy_freq, vclk_freq, venc_freq, hdmi_freq,
+ 		priv->venc.hdmi_use_enci);
+ 
+-	meson_vclk_setup(priv, MESON_VCLK_TARGET_HDMI, vclk_freq,
++	meson_vclk_setup(priv, MESON_VCLK_TARGET_HDMI, phy_freq, vclk_freq,
+ 			 venc_freq, hdmi_freq, priv->venc.hdmi_use_enci);
+ }
+ 
+@@ -617,6 +621,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 		   const struct drm_display_mode *mode)
+ {
+ 	struct meson_drm *priv = connector->dev->dev_private;
++	unsigned int phy_freq;
+ 	unsigned int vclk_freq;
+ 	unsigned int venc_freq;
+ 	unsigned int hdmi_freq;
+@@ -643,6 +648,9 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 
+ 	vclk_freq = mode->clock;
+ 
++	/* TMDS clock is pixel_clock * 10 */
++	phy_freq = vclk_freq * 10;
++
+ 	/* 480i/576i needs global pixel doubling */
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		vclk_freq *= 2;
+@@ -659,10 +667,10 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		venc_freq /= 2;
+ 
+-	dev_dbg(connector->dev->dev, "%s: vclk:%d venc=%d hdmi=%d\n", __func__,
+-		vclk_freq, venc_freq, hdmi_freq);
++	dev_dbg(connector->dev->dev, "%s: vclk:%d phy=%d venc=%d hdmi=%d\n",
++		__func__, phy_freq, vclk_freq, venc_freq, hdmi_freq);
+ 
+-	return meson_vclk_vic_supported_freq(vclk_freq);
++	return meson_vclk_vic_supported_freq(phy_freq, vclk_freq);
+ }
+ 
+ /* Encoder */
+diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+index f690793ae2d5..fdf26dac9fa8 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.c
++++ b/drivers/gpu/drm/meson/meson_vclk.c
+@@ -354,12 +354,17 @@ enum {
+ /* 2970 /1 /1 /1 /5 /2  => /1 /1 */
+ 	MESON_VCLK_HDMI_297000,
+ /* 5940 /1 /1 /2 /5 /1  => /1 /1 */
+-	MESON_VCLK_HDMI_594000
++	MESON_VCLK_HDMI_594000,
++/* 2970 /1 /1 /1 /5 /1  => /1 /2 */
++	MESON_VCLK_HDMI_594000_YUV420,
+ };
+ 
+ struct meson_vclk_params {
++	unsigned int pll_freq;
++	unsigned int phy_freq;
++	unsigned int vclk_freq;
++	unsigned int venc_freq;
+ 	unsigned int pixel_freq;
+-	unsigned int pll_base_freq;
+ 	unsigned int pll_od1;
+ 	unsigned int pll_od2;
+ 	unsigned int pll_od3;
+@@ -367,8 +372,11 @@ struct meson_vclk_params {
+ 	unsigned int vclk_div;
+ } params[] = {
+ 	[MESON_VCLK_HDMI_ENCI_54000] = {
++		.pll_freq = 4320000,
++		.phy_freq = 270000,
++		.vclk_freq = 54000,
++		.venc_freq = 54000,
+ 		.pixel_freq = 54000,
+-		.pll_base_freq = 4320000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+ 		.pll_od3 = 1,
+@@ -376,8 +384,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_54000] = {
+-		.pixel_freq = 54000,
+-		.pll_base_freq = 4320000,
++		.pll_freq = 4320000,
++		.phy_freq = 270000,
++		.vclk_freq = 54000,
++		.venc_freq = 54000,
++		.pixel_freq = 27000,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 4,
+ 		.pll_od3 = 1,
+@@ -385,8 +396,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_DDR_148500] = {
+-		.pixel_freq = 148500,
+-		.pll_base_freq = 2970000,
++		.pll_freq = 2970000,
++		.phy_freq = 742500,
++		.vclk_freq = 148500,
++		.venc_freq = 148500,
++		.pixel_freq = 74250,
+ 		.pll_od1 = 4,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 1,
+@@ -394,8 +408,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_74250] = {
++		.pll_freq = 2970000,
++		.phy_freq = 742500,
++		.vclk_freq = 74250,
++		.venc_freq = 74250,
+ 		.pixel_freq = 74250,
+-		.pll_base_freq = 2970000,
+ 		.pll_od1 = 2,
+ 		.pll_od2 = 2,
+ 		.pll_od3 = 2,
+@@ -403,8 +420,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_148500] = {
++		.pll_freq = 2970000,
++		.phy_freq = 1485000,
++		.vclk_freq = 148500,
++		.venc_freq = 148500,
+ 		.pixel_freq = 148500,
+-		.pll_base_freq = 2970000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 2,
+ 		.pll_od3 = 2,
+@@ -412,8 +432,11 @@ struct meson_vclk_params {
+ 		.vclk_div = 1,
+ 	},
+ 	[MESON_VCLK_HDMI_297000] = {
++		.pll_freq = 5940000,
++		.phy_freq = 2970000,
++		.venc_freq = 297000,
++		.vclk_freq = 297000,
+ 		.pixel_freq = 297000,
+-		.pll_base_freq = 5940000,
+ 		.pll_od1 = 2,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 1,
+@@ -421,14 +444,29 @@ struct meson_vclk_params {
+ 		.vclk_div = 2,
+ 	},
+ 	[MESON_VCLK_HDMI_594000] = {
++		.pll_freq = 5940000,
++		.phy_freq = 5940000,
++		.venc_freq = 594000,
++		.vclk_freq = 594000,
+ 		.pixel_freq = 594000,
+-		.pll_base_freq = 5940000,
+ 		.pll_od1 = 1,
+ 		.pll_od2 = 1,
+ 		.pll_od3 = 2,
+ 		.vid_pll_div = VID_PLL_DIV_5,
+ 		.vclk_div = 1,
+ 	},
++	[MESON_VCLK_HDMI_594000_YUV420] = {
++		.pll_freq = 5940000,
++		.phy_freq = 2970000,
++		.venc_freq = 594000,
++		.vclk_freq = 594000,
++		.pixel_freq = 297000,
++		.pll_od1 = 2,
++		.pll_od2 = 1,
++		.pll_od3 = 1,
++		.vid_pll_div = VID_PLL_DIV_5,
++		.vclk_div = 1,
++	},
+ 	{ /* sentinel */ },
+ };
+ 
+@@ -701,6 +739,7 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
+ 	unsigned int od, m, frac, od1, od2, od3;
+ 
+ 	if (meson_hdmi_pll_find_params(priv, pll_freq, &m, &frac, &od)) {
++		/* OD2 goes to the PHY, and needs to be *10, so keep OD3=1 */
+ 		od3 = 1;
+ 		if (od < 4) {
+ 			od1 = 2;
+@@ -723,21 +762,28 @@ static void meson_hdmi_pll_generic_set(struct meson_drm *priv,
+ }
+ 
+ enum drm_mode_status
+-meson_vclk_vic_supported_freq(unsigned int freq)
++meson_vclk_vic_supported_freq(unsigned int phy_freq,
++			      unsigned int vclk_freq)
+ {
+ 	int i;
+ 
+-	DRM_DEBUG_DRIVER("freq = %d\n", freq);
++	DRM_DEBUG_DRIVER("phy_freq = %d vclk_freq = %d\n",
++			 phy_freq, vclk_freq);
+ 
+ 	for (i = 0 ; params[i].pixel_freq ; ++i) {
+ 		DRM_DEBUG_DRIVER("i = %d pixel_freq = %d alt = %d\n",
+ 				 i, params[i].pixel_freq,
+ 				 FREQ_1000_1001(params[i].pixel_freq));
++		DRM_DEBUG_DRIVER("i = %d phy_freq = %d alt = %d\n",
++				 i, params[i].phy_freq,
++				 FREQ_1000_1001(params[i].phy_freq/10)*10);
+ 		/* Match strict frequency */
+-		if (freq == params[i].pixel_freq)
++		if (phy_freq == params[i].phy_freq &&
++		    vclk_freq == params[i].vclk_freq)
+ 			return MODE_OK;
+ 		/* Match 1000/1001 variant */
+-		if (freq == FREQ_1000_1001(params[i].pixel_freq))
++		if (phy_freq == (FREQ_1000_1001(params[i].phy_freq/10)*10) &&
++		    vclk_freq == FREQ_1000_1001(params[i].vclk_freq))
+ 			return MODE_OK;
+ 	}
+ 
+@@ -965,8 +1011,9 @@ static void meson_vclk_set(struct meson_drm *priv, unsigned int pll_base_freq,
+ }
+ 
+ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+-		      unsigned int vclk_freq, unsigned int venc_freq,
+-		      unsigned int dac_freq, bool hdmi_use_enci)
++		      unsigned int phy_freq, unsigned int vclk_freq,
++		      unsigned int venc_freq, unsigned int dac_freq,
++		      bool hdmi_use_enci)
+ {
+ 	bool vic_alternate_clock = false;
+ 	unsigned int freq;
+@@ -986,7 +1033,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		 * - venc_div = 1
+ 		 * - encp encoder
+ 		 */
+-		meson_vclk_set(priv, vclk_freq * 10, 0, 0, 0,
++		meson_vclk_set(priv, phy_freq, 0, 0, 0,
+ 			       VID_PLL_DIV_5, 2, 1, 1, false, false);
+ 		return;
+ 	}
+@@ -1008,9 +1055,11 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 	}
+ 
+ 	for (freq = 0 ; params[freq].pixel_freq ; ++freq) {
+-		if (vclk_freq == params[freq].pixel_freq ||
+-		    vclk_freq == FREQ_1000_1001(params[freq].pixel_freq)) {
+-			if (vclk_freq != params[freq].pixel_freq)
++		if ((phy_freq == params[freq].phy_freq ||
++		     phy_freq == FREQ_1000_1001(params[freq].phy_freq/10)*10) &&
++		    (vclk_freq == params[freq].vclk_freq ||
++		     vclk_freq == FREQ_1000_1001(params[freq].vclk_freq))) {
++			if (vclk_freq != params[freq].vclk_freq)
+ 				vic_alternate_clock = true;
+ 			else
+ 				vic_alternate_clock = false;
+@@ -1039,7 +1088,7 @@ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+ 		return;
+ 	}
+ 
+-	meson_vclk_set(priv, params[freq].pll_base_freq,
++	meson_vclk_set(priv, params[freq].pll_freq,
+ 		       params[freq].pll_od1, params[freq].pll_od2,
+ 		       params[freq].pll_od3, params[freq].vid_pll_div,
+ 		       params[freq].vclk_div, hdmi_tx_div, venc_div,
+diff --git a/drivers/gpu/drm/meson/meson_vclk.h b/drivers/gpu/drm/meson/meson_vclk.h
+index b62125540aef..aed0ab2efa71 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.h
++++ b/drivers/gpu/drm/meson/meson_vclk.h
+@@ -25,10 +25,11 @@ enum {
+ enum drm_mode_status
+ meson_vclk_dmt_supported_freq(struct meson_drm *priv, unsigned int freq);
+ enum drm_mode_status
+-meson_vclk_vic_supported_freq(unsigned int freq);
++meson_vclk_vic_supported_freq(unsigned int phy_freq, unsigned int vclk_freq);
+ 
+ void meson_vclk_setup(struct meson_drm *priv, unsigned int target,
+-		      unsigned int vclk_freq, unsigned int venc_freq,
+-		      unsigned int dac_freq, bool hdmi_use_enci);
++		      unsigned int phy_freq, unsigned int vclk_freq,
++		      unsigned int venc_freq, unsigned int dac_freq,
++		      bool hdmi_use_enci);
+ 
+ #endif /* __MESON_VCLK_H */
+diff --git a/drivers/gpu/drm/meson/meson_venc_cvbs.c b/drivers/gpu/drm/meson/meson_venc_cvbs.c
+index 9ab27aecfcf3..bd95b8e95626 100644
+--- a/drivers/gpu/drm/meson/meson_venc_cvbs.c
++++ b/drivers/gpu/drm/meson/meson_venc_cvbs.c
+@@ -206,7 +206,8 @@ static void meson_venc_cvbs_encoder_mode_set(struct drm_encoder *encoder,
+ 			/* Setup 27MHz vclk2 for ENCI and VDAC */
+ 			meson_vclk_setup(priv, MESON_VCLK_TARGET_CVBS,
+ 					 MESON_VCLK_CVBS, MESON_VCLK_CVBS,
+-					 MESON_VCLK_CVBS, true);
++					 MESON_VCLK_CVBS, MESON_VCLK_CVBS,
++					 true);
+ 			break;
+ 		}
+ 	}
 -- 
 2.22.0
 
