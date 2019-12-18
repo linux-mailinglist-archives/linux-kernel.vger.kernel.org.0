@@ -2,108 +2,340 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D60AD125274
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 20:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E6EDF12527D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 20:59:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727669AbfLRT5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 14:57:12 -0500
-Received: from imap2.colo.codethink.co.uk ([78.40.148.184]:37712 "EHLO
-        imap2.colo.codethink.co.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726698AbfLRT5M (ORCPT
+        id S1727646AbfLRT6b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 14:58:31 -0500
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:46696 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfLRT63 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 14:57:12 -0500
-Received: from [167.98.27.226] (helo=xylophone)
-        by imap2.colo.codethink.co.uk with esmtpsa  (Exim 4.92 #3 (Debian))
-        id 1ihfRO-0000cc-0V; Wed, 18 Dec 2019 19:57:02 +0000
-Message-ID: <f9fd39116713f17e55091868326a419190220559.camel@codethink.co.uk>
-Subject: Re: [PATCH v2 18/27] compat_ioctl: scsi: move ioctl handling into
- drivers
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-doc@vger.kernel.org,
-        corbet@lwn.net, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org
-Date:   Wed, 18 Dec 2019 19:57:01 +0000
-In-Reply-To: <20191217221708.3730997-19-arnd@arndb.de>
-References: <20191217221708.3730997-1-arnd@arndb.de>
-         <20191217221708.3730997-19-arnd@arndb.de>
-Organization: Codethink Ltd.
+        Wed, 18 Dec 2019 14:58:29 -0500
+Received: by mail-qk1-f202.google.com with SMTP id u30so2090971qke.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 11:58:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=pRw2SFM5926Ycakiwb4R0k3JFy1gd7g8sCeOA7lbhgc=;
+        b=ZP64ADvo98U6O5TPtR8NmtvMkJ1HrHC8oi4zoUVS7jI6N9icGUagZWiQiNg5DCijxy
+         CvvHb1/c6zBxc/WeX79aJKEsk7b2fjVP12iDTKIyeDFuxyKkGE4Oss+ktP/+I3NDYX2l
+         zju2x+Wh1AyKU/qQUTOgQ+IQKvKpN9cn1JPi/0WHODaEjBZlJxPdNFlFpslfAMw9QTd+
+         sI8kSAuzigzdadqGa9v+ul4NmXh2RyUMtVK4JBXQZUtsGptMdR3vCxRfp5cU+zbYfZN2
+         amGLvbJ8gVq6d/OQva1ikFvZwnK/HhErl1OIiJ+HPzl2lr7tBZopVSEuC3AlOdLjtNMe
+         8K1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=pRw2SFM5926Ycakiwb4R0k3JFy1gd7g8sCeOA7lbhgc=;
+        b=c5blhRt+/xg4jeU2d1zijmmn4JrgvLhiX2Dvpser1hkitA12cUFB4ePZkUzqUX2DQI
+         9B7CXv+/nJggdvZE68WbZOx4YcErB64h/iTV3TvNeQIr7CjpJwVK6RNquPcK4hTpHO0g
+         4t6gq/iVWBKA1niz1BSRvYBSHWxyrgOHfImWuIjjghpzkUR/mWT99/lw3Dvve+SHFY0f
+         m0lanDmVQ1J6PO8vYUeDaE/NYWXzzCwhplm2qDs8kghOtGMAkWGMMoEFsSri3tq+F4Q6
+         4HfkIIRrG89AjV0pSVZBC57SbAF3m8cIdaEXJwMxhifcvR1lOIphDDyGFY5QgBgpfzVC
+         tmVA==
+X-Gm-Message-State: APjAAAW+pJqTPDCozgLrDxe4yusU174r8FDBYmRwmsmhshc+mjxNc9zf
+        gXu4k4wFtdS08oBhz1jMsd1Q5YqK5959
+X-Google-Smtp-Source: APXvYqwkAXVKqBhtf/hRgoEfEuuxDJRKW23nRXmECehZMvJIyl8PDCg2nsPE9LrBdr6C6VwHlJAV56YHWqiU
+X-Received: by 2002:a0c:fa43:: with SMTP id k3mr4013507qvo.229.1576699108183;
+ Wed, 18 Dec 2019 11:58:28 -0800 (PST)
+Date:   Wed, 18 Dec 2019 11:58:21 -0800
+Message-Id: <20191218195823.130560-1-rajatja@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+Subject: [PATCH RESEND v4 1/3] drm/i915: Move the code to populate ACPI device
+ ID into intel_acpi
+From:   Rajat Jain <rajatja@google.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?=" 
+        <ville.syrjala@linux.intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Imre Deak <imre.deak@intel.com>,
+        "=?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?=" <jose.souza@intel.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, gregkh@linuxfoundation.org,
+        mathewk@google.com, Daniel Thompson <daniel.thompson@linaro.org>,
+        Jonathan Corbet <corbet@lwn.net>, Pavel Machek <pavel@denx.de>,
+        seanpaul@google.com, Duncan Laurie <dlaurie@google.com>,
+        jsbarnes@google.com, Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-17 at 23:16 +0100, Arnd Bergmann wrote:
-[...]
-> --- a/drivers/scsi/sr.c
-> +++ b/drivers/scsi/sr.c
-[...]
-> @@ -598,6 +599,55 @@ static int sr_block_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
->  	return ret;
->  }
->  
-> +#ifdef CONFIG_COMPAT
-> +static int sr_block_compat_ioctl(struct block_device *bdev, fmode_t mode, unsigned cmd,
-> +			  unsigned long arg)
-> +{
-> +	struct scsi_cd *cd = scsi_cd(bdev->bd_disk);
-> +	struct scsi_device *sdev = cd->device;
-> +	void __user *argp = compat_ptr(arg);
-> +	int ret;
-> +
-> +	mutex_lock(&sr_mutex);
-> +
-> +	ret = scsi_ioctl_block_when_processing_errors(sdev, cmd,
-> +			(mode & FMODE_NDELAY) != 0);
-> +	if (ret)
-> +		goto out;
-> +
-> +	scsi_autopm_get_device(sdev);
-> +
-> +	/*
-> +	 * Send SCSI addressing ioctls directly to mid level, send other
-> +	 * ioctls to cdrom/block level.
-> +	 */
-> +	switch (cmd) {
-> +	case SCSI_IOCTL_GET_IDLUN:
-> +	case SCSI_IOCTL_GET_BUS_NUMBER:
-> +		ret = scsi_compat_ioctl(sdev, cmd, argp);
-> +		goto put;
-> +	}
-> +
-> +	/*
-> +	 * CDROM ioctls are handled in the block layer, but
-> +	 * do the scsi blk ioctls here.
-> +	 */
-> +	ret = scsi_cmd_blk_ioctl(bdev, mode, cmd, argp);
-> +	if (ret != -ENOTTY)
-> +		return ret;
+Move the code that populates the ACPI device ID for devices, into
+more appripriate intel_acpi.c. This is done in preparation for more
+users of this code (in next patch).
 
-This needs to be be "goto put;"
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+v4: Same as v3
+v3: * Renamed the function to intel_acpi_*
+    * Used forward declaration for structure instead of header file inclusion.
+    * Fix a typo
+v2: v1 doesn't exist. Found existing code in i915 driver to assign the ACPI ID
+    which is what I plan to re-use.
 
-> +	ret = scsi_compat_ioctl(sdev, cmd, argp);
-> +
-> +put:
-> +	scsi_autopm_put_device(sdev);
-> +
-> +out:
-> +	mutex_unlock(&sr_mutex);
-> +	return ret;
-> +
-> +}
-> +#endif
-[...]
+ drivers/gpu/drm/i915/display/intel_acpi.c     | 89 +++++++++++++++++++
+ drivers/gpu/drm/i915/display/intel_acpi.h     |  5 ++
+ drivers/gpu/drm/i915/display/intel_opregion.c | 80 +----------------
+ 3 files changed, 98 insertions(+), 76 deletions(-)
 
+diff --git a/drivers/gpu/drm/i915/display/intel_acpi.c b/drivers/gpu/drm/i915/display/intel_acpi.c
+index 3456d33feb46..e21fb14d5e07 100644
+--- a/drivers/gpu/drm/i915/display/intel_acpi.c
++++ b/drivers/gpu/drm/i915/display/intel_acpi.c
+@@ -10,6 +10,7 @@
+ 
+ #include "i915_drv.h"
+ #include "intel_acpi.h"
++#include "intel_display_types.h"
+ 
+ #define INTEL_DSM_REVISION_ID 1 /* For Calpella anyway... */
+ #define INTEL_DSM_FN_PLATFORM_MUX_INFO 1 /* No args */
+@@ -156,3 +157,91 @@ void intel_register_dsm_handler(void)
+ void intel_unregister_dsm_handler(void)
+ {
+ }
++
++/*
++ * ACPI Specification, Revision 5.0, Appendix B.3.2 _DOD (Enumerate All Devices
++ * Attached to the Display Adapter).
++ */
++#define ACPI_DISPLAY_INDEX_SHIFT		0
++#define ACPI_DISPLAY_INDEX_MASK			(0xf << 0)
++#define ACPI_DISPLAY_PORT_ATTACHMENT_SHIFT	4
++#define ACPI_DISPLAY_PORT_ATTACHMENT_MASK	(0xf << 4)
++#define ACPI_DISPLAY_TYPE_SHIFT			8
++#define ACPI_DISPLAY_TYPE_MASK			(0xf << 8)
++#define ACPI_DISPLAY_TYPE_OTHER			(0 << 8)
++#define ACPI_DISPLAY_TYPE_VGA			(1 << 8)
++#define ACPI_DISPLAY_TYPE_TV			(2 << 8)
++#define ACPI_DISPLAY_TYPE_EXTERNAL_DIGITAL	(3 << 8)
++#define ACPI_DISPLAY_TYPE_INTERNAL_DIGITAL	(4 << 8)
++#define ACPI_VENDOR_SPECIFIC_SHIFT		12
++#define ACPI_VENDOR_SPECIFIC_MASK		(0xf << 12)
++#define ACPI_BIOS_CAN_DETECT			(1 << 16)
++#define ACPI_DEPENDS_ON_VGA			(1 << 17)
++#define ACPI_PIPE_ID_SHIFT			18
++#define ACPI_PIPE_ID_MASK			(7 << 18)
++#define ACPI_DEVICE_ID_SCHEME			(1ULL << 31)
++
++static u32 acpi_display_type(struct intel_connector *connector)
++{
++	u32 display_type;
++
++	switch (connector->base.connector_type) {
++	case DRM_MODE_CONNECTOR_VGA:
++	case DRM_MODE_CONNECTOR_DVIA:
++		display_type = ACPI_DISPLAY_TYPE_VGA;
++		break;
++	case DRM_MODE_CONNECTOR_Composite:
++	case DRM_MODE_CONNECTOR_SVIDEO:
++	case DRM_MODE_CONNECTOR_Component:
++	case DRM_MODE_CONNECTOR_9PinDIN:
++	case DRM_MODE_CONNECTOR_TV:
++		display_type = ACPI_DISPLAY_TYPE_TV;
++		break;
++	case DRM_MODE_CONNECTOR_DVII:
++	case DRM_MODE_CONNECTOR_DVID:
++	case DRM_MODE_CONNECTOR_DisplayPort:
++	case DRM_MODE_CONNECTOR_HDMIA:
++	case DRM_MODE_CONNECTOR_HDMIB:
++		display_type = ACPI_DISPLAY_TYPE_EXTERNAL_DIGITAL;
++		break;
++	case DRM_MODE_CONNECTOR_LVDS:
++	case DRM_MODE_CONNECTOR_eDP:
++	case DRM_MODE_CONNECTOR_DSI:
++		display_type = ACPI_DISPLAY_TYPE_INTERNAL_DIGITAL;
++		break;
++	case DRM_MODE_CONNECTOR_Unknown:
++	case DRM_MODE_CONNECTOR_VIRTUAL:
++		display_type = ACPI_DISPLAY_TYPE_OTHER;
++		break;
++	default:
++		MISSING_CASE(connector->base.connector_type);
++		display_type = ACPI_DISPLAY_TYPE_OTHER;
++		break;
++	}
++
++	return display_type;
++}
++
++void intel_acpi_device_id_update(struct drm_i915_private *dev_priv)
++{
++	struct drm_device *drm_dev = &dev_priv->drm;
++	struct intel_connector *connector;
++	struct drm_connector_list_iter conn_iter;
++	u8 display_index[16] = {};
++
++	/* Populate the ACPI IDs for all connectors for a given drm_device */
++	drm_connector_list_iter_begin(drm_dev, &conn_iter);
++	for_each_intel_connector_iter(connector, &conn_iter) {
++		u32 device_id, type;
++
++		device_id = acpi_display_type(connector);
++
++		/* Use display type specific display index. */
++		type = (device_id & ACPI_DISPLAY_TYPE_MASK)
++			>> ACPI_DISPLAY_TYPE_SHIFT;
++		device_id |= display_index[type]++ << ACPI_DISPLAY_INDEX_SHIFT;
++
++		connector->acpi_device_id = device_id;
++	}
++	drm_connector_list_iter_end(&conn_iter);
++}
+diff --git a/drivers/gpu/drm/i915/display/intel_acpi.h b/drivers/gpu/drm/i915/display/intel_acpi.h
+index 1c576b3fb712..e8b068661d22 100644
+--- a/drivers/gpu/drm/i915/display/intel_acpi.h
++++ b/drivers/gpu/drm/i915/display/intel_acpi.h
+@@ -6,12 +6,17 @@
+ #ifndef __INTEL_ACPI_H__
+ #define __INTEL_ACPI_H__
+ 
++struct drm_i915_private;
++
+ #ifdef CONFIG_ACPI
+ void intel_register_dsm_handler(void);
+ void intel_unregister_dsm_handler(void);
++void intel_acpi_device_id_update(struct drm_i915_private *i915);
+ #else
+ static inline void intel_register_dsm_handler(void) { return; }
+ static inline void intel_unregister_dsm_handler(void) { return; }
++static inline
++void intel_acpi_device_id_update(struct drm_i915_private *i915) { return; }
+ #endif /* CONFIG_ACPI */
+ 
+ #endif /* __INTEL_ACPI_H__ */
+diff --git a/drivers/gpu/drm/i915/display/intel_opregion.c b/drivers/gpu/drm/i915/display/intel_opregion.c
+index 969ade623691..6422384f199e 100644
+--- a/drivers/gpu/drm/i915/display/intel_opregion.c
++++ b/drivers/gpu/drm/i915/display/intel_opregion.c
+@@ -35,6 +35,7 @@
+ #include "display/intel_panel.h"
+ 
+ #include "i915_drv.h"
++#include "intel_acpi.h"
+ #include "intel_display_types.h"
+ #include "intel_opregion.h"
+ 
+@@ -242,29 +243,6 @@ struct opregion_asle_ext {
+ #define SWSCI_SBCB_POST_VBE_PM		SWSCI_FUNCTION_CODE(SWSCI_SBCB, 19)
+ #define SWSCI_SBCB_ENABLE_DISABLE_AUDIO	SWSCI_FUNCTION_CODE(SWSCI_SBCB, 21)
+ 
+-/*
+- * ACPI Specification, Revision 5.0, Appendix B.3.2 _DOD (Enumerate All Devices
+- * Attached to the Display Adapter).
+- */
+-#define ACPI_DISPLAY_INDEX_SHIFT		0
+-#define ACPI_DISPLAY_INDEX_MASK			(0xf << 0)
+-#define ACPI_DISPLAY_PORT_ATTACHMENT_SHIFT	4
+-#define ACPI_DISPLAY_PORT_ATTACHMENT_MASK	(0xf << 4)
+-#define ACPI_DISPLAY_TYPE_SHIFT			8
+-#define ACPI_DISPLAY_TYPE_MASK			(0xf << 8)
+-#define ACPI_DISPLAY_TYPE_OTHER			(0 << 8)
+-#define ACPI_DISPLAY_TYPE_VGA			(1 << 8)
+-#define ACPI_DISPLAY_TYPE_TV			(2 << 8)
+-#define ACPI_DISPLAY_TYPE_EXTERNAL_DIGITAL	(3 << 8)
+-#define ACPI_DISPLAY_TYPE_INTERNAL_DIGITAL	(4 << 8)
+-#define ACPI_VENDOR_SPECIFIC_SHIFT		12
+-#define ACPI_VENDOR_SPECIFIC_MASK		(0xf << 12)
+-#define ACPI_BIOS_CAN_DETECT			(1 << 16)
+-#define ACPI_DEPENDS_ON_VGA			(1 << 17)
+-#define ACPI_PIPE_ID_SHIFT			18
+-#define ACPI_PIPE_ID_MASK			(7 << 18)
+-#define ACPI_DEVICE_ID_SCHEME			(1 << 31)
+-
+ #define MAX_DSLP	1500
+ 
+ static int swsci(struct drm_i915_private *dev_priv,
+@@ -662,54 +640,12 @@ static void set_did(struct intel_opregion *opregion, int i, u32 val)
+ 	}
+ }
+ 
+-static u32 acpi_display_type(struct intel_connector *connector)
+-{
+-	u32 display_type;
+-
+-	switch (connector->base.connector_type) {
+-	case DRM_MODE_CONNECTOR_VGA:
+-	case DRM_MODE_CONNECTOR_DVIA:
+-		display_type = ACPI_DISPLAY_TYPE_VGA;
+-		break;
+-	case DRM_MODE_CONNECTOR_Composite:
+-	case DRM_MODE_CONNECTOR_SVIDEO:
+-	case DRM_MODE_CONNECTOR_Component:
+-	case DRM_MODE_CONNECTOR_9PinDIN:
+-	case DRM_MODE_CONNECTOR_TV:
+-		display_type = ACPI_DISPLAY_TYPE_TV;
+-		break;
+-	case DRM_MODE_CONNECTOR_DVII:
+-	case DRM_MODE_CONNECTOR_DVID:
+-	case DRM_MODE_CONNECTOR_DisplayPort:
+-	case DRM_MODE_CONNECTOR_HDMIA:
+-	case DRM_MODE_CONNECTOR_HDMIB:
+-		display_type = ACPI_DISPLAY_TYPE_EXTERNAL_DIGITAL;
+-		break;
+-	case DRM_MODE_CONNECTOR_LVDS:
+-	case DRM_MODE_CONNECTOR_eDP:
+-	case DRM_MODE_CONNECTOR_DSI:
+-		display_type = ACPI_DISPLAY_TYPE_INTERNAL_DIGITAL;
+-		break;
+-	case DRM_MODE_CONNECTOR_Unknown:
+-	case DRM_MODE_CONNECTOR_VIRTUAL:
+-		display_type = ACPI_DISPLAY_TYPE_OTHER;
+-		break;
+-	default:
+-		MISSING_CASE(connector->base.connector_type);
+-		display_type = ACPI_DISPLAY_TYPE_OTHER;
+-		break;
+-	}
+-
+-	return display_type;
+-}
+-
+ static void intel_didl_outputs(struct drm_i915_private *dev_priv)
+ {
+ 	struct intel_opregion *opregion = &dev_priv->opregion;
+ 	struct intel_connector *connector;
+ 	struct drm_connector_list_iter conn_iter;
+ 	int i = 0, max_outputs;
+-	int display_index[16] = {};
+ 
+ 	/*
+ 	 * In theory, did2, the extended didl, gets added at opregion version
+@@ -721,20 +657,12 @@ static void intel_didl_outputs(struct drm_i915_private *dev_priv)
+ 	max_outputs = ARRAY_SIZE(opregion->acpi->didl) +
+ 		ARRAY_SIZE(opregion->acpi->did2);
+ 
++	intel_acpi_device_id_update(dev_priv);
++
+ 	drm_connector_list_iter_begin(&dev_priv->drm, &conn_iter);
+ 	for_each_intel_connector_iter(connector, &conn_iter) {
+-		u32 device_id, type;
+-
+-		device_id = acpi_display_type(connector);
+-
+-		/* Use display type specific display index. */
+-		type = (device_id & ACPI_DISPLAY_TYPE_MASK)
+-			>> ACPI_DISPLAY_TYPE_SHIFT;
+-		device_id |= display_index[type]++ << ACPI_DISPLAY_INDEX_SHIFT;
+-
+-		connector->acpi_device_id = device_id;
+ 		if (i < max_outputs)
+-			set_did(opregion, i, device_id);
++			set_did(opregion, i, connector->acpi_device_id);
+ 		i++;
+ 	}
+ 	drm_connector_list_iter_end(&conn_iter);
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.24.1.735.g03f4e72817-goog
 
