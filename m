@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C4931253D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 938501253CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfLRUto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:44 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47832 "EHLO
+        id S1727658AbfLRUtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:49:22 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47846 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727495AbfLRUtc (ORCPT
+        with ESMTP id S1727608AbfLRUtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:32 -0500
+        Wed, 18 Dec 2019 15:49:20 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ie000214;
-        Wed, 18 Dec 2019 12:49:14 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0if000214;
+        Wed, 18 Dec 2019 12:49:15 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Milo Kim <milo.kim@ti.com>
-Subject: [PATCH 12/18] mfd: lp8788: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:51 -0500
-Message-Id: <1576702137-25905-13-git-send-email-paul.gortmaker@windriver.com>
+        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
+Subject: [PATCH 13/18] mfd: menelaus: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:52 -0500
+Message-Id: <1576702137-25905-14-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -33,8 +33,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_LP8788
-drivers/mfd/Kconfig:    bool "TI LP8788 Power Management Unit Driver"
+drivers/mfd/Kconfig:config MENELAUS
+drivers/mfd/Kconfig:    bool "TI TWL92330/Menelaus PM chip"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -45,77 +45,73 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
+Since module_i2c_driver() uses the same init level priority as
+builtin_i2c_driver() the init ordering remains unchanged with
+this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-Cc: Milo Kim <milo.kim@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
+Cc: linux-omap@vger.kernel.org
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/lp8788.c | 24 ++----------------------
- 1 file changed, 2 insertions(+), 22 deletions(-)
+ drivers/mfd/menelaus.c | 24 ++++--------------------
+ 1 file changed, 4 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/mfd/lp8788.c b/drivers/mfd/lp8788.c
-index 768d556b3fe9..b218855e4162 100644
---- a/drivers/mfd/lp8788.c
-+++ b/drivers/mfd/lp8788.c
-@@ -11,7 +11,7 @@
- #include <linux/i2c.h>
- #include <linux/mfd/core.h>
- #include <linux/mfd/lp8788.h>
+diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
+index b64d3315a5e1..65a268d11aaa 100644
+--- a/drivers/mfd/menelaus.c
++++ b/drivers/mfd/menelaus.c
+@@ -18,7 +18,7 @@
+  * Copyright (C) 2005, 2006 Nokia Corporation
+  */
+ 
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/slab.h>
- 
- #define MAX_LP8788_REGISTERS		0xA2
-@@ -199,27 +199,17 @@ static int lp8788_probe(struct i2c_client *cl, const struct i2c_device_id *id)
- 			       ARRAY_SIZE(lp8788_devs), NULL, 0, NULL);
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/sched.h>
+@@ -1222,33 +1222,17 @@ static int menelaus_probe(struct i2c_client *client,
+ 	return err;
  }
  
--static int lp8788_remove(struct i2c_client *cl)
+-static int menelaus_remove(struct i2c_client *client)
 -{
--	struct lp8788 *lp = i2c_get_clientdata(cl);
+-	struct menelaus_chip	*menelaus = i2c_get_clientdata(client);
 -
--	mfd_remove_devices(lp->dev);
--	lp8788_irq_exit(lp);
+-	free_irq(client->irq, menelaus);
+-	flush_work(&menelaus->work);
+-	the_menelaus = NULL;
 -	return 0;
 -}
 -
- static const struct i2c_device_id lp8788_ids[] = {
- 	{"lp8788", 0},
+ static const struct i2c_device_id menelaus_id[] = {
+ 	{ "menelaus", 0 },
  	{ }
  };
--MODULE_DEVICE_TABLE(i2c, lp8788_ids);
+-MODULE_DEVICE_TABLE(i2c, menelaus_id);
  
- static struct i2c_driver lp8788_driver = {
+ static struct i2c_driver menelaus_i2c_driver = {
  	.driver = {
- 		.name = "lp8788",
-+		.suppress_bind_attrs = true,
+-		.name		= DRIVER_NAME,
++		.name			= DRIVER_NAME,
++		.suppress_bind_attrs	= true,
  	},
- 	.probe = lp8788_probe,
--	.remove = lp8788_remove,
- 	.id_table = lp8788_ids,
+ 	.probe		= menelaus_probe,
+-	.remove		= menelaus_remove,
+ 	.id_table	= menelaus_id,
  };
- 
-@@ -228,13 +218,3 @@ static int __init lp8788_init(void)
- 	return i2c_add_driver(&lp8788_driver);
- }
- subsys_initcall(lp8788_init);
 -
--static void __exit lp8788_exit(void)
--{
--	i2c_del_driver(&lp8788_driver);
--}
--module_exit(lp8788_exit);
+-module_i2c_driver(menelaus_i2c_driver);
 -
--MODULE_DESCRIPTION("TI LP8788 MFD Driver");
--MODULE_AUTHOR("Milo Kim");
+-MODULE_AUTHOR("Texas Instruments, Inc. (and others)");
+-MODULE_DESCRIPTION("I2C interface for Menelaus.");
 -MODULE_LICENSE("GPL");
++builtin_i2c_driver(menelaus_i2c_driver);
 -- 
 2.7.4
 
