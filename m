@@ -2,407 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FF34124929
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:10:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCCF712492F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:12:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfLROKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:10:54 -0500
-Received: from mail-eopbgr690055.outbound.protection.outlook.com ([40.107.69.55]:57511
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726932AbfLROKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:10:54 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=S5FvwJNzhJMBnoJpkCr+GQdtkOlNIhW/0/bNLWjvK1znL219TLptZbjwWdEA1ZqPBEmHM16p0lAMF+3jAlytPvxCJCe/2eJmZAomhhjNj3t2fIBTkTHKMGyKdzIpQWQmGScek05s+X4iTSksFG0O4s9YNpUOrCcFYmxXZEk6b9D76ObA5FmWtW8OX3nkLvAXYcC0V+GHwjlAhM5fWIBrs+aCuDQ/3htp87qDqojOAhdPaUWW7vc9ZhBU5uSi27uLYeQbbQ6c6ebsozJGGSBqm24ViKM14QMTKMvKDXmsZC/IwqBRCRXLffX2kzp/eXO9WuxXN6QhLvJnScH63GSQzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2m1GkQ6l83oa4AHAUzpa405HZ8aodvD6CgU+sHV3Kj8=;
- b=ZzKH3lNXta/dooQU6kuxeYyjcVeTXeRZF9ECkMaN+EmgJDUy6Y2EhaIv1ykcATS6o/Yz7G+pbbx7/6JIi3vv/EITnxcag1j7+hSWuEAVqKMU/anS74RwSn8MGEdouLOXeiK02Qz+JGKOzryzWeUSwjbiiq60GSqduNJkR+TlIFAB9IN2wqTIWG7rcSEa47QmQ/VQcWKOc5q1gXXpxOCQoAvAEJINeaPAB3gANTjfeQ92OglrhagTMrINtG7YmwYgqPpO7VUBdgH6INN8bXDKNCN6owGfSjL+gXHQ6j1Nzkz8ZaYKG8DUxfORWeAKeDdfrxDcxYXJV5AE5YWP2vlLTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=linaro.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2m1GkQ6l83oa4AHAUzpa405HZ8aodvD6CgU+sHV3Kj8=;
- b=Ad8Ln8ufVErImAeYtnHF9UwquQ60eZox2RpviZegsH2AxpZDNgIvfOQ41z/8qLSRJ78j5BHOfgywwFAbdVtWd6Q+uJs9MPmBtvCHnSws16mhLdK4dhfyoBSm/YwPqkpGFQ6YJWUdCEeP6Q6p8s65401TZH8hnhCYDiJ/pfwp/R4=
-Received: from SN4PR0501CA0138.namprd05.prod.outlook.com
- (2603:10b6:803:2c::16) by BY5PR02MB6962.namprd02.prod.outlook.com
- (2603:10b6:a03:235::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.18; Wed, 18 Dec
- 2019 14:10:47 +0000
-Received: from BL2NAM02FT011.eop-nam02.prod.protection.outlook.com
- (2603:10b6:803:2c:cafe::ab) by SN4PR0501CA0138.outlook.office365.com
- (2603:10b6:803:2c::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.12 via Frontend
- Transport; Wed, 18 Dec 2019 14:10:47 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT011.mail.protection.outlook.com (10.152.77.5) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2559.14
- via Frontend Transport; Wed, 18 Dec 2019 14:10:46 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1iha2H-0001BK-RZ; Wed, 18 Dec 2019 06:10:45 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1iha2C-0002zy-Bk; Wed, 18 Dec 2019 06:10:40 -0800
-Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBIEAbfm009478;
-        Wed, 18 Dec 2019 06:10:37 -0800
-Received: from [172.30.17.107]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1iha28-0002xY-DK; Wed, 18 Dec 2019 06:10:36 -0800
-Subject: Re: [PATCH 1/5] firmware: xilinx: Adds new eemi call for reg access
-To:     Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
-        mingo@kernel.org, gregkh@linuxfoundation.org,
-        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, michal.simek@xilinx.com
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>
-References: <1575502159-11327-1-git-send-email-jolly.shah@xilinx.com>
- <1575502159-11327-2-git-send-email-jolly.shah@xilinx.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <a75310be-da16-8b8e-90a8-3a15ef8b735d@xilinx.com>
-Date:   Wed, 18 Dec 2019 15:10:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727070AbfLROMA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:12:00 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:28395 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbfLROL7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:11:59 -0500
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id xBIEBbkj031244;
+        Wed, 18 Dec 2019 23:11:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com xBIEBbkj031244
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576678298;
+        bh=GIh5bV342PmYX3igG3YsIMFCEsrn8iROsnE6Fi/UqLA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yJaTFc+ZccMZJ1WJ7g3tqLlwkWqkScEFFFAsSxSWUnhutDdCzjuLO0szKnsU4MVMf
+         +FKzThElVleTcsLuufgEW/Lqm1SI7QICgutZnGMEke1w8MhkFpHFDyX46XuK9SC20O
+         WZ/+BtaVuCn//rHTJLGmLZjJjj9k7B97HZL1MHGBDp8rrh8zZKyQ/o79zB3SmQA5TE
+         zTZrb02J9ysizcD2m7smCLW9fODsH/LMY+RdcCwP3xslM6ST8O2M3HD8XTrloUjCUe
+         pq5Qi2A6itN+hZbJV+rqfMCfNgSIU3i5ni54fzOPImPUwUCU8rfVTqKHwfYeuazRHn
+         DsAW11B9tAzRw==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id b79so1442447vsd.9;
+        Wed, 18 Dec 2019 06:11:38 -0800 (PST)
+X-Gm-Message-State: APjAAAVH3TXgA88JpLohUHw1OzsBdTtYaVpz2I0uFdHu8YHcRZdr+9KN
+        uxXiGFx1J2ho0KQmVrumBq1acWFygakT1hADVZA=
+X-Google-Smtp-Source: APXvYqwWJN2/aMPXJa20FY+DxxzTnJCSC+hWu1BfsV6WIJIJH7WdfyfiiPS90ix3XP62luBc2lWN4vHuTO1/VyD7zAw=
+X-Received: by 2002:a05:6102:3102:: with SMTP id e2mr1493360vsh.179.1576678296929;
+ Wed, 18 Dec 2019 06:11:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1575502159-11327-2-git-send-email-jolly.shah@xilinx.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(39860400002)(396003)(376002)(136003)(199004)(189003)(81156014)(81166006)(8676002)(26005)(31696002)(36756003)(2616005)(70586007)(6666004)(186003)(70206006)(4326008)(44832011)(2906002)(336012)(478600001)(31686004)(356004)(5660300002)(8936002)(9786002)(107886003)(316002)(426003)(7416002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY5PR02MB6962;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: fd044c5b-294d-4b1b-226f-08d783c4140c
-X-MS-TrafficTypeDiagnostic: BY5PR02MB6962:
-X-Microsoft-Antispam-PRVS: <BY5PR02MB6962892E5052D01C312F4951C6530@BY5PR02MB6962.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:478;
-X-Forefront-PRVS: 0255DF69B9
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 83VQ3cA/qsAinJbFi11+FbDgSU+Yr7GdXksEFud9PHVhKn/wRhbYuRG7IREU5ZTV+wp96J+2Ayz3htVk+z562wOfMFOGceihzwSbW7+n3aTxrCowZmmI0RWg6CJQ8hy8GUMml0SxnHOPw9qJJi7JcnGG26w1x3eFQs/yV8kXzw8msMDob400xSd7sBBQXwa4TRCXn073Kj4xSz1TwrnpHZxo2rmiUXXtZxNglDRR744DSMVQiH5OLmK3D9JniKQCyo5ulE2jztW7EGCharF/7OI1msi20cuGuzbgVEA7UM7l9pE68zCsI0mv8YxrZM1iaMHLsqEgAINyR0HWmMsi+5IWqBbjQgrGtI1WXjEk7caxv6M75sTnJa3KNt5mAO9GVeFC0oUafX0ZMKtJRj8eebKp1ceh9mqV5eximMZRw8DCTqyAHiUD7xXve1z3R0YDLYRha8ChRpSO/7N845uLOmh3/Rvy/EVFBsPPB2HyjUPqKdj8bHrnASmTMQVIs6EA
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2019 14:10:46.6580
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fd044c5b-294d-4b1b-226f-08d783c4140c
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6962
+References: <5a473c6c-cc1f-6648-31ec-3b40e415a836@infradead.org>
+ <20191207014238.5507-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <CAK7LNATj5RBHov_w05q1XSiOPN7fYQCKhVMDzHNwHSB1Eq2rmQ@mail.gmail.com>
+ <cedbe416-844e-2bb8-5d05-4cd34eae8619@i-love.sakura.ne.jp>
+ <CAK7LNATpAbRVbCuHQjq2e493aP0p1F9=Nd8+goQm-JnHzMEesw@mail.gmail.com> <ced8ab1c-9c35-c7b0-6b9e-bcee7ffdf469@i-love.sakura.ne.jp>
+In-Reply-To: <ced8ab1c-9c35-c7b0-6b9e-bcee7ffdf469@i-love.sakura.ne.jp>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 18 Dec 2019 23:11:00 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATNY1oP5XgFH3+fuUU=Z7pEz7Sqz0vKCzvhM4Kem7RkOg@mail.gmail.com>
+Message-ID: <CAK7LNATNY1oP5XgFH3+fuUU=Z7pEz7Sqz0vKCzvhM4Kem7RkOg@mail.gmail.com>
+Subject: Re: [PATCH v3] kconfig: Add yes2modconfig and mod2yesconfig targets.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05. 12. 19 0:29, Jolly Shah wrote:
-> From: Rajan Vaja <rajan.vaja@xilinx.com>
-> 
-> This patch adds new EEMI call which is used for CSU/PMU register
-> access from linux.
-> 
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+On Tue, Dec 17, 2019 at 6:42 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> Since kernel configs provided by syzbot are close to "make allyesconfig",
+> it takes long time to rebuild. This is especially waste of time when we
+> need to rebuild for many times (e.g. doing manual printk() inspection,
+> bisect operations).
+>
+> We can save time if we can exclude modules which are irrelevant to each
+> problem. But "make localmodconfig" cannot exclude modules which are built
+> into vmlinux because /sbin/lsmod output is used as the source of modules.
+>
+> Therefore, this patch adds "make yes2modconfig" which converts from =y
+> to =m if possible. After confirming that the interested problem is still
+> reproducible, we can try "make localmodconfig" (and/or manually tune
+> based on "Modules linked in:" line) in order to exclude modules which are
+> irrelevant to the interested problem. While we are at it, this patch also
+> adds "make mod2yesconfig" which converts from =m to =y in case someone
+> wants to convert from =m to =y after "make localmodconfig".
+>
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
 > ---
->  drivers/firmware/xilinx/zynqmp.c     | 183 +++++++++++++++++++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h |   9 ++
->  2 files changed, 192 insertions(+)
-> 
-> diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
-> index fd3d837..56431ad 100644
-> --- a/drivers/firmware/xilinx/zynqmp.c
-> +++ b/drivers/firmware/xilinx/zynqmp.c
-> @@ -24,6 +24,8 @@
->  #include <linux/firmware/xlnx-zynqmp.h>
->  #include "zynqmp-debug.h"
->  
-> +static unsigned long register_address;
-> +
->  static const struct zynqmp_eemi_ops *eemi_ops_tbl;
->  
->  static const struct mfd_cell firmware_devs[] = {
-> @@ -664,6 +666,26 @@ static int zynqmp_pm_set_requirement(const u32 node, const u32 capabilities,
->  				   qos, ack, NULL);
->  }
->  
-> +/**
-> + * zynqmp_pm_config_reg_access - PM Config API for Config register access
-> + * @register_access_id:	ID of the requested REGISTER_ACCESS
-> + * @address:		Address of the register to be accessed
-> + * @mask:		Mask to be written to the register
-> + * @value:		Value to be written to the register
-> + * @out:		Returned output value
-> + *
-> + * This function calls REGISTER_ACCESS to configure CSU/PMU registers.
-> + *
-> + * Return:	Returns status, either success or error+reason
-> + */
-> +
-> +static int zynqmp_pm_config_reg_access(u32 register_access_id, u32 address,
-> +				       u32 mask, u32 value, u32 *out)
-> +{
-> +	return zynqmp_pm_invoke_fn(PM_REGISTER_ACCESS, register_access_id,
-> +				   address, mask, value, out);
-> +}
-> +
->  static const struct zynqmp_eemi_ops eemi_ops = {
->  	.get_api_version = zynqmp_pm_get_api_version,
->  	.get_chipid = zynqmp_pm_get_chipid,
-> @@ -687,6 +709,7 @@ static const struct zynqmp_eemi_ops eemi_ops = {
->  	.set_requirement = zynqmp_pm_set_requirement,
->  	.fpga_load = zynqmp_pm_fpga_load,
->  	.fpga_get_status = zynqmp_pm_fpga_get_status,
-> +	.register_access = zynqmp_pm_config_reg_access,
->  };
->  
->  /**
-> @@ -704,6 +727,160 @@ const struct zynqmp_eemi_ops *zynqmp_pm_get_eemi_ops(void)
->  }
->  EXPORT_SYMBOL_GPL(zynqmp_pm_get_eemi_ops);
->  
-> +/**
-> + * config_reg_store - Write config_reg sysfs attribute
-> + * @kobj:	Kobject structure
-> + * @attr:	Kobject attribute structure
-> + * @buf:	User entered health_status attribute string
-> + * @count:	Buffer size
-> + *
-> + * User-space interface for setting the config register.
-> + *
-> + * To write any CSU/PMU register
-> + * echo <address> <mask> <values> > /sys/firmware/zynqmp/config_reg
-> + * Usage:
-> + * echo 0x345AB234 0xFFFFFFFF 0x1234ABCD > /sys/firmware/zynqmp/config_reg
-> + *
-> + * To Read any CSU/PMU register, write address to the variable like below
-> + * echo <address> > /sys/firmware/zynqmp/config_reg
-> + *
-> + * Return:	count argument if request succeeds, the corresponding error
-> + *		code otherwise
-> + */
-> +static ssize_t config_reg_store(struct kobject *kobj,
-> +				struct kobj_attribute *attr,
-> +				const char *buf, size_t count)
-> +{
-> +	char *kern_buff, *inbuf, *tok;
-> +	unsigned long address, value, mask;
-> +	int ret;
-> +
-> +	kern_buff = kzalloc(count, GFP_KERNEL);
-> +	if (!kern_buff)
-> +		return -ENOMEM;
-> +
-> +	ret = strlcpy(kern_buff, buf, count);
-> +	if (ret < 0) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
+> Changelog since v2:
+> - Add 'if possible' to help message.
+> - Make conf_rewrite_mod_or_yes() void.
+> - Don't call check_conf() loop, for conf_write() takes care.
+> - Use sym_add_change_count(1) to tell something has changed.
+>
+> Changelog since v1:
+> - Updated the available 'help' targets in Makefile.
 
-Greg: What's the recommended way how to parse parameters via sysfs?
-I see that kstrndup is used for cloning buffer instead of kzalloc
-followed by strchr and sscanf.
+Applied to linux-kbuild. Thanks.
 
 
-> +
-> +	inbuf = kern_buff;
-> +
-> +	/* Read the addess */
 
-typo here.
-
-> +	tok = strsep(&inbuf, " ");
-> +	if (!tok) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +	ret = kstrtol(tok, 16, &address);
-> +	if (ret) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +	/* Read the write value */
-> +	tok = strsep(&inbuf, " ");
-> +	/*
-> +	 * If parameter provided is only address, then its a read operation.
-> +	 * Store the address in a global variable and retrieve whenever
-> +	 * required.
-> +	 */
-> +	if (!tok) {
-> +		register_address = address;
-> +		goto err;
-> +	}
-> +	register_address = address;
-> +
-> +	ret = kstrtol(tok, 16, &mask);
-> +	if (ret) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +	tok = strsep(&inbuf, " ");
-> +	if (!tok) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +	ret = kstrtol(tok, 16, &value);
-> +	if (!tok) {
-> +		ret = -EFAULT;
-> +		goto err;
-> +	}
-> +	ret = zynqmp_pm_config_reg_access(CONFIG_REG_WRITE, address,
-> +					  mask, value, NULL);
-> +	if (ret)
-> +		pr_err("unable to write value to %lx\n", value);
-> +err:
-> +	kfree(kern_buff);
-> +	if (ret)
-> +		return ret;
-> +	return count;
-> +}
-> +
-> +/**
-> + * config_reg_show - Read config_reg sysfs attribute
-> + * @kobj:	Kobject structure
-> + * @attr:	Kobject attribute structure
-> + * @buf:	User entered health_status attribute string
-> + *
-> + * User-space interface for getting the config register.
-> + *
-> + * To Read any CSU/PMU register, write address to the variable like below
-> + * echo <address> > /sys/firmware/zynqmp/config_reg
-> + *
-> + * Then Read the address using below command
-> + * cat /sys/firmware/zynqmp/config_reg
-> + *
-> + * Return: number of chars written to buf.
-> + */
-> +static ssize_t config_reg_show(struct kobject *kobj,
-> +			       struct kobj_attribute *attr,
-> +			       char *buf)
-> +{
-> +	int ret;
-> +	u32 ret_payload[PAYLOAD_ARG_CNT];
-> +
-> +	ret = zynqmp_pm_config_reg_access(CONFIG_REG_READ, register_address,
-> +					  0, 0, ret_payload);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return sprintf(buf, "0x%x\n", ret_payload[1]);
-> +}
-> +
-> +static struct kobj_attribute zynqmp_attr_config_reg =
-> +					__ATTR_RW(config_reg);
-
-
-use DEVICE_ATTR_RW() instead
-
-> +
-> +static struct attribute *attrs[] = {
-> +	&zynqmp_attr_config_reg.attr,
-> +	NULL,
-> +};
-
-> +
-> +static const struct attribute_group attr_group = {
-> +	.attrs = attrs,
-> +	NULL,
-> +};
-
-ATTRIBUTE_GROUPS instead.
-
-> +
-> +static int zynqmp_pm_sysfs_init(void)
-> +{
-> +	struct kobject *zynqmp_kobj;
-> +	int ret;
-> +
-> +	zynqmp_kobj = kobject_create_and_add("zynqmp", firmware_kobj);
-> +	if (!zynqmp_kobj) {
-> +		pr_err("zynqmp: Firmware kobj add failed.\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret = sysfs_create_group(zynqmp_kobj, &attr_group);
-> +	if (ret) {
-> +		pr_err("%s() sysfs creation fail with error %d\n",
-> +		       __func__, ret);
-
-if you fail here you should free kobject_put(zynqmp_kobj);
-
-
-> +	}
-> +
-> +	return ret;
-> +}
-> +
->  static int zynqmp_firmware_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -748,6 +925,12 @@ static int zynqmp_firmware_probe(struct platform_device *pdev)
->  	/* Assign eemi_ops_table */
->  	eemi_ops_tbl = &eemi_ops;
->  
-> +	ret = zynqmp_pm_sysfs_init();
-> +	if (ret) {
-> +		pr_err("%s() sysfs init fail with error %d\n", __func__, ret);
-> +		return ret;
-> +	}
-> +
->  	zynqmp_pm_api_debugfs_init();
->  
->  	ret = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, firmware_devs,
-> diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
-> index df366f1..55561d0 100644
-> --- a/include/linux/firmware/xlnx-zynqmp.h
-> +++ b/include/linux/firmware/xlnx-zynqmp.h
-> @@ -77,6 +77,8 @@ enum pm_api_id {
->  	PM_CLOCK_GETRATE,
->  	PM_CLOCK_SETPARENT,
->  	PM_CLOCK_GETPARENT,
-> +	/* PM_REGISTER_ACCESS API */
-> +	PM_REGISTER_ACCESS = 52,
->  };
->  
->  /* PMU-FW return status codes */
-> @@ -261,6 +263,11 @@ enum tap_delay_type {
->  	PM_TAPDELAY_OUTPUT,
->  };
->  
-> +enum pm_register_access_id {
-> +	CONFIG_REG_WRITE,
-> +	CONFIG_REG_READ,
-> +};
-> +
->  /**
->   * struct zynqmp_pm_query_data - PM query data
->   * @qid:	query ID
-> @@ -305,6 +312,8 @@ struct zynqmp_eemi_ops {
->  			       const u32 capabilities,
->  			       const u32 qos,
->  			       const enum zynqmp_pm_request_ack ack);
-> +	int (*register_access)(u32 register_access_id, u32 address,
-> +			       u32 mask, u32 value, u32 *out);
->  };
->  
->  int zynqmp_pm_invoke_fn(u32 pm_api_id, u32 arg0, u32 arg1,
-> 
-
+-- 
+Best Regards
+Masahiro Yamada
