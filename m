@@ -2,315 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96C82124957
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:21:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF37112495D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:22:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfLROVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:21:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:9784 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726856AbfLROVt (ORCPT
+        id S1727190AbfLROWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:22:30 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37217 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbfLROWa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:21:49 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBIEJiGE143828
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 09:21:47 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2wyncx91qu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 09:21:47 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 18 Dec 2019 14:21:45 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 18 Dec 2019 14:21:43 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBIEKxCe48759240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 18 Dec 2019 14:20:59 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A07E55204F;
-        Wed, 18 Dec 2019 14:21:42 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.148.207.105])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id DBE435204E;
-        Wed, 18 Dec 2019 14:21:41 +0000 (GMT)
-Date:   Wed, 18 Dec 2019 16:21:40 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mike Rapoport <rppt@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>, linux-ia64@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ia64: add support for folded p4d page tables
-References: <20191218093820.17967-1-rppt@kernel.org>
- <20191218135939.GD28111@dhcp22.suse.cz>
+        Wed, 18 Dec 2019 09:22:30 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u17so2346143lja.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 06:22:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jo+R1TTGcJsYMxa30YVdwmew5sMvUZiUlEnGrV31yCE=;
+        b=JQ6dvlDdRFkUHfxe7bDgR/HwyZHKQawwKU5h/usfGR+z0tmdf0N+WEuwareRcJBKG+
+         zWuN/AU7jxTxpqCxgIdqiWobxX2nTseZQQuZjiNyzhiSXoNJXhJrZklqINXBBcr7gM12
+         ovaR6dKx4AU3Qv+q9JY5avY0p8lqri1/UC0We4ybcTAozHk6vkbUWw3YmfdxOrFNM5qG
+         57gZF+/cajeH9YF4Mi9Svxztjgd9j9Du6sMJ+lMnS6CtdRyennjQXVS2UV/2v8anlzQE
+         rgJjexXnIewRHQs0s4akShqXawNn18f8j88EyJjYFbEkMvemOKthl9OkrkZPdJSZBron
+         5UMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jo+R1TTGcJsYMxa30YVdwmew5sMvUZiUlEnGrV31yCE=;
+        b=Ik5/QJsCUfXX7dv+SCwBRMeDxVMYeNmpTqr0Q83NVnIuJl5aGzmq29oh6VHSNTziCa
+         OCujnUREBF7OF/5L9pmMFziBxsTCN3VqOZb7jr0RtiXj7k0YW2K75gZKOtg6RwWkJUND
+         jkSFQYhCTAlwuPdFtzr8+aegm1p9BGiQC9XAR8uAT5w2u2optCA0sZHwuLb8D2Hx5pTk
+         GGtzwd6jGNUEEc84saOu/+GjqPF99HUZLR+E9fU3eWFxcqlT1hOSWOxDPdS30kXcW6t7
+         pRCr+PcLQF8EHxsYhDv5y2gEPH1EYLVfM5B/Gvpw0Yu72uNgL3u0ahtdh4ElPf4OiMSJ
+         Tw9g==
+X-Gm-Message-State: APjAAAWnKkypO8XKpdPDztTvAki1OSSTUuP4Sr6/YebIjzbn/89iCEte
+        ssG9TslDioNsP4QJb7jXa0tMkDl0z/uVaFwKNF9y5A==
+X-Google-Smtp-Source: APXvYqxZUykIjq2r+Uz2bfp+KNP93UjcNLW94m1QYYV29xTP7mlTFZYzPUAyNYsD8Ar+PLZ+ox+HvrDJUyLLy0IthQg=
+X-Received: by 2002:a2e:854c:: with SMTP id u12mr1893548ljj.135.1576678948187;
+ Wed, 18 Dec 2019 06:22:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218135939.GD28111@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19121814-0020-0000-0000-00000399887C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121814-0021-0000-0000-000021F0AB9E
-Message-Id: <20191218142139.GA1454@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-18_04:2019-12-17,2019-12-18 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=2
- impostorscore=0 mlxlogscore=999 spamscore=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 clxscore=1015 bulkscore=0 adultscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912180118
+References: <20191217200721.741054904@linuxfoundation.org>
+In-Reply-To: <20191217200721.741054904@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 18 Dec 2019 19:52:16 +0530
+Message-ID: <CA+G9fYur78nMLo8=PkcTJ5LP+UY54RH9cTDmk9m2RR0h+4Mqug@mail.gmail.com>
+Subject: Re: [PATCH 5.4 00/37] 5.4.5-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 02:59:39PM +0100, Michal Hocko wrote:
-> On Wed 18-12-19 11:38:20, Mike Rapoport wrote:
-> > From: Mike Rapoport <rppt@linux.ibm.com>
-> > 
-> > Implement primitives necessary for the 4th level folding, add walks of p4d
-> > level where appropriate, remove usage of __ARCH_USE_5LEVEL_HACK and replace
-> > 5level-fixup.h with pgtable-nop4d.h
-> 
-> Why do we need that? I thought that IA64 is essentially a dead
-> architecture. Is this fixing something?
+On Wed, 18 Dec 2019 at 01:40, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.4.5 release.
+> There are 37 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 19 Dec 2019 20:06:21 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.4.5-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.4.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This is a part of a generic cleanup of page table manipulations. The goal
-is to remove __ARCH_USE_5LEVEL_HACK, asm-generic/5level-fixup.h,
-asm-generic/pgtable-nop4d-hack.h and the related code from the kernel.
- 
-> > Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> > ---
-> >  arch/ia64/include/asm/pgalloc.h |  4 ++--
-> >  arch/ia64/include/asm/pgtable.h | 17 ++++++++---------
-> >  arch/ia64/mm/fault.c            |  7 ++++++-
-> >  arch/ia64/mm/hugetlbpage.c      | 18 ++++++++++++------
-> >  arch/ia64/mm/init.c             | 28 ++++++++++++++++++++++++----
-> >  5 files changed, 52 insertions(+), 22 deletions(-)
-> > 
-> > diff --git a/arch/ia64/include/asm/pgalloc.h b/arch/ia64/include/asm/pgalloc.h
-> > index f4c491044882..2a3050345099 100644
-> > --- a/arch/ia64/include/asm/pgalloc.h
-> > +++ b/arch/ia64/include/asm/pgalloc.h
-> > @@ -36,9 +36,9 @@ static inline void pgd_free(struct mm_struct *mm, pgd_t *pgd)
-> >  
-> >  #if CONFIG_PGTABLE_LEVELS == 4
-> >  static inline void
-> > -pgd_populate(struct mm_struct *mm, pgd_t * pgd_entry, pud_t * pud)
-> > +p4d_populate(struct mm_struct *mm, p4d_t * p4d_entry, pud_t * pud)
-> >  {
-> > -	pgd_val(*pgd_entry) = __pa(pud);
-> > +	p4d_val(*p4d_entry) = __pa(pud);
-> >  }
-> >  
-> >  static inline pud_t *pud_alloc_one(struct mm_struct *mm, unsigned long addr)
-> > diff --git a/arch/ia64/include/asm/pgtable.h b/arch/ia64/include/asm/pgtable.h
-> > index d602e7c622db..c87f789bc914 100644
-> > --- a/arch/ia64/include/asm/pgtable.h
-> > +++ b/arch/ia64/include/asm/pgtable.h
-> > @@ -283,12 +283,12 @@ extern unsigned long VMALLOC_END;
-> >  #define pud_page(pud)			virt_to_page((pud_val(pud) + PAGE_OFFSET))
-> >  
-> >  #if CONFIG_PGTABLE_LEVELS == 4
-> > -#define pgd_none(pgd)			(!pgd_val(pgd))
-> > -#define pgd_bad(pgd)			(!ia64_phys_addr_valid(pgd_val(pgd)))
-> > -#define pgd_present(pgd)		(pgd_val(pgd) != 0UL)
-> > -#define pgd_clear(pgdp)			(pgd_val(*(pgdp)) = 0UL)
-> > -#define pgd_page_vaddr(pgd)		((unsigned long) __va(pgd_val(pgd) & _PFN_MASK))
-> > -#define pgd_page(pgd)			virt_to_page((pgd_val(pgd) + PAGE_OFFSET))
-> > +#define p4d_none(p4d)			(!p4d_val(p4d))
-> > +#define p4d_bad(p4d)			(!ia64_phys_addr_valid(p4d_val(p4d)))
-> > +#define p4d_present(p4d)		(p4d_val(p4d) != 0UL)
-> > +#define p4d_clear(p4dp)			(p4d_val(*(p4dp)) = 0UL)
-> > +#define p4d_page_vaddr(p4d)		((unsigned long) __va(p4d_val(p4d) & _PFN_MASK))
-> > +#define p4d_page(p4d)			virt_to_page((p4d_val(p4d) + PAGE_OFFSET))
-> >  #endif
-> >  
-> >  /*
-> > @@ -388,7 +388,7 @@ pgd_offset (const struct mm_struct *mm, unsigned long address)
-> >  #if CONFIG_PGTABLE_LEVELS == 4
-> >  /* Find an entry in the second-level page table.. */
-> >  #define pud_offset(dir,addr) \
-> > -	((pud_t *) pgd_page_vaddr(*(dir)) + (((addr) >> PUD_SHIFT) & (PTRS_PER_PUD - 1)))
-> > +	((pud_t *) p4d_page_vaddr(*(dir)) + (((addr) >> PUD_SHIFT) & (PTRS_PER_PUD - 1)))
-> >  #endif
-> >  
-> >  /* Find an entry in the third-level page table.. */
-> > @@ -582,10 +582,9 @@ extern struct page *zero_page_memmap_ptr;
-> >  
-> >  
-> >  #if CONFIG_PGTABLE_LEVELS == 3
-> > -#define __ARCH_USE_5LEVEL_HACK
-> >  #include <asm-generic/pgtable-nopud.h>
-> >  #endif
-> > -#include <asm-generic/5level-fixup.h>
-> > +#include <asm-generic/pgtable-nop4d.h>
-> >  #include <asm-generic/pgtable.h>
-> >  
-> >  #endif /* _ASM_IA64_PGTABLE_H */
-> > diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
-> > index c2f299fe9e04..ec994135cb74 100644
-> > --- a/arch/ia64/mm/fault.c
-> > +++ b/arch/ia64/mm/fault.c
-> > @@ -29,6 +29,7 @@ static int
-> >  mapped_kernel_page_is_present (unsigned long address)
-> >  {
-> >  	pgd_t *pgd;
-> > +	p4d_t *p4d;
-> >  	pud_t *pud;
-> >  	pmd_t *pmd;
-> >  	pte_t *ptep, pte;
-> > @@ -37,7 +38,11 @@ mapped_kernel_page_is_present (unsigned long address)
-> >  	if (pgd_none(*pgd) || pgd_bad(*pgd))
-> >  		return 0;
-> >  
-> > -	pud = pud_offset(pgd, address);
-> > +	p4d = p4d_offset(pgd, address);
-> > +	if (p4d_none(*p4d) || p4d_bad(*p4d))
-> > +		return 0;
-> > +
-> > +	pud = pud_offset(p4d, address);
-> >  	if (pud_none(*pud) || pud_bad(*pud))
-> >  		return 0;
-> >  
-> > diff --git a/arch/ia64/mm/hugetlbpage.c b/arch/ia64/mm/hugetlbpage.c
-> > index d16e419fd712..32352a73df0c 100644
-> > --- a/arch/ia64/mm/hugetlbpage.c
-> > +++ b/arch/ia64/mm/hugetlbpage.c
-> > @@ -30,12 +30,14 @@ huge_pte_alloc(struct mm_struct *mm, unsigned long addr, unsigned long sz)
-> >  {
-> >  	unsigned long taddr = htlbpage_to_page(addr);
-> >  	pgd_t *pgd;
-> > +	p4d_t *p4d;
-> >  	pud_t *pud;
-> >  	pmd_t *pmd;
-> >  	pte_t *pte = NULL;
-> >  
-> >  	pgd = pgd_offset(mm, taddr);
-> > -	pud = pud_alloc(mm, pgd, taddr);
-> > +	p4d = p4d_offset(pgd, taddr);
-> > +	pud = pud_alloc(mm, p4d, taddr);
-> >  	if (pud) {
-> >  		pmd = pmd_alloc(mm, pud, taddr);
-> >  		if (pmd)
-> > @@ -49,17 +51,21 @@ huge_pte_offset (struct mm_struct *mm, unsigned long addr, unsigned long sz)
-> >  {
-> >  	unsigned long taddr = htlbpage_to_page(addr);
-> >  	pgd_t *pgd;
-> > +	p4d_t *p4d;
-> >  	pud_t *pud;
-> >  	pmd_t *pmd;
-> >  	pte_t *pte = NULL;
-> >  
-> >  	pgd = pgd_offset(mm, taddr);
-> >  	if (pgd_present(*pgd)) {
-> > -		pud = pud_offset(pgd, taddr);
-> > -		if (pud_present(*pud)) {
-> > -			pmd = pmd_offset(pud, taddr);
-> > -			if (pmd_present(*pmd))
-> > -				pte = pte_offset_map(pmd, taddr);
-> > +		p4d = p4d_offset(pgd, addr);
-> > +		if (p4d_present(*p4d)) {
-> > +			pud = pud_offset(p4d, taddr);
-> > +			if (pud_present(*pud)) {
-> > +				pmd = pmd_offset(pud, taddr);
-> > +				if (pmd_present(*pmd))
-> > +					pte = pte_offset_map(pmd, taddr);
-> > +			}
-> >  		}
-> >  	}
-> >  
-> > diff --git a/arch/ia64/mm/init.c b/arch/ia64/mm/init.c
-> > index 58fd67068bac..bcdc78e97e6e 100644
-> > --- a/arch/ia64/mm/init.c
-> > +++ b/arch/ia64/mm/init.c
-> > @@ -208,6 +208,7 @@ static struct page * __init
-> >  put_kernel_page (struct page *page, unsigned long address, pgprot_t pgprot)
-> >  {
-> >  	pgd_t *pgd;
-> > +	p4d_t *p4d;
-> >  	pud_t *pud;
-> >  	pmd_t *pmd;
-> >  	pte_t *pte;
-> > @@ -215,7 +216,10 @@ put_kernel_page (struct page *page, unsigned long address, pgprot_t pgprot)
-> >  	pgd = pgd_offset_k(address);		/* note: this is NOT pgd_offset()! */
-> >  
-> >  	{
-> > -		pud = pud_alloc(&init_mm, pgd, address);
-> > +		p4d = p4d_alloc(&init_mm, pgd, address);
-> > +		if (!p4d)
-> > +			goto out;
-> > +		pud = pud_alloc(&init_mm, p4d, address);
-> >  		if (!pud)
-> >  			goto out;
-> >  		pmd = pmd_alloc(&init_mm, pud, address);
-> > @@ -382,6 +386,7 @@ int vmemmap_find_next_valid_pfn(int node, int i)
-> >  
-> >  	do {
-> >  		pgd_t *pgd;
-> > +		p4d_t *p4d;
-> >  		pud_t *pud;
-> >  		pmd_t *pmd;
-> >  		pte_t *pte;
-> > @@ -392,7 +397,13 @@ int vmemmap_find_next_valid_pfn(int node, int i)
-> >  			continue;
-> >  		}
-> >  
-> > -		pud = pud_offset(pgd, end_address);
-> > +		p4d = p4d_offset(pgd, end_address);
-> > +		if (p4d_none(*p4d)) {
-> > +			end_address += P4D_SIZE;
-> > +			continue;
-> > +		}
-> > +
-> > +		pud = pud_offset(p4d, end_address);
-> >  		if (pud_none(*pud)) {
-> >  			end_address += PUD_SIZE;
-> >  			continue;
-> > @@ -430,6 +441,7 @@ int __init create_mem_map_page_table(u64 start, u64 end, void *arg)
-> >  	struct page *map_start, *map_end;
-> >  	int node;
-> >  	pgd_t *pgd;
-> > +	p4d_t *p4d;
-> >  	pud_t *pud;
-> >  	pmd_t *pmd;
-> >  	pte_t *pte;
-> > @@ -444,12 +456,20 @@ int __init create_mem_map_page_table(u64 start, u64 end, void *arg)
-> >  	for (address = start_page; address < end_page; address += PAGE_SIZE) {
-> >  		pgd = pgd_offset_k(address);
-> >  		if (pgd_none(*pgd)) {
-> > +			p4d = memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node);
-> > +			if (!p4d)
-> > +				goto err_alloc;
-> > +			pgd_populate(&init_mm, pgd, p4d);
-> > +		}
-> > +		p4d = p4d_offset(pgd, address);
-> > +
-> > +		if (p4d_none(*p4d)) {
-> >  			pud = memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node);
-> >  			if (!pud)
-> >  				goto err_alloc;
-> > -			pgd_populate(&init_mm, pgd, pud);
-> > +			p4d_populate(&init_mm, p4d, pud);
-> >  		}
-> > -		pud = pud_offset(pgd, address);
-> > +		pud = pud_offset(p4d, address);
-> >  
-> >  		if (pud_none(*pud)) {
-> >  			pmd = memblock_alloc_node(PAGE_SIZE, PAGE_SIZE, node);
-> > -- 
-> > 2.24.0
-> > 
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
--- 
-Sincerely yours,
-Mike.
+Summary
+------------------------------------------------------------------------
 
+kernel: 5.4.5-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-5.4.y
+git commit: 280ed91cba5bf8a58ecacd658d388388bf630512
+git describe: v5.4.3-219-g280ed91cba5b
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/bui=
+ld/v5.4.3-219-g280ed91cba5b
+
+
+No regressions (compared to build v5.4.3)
+
+No fixes (compared to build v5.4.3)
+
+Ran 21153 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
+
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* libhugetlbfs
+* ltp-mm-tests
+* ltp-open-posix-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
