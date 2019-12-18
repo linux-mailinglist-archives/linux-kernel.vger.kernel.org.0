@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC4E124A61
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:53:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF30A124A64
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfLROxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:53:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727120AbfLROxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:53:33 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDFD02146E;
-        Wed, 18 Dec 2019 14:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576680813;
-        bh=JkHDnOY5P9I5w10xZEaHs+fhTecywtGbMXClR5tfdIo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z3Z3w0h7BclxAjayuS1bzFy6igHy+wgCXL/3XD2tyj51VFlFc+e+PBo8XkXOW7tdx
-         Xf1Jg/8KZAGNHgPiv5HBc5mpq378EBpYLy6Li25Z/Ys7S6fFNf/uaG4r1OE1gNRonU
-         vuS2qSlv5uTTHgqUtOrY8zGaGR1UHi44FZ4G6eX8=
-Date:   Wed, 18 Dec 2019 15:53:26 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 00/37] 5.4.5-stable review
-Message-ID: <20191218145326.GA387753@kroah.com>
-References: <20191217200721.741054904@linuxfoundation.org>
- <20191218144831.GB19358@roeck-us.net>
+        id S1727210AbfLROyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:54:35 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36562 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726921AbfLROyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:54:35 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w1so2827101otg.3;
+        Wed, 18 Dec 2019 06:54:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=iY4uXq1SaKZgzob1+2qQOKNlu24qtS6FnzwURWp1h9Q=;
+        b=LyZ6qOu7WjDjt2GGD0Tf848fnrm/8ldqJXRA+Vi7Ugr6Vka4WJdmPCqCPD/YrNSsix
+         UFRWrW3Txj3sKfbdLnmjL3qh0Zbxs8pAxh0c6RpoY95BdDWfQ2OrThr2fr7wqGKflIUu
+         NlYESQfGu+sOLQ3a6gohxvUs99TVP1zwWCoXzGFIqZMkcEsiE0+lV6zJF8fWUuuBiqGu
+         /ofqrkocLJHnDYYe/tGcNf6pH0KDtRNLhA3kE9GTNre3WcrhMJ3tqV1c38Mjf8ljxJ44
+         z9e4MipZJCi7WHcvQETFk/+GM0w2r6euhPUAWOwRLvcMciXc/Rr24mcBqG1jX2iwuxKh
+         ZvZA==
+X-Gm-Message-State: APjAAAWCfUFhw/lgD4VsEugIbRx/cbnFNpWNEy4mj2GqR1X4/fZoFQ2W
+        OW/02cSLYDJIXrF+x2KN4g==
+X-Google-Smtp-Source: APXvYqx9qabUxfrhOzpRQ5TYWNuN1bOUhzm7eE9y9M5Ce9bqK0nKPPoliIG8Vj+5bq2+vHKimuFUig==
+X-Received: by 2002:a05:6830:1c85:: with SMTP id v5mr3183032otf.35.1576680874215;
+        Wed, 18 Dec 2019 06:54:34 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w6sm857669oih.19.2019.12.18.06.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 06:54:33 -0800 (PST)
+Date:   Wed, 18 Dec 2019 08:54:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, jhogan@kernel.org,
+        mripard@kernel.org, shawnguo@kernel.org, mark.rutland@arm.com,
+        alexandre.belloni@bootlin.com, ralf@linux-mips.org,
+        heiko@sntech.de, icenowy@aosc.io, ak@linux.intel.com,
+        laurent.pinchart@ideasonboard.com, krzk@kernel.org,
+        geert+renesas@glider.be, paul@crapouillou.net,
+        prasannatsmkumar@gmail.com, keescook@chromium.org,
+        ebiederm@xmission.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, 772753199@qq.com
+Subject: Re: [PATCH v8 2/4] dt-bindings: Document yna vendor-prefix.
+Message-ID: <20191218145432.GA11183@bogus>
+References: <1575979363-25956-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1575979363-25956-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191218144831.GB19358@roeck-us.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1575979363-25956-3-git-send-email-zhouyanjie@wanyeetech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 06:48:31AM -0800, Guenter Roeck wrote:
-> On Tue, Dec 17, 2019 at 09:09:21PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.5 release.
-> > There are 37 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu, 19 Dec 2019 20:06:21 +0000.
-> > Anything received after that time might be too late.
-> > 
+On Tue, 10 Dec 2019 20:02:41 +0800, =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?=          wrote:
+> The "yna" is an acronym of the "YSH & ATIL".
 > 
-> Build results:
-> 	total: 158 pass: 158 fail: 0
-> Qemu test results:
-> 	total: 387 pass: 387 fail: 0
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> ---
+> 
+> Notes:
+>     v1->v2:
+>     No change.
+>     
+>     v2->v3:
+>     No change.
+>     
+>     v3->v4:
+>     No change.
+>     
+>     v4->v5:
+>     No change.
+>     
+>     v5->v6:
+>     No change.
+>     
+>     v6->v7:
+>     Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+>     to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+>     the old mailbox is in an unstable state.
+>     
+>     v7->v8:
+>     No change.
+> 
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Wonderful, thanks for the quick response and testing.
-
-greg k-h
+Acked-by: Rob Herring <robh@kernel.org>
