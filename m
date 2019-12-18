@@ -2,239 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD1212480D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:23:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94AD41247FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:22:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbfLRNW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 08:22:56 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:59182 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727114AbfLRNWy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:22:54 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576675373; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=H4LvATnPFwxC6gr/xey+iMEVwMbJ/2ar67uFaIO6rgE=; b=vxRC8N5hoYUaLQ6YZmlTTfu2Cp/diNWsMhsa33DWdPNHTaB8c+/304KeZKF9H7ebTosbeWjJ
- tVdBx625EP6PpjL2DicUJRngbM01xsMOshV+yZ//9IUSJYFUXfksBttDppqnSGUcmvWjFJdV
- iIeECWZWqyLpY9iLMcpWi/2TKy8=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfa282b.7fd316ee1e30-smtp-out-n01;
- Wed, 18 Dec 2019 13:22:51 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 64FF1C4479F; Wed, 18 Dec 2019 13:22:51 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 97347C4479F;
-        Wed, 18 Dec 2019 13:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 97347C4479F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, jhugo@codeaurora.org,
-        robh+dt@kernel.org
-Cc:     ohad@wizery.com, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        agross@kernel.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v2 5/5] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI nodes
-Date:   Wed, 18 Dec 2019 18:52:17 +0530
-Message-Id: <20191218132217.28141-6-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20191218132217.28141-1-sibis@codeaurora.org>
-References: <20191218132217.28141-1-sibis@codeaurora.org>
+        id S1726980AbfLRNWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 08:22:39 -0500
+Received: from mail-mw2nam12on2040.outbound.protection.outlook.com ([40.107.244.40]:49159
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726743AbfLRNWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:22:38 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GmUdJLgzcKwbIQG6tQ8x4OGTrHcH8dK2ObhbmFbI2+vMMvhmoTLRo1KRK0c31xgZpumm1RHO9q4eljwlfXG2jtfpsSXh6Z2gp6en8CpLAq2jaOSzh9MOuuaTqFe4kDRhfYC3X8hRPwLXNrme88YMtoh2o+HhLXxeJCWD+ZBjSaTXh3WJRNM450PVsdWYMLOm3oE2O0JT3Xr5fWDFB/fO2Zzt6YXoPZxuaT/FjfY6IouHQXq2hVwRL5tlsXOl5XppHr5aH4jq5zJEysenz/O5lWGYh3xn8iv5JF/xd4WXe3rHx8H5gClpYWBYTEUKP6GMGnUvkpbDiosGErhoDRgcHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jd6kHD+jLfCpO+ulSC3PXB+e2+hnzjIp6M3hitCQliM=;
+ b=TGEAkuHEYQnbBFOd7TMiH6fdF0nkePwtvs1ovti2atZnUUsvGF0StKMLSyOZCErYHaf/7tM4dJA0hAFjNzYFhpdW9vAUnShVLAwH5pBaOwPsgzkOwCb5aQEkmSLBmsIvkZrS7Xc3IwqSohttW1TAz/hCJApN8+mNpd+fIwd8HKzde/Uw+wvaJMqzBn6hsonbQLrdpDYbShdCuNkh7QxB9d2cA7c1kNhHNtuH7ogzY7305cuGCLxFFOxK2hX28K0WKlczlXsEnBHIOMVNrG+QE3KkBWIxISraM6GZ37kk7NYEusZ6ozTKNXU5gslH2ruBUbVdLleM/SzL3LALXXnvUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jd6kHD+jLfCpO+ulSC3PXB+e2+hnzjIp6M3hitCQliM=;
+ b=kTmlurvW58r093H3UKjPDxqn8hloF4H+Mio4gaLkZpj1TN4occrRXsqjyjxBm2PDQx5kilavjWFjiJZdDbsdPu2Lk1salkoe3obfT2BbB5X1k90n/9tLOSd171jF5dDsIfC9TMPySnPyb/mhhAFAbDPw1DcmWiAASWH9JCegzs8=
+Received: from CH2PR02MB7000.namprd02.prod.outlook.com (20.180.9.216) by
+ CH2PR02MB6999.namprd02.prod.outlook.com (20.180.8.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.14; Wed, 18 Dec 2019 13:22:34 +0000
+Received: from CH2PR02MB7000.namprd02.prod.outlook.com
+ ([fe80::969:436f:b4b8:4899]) by CH2PR02MB7000.namprd02.prod.outlook.com
+ ([fe80::969:436f:b4b8:4899%7]) with mapi id 15.20.2559.012; Wed, 18 Dec 2019
+ 13:22:34 +0000
+From:   Radhey Shyam Pandey <radheys@xilinx.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Michal Simek <michals@xilinx.com>,
+        "nick.graumann@gmail.com" <nick.graumann@gmail.com>,
+        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
+        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        git <git@xilinx.com>
+Subject: RE: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
+ dma_terminate_all
+Thread-Topic: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
+ dma_terminate_all
+Thread-Index: AQHVo1uM5nn5YHd560C/NFUjbNUe6Key97yAgAIaTxCACnlLgIAAebcQ
+Date:   Wed, 18 Dec 2019 13:22:34 +0000
+Message-ID: <CH2PR02MB7000C73DA877E4A45CF5EF0DC7530@CH2PR02MB7000.namprd02.prod.outlook.com>
+References: <1574664121-13451-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <20191210060113.GP82508@vkoul-mobl>
+ <CH2PR02MB70009D78EA8C487BFFA54964C75A0@CH2PR02MB7000.namprd02.prod.outlook.com>
+ <20191218060437.GQ2536@vkoul-mobl>
+In-Reply-To: <20191218060437.GQ2536@vkoul-mobl>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=radheys@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 86375aae-4afc-47e9-c32d-08d783bd5827
+x-ms-traffictypediagnostic: CH2PR02MB6999:|CH2PR02MB6999:
+x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR02MB69992E9870C207142C568774C7530@CH2PR02MB6999.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0255DF69B9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(396003)(366004)(346002)(13464003)(51914003)(189003)(199004)(66946007)(478600001)(64756008)(66446008)(4326008)(66476007)(66556008)(186003)(76116006)(316002)(9686003)(2906002)(107886003)(86362001)(71200400001)(55016002)(54906003)(81166006)(81156014)(53546011)(52536014)(6916009)(8676002)(7696005)(33656002)(6506007)(5660300002)(8936002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6999;H:CH2PR02MB7000.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: XVqTdk9iMMewG+SOeWDmOWK9/DsvMfiRcrv2OG15hhI6cc3W/hIGEQGmbarJEIO6MRmTT45gLsytt4cPXk2pG3vwalyV9a7wVJgyZUq0kjHCmi7X5v+2hSfQeSRFrkrNFyq80P+CBpbtLOBWX4tbfZ8ujvdts4E0c5rwyrHzlVuvM73JLVSGAS2AznUF5CaN0iz2FoqZ418hJdFTOWPerRhaQseooGUqkRek6ZMFBufgch/gYe6cjoMLmCDDUnt3dt+SN7mWH7RuHNXQXUwh/PGcb/zpkn83Kcafeh4Qg35llnY2D59irQREnnXNg1MufhcJRn9A2VR6LZAy8sXEb59EJaPyG7VRpI5tsRzxhBHd7NAoDOG8aADj/u+RbWYM2CKsSAQkjcFjYxtXWp8UfavENMUBRBIdqoSl0j9eLI2nQbRiNDddsiQNCncuRg69MZKaHVUOMjQm7z75zIw+z4HVcTq8PLzP1HPAa83vOeqPixxzfeZcmY54he+iatf/XCLeKB+owu/VmpEq2XUqxQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86375aae-4afc-47e9-c32d-08d783bd5827
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 13:22:34.6605
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YxWw/WfcNHTay8QBkHvfYnbIQxpp8GuHp9cPPq3Cg9r6fP9Bg7kA9WoYIXQi7jc3ruHU7GkwBOwKskRbGoJMTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6999
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds ADSP, MPSS and SLPI nodes for MSM8998 SoCs.
+> -----Original Message-----
+> From: Vinod Koul <vkoul@kernel.org>
+> Sent: Wednesday, December 18, 2019 11:35 AM
+> To: Radhey Shyam Pandey <radheys@xilinx.com>
+> Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
+> nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
+> Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
+> dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; git
+> <git@xilinx.com>
+> Subject: Re: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
+> dma_terminate_all
+>=20
+> On 11-12-19, 14:46, Radhey Shyam Pandey wrote:
+> > > -----Original Message-----
+> > > From: Vinod Koul <vkoul@kernel.org>
+> > > Sent: Tuesday, December 10, 2019 11:31 AM
+> > > To: Radhey Shyam Pandey <radheys@xilinx.com>
+> > > Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
+> > > nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
+> > > Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
+> > > dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; git
+> > > <git@xilinx.com>
+> > > Subject: Re: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
+> > > dma_terminate_all
+> > >
+> > > On 25-11-19, 12:12, Radhey Shyam Pandey wrote:
+> > > > Reset DMA channel after stop to ensure that pending transfers and
+> > > > FIFOs in the datapath are flushed or completed. It fixes intermitte=
+nt
+> > > > data verification failure reported by xilinx dma test client.
+> > > >
+> > > > Signed-off-by: Radhey Shyam Pandey
+> <radhey.shyam.pandey@xilinx.com>
+> > > > ---
+> > > >  drivers/dma/xilinx/xilinx_dma.c | 17 +++++++++--------
+> > > >  1 file changed, 9 insertions(+), 8 deletions(-)
+> > > >
+> > > > diff --git a/drivers/dma/xilinx/xilinx_dma.c
+> > > > b/drivers/dma/xilinx/xilinx_dma.c index a9c5d5c..6f1539c 100644
+> > > > --- a/drivers/dma/xilinx/xilinx_dma.c
+> > > > +++ b/drivers/dma/xilinx/xilinx_dma.c
+> > > > @@ -2404,16 +2404,17 @@ static int xilinx_dma_terminate_all(struct
+> > > dma_chan *dchan)
+> > > >  	u32 reg;
+> > > >  	int err;
+> > > >
+> > > > -	if (chan->cyclic)
+> > > > -		xilinx_dma_chan_reset(chan);
+> > >
+> > > So reset is required for non cyclic cases as well now?
+> >
+> > Yes. In absence of reset in non-cyclic case, when dmatest client
+> > driver is stressed and loaded/unloaded multiple times we see dma
+> > data comparison failures. Possibly IP is prefetching/holding the
+> > previous state and reset ensures a clean state on each iteration.
+> > >
+> > > > -
+> > > > -	err =3D chan->stop_transfer(chan);
+> > > > -	if (err) {
+> > > > -		dev_err(chan->dev, "Cannot stop channel %p: %x\n",
+> > > > -			chan, dma_ctrl_read(chan,
+> > > XILINX_DMA_REG_DMASR));
+> > > > -		chan->err =3D true;
+> > > > +	if (!chan->cyclic) {
+> > > > +		err =3D chan->stop_transfer(chan);
+> > >
+> > > no stop for cyclic now..?
+> > After reset stop is not needed, so for the cyclic mode we only do reset=
+.
+>=20
+> Okay makes sense, can you please add these as comments, down the line
+> these will be very useful for you & others to debug!
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |   8 ++
- arch/arm64/boot/dts/qcom/msm8998.dtsi     | 124 ++++++++++++++++++++++
- 2 files changed, 132 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-index 6db3f9e0344d1..e87094665c52c 100644
---- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-@@ -312,6 +312,14 @@
- 	};
- };
- 
-+&remoteproc_adsp {
-+	status = "okay";
-+};
-+
-+&remoteproc_slpi {
-+	status = "okay";
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <0 4>, <81 4>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 8d799e868a5d3..014127700afb0 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -1075,6 +1075,61 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
-+		remoteproc_mss: remoteproc@4080000 {
-+			compatible = "qcom,msm8998-mss-pil";
-+			reg = <0x04080000 0x100>, <0x04180000 0x20>;
-+			reg-names = "qdsp6", "rmb";
-+
-+			interrupts-extended =
-+				<&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-+				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack",
-+					  "shutdown-ack";
-+
-+			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-+				 <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
-+				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
-+				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-+				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
-+				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
-+				 <&rpmcc RPM_SMD_QDSS_CLK>,
-+				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+			clock-names = "iface", "bus", "mem", "gpll0_mss",
-+				      "snoc_axi", "mnoc_axi", "qdss", "xo";
-+
-+			qcom,smem-states = <&modem_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			resets = <&gcc GCC_MSS_RESTART>;
-+			reset-names = "mss_restart";
-+
-+			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-+
-+			power-domains = <&rpmpd MSM8998_VDDCX>,
-+					<&rpmpd MSM8998_VDDMX>;
-+			power-domain-names = "cx", "mx";
-+
-+			mba {
-+				memory-region = <&mba_mem>;
-+			};
-+
-+			mpss {
-+				memory-region = <&mpss_mem>;
-+			};
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
-+				label = "modem";
-+				qcom,remote-pid = <1>;
-+				mboxes = <&apcs_glb 15>;
-+			};
-+		};
-+
- 		gpucc: clock-controller@5065000 {
- 			compatible = "qcom,msm8998-gpucc";
- 			#clock-cells = <1>;
-@@ -1088,6 +1143,42 @@
- 				      "gpll0";
- 		};
- 
-+		remoteproc_slpi: remoteproc@5800000 {
-+			compatible = "qcom,msm8998-slpi-pas";
-+			reg = <0x05800000 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 390 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			px-supply = <&vreg_lvs2a_1p8>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-+			clock-names = "xo", "aggre2";
-+
-+			memory-region = <&slpi_mem>;
-+
-+			qcom,smem-states = <&slpi_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			power-domains = <&rpmpd MSM8998_SSCCX>;
-+			power-domain-names = "ssc_cx";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
-+				label = "dsps";
-+				qcom,remote-pid = <3>;
-+				mboxes = <&apcs_glb 27>;
-+			};
-+		};
-+
- 		stm: stm@6002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x06002000 0x1000>,
-@@ -1880,6 +1971,39 @@
- 			#size-cells = <0>;
- 		};
- 
-+		remoteproc_adsp: remoteproc@17300000 {
-+			compatible = "qcom,msm8998-adsp-pas";
-+			reg = <0x17300000 0x4040>;
-+
-+			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-+					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-+			interrupt-names = "wdog", "fatal", "ready",
-+					  "handover", "stop-ack";
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
-+			clock-names = "xo";
-+
-+			memory-region = <&adsp_mem>;
-+
-+			qcom,smem-states = <&adsp_smp2p_out 0>;
-+			qcom,smem-state-names = "stop";
-+
-+			power-domains = <&rpmpd MSM8998_VDDCX>;
-+			power-domain-names = "cx";
-+
-+			status = "disabled";
-+
-+			glink-edge {
-+				interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
-+				label = "lpass";
-+				qcom,remote-pid = <2>;
-+				mboxes = <&apcs_glb 9>;
-+			};
-+		};
-+
- 		apcs_glb: mailbox@17911000 {
- 			compatible = "qcom,msm8998-apcs-hmss-global";
- 			reg = <0x17911000 0x1000>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Thanks for the review. I agree, will include the comments in v2.
+>=20
+> --
+> ~Vinod
