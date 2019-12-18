@@ -2,101 +2,313 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABEC6123EF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 06:25:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C83123EBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 06:15:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfLRFZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 00:25:06 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46300 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfLRFZF (ORCPT
+        id S1726387AbfLRFPv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 00:15:51 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45262 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfLRFPu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 00:25:05 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 38so970847qtb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 21:25:05 -0800 (PST)
+        Wed, 18 Dec 2019 00:15:50 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so675165lfa.12;
+        Tue, 17 Dec 2019 21:15:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jonmasters-org.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uIMTyYXR3nXqdy95e1OaQ4blqi70Uo0OIJA0JwHv2YQ=;
-        b=zNU9URTpXbNk0H+bfxQuplRFAZ/+QuFZ6Yd096coCKdylsucVnKFkkww084LxKN7G6
-         ulzFsZdIg6SVR4tgU5cDYYlo0CXtfCmJPQycPblX0FFaYBE+cL5OKLuhei9teC6wUmmK
-         Oc84j0+Vw2gcCS4XC4WrHqz+fOgW/0CdiGR1dfMf/HODZ23IlHU7H1OJ2CmQoBfC4Z94
-         f3LbaBfhZ7wGluYaje4wnjvDGbcUfG9nrco1qf0kRn8/Ks0eSGsFKNjKDm+D7ZY8tNEi
-         OLH5Ejd9W1dUkuKA9ZRRYIkpvVpXSQKY6b9y3iYGtMQQIKB/nk3glaiVf+nHotXjSwF/
-         CilQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Muu5q8Fps2+SKFxVklBGeC5/MVx/Fov2oo+BdZqlLjg=;
+        b=L4ZhOowTQpZdtmeCPOjp0Sl/kuNotYeKtNtPZQUmNBaWSaSko1SGQVK9McyzRx5jpK
+         EVuPOvuhHw/Qayem+7mKKWll22hEyM3nN5rab4WIL+3BVVl/0950htgVwcdQz0uNRAV0
+         pZe7wx6lGhavyjEksHHn3WG0bNCoe9jQke4kZAySDpsbaFgi62fIrAsDA/KXwk06wENv
+         CXlYwGs99ZF1bgVcW6JKPnFbgflY30/tHbmMWJhLsYSiHq84zRx255XqUHY+CLu1NCRF
+         qG3emucrvNEc5hCBhedF6IK3qb8QTiwyCclYfu7I8846utKRwvBQOXckxRtdq1OJYfee
+         tYaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=uIMTyYXR3nXqdy95e1OaQ4blqi70Uo0OIJA0JwHv2YQ=;
-        b=pzMtmIAyGbHn3S2ESG2Dsu9XS+WZdDkv/6+8CxGbT1smY44BQ8bKtBHo5gOj4mfaIu
-         UtSxnPcUcU1Y4WLL8tRBUbaaSAFRVx2uLGA1yrbqFW37OxEDgXR6iBtFynQzXgWB2nOn
-         hY+Gu0KyYMgr8DusfgCP0TZLbk263My7w4Q4W3rV31oecm2n9/1DS7rzR8Hru7LKthvY
-         YOaeohYGFdzGrk2Xl3mb8JF0jw1AwQECiBtGZQnJExnmWIRBE6e1zavX9014WGKzJ4rK
-         xV+afSbWgxt4HSAiMZBtHUNHkHmgZiOWOiLqaWkVwJTO0S8F2QIztvDOSgltlMl2f2fg
-         oyTA==
-X-Gm-Message-State: APjAAAVxQ7b3HVAGTHR1SBQx3NeZ0AV3lZU6dhjW2v0TriRDvz8DgL7E
-        l0lbPFoYDlCNLS4sCDVz0gpbgk4d8cmL0A==
-X-Google-Smtp-Source: APXvYqw0LJ2pIxnufMfbafewC8CwiqT+EqKHOTuPpD18gUxiTVv4YVZQUuZHJ8Y4ZurUv0V5JwW/og==
-X-Received: by 2002:ac8:2af4:: with SMTP id c49mr659933qta.367.1576646704962;
-        Tue, 17 Dec 2019 21:25:04 -0800 (PST)
-Received: from independence.bos.jonmasters.org (Boston.jonmasters.org. [50.195.43.97])
-        by smtp.gmail.com with ESMTPSA id t7sm315351qkm.136.2019.12.17.21.25.04
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Muu5q8Fps2+SKFxVklBGeC5/MVx/Fov2oo+BdZqlLjg=;
+        b=gNs0iKwPXc1v6CTCY6FQBlTjvz1ObQD8utSvuzHV9wWH5B1skgeaoih2rQA8k0BPdd
+         edeHWk7YJ31cKdX40fd8HcLCwk6UxIPQVgkG4Wvy7tt0jHpC9hvRmCDRzF977tvsCLr3
+         AhNRfWqtE8y4Pv2FjiWlPiwuV1oPGI1NWkfHXJ53ZXLYxAk9dUCTiMmS5yQNE//dyEz+
+         7CWqJLUefJ7R5BkKsS8hd8sTHjeh1eVbJHSsT3124ZhObkl9qe/bMjg9iF5VnQ4XEXKk
+         yapeqYNkpotX71/IbayW2sNlkZe2D1eiiKRBe2TF6pQslYAh7QMM717C6vZFcrrtatsr
+         29sw==
+X-Gm-Message-State: APjAAAXNWhZa+YXgJOqjCfMzJE81046zjK59Qk54YYqn/n+3HcPOPvMh
+        yWQf9Y3ZDvlYloUTTUDhRQwHh58l
+X-Google-Smtp-Source: APXvYqxUpZwUFVyWk7q3cYBXx7sJpOFPMix6TwEawFTqUljubYnlDHGvWcpU69oxSeKohmNsmtX5Jw==
+X-Received: by 2002:a19:22cc:: with SMTP id i195mr436477lfi.148.1576645696280;
+        Tue, 17 Dec 2019 21:08:16 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id p15sm385752lfo.88.2019.12.17.21.08.14
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 21:25:04 -0800 (PST)
-Subject: Re: [PATCH] pcie: Add quirk for the Arm Neoverse N1SDP platform
-To:     Will Deacon <will@kernel.org>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org
-References: <20191209160638.141431-1-andre.przywara@arm.com>
- <20191209162645.GA7489@willie-the-truck>
-From:   Jon Masters <jcm@jonmasters.org>
-Organization: World Organi{s,z}ation of Broken Dreams
-Message-ID: <dacfd8bf-0f68-f2af-9238-4b0fadfbdfe3@jonmasters.org>
-Date:   Tue, 17 Dec 2019 21:21:17 -0500
+        Tue, 17 Dec 2019 21:08:15 -0800 (PST)
+Subject: Re: [PATCH v4 08/19] soc: tegra: Add support for 32KHz blink clock
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
+ <1576613046-17159-9-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b3f79e55-2104-c571-5d2a-27f4d549a404@gmail.com>
+Date:   Wed, 18 Dec 2019 08:08:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20191209162645.GA7489@willie-the-truck>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1576613046-17159-9-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/9/19 11:26 AM, Will Deacon wrote:
-> On Mon, Dec 09, 2019 at 04:06:38PM +0000, Andre Przywara wrote:
->> From: Deepak Pandey <Deepak.Pandey@arm.com>
->>
->> The Arm N1SDP SoC suffers from some PCIe integration issues, most
->> prominently config space accesses to not existing BDFs being answered
->> with a bus abort, resulting in an SError.
+17.12.2019 23:03, Sowjanya Komatineni пишет:
+> Tegra PMC has blink control to output 32 Khz clock out to Tegra
+> blink pin. Blink pad DPD state and enable controls are part of
+> Tegra PMC register space.
 > 
-> "Do as I say, not as I do"?
+> Currently Tegra clock driver registers blink control by passing
+> PMC address and register offset to clk_register_gate which performs
+> direct PMC access during clk_ops and with this when PMC is in secure
+> mode, any access from non-secure world does not go through.
+> 
+> This patch adds blink control registration to the Tegra PMC driver
+> using PMC specific clock gate operations that use tegra_pmc_readl
+> and tegra_pmc_writel to support both secure mode and non-secure
+> mode PMC register access.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 107 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 107 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 6d65194a6e71..19996c21c60d 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -61,12 +61,15 @@
+>  #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>  #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+>  #define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+> +#define  PMC_CNTRL_BLINK_EN		7
+>  #define  PMC_CNTRL_MAIN_RST		BIT(4)
+>  
+>  #define PMC_WAKE_MASK			0x0c
+>  #define PMC_WAKE_LEVEL			0x10
+>  #define PMC_WAKE_STATUS			0x14
+>  #define PMC_SW_WAKE_STATUS		0x18
+> +#define PMC_DPD_PADS_ORIDE		0x1c
+> +#define  PMC_DPD_PADS_ORIDE_BLINK	20
+>  
+>  #define DPD_SAMPLE			0x020
+>  #define  DPD_SAMPLE_ENABLE		BIT(0)
+> @@ -79,6 +82,7 @@
+>  
+>  #define PWRGATE_STATUS			0x38
+>  
+> +#define PMC_BLINK_TIMER			0x40
+>  #define PMC_IMPL_E_33V_PWR		0x40
+>  
+>  #define PMC_PWR_DET			0x48
+> @@ -170,6 +174,14 @@ struct pmc_clk {
+>  
+>  #define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
+>  
+> +struct pmc_clk_gate {
+> +	struct clk_hw	hw;
+> +	unsigned long	offs;
+> +	u32		shift;
+> +};
+> +
+> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct pmc_clk_gate, hw)
+> +
+>  struct pmc_clk_init_data {
+>  	char *name;
+>  	const char *const *parents;
+> @@ -320,6 +332,7 @@ struct tegra_pmc_soc {
+>  
+>  	const struct pmc_clk_init_data *pmc_clks_data;
+>  	unsigned int num_pmc_clks;
+> +	bool has_blink_output;
+>  };
+>  
+>  static const char * const tegra186_reset_sources[] = {
+> @@ -2330,6 +2343,60 @@ tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
+>  	return clk_register(NULL, &pmc_clk->hw);
+>  }
+>  
+> +static int pmc_clk_gate_is_enabled(struct clk_hw *hw)
+> +{
+> +	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+> +
+> +	return tegra_pmc_readl(pmc, gate->offs) & BIT(gate->shift) ? 1 : 0;
+> +}
+> +
+> +static int pmc_clk_gate_enable(struct clk_hw *hw)
+> +{
+> +	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+> +
+> +	pmc_clk_set_state(gate->offs, gate->shift, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +static void pmc_clk_gate_disable(struct clk_hw *hw)
+> +{
+> +	struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+> +
+> +	pmc_clk_set_state(gate->offs, gate->shift, 0);
+> +}
+> +
+> +static const struct clk_ops pmc_clk_gate_ops = {
+> +	.is_enabled = pmc_clk_gate_is_enabled,
+> +	.enable = pmc_clk_gate_enable,
+> +	.disable = pmc_clk_gate_disable,
+> +};
+> +
+> +static struct clk *
+> +tegra_pmc_clk_gate_register(const char *name, const char *parent_name,
+> +			    unsigned long flags, unsigned long offset,
+> +			    u32 shift)
+> +{
+> +	struct clk_init_data init;
+> +	struct pmc_clk_gate *gate;
+> +
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	init.name = name;
+> +	init.ops = &pmc_clk_gate_ops;
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+> +	init.flags = flags;
 
-In my former role I asked nicely that these patches not be posted 
-upstream, but I see that they ended up being posted anyway. Hacking up 
-upstream Linux to cover for the fact that a (reference) platform is 
-non-standard is not only not good form but it actively harms the community.
+What about "init.flags = 0"?
 
-You'll have people consume this platform and not realize that it's 
-broken, IP won't get fixed, and generally it'll be a mess. Yes, it's 
-unfortunate, but so was taping out that platform without working PCI. We 
-all know what should have happened, and what the right move ahead is.
+> +	gate->hw.init = &init;
+> +	gate->offs = offset;
+> +	gate->shift = shift;
+> +
+> +	return clk_register(NULL, &gate->hw);
+> +}
+> +
+>  static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>  				     struct device_node *np)
+>  {
+> @@ -2339,6 +2406,8 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>  	int i, err = -ENOMEM;
+>  
+>  	num_clks = pmc->soc->num_pmc_clks;
+> +	if (pmc->soc->has_blink_output)
+> +		num_clks += 1;
+>  
+>  	if (!num_clks)
+>  		return;
+> @@ -2380,6 +2449,37 @@ static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>  		}
+>  	}
+>  
+> +	if (pmc->soc->has_blink_output) {
+> +		tegra_pmc_writel(pmc, 0x0, PMC_BLINK_TIMER);
+> +		clk = tegra_pmc_clk_gate_register("blink_override",
+> +						  "clk_32k", 0,
+> +						  PMC_DPD_PADS_ORIDE,
+> +						  PMC_DPD_PADS_ORIDE_BLINK);
+> +		if (IS_ERR(clk)) {
+> +			dev_err(pmc->dev, "unable to register blink_override\n");
+> +			err = PTR_ERR(clk);
+> +			goto free_clks;
+> +		}
+> +
+> +		clk = tegra_pmc_clk_gate_register("blink",
+> +						  "blink_override", 0,
+> +						  PMC_CNTRL,
+> +						  PMC_CNTRL_BLINK_EN);
+> +		if (IS_ERR(clk)) {
+> +			dev_err(pmc->dev, "unable to register blink\n");
+> +			err = PTR_ERR(clk);
+> +			goto free_clks;
+> +		}
+> +
+> +		clk_data->clks[TEGRA_PMC_CLK_BLINK] = clk;
+> +		err = clk_register_clkdev(clk, "blink", NULL);
+> +		if (err) {
+> +			dev_err(pmc->dev,
+> +				"unable to register blink clock lookup\n");
+> +			goto free_clks;
+> +		}
+> +	}
+> +
+>  	err = of_clk_add_provider(np, of_clk_src_onecell_get, clk_data);
+>  	if (err) {
+>  		dev_err(pmc->dev, "failed to add pmc clk provider\n");
+> @@ -2658,6 +2758,7 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+>  	.num_reset_levels = 0,
+>  	.pmc_clks_data = NULL,
+>  	.num_pmc_clks = 0,
+> +	.has_blink_output = true,
+>  };
+>  
+>  static const char * const tegra30_powergates[] = {
+> @@ -2707,6 +2808,7 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+>  	.num_reset_levels = 0,
+>  	.pmc_clks_data = tegra_pmc_clks_data,
+>  	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+> +	.has_blink_output = true,
+>  };
+>  
+>  static const char * const tegra114_powergates[] = {
+> @@ -2760,6 +2862,7 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+>  	.num_reset_levels = 0,
+>  	.pmc_clks_data = tegra_pmc_clks_data,
+>  	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+> +	.has_blink_output = true,
+>  };
+>  
+>  static const char * const tegra124_powergates[] = {
+> @@ -2873,6 +2976,7 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+>  	.num_reset_levels = 0,
+>  	.pmc_clks_data = tegra_pmc_clks_data,
+>  	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+> +	.has_blink_output = true,
+>  };
+>  
+>  static const char * const tegra210_powergates[] = {
+> @@ -2989,6 +3093,7 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+>  	.wake_events = tegra210_wake_events,
+>  	.pmc_clks_data = tegra_pmc_clks_data,
+>  	.num_pmc_clks = ARRAY_SIZE(tegra_pmc_clks_data),
+> +	.has_blink_output = true,
+>  };
+>  
+>  #define TEGRA186_IO_PAD_TABLE(_pad)					     \
+> @@ -3120,6 +3225,7 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+>  	.wake_events = tegra186_wake_events,
+>  	.pmc_clks_data = NULL,
+>  	.num_pmc_clks = 0,
+> +	.has_blink_output = false,
+>  };
+>  
+>  static const struct tegra_io_pad_soc tegra194_io_pads[] = {
+> @@ -3239,6 +3345,7 @@ static const struct tegra_pmc_soc tegra194_pmc_soc = {
+>  	.wake_events = tegra194_wake_events,
+>  	.pmc_clks_data = NULL,
+>  	.num_pmc_clks = 0,
+> +	.has_blink_output = false,
+>  };
+>  
+>  static const struct of_device_id tegra_pmc_match[] = {
+> 
 
-Jon.
-
--- 
-Computer Architect
