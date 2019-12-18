@@ -2,379 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E028212405B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:31:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A8009124051
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:30:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLRHbe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:31:34 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:61988 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbfLRHbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:31:34 -0500
-Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 18 Dec
- 2019 15:20:49 +0800
-Subject: Re: [PATCH v4 6/6] clk: meson: a1: add support for Amlogic A1
- Peripheral clock driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191206074052.15557-1-jian.hu@amlogic.com>
- <20191206074052.15557-7-jian.hu@amlogic.com>
- <1j36dplsec.fsf@starbuckisacylon.baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <fc5ab1b2-d4ee-0ebd-4788-4f0ae6d375bf@amlogic.com>
-Date:   Wed, 18 Dec 2019 15:20:48 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726683AbfLRHab (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:30:31 -0500
+Received: from mout.web.de ([212.227.15.3]:42307 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725797AbfLRHab (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:30:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576654217;
+        bh=Wql71J+0BokgVQwl76yYBuNMq5gEjNygtvAZ7X9bDBs=;
+        h=X-UI-Sender-Class:Cc:References:Subject:To:From:Date:In-Reply-To;
+        b=I++emGpV1DGTTp0t+qyHWDQ3Icg9xvM0gnueLPM18dkWXB9jZ9hc8fomdH1iYZ88Z
+         A3YtnKuspPvmPMumiMVfmhmXFDjtVPCRia5RBX7noK0IMOtplnVE0FopllV9JVUOfZ
+         iGSKFexSsDYgrIO6ZE69Zll6c06rW/kbzcJI0M58=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.131.36.204]) by smtp.web.de (mrweb002
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MZDki-1iOiTk3yUm-00Ky2P; Wed, 18
+ Dec 2019 08:30:17 +0100
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>
+References: <20191213055028.5574-1-namjae.jeon@samsung.com>
+Subject: Re: [PATCH v7 00/13] add the latest exfat driver
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <3fa1e62f-89ed-1fa7-8c56-9d1ad7d63ffa@web.de>
+Date:   Wed, 18 Dec 2019 08:30:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1j36dplsec.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20191213055028.5574-1-namjae.jeon@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.99]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+X-Provags-ID: V03:K1:z44SlZerHFlBK6KRU9wM2+AilEfPQoj03L9MvbrP3giQ/SGUqm0
+ sTUPQVyHaH3cNMKxKyzP0BCSZjfLTJys9ryPUVoZWcCBLpn7bawZvJlduA4x2Iipnfk/kaR
+ W16rU2iyk5kpwF090ICgnhh74Ph/e7C9+NdLEpkLqt+gW+oWJigna7QTeUiEX3WVwZj+pma
+ 4ZvgP9NpWixOyYknXiQUw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GWG4t86FIX8=:9s1mJU5jdBwWJZmo6CunQE
+ GSXT3wfJYrOMpZyv2VKFQveVvqQ0snw6wO8rFEfBd1pQrk+3/baoTCB3t2fBJm/ev2ur/Hq8G
+ 3qyL4QGVwBHo9R/b/scChrndBfKZ6M5jtpuUFL8iougix2zHgPyWV1Nz4wMklteaXr//v3v8A
+ NsOm6Fu2qbZFeF+Egnot7m3WluvYRnUTwX9EtDJskKUxLuhkhEkM8qc8w0cNF6M2wsZ2UnPdL
+ A82r38p8xTEqqvP2VfxCrmaqrngO0MeKc61Ov7LgAo/Vm4CrOKIXOobGyxkML1hrqNUB3oZGT
+ 0vi35XPVNtiarMHRmjpMDtG9kMOk9CTlft1UkSxHgyY7IiUW4eOeku6dI7OKeeEAflIUZbjwu
+ DiQpEqA4bWj8qBeQ8YWkwpDg6KtglOztzE4JdzY5cmPnPKZrJWmQDa0rIrRNJDalvwmZ6UeLl
+ jDYiMHgiDiuZPOUWhivJdRFFIo4ZzK6drDQRMwNRnlveFhq7Lu9ofZh7qXNQ4hAVvzj68J1vh
+ eBG5YmVKPzyqw5aaDudlwo3P/JRDw0nBJbH7MaBamFsPDYf2RffqLIWL0lWO7yE6X+OCENgho
+ mKv7UA7qOcxPh9nREJUlmEKrwoIOSqkdE9cu/LnbdQ6AsaE/OJWqn9+MM6ZJr9dZZcHAkZj3d
+ 7F0vmWDK9NIVVwYT/CQSwyainXWTywbKQGurOlAuMNZSwJIcRuL4g5csUqn3q+HX3ZupDCpzL
+ ltALE2knLkAIggRB4xLD0mgfl8uEjCeF1MzFXojgyyBXYvE6PW68OFJucRJF/q/kTZ/YqA+5v
+ +Xmt7VUdl3BumoJ0vpS+m8ZTTrdYCEfQh7U+PiymrTHNYZeB6tLFh1HSINsW5QA1ZAQoCqHMk
+ LdLajTBp4D4fY+nU8BE/skPGdISI5Cg6Zl4r+CiXVppp0n6Se7nvoIEmcxqQNijWYrGDDKTrJ
+ 1adjav/tGprB7xqKR323PARv5DDOpWd1zeF42X/FPnIV3D/mJh7/tigHRgUSpEqF+4N6mqm2w
+ tgDfe2lS/6Q6Wfi6hJcaWQ5sD1QYg9nCkkrqvMfw3QkkqP3yTIWMoV5oDcSgOvqyuKryW10SS
+ 5CjCKytxKkwEpDqk/v/j3zYru6VmidMMCMeJ1Mq59LNyaS5jCSin0FPjBv1r1qk4omfvxqK02
+ 2DbcQ1k/uN3MCwOrcd0jJZiYS4xecKU/fnZW6eRvOGK6uds9aawH40TreoupYrAVzMJ9+lWk2
+ 7a0vVvQ9B9bDIjIz+5lVoonbwKinE3rNDLDbGH356Frz0j16WdgE0uYW+NW8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> We plan to treat this version as the future upstream for the code base
+> once merged, and all new features and bug fixes will go upstream first.
 
+Would you like to offer and integrate any test cases?
 
-On 2019/12/12 19:01, Jerome Brunet wrote:
-> 
-> On Fri 06 Dec 2019 at 08:40, Jian Hu <jian.hu@amlogic.com> wrote:
-> 
->> Add Amlogic Meson A1 peripheral clock driver, it depends
->> on the A1 PLL driver.
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   drivers/clk/meson/Kconfig  |   10 +
->>   drivers/clk/meson/Makefile |    1 +
->>   drivers/clk/meson/a1.c     | 2246 ++++++++++++++++++++++++++++++++++++
->>   drivers/clk/meson/a1.h     |  120 ++
->>   4 files changed, 2377 insertions(+)
->>   create mode 100644 drivers/clk/meson/a1.c
->>   create mode 100644 drivers/clk/meson/a1.h
->>
->> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
->> index 14e7936ae18e..d6b2b51316b7 100644
->> --- a/drivers/clk/meson/Kconfig
->> +++ b/drivers/clk/meson/Kconfig
->> @@ -103,6 +103,16 @@ config COMMON_CLK_A1_PLL
->>   	  Support for the PLL clock controller on Amlogic A113L device,
->>   	  aka a1. Say Y if you want PLL to work.
->>   
->> +config COMMON_CLK_A1
->> +	bool
->> +	depends on ARCH_MESON
->> +	select COMMON_CLK_MESON_EE_CLKC
->> +	select COMMON_CLK_MESON_DUALDIV
->> +	select COMMON_CLK_MESON_REGMAP
->> +	help
->> +	  Support for the Peripheral clock controller on Amlogic A113L device,
->> +	  aka a1. Say Y if you want Peripherals to work.
->> +
->>   config COMMON_CLK_G12A
->>   	bool
->>   	depends on ARCH_MESON
->> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
->> index 71d3b8e6fb8a..0f3890030118 100644
->> --- a/drivers/clk/meson/Makefile
->> +++ b/drivers/clk/meson/Makefile
->> @@ -17,6 +17,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
->>   obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
->>   obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
->>   obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
->> +obj-$(CONFIG_COMMON_CLK_A1) += a1.o
->>   obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
->>   obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
->>   obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
->> diff --git a/drivers/clk/meson/a1.c b/drivers/clk/meson/a1.c
->> new file mode 100644
->> index 000000000000..76fa5a9e74a5
->> --- /dev/null
->> +++ b/drivers/clk/meson/a1.c
->> @@ -0,0 +1,2246 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + * Author: Jian Hu <jian.hu@amlogic.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include "a1.h"
->> +#include "clk-dualdiv.h"
->> +#include "meson-eeclk.h"
->> +
->> +/* PLLs clock in gates, its parent is xtal */
->> +static struct clk_regmap a1_xtal_clktree = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 0,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_clktree",
->> +		.ops = &clk_regmap_gate_ro_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_fixpll = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 1,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_fixpll",
->> +		.ops = &clk_regmap_gate_ro_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_usb_phy = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 2,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_usb_phy",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_usb_ctrl = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 3,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_usb_ctrl",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_hifipll = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 4,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_hifipll",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_syspll = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 5,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_syspll",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_xtal_dds = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_OSCIN_CTRL,
->> +		.bit_idx = 6,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "xtal_dds",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_data = &(const struct clk_parent_data) {
->> +			.fw_name = "xtal",
->> +		},
->> +		.num_parents = 1,
->> +	},
->> +};
->> +
->> +static const struct clk_parent_data sys_clk_parents[] = {
->> +	{ .fw_name = "xtal" },
->> +	{ .fw_name = "fclk_div2"},
->> +	{ .fw_name = "fclk_div3"},
->> +	{ .fw_name = "fclk_div5"},
->> +};
->> +
->> +static struct clk_regmap a1_sys_b_sel = {
->> +	.data = &(struct clk_regmap_mux_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.mask = 0x7,
->> +		.shift = 26,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "sys_b_sel",
->> +		.ops = &clk_regmap_mux_ro_ops,
->> +		.parent_data = sys_clk_parents,
->> +		.num_parents = ARRAY_SIZE(sys_clk_parents),
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_b_div = {
->> +	.data = &(struct clk_regmap_div_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.shift = 16,
->> +		.width = 10,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "sys_b_div",
->> +		.ops = &clk_regmap_divider_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&a1_sys_b_sel.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_b = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.bit_idx = 29,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "sys_b",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&a1_sys_b_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		/*
->> +		 * This clock is used by APB bus which setted in Romcode
->> +		 * and is required by the platform to operate correctly.
->> +		 * Until the following condition are met, we need this clock to
->> +		 * be marked as critical:
->> +		 * a) Mark the clock used by a firmware resource, if possible
->> +		 * b) CCF has a clock hand-off mechanism to make the sure the
->> +		 *    clock stays on until the proper driver comes along
->> +		 */
->> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_a_sel = {
->> +	.data = &(struct clk_regmap_mux_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.mask = 0x7,
->> +		.shift = 10,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "sys_a_sel",
->> +		.ops = &clk_regmap_mux_ro_ops,
->> +		.parent_data = sys_clk_parents,
->> +		.num_parents = ARRAY_SIZE(sys_clk_parents),
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_a_div = {
->> +	.data = &(struct clk_regmap_div_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.shift = 0,
->> +		.width = 10,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "sys_a_div",
->> +		.ops = &clk_regmap_divider_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&a1_sys_a_sel.hw
->> +		},
->> +		.num_parents = 1,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_a = {
->> +	.data = &(struct clk_regmap_gate_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.bit_idx = 13,
->> +	},
->> +	.hw.init = &(struct clk_init_data) {
->> +		.name = "sys_a",
->> +		.ops = &clk_regmap_gate_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&a1_sys_a_div.hw
->> +		},
->> +		.num_parents = 1,
->> +		/*
->> +		 * This clock is used by APB bus which setted in Romcode
->> +		 * and is required by the platform to operate correctly.
-> 
-> #1 It weird that both sys_a and sys_b are critical, Only the leaf needs
->   to be critical which, AFAICT, is a1_sys_clk.
-> 
-> #2 Like on the other controller: What the clock is needed for needs is
->   needed for for each critical clock, but the explanation below needs to
->   appear only once and can be refered to afterward.
-> 
-OK, I will remove the flag CLK_IS_CRITICAL for a1_sys_a and a1_sys_b.
-And add it for a1_sys_clk.
->> +		 * Until the following condition are met, we need this clock to
->> +		 * be marked as critical:
->> +		 * a) Mark the clock used by a firmware resource, if possible
->> +		 * b) CCF has a clock hand-off mechanism to make the sure the
->> +		 *    clock stays on until the proper driver comes along
->> +		 */
->> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
->> +	},
->> +};
->> +
->> +static struct clk_regmap a1_sys_clk = {
->> +	.data = &(struct clk_regmap_mux_data){
->> +		.offset = SYS_CLK_CTRL0,
->> +		.mask = 0x1,
->> +		.shift = 31,
->> +	},
->> +	.hw.init = &(struct clk_init_data){
->> +		.name = "sys_clk",
->> +		.ops = &clk_regmap_mux_ro_ops,
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&a1_sys_a.hw, &a1_sys_b.hw,
->> +		},
->> +		.num_parents = 2,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
->> +
-[...]
-> .
-> 
+Regards,
+Markus
