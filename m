@@ -2,135 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 554B71256D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDF41256DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:36:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfLRWfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 17:35:48 -0500
-Received: from mout.web.de ([217.72.192.78]:47691 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbfLRWfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 17:35:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1576708539;
-        bh=dWWWJ56z1+3McYaTHm68m10tWxr+xp0Nfa2r5nT/XzM=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Q6e5cOL09ofwA4pprMspntmwlHo2cj3FfkHb+T+fo+Hokc0pgbhwlsaLXBuFqCQFP
-         LUhDsQfBaIFzGK5VnIh/Wsy83NQ3qofTSflXxMyqdGVF+qCCaYhhFdu+YNIkDhIZYd
-         OeMpota4U8gq4SgV8yG+/SR5WuWOoNu0++IohITQ=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from localhost.localdomain ([89.204.137.218]) by smtp.web.de
- (mrweb103 [213.165.67.124]) with ESMTPSA (Nemesis) id
- 0LeLSr-1huKBy0mzt-00qDza; Wed, 18 Dec 2019 23:35:39 +0100
-From:   Soeren Moch <smoch@web.de>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     Soeren Moch <smoch@web.de>, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/2] arm64: dts: rockchip: RockPro64: enable wifi module at sdio0
-Date:   Wed, 18 Dec 2019 23:35:22 +0100
-Message-Id: <20191218223523.30154-2-smoch@web.de>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191218223523.30154-1-smoch@web.de>
-References: <20191218223523.30154-1-smoch@web.de>
+        id S1726786AbfLRWgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 17:36:03 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45449 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbfLRWgA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 17:36:00 -0500
+Received: by mail-pg1-f196.google.com with SMTP id b9so2006565pgk.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 14:35:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=+oRMrQvnKv8sUjeUK0UWacEw5OuTlAMvQh07s4c6q20=;
+        b=db+TBlr64EdEwBEdMs7w/Pv0H3tuG2jAw41a3OXASqoAZL0EYUaWZ8HDZIfe49qvZA
+         pFTHJMOSZ1DUHo6yp0wOMGWXQci8BN/9/nnoGHSnTOEwQ8aHsf+528NQ2yhrN+P9x6GK
+         XVrBd6FxIvat+vm+Zie433PrCuTb46Gkq0JC0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+oRMrQvnKv8sUjeUK0UWacEw5OuTlAMvQh07s4c6q20=;
+        b=ce8Gn6yLhQFm78BqkS0jkNfBS6kFkVYpEAbBmLHvv1ZlCdZyjOJV2w3Af1IETBXzE2
+         G1e+V2hA0Pav9xXDHsXj0XJMCc1a4nXTey8Gz7IDQSltc2beifEsRogreFn1C7PcbxN/
+         K4VDgeuqup3BspCLleZq2lXPCwJ5P3UDPvRW5AADYPvsZHxEUrZL9KeZmELON4sYnjCE
+         5nfbujVJ4hNvoKO2M1+zUpkNTFw7pMEkTi4YOk9VuhEXCq70+u9qM9j2OjsSS6ZRPMC7
+         cCoWv5VcJG+bntRIiq+pSvRWjrVKsQOlc9oPM9jqHsDo0QxKI8SYpA6pIbKSBd+kV8AM
+         am1A==
+X-Gm-Message-State: APjAAAX2kFOz3Qyutp2kfYHs6BYG3zIumAb2prTF7UszwWMXa5Wzv9EV
+        elHMgXf4FfrJdWh6cNRdYC4L9g==
+X-Google-Smtp-Source: APXvYqyxaHyGUjuepnVu3CFb1Nbl4hMcUXmhJvEcO3i8W028D3on1sqc1halTkAOiHuxndTpK4WDwA==
+X-Received: by 2002:aa7:85d3:: with SMTP id z19mr5797968pfn.62.1576708559241;
+        Wed, 18 Dec 2019 14:35:59 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id i9sm4709919pfk.24.2019.12.18.14.35.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 14:35:58 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     robdclark@chromium.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, seanpaul@chromium.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Douglas Anderson <dianders@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Jonas Karlman <jonas@kwiboo.se>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v3 1/9] drm/bridge: ti-sn65dsi86: Split the setting of the dp and dsi rates
+Date:   Wed, 18 Dec 2019 14:35:22 -0800
+Message-Id: <20191218143416.v3.1.Icb765d5799e9651e5249c0c27627ba33a9e411cf@changeid>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+In-Reply-To: <20191218223530.253106-1-dianders@chromium.org>
+References: <20191218223530.253106-1-dianders@chromium.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ROAhb4S5HnA8zC1UxSpS35h6K1uYG1iZNFj0qH1Upg0Ypl38cVT
- KHwIZnhcqQFTHjIGJmcOSDo6GPae4t640XYWTwIfcSeErvbBsWzKrA5Qv5gYv9XLQTqWrKE
- xk4sf/ZpyVe4B5+FhRhNGodEQ0RLFB4O/o7+kTwDkPgjAJRf2GV4c7Tt60eL8DnnnIk0UfH
- 2Z4sU/Ore3JwH8bCkj75A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:WjCFWLClYzs=:sfZYTqTROrpebhd/C8nXmJ
- QulDk9vDBdJGdA9icQsumC87GMwKHlCewB1YaAeB/4yGhAoVIvE91PEDjHkacHNfN+Bt8R3+K
- atOp8SKjNYkowSZcUOwc1b7LitlCwTSPRjbDbqIQp+yWzBqQ+jlaKKFxnElosmf5nXpdv2FxR
- 1bUmSUdFPdtw03UFMVvGH/H3jYTMpG4zdUZdbWEvwgT+zpbAhTz8oLMPxjUHkxMpIl3bc/1L3
- q9Dk3PaKyAuEuMFTsQG+a3S4tTXE1ovS4Jr6Blb3XvjTn8LyqWA2dN2wMxMWan8JNByZoVSOe
- E9elEXDngX2dXKdyqftHY81xCwKE7vY1gG2qj7IIPScoGK6IPilciBjtaDjyY1YrxcbhgAsoO
- FuSrPuyS0znVddHgKsWPcOvIhDKVaDykCQOo6E7HYTUVzPLOFrwTj8Pld6nMaQWDz47rNE8IZ
- wgCnJjq+HJkf9BmZCSalPxaQOugPc/fITL3rM1L94vf015E1W+FkN2qFZBUislon64M1XaW3M
- acFP+tF7VON/3QJPH0OUwBYtqU/ua8iOqmBeBobDc43xotypdP9pXKe1v5mDc4xQcMNbtYZ+C
- jmsIWc1mlcBd9S2g0hdkm9VN0cV79Qlw6JRhbsMoOBEcRd8B6aPzUsMLkgSW5j6S/Hbtfqvwf
- 1BV03R9cWgWsh9L8tmnep9B1Jx4wIZItyguUNzl62Z8OUUYOhwj7F7Iic3HywHcAGTpFk3zA6
- ntcMz+JJLNnm1FdOf64UPFxEiRr9pQdHsmFMlEYuNuKIXhO93s7Ow2EZiwIi5KEI92fv7gKrx
- eLQavYqLH9qjjPPm/tAUGPrdqp7qH4xc+jDTTPhhiyxwMJ3JvUZEW/dflmO1JIGZKu+DNmqrI
- 0i5JbqtMYkwxlYRIgYAvcw9p63JNxiQ/IVkITm8rFBzVmgpzfef/AphctNC4+5yjWqlQ4Frrc
- JvDGeYgoK4bpUEabFOBKrGz+WqntDCxeVE2I56n5iJebZ7HOK9lohhDxfB+pbgELZZbFfXQZ/
- GG8qPZhbXUm4ToWK9poMYdSha2RjgtAIi501cPT0B7/Dz2ynI2PptER2Osw90hTJuLd9MJMvQ
- TANrT+8fuMoqRxsdvbHkOo+SDnhLpKWpyZecFVda9fbObLZZXxtYkX2fa2V+4Car8IxPNA8PY
- EAcffdHrDmVOBNdda6W+/5Gj1E6Qv9wLTTP6y9UyRMF29esf1ajk4/D5EAGrOwGl9aNbKwxTh
- sXjd8HgAYpVU2uYZMzWZZgWBFJ8lP5pX3Quo/iw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RockPro64 supports an Ampak AP6359SA based wifi/bt combo module.
-The BCM4359/9 wifi controller in this module is connected to sdio0,
-enable this interface.
+These two things were in one function.  Split into two.  This looks
+like it's duplicating some code, but don't worry.  This is is just in
+preparation for future changes.
 
-Use the in-band sdio irq instead of the out-of-band wifi_host_wake_l
-signal since the latter is not working reliably on this board (probably
-due to it's PCIe WAKE# connection).
+This is intended to have zero functional change and will just make
+future patches easier to understand.
 
-Signed-off-by: Soeren Moch <smoch@web.de>
-=2D--
-changes in v3:
-- none
-changes in v2:
-- add comment about irq in commit message
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Tested-by: Rob Clark <robdclark@gmail.com>
+Reviewed-by: Rob Clark <robdclark@gmail.com>
+---
 
-Not sure where to place exactly the sdio0 node in the dts because
-existing sd nodes are not sorted alphabetically.
+Changes in v3: None
+Changes in v2: None
 
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-=2D--
- .../boot/dts/rockchip/rk3399-rockpro64.dts    | 21 ++++++++++++-------
- 1 file changed, 14 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 33 +++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm6=
-4/boot/dts/rockchip/rk3399-rockpro64.dts
-index 7f4b2eba31d4..9fa92790d6e0 100644
-=2D-- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-@@ -71,13 +71,6 @@
- 		clock-names =3D "ext_clock";
- 		pinctrl-names =3D "default";
- 		pinctrl-0 =3D <&wifi_enable_h>;
--
--		/*
--		 * On the module itself this is one of these (depending
--		 * on the actual card populated):
--		 * - SDIO_RESET_L_WL_REG_ON
--		 * - PDN (power down when low)
--		 */
- 		reset-gpios =3D <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
- 	};
-
-@@ -650,6 +643,20 @@
- 	status =3D "okay";
- };
-
-+&sdio0 {
-+	bus-width =3D <4>;
-+	cap-sd-highspeed;
-+	cap-sdio-irq;
-+	disable-wp;
-+	keep-power-in-suspend;
-+	mmc-pwrseq =3D <&sdio_pwrseq>;
-+	non-removable;
-+	pinctrl-names =3D "default";
-+	pinctrl-0 =3D <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
-+	sd-uhs-sdr104;
-+	status =3D "okay";
-+};
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index 43abf01ebd4c..2fb9370a76e6 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -417,6 +417,24 @@ static void ti_sn_bridge_set_refclk_freq(struct ti_sn_bridge *pdata)
+ 			   REFCLK_FREQ(i));
+ }
+ 
++static void ti_sn_bridge_set_dsi_rate(struct ti_sn_bridge *pdata)
++{
++	unsigned int bit_rate_mhz, clk_freq_mhz;
++	unsigned int val;
++	struct drm_display_mode *mode =
++		&pdata->bridge.encoder->crtc->state->adjusted_mode;
 +
- &sdmmc {
- 	bus-width =3D <4>;
- 	cap-sd-highspeed;
-=2D-
-2.17.1
++	/* set DSIA clk frequency */
++	bit_rate_mhz = (mode->clock / 1000) *
++			mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
++	clk_freq_mhz = bit_rate_mhz / (pdata->dsi->lanes * 2);
++
++	/* for each increment in val, frequency increases by 5MHz */
++	val = (MIN_DSI_CLK_FREQ_MHZ / 5) +
++		(((clk_freq_mhz - MIN_DSI_CLK_FREQ_MHZ) / 5) & 0xFF);
++	regmap_write(pdata->regmap, SN_DSIA_CLK_FREQ_REG, val);
++}
++
+ /**
+  * LUT index corresponds to register value and
+  * LUT values corresponds to dp data rate supported
+@@ -426,22 +444,16 @@ static const unsigned int ti_sn_bridge_dp_rate_lut[] = {
+ 	0, 1620, 2160, 2430, 2700, 3240, 4320, 5400
+ };
+ 
+-static void ti_sn_bridge_set_dsi_dp_rate(struct ti_sn_bridge *pdata)
++static void ti_sn_bridge_set_dp_rate(struct ti_sn_bridge *pdata)
+ {
+-	unsigned int bit_rate_mhz, clk_freq_mhz, dp_rate_mhz;
+-	unsigned int val, i;
++	unsigned int bit_rate_mhz, dp_rate_mhz;
++	unsigned int i;
+ 	struct drm_display_mode *mode =
+ 		&pdata->bridge.encoder->crtc->state->adjusted_mode;
+ 
+ 	/* set DSIA clk frequency */
+ 	bit_rate_mhz = (mode->clock / 1000) *
+ 			mipi_dsi_pixel_format_to_bpp(pdata->dsi->format);
+-	clk_freq_mhz = bit_rate_mhz / (pdata->dsi->lanes * 2);
+-
+-	/* for each increment in val, frequency increases by 5MHz */
+-	val = (MIN_DSI_CLK_FREQ_MHZ / 5) +
+-		(((clk_freq_mhz - MIN_DSI_CLK_FREQ_MHZ) / 5) & 0xFF);
+-	regmap_write(pdata->regmap, SN_DSIA_CLK_FREQ_REG, val);
+ 
+ 	/* set DP data rate */
+ 	dp_rate_mhz = ((bit_rate_mhz / pdata->dsi->lanes) * DP_CLK_FUDGE_NUM) /
+@@ -510,7 +522,8 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
+ 			   val);
+ 
+ 	/* set dsi/dp clk frequency value */
+-	ti_sn_bridge_set_dsi_dp_rate(pdata);
++	ti_sn_bridge_set_dsi_rate(pdata);
++	ti_sn_bridge_set_dp_rate(pdata);
+ 
+ 	/* enable DP PLL */
+ 	regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 1);
+-- 
+2.24.1.735.g03f4e72817-goog
 
