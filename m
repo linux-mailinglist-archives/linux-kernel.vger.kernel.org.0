@@ -2,156 +2,207 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AC3F12475F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F9DD124768
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726959AbfLRM4y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 07:56:54 -0500
-Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41701 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726723AbfLRM4y (ORCPT
+        id S1727035AbfLRM5y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 07:57:54 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35341 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726858AbfLRM5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 07:56:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576673812;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
-        bh=CoQOXHcnzjdvQ1sg/dnquWWmolferEO6c22b28RsYfo=;
-        b=C2zkbpb3XxwgmRje/O38VWFcnXQVFMBURVWpe7/BLVtq581nmc1eKM5C81JJhQwLU84yaT
-        wB2EYO3oABJKvODJTL1nF1TGOgtBKukJx09G8NWTQj5nTjLzWPol6lB034lr241ZN2Pl34
-        haohDlh2YTIThLK5i11Bb/U+Sk/HBck=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-56-dOrR9avBP-GDz32p6ByXCQ-1; Wed, 18 Dec 2019 07:56:51 -0500
-X-MC-Unique: dOrR9avBP-GDz32p6ByXCQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AD860800D41;
-        Wed, 18 Dec 2019 12:56:49 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-39.ams2.redhat.com [10.36.117.39])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F4485D9E5;
-        Wed, 18 Dec 2019 12:56:46 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 8E9671FCED; Wed, 18 Dec 2019 13:56:45 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     tzimmermann@suse.de, gurchetansingh@chromium.org,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 3/3] drm/udl: simplify gem object mapping.
-Date:   Wed, 18 Dec 2019 13:56:45 +0100
-Message-Id: <20191218125645.9211-4-kraxel@redhat.com>
-In-Reply-To: <20191218125645.9211-1-kraxel@redhat.com>
-References: <20191218125645.9211-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+        Wed, 18 Dec 2019 07:57:53 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2F00F6CB0;
+        Wed, 18 Dec 2019 07:57:52 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 18 Dec 2019 07:57:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm1; bh=frvGpADLITedq/sG6F8ewcZ3U6K
+        M9hdUCVrbvmzN2gI=; b=SSl8U52f5KAoi+pLP9eCdIoDHqsojMT+TPEP43X6GQt
+        tjLZtZ5sNWyQ5Y+6sVadQjwodLbeyTkyAUYIkzPsagKhHCJUx7FPfRAIExiPvSYK
+        E6LK0oXPoDlH4mbIwgqVQBVO5bSSjXJ9WdPQCMKtrtG7XthOPeqWt5+iyLI06lAf
+        HSYjLrCQ320fhhCFlTGubhGY18AgGQi9V+QW3qF+lHKAlthjvwGx1JLczSZGE/h6
+        44kkjuB4VGhd8mlGTxOYjBdqoPnypH+/AXojQVkb9fqgypqUfx4VbrSzb8s+kd52
+        cqCylUbHNNfmDMMgB/uB0HrcEq2QedFx2XQuiQVgEhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=frvGpA
+        DLITedq/sG6F8ewcZ3U6KM9hdUCVrbvmzN2gI=; b=gHEDPS3DOQoyIWF+CI9uhZ
+        4C5q4pCME3HKYCY99OPH6VUMRRGcXmvQrR2H45px9vtj2qoEAtLG8FwKIKtNMZWi
+        orj8/U/30+sPVPc3aSiazVALG9t6R6ety7SKOOySYMxcbmoqNlLrxeyKSQ0P5NEO
+        eFmtPI86/TfRMeampRGWT4q0tQIGoUpNIa4sKjI0Bf75+TqAus2qNv9VQjqNGbQN
+        r9aeqGRaWwEgxm82KRokYSbliLeVCQo7Up85g7CHheYUCOGvfg9m5rO1K2kynmBq
+        V0Z4FkBGCfPFZV+jcOEgQsY+NguyvkL2gSpfd3jrc68niY378N9GajUSah2j1HBw
+        ==
+X-ME-Sender: <xms:TiL6XThp7Xp-qBzFtMENMp_AFajDnec-Es1rsgWInFOVS3b10xhFsQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtledggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrih
+    hnpeguvghvihgtvghtrhgvvgdrohhrghdpghhithhhuhgsrdgtohhmpdhhuhdrtghomhen
+    ucfkphepledtrdekledrieekrdejieenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgi
+    himhgvsegtvghrnhhordhtvggthhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:TiL6Xd4iE6xuYSlhXG6sYl-s-q_EqWfiZLcoQT1kv1Gc3IhbmQa9PQ>
+    <xmx:TiL6XcLA9smXakFS_IXH8ko3w9DGYVZPqtfizTqKpbeccXzr19OFpQ>
+    <xmx:TiL6XRi8KDldoGXgKLdeGUU7Xg7J32g59kXC6DQ0x8LWhLlMW0KyFg>
+    <xmx:UCL6XVPLDyYb7At6LBHuEGDVD3Or8j5gPOrxe2YI4-zEDS8CGKhN4w>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6AA4F80063;
+        Wed, 18 Dec 2019 07:57:50 -0500 (EST)
+Date:   Wed, 18 Dec 2019 13:57:48 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jian Hu <jian.hu@amlogic.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+Message-ID: <20191218125748.xacfkuhfabbtivsk@gilmour.lan>
+References: <20191206074052.15557-1-jian.hu@amlogic.com>
+ <20191206074052.15557-2-jian.hu@amlogic.com>
+ <20191213103856.qo7vlnuk4ajz3vq5@gilmour.lan>
+ <ba16b846-1d5f-3d1e-e8e2-420687d11e8a@amlogic.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bbp7a3fcwjlmdl47"
+Content-Disposition: inline
+In-Reply-To: <ba16b846-1d5f-3d1e-e8e2-420687d11e8a@amlogic.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With shmem helpers allowing to update pgprot caching flags via
-drm_gem_shmem_object.map_cached we can just use that and ditch
-our own implementations of mmap() and vmap().
 
-We also don't need a special case for imported objects, any map
-requests are handled by the exporter not udl.
+--bbp7a3fcwjlmdl47
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/udl/udl_gem.c | 62 ++---------------------------------
- 1 file changed, 3 insertions(+), 59 deletions(-)
+On Wed, Dec 18, 2019 at 04:00:20PM +0800, Jian Hu wrote:
+> Hi Maxime
+>
+> Thanks for your review
+>
+> On 2019/12/13 18:38, Maxime Ripard wrote:
+> > Hi,
+> >
+> > On Fri, Dec 06, 2019 at 03:40:47PM +0800, Jian Hu wrote:
+> > > Add the documentation to support Amlogic A1 PLL clock driver,
+> > > and add A1 PLL clock controller bindings.
+> > >
+> > > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> > > ---
+> > >   .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 59 +++++++++++++++++++
+> > >   include/dt-bindings/clock/a1-pll-clkc.h       | 16 +++++
+> > >   2 files changed, 75 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> > >   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> > > new file mode 100644
+> > > index 000000000000..7feeef5abf1b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> > > @@ -0,0 +1,59 @@
+> > > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> > > +/*
+> > > + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> > > + */
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: "http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#"
+> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > +
+> > > +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
+> > > +
+> > > +maintainers:
+> > > +  - Neil Armstrong <narmstrong@baylibre.com>
+> > > +  - Jerome Brunet <jbrunet@baylibre.com>
+> > > +  - Jian Hu <jian.hu@jian.hu.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    - enum:
+> > > +        - amlogic,a1-pll-clkc
+> >
+> > I'm not sure this works, compatible shouldn't contain a list.
+> >
+> I refered to
+> Documentation/devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml.
+>
+> I have used 'dt-doc-validate' tools to check, it will report something wrong
+> below.
+>
+> properties:compatible: [{'enum': ['amlogic,a1-pll-clkc']}] is not of type
+> 'object', 'boolean'
+>
+> Refer to
+> https://github.com/robherring/dt-schema/blob/master/example-schema.yaml
+>
+> I will change it like this:
+>
+> properties:
+>   compatible:
+>     oneOf:
+>       - enum:
+>          - amlogic,a1-pll-clkc
+>
+> And It has been passed by 'dt-doc-validate' tools.
+>
+> Is it right?
 
-diff --git a/drivers/gpu/drm/udl/udl_gem.c b/drivers/gpu/drm/udl/udl_gem.c
-index b6e26f98aa0a..7e3a88b25b6b 100644
---- a/drivers/gpu/drm/udl/udl_gem.c
-+++ b/drivers/gpu/drm/udl/udl_gem.c
-@@ -17,72 +17,15 @@
-  * GEM object funcs
-  */
- 
--static int udl_gem_object_mmap(struct drm_gem_object *obj,
--			       struct vm_area_struct *vma)
--{
--	int ret;
--
--	ret = drm_gem_shmem_mmap(obj, vma);
--	if (ret)
--		return ret;
--
--	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
--	if (obj->import_attach)
--		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
--	vma->vm_page_prot = pgprot_decrypted(vma->vm_page_prot);
--
--	return 0;
--}
--
--static void *udl_gem_object_vmap(struct drm_gem_object *obj)
--{
--	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
--	int ret;
--
--	ret = mutex_lock_interruptible(&shmem->vmap_lock);
--	if (ret)
--		return ERR_PTR(ret);
--
--	if (shmem->vmap_use_count++ > 0)
--		goto out;
--
--	ret = drm_gem_shmem_get_pages(shmem);
--	if (ret)
--		goto err_zero_use;
--
--	if (obj->import_attach)
--		shmem->vaddr = dma_buf_vmap(obj->import_attach->dmabuf);
--	else
--		shmem->vaddr = vmap(shmem->pages, obj->size >> PAGE_SHIFT,
--				    VM_MAP, PAGE_KERNEL);
--
--	if (!shmem->vaddr) {
--		DRM_DEBUG_KMS("Failed to vmap pages\n");
--		ret = -ENOMEM;
--		goto err_put_pages;
--	}
--
--out:
--	mutex_unlock(&shmem->vmap_lock);
--	return shmem->vaddr;
--
--err_put_pages:
--	drm_gem_shmem_put_pages(shmem);
--err_zero_use:
--	shmem->vmap_use_count = 0;
--	mutex_unlock(&shmem->vmap_lock);
--	return ERR_PTR(ret);
--}
--
- static const struct drm_gem_object_funcs udl_gem_object_funcs = {
- 	.free = drm_gem_shmem_free_object,
- 	.print_info = drm_gem_shmem_print_info,
- 	.pin = drm_gem_shmem_pin,
- 	.unpin = drm_gem_shmem_unpin,
- 	.get_sg_table = drm_gem_shmem_get_sg_table,
--	.vmap = udl_gem_object_vmap,
-+	.vmap = drm_gem_shmem_vmap,
- 	.vunmap = drm_gem_shmem_vunmap,
--	.mmap = udl_gem_object_mmap,
-+	.mmap = drm_gem_shmem_mmap,
- };
- 
- /*
-@@ -101,6 +44,7 @@ struct drm_gem_object *udl_driver_gem_create_object(struct drm_device *dev,
- 
- 	obj = &shmem->base;
- 	obj->funcs = &udl_gem_object_funcs;
-+	shmem->map_cached = true;
- 
- 	return obj;
- }
--- 
-2.18.1
+You can simply do
 
+properties:
+  compatible:
+    const: amlogic,a1-pll-clkc
+
+> > You can write this like:
+> > compatible:
+> >    const: amlogic,a1-pll-clkc
+> >
+> > > +  "#clock-cells":
+> > > +    const: 1
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +clocks:
+> > > +  minItems: 2
+> > > +  maxItems: 2
+> >
+> > This is redundant, it will be added automatically by the tools ...
+> If I remove the minItems, it will pass by dt-doc-validate.
+>
+> Would please tell how to use dt-schema to generate automatically it?
+
+You don't have to do anything, it's just done at the tools runtime.
+
+Maxime
+
+--bbp7a3fcwjlmdl47
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfoiTAAKCRDj7w1vZxhR
+xerFAQDOLKhGK6KP3ibCZZanzPijGZZtzYdosl6gUdzpZnNVngD5ASqg8zZV0ayF
+sEdXHgcGOt+HcE9xLntYb/gB3k+t3AY=
+=9Edw
+-----END PGP SIGNATURE-----
+
+--bbp7a3fcwjlmdl47--
