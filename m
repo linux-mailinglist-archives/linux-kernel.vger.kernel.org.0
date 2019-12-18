@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 43EE11253D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16B021253D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfLRUtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:36 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47879 "EHLO
+        id S1727785AbfLRUtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:49:50 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47877 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbfLRUta (ORCPT
+        with ESMTP id S1727682AbfLRUtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:30 -0500
+        Wed, 18 Dec 2019 15:49:25 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ij000214;
-        Wed, 18 Dec 2019 12:49:18 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ik000214;
+        Wed, 18 Dec 2019 12:49:19 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Graeme Gregory <gg@slimlogic.co.uk>, linux-omap@vger.kernel.org
-Subject: [PATCH 17/18] mfd: palmas: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:56 -0500
-Message-Id: <1576702137-25905-18-git-send-email-paul.gortmaker@windriver.com>
+        Yang@mail.windriver.com, Bin <bin.yang@intel.com>,
+        Zhu@mail.windriver.com, Lejun <lejun.zhu@linux.intel.com>
+Subject: [PATCH 18/18] mfd: intel_soc_pmic_core: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:57 -0500
+Message-Id: <1576702137-25905-19-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -32,10 +32,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Makefile/Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_PALMAS
-drivers/mfd/Kconfig:    bool "TI Palmas series chips"
+drivers/mfd/Makefile:intel-soc-pmic-objs := intel_soc_pmic_core.o intel_soc_pmic_crc.o
+drivers/mfd/Makefile:obj-$(CONFIG_INTEL_SOC_PMIC)       += intel-soc-pmic.o
+drivers/mfd/Kconfig:config INTEL_SOC_PMIC
+drivers/mfd/Kconfig:    bool "Support for Intel Atom SoC PMIC"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -46,105 +48,94 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_init was not in use by this code, the init ordering
-remains unchanged with this commit.
-
-We delete the include of module.h as well as an unused instance of
-moduleparam.h include as well.
+Since module_i2c_driver() uses the same init level priority as
+builtin_i2c_driver() the init ordering remains unchanged with
+this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Graeme Gregory <gg@slimlogic.co.uk>
-Cc: linux-omap@vger.kernel.org
+Cc: Yang, Bin <bin.yang@intel.com>
+Cc: Zhu, Lejun <lejun.zhu@linux.intel.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/palmas.c | 36 +-----------------------------------
- 1 file changed, 1 insertion(+), 35 deletions(-)
+ drivers/mfd/intel_soc_pmic_core.c | 31 +++----------------------------
+ 1 file changed, 3 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-index f5b3fa973b13..0e96c5cd02c6 100644
---- a/drivers/mfd/palmas.c
-+++ b/drivers/mfd/palmas.c
-@@ -7,8 +7,6 @@
-  * Author: Graeme Gregory <gg@slimlogic.co.uk>
-  */
- 
--#include <linux/module.h>
--#include <linux/moduleparam.h>
- #include <linux/init.h>
- #include <linux/slab.h>
+diff --git a/drivers/mfd/intel_soc_pmic_core.c b/drivers/mfd/intel_soc_pmic_core.c
+index c9f35378d391..33d1a658e25f 100644
+--- a/drivers/mfd/intel_soc_pmic_core.c
++++ b/drivers/mfd/intel_soc_pmic_core.c
+@@ -13,7 +13,7 @@
+ #include <linux/gpio/machine.h>
  #include <linux/i2c.h>
-@@ -500,7 +498,6 @@ static const struct of_device_id of_palmas_match_tbl[] = {
- 	},
- 	{ },
- };
--MODULE_DEVICE_TABLE(of, of_palmas_match_tbl);
- 
- static int palmas_i2c_probe(struct i2c_client *i2c,
- 			    const struct i2c_device_id *id)
-@@ -700,26 +697,6 @@ static int palmas_i2c_probe(struct i2c_client *i2c,
+ #include <linux/interrupt.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/intel_soc_pmic.h>
+ #include <linux/pwm.h>
+@@ -115,23 +115,6 @@ static int intel_soc_pmic_i2c_probe(struct i2c_client *i2c,
  	return ret;
  }
  
--static int palmas_i2c_remove(struct i2c_client *i2c)
+-static int intel_soc_pmic_i2c_remove(struct i2c_client *i2c)
 -{
--	struct palmas *palmas = i2c_get_clientdata(i2c);
--	int i;
+-	struct intel_soc_pmic *pmic = dev_get_drvdata(&i2c->dev);
 -
--	regmap_del_irq_chip(palmas->irq, palmas->irq_data);
+-	regmap_del_irq_chip(pmic->irq, pmic->irq_chip_data);
 -
--	for (i = 1; i < PALMAS_NUM_CLIENTS; i++) {
--		if (palmas->i2c_clients[i])
--			i2c_unregister_device(palmas->i2c_clients[i]);
--	}
+-	/* Remove lookup table for Panel Control from the GPIO Chip */
+-	gpiod_remove_lookup_table(&panel_gpio_table);
 -
--	if (palmas == palmas_dev) {
--		pm_power_off = NULL;
--		palmas_dev = NULL;
--	}
+-	/* remove crc-pwm lookup table */
+-	pwm_remove_table(crc_pwm_lookup, ARRAY_SIZE(crc_pwm_lookup));
+-
+-	mfd_remove_devices(&i2c->dev);
 -
 -	return 0;
 -}
 -
- static const struct i2c_device_id palmas_i2c_id[] = {
- 	{ "palmas", },
- 	{ "twl6035", },
-@@ -727,15 +704,14 @@ static const struct i2c_device_id palmas_i2c_id[] = {
- 	{ "tps65913", },
- 	{ /* end */ }
+ static void intel_soc_pmic_shutdown(struct i2c_client *i2c)
+ {
+ 	struct intel_soc_pmic *pmic = dev_get_drvdata(&i2c->dev);
+@@ -167,14 +150,12 @@ static SIMPLE_DEV_PM_OPS(intel_soc_pmic_pm_ops, intel_soc_pmic_suspend,
+ static const struct i2c_device_id intel_soc_pmic_i2c_id[] = {
+ 	{ }
  };
--MODULE_DEVICE_TABLE(i2c, palmas_i2c_id);
+-MODULE_DEVICE_TABLE(i2c, intel_soc_pmic_i2c_id);
  
- static struct i2c_driver palmas_i2c_driver = {
- 	.driver = {
- 		   .name = "palmas",
- 		   .of_match_table = of_palmas_match_tbl,
-+		   .suppress_bind_attrs = true,
+ #if defined(CONFIG_ACPI)
+ static const struct acpi_device_id intel_soc_pmic_acpi_match[] = {
+ 	{ "INT33FD" },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(acpi, intel_soc_pmic_acpi_match);
+ #endif
+ 
+ static struct i2c_driver intel_soc_pmic_i2c_driver = {
+@@ -182,16 +163,10 @@ static struct i2c_driver intel_soc_pmic_i2c_driver = {
+ 		.name = "intel_soc_pmic_i2c",
+ 		.pm = &intel_soc_pmic_pm_ops,
+ 		.acpi_match_table = ACPI_PTR(intel_soc_pmic_acpi_match),
++		.suppress_bind_attrs = true,
  	},
- 	.probe = palmas_i2c_probe,
--	.remove = palmas_i2c_remove,
- 	.id_table = palmas_i2c_id,
+ 	.probe = intel_soc_pmic_i2c_probe,
+-	.remove = intel_soc_pmic_i2c_remove,
+ 	.id_table = intel_soc_pmic_i2c_id,
+ 	.shutdown = intel_soc_pmic_shutdown,
  };
- 
-@@ -745,13 +721,3 @@ static int __init palmas_i2c_init(void)
- }
- /* init early so consumer devices can complete system boot */
- subsys_initcall(palmas_i2c_init);
 -
--static void __exit palmas_i2c_exit(void)
--{
--	i2c_del_driver(&palmas_i2c_driver);
--}
--module_exit(palmas_i2c_exit);
+-module_i2c_driver(intel_soc_pmic_i2c_driver);
 -
--MODULE_AUTHOR("Graeme Gregory <gg@slimlogic.co.uk>");
--MODULE_DESCRIPTION("Palmas chip family multi-function driver");
--MODULE_LICENSE("GPL");
+-MODULE_DESCRIPTION("I2C driver for Intel SoC PMIC");
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Yang, Bin <bin.yang@intel.com>");
+-MODULE_AUTHOR("Zhu, Lejun <lejun.zhu@linux.intel.com>");
++builtin_i2c_driver(intel_soc_pmic_i2c_driver);
 -- 
 2.7.4
 
