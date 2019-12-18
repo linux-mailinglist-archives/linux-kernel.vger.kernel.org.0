@@ -2,104 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A160124371
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:39:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 216B7124379
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:41:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfLRJjD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 04:39:03 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32832 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfLRJjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:39:02 -0500
-Received: by mail-wr1-f65.google.com with SMTP id b6so1517316wrq.0
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 01:39:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=nFPcr6Vhf/vTUjnzKn/DgVDi3KeDiuALX41REntGwaE=;
-        b=V/K3+TWVGK3j3wHm/pvunVZKgm/4sFvM7qY+23Kd9QQibFKlW5umPl8RNbE5nVx+Zf
-         FjdOYqcyo2HvBpD66JePTkC7aVAbWrqNs05VBqdqU6+fcIUBt2ETMv7Fpd/qkJEhq3iS
-         sAwPgriUz/aXUOpMmjLz43xPTxgNaYw/jiYA62sRfCcpiIHWnp7GHqV/KnAjjahsa7sG
-         ilpdIqsAjAKAhkzESCyACJcpbuwlAs8L10eHvbzv73PWG4WL3DGVhRk85SqnD0tEBiYr
-         Kg0qBelmU+Mk1Xpz8QrN6cz/EDoRUSalKERhbQhc7RzPYvn1PKpec21zQlt/TdmHW41z
-         pkjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=nFPcr6Vhf/vTUjnzKn/DgVDi3KeDiuALX41REntGwaE=;
-        b=WahORYnJxoTHfynuRSTYWWKraRCKEzEbYBPlpOXYGfp8N0QWA2t/+oEHr1Dn9p6SaT
-         iJR66Uo54Pg1RwuxvLPTB2gsNFaxDXapnkedgB/hfCYEeoxv+3JRfJu8mDyXfMyhKwSk
-         ytMBTCXhlW61qmHJhOrCx0NsWtVafHT7+tTDrbudAQfmY8ca3qsiATjOd8wV4eHlKr/K
-         UG7KDWSlQN1zdLlEH4o5Iu+oPg5yEb14L/ZsPYHjALOiRWl7r48QL6Uf8W9mZbP9AHpM
-         r4TEW21wEm49m/msKlnOsiaJmFh0VykznLNuLSCbW39XhyONh4ONwaqxl9c/ELYWfho8
-         m1Iw==
-X-Gm-Message-State: APjAAAUT8KKozB2PytyLOeefLqM2N9hFJqkUCJsaF/7D7zaEo+N+DGqb
-        e/5mKidhLK8sTQzeEbHXWKJCFA==
-X-Google-Smtp-Source: APXvYqzSJKUl+4Mp9mXUnWGBYdOx1N4C65CovJGXTy3EzFZSQQGVRwoIgvyZ3eGDW5jE2Jo022hASQ==
-X-Received: by 2002:adf:bc87:: with SMTP id g7mr1743769wrh.121.1576661940179;
-        Wed, 18 Dec 2019 01:39:00 -0800 (PST)
-Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id k8sm1975793wrl.3.2019.12.18.01.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 01:38:59 -0800 (PST)
-Date:   Wed, 18 Dec 2019 09:38:59 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
-        <ville.syrjala@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: intel_soc_pmic: Rename pwm_backlight pwm-lookup
- to pwm_pmic_backlight
-Message-ID: <20191218093859.GO18955@dell>
-References: <20191212155209.GC3468@dell>
- <4d07445d-98b1-f23c-0aac-07709b45df78@redhat.com>
- <20191213082734.GE3468@dell>
- <d648794d-4c76-cfa1-dcbd-16c34d409c51@redhat.com>
- <20191216093016.GE3648@dell>
- <fc3c29da-528d-a6b6-d13b-92e6469eadea@redhat.com>
- <20191217081127.GI18955@dell>
- <87immfyth2.fsf@intel.com>
- <20191217135140.GL18955@dell>
- <87a77q14wo.fsf@intel.com>
+        id S1726734AbfLRJk6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 04:40:58 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:46386 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726090AbfLRJk6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:40:58 -0500
+Received: from [10.10.222.226] (unknown [194.162.236.226])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id D98CA281DD0;
+        Wed, 18 Dec 2019 09:34:30 +0000 (UTC)
+Subject: Re: [alsa-devel] [PATCH 06/10] mfd: Add core driver for AD242x A2B
+ transceivers
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
+        lee.jones@linaro.org
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-8-daniel@zonque.org>
+ <c3885b01-e6ec-1b67-6e48-69e3fc40bb62@linux.intel.com>
+From:   Daniel Mack <daniel@zonque.org>
+Message-ID: <96d1182a-d9ba-78ce-c483-6be5389e3aba@zonque.org>
+Date:   Wed, 18 Dec 2019 10:40:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <c3885b01-e6ec-1b67-6e48-69e3fc40bb62@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87a77q14wo.fsf@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019, Jani Nikula wrote:
+Hi Pierre,
 
-> On Tue, 17 Dec 2019, Lee Jones <lee.jones@linaro.org> wrote:
-> > Hans was making the case that this was impractical for DRM, due to the
-> > amount of churn you guys receive, hence the discussion.  I'm very
-> > pleased that this is not the case.
+Thanks for looking into this!
+
+On 12/17/19 8:16 PM, Pierre-Louis Bossart wrote:
+> is the datasheet public? I thought it was only available under NDA.
+
+It was until recently, but it is now public:
+
+
+https://www.analog.com/media/en/technical-documentation/user-guides/AD242x_TRM_Rev1.1.pdf
+
+>> +    master->sync_clk = devm_clk_get(dev, "sync");
+>> +    if (IS_ERR(master->sync_clk)) {
+>> +        ret = PTR_ERR(master->sync_clk);
+>> +        if (ret != -EPROBE_DEFER)
+>> +            dev_err(dev, "failed to get sync clk: %d\n", ret);
+>> +
+>> +        return ret;
+>> +    }
+>> +
+>> +    if (of_property_read_u32(dev->of_node, "clock-frequency",
+>> +                 &master->sync_clk_rate)) {
+>> +        ret = clk_set_rate(master->sync_clk, master->sync_clk_rate);
 > 
-> Heh, well, it is the case, but the point is that should be our problem,
-> not yours. ;)
+> shouldn't you check the rate before setting it?
+>
+>> +        if (ret < 0) {
+>> +            dev_err(dev, "Cannot set sync clock rate: %d\n", ret);
+>> +            return ret;
+>> +        }
+>> +    }
+>> +
+>> +    master->sync_clk_rate = clk_get_rate(master->sync_clk);
+>> +    if (master->sync_clk_rate != 44100 && master->sync_clk_rate !=
+>> 48000) {
+>> +        dev_err(dev, "SYNC clock rate %d is invalid\n",
+>> +            master->sync_clk_rate);
+>> +        return -EINVAL;
+>> +    }
+> 
+> this is a bit odd, you set the rate in case there is a property but get
+> it anyways. the last block could be an else?
 
-:)
+The idea is: if 'clock-frequency' is given, we use it to set the clock,
+otherwise we rely on the clock having one of the two allowed rates. This
+way, we also catch setups where the clock provider cannot generated the
+desired frequency, or where the value of 'clock-frequency' is illegal.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>> +    ret = clk_prepare_enable(master->sync_clk);
+>> +    if (ret < 0) {
+>> +        dev_err(dev, "failed to enable sync clk: %d\n", ret);
+>> +        return ret;
+>> +    }
+>> +
+>> +    /* Master node setup */
+>> +
+>> +    ret = regmap_write(regmap, AD242X_CONTROL,
+>> +               AD242X_CONTROL_MSTR | AD242X_CONTROL_SOFTRST);
+>> +    if (ret < 0)
+>> +        return ret;
+>> +
+>> +    ret = ad242x_wait_for_irq(master, &master->run_completion, 10);
+> 
+> what is 10?
+
+Milliseconds. The parameter needs to get a better name I figure.
+
+
+Thanks,
+Daniel
