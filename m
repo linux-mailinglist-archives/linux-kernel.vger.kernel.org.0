@@ -2,62 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C111A124C17
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0073E124C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfLRPrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:47:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40548 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbfLRPqx (ORCPT
+        id S1727192AbfLRPsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:48:30 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:50394 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbfLRPsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:46:53 -0500
-Received: by mail-wm1-f66.google.com with SMTP id t14so2415297wmi.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:46:51 -0800 (PST)
+        Wed, 18 Dec 2019 10:48:30 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 47dKDF1GzMz9vYy2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 15:48:29 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id uEFjGA3ibnSQ for <linux-kernel@vger.kernel.org>;
+        Wed, 18 Dec 2019 09:48:29 -0600 (CST)
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com [209.85.161.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 47dKDF0BPYz9vYxq
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 09:48:29 -0600 (CST)
+Received: by mail-yw1-f70.google.com with SMTP id z7so1547207ywd.21
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:48:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4/TA5V3tcqADPu1K+BV5/M4caj20lIOYip+ZBjXtypI=;
-        b=p/K2DA4elKKe/umIqFLDDzXYHttb7FH0nG/QtbHrZUoYXHTs2oF9MlPFGuBruiVqXg
-         dCImiskdofXSNO3vg75mzmCaa/mbGYAo0wka88H7UtnZVVYY/N7YtYoKWWJiK4coMLax
-         0WrmWxzp8HkUBSy+5VxtY/RV0+ApcMyVz10FEiyXq+bfsvpm7yCKG9a8y4F993LzberR
-         eT1z0OqXWsbkSHivMFhVLxSwFj0dzWIO1qzmmN4NPI1YTK5c8/eiA+51NNpyyo7IG+Gl
-         afKkFROgmWHBemhNF6ROgCjqfJFRONhooA7YzV9uDzqkxGnyIbWs0kYVVC6uxdS3C9OB
-         kk0Q==
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=24iL5/uUkW8WBrQ+DwpF6Dwk7XjHT1zZjAzHIUDTH/4=;
+        b=iWhjT4BTr9LLloEH90ZsH1TvIWOH57cw1MQgcHeDYwOIDfS2k/tzc3ep0QbbE1E1/0
+         a3PXogSZAAdSAYBtNaacCxr8oPsRDVX+7p89iaFIspNqEjFU01luRm2avI+bUsbf7pLB
+         J56L1XiP+cBb4qlGzneNwYGeEZzMf+HMwzFyi7L2CWEivK6Gwj4BFQ4zBCLEh21Mp5al
+         vQzZhSPGrvFmZOEMIyuNUrLoziYSjQkHZDONVva7a++X+SwD4hLw08bg/Euyl05egjHd
+         OCHNKwDx4YXZFTyzOlftoV5C9+zmCh1YY/5g6EVOimzmScpjd+hmeezAjXmOXZfZhjnn
+         SsJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4/TA5V3tcqADPu1K+BV5/M4caj20lIOYip+ZBjXtypI=;
-        b=skdW7FSfzgJeFE+Jv+JQYQc7dROCW48UUIMUCP2FyjoPq3LPwnX0ARhWyu3VbXmCMY
-         QzVi47zLvRLO3ocOf2G/AjoyLZDx50Gcj5qp0qLrTtPTFt6Bgz53vBVj5c+yCcksuCt0
-         EctkD7AVe/6pl4ImbUpoghbTioPb3UGHLbEahKyIXX+CRw/hGn2LircdwQj8TqDvRPSE
-         mOuN4fvHhbx3KIoZjfdQ+8D4QFCIl/Fv8RDz5h6CtI1V5167e0cmuT0jqrizxBv/C58x
-         ++K5f5pZ5AbZN5/X9gqTyuGFhfjyR3DqYpOZ88eLwAttDQp3RR2PbM2ccV/gftYynG/F
-         BviA==
-X-Gm-Message-State: APjAAAXdpRicD9uq6GGWPW68YsabdmaTUJ3k3qgWRXGbeKRviTbHOacm
-        iq8udPgGIaG7tJAN0lNDyc6RBg==
-X-Google-Smtp-Source: APXvYqzuomsxDNlw0fZ5uXNnvYIuXSCtgP+tD9WpS5svU+SVlgn+zsKMLxMQD2gSo6uiOBS8Z1tyaA==
-X-Received: by 2002:a7b:c750:: with SMTP id w16mr4281186wmk.46.1576684010516;
-        Wed, 18 Dec 2019 07:46:50 -0800 (PST)
-Received: from bender.baylibre.local (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
-        by smtp.gmail.com with ESMTPSA id x1sm2891492wru.50.2019.12.18.07.46.49
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=24iL5/uUkW8WBrQ+DwpF6Dwk7XjHT1zZjAzHIUDTH/4=;
+        b=IKZ7N3cLy/7z+hDA2ewcas0+0PeBWDI3mQwzYSngv10sxfzxwJQXuJx3FnGaAazofU
+         cqUZuuL1ZrOdgo+syvvlc7dSOcly4sB12WlCuE9I2chLs20/h7f2ohaSmvTIOpc7a8BB
+         /bcHUWvF1OBVf48UxNFUj72p5W1ylauRzI6vzAkTya0bccsuhFeB8qsiRIgQ+H610WM5
+         WjBlI36Emlp7vwM+Vzs4hMUwKRrq1ybt5qd718G4zoGjNGDkm6ekHLKtRXmBC8YrWIms
+         QNP6vm8KyFCGUf6hgwrgRB+mHwXGlZ/Ph3uKXykzrNqJytQcSlmrk4In63gszEsytnld
+         5Ndw==
+X-Gm-Message-State: APjAAAW2bh8h1Os2lJpyVmqlnJdHyQP9ZiNLPknA7d72dzXfM3FexWFI
+        Z5ZYd1ZagaL+3yKW2nIV2lizCH0Q9LZXqzHplflTho9jKPWQ7qT37cyms/GJhrWah2zU35A2m1A
+        dsD9gx1aThwhm9T8Gz1Jh4hEqYumX
+X-Received: by 2002:a25:df15:: with SMTP id w21mr2537598ybg.7.1576684108468;
+        Wed, 18 Dec 2019 07:48:28 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyUs2lA5D65kMHLl6/mRZQTuLTuD4Ghfd2R8mcUBxkI5G82Qt7wVJf30S63EhVsq0vzQPq5Yw==
+X-Received: by 2002:a25:df15:: with SMTP id w21mr2537588ybg.7.1576684108258;
+        Wed, 18 Dec 2019 07:48:28 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id j4sm1050738ywd.103.2019.12.18.07.48.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:46:50 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
-        jonas@kwiboo.se, jernej.skrabec@siol.net,
-        boris.brezillon@collabora.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] drm/meson: Add YUV420 output support
-Date:   Wed, 18 Dec 2019 16:46:37 +0100
-Message-Id: <20191218154637.17509-11-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20191218154637.17509-1-narmstrong@baylibre.com>
-References: <20191218154637.17509-1-narmstrong@baylibre.com>
+        Wed, 18 Dec 2019 07:48:27 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] tpm/ppi: remove impossible assertion in tpm_eval_dsm
+Date:   Wed, 18 Dec 2019 09:48:25 -0600
+Message-Id: <20191218154825.11634-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -65,238 +79,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the YUV420 output from the Amlogic Meson SoCs
-Video Processing Unit to the HDMI Controller.
+In tpm_eval_dsm, BUG_ON on ppi_handle is used as an assertion.
+However, if ppi_handle is NULL, the kernel crashes. The patch
+removes the unnecessary check.
 
-The YUV420 is obtained by generating a YUV444 pixel stream like
-the classic HDMI display modes, but then the Video Encoder output
-can be configured to down-sample the YUV444 pixel stream to a YUV420
-stream.
-In addition if pixel stream down-sampling, the Y Cb Cr components must
-also be mapped differently to align with the HDMI2.0 specifications.
-
-This mode needs a different clock generation scheme since the TMDS PHY
-clock must match the 10x ration with the YUV420 pixel clock, but
-the video encoder must run at 2x the pixel clock.
-
-This patch enables the bridge bus format negotiation, and handles
-the YUV420 case if selected by the negotiation.
-
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
 ---
- drivers/gpu/drm/meson/meson_dw_hdmi.c | 91 ++++++++++++++++++++-------
- 1 file changed, 70 insertions(+), 21 deletions(-)
+v1: replaced the recovery code to completely eliminate the check,
+as suggested by Jason Gunthorpe.
+---
+ drivers/char/tpm/tpm_ppi.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-index ce27dfde509e..90ec4553ed51 100644
---- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
-+++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
-@@ -150,6 +150,7 @@ struct meson_dw_hdmi {
- 	struct regulator *hdmi_supply;
- 	u32 irq_stat;
- 	struct dw_hdmi *hdmi;
-+	unsigned long output_bus_fmt;
- };
- #define encoder_to_meson_dw_hdmi(x) \
- 	container_of(x, struct meson_dw_hdmi, encoder)
-@@ -301,6 +302,10 @@ static void meson_hdmi_phy_setup_mode(struct meson_dw_hdmi *dw_hdmi,
- 	struct meson_drm *priv = dw_hdmi->priv;
- 	unsigned int pixel_clock = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		pixel_clock /= 2;
-+
- 	if (dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
- 	    dw_hdmi_is_compatible(dw_hdmi, "amlogic,meson-gxm-dw-hdmi")) {
- 		if (pixel_clock >= 371250) {
-@@ -383,6 +388,10 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
- 
- 	vclk_freq = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		vclk_freq /= 2;
-+
- 	/* TMDS clock is pixel_clock * 10 */
- 	phy_freq = vclk_freq * 10;
- 
-@@ -392,13 +401,16 @@ static void dw_hdmi_set_vclk(struct meson_dw_hdmi *dw_hdmi,
- 		return;
- 	}
- 
-+	/* 480i/576i needs global pixel doubling */
- 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
- 		vclk_freq *= 2;
- 
- 	venc_freq = vclk_freq;
- 	hdmi_freq = vclk_freq;
- 
--	if (meson_venc_hdmi_venc_repeat(vic))
-+	/* VENC double pixels for 1080i, 720p and YUV420 modes */
-+	if (meson_venc_hdmi_venc_repeat(vic) ||
-+	    dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
- 		venc_freq *= 2;
- 
- 	vclk_freq = max(venc_freq, hdmi_freq);
-@@ -445,8 +457,9 @@ static int dw_hdmi_phy_init(struct dw_hdmi *hdmi, void *data,
- 	/* Enable normal output to PHY */
- 	dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_BIST_CNTL, BIT(12));
- 
--	/* TMDS pattern setup (TOFIX Handle the YUV420 case) */
--	if (mode->clock > 340000) {
-+	/* TMDS pattern setup */
-+	if (mode->clock > 340000 &&
-+	    dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_YUV8_1X24) {
- 		dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_01,
- 				  0);
- 		dw_hdmi->data->top_write(dw_hdmi, HDMITX_TOP_TMDS_CLK_PTTN_23,
-@@ -621,6 +634,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 		   const struct drm_display_mode *mode)
+diff --git a/drivers/char/tpm/tpm_ppi.c b/drivers/char/tpm/tpm_ppi.c
+index b2dab941cb7f..603f7806f9af 100644
+--- a/drivers/char/tpm/tpm_ppi.c
++++ b/drivers/char/tpm/tpm_ppi.c
+@@ -42,7 +42,6 @@ static inline union acpi_object *
+ tpm_eval_dsm(acpi_handle ppi_handle, int func, acpi_object_type type,
+ 	     union acpi_object *argv4, u64 rev)
  {
- 	struct meson_drm *priv = connector->dev->dev_private;
-+	bool is_hdmi2_sink = connector->display_info.hdmi.scdc.supported;
- 	unsigned int phy_freq;
- 	unsigned int vclk_freq;
- 	unsigned int venc_freq;
-@@ -630,9 +644,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- 	DRM_DEBUG_DRIVER("Modeline " DRM_MODE_FMT "\n", DRM_MODE_ARG(mode));
- 
--	/* If sink max TMDS clock, we reject the mode */
-+	/* If sink does not support 540MHz, reject the non-420 HDMI2 modes */
- 	if (connector->display_info.max_tmds_clock &&
--	    mode->clock > connector->display_info.max_tmds_clock)
-+	    mode->clock > connector->display_info.max_tmds_clock &&
-+	    !drm_mode_is_420_only(&connector->display_info, mode) &&
-+	    !drm_mode_is_420_also(&connector->display_info, mode))
- 		return MODE_BAD;
- 
- 	/* Check against non-VIC supported modes */
-@@ -648,6 +664,12 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- 	vclk_freq = mode->clock;
- 
-+	/* For 420, pixel clock is half unlike venc clock */
-+	if (drm_mode_is_420_only(&connector->display_info, mode) ||
-+	    (!is_hdmi2_sink &&
-+	     drm_mode_is_420_also(&connector->display_info, mode)))
-+		vclk_freq /= 2;
-+
- 	/* TMDS clock is pixel_clock * 10 */
- 	phy_freq = vclk_freq * 10;
- 
-@@ -658,8 +680,11 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 	venc_freq = vclk_freq;
- 	hdmi_freq = vclk_freq;
- 
--	/* VENC double pixels for 1080i and 720p modes */
--	if (meson_venc_hdmi_venc_repeat(vic))
-+	/* VENC double pixels for 1080i, 720p and YUV420 modes */
-+	if (meson_venc_hdmi_venc_repeat(vic) ||
-+	    drm_mode_is_420_only(&connector->display_info, mode) ||
-+	    (!is_hdmi2_sink &&
-+	     drm_mode_is_420_also(&connector->display_info, mode)))
- 		venc_freq *= 2;
- 
- 	vclk_freq = max(venc_freq, hdmi_freq);
-@@ -677,6 +702,7 @@ dw_hdmi_mode_valid(struct drm_connector *connector,
- 
- static const u32 meson_dw_hdmi_out_bus_fmts[] = {
- 	MEDIA_BUS_FMT_YUV8_1X24,
-+	MEDIA_BUS_FMT_UYYVYY8_0_5X24,
- };
- 
- static void meson_venc_hdmi_encoder_destroy(struct drm_encoder *encoder)
-@@ -717,18 +743,23 @@ meson_venc_hdmi_encoder_get_inp_bus_fmts(struct drm_bridge *bridge,
- 					unsigned int *num_input_fmts)
- {
- 	u32 *input_fmts = NULL;
-+	int i;
- 
--	if (output_fmt == meson_dw_hdmi_out_bus_fmts[0]) {
--		*num_input_fmts = 1;
--		input_fmts = kcalloc(*num_input_fmts,
--				     sizeof(*input_fmts),
--				     GFP_KERNEL);
--		if (!input_fmts)
--			return NULL;
-+	*num_input_fmts = 0;
- 
--		input_fmts[0] = output_fmt;
--	} else {
--		*num_input_fmts = 0;
-+	for (i = 0 ; i < ARRAY_SIZE(meson_dw_hdmi_out_bus_fmts) ; ++i) {
-+		if (output_fmt == meson_dw_hdmi_out_bus_fmts[i]) {
-+			*num_input_fmts = 1;
-+			input_fmts = kcalloc(*num_input_fmts,
-+					     sizeof(*input_fmts),
-+					     GFP_KERNEL);
-+			if (!input_fmts)
-+				return NULL;
-+
-+			input_fmts[0] = output_fmt;
-+
-+			break;
-+		}
- 	}
- 
- 	return input_fmts;
-@@ -739,6 +770,12 @@ static int meson_venc_hdmi_encoder_atomic_check(struct drm_bridge *bridge,
- 					struct drm_crtc_state *crtc_state,
- 					struct drm_connector_state *conn_state)
- {
-+	struct meson_dw_hdmi *dw_hdmi = bridge_to_meson_dw_hdmi(bridge);
-+
-+	dw_hdmi->output_bus_fmt = bridge_state->output_bus_cfg.fmt;
-+
-+	DRM_DEBUG_DRIVER("output_bus_fmt %lx\n", dw_hdmi->output_bus_fmt);
-+
- 	return 0;
+-	BUG_ON(!ppi_handle);
+ 	return acpi_evaluate_dsm_typed(ppi_handle, &tpm_ppi_guid,
+ 				       rev, func, argv4, type);
  }
- 
-@@ -776,18 +813,29 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_bridge *bridge,
- 	struct meson_dw_hdmi *dw_hdmi = bridge_to_meson_dw_hdmi(bridge);
- 	struct meson_drm *priv = dw_hdmi->priv;
- 	int vic = drm_match_cea_mode(mode);
-+	unsigned int ycrcb_map = VPU_HDMI_OUTPUT_CBYCR;
-+	bool yuv420_mode = false;
- 
- 	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
- 
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24) {
-+		ycrcb_map = VPU_HDMI_OUTPUT_CRYCB;
-+		yuv420_mode = true;
-+	}
-+
- 	/* VENC + VENC-DVI Mode setup */
--	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, false,
--				 VPU_HDMI_OUTPUT_CBYCR);
-+	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, yuv420_mode, mode);
- 
- 	/* VCLK Set clock */
- 	dw_hdmi_set_vclk(dw_hdmi, mode);
- 
--	/* Setup YUV444 to HDMI-TX, no 10bit diphering */
--	writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
-+	if (dw_hdmi->output_bus_fmt == MEDIA_BUS_FMT_UYYVYY8_0_5X24)
-+		/* Setup YUV420 to HDMI-TX, no 10bit diphering */
-+		writel_relaxed(2 | (2 << 2),
-+			       priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
-+	else
-+		/* Setup YUV444 to HDMI-TX, no 10bit diphering */
-+		writel_relaxed(0, priv->io_base + _REG(VPU_HDMI_FMT_CTRL));
- }
- 
- static const struct drm_bridge_funcs meson_venc_hdmi_encoder_bridge_funcs = {
-@@ -1042,6 +1090,7 @@ static int meson_dw_hdmi_bind(struct device *dev, struct device *master,
- 	dw_plat_data->phy_name = "meson_dw_hdmi_phy";
- 	dw_plat_data->phy_data = meson_dw_hdmi;
- 	dw_plat_data->input_bus_encoding = V4L2_YCBCR_ENC_709;
-+	dw_plat_data->ycbcr_420_allowed = true;
- 
- 	if (dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxl-dw-hdmi") ||
- 	    dw_hdmi_is_compatible(meson_dw_hdmi, "amlogic,meson-gxm-dw-hdmi") ||
 -- 
-2.22.0
+2.20.1
 
