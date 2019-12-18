@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6C71252CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 348F11252CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727483AbfLRUJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:09:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47566 "EHLO mail.kernel.org"
+        id S1727144AbfLRUJv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:09:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726636AbfLRUJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:09:49 -0500
+        id S1726757AbfLRUJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:09:50 -0500
 Received: from localhost (unknown [104.132.0.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 030A821D7D;
-        Wed, 18 Dec 2019 20:09:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D46424650;
+        Wed, 18 Dec 2019 20:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1576699789;
-        bh=Rod+bJ2QMrojGgJqYQnIMGlsLvajxvwq+9925iKpS+4=;
+        bh=W2uMCJVpanpiKWXRI26gL3PaRjh3Wk4iqNVcFWlQmck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X/xImYerBfbvNWoa9mF0Ye/pmPU3bqMMPKLjR53RlCEEdyd+kT4scluxwEVn4OTMG
-         lCAyR7kgoh1+9w9UZ2lgeMvIhbqGgkHgD33R6v7uKGeJIZ0nPwQY4odbkBhgRS4TtX
-         c+Xd/UcA4lO/1xzAdZnL/MT/qEBOY87ICRtrDF9s=
+        b=WVjdznsmLsk/6M4cPCUDn12ivFAgiZtOffllkTOac3FUEK7TFFywLr1VDRClqt9+w
+         1YzwlwVqy7o22UsjdZ8ZDAwei9fYhCoiu671cqccIBcH6I6VbzT0l/BO2ZGuc1ju2L
+         ciRzz/1K9crParmMGPVjXxrFj+19geCADZpNzZwg=
 From:   Jaegeuk Kim <jaegeuk@kernel.org>
 To:     linux-kernel@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net
 Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 2/4] f2fs: don't put new_page twice in f2fs_rename
-Date:   Wed, 18 Dec 2019 12:09:45 -0800
-Message-Id: <20191218200947.20445-2-jaegeuk@kernel.org>
+Subject: [PATCH 3/4] f2fs: declare nested quota_sem and remove unnecessary sems
+Date:   Wed, 18 Dec 2019 12:09:46 -0800
+Message-Id: <20191218200947.20445-3-jaegeuk@kernel.org>
 X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
 In-Reply-To: <20191218200947.20445-1-jaegeuk@kernel.org>
 References: <20191218200947.20445-1-jaegeuk@kernel.org>
@@ -40,53 +40,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In f2fs_rename(), new_page is gone after f2fs_set_link(), but it tries
-to put again when whiteout is failed and jumped to put_out_dir.
+1.
+f2fs_quota_sync
+ -> down_read(&sbi->quota_sem)
+ -> dquot_writeback_dquots
+  -> f2fs_dquot_commit
+   -> down_read(&sbi->quota_sem)
+
+2.
+f2fs_quota_sync
+ -> down_read(&sbi->quota_sem)
+  -> f2fs_write_data_pages
+   -> f2fs_write_single_data_page
+    -> down_write(&F2FS_I(inode)->i_sem)
+
+f2fs_mkdir
+ -> f2fs_do_add_link
+   -> down_write(&F2FS_I(inode)->i_sem)
+   -> f2fs_init_inode_metadata
+    -> f2fs_new_node_page
+     -> dquot_alloc_inode
+      -> f2fs_dquot_mark_dquot_dirty
+       -> down_read(&sbi->quota_sem)
 
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- fs/f2fs/namei.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/super.c | 18 ++++--------------
+ 1 file changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index 61615ab466c2..91e7b8360d2a 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -850,7 +850,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	struct inode *old_inode = d_inode(old_dentry);
- 	struct inode *new_inode = d_inode(new_dentry);
- 	struct inode *whiteout = NULL;
--	struct page *old_dir_page;
-+	struct page *old_dir_page = NULL;
- 	struct page *old_page, *new_page = NULL;
- 	struct f2fs_dir_entry *old_dir_entry = NULL;
- 	struct f2fs_dir_entry *old_entry;
-@@ -941,6 +941,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 			goto put_out_dir;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 9e85894d12c9..e6fb4b52eb91 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2158,7 +2158,7 @@ static int f2fs_dquot_commit(struct dquot *dquot)
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+ 	int ret;
  
- 		f2fs_set_link(new_dir, new_entry, new_page, old_inode);
-+		new_page = NULL;
+-	down_read(&sbi->quota_sem);
++	down_read_nested(&sbi->quota_sem, SINGLE_DEPTH_NESTING);
+ 	ret = dquot_commit(dquot);
+ 	if (ret < 0)
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+@@ -2182,13 +2182,10 @@ static int f2fs_dquot_acquire(struct dquot *dquot)
+ static int f2fs_dquot_release(struct dquot *dquot)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(dquot->dq_sb);
+-	int ret;
++	int ret = dquot_release(dquot);
  
- 		new_inode->i_ctime = current_time(new_inode);
- 		down_write(&F2FS_I(new_inode)->i_sem);
-@@ -980,6 +981,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
- 	f2fs_mark_inode_dirty_sync(old_inode, false);
+-	down_read(&sbi->quota_sem);
+-	ret = dquot_release(dquot);
+ 	if (ret < 0)
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+-	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
  
- 	f2fs_delete_entry(old_entry, old_page, old_dir, NULL);
-+	old_page = NULL;
+@@ -2196,29 +2193,22 @@ static int f2fs_dquot_mark_dquot_dirty(struct dquot *dquot)
+ {
+ 	struct super_block *sb = dquot->dq_sb;
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-	int ret;
+-
+-	down_read(&sbi->quota_sem);
+-	ret = dquot_mark_dquot_dirty(dquot);
++	int ret = dquot_mark_dquot_dirty(dquot);
  
- 	if (whiteout) {
- 		set_inode_flag(whiteout, FI_INC_LINK);
-@@ -1015,8 +1017,7 @@ static int f2fs_rename(struct inode *old_dir, struct dentry *old_dentry,
+ 	/* if we are using journalled quota */
+ 	if (is_journalled_quota(sbi))
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_FLUSH);
  
- put_out_dir:
- 	f2fs_unlock_op(sbi);
--	if (new_page)
--		f2fs_put_page(new_page, 0);
-+	f2fs_put_page(new_page, 0);
- out_dir:
- 	if (old_dir_entry)
- 		f2fs_put_page(old_dir_page, 0);
+-	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
+ static int f2fs_dquot_commit_info(struct super_block *sb, int type)
+ {
+ 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+-	int ret;
++	int ret = dquot_commit_info(sb, type);
+ 
+-	down_read(&sbi->quota_sem);
+-	ret = dquot_commit_info(sb, type);
+ 	if (ret < 0)
+ 		set_sbi_flag(sbi, SBI_QUOTA_NEED_REPAIR);
+-	up_read(&sbi->quota_sem);
+ 	return ret;
+ }
+ 
 -- 
 2.24.0.525.g8f36a354ae-goog
 
