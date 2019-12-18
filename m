@@ -2,71 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C11C21253B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:41:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D23951253DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbfLRUl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:41:27 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37100 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbfLRUl0 (ORCPT
+        id S1727826AbfLRUuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:50:00 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47925 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727395AbfLRUt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:41:26 -0500
-Received: by mail-ot1-f67.google.com with SMTP id k14so4049763otn.4;
-        Wed, 18 Dec 2019 12:41:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vjAWgj8LPRVBBw4YOgmZJNGJyNN6iEbkQXZFrIxWMd0=;
-        b=f/o6m4kkdrseDeko1cTkyQ3A0Er94juvAd+hgIjUj5gyOia3cWFoK8oaRVIkbCdSON
-         um3AcstN7D9XBtPrGe7s9hnrn/G7EEWRDjRXNmLt7geaIHU375vdUTuqA6dI5dJnA9+6
-         oRJWZpLq7j90hA3/qZa8yb7Z7HHJa7/3fR+2JtFOP5r2i0rRPjjCmdsN1ivDQen0wwP8
-         rNfJGF2IKNwCzl6lws75QEzbN2lLHxhJ1+ccPutXRO9NJ/kFQeFWYuEBMZ0EAFHWDogv
-         UyjhJ06xj5PNdlg8DpQei8jL20rVi69KvUiP0ZeBvNulKdnRPW7/50dPeyAgSPbkT8tt
-         JJOw==
-X-Gm-Message-State: APjAAAWn/TkzYR2R6OM1GD9DshP3OPjPBsSj3mo07UAVI+yd1ZQq6y/u
-        /gucl76KxikixfWg1uFT2uSiXhE=
-X-Google-Smtp-Source: APXvYqzQqGo/mhAS3tDmnfbWxDRBX1it8whjpDyON36SIKPZWsEZwe6SklGflwoLOyGplD0lHy7Kkw==
-X-Received: by 2002:a9d:7a88:: with SMTP id l8mr4842838otn.187.1576701685257;
-        Wed, 18 Dec 2019 12:41:25 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s9sm1180127oic.15.2019.12.18.12.41.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 12:41:24 -0800 (PST)
-Date:   Wed, 18 Dec 2019 14:41:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     robh@kernel.org, broonie@kernel.org, lee.jones@linaro.org,
-        linus.walleij@linaro.org, vinod.koul@linaro.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, spapothi@codeaurora.org,
-        bgoswami@codeaurora.org, linux-gpio@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH v5 01/11] ASoC: dt-bindings: add dt bindings for
- WCD9340/WCD9341 audio codec
-Message-ID: <20191218204123.GA18202@bogus>
-References: <20191217121642.28534-1-srinivas.kandagatla@linaro.org>
- <20191217121642.28534-2-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217121642.28534-2-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 18 Dec 2019 15:49:59 -0500
+Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0iS000214;
+        Wed, 18 Dec 2019 12:49:00 -0800 (PST)
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Daniel Ribeiro <drwyrm@gmail.com>,
+        Graeme Gregory <gg@slimlogic.co.uk>,
+        Haojian Zhuang <haojian.zhuang@marvell.com>,
+        Harald Welte <laforge@openezx.org>, Ian Molton <spyro@f2s.com>,
+        Jorge Eduardo Candelaria <jorge.candelaria@ti.com>,
+        Keshava Munegowda <keshava_mgowda@ti.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Mike Rapoport <mike@compulab.co.il>,
+        Milo Kim <milo.kim@ti.com>,
+        Misael Lopez Cruz <misael.lopez@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Rabin Vincent <rabin.vincent@stericsson.com>,
+        Roger Quadros <rogerq@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Viresh Kumar <vireshk@kernel.org>, Yang@mail.windriver.com,
+        Bin <bin.yang@intel.com>, Zhu@mail.windriver.com,
+        Lejun <lejun.zhu@linux.intel.com>, linux-omap@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: [PATCH 00/18] mfd: demodularization of non-modular drivers
+Date:   Wed, 18 Dec 2019 15:48:39 -0500
+Message-Id: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019 12:16:32 +0000, Srinivas Kandagatla wrote:
-> This patch adds bindings for wcd9340/wcd9341 audio codec which can
-> support both SLIMbus and I2S/I2C interface.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
->  .../bindings/sound/qcom,wcd934x.yaml          | 175 ++++++++++++++++++
->  1 file changed, 175 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-> 
+This group of MFD drivers are all controlled by "bool" Kconfig settings,
+but contain module infrastructure like unused/orphaned "remove" and
+__exit functions, use of <linux/module.h> and/or MODULE_ macros that
+are no-ops in the non-modular case.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+We can remove/replace all of the above.  We are trying to make driver
+code consistent with the Makefiles/Kconfigs that control them.  This
+means not using modular functions/macros for drivers that can never be
+built as a module.  Some of the downfalls this leads to are:
+
+ (1) it is easy to accidentally write unused module_exit and remove code
+ (2) it can be misleading when reading the source, thinking it can be
+     modular when the Makefile and/or Kconfig prohibit it
+ (3) it requires the include of the module.h header file which in turn
+     includes nearly everything else, thus adding to CPP overhead.
+ (4) it gets copied/replicated into other drivers and spreads quickly.
+
+We've integrated hundreds of these type cleanups already, as the git
+history will show.  This is just a continuation of that objective.
+
+The ".remove" function linked into the device structure deserves an
+extra comment.  While the normal execution path would be from a module
+unload (if it was modular), it is theoretically possible that a person
+could use the core driver infrastructure to manually push the driver off
+the hardware; an "unbind" event -- which would run the ".remove" function.
+
+Given that, in this series, when we delete a ".remove" function from
+the driver struct, we also disable unbind.  Should there be a valid use
+case out there that has been overlooked, this will ensure we get to see
+it and can react/revert accordingly.
+
+Build testing was done on drivers/mfd for allmodconfig on x86_64, ARM
+and ARM-64 (on linux-next).
+
+---
+
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Daniel Ribeiro <drwyrm@gmail.com>
+Cc: Graeme Gregory <gg@slimlogic.co.uk>
+Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
+Cc: Harald Welte <laforge@openezx.org>
+Cc: Ian Molton <spyro@f2s.com>
+Cc: Jorge Eduardo Candelaria <jorge.candelaria@ti.com>
+Cc: Keshava Munegowda <keshava_mgowda@ti.com>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: Mike Rapoport <mike@compulab.co.il>
+Cc: Milo Kim <milo.kim@ti.com>
+Cc: Misael Lopez Cruz <misael.lopez@ti.com>
+Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc: Rabin Vincent <rabin.vincent@stericsson.com>
+Cc: Roger Quadros <rogerq@ti.com>
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Viresh Kumar <vireshk@kernel.org>
+Cc: Yang, Bin <bin.yang@intel.com>
+Cc: Zhu, Lejun <lejun.zhu@linux.intel.com>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+
+Paul Gortmaker (18):
+  mfd: stmpe-spi: Make it explicitly non-modular
+  mfd: stmpe-i2c: Make it explicitly non-modular
+  mfd: ezx-pcap: Make it explicitly non-modular
+  mfd: 88pm860x-*: Make it explicitly non-modular
+  mfd: tc3589: Make it explicitly non-modular
+  mfd: tc6387xb: Make it explicitly non-modular
+  mfd: tc6393xb: Make it explicitly non-modular
+  mfd: twl4030-audio: Make it explicitly non-modular
+  mfd: twl4030-power: Make it explicitly non-modular
+  mfd: twl6040: Make it explicitly non-modular
+  mfd: t7l66xb: Make it explicitly non-modular
+  mfd: lp8788: Make it explicitly non-modular
+  mfd: menelaus: Make it explicitly non-modular
+  mfd: tps6586x: Make it explicitly non-modular
+  mfd: omap-usb-tll: Make it explicitly non-modular
+  mfd: omap-usb-host: Make it explicitly non-modular
+  mfd: palmas: Make it explicitly non-modular
+  mfd: intel_soc_pmic_core: Make it explicitly non-modular
+
+ drivers/mfd/88pm860x-core.c       | 40 ++-------------------------------
+ drivers/mfd/88pm860x-i2c.c        |  1 -
+ drivers/mfd/ezx-pcap.c            | 42 +++-------------------------------
+ drivers/mfd/intel_soc_pmic_core.c | 31 +++-----------------------
+ drivers/mfd/lp8788.c              | 24 ++------------------
+ drivers/mfd/menelaus.c            | 24 ++++----------------
+ drivers/mfd/omap-usb-host.c       | 47 +++++----------------------------------
+ drivers/mfd/omap-usb-tll.c        | 47 ++++-----------------------------------
+ drivers/mfd/palmas.c              | 36 +-----------------------------
+ drivers/mfd/stmpe-i2c.c           | 23 ++-----------------
+ drivers/mfd/stmpe-spi.c           | 23 ++-----------------
+ drivers/mfd/stmpe.c               | 14 ------------
+ drivers/mfd/stmpe.h               |  1 -
+ drivers/mfd/t7l66xb.c             | 37 ++++--------------------------
+ drivers/mfd/tc3589x.c             | 26 ++--------------------
+ drivers/mfd/tc6387xb.c            | 30 ++++---------------------
+ drivers/mfd/tc6393xb.c            | 43 ++---------------------------------
+ drivers/mfd/tps6586x.c            | 26 ++--------------------
+ drivers/mfd/twl4030-audio.c       | 21 +++--------------
+ drivers/mfd/twl4030-power.c       | 19 +++-------------
+ drivers/mfd/twl6040.c             | 29 +++---------------------
+ 21 files changed, 51 insertions(+), 533 deletions(-)
+
+-- 
+2.7.4
+
