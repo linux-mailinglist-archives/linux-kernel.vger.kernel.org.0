@@ -2,102 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B76CC1252A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:06:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E1BEB1252A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:06:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbfLRUFu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:05:50 -0500
-Received: from foss.arm.com ([217.140.110.172]:59320 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727145AbfLRUFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:05:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E714811B3;
-        Wed, 18 Dec 2019 12:05:47 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65D8D3F67D;
-        Wed, 18 Dec 2019 12:05:47 -0800 (PST)
-Date:   Wed, 18 Dec 2019 20:05:45 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "ASoC: meson: axg-fifo: add fifo depth to the bindings documentation" to the asoc tree
-In-Reply-To: <20191218172420.1199117-3-jbrunet@baylibre.com>
-Message-Id: <applied-20191218172420.1199117-3-jbrunet@baylibre.com>
-X-Patchwork-Hint: ignore
+        id S1727674AbfLRUGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:06:09 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:55738 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbfLRUGJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:06:09 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f00:1c3::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id AE094153CA138;
+        Wed, 18 Dec 2019 12:06:08 -0800 (PST)
+Date:   Wed, 18 Dec 2019 12:06:08 -0800 (PST)
+Message-Id: <20191218.120608.957923763169948073.davem@davemloft.net>
+To:     Jose.Abreu@synopsys.com
+Cc:     netdev@vger.kernel.org, Joao.Pinto@synopsys.com,
+        jakub.kicinski@netronome.com, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com, mcoquelin.stm32@gmail.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v3 0/9] net: stmmac: Fixes for -net
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <cover.1576664155.git.Jose.Abreu@synopsys.com>
+References: <cover.1576664155.git.Jose.Abreu@synopsys.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 18 Dec 2019 12:06:09 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+From: Jose Abreu <Jose.Abreu@synopsys.com>
+Date: Wed, 18 Dec 2019 11:17:34 +0100
 
-   ASoC: meson: axg-fifo: add fifo depth to the bindings documentation
+> Fixes for stmmac.
 
-has been applied to the asoc tree at
+Series applied.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+But realistically I doubt you'll ever find a configuration where
+SMP_CACHE_BYTES is less than 16 (seriously, it is so non-sensible to
+build a cpu like that).  So you could have done something like:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+#if SMP_CACHE_BYTES < 16
+#error SMP_CACHE_BYTES too small
+#endif
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+and then add the funky double alignment code if that ever triggered.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From fb522dbb4531c14193115a09905c6c31b37dbfc5 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Wed, 18 Dec 2019 18:24:18 +0100
-Subject: [PATCH] ASoC: meson: axg-fifo: add fifo depth to the bindings
- documentation
-
-Add a new property with the depth of the fifo in bytes. This is useful
-since some instance of the fifo, even on the same SoC, may have different
-depth. The depth is useful is set some parameters of the fifo.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20191218172420.1199117-3-jbrunet@baylibre.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-index 3080979350a0..fa4545ed81ca 100644
---- a/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-+++ b/Documentation/devicetree/bindings/sound/amlogic,axg-fifo.txt
-@@ -17,6 +17,9 @@ Required properties:
-   * "arb" : memory ARB line (required)
-   * "rst" : dedicated device reset line (optional)
- - #sound-dai-cells: must be 0.
-+- amlogic,fifo-depth: The size of the controller's fifo in bytes. This
-+  		      is useful for determining certain configuration such
-+		      as the flush threshold of the fifo
- 
- Example of FRDDR A on the A113 SoC:
- 
-@@ -27,4 +30,5 @@ frddr_a: audio-controller@1c0 {
- 	interrupts = <GIC_SPI 88 IRQ_TYPE_EDGE_RISING>;
- 	clocks = <&clkc_audio AUD_CLKID_FRDDR_A>;
- 	resets = <&arb AXG_ARB_FRDDR_A>;
-+	fifo-depth = <512>;
- };
--- 
-2.20.1
-
+But again it never will.
