@@ -2,78 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 55AFA125665
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:18:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B47BC12567C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:18:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfLRWSH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 17:18:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfLRWSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 17:18:07 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36D63218AC;
-        Wed, 18 Dec 2019 22:18:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576707486;
-        bh=xhXZ+35S+/6cI1WWLxRqDqVB+Krevd61uwH4joVkI+Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O08qVggBfYFX7mdzqneUUMrtP8xNId4jbqmESqBDwYUUX3GQKLvJc9Tc3uf5MXvet
-         YEQ0XBPl8A0jLwLu4r7wd1Jsbj4fiDXw0WD5pHhTEV4r2dtj+HgltfdRHawWdXTZhZ
-         w+u1QRxMDDARMOhd6brItV7mj6s/du1DOpjSywN4=
-Date:   Wed, 18 Dec 2019 23:18:04 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:DRM DRIVERS FOR ALLWINNER A10" 
-        <dri-devel@lists.freedesktop.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH 1/1] drm/sun4i: hdmi: Remove duplicate cleanup calls
-Message-ID: <20191218221804.5nlobcy2bcxvlsr5@gilmour.lan>
-References: <20191217124632.20820-1-stefan@olimex.com>
+        id S1726744AbfLRWSm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 17:18:42 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43255 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfLRWSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 17:18:39 -0500
+Received: by mail-oi1-f195.google.com with SMTP id x14so2026621oic.10;
+        Wed, 18 Dec 2019 14:18:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/4DCBGTzV25UqwiiGbHriQAr3E9Rn3IXXhGkvh3a7hY=;
+        b=BREEZcCPj36BE8OL53AQ3mt3dRIZkN/CTNHC+FjFicSGOusz39qUsKLKrNHWZ98UHa
+         sMAxcoMbWDN5vQApNbkN4OxhLhdFozrJ/y8LTFc072XePZHeCuB4Gxc9/0V0YzXF0ejA
+         eH/UehlU8HR7v+8xcgV0qbdBnwLgTxDKGMlx9L3TewCBgKl4oDizA8xA/6SqywXSILMV
+         I1AFUOPJlRhGIOFpc0Csso+sAh4AiWoTnls0toG5L2NQQDtOVtvAFQoT5YvWeW2wJHT9
+         jpULjMV0CbZGHYLSx0fWIT9ljkVXI5BuUZFLzSNanTvbLcXfmrP4MjcLxTAgshlua4rA
+         DV9w==
+X-Gm-Message-State: APjAAAU39tVsW9QaB7k0Bb2WK5ElDAvu2focxUvBWDDqAzrkz7TWg9PM
+        nVy3ZrwROwyH63yE0nX+5Q==
+X-Google-Smtp-Source: APXvYqxn0yvz4TRVwtiUKNKpafKpf6Hjnbe2ieMd81LDvcEqkQUy8kwzMvieUr8SBs9uriNVboNWpw==
+X-Received: by 2002:aca:f305:: with SMTP id r5mr1618542oih.174.1576707518439;
+        Wed, 18 Dec 2019 14:18:38 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v25sm413787ote.61.2019.12.18.14.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 14:18:37 -0800 (PST)
+Date:   Wed, 18 Dec 2019 16:18:36 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        mark.rutland@arm.com, paul@crapouillou.net,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, 2374286503@qq.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: I2C: Add X1000 bindings.
+Message-ID: <20191218221836.GA24317@bogus>
+References: <1576570450-122556-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1576570450-122556-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="t3hsvrwjuxfiwifc"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191217124632.20820-1-stefan@olimex.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1576570450-122556-3-git-send-email-zhouyanjie@wanyeetech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 17 Dec 2019 16:14:09 +0800, =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= wrote:
+> Add the I2C bindings for the X1000 Soc from Ingenic.
+> 
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> ---
+> 
+> Notes:
+>     v1->v2:
+>     No change.
+>     
+>     v2->v3:
+>     No change.
+> 
+>  Documentation/devicetree/bindings/i2c/i2c-jz4780.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
---t3hsvrwjuxfiwifc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Dec 17, 2019 at 02:46:32PM +0200, Stefan Mavrodiev wrote:
-> When the HDMI unbinds drm_connector_cleanup() and drm_encoder_cleanup()
-> are called. This also happens when the connector and the encoder are
-> destroyed. This double call triggers a NULL pointer exception.
->
-> The patch fixes this by removing the cleanup calls in the unbind
-> function.
->
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-
-Added a fixes tag, and cc'd stable, and applied, thanks!
-Maxime
-
---t3hsvrwjuxfiwifc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfqlmwAKCRDj7w1vZxhR
-xZ3vAP9s6v4QB4Gp5qZQbl7J9vhz9/z9g/OiEFIVY3exwU1eGQD+Kd9eK1IzBZNQ
-jnb58LSELiAKgpGxPmoTsqILx6OCng0=
-=8IeF
------END PGP SIGNATURE-----
-
---t3hsvrwjuxfiwifc--
+Acked-by: Rob Herring <robh@kernel.org>
