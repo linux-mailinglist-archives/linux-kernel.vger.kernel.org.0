@@ -2,129 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3F461256FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:36:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 554B71256D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfLRWgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 17:36:01 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:40136 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbfLRWf6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 17:35:58 -0500
-Received: by mail-pj1-f65.google.com with SMTP id bg7so1047327pjb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 14:35:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ac+GRDMFPcxFMKgFQ0+PN5ep2CIAGQOVje6d76UBFmU=;
-        b=bJT2Wk+hjANwW4eZsDvl3YCIgdw/UuJFo8So+f9iGdvMWtC/AP2mu4QAeyNQg7MIMV
-         NGhDP8H44Vst4zK5cQkKxqoMD36i7D+cxsnYr44KppfZLgtBfFTjveKVD8T8XjE7qsiS
-         hBysUPQrLSAIjCwADAfprx/LC4F6GhQIFQkEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ac+GRDMFPcxFMKgFQ0+PN5ep2CIAGQOVje6d76UBFmU=;
-        b=VnF1i6VXAvkVUUAaa0YFUovcuUObNiRgzQnkcCrTGZP5jmraVkJbui8Kdq4rWI3wtM
-         dcrVMXymJk8yDo3guBZHF44H8mAMzr8eiiB12fn8kkHZrosDv18JPYbEWJ2BnWPIcOU8
-         KW2t4xOAcvhtyxsdjLViDlOeBm9NquwydOf5DU8HIjg81phgwvOd8UfnzCOTLEWF8bz5
-         RhjSfntzRlgStSuFxnG9e8M6D98a5G11CrM7lL6mH89REcOoTReiNgHccTlhs4RAIxBw
-         rssNOvG1P7SuIUL6qSYpcwFHThGCgD7+VWzSz4zSmL02uvQqA4rJrdUEnZBDPgmulMSj
-         3WTA==
-X-Gm-Message-State: APjAAAVHimJYd2DcEdWl//VuUKhV7JQqUpgtQoudNtfrn0zxlXyKj0M8
-        0UqM2y1j7oXzrxJyQ04h7EOuwA==
-X-Google-Smtp-Source: APXvYqx57BZ+CNHb/hjEGlMO3rpcPAYYWODK4qahli7hCHRhAdX55bWmLvl5Xm6VZGLGAG7faFuJjw==
-X-Received: by 2002:a17:902:d881:: with SMTP id b1mr5720489plz.29.1576708557854;
-        Wed, 18 Dec 2019 14:35:57 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id i9sm4709919pfk.24.2019.12.18.14.35.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 14:35:57 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     robdclark@chromium.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, seanpaul@chromium.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jonas Karlman <jonas@kwiboo.se>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v3 0/9] drm/bridge: ti-sn65dsi86: Improve support for AUO B116XAK01 + other DP
-Date:   Wed, 18 Dec 2019 14:35:21 -0800
-Message-Id: <20191218223530.253106-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+        id S1726695AbfLRWfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 17:35:48 -0500
+Received: from mout.web.de ([217.72.192.78]:47691 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726387AbfLRWfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 17:35:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576708539;
+        bh=dWWWJ56z1+3McYaTHm68m10tWxr+xp0Nfa2r5nT/XzM=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Q6e5cOL09ofwA4pprMspntmwlHo2cj3FfkHb+T+fo+Hokc0pgbhwlsaLXBuFqCQFP
+         LUhDsQfBaIFzGK5VnIh/Wsy83NQ3qofTSflXxMyqdGVF+qCCaYhhFdu+YNIkDhIZYd
+         OeMpota4U8gq4SgV8yG+/SR5WuWOoNu0++IohITQ=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from localhost.localdomain ([89.204.137.218]) by smtp.web.de
+ (mrweb103 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 0LeLSr-1huKBy0mzt-00qDza; Wed, 18 Dec 2019 23:35:39 +0100
+From:   Soeren Moch <smoch@web.de>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Soeren Moch <smoch@web.de>, Robin Murphy <robin.murphy@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] arm64: dts: rockchip: RockPro64: enable wifi module at sdio0
+Date:   Wed, 18 Dec 2019 23:35:22 +0100
+Message-Id: <20191218223523.30154-2-smoch@web.de>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191218223523.30154-1-smoch@web.de>
+References: <20191218223523.30154-1-smoch@web.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ROAhb4S5HnA8zC1UxSpS35h6K1uYG1iZNFj0qH1Upg0Ypl38cVT
+ KHwIZnhcqQFTHjIGJmcOSDo6GPae4t640XYWTwIfcSeErvbBsWzKrA5Qv5gYv9XLQTqWrKE
+ xk4sf/ZpyVe4B5+FhRhNGodEQ0RLFB4O/o7+kTwDkPgjAJRf2GV4c7Tt60eL8DnnnIk0UfH
+ 2Z4sU/Ore3JwH8bCkj75A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WjCFWLClYzs=:sfZYTqTROrpebhd/C8nXmJ
+ QulDk9vDBdJGdA9icQsumC87GMwKHlCewB1YaAeB/4yGhAoVIvE91PEDjHkacHNfN+Bt8R3+K
+ atOp8SKjNYkowSZcUOwc1b7LitlCwTSPRjbDbqIQp+yWzBqQ+jlaKKFxnElosmf5nXpdv2FxR
+ 1bUmSUdFPdtw03UFMVvGH/H3jYTMpG4zdUZdbWEvwgT+zpbAhTz8oLMPxjUHkxMpIl3bc/1L3
+ q9Dk3PaKyAuEuMFTsQG+a3S4tTXE1ovS4Jr6Blb3XvjTn8LyqWA2dN2wMxMWan8JNByZoVSOe
+ E9elEXDngX2dXKdyqftHY81xCwKE7vY1gG2qj7IIPScoGK6IPilciBjtaDjyY1YrxcbhgAsoO
+ FuSrPuyS0znVddHgKsWPcOvIhDKVaDykCQOo6E7HYTUVzPLOFrwTj8Pld6nMaQWDz47rNE8IZ
+ wgCnJjq+HJkf9BmZCSalPxaQOugPc/fITL3rM1L94vf015E1W+FkN2qFZBUislon64M1XaW3M
+ acFP+tF7VON/3QJPH0OUwBYtqU/ua8iOqmBeBobDc43xotypdP9pXKe1v5mDc4xQcMNbtYZ+C
+ jmsIWc1mlcBd9S2g0hdkm9VN0cV79Qlw6JRhbsMoOBEcRd8B6aPzUsMLkgSW5j6S/Hbtfqvwf
+ 1BV03R9cWgWsh9L8tmnep9B1Jx4wIZItyguUNzl62Z8OUUYOhwj7F7Iic3HywHcAGTpFk3zA6
+ ntcMz+JJLNnm1FdOf64UPFxEiRr9pQdHsmFMlEYuNuKIXhO93s7Ow2EZiwIi5KEI92fv7gKrx
+ eLQavYqLH9qjjPPm/tAUGPrdqp7qH4xc+jDTTPhhiyxwMJ3JvUZEW/dflmO1JIGZKu+DNmqrI
+ 0i5JbqtMYkwxlYRIgYAvcw9p63JNxiQ/IVkITm8rFBzVmgpzfef/AphctNC4+5yjWqlQ4Frrc
+ JvDGeYgoK4bpUEabFOBKrGz+WqntDCxeVE2I56n5iJebZ7HOK9lohhDxfB+pbgELZZbFfXQZ/
+ GG8qPZhbXUm4ToWK9poMYdSha2RjgtAIi501cPT0B7/Dz2ynI2PptER2Osw90hTJuLd9MJMvQ
+ TANrT+8fuMoqRxsdvbHkOo+SDnhLpKWpyZecFVda9fbObLZZXxtYkX2fa2V+4Car8IxPNA8PY
+ EAcffdHrDmVOBNdda6W+/5Gj1E6Qv9wLTTP6y9UyRMF29esf1ajk4/D5EAGrOwGl9aNbKwxTh
+ sXjd8HgAYpVU2uYZMzWZZgWBFJ8lP5pX3Quo/iw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series contains a pile of patches that was created to support
-hooking up the AUO B116XAK01 panel to the eDP side of the bridge.  In
-general it should be useful for hooking up a wider variety of DP
-panels to the bridge, especially those with lower resolution and lower
-bits per pixel.
+RockPro64 supports an Ampak AP6359SA based wifi/bt combo module.
+The BCM4359/9 wifi controller in this module is connected to sdio0,
+enable this interface.
 
-The overall result of this series:
-* Allows panels with fewer than 4 DP lanes hooked up to work.
-* Optimizes the link rate for panels with 6 bpp.
-* Supports trying more than one link rate when training if the main
-  link rate didn't work.
-* Avoids invalid link rates.
+Use the in-band sdio irq instead of the out-of-band wifi_host_wake_l
+signal since the latter is not working reliably on this board (probably
+due to it's PCIe WAKE# connection).
 
-It's not expected that this series will break any existing users but
-testing is always good.
+Signed-off-by: Soeren Moch <smoch@web.de>
+=2D--
+changes in v3:
+- none
+changes in v2:
+- add comment about irq in commit message
 
-To support the AUO B116XAK01, we could actually stop at the ("Use
-18-bit DP if we can") patch since that causes the panel to run at a
-link rate of 1.62 which works.  The patches to try more than one link
-rate were all developed prior to realizing that I could just use
-18-bit mode and were validated with that patch reverted.
+Not sure where to place exactly the sdio0 node in the dts because
+existing sd nodes are not sorted alphabetically.
 
-These patches were tested on sdm845-cheza atop mainline as of
-2019-12-13 and also on another board (the one with AUO B116XAK01) atop
-a downstream kernel tree.
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+=2D--
+ .../boot/dts/rockchip/rk3399-rockpro64.dts    | 21 ++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
 
-This patch series doesn't do anything to optimize the MIPI link and
-only focuses on the DP link.  For instance, it's left as an exercise
-to the reader to see if we can use the 666-packed mode on the MIPI
-link and save some power (because we could lower the clock rate).
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm6=
+4/boot/dts/rockchip/rk3399-rockpro64.dts
+index 7f4b2eba31d4..9fa92790d6e0 100644
+=2D-- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
+@@ -71,13 +71,6 @@
+ 		clock-names =3D "ext_clock";
+ 		pinctrl-names =3D "default";
+ 		pinctrl-0 =3D <&wifi_enable_h>;
+-
+-		/*
+-		 * On the module itself this is one of these (depending
+-		 * on the actual card populated):
+-		 * - SDIO_RESET_L_WL_REG_ON
+-		 * - PDN (power down when low)
+-		 */
+ 		reset-gpios =3D <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
+ 	};
 
-I am nowhere near a display expert and my knowledge of DP and MIPI is
-pretty much zero.  If something about this patch series smells wrong,
-it probably is.  Please let know and I'll try to fix it.
+@@ -650,6 +643,20 @@
+ 	status =3D "okay";
+ };
 
-Changes in v3:
-- Init rate_valid table, don't rely on stack being 0 (oops).
-- Rename rate_times_200khz to rate_per_200khz.
-- Loop over the ti_sn_bridge_dp_rate_lut table, making code smaller.
-- Use 'true' instead of 1 for bools.
-- Added note to commit message noting DP 1.4+ isn't well tested.
-
-Changes in v2:
-- Squash in maybe-uninitialized fix from Rob Clark.
-- Patch ("Avoid invalid rates") replaces ("Skip non-standard DP rates")
-
-Douglas Anderson (9):
-  drm/bridge: ti-sn65dsi86: Split the setting of the dp and dsi rates
-  drm/bridge: ti-sn65dsi86: zero is never greater than an unsigned int
-  drm/bridge: ti-sn65dsi86: Don't use MIPI variables for DP link
-  drm/bridge: ti-sn65dsi86: Config number of DP lanes Mo' Betta
-  drm/bridge: ti-sn65dsi86: Read num lanes from the DP sink
-  drm/bridge: ti-sn65dsi86: Use 18-bit DP if we can
-  drm/bridge: ti-sn65dsi86: Group DP link training bits in a function
-  drm/bridge: ti-sn65dsi86: Train at faster rates if slower ones fail
-  drm/bridge: ti-sn65dsi86: Avoid invalid rates
-
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 259 +++++++++++++++++++++-----
- 1 file changed, 216 insertions(+), 43 deletions(-)
-
--- 
-2.24.1.735.g03f4e72817-goog
++&sdio0 {
++	bus-width =3D <4>;
++	cap-sd-highspeed;
++	cap-sdio-irq;
++	disable-wp;
++	keep-power-in-suspend;
++	mmc-pwrseq =3D <&sdio_pwrseq>;
++	non-removable;
++	pinctrl-names =3D "default";
++	pinctrl-0 =3D <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++	status =3D "okay";
++};
++
+ &sdmmc {
+ 	bus-width =3D <4>;
+ 	cap-sd-highspeed;
+=2D-
+2.17.1
 
