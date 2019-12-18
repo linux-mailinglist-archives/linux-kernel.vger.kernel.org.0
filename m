@@ -2,165 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 96534124ADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:11:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A6D68124AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:12:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfLRPLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:11:32 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40652 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbfLRPLY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:11:24 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u1so2534777ljk.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:11:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0o452dtZDcKvnVAQ8Kj3Gm0Xbx2pj/IYUiQTJzQO9gE=;
-        b=Fkg0mQdKOLV1WZE8Z1XxbvNcqJdb67rz/Q/NjePD7qIU9ny1yPyJKOOfsOOA4OEkL5
-         u+WyT9wy7radyNji9r6O0NL01H1e+aRCp58B6flFwf4fmwkGrGcLEA71Xm7XdDJu9GCh
-         NowL3CKkqunsqL0t1gWO2GDCHsWK7l81/dWd7viQeajhILnoEgRkGoTYqA+M8YJN+p0m
-         /aiV9wMWADePF00JXxJUjmUrnTyi/mWhUAvDUJCJypvfxj0NKsQhgC5Ui4jhFwGIUnd8
-         yZmidC4lSdm9/1PCTq2HFveGp/PVULv2K8U0MH2xtFCdG4H6z4GEhB12BFgYynk34v3W
-         79nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0o452dtZDcKvnVAQ8Kj3Gm0Xbx2pj/IYUiQTJzQO9gE=;
-        b=rwcu6Gp430kATodFP0gHPLiSXKGXIJtas2BG80Sse/rDx8oYwEAvHlSC3xytikbygv
-         +Jti0iDgrmlElxuWPxO/+HN21VBIkQqmDrtQiyP+n416bwxDNKVII2tWWdmiR8THbi5o
-         EaSdmGdYz87ra6l6G1dhB2mti6CxD4qEnNxX2A5Y6Jc1H+Q7cbE86DASFwzqxrN2RnZ3
-         8Jb8Znh9YzrRjExx0YEf1freTNXIZnx+9KzofoFS7ySzYhTLXDSpKM1eKUS1A9MnTzUH
-         8uJGpBFAA7vFz4Z/SVuJAOI0o2GCR08E7Rwn5Sx2bH5diLPll3PgQYI+CvTjjbYQQ2OZ
-         RQ8Q==
-X-Gm-Message-State: APjAAAVA54dxg0QAxH9Ip8z3CFAA7quyYoFf7qZHeF3ZlNin5gE7jXAg
-        hopYlN8UdqYpIsuKBqTVThR9Pw==
-X-Google-Smtp-Source: APXvYqwoxIn9nfRFjJUPqQwR+khLXfWKms5b5AuArgOziPlcTFDSZdYBhtuiosiiZzJKNtWPyEXDzg==
-X-Received: by 2002:a2e:58c:: with SMTP id 134mr2221234ljf.12.1576681882374;
-        Wed, 18 Dec 2019 07:11:22 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id i4sm1736919lji.0.2019.12.18.07.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:11:20 -0800 (PST)
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 934571012CF; Wed, 18 Dec 2019 18:11:21 +0300 (+03)
-Date:   Wed, 18 Dec 2019 18:11:21 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Magnus Karlsson <magnus.karlsson@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        kirill.shutemov@linux.intel.com, justin.he@arm.com,
-        linux-mm@kvack.org,
-        syzbot <syzbot+9301f2f33873407d5b33@syzkaller.appspotmail.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        bpf <bpf@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, hawk@kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Jonathan Lemon <jonathan.lemon@gmail.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        linux-kernel@vger.kernel.org,
-        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        syzkaller-bugs@googlegroups.com, Yonghong Song <yhs@fb.com>
-Subject: Re: WARNING in wp_page_copy
-Message-ID: <20191218151121.nllpaaq4v5yictib@box>
-References: <000000000000a6f2030598bbe38c@google.com>
- <0000000000000e32950599ac5a96@google.com>
- <20191216150017.GA27202@linux.fritz.box>
- <CAJ8uoz3nCxcmnPonNunYhswskidn=PnN8=4_jXW4B=Xu4k_DoQ@mail.gmail.com>
- <CAJ8uoz312gDBGpqOJiKqrXn456sy6u+Gnvcvv_+0=EimasRoUw@mail.gmail.com>
- <20191217154031.GI5624@arrakis.emea.arm.com>
- <CAJ8uoz3yDK8sEE05cKA8siBi-Dc0wtbe1-zYgbz_-pd5t69j8w@mail.gmail.com>
- <20191217223808.GA14982@mbp>
+        id S1727551AbfLRPL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:11:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51290 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727021AbfLRPLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 10:11:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A01B4AD45;
+        Wed, 18 Dec 2019 15:11:53 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH v12 2/5] xenbus/backend: Protect xenbus
+ callback with lock
+To:     SeongJae Park <sjpark@amazon.com>
+Cc:     axboe@kernel.dk, sj38.park@gmail.com, konrad.wilk@oracle.com,
+        pdurrant@amazon.com, SeongJae Park <sjpark@amazon.de>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        xen-devel@lists.xenproject.org, roger.pau@citrix.com
+References: <20191218144025.24277-1-sjpark@amazon.com>
+From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Message-ID: <7edb266e-3185-5adc-1121-1b61feaf5a34@suse.com>
+Date:   Wed, 18 Dec 2019 16:11:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217223808.GA14982@mbp>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20191218144025.24277-1-sjpark@amazon.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 10:38:09PM +0000, Catalin Marinas wrote:
-> On Tue, Dec 17, 2019 at 04:57:34PM +0100, Magnus Karlsson wrote:
-> > On Tue, Dec 17, 2019 at 4:40 PM Catalin Marinas <catalin.marinas@arm.com> wrote:
-> > > On Tue, Dec 17, 2019 at 02:27:22PM +0100, Magnus Karlsson wrote:
-> > > > On Mon, Dec 16, 2019 at 4:10 PM Magnus Karlsson
-> > > > <magnus.karlsson@gmail.com> wrote:
-> > > > > On Mon, Dec 16, 2019 at 4:00 PM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> > > > > > On Sat, Dec 14, 2019 at 08:20:07AM -0800, syzbot wrote:
-> > > > > > > syzbot has found a reproducer for the following crash on:
-> > > > > > >
-> > > > > > > HEAD commit:    1d1997db Revert "nfp: abm: fix memory leak in nfp_abm_u32_..
-> > > > > > > git tree:       net-next
-> > > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1029f851e00000
-> > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=cef1fd5032faee91
-> > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=9301f2f33873407d5b33
-> > > > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119d9fb1e00000
-> > > > > > >
-> > > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > > > > Reported-by: syzbot+9301f2f33873407d5b33@syzkaller.appspotmail.com
-> > > > > >
-> > > > > > Bjorn / Magnus, given xsk below, PTAL, thanks!
-> > > > >
-> > > > > Thanks. I will take a look at it right away.
-> > > > >
-> > > > > /Magnus
-> > > >
-> > > > After looking through the syzcaller report, I have the following
-> > > > hypothesis that would dearly need some comments from MM-savy people
-> > > > out there. Syzcaller creates, using mmap, a memory area that is
-> > >
-> > > I guess that's not an anonymous mmap() since we don't seem to have a
-> > > struct page for src in cow_user_page() (the WARN_ON_ONCE path). Do you
-> > > have more information on the mmap() call?
-> > 
-> > I have this from the syzcaller logs:
-> > 
-> > mmap(&(0x7f0000001000/0x2000)=nil, 0x2000, 0xfffffe, 0x12, r8, 0x0)
-> > getsockopt$XDP_MMAP_OFFSETS(r8, 0x11b, 0x7, &(0x7f0000001300),
-> > &(0x7f0000000100)=0x60)
-> > 
-> > The full log can be found at:
-> > https://syzkaller.appspot.com/x/repro.syz?x=119d9fb1e00000
+On 18.12.19 15:40, SeongJae Park wrote:
+> On Wed, 18 Dec 2019 14:30:44 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
 > 
-> Thanks. Prior to mmap, we have:
+>> On 18.12.19 13:42, SeongJae Park wrote:
+>>> On Wed, 18 Dec 2019 13:27:37 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
+>>>
+>>>> On 18.12.19 11:42, SeongJae Park wrote:
+>>>>> From: SeongJae Park <sjpark@amazon.de>
+>>>>>
+>>>>> 'reclaim_memory' callback can race with a driver code as this callback
+>>>>> will be called from any memory pressure detected context.  To deal with
+>>>>> the case, this commit adds a spinlock in the 'xenbus_device'.  Whenever
+>>>>> 'reclaim_memory' callback is called, the lock of the device which passed
+>>>>> to the callback as its argument is locked.  Thus, drivers registering
+>>>>> their 'reclaim_memory' callback should protect the data that might race
+>>>>> with the callback with the lock by themselves.
+>>>>
+>>>> Any reason you don't take the lock around the .probe() and .remove()
+>>>> calls of the backend (xenbus_dev_probe() and xenbus_dev_remove())? This
+>>>> would eliminate the need to do that in each backend instead.
+>>>
+>>> First of all, I would like to keep the critical section as small as possible.
+>>> With my small test, I could see slightly increasing memory pressure as the
+>>> critical section becomes wider.  Also, some drivers might share the data their
+>>> 'reclaim_memory' callback touches with other functions.  I think only the
+>>> driver owners can know what data is shared and what is the minimum critical
+>>> section to protect it.
+>>
+>> But this kind of serialization can still be added on top.
 > 
-> r8 = socket$xdp(0x2c, 0x3, 0x0)
+> I'm still worrying about the unnecessarily large critical section, but it might
+> be small enough to be ignored.  If no others have strong objection, I will take
+> the lock around the '->probe()' and '->remove()'.
+
+The lock is per device, so contention is possible only for the
+reclaim case. In case probe or remove are running reclaim will have
+nothing to free (in probe case nothing is allocated yet, in remove
+case everything should be freed anyway). So the larger critical section
+is no problem at all IMO.
+
+>> And with the trylock in the reclaim path I believe you can even avoid
+>> the irq variants of the spinlock. But I might be wrong, so you should
+>> try that with lockdep enabled. If it is working there is no harm done
+>> when making the critical section larger, as memory allocations will
+>> work as before.
 > 
-> So basically we have an mmap() on a socket descriptor with a subsequent
-> copy_to_user() writing this range. We do we even end up doing CoW on
-> such mapping?
+> Yes, you're right.  I will try test with lockdep.
 
-It's a non-readable private mapping of a socket. Any write to it would
-cause CoW.
+Thanks,
 
-BTW, how useful memory mapped sockets are? I don't know much about
-networking, but it looks like a rarely used feature that substantially
-increase attack surface. CAP_NET_RAW is easy to come by nowadays with
-user-ns.
 
-Few years back I was able to modify zero page via memory mapped socket...
+Juergen
 
-> Maybe the socket code should also implement the .fault()
-> file op. It needs more digging.
-
-Caller definitely does a weird thing here that doesn't suppose to produce
-a meaningful result. I think we can keep the warning for now just to make
-sure we don't have any more-or-less legitimate obscure use-case.
-
-But ultimately this WARN_ON_ONCE() has to be upgraded to SIGSEGV or
-SIGBUS. Pretending that we do anything meaningful here by clearing the
-page unlikely does anything useful to a user.
-
--- 
- Kirill A. Shutemov
