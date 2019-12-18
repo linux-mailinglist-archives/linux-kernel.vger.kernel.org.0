@@ -2,204 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE61123B6B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:18:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23866123B70
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726496AbfLRASH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 19:18:07 -0500
-Received: from mail-co1nam11on2048.outbound.protection.outlook.com ([40.107.220.48]:2145
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725946AbfLRASH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 19:18:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DWqcOv/d6rqzcCBL9/aM9v3vfr+o7rJyx0zmvzSVpHalHJnid+2CTvSizAhGbbwHWwq6o1QDSZGrGxxc7gdUkaiiVJ24orrUxJicOJmcXHOZsQd9l+NTkwxf662mjBGFEpHihB/gr3pd6lJoWU1Z4IG3Gbcn+pwrn3ICQpBvF0CdgYLiJLTO20C7QTRsVSquNnM4frFSxbs26OJU+vcrWX9DVKI1Ue+JWrQKocn6jor+Vx+y1E3MMAP33G1vx+ycMIt8hBnnUl3bvhqqnRvY96iTACJ5krQjpAng/HiTys8Py43sHV1A51Enzw8Lwerl7tagKOpIWf31V6mnVLrJew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HYudlir81P9YYIWw0q0zdfvqg0TRBm5/if+pndPW44=;
- b=EM3ur4yXNnnKNOYfWTVL4akjqZ4mHwQmE/gNitfC0ZKaFfRNkHnasa7puVzpKNfsFAxG8NyG8hdL1m72+w+OTF9ua8xVwEFQuJbGS4JDN+6MQNKTOAcJPmCWB/tqFwFo+kkQG/AkMyDVkzbklA8sb0yyYrHwTdUhYaUH0ib40SfnY+OmRzhPFLFRygUNkBsIfxW6yab6/NWzIUdLEFifLw5/FGZ3LOR6qI1M2kQcWHxwbEZtUJ5di6F8qGTFXtWm6sp1IwiOIufWo/ZDZcVH3TjBZRcHuqNMnau0HM/nk9QxBHqCTt7KymKI73slFAJ1albD82lzq7yT7y77QEqb/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1726613AbfLRATE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 19:19:04 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40449 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725940AbfLRATD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 19:19:03 -0500
+Received: by mail-pj1-f67.google.com with SMTP id n67so11541pjb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 16:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9HYudlir81P9YYIWw0q0zdfvqg0TRBm5/if+pndPW44=;
- b=pPgaQxqtldpacqFWTOm/OfyV79Yv3u5VXEQIeSjkoFcmdcHp/CECD+9o2kYmaumC+40OZSYEU2tzNw4Iz+94oLs7n9ZcLhRNTWUenqLBQnEaHFuMX6OUIS6ex9WEp0R1x5G95s/RULZ9OKDldTQ/ZyxytNsi1ivbo5ZRUfNeOPo=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB2342.namprd12.prod.outlook.com (52.132.208.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.14; Wed, 18 Dec 2019 00:18:02 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::6d85:d029:53c0:ba61]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::6d85:d029:53c0:ba61%5]) with mapi id 15.20.2538.019; Wed, 18 Dec 2019
- 00:18:02 +0000
-Subject: Re: [RFC PATCH v3 1/6] crypto: ccp - rename psp-dev files to sev-dev
-To:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc:     Nimesh Easow <Nimesh.Easow@amd.com>,
-        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <cover.1575438845.git.Rijo-john.Thomas@amd.com>
- <57c6797e99b1f62ff13222c8f0ee4687e8617a48.1575438845.git.Rijo-john.Thomas@amd.com>
-From:   Gary R Hook <gary.hook@amd.com>
-Message-ID: <78c28a44-dbec-07c5-9f9b-133d4d9df5f0@amd.com>
-Date:   Tue, 17 Dec 2019 18:18:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-In-Reply-To: <57c6797e99b1f62ff13222c8f0ee4687e8617a48.1575438845.git.Rijo-john.Thomas@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN2PR01CA0045.prod.exchangelabs.com (2603:10b6:800::13) To
- DM5PR12MB1449.namprd12.prod.outlook.com (2603:10b6:4:10::14)
-MIME-Version: 1.0
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 6ce79aa8-ca93-46dd-3ba1-08d7834fbebd
-X-MS-TrafficTypeDiagnostic: DM5PR12MB2342:|DM5PR12MB2342:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM5PR12MB23425786BD955118D1F9F952FD530@DM5PR12MB2342.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 0255DF69B9
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(136003)(376002)(39860400002)(346002)(189003)(199004)(6486002)(8936002)(2906002)(316002)(81166006)(81156014)(52116002)(8676002)(110136005)(66556008)(66476007)(5660300002)(4326008)(36756003)(6512007)(66946007)(86362001)(478600001)(31686004)(186003)(26005)(6506007)(54906003)(31696002)(53546011)(2616005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2342;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ydxieSke7mLMlYFpMEBAoiepK98LNV3FG5xpL145q9sqYTEPS5Y/gjqxcoXNWd6SM49JiiLcQZRzQbzBlYIB9w7IWeOPb6bMAwKBDRFgqk8i16H4nDv/UqN7vc5HWP2PiX1wbnK5siX0SCxaM7SFnpMR7zF8ylyeGZbgv0WdldKm0nkfNayWX3utbECZJ5i1Fvv7Idfm78QVJx1tNNoOkTfCNyj8gXWvLMlrqnNIvoJAmr6GfbbaHhPPEVWIWoZN8BlhUCOcKqrqLuoI94DvSExZMnscJl0nWInaYpjctiWNHJHEE3kE3SxWT4nsHvh30U4djr+YumAJ3zLNu22GdRpJE4V2FqbjSwE8zDn0ahLqiYXNXtrn4t54co1IH43HFVwrwjQfj2By9bw52EgOiIgJo/13GZKVkMiPC7PTMHD9soZ08KWBO0tnw8DnRxHa
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce79aa8-ca93-46dd-3ba1-08d7834fbebd
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Dec 2019 00:18:02.4341
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nmKIQOewhP9tgvCHBJQ/v0zwwpVvgK6tNB+XyEv2PKWzsKYrs2vutvwLHXaRUjOw
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2342
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=oCKoHe1lxe0PuESdkrD15D9EeMySLR5I9RS5subxYv0=;
+        b=OegfkyV7Z/WtDb+kzEq9Eg6X6wokHNhhjYvhBDnSMS2oW/lTMraChWNqKy+XbjcIIY
+         2MfUEgry3rg6wb+bxA+6yoLR4OrGRhso5ZNYnT0lxtpapggxOTQz8KvUWxwKpYORe89i
+         Jgt3l36325rdKDMHTTa0ALUkIi1bMVszC0+Ts0a4HAE98jJ4RCmJcKNOXdvDo436tpvl
+         g9vVGNdoQCXeNgxwNCNZzu8xIgSt32rFWKtjcqKL4Hd/iYRsRi5a4fLrxjrK5LYWs11q
+         9qCa4vihhgMh80xY1DQY9w2T5tN88/Y1+w2lQuvATVGqc9VumhJ2JRawYCIOqd+yK64I
+         +SaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oCKoHe1lxe0PuESdkrD15D9EeMySLR5I9RS5subxYv0=;
+        b=CnOWEOMy9UcK53oMF7SXzWYhQaHMhW6rsWVdr72qVpPv+xAnQW+W9GrYAO7xB5lfjr
+         HGkUXhqcqAdQ5LtOWp6x9t7tqc9mevuYKOljG6xBIfw0fugDSSmeK1cVzfuSn/TJjFHV
+         S1VE2tVXGO3ETWQdiDWU+sUhMFw4rcSj1+gIGUbkDe0JA4jQi0tEQItTf40eQ/TrazOI
+         zL6Mx7afZKzkNaQATAF3cBii7gI1KdIST8tXPCIc32FYHzSVshYjAH762DrFd9agLZUE
+         wZ/GbRvzx6fxA4WNeqkZpuNwAkxXmXnns8kknzoPqxwpoNLG3yk2H+/XYYS4t597BTej
+         PimA==
+X-Gm-Message-State: APjAAAVyFmyi2lvo93pe5r3ZkM+uFr3DOucSCEtoC5cC2NH/tLsEVgCL
+        9s3jdUbd7iyZWXe2HuaZIKy5Yg==
+X-Google-Smtp-Source: APXvYqxB1waYmvRr3KkK8PGRDfUSYKoGNfyfaAZskT8PdRB1quQidke6t4GMeDoXYUzsHkF1aXKe1g==
+X-Received: by 2002:a17:90a:e98d:: with SMTP id v13mr11895pjy.107.1576628342864;
+        Tue, 17 Dec 2019 16:19:02 -0800 (PST)
+Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
+        by smtp.gmail.com with ESMTPSA id k190sm152197pga.73.2019.12.17.16.19.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Dec 2019 16:19:01 -0800 (PST)
+From:   Olof Johansson <olof@lixom.net>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        patches@armlinux.co.uk, Olof Johansson <olof@lixom.net>
+Subject: [PATCH] ARM: mm: mark free_memmap as __init
+Date:   Tue, 17 Dec 2019 16:18:49 -0800
+Message-Id: <20191218001849.41415-1-olof@lixom.net>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 12:18 AM, Rijo Thomas wrote:
-> This is a preliminary patch for creating a generic PSP device driver
-> file, which will have support for both SEV and TEE (Trusted Execution
-> Environment) interface.
-> 
-> This patch does not introduce any new functionality, but simply renames
-> psp-dev.c and psp-dev.h files to sev-dev.c and sev-dev.h files
-> respectively.
-> 
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Jens Wiklander <jens.wiklander@linaro.org>
-> Co-developed-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-> Signed-off-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-> Signed-off-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
-> ---
->   drivers/crypto/ccp/Makefile                 | 2 +-
->   drivers/crypto/ccp/{psp-dev.c => sev-dev.c} | 6 +++---
->   drivers/crypto/ccp/{psp-dev.h => sev-dev.h} | 8 ++++----
->   drivers/crypto/ccp/sp-pci.c                 | 2 +-
->   4 files changed, 9 insertions(+), 9 deletions(-)
->   rename drivers/crypto/ccp/{psp-dev.c => sev-dev.c} (99%)
->   rename drivers/crypto/ccp/{psp-dev.h => sev-dev.h} (90%)
-> 
-> diff --git a/drivers/crypto/ccp/Makefile b/drivers/crypto/ccp/Makefile
-> index 6b86f1e..9dafcf2 100644
-> --- a/drivers/crypto/ccp/Makefile
-> +++ b/drivers/crypto/ccp/Makefile
-> @@ -8,7 +8,7 @@ ccp-$(CONFIG_CRYPTO_DEV_SP_CCP) += ccp-dev.o \
->   	    ccp-dmaengine.o
->   ccp-$(CONFIG_CRYPTO_DEV_CCP_DEBUGFS) += ccp-debugfs.o
->   ccp-$(CONFIG_PCI) += sp-pci.o
-> -ccp-$(CONFIG_CRYPTO_DEV_SP_PSP) += psp-dev.o
-> +ccp-$(CONFIG_CRYPTO_DEV_SP_PSP) += sev-dev.o
->   
->   obj-$(CONFIG_CRYPTO_DEV_CCP_CRYPTO) += ccp-crypto.o
->   ccp-crypto-objs := ccp-crypto-main.o \
-> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/sev-dev.c
-> similarity index 99%
-> rename from drivers/crypto/ccp/psp-dev.c
-> rename to drivers/crypto/ccp/sev-dev.c
-> index 5ff842c..9a8c523 100644
-> --- a/drivers/crypto/ccp/psp-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -1,8 +1,8 @@
->   // SPDX-License-Identifier: GPL-2.0-only
->   /*
-> - * AMD Platform Security Processor (PSP) interface
-> + * AMD Secure Encrypted Virtualization (SEV) interface
->    *
-> - * Copyright (C) 2016,2018 Advanced Micro Devices, Inc.
-> + * Copyright (C) 2016,2019 Advanced Micro Devices, Inc.
->    *
->    * Author: Brijesh Singh <brijesh.singh@amd.com>
->    */
-> @@ -22,7 +22,7 @@
->   #include <linux/firmware.h>
->   
->   #include "sp-dev.h"
-> -#include "psp-dev.h"
-> +#include "sev-dev.h"
->   
->   #define DEVICE_NAME		"sev"
->   #define SEV_FW_FILE		"amd/sev.fw"
-> diff --git a/drivers/crypto/ccp/psp-dev.h b/drivers/crypto/ccp/sev-dev.h
-> similarity index 90%
-> rename from drivers/crypto/ccp/psp-dev.h
-> rename to drivers/crypto/ccp/sev-dev.h
-> index dd516b3..e861647 100644
-> --- a/drivers/crypto/ccp/psp-dev.h
-> +++ b/drivers/crypto/ccp/sev-dev.h
-> @@ -2,13 +2,13 @@
->   /*
->    * AMD Platform Security Processor (PSP) interface driver
->    *
-> - * Copyright (C) 2017-2018 Advanced Micro Devices, Inc.
-> + * Copyright (C) 2017-2019 Advanced Micro Devices, Inc.
+As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
+forcibly"), free_memmap() might not always be inlined, and thus is
+triggering a section warning:
 
-Minor nit, for next time: the copyright dates should be <first 
-year>,<current year>. I got this wrong the last time I updated it. :-(
+WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
 
-The change above, for sev-dev.c, is correct.
+Mark it as __init, since the faller (free_unused_memmap) already is.
 
->    *
->    * Author: Brijesh Singh <brijesh.singh@amd.com>
->    */
->   
-> -#ifndef __PSP_DEV_H__
-> -#define __PSP_DEV_H__
-> +#ifndef __SEV_DEV_H__
-> +#define __SEV_DEV_H__
->   
->   #include <linux/device.h>
->   #include <linux/spinlock.h>
-> @@ -64,4 +64,4 @@ struct psp_device {
->   	u8 build;
->   };
->   
-> -#endif /* __PSP_DEV_H */
-> +#endif /* __SEV_DEV_H */
-> diff --git a/drivers/crypto/ccp/sp-pci.c b/drivers/crypto/ccp/sp-pci.c
-> index b29d2e6..473cf14 100644
-> --- a/drivers/crypto/ccp/sp-pci.c
-> +++ b/drivers/crypto/ccp/sp-pci.c
-> @@ -22,7 +22,7 @@
->   #include <linux/ccp.h>
->   
->   #include "ccp-dev.h"
-> -#include "psp-dev.h"
-> +#include "sev-dev.h"
->   
->   #define MSIX_VECTORS			2
->   
-> 
+Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
+Signed-off-by: Olof Johansson <olof@lixom.net>
+---
+KernelVersion: v5.5-rc2
+
+ arch/arm/mm/init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 3ef204137e732..054be44d1cdb4 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -324,7 +324,7 @@ static inline void poison_init_mem(void *s, size_t count)
+ 		*p++ = 0xe7fddef0;
+ }
+ 
+-static inline void
++static inline void __init
+ free_memmap(unsigned long start_pfn, unsigned long end_pfn)
+ {
+ 	struct page *start_pg, *end_pg;
+-- 
+2.11.0
 
