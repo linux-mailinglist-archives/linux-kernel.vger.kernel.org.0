@@ -2,147 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F459124EE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9A0124EFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:20:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfLRRQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 12:16:16 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:45776 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfLRRQP (ORCPT
+        id S1727205AbfLRRUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 12:20:16 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:42596 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726939AbfLRRUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 12:16:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id b9so1587973pgk.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 09:16:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=rsgLsLg/wxtAj9kO60kIoIvi8Gvu9M5kT2kkH8nAkwg=;
-        b=lHIItX6fuQmi0XhrOTbnRwTehxKFE1FN1sEZ7rdOae4VBHmNGUVQOn2gyjtOyFklAr
-         gqKuvEZeJzngwhbMGoFTfkbZb6WE0VfIzvVfkWthnU7FX2JVq0XmJZzl1zVaP9gIIriL
-         Gyp2tfl1CeCw2U/LzXGQqnTHGL1VlOaK8W7bs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=rsgLsLg/wxtAj9kO60kIoIvi8Gvu9M5kT2kkH8nAkwg=;
-        b=YsZK56ocoSfy90AHGOARtZVrP9aIBIl2dizI5IH3W1lNhPKZTyTogmdApMYwebeKg0
-         DMxPIPKahsjbky4N8wUMaVBg8KrjA1JI3gA/RSGmYxVt3nGnk88v9rnXPmQhEKToieEO
-         mzQVItWZ/BnjstR7HDnHfHlehPq8ZdFr7e50Qp8o3eSvD2MNM1OygzfYu1x7jW5/5sI4
-         NRfsIwaGrzEfFIp1jwEgkFGiATo/nlasUAkUxqPFg2mCVEmeWDfaoGkMqJ1G1npmFEaI
-         DGqN4Of4W7bKe669NhX3OdiDxi/Dc5W5qPKYjJzgHPu7AvAj386eNIWdSerUWW0yrbu1
-         XIxQ==
-X-Gm-Message-State: APjAAAUs0xODRApKpPhfna9/rD+IkS5/7dnB6MQLLY8eEEvKxK/NH1SL
-        V6dqC/WNbriFuVDmSqpL0Fv+pA==
-X-Google-Smtp-Source: APXvYqxDCuD9IVb9t3S3rGH4Y9Oz7ptzoyvBZqNsgpOzpElb+EU0ZowiBrYWJ5I1PdvNnIBlRp+7nw==
-X-Received: by 2002:aa7:93c1:: with SMTP id y1mr2894684pff.200.1576689374963;
-        Wed, 18 Dec 2019 09:16:14 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t30sm3894117pgl.75.2019.12.18.09.16.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 09:16:13 -0800 (PST)
-Date:   Wed, 18 Dec 2019 09:16:12 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Paul Burton <paulburton@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-Subject: [PATCH] MIPS: BPF: Use sizeof_field() instead of FIELD_SIZEOF()
-Message-ID: <201912180915.9878694B@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Wed, 18 Dec 2019 12:20:15 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBIHJOOR034038;
+        Wed, 18 Dec 2019 17:19:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=r3/Nxdgw7C9i3Ps59Nix06XSuTi4MWt2cP5VOrIiwCU=;
+ b=UBk74vskXkgoq8ER+tkG3c6lpQdMTtYJqBlWkhoRUgnSO61j/YHqQe6xHYy9KyzXxIma
+ xed7RROU/HWJB5M9yNpphvTQ3LNd0g84kKVVkWDso1qggLct7eBY8ZgPMTkYiIi5wc/c
+ k5ok6SvH6LgXgFiBUztRUTfwSPi8jOOBFx2wo1qlgxm+9OF3UUsTwJ57iQ0emSNSGKWH
+ 0OCnrmnamrM3oicXX9iy8k9/RkfXAEXblwmN0lBoAuMkgkhXS5uihia8djUZMPkx2Nxq
+ qCPyHmLQvZvhf1EDOi7G3CC2camhTJGNt1V5VQS3bPEzg00kz+auMZeiSP+UxYEpGNE2 6g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2wvq5uq5yq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Dec 2019 17:19:33 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBIHJMVD191361;
+        Wed, 18 Dec 2019 17:19:32 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2wyp4xcs8v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 18 Dec 2019 17:19:32 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBIHIoZk025082;
+        Wed, 18 Dec 2019 17:18:50 GMT
+Received: from dhcp-10-154-159-47.vpn.oracle.com (/10.154.159.47)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Dec 2019 09:18:50 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: Re: [PATCH v6 0/4] support reserving crashkernel above 4G on arm64
+ kdump
+From:   John Donnelly <john.p.donnelly@oracle.com>
+In-Reply-To: <2a97b296-59e7-0a26-84fa-e2ddcd7987b6@huawei.com>
+Date:   Wed, 18 Dec 2019 11:18:48 -0600
+Cc:     tglx@linutronix.de, mingo@redhat.com, catalin.marinas@arm.com,
+        will@kernel.org, james.morse@arm.com, dyoung@redhat.com,
+        bhsharma@redhat.com, horms@verge.net.au, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        guohanjun@huawei.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <11E080AF-28F1-481A-BF16-9C062091D900@oracle.com>
+References: <20190830071200.56169-1-chenzhou10@huawei.com>
+ <2a97b296-59e7-0a26-84fa-e2ddcd7987b6@huawei.com>
+To:     Chen Zhou <chenzhou10@huawei.com>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912180141
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912180141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The FIELD_SIZEOF() macro was redundant, and is being removed from the
-kernel. Since commit c593642c8be0 ("treewide: Use sizeof_field() macro")
-this is one of the last users of the old macro, so replace it.
+HI=20
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- arch/mips/net/bpf_jit.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+SEE INLINE ON A QUESTION :
 
-diff --git a/arch/mips/net/bpf_jit.c b/arch/mips/net/bpf_jit.c
-index 3a0e34f4e615..0af88622c619 100644
---- a/arch/mips/net/bpf_jit.c
-+++ b/arch/mips/net/bpf_jit.c
-@@ -689,7 +689,7 @@ static int build_body(struct jit_ctx *ctx)
- 			emit_load_imm(r_A, k, ctx);
- 			break;
- 		case BPF_LD | BPF_W | BPF_LEN:
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, len) != 4);
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff, len) != 4);
- 			/* A <- len ==> lw r_A, offset(skb) */
- 			ctx->flags |= SEEN_SKB | SEEN_A;
- 			off = offsetof(struct sk_buff, len);
-@@ -1093,7 +1093,7 @@ static int build_body(struct jit_ctx *ctx)
- 		case BPF_ANC | SKF_AD_PROTOCOL:
- 			/* A = ntohs(skb->protocol */
- 			ctx->flags |= SEEN_SKB | SEEN_OFF | SEEN_A;
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff,
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff,
- 						  protocol) != 2);
- 			off = offsetof(struct sk_buff, protocol);
- 			emit_half_load(r_A, r_skb, off, ctx);
-@@ -1118,7 +1118,7 @@ static int build_body(struct jit_ctx *ctx)
- 		case BPF_ANC | SKF_AD_CPU:
- 			ctx->flags |= SEEN_A | SEEN_OFF;
- 			/* A = current_thread_info()->cpu */
--			BUILD_BUG_ON(FIELD_SIZEOF(struct thread_info,
-+			BUILD_BUG_ON(sizeof_field(struct thread_info,
- 						  cpu) != 4);
- 			off = offsetof(struct thread_info, cpu);
- 			/* $28/gp points to the thread_info struct */
-@@ -1137,30 +1137,30 @@ static int build_body(struct jit_ctx *ctx)
- 				   b_imm(prog->len, ctx), ctx);
- 			emit_reg_move(r_ret, r_zero, ctx);
- 			if (code == (BPF_ANC | SKF_AD_IFINDEX)) {
--				BUILD_BUG_ON(FIELD_SIZEOF(struct net_device, ifindex) != 4);
-+				BUILD_BUG_ON(sizeof_field(struct net_device, ifindex) != 4);
- 				off = offsetof(struct net_device, ifindex);
- 				emit_load(r_A, r_s0, off, ctx);
- 			} else { /* (code == (BPF_ANC | SKF_AD_HATYPE) */
--				BUILD_BUG_ON(FIELD_SIZEOF(struct net_device, type) != 2);
-+				BUILD_BUG_ON(sizeof_field(struct net_device, type) != 2);
- 				off = offsetof(struct net_device, type);
- 				emit_half_load_unsigned(r_A, r_s0, off, ctx);
- 			}
- 			break;
- 		case BPF_ANC | SKF_AD_MARK:
- 			ctx->flags |= SEEN_SKB | SEEN_A;
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, mark) != 4);
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff, mark) != 4);
- 			off = offsetof(struct sk_buff, mark);
- 			emit_load(r_A, r_skb, off, ctx);
- 			break;
- 		case BPF_ANC | SKF_AD_RXHASH:
- 			ctx->flags |= SEEN_SKB | SEEN_A;
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff, hash) != 4);
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff, hash) != 4);
- 			off = offsetof(struct sk_buff, hash);
- 			emit_load(r_A, r_skb, off, ctx);
- 			break;
- 		case BPF_ANC | SKF_AD_VLAN_TAG:
- 			ctx->flags |= SEEN_SKB | SEEN_A;
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff,
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff,
- 						  vlan_tci) != 2);
- 			off = offsetof(struct sk_buff, vlan_tci);
- 			emit_half_load_unsigned(r_A, r_skb, off, ctx);
-@@ -1186,7 +1186,7 @@ static int build_body(struct jit_ctx *ctx)
- 			break;
- 		case BPF_ANC | SKF_AD_QUEUE:
- 			ctx->flags |= SEEN_SKB | SEEN_A;
--			BUILD_BUG_ON(FIELD_SIZEOF(struct sk_buff,
-+			BUILD_BUG_ON(sizeof_field(struct sk_buff,
- 						  queue_mapping) != 2);
- 			BUILD_BUG_ON(offsetof(struct sk_buff,
- 					      queue_mapping) > 0xff);
--- 
-2.17.1
+> On Dec 17, 2019, at 8:07 PM, Chen Zhou <chenzhou10@huawei.com> wrote:
+>=20
+> Hi all,
+>=20
+> Friendly ping...
+>=20
+> On 2019/8/30 15:11, Chen Zhou wrote:
+>> I am busy with other things, so it was a long time before this =
+version was
+>> released.
+>>=20
+>> This patch series enable reserving crashkernel above 4G in arm64.
+>>=20
+>> There are following issues in arm64 kdump:
+>> 1. We use crashkernel=3DX to reserve crashkernel below 4G, which will =
+fail
+>> when there is no enough low memory.
+>> 2. Currently, crashkernel=3DY@X can be used to reserve crashkernel =
+above 4G,
+>> in this case, if swiotlb or DMA buffers are requierd, crash dump =
+kernel
+>> will boot failure because there is no low memory available for =
+allocation.
+
+ =20
+      Can you elaborate when the boot failures may fail due to lacking  =
+swiotlb or DMA buffers ? Are these related to certain adapters or =
+specific  platforms  ?=20
+
+     I have not seen this when using   crashkernel=3D2024M@35GB .=20
 
 
--- 
-Kees Cook
+>>=20
+>> To solve these issues, introduce crashkernel=3DX,low to reserve =
+specified
+>> size low memory.
+>> Crashkernel=3DX tries to reserve memory for the crash dump kernel =
+under
+>> 4G. If crashkernel=3DY,low is specified simultaneously, reserve =
+spcified
+>> size low memory for crash kdump kernel devices firstly and then =
+reserve
+>> memory above 4G.
+>>=20
+>> When crashkernel is reserved above 4G in memory, that is, =
+crashkernel=3DX,low
+>> is specified simultaneously, kernel should reserve specified size low =
+memory
+>> for crash dump kernel devices. So there may be two crash kernel =
+regions, one
+>> is below 4G, the other is above 4G.
+>> In order to distinct from the high region and make no effect to the =
+use of
+>> kexec-tools, rename the low region as "Crash kernel (low)", and add =
+DT property
+>> "linux,low-memory-range" to crash dump kernel's dtb to pass the low =
+region.
+>>=20
+>> Besides, we need to modify kexec-tools:
+>> arm64: kdump: add another DT property to crash dump kernel's dtb(see =
+[1])
+>>=20
+>> The previous changes and discussions can be retrieved from:
+>>=20
+>> Changes since [v5]
+>> - Move reserve_crashkernel_low() into kernel/crash_core.c.
+>> - Delete crashkernel=3DX,high.
+>> - Modify crashkernel=3DX,low.
+>> If crashkernel=3DX,low is specified simultaneously, reserve spcified =
+size low
+>> memory for crash kdump kernel devices firstly and then reserve memory =
+above 4G.
+>> In addition, rename crashk_low_res as "Crash kernel (low)" for arm64, =
+and then
+>> pass to crash dump kernel by DT property "linux,low-memory-range".
+>> - Update Documentation/admin-guide/kdump/kdump.rst.
+>>=20
+>> Changes since [v4]
+>> - Reimplement memblock_cap_memory_ranges for multiple ranges by Mike.
+>>=20
+>> Changes since [v3]
+>> - Add memblock_cap_memory_ranges back for multiple ranges.
+>> - Fix some compiling warnings.
+>>=20
+>> Changes since [v2]
+>> - Split patch "arm64: kdump: support reserving crashkernel above 4G" =
+as
+>> two. Put "move reserve_crashkernel_low() into kexec_core.c" in a =
+separate
+>> patch.
+>>=20
+>> Changes since [v1]:
+>> - Move common reserve_crashkernel_low() code into =
+kernel/kexec_core.c.
+>> - Remove memblock_cap_memory_ranges() i added in v1 and implement =
+that
+>> in fdt_enforce_memory_region().
+>> There are at most two crash kernel regions, for two crash kernel =
+regions
+>> case, we cap the memory range [min(regs[*].start), max(regs[*].end)]
+>> and then remove the memory range in the middle.
+>>=20
+>> [1]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infradead.org_=
+pipermail_kexec_2019-2DAugust_023569.html&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZ=
+YR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc=
+&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzGWSphuvXXlXow68&s=3D9tn9kUBabiuYhVtXauANS=
+DGaISnCnHLYcAUQgsPBFxs&e=3D=20
+>> [v1]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_2_1174&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DF-lM7II2cuMF_sK3b6-QhSbWM3X-pI_WZEs0sZitS7A&e=3D=20
+>> [v2]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_9_86&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2fP=
+g9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzGW=
+SphuvXXlXow68&s=3D5Y-S6sqMTklHkOQsNtjTX3C7pV05BjKLGhJVfMHEvDs&e=3D=20
+>> [v3]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_9_306&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2f=
+Pg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzG=
+WSphuvXXlXow68&s=3DcWn4zSRQupaZ3jjz4eDvD-pNkoLyL_hsZoRx4yJoD0c&e=3D=20
+>> [v4]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_15_273&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DNslk4RJKIyIuT0IoQoolXNjupEDXplPhQQwnTSoXNWE&e=3D=20
+>> [v5]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+5_6_1360&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DHJVAM6sCxV2DnNg5d4pw8WPqtkmQnKvztEmkSIgtQ5M&e=3D=20
+>>=20
+>> Chen Zhou (4):
+>>  x86: kdump: move reserve_crashkernel_low() into crash_core.c
+>>  arm64: kdump: reserve crashkenel above 4G for crash dump kernel
+>>  arm64: kdump: add memory for devices by DT property, =
+low-memory-range
+>>  kdump: update Documentation about crashkernel on arm64
+>>=20
+>> Documentation/admin-guide/kdump/kdump.rst       | 13 ++++-
+>> Documentation/admin-guide/kernel-parameters.txt | 12 ++++-
+>> arch/arm64/include/asm/kexec.h                  |  3 ++
+>> arch/arm64/kernel/setup.c                       |  8 ++-
+>> arch/arm64/mm/init.c                            | 61 =
++++++++++++++++++++++--
+>> arch/x86/include/asm/kexec.h                    |  3 ++
+>> arch/x86/kernel/setup.c                         | 65 =
++++----------------------
+>> include/linux/crash_core.h                      |  4 ++
+>> include/linux/kexec.h                           |  1 -
+>> kernel/crash_core.c                             | 65 =
++++++++++++++++++++++++++
+>> 10 files changed, 168 insertions(+), 67 deletions(-)
+>>=20
+>=20
+>=20
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infradead.org_=
+mailman_listinfo_kexec&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65e=
+apI_JnE&r=3Dt2fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3=
+Dvevd09m6neWWzGWSphuvXXlXow68&s=3DXMcFx61B_QPg-FUfG_-t88DKCnGm4grqu6zRguiH=
+YrU&e=3D=20
+
