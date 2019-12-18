@@ -2,78 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A69B1253AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7337C125394
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfLRUkM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:40:12 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38465 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbfLRUkK (ORCPT
+        id S1727239AbfLRUjx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:39:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47466 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfLRUjw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:40:10 -0500
-Received: by mail-qt1-f196.google.com with SMTP id n15so3049849qtp.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 12:40:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RI4FfjUerUGerBdwMNUghyq+e/9oztb7saspiR/63kY=;
-        b=Q2LP2ud9XF1WLyrpBCmnqhSSlUhV5hrks1PnxlCsIUnXutNYBe/sViB55I2QzuL7+W
-         sqSsc57suGyKQ6PpgnOH6rK2UCeEd8Wdr1K1sZwz5FmzStHsWWuR8vomTGrLs1KwH7J5
-         jcFJ2d3jAgDXoZOO8BU2MgdaWVl+uLksodol+1xg5GuqI9VGHIKcp1TSM/8i3j9+VtaO
-         FKSLcfEp15Ug/5OxSenEp8BVENSChnnqiyxeffeTmRObdYCkrh5EztJliywEB/p3JkOG
-         V0gN0wB1cPUn/wPUSzKfkM7KzshjIaMekR9ol37ak2wLkD/ssM57Pt9HGWT4ZaAVkCvM
-         Yg1w==
-X-Gm-Message-State: APjAAAW+UUNNq6X6nyPdFsmfotEElmWljuMeztz6vB8xsgJ4XN0zbW0G
-        1BX9uS1hWt1/Vi68UefQFgs=
-X-Google-Smtp-Source: APXvYqwluaUhUJ3BOqEqBzij3XaewXUwdek9wjBLj5fmFCxOOtyVZCoANogUKR2UMMWgVRSKGNI+HQ==
-X-Received: by 2002:ac8:2310:: with SMTP id a16mr3978805qta.46.1576701609798;
-        Wed, 18 Dec 2019 12:40:09 -0800 (PST)
-Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id t7sm993347qkm.136.2019.12.18.12.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 12:40:09 -0800 (PST)
-From:   Arvind Sankar <nivedita@alum.mit.edu>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 07/24] arch/setup: Drop dummy_con initialization
-Date:   Wed, 18 Dec 2019 15:39:45 -0500
-Message-Id: <20191218204002.30512-8-nivedita@alum.mit.edu>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191218204002.30512-1-nivedita@alum.mit.edu>
-References: <20191218204002.30512-1-nivedita@alum.mit.edu>
+        Wed, 18 Dec 2019 15:39:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5IRekf7Hfq0F+Zs5ey5GQlKOYNtd0pnVixx2++Tjts0=; b=XSIt63bn3+h51oZ/5uaig/NOu
+        tFArHm61DH2FN0mgqglrTl5zKVhpSO7LuMmNRCoIXRmTZt5bZoRkL5YY9B9nkcVaeD5/dD9z+X00p
+        tN0VRF1fIvb7Rp0xMS5MDbXsddPNA0eLVfg9XM+jBSFMm/XIXuaAyAGNZphBQlWjc7j2fzzbhWMEt
+        k+RcqOpGsZtcOCG0OeJqGrYr8VtZ3pduTlmbJiTo1Wa0bTET8aziDg+/qRkipWT4/Fff//AH1Mdym
+        1Vbaxyye5BoJhHTrsGLym2XeSxr0lP9xMRW/VzMveg8bL2NTgzitT6LtVzLATjjErAcV7hXPkFLfR
+        GbdToNU0A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihg6m-0002vS-Tm; Wed, 18 Dec 2019 20:39:49 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E8D47980E35; Wed, 18 Dec 2019 21:39:46 +0100 (CET)
+Date:   Wed, 18 Dec 2019 21:39:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org,
+        Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] rxrpc: struct mutex cannot be used for
+ rxrpc_call::user_mutex
+Message-ID: <20191218203946.GL11457@worktop.programming.kicks-ass.net>
+References: <157659672074.19580.11641288666811539040.stgit@warthog.procyon.org.uk>
+ <20191218135047.GS2844@hirez.programming.kicks-ass.net>
+ <20191218190833.ufpxjrvin5jvp3m5@linux-p48b>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218190833.ufpxjrvin5jvp3m5@linux-p48b>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-con_init in tty/vt.c will now set conswitchp to dummy_con if it's unset.
-Drop it from arch setup code.
+On Wed, Dec 18, 2019 at 11:08:33AM -0800, Davidlohr Bueso wrote:
+> On Wed, 18 Dec 2019, Peter Zijlstra wrote:
+> 
+> > On Tue, Dec 17, 2019 at 03:32:00PM +0000, David Howells wrote:
+> > > Standard kernel mutexes cannot be used in any way from interrupt or softirq
+> > > context, so the user_mutex which manages access to a call cannot be a mutex
+> > > since on a new call the mutex must start off locked and be unlocked within
+> > > the softirq handler to prevent userspace interfering with a call we're
+> > > setting up.
+> > > 
+> > > Commit a0855d24fc22d49cdc25664fb224caee16998683 ("locking/mutex: Complain
+> > > upon mutex API misuse in IRQ contexts") causes big warnings to be splashed
+> > > in dmesg for each a new call that comes in from the server.
+> > 
+> > FYI that patch has currently been reverted.
+> > 
+> > commit c571b72e2b845ca0519670cb7c4b5fe5f56498a5 (tip/locking/urgent, tip/locking-urgent-for-linus)
+> 
+> Will we ever want to re-add this warning (along with writer rwsems) at some point?
 
-Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
----
- arch/c6x/kernel/setup.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/arch/c6x/kernel/setup.c b/arch/c6x/kernel/setup.c
-index 8ef35131f999..48c709644e29 100644
---- a/arch/c6x/kernel/setup.c
-+++ b/arch/c6x/kernel/setup.c
-@@ -397,10 +397,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	/* Get CPU info */
- 	get_cpuinfo();
--
--#if defined(CONFIG_VT) && defined(CONFIG_DUMMY_CONSOLE)
--	conswitchp = &dummy_con;
--#endif
- }
- 
- #define cpu_to_ptr(n) ((void *)((long)(n)+1))
--- 
-2.24.1
-
+Yes, we can try again for the next cycle.
