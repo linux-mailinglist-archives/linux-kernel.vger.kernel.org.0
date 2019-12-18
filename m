@@ -2,461 +2,363 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FEC2124C2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:50:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2FA7124C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:52:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbfLRPun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:50:43 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:11604 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbfLRPun (ORCPT
+        id S1727386AbfLRPwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:52:23 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25331 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727333AbfLRPwV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:50:43 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfa4ac70000>; Wed, 18 Dec 2019 07:50:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 18 Dec 2019 07:50:40 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 18 Dec 2019 07:50:40 -0800
-Received: from [10.2.164.84] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Dec
- 2019 15:50:39 +0000
-Subject: Re: [PATCH v4 06/19] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-7-git-send-email-skomatineni@nvidia.com>
- <87b2b266-e4a9-9a7a-2336-6ec57d7c4d1d@gmail.com>
- <55a56c3d-3fac-cc77-46ae-acf5de77d262@gmail.com>
- <e4588ae6-8f9a-e4cb-3fd0-aba80a3689dc@nvidia.com>
-Message-ID: <c02c873f-cf56-bee9-b4e7-9caff23b1a9d@nvidia.com>
-Date:   Wed, 18 Dec 2019 07:50:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 18 Dec 2019 10:52:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576684340;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=THYjZHsfqlcY5XBUJQqb0Qdi/YfwWdOPu9LEwp8yxW0=;
+        b=UvxnZYWLFCWftiWi53pq1M4pyFu/pi3gYfxPOmb+spXJDIIXpyjYzIld7ZGh3tQoRCbnsx
+        smoJJ18XSj6hlp+UIMN5dvT5mm39Ofaa2nt10OIiT4ZoT/gEpABCYUpYnoLPSuAGrcQQBE
+        L9onKCm9WFLDWxG0yeJDqDO9rUy+e04=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-183-F1xfDVRRMESjHVHh6xC--w-1; Wed, 18 Dec 2019 10:52:19 -0500
+X-MC-Unique: F1xfDVRRMESjHVHh6xC--w-1
+Received: by mail-qv1-f71.google.com with SMTP id g15so1589645qvk.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:52:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=THYjZHsfqlcY5XBUJQqb0Qdi/YfwWdOPu9LEwp8yxW0=;
+        b=TJWNDBL7SOR7ZcPoLwxpTQIpXFpdF0n28iSo5W+vr2L+8uo8ctrv96KV46OZTGFUgG
+         d7CbgCvh8dDFHdxOjvGd6W9QvFl++K59fEaRV3Em9fanq00x5FKXmKmwGiBNi7FFIkSI
+         J2cJTg4bj+yKzEvlEVjDemBxPt3vrAfHlRf0nIgIJHwzA2bo2JN+oVokWDPzgI9E9A8N
+         jHfz7RKxVhkq2h5u7qOuWCY/fjDakmjX3igarSvnzfXWcYX7jiD3rww5Ma2xKvuOQ0ro
+         l25eKuoPOYt7YokCzItRoSI7KmjJR5TfgvLKOZPC6B5DW4vb1UcOVdAJo1Q6klNDb7Kw
+         LpEQ==
+X-Gm-Message-State: APjAAAWn/GteF7tZdfgGvIEi1A/V2ahj7az3887VxrEY8Q6Gd622dfZY
+        b1w0fiLDpClv4OK3yb8to6F4A7u/m+LIqJoAko6bmnuYbAp8sCnJOPbg+gWtiNBwB6fCewnFaDG
+        o/u/RysSuDUwzsy/VVZIZKn1TXAjX5fbhx5cLBd7X
+X-Received: by 2002:a05:620a:11a3:: with SMTP id c3mr3214218qkk.230.1576684338743;
+        Wed, 18 Dec 2019 07:52:18 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz2fP1sRiLsu9cEvmPDh/NQ/bdrX1PJuTUOO1rcnSsj7nGBC10sCRPYH4PnhRw8dUhJ4X9vmJVGHVGOBtehVl0=
+X-Received: by 2002:a05:620a:11a3:: with SMTP id c3mr3214190qkk.230.1576684338399;
+ Wed, 18 Dec 2019 07:52:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e4588ae6-8f9a-e4cb-3fd0-aba80a3689dc@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576684231; bh=8RZN2HQ4hYB8EJfw8DildVTGAnf77fJ+1CFrILTRxJg=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Wzmf6jB/MkEbb/ikMS5ZzJYZNVxsWNrpKz+zem5cIqJksyadk6/AgMBVwagcWvm2V
-         7OpZbh7qk4c4PRklp3kTJ9enc9WacKZkJm24Hq5EJMeX9IxrbA+Ut2SlgJZ8IA9BJ+
-         Z/cUdsBz56jQwTy9solp8nlCNTYov1zoBZU8W0ijv9P9En6eGE75OM37Mqqsb8psjM
-         xhWPcQP8AjaMAs7udpWXGn/NXIeiCgqMhb6qpTM+fvg7q3nQObiK9CL1U8DqqWlwi8
-         caR94ihnaB3tV9i2ejmXxRt3ythQTaFhSt1u3ba9bATAgsNM6h2SAqeqOUmoiKR9Ll
-         ltJV0bIgCbYBg==
+References: <20191026222506.453481-1-pedro@pedrovanzella.com>
+In-Reply-To: <20191026222506.453481-1-pedro@pedrovanzella.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Wed, 18 Dec 2019 16:52:06 +0100
+Message-ID: <CAO-hwJLjN1UQAXTZbFWchOHGsQ2CqBc+JT6xFd=ZZqNUVDmDGw@mail.gmail.com>
+Subject: Re: [PATCH v6] hid-logitech-hidpp: read battery voltage from newer devices
+To:     Pedro Vanzella <pedro@pedrovanzella.com>
+Cc:     "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        =?UTF-8?Q?Filipe_La=C3=ADns?= <lains@archlinux.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Oct 27, 2019 at 12:26 AM Pedro Vanzella <pedro@pedrovanzella.com> wrote:
+>
+> Newer Logitech mice report their battery voltage through feature 0x1001
+> instead of the battery levels through feature 0x1000.
+>
+> When the device is brought up and we try to query the battery, figure
+> out if it supports the old or the new feature. If it supports the new
+> feature, record the feature index and read the battery voltage and
+> its charge status. The device will respond with three bytes: the first
+> two are its voltage, and the last one is a bitset, reporting if the
+> battery is charging, fast or slow, in critical level or discharging.
+>
+> If everything went correctly, record the fact that we're capable
+> of querying battery voltage.
+>
+> Note that the protocol only gives us the current voltage in mV.
+> We store that as-is, but when queried, we report it in uV as
+> expected by sysfs.
+>
+> Like we do for other ways of interacting with the battery for other
+> devices, refresh the battery status and notify the power supply
+> subsystem of the changes in voltage and status.
+>
+> Since there are no known devices which implement both the old and the
+> new battery feature, we make sure to try the newer feature first and
+> only fall back to the old one if that fails.
+>
+> Signed-off-by: Pedro Vanzella <pedro@pedrovanzella.com>
+> ---
 
-On 12/18/19 7:46 AM, Sowjanya Komatineni wrote:
+Applied to for-5.6/logitech, sorry for the delay.
+
+Cheers,
+Benjamin
+
+>  drivers/hid/hid-logitech-hidpp.c | 172 ++++++++++++++++++++++++++++++-
+>  1 file changed, 168 insertions(+), 4 deletions(-)
 >
-> On 12/18/19 12:35 AM, Dmitry Osipenko wrote:
->> 18.12.2019 11:30, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> 17.12.2019 23:03, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and currently
->>>> these PMC clocks are registered by Tegra clock driver with each=20
->>>> clock as
->>>> separate mux and gate clocks using clk_register_mux and=20
->>>> clk_register_gate
->>>> by passing PMC base address and register offsets and PMC=20
->>>> programming for
->>>> these clocks happens through direct PMC access by the clock driver.
->>>>
->>>> With this, when PMC is in secure mode any direct PMC access from the
->>>> non-secure world does not go through and these clocks will not be
->>>> functional.
->>>>
->>>> This patch adds these PMC clocks registration to pmc driver with=20
->>>> PMC as
->>>> a clock provider and registers each clock as single clock.
->>>>
->>>> clk_ops callback implementations for these clocks uses=20
->>>> tegra_pmc_readl and
->>>> tegra_pmc_writel which supports PMC programming in both secure mode=20
->>>> and
->>>> non-secure mode.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>> =C2=A0 drivers/soc/tegra/pmc.c | 248=20
->>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>> =C2=A0 1 file changed, 248 insertions(+)
->>>>
->>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>> index ea0e11a09c12..6d65194a6e71 100644
->>>> --- a/drivers/soc/tegra/pmc.c
->>>> +++ b/drivers/soc/tegra/pmc.c
->>>> @@ -13,6 +13,9 @@
->>>> =C2=A0 =C2=A0 #include <linux/arm-smccc.h>
->>>> =C2=A0 #include <linux/clk.h>
->>>> +#include <linux/clk-provider.h>
->>>> +#include <linux/clkdev.h>
->>>> +#include <linux/clk/clk-conf.h>
->>>> =C2=A0 #include <linux/clk/tegra.h>
->>>> =C2=A0 #include <linux/debugfs.h>
->>>> =C2=A0 #include <linux/delay.h>
->>>> @@ -48,6 +51,7 @@
->>>> =C2=A0 #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
->>>> =C2=A0 #include <dt-bindings/gpio/tegra186-gpio.h>
->>>> =C2=A0 #include <dt-bindings/gpio/tegra194-gpio.h>
->>>> +#include <dt-bindings/soc/tegra-pmc.h>
->>>> =C2=A0 =C2=A0 #define PMC_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
->>>> =C2=A0 #define=C2=A0 PMC_CNTRL_INTR_POLARITY=C2=A0=C2=A0=C2=A0 BIT(17)=
- /* inverts INTR=20
->>>> polarity */
->>>> @@ -100,6 +104,7 @@
->>>> =C2=A0 #define PMC_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0x168
->>>> =C2=A0 #define PMC_SW_WAKE2_STATUS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 0x16c
->>>> =C2=A0 +#define PMC_CLK_OUT_CNTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 0x1a8
->>>> =C2=A0 #define PMC_SENSOR_CTRL=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x1b0
->>>> =C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_SCRATCH_WRITE=C2=A0=C2=A0=C2=A0 B=
-IT(2)
->>>> =C2=A0 #define=C2=A0 PMC_SENSOR_CTRL_ENABLE_RST=C2=A0=C2=A0=C2=A0 BIT(=
-1)
->>>> @@ -155,6 +160,64 @@
->>>> =C2=A0 #define=C2=A0 TEGRA_SMC_PMC_READ=C2=A0=C2=A0=C2=A0 0xaa
->>>> =C2=A0 #define=C2=A0 TEGRA_SMC_PMC_WRITE=C2=A0=C2=A0=C2=A0 0xbb
->>>> =C2=A0 +struct pmc_clk {
->>>> +=C2=A0=C2=A0=C2=A0 struct clk_hw=C2=A0=C2=A0=C2=A0 hw;
->>>> +=C2=A0=C2=A0=C2=A0 unsigned long=C2=A0=C2=A0=C2=A0 offs;
->>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mux_=
-mask;
->>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mux_=
-shift;
->>>> +=C2=A0=C2=A0=C2=A0 u32=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gate=
-_shift;
->>>> +};
->>>> +
->>>> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
->>>> +
->>>> +struct pmc_clk_init_data {
->>>> +=C2=A0=C2=A0=C2=A0 char *name;
->>>> +=C2=A0=C2=A0=C2=A0 const char *const *parents;
->>>> +=C2=A0=C2=A0=C2=A0 int num_parents;
->>>> +=C2=A0=C2=A0=C2=A0 int clk_id;
->>>> +=C2=A0=C2=A0=C2=A0 u8 mux_shift;
->>>> +=C2=A0=C2=A0=C2=A0 u8 gate_shift;
->>>> +};
->>>> +
->>>> +static const char * const clk_out1_parents[] =3D { "osc", "osc_div2",
->>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern1",
->>>> +};
->>>> +
->>>> +static const char * const clk_out2_parents[] =3D { "osc", "osc_div2",
->>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern2",
->>>> +};
->>>> +
->>>> +static const char * const clk_out3_parents[] =3D { "osc", "osc_div2",
->>>> +=C2=A0=C2=A0=C2=A0 "osc_div4", "extern3",
->>>> +};
->>>> +
->>>> +static const struct pmc_clk_init_data tegra_pmc_clks_data[] =3D {
->>>> +=C2=A0=C2=A0=C2=A0 {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_1",
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out1_pare=
-nts,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_SIZ=
-E(clk_out1_parents),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC_CLK_=
-OUT_1,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 6,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 2,
->>> I'd replace these with a single .shift, given that mux_shift =3D
->>> gate_shift + 4 for all clocks.
->>>
->>>> +=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_2",
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out2_pare=
-nts,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_SIZ=
-E(clk_out2_parents),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC_CLK_=
-OUT_2,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 14,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 10,
->>>> +=C2=A0=C2=A0=C2=A0 },
->>>> +=C2=A0=C2=A0=C2=A0 {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .name =3D "clk_out_3",
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .parents =3D clk_out3_pare=
-nts,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .num_parents =3D ARRAY_SIZ=
-E(clk_out3_parents),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .clk_id =3D TEGRA_PMC_CLK_=
-OUT_3,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .mux_shift =3D 22,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 .gate_shift =3D 18,
->>>> +=C2=A0=C2=A0=C2=A0 },
->>>> +};
->>>> +
->>>> =C2=A0 struct tegra_powergate {
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct generic_pm_domain genpd;
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_pmc *pmc;
->>>> @@ -254,6 +317,9 @@ struct tegra_pmc_soc {
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct tegra_wake_event *wake_eve=
-nts;
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int num_wake_events;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 const struct pmc_clk_init_data *pmc_clks_data;
->>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_pmc_clks;
->>>> =C2=A0 };
->>>> =C2=A0 =C2=A0 static const char * const tegra186_reset_sources[] =3D {
->>>> @@ -2163,6 +2229,173 @@ static int tegra_pmc_clk_notify_cb(struct=20
->>>> notifier_block *nb,
->>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return NOTIFY_OK;
->>>> =C2=A0 }
->>>> =C2=A0 +static void pmc_clk_fence_udelay(u32 offset)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_readl(pmc, offset);
->>>> +=C2=A0=C2=A0=C2=A0 /* pmc clk propagation delay 2 us */
->>>> +=C2=A0=C2=A0=C2=A0 udelay(2);
->>>> +}
->>>> +
->>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, clk->offs) >> clk->mu=
-x_shift;
->>>> +=C2=A0=C2=A0=C2=A0 val &=3D clk->mux_mask;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return val;
->>>> +}
->>>> +
->>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, clk->offs);
->>>> +=C2=A0=C2=A0=C2=A0 val &=3D ~(clk->mux_mask << clk->mux_shift);
->>>> +=C2=A0=C2=A0=C2=A0 val |=3D index << clk->mux_shift;
->>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, clk->offs);
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(clk->offs);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>> +}
->>>> +
->>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return tegra_pmc_readl(pmc, clk->offs) & BIT(clk->=
-gate_shift)=20
->>>> ? 1 : 0;
->>>> +}
->>>> +
->>>> +static void pmc_clk_set_state(unsigned long offs, u32 shift, int=20
->>>> state)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 u32 val;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 val =3D tegra_pmc_readl(pmc, offs);
->>>> +=C2=A0=C2=A0=C2=A0 val =3D state ? (val | BIT(shift)) : (val & ~BIT(s=
-hift));
->>>> +=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, val, offs);
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_fence_udelay(offs);
->>>> +}
->>>> +
->>>> +static int pmc_clk_enable(struct clk_hw *hw)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(clk->offs, clk->gate_shift, 1);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return 0;
->>>> +}
->>>> +
->>>> +static void pmc_clk_disable(struct clk_hw *hw)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *clk =3D to_pmc_clk(hw);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk_set_state(clk->offs, clk->gate_shift, 0);
->>>> +}
->>>> +
->>>> +static const struct clk_ops pmc_clk_ops =3D {
->>>> +=C2=A0=C2=A0=C2=A0 .get_parent =3D pmc_clk_mux_get_parent,
->>>> +=C2=A0=C2=A0=C2=A0 .set_parent =3D pmc_clk_mux_set_parent,
->>>> +=C2=A0=C2=A0=C2=A0 .determine_rate =3D __clk_mux_determine_rate,
->>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>> +};
->>>> +
->>>> +static struct clk *
->>>> +tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 unsigned long offset)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct clk_init_data init;
->>>> +=C2=A0=C2=A0=C2=A0 struct pmc_clk *pmc_clk;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk =3D kzalloc(sizeof(*pmc_clk), GFP_KERNEL);
->>>> +=C2=A0=C2=A0=C2=A0 if (!pmc_clk)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ERR_PTR(-ENOMEM);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 init.name =3D data->name;
->>>> +=C2=A0=C2=A0=C2=A0 init.ops =3D &pmc_clk_ops;
->>>> +=C2=A0=C2=A0=C2=A0 init.parent_names =3D data->parents;
->>>> +=C2=A0=C2=A0=C2=A0 init.num_parents =3D data->num_parents;
->>>> +=C2=A0=C2=A0=C2=A0 init.flags =3D CLK_SET_RATE_NO_REPARENT | CLK_SET_=
-RATE_PARENT |
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 CLK_SET_PARENT_GATE;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->hw.init =3D &init;
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->offs =3D offset;
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->mux_mask =3D 3;
->>> If mux_mask is a constant value, perhaps will be better to replace the
->>> variable with a literal?
->>>
->>> #define PMC_CLK_OUT_MUX_MASK=C2=A0=C2=A0=C2=A0 GENMASK(1, 0)
->> Maybe even:
->>
->> #define PMC_CLK_OUT_MUX_MASK(c)=C2=A0=C2=A0=C2=A0 GENMASK(c->shift + 1, =
-c->shift)
->>
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->mux_shift =3D data->mux_shift;
->>>> +=C2=A0=C2=A0=C2=A0 pmc_clk->gate_shift =3D data->gate_shift;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 return clk_register(NULL, &pmc_clk->hw);
->>>> +}
->>>> +
->>>> +static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *np)
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0 struct clk *clk;
->>>> +=C2=A0=C2=A0=C2=A0 struct clk_onecell_data *clk_data;
->>>> +=C2=A0=C2=A0=C2=A0 unsigned int num_clks;
->>>> +=C2=A0=C2=A0=C2=A0 int i, err =3D -ENOMEM;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 num_clks =3D pmc->soc->num_pmc_clks;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 if (!num_clks)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 clk_data =3D kmalloc(sizeof(*clk_data), GFP_KERNEL=
-);
->>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_clk;
->>> What about devm_kmalloc, devm_kcalloc?
->>>
->>>> +=C2=A0=C2=A0=C2=A0 clk_data->clks =3D kcalloc(TEGRA_PMC_CLK_MAX,=20
->>>> sizeof(*clk_data->clks),
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 GFP_KERNEL);
->>>> +=C2=A0=C2=A0=C2=A0 if (!clk_data->clks)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto free_clkdata;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 clk_data->clk_num =3D TEGRA_PMC_CLK_MAX;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < TEGRA_PMC_CLK_MAX; i++)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[i] =3D ERR_=
-PTR(-ENOENT);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < pmc->soc->num_pmc_clks; i++) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct pmc_clk_init_=
-data *data;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data =3D pmc->soc->pmc_clk=
-s_data + i;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk =3D tegra_pmc_clk_out_=
-register(data,=20
->>>> PMC_CLK_OUT_CNTRL);> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (I=
-S_ERR(clk)) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 de=
-v_err(pmc->dev,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 "unable to register %s\n", data->name);
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 er=
-r =3D PTR_ERR(clk);
->>> Error codes in a message could be useful.
+> diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
+> index 0179f7ed77e5..959586dab535 100644
+> --- a/drivers/hid/hid-logitech-hidpp.c
+> +++ b/drivers/hid/hid-logitech-hidpp.c
+> @@ -87,6 +87,7 @@ MODULE_PARM_DESC(disable_tap_to_click,
+>  #define HIDPP_CAPABILITY_HIDPP20_BATTERY       BIT(1)
+>  #define HIDPP_CAPABILITY_BATTERY_MILEAGE       BIT(2)
+>  #define HIDPP_CAPABILITY_BATTERY_LEVEL_STATUS  BIT(3)
+> +#define HIDPP_CAPABILITY_BATTERY_VOLTAGE       BIT(4)
 >
-> Added error code at end of clock register along with WARN message to=20
-> have it common to show warning with error code for all errors=20
-> including kmalloc and kcalloc.
+>  /*
+>   * There are two hidpp protocols in use, the first version hidpp10 is known
+> @@ -135,12 +136,15 @@ struct hidpp_report {
+>  struct hidpp_battery {
+>         u8 feature_index;
+>         u8 solar_feature_index;
+> +       u8 voltage_feature_index;
+>         struct power_supply_desc desc;
+>         struct power_supply *ps;
+>         char name[64];
+>         int status;
+>         int capacity;
+>         int level;
+> +       int voltage;
+> +       int charge_type;
+>         bool online;
+>  };
 >
-Sure, With devm_kmalloc and devm_kcalloc, will move error code along=20
-with message and do return right at point of errors.
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D PTR_ERR_OR_ZERO(clk)=
-;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_=
-err(pmc->dev, "unable to register %s: %d\n",
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 data->name, err);
->>>
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 go=
-to free_clks;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[data->clk_id=
-] =3D clk;
->>>
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_register_clkde=
-v(clk, data->name, NULL);
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 de=
-v_err(pmc->dev,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 "unable to register %s clock lookup\n",
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 data->name);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_=
-err(pmc->dev,
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 "unable to register %s clock lookup: %d\n",
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 data->name, err);
->>>
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 go=
-to free_clks;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> I'd move the assignment here for a bit more consistency.
->>>
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_data->clks[data->clk_id=
-] =3D clk;
->>>
->>>> +=C2=A0=C2=A0=C2=A0 }
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0 err =3D of_clk_add_provider(np, of_clk_src_onecell=
-_get, clk_data);
->>>> +=C2=A0=C2=A0=C2=A0 if (err) {
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(pmc->dev, "failed =
-to add pmc clk provider\n");
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto free_clks;
->>>> +=C2=A0=C2=A0=C2=A0 }
->>> [snip]
->>>
+> @@ -1219,6 +1223,144 @@ static int hidpp20_battery_event(struct hidpp_device *hidpp,
+>         return 0;
+>  }
 >
+> +/* -------------------------------------------------------------------------- */
+> +/* 0x1001: Battery voltage                                                    */
+> +/* -------------------------------------------------------------------------- */
+> +
+> +#define HIDPP_PAGE_BATTERY_VOLTAGE 0x1001
+> +
+> +#define CMD_BATTERY_VOLTAGE_GET_BATTERY_VOLTAGE 0x00
+> +
+> +#define EVENT_BATTERY_VOLTAGE_STATUS_BROADCAST 0x00
+> +
+> +static int hidpp20_battery_map_status_voltage(u8 data[3], int *voltage,
+> +                                               int *level, int *charge_type)
+> +{
+> +       int status;
+> +
+> +       long charge_sts = (long)data[2];
+> +
+> +       *level = POWER_SUPPLY_CAPACITY_LEVEL_UNKNOWN;
+> +       switch (data[2] & 0xe0) {
+> +       case 0x00:
+> +               status = POWER_SUPPLY_STATUS_CHARGING;
+> +               break;
+> +       case 0x20:
+> +               status = POWER_SUPPLY_STATUS_FULL;
+> +               *level = POWER_SUPPLY_CAPACITY_LEVEL_FULL;
+> +               break;
+> +       case 0x40:
+> +               status = POWER_SUPPLY_STATUS_DISCHARGING;
+> +               break;
+> +       case 0xe0:
+> +               status = POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +               break;
+> +       default:
+> +               status = POWER_SUPPLY_STATUS_UNKNOWN;
+> +       }
+> +
+> +       *charge_type = POWER_SUPPLY_CHARGE_TYPE_STANDARD;
+> +       if (test_bit(3, &charge_sts)) {
+> +               *charge_type = POWER_SUPPLY_CHARGE_TYPE_FAST;
+> +       }
+> +       if (test_bit(4, &charge_sts)) {
+> +               *charge_type = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
+> +       }
+> +
+> +       if (test_bit(5, &charge_sts)) {
+> +               *level = POWER_SUPPLY_CAPACITY_LEVEL_CRITICAL;
+> +       }
+> +
+> +       *voltage = get_unaligned_be16(data);
+> +
+> +       return status;
+> +}
+> +
+> +static int hidpp20_battery_get_battery_voltage(struct hidpp_device *hidpp,
+> +                                                u8 feature_index,
+> +                                                int *status, int *voltage,
+> +                                                int *level, int *charge_type)
+> +{
+> +       struct hidpp_report response;
+> +       int ret;
+> +       u8 *params = (u8 *)response.fap.params;
+> +
+> +       ret = hidpp_send_fap_command_sync(hidpp, feature_index,
+> +                                         CMD_BATTERY_VOLTAGE_GET_BATTERY_VOLTAGE,
+> +                                         NULL, 0, &response);
+> +
+> +       if (ret > 0) {
+> +               hid_err(hidpp->hid_dev, "%s: received protocol error 0x%02x\n",
+> +                       __func__, ret);
+> +               return -EPROTO;
+> +       }
+> +       if (ret)
+> +               return ret;
+> +
+> +       hidpp->capabilities |= HIDPP_CAPABILITY_BATTERY_VOLTAGE;
+> +
+> +       *status = hidpp20_battery_map_status_voltage(params, voltage,
+> +                                                    level, charge_type);
+> +
+> +       return 0;
+> +}
+> +
+> +static int hidpp20_query_battery_voltage_info(struct hidpp_device *hidpp)
+> +{
+> +       u8 feature_type;
+> +       int ret;
+> +       int status, voltage, level, charge_type;
+> +
+> +       if (hidpp->battery.voltage_feature_index == 0xff) {
+> +               ret = hidpp_root_get_feature(hidpp, HIDPP_PAGE_BATTERY_VOLTAGE,
+> +                                            &hidpp->battery.voltage_feature_index,
+> +                                            &feature_type);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       ret = hidpp20_battery_get_battery_voltage(hidpp,
+> +                                                 hidpp->battery.voltage_feature_index,
+> +                                                 &status, &voltage, &level, &charge_type);
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       hidpp->battery.status = status;
+> +       hidpp->battery.voltage = voltage;
+> +       hidpp->battery.level = level;
+> +       hidpp->battery.charge_type = charge_type;
+> +       hidpp->battery.online = status != POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +
+> +       return 0;
+> +}
+> +
+> +static int hidpp20_battery_voltage_event(struct hidpp_device *hidpp,
+> +                                           u8 *data, int size)
+> +{
+> +       struct hidpp_report *report = (struct hidpp_report *)data;
+> +       int status, voltage, level, charge_type;
+> +
+> +       if (report->fap.feature_index != hidpp->battery.voltage_feature_index ||
+> +               report->fap.funcindex_clientid != EVENT_BATTERY_VOLTAGE_STATUS_BROADCAST)
+> +               return 0;
+> +
+> +       status = hidpp20_battery_map_status_voltage(report->fap.params, &voltage,
+> +                                                   &level, &charge_type);
+> +
+> +       hidpp->battery.online = status != POWER_SUPPLY_STATUS_NOT_CHARGING;
+> +
+> +       if (voltage != hidpp->battery.voltage || status != hidpp->battery.status) {
+> +               hidpp->battery.voltage = voltage;
+> +               hidpp->battery.status = status;
+> +               hidpp->battery.level = level;
+> +               hidpp->battery.charge_type = charge_type;
+> +               if (hidpp->battery.ps)
+> +                       power_supply_changed(hidpp->battery.ps);
+> +       }
+> +       return 0;
+> +}
+> +
+>  static enum power_supply_property hidpp_battery_props[] = {
+>         POWER_SUPPLY_PROP_ONLINE,
+>         POWER_SUPPLY_PROP_STATUS,
+> @@ -1228,6 +1370,7 @@ static enum power_supply_property hidpp_battery_props[] = {
+>         POWER_SUPPLY_PROP_SERIAL_NUMBER,
+>         0, /* placeholder for POWER_SUPPLY_PROP_CAPACITY, */
+>         0, /* placeholder for POWER_SUPPLY_PROP_CAPACITY_LEVEL, */
+> +       0, /* placeholder for POWER_SUPPLY_PROP_VOLTAGE_NOW, */
+>  };
+>
+>  static int hidpp_battery_get_property(struct power_supply *psy,
+> @@ -1265,6 +1408,13 @@ static int hidpp_battery_get_property(struct power_supply *psy,
+>                 case POWER_SUPPLY_PROP_SERIAL_NUMBER:
+>                         val->strval = hidpp->hid_dev->uniq;
+>                         break;
+> +               case POWER_SUPPLY_PROP_VOLTAGE_NOW:
+> +                       /* hardware reports voltage in in mV. sysfs expects uV */
+> +                       val->intval = hidpp->battery.voltage * 1000;
+> +                       break;
+> +               case POWER_SUPPLY_PROP_CHARGE_TYPE:
+> +                       val->intval = hidpp->battery.charge_type;
+> +                       break;
+>                 default:
+>                         ret = -EINVAL;
+>                         break;
+> @@ -3083,6 +3233,9 @@ static int hidpp_raw_hidpp_event(struct hidpp_device *hidpp, u8 *data,
+>                 ret = hidpp_solar_battery_event(hidpp, data, size);
+>                 if (ret != 0)
+>                         return ret;
+> +               ret = hidpp20_battery_voltage_event(hidpp, data, size);
+> +               if (ret != 0)
+> +                       return ret;
+>         }
+>
+>         if (hidpp->capabilities & HIDPP_CAPABILITY_HIDPP10_BATTERY) {
+> @@ -3204,12 +3357,16 @@ static int hidpp_initialize_battery(struct hidpp_device *hidpp)
+>
+>         hidpp->battery.feature_index = 0xff;
+>         hidpp->battery.solar_feature_index = 0xff;
+> +       hidpp->battery.voltage_feature_index = 0xff;
+>
+>         if (hidpp->protocol_major >= 2) {
+>                 if (hidpp->quirks & HIDPP_QUIRK_CLASS_K750)
+>                         ret = hidpp_solar_request_battery_event(hidpp);
+> -               else
+> -                       ret = hidpp20_query_battery_info(hidpp);
+> +               else {
+> +                       ret = hidpp20_query_battery_voltage_info(hidpp);
+> +                       if (ret)
+> +                               ret = hidpp20_query_battery_info(hidpp);
+> +               }
+>
+>                 if (ret)
+>                         return ret;
+> @@ -3234,7 +3391,7 @@ static int hidpp_initialize_battery(struct hidpp_device *hidpp)
+>         if (!battery_props)
+>                 return -ENOMEM;
+>
+> -       num_battery_props = ARRAY_SIZE(hidpp_battery_props) - 2;
+> +       num_battery_props = ARRAY_SIZE(hidpp_battery_props) - 3;
+>
+>         if (hidpp->capabilities & HIDPP_CAPABILITY_BATTERY_MILEAGE)
+>                 battery_props[num_battery_props++] =
+> @@ -3244,6 +3401,10 @@ static int hidpp_initialize_battery(struct hidpp_device *hidpp)
+>                 battery_props[num_battery_props++] =
+>                                 POWER_SUPPLY_PROP_CAPACITY_LEVEL;
+>
+> +       if (hidpp->capabilities & HIDPP_CAPABILITY_BATTERY_VOLTAGE)
+> +               battery_props[num_battery_props++] =
+> +                       POWER_SUPPLY_PROP_VOLTAGE_NOW;
+> +
+>         battery = &hidpp->battery;
+>
+>         n = atomic_inc_return(&battery_no) - 1;
+> @@ -3407,7 +3568,10 @@ static void hidpp_connect_event(struct hidpp_device *hidpp)
+>                 else
+>                         hidpp10_query_battery_status(hidpp);
+>         } else if (hidpp->capabilities & HIDPP_CAPABILITY_HIDPP20_BATTERY) {
+> -               hidpp20_query_battery_info(hidpp);
+> +               if (hidpp->capabilities & HIDPP_CAPABILITY_BATTERY_VOLTAGE)
+> +                       hidpp20_query_battery_voltage_info(hidpp);
+> +               else
+> +                       hidpp20_query_battery_info(hidpp);
+>         }
+>         if (hidpp->battery.ps)
+>                 power_supply_changed(hidpp->battery.ps);
+> --
+> 2.23.0
+>
+
