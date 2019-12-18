@@ -2,75 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B6512456F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:13:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B521912458C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:18:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfLRLM7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:12:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55134 "EHLO mx2.suse.de"
+        id S1726743AbfLRLRu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:17:50 -0500
+Received: from foss.arm.com ([217.140.110.172]:42336 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725930AbfLRLM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:12:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 274E8B1A1;
-        Wed, 18 Dec 2019 11:12:56 +0000 (UTC)
-Subject: Re: [PATCH] scsi: libfc: remove unnecessary assertion on ep variable
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191217212214.30722-1-pakki001@umn.edu>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <ca12f639-2ee0-55eb-c927-c1ce97208c00@suse.de>
-Date:   Wed, 18 Dec 2019 12:12:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191217212214.30722-1-pakki001@umn.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726545AbfLRLRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 06:17:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A12D330E;
+        Wed, 18 Dec 2019 03:17:47 -0800 (PST)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F10D43F6CF;
+        Wed, 18 Dec 2019 03:17:46 -0800 (PST)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH v2 00/11] firmware: arm_scmi: Add support for multiple device per protocol
+Date:   Wed, 18 Dec 2019 11:17:31 +0000
+Message-Id: <20191218111742.29731-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/17/19 10:22 PM, Aditya Pakki wrote:
-> In ft_recv_write_data(), the pointer ep is dereferenced first and
-> then asserts for NULL. The patch removes the unnecessary assertion.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
->   drivers/target/tcm_fc/tfc_io.c | 1 -
->   1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/target/tcm_fc/tfc_io.c b/drivers/target/tcm_fc/tfc_io.c
-> index 1354a157e9af..6a38ff936389 100644
-> --- a/drivers/target/tcm_fc/tfc_io.c
-> +++ b/drivers/target/tcm_fc/tfc_io.c
-> @@ -221,7 +221,6 @@ void ft_recv_write_data(struct ft_cmd *cmd, struct fc_frame *fp)
->   	ep = fc_seq_exch(seq);
->   	lport = ep->lp;
->   	if (cmd->was_ddp_setup) {
-> -		BUG_ON(!ep);
->   		BUG_ON(!lport);
->   		/*
->   		 * Since DDP (Large Rx offload) was setup for this request,
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Currently only one scmi device is created for each protocol enumerated.
+However, there is requirement to make use of some procotols by multiple
+kernel subsystems/frameworks. One such example is SCMI PERFORMANCE
+protocol which can be used by both cpufreq and devfreq drivers.
+Similarly, SENSOR protocol may be used by either hwmon or iio subsystems,
+and POWER protocol may be used by genpd and regulator drivers.
 
-Cheers,
+This series adds support for multiple device per protocol using scmi device
+name if one is available. It also updates existing drivers to add
+scmi device names to driver id tables.
 
-Hannes
+Regards,
+Sudeep
+
+v1[1]->v2:
+	- Dropped all the changes that mixes up the device specific init
+	  with the protocol
+	- Used idr_replace to skip protocol initialisation as suggested
+	- Added collected reviewed/acked-by
+	- Reworded hwmon changes to reflect that hwmon/iio drivers will
+	  be mutually exclusive and hwmon needs to be removed if IIO
+	  support is added
+
+[1] https://lore.kernel.org/lkml/20191210145345.11616-1-sudeep.holla@arm.com/
+
+Sudeep Holla (11):
+  firmware: arm_scmi: Add support for multiple device per protocol
+  firmware: arm_scmi: Skip scmi mbox channel setup for addtional devices
+  firmware: arm_scmi: Add names to scmi devices created
+  firmware: arm_scmi: Add versions and identifier attributes using dev_groups
+  firmware: arm_scmi: Match scmi device by both name and protocol id
+  firmware: arm_scmi: Stash version in protocol init functions
+  firmware: arm_scmi: Skip protocol initialisation for additional devices
+  clk: scmi: Match scmi device by both name and protocol id
+  cpufreq: scmi: Match scmi device by both name and protocol id
+  hwmon: (scmi-hwmon) Match scmi device by both name and protocol id
+  reset: reset-scmi: Match scmi device by both name and protocol id
+
+ drivers/clk/clk-scmi.c                     |  2 +-
+ drivers/cpufreq/scmi-cpufreq.c             |  2 +-
+ drivers/firmware/arm_scmi/bus.c            | 29 ++++++-
+ drivers/firmware/arm_scmi/clock.c          |  2 +
+ drivers/firmware/arm_scmi/driver.c         | 92 +++++++++++++++++++++-
+ drivers/firmware/arm_scmi/perf.c           |  2 +
+ drivers/firmware/arm_scmi/power.c          |  2 +
+ drivers/firmware/arm_scmi/reset.c          |  2 +
+ drivers/firmware/arm_scmi/scmi_pm_domain.c |  2 +-
+ drivers/firmware/arm_scmi/sensors.c        |  2 +
+ drivers/hwmon/scmi-hwmon.c                 |  2 +-
+ drivers/reset/reset-scmi.c                 |  2 +-
+ include/linux/scmi_protocol.h              |  5 +-
+ 13 files changed, 134 insertions(+), 12 deletions(-)
+
 -- 
-Dr. Hannes Reinecke            Teamlead Storage & Networking
-hare@suse.de                               +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), Geschäftsführer: Felix Imendörffer
+2.17.1
+
