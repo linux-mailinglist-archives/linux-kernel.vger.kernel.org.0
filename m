@@ -2,135 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5520A123FF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:01:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 194A6124004
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:04:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726759AbfLRHBl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:01:41 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42996 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbfLRHBk (ORCPT
+        id S1726787AbfLRHEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:04:15 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:34230 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725797AbfLRHEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:01:40 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 4so674568pfz.9
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 23:01:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=axtens.net; s=google;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=BZCWkhOFV3yf2yR16aoRfXzQzGQ6DZmCFUiKpUKgtKg=;
-        b=HJ57PQOLVeFDWs5pPEm8r4CDItVMeCu5KLeQ4NJI+/3RFeWqSohuCj05oj8iIksoji
-         LBJWTgT0aPLaGtmuAEfWgKyhcfyHKTH7JdTgkG9ZP0bJVOaVHl4n81pUT/5kwswuxkI2
-         cICePRCvQ2kUgGEW5NzFKPmykXeOTEAu3FNAg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version:content-transfer-encoding;
-        bh=BZCWkhOFV3yf2yR16aoRfXzQzGQ6DZmCFUiKpUKgtKg=;
-        b=SKr0+Svb31pF7Jw6RGmnPe8HG7HiRag82KbPAMTTE8KyTpbbN0J70p5CjGMNPrPys6
-         wNkTLH1UaEuMMbmKc4kZS1ceh9XpXizKL6/+oYObU9jsnjbuktq5f5pIjR31zbyLKt9j
-         takfRtJ3X2vPJLFHLvhDAnPDmAPf+A7Mkkvfdd4AyTeqzlAA/UOt+cO/yGcXp3m4Zxx8
-         azsS+fduCUt+ciB/sHfQb2RZoL1Sv7HtEO1KvrGR49F64P0t32sYFanxIyf+Gkz4yf6/
-         /N7Aa6XZkN5nGmHeoPHE7i+bsku37g2G95JK0kPr0xVufGW5BgrQYqlLxAifq4FD7A26
-         A0uQ==
-X-Gm-Message-State: APjAAAUFNnoOo8LDmF+iD96X2obK2SsYMrCB2TynOA0WxJyfE1zivdji
-        WXFWlhirTtbKlhfV4DwRvaXPfaC00qk=
-X-Google-Smtp-Source: APXvYqyGk7+DsmSnrPB6g5gp31sxI6sfx2J8mSWVUByqzssCbVtU40pAOxr5YrMiphHnf0wAgDdaSw==
-X-Received: by 2002:a63:3484:: with SMTP id b126mr1263334pga.17.1576652499643;
-        Tue, 17 Dec 2019 23:01:39 -0800 (PST)
-Received: from localhost (2001-44b8-1113-6700-a084-b324-40b3-453d.static.ipv6.internode.on.net. [2001:44b8:1113:6700:a084:b324:40b3:453d])
-        by smtp.gmail.com with ESMTPSA id i127sm1608577pfc.55.2019.12.17.23.01.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 23:01:38 -0800 (PST)
-From:   Daniel Axtens <dja@axtens.net>
-To:     Jordan Niethe <jniethe5@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, kasan-dev@googlegroups.com,
-        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
-        bsingharora@gmail.com, Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH v3 3/3] powerpc: Book3S 64-bit "heavyweight" KASAN support
-In-Reply-To: <CACzsE9q1iLgoMLzVy0AYeRvWbj=kY-Ry52y84PGtWw3YXXFipA@mail.gmail.com>
-References: <20191212151656.26151-1-dja@axtens.net> <20191212151656.26151-4-dja@axtens.net> <CACzsE9q1iLgoMLzVy0AYeRvWbj=kY-Ry52y84PGtWw3YXXFipA@mail.gmail.com>
-Date:   Wed, 18 Dec 2019 18:01:34 +1100
-Message-ID: <87y2vat8vl.fsf@dja-thinkpad.axtens.net>
+        Wed, 18 Dec 2019 02:04:15 -0500
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBI71A3a029583;
+        Tue, 17 Dec 2019 23:04:12 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=pfpt0818;
+ bh=UZcnCwq10j0m/Je2ObzEn/jzRkw3tFD03EzMMVd90kY=;
+ b=oNB3FkYU6UFk2BbZIlzIFPRlb7hS0SOAZz3YIeonFMpyMwy+VzoJME8H7yzUtAJIe0p3
+ ELYr1mpPucVMM3+4MZNnBZkcqTqlB66XbodqS2Amt/2rhavt1lVa9/HZnK4emnJ2bVWP
+ 80KClpDX05wvybw/NkIx6V61kjCuxJsLucbocvZotwTl5MjQPWbfr35dT5Z7ZEP/dGWM
+ fFKkNEcsctusOvsMOw2T/FsrvabKEc86ggKyFPVA3pCFnDax4ANcDj0K5EGqz+qjnv2X
+ uIAQBAPC3Z/Xq+uvQqZd1TZ5z0jIb3PB+q6qGfV7MK2WPi2hDFaLYNfJqc6mX34duCjk RQ== 
+Received: from sc-exch01.marvell.com ([199.233.58.181])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2wxn0wnjy7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 17 Dec 2019 23:04:12 -0800
+Received: from SC-EXCH03.marvell.com (10.93.176.83) by SC-EXCH01.marvell.com
+ (10.93.176.81) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Tue, 17 Dec
+ 2019 23:04:10 -0800
+Received: from maili.marvell.com (10.93.176.43) by SC-EXCH03.marvell.com
+ (10.93.176.83) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 17 Dec 2019 23:04:10 -0800
+Received: from dc5-eodlnx05.marvell.com (dc5-eodlnx05.marvell.com [10.69.113.147])
+        by maili.marvell.com (Postfix) with ESMTP id 4CDA33F703F;
+        Tue, 17 Dec 2019 23:04:10 -0800 (PST)
+From:   Bhaskar Upadhaya <bupadhaya@marvell.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>, <lenb@kernel.org>,
+        <rafael@kernel.org>
+CC:     <gkulkarni@marvell.com>, <rrichter@marvell.com>,
+        <bhaskar.upadhaya.linux@gmail.com>,
+        Bhaskar Upadhaya <bupadhaya@marvell.com>
+Subject: [RFC PATCH] apei/ghes: fix ghes_poll_func by registering in non-deferrable mode
+Date:   Tue, 17 Dec 2019 23:03:38 -0800
+Message-ID: <1576652618-27017-1-git-send-email-bupadhaya@marvell.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-18_01:2019-12-17,2019-12-18 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently Linux register ghes_poll_func with TIMER_DEFERRABLE flag,
+because of which it is serviced when the CPU eventually wakes up with a
+subsequent non-deferrable timer and not at the configured polling interval.
 
->>    [For those not immersed in ppc64, in real mode, the top nibble or 2 b=
-its
->>    (depending on radix/hash mmu) of the address is ignored. The linear
->>    mapping is placed at 0xc000000000000000. This means that a pointer to
->>    part of the linear mapping will work both in real mode, where it will=
- be
->>    interpreted as a physical address of the form 0x000..., and out of re=
-al
->>    mode, where it will go via the linear mapping.]
->>
->
-> How does hash or radix mmu mode effect how many bits are ignored in real =
-mode?
+For polling mode, the polling interval configured by firmware should not
+be exceeded as per ACPI_6_3 spec[refer Table 18-394], So Timer need to
+be configured in non-deferrable mode by removing TIMER_DEFERRABLE flag.
+With NO_HZ enabled and timer callback being configured in non-deferrable
+mode, timer callback will get called exactly after polling interval.
 
-Bah, you're picking on details that I picked up from random
-conversations in the office rather than from reading the spec! :P
+Impact of removing TIMER_DEFFERABLE flag
+- With NO_HZ enabled, additional timer ticks and unnecessary wakeups of
+ the cpu happens exactly after polling interval.
 
-The ISA suggests that real addresses space is limited to at most 64
-bits. ISAv3, Book III s5.7:
+- If polling interval is too small than polling function will be called
+ too frequently which may stall the cpu.
 
-| * Host real address space size is 2^m bytes, m <=3D 60;
-|   see Note 1.
-| * Guest real address space size is 2 m bytes, m <=3D 60;
-|   see Notes 1 and 2.
-...
-| Notes:
-| 1. The value of m is implementation-dependent (sub-
-|    ject to the maximum given above). When used to
-|    address storage or to represent a guest real
-|    address, the high-order 60-m bits of the =E2=80=9C60-bit=E2=80=9D
-|    real address must be zeros.
-| 2. The hypervisor may assign a guest real address
-|    space size for each partition that uses Radix Tree
-|    translation. Accesses to guest real storage out-
-|    side this range but still mappable by the second
-|    level Radix Tree will cause an HISI or HDSI.
-|    Accesses to storage outside the mappable range
-|    will have boundedly undefined results.
+Signed-off-by: Bhaskar Upadhaya <bupadhaya@marvell.com>
+---
+ drivers/acpi/apei/ghes.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-However, it doesn't follow from that passage that the top 4 bits are
-always ignored when translations are off ('real mode'): see for example
-the discussion of the HRMOR in s 5.7.3 and s 5.7.3.1.=20
-
-I think I got the 'top 2 bits on radix' thing from the discussion of
-'quadrants' in arch/powerpc/include/asm/book3s/64/radix.h, which in turn
-is discussed in s 5.7.5.1. Table 20 in particular is really helpful for
-understanding it. But it's not especially relevant to what I'm actually
-doing here.
-
-I think to fully understand all of what's going on I would need to spend
-some serious time with the entirety of s5.7, because there a lot of
-quirks about how storage works! But I think for our purposes it suffices
-to say:
-
-  The kernel installs a linear mapping at effective address
-  c000... onward. This is a one-to-one mapping with physical memory from
-  0000... onward. Because of how memory accesses work on powerpc 64-bit
-  Book3S, a kernel pointer in the linear map accesses the same memory
-  both with translations on (accessing as an 'effective address'), and
-  with translations off (accessing as a 'real address'). This works in
-  both guests and the hypervisor. For more details, see s5.7 of Book III
-  of version 3 of the ISA, in particular the Storage Control Overview,
-  s5.7.3, and s5.7.5 - noting that this KASAN implementation currently
-  only supports Radix.
-
-Thanks for your attention to detail!
-
-Regards,
-Daniel
-
-
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 777f6f7122b4..c8f9230f69fb 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1181,7 +1181,7 @@ static int ghes_probe(struct platform_device *ghes_dev)
+ 
+ 	switch (generic->notify.type) {
+ 	case ACPI_HEST_NOTIFY_POLLED:
+-		timer_setup(&ghes->timer, ghes_poll_func, TIMER_DEFERRABLE);
++		timer_setup(&ghes->timer, ghes_poll_func, 0);
+ 		ghes_add_timer(ghes);
+ 		break;
+ 	case ACPI_HEST_NOTIFY_EXTERNAL:
+-- 
+2.17.1
 
