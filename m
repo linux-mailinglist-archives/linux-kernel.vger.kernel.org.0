@@ -2,30 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8A711253DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC7B81253DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbfLRUt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:56 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47848 "EHLO
+        id S1727840AbfLRUuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:50:06 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47839 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727395AbfLRUtV (ORCPT
+        with ESMTP id S1727548AbfLRUtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:21 -0500
+        Wed, 18 Dec 2019 15:49:19 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ic000214;
-        Wed, 18 Dec 2019 12:49:13 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0id000214;
+        Wed, 18 Dec 2019 12:49:14 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Misael Lopez Cruz <misael.lopez@ti.com>,
-        Jorge Eduardo Candelaria <jorge.candelaria@ti.com>,
-        linux-omap@vger.kernel.org
-Subject: [PATCH 10/18] mfd: twl6040: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:49 -0500
-Message-Id: <1576702137-25905-11-git-send-email-paul.gortmaker@windriver.com>
+        Ian Molton <spyro@f2s.com>
+Subject: [PATCH 11/18] mfd: t7l66xb: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:50 -0500
+Message-Id: <1576702137-25905-12-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -34,12 +31,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig/Makefile controlling compilation of this code is:
+The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config TWL6040_CORE
-drivers/mfd/Kconfig:    bool "TI TWL6040 audio codec"
-
-drivers/mfd/Makefile: obj-$(CONFIG_TWL6040_CORE)      += twl6040.o
+drivers/mfd/Kconfig:config MFD_T7L66XB
+drivers/mfd/Kconfig:    bool "Toshiba T7L66XB"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -50,82 +45,79 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_i2c_driver() uses the same init level priority as
-builtin_i2c_driver() the init ordering remains unchanged with
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
 this commit.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Misael Lopez Cruz <misael.lopez@ti.com>
-Cc: Jorge Eduardo Candelaria <jorge.candelaria@ti.com>
-Cc: linux-omap@vger.kernel.org
+Cc: Ian Molton <spyro@f2s.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/twl6040.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+ drivers/mfd/t7l66xb.c | 37 ++++---------------------------------
+ 1 file changed, 4 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
-index b9c6d94b4002..531eefb2fab5 100644
---- a/drivers/mfd/twl6040.c
-+++ b/drivers/mfd/twl6040.c
-@@ -9,7 +9,7 @@
-  * Copyright:	(C) 2011 Texas Instruments, Inc.
+diff --git a/drivers/mfd/t7l66xb.c b/drivers/mfd/t7l66xb.c
+index 70da0c4ae457..636b9c8dc96d 100644
+--- a/drivers/mfd/t7l66xb.c
++++ b/drivers/mfd/t7l66xb.c
+@@ -20,7 +20,7 @@
   */
  
+ #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/types.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
  #include <linux/slab.h>
- #include <linux/kernel.h>
-@@ -808,41 +808,18 @@ static int twl6040_probe(struct i2c_client *client,
+@@ -403,42 +403,13 @@ static int t7l66xb_probe(struct platform_device *dev)
  	return ret;
  }
  
--static int twl6040_remove(struct i2c_client *client)
+-static int t7l66xb_remove(struct platform_device *dev)
 -{
--	struct twl6040 *twl6040 = i2c_get_clientdata(client);
+-	struct t7l66xb_platform_data *pdata = dev_get_platdata(&dev->dev);
+-	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
+-	int ret;
 -
--	if (twl6040->power_count)
--		twl6040_power(twl6040, 0);
+-	ret = pdata->disable(dev);
+-	clk_disable_unprepare(t7l66xb->clk48m);
+-	clk_put(t7l66xb->clk48m);
+-	clk_disable_unprepare(t7l66xb->clk32k);
+-	clk_put(t7l66xb->clk32k);
+-	t7l66xb_detach_irq(dev);
+-	iounmap(t7l66xb->scr);
+-	release_resource(&t7l66xb->rscr);
+-	mfd_remove_devices(&dev->dev);
+-	kfree(t7l66xb);
 -
--	regmap_del_irq_chip(twl6040->irq, twl6040->irq_data);
+-	return ret;
 -
--	mfd_remove_devices(&client->dev);
--
--	regulator_bulk_disable(TWL6040_NUM_SUPPLIES, twl6040->supplies);
--
--	return 0;
 -}
 -
- static const struct i2c_device_id twl6040_i2c_id[] = {
- 	{ "twl6040", 0, },
- 	{ "twl6041", 0, },
- 	{ },
- };
--MODULE_DEVICE_TABLE(i2c, twl6040_i2c_id);
- 
- static struct i2c_driver twl6040_driver = {
+ static struct platform_driver t7l66xb_platform_driver = {
  	.driver = {
- 		.name = "twl6040",
-+		.suppress_bind_attrs = true,
+-		.name	= "t7l66xb",
++		.name			= "t7l66xb",
++		.suppress_bind_attrs	= true,
  	},
- 	.probe		= twl6040_probe,
--	.remove		= twl6040_remove,
- 	.id_table	= twl6040_i2c_id,
+ 	.suspend	= t7l66xb_suspend,
+ 	.resume		= t7l66xb_resume,
+ 	.probe		= t7l66xb_probe,
+-	.remove		= t7l66xb_remove,
  };
 -
--module_i2c_driver(twl6040_driver);
+-/*--------------------------------------------------------------------------*/
 -
--MODULE_DESCRIPTION("TWL6040 MFD");
--MODULE_AUTHOR("Misael Lopez Cruz <misael.lopez@ti.com>");
--MODULE_AUTHOR("Jorge Eduardo Candelaria <jorge.candelaria@ti.com>");
--MODULE_LICENSE("GPL");
-+builtin_i2c_driver(twl6040_driver);
+-module_platform_driver(t7l66xb_platform_driver);
+-
+-MODULE_DESCRIPTION("Toshiba T7L66XB core driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Ian Molton");
+-MODULE_ALIAS("platform:t7l66xb");
++builtin_platform_driver(t7l66xb_platform_driver);
 -- 
 2.7.4
 
