@@ -2,65 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32EEE12507A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 142D8125021
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfLRSVk convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Dec 2019 13:21:40 -0500
-Received: from mail.opsba.org ([38.99.166.131]:12429 "EHLO obiwan.opsba.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbfLRSVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:21:40 -0500
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Dec 2019 13:21:40 EST
-Received: from TestExchange.opsba.org (192.168.11.15) by obiwan.opsba.org
- (192.168.11.30) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 18 Dec
- 2019 13:06:37 -0500
-Received: from Obiwan.opsba.org (192.168.11.30) by TestExchange.opsba.org
- (192.168.11.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 18 Dec
- 2019 13:06:36 -0500
-Received: from [192.168.88.214] (185.248.15.173) by obiwan.opsba.org
- (192.168.11.30) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 18 Dec 2019 13:06:33 -0500
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727433AbfLRSH0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 13:07:26 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:44274 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727368AbfLRSHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 13:07:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576692444;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=nmdGUwTvoHp9zBzsfUh31MNBzW9ZhcHvi1/dZfx3TSc=;
+        b=UaOg8v0QtzadQldEogCOhNqNeoUxnrLvQxx631DrXamp5YXFFsNw5fjx73DiEZd3r2BUdG
+        p2wS29Q20kx6psKB8ykqxNliGkqcL5xEsjkh3Y+YlL36kWSmTWfsjrBbJv9v+ur/F1aBAg
+        bk9kgoDsS/jotUbvPjLxpzhGJNfPpAU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-50-bjYQnByeNymkKKOVYrH73A-1; Wed, 18 Dec 2019 13:07:17 -0500
+X-MC-Unique: bjYQnByeNymkKKOVYrH73A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1626E1088381;
+        Wed, 18 Dec 2019 18:07:16 +0000 (UTC)
+Received: from steredhat.redhat.com (ovpn-117-218.ams2.redhat.com [10.36.117.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1592E5D9E2;
+        Wed, 18 Dec 2019 18:07:08 +0000 (UTC)
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     davem@davemloft.net
+Cc:     Jorgen Hansen <jhansen@vmware.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Dexuan Cui <decui@microsoft.com>, netdev@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        Stefano Garzarella <sgarzare@redhat.com>
+Subject: [PATCH net-next v3 00/11] VSOCK: add vsock_test test suite
+Date:   Wed, 18 Dec 2019 19:06:57 +0100
+Message-Id: <20191218180708.120337-1-sgarzare@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: hi
-To:     Recipients <webmaster@opsba.org>
-From:   Nelson Gray <webmaster@opsba.org>
-Date:   Wed, 18 Dec 2019 21:06:31 +0300
-Reply-To: <nelsongray918@gmail.com>
-Message-ID: <1532ecefafb84e749fa6d2f64ae1a7b9@Obiwan.opsba.org>
-X-Brightmail-Tracker: =?iso-8859-1?Q?H4sIAAAAAAAAC11TaVATZxj2292E5diyBNTPtKLGSrUitafLTFuUtmM6Rb?=
- =?iso-8859-1?Q?nqONjJ2KCBpMWESYJij4xBwTEc2ooVEBHSRA4JAkVrvDiqyFkYoVCkghwy?=
- =?iso-8859-1?Q?EEZBJQihaDfJiqH745nne97je99nd3GUU+bMxUXxSpFcKozhsV2wqgJX93?=
- =?iso-8859-1?Q?WGbyyC9cYbvZkI1dCcglFJZbWAmk2pB1RDWhpKtagHUarvSgmgOob0CNV2?=
- =?iso-8859-1?Q?OZtN1ekyUCphuoBFJd5NYlO1I+WAGjMbMSq7weREaacvsaipB39iVPdYP0?=
- =?iso-8859-1?Q?KZE7SA0tcPo5SuymOjF7/3SqETP+fpeRbfMlnE4j85eAfjD9x+Dvjj7b+i?=
- =?iso-8859-1?Q?/IGUJjb/6ZAe5demjtDRcu8Qlx0siTRSFv81SzzzvIYdGxOfXPkMPQAiNM?=
- =?iso-8859-1?Q?AF55AlAHZ2dIG5g6GoDbMfLgNYaBilD844SvrBv0+ks62cID1gfeYgo6+F?=
- =?iso-8859-1?Q?Z/NGUQ3Aae4DzRqlVfYkXeGE6Tywci/ydXgst5Vl5WzyDfioy4xYOUaugm?=
- =?iso-8859-1?Q?kWrS2HQ66Eup5JYG8fAMf+/Qmz68th/YkGWz4kQ6HmL6OTnW+ArcZUtp0H?=
- =?iso-8859-1?Q?wmsPBxl9EzRYmjA73wLbjnYxuhqB+Tkf2Hk4vFxfytSugzdrjwA7fwfO9P?=
- =?iso-8859-1?Q?Yj1t0heZDe/Uwq08gfNlZUMvwzqKm8xxQEw75bFcBeUIrBpu6rzKQ+8Lpa?=
- =?iso-8859-1?Q?yyS9BWfVx5niFVB7pID1YtLOzHGnY4CX5eBvloO/WQ7+Zr30NxdgRYAMjp?=
- =?iso-8859-1?Q?TsE0r9ZLGKSKGfTB5dDuzf4/ZL4Lf8h341wB9HeAsJnnhawHklUrZ7v1io?=
- =?iso-8859-1?Q?EO+Ux8WIFDxvYvTClICzeE5WxCliJbsksjjFzjh5TA0IxXGytbnvMSDbxx?=
- =?iso-8859-1?Q?8nIFxMKpOKeJCgoi0CjodcFC2Kj5LE0P8B03AFYSToCNcx8v+eCO5cAzbg?=
- =?iso-8859-1?Q?bjwv4l0JnUwoYoV7FJJopsVSIqeLnmnRC3V+eQNIBvjdwdNaFO+xoeFmDo?=
- =?iso-8859-1?Q?1lNvzdhtU21KTk0XjwHy2NI0YdjXVDVuwcu6ZHObY9uIsJvpgegLReJY6T?=
- =?iso-8859-1?Q?zq3BXU4ETNEzLHEIzB/D+s8bp9wNt8FSrifhE0x3cYsVyfdIlMwWTPwOWI?=
- =?iso-8859-1?Q?T3IfgAwtxIywvoZz0wgfdxwPMkOqwDuEmkypcGvEY03qDf1UJGnH+xiXYO?=
- =?iso-8859-1?Q?oZ3D19icUwqVjs4lPrE5x6jzK7kHkKyS5sLjvpGWX3xV7WONCyYyggSqCz?=
- =?iso-8859-1?Q?Mq8VJX70cSGJbcV6DJLv5E93xHR1D/4XKsdeVwx2lDdnk36Rx1alfLH4de?=
- =?iso-8859-1?Q?PZuY87mTvnp1uCnk0/2PplVX738Vv2SixPdK1feLvy1OlZn3eQgTN3ttPD?=
- =?iso-8859-1?Q?PMPXRDsL6EVEUdXf34h5shP7aGrbpVcyrpGTd9oLFiky7hQ/11fvO5so9z?=
- =?iso-8859-1?Q?A7al+81+od/MmmxZy9kW5HsY1E3r7m0dDVWb994PK7p6IX97boAyImK3P/?=
- =?iso-8859-1?Q?/LJ8XX2ckPmtdcrDf5bDy5Je/cyb1bSysiWtUXOyIbBbNTFSzedxkLl+m6?=
- =?iso-8859-1?Q?w8ms3Gp30OP5szQw8D3zR6pQ2q+oKh6mEAvffhOVK4T/AS6pn33EBQAA?=
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Your e-mail account was selected for a donation of 2,500,000.00 USD. Contact us for more information 
+The vsock_diag.ko module already has a test suite but the core AF_VSOCK
+functionality has no tests. This patch series adds several test cases tha=
+t
+exercise AF_VSOCK SOCK_STREAM socket semantics (send/recv, connect/accept=
+,
+half-closed connections, simultaneous connections).
+
+The v1 of this series was originally sent by Stefan.
+
+v3:
+- Patch 6:
+  * check the byte received in the recv_byte()
+  * use send(2)/recv(2) instead of write(2)/read(2) to test also flags
+    (e.g. MSG_PEEK)
+- Patch 8:
+  * removed unnecessary control_expectln("CLOSED") [Stefan].
+- removed patches 9,10,11 added in the v2
+- new Patch 9 add parameters to list and skip tests (e.g. useful for vmci
+  that doesn't support half-closed socket in the host)
+- new Patch 10 prints a list of options in the help
+- new Patch 11 tests MSG_PEEK flags of recv(2)
+
+v2: https://patchwork.ozlabs.org/cover/1140538/
+v1: https://patchwork.ozlabs.org/cover/847998/
+
+Stefan Hajnoczi (7):
+  VSOCK: fix header include in vsock_diag_test
+  VSOCK: add SPDX identifiers to vsock tests
+  VSOCK: extract utility functions from vsock_diag_test.c
+  VSOCK: extract connect/accept functions from vsock_diag_test.c
+  VSOCK: add full barrier between test cases
+  VSOCK: add send_byte()/recv_byte() test utilities
+  VSOCK: add AF_VSOCK test cases
+
+Stefano Garzarella (4):
+  vsock_test: wait for the remote to close the connection
+  testing/vsock: add parameters to list and skip tests
+  testing/vsock: print list of options and description
+  vsock_test: add SOCK_STREAM MSG_PEEK test
+
+ tools/testing/vsock/.gitignore        |   1 +
+ tools/testing/vsock/Makefile          |   9 +-
+ tools/testing/vsock/README            |   3 +-
+ tools/testing/vsock/control.c         |  15 +-
+ tools/testing/vsock/control.h         |   2 +
+ tools/testing/vsock/timeout.h         |   1 +
+ tools/testing/vsock/util.c            | 376 +++++++++++++++++++++++++
+ tools/testing/vsock/util.h            |  49 ++++
+ tools/testing/vsock/vsock_diag_test.c | 202 ++++----------
+ tools/testing/vsock/vsock_test.c      | 379 ++++++++++++++++++++++++++
+ 10 files changed, 883 insertions(+), 154 deletions(-)
+ create mode 100644 tools/testing/vsock/util.c
+ create mode 100644 tools/testing/vsock/util.h
+ create mode 100644 tools/testing/vsock/vsock_test.c
+
+--=20
+2.24.1
+
