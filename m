@@ -2,95 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56CA0124DEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68788124E02
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfLRQiX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:38:23 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43349 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727124AbfLRQiW (ORCPT
+        id S1727591AbfLRQkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:40:10 -0500
+Received: from mout.kundenserver.de ([212.227.17.24]:40215 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbfLRQkJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:38:22 -0500
-Received: by mail-qk1-f196.google.com with SMTP id t129so2058324qke.10
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 08:38:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sbHXKAlGtJ4WoF+Wk5BJ7Ni9B2+fY69RTFn/n1ttSO4=;
-        b=S2234Y6PzoYiAKpG5kfvgExKO7U4AEEPbmh0zbW+1C8PjTfHk/M7SihyDv5d7vq+Ru
-         NArec1JjWWgRz8TRt7gvAmwkrhVxatpifjGd6KEal21z6iBnXvuaJpa8p2rgdska4HR8
-         Vn1IWYv7095dx+9vEd1cUadyqjeeepD8aTciCzCnaWuF+oAzgmeS5QjeNn5Lmn37yzYh
-         fx8cbejQT9OMRW+IDdq/E8ZiCAOt/V/VrtYz1g2GV3t5tROmmRq6/XCUz1KiqHH2I6V6
-         egDx+E2dG2bhwjzHMvecHlewS40PCe32Ce/P5nAKGuyQaOZt6MhqmyR/N26znSJNXPBS
-         zLaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sbHXKAlGtJ4WoF+Wk5BJ7Ni9B2+fY69RTFn/n1ttSO4=;
-        b=Re3zPObak62ySgg++1+NdlpHAaFv5iJErFWjiNdYQDe62BnVgi6HMcf1fPR2Tu4hMd
-         fa1KhgieVg31BRz6eVtsdLpxZndXnhOpRupG3YYMdU+LKc3cizVlv1Axbwtw/Wj0K2Pd
-         YzlGTdp74gC1ED6buXsCILRCmpnecoyO+00hkBpyuzn8QPBgcMaUDmyC27rrmqpxrYnV
-         YZK7c359j8sYYacc5YpoDCvd8/itf6wAbxpOvgCzgeDZ9g/tCKE1AcNxycxm7r7IIyf5
-         PEmy/D3THfUei7b1zLho6LceDh2gtE6VH8YQzfHEOQMS4KR1yYqhzBgR372QvZ9BdcZh
-         6dTQ==
-X-Gm-Message-State: APjAAAXofXZQeeOi9Ah/oWFjVfXUf6cMdKWQS/rQm8UiX1ARiOZBdalB
-        SIOM7Upe+woDufWzBg/b63PZQm7UncocYQ==
-X-Google-Smtp-Source: APXvYqyi2DFONj1cNsqdqMvZd0EqSNs+bKVIC10ca2hMoPkHA/RPLR03EXtJv64Xk3ZmkgCRZBu+Tg==
-X-Received: by 2002:a37:644:: with SMTP id 65mr3542626qkg.309.1576687100662;
-        Wed, 18 Dec 2019 08:38:20 -0800 (PST)
-Received: from ?IPv6:2620:10d:c0a8:1102:ce0:3629:8daa:1271? ([2620:10d:c091:480::65a1])
-        by smtp.gmail.com with ESMTPSA id q126sm812880qkd.21.2019.12.18.08.38.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 08:38:19 -0800 (PST)
-Subject: Re: [PATCH] btrfs: remove BUG_ON used as assertions
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     kjlu@umn.edu, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191215171237.27482-1-pakki001@umn.edu>
-From:   Josef Bacik <josef@toxicpanda.com>
-Message-ID: <2f9d6549-47cf-fb71-3bff-50b51093e757@toxicpanda.com>
-Date:   Wed, 18 Dec 2019 11:38:18 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:68.0)
- Gecko/20100101 Thunderbird/68.3.1
+        Wed, 18 Dec 2019 11:40:09 -0500
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MRTIx-1iMu9G3WSb-00NRZ9; Wed, 18 Dec 2019 17:39:55 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Brian Foster <bfoster@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Allison Collins <allison.henderson@oracle.com>,
+        Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] xfs: rename compat_time_t to old_time32_t
+Date:   Wed, 18 Dec 2019 17:39:28 +0100
+Message-Id: <20191218163954.296726-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20191215171237.27482-1-pakki001@umn.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:E9mF7OYDn9JyQwrHLT+pY4Y1q8BDrhiycRQ3Ygb25o5lMFAbgML
+ r8VIN8pCIoF2EG1eS0sqGdFs16ROCCbwJCM4eSC/EYLBG0P6ZOPrM+WDns2LZkHEOt6dKVZ
+ KigR86K6jd1IXB9Is8ld5PoRU9RZXPkHIF0Ikm07i5N+v7aolUwAq5o8tcWHEe2Aa88Ttmy
+ llvpZ3Q1tHfVjtUL7sAfw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:7cATP4CSdSk=:f9D6xz2FFGd7zqBrEqzNNr
+ 25DzUk6VbJWMouHADDk631BIoq1VL5PSh7hi6MN7wfep+gWhhjEucBFmXuR2bO/5OCMvY4mta
+ vqgKF5AmsMkxvawUCqaQx9jqlJYt+V0c40DieoYHeHf9vAficZdjykAMQi1lEz7IsTNnfqKFC
+ /TMI42qGT8keVFBCOH12cYI6rMio/a0LVhxBntLzfQbCqgPdqzc2+v0ZyE/PZ7kHc204eXCmH
+ bVIMh9B04C8NF1hVACl+DoJt9N2f0tWqd7CqzDkzS+BMWZVzCzr09i4m55OonYvDPGoegMKBm
+ ZS7rWzAqtE1AITyw5o6qk/cphSQaBc/7tQzq7UnsXkgCCo9kZsno4XJdeh5+hnkIlX2Ob4wJX
+ RajGiL1S3Kv35a3gUDWFM8zdebH4mahgIsiZGUIkOKeiBHfbiL1G9VyGq0QSTbRnSHM5x+SQi
+ mHVSlXEaCQ39FQVNDnBpUJRRlssjqUHB9ShEY3V8+j19mYM0hnRGqAShlC+fo3QJXfDe4CGlM
+ TfhaUyhamZXOXWxHWrFajja0AaRBC3L0vLcbJE4hS5kn1BGLng2eLIdq3gLwR457YQKuZh04O
+ D7x6Wbf7HocsfpQu2rOdNz9uV3KHehT/U7FnUHY7FcNNXKARfZgRf8GOHj/zc6teMnBwp1k9o
+ Ngk6ivNWG315zPJL7eah7wniA6dIDSAQXeXMgf6p5/QOWfpB5l+vV6k/lp8gpQ6mLSXyIKiAS
+ B0NPEgoYzzGoK1y+rI4p/pShuZcq0fMxeraEw/VyuYarTKmEP3YlNUnzzkYY2A37KPWbwOTBW
+ v4KERGsd9uBcow2SO2fhq7ww64iL5AdyKwz7i1X0lQhBkxO8+1QRZjn7l5nQyxZFmQpH3fTxd
+ fVGYeDs4N4d/GOxBRhYQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/15/19 12:12 PM, Aditya Pakki wrote:
-> alloc_extent_state_atomic() allocates extents via GFP_ATOMIC flag
-> and cannot fail. There are multiple invocations of BUG_ON on the
-> return value to check for failure. The patch replaces certain
-> invocations of BUG_ON by returning the error upstream.
-> 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+The compat_time_t type has been removed everywhere else,
+as most users rely on old_time32_t for both native and
+compat mode handling of 32-bit time_t.
 
-I already tried this a few months ago and gave up.  There are a few things if 
-you want to tackle something like this
+Remove the last one in xfs.
 
-1) use bpf's error injection thing to make sure you handle every path that can 
-error out.  This is the script I wrote to do just that
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/xfs/xfs_ioctl32.c | 2 +-
+ fs/xfs/xfs_ioctl32.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-https://github.com/josefbacik/debug-scripts/blob/master/error-injection-stress.py
+diff --git a/fs/xfs/xfs_ioctl32.c b/fs/xfs/xfs_ioctl32.c
+index c4c4f09113d3..a49bd80b2c3b 100644
+--- a/fs/xfs/xfs_ioctl32.c
++++ b/fs/xfs/xfs_ioctl32.c
+@@ -107,7 +107,7 @@ xfs_ioctl32_bstime_copyin(
+ 	xfs_bstime_t		*bstime,
+ 	compat_xfs_bstime_t	__user *bstime32)
+ {
+-	compat_time_t		sec32;	/* tv_sec differs on 64 vs. 32 */
++	old_time32_t		sec32;	/* tv_sec differs on 64 vs. 32 */
+ 
+ 	if (get_user(sec32,		&bstime32->tv_sec)	||
+ 	    get_user(bstime->tv_nsec,	&bstime32->tv_nsec))
+diff --git a/fs/xfs/xfs_ioctl32.h b/fs/xfs/xfs_ioctl32.h
+index 8c7743cd490e..053de7d894cd 100644
+--- a/fs/xfs/xfs_ioctl32.h
++++ b/fs/xfs/xfs_ioctl32.h
+@@ -32,7 +32,7 @@
+ #endif
+ 
+ typedef struct compat_xfs_bstime {
+-	compat_time_t	tv_sec;		/* seconds		*/
++	old_time32_t	tv_sec;		/* seconds		*/
+ 	__s32		tv_nsec;	/* and nanoseconds	*/
+ } compat_xfs_bstime_t;
+ 
+-- 
+2.20.0
 
-2) We actually can't fail here.  We would need to go back and make _all_ callers 
-of lock_extent_bits() handle the allocation error.  This is theoretically 
-possible, but a giant pain in the ass.  In general we can make allocations here 
-and we need to be able to make them.
-
-3) We should probably mark this path with __GFP_NOFAIL because again, this is 
-locking and we need locking to succeed.
-
-Thanks,
-
-Josef
