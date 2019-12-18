@@ -2,102 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA8C123E9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21C5E123EA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:40:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfLREk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 23:40:29 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41569 "EHLO
+        id S1726717AbfLREkr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 23:40:47 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41599 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726613AbfLREkV (ORCPT
+        with ESMTP id S1726387AbfLREkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 23:40:21 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w62so488907pfw.8
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:40:21 -0800 (PST)
+        Tue, 17 Dec 2019 23:40:46 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w62so489442pfw.8;
+        Tue, 17 Dec 2019 20:40:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=buvyJgIJY0R4gHfuaJpwEN38gwzHGwHEA+PtuFw57xs=;
-        b=fSA6/OU6RZ4QSFkEveLrXMk7xfGo5Yml/4SapAlwGdyCNgt6hZvHpVJXueStFSsHRU
-         E8cFUeFs80hq2ijU88iVgMzJbyAijs5ff9wE+NkkPiF2iJ9XGAthOz03SFgeQWN93Knc
-         sxUokcCF+H9YitQqotepfn0/Z+vKvmrvDGp4PEfaS7oVzHaxx05dJjcuH1bLCw0F3GqB
-         lBkVZB4XUJaRNgt7fr2Hd2Q8sbpoGUwVLYsgo6nGcVoUf+zHKWshZZBBA+L+Wcw3OsUZ
-         B1eLZ2zD8Fs8xMcZ7wPwo4dThIhjfnksWJgczgKpxlIh5m6nPrk12rGDUrhJgCbdp9tY
-         aWLg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GrKfPHWlzDEJvr5AEBo/fYlRUfRELTxwLkCTPqqmL5k=;
+        b=XDX7OygWR3o/AaSRFcMaG6KBpndn7POmPbXa0ahnXYjdD1xRPgLVAHFsUVHeV4E3Pn
+         rcWCicvO3NFdRtdGEzchqV7808Mpl148Jls3F2Xte9cjATYJeh60kZ9YsiDTf9hjp8+p
+         ATm3f+mEXaYhz7gqfYxL7ybnsncdHz7WICz5Yjm2XAKPRuEK2Owqge+1/7Q6Y/ijXhbz
+         JNCNv6+z3nSI1J5sYDn4cL7fUpP05fVkQPeM40fxXy+15VByQORdRoluMEqlffXYKnG6
+         lYckpOKKMl7YZueSMsVqK1lSoLIGRL1LU6smOWAn+f+rCanWu20zfE6Kg931oxO0TEkU
+         8Dvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=buvyJgIJY0R4gHfuaJpwEN38gwzHGwHEA+PtuFw57xs=;
-        b=IkfY01iVJ7ZmLkyiNSE1JPsqH2NwOsUCynbNvq18tmSKUDBr06ucJp4Dahjo0RXr/n
-         VFrV1XdUt5gmB1d6VFxnSh9OlZAfqCkCdlfrflvU2VxZCz26STKQzi/rrNjTDD7GIcQ+
-         n+uD0fILEAAHvuG5ITNbeK8MBreIka9U+eIpcC78XDLNt2lbv4wsJ06NOa86bErzatc5
-         LKhqNXGQjAgTFuQihX8djKBw5MmQsInPoP+hTAotx1DdRk5WEd1k8NB92EoSq+5H0hZy
-         xCUHIZGA4tZmj8xkyRM/DHLYLfR6T7TMUcqvi9y7ncMmH9q/6AMYLJzCuR/+Nubavxwx
-         IpEA==
-X-Gm-Message-State: APjAAAVBFxqN1Mlb6vd4uhHycpbrBc47p+zIHmpA0StJ0mk3fr7+lHJY
-        2I5h9aArInZG3DBlPdTIc6E=
-X-Google-Smtp-Source: APXvYqzYkNMV1tAM39yw129obSP47Du+yTcT5HVPg0cGDvNIcUAUzXmE7cRKZdrBA9z1l687aXPNXA==
-X-Received: by 2002:a62:8205:: with SMTP id w5mr831686pfd.136.1576644020754;
-        Tue, 17 Dec 2019 20:40:20 -0800 (PST)
-Received: from tw-172-25-31-76.office.twttr.net ([8.25.197.24])
-        by smtp.gmail.com with ESMTPSA id j21sm781105pfe.175.2019.12.17.20.40.19
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GrKfPHWlzDEJvr5AEBo/fYlRUfRELTxwLkCTPqqmL5k=;
+        b=dGzM8DW+xk6N3a1nxsUl2D7MMDB+goNMQ4VXCT8Oqmw3R728V6amsmkmzf67JFgXT0
+         PGW1zkZX29ToP+CvkoqxPwsHVSEo9g3Af7Ttz6CxWXJYFoi2ahvqzKGMcnO9JjBYUnSB
+         Nax5Lo2gaOMtzMZjrF0W3OgNXG4zpv4TEzoY0MCms0VoeqK2VH7D59QypKw81Mk19CWl
+         ckx7P311QAsj2k3AEEELgEESEWUp4/XS0MlzqPUQVvnRb8ANa7lZdNYzQ1TPQFU//1tG
+         12/eCH4AFKUhoMal2+hJKk9FOEeNRMc6nDoTY4BN9uPCqIRxjmM+sijxPI4+XAiL+6+3
+         57hw==
+X-Gm-Message-State: APjAAAWaP/vMBPl8GzS+KLzxlSLqTFR9lMk/F5chV7z8DcUgY1ySvBXW
+        UqI0dgimepTL4KPfMCJLT/U=
+X-Google-Smtp-Source: APXvYqyyzxV7dEGa56Cg6K8AAx/tV3UCABXTF2we4KGAO9kAqp1sqWnzMe0COs+F87LFNJAdPquDyQ==
+X-Received: by 2002:a63:1402:: with SMTP id u2mr701402pgl.224.1576644045967;
+        Tue, 17 Dec 2019 20:40:45 -0800 (PST)
+Received: from localhost ([2401:fa00:8f:203:250d:e71d:5a0a:9afe])
+        by smtp.gmail.com with ESMTPSA id k60sm633881pjh.22.2019.12.17.20.40.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 20:40:20 -0800 (PST)
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-To:     iommu@lists.linux-foundation.org
-Cc:     robin.murphy@arm.com, linux-kernel@vger.kernel.org,
-        joro@8bytes.org, Cong Wang <xiyou.wangcong@gmail.com>,
-        John Garry <john.garry@huawei.com>
-Subject: [Patch v3 3/3] iommu: avoid taking iova_rbtree_lock twice
-Date:   Tue, 17 Dec 2019 20:39:51 -0800
-Message-Id: <20191218043951.10534-4-xiyou.wangcong@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
-References: <20191218043951.10534-1-xiyou.wangcong@gmail.com>
+        Tue, 17 Dec 2019 20:40:45 -0800 (PST)
+Date:   Wed, 18 Dec 2019 13:40:43 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Andrey Zhizhikin <andrey.z@gmail.com>, ast@kernel.org,
+        daniel@iogearbox.net, kafai@fb.com, songliubraving@fb.com,
+        yhs@fb.com, andriin@fb.com, pmladek@suse.com,
+        wangkefeng.wang@huawei.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>
+Subject: Re: [PATCH] tools lib api fs: fix gcc9 compilation error
+Message-ID: <20191218044043.GB88635@google.com>
+References: <20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com>
+ <20191218031019.GB419@tigerII.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218031019.GB419@tigerII.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both find_iova() and __free_iova() take iova_rbtree_lock,
-there is no reason to take and release it twice inside
-free_iova().
+On (19/12/18 12:10), Sergey Senozhatsky wrote:
+> On (19/12/11 08:01), Andrey Zhizhikin wrote:
+> [..]
+> > @@ -210,6 +210,7 @@ static bool fs__env_override(struct fs *fs)
+> >  	size_t name_len = strlen(fs->name);
+> >  	/* name + "_PATH" + '\0' */
+> >  	char upper_name[name_len + 5 + 1];
+> > +
+> >  	memcpy(upper_name, fs->name, name_len);
+> >  	mem_toupper(upper_name, name_len);
+> >  	strcpy(&upper_name[name_len], "_PATH");
+> > @@ -219,7 +220,8 @@ static bool fs__env_override(struct fs *fs)
+> >  		return false;
+> >  
+> >  	fs->found = true;
+> > -	strncpy(fs->path, override_path, sizeof(fs->path));
+> > +	strncpy(fs->path, override_path, sizeof(fs->path) - 1);
+> > +	fs->path[sizeof(fs->path) - 1] = '\0';
+> 
+> I think the trend these days is to prefer stracpy/strscpy over
+> strcpy/strlcpy/strncpy.
 
-Fold them into one critical section by calling the unlock
-versions instead.
+Scratch that. This is user-space, I should pay more attention.
 
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: John Garry <john.garry@huawei.com>
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
----
- drivers/iommu/iova.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 184d4c0e20b5..f46f8f794678 100644
---- a/drivers/iommu/iova.c
-+++ b/drivers/iommu/iova.c
-@@ -390,10 +390,14 @@ EXPORT_SYMBOL_GPL(__free_iova);
- void
- free_iova(struct iova_domain *iovad, unsigned long pfn)
- {
--	struct iova *iova = find_iova(iovad, pfn);
-+	unsigned long flags;
-+	struct iova *iova;
- 
-+	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
-+	iova = private_find_iova(iovad, pfn);
- 	if (iova)
--		__free_iova(iovad, iova);
-+		private_free_iova(iovad, iova);
-+	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
- 
- }
- EXPORT_SYMBOL_GPL(free_iova);
--- 
-2.21.0
-
+	-ss
