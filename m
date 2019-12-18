@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8793D125397
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:40:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25D141253A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:41:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfLRUkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:40:06 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:38924 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLRUkF (ORCPT
+        id S1727664AbfLRUkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:40:10 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39659 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbfLRUkG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:40:05 -0500
-Received: by mail-qk1-f194.google.com with SMTP id c16so2738344qko.6
+        Wed, 18 Dec 2019 15:40:06 -0500
+Received: by mail-qt1-f196.google.com with SMTP id e5so3055948qtm.6
         for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 12:40:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NYhWk9A+WoXMXCHtGdQqG3zbhIals/Q0OXKZBLbp2XQ=;
-        b=QmiTNlu8jt60arhUq6Vijn1eKRufa4lMPb71FIpggvRBA8SwJkZj7IQX7jPSa0Mf0+
-         hejwR+qSJtPESHkIQsfVsbCoSij3MewLzVbpjyiySrAX7Iped/S9vBbST7RGEOvZKOx1
-         jUkwbdU59oqG40dtFPXeLoRguIJQbsVY2XllTKByb/NV2cMsUBwvmOu9bcD2gGc1urKN
-         rN7zUjzR8Lno5RPKzvelPX16LGSRpEIW0z3d30rL54NZlKE4fAWCRYPpaQqZ4+8EdM3k
-         t5a+TcdPRRQz1DNAbfn8mM3DeYiVPMVySeEyVzCZq2MtJ5bs05LAeS739bMsjX6KvCxG
-         RhKQ==
-X-Gm-Message-State: APjAAAWrMT16KNL7dj4MoLg56mY0tiT2xEYbOUXllliWZ4/T03NPpKND
-        F2qaKOmUlIbZTB4Tj+ufgeo=
-X-Google-Smtp-Source: APXvYqw3gDszwrtCiXihMuBAD84OtqA8ZYseLupbuLXdLkRVMBBZpca33S3DGFVq1RH54+FnZgca2w==
-X-Received: by 2002:a37:3ce:: with SMTP id 197mr4779532qkd.454.1576701604480;
-        Wed, 18 Dec 2019 12:40:04 -0800 (PST)
+        bh=xuC0KnENGlHSh4OuNtX5fMwiXIkT6SBdyZ81CX+59Kg=;
+        b=MXmFL7uqVsnOIzXbdpVsLnz4t8Ed18k7qAiFMRuzJb8WqCUdM6Ulp3sX7xmrblR8aD
+         Bx7NfcXWMQrVBRAb0r3H1DbJt5eKNx4nGThBNq2xkoegjYVQ/7w3Ko4GuIiwrMzVHlee
+         jZG9a1WlBKXEO+WjKp7/f0prjPNAicQsPkPJTRImvArmjatX4+8ZAt5SpaX3NLsfQSIG
+         xx8gq6MO2f28xtI7vOJ4vqqslH3yz7JoKD+cdeI2FHq7GO3J6Kb+AO0XJspiZO0kNE/x
+         WNpgKnRBlLijqHRSGoFYbKa/JNgg72k85WOTEQKwcynsijOrczLZpYO8b2W+6s/wtCN9
+         vLfw==
+X-Gm-Message-State: APjAAAW/FfV44sLONXR18pRldtxfr8ragwUtLbwUEu3ZIW2r74tIqpo3
+        Udl0DAs/7t9zQng0iy7evY8=
+X-Google-Smtp-Source: APXvYqyauJueZCK5IwnG4crXFSgetR+R06CV0pByYUl+l/bjpphLDYXDZ69L0JMnIG6W9yp2y5apkg==
+X-Received: by 2002:ac8:195d:: with SMTP id g29mr4000603qtk.65.1576701605403;
+        Wed, 18 Dec 2019 12:40:05 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id t7sm993347qkm.136.2019.12.18.12.40.03
+        by smtp.gmail.com with ESMTPSA id t7sm993347qkm.136.2019.12.18.12.40.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 18 Dec 2019 12:40:04 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 01/24] console/dummycon: Remove bogus depends on from DUMMY_CONSOLE
-Date:   Wed, 18 Dec 2019 15:39:39 -0500
-Message-Id: <20191218204002.30512-2-nivedita@alum.mit.edu>
+Subject: [PATCH 02/24] vt: Initialize conswitchp to dummy_con if unset
+Date:   Wed, 18 Dec 2019 15:39:40 -0500
+Message-Id: <20191218204002.30512-3-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191218204002.30512-1-nivedita@alum.mit.edu>
 References: <20191218204002.30512-1-nivedita@alum.mit.edu>
@@ -51,37 +51,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit [1] consolidated console configuration in
-drivers/video/console, DUMMY_CONSOLE has always been enabled, since the
-dependency is always satisfied.
-
-There is no point in trying to allow it to be configured out, since
-(a) it's tiny, and (b) if VT_CONSOLE is enabled, we must have a working
-console driver by the time con_init(vt.c) runs, and only dummycon is
-guaranteed to work (vgacon may be configured in, but that doesn't mean
-we have a VGA device).
-
-So just remove the fake dependency.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit?id=31d2a7d36d6989c714b792ec00358ada24c039e7
+If the arch setup code hasn't initialized conswitchp yet, set it to
+dummy_con in con_init. This will allow us to drop the dummy_con
+initialization that's done in almost every architecture.
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- drivers/video/console/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/tty/vt/vt.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/video/console/Kconfig b/drivers/video/console/Kconfig
-index c10e17fb9a9a..70c10ea1c38b 100644
---- a/drivers/video/console/Kconfig
-+++ b/drivers/video/console/Kconfig
-@@ -93,7 +93,6 @@ config SGI_NEWPORT_CONSOLE
+diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+index 34aa39d1aed9..2456afaf1c61 100644
+--- a/drivers/tty/vt/vt.c
++++ b/drivers/tty/vt/vt.c
+@@ -3326,8 +3326,9 @@ static int __init con_init(void)
  
- config DUMMY_CONSOLE
- 	bool
--	depends on VGA_CONSOLE!=y || SGI_NEWPORT_CONSOLE!=y 
- 	default y
+ 	console_lock();
  
- config DUMMY_CONSOLE_COLUMNS
+-	if (conswitchp)
+-		display_desc = conswitchp->con_startup();
++	if (!conswitchp)
++		conswitchp = &dummy_con;
++	display_desc = conswitchp->con_startup();
+ 	if (!display_desc) {
+ 		fg_console = 0;
+ 		console_unlock();
 -- 
 2.24.1
 
