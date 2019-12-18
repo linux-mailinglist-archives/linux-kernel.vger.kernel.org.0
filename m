@@ -2,28 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C975A1253D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A67911253E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfLRUtd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:33 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47887 "EHLO
+        id S1727866AbfLRUuS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:50:18 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47790 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfLRUtb (ORCPT
+        with ESMTP id S1726454AbfLRUtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:31 -0500
+        Wed, 18 Dec 2019 15:49:17 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0iV000214;
-        Wed, 18 Dec 2019 12:49:08 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0iW000214;
+        Wed, 18 Dec 2019 12:49:09 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Daniel Ribeiro <drwyrm@gmail.com>,
-        Harald Welte <laforge@openezx.org>
-Subject: [PATCH 03/18] mfd: ezx-pcap: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:42 -0500
-Message-Id: <1576702137-25905-4-git-send-email-paul.gortmaker@windriver.com>
+        Haojian Zhuang <haojian.zhuang@marvell.com>
+Subject: [PATCH 04/18] mfd: 88pm860x-*: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:43 -0500
+Message-Id: <1576702137-25905-5-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -32,10 +31,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+The Kconfig/Makefile currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config EZX_PCAP
-drivers/mfd/Kconfig:    bool "Motorola EZXPCAP Support"
+drivers/mfd/Makefile:88pm860x-objs := 88pm860x-core.o 88pm860x-i2c.o
+drivers/mfd/Makefile:obj-$(CONFIG_MFD_88PM860X) += 88pm860x.o
+
+drivers/mfd/Kconfig:config MFD_88PM860X
+drivers/mfd/Kconfig:    bool "Marvell 88PM8606/88PM8607"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -46,93 +48,133 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
+In the case of 88pm860x-i2c.c, there is nothing modular whatsoever,
+so we simply remove module.h itself.
+
 Since module_init was not in use by this code, the init ordering
 remains unchanged with this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Daniel Ribeiro <drwyrm@gmail.com>
-Cc: Harald Welte <laforge@openezx.org>
+Cc: Haojian Zhuang <haojian.zhuang@marvell.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/ezx-pcap.c | 42 +++---------------------------------------
- 1 file changed, 3 insertions(+), 39 deletions(-)
+ drivers/mfd/88pm860x-core.c | 40 ++--------------------------------------
+ drivers/mfd/88pm860x-i2c.c  |  1 -
+ 2 files changed, 2 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/mfd/ezx-pcap.c b/drivers/mfd/ezx-pcap.c
-index 70fa18b04ad2..954a27985b2f 100644
---- a/drivers/mfd/ezx-pcap.c
-+++ b/drivers/mfd/ezx-pcap.c
-@@ -6,7 +6,7 @@
-  * Copyright (C) 2009 Daniel Ribeiro <drwyrm@gmail.com>
+diff --git a/drivers/mfd/88pm860x-core.c b/drivers/mfd/88pm860x-core.c
+index c9bae71f643a..741012a7a6e1 100644
+--- a/drivers/mfd/88pm860x-core.c
++++ b/drivers/mfd/88pm860x-core.c
+@@ -8,7 +8,7 @@
   */
  
+ #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-@@ -392,30 +392,6 @@ static int pcap_add_subdev(struct pcap_chip *pcap,
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+ #include <linux/irq.h>
+@@ -643,12 +643,6 @@ static int device_irq_init(struct pm860x_chip *chip,
  	return ret;
  }
  
--static int ezx_pcap_remove(struct spi_device *spi)
+-static void device_irq_exit(struct pm860x_chip *chip)
 -{
--	struct pcap_chip *pcap = spi_get_drvdata(spi);
--	unsigned long flags;
--	int i;
+-	if (chip->core_irq)
+-		free_irq(chip->core_irq, chip);
+-}
 -
--	/* remove all registered subdevs */
--	device_for_each_child(&spi->dev, NULL, pcap_remove_subdev);
+ int pm8606_osc_enable(struct pm860x_chip *chip, unsigned short client)
+ {
+ 	int ret = -EIO;
+@@ -1079,12 +1073,6 @@ static int pm860x_device_init(struct pm860x_chip *chip,
+ 	return 0;
+ }
+ 
+-static void pm860x_device_exit(struct pm860x_chip *chip)
+-{
+-	device_irq_exit(chip);
+-	mfd_remove_devices(chip->dev);
+-}
 -
--	/* cleanup ADC */
--	spin_lock_irqsave(&pcap->adc_lock, flags);
--	for (i = 0; i < PCAP_ADC_MAXQ; i++)
--		kfree(pcap->adc_queue[i]);
--	spin_unlock_irqrestore(&pcap->adc_lock, flags);
+ static int verify_addr(struct i2c_client *i2c)
+ {
+ 	unsigned short addr_8607[] = {0x30, 0x34};
+@@ -1201,18 +1189,6 @@ static int pm860x_probe(struct i2c_client *client)
+ 	return 0;
+ }
+ 
+-static int pm860x_remove(struct i2c_client *client)
+-{
+-	struct pm860x_chip *chip = i2c_get_clientdata(client);
 -
--	/* cleanup irqchip */
--	for (i = pcap->irq_base; i < (pcap->irq_base + PCAP_NIRQS); i++)
--		irq_set_chip_and_handler(i, NULL, NULL);
--
--	destroy_workqueue(pcap->workqueue);
--
+-	pm860x_device_exit(chip);
+-	if (chip->companion) {
+-		regmap_exit(chip->regmap_companion);
+-		i2c_unregister_device(chip->companion);
+-	}
 -	return 0;
 -}
 -
- static int ezx_pcap_probe(struct spi_device *spi)
+ #ifdef CONFIG_PM_SLEEP
+ static int pm860x_suspend(struct device *dev)
  {
- 	struct pcap_platform_data *pdata = dev_get_platdata(&spi->dev);
-@@ -513,9 +489,9 @@ static int ezx_pcap_probe(struct spi_device *spi)
+@@ -1241,22 +1217,20 @@ static const struct i2c_device_id pm860x_id_table[] = {
+ 	{ "88PM860x", 0 },
+ 	{}
+ };
+-MODULE_DEVICE_TABLE(i2c, pm860x_id_table);
  
- static struct spi_driver ezxpcap_driver = {
- 	.probe	= ezx_pcap_probe,
--	.remove = ezx_pcap_remove,
- 	.driver = {
--		.name	= "ezx-pcap",
-+		.name			= "ezx-pcap",
-+		.suppress_bind_attrs	= true,
+ static const struct of_device_id pm860x_dt_ids[] = {
+ 	{ .compatible = "marvell,88pm860x", },
+ 	{},
+ };
+-MODULE_DEVICE_TABLE(of, pm860x_dt_ids);
+ 
+ static struct i2c_driver pm860x_driver = {
+ 	.driver	= {
+ 		.name	= "88PM860x",
+ 		.pm     = &pm860x_pm_ops,
+ 		.of_match_table	= pm860x_dt_ids,
++		.suppress_bind_attrs = true,
  	},
+ 	.probe_new	= pm860x_probe,
+-	.remove		= pm860x_remove,
+ 	.id_table	= pm860x_id_table,
  };
  
-@@ -523,16 +499,4 @@ static int __init ezx_pcap_init(void)
- {
- 	return spi_register_driver(&ezxpcap_driver);
+@@ -1270,13 +1244,3 @@ static int __init pm860x_i2c_init(void)
+ 	return ret;
  }
+ subsys_initcall(pm860x_i2c_init);
 -
--static void __exit ezx_pcap_exit(void)
+-static void __exit pm860x_i2c_exit(void)
 -{
--	spi_unregister_driver(&ezxpcap_driver);
+-	i2c_del_driver(&pm860x_driver);
 -}
+-module_exit(pm860x_i2c_exit);
 -
- subsys_initcall(ezx_pcap_init);
--module_exit(ezx_pcap_exit);
--
+-MODULE_DESCRIPTION("PMIC Driver for Marvell 88PM860x");
+-MODULE_AUTHOR("Haojian Zhuang <haojian.zhuang@marvell.com>");
 -MODULE_LICENSE("GPL");
--MODULE_AUTHOR("Daniel Ribeiro / Harald Welte");
--MODULE_DESCRIPTION("Motorola PCAP2 ASIC Driver");
--MODULE_ALIAS("spi:ezx-pcap");
+diff --git a/drivers/mfd/88pm860x-i2c.c b/drivers/mfd/88pm860x-i2c.c
+index a000aed35755..986c8c774871 100644
+--- a/drivers/mfd/88pm860x-i2c.c
++++ b/drivers/mfd/88pm860x-i2c.c
+@@ -7,7 +7,6 @@
+  * Author: Haojian Zhuang <haojian.zhuang@marvell.com>
+  */
+ #include <linux/kernel.h>
+-#include <linux/module.h>
+ #include <linux/i2c.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/88pm860x.h>
 -- 
 2.7.4
 
