@@ -2,108 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87855123DF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 04:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2549E123E00
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 04:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfLRDa2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 22:30:28 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40538 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbfLRDa2 (ORCPT
+        id S1726571AbfLRDeh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 22:34:37 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33615 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbfLRDeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 22:30:28 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i15so585918oto.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 19:30:28 -0800 (PST)
+        Tue, 17 Dec 2019 22:34:36 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z16so430418pfk.0;
+        Tue, 17 Dec 2019 19:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qr1/j+fdN8RUPF3Ke+iWBk1FIjTHPDLsVp5XYEGSUAA=;
-        b=r7683Xhg9KugjM0gda6HdDLcmF/7mlakOgAevQOXeQ2AZclXt3/Sj1gul1s3hLVPXa
-         qSkdW7TKlmL+f2wJw7Rpl+PMMSpLQJRFMxDBV7C7UFs5lGQRGepG41koa1g+VU6u/myw
-         DABbhxOUGGZkdOYp6yveV5FRBCcDcWs/1gESUYqH3XK4MpFEOx6ekH7z7K23bS3nKJWX
-         mpPHVAKE0r2Q0zFFeBJlLJaPz8t5348xZfipRumjBrF+VkSwsatfOPi9k8FpLjcNPklx
-         /Uk5WqlRhABInBbeIkFAQ+UrGnd2wzCFJFK9UrC8VzmCJBurUZOxlJcs8o9oSbSLbiM8
-         kpxA==
+        h=from:to:cc:subject:date:message-id;
+        bh=ONukCPo04MyQ0dGWDhkAJ7/bKcKlZKdzKOh3835rIc0=;
+        b=c8NEa/YH1XpKu6xJWwXlnSnGB2WmMOfYCtydSz7iHpVwl+5eVGYsy8yH638ZoSv4Hq
+         uUFfqstMcdMhs8fvd99tSUaqtn6jwayD/sCLAn/LlORkHPevuDXNBsjSx+CwtQ493F5W
+         Wmt1wUEpC8tPQjlMlNdU9RkhsB8q4RhG4a3AHOSmK5wc2dxasePWOyxWKksBQLBOA7Rj
+         lBoIij+vIpcvhJFQNcI7EEUmLgJp9R4ibhVXYaDfF7QLgq3RKdXCcOr0kV6GFFLlrS9n
+         wfWA9RoZMsKBQfJQkEmo0rLmmBiw4rZ4r1L+Bva1r/y9xiECzY6Jc55eYcBxnoMpgDfi
+         i2pw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=qr1/j+fdN8RUPF3Ke+iWBk1FIjTHPDLsVp5XYEGSUAA=;
-        b=UY3Tyy6fxOvODw3SO7QVKnjJSPr1PjcWwwzh0+X5sRzLpQZh73eFO35jweVgKKyyoq
-         IXHJ0tvDj//pRtnaK5wcidqEYSDShOcormm8IIwLdJMi0lTSh74AOcG2ElASO1DE7OOh
-         PDYUDJ4kCptpjUTyKl/DCDrlo6G138XGHcbFXUZwdIIjj8MhtMceJTz7qsC0HS+FULhu
-         QoxmuK9JtM83MGzwNgwGZ7OFyJhHv/XX6nN3YpQh9aoh1KumxXEWay0zJ8kdjzTA6sHo
-         mgb0TKfLec9naHbJbmV9VHpD83rBZ0YWYu9vPfm238Tynyp60yJCbQ25Bp7hbtN+jPQV
-         Rc6Q==
-X-Gm-Message-State: APjAAAU9g3+J/UAThhvQp0SUw5gKKQ4BhWZCU8VdZu1K4JG/rlDKXDRC
-        v1HnLkLEJ0vehRFITH2eoUU=
-X-Google-Smtp-Source: APXvYqyqG++bstgfOIWt8w9Txd9nI0roI4RPI5uFXAJ7FX//F0JBxK1+MULO0zQP+He/A4RuC6GeEg==
-X-Received: by 2002:a9d:3f06:: with SMTP id m6mr188385otc.268.1576639827663;
-        Tue, 17 Dec 2019 19:30:27 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id f142sm348395oig.48.2019.12.17.19.30.26
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ONukCPo04MyQ0dGWDhkAJ7/bKcKlZKdzKOh3835rIc0=;
+        b=MFgAs6oZzZFhNUMu7QvkjnzsICbM6OaIgcrwRpvcljbXa5GAoJnDdWbbS4TfL93LOT
+         ObD4wr4df7OoF7ZYlcAuVNinMlV8Ciesvkk46Ca5r9XJfHw/ZRoVn55d1gTQDede25kd
+         BO1UoHyWo3P2nbFa6o3V24Pr5zPn6tuB5m+MZtESOyieZfCMa31C2vsOPj2S+Yu6A7o0
+         hCVunPzU6S9LOZQbS+MgTdVIMYRCS2DcRHsqKeSfID9XKsoXJho9i0zSpzvjW/FNhiTl
+         BCwLyP0JeksBX9N0cundOlyBiCM+YFb15oR/wmFOaSJ9OWj5z8kKx57nXyjZMSq6BaVQ
+         r3YQ==
+X-Gm-Message-State: APjAAAUhMYR66AvKZUl6VAxT3RYKXVdLEA0nBMA7G30vf4EUZwATD0cA
+        BS+ZfwNGo/PoqCUJgaumZtCUFXihSth5Hg==
+X-Google-Smtp-Source: APXvYqwMTguHHmmbQPNu/P12kClGPGCj5gkW0POPuZgnv1g9mEaXU1UpbCZ0ywj5EPJHW8UYz0xdrw==
+X-Received: by 2002:a63:b141:: with SMTP id g1mr428607pgp.168.1576640075959;
+        Tue, 17 Dec 2019 19:34:35 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id b21sm634059pfp.0.2019.12.17.19.34.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 19:30:27 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Lu Shuaibing <shuaibinglu@126.com>, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] ipc/msg.c: Adjust indentation in ksys_msgctl
-Date:   Tue, 17 Dec 2019 20:29:34 -0700
-Message-Id: <20191218032932.37479-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        Tue, 17 Dec 2019 19:34:35 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     atul.gupta@chelsio.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, tglx@linutronix.de, allison@lohutok.net,
+        arjun@chelsio.com, kstewart@linuxfoundation.org,
+        edumazet@google.com
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] crypto: chelsio: chtls: fix possible sleep-in-atomic-context bugs in abort_syn_rcv()
+Date:   Wed, 18 Dec 2019 11:34:22 +0800
+Message-Id: <20191218033422.18672-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-../ipc/msg.c:621:4: warning: misleading indentation; statement is not
-part of the previous 'if' [-Wmisleading-indentation]
-                 return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm,
-msqid64.msg_qbytes);
-                 ^
-../ipc/msg.c:619:3: note: previous statement is here
-                if (copy_msqid_from_user(&msqid64, buf, version))
-                ^
-1 warning generated.
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1806: 
+	alloc_skb(GFP_KERNEL) in send_abort_rpl
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1925: 
+	send_abort_rpl in abort_syn_rcv
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1920: 
+	spin_lock in abort_syn_rcv
 
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1787: 
+	alloc_skb(GFP_KERNEL) in send_defer_abort_rpl
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1811: 
+	send_defer_abort_rpl in send_abort_rpl
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1925: 
+    send_abort_rpl in abort_syn_rcv
+drivers/crypto/chelsio/chtls/chtls_cm.c, 1920: 
+    spin_lock in abort_syn_rcv
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/829
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+alloc_skb(GFP_KERNEL) can sleep at runtime.
+
+To fix these possible bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
+Besides, in send_defer_abort_rpl(), error handling code is added to 
+handle the failure of alloc_skb().
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
+ drivers/crypto/chelsio/chtls/chtls_cm.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-I assume this will be squashed into the offending patch since it is
-still in -next:
-
-https://git.kernel.org/next/linux-next/c/658622e448a6e6a6a69471daeff7e95e98d34ed1
-
- ipc/msg.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/ipc/msg.c b/ipc/msg.c
-index 22ed09ded601..caca67368cb5 100644
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@ -618,7 +618,8 @@ static long ksys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf, int ver
- 	case IPC_SET:
- 		if (copy_msqid_from_user(&msqid64, buf, version))
- 			return -EFAULT;
--		 return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm, msqid64.msg_qbytes);
-+		return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm,
-+				   msqid64.msg_qbytes);
- 	case IPC_RMID:
- 		return msgctl_down(ns, msqid, cmd, NULL, 0);
- 	default:
+diff --git a/drivers/crypto/chelsio/chtls/chtls_cm.c b/drivers/crypto/chelsio/chtls/chtls_cm.c
+index aca75237bbcf..e6e4c3ddc368 100644
+--- a/drivers/crypto/chelsio/chtls/chtls_cm.c
++++ b/drivers/crypto/chelsio/chtls/chtls_cm.c
+@@ -1805,8 +1805,11 @@ static void send_defer_abort_rpl(struct chtls_dev *cdev, struct sk_buff *skb)
+ 	struct cpl_abort_req_rss *req = cplhdr(skb);
+ 	struct sk_buff *reply_skb;
+ 
+-	reply_skb = alloc_skb(sizeof(struct cpl_abort_rpl),
+-			      GFP_KERNEL | __GFP_NOFAIL);
++	reply_skb = alloc_skb(sizeof(struct cpl_abort_rpl), GFP_ATOMIC);
++	if (!reply_skb) {
++		kfree_skb(skb);
++		return;
++	}
+ 	__skb_put(reply_skb, sizeof(struct cpl_abort_rpl));
+ 	set_abort_rpl_wr(reply_skb, GET_TID(req),
+ 			 (req->status & CPL_ABORT_NO_RST));
+@@ -1825,7 +1828,7 @@ static void send_abort_rpl(struct sock *sk, struct sk_buff *skb,
+ 	csk = rcu_dereference_sk_user_data(sk);
+ 
+ 	reply_skb = alloc_skb(sizeof(struct cpl_abort_rpl),
+-			      GFP_KERNEL);
++			      GFP_ATOMIC);
+ 
+ 	if (!reply_skb) {
+ 		req->status = (queue << 1);
 -- 
-2.24.1
+2.17.1
 
