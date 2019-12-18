@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C88CE12550A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:46:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 266BB1254F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:45:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbfLRVqG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:46:06 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36458 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726794AbfLRVpT (ORCPT
+        id S1726895AbfLRVpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:45:24 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:35803 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726801AbfLRVpV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:45:19 -0500
-Received: by mail-qk1-f195.google.com with SMTP id a203so3265725qkc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:45:19 -0800 (PST)
+        Wed, 18 Dec 2019 16:45:21 -0500
+Received: by mail-qv1-f67.google.com with SMTP id u10so1308129qvi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:45:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EVS8C1CmVe0PF737qzOV4edJfMDPYHvKPgJECzGTAu0=;
-        b=PyPdp21owd7DhKZhVUyjvDM9Ccu5wwRATxt8GhfhZomMwhzX7kNKGTaJo8+Oa51sb2
-         hx3BwfCmuEFPNREtZytg6O5yzuB+9qLXiAYBGQGVSQA3kZw6weJxI63xRXp93p1fh7+1
-         69x3Vz16TykpPMLMbnHDUEBK7D96YxUKxcHxNotr2KPEjzco1PlBqisGQnQmffdin2Kb
-         wp1KkRlQeLwk72+HptGVI1SkAAi0e7jgNjORVYJyfgUSHx608Y7mkuxXezySkkkDyGbE
-         RJfZSKyvelIujP0pSqeWLXeb/sbcMQExlqjMtvRzohbfE2vGy2a1jyYUFi8CEprsmLPz
-         m1LA==
-X-Gm-Message-State: APjAAAWazwwVyg0R6tWCvno/WRI36AAa18rCuQRW39DeHvICWp1k8Brp
-        G9T5K01JzHAytsUuekfJmk4=
-X-Google-Smtp-Source: APXvYqy9Nizq1CBnLc06xTbeFaqSU4auDjXoemKbxG8Sw2o6W/UPwxlVjzIL1eJ1J8WNYhZP6kyOZw==
-X-Received: by 2002:a37:27cf:: with SMTP id n198mr4995971qkn.188.1576705518991;
-        Wed, 18 Dec 2019 13:45:18 -0800 (PST)
+        bh=dfoBv1/fajBVFYCXkRzHX94CB9r4wEDcgyCOURmAgAg=;
+        b=emliEjp3SzuS1NR8F6BvurcWoQLy3T6gYl/N/iTGeTjJWc8c06kAD4TBVINjLyJiAm
+         2PKKyNsO4PZInhUdB8TNX0gAt3tNHQmRIoElDJ0TrQ945i4ZmYk6tBeNa9EGGEXBcrSk
+         R6okU2qB4R0fdyXTk7aVEeDt/vUfKxJtNEB/+AzFhgcb0OQMrYiCMM+ghPfEgx9Hx0aL
+         rYcHYEb6G805MY8L5bkS6/H67n2d5C77B4wnYEI8CncGkh8wQF+wNHhDB0FaizHRPSXb
+         bfGEtnvSw39l6B+oBIVmES68oheEebTeCmimXXCqIKzwKkRma4vFJZS6NE+D1NvtpXEs
+         uPlQ==
+X-Gm-Message-State: APjAAAU7+eORJ4Yf/s6iKntagpP4WWKY54UrLp81u0WcawrAj2D1gDfh
+        25hWyc1aNUzu2liyEQPJKiE=
+X-Google-Smtp-Source: APXvYqyJcgV0YzfwIJWEoPzEWKHM/Q8SNW5jLeaK/pkZxk08wlg0hw8p4nfU1ul4ALKejsYqz8VKSA==
+X-Received: by 2002:a05:6214:7cc:: with SMTP id bb12mr4424854qvb.207.1576705519918;
+        Wed, 18 Dec 2019 13:45:19 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.18
+        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:45:18 -0800 (PST)
+        Wed, 18 Dec 2019 13:45:19 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/24] arch/nios2/setup: Drop dummy_con initialization
-Date:   Wed, 18 Dec 2019 16:44:56 -0500
-Message-Id: <20191218214506.49252-15-nivedita@alum.mit.edu>
+Subject: [PATCH v2 15/24] arch/openrisc/setup: Drop dummy_con initialization
+Date:   Wed, 18 Dec 2019 16:44:57 -0500
+Message-Id: <20191218214506.49252-16-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191218214506.49252-1-nivedita@alum.mit.edu>
 References: <20191218211231.GA918900@kroah.com>
@@ -57,22 +57,25 @@ Drop it from arch setup code.
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- arch/nios2/kernel/setup.c | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/openrisc/kernel/setup.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/arch/nios2/kernel/setup.c b/arch/nios2/kernel/setup.c
-index 4cf35b09c0ec..3c6e3c813a0b 100644
---- a/arch/nios2/kernel/setup.c
-+++ b/arch/nios2/kernel/setup.c
-@@ -196,8 +196,4 @@ void __init setup_arch(char **cmdline_p)
- 	 * get kmalloc into gear
- 	 */
+diff --git a/arch/openrisc/kernel/setup.c b/arch/openrisc/kernel/setup.c
+index d668f5be3a99..c0a774b51e45 100644
+--- a/arch/openrisc/kernel/setup.c
++++ b/arch/openrisc/kernel/setup.c
+@@ -308,11 +308,6 @@ void __init setup_arch(char **cmdline_p)
+ 	/* paging_init() sets up the MMU and marks all pages as reserved */
  	paging_init();
--
+ 
 -#if defined(CONFIG_VT) && defined(CONFIG_DUMMY_CONSOLE)
--	conswitchp = &dummy_con;
+-	if (!conswitchp)
+-		conswitchp = &dummy_con;
 -#endif
- }
+-
+ 	*cmdline_p = boot_command_line;
+ 
+ 	printk(KERN_INFO "OpenRISC Linux -- http://openrisc.io\n");
 -- 
 2.24.1
 
