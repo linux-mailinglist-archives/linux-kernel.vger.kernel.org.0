@@ -2,203 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65478123F3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 06:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE04123F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 06:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfLRFrj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 00:47:39 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35544 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfLRFri (ORCPT
+        id S1726666AbfLRFxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 00:53:37 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:52702 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726497AbfLRFxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 00:47:38 -0500
-Received: by mail-qk1-f196.google.com with SMTP id z76so986159qka.2;
-        Tue, 17 Dec 2019 21:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rdMMSS5mGXhXxSzn8vN5OSqGco+TdXWURJZsejhpNlU=;
-        b=IbnAbj6RtNE27gTD/82fE5rTu6luXBFeErBAampq/mDtF+82hybj1EYlIJDNleRtWb
-         Tc4xby6WNKEe1VSWAzvQ40QRBdEwkpaoip/jXm9+Y+0/Tdp34uz38tiuwZMmV3ZpCX+7
-         bO+zDh5JQqe502cQCnq8O8hMlBmXcXFxstpyjlB6KqjnSJs6eyObBs9hyl+/FL3Y1wkq
-         k9CEZwWyoAAnbiVWo5OLtx6PDUm03DNKDOhovQncKCIVwQztzjY5dDfDcORDypYn1Ciq
-         IFdm/4n/bUxaAX34UFIFDcwT7AykhHSdACqkLGLZmGzdHLujESdTVCUvUhxVm2CULKmL
-         Uzcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rdMMSS5mGXhXxSzn8vN5OSqGco+TdXWURJZsejhpNlU=;
-        b=PHAaRmQ+kvY3lUAHSGkf3gM9bzsmYyVT0MzB1ncsSksX/G8VyB5MqKVAcL6GkiiHvq
-         NHM577f6hjKmBqwRhfzwSf+k/MvOhWVVTB4nb2muvnsXvNbYUo6imjQ5t/D4ubSlkCVp
-         YdCeW2MKvfh0LSDY7cbQihkbGOngo1E83a5c2dcZeRF5TT3aQoTS/4CqkqWrItd8LqMP
-         +oxMmiuoVVP4Z0wkMdNcyLB1rBKY+GPrzUAC36GR9NVdeu8qyE3rZtvpHrp3oLWYGNWN
-         MrvGzVvC4YWrdi63SeFWn/wk1BKWJ+qRzjJrkutXrpmi9GypIsnrWLFWjPrEqxoBkrB0
-         UNBA==
-X-Gm-Message-State: APjAAAVFj+s0/i7JgNKpwMi71FR5isFGEzpbjdQzUX+rWBkYrj7Y0CBk
-        w2VeSgDWKTvdRx+n0ziozU8=
-X-Google-Smtp-Source: APXvYqxaNz0RO1lOZKINUdqFpRia863ytJsrYewYWjT74VbIG5he6WOrbsQMH4RbQA7++XwYkL1Icg==
-X-Received: by 2002:ae9:e41a:: with SMTP id q26mr790211qkc.288.1576648057742;
-        Tue, 17 Dec 2019 21:47:37 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id t198sm354933qke.6.2019.12.17.21.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Dec 2019 21:47:37 -0800 (PST)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id 751CC22223;
-        Wed, 18 Dec 2019 00:47:35 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Wed, 18 Dec 2019 00:47:35 -0500
-X-ME-Sender: <xms:dr35XX1gdcqGAIqLT51JyHjdGnzLF1l4WLjUXPweExjBpT4Ci871Yw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtkedgkeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucfkphephe
-    dvrdduheehrdduuddurdejudenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
-    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
-    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
-    mhgvnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:dr35XQd4G4lVVfUNeZx2swRweY951aczqjlN0OH0Ok8mYQMGgCrtzQ>
-    <xmx:dr35XeAEw3MdzyfTpxLn4CyJvUYuy7W7U_PYH1XUlribC_owMFWxJg>
-    <xmx:dr35XX93UVrpEnOnntHX8srZBT8vFtWAMQ0ErbFr4ymsIt3qA4Z23Q>
-    <xmx:d735XRpK3pJiUKvIRHERfgQkVY3faW59Xm1i2MFCfRkSRilXSIUcNFuGAOc>
-Received: from localhost (unknown [52.155.111.71])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 06F2B8005A;
-        Wed, 18 Dec 2019 00:47:33 -0500 (EST)
-Date:   Wed, 18 Dec 2019 13:47:32 +0800
-From:   Boqun Feng <boqun.feng@gmail.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Michael Kelley <mikelley@microsoft.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        xen-devel@lists.xenproject.org,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC 6/6] arm64: hyperv: Enable vDSO
-Message-ID: <20191218054732.GK97412@debian-boqun.qqnc3lrjykvubdpftowmye0fmh.lx.internal.cloudapp.net>
-References: <20191216001922.23008-1-boqun.feng@gmail.com>
- <20191216001922.23008-7-boqun.feng@gmail.com>
- <87y2vb82lz.fsf@vitty.brq.redhat.com>
+        Wed, 18 Dec 2019 00:53:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576648416;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GWocaOhvv7iz+Y/q3X9mGWyFBvKPi09TUVpc/LIJHfQ=;
+        b=dpmgfpz2bBlccPiIug7w7vgwLudqfoLEgqUyFwdFeKO0iVXv+iihrr4GDlYr7sePhXawHa
+        xSgHp+YXIJlR7HNt70jy9crSPNhHWM2CTaEHbAiI+QlOIXSk+lvJ2jAp9dNx1taTQr2w+I
+        FMHxq1+m0KwoQFdrsr9YeDMSqQ0UF94=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-352-c8U9DMXXOUOp4b8hEnHBtg-1; Wed, 18 Dec 2019 00:53:32 -0500
+X-MC-Unique: c8U9DMXXOUOp4b8hEnHBtg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 4D09510054E3;
+        Wed, 18 Dec 2019 05:53:31 +0000 (UTC)
+Received: from [10.72.12.155] (ovpn-12-155.pek2.redhat.com [10.72.12.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 26C1C1001902;
+        Wed, 18 Dec 2019 05:53:20 +0000 (UTC)
+Subject: Re: [PATCH 1/1] drivers/vhost : Removes unnecessary 'else' in
+ vhost_copy_from_user
+To:     Leonardo Bras <leonardo@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191212211539.34578-1-leonardo@linux.ibm.com>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <86408a73-1acf-562b-75c0-08ca2728ed36@redhat.com>
+Date:   Wed, 18 Dec 2019 13:53:15 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y2vb82lz.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191212211539.34578-1-leonardo@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 03:10:16PM +0100, Vitaly Kuznetsov wrote:
-> Boqun Feng <boqun.feng@gmail.com> writes:
-> 
-> > Similar to x86, add a new vclock_mode VCLOCK_HVCLOCK, and reuse the
-> > hv_read_tsc_page() for userspace to read tsc page clocksource.
-> >
-> > Signed-off-by: Boqun Feng (Microsoft) <boqun.feng@gmail.com>
-> > ---
-> >  arch/arm64/include/asm/clocksource.h       |  3 ++-
-> >  arch/arm64/include/asm/mshyperv.h          |  2 +-
-> >  arch/arm64/include/asm/vdso/gettimeofday.h | 19 +++++++++++++++++++
-> >  3 files changed, 22 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/include/asm/clocksource.h b/arch/arm64/include/asm/clocksource.h
-> > index fbe80057468c..c6acd45fe748 100644
-> > --- a/arch/arm64/include/asm/clocksource.h
-> > +++ b/arch/arm64/include/asm/clocksource.h
-> > @@ -4,7 +4,8 @@
-> >  
-> >  #define VCLOCK_NONE	0	/* No vDSO clock available.		*/
-> >  #define VCLOCK_CNTVCT	1	/* vDSO should use cntvcnt		*/
-> > -#define VCLOCK_MAX	1
-> > +#define VCLOCK_HVCLOCK	2	/* vDSO should use vread_hvclock()	*/
-> > +#define VCLOCK_MAX	2
-> >  
-> >  struct arch_clocksource_data {
-> >  	int vclock_mode;
-> > diff --git a/arch/arm64/include/asm/mshyperv.h b/arch/arm64/include/asm/mshyperv.h
-> > index 0afb00e3501d..7c85dd816dca 100644
-> > --- a/arch/arm64/include/asm/mshyperv.h
-> > +++ b/arch/arm64/include/asm/mshyperv.h
-> > @@ -90,7 +90,7 @@ extern void hv_get_vpreg_128(u32 reg, struct hv_get_vp_register_output *result);
-> >  #define hv_set_reference_tsc(val) \
-> >  		hv_set_vpreg(HV_REGISTER_REFERENCE_TSC, val)
-> >  #define hv_set_clocksource_vdso(val) \
-> > -		((val).archdata.vclock_mode = VCLOCK_NONE)
-> > +		((val).archdata.vclock_mode = VCLOCK_HVCLOCK)
-> >  
-> >  #if IS_ENABLED(CONFIG_HYPERV)
-> >  #define hv_enable_stimer0_percpu_irq(irq)	enable_percpu_irq(irq, 0)
-> > diff --git a/arch/arm64/include/asm/vdso/gettimeofday.h b/arch/arm64/include/asm/vdso/gettimeofday.h
-> > index e6e3fe0488c7..7e689b903f4d 100644
-> > --- a/arch/arm64/include/asm/vdso/gettimeofday.h
-> > +++ b/arch/arm64/include/asm/vdso/gettimeofday.h
-> > @@ -67,6 +67,20 @@ int clock_getres_fallback(clockid_t _clkid, struct __kernel_timespec *_ts)
-> >  	return ret;
-> >  }
-> >  
-> > +#ifdef CONFIG_HYPERV_TIMER
-> > +/* This will override the default hv_get_raw_timer() */
-> > +#define hv_get_raw_timer() __arch_counter_get_cntvct()
-> > +#include <clocksource/hyperv_timer.h>
-> > +
-> > +extern struct ms_hyperv_tsc_page
-> > +_hvclock_page __attribute__((visibility("hidden")));
-> > +
-> > +static u64 vread_hvclock(void)
-> > +{
-> > +	return hv_read_tsc_page(&_hvclock_page);
-> > +}
-> > +#endif
-> 
-> The function is almost the same on x86 (&_hvclock_page ->
-> &hvclock_page), would it maybe make sense to move this to arch neutral
-> clocksource/hyperv_timer.h?
-> 
 
-I'm not sure whether the underscore matters in the vDSO data symbol, so
-I follow the architectural name convention. If the leading underscore
-doesn't have special purpose I'm happy to move this to arch neutral
-header file.
+On 2019/12/13 =E4=B8=8A=E5=8D=885:15, Leonardo Bras wrote:
+> There is no need for this else statement, given that if block will retu=
+rn.
+> This change is not supposed to change the output binary.
+>
+> It reduces identation level on most lines in this function, and also
+> fixes an split string on vq_err().
+>
+> Signed-off-by: Leonardo Bras <leonardo@linux.ibm.com>
+> ---
+>   drivers/vhost/vhost.c | 50 +++++++++++++++++++++---------------------=
+-
+>   1 file changed, 24 insertions(+), 26 deletions(-)
+>
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index f44340b41494..b23d1b74c32f 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -824,34 +824,32 @@ static int vhost_copy_from_user(struct vhost_virt=
+queue *vq, void *to,
+>  =20
+>   	if (!vq->iotlb)
+>   		return __copy_from_user(to, from, size);
+> -	else {
+> -		/* This function should be called after iotlb
+> -		 * prefetch, which means we're sure that vq
+> -		 * could be access through iotlb. So -EAGAIN should
+> -		 * not happen in this case.
+> -		 */
+> -		void __user *uaddr =3D vhost_vq_meta_fetch(vq,
+> -				     (u64)(uintptr_t)from, size,
+> -				     VHOST_ADDR_DESC);
+> -		struct iov_iter f;
+>  =20
+> -		if (uaddr)
+> -			return __copy_from_user(to, uaddr, size);
+> +	/* This function should be called after iotlb
+> +	 * prefetch, which means we're sure that vq
+> +	 * could be access through iotlb. So -EAGAIN should
+> +	 * not happen in this case.
+> +	 */
+> +	void __user *uaddr =3D vhost_vq_meta_fetch(vq,
+> +			     (u64)(uintptr_t)from, size,
+> +			     VHOST_ADDR_DESC);
+> +	struct iov_iter f;
 
-> > +
-> >  static __always_inline u64 __arch_get_hw_counter(s32 clock_mode)
-> >  {
-> >  	u64 res;
-> > @@ -78,6 +92,11 @@ static __always_inline u64 __arch_get_hw_counter(s32 clock_mode)
-> >  	if (clock_mode == VCLOCK_NONE)
-> >  		return __VDSO_USE_SYSCALL;
-> >  
-> > +#ifdef CONFIG_HYPERV_TIMER
-> > +	if (likely(clock_mode == VCLOCK_HVCLOCK))
-> > +		return vread_hvclock();
-> 
-> I'm not sure likely() is justified here: it'll make ALL builds which
-> enable CONFIG_HYPERV_TIMER (e.g. distro kernels) to prefer
-> VCLOCK_HVCLOCK, even if the kernel is not running on Hyper-V.
-> 
 
-Make sense. Thanks for pointing this out! I will change it in the next
-version.
+I think this will lead at least warnings from compiler.
 
-Regards,
-Boqun
+Generally, I would not bother to make changes like this especially=20
+consider it will bring troubles when trying to backporting fixes to=20
+downstream in the future.
 
-> > +#endif
-> > +
-> >  	/*
-> >  	 * This isb() is required to prevent that the counter value
-> >  	 * is speculated.
-> 
-> -- 
-> Vitaly
-> 
+There're some more interesting things: e.g current metadata IOTLB=20
+performance is bad for dynamic mapping since it will be reset each time=20
+a new updating is coming.
+
+We can optimize this by only reset the metadata IOTLB when the updating=20
+is for metdata.
+
+Want to try this?
+
+Thanks
+
+
+>  =20
+> -		ret =3D translate_desc(vq, (u64)(uintptr_t)from, size, vq->iotlb_iov=
+,
+> -				     ARRAY_SIZE(vq->iotlb_iov),
+> -				     VHOST_ACCESS_RO);
+> -		if (ret < 0) {
+> -			vq_err(vq, "IOTLB translation failure: uaddr "
+> -			       "%p size 0x%llx\n", from,
+> -			       (unsigned long long) size);
+> -			goto out;
+> -		}
+> -		iov_iter_init(&f, READ, vq->iotlb_iov, ret, size);
+> -		ret =3D copy_from_iter(to, size, &f);
+> -		if (ret =3D=3D size)
+> -			ret =3D 0;
+> -	}
+> +	if (uaddr)
+> +		return __copy_from_user(to, uaddr, size);
+> +
+> +	ret =3D translate_desc(vq, (u64)(uintptr_t)from, size, vq->iotlb_iov,
+> +			     ARRAY_SIZE(vq->iotlb_iov),
+> +			     VHOST_ACCESS_RO);
+> +	if (ret < 0) {
+> +		vq_err(vq, "IOTLB translation failure: uaddr %p size 0x%llx\n",
+> +		       from, (unsigned long long)size);
+> +		goto out;
+> +	}
+> +	iov_iter_init(&f, READ, vq->iotlb_iov, ret, size);
+> +	ret =3D copy_from_iter(to, size, &f);
+> +	if (ret =3D=3D size)
+> +		ret =3D 0;
+>  =20
+>   out:
+>   	return ret;
+
