@@ -2,117 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D63B1124494
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 11:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 876321244AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 11:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfLRKbI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 05:31:08 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:56149 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbfLRKbI (ORCPT
+        id S1726937AbfLRKdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 05:33:40 -0500
+Received: from smtprelay-out1.synopsys.com ([149.117.73.133]:46438 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726671AbfLRKdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 05:31:08 -0500
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id xBIATpNC011264;
-        Wed, 18 Dec 2019 19:29:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp);
- Wed, 18 Dec 2019 19:29:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav110.sakura.ne.jp)
-Received: from [192.168.1.9] (softbank126040062084.bbtec.net [126.40.62.84])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id xBIATkm1011020
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 18 Dec 2019 19:29:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jiri Slaby <jslaby@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
- <20191216114636.GB1515069@kroah.com>
- <ce36371b-0ca6-5819-2604-65627ce58fc8@i-love.sakura.ne.jp>
- <20191216201834.GA785904@mit.edu>
- <46e8f6b3-46ac-6600-ba40-9545b7e44016@i-love.sakura.ne.jp>
- <CACT4Y+ZLaR=GR2nssb_buGC0ULNpQW6jvX0p8NAE-vReDY5fPA@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <cca315b2-d2c0-0bcb-35d9-f830b028fb4d@i-love.sakura.ne.jp>
-Date:   Wed, 18 Dec 2019 19:29:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
-MIME-Version: 1.0
-In-Reply-To: <CACT4Y+ZLaR=GR2nssb_buGC0ULNpQW6jvX0p8NAE-vReDY5fPA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 18 Dec 2019 05:33:22 -0500
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id BF0BA40346;
+        Wed, 18 Dec 2019 10:33:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1576665201; bh=0M9mYY6dp+dohtIQdCtyeu3ar+st+lmwIwwIyzmrtEs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Oqr9YdTMq7rKi76ubUYqeeAZPBqhy9xYt+pcgaPQCjCillvkAX8cd7xDoBVbKNIiA
+         wZXIGHoXGM0um9oi7FSdwc2DzhHbNbNlGI2fWta06r9fospEE/vrMjUPZ01GFGKNiC
+         DLSN3H7FvMmlySIuSFqXTw539a/5mjdzzCrENMCE3FHojVZYb33YR0CvKOTlSc52Y6
+         62EsFBN7cxGhI36BwclRX2ZoYWlB1z7NkQHG3olyty1PttwTygNL7jBca2JWY9xKc0
+         z7TriHFtjmqZDNiWMJLUICYE73uXk1SWxqJqmHDnmMXghTp+TvsgdbGN0wBpqGSHNx
+         LGxrRd7SU0pCQ==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 68555A0066;
+        Wed, 18 Dec 2019 10:33:18 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Andre Guedes <andre.guedes@linux.intel.com>,
+        Richard.Ong@synopsys.com, Boon Leong <boon.leong.ong@intel.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/7] net: stmmac: TSN support using TAPRIO API
+Date:   Wed, 18 Dec 2019 11:33:04 +0100
+Message-Id: <cover.1576664870.git.Jose.Abreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/17 17:36, Dmitry Vyukov wrote:
-> FWIW we've just disabled sysrq entirely:
-> https://github.com/google/syzkaller/blob/master/dashboard/config/bits-syzbot.config#L182
-> because random packets over usb can trigger a panic sysrq (again
-> almost impossible to reliably filter these out on fuzzer side).
+This series adds TSN support (EST and Frame Preemption) for stmmac driver.
 
-Excuse me, but CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x0 helps only if show_state() etc. are
-called via the __handle_sysrq() handler in drivers/tty/sysrq.c .
+1) Adds the HW specific support for EST in GMAC5+ cores.
 
-  static void sysrq_handle_showstate(int key)
-  {
-  	show_state();
-  	show_workqueue_state();
-  }
-  static struct sysrq_key_op sysrq_showstate_op = {
-  	.handler	= sysrq_handle_showstate,
-  	.help_msg	= "show-task-states(t)",
-  	.action_msg	= "Show State",
-  	.enable_mask	= SYSRQ_ENABLE_DUMP,
-  };
+2) Adds the HW specific support for EST in XGMAC3+ cores.
 
-The k_spec() handler in drivers/tty/vt/keyboard.c calls show_state() etc. without
-evaluating sysrq_enabled value.
+3) Integrates EST HW specific support with TAPRIO scheduler API.
 
-  #define FN_HANDLERS\
-  	fn_null,	fn_enter,	fn_show_ptregs,	fn_show_mem,\
-  	fn_show_state,	fn_send_intr,	fn_lastcons,	fn_caps_toggle,\
-  	fn_num,		fn_hold,	fn_scroll_forw,	fn_scroll_back,\
-  	fn_boot_it,	fn_caps_on,	fn_compose,	fn_SAK,\
-  	fn_dec_console, fn_inc_console, fn_spawn_con,	fn_bare_num
-  
-  typedef void (fn_handler_fn)(struct vc_data *vc);
-  static fn_handler_fn FN_HANDLERS;
-  static fn_handler_fn *fn_handler[] = { FN_HANDLERS };
+4) Adds the Frame Preemption suppor on stmmac TAPRIO implementation.
 
-  static void fn_show_state(struct vc_data *vc)
-  {
-  	show_state();
-  }
+5) Adds the HW specific support for Frame Preemption in GMAC5+ cores.
 
-  static void k_spec(struct vc_data *vc, unsigned char value, char up_flag)
-  {
-  	if (up_flag)
-  		return;
-  	if (value >= ARRAY_SIZE(fn_handler))
-  		return;
-  	if ((kbd->kbdmode == VC_RAW ||
-  	     kbd->kbdmode == VC_MEDIUMRAW ||
-  	     kbd->kbdmode == VC_OFF) &&
-  	     value != KVAL(K_SAK))
-  		return;		/* SAK is allowed even in raw mode */
-  	fn_handler[value](vc);
-  }
+6) Adds the HW specific support for Frame Preemption in XGMAC3+ cores.
 
-Therefore, we need to guard at either callee side (e.g. show_state_filter())
-or caller side (e.g. k_spec()) using kernel config (or something equivalent)
-in order to avoid forever calling show_state() from timer function.
+7) Adds support for HW debug counters for Frame Preemption available in
+GMAC5+ cores.
+
+---
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+
+Jose Abreu (7):
+  net: stmmac: Add basic EST support for GMAC5+
+  net: stmmac: Add basic EST support for XGMAC
+  net: stmmac: Integrate EST with TAPRIO scheduler API
+  net: stmmac: Add Frame Preemption support using TAPRIO API
+  net: stmmac: gmac5+: Add support for Frame Preemption
+  net: stmmac: xgmac3+: Add support for Frame Preemption
+  net: stmmac: mmc: Add Frame Preemption counters on GMAC5+ cores
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |   5 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h       |  12 ++
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_core.c  |   4 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_dma.c   |   4 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c       | 118 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h       |  24 ++++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  25 ++++
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    |  76 ++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   4 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  14 +++
+ drivers/net/ethernet/stmicro/stmmac/mmc_core.c     |  16 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |   2 +
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c    | 135 +++++++++++++++++++++
+ include/linux/stmmac.h                             |  13 ++
+ 14 files changed, 452 insertions(+)
+
+-- 
+2.7.4
+
