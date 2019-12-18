@@ -2,176 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 94AD41247FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:22:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AADFA124819
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:24:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfLRNWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 08:22:39 -0500
-Received: from mail-mw2nam12on2040.outbound.protection.outlook.com ([40.107.244.40]:49159
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726743AbfLRNWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:22:38 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GmUdJLgzcKwbIQG6tQ8x4OGTrHcH8dK2ObhbmFbI2+vMMvhmoTLRo1KRK0c31xgZpumm1RHO9q4eljwlfXG2jtfpsSXh6Z2gp6en8CpLAq2jaOSzh9MOuuaTqFe4kDRhfYC3X8hRPwLXNrme88YMtoh2o+HhLXxeJCWD+ZBjSaTXh3WJRNM450PVsdWYMLOm3oE2O0JT3Xr5fWDFB/fO2Zzt6YXoPZxuaT/FjfY6IouHQXq2hVwRL5tlsXOl5XppHr5aH4jq5zJEysenz/O5lWGYh3xn8iv5JF/xd4WXe3rHx8H5gClpYWBYTEUKP6GMGnUvkpbDiosGErhoDRgcHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jd6kHD+jLfCpO+ulSC3PXB+e2+hnzjIp6M3hitCQliM=;
- b=TGEAkuHEYQnbBFOd7TMiH6fdF0nkePwtvs1ovti2atZnUUsvGF0StKMLSyOZCErYHaf/7tM4dJA0hAFjNzYFhpdW9vAUnShVLAwH5pBaOwPsgzkOwCb5aQEkmSLBmsIvkZrS7Xc3IwqSohttW1TAz/hCJApN8+mNpd+fIwd8HKzde/Uw+wvaJMqzBn6hsonbQLrdpDYbShdCuNkh7QxB9d2cA7c1kNhHNtuH7ogzY7305cuGCLxFFOxK2hX28K0WKlczlXsEnBHIOMVNrG+QE3KkBWIxISraM6GZ37kk7NYEusZ6ozTKNXU5gslH2ruBUbVdLleM/SzL3LALXXnvUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
+        id S1727210AbfLRNXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 08:23:40 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37088 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbfLRNXj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:23:39 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b15so1700259lfc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 05:23:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jd6kHD+jLfCpO+ulSC3PXB+e2+hnzjIp6M3hitCQliM=;
- b=kTmlurvW58r093H3UKjPDxqn8hloF4H+Mio4gaLkZpj1TN4occrRXsqjyjxBm2PDQx5kilavjWFjiJZdDbsdPu2Lk1salkoe3obfT2BbB5X1k90n/9tLOSd171jF5dDsIfC9TMPySnPyb/mhhAFAbDPw1DcmWiAASWH9JCegzs8=
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com (20.180.9.216) by
- CH2PR02MB6999.namprd02.prod.outlook.com (20.180.8.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.14; Wed, 18 Dec 2019 13:22:34 +0000
-Received: from CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::969:436f:b4b8:4899]) by CH2PR02MB7000.namprd02.prod.outlook.com
- ([fe80::969:436f:b4b8:4899%7]) with mapi id 15.20.2559.012; Wed, 18 Dec 2019
- 13:22:34 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        "nick.graumann@gmail.com" <nick.graumann@gmail.com>,
-        "andrea.merello@gmail.com" <andrea.merello@gmail.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        git <git@xilinx.com>
-Subject: RE: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
- dma_terminate_all
-Thread-Topic: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
- dma_terminate_all
-Thread-Index: AQHVo1uM5nn5YHd560C/NFUjbNUe6Key97yAgAIaTxCACnlLgIAAebcQ
-Date:   Wed, 18 Dec 2019 13:22:34 +0000
-Message-ID: <CH2PR02MB7000C73DA877E4A45CF5EF0DC7530@CH2PR02MB7000.namprd02.prod.outlook.com>
-References: <1574664121-13451-1-git-send-email-radhey.shyam.pandey@xilinx.com>
- <20191210060113.GP82508@vkoul-mobl>
- <CH2PR02MB70009D78EA8C487BFFA54964C75A0@CH2PR02MB7000.namprd02.prod.outlook.com>
- <20191218060437.GQ2536@vkoul-mobl>
-In-Reply-To: <20191218060437.GQ2536@vkoul-mobl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [149.199.50.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 86375aae-4afc-47e9-c32d-08d783bd5827
-x-ms-traffictypediagnostic: CH2PR02MB6999:|CH2PR02MB6999:
-x-ld-processed: 657af505-d5df-48d0-8300-c31994686c5c,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CH2PR02MB69992E9870C207142C568774C7530@CH2PR02MB6999.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-forefront-prvs: 0255DF69B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(136003)(376002)(396003)(366004)(346002)(13464003)(51914003)(189003)(199004)(66946007)(478600001)(64756008)(66446008)(4326008)(66476007)(66556008)(186003)(76116006)(316002)(9686003)(2906002)(107886003)(86362001)(71200400001)(55016002)(54906003)(81166006)(81156014)(53546011)(52536014)(6916009)(8676002)(7696005)(33656002)(6506007)(5660300002)(8936002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6999;H:CH2PR02MB7000.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: XVqTdk9iMMewG+SOeWDmOWK9/DsvMfiRcrv2OG15hhI6cc3W/hIGEQGmbarJEIO6MRmTT45gLsytt4cPXk2pG3vwalyV9a7wVJgyZUq0kjHCmi7X5v+2hSfQeSRFrkrNFyq80P+CBpbtLOBWX4tbfZ8ujvdts4E0c5rwyrHzlVuvM73JLVSGAS2AznUF5CaN0iz2FoqZ418hJdFTOWPerRhaQseooGUqkRek6ZMFBufgch/gYe6cjoMLmCDDUnt3dt+SN7mWH7RuHNXQXUwh/PGcb/zpkn83Kcafeh4Qg35llnY2D59irQREnnXNg1MufhcJRn9A2VR6LZAy8sXEb59EJaPyG7VRpI5tsRzxhBHd7NAoDOG8aADj/u+RbWYM2CKsSAQkjcFjYxtXWp8UfavENMUBRBIdqoSl0j9eLI2nQbRiNDddsiQNCncuRg69MZKaHVUOMjQm7z75zIw+z4HVcTq8PLzP1HPAa83vOeqPixxzfeZcmY54he+iatf/XCLeKB+owu/VmpEq2XUqxQ==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86375aae-4afc-47e9-c32d-08d783bd5827
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 13:22:34.6605
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YxWw/WfcNHTay8QBkHvfYnbIQxpp8GuHp9cPPq3Cg9r6fP9Bg7kA9WoYIXQi7jc3ruHU7GkwBOwKskRbGoJMTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6999
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=5SkJ4zyZx5Gc3ntyaEJs4TJQW06uBI/jmE9PJA8MRnM=;
+        b=pNxmEJx9Ga6kWrGleWquQnRu+x3IT4w1xzdjQfVYIZVWuru47elp68vnOsLTC9ZZHZ
+         rDLkSDl37TzgFL4Gf4Fy67tihwWMznjflIrHiWUFbowKfLb1P5EU9RaBZ57PkGEwky6z
+         gn4PnqxcjjGDq/H3F2uDq34+kxhWS26Cq/vI/bIwdujMtGAgdlZvRY+/sCcEcGyTPOYS
+         Q23ldAXtkmV2ol3H0s+5ji9ebp3gBQ+QAl5D4LBObw8gnEjgL8VfQYB5VZBLpl7GqlaD
+         namvOYPapFh5swcHHrLHSogN3GZTDGWg7vT/A3RnV0MDx6fNbtO0VjbgA/mHBDAMLL8/
+         Uhzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5SkJ4zyZx5Gc3ntyaEJs4TJQW06uBI/jmE9PJA8MRnM=;
+        b=JqYRjchLE9JNK6EeUwrcE7RwrO/KjXETQNvsbBe/4wSKxYdKI4H9o2aRlTyJ7uwcqO
+         hA16ioq1eFxkun8xzJoS1XTINSBe5xRixwYrbkQGFfbxyi4BZJYJ47gPZpmaBfT5RLl8
+         lBvHL9cqKiACjheSvdsB0YHEQa/Jm15Dixzdkl1gERTV4lfN2LGmWKHlLOiWCx1JaiKi
+         9o9XZ/esJ/pxKPHf0Vzcm9yebbIb/Edv32FhtdDnTCoxof9XeMh3GOJPH2qs4DoCXpLW
+         yYgpSBpsg6KDEpht0XexvB3yXVDoRCc3vBS6IvBtodiKBbBxaNDdM51YrSzZlu3KhMMS
+         x5Og==
+X-Gm-Message-State: APjAAAXEmOndJJJcsJYDxGvBLnB1fQFBDvfGGcNrZCyGOK49n9cf/b1F
+        21UDoMWYH27cHHUFN54aCsxD/HBvE8g=
+X-Google-Smtp-Source: APXvYqwjvj3hNKYMIv28Jm1ph10aljnG35FIxC2qpNMG2AVVRU1HuPC7o35HF9tZxE1MVNZ9r0+NeA==
+X-Received: by 2002:a19:6a04:: with SMTP id u4mr1798924lfu.62.1576675417586;
+        Wed, 18 Dec 2019 05:23:37 -0800 (PST)
+Received: from localhost.localdomain ([37.157.136.193])
+        by smtp.gmail.com with ESMTPSA id z7sm1440667lfa.81.2019.12.18.05.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 05:23:36 -0800 (PST)
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+To:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Vikash Garodia <vgarodia@codeaurora.org>, dikshita@codeaurora.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Subject: [PATCH v2 00/12] Venus new features
+Date:   Wed, 18 Dec 2019 15:22:39 +0200
+Message-Id: <20191218132251.24161-1-stanimir.varbanov@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Vinod Koul <vkoul@kernel.org>
-> Sent: Wednesday, December 18, 2019 11:35 AM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
-> nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
-> Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
-> dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; git
-> <git@xilinx.com>
-> Subject: Re: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
-> dma_terminate_all
->=20
-> On 11-12-19, 14:46, Radhey Shyam Pandey wrote:
-> > > -----Original Message-----
-> > > From: Vinod Koul <vkoul@kernel.org>
-> > > Sent: Tuesday, December 10, 2019 11:31 AM
-> > > To: Radhey Shyam Pandey <radheys@xilinx.com>
-> > > Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>;
-> > > nick.graumann@gmail.com; andrea.merello@gmail.com; Appana Durga
-> > > Kedareswara Rao <appanad@xilinx.com>; mcgrof@kernel.org;
-> > > dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; git
-> > > <git@xilinx.com>
-> > > Subject: Re: [PATCH] dmaengine: xilinx_dma: Reset DMA channel in
-> > > dma_terminate_all
-> > >
-> > > On 25-11-19, 12:12, Radhey Shyam Pandey wrote:
-> > > > Reset DMA channel after stop to ensure that pending transfers and
-> > > > FIFOs in the datapath are flushed or completed. It fixes intermitte=
-nt
-> > > > data verification failure reported by xilinx dma test client.
-> > > >
-> > > > Signed-off-by: Radhey Shyam Pandey
-> <radhey.shyam.pandey@xilinx.com>
-> > > > ---
-> > > >  drivers/dma/xilinx/xilinx_dma.c | 17 +++++++++--------
-> > > >  1 file changed, 9 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/dma/xilinx/xilinx_dma.c
-> > > > b/drivers/dma/xilinx/xilinx_dma.c index a9c5d5c..6f1539c 100644
-> > > > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > > > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > > > @@ -2404,16 +2404,17 @@ static int xilinx_dma_terminate_all(struct
-> > > dma_chan *dchan)
-> > > >  	u32 reg;
-> > > >  	int err;
-> > > >
-> > > > -	if (chan->cyclic)
-> > > > -		xilinx_dma_chan_reset(chan);
-> > >
-> > > So reset is required for non cyclic cases as well now?
-> >
-> > Yes. In absence of reset in non-cyclic case, when dmatest client
-> > driver is stressed and loaded/unloaded multiple times we see dma
-> > data comparison failures. Possibly IP is prefetching/holding the
-> > previous state and reset ensures a clean state on each iteration.
-> > >
-> > > > -
-> > > > -	err =3D chan->stop_transfer(chan);
-> > > > -	if (err) {
-> > > > -		dev_err(chan->dev, "Cannot stop channel %p: %x\n",
-> > > > -			chan, dma_ctrl_read(chan,
-> > > XILINX_DMA_REG_DMASR));
-> > > > -		chan->err =3D true;
-> > > > +	if (!chan->cyclic) {
-> > > > +		err =3D chan->stop_transfer(chan);
-> > >
-> > > no stop for cyclic now..?
-> > After reset stop is not needed, so for the cyclic mode we only do reset=
-.
->=20
-> Okay makes sense, can you please add these as comments, down the line
-> these will be very useful for you & others to debug!
+Hello,
 
-Thanks for the review. I agree, will include the comments in v2.
->=20
-> --
-> ~Vinod
+Here is v2 with the following changes:
+
+ - added patches for dt-bindings conversion to DT schema, and
+delete the obsoleted .txt document
+
+ - introduced qcom,sdm845-venus-v2 compatible and resources to
+better describe the ability for dynamic core assignment and also
+cover SoCs with one vcodec
+
+ - 01/12 - move all clock and pmdomains names in venus resource
+structure
+
+ - 02/12 - fixed locking issues when deciding on which core to run
+current instance
+
+The previous version is at [1].
+
+regards,
+Stan
+
+[1] https://lkml.org/lkml/2019/12/9/121
+
+Aniket Masule (2):
+  media: venus: introduce core selection
+  media: venus: vdec: handle 10bit bitstreams
+
+Stanimir Varbanov (10):
+  venus: redesign clocks and pm domains control
+  venus: venc: blacklist two encoder properties
+  v4l: Add source event change for bit-depth
+  dt-bindings: media: venus: Convert msm8916 to DT schema
+  dt-bindings: media: venus: Convert msm8996 to DT schema
+  dt-bindings: media: venus: Convert sdm845 to DT schema
+  dt-bindings: media: venus: Add sdm845v2 DT schema
+  venus: core: add sdm845-v2 DT compatible and resource struct
+  arm64: dts: sdm845: follow venus-sdm845v2 DT binding
+  dt-bindings: media: venus: delete old binding document
+
+ .../bindings/media/qcom,venus-msm8916.yaml    | 115 +++
+ .../bindings/media/qcom,venus-msm8996.yaml    | 139 +++
+ .../bindings/media/qcom,venus-sdm845-v2.yaml  | 137 +++
+ .../bindings/media/qcom,venus-sdm845.yaml     | 151 +++
+ .../devicetree/bindings/media/qcom,venus.txt  | 120 ---
+ .../media/uapi/v4l/vidioc-dqevent.rst         |   8 +-
+ .../media/videodev2.h.rst.exceptions          |   1 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  25 +-
+ drivers/media/platform/qcom/venus/Makefile    |   2 +-
+ drivers/media/platform/qcom/venus/core.c      | 122 ++-
+ drivers/media/platform/qcom/venus/core.h      |  31 +-
+ drivers/media/platform/qcom/venus/helpers.c   | 435 ++------
+ drivers/media/platform/qcom/venus/helpers.h   |   4 -
+ drivers/media/platform/qcom/venus/hfi_cmds.c  |   2 +
+ .../media/platform/qcom/venus/hfi_helper.h    |   6 +
+ .../media/platform/qcom/venus/hfi_parser.h    |   5 +
+ .../media/platform/qcom/venus/pm_helpers.c    | 964 ++++++++++++++++++
+ .../media/platform/qcom/venus/pm_helpers.h    |  65 ++
+ drivers/media/platform/qcom/venus/vdec.c      |  88 +-
+ drivers/media/platform/qcom/venus/venc.c      |  75 +-
+ include/uapi/linux/videodev2.h                |   1 +
+ 21 files changed, 1849 insertions(+), 647 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,venus-msm8916.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,venus-msm8996.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,venus-sdm845-v2.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,venus-sdm845.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/qcom,venus.txt
+ create mode 100644 drivers/media/platform/qcom/venus/pm_helpers.c
+ create mode 100644 drivers/media/platform/qcom/venus/pm_helpers.h
+
+-- 
+2.17.1
+
