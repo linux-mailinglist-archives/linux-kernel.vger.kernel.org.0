@@ -2,140 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFBE1247EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:18:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2921247EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:19:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfLRNSV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 08:18:21 -0500
-Received: from alln-iport-6.cisco.com ([173.37.142.93]:21984 "EHLO
-        alln-iport-6.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfLRNSV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:18:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=3076; q=dns/txt; s=iport;
-  t=1576675100; x=1577884700;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=7dNGHeyUqKpYVYMYA64XXX88dWHaHKbDO5x/yR/XAMg=;
-  b=gdGEJD2ZV3yCKAsxbKN/3FhMkhVwab9869ojuEDt01HKE8aZ8TcafRqN
-   Lmc+byLaLzeqyNPtUmkUXlI252KVNZgNNtCX6B73Oq8Zz5K4WsJOJDV5X
-   I1bRn/8cNRKUx96vfb7lZ56AAgowoeTS0IBcFHb7jDNYdtjIZ6XKemGQa
-   s=;
-X-IronPort-AV: E=Sophos;i="5.69,329,1571702400"; 
-   d="scan'208";a="403697379"
-Received: from rcdn-core-2.cisco.com ([173.37.93.153])
-  by alln-iport-6.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 18 Dec 2019 13:18:20 +0000
-Received: from sjc-ads-7483.cisco.com (sjc-ads-7483.cisco.com [10.30.221.19])
-        by rcdn-core-2.cisco.com (8.15.2/8.15.2) with ESMTP id xBIDIJVw018095;
-        Wed, 18 Dec 2019 13:18:20 GMT
-Received: by sjc-ads-7483.cisco.com (Postfix, from userid 838444)
-        id AF47A159D; Wed, 18 Dec 2019 05:18:19 -0800 (PST)
-From:   Aviraj CJ <acj@cisco.com>
-To:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        gregkh@linuxfoundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xe-linux-external@cisco.com,
-        acj@cisco.com
-Subject: [PATCH stable v4.14 2/2] net: stmmac: don't stop NAPI processing when dropping a packet
-Date:   Wed, 18 Dec 2019 05:17:21 -0800
-Message-Id: <20191218131720.12270-2-acj@cisco.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191218131720.12270-1-acj@cisco.com>
-References: <20191218131720.12270-1-acj@cisco.com>
+        id S1727070AbfLRNTH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 08:19:07 -0500
+Received: from mga05.intel.com ([192.55.52.43]:36888 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726749AbfLRNTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:19:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 05:19:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,329,1571727600"; 
+   d="scan'208";a="266886586"
+Received: from unknown (HELO localhost) ([10.239.159.128])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Dec 2019 05:19:05 -0800
+Date:   Wed, 18 Dec 2019 21:20:14 +0800
+From:   Yang Weijiang <weijiang.yang@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        jmattson@google.com, yu.c.zhang@linux.intel.com,
+        yu-cheng.yu@intel.com
+Subject: Re: [PATCH v8 4/7] KVM: VMX: Load CET states on vmentry/vmexit
+Message-ID: <20191218132014.GA7926@local-michael-cet-test>
+References: <20191101085222.27997-1-weijiang.yang@intel.com>
+ <20191101085222.27997-5-weijiang.yang@intel.com>
+ <20191210212305.GM15758@linux.intel.com>
+ <20191211015423.GC12845@local-michael-cet-test>
+ <20191211163510.GF5044@linux.intel.com>
+ <20191212010423.GB17570@local-michael-cet-test.sh.intel.com>
+ <20191218003005.GO11771@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.30.221.19, sjc-ads-7483.cisco.com
-X-Outbound-Node: rcdn-core-2.cisco.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218003005.GO11771@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-upstream 07b3975352374c3f5ebb4a42ef0b253fe370542d commit
-
-Currently, if we drop a packet, we exit from NAPI loop before the budget
-is consumed. In some situations this will make the RX processing stall
-e.g. when flood pinging the system with oversized packets, as the
-errorneous packets are not dropped efficiently.
-
-If we drop a packet, we should just continue to the next one as long as
-the budget allows.
-
-Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[acj: backport v4.14 -stable
-- adjust context]
-Signed-off-by: Aviraj CJ <acj@cisco.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index da5b5fc99c04..e6d16c48ffef 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3323,9 +3323,8 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv, u32 queue)
- static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- {
- 	struct stmmac_rx_queue *rx_q = &priv->rx_queue[queue];
--	unsigned int entry = rx_q->cur_rx;
- 	int coe = priv->hw->rx_csum;
--	unsigned int next_entry;
-+	unsigned int next_entry = rx_q->cur_rx;
- 	unsigned int count = 0;
- 
- 	if (netif_msg_rx_status(priv)) {
-@@ -3340,10 +3339,12 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 		priv->hw->desc->display_ring(rx_head, DMA_RX_SIZE, true);
- 	}
- 	while (count < limit) {
--		int status;
-+		int entry, status;
- 		struct dma_desc *p;
- 		struct dma_desc *np;
- 
-+		entry = next_entry;
-+
- 		if (priv->extend_desc)
- 			p = (struct dma_desc *)(rx_q->dma_erx + entry);
- 		else
-@@ -3410,7 +3411,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 						   "len %d larger than size (%d)\n",
- 						   frame_len, priv->dma_buf_sz);
- 				priv->dev->stats.rx_length_errors++;
--				break;
-+				continue;
- 			}
- 
- 			/* ACS is set; GMAC core strips PAD/FCS for IEEE 802.3
-@@ -3446,7 +3447,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 						dev_warn(priv->device,
- 							 "packet dropped\n");
- 					priv->dev->stats.rx_dropped++;
--					break;
-+					continue;
- 				}
- 
- 				dma_sync_single_for_cpu(priv->device,
-@@ -3471,7 +3472,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 							   "%s: Inconsistent Rx chain\n",
- 							   priv->dev->name);
- 					priv->dev->stats.rx_dropped++;
--					break;
-+					continue;
- 				}
- 				prefetch(skb->data - NET_IP_ALIGN);
- 				rx_q->rx_skbuff[entry] = NULL;
-@@ -3506,7 +3507,6 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 			priv->dev->stats.rx_packets++;
- 			priv->dev->stats.rx_bytes += frame_len;
- 		}
--		entry = next_entry;
- 	}
- 
- 	stmmac_rx_refill(priv, queue);
--- 
-2.19.1
-
+On Tue, Dec 17, 2019 at 04:30:05PM -0800, Sean Christopherson wrote:
+> On Thu, Dec 12, 2019 at 09:04:24AM +0800, Yang Weijiang wrote:
+> > On Wed, Dec 11, 2019 at 08:35:10AM -0800, Sean Christopherson wrote:
+> > > Have you tested SMM at all?  The interaction between CR0 and CR4 may be
+> > > problematic for em_rsm() and/or rsm_enter_protected_mode().
+> > >
+> > Not yet, what's an easy way to test code in SMM mode?
+> 
+> IIRC, SeaBIOS does SMM stuff by default.
+Thanks Sean. I'll check this part.
