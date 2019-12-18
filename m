@@ -2,127 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E817124E26
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:44:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D28E9124E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:45:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727563AbfLRQon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:44:43 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45142 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727215AbfLRQol (ORCPT
+        id S1727627AbfLRQpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:45:00 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:44713 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbfLRQo7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:44:41 -0500
-Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id 3149C20B479A;
-        Wed, 18 Dec 2019 08:44:40 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3149C20B479A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576687480;
-        bh=7oX3VjVjQ+qxdF/mzYJ1sOnrnFWgeNPXNB/HYkY5A+o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fPjvMO4IVlR7+CgLSY1M2HhFQ1ROTpZvGRHi1qfqL8CzE0hqNupbB0pZ43rnxJnFk
-         B+WFd2WNyWdimKHuAxoySIwa0nuEevouCXPicgntJA5AO7C4sdwCw68OMk6r0/CfkT
-         PFUjkatRILjXDgqzqL4uGX/1f4inXsDHEE59c9yU=
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Subject: [PATCH v5 2/2] IMA: Call workqueue functions to measure queued keys
-Date:   Wed, 18 Dec 2019 08:44:34 -0800
-Message-Id: <20191218164434.2877-3-nramas@linux.microsoft.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191218164434.2877-1-nramas@linux.microsoft.com>
-References: <20191218164434.2877-1-nramas@linux.microsoft.com>
+        Wed, 18 Dec 2019 11:44:59 -0500
+Received: from mail-qt1-f182.google.com ([209.85.160.182]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1My6xz-1hl6H70dkV-00zTNH; Wed, 18 Dec 2019 17:44:58 +0100
+Received: by mail-qt1-f182.google.com with SMTP id n15so2454485qtp.5;
+        Wed, 18 Dec 2019 08:44:57 -0800 (PST)
+X-Gm-Message-State: APjAAAWe3Vs1VVwusIdEy6EtesIfTgwMQJvs1Te9YS3hWfT4/TadfwF7
+        ASCnD5Wm5XUx10kvVQj21CQrQH9naHcKbmgtq5w=
+X-Google-Smtp-Source: APXvYqz+l4BOlK2W2ys3sLUa8ROCWJ8lqlRzESKGpDoxTAUgyCUDZt0Q19zyLDMrdWwIzD8L81ulsb8WG6J0gy/M2Bo=
+X-Received: by 2002:ac8:6153:: with SMTP id d19mr2990509qtm.18.1576687497010;
+ Wed, 18 Dec 2019 08:44:57 -0800 (PST)
+MIME-Version: 1.0
+References: <20191213204936.3643476-1-arnd@arndb.de> <20191213205417.3871055-12-arnd@arndb.de>
+ <20191213211728.GL99875@magnolia> <CAK8P3a3k9dq+9DnPFBKdzOe=ALPXXjCvBBj8r_xsqz1vTswGsg@mail.gmail.com>
+ <CAK8P3a2nJKR+_Gc6G_S6Bd0fKecBCM+a2cekOU+6m6kw_c4q9A@mail.gmail.com> <20191217221555.GE12765@magnolia>
+In-Reply-To: <20191217221555.GE12765@magnolia>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 18 Dec 2019 17:44:40 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a1QWxbGao7MLbAg-Wmv58oQ8ZsURYHgf3mihJ6-RKACrQ@mail.gmail.com>
+Message-ID: <CAK8P3a1QWxbGao7MLbAg-Wmv58oQ8ZsURYHgf3mihJ6-RKACrQ@mail.gmail.com>
+Subject: Re: [PATCH v2 21/24] xfs: quota: move to time64_t interfaces
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Pavel Reichl <preichl@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Dave Chinner <dchinner@redhat.com>,
+        Allison Collins <allison.henderson@oracle.com>,
+        Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:j5/HNtZsXsGRbPZkpl4k+drfIvbR0CyOiXMiafhTVZpdhwkPTMH
+ WdWO1B+LVkkCAe7uzp9t7MKWFMt1p42mqh9daEwoiA3Mmtcbl8y9dLXJEI/hpqIweNCjTf3
+ zqSCX0VLAKrsWiV/KfQfU0EtNOMf03QEv4frx1sjDtesNn3tYBfgfbCZovx04EDKffVSCSt
+ LPyU37UjKB33gIrsgb8LA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:k4N9wcJcEio=:S1vAD/RU39IDfIxJZEYlRp
+ 1Oc7mv12ZmRoKyDbRo+UCmQYBX0+yBS7BqREqavcBvoYgRbnq5ZsBZdIL464pUWs1VsqJAHWW
+ UT4IDn3nH/1zAxLhC8de1OUk6Ggnk8TkO5/Yx2a8hqP6vmSlQcKUYGZCliP6dO/bLlaKN4/JW
+ CztHn7shrnKxkSvvEZuuUcA3xdEq7w42+T2u0oaTM/v7bvQqro7Hz1IM3F1Cr0v5LtPa7obLT
+ c85miHvZVgD9QgzHhp9i0emPnWvHHJffOcRwKUtfqkVXxVYgaYKIpWjMtAubOxaMv7LOsE1Ld
+ 2qhjDVoMV5K/L/yP4hNETfHx/WHsF7yMMlDi7SIFj5rv24A6W1PW5ISnVtEuoXyK49ig3MIVw
+ eg3Jj+tPpj8G6gvyt/7w33e6O5ViBLJy9pu2EzT9DOFM6q0KKUy/XXkdXhxPbYxLRyEKd2Atd
+ CS5LqGCM+jWo72C9ZLkrxLRIT7BUk17tX1XckBr5szJBhd2nbkMI9uF/LLfGQMWG/vlNdSH+3
+ 9Y7ItA2/FePuiWUmBgOoQbqcrZ1YFD4qcck0FWMe0ZoOw3TdQxXyNRQ7+pTTMfso+GTeiGqKC
+ v+Ybl4JU6kdIn8knU5zrMB/B/tZswbdm53G/gAXg9Lh2+cdoacL31pplzynS0YowNcQWJV0nf
+ itCIVn8s9hfO67eXrIMjZJVZtGH/91SM9/Ix77zCZ7BXb6wgy0NR/1unS+gf1NdN2RkvnDcYB
+ hzdc+bay0VDpyDxbOo1ZZNrwXga+zOG0w84hzFly69l6M8msF9DcVyx5WjGVQlTnZqPUkfPkM
+ jXKcBdcPWXY/hjk96UQ8kTPRCNbs9/S1Qc6JNtMcrDZ8fkkAN+LcpbbKOu8pPFxE0iakYFzS6
+ 3d8jfd7LIN3ok3+0HoeA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Measuring keys requires a custom IMA policy to be loaded.
-Keys should be queued for measurement if a custom IMA policy
-is not yet loaded. Keys queued for measurement, if any, should be
-processed when a custom IMA policy is loaded.
+On Tue, Dec 17, 2019 at 11:18 PM Darrick J. Wong
+<darrick.wong@oracle.com> wrote:
+> On Tue, Dec 17, 2019 at 04:02:47PM +0100, Arnd Bergmann wrote:
+> > On Mon, Dec 16, 2019 at 5:52 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > > On Fri, Dec 13, 2019 at 10:17 PM Darrick J. Wong <darrick.wong@oracle.com> wrote:
+> > >>
+> > >> Hmm, so one thing that I clean up on the way to bigtime is the total
+> > >> lack of clamping here.  If (for example) it's September 2105 and
+> > >> rtbtimelimit is set to 1 year, this will cause an integer overflow.  The
+> > >> quota timer will be set to 1970 and expire immediately, rather than what
+> > >> I'd consider the best effort of February 2106.
+> >
+> > One more hing to note (I will add this to the changelog text) is that on
+>
+> Ok, I'll look for it in the next revision you send out.
+>
+> By the way, would you mind cc'ing the xfs list on all 24 patches?  They
+> probably aren't directly relevant to xfs, but it does make it a lot
+> easier for us to look at the other 21 patches and think "Oh, ok, so
+> there isn't some core infrastructure change that we're not seeing".
 
-This patch updates the IMA hook function ima_post_key_create_or_update()
-to queue the key if a custom IMA policy has not yet been loaded.
-And, ima_update_policy() function, which is called when
-a custom IMA policy is loaded, is updated to process queued keys.
+I wasn't planning on sending the full series once more, as there were very
+few comments now. I've sent the three XFS patches again by themselves
+now. If you can pick these up, I'll put the rest into linux-next to give them
+some more testing, and hopefully have others pick up a couple more
+before I send a pull request.
 
-Sample "key" measurement rule in the IMA policy:
-
-measure func=KEY_CHECK uid=0 keyrings=.ima|.builtin_trusted_keys template=ima-buf
-
-If the kernel is built with one or more built-in trusted certificates,
-IMA measurement should list all the keys imported from those certificates.
-
-Display "key" measurement in the IMA measurement list:
-
-cat /sys/kernel/security/ima/ascii_runtime_measurements
-
-10 faf3...e702 ima-buf sha256:27c915b8ddb9fae7214cf0a8a7043cc3eeeaa7539bcb136f8427067b5f6c3b7b .builtin_trusted_keys 308202863082...4aee
-
-Verify "key" measurement data for a key added to ".builtin_trusted_keys" keyring:
-
-cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep -m 1 "\.builtin_trusted_keys" | cut -d' ' -f 6 | xxd -r -p |tee btk-cert.der | sha256sum | cut -d' ' -f 1
-
-The output of the above command should match the template hash
-of the first "key" measurement entry in the IMA measurement list for
-the key added to ".builtin_trusted_keys" keyring.
-
-The file namely "btk-cert.der" generated by the above command
-should be a valid x509 certificate (in DER format) and should match
-the one that was used to import the key to the ".builtin_trusted_keys" keyring.
-The certificate file can be verified using openssl tool.
-
-Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
----
- security/integrity/ima/ima_asymmetric_keys.c | 8 ++++++++
- security/integrity/ima/ima_policy.c          | 3 +++
- 2 files changed, 11 insertions(+)
-
-diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
-index d520a67180d8..4124f10ff0c2 100644
---- a/security/integrity/ima/ima_asymmetric_keys.c
-+++ b/security/integrity/ima/ima_asymmetric_keys.c
-@@ -145,6 +145,8 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   const void *payload, size_t payload_len,
- 				   unsigned long flags, bool create)
- {
-+	bool queued = false;
-+
- 	/* Only asymmetric keys are handled by this hook. */
- 	if (key->type != &key_type_asymmetric)
- 		return;
-@@ -152,6 +154,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 	if (!payload || (payload_len == 0))
- 		return;
- 
-+	if (!ima_process_keys)
-+		queued = ima_queue_key(keyring, payload, payload_len);
-+
-+	if (queued)
-+		return;
-+
- 	/*
- 	 * keyring->description points to the name of the keyring
- 	 * (such as ".builtin_trusted_keys", ".ima", etc.) to
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index a4dde9d575b2..04b9c6c555de 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -807,6 +807,9 @@ void ima_update_policy(void)
- 		kfree(arch_policy_entry);
- 	}
- 	ima_update_policy_flag();
-+
-+	/* Custom IMA policy has been loaded */
-+	ima_process_queued_keys();
- }
- 
- /* Keep the enumeration in sync with the policy_tokens! */
--- 
-2.17.1
-
+      Arnd
