@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3B412458B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:18:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6BA124584
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfLRLS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:18:27 -0500
-Received: from foss.arm.com ([217.140.110.172]:42356 "EHLO foss.arm.com"
+        id S1726860AbfLRLRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:17:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:42362 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfLRLRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726141AbfLRLRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Dec 2019 06:17:51 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50A6E11B3;
-        Wed, 18 Dec 2019 03:17:50 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 349A030E;
+        Wed, 18 Dec 2019 03:17:51 -0800 (PST)
 Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1DF33F6CF;
-        Wed, 18 Dec 2019 03:17:49 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 85D8B3F6CF;
+        Wed, 18 Dec 2019 03:17:50 -0800 (PST)
 From:   Sudeep Holla <sudeep.holla@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Sudeep Holla <sudeep.holla@arm.com>,
         Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 03/11] firmware: arm_scmi: Add names to scmi devices created
-Date:   Wed, 18 Dec 2019 11:17:34 +0000
-Message-Id: <20191218111742.29731-4-sudeep.holla@arm.com>
+Subject: [PATCH v2 04/11] firmware: arm_scmi: Add versions and identifier attributes using dev_groups
+Date:   Wed, 18 Dec 2019 11:17:35 +0000
+Message-Id: <20191218111742.29731-5-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191218111742.29731-1-sudeep.holla@arm.com>
 References: <20191218111742.29731-1-sudeep.holla@arm.com>
@@ -32,71 +32,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that scmi bus provides option to create named scmi device, let us
-create the default devices with names. This will help to add names for
-matching to respective drivers and eventually to add multiple devices
-and drivers per protocol.
+Platform drivers now have the option to have the platform core create
+and remove any needed sysfs attribute files. Using the same, let's add
+the scmi firmware and protocol version attributes as well as vendor and
+sub-vendor identifiers to sysfs.
+
+It helps to identify the firmware details from the sysfs entries similar
+to ARM SCPI implementation.
 
 Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_scmi/driver.c | 36 +++++++++++++++++++++++++++++-
- 1 file changed, 35 insertions(+), 1 deletion(-)
+ drivers/firmware/arm_scmi/driver.c | 47 ++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 2952fcd8dd8a..0bbdc7c9eb0f 100644
+index 0bbdc7c9eb0f..26b2c438bd59 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -829,6 +829,40 @@ scmi_create_protocol_device(struct device_node *np, struct scmi_info *info,
- 	scmi_set_handle(sdev);
+@@ -979,6 +979,52 @@ static int scmi_remove(struct platform_device *pdev)
+ 	return ret;
  }
  
-+#define MAX_SCMI_DEV_PER_PROTOCOL	2
-+struct scmi_prot_devnames {
-+	int protocol_id;
-+	char *names[MAX_SCMI_DEV_PER_PROTOCOL];
-+};
-+
-+static struct scmi_prot_devnames devnames[] = {
-+	{ SCMI_PROTOCOL_POWER,  { "genpd" },},
-+	{ SCMI_PROTOCOL_PERF,   { "cpufreq" },},
-+	{ SCMI_PROTOCOL_CLOCK,  { "clocks" },},
-+	{ SCMI_PROTOCOL_SENSOR, { "hwmon" },},
-+	{ SCMI_PROTOCOL_RESET,  { "reset" },},
-+};
-+
-+static inline void
-+scmi_create_protocol_devices(struct device_node *np, struct scmi_info *info,
-+			     int prot_id)
++static ssize_t protocol_version_show(struct device *dev,
++				     struct device_attribute *attr, char *buf)
 +{
-+	int loop, cnt;
++	struct scmi_info *info = dev_get_drvdata(dev);
 +
-+	for (loop = 0; loop < ARRAY_SIZE(devnames); loop++) {
-+		if (devnames[loop].protocol_id != prot_id)
-+			continue;
-+
-+		for (cnt = 0; cnt < ARRAY_SIZE(devnames[loop].names); cnt++) {
-+			const char *name = devnames[loop].names[cnt];
-+
-+			if (name)
-+				scmi_create_protocol_device(np, info, prot_id,
-+							    name);
-+		}
-+	}
++	return sprintf(buf, "%u.%u\n", info->version.major_ver,
++		       info->version.minor_ver);
 +}
++static DEVICE_ATTR_RO(protocol_version);
 +
- static int scmi_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -897,7 +931,7 @@ static int scmi_probe(struct platform_device *pdev)
- 			continue;
- 		}
- 
--		scmi_create_protocol_device(child, info, prot_id, NULL);
-+		scmi_create_protocol_devices(child, info, prot_id);
- 	}
- 
- 	return 0;
++static ssize_t firmware_version_show(struct device *dev,
++				     struct device_attribute *attr, char *buf)
++{
++	struct scmi_info *info = dev_get_drvdata(dev);
++
++	return sprintf(buf, "0x%x\n", info->version.impl_ver);
++}
++static DEVICE_ATTR_RO(firmware_version);
++
++static ssize_t vendor_id_show(struct device *dev,
++			      struct device_attribute *attr, char *buf)
++{
++	struct scmi_info *info = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", info->version.vendor_id);
++}
++static DEVICE_ATTR_RO(vendor_id);
++
++static ssize_t sub_vendor_id_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct scmi_info *info = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", info->version.sub_vendor_id);
++}
++static DEVICE_ATTR_RO(sub_vendor_id);
++
++static struct attribute *versions_attrs[] = {
++	&dev_attr_firmware_version.attr,
++	&dev_attr_protocol_version.attr,
++	&dev_attr_vendor_id.attr,
++	&dev_attr_sub_vendor_id.attr,
++	NULL,
++};
++ATTRIBUTE_GROUPS(versions);
++
+ static const struct scmi_desc scmi_generic_desc = {
+ 	.max_rx_timeout_ms = 30,	/* We may increase this if required */
+ 	.max_msg = 20,		/* Limited by MBOX_TX_QUEUE_LEN */
+@@ -997,6 +1043,7 @@ static struct platform_driver scmi_driver = {
+ 	.driver = {
+ 		   .name = "arm-scmi",
+ 		   .of_match_table = scmi_of_match,
++		   .dev_groups = versions_groups,
+ 		   },
+ 	.probe = scmi_probe,
+ 	.remove = scmi_remove,
 -- 
 2.17.1
 
