@@ -2,132 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C8E124949
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:18:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 309B7124951
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:20:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfLROS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:18:29 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:58302 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726856AbfLROS2 (ORCPT
+        id S1727071AbfLROUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:20:14 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33760 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfLROUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:18:28 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iha9g-0002Dh-1A; Wed, 18 Dec 2019 15:18:24 +0100
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v2 19/36] irqchip/gic-v4.1: Add VPE INVALL callback
-X-PHP-Originating-Script: 0:main.inc
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 18 Dec 2019 14:18:23 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Wed, 18 Dec 2019 09:20:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z16so1311079pfk.0;
+        Wed, 18 Dec 2019 06:20:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uuW/6iCy7ecNdnidN2Pk7EDOQ/h19itMrsd0ZjDBvfw=;
+        b=Hk9ax0xAmpljwKiCyzVihzVRkfJ2DqkR9dAMwSAUpqRR4ZYglUNHxHisS4poCqocD4
+         wqmcS2jqGuOODoAF1qO3jQ30L4H06eimDUPLJ0f+y2cXwTCG9EiJ9qZat9Wwi8wzCSaW
+         llWv59Tf9xS4sw+wm7Z58YoGTvOCoB7x7gBx96mVdC46q+nBmntP+rINoVO+elyEc4lP
+         scQZRAjfC7tQ2m9CA4EEW7zxtOC9IXuXfh3Mcqno8EMdHSgoZZrdkxS9ijutHYAeIwSp
+         E0J3pxisOFbP3jjDpwWh3fBVrBZQU0WShSShrl2N0KZL7MpQnvT9OxsN40krUYAP2jii
+         OtEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uuW/6iCy7ecNdnidN2Pk7EDOQ/h19itMrsd0ZjDBvfw=;
+        b=hwX2O81vGB43WNVgOMnJK4jxqzZleUW747ADhMQmF5xwq4k5lxpNIudhOjRQmwT3aa
+         P/+CLzZHcQMwuh6ngJgV3+lZYfow03zUDU/apIH1FhdLIRPhI0PIkE6isL0pFtQvSNNU
+         XtQ/rrLpZaaP0BW9+3bhMRkn1VF9dNEtR9jo/E+LAqjXigKDWSg6ZDDB/dCbotbJnQeZ
+         7Y+1bi+D2LbFSdt2I181vPNtJbDeSVMhtC+Lc7loZXSEATA/JGmty9oSIZ1aYPS/vzFH
+         hOkaigwe1VYNepu/k8UeGdc4y8PrYUrUa6bvE5+jKXxZWr6wsH91QHgAsYHWrj15d9n3
+         xSAA==
+X-Gm-Message-State: APjAAAUbw9I9hhiSgOTunjr0xgMj782O6BmAD8K6mh8VZqwRLea7G37C
+        5TjUigeP/oXLArjTnBrM+Xj3B38X
+X-Google-Smtp-Source: APXvYqwivTFZwXqvn2cFuZnC04jwYiLnsEZviVjW/PGwhCbFzgfGZRzdEHWuE0evhiv7W0vSpWLx9g==
+X-Received: by 2002:a63:d411:: with SMTP id a17mr3503015pgh.333.1576678813164;
+        Wed, 18 Dec 2019 06:20:13 -0800 (PST)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id b22sm3661270pfd.63.2019.12.18.06.20.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 06:20:12 -0800 (PST)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 5EBBC40352; Wed, 18 Dec 2019 11:20:10 -0300 (-03)
+Date:   Wed, 18 Dec 2019 11:20:10 -0300
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jayachandran C <jnair@marvell.com>,
-        Robert Richter <rrichter@marvell.com>
-In-Reply-To: <28e29c2d-a35a-6a67-c65d-7ab61d33b21b@huawei.com>
-References: <20191027144234.8395-1-maz@kernel.org>
- <20191027144234.8395-20-maz@kernel.org>
- <28e29c2d-a35a-6a67-c65d-7ab61d33b21b@huawei.com>
-Message-ID: <54ec5b97e909e4da85064c66fb2a1348@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH 12/12] perf maps: Set maps pointer in the kmap area for
+ kernel maps
+Message-ID: <20191218142010.GD13395@kernel.org>
+References: <20191217144828.2460-1-acme@kernel.org>
+ <20191217144828.2460-13-acme@kernel.org>
+ <20191218090707.GF19062@krava>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218090707.GF19062@krava>
+X-Url:  http://acmel.wordpress.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Old email, doing some v3 cleanup]
+Em Wed, Dec 18, 2019 at 10:07:07AM +0100, Jiri Olsa escreveu:
+> On Tue, Dec 17, 2019 at 11:48:28AM -0300, Arnaldo Carvalho de Melo wrote:
+> 
+> SNIP
+> 
+> >  
+> > @@ -1098,7 +1097,6 @@ __machine__create_kernel_maps(struct machine *machine, struct dso *kernel)
+> >  	if (!kmap)
+> >  		return -1;
+> >  
+> > -	kmap->kmaps = &machine->kmaps;
+> >  	maps__insert(&machine->kmaps, map);
+> >  
+> >  	return 0;
+> > diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+> > index fdd5bddb3075..a2cdfe62df94 100644
+> > --- a/tools/perf/util/map.c
+> > +++ b/tools/perf/util/map.c
+> > @@ -223,7 +223,7 @@ struct map *map__new(struct machine *machine, u64 start, u64 len,
+> >   * they are loaded) and for vmlinux, where only after we load all the
+> >   * symbols we'll know where it starts and ends.
+> >   */
+> > -struct map *map__new2(u64 start, struct dso *dso)
+> > +struct map *map__new2(u64 start, struct dso *dso, struct maps *kmaps)
 
-On 2019-11-01 11:51, Zenghui Yu wrote:
-> Hi Marc,
->
-> On 2019/10/27 22:42, Marc Zyngier wrote:
->> GICv4.1 redistributors have a VPE-aware INVALL register. Progress!
->> We can now emulate a guest-requested INVALL without emiting a
->> VINVALL command.
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->
-> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
->
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c   | 14 ++++++++++++++
->>   include/linux/irqchip/arm-gic-v3.h |  3 +++
->>   2 files changed, 17 insertions(+)
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index f7effd453729..10bd156aa042 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -3511,6 +3511,19 @@ static void its_vpe_4_1_deschedule(struct 
->> its_vpe *vpe,
->>   	}
->>   }
->>   +static void its_vpe_4_1_invall(struct its_vpe *vpe)
->> +{
->> +	void __iomem *rdbase;
->> +	u64 val;
->> +
->> +	val  = GICR_INVLPIR_V;
->> +	val |= FIELD_PREP(GICR_INVLPIR_VPEID, vpe->vpe_id);
->
-> Can we use GICR_INVALL_V/VPEID instead, and ...
->
->> +
->> +	/* Target the redistributor this vPE is currently known on */
->> +	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
->> +	gic_write_lpir(val, rdbase + GICR_INVALLR);
->> +}
->> +
->>   static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void 
->> *vcpu_info)
->>   {
->>   	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
->> @@ -3526,6 +3539,7 @@ static int 
->> its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
->>   		return 0;
->>
->>   	case INVALL_VPE:
->> +		its_vpe_4_1_invall(vpe);
->>   		return 0;
->>
->>   	default:
->> diff --git a/include/linux/irqchip/arm-gic-v3.h 
->> b/include/linux/irqchip/arm-gic-v3.h
->> index 6fd89d77b2b2..b69f60792554 100644
->> --- a/include/linux/irqchip/arm-gic-v3.h
->> +++ b/include/linux/irqchip/arm-gic-v3.h
->> @@ -247,6 +247,9 @@
->>   #define GICR_TYPER_COMMON_LPI_AFF	GENMASK_ULL(25, 24)
->>   #define GICR_TYPER_AFFINITY		GENMASK_ULL(63, 32)
->>   +#define GICR_INVLPIR_VPEID		GENMASK_ULL(47, 32)
->> +#define GICR_INVLPIR_V			GENMASK_ULL(63, 63)
->> +
->
-> ... define them here:
->
-> #define GICR_INVALL_VPEID		GICR_INVLPIR_VPEID
-> #define GICR_INVALL_V			GICR_INVLPIR_V
+> hum, how about map__new? kernel maps could go throught that as well, right?
 
-Yes, that's a sensible things to do. I'll squash that in my rebased 
-series.
+Nope, I even thought about renaming map__new2() to map__new_kmap() as
+only it is used to create kernel/modules maps, as is stated above in the
+comment just before map__new2().
 
-Thanks,
+map__new() is only called from machine__process_mmap_event() and machine__process_mmap2_event()
+and only after checking if it is not a kernel "mmap":
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+        if (sample->cpumode == PERF_RECORD_MISC_GUEST_KERNEL ||
+            sample->cpumode == PERF_RECORD_MISC_KERNEL) {
+                ret = machine__process_kernel_mmap_event(machine, event);
+		if (ret < 0)
+                        goto out_problem;
+                return 0;
+	...
+	map = map__new(...);
+
+- Arnaldo
