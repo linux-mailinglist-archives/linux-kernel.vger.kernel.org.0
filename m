@@ -2,88 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 061C012464C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B110124651
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:59:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfLRL5p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:57:45 -0500
-Received: from Galois.linutronix.de ([193.142.43.55]:57528 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726141AbfLRL5o (ORCPT
+        id S1726944AbfLRL7m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:59:42 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:51494 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726591AbfLRL7j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:57:44 -0500
-Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tip-bot2@linutronix.de>)
-        id 1ihXxQ-0000ek-Me; Wed, 18 Dec 2019 12:57:36 +0100
-Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id E1F3D1C268E;
-        Wed, 18 Dec 2019 12:57:35 +0100 (CET)
-Date:   Wed, 18 Dec 2019 11:57:35 -0000
-From:   "tip-bot2 for Enrico Weigelt" <tip-bot2@linutronix.de>
-Reply-to: linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] Documentation/x86/boot: Fix typo
-Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
+        Wed, 18 Dec 2019 06:59:39 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TlHBU8U_1576670372;
+Received: from localhost(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0TlHBU8U_1576670372)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 18 Dec 2019 19:59:33 +0800
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     Alex Shi <alex.shi@linux.alibaba.com>,
+        Harry Wei <harryxiyou@gmail.com>,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "x86-ml" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
-In-Reply-To: <20191203113314.26810-1-info@metux.net>
-References: <20191203113314.26810-1-info@metux.net>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] docs/zh_CN: translate kernel enforcement statement
+Date:   Wed, 18 Dec 2019 19:59:26 +0800
+Message-Id: <1576670367-153661-1-git-send-email-alex.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Message-ID: <157667025572.30329.18057346282277945641.tip-bot2@tip-bot2>
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot2.linutronix.de>
-Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Now we have the Chinese version of this statemment.
 
-Commit-ID:     e156c6176c9d6e69e166fb20e3b4e9f85ead8d77
-Gitweb:        https://git.kernel.org/tip/e156c6176c9d6e69e166fb20e3b4e9f85ead8d77
-Author:        Enrico Weigelt <info@metux.net>
-AuthorDate:    Tue, 03 Dec 2019 12:33:14 +01:00
-Committer:     Borislav Petkov <bp@suse.de>
-CommitterDate: Wed, 18 Dec 2019 12:50:27 +01:00
-
-Documentation/x86/boot: Fix typo
-
-s/Fileds/Fields/g
-
-Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Alex Shi <alex.shi@linux.alibaba.com>
+Cc: Harry Wei <harryxiyou@gmail.com>
 Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191203113314.26810-1-info@metux.net
+Cc: linux-kernel@vger.kernel.org
 ---
- Documentation/x86/boot.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../zh_CN/process/kernel-enforcement-statement.rst | 146 +++++++++++++++++++++
+ 1 file changed, 146 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/process/kernel-enforcement-statement.rst
 
-diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
-index 90bb8f5..692ce57 100644
---- a/Documentation/x86/boot.rst
-+++ b/Documentation/x86/boot.rst
-@@ -251,7 +251,7 @@ setting fields in the header, you must make sure only to set fields
- supported by the protocol version in use.
- 
- 
--Details of Harder Fileds
-+Details of Header Fields
- ========================
- 
- For each field, some are information from the kernel to the bootloader
+diff --git a/Documentation/translations/zh_CN/process/kernel-enforcement-statement.rst b/Documentation/translations/zh_CN/process/kernel-enforcement-statement.rst
+new file mode 100644
+index 000000000000..4c71229bf2d8
+--- /dev/null
++++ b/Documentation/translations/zh_CN/process/kernel-enforcement-statement.rst
+@@ -0,0 +1,146 @@
++﻿.. _cn_process_statement_kernel:
++
++Linux 内核执行声明
++------------------
++
++作为Linux内核的开发人员，我们对如何使用我们的软件以及如何实施软件许可证有着
++浓厚的兴趣。遵守GPL-2.0的互惠共享义务对我们软件和社区的长期可持续性至关重要。
++
++虽然有权强制执行对我们社区的贡献中的单独版权权益，但我们有共同的利益，即确保
++个人强制执行行动的方式有利于我们的社区，不会对我们软件生态系统的健康和增长
++产生意外的负面影响。为了阻止无益的执法行动，我们同意代表我们自己和我们版权
++利益的任何继承人对Linux内核用户作出以下符合我们开发社区最大利益的承诺:
++
++    尽管有GPL-2.0的终止条款，我们同意，采用以下GPL-3.0条款作为我们许可证下的
++    附加许可，作为任何对许可证下权利的非防御性主张，这符合我们开发社区的最佳
++    利益。
++
++        但是，如果您停止所有违反本许可证的行为，则您从特定版权持有人处获得的
++        许可证将被恢复：（a）暂时恢复，除非版权持有人明确并最终终止您的许可证；
++        以及（b）永久恢复, 如果版权持有人未能在你终止违反后60天内以合理方式
++        通知您违反本许可证的行为，则永久恢复您的许可证。
++
++        此外，如果版权所有者以某种合理的方式通知您违反了本许可，这是您第一次
++        从该版权所有者处收到违反本许可的通知（对于任何作品），并且您在收到通知
++        后的30天内纠正违规行为。则您从特定版权所有者处获得的许可将永久恢复.
++
++我们提供这些保证的目的是鼓励更多地使用该软件。我们希望公司和个人使用、修改和
++分发此软件。我们希望以公开和透明的方式与用户合作，以消除我们对法规遵从性或强制
++执行的任何不确定性，这些不确定性可能会限制我们软件的采用。我们将法律行动视为
++最后手段，只有在其他社区努力未能解决这一问题时才采取行动。
++
++最后，一旦一个不合规问题得到解决，我们希望用户会感到欢迎，加入我们为之努力的
++这个项目。共同努力，我们会更强大。
++
++除了下面提到的以外，我们只为自己说话，而不是为今天、过去或将来可能为之工作的
++任何公司说话。
++
++  - Laura Abbott
++  - Bjorn Andersson (Linaro)
++  - Andrea Arcangeli
++  - Neil Armstrong
++  - Jens Axboe
++  - Pablo Neira Ayuso
++  - Khalid Aziz
++  - Ralf Baechle
++  - Felipe Balbi
++  - Arnd Bergmann
++  - Ard Biesheuvel
++  - Tim Bird
++  - Paolo Bonzini
++  - Christian Borntraeger
++  - Mark Brown (Linaro)
++  - Paul Burton
++  - Javier Martinez Canillas
++  - Rob Clark
++  - Kees Cook (Google)
++  - Jonathan Corbet
++  - Dennis Dalessandro
++  - Vivien Didelot (Savoir-faire Linux)
++  - Hans de Goede
++  - Mel Gorman (SUSE)
++  - Sven Eckelmann
++  - Alex Elder (Linaro)
++  - Fabio Estevam
++  - Larry Finger
++  - Bhumika Goyal
++  - Andy Gross
++  - Juergen Gross
++  - Shawn Guo
++  - Ulf Hansson
++  - Stephen Hemminger (Microsoft)
++  - Tejun Heo
++  - Rob Herring
++  - Masami Hiramatsu
++  - Michal Hocko
++  - Simon Horman
++  - Johan Hovold (Hovold Consulting AB)
++  - Christophe JAILLET
++  - Olof Johansson
++  - Lee Jones (Linaro)
++  - Heiner Kallweit
++  - Srinivas Kandagatla
++  - Jan Kara
++  - Shuah Khan (Samsung)
++  - David Kershner
++  - Jaegeuk Kim
++  - Namhyung Kim
++  - Colin Ian King
++  - Jeff Kirsher
++  - Greg Kroah-Hartman (Linux Foundation)
++  - Christian König
++  - Vinod Koul
++  - Krzysztof Kozlowski
++  - Viresh Kumar
++  - Aneesh Kumar K.V
++  - Julia Lawall
++  - Doug Ledford
++  - Chuck Lever (Oracle)
++  - Daniel Lezcano
++  - Shaohua Li
++  - Xin Long
++  - Tony Luck
++  - Catalin Marinas (Arm Ltd)
++  - Mike Marshall
++  - Chris Mason
++  - Paul E. McKenney
++  - Arnaldo Carvalho de Melo
++  - David S. Miller
++  - Ingo Molnar
++  - Kuninori Morimoto
++  - Trond Myklebust
++  - Martin K. Petersen (Oracle)
++  - Borislav Petkov
++  - Jiri Pirko
++  - Josh Poimboeuf
++  - Sebastian Reichel (Collabora)
++  - Guenter Roeck
++  - Joerg Roedel
++  - Leon Romanovsky
++  - Steven Rostedt (VMware)
++  - Frank Rowand
++  - Ivan Safonov
++  - Anna Schumaker
++  - Jes Sorensen
++  - K.Y. Srinivasan
++  - David Sterba (SUSE)
++  - Heiko Stuebner
++  - Jiri Kosina (SUSE)
++  - Willy Tarreau
++  - Dmitry Torokhov
++  - Linus Torvalds
++  - Thierry Reding
++  - Rik van Riel
++  - Luis R. Rodriguez
++  - Geert Uytterhoeven (Glider bvba)
++  - Eduardo Valentin (Amazon.com)
++  - Daniel Vetter
++  - Linus Walleij
++  - Richard Weinberger
++  - Dan Williams
++  - Rafael J. Wysocki
++  - Arvind Yadav
++  - Masahiro Yamada
++  - Wei Yongjun
++  - Lv Zheng
++  - Marc Zyngier (Arm Ltd)
+-- 
+1.8.3.1
+
