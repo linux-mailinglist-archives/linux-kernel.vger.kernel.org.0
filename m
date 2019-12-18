@@ -2,85 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9421D124FB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:52:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1DD4124FC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 18:53:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfLRRwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 12:52:32 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:55726 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727180AbfLRRwb (ORCPT
+        id S1727437AbfLRRxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 12:53:39 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39742 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbfLRRxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 12:52:31 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576691551; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=F5m8QQ4p8IPJ3aJPJPuQyUzhNMvwbEpBTfkagoJetIQ=;
- b=f79JcH99C01CMteSvNMGVdT539st92i44DR/21Ruuh57qvJd0nxOwZRaAezc00soVuQPaElk
- AfMjV0yVxKr9nAh5bWYdb/xjb0hvfZ4MhsMk/mg0AzbFXchZMEX3g8VGggGlkktPygLyIKKy
- s+4d2ks/DM191RHAJF94/jhFmpY=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfa675a.7efb76ae92d0-smtp-out-n01;
- Wed, 18 Dec 2019 17:52:26 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8352CC433A2; Wed, 18 Dec 2019 17:52:26 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
-        MISSING_MID,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AF429C43383;
-        Wed, 18 Dec 2019 17:52:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AF429C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Wed, 18 Dec 2019 12:53:38 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y1so2328543lfb.6;
+        Wed, 18 Dec 2019 09:53:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tANAGAdpU+BFt2vwt7q1SVWW9LOxxvMiToKQfU2dzGY=;
+        b=ojyAodJsS39WwSn2v9z10Ilwua3eGiadQEkWeX95j+itQ849iU+10jsELlgwfvZxvL
+         ilaHyAX00JDOH7L6FEvOsipkdwKtAON35PsYKDFMlX2ZE0Rr2yw65RRtwJcdPFXKuYbI
+         mPhpTZp48pUHRo2qADJN8rVJQyEvcvXfu1Ln4HHOl28n9ldfyN/MDz9vvCfLfR9M7bGn
+         6/8fVzk67IjdvkNw8uWWAsRzrlLnWJ41UUu8m3+RCthdgAOivTu+oLGnlyxK8xW01S32
+         IDsQH4rmIoNc1C4XKkNx8TpVcMU4275JgYjemVI5hLi3d22ykeW3WJT6cXW+h03U1CDq
+         du4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tANAGAdpU+BFt2vwt7q1SVWW9LOxxvMiToKQfU2dzGY=;
+        b=ZgONUXxsnur90jAJpYR2eWmRRQaxx4seYpxqBn4gCHt6VuKTIvS39pE+jPvo/HwjEG
+         PJXhh6Wk0IabLKPSKlILv2Ul8FUDHAVTazrwpcqtPqCLtkSyYKPI7pZu3pKEqL5N5lyZ
+         Sj0bnZw2rJeGD+7AABvVQJEoJB857SNh80Q70pS93IL3EIRpR5agL+Cx4kmINriNe+9W
+         2+ZgL4sR/oLVE6UQczR6c778dp4NPXfYL/zf8s7pZV1DN+O0KB3Aim8Uwmx+6iCkRy2T
+         5QJIXfCmgkLHmnBj6Roi5v8P8Hrj2pI/mmFfOx0StM0N/NCe1l6RifRhuS4wCSSs3Bla
+         Nc1g==
+X-Gm-Message-State: APjAAAXf+8EMYdAzqD80Vt8CvnKXmN+HZUscIcfVIDmawQyh5vzz7KEj
+        0GAsT/GetlpgZdSoRP8pWNb+yliV
+X-Google-Smtp-Source: APXvYqwgJ4OIShl4gWAypmuZ77/QGVn2SFvXdJnirvnhCMOQ+zoxPP+l1VUVnz4DOkM/l0djWNNMQA==
+X-Received: by 2002:ac2:5c4a:: with SMTP id s10mr2553655lfp.88.1576691616167;
+        Wed, 18 Dec 2019 09:53:36 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id n14sm1530480lfe.5.2019.12.18.09.53.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 09:53:35 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Chen <Peter.Chen@nxp.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Felipe Balbi <balbi@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/4] NVIDIA Tegra USB2 drivers clean up
+Date:   Wed, 18 Dec 2019 20:53:09 +0300
+Message-Id: <20191218175313.16235-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH][next] ath11k: fix memory leak on reg_info
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20191212183228.105993-1-colin.king@canonical.com>
-References: <20191212183228.105993-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>,
-        Ganesh Sesetti <gseset@codeaurora.org>,
-        Karthikeyan Periyasamy <periyasa@codeaurora.org>,
-        John Crispin <john@phrozen.org>, ath11k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20191218175226.8352CC433A2@smtp.codeaurora.org>
-Date:   Wed, 18 Dec 2019 17:52:26 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Colin King <colin.king@canonical.com> wrote:
+Hello,
 
-> Currently a return path is leaking the previously allocate reg_info. Fix
-> this by exiting via the return path mem_free.  Since the return value ret
-> is defaulted to 0, there is no need to re-assign ret to the 0 before
-> the goto.
-> 
-> Addresses-Coverity: ("Resource leak")
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This small patch series brings the NVIDIA Tegra USB2 PHY driver into a better
+shape by refactoring code to match upstream standards, the ChipIdea/Tegra UDC
+driver also gets a minor update. Please review and apply, thanks in advance!
 
-Patch applied to ath-next branch of ath.git, thanks.
+Dmitry Osipenko (4):
+  dt-binding: usb: ci-hdrc-usb2: Document NVIDIA Tegra support
+  usb: phy: tegra: Hook up init/shutdown callbacks
+  usb: phy: tegra: Perform general clean up of the code
+  usb: phy: tegra: Use relaxed versions of readl/writel
 
-b5316db229d5 ath11k: fix memory leak on reg_info
+ .../devicetree/bindings/usb/ci-hdrc-usb2.txt  |   4 +
+ drivers/usb/chipidea/ci_hdrc_tegra.c          |   9 -
+ drivers/usb/phy/phy-tegra-usb.c               | 715 ++++++++++--------
+ 3 files changed, 395 insertions(+), 333 deletions(-)
 
 -- 
-https://patchwork.kernel.org/patch/11289073/
+2.24.0
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
