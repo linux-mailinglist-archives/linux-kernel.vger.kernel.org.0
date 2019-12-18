@@ -2,275 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3003124D67
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:27:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 528CD124D2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:25:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfLRQZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:25:22 -0500
-Received: from foss.arm.com ([217.140.110.172]:52460 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727215AbfLRQZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:25:20 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85B1B11B3;
-        Wed, 18 Dec 2019 08:25:19 -0800 (PST)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.56])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F311E3F719;
-        Wed, 18 Dec 2019 08:25:16 -0800 (PST)
-From:   Steven Price <steven.price@arm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Steven Price <steven.price@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: [PATCH v17 19/23] mm: Add generic ptdump
+        id S1727617AbfLRQYO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:24:14 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:45033 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727579AbfLRQYM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 11:24:12 -0500
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: f0jPY7UzWK3uy5i4vWafTzmhqFjDVAg+qGCmk2nIwBESFp1eggXGvSwKLmrgrJOAEGLSGwYn7P
+ fs5MyDsXEab3q0xdtlUA6xhjC7KaWGFxHY4Zs0oxrwHPmovAsCNJenka4bVt995RodsZMagKDY
+ isoEPncwl3Lf0pcA8HU01QE6s0ZofU2GfxsNhTqut/Jc50WCRdLEKE1VXeWfOVhXoCNiM/JWPL
+ 4JcA92vRVN7K1K/Ca4vnPAIhB3T6ROy4/NRvs9VAvRYi7tlITuNNTiBWEOTr+0aDItWr8yiqsV
+ xVE=
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="58926955"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 Dec 2019 09:24:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Wed, 18 Dec 2019 09:24:02 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Wed, 18 Dec 2019 09:24:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TQsEXVYgkolQSY3/wudvrRNeDFuAFBhaQmPYECu1kn5bT7+2YIoDumjqfZ7lOI9VFiN5bzkGBVc00oBNC0F4i0HmdevbPQ66WoQY/1L9Aa9rNZ6pbpnm7cZzHdI3bp+HWRAt/uYL9ZndVC38zSx+rIiZfIVi/zakT0zyK1O/+5zUR+k192IqMteRvJBqPNPcRqh3S2Z6txQjEiq1qgLt3Es0VAzMeBGtsbc+grAknQ02F5RKvEuetf54zbY5MN/uoM6SRMJa67adBMiAnXKSnqJGKJBbsmBn6wbW3ib/JaHoXycVTderxfW4VOBYANC5x53f38nY6RsO0S5w83r9Yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WgF5MxWy+kD9TgHOvNEM2fPe3tHmRhpvGCMtxK1eJ7w=;
+ b=ClVgXeyr3+J2b9hUmaPLwe4MSursG3r8RuGh/KQl/G6jc9Rnd5eJHVc5GpSYYOy+hZTXGouulhIcDBDCyuLNLEFxUh00as9QHRh7jrpBwigTmtnpwEPtlzGCDOqSsXLgb/mBL47x+8goxKl/NCNK8Ys3LoZ8M77bCf1lBjPmQ9SOD3XLaUZd9OsoQQ6KzNwQr7WIzzzMm49xtYX12KSlcaOnZZLnLMMah+R2jV3GKsy/bEWCyOSGDXDt5BGmFPyQq90ZTautGf51WdI6VnRqenD87ey5GIHgopO1yZbeSnygSRWQ4yfkApFP2EvIzy9vrpvMEk5EBMh3l6EER6YIkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WgF5MxWy+kD9TgHOvNEM2fPe3tHmRhpvGCMtxK1eJ7w=;
+ b=GXrfgLg0McboRS8iBYwCZjV1LsFLekAon/oWtjBgWZ6G+3NB3/6Xw4ICpvK4WRoalmTZijxQmyDmjZhvVJAufj6dqgCe4XoUTUlxT53bwStcACQXhcYkxSCIFY/pfLCOjhXHjGI2u0axRvnfQkjfvsqQc3E1xxQzSpmI1XSp6e0=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB1769.namprd11.prod.outlook.com (10.175.87.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.19; Wed, 18 Dec 2019 16:24:00 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::9039:e0e8:9032:20c1%12]) with mapi id 15.20.2559.012; Wed, 18 Dec
+ 2019 16:24:00 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>,
+        <alexandre.belloni@bootlin.com>
+CC:     <Nicolas.Ferre@microchip.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <a.zummo@towertech.it>, <Ludovic.Desroches@microchip.com>,
+        <Eugen.Hristev@microchip.com>
+Subject: [PATCH 02/10] dt-bindings: iio: adc: at91-sama5d2: add rtc-trigger
+ optional property
+Thread-Topic: [PATCH 02/10] dt-bindings: iio: adc: at91-sama5d2: add
+ rtc-trigger optional property
+Thread-Index: AQHVtb+NqLUQmMTAWE2Je79GFXwa4Q==
 Date:   Wed, 18 Dec 2019 16:23:58 +0000
-Message-Id: <20191218162402.45610-20-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191218162402.45610-1-steven.price@arm.com>
-References: <20191218162402.45610-1-steven.price@arm.com>
+Message-ID: <1576686157-11939-3-git-send-email-eugen.hristev@microchip.com>
+References: <1576686157-11939-1-git-send-email-eugen.hristev@microchip.com>
+In-Reply-To: <1576686157-11939-1-git-send-email-eugen.hristev@microchip.com>
+Accept-Language: en-US, ro-RO
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6f44049a-f87d-4ce5-5e78-08d783d6b08b
+x-ms-traffictypediagnostic: DM5PR11MB1769:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR11MB17692543481FF5CA3B4B8463E8530@DM5PR11MB1769.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0255DF69B9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(39860400002)(136003)(346002)(376002)(199004)(189003)(66476007)(66946007)(66446008)(76116006)(91956017)(2616005)(64756008)(66556008)(86362001)(186003)(316002)(110136005)(8676002)(54906003)(8936002)(71200400001)(81166006)(478600001)(2906002)(6512007)(26005)(81156014)(36756003)(4326008)(6506007)(5660300002)(6486002)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1769;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 1DqkBM+wHpJ/qNxdyTgzawMlyo6knEOhhnqqxpEXL9MEo3b7IExrptCwMYK209tI8HNcUQP3RoV4GpzPujCvlEWHZTHE3rX/s81hmBXJe1gEI6OVUURS2G/TKiIwGxdzsQeuh8zdLBVPKA2OVM1nWHZ+gpEbQvjlNqsf1HXbKaZ0H8A3XDNQayd/vPJRy7QyhzvL4s9MNQy9IjfJV6TLxW8iSIr8AKVEKgHdvpYhdQsbBKCbZsf29LCbWlKPiPwkekBtgtLINIpjm9tNtLkqusljiFXdWGRiW8w2Xp0KG6yxETpDwFtSGdEY+QuV5F7eRIu1innfZVGDw5XbeNJZyNWGI9usDRaz3sUnADqYy5L6C3QlzgsLtfrJPvNAT8lQvHgap92RBQQVoc10Sja0Nf9djPLV0JfExydbhDzLoJtnXl0LKv4TC3tjsBa0srSm
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f44049a-f87d-4ce5-5e78-08d783d6b08b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 16:23:59.0184
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4Kf/72/Y6MchjDbrn5657HoIcH9mfjPwQ2UGhezKqxfhGEGOJq8edTlmYA8yHq+4VElWDQewvQxwRdMwlBfX3c21ssdAQDojvrkeHrW+C7k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1769
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a generic version of page table dumping that architectures can
-opt-in to
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-Signed-off-by: Steven Price <steven.price@arm.com>
+Add property to connect RTC-type trigger to the ADC block.
+The ADC is connected internally with a line to the RTC block.
+The RTC can provide a trigger signal to the ADC to start conversions.
+
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
 ---
- include/linux/ptdump.h |  21 +++++++
- mm/Kconfig.debug       |  21 +++++++
- mm/Makefile            |   1 +
- mm/ptdump.c            | 139 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 182 insertions(+)
- create mode 100644 include/linux/ptdump.h
- create mode 100644 mm/ptdump.c
+ Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/ptdump.h b/include/linux/ptdump.h
-new file mode 100644
-index 000000000000..a0fb8dd2be97
---- /dev/null
-+++ b/include/linux/ptdump.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef _LINUX_PTDUMP_H
-+#define _LINUX_PTDUMP_H
-+
-+#include <linux/mm_types.h>
-+
-+struct ptdump_range {
-+	unsigned long start;
-+	unsigned long end;
-+};
-+
-+struct ptdump_state {
-+	void (*note_page)(struct ptdump_state *st, unsigned long addr,
-+			  int level, unsigned long val);
-+	const struct ptdump_range *range;
-+};
-+
-+void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm);
-+
-+#endif /* _LINUX_PTDUMP_H */
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index 327b3ebf23bf..0271b22e063f 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -117,3 +117,24 @@ config DEBUG_RODATA_TEST
-     depends on STRICT_KERNEL_RWX
-     ---help---
-       This option enables a testcase for the setting rodata read-only.
-+
-+config GENERIC_PTDUMP
-+	bool
-+
-+config PTDUMP_CORE
-+	bool
-+
-+config PTDUMP_DEBUGFS
-+	bool "Export kernel pagetable layout to userspace via debugfs"
-+	depends on DEBUG_KERNEL
-+	depends on DEBUG_FS
-+	depends on GENERIC_PTDUMP
-+	select PTDUMP_CORE
-+	help
-+	  Say Y here if you want to show the kernel pagetable layout in a
-+	  debugfs file. This information is only useful for kernel developers
-+	  who are working in architecture specific areas of the kernel.
-+	  It is probably not a good idea to enable this feature in a production
-+	  kernel.
-+
-+	  If in doubt, say N.
-diff --git a/mm/Makefile b/mm/Makefile
-index 1937cc251883..a8eff811f6c4 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -108,3 +108,4 @@ obj-$(CONFIG_ZONE_DEVICE) += memremap.o
- obj-$(CONFIG_HMM_MIRROR) += hmm.o
- obj-$(CONFIG_MEMFD_CREATE) += memfd.o
- obj-$(CONFIG_MAPPING_DIRTY_HELPERS) += mapping_dirty_helpers.o
-+obj-$(CONFIG_PTDUMP_CORE) += ptdump.o
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-new file mode 100644
-index 000000000000..868638b8e404
---- /dev/null
-+++ b/mm/ptdump.c
-@@ -0,0 +1,139 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/pagewalk.h>
-+#include <linux/ptdump.h>
-+#include <linux/kasan.h>
-+
-+#ifdef CONFIG_KASAN
-+/*
-+ * This is an optimization for KASAN=y case. Since all kasan page tables
-+ * eventually point to the kasan_early_shadow_page we could call note_page()
-+ * right away without walking through lower level page tables. This saves
-+ * us dozens of seconds (minutes for 5-level config) while checking for
-+ * W+X mapping or reading kernel_page_tables debugfs file.
-+ */
-+static inline int note_kasan_page_table(struct mm_walk *walk,
-+					unsigned long addr)
-+{
-+	struct ptdump_state *st = walk->private;
-+
-+	st->note_page(st, addr, 5, pte_val(kasan_early_shadow_pte[0]));
-+
-+	walk->action = ACTION_CONTINUE;
-+
-+	return 0;
-+}
-+#endif
-+
-+static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
-+			    unsigned long next, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+	pgd_t val = READ_ONCE(*pgd);
-+
-+#if CONFIG_PGTABLE_LEVELS > 4 && defined(CONFIG_KASAN)
-+	if (pgd_page(val) == virt_to_page(lm_alias(kasan_early_shadow_p4d)))
-+		return note_kasan_page_table(walk, addr);
-+#endif
-+
-+	if (pgd_leaf(val))
-+		st->note_page(st, addr, 1, pgd_val(val));
-+
-+	return 0;
-+}
-+
-+static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
-+			    unsigned long next, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+	p4d_t val = READ_ONCE(*p4d);
-+
-+#if CONFIG_PGTABLE_LEVELS > 3 && defined(CONFIG_KASAN)
-+	if (p4d_page(val) == virt_to_page(lm_alias(kasan_early_shadow_pud)))
-+		return note_kasan_page_table(walk, addr);
-+#endif
-+
-+	if (p4d_leaf(val))
-+		st->note_page(st, addr, 2, p4d_val(val));
-+
-+	return 0;
-+}
-+
-+static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
-+			    unsigned long next, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+	pud_t val = READ_ONCE(*pud);
-+
-+#if CONFIG_PGTABLE_LEVELS > 2 && defined(CONFIG_KASAN)
-+	if (pud_page(val) == virt_to_page(lm_alias(kasan_early_shadow_pmd)))
-+		return note_kasan_page_table(walk, addr);
-+#endif
-+
-+	if (pud_leaf(val))
-+		st->note_page(st, addr, 3, pud_val(val));
-+
-+	return 0;
-+}
-+
-+static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
-+			    unsigned long next, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+	pmd_t val = READ_ONCE(*pmd);
-+
-+#if defined(CONFIG_KASAN)
-+	if (pmd_page(val) == virt_to_page(lm_alias(kasan_early_shadow_pte)))
-+		return note_kasan_page_table(walk, addr);
-+#endif
-+
-+	if (pmd_leaf(val))
-+		st->note_page(st, addr, 4, pmd_val(val));
-+
-+	return 0;
-+}
-+
-+static int ptdump_pte_entry(pte_t *pte, unsigned long addr,
-+			    unsigned long next, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+
-+	st->note_page(st, addr, 5, pte_val(READ_ONCE(*pte)));
-+
-+	return 0;
-+}
-+
-+static int ptdump_hole(unsigned long addr, unsigned long next,
-+		       int depth, struct mm_walk *walk)
-+{
-+	struct ptdump_state *st = walk->private;
-+
-+	st->note_page(st, addr, depth + 1, 0);
-+
-+	return 0;
-+}
-+
-+static const struct mm_walk_ops ptdump_ops = {
-+	.pgd_entry	= ptdump_pgd_entry,
-+	.p4d_entry	= ptdump_p4d_entry,
-+	.pud_entry	= ptdump_pud_entry,
-+	.pmd_entry	= ptdump_pmd_entry,
-+	.pte_entry	= ptdump_pte_entry,
-+	.pte_hole	= ptdump_hole,
-+};
-+
-+void ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
-+{
-+	const struct ptdump_range *range = st->range;
-+
-+	down_read(&mm->mmap_sem);
-+	while (range->start != range->end) {
-+		walk_page_range_novma(mm, range->start, range->end,
-+				      &ptdump_ops, st);
-+		range++;
-+	}
-+	up_read(&mm->mmap_sem);
-+
-+	/* Flush out the last page */
-+	st->note_page(st, 0, 0, 0);
-+}
--- 
-2.20.1
-
+diff --git a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt=
+ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+index 4a3c1d4..1980f0e 100644
+--- a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+@@ -23,6 +23,9 @@ Optional properties:
+   See ../../dma/dma.txt for details.
+   - #io-channel-cells: in case consumer drivers are attached, this must be=
+ 1.
+   See <Documentation/devicetree/bindings/iio/iio-bindings.txt> for details=
+.
++  - atmel,rtc-trigger: The ADC IP block can be triggered by the RTC block
++inside the SoC. This property is a phandle to a node that provides a
++trigger device, if the ADC block supports it.
+=20
+ Properties for consumer drivers:
+   - Consumer drivers can be connected to this producer device, as specifie=
+d
+@@ -44,6 +47,7 @@ adc: adc@fc030000 {
+ 	vddana-supply =3D <&vdd_3v3_lp_reg>;
+ 	vref-supply =3D <&vdd_3v3_lp_reg>;
+ 	atmel,trigger-edge-type =3D <IRQ_TYPE_EDGE_BOTH>;
++	atmel,rtc-trigger =3D <&rtc_adc_trigger>;
+ 	dmas =3D <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) | AT91=
+_XDMAC_DT_PERID(25))>;
+ 	dma-names =3D "rx";
+ 	#io-channel-cells =3D <1>;
+--=20
+2.7.4
