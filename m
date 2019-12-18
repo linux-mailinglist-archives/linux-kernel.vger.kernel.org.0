@@ -2,130 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F3C124A13
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E1D124A04
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:46:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfLROry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:47:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:44882 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727186AbfLROry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:47:54 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBIElnw9091999;
-        Wed, 18 Dec 2019 08:47:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576680469;
-        bh=9QQbSS0rFH46BR10NFC7Q609jmka/ilJ1AcUNksp8Fo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JZ97l2tUebr0TbqM/WnjQMc9swjxz6W/Tn97oPc6EhnSznVXHMtgIbLg5uHlpmuY1
-         NiMeHguJuWE/AhB+3KImvys8cEkiA6AwOJa9vxdBP3YvIsgHw6aSFZ3u0cwNo6a/em
-         Z42TZ5RhDeLiubGLZNdxY2hMlQ/R8P8hbNBj7pcg=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBIEln1I019031
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 18 Dec 2019 08:47:49 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
- Dec 2019 08:47:48 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 18 Dec 2019 08:47:48 -0600
-Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBIElmKj014309;
-        Wed, 18 Dec 2019 08:47:48 -0600
-Subject: Re: [PATCH v17 00/19] Multicolor Framework
-To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
-CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191114133023.32185-1-dmurphy@ti.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <efdfcf1f-50b2-314f-3d46-93369229109a@ti.com>
-Date:   Wed, 18 Dec 2019 08:45:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727239AbfLROqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:46:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:48712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726921AbfLROqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:46:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88F2430E;
+        Wed, 18 Dec 2019 06:46:04 -0800 (PST)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDF753F719;
+        Wed, 18 Dec 2019 06:46:02 -0800 (PST)
+Date:   Wed, 18 Dec 2019 14:45:55 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Jolly Shah <jolly.shah@xilinx.com>
+Cc:     ard.biesheuvel@linaro.org, mingo@kernel.org,
+        gregkh@linuxfoundation.org, matt@codeblueprint.co.uk,
+        hkallweit1@gmail.com, keescook@chromium.org,
+        dmitry.torokhov@gmail.com, michal.simek@xilinx.com,
+        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH 0/5] firmware: xilinx: Add xilinx specific sysfs interface
+Message-ID: <20191218144555.GA12525@bogus>
+References: <1575502159-11327-1-git-send-email-jolly.shah@xilinx.com>
 MIME-Version: 1.0
-In-Reply-To: <20191114133023.32185-1-dmurphy@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575502159-11327-1-git-send-email-jolly.shah@xilinx.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On Wed, Dec 04, 2019 at 03:29:14PM -0800, Jolly Shah wrote:
+> This patch series adds xilinx specific sysfs interface for below
+> purposes:
+> - Register access
+> - Set shutdown scope
+> - Set boot health status bit
 
-Bump for application to leds-next
+This series defeats the whole abstraction EEMI provides. By providing
+direct register accesses, you are allowing user-space to do whatever it
+wants. I had NACKed this idea before. Has anything changed ?
 
-Dan
+If you need it for testing firmware, better put them in debugfs which is
+off on production builds.
 
-On 11/14/19 7:30 AM, Dan Murphy wrote:
-> Hello
->
-> Simple fix in the multicolor code where the extended registration call was not
-> called in the devm_* function
->
-> Thanks Martin F. for finding this issue.
->
-> Hopefully this will be pulled in for the 5.5 merge window.
->
-> Dan
->
-> Dan Murphy (19):
->    dt: bindings: Add multicolor class dt bindings documention
->    dt-bindings: leds: Add multicolor ID to the color ID list
->    leds: Add multicolor ID to the color ID list
->    leds: multicolor: Introduce a multicolor class definition
->    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
->    leds: lp50xx: Add the LP50XX family of the RGB LED driver
->    dt: bindings: lp55xx: Be consistent in the document with LED acronym
->    dt: bindings: lp55xx: Update binding for Multicolor Framework
->    ARM: dts: n900: Add reg property to the LP5523 channel node
->    ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
->    ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
->    leds: lp55xx: Convert LED class registration to devm_*
->    leds: lp55xx: Add multicolor framework support to lp55xx
->    leds: lp5523: Update the lp5523 code to add multicolor brightness
->      function
->    leds: lp5521: Add multicolor framework multicolor brightness support
->    leds: lp55xx: Fix checkpatch file permissions issues
->    leds: lp5523: Fix checkpatch issues in the code
->    dt: bindings: Update lp55xx binding to recommended LED naming
->    leds: lp55xx-common: Remove extern from lp55xx-common header
->
->   .../ABI/testing/sysfs-class-led-multicolor    |  36 +
->   .../bindings/leds/leds-class-multicolor.txt   |  98 +++
->   .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
->   .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
->   Documentation/leds/index.rst                  |   1 +
->   Documentation/leds/leds-class-multicolor.rst  | 100 +++
->   arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
->   arch/arm/boot/dts/omap3-n900.dts              |  29 +-
->   arch/arm/boot/dts/ste-href.dtsi               |  22 +-
->   drivers/leds/Kconfig                          |  22 +
->   drivers/leds/Makefile                         |   2 +
->   drivers/leds/led-class-multicolor.c           | 272 ++++++
->   drivers/leds/led-core.c                       |   1 +
->   drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
->   drivers/leds/leds-lp5521.c                    |  43 +-
->   drivers/leds/leds-lp5523.c                    |  62 +-
->   drivers/leds/leds-lp5562.c                    |  22 +-
->   drivers/leds/leds-lp55xx-common.c             | 235 ++++--
->   drivers/leds/leds-lp55xx-common.h             |  36 +-
->   drivers/leds/leds-lp8501.c                    |  23 +-
->   include/dt-bindings/leds/common.h             |   3 +-
->   include/linux/led-class-multicolor.h          | 139 +++
->   include/linux/platform_data/leds-lp55xx.h     |   8 +
->   23 files changed, 2106 insertions(+), 172 deletions(-)
->   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
->   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
->   create mode 100644 Documentation/leds/leds-class-multicolor.rst
->   create mode 100644 drivers/leds/led-class-multicolor.c
->   create mode 100644 drivers/leds/leds-lp50xx.c
->   create mode 100644 include/linux/led-class-multicolor.h
->
+--
+Regards,
+Sudeep
