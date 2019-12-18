@@ -2,102 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF6ED123E0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 04:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0D75123E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 04:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726569AbfLRDnC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 22:43:02 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40804 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfLRDnC (ORCPT
+        id S1726652AbfLRDoB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 22:44:01 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38417 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfLRDoB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 22:43:02 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i15so619796oto.7
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 19:43:01 -0800 (PST)
+        Tue, 17 Dec 2019 22:44:01 -0500
+Received: by mail-pl1-f194.google.com with SMTP id f20so340282plj.5;
+        Tue, 17 Dec 2019 19:44:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DTLHJB/iUcLDfSNgBM/rRd3/H05ShntwvWDkcVOuP88=;
-        b=ZAJg/VsfqHfAuA79L5vD2Ey6OpHmmoZSS1dDrf4XEoZWod53aC9rF4y45Noqua0A50
-         LtZYqDB1iJt43WO4BjCyodOhPdraBw3odtu8MA7i/A9qpySPvR3hHf5uOvjBRLlHGYIV
-         FQ4Jt6o80x4l2JzqJRF/DluvbyOVLjOqSMwTbhtmEnCEeMRMrr6YoPZerrCrISuzJiBS
-         dcBhss7gTBIZyUz5WFFN3XvcSf/LhG9NKm9SQDFM/mLlGld5HAVcTpZZU9ZF241lawy0
-         MNoTo6uE1F26dNLh7GEKt+gPQOdXQPY459Im7iTHCyXLhlo/V+zSN7Fhl1o60v/n1Jm+
-         swrA==
+        h=from:to:cc:subject:date:message-id;
+        bh=+y9h4aE08CuPVLDRigUSeMNj0mFN2Iazg3NzEcyF52c=;
+        b=o50VKtgFJWtikhjh86K9Pp/xJL03nCe7uNeHQnLKhET0QZQEmrtcKEpIUAeM5burEi
+         /dLWaajjB6izQNe5N9WCjD+mI4E+LkERBxjpMBaeO5aeNTu0pYm3GKdzaa02JDlVdNna
+         OWZSGSEpX+04ZPPsfpFdobOzz8zK9P2aviZd90PKbnDDDX1aNnII3vKEAgue17Irpp7q
+         3wktnxWRmnb2l4wUmRqtMk6AXhp2P+T/Uo8pDevRzloYXo8dl4o2VkQiuUSOiwaboWzg
+         4wbiZCe1wLcr2nsNglw9j6Lw004zKS5IrLZDUizeeXM6Re2lykgfzHKxi6Q58uIlUQlq
+         ygYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DTLHJB/iUcLDfSNgBM/rRd3/H05ShntwvWDkcVOuP88=;
-        b=MRYzPWmRMK1uuwGX7zUJEskJnxwqGUZAToImci41EZGx8B/RIxM17cH9RtnHxxIc5M
-         hQxOL8s6VQSIzOLUB5eA9eckDK9GNL4cggRUzybpVRWuD4cbEAsHg+6wAfhqslAqVAkZ
-         WipLP3hieqMZs2iWlVHTd1J2NAB43I04Tjnv5JGex4xJw+YZ4yTZDkilXF3+/luKyBNA
-         SYcjeDS7J+CqZft4ti0fgb+RASZHo7AWJmIqb5ID/CQgk8jQXd5ogymy+eGxjGUa5DyY
-         v76l2xwndfkWSr9fIElcN1OAN3XbEjxfubiMfVK9aimdw8Plf3+UmVgvLJlfkKEEfCh/
-         huFQ==
-X-Gm-Message-State: APjAAAXXq7NU3bShFAoHiQEL8ufs9U/Bfe3MguUdAQEwKovvy3cftvTp
-        qs8Pk73NarskVWrJHDUFs2Q=
-X-Google-Smtp-Source: APXvYqyWkKYiPX0Oalp+GwJKtbJm7N+/LKAcXm06U7mnzZIJAM/DsOUTb+h0bjkHM9vDH2c+qw6uiA==
-X-Received: by 2002:a9d:2264:: with SMTP id o91mr236481ota.328.1576640580929;
-        Tue, 17 Dec 2019 19:43:00 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id q1sm358262otr.40.2019.12.17.19.43.00
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+y9h4aE08CuPVLDRigUSeMNj0mFN2Iazg3NzEcyF52c=;
+        b=Zbe91KUY0XRYZnL/ED/kyabsIkSCcIFaC5gnjkeJ8KdEbYxFZAyynNFFhlb+Lezzv8
+         TnY7RVRwy7mRY8OiotTM0dEuXC/lIBQzcoAQYbJ+l9p7yqoTT8svs/mLLazkaBzW/ByJ
+         H2sDT+0PJUGuurtD6iQUeeLiKO8BV+1M8aV9ZHdlkN+zdkIF6WfBBBUkjpMoIpbu4SYm
+         6fj9jtgN8mgOnGhw0GTdcKbVZbHGm7wuwTnGh3B23019gJ9DkFmZc8dZ1FAtmMnj2tfB
+         7AiEOJUNPn5glNRLty4qBTC84R01vcbO6nsdTr0gVC3oz4O4QiPFnd7ylN+h/bR8Jl9H
+         yhKQ==
+X-Gm-Message-State: APjAAAUY6NEOIFiJd3PgmxCtDhy5mtSGcaU1UqkYt+Jd/PsTs5mmLKtL
+        o4rJxZ4GkhGD+L5CTML5v0g=
+X-Google-Smtp-Source: APXvYqxbDnldt34tQauFfXHJ9KD9GGYfju4fjtfJwioU9AQjdJDRoygXN3aR7oZ/RlBXPJgQvQEogA==
+X-Received: by 2002:a17:90a:c214:: with SMTP id e20mr142755pjt.98.1576640640300;
+        Tue, 17 Dec 2019 19:44:00 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id k29sm630606pfh.104.2019.12.17.19.43.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 19:43:00 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] ALSA: usx2y: Adjust indentation in snd_usX2Y_hwdep_dsp_status
-Date:   Tue, 17 Dec 2019 20:42:57 -0700
-Message-Id: <20191218034257.54535-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        Tue, 17 Dec 2019 19:43:59 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        stern@rowland.harvard.edu, rogerq@ti.com
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] usb: gadget: udc: fix possible sleep-in-atomic-context bugs in gr_probe()
+Date:   Wed, 18 Dec 2019 11:43:49 +0800
+Message-Id: <20191218034349.18919-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-../sound/usb/usx2y/usX2Yhwdep.c:122:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        info->version = USX2Y_DRIVER_VERSION;
-        ^
-../sound/usb/usx2y/usX2Yhwdep.c:120:2: note: previous statement is here
-        if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
-        ^
-1 warning generated.
+drivers/usb/gadget/udc/core.c, 1175: 
+	kzalloc(GFP_KERNEL) in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272: 
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186: 
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183: 
+	spin_lock in gr_probe
 
-This warning occurs because there is a space before the tab on this
-line. Remove it so that the indentation is consistent with the Linux
-kernel coding style and clang no longer warns.
+drivers/usb/gadget/udc/core.c, 1195: 
+	mutex_lock in usb_add_gadget_udc_release
+drivers/usb/gadget/udc/core.c, 1272: 
+	usb_add_gadget_udc_release in usb_add_gadget_udc
+drivers/usb/gadget/udc/gr_udc.c, 2186: 
+	usb_add_gadget_udc in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183: 
+	spin_lock in gr_probe
 
-This was introduced before the beginning of git history so no fixes tag.
+drivers/usb/gadget/udc/gr_udc.c, 212:
+	debugfs_create_file in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2197:
+	gr_dfs_create in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/831
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+drivers/usb/gadget/udc/gr_udc.c, 2114:
+	devm_request_threaded_irq in gr_request_irq
+drivers/usb/gadget/udc/gr_udc.c, 2202:
+	gr_request_irq in gr_probe
+drivers/usb/gadget/udc/gr_udc.c, 2183:
+    spin_lock in gr_probe
+
+kzalloc(GFP_KERNEL), mutex_lock(), debugfs_create_file() and 
+devm_request_threaded_irq() can sleep at runtime.
+
+To fix these possible bugs, usb_add_gadget_udc(), gr_dfs_create() and
+gr_request_irq() are called without handling the spinlock.
+
+These bugs are found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- sound/usb/usx2y/usX2Yhwdep.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/gr_udc.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/sound/usb/usx2y/usX2Yhwdep.c b/sound/usb/usx2y/usX2Yhwdep.c
-index d1caa8ed9e68..9985fc139487 100644
---- a/sound/usb/usx2y/usX2Yhwdep.c
-+++ b/sound/usb/usx2y/usX2Yhwdep.c
-@@ -119,7 +119,7 @@ static int snd_usX2Y_hwdep_dsp_status(struct snd_hwdep *hw,
- 	info->num_dsps = 2;		// 0: Prepad Data, 1: FPGA Code
- 	if (us428->chip_status & USX2Y_STAT_CHIP_INIT)
- 		info->chip_ready = 1;
-- 	info->version = USX2Y_DRIVER_VERSION; 
-+	info->version = USX2Y_DRIVER_VERSION;
- 	return 0;
- }
+diff --git a/drivers/usb/gadget/udc/gr_udc.c b/drivers/usb/gadget/udc/gr_udc.c
+index 64d80c65bb96..aaf975c809bf 100644
+--- a/drivers/usb/gadget/udc/gr_udc.c
++++ b/drivers/usb/gadget/udc/gr_udc.c
+@@ -2175,8 +2175,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	spin_lock(&dev->lock);
+-
+ 	/* Inside lock so that no gadget can use this udc until probe is done */
+ 	retval = usb_add_gadget_udc(dev->dev, &dev->gadget);
+ 	if (retval) {
+@@ -2185,15 +2183,21 @@ static int gr_probe(struct platform_device *pdev)
+ 	}
+ 	dev->added = 1;
+ 
++	spin_lock(&dev->lock);
++
+ 	retval = gr_udc_init(dev);
+-	if (retval)
++	if (retval) {
++		spin_unlock(&dev->lock);
+ 		goto out;
+-
+-	gr_dfs_create(dev);
++	}
+ 
+ 	/* Clear all interrupt enables that might be left on since last boot */
+ 	gr_disable_interrupts_and_pullup(dev);
+ 
++	spin_unlock(&dev->lock);
++
++	gr_dfs_create(dev);
++
+ 	retval = gr_request_irq(dev, dev->irq);
+ 	if (retval) {
+ 		dev_err(dev->dev, "Failed to request irq %d\n", dev->irq);
+@@ -2222,8 +2226,6 @@ static int gr_probe(struct platform_device *pdev)
+ 		dev_info(dev->dev, "regs: %p, irq %d\n", dev->regs, dev->irq);
+ 
+ out:
+-	spin_unlock(&dev->lock);
+-
+ 	if (retval)
+ 		gr_remove(pdev);
  
 -- 
-2.24.1
+2.17.1
 
