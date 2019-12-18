@@ -2,60 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7BE12401F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63AAE12402A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfLRHOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:14:49 -0500
-Received: from mga06.intel.com ([134.134.136.31]:64110 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfLRHOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:14:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 23:14:48 -0800
-X-IronPort-AV: E=Sophos;i="5.69,328,1571727600"; 
-   d="scan'208";a="209988246"
-Received: from asama-mobl.amr.corp.intel.com (HELO localhost) ([10.252.50.109])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 23:14:43 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-acpi@vger.kernel.org,
-        intel-gfx <intel-gfx@lists.freedesktop.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mfd: intel_soc_pmic: Rename pwm_backlight pwm-lookup to pwm_pmic_backlight
-In-Reply-To: <20191217135140.GL18955@dell>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191212084546.GA3468@dell> <d22e9a04-da09-0f41-a78e-ac17a947650a@redhat.com> <20191212155209.GC3468@dell> <4d07445d-98b1-f23c-0aac-07709b45df78@redhat.com> <20191213082734.GE3468@dell> <d648794d-4c76-cfa1-dcbd-16c34d409c51@redhat.com> <20191216093016.GE3648@dell> <fc3c29da-528d-a6b6-d13b-92e6469eadea@redhat.com> <20191217081127.GI18955@dell> <87immfyth2.fsf@intel.com> <20191217135140.GL18955@dell>
-Date:   Wed, 18 Dec 2019 09:14:47 +0200
-Message-ID: <87a77q14wo.fsf@intel.com>
+        id S1725882AbfLRHUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:20:05 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41503 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725799AbfLRHUF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:20:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576653603;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=fYeOh3Byq//a4cdBHK5jgsQ7V90xFPhkylt6ogpeL8Q=;
+        b=StBvN2/sbC4Npg4JEYnz88Me8FNkwetdZ4EQFMcFSW2PJQ5qqpLGuC0ieU11tYSClp1f2/
+        dt7R3SRMh8ZWHQSSXWQoc8ip6kHO5SnnbO1KP0jUVn35RQD0NjS8tIcRR1RH8tkVI7uZqg
+        IOt4J8ys1vaNCjsqhRn67kRBUp3d0Xs=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-370-OObexW6QMtSMIR0UsAJLTA-1; Wed, 18 Dec 2019 02:19:59 -0500
+X-MC-Unique: OObexW6QMtSMIR0UsAJLTA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E18C21083E51;
+        Wed, 18 Dec 2019 07:19:56 +0000 (UTC)
+Received: from localhost (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B35B7D8FC;
+        Wed, 18 Dec 2019 07:19:52 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>, Long Li <longli@microsoft.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        John Garry <john.garry@huawei.com>,
+        Hannes Reinecke <hare@suse.com>
+Subject: [RFC PATCH 0/3] softirq/blk-mq: implement interrupt flood detection for avoiding cpu lockup
+Date:   Wed, 18 Dec 2019 15:19:39 +0800
+Message-Id: <20191218071942.22336-1-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019, Lee Jones <lee.jones@linaro.org> wrote:
-> Hans was making the case that this was impractical for DRM, due to the
-> amount of churn you guys receive, hence the discussion.  I'm very
-> pleased that this is not the case.
+Hi Guys,
 
-Heh, well, it is the case, but the point is that should be our problem,
-not yours. ;)
+For minimizing IO latency, blk-mq often completes IO in the hardware
+interrupt context. However, in case of multiple HBAs, or multiple
+storage devices attached to same HBA, if one CPU core has to handle
+interrupts of IOs submitted from multile CPU , there is risk to lock
+up CPUs[1][2].
 
-BR,
-Jani.
+Follows the idea when there is mutliple IO submitter and single
+CPU for completing these IOs:
 
+1) in case of multiple storages attached to one single HBA, these
+storages may handle IO more quickly than single CPU core
 
--- 
-Jani Nikula, Intel Open Source Graphics Center
+2) in case of multiple HBAs in one system, one single effective CPU
+can be selected for handling interrupts from several queues, then
+multiple storages still may handle IO more quickly than single CPU
+core.
+
+When handling IO completion in interrupt context, IO latency is good,
+but there is risk to lock up CPU. When moving IO completion to process
+context via NAPI or threaded interrupt handler, CPU lockup can be
+avoided. So people try to move part of IO completion into process
+context for avoiding CPU lockup, meantime trying to not hurt IO
+performance, such as Keith's work[3].
+
+However, it is hard to partition IO completion in the two contexts, if
+less work is moved to process context, risk of locking up CPU can't be
+eliminated; if more work is moved to process context, extra IO latency is
+introduced, then IO performance is hurt.
+
+Interrupt flood information can be one useful hint for partitioning IO
+completion work into the two contexts effectively.
+
+The 1st two patches implement interrpupt flood detection, and the 3rd
+patch applies the hint to complet IO in process context when interrupt
+flood happens. This way avoids CPU lockup, meantime IO performance isn't
+hurt obviously.
+
+[1] https://lore.kernel.org/lkml/1566281669-48212-1-git-send-email-longli=
+@linuxonhyperv.com/
+[2] https://lore.kernel.org/lkml/a7ef3810-31af-013a-6d18-ceb6154aa2ef@hua=
+wei.com/
+[3] https://lore.kernel.org/linux-nvme/20191209175622.1964-1-kbusch@kerne=
+l.org/T/#t
+
+Ming Lei (3):
+  sched/core: add API for exporting runqueue clock
+  softirq: implement interrupt flood detection
+  blk-mq: complete request in rescuer process context in case of irq
+    flood
+
+ block/blk-mq.c          |  68 ++++++++++++++++-
+ drivers/base/cpu.c      |  23 ++++++
+ include/linux/hardirq.h |   2 +
+ include/linux/sched.h   |   2 +
+ kernel/sched/core.c     |   5 ++
+ kernel/softirq.c        | 161 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 260 insertions(+), 1 deletion(-)
+
+Cc: Long Li <longli@microsoft.com>
+Cc: Ingo Molnar <mingo@redhat.com>,
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Sagi Grimberg <sagi@grimberg.me>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Hannes Reinecke <hare@suse.com>
+--=20
+2.20.1
+
