@@ -2,73 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 254FC123E3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:05:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9E95123E46
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 05:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfLREFR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 23:05:17 -0500
-Received: from bilbo.ozlabs.org ([203.11.71.1]:35295 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726492AbfLREFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 23:05:13 -0500
-Received: by ozlabs.org (Postfix, from userid 1034)
-        id 47d1cl32N3z9sSF; Wed, 18 Dec 2019 15:05:11 +1100 (AEDT)
-X-powerpc-patch-notification: thanks
-X-powerpc-patch-commit: e352f576d345e5bf1fb62c8559851448a6c1d9cd
-In-Reply-To: <20191216103058.4958-1-david@redhat.com>
-To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-From:   Michael Ellerman <patch-notifications@ellerman.id.au>
-Cc:     David Hildenbrand <david@redhat.com>,
+        id S1726556AbfLREKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 23:10:10 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34533 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfLREKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 23:10:10 -0500
+Received: by mail-io1-f68.google.com with SMTP id z193so544285iof.1
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 20:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ZI9jyFjISAngYAMy39G35CXNgJygVR0280jysm3UBIo=;
+        b=VkKAOxtPMy5W5SSkbDeqxMUaOoqoynaHignds/XjvcYDcc8zsz5KR2aRMv5v9qrzkr
+         Z/LBqHt/TJwnzBix9Zaz/gl+Gb5arycBHBl6Z4Gqn7F7GQfyPrm5c631m9dUdI2H9HuY
+         B2I3299Q3mK9KWOet63WIpbW0JB8qw2nfATVljKfoojjjKWAi+b2nHrzCeEStER52xbi
+         iXpC3dKE0F13NNsiokVDOnWY16xPyKVKPMZxU7scLL7o9DVt5MP3kn2SsVAIMwhFwHG3
+         Dd1Mr7pUzWi2HpiXvWJsyysKjzVNxhlN8w+0PwJuviPlpqiqUIMcAekkb5G2s4vIMZZq
+         Conw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ZI9jyFjISAngYAMy39G35CXNgJygVR0280jysm3UBIo=;
+        b=f5oDUrUH2Oif41Am1DqZjrehpg5wp34jZEbIXqnL95T2mQesWrSKHuQUDX0/rrZuRK
+         6IoHLGnJslmlr08CztQk/6fNJuBPWwlEW6s8W80lmQo/KIyTXDb42IrUh7ywRopfv3nB
+         8999Oyu08tH3R3ygO4ZR6XdHIYUFmdboJPZ/3u5PNmP6fAUfp9TfbcHTUw+O10ypT3cG
+         0p9o7JavIoBDzk5kE+SJuC5Rwl1yim26naXpwWewcdmxYc5e+3vxG1WVJ1+s2KshVATb
+         334cOQOEFRL3mq4WBCTSjFJuIaByzPcKK7cUl8K+qXfbpnKNXtzpfMKcDs0BfvnKToIk
+         /DMw==
+X-Gm-Message-State: APjAAAXUMQrzQEbbEmXXLpghe++0VXX7VyBQgbK7crzsYQquV02d4RjU
+        cAW0nKfWB+w3QLnFUdrrkDo7UwFV9GQHAHCfHDo=
+X-Google-Smtp-Source: APXvYqxKhLraorW1FRWcgfifseK/7GGEnwsZvDt9U+eHohKKsUxjjdRRIHsxJbxUg/wAiwiJVxA7MbUw7o979mOI3Ok=
+X-Received: by 2002:a6b:b48d:: with SMTP id d135mr126438iof.280.1576642209483;
+ Tue, 17 Dec 2019 20:10:09 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:ac0:9191:0:0:0:0:0 with HTTP; Tue, 17 Dec 2019 20:10:08
+ -0800 (PST)
+In-Reply-To: <CAHk-=whN00UTq76bDT-WXm72VhttLv8tcchqEkcUoGXt38XXRg@mail.gmail.com>
+References: <20191212181422.31033-1-linux@dominikbrodowski.net>
+ <20191217051751.7998-1-youling257@gmail.com> <20191217064254.GB3247@light.dominikbrodowski.net>
+ <CAOzgRdZR0bO14fyOk5jLBUkWwgsf7fx41JMQr-Hr6nss1KSmLw@mail.gmail.com> <CAHk-=whN00UTq76bDT-WXm72VhttLv8tcchqEkcUoGXt38XXRg@mail.gmail.com>
+From:   youling 257 <youling257@gmail.com>
+Date:   Wed, 18 Dec 2019 12:10:08 +0800
+Message-ID: <CAOzgRda=q0mBeBx_i8N0VT_a_ud8EVcf9hVC5Y_Oz2sdAdGGLg@mail.gmail.com>
+Subject: Re: [PATCH 4/5] init: unify opening /dev/console as stdin/stdout/stderr
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Richard Fontana <rfontana@redhat.com>, linux-mm@kvack.org,
-        Paul Mackerras <paulus@samba.org>,
-        Arun KS <arunks@codeaurora.org>,
+        Rafael Wysocki <rafael@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        linuxppc-dev@lists.ozlabs.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] powerpc/pseries/cmm: fix managed page counts when migrating pages between zones
-Message-Id: <47d1cl32N3z9sSF@ozlabs.org>
-Date:   Wed, 18 Dec 2019 15:05:11 +1100 (AEDT)
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-12-16 at 10:30:58 UTC, David Hildenbrand wrote:
-> Commit 63341ab03706 (virtio-balloon: fix managed page counts when migrati=
-> ng
-> pages between zones) fixed a long existing BUG in the virtio-balloon
-> driver when pages would get migrated between zones.  I did not try to
-> reproduce on powerpc, but looking at the code, the same should apply to
-> powerpc/cmm ever since it started using the balloon compaction
-> infrastructure (luckily just recently).
-> 
-> In case we have to migrate a ballon page to a newpage of another zone, th=
-> e
-> managed page count of both zones is wrong. Paired with memory offlining
-> (which will adjust the managed page count), we can trigger kernel crashes
-> and all kinds of different symptoms.
-> 
-> Fix it by properly adjusting the managed page count when migrating if
-> the zone changed.
-> 
-> We'll temporarily modify the totalram page count. If this ever becomes a
-> problem, we can fine tune by providing helpers that don't touch
-> the totalram pages (e.g., adjust_zone_managed_page_count()).
-> 
-> Fixes: fe030c9b85e6 ("powerpc/pseries/cmm: Implement balloon compaction")
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Richard Fontana <rfontana@redhat.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Arun KS <arunks@codeaurora.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+only Revert "fs: remove ksys_dup()", not see the warning
+"/system/bin/sh: No controlling tty: open /dev/tty: No such device or
+address."
 
-Applied to powerpc fixes, thanks.
+yes, "fs: remove ksys_dup()" caused my system/bin/sh problem.
 
-https://git.kernel.org/powerpc/c/e352f576d345e5bf1fb62c8559851448a6c1d9cd
+but test "early init: fix error handling when opening /dev/console",
+still can see "/system/bin/sh: No controlling tty" warning, it not
+solve my problem.
 
-cheers
+
+2019-12-18 5:14 GMT+08:00, Linus Torvalds <torvalds@linux-foundation.org>:
+> This should be fixed by 2d3145f8d280 ("early init: fix error handling
+> when opening /dev/console")
+>
+> I'm not sure what you did to trigger that bug, but it was a bug.
+>
+>               Linus
+>
+>
+> On Tue, Dec 17, 2019 at 1:34 AM youling 257 <youling257@gmail.com> wrote:
+>>
+>> I had been Revert "fs: remove ksys_dup()" Revert "init: unify opening
+>> /dev/console as stdin/stdout/stderr", test boot, n the system/bin/sh
+>> warning.
+>
