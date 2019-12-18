@@ -2,95 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D698123C38
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:06:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44C48123C2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:01:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbfLRBGS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 20:06:18 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52147 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfLRBGS (ORCPT
+        id S1726454AbfLRBBF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 20:01:05 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48064 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfLRBBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 20:06:18 -0500
-Received: by mail-wm1-f67.google.com with SMTP id d73so92751wmd.1
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 17:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=CIZH5Iz8Q+UcB5hqDpoZoMcl1+hdqO5hVl6PqRkR26c=;
-        b=HKqQzMNVF3crjW88H263YTfhX7QmsQrjBxpoyIV5+9h921uzDgiR25TNJL/tQgwCMS
-         H0c/rKXUMN6B4ieH9uDuSTngC5Q+wOXXk9dOtKbBV6Otye/DGFmAjFgwA2llcITQvHyW
-         tcJ8d2EyXJr+6CMtLUfuLSpy5Jj0NfsxruKLZk17uhHHmPZJDLEvGGeyBJIl/lE2/g3d
-         9UeM418rafRFktzw51VrL1siu8D+U6EI3jVgtWngtXYKzjYiXsB55tCWZ+W6/eP3fuSq
-         UpS7FJ/AhTKFCVQGIw9Syf+Scm4wTd+NojwfReD8b0tqCgk9MBa85tyeybOMcD2tuqH4
-         Mabg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=CIZH5Iz8Q+UcB5hqDpoZoMcl1+hdqO5hVl6PqRkR26c=;
-        b=MOu9CDILLsqWRAiQuB/yO/N0siDMWOZOxtXPuFmQrO0HBH3xOV3xnsSSGhVJpl2v2X
-         qhZDjRCyET1z//rTraQECIZh7St6WH6meuPVe+jSgowlGe+R67PgVKCO9t6mJcgzygdK
-         3R0CfRx3fLhcKALDPtaeX+bfF9hAgQ+cv2zadGo8Se9k2aQO+mZhPvINQIMavo2dC213
-         HUJAthnisj8czWcWLGgRwpBpHnhZ0HCWkU0eS0inepnqUseJeUWdxPFnciMlafA/hGUL
-         03sYzWWikdLCakU41TI3ZUJEga3CzNy+ju8/cTXBbFWE0JaFYk83dm/LYyFTLUadpYA6
-         JZuQ==
-X-Gm-Message-State: APjAAAXMNTlkOkDW6miEh8Gi8BIf0YDhMA1os6Evi4dr4cRW09lHGKso
-        3EKtyKi+G4s27nFdBnDdGzY=
-X-Google-Smtp-Source: APXvYqyMl9k8MKXlxMm7wNyv/DWdhtcTNOXrTcixs3yJtvQhzXGKregw5hmJy2az5JqhZ9wteU3glA==
-X-Received: by 2002:a1c:a543:: with SMTP id o64mr235510wme.73.1576631175947;
-        Tue, 17 Dec 2019 17:06:15 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id v14sm647455wrm.28.2019.12.17.17.06.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 17:06:15 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        bcm-kernel-feedback-list@broadcom.com (open list:BROADCOM STB NAND
-        FLASH DRIVER), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] mtd: nand: brcmnand: Set appropriate DMA mask
-Date:   Tue, 17 Dec 2019 16:56:35 -0800
-Message-Id: <20191218005635.31636-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 17 Dec 2019 20:01:05 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBI1104i096893;
+        Tue, 17 Dec 2019 19:01:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576630860;
+        bh=gWirss4z2TwsaaOabHQAhC/9any+J11ohnxYoUt21FQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=iYJmRToxlA3+cExa6lRletT31wdgaKZGS0dl5zMKqvuolEJkSMSpHV+CPFfzxCM/P
+         RsJvlbTH2iQFfythblCw45W8UqwPE4Bz4Q6sBsOyZuvn+CumjRlTHJTsFJeKDgyoLJ
+         Nqes72vShmqoxuF9uRnGG9SP1h2A4ZOOQZs+3Y8M=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBI110Cs096174
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 17 Dec 2019 19:01:00 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 17
+ Dec 2019 19:01:00 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Tue, 17 Dec 2019 19:01:00 -0600
+Received: from [10.250.79.55] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBI10xPM120389;
+        Tue, 17 Dec 2019 19:01:00 -0600
+Subject: Re: [PATCH v2 2/3] ARM: OMAP2+: Introduce check for OP-TEE in
+ omap_secure_init()
+To:     Tony Lindgren <tony@atomide.com>
+CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191217234745.4434-1-afd@ti.com>
+ <20191217234745.4434-3-afd@ti.com> <20191218005316.GG35479@atomide.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <f2efedb7-8050-2c16-02d0-a534c00a497e@ti.com>
+Date:   Tue, 17 Dec 2019 20:00:59 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <20191218005316.GG35479@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NAND controllers >= 7.0 with FLASH_DMA support physical addresses up to
-40-bit, set an appropriate DMA mask for that purpose.
+On 12/17/19 7:53 PM, Tony Lindgren wrote:
+> * Andrew F. Davis <afd@ti.com> [191217 23:48]:
+>> --- a/arch/arm/mach-omap2/omap-secure.c
+>> +++ b/arch/arm/mach-omap2/omap-secure.c
+>> @@ -20,6 +21,18 @@
+>>  
+>>  static phys_addr_t omap_secure_memblock_base;
+>>  
+>> +bool optee_available;
+> 
+> The above can be static bool optee_available?
+> 
+>> --- a/arch/arm/mach-omap2/omap-secure.h
+>> +++ b/arch/arm/mach-omap2/omap-secure.h
+>> @@ -10,6 +10,8 @@
+>>  #ifndef OMAP_ARCH_OMAP_SECURE_H
+>>  #define OMAP_ARCH_OMAP_SECURE_H
+>>  
+>> +#include <linux/types.h>
+>> +
+>>  /* Monitor error code */
+>>  #define  API_HAL_RET_VALUE_NS2S_CONVERSION_ERROR	0xFFFFFFFE
+>>  #define  API_HAL_RET_VALUE_SERVICE_UNKNWON		0xFFFFFFFF
+>> @@ -72,6 +74,7 @@ extern u32 rx51_secure_dispatcher(u32 idx, u32 process, u32 flag, u32 nargs,
+>>  extern u32 rx51_secure_update_aux_cr(u32 set_bits, u32 clear_bits);
+>>  extern u32 rx51_secure_rng_call(u32 ptr, u32 count, u32 flag);
+>>  
+>> +extern bool optee_available;
+>>  void omap_secure_init(void);
+> 
+> And then this change should not be needed, right?
+> 
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/mtd/nand/raw/brcmnand/brcmnand.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/brcmnand/brcmnand.c b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-index 1a66b1cd51c0..44518dada75b 100644
---- a/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-+++ b/drivers/mtd/nand/raw/brcmnand/brcmnand.c
-@@ -2635,6 +2635,16 @@ int brcmnand_probe(struct platform_device *pdev, struct brcmnand_soc *soc)
- 		/* initialize the dma version */
- 		brcmnand_flash_dma_revision_init(ctrl);
- 
-+		ret = -EIO;
-+		if (ctrl->nand_version >= 0x0700)
-+			ret = dma_set_mask_and_coherent(&pdev->dev,
-+							DMA_BIT_MASK(40));
-+		if (ret)
-+			ret = dma_set_mask_and_coherent(&pdev->dev,
-+							DMA_BIT_MASK(32));
-+		if (ret)
-+			goto err;
-+
- 		/* linked-list and stop on error */
- 		flash_dma_writel(ctrl, FLASH_DMA_MODE, FLASH_DMA_MODE_MASK);
- 		flash_dma_writel(ctrl, FLASH_DMA_ERROR_STATUS, 0);
--- 
-2.17.1
+I have a staged change I'm about to post that makes use of this flag
+from outside of omap-secure.c, otherwise I would have left it internal
+to that file.
 
+I could also have moved the flag in the patch that uses it, but it
+seemed like an unnecessary change given I know it will be needed here soon.
+
+Andrew
+
+
+> Otherwise series looks OK to me, thanks for updating it.
+> 
+> Regards,
+> 
+> Tony
+> 
