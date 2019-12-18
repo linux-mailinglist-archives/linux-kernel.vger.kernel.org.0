@@ -2,81 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CABB5123F5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F7AA123F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfLRGAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 01:00:48 -0500
-Received: from smtp25.cstnet.cn ([159.226.251.25]:34570 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725930AbfLRGAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 01:00:47 -0500
-Received: from localhost.localdomain (unknown [159.226.5.100])
-        by APP-05 (Coremail) with SMTP id zQCowACHcKBnwPldBQYSAw--.4719S3;
-        Wed, 18 Dec 2019 14:00:09 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     sschaeck@cisco.com, bp@alien8.de, mchehab@kernel.org,
-        tony.luck@intel.com, james.morse@arm.com, rrichter@marvell.com,
-        joel@jms.id.au, andrew@aj.id.au
-Cc:     linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] EDAC: aspeed: Remove unneeded semicolon
-Date:   Wed, 18 Dec 2019 06:00:06 +0000
-Message-Id: <1576648806-1114-1-git-send-email-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: zQCowACHcKBnwPldBQYSAw--.4719S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF45ZrWktFWkGr1fGr1UGFg_yoWftrb_CF
-        40kF4fWryDtr1xC397AwnrAF9IvFyDu3W0gF92ga4akF1UXr17XryDuFWUWr4fu3yUuFyD
-        Gr1UtrW7uw47KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb4AYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
-        C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-        F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-        4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kI
-        c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
-        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
-        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8fwID
-        UUUUU==
-X-Originating-IP: [159.226.5.100]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBAEIA102SzegqQAAsQ
+        id S1726591AbfLRGAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 01:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725930AbfLRGAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 01:00:42 -0500
+Received: from localhost (unknown [5.29.147.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B997421582;
+        Wed, 18 Dec 2019 06:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576648842;
+        bh=CSCE8RPyOF1ZSD20G/PLB+Iaew03qd0fJdcLm1v7ek0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vfDl/e/0kTj9r46LiIZQfuTKDdCoUFleucrxBNqAABtEoH1+9/F53gwX6bCGJCagR
+         GoZNCfKZJiITVyS0nvy1H72wmn4V4F+HHri+hBu3ZKBdNCRI1tSknOoWMCz+XoWKi4
+         Wji0w+e5QpPe2vrj0CdvtYx3DhmfkYd0uKcWolfk=
+Date:   Wed, 18 Dec 2019 08:00:38 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Prabhath Sajeepa <psajeepa@purestorage.com>
+Cc:     dledford@redhat.com, jgg@ziepe.ca, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org, roland@purestorage.com
+Subject: Re: [PATCH] IB/mlx5: Fix outstanding_pi index for GSI qps
+Message-ID: <20191218060038.GL66555@unreal>
+References: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576195889-23527-1-git-send-email-psajeepa@purestorage.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unneeded semicolon reported by coccinelle.
+On Thu, Dec 12, 2019 at 05:11:29PM -0700, Prabhath Sajeepa wrote:
+> b0ffeb537f3a changed the way how outstanding WRs are tracked for GSI QP. But the
+> fix did not cover the case when a call to ib_post_send fails and index
+> to track outstanding WRs need to be updated correctly.
+>
+> Fixes: b0ffeb537f3a ('IB/mlx5: Fix iteration overrun in GSI qps ')
+> Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
+> ---
+>  drivers/infiniband/hw/mlx5/gsi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- drivers/edac/aspeed_edac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The description of this patch is better to be updated to include the
+fact that outstanding_ci holds unwrapped version of outstanding_pi and
+current code will generate wrong loop inside generate_completions(), due
+to breaking assumption that outstanding_ci < outstanding_pi:
 
-diff --git a/drivers/edac/aspeed_edac.c b/drivers/edac/aspeed_edac.c
-index 09a9e3d..b194658b 100644
---- a/drivers/edac/aspeed_edac.c
-+++ b/drivers/edac/aspeed_edac.c
-@@ -243,7 +243,7 @@ static int init_csrows(struct mem_ctl_info *mci)
- 	if (!np) {
- 		dev_err(mci->pdev, "dt: missing /memory node\n");
- 		return -ENODEV;
--	};
-+	}
- 
- 	rc = of_address_to_resource(np, 0, &r);
- 
-@@ -252,7 +252,7 @@ static int init_csrows(struct mem_ctl_info *mci)
- 	if (rc) {
- 		dev_err(mci->pdev, "dt: failed requesting resource for /memory node\n");
- 		return rc;
--	};
-+	}
- 
- 	dev_dbg(mci->pdev, "dt: /memory node resources: first page r.start=0x%x, resource_size=0x%x, PAGE_SHIFT macro=0x%x\n",
- 		r.start, resource_size(&r), PAGE_SHIFT);
--- 
-2.7.4
+ 79         for (index = gsi->outstanding_ci; index != gsi->outstanding_pi;
+ 80              index++) {
 
+Thanks,
+Acked-by: Leon Romanovsky <leonro@mellanox.com>
