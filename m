@@ -2,286 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EBCA125578
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 019C812557E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:56:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbfLRV4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:56:18 -0500
-Received: from mga04.intel.com ([192.55.52.120]:16969 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727338AbfLRV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:56:04 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 13:55:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="222108191"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2019 13:55:51 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kurz <groug@kaod.org>
-Subject: [PATCH v2 43/45] KVM: Drop kvm_arch_vcpu_init() and kvm_arch_vcpu_uninit()
-Date:   Wed, 18 Dec 2019 13:55:28 -0800
-Message-Id: <20191218215530.2280-44-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191218215530.2280-1-sean.j.christopherson@intel.com>
-References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+        id S1727344AbfLRV4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:56:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45161 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727205AbfLRVzz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 16:55:55 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 59so4270108otp.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:55:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C2UwPzd2e+JnH6ssOXgfC4uB+eN483cl8wOJHT+wP8M=;
+        b=XCudI/JCQe7VEnt5Em/Pipw1qi0JG1eyb3RwjBUFAkJKOxbTsaUcmzTN0s+Ny9ZT5s
+         WL8o318kiqnC9J4dj7/6qblgiquZ2ALWvjojChr4yxRsH96q4N6hb06FNWTQOtWkp9z2
+         APAtiZfM1mQiQZqshcoH+c3sU491IxNVVqOAqJGD4QsREJGVLtkLN8FE2ZdTHL3W765H
+         5tAmWBPpgqAnnUHqpPdMcp0yCDUZA/JIuVtSJ0pt+PKjr7FMCpZRYZArLaoiwN4EZl4j
+         MQUwVZ2f6Oit4/hZ1PDQSJMk2AJbcsn5snNd0t2BVcbpN0UNyuUgGdspdS0FMcmGB3kP
+         PzGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C2UwPzd2e+JnH6ssOXgfC4uB+eN483cl8wOJHT+wP8M=;
+        b=X+lwSSa7/76vih1COc1jRdt854e0rAVDX0Ue0G9M3Km8mYTlbLz2y7U7optJqNhuD6
+         LJJPsVubuWrVIQNpwKT1K1UWrs+BkwYCWXXQU/sIj4nYSb6+6luysI+PeFqnurJCmIRW
+         vOhgVZZ1Ql/Ro5g3vd4phV5fHOI6wCX1om4U7J/WYNARQ0NUqjeZuiknSbEFN1zoG4xd
+         Rim6txcF0nSOmwEk7y/jWWgeHR+M7mHMXSpSabIR+OTZxhCpbwF//Ui4uUSLnwgKfcT3
+         uTVC2j0gYJYzFiJeQqu/MaZoMwUAL8VVyO4jta7lgwxDHduyufvoGby7Fd7hCZ0lWyCl
+         qwXg==
+X-Gm-Message-State: APjAAAUhMps5QVQGpezsnWUXunAg5uKENBHOE+1fVjG/g1glY4UY/SoE
+        FdFj05P/ODMdiMboj8I+WMwg86JAVujZGAqBactKGQ==
+X-Google-Smtp-Source: APXvYqwZUpR2pOb+7NtUAAWPh39PS4a/L1DlmezGGneYI0CeI3eZxyiX0c86zqIx1K0Px2o89RD/z24Uc6nXitzTGlI=
+X-Received: by 2002:a9d:6481:: with SMTP id g1mr5082817otl.180.1576706154945;
+ Wed, 18 Dec 2019 13:55:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191209143120.60100-1-jannh@google.com> <20191209143120.60100-2-jannh@google.com>
+ <20191211170632.GD14821@zn.tnic>
+In-Reply-To: <20191211170632.GD14821@zn.tnic>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 18 Dec 2019 22:55:28 +0100
+Message-ID: <CAG48ez2qGOAPBKiXDBL56_+QqR_bGRrtBSCT73VnKQ3xYsjAEA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] x86/traps: Print address on #GP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove kvm_arch_vcpu_init() and kvm_arch_vcpu_uninit() now that all
-arch specific implementations are nops.
+On Wed, Dec 11, 2019 at 6:06 PM Borislav Petkov <bp@alien8.de> wrote:
+> On Mon, Dec 09, 2019 at 03:31:18PM +0100, Jann Horn wrote:
+> >     I have already sent a patch to syzkaller that relaxes their parsing of GPF
+> >     messages (https://github.com/google/syzkaller/commit/432c7650) such that
+> >     changes like the one in this patch don't break it.
+> >     That patch has already made its way into syzbot's syzkaller instances
+> >     according to <https://syzkaller.appspot.com/upstream>.
+>
+> Ok, cool.
+>
+> I still think we should do the oops number marking, though, as it has
+> more benefits than just syzkaller scanning for it. The first oops has always
+> been of crucial importance so having the number in there:
+>
+> [    2.542218] [1] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
+>                 ^
+>
+> would make eyeballing oopses even easier. Basically the same reason why
+> you're doing this enhancement. :)
+>
+> So let me know if you don't have time to do it or you don't care about
+> it etc, and I'll have a look.
 
-Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/arm/include/asm/kvm_host.h   |  1 -
- arch/arm64/include/asm/kvm_host.h |  1 -
- arch/arm64/kvm/reset.c            |  5 -----
- arch/mips/kvm/mips.c              | 10 ----------
- arch/powerpc/kvm/powerpc.c        | 10 ----------
- arch/s390/include/asm/kvm_host.h  |  1 -
- arch/s390/kvm/kvm-s390.c          |  5 -----
- arch/x86/kvm/x86.c                | 10 ----------
- include/linux/kvm_host.h          |  3 ---
- virt/kvm/arm/arm.c                |  5 -----
- virt/kvm/kvm_main.c               | 16 ++--------------
- 11 files changed, 2 insertions(+), 65 deletions(-)
-
-diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-index de81dd897a30..e26cad6d11b3 100644
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -363,7 +363,6 @@ struct kvm_vcpu *kvm_mpidr_to_vcpu(struct kvm *kvm, unsigned long mpidr);
- static inline bool kvm_arch_requires_vhe(void) { return false; }
- static inline void kvm_arch_hardware_unsetup(void) {}
- static inline void kvm_arch_sync_events(struct kvm *kvm) {}
--static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
- static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
- static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
- static inline void kvm_arm_vcpu_destroy(struct kvm_vcpu *vcpu) {}
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index b1de2b147729..7aef2e4114d8 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -54,7 +54,6 @@ int kvm_arm_init_sve(void);
- int __attribute_const__ kvm_target_cpu(void);
- int kvm_reset_vcpu(struct kvm_vcpu *vcpu);
- void kvm_arm_vcpu_destroy(struct kvm_vcpu *vcpu);
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu);
- int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext);
- void __extended_idmap_trampoline(phys_addr_t boot_pgd, phys_addr_t idmap_start);
- 
-diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-index ff3512a0ca97..30b7ea680f66 100644
---- a/arch/arm64/kvm/reset.c
-+++ b/arch/arm64/kvm/reset.c
-@@ -204,11 +204,6 @@ bool kvm_arm_vcpu_is_finalized(struct kvm_vcpu *vcpu)
- 	return true;
- }
- 
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
--{
--
--}
--
- void kvm_arm_vcpu_destroy(struct kvm_vcpu *vcpu)
- {
- 	kfree(vcpu->arch.sve_state);
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 879a7cbd5b54..2606f3f02b54 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -1230,16 +1230,6 @@ static enum hrtimer_restart kvm_mips_comparecount_wakeup(struct hrtimer *timer)
- 	return kvm_mips_count_timeout(vcpu);
- }
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
--{
--	return 0;
--}
--
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
--{
--
--}
--
- int kvm_arch_vcpu_ioctl_translate(struct kvm_vcpu *vcpu,
- 				  struct kvm_translation *tr)
- {
-diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
-index 91cf94d4191e..80f2d1a3ca63 100644
---- a/arch/powerpc/kvm/powerpc.c
-+++ b/arch/powerpc/kvm/powerpc.c
-@@ -801,16 +801,6 @@ static enum hrtimer_restart kvmppc_decrementer_wakeup(struct hrtimer *timer)
- 	return HRTIMER_NORESTART;
- }
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
--{
--	return 0;
--}
--
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
--{
--
--}
--
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- #ifdef CONFIG_BOOKE
-diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-index 02f4c21c57f6..11ecc4071a29 100644
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@ -914,7 +914,6 @@ extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
- 
- static inline void kvm_arch_hardware_disable(void) {}
- static inline void kvm_arch_sync_events(struct kvm *kvm) {}
--static inline void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu) {}
- static inline void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu) {}
- static inline void kvm_arch_free_memslot(struct kvm *kvm,
- 		struct kvm_memory_slot *free, struct kvm_memory_slot *dont) {}
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index bcdd542b96a2..c059b86aacd4 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -2700,11 +2700,6 @@ static int sca_can_add_vcpu(struct kvm *kvm, unsigned int id)
- 	return rc == 0 && id < KVM_S390_ESCA_CPU_SLOTS;
- }
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
--{
--	return 0;
--}
--
- /* needs disabled preemption to protect from TOD sync and vcpu_load/put */
- static void __start_cpu_timer_accounting(struct kvm_vcpu *vcpu)
- {
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 24671f487645..292f1e53a758 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9485,16 +9485,6 @@ bool kvm_vcpu_is_bsp(struct kvm_vcpu *vcpu)
- struct static_key kvm_no_apic_vcpu __read_mostly;
- EXPORT_SYMBOL_GPL(kvm_no_apic_vcpu);
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
--{
--	return 0;
--}
--
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu)
--{
--
--}
--
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 792b122e44fa..aa28646d38be 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -864,9 +864,6 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *kvm_run);
- int kvm_arch_init(void *opaque);
- void kvm_arch_exit(void);
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu);
--void kvm_arch_vcpu_uninit(struct kvm_vcpu *vcpu);
--
- void kvm_arch_sched_in(struct kvm_vcpu *vcpu, int cpu);
- 
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu);
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index f6c641136501..ced72748802f 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -360,11 +360,6 @@ void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu)
- 	preempt_enable();
- }
- 
--int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
--{
--	return 0;
--}
--
- void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	int *last_ran;
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index f76b2155dfee..21533a472ead 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -324,7 +324,6 @@ void kvm_reload_remote_mmus(struct kvm *kvm)
- static int kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
- {
- 	struct page *page;
--	int r;
- 
- 	mutex_init(&vcpu->mutex);
- 	vcpu->cpu = -1;
-@@ -338,10 +337,8 @@ static int kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
- 	INIT_LIST_HEAD(&vcpu->blocked_vcpu_list);
- 
- 	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
--	if (!page) {
--		r = -ENOMEM;
--		goto fail;
--	}
-+	if (!page)
-+		return -ENOMEM;
- 	vcpu->run = page_address(page);
- 
- 	kvm_vcpu_set_in_spin_loop(vcpu, false);
-@@ -350,15 +347,7 @@ static int kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
- 	vcpu->ready = false;
- 	preempt_notifier_init(&vcpu->preempt_notifier, &kvm_preempt_ops);
- 
--	r = kvm_arch_vcpu_init(vcpu);
--	if (r < 0)
--		goto fail_free_run;
- 	return 0;
--
--fail_free_run:
--	free_page((unsigned long)vcpu->run);
--fail:
--	return r;
- }
- 
- static void kvm_vcpu_uninit(struct kvm_vcpu *vcpu)
-@@ -369,7 +358,6 @@ static void kvm_vcpu_uninit(struct kvm_vcpu *vcpu)
- 	 * descriptors are already gone.
- 	 */
- 	put_pid(rcu_dereference_protected(vcpu->pid, 1));
--	kvm_arch_vcpu_uninit(vcpu);
- 	free_page((unsigned long)vcpu->run);
- }
- 
--- 
-2.24.1
-
+I don't think I have time to do this in the near future. Feel free to
+implement this.
