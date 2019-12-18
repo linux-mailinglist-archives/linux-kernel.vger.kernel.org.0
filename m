@@ -2,268 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD071241A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:29:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A4BF124172
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 09:17:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfLRI3r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 03:29:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbfLRI3q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 03:29:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B892320717;
-        Wed, 18 Dec 2019 08:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576657785;
-        bh=Fzfpbt9JX0wNm8rRu7tHK7Up5oc+JJ5GXixsDBHZ1zQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=foEnAQQZ+BJBpd72yJ5tjGMOweQY+brT9HxBOqitTbUu9AyFBY6WxL9AHpLBc6S6E
-         o9cbcUQ0tCx+n5GBDzgd5NKYiOsVjiMEjXIc3ac5VojTyjnCG9zgcCaAdJwarT5dNm
-         XK9dhjqT8fA2CVsfkgeyiC+hdivEiByv0v3gi2ro=
-Date:   Wed, 18 Dec 2019 09:29:43 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Bao D. Nguyen" <nguyenb@codeaurora.org>
-Cc:     ulf.hansson@linaro.org, robh+dt@kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        asutoshd@codeaurora.org, cang@codeaurora.org,
-        "Bao D. Nguyen" <nguyenb@quicinc.com>
-Subject: Re: [<PATCH v1> 9/9] mmc: sd: Fix trivial SD card issues
-Message-ID: <20191218082943.GB1554871@kroah.com>
-References: <cover.1576540906.git.nguyenb@codeaurora.org>
- <25f3b41fb4950cad5cf075b245d0ac4010cd1aac.1576540908.git.nguyenb@codeaurora.org>
+        id S1726671AbfLRIRI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 03:17:08 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7711 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725535AbfLRIRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 03:17:08 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 420504A90767678B9FA2;
+        Wed, 18 Dec 2019 16:17:06 +0800 (CST)
+Received: from huawei.com (10.175.101.78) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 18 Dec 2019
+ 16:16:58 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <axboe@kernel.dk>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <yangyingliang@huawei.com>
+Subject: [PATCH] block: fix memleak when __blk_rq_map_user_iov() is failed
+Date:   Wed, 18 Dec 2019 16:44:04 +0800
+Message-ID: <1576658644-88101-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <25f3b41fb4950cad5cf075b245d0ac4010cd1aac.1576540908.git.nguyenb@codeaurora.org>
+Content-Type: text/plain
+X-Originating-IP: [10.175.101.78]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 06:50:42PM -0800, Bao D. Nguyen wrote:
-> From: "Bao D. Nguyen" <nguyenb@quicinc.com>
-> 
-> Fix various trivial SD card issues.
+When I doing fuzzy test, get the memleak report:
 
-There are a number of real bugfixes in here, please split these out and
-put them at the beginning of the series so that they can be backported
-to the stable kernel tree.  Specifics below:
+BUG: memory leak
+unreferenced object 0xffff88837af80000 (size 4096):
+  comm "memleak", pid 3557, jiffies 4294817681 (age 112.499s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    20 00 00 00 10 01 00 00 00 00 00 00 01 00 00 00   ...............
+  backtrace:
+    [<000000001c894df8>] bio_alloc_bioset+0x393/0x590
+    [<000000008b139a3c>] bio_copy_user_iov+0x300/0xcd0
+    [<00000000a998bd8c>] blk_rq_map_user_iov+0x2f1/0x5f0
+    [<000000005ceb7f05>] blk_rq_map_user+0xf2/0x160
+    [<000000006454da92>] sg_common_write.isra.21+0x1094/0x1870
+    [<00000000064bb208>] sg_write.part.25+0x5d9/0x950
+    [<000000004fc670f6>] sg_write+0x5f/0x8c
+    [<00000000b0d05c7b>] __vfs_write+0x7c/0x100
+    [<000000008e177714>] vfs_write+0x1c3/0x500
+    [<0000000087d23f34>] ksys_write+0xf9/0x200
+    [<000000002c8dbc9d>] do_syscall_64+0x9f/0x4f0
+    [<00000000678d8e9a>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-> 
-> Signed-off-by: Bao D. Nguyen <nguyenb@codeaurora.org>
-> ---
->  drivers/mmc/core/block.c |  4 ++--
->  drivers/mmc/core/bus.c   | 13 +++++++++++++
->  drivers/mmc/core/core.c  | 13 ++++++++-----
->  drivers/mmc/core/sd.c    |  9 ++++++---
->  4 files changed, 29 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-> index 95b41c0..200882d 100644
-> --- a/drivers/mmc/core/block.c
-> +++ b/drivers/mmc/core/block.c
-> @@ -653,13 +653,13 @@ static int mmc_blk_ioctl_cmd(struct mmc_blk_data *md,
->  	struct request *req;
->  
->  	idata = mmc_blk_ioctl_copy_from_user(ic_ptr);
-> -	if (IS_ERR(idata))
-> +	if (IS_ERR_OR_NULL(idata))
+If __blk_rq_map_user_iov() is failed in blk_rq_map_user_iov(),
+the bio(s) which is allocated before this failing will leak. The
+refcount of the bio(s) is init to 1 and increased to 2 by calling
+bio_get(), but __blk_rq_unmap_user() only decrease it to 1, so
+the bio cannot be freed. Fix it by calling blk_rq_unmap_user().
 
-How can this function ever return NULL?
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ block/blk-map.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  		return PTR_ERR(idata);
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 3a62e471d81b..b0790268ed9d 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -151,7 +151,7 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
+ 	return 0;
+ 
+ unmap_rq:
+-	__blk_rq_unmap_user(bio);
++	blk_rq_unmap_user(bio);
+ fail:
+ 	rq->bio = NULL;
+ 	return ret;
+-- 
+2.17.1
 
-If NULL was returned, are you sure you can return 0 here?  That implies
-that all went well, when obviously it did not.
-
-But again, I do not see how mmc_blk_ioctl_copy_from_user() can return
-NULL, do you?
-
->  	/* This will be NULL on non-RPMB ioctl():s */
->  	idata->rpmb = rpmb;
->  
->  	card = md->queue.card;
-> -	if (IS_ERR(card)) {
-> +	if (IS_ERR_OR_NULL(card)) {
-
-How can card be NULL?
-
->  		err = PTR_ERR(card);
-
-Again, returning "success" is ok?  Are you sure?
-
->  		goto cmd_done;
->  	}
-> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> index 74de3f2..fb17d21 100644
-> --- a/drivers/mmc/core/bus.c
-> +++ b/drivers/mmc/core/bus.c
-> @@ -131,6 +131,16 @@ static void mmc_bus_shutdown(struct device *dev)
->  	struct mmc_host *host = card->host;
->  	int ret;
->  
-> +	if (!drv) {
-> +		pr_debug("%s: %s: drv is NULL\n", dev_name(dev), __func__);
-
-How can this ever happen?
-
-And never use pr_* calls in a driver, you have a valid device, use
-dev_dbg() and friends.
-
-> +		return;
-> +	}
-> +
-> +	if (!card) {
-> +		pr_debug("%s: %s: card is NULL\n", dev_name(dev), __func__);
-
-Same here, how can this ever happen?
-
-> +		return;
-> +	}
-> +
->  	if (dev->driver && drv->shutdown)
->  		drv->shutdown(card);
->  
-> @@ -247,12 +257,15 @@ void mmc_unregister_driver(struct mmc_driver *drv)
->  static void mmc_release_card(struct device *dev)
->  {
->  	struct mmc_card *card = mmc_dev_to_card(dev);
-> +	struct mmc_host *host = card->host;
->  
->  	sdio_free_common_cis(card);
->  
->  	kfree(card->info);
->  
->  	kfree(card);
-> +	if (host)
-> +		host->card = NULL;
-
-Why are you setting this to null?  Does this solve some race condition
-that you are then catching in the shutdown callback?  If so, this should
-be broken out as a separate bugfix and put earlier in the series as that
-should go to all stable kernels, right?
-
->  }
->  
->  /*
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 38b0cec..13d496e 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -399,7 +399,7 @@ void mmc_wait_for_req_done(struct mmc_host *host, struct mmc_request *mrq)
->  	struct mmc_command *cmd;
->  
->  	while (1) {
-> -		wait_for_completion(&mrq->completion);
-> +		wait_for_completion_io(&mrq->completion);
-
-Why this change?  That seems like a big one.  Why is this not a separate
-patch?
-
->  
->  		cmd = mrq->cmd;
->  
-> @@ -666,6 +666,10 @@ void mmc_set_data_timeout(struct mmc_data *data, const struct mmc_card *card)
->  {
->  	unsigned int mult;
->  
-> +	if (!card) {
-> +		WARN_ON(1);
-
-And you just crashed systems that run with panic-on-warn :(
-
-How can this ever happen?  If it is a real issue, catch it, log it, and
-then move on, don't splat the kernel log with a full traceback and
-reboot machines :(
-
-> +		return;
-> +	}
->  	/*
->  	 * SDIO cards only define an upper 1 s limit on access.
->  	 */
-> @@ -2341,17 +2345,16 @@ void mmc_rescan(struct work_struct *work)
->  
->  void mmc_start_host(struct mmc_host *host)
->  {
-> +	mmc_claim_host(host);
-
-What?  This is a totally separate change, plaese break this out and
-describe what you are fixing here.  Again, should be a bugfix for
-earlier in the series.
-
->  	host->f_init = max(freqs[0], host->f_min);
->  	host->rescan_disable = 0;
->  	host->ios.power_mode = MMC_POWER_UNDEFINED;
->  
-> -	if (!(host->caps2 & MMC_CAP2_NO_PRESCAN_POWERUP)) {
-> -		mmc_claim_host(host);
-> +	if (!(host->caps2 & MMC_CAP2_NO_PRESCAN_POWERUP))
->  		mmc_power_up(host, host->ocr_avail);
-> -		mmc_release_host(host);
-> -	}
->  
->  	mmc_gpiod_request_cd_irq(host);
-> +	mmc_release_host(host);
-
-And are you sure the reference counting is correct here?  Before this
-patch, you dropped the reference above, now you are matching it.  Either
-this is wrong, or the original code is wrong.  Either way, you need to
-describe it much better please.
-
->  	_mmc_detect_change(host, 0, false);
->  }
->  
-> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> index 5938caf..e163f0e 100644
-> --- a/drivers/mmc/core/sd.c
-> +++ b/drivers/mmc/core/sd.c
-> @@ -989,6 +989,7 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
->  		err = mmc_send_relative_addr(host, &card->rca);
->  		if (err)
->  			goto free_card;
-> +		host->card = card;
-
-Why?
-
->  	}
->  
->  	if (!oldcard) {
-> @@ -1090,13 +1091,13 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
->  		goto free_card;
->  	}
->  done:
-> -	host->card = card;
->  	return 0;
->  
->  free_card:
-> -	if (!oldcard)
-> +	if (!oldcard) {
-> +		host->card = NULL;
-
-Again, why?
-
->  		mmc_remove_card(card);
-> -
-> +	}
->  	return err;
->  }
->  
-> @@ -1106,7 +1107,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
->  static void mmc_sd_remove(struct mmc_host *host)
->  {
->  	mmc_remove_card(host->card);
-> +	mmc_claim_host(host);
->  	host->card = NULL;
-> +	mmc_release_host(host);
-
-Huh?  What is this "fixing"?
-
-Again, please break all of these out into logical bugfixes and describe
-what you are doing.
-
-thanks,
-
-greg k-h
