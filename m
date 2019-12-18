@@ -2,67 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36700124A97
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29FB1124AA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfLRPE5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:04:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727114AbfLRPE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:04:56 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79E8820684;
-        Wed, 18 Dec 2019 15:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576681496;
-        bh=/Xwy0EYDAWm9IUmqarXi6RASHE7DRX2pjkg+940R3xc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TjnG36vCL53/t2504//iSgiNAM2/Nb8XGdqdkMkqNuLbwx0OAbgmdvZwdVXhj5B0y
-         vNhc3zZjTbwHJZFlgrL4vdbLoSBKNy2CmrhB/0ecaApmQg2RnmRwWyYPEubtpUK3y8
-         7JDRqjgC1xASB3MQ27ehzPSYiHnGPa+1EJU+BN0k=
-Date:   Wed, 18 Dec 2019 16:03:46 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     =?iso-8859-1?B?Suly9G1l?= Pouiller <Jerome.Pouiller@silabs.com>
-Cc:     "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: [PATCH v2 00/55] Improve wfx driver
-Message-ID: <20191218150346.GA431628@kroah.com>
-References: <20191217161318.31402-1-Jerome.Pouiller@silabs.com>
+        id S1727216AbfLRPGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:06:34 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:56844 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726723AbfLRPGe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 10:06:34 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1ihauE-0003Jx-Cx; Wed, 18 Dec 2019 16:06:30 +0100
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v2 16/36] irqchip/gic-v4.1: Add mask/unmask doorbell  callbacks
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217161318.31402-1-Jerome.Pouiller@silabs.com>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 18 Dec 2019 15:06:30 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+In-Reply-To: <7c94be43-e1b0-625a-762c-ec8589f16b2d@huawei.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-17-maz@kernel.org>
+ <7c94be43-e1b0-625a-762c-ec8589f16b2d@huawei.com>
+Message-ID: <115f732eec1d960e69ee2b544a0e39b0@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 04:14:26PM +0000, Jérôme Pouiller wrote:
-> From: Jérôme Pouiller <jerome.pouiller@silabs.com>
-> 
-> Hello all,
-> 
-> This pull request continue to clean up the wfx driver. It can be more or
-> less divided in four parts:
->   - 0001 to 0009 fix some issues (should be included in 5.5?)
->   - 0010 to 0028 mostly contains cosmetics changes
+On 2019-11-01 11:23, Zenghui Yu wrote:
+> Hi Marc,
+>
+> On 2019/10/27 22:42, Marc Zyngier wrote:
+>> masking/unmasking doorbells on GICv4.1 relies on a new INVDB 
+>> command,
+>> which broadcasts the invalidation to all RDs.
+>> Implement the new command as well as the masking callbacks, and plug
+>> the whole thing into the v4.1 VPE irqchip.
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>
+> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c   | 60 
+>> ++++++++++++++++++++++++++++++
+>>   include/linux/irqchip/arm-gic-v3.h |  3 +-
+>>   2 files changed, 62 insertions(+), 1 deletion(-)
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index dcc7227af5f1..3c34bef70bdd 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -309,6 +309,10 @@ struct its_cmd_desc {
+>>   			u16 seq_num;
+>>   			u16 its_list;
+>>   		} its_vmovp_cmd;
+>> +
+>> +		struct {
+>> +			struct its_vpe *vpe;
+>> +		} its_invdb_cmd;
+>>   	};
+>>   };
+>>   @@ -750,6 +754,21 @@ static struct its_vpe 
+>> *its_build_vmovp_cmd(struct its_node *its,
+>>   	return valid_vpe(its, desc->its_vmovp_cmd.vpe);
+>>   }
+>>   +static struct its_vpe *its_build_invdb_cmd(struct its_node *its,
+>> +					   struct its_cmd_block *cmd,
+>> +					   struct its_cmd_desc *desc)
+>> +{
+>> +	if (WARN_ON(!is_v4_1(its)))
+>> +		return NULL;
+>> +
+>> +	its_encode_cmd(cmd, GITS_CMD_INVDB);
+>> +	its_encode_vpeid(cmd, desc->its_invdb_cmd.vpe->vpe_id);
+>> +
+>> +	its_fixup_cmd(cmd);
+>> +
+>> +	return valid_vpe(its, desc->its_invdb_cmd.vpe);
+>> +}
+>> +
+>>   static u64 its_cmd_ptr_to_offset(struct its_node *its,
+>>   				 struct its_cmd_block *ptr)
+>>   {
+>> @@ -1117,6 +1136,14 @@ static void its_send_vinvall(struct its_node 
+>> *its, struct its_vpe *vpe)
+>>   	its_send_single_vcommand(its, its_build_vinvall_cmd, &desc);
+>>   }
+>>   +static void its_send_invdb(struct its_node *its, struct its_vpe 
+>> *vpe)
+>> +{
+>> +	struct its_cmd_desc desc;
+>> +
+>> +	desc.its_invdb_cmd.vpe = vpe;
+>> +	its_send_single_vcommand(its, its_build_invdb_cmd, &desc);
+>> +}
+>> +
+>>   /*
+>>    * irqchip functions - assumes MSI, mostly.
+>>    */
+>> @@ -3408,6 +3435,37 @@ static struct irq_chip its_vpe_irq_chip = {
+>>   	.irq_set_vcpu_affinity	= its_vpe_set_vcpu_affinity,
+>>   };
+>>   +static void its_vpe_4_1_send_inv(struct irq_data *d)
+>> +{
+>> +	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+>> +	struct its_node *its;
+>> +
+>> +	/*
+>> +	 * GICv4.1 wants doorbells to be invalidated using the
+>> +	 * INVDB command in order to be broadcast to all RDs. Send
+>> +	 * it to the first valid ITS, and let the HW do its magic.
+>> +	 */
+>> +	list_for_each_entry(its, &its_nodes, entry) {
+>> +		if (!is_v4_1(its))
+>> +			continue;
+>> +
+>> +		its_send_invdb(its, vpe);
+>> +		break;
+>> +	}
+>
+> Maybe use find_4_1_its() helper instead?
 
-I took the first 10 to staging-linus to get into 5.5-final.
+Yes, good point. I've moved it up in the series, and it is now added
+to this patch.
 
->   - 0029 to 0043 re-work power save (in station mode) and QoS
->   - 0044 to 0054 re-work the scan process
+Thanks,
 
-all the rest of these I've queued up "normally" in staging-next.
-
-And thanks for fixing up the mime issue, these applied with no problems
-at all.
-
-greg k-h
+         M.
+-- 
+Jazz is not dead. It just smells funny...
