@@ -2,156 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC5CC1250F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41B751250FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfLRSsS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 13:48:18 -0500
-Received: from foss.arm.com ([217.140.110.172]:57250 "EHLO foss.arm.com"
+        id S1727184AbfLRSvT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 13:51:19 -0500
+Received: from foss.arm.com ([217.140.110.172]:57352 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfLRSsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:48:17 -0500
+        id S1727049AbfLRSvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 13:51:16 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8288D1FB;
-        Wed, 18 Dec 2019 10:48:16 -0800 (PST)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D5B93F67D;
-        Wed, 18 Dec 2019 10:48:14 -0800 (PST)
-Date:   Wed, 18 Dec 2019 18:48:09 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 8/8] firmware: arm_scpi: Support unidirectional
- mailbox channels
-Message-ID: <20191218184809.GA14599@bogus>
-References: <20191215042455.51001-1-samuel@sholland.org>
- <20191215042455.51001-9-samuel@sholland.org>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BB7B31B;
+        Wed, 18 Dec 2019 10:51:15 -0800 (PST)
+Received: from [192.168.42.50] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F5E23F67D;
+        Wed, 18 Dec 2019 10:51:13 -0800 (PST)
+Subject: Re: [PATCH] sched, fair: Allow a small degree of load imbalance
+ between SD_NUMA domains
+To:     Mel Gorman <mgorman@techsingularity.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, pauld@redhat.com,
+        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
+        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
+        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20191218154402.GF3178@techsingularity.net>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <8f049805-3e97-09bb-2d32-0718be1dec9b@arm.com>
+Date:   Wed, 18 Dec 2019 18:50:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191215042455.51001-9-samuel@sholland.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191218154402.GF3178@techsingularity.net>
+Content-Type: text/plain; charset=iso-8859-15
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 14, 2019 at 10:24:55PM -0600, Samuel Holland wrote:
-> Some mailbox controllers have only unidirectional channels, so we need a
-> pair of them for each SCPI channel. If a mbox-names property is present,
-> look for "rx" and "tx" mbox channels; otherwise, the existing behavior
-> is preserved, and a single mbox channel is used for each SCPI channel.
->
+Hi Mel,
 
-I need to look at the bindings again, but I think you must update it.
+On 18/12/2019 15:44, Mel Gorman wrote:
+> The CPU load balancer balances between different domains to spread load
+> and strives to have equal balance everywhere. Communicating tasks can
+> migrate so they are topologically close to each other but these decisions
+> are independent. On a lightly loaded NUMA machine, two communicating tasks
+> pulled together at wakeup time can be pushed apart by the load balancer.
+> In isolation, the load balancer decision is fine but it ignores the tasks
+> data locality and the wakeup/LB paths continually conflict. NUMA balancing
+> is also a factor but it also simply conflicts with the load balancer.
+> 
+> This patch allows a degree of imbalance to exist between NUMA domains
+> based on the imbalance_pct defined by the scheduler domain to take into
+> account that data locality is also important. This slight imbalance is
+> allowed until the scheduler domain reaches almost 50% utilisation at which
+> point other factors like HT utilisation and memory bandwidth come into
+> play. While not commented upon in the code, the cutoff is important for
+> memory-bound parallelised non-communicating workloads that do not fully
+> utilise the entire machine. This is not necessarily the best universal
+> cut-off point but it appeared appropriate for a variety of workloads
+> and machines.
+> 
+> The most obvious impact is on netperf TCP_STREAM -- two simple
+> communicating tasks with some softirq offloaded depending on the
+> transmission rate.
+> 
 
-> Note that since the mailbox framework only supports a single phandle
-> with each name (mbox_request_channel_byname always returns the first
-> one), this new mode only supports a single SCPI channel.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->  drivers/firmware/arm_scpi.c | 58 +++++++++++++++++++++++++++++--------
->  1 file changed, 46 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-> index a80c331c3a6e..36ff9dd8d0fa 100644
-> --- a/drivers/firmware/arm_scpi.c
-> +++ b/drivers/firmware/arm_scpi.c
-> @@ -231,7 +231,8 @@ struct scpi_xfer {
->
->  struct scpi_chan {
->  	struct mbox_client cl;
-> -	struct mbox_chan *chan;
-> +	struct mbox_chan *rx_chan;
-> +	struct mbox_chan *tx_chan;
->  	void __iomem *tx_payload;
->  	void __iomem *rx_payload;
->  	struct list_head rx_pending;
-> @@ -505,7 +506,7 @@ static int scpi_send_message(u8 idx, void *tx_buf, unsigned int tx_len,
->  	msg->rx_len = rx_len;
->  	reinit_completion(&msg->done);
->
-> -	ret = mbox_send_message(scpi_chan->chan, msg);
-> +	ret = mbox_send_message(scpi_chan->tx_chan, msg);
->  	if (ret < 0 || !rx_buf)
->  		goto out;
->
-> @@ -854,8 +855,13 @@ static void scpi_free_channels(void *data)
->  	struct scpi_drvinfo *info = data;
->  	int i;
->
-> -	for (i = 0; i < info->num_chans; i++)
-> -		mbox_free_channel(info->channels[i].chan);
-> +	for (i = 0; i < info->num_chans; i++) {
-> +		struct scpi_chan *pchan = &info->channels[i];
+<snip>
+
+> In general, the patch simply seeks to avoid unnecessarily cross-node
+> migrations when a machine is lightly loaded but shows benefits for other
+> workloads. While tests are still running, so far it seems to benefit
+> light-utilisation smaller workloads on large machines and does not appear
+> to do any harm to larger or parallelised workloads.
+> 
+
+Thanks for the detailed testing, I haven't digested it entirely yet but I
+appreciate the effort.
+
+> @@ -8690,6 +8686,38 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>  		env->migration_type = migrate_task;
+>  		env->imbalance = max_t(long, 0, (local->idle_cpus -
+>  						 busiest->idle_cpus) >> 1);
 > +
-> +		if (pchan->tx_chan != pchan->rx_chan)
-> +			mbox_free_channel(pchan->tx_chan);
-> +		mbox_free_channel(pchan->rx_chan);
+> +out_spare:
+> +		/*
+> +		 * Whether balancing the number of running tasks or the number
+> +		 * of idle CPUs, consider allowing some degree of imbalance if
+> +		 * migrating between NUMA domains.
+> +		 */
+> +		if (env->sd->flags & SD_NUMA) {
+> +			unsigned int imbalance_adj, imbalance_max;
+> +
+> +			/*
+> +			 * imbalance_adj is the allowable degree of imbalance
+> +			 * to exist between two NUMA domains. It's calculated
+> +			 * relative to imbalance_pct with a minimum of two
+> +			 * tasks or idle CPUs.
+> +			 */
+> +			imbalance_adj = (busiest->group_weight *
+> +				(env->sd->imbalance_pct - 100) / 100) >> 1;
 
-I think mbox_free_channel handles !chan->cl, so just do unconditionally.
+IIRC imbalance_pct for NUMA domains uses the default 125, so I read this as
+"allow an imbalance of 1 task per 8 CPU in the source group" (just making
+sure I follow).
 
-> +	}
->  }
->
->  static int scpi_remove(struct platform_device *pdev)
-> @@ -903,6 +909,7 @@ static int scpi_probe(struct platform_device *pdev)
->  	struct resource res;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> +	bool use_mbox_names = false;
->
->  	scpi_info = devm_kzalloc(dev, sizeof(*scpi_info), GFP_KERNEL);
->  	if (!scpi_info)
-> @@ -916,6 +923,14 @@ static int scpi_probe(struct platform_device *pdev)
->  		dev_err(dev, "no mboxes property in '%pOF'\n", np);
->  		return -ENODEV;
->  	}
-> +	if (of_get_property(dev->of_node, "mbox-names", NULL)) {
+> +			imbalance_adj = max(imbalance_adj, 2U);
+> +
+> +			/*
+> +			 * Ignore imbalance unless busiest sd is close to 50%
+> +			 * utilisation. At that point balancing for memory
+> +			 * bandwidth and potentially avoiding unnecessary use
+> +			 * of HT siblings is as relevant as memory locality.
+> +			 */
+> +			imbalance_max = (busiest->group_weight >> 1) - imbalance_adj;
+> +			if (env->imbalance <= imbalance_adj &&
+> +			    busiest->sum_nr_running < imbalance_max) {
 
-So, for this platform, this is required and must fail if it is not found.
-But instead your check here is optional and may end up populating 2
-scpi channels instead of one. I would suggest to make it required and
-fail for it based on some compatible, otherwise you are not checking
-correctly.
+The code does "unless busiest group has half as many runnable tasks (or more)
+as it has CPUs (modulo the adj thing)", is that what you mean by "unless
+busiest sd is close to 50% utilisation" in the comment? It's somewhat
+different IMO.
 
-Something like:
-        if (of_match_device(blah_blah_of_match, &pdev->dev)) {
-                use_mbox_names = true;
-		count = 1;
-	}
-
-
-> +		use_mbox_names = true;
-> +		if (count != 2) {
-> +			dev_err(dev, "need exactly 2 mboxes with mbox-names\n");
-> +			return -ENODEV;
+> +				env->imbalance = 0;
+> +			}
 > +		}
-> +		count /= 2;
-> +	}
-
-Ah, OK then you must update the binding as it's different usage of mailbox. 
-
-General query, not related to this patch: If you are in process of
-implementing the firmware, I suggest to move to SCMI protocol than this
-one if not too late. This specification is deprecated and no longer
-updated while SCMI is actively developed and maintained. However it has
-slightly different notion of tx and rx and the way the specification
-commands which messages are synchronous and which can be async/delayed.
-
---
-Regards,
-Sudeep
+>  		return;
+>  	}
+>  
+> 
+I'm quite sure you have reasons to have written it that way, but I was
+hoping we could squash it down to something like:
+---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 08a233e97a01..f05d09a8452e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8680,16 +8680,27 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 			env->migration_type = migrate_task;
+ 			lsub_positive(&nr_diff, local->sum_nr_running);
+ 			env->imbalance = nr_diff >> 1;
+-			return;
++		} else {
++
++			/*
++			 * If there is no overload, we just want to even the number of
++			 * idle cpus.
++			 */
++			env->migration_type = migrate_task;
++			env->imbalance = max_t(long, 0, (local->idle_cpus -
++							 busiest->idle_cpus) >> 1);
+ 		}
+ 
+ 		/*
+-		 * If there is no overload, we just want to even the number of
+-		 * idle cpus.
++		 * Allow for a small imbalance between NUMA groups; don't do any
++		 * of it if there is at least half as many tasks / busy CPUs as
++		 * there are available CPUs in the busiest group
+ 		 */
+-		env->migration_type = migrate_task;
+-		env->imbalance = max_t(long, 0, (local->idle_cpus -
+-						 busiest->idle_cpus) >> 1);
++		if (env->sd->flags & SD_NUMA &&
++		    (busiest->sum_nr_running < busiest->group_weight >> 1) &&
++		    (env->imbalance < busiest->group_weight * (env->sd->imbalance_pct - 100) / 100))
++				env->imbalance = 0;
++
+ 		return;
+ 	}
+ 
