@@ -2,85 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 013891243D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:58:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 926A11243BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:53:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbfLRJ6r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 04:58:47 -0500
-Received: from mail.netline.ch ([148.251.143.178]:38015 "EHLO
-        netline-mail3.netline.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfLRJ6q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:58:46 -0500
-X-Greylist: delayed 384 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Dec 2019 04:58:45 EST
-Received: from localhost (localhost [127.0.0.1])
-        by netline-mail3.netline.ch (Postfix) with ESMTP id E484C2A6046;
-        Wed, 18 Dec 2019 10:52:19 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at netline-mail3.netline.ch
-Received: from netline-mail3.netline.ch ([127.0.0.1])
-        by localhost (netline-mail3.netline.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id svgeRHm0o1zt; Wed, 18 Dec 2019 10:52:19 +0100 (CET)
-Received: from thor (252.80.76.83.dynamic.wline.res.cust.swisscom.ch [83.76.80.252])
-        by netline-mail3.netline.ch (Postfix) with ESMTPSA id 03FF42A6045;
-        Wed, 18 Dec 2019 10:52:18 +0100 (CET)
-Received: from localhost ([::1])
-        by thor with esmtp (Exim 4.93)
-        (envelope-from <michel@daenzer.net>)
-        id 1ihW0A-000x6B-5f; Wed, 18 Dec 2019 10:52:18 +0100
-Subject: Re: [PATCH 2/3] gpu: drm: dead code elimination
-To:     Pan Zhang <zhangpan26@huawei.com>, hushiyuan@huawei.com,
-        alexander.deucher@amd.com, christian.koenig@amd.com,
-        David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch,
-        ray.huang@amd.com, irmoy.das@amd.com, sam@ravnborg.org
-Cc:     dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-References: <1576641000-14772-1-git-send-email-zhangpan26@huawei.com>
-From:   =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Message-ID: <484b831b-671a-12f4-8259-1cb6b75e93e3@daenzer.net>
-Date:   Wed, 18 Dec 2019 10:52:18 +0100
+        id S1726744AbfLRJxF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 04:53:05 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:46500 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbfLRJxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:53:05 -0500
+Received: from [10.10.222.226] (unknown [194.162.236.226])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 3A811281DF4;
+        Wed, 18 Dec 2019 09:46:38 +0000 (UTC)
+Subject: Re: [alsa-devel] [PATCH 00/10] mfd: Add support for Analog Devices
+ A2B transceiver
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
+        lee.jones@linaro.org
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
+From:   Daniel Mack <daniel@zonque.org>
+Message-ID: <22803ea0-0c4a-b096-ec11-5e8f5c27d8d3@zonque.org>
+Date:   Wed, 18 Dec 2019 10:53:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <1576641000-14772-1-git-send-email-zhangpan26@huawei.com>
+In-Reply-To: <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-18 4:50 a.m., Pan Zhang wrote:
-> this set adds support for removal of gpu drm dead code.
+Hi,
+
+On 12/17/19 8:29 PM, Pierre-Louis Bossart wrote:
+>> Transceivers can both receive and provide audio, and streams can be
+>> routed from one node to any other, including many others. The tricky
+>> bit is how to expose the audio routing in DT in a sane way.
+>> The way it is implemented here, the slave nodes specify the number of
+>> slots they each consume and generate, and which thereof they forward
+>> from one side to the other. This mimics the internal register
+>> structure and should allow for even exotic setups.
 > 
-> patch2:
-> `num_entries` is a data of unsigned type(compilers always treat as unsigned int) and SIZE_MAX == ~0,
-> 
-> so there is a impossible condition:
-> '(num_entries > ((~0) - 56) / 72) => (max(0-u32) > 256204778801521549)'.
+> It was my understanding that the A2B bus is bidirectional but with
+> separate time windows allocated for host->device and device->host
+> transmission. The wording seems to hint at device-to-device
+> communication but I wonder if this is really what you meant.
 
-While this looks correct for 64-bit, where size_t is unsigned long, on
-32-bit it's unsigned int, in which case this isn't dead code.
-
-
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-> index 85b0515..10a7f30 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_bo_list.c
-> @@ -71,10 +71,6 @@ int amdgpu_bo_list_create(struct amdgpu_device *adev, struct drm_file *filp,
->  	unsigned i;
->  	int r;
->  
-> -	if (num_entries > (SIZE_MAX - sizeof(struct amdgpu_bo_list))
-> -				/ sizeof(struct amdgpu_bo_list_entry))
-> -		return -EINVAL;
-> -
->  	size = sizeof(struct amdgpu_bo_list);
->  	size += num_entries * sizeof(struct amdgpu_bo_list_entry);
->  	list = kvmalloc(size, GFP_KERNEL);
-> 
+Yes, audio frames can be exchanged between two slave nodes without
+interaction by the master node. I'm not sure what the best way is to
+describe that in DT really, but as the hardware is capable of doing it,
+there must be a way to enable such setups.
 
 
--- 
-Earthling Michel Dänzer               |               https://redhat.com
-Libre software enthusiast             |             Mesa and X developer
+Thanks,
+Daniel
+
