@@ -2,59 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F07124BBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:31:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E29FD124BC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfLRPbW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:31:22 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:25678 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726955AbfLRPbW (ORCPT
+        id S1727241AbfLRPcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:32:31 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34143 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbfLRPca (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:31:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576683081;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=Nu4re5DJtt7kCRpoMSpCYfrOekqJ3V3x1aYPZ4h9ezM=;
-        b=GPLGNJ8VqxrRQehKDyFJHAAeDFExArbuYh7eLBdfn8/pvoI85/+cW/wmG5xI3anu368JO4
-        5FUE78i/sZRkYm7JSr0e2Zo2VZ566AG0A/MBh9EOyHUx+CFb1zCC66t5LRAgzcYFtlTHxd
-        mmfpNAI8pwBY5f+O5/9IvmKThGZhRL4=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-265-wtG94tcuOXOJO92wC1j41w-1; Wed, 18 Dec 2019 10:31:15 -0500
-X-MC-Unique: wtG94tcuOXOJO92wC1j41w-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 76893109E572;
-        Wed, 18 Dec 2019 15:31:13 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.44])
-        by smtp.corp.redhat.com (Postfix) with SMTP id EAFE168894;
-        Wed, 18 Dec 2019 15:31:11 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 18 Dec 2019 16:31:09 +0100 (CET)
-Date:   Wed, 18 Dec 2019 16:31:07 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Q: does force_iret() make any sense today?
-Message-ID: <20191218153107.GA3489@redhat.com>
+        Wed, 18 Dec 2019 10:32:30 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t2so2784354wrr.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:32:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=7Qgxawx8gqe2BBpe4MZ803XarIMGynGCmm7JzlsrHx4=;
+        b=pQy3yE5T4Cc2PDd5faZrS7xPPdg8CwSKLW1O29SLbK6/+1cR3KUy4QSMPY607f+lUW
+         gPcx/79pzwgnfr5Q8qhRCGoJCgDoSSHXkNmSzp/0SxAmqlKryj3RYGdkCYaQYo7uHnxV
+         6AjTThuwQeXUxElRLXHPDYo2ikfLsvJ2BC9M4SQc8wfNd7XheKAigvHp991rOSLL/aRY
+         5HI7NABD6QTLJm8imYTS5h0HTEEO4aSy9BexJ1IEZjpTPzTP7IbE7mb20jy8Ujxzz/8O
+         okhcgcJAMqq7Zo1tH42Dc2RH899UpweRs2PRzcx0yssP3cfmhdhEEi1U3SBUjwVvrlzx
+         TywA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=7Qgxawx8gqe2BBpe4MZ803XarIMGynGCmm7JzlsrHx4=;
+        b=oQeNaJi8CBFdmUREae6KyWqBbryPVZqJ7vtNIzS9S8rneTE1IGwz5c6VOsxTAxnSTw
+         mpYDAlH7cKJhyn/CDrW0nxXrgfjyF2TPnwysuQNOa/CRBPwXJoe1vvzxGIg80Y8BODgA
+         jv0FgiuHFEDMg93tJixY+w7Trj5ZjMVibHM4T86XLNG4weUXZ4DLesFV2/OfCglCAHVB
+         GMWESLh1oRWooVgwU8uWNpSRfOdqO6iCdJY0/EX3BNBvdclZGFvyF9A4DWA0o8H1Muo5
+         GrQJi7D/OWPA6CKVQQs/YPc+SXCk8vQ3sGH9gHPpqxhnhNuYzGb4ngthpiUTJW5EZfLn
+         ovtQ==
+X-Gm-Message-State: APjAAAXgO+mgTS757PHInXSYjqVh00H80JEVFSzlYU2cktmpIM/QBzFe
+        wWKtyawH4u9elzElHKQJipTL9UNtabp7ejRXNvQ=
+X-Google-Smtp-Source: APXvYqyEF2F+rvDL/3sWkSd3gXZHf49MVjaapQVL9YcllYKgea9EXT7SPTZIBNnnt+FWfswa2jtKh9+lRPPSF0H5uFg=
+X-Received: by 2002:adf:ef4e:: with SMTP id c14mr3660843wrp.142.1576683148843;
+ Wed, 18 Dec 2019 07:32:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Received: by 2002:a1c:4d0a:0:0:0:0:0 with HTTP; Wed, 18 Dec 2019 07:32:28
+ -0800 (PST)
+Reply-To: info.fredricksowahconsultant@gmail.com
+From:   "Mr. Fredrick Sowah" <zulurichard84@gmail.com>
+Date:   Wed, 18 Dec 2019 15:32:28 +0000
+Message-ID: <CANcZ0Y-no6cogYHFDqTJDQh68+V563L=sxAe+zCmr3CZOHhC+A@mail.gmail.com>
+Subject: Investment Offer,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I do not pretend I understand the arch/x86/entry/ code, but it seems that
-asm does all the necessary checks and the "extra" TIF_NOTIFY_RESUME simply
-has no effect except tracehook_notify_resume() will be called for no reason?
+Dear Sir/ Madam,
 
-Oleg.
+Compliments of the season? I'm Mr. Fredrick, a financial consultant
+based here in Ghana, West Africa, I have a high profile clients who
+confided in me about $200 Million US Dollars and he wishes to invest
+in any lucrative fast-growing investment sectors, in this view, my
+client needs a foreigner who will be his foreign Investment/ Asset
+manager that can help him in securing and investing these funds into
+any of the investment sectors reachable to the manager.
 
+Should you be interested in working with us on the aforementioned
+proposal, Kindly back to us for more detailed discussions.
+
+We look forward to hearing from you soon
+
+Best regard
+Mr. Frederick Sowah
