@@ -2,112 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 467F21246AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:21:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD80112469E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfLRMVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 07:21:53 -0500
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:64698 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfLRMVx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 07:21:53 -0500
-X-Greylist: delayed 339 seconds by postgrey-1.27 at vger.kernel.org; Wed, 18 Dec 2019 07:21:51 EST
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 003D53F4E2;
-        Wed, 18 Dec 2019 13:16:10 +0100 (CET)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=Xg93ZJD1;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=flawful.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id S8UUBs6IQdRp; Wed, 18 Dec 2019 13:16:09 +0100 (CET)
-Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
-        (Authenticated sender: mb274189)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id DD3363F3BA;
-        Wed, 18 Dec 2019 13:16:08 +0100 (CET)
-Received: by flawful.org (Postfix, from userid 1001)
-        id E3946E50; Wed, 18 Dec 2019 13:16:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
-        t=1576671368; bh=tDgQ8Hd7X2DMLFKWDPV38ouTSnh9qudUss4S+7QTdhc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xg93ZJD1Xo4idJjy5M2BapnXGYA2U/a5Ejjo3qQjPm/B97aFFjq/73mWy1iGtyuhN
-         NGNIe8OkbS2NvfLHbteFPSdHYcNxK/2MR+kxTunx7t89lmQfQ2NwujCZ264jx6cfRV
-         +fkGbppgVjYEqm3txWXU+N5tk+nkzxFZCJ3cKtL4=
-Date:   Wed, 18 Dec 2019 13:16:07 +0100
-From:   Niklas Cassel <nks@flawful.org>
-To:     sboyd@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, niklas.cassel@linaro.org
-Subject: Re: [PATCH v3 0/7] Clock changes to support cpufreq on QCS404
-Message-ID: <20191218121607.djwnxkrsgpdcf5k3@flawful.org>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org>
+        id S1726788AbfLRMRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 07:17:23 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:33197 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726029AbfLRMRX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 07:17:23 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47dDXb27H3z9sS6;
+        Wed, 18 Dec 2019 23:17:19 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ellerman.id.au;
+        s=201909; t=1576671439;
+        bh=nwZUJvsHJoteMMjLAMbyeGibq43+npiZP1GzGw6OdMg=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=FWwsdBB2+MZf8NVXIEjf8tR9dv+exTyvKS6elRrzIyN27dQh8eHzQNjJQHpQveSml
+         xoqXnvuT7c7nNs/ravK1bS5c7m/ql9XqGyxIjCBb9LoTFcnX8uhdTy+mQ57DOmM6tT
+         jJrlgpKZIt+799SUTrRBAWBSnrCJeJigPRc+P3Wzs7L/pejGxlV/TrV3IGQ/xI0OgR
+         XXHNPaPI3u6gbCNEbb0rl01jngUdmk+TBgvV5caOxjJRye8oEKVEhT4t9oxE8bWblp
+         cZ3NCYARcHRFSLNOYnjjOWRrd/e6rntCX82fGi65iP2qQ6A8ajaxzCPHF68byUvpSu
+         l2M3qvgekM/QQ==
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Will Deacon <will@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Daniel Axtens <dja@axtens.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Subject: Re: READ_ONCE() + STACKPROTECTOR_STRONG == :/ (was Re: [GIT PULL] Please pull powerpc/linux.git powerpc-5.5-2 tag (topic/kasan-bitops))
+In-Reply-To: <CAHk-=wjNLxSZZs+A0tyb-MnJ2YU-sqTAfy0-X+9vxjXfs_O4zA@mail.gmail.com>
+References: <20191212100756.GA11317@willie-the-truck> <20191212104610.GW2827@hirez.programming.kicks-ass.net> <CAHk-=wjUBsH0BYDBv=q36482G-U7c=9bC89L_BViSciTfb8fhA@mail.gmail.com> <20191212180634.GA19020@willie-the-truck> <CAHk-=whRxB0adkz+V7SQC8Ac_rr_YfaPY8M2mFDfJP2FFBNz8A@mail.gmail.com> <20191212193401.GB19020@willie-the-truck> <CAHk-=wiMuHmWzQ7-CRQB6o+SHtA-u-Rp6VZwPcqDbjAaug80rQ@mail.gmail.com> <20191217170719.GA869@willie-the-truck> <CAHk-=whBnZBVNwu8aVVp205EKk7xtsnQgSjs38a5=y9HyheXzQ@mail.gmail.com> <CAHk-=wjNLxSZZs+A0tyb-MnJ2YU-sqTAfy0-X+9vxjXfs_O4zA@mail.gmail.com>
+Date:   Wed, 18 Dec 2019 23:17:13 +1100
+Message-ID: <87zhfpn7zq.fsf@mpe.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125135910.679310-1-niklas.cassel@linaro.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 25, 2019 at 02:59:02PM +0100, Niklas Cassel wrote:
-> The following clock changes are required to enable cpufreq support on
-> the QCS404.
-> 
-> Changes since v2:
-> -Addressed Stephen Boyd's comment regarding apcs-msm8916
-> should use new way of specifying clock parents.
-> -DT binding now has "pll" as first clock, in order to
-> not break DT backwards compatibility (in case no clock-names
-> are given).
-> -Moved EPROBE_DEFER error handling to its own patch.
-> 
-> Jorge Ramirez-Ortiz (6):
->   dt-bindings: mailbox: qcom: Add clock-name optional property
->   clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
->   clk: qcom: hfpll: register as clock provider
->   clk: qcom: hfpll: CLK_IGNORE_UNUSED
->   clk: qcom: hfpll: use clk_parent_data to specify the parent
->   clk: qcom: apcs-msm8916: silently error out on EPROBE_DEFER
-> 
-> Niklas Cassel (1):
->   clk: qcom: apcs-msm8916: use clk_parent_data to specify the parent
-> 
->  .../mailbox/qcom,apcs-kpss-global.txt         | 24 ++++++++++++++---
->  drivers/clk/qcom/apcs-msm8916.c               | 26 ++++++++++++++-----
->  drivers/clk/qcom/clk-alpha-pll.c              |  8 ++++++
->  drivers/clk/qcom/clk-alpha-pll.h              |  1 +
->  drivers/clk/qcom/gcc-qcs404.c                 |  2 +-
->  drivers/clk/qcom/hfpll.c                      | 21 +++++++++++++--
->  6 files changed, 70 insertions(+), 12 deletions(-)
-> 
-> -- 
-> 2.23.0
-> 
+Linus Torvalds <torvalds@linux-foundation.org> writes:
+> On Tue, Dec 17, 2019 at 10:04 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> Let me think about it.
+>
+> How about we just get rid of the union entirely, and just use
+> 'unsigned long' or 'unsigned long long' depending on the size.
+>
+> Something like the attached patch - it still requires that it be an
+> arithmetic type, but now because of the final cast.
+>
+> But it might still be a cast to a volatile type, of course. Then the
+> result will be volatile, but at least now READ_ONCE() won't be taking
+> the address of a volatile variable on the stack - does that at least
+> fix some of the horrible code generation. Hmm?
 
-Hello Stephen,
+Yes it seems to fix it for me.
 
-I have adressed your review comments
-on the previous patch series version.
+There's no unnecessary stack protector gunk, and no store/load to the
+stack variable.
 
-Could you please have a look?
+This is my previous example of ext4_resize_begin(), hacked to use a copy
+of the generic version of test_and_set_bit_lock(), which in turn was
+hacked to use a local version of your READ_ONCE().
 
-If it looks good, could you please
-consider taking them via your tree?
+  c000000000534390 <ext4_resize_begin_generic>:
+  c000000000534390:       19 01 4c 3c     addis   r2,r12,281
+  c000000000534394:       70 c3 42 38     addi    r2,r2,-15504
+  c000000000534398:       a6 02 08 7c     mflr    r0
+  c00000000053439c:       4d 98 b3 4b     bl      c00000000006dbe8 <_mcount>
+  c0000000005343a0:       a6 02 08 7c     mflr    r0
+  c0000000005343a4:       f8 ff e1 fb     std     r31,-8(r1)
+  c0000000005343a8:       f0 ff c1 fb     std     r30,-16(r1)
+  c0000000005343ac:       78 1b 7f 7c     mr      r31,r3
+  c0000000005343b0:       18 00 60 38     li      r3,24
+  c0000000005343b4:       10 00 01 f8     std     r0,16(r1)
+  c0000000005343b8:       91 ff 21 f8     stdu    r1,-112(r1)
+  c0000000005343bc:       98 03 df eb     ld      r30,920(r31)
+  c0000000005343c0:       d9 d3 c0 4b     bl      c000000000141798 <capable+0x8>
+  c0000000005343c4:       00 00 00 60     nop
+  c0000000005343c8:       00 00 a3 2f     cmpdi   cr7,r3,0
+  c0000000005343cc:       a4 00 9e 41     beq     cr7,c000000000534470 <ext4_resize_begin_generic+0xe0>
+  c0000000005343d0:       98 03 3f e9     ld      r9,920(r31)
+  c0000000005343d4:       60 00 5e e9     ld      r10,96(r30)
+  c0000000005343d8:       54 00 fe 80     lwz     r7,84(r30)
+  c0000000005343dc:       68 00 09 e9     ld      r8,104(r9)
+  c0000000005343e0:       18 00 4a e9     ld      r10,24(r10)
+  c0000000005343e4:       14 00 08 81     lwz     r8,20(r8)
+  c0000000005343e8:       36 3c 4a 7d     srd     r10,r10,r7
+  c0000000005343ec:       00 40 aa 7f     cmpd    cr7,r10,r8
+  c0000000005343f0:       b8 00 9e 40     bne     cr7,c0000000005344a8 <ext4_resize_begin_generic+0x118>
+  c0000000005343f4:       a0 00 49 a1     lhz     r10,160(r9)
+  c0000000005343f8:       02 00 4a 71     andi.   r10,r10,2
+  c0000000005343fc:       84 00 82 40     bne     c000000000534480 <ext4_resize_begin_generic+0xf0>
+  c000000000534400:       30 02 49 e9     ld      r10,560(r9)						# simple load of EXT4_SB(sb)->s_ext4_flags
+  c000000000534404:       01 00 4a 71     andi.   r10,r10,1
+  c000000000534408:       48 00 82 40     bne     c000000000534450 <ext4_resize_begin_generic+0xc0>
+  c00000000053440c:       30 02 e9 38     addi    r7,r9,560
+  c000000000534410:       01 00 00 39     li      r8,1
+  c000000000534414:       a8 38 40 7d     ldarx   r10,0,r7
+  c000000000534418:       78 53 06 7d     or      r6,r8,r10
+  c00000000053441c:       ad 39 c0 7c     stdcx.  r6,0,r7
+  c000000000534420:       f4 ff c2 40     bne-    c000000000534414 <ext4_resize_begin_generic+0x84>
+  c000000000534424:       2c 01 00 4c     isync
+  c000000000534428:       01 00 49 71     andi.   r9,r10,1
+  c00000000053442c:       00 00 60 38     li      r3,0
+  c000000000534430:       20 00 82 40     bne     c000000000534450 <ext4_resize_begin_generic+0xc0>
+  c000000000534434:       70 00 21 38     addi    r1,r1,112
+  c000000000534438:       10 00 01 e8     ld      r0,16(r1)
+  c00000000053443c:       f0 ff c1 eb     ld      r30,-16(r1)
+  c000000000534440:       f8 ff e1 eb     ld      r31,-8(r1)
+  c000000000534444:       a6 03 08 7c     mtlr    r0
+  c000000000534448:       20 00 80 4e     blr
+  c00000000053444c:       00 00 00 60     nop
+  c000000000534450:       70 00 21 38     addi    r1,r1,112
+  c000000000534454:       f0 ff 60 38     li      r3,-16
+  c000000000534458:       10 00 01 e8     ld      r0,16(r1)
+  c00000000053445c:       f0 ff c1 eb     ld      r30,-16(r1)
+  c000000000534460:       f8 ff e1 eb     ld      r31,-8(r1)
+  c000000000534464:       a6 03 08 7c     mtlr    r0
+  c000000000534468:       20 00 80 4e     blr
+  c00000000053446c:       00 00 00 60     nop
+  c000000000534470:       ff ff 60 38     li      r3,-1
+  c000000000534474:       c0 ff ff 4b     b       c000000000534434 <ext4_resize_begin_generic+0xa4>
+  c000000000534478:       00 00 00 60     nop
+  c00000000053447c:       00 00 00 60     nop
+  c000000000534480:       8a ff c2 3c     addis   r6,r2,-118
+  c000000000534484:       74 ff 82 3c     addis   r4,r2,-140
+  c000000000534488:       78 fb e3 7f     mr      r3,r31
+  c00000000053448c:       7c 00 a0 38     li      r5,124
+  c000000000534490:       a8 75 c6 38     addi    r6,r6,30120
+  c000000000534494:       f8 0b 84 38     addi    r4,r4,3064
+  c000000000534498:       d1 a4 01 48     bl      c00000000054e968 <__ext4_warning+0x8>
+  c00000000053449c:       00 00 00 60     nop
+  c0000000005344a0:       ff ff 60 38     li      r3,-1
+  c0000000005344a4:       90 ff ff 4b     b       c000000000534434 <ext4_resize_begin_generic+0xa4>
+  c0000000005344a8:       60 00 29 e9     ld      r9,96(r9)
+  c0000000005344ac:       8a ff c2 3c     addis   r6,r2,-118
+  c0000000005344b0:       74 ff 82 3c     addis   r4,r2,-140
+  c0000000005344b4:       78 fb e3 7f     mr      r3,r31
+  c0000000005344b8:       72 00 a0 38     li      r5,114
+  c0000000005344bc:       78 75 c6 38     addi    r6,r6,30072
+  c0000000005344c0:       f8 0b 84 38     addi    r4,r4,3064
+  c0000000005344c4:       18 00 e9 e8     ld      r7,24(r9)
+  c0000000005344c8:       a1 a4 01 48     bl      c00000000054e968 <__ext4_warning+0x8>
+  c0000000005344cc:       00 00 00 60     nop
+  c0000000005344d0:       ff ff 60 38     li      r3,-1
+  c0000000005344d4:       60 ff ff 4b     b       c000000000534434 <ext4_resize_begin_generic+0xa4>
+  c0000000005344d8:       00 00 00 60     nop
+  c0000000005344dc:       00 00 00 60     nop
 
-Kind regards,
-Niklas
+
+cheers
