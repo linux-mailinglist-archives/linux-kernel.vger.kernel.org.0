@@ -2,70 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE195124D73
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:27:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A046D124D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:27:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727735AbfLRQ0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:26:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60460 "EHLO mail.kernel.org"
+        id S1727915AbfLRQ0V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:26:21 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:46355 "EHLO smtp2.axis.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727397AbfLRQ0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:26:08 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD28B227BF;
-        Wed, 18 Dec 2019 16:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576686368;
-        bh=UvJV5+V5GLxfdacULy68GLBFVz/DGrDdaw3cACZWHcQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1wxC876a3n7CpULPIipSeOs97JkwwYdJEYVfc4Zku80A7YWvdkiP2ebrQZjvkVqF2
-         kFPmjEoYlMyCUZ/il8b7C0zGilgDyHoY56/Egirz2+3hEGDAUzZepUk5H/E8OX3BLW
-         /Oz0m25SbUjJaVmp8EKwOszq4Vii1bymymw8YOEs=
-Date:   Wed, 18 Dec 2019 17:26:06 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vipul Kumar <vipulk0511@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>
-Subject: Re: [PATCH] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on
- Intel Bay Trail SoC
-Message-ID: <20191218162606.GC482612@kroah.com>
-References: <1576683039-5311-1-git-send-email-vipulk0511@gmail.com>
+        id S1726980AbfLRQ0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 11:26:20 -0500
+IronPort-SDR: YH9AgxxdhWOLwLlrUlwoR/X6uYvSXtdaAwFArokfZwhhTzOzDGuRoFiCgk6U7Fik02syJkuzCl
+ IbK0UmUihXB6ubOcv7cY0oVSS3jFO4bKmQtTY8SkGfSzqRiLQxR+jUVAdaO0p2/ykYaj7c4yWF
+ MtOAAl43S8vfcMBpJ4XOhut271b3kTizkJskg30PImN1QqgwslLARvFkfcbpPdN3Ms87aCEfqN
+ tcZ4BGdalNSLNIoc0vZmQN2yzaIr8u2GM4rYzk6a5ADOmD2dPLvgx0gMYlciiYolZdzgAhcKF4
+ lto=
+X-IronPort-AV: E=Sophos;i="5.69,330,1571695200"; 
+   d="scan'208";a="3621155"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bes.se.axis.com
+Date:   Wed, 18 Dec 2019 17:26:16 +0100
+From:   Jesper Nilsson <jesper.nilsson@axis.com>
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     Jesper Nilsson <jespern@axis.com>, Lars Persson <larper@axis.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@axis.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pinctrl: artpec6: fix __iomem on reg in set
+Message-ID: <20191218162616.qsxsltfsrxotzqhb@axis.com>
+References: <20191218101602.2442868-1-ben.dooks@codethink.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1576683039-5311-1-git-send-email-vipulk0511@gmail.com>
+In-Reply-To: <20191218101602.2442868-1-ben.dooks@codethink.co.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 09:00:39PM +0530, Vipul Kumar wrote:
-> From: Vipul Kumar <vipul_kumar@mentor.com>
+On Wed, Dec 18, 2019 at 11:16:02AM +0100, Ben Dooks (Codethink) wrote:
+> The artpec6_pconf_set should have marked reg as __iomem,
+>  which ends up making sparse complain about address
+> space conversions. Add the __iomem to silence the
+> following warnings:
 > 
-> 'commit f3a02ecebed7 ("x86/tsc: Set TSC_KNOWN_FREQ and TSC_RELIABLE
-> flags on Intel Atom SoCs")', causing time drift for Bay trail SoC.
-> These flags are set for SoCs having cpuid_level 0x15 or more.
-> Bay trail is having cpuid_level 0xb.
+> drivers/pinctrl/pinctrl-artpec6.c:814:13: warning: incorrect type in assignment (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:814:13:    expected unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:814:13:    got void [noderef] <asn:2> *
+> drivers/pinctrl/pinctrl-artpec6.c:825:34: warning: incorrect type in argument 1 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:825:34:    expected void const volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:825:34:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:827:25: warning: incorrect type in argument 2 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:827:25:    expected void volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:827:25:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:837:34: warning: incorrect type in argument 1 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:837:34:    expected void const volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:837:34:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:840:25: warning: incorrect type in argument 2 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:840:25:    expected void volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:840:25:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:850:34: warning: incorrect type in argument 1 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:850:34:    expected void const volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:850:34:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:853:25: warning: incorrect type in argument 2 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:853:25:    expected void volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:853:25:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:864:34: warning: incorrect type in argument 1 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:864:34:    expected void const volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:864:34:    got unsigned int *reg
+> drivers/pinctrl/pinctrl-artpec6.c:867:25: warning: incorrect type in argument 2 (different address spaces)
+> drivers/pinctrl/pinctrl-artpec6.c:867:25:    expected void volatile [noderef] <asn:2> *addr
+> drivers/pinctrl/pinctrl-artpec6.c:867:25:    got unsigned int *reg
 > 
-> So, unset both flags to make sure the clocksource calibration can
-> be done.
-> 
-> Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
+> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
 > ---
->  arch/x86/kernel/tsc_msr.c | 3 +++
->  1 file changed, 3 insertions(+)
 
-<formletter>
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
 
-</formletter>
+
+> Cc: Lars Persson <lars.persson@axis.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: linux-arm-kernel@axis.com
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/pinctrl/pinctrl-artpec6.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
+> index 986e04ac6b5b..439a997b6bdb 100644
+> --- a/drivers/pinctrl/pinctrl-artpec6.c
+> +++ b/drivers/pinctrl/pinctrl-artpec6.c
+> @@ -798,7 +798,7 @@ static int artpec6_pconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+>  	enum pin_config_param param;
+>  	unsigned int arg;
+>  	unsigned int regval;
+> -	unsigned int *reg;
+> +	unsigned int __iomem *reg;
+
+	void __iomem *reg;
+
+We're using as an argument to readl()?
+
+>  	int i;
+>  
+>  	/* Check for valid pin */
+> -- 
+> 2.24.0
+> 
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
