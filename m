@@ -2,107 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45DDD1242B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:17:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20FA81242E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfLRJRo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 04:17:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39224 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfLRJRn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:17:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AX3VdH7EqYVEvpigBaq6scqvol8UFlytVvrQaxwhRTM=; b=srjXb+CxYdYqaxGRqX3nMXE1M
-        C2geSj7fwM5u2GA7fxI8FP+v4268VeXJPYvxhOKrvoC+VQ5QGooB9BQOFVFxLuX071vWav1PtDVzO
-        fb5ZlSZyDtar5TL2grgkuSySdQ7Vp1cuMjjznT76n3MgUxQpH8HrZXAK1u9YEpV3HTRTzCuOuvFpK
-        Y9eOUQYo5HRQ+0VX1ZjCZa1O0E4z/+Yx+y6VENLuQr3iXjesZ7aRm+/aNfnIBONymnuLEt8NWzxlW
-        E7pR6nPKjZxW3QEyuUVbciHYYmpEjW4J2bKvHFh4lp84cz6Kgd/gGtAVoqvXPfiBn0HMxU9MXVngI
-        5dNo8hNvA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihVSa-0004jh-5F; Wed, 18 Dec 2019 09:17:36 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 830B4306062;
-        Wed, 18 Dec 2019 10:16:10 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DE2FC2B3E30F6; Wed, 18 Dec 2019 10:17:33 +0100 (CET)
-Date:   Wed, 18 Dec 2019 10:17:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, npiggin@gmail.com, mpe@ellerman.id.au,
-        will@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] mm/mmu_gather: Invalidate TLB correctly on batch
- allocation failure and flush
-Message-ID: <20191218091733.GO2844@hirez.programming.kicks-ass.net>
-References: <20191218053530.73053-1-aneesh.kumar@linux.ibm.com>
- <20191218053530.73053-2-aneesh.kumar@linux.ibm.com>
+        id S1726921AbfLRJTR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 04:19:17 -0500
+Received: from mail.dlink.ru ([178.170.168.18]:57768 "EHLO fd.dlink.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbfLRJTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:19:15 -0500
+Received: by fd.dlink.ru (Postfix, from userid 5000)
+        id F1EC31B20120; Wed, 18 Dec 2019 12:19:10 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru F1EC31B20120
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dlink.ru; s=mail;
+        t=1576660751; bh=dacXOshgO7/LdPb/5UECyNXY1P7mbC7VYs/cQiweRR8=;
+        h=From:To:Cc:Subject:Date;
+        b=DOq9x7S1dsO5H3WvE5Cu5xnECZ5E7Lg6u/KgEDo7VD//WoXfboKcSX84oXGuMQnyL
+         0vAaLvoXqKYs//aIwhjkkTTPHWUse+WRxzpqd/elp6g+DE2AYemImG643xE9PBh085
+         TUi8fy57RN8M+/a207IEGM813GxzkggZk3q2D2uY=
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.dlink.ru
+X-Spam-Level: 
+X-Spam-Status: No, score=-99.2 required=7.5 tests=BAYES_50,URIBL_BLOCKED,
+        USER_IN_WHITELIST autolearn=disabled version=3.4.2
+Received: from mail.rzn.dlink.ru (mail.rzn.dlink.ru [178.170.168.13])
+        by fd.dlink.ru (Postfix) with ESMTP id 244C61B20380;
+        Wed, 18 Dec 2019 12:18:57 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fd.dlink.ru 244C61B20380
+Received: from mail.rzn.dlink.ru (localhost [127.0.0.1])
+        by mail.rzn.dlink.ru (Postfix) with ESMTP id 5BD631B20367;
+        Wed, 18 Dec 2019 12:18:55 +0300 (MSK)
+Received: from localhost.localdomain (unknown [196.196.203.126])
+        by mail.rzn.dlink.ru (Postfix) with ESMTPA;
+        Wed, 18 Dec 2019 12:18:55 +0300 (MSK)
+From:   Alexander Lobakin <alobakin@dlink.ru>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Alexander Lobakin <alobakin@dlink.ru>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Edward Cree <ecree@solarflare.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: [PATCH net] net: core: sysctl: fix compiler warning when only cBPF is present
+Date:   Wed, 18 Dec 2019 12:18:21 +0300
+Message-Id: <20191218091821.7080-1-alobakin@dlink.ru>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218053530.73053-2-aneesh.kumar@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 11:05:29AM +0530, Aneesh Kumar K.V wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
-> 
-> Architectures for which we have hardware walkers of Linux page table should
-> flush TLB on mmu gather batch allocation failures and batch flush. Some
-> architectures like POWER supports multiple translation modes (hash and radix)
+proc_dointvec_minmax_bpf_restricted() has been firstly introduced
+in commit 2e4a30983b0f ("bpf: restrict access to core bpf sysctls")
+under CONFIG_HAVE_EBPF_JIT. Then, this ifdef has been removed in
+ede95a63b5e8 ("bpf: add bpf_jit_limit knob to restrict unpriv
+allocations"), because a new sysctl, bpf_jit_limit, made use of it.
+Finally, this parameter has become long instead of integer with
+fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+and thus, a new proc_dolongvec_minmax_bpf_restricted() has been
+added.
+With this last change, we got back to that
+proc_dointvec_minmax_bpf_restricted() is used only under
+CONFIG_HAVE_EBPF_JIT, but the corresponding ifdef has not been
+brought back.
 
-nohash, hash and radix in fact :-)
+So, in configurations like CONFIG_BPF_JIT=y && CONFIG_HAVE_EBPF_JIT=n
+since v4.20 we have:
 
-> and in the case of POWER only radix translation mode needs the above TLBI.
+  CC      net/core/sysctl_net_core.o
+net/core/sysctl_net_core.c:292:1: warning: ‘proc_dointvec_minmax_bpf_restricted’ defined but not used [-Wunused-function]
+  292 | proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-> This is because for hash translation mode kernel wants to avoid this extra
-> flush since there are no hardware walkers of linux page table. With radix
-> translation, the hardware also walks linux page table and with that, kernel
-> needs to make sure to TLB invalidate page walk cache before page table pages are
-> freed.
-> 
-> More details in
-> commit: d86564a2f085 ("mm/tlb, x86/mm: Support invalidating TLB caches for RCU_TABLE_FREE")
-> 
-> Fixes: a46cc7a90fd8 ("powerpc/mm/radix: Improve TLB/PWC flushes")
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> ---
+Suppress this by guarding it with CONFIG_HAVE_EBPF_JIT again.
 
-> diff --git a/arch/powerpc/include/asm/tlb.h b/arch/powerpc/include/asm/tlb.h
-> index b2c0be93929d..7f3a8b902325 100644
-> --- a/arch/powerpc/include/asm/tlb.h
-> +++ b/arch/powerpc/include/asm/tlb.h
-> @@ -26,6 +26,17 @@
->  
->  #define tlb_flush tlb_flush
->  extern void tlb_flush(struct mmu_gather *tlb);
-> +/*
-> + * book3s:
-> + * Hash does not use the linux page-tables, so we can avoid
-> + * the TLB invalidate for page-table freeing, Radix otoh does use the
-> + * page-tables and needs the TLBI.
-> + *
-> + * nohash:
-> + * We still do TLB invalidate in the __pte_free_tlb routine before we
-> + * add the page table pages to mmu gather table batch.
+Fixes: fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+---
+ net/core/sysctl_net_core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I'm a little confused though; if nohash is a software TLB fill, why do
-you need a TLBI for tables?
+diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+index eb29e5adc84d..70211c9edb02 100644
+--- a/net/core/sysctl_net_core.c
++++ b/net/core/sysctl_net_core.c
+@@ -288,6 +288,7 @@ static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_HAVE_EBPF_JIT
+ static int
+ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 				    void __user *buffer, size_t *lenp,
+@@ -298,6 +299,7 @@ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 
+ 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ }
++#endif /* CONFIG_HAVE_EBPF_JIT */
+ 
+ static int
+ proc_dolongvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+-- 
+2.24.1
 
-> + */
-> +#define tlb_needs_table_invalidate()	radix_enabled()
->  
->  /* Get the generic bits... */
->  #include <asm-generic/tlb.h>
