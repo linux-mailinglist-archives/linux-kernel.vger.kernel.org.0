@@ -2,89 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23866123B70
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:19:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DDB3123B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:19:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbfLRATE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 19:19:04 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:40449 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725940AbfLRATD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 19:19:03 -0500
-Received: by mail-pj1-f67.google.com with SMTP id n67so11541pjb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 16:19:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=oCKoHe1lxe0PuESdkrD15D9EeMySLR5I9RS5subxYv0=;
-        b=OegfkyV7Z/WtDb+kzEq9Eg6X6wokHNhhjYvhBDnSMS2oW/lTMraChWNqKy+XbjcIIY
-         2MfUEgry3rg6wb+bxA+6yoLR4OrGRhso5ZNYnT0lxtpapggxOTQz8KvUWxwKpYORe89i
-         Jgt3l36325rdKDMHTTa0ALUkIi1bMVszC0+Ts0a4HAE98jJ4RCmJcKNOXdvDo436tpvl
-         g9vVGNdoQCXeNgxwNCNZzu8xIgSt32rFWKtjcqKL4Hd/iYRsRi5a4fLrxjrK5LYWs11q
-         9qCa4vihhgMh80xY1DQY9w2T5tN88/Y1+w2lQuvATVGqc9VumhJ2JRawYCIOqd+yK64I
-         +SaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=oCKoHe1lxe0PuESdkrD15D9EeMySLR5I9RS5subxYv0=;
-        b=CnOWEOMy9UcK53oMF7SXzWYhQaHMhW6rsWVdr72qVpPv+xAnQW+W9GrYAO7xB5lfjr
-         HGkUXhqcqAdQ5LtOWp6x9t7tqc9mevuYKOljG6xBIfw0fugDSSmeK1cVzfuSn/TJjFHV
-         S1VE2tVXGO3ETWQdiDWU+sUhMFw4rcSj1+gIGUbkDe0JA4jQi0tEQItTf40eQ/TrazOI
-         zL6Mx7afZKzkNaQATAF3cBii7gI1KdIST8tXPCIc32FYHzSVshYjAH762DrFd9agLZUE
-         wZ/GbRvzx6fxA4WNeqkZpuNwAkxXmXnns8kknzoPqxwpoNLG3yk2H+/XYYS4t597BTej
-         PimA==
-X-Gm-Message-State: APjAAAVyFmyi2lvo93pe5r3ZkM+uFr3DOucSCEtoC5cC2NH/tLsEVgCL
-        9s3jdUbd7iyZWXe2HuaZIKy5Yg==
-X-Google-Smtp-Source: APXvYqxB1waYmvRr3KkK8PGRDfUSYKoGNfyfaAZskT8PdRB1quQidke6t4GMeDoXYUzsHkF1aXKe1g==
-X-Received: by 2002:a17:90a:e98d:: with SMTP id v13mr11895pjy.107.1576628342864;
-        Tue, 17 Dec 2019 16:19:02 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id k190sm152197pga.73.2019.12.17.16.19.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 17 Dec 2019 16:19:01 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        patches@armlinux.co.uk, Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM: mm: mark free_memmap as __init
-Date:   Tue, 17 Dec 2019 16:18:49 -0800
-Message-Id: <20191218001849.41415-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        id S1726540AbfLRAS6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 19:18:58 -0500
+Received: from mga01.intel.com ([192.55.52.88]:33088 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725940AbfLRAS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 17 Dec 2019 19:18:58 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 16:18:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,327,1571727600"; 
+   d="scan'208";a="217971873"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 17 Dec 2019 16:18:57 -0800
+Date:   Tue, 17 Dec 2019 16:18:57 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Barret Rhoden <brho@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-nvdimm@lists.01.org, x86@kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jason.zeng@intel.com
+Subject: Re: [PATCH v5 1/2] mm: make dev_pagemap_mapping_shift() externally
+ visible
+Message-ID: <20191218001857.GM11771@linux.intel.com>
+References: <20191212182238.46535-1-brho@google.com>
+ <20191212182238.46535-2-brho@google.com>
+ <20191213174702.GB31552@linux.intel.com>
+ <e004e742-f755-c22c-57bb-acfe30971c7d@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e004e742-f755-c22c-57bb-acfe30971c7d@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As of commit ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING
-forcibly"), free_memmap() might not always be inlined, and thus is
-triggering a section warning:
+On Mon, Dec 16, 2019 at 12:59:53PM -0500, Barret Rhoden wrote:
+> On 12/13/19 12:47 PM, Sean Christopherson wrote:
+> >>+EXPORT_SYMBOL_GPL(dev_pagemap_mapping_shift);
+> >
+> >This is basically a rehash of lookup_address_in_pgd(), and doesn't provide
+> >exactly what KVM needs.  E.g. KVM works with levels instead of shifts, and
+> >it would be nice to provide the pte so that KVM can sanity check that the
+> >pfn from this walk matches the pfn it plans on mapping.
+> 
+> One minor issue is that the levels for lookup_address_in_pgd() and for KVM
+> differ in name, although not in value.  lookup uses PG_LEVEL_4K = 1.  KVM
+> uses PT_PAGE_TABLE_LEVEL = 1.  The enums differ a little too: x86 has a name
+> for a 512G page, etc.  It's all in arch/x86.
+> 
+> Does KVM-x86 need its own names for the levels?  If not, I could convert the
+> PT_PAGE_TABLE_* stuff to PG_LEVEL_* stuff.
 
-WARNING: vmlinux.o(.text.unlikely+0x904): Section mismatch in reference from the function free_memmap() to the function .meminit.text:memblock_free()
+Not really.  I suspect the whole reason KVM has different enums is to
+handle PSE/Mode-B paging, where PG_LEVEL_2M would be inaccurate, e.g.:
 
-Mark it as __init, since the faller (free_unused_memmap) already is.
+	if (PTTYPE == 32 && walker->level == PT_DIRECTORY_LEVEL && is_cpuid_PSE36())
+		gfn += pse36_gfn_delta(pte);
 
-Fixes: ac7c3e4ff401 ("compiler: enable CONFIG_OPTIMIZE_INLINING forcibly")
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
-KernelVersion: v5.5-rc2
+That being said, I absolute loathe PT_PAGE_TABLE_LEVEL, I can never
+remember that it means 4k pages.  I would be in favor of using the kernel's
+enums with some KVM-specific abstraction of PG_LEVEL_2M, e.g.
 
- arch/arm/mm/init.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+/* KVM Hugepage definitions for x86 */
+enum {
+	PG_LEVEL_2M_OR_4M      = PG_LEVEL_2M,
+	/* set max level to the biggest one */
+	KVM_MAX_HUGEPAGE_LEVEL = PG_LEVEL_1G,
+};
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 3ef204137e732..054be44d1cdb4 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -324,7 +324,7 @@ static inline void poison_init_mem(void *s, size_t count)
- 		*p++ = 0xe7fddef0;
- }
- 
--static inline void
-+static inline void __init
- free_memmap(unsigned long start_pfn, unsigned long end_pfn)
- {
- 	struct page *start_pg, *end_pg;
--- 
-2.11.0
+And ideally restrict usage of the ugly PG_LEVEL_2M_OR_4M to flows that can
+actually encounter 4M pages, i.e. when walking guest page tables.  On the
+host side, KVM always uses PAE or 64-bit paging.
 
+Personally, I'd pursue that in a separate patch/series, it'll touch a
+massive amount of code and will probably get bikeshedded a fair amount.
