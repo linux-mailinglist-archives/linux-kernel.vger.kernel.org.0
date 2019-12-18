@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEAF124BA5
+	by mail.lfdr.de (Postfix) with ESMTP id BFC00124BA6
 	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:28:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfLRP1w (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:27:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59858 "EHLO mail.kernel.org"
+        id S1727323AbfLRP16 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:27:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726723AbfLRP1v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:27:51 -0500
+        id S1726723AbfLRP1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 10:27:54 -0500
 Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A390B2176D;
-        Wed, 18 Dec 2019 15:27:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 581D5218AC;
+        Wed, 18 Dec 2019 15:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576682871;
-        bh=XW8sgdFNRlYNJyYJl0YWqko7kyc0qa3z1odcYDIWORs=;
+        s=default; t=1576682872;
+        bh=Atjyd0VhLOfncfVpnTToXRLQMij7shELi5mE142B0vA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=GDYxdjj0EGrZMoSdd4ccAMF6CcFsf7egc7Vfz+en5YdhQNF7c5PsMpaHePlkVqvCi
-         RfquyL8umhGOH5T3+lqhD+NMaCczsqZooHqBcoDhzC6pZgbykLaqos+GEIt/Fg0Pjq
-         PV3dVurUtblgINRLr8D5sQ4Kaq723in1PreLYlYs=
+        b=S+WpfUcsQ6sto4b0+RxDhBs3uo0dCj1iEEvin93GOr6xhw6z53ZMtOfmKFRtwga+S
+         2jBfAkzK50SviX2bkQJ9SyjlR6DM7h622xNE/SGUcBXGnn077wGcOfpL0NJJlorVVZ
+         W/z6UebJJyTffYDFXOmyPUBJU/nztaTYeqmO0jzA=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     artem.bityutskiy@linux.intel.com, mhiramat@kernel.org,
         linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
-Subject: [PATCH 1/7] tracing: Add trace_array_find() to find instance trace arrays
-Date:   Wed, 18 Dec 2019 09:27:37 -0600
-Message-Id: <ae87b48837528e5dba7e6cff962a2c431754862d.1576679206.git.zanussi@kernel.org>
+Subject: [PATCH 2/7] tracing: Add get/put_event_file()
+Date:   Wed, 18 Dec 2019 09:27:38 -0600
+Message-Id: <8ee01da8f9a1aa7bbec4ea9492a464e43d31f70c.1576679206.git.zanussi@kernel.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1576679206.git.zanussi@kernel.org>
 References: <cover.1576679206.git.zanussi@kernel.org>
@@ -41,85 +41,187 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new trace_array_find() function that can be used to find a trace
-array given the instance name, and replace existing code that does the
-same thing with it.
+Add a function to get an event file and prevent it from going away on
+module or instance removal.
 
-Also make it available for use outside of trace.c.
+get_event_file() will find an event file in a given instance (if
+instance is NULL, it assumes the top trace array) and return it,
+pinning the instance's trace array as well as the event's module, if
+applicable, so they won't go away while in use.
+
+put_event_file() does the matching release.
+
+Also included are _nolock() versions, which can be used if event_mutex
+is already held.
 
 Signed-off-by: Tom Zanussi <zanussi@kernel.org>
 ---
- kernel/trace/trace.c | 30 ++++++++++++++++++++----------
- kernel/trace/trace.h |  1 +
- 2 files changed, 21 insertions(+), 10 deletions(-)
+ include/linux/trace_events.h |  10 ++++
+ kernel/trace/trace_events.c  | 130 +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 140 insertions(+)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 23459d53d576..5483b50a11ff 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8455,6 +8455,21 @@ static void update_tracer_options(struct trace_array *tr)
- 	mutex_unlock(&trace_types_lock);
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 4c6e15605766..cf982c7d6636 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -348,6 +348,16 @@ enum {
+ 	EVENT_FILE_FL_WAS_ENABLED_BIT,
+ };
+ 
++extern struct trace_event_file *get_event_file(const char *instance,
++					       const char *system,
++					       const char *event);
++extern struct trace_event_file *get_event_file_nolock(const char *instance,
++						      const char *system,
++						      const char *event);
++
++extern void put_event_file(struct trace_event_file *file);
++extern void put_event_file_nolock(struct trace_event_file *file);
++
+ /*
+  * Event file flags:
+  *  ENABLED	  - The event is enabled
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index c6de3cebc127..2ee417d003eb 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2535,6 +2535,136 @@ find_event_file(struct trace_array *tr, const char *system, const char *event)
+ 	return file;
  }
  
-+/* Must have event_mutex and trace_types_lock held */
-+struct trace_array *trace_array_find(const char *name)
++static struct trace_event_file *__get_event_file(const char *instance,
++						 const char *system,
++						 const char *event,
++						 bool lock)
 +{
-+	struct trace_array *tr, *found = NULL;
++	struct trace_array *tr = top_trace_array();
++	struct trace_event_file *file = NULL;
++	int ret = -EINVAL;
 +
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		if (tr->name && strcmp(tr->name, name) == 0) {
-+			found = tr;
-+			break;
-+		}
++	if (instance) {
++		tr = trace_array_find(instance);
++		if (!tr)
++			return ERR_PTR(ret);
 +	}
 +
-+	return found;
++	ret = trace_array_get(tr);
++	if (ret)
++		return ERR_PTR(ret);
++
++	if (lock)
++		mutex_lock(&event_mutex);
++
++	file = find_event_file(tr, system, event);
++	if (!file) {
++		trace_array_put(tr);
++		ret = -EINVAL;
++		goto out;
++	}
++
++	/* Don't let event modules unload while in use */
++	ret = try_module_get(file->event_call->mod);
++	if (!ret) {
++		trace_array_put(tr);
++		ret = -EBUSY;
++		goto out;
++	}
++
++	ret = 0;
++ out:
++	if (lock)
++		mutex_unlock(&event_mutex);
++
++	if (ret)
++		file = ERR_PTR(ret);
++
++	return file;
 +}
 +
- static struct trace_array *trace_array_create(const char *name)
- {
- 	struct trace_array *tr;
-@@ -8531,10 +8546,8 @@ static int instance_mkdir(const char *name)
- 	mutex_lock(&trace_types_lock);
++/**
++ * get_event_file - Find and return a trace event file
++ * @instance: The name of the trace instance containing the event
++ * @system: The name of the system containing the event
++ * @event: The name of the event
++ *
++ * Return a trace event file given the trace instance name, trace
++ * system, and trace event name.  If the instance name is NULL, it
++ * refers to the top-level trace array.
++ *
++ * This function will look it up and return it if found, after calling
++ * trace_array_get() to prevent the instance from going away, and
++ * increment the event's module refcount to prevent it from being
++ * removed.
++ *
++ * To release the file, call put_event_file(), which will call
++ * trace_array_put() and decrement the event's module refcount.
++ *
++ * Return: The trace event on success, ERR_PTR otherwise.
++ */
++struct trace_event_file *get_event_file(const char *instance,
++					const char *system,
++					const char *event)
++{
++	return __get_event_file(instance, system, event, true);
++}
++EXPORT_SYMBOL_GPL(get_event_file);
++
++/**
++ * get_event_file_nolock - non-locking version of get_event_file
++ *
++ * Same as get_event_file() but doesn't take event_mutex.  See
++ * get_event_file() for details.
++ */
++struct trace_event_file *get_event_file_nolock(const char *instance,
++					       const char *system,
++					       const char *event)
++{
++	return __get_event_file(instance, system, event, false);
++}
++EXPORT_SYMBOL_GPL(get_event_file_nolock);
++
++/**
++ * put_event_file - Release a file from get_event_file()
++ * @file: The trace event file
++ *
++ * If a file was retrieved using get_event_file(), this should be
++ * called when it's no longer needed.  It will cancel the previous
++ * trace_array_get() called by that function, and decrement the
++ * event's module refcount.
++ */
++void __put_event_file(struct trace_event_file *file, bool lock)
++{
++	trace_array_put(file->tr);
++
++	if (lock)
++		mutex_lock(&event_mutex);
++
++	module_put(file->event_call->mod);
++
++	if (lock)
++		mutex_unlock(&event_mutex);
++}
++
++void put_event_file(struct trace_event_file *file)
++{
++	return __put_event_file(file, true);
++}
++EXPORT_SYMBOL_GPL(put_event_file);
++
++/**
++ * put_event_file_nolock - non-locking version of put_event_file
++ *
++ * Same as put_event_file() but doesn't take event_mutex.  See
++ * put_event_file() for details.
++ */
++void put_event_file_nolock(struct trace_event_file *file)
++{
++	return __put_event_file(file, false);
++}
++EXPORT_SYMBOL_GPL(put_event_file_nolock);
++
+ #ifdef CONFIG_DYNAMIC_FTRACE
  
- 	ret = -EEXIST;
--	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
--		if (tr->name && strcmp(tr->name, name) == 0)
--			goto out_unlock;
--	}
-+	if (trace_array_find(name))
-+		goto out_unlock;
- 
- 	tr = trace_array_create(name);
- 
-@@ -8658,12 +8671,9 @@ static int instance_rmdir(const char *name)
- 	mutex_lock(&trace_types_lock);
- 
- 	ret = -ENODEV;
--	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
--		if (tr->name && strcmp(tr->name, name) == 0) {
--			ret = __remove_instance(tr);
--			break;
--		}
--	}
-+	tr = trace_array_find(name);
-+	if (tr)
-+		ret = __remove_instance(tr);
- 
- 	mutex_unlock(&trace_types_lock);
- 	mutex_unlock(&event_mutex);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 63bf60f79398..f37ef6524821 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -346,6 +346,7 @@ extern struct mutex trace_types_lock;
- 
- extern int trace_array_get(struct trace_array *tr);
- extern int tracing_check_open_get_tr(struct trace_array *tr);
-+extern struct trace_array *trace_array_find(const char *name);
- 
- extern int tracing_set_time_stamp_abs(struct trace_array *tr, bool abs);
- extern int tracing_set_clock(struct trace_array *tr, const char *clockstr);
+ /* Avoid typos */
 -- 
 2.14.1
 
