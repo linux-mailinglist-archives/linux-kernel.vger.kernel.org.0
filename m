@@ -2,171 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3580C124917
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:08:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C3212491F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbfLROIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:08:38 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:43471 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbfLROIh (ORCPT
+        id S1727126AbfLROKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:10:16 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:43634 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727034AbfLROKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:08:37 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x6so190910pfo.10;
-        Wed, 18 Dec 2019 06:08:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cxSdk9UJsEr3lAANbH2coKYFIZBC8JxUrWKkWgdn3kQ=;
-        b=HcRYSrFMWc6OKi/4GDsCfUjcmQelKnE9b419wSEA4CtCLwKE/KR3Enjmz7V/rXj81+
-         s9gh3SzmPClnn4VTGTehGVmdLoG88+g9WBSA3IcUC3I6d7nbHlMBqLcylHpEH9OPi7uw
-         J/fsg1dnts0UgeFQurRmn914pIZxllHvYXZW6O5WN9PUEbnc0GyCT2D7d2oWEt3dtS2m
-         XBiNs2UDix8vDNfysHl91x7IpS9u9LBQPRbz56qe9je1+4j+RtNRSwD38uB+ecx/FDVn
-         QA4lFZZ5eEwHILWHHzaz/f0hIbxo5UAS2xOfcUBYXcY1/Tm+4ZAwoawNe0oscSoZJvhy
-         rAXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cxSdk9UJsEr3lAANbH2coKYFIZBC8JxUrWKkWgdn3kQ=;
-        b=BTprwaNYzjbmy3086ngpEcCBtVu20UT6MeDMCYSc/i88KhDzK97QWEnHO2tMv/hGK9
-         fOr3jpFP+YJon1Txef+JuyAC8ij5j8+REoEVz75ZdnkLeUC0/UhTMVbOXmeSh2017P4N
-         tj6T8YJlw55AZywDMgKcijPad01RIMO+XCPU0BoFvFLztNvIB9wD5VuczMFjagf8Skzx
-         FwzGQCooGnXOQ3qcEDt078+8BxvXyyi8lsSgxCwgpM3SlscTZ/0rQAc3Py8B0qPbFpxH
-         CqFDhWami2cR3nIqOP/bZfUNnPGCXmcrAPV95wOD4DkbyUChhfBBOWHFrhA1VelYKpIM
-         bMRg==
-X-Gm-Message-State: APjAAAXzynhpz1n9h/dHMumvsYAe6FxVlfC3nzPxjWKq1DjVX+YJBYQz
-        SElkSvlpuujQbNvnA+54D+k=
-X-Google-Smtp-Source: APXvYqxpi3nApN665oMRs8YN9qLNLPkz3x3ANJyx3JwOmevY77s+kPTOnvW6D6kUqDKxBl9pWuQb2g==
-X-Received: by 2002:a62:3892:: with SMTP id f140mr3177996pfa.190.1576678116268;
-        Wed, 18 Dec 2019 06:08:36 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id f8sm3082032pjg.28.2019.12.18.06.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 06:08:34 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id EE54040352; Wed, 18 Dec 2019 11:08:31 -0300 (-03)
-Date:   Wed, 18 Dec 2019 11:08:31 -0300
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 07/12] perf hists browser: Allow passing an initial hotkey
-Message-ID: <20191218140831.GC13395@kernel.org>
-References: <20191217144828.2460-1-acme@kernel.org>
- <20191217144828.2460-8-acme@kernel.org>
- <20191218080818.GD19062@krava>
+        Wed, 18 Dec 2019 09:10:16 -0500
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xBIE9xc1002895;
+        Wed, 18 Dec 2019 23:10:00 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xBIE9xc1002895
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576678200;
+        bh=sK0Y524wx5hTvDQvfkikiU6FvAcdXV1HieXZce1m0oY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CSWsiFWl4hNytsEwVdoam4tV0utXMKiNzfUBJQ+/TJxh/aZLGebehNEK3fZb3xvfn
+         Xj98jOMxDT/HhqiJAAZ+1N3/RT0OjqCmOw8kcSV2pafhlhGH8af/RCI0CHLtBbg8yI
+         oy+gjIxYzdvTXy9PA4KBR1tOoCRASBSaBhXtYXlDjNEbJdEp6jh25v396vO/YXeZ2F
+         ViupeXq1tg/p/NBxrsLD9EE6ketgS2yywrktuMT7xzLCtzDyn3aYchnOUfk2opZ4Ui
+         rp6fGIOcLTZVeqzYuVbT2vdRwOp0CogA6ia5qsXhwXsHdZlMVi8VtiZTrT8gNqEVJA
+         2ammzjWoVjrHA==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id d6so663895uam.11;
+        Wed, 18 Dec 2019 06:09:59 -0800 (PST)
+X-Gm-Message-State: APjAAAWZzvlUrstMxLDKAN9LB80hR3Gf6APAA1/n50gt8yDJ3vMEy28E
+        dJ8O4oA9QiSTDGzIsFTU2wqAJy/Pb191sa2q81w=
+X-Google-Smtp-Source: APXvYqxj/VVIXI6U17IvS2b1hvsjfikDP+/ho6hEvii+xPz6k15U/LpW0YHSFxyWudL1l727MKUmI6SeuX7p8+rBGCw=
+X-Received: by 2002:ab0:3487:: with SMTP id c7mr1453419uar.25.1576678198490;
+ Wed, 18 Dec 2019 06:09:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218080818.GD19062@krava>
-X-Url:  http://acmel.wordpress.com
+References: <cover.1576599202.git.tommyhebb@gmail.com>
+In-Reply-To: <cover.1576599202.git.tommyhebb@gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Wed, 18 Dec 2019 23:09:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQgG45XRfQEKBJFt-knZ0L7se5eMH6Kvo-3L_gW6wcA1g@mail.gmail.com>
+Message-ID: <CAK7LNAQgG45XRfQEKBJFt-knZ0L7se5eMH6Kvo-3L_gW6wcA1g@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] kconfig: rework symbol help text
+To:     Thomas Hebb <tommyhebb@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        "open list:SIFIVE DRIVERS" <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Dec 18, 2019 at 09:08:18AM +0100, Jiri Olsa escreveu:
-> On Tue, Dec 17, 2019 at 11:48:23AM -0300, Arnaldo Carvalho de Melo wrote:
-> 
-> SNIP
-> 
-> > diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-> > index 6dfdd8d5a743..3b7af5a8d101 100644
-> > --- a/tools/perf/ui/browsers/hists.c
-> > +++ b/tools/perf/ui/browsers/hists.c
-> > @@ -673,9 +673,8 @@ static int hist_browser__title(struct hist_browser *browser, char *bf, size_t si
-> >  }
-> >  
-> >  int hist_browser__run(struct hist_browser *browser, const char *help,
-> > -		      bool warn_lost_event)
-> > +		      bool warn_lost_event, int key)
-> >  {
-> > -	int key;
-> >  	char title[160];
-> >  	struct hist_browser_timer *hbt = browser->hbt;
-> >  	int delay_secs = hbt ? hbt->refresh : 0;
-> > @@ -688,9 +687,12 @@ int hist_browser__run(struct hist_browser *browser, const char *help,
-> >  	if (ui_browser__show(&browser->b, title, "%s", help) < 0)
-> >  		return -1;
-> >  
-> > +	if (key)
-> > +		goto do_hotkey;
-> > +
-> >  	while (1) {
-> >  		key = ui_browser__run(&browser->b, delay_secs);
-> > -
-> > +do_hotkey:
-> 
-> or we could switch the 'swtich' and ui_browser__run, and get rid of the goto, like:
-> 
-> 	while (1) {
->   		switch (key) {
-> 		...
-> 		}
-> 
-> 		key = ui_browser__run(&browser->b, delay_secs);
-> 	}
+On Wed, Dec 18, 2019 at 1:15 AM Thomas Hebb <tommyhebb@gmail.com> wrote:
+>
+> This series fixes several issues with help text generated by Kconfig,
+> mainly affecting symbols that are defined in multiple places. Although
+> results of these patches are somewhat visible for the symbols in Linux,
+> what prompted me to write the series was working on U-Boot, which also
+> uses Kconfig and makes very heavy use of multiple definitions (e.g. for
+> overriding defaults). I have provided Linux examples where I could find
+> them, but the example for the biggest patch (the first one) is taken
+> from U-Boot because it was more illustrative than anything I could find
+> in Linux.
+>
+> Changes in v2:
+> - Added explicit U-Boot version in commit message + other rewordings
+> - Made the new "Depends on:" line print actual dependencies instead of
+>   visibility to avoid an intra-series regression, and noted that in the
+>   commit message.
+> - Get rid of redundant "with prompt" and "without prompt" notes in
+>   definition text, but continue to ensure that definitions with prompts
+>   are printed before ones without.
+> - Fixed checkpatch issues
+> - Omit already-merged patch "kconfig: don't crash on NULL expressions in
+>   expr_eq()"
+>
+> Thomas Hebb (3):
+>   kconfig: list all definitions of a symbol in help text
+>   kconfig: distinguish between dependencies and visibility in help text
+>   kconfig: fix nesting of symbol help text
 
-I think those are equivalent and having the test like I did is more
-clear, i.e. "has this key been provided" instead of going to the switch
-just to hit the default case for the zero in key and call
-ui_browser__run().
+All applied to linux-kbuild. Thanks.
 
-- Arnaldo
- 
-> jirka
-> 
-> >  		switch (key) {
-> >  		case K_TIMER: {
-> >  			u64 nr_entries;
-> > @@ -2994,8 +2996,7 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
-> >  
-> >  		nr_options = 0;
-> >  
-> > -		key = hist_browser__run(browser, helpline,
-> > -					warn_lost_event);
-> > +		key = hist_browser__run(browser, helpline, warn_lost_event, 0);
-> >  
-> >  		if (browser->he_selection != NULL) {
-> >  			thread = hist_browser__selected_thread(browser);
-> > @@ -3573,7 +3574,7 @@ int block_hists_tui_browse(struct block_hist *bh, struct evsel *evsel,
-> >  	memset(&action, 0, sizeof(action));
-> >  
-> >  	while (1) {
-> > -		key = hist_browser__run(browser, "? - help", true);
-> > +		key = hist_browser__run(browser, "? - help", true, 0);
-> >  
-> >  		switch (key) {
-> >  		case 'q':
-> > diff --git a/tools/perf/ui/browsers/hists.h b/tools/perf/ui/browsers/hists.h
-> > index 078f2f2c7abd..1e938d9ffa5e 100644
-> > --- a/tools/perf/ui/browsers/hists.h
-> > +++ b/tools/perf/ui/browsers/hists.h
-> > @@ -34,7 +34,7 @@ struct hist_browser {
-> >  struct hist_browser *hist_browser__new(struct hists *hists);
-> >  void hist_browser__delete(struct hist_browser *browser);
-> >  int hist_browser__run(struct hist_browser *browser, const char *help,
-> > -		      bool warn_lost_event);
-> > +		      bool warn_lost_event, int key);
-> >  void hist_browser__init(struct hist_browser *browser,
-> >  			struct hists *hists);
-> >  #endif /* _PERF_UI_BROWSER_HISTS_H_ */
-> > -- 
-> > 2.21.0
-> > 
+
+>  scripts/kconfig/expr.c |  3 +-
+>  scripts/kconfig/expr.h |  1 +
+>  scripts/kconfig/menu.c | 82 +++++++++++++++++++++++++-----------------
+>  3 files changed, 52 insertions(+), 34 deletions(-)
+>
+> --
+> 2.24.1
+>
+
 
 -- 
-
-- Arnaldo
+Best Regards
+Masahiro Yamada
