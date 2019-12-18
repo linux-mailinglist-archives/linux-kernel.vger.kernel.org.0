@@ -2,83 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E8911256BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:31:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5355A1256D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:34:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726656AbfLRWbR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 17:31:17 -0500
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:53391 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbfLRWbR (ORCPT
+        id S1726681AbfLRWeV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 17:34:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38420 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbfLRWeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 17:31:17 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 239BD1E0B;
-        Wed, 18 Dec 2019 17:31:14 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Wed, 18 Dec 2019 17:31:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=Lzyvf/oAweCjZ5qIV56uJI0Ozerep15
-        7X4x8VBFaL2w=; b=fgkh+Wd1faRZ80tV79SqEgiqfO47hlCbRGjvMXW/tF7jki9
-        WynI1IF7nJLBpyfFNBrs5kB/iD9B1kZ4Zct/KVqlmhAjbOmezDRIj68BgFn9cKrO
-        6zVbHOITS5uYfxQbYW64M2VcaKodkAdmf+8kBkA/mm8cEojiNaJ0rBJMWyM5iOrA
-        cQ32L48NZETL5UM0mGXuk5qtld06H6KvTLd/QRZEBWK2uUjG/fMq3afcmeP2Ih1F
-        6wwQweBoXijypJ+cC4RH5UgCYG4mCFKK+XeG8mS/OMQRoqwSejkVoevxOJ5J8BBd
-        yxNpuEGrb4n1BnHbYP8kBZFKKwJAzpuZRUsVhCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=Lzyvf/
-        oAweCjZ5qIV56uJI0Ozerep157X4x8VBFaL2w=; b=Ag20xibjqHXMkA9a8aMYoI
-        ymKmoMLALOwuT3RPU4NmvqWfucAiAItau1LrU6oqlFu5Yx7AnxaOgXYQMK83j5BD
-        Xi1ou27OAwT6EHUZYDWbaBwW7nB4IMXpjyYFK81CtGRS9SggF7BweRFMTXZKLofv
-        kCqCYoxzUG30G17iZ0lyC3lAIjCUrYlFLS1vUlnyAANTVhmi+s5Alwy696plDaFd
-        E0C+9w7DORjvdmRgIErOl5NlfrXWfyzy0F1IucCKgW3Xu4ij9y72lfbNNZK4AuLs
-        upfQ+Wh+GcQNPNLmDWGZvMamMOwyk6GpA6Q+MIAHaYL0ghXKPB5vJHWjuphfW6rQ
-        ==
-X-ME-Sender: <xms:rqj6XfEXRl9AX1MZQR9DICsNKazBcDuTVlw-GrXsNQfmXGJubEBsiA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtledgudehkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrg
-    hrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushht
-    vghrufhiiigvpedt
-X-ME-Proxy: <xmx:rqj6Xfa4-8pcRXygko6cwYT0kJmFx7aETOpInZFh_-vM2nBcvhtrvA>
-    <xmx:rqj6XbycQMjEhwpDN8jUPmY8f2_5AiuUjH9h8oL23BayYpp2vVsdAA>
-    <xmx:rqj6XZQbpq4QZV3aBoG8HOYeycBGUTb1k2zNIIiwFumDcPWv7qe7GQ>
-    <xmx:sqj6XXWAf5MO83LJorjEsG5NKdLUN_wd55TeemMVrtKwttyCxseetw>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id CAC89E00A3; Wed, 18 Dec 2019 17:31:10 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-694-gd5bab98-fmstable-20191218v1
-Mime-Version: 1.0
-Message-Id: <524f6f1c-c32d-498b-b835-ae01c338a7e2@www.fastmail.com>
-In-Reply-To: <1576648806-1114-1-git-send-email-vulab@iscas.ac.cn>
-References: <1576648806-1114-1-git-send-email-vulab@iscas.ac.cn>
-Date:   Thu, 19 Dec 2019 09:02:53 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Xu Wang" <vulab@iscas.ac.cn>,
-        "Stefan M Schaeckeler" <sschaeck@cisco.com>,
-        "Borislav Petkov" <bp@alien8.de>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>, tony.luck@intel.com,
-        "James Morse" <james.morse@arm.com>, rrichter@marvell.com,
-        "Joel Stanley" <joel@jms.id.au>
-Cc:     linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC: aspeed: Remove unneeded semicolon
-Content-Type: text/plain
+        Wed, 18 Dec 2019 17:34:21 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d7so30604otf.5
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 14:34:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q0o+3IFWqjXrZk2VGX8AZpqrFD1hgC3oeYUhyHktLWk=;
+        b=OvOglgIpCOvAU0KUmMs8x4iozSWSqM+yDOyefrFtCr2OVCpfsjJ7pnWEnXeEBMD0A7
+         dcjpSo5tP1TdSit6XHXofae91ynxxjN33wttHo9/PkuR1cQpHtnXOEt8YZMQDifUZQ2L
+         inAlja5nVFJgaMkKbocgiGlM7eskKOyL5cDOlyJEDEaPFrmvYPf6XGLW7jL0jKVa/Lfy
+         +xOtBtwKlaja0TfAcQJ0VYwDDhkPQFIDjW/oLwrRSpinQV6s2k4O0GaSwy1uoMBPtmq8
+         9NyURifh80gzG9Po7lDjW9xXjm5HU2xWTmRiQdzfPOlKbbD1ThuVVX2hP7JZaTtLGX+x
+         vibg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q0o+3IFWqjXrZk2VGX8AZpqrFD1hgC3oeYUhyHktLWk=;
+        b=NXNtDQzQAhzR/cLR7aEc/S9HgVTFKZdt/C9r3H1sX833+XykOsTyKrSeXhrC6yg8Vk
+         3MqpRBiG+qEykuycwuJJGhDHCbHVkbOG4VAK86hO+4NWgYJSyNltu44pwhjGSodoiZsF
+         zazjGXySQRqnM5vwuC7Yafk3i4axWYgSZF/GWwdFWiWUNd6kqGC2NQNRGLYgmNnk7Vai
+         LK/sH5zKhOxkbmJVPjaiLIhXOhsDryJKih68hhtHFSnEV+icxqJYrP6AZVxQFRRChXYb
+         u98L0S+XsB6MtJ8NXN8eqEylgJQqAawWmELigy+/IwVpiULF4TtVW4DJgdXQ/axsw/iN
+         0lEw==
+X-Gm-Message-State: APjAAAWCpsdvCsPnuFkFJJCB7Xy1xD4FL/p1aRbH8PzaTBGnXqBFsPOz
+        CwNJo3lRSxPuD+rFGJZwLcty20WHpXh1lVsIq6ZJ2nJXqIg=
+X-Google-Smtp-Source: APXvYqwMnOJnqiiU5PdDj4bWsPLkyAyK7HjGgPt4cyMj0QNS4/FD/W0Art0KzjBqfz4nroAZ1UYCVscxfEw92u6lZEw=
+X-Received: by 2002:a05:6830:2057:: with SMTP id f23mr659352otp.110.1576708460339;
+ Wed, 18 Dec 2019 14:34:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20191209143120.60100-1-jannh@google.com> <20191209143120.60100-4-jannh@google.com>
+ <20191211173711.GF14821@zn.tnic>
+In-Reply-To: <20191211173711.GF14821@zn.tnic>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 18 Dec 2019 23:33:54 +0100
+Message-ID: <CAG48ez1-u8DbxSAu9DXTEEy3-ADquQLWXB6ufV+By7TnuxWOsQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/4] x86/kasan: Print original address on #GP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 11, 2019 at 6:37 PM Borislav Petkov <bp@alien8.de> wrote:
+> On Mon, Dec 09, 2019 at 03:31:20PM +0100, Jann Horn wrote:
+> >  arch/x86/kernel/traps.c     | 12 ++++++++++-
+> >  arch/x86/mm/kasan_init_64.c | 21 -------------------
+> >  include/linux/kasan.h       |  6 ++++++
+> >  mm/kasan/report.c           | 40 +++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 57 insertions(+), 22 deletions(-)
+>
+> I need a KASAN person ACK here, I'd guess.
 
+Right, I got a Reviewed-by from Dmitry for v2, but cleared that when I
+made changes to the patch later - I'll ask Dmitry for a fresh ack on
+the v7 patch.
 
-On Wed, 18 Dec 2019, at 16:30, Xu Wang wrote:
-> Remove unneeded semicolon reported by coccinelle.
-> 
-> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+[...]
+> > -             die(desc, regs, error_code);
+> > +             flags = oops_begin();
+> > +             sig = SIGSEGV;
+> > +             __die_header(desc, regs, error_code);
+> > +             if (hint == GP_NON_CANONICAL)
+> > +                     kasan_non_canonical_hook(gp_addr);
+> > +             if (__die_body(desc, regs, error_code))
+> > +                     sig = 0;
+> > +             oops_end(flags, regs, sig);
+>
+> Instead of opencoding it like this, can we add a
+>
+>         die_addr(desc, regs, error_code, gp_addr);
+>
+> to arch/x86/kernel/dumpstack.c and call it from here:
+>
+>         if (hint != GP_NON_CANONICAL)
+>                 gp_addr = 0;
+>
+>         die_addr(desc, regs, error_code, gp_addr);
 
-Acked-by: Andrew Jeffery <andrew@aj.id.au>
+Okay, so I'll make __die_header() and __die_body() static, introduce
+and hook up die_addr() in patch 3/4, and then in patch 4/4 insert the
+call to the KASAN hook.
+
+> This way you won't need to pass down to die_addr() the hint too - you
+> code into gp_addr whether it was non-canonical or not.
+>
+> The
+>
+> +       if (addr < KASAN_SHADOW_OFFSET)
+> +               return;
+>
+> check in kasan_non_canonical_hook() would then catch it when addr == 0.
+
+I'll add an explicit check for nonzero address before calling
+kasan_non_canonical_hook() so that the semantics are a bit more
+cleanly split.
