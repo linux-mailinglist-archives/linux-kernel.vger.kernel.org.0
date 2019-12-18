@@ -2,195 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2E0124028
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:18:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33DB4123FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:01:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLRHSM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:18:12 -0500
-Received: from mga14.intel.com ([192.55.52.115]:20002 "EHLO mga14.intel.com"
+        id S1726718AbfLRHAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:00:50 -0500
+Received: from mout.web.de ([212.227.15.4]:50847 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbfLRHSJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:18:09 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 20:11:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,328,1571727600"; 
-   d="scan'208";a="227730233"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga002.jf.intel.com with ESMTP; 17 Dec 2019 20:11:47 -0800
-Cc:     baolu.lu@linux.intel.com, "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-        Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH v8 08/10] iommu/vt-d: Add custom allocator for IOASID
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <1576524252-79116-1-git-send-email-jacob.jun.pan@linux.intel.com>
- <1576524252-79116-9-git-send-email-jacob.jun.pan@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <9c9c818c-ccb1-544d-2041-cf7017c4d898@linux.intel.com>
-Date:   Wed, 18 Dec 2019 12:10:55 +0800
+        id S1725881AbfLRHAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:00:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1576652429;
+        bh=HEVqlBMuHVQwjhLQA1qIaNrb256F6p8krZdbgoetx54=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=A+lt93RUoLNxaWM7AkIkUL4MiZkHPcUiIbEvea7xOffBoDlKqkDvLbY9CdCLloZHo
+         46QkwDGN7GB58aXU8Z3AxNFZgljcRpO/kJVLNeOdfM0XAUZIVF3kOqLlnJ1gHKs7lf
+         WWYbi3o+U3Qrl2eKXOsXPNg5SIPdU4g+ZenMRxgg=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([93.131.36.204]) by smtp.web.de (mrweb001
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MT8sw-1iIgPa3cvO-00S5W6; Wed, 18
+ Dec 2019 08:00:29 +0100
+Subject: Re: [v5 10/13] exfat: add nls operations
+From:   Markus Elfring <Markus.Elfring@web.de>
+To:     Namjae Jeon <namjae.jeon@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Daniel Wagner <dwagner@suse.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Nikolay Borisov <nborisov@suse.com>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        =?UTF-8?Q?Valdis_Kl=c4=93tnieks?= <valdis.kletnieks@vt.edu>,
+        linkinjeon@gmail.com
+References: <20191125000326.24561-1-namjae.jeon@samsung.com>
+ <CGME20191125000633epcas1p1bce48f6e0fdd552fe74dbdb7976d5182@epcas1p1.samsung.com>
+ <20191125000326.24561-11-namjae.jeon@samsung.com>
+ <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <db6a467c-2fe8-9cf4-8447-1b7cbfd222a0@web.de>
+Date:   Wed, 18 Dec 2019 08:00:20 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1576524252-79116-9-git-send-email-jacob.jun.pan@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <147eac54-5846-ffe1-4b6b-ebf611d1252b@web.de>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7lCiLfWBCrd+QEOxHEQ8qqirKCsCth+iCZ89RrYVGBQVKOzYPt2
+ /43DSMGStcVwEoevrv16tVP6IiLLgjzFYBYNh6djNQw/zCF3VwXIKO/jdhkwDBVkCxNrHiV
+ efcYIJTPAgQhstd4yiBM/ZweL1u+UEN2t5znoydfZy7fTMDx2y67xGyLaB+xxVhYZVmmVc5
+ Odo69TDR/BIdTMMkCV2UA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:G8px9mSQLuk=:1xHuOAYeOZjnbSktpJebpF
+ BS7ogWHJvVJnxkEzAGA0tPqJw4AYAhnvfv5U8eDDmlNwA7LxL0Fc85pi3xXdu1eLo0jMI+cCI
+ KZhzULQG4R2VtqTnR62AxF/JWjbLdVhO3H1mXDAa6V9UquTg6HF8zap9fQOjjGxYuRMg7iDBV
+ GNVF1YfEv5DmoyTNjByamgT/MIUZXCtk2vild0YK5xNeldnSWPGUZ2p2C5uS6c6vuF/fu37Dw
+ IN1zoc7/LdgzxbPKnAUXuhBqMrVmwfcxi69QCVUc2rRg3Le9g/EgYTonRQ+95/uuJL2jvXU9+
+ 3uAasT3JqYmaWveQlZiErCnkI3GqywDNfBR8EP2SHLLrRB6M7LIQJ9MxS4tu1y7E5/aoOBeld
+ 7Pj6ElSsmlYY/r6+T0EzBfmDB76nH0cnUZsgw2j9SmAsjxRq9RNrhlQazGFmg1Mcm5LWioF6y
+ /0eLp+86lt6/fsbFeTYwKqkuD8dENyX5S9Nh9SH8ugUKRp5tDvcDHYF2xLUvjjkRbHJx6taZk
+ wRxB5J70oCpftXer8eh6FRRLKYfeVj6KfU5IMfOpgknn0YTDh8jSACY6CeDtZRjc6zzYOW9vD
+ ik54vX60AVbguUq0JuL/z2XJHirtD/ZCBiLmk61wmEXzudlY/tHKoSeqXvwq8khRFAlWcgD08
+ PfTLHPVepvsxwTblOLUBW1J11bHR6KO2pY1nMvfnfdk2vbNtpHNC0qCsJhYfUlx6Xl28E3thY
+ hfWz//Konk1YkJNuGUVN03k4tK4qre17NbV1rg5RpalyxBaEg8tvARnmeqz95yiS98ItK0uJu
+ lL+G7AZClfC1pr2rAvWurjrV7U1fk8yJnDFmtH6TRzfIEdYpRG2+0D0xQxMZ3FHqmb0t8O7gM
+ FKnOpdDwJrW3WAu0Ok4I8EcLu9dXoo1q4M/Hidj8Zig7Nehtx6dpO8SjEZIpldXOcB8W8VIAb
+ tgxNVUW5ormCsO4REyr8PwUaLZE0VDPyvKFhYOYXRqEm5aIHn2aJZ6ln6eD6gxkqJiHiM8UNS
+ RvUK2hjU3OgARZEqvMUPPSPIh1jnluKEOIaa0Tlu+Oklh7D8dueTNiKA9WOG64ub76QpKYtxc
+ 6u1t+90CeCKTO1dGc0yOxeylvjY6MiqNZK/3JrwV4SczntBlHo+/VYSBzxAe4/91zOuAGl+O+
+ 1PmPZPiA9NzzhXcdlKqg1ZOnyaeoXkId/t8l4f1khLQv6weVSxWBGQ+42Qk6RXtyCCHkHy+r6
+ 9ZHFbAaLJPLFjncAI5iR9Hl48qnrH+Oz+zZLMLHuS/2C5veP1cFCGzeK1FD8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> * Can it be that a type other than =E2=80=9Cint=E2=80=9D would be more p=
+ortable
+>   for the desired data processing at these source code places?
+>
+> * How do you think about to use more meaningful identifiers for
+>   two of the shown literals?
 
-On 12/17/19 3:24 AM, Jacob Pan wrote:
-> When VT-d driver runs in the guest, PASID allocation must be
-> performed via virtual command interface. This patch registers a
-> custom IOASID allocator which takes precedence over the default
-> XArray based allocator. The resulting IOASID allocation will always
-> come from the host. This ensures that PASID namespace is system-
-> wide.
-> 
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Signed-off-by: Liu, Yi L <yi.l.liu@intel.com>
-> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> ---
->   drivers/iommu/intel-iommu.c | 75 +++++++++++++++++++++++++++++++++++++++++++++
->   include/linux/intel-iommu.h |  2 ++
->   2 files changed, 77 insertions(+)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index e90102c7540d..b0c0bb6f740e 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -1700,6 +1700,9 @@ static void free_dmar_iommu(struct intel_iommu *iommu)
->   		if (ecap_prs(iommu->ecap))
->   			intel_svm_finish_prq(iommu);
->   	}
-> +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap))
-> +		ioasid_unregister_allocator(&iommu->pasid_allocator);
-> +
->   #endif
->   }
->   
-> @@ -3181,6 +3184,75 @@ static int copy_translation_tables(struct intel_iommu *iommu)
->   	return ret;
->   }
->   
-> +#ifdef CONFIG_INTEL_IOMMU_SVM
-> +static ioasid_t intel_ioasid_alloc(ioasid_t min, ioasid_t max, void *data)
-> +{
-> +	struct intel_iommu *iommu = data;
-> +	ioasid_t ioasid;
-> +
+Would you like to clarify these software development concerns?
 
-Check !iommu just like the free api?
-
-> +	/*
-> +	 * VT-d virtual command interface always uses the full 20 bit
-> +	 * PASID range. Host can partition guest PASID range based on
-> +	 * policies but it is out of guest's control.
-> +	 */
-> +	if (min < PASID_MIN || max > intel_pasid_max_id)
-> +		return INVALID_IOASID;
-> +
-> +	if (vcmd_alloc_pasid(iommu, &ioasid))
-> +		return INVALID_IOASID;
-> +
-> +	return ioasid;
-> +}
-> +
-> +static void intel_ioasid_free(ioasid_t ioasid, void *data)
-> +{
-> +	struct intel_iommu *iommu = data;
-> +
-> +	if (!iommu)
-> +		return;
-> +	/*
-> +	 * Sanity check the ioasid owner is done at upper layer, e.g. VFIO
-> +	 * We can only free the PASID when all the devices are unbound.
-> +	 */
-> +	if (ioasid_find(NULL, ioasid, NULL)) {
-> +		pr_alert("Cannot free active IOASID %d\n", ioasid);
-> +		return;
-> +	}
-> +	vcmd_free_pasid(iommu, ioasid);
-> +}
-> +
-> +static void register_pasid_allocator(struct intel_iommu *iommu)
-> +{
-> +	if (!intel_iommu_sm) {
-
-Use sm_supported(iommu) instead.
-
-> +		pr_warn("VT-d scalable mode not enabled\n");
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * Register a custom PASID allocator if we are running in a guest,
-> +	 * guest PASID must be obtained via virtual command interface.
-> +	 * There can be multiple vIOMMUs in each guest but only one allocator
-> +	 * is active. All vIOMMU allocators will eventually be calling the same
-> +	 * host allocator.
-> +	 */
-> +	if (ecap_vcs(iommu->ecap) && vccap_pasid(iommu->vccap)) {
-> +		pr_info("Register custom PASID allocator\n");
-> +		iommu->pasid_allocator.alloc = intel_ioasid_alloc;
-> +		iommu->pasid_allocator.free = intel_ioasid_free;
-> +		iommu->pasid_allocator.pdata = (void *)iommu;
-> +		if (!ioasid_register_allocator(&iommu->pasid_allocator)) {
-> +			pr_warn("Custom PASID allocator failed, scalable mode disabled\n");
-> +			/*
-> +			 * Disable scalable mode on this IOMMU if there
-> +			 * is no custom allocator. Mixing SM capable vIOMMU
-> +			 * and non-SM vIOMMU are not supported.
-> +			 */
-> +			intel_iommu_sm = 0;
-> +		}
-> +	}
-> +}
-> +#endif
-> +
->   static int __init init_dmars(void)
->   {
->   	struct dmar_drhd_unit *drhd;
-> @@ -3298,6 +3370,9 @@ static int __init init_dmars(void)
->   	 */
->   	for_each_active_iommu(iommu, drhd) {
->   		iommu_flush_write_buffer(iommu);
-> +#ifdef CONFIG_INTEL_IOMMU_SVM
-> +		register_pasid_allocator(iommu);
-> +#endif
->   		iommu_set_root_entry(iommu);
->   		iommu->flush.flush_context(iommu, 0, 0, 0, DMA_CCMD_GLOBAL_INVL);
->   		iommu->flush.flush_iotlb(iommu, 0, 0, 0, DMA_TLB_GLOBAL_FLUSH);
-> diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-> index 1e11560b0e59..8c30b23bd838 100644
-> --- a/include/linux/intel-iommu.h
-> +++ b/include/linux/intel-iommu.h
-> @@ -19,6 +19,7 @@
->   #include <linux/iommu.h>
->   #include <linux/io-64-nonatomic-lo-hi.h>
->   #include <linux/dmar.h>
-> +#include <linux/ioasid.h>
->   
->   #include <asm/cacheflush.h>
->   #include <asm/iommu.h>
-> @@ -557,6 +558,7 @@ struct intel_iommu {
->   #ifdef CONFIG_INTEL_IOMMU_SVM
->   	struct page_req_dsc *prq;
->   	unsigned char prq_name[16];    /* Name for PRQ interrupt */
-> +	struct ioasid_allocator_ops pasid_allocator; /* Custom allocator for PASIDs */
->   #endif
->   	struct q_inval  *qi;            /* Queued invalidation info */
->   	u32 *iommu_state; /* Store iommu states between suspend and resume.*/
-> 
-
-Best regards,
-baolu
+Regards,
+Markus
