@@ -2,103 +2,245 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF9E3124AC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F8B6124AEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:12:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbfLRPKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:10:21 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:35388 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726922AbfLRPKU (ORCPT
+        id S1727525AbfLRPLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:11:48 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:33979 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727512AbfLRPLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:10:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576681819;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=QM58zRG2E33uopTi5C1OLZUP84XlNWgGlqpWQbuCIPw=;
-        b=giL2cRqi7uySqBFzskBehkV1wUW21VtzT/szfQoPmHMZHhfhIp1sP6/YB/kt2YUmqaU3+i
-        VmiHC6An73+bsyz9InEjx3FJ4+NH8ZgBN7a/qdgW5TUK6bYmbypN0enjkFYVAO/WgBfZnP
-        Z3LounYvq1sOhEhXX+mh1L6n5qgA8Ws=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-262-u8ryBpnTP02wqiERj4m_Yw-1; Wed, 18 Dec 2019 10:10:16 -0500
-X-MC-Unique: u8ryBpnTP02wqiERj4m_Yw-1
-Received: by mail-qt1-f200.google.com with SMTP id e8so1568169qtg.9
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:10:16 -0800 (PST)
+        Wed, 18 Dec 2019 10:11:46 -0500
+Received: by mail-ua1-f67.google.com with SMTP id 1so759855uao.1
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:11:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OG/pM/wl2nU75Ce+HHMv6RzUgI11FdyesZawxBUPdMo=;
+        b=sjxLPdqPMrWCiphZxrkk/aw+he+VCwR/j4xHVgnfx30c9y7WrySH0ZYfQ7gh3PREfX
+         wQRdWBaCujUPM62xcIlkuUyLa0wFeKzZkuUT86MuIDwLLJjvJu4Nfp0RXzU1KyHY+I7E
+         f+tfhzGksjrXSTjSfAGuLrf2FB1LywGABMos918G4y5Gi+dKniW7jLz2NdrfTBv/Sres
+         mKHEkeGAGqDurGMX0VzvKl87Ft5xhzwAVN37w2mxLek+aM4x8tCCyDuLs0U46a+F8bxn
+         CK8bNsy93M34jpcpDhqau5xatHXEBHjviqduADf0U+OP+/q4W9lRh697GWBgvPJr41X9
+         bvKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=QM58zRG2E33uopTi5C1OLZUP84XlNWgGlqpWQbuCIPw=;
-        b=VnCixpAETyJfVra0n10Gwb8SR8ihBQ18oX2LS26+LK437l7Mc/TqirwnRuPwkg/GcP
-         kb0L7ETkji0EYclkdCGdCWtgQSOXZpMyUldN9zbqcqCLFKd/Z0xECU4hj8+wYtX5BeA1
-         j3W8BvlUkdYgmwFqRWIyIAubLatOidpSYwt6qCw6NkyQRsKmjVhsY+Ai60SNiJzX6gny
-         rCxn1DQKgqktwW7JEEp+NUajTh2Q3d7PGwf/Yfy07G6ZSEnyounSfCaIJbUwKGDtJLlY
-         f5MArOQpHUsAvmEC9kbprt2Pt/2teBIRLkVNc3oiFvEk/eCLrkK+TTOa/vRmRSBkncER
-         uBIA==
-X-Gm-Message-State: APjAAAW+w7mxr57KyMIjMZl8tL160azXWzL8fyZ7MuliMCYWqvm5ZWn5
-        Q6tuHBNWSINih+DcmDJTRs5kCYrMwprP+hbMPRjMO6keXp3tkQ7CM++Xxv97TB2WqkTv8Z3fIkj
-        0kuyow1J0FYl/kuN1ER2kmxz9
-X-Received: by 2002:a0c:e1ce:: with SMTP id v14mr2673046qvl.39.1576681816438;
-        Wed, 18 Dec 2019 07:10:16 -0800 (PST)
-X-Google-Smtp-Source: APXvYqwhQfsc+4bORIeWfJPGw6vR+W11ECcHruYmI+Dy/4t2QYKRuVwYMstb8WaGcqyUqp1oBsusFQ==
-X-Received: by 2002:a0c:e1ce:: with SMTP id v14mr2673022qvl.39.1576681816185;
-        Wed, 18 Dec 2019 07:10:16 -0800 (PST)
-Received: from redhat.com (bzq-79-181-48-215.red.bezeqint.net. [79.181.48.215])
-        by smtp.gmail.com with ESMTPSA id i19sm716606qki.124.2019.12.18.07.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:10:15 -0800 (PST)
-Date:   Wed, 18 Dec 2019 10:10:11 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: vhost changes (batched) in linux-next after 12/13 trigger random
- crashes in KVM guests after reboot
-Message-ID: <20191218100926-mutt-send-email-mst@kernel.org>
-References: <c022e1d6-0d57-ae07-5e6b-8e40d3b01f4b@de.ibm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OG/pM/wl2nU75Ce+HHMv6RzUgI11FdyesZawxBUPdMo=;
+        b=dStkNcxmiB880Cj2VAtYyworRk/YvyfLHqfjH9syjBM+k39sQlcGGGafk6KRgfQzvH
+         T/vuNbfNxx29tcJru3U/bYq/cAj2cqz/0UeqjNvAgYhtlTU1CQEwVPOYvpm9QnWvujQS
+         0pS75CULiZVB989KTxNkNgJNjA00MMRpZXXMWVsnsOWdoOv8iBaXsY6oe8tr7GQ8WNmO
+         TLZ99IvSbEuExP6LU7haKFHASxIrEzJlUc9oObsS6LYPPCcfu1BV5EiCVyIQ7eqaoBGU
+         NPYLA8U8GwN1mw8thwnq9V7nugOrqr7u1KHazM1NQe32PaMtMW07EcJJUO7BzVjEDx+Q
+         715Q==
+X-Gm-Message-State: APjAAAV7IdWUMuIzm+dsIq63IBNe4NGVAZsTHN5fz7bt3sHtjevvgD4I
+        tSR1c9GJJyq0CckKUmxlSvWe5AMNJ3hJIyXUkCeDPA==
+X-Google-Smtp-Source: APXvYqxIemSRkPQQlkOHIgb1DLI/F80ZGX0B3DDxjvdIfGtoGmFwb3OGpLHbe5uZsgnRUDNiscbxAsqS/SFF84Oq+ro=
+X-Received: by 2002:ab0:e16:: with SMTP id g22mr1660978uak.129.1576681904792;
+ Wed, 18 Dec 2019 07:11:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c022e1d6-0d57-ae07-5e6b-8e40d3b01f4b@de.ibm.com>
+References: <1571668177-3766-1-git-send-email-rampraka@codeaurora.org>
+ <CAPDyKFoZEc-m7NMnaAa5bjtCSp4wyJqic3cLHk95xracoWcCUA@mail.gmail.com> <0101016eb6152d19-fa1453b7-ae71-49d7-b13b-8c4009375ee1-000000@us-west-2.amazonses.com>
+In-Reply-To: <0101016eb6152d19-fa1453b7-ae71-49d7-b13b-8c4009375ee1-000000@us-west-2.amazonses.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 18 Dec 2019 16:11:08 +0100
+Message-ID: <CAPDyKFoc-c23d4U6m3UMxtA7KhnHeeUN5u-Rpiwsbsz7PnyT+w@mail.gmail.com>
+Subject: Re: [RFC 0/6] mmc: Add clock scaling support for mmc driver
+To:     Ram Prakash Gupta <rampraka@codeaurora.org>
+Cc:     Asutosh Das <asutoshd@codeaurora.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Sayali Lokhande <sayalil@codeaurora.org>,
+        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
+        cang@codeaurora.org, ppvk@codeaurora.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Doug Anderson <dianders@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 03:43:43PM +0100, Christian Borntraeger wrote:
-> Michael,
-> 
-> with 
-> commit db7286b100b503ef80612884453bed53d74c9a16 (refs/bisect/skip-db7286b100b503ef80612884453bed53d74c9a16)
->     vhost: use batched version by default
-> plus
-> commit 6bd262d5eafcdf8cdfae491e2e748e4e434dcda6 (HEAD, refs/bisect/bad)
->     Revert "vhost/net: add an option to test new code"
-> to make things compile (your next tree is not easily bisectable, can you fix that as well?).
+On Fri, 29 Nov 2019 at 08:34, <rampraka@codeaurora.org> wrote:
+>
+> Hi Ulf,
+>
+> Seems some setting issue with my thunderbird application.
+> Sorry for spams, please ignore my last responses as unsupported
+> characters got added.
+>
+> Typing my response again from browser and re-sending.
+>
+> Thanks,
+> Ram
+>
+> On 2019-10-22 14:10, Ulf Hansson wrote:
+> > On Mon, 21 Oct 2019 at 16:30, Ram Prakash Gupta
+> > <rampraka@codeaurora.org> wrote:
+> >>
+> >> This change adds the use of devfreq based clock scaling to MMC.
+> >> This applicable for eMMC and SDCard.
+> >> For some workloads, such as video playback, it isn't necessary
+> >> for these cards to run at high speed. Running at lower
+> >> frequency, in such cases can still meet the deadlines for data
+> >> transfers.
+> >>
+> >> Scaling down the clock frequency dynamically has power savings
+> >> not only because the bus is running at lower frequency but also
+> >> has an advantage of scaling down the system core voltage, if
+> >> supported. Provide an ondemand clock scaling support similar
+> >> to the cpufreq ondemand governor having two thresholds,
+> >> up_threshold and down_threshold to decide whether to increase
+> >> the frequency or scale it down respectively as per load.
+> >
+> > This sounds simple, but what the series is doing is far more
+> > complicated but scaling the bus clock, as it also re-negotiates the
+> > bus speed mode.
+> >
+> > Each time the triggering point for scaling up/down is hit, then a
+> > series of commands needs to be sent to the card, including running the
+> > tuning procedure. The point is, for sure, this doesn't come for free,
+> > both from a latency point of view, but also from an energy cost point
+> > of view. So, whether this really improves the behaviour, seems like
+> > very use case sensitive, right!?
+>
+> Switching modes would incur some latency for sending commands to switch
+> modes, but tuning is not needed as most of the emmc devices used now a
+> days are with enhanced strobe support, so tuning would not add up any
+> latency as it is not required in hs400 enhanced strobe mode.
+>
+> This feature is implemented for video playback case, where data transfer
+> request is less, where this feature helps with saving power consumption.
+>
+> And when there is burst of data transfer request, load will remain
+> _high_
+> so there won't be any switching and hence it won't affect any existing
+> use cases from latency point of view.
+>
+> Also if hw supports to switch clk frequency without changing mode. I
+> will
+> make change in code. For this I have seek input from hw team.
+>
+>  From collected data, I see this feature is helping in saving power
+> consumption. And no energy penalty is observed. Please share if I am
+> missing any specific. Power saving using this feature is quite good
+> and considerable. Please find the data below.
+>
+> Use Case                             Delta at Battery  Power Impact
+> 30 fps at HD 1080p decode 20Mbps       10 mA               11%
+> 30 fps at UHD 8b H.264 42 Mbps         20.93 mA            19%
+>
+> >
+> > Overall, when it comes to use cases, we have very limited knowledge
+> > about them at the mmc block layer level. I think it should remain like
+> > that. If at any place at all, this information is better maintained by
+> > the generic block layer and potentially the configured I/O scheduler.
+>
+> I think, generic block layer do not have knowledge of use case for data
+> transfer request. And devfreq framework have been used to implement this
+> feature, which should be same in any layer.
 
-I'll try.
+Just to be clear, my main concern here is not using the devfreq framework.
 
-> 
-> I get random crashes in my s390 KVM guests after reboot.
-> Reverting both patches together with commit decd9b8 "vhost: use vhost_desc instead of vhost_log" to
-> make it compile again) on top of linux-next-1218 makes the problem go away.
-> 
-> Looks like the batched version is not yet ready for prime time. Can you drop these patches until
-> we have fixed the issues?
-> 
-> Christian
-> 
+It's rather whether switching speed modes is really worth it, which
+Doug pointed out as well.
 
-Will do, thanks for letting me know.
+>
+> Also mobile platforms comes mostly with emmc and ufs as storage media.
+> And clock scaling is already implemented in upstream ufs driver using
+> devfreq framework. On similar line, this feature is implemented for mmc
+> driver. So I believe, clk scaling implementation is better placed in mmc
+> driver rather in generic block layer.
 
--- 
-MST
+At some point you want to trigger the clock to be scaled up/down,
+probably because of reaching some bandwidth threshold. This part seems
+like a generic block thing and not an mmc specific thing.
 
+Exactly how that would affect this approach is hard to say, but my
+point is, that I don't want to sprinkle the mmc subsystem with code
+that may belong in upper common layers.
+
+>
+> >
+> > This brings me to a question about the tests you have you run. Can you
+> > share some information and data about that?
+>
+> Test case used are 1080p and 4k video playback use case. As this feature
+> is implemented specifically for video playback use case.
+
+Right.
+
+It seems to me, that you are optimizing for only one particular use
+case. How do you make sure to not increase energy consumption, for
+other use cases that would gain from running at the highest speed mode
+and "race to idle"?
+
+I think you need to take a step back and think more general about this
+approach. More importantly, you need to provide more data to prove
+your approach, also according to suggestions from Dough.
+
+> >
+> >>
+> >>
+> >> Ram Prakash Gupta (6):
+> >>   mmc: core: Parse clk scaling dt entries
+> >>   mmc: core: Add core scaling support in driver
+> >>   mmc: core: Initialize clk scaling for mmc and SDCard
+> >>   mmc: core: Add debugfs entries for scaling support
+> >>   mmc: sdhci-msm: Add capability in platfrom host
+> >>   dt-bindings: mmc: sdhci-msm: Add clk scaling dt parameters
+> >>
+> >>  .../devicetree/bindings/mmc/sdhci-msm.txt          |  19 +
+> >
+> > I noticed that the DT patch was put last in the series, but the
+> > parsing is implemented in the first patch. Please flip this around. If
+> > you want to implement DT parsing of new bindings, please make sure to
+> > discuss the new bindings first.
+>
+> I will update in next post.
+>
+> >
+> >>  drivers/mmc/core/block.c                           |  19 +-
+> >>  drivers/mmc/core/core.c                            | 777
+> >> +++++++++++++++++++++
+> >>  drivers/mmc/core/core.h                            |  17 +
+> >>  drivers/mmc/core/debugfs.c                         |  90 +++
+> >>  drivers/mmc/core/host.c                            | 226 ++++++
+> >>  drivers/mmc/core/mmc.c                             | 246 ++++++-
+> >>  drivers/mmc/core/queue.c                           |   2 +
+> >>  drivers/mmc/core/sd.c                              |  84 ++-
+> >>  drivers/mmc/host/sdhci-msm.c                       |   2 +
+> >>  include/linux/mmc/card.h                           |   7 +
+> >>  include/linux/mmc/host.h                           |  66 ++
+> >>  12 files changed, 1550 insertions(+), 5 deletions(-)
+> >
+> > This is a lot of new code in the mmc core, which I would then need to
+> > maintain, of course. I have to admit, I am a bit concerned about that,
+> > so you have to convince me that there are good reasons for me to apply
+> > this.
+> >
+> > As I stated above, I think the approach looks quite questionable in
+> > general. And even if you can share measurement, that it improves the
+> > behaviour, I suspect (without a deeper code review) that some of the
+> > code better belongs in common block device layer.
+>
+>  From the collected power data, I see this as good reason to have this
+> feature in mmc driver as number is quite considerable.
+>
+> For approach, it would be helpful if you share your inputs regarding
+> this
+> approach. And as you have stated, this can be further discussed after a
+> review from you.
+
+Besides my comments above, Doug has provided you with valuable
+feedback. Please follow up on that as well, if you still intend to
+pursue with this approach.
+
+Kind regards
+Uffe
