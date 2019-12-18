@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC7B81253DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4931253D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbfLRUuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:50:06 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47839 "EHLO
+        id S1727774AbfLRUto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:49:44 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47832 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfLRUtT (ORCPT
+        with ESMTP id S1727495AbfLRUtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:19 -0500
+        Wed, 18 Dec 2019 15:49:32 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0id000214;
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ie000214;
         Wed, 18 Dec 2019 12:49:14 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Ian Molton <spyro@f2s.com>
-Subject: [PATCH 11/18] mfd: t7l66xb: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:50 -0500
-Message-Id: <1576702137-25905-12-git-send-email-paul.gortmaker@windriver.com>
+        Milo Kim <milo.kim@ti.com>
+Subject: [PATCH 12/18] mfd: lp8788: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:51 -0500
+Message-Id: <1576702137-25905-13-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -33,8 +33,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_T7L66XB
-drivers/mfd/Kconfig:    bool "Toshiba T7L66XB"
+drivers/mfd/Kconfig:config MFD_LP8788
+drivers/mfd/Kconfig:    bool "TI LP8788 Power Management Unit Driver"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -45,79 +45,77 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
+Cc: Milo Kim <milo.kim@ti.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: Ian Molton <spyro@f2s.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/t7l66xb.c | 37 ++++---------------------------------
- 1 file changed, 4 insertions(+), 33 deletions(-)
+ drivers/mfd/lp8788.c | 24 ++----------------------
+ 1 file changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/mfd/t7l66xb.c b/drivers/mfd/t7l66xb.c
-index 70da0c4ae457..636b9c8dc96d 100644
---- a/drivers/mfd/t7l66xb.c
-+++ b/drivers/mfd/t7l66xb.c
-@@ -20,7 +20,7 @@
-  */
- 
- #include <linux/kernel.h>
+diff --git a/drivers/mfd/lp8788.c b/drivers/mfd/lp8788.c
+index 768d556b3fe9..b218855e4162 100644
+--- a/drivers/mfd/lp8788.c
++++ b/drivers/mfd/lp8788.c
+@@ -11,7 +11,7 @@
+ #include <linux/i2c.h>
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/lp8788.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/err.h>
- #include <linux/io.h>
  #include <linux/slab.h>
-@@ -403,42 +403,13 @@ static int t7l66xb_probe(struct platform_device *dev)
- 	return ret;
+ 
+ #define MAX_LP8788_REGISTERS		0xA2
+@@ -199,27 +199,17 @@ static int lp8788_probe(struct i2c_client *cl, const struct i2c_device_id *id)
+ 			       ARRAY_SIZE(lp8788_devs), NULL, 0, NULL);
  }
  
--static int t7l66xb_remove(struct platform_device *dev)
+-static int lp8788_remove(struct i2c_client *cl)
 -{
--	struct t7l66xb_platform_data *pdata = dev_get_platdata(&dev->dev);
--	struct t7l66xb *t7l66xb = platform_get_drvdata(dev);
--	int ret;
+-	struct lp8788 *lp = i2c_get_clientdata(cl);
 -
--	ret = pdata->disable(dev);
--	clk_disable_unprepare(t7l66xb->clk48m);
--	clk_put(t7l66xb->clk48m);
--	clk_disable_unprepare(t7l66xb->clk32k);
--	clk_put(t7l66xb->clk32k);
--	t7l66xb_detach_irq(dev);
--	iounmap(t7l66xb->scr);
--	release_resource(&t7l66xb->rscr);
--	mfd_remove_devices(&dev->dev);
--	kfree(t7l66xb);
--
--	return ret;
--
+-	mfd_remove_devices(lp->dev);
+-	lp8788_irq_exit(lp);
+-	return 0;
 -}
 -
- static struct platform_driver t7l66xb_platform_driver = {
- 	.driver = {
--		.name	= "t7l66xb",
-+		.name			= "t7l66xb",
-+		.suppress_bind_attrs	= true,
- 	},
- 	.suspend	= t7l66xb_suspend,
- 	.resume		= t7l66xb_resume,
- 	.probe		= t7l66xb_probe,
--	.remove		= t7l66xb_remove,
+ static const struct i2c_device_id lp8788_ids[] = {
+ 	{"lp8788", 0},
+ 	{ }
  };
+-MODULE_DEVICE_TABLE(i2c, lp8788_ids);
+ 
+ static struct i2c_driver lp8788_driver = {
+ 	.driver = {
+ 		.name = "lp8788",
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = lp8788_probe,
+-	.remove = lp8788_remove,
+ 	.id_table = lp8788_ids,
+ };
+ 
+@@ -228,13 +218,3 @@ static int __init lp8788_init(void)
+ 	return i2c_add_driver(&lp8788_driver);
+ }
+ subsys_initcall(lp8788_init);
 -
--/*--------------------------------------------------------------------------*/
+-static void __exit lp8788_exit(void)
+-{
+-	i2c_del_driver(&lp8788_driver);
+-}
+-module_exit(lp8788_exit);
 -
--module_platform_driver(t7l66xb_platform_driver);
--
--MODULE_DESCRIPTION("Toshiba T7L66XB core driver");
--MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Ian Molton");
--MODULE_ALIAS("platform:t7l66xb");
-+builtin_platform_driver(t7l66xb_platform_driver);
+-MODULE_DESCRIPTION("TI LP8788 MFD Driver");
+-MODULE_AUTHOR("Milo Kim");
+-MODULE_LICENSE("GPL");
 -- 
 2.7.4
 
