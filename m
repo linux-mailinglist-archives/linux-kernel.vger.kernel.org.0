@@ -2,39 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5F61242F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:24:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C70C41242FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 10:25:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbfLRJYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 04:24:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60562 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfLRJYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:24:44 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 93C0CAB71;
-        Wed, 18 Dec 2019 09:24:41 +0000 (UTC)
-Subject: Re: [RFC PATCH 1/3] x86/xen: add basic KASAN support for PV kernel
-To:     Sergey Dyasli <sergey.dyasli@citrix.com>, xen-devel@lists.xen.org,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        George Dunlap <george.dunlap@citrix.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>
-References: <20191217140804.27364-1-sergey.dyasli@citrix.com>
- <20191217140804.27364-2-sergey.dyasli@citrix.com>
-From:   =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Message-ID: <934a2950-9079-138d-5476-5eabd84dfec5@suse.com>
-Date:   Wed, 18 Dec 2019 10:24:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726767AbfLRJZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 04:25:19 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35904 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbfLRJZS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:25:18 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r19so1323786ljg.3;
+        Wed, 18 Dec 2019 01:25:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=PLKwWIuTZDD+oQG31GvMuL5TYzCyN5KNCo0T2Wy+cds=;
+        b=TfMoo8Xu+y+B+rq8CeEVgYOMWYrTQhV24sb8yvWhXilZIZxPeVoV1j+TgShyAmjRHD
+         3qfEI0uYZjr4KKhJS/G0i4+YDv0SmICaGCVDXmOqvtRymMjsNdAMzXhgouyEkdMyqyO1
+         EVuX347NJcAyyv52jPidJnzTi0KapVzmsOY8pd9bSCXTys4x4QZ1y9jcMRK8PoTyr3yw
+         QpTejkC+a7NgNUDiGBKZhyOrDBjb4Hhu3M4rSBmOMmb806EZYd7G49vhQFIf0nDArbiH
+         G6RXjdjFUxXepIvedrukBdwLHTrQD0d5LmtjsYcHTG5hdbaghoUmXsy4y1bw9jv919ft
+         hDfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PLKwWIuTZDD+oQG31GvMuL5TYzCyN5KNCo0T2Wy+cds=;
+        b=f+wOwcZ1be7lfHs0mkh4VPi4ECxRQo+zJAUvm20O8kHTs8I9oZ6UnA0+B2g8R7v2Xy
+         F4jnt6JBGbPgYX5sZx8rFOWUqTaI0P6YtFV8bc0dhDlEB7PE112agJbyl1VKP00O9rmZ
+         pAz0xppxDJau4a2QGJdmx0BG1Sd4z6PGjcNuTkosMnPsQcIwLT3JRNKhUxgGx7Sr/sOf
+         BEqpWHCiCK5/l0Iq56te3x1vK1S76SZZSYb/nxbASXC9KZRB8Ih0CbFG9JjAUyZC3vdi
+         cu9n2JWtXfN3jJbxEY3lcatSwWkEdKQiFhYU8UG0EDGw4iz0i5H6W4q8i8LBGHeiOL+h
+         ivgA==
+X-Gm-Message-State: APjAAAUOAu1vILEEPTtLcLKvAhIxmnTNDlrcw/uV2WM8nx3l+vY3DlBl
+        jLOVgI7rf9xZARNF2cCfVUj9HMT62Y4=
+X-Google-Smtp-Source: APXvYqzEd8z2QVSjJ9ymLRW7TE86+BRX0V+GQzH6a73ToOSO1dp9ZdoBwixCaIgv+9Uh6LSxQjYpqQ==
+X-Received: by 2002:a2e:84d0:: with SMTP id q16mr970913ljh.138.1576661116588;
+        Wed, 18 Dec 2019 01:25:16 -0800 (PST)
+Received: from [172.31.190.83] ([86.57.146.226])
+        by smtp.gmail.com with ESMTPSA id q14sm761785ljm.68.2019.12.18.01.25.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Dec 2019 01:25:16 -0800 (PST)
+Subject: Re: [PATCH 2/2] io_uring: batch getting pcpu references
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <cover.1576621553.git.asml.silence@gmail.com>
+ <b72c5ec7f6d9a9881948de6cb88d30cc5e0354e9.1576621553.git.asml.silence@gmail.com>
+ <e54d77e4-9357-cb9e-9d06-d96b24f49a44@kernel.dk>
+ <6f29aacb-a067-fc9d-5625-0625557be2e1@kernel.dk>
+From:   Pavel Begunkov <asml.silence@gmail.com>
+Message-ID: <bc774cca-00ae-1a31-1f34-d223f45455e8@gmail.com>
+Date:   Wed, 18 Dec 2019 12:25:15 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <20191217140804.27364-2-sergey.dyasli@citrix.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <6f29aacb-a067-fc9d-5625-0625557be2e1@kernel.dk>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -42,235 +68,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.12.19 15:08, Sergey Dyasli wrote:
-> This enables to use Outline instrumentation for Xen PV kernels.
+On 12/18/2019 2:31 AM, Jens Axboe wrote:
+> On 12/17/19 4:21 PM, Jens Axboe wrote:
+>> On 12/17/19 3:28 PM, Pavel Begunkov wrote:
+>>> percpu_ref_tryget() has its own overhead. Instead getting a reference
+>>> for each request, grab a bunch once per io_submit_sqes().
+>>>
+>>> basic benchmark with submit and wait 128 non-linked nops showed ~5%
+>>> performance gain. (7044 KIOPS vs 7423)
+>>>
+>>> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>>> ---
+>>>
+>>> For notice: it could be done without @extra_refs variable,
+>>> but looked too tangled because of gotos.
+>>>
+>>>
+>>>  fs/io_uring.c | 11 ++++++++---
+>>>  1 file changed, 8 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/fs/io_uring.c b/fs/io_uring.c
+>>> index cf4138f0e504..6c85dfc62224 100644
+>>> --- a/fs/io_uring.c
+>>> +++ b/fs/io_uring.c
+>>> @@ -845,9 +845,6 @@ static struct io_kiocb *io_get_req(struct io_ring_ctx *ctx,
+>>>  	gfp_t gfp = GFP_KERNEL | __GFP_NOWARN;
+>>>  	struct io_kiocb *req;
+>>>  
+>>> -	if (!percpu_ref_tryget(&ctx->refs))
+>>> -		return NULL;
+>>> -
+>>>  	if (!state) {
+>>>  		req = kmem_cache_alloc(req_cachep, gfp);
+>>>  		if (unlikely(!req))
+>>> @@ -3929,6 +3926,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+>>>  	struct io_submit_state state, *statep = NULL;
+>>>  	struct io_kiocb *link = NULL;
+>>>  	int i, submitted = 0;
+>>> +	unsigned int extra_refs;
+>>>  	bool mm_fault = false;
+>>>  
+>>>  	/* if we have a backlog and couldn't flush it all, return BUSY */
+>>> @@ -3941,6 +3939,10 @@ static int io_submit_sqes(struct io_ring_ctx *ctx, unsigned int nr,
+>>>  		statep = &state;
+>>>  	}
+>>>  
+>>> +	if (!percpu_ref_tryget_many(&ctx->refs, nr))
+>>> +		return -EAGAIN;
+>>> +	extra_refs = nr;
+>>> +
+>>>  	for (i = 0; i < nr; i++) {
+>>>  		struct io_kiocb *req = io_get_req(ctx, statep);
+>>>  
 > 
-> KASAN_INLINE and KASAN_VMALLOC options currently lead to boot crashes
-> and hence disabled.
+> This also needs to come before the submit_state_start().
 > 
-> Rough edges in the patch are marked with XXX.
+Good catch, forgot to handle this. Thanks
+
+> I forgot to mention that I really like the idea, no point in NOT batching
+> the refs when we know exactly how many refs we need.
 > 
-> Signed-off-by: Sergey Dyasli <sergey.dyasli@citrix.com>
-> ---
->   arch/x86/mm/init.c          | 14 ++++++++++++++
->   arch/x86/mm/kasan_init_64.c | 28 ++++++++++++++++++++++++++++
->   arch/x86/xen/Makefile       |  7 +++++++
->   arch/x86/xen/enlighten_pv.c |  3 +++
->   arch/x86/xen/mmu_pv.c       | 13 +++++++++++--
->   arch/x86/xen/multicalls.c   | 10 ++++++++++
->   drivers/xen/Makefile        |  2 ++
->   kernel/Makefile             |  2 ++
->   lib/Kconfig.kasan           |  3 ++-
->   9 files changed, 79 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-> index e7bb483557c9..0c98a45eec6c 100644
-> --- a/arch/x86/mm/init.c
-> +++ b/arch/x86/mm/init.c
-> @@ -8,6 +8,8 @@
->   #include <linux/kmemleak.h>
->   #include <linux/sched/task.h>
->   
-> +#include <xen/xen.h>
-> +
->   #include <asm/set_memory.h>
->   #include <asm/e820/api.h>
->   #include <asm/init.h>
-> @@ -835,6 +837,18 @@ void free_kernel_image_pages(const char *what, void *begin, void *end)
->   	unsigned long end_ul = (unsigned long)end;
->   	unsigned long len_pages = (end_ul - begin_ul) >> PAGE_SHIFT;
->   
-> +	/*
-> +	 * XXX: skip this for now. Otherwise it leads to:
-> +	 *
-> +	 * (XEN) mm.c:2713:d157v0 Bad type (saw 8c00000000000001 != exp e000000000000000) for mfn 36f40 (pfn 02f40)
-> +	 * (XEN) mm.c:1043:d157v0 Could not get page type PGT_writable_page
-> +	 * (XEN) mm.c:1096:d157v0 Error getting mfn 36f40 (pfn 02f40) from L1 entry 8010000036f40067 for l1e_owner d157, pg_owner d157
-> +	 *
-> +	 * and further #PF error: [PROT] [WRITE] in the kernel.
-> +	 */
-> +	if (xen_pv_domain() && IS_ENABLED(CONFIG_KASAN))
-> +		return;
-> +
 
-I guess this is related to freeing some kasan page tables without
-unpinning them?
-
->   	free_init_pages(what, begin_ul, end_ul);
->   
->   	/*
-> diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-> index cf5bc37c90ac..caee2022f8b0 100644
-> --- a/arch/x86/mm/kasan_init_64.c
-> +++ b/arch/x86/mm/kasan_init_64.c
-> @@ -13,6 +13,8 @@
->   #include <linux/sched/task.h>
->   #include <linux/vmalloc.h>
->   
-> +#include <xen/xen.h>
-> +
->   #include <asm/e820/types.h>
->   #include <asm/pgalloc.h>
->   #include <asm/tlbflush.h>
-> @@ -20,6 +22,9 @@
->   #include <asm/pgtable.h>
->   #include <asm/cpu_entry_area.h>
->   
-> +#include <xen/interface/xen.h>
-> +#include <asm/xen/hypervisor.h>
-> +
->   extern struct range pfn_mapped[E820_MAX_ENTRIES];
->   
->   static p4d_t tmp_p4d_table[MAX_PTRS_PER_P4D] __initdata __aligned(PAGE_SIZE);
-> @@ -305,6 +310,12 @@ static struct notifier_block kasan_die_notifier = {
->   };
->   #endif
->   
-> +#ifdef CONFIG_XEN
-> +/* XXX: this should go to some header */
-> +void __init set_page_prot(void *addr, pgprot_t prot);
-> +void __init pin_pagetable_pfn(unsigned cmd, unsigned long pfn);
-> +#endif
-> +
-
-Instead of exporting those, why don't you ...
-
->   void __init kasan_early_init(void)
->   {
->   	int i;
-> @@ -332,6 +343,16 @@ void __init kasan_early_init(void)
->   	for (i = 0; pgtable_l5_enabled() && i < PTRS_PER_P4D; i++)
->   		kasan_early_shadow_p4d[i] = __p4d(p4d_val);
->   
-> +	if (xen_pv_domain()) {
-> +		/* PV page tables must have PAGE_KERNEL_RO */
-> +		set_page_prot(kasan_early_shadow_pud, PAGE_KERNEL_RO);
-> +		set_page_prot(kasan_early_shadow_pmd, PAGE_KERNEL_RO);
-> +		set_page_prot(kasan_early_shadow_pte, PAGE_KERNEL_RO);
-
-add a function doing that to mmu_pv.c (e.g. xen_pv_kasan_early_init())?
-
-> +
-> +		/* Add mappings to the initial PV page tables */
-> +		kasan_map_early_shadow((pgd_t *)xen_start_info->pt_base);
-> +	}
-> +
->   	kasan_map_early_shadow(early_top_pgt);
->   	kasan_map_early_shadow(init_top_pgt);
->   }
-> @@ -369,6 +390,13 @@ void __init kasan_init(void)
->   				__pgd(__pa(tmp_p4d_table) | _KERNPG_TABLE));
->   	}
->   
-> +	if (xen_pv_domain()) {
-> +		/* PV page tables must be pinned */
-> +		set_page_prot(early_top_pgt, PAGE_KERNEL_RO);
-> +		pin_pagetable_pfn(MMUEXT_PIN_L4_TABLE,
-> +				  PFN_DOWN(__pa_symbol(early_top_pgt)));
-
-and another one like xen_pv_kasan_init() here.
-
-> +	}
-> +
->   	load_cr3(early_top_pgt);
->   	__flush_tlb_all();
->   
-> diff --git a/arch/x86/xen/Makefile b/arch/x86/xen/Makefile
-> index 084de77a109e..102fad0b0bca 100644
-> --- a/arch/x86/xen/Makefile
-> +++ b/arch/x86/xen/Makefile
-> @@ -1,3 +1,10 @@
-> +KASAN_SANITIZE_enlighten_pv.o := n
-> +KASAN_SANITIZE_enlighten.o := n
-> +KASAN_SANITIZE_irq.o := n
-> +KASAN_SANITIZE_mmu_pv.o := n
-> +KASAN_SANITIZE_p2m.o := n
-> +KASAN_SANITIZE_multicalls.o := n
-> +
->   # SPDX-License-Identifier: GPL-2.0
->   OBJECT_FILES_NON_STANDARD_xen-asm_$(BITS).o := y
->   
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index ae4a41ca19f6..27de55699f24 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -72,6 +72,7 @@
->   #include <asm/mwait.h>
->   #include <asm/pci_x86.h>
->   #include <asm/cpu.h>
-> +#include <asm/kasan.h>
->   
->   #ifdef CONFIG_ACPI
->   #include <linux/acpi.h>
-> @@ -1231,6 +1232,8 @@ asmlinkage __visible void __init xen_start_kernel(void)
->   	/* Get mfn list */
->   	xen_build_dynamic_phys_to_machine();
->   
-> +	kasan_early_init();
-> +
->   	/*
->   	 * Set up kernel GDT and segment registers, mainly so that
->   	 * -fstack-protector code can be executed.
-> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-> index c8dbee62ec2a..eaf63f1f26af 100644
-> --- a/arch/x86/xen/mmu_pv.c
-> +++ b/arch/x86/xen/mmu_pv.c
-> @@ -1079,7 +1079,7 @@ static void xen_exit_mmap(struct mm_struct *mm)
->   
->   static void xen_post_allocator_init(void);
->   
-> -static void __init pin_pagetable_pfn(unsigned cmd, unsigned long pfn)
-> +void __init pin_pagetable_pfn(unsigned cmd, unsigned long pfn)
->   {
->   	struct mmuext_op op;
->   
-> @@ -1767,7 +1767,7 @@ static void __init set_page_prot_flags(void *addr, pgprot_t prot,
->   	if (HYPERVISOR_update_va_mapping((unsigned long)addr, pte, flags))
->   		BUG();
->   }
-> -static void __init set_page_prot(void *addr, pgprot_t prot)
-> +void __init set_page_prot(void *addr, pgprot_t prot)
->   {
->   	return set_page_prot_flags(addr, prot, UVMF_NONE);
->   }
-> @@ -1943,6 +1943,15 @@ void __init xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn)
->   	if (i && i < pgd_index(__START_KERNEL_map))
->   		init_top_pgt[i] = ((pgd_t *)xen_start_info->pt_base)[i];
->   
-> +#ifdef CONFIG_KASAN
-> +	/*
-> +	 * Copy KASAN mappings
-> +	 * ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
-> +	 */
-> +	for (i = 0xec0 >> 3; i < 0xfc0 >> 3; i++)
-> +		init_top_pgt[i] = ((pgd_t *)xen_start_info->pt_base)[i];
-> +#endif
-> +
->   	/* Make pagetable pieces RO */
->   	set_page_prot(init_top_pgt, PAGE_KERNEL_RO);
->   	set_page_prot(level3_ident_pgt, PAGE_KERNEL_RO);
-> diff --git a/arch/x86/xen/multicalls.c b/arch/x86/xen/multicalls.c
-> index 07054572297f..5e4729efbbe2 100644
-> --- a/arch/x86/xen/multicalls.c
-> +++ b/arch/x86/xen/multicalls.c
-> @@ -99,6 +99,15 @@ void xen_mc_flush(void)
->   				ret++;
->   	}
->   
-> +	/*
-> +	 * XXX: Kasan produces quite a lot (~2000) of warnings in a form of:
-> +	 *
-> +	 *     (XEN) mm.c:3222:d155v0 mfn 3704b already pinned
-> +	 *
-> +	 * during kasan_init(). They are benign, but silence them for now.
-> +	 * Otherwise, booting takes too long due to printk() spam.
-> +	 */
-> +#ifndef CONFIG_KASAN
-
-It might be interesting to identify the problematic page tables.
-
-I guess this would require some hacking to avoid the multicalls in order
-to identify which page table should not be pinned again.
-
-
-Juergen
+-- 
+Pavel Begunkov
