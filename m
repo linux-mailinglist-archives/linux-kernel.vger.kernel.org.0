@@ -2,57 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13EAF123D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 03:47:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B63123D87
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 03:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfLRCr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 21:47:28 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36257 "EHLO
+        id S1726609AbfLRCxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 21:53:49 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43120 "EHLO
         mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfLRCr1 (ORCPT
+        with ESMTP id S1726487AbfLRCxt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 21:47:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w1so498709otg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 18:47:27 -0800 (PST)
+        Tue, 17 Dec 2019 21:53:49 -0500
+Received: by mail-ot1-f68.google.com with SMTP id p8so481923oth.10;
+        Tue, 17 Dec 2019 18:53:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JUUYBsrF3PEDxG8ARCfxoW9cEQCOft8fjzh1KUsCN4M=;
-        b=SYiYtFoMdqylFw6t8cThFNsDpL7jUvhar951qfYQCyB2sf6koLKh8G8aMmzy1Djye3
-         UjdZU2dpxykHjIB+JMW7qn+5gfFF+6nChzhJPZ5U3N1ccoJnNMC3An523JAoHK9sK/03
-         Xtzb/RbWFTQjTU0PtUqgIBgMrdph2gGbPLBZQuhpthb/XxdF9MQUh7uwzRb6o1RlV/fP
-         biMx0DOHbzPJlKRa8P0xYFjTC3Zl5R2h6D6zSaaqYWT2JSlKBPQaYjmvrGivEtDwvWd2
-         0GXFAagh8UvK+Ruey6cmnDBGEsJJhQfx8RbEhd84918X/ssdsHLExs4UKHZPfjfuxB0J
-         hMJw==
+        bh=napGSWjNbtalCcb/TGth7a+gCE4XiYyJESJ2KzfJmU8=;
+        b=hs0MAylM1x9OeqPMSPUXXG4f/LQFGdgUZ+x09WQNrJ6Is+O9oD5Yz4jKugxFxQzh7n
+         S9bw9s50RChQY5ZGMz76zzUpS1LFrrARuogPumZpCpxuAEhE+QB5MxGeJaKNzvwOuOiQ
+         YPgor9D+jr0x3K0qnhzgruo6r0y9XBCLMhokJiNc2AI26q3ckHXNU4pF3tRcS+cRtkId
+         qM4t1XRlWudrz2fDAxMCfN4HpXkPgE+W34bSz+J5Ycf7GvNuRcSBzMyIIt59UkKxQBHd
+         OujXN65VcqHiTytgficx6Bq6nF6nRNhz1l/+Ak3lmmG/dxdjfjGkOs52tT0ehE30R7fZ
+         bGNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=JUUYBsrF3PEDxG8ARCfxoW9cEQCOft8fjzh1KUsCN4M=;
-        b=IFBaruHE2FZZ2QCAhAivv0Vu1802yuxdNsXz7VeG/HPMabUnG3BIJ3lcaCdzKCwszy
-         xZrf0XAYJhDGtg1T7Xt6XCbt6948aR7NylmmDT5xpU2SWJdHilQb71G6yul/B7PSum9G
-         eLssI1V5rr0zvdb921Rjt7WkPk4OFhKU6XI3zLQWBPpz8mhVY33tYBntx5QgTZeCEDt6
-         26AY4vatWYviNwpf3gZLhTCLD/whCZEvZrgFJT7BeJS5YTXVLnNyL1O4dy7aXSt+pq8M
-         lu4BY2UGmwovQWGx2y/l7rkp0JyuXD/puUh1tg7O1jVFtiKeR70/dta/BnOKJuakOTZL
-         yYiw==
-X-Gm-Message-State: APjAAAXcpXP19FlUm3AE5+SrOCZPud983nC8LWz1WhdSKavvxUg7mTBj
-        U0JxZNP0IJzdx49DWomVxQY=
-X-Google-Smtp-Source: APXvYqwaK1p7an0iD/Qzepip35XclaLsw3sW86gcb4Gt67BVe756QBGNUDH4/5f1QdtwyvefgRwqUA==
-X-Received: by 2002:a9d:7:: with SMTP id 7mr33016ota.26.1576637246547;
-        Tue, 17 Dec 2019 18:47:26 -0800 (PST)
+        bh=napGSWjNbtalCcb/TGth7a+gCE4XiYyJESJ2KzfJmU8=;
+        b=DLStilepSzUI/mDAFmbeixFL2tNW3AhY/egiS9Z8aWZj/5VJKx+yhk3o/y0Swkvd6n
+         KWHrO+CNRAWkx2B0XtTgq3VZn6p+kzjHqxlRl2S2iUST+fmmhXubIKUtTJm7qBcF7jDJ
+         OiKg09Pz7uScutRzKwY+5ECtua6Jd2bdzpujCQehBS19K+Um421wZ5Ti7VkEjG3A/iVR
+         C8kn2WKEgQzXrsbRTMzc0Ur9Q2ACtyvl/qzGljoLDK8BeywrdalW2sfqC2fYMxDHaE0p
+         5QU1V1IJ3yuaKjVGWSxgBbXjI6WfmoTtG0P82fBth3HFRAgK5a6AlHfhY5c8TD1IUzUu
+         fi4Q==
+X-Gm-Message-State: APjAAAWw1m5H/EhzyZOCHTryR5eahaZVzr0BzInq3+1P+FffguDXHW3W
+        Wv9oiE/dJMA2ydYwp+j1nfazIPTb
+X-Google-Smtp-Source: APXvYqweUnGyc7Bkuy40mtuJwRPbvb6R4a3nrdaFBq7qRzNeSOHozOIJBbv5SpCrYTFmG64y7nKIEg==
+X-Received: by 2002:a05:6830:2361:: with SMTP id r1mr51151oth.88.1576637627813;
+        Tue, 17 Dec 2019 18:53:47 -0800 (PST)
 Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id w201sm320997oif.29.2019.12.17.18.47.25
+        by smtp.gmail.com with ESMTPSA id q16sm279817otl.74.2019.12.17.18.53.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 18:47:26 -0800 (PST)
+        Tue, 17 Dec 2019 18:53:47 -0800 (PST)
 From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com,
         Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] tty: synclinkmp: Adjust indentation in several functions
-Date:   Tue, 17 Dec 2019 19:47:20 -0700
-Message-Id: <20191218024720.3528-1-natechancellor@gmail.com>
+Subject: [PATCH] fbcon: Adjust indentation in set_con2fb_map
+Date:   Tue, 17 Dec 2019 19:53:37 -0700
+Message-Id: <20191218025337.35044-1-natechancellor@gmail.com>
 X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 X-Patchwork-Bot: notify
@@ -64,148 +64,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Clang warns:
 
-../drivers/tty/synclinkmp.c:1456:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (C_CRTSCTS(tty)) {
+../drivers/video/fbdev/core/fbcon.c:915:3: warning: misleading
+indentation; statement is not part of the previous 'if'
+[-Wmisleading-indentation]
+        return err;
         ^
-../drivers/tty/synclinkmp.c:1453:2: note: previous statement is here
-        if (I_IXOFF(tty))
+../drivers/video/fbdev/core/fbcon.c:912:2: note: previous statement is
+here
+        if (!search_fb_in_map(info_idx))
         ^
-../drivers/tty/synclinkmp.c:2473:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 0;
-                                                ^
-../drivers/tty/synclinkmp.c:2471:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2482:8: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-                                                info->port.tty->hw_stopped = 1;
-                                                ^
-../drivers/tty/synclinkmp.c:2480:7: note: previous statement is here
-                                                if ( debug_level >= DEBUG_LEVEL_ISR )
-                                                ^
-../drivers/tty/synclinkmp.c:2809:3: warning: misleading indentation;
-statement is not part of the previous 'if' [-Wmisleading-indentation]
-        if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:2807:2: note: previous statement is here
-        if (I_INPCK(info->port.tty))
-        ^
-../drivers/tty/synclinkmp.c:3246:3: warning: misleading indentation;
-statement is not part of the previous 'else' [-Wmisleading-indentation]
-        set_signals(info);
-        ^
-../drivers/tty/synclinkmp.c:3244:2: note: previous statement is here
-        else
-        ^
-5 warnings generated.
+1 warning generated.
 
-The indentation on these lines is not at all consistent, tabs and spaces
-are mixed together. Convert to just using tabs to be consistent with the
-Linux kernel coding style and eliminate these warnings from clang.
+This warning occurs because there is a space before the tab on this
+line. This happens on several lines in this function; normalize them
+so that the indentation is consistent with the Linux kernel coding
+style and clang no longer warns.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/823
+This warning was introduced before the beginning of git history so no
+fixes tab.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/824
 Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 ---
- drivers/tty/synclinkmp.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/video/fbdev/core/fbcon.c | 27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/tty/synclinkmp.c b/drivers/tty/synclinkmp.c
-index 33181fa6eb18..517a0d172239 100644
---- a/drivers/tty/synclinkmp.c
-+++ b/drivers/tty/synclinkmp.c
-@@ -1453,10 +1453,10 @@ static void throttle(struct tty_struct * tty)
- 	if (I_IXOFF(tty))
- 		send_xchar(tty, STOP_CHAR(tty));
+diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
+index c9235a2f42f8..9d2c43e345a4 100644
+--- a/drivers/video/fbdev/core/fbcon.c
++++ b/drivers/video/fbdev/core/fbcon.c
+@@ -866,7 +866,7 @@ static int set_con2fb_map(int unit, int newidx, int user)
+ 	int oldidx = con2fb_map[unit];
+ 	struct fb_info *info = registered_fb[newidx];
+ 	struct fb_info *oldinfo = NULL;
+- 	int found, err = 0;
++	int found, err = 0;
  
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals &= ~SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
+ 	WARN_CONSOLE_UNLOCKED();
+ 
+@@ -888,31 +888,30 @@ static int set_con2fb_map(int unit, int newidx, int user)
+ 
+ 	con2fb_map[unit] = newidx;
+ 	if (!err && !found)
+- 		err = con2fb_acquire_newinfo(vc, info, unit, oldidx);
+-
++		err = con2fb_acquire_newinfo(vc, info, unit, oldidx);
+ 
+ 	/*
+ 	 * If old fb is not mapped to any of the consoles,
+ 	 * fbcon should release it.
+ 	 */
+- 	if (!err && oldinfo && !search_fb_in_map(oldidx))
+- 		err = con2fb_release_oldinfo(vc, oldinfo, info, unit, oldidx,
+- 					     found);
++	if (!err && oldinfo && !search_fb_in_map(oldidx))
++		err = con2fb_release_oldinfo(vc, oldinfo, info, unit, oldidx,
++					     found);
+ 
+- 	if (!err) {
+- 		int show_logo = (fg_console == 0 && !user &&
+- 				 logo_shown != FBCON_LOGO_DONTSHOW);
++	if (!err) {
++		int show_logo = (fg_console == 0 && !user &&
++				 logo_shown != FBCON_LOGO_DONTSHOW);
+ 
+- 		if (!found)
+- 			fbcon_add_cursor_timer(info);
+- 		con2fb_map_boot[unit] = newidx;
+- 		con2fb_init_display(vc, info, unit, show_logo);
++		if (!found)
++			fbcon_add_cursor_timer(info);
++		con2fb_map_boot[unit] = newidx;
++		con2fb_init_display(vc, info, unit, show_logo);
  	}
- }
-@@ -1482,10 +1482,10 @@ static void unthrottle(struct tty_struct * tty)
- 			send_xchar(tty, START_CHAR(tty));
- 	}
  
-- 	if (C_CRTSCTS(tty)) {
-+	if (C_CRTSCTS(tty)) {
- 		spin_lock_irqsave(&info->lock,flags);
- 		info->serial_signals |= SerialSignal_RTS;
--	 	set_signals(info);
-+		set_signals(info);
- 		spin_unlock_irqrestore(&info->lock,flags);
- 	}
- }
-@@ -2470,7 +2470,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (status & SerialSignal_CTS) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx start...");
--			 			info->port.tty->hw_stopped = 0;
-+						info->port.tty->hw_stopped = 0;
- 						tx_start(info);
- 						info->pending_bh |= BH_TRANSMIT;
- 						return;
-@@ -2479,7 +2479,7 @@ static void isr_io_pin( SLMP_INFO *info, u16 status )
- 					if (!(status & SerialSignal_CTS)) {
- 						if ( debug_level >= DEBUG_LEVEL_ISR )
- 							printk("CTS tx stop...");
--			 			info->port.tty->hw_stopped = 1;
-+						info->port.tty->hw_stopped = 1;
- 						tx_stop(info);
- 					}
- 				}
-@@ -2806,8 +2806,8 @@ static void change_params(SLMP_INFO *info)
- 	info->read_status_mask2 = OVRN;
- 	if (I_INPCK(info->port.tty))
- 		info->read_status_mask2 |= PE | FRME;
-- 	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-- 		info->read_status_mask1 |= BRKD;
-+	if (I_BRKINT(info->port.tty) || I_PARMRK(info->port.tty))
-+		info->read_status_mask1 |= BRKD;
- 	if (I_IGNPAR(info->port.tty))
- 		info->ignore_status_mask2 |= PE | FRME;
- 	if (I_IGNBRK(info->port.tty)) {
-@@ -3177,7 +3177,7 @@ static int tiocmget(struct tty_struct *tty)
-  	unsigned long flags;
+ 	if (!search_fb_in_map(info_idx))
+ 		info_idx = newidx;
  
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	result = ((info->serial_signals & SerialSignal_RTS) ? TIOCM_RTS : 0) |
-@@ -3215,7 +3215,7 @@ static int tiocmset(struct tty_struct *tty,
- 		info->serial_signals &= ~SerialSignal_DTR;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return 0;
-@@ -3227,7 +3227,7 @@ static int carrier_raised(struct tty_port *port)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&info->lock,flags);
-- 	get_signals(info);
-+	get_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
- 
- 	return (info->serial_signals & SerialSignal_DCD) ? 1 : 0;
-@@ -3243,7 +3243,7 @@ static void dtr_rts(struct tty_port *port, int on)
- 		info->serial_signals |= SerialSignal_RTS | SerialSignal_DTR;
- 	else
- 		info->serial_signals &= ~(SerialSignal_RTS | SerialSignal_DTR);
-- 	set_signals(info);
-+	set_signals(info);
- 	spin_unlock_irqrestore(&info->lock,flags);
+- 	return err;
++	return err;
  }
  
+ /*
 -- 
 2.24.1
 
