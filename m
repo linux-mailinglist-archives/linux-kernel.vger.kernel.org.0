@@ -2,94 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2E41124075
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C57E12407C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:39:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfLRHhn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:37:43 -0500
-Received: from spam01.hygon.cn ([110.188.70.11]:40211 "EHLO spam2.hygon.cn"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726682AbfLRHhn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:37:43 -0500
-Received: from MK-DB.hygon.cn ([172.23.18.60])
-        by spam2.hygon.cn with ESMTP id xBI7YsLc029176;
-        Wed, 18 Dec 2019 15:34:54 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from cncheex01.Hygon.cn ([172.23.18.10])
-        by MK-DB.hygon.cn with ESMTP id xBI7YjaX044964;
-        Wed, 18 Dec 2019 15:34:45 +0800 (GMT-8)
-        (envelope-from linjiasen@hygon.cn)
-Received: from [172.20.21.12] (172.23.18.44) by cncheex01.Hygon.cn
- (172.23.18.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 18 Dec
- 2019 15:34:54 +0800
-Subject: Re: [PATCH] NTB: ntb_perf: Add more debugfs entries for ntb_perf
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        <linux-kernel@vger.kernel.org>, <linux-ntb@googlegroups.com>,
-        <jdmason@kudzu.us>
-CC:     <allenbh@gmail.com>, <dave.jiang@intel.com>, <sanju.mehta@amd.com>
-References: <1576550536-84697-1-git-send-email-linjiasen@hygon.cn>
- <d4f679cd-739b-fd80-8344-7da475937835@deltatee.com>
-From:   Jiasen Lin <linjiasen@hygon.cn>
-Message-ID: <fd3efeba-40f0-3933-af48-d74486ddea86@hygon.cn>
-Date:   Wed, 18 Dec 2019 15:32:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+        id S1726680AbfLRHjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:39:07 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9692 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725955AbfLRHjH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:39:07 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df9d7780002>; Tue, 17 Dec 2019 23:38:32 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 17 Dec 2019 23:39:01 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 17 Dec 2019 23:39:01 -0800
+Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Dec
+ 2019 07:39:00 +0000
+Subject: Re: [PATCH] move_pages.2: not return ENOENT if the page are already
+ on the target nodes
+To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>, <cl@linux.com>,
+        <mhocko@suse.com>, <cai@lca.pw>, <akpm@linux-foundation.org>
+CC:     <linux-man@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <1575596090-115377-1-git-send-email-yang.shi@linux.alibaba.com>
+ <0dc96e40-5f2b-a2fe-6e5f-b6f3d5e9ebde@nvidia.com>
+ <95170ea5-5b62-9168-fcd9-93b43330a1b4@linux.alibaba.com>
+ <092adc11-7039-9343-7067-0e0199c9dc13@gmail.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <51dd767a-221f-882d-c7f6-45bd0c217a67@nvidia.com>
+Date:   Tue, 17 Dec 2019 23:36:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <d4f679cd-739b-fd80-8344-7da475937835@deltatee.com>
+In-Reply-To: <092adc11-7039-9343-7067-0e0199c9dc13@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.23.18.44]
-X-ClientProxiedBy: cncheex02.Hygon.cn (172.23.18.12) To cncheex01.Hygon.cn
- (172.23.18.10)
-X-MAIL: spam2.hygon.cn xBI7YsLc029176
-X-DNSRBL: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576654712; bh=niungb3NWD18TtefGE0yuSB9KQjV5p6gDgvusv9+FwI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=X354docB+XmzyyqCzg1MdSpZNg566c/6yQnQBXH5PDwsDqnxS9VZosRWzmgFPx1kK
+         pX1HnjmCJkD9oL7TKeuV09T7Yf8gE6nLdUpsLTYrpu07eV086GCwsAKjSGk+y0hWcx
+         8Ovea66u32wFR2tHgg3rr29yuH5rUCAtBe+yB3wkUs7RTh9wVWIZa/E1EjRfSZkfNB
+         hD/jkDZA4NYnmD6j5j9SzmnUsR2NFQrb3S9+Do7VSY7ADTKKcbLqdCJskovWQ9AB4V
+         BmIv8Ne1Kp5QGrKlAUBkcy4/YTMCpMvZA8K659fne+/74Kj7g1Db0JV+woSeQiywsU
+         0tSdJe7cP8yuA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2019/12/18 0:42, Logan Gunthorpe wrote:
-> 
-> 
-> On 2019-12-16 7:42 p.m., Jiasen Lin wrote:
->> Currently, read input and output buffer is not supported yet in
->> debugfs of ntb_perf. We can not confirm whether the output data is
->> transmitted to the input buffer at peer memory through NTB.
+On 12/13/19 5:55 PM, Michael Kerrisk (man-pages) wrote:
+...
+>>> whoa, hold on. If I'm reading through the various error paths
+>>> correctly, then this
+>>> code is *never* going to return ENOENT for the whole function. It can
+>>> fill in that
+>>> value per-page, in the status array, but that's all. Did I get that
+>>> right?
 >>
->> This patch add new entries in debugfs which implement interface to read
->> a part of input and out buffer. User can dump output and input data at
->> local and peer system by hexdump command, and then compare them manually.
+>> Nice catch. Yes, you are right.
+>>
+>>>
+>>> If so, we need to redo this part of the man page.
+>>
+>> Yes.
 > 
-> Do we even initialize inbuf and outbuf? Probably not a good idea to
-> expose them to userspace if it's not initialized.
-> 
-
-Good catch! Input buffer(peer->inbuf) should be initialized after call
-dma_alloc_coherent in perf_setup_inbuf, but output buffer(peer->outbuf)
-that point to NTB BARx MMIO address can not be initialized. The address 
-of memory request that fall in NTB memory windown will be translated 
-into an address that point to input buffer at peer memory system through 
-NTB XLAT register in ntb_perf. In other words, only input buffer should 
-be initialized.
-Will fix it for v2 as a separate patch.
-
-> Really, ntb_tool should be used to check if memory windows work,
-> ntb_perf is just to see the maximum transfer rate.
+> So where are things at with this? Is an improved man-pages
+> patch on the way, or is some other action (on the API) planned?
 > 
 
-Yes, you are right! ntb_tool could be used to check memory window
-by hexdmup mw and peer_mw after write mw_trans and peer_mw_trans,
-but this is only one ntb client be probed although we can insmod both
-ntb_tool.ko and ntb_perf.ko, That's to say, only one modulue can create
-files in debugFS. So, I suggest that add debugfs entries that can read
-input and output buffer in ntb_perf.
+I was waiting to see if Yang was going to respond...anyway, I think
+we're looking at approximately this sort of change:
 
-Thanks,
-Jiasen Lin
+diff --git a/man2/move_pages.2 b/man2/move_pages.2
+index 2d96468fa..1bf1053f2 100644
+--- a/man2/move_pages.2
++++ b/man2/move_pages.2
+@@ -191,12 +191,6 @@ was specified or an attempt was made to migrate pages of a kernel thread.
+  .B ENODEV
+  One of the target nodes is not online.
+  .TP
+-.B ENOENT
+-No pages were found that require moving.
+-All pages are either already
+-on the target node, not present, had an invalid address or could not be
+-moved because they were mapped by multiple processes.
+-.TP
+  .B EPERM
+  The caller specified
+  .B MPOL_MF_MOVE_ALL
 
-> Logan
-> 
+...But I'm not sure if we should change the implementation, instead, so
+that it *can* return ENOENT. That's the main question to resolve before
+creating any more patches, I think.
+
+In addition, Michal mentioned that the page states in the status array also
+need updated documentation.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
