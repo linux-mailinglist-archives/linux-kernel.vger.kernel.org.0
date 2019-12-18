@@ -2,110 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4128A1249E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D369A1249EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:43:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLROk5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:40:57 -0500
-Received: from smtp-fw-4101.amazon.com ([72.21.198.25]:20484 "EHLO
-        smtp-fw-4101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfLROk5 (ORCPT
+        id S1727209AbfLROnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:43:42 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:43580 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbfLROnm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:40:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1576680057; x=1608216057;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=9TSSJzMeZCiqUiC9We6oHtvYEYmkGKrZqf9wv74O1kk=;
-  b=RV3rXPZoZdth0OXc24vpUutgAe9DSrjAAAj2UQKYF0xjz14uJ/SkcuJ7
-   GzSF6vl8YIgJH7Y4cYi0+KyyXF6Tm/rWhiFpEbPm0WM4kBrrAIEL3clv1
-   UxgqSEUtq284ylHxa7h3acgjcCba1qeLvKO/NSaCClmLdIC31lh8yOH5Y
-   I=;
-IronPort-SDR: jSc+E8xRrCSZQoSlNwzzxZ2Qt5foevig6NsIXRRGZopSepGBVga7+89uIb9r6bG12xVsPzG1Vv
- vCzkdB274h9w==
-X-IronPort-AV: E=Sophos;i="5.69,329,1571702400"; 
-   d="scan'208";a="9045548"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-119b4f96.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-4101.iad4.amazon.com with ESMTP; 18 Dec 2019 14:40:55 +0000
-Received: from EX13MTAUEA002.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan2.pdx.amazon.com [10.170.41.162])
-        by email-inbound-relay-2a-119b4f96.us-west-2.amazon.com (Postfix) with ESMTPS id 65BBC1A94AC;
-        Wed, 18 Dec 2019 14:40:53 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA002.ant.amazon.com (10.43.61.77) with Microsoft SMTP Server (TLS)
- id 15.0.1236.3; Wed, 18 Dec 2019 14:40:52 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.100) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 18 Dec 2019 14:40:47 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     =?UTF-8?q?J=C3=BCrgen=20Gro=C3=9F?= <jgross@suse.com>
-CC:     SeongJae Park <sjpark@amazon.com>, <axboe@kernel.dk>,
-        <sj38.park@gmail.com>, <konrad.wilk@oracle.com>,
-        <pdurrant@amazon.com>, SeongJae Park <sjpark@amazon.de>,
-        <linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>, <roger.pau@citrix.com>
-Subject: Re: Re: [Xen-devel] [PATCH v12 2/5] xenbus/backend: Protect xenbus callback with lock
-Date:   Wed, 18 Dec 2019 15:40:25 +0100
-Message-ID: <20191218144025.24277-1-sjpark@amazon.com>
+        Wed, 18 Dec 2019 09:43:42 -0500
+Received: from grover.flets-west.jp (softbank126093102113.bbtec.net [126.93.102.113]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id xBIEhFfM023662;
+        Wed, 18 Dec 2019 23:43:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com xBIEhFfM023662
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576680196;
+        bh=tUmVeYvMx8QakjR2/czhCZu5i/UP6xrlWBeyhJE2fFc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fD5yEZMsKLZIXrWal+2upTacvoV2jbxZpXLrlY1kHU/JtGOe7CASd0oMxasMqMZVt
+         gdDydsDyKEOUbXVGDw1E2Jg20GeY22h2A/7ZytrijmkFDVjSUP2MGX430Fd9nBR6XK
+         4a8xBlv3iFg/WrBAIAR7V7J3fC4eKcnFyUVEynZfcaTN1wMAaE11BK2suV1mIgKRZF
+         uloUt0UJGuhlPMiiUMYWU87578YmiLiTOFfOk9u7RiqJ79EKYohjDFky5koE7b00j3
+         EFd9IQA1Q4t3N2hv70KT+PRpz0b857Y3/tYH8CGAviYtmntDId+87m5phel9TLa68E
+         AHWIjwe/Xz/sw==
+X-Nifty-SrcIP: [126.93.102.113]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>
+Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drivers/component: remove modular code
+Date:   Wed, 18 Dec 2019 23:43:07 +0900
+Message-Id: <20191218144307.19243-1-masahiroy@kernel.org>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-In-Reply-To: <ee6c4bae-0571-a18e-d408-0b69f8018329@suse.com> (raw)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.43.160.100]
-X-ClientProxiedBy: EX13D27UWA004.ant.amazon.com (10.43.160.43) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019 14:30:44 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
+drivers/base/Makefile always adds component.o to obj-y, like this:
 
-> On 18.12.19 13:42, SeongJae Park wrote:
-> > On Wed, 18 Dec 2019 13:27:37 +0100 "Jürgen Groß" <jgross@suse.com> wrote:
-> > 
-> >> On 18.12.19 11:42, SeongJae Park wrote:
-> >>> From: SeongJae Park <sjpark@amazon.de>
-> >>>
-> >>> 'reclaim_memory' callback can race with a driver code as this callback
-> >>> will be called from any memory pressure detected context.  To deal with
-> >>> the case, this commit adds a spinlock in the 'xenbus_device'.  Whenever
-> >>> 'reclaim_memory' callback is called, the lock of the device which passed
-> >>> to the callback as its argument is locked.  Thus, drivers registering
-> >>> their 'reclaim_memory' callback should protect the data that might race
-> >>> with the callback with the lock by themselves.
-> >>
-> >> Any reason you don't take the lock around the .probe() and .remove()
-> >> calls of the backend (xenbus_dev_probe() and xenbus_dev_remove())? This
-> >> would eliminate the need to do that in each backend instead.
-> > 
-> > First of all, I would like to keep the critical section as small as possible.
-> > With my small test, I could see slightly increasing memory pressure as the
-> > critical section becomes wider.  Also, some drivers might share the data their
-> > 'reclaim_memory' callback touches with other functions.  I think only the
-> > driver owners can know what data is shared and what is the minimum critical
-> > section to protect it.
-> 
-> But this kind of serialization can still be added on top.
+  obj-y                   := component.o core.o bus.o dd.o syscore.o \
 
-I'm still worrying about the unnecessarily large critical section, but it might
-be small enough to be ignored.  If no others have strong objection, I will take
-the lock around the '->probe()' and '->remove()'.
+Hence it is never compiled as a module. Remove useless modular code.
 
-> 
-> And with the trylock in the reclaim path I believe you can even avoid
-> the irq variants of the spinlock. But I might be wrong, so you should
-> try that with lockdep enabled. If it is working there is no harm done
-> when making the critical section larger, as memory allocations will
-> work as before.
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
 
-Yes, you're right.  I will try test with lockdep.
+ drivers/base/component.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 532a3a5d8f63..3a09036e772a 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -11,7 +11,6 @@
+ #include <linux/device.h>
+ #include <linux/kref.h>
+ #include <linux/list.h>
+-#include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+ #include <linux/debugfs.h>
+@@ -775,5 +774,3 @@ void component_del(struct device *dev, const struct component_ops *ops)
+ 	kfree(component);
+ }
+ EXPORT_SYMBOL_GPL(component_del);
+-
+-MODULE_LICENSE("GPL v2");
+-- 
+2.17.1
 
-Thanks,
-SeongJae Park
-
-> 
-> 
-> Juergen
