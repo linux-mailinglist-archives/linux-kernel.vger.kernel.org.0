@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 938501253CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3797A1253DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfLRUtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:22 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47846 "EHLO
+        id S1727854AbfLRUuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:50:11 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47837 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbfLRUtU (ORCPT
+        with ESMTP id S1727535AbfLRUtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:49:20 -0500
+        Wed, 18 Dec 2019 15:49:19 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0if000214;
-        Wed, 18 Dec 2019 12:49:15 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0ig000214;
+        Wed, 18 Dec 2019 12:49:16 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org
-Subject: [PATCH 13/18] mfd: menelaus: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:52 -0500
-Message-Id: <1576702137-25905-14-git-send-email-paul.gortmaker@windriver.com>
+        Mike Rapoport <mike@compulab.co.il>
+Subject: [PATCH 14/18] mfd: tps6586x: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:53 -0500
+Message-Id: <1576702137-25905-15-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -33,8 +33,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MENELAUS
-drivers/mfd/Kconfig:    bool "TI TWL92330/Menelaus PM chip"
+drivers/mfd/Kconfig:config MFD_TPS6586X
+drivers/mfd/Kconfig:    bool "TI TPS6586x Power Management chips"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -45,73 +45,84 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_i2c_driver() uses the same init level priority as
-builtin_i2c_driver() the init ordering remains unchanged with
-this commit.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
 
 Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
 
-Cc: Tony Lindgren <tony@atomide.com>
 Cc: Lee Jones <lee.jones@linaro.org>
-Cc: linux-omap@vger.kernel.org
+Cc: Mike Rapoport <mike@compulab.co.il>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/menelaus.c | 24 ++++--------------------
- 1 file changed, 4 insertions(+), 20 deletions(-)
+ drivers/mfd/tps6586x.c | 26 ++------------------------
+ 1 file changed, 2 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/mfd/menelaus.c b/drivers/mfd/menelaus.c
-index b64d3315a5e1..65a268d11aaa 100644
---- a/drivers/mfd/menelaus.c
-+++ b/drivers/mfd/menelaus.c
-@@ -18,7 +18,7 @@
-  * Copyright (C) 2005, 2006 Nokia Corporation
-  */
- 
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index c8aadd39324e..d7db10d34193 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -16,7 +16,7 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
- #include <linux/sched.h>
-@@ -1222,33 +1222,17 @@ static int menelaus_probe(struct i2c_client *client,
- 	return err;
+ #include <linux/mutex.h>
+ #include <linux/slab.h>
+ #include <linux/err.h>
+@@ -578,17 +578,6 @@ static int tps6586x_i2c_probe(struct i2c_client *client,
+ 	return ret;
  }
  
--static int menelaus_remove(struct i2c_client *client)
+-static int tps6586x_i2c_remove(struct i2c_client *client)
 -{
--	struct menelaus_chip	*menelaus = i2c_get_clientdata(client);
+-	struct tps6586x *tps6586x = i2c_get_clientdata(client);
 -
--	free_irq(client->irq, menelaus);
--	flush_work(&menelaus->work);
--	the_menelaus = NULL;
+-	tps6586x_remove_subdevs(tps6586x);
+-	mfd_remove_devices(tps6586x->dev);
+-	if (client->irq)
+-		free_irq(client->irq, tps6586x);
 -	return 0;
 -}
 -
- static const struct i2c_device_id menelaus_id[] = {
- 	{ "menelaus", 0 },
- 	{ }
+ static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
+ {
+ 	struct tps6586x *tps6586x = dev_get_drvdata(dev);
+@@ -616,16 +605,15 @@ static const struct i2c_device_id tps6586x_id_table[] = {
+ 	{ "tps6586x", 0 },
+ 	{ },
  };
--MODULE_DEVICE_TABLE(i2c, menelaus_id);
+-MODULE_DEVICE_TABLE(i2c, tps6586x_id_table);
  
- static struct i2c_driver menelaus_i2c_driver = {
- 	.driver = {
--		.name		= DRIVER_NAME,
-+		.name			= DRIVER_NAME,
-+		.suppress_bind_attrs	= true,
+ static struct i2c_driver tps6586x_driver = {
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
+ 		.pm	= &tps6586x_pm_ops,
++		.suppress_bind_attrs = true,
  	},
- 	.probe		= menelaus_probe,
--	.remove		= menelaus_remove,
- 	.id_table	= menelaus_id,
+ 	.probe		= tps6586x_i2c_probe,
+-	.remove		= tps6586x_i2c_remove,
+ 	.id_table	= tps6586x_id_table,
  };
+ 
+@@ -634,13 +622,3 @@ static int __init tps6586x_init(void)
+ 	return i2c_add_driver(&tps6586x_driver);
+ }
+ subsys_initcall(tps6586x_init);
 -
--module_i2c_driver(menelaus_i2c_driver);
+-static void __exit tps6586x_exit(void)
+-{
+-	i2c_del_driver(&tps6586x_driver);
+-}
+-module_exit(tps6586x_exit);
 -
--MODULE_AUTHOR("Texas Instruments, Inc. (and others)");
--MODULE_DESCRIPTION("I2C interface for Menelaus.");
+-MODULE_DESCRIPTION("TPS6586X core driver");
+-MODULE_AUTHOR("Mike Rapoport <mike@compulab.co.il>");
 -MODULE_LICENSE("GPL");
-+builtin_i2c_driver(menelaus_i2c_driver);
 -- 
 2.7.4
 
