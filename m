@@ -2,92 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 239CF125430
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:07:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ABDB125457
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:11:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfLRVHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:07:09 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37897 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfLRVG7 (ORCPT
+        id S1726530AbfLRVLP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:11:15 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36064 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbfLRVLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:06:59 -0500
-Received: by mail-lf1-f68.google.com with SMTP id r14so2725335lfm.5;
-        Wed, 18 Dec 2019 13:06:57 -0800 (PST)
+        Wed, 18 Dec 2019 16:11:14 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j17so2842554edp.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:11:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OX3etwg8UyXmbbSJQLCscVLMHChzcySiKJD4V7kijDA=;
-        b=GIA8G7vs3ssG+kS97bTj/9sDjWnB0kbPTwEOvBXDvEmAmNgHov8HaqJ9Jp637+eJDr
-         mLFY1peZ9m/mZdiPvimSZzUZtSmoOyFHxLwT00eOyeWK9oa0RYAonBMkgeTj5WbO4y31
-         MB9rrwVxZvEKGkvsKLHBnmqkbebPuO3RVtN7wMK4iJz7xxNOkm7P0PO5RIILldqBwX1t
-         wQOIcH/BZtXlAPIafiaXZqTi1jI8ohmqMyhgxVvf1v5AJOEDQaZ9INVQZ9SNlm353r5+
-         /+zwSljYFZwCrEOl6K6f7uHZ2p33pKu8ogzOS4Za84lhGj+2GriO/Gq9UVSamYfih0Z0
-         K9HA==
+        d=soleen.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hr7toINHw/iAnDrTVS41gqcv0IO9jGOGlaJRRX6HtRc=;
+        b=Yc9HL4dmvuVtA1hqpH3w649GWiSriaIdkvI8nXwcp2OqH8ZA710XQUf7rzqbIvmvSs
+         wIQ2X1WO0b68Wrbnx34fUtBQ4DUY9+cutDhxyPRLLXCzDzQgIlSmRi88M4J7y5OTFAdf
+         utyUH6R7V4Wg6zCugkdFlYh+oiEMcrcthwzghhD8AeCnoCByKEw/uRG4Khy9wPOpXezo
+         LVA1NJynvisLO8eCsjUz5L222tAGwjRM+e+BzIAeK379y0NcuXcnvHZ3PW8pguMmhDm5
+         /oUXQ4+shDdOnc0H1rtFMsxegKAuoDq2jO7t51FvxpHfoVPyfJ96EjLF8IOi51I8dG3H
+         sfEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OX3etwg8UyXmbbSJQLCscVLMHChzcySiKJD4V7kijDA=;
-        b=NvpaRQ0CIbogvjgGR85shzjd6xrToYE1jKv1B3HM6QRJh2/co5ukBh8OBEmAZIKvbA
-         iY3hkZywULSm8yAdVoy61TNZ3D9SMEmRs8b13U34flmsVJll53qVB4z0fuTLWN4Pu6Q0
-         prbLzVfV/rKyoYyJ5VZYoLimPcp2l1TCKLewkrtuQF7CkJk79rpaPcSCraAlFsBZLKJk
-         9RN4PDCJ7ChTXJeTlb6PvoYBuD75dGqyhBad4/aETtOarQu377rNWW8rTq+mphHWF19+
-         7uadeqO3eVuYUFYFnKtKxa21EH9I9cdF7/LT8ZTm7IXF3DP3u3vw97NVmTEuzJopihbt
-         gAeA==
-X-Gm-Message-State: APjAAAVl0zZLJDwP/oSem1oI9rIFLO6jdbNbbUZyJypgytq13d9zXvQ6
-        6benhIW6J+o+EQa4kCx2oEs=
-X-Google-Smtp-Source: APXvYqwKH8I3c4Sj8soE97dvCZsqMd65HH/e73RXgS6N+7HJggYBIknoIPITBYBlsvTF68+XmZ4mfQ==
-X-Received: by 2002:ac2:4194:: with SMTP id z20mr3177996lfh.20.1576703217029;
-        Wed, 18 Dec 2019 13:06:57 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id r15sm1754648ljk.3.2019.12.18.13.06.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:06:56 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 17/17] ARM: tegra: Enable Tegra cpuidle driver in tegra_defconfig
-Date:   Thu, 19 Dec 2019 00:05:03 +0300
-Message-Id: <20191218210503.6689-18-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191218210503.6689-1-digetx@gmail.com>
-References: <20191218210503.6689-1-digetx@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hr7toINHw/iAnDrTVS41gqcv0IO9jGOGlaJRRX6HtRc=;
+        b=Vzj4UmP13AVuB0ZhHS9WqmdH2cN6SM3GCwIH61bu6h1VnoKGPREnBQCLTvpgHAzcFf
+         umhxK2o2jMb3GhmNH2UGWy88aNsuINWGerA3N7imgpFz38TmrjVKf3Cp8wCCiWxII7LJ
+         1l1pMBq2nteBzQkLuMfHOvZzR3114Yjs7pREYeQvp/9RnTc0R4rIgeN0BzStzUg/+WP9
+         98KmhnFKH0/tB4om5hK4565EXC7463dUN1394u6dmau79/P2yh1TmvJNkzBn2iP8K55r
+         IrA/vY9RScZN/60snGSlR2RA7kEiS9bh6mTPfGhdsnlV5moJ14gRbILG/JEdeAlCgyC9
+         Ssag==
+X-Gm-Message-State: APjAAAW9wcDHfysot9nYxKX9LlQxI2BncOUN/NDjEc/nnD0zuO0BAmmY
+        yNpAUymOalUgL9CPTidW477T8cdwqyzThg9MHyVi4g==
+X-Google-Smtp-Source: APXvYqxUveWYs+R5UGAvJL5Zp/Pe1Egw5UoWu7yq5s55Vn88PgYlF8axZ/QOJSQ2OANQC2UMBMt8bropFYpNPNkUfOs=
+X-Received: by 2002:a05:6402:1cbb:: with SMTP id cz27mr4984720edb.227.1576703472972;
+ Wed, 18 Dec 2019 13:11:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191204232058.2500117-1-pasha.tatashin@soleen.com>
+ <20191204232058.2500117-2-pasha.tatashin@soleen.com> <c5dcf342-90f4-beb5-d2b1-4a37ccedfe42@xen.org>
+In-Reply-To: <c5dcf342-90f4-beb5-d2b1-4a37ccedfe42@xen.org>
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+Date:   Wed, 18 Dec 2019 16:11:02 -0500
+Message-ID: <CA+CK2bDySpttFq1ro2QK9jPoRi5unXz6bx-6Qv1OpoNimMd6Ug@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] arm/arm64/xen: hypercall.h add includes guards
+To:     Julien Grall <julien@xen.org>
+Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, steve.capper@arm.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <maz@kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        allison@lohutok.net, info@metux.net, alexios.zavras@intel.com,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        Stefan Agner <stefan@agner.ch>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        xen-devel@lists.xenproject.org,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Tegra CPU Idle driver was moved out into driver/cpuidle/ directory and
-it is now a proper platform driver.
+> >       /*
+> > -      * Whenever we re-enter userspace, the domains should always be
+> > +      * Whenever we re-enter kernel, the domains should always be
+>
+> This feels unrelated from the rest of the patch and probably want an
+> explanation. So I think this want to be in a separate patch.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- arch/arm/configs/tegra_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I will simply remove this comment fix, since I do not change anything
+else in this file anymore.
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index a27592d3b1fa..aa94369bdd0f 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -25,6 +25,7 @@ CONFIG_CPU_FREQ=y
- CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_CPU_IDLE=y
-+CONFIG_ARM_TEGRA_CPUIDLE=y
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_TRUSTED_FOUNDATIONS=y
--- 
-2.24.0
+> The rest of the patch looks good to me.
 
+Thank you Julien.
+
+>
+> Cheers,
+>
+> --
+> Julien Grall
