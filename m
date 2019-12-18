@@ -2,126 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0F0C12493E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:17:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F0C8E124949
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:18:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbfLRORJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:17:09 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36910 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfLRORG (ORCPT
+        id S1727120AbfLROS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:18:29 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:58302 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726856AbfLROS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:17:06 -0500
-Received: by mail-pl1-f196.google.com with SMTP id c23so1040575plz.4;
-        Wed, 18 Dec 2019 06:17:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=L3jQPTQ2R5MiyMCuFQ28/QWm5v0842TnhDYDEhmSL3A=;
-        b=AUgHnCwjrq2NwEEG1Av211jYafr70uh5ebuUs9nuRl2qxREry4BoHzgTAYFsMv3wmB
-         a5YHGLTtY98yx+j9Q8b0+FfGt3JAt9UXBE5Tc2ZKcoONX9VI2nvpvdLs3RQVZ0ZWg3D/
-         wGNTH8LtR+5ExwolcnWmnJPdNKSBdOlHYInW34Z4F1Q+/IjyVPyQbqT6/6epI1U9qcjK
-         hIq0wWqyQAIsz3YtV0XUhJMTjyxbmzkECW3oVzbsKmYy5ylphCqEF7EEeRZ5ip1KDtCF
-         7fKH461scRZnfR6yLog37fd6vf7hZU9n927npHCGxC1sOUrPpxn197u0alXAG8w6IXUR
-         tr8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=L3jQPTQ2R5MiyMCuFQ28/QWm5v0842TnhDYDEhmSL3A=;
-        b=V/eXzXEvfyC4+NyQrTdwAlkV2OagB+tyo1iBpGNyDeNQ5KKLUYgLxlK4ciOYm4sCsw
-         vJJaJYV8exYQzvIxxaNhI58j0Z/7Z6yXie/dsgWrR5lJwUUo6WvJGFVug7AxpxwpPuxV
-         H4yNCqXLBKFwLI7dh2haYQOOiwXbIpDl4qlprDoHKDMbBVuiZg1UScT97esbu2+LDvGP
-         NrKz/W35LjVgAnrurPLlORTc0SFxjtlHqWhPG0V8THL2PHoG2ShDiGJyPVPhauTz3pij
-         fEysX0kuanQZaebyxe5vmdzBXc57iwmm2FG67Ycks2w9u7SL+/QholjXEcPUEh73J7V9
-         N6TA==
-X-Gm-Message-State: APjAAAXLYeteL9b53VWxaTVVCXUTI8DrmqXwFo98JJsPicpvTpkwMq7O
-        k5JEcqRGeNYIGwsLNaFaVk0=
-X-Google-Smtp-Source: APXvYqxrumjb/MCyv+nqkhnIWzKh4Ue6ATLhMTvMUn7j3d3USRqbMhKU5djbDU374OD2VrPmFbBudQ==
-X-Received: by 2002:a17:90a:a386:: with SMTP id x6mr3205472pjp.116.1576678625582;
-        Wed, 18 Dec 2019 06:17:05 -0800 (PST)
-Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
-        by smtp.gmail.com with ESMTPSA id t187sm3546560pfd.21.2019.12.18.06.17.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 06:17:05 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     jeffrey.t.kirsher@intel.com, davem@davemloft.net
-Cc:     intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] net: intel: e1000e: fix possible sleep-in-atomic-context bugs in e1000e_get_hw_semaphore()
-Date:   Wed, 18 Dec 2019 22:16:56 +0800
-Message-Id: <20191218141656.12416-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 18 Dec 2019 09:18:28 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iha9g-0002Dh-1A; Wed, 18 Dec 2019 15:18:24 +0100
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v2 19/36] irqchip/gic-v4.1: Add VPE INVALL callback
+X-PHP-Originating-Script: 0:main.inc
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 18 Dec 2019 14:18:23 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+In-Reply-To: <28e29c2d-a35a-6a67-c65d-7ab61d33b21b@huawei.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-20-maz@kernel.org>
+ <28e29c2d-a35a-6a67-c65d-7ab61d33b21b@huawei.com>
+Message-ID: <54ec5b97e909e4da85064c66fb2a1348@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+[Old email, doing some v3 cleanup]
 
-drivers/net/ethernet/intel/e1000e/mac.c, 1366: 
-	usleep_range in e1000e_get_hw_semaphore
-drivers/net/ethernet/intel/e1000e/80003es2lan.c, 322:
-	e1000e_get_hw_semaphore in e1000_release_swfw_sync_80003es2lan
-drivers/net/ethernet/intel/e1000e/80003es2lan.c, 197:
-	e1000_release_swfw_sync_80003es2lan in e1000_release_phy_80003es2lan
-drivers/net/ethernet/intel/e1000e/netdev.c, 4883: 
-	(FUNC_PTR) e1000_release_phy_80003es2lan in e1000e_update_phy_stats
-drivers/net/ethernet/intel/e1000e/netdev.c, 4917:
-	e1000e_update_phy_stats in e1000e_update_stats
-drivers/net/ethernet/intel/e1000e/netdev.c, 5945: 
-	e1000e_update_stats in e1000e_get_stats64
-drivers/net/ethernet/intel/e1000e/netdev.c, 5944: 
-	spin_lock in e1000e_get_stats64
+On 2019-11-01 11:51, Zenghui Yu wrote:
+> Hi Marc,
+>
+> On 2019/10/27 22:42, Marc Zyngier wrote:
+>> GICv4.1 redistributors have a VPE-aware INVALL register. Progress!
+>> We can now emulate a guest-requested INVALL without emiting a
+>> VINVALL command.
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>
+> Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c   | 14 ++++++++++++++
+>>   include/linux/irqchip/arm-gic-v3.h |  3 +++
+>>   2 files changed, 17 insertions(+)
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index f7effd453729..10bd156aa042 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -3511,6 +3511,19 @@ static void its_vpe_4_1_deschedule(struct 
+>> its_vpe *vpe,
+>>   	}
+>>   }
+>>   +static void its_vpe_4_1_invall(struct its_vpe *vpe)
+>> +{
+>> +	void __iomem *rdbase;
+>> +	u64 val;
+>> +
+>> +	val  = GICR_INVLPIR_V;
+>> +	val |= FIELD_PREP(GICR_INVLPIR_VPEID, vpe->vpe_id);
+>
+> Can we use GICR_INVALL_V/VPEID instead, and ...
+>
+>> +
+>> +	/* Target the redistributor this vPE is currently known on */
+>> +	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
+>> +	gic_write_lpir(val, rdbase + GICR_INVALLR);
+>> +}
+>> +
+>>   static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void 
+>> *vcpu_info)
+>>   {
+>>   	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+>> @@ -3526,6 +3539,7 @@ static int 
+>> its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+>>   		return 0;
+>>
+>>   	case INVALL_VPE:
+>> +		its_vpe_4_1_invall(vpe);
+>>   		return 0;
+>>
+>>   	default:
+>> diff --git a/include/linux/irqchip/arm-gic-v3.h 
+>> b/include/linux/irqchip/arm-gic-v3.h
+>> index 6fd89d77b2b2..b69f60792554 100644
+>> --- a/include/linux/irqchip/arm-gic-v3.h
+>> +++ b/include/linux/irqchip/arm-gic-v3.h
+>> @@ -247,6 +247,9 @@
+>>   #define GICR_TYPER_COMMON_LPI_AFF	GENMASK_ULL(25, 24)
+>>   #define GICR_TYPER_AFFINITY		GENMASK_ULL(63, 32)
+>>   +#define GICR_INVLPIR_VPEID		GENMASK_ULL(47, 32)
+>> +#define GICR_INVLPIR_V			GENMASK_ULL(63, 63)
+>> +
+>
+> ... define them here:
+>
+> #define GICR_INVALL_VPEID		GICR_INVLPIR_VPEID
+> #define GICR_INVALL_V			GICR_INVLPIR_V
 
-drivers/net/ethernet/intel/e1000e/mac.c, 1384: 
-	usleep_range in e1000e_get_hw_semaphore
-drivers/net/ethernet/intel/e1000e/80003es2lan.c, 322:
-	e1000e_get_hw_semaphore in e1000_release_swfw_sync_80003es2lan
-drivers/net/ethernet/intel/e1000e/80003es2lan.c, 197:
-	e1000_release_swfw_sync_80003es2lan in e1000_release_phy_80003es2lan
-drivers/net/ethernet/intel/e1000e/netdev.c, 4883: 
-	(FUNC_PTR) e1000_release_phy_80003es2lan in e1000e_update_phy_stats
-drivers/net/ethernet/intel/e1000e/netdev.c, 4917:
-	e1000e_update_phy_stats in e1000e_update_stats
-drivers/net/ethernet/intel/e1000e/netdev.c, 5945: 
-	e1000e_update_stats in e1000e_get_stats64
-drivers/net/ethernet/intel/e1000e/netdev.c, 5944: 
-	spin_lock in e1000e_get_stats64
+Yes, that's a sensible things to do. I'll squash that in my rebased 
+series.
 
-(FUNC_PTR) means a function pointer is called.
+Thanks,
 
-To fix these bugs, usleep_range() is replaced with udelay().
-
-These bugs are found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/ethernet/intel/e1000e/mac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/e1000e/mac.c b/drivers/net/ethernet/intel/e1000e/mac.c
-index e531976f8a67..51512a73fdd0 100644
---- a/drivers/net/ethernet/intel/e1000e/mac.c
-+++ b/drivers/net/ethernet/intel/e1000e/mac.c
-@@ -1363,7 +1363,7 @@ s32 e1000e_get_hw_semaphore(struct e1000_hw *hw)
- 		if (!(swsm & E1000_SWSM_SMBI))
- 			break;
- 
--		usleep_range(50, 100);
-+		udelay(100);
- 		i++;
- 	}
- 
-@@ -1381,7 +1381,7 @@ s32 e1000e_get_hw_semaphore(struct e1000_hw *hw)
- 		if (er32(SWSM) & E1000_SWSM_SWESMBI)
- 			break;
- 
--		usleep_range(50, 100);
-+		udelay(100);
- 	}
- 
- 	if (i == timeout) {
+         M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
