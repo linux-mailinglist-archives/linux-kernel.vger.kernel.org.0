@@ -2,104 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B246A12499F
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3C111249A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:29:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727335AbfLRO2e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:28:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40258 "EHLO mail.kernel.org"
+        id S1727130AbfLRO3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:29:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727108AbfLRO2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:28:33 -0500
-Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        id S1726856AbfLRO3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:29:36 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92B28218AC;
-        Wed, 18 Dec 2019 14:28:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5FED20716;
+        Wed, 18 Dec 2019 14:29:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576679312;
-        bh=15ucsLIJHLjkp5MFs6OnIcXlU6sykz3NdkikG8heYMM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=UvpSusOrcAuro+JfprVheYyS1/8+oJz0k46coOEv3J6SOUsH2xuhzGKcCugoP6zyY
-         KJqWqjcnK/ANG1TQvOQwOOxDiTWHx3PwBAlyxoAPVChE1ZFP4nCcVZiiaJxR1Alv8x
-         EHrhu+Q23y5FUBEqy7MBbxuND6d+aPxDb2KZE7Uk=
-Date:   Wed, 18 Dec 2019 08:28:31 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     bjorn@helgaas.com, andrew.murray@arm.com,
-        linux-pci@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        wangkefeng.wang@huawei.com, huawei.libin@huawei.com,
-        guohanjun@huawei.com
-Subject: Re: [PATCH v2] PCI: Add quirk for HiSilicon NP 5896 devices
-Message-ID: <20191218142831.GA101587@google.com>
+        s=default; t=1576679376;
+        bh=6TmEszoREjc8yIfDNgzG2vNgMDwZQPO+PjlcW1S5bh4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RDHNBfurToKdwV7ffFSdbuHn3zL79IJ87rn+Zbcw216Yx6jJBxvxeODd4nSQAlK+O
+         fNTn2LN9if3KXjonfafq7PQ3pCczWxlmvyPK8cSz2GynnL/F9ErgIhGhcaNJbNYdoh
+         VOUYSQNFIO1qb//yDvvOtqp5UomLqkZbSCkT19y8=
+Date:   Wed, 18 Dec 2019 15:29:32 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Henry Lin <henryl@nvidia.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: Fix build warning seen with CONFIG_PM=n
+Message-ID: <20191218142932.GA237894@kroah.com>
+References: <20191218011911.6907-1-linux@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ec52f21-8fd6-86f0-88ad-e316a274024d@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191218011911.6907-1-linux@roeck-us.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 05:16:03PM +0800, Xiongfeng Wang wrote:
-> On 2019/12/11 12:10, Bjorn Helgaas wrote:
-> > On Tue, Dec 10, 2019 at 9:28 PM Xiongfeng Wang
-> > <wangxiongfeng2@huawei.com> wrote:
-> >> On 2019/12/7 2:10, Bjorn Helgaas wrote:
-> >>> On Fri, Dec 06, 2019 at 03:01:45PM +0800, Xiongfeng Wang wrote:
-> >>>> HiSilicon PCI Network Processor 5896 devices misreport the
-> >>>> class type as 'NOT_DEFINED', but it is actually a network
-> >>>> device. Also the size of BAR3 is reported as 265T, but this BAR
-> >>>> is actually unused.  This patch modify the class type to
-> >>>> 'CLASS_NETWORK' and disable the unused BAR3.
-
-> >>> The question is not whether the BAR is used by the driver; the
-> >>> question is whether the device responds to accesses to the
-> >>> region described by the BAR when PCI_COMMAND_MEMORY is turned
-> >>> on.
-> >>
-> >> I asked the hardware engineer. He said I can not write an address
-> >> into that BAR.
-> > 
-> > If the BAR is not writable, I think sizing should fail, so I
-> > suspect some of the bits are actually writable.
+On Tue, Dec 17, 2019 at 05:19:11PM -0800, Guenter Roeck wrote:
+> The following build warning is seen if CONFIG_PM is disabled.
 > 
-> Sorry for the delayed response. It's not so convenient for me to get
-> to the hardware guys.  BAR0 BAR1 BAR2 are 32-bit and can be used to
-> access the registers and memory within 5896 devices. These three
-> BARs can meet the need for most scenario.  BAR3 is 64-bit and can be
-> used to access all the registers and memory within 5896 devices.
-> (BAR3 is writable. Sorry for the non-confirmed information before.)
-> But BAR3 is not used by the driver and the size is very
-> large（larger than 100G, still didn't get the precise size）.  So I
-> think maybe we can disable this BAR for now, otherwise the
-> unassigned resource will cause 'pci_enable_device()' returning
-> failure.
+> drivers/usb/host/xhci-pci.c:498:13: warning:
+> 	unused function 'xhci_pci_shutdown'
+> 
+> Fixes: f2c710f7dca8 ("usb: xhci: only set D3hot for pci device")
+> Cc: Henry Lin <henryl@nvidia.com>
+> Cc: stable@vger.kernel.org	# all stable releases with 2f23dc86c3f8
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>  drivers/usb/host/xhci-pci.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Here's the problem: the proposed patch (below) clears the struct
-resource corresponding to BAR 3, but that doesn't actually disable the
-BAR.  It hides the BAR from Linux, so Linux will pretend it doesn't
-exist, but it's still there in the hardware.
+Nice catch.
 
-The hardware BAR 3 still contains some value (possibly zero), and if
-PCI_COMMAND_MEMORY is set (which you need to do if you want to use
-*any* memory BARs on the device), the device will respond to any
-transactions in the BAR 3 range.  Depending on the topology and all
-the other BAR and window assignments, this may cause address
-conflicts.
+Mathias, I can queue this up now if you give me an ack.
 
-+ * HiSilicon NP 5896 devices BAR3 size is reported as 256T and causes problem
-+ * when assigning the resources. But this BAR is actually unused by the driver,
-+ * so let's disable it.
-+ */
-+static void quirk_hisi_fixup_np_bar(struct pci_dev *pdev)
-+{
-+       struct resource *r = &pdev->resource[3];
-+
-+       r->start = 0;
-+       r->end = 0;
-+       r->flags = 0;
-+
-+       pci_info(pdev, "Disabling invalid BAR 3\n");
+thanks,
+
+greg k-h
