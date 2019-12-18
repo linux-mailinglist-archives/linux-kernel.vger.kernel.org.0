@@ -2,77 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24C9912473A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:49:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7F89124744
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:51:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726931AbfLRMs4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 07:48:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40838 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbfLRMs4 (ORCPT
+        id S1726918AbfLRMvp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 07:51:45 -0500
+Received: from mail-pl1-f180.google.com ([209.85.214.180]:46299 "EHLO
+        mail-pl1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbfLRMvo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 07:48:56 -0500
-Received: by mail-lf1-f66.google.com with SMTP id i23so1606692lfo.7;
-        Wed, 18 Dec 2019 04:48:54 -0800 (PST)
+        Wed, 18 Dec 2019 07:51:44 -0500
+Received: by mail-pl1-f180.google.com with SMTP id y8so925056pll.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 04:51:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=puVqjGfUZqc69p5IbHMBZvLnH8lealCUIRVLLSvyh68=;
-        b=CegjZJQnDRhZvA19wS9NRPHXrPax+EW+aA5TzuSzoe7qytrGuF4nV6ZBgCWjEAfinb
-         KodRF8cIryYDy/YcH8FDDqXlRwgavUGskCHIfW0ROEVvLv922pvgyVl+m0N5Ynw7P0ll
-         EbsknU1E8T8x0olITC2gY5Nib0H3R5yURtYeHIfA2JzMGkwyFXB4ywGNtyAdHAiHWUN0
-         z9NBzJD+SjKwrh3T6GN0TYxniafqDKSbCJbVjac3ZIP1jw+dmulOtSrw8Rm5QHi/lE6Q
-         b60rpMTQPA4YNm+R7HdKB2crWn5DBw19hbq6k7EXfmwDtKVR2hV3pwYZ/zBmZRSZhMUD
-         2McA==
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-transfer-encoding:content-language;
+        bh=FMyD/MSNBBcC50DW1kZoGY+MZ7/XSIpSWlAzw7z2Gug=;
+        b=nAKkVnO2bx3KrwBfj56Elor9wqVHO6jodhd/FOFJKacDC7l0XAoQrxBs9MfazgF/AV
+         EKEigUJZi/3afJMLyRehUQ06HTvgKYwi5p1l7WVzxbNzetGkY1IpZirTYWxc1goN4Eat
+         KGeGTFnuQEINBdTdDGTjAwwofiHqPjfEtgs6VSqL/OKZ5xtZtCRKRAVQTN7F73dhKlxP
+         cPNO3GBbsxtlp5BxgTtRo1QOoqLv1PhXvz53+TQWGdRlQ2x+qE8B6uKNfWOsWVqJr3Sf
+         wuD97upmUsnAUkGvtufIMP3E5znuJhi8L5L/bePaqCTp41DN5UxQRI3XJD/BtCB13lb5
+         IAgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=puVqjGfUZqc69p5IbHMBZvLnH8lealCUIRVLLSvyh68=;
-        b=jWdHO1XkUxirKTmCuEMpbzMqaFqVNkL6lMKkpWCnrvzCx1DwfE0PFqqgGH3C9EOFyD
-         9yFsFQ16Ls96TLBFYlb11ZAz3GPYZVluZ3FX424sCjY36ZNOih40SZqJC7xRsLSujW+b
-         4JBqW9+mNFhaATLQfMY9CoyUE+Hcb0rPL7NII+pwGe6jGECZ+lOqAiXlyZSj8vM3RdUO
-         AyX5iuEoHMdtCWy6tX+P/KNSTxqbauBRa5Fe2VniK2s4BJIuZYg+FnW035scDxbigq9/
-         ZIHUXnplF4YD34VfgFb1KHZHWYX2Oqn5mC6H0pfpCcabGw6hJw6kmaFkxq9+KE16xNSP
-         bg5A==
-X-Gm-Message-State: APjAAAULpHCs9k6Sw5zzHHUNVqYCaNQGjFJeZRb2uX6m0UIPbnXrgXYL
-        b+iKZJPtZijvfD3GqgY4up5mijUJuXKK+vDDTgY=
-X-Google-Smtp-Source: APXvYqxxr2ycXk2c/95HhTuw//BhWhwZCbDPO1lc7OiIlgU4kqTzX6dC1NiHbs00RN13nBGSqf36KHHnaQUo36J/HmA=
-X-Received: by 2002:ac2:50da:: with SMTP id h26mr1594397lfm.80.1576673333979;
- Wed, 18 Dec 2019 04:48:53 -0800 (PST)
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-transfer-encoding:content-language;
+        bh=FMyD/MSNBBcC50DW1kZoGY+MZ7/XSIpSWlAzw7z2Gug=;
+        b=ab6uLSc0pLvDaRcLcaUkCs8wduAbSBRKtyVI4NH+NyK/v7jVizCV281sC2peEapAc9
+         7huVfxE+Kp9cGNxzg4eXGZP0qC8xsuqcv37eq2Qbfkk/4E2gtUej0YYGex+9yv1nyHbM
+         HltpmEV6OfjyY0FV43X7rDX7dgwtNMXcA2HN5gjgjAuKlGrvDYdSDzyy1GTnzgOpN7r1
+         nBeKZ+UJmVPs76oVgh7fBj9UrmFgT/pEQWC2VNwRpEJ8lOfjlY36R7T6K3O9I3ccj9QB
+         8DYm+CU/SpK712RaUmGKN90fFX/prIPg3K5IRfIxhrz2dLUP/qTfMDcKDYuIm7yDN1lU
+         dbZg==
+X-Gm-Message-State: APjAAAWqvaVaXF6OuP0igX573XbaI4x1EnV2cLP5w/AbcMgBha5MZFem
+        ntBnw1mfvvXMCNRQtgRwbL4+9vo/cwn1bA==
+X-Google-Smtp-Source: APXvYqxSw2W89Z1ed38sk+l/HZwuj1/iISIxcDi+mToLA+B8DJ8+lORbUmCuM7OZ4G31ALZIWr8a/w==
+X-Received: by 2002:a17:902:8649:: with SMTP id y9mr2607392plt.67.1576673503966;
+        Wed, 18 Dec 2019 04:51:43 -0800 (PST)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.139.103? ([2402:f000:1:1501:200:5efe:a66f:8b67])
+        by smtp.gmail.com with ESMTPSA id z13sm2920796pjz.15.2019.12.18.04.51.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 18 Dec 2019 04:51:43 -0800 (PST)
+To:     arnaud.pouliquen@st.com, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     alsa-devel@alsa-project.org, LKML <linux-kernel@vger.kernel.org>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [BUG] ALSA: soc: sti: a possible sleep-in-atomic-context bug in
+ uni_player_ctl_iec958_put()
+Message-ID: <739176c9-d889-0093-129c-25ff9c57b63b@gmail.com>
+Date:   Wed, 18 Dec 2019 20:51:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1576672860-14420-1-git-send-email-peng.fan@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 18 Dec 2019 09:48:49 -0300
-Message-ID: <CAOMZO5DeA24EUjr-E=V=tGNaZ7UkOEi+F5-kEBqEB288DSNSoA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: mvebu: armada-37xx: use use platform api
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mripard@kernel.org" <mripard@kernel.org>,
-        "wens@csie.org" <wens@csie.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 9:44 AM Peng Fan <peng.fan@nxp.com> wrote:
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-> -       nr_irq_parent = of_irq_count(np);
-> +       nr_irq_parent = platform_irq_count(pdev);
-> +       if (nr_irq_parent < 0) {
-> +               if (nr_irq_parent != -EPROBE_DEFER)
-> +                       dev_err(dev, "Couldn't determine irq count: %pe\n",
-> +                               ERR_PTR(nr_irq_parent));
+sound/soc/sti/uniperif_player.c, 229:
+     mutex_lock in uni_player_set_channel_status
+sound/soc/sti/uniperif_player.c, 608:
+     uni_player_set_channel_status in uni_player_ctl_iec958_put
+sound/soc/sti/uniperif_player.c, 603:
+     _raw_spin_lock_irqsave in uni_player_ctl_iec958_put
 
-Why do you return ERR_PTR(nr_irq_parent) instead of simply nr_irq_parent?
+mutex_lock() can sleep at runtime.
+
+I am not sure how to properly fix this possible bug, so I only report it.
+
+This bug is found by a static analysis tool STCheck written by myself.
+
+
+Best wishes,
+Jia-Ju Bai
