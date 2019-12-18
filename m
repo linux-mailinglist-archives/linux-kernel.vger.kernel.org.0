@@ -2,110 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B161312404B
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A7DB124014
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfLRH3W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:29:22 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:25041 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725955AbfLRH3W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:29:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576654161;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W+koJecItxUpWBbkClvTnIgMsQAjFCgBgLdaip1sKlY=;
-        b=HgEJY8wcMK3XBEFLet34nsAXKtuAIo/zIG1uAXZ/TBIsjQz0+FKq+xkK/kJuQGa23P8Bxm
-        G12T/MccDar4TfUZ68LUXXo9kWfpGX3UUM/VvEWL/n80utkD3uHYwvAQK6MP2fAE+qSNCc
-        8+Z7UeLyhNuvAUlxMxpM8Qe8SPJWbEY=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-237-KeCKVkgNOpu5eoSnYBoDdg-1; Wed, 18 Dec 2019 02:29:18 -0500
-X-MC-Unique: KeCKVkgNOpu5eoSnYBoDdg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 6C21B800EC0;
-        Wed, 18 Dec 2019 07:29:15 +0000 (UTC)
-Received: from krava (ovpn-204-177.brq.redhat.com [10.40.204.177])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6DCF71001B00;
-        Wed, 18 Dec 2019 07:29:11 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 08:29:08 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Andrey Zhizhikin <andrey.z@gmail.com>
-Cc:     ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, andriin@fb.com,
-        sergey.senozhatsky@gmail.com, pmladek@suse.com,
-        wangkefeng.wang@huawei.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>
-Subject: Re: [PATCH] tools lib api fs: fix gcc9 compilation error
-Message-ID: <20191218072908.GA19062@krava>
-References: <20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com>
+        id S1726743AbfLRHI6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:08:58 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7707 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726682AbfLRHI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:08:56 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 30DAD92510CB087CAE9B;
+        Wed, 18 Dec 2019 15:08:51 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Wed, 18 Dec 2019
+ 15:08:44 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+        <alexander.shishkin@linux.intel.com>, <jolsa@redhat.com>,
+        <namhyung@kernel.org>, <ak@linux.intel.com>,
+        <adrian.hunter@intel.com>, <yao.jin@linux.intel.com>,
+        <tmricht@linux.ibm.com>, <brueckner@linux.ibm.com>,
+        <songliubraving@fb.com>, <gregkh@linuxfoundation.org>,
+        <kim.phillips@arm.com>, <James.Clark@arm.com>,
+        <jeremy.linton@arm.com>
+CC:     <gengdongjiu@huawei.com>, <wxf.wang@hisilicon.com>,
+        <liwei391@huawei.com>, <tanxiaojun@huawei.com>,
+        <liuqi115@hisilicon.com>, <huawei.libin@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
+Subject: [PATCH 0/6] perf tools: Add support for some spe events and precise ip
+Date:   Wed, 18 Dec 2019 15:54:49 +0800
+Message-ID: <20191218075455.5106-1-tanxiaojun@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211080109.18765-1-andrey.zhizhikin@leica-geosystems.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 08:01:09AM +0000, Andrey Zhizhikin wrote:
-> GCC9 introduced string hardening mechanisms, which exhibits the error
-> during fs api compilation:
-> 
-> error: '__builtin_strncpy' specified bound 4096 equals destination size
-> [-Werror=stringop-truncation]
-> 
-> This comes when the length of copy passed to strncpy is is equal to
-> destination size, which could potentially lead to buffer overflow.
-> 
-> There is a need to mitigate this potential issue by limiting the size of
-> destination by 1 and explicitly terminate the destination with NULL.
-> 
-> Signed-off-by: Andrey Zhizhikin <andrey.zhizhikin@leica-geosystems.com>
-> Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
+After the commit ffd3d18c20b8 ("perf tools: Add ARM Statistical
+Profiling Extensions (SPE) support") is merged, "perf record" and
+"perf report --dump-raw-trace" have been supported. However, the
+raw data that is dumped cannot be used without parsing.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
+This patchset is to improve the "perf report" support for spe, and
+further process the data. Currently, support for the three events
+of llc-miss, tlb-miss, branch-miss and remote-access is added.
 
-thanks,
-jirka
+The macro definition was modified under Jeremy's suggestion, and
+the "event:pp" approach was used under James' suggestion to achieve
+the precise ip of some events on arm64. Currently, only branch-misses
+are implemented, and other event support will be added later.
 
-> ---
->  tools/lib/api/fs/fs.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
-> index 11b3885e833e..027b18f7ed8c 100644
-> --- a/tools/lib/api/fs/fs.c
-> +++ b/tools/lib/api/fs/fs.c
-> @@ -210,6 +210,7 @@ static bool fs__env_override(struct fs *fs)
->  	size_t name_len = strlen(fs->name);
->  	/* name + "_PATH" + '\0' */
->  	char upper_name[name_len + 5 + 1];
-> +
->  	memcpy(upper_name, fs->name, name_len);
->  	mem_toupper(upper_name, name_len);
->  	strcpy(&upper_name[name_len], "_PATH");
-> @@ -219,7 +220,8 @@ static bool fs__env_override(struct fs *fs)
->  		return false;
->  
->  	fs->found = true;
-> -	strncpy(fs->path, override_path, sizeof(fs->path));
-> +	strncpy(fs->path, override_path, sizeof(fs->path) - 1);
-> +	fs->path[sizeof(fs->path) - 1] = '\0';
->  	return true;
->  }
->  
-> -- 
-> 2.17.1
-> 
+In addition, we also found that when recording large multi-threaded
+programs, ctrl + c could not end recording, so it was fixed and two
+patches were added.
+
+Tan Xiaojun (4):
+  perf tools: Move arm-spe-pkt-decoder.h/c to the new dir
+  perf tools: Add support for "report" for some spe events
+  perf report: Add --spe options for arm-spe
+  perf tools: Support "branch-misses:pp" on arm64
+
+Wei Li (2):
+  perf tools: add perf_evlist__terminate() for terminate
+  perf tools: arm-spe: fix record hang after being terminated
+
+ tools/perf/Documentation/perf-report.txt      |  10 +
+ tools/perf/arch/arm64/util/arm-spe.c          |  10 +-
+ tools/perf/builtin-record.c                   |   1 +
+ tools/perf/builtin-report.c                   |   5 +
+ tools/perf/util/Build                         |   2 +-
+ tools/perf/util/arm-spe-decoder/Build         |   1 +
+ .../util/arm-spe-decoder/arm-spe-decoder.c    | 225 +++++
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  66 ++
+ .../arm-spe-pkt-decoder.c                     |   0
+ .../arm-spe-pkt-decoder.h                     |   2 +
+ tools/perf/util/arm-spe.c                     | 788 +++++++++++++++++-
+ tools/perf/util/arm-spe.h                     |   3 +
+ tools/perf/util/auxtrace.c                    |  49 ++
+ tools/perf/util/auxtrace.h                    |  29 +
+ tools/perf/util/evlist.c                      |  16 +
+ tools/perf/util/evlist.h                      |   1 +
+ tools/perf/util/evsel.h                       |   1 +
+ tools/perf/util/session.h                     |   2 +
+ 18 files changed, 1169 insertions(+), 42 deletions(-)
+ create mode 100644 tools/perf/util/arm-spe-decoder/Build
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.c
+ create mode 100644 tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.c (100%)
+ rename tools/perf/util/{ => arm-spe-decoder}/arm-spe-pkt-decoder.h (96%)
+
+-- 
+2.17.1
 
