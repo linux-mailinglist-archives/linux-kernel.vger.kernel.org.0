@@ -2,165 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FFC8123FE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3BC124027
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbfLRG7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 01:59:49 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45112 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfLRG7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 01:59:48 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j26so845719ljc.12;
-        Tue, 17 Dec 2019 22:59:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=CmCrYGkB4ZFug6o70e5mM5AN8jxFdIYj78bBkf6cS9E=;
-        b=rDsZ6ehiV/VaCkyEJyidCLuuzIViJSA3fU06nnxchbnNcHLsWg6FC2rbu2cp4g2nCZ
-         GjdMQHKvGXBnvWiXKj1hKGsMMqGjHMiA0HMp0rzkxDuYMtBvcDt1quK0DzEdDnzPgmIZ
-         dH08cWPlt89V0876fScd0Mm8G4m9KL5O8CeLvfn8TwxwEFQ8KYz+SEguLitgvhJapHUf
-         HdME4jEDXQTOIG4X/x3HXBQwNhgg4iqZ0NBINB68g/dotSJdBVK81dNQ2aRPL/0irAGc
-         5ESQPo37s3ez1Td2wk7GcTHZcfP/xofmgHS8DKphXoH4JIvU0Oo7SOvncl2+IOLJ2kj7
-         9M/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CmCrYGkB4ZFug6o70e5mM5AN8jxFdIYj78bBkf6cS9E=;
-        b=meIIYNZ2kUX2OzNAYmpI6d2qfZCu0Gl+PJnW8Fb3nmx1YfwL0jIvYOsPy8DdK0+/wl
-         kdyjNz1uz0sKftW6IT/ry35W2svXq+f0rHMT16l/XKDZzXPWE4IJH2V7Kxr3vL9DxvHJ
-         XPEXsOUYpB/cnfrSMZuLqHbZENy4t/OCgNz7qxAqY4RZnPmeiqj8Ln1MsXY0z1+HWL4q
-         PMTq8hkPDhtyzPmBnkATLGEFOLTqY87GxoeG2b97/83NwsRlOXvTyyg4JHagDBF19/hK
-         L88895plqb3NTyvdrW+71O0CKH87odrJ8LQqA5hiEFnLFNKf437k3D9IHthApWJHX0qX
-         QISA==
-X-Gm-Message-State: APjAAAW0/wfA4TK3vasSm0QeebkslNCjJpL6QliayddcfBliknjp/r0v
-        jLXe8IYQtIJ9y7+uGUjWOQoj8zlD
-X-Google-Smtp-Source: APXvYqzT48RPafMiESaVyT/lGCGTlQ1gd/eTB1+JM+yWuja4CpotaFHQ4sjej153gQh/Yj/H0wT0Dw==
-X-Received: by 2002:a2e:978d:: with SMTP id y13mr558306lji.103.1576652384997;
-        Tue, 17 Dec 2019 22:59:44 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id p4sm517158lji.107.2019.12.17.22.59.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 Dec 2019 22:59:44 -0800 (PST)
-Subject: Re: [PATCH v4 13/19] ASoC: tegra: Add fallback implementation for
- audio mclk
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e2f96102-33fa-cbe5-f488-666b7b7ffb06@gmail.com>
-Date:   Wed, 18 Dec 2019 09:59:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726671AbfLRHSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:18:09 -0500
+Received: from mga14.intel.com ([192.55.52.115]:20002 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbfLRHSJ (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 02:18:09 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 18:29:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,327,1571727600"; 
+   d="scan'208";a="212570134"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.196.84]) ([10.239.196.84])
+  by fmsmga007.fm.intel.com with ESMTP; 17 Dec 2019 18:29:43 -0800
+Subject: Re: [PATCH v3 1/3] perf report: Change sort order by a specified
+ event in group
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20191212123337.23600-1-yao.jin@linux.intel.com>
+ <20191216073113.GB18240@krava>
+ <fcedac74-7fb4-1c3b-67a3-9af24c256f40@linux.intel.com>
+ <20191217090600.GA24766@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <e0b69c6b-40b9-5d7f-dcc9-39fc4ef52700@linux.intel.com>
+Date:   Wed, 18 Dec 2019 10:29:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20191217090600.GA24766@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-17.12.2019 23:04, Sowjanya Komatineni пишет:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
+
+
+On 12/17/2019 5:06 PM, Jiri Olsa wrote:
+> On Tue, Dec 17, 2019 at 09:47:01AM +0800, Jin, Yao wrote:
+>>
+>>
+>> On 12/16/2019 3:31 PM, Jiri Olsa wrote:
+>>> On Thu, Dec 12, 2019 at 08:33:35PM +0800, Jin Yao wrote:
+>>>
+>>> SNIP
+>>>
+>>>>
+>>>> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+>>>> ---
+>>>>    tools/perf/Documentation/perf-report.txt |   4 +
+>>>>    tools/perf/builtin-report.c              |  10 +++
+>>>>    tools/perf/ui/hist.c                     | 108 +++++++++++++++++++----
+>>>>    tools/perf/util/symbol_conf.h            |   1 +
+>>>>    4 files changed, 108 insertions(+), 15 deletions(-)
+>>>>
+>>>> diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
+>>>> index 8dbe2119686a..9ade613ef020 100644
+>>>> --- a/tools/perf/Documentation/perf-report.txt
+>>>> +++ b/tools/perf/Documentation/perf-report.txt
+>>>> @@ -371,6 +371,10 @@ OPTIONS
+>>>>    	Show event group information together. It forces group output also
+>>>>    	if there are no groups defined in data file.
+>>>> +--group-sort-idx::
+>>>> +	Sort the output by the event at the index n in group. If n is invalid,
+>>>> +	sort by the first event. WARNING: This should be used with --group.
+>>>
+>>> --group in record or report?
+>>>
+>>
+>> This --group is in perf-report. So even if it's not created with -e '{}' in
+>> perf-record, it still supports to show event information together.
+>>
+>>> you can also create groups with -e '{}', not just --group option
+>>>
+>>> I wonder you could check early on 'evlist->nr_groups' and fail
+>>> if there's no group defined if the option is enabled
+>>>
+>>
+>> Maybe we don't need to check that because it supports the case of no group
+>> defined.
+>>
+>> For example,
+>> perf record -e cycles,instructions
+>> perf report --group --group-sort-idx 1 --stdio
 > 
-> New device tree uses clk_out_1 from pmc clock provider.
+> hum, --group will force evlist->nr_groups == 1, right?
 > 
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
+> so we could warn/fail on (group-sort-idx && !evlist->nr_groups)
 > 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index fe9ca8acd0fb..1b88c6043082 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -191,7 +191,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->  	data->clk_cdev1 = devm_clk_get(dev, "mclk");
->  	if (IS_ERR(data->clk_cdev1)) {
->  		dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> -		return PTR_ERR(data->clk_cdev1);
-> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
-> +			return PTR_ERR(data->clk_cdev1);
-> +		/* Fall back to extern1 */
-> +		data->clk_cdev1 = devm_clk_get(dev, "extern1");
-> +		if (IS_ERR(data->clk_cdev1)) {
-> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
-> +			return PTR_ERR(data->clk_cdev1);
-> +		}
-> +
-> +		dev_err(data->dev, "Falling back to extern1\n");
->  	}
->  
->  	/*
 > 
 
-[    1.769091] ------------[ cut here ]------------
-[    1.769249] WARNING: CPU: 2 PID: 1 at drivers/clk/clk.c:954
-clk_core_disable+0xa5/0x1d4
-[    1.769330] clk_out_1 already disabled
-[    1.769459] Modules linked in:
-[    1.769541] CPU: 2 PID: 1 Comm: swapper/0 Not tainted
-5.5.0-rc1-next-20191213-00167-g6b9fbcdac8f3-dirty #266
-[    1.769676] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[    1.769775] [<c010e4bd>] (unwind_backtrace) from [<c010a0fd>]
-(show_stack+0x11/0x14)
-[    1.769918] [<c010a0fd>] (show_stack) from [<c09a37b1>]
-(dump_stack+0x85/0x94)
-[    1.770061] [<c09a37b1>] (dump_stack) from [<c011f3d1>]
-(__warn+0xc1/0xc4)
-[    1.770144] [<c011f3d1>] (__warn) from [<c011f691>]
-(warn_slowpath_fmt+0x61/0x78)
-[    1.770285] [<c011f691>] (warn_slowpath_fmt) from [<c04a0e7d>]
-(clk_core_disable+0xa5/0x1d4)
-[    1.770427] [<c04a0e7d>] (clk_core_disable) from [<c04a0fc3>]
-(clk_core_disable_lock+0x17/0x20)
-[    1.770516] [<c04a0fc3>] (clk_core_disable_lock) from [<c07792bb>]
-(tegra_asoc_utils_set_rate+0x53/0x208)
-[    1.770662] [<c07792bb>] (tegra_asoc_utils_set_rate) from
-[<c077b8c5>] (tegra_rt5640_probe+0xd5/0x128)
-[    1.770808] [<c077b8c5>] (tegra_rt5640_probe) from [<c0555eb7>]
-(platform_drv_probe+0x33/0x68)
-[    1.770958] [<c0555eb7>] (platform_drv_probe) from [<c055471d>]
-(really_probe+0x14d/0x240)
-[    1.771099] [<c055471d>] (really_probe) from [<c055493f>]
-(driver_probe_device+0x43/0x11c)
-[    1.771187] [<c055493f>] (driver_probe_device) from [<c0554b25>]
-(device_driver_attach+0x3d/0x40)
-[    1.771328] [<c0554b25>] (device_driver_attach) from [<c0554b5f>]
-(__driver_attach+0x37/0x78)
-[    1.771469] [<c0554b5f>] (__driver_attach) from [<c05532fb>]
-(bus_for_each_dev+0x43/0x6c)
-[    1.771609] [<c05532fb>] (bus_for_each_dev) from [<c0553e0f>]
-(bus_add_driver+0xe3/0x148)
-[    1.771692] [<c0553e0f>] (bus_add_driver) from [<c055531d>]
-(driver_register+0x39/0xa0)
-[    1.771833] [<c055531d>] (driver_register) from [<c0102c2f>]
-(do_one_initcall+0x43/0x1bc)
-[    1.771979] [<c0102c2f>] (do_one_initcall) from [<c1000ce5>]
-(kernel_init_freeable+0x121/0x194)
-[    1.772129] [<c1000ce5>] (kernel_init_freeable) from [<c09b40e9>]
-(kernel_init+0xd/0xd0)
-[    1.772215] [<c09b40e9>] (kernel_init) from [<c01010bd>]
-(ret_from_fork+0x11/0x34)
-[    1.772349] Exception stack(0xde907fb0 to 0xde907ff8)
+Yes, we can. I have added this checking in v4.
 
+> SNIP
+> 
+>>
+>> Thanks. Can we say something as following?
+>>
+>> --group-sort-idx::
+>> 	Sort the output by the event at the index n in group. If n is invalid, sort
+>> by the first event. It can support multiple groups with different amount of
+>> events. WARNING: This should be used with perf report --group.
+> 
+> if the events are already grouped you dont need --group ;-) how about:
+> 
+> 	This should be used on grouped events.
+> 
+
+OK, yes, that's better. I just post v4 which includes this update.
+
+Thanks
+Jin Yao
+
+> thanks,
+> jirka
+> 
