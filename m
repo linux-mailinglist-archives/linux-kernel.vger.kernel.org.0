@@ -2,138 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3C9D124587
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:18:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0920B1245AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfLRLST (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:18:19 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37755 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727014AbfLRLSR (ORCPT
+        id S1726918AbfLRLVD convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Dec 2019 06:21:03 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:47269 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726676AbfLRLVC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:18:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576667897;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dZGhAnGH0QyfnH31mPKQJTf9859i7lgXJ3SW1mv4Pr8=;
-        b=Q6eI/e3aIz3LjvMzw/L2ArUYljy7IRkF2v2wbrTI9NLaZ8QSN/c1rDRAmpUwZerpASv1er
-        iVpTU2GlLrIQqLJIBQ/nEoBR5V7oTuqS5X1yTYtdAnZu6dLbjE/cN5y7kLCBW07CpQxkC/
-        /O8mcj3UVZioLtdo/Gn2+3s2Ij0FW7Y=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-87-bUR201HIMqewX_PT9ao8Tw-1; Wed, 18 Dec 2019 06:18:15 -0500
-X-MC-Unique: bUR201HIMqewX_PT9ao8Tw-1
-Received: by mail-wr1-f69.google.com with SMTP id z14so752379wrs.4
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 03:18:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dZGhAnGH0QyfnH31mPKQJTf9859i7lgXJ3SW1mv4Pr8=;
-        b=a0CqqpaJyeRmUcgDyvgnhDBG00g/Cfc47yO0WOzhiYb0XGhRK7nkMuu+PIZErcDjUD
-         UTqRpjiMqF0djJ9Af6w3o939GdOt9xxvTYz4aEzZFJ768iEXpRmcB2tfosVBnfBjkrkZ
-         Q59NvL7mc3n2j5h3By2ot47Y6QKNXPoMSLPzt627EgwTwmF5CW1RoiegvCzFi8C9C1am
-         xhciNQFvMpkCBA49P5UVmM3cYHUv+4yhtgf0X/4Qp3CqyLPbO2xuRA6WGBnK05Zo6lX7
-         IeqrmjoJFGVKri6zPAmHshENCY0IMGek1Tu58dAi+h7nmnz76k+T9yWq4+W/21Xljh5J
-         TAzA==
-X-Gm-Message-State: APjAAAXe/1ZjMFoppiREjrL1uIuGchAsiodroX687qQ5kyXY8dQ5Ei0o
-        6acAtddRiUdCOTuWrMnBuT2Uu8GpuPch0SBcrsvTPjKF06pfCMsFeBf65PK7SI+Crpk+xttYjss
-        bfmj2tYo5zhJo7yWwJRYutkWT
-X-Received: by 2002:adf:c147:: with SMTP id w7mr2254246wre.389.1576667894757;
-        Wed, 18 Dec 2019 03:18:14 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxy8svWDScf6vz9rhpq+U1ipCWfybaC8xv/UzYFKKYrL6RfmzIcL81FArHty2w2DF4y6X0lVQ==
-X-Received: by 2002:adf:c147:: with SMTP id w7mr2254231wre.389.1576667894560;
-        Wed, 18 Dec 2019 03:18:14 -0800 (PST)
-Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
-        by smtp.gmail.com with ESMTPSA id y139sm2232359wmd.24.2019.12.18.03.18.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 03:18:13 -0800 (PST)
-Subject: Re: [PATCH] platform/x86: hp-wmi: Make buffer for
- HPWMI_FEATURE2_QUERY 128 bytes
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>
-References: <20191217190604.638467-1-hdegoede@redhat.com>
- <CAHp75Vf8CDwW731uD4OMzB69P-D1AN3PzCMFBGGD4fvBFccpLg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <92800c93-9d03-ab26-e71f-ce40df1ad3bc@redhat.com>
-Date:   Wed, 18 Dec 2019 12:18:13 +0100
+        Wed, 18 Dec 2019 06:21:02 -0500
+Received: from [37.162.94.155] (port=27596 helo=[192.168.43.3])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1ihXNz-00B31J-Q6; Wed, 18 Dec 2019 12:20:59 +0100
+Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
+To:     Daniel Mack <daniel@zonque.org>, Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-8-daniel@zonque.org> <20191217133952.GJ18955@dell>
+ <ce6e0b19-ec40-c17b-cee6-05eca52d5df3@zonque.org>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <e288a6e1-a967-d7cd-72fc-d190819953e3@lucaceresoli.net>
+Date:   Wed, 18 Dec 2019 12:20:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf8CDwW731uD4OMzB69P-D1AN3PzCMFBGGD4fvBFccpLg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <ce6e0b19-ec40-c17b-cee6-05eca52d5df3@zonque.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Daniel,
 
-On 18-12-2019 11:17, Andy Shevchenko wrote:
-> On Tue, Dec 17, 2019 at 9:06 PM Hans de Goede <hdegoede@redhat.com> wrote:
+On 17/12/19 20:24, Daniel Mack wrote:
+>>> +++ b/drivers/mfd/ad242x-bus.c
+>>> @@ -0,0 +1,42 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +
+>>> +#include <linux/i2c.h>
+>>> +#include <linux/init.h>
+>>> +#include <linux/mfd/ad242x.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +
+>>> +static int ad242x_bus_i2c_probe(struct i2c_client *i2c,
+>>> +                const struct i2c_device_id *id)
+>>> +{
+>>> +    dev_set_drvdata(&i2c->dev, i2c);
+>>> +    i2c_set_clientdata(i2c, &i2c->dev);
 >>
->> At least on the HP Envy x360 15-cp0xxx model the WMI interface
->> for HPWMI_FEATURE2_QUERY requires an outsize of at least 128 bytes,
->> otherwise it fails with an error code 5 (HPWMI_RET_INVALID_PARAMETERS):
+>> Please explain to me what you think is happening here.
 >>
->> Dec 06 00:59:38 kernel: hp_wmi: query 0xd returned error 0x5
+>>> +    return 0;
+>>> +}
 >>
->> We do not care about the contents of the buffer, we just want to know
->> if the HPWMI_FEATURE2_QUERY command is supported.
->>
->> This commits bumps the buffer size, fixing the error.
->>
+>> What does this driver do?  Seems kinda pointless?
 > 
-> Fixes tag?
-
-The HPWMI_FEATURE2_QUERY call was introduced in 8a1513b4932, so I guess
-this should have a:
-
-Fixes: 8a1513b4932 ("hp-wmi: limit hotkey enable")
-
-Tag, shall I send a v2 with this, or can you add it while applying the patch?
-
-Regards,
-
-Hans
-
-
-
-
+> As explained in the commit log, these devices expose two addresses on
+> the i2c bus, and each of which exists for a distinct purpose. The
+> primary one is used to access registers on the master node itself, the
+> second one is proxying traffic to remote nodes.
 > 
->> Cc: stable@vger.kernel.org
->> BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1520703
->> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
->> ---
->>   drivers/platform/x86/hp-wmi.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/platform/x86/hp-wmi.c b/drivers/platform/x86/hp-wmi.c
->> index 9579a706fc08..a881b709af25 100644
->> --- a/drivers/platform/x86/hp-wmi.c
->> +++ b/drivers/platform/x86/hp-wmi.c
->> @@ -300,7 +300,7 @@ static int __init hp_wmi_bios_2008_later(void)
->>
->>   static int __init hp_wmi_bios_2009_later(void)
->>   {
->> -       int state = 0;
->> +       u8 state[128];
->>          int ret = hp_wmi_perform_query(HPWMI_FEATURE2_QUERY, HPWMI_READ, &state,
->>                                         sizeof(state), sizeof(state));
->>          if (!ret)
->> --
->> 2.23.0
->>
-> 
-> 
+> Now, the question is how to support that, and the approach chosen here
+> is to have a dummy driver sitting on the 2nd address, and to reach out
+> to it via a DT phandle from the master node. I don't like that much
+> either, but I'm not aware of a cleaner way to bind two addresses with
+> one driver. If there is any, I'd be happy to change that.
+
+Have a look at i2c_new_dummy_device(), perhaps it is what you need here.
+
+-- 
+Luca
 
