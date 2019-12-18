@@ -2,108 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 80A6F1246A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:18:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C670F1246B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 13:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbfLRMSl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 07:18:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41076 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725930AbfLRMSl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 07:18:41 -0500
-Received: by mail-wr1-f68.google.com with SMTP id c9so2050682wrw.8
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 04:18:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HdA4x4Mpp0Ob+ig4Pc6f4Csozs6EHGzpAf+wfwCPZUM=;
-        b=oKw60tibz2ozN6kXgqmUjIxiZJSkhYCSVlM16hOVIFRcF2dOG9Blm7NLiydXcTws5B
-         z2h+NoL4ngtuxa0FtUSRbmVb+w7OuEki889FzgTXbuIsrMivC0iD0K/tFsXIw2ht3rl7
-         6yD7Jb2tgnbitAI71s0TsGZ7BeNQjrgvsVBxb0DvD6VhQB08rJaCUKFs5w18yVjjEWSd
-         +HJHIkgCcOfk+G57Hnb6S7ZGpC0695zwmTpDVQq1ikbev0cBNUdKy+QEBB++eFiaKJQH
-         e0vSrSYDX+ZNOa2fFygTHeXgOgZNuN4hRYkdsBvXON5nm5MKldz3g+HnqAYyVru3nqS4
-         CqSQ==
-X-Gm-Message-State: APjAAAVuKdAD87omyhi3FKCXNT/3+1QGVmmvC5gne3FviijfHWrEkrtp
-        rFZ9IUMYlwuoTcW1hyzO8JY=
-X-Google-Smtp-Source: APXvYqwvdlQcIhXXIIukIAvOpQerf7Pd1fFtKLlBDSy+5nmuElWfeJOxSRHPfmDBZCM7c9loTD64lQ==
-X-Received: by 2002:a5d:52c4:: with SMTP id r4mr2388982wrv.368.1576671519196;
-        Wed, 18 Dec 2019 04:18:39 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id v20sm2242610wmj.32.2019.12.18.04.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 04:18:38 -0800 (PST)
-Date:   Wed, 18 Dec 2019 13:18:37 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Kravetz <mike.kravetz@oracle.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Eric B Munson <emunson@akamai.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.ibm.com, Jarod Wilson <jarod@redhat.com>
-Subject: hugetlbfs testing coverage (was: Re: [PATCH v2] mm/hugetlb: defer
- free_huge_page() to a workqueue)
-Message-ID: <20191218121837.GD21485@dhcp22.suse.cz>
-References: <20191212060650.ftqq27ftutxpc5hq@linux-p48b>
- <20191212063050.ufrpij6s6jkv7g7j@linux-p48b>
- <20191212190427.ouyohviijf5inhur@linux-p48b>
- <d6b9743c-776c-d740-73af-a600f15b910a@oracle.com>
- <79d3a7e1-384b-b759-cd84-56253fb9ed40@redhat.com>
- <20191216132658.GG30281@dhcp22.suse.cz>
- <98ac628d-f8be-270d-80bc-bf2373299caf@redhat.com>
- <21a92649-bb9f-b024-e52b-4ce9355f973b@redhat.com>
- <20191217090054.GA31063@dhcp22.suse.cz>
- <ca035fbb-752d-70ff-1be8-e2d2f90b3c0e@oracle.com>
+        id S1726932AbfLRMWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 07:22:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725930AbfLRMWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 07:22:00 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D114121582;
+        Wed, 18 Dec 2019 12:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576671719;
+        bh=mwUG7T4wiluvDMoa+8uM1MTApMMhiYa8/vECsa8OAxE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ucr2Uf3eUh2mEBA62plUWANWmrqEmolSuEx8tTmm+okxdOQ13Aeegy8KhfAVwjKp9
+         72hB7zUnKvDuzwQM06zyPIoAuoX9th/aNWWQ1jnQ/LKYlqo0XUvfLfN1NQiqBZK23l
+         qiG/XbRV18woNVgm8AnBtPO7Ztxa3rOPd3wJs3EA=
+Date:   Wed, 18 Dec 2019 13:21:57 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Siddharth Kapoor <ksiddharth@google.com>, lee.jones@linaro.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: Kernel panic on Google Pixel devices due to regulator patch
+Message-ID: <20191218122157.GA17086@kroah.com>
+References: <CAJRo92+eD9F6Q60yVY2PfwaPWO_8Dts8QwH7mhpJaem7SpLihg@mail.gmail.com>
+ <20191218113458.GA3219@sirena.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca035fbb-752d-70ff-1be8-e2d2f90b3c0e@oracle.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191218113458.GA3219@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 17-12-19 10:05:06, Mike Kravetz wrote:
-> Cc: Eric
+On Wed, Dec 18, 2019 at 11:34:58AM +0000, Mark Brown wrote:
+> On Tue, Dec 17, 2019 at 11:51:55PM +0800, Siddharth Kapoor wrote:
 > 
-> On 12/17/19 1:00 AM, Michal Hocko wrote:
-> > On Mon 16-12-19 13:44:53, Waiman Long wrote:
-> >> On 12/16/19 10:38 AM, Waiman Long wrote:
-> > [...]
-> >>>> Can you extract guts of the testcase and integrate them into hugetlb
-> >>>> test suite?
-> >>
-> >> BTW, what hugetlb test suite are you talking about?
-> > 
-> > I was using tests from libhugetlbfs package in the past. There are few
-> > tests in LTP project but the libhugetlbfs coverage used to cover the
-> > largest part of the functionality.
-> > 
-> > Is there any newer home for the package than [1], Mike? Btw. would it
-> > mak sense to migrate those tests to a more common place, LTP or kernel
-> > selftests?
+> > I would like to share a concern with the regulator patch which is part of
+> > 4.9.196 LTS kernel.
 > 
-> That is the latest home/release for libhugetlbfs.
-> 
-> The libhugetlbfs test suite is somewhat strange in that I suspect it started
-> as testing for libhugetlbfs itself.  When it was written, the thought may have
-> been that people would use libhugetlfs as the primary interface to hugetlb
-> pages.  That is not the case today.  Over time, hugetlbfs tests not associated
-> with libhugetlbfs were added.
-> 
-> If we want to migrate libhugetlbfs tests, then I think we would only want to
-> migrate the non-libhugetlbfs test cases.  Although, the libhugetlbfs specific
-> tests are useful as they 'could' point out regressions.
+> That's an *extremely* old kernel.
 
-Yeah, I can second that. I remember using the suite and it pointed to
-real issues when I was touching the area in the past. So if we can get
-as many tests to be independent on the library and integrate it to some
-existing testing project - be it kernel selftest or LTP - then it would
-be really great and I assume the testing coverage of the hugetlb
-functionality would increase dramatically.
--- 
-Michal Hocko
-SUSE Labs
+It is, but it's the latest stable kernel (well close to), and your patch
+was tagged by you to be backported to here, so if there's a problem with
+a stable branch, I want to know about it as I don't want to see
+regressions happen in it.
+
+> > https://lore.kernel.org/lkml/20190904124250.25844-1-broonie@kernel.org/
+> 
+> That's the patch "[PATCH] regulator: Defer init completion for a while
+> after late_initcall" which defers disabling of idle regulators for a
+> while.
+> 
+> Please include human readable descriptions of things like commits and
+> issues being discussed in e-mail in your mails, this makes them much
+> easier for humans to read especially when they have no internet access.
+> I do frequently catch up on my mail on flights or while otherwise
+> travelling so this is even more pressing for me than just being about
+> making things a bit easier to read.
+> 
+> > We have reverted the patch in Pixel kernels and would like you to look into
+> > this and consider reverting it upstream as well.
+> 
+> I've got nothing to do with the stable kernels so there's nothing I can
+> do here, sorry.
+
+Should I revert it everywhere?  This patch reads as it should be fixing
+problems, not causing them :)
+
+> However if this is triggering anything it's almost
+> certainly some kind of timing issue (this code isn't new, it's just
+> being run a bit later) and is only currently working through luck so I
+> do strongly recommend trying to figure out the actual problem since it's
+> liable to come back and bite you later - we did find one buggy driver in
+> mainline as a result of this change, it's possible you've got another
+> one.  
+> 
+> Possibly your GPU supplies need to be flagged as always on, possibly
+> your GPU driver is forgetting to enable some supplies it needs, or
+> possibly there's a missing always-on constraint on one of the regulators
+> depending on how the driver expects this to work (if it's a proprietary
+> driver it shouldn't be using the regulator API itself).  I'm quite
+> surprised you've not seen any issue before given that the supplies would
+> still be being disabled earlier.
+
+Timing "luck" is probably something we shouldn't be messing with in
+stable kernels.  How about I revert this for the 4.14 and older releases
+and let new devices deal with the timing issues when they are brought up
+on new hardware?
+
+thanks,
+
+greg k-h
