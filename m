@@ -2,106 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 264781248DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:01:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 857141248F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:02:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfLROBf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:01:35 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:42865 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726825AbfLROBf (ORCPT
+        id S1727291AbfLROCS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:02:18 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:43178 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbfLROCS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:01:35 -0500
-X-Originating-IP: 90.76.143.236
-Received: from localhost (lfbn-tou-1-1075-236.w90-76.abo.wanadoo.fr [90.76.143.236])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id D6355FF811;
-        Wed, 18 Dec 2019 14:01:31 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 15:01:31 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Igor Russkikh <irusskikh@marvell.com>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "sd@queasysnail.net" <sd@queasysnail.net>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "allan.nielsen@microchip.com" <allan.nielsen@microchip.com>,
-        "camelia.groza@nxp.com" <camelia.groza@nxp.com>,
-        "Simon.Edelhaus@aquantia.com" <Simon.Edelhaus@aquantia.com>,
-        Dmitry Bogdanov <dbogdanov@marvell.com>,
-        "jakub.kicinski@netronome.com" <jakub.kicinski@netronome.com>,
-        Igor Russkikh <Igor.Russkikh@aquantia.com>
-Subject: Re: [EXT] [PATCH net-next v3 05/15] net: macsec: hardware offloading
- infrastructure
-Message-ID: <20191218140131.GA3325@kwain>
-References: <20191213154844.635389-1-antoine.tenart@bootlin.com>
- <20191213154844.635389-6-antoine.tenart@bootlin.com>
- <BYAPR18MB2630684FD194F179E718E198B7530@BYAPR18MB2630.namprd18.prod.outlook.com>
+        Wed, 18 Dec 2019 09:02:18 -0500
+Received: by mail-ua1-f67.google.com with SMTP id o42so652244uad.10
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 06:02:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XWfYBni5NvApXaQAN+Sc8AcAyWYbtB1RtpsTw1gA/Ig=;
+        b=UIoDOfeeFGo8xJL7UOOA5AiHtOnoVYYX8uWUVSYGlN91z4GJFaIV3YUvfPbrkK6EaC
+         kN+uw1xgypetPlU+ZEfU9QyIYqJy3XnYRf1RjpOeMfmO0rhb4J0O1iYnvCySqhlJ67hG
+         pBmkr43dD5CdHdXH67Lr6LhaWtSPujA60xbFz71VAA7xD00Bmx0f37SXneXyo/tMTZnY
+         wAokPjmzQ2ays98bjhWAL12sbuwFo4dkwmpPPg/isp7TCJVtyOcPNZXgOGZt6mQMSVPZ
+         HLFnwFCGNYsQscjiVRnnABGHWMqY5ytLEZAzpE+/8TNkGb9R5VQhp9NsjuRb+GCX8Bq5
+         Zfxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XWfYBni5NvApXaQAN+Sc8AcAyWYbtB1RtpsTw1gA/Ig=;
+        b=ijWCcJz3KQpB+YR9xZKNq4M3+pLdJhzN/8QZU9lz2oCKxXJ2NcmRzMgLvIWw/wGuN+
+         yAq/MP3cfUsHbgWF0+E+lDbiOk6roR7owTDngYeFbOJ8x2U7fTdXpVfhDuKk7DVih8Rj
+         qMV2sIHbQ5heck76f3FNJxyvQikup+d5ob6dZ6tC7zppferFsTlMTUjf5uBFPP0cluuq
+         y+u+C7xH1Fayw1ry1jG/zSNqceKqSdSjUj255eba8xcjw1pZa8P3joAcQEVzPf0mjHZy
+         A+IoJx5wu3kynaaDJfCRF/qvSGzyobLJpGo7xvmJZn6b6hd1fFL6w9xxMk6c7cXuIv1l
+         mnew==
+X-Gm-Message-State: APjAAAU81lxxkAos+Mcvz6GKFhAPCLJvLqp7OM8heCef/iw0WlzbE1dU
+        hIPuAsN7UCsmmYc+nnHX66AZ5MbkM73/3kXitUuJnV7v
+X-Google-Smtp-Source: APXvYqzlW10cgVZlH4+ozp+d38GOPO+fFsjnBu+gNNFWD1IskWWWrLnsiB7uOFCa5PBl7aGksxtQ4pSl6TsVj61svpo=
+X-Received: by 2002:ab0:5510:: with SMTP id t16mr1519430uaa.15.1576677736310;
+ Wed, 18 Dec 2019 06:02:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <BYAPR18MB2630684FD194F179E718E198B7530@BYAPR18MB2630.namprd18.prod.outlook.com>
+References: <20191215175120.3290-1-tiny.windzz@gmail.com> <20191215175120.3290-10-tiny.windzz@gmail.com>
+ <20191218063028.GC3755841@builder>
+In-Reply-To: <20191218063028.GC3755841@builder>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 18 Dec 2019 15:01:40 +0100
+Message-ID: <CAPDyKFrNXqwHuTNkT-Q9=jswXyPXkNNg9eTWfzv-Rwd1P5JqEA@mail.gmail.com>
+Subject: Re: [PATCH 10/13] mmc: sdhci-msm: convert to devm_platform_ioremap_resource
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Yangtao Li <tiny.windzz@gmail.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andy Gross <agross@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Igor,
+-trimmed cc list
 
-On Wed, Dec 18, 2019 at 01:40:39PM +0000, Igor Russkikh wrote:
-> > @@ -2922,7 +3300,27 @@ static int macsec_changelink(struct net_device
-> > *dev, struct nlattr *tb[],
-> >  	    data[IFLA_MACSEC_PORT])
-> >  		return -EINVAL;
-> >  
-> > -	return macsec_changelink_common(dev, data);
-> > +	/* If h/w offloading is available, propagate to the device */
-> > +	if (macsec_is_offloaded(macsec)) {
-> > +		const struct macsec_ops *ops;
-> > +		struct macsec_context ctx;
-> > +		int ret;
-> > +
-> > +		ops = macsec_get_ops(netdev_priv(dev), &ctx);
-> > +		if (!ops)
-> > +			return -EOPNOTSUPP;
-> > +
-> > +		ctx.secy = &macsec->secy;
-> > +		ret = macsec_offload(ops->mdo_upd_secy, &ctx);
-> > +		if (ret)
-> > +			return ret;
-> > +	}
-> > +
-> > +	ret = macsec_changelink_common(dev, data);
-> 
-> In our mac driver verification we see that propagating upd_secy to
-> device before doing macsec_changelink_common is actually useless,
-> since in this case underlying device can't fetch any of the updated
-> parameters from the macsec structures.
-> 
-> Isn't it logical first doing `macsec_changelink_common` and then
-> propagate the event?
+On Wed, 18 Dec 2019 at 07:30, Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Sun 15 Dec 09:51 PST 2019, Yangtao Li wrote:
+>
+> > Use devm_platform_ioremap_resource() to simplify code.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > ---
+> >  drivers/mmc/host/sdhci-msm.c | 5 +----
+> >  1 file changed, 1 insertion(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> > index 3d0bb5e2e09b..6daacef4ceec 100644
+> > --- a/drivers/mmc/host/sdhci-msm.c
+> > +++ b/drivers/mmc/host/sdhci-msm.c
+> > @@ -1746,7 +1746,6 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+> >       struct sdhci_host *host;
+> >       struct sdhci_pltfm_host *pltfm_host;
+> >       struct sdhci_msm_host *msm_host;
+> > -     struct resource *core_memres;
+> >       struct clk *clk;
+> >       int ret;
+> >       u16 host_version, core_minor;
+> > @@ -1847,9 +1846,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+> >       }
+> >
+> >       if (!msm_host->mci_removed) {
+> > -             core_memres = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > -             msm_host->core_mem = devm_ioremap_resource(&pdev->dev,
+> > -                             core_memres);
+> > +             msm_host->core_mem = devm_platform_ioremap_resource(pdev, 1);
+> >
+>
+> This would now look better without this empty line.
 
-Doing the macsec_changelink_common after propagating the event to the
-device driver was done to ease the fail case scenario (it's quite hard
-to revert macsec_changelink_common). But then you're right that many
-parameters are set by macsec_changelink_common, which means it must be
-performed before the propagation of the upd_secy event.
+Good point, I fixed it when applying. No actions needed.
 
-I think the solution is to keep a copy of unmodified secy and tx_sc, and
-in case of failure to revert the operation by copying the whole
-structures back. That would allow to move macsec_changelink_common up.
-Would that work for you?
+>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>
 
-Thanks for spotting this!
-Antoine
+[...]
 
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Kind regards
+Uffe
