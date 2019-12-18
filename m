@@ -2,302 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD3AB1253FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:59:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C2D3125464
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:12:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbfLRU7j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:59:39 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:32862 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfLRU7h (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:59:37 -0500
-Received: by mail-ot1-f66.google.com with SMTP id b18so4144982otp.0;
-        Wed, 18 Dec 2019 12:59:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EOIM5ohVJuG8WUM6Uv/kRMmOO7OZqxuzI2GR/19vjz4=;
-        b=Tzr3BonCLAZmhMEMXl6+MTt0ld+jUvMkvxs+1E7NqQdopHhuoFbLSSvzTus6zKqX5I
-         OowaHY36+ojWkrFGQSyrdoZL0ow6niD/rm2h83trJDmYfr9/W3UCzGmvfne6rw/87zOT
-         62/KPApAxomYu4sCRkrxx6og4GT6GhqxpCpkPI6/nUm1KGv4+7Ed5wdatkxA45p5Tzt1
-         E85OTZ5a6kAHBKJYh9BsNuCADL2ccUEOoNdyKhR+dtF/Pa+S52mziZ/efEe5HK9vNnzD
-         3Y6vMMSuZVpN7F47oXrkrsRnXUZTcge9V/djF9stVsORrLqfDWh6i6Yy5+B5kBWcVA58
-         kw7A==
-X-Gm-Message-State: APjAAAWRMTM77Z67eCDHVkx6waUbeAYjhHVo3FIOrVOltpnBG5JQWKCv
-        gf6mOZzsbM/T2TjIGuGwWQ==
-X-Google-Smtp-Source: APXvYqwdDGZoTBaty9DPSZdgYwCiElye4wqTApby9V2QTSges2/6Tjk/aNfYOvQ1w6UuiKIOxv/y9A==
-X-Received: by 2002:a05:6830:2361:: with SMTP id r1mr4543788oth.88.1576702777020;
-        Wed, 18 Dec 2019 12:59:37 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n22sm1230679otj.36.2019.12.18.12.59.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 12:59:36 -0800 (PST)
-Date:   Wed, 18 Dec 2019 14:59:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Anil Varughese <aniljoy@cadence.com>,
-        Roger Quadros <rogerq@ti.com>, Jyri Sarha <jsarha@ti.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 13/14] dt-bindings: phy: Document WIZ (SERDES wrapper)
- bindings
-Message-ID: <20191218205935.GA5162@bogus>
-References: <20191216095712.13266-1-kishon@ti.com>
- <20191216095712.13266-14-kishon@ti.com>
+        id S1726668AbfLRVMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:12:45 -0500
+Received: from mga03.intel.com ([134.134.136.65]:34672 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726387AbfLRVMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 16:12:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 13:12:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="210223283"
+Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
+  by orsmga008.jf.intel.com with ESMTP; 18 Dec 2019 13:12:43 -0800
+Message-ID: <587463c4e5fa82dff8748e5f753890ac390e993e.camel@intel.com>
+Subject: Re: [PATCH v2 3/3] x86/fpu/xstate: Invalidate fpregs when
+ __fpu_restore_sig() fails
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Wed, 18 Dec 2019 12:53:59 -0800
+In-Reply-To: <20191218155449.sk4gjabtynh67jqb@linutronix.de>
+References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
+         <20191212210855.19260-4-yu-cheng.yu@intel.com>
+         <20191218155449.sk4gjabtynh67jqb@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216095712.13266-14-kishon@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 03:27:11PM +0530, Kishon Vijay Abraham I wrote:
-> Add DT binding documentation for WIZ (SERDES wrapper). WIZ is *NOT* a
-> PHY but a wrapper used to configure some of the input signals to the
-> SERDES. It is used with both Sierra(16G) and Torrent(10G) serdes.
+On Wed, 2019-12-18 at 16:54 +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-12-12 13:08:55 [-0800], Yu-cheng Yu wrote:
+> > In __fpu_restore_sig(),'init_fpstate.xsave' and part of 'fpu->state.xsave'
+> > are restored separately to xregs.  However, as stated in __cpu_invalidate_
+> > fpregs_state(),
+> > 
+> >   Any code that clobbers the FPU registers or updates the in-memory
+> >   FPU state for a task MUST let the rest of the kernel know that the
+> >   FPU registers are no longer valid for this task.
+> > 
+> > and this code violates that rule.  Should the restoration fail, the other
+> > task's context is corrupted.
+> > 
+> > This problem does not occur very often because copy_*_to_xregs() succeeds
+> > most of the time.  
 > 
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-> [jsarha@ti.com: Add separate compatible for Sierra(16G) and Torrent(10G)
->  SERDES]
-> Signed-off-by: Jyri Sarha <jsarha@ti.com>
-> ---
->  .../bindings/phy/ti,phy-j721e-wiz.yaml        | 204 ++++++++++++++++++
->  1 file changed, 204 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
+> why "most of the time"? It should always succeed. We talk here about
+> __fpu__restore_sig() correct? Using init_fpstate as part of restore
+> process isn't the "default" case. If the restore _here_ fails then it
+> fails.
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> new file mode 100644
-> index 000000000000..fd4204a960a9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> @@ -0,0 +1,204 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/phy/ti,phy-j721e-wiz.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: TI J721E WIZ (SERDES Wrapper)
-> +
-> +maintainers:
-> +  - Kishon Vijay Abraham I <kishon@ti.com>
-> +
-> +properties:
-> +  compatible:
-> +      enum:
-> +          - ti,j721e-wiz-16g
-> +          - ti,j721e-wiz-10g
-
-Tab size is 2 spaces.
-
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 3
-> +    description: clock-specifier to represent input to the WIZ
-> +
-> +  clock-names:
-> +    items:
-> +      - const: fck
-> +      - const: core_ref_clk
-> +      - const: ext_ref_clk
-> +
-> +  num-lanes:
-> +    minimum: 1
-> +    maximum: 4
-> +
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
-> +
-> +  ranges: true
-> +
-> +  assigned-clocks:
-> +    maxItems: 2
-> +
-> +  assigned-clock-parents:
-> +    maxItems: 2
-> +
-> +patternProperties:
-> +   "^pll[0|1]-refclk$":
-
-Indentation
-
-> +    type: object
-> +    description: |
-
-Don't need the '|' unless there's formatting or multiple paragraphs.
-
-> +      WIZ node should have subnodes for each of the PLLs present in
-> +      the SERDES.
-> +    properties:
-> +      clocks:
-> +        maxItems: 2
-> +        description: Phandle to clock nodes representing the two inputs to PLL.
-> +
-> +      "#clock-cells":
-> +        const: 0
-> +
-> +      assigned-clocks:
-> +        maxItems: 1
-> +
-> +      assigned-clock-parents:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - clocks
-> +      - "#clock-cells"
-> +      - assigned-clocks
-> +      - assigned-clock-parents
-> +
-> +   "^cmn-refclk1?-dig-div$":
-
-Indentation
-
-> +    type: object
-> +    description: |
-> +      WIZ node should have subnodes for each of the PMA common refclock
-> +      provided by the SERDES.
-> +    properties:
-> +      clocks:
-> +        maxItems: 1
-> +        description: Phandle to the clock node representing the input to the
-> +          divider clock.
-> +
-> +      "#clock-cells":
-> +        const: 0
-> +
-> +    required:
-> +      - clocks
-> +      - "#clock-cells"
-> +
-> +   "^refclk-dig$":
-
-Indentation
-
-> +    type: object
-> +    description: |
-> +      WIZ node should have subnode for refclk_dig to select the reference
-> +      clock source for the reference clock used in the PHY and PMA digital
-> +      logic.
-> +    properties:
-> +      clocks:
-> +        maxItems: 4
-> +        description: Phandle to four clock nodes representing the inputs to
-> +          refclk_dig
-> +
-> +      "#clock-cells":
-> +        const: 0
-> +
-> +      assigned-clocks:
-> +        maxItems: 1
-> +
-> +      assigned-clock-parents:
-> +        maxItems: 1
-> +
-> +    required:
-> +      - clocks
-> +      - "#clock-cells"
-> +      - assigned-clocks
-> +      - assigned-clock-parents
-> +
-> +   "^serdes@[0-9a-f]+$":
-
-...
-
-> +    type: object
-> +    description: |
-> +      WIZ node should have '1' subnode for the SERDES. It could be either
-> +      Sierra SERDES or Torrent SERDES. Sierra SERDES should follow the
-> +      bindings specified in
-> +      Documentation/devicetree/bindings/phy/phy-cadence-sierra.txt
-> +      Torrent SERDES should follow the bindings specified in
-> +      Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-> +
-> +required:
-> +  - compatible
-> +  - power-domains
-> +  - clocks
-> +  - clock-names
-> +  - num-lanes
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - "#reset-cells"
-> +  - ranges
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
-> +
-> +    wiz@5000000 {
-> +           compatible = "ti,j721e-wiz-16g";
-> +           #address-cells = <1>;
-> +           #size-cells = <1>;
-> +           power-domains = <&k3_pds 292 TI_SCI_PD_EXCLUSIVE>;
-> +           clocks = <&k3_clks 292 5>, <&k3_clks 292 11>, <&dummy_cmn_refclk>;
-> +           clock-names = "fck", "core_ref_clk", "ext_ref_clk";
-> +           assigned-clocks = <&k3_clks 292 11>, <&k3_clks 292 0>;
-> +           assigned-clock-parents = <&k3_clks 292 15>, <&k3_clks 292 4>;
-> +           num-lanes = <2>;
-> +           #reset-cells = <1>;
-> +           ranges = <0x5000000 0x0 0x5000000 0x10000>;
-> +
-> +           pll0-refclk {
-> +                  clocks = <&k3_clks 293 13>, <&dummy_cmn_refclk>;
-> +                  #clock-cells = <0>;
-> +                  assigned-clocks = <&wiz1_pll0_refclk>;
-> +                  assigned-clock-parents = <&k3_clks 293 13>;
-> +           };
-> +
-> +           pll1-refclk {
-> +                  clocks = <&k3_clks 293 0>, <&dummy_cmn_refclk1>;
-> +                  #clock-cells = <0>;
-> +                  assigned-clocks = <&wiz1_pll1_refclk>;
-> +                  assigned-clock-parents = <&k3_clks 293 0>;
-> +           };
-> +
-> +           cmn-refclk-dig-div {
-> +                  clocks = <&wiz1_refclk_dig>;
-> +                  #clock-cells = <0>;
-> +           };
-> +
-> +           cmn-refclk1-dig-div {
-> +                  clocks = <&wiz1_pll1_refclk>;
-> +                  #clock-cells = <0>;
-> +           };
-> +
-> +           refclk-dig {
-> +                  clocks = <&k3_clks 292 11>, <&k3_clks 292 0>, <&dummy_cmn_refclk>, <&dummy_cmn_refclk1>;
-> +                  #clock-cells = <0>;
-> +                  assigned-clocks = <&wiz0_refclk_dig>;
-> +                  assigned-clock-parents = <&k3_clks 292 11>;
-> +           };
-> +
-> +           serdes@5000000 {
-> +                  compatible = "cdns,ti,sierra-phy-t0";
-> +                  reg-names = "serdes";
-> +                  reg = <0x5000000 0x10000>;
-> +                  #address-cells = <1>;
-> +                  #size-cells = <0>;
-> +                  resets = <&serdes_wiz0 0>;
-> +                  reset-names = "sierra_reset";
-> +                  clocks = <&wiz0_cmn_refclk_dig_div>, <&wiz0_cmn_refclk1_dig_div>;
-> +                  clock-names = "cmn_refclk_dig_div", "cmn_refclk1_dig_div";
-> +           };
-> +    };
-> -- 
-> 2.17.1
+> >                    It occurs, for instance, in copy_user_to_fpregs_
+> > zeroing() when the first half of the restoration succeeds and the other
+> > half fails.  This can be triggered by running glibc tests, where a non-
+> > present user stack page causes the XRSTOR to fail.
 > 
+> So if copy_user_to_fpregs_zeroing() fails then we go to the slowpath.
+> Then we load the FPU register with copy_kernel_to_xregs_err().
+> In the end they are either enabled (fpregs_mark_activate()) or cleared
+> if it failed (fpu__clear()). Don't see here a problem.
+
+I could have explained this better, sorry!  I will explain the first
+case below; other cases are similar.
+
+In copy_user_to_fpregs_zeroing(), we have:
+
+    if (user_xsave()) {
+        ...
+        if (unlikely(init_bv))
+            copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
+        return copy_user_to_xregs(buf, xbv);
+        ...
+    }
+
+The copy_user_to_xregs() may fail, and when that happens, before going to
+the slow path, there is fpregs_unlock() and context switches may happen.
+However, at this point, fpu_fpregs_owner_ctx has not been changed; it could
+still be another task's FPU.  For this to happen and to be detected, the user
+stack page needs to be non-present, fpu_fpregs_owner_ctx need to be another task,
+and that other task needs to be able to detect its registers are modified.
+The last factor is not easy to reproduce, and a CET control-protection fault
+helps.
+
+> 
+> Can you tell me which glibc test? I would like to reproduce this.
+> 
+> > The introduction of supervisor xstates and CET, while not contributing to
+> > the problem, makes it more detectable.  After init_fpstate and the Shadow
+> > Stack pointer have been restored to xregs, the XRSTOR from user stack
+> > fails and fpu_fpregs_owner_ctx is not updated.  The task currently owning
+> > fpregs then uses the corrupted Shadow Stack pointer and triggers a control-
+> > protection fault.
+> 
+> So I don't need new HW with supervisor and CET? A plain KVM box with
+> SSE2 and so should be enough?
+
+What I do is, clone the whole glibc source, and run mutiple copies of
+"make check".  In about 40 minutes or so, there are unexplained seg faults,
+or a few control-protection faults (if you enable CET).  Please let me
+know if more clarification is needed.
+
+Thanks,
+Yu-cheng
+
+
