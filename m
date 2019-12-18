@@ -2,118 +2,255 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885841255F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:59:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BB2F12561F
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 23:00:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727511AbfLRV7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:59:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:29389 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727505AbfLRV7E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:59:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576706343;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xyRq0uSWZtoF1xSeEB8lICjPIcYYqv0mpEMiHQwYmsc=;
-        b=ZobevB9evxz2RgIMe+dHIFnQWUUaXf9xhegU6owLqq3OdoVW8c4u7i36HIckZwYMGu3kj3
-        aYE4x8QrTir48rqJIPhFhEIbwnKvAqnycAtvqnDMi2teXwYvw5P2Rkn30ZcD3/gxjCHhZf
-        +eNCpTUn5fQD/QdVRSHHGa8LUob4kq0=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-280-AI67nVF-N920XRFMH7kMRA-1; Wed, 18 Dec 2019 16:59:00 -0500
-X-MC-Unique: AI67nVF-N920XRFMH7kMRA-1
-Received: by mail-qv1-f70.google.com with SMTP id d7so2298923qvq.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:59:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xyRq0uSWZtoF1xSeEB8lICjPIcYYqv0mpEMiHQwYmsc=;
-        b=T8tQofdGnKlTEn4eoYXNwGNzZDkuny7/edml+4nz5EbpyANj69DKUKAU0nH9E3/d+1
-         kEuB5L0gfPhpzApa/gGwWS+gGGzu5O6zyzmNMjzlEusmd20Ogaa3WWH49TXtlPAlaGou
-         SCrGEmVK4rgW4C3Q8rJBrBiJUykGogFWvnU3n0NNTNOKOs90n8M4kJ03WFAScLFdb5Z9
-         MeF38NganVmE5vRQpdhmN1ANZQrYUgkVfdnoTBaFGKdJ4sTAx7Q7N2F5D/UgXj4zRovG
-         HsJPtSrJ3L6+qEpwGI9LljlA2qj/cMgT26DsMwu2vq3a076nHWiCPGxpso3+AsCZZ0/k
-         2eWQ==
-X-Gm-Message-State: APjAAAUpfVPD9+sDGypf8rxWicC3PzeYrf/UB8QF6acbLMuIOCOaWjjN
-        aEMiAAgp2UUZKxovMfA48vEGNpX/WwEjj+J1L5jh++eL3oo565RvuKJu+OfIX9W5XP0Odcf/obu
-        RhY9EkcLLT7LMSpZsgJtfZHK1
-X-Received: by 2002:a37:4905:: with SMTP id w5mr4969504qka.267.1576706340079;
-        Wed, 18 Dec 2019 13:59:00 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzVX8iG95niunFTpS5tBBbhXdu5Y9XJU2Owx29mSQ+hRkMsBGZvfhvamN55CSq/5e+E+hVhyg==
-X-Received: by 2002:a37:4905:: with SMTP id w5mr4969484qka.267.1576706339769;
-        Wed, 18 Dec 2019 13:58:59 -0800 (PST)
-Received: from xz-x1 ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id e2sm1066715qkb.112.2019.12.18.13.58.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:58:58 -0800 (PST)
-Date:   Wed, 18 Dec 2019 16:58:57 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>
-Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
-Message-ID: <20191218215857.GE26669@xz-x1>
-References: <20191209215400.GA3352@xz-x1>
- <affd9d84-1b84-0c25-c431-a075c58c33dc@redhat.com>
- <20191210155259.GD3352@xz-x1>
- <3e6cb5ec-66c0-00ab-b75e-ad2beb1d216d@redhat.com>
- <20191215172124.GA83861@xz-x1>
- <f117d46a-7528-ce32-8e46-4f3f35937079@redhat.com>
- <20191216185454.GG83861@xz-x1>
- <815923d9-2d48-2915-4acb-97eb90996403@redhat.com>
- <20191217162405.GD7258@xz-x1>
- <c01d0732-2172-2573-8251-842e94da4cfc@redhat.com>
+        id S1726736AbfLRWAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 17:00:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44214 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbfLRWAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 17:00:40 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C43E2146E;
+        Wed, 18 Dec 2019 22:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576706439;
+        bh=BHrAQFIGbbIvTg9mW+NwpWTBkboWudvsPo35DCHjyKU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aUiiz0YBKuuTNqGtZUBFxpAtyAvA7wMfZV6DH+GQ/h96SUDYnp49gpjr195CweqU8
+         jR/OTEUynai/TzIMVUvyBnqfuvp4CYlm2PzeJtATAsKDvbY8YeAkhkMIJxjWsgpe+z
+         YWT6uZAFFiGY72eQYemkOy+F2LVxbpBfyKJMQbGE=
+Date:   Wed, 18 Dec 2019 23:00:37 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/7] dt-bindings: thermal: add YAML schema for
+ sun8i-thermal driver bindings
+Message-ID: <20191218220037.4g6pzdvrhroaj4qu@gilmour.lan>
+References: <20191218042121.1471954-1-anarsoul@gmail.com>
+ <20191218042121.1471954-3-anarsoul@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="nfb3broi25z4qfbb"
 Content-Disposition: inline
-In-Reply-To: <c01d0732-2172-2573-8251-842e94da4cfc@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191218042121.1471954-3-anarsoul@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 05:28:54PM +0100, Paolo Bonzini wrote:
-> On 17/12/19 17:24, Peter Xu wrote:
-> >> No, please pass it all the way down to the [&] functions but not to
-> >> kvm_write_guest_page.  Those should keep using vcpu->kvm.
-> > Actually I even wanted to refactor these helpers.  I mean, we have two
-> > sets of helpers now, kvm_[vcpu]_{read|write}*(), so one set is per-vm,
-> > the other set is per-vcpu.  IIUC the only difference of these two are
-> > whether we should consider ((vcpu)->arch.hflags & HF_SMM_MASK) or we
-> > just write to address space zero always.
-> 
-> Right.
-> 
-> > Could we unify them into a
-> > single set of helper (I'll just drop the *_vcpu_* helpers because it's
-> > longer when write) but we always pass in vcpu* as the first parameter?
-> > Then we add another parameter "vcpu_smm" to show whether we want to
-> > consider the HF_SMM_MASK flag.
-> 
-> You'd have to check through all KVM implementations whether you always
-> have the vCPU.  Also non-x86 doesn't have address spaces, and by the
-> time you add ", true" or ", false" it's longer than the "_vcpu_" you
-> have removed.  So, not a good idea in my opinion. :D
 
-Well, now I've changed my mind. :) (considering that we still have
-many places that will not have vcpu*...)
+--nfb3broi25z4qfbb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I can simply add that "vcpu_smm" parameter to kvm_vcpu_write_*()
-without removing the kvm_write_*() helpers.  Then I'll be able to
-convert most of the kvm_write_*() (or its family) callers to
-kvm_vcpu_write*(..., vcpu_smm=false) calls where proper.
+Hi,
 
-Would that be good?
+On Tue, Dec 17, 2019 at 08:21:16PM -0800, Vasily Khoruzhick wrote:
+> From: Yangtao Li <tiny.windzz@gmail.com>
+>
+> sun8i-thermal driver supports thermal sensor in wide range of Allwinner
+> SoCs. Add YAML schema for its bindings.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  .../thermal/allwinner,sun8i-a83t-ths.yaml     | 146 ++++++++++++++++++
+>  1 file changed, 146 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> new file mode 100644
+> index 000000000000..8768c2450633
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/thermal/allwinner,sun8i-a83t-ths.yaml
+> @@ -0,0 +1,146 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/thermal/allwinner,sun8i-a83t-ths.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner SUN8I Thermal Controller Device Tree Bindings
+> +
+> +maintainers:
+> +  - Yangtao Li <tiny.windzz@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - allwinner,sun8i-a83t-ths
+> +      - allwinner,sun8i-h3-ths
+> +      - allwinner,sun8i-r40-ths
+> +      - allwinner,sun50i-a64-ths
+> +      - allwinner,sun50i-h5-ths
+> +      - allwinner,sun50i-h6-ths
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  nvmem-cells:
+> +    maxItems: 1
+> +    description: Calibration data for thermal sensors
+> +
+> +  nvmem-cell-names:
+> +    const: calibration
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: allwinner,sun50i-h6-ths
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          maxItems: 1
 
--- 
-Peter Xu
+When minItems and maxItems are equal, you can only set one, the other
+will be filled automatically.
 
+> +
+> +        clock-names:
+> +          minItems: 1
+> +          maxItems: 1
+> +          items:
+> +            - const: bus
+
+And this can even be just
+
+clock-names:
+  const: bus
+
+> +
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 1
+> +          maxItems: 2
+> +
+> +        clock-names:
+> +          minItems: 1
+> +          maxItems: 2
+> +          items:
+> +            - const: bus
+> +            - const: mod
+
+I'm not sure why you need the minItems set to 1 here though?
+
+it's always 2 for the !H6 case, right?
+
+if so, then we should even do something like:
+
+properties:
+  ...
+
+  # This is needed because we will need to check both the H6 and !H6
+  # case, and it must validate. So we make sure we match against the
+  # union of both cases.
+  clocks:
+    minItems: 1
+    maxItems: 2
+    items:
+      - description: Bus Clock
+      - description: Module Clock
+
+  # Same story here
+  clock-names:
+    minItems: 1
+    maxItems: 2
+    items:
+      - const: bus
+      - const: mod
+
+allOf:
+  - if:
+    properties:
+      compatible:
+        contains:
+	  const: allwinner,sun50i-h6-ths
+
+    # Here we validate in the H6 case we only have one clock
+    then:
+      properties:
+        clocks:
+	  maxItems: 1
+
+        clock-names:
+	  maxItems: 1
+
+    # and here that in the other case we have two clocks, the names
+    # being validated by the schema above
+    else:
+      properties:
+        clocks:
+	  maxItems: 2
+
+        clock-names:
+	  maxItems: 2
+
+# And now we can set this since all our properties will have been
+# expressed in the upper level schema
+additionalProperties: false
+
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: allwinner,sun8i-h3-ths
+> +
+> +    then:
+> +      properties:
+> +        "#thermal-sensor-cells":
+> +          const: 0
+> +
+> +    else:
+> +      properties:
+> +        "#thermal-sensor-cells":
+> +          const: 1
+
+Same thing here, you should have an enum accepting both values in the
+upper schema, the condition here only making further checks. Also, in
+the case where #thermal-sensor-cells is one, then you need to document
+what that argument is.
+
+Thanks!
+Maxime
+
+--nfb3broi25z4qfbb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfqhhQAKCRDj7w1vZxhR
+xWvSAQCi6mjrJCTS8SWPU7PcgNEc6pA17UBJm2Xk4XKoLO7m6wD9EPOHRneAtdBr
+BtJRS/RwZk8fGlXI46Xa48uRjngLqw4=
+=F0Nc
+-----END PGP SIGNATURE-----
+
+--nfb3broi25z4qfbb--
