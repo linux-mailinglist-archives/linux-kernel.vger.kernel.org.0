@@ -2,142 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 106BC124011
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6901F12401B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:10:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLRHIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:08:21 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:28599 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725797AbfLRHIV (ORCPT
+        id S1726733AbfLRHKJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:10:09 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41043 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfLRHKI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:08:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1576652900; x=1608188900;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=S6bTXvED8GBzOjBBXCmPzxc4JU5heDpTnSHkn/py9vo=;
-  b=mXb3Su5KPMyWGcxENMDS/BpTtTopzFvZoXy4qw+V19dTYWcOXN6f8iUJ
-   2dSH2XTNK0iWm3BRP5FlGvK9Rmy+uPg0X2OChAJkHqwLhOcmbiTolaTfP
-   DXMbqdstViMuNKdunbXm7yuJvIq+ORlyYU+lrn9xsxDDh4xscSPmjBiQY
-   jpKwROy+VfR7f8YEK3LCJ2+iRIKbY4uHa6cCtJ69cCyRKbFOp5MrHQO5v
-   eCJiSE4bDBS1SQBRDKgz4DdDBC6LDa9HCecLY4fu3CnY3AlbZbnpx61dk
-   S4sKi9CZnxNnW/jJno2pU4zfydGiVR0ylf9zJH715tGW+C1meVlK5ZFkc
-   g==;
-IronPort-SDR: x5NmbfCn7LbZS1aMGizD7YB5yf8XahYggn9ZuP0rv77917WpyWBpN5nkK7znI5yArWpugB9kpY
- gQ6giMEtzRCnf38Sl0ROhLojGYndg+7KdYqmS98u5SFvQHmZdC18tpIJVH+zAd1p3FVbLMf2+N
- s8rd0bHFhR4yoc0WJez7RBbj/tcwKF25E2vTYeNIR02/zN0Gru26sXOwyHpDMt4WU8NTl3i8dK
- mUD0C5+fpN+Q6i/L8puFvp7ZfoO+SypXr4DeDjFmZNeOh/6uU4cTDh4JvrbdZwRlay3u7pB2d1
- /HQ=
-X-IronPort-AV: E=Sophos;i="5.69,328,1571673600"; 
-   d="scan'208";a="125606931"
-Received: from mail-bn7nam10lp2104.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.104])
-  by ob1.hgst.iphmx.com with ESMTP; 18 Dec 2019 15:08:19 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=E2kbKXHUvxwVoVrUz2hI/0bbbrtn35Ln6q02QcgAQ1S2NBAM6LUWjVnxjqLo1UNilJbhNFwCAcbrB5GNEF16nCAR18DrtfPwJs3uH9IzJiNZuV0YyLo2GuWShPa+KGUkf4/Nh7rzoFk2i/GQ9VXfBqHEb0U6KwpMPDuTPRh4kNzgefveylUqwHPHlJm/OpMTc4Mzk3DcnxIow/k82Gbf1kWltvh3W5PUyCRPsYC0q5IsQ/3ypgjHHuKrMvLYUww9KsCODkwGEm7zitxYTXum4Zinc550rEEe/1+luLeA4p92Wvwzhw5Hou6EqdeOHwJ9wU8xQZQQyQ2svIk3UWFk3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZYInGyhDAMLJaqAhKNG5tetI3WSvM5cBRjwkGz8Vjko=;
- b=QkhdwpBCcKE0SF0OMaS0vbglC0XUt0HdyAm2i7G3Wj8JOO/2xMBkhpWoazxIhwQTP2mPtn3hAi+koB0bunRPriBTNB8P2M3ZEvDZLza/p8uk5YeFibtP0gJPRCrLNgctbQYedx2L049YJ/8FsA6Sx4ZYtH8OUBIYvjZF+jChqOHEC48HOV4RpjtDmgo+dmunwSJdwsEGx6saUOIpSJHkFX+FKPnfUNQKfcQkzQl7D5yovksqQRwOnNbjgu9L+Gt+6qgg02ECpry4SEInWJ28cU9oYJUw7VlL3fhAUEfVZj9YBl+GszFPjeTJT5yPrg1x2FRJWLscYfOBGaZhbgiBYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Wed, 18 Dec 2019 02:10:08 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so887293ljc.8;
+        Tue, 17 Dec 2019 23:10:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZYInGyhDAMLJaqAhKNG5tetI3WSvM5cBRjwkGz8Vjko=;
- b=AL9aa8I8fnqs7K/o9eJEsIS6JGWrnbTrWrBy/SWXjhQEG6aChPJ4X/ZYdzE0NP4TfYWuMWEx52vEOvMMzOwpv5H/fir1/WPeG0lTjpb0M580awGiLM1BP25VH1vSMPrOj8vHcnnPQr59RNSOeW64pUHz5S99k+OR5s5P54uZxXE=
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com (10.186.144.209) by
- MN2PR04MB6111.namprd04.prod.outlook.com (20.178.245.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.20; Wed, 18 Dec 2019 07:08:18 +0000
-Received: from MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::9447:fa71:53df:f866]) by MN2PR04MB6991.namprd04.prod.outlook.com
- ([fe80::9447:fa71:53df:f866%3]) with mapi id 15.20.2538.019; Wed, 18 Dec 2019
- 07:08:18 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Sheeba B <sheebab@cadence.com>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "stanley.chu@mediatek.com" <stanley.chu@mediatek.com>,
-        "beanhuo@micron.com" <beanhuo@micron.com>,
-        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "vigneshr@ti.com" <vigneshr@ti.com>
-CC:     "rafalc@cadence.com" <rafalc@cadence.com>,
-        "mparab@cadence.com" <mparab@cadence.com>
-Subject: RE: [PATCH] scsi: ufs: Power off hook for Cadence UFS driver
-Thread-Topic: [PATCH] scsi: ufs: Power off hook for Cadence UFS driver
-Thread-Index: AQHVtANSRUyTGWosAEOUELZ0k1qeaae/e6aQ
-Date:   Wed, 18 Dec 2019 07:08:18 +0000
-Message-ID: <MN2PR04MB69913D1CF1CC38F30A74331AFC530@MN2PR04MB6991.namprd04.prod.outlook.com>
-References: <1576491432-631-1-git-send-email-sheebab@cadence.com>
-In-Reply-To: <1576491432-631-1-git-send-email-sheebab@cadence.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [212.25.79.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d2fe8eaa-111e-466c-0f8c-08d783890f3a
-x-ms-traffictypediagnostic: MN2PR04MB6111:
-x-microsoft-antispam-prvs: <MN2PR04MB6111BE7E7F836F02181E26C1FC530@MN2PR04MB6111.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:330;
-x-forefront-prvs: 0255DF69B9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(366004)(376002)(136003)(39860400002)(396003)(189003)(199004)(8676002)(81166006)(71200400001)(81156014)(9686003)(8936002)(110136005)(26005)(54906003)(316002)(2906002)(33656002)(86362001)(7416002)(4326008)(7696005)(64756008)(66556008)(66476007)(66446008)(52536014)(66946007)(186003)(5660300002)(4744005)(478600001)(55016002)(76116006)(6506007)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB6111;H:MN2PR04MB6991.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: iHm/tOeaDISnBjnlmDP8ZFcCzSmK+hDfIfzylhiDy7dv0UHGRtIWJfwXJh5jtJ4aKhumCBM98ajGOZmR0IOBtK7brYxChUH6bBk3sQezZ46gs21Cwo1+dg+V+/rmV1r8eglCEhzzz9RcgjgCVNbp0hocuAhjYB7VgVV1gYZzbZBh+yfKguZ7C79YSqdOouOIoPlKTj38YitHSHPKb3KfM/M4WwhxuQRiBiRcH+gD72pFcWBGIMX0jHGJVYEa8R5iz8T6pBKLRiynyIRzuVpw26hA7Bp2LgcJwIzBh3uoPkyub2lLdaYOFnscWiB7mvr6OUymnr4IpEhk98lvZzV8tfjDxWMcW0tZzeLL2V+OY6mGjJ1k4zPW0Nrk7hFDd0JV5UfqxODqPRpjsVvveolyTFz9AtY/hXaGA8LIE+zV7JymJ798sMSoshpXTkhhczkTsGVmPkSUDJzXy02lS7hkgBQx8n4LyQMnjMnoTDT0vaEmtfMlApxEdDphN5EKUYgX
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IBdg5aF3fYTeZv3fBxp90QKp5sNr8bN+iXsOpN0a2Cg=;
+        b=oZjGf5817twtAehacdCypreFivXsIxAoPAGBZkkXbeHZPeRMGrhowHTcge4fBo6qeP
+         WJRNwFa+zpluILdMcMzlCA5TgoYG47OcAwmQSGeARm6xq6GNrCdZKxq8cYocdUmDKlX+
+         AONqICe8U1AcR4dHSTklMIJl+MRwmZDxMe20xwNZGNYCyc6SSySSDROj2BFG7dA/l0De
+         L56PoePLPPR+9WGmqzDYTx1HVaPB9oiNfOAY7AtDPhs+jp1G3JrzY+a70o+/YVtGD1Wg
+         BuP21jr6JqKNGgTXUQoz68ebi6Zfas4aRCZkjUuu9S21Yi9XtQm6p2JRa5m4Ig8HjE8l
+         vplQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IBdg5aF3fYTeZv3fBxp90QKp5sNr8bN+iXsOpN0a2Cg=;
+        b=Dv1fsV7qe0S1w1rST1cGTI6ORB3Xo8k6Ee5BwAKogzE0x5yznqaW+QpYoq5sFMK7nd
+         2PNZLTvRlPE7yd3jcnWkKhUQkm2R90ZKmLKA6JxhsqGcLD+OZ+TOgCsY2k2QbNjtfVwE
+         Ua4pwARaZnJsjuONF6H9dpgmxiWQ1p8xsq9w0d+4KPKlI7vwkC5q2pad2AEEvQlr9Wni
+         kwjqN3V+9/3oClitipSxOps+7K36KJQOBphBoVb9dP/GHRSJoXOZG6fIjGNi1j4KG6kk
+         IF0DBFi9cCN21r8lTzgHH7TWzrtgcBtJ/fVCFNb+EMw3hHBih7Kly+jvS2jU8wKfxRMZ
+         QpIQ==
+X-Gm-Message-State: APjAAAUcxisWwO+jCC7OmMMy7Ad1TJv0wQf8lVZozHiQVEUOYGIBPSyU
+        OF+P9M40Au0QPXELNjM/lXeWxoZv
+X-Google-Smtp-Source: APXvYqyT4G6+W8Fd+43KZztrWwWfaAhOqWwmJ6nyuemhpj5fV8hDlylE5MvF39YCNdnTWNcn+0DlWw==
+X-Received: by 2002:a2e:7311:: with SMTP id o17mr589196ljc.197.1576653004682;
+        Tue, 17 Dec 2019 23:10:04 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id u16sm535808ljo.22.2019.12.17.23.10.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 23:10:04 -0800 (PST)
+Subject: Re: [PATCH v8 00/19] Consolidate and improve NVIDIA Tegra CPUIDLE
+ driver(s)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191203004116.11771-1-digetx@gmail.com>
+ <20191207215216.GA9561@qmqm.qmqm.pl>
+ <0b3a861d-e5e8-ddca-ac60-0a3c61a9d9dc@gmail.com>
+ <20191209160420.GA24097@qmqm.qmqm.pl>
+ <323f5f70-5249-e75a-98cc-7fdca2d375c2@gmail.com>
+ <20191210023549.GA15246@qmqm.qmqm.pl>
+ <205cd87d-6957-9457-4ed5-31c534ae0846@gmail.com>
+ <5de4eb77-276d-e1af-993b-5cdf52e93856@gmail.com>
+Message-ID: <9e0e5e1f-e41c-7c37-9618-44ceff6d0a56@gmail.com>
+Date:   Wed, 18 Dec 2019 10:10:03 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2fe8eaa-111e-466c-0f8c-08d783890f3a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 07:08:18.3464
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RAKeqhyq8PcBGD2qZEqQfpmjP0wTjjUbTudulSxEI09j85LDvB7O3DbLRhspiMr8A6tOW2uwBEfMOHBj5T5Q+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB6111
+In-Reply-To: <5de4eb77-276d-e1af-993b-5cdf52e93856@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
->=20
-> Attach Power off hook on Cadence UFS driver
->=20
-> Signed-off-by: Sheeba B <sheebab@cadence.com>
-Reviewed-by: Avri Altman <avri.altman@wdc.com>
+10.12.2019 19:21, Dmitry Osipenko пишет:
+> 10.12.2019 19:02, Dmitry Osipenko пишет:
+>> 10.12.2019 05:35, Michał Mirosław пишет:
+>>> On Tue, Dec 10, 2019 at 12:22:18AM +0300, Dmitry Osipenko wrote:
+>>>> 09.12.2019 19:04, Michał Mirosław пишет:
+>>>>> On Sun, Dec 08, 2019 at 01:56:14AM +0300, Dmitry Osipenko wrote:
+>>>>>> 08.12.2019 00:52, Michał Mirosław пишет:
+>>>>>>> On Tue, Dec 03, 2019 at 03:40:57AM +0300, Dmitry Osipenko wrote:
+>>>>>>>> Hello,
+>>>>>>>>
+>>>>>>>> This series does the following:
+>>>>>>>>
+>>>>>>>>   1. Unifies Tegra20/30/114 drivers into a single driver and moves it out
+>>>>>>>>      into common drivers/cpuidle/ directory.
+>>>>>>>>
+>>>>>>>>   2. Enables CPU cluster power-down idling state on Tegra30.
+>>>>>>>>
+>>>>>>>> In the end there is a quite nice clean up of the Tegra CPUIDLE drivers
+>>>>>>>> and of the Tegra's arch code in general. Please review, thanks!
+>>>>>>>
+>>>>>>> I did a quick smoke test for this series on top of Linus' master:
+>>>>>>>  - rebuilding with the patches applied, CONFIG_ARM_TEGRA_CPUIDLE=n - works
+>>>>>>>  - building with CONFIG_ARM_TEGRA_CPUIDLE=y - doesn't boot
+>>>>>>>
+>>>>>>> The hang is somewhere early in the boot process, before simplefb can
+>>>>>>> take the console and show any logs. If I get BOOTFB to work again I might
+>>>>>>> be able to get some more info.
+>>>>>>
+>>>>>> Thank you very much for trying these patches!
+>>>>>>
+>>>>>> Could you please try to make ARM_TEGRA_CPUIDLE "tristate" in the Kconfig
+>>>>>> and compile it as a loadable module? That way you'll get framebuffer
+>>>>>> shown before the hang happens.
+>>>>>>
+>>>>>> Does LP2 suspend/resume work for you? There should be
+>>>>>> "nvidia,suspend-mode = <2>" in the PMC's node of device-tree.
+>>>>>
+>>>>> Not at the moment. I also tried suspend-mode = <1> and <0>, but it
+>>>>> made no difference.
+>>>>
+>>>> If LP2 doesn't work, then it explains why you're getting the hang.
+>>>>
+>>>> Are you using TF300T for the testing? I'm recalling that LP2 worked for
+>>>> you sometime ago on TF300T, maybe some offending change was introduced
+>>>> since then. Could you please try to do the git bisection or at least
+>>>> find out what is the last good kernel version?
+>>>>
+>>>> I rebased this series on a recent linux-next and you could find the
+>>>> rebased patches here [1].
+>>>>
+>>>> [1] https://github.com/grate-driver/linux/commits/master
+>>>>
+>>>> With [1] you should be able to remove "nvidia,suspend-mode" property
+>>>> from the device-tree to get cpuidle working with the disabled CC6 state
+>>>> (LP2). Could you please check that at least disabled CC6 works for you?
+>>>
+>>> I tested suspend with your tree merged, but CONFIG_TEGRA_CPUIDLE=n. LP2
+>>> seems to work [1]. The same tree with CONFIG_TEGRA_CPUIDLE=y doesn't
+>>> boot. I'll try comparing DTs, but other than that I'm blocked on BOOTFB now.
+>>
+>> That's an interesting result.
+>>
+>>> [1] rtcwake -s 3 -d /dev/rtc0 -v -m mem
+>>>
+>>> (...)
+>>> [ 2710.157919] PM: suspend entry (deep)
+>>> [ 2710.161205] Filesystems sync: 0.000 seconds
+>>> [ 2710.176677] Freezing user space processes ... (elapsed 0.001 seconds) done.
+>>> [ 2710.178342] OOM killer disabled.
+>>> [ 2710.178527] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+>>> [ 2710.347871] Disabling non-boot CPUs ...
+>>> [ 2710.349160] IRQ 18: no longer affine to CPU1
+>>> [ 2710.352499] IRQ 19: no longer affine to CPU2
+>>> [ 2710.370059] IRQ 20: no longer affine to CPU3
+>>> [ 2710.371284] Entering suspend state LP2
+>>> [ 2710.371556] Enabling non-boot CPUs ...
+>>> [ 2710.373157] CPU1 is up
+>>> [ 2710.374598] CPU2 is up
+>>> [ 2710.375996] CPU3 is up
+>>> [ 2710.462876] OOM killer enabled.
+>>> [ 2710.463018] Restarting tasks ...
+>>> [ 2710.463880] tegra-devfreq 6000c800.actmon: Failed to get emc clock
+>>> [ 2710.464509] done.
+>>> [ 2710.552824] asus-ec 1-0015: model         : ASUS-TF201-PAD
+>>> [ 2710.558345] asus-ec 1-0015: FW version    : PAD-EC20T-0216
+>>> [ 2710.562942] asus-ec 1-0015: Config format : ECFG-0001
+>>> [ 2710.567651] asus-ec 1-0015: HW version    : TF201-PAD-SKU1
+>>> [ 2710.572488] asus-ec 1-0015: EC FW behaviour: susb on when system wakeup
+>>> [ 2710.769796] atkbd serio1: no of_node; not parsing pinctrl DT
+>>> [ 2710.835629] asus-ec 5-0019: model         : ASUS-TF201-DOCK
+>>> [ 2710.838686] asus-ec 5-0019: FW version    : DOCK-EC20N-0207
+>>> [ 2710.841865] asus-ec 5-0019: Config format : ECFG-0001
+>>> [ 2710.844271] asus-ec 5-0019: HW version    : PCBA-SKU-2
+>>> [ 2710.847950] asus-ec 5-0019: EC FW behaviour: susb on when receive ec_req
+>>> [ 2711.040935] PM: suspend exit
+>>>
+>>
+>> Could you please try this change on top of recent grate-linux (it should
+>> allow display to light up before the hang):
+>>
+>> diff --git a/drivers/cpuidle/cpuidle-tegra.c
+>> b/drivers/cpuidle/cpuidle-tegra.c
+>> index db9ccba5a74c..21317b4e16c1 100644
+>> --- a/drivers/cpuidle/cpuidle-tegra.c
+>> +++ b/drivers/cpuidle/cpuidle-tegra.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/ktime.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/types.h>
+>> +#include <linux/workqueue.h>
+>>
+>>  #include <linux/clk/tegra.h>
+>>  #include <linux/firmware/trusted_foundations.h>
+>> @@ -332,7 +333,7 @@ static void tegra_cpuidle_setup_tegra114_c7_state(void)
+>>  	s->exit_latency = 500;
+>>  }
+>>
+>> -static int tegra_cpuidle_probe(struct platform_device *pdev)
+>> +static void tegra_cpuidle_probe_work(struct work_struct *work)
+>>  {
+>>  	/* LP2 could be disabled in device-tree */
+>>  	if (tegra_pmc_get_suspend_mode() < TEGRA_SUSPEND_LP2)
+>> @@ -372,10 +373,18 @@ static int tegra_cpuidle_probe(struct
+>> platform_device *pdev)
+>>  		break;
+>>
+>>  	default:
+>> -		return -EINVAL;
+>> +		return;
+>>  	}
+>>
+>> -	return cpuidle_register(&tegra_idle_driver, cpu_possible_mask);
+>> +	cpuidle_register(&tegra_idle_driver, cpu_possible_mask);
+>> +}
+>> +
+>> +static DECLARE_DELAYED_WORK(delayed_probe, tegra_cpuidle_probe_work);
+>> +
+>> +static int tegra_cpuidle_probe(struct platform_device *pdev)
+>> +{
+>> +	schedule_delayed_work(&delayed_probe, 5 * HZ);
+>> +	return 0;
+>>  }
+>>
+>>  static struct platform_driver tegra_cpuidle_driver = {
+>>
+> 
+> Also, do you have CONFIG_ARM_TEGRA20_CPUFREQ=y? Please try to disable it
+> if it's enabled and if you enabled CPU OPPs in the device-tree.
+> 
 
-> ---
->  drivers/scsi/ufs/cdns-pltfrm.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfr=
-m.c index
-> 1c80f9633da6..56a6a1ed5ec2 100644
-> --- a/drivers/scsi/ufs/cdns-pltfrm.c
-> +++ b/drivers/scsi/ufs/cdns-pltfrm.c
-> @@ -325,6 +325,7 @@ static const struct dev_pm_ops cdns_ufs_dev_pm_ops
-> =3D {  static struct platform_driver cdns_ufs_pltfrm_driver =3D {
->         .probe  =3D cdns_ufs_pltfrm_probe,
->         .remove =3D cdns_ufs_pltfrm_remove,
-> +       .shutdown =3D ufshcd_pltfrm_shutdown,
->         .driver =3D {
->                 .name   =3D "cdns-ufshcd",
->                 .pm     =3D &cdns_ufs_dev_pm_ops,
-> --
-> 2.17.1
+I'm going to drop the "Support CPU cluster power-down state on Tegra30"
+for now to not block the rest of the patches.
 
+Will get back to that patch once we'll fix the TF300T problem, perhaps
+something needs to be changed for the Trusted Foundations firmware handling.
