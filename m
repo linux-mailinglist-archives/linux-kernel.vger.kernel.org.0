@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB6E1250E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D417F1250EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfLRSod (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 13:44:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35829 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfLRSob (ORCPT
+        id S1727398AbfLRSof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 13:44:35 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41821 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfLRSoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:44:31 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 15so2460379lfr.2;
-        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
+        Wed, 18 Dec 2019 13:44:32 -0500
+Received: by mail-lf1-f65.google.com with SMTP id m30so2434884lfp.8;
+        Wed, 18 Dec 2019 10:44:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oOVKsDe9LGG5j1ETif1ZJ64tX9Yfod2gK7GPtOgEPIo=;
-        b=fl/mcjN0Inn4J53cTISzwwKunBpVjOFs6mO2NmR74kNswtmnBdosMc6FyNU5wku3G9
-         XsRq6fpgtpUuI/AqtzJAQmPT1NvMvN/ZgSO/zlYppUrf4JsnVllJTR2g1Z/lXPWiEUFL
-         5LFxHSJjZnSHaUVvQgGXVQ/8FZt2hzxjS4VGX5D92gB0BHhzhLtj1KKi90YiuNPYCdrp
-         qnwiN6Fnjdp66ITEjQpBPkX5iOtV4ySPXiMB5E8v4ifl7+45VQ0EGYcqZq7XGjSUBV8I
-         oKqyDpX0/TPfKvmDhOTG5FGUEVdXzgpoXlwlIWp2Eo60CzA4yDKAGggoiN8gFjJ8ZhIX
-         Ow/Q==
+        bh=v+s6MmvX7icUw9PqvAbzROxUfy5WGSHxEQBNGekKk1M=;
+        b=eWu5k4UPSPnWt4SB9moFHFObPD8046g6FCMmloy9PcnDk3ptLRirVJw/39qIgsG0XO
+         Lg4DZR/G2w4/834Cu8ZgnkBEcxXME7FuU1t5tfxAnkHHUKKWE999HQwuqSswry8kH5GH
+         SNDlu/gQxRDqJhvrtPu0i7pzQtCb/kMGxOEzbG1DVzCKyqnKk25l3yHlTcZJKMczHdVU
+         Zh/PhVy5A37OxRuSgZ17oHqAtxUCCbQHycGb2dRq8F103P/BgFVrakfALjnVHOhFLM7r
+         coo6lqANCUQL06x2ggbSFlkSnrGwYUUWOWOzoGe7OMDW0s0uBaG2KoEoWcKi59SuShjP
+         4Evw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oOVKsDe9LGG5j1ETif1ZJ64tX9Yfod2gK7GPtOgEPIo=;
-        b=l7ucKabOmFNDe0hvvqQ0CaNnvxmevZMZu9hzIizkJ3ZYOU8iAkIJbubOjqMgvFsf0q
-         JY9oLYnerXa8SGoyrWv2ZjdL+bBQxHTZhTZMUqU0vBnXKZYjHOLHrJfUIkqb8i31Hh1q
-         pg/3odFnaC7K3L8ySQ9DEKE7jEL3SfetgtAIS1rX281LAuRLGq1AQmPSvW8V8r4xIXCu
-         5vMMSGQSkgNM33Shymp9GZDT79u9kAnhy0jheMUyXLuiMwxxjehCvYQNl93nwGgLtmRD
-         fxMAFWFxW6VSMRQ6VYETmeCi9DNf01zPVP1C8fPl+y8YkjCePszt3mbU+hVXamSiBH+D
-         P4Hg==
-X-Gm-Message-State: APjAAAUseISSFdabruQ6NiYbCsN10FbkHUBB0ZcRmTEA0cRsFZRvn+B4
-        59wdjBdA2Qksc4EbhZfFrx8=
-X-Google-Smtp-Source: APXvYqxcOhEC+YyoDwD71+Fs8/hy9mFoRrOTi5mjrD5gpfu4V0qnSlUn6BTpa/nMq7OHBBIhV0a7WA==
-X-Received: by 2002:a19:784:: with SMTP id 126mr2655011lfh.191.1576694668859;
-        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
+        bh=v+s6MmvX7icUw9PqvAbzROxUfy5WGSHxEQBNGekKk1M=;
+        b=AFMsR8lois2J3IcIlcMCpNm57L9Tc7FU+saQJ3jLgpons0bpgricuEC/IYO8a5B5w8
+         Cl27HH9/AYd2VM6jo+MpN6lPCyJj0R7nL9A3AeXKsslCr4SmI+A2TGODGVTQsrt2S9i7
+         wO8Xvy2bVroV8rz19p5UuHQJHXIHfFefNscMCmuDRcYuOhBLE1wSF5UvUn0KhcRkdwMJ
+         4iKEentshy2MxZ1fFmJzx3FFjpYqY8TA/Hk5ax3nXjY6r7AZ8peKtz75L0Bdoy67Vk7A
+         UMcf6BIf4rr6i527ESok0bk/7qD6kYYFAYLntxXFB+fZeJJ73UpKAS1aDKugbz64rwiE
+         Xt5g==
+X-Gm-Message-State: APjAAAUrLxJLsKE6huqBDr2EXSnLXC0Or9P1W4njYiwb3EMrBHxEoAZ5
+        YMb1oGnHWv5tKa00iqY2u4k=
+X-Google-Smtp-Source: APXvYqx3pUFK4C9rEvv0I4zncfw0HhZuOlzK0cBQdhYTb2NqAe4bgmQqGDfSVjwRV67Eu/OOEAyKhQ==
+X-Received: by 2002:a19:4f46:: with SMTP id a6mr2765387lfk.143.1576694669901;
+        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
         by smtp.gmail.com with ESMTPSA id j204sm1553354lfj.38.2019.12.18.10.44.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
+        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -54,9 +54,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND for 5.6 v1 2/3] clk: tegra20/30: Don't pre-initialize displays parent clock
-Date:   Wed, 18 Dec 2019 21:44:06 +0300
-Message-Id: <20191218184407.25790-2-digetx@gmail.com>
+Subject: [PATCH RESEND for 5.6 v1 3/3] clk: tegra20/30: Explicitly set parent clock for Video Decoder
+Date:   Wed, 18 Dec 2019 21:44:07 +0300
+Message-Id: <20191218184407.25790-3-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191218184407.25790-1-digetx@gmail.com>
 References: <20191218184407.25790-1-digetx@gmail.com>
@@ -67,43 +67,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both Tegra20 and Tegra30 are initializing display's parent clock
-incorrectly because PLLP is running at 216/408MHz while display rate is
-set to 600MHz, but pre-setting the parent isn't needed at all because
-display driver selects proper parent anyways.
+The VDE parent won't be changed automatically to PLLC if bootloader
+didn't do that for us, hence let's explicitly set the parent for
+consistency.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 2 --
- drivers/clk/tegra/clk-tegra30.c | 2 --
- 2 files changed, 4 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 2 +-
+ drivers/clk/tegra/clk-tegra30.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4d8222f5c638..0c14fb570343 100644
+index 0c14fb570343..fff5cba87637 100644
 --- a/drivers/clk/tegra/clk-tegra20.c
 +++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1046,8 +1046,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC4, TEGRA20_CLK_PLL_P, 100000000, 0 },
+@@ -1048,7 +1048,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
  	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA20_CLK_DISP1, TEGRA20_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
  	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
  	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+-	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
++	{ TEGRA20_CLK_VDE, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	/* must be the last entry */
+ 	{ TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0 },
+ };
 diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c8bc18e4d7e5..bd4d42005897 100644
+index bd4d42005897..b20891489e11 100644
 --- a/drivers/clk/tegra/clk-tegra30.c
 +++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1251,8 +1251,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
- 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+@@ -1256,7 +1256,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
  	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
+-	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
++	{ TEGRA30_CLK_VDE, TEGRA30_CLK_PLL_C, 600000000, 0 },
+ 	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
+ 	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
 -- 
 2.24.0
 
