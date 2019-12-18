@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD64312550C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:46:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3563125500
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727184AbfLRVqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:46:14 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46390 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726751AbfLRVpQ (ORCPT
+        id S1726846AbfLRVpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:45:22 -0500
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:44665 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfLRVpR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:45:16 -0500
-Received: by mail-qt1-f194.google.com with SMTP id 38so3174533qtb.13
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:45:16 -0800 (PST)
+        Wed, 18 Dec 2019 16:45:17 -0500
+Received: by mail-qv1-f65.google.com with SMTP id n8so1367102qvg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:45:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=a3CngsofCLiiBus+wS+2g2HZdYbmV2oX+9kndN4OJ+g=;
-        b=XVSyL2s0cRcNi598s6/xh1v4JjHfoaMgpKcUwckhTHdayDLsWEP1EKNb57MBbIUyHn
-         GHVbyf4OILoTrlnSx28SDkES62MxFV+biCfV8o3VWkvmOVK1xTQGCfmJmKC/inE0nVMf
-         O9h/Veub608/VHRrV3Rp4SGLJ43qmby0xewEkmPZpKigGOW1gMbsEsgPWFIuZFc/FCmz
-         C+2gYQb5hGA9RSM3dlknS4Rc7RILPl2pfxv/dW2Y3mQew3+xg3Ts/w/rMGSFO+/eX8G+
-         gxcQEmZTkncohGmZSY+6ioc0YCNkk/Ghsrb/Hp4JoWw8qBqtt7kn+obLYQUo0mFbfT3f
-         W8YQ==
-X-Gm-Message-State: APjAAAXoRv8ykIgjsSAVlOVnbolP6EhKZyr54FlmHev6UIK+wT3x5pw/
-        l3ITQwJWze2lPG7HQ4uogtyOSgLZ
-X-Google-Smtp-Source: APXvYqxrWCd1ojPRsHYTrmEasHOjoiX7H814GM8kgLrrOb5Ai6KTdaiwm89CP7f1vOPf1gk/YeRUVg==
-X-Received: by 2002:ac8:5159:: with SMTP id h25mr4320844qtn.249.1576705515737;
-        Wed, 18 Dec 2019 13:45:15 -0800 (PST)
+        bh=L92CVkon/nLqJ4vOLY/kKoM5pQOZuk1/nWVb5NREnUs=;
+        b=kltBtbdSfqeijclfaTwr3QdHuoWupsK2xe78zhqH4CgXIanOnhjSHy3tlpdXmiLyZI
+         +RHYlyOCP1GtSweraOuDC0VET9+a5pkQBAH9nhBJjA2T83Qh4FTerrXJY9Mnh6j07TYw
+         wRtp0qHJ5Xiqcgdg4lMhhc279a1OD7XFvlG0puy3BTifhfCg53CtGgM66QqUa1SNN+/s
+         779rB92jzqam6neW0ITl56Gv4ybRhXwsIotBBKWBa7xz0M8me+7E4ccA/rsaFuWh9+3I
+         Cz/UFEIW5V9cGdH8/Ht5pS1759x+9SWWR/6vulicg0Se79ivNpD9kSXTzkDsWNeqrhLy
+         0zFw==
+X-Gm-Message-State: APjAAAWcTNiiPlb7VIKdx5OvyilBSu/sbvItJ1eRefoGx0xIT+6L69kH
+        9dpj3TOykvALxTMmdyFUFfw=
+X-Google-Smtp-Source: APXvYqyB3uBmWp77+UDehW72H0UvPNTduU8HNAMk9eZuy2/lo3hnoKpqLP/mXFhUv+e6bepQe8+hSg==
+X-Received: by 2002:ad4:46c3:: with SMTP id g3mr4396115qvw.60.1576705516595;
+        Wed, 18 Dec 2019 13:45:16 -0800 (PST)
 Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
-        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.14
+        by smtp.gmail.com with ESMTPSA id u4sm1059851qkh.59.2019.12.18.13.45.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 18 Dec 2019 13:45:15 -0800 (PST)
 From:   Arvind Sankar <nivedita@alum.mit.edu>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/24] arch/m68k/setup: Drop dummy_con initialization
-Date:   Wed, 18 Dec 2019 16:44:52 -0500
-Message-Id: <20191218214506.49252-11-nivedita@alum.mit.edu>
+Subject: [PATCH v2 11/24] arch/microblaze/setup: Drop dummy_con initialization
+Date:   Wed, 18 Dec 2019 16:44:53 -0500
+Message-Id: <20191218214506.49252-12-nivedita@alum.mit.edu>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191218214506.49252-1-nivedita@alum.mit.edu>
 References: <20191218211231.GA918900@kroah.com>
@@ -57,53 +57,24 @@ Drop it from arch setup code.
 
 Signed-off-by: Arvind Sankar <nivedita@alum.mit.edu>
 ---
- arch/m68k/kernel/setup_mm.c | 4 ----
- arch/m68k/kernel/setup_no.c | 4 ----
- arch/m68k/sun3x/config.c    | 1 -
- 3 files changed, 9 deletions(-)
+ arch/microblaze/kernel/setup.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/m68k/kernel/setup_mm.c b/arch/m68k/kernel/setup_mm.c
-index 528484feff80..ab8aa7be260f 100644
---- a/arch/m68k/kernel/setup_mm.c
-+++ b/arch/m68k/kernel/setup_mm.c
-@@ -274,10 +274,6 @@ void __init setup_arch(char **cmdline_p)
+diff --git a/arch/microblaze/kernel/setup.c b/arch/microblaze/kernel/setup.c
+index 522a0c5d9c59..511c1ab7f57f 100644
+--- a/arch/microblaze/kernel/setup.c
++++ b/arch/microblaze/kernel/setup.c
+@@ -65,10 +65,6 @@ void __init setup_arch(char **cmdline_p)
+ 	microblaze_cache_init();
  
- 	parse_early_param();
- 
--#ifdef CONFIG_DUMMY_CONSOLE
+ 	xilinx_pci_init();
+-
+-#if defined(CONFIG_DUMMY_CONSOLE)
 -	conswitchp = &dummy_con;
 -#endif
--
- 	switch (m68k_machtype) {
- #ifdef CONFIG_AMIGA
- 	case MACH_AMIGA:
-diff --git a/arch/m68k/kernel/setup_no.c b/arch/m68k/kernel/setup_no.c
-index 3c5def10d486..a63483de7a42 100644
---- a/arch/m68k/kernel/setup_no.c
-+++ b/arch/m68k/kernel/setup_no.c
-@@ -146,10 +146,6 @@ void __init setup_arch(char **cmdline_p)
- 	memcpy(boot_command_line, command_line, COMMAND_LINE_SIZE);
- 	boot_command_line[COMMAND_LINE_SIZE-1] = 0;
+ }
  
--#if defined(CONFIG_FRAMEBUFFER_CONSOLE) && defined(CONFIG_DUMMY_CONSOLE)
--	conswitchp = &dummy_con;
--#endif
--
- 	/*
- 	 * Give all the memory to the bootmap allocator, tell it to put the
- 	 * boot mem_map at the start of memory.
-diff --git a/arch/m68k/sun3x/config.c b/arch/m68k/sun3x/config.c
-index 03ce7f9facfe..d806dee71a9c 100644
---- a/arch/m68k/sun3x/config.c
-+++ b/arch/m68k/sun3x/config.c
-@@ -70,7 +70,6 @@ void __init config_sun3x(void)
- 		break;
- 	default:
- 		serial_console = 0;
--		conswitchp = &dummy_con;
- 		break;
- 	}
- #endif
+ #ifdef CONFIG_MTD_UCLINUX
 -- 
 2.24.1
 
