@@ -2,80 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D8AE41254CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:36:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 622E81254D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:37:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfLRVgP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:36:15 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46528 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbfLRVgP (ORCPT
+        id S1726617AbfLRVhS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:37:18 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33080 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726188AbfLRVhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:36:15 -0500
-Received: by mail-ot1-f68.google.com with SMTP id c22so4199607otj.13;
-        Wed, 18 Dec 2019 13:36:14 -0800 (PST)
+        Wed, 18 Dec 2019 16:37:18 -0500
+Received: by mail-ot1-f65.google.com with SMTP id b18so4259048otp.0;
+        Wed, 18 Dec 2019 13:37:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=72VAfYuwXoJ1WVkCcjRKB4hbu6IUlbWCsYCwfnomH8c=;
-        b=iG07TqtD0Zy6mDTqDwf9/d1v5E3gw/MEbruqrIxib1ijDvNRDX6JULocExJEQyKKvH
-         VHZIUNin/jlX5L4EQFeSQKIN2Cx3fqdX1nPUaL149f01jHO3o29jZHJeW74yqLiU1ZkT
-         uhcyX6erP0ZtK9gqxip0IgphDc2ytHhwtm7zDK4tGaM0UfInGW+ekQYoq5pETqTnK3e8
-         aJZyEOs9avxr+O1PbT/FoNkNvYpiuD15N9KUa9Hp560d7+g/ph+Hl1ODg5XF2SW0ASxV
-         mGEfNSLh/mDGhNNQDG7FbtckslhL5W3qYOm8dyy5MRKr2lMEfODHMcdaq5NgqXT9HmVK
-         yPaQ==
-X-Gm-Message-State: APjAAAVZdz/LW5kh5ldV0wthlZlNimkVOqbuBplOVsetfv2UuOi8dZBr
-        h58SwmigTd7GNxpI7Fhpkg==
-X-Google-Smtp-Source: APXvYqy7BIKZhbjHQz6b0xkP7HzpJe1AqV+DOsqDmUcyxYqd8NSDMqiKqNPha8X3aU1Lz45KQRfqzA==
-X-Received: by 2002:a05:6830:1f95:: with SMTP id v21mr4939761otr.325.1576704974635;
-        Wed, 18 Dec 2019 13:36:14 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:content-language
+         :user-agent;
+        bh=ifuKCDLglV3cQ2NjiVrZMr22gRDHsz+j+tKyqQeTxHQ=;
+        b=W+FdHrzyZB4rhHvRV+SBEntRFDaPb+KZV7L5em79Suppw7wufxQvHpJipBEkX4941/
+         Wu1M/VfdNiWkHzWwhrJAb9P/gzn5sjgYO5tCxjl8zd7lHYkeYu2YAzAp++eEq8epLKcL
+         V7nVPfu7341RWtF85RY9hMbo+kV8v+z+21yToi8rHsE42Ykb3nYpABX/u8ojiMIqCBPA
+         Wad6JYgqVRdNEfmS06Zry8IoVNvyT0HePGkjBkvsYcj7R1VtN1wJgaAHidQM7GT+taif
+         S75WJLdz9Yv+bxKNO0EAuLtjo2lbFpZAaqY/MvvwmE8zzFIvnsbXduhemgL3O90HRNmY
+         aF6Q==
+X-Gm-Message-State: APjAAAU09ETnd4Jr6mOK/kd0gLlrlM9Dzfc4fCR9MrR0OFgaWpR03RnW
+        7JVs+NxucvVZAnBAk3iMxw==
+X-Google-Smtp-Source: APXvYqyb5pOkEkq05UBSd4+BP9Qw43aHqaQLKGXY2sc4jHQcsLcCb95uhzFgK9KV8LGcg5xUOxHBnA==
+X-Received: by 2002:a05:6830:1bf1:: with SMTP id k17mr4833956otb.101.1576705037550;
+        Wed, 18 Dec 2019 13:37:17 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p83sm1235400oia.51.2019.12.18.13.36.14
+        by smtp.gmail.com with ESMTPSA id g25sm1263886otr.8.2019.12.18.13.37.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 13:36:14 -0800 (PST)
-Date:   Wed, 18 Dec 2019 15:36:13 -0600
+        Wed, 18 Dec 2019 13:37:17 -0800 (PST)
+Date:   Wed, 18 Dec 2019 15:37:16 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
-        sam@ravnborg.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christoph.muellner@theobroma-systems.com, maxime@cerno.tech,
-        heiko@sntech.de,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: display: panel: Add binding document
- for Xinpeng XPP055C272
-Message-ID: <20191218213613.GA29058@bogus>
-References: <20191217222906.19943-1-heiko@sntech.de>
- <20191217222906.19943-2-heiko@sntech.de>
+To:     Eugen.Hristev@microchip.com
+Cc:     robh@kernel.org, Ludovic.Desroches@microchip.com,
+        wsa@the-dreams.de, peda@axentia.se, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Codrin.Ciubotariu@microchip.com,
+        Eugen.Hristev@microchip.com
+Subject: Re: [PATCH v3 1/4] dt-bindings: i2c: at91: cosmetic formatting of
+  compatible list
+Message-ID: <20191218213716.GA30887@bogus>
+References: <1575886763-19089-1-git-send-email-eugen.hristev@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191217222906.19943-2-heiko@sntech.de>
+In-Reply-To: <1575886763-19089-1-git-send-email-eugen.hristev@microchip.com>
+Content-Language: en-US
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019 23:29:05 +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+On Mon, 9 Dec 2019 10:19:59 +0000, <Eugen.Hristev@microchip.com> wrote:
 > 
-> The XPP055C272 is a 5.5" 720x1280 DSI display.
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
-> changes in v4:
-> - fix id (Maxime)
-> - drop port (Maxime)
-> changes in v2:
-> - add size info into binding title (Sam)
-> - add more required properties (Sam)
+> Format the list of compatibles with one compatible per line.
 > 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+> Suggested-by: Peter Rosin <peda@axentia.se>
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+> Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 > ---
->  .../display/panel/xinpeng,xpp055c272.yaml     | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/xinpeng,xpp055c272.yaml
+>  Documentation/devicetree/bindings/i2c/i2c-at91.txt | 14 ++++++++++----
+>  1 file changed, 10 insertions(+), 4 deletions(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
