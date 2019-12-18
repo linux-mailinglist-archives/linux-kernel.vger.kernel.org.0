@@ -2,124 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E026E123BEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48F9D123BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 01:51:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726856AbfLRAvk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 19:51:40 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38727 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfLRAve (ORCPT
+        id S1726911AbfLRAv5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 19:51:57 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38730 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfLRAvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 19:51:34 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x185so210465pfc.5;
-        Tue, 17 Dec 2019 16:51:33 -0800 (PST)
+        Tue, 17 Dec 2019 19:51:54 -0500
+Received: by mail-il1-f195.google.com with SMTP id f5so188131ilq.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 16:51:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=lIjsvF9IAOKO/y9eAPFaGirPoWCV8dxZZXU9yHmkvfQ=;
-        b=qmW/1GT7rwoMEFROf0tuZO/TNcV775jnRSkCS+it7yLw59eK7Y1L43a+g6+fLSWG9b
-         SWv1c8DzoiqPdynrpgYLWmcUPh6EUkPbVBmWbnp4VvVkeXaTRdvypbgwk+TG/V6NBR2h
-         b4jZ3BoJGQh2iGNuM5aBYvvPV8DSFCcFgL2XpTuONZn5Q8QQ9CzoCnC0uUhNrdRtSPua
-         VAnHhXdl4U1HGS9EnUOW64gVihWaQUfx3RNom3BE9YmDhompVgHI7F1M+2VKKbiQOZdg
-         SITxEV5bTN1gKcRlL4xJids5KsCKftXxWUeVjCLpWp9uPjVsUmPi+QNMip5j5b1Jbnx3
-         OtdA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/FqIFbxNZ4ErowQaQntfHCdnij1EjI9liJnlLkiqWQc=;
+        b=mTE1+RmVS47pn7wwx1YUwxOkfF6sMrc/6gDreEAiPH52c208VuOmECL0FxLsJiOeSj
+         xd6GbfHO5uLaojmq7ftwHPw2eJ7dBFFX2kd4qTD4vF6V9bgGaznbDPFQJ6EcBm3DRuBu
+         Sf9wkS0+HVSXl95nXlUBbglpe3Om87S4go9Tg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=lIjsvF9IAOKO/y9eAPFaGirPoWCV8dxZZXU9yHmkvfQ=;
-        b=UsZi+e9/vZhtfYUPmfPFqOwx44ixKn1AOgRQgpHyB0E9CrZf9Q8BRZlu5jHV7XKmzy
-         L8Rf2W3yfHiFC2DpY7X3oM/1X576I/vdvRynnzFHN8dQKSABg9dw7uGdajtEDFRHxn/J
-         ieEUZHr4FD4HjoyGITkEy4gKm224gg4BwbupdQRihfgcKIRe3RdqJPWASQ2yyxjePG5G
-         ICLS+0DALA9TDUjEV97r/EWbMaq6Nz9J+UYBfhCzVDsvokNQEW9LdhbCGFeezdB1AQPb
-         XkXKFMcH/DDKrrCrM5YmY8smQa6weVwyXAGKVocwobpXjExhlMxB6Dz2EUN2JbBXCUP+
-         fSYg==
-X-Gm-Message-State: APjAAAUsBtzsfJN67l+Y79SDAmQrN9DvV1fUM+N3Hpix33rUM+WySvcF
-        3N/rbDpJtguBXKY4CWI085A=
-X-Google-Smtp-Source: APXvYqwKGOZaAQfUtUBJtD/vxKXoV8SgggpyDu6VySrj1IUnPf+QUgUexIcyJuZXBY/qUmNXPbGJ2w==
-X-Received: by 2002:a63:5b0a:: with SMTP id p10mr871386pgb.228.1576630293350;
-        Tue, 17 Dec 2019 16:51:33 -0800 (PST)
-Received: from stbirv-lnx-3.igp.broadcom.net ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 81sm274819pfx.30.2019.12.17.16.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 17 Dec 2019 16:51:33 -0800 (PST)
-From:   Doug Berger <opendmb@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>
-Subject: [PATCH net-next v2 8/8] net: bcmgenet: Add software counters to track reallocations
-Date:   Tue, 17 Dec 2019 16:51:15 -0800
-Message-Id: <1576630275-17591-9-git-send-email-opendmb@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576630275-17591-1-git-send-email-opendmb@gmail.com>
-References: <1576630275-17591-1-git-send-email-opendmb@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/FqIFbxNZ4ErowQaQntfHCdnij1EjI9liJnlLkiqWQc=;
+        b=nMbkBhBvSI3dPhhW+V07rBVtcHYE+K2jzjwrN07W1B8vJYbl3+lHElKm13dCNsVgz9
+         AddKt87s7F5Nua+0oJNK8jmJPPoLqDGyMRZSjGGk073fcQB/GMOycgJ19J+Y9aDTPvVs
+         Xn3GcAqB+mgkNs7OGFW54HFVEm98n5pkQf34JoFtsKGtYlLejOn3B25QXlE7Tacl4lln
+         qa4tfpmRnfSXZ66DgN6HXJ94CAuPPHU9wuYoEdmsQFT+cuqzHdTEXyRXEnwmnCz7XLXQ
+         nvc9P/1t2EQgwuDEVGhxRzzmqgDbRIw+WVHsMkVryNLI5pCuzzV3hoJD8fft+pyz/eNQ
+         /yMA==
+X-Gm-Message-State: APjAAAVkawcrIPDrwGts4ngfJCiDOrOnsLlrsG2QMwFC1ghBfgXuFI0R
+        Bf8lAoHCkDnUBFPu9gwUrdBTLqc4RcY=
+X-Google-Smtp-Source: APXvYqzRCPfm6J2ml81UwG+/SVU7NwfZnu0W0lLG1wflOtO9ZuFJ8HRMQcW0GzLiyOyjgHDu5IZd+g==
+X-Received: by 2002:a92:9a56:: with SMTP id t83mr243868ili.200.1576630313190;
+        Tue, 17 Dec 2019 16:51:53 -0800 (PST)
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com. [209.85.166.45])
+        by smtp.gmail.com with ESMTPSA id e85sm122441ilk.78.2019.12.17.16.51.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 16:51:52 -0800 (PST)
+Received: by mail-io1-f45.google.com with SMTP id v3so155244ioj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 17 Dec 2019 16:51:52 -0800 (PST)
+X-Received: by 2002:a02:ba93:: with SMTP id g19mr919432jao.90.1576630311502;
+ Tue, 17 Dec 2019 16:51:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20191022190120.25772-1-jeffrey.l.hugo@gmail.com>
+In-Reply-To: <20191022190120.25772-1-jeffrey.l.hugo@gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 17 Dec 2019 16:51:39 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=V7HvXPkdjq_WeX+gN3s_Lc2zvX2rapcXNNBeKq2W_rtQ@mail.gmail.com>
+Message-ID: <CAD=FV=V7HvXPkdjq_WeX+gN3s_Lc2zvX2rapcXNNBeKq2W_rtQ@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/bridge: ti-sn65dsi86: Decouple DP output lanes
+ from DSI input lanes
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When inserting the TSB, keep track of how many times we had to do
-it and if there was a failure in doing so, this helps profile the
-driver for possibly incorrect headroom settings.
+Hi,
 
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/ethernet/broadcom/genet/bcmgenet.c | 6 ++++++
- drivers/net/ethernet/broadcom/genet/bcmgenet.h | 2 ++
- 2 files changed, 8 insertions(+)
+On Tue, Oct 22, 2019 at 12:01 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
+>
+> Based on work by Bjorn Andersson <bjorn.andersson@linaro.org>
+>
+> The bridge can be configured to use 1, 2, or 4 DP lanes.  This
+> configuration is independent of the input DSI lanes.  Right now, the
+> driver assumes that there is 1:1 mapping of input lanes to output lanes
+> which is not correct and does not work for manu devices such as the
+> Lenovo Miix 630 and Lenovo Yoga C630 laptops.
+>
+> The bridge can also be configured to use one of a number of data rates on
+> the DP lanes.  Currently any of the supported rates is considered valid,
+> however the configured rate must also be supported by the connected panel,
+> and not all rates are supported or even valid for any particular panel.
+>
+> Luckily, we can determine what we need at runtime by reading the DPCD from
+> the attached panel.  DPCD will tell us the maximum number of supported
+> lanes, and the supported data rates.
+>
+> Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+> ---
+>
+> Bjorn, I think this should address the issue you pointed out concerning
+> the data rate glitch I missed in your origional work.  Would you kindly
+> give this a test and let me know if it appears to address all of the
+> issues you were working around?
+>
+> v2:
+> -Use DPCD instead of DT to address the issue of some panels not
+> supporting all the rates
+>
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 97 ++++++++++++++++++++++++++-
+>  1 file changed, 94 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index e2bca19bf10b..3ee7917e3fc0 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -861,6 +861,9 @@ static const struct bcmgenet_stats bcmgenet_gstrings_stats[] = {
- 	STAT_GENET_SOFT_MIB("alloc_rx_buff_failed", mib.alloc_rx_buff_failed),
- 	STAT_GENET_SOFT_MIB("rx_dma_failed", mib.rx_dma_failed),
- 	STAT_GENET_SOFT_MIB("tx_dma_failed", mib.tx_dma_failed),
-+	STAT_GENET_SOFT_MIB("tx_realloc_tsb", mib.tx_realloc_tsb),
-+	STAT_GENET_SOFT_MIB("tx_realloc_tsb_failed",
-+			    mib.tx_realloc_tsb_failed),
- 	/* Per TX queues */
- 	STAT_GENET_Q(0),
- 	STAT_GENET_Q(1),
-@@ -1487,6 +1490,7 @@ static void bcmgenet_tx_reclaim_all(struct net_device *dev)
- static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
- 					    struct sk_buff *skb)
- {
-+	struct bcmgenet_priv *priv = netdev_priv(dev);
- 	struct status_64 *status = NULL;
- 	struct sk_buff *new_skb;
- 	u16 offset;
-@@ -1501,11 +1505,13 @@ static struct sk_buff *bcmgenet_put_tx_csum(struct net_device *dev,
- 		new_skb = skb_realloc_headroom(skb, sizeof(*status));
- 		if (!new_skb) {
- 			dev_kfree_skb_any(skb);
-+			priv->mib.tx_realloc_tsb_failed++;
- 			dev->stats.tx_dropped++;
- 			return NULL;
- 		}
- 		dev_consume_skb_any(skb);
- 		skb = new_skb;
-+		priv->mib.tx_realloc_tsb++;
- 	}
- 
- 	skb_push(skb, sizeof(*status));
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.h b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-index d33c0d093f82..61a6fe9f4cec 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.h
-@@ -144,6 +144,8 @@ struct bcmgenet_mib_counters {
- 	u32	alloc_rx_buff_failed;
- 	u32	rx_dma_failed;
- 	u32	tx_dma_failed;
-+	u32	tx_realloc_tsb;
-+	u32	tx_realloc_tsb_failed;
- };
- 
- #define UMAC_HD_BKP_CTRL		0x004
--- 
-2.7.4
+Overall I'm suggesting moving over to my series and I've taken the
+best stuff from your patch and put it atop my series.  Please yell if
+you disagree.  You can find the cover letter for my v2 at:
 
+https://lore.kernel.org/r/20191218004741.102067-1-dianders@chromium.org
+
+A few misc comments below in any case.
+
+
+> @@ -444,10 +447,91 @@ static void ti_sn_bridge_set_dsi_dp_rate(struct ti_sn_bridge *pdata)
+>         regmap_write(pdata->regmap, SN_DSIA_CLK_FREQ_REG, val);
+>
+>         /* set DP data rate */
+> -       dp_rate_mhz = ((bit_rate_mhz / pdata->dsi->lanes) * DP_CLK_FUDGE_NUM) /
+> +       dp_rate_mhz = ((bit_rate_mhz / pdata->dp_lanes) * DP_CLK_FUDGE_NUM) /
+>                                                         DP_CLK_FUDGE_DEN;
+
+One note is that "bit_rate_mhz" is still calculated using the MIPI
+pixel format, which is wrong.  It happens that (at the moment) we have
+24 bits per pixel for both cases, though.
+
+
+> +       /* read the panel capabilities to determine valid supported rates */
+> +       val = drm_dp_dpcd_readb(&pdata->aux, DP_MAX_LINK_RATE, &dpcd_val);
+> +       if (!val) {
+> +               DRM_ERROR("Reading max link rate from DPCD failed\n");
+> +               return;
+> +       }
+> +
+> +       if (dpcd_val) {
+
+I think your patch is assuming that the only case you want to use the
+table is if dpcd_val is 0.  This doesn't appear to be the case.  In
+Table 4-24 of the spec it states that you can have a non-zero value
+here and still provide a table.  That might be useful if you want to
+be backward compatible with an eDP 1.3 source but also provide an
+optimized rate for a eDP 1.4 source.
+
+We should be checking the eDP revision first and always using the
+table if it's eDP 1.4.
+
+
+> +               /* cap to the max rate supported by the bridge */
+> +               if (dpcd_val > 0x14)
+> +                       dpcd_val = 0x14;
+> +
+> +               switch (dpcd_val) {
+> +               case 0x14:
+
+There are constants.  Like DP_LINK_BW_5_4
+
+
+> @@ -505,7 +589,14 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
+>                            CHA_DSI_LANES_MASK, val);
+>
+>         /* DP lane config */
+> -       val = DP_NUM_LANES(pdata->dsi->lanes - 1);
+> +       ret = drm_dp_dpcd_readb(&pdata->aux, DP_MAX_LANE_COUNT, (u8 *)&val);
+
+This is an iffy cast.  The function is only guaranteed to set the
+first byte of val which could be the most or least significant byte.
+Other bytes will remain as-is.
