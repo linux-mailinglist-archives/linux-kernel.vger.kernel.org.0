@@ -2,130 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E12A51248C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:53:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C4501248CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 14:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfLRNxH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 08:53:07 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:51038 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726710AbfLRNxH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 08:53:07 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1ihZl9-0001g7-Pf; Wed, 18 Dec 2019 14:53:03 +0100
-To:     Andre Przywara <andre.przywara@arm.com>
-Subject: Re: [PATCH] pcie: Add quirk for the Arm Neoverse N1SDP platform
-X-PHP-Originating-Script: 0:main.inc
+        id S1727110AbfLRNyL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 08:54:11 -0500
+Received: from mout.gmx.net ([212.227.17.22]:47233 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbfLRNyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:54:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1576677243;
+        bh=ZhcDDcNfsfafFdvs1JQcGHU/hpgdybDLx7pCjlP+xVM=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=XK1rBebkH++Y1QL+eER5du3AZsBxW6t/Gmc0yw30HIR8Ck6ty8siCmjRLlOq9VY1S
+         f8rK3dtAYf2lALCFwZTzrT19Ta+gh/R3TXxQVzHJ4y4/aR7iCZsrdSjHMZwbjGYCxn
+         thnuBI7n/Zcm9BWdNvE8KzRYSOm8dLYgdLfUnFVU=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [185.76.99.135] ([185.76.99.135]) by web-mail.gmx.net
+ (3c-app-gmx-bap62.server.lan [172.19.172.132]) (via HTTP); Wed, 18 Dec 2019
+ 14:54:03 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 18 Dec 2019 13:53:02 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Jon Masters <jcm@jonmasters.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Will Deacon <will@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, Len Brown <lenb@kernel.org>
-In-Reply-To: <20191218102203.4078b011@donnerap.cambridge.arm.com>
-References: <20191209160638.141431-1-andre.przywara@arm.com>
- <20191209162645.GA7489@willie-the-truck>
- <dacfd8bf-0f68-f2af-9238-4b0fadfbdfe3@jonmasters.org>
- <20191218102203.4078b011@donnerap.cambridge.arm.com>
-Message-ID: <68c0c1e31ce72ab26eab7f1b077a302c@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: andre.przywara@arm.com, jcm@jonmasters.org, lorenzo.pieralisi@arm.com, catalin.marinas@arm.com, rjw@rjwysocki.net, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, andrew.murray@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, lenb@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Message-ID: <trinity-d7a098bf-51a2-4579-93c9-963826ed2895-1576677243636@3c-app-gmx-bap62>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Masahiro Yamada" <masahiroy@kernel.org>
+Cc:     "Linux Kbuild mailing list" <linux-kbuild@vger.kernel.org>,
+        "Michal Marek" <michal.lkml@markovi.net>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Frank Rowand" <frowand.list@gmail.com>,
+        DTML <devicetree@vger.kernel.org>
+Subject: Aw: Re: [PATCH] kbuild: Add DTC_CPP_FLAGS
+Content-Type: text/plain; charset=UTF-8
+Date:   Wed, 18 Dec 2019 14:54:03 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <CAK7LNARWYE4-4Qp-YfTrrt1YCZ68b28FDoE45cDJkZTqUyXNUw@mail.gmail.com>
+References: <20191218114625.28438-1-frank-w@public-files.de>
+ <CAK7LNARWYE4-4Qp-YfTrrt1YCZ68b28FDoE45cDJkZTqUyXNUw@mail.gmail.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:IPEYO5erNR3VIgkP26Ywy22WTWQkOf9vN8fjbS56GYJQF0o6de1mtWEGI8IjV1m+jU8TF
+ 3k76khgIJtZ6dmgLTKOuR3djzyaqRsERlxXcPq/ov0DxOQv0xSq740gNPqZBhdffYA5EuukAokko
+ 9boOvproSK4KWQ/MY5/YNELjGh8WGFILYQtgAJM0rnQZPujUhB89vhNWl6xIf3e33yDAHa+YantC
+ ntLllE7GdbDVNceTMN+7KG3qbfzvb9AMflXfOijv8HQoWnCZ1eD6HMRKRIbR6Sononw2Qimr1P0u
+ d4=
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:s4mPEd+k28k=:K9yIMO1inLEXGbGxzMcLZt
+ kxi2OI5xu/PLSRGCYa8rgEvelPZvFG7ScNxj59El6atgpkLps4J0J7OpDTmk0DqTMQu4ILPw5
+ RcKuYnhTiRK8D/TZ1ooLUXG/OFLEsEPy2Cent4kgR3+zNwGQwVlC4cxkpyiRemeJcfln89kP7
+ wo/BTXQ8x5XxKFY7NhHxIubfgXowzLfpfkJnZYJSBBR3Ny35Axt9/yl0gh6CGxNP9WocpO7pC
+ 9+q2fUe9mYfJiLX8+yVD9wG+iyZfEw7kgf/+E9jMpT7gcwaOtKt4qz2PiME2k6wMoT6cpuLcq
+ wODlqkagwlWUt7eq0XpfmUp6fVKUPjN2DYh6TyILnRD8pOH6MGdCOvw26bftMKK9QyYD2NWxZ
+ MNs3FwOddJjd1ql/0Y/oE9lyRW2MEqML3jGaoJmShuNw7JNjVd+qDi5J1+lMEIA8Lf0CMWMRp
+ LIpz6NYKTkMle2hSM7CDpeuSvK3T5Wob+ixDutg8V7vlFNjhW8MUX5PFbIUi2iZmKwR6QGH+v
+ BhCVRYf7TOVz30C7SSYQ4NMz/clRBkLC/n5el1BDLAzq+bUQ2gEXqPs+zpXd+XNIDUrUfvNOT
+ 9o5putGwzFXN9OY/WF4BwtO3LVSBI13XxV7O1Tloc0gIinlyVefrutQpB/mx4/ECohe/UbI8l
+ Igq3b96srX3rzn9vSNoKrXOFnbBu9pbrQJBINL6aOB7Ao8qBBPV9hs4sDC33HQpgHlKw=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-18 10:22, Andre Przywara wrote:
-> On Tue, 17 Dec 2019 21:21:17 -0500
-> Jon Masters <jcm@jonmasters.org> wrote:
->
-> Hi Jon,
->
->> On 12/9/19 11:26 AM, Will Deacon wrote:
->> > On Mon, Dec 09, 2019 at 04:06:38PM +0000, Andre Przywara wrote:
->> >> From: Deepak Pandey <Deepak.Pandey@arm.com>
->> >>
->> >> The Arm N1SDP SoC suffers from some PCIe integration issues, most
->> >> prominently config space accesses to not existing BDFs being 
->> answered
->> >> with a bus abort, resulting in an SError.
->> >
->> > "Do as I say, not as I do"?
->>
->> In my former role I asked nicely that these patches not be posted
->> upstream, but I see that they ended up being posted anyway. Hacking 
->> up
->> upstream Linux to cover for the fact that a (reference) platform is
->> non-standard is not only not good form but it actively harms the 
->> community.
->
-> Please keep in mind that this platform was designed to be standards
-> compliant, it is just due to an integration problem that this is not
-> the case with this silicon. So we end up with the usual hardware
-> errata, which the kernel can fix up. I agree it's not nice, and I 
-> also
-> want it fixed in hardware, but I guess that's the usual software 
-> guy's
-> pipe dream.
->
->> You'll have people consume this platform and not realize that it's
->> broken, IP won't get fixed, and generally it'll be a mess.
->
-> I don't see how yet another ACPI quirk in the ACPI quirk framework(!)
-> will make a mess.
-> Actually the rest of the system is standards compliant (it even uses
-> ACPI from the very beginning ;-), so it's just this problem that
-> prevents us from using the system in the proper, standards compliant
-> way. Effectively we are back to the embedded times with compiling 
-> your
-> own kernel and somehow getting a root filesystem on the hard drive.
-> If there would be mainline kernel support, all of this would go away
-> and would could use standard distro installers (given they backport
-> the patch).
->
->> Yes, it's
->> unfortunate, but so was taping out that platform without working 
->> PCI. We
->> all know what should have happened, and what the right move ahead 
->> is.
->
-> That may come as a surprise to some, but Arm Ltd. is actually not
-> really in the business of *producing silicon*, so a respin of the 
-> chip
-> was and is not an option. I too wish it would be different, but 
-> that's
-> how it is.
+Hi,
 
-In all honesty, I really wonder why we are even having this discussion:
+thank you for your answer... i waited for this argument ;) so here an exam=
+ple (don't wanted to add in patch itself):
 
-- The HW is unavailable to the mere mortal. And even most superheroes
-   cannot get their hands on it
+i have 2 different Bananapi-r64 boards with different switch-chips (v0.x r=
+tl8367,v1.x xmt7531). for 1 of the switches (mt7531) there are 2 drivers (=
+phy-driver + dsa driver) available and so i have 3 different configs in DT=
+S.
 
-- Even with this terrible son of a hack, essential PCIe features cannot
-   work (and yes, I do consider SR-IOV as an essential feature)
+Imho dtsi should contain only config for 1 chip, but the board has only 1 =
+dts. Till now i have copied the whole dts twice, so i have 3 independent d=
+ts. if i Patch any other in one like for bluetooth, wifi, which is same on=
+ each board i have to do it on all 3 dts files.
 
-- If we take this hack and somehow get this thing to run with mainline,
-   we will never be able to say "no" to this kind of unfinished,
-   *prototype* implementations ever again
+so i tried to make the switch-part conditionally, include the right dtsi f=
+or switch to 1 bpi-r64 dts based on -D param passed to the build-chain.
 
-To sum it up: a hack that doesn't really work for a prototype that you
-can't really buy? Why should we even care?
+#ifdef __SWITCH_RTL8367__
+       #include "rtl8367.dtsi"
+#endif
+#ifdef __SWITCH_MT7531_DSA__
+       #include "mt7531.dtsi"
+#endif
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+imho i can/should not include a dtsi to a dtsi and no dts to dts, so i can=
+not have a small dts (with the switch-config) including the whole r64 boar=
+d. Am i right?
+
+and this change should be less interferring than other ideas i'm thinking =
+about.
+
+Another example: I had tried adding the include/generated/autoconf.h to dt=
+si (same reason) which needs a change in scripts/dtc/include-prefixes/ (ad=
+d symlink) or an odd include in the dtsi (#include "../../../../../include=
+/generated/autoconf.h"). Both ways not nice...
+
+regards Frank
+
+
+> Gesendet: Mittwoch, 18. Dezember 2019 um 14:31 Uhr
+> Von: "Masahiro Yamada" <masahiroy@kernel.org>
+> I think this is questionable
+> since DT is supposed to describe hardware.
+> Does it depends on #ifdef or some external defines?
+>
+> If you want to add variations,
+> you can add a new DTS which includes other DTS(I) files.
+
