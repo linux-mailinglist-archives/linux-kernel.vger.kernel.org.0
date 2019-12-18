@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FD2112457A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:17:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3B412458B
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:18:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfLRLRv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:17:51 -0500
-Received: from foss.arm.com ([217.140.110.172]:42348 "EHLO foss.arm.com"
+        id S1727096AbfLRLS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:18:27 -0500
+Received: from foss.arm.com ([217.140.110.172]:42356 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbfLRLRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:17:50 -0500
+        id S1726551AbfLRLRv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 06:17:51 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6E4CB113E;
-        Wed, 18 Dec 2019 03:17:49 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50A6E11B3;
+        Wed, 18 Dec 2019 03:17:50 -0800 (PST)
 Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B606B3F6CF;
-        Wed, 18 Dec 2019 03:17:48 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1DF33F6CF;
+        Wed, 18 Dec 2019 03:17:49 -0800 (PST)
 From:   Sudeep Holla <sudeep.holla@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Sudeep Holla <sudeep.holla@arm.com>,
         Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v2 02/11] firmware: arm_scmi: Skip scmi mbox channel setup for addtional devices
-Date:   Wed, 18 Dec 2019 11:17:33 +0000
-Message-Id: <20191218111742.29731-3-sudeep.holla@arm.com>
+Subject: [PATCH v2 03/11] firmware: arm_scmi: Add names to scmi devices created
+Date:   Wed, 18 Dec 2019 11:17:34 +0000
+Message-Id: <20191218111742.29731-4-sudeep.holla@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191218111742.29731-1-sudeep.holla@arm.com>
 References: <20191218111742.29731-1-sudeep.holla@arm.com>
@@ -32,33 +32,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the scmi bus supports adding multiple devices per protocol,
-and since scmi_create_protocol_device calls scmi_mbox_chan_setup,
-we must avoid allocating and initialising the mbox channel if it is
-already initialised.
+Now that scmi bus provides option to create named scmi device, let us
+create the default devices with names. This will help to add names for
+matching to respective drivers and eventually to add multiple devices
+and drivers per protocol.
 
 Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
 Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/firmware/arm_scmi/driver.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/firmware/arm_scmi/driver.c | 36 +++++++++++++++++++++++++++++-
+ 1 file changed, 35 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index dee7ce3bd815..2952fcd8dd8a 100644
+index 2952fcd8dd8a..0bbdc7c9eb0f 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -735,6 +735,11 @@ static int scmi_mbox_chan_setup(struct scmi_info *info, struct device *dev,
- 	idx = tx ? 0 : 1;
- 	idr = tx ? &info->tx_idr : &info->rx_idr;
+@@ -829,6 +829,40 @@ scmi_create_protocol_device(struct device_node *np, struct scmi_info *info,
+ 	scmi_set_handle(sdev);
+ }
  
-+	/* check if already allocated, used for multiple device per protocol */
-+	cinfo = idr_find(idr, prot_id);
-+	if (cinfo)
-+		return 0;
++#define MAX_SCMI_DEV_PER_PROTOCOL	2
++struct scmi_prot_devnames {
++	int protocol_id;
++	char *names[MAX_SCMI_DEV_PER_PROTOCOL];
++};
 +
- 	if (scmi_mailbox_check(np, idx)) {
- 		cinfo = idr_find(idr, SCMI_PROTOCOL_BASE);
- 		if (unlikely(!cinfo)) /* Possible only if platform has no Rx */
++static struct scmi_prot_devnames devnames[] = {
++	{ SCMI_PROTOCOL_POWER,  { "genpd" },},
++	{ SCMI_PROTOCOL_PERF,   { "cpufreq" },},
++	{ SCMI_PROTOCOL_CLOCK,  { "clocks" },},
++	{ SCMI_PROTOCOL_SENSOR, { "hwmon" },},
++	{ SCMI_PROTOCOL_RESET,  { "reset" },},
++};
++
++static inline void
++scmi_create_protocol_devices(struct device_node *np, struct scmi_info *info,
++			     int prot_id)
++{
++	int loop, cnt;
++
++	for (loop = 0; loop < ARRAY_SIZE(devnames); loop++) {
++		if (devnames[loop].protocol_id != prot_id)
++			continue;
++
++		for (cnt = 0; cnt < ARRAY_SIZE(devnames[loop].names); cnt++) {
++			const char *name = devnames[loop].names[cnt];
++
++			if (name)
++				scmi_create_protocol_device(np, info, prot_id,
++							    name);
++		}
++	}
++}
++
+ static int scmi_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -897,7 +931,7 @@ static int scmi_probe(struct platform_device *pdev)
+ 			continue;
+ 		}
+ 
+-		scmi_create_protocol_device(child, info, prot_id, NULL);
++		scmi_create_protocol_devices(child, info, prot_id);
+ 	}
+ 
+ 	return 0;
 -- 
 2.17.1
 
