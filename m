@@ -2,118 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C57E12407C
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:39:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A30912406D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfLRHjH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:39:07 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:9692 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfLRHjH (ORCPT
+        id S1726671AbfLRHg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:36:58 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46803 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725799AbfLRHg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:39:07 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df9d7780002>; Tue, 17 Dec 2019 23:38:32 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 17 Dec 2019 23:39:01 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 17 Dec 2019 23:39:01 -0800
-Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Dec
- 2019 07:39:00 +0000
-Subject: Re: [PATCH] move_pages.2: not return ENOENT if the page are already
- on the target nodes
-To:     "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>, <cl@linux.com>,
-        <mhocko@suse.com>, <cai@lca.pw>, <akpm@linux-foundation.org>
-CC:     <linux-man@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <1575596090-115377-1-git-send-email-yang.shi@linux.alibaba.com>
- <0dc96e40-5f2b-a2fe-6e5f-b6f3d5e9ebde@nvidia.com>
- <95170ea5-5b62-9168-fcd9-93b43330a1b4@linux.alibaba.com>
- <092adc11-7039-9343-7067-0e0199c9dc13@gmail.com>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <51dd767a-221f-882d-c7f6-45bd0c217a67@nvidia.com>
-Date:   Tue, 17 Dec 2019 23:36:09 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Wed, 18 Dec 2019 02:36:58 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y14so719504pfm.13;
+        Tue, 17 Dec 2019 23:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:cc:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=pg4QWq+v6GL4Rqi0KrNkbBy7ChOwtldNf1BCqo0xgwg=;
+        b=DKDNn88wkruXoKMY1NzZ+hXIuRTXdUdicFpgelALcHp9N4xyLCsxLi5GwVSTFTLFPB
+         NuNjJZNsFTtBWqAQybCg4hv2eZJQJiLs+Cn4EsUzKfXBsMTbWLkxKopWRDO+7AYORErt
+         na5p8Q0Y3ZEbZPYoHMFBGk/lNnBJoADJdIj+ootuVfG0vnS8BhysFdAV/xR2rZ4rJV8f
+         ND46h0fXkMgjBGmS1t5Uc9YeVJdu3koRvqxoxTO/NsC/k6uQxmki3l0lR6S1HX9b8b0h
+         ofkdTxibe6A7We+wtvJNjjVyfeyVIceOjFHj29uVo6fWWi5hi9WgGbB2AE3kvPje6ZNx
+         ZfUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=pg4QWq+v6GL4Rqi0KrNkbBy7ChOwtldNf1BCqo0xgwg=;
+        b=X1hNL8Paq0bO7Vzb1aled7yUT8pbjl9iQ9EvVsBJO7x946+Q2krN6m3YoApF6aY2Td
+         TuPUU6TK56FswjlVwUJKmTNNTDpwsrfi4sJz6pQwPTw2cEQig5e9DFQUZebjmr86dVJ1
+         TQZz9qtqnl3VtuddftoPo776HHc4NJs3Vgp0ii186gx09wdx5XVwCcGNtDqL4P8wTx+f
+         YjAmomH0llsB9RtnLSPlhOIUIyjAl9uvZvwkMAKZHyR8ZnSMtzzt2AaN5lWudGVOBfRj
+         q5pJj2trekDNAvUWc2s6E/DSLdjFkIqJ5A7mFHZdqBUXEiqA63ielbtNDOq/sm3qsOyw
+         9H+A==
+X-Gm-Message-State: APjAAAXY9V8cPTlGzIHWwIQDlR6HuE6OQbkJJNS0hLSicd8hieY0x/+t
+        RiXC+8Sh5nWbojTpUXiZiQ==
+X-Google-Smtp-Source: APXvYqykzcjQaYHwHiQ0EjzUn6HtCHp8hGSiRRNg6WpcmmBHBfrcz8LxD6SEJ0MBpJ8PhtL88V8d/w==
+X-Received: by 2002:a62:1857:: with SMTP id 84mr1485263pfy.257.1576654617070;
+        Tue, 17 Dec 2019 23:36:57 -0800 (PST)
+Received: from [127.0.0.1] ([203.205.141.36])
+        by smtp.gmail.com with ESMTPSA id j3sm1697366pfi.8.2019.12.17.23.36.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Dec 2019 23:36:56 -0800 (PST)
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, hpa@zytor.com
+From:   Haiwei Li <lihaiwei.kernel@gmail.com>
+Subject: [PATCH] KVM: VMX: Clean up the spaces redundant.
+Message-ID: <5c33f601-0bee-7958-7295-541b87b95138@gmail.com>
+Date:   Wed, 18 Dec 2019 15:36:35 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <092adc11-7039-9343-7067-0e0199c9dc13@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576654712; bh=niungb3NWD18TtefGE0yuSB9KQjV5p6gDgvusv9+FwI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=X354docB+XmzyyqCzg1MdSpZNg566c/6yQnQBXH5PDwsDqnxS9VZosRWzmgFPx1kK
-         pX1HnjmCJkD9oL7TKeuV09T7Yf8gE6nLdUpsLTYrpu07eV086GCwsAKjSGk+y0hWcx
-         8Ovea66u32wFR2tHgg3rr29yuH5rUCAtBe+yB3wkUs7RTh9wVWIZa/E1EjRfSZkfNB
-         hD/jkDZA4NYnmD6j5j9SzmnUsR2NFQrb3S9+Do7VSY7ADTKKcbLqdCJskovWQ9AB4V
-         BmIv8Ne1Kp5QGrKlAUBkcy4/YTMCpMvZA8K659fne+/74Kj7g1Db0JV+woSeQiywsU
-         0tSdJe7cP8yuA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/19 5:55 PM, Michael Kerrisk (man-pages) wrote:
-...
->>> whoa, hold on. If I'm reading through the various error paths
->>> correctly, then this
->>> code is *never* going to return ENOENT for the whole function. It can
->>> fill in that
->>> value per-page, in the status array, but that's all. Did I get that
->>> right?
->>
->> Nice catch. Yes, you are right.
->>
->>>
->>> If so, we need to redo this part of the man page.
->>
->> Yes.
-> 
-> So where are things at with this? Is an improved man-pages
-> patch on the way, or is some other action (on the API) planned?
-> 
+ From 6b2634f16cfd5d48896a7c0a094b59410ce078c5 Mon Sep 17 00:00:00 2001
+From: Haiwei Li <lihaiwei@tencent.com>
+Date: Wed, 18 Dec 2019 15:21:10 +0800
+Subject: [PATCH] Clean up the spaces redundant.
 
-I was waiting to see if Yang was going to respond...anyway, I think
-we're looking at approximately this sort of change:
+Clean up the spaces redundant in vmx.c.
 
-diff --git a/man2/move_pages.2 b/man2/move_pages.2
-index 2d96468fa..1bf1053f2 100644
---- a/man2/move_pages.2
-+++ b/man2/move_pages.2
-@@ -191,12 +191,6 @@ was specified or an attempt was made to migrate pages of a kernel thread.
-  .B ENODEV
-  One of the target nodes is not online.
-  .TP
--.B ENOENT
--No pages were found that require moving.
--All pages are either already
--on the target node, not present, had an invalid address or could not be
--moved because they were mapped by multiple processes.
--.TP
-  .B EPERM
-  The caller specified
-  .B MPOL_MF_MOVE_ALL
+Signed-off-by: Haiwei Li <lihaiwei@tencent.com>
+---
+  arch/x86/kvm/vmx/vmx.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
 
-...But I'm not sure if we should change the implementation, instead, so
-that it *can* return ENOENT. That's the main question to resolve before
-creating any more patches, I think.
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 51e3b27..94a7456 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -173,7 +173,7 @@
+  module_param(ple_window_shrink, uint, 0444);
 
-In addition, Michal mentioned that the page states in the status array also
-need updated documentation.
+  /* Default is to compute the maximum so we can never overflow. */
+-static unsigned int ple_window_max        = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
++static unsigned int ple_window_max = KVM_VMX_DEFAULT_PLE_WINDOW_MAX;
+  module_param(ple_window_max, uint, 0444);
 
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+  /* Default is SYSTEM mode, 1 for host-guest mode */
+--
+1.8.3.1
