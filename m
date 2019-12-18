@@ -2,141 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DB9124079
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:37:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71231124081
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 08:45:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfLRHhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 02:37:46 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:15512 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfLRHho (ORCPT
+        id S1726674AbfLRHoo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 02:44:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:27000 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726497AbfLRHon (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 02:37:44 -0500
-Received: from [10.28.19.135] (10.28.19.135) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 18 Dec
- 2019 15:37:49 +0800
-Subject: Re: [PATCH v5 2/4] dt-bindings: watchdog: add new binding for meson
- secure watchdog
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Qianggui Song <qianggui.song@amlogic.com>,
-        <devicetree@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <1576153187-28378-1-git-send-email-xingyu.chen@amlogic.com>
- <1576153187-28378-3-git-send-email-xingyu.chen@amlogic.com>
- <CAFBinCBHLqgPExPsVaSWdSOr0Oj-jeYa4Z82U-pJ=fS+D1wGnA@mail.gmail.com>
- <f7b0afe7-e317-2422-de7e-878837f9f238@amlogic.com>
- <a8f5ab1d-264c-5b2c-e72b-3774b9f44c22@roeck-us.net>
-From:   Xingyu Chen <xingyu.chen@amlogic.com>
-Message-ID: <1da513d7-20e1-726a-dcc4-952cbfbbe63a@amlogic.com>
-Date:   Wed, 18 Dec 2019 15:37:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 18 Dec 2019 02:44:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576655082;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/7Bu8lRWW0sQ62qo/rCg256wOgb/rW5afbJ5suw1if4=;
+        b=O/AC1H5e2mSTD3p9IV9RkcRhwsyh7NhYOsujnsDRZNnOSwq3DVsNYtyqhGiO1xZY7ZEwaM
+        TY6b5PnaDjN40bmybUhOUuNU8dYeujipLHPCl15HwYZ7RYVKcjZ9LiSnJmj9OHw4B6xscE
+        inAGKvNY9g10ZKwper/JwhAjvEO/sPQ=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-39-o9zC6pzLPnqeaXNQwQVgjQ-1; Wed, 18 Dec 2019 02:43:58 -0500
+X-MC-Unique: o9zC6pzLPnqeaXNQwQVgjQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 218F5DBA5;
+        Wed, 18 Dec 2019 07:43:57 +0000 (UTC)
+Received: from krava (ovpn-204-177.brq.redhat.com [10.40.204.177])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A9B3560C63;
+        Wed, 18 Dec 2019 07:43:54 +0000 (UTC)
+Date:   Wed, 18 Dec 2019 08:43:51 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jin Yao <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v4 1/3] perf report: Change sort order by a specified
+ event in group
+Message-ID: <20191218074351.GB19062@krava>
+References: <20191218022443.18958-1-yao.jin@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <a8f5ab1d-264c-5b2c-e72b-3774b9f44c22@roeck-us.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-Originating-IP: [10.28.19.135]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218022443.18958-1-yao.jin@linux.intel.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Guenter Martin
+On Wed, Dec 18, 2019 at 10:24:41AM +0800, Jin Yao wrote:
 
-On 2019/12/16 21:30, Guenter Roeck wrote:
-> On 12/15/19 10:03 PM, Xingyu Chen wrote:
->> Hi, Martin
->>
->> Sorry for the late reply.
->>
->> On 2019/12/13 4:05, Martin Blumenstingl wrote:
->>> Hi Xingyu and Rob,
->>>
->>> On Thu, Dec 12, 2019 at 1:20 PM Xingyu Chen 
->>> <xingyu.chen@amlogic.com> wrote:
->>> [...]
->>>> +examples:
->>>> +  - |
->>>> +    watchdog {
->>>> +          compatible = "amlogic,meson-sec-wdt";
->>>> +          timeout-sec = <60>;
->>>> +    };
->>> in v3 of this patch Rob commented that there shouldn't be an OF node
->>> if there are no additional properties
->>> with timeout-sec there's now an additional property so my
->>> understanding is that it's fine to have an OF node
->> Your understanding is correct.
->>>
->>> what I don't understand yet is where this node should be placed.
->>> is it supposed to be a child node of the secure monitor node (for
->>> which we already have a binding here:
->>> Documentation/devicetree/bindings/firmware/meson/meson_sm.txt) or
->>> where else would we place it inside the .dts?
->> IMO,  Although the watchdog node need to reference the meson_sm node, 
->> there is no
->> bus-like dependencies between the devices which the two nodes 
->> corresponding to.
->> so i think that the watchdog node as child node of meson_sm maybe not 
->> appropriate.
->
-> The watchdog driver needs the meson SM's dt node, and it depends on 
-> the existence
-> of that node. That seems enough of a relationship to warrant having it 
-> as child note.
-Thanks for your reply, if i take the wdt node as child of secure monitor 
-(sm), how should
-i register or find the wdt device ?
+SNIP
 
-I only think of the following three methods :
-1). update the sm driver，and scan&register wdt device when the sm driver 
-probes(It is like i2c), but there
-are too many changes involved.
+> After:
+> 
+>   # perf report --group --stdio --group-sort-idx 3
+> 
+>   # To display the perf.data header info, please use --header/--header-only options.
+>   #
+>   #
+>   # Total Lost Samples: 0
+>   #
+>   # Samples: 12K of events 'cpu/instructions,period=2000003/, cpu/cpu-cycles,period=200003/, BR_MISP_RETIRED.ALL_BRANCHES:pp, cpu/event=0xc0,umask=1,cmask=1,
+>   # Event count (approx.): 6451235635
+>   #
+>   #                         Overhead  Command    Shared Object            Symbol
+>   # ................................  .........  .......................  ...................................
+>   #
+>       92.19%  98.68%   0.00%  93.30%  mgen       mgen                     [.] LOOP1
+>        0.00%   0.13%   0.00%   6.08%  swapper    [kernel.kallsyms]        [k] intel_idle
+>        3.12%   0.29%   0.00%   0.16%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x0000000000049515
+>        0.00%   0.00%   0.00%   0.06%  swapper    [kernel.kallsyms]        [k] hrtimer_start_range_ns
+>        1.56%   0.03%   0.00%   0.04%  gsd-color  libglib-2.0.so.0.5600.4  [.] 0x00000000000494b7
+>        0.00%   0.15%   0.00%   0.04%  perf       [kernel.kallsyms]        [k] smp_call_function_single
+>        0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] update_curr
+>        0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] apic_timer_interrupt
+>        0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] native_apic_msr_eoi_write
+>        0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] __update_load_avg_se
+>        0.00%   0.00%   0.00%   0.02%  mgen       [kernel.kallsyms]        [k] scheduler_tick
+> 
+> Now the output is sorted by the fourth event in group.
+> 
+>  v4:
+>  ---
+>  1. Update Documentation/perf-report.txt to mention
+>     '--group-sort-idx' support multiple groups with different
+>     amount of events and it should be used on grouped events.
+> 
+>  2. Update __hpp__group_sort_idx(), just return when the
+>     idx is out of limit.
+> 
+>  3. Return failure on symbol_conf.group_sort_idx && !session->evlist->nr_groups.
+>     So now we don't need to use together with --group.
 
-2). add "simple-bus" key string to compatible of sm node, and it will 
-make the child node is registered as
-platform device, but it seems that the key string is not match current 
-scene.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-secure-monitor {
-     compatible = "amlogic,meson-gxbb-sm",  "simple-bus";
+thanks,
+jirka
 
-     watchdog {
-         compatible = "amlogic,meson-sec-wdt";
-         timeout-sec = <60>;
-     }
-}
-
-3).  don't register device, and find directly the watchdog node by using 
-the of_* API in watchdog
-driver (Eg: linux-4.x/drivers/tee/optee/core.c)
-
-secure-monitor {
-     compatible = "amlogic,meson-gxbb-sm";
-
-     watchdog {
-         compatible = "amlogic,meson-sec-wdt";
-         timeout-sec = <60>;
-     }
-}
-
-The method 3 looks better for me, do you have a better suggestion ? Thanks
-
-BR
->
-> Guenter
->
-> .
->
