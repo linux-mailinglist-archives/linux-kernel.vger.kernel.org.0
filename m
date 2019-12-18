@@ -2,127 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C2D3125464
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:12:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46970125404
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbfLRVMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:12:45 -0500
-Received: from mga03.intel.com ([134.134.136.65]:34672 "EHLO mga03.intel.com"
+        id S1726671AbfLRVAZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:00:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42806 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbfLRVMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:12:44 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 13:12:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="210223283"
-Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
-  by orsmga008.jf.intel.com with ESMTP; 18 Dec 2019 13:12:43 -0800
-Message-ID: <587463c4e5fa82dff8748e5f753890ac390e993e.camel@intel.com>
-Subject: Re: [PATCH v2 3/3] x86/fpu/xstate: Invalidate fpregs when
- __fpu_restore_sig() fails
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Wed, 18 Dec 2019 12:53:59 -0800
-In-Reply-To: <20191218155449.sk4gjabtynh67jqb@linutronix.de>
-References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
-         <20191212210855.19260-4-yu-cheng.yu@intel.com>
-         <20191218155449.sk4gjabtynh67jqb@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726092AbfLRVAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 16:00:25 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD27F21582;
+        Wed, 18 Dec 2019 21:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576702825;
+        bh=ZNJraewX/i31LpNaURIQAkN2DiYLTRgEHkAUTtmT1H4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YNikuLqKHLwdudaWg4x2OkKj0HtoyhAF75eqIJkPUFiI9YDynEKF3aE6T2RUhMT+B
+         USCUGGDPbbJ02fHeEZNKdPfnkttfVcQkbgWmtVf2fJqOza7Jv3YR6WhXj9vkc2/Qnv
+         d8CzXtzLkn17rE/PDNFtmUEWUwI/qeD3Drl4nvLk=
+Subject: Re: [PATCH 5.3 00/25] 5.3.18-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20191217200903.179327435@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <45d3dbe7-fb86-e937-3da6-27d12c5de832@kernel.org>
+Date:   Wed, 18 Dec 2019 14:00:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <20191217200903.179327435@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-18 at 16:54 +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-12-12 13:08:55 [-0800], Yu-cheng Yu wrote:
-> > In __fpu_restore_sig(),'init_fpstate.xsave' and part of 'fpu->state.xsave'
-> > are restored separately to xregs.  However, as stated in __cpu_invalidate_
-> > fpregs_state(),
-> > 
-> >   Any code that clobbers the FPU registers or updates the in-memory
-> >   FPU state for a task MUST let the rest of the kernel know that the
-> >   FPU registers are no longer valid for this task.
-> > 
-> > and this code violates that rule.  Should the restoration fail, the other
-> > task's context is corrupted.
-> > 
-> > This problem does not occur very often because copy_*_to_xregs() succeeds
-> > most of the time.  
+On 12/17/19 1:15 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.3.18 release.
+> There are 25 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> why "most of the time"? It should always succeed. We talk here about
-> __fpu__restore_sig() correct? Using init_fpstate as part of restore
-> process isn't the "default" case. If the restore _here_ fails then it
-> fails.
+> Note, this is the LAST 5.3.y kernel to be released, after this one, it
+> will be end-of-life.  You should have moved to the 5.4.y series already
+> by now.
 > 
-> >                    It occurs, for instance, in copy_user_to_fpregs_
-> > zeroing() when the first half of the restoration succeeds and the other
-> > half fails.  This can be triggered by running glibc tests, where a non-
-> > present user stack page causes the XRSTOR to fail.
+> Responses should be made by Thu, 19 Dec 2019 20:08:42 +0000.
+> Anything received after that time might be too late.
 > 
-> So if copy_user_to_fpregs_zeroing() fails then we go to the slowpath.
-> Then we load the FPU register with copy_kernel_to_xregs_err().
-> In the end they are either enabled (fpregs_mark_activate()) or cleared
-> if it failed (fpu__clear()). Don't see here a problem.
-
-I could have explained this better, sorry!  I will explain the first
-case below; other cases are similar.
-
-In copy_user_to_fpregs_zeroing(), we have:
-
-    if (user_xsave()) {
-        ...
-        if (unlikely(init_bv))
-            copy_kernel_to_xregs(&init_fpstate.xsave, init_bv);
-        return copy_user_to_xregs(buf, xbv);
-        ...
-    }
-
-The copy_user_to_xregs() may fail, and when that happens, before going to
-the slow path, there is fpregs_unlock() and context switches may happen.
-However, at this point, fpu_fpregs_owner_ctx has not been changed; it could
-still be another task's FPU.  For this to happen and to be detected, the user
-stack page needs to be non-present, fpu_fpregs_owner_ctx need to be another task,
-and that other task needs to be able to detect its registers are modified.
-The last factor is not easy to reproduce, and a CET control-protection fault
-helps.
-
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.3.18-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.3.y
+> and the diffstat can be found below.
 > 
-> Can you tell me which glibc test? I would like to reproduce this.
+> thanks,
 > 
-> > The introduction of supervisor xstates and CET, while not contributing to
-> > the problem, makes it more detectable.  After init_fpstate and the Shadow
-> > Stack pointer have been restored to xregs, the XRSTOR from user stack
-> > fails and fpu_fpregs_owner_ctx is not updated.  The task currently owning
-> > fpregs then uses the corrupted Shadow Stack pointer and triggers a control-
-> > protection fault.
+> greg k-h
 > 
-> So I don't need new HW with supervisor and CET? A plain KVM box with
-> SSE2 and so should be enough?
 
-What I do is, clone the whole glibc source, and run mutiple copies of
-"make check".  In about 40 minutes or so, there are unexplained seg faults,
-or a few control-protection faults (if you enable CET).  Please let me
-know if more clarification is needed.
+Compiled and booted on my test system. No dmesg regressions.
 
-Thanks,
-Yu-cheng
-
+thanks,
+-- Shuah
 
