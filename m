@@ -2,98 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C75012538D
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:38:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 161A4125396
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfLRUiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:38:20 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33903 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfLRUiU (ORCPT
+        id S1727526AbfLRUkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:40:05 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:39661 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726387AbfLRUkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:38:20 -0500
-Received: by mail-oi1-f194.google.com with SMTP id l136so1890924oig.1;
-        Wed, 18 Dec 2019 12:38:19 -0800 (PST)
+        Wed, 18 Dec 2019 15:40:04 -0500
+Received: by mail-qk1-f171.google.com with SMTP id c16so2738317qko.6
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 12:40:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hZ9E1NuLuIvtf+WPRqjwV9sUZ6orTffbf5yW67pbe2s=;
-        b=E585jzx3Zv6Wlx+jFwqfOn4RW+GD6f6DtZJ2J8WlGjkowZ5UPuIFQVQI1NarROUnaa
-         Gnd2vNMKT2nPo+iSwd7RZYbLOyTLLj86Sak+a6GTFEUqwJ3oKB4QP/vVR5Dsp7QJ1Oz+
-         Av/Jyen7gqMx4BVr2HYtwqN9aR4U1jhudBgeEtzdrBoy9bg9plo11TBa8Axdpcju6GAu
-         elPAq+/tWIAR0PqOMbvvegMWY/WzjrudBITniuWST8f98yF/fWtaAL7KNV5/g9whHqtz
-         /wKBWnwETqehgdh4WGEk6sHoQyvHwSPMDcWKWsMz6MQ0aPXrfo0T7GdKVYMkVSBmDx/5
-         MMsA==
-X-Gm-Message-State: APjAAAWOBVDdpAfI7KMhdtfH7AU5G+Pytyr7wIN4IU+Ox4ogH9i+FXGv
-        PSie/iWYUpKCT/uW1Jb+PQ==
-X-Google-Smtp-Source: APXvYqxAKp78mrKcfBIIJGi+RshJWSvfi1+AG5ZtMHY8fR0aL5vcNcIROydHyMWaiCPZ0EZmvYFcMQ==
-X-Received: by 2002:aca:dd04:: with SMTP id u4mr1348308oig.94.1576701499476;
-        Wed, 18 Dec 2019 12:38:19 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s83sm1185529oif.33.2019.12.18.12.38.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l89ZK9pw45KPr7sU4NoYin+EzM5dKZ/KLpBAwi3U67k=;
+        b=AzCBYiABPNMB7EF86TFmXJPfRqNRGvc6EmYd406Ee7HolSSTnko5YHBdZWSt/KSuWR
+         JvDouMhFRkm5/R0gUE+5h7PFKZVcgRQmMSpc8UV1mTcIB6n5Qo6ApVbUffLSP/TbZgRR
+         /ElENB08uL6TrqtK4ejQVn9+mCryqIl8EjSqve5gY+dt9fS3qu5rka+1OOqxvXaBxFak
+         IZsqNpTUtn9j9SArv6k47/nPvmsuchvWAE2xiKYsUPLdHRI5QkDEa7zH8snHhytAKIrq
+         1PRPREPnO7casn4jzetMvHQLJZutxD5O9q/s1u/pMp7nwf/MJQtLLSrYHLX9PnqXIpv0
+         3XTw==
+X-Gm-Message-State: APjAAAU3K9kuNIoEYLbs0Ka1YGuibouLXgBRpccx94wejqFLK9FifmlM
+        KBnDsiDaaPpP5/HeM9ipu3PezaKT
+X-Google-Smtp-Source: APXvYqwA2fi2pdL/IEQq2asppEpCf8iVffklKH2mPPDGC8pCmXtXt6ejHqYp9UepPxK7RWVbTBCWWA==
+X-Received: by 2002:a37:8085:: with SMTP id b127mr4554792qkd.424.1576701603875;
+        Wed, 18 Dec 2019 12:40:03 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id t7sm993347qkm.136.2019.12.18.12.40.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 12:38:18 -0800 (PST)
-Date:   Wed, 18 Dec 2019 14:38:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Guillaume La Roque <glaroque@baylibre.com>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        nsaenzjulienne@suse.de, linux-kernel@vger.kernel.org,
-        khilman@baylibre.com
-Subject: Re: [PATCH v5 1/2] dt-bindings: net: bluetooth: add interrupts
- properties
-Message-ID: <20191218203818.GA8009@bogus>
-References: <20191213150622.14162-1-glaroque@baylibre.com>
- <20191213150622.14162-2-glaroque@baylibre.com>
- <20191213161901.GZ10631@localhost>
+        Wed, 18 Dec 2019 12:40:03 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 00/24] Consolidate dummy_con initialization
+Date:   Wed, 18 Dec 2019 15:39:38 -0500
+Message-Id: <20191218204002.30512-1-nivedita@alum.mit.edu>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213161901.GZ10631@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 05:19:01PM +0100, Johan Hovold wrote:
-> On Fri, Dec 13, 2019 at 04:06:21PM +0100, Guillaume La Roque wrote:
-> > add interrupts and interrupt-names as optional properties
-> > to support host-wakeup by interrupt properties instead of
-> > host-wakeup-gpios.
-> > 
-> > Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> > ---
-> >  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > index b5eadee4a9a7..95912d979239 100644
-> > --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > @@ -36,7 +36,9 @@ Optional properties:
-> >      - pcm-frame-type: short, long
-> >      - pcm-sync-mode: slave, master
-> >      - pcm-clock-mode: slave, master
-> > -
-> > + - interrupts: must be one, used to wakeup the host processor if
-> > +   gpiod_to_irq function not supported
-> 
-> This is a Linux implementation detail which therefore doesn't belong in
-> the binding.
-> 
-> I think the general rule is to prefer interrupts over gpios where we
-> have a choice, but here the current binding already has a
-> host-wakeup-gpios.
-> 
-> Not sure how best to handle that, maybe Rob knows.
+This series moves initialization of conswitchp to dummy_con into vt.c,
+and configures DUMMY_CONSOLE unconditionally when CONFIG_VT is enabled.
 
-Use gpiod_to_irqd().
+The patches after the second one remove conswitchp = &dummy_con; from
+the various architecture setup functions where it currently appears. If
+the first two look ok, I was thinking of sending the others
+individually.
 
-You can also deprecate the gpio prop, but you have to keep driver 
-support for it. And updating dts files would break old kernels with new 
-dtbs.
+Arvind Sankar (24):
+  console/dummycon: Remove bogus depends on from DUMMY_CONSOLE
+  vt: Initialize conswitchp to dummy_con if unset
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
+  arch/setup: Drop dummy_con initialization
 
-Rob
+ arch/alpha/kernel/setup.c             | 2 --
+ arch/arc/kernel/setup.c               | 4 ----
+ arch/arm/kernel/setup.c               | 2 --
+ arch/arm64/kernel/setup.c             | 3 ---
+ arch/c6x/kernel/setup.c               | 4 ----
+ arch/csky/kernel/setup.c              | 4 ----
+ arch/ia64/kernel/setup.c              | 3 ---
+ arch/m68k/kernel/setup_mm.c           | 4 ----
+ arch/m68k/kernel/setup_no.c           | 4 ----
+ arch/m68k/sun3x/config.c              | 1 -
+ arch/microblaze/kernel/setup.c        | 4 ----
+ arch/mips/kernel/setup.c              | 2 --
+ arch/nds32/kernel/setup.c             | 5 -----
+ arch/nios2/kernel/setup.c             | 4 ----
+ arch/openrisc/kernel/setup.c          | 5 -----
+ arch/parisc/kernel/setup.c            | 4 ----
+ arch/powerpc/kernel/setup-common.c    | 3 ---
+ arch/powerpc/platforms/cell/setup.c   | 3 ---
+ arch/powerpc/platforms/maple/setup.c  | 3 ---
+ arch/powerpc/platforms/pasemi/setup.c | 4 ----
+ arch/powerpc/platforms/ps3/setup.c    | 4 ----
+ arch/riscv/kernel/setup.c             | 4 ----
+ arch/s390/kernel/setup.c              | 2 --
+ arch/sh/kernel/setup.c                | 4 ----
+ arch/sparc/kernel/setup_32.c          | 4 ----
+ arch/sparc/kernel/setup_64.c          | 4 ----
+ arch/unicore32/kernel/setup.c         | 2 --
+ arch/x86/kernel/setup.c               | 2 --
+ arch/xtensa/kernel/setup.c            | 2 --
+ drivers/tty/vt/vt.c                   | 5 +++--
+ drivers/video/console/Kconfig         | 1 -
+ 31 files changed, 3 insertions(+), 99 deletions(-)
+
+-- 
+2.24.1
+
