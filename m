@@ -2,101 +2,130 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF241249FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:45:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51F3C124A13
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:47:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfLROpO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:45:14 -0500
-Received: from mail-il1-f199.google.com ([209.85.166.199]:38480 "EHLO
-        mail-il1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbfLROpN (ORCPT
+        id S1727270AbfLROry (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:47:54 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44882 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727186AbfLROry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:45:13 -0500
-Received: by mail-il1-f199.google.com with SMTP id i67so1918844ilf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 06:45:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=0bdlNmaxCD5fqq7L78Z2fQzwkj/o9Hs5/Lv+Ota1nxg=;
-        b=eh/Gyux/N+l7I7GknK6OGbJjcmZOS3Q/+BmGlCO3LGoL+s49rYPMXyZP0wIXgPx8gh
-         Tg2yLj+8bFSOJee/SJ0Hys8AsJSNvNepWkwDDL1AWvRGd012+TowQpwIg8AU9Yc6YS2K
-         a/zUE7DUkfy6mv7WgaDDTUz4ai13F71oT9LCwh6i0BIqcJDHnor37Y1FfaGcv/BsSt1k
-         QjZU5dzZ3oIhTZxYLJrrTPYKSzk7ZESizAAlY9KKyd2hDtVnFdI4LgFauqrMF3WXQVlS
-         H/TllY/3qVSrEYwyXJOV5tborUloR3Hh2FcW64VJuNbbER45RXJQ972soZ+p7tJVSlsf
-         ECcw==
-X-Gm-Message-State: APjAAAWmwvj8vN78aJFDmYBcp6c9iyDaz6pmDe1GhXM44URLfftrMmU7
-        PWJ+BACfH2gIq/AvDAOln7ueVq8lRrZ2vmnkoFv2SMGhKD6Y
-X-Google-Smtp-Source: APXvYqybjSYiAZFu7Xg50IBunoKwYwK5lK7Rqh2qMNJUI3t/FMi22e3PBYDNnKJGOQCWh8l6rLjB8I4xhB4jf6mlSAy+b4MqVyNO
+        Wed, 18 Dec 2019 09:47:54 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBIElnw9091999;
+        Wed, 18 Dec 2019 08:47:49 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576680469;
+        bh=9QQbSS0rFH46BR10NFC7Q609jmka/ilJ1AcUNksp8Fo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JZ97l2tUebr0TbqM/WnjQMc9swjxz6W/Tn97oPc6EhnSznVXHMtgIbLg5uHlpmuY1
+         NiMeHguJuWE/AhB+3KImvys8cEkiA6AwOJa9vxdBP3YvIsgHw6aSFZ3u0cwNo6a/em
+         Z42TZ5RhDeLiubGLZNdxY2hMlQ/R8P8hbNBj7pcg=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBIEln1I019031
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 18 Dec 2019 08:47:49 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 18
+ Dec 2019 08:47:48 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 18 Dec 2019 08:47:48 -0600
+Received: from [10.250.65.13] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBIElmKj014309;
+        Wed, 18 Dec 2019 08:47:48 -0600
+Subject: Re: [PATCH v17 00/19] Multicolor Framework
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20191114133023.32185-1-dmurphy@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <efdfcf1f-50b2-314f-3d46-93369229109a@ti.com>
+Date:   Wed, 18 Dec 2019 08:45:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Received: by 2002:a92:5855:: with SMTP id m82mr2170777ilb.302.1576680310849;
- Wed, 18 Dec 2019 06:45:10 -0800 (PST)
-Date:   Wed, 18 Dec 2019 06:45:10 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000daea9f0599fb7da6@google.com>
-Subject: KASAN: slab-out-of-bounds Read in hidinput_hid_event
-From:   syzbot <syzbot+00eaa791c74b27f5e7b1@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
-        jikos@kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        rydberg@bitmath.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20191114133023.32185-1-dmurphy@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hello
 
-syzbot found the following crash on:
+Bump for application to leds-next
 
-HEAD commit:    d533c992 usb: core: kcov: collect coverage from usb comple..
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e440aee00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=743b91162e9f9496
-dashboard link: https://syzkaller.appspot.com/bug?extid=00eaa791c74b27f5e7b1
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1445d9fae00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12557049e00000
+Dan
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+00eaa791c74b27f5e7b1@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in test_bit  
-include/asm-generic/bitops/instrumented-non-atomic.h:110 [inline]
-BUG: KASAN: slab-out-of-bounds in hidinput_hid_event+0x1111/0x15d3  
-drivers/hid/hid-input.c:1381
-Read of size 8 at addr ffff8881cf4d2cd0 by task swapper/1/0
-
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 5.5.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0xef/0x16e lib/dump_stack.c:118
-  print_address_description.constprop.0+0x16/0x200 mm/kasan/report.c:374
-  __kasan_report.cold+0x37/0x7f mm/kasan/report.c:506
-  kasan_report+0xe/0x20 mm/kasan/common.c:639
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x152/0x1c0 mm/kasan/generic.c:192
-  test_bit include/asm-generic/bitops/instrumented-non-atomic.h:110 [inline]
-  hidinput_hid_event+0x1111/0x15d3 drivers/hid/hid-input.c:1381
-  hid_process_event+0x4a0/0x580 drivers/hid/hid-core.c:1506
-  hid_input_field drivers/hid/hid-core.c:1550 [inline]
-  hid_report_raw_event+0xabb/0xed0 drivers/hid/hid-core.c:1757
-  hid_input_report+0x315/0x3f0 drivers/hid/hid-core.c:1824
-  hid_irq_in+0x50e/0x690 drivers/hid/usbhid/hid-core.c:284
-
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+On 11/14/19 7:30 AM, Dan Murphy wrote:
+> Hello
+>
+> Simple fix in the multicolor code where the extended registration call was not
+> called in the devm_* function
+>
+> Thanks Martin F. for finding this issue.
+>
+> Hopefully this will be pulled in for the 5.5 merge window.
+>
+> Dan
+>
+> Dan Murphy (19):
+>    dt: bindings: Add multicolor class dt bindings documention
+>    dt-bindings: leds: Add multicolor ID to the color ID list
+>    leds: Add multicolor ID to the color ID list
+>    leds: multicolor: Introduce a multicolor class definition
+>    dt: bindings: lp50xx: Introduce the lp50xx family of RGB drivers
+>    leds: lp50xx: Add the LP50XX family of the RGB LED driver
+>    dt: bindings: lp55xx: Be consistent in the document with LED acronym
+>    dt: bindings: lp55xx: Update binding for Multicolor Framework
+>    ARM: dts: n900: Add reg property to the LP5523 channel node
+>    ARM: dts: imx6dl-yapp4: Add reg property to the lp5562 channel node
+>    ARM: dts: ste-href: Add reg property to the LP5521 channel nodes
+>    leds: lp55xx: Convert LED class registration to devm_*
+>    leds: lp55xx: Add multicolor framework support to lp55xx
+>    leds: lp5523: Update the lp5523 code to add multicolor brightness
+>      function
+>    leds: lp5521: Add multicolor framework multicolor brightness support
+>    leds: lp55xx: Fix checkpatch file permissions issues
+>    leds: lp5523: Fix checkpatch issues in the code
+>    dt: bindings: Update lp55xx binding to recommended LED naming
+>    leds: lp55xx-common: Remove extern from lp55xx-common header
+>
+>   .../ABI/testing/sysfs-class-led-multicolor    |  36 +
+>   .../bindings/leds/leds-class-multicolor.txt   |  98 +++
+>   .../devicetree/bindings/leds/leds-lp50xx.txt  | 148 ++++
+>   .../devicetree/bindings/leds/leds-lp55xx.txt  | 163 +++-
+>   Documentation/leds/index.rst                  |   1 +
+>   Documentation/leds/leds-class-multicolor.rst  | 100 +++
+>   arch/arm/boot/dts/imx6dl-yapp4-common.dtsi    |  14 +-
+>   arch/arm/boot/dts/omap3-n900.dts              |  29 +-
+>   arch/arm/boot/dts/ste-href.dtsi               |  22 +-
+>   drivers/leds/Kconfig                          |  22 +
+>   drivers/leds/Makefile                         |   2 +
+>   drivers/leds/led-class-multicolor.c           | 272 ++++++
+>   drivers/leds/led-core.c                       |   1 +
+>   drivers/leds/leds-lp50xx.c                    | 799 ++++++++++++++++++
+>   drivers/leds/leds-lp5521.c                    |  43 +-
+>   drivers/leds/leds-lp5523.c                    |  62 +-
+>   drivers/leds/leds-lp5562.c                    |  22 +-
+>   drivers/leds/leds-lp55xx-common.c             | 235 ++++--
+>   drivers/leds/leds-lp55xx-common.h             |  36 +-
+>   drivers/leds/leds-lp8501.c                    |  23 +-
+>   include/dt-bindings/leds/common.h             |   3 +-
+>   include/linux/led-class-multicolor.h          | 139 +++
+>   include/linux/platform_data/leds-lp55xx.h     |   8 +
+>   23 files changed, 2106 insertions(+), 172 deletions(-)
+>   create mode 100644 Documentation/ABI/testing/sysfs-class-led-multicolor
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-class-multicolor.txt
+>   create mode 100644 Documentation/devicetree/bindings/leds/leds-lp50xx.txt
+>   create mode 100644 Documentation/leds/leds-class-multicolor.rst
+>   create mode 100644 drivers/leds/led-class-multicolor.c
+>   create mode 100644 drivers/leds/leds-lp50xx.c
+>   create mode 100644 include/linux/led-class-multicolor.h
+>
