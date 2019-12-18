@@ -2,105 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFD79123CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:53:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50A11123CB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 02:54:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbfLRBw6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 17 Dec 2019 20:52:58 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45159 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfLRBw6 (ORCPT
+        id S1726510AbfLRByd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 17 Dec 2019 20:54:33 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:53189 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfLRByd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 17 Dec 2019 20:52:58 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 59so325657otp.12;
-        Tue, 17 Dec 2019 17:52:57 -0800 (PST)
+        Tue, 17 Dec 2019 20:54:33 -0500
+Received: by mail-pj1-f66.google.com with SMTP id w23so111905pjd.2;
+        Tue, 17 Dec 2019 17:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5JPROeomugbS9mLeFJJ5jabbve8scXzl7BwrEThoADw=;
-        b=as//1I4Ta7JpUaGIQEI+vtdK3ny4nBtnqsLDS7yKqxrn+9titvy7b45FCzeQ4OIadE
-         fkM32IcZp/Ri5kznzY16uv5H353AowD1NXl3VAP/K6hAHx0JukAnDaMT8oXlz4O0O70k
-         L5YZhvRK39OLMlTmBXxhy5TSFBy6q2cW59bn7+dYHjOVxYH9opwPlWiP0QXVoAoS+FR+
-         zmdzrjVjGORwqMwIA3aF4scib3Oi/dEP0V3C6OvU8jMJS1TX7MlCfv7M6rS5Gcukdlrl
-         /PsEyFck6se/4Yq7ZX7cgRhQtGfno47Yt1Ww87hxuEffTPSGi9azAz06OiaJkU+RTw79
-         o0gA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=qrqBSnq1cq8FS5gawrphSxwLBseLRAGwGCvmjz1Q1II=;
+        b=FbBCTikclCYR4cGrWNezWC1nVX5NuYX5aIza+PuEwNpeGE8C5QT3qX442Bm1dvsjKJ
+         WZWeIgt+HEjkZSKhB7ZrHDR9zUw0IfGSUXrlwYAHm7ixZ3SePqGpOyv2Akhy9mv8W74k
+         92KTUCBD0UcpMFqUURAANkl4weuwBxFXouZJPn7K3JIvyUcXDHmTY+mY0e/r8deJQ/tg
+         3dFffEP+xmEk2OgPy0vx4+k3uGA7N8tl5n9YRvbAxdE1jra0J6aIvsbHwtduA20qvHI9
+         hhwNiBNhUS9nNhyItjjBjQ2rIagyUdrWtVRqBquDySWVVnejp73oj7bxG3dkG7RkKMmP
+         0/mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5JPROeomugbS9mLeFJJ5jabbve8scXzl7BwrEThoADw=;
-        b=Hfoxe2yDTBWTY78ocDqg0ilbhvOlhSidAtUEosrrS8nR5E0P+nDbIV1oBVBuR/GMDS
-         URgagsrNVay6bmP88L0cWo8NiM4gd/RLMk+5wfBOHxYwBuKLh30DnDrtyb0nA8acVa7n
-         b0N591TN70KbT80/qKmHozJHRYyR/9oAjjOJuz5zq5KgWoFlxT3AKQHRiqqd0VWa8e7P
-         MwDMVObs8KJmqJmPFizSMZ7EMbSA9hsTyegJLiPBcjAFRJSESTle/+2s3Qm9q3D2z2o1
-         Z69VoZYNC3cQYIPzAHM/+lI8kOa2tFwJZocGqzeMX7qHjCEzA4pLD/OEEgMeRyr00z9+
-         kPYQ==
-X-Gm-Message-State: APjAAAUUBuKhbw0ELJtfAUikvcju4FgQTZXebm784otjEOHOq8esr2iO
-        I/OCQQxt70aVGjNdrFbrxvdTtx/Z
-X-Google-Smtp-Source: APXvYqy1dnjjHAYTKRAwou3Za6zOmAVJg/VMZ/bbBOObvgBVPmDoOogJZ5cK0DRAKl91q+q5w8pXwQ==
-X-Received: by 2002:a9d:7b50:: with SMTP id f16mr364425oto.18.1576633977191;
-        Tue, 17 Dec 2019 17:52:57 -0800 (PST)
-Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
-        by smtp.gmail.com with ESMTPSA id r205sm269702oih.54.2019.12.17.17.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 17:52:56 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     QLogic-Storage-Upstream@qlogic.com,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
-Date:   Tue, 17 Dec 2019 18:52:52 -0700
-Message-Id: <20191218015252.20890-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=qrqBSnq1cq8FS5gawrphSxwLBseLRAGwGCvmjz1Q1II=;
+        b=YijV5ssOojkH8KjR8B0tdLQtSm4ZX3/7XDJZ9f+v5HFBVeN2ElcLPv8Ec0BBxwIEux
+         8o9bdrsAQKxp6ZfS6HqsWdp/UU/f0S9n1Vuec54VThrXuFJRJ73SLq3SsByDCIBeQd0t
+         0ikWO3u8I4uISDCNeBag/2e4fYiH6uL/eGu51pjmm+H9EsZFlmCsVunZPv939cZFMGGJ
+         fGEczjcHedolfGd2aV4Hhr1dwxOGB6kJRAP2mpxhVkFJ7OrO710mX4Lr1cL7OWIL2a6Y
+         F5sL7Qzh50e/TGNBLleiMXHbtxgxDQqo61Mzy8zt3CKXqPk2dhe9chOvy44oKT443Crg
+         Q6WQ==
+X-Gm-Message-State: APjAAAVsCs1swVGCFr7v9r2U0jnRhUmrl+PxNUQHknF8DERtZBKskEiq
+        SL7nyQImj087A0soyRa6tw9CuAVI4Ts=
+X-Google-Smtp-Source: APXvYqyQmq42D3Yr/fYY2dOEs2JTAP3hi2oL2Ai7adn8rGpQCh9Q4RYh+SaQ+exSlON18SVq5BaayA==
+X-Received: by 2002:a17:902:9f83:: with SMTP id g3mr1395025plq.234.1576634072250;
+        Tue, 17 Dec 2019 17:54:32 -0800 (PST)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.139.103? ([2402:f000:1:1501:200:5efe:a66f:8b67])
+        by smtp.gmail.com with ESMTPSA id z4sm393935pfn.42.2019.12.17.17.54.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Dec 2019 17:54:31 -0800 (PST)
+Subject: Re: [PATCH] fs: nfs: fix a possible sleep-in-atomic-context bug in
+ _pnfs_grab_empty_layout()
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>
+Cc:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20191217133319.11861-1-baijiaju1990@gmail.com>
+ <ff4e1443d70acc88bba68f87650c7b5118c63f2b.camel@hammerspace.com>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <665af671-63fc-2aeb-8deb-e1d3324a19f7@gmail.com>
+Date:   Wed, 18 Dec 2019 09:54:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ff4e1443d70acc88bba68f87650c7b5118c63f2b.camel@hammerspace.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Clang warns:
 
-../drivers/scsi/qla4xxx/ql4_os.c:4148:3: warning: misleading
-indentation; statement is not part of the previous 'if'
-[-Wmisleading-indentation]
-         if (ha->fw_dump)
-         ^
-../drivers/scsi/qla4xxx/ql4_os.c:4144:2: note: previous statement is
-here
-        if (ha->queues)
-        ^
-1 warning generated.
 
-This warning occurs because there is a space after the tab on this line.
-Remove it so that the indentation is consistent with the Linux kernel
-coding style and clang no longer warns.
+On 2019/12/17 22:37, Trond Myklebust wrote:
+> On Tue, 2019-12-17 at 21:33 +0800, Jia-Ju Bai wrote:
+>> The filesystem may sleep while holding a spinlock.
+>> The function call path (from bottom to top) in Linux 4.19 is:
+>>
+>> fs/nfs/pnfs.c, 2052:
+>> 	pnfs_find_alloc_layout(GFP_KERNEL) in _pnfs_grab_empty_layout
+>> fs/nfs/pnfs.c, 2051:
+>> 	spin_lock in _pnfs_grab_empty_layout
+>>
+>> pnfs_find_alloc_layout(GFP_KERNEL) can sleep at runtime.
+>>
+>> To fix this possible bug, GFP_KERNEL is replaced with GFP_ATOMIC for
+>> pnfs_find_alloc_layout().
+>>
+>> This bug is found by a static analysis tool STCheck written by
+>> myself.
+>>
+>> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+>> ---
+>>   fs/nfs/pnfs.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+>> index cec3070ab577..cfbe170f0651 100644
+>> --- a/fs/nfs/pnfs.c
+>> +++ b/fs/nfs/pnfs.c
+>> @@ -2138,7 +2138,7 @@ _pnfs_grab_empty_layout(struct inode *ino,
+>> struct nfs_open_context *ctx)
+>>   	struct pnfs_layout_hdr *lo;
+>>   
+>>   	spin_lock(&ino->i_lock);
+>> -	lo = pnfs_find_alloc_layout(ino, ctx, GFP_KERNEL);
+>> +	lo = pnfs_find_alloc_layout(ino, ctx, GFP_ATOMIC);
+>>   	if (!lo)
+>>   		goto out_unlock;
+>>   	if (!test_bit(NFS_LAYOUT_INVALID_STID, &lo->plh_flags))
+> I'm not seeing why this is necessary. As far as I can see,
+> pnfs_find_alloc_layout() will release the ino->i_lock before sleeping.
+>
+> False positive?
+>
 
-Fixes: 068237c87c64 ("[SCSI] qla4xxx: Capture minidump for ISP82XX on firmware failure")
-Link: https://github.com/ClangBuiltLinux/linux/issues/819
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/scsi/qla4xxx/ql4_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the reply.
+You are right, my report is false...
+I did not check the definition of pnfs_find_alloc_layout(), sorry...
 
-diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
-index 2323432a0edb..5504ab11decc 100644
---- a/drivers/scsi/qla4xxx/ql4_os.c
-+++ b/drivers/scsi/qla4xxx/ql4_os.c
-@@ -4145,7 +4145,7 @@ static void qla4xxx_mem_free(struct scsi_qla_host *ha)
- 		dma_free_coherent(&ha->pdev->dev, ha->queues_len, ha->queues,
- 				  ha->queues_dma);
- 
--	 if (ha->fw_dump)
-+	if (ha->fw_dump)
- 		vfree(ha->fw_dump);
- 
- 	ha->queues_len = 0;
--- 
-2.24.1
 
+Best wishes,
+Jia-Ju Bai
