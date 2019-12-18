@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019C812557E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3369125577
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 22:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfLRV4m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 16:56:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45161 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfLRVzz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 16:55:55 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so4270108otp.12
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 13:55:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=C2UwPzd2e+JnH6ssOXgfC4uB+eN483cl8wOJHT+wP8M=;
-        b=XCudI/JCQe7VEnt5Em/Pipw1qi0JG1eyb3RwjBUFAkJKOxbTsaUcmzTN0s+Ny9ZT5s
-         WL8o318kiqnC9J4dj7/6qblgiquZ2ALWvjojChr4yxRsH96q4N6hb06FNWTQOtWkp9z2
-         APAtiZfM1mQiQZqshcoH+c3sU491IxNVVqOAqJGD4QsREJGVLtkLN8FE2ZdTHL3W765H
-         5tAmWBPpgqAnnUHqpPdMcp0yCDUZA/JIuVtSJ0pt+PKjr7FMCpZRYZArLaoiwN4EZl4j
-         MQUwVZ2f6Oit4/hZ1PDQSJMk2AJbcsn5snNd0t2BVcbpN0UNyuUgGdspdS0FMcmGB3kP
-         PzGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=C2UwPzd2e+JnH6ssOXgfC4uB+eN483cl8wOJHT+wP8M=;
-        b=X+lwSSa7/76vih1COc1jRdt854e0rAVDX0Ue0G9M3Km8mYTlbLz2y7U7optJqNhuD6
-         LJJPsVubuWrVIQNpwKT1K1UWrs+BkwYCWXXQU/sIj4nYSb6+6luysI+PeFqnurJCmIRW
-         vOhgVZZ1Ql/Ro5g3vd4phV5fHOI6wCX1om4U7J/WYNARQ0NUqjeZuiknSbEFN1zoG4xd
-         Rim6txcF0nSOmwEk7y/jWWgeHR+M7mHMXSpSabIR+OTZxhCpbwF//Ui4uUSLnwgKfcT3
-         uTVC2j0gYJYzFiJeQqu/MaZoMwUAL8VVyO4jta7lgwxDHduyufvoGby7Fd7hCZ0lWyCl
-         qwXg==
-X-Gm-Message-State: APjAAAUhMps5QVQGpezsnWUXunAg5uKENBHOE+1fVjG/g1glY4UY/SoE
-        FdFj05P/ODMdiMboj8I+WMwg86JAVujZGAqBactKGQ==
-X-Google-Smtp-Source: APXvYqwZUpR2pOb+7NtUAAWPh39PS4a/L1DlmezGGneYI0CeI3eZxyiX0c86zqIx1K0Px2o89RD/z24Uc6nXitzTGlI=
-X-Received: by 2002:a9d:6481:: with SMTP id g1mr5082817otl.180.1576706154945;
- Wed, 18 Dec 2019 13:55:54 -0800 (PST)
+        id S1727452AbfLRV4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 16:56:15 -0500
+Received: from mga04.intel.com ([192.55.52.120]:16973 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727344AbfLRV4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 16:56:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 13:55:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="222108195"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.202])
+  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2019 13:55:52 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kurz <groug@kaod.org>
+Subject: [PATCH v2 44/45] KVM: Move putting of vcpu->pid to kvm_vcpu_destroy()
+Date:   Wed, 18 Dec 2019 13:55:29 -0800
+Message-Id: <20191218215530.2280-45-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-References: <20191209143120.60100-1-jannh@google.com> <20191209143120.60100-2-jannh@google.com>
- <20191211170632.GD14821@zn.tnic>
-In-Reply-To: <20191211170632.GD14821@zn.tnic>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 18 Dec 2019 22:55:28 +0100
-Message-ID: <CAG48ez2qGOAPBKiXDBL56_+QqR_bGRrtBSCT73VnKQ3xYsjAEA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] x86/traps: Print address on #GP
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 6:06 PM Borislav Petkov <bp@alien8.de> wrote:
-> On Mon, Dec 09, 2019 at 03:31:18PM +0100, Jann Horn wrote:
-> >     I have already sent a patch to syzkaller that relaxes their parsing of GPF
-> >     messages (https://github.com/google/syzkaller/commit/432c7650) such that
-> >     changes like the one in this patch don't break it.
-> >     That patch has already made its way into syzbot's syzkaller instances
-> >     according to <https://syzkaller.appspot.com/upstream>.
->
-> Ok, cool.
->
-> I still think we should do the oops number marking, though, as it has
-> more benefits than just syzkaller scanning for it. The first oops has always
-> been of crucial importance so having the number in there:
->
-> [    2.542218] [1] general protection fault while derefing a non-canonical address 0xdfff000000000001: 0000 [#1] PREEMPT SMP
->                 ^
->
-> would make eyeballing oopses even easier. Basically the same reason why
-> you're doing this enhancement. :)
->
-> So let me know if you don't have time to do it or you don't care about
-> it etc, and I'll have a look.
+Move the putting of vcpu->pid to kvm_vcpu_destroy().  vcpu->pid is
+guaranteed to be NULL when kvm_vcpu_uninit() is called in the error path
+of kvm_vm_ioctl_create_vcpu(), e.g. it is explicitly nullified by
+kvm_vcpu_init() and is only changed by KVM_RUN.
 
-I don't think I have time to do this in the near future. Feel free to
-implement this.
+No functional change intended.
+
+Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ virt/kvm/kvm_main.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 21533a472ead..6912d81ca32d 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -352,12 +352,6 @@ static int kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
+ 
+ static void kvm_vcpu_uninit(struct kvm_vcpu *vcpu)
+ {
+-	/*
+-	 * no need for rcu_read_lock as VCPU_RUN is the only place that
+-	 * will change the vcpu->pid pointer and on uninit all file
+-	 * descriptors are already gone.
+-	 */
+-	put_pid(rcu_dereference_protected(vcpu->pid, 1));
+ 	free_page((unsigned long)vcpu->run);
+ }
+ 
+@@ -365,6 +359,13 @@ void kvm_vcpu_destroy(struct kvm_vcpu *vcpu)
+ {
+ 	kvm_arch_vcpu_destroy(vcpu);
+ 
++	/*
++	 * No need for rcu_read_lock as VCPU_RUN is the only place that changes
++	 * the vcpu->pid pointer, and at destruction time all file descriptors
++	 * are already gone.
++	 */
++	put_pid(rcu_dereference_protected(vcpu->pid, 1));
++
+ 	kvm_vcpu_uninit(vcpu);
+ 	kmem_cache_free(kvm_vcpu_cache, vcpu);
+ }
+-- 
+2.24.1
+
