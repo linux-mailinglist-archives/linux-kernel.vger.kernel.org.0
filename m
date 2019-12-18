@@ -2,244 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EFAE124DAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:32:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0656A124DB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfLRQcM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:32:12 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5899 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbfLRQcM (ORCPT
+        id S1727519AbfLRQcp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:32:45 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:37009 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727215AbfLRQcp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:32:12 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfa54800000>; Wed, 18 Dec 2019 08:32:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 18 Dec 2019 08:32:10 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 18 Dec 2019 08:32:10 -0800
-Received: from [10.2.164.84] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Dec
- 2019 16:32:08 +0000
-Subject: Re: [PATCH v4 13/19] ASoC: tegra: Add fallback implementation for
- audio mclk
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-14-git-send-email-skomatineni@nvidia.com>
- <e2f96102-33fa-cbe5-f488-666b7b7ffb06@gmail.com>
- <7e49fef8-112c-1694-9316-7a23db8a01a4@gmail.com>
- <66a28f8a-82e8-5b12-464c-4c91441d1511@nvidia.com>
- <fb36edbf-08c9-aa7e-a7fd-6ee15261a525@gmail.com>
- <de4d2693-3d5c-d154-22eb-2e41ddc12974@gmail.com>
- <1499a012-f5e1-3c76-6750-5858765a0532@nvidia.com>
- <13074e67-2807-d494-b8b4-b2e3b529117a@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <c4e20767-2263-7a29-f50c-d36876ad58e2@nvidia.com>
-Date:   Wed, 18 Dec 2019 08:32:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Wed, 18 Dec 2019 11:32:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576686763;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y3ctDenRaxBBfnt71/wY8mJ2VuDfPI/vun6mNqpcyJo=;
+        b=RX0bgHXVb/X1y/Zykb00PfCbwFU6TvwczMDPCSE8dmoHdJgb0tfowev2JLcP/YgLUCjg08
+        vY20WpMdZJAOFSTEqdF8i6GOB0Bng4xjt5ExcMJyHpTpspFeMuKYLcLva1Mip6OKvQW//G
+        bbEyh47+vYztK9TOdRA+45JqKS2UZO8=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-124--XbbtNnMO46eR9ysys89NQ-1; Wed, 18 Dec 2019 11:32:41 -0500
+X-MC-Unique: -XbbtNnMO46eR9ysys89NQ-1
+Received: by mail-qv1-f71.google.com with SMTP id d7so1662366qvq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 08:32:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Y3ctDenRaxBBfnt71/wY8mJ2VuDfPI/vun6mNqpcyJo=;
+        b=kdqX3aGYJ6+CvQyvKV7j4LnTh7h1iGIMBWvKVCu+RNJMELx47dOVsDkLpQnrrAOuiV
+         X1HNcvMBlEZHM4gdxq2Qmj7Izc6Rmav/HLVAf5KRhFC9h6Is+6sbT7CeUtWCZciu7REr
+         VXMGGYrNpL7fIvorVDWXOJJ7qN9/4k9AM+nvvLfObmy0uoQaWDzWgr607VXGoX4udR2V
+         6VYaLpA0DTyU+vCyWnacAE4I6OVJ4Bply4bPaRD0QznuvTazvGCD9Uo46adOwDLBphSd
+         qXAwZBH+iU7a30xM7JaRLxZZNBbyWwiLeqa2HhCT95KZDMFqBSVEKjPhdF+5v1+8DeSS
+         JdSA==
+X-Gm-Message-State: APjAAAWyWEREt2K6ITIu+P7U3cM5gZhcE+2rUeruqqub1IEwZV3695Gy
+        yGbPW+sGqtmABUhCC2OEgqfVRwFkfTKYZuCoaOjnfaCzvTd4cgkStcpx3oygsN4FiSu8eEcm19A
+        bEJxsQNa63Gi/IZdLNIg2UJ/0
+X-Received: by 2002:ac8:1851:: with SMTP id n17mr3004126qtk.305.1576686760919;
+        Wed, 18 Dec 2019 08:32:40 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzFudc5wmFw7q9a3TI0yUBmwHk28ZUUUWXAsMXoc4ec7bXdVq4uOoF/CeMFZ43sfAAwFnmuzg==
+X-Received: by 2002:ac8:1851:: with SMTP id n17mr3004095qtk.305.1576686760616;
+        Wed, 18 Dec 2019 08:32:40 -0800 (PST)
+Received: from xz-x1 ([104.156.64.74])
+        by smtp.gmail.com with ESMTPSA id i2sm882493qte.87.2019.12.18.08.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 08:32:39 -0800 (PST)
+Date:   Wed, 18 Dec 2019 11:32:38 -0500
+From:   Peter Xu <peterx@redhat.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Christophe de Dinechin <dinechin@redhat.com>,
+        Christophe de Dinechin <christophe.de.dinechin@gmail.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>
+Subject: Re: [PATCH RFC 04/15] KVM: Implement ring-based dirty memory tracking
+Message-ID: <20191218163238.GC26669@xz-x1>
+References: <20191213202324.GI16429@xz-x1>
+ <bc15650b-df59-f508-1090-21dafc6e8ad1@redhat.com>
+ <E167A793-B42A-422D-8D46-B992CB6EBE69@redhat.com>
+ <d59ac0eb-e65a-a46f-886e-6df80a2b142f@redhat.com>
+ <20191217153837.GC7258@xz-x1>
+ <ecb949d1-4539-305f-0a84-1704834e37ba@redhat.com>
+ <20191217164244.GE7258@xz-x1>
+ <c6d00ced-64ff-34af-99dd-abbcbac67836@redhat.com>
+ <20191217194114.GG7258@xz-x1>
+ <838084bf-efd7-009c-62ce-f11493242867@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <13074e67-2807-d494-b8b4-b2e3b529117a@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576686720; bh=ojN0J52Mms4YB1Oz2k3/gp5yRH+VnUIaavZron+331I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=kkKtfiO+8RRjqHZVhoXUcMQnEj9KfRhy+oidwvkomvy44zzCl/WnQk9AzmxDYgb6T
-         bBviXRTD1vqex6xibC2eCRVogjXlhzLz/iTQTP9AtcNatvUAhD/w/Q68LecvaBLgG9
-         Vtd85m/lbwDSo2fZXYvgqbqkgaCyQblI46DB0o+4q9x+FmqH5ASHo6i62n4MBhhf34
-         wuHAmFX8K2fGX7EPR6K53ETV4kn0b+X4fNN5FCNq0SAyXt84tDlegG7fPUM59GTQFL
-         +L7pZaAiWa329ox9ZuhHdotL+G0rbzNrE7y0S/4A/fKcM8y4ENwOjsJcjShyYpwcQl
-         tvUa8i5uiCZSA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <838084bf-efd7-009c-62ce-f11493242867@redhat.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 18, 2019 at 01:33:01AM +0100, Paolo Bonzini wrote:
+> On 17/12/19 20:41, Peter Xu wrote:
+> > On Tue, Dec 17, 2019 at 05:48:58PM +0100, Paolo Bonzini wrote:
+> >> On 17/12/19 17:42, Peter Xu wrote:
+> >>>
+> >>> However I just noticed something... Note that we still didn't read
+> >>> into non-x86 archs, I think it's the same question as when I asked
+> >>> whether we can unify the kvm[_vcpu]_write() interfaces and you'd like
+> >>> me to read the non-x86 archs - I think it's time I read them, because
+> >>> it's still possible that non-x86 archs will still need the per-vm
+> >>> ring... then that could be another problem if we want to at last
+> >>> spread the dirty ring idea outside of x86.
+> >>
+> >> We can take a look, but I think based on x86 experience it's okay if we
+> >> restrict dirty ring to arches that do no VM-wide accesses.
+> > 
+> > Here it is - a quick update on callers of mark_page_dirty_in_slot().
+> > The same reverse trace, but ignoring all common and x86 code path
+> > (which I covered in the other thread):
+> > 
+> > ==================================
+> > 
+> >    mark_page_dirty_in_slot (non-x86)
+> >         mark_page_dirty
+> >             kvm_write_guest_page
+> >                 kvm_write_guest
+> >                     kvm_write_guest_lock
+> >                         vgic_its_save_ite [?]
+> >                         vgic_its_save_dte [?]
+> >                         vgic_its_save_cte [?]
+> >                         vgic_its_save_collection_table [?]
+> >                         vgic_v3_lpi_sync_pending_status [?]
+> >                         vgic_v3_save_pending_tables [?]
+> >                     kvmppc_rtas_hcall [&]
+> >                     kvmppc_st [&]
+> >                     access_guest [&]
+> >                     put_guest_lc [&]
+> >                     write_guest_lc [&]
+> >                     write_guest_abs [&]
+> >             mark_page_dirty
+> >                 _kvm_mips_map_page_fast [&]
+> >                 kvm_mips_map_page [&]
+> >                 kvmppc_mmu_map_page [&]
+> >                 kvmppc_copy_guest
+> >                     kvmppc_h_page_init [&]
+> >                 kvmppc_xive_native_vcpu_eq_sync [&]
+> >                 adapter_indicators_set [?] (from kvm_set_irq)
+> >                 kvm_s390_sync_dirty_log [?]
+> >                 unpin_guest_page
+> >                     unpin_blocks [&]
+> >                     unpin_scb [&]
+> > 
+> > Cases with [*]: should not matter much
+> >            [&]: should be able to change to per-vcpu context
+> >            [?]: uncertain...
+> > 
+> > ==================================
+> > 
+> > This time we've got 8 leaves with "[?]".
+> > 
+> > I'm starting with these:
+> > 
+> >         vgic_its_save_ite [?]
+> >         vgic_its_save_dte [?]
+> >         vgic_its_save_cte [?]
+> >         vgic_its_save_collection_table [?]
+> >         vgic_v3_lpi_sync_pending_status [?]
+> >         vgic_v3_save_pending_tables [?]
+> > 
+> > These come from ARM specific ioctls like KVM_DEV_ARM_ITS_SAVE_TABLES,
+> > KVM_DEV_ARM_ITS_RESTORE_TABLES, KVM_DEV_ARM_VGIC_SAVE_PENDING_TABLES.
+> > IIUC ARM needed these to allow proper migration which indeed does not
+> > have a vcpu context.
+> > 
+> > (Though I'm a bit curious why ARM didn't simply migrate these
+> >  information explicitly from userspace, instead it seems to me that
+> >  ARM guests will dump something into guest ram and then tries to
+> >  recover from that which seems to be a bit weird)
+> >  
+> > Then it's this:
+> > 
+> >         adapter_indicators_set [?]
+> > 
+> > This is s390 specific, which should come from kvm_set_irq.  I'm not
+> > sure whether we can remove the mark_page_dirty() call of this, if it's
+> > applied from another kernel structure (which should be migrated
+> > properly IIUC).  But I might be completely wrong.
+> > 
+> >         kvm_s390_sync_dirty_log [?]
+> >         
+> > This is also s390 specific, should be collecting from the hardware
+> > PGSTE_UC_BIT bit.  No vcpu context for sure.
+> > 
+> > (I'd be glad too if anyone could hint me why x86 cannot use page table
+> >  dirty bits for dirty tracking, if there's short answer...)
+> 
+> With PML it is.  Without PML, however, it would be much slower to
+> synchronize the dirty bitmap from KVM to userspace (one atomic operation
+> per page instead of one per 64 pages) and even impossible to have the
+> dirty ring.
 
-On 12/18/19 8:29 AM, Dmitry Osipenko wrote:
-> 18.12.2019 18:43, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/17/19 11:31 PM, Dmitry Osipenko wrote:
->>> 18.12.2019 10:22, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> 18.12.2019 10:14, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> On 12/17/19 11:01 PM, Dmitry Osipenko wrote:
->>>>>> 18.12.2019 09:59, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>> 17.12.2019 23:04, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
->>>>>>>> clocks
->>>>>>>> are moved to Tegra PMC driver with pmc as clock provider and
->>>>>>>> using pmc
->>>>>>>> clock ids.
->>>>>>>>
->>>>>>>> New device tree uses clk_out_1 from pmc clock provider.
->>>>>>>>
->>>>>>>> So, this patch adds implementation for mclk fallback to extern1 wh=
-en
->>>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
->>>>>>>> device
->>>>>>>> tree with older kernels.
->>>>>>>>
->>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>> ---
->>>>>>>>  =C2=A0=C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->>>>>>>>  =C2=A0=C2=A0 1 file changed, 10 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>> index fe9ca8acd0fb..1b88c6043082 100644
->>>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>> @@ -191,7 +191,16 @@ int tegra_asoc_utils_init(struct
->>>>>>>> tegra_asoc_utils_data *data,
->>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_clk=
-_get(dev, "mclk");
->>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1))=
- {
->>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_=
-err(data->dev, "Can't retrieve clk cdev1\n");
->>>>>>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(data->c=
-lk_cdev1);
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (PTR_ERR(data->clk_=
-cdev1) !=3D -ENOENT)
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return PTR_ERR(data->clk_cdev1);
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Fall back to extern=
-1 */
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D de=
-vm_clk_get(dev, "extern1");
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_c=
-dev1)) {
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 dev_err(data->dev, "Can't retrieve clk extern1\n");
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return PTR_ERR(data->clk_cdev1);
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>>> +
->>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->dev, "Fa=
-lling back to extern1\n");
->>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>>>>>>>  =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>>>>>>>
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769091] ------------[ cut here ]------------
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769249] WARNING: CPU: 2 PID: 1 at drivers/clk=
-/clk.c:954
->>>>>>> clk_core_disable+0xa5/0x1d4
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769330] clk_out_1 already disabled
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769459] Modules linked in:
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769541] CPU: 2 PID: 1 Comm: swapper/0 Not tai=
-nted
->>>>>>> 5.5.0-rc1-next-20191213-00167-g6b9fbcdac8f3-dirty #266
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769676] Hardware name: NVIDIA Tegra SoC (Flat=
-tened Device
->>>>>>> Tree)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769775] [<c010e4bd>] (unwind_backtrace) from =
-[<c010a0fd>]
->>>>>>> (show_stack+0x11/0x14)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.769918] [<c010a0fd>] (show_stack) from [<c09a=
-37b1>]
->>>>>>> (dump_stack+0x85/0x94)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770061] [<c09a37b1>] (dump_stack) from [<c011=
-f3d1>]
->>>>>>> (__warn+0xc1/0xc4)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770144] [<c011f3d1>] (__warn) from [<c011f691=
->]
->>>>>>> (warn_slowpath_fmt+0x61/0x78)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770285] [<c011f691>] (warn_slowpath_fmt) from=
- [<c04a0e7d>]
->>>>>>> (clk_core_disable+0xa5/0x1d4)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770427] [<c04a0e7d>] (clk_core_disable) from =
-[<c04a0fc3>]
->>>>>>> (clk_core_disable_lock+0x17/0x20)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770516] [<c04a0fc3>] (clk_core_disable_lock) =
-from [<c07792bb>]
->>>>>>> (tegra_asoc_utils_set_rate+0x53/0x208)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770662] [<c07792bb>] (tegra_asoc_utils_set_ra=
-te) from
->>>>>>> [<c077b8c5>] (tegra_rt5640_probe+0xd5/0x128)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770808] [<c077b8c5>] (tegra_rt5640_probe) fro=
-m [<c0555eb7>]
->>>>>>> (platform_drv_probe+0x33/0x68)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.770958] [<c0555eb7>] (platform_drv_probe) fro=
-m [<c055471d>]
->>>>>>> (really_probe+0x14d/0x240)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771099] [<c055471d>] (really_probe) from [<c0=
-55493f>]
->>>>>>> (driver_probe_device+0x43/0x11c)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771187] [<c055493f>] (driver_probe_device) fr=
-om [<c0554b25>]
->>>>>>> (device_driver_attach+0x3d/0x40)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771328] [<c0554b25>] (device_driver_attach) f=
-rom [<c0554b5f>]
->>>>>>> (__driver_attach+0x37/0x78)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771469] [<c0554b5f>] (__driver_attach) from [=
-<c05532fb>]
->>>>>>> (bus_for_each_dev+0x43/0x6c)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771609] [<c05532fb>] (bus_for_each_dev) from =
-[<c0553e0f>]
->>>>>>> (bus_add_driver+0xe3/0x148)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771692] [<c0553e0f>] (bus_add_driver) from [<=
-c055531d>]
->>>>>>> (driver_register+0x39/0xa0)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771833] [<c055531d>] (driver_register) from [=
-<c0102c2f>]
->>>>>>> (do_one_initcall+0x43/0x1bc)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.771979] [<c0102c2f>] (do_one_initcall) from [=
-<c1000ce5>]
->>>>>>> (kernel_init_freeable+0x121/0x194)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.772129] [<c1000ce5>] (kernel_init_freeable) f=
-rom [<c09b40e9>]
->>>>>>> (kernel_init+0xd/0xd0)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.772215] [<c09b40e9>] (kernel_init) from [<c01=
-010bd>]
->>>>>>> (ret_from_fork+0x11/0x34)
->>>>>>> [=C2=A0=C2=A0=C2=A0 1.772349] Exception stack(0xde907fb0 to 0xde907=
-ff8)
->>>>>>>
->>>>>> Although, that's probably related to the "ASoC: tegra: Add initial
->>>>>> parent configuration for audio mclk".
->>>>>>
->>>>> Actually I see these warnings of already unprepared and already
->>>>> disabled
->>>>> for pll_a, pll_a_out0, and clk_out_1 even without this whole patch
->>>>> series as well.
->>>>>
->>>>> I think its from tegra_asoc_utils_set_rate() doing
->>>>> clk_disable_unprepare
->>>>> and these clocks are already unprepared and disabled so its just
->>>>> warning
->>>>> from clk_core_unprepare and clk_core_disable.
->>>> Doesn't happen for me without this series.
->> I looked at wrong log, right earlier clock driver keeps them enabled so
->> asoc_utils_set_rate() disables the clock fine but now enabling audio
->> clock should be done in asoc_utils_init() to let the
->> clk_disable_unprepare from asoc_utils_set_rate not to show this warning.
->>
->> But actually we don't need to have clock enabled in asoc_utils_init
->> prior to invoking asoc_utils_set_rate from utils_init and its just warns
->> during sound driver probe because clock is already in disabled state. At
->> same time it doesn't harm to have it kept enabled in utils_init. So will
->> keep it enabled in asoc_utils_init to prevent this warning to show up.
->>
->>> But sound works with both old/new device-trees.
-> The rule of thumb: don't enable anything when it shouldn't be enabled.
-> If clocks are disabled at the time of drivers probe, then drivers
-> shouldn't disable the clocks.
-Will fix asoc_utils_set_rate to disable only when its enabled.
+Indeed, however I think it'll be faster for hardware to mark page as
+dirty.  So could it be a tradeoff on whether we want the "collection"
+to be faster or "marking page dirty" to be faster?  IMHO "marking page
+dirty" could be even more important sometimes because that affects
+guest responsiveness (blocks vcpu execution), while the collection
+procedure can happen in parrallel with that.
+
+> 
+> > I think my conclusion so far...
+> > 
+> >   - for s390 I don't think we even need this dirty ring buffer thing,
+> >     because I think hardware trackings should be more efficient, then
+> >     we don't need to care much on that either from design-wise of
+> >     dirty ring,
+> 
+> I would be surprised if it's more efficient without something like PML,
+> but anyway the gist is correct---without write protection-based dirty
+> page logging, s390 cannot use the dirty page ring buffer.
+> 
+> >   - for ARM, those no-vcpu-context dirty tracking probably needs to be
+> >     considered, but hopefully that's a very special path so it rarely
+> >     happen.  The bad thing is I didn't dig how many pages will be
+> >     dirtied when ARM guest starts to dump all these things so it could
+> >     be a burst...  If it is, then there's risk to trigger the ring
+> >     full condition (which we wanted to avoid..)
+> 
+> It says all vCPU locks must be held, so it could just use any vCPU.  I
+> am not sure what's the upper limit on the number of entries, or even
+> whether userspace could just dirty those pages itself, or perhaps
+> whether there could be a different ioctl that gets the pages into
+> userspace memory (and then if needed userspace can copy them into guest
+> memory, I don't know why it is designed like that).
+
+Yeah that's true.  I'll see whether Eric has more update on these...
+
+Thanks,
+
+-- 
+Peter Xu
+
