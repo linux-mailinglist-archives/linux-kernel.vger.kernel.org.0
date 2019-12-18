@@ -2,81 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C8312528A
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:02:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68192125295
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:05:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfLRUCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:02:52 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35548 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726699AbfLRUCw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:02:52 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j6so3545311lja.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 12:02:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k5MHuR+Dfrg48Y42Cv+YWOTLJx7dFcX68zXwZq7HNVE=;
-        b=PRynXANEkijzYdjvzq7/KxT6QPnEdAJQ01vTFcBAkcxcPCOUchyYmi1fc4GRmhY+FN
-         BswAgZG4tc+rRLi/QGsOpnyK/w0DQjALeHSoI/EhuA9pD+fPXboSdkw5AdB5wGESSwQp
-         L3nlaywm1L+/BTVj6LHIGuPQGS+EIAgavYgvs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k5MHuR+Dfrg48Y42Cv+YWOTLJx7dFcX68zXwZq7HNVE=;
-        b=dTYn4/3KlbTlTowGR/oyz0+mDdDXUQ9m5mfmf9DSPBhi4CZYT55pa6DxQlp26/XfOC
-         HA0n9wedoD+jCH2gL38GE7rBjvfBzp88blQSIWQAYk4wa2t93/5eF9T7k5AUqTl2WSob
-         HYAlPf05U0TgOtVk4tgBDDK1k9RtWdYySl550KStSWG5x3KvkwGFG3FpVJxJteYQY4w7
-         HDDSJXe4DTL379KjTIyK82oyrTfLbSRWNTF64U6qMNdApQmaLj/cwzWAfVCRoOoGp9YD
-         Zo9EBFCI0TBKgcLMZ7KTvZeMSsnPRS0nueGO4fDV8guQDPhNxZBKuA8vSQPg/Gh5ouvo
-         rUgQ==
-X-Gm-Message-State: APjAAAWnr6fGvJtHmpTyI3Ped+slTce2sNe9sePTtFBQp0SoyjLcTx7X
-        nNHVCmfb7sFEjMAvq72QyCB4zAAr1us=
-X-Google-Smtp-Source: APXvYqxOhjxVezbR5n55uh7MRBuzXNtUGWxXVCAWWZAR94yGbsOkIGL16M2Y4IF4NlNnjZTcBSpq8A==
-X-Received: by 2002:a2e:7d0c:: with SMTP id y12mr3155579ljc.39.1576699370009;
-        Wed, 18 Dec 2019 12:02:50 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id u7sm1604533lfn.31.2019.12.18.12.02.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Dec 2019 12:02:49 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id i23so2594851lfo.7
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 12:02:48 -0800 (PST)
-X-Received: by 2002:ac2:4946:: with SMTP id o6mr2943402lfi.170.1576699368241;
- Wed, 18 Dec 2019 12:02:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20191126110659.GA14042@redhat.com> <20191203141239.GA30688@redhat.com>
- <20191218151904.GA3127@redhat.com>
-In-Reply-To: <20191218151904.GA3127@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 18 Dec 2019 12:02:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whNhwFigBDSnyrfJYxr-uAe6PHiWTcHcZzPW+vZ3eWAXw@mail.gmail.com>
-Message-ID: <CAHk-=whNhwFigBDSnyrfJYxr-uAe6PHiWTcHcZzPW+vZ3eWAXw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] x86: fix get_nr_restart_syscall()
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Jan Kratochvil <jan.kratochvil@redhat.com>,
-        Pedro Alves <palves@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727510AbfLRUFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:05:39 -0500
+Received: from foss.arm.com ([217.140.110.172]:59266 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727145AbfLRUFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:05:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CD7311B3;
+        Wed, 18 Dec 2019 12:05:38 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7FC0D3F67D;
+        Wed, 18 Dec 2019 12:05:37 -0800 (PST)
+Date:   Wed, 18 Dec 2019 20:05:35 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "ASoC: meson: axg-fifo: relax period size constraints" to the asoc tree
+In-Reply-To: <20191218172420.1199117-5-jbrunet@baylibre.com>
+Message-Id: <applied-20191218172420.1199117-5-jbrunet@baylibre.com>
+X-Patchwork-Hint: ignore
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 7:19 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> Andy, Linus, do you have any objections?
+The patch
 
-It's ok by me, no objections. I still don't love your "hide the bit in
-thread flags over return to user space", and would still prefer it in
-the restart block, but I don't care _that_ deeply.
+   ASoC: meson: axg-fifo: relax period size constraints
 
-            Linus
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 42b5ac832b0c3bf5b0bf98ea6d99efa5fb5d5075 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Wed, 18 Dec 2019 18:24:20 +0100
+Subject: [PATCH] ASoC: meson: axg-fifo: relax period size constraints
+
+Now that the fifo depths and thresholds are properly in the axg-fifo
+driver, we can relax the constraints on period. As long as the period is a
+multiple of the fifo burst size (8 bytes) things should be OK.
+
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20191218172420.1199117-5-jbrunet@baylibre.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/meson/axg-fifo.c | 8 ++++----
+ sound/soc/meson/axg-fifo.h | 2 --
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/sound/soc/meson/axg-fifo.c b/sound/soc/meson/axg-fifo.c
+index c2742a02d866..c12b0d5e8ebf 100644
+--- a/sound/soc/meson/axg-fifo.c
++++ b/sound/soc/meson/axg-fifo.c
+@@ -34,7 +34,7 @@ static struct snd_pcm_hardware axg_fifo_hw = {
+ 	.rate_max = 192000,
+ 	.channels_min = 1,
+ 	.channels_max = AXG_FIFO_CH_MAX,
+-	.period_bytes_min = AXG_FIFO_MIN_DEPTH,
++	.period_bytes_min = AXG_FIFO_BURST,
+ 	.period_bytes_max = UINT_MAX,
+ 	.periods_min = 2,
+ 	.periods_max = UINT_MAX,
+@@ -227,17 +227,17 @@ int axg_fifo_pcm_open(struct snd_soc_component *component,
+ 
+ 	/*
+ 	 * Make sure the buffer and period size are multiple of the FIFO
+-	 * minimum depth size
++	 * burst
+ 	 */
+ 	ret = snd_pcm_hw_constraint_step(ss->runtime, 0,
+ 					 SNDRV_PCM_HW_PARAM_BUFFER_BYTES,
+-					 AXG_FIFO_MIN_DEPTH);
++					 AXG_FIFO_BURST);
+ 	if (ret)
+ 		return ret;
+ 
+ 	ret = snd_pcm_hw_constraint_step(ss->runtime, 0,
+ 					 SNDRV_PCM_HW_PARAM_PERIOD_BYTES,
+-					 AXG_FIFO_MIN_DEPTH);
++					 AXG_FIFO_BURST);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/sound/soc/meson/axg-fifo.h b/sound/soc/meson/axg-fifo.h
+index 521b54e98fd3..b63acd723c87 100644
+--- a/sound/soc/meson/axg-fifo.h
++++ b/sound/soc/meson/axg-fifo.h
+@@ -31,8 +31,6 @@ struct snd_soc_pcm_runtime;
+ 					 SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE)
+ 
+ #define AXG_FIFO_BURST			8
+-#define AXG_FIFO_MIN_CNT		64
+-#define AXG_FIFO_MIN_DEPTH		(AXG_FIFO_BURST * AXG_FIFO_MIN_CNT)
+ 
+ #define FIFO_INT_ADDR_FINISH		BIT(0)
+ #define FIFO_INT_ADDR_INT		BIT(1)
+-- 
+2.20.1
+
