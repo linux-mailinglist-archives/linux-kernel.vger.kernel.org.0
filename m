@@ -2,61 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3C421252CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:10:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CA4B1252CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:10:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfLRUJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:09:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47604 "EHLO mail.kernel.org"
+        id S1727555AbfLRUKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:10:04 -0500
+Received: from mga04.intel.com ([192.55.52.120]:9870 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725818AbfLRUJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 15:09:50 -0500
-Received: from localhost (unknown [104.132.0.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41EFE24672;
-        Wed, 18 Dec 2019 20:09:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576699790;
-        bh=hyyMtYEKhxzSeADhWhVSPTwVw+0j/nVaT1nPanMj+j4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pw3vmYA+s18rEXrjuBlxEtKHDmWBLGot+yMUmzX1vltxYqXmdP9LE9ZXMnAONhUKI
-         kAQRDgOKhw4WVPYJ5gR9KKQwDHyCmK5y0RxS3GK2CybT2lu2OxXVk/g9TO6wRM2KV4
-         4aSZLiyzX+mSHDidM7Fy5kwFoplid5QqPTHO54Rg=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH 4/4] f2fs: free sysfs kobject
-Date:   Wed, 18 Dec 2019 12:09:47 -0800
-Message-Id: <20191218200947.20445-4-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.24.0.525.g8f36a354ae-goog
-In-Reply-To: <20191218200947.20445-1-jaegeuk@kernel.org>
-References: <20191218200947.20445-1-jaegeuk@kernel.org>
+        id S1726636AbfLRUKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 15:10:03 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 12:10:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="218256493"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
+  by orsmga003.jf.intel.com with ESMTP; 18 Dec 2019 12:10:02 -0800
+Date:   Wed, 18 Dec 2019 12:10:02 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Joerg Roedel <joro@8bytes.org>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Weijiang Yang <weijiang.yang@intel.com>
+Subject: Re: [RFC PATCH] KVM: x86: Disallow KVM_SET_CPUID{2} if the vCPU is
+ in guest mode
+Message-ID: <20191218201002.GE25201@linux.intel.com>
+References: <20191218174255.30773-1-sean.j.christopherson@intel.com>
+ <CALMp9eR-ssCUT_6oZntZ=-5SEN7Y8q-HnraKW=WDHuAn9gYZfQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALMp9eR-ssCUT_6oZntZ=-5SEN7Y8q-HnraKW=WDHuAn9gYZfQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Detected kmemleak.
+On Wed, Dec 18, 2019 at 11:38:43AM -0800, Jim Mattson wrote:
+> On Wed, Dec 18, 2019 at 9:42 AM Sean Christopherson
+> <sean.j.christopherson@intel.com> wrote:
+> >
+> > Reject KVM_SET_CPUID{2} with -EBUSY if the vCPU is in guest mode (L2) to
+> > avoid complications and potentially undesirable KVM behavior.  Allowing
+> > userspace to change a guest's capabilities while L2 is active would at
+> > best result in unexpected behavior in the guest (L1 or L2), and at worst
+> > induce bad KVM behavior by breaking fundamental assumptions regarding
+> > transitions between L0, L1 and L2.
+> 
+> This seems a bit contrived. As long as we're breaking the ABI, can we
+> disallow changes to CPUID once the vCPU has been powered on?
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/sysfs.c | 1 +
- 1 file changed, 1 insertion(+)
+I can at least concoct scenarios where changing CPUID after KVM_RUN
+provides value, e.g. effectively creating a new VM/vCPU without destroying
+the kernel's underlying data structures and without putting the file
+descriptors, for performance (especially if KVM avoids its hardware on/off
+paths) or sandboxing (process has access to a VM fd, but not /dev/kvm).
 
-diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
-index 70945ceb9c0c..5963316f391a 100644
---- a/fs/f2fs/sysfs.c
-+++ b/fs/f2fs/sysfs.c
-@@ -786,4 +786,5 @@ void f2fs_unregister_sysfs(struct f2fs_sb_info *sbi)
- 		remove_proc_entry(sbi->sb->s_id, f2fs_proc_root);
- 	}
- 	kobject_del(&sbi->s_kobj);
-+	kobject_put(&sbi->s_kobj);
- }
--- 
-2.24.0.525.g8f36a354ae-goog
+A truly contrived, but technically architecturally accurate, scenario would
+be modeling SGX interaction with the machine check architecutre.  Per the
+SDM, #MCs or clearing bits in IA32_MCi_CTL disable SGX, which is reflected
+in CPUID:
 
+  Any machine check exception (#MC) that occurs after Intel SGX is first
+  enables causes Intel SGX to be disabled, (CPUID.SGX_Leaf.0:EAX[SGX1] == 0)
+  It cannot be enabled until after the next reset.
+
+  Any act of clearing bits from '1 to '0 in any of the IA32_MCi_CTL register
+  may disable Intel SGX (set CPUID.SGX_Leaf.0:EAX[SGX1] to 0) until the next
+  reset.
+
+I doubt a userspace VMM would actively model that behavior, but it's at
+least theoretically possible.  Yes, it would technically be possible for
+SGX to be disabled while L2 is active, but I don't think it's unreasonable
+to require userspace to first force the vCPU out of L2.
