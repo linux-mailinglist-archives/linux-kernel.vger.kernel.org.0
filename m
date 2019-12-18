@@ -2,78 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1EB6124E37
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:45:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3418C124E39
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:46:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727555AbfLRQpu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:45:50 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:40151 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfLRQpu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:45:50 -0500
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N3bnP-1hhqcJ2ccd-010bkI; Wed, 18 Dec 2019 17:45:32 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] y2038: sh: remove timeval/timespec usage from headers
-Date:   Wed, 18 Dec 2019 17:45:11 +0100
-Message-Id: <20191218164527.542823-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        id S1727650AbfLRQp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:45:58 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48168 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727334AbfLRQp5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 11:45:57 -0500
+Received: from zn.tnic (p200300EC2F0B8B009D1D67E59157F47A.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:8b00:9d1d:67e5:9157:f47a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 79A931EC09F1;
+        Wed, 18 Dec 2019 17:45:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1576687556;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=veM79yV+cFFmEZLqNeH8K6a+RQqwXlPU3rmWJpTwMAc=;
+        b=fBUPT53IBka5z+KEVntYJcp7wP7qQ54cuPs5kQAraLooNx6fq5wjTyKSH0eiAUSHdDQ1+G
+        fpdc81ctMpM6X7VTsRs8eitVE/G7pe4KbfRLNC4VSx/2MN3Nx5BUFW7T1KT/ThFYRm+sCa
+        0TJ3xDKmODWlqfF7szBdTWqtsny89pw=
+Date:   Wed, 18 Dec 2019 17:45:43 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 01/11] x86/crypto: Adapt assembly for PIE support
+Message-ID: <20191218164543.GH24886@zn.tnic>
+References: <20191205000957.112719-1-thgarnie@chromium.org>
+ <20191205000957.112719-2-thgarnie@chromium.org>
+ <20191218124604.GE24886@zn.tnic>
+ <CAJcbSZE56E_JqWpxvpHd194SAVn0fGJRiJWmLy=zfOyTthsGCg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:DMQ5Nstz2iNQ6VhbEOPaGqLSp/BDXB+L9DaoDSta8r7mGWTx02S
- 2d41/T0uymdNKG4hRkAwkDdKuOBvucXRcqSZOtR4jIu2kcUqo9JGMjJluVVq+kOGnWEaSoc
- 8so6L6HO3bN1p7SJKhWIlIWXRYaeXMPqI6sZUxGIIdiK6MCN7M7/e+ODxRKz6SQV/UZPRGV
- jOukBrIMaAGCYLshwkvXQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0OdFC6eI7iI=:qSLeRvQMk2UrLmt0GS/QaR
- uMLiejva+UUVVQ+nVTJlgrprgYL3i2op9LSNd1rZl422yeDqrO+TIxXgqRU9Gf2b1nUOp9UVI
- FFfgR9Az0FzzKh/8Qt2FhOua9jIf9v4fwQvoaRn3VV9rbssiYrUZZ6rbxsd3Mfse7ybv8CbDn
- MXcZrrK1vG2/oxMr310BU5pIZt+Rq1XIAazKgUwX4ul6W2JFoHC4CxsqD/QwOnkH20HgJ23Bc
- 6Djmh5pDTgqpu8NTqh5Y79IyHqw714dy6NJYKW+WA2vtro5jds+CA6fKlq+EULK5UO86cz1gP
- uokZhOt8zuda6gdYMmSLpmcrhrIkDpdD9SWWroOdOsafgqma1z7uaFUwAVwoscuEjXqzg2et9
- XkQQPRfQ8HfKGHYmPRpI0tGEBCBC7X4pGppX9ij7kwl5NyRcq4XHrpOSnfTW2P049z9F4oTcN
- DhCBgHDPuoPksNywDGGMfBX9XtkXt8tKlq8qeLJdMX3P5Orvh3fKt0gjAYkhFrc9Rth9dwQ+B
- L+attDwvtQsgryxWBi5NstpsRI7Ds7Enspy2igEPicq3yj2ytqW2WwzMXEycZ7vSwsU3uNoJA
- 6ZL9IbxUHXbgVAwsKsUBYr9Al/KT2R4Tdw6jh4jJiU9/m97NpJnBvFbjCMWRJVyO+JornQkR9
- G9Ahw3MYYK2qrEPwQOv+/iRBRcbkNp7nFLvz3M7ljthhSYQBasJSBM3YfXLtoABMoPlO3Qtb1
- mKAVwxYYz/a+TMd35h6MqHd005NEDP3gs4jqNBOgzODOCV02UEY0Yh3ddjnlP05IS5pfAoizz
- Z6IXwS8PJvxCOAkLj7XNzlpnu2Sindq08PgjDXDDhXh1g7mpRGgNVVCM45jsdmFoC71tXvtgx
- 7rwwN6hGNO9MeSi97SNQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJcbSZE56E_JqWpxvpHd194SAVn0fGJRiJWmLy=zfOyTthsGCg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This header file escaped my earlier cleanups for removing
-the in-kernel usage of timeval and timespec structs.
+On Wed, Dec 18, 2019 at 08:35:32AM -0800, Thomas Garnier wrote:
+> In the last discussion, we mentioned Ingo (and other people) asked us
 
-Replace them with the corresponding __kernel_old_* types.
+The last discussion ended up with:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/sh/include/uapi/asm/sockios.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+https://lkml.kernel.org/r/CAJcbSZEnPeCnkpc%2BuHmBWRJeaaw4TPy9HPkSGeriDb6mN6HR1g@mail.gmail.com
 
-diff --git a/arch/sh/include/uapi/asm/sockios.h b/arch/sh/include/uapi/asm/sockios.h
-index ef18a668456d..3da561453260 100644
---- a/arch/sh/include/uapi/asm/sockios.h
-+++ b/arch/sh/include/uapi/asm/sockios.h
-@@ -10,7 +10,7 @@
- #define SIOCSPGRP	_IOW('s', 8, pid_t)
- #define SIOCGPGRP	_IOR('s', 9, pid_t)
- 
--#define SIOCGSTAMP_OLD	_IOR('s', 100, struct timeval) /* Get stamp (timeval) */
--#define SIOCGSTAMPNS_OLD _IOR('s', 101, struct timespec) /* Get stamp (timespec) */
-+#define SIOCGSTAMP_OLD	_IOR('s', 100, struct __kernel_old_timeval) /* Get stamp (timeval) */
-+#define SIOCGSTAMPNS_OLD _IOR('s', 101, struct __kernel_old_timespec) /* Get stamp (timespec) */
- 
- #endif /* __ASM_SH_SOCKIOS_H */
+which I read as, you'll remove that silly sentence from every commit
+message.
+
 -- 
-2.20.0
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
