@@ -2,93 +2,188 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87283124DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:40:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC69A124E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 17:40:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfLRQkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 11:40:00 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30982 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727124AbfLRQkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 11:40:00 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 08:39:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="205898318"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.202])
-  by orsmga007.jf.intel.com with ESMTP; 18 Dec 2019 08:39:59 -0800
-Date:   Wed, 18 Dec 2019 08:39:59 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Marc Zyngier <maz@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <f4bug@amsat.org>
-Subject: Re: [PATCH v4 19/19] KVM: selftests: Add test for
- KVM_SET_USER_MEMORY_REGION
-Message-ID: <20191218163958.GC25201@linux.intel.com>
-References: <20191217204041.10815-1-sean.j.christopherson@intel.com>
- <20191217204041.10815-20-sean.j.christopherson@intel.com>
- <f962fafb-3956-746f-d077-3dbcefaae7c8@de.ibm.com>
+        id S1727613AbfLRQkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 11:40:31 -0500
+Received: from mailoutvs56.siol.net ([185.57.226.247]:50590 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726931AbfLRQkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 11:40:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 161B1521E9F;
+        Wed, 18 Dec 2019 17:40:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id xfVEE8OS8Kem; Wed, 18 Dec 2019 17:40:27 +0100 (CET)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 9BF6A523FB0;
+        Wed, 18 Dec 2019 17:40:27 +0100 (CET)
+Received: from jernej-laptop.localnet (cpe-86-58-102-7.static.triera.net [86.58.102.7])
+        (Authenticated sender: jernej.skrabec@siol.net)
+        by mail.siol.net (Postfix) with ESMTPA id 799165236CB;
+        Wed, 18 Dec 2019 17:40:26 +0100 (CET)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     mchehab@kernel.org, mripard@kernel.org, hverkuil@xs4all.nl,
+        gregkh@linuxfoundation.org, wens@csie.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] media: cedrus: Fix decoding for some HEVC videos
+Date:   Wed, 18 Dec 2019 17:40:25 +0100
+Message-ID: <2234008.mhVpxdDc1K@jernej-laptop>
+In-Reply-To: <20191218084047.GA2900@aptenodytes>
+References: <20191213161516.54688-1-jernej.skrabec@siol.net> <20191213161516.54688-2-jernej.skrabec@siol.net> <20191218084047.GA2900@aptenodytes>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f962fafb-3956-746f-d077-3dbcefaae7c8@de.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 12:39:43PM +0100, Christian Borntraeger wrote:
-> 
-> On 17.12.19 21:40, Sean Christopherson wrote:
-> > Add a KVM selftest to test moving the base gfn of a userspace memory
-> > region.  The test is primarily targeted at x86 to verify its memslot
-> > metadata is correctly updated, but also provides basic functionality
-> > coverage on other architectures.
-> > +static void *vcpu_worker(void *data)
-> > +{
-> > +	struct kvm_vm *vm = data;
-> > +	struct kvm_run *run;
-> > +	struct ucall uc;
-> > +	uint64_t cmd;
-> > +
-> > +	/*
-> > +	 * Loop until the guest is done.  Re-enter the guest on all MMIO exits,
-> > +	 * which will occur if the guest attempts to access a memslot while it
-> > +	 * is being moved.
-> > +	 */
-> > +	run = vcpu_state(vm, VCPU_ID);
-> > +	do {
-> > +		vcpu_run(vm, VCPU_ID);
-> > +	} while (run->exit_reason == KVM_EXIT_MMIO);
-> > +
-> > +	TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
-> > +		    "Unexpected exit reason = %d", run->exit_reason);
-> 
-> 
-> This will also not work for s390. Maybe just make this test x86 specific for now?
+Hi!
 
-Doh, that's obvious in hindsight.  I think the basic premise is also
-broken on arm64 as it returns -EFAULT on is_error_noslot_pfn(pfn).  So
-yeah, x86 only for now :-(
+Dne sreda, 18. december 2019 ob 09:40:47 CET je Paul Kocialkowski napisal(a):
+> Hi,
+> 
+> On Fri 13 Dec 19, 17:15, Jernej Skrabec wrote:
+> > It seems that for some HEVC videos at least one bitstream parsing
+> > trigger must be called in order to be decoded correctly. There is no
+> > explanation why this helps, but it was observed that several videos
+> > with this fix are now decoded correctly and there is no regression with
+> > others.
+> > 
+> > Without this fix, those same videos totally crash HEVC decoder (other
+> > decoder engines are unaffected). After decoding those problematic
+> > videos, HEVC decoder always returns only green image (all zeros).
+> > Only complete HW reset helps.
+> > 
+> > This fix is similar to that for H264.
+> 
+> Thanks for the fix, interesting that the same issue shows up on HEVC!
+> I suspect that Allwinner folks never really tested the engine without
+> using it for bitstream parsing.
+
+That thought also crossed my mind. It's even worse with VP8. There you can't 
+have proper decoding at all without calling one specific bitstream parsing 
+function.
+
+> 
+> Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Thanks!
+
+Best regards,
+Jernej
+
+> 
+> Cheers,
+> 
+> Paul
+> 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  .../staging/media/sunxi/cedrus/cedrus_h265.c  | 25 ++++++++++++++++---
+> >  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  1 +
+> >  2 files changed, 23 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c index
+> > 109d3289418c..5a207f1e137c 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_h265.c
+> > @@ -7,6 +7,7 @@
+> > 
+> >   * Copyright (C) 2018 Bootlin
+> >   */
+> > 
+> > +#include <linux/delay.h>
+> > 
+> >  #include <linux/types.h>
+> >  
+> >  #include <media/videobuf2-dma-contig.h>
+> > 
+> > @@ -283,6 +284,23 @@ static void cedrus_h265_write_scaling_list(struct
+> > cedrus_ctx *ctx,> 
+> >  		}
+> >  
+> >  }
+> > 
+> > +static void cedrus_h265_skip_bits(struct cedrus_dev *dev, int num)
+> > +{
+> > +	int count = 0;
+> > +
+> > +	while (count < num) {
+> > +		int tmp = min(num - count, 32);
+> > +
+> > +		cedrus_write(dev, VE_DEC_H265_TRIGGER,
+> > +			     VE_DEC_H265_TRIGGER_FLUSH_BITS |
+> > +			     VE_DEC_H265_TRIGGER_TYPE_N_BITS(tmp));
+> > +		while (cedrus_read(dev, VE_DEC_H265_STATUS) &
+> > VE_DEC_H265_STATUS_VLD_BUSY) +			udelay(1);
+> > +
+> > +		count += tmp;
+> > +	}
+> > +}
+> > +
+> > 
+> >  static void cedrus_h265_setup(struct cedrus_ctx *ctx,
+> >  
+> >  			      struct cedrus_run *run)
+> >  
+> >  {
+> > 
+> > @@ -347,10 +365,9 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
+> > 
+> >  	/* Source offset and length in bits. */
+> > 
+> > -	reg = slice_params->data_bit_offset;
+> > -	cedrus_write(dev, VE_DEC_H265_BITS_OFFSET, reg);
+> > +	cedrus_write(dev, VE_DEC_H265_BITS_OFFSET, 0);
+> > 
+> > -	reg = slice_params->bit_size - slice_params->data_bit_offset;
+> > +	reg = slice_params->bit_size;
+> > 
+> >  	cedrus_write(dev, VE_DEC_H265_BITS_LEN, reg);
+> >  	
+> >  	/* Source beginning and end addresses. */
+> > 
+> > @@ -385,6 +402,8 @@ static void cedrus_h265_setup(struct cedrus_ctx *ctx,
+> > 
+> >  	/* Initialize bitstream access. */
+> >  	cedrus_write(dev, VE_DEC_H265_TRIGGER, 
+VE_DEC_H265_TRIGGER_INIT_SWDEC);
+> > 
+> > +	cedrus_h265_skip_bits(dev, slice_params->data_bit_offset);
+> > +
+> > 
+> >  	/* Bitstream parameters. */
+> >  	
+> >  	reg = VE_DEC_H265_DEC_NAL_HDR_NAL_UNIT_TYPE(slice_params-
+>nal_unit_type)
+> >  	|
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h index
+> > 0d9449fe2b28..df1cceef8d93 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+> > @@ -424,6 +424,7 @@
+> > 
+> >  #define VE_DEC_H265_TRIGGER			(VE_ENGINE_DEC_H265 + 
+0x34)
+> > 
+> > +#define VE_DEC_H265_TRIGGER_TYPE_N_BITS(x)	(((x) & 0x3f) << 8)
+> > 
+> >  #define VE_DEC_H265_TRIGGER_STCD_VC1		(0x02 << 4)
+> >  #define VE_DEC_H265_TRIGGER_STCD_AVS		(0x01 << 4)
+> >  #define VE_DEC_H265_TRIGGER_STCD_HEVC		(0x00 << 4)
+
+
+
+
