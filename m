@@ -2,245 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F8B6124AEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:12:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8730124AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfLRPLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:11:48 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:33979 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbfLRPLq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:11:46 -0500
-Received: by mail-ua1-f67.google.com with SMTP id 1so759855uao.1
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:11:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OG/pM/wl2nU75Ce+HHMv6RzUgI11FdyesZawxBUPdMo=;
-        b=sjxLPdqPMrWCiphZxrkk/aw+he+VCwR/j4xHVgnfx30c9y7WrySH0ZYfQ7gh3PREfX
-         wQRdWBaCujUPM62xcIlkuUyLa0wFeKzZkuUT86MuIDwLLJjvJu4Nfp0RXzU1KyHY+I7E
-         f+tfhzGksjrXSTjSfAGuLrf2FB1LywGABMos918G4y5Gi+dKniW7jLz2NdrfTBv/Sres
-         mKHEkeGAGqDurGMX0VzvKl87Ft5xhzwAVN37w2mxLek+aM4x8tCCyDuLs0U46a+F8bxn
-         CK8bNsy93M34jpcpDhqau5xatHXEBHjviqduADf0U+OP+/q4W9lRh697GWBgvPJr41X9
-         bvKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OG/pM/wl2nU75Ce+HHMv6RzUgI11FdyesZawxBUPdMo=;
-        b=dStkNcxmiB880Cj2VAtYyworRk/YvyfLHqfjH9syjBM+k39sQlcGGGafk6KRgfQzvH
-         T/vuNbfNxx29tcJru3U/bYq/cAj2cqz/0UeqjNvAgYhtlTU1CQEwVPOYvpm9QnWvujQS
-         0pS75CULiZVB989KTxNkNgJNjA00MMRpZXXMWVsnsOWdoOv8iBaXsY6oe8tr7GQ8WNmO
-         TLZ99IvSbEuExP6LU7haKFHASxIrEzJlUc9oObsS6LYPPCcfu1BV5EiCVyIQ7eqaoBGU
-         NPYLA8U8GwN1mw8thwnq9V7nugOrqr7u1KHazM1NQe32PaMtMW07EcJJUO7BzVjEDx+Q
-         715Q==
-X-Gm-Message-State: APjAAAV7IdWUMuIzm+dsIq63IBNe4NGVAZsTHN5fz7bt3sHtjevvgD4I
-        tSR1c9GJJyq0CckKUmxlSvWe5AMNJ3hJIyXUkCeDPA==
-X-Google-Smtp-Source: APXvYqxIemSRkPQQlkOHIgb1DLI/F80ZGX0B3DDxjvdIfGtoGmFwb3OGpLHbe5uZsgnRUDNiscbxAsqS/SFF84Oq+ro=
-X-Received: by 2002:ab0:e16:: with SMTP id g22mr1660978uak.129.1576681904792;
- Wed, 18 Dec 2019 07:11:44 -0800 (PST)
-MIME-Version: 1.0
-References: <1571668177-3766-1-git-send-email-rampraka@codeaurora.org>
- <CAPDyKFoZEc-m7NMnaAa5bjtCSp4wyJqic3cLHk95xracoWcCUA@mail.gmail.com> <0101016eb6152d19-fa1453b7-ae71-49d7-b13b-8c4009375ee1-000000@us-west-2.amazonses.com>
-In-Reply-To: <0101016eb6152d19-fa1453b7-ae71-49d7-b13b-8c4009375ee1-000000@us-west-2.amazonses.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 18 Dec 2019 16:11:08 +0100
-Message-ID: <CAPDyKFoc-c23d4U6m3UMxtA7KhnHeeUN5u-Rpiwsbsz7PnyT+w@mail.gmail.com>
-Subject: Re: [RFC 0/6] mmc: Add clock scaling support for mmc driver
-To:     Ram Prakash Gupta <rampraka@codeaurora.org>
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        Sahitya Tummala <stummala@codeaurora.org>,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        Veerabhadrarao Badiganti <vbadigan@codeaurora.org>,
-        cang@codeaurora.org, ppvk@codeaurora.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Doug Anderson <dianders@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727414AbfLRPLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:11:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50930 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727130AbfLRPLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 10:11:19 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E6883ACEC;
+        Wed, 18 Dec 2019 15:11:17 +0000 (UTC)
+Date:   Wed, 18 Dec 2019 16:11:17 +0100
+Message-ID: <s5hv9qd7joq.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 5.5-rc3
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 29 Nov 2019 at 08:34, <rampraka@codeaurora.org> wrote:
->
-> Hi Ulf,
->
-> Seems some setting issue with my thunderbird application.
-> Sorry for spams, please ignore my last responses as unsupported
-> characters got added.
->
-> Typing my response again from browser and re-sending.
->
-> Thanks,
-> Ram
->
-> On 2019-10-22 14:10, Ulf Hansson wrote:
-> > On Mon, 21 Oct 2019 at 16:30, Ram Prakash Gupta
-> > <rampraka@codeaurora.org> wrote:
-> >>
-> >> This change adds the use of devfreq based clock scaling to MMC.
-> >> This applicable for eMMC and SDCard.
-> >> For some workloads, such as video playback, it isn't necessary
-> >> for these cards to run at high speed. Running at lower
-> >> frequency, in such cases can still meet the deadlines for data
-> >> transfers.
-> >>
-> >> Scaling down the clock frequency dynamically has power savings
-> >> not only because the bus is running at lower frequency but also
-> >> has an advantage of scaling down the system core voltage, if
-> >> supported. Provide an ondemand clock scaling support similar
-> >> to the cpufreq ondemand governor having two thresholds,
-> >> up_threshold and down_threshold to decide whether to increase
-> >> the frequency or scale it down respectively as per load.
-> >
-> > This sounds simple, but what the series is doing is far more
-> > complicated but scaling the bus clock, as it also re-negotiates the
-> > bus speed mode.
-> >
-> > Each time the triggering point for scaling up/down is hit, then a
-> > series of commands needs to be sent to the card, including running the
-> > tuning procedure. The point is, for sure, this doesn't come for free,
-> > both from a latency point of view, but also from an energy cost point
-> > of view. So, whether this really improves the behaviour, seems like
-> > very use case sensitive, right!?
->
-> Switching modes would incur some latency for sending commands to switch
-> modes, but tuning is not needed as most of the emmc devices used now a
-> days are with enhanced strobe support, so tuning would not add up any
-> latency as it is not required in hs400 enhanced strobe mode.
->
-> This feature is implemented for video playback case, where data transfer
-> request is less, where this feature helps with saving power consumption.
->
-> And when there is burst of data transfer request, load will remain
-> _high_
-> so there won't be any switching and hence it won't affect any existing
-> use cases from latency point of view.
->
-> Also if hw supports to switch clk frequency without changing mode. I
-> will
-> make change in code. For this I have seek input from hw team.
->
->  From collected data, I see this feature is helping in saving power
-> consumption. And no energy penalty is observed. Please share if I am
-> missing any specific. Power saving using this feature is quite good
-> and considerable. Please find the data below.
->
-> Use Case                             Delta at Battery  Power Impact
-> 30 fps at HD 1080p decode 20Mbps       10 mA               11%
-> 30 fps at UHD 8b H.264 42 Mbps         20.93 mA            19%
->
-> >
-> > Overall, when it comes to use cases, we have very limited knowledge
-> > about them at the mmc block layer level. I think it should remain like
-> > that. If at any place at all, this information is better maintained by
-> > the generic block layer and potentially the configured I/O scheduler.
->
-> I think, generic block layer do not have knowledge of use case for data
-> transfer request. And devfreq framework have been used to implement this
-> feature, which should be same in any layer.
+Linus,
 
-Just to be clear, my main concern here is not using the devfreq framework.
+please pull sound fixes for v5.5-rc3 from:
 
-It's rather whether switching speed modes is really worth it, which
-Doug pointed out as well.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.5-rc3
 
->
-> Also mobile platforms comes mostly with emmc and ufs as storage media.
-> And clock scaling is already implemented in upstream ufs driver using
-> devfreq framework. On similar line, this feature is implemented for mmc
-> driver. So I believe, clk scaling implementation is better placed in mmc
-> driver rather in generic block layer.
+The topmost commit is 7c497d799267134786afdf719d9230b7d6f77d84
 
-At some point you want to trigger the clock to be scaled up/down,
-probably because of reaching some bandwidth threshold. This part seems
-like a generic block thing and not an mmc specific thing.
+----------------------------------------------------------------
 
-Exactly how that would affect this approach is hard to say, but my
-point is, that I don't want to sprinkle the mmc subsystem with code
-that may belong in upper common layers.
+sound fixes for 5.5-rc3
 
->
-> >
-> > This brings me to a question about the tests you have you run. Can you
-> > share some information and data about that?
->
-> Test case used are 1080p and 4k video playback use case. As this feature
-> is implemented specifically for video playback use case.
+A slightly high amount at this time, but all good and small fixes.
 
-Right.
+- A PCM core fix that initializes the buffer properly for avoiding
+  information leaks; it is a long-standing minor problem, but good
+  to fix better now
+- A few ASoC core fixes for the init / cleanup ordering issues
+  that surfaced after the recent refactoring
+- Lots of SOF and topology-related fixes went in, as usual as such
+  hot topics
+- Several ASoC codec and platform-specific small fixes: wm89xx,
+  realtek, and max98090, AMD, Intel-SST
+- A fix for the previous incomplete regression of HD-audio, now
+  hitting Nvidia HDMI
+- A few HD-audio CA0132 codec fixes
 
-It seems to me, that you are optimizing for only one particular use
-case. How do you make sure to not increase energy consumption, for
-other use cases that would gain from running at the highest speed mode
-and "race to idle"?
+----------------------------------------------------------------
 
-I think you need to take a step back and think more general about this
-approach. More importantly, you need to provide more data to prove
-your approach, also according to suggestions from Dough.
+Amery Song (1):
+      ASoC: Intel: common: work-around incorrect ACPI HID for CML boards
 
-> >
-> >>
-> >>
-> >> Ram Prakash Gupta (6):
-> >>   mmc: core: Parse clk scaling dt entries
-> >>   mmc: core: Add core scaling support in driver
-> >>   mmc: core: Initialize clk scaling for mmc and SDCard
-> >>   mmc: core: Add debugfs entries for scaling support
-> >>   mmc: sdhci-msm: Add capability in platfrom host
-> >>   dt-bindings: mmc: sdhci-msm: Add clk scaling dt parameters
-> >>
-> >>  .../devicetree/bindings/mmc/sdhci-msm.txt          |  19 +
-> >
-> > I noticed that the DT patch was put last in the series, but the
-> > parsing is implemented in the first patch. Please flip this around. If
-> > you want to implement DT parsing of new bindings, please make sure to
-> > discuss the new bindings first.
->
-> I will update in next post.
->
-> >
-> >>  drivers/mmc/core/block.c                           |  19 +-
-> >>  drivers/mmc/core/core.c                            | 777
-> >> +++++++++++++++++++++
-> >>  drivers/mmc/core/core.h                            |  17 +
-> >>  drivers/mmc/core/debugfs.c                         |  90 +++
-> >>  drivers/mmc/core/host.c                            | 226 ++++++
-> >>  drivers/mmc/core/mmc.c                             | 246 ++++++-
-> >>  drivers/mmc/core/queue.c                           |   2 +
-> >>  drivers/mmc/core/sd.c                              |  84 ++-
-> >>  drivers/mmc/host/sdhci-msm.c                       |   2 +
-> >>  include/linux/mmc/card.h                           |   7 +
-> >>  include/linux/mmc/host.h                           |  66 ++
-> >>  12 files changed, 1550 insertions(+), 5 deletions(-)
-> >
-> > This is a lot of new code in the mmc core, which I would then need to
-> > maintain, of course. I have to admit, I am a bit concerned about that,
-> > so you have to convince me that there are good reasons for me to apply
-> > this.
-> >
-> > As I stated above, I think the approach looks quite questionable in
-> > general. And even if you can share measurement, that it improves the
-> > behaviour, I suspect (without a deeper code review) that some of the
-> > code better belongs in common block device layer.
->
->  From the collected power data, I see this as good reason to have this
-> feature in mmc driver as number is quite considerable.
->
-> For approach, it would be helpful if you share your inputs regarding
-> this
-> approach. And as you have stated, this can be further discussed after a
-> review from you.
+Curtis Malainey (3):
+      ASoC: core: Init pcm runtime work early to avoid warnings
+      ASoC: core: only flush inited work during free
+      ASoC: SOF: Intel: split cht and byt debug window sizes
 
-Besides my comments above, Doug has provided you with valuable
-feedback. Please follow up on that as well, if you still intend to
-pursue with this approach.
+Daniel Baluta (2):
+      ASoC: SOF: topology: Fix unload for SAI/ESAI
+      ASoC: simple-card: Don't create separate link when platform is present
 
-Kind regards
-Uffe
+Dragos Tarcatu (2):
+      ASoC: topology: Check return value for snd_soc_add_dai_link()
+      ASoC: topology: Check return value for soc_tplg_pcm_create()
+
+Hans de Goede (1):
+      ASoC: Intel: bytcr_rt5640: Update quirk for Teclast X89
+
+Karol Trzcinski (2):
+      ASoC: SOF: loader: snd_sof_fw_parse_ext_data log warning on unknown header
+      ASoC: SOF: loader: fix snd_sof_fw_parse_ext_data
+
+Keyon Jie (1):
+      ASoC: SOF: Intel: BYT: fix a copy/paste mistake in byt_dump()
+
+Michael Walle (1):
+      ASoC: wm8904: fix automatic sysclk configuration
+
+Shengjiu Wang (1):
+      ASoC: wm8962: fix lambda value
+
+Shuming Fan (1):
+      ASoC: rt5682: fix i2c arbitration lost issue
+
+Takashi Iwai (6):
+      ALSA: pcm: Avoid possible info leaks from PCM stream buffers
+      ALSA: hda/ca0132 - Keep power on during processing DSP response
+      ALSA: hda/ca0132 - Avoid endless loop
+      ALSA: hda/ca0132 - Fix work handling in delayed HP detection
+      ALSA: hda: Fix regression by strip mask fix
+      ALSA: hda - Downgrade error message for single-cmd fallback
+
+Tzung-Bi Shih (3):
+      ASoC: max98090: remove msleep in PLL unlocked workaround
+      ASoC: max98090: exit workaround earlier if PLL is locked
+      ASoC: max98090: fix possible race conditions
+
+Yu-Hsuan Hsu (1):
+      ASoC: AMD: Enable clk in startup intead of hw_params
+
+YueHaibing (2):
+      ASoC: rt5677: Fix build error without CONFIG_SPI
+      ASoC: Intel: sst: Add missing include <linux/io.h>
+
+---
+ include/sound/soc.h                               |  1 +
+ sound/core/pcm_native.c                           |  4 ++
+ sound/hda/hdac_stream.c                           |  4 +-
+ sound/pci/hda/hda_controller.c                    |  2 +-
+ sound/pci/hda/patch_ca0132.c                      | 23 ++++++++++--
+ sound/pci/hda/patch_hdmi.c                        |  2 +
+ sound/soc/amd/acp-da7219-max98357a.c              | 46 +++++++----------------
+ sound/soc/codecs/max98090.c                       | 30 ++++++++++-----
+ sound/soc/codecs/max98090.h                       |  1 -
+ sound/soc/codecs/rt5677-spi.h                     | 16 ++++++++
+ sound/soc/codecs/rt5682.c                         |  2 +
+ sound/soc/codecs/wm8904.c                         |  6 +++
+ sound/soc/codecs/wm8962.c                         |  4 +-
+ sound/soc/generic/simple-card.c                   |  6 +++
+ sound/soc/intel/atom/sst/sst.c                    |  1 +
+ sound/soc/intel/boards/bytcr_rt5640.c             |  8 +++-
+ sound/soc/intel/common/soc-acpi-intel-cml-match.c | 41 +++++++++++---------
+ sound/soc/soc-compress.c                          |  6 +--
+ sound/soc/soc-core.c                              | 13 ++++++-
+ sound/soc/soc-pcm.c                               | 11 ++----
+ sound/soc/soc-topology.c                          | 27 +++++++++----
+ sound/soc/sof/intel/byt.c                         | 25 ++++++------
+ sound/soc/sof/loader.c                            |  7 +++-
+ sound/soc/sof/topology.c                          |  4 +-
+ 24 files changed, 185 insertions(+), 105 deletions(-)
+
