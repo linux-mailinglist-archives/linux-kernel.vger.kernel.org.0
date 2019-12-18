@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71224124C11
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C481124C14
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 16:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbfLRPqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 10:46:52 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37599 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727363AbfLRPqr (ORCPT
+        id S1727460AbfLRPq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 10:46:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50235 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727370AbfLRPqs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 10:46:47 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f129so2427319wmf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:46:45 -0800 (PST)
+        Wed, 18 Dec 2019 10:46:48 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a5so2343992wmb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 07:46:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HS90VjGTEgPLwoS07O26nuJB7gxxS9CD1cnSI1IU66I=;
-        b=fDwnwLMtw3uOHsVJkA+Sxz35a/DRK14VjnfBHoxmw+sub14JCsrV3biDAx5fbrQ30n
-         bzbtOHe5126TPWkHhYQKOWlwX38XHenTKd7WCgPbXfmj2geKxFlou39QgO5VHTLUbA9e
-         70Si2uXmHxGHZEC9XAZZT04cy2SjuOAJrJfQb+gR3/LeMRF8RLdd7lJUNeiiPwqIYaS0
-         GQ3e3jiqyoH3xcO12avGq3Yt5/6OemFDqKKrxovlc2roINAJetJ0o6urhqLfpX/oBSup
-         4TF6u8afr1873ygcxCRYuey9XoBBSa25fpoijdK8HNqoXDcBjYGX8S2wgzYNT5Rikw4n
-         RYyA==
+        bh=HYTni/YaBkgYSQUn7nXBaoqEYGtf4zrlvskOsHha/TE=;
+        b=HHYoHbnhUWLFFtVMUKXFDrSEywXbuf608rVEp57miIwEjlpxnsvNbm1u8VukondcRV
+         9flKq3octdI14JuIpljxK99P8A6DckOYeaNUjPPleS+9+uaanNayErhrj30E+X2BnvQV
+         /liqc6+Ayuz45jEXIcrRRX40LKqfDEtzL7VL3/qr91f5UsWU7pA5ck0tVzdRX0LZuuOE
+         REf+UqGMpTVgTmvX3dsYnq1Uc4Ey5uvP7cGQrUFknZM/tKGsNGU8TvTt7wsX759bp77Z
+         EDjl2ocu9PjPbSP2reodNoZ6Ju/FSLjVQlFV7ZeC8AW1GAp63Km+K0Qu58aL+MQpXjnC
+         XD9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HS90VjGTEgPLwoS07O26nuJB7gxxS9CD1cnSI1IU66I=;
-        b=Vu3MWGXug/sssX5w+qT30YjKJ26DLoWCaEXk383Rnmvioo34SCmbcZ7yl8DD05MEXv
-         BvTTqSqHRQEYR6uH4oEVGFCL5UVDfZaWgc7OfZR5Xpej6yaGYrnPiXRaITthD1qWrkF3
-         ZTGCxXP0e5YQxFd7O/lBghk3qsRTrZGeptJcYNNW/lX/Tsp9TQICB7kt2Ie3NAV1NEwE
-         qOxt4lLJSVoRlMYdEpksTYVWQ1oxm3FvfVfoNBgTv02jgXEvZ6m7zWz7SMiAB2u/gM8B
-         4VuO9UmCAysGxf6DoADcOCjVCXWL47uEsL+IeIw0INAxEfaNzsnEJcJeN+pby9UJlN5E
-         fwDA==
-X-Gm-Message-State: APjAAAW2fsEpcjg1g7E13G7cBcjfHAVouD0VQhG+8/DJR2IC18chBK+n
-        H58Ut4/nb+kMFYK/jhLQX98+Ig==
-X-Google-Smtp-Source: APXvYqzMxHZU54rjVdvdQilWUCjDI7zSWqhv9fM1JYbrPdMsusPqlZYyBJj6ngYbYwqGl/RqMDtDfw==
-X-Received: by 2002:a1c:5419:: with SMTP id i25mr4119475wmb.150.1576684004437;
-        Wed, 18 Dec 2019 07:46:44 -0800 (PST)
+        bh=HYTni/YaBkgYSQUn7nXBaoqEYGtf4zrlvskOsHha/TE=;
+        b=BodJnVF/VjPD3vMzXIjEe4yaV+cZr8YcFNb45luEy2kSGvDM0TaS+BGXLbJOd5xc0z
+         PH6reivEZvDBJGZ6IZKmxpx5j13kA9FsNm9R/0SI6bf6XkfmO0LWRQITbBXNM3453nZx
+         syljrvV5k1kcwMUiF58sTsPwLmwxdbvlUW3Trkb+vdVECilEs2nkVCXMSer5tsABqA4l
+         SCGm1HlD+FXWznTbtK2eEyGYmsMzHgywOHdXVIY1NHV4+IQUwJWE5dp6j0cVl1el32cF
+         gVxfnPc4BDEv+1rBRrfdxgLT/j0ebVriYTdPacu3vhhUJ2BTNs4NQt20GESSEyzfOEBB
+         xN/w==
+X-Gm-Message-State: APjAAAVw0SuG1xLnD8hrlh0VvoaUtm6Mz8soqpg35ffJ3a2h2rv0XvR6
+        L/LfC7p6SjewbIaCEbEYkCTBmg==
+X-Google-Smtp-Source: APXvYqxa+ljjpYhoTTPolZyT1O82GeyIErtwIxBIE6ffnaCrj6aZtlCicLWADM3U6oPJnQUwthrdUQ==
+X-Received: by 2002:a1c:9cce:: with SMTP id f197mr3800521wme.133.1576684005160;
+        Wed, 18 Dec 2019 07:46:45 -0800 (PST)
 Received: from bender.baylibre.local (lfbn-nic-1-505-157.w90-116.abo.wanadoo.fr. [90.116.92.157])
-        by smtp.gmail.com with ESMTPSA id x1sm2891492wru.50.2019.12.18.07.46.43
+        by smtp.gmail.com with ESMTPSA id x1sm2891492wru.50.2019.12.18.07.46.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 07:46:43 -0800 (PST)
+        Wed, 18 Dec 2019 07:46:44 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         jonas@kwiboo.se, jernej.skrabec@siol.net,
@@ -52,9 +52,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/10] drm/bridge: synopsys: dw-hdmi: allow ycbcr420 modes for >= 0x200a
-Date:   Wed, 18 Dec 2019 16:46:31 +0100
-Message-Id: <20191218154637.17509-5-narmstrong@baylibre.com>
+Subject: [PATCH v3 05/10] drm/meson: venc: make drm_display_mode const
+Date:   Wed, 18 Dec 2019 16:46:32 +0100
+Message-Id: <20191218154637.17509-6-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20191218154637.17509-1-narmstrong@baylibre.com>
 References: <20191218154637.17509-1-narmstrong@baylibre.com>
@@ -65,46 +65,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now the DW-HDMI Controller supports the HDMI2.0 modes, enable support
-for these modes in the connector if the platform supports them.
-We limit these modes to DW-HDMI IP version >= 0x200a which
-are designed to support HDMI2.0 display modes.
+Before switching to bridge funcs, make sure drm_display_mode is passed
+as const to the venc functions.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
- include/drm/bridge/dw_hdmi.h              | 1 +
- 2 files changed, 7 insertions(+)
+ drivers/gpu/drm/meson/meson_venc.c | 2 +-
+ drivers/gpu/drm/meson/meson_venc.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 8c1f7e5e6698..bb87b87c752e 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -3189,6 +3189,12 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	hdmi->bridge.of_node = pdev->dev.of_node;
- #endif
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 4efd7864d5bf..a9ab78970bfe 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -946,7 +946,7 @@ bool meson_venc_hdmi_venc_repeat(int vic)
+ EXPORT_SYMBOL_GPL(meson_venc_hdmi_venc_repeat);
  
-+	if (hdmi->version >= 0x200a)
-+		hdmi->connector.ycbcr_420_allowed =
-+			hdmi->plat_data->ycbcr_420_allowed;
-+	else
-+		hdmi->connector.ycbcr_420_allowed = false;
-+
- 	memset(&pdevinfo, 0, sizeof(pdevinfo));
- 	pdevinfo.parent = dev;
- 	pdevinfo.id = PLATFORM_DEVID_AUTO;
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index fbf3812c4326..19e30cdd35bf 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -127,6 +127,7 @@ struct dw_hdmi_plat_data {
- 	unsigned long input_bus_format;
- 	unsigned long input_bus_encoding;
- 	bool use_drm_infoframe;
-+	bool ycbcr_420_allowed;
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+-			      struct drm_display_mode *mode)
++			      const struct drm_display_mode *mode)
+ {
+ 	union meson_hdmi_venc_mode *vmode = NULL;
+ 	union meson_hdmi_venc_mode vmode_dmt;
+diff --git a/drivers/gpu/drm/meson/meson_venc.h b/drivers/gpu/drm/meson/meson_venc.h
+index 576768bdd08d..1abdcbdf51c0 100644
+--- a/drivers/gpu/drm/meson/meson_venc.h
++++ b/drivers/gpu/drm/meson/meson_venc.h
+@@ -60,7 +60,7 @@ extern struct meson_cvbs_enci_mode meson_cvbs_enci_ntsc;
+ void meson_venci_cvbs_mode_set(struct meson_drm *priv,
+ 			       struct meson_cvbs_enci_mode *mode);
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+-			      struct drm_display_mode *mode);
++			      const struct drm_display_mode *mode);
+ unsigned int meson_venci_get_field(struct meson_drm *priv);
  
- 	/* Vendor PHY support */
- 	const struct dw_hdmi_phy_ops *phy_ops;
+ void meson_venc_enable_vsync(struct meson_drm *priv);
 -- 
 2.22.0
 
