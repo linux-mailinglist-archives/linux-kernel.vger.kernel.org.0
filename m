@@ -2,68 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 014A8123F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 06:57:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CABB5123F5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 07:00:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725991AbfLRF51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 00:57:27 -0500
-Received: from mail-m972.mail.163.com ([123.126.97.2]:35158 "EHLO
-        mail-m972.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfLRF51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 00:57:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-        s=s110527; h=From:Subject:Date:Message-Id; bh=BulQTA6G1N4TWHEAvp
-        OsyuqFrzbeQQmLPGWhFy4BohA=; b=XRJUCRbB0X3DC2/ZWr5mhVoutDzXnQaiEt
-        WgrdPoK52rCc6FT37BGdo8Hhrvn2tMTeTA0OnEvtoK44npKsg7WF10/hfhZQLKBG
-        CzR4vDrxolydO3b0qEmiKwWiYHEOoW0U4F+dPnzZ3csAD9CqAV4qYCXI1CvXqGqy
-        /IL6HA/1g=
-Received: from localhost.localdomain (unknown [218.106.182.184])
-        by smtp2 (Coremail) with SMTP id GtxpCgBnMzqbv_ldmP0WAA--.443S3;
-        Wed, 18 Dec 2019 13:57:01 +0800 (CST)
-From:   Xidong Wang <wangxidong_97@163.com>
-To:     Xidong Wang <wangxidong_97@163.com>,
-        Marc Dietrich <marvin24@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] staging: nvec: check return value
-Date:   Wed, 18 Dec 2019 13:56:38 +0800
-Message-Id: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
+        id S1726656AbfLRGAs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 01:00:48 -0500
+Received: from smtp25.cstnet.cn ([159.226.251.25]:34570 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725930AbfLRGAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 01:00:47 -0500
+Received: from localhost.localdomain (unknown [159.226.5.100])
+        by APP-05 (Coremail) with SMTP id zQCowACHcKBnwPldBQYSAw--.4719S3;
+        Wed, 18 Dec 2019 14:00:09 +0800 (CST)
+From:   Xu Wang <vulab@iscas.ac.cn>
+To:     sschaeck@cisco.com, bp@alien8.de, mchehab@kernel.org,
+        tony.luck@intel.com, james.morse@arm.com, rrichter@marvell.com,
+        joel@jms.id.au, andrew@aj.id.au
+Cc:     linux-edac@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] EDAC: aspeed: Remove unneeded semicolon
+Date:   Wed, 18 Dec 2019 06:00:06 +0000
+Message-Id: <1576648806-1114-1-git-send-email-vulab@iscas.ac.cn>
 X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: GtxpCgBnMzqbv_ldmP0WAA--.443S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtryxWw1DXw4Uuw4DJr4Utwb_yoW3ZFX_Cw
-        savw1xZrZrArn7Ar4qywn8ArW29rWfWrs2qr4qg392vayUur4Sv3yDXr1DC3yUW3yxGrW3
-        uFyqkr4ayr13ujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjFAp7UUUUU==
-X-Originating-IP: [218.106.182.184]
-X-CM-SenderInfo: pzdqw5xlgr0wrbzxqiywtou0bp/1tbi8A2P81uoWGCDAwAAsK
+X-CM-TRANSID: zQCowACHcKBnwPldBQYSAw--.4719S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrZF45ZrWktFWkGr1fGr1UGFg_yoWftrb_CF
+        40kF4fWryDtr1xC397AwnrAF9IvFyDu3W0gF92ga4akF1UXr17XryDuFWUWr4fu3yUuFyD
+        Gr1UtrW7uw47KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb4AYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+        C2z280aVCY1x0267AKxVWxJr0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+        F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
+        4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kI
+        c2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+        v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+        c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+        0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_
+        Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8fwID
+        UUUUU==
+X-Originating-IP: [159.226.5.100]
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBAEIA102SzegqQAAsQ
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In nvec_kbd_probe(), the return value of devm_input_allocate_device()
-should be checked before it is used.
+Remove unneeded semicolon reported by coccinelle.
 
-Signed-off-by: Xidong Wang <wangxidong_97@163.com>
+Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
 ---
- drivers/staging/nvec/nvec_kbd.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/edac/aspeed_edac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
-index 01dbb66..386d619 100644
---- a/drivers/staging/nvec/nvec_kbd.c
-+++ b/drivers/staging/nvec/nvec_kbd.c
-@@ -123,6 +123,8 @@ static int nvec_kbd_probe(struct platform_device *pdev)
- 		keycodes[j++] = extcode_tab_us102[i];
+diff --git a/drivers/edac/aspeed_edac.c b/drivers/edac/aspeed_edac.c
+index 09a9e3d..b194658b 100644
+--- a/drivers/edac/aspeed_edac.c
++++ b/drivers/edac/aspeed_edac.c
+@@ -243,7 +243,7 @@ static int init_csrows(struct mem_ctl_info *mci)
+ 	if (!np) {
+ 		dev_err(mci->pdev, "dt: missing /memory node\n");
+ 		return -ENODEV;
+-	};
++	}
  
- 	idev = devm_input_allocate_device(&pdev->dev);
-+	if (!idev)
-+		return -ENOMEM;
- 	idev->name = "nvec keyboard";
- 	idev->phys = "nvec";
- 	idev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP) | BIT_MASK(EV_LED);
+ 	rc = of_address_to_resource(np, 0, &r);
+ 
+@@ -252,7 +252,7 @@ static int init_csrows(struct mem_ctl_info *mci)
+ 	if (rc) {
+ 		dev_err(mci->pdev, "dt: failed requesting resource for /memory node\n");
+ 		return rc;
+-	};
++	}
+ 
+ 	dev_dbg(mci->pdev, "dt: /memory node resources: first page r.start=0x%x, resource_size=0x%x, PAGE_SHIFT macro=0x%x\n",
+ 		r.start, resource_size(&r), PAGE_SHIFT);
 -- 
 2.7.4
 
