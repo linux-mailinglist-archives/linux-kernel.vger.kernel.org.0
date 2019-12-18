@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A3B01253C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:49:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00ACD1253D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 21:50:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbfLRUtU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 15:49:20 -0500
-Received: from mail.windriver.com ([147.11.1.11]:47827 "EHLO
+        id S1727510AbfLRUtS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 15:49:18 -0500
+Received: from mail.windriver.com ([147.11.1.11]:47825 "EHLO
         mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727395AbfLRUtR (ORCPT
+        with ESMTP id S1727337AbfLRUtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 18 Dec 2019 15:49:17 -0500
 Received: from yow-cube1.wrs.com (yow-cube1.wrs.com [128.224.56.98])
-        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0iY000214;
-        Wed, 18 Dec 2019 12:49:10 -0800 (PST)
+        by mail.windriver.com (8.15.2/8.15.2) with ESMTP id xBIKn0iZ000214;
+        Wed, 18 Dec 2019 12:49:11 -0800 (PST)
 From:   Paul Gortmaker <paul.gortmaker@windriver.com>
 To:     Lee Jones <lee.jones@linaro.org>
 Cc:     linux-kernel@vger.kernel.org,
         Paul Gortmaker <paul.gortmaker@windriver.com>,
         Ian Molton <spyro@f2s.com>
-Subject: [PATCH 06/18] mfd: tc6387xb: Make it explicitly non-modular
-Date:   Wed, 18 Dec 2019 15:48:45 -0500
-Message-Id: <1576702137-25905-7-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 07/18] mfd: tc6393xb: Make it explicitly non-modular
+Date:   Wed, 18 Dec 2019 15:48:46 -0500
+Message-Id: <1576702137-25905-8-git-send-email-paul.gortmaker@windriver.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
 References: <1576702137-25905-1-git-send-email-paul.gortmaker@windriver.com>
@@ -33,8 +33,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The Kconfig currently controlling compilation of this code is:
 
-drivers/mfd/Kconfig:config MFD_TC6387XB
-drivers/mfd/Kconfig:    bool "Toshiba TC6387XB"
+drivers/mfd/Kconfig:config MFD_TC6393XB
+drivers/mfd/Kconfig:    bool "Toshiba TC6393XB"
 
 ...meaning that it currently is not being built as a module by anyone.
 
@@ -45,9 +45,8 @@ We explicitly disallow a driver unbind, since that doesn't have a
 sensible use case anyway, and it allows us to drop the ".remove"
 code for non-modular drivers.
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Since module_init was not in use by this code, the init ordering
+remains unchanged with this commit.
 
 We also delete the MODULE_LICENSE tag etc. since all that information
 is already contained at the top of the file in the comments.
@@ -56,61 +55,87 @@ Cc: Lee Jones <lee.jones@linaro.org>
 Cc: Ian Molton <spyro@f2s.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
- drivers/mfd/tc6387xb.c | 30 ++++--------------------------
- 1 file changed, 4 insertions(+), 26 deletions(-)
+ drivers/mfd/tc6393xb.c | 43 ++-----------------------------------------
+ 1 file changed, 2 insertions(+), 41 deletions(-)
 
-diff --git a/drivers/mfd/tc6387xb.c b/drivers/mfd/tc6387xb.c
-index c66a701ab21c..aa2eada4bf30 100644
---- a/drivers/mfd/tc6387xb.c
-+++ b/drivers/mfd/tc6387xb.c
-@@ -6,7 +6,7 @@
-  * This file contains TC6387XB base support.
+diff --git a/drivers/mfd/tc6393xb.c b/drivers/mfd/tc6393xb.c
+index 05d5059ca203..55f6ffb35e7f 100644
+--- a/drivers/mfd/tc6393xb.c
++++ b/drivers/mfd/tc6393xb.c
+@@ -12,7 +12,7 @@
   */
  
+ #include <linux/kernel.h>
 -#include <linux/module.h>
 +#include <linux/init.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
  #include <linux/platform_device.h>
- #include <linux/clk.h>
- #include <linux/err.h>
-@@ -199,35 +199,13 @@ static int tc6387xb_probe(struct platform_device *dev)
+@@ -730,32 +730,6 @@ static int tc6393xb_probe(struct platform_device *dev)
  	return ret;
  }
  
--static int tc6387xb_remove(struct platform_device *dev)
+-static int tc6393xb_remove(struct platform_device *dev)
 -{
--	struct tc6387xb *tc6387xb = platform_get_drvdata(dev);
+-	struct tc6393xb_platform_data *tcpd = dev_get_platdata(&dev->dev);
+-	struct tc6393xb *tc6393xb = platform_get_drvdata(dev);
+-	int ret;
 -
 -	mfd_remove_devices(&dev->dev);
--	iounmap(tc6387xb->scr);
--	release_resource(&tc6387xb->rscr);
--	clk_disable_unprepare(tc6387xb->clk32k);
--	clk_put(tc6387xb->clk32k);
--	kfree(tc6387xb);
 -
--	return 0;
+-	if (tcpd->teardown)
+-		tcpd->teardown(dev);
+-
+-	tc6393xb_detach_irq(dev);
+-
+-	if (tc6393xb->gpio.base != -1)
+-		gpiochip_remove(&tc6393xb->gpio);
+-
+-	ret = tcpd->disable(dev);
+-	clk_disable_unprepare(tc6393xb->clk);
+-	iounmap(tc6393xb->scr);
+-	release_resource(&tc6393xb->rscr);
+-	clk_put(tc6393xb->clk);
+-	kfree(tc6393xb);
+-
+-	return ret;
 -}
 -
--
- static struct platform_driver tc6387xb_platform_driver = {
+ #ifdef CONFIG_PM
+ static int tc6393xb_suspend(struct platform_device *dev, pm_message_t state)
+ {
+@@ -826,12 +800,12 @@ static int tc6393xb_resume(struct platform_device *dev)
+ 
+ static struct platform_driver tc6393xb_driver = {
+ 	.probe = tc6393xb_probe,
+-	.remove = tc6393xb_remove,
+ 	.suspend = tc6393xb_suspend,
+ 	.resume = tc6393xb_resume,
+ 
  	.driver = {
--		.name		= "tc6387xb",
-+		.name			= "tc6387xb",
-+		.suppress_bind_attrs	= true,
+ 		.name = "tc6393xb",
++		.suppress_bind_attrs = true,
  	},
- 	.probe		= tc6387xb_probe,
--	.remove		= tc6387xb_remove,
- 	.suspend        = tc6387xb_suspend,
- 	.resume         = tc6387xb_resume,
  };
+ 
+@@ -839,17 +813,4 @@ static int __init tc6393xb_init(void)
+ {
+ 	return platform_driver_register(&tc6393xb_driver);
+ }
 -
--module_platform_driver(tc6387xb_platform_driver);
+-static void __exit tc6393xb_exit(void)
+-{
+-	platform_driver_unregister(&tc6393xb_driver);
+-}
 -
--MODULE_DESCRIPTION("Toshiba TC6387XB core driver");
+ subsys_initcall(tc6393xb_init);
+-module_exit(tc6393xb_exit);
+-
 -MODULE_LICENSE("GPL v2");
--MODULE_AUTHOR("Ian Molton");
--MODULE_ALIAS("platform:tc6387xb");
+-MODULE_AUTHOR("Ian Molton, Dmitry Baryshkov and Dirk Opfer");
+-MODULE_DESCRIPTION("tc6393xb Toshiba Mobile IO Controller");
+-MODULE_ALIAS("platform:tc6393xb");
 -
-+builtin_platform_driver(tc6387xb_platform_driver);
 -- 
 2.7.4
 
