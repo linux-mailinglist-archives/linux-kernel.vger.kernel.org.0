@@ -2,164 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53A55125085
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:24:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2877125089
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 19:25:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfLRSYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 13:24:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727024AbfLRSYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:24:16 -0500
-Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        id S1727452AbfLRSZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 13:25:22 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:55702 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727175AbfLRSZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 13:25:21 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576693520; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=wbgekAz2uN18H2Y7xQKuUSB/FojZz1qn3faWVvqfdzk=;
+ b=j7xcLRvQd+ISbSstuBESglzPDWQHwtHdspHzhraDXuc5MIiusXcy04APEActCFc+dIVmIcTD
+ S6EwLSTNgQOzdylTlKYJMQycfWQheI8cBBxkFH4vZKwsahQRHskExvPLEmvKV4ZrsWh3U7C/
+ f0pHj/cb2xoq1K46sSX9Khduxeg=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfa6f0d.7fd31355f148-smtp-out-n01;
+ Wed, 18 Dec 2019 18:25:17 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id D85B8C447A3; Wed, 18 Dec 2019 18:25:17 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
+        MISSING_MID,SPF_NONE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46E3520716;
-        Wed, 18 Dec 2019 18:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576693455;
-        bh=xTs4fz9satT0Xu96X1ueuV9XiuG4syoDhNorBGtLyUs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=tkguOyQ64564f3c37kjCwxua1Ypf6qPJwTI5eLqhIxnBnUH350+bWLCeO+dAtYw1s
-         PuRTbEDKIdBue5R2+L7EsiPKE0NcG2YGkSvygj+opL1Ri7TTw+LDlnkRmuRnkVY97c
-         4D3/CLBaqMyUG/CpfcwKWy5ya2Ul4h1ccwbPkgHM=
-Date:   Wed, 18 Dec 2019 12:24:12 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     jamessewart@arista.com, logang@deltatee.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] pci: fix a -Wtype-limits compilation warning
-Message-ID: <20191218182412.GA115305@google.com>
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0AB15C433A2;
+        Wed, 18 Dec 2019 18:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0AB15C433A2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218170004.5297-1-cai@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] mt76: fix LED link time failure
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20191216131902.3251040-1-arnd@arndb.de>
+References: <20191216131902.3251040-1-arnd@arndb.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Felix Fietkau <nbd@nbd.name>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Roy Luo <royluo@google.com>,
+        Stanislaw Gruszka <sgruszka@redhat.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20191218182517.D85B8C447A3@smtp.codeaurora.org>
+Date:   Wed, 18 Dec 2019 18:25:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 12:00:04PM -0500, Qian Cai wrote:
-> The commit a7d06153eea2 ("PCI: Fix pci_add_dma_alias() bitmask size")
-> introduced a compilation warning and a potential infinite loop because
-> it is no longer possible to be self-terminated as u8 is always less than
-> 256,
+Arnd Bergmann <arnd@arndb.de> wrote:
+
+> The mt76_led_cleanup() function is called unconditionally, which
+> leads to a link error when CONFIG_LEDS is a loadable module or
+> disabled but mt76 is built-in:
 > 
-> In file included from ./include/linux/kernel.h:12,
->                  from ./include/asm-generic/bug.h:19,
->                  from ./arch/x86/include/asm/bug.h:83,
->                  from ./include/linux/bug.h:5,
->                  from ./include/linux/jump_label.h:250,
->                  from ./arch/x86/include/asm/string_64.h:6,
->                  from ./arch/x86/include/asm/string.h:5,
->                  from ./include/linux/string.h:20,
->                  from ./include/linux/uuid.h:12,
->                  from ./include/linux/mod_devicetable.h:13,
->                  from ./include/linux/pci.h:27,
->                  from drivers/pci/search.c:11:
-> drivers/pci/search.c: In function 'pci_for_each_dma_alias':
-> ./include/linux/bitops.h:30:13: warning: comparison is always true due
-> to limited range of data type [-Wtype-limits]
->        (bit) < (size);     \
->              ^
-> drivers/pci/search.c:46:3: note: in expansion of macro 'for_each_set_bit'
->    for_each_set_bit(devfn, pdev->dma_alias_mask, MAX_NR_DEVFNS) {
+> drivers/net/wireless/mediatek/mt76/mac80211.o: In function `mt76_unregister_device':
+> mac80211.c:(.text+0x2ac): undefined reference to `led_classdev_unregister'
 > 
-> Fixed it by using u16 for "devfn" in this occasion.
-
-Ugh, that is pretty subtle!  Would you mind if we used "unsigned int"
-instead of "u16"?  "u16" makes it look like just a mistake -- somebody
-is likely to come along and say devfn only needs "u8" and try to
-change it back.  The same might happen with "unsigned int", but at
-least it doesn't look like it was chosen specifically to fit a devfn.
-
-Provisional patch below.
-
-> Fixes: a7d06153eea2 ("PCI: Fix pci_add_dma_alias() bitmask size")
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  drivers/pci/search.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Use the same trick that is guarding the registration, using an
+> IS_ENABLED() check for the CONFIG_MT76_LEDS symbol that indicates
+> whether LEDs can be used or not.
 > 
-> diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-> index 9e4dfae47252..42bc44d0e681 100644
-> --- a/drivers/pci/search.c
-> +++ b/drivers/pci/search.c
-> @@ -41,7 +41,7 @@ int pci_for_each_dma_alias(struct pci_dev *pdev,
->  	 * DMA, iterate over that too.
->  	 */
->  	if (unlikely(pdev->dma_alias_mask)) {
-> -		u8 devfn;
-> +		u16 devfn;
->  
->  		for_each_set_bit(devfn, pdev->dma_alias_mask, MAX_NR_DEVFNS) {
->  			ret = fn(pdev, PCI_DEVID(pdev->bus->number, devfn),
-> -- 
-> 2.21.0 (Apple Git-122.2)
+> Fixes: 36f7e2b2bb1d ("mt76: do not use devm API for led classdev")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Felix Fietkau <nbd@nbd.name>
 
-commit f8bf2aeb651b ("PCI: Fix pci_add_dma_alias() bitmask size")
-Author: James Sewart <jamessewart@arista.com>
-Date:   Tue Dec 10 15:51:33 2019 -0600
+Patch applied to wireless-drivers.git, thanks.
 
-    PCI: Fix pci_add_dma_alias() bitmask size
-    
-    The number of possible devfns is 256, but pci_add_dma_alias() allocated a
-    bitmap of size 255.  Fix this off-by-one error.
-    
-    This fixes commits 338c3149a221 ("PCI: Add support for multiple DMA
-    aliases") and c6635792737b ("PCI: Allocate dma_alias_mask with
-    bitmap_zalloc()"), but I doubt it was possible to see a problem because
-    it takes 4 64-bit longs (or 8 32-bit longs) to hold 255 bits, and
-    bitmap_zalloc() doesn't save the 255-bit size anywhere.
-    
-    [bhelgaas: commit log, move #define to drivers/pci/pci.h, include loop
-    limit fix from Qian Cai:
-    https://lore.kernel.org/r/20191218170004.5297-1-cai@lca.pw]
-    Signed-off-by: James Sewart <jamessewart@arista.com>
-    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-    Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+d68f4e43a46f mt76: fix LED link time failure
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e87196cc1a7f..7b5fa2eabe09 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6017,7 +6017,7 @@ EXPORT_SYMBOL_GPL(pci_pr3_present);
- void pci_add_dma_alias(struct pci_dev *dev, u8 devfn)
- {
- 	if (!dev->dma_alias_mask)
--		dev->dma_alias_mask = bitmap_zalloc(U8_MAX, GFP_KERNEL);
-+		dev->dma_alias_mask = bitmap_zalloc(MAX_NR_DEVFNS, GFP_KERNEL);
- 	if (!dev->dma_alias_mask) {
- 		pci_warn(dev, "Unable to allocate DMA alias mask\n");
- 		return;
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index a0a53bd05a0b..6394e7746fb5 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -4,6 +4,9 @@
- 
- #include <linux/pci.h>
- 
-+/* Number of possible devfns: 0.0 to 1f.7 inclusive */
-+#define MAX_NR_DEVFNS 256
-+
- #define PCI_FIND_CAP_TTL	48
- 
- #define PCI_VSEC_ID_INTEL_TBT	0x1234	/* Thunderbolt */
-diff --git a/drivers/pci/search.c b/drivers/pci/search.c
-index bade14002fd8..e4dbdef5aef0 100644
---- a/drivers/pci/search.c
-+++ b/drivers/pci/search.c
-@@ -41,9 +41,9 @@ int pci_for_each_dma_alias(struct pci_dev *pdev,
- 	 * DMA, iterate over that too.
- 	 */
- 	if (unlikely(pdev->dma_alias_mask)) {
--		u8 devfn;
-+		unsigned int devfn;
- 
--		for_each_set_bit(devfn, pdev->dma_alias_mask, U8_MAX) {
-+		for_each_set_bit(devfn, pdev->dma_alias_mask, MAX_NR_DEVFNS) {
- 			ret = fn(pdev, PCI_DEVID(pdev->bus->number, devfn),
- 				 data);
- 			if (ret)
+-- 
+https://patchwork.kernel.org/patch/11294195/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
