@@ -2,107 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B83EA124A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:49:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AE50124A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:49:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfLROtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:49:09 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46675 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727135AbfLROtC (ORCPT
+        id S1727323AbfLROs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:48:59 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:44000 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726856AbfLROs6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:49:02 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBIEmKDJ016029;
-        Wed, 18 Dec 2019 15:48:52 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=STMicroelectronics;
- bh=sYclvs3hTaLkH1aPSdNgdAO6bhgIGop8dGr694cnD4I=;
- b=pTC9JZ6Cyw+S37W3ygLPbq+RoMpDWmjqDCHeHelBPnPd3aTIMFoiGyZk6Z6+yjJiKF35
- F+aa5sUao/YmRhzWaCeeWqgAWKVQr/3BrguNkBx3vYzXjEwNaL8xslxTXPCCBVBlZzn5
- QIkTQvmXMKSXFNp10Gge/jZ1PWksN50dAWqQqaqVLDHxOzclr7iFi3Kc6Weg8McLe1mn
- aLMGNz0KJf3J/7SyHBoBgM5xb0767/JuJuoM9xLcT1pBK6ITs6wMCd87OHdvpwzqKWQv
- O0BUN5fvYJg7U2XW+aJyYFF6lGGAX8VDxlMFsj2cOvmxPogA6y6unkozrUWf2Cwj2QX8 dw== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2wvpd1mv2a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 18 Dec 2019 15:48:52 +0100
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3EF70100039;
-        Wed, 18 Dec 2019 15:48:48 +0100 (CET)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 33E11207547;
-        Wed, 18 Dec 2019 15:48:48 +0100 (CET)
-Received: from localhost (10.75.127.48) by SFHDAG3NODE3.st.com (10.75.127.9)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 18 Dec 2019 15:48:47
- +0100
-From:   Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH v2 3/3] ARM: dts: stm32: fix dma controller node name on stm32mp157c
-Date:   Wed, 18 Dec 2019 15:48:44 +0100
-Message-ID: <20191218144844.7481-4-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20191218144844.7481-1-benjamin.gaignard@st.com>
-References: <20191218144844.7481-1-benjamin.gaignard@st.com>
+        Wed, 18 Dec 2019 09:48:58 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1ihadC-0002xn-Ku; Wed, 18 Dec 2019 15:48:54 +0100
+To:     Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH v2 22/36] irqchip/gic-v4.1: Advertise support v4.1 to KVM
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG3NODE2.st.com (10.75.127.8) To SFHDAG3NODE3.st.com
- (10.75.127.9)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-18_04:2019-12-17,2019-12-18 signatures=0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 18 Dec 2019 14:48:54 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Jayachandran C <jnair@marvell.com>,
+        Robert Richter <rrichter@marvell.com>
+In-Reply-To: <14462a79-fc0b-b8e5-115a-dfb505351acb@huawei.com>
+References: <20191027144234.8395-1-maz@kernel.org>
+ <20191027144234.8395-23-maz@kernel.org>
+ <14462a79-fc0b-b8e5-115a-dfb505351acb@huawei.com>
+Message-ID: <c9f8f2590662cfe9e28e90cf8f79e708@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modify dma controller nodes name to fit with the standard naming.
+On 2019-11-01 12:55, Zenghui Yu wrote:
+> Hi Marc,
+>
+> On 2019/10/27 22:42, Marc Zyngier wrote:
+>> Tell KVM that we support v4.1. Nothing uses this information so far.
+>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+>> ---
+>>   drivers/irqchip/irq-gic-v3-its.c       | 9 ++++++++-
+>>   drivers/irqchip/irq-gic-v3.c           | 1 +
+>>   include/linux/irqchip/arm-gic-common.h | 2 ++
+>>   3 files changed, 11 insertions(+), 1 deletion(-)
+>> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
+>> b/drivers/irqchip/irq-gic-v3-its.c
+>> index df259e202482..6483f8051b3e 100644
+>> --- a/drivers/irqchip/irq-gic-v3-its.c
+>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+>> @@ -4580,6 +4580,7 @@ int __init its_init(struct fwnode_handle 
+>> *handle, struct rdists *rdists,
+>>   	struct device_node *of_node;
+>>   	struct its_node *its;
+>>   	bool has_v4 = false;
+>> +	bool has_v4_1 = false;
+>>   	int err;
+>>
+>>   	gic_rdists = rdists;
+>> @@ -4600,8 +4601,14 @@ int __init its_init(struct fwnode_handle 
+>> *handle, struct rdists *rdists,
+>>   	if (err)
+>>   		return err;
+>>   -	list_for_each_entry(its, &its_nodes, entry)
+>> +	list_for_each_entry(its, &its_nodes, entry) {
+>>   		has_v4 |= is_v4(its);
+>> +		has_v4_1 |= is_v4_1(its);
+>> +	}
+>> +
+>> +	/* Don't bother with inconsistent systems */
+>> +	if (WARN_ON(!has_v4_1 && rdists->has_rvpeid))
+>> +		rdists->has_rvpeid = false;
+>>
+>>   	if (has_v4 & rdists->has_vlpis) {
+>>   		if (its_init_vpe_domain() ||
+>> diff --git a/drivers/irqchip/irq-gic-v3.c 
+>> b/drivers/irqchip/irq-gic-v3.c
+>> index f0d33ac64a99..94dddfb21076 100644
+>> --- a/drivers/irqchip/irq-gic-v3.c
+>> +++ b/drivers/irqchip/irq-gic-v3.c
+>> @@ -1758,6 +1758,7 @@ static void __init 
+>> gic_of_setup_kvm_info(struct device_node *node)
+>>   		gic_v3_kvm_info.vcpu = r;
+>>
+>>   	gic_v3_kvm_info.has_v4 = gic_data.rdists.has_vlpis;
+>> +	gic_v3_kvm_info.has_v4_1 = gic_data.rdists.has_rvpeid;
+>
+> Also set gic_v3_kvm_info.has_v4_1 in gic_acpi_setup_kvm_info().
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
-version 2:
-- rebased on top of stm32-next after DT diversity patches
-  
- arch/arm/boot/dts/stm32mp151.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Indeed. Now fixed.
 
-diff --git a/arch/arm/boot/dts/stm32mp151.dtsi b/arch/arm/boot/dts/stm32mp151.dtsi
-index b0f3fa564967..3dd570b10181 100644
---- a/arch/arm/boot/dts/stm32mp151.dtsi
-+++ b/arch/arm/boot/dts/stm32mp151.dtsi
-@@ -947,7 +947,7 @@
- 			};
- 		};
- 
--		dma1: dma@48000000 {
-+		dma1: dma-controller@48000000 {
- 			compatible = "st,stm32-dma";
- 			reg = <0x48000000 0x400>;
- 			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-@@ -964,7 +964,7 @@
- 			dma-requests = <8>;
- 		};
- 
--		dma2: dma@48001000 {
-+		dma2: dma-controller@48001000 {
- 			compatible = "st,stm32-dma";
- 			reg = <0x48001000 0x400>;
- 			interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
-@@ -1275,7 +1275,7 @@
- 			status = "disabled";
- 		};
- 
--		mdma1: dma@58000000 {
-+		mdma1: dma-controller@58000000 {
- 			compatible = "st,stm32h7-mdma";
- 			reg = <0x58000000 0x1000>;
- 			interrupts = <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>;
+Thanks,
+
+         M.
 -- 
-2.15.0
-
+Jazz is not dead. It just smells funny...
