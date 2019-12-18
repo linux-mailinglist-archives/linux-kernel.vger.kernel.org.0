@@ -2,114 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6AE50124A1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:49:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCBA4124A2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 15:49:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbfLROs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 09:48:59 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:44000 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726856AbfLROs6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 09:48:58 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1ihadC-0002xn-Ku; Wed, 18 Dec 2019 15:48:54 +0100
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH v2 22/36] irqchip/gic-v4.1: Advertise support v4.1 to KVM
-X-PHP-Originating-Script: 0:main.inc
+        id S1727257AbfLROtq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 09:49:46 -0500
+Received: from smtp2.axis.com ([195.60.68.18]:38195 "EHLO smtp2.axis.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726856AbfLROtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 09:49:45 -0500
+IronPort-SDR: vTUCunjVXjVdRehuOm46Tk7M0Sq5tcfe897Iy+3eq8hNMAkvYYuPyyY8s1+XbFPzDkR0aUXi0i
+ 6mx2DlMFWULC+a/bYxL23AzOJN4feB/IHpQg4cD5uweDmpuAaoxs2KhCzU3qYJ/t83erwAXtPj
+ TfikBrJigFx/wYnKm0sZ0ifmWoRaDTySZL8CO2pt71l6tSuv20bA76DM4YvGOJP069Cozcs0jn
+ h8mcaVDbp2bTBII9/YlWJiCdPcsd5aJRZZ7vhwgpRaUIIUh08LFDRLwfjaeTKx6cpc+t8sXZRJ
+ Iuk=
+X-IronPort-AV: E=Sophos;i="5.69,329,1571695200"; 
+   d="scan'208";a="3614878"
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Date:   Wed, 18 Dec 2019 15:49:43 +0100
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "treding@nvidia.com" <treding@nvidia.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] asm/sections: Check for overflow in memory_contains()
+Message-ID: <20191218144943.bf5vqykvggtfnph7@axis.com>
+References: <20191217102238.14792-1-vincent.whitchurch@axis.com>
+ <20191217102831.GP25745@shell.armlinux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 18 Dec 2019 14:48:54 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jayachandran C <jnair@marvell.com>,
-        Robert Richter <rrichter@marvell.com>
-In-Reply-To: <14462a79-fc0b-b8e5-115a-dfb505351acb@huawei.com>
-References: <20191027144234.8395-1-maz@kernel.org>
- <20191027144234.8395-23-maz@kernel.org>
- <14462a79-fc0b-b8e5-115a-dfb505351acb@huawei.com>
-Message-ID: <c9f8f2590662cfe9e28e90cf8f79e708@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, andrew.murray@arm.com, jnair@marvell.com, rrichter@marvell.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191217102831.GP25745@shell.armlinux.org.uk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-11-01 12:55, Zenghui Yu wrote:
-> Hi Marc,
->
-> On 2019/10/27 22:42, Marc Zyngier wrote:
->> Tell KVM that we support v4.1. Nothing uses this information so far.
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>   drivers/irqchip/irq-gic-v3-its.c       | 9 ++++++++-
->>   drivers/irqchip/irq-gic-v3.c           | 1 +
->>   include/linux/irqchip/arm-gic-common.h | 2 ++
->>   3 files changed, 11 insertions(+), 1 deletion(-)
->> diff --git a/drivers/irqchip/irq-gic-v3-its.c 
->> b/drivers/irqchip/irq-gic-v3-its.c
->> index df259e202482..6483f8051b3e 100644
->> --- a/drivers/irqchip/irq-gic-v3-its.c
->> +++ b/drivers/irqchip/irq-gic-v3-its.c
->> @@ -4580,6 +4580,7 @@ int __init its_init(struct fwnode_handle 
->> *handle, struct rdists *rdists,
->>   	struct device_node *of_node;
->>   	struct its_node *its;
->>   	bool has_v4 = false;
->> +	bool has_v4_1 = false;
->>   	int err;
->>
->>   	gic_rdists = rdists;
->> @@ -4600,8 +4601,14 @@ int __init its_init(struct fwnode_handle 
->> *handle, struct rdists *rdists,
->>   	if (err)
->>   		return err;
->>   -	list_for_each_entry(its, &its_nodes, entry)
->> +	list_for_each_entry(its, &its_nodes, entry) {
->>   		has_v4 |= is_v4(its);
->> +		has_v4_1 |= is_v4_1(its);
->> +	}
->> +
->> +	/* Don't bother with inconsistent systems */
->> +	if (WARN_ON(!has_v4_1 && rdists->has_rvpeid))
->> +		rdists->has_rvpeid = false;
->>
->>   	if (has_v4 & rdists->has_vlpis) {
->>   		if (its_init_vpe_domain() ||
->> diff --git a/drivers/irqchip/irq-gic-v3.c 
->> b/drivers/irqchip/irq-gic-v3.c
->> index f0d33ac64a99..94dddfb21076 100644
->> --- a/drivers/irqchip/irq-gic-v3.c
->> +++ b/drivers/irqchip/irq-gic-v3.c
->> @@ -1758,6 +1758,7 @@ static void __init 
->> gic_of_setup_kvm_info(struct device_node *node)
->>   		gic_v3_kvm_info.vcpu = r;
->>
->>   	gic_v3_kvm_info.has_v4 = gic_data.rdists.has_vlpis;
->> +	gic_v3_kvm_info.has_v4_1 = gic_data.rdists.has_rvpeid;
->
-> Also set gic_v3_kvm_info.has_v4_1 in gic_acpi_setup_kvm_info().
+On Tue, Dec 17, 2019 at 11:28:31AM +0100, Russell King - ARM Linux admin wrote:
+> On Tue, Dec 17, 2019 at 11:22:38AM +0100, Vincent Whitchurch wrote:
+> > ARM uses memory_contains() from its stacktrace code via this function:
+> > 
+> >  static inline bool in_entry_text(unsigned long addr)
+> >  {
+> >  	return memory_contains(__entry_text_start, __entry_text_end,
+> >  			       (void *)addr, 1);
+> >  }
+> > 
+> > addr is taken from the stack and can be a completely invalid.  If addr
+> > is 0xffffffff, there is an overflow in the pointer arithmetic in
+> > memory_contains() and in_entry_text() incorrectly returns true.
+> > 
+> > Fix this by adding an overflow check.  The check is done on unsigned
+> > longs to avoid undefined behaviour.
+> > 
+> > Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+> > ---
+> >  include/asm-generic/sections.h | 10 +++++++++-
+> >  1 file changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/asm-generic/sections.h b/include/asm-generic/sections.h
+> > index d1779d442aa5..e6e1b381c5df 100644
+> > --- a/include/asm-generic/sections.h
+> > +++ b/include/asm-generic/sections.h
+> > @@ -105,7 +105,15 @@ static inline int arch_is_kernel_initmem_freed(unsigned long addr)
+> >  static inline bool memory_contains(void *begin, void *end, void *virt,
+> >  				   size_t size)
+> >  {
+> > -	return virt >= begin && virt + size <= end;
+> > +	unsigned long membegin = (unsigned long)begin;
+> > +	unsigned long memend = (unsigned long)end;
+> > +	unsigned long objbegin = (unsigned long)virt;
+> > +	unsigned long objend = objbegin + size;
+> > +
+> > +	if (objend < objbegin)
+> > +		return false;
+> > +
+> > +	return objbegin >= membegin && objend <= memend;
+> 
+> Would merely changing to:
+> 
+> 	return virt >= begin && virt <= end - size;
+> 
+> be sufficient ?  Is end - size possible to underflow?
 
-Indeed. Now fixed.
+Something like this would trigger an underflow and return an incorrect
+result with that expression, wouldn't it?
 
-Thanks,
+ memory_contains((void *)0x0000, (void *)0x1000, (void *)0x0, 0x1001))
 
-         M.
--- 
-Jazz is not dead. It just smells funny...
+AFAICS no current callers actually send in an object size which is
+larger than the size of the memory, but perhaps it's best to be
+defensive?
