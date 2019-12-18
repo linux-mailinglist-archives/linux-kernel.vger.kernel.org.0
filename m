@@ -2,165 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 41AE7124601
-	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90C8112460D
+	for <lists+linux-kernel@lfdr.de>; Wed, 18 Dec 2019 12:46:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfLRLmp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 06:42:45 -0500
-Received: from foss.arm.com ([217.140.110.172]:43226 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726029AbfLRLmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:42:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32F1D30E;
-        Wed, 18 Dec 2019 03:42:44 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8BA13F6CF;
-        Wed, 18 Dec 2019 03:42:42 -0800 (PST)
-Subject: Re: [PATCH v2 7/7] arm64: nofpsmid: Handle TIF_FOREIGN_FPSTATE flag
- cleanly
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will@kernel.org, mark.rutland@arm.com, dave.martin@arm.com,
-        catalin.marinas@arm.com, ard.biesheuvel@linaro.org,
-        christoffer.dall@arm.com, Marc Zyngier <marc.zyngier@arm.com>
-References: <20191217183402.2259904-1-suzuki.poulose@arm.com>
- <20191217183402.2259904-8-suzuki.poulose@arm.com>
- <94c0bdd9f26c3262ff8a885d13a64d22@www.loen.fr>
-From:   Suzuki Kuruppassery Poulose <suzuki.poulose@arm.com>
-Message-ID: <9e491901-b589-b486-1cad-1bd92a35da95@arm.com>
-Date:   Wed, 18 Dec 2019 11:42:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <94c0bdd9f26c3262ff8a885d13a64d22@www.loen.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726936AbfLRLqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 06:46:53 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:40048 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbfLRLqx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 06:46:53 -0500
+Received: by mail-pj1-f67.google.com with SMTP id bg7so262124pjb.5;
+        Wed, 18 Dec 2019 03:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Rm3PGAG4ZjJjxffgjZO01XuGdZ5Se+lxRoTd65jV/I=;
+        b=ZqdU5bMscFQvm8p09tXvtNABGBJq3yux1pRvAaSqHYWoBHsvLzpx40uJaQXuXESBMy
+         uFXxFSZYelsqKFR9u97FntWyBuRrNZSiUzu5UUXshbqPHsStjihAGvW+ajqEG1EbOfPo
+         CduQ2IZkIVxIZeAaHojbbW/tuxGxmxAllFCZKTj9CAH1CuO8lkcQszADJvRwU7fQhyzU
+         zhkiN/jm65g1GHgd/qp5N+glagyd4JzNwME+ofMcnZvqiltufXLulTwnVoZM4j6hTuWe
+         D2NNi9Gtqt/tAooIXZqAb9wUAVNgMtXyikiC/W49ZmSFYqVsituX+OOu/u1AAbxR5XtM
+         O3rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Rm3PGAG4ZjJjxffgjZO01XuGdZ5Se+lxRoTd65jV/I=;
+        b=T/kq+1VwOU6ilo7BaSX9S8t5v4WVpkKCYB6rpGzfrqhmaHpM+QvAM4T52KLDA8x/Kn
+         ECp3W8vi643Lyxr4A2LOnrUtKGiq1w+e1pz4prMZKRfDqTmtOAXh9V+3IzRIhJlCBlFI
+         ovQWu+Ig1TPVqjVs1Q7/KHQ20nF5WPJvibodvfjTGqSyxj/0XjF2EZu06ZyCmtnlGTx+
+         ZmhqkDRp3bbr1UCV07ZK2hhO+1CF2jbVxytb5eCAAmsC0yWuadAYn8hRx9EXgOhyrJoo
+         qsWBzY7MlvHdScvrKb2B1SPEQDpUX1s8J7DSUCxN3z0yCQqSliWlCPqDIxN3opwp8kJy
+         Hzpw==
+X-Gm-Message-State: APjAAAXP+xh6xULQY3yg+9pqglGZuKsTeKKQnUt4Gjpme3pFA/UFmmt4
+        a3xtIWq4A+8suFB22TCqEig=
+X-Google-Smtp-Source: APXvYqwRkgvw8jDHziQzj693orxCe6AxRD4tkkS6Jhb3GveNfnhdDXtHvoza5yByb4hW1lEpWrgvUA==
+X-Received: by 2002:a17:902:bd93:: with SMTP id q19mr52436pls.134.1576669612673;
+        Wed, 18 Dec 2019 03:46:52 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id a10sm2913237pgm.81.2019.12.18.03.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 03:46:52 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     ath9k-devel@qca.qualcomm.com, kvalo@codeaurora.org,
+        davem@davemloft.net
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH] ath9k: fix possible sleep-in-atomic-context bugs in hif_usb_send_regout()
+Date:   Wed, 18 Dec 2019 19:45:33 +0800
+Message-Id: <20191218114533.9268-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-On 17/12/2019 19:05, Marc Zyngier wrote:
-> Hi Suzuki,
-> 
-> On 2019-12-17 18:34, Suzuki K Poulose wrote:
->> We detect the absence of FP/SIMD after an incapable CPU is brought up,
->> and by then we have kernel threads running already with
->> TIF_FOREIGN_FPSTATE set
->> which could be set for early userspace applications (e.g, modprobe 
->> triggered
->> from initramfs) and init. This could cause the applications to loop
->> forever in
->> do_nofity_resume() as we never clear the TIF flag, once we now know that
->> we don't support FP.
->>
->> Fix this by making sure that we clear the TIF_FOREIGN_FPSTATE flag
->> for tasks which may have them set, as we would have done in the normal
->> case, but avoiding touching the hardware state (since we don't support 
->> any).
->>
->> Also to make sure we handle the cases seemlessly we categorise the
->> helper functions to two :
->>  1) Helpers for common core code, which calls into take appropriate
->>     actions without knowing the current FPSIMD state of the CPU/task.
->>
->>     e.g fpsimd_restore_current_state(), fpsimd_flush_task_state(),
->>         fpsimd_save_and_flush_cpu_state().
->>
->>     We bail out early for these functions, taking any appropriate actions
->>     (e.g, clearing the TIF flag) where necessary to hide the handling
->>     from core code.
->>
->>  2) Helpers used when the presence of FP/SIMD is apparent.
->>     i.e, save/restore the FP/SIMD register state, modify the CPU/task
->>     FP/SIMD state.
->>     e.g,
->>
->>     fpsimd_save(), task_fpsimd_load() - save/restore task FP/SIMD 
->> registers
->>
->>     fpsimd_bind_task_to_cpu()  \
->>                                 - Update the "state" metadata for 
->> CPU/task.
->>     fpsimd_bind_state_to_cpu() /
->>
->>     fpsimd_update_current_state() - Update the fp/simd state for the 
->> current
->>                                     task from memory.
->>
->>     These must not be called in the absence of FP/SIMD. Put in a WARNING
->>     to make sure they are not invoked in the absence of FP/SIMD.
->>
->> KVM also uses the TIF_FOREIGN_FPSTATE flag to manage the FP/SIMD state
->> on the CPU. However, without FP/SIMD support we trap all accesses and
->> inject undefined instruction. Thus we should never "load" guest state.
->> Add a sanity check to make sure this is valid.
-> 
-> Yes, but no, see below.
-> 
->>
->> Fixes: 82e0191a1aa11abf ("arm64: Support systems without FP/ASIMD")
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> 
-> No idea who that guy is. It's a fake! ;-)
+drivers/net/wireless/ath/ath9k/hif_usb.c, 108: 
+	usb_alloc_urb(GFP_KERNEL) in hif_usb_send_regout
+drivers/net/wireless/ath/ath9k/hif_usb.c, 470: 
+	hif_usb_send_regout in hif_usb_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 34: 
+	(FUNC_PTR)hif_usb_send in htc_issue_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 295: 
+	htc_issue_send in htc_send
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 250: 
+	htc_send in ath9k_htc_send_beacon
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 207: 
+	spin_lock_bh in ath9k_htc_send_beacon
 
-Sorry about that, will fix it.
+drivers/net/wireless/ath/ath9k/hif_usb.c, 112: 
+	kzalloc(GFP_KERNEL) in hif_usb_send_regout
+drivers/net/wireless/ath/ath9k/hif_usb.c, 470: 
+	hif_usb_send_regout in hif_usb_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 34: 
+	(FUNC_PTR)hif_usb_send in htc_issue_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 295: 
+	htc_issue_send in htc_send
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 250: 
+	htc_send in ath9k_htc_send_beacon
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 207: 
+	spin_lock_bh in ath9k_htc_send_beacon
 
-> 
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> ---
->>  arch/arm64/kernel/fpsimd.c  | 31 +++++++++++++++++++++++++++----
->>  arch/arm64/kvm/hyp/switch.c |  9 +++++++++
->>  2 files changed, 36 insertions(+), 4 deletions(-)
->>
-> 
-> [...]
-> 
->> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
->> index 72fbbd86eb5e..9696ebb5c13a 100644
->> --- a/arch/arm64/kvm/hyp/switch.c
->> +++ b/arch/arm64/kvm/hyp/switch.c
->> @@ -28,10 +28,19 @@
->>  /* Check whether the FP regs were dirtied while in the host-side run
->> loop: */
->>  static bool __hyp_text update_fp_enabled(struct kvm_vcpu *vcpu)
->>  {
->> +    /*
->> +     * When the system doesn't support FP/SIMD, we cannot rely on
->> +     * the state of _TIF_FOREIGN_FPSTATE. However, we will never
->> +     * set the KVM_ARM64_FP_ENABLED, as the FP/SIMD accesses always
->> +     * inject an abort into the guest. Thus we always trap the
->> +     * accesses.
->> +     */
->>      if (vcpu->arch.host_thread_info->flags & _TIF_FOREIGN_FPSTATE)
->>          vcpu->arch.flags &= ~(KVM_ARM64_FP_ENABLED |
->>                        KVM_ARM64_FP_HOST);
->>
->> +    WARN_ON(!system_supports_fpsimd() &&
->> +        (vcpu->arch.flags & KVM_ARM64_FP_ENABLED));
-> 
-> Careful, this will panic the host if it happens on a !VHE host
-> (calling non-inline stuff from a __hyp_text function is usually
-> not a good idea).
+drivers/net/wireless/ath/ath9k/hif_usb.c, 127: 
+	usb_submit_urb(GFP_KERNEL) in hif_usb_send_regout
+drivers/net/wireless/ath/ath9k/hif_usb.c, 470: 
+	hif_usb_send_regout in hif_usb_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 34: 
+	(FUNC_PTR)hif_usb_send in htc_issue_send
+drivers/net/wireless/ath/ath9k/htc_hst.c, 295: 
+	htc_issue_send in htc_send
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 250: 
+	htc_send in ath9k_htc_send_beacon
+drivers/net/wireless/ath/ath9k/htc_drv_beacon.c, 207: 
+	spin_lock_bh in ath9k_htc_send_beacon
 
-Ouch! Sorry about that WARN_ON()! I could drop the warning and
-make this :
+(FUNC_PTR) means a function pointer is called.
 
-	if (!system_supports_fpsimd() ||
-	    (vcpu->arch.host_thread_info->flags & _TIF_FOREIGN_FPSTATE))
-		vcpu->arch.flags &= ~(KVM_ARM64_FP_ENABLED |
-				      KVM_ARM64_FP_HOST);
+To fix these bugs, GFP_KERNEL is replaced with GFP_ATOMIC.
 
-to make sure we never say fp is enabled.
+These bugs are found by a static analysis tool STCheck written by myself.
 
-What do you think ?
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+---
+ drivers/net/wireless/ath/ath9k/hif_usb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Cheers
-Suzuki
+diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath/ath9k/hif_usb.c
+index fb649d85b8fc..37231fde102d 100644
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -105,11 +105,11 @@ static int hif_usb_send_regout(struct hif_device_usb *hif_dev,
+ 	struct cmd_buf *cmd;
+ 	int ret = 0;
+ 
+-	urb = usb_alloc_urb(0, GFP_KERNEL);
++	urb = usb_alloc_urb(0, GFP_ATOMIC);
+ 	if (urb == NULL)
+ 		return -ENOMEM;
+ 
+-	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
++	cmd = kzalloc(sizeof(*cmd), GFP_ATOMIC);
+ 	if (cmd == NULL) {
+ 		usb_free_urb(urb);
+ 		return -ENOMEM;
+@@ -124,7 +124,7 @@ static int hif_usb_send_regout(struct hif_device_usb *hif_dev,
+ 			 hif_usb_regout_cb, cmd, 1);
+ 
+ 	usb_anchor_urb(urb, &hif_dev->regout_submitted);
+-	ret = usb_submit_urb(urb, GFP_KERNEL);
++	ret = usb_submit_urb(urb, GFP_ATOMIC);
+ 	if (ret) {
+ 		usb_unanchor_urb(urb);
+ 		kfree(cmd);
+-- 
+2.17.1
+
