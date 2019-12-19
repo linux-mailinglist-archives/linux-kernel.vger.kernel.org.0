@@ -2,80 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA16812683B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:36:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E74F12683F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:36:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfLSRfD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:35:03 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:34148 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfLSRfD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:35:03 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f4so7542711wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:35:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=nW/VtVXYcqbEdi0n13WAqaTiNKpN7zA1JnbtuO/Ib0k=;
-        b=BO+5mc1EonsJLkoNIxNKMLtWBhCtFIMeog9E6Ie5zN6iBJkngWawNPXHgdDgWD4JmB
-         DXGvAMhe8OFpBahl+JfigxmOQFOlNM1HQH0hfu5KYFHbfkqTQEWo6KQc1+BjsCSYGe44
-         Z6bQO1tC7JAHFI5C4R5/dpeXWHzZfcsw8pp2RTRrlyfvFmdzvduiWP8LF8qDwH0fct8u
-         9doKasvNmIfRNyJtSYMrcJ5tfgzJeS4SpOsKONxP8NgGBKn0PHbrD4HZwCqyiRQoyioG
-         NORuy751MpoAcNGoIxA6Pkh8Aw+qOXymFZ7bNPeDo/j2UOTUbyukD/LfeQ9xoKAxKkcO
-         pEkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=nW/VtVXYcqbEdi0n13WAqaTiNKpN7zA1JnbtuO/Ib0k=;
-        b=iBXSNkUyWCIAOKFhtCwVL7/hUw+5ZkP6ZbZn52bamxgFMX5LpHuFFGT1/7Kl1TUVBs
-         g+9nMbHmT/gr4YsRrI3gL+8d4Br1M+znLAIeopMm+X/a9lAPpamw5RZp77IrDdQRav3H
-         2d4bqaukb1cBOiImEpQSsDC4WN1bBjq5BnLSvAQesXdT7LbnFklaNtoOo8WbTtsIlNOp
-         VRSfuAJb2aTYJcAbJuHfPSR9JrcH6ROrCNEP+OyI+63gTk3faoRmQknlzzX3ULZ8U8Mg
-         4XkTQg7lLq+NKNZys2GhysTsw4kHO29fXmEGFZN97ARYxxM12CBB/zbQMaDRYE1Mb20a
-         dUZg==
-X-Gm-Message-State: APjAAAVzab+Dqg+exkV8kK/D08fCxh5Idgq2QGvHiXr/fhtEjz+HDchc
-        1anf4KF1H0T9FH5ws1/adCDwbMU=
-X-Google-Smtp-Source: APXvYqxR7k7aM/NQ4z/D0VSrwgYcQeV/3IHUd/IjmLxzZ49UzJXkxGt3hE/itmhWDk8qLJjG9rgIhA==
-X-Received: by 2002:a1c:2504:: with SMTP id l4mr11494880wml.134.1576776901086;
-        Thu, 19 Dec 2019 09:35:01 -0800 (PST)
-Received: from avx2 ([46.53.254.180])
-        by smtp.gmail.com with ESMTPSA id c68sm6822187wme.13.2019.12.19.09.35.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 09:35:00 -0800 (PST)
-Date:   Thu, 19 Dec 2019 20:34:58 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     pmladek@suse.com, rostedt@goodmis.org,
-        sergey.senozhatsky@gmail.com, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Subject: [PATCH] vsprintf: spread "const char *"
-Message-ID: <20191219173458.GA4246@avx2>
+        id S1727052AbfLSRfH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:35:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726928AbfLSRfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:35:06 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 492B6227BF;
+        Thu, 19 Dec 2019 17:35:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576776905;
+        bh=s5oaspOL57PeyHvJJ2IZujrmMyDV5G1RgW/jNsRFpcI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aeu9sc1zY3qe/XYURcfyADyDRQSTY4m2jgc72uJjDA9qYqsqBUeapVh15uArYh1Pz
+         /j2mksn7HnCACdYISyc8+X3B8RSXfCmgNGfo6CFlQdR8YvP+RNFi4eBFnFfrcL5c0b
+         brTHvQUO3hWECeyPuRkD51cWKHNHIIaUCg9yeyjY=
+Date:   Thu, 19 Dec 2019 12:35:04 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.4 128/350] spi: pxa2xx: Set
+ controller->max_transfer_size in dma mode
+Message-ID: <20191219173504.GN17708@sasha-vm>
+References: <20191210210735.9077-1-sashal@kernel.org>
+ <20191210210735.9077-89-sashal@kernel.org>
+ <20191211104738.GA3870@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
+In-Reply-To: <20191211104738.GA3870@sirena.org.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+On Wed, Dec 11, 2019 at 10:47:38AM +0000, Mark Brown wrote:
+>On Tue, Dec 10, 2019 at 04:03:53PM -0500, Sasha Levin wrote:
+>> From: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>
+>> [ Upstream commit b2662a164f9dc48da8822e56600686d639056282 ]
+>>
+>> In DMA mode we have a maximum transfer size, past that the driver
+>> falls back to PIO (see the check at the top of pxa2xx_spi_transfer_one).
+>> Falling back to PIO for big transfers defeats the point of a dma engine,
+>> hence set the max transfer size to inform spi clients that they need
+>> to do something smarter.
+>
+>This won't fix anything by itself, this asks other code to change how it
+>behaves which may or may not work in older kernels.
 
- lib/vsprintf.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll drop it then, thanks!
 
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@ -1550,7 +1550,7 @@ static noinline_for_stack
- char *ip_addr_string(char *buf, char *end, const void *ptr,
- 		     struct printf_spec spec, const char *fmt)
- {
--	char *err_fmt_msg;
-+	const char *err_fmt_msg;
- 
- 	if (check_pointer(&buf, end, ptr, spec))
- 		return buf;
+-- 
+Thanks,
+Sasha
