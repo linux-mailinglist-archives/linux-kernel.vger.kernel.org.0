@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B633126A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BB6C126961
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbfLSSos (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36862 "EHLO mail.kernel.org"
+        id S1727754AbfLSShG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:37:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729030AbfLSSop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:45 -0500
+        id S1727125AbfLSShD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:37:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9633E2465E;
-        Thu, 19 Dec 2019 18:44:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7150224679;
+        Thu, 19 Dec 2019 18:37:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781085;
-        bh=4xH0UAw3Fkv7ZW/hR8Y2pc2HbXJSz/nlbw4mNY2dFd4=;
+        s=default; t=1576780622;
+        bh=NzS+thb2zRhKzX02D+ejkXOi1iRJq/6D5XAXZ6VOCSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dfEhEAik8Kd4AaACcYASuDTHGNMz+6ncvYyxBu1NMCSKJ+m83MTfiucJB9eAPnsfQ
-         kcSMN5Zw1X4307sMaItarjfU1S79XcciTUWsoUV4+L9iRlvAmef7HQnxyfEycktv/c
-         OsC2QReWxL3l5ZADJE2PYAFw8gO0xh2pwha6p3ak=
+        b=TaTOLYfwguwpzyO23FfEYcB8NNVow5JVjcP9hz1sin1TjVNfsUTM4F9gqYivVi/ao
+         KWWALJxqdaI7aQlnT2LFHs1giFGasB+l3eOq7D+TbXmWbnxcF6aHdAVxuxHJj3roGV
+         MEHwXR4pSQ5HivGXOMgm6s0cIhDSaYB2g5RBb640=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 075/199] Input: goodix - add upside-down quirk for Teclast X89 tablet
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 049/162] MIPS: OCTEON: cvmx_pko_mem_debug8: use oldest forward compatible definition
 Date:   Thu, 19 Dec 2019 19:32:37 +0100
-Message-Id: <20191219183219.131076378@linuxfoundation.org>
+Message-Id: <20191219183210.878655332@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,43 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit df5b5e555b356662a5e4a23c6774fdfce8547d54 upstream.
+[ Upstream commit 1c6121c39677175bd372076020948e184bad4b6b ]
 
-The touchscreen on the Teclast X89 is mounted upside down in relation to
-the display orientation (the touchscreen itself is mounted upright, but the
-display is mounted upside-down). Add a quirk for this so that we send
-coordinates which match the display orientation.
+cn58xx is compatible with cn50xx, so use the latter.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
-Link: https://lore.kernel.org/r/20191202085636.6650-1-hdegoede@redhat.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+[paul.burton@mips.com: s/cn52xx/cn50xx/ in commit message.]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/touchscreen/goodix.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c | 2 +-
+ arch/mips/include/asm/octeon/cvmx-pko.h            | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -90,6 +90,15 @@ static const unsigned long goodix_irq_fl
- static const struct dmi_system_id rotated_screen[] = {
- #if defined(CONFIG_DMI) && defined(CONFIG_X86)
- 	{
-+		.ident = "Teclast X89",
-+		.matches = {
-+			/* tPAD is too generic, also match on bios date */
-+			DMI_MATCH(DMI_BOARD_VENDOR, "TECLAST"),
-+			DMI_MATCH(DMI_BOARD_NAME, "tPAD"),
-+			DMI_MATCH(DMI_BIOS_DATE, "12/19/2014"),
-+		},
-+	},
-+	{
- 		.ident = "WinBook TW100",
- 		.matches = {
- 			DMI_MATCH(DMI_SYS_VENDOR, "WinBook"),
+diff --git a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
+index 8241fc6aa17d8..3839feba68f20 100644
+--- a/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
++++ b/arch/mips/cavium-octeon/executive/cvmx-cmd-queue.c
+@@ -266,7 +266,7 @@ int cvmx_cmd_queue_length(cvmx_cmd_queue_id_t queue_id)
+ 		} else {
+ 			union cvmx_pko_mem_debug8 debug8;
+ 			debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
+-			return debug8.cn58xx.doorbell;
++			return debug8.cn50xx.doorbell;
+ 		}
+ 	case CVMX_CMD_QUEUE_ZIP:
+ 	case CVMX_CMD_QUEUE_DFA:
+diff --git a/arch/mips/include/asm/octeon/cvmx-pko.h b/arch/mips/include/asm/octeon/cvmx-pko.h
+index 5f47f76ed510a..20eb9c46a75ab 100644
+--- a/arch/mips/include/asm/octeon/cvmx-pko.h
++++ b/arch/mips/include/asm/octeon/cvmx-pko.h
+@@ -611,7 +611,7 @@ static inline void cvmx_pko_get_port_status(uint64_t port_num, uint64_t clear,
+ 		pko_reg_read_idx.s.index = cvmx_pko_get_base_queue(port_num);
+ 		cvmx_write_csr(CVMX_PKO_REG_READ_IDX, pko_reg_read_idx.u64);
+ 		debug8.u64 = cvmx_read_csr(CVMX_PKO_MEM_DEBUG8);
+-		status->doorbell = debug8.cn58xx.doorbell;
++		status->doorbell = debug8.cn50xx.doorbell;
+ 	}
+ }
+ 
+-- 
+2.20.1
+
 
 
