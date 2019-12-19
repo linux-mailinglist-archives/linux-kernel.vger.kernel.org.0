@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEB7C126A8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB8E1126B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfLSSsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:48:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41780 "EHLO mail.kernel.org"
+        id S1730423AbfLSSxv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728924AbfLSSsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:48:39 -0500
+        id S1730418AbfLSSxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FED724679;
-        Thu, 19 Dec 2019 18:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B13A9227BF;
+        Thu, 19 Dec 2019 18:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781318;
-        bh=g2ZdvR/qygmJ0fYfpEQW2Fu3sNskEi0SO6ZDcp7X/4k=;
+        s=default; t=1576781627;
+        bh=HmRvdImrrDSCZEqCQ4WawS6uqwqHMiPVGjo2/RsL9iE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EAkK8N6XwWFXA1kpTjZ/0tOPb4GZKDxrJHo/mcZ718dgDB2L6nDWgalh2Cvbv4t+m
-         QfIstfX36xxu3XnlCVPzyZMfffz4wGen6IH2yoHtw1UOoc4SFp4eBGIMeme2/X1xT5
-         Q6og5at1BizpAsagP+vrz+ag8EEHE/rY/h15i+d4=
+        b=OU2I8JUba8QSBlBNgOBrVER+khWuj3YFRG0HDbihic7gxOpzj8CU9zsxfpqVDo1pc
+         9oJlsJY6p+1oVBOhkMXIy1XuVEpyrg/XZMwIi/GMj86/xDg8qBXqy8f6ZlT9gm1TNP
+         S1Kqxo8M0+xDbnPol+Ajm9mFjdqQdpySrFXdpy24=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 165/199] powerpc: Fix vDSO clock_getres()
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 5.4 15/80] block: fix "check bi_size overflow before merge"
 Date:   Thu, 19 Dec 2019 19:34:07 +0100
-Message-Id: <20191219183224.574785625@linuxfoundation.org>
+Message-Id: <20191219183052.303047719@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,126 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-[ Upstream commit 552263456215ada7ee8700ce022d12b0cffe4802 ]
+commit cc90bc68422318eb8e75b15cd74bc8d538a7df29 upstream.
 
-clock_getres in the vDSO library has to preserve the same behaviour
-of posix_get_hrtimer_res().
+This partially reverts commit e3a5d8e386c3fb973fa75f2403622a8f3640ec06.
 
-In particular, posix_get_hrtimer_res() does:
-    sec = 0;
-    ns = hrtimer_resolution;
-and hrtimer_resolution depends on the enablement of the high
-resolution timers that can happen either at compile or at run time.
+Commit e3a5d8e386c3 ("check bi_size overflow before merge") adds a bio_full
+check to __bio_try_merge_page.  This will cause __bio_try_merge_page to fail
+when the last bi_io_vec has been reached.  Instead, what we want here is only
+the bi_size overflow check.
 
-Fix the powerpc vdso implementation of clock_getres keeping a copy of
-hrtimer_resolution in vdso data and using that directly.
-
-Fixes: a7f290dad32e ("[PATCH] powerpc: Merge vdso's and add vdso support to 32 bits kernel")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
-[chleroy: changed CLOCK_REALTIME_RES to CLOCK_HRTIMER_RES]
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/a55eca3a5e85233838c2349783bcb5164dae1d09.1575273217.git.christophe.leroy@c-s.fr
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: e3a5d8e386c3 ("block: check bi_size overflow before merge")
+Cc: stable@vger.kernel.org # v5.4+
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/powerpc/include/asm/vdso_datapage.h  |    2 ++
- arch/powerpc/kernel/asm-offsets.c         |    2 +-
- arch/powerpc/kernel/time.c                |    1 +
- arch/powerpc/kernel/vdso32/gettimeofday.S |    7 +++++--
- arch/powerpc/kernel/vdso64/gettimeofday.S |    7 +++++--
- 5 files changed, 14 insertions(+), 5 deletions(-)
 
---- a/arch/powerpc/include/asm/vdso_datapage.h
-+++ b/arch/powerpc/include/asm/vdso_datapage.h
-@@ -86,6 +86,7 @@ struct vdso_data {
- 	__s32 wtom_clock_nsec;
- 	struct timespec stamp_xtime;	/* xtime as at tb_orig_stamp */
- 	__u32 stamp_sec_fraction;	/* fractional seconds of stamp_xtime */
-+	__u32 hrtimer_res;			/* hrtimer resolution */
-    	__u32 syscall_map_64[SYSCALL_MAP_SIZE]; /* map of syscalls  */
-    	__u32 syscall_map_32[SYSCALL_MAP_SIZE]; /* map of syscalls */
- };
-@@ -107,6 +108,7 @@ struct vdso_data {
- 	__s32 wtom_clock_nsec;
- 	struct timespec stamp_xtime;	/* xtime as at tb_orig_stamp */
- 	__u32 stamp_sec_fraction;	/* fractional seconds of stamp_xtime */
-+	__u32 hrtimer_res;		/* hrtimer resolution */
-    	__u32 syscall_map_32[SYSCALL_MAP_SIZE]; /* map of syscalls */
- 	__u32 dcache_block_size;	/* L1 d-cache block size     */
- 	__u32 icache_block_size;	/* L1 i-cache block size     */
---- a/arch/powerpc/kernel/asm-offsets.c
-+++ b/arch/powerpc/kernel/asm-offsets.c
-@@ -383,6 +383,7 @@ int main(void)
- 	DEFINE(WTOM_CLOCK_NSEC, offsetof(struct vdso_data, wtom_clock_nsec));
- 	DEFINE(STAMP_XTIME, offsetof(struct vdso_data, stamp_xtime));
- 	DEFINE(STAMP_SEC_FRAC, offsetof(struct vdso_data, stamp_sec_fraction));
-+	DEFINE(CLOCK_HRTIMER_RES, offsetof(struct vdso_data, hrtimer_res));
- 	DEFINE(CFG_ICACHE_BLOCKSZ, offsetof(struct vdso_data, icache_block_size));
- 	DEFINE(CFG_DCACHE_BLOCKSZ, offsetof(struct vdso_data, dcache_block_size));
- 	DEFINE(CFG_ICACHE_LOGBLOCKSZ, offsetof(struct vdso_data, icache_log_block_size));
-@@ -411,7 +412,6 @@ int main(void)
- 	DEFINE(CLOCK_REALTIME, CLOCK_REALTIME);
- 	DEFINE(CLOCK_MONOTONIC, CLOCK_MONOTONIC);
- 	DEFINE(NSEC_PER_SEC, NSEC_PER_SEC);
--	DEFINE(CLOCK_REALTIME_RES, MONOTONIC_RES_NSEC);
+---
+ block/bio.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -751,10 +751,12 @@ bool __bio_try_merge_page(struct bio *bi
+ 	if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
+ 		return false;
  
- #ifdef CONFIG_BUG
- 	DEFINE(BUG_ENTRY_SIZE, sizeof(struct bug_entry));
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -862,6 +862,7 @@ void update_vsyscall_old(struct timespec
- 	vdso_data->wtom_clock_nsec = wtm->tv_nsec;
- 	vdso_data->stamp_xtime = *wall_time;
- 	vdso_data->stamp_sec_fraction = frac_sec;
-+	vdso_data->hrtimer_res = hrtimer_resolution;
- 	smp_wmb();
- 	++(vdso_data->tb_update_count);
- }
---- a/arch/powerpc/kernel/vdso32/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso32/gettimeofday.S
-@@ -160,12 +160,15 @@ V_FUNCTION_BEGIN(__kernel_clock_getres)
- 	cror	cr0*4+eq,cr0*4+eq,cr1*4+eq
- 	bne	cr0,99f
+-	if (bio->bi_vcnt > 0 && !bio_full(bio, len)) {
++	if (bio->bi_vcnt > 0) {
+ 		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
  
-+	mflr	r12
-+  .cfi_register lr,r12
-+	bl	__get_datapage@local	/* get data page */
-+	lwz	r5, CLOCK_HRTIMER_RES(r3)
-+	mtlr	r12
- 	li	r3,0
- 	cmpli	cr0,r4,0
- 	crclr	cr0*4+so
- 	beqlr
--	lis	r5,CLOCK_REALTIME_RES@h
--	ori	r5,r5,CLOCK_REALTIME_RES@l
- 	stw	r3,TSPC32_TV_SEC(r4)
- 	stw	r5,TSPC32_TV_NSEC(r4)
- 	blr
---- a/arch/powerpc/kernel/vdso64/gettimeofday.S
-+++ b/arch/powerpc/kernel/vdso64/gettimeofday.S
-@@ -145,12 +145,15 @@ V_FUNCTION_BEGIN(__kernel_clock_getres)
- 	cror	cr0*4+eq,cr0*4+eq,cr1*4+eq
- 	bne	cr0,99f
- 
-+	mflr	r12
-+  .cfi_register lr,r12
-+	bl	V_LOCAL_FUNC(__get_datapage)
-+	lwz	r5, CLOCK_HRTIMER_RES(r3)
-+	mtlr	r12
- 	li	r3,0
- 	cmpldi	cr0,r4,0
- 	crclr	cr0*4+so
- 	beqlr
--	lis	r5,CLOCK_REALTIME_RES@h
--	ori	r5,r5,CLOCK_REALTIME_RES@l
- 	std	r3,TSPC64_TV_SEC(r4)
- 	std	r5,TSPC64_TV_NSEC(r4)
- 	blr
+ 		if (page_is_mergeable(bv, page, len, off, same_page)) {
++			if (bio->bi_iter.bi_size > UINT_MAX - len)
++				return false;
+ 			bv->bv_len += len;
+ 			bio->bi_iter.bi_size += len;
+ 			return true;
 
 
