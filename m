@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87F9A12618D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC2BC126193
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfLSMEP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35990 "EHLO mail.kernel.org"
+        id S1727049AbfLSMET (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:04:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbfLSMEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:13 -0500
+        id S1726960AbfLSMEQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:04:16 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BC45222C2;
-        Thu, 19 Dec 2019 12:04:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38F3924650;
+        Thu, 19 Dec 2019 12:04:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757052;
-        bh=WptcAB1FKir/J2JPdEAf91BmzeN8oM9lebcSis2OmXQ=;
+        s=default; t=1576757055;
+        bh=HgXtsgN6xVx39MU4q6JvdB/g0TZMwtT2d6vaIKJJ5e4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWiMn8UcJD3BIN7p1n6aA3ANDMt7r08FqWFzIugrqxf89y6iRj6o+c3ga2s/RfTC4
-         OPhT6dlqDsZ9ymXOwx2GO0yNskWfPyc9hJm55411j6xTWa3qo3wvG/afb7ej0QKADa
-         TPb84mydQ/W5h+kRKMaHahCjmRsvab/ZBzWZlMHs=
+        b=fSl4t6pZfzElFVqBe6knTYDJ8hQQJN06DOMfiZ24+Lj+iTbPaX1gp9MPVlH7hrgLL
+         QxOTiYz0yX822cb2EDGpEGHb2EjvtqqC2fwNoo7s6LAf4BBGLKG7LRICMjP+cI0wqx
+         cEgub9F/yFmYnjQzP3EyF2lf5wvt8KPKsLhOfcCk=
 From:   Will Deacon <will@kernel.org>
 To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
 Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
@@ -37,9 +37,9 @@ Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 04/16] PCI: Export pci_ats_disabled() as a GPL symbol to modules
-Date:   Thu, 19 Dec 2019 12:03:40 +0000
-Message-Id: <20191219120352.382-5-will@kernel.org>
+Subject: [PATCH v4 05/16] drivers/iommu: Take a ref to the IOMMU driver prior to ->add_device()
+Date:   Thu, 19 Dec 2019 12:03:41 +0000
+Message-Id: <20191219120352.382-6-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191219120352.382-1-will@kernel.org>
 References: <20191219120352.382-1-will@kernel.org>
@@ -50,27 +50,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Building drivers for ATS-aware IOMMUs as modules requires access to
-pci_ats_disabled(). Export it as a GPL symbol to get things working.
+To avoid accidental removal of an active IOMMU driver module, take a
+reference to the driver module in 'iommu_probe_device()' immediately
+prior to invoking the '->add_device()' callback and hold it until the
+after the device has been removed by '->remove_device()'.
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Suggested-by: Joerg Roedel <joro@8bytes.org>
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/pci/pci.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/iommu/iommu.c | 19 +++++++++++++++++--
+ include/linux/iommu.h |  4 +++-
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index e87196cc1a7f..ad746d903ceb 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -131,6 +131,7 @@ bool pci_ats_disabled(void)
- {
- 	return pcie_ats_disabled;
- }
-+EXPORT_SYMBOL_GPL(pci_ats_disabled);
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 7c92197d53f3..bc8edf90e729 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -22,6 +22,7 @@
+ #include <linux/bitops.h>
+ #include <linux/property.h>
+ #include <linux/fsl/mc.h>
++#include <linux/module.h>
+ #include <trace/events/iommu.h>
  
- /* Disable bridge_d3 for all PCIe ports */
- static bool pci_bridge_d3_disable;
+ static struct kset *iommu_group_kset;
+@@ -185,10 +186,21 @@ int iommu_probe_device(struct device *dev)
+ 	if (!iommu_get_dev_param(dev))
+ 		return -ENOMEM;
+ 
++	if (!try_module_get(ops->owner)) {
++		ret = -EINVAL;
++		goto err_free_dev_param;
++	}
++
+ 	ret = ops->add_device(dev);
+ 	if (ret)
+-		iommu_free_dev_param(dev);
++		goto err_module_put;
++
++	return 0;
+ 
++err_module_put:
++	module_put(ops->owner);
++err_free_dev_param:
++	iommu_free_dev_param(dev);
+ 	return ret;
+ }
+ 
+@@ -199,7 +211,10 @@ void iommu_release_device(struct device *dev)
+ 	if (dev->iommu_group)
+ 		ops->remove_device(dev);
+ 
+-	iommu_free_dev_param(dev);
++	if (dev->iommu_param) {
++		module_put(ops->owner);
++		iommu_free_dev_param(dev);
++	}
+ }
+ 
+ static struct iommu_domain *__iommu_domain_alloc(struct bus_type *bus,
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index f2223cbb5fd5..e9f94d3f7a04 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -246,9 +246,10 @@ struct iommu_iotlb_gather {
+  * @sva_get_pasid: Get PASID associated to a SVA handle
+  * @page_response: handle page request response
+  * @cache_invalidate: invalidate translation caches
+- * @pgsize_bitmap: bitmap of all possible supported page sizes
+  * @sva_bind_gpasid: bind guest pasid and mm
+  * @sva_unbind_gpasid: unbind guest pasid and mm
++ * @pgsize_bitmap: bitmap of all possible supported page sizes
++ * @owner: Driver module providing these ops
+  */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -318,6 +319,7 @@ struct iommu_ops {
+ 	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
+ 
+ 	unsigned long pgsize_bitmap;
++	struct module *owner;
+ };
+ 
+ /**
 -- 
 2.24.1.735.g03f4e72817-goog
 
