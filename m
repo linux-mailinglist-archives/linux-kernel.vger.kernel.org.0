@@ -2,56 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CB0126E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:43:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E76A126E29
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:46:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfLSTnO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Dec 2019 14:43:14 -0500
-Received: from mail.fireflyinternet.com ([109.228.58.192]:57660 "EHLO
-        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727120AbfLSTnN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 14:43:13 -0500
-X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
-Received: from localhost (unverified [78.156.65.138]) 
-        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 19638651-1500050 
-        for multiple; Thu, 19 Dec 2019 19:43:08 +0000
-Content-Type: text/plain; charset="utf-8"
+        id S1727020AbfLSTqU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:46:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbfLSTqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 14:46:20 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3297227BF;
+        Thu, 19 Dec 2019 19:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576784779;
+        bh=xUSTFd7GGdvk10sf3+om8mg9EYMJvjpiQnqD0QauP2I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TlZXCHKVySipIwV8OQTf4eP3VeA0QPzE+s9nJVK5IUitaVn0l2mcL7AWC2Xvaxbju
+         l4K26akuLHBCiPdJZXw9IjzSH3PlfKq+EHYNazCz9xmkuM90nZO4pSvrwtESuW0ggT
+         4/G6f+qMiFE1v3SEzi1TZcwsUyDIJy4Cpr3wiQ5Q=
+Date:   Thu, 19 Dec 2019 14:46:18 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, alsa-devel@alsa-project.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH AUTOSEL 5.4 197/350] ASoC: SOF: imx: fix reverse
+ CONFIG_SND_SOC_SOF_OF dependency
+Message-ID: <20191219194618.GQ17708@sasha-vm>
+References: <20191210210735.9077-1-sashal@kernel.org>
+ <20191210210735.9077-158-sashal@kernel.org>
+ <20191211110005.GC3870@sirena.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Colin King <colin.king@canonical.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-From:   Chris Wilson <chris@chris-wilson.co.uk>
-In-Reply-To: <20191219190916.24693-1-colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191219190916.24693-1-colin.king@canonical.com>
-Message-ID: <157678458608.6469.7303602517496484124@skylake-alporthouse-com>
-User-Agent: alot/0.6
-Subject: Re: [PATCH][next] drm/i915: fix uninitialized pointer reads on pointers to
- and from
-Date:   Thu, 19 Dec 2019 19:43:06 +0000
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20191211110005.GC3870@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Colin King (2019-12-19 19:09:16)
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently pointers to and from are not initialized and may contain
-> garbage values. This will cause uninitialized pointer reads in the
-> call to intel_frontbuffer_track and later checks to see if to and from
-> are null.  Fix this by ensuring to and from are initialized to NULL.
-> 
-> Addresses-Coverity: ("Uninitialised pointer read)"
-> Fixes: da42104f589d ("drm/i915: Hold reference to intel_frontbuffer as we track activity")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Wed, Dec 11, 2019 at 11:00:05AM +0000, Mark Brown wrote:
+>On Tue, Dec 10, 2019 at 04:05:02PM -0500, Sasha Levin wrote:
+>> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>>
+>> [ Upstream commit f9ad75468453b019b92c5296e6a04bf7c37f49e4 ]
+>>
+>> updated solution to the problem reported with randconfig:
+>>
+>> CONFIG_SND_SOC_SOF_IMX depends on CONFIG_SND_SOC_SOF, but is in
+>> turn referenced by the sof-of-dev driver. This creates a reverse
+>> dependency that manifests in a link error when CONFIG_SND_SOC_SOF_OF
+>> is built-in but CONFIG_SND_SOC_SOF_IMX=m:
+>
+>Are you sure this doesn't depend on any other Kconfig changes?
 
-"D'oh"
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
--Chris
+Nope, but it didn't fail my build tests.
+
+-- 
+Thanks,
+Sasha
