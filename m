@@ -2,106 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA786126302
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:12:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98DC21262D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfLSNMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:12:02 -0500
-Received: from mail1.skidata.com ([91.230.2.99]:32414 "EHLO mail1.skidata.com"
+        id S1726777AbfLSNFF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:05:05 -0500
+Received: from sauhun.de ([88.99.104.3]:48184 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726730AbfLSNMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:12:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=skidata.com; i=@skidata.com; q=dns/txt; s=selector1;
-  t=1576761122; x=1608297122;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=v5I6HmyMZEfkk4cOh4zALwoYi8f2gqBVfg+2kVMeEaQ=;
-  b=fMiGaPKKuzjK7FDtuSG+eMkzU1wAo87wWuv4yfakiDFMVnGO039dcvoI
-   yby3RJh8KqUsYgwBEmWx5NC3I8RE6WyOWTxpcPeAlHQTP80c/QP20UoNO
-   e1nZ4Y4MKmpFSegu6Uu/1tR/Sm51LSzyJGdSwhoIlLWTCu5zpbiTQwyir
-   oIwEzkQmbQS07p3KSGzpQ6kiBEhR+TbJNiT+NB2xzIvQo/gkldD+gzLsX
-   XPQ02WBF9OsrEdqbMWkiyUIozctUdAQLYswSEr2Dxy7BvL5eL9flq5ILL
-   56EJeANycY4o5xLJhIU25Tk543nGKTaCqj/VJRN3u9ihSWv+E0ydXRtYw
-   A==;
-IronPort-SDR: rXbAXl7IN2U5RgHPwH21Zv+D0s59fW9LQVr0jcHMtkaDqp7hRM4Ia6i4EOH7iox+lOOTRA3bN+
- J0PEibFOsz2yC0/7UKg7j6sQ+lKIRyUUDhOUI7HxDMxF5AXoc8D/p5fYhNSfWdaDFP1FpYlnBG
- 8+ivRwjBxnC4zkJ68gRdftG5+DZLkkI1lyhoQHSU0spy7jhHkCboC/Pq1ZYpVnaob5mOeKRzvE
- /bAwLVRS6VnXljJrDBvLWtU4k6DCbscWh2cY8qIVlO220Jt32mvJ83bidt6OyEli/GFhfDfESx
- fEw=
-X-IronPort-AV: E=Sophos;i="5.69,332,1571695200"; 
-   d="scan'208";a="21622553"
-From:   Richard Leitner <richard.leitner@skidata.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Richard Leitner <richard.leitner@skidata.com>
-Subject: [PATCH 2/2] ARM: dts: tegra20: add labels to host1x its subnodes
-Date:   Thu, 19 Dec 2019 14:04:31 +0100
-Message-ID: <20191219130431.30458-2-richard.leitner@skidata.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191219130431.30458-1-richard.leitner@skidata.com>
-References: <20191219130431.30458-1-richard.leitner@skidata.com>
+        id S1726704AbfLSNFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 08:05:05 -0500
+Received: from localhost (p5486C702.dip0.t-ipconnect.de [84.134.199.2])
+        by pokefinder.org (Postfix) with ESMTPSA id 518302C2D2A;
+        Thu, 19 Dec 2019 14:05:02 +0100 (CET)
+Date:   Thu, 19 Dec 2019 14:05:01 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Radu Pirea <radu_nicolae.pirea@upb.ro>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chirag Parekh <chirag.parekh@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH] i2c: cadence: Added slave support
+Message-ID: <20191219130501.GA958@kunai>
+References: <20191219124120.53754-1-radu_nicolae.pirea@upb.ro>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [192.168.111.252]
-X-ClientProxiedBy: sdex4srv.skidata.net (192.168.111.82) To
- sdex5srv.skidata.net (192.168.111.83)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <20191219124120.53754-1-radu_nicolae.pirea@upb.ro>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add labels to the host1x, dc and hdmi nodes of the Tegra20 SoC so we
-just need to alias it from derived boards.
 
-Signed-off-by: Richard Leitner <richard.leitner@skidata.com>
----
- arch/arm/boot/dts/tegra20.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index e02f75757a7e..c569bd87550f 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -29,7 +29,7 @@
- 		};
- 	};
- 
--	host1x@50000000 {
-+	host1x: host1x@50000000 {
- 		compatible = "nvidia,tegra20-host1x", "simple-bus";
- 		reg = <0x50000000 0x00024000>;
- 		interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>, /* syncpt */
-@@ -96,7 +96,7 @@
- 			reset-names = "3d";
- 		};
- 
--		dc@54200000 {
-+		dc1: dc@54200000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54200000 0x00040000>;
- 			interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
-@@ -113,7 +113,7 @@
- 			};
- 		};
- 
--		dc@54240000 {
-+		dc2: dc@54240000 {
- 			compatible = "nvidia,tegra20-dc";
- 			reg = <0x54240000 0x00040000>;
- 			interrupts = <GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>;
-@@ -130,7 +130,7 @@
- 			};
- 		};
- 
--		hdmi@54280000 {
-+		hdmi: hdmi@54280000 {
- 			compatible = "nvidia,tegra20-hdmi";
- 			reg = <0x54280000 0x00040000>;
- 			interrupts = <GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
--- 
-2.21.0
 
+> +/**
+> + * enum cdns_i2c_mode - I2C Controller current operating mode
+> + *
+> + * @CDNS_I2C_MODE_SLAVE:       I2C controller operating in slave mode
+> + * @CDNS_I2C_MODE_MASTER:      I2C Controller operating in master mode
+> + */
+
+Can't the hardware operate as master and slave at the same time?
+
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl37dXkACgkQFA3kzBSg
+Kbbt0A/9G7dnHkPv6eu3f7KNRWgl+KyWAG1doDbApk+NkT47uu+hfNRDnb3XzAs6
+2NsXG9/26GVEJL/ATHPBxWahXHzvvd4Dh2kYx8vUpy09EmlHUEFennlKdWUXAezQ
+23SfiuyrbZLJuM+hlEag2FPhIKxdExkotQYa+Qn2TjbR51VAPz0uDK7tzqt/aQ5g
+4Q5KYZrUaFlgG6rRSnncOyrZb3GHDXeMS4gQuGu0U1sn9CEcWzswlJHMBug+D+Uy
+4HnwS6ADhHbGIqXROqcrAyemGP7WKFwajmJ0dg7nDXFtyU4pZm6zbTtHlKj+r5aJ
+VtvXQJSxUxTuy4iQFg0pY0Vs+E1uIsO/TGuVhNh1TrBsLFgn48kIugAsyKE3Fl0F
+nDUJvEiuFUa3eWe+fwpECpFxIQkUsF194rWiMJQeNnE3BWN4k+2c/tP/CGy110Ca
+0CT+I/aQaFFMbih71E6kzazR+PkmKeFksl+jRp3Uiw8Krg3Gk669FbhySuwTqDeJ
+zjfWhKxuc4dkvCuXpxUi2nF4uzF16M2/1ZUL+xP4b4FB4ciHKomK0Du0jShn4zsF
+qSNg6udixqR097xmg1UeDqDXtPyJx5iI/txwIAO2w6LKg/WqLSCYph1F15nAeKOb
+hKJkSf7g9rrgz5Kd6bf7IVa8ckdh0q1Mtr+XeYe6ubKpB2BM1LE=
+=L4Bm
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
