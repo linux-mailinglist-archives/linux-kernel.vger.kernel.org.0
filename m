@@ -2,132 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D06C712613A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A385126149
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbfLSLwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:52:07 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32935 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726834AbfLSLwD (ORCPT
+        id S1726754AbfLSLxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:53:34 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:59728 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbfLSLxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:52:03 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d139so6872196wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 03:52:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=hbXoP0vp+PirYvwWUgyHBe1Esfy/aJnIgbBAojigrF0=;
-        b=LypOjrsbEXY8+p1H8QsI/d/4m54NfYisDoA50iSu2jHPNY17JWdPP4URvvQYB/snb/
-         8N2iUUNJE3Kzz+1mV9d8kMdxrtf0ubHPujowM1L7/OjXuL9N5zjfbD3O2qicLjryXY7L
-         clvFUz7v7TbdUsvHTpd6eepalzO5ha+3NlfBp7UHBYEpEVpR8K1A/IUHWWaWBEICXf9x
-         F+4E5i8E7EWg0mxZHSiP1qHyiy8XbH1hcauTdW9yrxRbCWWLFbO+765obtH5l4NC0N/p
-         UzTve8Kgp6Uifmbvg8qgI1o/LoC6uEKR8ph40LqX5cXQ7CTL/Q5PpQLGnqPxPifw4hJR
-         BMpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=hbXoP0vp+PirYvwWUgyHBe1Esfy/aJnIgbBAojigrF0=;
-        b=VlK+djyyUS8kncfhtc+sQ+V68milBvAGsKQVkFfSLxJASj1k5IgbIZ+s7XOVj1cFkx
-         hTh5u5nEyDk9rcNQkrtEMnbMvvtz9c515iO1K7AkSFGBaGoyjXD1ENVFr9FEW8XTHDPH
-         zpZpJYYJ7jH1Dhm/132xOHd7vCFZ4tiJesbzDbecv0MKYhIqxrF0CVIalgXacEtqEdeV
-         AXpSNgj7vQSWkkf7v8hjUz2UD0PQQgRWCQ6aF4s7AJDEK7oEAa9o2VujYp30jyTTGUmX
-         2GuehnoOHiVkgdHUXP4DXPKKS3V8Iy0KwfHoEsTOh+hMPnxoKIY5LRBWP/MxjsovnVM+
-         dwGQ==
-X-Gm-Message-State: APjAAAWvWNyDoV8JDywt4XY/O811ImfmQWl89DXh1VaQEGvBk9YK/eDz
-        OhMHCaNyYQRYC8dqFRfn8YN3ag==
-X-Google-Smtp-Source: APXvYqxZ/oEM+nqoc8/gYEZ994ql7c784S/DiPIFRUFGg4yIpfxl7xtlNfGudIoaveyihp9K+F/28g==
-X-Received: by 2002:a7b:cf12:: with SMTP id l18mr10187082wmg.66.1576756321641;
-        Thu, 19 Dec 2019 03:52:01 -0800 (PST)
-Received: from localhost.localdomain (i16-les01-ntr-213-44-229-207.sfr.lns.abo.bbox.fr. [213.44.229.207])
-        by smtp.googlemail.com with ESMTPSA id k16sm6489660wru.0.2019.12.19.03.52.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 03:52:01 -0800 (PST)
-From:   Khouloud Touil <ktouil@baylibre.com>
-To:     bgolaszewski@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, srinivas.kandagatla@linaro.org,
-        baylibre-upstreaming@groups.io
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linus.walleij@linaro.org,
-        Khouloud Touil <ktouil@baylibre.com>
-Subject: [PATCH v3 4/4] eeprom: at24: remove the write-protect pin support
-Date:   Thu, 19 Dec 2019 12:51:41 +0100
-Message-Id: <20191219115141.24653-5-ktouil@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191219115141.24653-1-ktouil@baylibre.com>
-References: <20191219115141.24653-1-ktouil@baylibre.com>
+        Thu, 19 Dec 2019 06:53:34 -0500
+Received: from [5.158.153.53] (helo=g2noscherz.lab.linutronix.de.)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA1:256)
+        (Exim 4.80)
+        (envelope-from <john.ogness@linutronix.de>)
+        id 1ihuMx-0003XB-TG; Thu, 19 Dec 2019 12:53:28 +0100
+From:   John Ogness <john.ogness@linutronix.de>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] printk: fix exclusive_console replaying
+Date:   Thu, 19 Dec 2019 12:59:22 +0106
+Message-Id: <20191219115322.31160-1-john.ogness@linutronix.de>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NVMEM framework is an interface for the at24 EEPROMs as well as for
-other drivers, instead of passing the wp-gpios over the different
-drivers each time, it would be better to pass it over the NVMEM
-subsystem once and for all.
+Commit f92b070f2dc8 ("printk: Do not miss new messages when replaying
+the log") introduced a new variable @exclusive_console_stop_seq to
+store when an exclusive console should stop printing. It should be
+set to the @console_seq value at registration. However, @console_seq
+is previously set to @syslog_seq so that the exclusive console knows
+where to begin. This results in the exclusive console immediately
+reactivating all the other consoles and thus repeating the messages
+for those consoles.
 
-Removing the support for the write-protect pin after adding it to the
-NVMEM subsystem.
+Set @console_seq after @exclusive_console_stop_seq has stored the
+current @console_seq value.
 
-Signed-off-by: Khouloud Touil <ktouil@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Fixes: f92b070f2dc8 ("printk: Do not miss new messages when replaying the log")
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- drivers/misc/eeprom/at24.c | 9 ---------
- 1 file changed, 9 deletions(-)
+ kernel/printk/printk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 0681d5fdd538..8fce49a6d9cd 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -22,7 +22,6 @@
- #include <linux/nvmem-provider.h>
- #include <linux/regmap.h>
- #include <linux/pm_runtime.h>
--#include <linux/gpio/consumer.h>
- 
- /* Address pointer is 16 bit. */
- #define AT24_FLAG_ADDR16	BIT(7)
-@@ -89,8 +88,6 @@ struct at24_data {
- 
- 	struct nvmem_device *nvmem;
- 
--	struct gpio_desc *wp_gpio;
--
- 	/*
- 	 * Some chips tie up multiple I2C addresses; dummy devices reserve
- 	 * them for us, and we'll use them with SMBus calls.
-@@ -457,12 +454,10 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
- 	 * from this host, but not from other I2C masters.
- 	 */
- 	mutex_lock(&at24->lock);
--	gpiod_set_value_cansleep(at24->wp_gpio, 0);
- 
- 	while (count) {
- 		ret = at24_regmap_write(at24, buf, off, count);
- 		if (ret < 0) {
--			gpiod_set_value_cansleep(at24->wp_gpio, 1);
- 			mutex_unlock(&at24->lock);
- 			pm_runtime_put(dev);
- 			return ret;
-@@ -472,7 +467,6 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
- 		count -= ret;
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1ef6f75d92f1..fada22dc4ab6 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2770,8 +2770,6 @@ void register_console(struct console *newcon)
+ 		 * for us.
+ 		 */
+ 		logbuf_lock_irqsave(flags);
+-		console_seq = syslog_seq;
+-		console_idx = syslog_idx;
+ 		/*
+ 		 * We're about to replay the log buffer.  Only do this to the
+ 		 * just-registered console to avoid excessive message spam to
+@@ -2783,6 +2781,8 @@ void register_console(struct console *newcon)
+ 		 */
+ 		exclusive_console = newcon;
+ 		exclusive_console_stop_seq = console_seq;
++		console_seq = syslog_seq;
++		console_idx = syslog_idx;
+ 		logbuf_unlock_irqrestore(flags);
  	}
- 
--	gpiod_set_value_cansleep(at24->wp_gpio, 1);
- 	mutex_unlock(&at24->lock);
- 
- 	pm_runtime_put(dev);
-@@ -662,9 +656,6 @@ static int at24_probe(struct i2c_client *client)
- 	at24->client[0].client = client;
- 	at24->client[0].regmap = regmap;
- 
--	at24->wp_gpio = devm_gpiod_get_optional(dev, "wp", GPIOD_OUT_HIGH);
--	if (IS_ERR(at24->wp_gpio))
--		return PTR_ERR(at24->wp_gpio);
- 
- 	writable = !(flags & AT24_FLAG_READONLY);
- 	if (writable) {
+ 	console_unlock();
 -- 
-2.17.1
+2.20.1
 
