@@ -2,93 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7BD125C9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:29:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7C8C125CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:29:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbfLSI24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 03:28:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37517 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfLSI24 (ORCPT
+        id S1726867AbfLSI3o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 03:29:44 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:43242 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfLSI3l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 03:28:56 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b15so3711792lfc.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 00:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EYVpTAvfKwHHKmlAPuGRsZ3iezpd785NjyR9OVcUj6E=;
-        b=MJZ/DNtFXAxxKUZKDxH+hao28YTyE5NOXtuQ0Z3/ibWy8zpn9idcT5fZSA3qlJswY1
-         Yijm5VvGd/xFqGL1v6NZGRxBXBKHV016m5JvvGWQlY0M4LINXT2A+VMv/c7K+z0FglYN
-         FkcONe7Byj4YXGeofGkBJBC9L9BYhWz0U/7T5uj+m7cWbGsUIxhMxvZYjxq9RmDbTAeo
-         5FOeLkOvfmFeFbQ9FneVOLbyy+1qTeqa2lenupHqbbfkraaI8ywbs0EUp3VJNPMnGg4z
-         8lysTRj1vQ/4vBUWcuSX068OiI8cXcTJLEVHZYJzOCkkKrvNMEEtnJ4J5TdoqJk3xzfJ
-         RFyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EYVpTAvfKwHHKmlAPuGRsZ3iezpd785NjyR9OVcUj6E=;
-        b=nRRDtS2AeYDjAwLUKgK6VH3OjLCXyYParph6pcltZQk8gotV3VQdFyI5U7E8B22Cpc
-         Cpg3y5/OmPku/eZmhjSnzGTyOysjmqWjJpM9hCOuKZjLLyS6qhc+IO+fOK/IOGIst/ZX
-         0asEMLE0DLvVibLFyi97kS/HlLUSpNsTwGmR8IKstolOxEJnQGT9yN9GZkbwm2DYw4G0
-         Yw5yvdLwsfR9kIQrlKKc0HgC8CMfTSdPQh6wXoWvhQ8Ww/3XlXhvuDIvkAVVFZH8SenV
-         XdUEJepwJh296Q2nj7Iu9r07JNqhRzYdTb53ZiCydf7Ht9L83q7hK7QZeeI0rk4zcbFi
-         6Dxw==
-X-Gm-Message-State: APjAAAVvshUC6i2hmPxNDTMI9sDnIS1TyCyetuAd05beOdGFfLniE9iv
-        2mmG4uQy+OEMEICd6IcIWCyoZgSXgO95XipB03BnaA==
-X-Google-Smtp-Source: APXvYqynTJm9GoZtkT/ox5Ee2KtmtUCBm2Ol3fEci7a1RBI4FjyF3QqGMde1dsSwXQ7lWCCv/YG69H6YPlbklmRCDWQ=
-X-Received: by 2002:a19:8a41:: with SMTP id m62mr4543898lfd.5.1576744133697;
- Thu, 19 Dec 2019 00:28:53 -0800 (PST)
-MIME-Version: 1.0
-References: <20191213124221.25775-1-tbogendoerfer@suse.de> <20191213124221.25775-3-tbogendoerfer@suse.de>
-In-Reply-To: <20191213124221.25775-3-tbogendoerfer@suse.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 Dec 2019 09:28:42 +0100
-Message-ID: <CACRpkdY+2Z90n6zNZbQpmGCWYAH4PzEOv8puOkwbrcxCk_Eq2A@mail.gmail.com>
-Subject: Re: [PATCH v11 net-next 2/2] mfd: ioc3: Add driver for SGI IOC3 chip
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paulburton@kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-mips@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-rtc@vger.kernel.org,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Dec 2019 03:29:41 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191219082939euoutp022f17a85f35651a19846686e454444781~huHo5dvww1768117681euoutp02K
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:29:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191219082939euoutp022f17a85f35651a19846686e454444781~huHo5dvww1768117681euoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576744179;
+        bh=p1LIywHdkTfZ+S5wtThg7HFbv2fxoOEzXYDi6tOWudg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=Nrb8jpMxC/8aqwaDcs2XH0MdMRxmmeeXg3m7w4p+EBLrP5y9L6YJZvN+OK3+2YhXN
+         xfRvQN+1Nq1p39xIC68NrFjk23j3NfepmqCksqwyDrMTbU3DztB0Sazjk66rmVt8Mh
+         aKh4HI8ae8eUtSD3HN7SgDkEq10gXuPXVw5u4OKs=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191219082939eucas1p2adfb349fccfb175b858efbb4ea00a7b6~huHosPOb42046820468eucas1p2L;
+        Thu, 19 Dec 2019 08:29:39 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EF.46.60698.3F43BFD5; Thu, 19
+        Dec 2019 08:29:39 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191219082938eucas1p254fe738574f287a44630d5a7eef7385e~huHoJllW10073900739eucas1p2N;
+        Thu, 19 Dec 2019 08:29:38 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191219082938eusmtrp1e297cafe3cecfac39afde0375947b5dc~huHoI76Dq0048200482eusmtrp1t;
+        Thu, 19 Dec 2019 08:29:38 +0000 (GMT)
+X-AuditID: cbfec7f5-a29ff7000001ed1a-48-5dfb34f3d64c
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id FC.F6.08375.2F43BFD5; Thu, 19
+        Dec 2019 08:29:38 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219082938eusmtip1cc3e16352662dbd35a1a57b5395ea20d~huHnvx4cH1676616766eusmtip1F;
+        Thu, 19 Dec 2019 08:29:38 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/2] Exynos5422: fix bus related OPPs for Odroid XU3/XU4/HC1
+Date:   Thu, 19 Dec 2019 09:29:25 +0100
+Message-Id: <20191219082927.11898-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djP87qfTX7HGjStELbYOGM9q8X1L89Z
+        LRZ8msFqcf78BnaLy7vmsFl87j3CaDHj/D4mi7VH7rI7cHhsWtXJ5tG3ZRWjx+dNcgHMUVw2
+        Kak5mWWpRfp2CVwZ27YvZy04w1+xbuZFxgbGCzxdjJwcEgImEte2nGXrYuTiEBJYwSix9/Bx
+        dgjnC6PEy69HmSGcz4wSmyY9YoJpOXHwKlTVckaJXwduMMK1zLmxkRmkik3AUKLrbRcbiC0i
+        EC/xqP8uC0gRs8BjRonj/06BjRIW8JGY9uQvWBGLgKrE+ouXwWxeAVuJuU/7WSDWyUus3nAA
+        7A4JgTNsEod+PWGFSLhIvGraywZhC0u8Or6FHcKWkTg9uYcFoqGZUeLhubXsEE4Po8TlphmM
+        EFXWEoePXwSaxAF0k6bE+l36EGFHiWu72tlBwhICfBI33gqChJmBzEnbpjNDhHklOtqEIKrV
+        JGYdXwe39uCFS1AlHhIf95SBhIUEYiW6j39hm8AoNwth1QJGxlWM4qmlxbnpqcXGeanlesWJ
+        ucWleel6yfm5mxiBSeD0v+NfdzDu+5N0iFGAg1GJh/eH669YIdbEsuLK3EOMEhzMSiK8tzt+
+        xgrxpiRWVqUW5ccXleakFh9ilOZgURLnNV70MlZIID2xJDU7NbUgtQgmy8TBKdXAaNqa/Crh
+        h/j5047cn19fkebO0qutYl7HK/z774kf2qJhTg2VbHd5xCOFknILK/zzbsyepFD78a34xc36
+        FQqfjT96N8Zd/870cPujWvWyWzP9GFZP/MfjuLV+kad4v8ej/XMEnRTuuDDM+PIv7evtz8IH
+        uMqicy9Yrua10HX+eviTicmrDyLeSizFGYmGWsxFxYkAzeRfX/4CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsVy+t/xu7qfTH7HGvTtMLDYOGM9q8X1L89Z
+        LRZ8msFqcf78BnaLy7vmsFl87j3CaDHj/D4mi7VH7rI7cHhsWtXJ5tG3ZRWjx+dNcgHMUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ27YvZy04
+        w1+xbuZFxgbGCzxdjJwcEgImEicOXmUHsYUEljJK3FpeCxGXkTg5rYEVwhaW+HOti62LkQuo
+        5hOjxKmuL0wgCTYBQ4mutyAJTg4RgUSJ2R9ngxUxCzxllFi1ZgpYt7CAj8S0J3/BilgEVCXW
+        X7wMZvMK2ErMfdrPArFBXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbUK07MLS7NS9dLzs/dxAgM
+        vW3Hfm7ewXhpY/AhRgEORiUe3h+uv2KFWBPLiitzDzFKcDArifDe7vgZK8SbklhZlVqUH19U
+        mpNafIjRFGj5RGYp0eR8YFzklcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLp
+        Y+LglGpgjDwTX11zVzBgU6LNy54gx9YzD5xjUnXXeQh7Vp7Ye2/tiq6jDyS6StMOGzHn3bh8
+        c+qzwvLPchWehktND/3gv8toM+vwZ62NiU2tktmXL2xfGzIxdVKIwx1D6eMzGcO2sUluu8HB
+        6WVxOvRA02/markLQbUHmzPcH/MxX2ZttG1Mv7Cu0+KIEktxRqKhFnNRcSIAFfCIDlMCAAA=
+X-CMS-MailID: 20191219082938eucas1p254fe738574f287a44630d5a7eef7385e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191219082938eucas1p254fe738574f287a44630d5a7eef7385e
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191219082938eucas1p254fe738574f287a44630d5a7eef7385e
+References: <CGME20191219082938eucas1p254fe738574f287a44630d5a7eef7385e@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 1:43 PM Thomas Bogendoerfer
-<tbogendoerfer@suse.de> wrote:
+Dear All,
 
-> SGI IOC3 chip has integrated ethernet, keyboard and mouse interface.
-> It also supports connecting a SuperIO chip for serial and parallel
-> interfaces. IOC3 is used inside various SGI systemboards and add-on
-> cards with different equipped external interfaces.
->
-> Support for ethernet and serial interfaces were implemented inside
-> the network driver. This patchset moves out the not network related
-> parts to a new MFD driver, which takes care of card detection,
-> setup of platform devices and interrupt distribution for the subdevices.
->
-> Serial portion: Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
->
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Currently the only Exynos5422-based boards that support bus frequency
+scaling are Hardkernel's Odroid XU3/XU4/HC1. The recent changes in the
+devfreq framework revealed that some operating points for the defined
+busses cannot be applied, because the rates defined in the OPPs cannot
+be derived from the top PLL clocks (due to lack of common integer
+dividers). This issue has been first noticed by Lukasz Luba in:
+https://lkml.org/lkml/2019/7/15/276
 
-This makes the kernel a better place:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+To use the rates currently defined in the OPPs, one would need to change
+the rate and the topology of the top PLL clocks. The best place for such
+operation is the bootloader, because later when kernel boots, more and
+more devices (like UART, MMC, and so on) are enabled and get the clocks
+from those top PLLs. Changing the rate of the clock for the already
+enabled/operating device is very tricky.
 
-Will there be a GPIO driver arriving later?
+To avoid that issue I've decided to keep the current top PLL clocks
+configuration prepared by the bootloader on Odroid XU3/XU4/HC1 boards and
+adjust the OPPs for it. This means that the bus related OPPs are board
+dependant, so I've moved the to the respective DTS files. For other
+boards (for example Peach Pi/Pit Chromebooks), slightly different OPPs
+might need to be defined due to different clock topology and top PLLs
+rates configured by their bootloader.
 
-Yours,
-Linus Walleij
+The provided approach is probably the simplest fix to let all busses
+operate on the highest possible speeds, which match the configuration
+applied initially by the bootloader.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Patch summary:
+
+Marek Szyprowski (2):
+  ARM: dts: exynos: Move bus related OPPs to the boards DTS
+  ARM: dts: exynos: Adjust bus related OPPs to the values correct for
+    Odroids
+
+ arch/arm/boot/dts/exynos5420.dtsi             | 259 ----------------
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 276 +++++++++++++++++-
+ 2 files changed, 275 insertions(+), 260 deletions(-)
+
+-- 
+2.17.1
+
