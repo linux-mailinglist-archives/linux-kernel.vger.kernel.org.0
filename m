@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E30F125F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36369125F46
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:37:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbfLSKhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:37:33 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35237 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfLSKhc (ORCPT
+        id S1726903AbfLSKhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:37:38 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35847 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfLSKhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:37:32 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p17so5086907wmb.0;
-        Thu, 19 Dec 2019 02:37:31 -0800 (PST)
+        Thu, 19 Dec 2019 05:37:33 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p17so5084509wma.1;
+        Thu, 19 Dec 2019 02:37:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=dEvmcxcRbDnw5Esbmp5xNDj/bzEbhT/0+2MaiZbtS5U=;
-        b=Lak+yufuDPx18PWvNvcNvX7vS14JJsdeRWOlHq1oL9NZg6j8lsNzYXzgBeW7vWY+Lg
-         ma/zkuBkmnLq/u0ywSqh988wacsSEnKlu/TSPmH8bd8+L4DaRn5Am0msOuM7BNckWGND
-         AUWASC5JgPjj726HcpjjhLZvPtqrfpg9JuIb5P5d3V01qs61RizLot36tNOmQK9NE5Yg
-         Hk7M9OA1DwPUeD7zJZhlSgTOrsvCDUOpAUxgUxoG6leXKd7jDVz3mpaFWBke9ZzWiSUd
-         0yRCKwXcRe9WnNmXZKNgk6U5fjKYCdG1qQ4FCSiS/wNJnNBuOC4JwjKxdDYkvjOhYBFu
-         tEQQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1OGCzyJCrst2owrhk2ZRzZZ6qSHUKtNRJtopFQDCbsw=;
+        b=B2ccDoUGkMxCO80QmF5W9iwsdFhTmr2sts5usbCRrkPvh5qTXjbeKAI2lsJUDA3WTh
+         10f4LgNyH5xLFiqWtunJ/v2ffVvpP/FvCN8iSS4FiZ0yjYUGleUPJyW2RrxxttsthtV9
+         ie4+/WgfQFA6x9sXkBnwzcT2MpN7Wmq36tBReEnOEQMtP1wT2XoAeeCTi38YCXApImUl
+         mRcXSZ0O2wKAs9VzY3Rew0i1AMUz/6bZbsHBWD5hhC9Gm0IzrWRZUS7E79nKk3f6Affl
+         1zJuJBI1L1cNIH4PzfYo++nXJSL4kCZnH2cuIWLw/ZaMUmpEKNvABqzEAlpSUvdaXLYC
+         NJ6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=dEvmcxcRbDnw5Esbmp5xNDj/bzEbhT/0+2MaiZbtS5U=;
-        b=Jj52hyuu8Vb1vGF31ZH3LlBcJ8HJlnACl/o0TjFq0+uudfqMye2evgr9soU9jqJ+LE
-         p4zKsowFpS64Uzz4zjLDxSz7oISAfXv55YdyIpIIjOdG6QdBdVT1x9yDRZrgHR6cIMRY
-         mS6WoDvialFiB/cC4Es6aOqNT9KxQgeXOVRf34tsNaAxHvSgbREK1dDCnTREyPofZIGF
-         k6zkJZ1A6jdMWbNmYka4UkZDy0vL5eWgFaomDvukG0imXhfY59EIMVEKrznQAwv0wfw6
-         VAwBqEUsIQ9Q8MLsAaLMgCKTrfDnKDBcyyyvKXysjqlx3cMLkXP4w6BHYLnZ9epvn8rC
-         mevw==
-X-Gm-Message-State: APjAAAU+feILDY+tcDrHLELHvmcP9G2cn+PwLhkRCveWwatgNislc6Su
-        jKVEun2Be+0vjR1A6fuDbdk=
-X-Google-Smtp-Source: APXvYqwvTREV8saFCr0EAPE0obR3gxrSzVWmxDosp7ehqXK2yVaCvyLhE7uJIPB+kKC3nJsczB6ZhA==
-X-Received: by 2002:a1c:9a52:: with SMTP id c79mr9149301wme.127.1576751850387;
-        Thu, 19 Dec 2019 02:37:30 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1OGCzyJCrst2owrhk2ZRzZZ6qSHUKtNRJtopFQDCbsw=;
+        b=CcHL/rYg06Y1/Awe95cJ8iNLot9vXOnKKchJcBTrqmdlWEoie21cOTDykSCXShbgKC
+         3cIZpqbBVblq1TIx+ODmfZkFi6K1sKKlN3YWOFEe5sbgR4n2uf3gSpHV5JcSedTfsrDF
+         DVv31tOXfHFSUIO6up1qiKsRgAFnCWKyiSK+HinhUMShglucrCFlt9d1Y62LN3rZWRKg
+         ILLEtlnD4iJGEHqYq6GmbAfj7HK/k/uEFV530QE2HBBnzN1W8X4qd+ksI730U84GH+89
+         LuOzpVEucstQgjjdQrPNd+LlqwijtCdKHvNUMIjWXxEywc9HpaQ95HHfog0NKbDjBdwN
+         1vGw==
+X-Gm-Message-State: APjAAAWAHD/vbaV+6NzdtkW0sG3lRUPxadLbmUDf1xPY6g5JSyGtYHeP
+        LAL/JtAeRbmyT2iykZ7xT/w=
+X-Google-Smtp-Source: APXvYqzXGUyLsw/d8HZogvct7wS7UZ0HVLfRA4lHFd7hR+zFjnaCtd0fa+P/K1dCYPJduIQWBddgew==
+X-Received: by 2002:a7b:c74c:: with SMTP id w12mr9213826wmk.1.1576751851566;
+        Thu, 19 Dec 2019 02:37:31 -0800 (PST)
 Received: from localhost.localdomain (p5B3F677C.dip0.t-ipconnect.de. [91.63.103.124])
-        by smtp.gmail.com with ESMTPSA id c68sm5735147wme.13.2019.12.19.02.37.29
+        by smtp.gmail.com with ESMTPSA id c68sm5735147wme.13.2019.12.19.02.37.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 02:37:29 -0800 (PST)
+        Thu, 19 Dec 2019 02:37:31 -0800 (PST)
 From:   Saravanan Sekar <sravanhome@gmail.com>
 To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
@@ -51,40 +52,37 @@ To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
         mchehab+samsung@kernel.org, davem@davemloft.net,
         gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 0/4] Add regulator support for mpq7920 
-Date:   Thu, 19 Dec 2019 11:37:17 +0100
-Message-Id: <20191219103721.10935-1-sravanhome@gmail.com>
+Subject: [PATCH 1/4] dt-bindings: Add an entry for Monolithic Power System, MPS
+Date:   Thu, 19 Dec 2019 11:37:18 +0100
+Message-Id: <20191219103721.10935-2-sravanhome@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191219103721.10935-1-sravanhome@gmail.com>
+References: <20191219103721.10935-1-sravanhome@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series add support for PMIC regulator driver for Monolithic
-Power System's MPQ7920 chipset. MPQ7920 provides support for 4-BUCK converter,
-one fixed voltage RTCLDO and 4-LDO regualtor, accessed over I2C.
+Add an entry for Monolithic Power System, MPS
 
-Thanks,
-Saravanan
+Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Saravanan Sekar (4):
-  dt-bindings: Add an entry for Monolithic Power System, MPS
-  dt-bindings: regulator: add document bindings for mpq7920
-  regulator: mpq7920: add mpq7920 regulator driver
-  MAINTAINERS: Add entry for mpq7920 PMIC driver
-
- .../bindings/regulator/mpq7920.yaml           | 149 +++++++
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- MAINTAINERS                                   |   7 +
- drivers/regulator/Kconfig                     |  10 +
- drivers/regulator/Makefile                    |   1 +
- drivers/regulator/mpq7920.c                   | 376 ++++++++++++++++++
- drivers/regulator/mpq7920.h                   |  72 ++++
- 7 files changed, 617 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/mpq7920.yaml
- create mode 100644 drivers/regulator/mpq7920.c
- create mode 100644 drivers/regulator/mpq7920.h
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 6046f4555852..5eac9d08bfa8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -605,6 +605,8 @@ patternProperties:
+     description: MiraMEMS Sensing Technology Co., Ltd.
+   "^mitsubishi,.*":
+     description: Mitsubishi Electric Corporation
++  "^mps,.*":
++    description: Monolithic Power Systems, Inc.
+   "^mosaixtech,.*":
+     description: Mosaix Technologies, Inc.
+   "^motorola,.*":
 -- 
 2.17.1
 
