@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A9EE126AAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3AA1126B22
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729903AbfLSSt5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:49:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43578 "EHLO mail.kernel.org"
+        id S1730170AbfLSSyK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:54:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729893AbfLSSt4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:56 -0500
+        id S1730445AbfLSSyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:54:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E9C224672;
-        Thu, 19 Dec 2019 18:49:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE8A2222C2;
+        Thu, 19 Dec 2019 18:54:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781395;
-        bh=pE3GXZEB3vX75So1AzQKHyqp1Ek/HBfofw59UGeGrDI=;
+        s=default; t=1576781644;
+        bh=iGXz/x6xZIxMlB36RE7c/0DO5szquI6BsXtST0kPL2s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nBFvKtifLF/6UxNtO05c5gLNX1GfgZwgNy2jtFqb4jW7XzRq4Q5QPEYYXNniuqQeA
-         Qk5pW68U/RMGGTPDl2NlHjowFltAst+73kEgY4vdcUg6oimN3pHIO2vgBY0lDZfILr
-         kRJC2o//P+zHiUYONNs2uIQwXRLXrAu7WNO9qJRs=
+        b=oQpucYABzKNuxORMhyoOv6x25SAayAEYsvDr8E8J0G+IY3oxOaq2iDTFqBgkH9ZA/
+         mliRUjCRKMFSrLXFhqfBK60diZNOyRnA98ri3RX2UzwyRMpP1w5u18f2cQmeCYCsHA
+         URBwQuk7IFe5Rjdhmx1Bl6n7IHSQMo5aXCOyJ7rQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Qian Cai <cai@lca.pw>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 4.9 171/199] workqueue: Fix missing kfree(rescuer) in destroy_workqueue()
+        stable@vger.kernel.org, Chris Lew <clew@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 5.4 21/80] rpmsg: glink: Set tail pointer to 0 at end of FIFO
 Date:   Thu, 19 Dec 2019 19:34:13 +0100
-Message-Id: <20191219183224.972835729@linuxfoundation.org>
+Message-Id: <20191219183101.268904080@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,29 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Chris Lew <clew@codeaurora.org>
 
-commit 8efe1223d73c218ce7e8b2e0e9aadb974b582d7f upstream.
+commit 4623e8bf1de0b86e23a56cdb39a72f054e89c3bd upstream.
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Qian Cai <cai@lca.pw>
-Fixes: def98c84b6cd ("workqueue: Fix spurious sanity check failures in destroy_workqueue()")
-Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+When wrapping around the FIFO, the remote expects the tail pointer to
+be reset to 0 on the edge case where the tail equals the FIFO length.
+
+Fixes: caf989c350e8 ("rpmsg: glink: Introduce glink smem based transport")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chris Lew <clew@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/workqueue.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/rpmsg/qcom_glink_smem.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4057,6 +4057,7 @@ void destroy_workqueue(struct workqueue_
+--- a/drivers/rpmsg/qcom_glink_smem.c
++++ b/drivers/rpmsg/qcom_glink_smem.c
+@@ -105,7 +105,7 @@ static void glink_smem_rx_advance(struct
+ 	tail = le32_to_cpu(*pipe->tail);
  
- 		/* rescuer will empty maydays list before exiting */
- 		kthread_stop(rescuer->task);
-+		kfree(rescuer);
- 	}
+ 	tail += count;
+-	if (tail > pipe->native.length)
++	if (tail >= pipe->native.length)
+ 		tail -= pipe->native.length;
  
- 	/* sanity checks */
+ 	*pipe->tail = cpu_to_le32(tail);
 
 
