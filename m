@@ -2,110 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E750125A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 05:31:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3488125A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 05:46:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfLSEbH convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 18 Dec 2019 23:31:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfLSEbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 23:31:07 -0500
-Received: from rorschach.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A11B2082E;
-        Thu, 19 Dec 2019 04:31:04 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 23:31:01 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        clang-built-linux@googlegroups.com,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: "ftrace: Rework event_create_dir()" triggers boot error
- messages
-Message-ID: <20191218233101.73044ce3@rorschach.local.home>
-In-Reply-To: <0FA8C6E3-D9F5-416D-A1B0-5E4CD583A101@lca.pw>
-References: <0FA8C6E3-D9F5-416D-A1B0-5E4CD583A101@lca.pw>
-X-Mailer: Claws Mail 3.17.4git76 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726925AbfLSEqw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 23:46:52 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41908 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726841AbfLSEqw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 23:46:52 -0500
+Received: by mail-wr1-f68.google.com with SMTP id c9so4561249wrw.8;
+        Wed, 18 Dec 2019 20:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RewqfyyXUZkV87uK4kzXKpumYayj1KfeiY2XdrXVvEk=;
+        b=b2kXwGjF/KZC5BAJK9E3w3S4vTSW8QqbTmD28QRCHDLL6jJjM5W9g1pAx2tJqGqhRR
+         i0DCFfZEOsPIGP2LFB0q8y6qo5i6+OH5O797VULZS7zQR2QSMMnHAnhUtMFgeSNJEkFu
+         Mm6ZJsSy+oAO9LnFYbVyIDaY64+C5XCApp1Pqn+jf11v2EMM6CMkWIWqoGome5bX8pml
+         lV9N84SDRP7/XgQP3ZaBxaDKkl9HYNwbeLEVm0P+JyVnGnXjj0R6rtTGk3gJ3S+CGOoR
+         i52HLQEPX8Tqq82QniHc9BejR2N0pV94jMk3qnZt0wckij2a3r6y7g7TAdEChSWKzrHY
+         MyzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RewqfyyXUZkV87uK4kzXKpumYayj1KfeiY2XdrXVvEk=;
+        b=bO0mgmjhaFjuF53oH1LhTtupvi4izfNRSIWvFNZdJD/6kYpx9G7klwDdODOnEJceRE
+         5IMvqJ52TtczEeKQ8hycfDft/tL/SJmjpb4VdYBkIGJZ7nphpP53n8LJmj0sasVX3/Qz
+         KY+bVNaGPd0TRUhm5f7AapWHvMhp8YUPsmWTQ94vQ14cx70Yq5FLn+OBHRIdvwnyYOm/
+         vUa0ZLBoHWZQsuYKYmucWaZ/JtppZluUQhHwFJ0qR6ncnPa8lEKzkFtKusJW2Y4g2Vwo
+         m3RVRKn8ls1HICepZx2038hvFS1XrkDMU2z2jfONnizpEd1wG2yPDNSYBsmT54O0feFa
+         WQsA==
+X-Gm-Message-State: APjAAAXo9g5QHvaopQ5iSFq3MQStQwcC4JDYWsKCbxNSjG5BlxdyjkE8
+        S+brsjrbPwYhbX2IOJ8EqprFgPCQuJEpjvZKNBcAEQ==
+X-Google-Smtp-Source: APXvYqyCxuxeVFw1b72FQxFm4sMDuoygQtpMel373KN75/FGpF7gKkbQCxJa2BmXRzAOoSqBKxXUIOnvzpMfdZHbfuU=
+X-Received: by 2002:a5d:4692:: with SMTP id u18mr3557822wrq.206.1576730809795;
+ Wed, 18 Dec 2019 20:46:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20191219082557.16092126@canb.auug.org.au> <BYAPR12MB2806A8EBBB8B6F9AE29FBC00F1520@BYAPR12MB2806.namprd12.prod.outlook.com>
+In-Reply-To: <BYAPR12MB2806A8EBBB8B6F9AE29FBC00F1520@BYAPR12MB2806.namprd12.prod.outlook.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 18 Dec 2019 23:46:38 -0500
+Message-ID: <CADnq5_PTLEXHd3U8fkKVcckFjCDN_p3n9PoQWwLkzRODqDd71A@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the amdgpu tree
+To:     "Chen, Guchun" <Guchun.Chen@amd.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019 22:58:23 -0500
-Qian Cai <cai@lca.pw> wrote:
+On Wed, Dec 18, 2019 at 8:22 PM Chen, Guchun <Guchun.Chen@amd.com> wrote:
+>
+> [AMD Official Use Only - Internal Distribution Only]
+>
+> Hi Stephen,
+>
+> Sorry for the inconvenience. How I can fix this?
+>
 
-> The linux-next commit "ftrace: Rework event_create_dir()” [1] triggers boot warnings
-> for Clang-build (Clang version 8.0.1) kernels (reproduced on both arm64 and powerpc).
-> Reverted it (with trivial conflict fixes) on the top of today’s linux-next fixed the issue.
-> 
-> configs:
-> https://raw.githubusercontent.com/cailca/linux-mm/master/arm64.config
-> https://raw.githubusercontent.com/cailca/linux-mm/master/powerpc.config
-> 
-> [1] https://lore.kernel.org/lkml/20191111132458.342979914@infradead.org/
-> 
-> [  115.799327][    T1] Registered efivars operations
-> [  115.849770][    T1] clocksource: Switched to clocksource arch_sys_counter
-> [  115.901145][    T1] Could not initialize trace point events/sys_enter_rt_sigreturn
-> [  115.908854][    T1] Could not create directory for event sys_enter_rt_sigreturn
-> [  115.998949][    T1] Could not initialize trace point events/sys_enter_restart_syscall
-> [  116.006802][    T1] Could not create directory for event sys_enter_restart_syscall
-> [  116.062702][    T1] Could not initialize trace point events/sys_enter_getpid
-> [  116.069828][    T1] Could not create directory for event sys_enter_getpid
-> [  116.078058][    T1] Could not initialize trace point events/sys_enter_gettid
-> [  116.085181][    T1] Could not create directory for event sys_enter_gettid
-> [  116.093405][    T1] Could not initialize trace point events/sys_enter_getppid
-> [  116.100612][    T1] Could not create directory for event sys_enter_getppid
-> [  116.108989][    T1] Could not initialize trace point events/sys_enter_getuid
-> [  116.116058][    T1] Could not create directory for event sys_enter_getuid
-> [  116.124250][    T1] Could not initialize trace point events/sys_enter_geteuid
-> [  116.131457][    T1] Could not create directory for event sys_enter_geteuid
-> [  116.139840][    T1] Could not initialize trace point events/sys_enter_getgid
-> [  116.146908][    T1] Could not create directory for event sys_enter_getgid
-> [  116.155163][    T1] Could not initialize trace point events/sys_enter_getegid
-> [  116.162370][    T1] Could not create directory for event sys_enter_getegid
-> [  116.178015][    T1] Could not initialize trace point events/sys_enter_setsid
-> [  116.185138][    T1] Could not create directory for event sys_enter_setsid
-> [  116.269307][    T1] Could not initialize trace point events/sys_enter_sched_yield
-> [  116.276811][    T1] Could not create directory for event sys_enter_sched_yield
-> [  116.527652][    T1] Could not initialize trace point events/sys_enter_munlockall
-> [  116.535126][    T1] Could not create directory for event sys_enter_munlockall
-> [  116.622096][    T1] Could not initialize trace point events/sys_enter_vhangup
-> [  116.629307][    T1] Could not create directory for event sys_enter_vhangup
-> [  116.783867][    T1] Could not initialize trace point events/sys_enter_sync
-> [  116.790819][    T1] Could not create directory for event sys_enter_sync
-> [  117.723402][    T1] pnp: PnP ACPI init
+Already fixed.
 
-I noticed that all of the above have zero parameters. Does the
-following patch fix it?
+Alex
 
-(note, I prefer "ret" and "i" on different lines anyway)
-
--- Steve
-
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 53935259f701..abb70c71fe60 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -269,7 +269,8 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
- 	struct syscall_trace_enter trace;
- 	struct syscall_metadata *meta = call->data;
- 	int offset = offsetof(typeof(trace), args);
--	int ret, i;
-+	int ret = 0;
-+	int i;
- 
- 	for (i = 0; i < meta->nb_args; i++) {
- 		ret = trace_define_field(call, meta->types[i],
+> Regards,
+> Guchun
+>
+> -----Original Message-----
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Sent: Thursday, December 19, 2019 5:26 AM
+> To: Alex Deucher <alexdeucher@gmail.com>
+> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing List <linux-kernel@vger.kernel.org>; Chen, Guchun <Guchun.Chen@amd.com>
+> Subject: linux-next: Fixes tag needs some work in the amdgpu tree
+>
+> Hi all,
+>
+> In commit
+>
+>   caa01659028a ("drm/amdgpu: move umc offset to one new header file for Arcturus")
+>
+> Fixes tag
+>
+>   Fixes: 9686563c4c42 drm/amdgpu: Added RAS UMC error query support for Arcturus
+>
+> has these problem(s):
+>
+>   - Target SHA1 does not exist
+>
+> Did you mean
+>
+> Fixes: 4cf781c24c3b ("drm/amdgpu: Added RAS UMC error query support for Arcturus")
+>
+> Also, please keep all the tags together at the end of the commit message.
+>
+> --
+> Cheers,
+> Stephen Rothwell
