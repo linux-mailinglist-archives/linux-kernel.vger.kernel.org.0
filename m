@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6EE0126A5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D8A3126A90
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbfLSSqi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:46:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39226 "EHLO mail.kernel.org"
+        id S1729674AbfLSSsp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729084AbfLSSqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:32 -0500
+        id S1729653AbfLSSsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B81EE222C2;
-        Thu, 19 Dec 2019 18:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37B6C24672;
+        Thu, 19 Dec 2019 18:48:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781192;
-        bh=bUCTHCV4C8NP7zJew3U8XaxWsHStdiHQUK2ftaIvRMw=;
+        s=default; t=1576781315;
+        bh=RWxwab80TY1PaH/MVpLU0B8OeDnTrNO7TreYWl8Nzmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N9VeuPOdwNH8vavm7blOd2gnMEQzvljNB+MSqDuI5NaRoKkPc6iUM7qqp16NEHOnP
-         hVY14Au2kMU7nQaRNTbc89n4N2NtLZROriRDbSbcAKyYh7cn/mjwA9b/Avwz0TKA1U
-         PlaM5gQbsKobkymTuNsT9QTqtYcKvflv4NIvCK9w=
+        b=zmgVc55SJ9Uh6WsHXgLjJvGvuPAhkLGrXiL0g9NXkd9VyIchkwoQVqAXW5X2saah+
+         Ds8QuqDz3Dv/ae1w8QxZOP9kyvaC1DK7obUOc1uSgPXn+sR+au7xo6d53FBJ0OMicp
+         6EXwnGve5H+DG3Ld/8PBXTFI5ItMYFyFM/mogf6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 119/199] btrfs: record all roots for rename exchange on a subvol
-Date:   Thu, 19 Dec 2019 19:33:21 +0100
-Message-Id: <20191219183221.499407062@linuxfoundation.org>
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 120/199] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
+Date:   Thu, 19 Dec 2019 19:33:22 +0100
+Message-Id: <20191219183221.563732899@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,43 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-commit 3e1740993e43116b3bc71b0aad1e6872f6ccf341 upstream.
+commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
 
-Testing with the new fsstress support for subvolumes uncovered a pretty
-bad problem with rename exchange on subvolumes.  We're modifying two
-different subvolumes, but we only start the transaction on one of them,
-so the other one is not added to the dirty root list.  This is caught by
-btrfs_cow_block() with a warning because the root has not been updated,
-however if we do not modify this root again we'll end up pointing at an
-invalid root because the root item is never updated.
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback to get the RX buffer address was added to
+the PCI driver. Unfortunately, driver rtl8192de was not modified
+appropriately and the code runs into a WARN_ONCE() call. The use
+of an incorrect array is also fixed.
 
-Fix this by making sure we add the destination root to the trans list,
-the same as we do with normal renames.  This fixes the corruption.
-
-Fixes: cdd1fedf8261 ("btrfs: add support for RENAME_EXCHANGE and RENAME_WHITEOUT")
-CC: stable@vger.kernel.org # 4.9+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org> # 3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9616,6 +9616,9 @@ static int btrfs_rename_exchange(struct
- 		goto out_notrans;
- 	}
- 
-+	if (dest != root)
-+		btrfs_record_root_in_trans(trans, dest);
-+
- 	/*
- 	 * We need to find a free sequence number both in the source and
- 	 * in the destination directory for the exchange.
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -843,13 +843,15 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
+ 			break;
+ 		}
+ 	} else {
+-		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
+ 		switch (desc_name) {
+ 		case HW_DESC_OWN:
+-			ret = GET_RX_DESC_OWN(pdesc);
++			ret = GET_RX_DESC_OWN(p_desc);
+ 			break;
+ 		case HW_DESC_RXPKT_LEN:
+-			ret = GET_RX_DESC_PKT_LEN(pdesc);
++			ret = GET_RX_DESC_PKT_LEN(p_desc);
++			break;
++		case HW_DESC_RXBUFF_ADDR:
++			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
+ 			break;
+ 		default:
+ 			RT_ASSERT(false, "ERR rxdesc :%d not process\n",
 
 
