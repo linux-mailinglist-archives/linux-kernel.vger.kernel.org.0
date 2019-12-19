@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 220A2126A0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19BF3126944
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfLSSno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:43:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35318 "EHLO mail.kernel.org"
+        id S1727426AbfLSSgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:36:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728649AbfLSSnh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:37 -0500
+        id S1727386AbfLSSf7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:35:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ADAE206D7;
-        Thu, 19 Dec 2019 18:43:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCDED24686;
+        Thu, 19 Dec 2019 18:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781016;
-        bh=HWfVOk9ffR+9BCLe8fI2YOt95dbyHc8Er0MDZ8RP7I8=;
+        s=default; t=1576780559;
+        bh=NKIKF7A5zn42BO7JUEY9uTMY+4ubMBgIJXguLfS5Lgs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y6F5QAttFB53Lcgo1Pv/oN+RDWgCIvwDj+iGwdOAeq7PmF+z6tYTYPA6W7Uxdq4xn
-         ACV/LLzITk/JnEk6uWwD4CdSRSxUzwQREQ6AjrJ41Cu8TeYkdvTmKfgo8ncwcJCUw6
-         Naemm4RmF89A4u1LsP9Rp2KmvVQxC6RPRfVemMNU=
+        b=ERfSHwxX7RFokTAzUEAWtubQg7fU/mfSR2tq1bmMmYGUZo5QcU65wvz9+XpDTAN38
+         v27YeEAlPllGLQDn3vr6hYQaNtOpEC8V2sljuYnAjLSO9aAoPw+sE60wS3HBxUW2CN
+         XOjZktiBtgY4rT2Y6LKlHxw7pLG5xRSyVnBAV3C0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 049/199] ARM: OMAP1/2: fix SoC name printing
+Subject: [PATCH 4.4 023/162] Staging: iio: adt7316: Fix i2c data reading, set the data field
 Date:   Thu, 19 Dec 2019 19:32:11 +0100
-Message-Id: <20191219183217.669837002@linuxfoundation.org>
+Message-Id: <20191219183208.807901786@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,61 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
+From: Shreeya Patel <shreeya.patel23498@gmail.com>
 
-[ Upstream commit 04a92358b3964988c78dfe370a559ae550383886 ]
+[ Upstream commit 688cd642ba0c393344c802647848da5f0d925d0e ]
 
-Currently we get extra newlines on OMAP1/2 when the SoC name is printed:
+adt7316_i2c_read function nowhere sets the data field.
+It is necessary to have an appropriate value for it.
+Hence, assign the value stored in 'ret' variable to data field.
 
-[    0.000000] OMAP1510
-[    0.000000]  revision 2 handled as 15xx id: bc058c9b93111a16
+This is an ancient bug, and as no one seems to have noticed,
+probably no sense in applying it to stable.
 
-[    0.000000] OMAP2420
-[    0.000000]
-
-Fix by using pr_cont.
-
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/id.c | 6 +++---
- arch/arm/mach-omap2/id.c | 4 ++--
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/staging/iio/addac/adt7316-i2c.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/mach-omap1/id.c b/arch/arm/mach-omap1/id.c
-index 52de382fc8047..7e49dfda3d2f4 100644
---- a/arch/arm/mach-omap1/id.c
-+++ b/arch/arm/mach-omap1/id.c
-@@ -200,10 +200,10 @@ void __init omap_check_revision(void)
- 		printk(KERN_INFO "Unknown OMAP cpu type: 0x%02x\n", cpu_type);
+diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
+index 78fe0b5572802..fa1ef25d7a9a3 100644
+--- a/drivers/staging/iio/addac/adt7316-i2c.c
++++ b/drivers/staging/iio/addac/adt7316-i2c.c
+@@ -35,6 +35,8 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
+ 		return ret;
  	}
  
--	printk(KERN_INFO "OMAP%04x", omap_revision >> 16);
-+	pr_info("OMAP%04x", omap_revision >> 16);
- 	if ((omap_revision >> 8) & 0xff)
--		printk(KERN_INFO "%x", (omap_revision >> 8) & 0xff);
--	printk(KERN_INFO " revision %i handled as %02xxx id: %08x%08x\n",
-+		pr_cont("%x", (omap_revision >> 8) & 0xff);
-+	pr_cont(" revision %i handled as %02xxx id: %08x%08x\n",
- 	       die_rev, omap_revision & 0xff, system_serial_low,
- 	       system_serial_high);
- }
-diff --git a/arch/arm/mach-omap2/id.c b/arch/arm/mach-omap2/id.c
-index cc6d9fa609242..9d942f022f2f6 100644
---- a/arch/arm/mach-omap2/id.c
-+++ b/arch/arm/mach-omap2/id.c
-@@ -199,8 +199,8 @@ void __init omap2xxx_check_revision(void)
- 
- 	pr_info("%s", soc_name);
- 	if ((omap_rev() >> 8) & 0x0f)
--		pr_info("%s", soc_rev);
--	pr_info("\n");
-+		pr_cont("%s", soc_rev);
-+	pr_cont("\n");
++	*data = ret;
++
+ 	return 0;
  }
  
- #define OMAP3_SHOW_FEATURE(feat)		\
 -- 
 2.20.1
 
