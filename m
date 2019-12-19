@@ -2,230 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A369D125F04
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:33:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF21A125F1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:34:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfLSKd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:33:27 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39744 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfLSKdT (ORCPT
+        id S1726824AbfLSKeM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:34:12 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34430 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLSKeM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:33:19 -0500
-Received: by mail-wm1-f65.google.com with SMTP id 20so4934102wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:33:17 -0800 (PST)
+        Thu, 19 Dec 2019 05:34:12 -0500
+Received: by mail-pf1-f195.google.com with SMTP id l127so2994913pfl.1;
+        Thu, 19 Dec 2019 02:34:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=UpfkndITw/1h6ZYfXIWQrUX2mzHma7l6m7IK0V8q2nM=;
-        b=Jq/RoVBQUdYougVCwhsmeMWjBjrNCV266LCRZYiOKSQCC+HXqnkdyFQNLqbV3MQfjk
-         t4Ro8rV3EKvd4KHJqxr8Ldmg6vZxVW18xqPRqQ5+YdNa6aT/IVZjHV/M3/VUMo4XXImK
-         BFeXhpMFYhwAY5fqnVWVHs+holLoSXbry+uDxP7kjoMd8l33khaUEtoP7rHWELMiaMfy
-         ZNx6rE0HyNd9nKxLTtTg8m2CPnrZ9lINMdS05P3Z+H7wR/KyXAqCyu4wbwbNYuTORc6k
-         Cdq3snOBdrvb5cHDDxDwpa1yt3c1FQYnDhJhViq3v8DtUHkje3sFj0OdZSw/NmgjfrKk
-         FoHQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BAIlE7DMaDGBVXpBNBOtzHm8RlaK5xCd8x7R/wAcGNI=;
+        b=fPLIxbkSfXYkwypUHxgrQoRCFHxrEKjirZPQC18UFlxp+lgXCi3e/Ce91ydWZlshwU
+         bmZnTU69j0FnT760dwJB/OI1Cfy4kgHn9m1cbcBN9G+3uGfyDFnfNFralhTltGDBnCIt
+         mEhAnUf9OJGEvRCED0gfO27fylMoTwysbsUOX06tjEim2jMAni8ohICfHJ45hglCpNGm
+         u3TXnLExef8+MjzV4Ga8FAZLUUgU0cqEoam1N7NfM9XWUO14n8L1pyjQrrLQ455XDjK0
+         cYo9d6KifrTTL2L04lwhNuUOGRTmk/q+r1HswwtAJm0Eb5jWpqIjjCmHfyCG1c/yMINL
+         GsDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=UpfkndITw/1h6ZYfXIWQrUX2mzHma7l6m7IK0V8q2nM=;
-        b=UBiykm76Dm3Wpl53+pr1D2f+FtahK4WXEj6MP91kz3m0wTct83Sna5Q79cSd/UP1s6
-         ingFTTE4/JXleOIchN3D4k4GOatheuotoq6i9gjtfhqxlJIOm+kj76XRInd0ozDtGWhg
-         3KsK3pvw0JHXMLdx++6Ht8s9HnRF6dDhmQe3861CPS5aS/1+RxkCdZfFIPTxosMYyuRc
-         obdZUg+tcEBB/DjEel1ORwJrekg1PFdnphQOob1Cdkd+Z/JEFsMOaMTGro1ZZYgdQitF
-         elKPTloi89476UxSXv4yJE8mHel8tHoqN/FVY4yZxDMWuOy7edEcMhOdt2sj8sy+c8Ss
-         /lDw==
-X-Gm-Message-State: APjAAAVDgUsZkOWXnYaOnyzu15wQDY6+r7Oevd5KyW+PeeisIyLC/WZV
-        7AC2PIYfV0sX7jNhlOz1pr8KpQ==
-X-Google-Smtp-Source: APXvYqwl6PRQmxRp2FeaUrF1dSbhoP+n1mCs6HIPNucmAod9GoKn3RCFhO9Un5ocsWwCOZY6wlcBjA==
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr8847992wml.138.1576751596755;
-        Thu, 19 Dec 2019 02:33:16 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id i11sm5962942wrs.10.2019.12.19.02.33.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BAIlE7DMaDGBVXpBNBOtzHm8RlaK5xCd8x7R/wAcGNI=;
+        b=QCDhDL4oo6f86C5vShArxSMqIQbuZkR0I+oXOr1LqMZNjdgzoqkS11NqEFY/AuP0yU
+         ghJhofgTNA6zFbWUHu42TV/382ekOFBX2UYlJdIr+Y1hpa45q7uvpBAhQnzQu7u11E1V
+         G2l3Ilzt+wxKcwkcv+iqEwFki1ZKTYP1mr2Suw7MmIDEZ8lEcEaNB4gSLCY0JdTK8WgR
+         so27cXMTgDY1tYuttQhVZ+V8vgUPEQDoOU+U32FHHu/nAW2cdCK7kQu9SSGpQarhiBOL
+         XZKa62zUEoHteA1hfZFlrBzrWCxwrwtj8Nzl4hwq9ddMf9hIYx+9dINBS5Iq6IoSbfwS
+         BnAQ==
+X-Gm-Message-State: APjAAAXnNNomDZgbzsD0dExT90LQzoL05hG2Agr3ab1uCDfFQsBa+fRE
+        OsyYavAda8j4oPV7R7ZHz4Q=
+X-Google-Smtp-Source: APXvYqxaSmxfpFZxq4SV0bc4KGc9zAFwbYtPo3wGd6OBZqZduudwqsv5TLWgLCbp41LQIElLjdq7pg==
+X-Received: by 2002:a63:7705:: with SMTP id s5mr8134161pgc.379.1576751651603;
+        Thu, 19 Dec 2019 02:34:11 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id d26sm6596181pgv.66.2019.12.19.02.34.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 02:33:15 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc:     robh@kernel.org, vinod.koul@linaro.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, spapothi@codeaurora.org,
-        bgoswami@codeaurora.org, linux-gpio@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v6 11/11] ASoC: qcom: sdm845: add support to DB845c and Lenovo Yoga
-Date:   Thu, 19 Dec 2019 10:31:53 +0000
-Message-Id: <20191219103153.14875-12-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
-References: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 19 Dec 2019 02:34:10 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     fabien.dessenne@st.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH v2] media: sti: bdisp: fix a possible sleep-in-atomic-context bug in bdisp_device_run()
+Date:   Thu, 19 Dec 2019 18:34:01 +0800
+Message-Id: <20191219103401.13630-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to Lenovo Yoga c630 compatible strings
-and related setup to the sound machine driver.
+The driver may sleep while holding a spinlock.
+The function call path (from bottom to top) in Linux 4.19 is:
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+drivers/media/platform/sti/bdisp/bdisp-hw.c, 385:
+    msleep in bdisp_hw_reset
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c, 341:
+    bdisp_hw_reset in bdisp_device_run
+drivers/media/platform/sti/bdisp/bdisp-v4l2.c, 317:
+    _raw_spin_lock_irqsave in bdisp_device_run
+
+To fix this bug, msleep() is replaced with udelay().
+
+This bug is found by a static analysis tool STCheck written by myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- sound/soc/qcom/sdm845.c | 86 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 85 insertions(+), 1 deletion(-)
+v2:
+* Use udelay() instead of mdelay().
+  Thank Fabien for good advice.
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 28f3cef696e6..3b5547a27aad 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -24,6 +24,9 @@
- #define RIGHT_SPK_TDM_TX_MASK   0xC0
- #define SPK_TDM_RX_MASK         0x03
- #define NUM_TDM_SLOTS           8
-+#define SLIM_MAX_TX_PORTS 16
-+#define SLIM_MAX_RX_PORTS 16
-+#define WCD934X_DEFAULT_MCLK_RATE	9600000
+---
+ drivers/media/platform/sti/bdisp/bdisp-hw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/sti/bdisp/bdisp-hw.c b/drivers/media/platform/sti/bdisp/bdisp-hw.c
+index 4372abbb5950..a74e9fd65238 100644
+--- a/drivers/media/platform/sti/bdisp/bdisp-hw.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-hw.c
+@@ -14,8 +14,8 @@
+ #define MAX_SRC_WIDTH           2048
  
- struct sdm845_snd_data {
- 	struct snd_soc_jack jack;
-@@ -36,6 +39,39 @@ struct sdm845_snd_data {
+ /* Reset & boot poll config */
+-#define POLL_RST_MAX            50
+-#define POLL_RST_DELAY_MS       20
++#define POLL_RST_MAX            500
++#define POLL_RST_DELAY_MS       2
  
- static unsigned int tdm_slot_offset[8] = {0, 4, 8, 12, 16, 20, 24, 28};
- 
-+static int sdm845_slim_snd_hw_params(struct snd_pcm_substream *substream,
-+				     struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	u32 rx_ch[SLIM_MAX_RX_PORTS], tx_ch[SLIM_MAX_TX_PORTS];
-+	u32 rx_ch_cnt = 0, tx_ch_cnt = 0;
-+	int ret = 0, i;
-+
-+	for (i = 0 ; i < dai_link->num_codecs; i++) {
-+		ret = snd_soc_dai_get_channel_map(rtd->codec_dais[i],
-+				&tx_ch_cnt, tx_ch, &rx_ch_cnt, rx_ch);
-+
-+		if (ret != 0 && ret != -ENOTSUPP) {
-+			pr_err("failed to get codec chan map, err:%d\n", ret);
-+			return ret;
-+		} else if (ret == -ENOTSUPP) {
-+			/* Ignore unsupported */
-+			continue;
-+		}
-+
-+		if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
-+							  rx_ch_cnt, rx_ch);
-+		else
-+			ret = snd_soc_dai_set_channel_map(cpu_dai, tx_ch_cnt,
-+							  tx_ch, 0, NULL);
-+	}
-+
-+	return 0;
-+}
-+
- static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
- 					struct snd_pcm_hw_params *params)
- {
-@@ -151,6 +187,11 @@ static int sdm845_snd_hw_params(struct snd_pcm_substream *substream,
- 	case QUATERNARY_TDM_TX_0:
- 		ret = sdm845_tdm_snd_hw_params(substream, params);
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+		ret = sdm845_slim_snd_hw_params(substream, params);
-+		break;
-+	case QUATERNARY_MI2S_RX:
-+		break;
- 	default:
- 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
- 		break;
-@@ -173,7 +214,20 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
- 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
- 	struct sdm845_snd_data *pdata = snd_soc_card_get_drvdata(card);
- 	struct snd_jack *jack;
--	int rval;
-+	struct snd_soc_dai_link *dai_link = rtd->dai_link;
-+	/*
-+	 * Codec SLIMBUS configuration
-+	 * RX1, RX2, RX3, RX4, RX5, RX6, RX7, RX8, RX9, RX10, RX11, RX12, RX13
-+	 * TX1, TX2, TX3, TX4, TX5, TX6, TX7, TX8, TX9, TX10, TX11, TX12, TX13
-+	 * TX14, TX15, TX16
-+	 */
-+	unsigned int rx_ch[SLIM_MAX_RX_PORTS] = {144, 145, 146, 147, 148, 149,
-+					150, 151, 152, 153, 154, 155, 156};
-+	unsigned int tx_ch[SLIM_MAX_TX_PORTS] = {128, 129, 130, 131, 132, 133,
-+					    134, 135, 136, 137, 138, 139,
-+					    140, 141, 142, 143};
-+	int rval, i;
-+
- 
- 	if (!pdata->jack_setup) {
- 		rval = snd_soc_card_jack_new(card, "Headset Jack",
-@@ -211,6 +265,21 @@ static int sdm845_dai_init(struct snd_soc_pcm_runtime *rtd)
- 			return rval;
- 		}
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+		for (i = 0 ; i < dai_link->num_codecs; i++) {
-+			rval = snd_soc_dai_set_channel_map(rtd->codec_dais[i],
-+							  ARRAY_SIZE(tx_ch),
-+							  tx_ch,
-+							  ARRAY_SIZE(rx_ch),
-+							  rx_ch);
-+			if (rval != 0 && rval != -ENOTSUPP)
-+				return rval;
-+
-+			snd_soc_dai_set_sysclk(rtd->codec_dais[i], 0,
-+					       WCD934X_DEFAULT_MCLK_RATE,
-+					       SNDRV_PCM_STREAM_PLAYBACK);
-+		}
-+		break;
- 	default:
- 		break;
+ enum bdisp_target_plan {
+ 	BDISP_RGB,
+@@ -382,7 +382,7 @@ int bdisp_hw_reset(struct bdisp_dev *bdisp)
+ 	for (i = 0; i < POLL_RST_MAX; i++) {
+ 		if (readl(bdisp->regs + BLT_STA1) & BLT_STA1_IDLE)
+ 			break;
+-		msleep(POLL_RST_DELAY_MS);
++		udelay(POLL_RST_DELAY_MS * 1000);
  	}
-@@ -256,6 +325,14 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 		}
- 		snd_soc_dai_set_fmt(cpu_dai, fmt);
- 		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
-+		break;
-+	case QUATERNARY_MI2S_RX:
-+		snd_soc_dai_set_sysclk(cpu_dai,
-+			Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT,
-+			MI2S_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+		snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_CBS_CFS);
-+
-+
- 		break;
- 
- 	case QUATERNARY_TDM_RX_0:
-@@ -294,6 +371,8 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 			}
- 		}
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+		break;
- 
- 	default:
- 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
-@@ -338,6 +417,9 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
- 				0, SNDRV_PCM_STREAM_PLAYBACK);
- 		}
- 		break;
-+	case SLIMBUS_0_RX...SLIMBUS_6_TX:
-+	case QUATERNARY_MI2S_RX:
-+		break;
- 
- 	default:
- 		pr_err("%s: invalid dai id 0x%x\n", __func__, cpu_dai->id);
-@@ -451,6 +533,8 @@ static int sdm845_snd_platform_remove(struct platform_device *pdev)
- 
- static const struct of_device_id sdm845_snd_device_id[]  = {
- 	{ .compatible = "qcom,sdm845-sndcard" },
-+	{ .compatible = "qcom,db845c-sndcard" },
-+	{ .compatible = "lenovo,yoga-c630-sndcard" },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sdm845_snd_device_id);
+ 	if (i == POLL_RST_MAX)
+ 		dev_err(bdisp->dev, "Reset timeout\n");
 -- 
-2.21.0
+2.17.1
 
