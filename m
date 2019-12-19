@@ -2,108 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD67126759
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:44:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05E6F126740
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:36:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfLSQn4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:43:56 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41995 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbfLSQn4 (ORCPT
+        id S1726963AbfLSQgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:36:08 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46971 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfLSQgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:43:56 -0500
-Received: by mail-ed1-f68.google.com with SMTP id e10so5519106edv.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:43:55 -0800 (PST)
+        Thu, 19 Dec 2019 11:36:08 -0500
+Received: by mail-lj1-f195.google.com with SMTP id m26so4491788ljc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:36:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Q6MJKY5kaJhdcPD2Yij+K4j3QBznO/FzqxPRwZHg2tA=;
-        b=XYNY/1juioQpuXWDwItjvluLKzqTb1s+LUDJh70eT+FynV6pmhNjrfR8rKpTN0Y4Vq
-         95LNMIm35iIung4zroafpJpZMFHIQW6gyl0nMe0sXzlo0Usj/osB8dJgXFazZDihbiKk
-         TXHN/eqPdNOFXyC7+ATLgVoMdiY/9k9+NozPc=
+        bh=+0EPaeAm1h5et+pcE0Lw2TnBFxWaf1zou6EIoTCmP30=;
+        b=bZHWn0PsXhDbOK/Bql+EUdVYbHBqZFT+2Nbu2NKTbOPDpYJnxQ8/xUws763LXH9j3m
+         XvTn3+qa6G5xDrHkogar6bc8r1mWIiQFLSpH4PfDJaTYQjML3UPjF8ReFuAn4IPFe3wt
+         CsSw4N/hW8UkyP4cDs7xLRa2iwzcttIS4FCkc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Q6MJKY5kaJhdcPD2Yij+K4j3QBznO/FzqxPRwZHg2tA=;
-        b=RFac+VBdIxQ77VWJL+zqZNERIv4Q4sHGYaq1coQuPEU9NqDbx/jJIIS2v4LInmGvgZ
-         b6W8BvZCJLFngG10ZLBcYpE66TPKSKS90sDpQyMUAruE8kNS8Bg+jh2SuGY7nHo+5HbW
-         plXaLWtqNaA2T9eyESkJgzwU7ZHYj8SK2MD+c25mf8wYpYBgYDbtist0aAsvLqVJXHV7
-         KTNUPnxP5V6RRYZOJLRsSVumbQcHZ3GnYyfqguFvMu5ED3zpdn/0FGxazG1q2ADVBUgs
-         LaXj9U3H1wj2vqgrXvsKCwxhO1WrJdOZRBEtlGJypHDamudBX9Jjftd2tFo6nE2xzqEd
-         zIBA==
-X-Gm-Message-State: APjAAAXKojZS9zjYtJpFesqokHWn4bvZHr+WUvAPLMtdBZYf7QEcLW9i
-        RUS1yMMo2zXSzr6XX/XRnWQFrtwziwI=
-X-Google-Smtp-Source: APXvYqzJrnDhyqXry2Juez68Ic0FZffsvBz9pdNakQx5OknlAgsdfpA3d5HGd3d/OE3zijzIjYZueg==
-X-Received: by 2002:a05:6402:2042:: with SMTP id bc2mr10139724edb.300.1576773834324;
-        Thu, 19 Dec 2019 08:43:54 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id by2sm597353ejb.45.2019.12.19.08.43.53
+        bh=+0EPaeAm1h5et+pcE0Lw2TnBFxWaf1zou6EIoTCmP30=;
+        b=fLD6SclczqgTxMqc83/PnM03yC46mYN7SgbMrpuWcceQgBO3izOnPZVWN3a6VBdcPb
+         SEHQSQNh/BGfB7L8LUXFCPa2IGoVPJ6BkCLwB17gWPSC5aUmylJU2Cheb9YWy3k2kIKf
+         sMY6lfHxx5UXEG1gcgz2MI8Wqu3Zoej86OG79zmiFxNByPd78mvZmaBaq7UH1l89W0ag
+         CsFDqBPal7Sqd57osdmt/nGO/Uq+1gOtugH1hdxGWG4ZbOdSjZhMy4QudpqItfAuNGmI
+         kPNKTQDQw67c16Zkg4WcbkUHoREkNRJJcrMIR31joj5po7XFnIVPbe9OeiCd6SlnWwNX
+         2gtA==
+X-Gm-Message-State: APjAAAWNvmSqqBaUBz1j6pafXGaF6o3oFouDAApRUxULVrTyTrDRRTDf
+        Bbgghy1X5oGZpW0AfpdGOEXFY1bVZdU=
+X-Google-Smtp-Source: APXvYqxXMYywtGonobgbmDVArwHxncOTzu6oeSFcCoSVbmi8DenMSfhA1pJfLhbmtQ4Tyohrheo4bQ==
+X-Received: by 2002:a2e:844e:: with SMTP id u14mr6753013ljh.183.1576773365064;
+        Thu, 19 Dec 2019 08:36:05 -0800 (PST)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id u9sm3103342lji.49.2019.12.19.08.36.03
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 08:43:54 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id b6so6704466wrq.0
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:43:53 -0800 (PST)
-X-Received: by 2002:adf:ee92:: with SMTP id b18mr10865736wro.281.1576773336863;
- Thu, 19 Dec 2019 08:35:36 -0800 (PST)
+        Thu, 19 Dec 2019 08:36:04 -0800 (PST)
+Received: by mail-lj1-f174.google.com with SMTP id u17so6934692lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:36:03 -0800 (PST)
+X-Received: by 2002:a2e:9ad1:: with SMTP id p17mr6832409ljj.26.1576773363095;
+ Thu, 19 Dec 2019 08:36:03 -0800 (PST)
 MIME-Version: 1.0
-References: <20191205000957.112719-1-thgarnie@chromium.org> <20191219133452.GM2827@hirez.programming.kicks-ass.net>
-In-Reply-To: <20191219133452.GM2827@hirez.programming.kicks-ass.net>
-From:   Thomas Garnier <thgarnie@chromium.org>
-Date:   Thu, 19 Dec 2019 08:35:25 -0800
-X-Gmail-Original-Message-ID: <CAJcbSZEubkFN0BLugoBm8fsPrNWxfFCDytC3nYUepr74dQFS=w@mail.gmail.com>
-Message-ID: <CAJcbSZEubkFN0BLugoBm8fsPrNWxfFCDytC3nYUepr74dQFS=w@mail.gmail.com>
-Subject: Re: [PATCH v10 00/11] x86: PIE support to extend KASLR randomization
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Juergen Gross <jgross@suse.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        "VMware, Inc." <pv-drivers@vmware.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Will Deacon <will@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Linux PM list <linux-pm@vger.kernel.org>
+References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
+ <20191206135604.GB2734@twin.jikos.cz> <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
+ <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
+ <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
+ <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
+ <b2ae78da-1c29-8ef7-d0bb-376c52af37c3@yandex-team.ru> <CAHk-=wgTisLQ9k-hsQeyrT5qBS0xuQPYsueFWNT3RxbkkVmbjw@mail.gmail.com>
+ <20191219000013.GB13065@localhost> <20191219001446.GA49812@localhost>
+ <CAHk-=wgMiTbRPp6Fx_A4YV+9xL7dc2j0Dj3NTFDPRfjsjLQTWw@mail.gmail.com> <935.1576742190@warthog.procyon.org.uk>
+In-Reply-To: <935.1576742190@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 19 Dec 2019 08:35:46 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiQdy80352u4d39QD58yQKaNfeEz+k3eRwZw5faEYFsgw@mail.gmail.com>
+Message-ID: <CAHk-=wiQdy80352u4d39QD58yQKaNfeEz+k3eRwZw5faEYFsgw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Josh Triplett <josh@joshtriplett.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Akemi Yagi <toracat@elrepo.org>, DJ Delorie <dj@redhat.com>,
+        David Sterba <dsterba@suse.cz>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 5:35 AM Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, Dec 18, 2019 at 11:56 PM David Howells <dhowells@redhat.com> wrote:
 >
-> On Wed, Dec 04, 2019 at 04:09:37PM -0800, Thomas Garnier wrote:
-> > Minor changes based on feedback and rebase from v9.
-> >
-> > Splitting the previous serie in two. This part contains assembly code
-> > changes required for PIE but without any direct dependencies with the
-> > rest of the patchset.
->
-> ISTR suggestion you add an objtool pass that verifies there are no
-> absolute text references left. Otherwise we'll forever be chasing that
-> last one..
+> I looked at splitting the waitqueue in to two, but it makes poll tricky.
 
-Correct, I have a reference in the changelog saying I will tackle in
-the next patchset because we still have non-pie references in other
-places but the fix is a bit more complex (for exemple per-cpu) and not
-included in this phase. I will add a better explanation in the next
-message for patch v11.
+No, it's actually trivial for poll.
+
+The thing is, poll can happily just add two wait-queues to the
+poll_table. In my conversion, I just did
+
+-       poll_wait(filp, &pipe->wait, wait);
++       if (filp->f_mode & FMODE_READ)
++               poll_wait(filp, &pipe->rd_wait, wait);
++       if (filp->f_mode & FMODE_WRITE)
++               poll_wait(filp, &pipe->wr_wait, wait);
+
+which changes the unconditional "add one" to two conditional adds.
+They _could_ have been unconditional too, but why add unnecessary
+wakeups? So it only really does it twice on named pipes (if opened for
+reading and writing).
+
+It's _unusual_ to add two wait-queues for a single poll, but it's not
+wrong. The tty layer has always done it - exactly because it has
+separate wait queues for reading and writing. Some other drivers do
+too. Sometimes there's a separate wait queue for errors, sometimes
+there are multiple wait-queues because there are events from the
+"subsystem" and there are other events from the "device". I think
+sound does the latter, for example.
+
+And no, I don't particularly like the FMODE_READ/WRITE testing above -
+it would be better to pass in the polling mask and ask "are we waiting
+for polling for reading or writing?" instead of asking whether the
+file descriptor was opened for read or write, but hey, it is what it
+is.
+
+Sadly, "poll()" doesn't really get passed the bitmask of what is being
+waited on (it's there in the poll_tabvle "_key" field, but I don't
+want to have the pipe code look into those kinds of details.
+
+So the named pipe case could be improved, but it's not like anybody
+really cares. Nobody uses named pipes any more (and few people ever
+did). So I didn't worry about it.
+
+            Linus
