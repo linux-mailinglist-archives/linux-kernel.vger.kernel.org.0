@@ -2,337 +2,247 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 885A3125ED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:24:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC9A125EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:22:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfLSKYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:24:32 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:39040 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726652AbfLSKYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:24:30 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CA091A0227;
-        Thu, 19 Dec 2019 11:24:28 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 99DA51A0768;
-        Thu, 19 Dec 2019 11:24:22 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 00878402FC;
-        Thu, 19 Dec 2019 18:24:14 +0800 (SGT)
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     tglx@linutronix.de, maz@kernel.org, jason@lakedaemon.net,
-        robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, fugang.duan@nxp.com,
-        linux-arm-kernel@lists.infradead.org,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: [PATCH V2 2/2] drivers/irqchip: add NXP INTMUX interrupt multiplexer support
-Date:   Thu, 19 Dec 2019 18:21:05 +0800
-Message-Id: <1576750865-14442-3-git-send-email-qiangqing.zhang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576750865-14442-1-git-send-email-qiangqing.zhang@nxp.com>
-References: <1576750865-14442-1-git-send-email-qiangqing.zhang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726742AbfLSKWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:22:04 -0500
+Received: from mail-qv1-f68.google.com ([209.85.219.68]:45684 "EHLO
+        mail-qv1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLSKWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:22:04 -0500
+Received: by mail-qv1-f68.google.com with SMTP id l14so1987794qvu.12
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RxF/3xVlUS8ynULbPMYetj7WI4OWmavmAlIDGJ3QWsE=;
+        b=mnU7Uy9c4RjOMQCYwRrfhEO/MlAIGDXYKa1kofKUJit561ETC/3JKdAYC7+3fKQIKR
+         msaJydYZ3Fv1tV0Xw0BusryjX+/HbgYScWAjG1qOrc4y2ryHDI7ovaXnG0rGbFqr8JR+
+         9sN73JIR3m377cVIfwMc6vMrbbK3TNmVEzjoRLNi/43f9Re+AQiFlbrjAi80pn1ejuLc
+         Ow3dlAWcYXEjbjFk+FNSYql46vL8P50SkbXExKjLsocfobvfs/uTJF6JEIxZnfAn5Zl7
+         k2St4sxO9RfBAKResusCXeOqq4KBnRgXjTTGP8oGJTY7PYzR+xTzs7r4nugv/T3c2xNp
+         iN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RxF/3xVlUS8ynULbPMYetj7WI4OWmavmAlIDGJ3QWsE=;
+        b=tu1xtu6CPbmPC0oRQa5oEUl/HtSUOXFJupsYCPIf+MqYscZYli8qzYmWmag1cuIMuT
+         jEDXQuGi1kcFfaAr4z33KI8QCJs5F6SD4n1zoJHMSIngkIt+6f45TBkgFk6fRZ48rUoQ
+         kQKqXADuS+s/XaCHeW/OrGTaIkWZ7p/oHdp/z00JzRZtPFPVZEr1ixkdi81ADXsVh0vY
+         JG/4zIh+yRh8GF+UflnefqBqFOmzqkeAbzaK3bg9CxrXzg/NfDgfcrnCPKpHSrFKIRo0
+         oZQR7OpVQoGW+d7awYDM2zABVXqBr5lQozPkJNTSeWacGHRF4DnaJj2yQZ6uWLYVn2qT
+         QGGQ==
+X-Gm-Message-State: APjAAAUL/nw1t1GJPUfN6lcf9Y2frCmJGR9HmFLkz5zuzEafdRYqiH5h
+        H3jONneEO9EOcluT4JX0KYIMdk3LrUqaW425kqSoCA==
+X-Google-Smtp-Source: APXvYqykDgu2fIyEwsnVjjcafYBfJKGgpr03PqoCs1HL+UIf8vYq9aPLCz5s5do5q37GDcLARuY6BXzPZaI+Fyi9RWw=
+X-Received: by 2002:a05:6214:1103:: with SMTP id e3mr6769571qvs.159.1576750922197;
+ Thu, 19 Dec 2019 02:22:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20191218231150.12139-1-jannh@google.com> <20191218231150.12139-4-jannh@google.com>
+In-Reply-To: <20191218231150.12139-4-jannh@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 19 Dec 2019 11:21:51 +0100
+Message-ID: <CACT4Y+bKioQorPESS0B83s4TkU0ZSo7M2JpNxJD06W=OihrK9A@mail.gmail.com>
+Subject: Re: [PATCH v7 4/4] x86/kasan: Print original address on #GP
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Interrupt Multiplexer (INTMUX) expands the number of peripherals
-that can interrupt the core:
-* The INTMUX has 8 channels that are assigned to 8 NVIC interrupt slots.
-* Each INTMUX channel can receive up to 32 interrupt sources and has 1
-  interrupt output.
-* The INTMUX routes the interrupt sources to the interrupt outputs.
+On Thu, Dec 19, 2019 at 12:12 AM Jann Horn <jannh@google.com> wrote:
+>
+> Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
+> to understand by computing the address of the original access and
+> printing that. More details are in the comments in the patch.
+>
+> This turns an error like this:
+>
+>     kasan: CONFIG_KASAN_INLINE enabled
+>     kasan: GPF could be caused by NULL-ptr deref or user memory access
+>     general protection fault, probably for non-canonical address
+>         0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
+>
+> into this:
+>
+>     general protection fault, probably for non-canonical address
+>         0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
+>     KASAN: maybe wild-memory-access in range
+>         [0x00badbeefbadbee8-0x00badbeefbadbeef]
+>
+> The hook is placed in architecture-independent code, but is currently
+> only wired up to the X86 exception handler because I'm not sufficiently
+> familiar with the address space layout and exception handling mechanisms
+> on other architectures.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>
+> Notes:
+>     v2:
+>      - move to mm/kasan/report.c (Dmitry)
+>      - change hook name to be more generic
+>      - use TASK_SIZE instead of TASK_SIZE_MAX for compiling on non-x86
+>      - don't open-code KASAN_SHADOW_MASK (Dmitry)
+>      - add "KASAN: " prefix, but not "BUG: " (Andrey, Dmitry)
+>      - use same naming scheme as get_wild_bug_type (Andrey)
+>      - this version was "Reviewed-by: Dmitry Vyukov <dvyukov@google.com>"
+>     v3:
+>      - adjusted example output in commit message based on
+>        changes in preceding patch
+>      - ensure that KASAN output happens after bust_spinlocks(1)
+>      - moved hook in arch/x86/kernel/traps.c such that output
+>        appears after the first line of KASAN-independent error report
+>     v4:
+>      - adjust patch to changes in x86/traps patch
+>     v5:
+>      - adjust patch to changes in x86/traps patch
+>      - fix bug introduced in v3: remove die() call after oops_end()
+>     v6:
+>      - adjust sample output in commit message
+>     v7:
+>      - instead of open-coding __die_header()+__die_body() in traps.c,
+>        insert a hook call into die_body(), introduced in patch 3/4
+>        (Borislav)
+>
+>  arch/x86/kernel/dumpstack.c |  2 ++
+>  arch/x86/mm/kasan_init_64.c | 21 -------------------
+>  include/linux/kasan.h       |  6 ++++++
+>  mm/kasan/report.c           | 40 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 48 insertions(+), 21 deletions(-)
+>
+> diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+> index 8995bf10c97c..ae64ec7f752f 100644
+> --- a/arch/x86/kernel/dumpstack.c
+> +++ b/arch/x86/kernel/dumpstack.c
+> @@ -427,6 +427,8 @@ void die_addr(const char *str, struct pt_regs *regs, long err, long gp_addr)
+>         int sig = SIGSEGV;
+>
+>         __die_header(str, regs, err);
+> +       if (gp_addr)
+> +               kasan_non_canonical_hook(gp_addr);
+>         if (__die_body(str, regs, err))
+>                 sig = 0;
+>         oops_end(flags, regs, sig);
+> diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+> index cf5bc37c90ac..763e71abc0fe 100644
+> --- a/arch/x86/mm/kasan_init_64.c
+> +++ b/arch/x86/mm/kasan_init_64.c
+> @@ -288,23 +288,6 @@ static void __init kasan_shallow_populate_pgds(void *start, void *end)
+>         } while (pgd++, addr = next, addr != (unsigned long)end);
+>  }
+>
+> -#ifdef CONFIG_KASAN_INLINE
+> -static int kasan_die_handler(struct notifier_block *self,
+> -                            unsigned long val,
+> -                            void *data)
+> -{
+> -       if (val == DIE_GPF) {
+> -               pr_emerg("CONFIG_KASAN_INLINE enabled\n");
+> -               pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
+> -       }
+> -       return NOTIFY_OK;
+> -}
+> -
+> -static struct notifier_block kasan_die_notifier = {
+> -       .notifier_call = kasan_die_handler,
+> -};
+> -#endif
+> -
+>  void __init kasan_early_init(void)
+>  {
+>         int i;
+> @@ -341,10 +324,6 @@ void __init kasan_init(void)
+>         int i;
+>         void *shadow_cpu_entry_begin, *shadow_cpu_entry_end;
+>
+> -#ifdef CONFIG_KASAN_INLINE
+> -       register_die_notifier(&kasan_die_notifier);
+> -#endif
+> -
+>         memcpy(early_top_pgt, init_top_pgt, sizeof(early_top_pgt));
+>
+>         /*
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index 4f404c565db1..e0238af0388f 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -225,4 +225,10 @@ static inline void kasan_release_vmalloc(unsigned long start,
+>                                          unsigned long free_region_end) {}
+>  #endif
+>
+> +#ifdef CONFIG_KASAN_INLINE
+> +void kasan_non_canonical_hook(unsigned long addr);
+> +#else /* CONFIG_KASAN_INLINE */
+> +static inline void kasan_non_canonical_hook(unsigned long addr) { }
+> +#endif /* CONFIG_KASAN_INLINE */
+> +
+>  #endif /* LINUX_KASAN_H */
+> diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+> index 621782100eaa..5ef9f24f566b 100644
+> --- a/mm/kasan/report.c
+> +++ b/mm/kasan/report.c
+> @@ -512,3 +512,43 @@ void __kasan_report(unsigned long addr, size_t size, bool is_write, unsigned lon
+>
+>         end_report(&flags);
+>  }
+> +
+> +#ifdef CONFIG_KASAN_INLINE
+> +/*
+> + * With CONFIG_KASAN_INLINE, accesses to bogus pointers (outside the high
+> + * canonical half of the address space) cause out-of-bounds shadow memory reads
+> + * before the actual access. For addresses in the low canonical half of the
+> + * address space, as well as most non-canonical addresses, that out-of-bounds
+> + * shadow memory access lands in the non-canonical part of the address space.
+> + * Help the user figure out what the original bogus pointer was.
+> + */
+> +void kasan_non_canonical_hook(unsigned long addr)
+> +{
+> +       unsigned long orig_addr;
+> +       const char *bug_type;
+> +
+> +       if (addr < KASAN_SHADOW_OFFSET)
+> +               return;
+> +
+> +       orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
+> +       /*
+> +        * For faults near the shadow address for NULL, we can be fairly certain
+> +        * that this is a KASAN shadow memory access.
+> +        * For faults that correspond to shadow for low canonical addresses, we
+> +        * can still be pretty sure - that shadow region is a fairly narrow
+> +        * chunk of the non-canonical address space.
+> +        * But faults that look like shadow for non-canonical addresses are a
+> +        * really large chunk of the address space. In that case, we still
+> +        * print the decoded address, but make it clear that this is not
+> +        * necessarily what's actually going on.
+> +        */
+> +       if (orig_addr < PAGE_SIZE)
+> +               bug_type = "null-ptr-deref";
+> +       else if (orig_addr < TASK_SIZE)
+> +               bug_type = "probably user-memory-access";
+> +       else
+> +               bug_type = "maybe wild-memory-access";
+> +       pr_alert("KASAN: %s in range [0x%016lx-0x%016lx]\n", bug_type,
+> +                orig_addr, orig_addr + KASAN_SHADOW_MASK);
+> +}
+> +#endif
 
-In the driver, we only use channel 0 to steer 32 interrupt sources into
-1 interrupt out.
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
----
- drivers/irqchip/Kconfig          |   6 +
- drivers/irqchip/Makefile         |   1 +
- drivers/irqchip/irq-imx-intmux.c | 240 +++++++++++++++++++++++++++++++
- 3 files changed, 247 insertions(+)
- create mode 100644 drivers/irqchip/irq-imx-intmux.c
-
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index ba152954324b..7e2b1e9d0b45 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -457,6 +457,12 @@ config IMX_IRQSTEER
- 	help
- 	  Support for the i.MX IRQSTEER interrupt multiplexer/remapper.
- 
-+config IMX_INTMUX
-+	def_bool y if ARCH_MXC
-+	select IRQ_DOMAIN
-+	help
-+	  Support for the i.MX INTMUX interrupt multiplexer.
-+
- config LS1X_IRQ
- 	bool "Loongson-1 Interrupt Controller"
- 	depends on MACH_LOONGSON32
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index e806dda690ea..af976a79d1fb 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -100,6 +100,7 @@ obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
- obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
- obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
-+obj-$(CONFIG_IMX_INTMUX)		+= irq-imx-intmux.o
- obj-$(CONFIG_MADERA_IRQ)		+= irq-madera.o
- obj-$(CONFIG_LS1X_IRQ)			+= irq-ls1x.o
- obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+= irq-ti-sci-intr.o
-diff --git a/drivers/irqchip/irq-imx-intmux.c b/drivers/irqchip/irq-imx-intmux.c
-new file mode 100644
-index 000000000000..8a3a7de60219
---- /dev/null
-+++ b/drivers/irqchip/irq-imx-intmux.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright 2017 NXP
-+
-+#include <linux/clk.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_platform.h>
-+#include <linux/spinlock.h>
-+
-+#define CHANIER(n)	(0x10 + (0x40 * n))
-+#define CHANIPR(n)	(0x20 + (0x40 * n))
-+
-+/*                     INTMUX Block Diagram
-+ *
-+ *                               ________________
-+ * interrupt source #  0  +---->|                |
-+ *                        |     |                |
-+ * interrupt source #  1  +++-->|                |
-+ *            ...         | |   |   channel # 0  |--------->interrupt out # 0
-+ *            ...         | |   |                |
-+ *            ...         | |   |                |
-+ * interrupt source # X-1 +++-->|________________|
-+ *                        | | |
-+ *                        | | |
-+ *                        | | |  ________________
-+ *                        +---->|                |
-+ *                        | | | |                |
-+ *                        | +-->|                |
-+ *                        | | | |   channel # 1  |--------->interrupt out # 1
-+ *                        | | +>|                |
-+ *                        | | | |                |
-+ *                        | | | |________________|
-+ *                        | | |
-+ *                        | | |
-+ *                        | | |       ...
-+ *                        | | |       ...
-+ *                        | | |
-+ *                        | | |  ________________
-+ *                        +---->|                |
-+ *                          | | |                |
-+ *                          +-->|                |
-+ *                            | |   channel # N  |--------->interrupt out # N
-+ *                            +>|                |
-+ *                              |                |
-+ *                              |________________|
-+ *
-+ *
-+ * N: Interrupt Channel Instance Number (N=7)
-+ * X: Interrupt Source Number for each channel (X=32)
-+ *
-+ * The INTMUX interrupt multiplexer has 8 channels, each channel receives 32
-+ * interrupt sources and generates 1 interrupt output.
-+ *
-+ * The aim of INTMUX design is to route same interrupt to different cores.
-+ *
-+ * In this driver, we only use channel 0 to steer 32 interrupt sources into 1
-+ * interrupt out. We can extend the driver to support muti-channels in the
-+ * future if has requirement.
-+ *
-+ */
-+
-+struct intmux_data {
-+	void __iomem		*regs;
-+	struct clk		*ipg_clk;
-+	int			chan_idx;
-+	int			irq;
-+	struct irq_domain	*domain;
-+	raw_spinlock_t		lock;
-+};
-+
-+static void imx_intmux_irq_mask(struct irq_data *d)
-+{
-+	struct intmux_data *data = d->chip_data;
-+	unsigned long flags;
-+	void __iomem *reg;
-+	u32 val;
-+
-+	raw_spin_lock_irqsave(&data->lock, flags);
-+	reg = data->regs + CHANIER(data->chan_idx);
-+	val = readl_relaxed(reg);
-+	/* disable the interrupt source of this channel */
-+	val &= ~(1 << d->hwirq);
-+	writel_relaxed(val, reg);
-+	raw_spin_unlock_irqrestore(&data->lock, flags);
-+}
-+
-+static void imx_intmux_irq_unmask(struct irq_data *d)
-+{
-+	struct intmux_data *data = d->chip_data;
-+	unsigned long flags;
-+	void __iomem *reg;
-+	u32 val;
-+
-+	raw_spin_lock_irqsave(&data->lock, flags);
-+	reg = data->regs + CHANIER(data->chan_idx);
-+	val = readl_relaxed(reg);
-+	/* enable the interrupt source of this channel */
-+	val |= 1 << d->hwirq;
-+	writel_relaxed(val, reg);
-+	raw_spin_unlock_irqrestore(&data->lock, flags);
-+}
-+
-+static struct irq_chip imx_intmux_irq_chip = {
-+	.name		= "intmux",
-+	.irq_mask	= imx_intmux_irq_mask,
-+	.irq_unmask	= imx_intmux_irq_unmask,
-+};
-+
-+static int imx_intmux_irq_map(struct irq_domain *h, unsigned int irq,
-+			      irq_hw_number_t hwirq)
-+{
-+	irq_set_status_flags(irq, IRQ_LEVEL);
-+	irq_set_chip_data(irq, h->host_data);
-+	irq_set_chip_and_handler(irq, &imx_intmux_irq_chip, handle_level_irq);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops imx_intmux_domain_ops = {
-+	.map		= imx_intmux_irq_map,
-+	.xlate		= irq_domain_xlate_onecell,
-+};
-+
-+static void imx_intmux_irq_handler(struct irq_desc *desc)
-+{
-+	struct intmux_data *data = irq_desc_get_handler_data(desc);
-+	unsigned long irqstat;
-+	int pos, virq;
-+
-+	chained_irq_enter(irq_desc_get_chip(desc), desc);
-+
-+	/* read the interrupt source pending status of this channel */
-+	irqstat = readl_relaxed(data->regs + CHANIPR(data->chan_idx));
-+
-+	for_each_set_bit(pos, &irqstat, 32) {
-+		virq = irq_find_mapping(data->domain, pos);
-+		if (virq)
-+			generic_handle_irq(virq);
-+	}
-+
-+	chained_irq_exit(irq_desc_get_chip(desc), desc);
-+}
-+
-+static int imx_intmux_probe(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	struct intmux_data *data;
-+	int ret;
-+
-+	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(data->regs)) {
-+		dev_err(&pdev->dev, "failed to initialize reg\n");
-+		return PTR_ERR(data->regs);
-+	}
-+
-+	data->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
-+	if (IS_ERR(data->ipg_clk)) {
-+		ret = PTR_ERR(data->ipg_clk);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev, "failed to get ipg clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	raw_spin_lock_init(&data->lock);
-+
-+	ret = clk_prepare_enable(data->ipg_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to enable ipg clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	data->domain = irq_domain_add_linear(np, 32, &imx_intmux_domain_ops,
-+					     data);
-+	if (!data->domain) {
-+		dev_err(&pdev->dev, "failed to create IRQ domain\n");
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	/* use channel 0 for interrupt output */
-+	data->chan_idx = 0;
-+
-+	data->irq = irq_of_parse_and_map(np, data->chan_idx);
-+	if (!data->irq) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	irq_set_chained_handler_and_data(data->irq, imx_intmux_irq_handler,
-+					 data);
-+
-+	/* disable all interrupt sources of this channel */
-+	writel_relaxed(0, data->regs + CHANIER(data->chan_idx));
-+
-+	platform_set_drvdata(pdev, data);
-+
-+	return 0;
-+out:
-+	clk_disable_unprepare(data->ipg_clk);
-+	return ret;
-+}
-+
-+static int imx_intmux_remove(struct platform_device *pdev)
-+{
-+	struct intmux_data *data = platform_get_drvdata(pdev);
-+
-+	/* clear all interrupt sources pending status of this channel */
-+	writel_relaxed(0, data->regs + CHANIPR(data->chan_idx));
-+
-+	irq_set_chained_handler_and_data(data->irq, NULL, NULL);
-+
-+	irq_domain_remove(data->domain);
-+
-+	clk_disable_unprepare(data->ipg_clk);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id imx_intmux_id[] = {
-+	{ .compatible = "fsl,imx-intmux", },
-+	{ /* sentinel */ },
-+};
-+
-+static struct platform_driver imx_intmux_driver = {
-+	.driver = {
-+		.name = "imx-intmux",
-+		.of_match_table = imx_intmux_id,
-+	},
-+	.probe = imx_intmux_probe,
-+	.remove = imx_intmux_remove,
-+};
-+builtin_platform_driver(imx_intmux_driver);
--- 
-2.17.1
-
+Thanks!
