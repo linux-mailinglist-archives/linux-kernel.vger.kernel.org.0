@@ -2,181 +2,328 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF298126313
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:13:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 804E912633C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:16:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLSNNR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:13:17 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56236 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSNNR (ORCPT
+        id S1727029AbfLSNQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:16:02 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:30947 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726963AbfLSNQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:13:17 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJDD7UZ002286;
-        Thu, 19 Dec 2019 07:13:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576761188;
-        bh=KpH/tH+NsOsRovCmkYgi/0I9FOPMrHG3B7b6JVEqIBE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GK1cbM7HGrsGlHyIwq3TvwgMootFKhnrfTJ6xdxhfI2jWttjRU+6bS7CvJJRMV6Ns
-         Fy1X2rit3h1sXjIBI1C0gsaOBHK8HIfj3LzDID3SnVFdV2L0SoCufpiVHa+d6XltYC
-         3ZxjXuWhR1bOHoPjfnpfAAvsJsISvV/xk8hyvqos=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBJDD7nb020647
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Dec 2019 07:13:07 -0600
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Dec 2019 07:13:06 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Dec 2019 07:13:06 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJDD38D090087;
-        Thu, 19 Dec 2019 07:13:03 -0600
-Subject: Re: [PATCH 10/13] dt-bindings: PCI: Add EP mode dt-bindings for TI's
- J721E SoC
-To:     Rob Herring <robh@kernel.org>, Tom Joseph <tjoseph@cadence.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Murray <andrew.murray@arm.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-11-kishon@ti.com> <20191219001408.GA20303@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <fb090674-abff-e2e1-492d-0585100980d0@ti.com>
+        Thu, 19 Dec 2019 08:16:00 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576761359; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=Kzd3Ff/63q0KSXouv0vNewRLNbcKAkneVhefNQhqKp4=; b=lWomrEGvZUQEnrjSKIkkhq9nT6M3QKeEACe1VFwC10XLlFA9mPBYaLZNb6+aTzzNPJ1Tdejq
+ QDOmp81JKCVMZ25lCS9zYhruiRSFc6d7x8hdDZwjAMRDNiwSqZKnIXzerY8/CfwELaFoqcWE
+ P7OHKZrCtH2NbWxNZjEJ6FYcCBw=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfb7809.7f5f4b187ca8-smtp-out-n03;
+ Thu, 19 Dec 2019 13:15:53 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 93DE7C447A4; Thu, 19 Dec 2019 13:15:53 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from smasetty-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: smasetty)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E771CC447AF;
+        Thu, 19 Dec 2019 13:15:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E771CC447AF
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=smasetty@codeaurora.org
+From:   Sharat Masetty <smasetty@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     dri-devel@freedesktop.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, will@kernel.org,
+        robin.murphy@arm.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, jcrouse@codeaurora.org,
+        saiprakash.ranjan@codeaurora.org,
+        Sharat Masetty <smasetty@codeaurora.org>
+Subject: [PATCH 5/5] drm/msm/a6xx: Add support for using system cache(LLC)
 Date:   Thu, 19 Dec 2019 18:44:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191219001408.GA20303@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-Id: <1576761286-20451-6-git-send-email-smasetty@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1576761286-20451-1-git-send-email-smasetty@codeaurora.org>
+References: <1576761286-20451-1-git-send-email-smasetty@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Tom
+The last level system cache can be partitioned to 32 different slices
+of which GPU has two slices preallocated. One slice is used for caching GPU
+buffers and the other slice is used for caching the GPU SMMU pagetables.
+This patch talks to the core system cache driver to acquire the slice handles,
+configure the SCID's to those slices and activates and deactivates the slices
+upon GPU power collapse and restore.
 
-On 19/12/19 5:44 am, Rob Herring wrote:
-> On Mon, Dec 09, 2019 at 02:51:44PM +0530, Kishon Vijay Abraham I wrote:
->> Add PCIe EP mode dt-bindings for TI's J721E SoC.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../bindings/pci/ti,j721e-pci-ep.yaml         | 113 ++++++++++++++++++
->>  1 file changed, 113 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pci/ti,j721e-pci-ep.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pci/ti,j721e-pci-ep.yaml b/Documentation/devicetree/bindings/pci/ti,j721e-pci-ep.yaml
->> new file mode 100644
->> index 000000000000..4e2af4733998
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/ti,j721e-pci-ep.yaml
->> @@ -0,0 +1,113 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/pci/ti,j721e-pci-ep.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: TI J721E PCI EP (PCIe Wrapper)
->> +
->> +maintainers:
->> +  - Kishon Vijay Abraham I <kishon@ti.com>
->> +
->> +properties:
->> +  compatible:
->> +      enum:
->> +          - ti,j721e-pcie-ep
-> 
-> Indentation.
-> 
->> +
->> +  reg:
->> +    maxItems: 4
->> +
->> +  reg-names:
->> +    items:
->> +      - const: intd_cfg
->> +      - const: user_cfg
->> +      - const: reg
->> +      - const: mem
->> +
->> +  ti,syscon-pcie-ctrl:
->> +    description: Phandle to the SYSCON entry required for configuring PCIe mode
->> +                 and link speed.
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/phandle
->> +
->> +  max-link-speed:
->> +    minimum: 1
->> +    maximum: 3
->> +
->> +  num-lanes:
->> +    minimum: 1
->> +    maximum: 2
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +    description: clock-specifier to represent input to the PCIe
->> +
->> +  clock-names:
->> +    items:
->> +      - const: fck
->> +
->> +  cdns,max-outbound-regions:
->> +    description: As defined in
->> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/int32
-> 
-> uint32
-> 
->> +      - enum: [16]
->> +
->> +  max-functions:
->> +    minimum: 1
->> +    maximum: 6
-> 
-> Needs a type ref. Or a common definition.
-> 
->> +
->> +  dma-coherent:
->> +    description: Indicates that the PCIe IP block can ensure the coherency
->> +
->> +  phys:
-> 
-> How many? Need to convert cdns,cdns-pcie-host.txt...
+Some support from the IOMMU driver is also needed to make use of the
+system cache. IOMMU_QCOM_SYS_CACHE is a buffer protection flag which enables
+caching GPU data buffers in the system cache with memory attributes such
+as outer cacheable, read-allocate, write-allocate for buffers. The GPU
+then has the ability to override a few cacheability parameters which it
+does to override write-allocate to write-no-allocate as the GPU hardware
+does not benefit much from it.
 
+Similarly DOMAIN_ATTR_QCOM_SYS_CACHE is another domain level attribute
+used by the IOMMU driver to set the right attributes to cache the hardware
+pagetables into the system cache.
 
-Tom, Can you convert cdns,cdns-pcie-host.txt to YAML binding?
-> 
->> +    description: As defined in
->> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
->> +
->> +  phy-names:
->> +    description: As defined in
->> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
-> 
-> For all the properties shared with host mode, it might make sense to 
-> define a common schema with all those properties and then include it in 
-> the host and endpoint schemas.
+Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 122 +++++++++++++++++++++++++++++++++-
+ drivers/gpu/drm/msm/adreno/a6xx_gpu.h |   9 +++
+ drivers/gpu/drm/msm/msm_iommu.c       |  13 ++++
+ drivers/gpu/drm/msm/msm_mmu.h         |   3 +
+ 4 files changed, 146 insertions(+), 1 deletion(-)
 
-Sure.
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+index faff6ff..0c7fdee 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+@@ -9,6 +9,7 @@
+ #include "a6xx_gmu.xml.h"
 
-Thanks
-Kishon
+ #include <linux/devfreq.h>
++#include <linux/soc/qcom/llcc-qcom.h>
+
+ #define GPU_PAS_ID 13
+
+@@ -781,6 +782,117 @@ static void a6xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu)
+ 	gpu_write(gpu, REG_A6XX_GBIF_HALT, 0x0);
+ }
+
++#define A6XX_LLC_NUM_GPU_SCIDS		5
++#define A6XX_GPU_LLC_SCID_NUM_BITS	5
++
++#define A6XX_GPU_LLC_SCID_MASK \
++	((1 << (A6XX_LLC_NUM_GPU_SCIDS * A6XX_GPU_LLC_SCID_NUM_BITS)) - 1)
++
++#define A6XX_GPUHTW_LLC_SCID_SHIFT	25
++#define A6XX_GPUHTW_LLC_SCID_MASK \
++	(((1 << A6XX_GPU_LLC_SCID_NUM_BITS) - 1) << A6XX_GPUHTW_LLC_SCID_SHIFT)
++
++static inline void a6xx_gpu_cx_rmw(struct a6xx_llc *llc,
++	u32 reg, u32 mask, u32 or)
++{
++	msm_rmw(llc->mmio + (reg << 2), mask, or);
++}
++
++static void a6xx_llc_deactivate(struct a6xx_llc *llc)
++{
++	llcc_slice_deactivate(llc->gpu_llc_slice);
++	llcc_slice_deactivate(llc->gpuhtw_llc_slice);
++}
++
++static void a6xx_llc_activate(struct a6xx_llc *llc)
++{
++	if (!llc->mmio)
++		return;
++
++	/* Program the sub-cache ID for all GPU blocks */
++	if (!llcc_slice_activate(llc->gpu_llc_slice))
++		a6xx_gpu_cx_rmw(llc,
++				REG_A6XX_CX_MISC_SYSTEM_CACHE_CNTL_1,
++				A6XX_GPU_LLC_SCID_MASK,
++				(llc->cntl1_regval &
++				 A6XX_GPU_LLC_SCID_MASK));
++
++	/* Program the sub-cache ID for the GPU pagetables */
++	if (!llcc_slice_activate(llc->gpuhtw_llc_slice))
++		a6xx_gpu_cx_rmw(llc,
++				REG_A6XX_CX_MISC_SYSTEM_CACHE_CNTL_1,
++				A6XX_GPUHTW_LLC_SCID_MASK,
++				(llc->cntl1_regval &
++				 A6XX_GPUHTW_LLC_SCID_MASK));
++
++	/* Program cacheability overrides */
++	a6xx_gpu_cx_rmw(llc, REG_A6XX_CX_MISC_SYSTEM_CACHE_CNTL_0, 0xF,
++		llc->cntl0_regval);
++}
++
++static void a6xx_llc_slices_destroy(struct a6xx_llc *llc)
++{
++	if (llc->mmio)
++		iounmap(llc->mmio);
++
++	llcc_slice_putd(llc->gpu_llc_slice);
++	llcc_slice_putd(llc->gpuhtw_llc_slice);
++}
++
++static int a6xx_llc_slices_init(struct platform_device *pdev,
++		struct a6xx_llc *llc)
++{
++	llc->mmio = msm_ioremap(pdev, "cx_mem", "gpu_cx");
++	if (IS_ERR_OR_NULL(llc->mmio))
++		return -ENODEV;
++
++	llc->gpu_llc_slice = llcc_slice_getd(LLCC_GPU);
++	llc->gpuhtw_llc_slice = llcc_slice_getd(LLCC_GPUHTW);
++	if (IS_ERR(llc->gpu_llc_slice) && IS_ERR(llc->gpuhtw_llc_slice))
++		return -ENODEV;
++
++	/*
++	 * CNTL0 provides options to override the settings for the
++	 * read and write allocation policies for the LLC. These
++	 * overrides are global for all memory transactions from
++	 * the GPU.
++	 *
++	 * 0x3: read-no-alloc-overridden = 0
++	 *      read-no-alloc = 0 - Allocate lines on read miss
++	 *      write-no-alloc-overridden = 1
++	 *      write-no-alloc = 1 - Do not allocates lines on write miss
++	 */
++	llc->cntl0_regval = 0x03;
++
++	/*
++	 * CNTL1 is used to specify SCID for (CP, TP, VFD, CCU and UBWC
++	 * FLAG cache) GPU blocks. This value will be passed along with
++	 * the address for any memory transaction from GPU to identify
++	 * the sub-cache for that transaction.
++	 */
++	if (!IS_ERR(llc->gpu_llc_slice)) {
++		u32 gpu_scid = llcc_get_slice_id(llc->gpu_llc_slice);
++		int i;
++
++		for (i = 0; i < A6XX_LLC_NUM_GPU_SCIDS; i++)
++			llc->cntl1_regval |=
++				gpu_scid << (A6XX_GPU_LLC_SCID_NUM_BITS * i);
++	}
++
++	/*
++	 * Set SCID for GPU IOMMU. This will be used to access
++	 * page tables that are cached in LLC.
++	 */
++	if (!IS_ERR(llc->gpuhtw_llc_slice)) {
++		u32 gpuhtw_scid = llcc_get_slice_id(llc->gpuhtw_llc_slice);
++
++		llc->cntl1_regval |=
++			gpuhtw_scid << A6XX_GPUHTW_LLC_SCID_SHIFT;
++	}
++
++	return 0;
++}
++
+ static int a6xx_pm_resume(struct msm_gpu *gpu)
+ {
+ 	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+@@ -795,6 +907,8 @@ static int a6xx_pm_resume(struct msm_gpu *gpu)
+
+ 	msm_gpu_resume_devfreq(gpu);
+
++	a6xx_llc_activate(&a6xx_gpu->llc);
++
+ 	return 0;
+ }
+
+@@ -803,6 +917,8 @@ static int a6xx_pm_suspend(struct msm_gpu *gpu)
+ 	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
+ 	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+
++	a6xx_llc_deactivate(&a6xx_gpu->llc);
++
+ 	devfreq_suspend_device(gpu->devfreq.devfreq);
+
+ 	/*
+@@ -851,6 +967,7 @@ static void a6xx_destroy(struct msm_gpu *gpu)
+ 		drm_gem_object_put_unlocked(a6xx_gpu->sqe_bo);
+ 	}
+
++	a6xx_llc_slices_destroy(&a6xx_gpu->llc);
+ 	a6xx_gmu_remove(a6xx_gpu);
+
+ 	adreno_gpu_cleanup(adreno_gpu);
+@@ -924,7 +1041,10 @@ struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
+ 	adreno_gpu->registers = NULL;
+ 	adreno_gpu->reg_offsets = a6xx_register_offsets;
+
+-	ret = adreno_gpu_init(dev, pdev, adreno_gpu, &funcs, 1, 0);
++	ret = a6xx_llc_slices_init(pdev, &a6xx_gpu->llc);
++
++	ret = adreno_gpu_init(dev, pdev, adreno_gpu, &funcs, 1,
++			ret ? 0 : MMU_FEATURE_USE_SYSTEM_CACHE);
+ 	if (ret) {
+ 		a6xx_destroy(&(a6xx_gpu->base.base));
+ 		return ERR_PTR(ret);
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+index 7239b8b..09b9ad0 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+@@ -12,6 +12,14 @@
+
+ extern bool hang_debug;
+
++struct a6xx_llc {
++	void __iomem *mmio;
++	void *gpu_llc_slice;
++	void *gpuhtw_llc_slice;
++	u32 cntl0_regval;
++	u32 cntl1_regval;
++};
++
+ struct a6xx_gpu {
+ 	struct adreno_gpu base;
+
+@@ -21,6 +29,7 @@ struct a6xx_gpu {
+ 	struct msm_ringbuffer *cur_ring;
+
+ 	struct a6xx_gmu gmu;
++	struct a6xx_llc llc;
+ };
+
+ #define to_a6xx_gpu(x) container_of(x, struct a6xx_gpu, base)
+diff --git a/drivers/gpu/drm/msm/msm_iommu.c b/drivers/gpu/drm/msm/msm_iommu.c
+index 8c95c31..4699367 100644
+--- a/drivers/gpu/drm/msm/msm_iommu.c
++++ b/drivers/gpu/drm/msm/msm_iommu.c
+@@ -27,6 +27,16 @@ static int msm_iommu_attach(struct msm_mmu *mmu, const char * const *names,
+ 			    int cnt)
+ {
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
++	int gpu_htw_llc = 1;
++
++	/*
++	 * This allows GPU to set the bus attributes required
++	 * to use system cache on behalf of the iommu page table
++	 * walker.
++	 */
++	if (msm_mmu_has_feature(mmu, MMU_FEATURE_USE_SYSTEM_CACHE))
++		iommu_domain_set_attr(iommu->domain,
++				DOMAIN_ATTR_QCOM_SYS_CACHE, &gpu_htw_llc);
+
+ 	return iommu_attach_device(iommu->domain, mmu->dev);
+ }
+@@ -45,6 +55,9 @@ static int msm_iommu_map(struct msm_mmu *mmu, uint64_t iova,
+ 	struct msm_iommu *iommu = to_msm_iommu(mmu);
+ 	size_t ret;
+
++	if (msm_mmu_has_feature(mmu, MMU_FEATURE_USE_SYSTEM_CACHE))
++		prot |= IOMMU_QCOM_SYS_CACHE;
++
+ 	ret = iommu_map_sg(iommu->domain, iova, sgt->sgl, sgt->nents, prot);
+ 	WARN_ON(!ret);
+
+diff --git a/drivers/gpu/drm/msm/msm_mmu.h b/drivers/gpu/drm/msm/msm_mmu.h
+index 1e4ac36d..3e6bdad 100644
+--- a/drivers/gpu/drm/msm/msm_mmu.h
++++ b/drivers/gpu/drm/msm/msm_mmu.h
+@@ -18,6 +18,9 @@ struct msm_mmu_funcs {
+ 	void (*destroy)(struct msm_mmu *mmu);
+ };
+
++/* MMU features */
++#define MMU_FEATURE_USE_SYSTEM_CACHE (1 << 0)
++
+ struct msm_mmu {
+ 	const struct msm_mmu_funcs *funcs;
+ 	struct device *dev;
+--
+1.9.1
