@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C156126A01
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:43:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AA87126937
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfLSSnQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:43:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34748 "EHLO mail.kernel.org"
+        id S1727179AbfLSSfe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:35:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727810AbfLSSnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:12 -0500
+        id S1727150AbfLSSfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:35:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 992E324682;
-        Thu, 19 Dec 2019 18:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96B1824672;
+        Thu, 19 Dec 2019 18:35:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780992;
-        bh=ySy2hneMvy4qsQQPVPoscng/4fEPsX7VZqAqTqFZD4Y=;
+        s=default; t=1576780530;
+        bh=otUWK49KyyBOMV/bSn9NkqTZ1N4WCHx+CSRaC3fXr8A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CwKXjQP74xROLOZEGnCnhYAiuLD+51DRDFDDZH2rMNkDGKCbogAYuiCC3rJcx1a+R
-         fUJMsiV5B4PFJ083NfRY3rNdulR4IloL6NtMRW+jZdi4Y9B0mPN5U2fUjSToD3swBh
-         taxRl9D/en8ZEgHb2rfxIzMjFZwkI63IKVQNgOxA=
+        b=hwAcqti/SgMOBtVLEiJUDcbLLQxqzTecy0WtvT8JoTFL5lu8w2vMDqGz+3SSN2r7b
+         b6xQgVtmQU39PnLxwQ8Iwy7y5U+NHsujr0mIqQNcSIbDpr1kkU9LsTA1Mt09yJ2jNP
+         USYAVzkAeHQoTLmhMLZKUtc9w/bzdpA/n6STnTWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>,
-        Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>,
-        Hans Verkuil <hansverk@cisco.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 037/199] media: pulse8-cec: return 0 when invalidating the logical address
-Date:   Thu, 19 Dec 2019 19:31:59 +0100
-Message-Id: <20191219183216.963731345@linuxfoundation.org>
+Subject: [PATCH 4.4 012/162] net: ep93xx_eth: fix mismatch of request_mem_region in remove
+Date:   Thu, 19 Dec 2019 19:32:00 +0100
+Message-Id: <20191219183203.078403846@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,35 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 2e84eb9affac43eeaf834992888b72426a8cd442 ]
+[ Upstream commit 3df70afe8d33f4977d0e0891bdcfb639320b5257 ]
 
-Return 0 when invalidating the logical address. The cec core produces
-a warning for drivers that do this.
+The driver calls release_resource in remove to match request_mem_region
+in probe, which is incorrect.
+Fix it by using the right one, release_mem_region.
 
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Reported-by: Torbjorn Jansson <torbjorn.jansson@mbox200.swipnet.se>
-Signed-off-by: Hans Verkuil <hansverk@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/pulse8-cec/pulse8-cec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/cirrus/ep93xx_eth.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/pulse8-cec/pulse8-cec.c b/drivers/staging/media/pulse8-cec/pulse8-cec.c
-index 1732c3857b8ea..2785cc03c5298 100644
---- a/drivers/staging/media/pulse8-cec/pulse8-cec.c
-+++ b/drivers/staging/media/pulse8-cec/pulse8-cec.c
-@@ -580,7 +580,7 @@ unlock:
- 	else
- 		pulse8->config_pending = true;
- 	mutex_unlock(&pulse8->config_lock);
--	return err;
-+	return log_addr == CEC_LOG_ADDR_INVALID ? 0 : err;
- }
+diff --git a/drivers/net/ethernet/cirrus/ep93xx_eth.c b/drivers/net/ethernet/cirrus/ep93xx_eth.c
+index de9f7c97d916d..796ee362ad70c 100644
+--- a/drivers/net/ethernet/cirrus/ep93xx_eth.c
++++ b/drivers/net/ethernet/cirrus/ep93xx_eth.c
+@@ -776,6 +776,7 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
+ {
+ 	struct net_device *dev;
+ 	struct ep93xx_priv *ep;
++	struct resource *mem;
  
- static int pulse8_cec_adap_transmit(struct cec_adapter *adap, u8 attempts,
+ 	dev = platform_get_drvdata(pdev);
+ 	if (dev == NULL)
+@@ -791,8 +792,8 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
+ 		iounmap(ep->base_addr);
+ 
+ 	if (ep->res != NULL) {
+-		release_resource(ep->res);
+-		kfree(ep->res);
++		mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++		release_mem_region(mem->start, resource_size(mem));
+ 	}
+ 
+ 	free_netdev(dev);
 -- 
 2.20.1
 
