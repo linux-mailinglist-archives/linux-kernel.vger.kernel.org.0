@@ -2,179 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F0DA126F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:10:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025FD126F7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:14:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbfLSVKy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:10:54 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44963 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbfLSVKy (ORCPT
+        id S1727140AbfLSVN7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:13:59 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33412 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbfLSVN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:10:54 -0500
-Received: by mail-ot1-f65.google.com with SMTP id h9so6309138otj.11;
-        Thu, 19 Dec 2019 13:10:53 -0800 (PST)
+        Thu, 19 Dec 2019 16:13:58 -0500
+Received: by mail-pf1-f196.google.com with SMTP id z16so3999188pfk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 13:13:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AgO/47tZIxvVJC669ttTdtG/Znfw1BmDdkytg6xCB4Y=;
+        b=whUB+AfKiwN8ECIkMHp0e0YfDbAkUtQz33jBgFfW/Q827xTfxTV9F/Q5DI6bUSau6x
+         BJzkRHXuHkopY+JIPQlCK9ZX2tzijX0WNjW+eZ8B1zDteVlui888czWXpidpu5RBcHGh
+         IkpzhrzS/hXvgAp1+FEMAqgUFUbjQ0GtXoAuI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kdIcXkG3q+6Tp6qJkg61HxwVk6Xb+NLQK9ho5n/HPpg=;
-        b=mn4aKrbBTAcFWAUd1Wh4OPflXLfCV0HL3DJu35sZpmJWc3bpYjEP+kHncXZalgm8BP
-         5i6vaPxXL42sHBXANrGEe2y2DEp88V9OSQ1yw8nP4HVB/faxPNjVVEOzZHKg6SZB0OyS
-         xg8MNlfpk2jFBnl7Px7MZo3vFL69WzL5AJ4UITssVi9XWz1BNcMHeU6rCgvY+AbTDHoX
-         3zB/tjBOejqq6g4BdpUqhUsl4r7DsJk4mbicWM6wUyJBo9IUxVXr8ImnwV4TDf80xu1h
-         1uPPE/IDIa7nC6cU7CtY4ptweai9Cm4ZPBSHiFk1bLO4YzL+4ihiLNcoGpN8TZfdLKKk
-         IuZw==
-X-Gm-Message-State: APjAAAWkSjqG5P/LgHf/OVHWNGuCdh+aQofft3hT91dKFC1wQog9YhUk
-        9HOPlvWqzsyXkMrA9FY02Q==
-X-Google-Smtp-Source: APXvYqyWwc0KqeYK5GLuZwGu9o5s8XYZqL3nuqpxPP87JVURXgzBHlQXhWwSr7SlCvGX0+pv00UsZA==
-X-Received: by 2002:a05:6830:160c:: with SMTP id g12mr10696228otr.82.1576789853254;
-        Thu, 19 Dec 2019 13:10:53 -0800 (PST)
-Received: from localhost (ip-184-205-110-29.ftwttx.spcsdns.net. [184.205.110.29])
-        by smtp.gmail.com with ESMTPSA id z21sm2534203oto.52.2019.12.19.13.10.51
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AgO/47tZIxvVJC669ttTdtG/Znfw1BmDdkytg6xCB4Y=;
+        b=Cv2gMqmiRVTlsyGGDLN5nm6COpt0/GQFrLtIcCvK3uWqxOk7atZ7/LNYt/odsYgeaW
+         vq6uyEPB416fE7KEWxCEHAHIEKMEvxM7vSLi3JVr13xSelxpbw6TSw/gmONt4TJSJLGJ
+         J/8ORK0HXmIZZhYmAC+8oPD9QCiKH4u1NChMVnpOGbPlGgLf7GXCOxk6F6AIevVHt68U
+         NAckg4NoztqlQJfes2j0Hhqur4Ri5a9Drw2J2gL9U1CHH5nHakkK1EYM7lvNO0bpnAeF
+         mPQpCkpMiLYvOpW0T/KggbHkB0FeMZH3I0OpCrmF8Gai0OOrfMMgB1tiWX9mHu+bccC7
+         Wv1g==
+X-Gm-Message-State: APjAAAWg8oQgCNKT7C9s4H7Mm6UiNP8ce2+AgbeRmGj7KhT7gSD21QLt
+        OcXlHsfR5Xn4x3yZrUrlvLIyAX7+p4w=
+X-Google-Smtp-Source: APXvYqwuv5GC/ueDm/Dh6HQenN+iHtp83AKTiRSjtUQwuBvjJEM7Zzd8K4MrrwRa1V9K8Nhm6djmLg==
+X-Received: by 2002:a62:1c95:: with SMTP id c143mr11616195pfc.219.1576790037454;
+        Thu, 19 Dec 2019 13:13:57 -0800 (PST)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id 73sm8616834pgc.13.2019.12.19.13.13.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 13:10:52 -0800 (PST)
-Date:   Thu, 19 Dec 2019 15:10:50 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yuti Amonkar <yamonkar@cadence.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kishon@ti.com, mark.rutland@arm.com, jsarha@ti.com,
-        tomi.valkeinen@ti.com, praneeth@ti.com, mparab@cadence.com,
-        sjakhade@cadence.com
-Subject: Re: [RESEND PATCH v1 02/15] dt-bindings:phy: Convert Cadence MHDP
- PHY bindings to YAML.
-Message-ID: <20191219211050.GA1841@bogus>
-References: <1576069760-11473-1-git-send-email-yamonkar@cadence.com>
- <1576069760-11473-3-git-send-email-yamonkar@cadence.com>
+        Thu, 19 Dec 2019 13:13:56 -0800 (PST)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        bristot@redhat.com, frextrite@gmail.com,
+        madhuparnabhowmik04@gmail.com, urezki@gmail.com,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v3 rcu-dev] rcuperf: Measure memory footprint during kfree_rcu() test
+Date:   Thu, 19 Dec 2019 16:13:49 -0500
+Message-Id: <20191219211349.235877-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576069760-11473-3-git-send-email-yamonkar@cadence.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 02:09:07PM +0100, Yuti Amonkar wrote:
-> - Convert the MHDP PHY devicetree bindings to yaml schemas.
-> - Rename DP PHY to have generic Torrent PHY nomrnclature.
-> - Rename compatible string from "cdns,dp-phy" to "cdns,torrent-phy".
+During changes to kfree_rcu() code, we often check the amount of free
+memory.  As an alternative to checking this manually, this commit adds a
+measurement in the test itself.  It measures four times during the test
+for available memory, digitally filters these measurements to produce a
+running average with a weight of 0.5, and compares this digitally
+filtered value with the amount of available memory at the beginning of
+the test.
 
-You can't just change compatible strings. It's an ABI. Unless you know 
-for sure there are no users that would care.
+We apply the digital filter only once we are more than 25% into the
+test. At the 25% mark, we just read available memory and don't apply any
+filtering. This prevents the first sample from skewing the results
+as we would not consider memory readings that were before memory was
+allocated.
 
-> 
-> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
-> ---
->  .../devicetree/bindings/phy/phy-cadence-dp.txt     | 30 ------------
->  .../bindings/phy/phy-cadence-torrent.yaml          | 57 ++++++++++++++++++++++
->  2 files changed, 57 insertions(+), 30 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt b/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-> deleted file mode 100644
-> index 7f49fd54e..0000000
-> --- a/Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
-> +++ /dev/null
-> @@ -1,30 +0,0 @@
-> -Cadence MHDP DisplayPort SD0801 PHY binding
-> -===========================================
-> -
-> -This binding describes the Cadence SD0801 PHY hardware included with
-> -the Cadence MHDP DisplayPort controller.
-> -
-> --------------------------------------------------------------------------------
-> -Required properties (controller (parent) node):
-> -- compatible	: Should be "cdns,dp-phy"
-> -- reg		: Defines the following sets of registers in the parent
-> -		  mhdp device:
-> -			- Offset of the DPTX PHY configuration registers
-> -			- Offset of the SD0801 PHY configuration registers
-> -- #phy-cells	: from the generic PHY bindings, must be 0.
-> -
-> -Optional properties:
-> -- num_lanes	: Number of DisplayPort lanes to use (1, 2 or 4)
-> -- max_bit_rate	: Maximum DisplayPort link bit rate to use, in Mbps (2160,
-> -		  2430, 2700, 3240, 4320, 5400 or 8100)
-> --------------------------------------------------------------------------------
-> -
-> -Example:
-> -	dp_phy: phy@f0fb030a00 {
-> -		compatible = "cdns,dp-phy";
-> -		reg = <0xf0 0xfb030a00 0x0 0x00000040>,
-> -		      <0xf0 0xfb500000 0x0 0x00100000>;
-> -		num_lanes = <4>;
-> -		max_bit_rate = <8100>;
-> -		#phy-cells = <0>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
-> new file mode 100644
-> index 0000000..4fa9d0a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+A sample run shows something like:
 
-Normal file naming is using the compatible string.
+Total time taken by all kfree'ers: 6369738407 ns, loops: 10000, batches: 764, memory footprint: 216MB
 
-> @@ -0,0 +1,57 @@
-> +%YAML 1.2
-> +---
-> +$id: "http://devicetree.org/schemas/phy/phy-cadence-torrent.yaml#"
-> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> +
-> +title: Cadence Torrent SD0801 PHY binding for DisplayPort
-> +
-> +description:
-> +  This binding describes the Cadence SD0801 PHY hardware included with
-> +  the Cadence MHDP DisplayPort controller.
-> +
-> +maintainers:
-> +  - Swapnil Jakhade <sjakhade@cadence.com>
-> +  - Yuti Amonkar <yamonkar@cadence.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: cdns,torrent-phy
-> +
-> +  reg:
-> +    items:
-> +      - description: Offset of the DPTX PHY configuration registers.
-> +      - description: Offset of the SD0801 PHY configuration registers.
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  num_lanes:
-> +    description:
-> +      Number of DisplayPort lanes.
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [1, 2, 4]
-> +
-> +  max_bit_rate:
-> +    description:
-> +      Maximum DisplayPort link bit rate to use, in Mbps
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [2160, 2430, 2700, 3240, 4320, 5400, 8100]
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#phy-cells"
-> +
-> +examples:
-> +  - |
-> +    dp_phy: phy@f0fb030a00 {
-> +          compatible = "cdns,torrent-phy";
-> +          reg = <0xf0 0xfb030a00 0x0 0x00000040>,
-> +                <0xf0 0xfb500000 0x0 0x00100000>;
-> +          num_lanes = <4>;
-> +          max_bit_rate = <8100>;
-> +          #phy-cells = <0>;
-> +    };
-> +...
-> -- 
-> 2.7.4
-> 
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+
+---
+v1->v2: Minor corrections
+v1->v3: Use long long to prevent 32-bit system's overflow
+	Handle case where some threads start later than others.
+	Start measuring only once 25% into the test. Slightly more accurate.
+
+Cc: bristot@redhat.com
+Cc: frextrite@gmail.com
+Cc: madhuparnabhowmik04@gmail.com
+Cc: urezki@gmail.com
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+ kernel/rcu/rcuperf.c | 23 +++++++++++++++++++++--
+ 1 file changed, 21 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index da94b89cd531..67e0f804ea97 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/kthread.h>
+ #include <linux/err.h>
+@@ -604,6 +605,8 @@ struct kfree_obj {
+ 	struct rcu_head rh;
+ };
+ 
++long long mem_begin;
++
+ static int
+ kfree_perf_thread(void *arg)
+ {
+@@ -611,6 +614,7 @@ kfree_perf_thread(void *arg)
+ 	long me = (long)arg;
+ 	struct kfree_obj *alloc_ptr;
+ 	u64 start_time, end_time;
++	long long mem_during = si_mem_available();
+ 
+ 	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+ 	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+@@ -626,6 +630,15 @@ kfree_perf_thread(void *arg)
+ 	}
+ 
+ 	do {
++		// Moving average of memory availability measurements.
++		// Start measuring only from when we are at least 25% into the test.
++		if (loop && kfree_loops > 3 && (loop % (kfree_loops / 4) == 0)) {
++			if (loop == (kfree_loops / 4))
++				mem_during = si_mem_available();
++			else
++				mem_during = (mem_during + si_mem_available()) / 2;
++		}
++
+ 		for (i = 0; i < kfree_alloc_num; i++) {
+ 			alloc_ptr = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
+ 			if (!alloc_ptr)
+@@ -645,9 +658,13 @@ kfree_perf_thread(void *arg)
+ 		else
+ 			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
+ 
+-		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
++		// The "memory footprint" field represents how much in-flight
++		// memory is allocated during the test and waiting to be freed.
++		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld, memory footprint: %lldMB\n",
+ 		       (unsigned long long)(end_time - start_time), kfree_loops,
+-		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
++		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started),
++		       (mem_begin - mem_during) >> (20 - PAGE_SHIFT));
++
+ 		if (shutdown) {
+ 			smp_mb(); /* Assign before wake. */
+ 			wake_up(&shutdown_wq);
+@@ -719,6 +736,8 @@ kfree_perf_init(void)
+ 		goto unwind;
+ 	}
+ 
++	mem_begin = si_mem_available();
++
+ 	for (i = 0; i < kfree_nrealthreads; i++) {
+ 		firsterr = torture_create_kthread(kfree_perf_thread, (void *)i,
+ 						  kfree_reader_tasks[i]);
+-- 
+2.24.1.735.g03f4e72817-goog
