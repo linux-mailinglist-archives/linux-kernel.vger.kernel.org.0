@@ -2,108 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B177912684B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:39:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B507126888
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:58:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfLSRjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:39:12 -0500
-Received: from mta-p5.oit.umn.edu ([134.84.196.205]:56812 "EHLO
-        mta-p5.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfLSRjM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:39:12 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p5.oit.umn.edu (Postfix) with ESMTP id 47dzdW3BGVz9vbXk
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 17:39:11 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p5.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p5.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id S5REBf1zvEd9 for <linux-kernel@vger.kernel.org>;
-        Thu, 19 Dec 2019 11:39:11 -0600 (CST)
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com [209.85.219.199])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p5.oit.umn.edu (Postfix) with ESMTPS id 47dzdW20SNz9vbY6
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 11:39:11 -0600 (CST)
-Received: by mail-yb1-f199.google.com with SMTP id a14so4630851ybh.14
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:39:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=subject:to:cc:references:in-reply-to:from:message-id:date
-         :user-agent:mime-version:content-language:content-transfer-encoding;
-        bh=AzwXwPyqLdMgiqxoaURBqE7zGRBLFphXTk6J0tyQ+1Q=;
-        b=WZFzVAbwy+PD3mfPyPnG/lqPzt5jire3SR0Dmi4ESDMbYrL0YMqDXS/gnwFGLUOpJX
-         Aph8hlbuNcPcKp1ouVSPSXKSu3cYdI1TbqcG5bChV3gwEvctRuldGeFualjy82R6o9g4
-         itwTPUbaq0V5y5zcTp6RzoR8KklzaE7+9TwCIgaR5odfvBOPFtgZrIk2SJKQTlaS5mFX
-         HCyYhhPuNqm3lZQjg/w+e8k/ksVL+X0kVSQJlkSYxsoQ2cO9SQKhWCyr51NhBd4yXCpC
-         4Z/X7zfDYL0K3qYHVxReQo67gdRjwVE64kFRNu6kDtVAvaoQWhMQqyfKOuiusJ2tiBQv
-         DkMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:in-reply-to:from
-         :message-id:date:user-agent:mime-version:content-language
-         :content-transfer-encoding;
-        bh=AzwXwPyqLdMgiqxoaURBqE7zGRBLFphXTk6J0tyQ+1Q=;
-        b=SAd4bT+W4wBOnabLQHKnr7DA3k4LcgA8M8Wy378ebK0sjUwz9MgOmUKIly34lVoZ7X
-         Jhi9jHbhQq7V+98IBt1n4hRzUf+0oLIITSuY8LQ8jAHzTEL+Io+bVay4WtBHAWc13XgF
-         HGkASbLB8hX+Aw1nr5/vYH8YvBs84KcYZHvAHJA17ZiUHb60LYJ5sCDm1AzoJIZ/4rDZ
-         8t3OWLdiTL5lvbolX6mpCbRk3JOGiZu4t+gYd3sVSVZkhKaT1tk7sCgP6ruoT1kJ0lho
-         /kZmKfNJK5A3xj59izbjZHRLXiMCSU9JeiT1VZQQX7kN0qgZSd5LTOCP5DRueSv8/p9j
-         m/7g==
-X-Gm-Message-State: APjAAAWJJRnfby++7h85qr+JFsSMhkHA4kLOyD8e77OZF+GGsigQtefH
-        arRfVvptOD5o23Y4zGANts+mCvkku+e2gwNq7jEcclicKvTTWy+ZMKM1YEBgXVjABjD10l7PUuY
-        K5Uh44RCPN2Bj37RcFtKssiqtVnBIJhWCIwie4oZv5BpkyzTrarFPRRyhhmUe+1ZaoZ7DeZrTwf
-        Tw
-X-Received: by 2002:a81:6707:: with SMTP id b7mr7101435ywc.36.1576777150521;
-        Thu, 19 Dec 2019 09:39:10 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzP14w1/YKStiE4g89ZmMAeIFFU+TvL1hgLMP0XOo/Xbf7zuSSnJT6rWdWDvw3RwIwm9Zx+oA==
-X-Received: by 2002:a81:6707:: with SMTP id b7mr7101408ywc.36.1576777150217;
-        Thu, 19 Dec 2019 09:39:10 -0800 (PST)
-Received: from [128.101.106.66] (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id q1sm2854283ywa.82.2019.12.19.09.39.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 09:39:09 -0800 (PST)
-Subject: Re: [PATCH] bpf: Replace BUG_ON when fp_old is NULL
-To:     Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yhs@fb.com>
-Cc:     "kjlu@umn.edu" <kjlu@umn.edu>, Alexei Starovoitov <ast@kernel.org>,
-        Martin Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191215154432.22399-1-pakki001@umn.edu>
- <98c13b9c-a73a-6203-4ea1-6b1180d87d97@fb.com>
- <566f206c-f133-6f68-c257-2c0b3ec462fa@iogearbox.net>
-In-Reply-To: <566f206c-f133-6f68-c257-2c0b3ec462fa@iogearbox.net>
-From:   Aditya Pakki <pakki001@umn.edu>
-Message-ID: <51dcca79-f819-8ebb-308e-210a0d76b1cc@umn.edu>
-Date:   Thu, 19 Dec 2019 11:39:08 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726952AbfLSR6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:58:51 -0500
+Received: from mga17.intel.com ([192.55.52.151]:4392 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbfLSR6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:58:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 09:58:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,332,1571727600"; 
+   d="scan'208";a="213075151"
+Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
+  by fmsmga007.fm.intel.com with ESMTP; 19 Dec 2019 09:58:50 -0800
+Message-ID: <1607597639a6c6255127fef07704ee9193e33166.camel@intel.com>
+Subject: Re: [PATCH v2 3/3] x86/fpu/xstate: Invalidate fpregs when
+ __fpu_restore_sig() fails
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Rik van Riel <riel@surriel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Thu, 19 Dec 2019 09:40:06 -0800
+In-Reply-To: <20191219171635.phdsfkvsyazwaq7s@linutronix.de>
+References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
+         <20191212210855.19260-4-yu-cheng.yu@intel.com>
+         <20191218155449.sk4gjabtynh67jqb@linutronix.de>
+         <587463c4e5fa82dff8748e5f753890ac390e993e.camel@intel.com>
+         <20191219142217.axgpqlb7zzluoxnf@linutronix.de>
+         <19a94f88f1bc66bb81dbf5dd72083d03ca5090e9.camel@intel.com>
+         <20191219171635.phdsfkvsyazwaq7s@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/16/19 5:17 AM, Daniel Borkmann wrote:
-> On 12/15/19 11:08 PM, Yonghong Song wrote:
->> On 12/15/19 7:44 AM, Aditya Pakki wrote:
->>> If fp_old is NULL in bpf_prog_realloc, the program does an assertion
->>> and crashes. However, we can continue execution by returning NULL to
->>> the upper callers. The patch fixes this issue.
->>
->> Could you share how to reproduce the assertion and crash? I would
->> like to understand the problem first before making changes in the code.
->> Thanks!
+On Thu, 2019-12-19 at 18:16 +0100, Sebastian Andrzej Siewior wrote:
+> On 2019-12-19 08:44:08 [-0800], Yu-cheng Yu wrote:
+> > Yes, this works.  But then everywhere that calls copy_*_to_xregs_*() etc. needs to be checked.
+> > Are there other alternatives?
 > 
-> Fully agree, Aditya, please elaborate if you have seen a crash!
+> I don't like the big hammer approach of your very much. It might make
+> all it "correct" but then it might lead to more "invalids" then needed.
+> It also required to export the symbol which I would like to avoid.
 
-Thanks for your responses Alexei and Daniel. We identified this issue via static analysis
-and have not seen a crash. However, by looking at the callers of bpf_prog_realloc, I do 
-agree that fp_old is never NULL. 
+Copying to registers invalids current fpregs context.  It might not cause
+extra register loading, because registers are in fact already invalidated
+and any task owning the context needs to reload anyway.  Setting
+fpu_fpregs_owner_ctx is only to let the rest of the kernel know the
+fact that already happened.
 
-Would you recommend removing the BUG_ON assertion altogether ?
+But, I agree with you the patch does look biggish.
+
+> 
+> So if this patch works for you and you don't find anything else where it
+> falls apart then I will audit tomorrow all callers which got the
+> "invalidator" added and check for that angle.
+
+Yes, that works for me.  Also, most of these call sites are under fpregs_lock(),
+and we could use __cpu_invalidate_fpregs_state().
+
+I was also thinking maybe add warnings when any new code re-introduces the issue,
+but not sure where to add that.  Do you think that is needed?
+
+Thanks,
+Yu-cheng
+
