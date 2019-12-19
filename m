@@ -2,64 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D269C126B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:57:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF76126DF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:27:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729258AbfLSS5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:57:04 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:50189 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730815AbfLSS4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:56:39 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ii0xz-0004Ep-UI; Thu, 19 Dec 2019 18:56:08 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-rtc@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] rtc: rv3029: remove redundant return statement
-Date:   Thu, 19 Dec 2019 18:56:07 +0000
-Message-Id: <20191219185607.21285-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727230AbfLST12 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 19 Dec 2019 14:27:28 -0500
+Received: from hglps.gob.ec ([181.196.146.12]:54815 "EHLO hglps.gob.ec"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbfLST11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 14:27:27 -0500
+X-Greylist: delayed 8710 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 14:27:27 EST
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by hglps.gob.ec (Postfix) with ESMTP id 7F8FE240CB9E;
+        Thu, 19 Dec 2019 10:58:14 -0500 (ECT)
+Received: from hglps.gob.ec ([127.0.0.1])
+        by localhost (hglps.gob.ec [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wJDpTfbhGkLo; Thu, 19 Dec 2019 10:58:13 -0500 (ECT)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by hglps.gob.ec (Postfix) with ESMTP id A45ED240CD36;
+        Thu, 19 Dec 2019 10:58:13 -0500 (ECT)
+X-Virus-Scanned: amavisd-new at hglps.gob.ec
+Received: from hglps.gob.ec ([127.0.0.1])
+        by localhost (hglps.gob.ec [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id CRcf7wtEsDiv; Thu, 19 Dec 2019 10:58:13 -0500 (ECT)
+Received: from [172.245.153.183] (unknown [172.245.153.183])
+        by hglps.gob.ec (Postfix) with ESMTPSA id 20717240CB9E;
+        Thu, 19 Dec 2019 10:58:08 -0500 (ECT)
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 8BIT
+Content-Description: Mail message body
+Subject: info
+To:     "Mr. David" <anibal.reinoso@hgdc.gob.ec>
+From:   "Mr. David" <anibal.reinoso@hgdc.gob.ec>
+Date:   Thu, 19 Dec 2019 08:02:51 -0800
+Reply-To: contact-alexeyvolgohimneft@inbox.ru
+Message-Id: <20191219155808.20717240CB9E@hglps.gob.ec>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
-
-There are two return statements at the end of the function
-rv30x9_init, the latter is redundant and can be removed. Remove
-it.
-
-Addresses-Coverity: ("Structurally dead code")
-Fixes: ef2f1df54a29 ("rtc: rv3029: remove useless error messages")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/rtc/rtc-rv3029c2.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/rtc/rtc-rv3029c2.c b/drivers/rtc/rtc-rv3029c2.c
-index 4eda0db72b66..7c52efb7d113 100644
---- a/drivers/rtc/rtc-rv3029c2.c
-+++ b/drivers/rtc/rtc-rv3029c2.c
-@@ -898,8 +898,6 @@ static int __init rv30x9_init(void)
- 		return ret;
+Dear Sir/ Madam,
  
- 	return rv3049_register_driver();
--
--	return ret;
- }
- module_init(rv30x9_init)
- 
--- 
-2.24.0
+I'm direct mandate to a reputable refinery in the Russian Federation they currently have product allocation for D2, D6, ESPO, JET A1, JP54 and M100 respectively. They can supply products in FOB delivery terms. FOB ROTTERDAM AND FOB HOUSTON contact details bellow.
 
+email: alexeyvolgohimneft@inbox.ru
+Phone: +7-926-77-413-97,
+skype: contact-alexeyvolgohimneft@inbox.ru
