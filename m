@@ -2,441 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47831126FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DFA126FF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:48:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfLSVqI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:46:08 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43755 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727533AbfLSVqH (ORCPT
+        id S1727221AbfLSVsR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:48:17 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38382 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfLSVsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:46:07 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p27so3161713pli.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 13:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TsoYUtC7P6xJmX81tAQMZXm+6gaCI5+R0XGkw1MKZbI=;
-        b=xMUpH4lZ3EPrPr3Hzw8u3H2F0riR6wzBVplXc+lavSEroB5wo/JI6XCzospprvwxiv
-         Jgf2ASWaeMvD4LKUVqX0BUmrpjiR3X5pjaK4mqtZlUr2mc0kuLpVAWNlxnACFqU2WfEA
-         /YezFEJfjeFwk3B9+ZwDNpfwuEJVdkWakpJp1lqw/0EGgsSckpoPLi9BEnKXEFBfJvX/
-         4j7wm3brospQk7R2vpo52IRRwWHEH/TZ24odBo9rvDFao0FlHYANuihTchxhtdJjOEY9
-         2H73vcRDMdQljLnkda7jpDi7fKu4v9OLh69a4Cgb+n8ar6dnhLooq3VDW7cNSljiY14J
-         X/9g==
+        Thu, 19 Dec 2019 16:48:17 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d7so4620492otf.5;
+        Thu, 19 Dec 2019 13:48:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TsoYUtC7P6xJmX81tAQMZXm+6gaCI5+R0XGkw1MKZbI=;
-        b=EmfplajgVhEWYlq+SG0R4GL16nOvr9aJ9S/nG++nWz/eYcHs4+aq+T09P65WNhd4Dx
-         kStgUg1Mu9li+l1N295lG6jqEznOqIVDgVgW2W+tGzrGWIqNXF1hephiY1ipn8Rlyeq+
-         +zAbPA70fJZStGeuroPy4+6Q5Q8GOb6BcPAAvHbfoFaHKiX7rXO0v0fugnQ5MyQaHxl5
-         NUsZ5TPlZQGBV/JHkqNCkRdXV5wrOZGYlenQhFNKToPyUmDG+vigqurhFRFMhnSftGN5
-         /qigL2Aa2m2zRLnOnHLgD4UR6LSSKxQ9lnC4bbzbOxtQrL6kfP4zNzdhClMCy0yeCAk5
-         cQaw==
-X-Gm-Message-State: APjAAAUFaiOgLRv4YMBXrjzDuiIPGd9DFRbklEbze5zGgGdO9hYCAbHr
-        79JP1KdtL9h88N4QaN3jSKrXaF4bDS8=
-X-Google-Smtp-Source: APXvYqxtRqscQiY9IfHeajKV5yKSV+tZCpIBxWl9Q9FlVLkfPJMH/vIJmnbPCtSl/1Qcu7JU+KzPcA==
-X-Received: by 2002:a17:90a:28a5:: with SMTP id f34mr12003726pjd.79.1576791965751;
-        Thu, 19 Dec 2019 13:46:05 -0800 (PST)
-Received: from xps15 (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id h16sm9750608pfn.85.2019.12.19.13.46.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Dec 2019 13:46:05 -0800 (PST)
-Date:   Thu, 19 Dec 2019 14:46:03 -0700
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     bjorn.andersson@linaro.org, ohad@wizery.com,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCHv3 12/15] remoteproc/omap: add support for system
- suspend/resume
-Message-ID: <20191219214603.GA32574@xps15>
-References: <20191213125537.11509-1-t-kristo@ti.com>
- <20191213125537.11509-13-t-kristo@ti.com>
+        bh=z8WpkfaBd9LcNOS1ekWzc3jrpBFEgAwL/QCFq5Jyeew=;
+        b=AvxU+4kJ3aXwhwlLJ0DtiRGeL0xFfCOo62CZzDc3v+uZ13VhgY74sGeEIkjDquwmlS
+         SJVHtJ8u5Vgl6nnXuTveknv8aWkxSWwcRVFxvER4oSMF9ZmA6N1OnID3FAhMJJkMBGs5
+         5DHmRR9P5nIAeZFguR+Ux+yorEwbQNSRx9WHU0n6ukmdCt7hWeqXQ3M2V6k4jAHvnoxt
+         l8PNZJoYEMyZRgjc89bHKatVvgm86t5OsCWJ2Msg0DTy98fQuWxp/02xzPNJBUAkZXaU
+         NrHrWs2+4GhPN7f6z0OsR7B6OadTvWIqvhx3PjIj1YqR6LYz06a1P0ORbS3iCWmeKYBw
+         UOeQ==
+X-Gm-Message-State: APjAAAV/S6uiMA2Hd8qHiREbSRXlqjmBvrXYOyVV//S+JqnTbaFimlcc
+        eWC7KYn6EM3ZrU/8rV4KzQ==
+X-Google-Smtp-Source: APXvYqyRMrFF8GIOCRwcLqbmo96aJh0GGtJtfkuQW1KREFiW1KO2DI9WZdU4KIzqYrCOJ1NQrGxQ6A==
+X-Received: by 2002:a05:6830:22e3:: with SMTP id t3mr10536060otc.193.1576792096066;
+        Thu, 19 Dec 2019 13:48:16 -0800 (PST)
+Received: from localhost ([2607:fb90:1cd2:8a0d:3549:d84c:9720:edb4])
+        by smtp.gmail.com with ESMTPSA id n17sm2572850otq.46.2019.12.19.13.48.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 13:48:15 -0800 (PST)
+Date:   Thu, 19 Dec 2019 15:48:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: media: renesas,ceu: Convert to yaml
+Message-ID: <20191219214806.GA32623@bogus>
+References: <20191211171300.87023-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191213125537.11509-13-t-kristo@ti.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191211171300.87023-1-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 02:55:34PM +0200, Tero Kristo wrote:
-> From: Suman Anna <s-anna@ti.com>
+On Wed, 11 Dec 2019 18:13:00 +0100, Jacopo Mondi wrote:
+> Convert the Renesas CEU bindings description to yaml schema and remove
+> the existing textual bindings document.
 > 
-> This patch adds the support for system suspend/resume to the
-> OMAP remoteproc driver so that the OMAP remoteproc devices can
-> be suspended/resumed during a system suspend/resume. The support
-> is added through the driver PM .suspend/.resume callbacks, and
-> requires appropriate support from the OS running on the remote
-> processors.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 > 
-> The IPU & DSP remote processors typically have their own private
-> modules like registers, internal memories, caches etc. The context
-> of these modules need to be saved and restored properly for a
-> suspend/resume to work. These are in general not accessible from
-> the MPU, so the remote processors themselves have to implement
-> the logic for the context save & restore of these modules.
-> 
-> The OMAP remoteproc driver initiates a suspend by sending a mailbox
-> message requesting the remote processor to save its context and
-> enter into an idle/standby state. The remote processor should
-> usually stop whatever processing it is doing to switch to a context
-> save mode. The OMAP remoteproc driver detects the completion of
-> the context save by checking the module standby status for the
-> remoteproc device. It also stops any resources used by the remote
-> processors like the timers. The timers need to be running only
-> when the processor is active and executing, and need to be stopped
-> otherwise to allow the timer driver to reach low-power states. The
-> IOMMUs are automatically suspended by the PM core during the late
-> suspend stage, after the remoteproc suspend process is completed by
-> putting the remote processor cores into reset. Thereafter, the Linux
-> kernel can put the domain into further lower power states as possible.
-> 
-> The resume sequence undoes the operations performed in the PM suspend
-> callback, by starting the timers and finally releasing the processors
-> from reset. This requires that the remote processor side OS be able to
-> distinguish a power-resume boot from a power-on/cold boot, restore the
-> context of its private modules saved during the suspend phase, and
-> resume executing code from where it was suspended. The IOMMUs would
-> have been resumed by the PM core during early resume, so they are
-> already enabled by the time remoteproc resume callback gets invoked.
-> 
-> The remote processors should save their context into System RAM (DDR),
-> as any internal memories are not guaranteed to retain context as it
-> depends on the lowest power domain that the remote processor device
-> is put into. The management of the DDR contents will be managed by
-> the Linux kernel.
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> [t-kristo@ti.com: converted to use ti-sysc instead of hwmod]
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
 > ---
->  drivers/remoteproc/omap_remoteproc.c | 179 +++++++++++++++++++++++++++
->  drivers/remoteproc/omap_remoteproc.h |  18 ++-
->  2 files changed, 195 insertions(+), 2 deletions(-)
+> v1 -> v2:
+> - Dual license as suggested by Rob
+> - Fix compatible string for r7s72100-ceu
+> - Add 'default' to bus-width endpoint property
 > 
-> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-> index 9c750c2ab29d..0a9b9f7d20da 100644
-> --- a/drivers/remoteproc/omap_remoteproc.c
-> +++ b/drivers/remoteproc/omap_remoteproc.c
-> @@ -16,6 +16,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/err.h>
-> +#include <linux/io.h>
->  #include <linux/of_device.h>
->  #include <linux/of_reserved_mem.h>
->  #include <linux/platform_device.h>
-> @@ -23,10 +24,13 @@
->  #include <linux/remoteproc.h>
->  #include <linux/mailbox_client.h>
->  #include <linux/omap-mailbox.h>
-> +#include <linux/omap-iommu.h>
-
-Please move this up by one line.
-
->  #include <linux/regmap.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/reset.h>
->  #include <clocksource/timer-ti-dm.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk/ti.h>
-
-Unless there is a dependency with timer-ti-dm.h, these should go just above linux/err.h
-
->  
->  #include <linux/platform_data/dmtimer-omap.h>
->  
-> @@ -81,6 +85,9 @@ struct omap_rproc_timer {
->   * @timers: timer(s) info used by rproc
->   * @rproc: rproc handle
->   * @reset: reset handle
-> + * @pm_comp: completion primitive to sync for suspend response
-> + * @fck: functional clock for the remoteproc
-> + * @suspend_acked: state machine flag to store the suspend request ack
->   */
->  struct omap_rproc {
->  	struct mbox_chan *mbox;
-> @@ -92,6 +99,9 @@ struct omap_rproc {
->  	struct omap_rproc_timer *timers;
->  	struct rproc *rproc;
->  	struct reset_control *reset;
-> +	struct completion pm_comp;
-> +	struct clk *fck;
-> +	bool suspend_acked;
->  };
->  
->  /**
-> @@ -349,6 +359,11 @@ static void omap_rproc_mbox_callback(struct mbox_client *client, void *data)
->  	case RP_MBOX_ECHO_REPLY:
->  		dev_info(dev, "received echo reply from %s\n", name);
->  		break;
-> +	case RP_MBOX_SUSPEND_ACK:
-
-We can't get away with implicit fallthroughs anymore - please add /* Fall through */"
-
-> +	case RP_MBOX_SUSPEND_CANCEL:
-> +		oproc->suspend_acked = msg == RP_MBOX_SUSPEND_ACK;
-> +		complete(&oproc->pm_comp);
-> +		break;
->  	default:
->  		if (msg >= RP_MBOX_READY && msg < RP_MBOX_END_MSG)
->  			return;
-> @@ -529,6 +544,157 @@ static const struct rproc_ops omap_rproc_ops = {
->  	.da_to_va	= omap_rproc_da_to_va,
->  };
->  
-> +#ifdef CONFIG_PM
-> +static bool _is_rproc_in_standby(struct omap_rproc *oproc)
-> +{
-> +	return ti_clk_is_in_standby(oproc->fck);
-> +}
-> +
-> +/* 1 sec is long enough time to let the remoteproc side suspend the device */
-> +#define DEF_SUSPEND_TIMEOUT 1000
-> +static int _omap_rproc_suspend(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct omap_rproc *oproc = rproc->priv;
-> +	unsigned long to = msecs_to_jiffies(DEF_SUSPEND_TIMEOUT);
-> +	unsigned long ta = jiffies + to;
-> +	int ret;
-> +
-> +	reinit_completion(&oproc->pm_comp);
-> +	oproc->suspend_acked = false;
-> +	ret = mbox_send_message(oproc->mbox, (void *)RP_MBOX_SUSPEND_SYSTEM);
-> +	if (ret < 0) {
-> +		dev_err(dev, "PM mbox_send_message failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = wait_for_completion_timeout(&oproc->pm_comp, to);
-> +	if (!oproc->suspend_acked)
-> +		return -EBUSY;
-> +
-> +	/*
-> +	 * The remoteproc side is returning the ACK message before saving the
-> +	 * context, because the context saving is performed within a SYS/BIOS
-> +	 * function, and it cannot have any inter-dependencies against the IPC
-> +	 * layer. Also, as the SYS/BIOS needs to preserve properly the processor
-> +	 * register set, sending this ACK or signalling the completion of the
-> +	 * context save through a shared memory variable can never be the
-> +	 * absolute last thing to be executed on the remoteproc side, and the
-> +	 * MPU cannot use the ACK message as a sync point to put the remoteproc
-> +	 * into reset. The only way to ensure that the remote processor has
-> +	 * completed saving the context is to check that the module has reached
-> +	 * STANDBY state (after saving the context, the SYS/BIOS executes the
-> +	 * appropriate target-specific WFI instruction causing the module to
-> +	 * enter STANDBY).
-> +	 */
-> +	while (!_is_rproc_in_standby(oproc)) {
-> +		if (time_after(jiffies, ta))
-> +			return -ETIME;
-> +		schedule();
-> +	}
-> +
-> +	reset_control_assert(oproc->reset);
-> +
-> +	ret = omap_rproc_disable_timers(rproc, false);
-> +	if (ret) {
-> +		dev_err(dev, "disabling timers during suspend failed %d\n",
-> +			ret);
-> +		goto enable_device;
-> +	}
-> +
-> +	return 0;
-> +
-> +enable_device:
-> +	reset_control_deassert(oproc->reset);
-> +	return ret;
-> +}
-> +
-> +static int _omap_rproc_resume(struct rproc *rproc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	struct omap_rproc *oproc = rproc->priv;
-> +	int ret;
-> +
-> +	/* boot address could be lost after suspend, so restore it */
-> +	if (oproc->boot_data) {
-> +		ret = omap_rproc_write_dsp_boot_addr(rproc);
-> +		if (ret) {
-> +			dev_err(dev, "boot address restore failed %d\n", ret);
-> +			goto out;
-> +		}
-> +	}
-> +
-> +	ret = omap_rproc_enable_timers(rproc, false);
-> +	if (ret) {
-> +		dev_err(dev, "enabling timers during resume failed %d\n",
-> +			ret);
-
-The "ret);" fits on the live above.
-
-> +		goto out;
-> +	}
-> +
-> +	reset_control_deassert(oproc->reset);
-> +
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int __maybe_unused omap_rproc_suspend(struct device *dev)
-
-The "__maybe_unused" can be dropped because this is within the #ifdef CONFIG_PM
-block.
-
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rproc->lock);
-> +	if (rproc->state == RPROC_OFFLINE)
-> +		goto out;
-> +
-> +	if (rproc->state == RPROC_SUSPENDED)
-> +		goto out;
-> +
-> +	if (rproc->state != RPROC_RUNNING) {
-> +		ret = -EBUSY;
-> +		goto out;
-> +	}
-> +
-> +	ret = _omap_rproc_suspend(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "suspend failed %d\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	rproc->state = RPROC_SUSPENDED;
-> +out:
-> +	mutex_unlock(&rproc->lock);
-> +	return ret;
-> +}
-> +
-> +static int __maybe_unused omap_rproc_resume(struct device *dev)
-
-Same comment as above.
-
-> +{
-> +	struct platform_device *pdev = to_platform_device(dev);
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rproc->lock);
-> +	if (rproc->state == RPROC_OFFLINE)
-> +		goto out;
-> +
-> +	if (rproc->state != RPROC_SUSPENDED) {
-> +		ret = -EBUSY;
-> +		goto out;
-> +	}
-> +
-> +	ret = _omap_rproc_resume(rproc);
-> +	if (ret) {
-> +		dev_err(dev, "resume failed %d\n", ret);
-> +		goto out;
-> +	}
-> +
-> +	rproc->state = RPROC_RUNNING;
-> +out:
-> +	mutex_unlock(&rproc->lock);
-> +	return ret;
-> +}
-> +#endif /* CONFIG_PM */
-> +
->  static const char * const ipu_mem_names[] = {
->  	"l2ram", NULL
->  };
-> @@ -786,6 +952,14 @@ static int omap_rproc_probe(struct platform_device *pdev)
->  			oproc->num_timers);
->  	}
->  
-> +	init_completion(&oproc->pm_comp);
-> +
-> +	oproc->fck = devm_clk_get(&pdev->dev, 0);
-> +	if (IS_ERR(oproc->fck)) {
-> +		ret = PTR_ERR(oproc->fck);
-> +		goto free_rproc;
-> +	}
-> +
-
-oproc->fck is not released if an error occurs in of_reserved_mem_device_init()
-and rproc_add().
-
->  	ret = of_reserved_mem_device_init(&pdev->dev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "device does not have specific CMA pool\n");
-> @@ -818,11 +992,16 @@ static int omap_rproc_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +static const struct dev_pm_ops omap_rproc_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(omap_rproc_suspend, omap_rproc_resume)
-> +};
-> +
->  static struct platform_driver omap_rproc_driver = {
->  	.probe = omap_rproc_probe,
->  	.remove = omap_rproc_remove,
->  	.driver = {
->  		.name = "omap-rproc",
-> +		.pm = &omap_rproc_pm_ops,
->  		.of_match_table = omap_rproc_of_match,
->  	},
->  };
-> diff --git a/drivers/remoteproc/omap_remoteproc.h b/drivers/remoteproc/omap_remoteproc.h
-> index 72f656c93caa..c73383e707c7 100644
-> --- a/drivers/remoteproc/omap_remoteproc.h
-> +++ b/drivers/remoteproc/omap_remoteproc.h
-> @@ -1,7 +1,7 @@
->  /*
->   * Remote processor messaging
->   *
-> - * Copyright (C) 2011 Texas Instruments, Inc.
-> + * Copyright (C) 2011-2018 Texas Instruments, Inc.
->   * Copyright (C) 2011 Google, Inc.
->   * All rights reserved.
->   *
-> @@ -57,6 +57,16 @@
->   * @RP_MBOX_ABORT_REQUEST: a "please crash" request, used for testing the
->   * recovery mechanism (to some extent).
->   *
-> + * @RP_MBOX_SUSPEND_AUTO: auto suspend request for the remote processor
-> + *
-> + * @RP_MBOX_SUSPEND_SYSTEM: system suspend request for the remote processor
-> + *
-> + * @RP_MBOX_SUSPEND_ACK: successful response from remote processor for a
-> + * suspend request
-> + *
-> + * @RP_MBOX_SUSPEND_CANCEL: a cancel suspend response from a remote processor
-> + * on a suspend request
-> + *
->   * Introduce new message definitions if any here.
->   *
->   * @RP_MBOX_END_MSG: Indicates end of known/defined messages from remote core
-> @@ -70,7 +80,11 @@ enum omap_rp_mbox_messages {
->  	RP_MBOX_ECHO_REQUEST	= 0xFFFFFF03,
->  	RP_MBOX_ECHO_REPLY	= 0xFFFFFF04,
->  	RP_MBOX_ABORT_REQUEST	= 0xFFFFFF05,
-> -	RP_MBOX_END_MSG		= 0xFFFFFF06,
-> +	RP_MBOX_SUSPEND_AUTO	= 0xFFFFFF10,
-> +	RP_MBOX_SUSPEND_SYSTEM	= 0xFFFFFF11,
-> +	RP_MBOX_SUSPEND_ACK	= 0xFFFFFF12,
-> +	RP_MBOX_SUSPEND_CANCEL	= 0xFFFFFF13,
-> +	RP_MBOX_END_MSG		= 0xFFFFFF14,
->  };
->  
->  #endif /* _OMAP_RPMSG_H */
-> -- 
-> 2.17.1
+> Thanks
+>    j
+> ---
+>  .../devicetree/bindings/media/renesas,ceu.txt | 86 -------------------
+>  .../bindings/media/renesas,ceu.yaml           | 78 +++++++++++++++++
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 79 insertions(+), 87 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/renesas,ceu.yaml
 > 
-> --
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
+Applied, thanks.
+
+Rob
