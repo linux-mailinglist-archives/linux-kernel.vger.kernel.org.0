@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A255D126C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4184D126DAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfLSSrB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39660 "EHLO mail.kernel.org"
+        id S1727354AbfLSSjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:39:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729386AbfLSSqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:52 -0500
+        id S1728110AbfLSSi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CCC424680;
-        Thu, 19 Dec 2019 18:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E22424672;
+        Thu, 19 Dec 2019 18:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781211;
-        bh=JZ6u5cbVzfaZGgOTqZeaTkIZkskAy8XDOAGo0RNUALA=;
+        s=default; t=1576780736;
+        bh=n0R84Wlbi1EN+zgAoGETcxrfBsDxb76mo6+qqDnhY10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L8XDwWyT7ZOj25aHnVnT8KJ5s4p97sur6zkKblJ0J2oTwhlwX2xhqzwcXbANEYgVi
-         ZNouSnk4AiXA27y2BxeSJ6vpOltLLX9WncWEuKtI0tj+UUHOgoDytW2NNAw5cbRew8
-         w3/3WX37xbKnRq88Mn9csM81yRNgB70CxpYQCrXU=
+        b=hKd4LV5I0K6jVQdekYS2yewHjVsx+Cww2oe5KNRyJFLeFvbyXHxvXrUh2r6J7WKMX
+         zEFcBa3YWHf9c6qmctKjKAp15Y/GO43EK9m3rANTHe/3gS+dLgIwLg6AKoQ3HutGpv
+         bJiPe5X2BWk/WlByI8IWws/6Ob6fJ1QybKpJifMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.9 121/199] rtlwifi: rtl8192de: Fix missing callback that tests for hw release of buffer
-Date:   Thu, 19 Dec 2019 19:33:23 +0100
-Message-Id: <20191219183221.628787108@linuxfoundation.org>
+        stable@vger.kernel.org, Pete Zaitcev <zaitcev@redhat.com>,
+        syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.4 096/162] usb: mon: Fix a deadlock in usbmon between mmap and read
+Date:   Thu, 19 Dec 2019 19:33:24 +0100
+Message-Id: <20191219183213.631341595@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,72 +44,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Pete Zaitcev <zaitcev@redhat.com>
 
-commit 3155db7613edea8fb943624062baf1e4f9cfbfd6 upstream.
+commit 19e6317d24c25ee737c65d1ffb7483bdda4bb54a upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), a callback needed to check if the hardware has released
-a buffer indicating that a DMA operation is completed was not added.
+The problem arises because our read() function grabs a lock of the
+circular buffer, finds something of interest, then invokes copy_to_user()
+straight from the buffer, which in turn takes mm->mmap_sem. In the same
+time, the callback mon_bin_vma_fault() is invoked under mm->mmap_sem.
+It attempts to take the fetch lock and deadlocks.
 
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org>	# v3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This patch does away with protecting of our page list with any
+semaphores, and instead relies on the kernel not close the device
+while mmap is active in a process.
+
+In addition, we prohibit re-sizing of a buffer while mmap is active.
+This way, when (now unlocked) fault is processed, it works with the
+page that is intended to be mapped-in, and not some other random page.
+Note that this may have an ABI impact, but hopefully no legitimate
+program is this wrong.
+
+Signed-off-by: Pete Zaitcev <zaitcev@redhat.com>
+Reported-by: syzbot+56f9673bb4cdcbeb0e92@syzkaller.appspotmail.com
+Reviewed-by: Alan Stern <stern@rowland.harvard.edu>
+Fixes: 46eb14a6e158 ("USB: fix usbmon BUG trigger")
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191204203941.3503452b@suzdal.zaitcev.lan
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    1 +
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |   17 +++++++++++++++++
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h |    2 ++
- 3 files changed, 20 insertions(+)
+ drivers/usb/mon/mon_bin.c |   32 +++++++++++++++++++++-----------
+ 1 file changed, 21 insertions(+), 11 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
-@@ -243,6 +243,7 @@ static struct rtl_hal_ops rtl8192de_hal_
- 	.led_control = rtl92de_led_control,
- 	.set_desc = rtl92de_set_desc,
- 	.get_desc = rtl92de_get_desc,
-+	.is_tx_desc_closed = rtl92de_is_tx_desc_closed,
- 	.tx_polling = rtl92de_tx_polling,
- 	.enable_hw_sec = rtl92de_enable_hw_security_config,
- 	.set_key = rtl92de_set_key,
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -862,6 +862,23 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
- 	return ret;
+--- a/drivers/usb/mon/mon_bin.c
++++ b/drivers/usb/mon/mon_bin.c
+@@ -1035,12 +1035,18 @@ static long mon_bin_ioctl(struct file *f
+ 
+ 		mutex_lock(&rp->fetch_lock);
+ 		spin_lock_irqsave(&rp->b_lock, flags);
+-		mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
+-		kfree(rp->b_vec);
+-		rp->b_vec  = vec;
+-		rp->b_size = size;
+-		rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
+-		rp->cnt_lost = 0;
++		if (rp->mmap_active) {
++			mon_free_buff(vec, size/CHUNK_SIZE);
++			kfree(vec);
++			ret = -EBUSY;
++		} else {
++			mon_free_buff(rp->b_vec, rp->b_size/CHUNK_SIZE);
++			kfree(rp->b_vec);
++			rp->b_vec  = vec;
++			rp->b_size = size;
++			rp->b_read = rp->b_in = rp->b_out = rp->b_cnt = 0;
++			rp->cnt_lost = 0;
++		}
+ 		spin_unlock_irqrestore(&rp->b_lock, flags);
+ 		mutex_unlock(&rp->fetch_lock);
+ 		}
+@@ -1212,13 +1218,21 @@ mon_bin_poll(struct file *file, struct p
+ static void mon_bin_vma_open(struct vm_area_struct *vma)
+ {
+ 	struct mon_reader_bin *rp = vma->vm_private_data;
++	unsigned long flags;
++
++	spin_lock_irqsave(&rp->b_lock, flags);
+ 	rp->mmap_active++;
++	spin_unlock_irqrestore(&rp->b_lock, flags);
  }
  
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index)
-+{
-+	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
-+	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
-+	u8 *entry = (u8 *)(&ring->desc[ring->idx]);
-+	u8 own = (u8)rtl92de_get_desc(entry, true, HW_DESC_OWN);
-+
-+	/* a beacon packet will only use the first
-+	 * descriptor by defaut, and the own bit may not
-+	 * be cleared by the hardware
-+	 */
-+	if (own)
-+		return false;
-+	return true;
-+}
-+
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue)
+ static void mon_bin_vma_close(struct vm_area_struct *vma)
  {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
-@@ -740,6 +740,8 @@ bool rtl92de_rx_query_desc(struct ieee80
- void rtl92de_set_desc(struct ieee80211_hw *hw, u8 *pdesc, bool istx,
- 		      u8 desc_name, u8 *val);
- u32 rtl92de_get_desc(u8 *pdesc, bool istx, u8 desc_name);
-+bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
-+			       u8 hw_queue, u16 index);
- void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue);
- void rtl92de_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
- 			     bool b_firstseg, bool b_lastseg,
++	unsigned long flags;
++
+ 	struct mon_reader_bin *rp = vma->vm_private_data;
++	spin_lock_irqsave(&rp->b_lock, flags);
+ 	rp->mmap_active--;
++	spin_unlock_irqrestore(&rp->b_lock, flags);
+ }
+ 
+ /*
+@@ -1230,16 +1244,12 @@ static int mon_bin_vma_fault(struct vm_a
+ 	unsigned long offset, chunk_idx;
+ 	struct page *pageptr;
+ 
+-	mutex_lock(&rp->fetch_lock);
+ 	offset = vmf->pgoff << PAGE_SHIFT;
+-	if (offset >= rp->b_size) {
+-		mutex_unlock(&rp->fetch_lock);
++	if (offset >= rp->b_size)
+ 		return VM_FAULT_SIGBUS;
+-	}
+ 	chunk_idx = offset / CHUNK_SIZE;
+ 	pageptr = rp->b_vec[chunk_idx].pg;
+ 	get_page(pageptr);
+-	mutex_unlock(&rp->fetch_lock);
+ 	vmf->page = pageptr;
+ 	return 0;
+ }
 
 
