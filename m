@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CE33126940
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A41A0126943
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbfLSSfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:35:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52618 "EHLO mail.kernel.org"
+        id S1726945AbfLSSgB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:36:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727333AbfLSSfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:35:52 -0500
+        id S1727368AbfLSSf5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:35:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88EAD24683;
-        Thu, 19 Dec 2019 18:35:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72E6724686;
+        Thu, 19 Dec 2019 18:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780552;
-        bh=wCr4oXlxYFh5iatZpY7G7s/BwOUP0VA8+9jnlrIjENg=;
+        s=default; t=1576780556;
+        bh=1STtCvVJpTO3Clyji7skWF6q9V/tnqEw3HGtJ7bLgng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lDXZdpDHDmhGEFu41ftcQVUoauHytDAoNjEIYGm7QEewDxN50rNp1QM5OthVlLlCU
-         eFdN43uUsY2/tdJcpZ3SpfV12681nDWxEs7/H6ElLe4znqZFAoIePV07Wkvcsrpj7Y
-         4vUySayIXz8hTbc/KlP7ucM8cDHzwtHiJPVGrRM8=
+        b=Q1EZCEEE7Zh08Q04ddHXGAFTYfksaB/aVPpOPoZP9FgsZEh+havkoyY5tFBFySIRd
+         VC8Ul4dsFKmGVLBIx+yaY9OofSmJZGd6P3jJizVySfxHGn082Hiehe6cMoHZA5ufsC
+         0URcLQd+ZeiyZHJ4PgYUylKo278wD025TVihbAKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org, Brian Masney <masneyb@onstation.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 020/162] MIPS: SiByte: Enable ZONE_DMA32 for LittleSur
-Date:   Thu, 19 Dec 2019 19:32:08 +0100
-Message-Id: <20191219183208.127758298@linuxfoundation.org>
+Subject: [PATCH 4.4 022/162] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot issues
+Date:   Thu, 19 Dec 2019 19:32:10 +0100
+Message-Id: <20191219183208.625746119@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
 References: <20191219183150.477687052@linuxfoundation.org>
@@ -46,50 +45,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maciej W. Rozycki <macro@linux-mips.org>
+From: Brian Masney <masneyb@onstation.org>
 
-[ Upstream commit 756d6d836dbfb04a5a486bc2ec89397aa4533737 ]
+[ Upstream commit 7ed07855773814337b9814f1c3e866df52ebce68 ]
 
-The LittleSur board is marked for high memory support and therefore
-clearly must provide a way to have enough memory installed for some to
-be present outside the low 4GiB physical address range.  With the memory
-map of the BCM1250 SOC it has been built around it means over 1GiB of
-actual DRAM, as only the first 1GiB is mapped in the low 4GiB physical
-address range[1].
+When attempting to setup up a gpio hog, device probing will repeatedly
+fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
+between the gpio and pinctrl frameworks. If the gpio-ranges property is
+present in device tree, then the gpio framework will handle the gpio pin
+registration and eliminate the circular dependency.
 
-Complement commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
-DMA32.") then and also enable ZONE_DMA32 for LittleSur.
+See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+gpio-hog related boot issues") for a detailed commit message that
+explains the issue in much more detail. The code comment in this commit
+came from Christian's commit.
 
+I did not test this change against any hardware supported by this
+particular driver, however I was able to validate this same fix works
+for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
 
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
-    "Memory Map", pp. 34-38
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Patchwork: https://patchwork.linux-mips.org/patch/21107/
-Fixes: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 23 +++++++++++++++++------
+ 1 file changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 422624ca01329..596cbda9cb3d3 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -773,6 +773,7 @@ config SIBYTE_LITTLESUR
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select ZONE_DMA32 if 64BIT
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index b1e8a2d905ff1..a0904e426c734 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -755,12 +755,23 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 		goto unregister_pinctrl;
+ 	}
  
- config SIBYTE_SENTOSA
- 	bool "Sibyte BCM91250E-Sentosa"
+-	ret = gpiochip_add_pin_range(&pctrl->chip,
+-				     dev_name(pctrl->dev),
+-				     0, 0, pctrl->chip.ngpio);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to add pin range\n");
+-		goto unregister_gpiochip;
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
++		ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev),
++					     0, 0, pctrl->chip.ngpio);
++		if (ret) {
++			dev_err(pctrl->dev, "failed to add pin range\n");
++			goto unregister_gpiochip;
++		}
+ 	}
+ 
+ 	platform_set_drvdata(pdev, pctrl);
 -- 
 2.20.1
 
