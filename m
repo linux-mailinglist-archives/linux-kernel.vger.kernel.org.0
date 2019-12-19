@@ -2,109 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 170381263B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:38:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F02241263BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:38:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbfLSNi0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:38:26 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:48489 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726695AbfLSNiZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:38:25 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576762705; h=Content-Type: MIME-Version: Message-ID:
- In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
- bh=RPQGFB5PyYkICsCq/dy0eg390UyfcUdXx5VEiXg0zF4=; b=YaaTnEL/Paik9aukL5qtVKu/pQvy3pbamBE86aYgLsVbxlhHFUssCh503s+lS2JAsRabdlgP
- 4iVmk38lc/FSHw5leu6kWAT/2puN5Kpughzj+gBMVbA9dqvwphHz0GEKQ7onWCWuVQxd6JgG
- w3qOofwF1cUAtLNAUNay3Mf+Gc8=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfb7d50.7f3b38c24960-smtp-out-n03;
- Thu, 19 Dec 2019 13:38:24 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F300DC447A4; Thu, 19 Dec 2019 13:38:23 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726908AbfLSNic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:38:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40284 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726801AbfLSNia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 08:38:30 -0500
+Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 44ECBC4479F;
-        Thu, 19 Dec 2019 13:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 44ECBC4479F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Mao Wenan <maowenan@huawei.com>
-Cc:     <davem@davemloft.net>, <msinada@codeaurora.org>,
-        <periyasa@codeaurora.org>, <mpubbise@codeaurora.org>,
-        <julia.lawall@lip6.fr>, <milehu@codeaurora.org>,
-        netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-wireless@vger.kernel.org, ath11k@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] ath11k: add dependency for struct ath11k member debug
-References: <20191213012417.130719-1-maowenan@huawei.com>
-Date:   Thu, 19 Dec 2019 15:38:18 +0200
-In-Reply-To: <20191213012417.130719-1-maowenan@huawei.com> (Mao Wenan's
-        message of "Fri, 13 Dec 2019 09:24:17 +0800")
-Message-ID: <875zic77w5.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4DFC20684;
+        Thu, 19 Dec 2019 13:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576762709;
+        bh=H5+pX1vWjUX3DlsFCPRqcN0cwwYfdIzXOu/G2222Jxs=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=d3MpCAgzuIJypT663vxUWNJ9cfpuBGYCw0C/S/hV2VAl6fEdHbRsPSsuoGgbScQ8+
+         Y+mVlH6TNbZvh1j542vjahCeRhkCqsVrvBk7nV/bBcKUlqZw5ZIP3WBL/iw0QXNDIm
+         cHVqGSro3sY4INMLFivu9y6UtGXaNhSvbPXJyw/A=
+Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
+        id 978EE352277E; Thu, 19 Dec 2019 05:38:29 -0800 (PST)
+Date:   Thu, 19 Dec 2019 05:38:29 -0800
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
+Message-ID: <20191219133829.GZ2889@paulmck-ThinkPad-P72>
+Reply-To: paulmck@kernel.org
+References: <20191219115036.4699721c@canb.auug.org.au>
+ <20191219012726.GY2889@paulmck-ThinkPad-P72>
+ <20191219013151.GA21768@paulmck-ThinkPad-P72>
+ <20191219084155.GU2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219084155.GU2844@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mao Wenan <maowenan@huawei.com> writes:
+On Thu, Dec 19, 2019 at 09:41:55AM +0100, Peter Zijlstra wrote:
+> On Wed, Dec 18, 2019 at 05:31:51PM -0800, Paul E. McKenney wrote:
+> > On Wed, Dec 18, 2019 at 05:27:26PM -0800, Paul E. McKenney wrote:
+> > > On Thu, Dec 19, 2019 at 11:50:35AM +1100, Stephen Rothwell wrote:
+> > > > Hi all,
+> > > > 
+> > > > Today's linux-next merge of the rcu tree got a conflict in:
+> > > > 
+> > > >   kernel/cpu.c
+> > > > 
+> > > > between commit:
+> > > > 
+> > > >   45178ac0cea8 ("cpu/hotplug, stop_machine: Fix stop_machine vs hotplug order")
+> > > > 
+> > > > from the tip tree and commit:
+> > > > 
+> > > >   d62c673f4cfc ("cpu/hotplug, stop_machine: Fix stop_machine vs hotplug order")
+> > > > 
+> > > > from the rcu tree.
+> > > > 
+> > > > I fixed it up (I just used the tip tree version) and can carry the fix
+> > > > as necessary. This is now fixed as far as linux-next is concerned, but
+> > > > any non trivial conflicts should be mentioned to your upstream maintainer
+> > > > when your tree is submitted for merging.  You may also want to consider
+> > > > cooperating with the maintainer of the conflicting tree to minimise any
+> > > > particularly complex conflicts.
+> > > 
+> > > I will pull this one out of the set that I mark for -next.  That way
+> > > I can test and you can avoid at least this one conflict.  ;-)
+> > 
+> > Heh.  And the reason that it conflicts is that I fixed at least one
+> > spelling error...  ;-)
+> > 
+> > Still, the one in tip is the official one, so I will proceed as planned.
+> 
+> Argh, my bad. I'd forgotten you'd already queued it, and I was holding
+> onto it to make sure it didn't get lost. Now we haz it twice.
 
-> If CONFIG_ATH11K, CONFIG_MAC80211_DEBUGFS are set,
-> and CONFIG_ATH11K_DEBUGFS is not set, below error can be found,
-> drivers/net/wireless/ath/ath11k/debugfs_sta.c: In function ath11k_dbg_sta_open_htt_peer_stats:
-> drivers/net/wireless/ath/ath11k/debugfs_sta.c:411:4: error: struct ath11k has no member named debug
->   ar->debug.htt_stats.stats_req = stats_req;
->
-> It is to add the dependency for the member of struct ath11k.
->
-> Fixes: d5c65159f289 ("ath11k: driver for Qualcomm IEEE 802.11ax devices")
-> Signed-off-by: Mao Wenan <maowenan@huawei.com>
-> ---
->  drivers/net/wireless/ath/ath11k/debugfs_sta.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/net/wireless/ath/ath11k/debugfs_sta.c b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> index 3c5f931..bcc51d7 100644
-> --- a/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> +++ b/drivers/net/wireless/ath/ath11k/debugfs_sta.c
-> @@ -408,7 +408,9 @@ ath11k_dbg_sta_open_htt_peer_stats(struct inode *inode, struct file *file)
->  		return -ENOMEM;
->  
->  	mutex_lock(&ar->conf_mutex);
-> +#ifdef CONFIG_ATH11K_DEBUGFS
->  	ar->debug.htt_stats.stats_req = stats_req;
-> +#endif
+Better than losing the patch!  ;-)
 
-ifdefs are ugly and I don't think this is the root cause for the
-problem. I suspect (but not sure!) that ATH11K_DEBUGFS should depend on
-MAC80211_DEBUGFS, not DEBUG_FS like it does now. Or would there be a
-valid reason to have ATH11K_DEBUGFS enabled but not MAC80211_DEBUGFS?
-
-Then we could also change Makefile to this:
-
-ath11k-$(CONFIG_ATH11K_DEBUGFS) += debugfs_sta.o
-
-And hopefully get rid of an ifdef:
-
-drivers/net/wireless/ath/ath11k/debug.h:#ifdef CONFIG_MAC80211_DEBUGFS
-drivers/net/wireless/ath/ath11k/debug.h:#else /* !CONFIG_MAC80211_DEBUGFS */
-drivers/net/wireless/ath/ath11k/debug.h:#endif /* CONFIG_MAC80211_DEBUGFS*/
-
-Care to try this out?
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+							Thanx, Paul
