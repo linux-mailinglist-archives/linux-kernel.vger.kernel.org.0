@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36BF3126B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB435126AB3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbfLSSyI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:54:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49482 "EHLO mail.kernel.org"
+        id S1729643AbfLSSuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730113AbfLSSyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:54:07 -0500
+        id S1729893AbfLSSuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B6BA222C2;
-        Thu, 19 Dec 2019 18:54:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4383024672;
+        Thu, 19 Dec 2019 18:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781646;
-        bh=/RNUeUREqrykBAIP7/HzWlhfDvzGVU7SOlxeDFPZBec=;
+        s=default; t=1576781400;
+        bh=iaX4qoWzrHJ87FANjOxQtE9U3qI0YIdir/spzdB2Z/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Htmm0SMmCegSi5jiG/4Q1TZmjKIbGLTZEv5+lmGZ/YSYE+W7fRATJGEdtyZhM95wH
-         48WTOvB47fLbwGfBzUW/RqQbqaiNXJdLOY9KfMr1VVq9U6TjXX8tNAdGBC2Q8jnZJN
-         KbnUc7xKygmR4r2ktLyLC+3MXDWY1mDJJlO5OVxk=
+        b=r/6HTMUOFnO+GDUJsI4QLCGRXj1IGRljHDN/izlfBwvJD51OwsH7CvWHaMr/SF/hI
+         CW78nZuVRqYoAChq377dv1gZXMqSJaOIrW8xERofjQ0ZdR4seSLvh38lmzuFrtrO6y
+         2cRu5pUdaUUltFOKvAsV72u48oNuPLAN9ehQdTBk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Lew <clew@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 5.4 22/80] rpmsg: glink: Fix reuse intents memory leak issue
-Date:   Thu, 19 Dec 2019 19:34:14 +0100
-Message-Id: <20191219183101.706269733@linuxfoundation.org>
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Aya Levin <ayal@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 173/199] net/mlx5e: Fix SFF 8472 eeprom length
+Date:   Thu, 19 Dec 2019 19:34:15 +0100
+Message-Id: <20191219183225.110570192@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arun Kumar Neelakantam <aneela@codeaurora.org>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-commit b85f6b601407347f5425c4c058d1b7871f5bf4f0 upstream.
+[ Upstream commit c431f8597863a91eea6024926e0c1b179cfa4852 ]
 
-Memory allocated for re-usable intents are not freed during channel
-cleanup which causes memory leak in system.
+SFF 8472 eeprom length is 512 bytes. Fix module info return value to
+support 512 bytes read.
 
-Check and free all re-usable memory to avoid memory leak.
-
-Fixes: 933b45da5d1d ("rpmsg: glink: Add support for TX intents")
-Cc: stable@vger.kernel.org
-Acked-By: Chris Lew <clew@codeaurora.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: ace329f4ab3b ("net/mlx5e: ethtool, Remove unsupported SFP EEPROM high pages query")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Reviewed-by: Aya Levin <ayal@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rpmsg/qcom_glink_native.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -241,10 +241,19 @@ static void qcom_glink_channel_release(s
- {
- 	struct glink_channel *channel = container_of(ref, struct glink_channel,
- 						     refcount);
-+	struct glink_core_rx_intent *tmp;
- 	unsigned long flags;
-+	int iid;
- 
- 	spin_lock_irqsave(&channel->intent_lock, flags);
-+	idr_for_each_entry(&channel->liids, tmp, iid) {
-+		kfree(tmp->data);
-+		kfree(tmp);
-+	}
- 	idr_destroy(&channel->liids);
-+
-+	idr_for_each_entry(&channel->riids, tmp, iid)
-+		kfree(tmp);
- 	idr_destroy(&channel->riids);
- 	spin_unlock_irqrestore(&channel->intent_lock, flags);
- 
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+index e42ece20cd0b1..e13a6cd5163f4 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1368,7 +1368,7 @@ static int mlx5e_get_module_info(struct net_device *netdev,
+ 		break;
+ 	case MLX5_MODULE_ID_SFP:
+ 		modinfo->type       = ETH_MODULE_SFF_8472;
+-		modinfo->eeprom_len = MLX5_EEPROM_PAGE_LENGTH;
++		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
+ 		break;
+ 	default:
+ 		netdev_err(priv->netdev, "%s: cable type not recognized:0x%x\n",
+-- 
+2.20.1
+
 
 
