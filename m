@@ -2,181 +2,707 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D16E51270FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:57:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEB8B127106
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:58:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfLSW5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 17:57:09 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38734 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfLSW5I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:57:08 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u2so7330866wmc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 14:57:07 -0800 (PST)
+        id S1727165AbfLSW57 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 17:57:59 -0500
+Received: from mail-co1nam11on2055.outbound.protection.outlook.com ([40.107.220.55]:6037
+        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726943AbfLSW54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 17:57:56 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H+Lt62HoeznhYIL59aVITZCpYuJER3f4ZwrjFO95GF4+AY15xItCru7MW7qmCUBSEL8uDfrOoZZcGucbq/u2BorvTo/k/4R3CDji1Hu8jBBrmSXZaITHcgJeYxq5NDxdpJ78ZN6RuQzZidDBLeQN9SFVM3+qCZ1v0rKhPtYBW7OOTm66WMrRBhQ6oLsttjAqK+lDqppf6+QYhW8H/H2Do9PG8MXxlqcirnq+bDCt3z3GNRdO9v2ObFkh13plnnUl+7+GK6MHsTsbs+9PkK3yA5KqINqivlIWJOzRbQX2jGDJJvB2JpwBSxtFgG8Ym2vd8NOLFQLdehs+w0ZwPJJlDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dxDpOMiMWzFTmF68L9S14juEgP8v1vrh4PpjRH9+18o=;
+ b=KK4TWTPgLHFhvND6n0cyoNHW6FPUkD8WpsiI6fU03EBC/RUjH/aqzKCEwapprqGnrW1kgEhF2TqAo1NB9T430RzpZY40jlymOiV9akO2ufxgql4HkT33yMXC6ckzyYAxDIVWJsMjt+Ulqt1j2WDdEAgh2Dfo9O/w1cccsU56jR3TLu1mGy/jkSNOLe6Z8g/W31LKhAd6e1QtYLTOB/eYM8DNXo8IImnMr5wClt5sL4IErXvY6y5yUf1RjJ6V+uuyRW9iqb2wo01SXLkEQojb5d/WTA5rNtRYi5DcS6rxE6UB5OdgHJzYsSdcO+45c9lqrXPI8IrNb2uzCXehmlIsbw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l3jdDT7PSb2SnKaIBXuzxAAJB0WnU3CdgPU5NfDxII8=;
-        b=PywwbSYCCUJv3kVYfUhdS9qVZeBAD72fDQV51NthW+N8MqW8OZgsesK0GWgCSkdZor
-         RI6kSPJ+Pz2hpgJshGp6WAfcK5/CvaQcxWCoVoxFli34FVfdsJsoXMg2nfoH27k4qUJx
-         Xyfa1yGrCDU9K5VpNWpLrPUcwKRz3CIQWv2K5HdfN7zu1/Q6D7BgUYtvWX9mTkz0eBdf
-         mxBeAMOzAIc1JO54WOVlClW5/p+oIPHavVsINNjzl8Bj6Aaljy70jbfI6vsE931ZnXcQ
-         Baudo1F+pB+q9I7YIFlZY/q298L5taQt6G3Xt9W5uZ2uDBY469JRU+CfXVCdhKbNfStT
-         GxvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=l3jdDT7PSb2SnKaIBXuzxAAJB0WnU3CdgPU5NfDxII8=;
-        b=CKzzTT8iAd1x68PP1InTF9GfyZKexYqTz92pvmWOMXU5FGgbHaA6XM99P70KS+ecrm
-         u9T450Ow50l7BGI4JQxJoCt3V73Xe4R7vw75ee16XJw5aSVjarwLeA4VwBlWx8Ko0ktM
-         plDx2QMpMPv/E5XIlMC9njkz2RVVzoiJlTlubjYgTrxlRjdeDjCcvsYF+TiRUvxpmCzX
-         2RZfRYBdWP/QRZ6yVc7/NY+3k/Zu+crB/GOnMUU7Y9mjmI8tbhaz7fG8c5b2t5VkbPun
-         WYHsyvhTkZdOGzPgv6AMNyjlDAUQnECOjEzWSFkqE120BBXUw0gp90bFzWfiXoR7r3wk
-         WXuw==
-X-Gm-Message-State: APjAAAU65mL6sjplMD/GSmP/fjF7oNVo/CottXsHpir4xOizGA2BOxIX
-        BbglI/9UiwPQhVxm1ow3Tnrbvufb/NY=
-X-Google-Smtp-Source: APXvYqxwz8wY4e54xzWSkjgtONc87AnBglmNyXJap6okiLTfTindPZM9l4wBPRYKV+IYgoQyFvn4EQ==
-X-Received: by 2002:a1c:3c45:: with SMTP id j66mr12218981wma.2.1576796225983;
-        Thu, 19 Dec 2019 14:57:05 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:d0dd:3c81:4925:289e? ([2a01:e34:ed2f:f020:d0dd:3c81:4925:289e])
-        by smtp.googlemail.com with ESMTPSA id u14sm7935053wrm.51.2019.12.19.14.57.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 14:57:05 -0800 (PST)
-Subject: Re: [PATCH 2/2] thermal: cpuidle: Register cpuidle cooling device
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "open list:CPU IDLE TIME MANAGEMENT FRAMEWORK" 
-        <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20191219221932.15930-1-daniel.lezcano@linaro.org>
- <20191219221932.15930-2-daniel.lezcano@linaro.org>
- <20191219225103.GZ228856@google.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c08b76d1-5525-7d0e-7d11-da3584d2adcc@linaro.org>
-Date:   Thu, 19 Dec 2019 23:57:04 +0100
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dxDpOMiMWzFTmF68L9S14juEgP8v1vrh4PpjRH9+18o=;
+ b=TiIU+Pb09I24mXZJ1xKo0jWlh0dRtdPtqvgGfSViK8wYKJlcb+JO5Bm/MIJKua8mGV+RZrYFVULXMZnONoIxhmXHONqumhZUPlOwzTqot1xCMFS+e5QGPcjLvWtcwclFBCXyXnLHTfb3RrW94QTFNbE6vVkhJiyDEEW45yh/4lo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Gary.Hook@amd.com; 
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
+ DM5PR12MB2421.namprd12.prod.outlook.com (52.132.141.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.20; Thu, 19 Dec 2019 22:57:11 +0000
+Received: from DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::6d85:d029:53c0:ba61]) by DM5PR12MB1449.namprd12.prod.outlook.com
+ ([fe80::6d85:d029:53c0:ba61%5]) with mapi id 15.20.2538.019; Thu, 19 Dec 2019
+ 22:57:10 +0000
+Subject: Re: [RFC PATCH v3 5/6] crypto: ccp - add TEE support for Raven Ridge
+To:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc:     Nimesh Easow <Nimesh.Easow@amd.com>,
+        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <cover.1575438845.git.Rijo-john.Thomas@amd.com>
+ <de22c684e1e7d623bb9b743f13e3fcbcd6ff0957.1575438845.git.Rijo-john.Thomas@amd.com>
+From:   Gary R Hook <gary.hook@amd.com>
+Message-ID: <170622c0-7987-b351-d713-06ff99c0c578@amd.com>
+Date:   Thu, 19 Dec 2019 16:57:08 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
-MIME-Version: 1.0
-In-Reply-To: <20191219225103.GZ228856@google.com>
-Content-Type: text/plain; charset=utf-8
+ Thunderbird/68.2.2
+In-Reply-To: <de22c684e1e7d623bb9b743f13e3fcbcd6ff0957.1575438845.git.Rijo-john.Thomas@amd.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN2PR01CA0052.prod.exchangelabs.com (2603:10b6:800::20) To
+ DM5PR12MB1449.namprd12.prod.outlook.com (2603:10b6:4:10::14)
+MIME-Version: 1.0
+X-Originating-IP: [165.204.77.1]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 416cdffc-6913-4191-0e9a-08d784d6c7bb
+X-MS-TrafficTypeDiagnostic: DM5PR12MB2421:|DM5PR12MB2421:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM5PR12MB2421C7D1E4E86991C9A8EFE8FD520@DM5PR12MB2421.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1332;
+X-Forefront-PRVS: 0256C18696
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(189003)(199004)(31686004)(8936002)(81166006)(5660300002)(66946007)(86362001)(110136005)(54906003)(53546011)(186003)(478600001)(52116002)(26005)(81156014)(6506007)(8676002)(36756003)(30864003)(316002)(4326008)(2616005)(66476007)(31696002)(2906002)(66556008)(6512007)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2421;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5SZ+nF91pEi8x4RIx/xMte4uosWrrgPQ0fdIF+3JRqD8U0MEHZUsIDztp0tBAdiWO0rwIhW7BrXlcOS0EzLPW8j662ppizCutsMh5LeZLazWdaUSZEdPhv3awxPQ3RchwzKP+w2qZirMi0vaVmfIY/MbBvjcbQW5A+poOAdRjQL/R+H6f3X38qBCDXWGynrun5aAoiW2vA+zYZSV2SC6YMrMM2YS7Hsw4Tryq+xFMTNwmcoW2tDF5D9IZdEHLwpDnuFMpMbPCJniB+d8/F44ELMf2QxcMHwVkqTQV5ZF+sUxoJfCHl4HA/YGzS3dCkvms7hc6GT2lT27LoM4w0h/db4MBPvtvmz9/+ssAFpcY6j8b0g+BOYtw0i7GixR+tAfVV/PgLWQBk5IB/o0mc78jXl90gQscaLPGKpruZEprDv1HcYb8RFP6q+mDCCCX8EK
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 416cdffc-6913-4191-0e9a-08d784d6c7bb
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2019 22:57:10.7586
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +sbjqlGxt/s5XvsT87s+m+EiHIIohVR3Ntt8EX5F+VrO0dr1P0JcvDhYSj0dhB0Z
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2421
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2019 23:51, Matthias Kaehlcke wrote:
-> Hi Daniel,
+On 12/4/19 12:19 AM, Rijo Thomas wrote:
+> Adds a PCI device entry for Raven Ridge. Raven Ridge is an APU with a
+> dedicated AMD Secure Processor having Trusted Execution Environment (TEE)
+> support. The TEE provides a secure environment for running Trusted
+> Applications (TAs) which implement security-sensitive parts of a feature.
 > 
-> On Thu, Dec 19, 2019 at 11:19:28PM +0100, Daniel Lezcano wrote:
->> The cpuidle driver can be used as a cooling device by injecting idle
->> cycles. The DT binding for the idle state added an optional
->>
->> When the property is set, register the cpuidle driver with the idle
->> state node pointer as a cooling device. The thermal framework will do
->> the association automatically with the thermal zone via the
->> cooling-device defined in the device tree cooling-maps section.
->>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  drivers/cpuidle/dt_idle_states.c | 8 ++++++++
->>  1 file changed, 8 insertions(+)
->>
->> diff --git a/drivers/cpuidle/dt_idle_states.c b/drivers/cpuidle/dt_idle_states.c
->> index d06d21a9525d..34bd65197342 100644
->> --- a/drivers/cpuidle/dt_idle_states.c
->> +++ b/drivers/cpuidle/dt_idle_states.c
->> @@ -8,6 +8,7 @@
->>  
->>  #define pr_fmt(fmt) "DT idle-states: " fmt
->>  
->> +#include <linux/cpu_cooling.h>
->>  #include <linux/cpuidle.h>
->>  #include <linux/cpumask.h>
->>  #include <linux/errno.h>
->> @@ -205,6 +206,13 @@ int dt_init_idle_driver(struct cpuidle_driver *drv,
->>  			err = -EINVAL;
->>  			break;
->>  		}
->> +
->> +		if (of_find_property(state_node, "#cooling-cells", NULL)) {
->> +			err = cpuidle_of_cooling_register(state_node, drv);
+> This patch configures AMD Secure Processor's TEE interface by initializing
+> a ring buffer (shared memory between Rich OS and Trusted OS) which can hold
+> multiple command buffer entries. The TEE interface is facilitated by a set
+> of CPU to PSP mailbox registers.
 > 
-> cpuidle_of_cooling_register() returns a struct thermal_cooling_device *,
-> so you probably want to use PTR_ERR() here.
+> The next patch will address how commands are submitted to the ring buffer.
+> 
+> Cc: Jens Wiklander <jens.wiklander@linaro.org>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Co-developed-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
+> Signed-off-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
+> Signed-off-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
 
-Right, I'm about the send the V6 which returns an int.
+Acked-by: Gary R Hook <gary.hook@amd.com>
 
-> Could it be a problem that the cooling device isn't unregistered even when all
-> associated cores are taken offline?
-
-The cooling device relies on the powercap/idle_inject.c which is based
-on the smpboot API. This one takes care of parking the per cpu pinned
-tasks. So AFAICS, it is fine.
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> ---
+>   drivers/crypto/ccp/Makefile  |   3 +-
+>   drivers/crypto/ccp/psp-dev.c |  39 ++++++-
+>   drivers/crypto/ccp/psp-dev.h |   8 ++
+>   drivers/crypto/ccp/sp-dev.h  |  11 +-
+>   drivers/crypto/ccp/sp-pci.c  |  27 ++++-
+>   drivers/crypto/ccp/tee-dev.c | 238 +++++++++++++++++++++++++++++++++++++++++++
+>   drivers/crypto/ccp/tee-dev.h | 109 ++++++++++++++++++++
+>   7 files changed, 431 insertions(+), 4 deletions(-)
+>   create mode 100644 drivers/crypto/ccp/tee-dev.c
+>   create mode 100644 drivers/crypto/ccp/tee-dev.h
+> 
+> diff --git a/drivers/crypto/ccp/Makefile b/drivers/crypto/ccp/Makefile
+> index 3b29ea4..db362fe 100644
+> --- a/drivers/crypto/ccp/Makefile
+> +++ b/drivers/crypto/ccp/Makefile
+> @@ -9,7 +9,8 @@ ccp-$(CONFIG_CRYPTO_DEV_SP_CCP) += ccp-dev.o \
+>   ccp-$(CONFIG_CRYPTO_DEV_CCP_DEBUGFS) += ccp-debugfs.o
+>   ccp-$(CONFIG_PCI) += sp-pci.o
+>   ccp-$(CONFIG_CRYPTO_DEV_SP_PSP) += psp-dev.o \
+> -                                   sev-dev.o
+> +                                   sev-dev.o \
+> +                                   tee-dev.o
+>   
+>   obj-$(CONFIG_CRYPTO_DEV_CCP_CRYPTO) += ccp-crypto.o
+>   ccp-crypto-objs := ccp-crypto-main.o \
+> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
+> index 3bedf72..e95e7aa 100644
+> --- a/drivers/crypto/ccp/psp-dev.c
+> +++ b/drivers/crypto/ccp/psp-dev.c
+> @@ -13,6 +13,7 @@
+>   #include "sp-dev.h"
+>   #include "psp-dev.h"
+>   #include "sev-dev.h"
+> +#include "tee-dev.h"
+>   
+>   struct psp_device *psp_master;
+>   
+> @@ -45,6 +46,9 @@ static irqreturn_t psp_irq_handler(int irq, void *data)
+>   	if (status) {
+>   		if (psp->sev_irq_handler)
+>   			psp->sev_irq_handler(irq, psp->sev_irq_data, status);
+> +
+> +		if (psp->tee_irq_handler)
+> +			psp->tee_irq_handler(irq, psp->tee_irq_data, status);
+>   	}
+>   
+>   	/* Clear the interrupt status by writing the same value we read. */
+> @@ -109,6 +113,25 @@ static int psp_check_support(struct psp_device *psp,
+>   	return 0;
+>   }
+>   
+> +static int psp_init(struct psp_device *psp, unsigned int capability)
+> +{
+> +	int ret;
+> +
+> +	if (!psp_check_sev_support(psp, capability)) {
+> +		ret = sev_dev_init(psp);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	if (!psp_check_tee_support(psp, capability)) {
+> +		ret = tee_dev_init(psp);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   int psp_dev_init(struct sp_device *sp)
+>   {
+>   	struct device *dev = sp->dev;
+> @@ -151,7 +174,7 @@ int psp_dev_init(struct sp_device *sp)
+>   		goto e_err;
+>   	}
+>   
+> -	ret = sev_dev_init(psp);
+> +	ret = psp_init(psp, capability);
+>   	if (ret)
+>   		goto e_irq;
+>   
+> @@ -189,6 +212,8 @@ void psp_dev_destroy(struct sp_device *sp)
+>   
+>   	sev_dev_destroy(psp);
+>   
+> +	tee_dev_destroy(psp);
+> +
+>   	sp_free_psp_irq(sp, psp);
+>   }
+>   
+> @@ -204,6 +229,18 @@ void psp_clear_sev_irq_handler(struct psp_device *psp)
+>   	psp_set_sev_irq_handler(psp, NULL, NULL);
+>   }
+>   
+> +void psp_set_tee_irq_handler(struct psp_device *psp, psp_irq_handler_t handler,
+> +			     void *data)
+> +{
+> +	psp->tee_irq_data = data;
+> +	psp->tee_irq_handler = handler;
+> +}
+> +
+> +void psp_clear_tee_irq_handler(struct psp_device *psp)
+> +{
+> +	psp_set_tee_irq_handler(psp, NULL, NULL);
+> +}
+> +
+>   struct psp_device *psp_get_master_device(void)
+>   {
+>   	struct sp_device *sp = sp_get_psp_master_device();
+> diff --git a/drivers/crypto/ccp/psp-dev.h b/drivers/crypto/ccp/psp-dev.h
+> index 7c014ac..ef38e41 100644
+> --- a/drivers/crypto/ccp/psp-dev.h
+> +++ b/drivers/crypto/ccp/psp-dev.h
+> @@ -40,13 +40,21 @@ struct psp_device {
+>   	psp_irq_handler_t sev_irq_handler;
+>   	void *sev_irq_data;
+>   
+> +	psp_irq_handler_t tee_irq_handler;
+> +	void *tee_irq_data;
+> +
+>   	void *sev_data;
+> +	void *tee_data;
+>   };
+>   
+>   void psp_set_sev_irq_handler(struct psp_device *psp, psp_irq_handler_t handler,
+>   			     void *data);
+>   void psp_clear_sev_irq_handler(struct psp_device *psp);
+>   
+> +void psp_set_tee_irq_handler(struct psp_device *psp, psp_irq_handler_t handler,
+> +			     void *data);
+> +void psp_clear_tee_irq_handler(struct psp_device *psp);
+> +
+>   struct psp_device *psp_get_master_device(void);
+>   
+>   #endif /* __PSP_DEV_H */
+> diff --git a/drivers/crypto/ccp/sp-dev.h b/drivers/crypto/ccp/sp-dev.h
+> index 0394c75..4235946 100644
+> --- a/drivers/crypto/ccp/sp-dev.h
+> +++ b/drivers/crypto/ccp/sp-dev.h
+> @@ -2,7 +2,7 @@
+>   /*
+>    * AMD Secure Processor driver
+>    *
+> - * Copyright (C) 2017-2018 Advanced Micro Devices, Inc.
+> + * Copyright (C) 2017-2019 Advanced Micro Devices, Inc.
+>    *
+>    * Author: Tom Lendacky <thomas.lendacky@amd.com>
+>    * Author: Gary R Hook <gary.hook@amd.com>
+> @@ -45,8 +45,17 @@ struct sev_vdata {
+>   	const unsigned int cmdbuff_addr_hi_reg;
+>   };
+>   
+> +struct tee_vdata {
+> +	const unsigned int cmdresp_reg;
+> +	const unsigned int cmdbuff_addr_lo_reg;
+> +	const unsigned int cmdbuff_addr_hi_reg;
+> +	const unsigned int ring_wptr_reg;
+> +	const unsigned int ring_rptr_reg;
+> +};
+> +
+>   struct psp_vdata {
+>   	const struct sev_vdata *sev;
+> +	const struct tee_vdata *tee;
+>   	const unsigned int feature_reg;
+>   	const unsigned int inten_reg;
+>   	const unsigned int intsts_reg;
+> diff --git a/drivers/crypto/ccp/sp-pci.c b/drivers/crypto/ccp/sp-pci.c
+> index 733693d..56c1f61 100644
+> --- a/drivers/crypto/ccp/sp-pci.c
+> +++ b/drivers/crypto/ccp/sp-pci.c
+> @@ -2,7 +2,7 @@
+>   /*
+>    * AMD Secure Processor device driver
+>    *
+> - * Copyright (C) 2013,2018 Advanced Micro Devices, Inc.
+> + * Copyright (C) 2013,2019 Advanced Micro Devices, Inc.
+>    *
+>    * Author: Tom Lendacky <thomas.lendacky@amd.com>
+>    * Author: Gary R Hook <gary.hook@amd.com>
+> @@ -274,6 +274,14 @@ static int sp_pci_resume(struct pci_dev *pdev)
+>   	.cmdbuff_addr_hi_reg	= 0x109e4,
+>   };
+>   
+> +static const struct tee_vdata teev1 = {
+> +	.cmdresp_reg		= 0x10544,
+> +	.cmdbuff_addr_lo_reg	= 0x10548,
+> +	.cmdbuff_addr_hi_reg	= 0x1054c,
+> +	.ring_wptr_reg          = 0x10550,
+> +	.ring_rptr_reg          = 0x10554,
+> +};
+> +
+>   static const struct psp_vdata pspv1 = {
+>   	.sev			= &sevv1,
+>   	.feature_reg		= 0x105fc,
+> @@ -287,6 +295,13 @@ static int sp_pci_resume(struct pci_dev *pdev)
+>   	.inten_reg		= 0x10690,
+>   	.intsts_reg		= 0x10694,
+>   };
+> +
+> +static const struct psp_vdata pspv3 = {
+> +	.tee			= &teev1,
+> +	.feature_reg		= 0x109fc,
+> +	.inten_reg		= 0x10690,
+> +	.intsts_reg		= 0x10694,
+> +};
+>   #endif
+>   
+>   static const struct sp_dev_vdata dev_vdata[] = {
+> @@ -320,12 +335,22 @@ static int sp_pci_resume(struct pci_dev *pdev)
+>   		.psp_vdata = &pspv2,
+>   #endif
+>   	},
+> +	{	/* 4 */
+> +		.bar = 2,
+> +#ifdef CONFIG_CRYPTO_DEV_SP_CCP
+> +		.ccp_vdata = &ccpv5a,
+> +#endif
+> +#ifdef CONFIG_CRYPTO_DEV_SP_PSP
+> +		.psp_vdata = &pspv3,
+> +#endif
+> +	},
+>   };
+>   static const struct pci_device_id sp_pci_table[] = {
+>   	{ PCI_VDEVICE(AMD, 0x1537), (kernel_ulong_t)&dev_vdata[0] },
+>   	{ PCI_VDEVICE(AMD, 0x1456), (kernel_ulong_t)&dev_vdata[1] },
+>   	{ PCI_VDEVICE(AMD, 0x1468), (kernel_ulong_t)&dev_vdata[2] },
+>   	{ PCI_VDEVICE(AMD, 0x1486), (kernel_ulong_t)&dev_vdata[3] },
+> +	{ PCI_VDEVICE(AMD, 0x15DF), (kernel_ulong_t)&dev_vdata[4] },
+>   	/* Last entry must be zero */
+>   	{ 0, }
+>   };
+> diff --git a/drivers/crypto/ccp/tee-dev.c b/drivers/crypto/ccp/tee-dev.c
+> new file mode 100644
+> index 0000000..ccbc2ce
+> --- /dev/null
+> +++ b/drivers/crypto/ccp/tee-dev.c
+> @@ -0,0 +1,238 @@
+> +// SPDX-License-Identifier: MIT
+> +/*
+> + * AMD Trusted Execution Environment (TEE) interface
+> + *
+> + * Author: Rijo Thomas <Rijo-john.Thomas@amd.com>
+> + * Author: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
+> + *
+> + * Copyright 2019 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/types.h>
+> +#include <linux/mutex.h>
+> +#include <linux/delay.h>
+> +#include <linux/slab.h>
+> +#include <linux/gfp.h>
+> +#include <linux/psp-sev.h>
+> +
+> +#include "psp-dev.h"
+> +#include "tee-dev.h"
+> +
+> +static bool psp_dead;
+> +
+> +static int tee_alloc_ring(struct psp_tee_device *tee, int ring_size)
+> +{
+> +	struct ring_buf_manager *rb_mgr = &tee->rb_mgr;
+> +	void *start_addr;
+> +
+> +	if (!ring_size)
+> +		return -EINVAL;
+> +
+> +	/* We need actual physical address instead of DMA address, since
+> +	 * Trusted OS running on AMD Secure Processor will map this region
+> +	 */
+> +	start_addr = (void *)__get_free_pages(GFP_KERNEL, get_order(ring_size));
+> +	if (!start_addr)
+> +		return -ENOMEM;
+> +
+> +	rb_mgr->ring_start = start_addr;
+> +	rb_mgr->ring_size = ring_size;
+> +	rb_mgr->ring_pa = __psp_pa(start_addr);
+> +
+> +	return 0;
+> +}
+> +
+> +static void tee_free_ring(struct psp_tee_device *tee)
+> +{
+> +	struct ring_buf_manager *rb_mgr = &tee->rb_mgr;
+> +
+> +	if (!rb_mgr->ring_start)
+> +		return;
+> +
+> +	free_pages((unsigned long)rb_mgr->ring_start,
+> +		   get_order(rb_mgr->ring_size));
+> +
+> +	rb_mgr->ring_start = NULL;
+> +	rb_mgr->ring_size = 0;
+> +	rb_mgr->ring_pa = 0;
+> +}
+> +
+> +static int tee_wait_cmd_poll(struct psp_tee_device *tee, unsigned int timeout,
+> +			     unsigned int *reg)
+> +{
+> +	/* ~10ms sleep per loop => nloop = timeout * 100 */
+> +	int nloop = timeout * 100;
+> +
+> +	while (--nloop) {
+> +		*reg = ioread32(tee->io_regs + tee->vdata->cmdresp_reg);
+> +		if (*reg & PSP_CMDRESP_RESP)
+> +			return 0;
+> +
+> +		usleep_range(10000, 10100);
+> +	}
+> +
+> +	dev_err(tee->dev, "tee: command timed out, disabling PSP\n");
+> +	psp_dead = true;
+> +
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +static
+> +struct tee_init_ring_cmd *tee_alloc_cmd_buffer(struct psp_tee_device *tee)
+> +{
+> +	struct tee_init_ring_cmd *cmd;
+> +
+> +	cmd = kzalloc(sizeof(*cmd), GFP_KERNEL);
+> +	if (!cmd)
+> +		return NULL;
+> +
+> +	cmd->hi_addr = upper_32_bits(tee->rb_mgr.ring_pa);
+> +	cmd->low_addr = lower_32_bits(tee->rb_mgr.ring_pa);
+> +	cmd->size = tee->rb_mgr.ring_size;
+> +
+> +	dev_dbg(tee->dev, "tee: ring address: high = 0x%x low = 0x%x size = %u\n",
+> +		cmd->hi_addr, cmd->low_addr, cmd->size);
+> +
+> +	return cmd;
+> +}
+> +
+> +static inline void tee_free_cmd_buffer(struct tee_init_ring_cmd *cmd)
+> +{
+> +	kfree(cmd);
+> +}
+> +
+> +static int tee_init_ring(struct psp_tee_device *tee)
+> +{
+> +	int ring_size = MAX_RING_BUFFER_ENTRIES * sizeof(struct tee_ring_cmd);
+> +	struct tee_init_ring_cmd *cmd;
+> +	phys_addr_t cmd_buffer;
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	BUILD_BUG_ON(sizeof(struct tee_ring_cmd) != 1024);
+> +
+> +	ret = tee_alloc_ring(tee, ring_size);
+> +	if (ret) {
+> +		dev_err(tee->dev, "tee: ring allocation failed %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	tee->rb_mgr.wptr = 0;
+> +
+> +	cmd = tee_alloc_cmd_buffer(tee);
+> +	if (!cmd) {
+> +		tee_free_ring(tee);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	cmd_buffer = __psp_pa((void *)cmd);
+> +
+> +	/* Send command buffer details to Trusted OS by writing to
+> +	 * CPU-PSP message registers
+> +	 */
+> +
+> +	iowrite32(lower_32_bits(cmd_buffer),
+> +		  tee->io_regs + tee->vdata->cmdbuff_addr_lo_reg);
+> +	iowrite32(upper_32_bits(cmd_buffer),
+> +		  tee->io_regs + tee->vdata->cmdbuff_addr_hi_reg);
+> +	iowrite32(TEE_RING_INIT_CMD,
+> +		  tee->io_regs + tee->vdata->cmdresp_reg);
+> +
+> +	ret = tee_wait_cmd_poll(tee, TEE_DEFAULT_TIMEOUT, &reg);
+> +	if (ret) {
+> +		dev_err(tee->dev, "tee: ring init command timed out\n");
+> +		tee_free_ring(tee);
+> +		goto free_buf;
+> +	}
+> +
+> +	if (reg & PSP_CMDRESP_ERR_MASK) {
+> +		dev_err(tee->dev, "tee: ring init command failed (%#010x)\n",
+> +			reg & PSP_CMDRESP_ERR_MASK);
+> +		tee_free_ring(tee);
+> +		ret = -EIO;
+> +	}
+> +
+> +free_buf:
+> +	tee_free_cmd_buffer(cmd);
+> +
+> +	return ret;
+> +}
+> +
+> +static void tee_destroy_ring(struct psp_tee_device *tee)
+> +{
+> +	unsigned int reg;
+> +	int ret;
+> +
+> +	if (!tee->rb_mgr.ring_start)
+> +		return;
+> +
+> +	if (psp_dead)
+> +		goto free_ring;
+> +
+> +	iowrite32(TEE_RING_DESTROY_CMD,
+> +		  tee->io_regs + tee->vdata->cmdresp_reg);
+> +
+> +	ret = tee_wait_cmd_poll(tee, TEE_DEFAULT_TIMEOUT, &reg);
+> +	if (ret) {
+> +		dev_err(tee->dev, "tee: ring destroy command timed out\n");
+> +	} else if (reg & PSP_CMDRESP_ERR_MASK) {
+> +		dev_err(tee->dev, "tee: ring destroy command failed (%#010x)\n",
+> +			reg & PSP_CMDRESP_ERR_MASK);
+> +	}
+> +
+> +free_ring:
+> +	tee_free_ring(tee);
+> +}
+> +
+> +int tee_dev_init(struct psp_device *psp)
+> +{
+> +	struct device *dev = psp->dev;
+> +	struct psp_tee_device *tee;
+> +	int ret;
+> +
+> +	ret = -ENOMEM;
+> +	tee = devm_kzalloc(dev, sizeof(*tee), GFP_KERNEL);
+> +	if (!tee)
+> +		goto e_err;
+> +
+> +	psp->tee_data = tee;
+> +
+> +	tee->dev = dev;
+> +	tee->psp = psp;
+> +
+> +	tee->io_regs = psp->io_regs;
+> +
+> +	tee->vdata = (struct tee_vdata *)psp->vdata->tee;
+> +	if (!tee->vdata) {
+> +		ret = -ENODEV;
+> +		dev_err(dev, "tee: missing driver data\n");
+> +		goto e_err;
+> +	}
+> +
+> +	ret = tee_init_ring(tee);
+> +	if (ret) {
+> +		dev_err(dev, "tee: failed to init ring buffer\n");
+> +		goto e_err;
+> +	}
+> +
+> +	dev_notice(dev, "tee enabled\n");
+> +
+> +	return 0;
+> +
+> +e_err:
+> +	psp->tee_data = NULL;
+> +
+> +	dev_notice(dev, "tee initialization failed\n");
+> +
+> +	return ret;
+> +}
+> +
+> +void tee_dev_destroy(struct psp_device *psp)
+> +{
+> +	struct psp_tee_device *tee = psp->tee_data;
+> +
+> +	if (!tee)
+> +		return;
+> +
+> +	tee_destroy_ring(tee);
+> +}
+> diff --git a/drivers/crypto/ccp/tee-dev.h b/drivers/crypto/ccp/tee-dev.h
+> new file mode 100644
+> index 0000000..b3db0fc
+> --- /dev/null
+> +++ b/drivers/crypto/ccp/tee-dev.h
+> @@ -0,0 +1,109 @@
+> +/* SPDX-License-Identifier: MIT */
+> +/*
+> + * Copyright 2019 Advanced Micro Devices, Inc.
+> + *
+> + * Author: Rijo Thomas <Rijo-john.Thomas@amd.com>
+> + * Author: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
+> + *
+> + */
+> +
+> +/* This file describes the TEE communication interface between host and AMD
+> + * Secure Processor
+> + */
+> +
+> +#ifndef __TEE_DEV_H__
+> +#define __TEE_DEV_H__
+> +
+> +#include <linux/device.h>
+> +#include <linux/mutex.h>
+> +
+> +#define TEE_DEFAULT_TIMEOUT		10
+> +#define MAX_BUFFER_SIZE			992
+> +
+> +/**
+> + * enum tee_ring_cmd_id - TEE interface commands for ring buffer configuration
+> + * @TEE_RING_INIT_CMD:		Initialize ring buffer
+> + * @TEE_RING_DESTROY_CMD:	Destroy ring buffer
+> + * @TEE_RING_MAX_CMD:		Maximum command id
+> + */
+> +enum tee_ring_cmd_id {
+> +	TEE_RING_INIT_CMD		= 0x00010000,
+> +	TEE_RING_DESTROY_CMD		= 0x00020000,
+> +	TEE_RING_MAX_CMD		= 0x000F0000,
+> +};
+> +
+> +/**
+> + * struct tee_init_ring_cmd - Command to init TEE ring buffer
+> + * @low_addr:  bits [31:0] of the physical address of ring buffer
+> + * @hi_addr:   bits [63:32] of the physical address of ring buffer
+> + * @size:      size of ring buffer in bytes
+> + */
+> +struct tee_init_ring_cmd {
+> +	u32 low_addr;
+> +	u32 hi_addr;
+> +	u32 size;
+> +};
+> +
+> +#define MAX_RING_BUFFER_ENTRIES		32
+> +
+> +/**
+> + * struct ring_buf_manager - Helper structure to manage ring buffer.
+> + * @ring_start:  starting address of ring buffer
+> + * @ring_size:   size of ring buffer in bytes
+> + * @ring_pa:     physical address of ring buffer
+> + * @wptr:        index to the last written entry in ring buffer
+> + */
+> +struct ring_buf_manager {
+> +	void *ring_start;
+> +	u32 ring_size;
+> +	phys_addr_t ring_pa;
+> +	u32 wptr;
+> +};
+> +
+> +struct psp_tee_device {
+> +	struct device *dev;
+> +	struct psp_device *psp;
+> +	void __iomem *io_regs;
+> +	struct tee_vdata *vdata;
+> +	struct ring_buf_manager rb_mgr;
+> +};
+> +
+> +/**
+> + * enum tee_cmd_state - TEE command states for the ring buffer interface
+> + * @TEE_CMD_STATE_INIT:      initial state of command when sent from host
+> + * @TEE_CMD_STATE_PROCESS:   command being processed by TEE environment
+> + * @TEE_CMD_STATE_COMPLETED: command processing completed
+> + */
+> +enum tee_cmd_state {
+> +	TEE_CMD_STATE_INIT,
+> +	TEE_CMD_STATE_PROCESS,
+> +	TEE_CMD_STATE_COMPLETED,
+> +};
+> +
+> +/**
+> + * struct tee_ring_cmd - Structure of the command buffer in TEE ring
+> + * @cmd_id:      refers to &enum tee_cmd_id. Command id for the ring buffer
+> + *               interface
+> + * @cmd_state:   refers to &enum tee_cmd_state
+> + * @status:      status of TEE command execution
+> + * @res0:        reserved region
+> + * @pdata:       private data (currently unused)
+> + * @res1:        reserved region
+> + * @buf:         TEE command specific buffer
+> + */
+> +struct tee_ring_cmd {
+> +	u32 cmd_id;
+> +	u32 cmd_state;
+> +	u32 status;
+> +	u32 res0[1];
+> +	u64 pdata;
+> +	u32 res1[2];
+> +	u8 buf[MAX_BUFFER_SIZE];
+> +
+> +	/* Total size: 1024 bytes */
+> +} __packed;
+> +
+> +int tee_dev_init(struct psp_device *psp);
+> +void tee_dev_destroy(struct psp_device *psp);
+> +
+> +#endif /* __TEE_DEV_H__ */
+> 
 
