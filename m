@@ -2,113 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB561126F7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86445126F97
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:18:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbfLSVOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:14:38 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43121 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726908AbfLSVOi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:14:38 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 42FF32263C;
-        Thu, 19 Dec 2019 16:14:37 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 19 Dec 2019 16:14:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=V2Hao+J1GkYhnxb5ys8W85uWd1oQYMD
-        NDs9XruetUIo=; b=ji6ukp7gQRqpBg28UjFL7cM6qfmkQkdTmM85YWc7NeAvZfm
-        xoUkiIvFjEw37nLotwu1J7IR8Z4DCUS6W7Xcan33XMhP3lyh00zRzP7z8gg0nx4N
-        2y+tuyxjJ3Mn5ujOuGVF/uFplRP97k18eg0dLIpv5DgGDB8OGsx1mXhfukR+wRel
-        +dIWdlMF4+zoKUZEIrBo5YmfEyQvVBn14X+4jZ74U0PL/PM9H7QjJNFTMytrTcqe
-        +7/uQg57T3S2+/mLLvPkh2DGB6OBY+WX/aV647gUkRWPlgC2ZM7JqAIiIQz76WOx
-        nHWx9awvNa9+HJtQ1fETalNMQES9tVdsmCr5MCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=V2Hao+
-        J1GkYhnxb5ys8W85uWd1oQYMDNDs9XruetUIo=; b=U8piGZ34pLofpF3dhgwphE
-        YMEE3v+6/8++EL56tNDbqsZBhWsnEQL7LULEJRufdn42g4sUs9ykPn23fR95orgI
-        IuGcyeKVFxM7ffYrXFme18FDqVrEKqXPrJRtTeUUvzIE+swZ49yfubPMlhD4eDOb
-        d+AdRo/30NBzsNVEpww94VnX1AhgKB9lC+3QKPUG9n0IxrBUwjMeMu6h8/WEti+r
-        fRFpOXMGCz3nN13COw7kk+N91nurDyyqsLd1BH+kQj2N/uFsVrRfpNm/z4NPKPFn
-        TqPTvzC7lkkL9TW20mmxwtEiTDpluFVK5WbqSsJx5gsa9JMPgTRnJmo0Z/2Kw1hA
-        ==
-X-ME-Sender: <xms:POj7XQSs8PEyrN35x56zFmpGE9XQkWVDbP168vKI86Q4tE_E_0128g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdduuddgudeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrg
-    hrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushht
-    vghrufhiiigvpedt
-X-ME-Proxy: <xmx:POj7XWJu-bP77Z7xse4CUZpn75WQRSBoseaqkpMgw97yfBLvgxRJGA>
-    <xmx:POj7XQBkfKM-bVRq7XbLHgu8iU6kpzK67wpHvwBlZdgZZFUIvXDgaQ>
-    <xmx:POj7Xb3FLH-F69pOjcPYREL3NrHN8jmOE2XkLFXdoEQMqhv1VQZ0Qw>
-    <xmx:Pej7XdCieO_953Hn21694gMM0U8q7obfXRLXIM2K93mypOIMZPZmng>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 089F4E00A3; Thu, 19 Dec 2019 16:14:36 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-694-gd5bab98-fmstable-20191218v1
-Mime-Version: 1.0
-Message-Id: <700f857c-0d99-4e7e-a969-191c5afd10f8@www.fastmail.com>
-In-Reply-To: <22d81b7d-4f1c-30b9-e895-1f38a862462e@linux.ibm.com>
-References: <1576681778-18737-1-git-send-email-eajames@linux.ibm.com>
- <1576681778-18737-8-git-send-email-eajames@linux.ibm.com>
- <de68ff11-0942-422a-b233-ff578b06eefc@www.fastmail.com>
- <22d81b7d-4f1c-30b9-e895-1f38a862462e@linux.ibm.com>
-Date:   Fri, 20 Dec 2019 07:46:18 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>,
-        linux-aspeed@lists.ozlabs.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
-        "Marc Zyngier" <maz@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
-        "Joel Stanley" <joel@jms.id.au>
-Subject: Re: [PATCH v3 07/12] soc: aspeed: xdma: Add user interface
-Content-Type: text/plain
+        id S1727239AbfLSVSD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:18:03 -0500
+Received: from node.akkea.ca ([192.155.83.177]:35702 "EHLO node.akkea.ca"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726967AbfLSVSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 16:18:02 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by node.akkea.ca (Postfix) with ESMTP id 61CDB4E2006;
+        Thu, 19 Dec 2019 21:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1576790282; bh=OFvkXpgSlnb0/pUde8cMlEl0cLNJVrFCr4s08Ho54bQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=CcoAQ8RPcCBtfw7CpmT+5ehRWvIo07gAA5GsrhmxS4lEoacb9JvZNlJ7Hgrar3uPs
+         XMCWZ/8rcendV4xcx6LTmFMfuDbBn5Sjcc+Ep9TFmyTDXQVYIJ9zCgXTtevZjf7Q8W
+         CRjLEe8tw7Q0/M2PBJqTULSpJSNd/8qCti0Vef6I=
+X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
+Received: from node.akkea.ca ([127.0.0.1])
+        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WS9QXKpTBfZG; Thu, 19 Dec 2019 21:18:02 +0000 (UTC)
+Received: from www.akkea.ca (node.akkea.ca [192.155.83.177])
+        by node.akkea.ca (Postfix) with ESMTPSA id 095444E2003;
+        Thu, 19 Dec 2019 21:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
+        t=1576790282; bh=OFvkXpgSlnb0/pUde8cMlEl0cLNJVrFCr4s08Ho54bQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=CcoAQ8RPcCBtfw7CpmT+5ehRWvIo07gAA5GsrhmxS4lEoacb9JvZNlJ7Hgrar3uPs
+         XMCWZ/8rcendV4xcx6LTmFMfuDbBn5Sjcc+Ep9TFmyTDXQVYIJ9zCgXTtevZjf7Q8W
+         CRjLEe8tw7Q0/M2PBJqTULSpJSNd/8qCti0Vef6I=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 19 Dec 2019 13:18:02 -0800
+From:   Angus Ainslie <angus@akkea.ca>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     krzk@kernel.org, Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@puri.sm
+Subject: Re: [PATCH v2 0/2] Add MAX17055 fuel guage
+In-Reply-To: <20191219001531.gnav4roprttdwknc@earth.universe>
+References: <20191214152755.25138-1-angus@akkea.ca>
+ <20191219001531.gnav4roprttdwknc@earth.universe>
+Message-ID: <cb3c9effe0995d2cd7b48ef4a9c6ae03@akkea.ca>
+X-Sender: angus@akkea.ca
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 20 Dec 2019, at 02:30, Eddie James wrote:
+On 2019-12-18 16:15, Sebastian Reichel wrote:
+> Hi,
 > 
-> On 12/18/19 7:19 PM, Andrew Jeffery wrote:
-> >
-> > On Thu, 19 Dec 2019, at 01:39, Eddie James wrote:
-> >> +			mutex_unlock(&ctx->file_lock);
-> >> +			return -EBUSY;
-> >> +		}
-> >> +	} else {
-> >> +		mutex_lock(&ctx->file_lock);
-> >> +
-> >> +		rc = wait_event_interruptible(ctx->wait, !ctx->current_client);
-> >> +		if (rc) {
-> >> +			mutex_unlock(&ctx->file_lock);
-> >> +			return -EINTR;
-> >> +		}
-> >> +	}
-> >> +
-> >> +	aspeed_xdma_start(ctx, &op, client->phys, client);
-> >> +
-> >> +	mutex_unlock(&ctx->file_lock);
-> > Shouldn't we lift start_lock out of aspeed_xdma_start() use that here
-> > instead of file_lock? I think that would mean that we could remove
-> > file_lock.
+> On Sat, Dec 14, 2019 at 07:27:53AM -0800, Angus Ainslie (Purism) wrote:
+>> Extend the max17042_battery driver to include the MAX17055.
 > 
+> Thanks, queued to power-suply's for-next branch.
 > 
-> That wouldn't work with the reset though. The reset should hold 
-> start_lock as well, but if a client is waiting here with start_lock, 
-> we'd never get to the reset if the transfer doesn't complete. I think 
-> file_lock is necessary.
+> -- Sebastian
+> 
 
-Hmm, let me think about this some more.
+Thanks
 
-Andrew
+Angus
+
+>> 
+>> Changes since v1:
+>> 
+>> Change blacklist driver checks to whitelists.
+>> 
+>> Angus Ainslie (Purism) (2):
+>>   power: supply: max17042: add MAX17055 support
+>>   device-tree: bindings: max17042_battery: add all of the compatible
+>>     strings
+>> 
+>>  .../power/supply/max17042_battery.txt         |  6 ++-
+>>  drivers/power/supply/max17042_battery.c       | 17 +++++--
+>>  include/linux/power/max17042_battery.h        | 48 
+>> ++++++++++++++++++-
+>>  3 files changed, 66 insertions(+), 5 deletions(-)
+>> 
+>> --
+>> 2.17.1
+>> 
