@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93ADE126A5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:46:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C25CC12698A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729337AbfLSSqb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:46:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39076 "EHLO mail.kernel.org"
+        id S1728094AbfLSSit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:38:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728955AbfLSSqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:25 -0500
+        id S1727768AbfLSSip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EE3E222C2;
-        Thu, 19 Dec 2019 18:46:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2934D222C2;
+        Thu, 19 Dec 2019 18:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781185;
-        bh=or8v/UXHFUBX4szwDVoaJgBK6VW0CiG9OD1TtrN+Oi8=;
+        s=default; t=1576780724;
+        bh=6s41C/ku8CxZtDH/9HpVSknr1nn7NPsSuaDaixRw6lQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dcD4MSMwQ8RIX3bUbWpjRZqusF+5vkAmUpag9Q+q3v4TsezD1PUW+AYs6nlvwv1fl
-         yAOpyX/diZBefKlORuV+W4OaAygBQZAdhzrE4jq4qPf5L1igM7vmnlz095iR78gghV
-         5Q3pc1IjH/jQnTsyyYgF5A7c2AQs3+4j3vRPlZUQ=
+        b=ejiB5CY55U6GX+/MhGBQhW0mw5VrcOkoZWecKds+SmHcJt1vZ1Cv+iamFjt7wLG1t
+         K0/CKZPCla/gTI4rigd+lTECwuorWVTSFYxmdsDXNYkTlnqGXcFUSM1rsUb/RME/h9
+         XsuSEEzySR7T2VKXDPet5S+bwyWdm+GjddSKIgcY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Nikolay Borisov <nborisov@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.9 116/199] btrfs: check page->mapping when loading free space cache
-Date:   Thu, 19 Dec 2019 19:33:18 +0100
-Message-Id: <20191219183221.309968898@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 091/162] USB: atm: ueagle-atm: add missing endpoint check
+Date:   Thu, 19 Dec 2019 19:33:19 +0100
+Message-Id: <20191219183213.335021056@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,76 +42,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 3797136b626ad4b6582223660c041efdea8f26b2 upstream.
+commit 09068c1ad53fb077bdac288869dec2435420bdc4 upstream.
 
-While testing 5.2 we ran into the following panic
+Make sure that the interrupt interface has an endpoint before trying to
+access its endpoint descriptors to avoid dereferencing a NULL pointer.
 
-[52238.017028] BUG: kernel NULL pointer dereference, address: 0000000000000001
-[52238.105608] RIP: 0010:drop_buffers+0x3d/0x150
-[52238.304051] Call Trace:
-[52238.308958]  try_to_free_buffers+0x15b/0x1b0
-[52238.317503]  shrink_page_list+0x1164/0x1780
-[52238.325877]  shrink_inactive_list+0x18f/0x3b0
-[52238.334596]  shrink_node_memcg+0x23e/0x7d0
-[52238.342790]  ? do_shrink_slab+0x4f/0x290
-[52238.350648]  shrink_node+0xce/0x4a0
-[52238.357628]  balance_pgdat+0x2c7/0x510
-[52238.365135]  kswapd+0x216/0x3e0
-[52238.371425]  ? wait_woken+0x80/0x80
-[52238.378412]  ? balance_pgdat+0x510/0x510
-[52238.386265]  kthread+0x111/0x130
-[52238.392727]  ? kthread_create_on_node+0x60/0x60
-[52238.401782]  ret_from_fork+0x1f/0x30
+The driver binds to the interrupt interface with interface number 0, but
+must not assume that this interface or its current alternate setting are
+the first entries in the corresponding configuration arrays.
 
-The page we were trying to drop had a page->private, but had no
-page->mapping and so called drop_buffers, assuming that we had a
-buffer_head on the page, and then panic'ed trying to deref 1, which is
-our page->private for data pages.
-
-This is happening because we're truncating the free space cache while
-we're trying to load the free space cache.  This isn't supposed to
-happen, and I'll fix that in a followup patch.  However we still
-shouldn't allow those sort of mistakes to result in messing with pages
-that do not belong to us.  So add the page->mapping check to verify that
-we still own this page after dropping and re-acquiring the page lock.
-
-This page being unlocked as:
-btrfs_readpage
-  extent_read_full_page
-    __extent_read_full_page
-      __do_readpage
-        if (!nr)
-	   unlock_page  <-- nr can be 0 only if submit_extent_page
-			    returns an error
-
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-[ add callchain ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: b72458a80c75 ("[PATCH] USB: Eagle and ADI 930 usb adsl modem driver")
+Cc: stable <stable@vger.kernel.org>     # 2.6.16
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191210112601.3561-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/free-space-cache.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/atm/ueagle-atm.c |   18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/free-space-cache.c
-+++ b/fs/btrfs/free-space-cache.c
-@@ -391,6 +391,12 @@ static int io_ctl_prepare_pages(struct b
- 		if (uptodate && !PageUptodate(page)) {
- 			btrfs_readpage(NULL, page);
- 			lock_page(page);
-+			if (page->mapping != inode->i_mapping) {
-+				btrfs_err(BTRFS_I(inode)->root->fs_info,
-+					  "free space cache page truncated");
-+				io_ctl_drop_pages(io_ctl);
-+				return -EIO;
-+			}
- 			if (!PageUptodate(page)) {
- 				btrfs_err(BTRFS_I(inode)->root->fs_info,
- 					   "error reading free space cache");
+--- a/drivers/usb/atm/ueagle-atm.c
++++ b/drivers/usb/atm/ueagle-atm.c
+@@ -2167,10 +2167,11 @@ resubmit:
+ /*
+  * Start the modem : init the data and start kernel thread
+  */
+-static int uea_boot(struct uea_softc *sc)
++static int uea_boot(struct uea_softc *sc, struct usb_interface *intf)
+ {
+-	int ret, size;
+ 	struct intr_pkt *intr;
++	int ret = -ENOMEM;
++	int size;
+ 
+ 	uea_enters(INS_TO_USBDEV(sc));
+ 
+@@ -2195,6 +2196,11 @@ static int uea_boot(struct uea_softc *sc
+ 	if (UEA_CHIP_VERSION(sc) == ADI930)
+ 		load_XILINX_firmware(sc);
+ 
++	if (intf->cur_altsetting->desc.bNumEndpoints < 1) {
++		ret = -ENODEV;
++		goto err0;
++	}
++
+ 	intr = kmalloc(size, GFP_KERNEL);
+ 	if (!intr) {
+ 		uea_err(INS_TO_USBDEV(sc),
+@@ -2211,8 +2217,7 @@ static int uea_boot(struct uea_softc *sc
+ 	usb_fill_int_urb(sc->urb_int, sc->usb_dev,
+ 			 usb_rcvintpipe(sc->usb_dev, UEA_INTR_PIPE),
+ 			 intr, size, uea_intr, sc,
+-			 sc->usb_dev->actconfig->interface[0]->altsetting[0].
+-			 endpoint[0].desc.bInterval);
++			 intf->cur_altsetting->endpoint[0].desc.bInterval);
+ 
+ 	ret = usb_submit_urb(sc->urb_int, GFP_KERNEL);
+ 	if (ret < 0) {
+@@ -2227,6 +2232,7 @@ static int uea_boot(struct uea_softc *sc
+ 	sc->kthread = kthread_create(uea_kthread, sc, "ueagle-atm");
+ 	if (IS_ERR(sc->kthread)) {
+ 		uea_err(INS_TO_USBDEV(sc), "failed to create thread\n");
++		ret = PTR_ERR(sc->kthread);
+ 		goto err2;
+ 	}
+ 
+@@ -2241,7 +2247,7 @@ err1:
+ 	kfree(intr);
+ err0:
+ 	uea_leaves(INS_TO_USBDEV(sc));
+-	return -ENOMEM;
++	return ret;
+ }
+ 
+ /*
+@@ -2604,7 +2610,7 @@ static int uea_bind(struct usbatm_data *
+ 	if (ret < 0)
+ 		goto error;
+ 
+-	ret = uea_boot(sc);
++	ret = uea_boot(sc, intf);
+ 	if (ret < 0)
+ 		goto error_rm_grp;
+ 
 
 
