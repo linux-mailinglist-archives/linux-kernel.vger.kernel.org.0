@@ -2,90 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53EE81271D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:53:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5390C1271E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:56:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfLSXxK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 18:53:10 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:37378 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfLSXxK (ORCPT
+        id S1727150AbfLSX4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 18:56:50 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:43332 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfLSX4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:53:10 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJNnheR092452;
-        Thu, 19 Dec 2019 23:53:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2019-08-05;
- bh=IOAevKSgu4HyS0J5Cpr/uD26hsiJUKyCo1KcIHUOt/k=;
- b=QT37i+rEFTeKnIeL2aAHL6tZ1iWAjbIHprU190flLdKlKnwKlx62j6L7oOFLJzt3ct3c
- osh2QJVJwA7+Pl21r6cZ4kiEHuCTWmLIJ9ZsvSxXlB2jKLwtJOURW6jp35D/4ttFWctr
- pMohbi+EcExn5rm2F6gFk0+o0tWNhDNROPpu9hJlqe+bqw+IPCI6CJLVwHYuGRLHNsFL
- td+1G6GxT0HcmDZ1/8eYc4hzWosVtuvnv3hItTcXskaiSD9oFFCrAYRB8CWpJqk3eRre
- fSp/i+91W8qLQvUIyg/RzC9cevE7Xxp1kbNpN2K4HK2MWUj7UkUXJQE9SNwDS/MZ3Uuc Vg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2x01knnw27-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 23:53:05 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJNnVpT013896;
-        Thu, 19 Dec 2019 23:53:05 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2x04ms8xg1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 23:53:05 +0000
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBJNr4Zc014111;
-        Thu, 19 Dec 2019 23:53:04 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Dec 2019 15:53:04 -0800
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] scsi: csiostor: Adjust indentation in csio_device_reset
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20191218014726.8455-1-natechancellor@gmail.com>
-Date:   Thu, 19 Dec 2019 18:53:01 -0500
-In-Reply-To: <20191218014726.8455-1-natechancellor@gmail.com> (Nathan
-        Chancellor's message of "Tue, 17 Dec 2019 18:47:26 -0700")
-Message-ID: <yq1immban4y.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=947
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912190174
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912190174
+        Thu, 19 Dec 2019 18:56:50 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1ii5cf-0001SV-7t; Thu, 19 Dec 2019 17:54:25 -0600
+Message-ID: <7f0bd277632942acbdc0c41c6cd149d8543c2b3e.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     yingjie_bai@126.com, Kumar Gala <galak@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Bai Yingjie <byj.tea@gmail.com>
+Date:   Thu, 19 Dec 2019 17:54:24 -0600
+In-Reply-To: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
+References: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: yingjie_bai@126.com, galak@kernel.crashing.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, byj.tea@gmail.com
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-16.0 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+Subject: Re: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for
+ 64bit boot entry
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2019-11-25 at 23:15 +0800, yingjie_bai@126.com wrote:
+> From: Bai Yingjie <byj.tea@gmail.com>
+> 
+> CPU like P4080 has 36bit physical address, its DDR physical
+> start address can be configured above 4G by LAW registers.
+> 
+> For such systems in which their physical memory start address was
+> configured higher than 4G, we need also to write addr_h into the spin
+> table of the target secondary CPU, so that addr_h and addr_l together
+> represent a 64bit physical address.
+> Otherwise the secondary core can not get correct entry to start from.
+> 
+> This should do no harm for normal case where addr_h is all 0.
+> 
+> Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
+> ---
+>  arch/powerpc/platforms/85xx/smp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 
-Nathan,
+Acked-by: Scott Wood <oss@buserror.net>
 
-> Clang warns:
->
-> ../drivers/scsi/csiostor/csio_scsi.c:1386:3: warning: misleading
-> indentation; statement is not part of the previous 'if'
-> [-Wmisleading-indentation]
->          csio_lnodes_exit(hw, 1);
->          ^
-> ../drivers/scsi/csiostor/csio_scsi.c:1382:2: note: previous statement is
+-Scott
 
-Applied to 5.6/scsi-queue, thanks!
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
