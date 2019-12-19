@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18730126999
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B301C126A8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfLSSjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:39:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57470 "EHLO mail.kernel.org"
+        id S1729652AbfLSSsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41698 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727467AbfLSSjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:39:17 -0500
+        id S1728300AbfLSSse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C704C24684;
-        Thu, 19 Dec 2019 18:39:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC3982465E;
+        Thu, 19 Dec 2019 18:48:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780756;
-        bh=nooujZ1DsWjnhi4o+/CzvbZ/9qJ5W2ZL6euaFzbSMVc=;
+        s=default; t=1576781313;
+        bh=eUMcKAz5SHVJYqA7TJftOjKDuTCsol5guaw7UlNA5yM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZT978HC3MoLoyYqrAF8Q02qjUCvlSXGJ4VhmigcgkRlQDgSQ3VPtu1Lv85PMKPtCK
-         ZBZ9Xc0orYuuxbd9LAskLOvCgQ20oulJYVL8/3JDoi8h/7O2H6tZfykJGST/fB+GIU
-         xBJXpirgMd10gPhFF7LfIGVvnHWGgG0xQQnd9TpQ=
+        b=Nweue0GjL/0RFuIc1B0r743FccdfTW0WY2G6/3shBmv7OApE5UqkV0U6x7u617SzH
+         oOVNF5n0BSYQlZASUaEk8xsX5XU7z1ZZy1WU/krj3D9h10ipbrO1FOY2DoSba3xheP
+         PYEldYDkNTwuGrQ6GBrk2ZfZdjr0uDDe66GSunmA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 103/162] rtlwifi: rtl8192de: Fix missing enable interrupt flag
+        stable@vger.kernel.org, Aleksa Sarai <cyphar@cyphar.com>,
+        Tejun Heo <tj@kernel.org>
+Subject: [PATCH 4.9 129/199] cgroup: pids: use atomic64_t for pids->limit
 Date:   Thu, 19 Dec 2019 19:33:31 +0100
-Message-Id: <20191219183214.037943358@linuxfoundation.org>
+Message-Id: <20191219183222.162247453@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Aleksa Sarai <cyphar@cyphar.com>
 
-commit 330bb7117101099c687e9c7f13d48068670b9c62 upstream.
+commit a713af394cf382a30dd28a1015cbe572f1b9ca75 upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), the flag that indicates that interrupts are enabled was
-never set.
+Because pids->limit can be changed concurrently (but we don't want to
+take a lock because it would be needlessly expensive), use atomic64_ts
+instead.
 
-In addition, there are several places when enable/disable interrupts
-were commented out are restored. A sychronize_interrupts() call is
-removed.
-
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org>	# v3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Fixes: commit 49b786ea146f ("cgroup: implement the PIDs subsystem")
+Cc: stable@vger.kernel.org # v4.3+
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ kernel/cgroup_pids.c |   11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/hw.c
-@@ -1206,6 +1206,7 @@ void rtl92de_enable_interrupt(struct iee
+--- a/kernel/cgroup_pids.c
++++ b/kernel/cgroup_pids.c
+@@ -48,7 +48,7 @@ struct pids_cgroup {
+ 	 * %PIDS_MAX = (%PID_MAX_LIMIT + 1).
+ 	 */
+ 	atomic64_t			counter;
+-	int64_t				limit;
++	atomic64_t			limit;
  
- 	rtl_write_dword(rtlpriv, REG_HIMR, rtlpci->irq_mask[0] & 0xFFFFFFFF);
- 	rtl_write_dword(rtlpriv, REG_HIMRE, rtlpci->irq_mask[1] & 0xFFFFFFFF);
-+	rtlpci->irq_enabled = true;
+ 	/* Handle for "pids.events" */
+ 	struct cgroup_file		events_file;
+@@ -76,8 +76,8 @@ pids_css_alloc(struct cgroup_subsys_stat
+ 	if (!pids)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	pids->limit = PIDS_MAX;
+ 	atomic64_set(&pids->counter, 0);
++	atomic64_set(&pids->limit, PIDS_MAX);
+ 	atomic64_set(&pids->events_limit, 0);
+ 	return &pids->css;
+ }
+@@ -149,13 +149,14 @@ static int pids_try_charge(struct pids_c
+ 
+ 	for (p = pids; parent_pids(p); p = parent_pids(p)) {
+ 		int64_t new = atomic64_add_return(num, &p->counter);
++		int64_t limit = atomic64_read(&p->limit);
+ 
+ 		/*
+ 		 * Since new is capped to the maximum number of pid_t, if
+ 		 * p->limit is %PIDS_MAX then we know that this test will never
+ 		 * fail.
+ 		 */
+-		if (new > p->limit)
++		if (new > limit)
+ 			goto revert;
+ 	}
+ 
+@@ -280,7 +281,7 @@ set_limit:
+ 	 * Limit updates don't need to be mutex'd, since it isn't
+ 	 * critical that any racing fork()s follow the new limit.
+ 	 */
+-	pids->limit = limit;
++	atomic64_set(&pids->limit, limit);
+ 	return nbytes;
  }
  
- void rtl92de_disable_interrupt(struct ieee80211_hw *hw)
-@@ -1215,7 +1216,7 @@ void rtl92de_disable_interrupt(struct ie
+@@ -288,7 +289,7 @@ static int pids_max_show(struct seq_file
+ {
+ 	struct cgroup_subsys_state *css = seq_css(sf);
+ 	struct pids_cgroup *pids = css_pids(css);
+-	int64_t limit = pids->limit;
++	int64_t limit = atomic64_read(&pids->limit);
  
- 	rtl_write_dword(rtlpriv, REG_HIMR, IMR8190_DISABLED);
- 	rtl_write_dword(rtlpriv, REG_HIMRE, IMR8190_DISABLED);
--	synchronize_irq(rtlpci->pdev->irq);
-+	rtlpci->irq_enabled = false;
- }
- 
- static void _rtl92de_poweroff_adapter(struct ieee80211_hw *hw)
-@@ -1386,7 +1387,7 @@ void rtl92de_set_beacon_related_register
- 
- 	bcn_interval = mac->beacon_interval;
- 	atim_window = 2;
--	/*rtl92de_disable_interrupt(hw);  */
-+	rtl92de_disable_interrupt(hw);
- 	rtl_write_word(rtlpriv, REG_ATIMWND, atim_window);
- 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
- 	rtl_write_word(rtlpriv, REG_BCNTCFG, 0x660f);
-@@ -1406,9 +1407,9 @@ void rtl92de_set_beacon_interval(struct
- 
- 	RT_TRACE(rtlpriv, COMP_BEACON, DBG_DMESG,
- 		 "beacon_interval:%d\n", bcn_interval);
--	/* rtl92de_disable_interrupt(hw); */
-+	rtl92de_disable_interrupt(hw);
- 	rtl_write_word(rtlpriv, REG_BCN_INTERVAL, bcn_interval);
--	/* rtl92de_enable_interrupt(hw); */
-+	rtl92de_enable_interrupt(hw);
- }
- 
- void rtl92de_update_interrupt_mask(struct ieee80211_hw *hw,
+ 	if (limit >= PIDS_MAX)
+ 		seq_printf(sf, "%s\n", PIDS_MAX_STR);
 
 
