@@ -2,92 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC615126EC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:22:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DE18126EC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfLSUWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:22:24 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35366 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727386AbfLSUWP (ORCPT
+        id S1727571AbfLSUW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:22:28 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41483 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfLSUW0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:22:15 -0500
-Received: by mail-qk1-f196.google.com with SMTP id z76so6102562qka.2;
-        Thu, 19 Dec 2019 12:22:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r3E/D07/ZPDWwCmYCAV3wbix4nrV2NEeuAgSXWyKjuk=;
-        b=u6Wv8j6rmYawNkXdt1PMu7j72pvZx7svOC3E6pznjHc7+FKrdLbnpmSkSLwC619uwG
-         SIgEtVQR3RNyDP+MnUu66RibgcVwqQX/7rUtScjLHr6Pal8yn5U7QlcAesErCFSx45hg
-         onib1uCCGQGQadOVJ+9ENHyQPk7xutFYx7b1zOF5X0rBodDabJl+LlsmlqIuIykD/DzO
-         MOmBK1o41B4picUTKElrG4ixXSjCjS7NnbUTWFBfd3+qZfRpJHnl1AFp7qvXMZxle2rU
-         17vEUZKBjvL3LIfCGY1R9UbjtXkIr9KX9urMGHHKJB+HfnE4pxaih6aOzIYdxGCeXAuG
-         GRzw==
+        Thu, 19 Dec 2019 15:22:26 -0500
+Received: by mail-ed1-f66.google.com with SMTP id c26so6139276eds.8;
+        Thu, 19 Dec 2019 12:22:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r3E/D07/ZPDWwCmYCAV3wbix4nrV2NEeuAgSXWyKjuk=;
-        b=rwEoMk+gS2ANdTYlTeJspJ1zHZzEZEelPLOfki4YOSjl2m7PdrNSu+mf/9cA0hcocC
-         vBzoRqVcO+uiBOdq2GCJsHdXnkQEq5zZckJmvxSCD7oN2C6sNtZkucM0eteHz2XEtm/g
-         i5rD2ds41uUxEOET5++IXylw+GPQ/4pWdOP12CvPVCKDXf456rRHIZMGbqKl0g33kQUT
-         QvQba+swYiPSN5uH6G42HgbKt0EsBT6rus3NS7a/Yl9p+8Sh2xXktKKXU7OByZFR+STd
-         SM65c1hu4xuD8977V8K+HGrW2DQV1lA3N1w7Qh6dEEFFbxPDuKkL3TM1RVKXD1+xg6Q5
-         NbNw==
-X-Gm-Message-State: APjAAAV0k/hE9goMpZVZaqYFxMCGSy+tlCfD9IQ8rh4tCSFrOqE9iWVP
-        D75yvgibXqwUc6GS4cLRqwHJFCGVzNI=
-X-Google-Smtp-Source: APXvYqwjzlfu4HM0DKELI9BComNmyS8fALsw5Qp8Q5/Hv7wFJLwaM5FyiCgJ4C2p0Cv1SU6/gb4l9w==
-X-Received: by 2002:a37:de05:: with SMTP id h5mr10251127qkj.474.1576786934078;
-        Thu, 19 Dec 2019 12:22:14 -0800 (PST)
-Received: from localhost ([2620:10d:c091:500::1:29ea])
-        by smtp.gmail.com with ESMTPSA id z28sm2280778qtz.69.2019.12.19.12.22.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 12:22:13 -0800 (PST)
-Date:   Thu, 19 Dec 2019 12:22:11 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH v2 0/3] mm: memcontrol: recursive memory protection
-Message-ID: <20191219202211.GD2914998@devbig004.ftw2.facebook.com>
-References: <20191219200718.15696-1-hannes@cmpxchg.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+XwXmMLYM0uNSnbJNWZYduJB3McxlK0rmyyXpOOOY+E=;
+        b=Q61p1QlHzlZXUxnnL3/GYWbDtQRd4v8Qz++Rh+adjdxI1kJGg/ID1V/rmWNMdgOctw
+         +AksTB8M/yI1I3kNIwkiepsWvbA9WK8PTjqharvualRUNDS/Q9dfQT06PYFvAH81mL4F
+         OmAF9/0wxyYEvWABJoN+yMkcTJvOjbNwZuMzH2ASmZnE59YL0pjX8V8sQ+fXJpw4DOdd
+         4jQVApDlNdE3243tZXvM9Lu4NPIyioeS9MUxB4ftESTgpbJT69Lf4tAOKtijvv8rO4/6
+         JpnbtKnnrRON2RRzsduvv9brlr26JJpQph+BHuy5/Q/0ZMDT62/ePJffmuE0Hu5EZzTp
+         KpEA==
+X-Gm-Message-State: APjAAAV/86KwEkcYWof+082ahooju/eslCxPLOz0+GJfJ9SkRpED5MI0
+        sSoOlgPhffUly9rA9H+Y6seQPfHw
+X-Google-Smtp-Source: APXvYqyvXs1b77JsdU/bIq/7bJEZPvD05zPHc+WyTqQxuAEMRrkLbVyqmxjhV8KF6k+gHok+ePJnvg==
+X-Received: by 2002:a17:907:20a8:: with SMTP id pw8mr11469298ejb.248.1576786944265;
+        Thu, 19 Dec 2019 12:22:24 -0800 (PST)
+Received: from kozik-lap ([194.230.155.234])
+        by smtp.googlemail.com with ESMTPSA id s15sm626909edc.22.2019.12.19.12.22.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 19 Dec 2019 12:22:23 -0800 (PST)
+Date:   Thu, 19 Dec 2019 21:22:20 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
+        leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, kgene@kernel.org,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 9/9] arm64: dts: exynos: Replace deprecated property for
+ Exynos bus
+Message-ID: <20191219202220.GC21576@kozik-lap>
+References: <20191217055738.28445-1-cw00.choi@samsung.com>
+ <CGME20191217055107epcas1p44d46bdea7b326b86689f326742f5444a@epcas1p4.samsung.com>
+ <20191217055738.28445-10-cw00.choi@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20191219200718.15696-1-hannes@cmpxchg.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191217055738.28445-10-cw00.choi@samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 03:07:15PM -0500, Johannes Weiner wrote:
-> Changes since v1:
-> - improved Changelogs based on the discussion with Roman. Thanks!
-> - fix div0 when recursive & fixed protection is combined
-> - fix an unused compiler warning
+On Tue, Dec 17, 2019 at 02:57:38PM +0900, Chanwoo Choi wrote:
+> Replace the property related to devfreq and devfreq-event device
+> to remove the deprecated property name.
+> - Replace 'devfreq' with 'exynos,parent-bus' property
+>   for getting the parent devfreq device of exynos-bus.
+> - Replace 'devfreq-events' with 'exynos,ppmu-device' property
+>   for getting the devfreq-event device to monitor bus utilization.
 > 
-> The current memory.low (and memory.min) semantics require protection
-> to be assigned to a cgroup in an untinterrupted chain from the
-> top-level cgroup all the way to the leaf.
-> 
-> In practice, we want to protect entire cgroup subtrees from each other
-> (system management software vs. workload), but we would like the VM to
-> balance memory optimally *within* each subtree, without having to make
-> explicit weight allocations among individual components. The current
-> semantics make that impossible.
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  .../dts/exynos/exynos5433-tm2-common.dtsi     | 20 +++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 
-Acked-by: Tejun Heo <tj@kernel.org>
+I'll pick it up the next cycle after driver get merged.
 
-The original behavior turned out to be a significant source of
-mistakes and use cases which would require older behavior just weren't
-there.
+Best regards,
+Krzysztof
 
-Thanks.
-
--- 
-tejun
