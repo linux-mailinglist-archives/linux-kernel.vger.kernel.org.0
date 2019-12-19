@@ -2,113 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE6A125881
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:33:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F455125892
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:36:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfLSAdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 19:33:00 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39845 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfLSAdA (ORCPT
+        id S1726717AbfLSAgh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 19:36:37 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36220 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfLSAgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:33:00 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q10so2154673pfs.6;
-        Wed, 18 Dec 2019 16:32:59 -0800 (PST)
+        Wed, 18 Dec 2019 19:36:37 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k3so2173599pgc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 16:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=p0q8QxoTzBEMo9IJAgQ5mnM7oqp1lTPhY1a2DTeSNu0=;
-        b=sD+yWKkJaSLMn9+NH4JWR4Z0jpYCBDVtGUkIH10gaoa7OL7HVyppH63hIoT2oQe6pJ
-         lIHzlt8Uf1qSKtfuyFCSE+pO8KK9a+g+niJedeIWeNOMyx+8NxpLrbLGzQJURTtZ3a+T
-         bH6kLI3J0wDK6BjzTP2mvy6Ia6SKtpNYZZEoUREttZ3yXKf1JleHpjQ/PMQZEiZp4/zX
-         rB6ugqXcbdfFyDE3810WjOcxmZ+iNF7niJXmrCilZGtWYc9+pkAqXvj0DsjwnPeOix93
-         v4RXWOG52PjLGIjYf9SiW0Z1/Ai2Bt/EST23feB8ihwNkeK7QbmceuuheRWsJNKvRFcM
-         LsSA==
+        d=axtens.net; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5NTtETEykOhr2nCmuKVWtyUmiz45NkjCC1EiRzotiV0=;
+        b=Dka6E6KxQMKWIOq8r+b70xVQGVo4OdLoMXnwm6m0mMIhAJbUreti/BnUsZplcC3I5t
+         6GAQjfkecTIR6/e4HR3gYnoHqRT2G92zcwNrRuEl+OBpwkq1wQoWTGNOlJhGkDhGvv+W
+         DmQ7nlRQ3ekghRHA1hXbbgQbWCNx+vBJP1blU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=p0q8QxoTzBEMo9IJAgQ5mnM7oqp1lTPhY1a2DTeSNu0=;
-        b=N49HwNz4dIsCn8yVG1hteSc5hZal1geekdn7/mUyFDSlWe4+bg4Y1ovKgyScu+QkH0
-         A7rFaVU7B3yzcDWMvZI32d10o53ff7N5LBzGREHLnnpG1IhXACaMUNzVx2izoGILG/3W
-         eTu5OQudbgRrNllVVWNSfKPBLeSbdoDoFb32YLDHL8PtQq1GbLcAqbBGyxkIW4GfvDmC
-         fOhMMTZSQ00DxFkzNo1zO1PxgJZI/PGyfVR7WNWGuPrZriUyTekGZaumivdBo+t2TLt3
-         PGByk9bdUd2Esx4VRKe0xSaVtwdYVTdPT+XAJEe08GcBHhdAuquz9bujX2i/EDRJubk8
-         1Fmg==
-X-Gm-Message-State: APjAAAW2vEe2VRBhFmDz2GBE7OBEq7c/BNTIuRF2L6I2kOhVa+pzIupJ
-        8MNIS6zLGKUrzoPqvfpwFVaXICNn
-X-Google-Smtp-Source: APXvYqypzKHQBv3aT4OD6iC5R4Mscfj9bYi5rG9iGuw5KdGufEgvY8n/CeRjJtyduSIT1Ue24HnQDw==
-X-Received: by 2002:a63:4d5e:: with SMTP id n30mr6072905pgl.275.1576715579176;
-        Wed, 18 Dec 2019 16:32:59 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id g10sm4524960pgh.35.2019.12.18.16.32.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 18 Dec 2019 16:32:58 -0800 (PST)
-Date:   Wed, 18 Dec 2019 16:32:57 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org,
-        Chris Healy <cphealy@gmail.com>
-Subject: Re: [PATCH v2] hwmon: Driver for temperature sensors on SATA drives
-Message-ID: <20191219003256.GA28144@roeck-us.net>
-References: <20191215174509.1847-1-linux@roeck-us.net>
- <20191215174509.1847-2-linux@roeck-us.net>
- <yq1r211dvck.fsf@oracle.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5NTtETEykOhr2nCmuKVWtyUmiz45NkjCC1EiRzotiV0=;
+        b=FvK5U3pDdUWSPDX96D64fQrnwBam9UEAxZGktSI5cmOwX3eyg07DVXeSoIFA6eGGnv
+         Zz3PJNjqObfSK7vOA4JzoMw6zETps6fLOjFDI3MK2rwWwzwwJ1d/i7oCY5xj0u4cjY5/
+         Hrc+/sZtHOLDp6DT5hpzNi+bOApes9NqRcdizc6YJwoKa3E1d7wDweKbakCDKC0pzVut
+         Rp+J9Wi9af/fL6tZElO+TXBRi1ixQf1up1nnfVXVoSittnqf+AFEpW/yGvEBnx+Dy3cc
+         8KpGYVyk1phffpXEOR23RSQ2Py9v1Qh6mth48X/J7yhGSAm97/sz8z/m9qGo7bFLbfa4
+         OPDQ==
+X-Gm-Message-State: APjAAAVqWdbE4Bd5B/6rbk/fPl0odCPX5JJoCLZAEe58eGSubVWDUnJE
+        bDCN+FtdfWcatoqr/6/Q2+R6EfSG3FM=
+X-Google-Smtp-Source: APXvYqzmq4U/2uhuZHM/lC5xUAdQDDtPlzppqNzyl6j6ILF9v1mdA5FmXeloldbfX3xoXhZz9lR/qg==
+X-Received: by 2002:aa7:93ce:: with SMTP id y14mr6301702pff.185.1576715796122;
+        Wed, 18 Dec 2019 16:36:36 -0800 (PST)
+Received: from localhost (2001-44b8-111e-5c00-b05d-cbfe-b2ee-de17.static.ipv6.internode.on.net. [2001:44b8:111e:5c00:b05d:cbfe:b2ee:de17])
+        by smtp.gmail.com with ESMTPSA id l1sm4610430pgs.47.2019.12.18.16.36.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 16:36:35 -0800 (PST)
+From:   Daniel Axtens <dja@axtens.net>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, kasan-dev@googlegroups.com,
+        christophe.leroy@c-s.fr, aneesh.kumar@linux.ibm.com,
+        bsingharora@gmail.com
+Cc:     Daniel Axtens <dja@axtens.net>
+Subject: [PATCH v4 0/4] KASAN for powerpc64 radix
+Date:   Thu, 19 Dec 2019 11:36:26 +1100
+Message-Id: <20191219003630.31288-1-dja@axtens.net>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1r211dvck.fsf@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 07:15:07PM -0500, Martin K. Petersen wrote:
-> 
-> Guenter,
-> 
-> > This driver solves this problem by adding support for reading the
-> > temperature of SATA drives from the kernel using the hwmon API and
-> > by adding a temperature zone for each drive.
-> 
-> My working tree is available here:
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/linux.git/log/?h=5.6/drivetemp
-> 
-> A few notes:
-> 
->  - Before applying your patch I did s/satatemp/drivetemp/
-> 
->  - I get a crash in the driver core during probe if the drivetemp module
->    is loaded prior to loading ahci or a SCSI HBA driver. This crash is
->    unrelated to my changes. Haven't had time to debug.
-> 
->  - I tweaked your ATA detection heuristics and now use the cached VPD
->    page 0x89 instead of fetching one from the device.
-> 
->  - I also added support for reading the temperature log page on SCSI
->    drives.
-> 
->  - Tested with a mixed bag of about 40 SCSI and SATA drives attached.
-> 
->  - I still think sensor naming needs work. How and where are the
->    "drivetemp-scsi-8-140" names generated?
-> 
-Quick one: In libsensors, outside the kernel. The naming is generic,
-along the line of <driver name>-<bus name>-<bus index>-<slot>.
+Building on the work of Christophe, Aneesh and Balbir, I've ported
+KASAN to 64-bit Book3S kernels running on the Radix MMU.
 
-> I'll tinker some more but thought I'd share what I have for now.
-> 
-Thanks for sharing. I'll be out on vacation until January 1. I'll look
-at the code after I am back.
+This provides full inline instrumentation on radix, but does require
+that you be able to specify the amount of physically contiguous memory
+on the system at compile time. More details in patch 4.
 
-Guenter
+v4: More cleanups, split renaming out, clarify bits and bobs.
+    Drop the stack walk disablement, that isn't needed. No other
+    functional change.
 
-> -- 
-> Martin K. Petersen	Oracle Linux Engineering
+v3: Reduce the overly ambitious scope of the MAX_PTRS change.
+    Document more things, including around why some of the
+    restrictions apply.
+    Clean up the code more, thanks Christophe.
+
+v2: The big change is the introduction of tree-wide(ish)
+    MAX_PTRS_PER_{PTE,PMD,PUD} macros in preference to the previous
+    approach, which was for the arch to override the page table array
+    definitions with their own. (And I squashed the annoying
+    intermittent crash!)
+
+    Apart from that there's just a lot of cleanup. Christophe, I've
+    addressed most of what you asked for and I will reply to your v1
+    emails to clarify what remains unchanged.
+
+Daniel Axtens (4):
+  kasan: define and use MAX_PTRS_PER_* for early shadow tables
+  kasan: Document support on 32-bit powerpc
+  powerpc/mm/kasan: rename kasan_init_32.c to init_32.c
+  powerpc: Book3S 64-bit "heavyweight" KASAN support
+
+ Documentation/dev-tools/kasan.rst             |   7 +-
+ Documentation/powerpc/kasan.txt               | 122 ++++++++++++++++++
+ arch/powerpc/Kconfig                          |   2 +
+ arch/powerpc/Kconfig.debug                    |  21 +++
+ arch/powerpc/Makefile                         |  11 ++
+ arch/powerpc/include/asm/book3s/64/hash.h     |   4 +
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |   7 +
+ arch/powerpc/include/asm/book3s/64/radix.h    |   5 +
+ arch/powerpc/include/asm/kasan.h              |  21 ++-
+ arch/powerpc/kernel/prom.c                    |  61 ++++++++-
+ arch/powerpc/mm/kasan/Makefile                |   3 +-
+ .../mm/kasan/{kasan_init_32.c => init_32.c}   |   0
+ arch/powerpc/mm/kasan/init_book3s_64.c        |  70 ++++++++++
+ arch/powerpc/platforms/Kconfig.cputype        |   1 +
+ include/linux/kasan.h                         |  18 ++-
+ mm/kasan/init.c                               |   6 +-
+ 16 files changed, 346 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/powerpc/kasan.txt
+ rename arch/powerpc/mm/kasan/{kasan_init_32.c => init_32.c} (100%)
+ create mode 100644 arch/powerpc/mm/kasan/init_book3s_64.c
+
+-- 
+2.20.1
+
