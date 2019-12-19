@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D46126AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEC66126B3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729828AbfLSStf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:49:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43070 "EHLO mail.kernel.org"
+        id S1730281AbfLSSzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:55:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729814AbfLSSte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:34 -0500
+        id S1728670AbfLSSy6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:54:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78AAD2064B;
-        Thu, 19 Dec 2019 18:49:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07F932465E;
+        Thu, 19 Dec 2019 18:54:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781373;
-        bh=ZDWjkucWnuNDUFia2/GxQNQEtlT4iZWmBPaU8zSh7vg=;
+        s=default; t=1576781697;
+        bh=2psHlqRzmmA3xx2kZl7EqC/jBdJeenrOy2m5Qcvq0PM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ljLAPKdnBJZMqCBjvnvYoVyMyD+ttiZKu/micDpkBH/Da5WpwhSQxSazpVUtF5lQy
-         XUtwGvUjxxEB+vEVNi43HynE3AXfEa1P4v5lOxYG5aHYWeOFvwsp+RLnqaqcPXEjH6
-         0ImagnGhjS0Ou2M8OKg+eG//tgUKH2mhJ57KvZ28=
+        b=UwWk3aj80uzbZdJmSChR5C+VRn3cOj5/l9ZJzJ8Nt8Wkbk3+pT6b1T4iumJunUpGU
+         l9nk0gZLxylMICVjaeXhm+y+tcBCT63y7SCK7xkq9gwC9G0ydKC2WfUkJNDAdWc+0U
+         bHNoKoaZrcTrYZKhyyvLnXqUbHQ8DgpKzHVc4B9I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
-        Joe Thornber <ejt@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 4.9 194/199] dm btree: increase rebalance threshold in __rebalance2()
+        stable@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 5.4 44/80] drm/panfrost: Fix a BO leak in panfrost_ioctl_mmap_bo()
 Date:   Thu, 19 Dec 2019 19:34:36 +0100
-Message-Id: <20191219183226.514476773@linuxfoundation.org>
+Message-Id: <20191219183111.994129838@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,67 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Tao <houtao1@huawei.com>
+From: Boris Brezillon <boris.brezillon@collabora.com>
 
-commit 474e559567fa631dea8fb8407ab1b6090c903755 upstream.
+commit 3bb69dbcb9e8430e0cc9990cff427ca3ae25ffdc upstream.
 
-We got the following warnings from thin_check during thin-pool setup:
+We should release the reference we grabbed when an error occurs.
 
-  $ thin_check /dev/vdb
-  examining superblock
-  examining devices tree
-    missing devices: [1, 84]
-      too few entries in btree_node: 41, expected at least 42 (block 138, max_entries = 126)
-  examining mapping tree
-
-The phenomenon is the number of entries in one node of details_info tree is
-less than (max_entries / 3). And it can be easily reproduced by the following
-procedures:
-
-  $ new a thin pool
-  $ presume the max entries of details_info tree is 126
-  $ new 127 thin devices (e.g. 1~127) to make the root node being full
-    and then split
-  $ remove the first 43 (e.g. 1~43) thin devices to make the children
-    reblance repeatedly
-  $ stop the thin pool
-  $ thin_check
-
-The root cause is that the B-tree removal procedure in __rebalance2()
-doesn't guarantee the invariance: the minimal number of entries in
-non-root node should be >= (max_entries / 3).
-
-Simply fix the problem by increasing the rebalance threshold to
-make sure the number of entries in each child will be greater
-than or equal to (max_entries / 3 + 1), so no matter which
-child is used for removal, the number will still be valid.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Acked-by: Joe Thornber <ejt@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 187d2929206e ("drm/panfrost: Add support for GPU heap allocations")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+Reviewed-by: Steven Price <steven.price@arm.com>
+Acked-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191129135908.2439529-4-boris.brezillon@collabora.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/persistent-data/dm-btree-remove.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/panfrost/panfrost_drv.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/md/persistent-data/dm-btree-remove.c
-+++ b/drivers/md/persistent-data/dm-btree-remove.c
-@@ -203,7 +203,13 @@ static void __rebalance2(struct dm_btree
- 	struct btree_node *right = r->n;
- 	uint32_t nr_left = le32_to_cpu(left->header.nr_entries);
- 	uint32_t nr_right = le32_to_cpu(right->header.nr_entries);
--	unsigned threshold = 2 * merge_threshold(left) + 1;
-+	/*
-+	 * Ensure the number of entries in each child will be greater
-+	 * than or equal to (max_entries / 3 + 1), so no matter which
-+	 * child is used for removal, the number will still be not
-+	 * less than (max_entries / 3).
-+	 */
-+	unsigned int threshold = 2 * (merge_threshold(left) + 1);
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -303,14 +303,17 @@ static int panfrost_ioctl_mmap_bo(struct
+ 	}
  
- 	if (nr_left + nr_right < threshold) {
- 		/*
+ 	/* Don't allow mmapping of heap objects as pages are not pinned. */
+-	if (to_panfrost_bo(gem_obj)->is_heap)
+-		return -EINVAL;
++	if (to_panfrost_bo(gem_obj)->is_heap) {
++		ret = -EINVAL;
++		goto out;
++	}
+ 
+ 	ret = drm_gem_create_mmap_offset(gem_obj);
+ 	if (ret == 0)
+ 		args->offset = drm_vma_node_offset_addr(&gem_obj->vma_node);
+-	drm_gem_object_put_unlocked(gem_obj);
+ 
++out:
++	drm_gem_object_put_unlocked(gem_obj);
+ 	return ret;
+ }
+ 
 
 
