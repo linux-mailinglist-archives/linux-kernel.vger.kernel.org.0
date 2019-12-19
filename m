@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE38B126A9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 62F58126B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729504AbfLSStN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:49:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42492 "EHLO mail.kernel.org"
+        id S1730719AbfLSSzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:55:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729236AbfLSStK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:10 -0500
+        id S1730702AbfLSSzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:55:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25C462465E;
-        Thu, 19 Dec 2019 18:49:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8592C24676;
+        Thu, 19 Dec 2019 18:55:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781349;
-        bh=Bn0If5Wk3WW9HZ9OqrXH4CvWfVZAr01tMjmEe3qSPy4=;
+        s=default; t=1576781743;
+        bh=evkCinW7sZmVDT71TB5X7RzDelWavbVQam8KagxZbK4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FcPaXiVV2wLNG/xi2UvLOOPXuKQO4vpqO1j98s0mWja7mp8JYXbOD38pabDud++tI
-         q4pg91Rm3Rsu267K/Fyugme7ulfcL8e/TnR/ZcogAGJdVYpjKOcuqyLu1VXpveE8w5
-         vLvtPjmS22aCU6oHlxdwWc0Ee5lPiLlS7Zwddqpw=
+        b=1eYSz1YqU4pOzlFlHVhBE4KtokpaQQo+mnyovn0AZYdF4EJiE2nhKSji0AbaQFwFK
+         5o1eo/0TW4nSMtWEc0IrzOTG+dBL3MOK7f7xszyqYhmCJO+gko5p5/1UP/L8ElaKBF
+         OtruoJcJsq+lSpCWAVVnns2lD5RhAYVrDk4lMVWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Siddharth Kapoor <ksiddharth@google.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.9 185/199] Revert "regulator: Defer init completion for a while after late_initcall"
+        stable@vger.kernel.org, Frank Sorenson <sorenson@redhat.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.4 35/80] CIFS: Close open handle after interrupted close
 Date:   Thu, 19 Dec 2019 19:34:27 +0100
-Message-Id: <20191219183225.914268543@linuxfoundation.org>
+Message-Id: <20191219183106.903932675@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,89 +45,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-This reverts commit 8b8c8d69b1a31004517d4c71a490f47bdf3405a2 which is
-commit 55576cf1853798e86f620766e23b604c9224c19c upstream.
+commit 9150c3adbf24d77cfba37f03639d4a908ca4ac25 upstream.
 
-It's causing "odd" interactions with older kernels, so it probably isn't
-a good idea to cause timing changes there.  This has been reported to
-cause oopses on Pixel devices.
+If Close command is interrupted before sending a request
+to the server the client ends up leaking an open file
+handle. This wastes server resources and can potentially
+block applications that try to remove the file or any
+directory containing this file.
 
-Reported-by: Siddharth Kapoor <ksiddharth@google.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>
+Fix this by putting the close command into a worker queue,
+so another thread retries it later.
+
+Cc: Stable <stable@vger.kernel.org>
+Tested-by: Frank Sorenson <sorenson@redhat.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/regulator/core.c |   42 +++++++++++-------------------------------
- 1 file changed, 11 insertions(+), 31 deletions(-)
 
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -4452,7 +4452,7 @@ static int __init regulator_init(void)
- /* init early to allow our consumers to complete system booting */
- core_initcall(regulator_init);
- 
--static int regulator_late_cleanup(struct device *dev, void *data)
-+static int __init regulator_late_cleanup(struct device *dev, void *data)
- {
- 	struct regulator_dev *rdev = dev_to_rdev(dev);
- 	const struct regulator_ops *ops = rdev->desc->ops;
-@@ -4501,9 +4501,18 @@ unlock:
- 	return 0;
+---
+ fs/cifs/smb2misc.c  |   59 +++++++++++++++++++++++++++++++++++++++-------------
+ fs/cifs/smb2pdu.c   |   16 +++++++++++++-
+ fs/cifs/smb2proto.h |    3 ++
+ 3 files changed, 63 insertions(+), 15 deletions(-)
+
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -743,36 +743,67 @@ smb2_cancelled_close_fid(struct work_str
+ 	kfree(cancelled);
  }
  
--static void regulator_init_complete_work_function(struct work_struct *work)
-+static int __init regulator_init_complete(void)
- {
- 	/*
-+	 * Since DT doesn't provide an idiomatic mechanism for
-+	 * enabling full constraints and since it's much more natural
-+	 * with DT to provide them just assume that a DT enabled
-+	 * system has full constraints.
-+	 */
-+	if (of_have_populated_dt())
-+		has_full_constraints = true;
++/* Caller should already has an extra reference to @tcon */
++static int
++__smb2_handle_cancelled_close(struct cifs_tcon *tcon, __u64 persistent_fid,
++			      __u64 volatile_fid)
++{
++	struct close_cancelled_open *cancelled;
 +
-+	/*
- 	 * Regulators may had failed to resolve their input supplies
- 	 * when were registered, either because the input supply was
- 	 * not registered yet or because its parent device was not
-@@ -4520,35 +4529,6 @@ static void regulator_init_complete_work
- 	 */
- 	class_for_each_device(&regulator_class, NULL, NULL,
- 			      regulator_late_cleanup);
--}
--
--static DECLARE_DELAYED_WORK(regulator_init_complete_work,
--			    regulator_init_complete_work_function);
--
--static int __init regulator_init_complete(void)
--{
--	/*
--	 * Since DT doesn't provide an idiomatic mechanism for
--	 * enabling full constraints and since it's much more natural
--	 * with DT to provide them just assume that a DT enabled
--	 * system has full constraints.
--	 */
--	if (of_have_populated_dt())
--		has_full_constraints = true;
--
--	/*
--	 * We punt completion for an arbitrary amount of time since
--	 * systems like distros will load many drivers from userspace
--	 * so consumers might not always be ready yet, this is
--	 * particularly an issue with laptops where this might bounce
--	 * the display off then on.  Ideally we'd get a notification
--	 * from userspace when this happens but we don't so just wait
--	 * a bit and hope we waited long enough.  It'd be better if
--	 * we'd only do this on systems that need it, and a kernel
--	 * command line option might be useful.
--	 */
--	schedule_delayed_work(&regulator_init_complete_work,
--			      msecs_to_jiffies(30000));
++	cancelled = kzalloc(sizeof(*cancelled), GFP_KERNEL);
++	if (!cancelled)
++		return -ENOMEM;
++
++	cancelled->fid.persistent_fid = persistent_fid;
++	cancelled->fid.volatile_fid = volatile_fid;
++	cancelled->tcon = tcon;
++	INIT_WORK(&cancelled->work, smb2_cancelled_close_fid);
++	WARN_ON(queue_work(cifsiod_wq, &cancelled->work) == false);
++
++	return 0;
++}
++
++int
++smb2_handle_cancelled_close(struct cifs_tcon *tcon, __u64 persistent_fid,
++			    __u64 volatile_fid)
++{
++	int rc;
++
++	cifs_dbg(FYI, "%s: tc_count=%d\n", __func__, tcon->tc_count);
++	spin_lock(&cifs_tcp_ses_lock);
++	tcon->tc_count++;
++	spin_unlock(&cifs_tcp_ses_lock);
++
++	rc = __smb2_handle_cancelled_close(tcon, persistent_fid, volatile_fid);
++	if (rc)
++		cifs_put_tcon(tcon);
++
++	return rc;
++}
++
+ int
+ smb2_handle_cancelled_mid(char *buffer, struct TCP_Server_Info *server)
+ {
+ 	struct smb2_sync_hdr *sync_hdr = (struct smb2_sync_hdr *)buffer;
+ 	struct smb2_create_rsp *rsp = (struct smb2_create_rsp *)buffer;
+ 	struct cifs_tcon *tcon;
+-	struct close_cancelled_open *cancelled;
++	int rc;
  
- 	return 0;
+ 	if (sync_hdr->Command != SMB2_CREATE ||
+ 	    sync_hdr->Status != STATUS_SUCCESS)
+ 		return 0;
+ 
+-	cancelled = kzalloc(sizeof(*cancelled), GFP_KERNEL);
+-	if (!cancelled)
+-		return -ENOMEM;
+-
+ 	tcon = smb2_find_smb_tcon(server, sync_hdr->SessionId,
+ 				  sync_hdr->TreeId);
+-	if (!tcon) {
+-		kfree(cancelled);
++	if (!tcon)
+ 		return -ENOENT;
+-	}
+ 
+-	cancelled->fid.persistent_fid = rsp->PersistentFileId;
+-	cancelled->fid.volatile_fid = rsp->VolatileFileId;
+-	cancelled->tcon = tcon;
+-	INIT_WORK(&cancelled->work, smb2_cancelled_close_fid);
+-	queue_work(cifsiod_wq, &cancelled->work);
++	rc = __smb2_handle_cancelled_close(tcon, rsp->PersistentFileId,
++					   rsp->VolatileFileId);
++	if (rc)
++		cifs_put_tcon(tcon);
+ 
+-	return 0;
++	return rc;
  }
+ 
+ /**
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2972,7 +2972,21 @@ int
+ SMB2_close(const unsigned int xid, struct cifs_tcon *tcon,
+ 	   u64 persistent_fid, u64 volatile_fid)
+ {
+-	return SMB2_close_flags(xid, tcon, persistent_fid, volatile_fid, 0);
++	int rc;
++	int tmp_rc;
++
++	rc = SMB2_close_flags(xid, tcon, persistent_fid, volatile_fid, 0);
++
++	/* retry close in a worker thread if this one is interrupted */
++	if (rc == -EINTR) {
++		tmp_rc = smb2_handle_cancelled_close(tcon, persistent_fid,
++						     volatile_fid);
++		if (tmp_rc)
++			cifs_dbg(VFS, "handle cancelled close fid 0x%llx returned error %d\n",
++				 persistent_fid, tmp_rc);
++	}
++
++	return rc;
+ }
+ 
+ int
+--- a/fs/cifs/smb2proto.h
++++ b/fs/cifs/smb2proto.h
+@@ -212,6 +212,9 @@ extern int SMB2_set_compression(const un
+ extern int SMB2_oplock_break(const unsigned int xid, struct cifs_tcon *tcon,
+ 			     const u64 persistent_fid, const u64 volatile_fid,
+ 			     const __u8 oplock_level);
++extern int smb2_handle_cancelled_close(struct cifs_tcon *tcon,
++				       __u64 persistent_fid,
++				       __u64 volatile_fid);
+ extern int smb2_handle_cancelled_mid(char *buffer,
+ 					struct TCP_Server_Info *server);
+ void smb2_cancelled_close_fid(struct work_struct *work);
 
 
