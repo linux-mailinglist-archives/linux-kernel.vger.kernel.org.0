@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31A1712696D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EACD3126A61
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfLSShd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:37:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
+        id S1729369AbfLSSqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfLSSh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:29 -0500
+        id S1729095AbfLSSqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:46:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0765D24679;
-        Thu, 19 Dec 2019 18:37:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A92222C2;
+        Thu, 19 Dec 2019 18:46:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780649;
-        bh=BH8qikRBDt42ngMKoPw5Pib1vwe/elbNsYhbcf3y2MA=;
+        s=default; t=1576781197;
+        bh=iJSZqTbyRA+cNrTUI1i9sJNbprEpHV78xyk1cGnBK9c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cFhzklpTP+HnOT2JnJkwGIwP3uxwvHj6HNNTTnRuVcqRQmZn71/ZNGDJQoysHYbQ4
-         tgJOj9LU6lXhQJK+wDHxOcdbzXmEBmNs4Du+0dHVAbhbeIp31tdETeZ2nvJ+T5Rr8h
-         aQhl0HU3VTfKqznCtctJ2OwQ7vKzxU2dFzXz/SKM=
+        b=Xtwmm7uOpX6AfTf7Zj/qPKf9yBt11Z/eL54jc/0usoWLvAbDmvqTWw5t0jiWYMS5l
+         ma7/Jd0UWHfGy3Ysx+nlgvl8YIN1agGcc6lI3YenaiisRBGWaQiFkIzb3+uu6EWiIf
+         vIF7OQek2vb//wAiM2XpMntADrKi+1jjwx94AvWs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 059/162] CIFS: Fix SMB2 oplock break processing
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 085/199] KVM: x86: fix presentation of TSX feature in ARCH_CAPABILITIES
 Date:   Thu, 19 Dec 2019 19:32:47 +0100
-Message-Id: <20191219183211.467075228@linuxfoundation.org>
+Message-Id: <20191219183219.652680024@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,67 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit fa9c2362497fbd64788063288dc4e74daf977ebb upstream.
+commit cbbaa2727aa3ae9e0a844803da7cef7fd3b94f2b upstream.
 
-Even when mounting modern protocol version the server may be
-configured without supporting SMB2.1 leases and the client
-uses SMB2 oplock to optimize IO performance through local caching.
+KVM does not implement MSR_IA32_TSX_CTRL, so it must not be presented
+to the guests.  It is also confusing to have !ARCH_CAP_TSX_CTRL_MSR &&
+!RTM && ARCH_CAP_TAA_NO: lack of MSR_IA32_TSX_CTRL suggests TSX was not
+hidden (it actually was), yet the value says that TSX is not vulnerable
+to microarchitectural data sampling.  Fix both.
 
-However there is a problem in oplock break handling that leads
-to missing a break notification on the client who has a file
-opened. It latter causes big latencies to other clients that
-are trying to open the same file.
-
-The problem reproduces when there are multiple shares from the
-same server mounted on the client. The processing code tries to
-match persistent and volatile file ids from the break notification
-with an open file but it skips all share besides the first one.
-Fix this by looking up in all shares belonging to the server that
-issued the oplock break.
-
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Cc: stable@vger.kernel.org
+Tested-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2misc.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ arch/x86/kvm/x86.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/smb2misc.c
-+++ b/fs/cifs/smb2misc.c
-@@ -582,10 +582,10 @@ smb2_is_valid_oplock_break(char *buffer,
- 	spin_lock(&cifs_tcp_ses_lock);
- 	list_for_each(tmp, &server->smb_ses_list) {
- 		ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
-+
- 		list_for_each(tmp1, &ses->tcon_list) {
- 			tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1075,10 +1075,15 @@ u64 kvm_get_arch_capabilities(void)
+ 	 * If TSX is disabled on the system, guests are also mitigated against
+ 	 * TAA and clear CPU buffer mitigation is not required for guests.
+ 	 */
+-	if (boot_cpu_has_bug(X86_BUG_TAA) && boot_cpu_has(X86_FEATURE_RTM) &&
+-	    (data & ARCH_CAP_TSX_CTRL_MSR))
++	if (!boot_cpu_has(X86_FEATURE_RTM))
++		data &= ~ARCH_CAP_TAA_NO;
++	else if (!boot_cpu_has_bug(X86_BUG_TAA))
++		data |= ARCH_CAP_TAA_NO;
++	else if (data & ARCH_CAP_TSX_CTRL_MSR)
+ 		data &= ~ARCH_CAP_MDS_NO;
  
--			cifs_stats_inc(&tcon->stats.cifs_stats.num_oplock_brks);
- 			spin_lock(&tcon->open_file_lock);
- 			list_for_each(tmp2, &tcon->openFileList) {
- 				cfile = list_entry(tmp2, struct cifsFileInfo,
-@@ -597,6 +597,8 @@ smb2_is_valid_oplock_break(char *buffer,
- 					continue;
++	/* KVM does not emulate MSR_IA32_TSX_CTRL.  */
++	data &= ~ARCH_CAP_TSX_CTRL_MSR;
+ 	return data;
+ }
  
- 				cifs_dbg(FYI, "file id match, oplock break\n");
-+				cifs_stats_inc(
-+				    &tcon->stats.cifs_stats.num_oplock_brks);
- 				cinode = CIFS_I(d_inode(cfile->dentry));
- 				spin_lock(&cfile->file_info_lock);
- 				if (!CIFS_CACHE_WRITE(cinode) &&
-@@ -628,9 +630,6 @@ smb2_is_valid_oplock_break(char *buffer,
- 				return true;
- 			}
- 			spin_unlock(&tcon->open_file_lock);
--			spin_unlock(&cifs_tcp_ses_lock);
--			cifs_dbg(FYI, "No matching file for oplock break\n");
--			return true;
- 		}
- 	}
- 	spin_unlock(&cifs_tcp_ses_lock);
 
 
