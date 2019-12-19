@@ -2,376 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76AAC127107
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:58:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F69D12710B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:58:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfLSW6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 17:58:01 -0500
-Received: from mail-co1nam11on2063.outbound.protection.outlook.com ([40.107.220.63]:20304
-        "EHLO NAM11-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726930AbfLSW55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:57:57 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OlGxoOBOFN4ZkO0S00lvFuIufm+leEJmil6yUUb+1yPzCSuLyeHisjxBig8pCTuWfrQ9R7jhjrWnGJTaI2OcOYh9un8IzxOhl34Y2UHPrq0fKpvSSk2o9lAkUFBQ06j5p43iXLBz8URY4Mn60k71bInl9g4VNC1wYw0s9ub97gQliPDlBJtPM9QTPDZkO3TwIL4AZTTxeRV8xcOl7r9EkQH5HfYABuQTRwwqmwf6bxMgECDUOlakrVQVkLb6AgJr0h3c6OzYq4mx4a/emwibf9WC/2atqu3zaxldOrnn6CTPliDvn+OSX8UQwnUeGpz+Z2adZq89ue4JsdhtWxpwNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SWazoTWzKq5G3xbtzjl3fMdegmPzcKk6goKZ3kJ5NWo=;
- b=FrDpzu0EdKzi1CtQj59b/zYpb5a+hde5kWB9zINtZuCEtfpFiHPd5mus08UD294htG5v8LTZY/ud34/oA58MhqiyNzwOBIf75G8s1vzx9wKvdLzURD3q32sK5J0AItTiQaP11TvzWHX7j83d5vVux/J3HwyaKW3tJIZh9ui5rEgV1ri9YtTV/4Urjs8dQhHSl8kkdnTbVfzeJvgoZJtxTB5/LY3FqrQm69OMVItGT0WWgaXmnojGtTztcvl3UBLEZZYsmtX4IRs+OCupLvF1sShETpv7LqsNYfAycn6oGOYpQrqHDimIxr3xE/1rNSaonKzI7g6oXXRRR8vnpcSj/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1727191AbfLSW6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 17:58:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34701 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726830AbfLSW6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 17:58:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z22so3181331ljg.1;
+        Thu, 19 Dec 2019 14:58:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SWazoTWzKq5G3xbtzjl3fMdegmPzcKk6goKZ3kJ5NWo=;
- b=g7B8CJh4x0Jo50jUqG/nTcLBSP8YDyE4clv8hljck80t3xZoopS+FcTppDc/9/M67y1socrhbNERr2kJepMFrFTgMjaUYTIZVGsqGiYO7fl503zfvttkk9XY3GSxI1qNcKYrzZwjIn/5bvZM1+lK774lZbtXmckJ306J/70yVsk=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Gary.Hook@amd.com; 
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com (10.172.40.14) by
- DM5PR12MB2421.namprd12.prod.outlook.com (52.132.141.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.20; Thu, 19 Dec 2019 22:57:30 +0000
-Received: from DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::6d85:d029:53c0:ba61]) by DM5PR12MB1449.namprd12.prod.outlook.com
- ([fe80::6d85:d029:53c0:ba61%5]) with mapi id 15.20.2538.019; Thu, 19 Dec 2019
- 22:57:30 +0000
-Subject: Re: [RFC PATCH v3 6/6] crypto: ccp - provide in-kernel API to submit
- TEE commands
-To:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc:     Nimesh Easow <Nimesh.Easow@amd.com>,
-        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <cover.1575438845.git.Rijo-john.Thomas@amd.com>
- <8bde26314458954e1f229f5c737063692744a6cc.1575438845.git.Rijo-john.Thomas@amd.com>
-From:   Gary R Hook <gary.hook@amd.com>
-Message-ID: <992a572f-e25a-2bab-38c3-ed1ce0b69e17@amd.com>
-Date:   Thu, 19 Dec 2019 16:57:28 -0600
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=05wfn9+TUSy7NYQlatYLcdJC1LAk6czw1l0SEy3BnBM=;
+        b=uq3aCwuXNTvs1Z7urtnH/xXXPfL0+UQgebjSWUJbEtLZPPAfRA1I9f4CM5rqUo8ZeS
+         KJmSLSwYE8Eqhuz8/U15hSUx037u2NDz56F5S2xceo36AbCEqwLsFSI8UFx69OMMYrPD
+         aO6iOg0qug2GO86J0PxS4fgWFEtdA4ynb5S2FV18VTPtvTPpEH15pkDw/HEDMUS4ToH2
+         xzMS4v4IreNILxLlSdOhE0HVq+EMop6LYAm026kqTS/ZHq7oKs6QPb4tEM97uIEwVOms
+         wYYcWz2QrsKz2envYnOz3KGbwAjILypsIgT/gejvjjaaBNuiFzWntAi1qkPj0OjP3fJY
+         wj8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=05wfn9+TUSy7NYQlatYLcdJC1LAk6czw1l0SEy3BnBM=;
+        b=EcQkyF/70wdTMzbnsGnvl/2b5mUBzCmBLK3zJ/tcnjr/ZgIhYaSxFSJLIkwuKOrgSD
+         +/RvKJnHAxRzzwsgreNGDx6tx7WoTqTo/DzMSnOOXqtvdjuWiNw/CLINOPhCAQZANaq5
+         owgslrjY8Td6IR9vCIrCr5KEwydAw0Vlb14FqMGzX2hgY37gQTtK7sErmCIRbxMwLON3
+         RZLfxBnZElsM9EoPMnvg9m1Sc7GIKEbZqGneYmPHtoi6n7YJvJEQcah+AQ22X8OAsyqw
+         /wpa1Oa4QSJnRNObwBEmfVPEHVH2SISvqYGT9Hn0Dc4jTqIA5tbFpkFyEIsTbxJCiWIx
+         CMog==
+X-Gm-Message-State: APjAAAUiNpTx6neTEShhmj7I8dbt7GAaOU3QaAZYlaTWFPxcW2vN9dk0
+        COgGD4WM3Rcsg7OJ6plKBSQqXPaL
+X-Google-Smtp-Source: APXvYqyKgsgJ0jeESPN6s86pHb00fv9io13kzziQeW9BJOOZwuY3AHj8qNv70eMNewx8KVRjTTwYAQ==
+X-Received: by 2002:a2e:9f47:: with SMTP id v7mr7577083ljk.124.1576796318332;
+        Thu, 19 Dec 2019 14:58:38 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id q186sm3547142ljq.14.2019.12.19.14.58.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Dec 2019 14:58:37 -0800 (PST)
+Subject: Re: [PATCH v1 3/3] i2c: tegra: Fix suspending in active runtime PM
+ state
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191212233428.14648-1-digetx@gmail.com>
+ <20191212233428.14648-4-digetx@gmail.com> <20191213134746.GA222809@ulmo>
+ <3c2b16c0-3e66-d809-b263-f27cf925e203@gmail.com>
+ <1ed725c9-361b-c920-d532-dd640c3ca59f@gmail.com>
+Message-ID: <1ff337b4-b4e9-4f16-44d5-9e89f88dd61f@gmail.com>
+Date:   Fri, 20 Dec 2019 01:58:36 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-In-Reply-To: <8bde26314458954e1f229f5c737063692744a6cc.1575438845.git.Rijo-john.Thomas@amd.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN2PR01CA0050.prod.exchangelabs.com (2603:10b6:800::18) To
- DM5PR12MB1449.namprd12.prod.outlook.com (2603:10b6:4:10::14)
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Originating-IP: [165.204.77.1]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 53f8003b-7783-42d5-4cd7-08d784d6d373
-X-MS-TrafficTypeDiagnostic: DM5PR12MB2421:|DM5PR12MB2421:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DM5PR12MB2421344C28FEB93D8AA8E4F9FD520@DM5PR12MB2421.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1360;
-X-Forefront-PRVS: 0256C18696
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(189003)(199004)(31686004)(8936002)(81166006)(5660300002)(66946007)(86362001)(110136005)(54906003)(53546011)(186003)(478600001)(52116002)(26005)(81156014)(6506007)(8676002)(36756003)(316002)(4326008)(2616005)(66476007)(31696002)(2906002)(66556008)(6512007)(6486002)(134885004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB2421;H:DM5PR12MB1449.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 6RRBPYthdSdtYvJxHYEIf351K/I4oZeLzrTp40yHU7jQ5mzB/JJiNhEg3epQPPq3r8HMCbsc6nur9UrONi8zRJ13Ech1LRuTHjotyu2OIKs3a9iM/pLP5nYv95LpNmYXiicdKjlFWksbwJ7lti3IvCB+/OLvION9j0U3tX1LoC2Oq3JKzykw92I3HQY3SfY7h3QIyQHS27gzwX0xeo5hbrtZwjc4E9mOkxlBFNMEBTXzEco7L3UU35omhXvq++UuHOIDhD+Dz0diYPt8jI4PHBL5oOBOhxCMEdoCcOKwuVGyZBotxt+yIv7ayocr0FUbR6r7yCEHy2h4m/PJT5/H7pS5Dk0rE/ZOWoq6huS3D3HWG2eMfULaUHvn3xKlAuyg1acQvgl5S14he2kE8xhzXdXPR/+FJ2rToSYw0/TMdION4K4RrMzuhfm64OdkNk5PFP5DDFdaBiSA48A9ZExYJa2gXo3Vr1DEHTOJFzcCjru4t0IRxVky2iXEPx4YYoKs
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53f8003b-7783-42d5-4cd7-08d784d6d373
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Dec 2019 22:57:30.4749
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UBq/8Qpt+lNx/kXHFlVjDbRTW7xcUAFMVV7XjL1PeC/hugwN0nYHe0rReHWRPcVE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB2421
+In-Reply-To: <1ed725c9-361b-c920-d532-dd640c3ca59f@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/4/19 12:19 AM, Rijo Thomas wrote:
-> Extend the functionality of AMD Secure Processor (SP) driver by
-> providing an in-kernel API to submit commands to TEE ring buffer for
-> processing by Trusted OS running on AMD Secure Processor.
+13.12.2019 21:01, Dmitry Osipenko пишет:
+> 13.12.2019 17:04, Dmitry Osipenko пишет:
+>> 13.12.2019 16:47, Thierry Reding пишет:
+>>> On Fri, Dec 13, 2019 at 02:34:28AM +0300, Dmitry Osipenko wrote:
+>>>> I noticed that sometime I2C clock is kept enabled during suspend-resume.
+>>>> This happens because runtime PM defers dynamic suspension and thus it may
+>>>> happen that runtime PM is in active state when system enters into suspend.
+>>>> In particular I2C controller that is used for CPU's DVFS is often kept ON
+>>>> during suspend because CPU's voltage scaling happens quite often.
+>>>>
+>>>> Note: we marked runtime PM as IRQ-safe during the driver's probe in the
+>>>> "Support atomic transfers" patch, thus it's okay to enforce runtime PM
+>>>> suspend/resume in the NOIRQ phase which is used for the system-level
+>>>> suspend/resume of the driver.
+>>>>
+>>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>>> ---
+>>>>  drivers/i2c/busses/i2c-tegra.c | 9 +++++++++
+>>>>  1 file changed, 9 insertions(+)
+>>>
+>>> I've recently discussed this with Rafael in the context of runtime PM
+>>> support in the Tegra DRM driver and my understanding is that you're not
+>>> supposed to force runtime PM suspension like this.
+>>>
+>>> I had meant to send out an alternative patch to fix this, which I've
+>>> done now:
+>>>
+>>> 	http://patchwork.ozlabs.org/patch/1209148/
+>>>
+>>> That's more in line with what Rafael and I had discussed in the other
+>>> thread and should address the issue that you're seeing as well.
+>>
+>> Well, either me or you are still having some misunderstanding of the
+>> runtime PM :) To my knowledge there are a lot of drivers that enforce
+>> suspension of the runtime PM during system's suspend, it should be a
+>> right thing to do especially in a context of the Tegra I2C driver
+>> because we're using asynchronous pm_runtime_put() and thus at the time
+>> of system's suspending, the runtime PM could be ON (as I wrote in the
+>> commit message) and then Terga's I2C driver manually disables the clock
+>> on resume (woopsie).
 > 
-> Following TEE commands are supported by Trusted OS:
+> Actually, looks like it's not the asynchronous pm_runtime_put() is the
+> cause of suspending in active state. I see that only one of three I2C
+> controllers is suspended in the enabled state, maybe some child (I2C
+> client) device keeps it awake, will try to find out.
 > 
-> * TEE_CMD_ID_LOAD_TA : Load Trusted Application (TA) binary into
->    TEE environment
-> * TEE_CMD_ID_UNLOAD_TA : Unload TA binary from TEE environment
-> * TEE_CMD_ID_OPEN_SESSION : Open session with loaded TA
-> * TEE_CMD_ID_CLOSE_SESSION : Close session with loaded TA
-> * TEE_CMD_ID_INVOKE_CMD : Invoke a command with loaded TA
-> * TEE_CMD_ID_MAP_SHARED_MEM : Map shared memory
-> * TEE_CMD_ID_UNMAP_SHARED_MEM : Unmap shared memory
-> 
-> Linux AMD-TEE driver will use this API to submit command buffers
-> for processing in Trusted Execution Environment. The AMD-TEE driver
-> shall be introduced in a separate patch.
-> 
-> Cc: Jens Wiklander <jens.wiklander@linaro.org>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Co-developed-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-> Signed-off-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-> Signed-off-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+>> By invoking pm_runtime_force_suspend() on systems's suspend, the runtime
+>> PM executes tegra_i2c_runtime_suspend() if device is in active state. On
+>> system resume, pm_runtime_force_resume() either keeps device in a
+>> suspended state or resumes it, say if for userspace disabled the runtime
+>> PM for the I2C controller.
+>>
+>> Rafael, could you please clarify whether my patch is doing a wrong thing?
 
-Acked-by: Gary R Hook <gary.hook@amd.com>
+[snip]
 
-> ---
->   drivers/crypto/ccp/tee-dev.c | 126 +++++++++++++++++++++++++++++++++++++++++++
->   drivers/crypto/ccp/tee-dev.h |   1 +
->   include/linux/psp-tee.h      |  73 +++++++++++++++++++++++++
->   3 files changed, 200 insertions(+)
->   create mode 100644 include/linux/psp-tee.h
-> 
-> diff --git a/drivers/crypto/ccp/tee-dev.c b/drivers/crypto/ccp/tee-dev.c
-> index ccbc2ce..555c8a7 100644
-> --- a/drivers/crypto/ccp/tee-dev.c
-> +++ b/drivers/crypto/ccp/tee-dev.c
-> @@ -14,6 +14,7 @@
->   #include <linux/slab.h>
->   #include <linux/gfp.h>
->   #include <linux/psp-sev.h>
-> +#include <linux/psp-tee.h>
->   
->   #include "psp-dev.h"
->   #include "tee-dev.h"
-> @@ -38,6 +39,7 @@ static int tee_alloc_ring(struct psp_tee_device *tee, int ring_size)
->   	rb_mgr->ring_start = start_addr;
->   	rb_mgr->ring_size = ring_size;
->   	rb_mgr->ring_pa = __psp_pa(start_addr);
-> +	mutex_init(&rb_mgr->mutex);
->   
->   	return 0;
->   }
-> @@ -55,6 +57,7 @@ static void tee_free_ring(struct psp_tee_device *tee)
->   	rb_mgr->ring_start = NULL;
->   	rb_mgr->ring_size = 0;
->   	rb_mgr->ring_pa = 0;
-> +	mutex_destroy(&rb_mgr->mutex);
->   }
->   
->   static int tee_wait_cmd_poll(struct psp_tee_device *tee, unsigned int timeout,
-> @@ -236,3 +239,126 @@ void tee_dev_destroy(struct psp_device *psp)
->   
->   	tee_destroy_ring(tee);
->   }
-> +
-> +static int tee_submit_cmd(struct psp_tee_device *tee, enum tee_cmd_id cmd_id,
-> +			  void *buf, size_t len, struct tee_ring_cmd **resp)
-> +{
-> +	struct tee_ring_cmd *cmd;
-> +	u32 rptr, wptr;
-> +	int nloop = 1000, ret = 0;
-> +
-> +	*resp = NULL;
-> +
-> +	mutex_lock(&tee->rb_mgr.mutex);
-> +
-> +	wptr = tee->rb_mgr.wptr;
-> +
-> +	/* Check if ring buffer is full */
-> +	do {
-> +		rptr = ioread32(tee->io_regs + tee->vdata->ring_rptr_reg);
-> +
-> +		if (!(wptr + sizeof(struct tee_ring_cmd) == rptr))
-> +			break;
-> +
-> +		dev_info(tee->dev, "tee: ring buffer full. rptr = %u wptr = %u\n",
-> +			 rptr, wptr);
-> +
-> +		/* Wait if ring buffer is full */
-> +		mutex_unlock(&tee->rb_mgr.mutex);
-> +		schedule_timeout_interruptible(msecs_to_jiffies(10));
-> +		mutex_lock(&tee->rb_mgr.mutex);
-> +
-> +	} while (--nloop);
-> +
-> +	if (!nloop && (wptr + sizeof(struct tee_ring_cmd) == rptr)) {
-> +		dev_err(tee->dev, "tee: ring buffer full. rptr = %u wptr = %u\n",
-> +			rptr, wptr);
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-> +
-> +	/* Pointer to empty data entry in ring buffer */
-> +	cmd = (struct tee_ring_cmd *)(tee->rb_mgr.ring_start + wptr);
-> +
-> +	/* Write command data into ring buffer */
-> +	cmd->cmd_id = cmd_id;
-> +	cmd->cmd_state = TEE_CMD_STATE_INIT;
-> +	memset(&cmd->buf[0], 0, sizeof(cmd->buf));
-> +	memcpy(&cmd->buf[0], buf, len);
-> +
-> +	/* Update local copy of write pointer */
-> +	tee->rb_mgr.wptr += sizeof(struct tee_ring_cmd);
-> +	if (tee->rb_mgr.wptr >= tee->rb_mgr.ring_size)
-> +		tee->rb_mgr.wptr = 0;
-> +
-> +	/* Trigger interrupt to Trusted OS */
-> +	iowrite32(tee->rb_mgr.wptr, tee->io_regs + tee->vdata->ring_wptr_reg);
-> +
-> +	/* The response is provided by Trusted OS in same
-> +	 * location as submitted data entry within ring buffer.
-> +	 */
-> +	*resp = cmd;
-> +
-> +unlock:
-> +	mutex_unlock(&tee->rb_mgr.mutex);
-> +
-> +	return ret;
-> +}
-> +
-> +static int tee_wait_cmd_completion(struct psp_tee_device *tee,
-> +				   struct tee_ring_cmd *resp,
-> +				   unsigned int timeout)
-> +{
-> +	/* ~5ms sleep per loop => nloop = timeout * 200 */
-> +	int nloop = timeout * 200;
-> +
-> +	while (--nloop) {
-> +		if (resp->cmd_state == TEE_CMD_STATE_COMPLETED)
-> +			return 0;
-> +
-> +		usleep_range(5000, 5100);
-> +	}
-> +
-> +	dev_err(tee->dev, "tee: command 0x%x timed out, disabling PSP\n",
-> +		resp->cmd_id);
-> +
-> +	psp_dead = true;
-> +
-> +	return -ETIMEDOUT;
-> +}
-> +
-> +int psp_tee_process_cmd(enum tee_cmd_id cmd_id, void *buf, size_t len,
-> +			u32 *status)
-> +{
-> +	struct psp_device *psp = psp_get_master_device();
-> +	struct psp_tee_device *tee;
-> +	struct tee_ring_cmd *resp;
-> +	int ret;
-> +
-> +	if (!buf || !status || !len || len > sizeof(resp->buf))
-> +		return -EINVAL;
-> +
-> +	*status = 0;
-> +
-> +	if (!psp || !psp->tee_data)
-> +		return -ENODEV;
-> +
-> +	if (psp_dead)
-> +		return -EBUSY;
-> +
-> +	tee = psp->tee_data;
-> +
-> +	ret = tee_submit_cmd(tee, cmd_id, buf, len, &resp);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = tee_wait_cmd_completion(tee, resp, TEE_DEFAULT_TIMEOUT);
-> +	if (ret)
-> +		return ret;
-> +
-> +	memcpy(buf, &resp->buf[0], len);
-> +	*status = resp->status;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(psp_tee_process_cmd);
-> diff --git a/drivers/crypto/ccp/tee-dev.h b/drivers/crypto/ccp/tee-dev.h
-> index b3db0fc..f099601 100644
-> --- a/drivers/crypto/ccp/tee-dev.h
-> +++ b/drivers/crypto/ccp/tee-dev.h
-> @@ -54,6 +54,7 @@ struct tee_init_ring_cmd {
->    * @wptr:        index to the last written entry in ring buffer
->    */
->   struct ring_buf_manager {
-> +	struct mutex mutex;	/* synchronizes access to ring buffer */
->   	void *ring_start;
->   	u32 ring_size;
->   	phys_addr_t ring_pa;
-> diff --git a/include/linux/psp-tee.h b/include/linux/psp-tee.h
-> new file mode 100644
-> index 0000000..63bb221
-> --- /dev/null
-> +++ b/include/linux/psp-tee.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: MIT */
-> +/*
-> + * AMD Trusted Execution Environment (TEE) interface
-> + *
-> + * Author: Rijo Thomas <Rijo-john.Thomas@amd.com>
-> + *
-> + * Copyright 2019 Advanced Micro Devices, Inc.
-> + *
-> + */
-> +
-> +#ifndef __PSP_TEE_H_
-> +#define __PSP_TEE_H_
-> +
-> +#include <linux/types.h>
-> +#include <linux/errno.h>
-> +
-> +/* This file defines the Trusted Execution Environment (TEE) interface commands
-> + * and the API exported by AMD Secure Processor driver to communicate with
-> + * AMD-TEE Trusted OS.
-> + */
-> +
-> +/**
-> + * enum tee_cmd_id - TEE Interface Command IDs
-> + * @TEE_CMD_ID_LOAD_TA:          Load Trusted Application (TA) binary into
-> + *                               TEE environment
-> + * @TEE_CMD_ID_UNLOAD_TA:        Unload TA binary from TEE environment
-> + * @TEE_CMD_ID_OPEN_SESSION:     Open session with loaded TA
-> + * @TEE_CMD_ID_CLOSE_SESSION:    Close session with loaded TA
-> + * @TEE_CMD_ID_INVOKE_CMD:       Invoke a command with loaded TA
-> + * @TEE_CMD_ID_MAP_SHARED_MEM:   Map shared memory
-> + * @TEE_CMD_ID_UNMAP_SHARED_MEM: Unmap shared memory
-> + */
-> +enum tee_cmd_id {
-> +	TEE_CMD_ID_LOAD_TA = 1,
-> +	TEE_CMD_ID_UNLOAD_TA,
-> +	TEE_CMD_ID_OPEN_SESSION,
-> +	TEE_CMD_ID_CLOSE_SESSION,
-> +	TEE_CMD_ID_INVOKE_CMD,
-> +	TEE_CMD_ID_MAP_SHARED_MEM,
-> +	TEE_CMD_ID_UNMAP_SHARED_MEM,
-> +};
-> +
-> +#ifdef CONFIG_CRYPTO_DEV_SP_PSP
-> +/**
-> + * psp_tee_process_cmd() - Process command in Trusted Execution Environment
-> + * @cmd_id:     TEE command ID (&enum tee_cmd_id)
-> + * @buf:        Command buffer for TEE processing. On success, is updated
-> + *              with the response
-> + * @len:        Length of command buffer in bytes
-> + * @status:     On success, holds the TEE command execution status
-> + *
-> + * This function submits a command to the Trusted OS for processing in the
-> + * TEE environment and waits for a response or until the command times out.
-> + *
-> + * Returns:
-> + * 0 if TEE successfully processed the command
-> + * -%ENODEV    if PSP device not available
-> + * -%EINVAL    if invalid input
-> + * -%ETIMEDOUT if TEE command timed out
-> + * -%EBUSY     if PSP device is not responsive
-> + */
-> +int psp_tee_process_cmd(enum tee_cmd_id cmd_id, void *buf, size_t len,
-> +			u32 *status);
-> +
-> +#else /* !CONFIG_CRYPTO_DEV_SP_PSP */
-> +
-> +static inline int psp_tee_process_cmd(enum tee_cmd_id cmd_id, void *buf,
-> +				      size_t len, u32 *status)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif /* CONFIG_CRYPTO_DEV_SP_PSP */
-> +#endif /* __PSP_TEE_H_ */
-> 
+I'm now thinking that it will be not very worthwhile to spend time on
+trying to understand why runtime PM isn't working as expected here. It
+will be better to simply remove runtime PM from the I2C driver because
+it is used only for clock-gating/pinmuxing and it is a very light
+operation in comparison to I2C transfer performance. Thus it should be
+better to avoid the runtime PM overhead by enabling/disabling the I2C
+clocks before/after the transfer, I think that's what driver did before
+the runtime PM addition.
 
+Thierry / Jon / Mikko, any objections?
