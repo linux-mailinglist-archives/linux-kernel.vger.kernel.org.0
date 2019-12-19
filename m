@@ -2,165 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 870E2127124
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A099127154
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfLSXD4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 18:03:56 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:30402 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfLSXD4 (ORCPT
+        id S1727084AbfLSXRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 18:17:53 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:36208 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfLSXRw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:03:56 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191219230353epoutp03f8d9a2618fcc535e6ba9843a7ff2e0da~h6C8d1Zk31982719827epoutp037
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 23:03:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191219230353epoutp03f8d9a2618fcc535e6ba9843a7ff2e0da~h6C8d1Zk31982719827epoutp037
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576796633;
-        bh=ExdKVAXgbgQTjjhDCfChCkhQSmIxv86ZOAXt2nZx2is=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=hO/I+c65w7L+zgsJhxJd+gE79wgpVCefpjUugw4x9zMXdtYT08EQFAuDruESUh0N7
-         gKG8h0jQH469vgkWG+Pjj+NrRYtbJ6CqDbSFX7lsa4a8d3uTklvMpVaOT2WLBJ8vLq
-         OD6AdLAvs2B61Ubgdpo16mH++EqU6FTIsoGkbunU=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191219230353epcas1p4d306ad44dc3d2f33852d2f99f834aac5~h6C8Cr3ZG2203822038epcas1p4k;
-        Thu, 19 Dec 2019 23:03:53 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47f6r575kszMqYlp; Thu, 19 Dec
-        2019 23:03:49 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CF.33.48498.5D10CFD5; Fri, 20 Dec 2019 08:03:49 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191219230349epcas1p336ce638e09e2ed68852cce556dfb5429~h6C4w3CU91907919079epcas1p3B;
-        Thu, 19 Dec 2019 23:03:49 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191219230349epsmtrp21676f12cfea754e68c9b0ad7370dcfd3~h6C4wLFlW2882328823epsmtrp2J;
-        Thu, 19 Dec 2019 23:03:49 +0000 (GMT)
-X-AuditID: b6c32a36-a3dff7000001bd72-45-5dfc01d57dcf
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        75.F7.06569.5D10CFD5; Fri, 20 Dec 2019 08:03:49 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191219230349epsmtip1fe0a72851a116d14b7b4e97d9cbcef9e~h6C4kORpB1097610976epsmtip1h;
-        Thu, 19 Dec 2019 23:03:49 +0000 (GMT)
-Subject: Re: [v8 PATCH] PM / devfreq: Add dynamic scaling for imx8m ddr
- controller
-To:     linux-pm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        leonard.crestez@nxp.com, myungjoo.ham@samsung.com,
-        kyungmin.park@samsung.com
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <6c00b0d8-af71-b211-d5bb-87c48e5d5db5@samsung.com>
-Date:   Fri, 20 Dec 2019 08:10:21 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Thu, 19 Dec 2019 18:17:52 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJN9Vlg083950;
+        Thu, 19 Dec 2019 23:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=2X+MJZzOp6dCuDeJ0KornCko/xUA3DPD/Ld+FI4IMB4=;
+ b=o2ocV9kyQUB5ennM4SOPbMvLAQTJulmlksNIKiCsKqjDX7D9/8FtGhio+oWlnSnOEoKb
+ z8oNsFrRE9TsRnf315+mH/Bwz0DUFN+fhe1bsdpyhII3mqiijNUmwbMNVQaqGGr9OOVS
+ yEiL45AQ1lyvs6xMHbulUms9o/Y0qc1/fO7KLqjGWYbhuxnHNKB1l1a811OBG87fLUyu
+ efrW5z5LGbPw57bqyz8jJeNiJTpL5J9GLMAvYbp//2y6sT6uMteQk4p5yCzbJOhVpUUz
+ iEbTMIkLFRTh0aMX/xTt6NuzWOT+Q29IVm7WDuNDWDW4WrTn6m6GbPIbQ6sCy2snW4L4 Mw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2x01jadsm4-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 23:17:39 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJNAaxi032210;
+        Thu, 19 Dec 2019 23:17:39 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3020.oracle.com with ESMTP id 2x0bgmkg25-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 23:17:38 +0000
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJNHabU021720;
+        Thu, 19 Dec 2019 23:17:37 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 15:17:36 -0800
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
+        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
+        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
+        <matthias.bgg@gmail.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <beanhuo@micron.com>,
+        <kuohong.wang@mediatek.com>, <peter.wang@mediatek.com>,
+        <chun-hung.wu@mediatek.com>, <andy.teng@mediatek.com>
+Subject: Re: [PATCH v1 0/4] scsi: ufs-mediatek: provide power management
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com>
+Date:   Thu, 19 Dec 2019 18:17:33 -0500
+In-Reply-To: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com>
+        (Stanley Chu's message of "Fri, 13 Dec 2019 16:11:31 +0800")
+Message-ID: <yq1tv5vc3ci.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191219230919.16037-1-cw00.choi@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmge5Vxj+xBov3m1vMP3KO1eJs0xt2
-        ixV3P7JaXN41h83ic+8RRovbjSvYHNg8Nr7bweTRt2UVo8fnTXIBzFHZNhmpiSmpRQqpecn5
-        KZl56bZK3sHxzvGmZgaGuoaWFuZKCnmJuam2Si4+AbpumTlAe5UUyhJzSoFCAYnFxUr6djZF
-        +aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYGBkamQIUJ2RknDhxhL1giULGkYzlj
-        A2MLdxcjB4eEgIlE23OBLkYuDiGBHYwSR1ftZ4ZwPjFKdMz5yALhfGOUOH/1PytMx5nVgRDx
-        vYwS9/80MEE47xklmpatAyri5BAWCJGYtOoTO4gtIiAjMfXKflaQImaBHkaJzd9+M4Mk2AS0
-        JPa/uMEGYvMLKEpc/fGYEcTmFbCT+NTVDWazCKhKTO9cD1YvKhAmcXJbC1SNoMTJmU9YQGxO
-        AWuJTxdPgsWZBcQlbj2ZzwRhy0tsfzsHrFdC4DabxIdbNhC2i0T3h0vsELawxKvjW6BsKYnP
-        7/ayQdjVEitPHmEDOVpCoINRYsv+C6wQCWOJ/UsnM4GCgllAU2L9Ln2IsKLEzt9zoW7gk3j3
-        tQcaWrwSHW1CECXKEpcf3GWCsCUlFrd3sk1gVJqF5JtZSD6YheSDWQjLFjCyrGIUSy0ozk1P
-        LTYsMEKO7E2M4CSpZbaDcdE5n0OMAhyMSjy8Dmm/Y4VYE8uKK3MPMUpwMCuJ8N7u+BkrxJuS
-        WFmVWpQfX1Sak1p8iNEUGNgTmaVEk/OBCTyvJN7Q1MjY2NjCxNDM1NBQSZyX48fFWCGB9MSS
-        1OzU1ILUIpg+Jg5OqQbGnu/7Tn375GuvbaAYdnH2srNXtzTM/qx5sqLD8u5th5dcD223LZ3Z
-        nPpm+e7Zl7QvzWu3Ualb8mTlMc9LP7u02uKiAmYdlPDyZLhXbHSm1Tk0buqDPDP+5eu+Op62
-        On7emu16wIuvWQejI3Kmc++weLC7xlPrm5f2kf1/e+JcBPUPh5a9vbjIXImlOCPRUIu5qDgR
-        AEo+HuKoAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgkeLIzCtJLcpLzFFi42LZdlhJTvcq459Yg/6JKhbzj5xjtTjb9Ibd
-        YsXdj6wWl3fNYbP43HuE0eJ24wo2BzaPje92MHn0bVnF6PF5k1wAcxSXTUpqTmZZapG+XQJX
-        xokDR9gLlghULOlYztjA2MLdxcjBISFgInFmdWAXIxeHkMBuRok7F5azdjFyAsUlJaZdPMoM
-        USMscfhwMUTNW0aJ/2svsYDUCAuESExa9YkdxBYRkJGYemU/WC+zQA+jxM/r6hANjxgluje3
-        gBWxCWhJ7H9xgw3E5hdQlLj64zEjiM0rYCfxqasbzGYRUJWY3rmeGcQWFQiT2LnkMRNEjaDE
-        yZlPwBZzClhLfLp4khFimbrEn3mXmCFscYlbT+YzQdjyEtvfzmGewCg8C0n7LCQts5C0zELS
-        soCRZRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnC8aGntYDxxIv4QowAHoxIPr0Pa
-        71gh1sSy4srcQ4wSHMxKIry3O37GCvGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliS
-        mp2aWpBaBJNl4uCUamCcuHEWb61dr/KrO7y5K6ob/m7oKl+84+OP8sfql94I5y3cMfe72/fY
-        x+tklNYeDeldt/rsVtFfitUi9W8ufZ/Wb7KvXtT4raKw1MOfNk0L1NQ2dPyaaHNAQayJaWPd
-        h0i/R7kX720pcz1i8tj/oLSV2MsDb7tvsj5b9Phexzfuw87fYj51pjxoUmIpzkg01GIuKk4E
-        AMFr6fCTAgAA
-X-CMS-MailID: 20191219230349epcas1p336ce638e09e2ed68852cce556dfb5429
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191219230258epcas1p16ec64c3a06eafd9f0a3784d18541ce5c
-References: <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
-        <CGME20191219230258epcas1p16ec64c3a06eafd9f0a3784d18541ce5c@epcas1p1.samsung.com>
-        <20191219230919.16037-1-cw00.choi@samsung.com>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=958
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190170
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/19 8:09 AM, Chanwoo Choi wrote:
-> From: Leonard Crestez <leonard.crestez@nxp.com>
-> 
-> Add driver for dynamic scaling the DDR Controller on imx8m chips. Actual
-> frequency switching is implemented inside TF-A, this driver wraps the
-> SMC calls and synchronizes the clk tree.
-> 
-> The DRAM clocks on imx8m have the following structure (abridged):
-> 
->  +----------+       |\            +------+
->  | dram_pll |-------|M| dram_core |      |
->  +----------+       |U|---------->| D    |
->                  /--|X|           |  D   |
->    dram_alt_root |  |/            |   R  |
->                  |                |    C |
->             +---------+           |      |
->             |FIX DIV/4|           |      |
->             +---------+           |      |
->   composite:     |                |      |
->  +----------+    |                |      |
->  | dram_alt |----/                |      |
->  +----------+                     |      |
->  | dram_apb |-------------------->|      |
->  +----------+                     +------+
-> 
-> The dram_pll is used for higher rates and dram_alt is used for lower
-> rates. The dram_alt and dram_apb clocks are "imx composite" and their
-> parent can also be modified.
-> 
-> This driver will prepare/enable the new parents ahead of switching (so
-> that the expected roots are enabled) and afterwards it will call
-> clk_set_parent to ensure the parents in clock framework are up-to-date.
-> 
-> The driver relies on dram_pll dram_alt and dram_apb being marked with
-> CLK_GET_RATE_NOCACHE for rate updates.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> [cw00.choi: Edit the COMPILE_TEST module dependency in Kconfig]
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
-> Changes from v7:
-> - Squash patch[1] to this patch
-> [1] https://patchwork.kernel.org/patch/11303869/
-> - [PATCH] PM / devfreq: imx8m-ddrc: Fix argument swap in error print
 
-Applied it.
+Stanley,
 
-(snip)
+> The patch set provides power management on MediaTek Chipsets by
 
+Had to apply this by hand. Please make sure you prepare patch
+submissions against my "queue" branch.
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Martin K. Petersen	Oracle Linux Engineering
