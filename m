@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B52D126C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:01:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FDCA126C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbfLSSvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:51:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46194 "EHLO mail.kernel.org"
+        id S1729502AbfLSStP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:49:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729777AbfLSSvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:51:48 -0500
+        id S1729745AbfLSStN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C65282064B;
-        Thu, 19 Dec 2019 18:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C7924676;
+        Thu, 19 Dec 2019 18:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781508;
-        bh=PG9KEUH7TkC5EcssOfLAyGK+OCnkSeHV3uybCoZxYCA=;
+        s=default; t=1576781352;
+        bh=VX4tEIn9Rby6BBxce5FwGOE/aMXyX4JhJeIOApnzwIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/emO/zChAMpyL4DEafBCXJzFl1AHuNCJ5nRmUtXn+4jfmPJYEawTe/yaAfRUzO9g
-         KVoKwK07Sb9Cm1uoaRdjZwyt8z1G9cniQklCsiO0yph8d/64MmpMvwJgJnOdZ11nIr
-         mGSt9KWS7dgpjGXHq7W23mb1VhPYjBB5OxP8soqA=
+        b=wLg44zkyY5k8/SyAAQiuGWYmJH3Ive1dJK6/PgOMUeYjOTNJcNnZ6OYu1DclGrMv5
+         QtgypAjnPsprrPKdKPnS8Wcj9UbqXZcxZrkgyaVIGP0Fy/BJRseJpKD4D0/NxnUeap
+         S1z9anxYmLu53I/Q+g0R9Zd7qYCdKOlKgVkUYq2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 14/47] tcp: Protect accesses to .ts_recent_stamp with {READ,WRITE}_ONCE()
+        stable@vger.kernel.org,
+        Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH 4.9 186/199] PCI: Fix Intel ACS quirk UPDCR register address
 Date:   Thu, 19 Dec 2019 19:34:28 +0100
-Message-Id: <20191219182912.205576955@linuxfoundation.org>
+Message-Id: <20191219183225.980161171@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guillaume Nault <gnault@redhat.com>
+From: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
 
-[ Upstream commit 721c8dafad26ccfa90ff659ee19755e3377b829d ]
+commit d8558ac8c93d429d65d7490b512a3a67e559d0d4 upstream.
 
-Syncookies borrow the ->rx_opt.ts_recent_stamp field to store the
-timestamp of the last synflood. Protect them with READ_ONCE() and
-WRITE_ONCE() since reads and writes aren't serialised.
+According to documentation [0] the correct offset for the Upstream Peer
+Decode Configuration Register (UPDCR) is 0x1014.  It was previously defined
+as 0x1114.
 
-Use of .rx_opt.ts_recent_stamp for storing the synflood timestamp was
-introduced by a0f82f64e269 ("syncookies: remove last_synq_overflow from
-struct tcp_sock"). But unprotected accesses were already there when
-timestamp was stored in .last_synq_overflow.
+d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
+intended to enforce isolation between PCI devices allowing them to be put
+into separate IOMMU groups.  Due to the wrong register offset the intended
+isolation was not fully enforced.  This is fixed with this patch.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Please note that I did not test this patch because I have no hardware that
+implements this register.
+
+[0] https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/4th-gen-core-family-mobile-i-o-datasheet.pdf (page 325)
+Fixes: d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
+Link: https://lore.kernel.org/r/7a3505df-79ba-8a28-464c-88b83eefffa6@kernkonzept.com
+Signed-off-by: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org	# v3.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/net/tcp.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -492,9 +492,9 @@ static inline void tcp_synq_overflow(con
- 		}
- 	}
+---
+ drivers/pci/quirks.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4446,7 +4446,7 @@ int pci_dev_specific_acs_enabled(struct
+ #define INTEL_BSPR_REG_BPPD  (1 << 9)
  
--	last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
-+	last_overflow = READ_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp);
- 	if (!time_between32(now, last_overflow, last_overflow + HZ))
--		tcp_sk(sk)->rx_opt.ts_recent_stamp = now;
-+		WRITE_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp, now);
- }
+ /* Upstream Peer Decode Configuration Register */
+-#define INTEL_UPDCR_REG 0x1114
++#define INTEL_UPDCR_REG 0x1014
+ /* 5:0 Peer Decode Enable bits */
+ #define INTEL_UPDCR_REG_MASK 0x3f
  
- /* syncookies: no recent synqueue overflow on this listening socket? */
-@@ -515,7 +515,7 @@ static inline bool tcp_synq_no_recent_ov
- 		}
- 	}
- 
--	last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
-+	last_overflow = READ_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp);
- 
- 	/* If last_overflow <= jiffies <= last_overflow + TCP_SYNCOOKIE_VALID,
- 	 * then we're under synflood. However, we have to use
 
 
