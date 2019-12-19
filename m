@@ -2,77 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB2E1260BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 722E31260A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:18:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfLSLVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:21:30 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8152 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726652AbfLSLVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:21:30 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5EE7D51507BCD5EC8564;
-        Thu, 19 Dec 2019 19:21:28 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 19 Dec 2019 19:21:21 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <benh@kernel.crashing.org>, <paulus@samba.org>,
-        <mpe@ellerman.id.au>
-CC:     <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH V2] powerpc/setup_64: use DEFINE_DEBUGFS_ATTRIBUTE to define fops_rfi_flush
-Date:   Thu, 19 Dec 2019 19:18:12 +0800
-Message-ID: <20191219111812.180386-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726768AbfLSLSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:18:40 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38605 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLSLSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:18:39 -0500
+Received: from [79.140.121.60] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ihtp5-0003Wa-E1; Thu, 19 Dec 2019 11:18:27 +0000
+Date:   Thu, 19 Dec 2019 12:18:26 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Shuah Khan <shuah@kernel.org>,
+        David Laight <david.laight@aculab.com>,
+        Florian Weimer <fweimer@redhat.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, libc-alpha@sourceware.org,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        arnd@arndb.de
+Subject: Re: [PATCH 2/2] openat2: drop open_how->__padding field
+Message-ID: <20191219111825.2tzgdlbk3t2pspnw@wittgenstein>
+References: <20191219105533.12508-1-cyphar@cyphar.com>
+ <20191219105533.12508-3-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191219105533.12508-3-cyphar@cyphar.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE for
-debugfs files.
+On Thu, Dec 19, 2019 at 09:55:30PM +1100, Aleksa Sarai wrote:
+> The purpose of explicit padding was to allow us to use the space in the
+> future (C provides no guarantee about the value of padding bytes and
+> thus userspace could've provided garbage).
+> 
+> However, the downside of explicit padding is that any extension we wish
+> to add should fit the space exactly (otherwise we may end up with a u16
+> which will never be used). In addition, the correct error to return for
+> non-zero padding is not clear (-EINVAL doesn't imply "you're using an
+> extension field unsupported by this kernel", but -E2BIG seems a bit odd
+> if the structure size isn't different).
+> 
+> The simplest solution is to just match the design of clone3(2) -- use
+> u64s for all fields. The extra few-bytes cost of extra fields is not
+> significant (it's unlikely configuration structs will ever be extremely
+> large) and it allows for more flag space if necessary.
+> 
+> As openat2(2) is not yet in Linus's tree, we can iron out these minor
+> warts before we commit to this as a stable ABI.
+> 
+> Suggested-by: David Laight <david.laight@aculab.com>
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
 
-In order to protect against file removal races, debugfs files created via
-debugfs_create_file() are wrapped by a struct file_operations at their
-opening.
+Fine with me.
+Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
 
-If the original struct file_operations is known to be safe against removal
-races already, the proxy creation may be bypassed by creating the files
-using DEFINE_DEBUGFS_ATTRIBUTE() and debugfs_create_file_unsafe().
-
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
-Changes since v1:
-- modify commit message.
-
- arch/powerpc/kernel/setup_64.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
-index 6104917..4b9fbb2 100644
---- a/arch/powerpc/kernel/setup_64.c
-+++ b/arch/powerpc/kernel/setup_64.c
-@@ -956,11 +956,11 @@ static int rfi_flush_get(void *data, u64 *val)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(fops_rfi_flush, rfi_flush_get, rfi_flush_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(fops_rfi_flush, rfi_flush_get, rfi_flush_set, "%llu\n");
- 
- static __init int rfi_flush_debugfs_init(void)
- {
--	debugfs_create_file("rfi_flush", 0600, powerpc_debugfs_root, NULL, &fops_rfi_flush);
-+	debugfs_create_file_unsafe("rfi_flush", 0600, powerpc_debugfs_root, NULL, &fops_rfi_flush);
- 	return 0;
- }
- device_initcall(rfi_flush_debugfs_init);
--- 
-2.7.4
-
+> ---
+>  fs/open.c                                     |  2 --
+>  include/uapi/linux/openat2.h                  |  3 +--
+>  tools/testing/selftests/openat2/helpers.h     |  3 +--
+>  .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
+>  4 files changed, 10 insertions(+), 22 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index 50a46501bcc9..8cdb2b675867 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -993,8 +993,6 @@ static inline int build_open_flags(const struct open_how *how,
+>  		return -EINVAL;
+>  	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+>  		return -EINVAL;
+> -	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
+> -		return -EINVAL;
+>  
+>  	/* Deal with the mode. */
+>  	if (WILL_CREATE(flags)) {
+> diff --git a/include/uapi/linux/openat2.h b/include/uapi/linux/openat2.h
+> index 19ef775e8e5e..76fad4ada2d4 100644
+> --- a/include/uapi/linux/openat2.h
+> +++ b/include/uapi/linux/openat2.h
+> @@ -16,8 +16,7 @@
+>   */
+>  struct open_how {
+>  	__aligned_u64 flags;
+> -	__u16 mode;
+> -	__u16 __padding[3]; /* must be zeroed */
+> +	__aligned_u64 mode;
+>  	__aligned_u64 resolve;
+>  };
+>  
+> diff --git a/tools/testing/selftests/openat2/helpers.h b/tools/testing/selftests/openat2/helpers.h
+> index 43ca5ceab6e3..d756775d0725 100644
+> --- a/tools/testing/selftests/openat2/helpers.h
+> +++ b/tools/testing/selftests/openat2/helpers.h
+> @@ -37,8 +37,7 @@
+>   */
+>  struct open_how {
+>  	__aligned_u64 flags;
+> -	__u16 mode;
+> -	__u16 __padding[3]; /* must be zeroed */
+> +	__aligned_u64 mode;
+>  	__aligned_u64 resolve;
+>  };
+>  
+> diff --git a/tools/testing/selftests/openat2/openat2_test.c b/tools/testing/selftests/openat2/openat2_test.c
+> index 0b64fedc008b..b386367c606b 100644
+> --- a/tools/testing/selftests/openat2/openat2_test.c
+> +++ b/tools/testing/selftests/openat2/openat2_test.c
+> @@ -40,7 +40,7 @@ struct struct_test {
+>  	int err;
+>  };
+>  
+> -#define NUM_OPENAT2_STRUCT_TESTS 10
+> +#define NUM_OPENAT2_STRUCT_TESTS 7
+>  #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+>  
+>  void test_openat2_struct(void)
+> @@ -57,20 +57,6 @@ void test_openat2_struct(void)
+>  		  .arg.inner.flags = O_RDONLY,
+>  		  .size = sizeof(struct open_how_ext) },
+>  
+> -		/* Normal struct with broken padding. */
+> -		{ .name = "normal struct (non-zero padding[0])",
+> -		  .arg.inner.flags = O_RDONLY,
+> -		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
+> -		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+> -		{ .name = "normal struct (non-zero padding[1])",
+> -		  .arg.inner.flags = O_RDONLY,
+> -		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
+> -		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+> -		{ .name = "normal struct (non-zero padding[2])",
+> -		  .arg.inner.flags = O_RDONLY,
+> -		  .arg.inner.__padding = {0x00, 0x00, 0xef},
+> -		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+> -
+>  		/* TODO: Once expanded, check zero-padding. */
+>  
+>  		/* Smaller than version-0 struct. */
+> @@ -169,7 +155,7 @@ struct flag_test {
+>  	int err;
+>  };
+>  
+> -#define NUM_OPENAT2_FLAG_TESTS 21
+> +#define NUM_OPENAT2_FLAG_TESTS 23
+>  
+>  void test_openat2_flags(void)
+>  {
+> @@ -214,9 +200,15 @@ void test_openat2_flags(void)
+>  		{ .name = "invalid how.mode and O_CREAT",
+>  		  .how.flags = O_CREAT,
+>  		  .how.mode = 0xFFFF, .err = -EINVAL },
+> +		{ .name = "invalid (very large) how.mode and O_CREAT",
+> +		  .how.flags = O_CREAT,
+> +		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
+>  		{ .name = "invalid how.mode and O_TMPFILE",
+>  		  .how.flags = O_TMPFILE | O_RDWR,
+>  		  .how.mode = 0x1337, .err = -EINVAL },
+> +		{ .name = "invalid (very large) how.mode and O_TMPFILE",
+> +		  .how.flags = O_TMPFILE | O_RDWR,
+> +		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
+>  
+>  		/* ->resolve must only contain RESOLVE_* flags. */
+>  		{ .name = "invalid how.resolve and O_RDONLY",
+> -- 
+> 2.24.0
+> 
