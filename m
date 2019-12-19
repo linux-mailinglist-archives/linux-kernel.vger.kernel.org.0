@@ -2,107 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0EF4125E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:02:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 111F6125E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:03:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbfLSKC5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:02:57 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:45166 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfLSKC5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:02:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=o+0r16DLXVbC+7Zxqq6v+t/eSFuvrc9Emyuzqsf4HpQ=; b=hykn+ZX/usebevoo+tpjD7cev
-        zhqEgk1m4ICoMp2ftEfbrQ+/PnEryttu+L2s1ewb/bBJ8wTJJAZYpMOG9aVdlk1OYbzKwe21T6dup
-        3gChZRsSYwtKHKIObN1Z2JxyJ3W0UzeBQ5Lg7sdU9Lmcy1Fj51RLv5BqU9J1vK4SIWUHbaMhAfTEP
-        2hKMMSwe1TIqBOBck0rCBtLAvWHwLcxAO2zNNoy2lWEw6aP7y/OnvBmd6JRKeq2BhTkKPx546MMN7
-        0AakeW6h4y/T1pYMEoI85GzjBruV3ed9XgizMyUfOL8kEjlZfiDWBlZ+6NCmEZZsUkq8lBtV8Zp3A
-        97pJcKCqg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1ihsdg-0006Bx-Pn; Thu, 19 Dec 2019 10:02:36 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 457C63007F2;
-        Thu, 19 Dec 2019 11:01:09 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 9AC6D2B291C44; Thu, 19 Dec 2019 11:02:32 +0100 (CET)
-Date:   Thu, 19 Dec 2019 11:02:32 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     Mel Gorman <mgorman@techsingularity.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>, pauld@redhat.com,
-        srikar@linux.vnet.ibm.com, quentin.perret@arm.com,
-        dietmar.eggemann@arm.com, Morten.Rasmussen@arm.com,
-        hdanton@sina.com, parth@linux.ibm.com, riel@surriel.com,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched, fair: Allow a small degree of load imbalance
- between SD_NUMA domains
-Message-ID: <20191219100232.GY2844@hirez.programming.kicks-ass.net>
-References: <20191218154402.GF3178@techsingularity.net>
- <8f049805-3e97-09bb-2d32-0718be1dec9b@arm.com>
+        id S1726742AbfLSKDg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:03:36 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:2209 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726609AbfLSKDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:03:36 -0500
+Received: from lhreml709-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 966C17D17AC8464734A9;
+        Thu, 19 Dec 2019 10:03:34 +0000 (GMT)
+Received: from lhreml724-chm.china.huawei.com (10.201.108.75) by
+ lhreml709-cah.china.huawei.com (10.201.108.32) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 19 Dec 2019 10:03:33 +0000
+Received: from [127.0.0.1] (10.202.226.46) by lhreml724-chm.china.huawei.com
+ (10.201.108.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Thu, 19 Dec
+ 2019 10:03:33 +0000
+Subject: Re: Warnings in DRM code when removing/unbinding a driver
+To:     Daniel Vetter <daniel@ffwll.ch>
+CC:     Ezequiel Garcia <ezequiel@collabora.com>,
+        "kongxinwei (A)" <kong.kongxinwei@hisilicon.com>,
+        "Chenfeng (puck)" <puck.chen@hisilicon.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Linuxarm <linuxarm@huawei.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>, <dbueso@suse.de>
+References: <07899bd5-e9a5-cff0-395f-b4fb3f0f7f6c@huawei.com>
+ <f867543cf5d0fc3fdd0534749326411bcfc5e363.camel@collabora.com>
+ <c2e5f5a5-5839-42a9-2140-903e99e166db@huawei.com>
+ <fde72f73-d678-2b77-3950-d465f0afe904@huawei.com>
+ <CAKMK7uFr03euoB6rY8z9zmRyznP41vwfdaKApZ_0HfYZT4Hq_w@mail.gmail.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <fcca5732-c7dc-6e1d-dcbe-bfd914a4295b@huawei.com>
+Date:   Thu, 19 Dec 2019 10:03:33 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f049805-3e97-09bb-2d32-0718be1dec9b@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAKMK7uFr03euoB6rY8z9zmRyznP41vwfdaKApZ_0HfYZT4Hq_w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-ClientProxiedBy: lhreml712-chm.china.huawei.com (10.201.108.63) To
+ lhreml724-chm.china.huawei.com (10.201.108.75)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 06:50:52PM +0000, Valentin Schneider wrote:
-> I'm quite sure you have reasons to have written it that way, but I was
-> hoping we could squash it down to something like:
-> ---
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 08a233e97a01..f05d09a8452e 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8680,16 +8680,27 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->  			env->migration_type = migrate_task;
->  			lsub_positive(&nr_diff, local->sum_nr_running);
->  			env->imbalance = nr_diff >> 1;
-> -			return;
-> +		} else {
-> +
-> +			/*
-> +			 * If there is no overload, we just want to even the number of
-> +			 * idle cpus.
-> +			 */
-> +			env->migration_type = migrate_task;
-> +			env->imbalance = max_t(long, 0, (local->idle_cpus -
-> +							 busiest->idle_cpus) >> 1);
->  		}
->  
->  		/*
-> -		 * If there is no overload, we just want to even the number of
-> -		 * idle cpus.
-> +		 * Allow for a small imbalance between NUMA groups; don't do any
-> +		 * of it if there is at least half as many tasks / busy CPUs as
-> +		 * there are available CPUs in the busiest group
->  		 */
-> -		env->migration_type = migrate_task;
-> -		env->imbalance = max_t(long, 0, (local->idle_cpus -
-> -						 busiest->idle_cpus) >> 1);
-> +		if (env->sd->flags & SD_NUMA &&
-> +		    (busiest->sum_nr_running < busiest->group_weight >> 1) &&
-> +		    (env->imbalance < busiest->group_weight * (env->sd->imbalance_pct - 100) / 100))
+On 19/12/2019 09:54, Daniel Vetter wrote:
+> On Wed, Dec 18, 2019 at 7:08 PM John Garry <john.garry@huawei.com> wrote:
+>>
+>> +
+>>
+>> So the v5.4 kernel does not have this issue.
+>>
+>> I have bisected the initial occurrence to:
+>>
+>> commit 37a48adfba6cf6e87df9ba8b75ab85d514ed86d8
+>> Author: Thomas Zimmermann <tzimmermann@suse.de>
+>> Date:   Fri Sep 6 14:20:53 2019 +0200
+>>
+>>       drm/vram: Add kmap ref-counting to GEM VRAM objects
+>>
+>>       The kmap and kunmap operations of GEM VRAM buffers can now be called
+>>       in interleaving pairs. The first call to drm_gem_vram_kmap() maps the
+>>       buffer's memory to kernel address space and the final call to
+>>       drm_gem_vram_kunmap() unmaps the memory. Intermediate calls to these
+>>       functions increment or decrement a reference counter.
+>>
+>> So this either exposes or creates the issue.
+> 
+> Yeah that's just shooting the messenger.
 
-Note that this form allows avoiding the division. Every time I see that
-/100 I'm thinking we should rename and make imbalance_pct a base-2
-thing.
+OK, so it exposes it.
 
-> +				env->imbalance = 0;
-> +
->  		return;
->  	}
->  
+  Like I said, for most drivers
+> you can pretty much assume that their unload sequence has been broken
+> since forever. It's not often tested, and especially the hotunbind
+> from a device (as opposed to driver unload) stuff wasn't even possible
+> to get right until just recently.
+
+Do you think it's worth trying to fix this for 5.5 and earlier, or just 
+switch to the device-managed interface for 5.6 and forget about 5.5 and 
+earlier?
+
+Thanks,
+John
