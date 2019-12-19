@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 187F7126AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27F81126B31
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730292AbfLSSwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47460 "EHLO mail.kernel.org"
+        id S1730520AbfLSSye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:54:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730283AbfLSSwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:44 -0500
+        id S1729720AbfLSSyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:54:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B1482468A;
-        Thu, 19 Dec 2019 18:52:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3932920674;
+        Thu, 19 Dec 2019 18:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781564;
-        bh=1PxvcWMoJDi7qVwBIOeTcemwFDTFkq4tPGTvQHkT/QA=;
+        s=default; t=1576781670;
+        bh=vtycg2qbFBVyk9aM23uGYOQRX/P88p05zOSrazU58Co=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=giJxS7pkkUIe8Ag1ZmiFiGi/Id8B0GlhROR5lw3BZkYVywAYUf6jfCheAKtlpkhWg
-         FX7hclBTJ/QmbFxuwcxAi3pszGHzxO/myHmYb0MJ3Gc+hOVj7Aer1CD3c3VvGs7i8W
-         RlsxOpmYuA4HHaJi4xCsWPB8NGaYlls49/cB8/YA=
+        b=rxTsNQZFcxMVZUeBw8pXZJi6kSw+fPsUB+4CVA3QnqQvfBqxC4NJJiI6cPQRVKLgG
+         5wFVsSc+oqOm8ETzR4Nm+dnMwvB58yL5U89pEme/d3ovHcUQagBKg3ShyYBQgZIum4
+         Eo1JnYB97ARQ0da2yN+C3Mh77XHTOON9u/yZGcgs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Conole <aconole@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 08/47] openvswitch: support asymmetric conntrack
-Date:   Thu, 19 Dec 2019 19:34:22 +0100
-Message-Id: <20191219182903.506958631@linuxfoundation.org>
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 5.4 31/80] cifs: smbd: Return -EINVAL when the number of iovs exceeds SMBDIRECT_MAX_SGE
+Date:   Thu, 19 Dec 2019 19:34:23 +0100
+Message-Id: <20191219183104.637344341@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Conole <aconole@redhat.com>
+From: Long Li <longli@microsoft.com>
 
-[ Upstream commit 5d50aa83e2c8e91ced2cca77c198b468ca9210f4 ]
+commit 37941ea17d3f8eb2f5ac2f59346fab9e8439271a upstream.
 
-The openvswitch module shares a common conntrack and NAT infrastructure
-exposed via netfilter.  It's possible that a packet needs both SNAT and
-DNAT manipulation, due to e.g. tuple collision.  Netfilter can support
-this because it runs through the NAT table twice - once on ingress and
-again after egress.  The openvswitch module doesn't have such capability.
+While it's not friendly to fail user processes that issue more iovs
+than we support, at least we should return the correct error code so the
+user process gets a chance to retry with smaller number of iovs.
 
-Like netfilter hook infrastructure, we should run through NAT twice to
-keep the symmetry.
-
-Fixes: 05752523e565 ("openvswitch: Interface with NAT.")
-Signed-off-by: Aaron Conole <aconole@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Long Li <longli@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/openvswitch/conntrack.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
 
---- a/net/openvswitch/conntrack.c
-+++ b/net/openvswitch/conntrack.c
-@@ -897,6 +897,17 @@ static int ovs_ct_nat(struct net *net, s
- 	}
- 	err = ovs_ct_nat_execute(skb, ct, ctinfo, &info->range, maniptype);
+---
+ fs/cifs/smbdirect.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -1069,7 +1069,7 @@ static int smbd_post_send_data(
  
-+	if (err == NF_ACCEPT &&
-+	    ct->status & IPS_SRC_NAT && ct->status & IPS_DST_NAT) {
-+		if (maniptype == NF_NAT_MANIP_SRC)
-+			maniptype = NF_NAT_MANIP_DST;
-+		else
-+			maniptype = NF_NAT_MANIP_SRC;
-+
-+		err = ovs_ct_nat_execute(skb, ct, ctinfo, &info->range,
-+					 maniptype);
-+	}
-+
- 	/* Mark NAT done if successful and update the flow key. */
- 	if (err == NF_ACCEPT)
- 		ovs_nat_update_key(key, skb, maniptype);
+ 	if (n_vec > SMBDIRECT_MAX_SGE) {
+ 		cifs_dbg(VFS, "Can't fit data to SGL, n_vec=%d\n", n_vec);
+-		return -ENOMEM;
++		return -EINVAL;
+ 	}
+ 
+ 	sg_init_table(sgl, n_vec);
 
 
