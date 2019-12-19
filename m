@@ -2,268 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA1A1125DCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 088BD125DD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:40:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLSJj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 04:39:59 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60267 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfLSJj7 (ORCPT
+        id S1726890AbfLSJkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 04:40:10 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:55813 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbfLSJkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 04:39:59 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihsHi-0004Lf-Nl; Thu, 19 Dec 2019 10:39:54 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ihsHh-0004B1-S8; Thu, 19 Dec 2019 10:39:53 +0100
-From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Thu, 19 Dec 2019 04:40:08 -0500
+Received: by mail-pj1-f68.google.com with SMTP id d5so2245390pjz.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 01:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UaU6i9zWU3yr9QJvcRz0VGGzrcUKaBIv86YipeMOKo8=;
+        b=LyDg1/LfFyRwWJTxBF/LnsfrTJSpgla5kvA98Hg+eeijCP9Q4VYEvCBGyN5xVxKn7p
+         eEsQscd3wujq8XMHgepAaRQXBH0E1PQZo9FaDL3lWv8qT+wBABdwjQ6wBRbPQczrwZhV
+         xi1HLrIQxvVPsnnXebX2B39JQ8NlNTXox5+ak=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UaU6i9zWU3yr9QJvcRz0VGGzrcUKaBIv86YipeMOKo8=;
+        b=cN5WLF832nIQwuaiCcl43Gq7PuigfEddf37JAEmbhHfdn1ts+zVl6SE2HNc7olNYQz
+         IfD4oooIN1gJusH1wfF0sttIOmTYcZIcyO6htT5778DAuOEXRwZcLdIX4atXZFZeIhkX
+         7cpeGdiIxWG7TaOML+n4LHFU92SKrd8Q4Iz2OKzpXzD6HCh4MLsysSCi269d+QvvW0D6
+         BDLt05MufYBIxkvgNLRcTx9cQTEYV4jX186I7ZbZ48knbIZALBrZMHlOyMJb3bSfHlvi
+         memifPuq4y5ieOu1DVdNItLh7HlX220MKyoZJeRQER0ZlMBvz/Z772SToROe2LpcCMqf
+         SNeA==
+X-Gm-Message-State: APjAAAWCDEBu2aTrC0JwMt5blS7T4ePYF89pFThlCdg72CUjx4Jl6xIS
+        ZBZM+id8guRH43cy17FKdOqXvQ==
+X-Google-Smtp-Source: APXvYqzL4Uv3f/vYWiTWGoQqppzSjCV/VAXe3mUM5lmKJDJ2u9Tql+pWQk6EMSv57P1oNg9ofZmndA==
+X-Received: by 2002:a17:902:8bc5:: with SMTP id r5mr8257114plo.189.1576748408099;
+        Thu, 19 Dec 2019 01:40:08 -0800 (PST)
+Received: from tfiga.tok.corp.google.com ([2401:fa00:8f:203:f5fe:2a5e:f953:c0ed])
+        by smtp.gmail.com with ESMTPSA id d22sm7057694pfo.187.2019.12.19.01.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 01:40:07 -0800 (PST)
+From:   Tomasz Figa <tfiga@chromium.org>
+To:     linux-usb@vger.kernel.org
+Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH v5 3/3] leds: trigger: implement a tty trigger
-Date:   Thu, 19 Dec 2019 10:39:47 +0100
-Message-Id: <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
-References: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Changqi Hu <Changqi.Hu@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Shik Chen <shik@chromium.org>, Tomasz Figa <tfiga@chromium.org>
+Subject: [PATCH] usb: mtk-xhci: Do not explicitly set the DMA mask
+Date:   Thu, 19 Dec 2019 18:39:54 +0900
+Message-Id: <20191219093954.163417-1-tfiga@chromium.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Usage is as follows:
+The mtk-xhci platform glue sets the DMA mask to 32 bits on its own,
+which was needed before commit fda182d80a0b ("usb: xhci: configure
+32-bit DMA if the controller does not support 64-bit DMA"), but now it
+has no effect, because xhci_gen_setup() sets it up for us according to
+hardware capabilities. Remove the useless code.
 
-	myled=ledname
-	tty=ttyS0
-
-	echo tty > /sys/class/leds/$myled/trigger
-	cat /sys/class/tty/$tty/dev > /sys/class/leds/$myled/dev
-
-. When this new trigger is active it periodically checks the tty's
-statistics and when it changed since the last check the led is flashed
-once.
-
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
 ---
- .../ABI/testing/sysfs-class-led-trigger-tty   |   6 +
- drivers/leds/trigger/Kconfig                  |   7 +
- drivers/leds/trigger/Makefile                 |   1 +
- drivers/leds/trigger/ledtrig-tty.c            | 153 ++++++++++++++++++
- 4 files changed, 167 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-tty
- create mode 100644 drivers/leds/trigger/ledtrig-tty.c
+ drivers/usb/host/xhci-mtk.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-led-trigger-tty b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-new file mode 100644
-index 000000000000..f56f9721c317
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-@@ -0,0 +1,6 @@
-+What:		/sys/class/leds/<led>/dev
-+Date:		Dec 2019
-+KernelVersion:	5.6
-+Contact:	linux-leds@vger.kernel.org
-+Description:
-+		Specifies $major:$minor of the triggering tty
-diff --git a/drivers/leds/trigger/Kconfig b/drivers/leds/trigger/Kconfig
-index ce9429ca6dde..40ff08c93f56 100644
---- a/drivers/leds/trigger/Kconfig
-+++ b/drivers/leds/trigger/Kconfig
-@@ -144,4 +144,11 @@ config LEDS_TRIGGER_AUDIO
- 	  the audio mute and mic-mute changes.
- 	  If unsure, say N
+diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
+index b18a6baef204a..bfbdb3ceed291 100644
+--- a/drivers/usb/host/xhci-mtk.c
++++ b/drivers/usb/host/xhci-mtk.c
+@@ -488,11 +488,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
+ 		goto disable_clk;
+ 	}
  
-+config LEDS_TRIGGER_TTY
-+	tristate "LED Trigger for TTY devices"
-+	depends on TTY
-+	help
-+	  This allows LEDs to be controlled by activity on ttys which includes
-+	  serial devices like /dev/ttyS0.
-+
- endif # LEDS_TRIGGERS
-diff --git a/drivers/leds/trigger/Makefile b/drivers/leds/trigger/Makefile
-index 733a83e2a718..25c4db97cdd4 100644
---- a/drivers/leds/trigger/Makefile
-+++ b/drivers/leds/trigger/Makefile
-@@ -15,3 +15,4 @@ obj-$(CONFIG_LEDS_TRIGGER_PANIC)	+= ledtrig-panic.o
- obj-$(CONFIG_LEDS_TRIGGER_NETDEV)	+= ledtrig-netdev.o
- obj-$(CONFIG_LEDS_TRIGGER_PATTERN)	+= ledtrig-pattern.o
- obj-$(CONFIG_LEDS_TRIGGER_AUDIO)	+= ledtrig-audio.o
-+obj-$(CONFIG_LEDS_TRIGGER_TTY)		+= ledtrig-tty.o
-diff --git a/drivers/leds/trigger/ledtrig-tty.c b/drivers/leds/trigger/ledtrig-tty.c
-new file mode 100644
-index 000000000000..e9bbad52cc3f
---- /dev/null
-+++ b/drivers/leds/trigger/ledtrig-tty.c
-@@ -0,0 +1,153 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/tty.h>
-+#include <uapi/linux/serial.h>
-+
-+struct ledtrig_tty_data {
-+	struct led_classdev *led_cdev;
-+	struct delayed_work dwork;
-+	struct tty_struct *tty;
-+	dev_t device;
-+	int rx, tx;
-+};
-+
-+static void ledtrig_tty_halt(struct ledtrig_tty_data *trigger_data)
-+{
-+	cancel_delayed_work_sync(&trigger_data->dwork);
-+}
-+
-+static void ledtrig_tty_restart(struct ledtrig_tty_data *trigger_data)
-+{
-+	schedule_delayed_work(&trigger_data->dwork, 0);
-+}
-+
-+static ssize_t dev_show(struct device *dev,
-+			struct device_attribute *attr, char *buf)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
-+	ssize_t len = 0;
-+
-+	if (trigger_data->tty)
-+		len = sprintf(buf, "%d:%d\n", MAJOR(trigger_data->device),
-+			      MINOR(trigger_data->device));
-+
-+	return len;
-+}
-+
-+static ssize_t dev_store(struct device *dev,
-+			 struct device_attribute *attr, const char *buf,
-+			 size_t size)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
-+	struct tty_struct *tty;
-+	unsigned major, minor;
-+	int ret;
-+
-+	if (size == 0 || (size == 1 && buf[0] == '\n')) {
-+		tty = NULL;
-+	} else {
-+		ret = sscanf(buf, "%u:%u", &major, &minor);
-+		if (ret < 2)
-+			return -EINVAL;
-+
-+		tty = tty_kopen_shared(MKDEV(major, minor));
-+		if (IS_ERR(tty))
-+			return PTR_ERR(tty);
-+	}
-+
-+	ledtrig_tty_halt(trigger_data);
-+
-+	tty_kref_put(trigger_data->tty);
-+	trigger_data->tty = tty;
-+	trigger_data->device = MKDEV(major, minor);
-+
-+	if (tty) {
-+		struct serial_icounter_struct icount;
-+		ret = tty_get_icount(trigger_data->tty, &icount);
-+		if (!ret) {
-+			trigger_data->tx = icount.tx;
-+			trigger_data->rx = icount.rx;
-+		}
-+
-+		ledtrig_tty_restart(trigger_data);
-+	}
-+
-+	return size;
-+}
-+static DEVICE_ATTR_RW(dev);
-+
-+static void ledtrig_tty_work(struct work_struct *work)
-+{
-+	struct ledtrig_tty_data *trigger_data =
-+		container_of(work, struct ledtrig_tty_data, dwork.work);
-+	struct serial_icounter_struct icount;
-+	int ret;
-+
-+	if (!trigger_data->tty) {
-+		led_set_brightness(trigger_data->led_cdev, LED_OFF);
-+		return;
-+	}
-+
-+	ret = tty_get_icount(trigger_data->tty, &icount);
-+	if (ret)
-+		return;
-+
-+	if (icount.rx != trigger_data->rx ||
-+	    icount.tx != trigger_data->tx) {
-+		unsigned long delay_on = 100, delay_off = 100;
-+
-+		led_blink_set_oneshot(trigger_data->led_cdev,
-+				      &delay_on, &delay_off, 0);
-+
-+		trigger_data->rx = icount.rx;
-+		trigger_data->tx = icount.tx;
-+	}
-+
-+	schedule_delayed_work(&trigger_data->dwork, msecs_to_jiffies(100));
-+}
-+
-+static struct attribute *ledtrig_tty_attrs[] = {
-+	&dev_attr_dev.attr,
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(ledtrig_tty);
-+
-+static int ledtrig_tty_activate(struct led_classdev *led_cdev)
-+{
-+	struct ledtrig_tty_data *trigger_data;
-+
-+	trigger_data = kzalloc(sizeof(*trigger_data), GFP_KERNEL);
-+	if (!trigger_data)
-+		return -ENOMEM;
-+
-+	led_set_trigger_data(led_cdev, trigger_data);
-+
-+	INIT_DELAYED_WORK(&trigger_data->dwork, ledtrig_tty_work);
-+	trigger_data->led_cdev = led_cdev;
-+
-+	return 0;
-+}
-+
-+static void ledtrig_tty_deactivate(struct led_classdev *led_cdev)
-+{
-+	struct ledtrig_tty_data *trigger_data = led_get_trigger_data(led_cdev);
-+
-+	cancel_delayed_work_sync(&trigger_data->dwork);
-+
-+	kfree(trigger_data);
-+}
-+
-+struct led_trigger ledtrig_tty = {
-+	.name = "tty",
-+	.activate = ledtrig_tty_activate,
-+	.deactivate = ledtrig_tty_deactivate,
-+	.groups = ledtrig_tty_groups,
-+};
-+module_led_trigger(ledtrig_tty);
-+
-+MODULE_AUTHOR("Uwe Kleine-König <u.kleine-koenig@pengutronix.de>");
-+MODULE_DESCRIPTION("UART LED trigger");
-+MODULE_LICENSE("GPL v2");
+-	/* Initialize dma_mask and coherent_dma_mask to 32-bits */
+-	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+-	if (ret)
+-		goto disable_clk;
+-
+ 	hcd = usb_create_hcd(driver, dev, dev_name(dev));
+ 	if (!hcd) {
+ 		ret = -ENOMEM;
 -- 
-2.24.0
+2.24.1.735.g03f4e72817-goog
 
