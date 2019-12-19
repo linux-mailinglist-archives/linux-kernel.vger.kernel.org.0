@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B50E7126B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33FB2126B1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728280AbfLSSx6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:53:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
+        id S1730433AbfLSSx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728239AbfLSSxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:53:55 -0500
+        id S1730149AbfLSSx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C0F824679;
-        Thu, 19 Dec 2019 18:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75A00222C2;
+        Thu, 19 Dec 2019 18:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781634;
-        bh=8cJPzHB9UBMtrpOt681rBiJ2VXcfE/kr+hGaYCA90oc=;
+        s=default; t=1576781636;
+        bh=CAsP/cz+uN6p3m+stKxFiBXB48v0Z5X4p7HEq9Umdws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=koEV3Kk1NIRcWNXUk9XiDCchovTW6c1dVOdZnjIY1zy02GTpRjJ69FoG+aWXfQmHM
-         pprE63J/u36hjyWZwVle95Pix/OQfYFN8hdyQg+dxH7cwvTXH36MOqOuv3VAxRA/oF
-         lDXwSCkauzRFyWwFYJVI8V81OsPwEc164x3Ah95E=
+        b=avZ0NvZN8/XdKAPFJyH3OeMZjBFVOk1U8gAwfgIYmbphR57sroqrYSHdR04jhuZ0q
+         pBnpBhptZrax5QrGyS63SmKXR0meJ0oq9LNCqkgvMtMKDSo9NzCcNSBRIakzTkYNvS
+         gXMETyK+ix3CsQc0TZ6ai5K6VrXuUikIl0yGJn78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH 5.4 18/80] gfs2: fix glock reference problem in gfs2_trans_remove_revoke
-Date:   Thu, 19 Dec 2019 19:34:10 +0100
-Message-Id: <20191219183056.023477756@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 5.4 19/80] xtensa: fix TLB sanity checker
+Date:   Thu, 19 Dec 2019 19:34:11 +0100
+Message-Id: <20191219183058.969455763@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
 References: <20191219183031.278083125@linuxfoundation.org>
@@ -43,83 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit fe5e7ba11fcf1d75af8173836309e8562aefedef upstream.
+commit 36de10c4788efc6efe6ff9aa10d38cb7eea4c818 upstream.
 
-Commit 9287c6452d2b fixed a situation in which gfs2 could use a glock
-after it had been freed. To do that, it temporarily added a new glock
-reference by calling gfs2_glock_hold in function gfs2_add_revoke.
-However, if the bd element was removed by gfs2_trans_remove_revoke, it
-failed to drop the additional reference.
+Virtual and translated addresses retrieved by the xtensa TLB sanity
+checker must be consistent, i.e. correspond to the same state of the
+checked TLB entry. KASAN shadow memory is mapped dynamically using
+auto-refill TLB entries and thus may change TLB state between the
+virtual and translated address retrieval, resulting in false TLB
+insanity report.
+Move read_xtlb_translation close to read_xtlb_virtual to make sure that
+read values are consistent.
 
-This patch adds logic to gfs2_trans_remove_revoke to properly drop the
-additional glock reference.
-
-Fixes: 9287c6452d2b ("gfs2: Fix occasional glock use-after-free")
-Cc: stable@vger.kernel.org # v5.2+
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: a99e07ee5e88 ("xtensa: check TLB sanity on return to userspace")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/log.c   |    8 ++++++++
- fs/gfs2/log.h   |    1 +
- fs/gfs2/lops.c  |    5 +----
- fs/gfs2/trans.c |    2 ++
- 4 files changed, 12 insertions(+), 4 deletions(-)
+ arch/xtensa/mm/tlb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/gfs2/log.c
-+++ b/fs/gfs2/log.c
-@@ -609,6 +609,14 @@ void gfs2_add_revoke(struct gfs2_sbd *sd
- 	list_add(&bd->bd_list, &sdp->sd_log_revokes);
- }
- 
-+void gfs2_glock_remove_revoke(struct gfs2_glock *gl)
-+{
-+	if (atomic_dec_return(&gl->gl_revokes) == 0) {
-+		clear_bit(GLF_LFLUSH, &gl->gl_flags);
-+		gfs2_glock_queue_put(gl);
-+	}
-+}
-+
- void gfs2_write_revokes(struct gfs2_sbd *sdp)
- {
- 	struct gfs2_trans *tr;
---- a/fs/gfs2/log.h
-+++ b/fs/gfs2/log.h
-@@ -77,6 +77,7 @@ extern void gfs2_ail1_flush(struct gfs2_
- extern void gfs2_log_shutdown(struct gfs2_sbd *sdp);
- extern int gfs2_logd(void *data);
- extern void gfs2_add_revoke(struct gfs2_sbd *sdp, struct gfs2_bufdata *bd);
-+extern void gfs2_glock_remove_revoke(struct gfs2_glock *gl);
- extern void gfs2_write_revokes(struct gfs2_sbd *sdp);
- 
- #endif /* __LOG_DOT_H__ */
---- a/fs/gfs2/lops.c
-+++ b/fs/gfs2/lops.c
-@@ -882,10 +882,7 @@ static void revoke_lo_after_commit(struc
- 		bd = list_entry(head->next, struct gfs2_bufdata, bd_list);
- 		list_del_init(&bd->bd_list);
- 		gl = bd->bd_gl;
--		if (atomic_dec_return(&gl->gl_revokes) == 0) {
--			clear_bit(GLF_LFLUSH, &gl->gl_flags);
--			gfs2_glock_queue_put(gl);
--		}
-+		gfs2_glock_remove_revoke(gl);
- 		kmem_cache_free(gfs2_bufdata_cachep, bd);
+--- a/arch/xtensa/mm/tlb.c
++++ b/arch/xtensa/mm/tlb.c
+@@ -216,6 +216,8 @@ static int check_tlb_entry(unsigned w, u
+ 	unsigned tlbidx = w | (e << PAGE_SHIFT);
+ 	unsigned r0 = dtlb ?
+ 		read_dtlb_virtual(tlbidx) : read_itlb_virtual(tlbidx);
++	unsigned r1 = dtlb ?
++		read_dtlb_translation(tlbidx) : read_itlb_translation(tlbidx);
+ 	unsigned vpn = (r0 & PAGE_MASK) | (e << PAGE_SHIFT);
+ 	unsigned pte = get_pte_for_vaddr(vpn);
+ 	unsigned mm_asid = (get_rasid_register() >> 8) & ASID_MASK;
+@@ -231,8 +233,6 @@ static int check_tlb_entry(unsigned w, u
  	}
- }
---- a/fs/gfs2/trans.c
-+++ b/fs/gfs2/trans.c
-@@ -262,6 +262,8 @@ void gfs2_trans_remove_revoke(struct gfs
- 			list_del_init(&bd->bd_list);
- 			gfs2_assert_withdraw(sdp, sdp->sd_log_num_revoke);
- 			sdp->sd_log_num_revoke--;
-+			if (bd->bd_gl)
-+				gfs2_glock_remove_revoke(bd->bd_gl);
- 			kmem_cache_free(gfs2_bufdata_cachep, bd);
- 			tr->tr_num_revoke--;
- 			if (--n == 0)
+ 
+ 	if (tlb_asid == mm_asid) {
+-		unsigned r1 = dtlb ? read_dtlb_translation(tlbidx) :
+-			read_itlb_translation(tlbidx);
+ 		if ((pte ^ r1) & PAGE_MASK) {
+ 			pr_err("%cTLB: way: %u, entry: %u, mapping: %08x->%08x, PTE: %08x\n",
+ 					dtlb ? 'D' : 'I', w, e, r0, r1, pte);
 
 
