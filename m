@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C5DC126978
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABEC2126A18
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfLSSh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:37:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55754 "EHLO mail.kernel.org"
+        id S1728958AbfLSSoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:44:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727260AbfLSSh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:56 -0500
+        id S1728946AbfLSSoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:44:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE8FC20716;
-        Thu, 19 Dec 2019 18:37:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5575C24679;
+        Thu, 19 Dec 2019 18:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780676;
-        bh=sdkColpjmtpftgne7Ad8WX3Q1lItJcv6eaE6k+9S5Jw=;
+        s=default; t=1576781043;
+        bh=vKGtRTAO9OrO2yKIbWWQ9WkANzVXLGsOgVLPAQ7WQCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0Q5iymF6fneMwCoxpPjr5ukwtgxhNaAH3PAMu7w0Gsl2o3F+wCficveMFNAqJxa8
-         MOAWSl0RUcf+xsC9JsnYJAf7HF/Da9AQGC/ck3ibr3EsoNvbNt6gHmT+tPs9TJ/nUI
-         b351Sq2Bgoq8EPp8KQmFQYxneLWnNA6Evc+HGNLU=
+        b=wXeETxqkuucWvHixDOEmUD/rBU9n2TUwkESdlR8EFUfj9l2flJ4KOdksOsfpwW9sZ
+         LhStwhTYuY8tPuy6gHphZNMwWUw27oaNyZ+AgWHcm+RrgQqDnw/AOWNg8ve5jqhFVY
+         3hhloBQSLooEDC2/gDu+sxfFfNr2crOhWjIvE9GM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 033/162] dma-mapping: fix return type of dma_set_max_seg_size()
+        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
+        Sergey Yanovich <ynvich@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 059/199] ARM: dts: pxa: clean up USB controller nodes
 Date:   Thu, 19 Dec 2019 19:32:21 +0100
-Message-Id: <20191219183209.774085454@linuxfoundation.org>
+Message-Id: <20191219183218.257793815@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,36 +45,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Daniel Mack <daniel@zonque.org>
 
-[ Upstream commit c9d76d0655c06b8c1f944e46c4fd9e9cf4b331c0 ]
+[ Upstream commit c40ad24254f1dbd54f2df5f5f524130dc1862122 ]
 
-The function dma_set_max_seg_size() can return either 0 on success or
--EIO on error. Change its return type from unsigned int to int to
-capture this.
+PXA25xx SoCs don't have a USB controller, so drop the node from the
+common pxa2xx.dtsi base file. Both pxa27x and pxa3xx have a dedicated
+node already anyway.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+While at it, unify the names for the nodes across all pxa platforms.
+
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+Reported-by: Sergey Yanovich <ynvich@gmail.com>
+Link: https://patchwork.kernel.org/patch/8375421/
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/dma-mapping.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm/boot/dts/pxa27x.dtsi | 2 +-
+ arch/arm/boot/dts/pxa2xx.dtsi | 7 -------
+ arch/arm/boot/dts/pxa3xx.dtsi | 2 +-
+ 3 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 2e551e2d2d03a..62dd6676b7cc6 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -151,8 +151,7 @@ static inline unsigned int dma_get_max_seg_size(struct device *dev)
- 	return SZ_64K;
- }
+diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
+index 0e1320afa1562..d629948000db1 100644
+--- a/arch/arm/boot/dts/pxa27x.dtsi
++++ b/arch/arm/boot/dts/pxa27x.dtsi
+@@ -34,7 +34,7 @@
+ 			clocks = <&clks CLK_NONE>;
+ 		};
  
--static inline unsigned int dma_set_max_seg_size(struct device *dev,
--						unsigned int size)
-+static inline int dma_set_max_seg_size(struct device *dev, unsigned int size)
- {
- 	if (dev->dma_parms) {
- 		dev->dma_parms->max_segment_size = size;
+-		pxa27x_ohci: usb@4c000000 {
++		usb0: usb@4c000000 {
+ 			compatible = "marvell,pxa-ohci";
+ 			reg = <0x4c000000 0x10000>;
+ 			interrupts = <3>;
+diff --git a/arch/arm/boot/dts/pxa2xx.dtsi b/arch/arm/boot/dts/pxa2xx.dtsi
+index 3ff077ca44002..5a6f4ed92dac3 100644
+--- a/arch/arm/boot/dts/pxa2xx.dtsi
++++ b/arch/arm/boot/dts/pxa2xx.dtsi
+@@ -117,13 +117,6 @@
+ 			status = "disabled";
+ 		};
+ 
+-		usb0: ohci@4c000000 {
+-			compatible = "marvell,pxa-ohci";
+-			reg = <0x4c000000 0x10000>;
+-			interrupts = <3>;
+-			status = "disabled";
+-		};
+-
+ 		mmc0: mmc@41100000 {
+ 			compatible = "marvell,pxa-mmc";
+ 			reg = <0x41100000 0x1000>;
+diff --git a/arch/arm/boot/dts/pxa3xx.dtsi b/arch/arm/boot/dts/pxa3xx.dtsi
+index 9d6f3aacedb70..4aee150626902 100644
+--- a/arch/arm/boot/dts/pxa3xx.dtsi
++++ b/arch/arm/boot/dts/pxa3xx.dtsi
+@@ -187,7 +187,7 @@
+ 			status = "disabled";
+ 		};
+ 
+-		pxa3xx_ohci: usb@4c000000 {
++		usb0: usb@4c000000 {
+ 			compatible = "marvell,pxa-ohci";
+ 			reg = <0x4c000000 0x10000>;
+ 			interrupts = <3>;
 -- 
 2.20.1
 
