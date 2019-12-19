@@ -2,119 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73F9126343
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:17:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C608512634F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:19:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLSNR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:17:28 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46294 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSNR1 (ORCPT
+        id S1726834AbfLSNTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:19:01 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:34290 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfLSNTA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:17:27 -0500
-Received: by mail-io1-f68.google.com with SMTP id t26so5667736ioi.13
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 05:17:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jw4pmutuy+Vq97iclaQ8+r0oYbBvDyG4Nv1qzyzsrWU=;
-        b=LFUH1vdr/zB8R4iQUX1VdCJ5DJbOKe7GdTOH3PkFeydwmE7naIinE52ec+tOae3k/x
-         kSQS/nO31+WMKhPzYbamyaOj0rObU6yFQ7ODCYON+v2cBs5M0vgSeL3NFDTgmoZS660p
-         UXyaIiQkMBm6ssxqh9nlTRlHsu4WQwZHPQK11HTs5GxXnFZofQcFBQLpZpSi6uyqamu/
-         DZtEFUYLWUbb1RCtYp0ZG9XbbY+m4H5Rs/BMfCWQoKOdH7ZBGMhpaSbJzWJW2rOp3lE8
-         3cyR6LWuVLfGIfEnXWYG0dLqFHSo79RbSftItp1+9DGtTXVoeQgp9W5xjlqaoKOd650E
-         WVVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jw4pmutuy+Vq97iclaQ8+r0oYbBvDyG4Nv1qzyzsrWU=;
-        b=EnlIqn0LN4G/dcUAEuaBRmHJIMcCKjVWQgEUrt+IouNqq3dsXCWGvzgGODFWAbTFmP
-         MGv8Rhx4d+64l9k4CwuCiUeYYnjMb149vA9uUqSO9w1o54RmJfpwSGlCH+spx8hj9VyD
-         Zx/zHJYA2Wu4NQhsUM10RaWeZYwtnSMQ6Fz1Gp9sXW/SJgfIlg19RVobTODDdV29p5gj
-         Qbz2X5tAQiW+d0nSGdxpFXqX3og9GyFpb6PdS+0zKL2GK/g/7pphc7PvusBXMcaf7KPZ
-         eR2XkdKwOUumMJGx162OW/VggbQJ3zhs1YqE/RplC5BYt5BMlZr6p2E3MQh0EGLxh4v/
-         UxGQ==
-X-Gm-Message-State: APjAAAVw5jUB+tnVNnxmcK/xP9qseoMtoc5kIKZJW6lNJmJ8uRMwXTdj
-        ZTtNodI+Sa/G4FTcFQMhVTSvExQljLrslw6KJZFo7fto
-X-Google-Smtp-Source: APXvYqwvNyyAhHwXAbfyd3QPNsoCzCD1REk3C8Va6CVWCncIMlprP/hrEm3OHy84MRRJ8VpUBzSY/wXGzh0D6GLiUfY=
-X-Received: by 2002:a02:c85b:: with SMTP id r27mr6964167jao.57.1576761446932;
- Thu, 19 Dec 2019 05:17:26 -0800 (PST)
+        Thu, 19 Dec 2019 08:19:00 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJDIwD4121919;
+        Thu, 19 Dec 2019 07:18:58 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576761538;
+        bh=hKqAOCo/ma8q7kF4B46wVaSESSJX9CpZN2QLfa+H56g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=feY/JA5gY4Kcli+l+ebZ97/xvgSYqZR0o6XVAGjSNwKRy0seyHf0tS/jc37VSO/Kf
+         NdvWMOc4SWO9ZsDwIr3Uer+PniTBY37VuYix+cQX/Ckfjr4GtRbwU0NevKGk2qVWAF
+         76UhW/cOWCT3y5ljF0u+PiQAME2yaIsVVYw/n9MM=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBJDIwuO097965
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Dec 2019 07:18:58 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Dec 2019 07:18:57 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Dec 2019 07:18:57 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJDIt1Y106703;
+        Thu, 19 Dec 2019 07:18:55 -0600
+Subject: Re: [PATCHv3 05/15] remoteproc/omap: Add the rproc ops .da_to_va()
+ implementation
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+CC:     <bjorn.andersson@linaro.org>, <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, Suman Anna <s-anna@ti.com>
+References: <20191213125537.11509-1-t-kristo@ti.com>
+ <20191213125537.11509-6-t-kristo@ti.com> <20191218003815.GC16271@xps15>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <5869498f-086c-cea4-edcf-1b75fb22cf22@ti.com>
+Date:   Thu, 19 Dec 2019 15:18:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-References: <20191204155941.17814-1-brgl@bgdev.pl> <CAHp75VdiAtHtdrUP2EmLULh86oO37ha8si10gFKYRavXCEwRRQ@mail.gmail.com>
- <CAMpxmJVXVVVMPA_hRbs3mUsFs=s_VtQK9SvvYK3Xc5X27NPTKw@mail.gmail.com>
- <CAHp75VfXc88Fa6=zs=9iToz27QdXHqRCDPQwBPs2P-rsBF8nHw@mail.gmail.com>
- <CAMRc=Me4xWsQggmr=BvJrA9-FnPkxFkOYsRTsSXCtyNwFnsHNw@mail.gmail.com>
- <CAHp75VfzP8-0wKmPTTKYe+fc6=r_4sVcJPyOsM8YTuH=i4rxmA@mail.gmail.com>
- <CAMRc=MfxteQDmeZn_Et0uFs2cPvLGpJ5BTeBOn37o=2Oo_eU=Q@mail.gmail.com>
- <CAHp75VfeEB5RudwMaoiMTMMY3zW-kz-h=rJ3Cu5_tyRL6ZuF1w@mail.gmail.com>
- <CAMRc=Mcy=Q+9Eb6mb5JEq+CCbxgBY1CfTDsYj1Rt9bcLXgeY=g@mail.gmail.com> <20191219131249.GA12008@firefly>
-In-Reply-To: <20191219131249.GA12008@firefly>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 19 Dec 2019 14:17:16 +0100
-Message-ID: <CAMRc=MfS49ENPS=ousx0EY-_-HM7QGtevknb9PBkewcbk7YJ4Q@mail.gmail.com>
-Subject: Re: [PATCH v2 10/11] gpiolib: add new ioctl() for monitoring changes
- in line info
-To:     Kent Gibson <warthog618@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191218003815.GC16271@xps15>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 19 gru 2019 o 14:13 Kent Gibson <warthog618@gmail.com> napisa=C5=82(a=
-):
->
-> On Thu, Dec 19, 2019 at 02:05:19PM +0100, Bartosz Golaszewski wrote:
-> > wt., 10 gru 2019 o 18:00 Andy Shevchenko <andy.shevchenko@gmail.com> na=
-pisa=C5=82(a):
-> > >
-> > > > On a different note: why would endianness be an issue here? 32-bit
-> > > > variables with 64-bit alignment should still be in the same place i=
-n
-> > > > memory, right?
-> > >
-> > > With explicit padding, yes.
-> > >
-> > > > Any reason not to use __packed for this structure and not deal with
-> > > > this whole compat mess?
-> > >
-> > > Have been suggested that explicit padding is better approach.
-> > > (See my answer to Kent)
-> > >
-> > > > I also noticed that my change will only allow user-space to read on=
-e
-> > > > event at a time which seems to be a regression with regard to the
-> > > > current implementation. I probably need to address this too.
-> > >
-> > > Yes, but we have to have ABI v2 in place.
-> >
-> > Hi Andy,
-> >
-> > I was playing with some ideas for the new ABI and noticed that on
-> > 64-bit architecture the size of struct gpiochip_info is reported to be
-> > 68 bytes, not 72 as I would expect. Is implicit alignment padding not
-> > applied to a struct if there's a non-64bit-aligned 32-bit field at the
-> > end of it? Is there something I'm missing here?
-> >
->
-> Struct alignment is based on the size of the largest element.
-> The largest element of struct gpiopchip_info is a __u32, so the struct
-> gets 32-bit alignment, even on 64-bit.
->
-> The structs with the problems all contain a __u64, and so get padded out
-> to a 64-bit boundary.
->
+On 18/12/2019 02:38, Mathieu Poirier wrote:
+> On Fri, Dec 13, 2019 at 02:55:27PM +0200, Tero Kristo wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> An implementation for the rproc ops .da_to_va() has been added
+>> that provides the address translation between device addresses
+>> to kernel virtual addresses for internal RAMs present on that
+>> particular remote processor device. The implementation provides
+>> the translations based on the addresses parsed and stored during
+>> the probe.
+>>
+>> This ops gets invoked by the exported rproc_da_to_va() function
+>> and allows the remoteproc core's ELF loader to be able to load
+>> program data directly into the internal memories.
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>> ---
+>>   drivers/remoteproc/omap_remoteproc.c | 39 ++++++++++++++++++++++++++++
+>>   1 file changed, 39 insertions(+)
+>>
+>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>> index 844703507a74..28f14e24b389 100644
+>> --- a/drivers/remoteproc/omap_remoteproc.c
+>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>> @@ -232,10 +232,49 @@ static int omap_rproc_stop(struct rproc *rproc)
+>>   	return 0;
+>>   }
+>>   
+>> +/**
+>> + * omap_rproc_da_to_va() - internal memory translation helper
+>> + * @rproc: remote processor to apply the address translation for
+>> + * @da: device address to translate
+>> + * @len: length of the memory buffer
+>> + *
+>> + * Custom function implementing the rproc .da_to_va ops to provide address
+>> + * translation (device address to kernel virtual address) for internal RAMs
+>> + * present in a DSP or IPU device). The translated addresses can be used
+>> + * either by the remoteproc core for loading, or by any rpmsg bus drivers.
+>> + * Returns the translated virtual address in kernel memory space, or NULL
+>> + * in failure.
+>> + */
+>> +static void *omap_rproc_da_to_va(struct rproc *rproc, u64 da, int len)
+>> +{
+>> +	struct omap_rproc *oproc = rproc->priv;
+>> +	int i;
+>> +	u32 offset;
+>> +
+>> +	if (len <= 0)
+>> +		return NULL;
+>> +
+>> +	if (!oproc->num_mems)
+>> +		return NULL;
+>> +
+>> +	for (i = 0; i < oproc->num_mems; i++) {
+>> +		if (da >= oproc->mem[i].dev_addr && da + len <=
+> 
+> Shouldn't this be '<' rather than '<=' ?
 
-Thanks for the clarification, now it makes sense. I assumed memory
-alignment depends on the architecture. I need to educate myself more
-on this subject I guess.
+No, I think <= is correct. You need to consider the initial byte in the 
+range also. Consider a simple case where you provide the exact da + len 
+corresponding to a specific memory range.
 
-Bart
+> 
+>> +		    oproc->mem[i].dev_addr +  oproc->mem[i].size) {
+> 
+> One space too many after the '+' .
+
+True, I wonder why checkpatch did not catch this.
+
+> 
+>> +			offset = da -  oproc->mem[i].dev_addr;
+> 
+> One space too many after then '-' .
+
+Same, will fix these two.
+
+-Tero
+
+> 
+>> +			/* __force to make sparse happy with type conversion */
+>> +			return (__force void *)(oproc->mem[i].cpu_addr +
+>> +						offset);
+>> +		}
+>> +	}
+>> +
+>> +	return NULL;
+>> +}
+>> +
+>>   static const struct rproc_ops omap_rproc_ops = {
+>>   	.start		= omap_rproc_start,
+>>   	.stop		= omap_rproc_stop,
+>>   	.kick		= omap_rproc_kick,
+>> +	.da_to_va	= omap_rproc_da_to_va,
+>>   };
+>>   
+>>   static const char * const ipu_mem_names[] = {
+>> -- 
+>> 2.17.1
+>>
+>> --
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
