@@ -2,87 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD721261A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:05:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7475E12617C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfLSMEu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727239AbfLSMEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:47 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D0822467F;
-        Thu, 19 Dec 2019 12:04:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757086;
-        bh=REPAJHtyJR+6Jy8EQQhR674vo1D1/ED3u57XVfrNpyc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZG+nSrs6uN+I+BIGH9g/qebPimgmwx7q0+wtbI9Y7LsZzNGtouCFklrxBY4h6IaaH
-         KHEpj3RQqmYECzFtz7r1c/igzPpzWHmq+4TjhVtgMJBES4LzsDNFU6GjdHrHPRVeS/
-         rf8nX9+wvgwLqRe8LSbr1awWJAAlmqvuUPD+28Sg=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
+        id S1726935AbfLSMCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:02:32 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:50454 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfLSMCc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:02:32 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2I7s030349;
+        Thu, 19 Dec 2019 06:02:18 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576756938;
+        bh=SJ4hNptUJk4P4x4SOwGjpOGBMqMzUELoedaw1b+jwHI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=RFvRJCXO0HNrMEcTcs4Fcr3tvG2qzsk0ASlEc41wcAlIV1j1EOg9iX3ITF/TeAP62
+         pNUMfAKHW+v53YNoTRjTq67JrWwAQXmYAH5BVzcf8Y/dCQPYFQzZls5F6DrLZbYE4x
+         rJHv+WPgKFUV5JWWnd08mRG45SCctKuFBZZobeXk=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2H8k014202;
+        Thu, 19 Dec 2019 06:02:17 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Dec 2019 06:02:17 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Dec 2019 06:02:17 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2DRK102964;
+        Thu, 19 Dec 2019 06:02:14 -0600
+Subject: Re: [PATCH 07/13] PCI: cadence: Add new *ops* for CPU addr fixup
+To:     Andrew Murray <andrew.murray@arm.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 16/16] iommu/arm-smmu: Update my email address in MODULE_AUTHOR()
-Date:   Thu, 19 Dec 2019 12:03:52 +0000
-Message-Id: <20191219120352.382-17-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191219120352.382-1-will@kernel.org>
-References: <20191219120352.382-1-will@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20191209092147.22901-1-kishon@ti.com>
+ <20191209092147.22901-8-kishon@ti.com>
+ <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <936cd6d6-33fc-6432-6fec-2b5173cb9ca4@ti.com>
+Date:   Thu, 19 Dec 2019 17:33:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I no longer work for Arm, so update the stale reference to my old email
-address.
+Hi,
 
-Signed-off-by: Will Deacon <will@kernel.org>
----
- drivers/iommu/arm-smmu-v3.c | 2 +-
- drivers/iommu/arm-smmu.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On 17/12/19 6:10 pm, Andrew Murray wrote:
+> On Mon, Dec 09, 2019 at 02:51:41PM +0530, Kishon Vijay Abraham I wrote:
+>> Cadence driver uses "mem" memory resource to obtain the offset of
+>> configuration space address region, memory space address region and
+>> message space address region. The obtained offset is used to program
+>> the Address Translation Unit (ATU). However certain platforms like TI's
+>> J721E SoC require the absolute address to be programmed in the ATU and not
+>> just the offset.
+>>
+>> The same problem was solved in designware driver using a platform specific
+>> ops for CPU addr fixup in commit a660083eb06c5bb0 ("PCI: dwc: designware:
+> 
+> Thanks for this reference, though this doesn't need to be in the commit
+> log, please put such comments underneath a ---.
+> 
+>> Add new *ops* for CPU addr fixup"). Follow a similar mechanism in
+>> Cadence too instead of directly using "mem" memory resource in Cadence
+>> PCIe core.
+>>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  .../pci/controller/cadence/pcie-cadence-host.c    | 15 ++++-----------
+>>  drivers/pci/controller/cadence/pcie-cadence.c     |  8 ++++++--
+>>  drivers/pci/controller/cadence/pcie-cadence.h     |  1 +
+>>  3 files changed, 11 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> index 2efc33b1cade..cf817be237af 100644
+>> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> @@ -105,15 +105,14 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
+>>  static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>>  {
+>>  	struct cdns_pcie *pcie = &rc->pcie;
+>> -	struct resource *mem_res = pcie->mem_res;
+>>  	struct resource *bus_range = rc->bus_range;
+>>  	struct resource *cfg_res = rc->cfg_res;
+>>  	struct device *dev = pcie->dev;
+>>  	struct device_node *np = dev->of_node;
+>>  	struct of_pci_range_parser parser;
+>> +	u64 cpu_addr = cfg_res->start;
+>>  	struct of_pci_range range;
+>>  	u32 addr0, addr1, desc1;
+>> -	u64 cpu_addr;
+>>  	int r, err;
+>>  
+>>  	/*
+>> @@ -126,7 +125,9 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
+>>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
+>>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
+>>  
+>> -	cpu_addr = cfg_res->start - mem_res->start;
+>> +	if (pcie->ops->cpu_addr_fixup)
+>> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
+>> +
+> 
+> Won't this patch cause a breakage for existing users that won't have defined a
+> cpu_addr_fixup? The offset isn't being calculated and so cpu_addr will be wrong?
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 2a65d9b87125..03dc97842875 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -3732,6 +3732,6 @@ static struct platform_driver arm_smmu_driver = {
- module_platform_driver(arm_smmu_driver);
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
--MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-+MODULE_AUTHOR("Will Deacon <will@kernel.org>");
- MODULE_ALIAS("platform:arm-smmu-v3");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 3cfa138fbd4f..5ef1f2e100d7 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2322,6 +2322,6 @@ static struct platform_driver arm_smmu_driver = {
- module_platform_driver(arm_smmu_driver);
- 
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
--MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-+MODULE_AUTHOR("Will Deacon <will@kernel.org>");
- MODULE_ALIAS("platform:arm-smmu");
- MODULE_LICENSE("GPL v2");
--- 
-2.24.1.735.g03f4e72817-goog
+Correct, this will need an additional patch in pcie-cadence-plat.c.
 
+Thanks
+Kishon
