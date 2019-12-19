@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32585126695
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C80761266B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:21:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfLSQTB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:19:01 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:44206 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727052AbfLSQS7 (ORCPT
+        id S1726943AbfLSQVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:21:00 -0500
+Received: from www62.your-server.de ([213.133.104.62]:56570 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726778AbfLSQU7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:18:59 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576772338; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=WWzgqMCs3OvjqZLCaMbpY7f3izcNFaVnzcUYiTYGFw0=;
- b=QKDcqsJUmv0QC04bIdfe9DasYOetxmG3koEfc6TVLUCLxfU0hbuoc/CAaBSqZtzB9aMC2g+D
- EeioPwiYrI6e8LgFd0L4vkJRfR+z7bBq6Z72JAxkVq1N0jpfXfCnE/HtQXylDas/1RBvB9ti
- JD6DdUUp3uZeSu7zZTGEHYN//rM=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfba2f1.7fb23f4df0a0-smtp-out-n03;
- Thu, 19 Dec 2019 16:18:57 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6FD8AC447AF; Thu, 19 Dec 2019 16:18:57 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=2.0 tests=ALL_TRUSTED,MISSING_DATE,
-        MISSING_MID,SPF_NONE autolearn=no autolearn_force=no version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F4D8C43383;
-        Thu, 19 Dec 2019 16:18:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F4D8C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 19 Dec 2019 11:20:59 -0500
+Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=localhost)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1ihyXk-0003mT-CK; Thu, 19 Dec 2019 17:20:52 +0100
+Date:   Thu, 19 Dec 2019 17:20:51 +0100
+From:   Daniel Borkmann <daniel@iogearbox.net>
+To:     Alexander Lobakin <alobakin@dlink.ru>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Matteo Croce <mcroce@redhat.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Edward Cree <ecree@solarflare.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH net] net: core: sysctl: fix compiler warning when only
+ cBPF is present
+Message-ID: <20191219162051.GA11015@linux-9.fritz.box>
+References: <20191218091821.7080-1-alobakin@dlink.ru>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] ath11k: Use sizeof_field() instead of FIELD_SIZEOF()
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <201912181657.CE7D3CE33@keescook>
-References: <201912181657.CE7D3CE33@keescook>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        ath11k@lists.infradead.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20191219161857.6FD8AC447AF@smtp.codeaurora.org>
-Date:   Thu, 19 Dec 2019 16:18:57 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191218091821.7080-1-alobakin@dlink.ru>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25668/Thu Dec 19 10:55:58 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> wrote:
-
-> The FIELD_SIZEOF() macro was redundant, and is being removed from the
-> kernel. Since commit c593642c8be0 ("treewide: Use sizeof_field() macro")
-> this is one of the last users of the old macro, so replace it.
+On Wed, Dec 18, 2019 at 12:18:21PM +0300, Alexander Lobakin wrote:
+> proc_dointvec_minmax_bpf_restricted() has been firstly introduced
+> in commit 2e4a30983b0f ("bpf: restrict access to core bpf sysctls")
+> under CONFIG_HAVE_EBPF_JIT. Then, this ifdef has been removed in
+> ede95a63b5e8 ("bpf: add bpf_jit_limit knob to restrict unpriv
+> allocations"), because a new sysctl, bpf_jit_limit, made use of it.
+> Finally, this parameter has become long instead of integer with
+> fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+> and thus, a new proc_dolongvec_minmax_bpf_restricted() has been
+> added.
+> With this last change, we got back to that
+> proc_dointvec_minmax_bpf_restricted() is used only under
+> CONFIG_HAVE_EBPF_JIT, but the corresponding ifdef has not been
+> brought back.
 > 
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+> So, in configurations like CONFIG_BPF_JIT=y && CONFIG_HAVE_EBPF_JIT=n
+> since v4.20 we have:
+> 
+>   CC      net/core/sysctl_net_core.o
+> net/core/sysctl_net_core.c:292:1: warning: ‘proc_dointvec_minmax_bpf_restricted’ defined but not used [-Wunused-function]
+>   292 | proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Suppress this by guarding it with CONFIG_HAVE_EBPF_JIT again.
+> 
+> Fixes: fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
+> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
 
-Patch applied to ath-next branch of ath.git, thanks.
-
-ca0e477931c5 ath11k: Use sizeof_field() instead of FIELD_SIZEOF()
-
--- 
-https://patchwork.kernel.org/patch/11302533/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Applied, thanks!
