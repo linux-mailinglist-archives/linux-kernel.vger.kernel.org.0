@@ -2,160 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E6B125EB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA881125ECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:24:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfLSKPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:15:40 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42687 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbfLSKPk (ORCPT
+        id S1726734AbfLSKYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:24:10 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:33917 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726636AbfLSKYK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:15:40 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y19so3923150lfl.9;
-        Thu, 19 Dec 2019 02:15:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Rj2q3wD6aajz3PdA1FLrek6nU5zhW+vEBFUB4MYLIYs=;
-        b=VYe/tjzPHNpyq9kN24qr+0wfOwumba6bmciRVLa+9L5NEuwXAUQgygIBNEwsMvxx2A
-         5Sg/FAQKikTm1I6zgD3Pfq46QC69Fc4LaxF9XYMgsjj5m5DWD41kn7ShaJs9Hp/a0BfW
-         8+MYUQ9/VfDCVH6sY0bhMFCQPTPvGw8IrrwXoyYxUesoqKWMpmZh/ltZjqVVR2arkFwe
-         0yisTx5w/UZcNm/Zj4SWqhfR/xQVoWtjbLyBBi/iTAkAB5rxnbCp+QwSphWccc79DSi4
-         AMgYBzY/A3xL/PWG24tLgjNzZn2hBJPqCs3WfUMJ1XApJqo090kvepcXm2XyV0t9mqWB
-         r5MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Rj2q3wD6aajz3PdA1FLrek6nU5zhW+vEBFUB4MYLIYs=;
-        b=POuZyLbRHk4Hu5hZesNlsNL9sys7iZCrhOdvF7cuSBlSNqwHJlyi9Q6aeS39Vyd4hw
-         k1+2DW2J8OmHLpQfx8nymj5pD/MWs9Xx3eYwgA0Svrudiwnu5bUmCsE2Sp9h8sw8lEKf
-         yCRrLvOlAPBqj45bK+djTD1N9pzL85VNhH9XEXeWbHhOGSO5FTg2iF09B7HOl1wveo1P
-         69oUsR8Rref3dQRC0C3Z+RR7J9ewrnw8/z9vpL8Cx9/KDxDO6lndVwpmHkPAmEwFMmr6
-         GiwUROFfN/WC4iRHpcOolsoHjqSLAZ/3WT/SXJBXTw9sG5b1lU5A5ik7xd1eJKqamaJz
-         +RFA==
-X-Gm-Message-State: APjAAAXZuztYZgI188mo1xSv0YvPaNqBcs9d854QOkkVJbzkKBF6+Ulv
-        da5MukE3q3d0pSpgM4IZdeNMBoQDqsyDgw==
-X-Google-Smtp-Source: APXvYqya/tgd7VQnmbu9lTExcsRK48yqlOicy53+7Ka2wVmIDOYpJUSfB1plClM8Ws9/ZUmRYzQX1A==
-X-Received: by 2002:ac2:4834:: with SMTP id 20mr4443150lft.166.1576750537756;
-        Thu, 19 Dec 2019 02:15:37 -0800 (PST)
-Received: from [192.168.43.60] ([176.227.99.155])
-        by smtp.gmail.com with ESMTPSA id g24sm2384473lfb.85.2019.12.19.02.15.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 02:15:36 -0800 (PST)
-Subject: Re: [PATCH] Revert "iwlwifi: mvm: fix scan config command size"
-From:   Mehmet Akif Tasova <makiftasova@gmail.com>
-To:     Roman Gilg <subdiff@gmail.com>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
-        Tova Mussai <tova.mussai@intel.com>,
-        Ayala Beker <ayala.beker@intel.com>,
-        Sara Sharon <sara.sharon@intel.com>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191213203512.8250-1-makiftasova@gmail.com>
- <CAJcyoyusgtw0++KsEHK-t=EFGx2v9GKv7+BSViUCaB3nyDr2Jw@mail.gmail.com>
- <CAP=YcKGLDx_coFsY7ej6BkdBJT+FELGSOMM6YM_r7jgqEsvChw@mail.gmail.com>
-Message-ID: <8b895e5a-745b-a9f1-2bc8-8a1fac61129f@gmail.com>
-Date:   Thu, 19 Dec 2019 13:15:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <CAP=YcKGLDx_coFsY7ej6BkdBJT+FELGSOMM6YM_r7jgqEsvChw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 19 Dec 2019 05:24:10 -0500
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20191219102408epoutp04d688b98135eec12a83bb2ff4b2a46d96~hvrltk9iY0598205982epoutp04d
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 10:24:08 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20191219102408epoutp04d688b98135eec12a83bb2ff4b2a46d96~hvrltk9iY0598205982epoutp04d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576751048;
+        bh=lNrhRejjZJSzCkKB4e9oz198En7AGkhdGjzwETzjwSA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=KRYEj2JzULwya/Lqwzr7vEUGg8ieaFAf3rPegr29B0PVUF3SyMCsP9klN81Hb1v0F
+         ECc7o8e5so/QQv3UuwVcxFPji6Ab/CxyYfVztMOTNtOYbFxz8BKojI0vtLkS7M66Ta
+         3ZaPRb8yNlIUrnHGCUZ5g5Hn6i5XMQy/gom60bkg=
+Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20191219102407epcas5p1b5c225f18bdc03ded34454fd31c43f6f~hvrlMFaTh0414504145epcas5p1y;
+        Thu, 19 Dec 2019 10:24:07 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        84.91.20197.7CF4BFD5; Thu, 19 Dec 2019 19:24:07 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219102407epcas5p103b26e6fb191f7135d870a3449115c89~hvrktDiNf1266012660epcas5p1U;
+        Thu, 19 Dec 2019 10:24:07 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191219102407epsmtrp176085784dc461fe6da3d95f7ca863b62~hvrksUUAR2283122831epsmtrp1j;
+        Thu, 19 Dec 2019 10:24:07 +0000 (GMT)
+X-AuditID: b6c32a4a-781ff70000014ee5-d8-5dfb4fc75a10
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        41.F3.06569.6CF4BFD5; Thu, 19 Dec 2019 19:24:07 +0900 (KST)
+Received: from Jaguar.sa.corp.samsungelectronics.net (unknown
+        [107.108.73.139]) by epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191219102405epsmtip2fd5ad69fdeaf24c9021b65c50e814a81~hvri16nI00195201952epsmtip2W;
+        Thu, 19 Dec 2019 10:24:04 +0000 (GMT)
+From:   Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+To:     netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
+        Jose.Abreu@synopsys.com, davem@davemloft.net,
+        stable@vger.kernel.org, jayati.sahu@samsung.com,
+        pankaj.dubey@samsung.com, rcsekar@samsung.com,
+        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
+        Sriram Dash <sriram.dash@samsung.com>
+Subject: [PATCH] net: stmmac: platform: Fix MDIO init for platforms without
+ PHY
+Date:   Thu, 19 Dec 2019 15:47:01 +0530
+Message-Id: <1576750621-78066-1-git-send-email-p.rajanbabu@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleLIzCtJLcpLzFFi42LZdlhTS/e4/+9Yg6/PlC02PjnNaDHnfAuL
+        xZFTS5gs7v35wGqx6fE1VovLu+awWXRde8JqcWyBmMXRjcEWi7Z+Ybf4/3oro8WsCztYLW6s
+        Z7dYsPERowOfx5aVN5k8Ni+p9+jbsorR4+A+Q4+nP/Yye2zZ/5nR4/MmuQD2KC6blNSczLLU
+        In27BK6MVZMa2Qs2clb8n7+QrYGxjaOLkYNDQsBEYsqyoC5GLg4hgd2MEmd3/mOBcD4xSmxb
+        s5+1i5ETyPnGKLFnoQ2IDdIw6/htNoiivYwSSx5OYIJwWpgkbk1+ygxSxSZgKrFqTiMrSEJE
+        oItRYteBOWCjmAUWMkm82GcJYgsLBEp82dbNAmKzCKhKbHlwhhHE5hVwl/j7dx0rxDo5iZvn
+        Opkh7CNsEl9XaELYLhLvlz9ng7CFJV4d38IOYUtJvOxvg7LLJV5+Wgx2qoRAA6PEzInTGSES
+        9hIHrsxhAQUAs4CmxPpd+hC38Un0/n7CBAkXXomONiGIalWJ9cs3QXVKS+y7vhfK9pDoubqB
+        BRJCsRKT1xxhnsAoMwth6AJGxlWMkqkFxbnpqcWmBUZ5qeV6xYm5xaV56XrJ+bmbGMHpQstr
+        B+Oycz6HGAU4GJV4eH+4/ooVYk0sK67MPcQowcGsJMJ7u+NnrBBvSmJlVWpRfnxRaU5q8SFG
+        aQ4WJXHeSaxXY4QE0hNLUrNTUwtSi2CyTBycUg2MtgKXHZhlDwa5b13vK+t5rXEtX7X5Tr7X
+        ew7NszL866pvqH72wbIZvV6pLjp/Ze68S2SMO/nw+ax77G4F710djOwEn1/0tnF5sT8yfi9j
+        2IX+n1sWf2n97WqUfP33xaT8r2+W/q9/ZWM4PVXLN13UKDvgnulymb939sxRCtaffrOgpSe5
+        TNpAiaU4I9FQi7moOBEANvs2axMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsWy7bCSvO5x/9+xBru6GS02PjnNaDHnfAuL
+        xZFTS5gs7v35wGqx6fE1VovLu+awWXRde8JqcWyBmMXRjcEWi7Z+Ybf4/3oro8WsCztYLW6s
+        Z7dYsPERowOfx5aVN5k8Ni+p9+jbsorR4+A+Q4+nP/Yye2zZ/5nR4/MmuQD2KC6blNSczLLU
+        In27BK6MVZMa2Qs2clb8n7+QrYGxjaOLkZNDQsBEYtbx22xdjFwcQgK7GSV+LpzNBpGQlpje
+        vwfKFpZY+e85O0RRE5NE98UtYAk2AVOJVXMaWUESIgJ9jBL/F/1hAnGYBVYzSexY08IEUiUs
+        4C9x//4LFhCbRUBVYsuDM4wgNq+Au8Tfv+tYIVbISdw818k8gZFnASPDKkbJ1ILi3PTcYsMC
+        o7zUcr3ixNzi0rx0veT83E2M4NDU0trBeOJE/CFGAQ5GJR7eH66/YoVYE8uKK3MPMUpwMCuJ
+        8N7u+BkrxJuSWFmVWpQfX1Sak1p8iFGag0VJnFc+/1ikkEB6YklqdmpqQWoRTJaJg1OqgXGZ
+        bP8snY0e68QWK7Kq80bprA/YcKM3K0EhI73gvVDxo8C5NWJ7Xtkm1P+t29F7+rRuwBYTFaPj
+        zofvSPscrcgI8dwmEMrtHr+kz/LLI93mvh1ft9x/+CxVhi9i3qPoRzd36q9hXf/z4d8zlZEp
+        Nz2X7hFOdXhuPm/yghOWrX9u/d+0Kt85+IASS3FGoqEWc1FxIgDJWKlXSQIAAA==
+X-CMS-MailID: 20191219102407epcas5p103b26e6fb191f7135d870a3449115c89
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CMS-RootMailID: 20191219102407epcas5p103b26e6fb191f7135d870a3449115c89
+References: <CGME20191219102407epcas5p103b26e6fb191f7135d870a3449115c89@epcas5p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+The current implementation of "stmmac_dt_phy" function initializes
+the MDIO platform bus data, even in the absence of PHY. This fix
+will skip MDIO initialization if there is no PHY present.
 
-Because I used gmail mobile app to response and the app decided that 
-always using HTML is a valid choice for every one, my previous mail 
-rejected by mailing lists.
+Fixes: 7437127 ("net: stmmac: Convert to phylink and remove phylib logic")
+Acked-by: Jayati Sahu <jayati.sahu@samsung.com>
+Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
+Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Because of that I am (re)sending this mail. You can find contents of my 
-previous mail below.
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+index bedaff0..cc8d7e7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
+@@ -320,7 +320,7 @@ static int stmmac_mtl_setup(struct platform_device *pdev,
+ static int stmmac_dt_phy(struct plat_stmmacenet_data *plat,
+ 			 struct device_node *np, struct device *dev)
+ {
+-	bool mdio = true;
++	bool mdio = false;
+ 	static const struct of_device_id need_mdio_ids[] = {
+ 		{ .compatible = "snps,dwc-qos-ethernet-4.10" },
+ 		{},
+-- 
+2.7.4
 
-Regards,
-Mehmet Akif.
-
-> Hi Roman,
->
-> Unfortunately I don't have XPS 13 and tested the patch on Dell Vostro 
-> 5481 and this patch is the result of bisection on Vostro.
->
-> At first, the Archlinux bug report I shared looked similar thus that 
-> bug report contains lots of dmesg outputs from different users. But 
-> yes probably there is 2 distinct issue which should be solved separately.
->
-> I will update commit message accordingly as soon as possible.
->
-> Regards,
-> Mehmet Akif
->
->
-> On Wed, Dec 18, 2019, 22:12 Roman Gilg <subdiff@gmail.com 
-> <mailto:subdiff@gmail.com>> wrote:
->
->     On Fri, Dec 13, 2019 at 9:36 PM Mehmet Akif Tasova
->     <makiftasova@gmail.com <mailto:makiftasova@gmail.com>> wrote:
->     >
->     > Since Linux 5.4.1 released, iwlwifi could not initialize
->     Intel(R) Dual Band
->     > Wireless AC 9462 firmware, failing with following error in dmesg:
->     >
->     > iwlwifi 0000:00:14.3: FW error in SYNC CMD SCAN_CFG_CMD
->     >
->     > whole dmesg output of error can be found at:
->     > https://gist.github.com/makiftasova/354e46439338f4ab3fba0b77ad5c19ec
->     >
->     > also bug report from ArchLinux bug tracker (contains more info):
->     > https://bugs.archlinux.org/task/64703
->
->     Since this bug report is about the Dell XPS 13 2-in1: I tested your
->     revert with this device, but the issue persists at least on this
->     device. So these might be two different issues, one for your device
->     and another one for the XPS.
->
->     > Reverting commit 06eb547c4ae4 ("iwlwifi: mvm: fix scan config
->     command
->     > size") seems to fix this issue  until proper solution is found.
->     >
->     > This reverts commit 06eb547c4ae4382e70d556ba213d13c95ca1801b.
->     >
->     > Signed-off-by: Mehmet Akif Tasova <makiftasova@gmail.com
->     <mailto:makiftasova@gmail.com>>
->     > ---
->     >  drivers/net/wireless/intel/iwlwifi/mvm/scan.c | 2 +-
->     >  1 file changed, 1 insertion(+), 1 deletion(-)
->     >
->     > diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
->     b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
->     > index a046ac9fa852..a5af8f4128b1 100644
->     > --- a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
->     > +++ b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
->     > @@ -1213,7 +1213,7 @@ static int
->     iwl_mvm_legacy_config_scan(struct iwl_mvm *mvm)
->     >                 cmd_size = sizeof(struct iwl_scan_config_v2);
->     >         else
->     >                 cmd_size = sizeof(struct iwl_scan_config_v1);
->     > -       cmd_size += num_channels;
->     > +       cmd_size += mvm->fw->ucode_capa.n_scan_channels;
->     >
->     >         cfg = kzalloc(cmd_size, GFP_KERNEL);
->     >         if (!cfg)
->     > --
->     > 2.24.1
->     >
->
