@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFAF91269B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:40:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F78B126B10
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:53:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfLSSk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:40:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59196 "EHLO mail.kernel.org"
+        id S1729826AbfLSSxk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728071AbfLSSk0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:40:26 -0500
+        id S1730399AbfLSSxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C067624682;
-        Thu, 19 Dec 2019 18:40:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7ABDD20674;
+        Thu, 19 Dec 2019 18:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780826;
-        bh=atv7YAxSoS79URw9rbDEbE0+hZXe8bkNhGKUBQKyMAM=;
+        s=default; t=1576781615;
+        bh=Yy3XFsEZe3sqWetSTqVFGhQUN8SLOL5eBvnri+gU0VM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1FvHsVPvYKMTKEoM3bQXJRck159XKITVlQcpPJOzNSBOH5978ZP1OK4u32U5l+s77
-         0lGS5E+fcdV0FuBdNz+naYFvHz+QXwu6P6vNKAVCc9S8yLXCTZ+zxZBYJKC4nOvA4V
-         uwAkAU5jnkDgptuYJSbIapIuRDag8RtpiMi9/Pkw=
+        b=XLTObImYYxcGmucGaSFMCzT/2TsB4NNSH9nvz64qXCuKSu5YhGhz2sbso9IK4VumY
+         93NyVGnUcwLAl9TA14L9l88HgSk96cCe5gNkjKZ+Z6w6DlEZx5oCbYyLoa/Cgq4f64
+         4IUgh4loR0ffPvaAS5xZixmWhgu2SIe3nr0UJpl8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 133/162] pinctrl: samsung: Fix device node refcount leaks in S3C64xx wakeup controller init
-Date:   Thu, 19 Dec 2019 19:34:01 +0100
-Message-Id: <20191219183215.873963985@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 5.4 10/80] PCI/MSI: Fix incorrect MSI-X masking on resume
+Date:   Thu, 19 Dec 2019 19:34:02 +0100
+Message-Id: <20191219183045.268358671@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,53 +43,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-[ Upstream commit 7f028caadf6c37580d0f59c6c094ed09afc04062 ]
+commit e045fa29e89383c717e308609edd19d2fd29e1be upstream.
 
-In s3c64xx_eint_eint0_init() the for_each_child_of_node() loop is used
-with a break to find a matching child node.  Although each iteration of
-for_each_child_of_node puts the previous node, but early exit from loop
-misses it.  This leads to leak of device node.
+When a driver enables MSI-X, msix_program_entries() reads the MSI-X Vector
+Control register for each vector and saves it in desc->masked.  Each
+register is 32 bits and bit 0 is the actual Mask bit.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 61dd72613177 ("pinctrl: Add pinctrl-s3c64xx driver")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+When we restored these registers during resume, we previously set the Mask
+bit if *any* bit in desc->masked was set instead of when the Mask bit
+itself was set:
+
+  pci_restore_state
+    pci_restore_msi_state
+      __pci_restore_msix_state
+        for_each_pci_msi_entry
+          msix_mask_irq(entry, entry->masked)   <-- entire u32 word
+            __pci_msix_desc_mask_irq(desc, flag)
+              mask_bits = desc->masked & ~PCI_MSIX_ENTRY_CTRL_MASKBIT
+              if (flag)       <-- testing entire u32, not just bit 0
+                mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT
+              writel(mask_bits, desc_addr + PCI_MSIX_ENTRY_VECTOR_CTRL)
+
+This means that after resume, MSI-X vectors were masked when they shouldn't
+be, which leads to timeouts like this:
+
+  nvme nvme0: I/O 978 QID 3 timeout, completion polled
+
+On resume, set the Mask bit only when the saved Mask bit from suspend was
+set.
+
+This should remove the need for 19ea025e1d28 ("nvme: Add quirk for Kingston
+NVME SSD running FW E8FK11.T").
+
+[bhelgaas: commit log, move fix to __pci_msix_desc_mask_irq()]
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=204887
+Link: https://lore.kernel.org/r/20191008034238.2503-1-jian-hong@endlessm.com
+Fixes: f2440d9acbe8 ("PCI MSI: Refactor interrupt masking code")
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/pinctrl/samsung/pinctrl-s3c64xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/pci/msi.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-index 43407ab248f51..0cd9f3a7bb11a 100644
---- a/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c64xx.c
-@@ -713,6 +713,7 @@ static int s3c64xx_eint_eint0_init(struct samsung_pinctrl_drv_data *d)
- 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data) {
- 		dev_err(dev, "could not allocate memory for wkup eint data\n");
-+		of_node_put(eint0_np);
- 		return -ENOMEM;
- 	}
- 	data->drvdata = d;
-@@ -723,6 +724,7 @@ static int s3c64xx_eint_eint0_init(struct samsung_pinctrl_drv_data *d)
- 		irq = irq_of_parse_and_map(eint0_np, i);
- 		if (!irq) {
- 			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
-+			of_node_put(eint0_np);
- 			return -ENXIO;
- 		}
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -213,12 +213,13 @@ u32 __pci_msix_desc_mask_irq(struct msi_
  
-@@ -730,6 +732,7 @@ static int s3c64xx_eint_eint0_init(struct samsung_pinctrl_drv_data *d)
- 						 s3c64xx_eint0_handlers[i],
- 						 data);
- 	}
-+	of_node_put(eint0_np);
+ 	if (pci_msi_ignore_mask)
+ 		return 0;
++
+ 	desc_addr = pci_msix_desc_addr(desc);
+ 	if (!desc_addr)
+ 		return 0;
  
- 	bank = d->pin_banks;
- 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
--- 
-2.20.1
-
+ 	mask_bits &= ~PCI_MSIX_ENTRY_CTRL_MASKBIT;
+-	if (flag)
++	if (flag & PCI_MSIX_ENTRY_CTRL_MASKBIT)
+ 		mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT;
+ 
+ 	writel(mask_bits, desc_addr + PCI_MSIX_ENTRY_VECTOR_CTRL);
 
 
