@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1365126AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 187F7126AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbfLSSuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:50:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44226 "EHLO mail.kernel.org"
+        id S1730292AbfLSSwr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:52:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729970AbfLSSuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:50:23 -0500
+        id S1730283AbfLSSwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:44 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CBFB2064B;
-        Thu, 19 Dec 2019 18:50:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B1482468A;
+        Thu, 19 Dec 2019 18:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781422;
-        bh=HHdoDJ7rmZglhmmXVeqvhm7b+Zk+loPFJUyB8Ox7+cg=;
+        s=default; t=1576781564;
+        bh=1PxvcWMoJDi7qVwBIOeTcemwFDTFkq4tPGTvQHkT/QA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c8fGXNobPaa7H6Zt8WGJfFOr4JEUxaIQ+Z0ULJ/LxF4T7iuZx8H9h85weHRQ+kuUZ
-         5GyfaVoHrEe5RLupVZRXURDnc6fIsoOrFtA61bVnk/6adjuu4Ipobzkahm9ETfRBjl
-         KLwKdVyKhKilVwprmpihJtp6ibqaURTyZsN2phSM=
+        b=giJxS7pkkUIe8Ag1ZmiFiGi/Id8B0GlhROR5lw3BZkYVywAYUf6jfCheAKtlpkhWg
+         FX7hclBTJ/QmbFxuwcxAi3pszGHzxO/myHmYb0MJ3Gc+hOVj7Aer1CD3c3VvGs7i8W
+         RlsxOpmYuA4HHaJi4xCsWPB8NGaYlls49/cB8/YA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Aaron Conole <aconole@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 05/36] openvswitch: support asymmetric conntrack
+Subject: [PATCH 4.19 08/47] openvswitch: support asymmetric conntrack
 Date:   Thu, 19 Dec 2019 19:34:22 +0100
-Message-Id: <20191219182855.197824990@linuxfoundation.org>
+Message-Id: <20191219182903.506958631@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -66,7 +66,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/net/openvswitch/conntrack.c
 +++ b/net/openvswitch/conntrack.c
-@@ -879,6 +879,17 @@ static int ovs_ct_nat(struct net *net, s
+@@ -897,6 +897,17 @@ static int ovs_ct_nat(struct net *net, s
  	}
  	err = ovs_ct_nat_execute(skb, ct, ctinfo, &info->range, maniptype);
  
