@@ -2,60 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87E95125A76
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63FBC125A7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:19:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfLSFOj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 00:14:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41832 "EHLO mail.kernel.org"
+        id S1726847AbfLSFTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 00:19:54 -0500
+Received: from mga02.intel.com ([134.134.136.20]:30641 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfLSFOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:14:39 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2B842146E;
-        Thu, 19 Dec 2019 05:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576732478;
-        bh=zutbo+tkyWAeoZo0maixsENGTToLoAmt9MwqGd10Gvk=;
-        h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
-        b=SvdIWTueB22fAa/EqIDmetplXA/yHVHTxROAlv9nALYp6XEVxf+PZ13hSd6ZP7zUq
-         aTg2Gj1IuqzblN2opxfhhQGK69ycvcncMQcLaTtpyasdIk7oDDXmNz1FnV+R7GK84H
-         +SADY9DR+IEd06Bjcm6lnOiXp6BUonTRz8RoxwAc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191218190454.420358-3-lkundrak@v3.sk>
-References: <20191218190454.420358-1-lkundrak@v3.sk> <20191218190454.420358-3-lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: Re: [PATCH 2/2] clk: mmp2: Fix the order of timer mux parents
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-User-Agent: alot/0.8.1
-Date:   Wed, 18 Dec 2019 21:14:37 -0800
-Message-Id: <20191219051438.C2B842146E@mail.kernel.org>
+        id S1725908AbfLSFTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 00:19:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 21:19:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="213131732"
+Received: from allen-box.sh.intel.com ([10.239.159.136])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Dec 2019 21:19:51 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/2] iommu/vt-d: Avoid iova flush queue in strict mode
+Date:   Thu, 19 Dec 2019 13:18:50 +0800
+Message-Id: <20191219051851.25159-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-12-18 11:04:54)
-> Determined empirically, no documentation is available.
->=20
-> The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), b=
-ut
-> thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
-> what is going on, ended up just dividing the rate as of
-> commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
+If Intel IOMMU strict mode is enabled by users, it's unnecessary
+to create the iova flush queue.
 
-Any Fixes: tag?
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+---
+ drivers/iommu/intel-iommu.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index 0726705d2d89..93e1d7c3ac7c 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1858,10 +1858,12 @@ static int domain_init(struct dmar_domain *domain, struct intel_iommu *iommu,
+ 
+ 	init_iova_domain(&domain->iovad, VTD_PAGE_SIZE, IOVA_START_PFN);
+ 
+-	err = init_iova_flush_queue(&domain->iovad,
+-				    iommu_flush_iova, iova_entry_free);
+-	if (err)
+-		return err;
++	if (!intel_iommu_strict) {
++		err = init_iova_flush_queue(&domain->iovad,
++					    iommu_flush_iova, iova_entry_free);
++		if (err)
++			return err;
++	}
+ 
+ 	domain_reserve_special_ranges(domain);
+ 
+@@ -5199,6 +5201,7 @@ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ {
+ 	struct dmar_domain *dmar_domain;
+ 	struct iommu_domain *domain;
++	int ret;
+ 
+ 	switch (type) {
+ 	case IOMMU_DOMAIN_DMA:
+@@ -5215,11 +5218,14 @@ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ 			return NULL;
+ 		}
+ 
+-		if (type == IOMMU_DOMAIN_DMA &&
+-		    init_iova_flush_queue(&dmar_domain->iovad,
+-					  iommu_flush_iova, iova_entry_free)) {
+-			pr_warn("iova flush queue initialization failed\n");
+-			intel_iommu_strict = 1;
++		if (!intel_iommu_strict && type == IOMMU_DOMAIN_DMA) {
++			ret = init_iova_flush_queue(&dmar_domain->iovad,
++						    iommu_flush_iova,
++						    iova_entry_free);
++			if (ret) {
++				pr_warn("iova flush queue initialization failed\n");
++				intel_iommu_strict = 1;
++			}
+ 		}
+ 
+ 		domain_update_iommu_cap(dmar_domain);
+-- 
+2.17.1
 
