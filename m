@@ -2,94 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A23CD1258A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A96811258A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:40:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbfLSAjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 19:39:08 -0500
-Received: from mga12.intel.com ([192.55.52.136]:56776 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbfLSAjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:39:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 16:39:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="228070707"
-Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
-  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2019 16:39:00 -0800
-Message-ID: <dd33820c8874f8e4c7628243e0583a419be7fed4.camel@linux.intel.com>
-Subject: Re: [PATCH v24 06/24] x86/sgx: Add wrappers for ENCLS leaf functions
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
-        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
-        puiterwijk@redhat.com
-Date:   Thu, 19 Dec 2019 02:39:00 +0200
-In-Reply-To: <20191217144548.GF28788@zn.tnic>
-References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
-         <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
-         <20191217144548.GF28788@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S1726726AbfLSAj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 19:39:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:51080 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbfLSAj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 19:39:59 -0500
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ihjr9-0002Ra-Ac; Thu, 19 Dec 2019 00:39:55 +0000
+Date:   Thu, 19 Dec 2019 01:39:54 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
+Subject: Re: [PATCH 1/3] cgroup: unify attach permission checking
+Message-ID: <20191219003953.y26rclexqwijxmvz@wittgenstein>
+References: <20191218173516.7875-1-christian.brauner@ubuntu.com>
+ <20191218173516.7875-2-christian.brauner@ubuntu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191218173516.7875-2-christian.brauner@ubuntu.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-17 at 15:45 +0100, Borislav Petkov wrote:
-> On Sat, Nov 30, 2019 at 01:13:08AM +0200, Jarkko Sakkinen wrote:
-> > +/**
-> > + * encls_failed() - Check if an ENCLS leaf function failed
-> > + * @ret:	the return value of an ENCLS leaf function call
-> > + *
-> > + * Check if an ENCLS leaf function failed. This happens when the leaf function
-> > + * causes a fault that is not caused by an EPCM conflict or when the leaf
-> > + * function returns a non-zero value.
-> > + */
-> > +static inline bool encls_failed(int ret)
-> > +{
-> > +	int epcm_trapnr =
-> > +		boot_cpu_has(X86_FEATURE_SGX2) ? X86_TRAP_PF : X86_TRAP_GP;
-> > +	bool fault = ret & ENCLS_FAULT_FLAG;
-> > +
-> > +	return (fault && ENCLS_TRAPNR(ret) != epcm_trapnr) || (!fault && ret);
-> > +}
+On Wed, Dec 18, 2019 at 06:35:14PM +0100, Christian Brauner wrote:
+> The core codepaths to check whether a process can be attached to a
+> cgroup are the same for threads and thread-group leaders. Only a small
+> piece of code verifying that source and destination cgroup are in the
+> same domain differentiates the thread permission checking from
+> thread-group leader permission checking.
+> Since cgroup_migrate_vet_dst() only matters cgroup2 - it is a noop on
+> cgroup1 - we can move it out of cgroup_attach_task().
+> All checks can now be consolidated into a new helper
+> cgroup_attach_permissions() callable from both cgroup_procs_write() and
+> cgroup_threads_write().
 > 
-> Can we make this function more readable?
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Li Zefan <lizefan@huawei.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: cgroups@vger.kernel.org
+> Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> ---
+>  kernel/cgroup/cgroup.c | 46 +++++++++++++++++++++++++++++-------------
+>  1 file changed, 32 insertions(+), 14 deletions(-)
 > 
-> static inline bool encls_failed(int ret)
-> {
->         int epcm_trapnr;
-> 
->         if (boot_cpu_has(X86_FEATURE_SGX2))
->                 epcm_trapnr = X86_TRAP_PF;
->         else
->                 epcm_trapnr = X86_TRAP_GP;
-> 
->         if (ret & ENCLS_FAULT_FLAG)
->                 return ENCLS_TRAPNR(ret) != epcm_trapnr;
-> 
->         return !!ret;
-> }
-> 
-> I hope I've converted it correctly but I might've missed some corner
-> case...
-> 
-> Thx.
+> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> index 735af8f15f95..5ee06c1f7456 100644
+> --- a/kernel/cgroup/cgroup.c
+> +++ b/kernel/cgroup/cgroup.c
+> @@ -2719,11 +2719,7 @@ int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
+>  {
+>  	DEFINE_CGROUP_MGCTX(mgctx);
+>  	struct task_struct *task;
+> -	int ret;
+> -
+> -	ret = cgroup_migrate_vet_dst(dst_cgrp);
+> -	if (ret)
+> -		return ret;
+> +	int ret = 0;
+>  
+>  	/* look up all src csets */
+>  	spin_lock_irq(&css_set_lock);
+> @@ -4690,6 +4686,33 @@ static int cgroup_procs_write_permission(struct cgroup *src_cgrp,
+>  	return 0;
+>  }
+>  
+> +static inline bool cgroup_same_domain(const struct cgroup *src_cgrp,
+> +				      const struct cgroup *dst_cgrp)
+> +{
+> +	return src_cgrp->dom_cgrp == dst_cgrp->dom_cgrp;
+> +}
+> +
+> +static int cgroup_attach_permissions(struct cgroup *src_cgrp,
+> +				     struct cgroup *dst_cgrp,
+> +				     struct super_block *sb, bool thread)
+> +{
+> +	int ret;
 
-Absolutely. I absolutely hate too "clever code".
+This needs to be
 
-/Jarkko
+ret = 0
 
+> +
+> +	ret = cgroup_procs_write_permission(src_cgrp, dst_cgrp, sb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = cgroup_migrate_vet_dst(dst_cgrp);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (thread &&
+> +	    !cgroup_same_domain(src_cgrp->dom_cgrp, dst_cgrp->dom_cgrp))
+> +		ret = -EOPNOTSUPP;
+> +
+> +	return 0;
+
+and this
+
+return ret;
