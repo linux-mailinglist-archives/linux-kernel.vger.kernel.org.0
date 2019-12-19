@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B6F9126B70
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11532126AA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730538AbfLSS4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:56:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52958 "EHLO mail.kernel.org"
+        id S1729790AbfLSSt1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:49:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730809AbfLSS4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:56:24 -0500
+        id S1729782AbfLSStY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47575206EC;
-        Thu, 19 Dec 2019 18:56:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B833124672;
+        Thu, 19 Dec 2019 18:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781783;
-        bh=jk0VuUMvYHyoH4GIwFD9bkaY87rYKm6vgjLVmpGwtis=;
+        s=default; t=1576781364;
+        bh=FjQfHrnMKBL/HTRi+36OsxA3RH7s2kM7QEmwxUvZLGg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=er5lXTOcIaL4Dwh3TAVqLwNPLN5dzdW0WLuTSnIZ9+b4Oc6H6n0YdmB/fgwcRpIWC
-         B/QNLvRY0nWUvykPJeFVQc2BPr0ZaaniP6XdDJp7roQo2UYw0NerwbOpJRUQ8dl/sF
-         TkUx6wQDvhMvWG9xXK9lFrguaQ175bDMd0vX4MtU=
+        b=ceix/livFYA47RGl9cqDyARLVeRppvUBKii+u0Igo1/MAZ5044a8AtxuOMH191MmX
+         FddBFBaV8pzOA1kEAiXfn1vJUbCIwE7ktvL2fjaL99apeMzsVyri5rgnVk/QCBX3r6
+         3exvPYmCtNClE6zM29EOnLyZnBPYphjU6bWzIvGk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Dmitry Osipenko <digetx@gmail.com>,
         Thierry Reding <treding@nvidia.com>
-Subject: [PATCH 5.4 40/80] ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
-Date:   Thu, 19 Dec 2019 19:34:32 +0100
-Message-Id: <20191219183108.704774605@linuxfoundation.org>
+Subject: [PATCH 4.9 191/199] ARM: tegra: Fix FLOW_CTLR_HALT register clobbering by tegra_resume()
+Date:   Thu, 19 Dec 2019 19:34:33 +0100
+Message-Id: <20191219183226.316229908@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -64,7 +64,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/arch/arm/mach-tegra/reset-handler.S
 +++ b/arch/arm/mach-tegra/reset-handler.S
-@@ -44,16 +44,16 @@ ENTRY(tegra_resume)
+@@ -56,16 +56,16 @@ ENTRY(tegra_resume)
  	cmp	r6, #TEGRA20
  	beq	1f				@ Yes
  	/* Clear the flow controller flags for this CPU. */
