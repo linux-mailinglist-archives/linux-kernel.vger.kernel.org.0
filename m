@@ -2,263 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F1FC125960
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 02:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18C7C125964
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 02:54:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfLSBwX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 20:52:23 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:36578 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726463AbfLSBwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 20:52:23 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id AB3485C287CEFDA569EA;
-        Thu, 19 Dec 2019 09:52:20 +0800 (CST)
-Received: from [127.0.0.1] (10.74.191.121) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Dec 2019
- 09:52:15 +0800
-Subject: Re: [net-next v4 PATCH] page_pool: handle page recycle for
- NUMA_NO_NODE condition
-To:     Jesper Dangaard Brouer <brouer@redhat.com>,
-        <netdev@vger.kernel.org>
-CC:     <lirongqing@baidu.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Saeed Mahameed <saeedm@mellanox.com>, <mhocko@kernel.org>,
-        <peterz@infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20191218084437.6db92d32@carbon>
- <157665609556.170047.13435503155369210509.stgit@firesoul>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <40fb6aff-beec-f186-2bc0-187ad370cf0b@huawei.com>
-Date:   Thu, 19 Dec 2019 09:52:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S1726463AbfLSByS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 20:54:18 -0500
+Received: from mga12.intel.com ([192.55.52.136]:57625 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726776AbfLSByS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 20:54:18 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 17:54:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="228087471"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2019 17:54:15 -0800
+Cc:     baolu.lu@linux.intel.com,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        iommu@lists.linux-foundation.org,
+        Robin Murphy <robin.murphy@arm.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 4/5] iommu: intel: Use generic_iommu_put_resv_regions()
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Joerg Roedel <joro@8bytes.org>
+References: <20191218134205.1271740-1-thierry.reding@gmail.com>
+ <20191218134205.1271740-5-thierry.reding@gmail.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <2b3020a1-221c-f86b-6440-e9ef65f0c12e@linux.intel.com>
+Date:   Thu, 19 Dec 2019 09:53:22 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <157665609556.170047.13435503155369210509.stgit@firesoul>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20191218134205.1271740-5-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/18 16:01, Jesper Dangaard Brouer wrote:
-> The check in pool_page_reusable (page_to_nid(page) == pool->p.nid) is
-> not valid if page_pool was configured with pool->p.nid = NUMA_NO_NODE.
+Please tweak the title to
+
+"iommu/vt-d: Use generic_iommu_put_resv_regions()"
+
+then,
+
+Acked-by: Lu Baolu <baolu.lu@linux.intel.com>
+
+Best regards,
+baolu
+
+On 12/18/19 9:42 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> The goal of the NUMA changes in commit d5394610b1ba ("page_pool: Don't
-> recycle non-reusable pages"), were to have RX-pages that belongs to the
-> same NUMA node as the CPU processing RX-packet during softirq/NAPI. As
-> illustrated by the performance measurements.
+> Use the new standard function instead of open-coding it.
 > 
-> This patch moves the NAPI checks out of fast-path, and at the same time
-> solves the NUMA_NO_NODE issue.
-> 
-> First realize that alloc_pages_node() with pool->p.nid = NUMA_NO_NODE
-> will lookup current CPU nid (Numa ID) via numa_mem_id(), which is used
-> as the the preferred nid.  It is only in rare situations, where
-> e.g. NUMA zone runs dry, that page gets doesn't get allocated from
-> preferred nid.  The page_pool API allows drivers to control the nid
-> themselves via controlling pool->p.nid.
-> 
-> This patch moves the NAPI check to when alloc cache is refilled, via
-> dequeuing/consuming pages from the ptr_ring. Thus, we can allow placing
-> pages from remote NUMA into the ptr_ring, as the dequeue/consume step
-> will check the NUMA node. All current drivers using page_pool will
-> alloc/refill RX-ring from same CPU running softirq/NAPI process.
-> 
-> Drivers that control the nid explicitly, also use page_pool_update_nid
-> when changing nid runtime.  To speed up transision to new nid the alloc
-> cache is now flushed on nid changes.  This force pages to come from
-> ptr_ring, which does the appropate nid check.
-> 
-> For the NUMA_NO_NODE case, when a NIC IRQ is moved to another NUMA
-> node, then ptr_ring will be emptied in 65 (PP_ALLOC_CACHE_REFILL+1)
-> chunks per allocation and allocation fall-through to the real
-> page-allocator with the new nid derived from numa_mem_id(). We accept
-> that transitioning the alloc cache doesn't happen immediately.
-> 
-> Fixes: d5394610b1ba ("page_pool: Don't recycle non-reusable pages")
-> Reported-by: Li RongQing <lirongqing@baidu.com>
-> Reported-by: Yunsheng Lin <linyunsheng@huawei.com>
-> Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->  net/core/page_pool.c |   82 ++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 63 insertions(+), 19 deletions(-)
+>   drivers/iommu/intel-iommu.c | 11 +----------
+>   1 file changed, 1 insertion(+), 10 deletions(-)
 > 
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index a6aefe989043..bd4f8b2c46b6 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -96,10 +96,61 @@ struct page_pool *page_pool_create(const struct page_pool_params *params)
->  }
->  EXPORT_SYMBOL(page_pool_create);
->  
-> +static void __page_pool_return_page(struct page_pool *pool, struct page *page);
-
-It is possible to avoid forword-declare it by move the __page_pool_return_page()?
-Maybe it is ok since this patch is targetting net-next?
-
-> +
-> +noinline
-> +static struct page *page_pool_refill_alloc_cache(struct page_pool *pool,
-> +						 bool refill)
-> +{
-> +	struct ptr_ring *r = &pool->ring;
-> +	struct page *first_page, *page;
-> +	int i, curr_nid;
-> +
-> +	/* Quicker fallback, avoid locks when ring is empty */
-> +	if (__ptr_ring_empty(r))
-> +		return NULL;
-> +
-> +	/* Softirq guarantee CPU and thus NUMA node is stable. This,
-> +	 * assumes CPU refilling driver RX-ring will also run RX-NAPI.
-> +	 */
-> +	curr_nid = numa_mem_id();
-> +
-> +	/* Slower-path: Get pages from locked ring queue */
-> +	spin_lock(&r->consumer_lock);
-> +	first_page = __ptr_ring_consume(r);
-> +
-> +	/* Fallback to page-allocator if NUMA node doesn't match */
-> +	if (first_page && unlikely(!(page_to_nid(first_page) == curr_nid))) {
-> +		__page_pool_return_page(pool, first_page);
-> +		first_page = NULL;
-> +	}
-> +
-> +	if (unlikely(!refill))
-> +		goto out;
-> +
-> +	/* Refill alloc array, but only if NUMA node match */
-> +	for (i = 0; i < PP_ALLOC_CACHE_REFILL; i++) {
-> +		page = __ptr_ring_consume(r);
-> +		if (unlikely(!page))
-> +			break;
-> +
-> +		if (likely(page_to_nid(page) == curr_nid)) {
-> +			pool->alloc.cache[pool->alloc.count++] = page;
-> +		} else {
-> +			/* Release page to page-allocator, assume
-> +			 * refcnt == 1 invariant of cached pages
-> +			 */
-> +			__page_pool_return_page(pool, page);
-> +		}
-> +	}
-
-The above code seems to not clear all the pages in the ptr_ring that
-is not in the local node in some case?
-
-I am not so familiar with asm, but does below code make sense and
-generate better asm code?
-
-	struct page *page = NULL;
-
-	while (pool->alloc.count < PP_ALLOC_CACHE_REFILL || !refill) {
-		page = __ptr_ring_consume(r);
-
-		if (unlikely(!page || !refill))
-			break;
-
-		if (likely(page_to_nid(page) == curr_nid)) {
-			pool->alloc.cache[pool->alloc.count++] = page;
-		} else {
-			/* Release page to page-allocator, assume
-			 * refcnt == 1 invariant of cached pages
-			 */
-			__page_pool_return_page(pool, page);
-		}
-	}
-
-out:
-	if (likely(refill && pool->alloc.count > 0))
-		page = pool->alloc.cache[--pool->alloc.count];
-
-	spin_unlock(&r->consumer_lock);
-	
-	return page;
-
-
-"The above code does not compile or test yet".
-
-the above will clear all the pages in the ptr_ring that is not in the local
-node and treat the refill and !refill case consistently.
-
-But for the refill case, the pool->alloc.count may be PP_ALLOC_CACHE_REFILL - 1
-after page_pool_refill_alloc_cache() returns.
-
-
-> +out:
-> +	spin_unlock(&r->consumer_lock);
-> +	return first_page;
-> +}
-> +
->  /* fast path */
->  static struct page *__page_pool_get_cached(struct page_pool *pool)
->  {
-> -	struct ptr_ring *r = &pool->ring;
->  	bool refill = false;
->  	struct page *page;
->  
-> @@ -113,20 +164,7 @@ static struct page *__page_pool_get_cached(struct page_pool *pool)
->  		refill = true;
->  	}
->  
-> -	/* Quicker fallback, avoid locks when ring is empty */
-> -	if (__ptr_ring_empty(r))
-> -		return NULL;
+> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+> index 42966611a192..a6d5b7cf9183 100644
+> --- a/drivers/iommu/intel-iommu.c
+> +++ b/drivers/iommu/intel-iommu.c
+> @@ -5744,15 +5744,6 @@ static void intel_iommu_get_resv_regions(struct device *device,
+>   	list_add_tail(&reg->list, head);
+>   }
+>   
+> -static void intel_iommu_put_resv_regions(struct device *dev,
+> -					 struct list_head *head)
+> -{
+> -	struct iommu_resv_region *entry, *next;
 > -
-> -	/* Slow-path: Get page from locked ring queue,
-> -	 * refill alloc array if requested.
-> -	 */
-> -	spin_lock(&r->consumer_lock);
-> -	page = __ptr_ring_consume(r);
-> -	if (refill)
-> -		pool->alloc.count = __ptr_ring_consume_batched(r,
-> -							pool->alloc.cache,
-> -							PP_ALLOC_CACHE_REFILL);
-> -	spin_unlock(&r->consumer_lock);
-> +	page = page_pool_refill_alloc_cache(pool, refill);
->  	return page;
->  }
->  
-> @@ -311,13 +349,10 @@ static bool __page_pool_recycle_direct(struct page *page,
->  
->  /* page is NOT reusable when:
->   * 1) allocated when system is under some pressure. (page_is_pfmemalloc)
-> - * 2) belongs to a different NUMA node than pool->p.nid.
-> - *
-> - * To update pool->p.nid users must call page_pool_update_nid.
->   */
->  static bool pool_page_reusable(struct page_pool *pool, struct page *page)
->  {
-> -	return !page_is_pfmemalloc(page) && page_to_nid(page) == pool->p.nid;
-> +	return !page_is_pfmemalloc(page);
->  }
->  
->  void __page_pool_put_page(struct page_pool *pool, struct page *page,
-> @@ -484,7 +519,16 @@ EXPORT_SYMBOL(page_pool_destroy);
->  /* Caller must provide appropriate safe context, e.g. NAPI. */
->  void page_pool_update_nid(struct page_pool *pool, int new_nid)
->  {
-> +	struct page *page;
-> +
-> +	WARN_ON(!in_serving_softirq());
->  	trace_page_pool_update_nid(pool, new_nid);
->  	pool->p.nid = new_nid;
-> +
-> +	/* Flush pool alloc cache, as refill will check NUMA node */
-> +	while (pool->alloc.count) {
-> +		page = pool->alloc.cache[--pool->alloc.count];
-> +		__page_pool_return_page(pool, page);
-> +	}
->  }
->  EXPORT_SYMBOL(page_pool_update_nid);
+> -	list_for_each_entry_safe(entry, next, head, list)
+> -		kfree(entry);
+> -}
+> -
+>   int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct device *dev)
+>   {
+>   	struct device_domain_info *info;
+> @@ -5987,7 +5978,7 @@ const struct iommu_ops intel_iommu_ops = {
+>   	.add_device		= intel_iommu_add_device,
+>   	.remove_device		= intel_iommu_remove_device,
+>   	.get_resv_regions	= intel_iommu_get_resv_regions,
+> -	.put_resv_regions	= intel_iommu_put_resv_regions,
+> +	.put_resv_regions	= generic_iommu_put_resv_regions,
+>   	.apply_resv_region	= intel_iommu_apply_resv_region,
+>   	.device_group		= pci_device_group,
+>   	.dev_has_feat		= intel_iommu_dev_has_feat,
 > 
-> 
-> 
-> .
-> 
-
