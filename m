@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 233DB126A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3BE912697B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfLSSoS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36100 "EHLO mail.kernel.org"
+        id S1727962AbfLSSiG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:38:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728966AbfLSSoL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:11 -0500
+        id S1727951AbfLSSiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD6F224672;
-        Thu, 19 Dec 2019 18:44:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 126EA20716;
+        Thu, 19 Dec 2019 18:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781051;
-        bh=Y502lsPMB5qgMHI4OhlUNf8KmzIbMdwOn7jSQLvZNAc=;
+        s=default; t=1576780683;
+        bh=ioL19NGVy6hMx0RYu8e7DqjhRj5BQCCUBbouw/SxLH4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z2LL6gub0vSkT48DnbY1gl9vfnY6dT5dXf57Zd1UomtodaLFc2757lu3onKiFi2M6
-         q8mr3Fmtl+6Ghh1DgFdx1nLF5Stgu20XTKS1KJ1SKNvp3xqn0Lugm39+5cMYd/BGkS
-         WaJ0bGq2RSiEC1j66xNyDgPkcg6Bswhs04hZ2PPc=
+        b=Yw3w1I19TYiEI7IL6Ufc5yOSLOY2H1QbjzmfrotqxRQcg+SLeOE/nqMUHs9MEkzk5
+         UR5MooiwXrbC7wOIPQW0x2PRUAk/FIaR2o/UBXfqyCRjml5oeDhq75N5VjNObPZylI
+         WlfDmeYoFutm26v4ZFA/61RrBjHGT8cR72BPS2B4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Teigland <teigland@redhat.com>,
+        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 062/199] dlm: fix invalid cluster name warning
+Subject: [PATCH 4.4 036/162] i2c: imx: dont print error message on probe defer
 Date:   Thu, 19 Dec 2019 19:32:24 +0100
-Message-Id: <20191219183218.437070869@linuxfoundation.org>
+Message-Id: <20191219183210.026925099@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,45 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Teigland <teigland@redhat.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit 3595c559326d0b660bb088a88e22e0ca630a0e35 ]
+[ Upstream commit fece4978510e43f09c8cd386fee15210e8c68493 ]
 
-The warning added in commit 3b0e761ba83
-  "dlm: print log message when cluster name is not set"
+Probe deferral is a normal operating condition in the probe function,
+so don't spam the log with an error in this case.
 
-did not account for the fact that lockspaces created
-from userland do not supply a cluster name, so bogus
-warnings are printed every time a userland lockspace
-is created.
-
-Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/user.c | 3 ++-
+ drivers/i2c/busses/i2c-imx.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/dlm/user.c b/fs/dlm/user.c
-index 57f2aacec97f5..bb0d307deadd3 100644
---- a/fs/dlm/user.c
-+++ b/fs/dlm/user.c
-@@ -25,6 +25,7 @@
- #include "lvb_table.h"
- #include "user.h"
- #include "ast.h"
-+#include "config.h"
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index cf1b57a054d09..d121c5732d7db 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -1076,7 +1076,8 @@ static int i2c_imx_probe(struct platform_device *pdev)
+ 	/* Get I2C clock */
+ 	i2c_imx->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(i2c_imx->clk)) {
+-		dev_err(&pdev->dev, "can't get I2C clock\n");
++		if (PTR_ERR(i2c_imx->clk) != -EPROBE_DEFER)
++			dev_err(&pdev->dev, "can't get I2C clock\n");
+ 		return PTR_ERR(i2c_imx->clk);
+ 	}
  
- static const char name_prefix[] = "dlm";
- static const struct file_operations device_fops;
-@@ -402,7 +403,7 @@ static int device_create_lockspace(struct dlm_lspace_params *params)
- 	if (!capable(CAP_SYS_ADMIN))
- 		return -EPERM;
- 
--	error = dlm_new_lockspace(params->name, NULL, params->flags,
-+	error = dlm_new_lockspace(params->name, dlm_config.ci_cluster_name, params->flags,
- 				  DLM_USER_LVB_LEN, NULL, NULL, NULL,
- 				  &lockspace);
- 	if (error)
 -- 
 2.20.1
 
