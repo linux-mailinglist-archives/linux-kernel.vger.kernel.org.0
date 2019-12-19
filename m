@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 463C91269FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 748C4126950
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728809AbfLSSnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:43:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34590 "EHLO mail.kernel.org"
+        id S1727604AbfLSSg3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:36:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728789AbfLSSnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:05 -0500
+        id S1727577AbfLSSg0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:36:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5593424672;
-        Thu, 19 Dec 2019 18:43:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C39402467B;
+        Thu, 19 Dec 2019 18:36:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780984;
-        bh=YitMJak+QJ5u7f/nA4YofkormATrSvmkfaTtgbRZJzM=;
+        s=default; t=1576780586;
+        bh=gFCL55yY9BQIM8t0HoiwSrpJw767D1kWJryM0A1GYfw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MFlLftY5L4Zu1kmeTat91RME+tx5kkJrs+HfsITJu++qm6LedavhbimGex6CSUsdk
-         FpDilJOc2dmSvWpagTNoey+Qi1DRKEi1jwRAX5UGu4MNZYeyipGV/ru3KHdgWMmCo8
-         JC1Qha9Nl2XYuVtVAmHfhBz4cZsC1yezFYJKMm98=
+        b=m40KuzRsQCU8ALzH+ATecHtWZ7UoYdauaCr4tHxIM//wIFGAzH1cdNHL8JjKfAyNZ
+         q/hxyYP0UU7exaMvJsUaZIz5I7LNnp78t6j1J/o1sHGfsO9mdtYXIbdi3rS5QH0nTb
+         9kqpokqunsrpSBzYyskpXRl9piumx1B+L7pcK6Mo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 034/199] rtc: max8997: Fix the returned value in case of error in max8997_rtc_read_alarm()
-Date:   Thu, 19 Dec 2019 19:31:56 +0100
-Message-Id: <20191219183216.791262015@linuxfoundation.org>
+Subject: [PATCH 4.4 009/162] Input: cyttsp4_core - fix use after free bug
+Date:   Thu, 19 Dec 2019 19:31:57 +0100
+Message-Id: <20191219183201.355167767@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Pan Bian <bianpan2016@163.com>
 
-[ Upstream commit 41ef3878203cd9218d92eaa07df4b85a2cb128fb ]
+[ Upstream commit 79aae6acbef16f720a7949f8fc6ac69816c79d62 ]
 
-In case of error, we return 0.
-This is spurious and not consistent with the other functions of the driver.
-Propagate the error code instead.
+The device md->input is used after it is released. Setting the device
+data to NULL is unnecessary as the device is never used again. Instead,
+md->input should be assigned NULL to avoid accessing the freed memory
+accidently. Besides, checking md->si against NULL is superfluous as it
+points to a variable address, which cannot be NULL.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Link: https://lore.kernel.org/r/1572936379-6423-1-git-send-email-bianpan2016@163.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/rtc/rtc-max8997.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/input/touchscreen/cyttsp4_core.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-index db984d4bf9526..4cce5bd448f65 100644
---- a/drivers/rtc/rtc-max8997.c
-+++ b/drivers/rtc/rtc-max8997.c
-@@ -221,7 +221,7 @@ static int max8997_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+diff --git a/drivers/input/touchscreen/cyttsp4_core.c b/drivers/input/touchscreen/cyttsp4_core.c
+index 5ed31057430c6..6e904048d1cb7 100644
+--- a/drivers/input/touchscreen/cyttsp4_core.c
++++ b/drivers/input/touchscreen/cyttsp4_core.c
+@@ -1972,11 +1972,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
  
- out:
- 	mutex_unlock(&info->lock);
--	return 0;
-+	return ret;
- }
+ 	/* get sysinfo */
+ 	md->si = &cd->sysinfo;
+-	if (!md->si) {
+-		dev_err(dev, "%s: Fail get sysinfo pointer from core p=%p\n",
+-			__func__, md->si);
+-		goto error_get_sysinfo;
+-	}
  
- static int max8997_rtc_stop_alarm(struct max8997_rtc_info *info)
+ 	rc = cyttsp4_setup_input_device(cd);
+ 	if (rc)
+@@ -1986,8 +1981,6 @@ static int cyttsp4_mt_probe(struct cyttsp4 *cd)
+ 
+ error_init_input:
+ 	input_free_device(md->input);
+-error_get_sysinfo:
+-	input_set_drvdata(md->input, NULL);
+ error_alloc_failed:
+ 	dev_err(dev, "%s failed.\n", __func__);
+ 	return rc;
 -- 
 2.20.1
 
