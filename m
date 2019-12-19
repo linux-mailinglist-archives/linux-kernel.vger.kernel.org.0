@@ -2,65 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B5C91265F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 16:41:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27B0D12662A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 16:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbfLSPlq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 10:41:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41430 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbfLSPlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 10:41:46 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05A79206EC;
-        Thu, 19 Dec 2019 15:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576770105;
-        bh=KF60Qe5gV74XQJzFH9w0KtJr6zzItpIRfiJtfel+FtA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mX1sOidzues28HZ3z4Rp9rVat7pc28SuwQU3f/f5w7GvesHpULS+NBePQFyYs2E4u
-         eSW17ZipKIZ4SRxxp/vB9x6/Vo8NuMsvT/3DuXqkW3HKNWjZTFuMvZzPIJJ3uQbI6l
-         zDqpC5kp7AZDRe3zqkKOMrOQ8MC2GLspIZPT9aIw=
-Date:   Thu, 19 Dec 2019 16:41:43 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Aviraj CJ <acj@cisco.com>
-Cc:     peppe.cavallaro@st.com, alexandre.torgue@st.com,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xe-linux-external@cisco.com
-Subject: Re: [PATCH stable v4.14 1/2] net: stmmac: use correct DMA buffer
- size in the RX descriptor
-Message-ID: <20191219154143.GA1969379@kroah.com>
-References: <20191218131720.12270-1-acj@cisco.com>
+        id S1726869AbfLSPyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 10:54:24 -0500
+Received: from winnie.ispras.ru ([83.149.199.91]:10338 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726759AbfLSPyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 10:54:24 -0500
+X-Greylist: delayed 520 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 10:54:24 EST
+Received: from [10.10.3.121] (monopod.intra.ispras.ru [10.10.3.121])
+        by smtp.ispras.ru (Postfix) with ESMTP id C893C203C1;
+        Thu, 19 Dec 2019 18:45:39 +0300 (MSK)
+Date:   Thu, 19 Dec 2019 18:45:39 +0300 (MSK)
+From:   Alexander Monakov <amonakov@ispras.ru>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+cc:     Peter Zijlstra <peterz@infradead.org>, gcc-help@gcc.gnu.org,
+        mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, Jan Hubicka <hubicka@ucw.cz>
+Subject: Re: [Q] ld: Does LTO reorder ro variables in two files?
+In-Reply-To: <3db1b1c8-0228-56e4-a04f-e8d24cd1dd51@virtuozzo.com>
+Message-ID: <alpine.LNX.2.20.13.1912191817440.18668@monopod.intra.ispras.ru>
+References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain> <20191219131242.GK2827@hirez.programming.kicks-ass.net> <3db1b1c8-0228-56e4-a04f-e8d24cd1dd51@virtuozzo.com>
+User-Agent: Alpine 2.20.13 (LNX 116 2015-12-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218131720.12270-1-acj@cisco.com>
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 05:17:19AM -0800, Aviraj CJ wrote:
-> upstream 583e6361414903c5206258a30e5bd88cb03c0254 commit
-> 
-> We always program the maximum DMA buffer size into the receive descriptor,
-> although the allocated size may be less. E.g. with the default MTU size
-> we allocate only 1536 bytes. If somebody sends us a bigger frame, then
-> memory may get corrupted.
-> 
-> Program DMA using exact buffer sizes.
-> 
-> Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> [acj: backport v4.14 -stable
-> - adjust context
-> - skipped the section modifying non-existent functions in dwxgmac2_descs.c and
-> hwif.h ]
-> Signed-off-by: Aviraj CJ <acj@cisco.com>
+[adding Jan Hubicka, GCC LTO maintainer]
 
-Thanks for all of the backports, all now queued up.
+On Thu, 19 Dec 2019, Kirill Tkhai wrote:
 
-greg k-h
+> CC: gcc-help@gcc.gnu.org
+> 
+> Hi, gcc guys,
+> 
+> this thread starts here: https://lkml.org/lkml/2019/12/19/403
+> 
+> There are two const variables:
+> 
+>    struct sched_class idle_sched_class
+> and
+>    struct sched_class fair_sched_class,
+> 
+> which are declared in two files idle.c and fair.c.
+> 
+> 1)In Makefile the order is: idle.o fair.o
+> 2)the variables go to the same ro section
+> 3)there is no SORT(.*) keyword in linker script.
+> 
+> Is it always true, that after linkage &idle_sched_class < &fair_sched_class?
+
+No, with LTO you don't have that guarantee. For functions it's more obvious,
+GCC wants to analyze functions in reverse topological order so callees are
+generally optimized before callers, and it will emit assembly as it goes, so
+function ordering with LTO does not give much care to translation unit
+boundaries. For variables it's a bit more subtle, GCC partitions all variables
+and functions so it can hand them off to multiple compiler processes while doing
+LTO. There's no guarantees about order of variables that end up in different
+partitions.
+
+There's __attribute__((no_reorder)) that is intended to enforce ordering even
+with LTO (it's documented under "Common function attributes" but works for
+global variables as well).
+
+Alexander
+
+> Thanks!
+> Kirill
+> 
+> On 19.12.2019 16:12, Peter Zijlstra wrote:
+> > On Thu, Dec 19, 2019 at 03:39:14PM +0300, Kirill Tkhai wrote:
+> >> In kernel/sched/Makefile files, describing different sched classes, already
+> >> go in the order from the lowest priority class to the highest priority class:
+> >>
+> >> idle.o fair.o rt.o deadline.o stop_task.o
+> >>
+> >> The documentation of GNU linker says, that section appears in the order
+> >> they are seen during link time (see [1]):
+> >>
+> >>> Normally, the linker will place files and sections matched by wildcards
+> >>> in the order in which they are seen during the link. You can change this
+> >>> by using the SORT keyword, which appears before a wildcard pattern
+> >>> in parentheses (e.g., SORT(.text*)).
+> >>
+> >> So, we may expect const variables from idle.o will go before ro variables
+> >> from fair.o in RO_DATA section, while ro variables from fair.o will go
+> >> before ro variables from rt.o, etc.
+> >>
+> >> (Also, it looks like the linking order is already used in kernel, e.g.
+> >>  in drivers/md/Makefile)
+> >>
+> >> Thus, we may introduce an optimization based on xxx_sched_class addresses
+> >> in these two hot scheduler functions: pick_next_task() and check_preempt_curr().
+> >>
+> >> One more result of the patch is that size of object file becomes a little
+> >> less (excluding added BUG_ON(), which goes in __init section):
+> >>
+> >> $size kernel/sched/core.o
+> >>          text     data      bss	    dec	    hex	filename
+> >> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
+> >> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
+> > 
+> > Does LTO preserve this behaviour? I've never quite dared do this exact
+> > optimization.
+> 
+> 
