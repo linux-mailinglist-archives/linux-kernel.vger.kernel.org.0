@@ -2,1007 +2,529 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E35F12626C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:41:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7ECA2126297
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfLSMlV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:41:21 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40605 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726698AbfLSMlV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:41:21 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b8so4733345edx.7
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 04:41:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=NLiipgEST5BEg37TFrXdhty71tDMIsDUb5lR7VrvgPU=;
-        b=DMdLTMAsClKKY64ymPKjgXGwxYmow5VbF5ojHoZOVhPkg3KziWUkjubBs6/DKC1RZS
-         7z+ZVth6u0bKRfEDwETxds9rXwuh2ZRGh8eYj81FkSU08rW58f2TwaQX9SjYt86ZpHug
-         KOSeh+gY5zvEokkNh2phGhuMEjwvRcHNyNjKWoglWBhUNvbnPVG+InyRJfQuciv24YTB
-         DA05CraD1H9bxSA4El9nHszkIMTnFvWwumH72pdybQ7vpsSFoUC6YFadEwZtRhqKfcOR
-         HW7rtrxc8jDVqQzNOYq+cr2anbpIx6HBgDbRgUB/3h6/hk4ulGmUr36avZbnX268fPtE
-         tBkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NLiipgEST5BEg37TFrXdhty71tDMIsDUb5lR7VrvgPU=;
-        b=jm30rLNG4GDCAlHoU9eTUYMbm/3Uut2EQtaXE4CFoN4iBB01cFVtU/kLD68MLa4XiR
-         g9HgUU6H/5rSKw9cBNTsAdQWlhzdNm3yEAvXwpiZG6pEmFCUSdrKji0mVfDn6TNVrS1G
-         gJXNkR/iNSUGgdEtX8z1f9MPBZ2U56EtWRE3ndEQar4D10XbXFAEwgr+k7Rge/r0mfTV
-         kCoPk1s5lHw+djGSjT5Q/ocpaMUcTgISqAPKHuJdPghAPSgdF4Bbqr2t+vMFrOMfdOmW
-         8BngGjKNy2qH7L7SDEJ6rqhfkIpOOgQpmxxXC0/wnIuzl/bRueXI2J71bPbAQB48Bqmf
-         quxQ==
-X-Gm-Message-State: APjAAAVis39U6lCKKGxXP6huMPUbxHuEAekNEiqqqhaL7HJdcyTnTaDD
-        sViwRRsCkPKFIxwvMtoA3Vd+JQ==
-X-Google-Smtp-Source: APXvYqwPGS/aS1Q7CIrAbE5cA68n6FrMopk9q0NOvuhtpzZF0/nMyvWoM1TF17KqzRGh7VA0rmbkAg==
-X-Received: by 2002:a17:906:1356:: with SMTP id x22mr9304826ejb.55.1576759277597;
-        Thu, 19 Dec 2019 04:41:17 -0800 (PST)
-Received: from [192.168.27.135] ([37.157.136.193])
-        by smtp.googlemail.com with ESMTPSA id m24sm379267edr.83.2019.12.19.04.41.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 04:41:16 -0800 (PST)
-Subject: Re: [PATCH V1 2/2] interconnect: qcom: Add SC7180 interconnect
- provider driver
-To:     Odelu Kukatla <okukatla@codeaurora.org>, daidavid1@codeaurora.org,
-        bjorn.andersson@linaro.org, evgreen@google.com, sboyd@kernel.org,
-        Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     ilina@codeaurora.org, seansw@qti.qualcomm.com, elder@linaro.org,
-        linux-arm-msm-owner@vger.kernel.org
-References: <1574780408-21282-1-git-send-email-okukatla@codeaurora.org>
- <0101016ea83b71b7-4a22a4a7-cab8-4047-a18a-c0327edbe707-000000@us-west-2.amazonses.com>
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-Message-ID: <791798fa-a1d9-9a8a-b4e6-0f5b705a3d78@linaro.org>
-Date:   Thu, 19 Dec 2019 14:41:13 +0200
+        id S1726751AbfLSMvF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:51:05 -0500
+Received: from mail-sender230.upb.ro ([141.85.13.230]:47352 "EHLO mx.upb.ro"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726694AbfLSMvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:51:05 -0500
+X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 07:50:59 EST
+Received: from localhost (localhost [127.0.0.1])
+        by mx.upb.ro (Postfix) with ESMTP id 2E6B6B561D12;
+        Thu, 19 Dec 2019 14:41:28 +0200 (EET)
+Received: from mx.upb.ro ([127.0.0.1])
+        by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id r_lmHRd9MUMt; Thu, 19 Dec 2019 14:41:24 +0200 (EET)
+Received: from localhost (localhost [127.0.0.1])
+        by mx.upb.ro (Postfix) with ESMTP id 7E893B561E4D;
+        Thu, 19 Dec 2019 14:41:24 +0200 (EET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.upb.ro 7E893B561E4D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=upb.ro;
+        s=96342B8A-77E4-11E5-BA93-D93D0963A2DF; t=1576759284;
+        bh=djwm5AwoeH/zUuaFnnURslLnLriY/Da+TivkMPI8EUU=;
+        h=From:To:Date:Message-Id:MIME-Version;
+        b=Py4EWSzo08BfRL6avznRFHW9qAaWXF8g7oIqgUFq3UAtTPwWR8oFN4h4UKgV7Smg5
+         RVps+l0duGWRRATlJWt2qkVBfsD148v7+RafT/arrZmWJO2bzTr1DqTEYCFSWvcY2G
+         TD//xNHXBDU4F62C8qIi95tslYu6W990xR1B+jRg=
+X-Virus-Scanned: amavisd-new at upb.ro
+Received: from mx.upb.ro ([127.0.0.1])
+        by localhost (mx.upb.ro [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id oMOWJeNiNllZ; Thu, 19 Dec 2019 14:41:24 +0200 (EET)
+Received: from localhost.localdomain (unknown [46.222.245.86])
+        by mx.upb.ro (Postfix) with ESMTPSA id 7D5A8B561D12;
+        Thu, 19 Dec 2019 14:41:23 +0200 (EET)
+From:   Radu Pirea <radu_nicolae.pirea@upb.ro>
+To:     linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Radu Pirea <radu_nicolae.pirea@upb.ro>,
+        Chirag Parekh <chirag.parekh@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: [PATCH] i2c: cadence: Added slave support
+Date:   Thu, 19 Dec 2019 14:41:20 +0200
+Message-Id: <20191219124120.53754-1-radu_nicolae.pirea@upb.ro>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <0101016ea83b71b7-4a22a4a7-cab8-4047-a18a-c0327edbe707-000000@us-west-2.amazonses.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Odelu,
+Added support for I2C slave functionality
 
-On 26.11.19 г. 17:01 ч., Odelu Kukatla wrote:
-> Add driver for the Qualcomm interconnect buses found in SC7180 based
-> platforms. The topology consists of three NoCs that are controlled by
+Signed-off-by: Chirag Parekh <chirag.parekh@xilinx.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Radu Pirea <radu_nicolae.pirea@upb.ro>
+---
 
-Just three NoCs, really?
+Hi,
 
-> a remote processor that collects the aggregated bandwidth for each
-> master-slave pairs.
-> 
-> Signed-off-by: Odelu Kukatla <okukatla@codeaurora.org>
-> ---
->   drivers/interconnect/qcom/Kconfig  |  10 +
->   drivers/interconnect/qcom/Makefile |   2 +
->   drivers/interconnect/qcom/sc7180.c | 843 +++++++++++++++++++++++++++++++++++++
->   3 files changed, 855 insertions(+)
->   create mode 100644 drivers/interconnect/qcom/sc7180.c
-> 
-> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-> index 8ff255d..6f12713 100644
-> --- a/drivers/interconnect/qcom/Kconfig
-> +++ b/drivers/interconnect/qcom/Kconfig
-> @@ -14,6 +14,16 @@ config INTERCONNECT_QCOM_QCS404
->   	  This is a driver for the Qualcomm Network-on-Chip on qcs404-based
->   	  platforms.
->   
-> +config INTERCONNECT_QCOM_SC7180
-> +	tristate "Qualcomm SC7180 interconnect driver"
-> +	depends on INTERCONNECT_QCOM
-> +	depends on (QCOM_RPMH && QCOM_COMMAND_DB && OF) || COMPILE_TEST
-> +	select INTERCONNECT_QCOM_RPMH
-> +	select INTERCONNECT_QCOM_BCM_VOTER
-> +	help
-> +	  This is a driver for the Qualcomm Network-on-Chip on sc7180-based
-> +	  platforms.
-> +
->   config INTERCONNECT_QCOM_SDM845
->   	tristate "Qualcomm SDM845 interconnect driver"
->   	depends on INTERCONNECT_QCOM
-> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-> index 0f5e88d..793ca42 100644
-> --- a/drivers/interconnect/qcom/Makefile
-> +++ b/drivers/interconnect/qcom/Makefile
-> @@ -1,12 +1,14 @@
->   # SPDX-License-Identifier: GPL-2.0
->   
->   qnoc-qcs404-objs			:= qcs404.o
-> +qnoc-sc7180-objs			:= sc7180.o
->   qnoc-sdm845-objs			:= sdm845.o
->   icc-smd-rpm-objs			:= smd-rpm.o
->   bcm-voter-objs				:= bcm-voter.o
->   icc-rpmh-obj				:= icc-rpmh.o
->   
->   obj-$(CONFIG_INTERCONNECT_QCOM_QCS404) += qnoc-qcs404.o
-> +obj-$(CONFIG_INTERCONNECT_QCOM_SC7180) += qnoc-sc7180.o
->   obj-$(CONFIG_INTERCONNECT_QCOM_SDM845) += qnoc-sdm845.o
->   obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += icc-smd-rpm.o
->   obj-$(CONFIG_INTERCONNECT_QCOM_BCM_VOTER) += bcm-voter.o
-> diff --git a/drivers/interconnect/qcom/sc7180.c b/drivers/interconnect/qcom/sc7180.c
-> new file mode 100644
-> index 0000000..e14492e
-> --- /dev/null
-> +++ b/drivers/interconnect/qcom/sc7180.c
-> @@ -0,0 +1,843 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-> + *
-> + */
-> +
-> +#include <asm/div64.h>
+This patch implements the slave interface for the i2c cadence driver. Mos=
+t of the
+work has been done by the guys from Xilinx. All I have done it was to por=
+t the
+patch to the upstream kernel, test it and fix some minor issues.
 
-Is this used?
+Any suggestion about how can I improve this patch is welcome.
 
-> +#include <dt-bindings/interconnect/qcom,sc7180.h>
-> +#include <linux/device.h>
-> +#include <linux/interconnect.h>
-> +#include <linux/interconnect-provider.h>
-> +#include <linux/io.h>
+Thanks.
 
-unused?
+Radu P.
 
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/sort.h>
+ drivers/i2c/busses/i2c-cadence.c | 317 ++++++++++++++++++++++++++++++-
+ 1 file changed, 307 insertions(+), 10 deletions(-)
 
-unused?
+diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-ca=
+dence.c
+index 9d71ce15db05..ea6bf989ba1c 100644
+--- a/drivers/i2c/busses/i2c-cadence.c
++++ b/drivers/i2c/busses/i2c-cadence.c
+@@ -23,6 +23,7 @@
+ #define CDNS_I2C_ISR_OFFSET		0x10 /* IRQ Status Register, RW */
+ #define CDNS_I2C_XFER_SIZE_OFFSET	0x14 /* Transfer Size Register, RW */
+ #define CDNS_I2C_TIME_OUT_OFFSET	0x1C /* Time Out Register, RW */
++#define CDNS_I2C_IMR_OFFSET		0x20 /* IRQ Mask Register, RO */
+ #define CDNS_I2C_IER_OFFSET		0x24 /* IRQ Enable Register, WO */
+ #define CDNS_I2C_IDR_OFFSET		0x28 /* IRQ Disable Register, WO */
+=20
+@@ -40,9 +41,17 @@
+ #define CDNS_I2C_CR_DIVB_SHIFT		8
+ #define CDNS_I2C_CR_DIVB_MASK		(0x3f << CDNS_I2C_CR_DIVB_SHIFT)
+=20
++#define CDNS_I2C_CR_MASTER_EN_MASK	(CDNS_I2C_CR_NEA | \
++					 CDNS_I2C_CR_ACK_EN | \
++					 CDNS_I2C_CR_MS)
++
++#define CDNS_I2C_CR_SLAVE_EN_MASK	~CDNS_I2C_CR_MASTER_EN_MASK
++
+ /* Status Register Bit mask definitions */
+ #define CDNS_I2C_SR_BA		BIT(8)
++#define CDNS_I2C_SR_TXDV	BIT(6)
+ #define CDNS_I2C_SR_RXDV	BIT(5)
++#define CDNS_I2C_SR_RXRW	BIT(3)
+=20
+ /*
+  * I2C Address Register Bit mask definitions
+@@ -91,6 +100,14 @@
+ 					 CDNS_I2C_IXR_DATA | \
+ 					 CDNS_I2C_IXR_COMP)
+=20
++#define CDNS_I2C_IXR_SLAVE_INTR_MASK	(CDNS_I2C_IXR_RX_UNF | \
++					 CDNS_I2C_IXR_TX_OVF | \
++					 CDNS_I2C_IXR_RX_OVF | \
++					 CDNS_I2C_IXR_TO | \
++					 CDNS_I2C_IXR_NACK | \
++					 CDNS_I2C_IXR_DATA | \
++					 CDNS_I2C_IXR_COMP)
++
+ #define CDNS_I2C_TIMEOUT		msecs_to_jiffies(1000)
+ /* timeout for pm runtime autosuspend */
+ #define CNDS_I2C_PM_TIMEOUT		1000	/* ms */
+@@ -117,6 +134,32 @@
+ #define cdns_i2c_readreg(offset)       readl_relaxed(id->membase + offse=
+t)
+ #define cdns_i2c_writereg(val, offset) writel_relaxed(val, id->membase +=
+ offset)
+=20
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++/**
++ * enum cdns_i2c_mode - I2C Controller current operating mode
++ *
++ * @CDNS_I2C_MODE_SLAVE:       I2C controller operating in slave mode
++ * @CDNS_I2C_MODE_MASTER:      I2C Controller operating in master mode
++ */
++enum cdns_i2c_mode {
++	CDNS_I2C_MODE_SLAVE,
++	CDNS_I2C_MODE_MASTER,
++};
++
++/**
++ * enum cdns_i2c_slave_mode - Slave state when I2C is operating in slave=
+ mode
++ *
++ * @CDNS_I2C_SLAVE_STATE_IDLE: I2C slave idle
++ * @CDNS_I2C_SLAVE_STATE_SEND: I2C slave sending data to master
++ * @CDNS_I2C_SLAVE_STATE_RECV: I2C slave receiving data from master
++ */
++enum cdns_i2c_slave_state {
++	CDNS_I2C_SLAVE_STATE_IDLE,
++	CDNS_I2C_SLAVE_STATE_SEND,
++	CDNS_I2C_SLAVE_STATE_RECV,
++};
++#endif
++
+ /**
+  * struct cdns_i2c - I2C device private data structure
+  *
+@@ -138,6 +181,10 @@
+  * @clk:		Pointer to struct clk
+  * @clk_rate_change_nb:	Notifier block for clock rate changes
+  * @quirks:		flag for broken hold bit usage in r1p10
++ * @ctrl_reg_diva_divb: value of fields DIV_A and DIV_B from CR register
++ * @slave:		Registered slave instance.
++ * @dev_mode:		I2C operating role(master/slave).
++ * @slave_state:	I2C Slave state(idle/read/write).
+  */
+ struct cdns_i2c {
+ 	struct device		*dev;
+@@ -158,6 +205,12 @@ struct cdns_i2c {
+ 	struct clk *clk;
+ 	struct notifier_block clk_rate_change_nb;
+ 	u32 quirks;
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	u16 ctrl_reg_diva_divb;
++	struct i2c_client *slave;
++	enum cdns_i2c_mode dev_mode;
++	enum cdns_i2c_slave_state slave_state;
++#endif
+ };
+=20
+ struct cdns_platform_data {
+@@ -186,17 +239,155 @@ static inline bool cdns_is_holdquirk(struct cdns_i=
+2c *id, bool hold_wrkaround)
+ 		(id->curr_recv_count =3D=3D CDNS_I2C_FIFO_DEPTH + 1));
+ }
+=20
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++static void cdns_i2c_set_mode(enum cdns_i2c_mode mode, struct cdns_i2c *=
+id)
++{
++	/* Disable all interrupts */
++	cdns_i2c_writereg(CDNS_I2C_IXR_ALL_INTR_MASK, CDNS_I2C_IDR_OFFSET);
++
++	/* Clear FIFO and transfer size */
++	cdns_i2c_writereg(CDNS_I2C_CR_CLR_FIFO, CDNS_I2C_CR_OFFSET);
++
++	/* Update device mode and state */
++	id->dev_mode =3D mode;
++	id->slave_state =3D CDNS_I2C_SLAVE_STATE_IDLE;
++
++	switch (mode) {
++	case CDNS_I2C_MODE_MASTER:
++		/* Enable i2c master */
++		cdns_i2c_writereg(id->ctrl_reg_diva_divb |
++				  CDNS_I2C_CR_MASTER_EN_MASK,
++				  CDNS_I2C_CR_OFFSET);
++		/*
++		 * This delay is needed to give the IP some time to switch to
++		 * the master mode. With lower values(like 110 us) i2cdetect
++		 * will not detect any slave and without this delay, the IP will
++		 * trigger a timeout interrupt.
++		 */
++		usleep_range(115, 125);
++		break;
++	case CDNS_I2C_MODE_SLAVE:
++		/* Enable i2c slave */
++		cdns_i2c_writereg(id->ctrl_reg_diva_divb &
++				  CDNS_I2C_CR_SLAVE_EN_MASK,
++				  CDNS_I2C_CR_OFFSET);
++
++		/* Setting slave address */
++		cdns_i2c_writereg(id->slave->addr & CDNS_I2C_ADDR_MASK,
++				  CDNS_I2C_ADDR_OFFSET);
++
++		/* Enable slave send/receive interrupts */
++		cdns_i2c_writereg(CDNS_I2C_IXR_SLAVE_INTR_MASK,
++				  CDNS_I2C_IER_OFFSET);
++		break;
++	}
++}
++
++static void cdns_i2c_slave_rcv_data(struct cdns_i2c *id)
++{
++	u8 bytes;
++	unsigned char data;
++
++	/* Prepare backend for data reception */
++	if (id->slave_state =3D=3D CDNS_I2C_SLAVE_STATE_IDLE) {
++		id->slave_state =3D CDNS_I2C_SLAVE_STATE_RECV;
++		i2c_slave_event(id->slave, I2C_SLAVE_WRITE_REQUESTED, NULL);
++	}
++
++	/* Fetch number of bytes to receive */
++	bytes =3D cdns_i2c_readreg(CDNS_I2C_XFER_SIZE_OFFSET);
++
++	/* Read data and send to backend */
++	while (bytes--) {
++		data =3D cdns_i2c_readreg(CDNS_I2C_DATA_OFFSET);
++		i2c_slave_event(id->slave, I2C_SLAVE_WRITE_RECEIVED, &data);
++	}
++}
++
++static void cdns_i2c_slave_send_data(struct cdns_i2c *id)
++{
++	u8 data;
++
++	/* Prepare backend for data transmission */
++	if (id->slave_state =3D=3D CDNS_I2C_SLAVE_STATE_IDLE) {
++		id->slave_state =3D CDNS_I2C_SLAVE_STATE_SEND;
++		i2c_slave_event(id->slave, I2C_SLAVE_READ_REQUESTED, &data);
++	} else {
++		i2c_slave_event(id->slave, I2C_SLAVE_READ_PROCESSED, &data);
++	}
++
++	/* Send data over bus */
++	cdns_i2c_writereg(data, CDNS_I2C_DATA_OFFSET);
++}
++
+ /**
+- * cdns_i2c_isr - Interrupt handler for the I2C device
+- * @irq:	irq number for the I2C device
+- * @ptr:	void pointer to cdns_i2c structure
++ * cdns_i2c_slave_isr - Interrupt handler for the I2C device in slave ro=
+le
++ * @ptr:       Pointer to I2C device private data
++ *
++ * This function handles the data interrupt and transfer complete interr=
+upt of
++ * the I2C device in slave role.
++ *
++ * Return: IRQ_HANDLED always
++ */
++static irqreturn_t cdns_i2c_slave_isr(void *ptr)
++{
++	struct cdns_i2c *id =3D ptr;
++	unsigned int isr_status, i2c_status;
++
++	/* Fetch the interrupt status */
++	isr_status =3D cdns_i2c_readreg(CDNS_I2C_ISR_OFFSET);
++	cdns_i2c_writereg(isr_status, CDNS_I2C_ISR_OFFSET);
++
++	/* Ignore masked interrupts */
++	isr_status &=3D ~cdns_i2c_readreg(CDNS_I2C_IMR_OFFSET);
++
++	/* Fetch transfer mode (send/receive) */
++	i2c_status =3D cdns_i2c_readreg(CDNS_I2C_SR_OFFSET);
++
++	/* Handle data send/receive */
++	if (i2c_status & CDNS_I2C_SR_RXRW) {
++		/* Send data to master */
++		if (isr_status & CDNS_I2C_IXR_DATA)
++			cdns_i2c_slave_send_data(id);
++
++		if (isr_status & CDNS_I2C_IXR_COMP) {
++			id->slave_state =3D CDNS_I2C_SLAVE_STATE_IDLE;
++			i2c_slave_event(id->slave, I2C_SLAVE_STOP, NULL);
++		}
++	} else {
++		/* Receive data from master */
++		if (isr_status & CDNS_I2C_IXR_DATA)
++			cdns_i2c_slave_rcv_data(id);
++
++		if (isr_status & CDNS_I2C_IXR_COMP) {
++			cdns_i2c_slave_rcv_data(id);
++			id->slave_state =3D CDNS_I2C_SLAVE_STATE_IDLE;
++			i2c_slave_event(id->slave, I2C_SLAVE_STOP, NULL);
++		}
++	}
++
++	/* Master indicated xfer stop or fifo underflow/overflow */
++	if (isr_status & (CDNS_I2C_IXR_NACK | CDNS_I2C_IXR_RX_OVF |
++			  CDNS_I2C_IXR_RX_UNF | CDNS_I2C_IXR_TX_OVF)) {
++		id->slave_state =3D CDNS_I2C_SLAVE_STATE_IDLE;
++		i2c_slave_event(id->slave, I2C_SLAVE_STOP, NULL);
++		cdns_i2c_writereg(CDNS_I2C_CR_CLR_FIFO, CDNS_I2C_CR_OFFSET);
++	}
++
++	return IRQ_HANDLED;
++}
++#endif
++
++/**
++ * cdns_i2c_master_isr - Interrupt handler for the I2C device in master =
+role
++ * @ptr:       Pointer to I2C device private data
+  *
+  * This function handles the data interrupt, transfer complete interrupt=
+ and
+- * the error interrupts of the I2C device.
++ * the error interrupts of the I2C device in master role.
+  *
+  * Return: IRQ_HANDLED always
+  */
+-static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
++static irqreturn_t cdns_i2c_master_isr(void *ptr)
+ {
+ 	unsigned int isr_status, avail_bytes, updatetx;
+ 	unsigned int bytes_to_send;
+@@ -352,6 +543,27 @@ static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
+ 	return status;
+ }
+=20
++/**
++ * cdns_i2c_isr - Interrupt handler for the I2C device
++ * @irq:	irq number for the I2C device
++ * @ptr:	void pointer to cdns_i2c structure
++ *
++ * This function passes the control to slave/master based on current rol=
+e of
++ * i2c controller.
++ *
++ * Return: IRQ_HANDLED always
++ */
++static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
++{
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	struct cdns_i2c *id =3D ptr;
++
++	if (id->dev_mode =3D=3D CDNS_I2C_MODE_SLAVE)
++		return cdns_i2c_slave_isr(ptr);
++#endif
++	return cdns_i2c_master_isr(ptr);
++}
++
+ /**
+  * cdns_i2c_mrecv - Prepare and start a master receive operation
+  * @id:		pointer to the i2c device structure
+@@ -572,10 +784,28 @@ static int cdns_i2c_master_xfer(struct i2c_adapter =
+*adap, struct i2c_msg *msgs,
+ 	u32 reg;
+ 	struct cdns_i2c *id =3D adap->algo_data;
+ 	bool hold_quirk;
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	bool change_role =3D false;
++#endif
+=20
+ 	ret =3D pm_runtime_get_sync(id->dev);
+ 	if (ret < 0)
+ 		return ret;
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	/* Check i2c operating mode and switch if possible */
++	if (id->dev_mode =3D=3D CDNS_I2C_MODE_SLAVE) {
++		if (id->slave_state !=3D CDNS_I2C_SLAVE_STATE_IDLE)
++			return -EAGAIN;
++
++		/* Set mode to master */
++		cdns_i2c_set_mode(CDNS_I2C_MODE_MASTER, id);
++
++		/* Mark flag to change role once xfer is completed */
++		change_role =3D true;
++	}
++#endif
++
+ 	/* Check if the bus is free */
+ 	if (cdns_i2c_readreg(CDNS_I2C_SR_OFFSET) & CDNS_I2C_SR_BA) {
+ 		ret =3D -EAGAIN;
+@@ -634,7 +864,15 @@ static int cdns_i2c_master_xfer(struct i2c_adapter *=
+adap, struct i2c_msg *msgs,
+ 	}
+=20
+ 	ret =3D num;
++
+ out:
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	/* Switch i2c mode to slave */
++	if (change_role)
++		cdns_i2c_set_mode(CDNS_I2C_MODE_SLAVE, id);
++#endif
++
+ 	pm_runtime_mark_last_busy(id->dev);
+ 	pm_runtime_put_autosuspend(id->dev);
+ 	return ret;
+@@ -648,14 +886,67 @@ static int cdns_i2c_master_xfer(struct i2c_adapter =
+*adap, struct i2c_msg *msgs,
+  */
+ static u32 cdns_i2c_func(struct i2c_adapter *adap)
+ {
+-	return I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR |
+-		(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK) |
+-		I2C_FUNC_SMBUS_BLOCK_DATA;
++	u32 func =3D I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR |
++			(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK) |
++			I2C_FUNC_SMBUS_BLOCK_DATA;
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	func |=3D I2C_FUNC_SLAVE;
++#endif
++
++	return func;
++}
++
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++static int cdns_reg_slave(struct i2c_client *slave)
++{
++	int ret;
++	struct cdns_i2c *id =3D container_of(slave->adapter, struct cdns_i2c,
++									adap);
++
++	if (id->slave)
++		return -EBUSY;
++
++	if (slave->flags & I2C_CLIENT_TEN)
++		return -EAFNOSUPPORT;
++
++	ret =3D pm_runtime_get_sync(id->dev);
++	if (ret < 0)
++		return ret;
++
++	/* Store slave information */
++	id->slave =3D slave;
++
++	/* Enable I2C slave */
++	cdns_i2c_set_mode(CDNS_I2C_MODE_SLAVE, id);
++
++	return 0;
++}
++
++static int cdns_unreg_slave(struct i2c_client *slave)
++{
++	struct cdns_i2c *id =3D container_of(slave->adapter, struct cdns_i2c,
++									adap);
++
++	pm_runtime_put(id->dev);
++
++	/* Remove slave information */
++	id->slave =3D NULL;
++
++	/* Enable I2C master */
++	cdns_i2c_set_mode(CDNS_I2C_MODE_MASTER, id);
++
++	return 0;
+ }
++#endif
+=20
+ static const struct i2c_algorithm cdns_i2c_algo =3D {
+ 	.master_xfer	=3D cdns_i2c_master_xfer,
+ 	.functionality	=3D cdns_i2c_func,
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	.reg_slave	=3D cdns_reg_slave,
++	.unreg_slave	=3D cdns_unreg_slave,
++#endif
+ };
+=20
+ /**
+@@ -750,6 +1041,8 @@ static int cdns_i2c_setclk(unsigned long clk_in, str=
+uct cdns_i2c *id)
+ 	ctrl_reg |=3D ((div_a << CDNS_I2C_CR_DIVA_SHIFT) |
+ 			(div_b << CDNS_I2C_CR_DIVB_SHIFT));
+ 	cdns_i2c_writereg(ctrl_reg, CDNS_I2C_CR_OFFSET);
++	id->ctrl_reg_diva_divb =3D ctrl_reg & (CDNS_I2C_CR_DIVA_MASK |
++				 CDNS_I2C_CR_DIVB_MASK);
+=20
+ 	return 0;
+ }
+@@ -943,8 +1236,12 @@ static int cdns_i2c_probe(struct platform_device *p=
+dev)
+ 	if (ret || (id->i2c_clk > CDNS_I2C_SPEED_MAX))
+ 		id->i2c_clk =3D CDNS_I2C_SPEED_DEFAULT;
+=20
+-	cdns_i2c_writereg(CDNS_I2C_CR_ACK_EN | CDNS_I2C_CR_NEA | CDNS_I2C_CR_MS=
+,
+-			  CDNS_I2C_CR_OFFSET);
++#if IS_ENABLED(CONFIG_I2C_SLAVE)
++	/* Set initial mode to master */
++	id->dev_mode =3D CDNS_I2C_MODE_MASTER;
++	id->slave_state =3D CDNS_I2C_SLAVE_STATE_IDLE;
++#endif
++	cdns_i2c_writereg(CDNS_I2C_CR_MASTER_EN_MASK, CDNS_I2C_CR_OFFSET);
+=20
+ 	ret =3D cdns_i2c_setclk(id->input_clk, id);
+ 	if (ret) {
+--=20
+2.24.0
 
-> +
-> +#include "icc-rpmh.h"
-> +#include "bcm-voter.h"
-> +
-> +DEFINE_QNODE(qhm_a1noc_cfg, MASTER_A1NOC_CFG, 1, 4, 1,
-> +		SLAVE_SERVICE_A1NOC);
-
-Nit: Doesn't this fit on a single line? If you prefer to keep
-it this way, please align to the open parenthesis.
-
-> +DEFINE_QNODE(qhm_qspi, MASTER_QSPI, 1, 4, 1,
-> +		SLAVE_A1NOC_SNOC);
-> +DEFINE_QNODE(qhm_qup_0, MASTER_QUP_0, 1, 4, 1,
-> +		SLAVE_A1NOC_SNOC);
-> +DEFINE_QNODE(xm_sdc2, MASTER_SDCC_2, 1, 8, 1,
-> +		SLAVE_A1NOC_SNOC);
-> +DEFINE_QNODE(xm_emmc, MASTER_EMMC, 1, 8, 1,
-> +		SLAVE_A1NOC_SNOC);
-> +DEFINE_QNODE(xm_ufs_mem, MASTER_UFS_MEM, 1, 8, 1,
-> +		SLAVE_A1NOC_SNOC);
-> +DEFINE_QNODE(qhm_a2noc_cfg, MASTER_A2NOC_CFG, 1, 4, 1,
-> +		SLAVE_SERVICE_A2NOC);
-> +DEFINE_QNODE(qhm_qdss_bam, MASTER_QDSS_BAM, 1, 4, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(qhm_qup_1, MASTER_QUP_1, 1, 4, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(qxm_crypto, MASTER_CRYPTO, 1, 8, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(qxm_ipa, MASTER_IPA, 1, 8, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(xm_qdss_etr, MASTER_QDSS_ETR, 1, 8, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(qhm_usb3, MASTER_USB3, 1, 8, 1,
-> +		SLAVE_A2NOC_SNOC);
-> +DEFINE_QNODE(qxm_camnoc_hf0_uncomp, MASTER_CAMNOC_HF0_UNCOMP, 1, 32, 1,
-> +		SLAVE_CAMNOC_UNCOMP);
-> +DEFINE_QNODE(qxm_camnoc_hf1_uncomp, MASTER_CAMNOC_HF1_UNCOMP, 1, 32, 1,
-> +		SLAVE_CAMNOC_UNCOMP);
-> +DEFINE_QNODE(qxm_camnoc_sf_uncomp, MASTER_CAMNOC_SF_UNCOMP, 1, 32, 1,
-> +		SLAVE_CAMNOC_UNCOMP);
-> +DEFINE_QNODE(qnm_npu, MASTER_NPU, 2, 32, 1,
-> +		SLAVE_CDSP_GEM_NOC);
-> +DEFINE_QNODE(qxm_npu_dsp, MASTER_NPU_PROC, 1, 8, 1,
-> +		SLAVE_CDSP_GEM_NOC);
-> +DEFINE_QNODE(qnm_snoc, MASTER_SNOC_CNOC, 1, 8, 51,
-> +		SLAVE_A1NOC_CFG, SLAVE_A2NOC_CFG,
-> +		SLAVE_AHB2PHY_SOUTH, SLAVE_AHB2PHY_CENTER,
-> +		SLAVE_AOP, SLAVE_AOSS,
-> +		SLAVE_BOOT_ROM, SLAVE_CAMERA_CFG,
-> +		SLAVE_CAMERA_NRT_THROTTLE_CFG, SLAVE_CAMERA_RT_THROTTLE_CFG,
-> +		SLAVE_CLK_CTL, SLAVE_RBCPR_CX_CFG,
-> +		SLAVE_RBCPR_MX_CFG, SLAVE_CRYPTO_0_CFG,
-> +		SLAVE_DCC_CFG, SLAVE_CNOC_DDRSS,
-> +		SLAVE_DISPLAY_CFG, SLAVE_DISPLAY_RT_THROTTLE_CFG,
-> +		SLAVE_DISPLAY_THROTTLE_CFG, SLAVE_EMMC_CFG,
-> +		SLAVE_GLM, SLAVE_GFX3D_CFG,
-> +		SLAVE_IMEM_CFG, SLAVE_IPA_CFG,
-> +		SLAVE_CNOC_MNOC_CFG, SLAVE_CNOC_MSS,
-> +		SLAVE_NPU_CFG, SLAVE_NPU_DMA_BWMON_CFG,
-> +		SLAVE_NPU_PROC_BWMON_CFG, SLAVE_PDM,
-> +		SLAVE_PIMEM_CFG, SLAVE_PRNG,
-> +		SLAVE_QDSS_CFG, SLAVE_QM_CFG,
-> +		SLAVE_QM_MPU_CFG, SLAVE_QSPI_0,
-> +		SLAVE_QUP_0, SLAVE_QUP_1,
-> +		SLAVE_SDCC_2, SLAVE_SECURITY,
-> +		SLAVE_SNOC_CFG, SLAVE_TCSR,
-> +		SLAVE_TLMM_WEST, SLAVE_TLMM_NORTH,
-> +		SLAVE_TLMM_SOUTH, SLAVE_UFS_MEM_CFG,
-> +		SLAVE_USB3, SLAVE_VENUS_CFG,
-> +		SLAVE_VENUS_THROTTLE_CFG, SLAVE_VSENSE_CTRL_CFG,
-> +		SLAVE_SERVICE_CNOC);
-> +DEFINE_QNODE(xm_qdss_dap, MASTER_QDSS_DAP, 1, 8, 51,
-> +		SLAVE_A1NOC_CFG, SLAVE_A2NOC_CFG,
-> +		SLAVE_AHB2PHY_SOUTH, SLAVE_AHB2PHY_CENTER,
-> +		SLAVE_AOP, SLAVE_AOSS,
-> +		SLAVE_BOOT_ROM, SLAVE_CAMERA_CFG,
-> +		SLAVE_CAMERA_NRT_THROTTLE_CFG, SLAVE_CAMERA_RT_THROTTLE_CFG,
-> +		SLAVE_CLK_CTL, SLAVE_RBCPR_CX_CFG,
-> +		SLAVE_RBCPR_MX_CFG, SLAVE_CRYPTO_0_CFG,
-> +		SLAVE_DCC_CFG, SLAVE_CNOC_DDRSS,
-> +		SLAVE_DISPLAY_CFG, SLAVE_DISPLAY_RT_THROTTLE_CFG,
-> +		SLAVE_DISPLAY_THROTTLE_CFG, SLAVE_EMMC_CFG,
-> +		SLAVE_GLM, SLAVE_GFX3D_CFG,
-> +		SLAVE_IMEM_CFG, SLAVE_IPA_CFG,
-> +		SLAVE_CNOC_MNOC_CFG, SLAVE_CNOC_MSS,
-> +		SLAVE_NPU_CFG, SLAVE_NPU_DMA_BWMON_CFG,
-> +		SLAVE_NPU_PROC_BWMON_CFG, SLAVE_PDM,
-> +		SLAVE_PIMEM_CFG, SLAVE_PRNG,
-> +		SLAVE_QDSS_CFG, SLAVE_QM_CFG,
-> +		SLAVE_QM_MPU_CFG, SLAVE_QSPI_0,
-> +		SLAVE_QUP_0, SLAVE_QUP_1,
-> +		SLAVE_SDCC_2, SLAVE_SECURITY,
-> +		SLAVE_SNOC_CFG, SLAVE_TCSR,
-> +		SLAVE_TLMM_WEST, SLAVE_TLMM_NORTH,
-> +		SLAVE_TLMM_SOUTH, SLAVE_UFS_MEM_CFG,
-> +		SLAVE_USB3, SLAVE_VENUS_CFG,
-> +		SLAVE_VENUS_THROTTLE_CFG, SLAVE_VSENSE_CTRL_CFG,
-> +		SLAVE_SERVICE_CNOC);
-> +DEFINE_QNODE(qhm_cnoc_dc_noc, MASTER_CNOC_DC_NOC, 1, 4, 2,
-> +		SLAVE_GEM_NOC_CFG, SLAVE_LLCC_CFG);
-> +DEFINE_QNODE(acm_apps0, MASTER_APPSS_PROC, 1, 16, 2,
-> +		SLAVE_GEM_NOC_SNOC, SLAVE_LLCC);
-> +DEFINE_QNODE(acm_sys_tcu, MASTER_SYS_TCU, 1, 8, 2,
-> +		SLAVE_GEM_NOC_SNOC, SLAVE_LLCC);
-> +DEFINE_QNODE(qhm_gemnoc_cfg, MASTER_GEM_NOC_CFG, 1, 4, 2,
-> +		SLAVE_MSS_PROC_MS_MPU_CFG, SLAVE_SERVICE_GEM_NOC);
-> +DEFINE_QNODE(qnm_cmpnoc, MASTER_COMPUTE_NOC, 1, 32, 2,
-> +		SLAVE_GEM_NOC_SNOC, SLAVE_LLCC);
-> +DEFINE_QNODE(qnm_mnoc_hf, MASTER_MNOC_HF_MEM_NOC, 1, 32, 1,
-> +		SLAVE_LLCC);
-> +DEFINE_QNODE(qnm_mnoc_sf, MASTER_MNOC_SF_MEM_NOC, 1, 32, 2,
-> +		SLAVE_GEM_NOC_SNOC, SLAVE_LLCC);
-> +DEFINE_QNODE(qnm_snoc_gc, MASTER_SNOC_GC_MEM_NOC, 1, 8, 1,
-> +		SLAVE_LLCC);
-> +DEFINE_QNODE(qnm_snoc_sf, MASTER_SNOC_SF_MEM_NOC, 1, 16, 1,
-> +		SLAVE_LLCC);
-> +DEFINE_QNODE(qxm_gpu, MASTER_GFX3D, 2, 32, 2,
-> +		SLAVE_GEM_NOC_SNOC, SLAVE_LLCC);
-> +DEFINE_QNODE(ipa_core_master, MASTER_IPA_CORE, 1, 8, 1,
-> +		SLAVE_IPA_CORE);
-> +DEFINE_QNODE(llcc_mc, MASTER_LLCC, 2, 4, 1,
-> +		SLAVE_EBI1);
-> +DEFINE_QNODE(qhm_mnoc_cfg, MASTER_CNOC_MNOC_CFG, 1, 4, 1,
-> +		SLAVE_SERVICE_MNOC);
-> +DEFINE_QNODE(qxm_camnoc_hf0, MASTER_CAMNOC_HF0, 2, 32, 1,
-> +		SLAVE_MNOC_HF_MEM_NOC);
-> +DEFINE_QNODE(qxm_camnoc_hf1, MASTER_CAMNOC_HF1, 2, 32, 1,
-> +		SLAVE_MNOC_HF_MEM_NOC);
-> +DEFINE_QNODE(qxm_camnoc_sf, MASTER_CAMNOC_SF, 1, 32, 1,
-> +		SLAVE_MNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(qxm_mdp0, MASTER_MDP0, 1, 32, 1,
-> +		SLAVE_MNOC_HF_MEM_NOC);
-> +DEFINE_QNODE(qxm_rot, MASTER_ROTATOR, 1, 16, 1,
-> +		SLAVE_MNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(qxm_venus0, MASTER_VIDEO_P0, 1, 32, 1,
-> +		SLAVE_MNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(qxm_venus_arm9, MASTER_VIDEO_PROC, 1, 8, 1,
-> +		SLAVE_MNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(amm_npu_sys, MASTER_NPU_SYS, 2, 32, 1,
-> +		SLAVE_NPU_COMPUTE_NOC);
-> +DEFINE_QNODE(qhm_npu_cfg, MASTER_NPU_NOC_CFG, 1, 4, 8,
-> +		SLAVE_NPU_CAL_DP0, SLAVE_NPU_CP,
-> +		SLAVE_NPU_INT_DMA_BWMON_CFG, SLAVE_NPU_DPM,
-> +		SLAVE_ISENSE_CFG, SLAVE_NPU_LLM_CFG,
-> +		SLAVE_NPU_TCM, SLAVE_SERVICE_NPU_NOC);
-> +DEFINE_QNODE(qup_core_master_1, MASTER_QUP_CORE_0, 1, 4, 1,
-> +		SLAVE_QUP_CORE_0);
-> +DEFINE_QNODE(qup_core_master_2, MASTER_QUP_CORE_1, 1, 4, 1,
-> +		SLAVE_QUP_CORE_1);
-> +DEFINE_QNODE(qhm_snoc_cfg, MASTER_SNOC_CFG, 1, 4, 1,
-> +		SLAVE_SERVICE_SNOC);
-> +DEFINE_QNODE(qnm_aggre1_noc, MASTER_A1NOC_SNOC, 1, 16, 6,
-> +		SLAVE_APPSS, SLAVE_SNOC_CNOC,
-> +		SLAVE_SNOC_GEM_NOC_SF, SLAVE_IMEM,
-> +		SLAVE_PIMEM, SLAVE_QDSS_STM);
-> +DEFINE_QNODE(qnm_aggre2_noc, MASTER_A2NOC_SNOC, 1, 16, 7,
-> +		SLAVE_APPSS, SLAVE_SNOC_CNOC,
-> +		SLAVE_SNOC_GEM_NOC_SF, SLAVE_IMEM,
-> +		SLAVE_PIMEM, SLAVE_QDSS_STM,
-> +		SLAVE_TCU);
-> +DEFINE_QNODE(qnm_gemnoc, MASTER_GEM_NOC_SNOC, 1, 8, 6,
-> +		SLAVE_APPSS, SLAVE_SNOC_CNOC,
-> +		SLAVE_IMEM, SLAVE_PIMEM,
-> +		SLAVE_QDSS_STM, SLAVE_TCU);
-> +DEFINE_QNODE(qxm_pimem, MASTER_PIMEM, 1, 8, 2,
-> +		SLAVE_SNOC_GEM_NOC_GC, SLAVE_IMEM);
-> +
-> +DEFINE_QNODE(qns_a1noc_snoc, SLAVE_A1NOC_SNOC, 1, 16, 1,
-> +		MASTER_A1NOC_SNOC);
-> +DEFINE_QNODE(srvc_aggre1_noc, SLAVE_SERVICE_A1NOC, 1, 4, 0);
-> +DEFINE_QNODE(qns_a2noc_snoc, SLAVE_A2NOC_SNOC, 1, 16, 1,
-> +		MASTER_A2NOC_SNOC);
-> +DEFINE_QNODE(srvc_aggre2_noc, SLAVE_SERVICE_A2NOC, 1, 4, 0);
-> +DEFINE_QNODE(qns_camnoc_uncomp, SLAVE_CAMNOC_UNCOMP, 1, 32, 0);
-> +DEFINE_QNODE(qns_cdsp_gemnoc, SLAVE_CDSP_GEM_NOC, 1, 32, 1,
-> +		MASTER_COMPUTE_NOC);
-> +DEFINE_QNODE(qhs_a1_noc_cfg, SLAVE_A1NOC_CFG, 1, 4, 1,
-> +		MASTER_A1NOC_CFG);
-> +DEFINE_QNODE(qhs_a2_noc_cfg, SLAVE_A2NOC_CFG, 1, 4, 1,
-> +		MASTER_A2NOC_CFG);
-> +DEFINE_QNODE(qhs_ahb2phy0, SLAVE_AHB2PHY_SOUTH, 1, 4, 0);
-> +DEFINE_QNODE(qhs_ahb2phy2, SLAVE_AHB2PHY_CENTER, 1, 4, 0);
-> +DEFINE_QNODE(qhs_aop, SLAVE_AOP, 1, 4, 0);
-> +DEFINE_QNODE(qhs_aoss, SLAVE_AOSS, 1, 4, 0);
-> +DEFINE_QNODE(qhs_boot_rom, SLAVE_BOOT_ROM, 1, 4, 0);
-> +DEFINE_QNODE(qhs_camera_cfg, SLAVE_CAMERA_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_camera_nrt_throttle_cfg,
-> +		SLAVE_CAMERA_NRT_THROTTLE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_camera_rt_throttle_cfg,
-> +		SLAVE_CAMERA_RT_THROTTLE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_clk_ctl, SLAVE_CLK_CTL, 1, 4, 0);
-> +DEFINE_QNODE(qhs_cpr_cx, SLAVE_RBCPR_CX_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_cpr_mx, SLAVE_RBCPR_MX_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_crypto0_cfg, SLAVE_CRYPTO_0_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_dcc_cfg, SLAVE_DCC_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_ddrss_cfg, SLAVE_CNOC_DDRSS, 1, 4, 1,
-> +		MASTER_CNOC_DC_NOC);
-> +DEFINE_QNODE(qhs_display_cfg, SLAVE_DISPLAY_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_display_rt_throttle_cfg,
-> +		SLAVE_DISPLAY_RT_THROTTLE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_display_throttle_cfg, SLAVE_DISPLAY_THROTTLE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_emmc_cfg, SLAVE_EMMC_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_glm, SLAVE_GLM, 1, 4, 0);
-> +DEFINE_QNODE(qhs_gpuss_cfg, SLAVE_GFX3D_CFG, 1, 8, 0);
-> +DEFINE_QNODE(qhs_imem_cfg, SLAVE_IMEM_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_ipa, SLAVE_IPA_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_mnoc_cfg, SLAVE_CNOC_MNOC_CFG, 1, 4, 1,
-> +		MASTER_CNOC_MNOC_CFG);
-> +DEFINE_QNODE(qhs_mss_cfg, SLAVE_CNOC_MSS, 1, 4, 0);
-> +DEFINE_QNODE(qhs_npu_cfg, SLAVE_NPU_CFG, 1, 4, 1,
-> +		MASTER_NPU_NOC_CFG);
-> +DEFINE_QNODE(qhs_npu_dma_throttle_cfg, SLAVE_NPU_DMA_BWMON_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_npu_dsp_throttle_cfg, SLAVE_NPU_PROC_BWMON_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_pdm, SLAVE_PDM, 1, 4, 0);
-> +DEFINE_QNODE(qhs_pimem_cfg, SLAVE_PIMEM_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_prng, SLAVE_PRNG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qdss_cfg, SLAVE_QDSS_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qm_cfg, SLAVE_QM_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qm_mpu_cfg, SLAVE_QM_MPU_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qspi, SLAVE_QSPI_0, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qup0, SLAVE_QUP_0, 1, 4, 0);
-> +DEFINE_QNODE(qhs_qup1, SLAVE_QUP_1, 1, 4, 0);
-> +DEFINE_QNODE(qhs_sdc2, SLAVE_SDCC_2, 1, 4, 0);
-> +DEFINE_QNODE(qhs_security, SLAVE_SECURITY, 1, 4, 0);
-> +DEFINE_QNODE(qhs_snoc_cfg, SLAVE_SNOC_CFG, 1, 4, 1,
-> +		MASTER_SNOC_CFG);
-> +DEFINE_QNODE(qhs_tcsr, SLAVE_TCSR, 1, 4, 0);
-> +DEFINE_QNODE(qhs_tlmm_1, SLAVE_TLMM_WEST, 1, 4, 0);
-> +DEFINE_QNODE(qhs_tlmm_2, SLAVE_TLMM_NORTH, 1, 4, 0);
-> +DEFINE_QNODE(qhs_tlmm_3, SLAVE_TLMM_SOUTH, 1, 4, 0);
-> +DEFINE_QNODE(qhs_ufs_mem_cfg, SLAVE_UFS_MEM_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_usb3, SLAVE_USB3, 1, 4, 0);
-> +DEFINE_QNODE(qhs_venus_cfg, SLAVE_VENUS_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_venus_throttle_cfg, SLAVE_VENUS_THROTTLE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_vsense_ctrl_cfg, SLAVE_VSENSE_CTRL_CFG, 1, 4, 0);
-> +DEFINE_QNODE(srvc_cnoc, SLAVE_SERVICE_CNOC, 1, 4, 0);
-> +DEFINE_QNODE(qhs_gemnoc, SLAVE_GEM_NOC_CFG, 1, 4, 1,
-> +		MASTER_GEM_NOC_CFG);
-> +DEFINE_QNODE(qhs_llcc, SLAVE_LLCC_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_mdsp_ms_mpu_cfg, SLAVE_MSS_PROC_MS_MPU_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qns_gem_noc_snoc, SLAVE_GEM_NOC_SNOC, 1, 8, 1,
-> +		MASTER_GEM_NOC_SNOC);
-> +DEFINE_QNODE(qns_llcc, SLAVE_LLCC, 1, 16, 1,
-> +		MASTER_LLCC);
-> +DEFINE_QNODE(srvc_gemnoc, SLAVE_SERVICE_GEM_NOC, 1, 4, 0);
-> +DEFINE_QNODE(ipa_core_slave, SLAVE_IPA_CORE, 1, 8, 0);
-> +DEFINE_QNODE(ebi, SLAVE_EBI1, 2, 4, 0);
-> +DEFINE_QNODE(qns_mem_noc_hf, SLAVE_MNOC_HF_MEM_NOC, 1, 32, 1,
-> +		MASTER_MNOC_HF_MEM_NOC);
-> +DEFINE_QNODE(qns_mem_noc_sf, SLAVE_MNOC_SF_MEM_NOC, 1, 32, 1,
-> +		MASTER_MNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(srvc_mnoc, SLAVE_SERVICE_MNOC, 1, 4, 0);
-> +DEFINE_QNODE(qhs_cal_dp0, SLAVE_NPU_CAL_DP0, 1, 4, 0);
-> +DEFINE_QNODE(qhs_cp, SLAVE_NPU_CP, 1, 4, 0);
-> +DEFINE_QNODE(qhs_dma_bwmon, SLAVE_NPU_INT_DMA_BWMON_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_dpm, SLAVE_NPU_DPM, 1, 4, 0);
-> +DEFINE_QNODE(qhs_isense, SLAVE_ISENSE_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_llm, SLAVE_NPU_LLM_CFG, 1, 4, 0);
-> +DEFINE_QNODE(qhs_tcm, SLAVE_NPU_TCM, 1, 4, 0);
-> +DEFINE_QNODE(qns_npu_sys, SLAVE_NPU_COMPUTE_NOC, 2, 32, 0);
-> +DEFINE_QNODE(srvc_noc, SLAVE_SERVICE_NPU_NOC, 1, 4, 0);
-> +DEFINE_QNODE(qup_core_slave_1, SLAVE_QUP_CORE_0, 1, 4, 0);
-> +DEFINE_QNODE(qup_core_slave_2, SLAVE_QUP_CORE_1, 1, 4, 0);
-> +DEFINE_QNODE(qhs_apss, SLAVE_APPSS, 1, 8, 0);
-> +DEFINE_QNODE(qns_cnoc, SLAVE_SNOC_CNOC, 1, 8, 1,
-> +		MASTER_SNOC_CNOC);
-> +DEFINE_QNODE(qns_gemnoc_gc, SLAVE_SNOC_GEM_NOC_GC, 1, 8, 1,
-> +		MASTER_SNOC_GC_MEM_NOC);
-> +DEFINE_QNODE(qns_gemnoc_sf, SLAVE_SNOC_GEM_NOC_SF, 1, 16, 1,
-> +		MASTER_SNOC_SF_MEM_NOC);
-> +DEFINE_QNODE(qxs_imem, SLAVE_IMEM, 1, 8, 0);
-> +DEFINE_QNODE(qxs_pimem, SLAVE_PIMEM, 1, 8, 0);
-> +DEFINE_QNODE(srvc_snoc, SLAVE_SERVICE_SNOC, 1, 4, 0);
-> +DEFINE_QNODE(xs_qdss_stm, SLAVE_QDSS_STM, 1, 4, 0);
-> +DEFINE_QNODE(xs_sys_tcu_cfg, SLAVE_TCU, 1, 8, 0);
-> +
-> +DEFINE_QBCM(bcm_acv, "ACV", false, 1,
-> +		&ebi);
-> +DEFINE_QBCM(bcm_mc0, "MC0", true, 1,
-> +		&ebi);
-> +DEFINE_QBCM(bcm_sh0, "SH0", true, 1,
-> +		&qns_llcc);
-> +DEFINE_QBCM(bcm_mm0, "MM0", false, 1,
-> +		&qns_mem_noc_hf);
-> +DEFINE_QBCM(bcm_ce0, "CE0", false, 1,
-> +		&qxm_crypto);
-> +DEFINE_QBCM(bcm_ip0, "IP0", false, 1,
-> +		&ipa_core_slave);
-> +DEFINE_QBCM(bcm_cn0, "CN0", true, 48,
-> +		&qnm_snoc, &xm_qdss_dap, &qhs_a1_noc_cfg,
-> +		&qhs_a2_noc_cfg, &qhs_ahb2phy0, &qhs_aop,
-> +		&qhs_aoss, &qhs_boot_rom, &qhs_camera_cfg,
-> +		&qhs_camera_nrt_throttle_cfg,
-> +		&qhs_camera_rt_throttle_cfg, &qhs_clk_ctl,
-> +		&qhs_cpr_cx, &qhs_cpr_mx, &qhs_crypto0_cfg,
-> +		&qhs_dcc_cfg, &qhs_ddrss_cfg, &qhs_display_cfg,
-> +		&qhs_display_rt_throttle_cfg,
-> +		&qhs_display_throttle_cfg, &qhs_glm,
-> +		&qhs_gpuss_cfg, &qhs_imem_cfg, &qhs_ipa,
-> +		&qhs_mnoc_cfg, &qhs_mss_cfg, &qhs_npu_cfg,
-> +		&qhs_npu_dma_throttle_cfg, &qhs_npu_dsp_throttle_cfg,
-> +		&qhs_pimem_cfg, &qhs_prng, &qhs_qdss_cfg, &qhs_qm_cfg,
-> +		&qhs_qm_mpu_cfg, &qhs_qup0, &qhs_qup1,
-> +		&qhs_security, &qhs_snoc_cfg, &qhs_tcsr,
-> +		&qhs_tlmm_1, &qhs_tlmm_2, &qhs_tlmm_3,
-> +		&qhs_ufs_mem_cfg, &qhs_usb3, &qhs_venus_cfg,
-> +		&qhs_venus_throttle_cfg, &qhs_vsense_ctrl_cfg, &srvc_cnoc);
-> +DEFINE_QBCM(bcm_mm1, "MM1", false, 8,
-> +		&qxm_camnoc_hf0_uncomp, &qxm_camnoc_hf1_uncomp,
-> +		&qxm_camnoc_sf_uncomp, &qhm_mnoc_cfg, &qxm_mdp0,
-> +		&qxm_rot, &qxm_venus0, &qxm_venus_arm9);
-> +DEFINE_QBCM(bcm_sh2, "SH2", false, 1,
-> +		&acm_sys_tcu);
-> +DEFINE_QBCM(bcm_mm2, "MM2", false, 1,
-> +		&qns_mem_noc_sf);
-> +DEFINE_QBCM(bcm_qup0, "QUP0", false, 2,
-> +		&qup_core_master_1, &qup_core_master_2);
-> +DEFINE_QBCM(bcm_sh3, "SH3", false, 1,
-> +		&qnm_cmpnoc);
-> +DEFINE_QBCM(bcm_sh4, "SH4", false, 1,
-> +		&acm_apps0);
-> +DEFINE_QBCM(bcm_sn0, "SN0", true, 1,
-> +		&qns_gemnoc_sf);
-> +DEFINE_QBCM(bcm_co0, "CO0", false, 1,
-> +		&qns_cdsp_gemnoc);
-> +DEFINE_QBCM(bcm_sn1, "SN1", false, 1,
-> +		&qxs_imem);
-> +DEFINE_QBCM(bcm_cn1, "CN1", false, 8,
-> +		&qhm_qspi, &xm_sdc2, &xm_emmc,
-> +		&qhs_ahb2phy2, &qhs_emmc_cfg,
-> +		&qhs_pdm, &qhs_qspi, &qhs_sdc2);
-> +DEFINE_QBCM(bcm_sn2, "SN2", false, 2,
-> +		&qxm_pimem, &qns_gemnoc_gc);
-> +DEFINE_QBCM(bcm_co2, "CO2", false, 1,
-> +		&qnm_npu);
-> +DEFINE_QBCM(bcm_sn3, "SN3", false, 1,
-> +		&qxs_pimem);
-> +DEFINE_QBCM(bcm_co3, "CO3", false, 1,
-> +		&qxm_npu_dsp);
-> +DEFINE_QBCM(bcm_sn4, "SN4", false, 1,
-> +		&xs_qdss_stm);
-> +DEFINE_QBCM(bcm_sn7, "SN7", false, 1,
-> +		&qnm_aggre1_noc);
-> +DEFINE_QBCM(bcm_sn9, "SN9", false, 1,
-> +		&qnm_aggre2_noc);
-> +DEFINE_QBCM(bcm_sn12, "SN12", false, 1,
-> +		&qnm_gemnoc);
-> +
-> +static struct qcom_icc_bcm *aggre1_noc_bcms[] = {
-> +	&bcm_cn1,
-> +};
-> +
-> +static struct qcom_icc_node *aggre1_noc_nodes[] = {
-> +	[MASTER_A1NOC_CFG] = &qhm_a1noc_cfg,
-> +	[MASTER_QSPI] = &qhm_qspi,
-> +	[MASTER_QUP_0] = &qhm_qup_0,
-> +	[MASTER_SDCC_2] = &xm_sdc2,
-> +	[MASTER_EMMC] = &xm_emmc,
-> +	[MASTER_UFS_MEM] = &xm_ufs_mem,
-> +	[SLAVE_A1NOC_SNOC] = &qns_a1noc_snoc,
-> +	[SLAVE_SERVICE_A1NOC] = &srvc_aggre1_noc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_aggre1_noc = {
-> +	.nodes = aggre1_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(aggre1_noc_nodes),
-> +	.bcms = aggre1_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(aggre1_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *aggre2_noc_bcms[] = {
-> +	&bcm_ce0,
-> +};
-> +
-> +static struct qcom_icc_node *aggre2_noc_nodes[] = {
-> +	[MASTER_A2NOC_CFG] = &qhm_a2noc_cfg,
-> +	[MASTER_QDSS_BAM] = &qhm_qdss_bam,
-> +	[MASTER_QUP_1] = &qhm_qup_1,
-> +	[MASTER_USB3] = &qhm_usb3,
-> +	[MASTER_CRYPTO] = &qxm_crypto,
-> +	[MASTER_IPA] = &qxm_ipa,
-> +	[MASTER_QDSS_ETR] = &xm_qdss_etr,
-> +	[SLAVE_A2NOC_SNOC] = &qns_a2noc_snoc,
-> +	[SLAVE_SERVICE_A2NOC] = &srvc_aggre2_noc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_aggre2_noc = {
-> +	.nodes = aggre2_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(aggre2_noc_nodes),
-> +	.bcms = aggre2_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(aggre2_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *camnoc_virt_bcms[] = {
-> +	&bcm_mm1,
-> +};
-> +
-> +static struct qcom_icc_node *camnoc_virt_nodes[] = {
-> +	[MASTER_CAMNOC_HF0_UNCOMP] = &qxm_camnoc_hf0_uncomp,
-> +	[MASTER_CAMNOC_HF1_UNCOMP] = &qxm_camnoc_hf1_uncomp,
-> +	[MASTER_CAMNOC_SF_UNCOMP] = &qxm_camnoc_sf_uncomp,
-> +	[SLAVE_CAMNOC_UNCOMP] = &qns_camnoc_uncomp,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_camnoc_virt = {
-> +	.nodes = camnoc_virt_nodes,
-> +	.num_nodes = ARRAY_SIZE(camnoc_virt_nodes),
-> +	.bcms = camnoc_virt_bcms,
-> +	.num_bcms = ARRAY_SIZE(camnoc_virt_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *compute_noc_bcms[] = {
-> +	&bcm_co0,
-> +	&bcm_co2,
-> +	&bcm_co3,
-> +};
-> +
-> +static struct qcom_icc_node *compute_noc_nodes[] = {
-> +	[MASTER_NPU] = &qnm_npu,
-> +	[MASTER_NPU_PROC] = &qxm_npu_dsp,
-> +	[SLAVE_CDSP_GEM_NOC] = &qns_cdsp_gemnoc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_compute_noc = {
-> +	.nodes = compute_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(compute_noc_nodes),
-> +	.bcms = compute_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(compute_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *config_noc_bcms[] = {
-> +	&bcm_cn0,
-> +	&bcm_cn1,
-> +};
-> +
-> +static struct qcom_icc_node *config_noc_nodes[] = {
-> +	[MASTER_SNOC_CNOC] = &qnm_snoc,
-> +	[MASTER_QDSS_DAP] = &xm_qdss_dap,
-> +	[SLAVE_A1NOC_CFG] = &qhs_a1_noc_cfg,
-> +	[SLAVE_A2NOC_CFG] = &qhs_a2_noc_cfg,
-> +	[SLAVE_AHB2PHY_SOUTH] = &qhs_ahb2phy0,
-> +	[SLAVE_AHB2PHY_CENTER] = &qhs_ahb2phy2,
-> +	[SLAVE_AOP] = &qhs_aop,
-> +	[SLAVE_AOSS] = &qhs_aoss,
-> +	[SLAVE_BOOT_ROM] = &qhs_boot_rom,
-> +	[SLAVE_CAMERA_CFG] = &qhs_camera_cfg,
-> +	[SLAVE_CAMERA_NRT_THROTTLE_CFG] = &qhs_camera_nrt_throttle_cfg,
-> +	[SLAVE_CAMERA_RT_THROTTLE_CFG] = &qhs_camera_rt_throttle_cfg,
-> +	[SLAVE_CLK_CTL] = &qhs_clk_ctl,
-> +	[SLAVE_RBCPR_CX_CFG] = &qhs_cpr_cx,
-> +	[SLAVE_RBCPR_MX_CFG] = &qhs_cpr_mx,
-> +	[SLAVE_CRYPTO_0_CFG] = &qhs_crypto0_cfg,
-> +	[SLAVE_DCC_CFG] = &qhs_dcc_cfg,
-> +	[SLAVE_CNOC_DDRSS] = &qhs_ddrss_cfg,
-> +	[SLAVE_DISPLAY_CFG] = &qhs_display_cfg,
-> +	[SLAVE_DISPLAY_RT_THROTTLE_CFG] = &qhs_display_rt_throttle_cfg,
-> +	[SLAVE_DISPLAY_THROTTLE_CFG] = &qhs_display_throttle_cfg,
-> +	[SLAVE_EMMC_CFG] = &qhs_emmc_cfg,
-> +	[SLAVE_GLM] = &qhs_glm,
-> +	[SLAVE_GFX3D_CFG] = &qhs_gpuss_cfg,
-> +	[SLAVE_IMEM_CFG] = &qhs_imem_cfg,
-> +	[SLAVE_IPA_CFG] = &qhs_ipa,
-> +	[SLAVE_CNOC_MNOC_CFG] = &qhs_mnoc_cfg,
-> +	[SLAVE_CNOC_MSS] = &qhs_mss_cfg,
-> +	[SLAVE_NPU_CFG] = &qhs_npu_cfg,
-> +	[SLAVE_NPU_DMA_BWMON_CFG] = &qhs_npu_dma_throttle_cfg,
-> +	[SLAVE_NPU_PROC_BWMON_CFG] = &qhs_npu_dsp_throttle_cfg,
-> +	[SLAVE_PDM] = &qhs_pdm,
-> +	[SLAVE_PIMEM_CFG] = &qhs_pimem_cfg,
-> +	[SLAVE_PRNG] = &qhs_prng,
-> +	[SLAVE_QDSS_CFG] = &qhs_qdss_cfg,
-> +	[SLAVE_QM_CFG] = &qhs_qm_cfg,
-> +	[SLAVE_QM_MPU_CFG] = &qhs_qm_mpu_cfg,
-> +	[SLAVE_QSPI_0] = &qhs_qspi,
-> +	[SLAVE_QUP_0] = &qhs_qup0,
-> +	[SLAVE_QUP_1] = &qhs_qup1,
-> +	[SLAVE_SDCC_2] = &qhs_sdc2,
-> +	[SLAVE_SECURITY] = &qhs_security,
-> +	[SLAVE_SNOC_CFG] = &qhs_snoc_cfg,
-> +	[SLAVE_TCSR] = &qhs_tcsr,
-> +	[SLAVE_TLMM_WEST] = &qhs_tlmm_1,
-> +	[SLAVE_TLMM_NORTH] = &qhs_tlmm_2,
-> +	[SLAVE_TLMM_SOUTH] = &qhs_tlmm_3,
-> +	[SLAVE_UFS_MEM_CFG] = &qhs_ufs_mem_cfg,
-> +	[SLAVE_USB3] = &qhs_usb3,
-> +	[SLAVE_VENUS_CFG] = &qhs_venus_cfg,
-> +	[SLAVE_VENUS_THROTTLE_CFG] = &qhs_venus_throttle_cfg,
-> +	[SLAVE_VSENSE_CTRL_CFG] = &qhs_vsense_ctrl_cfg,
-> +	[SLAVE_SERVICE_CNOC] = &srvc_cnoc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_config_noc = {
-> +	.nodes = config_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(config_noc_nodes),
-> +	.bcms = config_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(config_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *dc_noc_bcms[] = {
-> +};
-> +
-> +static struct qcom_icc_node *dc_noc_nodes[] = {
-> +	[MASTER_CNOC_DC_NOC] = &qhm_cnoc_dc_noc,
-> +	[SLAVE_GEM_NOC_CFG] = &qhs_gemnoc,
-> +	[SLAVE_LLCC_CFG] = &qhs_llcc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_dc_noc = {
-> +	.nodes = dc_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(dc_noc_nodes),
-> +	.bcms = dc_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(dc_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *gem_noc_bcms[] = {
-> +	&bcm_sh0,
-> +	&bcm_sh2,
-> +	&bcm_sh3,
-> +	&bcm_sh4,
-> +};
-> +
-> +static struct qcom_icc_node *gem_noc_nodes[] = {
-> +	[MASTER_APPSS_PROC] = &acm_apps0,
-> +	[MASTER_SYS_TCU] = &acm_sys_tcu,
-> +	[MASTER_GEM_NOC_CFG] = &qhm_gemnoc_cfg,
-> +	[MASTER_COMPUTE_NOC] = &qnm_cmpnoc,
-> +	[MASTER_MNOC_HF_MEM_NOC] = &qnm_mnoc_hf,
-> +	[MASTER_MNOC_SF_MEM_NOC] = &qnm_mnoc_sf,
-> +	[MASTER_SNOC_GC_MEM_NOC] = &qnm_snoc_gc,
-> +	[MASTER_SNOC_SF_MEM_NOC] = &qnm_snoc_sf,
-> +	[MASTER_GFX3D] = &qxm_gpu,
-> +	[SLAVE_MSS_PROC_MS_MPU_CFG] = &qhs_mdsp_ms_mpu_cfg,
-> +	[SLAVE_GEM_NOC_SNOC] = &qns_gem_noc_snoc,
-> +	[SLAVE_LLCC] = &qns_llcc,
-> +	[SLAVE_SERVICE_GEM_NOC] = &srvc_gemnoc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_gem_noc = {
-> +	.nodes = gem_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(gem_noc_nodes),
-> +	.bcms = gem_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(gem_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *ipa_virt_bcms[] = {
-> +	&bcm_ip0,
-> +};
-> +
-> +static struct qcom_icc_node *ipa_virt_nodes[] = {
-> +	[MASTER_IPA_CORE] = &ipa_core_master,
-> +	[SLAVE_IPA_CORE] = &ipa_core_slave,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_ipa_virt = {
-> +	.nodes = ipa_virt_nodes,
-> +	.num_nodes = ARRAY_SIZE(ipa_virt_nodes),
-> +	.bcms = ipa_virt_bcms,
-> +	.num_bcms = ARRAY_SIZE(ipa_virt_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *mc_virt_bcms[] = {
-> +	&bcm_acv,
-> +	&bcm_mc0,
-> +};
-> +
-> +static struct qcom_icc_node *mc_virt_nodes[] = {
-> +	[MASTER_LLCC] = &llcc_mc,
-> +	[SLAVE_EBI1] = &ebi,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_mc_virt = {
-> +	.nodes = mc_virt_nodes,
-> +	.num_nodes = ARRAY_SIZE(mc_virt_nodes),
-> +	.bcms = mc_virt_bcms,
-> +	.num_bcms = ARRAY_SIZE(mc_virt_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *mmss_noc_bcms[] = {
-> +	&bcm_mm0,
-> +	&bcm_mm1,
-> +	&bcm_mm2,
-> +};
-> +
-> +static struct qcom_icc_node *mmss_noc_nodes[] = {
-> +	[MASTER_CNOC_MNOC_CFG] = &qhm_mnoc_cfg,
-> +	[MASTER_CAMNOC_HF0] = &qxm_camnoc_hf0,
-> +	[MASTER_CAMNOC_HF1] = &qxm_camnoc_hf1,
-> +	[MASTER_CAMNOC_SF] = &qxm_camnoc_sf,
-> +	[MASTER_MDP0] = &qxm_mdp0,
-> +	[MASTER_ROTATOR] = &qxm_rot,
-> +	[MASTER_VIDEO_P0] = &qxm_venus0,
-> +	[MASTER_VIDEO_PROC] = &qxm_venus_arm9,
-> +	[SLAVE_MNOC_HF_MEM_NOC] = &qns_mem_noc_hf,
-> +	[SLAVE_MNOC_SF_MEM_NOC] = &qns_mem_noc_sf,
-> +	[SLAVE_SERVICE_MNOC] = &srvc_mnoc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_mmss_noc = {
-> +	.nodes = mmss_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(mmss_noc_nodes),
-> +	.bcms = mmss_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(mmss_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *npu_noc_bcms[] = {
-
-No bcms?
-
-> +};
-> +
-> +static struct qcom_icc_node *npu_noc_nodes[] = {
-> +	[MASTER_NPU_SYS] = &amm_npu_sys,
-> +	[MASTER_NPU_NOC_CFG] = &qhm_npu_cfg,
-> +	[SLAVE_NPU_CAL_DP0] = &qhs_cal_dp0,
-> +	[SLAVE_NPU_CP] = &qhs_cp,
-> +	[SLAVE_NPU_INT_DMA_BWMON_CFG] = &qhs_dma_bwmon,
-> +	[SLAVE_NPU_DPM] = &qhs_dpm,
-> +	[SLAVE_ISENSE_CFG] = &qhs_isense,
-> +	[SLAVE_NPU_LLM_CFG] = &qhs_llm,
-> +	[SLAVE_NPU_TCM] = &qhs_tcm,
-> +	[SLAVE_NPU_COMPUTE_NOC] = &qns_npu_sys,
-> +	[SLAVE_SERVICE_NPU_NOC] = &srvc_noc,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_npu_noc = {
-> +	.nodes = npu_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(npu_noc_nodes),
-> +	.bcms = npu_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(npu_noc_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *qup_virt_bcms[] = {
-> +	&bcm_qup0,
-> +};
-> +
-> +static struct qcom_icc_node *qup_virt_nodes[] = {
-> +	[MASTER_QUP_CORE_0] = &qup_core_master_1,
-> +	[MASTER_QUP_CORE_1] = &qup_core_master_2,
-> +	[SLAVE_QUP_CORE_0] = &qup_core_slave_1,
-> +	[SLAVE_QUP_CORE_1] = &qup_core_slave_2,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_qup_virt = {
-> +	.nodes = qup_virt_nodes,
-> +	.num_nodes = ARRAY_SIZE(qup_virt_nodes),
-> +	.bcms = qup_virt_bcms,
-> +	.num_bcms = ARRAY_SIZE(qup_virt_bcms),
-> +};
-> +
-> +static struct qcom_icc_bcm *system_noc_bcms[] = {
-> +	&bcm_sn0,
-> +	&bcm_sn1,
-> +	&bcm_sn2,
-> +	&bcm_sn3,
-> +	&bcm_sn4,
-> +	&bcm_sn7,
-> +	&bcm_sn9,
-> +	&bcm_sn12,
-> +};
-> +
-> +static struct qcom_icc_node *system_noc_nodes[] = {
-> +	[MASTER_SNOC_CFG] = &qhm_snoc_cfg,
-> +	[MASTER_A1NOC_SNOC] = &qnm_aggre1_noc,
-> +	[MASTER_A2NOC_SNOC] = &qnm_aggre2_noc,
-> +	[MASTER_GEM_NOC_SNOC] = &qnm_gemnoc,
-> +	[MASTER_PIMEM] = &qxm_pimem,
-> +	[SLAVE_APPSS] = &qhs_apss,
-> +	[SLAVE_SNOC_CNOC] = &qns_cnoc,
-> +	[SLAVE_SNOC_GEM_NOC_GC] = &qns_gemnoc_gc,
-> +	[SLAVE_SNOC_GEM_NOC_SF] = &qns_gemnoc_sf,
-> +	[SLAVE_IMEM] = &qxs_imem,
-> +	[SLAVE_PIMEM] = &qxs_pimem,
-> +	[SLAVE_SERVICE_SNOC] = &srvc_snoc,
-> +	[SLAVE_QDSS_STM] = &xs_qdss_stm,
-> +	[SLAVE_TCU] = &xs_sys_tcu_cfg,
-> +};
-> +
-> +static struct qcom_icc_desc sc7180_system_noc = {
-> +	.nodes = system_noc_nodes,
-> +	.num_nodes = ARRAY_SIZE(system_noc_nodes),
-> +	.bcms = system_noc_bcms,
-> +	.num_bcms = ARRAY_SIZE(system_noc_bcms),
-> +};
-> +
-> +static int qnoc_probe(struct platform_device *pdev)
-> +{
-> +	const struct qcom_icc_desc *desc;
-> +	struct icc_onecell_data *data;
-> +	struct icc_provider *provider;
-> +	struct qcom_icc_node **qnodes;
-> +	struct qcom_icc_provider *qp;
-> +	struct icc_node *node;
-> +	size_t num_nodes, i;
-> +	int ret;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	qnodes = desc->nodes;
-> +	num_nodes = desc->num_nodes;
-> +
-> +	qp = devm_kzalloc(&pdev->dev, sizeof(*qp), GFP_KERNEL);
-> +	if (!qp)
-> +		return -ENOMEM;
-> +
-> +	data = devm_kcalloc(&pdev->dev, num_nodes, sizeof(*node), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	provider = &qp->provider;
-> +	provider->dev = &pdev->dev;
-> +	provider->set = qcom_icc_set;
-> +	provider->aggregate = qcom_icc_aggregate;
-> +	provider->xlate = of_icc_xlate_onecell;
-> +	INIT_LIST_HEAD(&provider->nodes);
-> +	provider->data = data;
-> +
-> +	qp->dev = &pdev->dev;
-> +	qp->bcms = desc->bcms;
-> +	qp->num_bcms = desc->num_bcms;
-> +
-> +	qp->voter = of_bcm_voter_get(qp->dev, NULL);
-> +	if (IS_ERR(qp->voter))
-> +		return PTR_ERR(qp->voter);
-> +
-> +	ret = icc_provider_add(provider);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "error adding interconnect provider\n");
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num_nodes; i++) {
-> +		size_t j;
-> +
-> +		if (!qnodes[i])
-> +			continue;
-> +
-> +		node = icc_node_create(qnodes[i]->id);
-> +		if (IS_ERR(node)) {
-> +			ret = PTR_ERR(node);
-> +			goto err;
-> +		}
-> +
-> +		node->name = qnodes[i]->name;
-> +		node->data = qnodes[i];
-> +		icc_node_add(node, provider);
-> +
-> +		dev_dbg(&pdev->dev, "registered node %pK %s %d\n", node,
-> +			qnodes[i]->name, node->id);
-> +
-> +		/* populate links */
-> +		for (j = 0; j < qnodes[i]->num_links; j++)
-> +			icc_link_create(node, qnodes[i]->links[j]);
-> +
-> +		data->nodes[i] = node;
-> +	}
-> +	data->num_nodes = num_nodes;
-> +
-> +	for (i = 0; i < qp->num_bcms; i++)
-> +		qcom_icc_bcm_init(qp->bcms[i], &pdev->dev);
-> +
-> +	platform_set_drvdata(pdev, qp);
-> +
-> +	dev_dbg(&pdev->dev, "Registered SC7180 ICC\n");
-> +
-> +	return ret;
-> +err:
-> +	list_for_each_entry(node, &provider->nodes, node_list) {
-> +		icc_node_del(node);
-> +		icc_node_destroy(node->id);
-> +	}
-
-You can use the new icc_nodes_remove() helper here..
-
-> +
-> +	icc_provider_del(provider);
-> +	return ret;
-> +}
-> +
-> +static int qnoc_remove(struct platform_device *pdev)
-> +{
-> +	struct qcom_icc_provider *qp = platform_get_drvdata(pdev);
-> +	struct icc_provider *provider = &qp->provider;
-> +	struct icc_node *n;
-> +
-> +	list_for_each_entry(n, &provider->nodes, node_list) {
-> +		icc_node_del(n);
-> +		icc_node_destroy(n->id);
-> +	}
-
-..and here too.
-
-> +
-> +	return icc_provider_del(provider);
-> +}
-> +static const struct of_device_id qnoc_of_match[] = {
-> +	{ .compatible = "qcom,sc7180-aggre1-noc",
-> +	  .data = &sc7180_aggre1_noc},
-> +	{ .compatible = "qcom,sc7180-aggre2-noc",
-> +	  .data = &sc7180_aggre2_noc},
-> +	{ .compatible = "qcom,sc7180-camnoc-virt",
-> +	  .data = &sc7180_camnoc_virt},
-> +	{ .compatible = "qcom,sc7180-compute-noc",
-> +	  .data = &sc7180_compute_noc},
-> +	{ .compatible = "qcom,sc7180-config-noc",
-> +	  .data = &sc7180_config_noc},
-> +	{ .compatible = "qcom,sc7180-dc-noc",
-> +	  .data = &sc7180_dc_noc},
-> +	{ .compatible = "qcom,sc7180-gem-noc",
-> +	  .data = &sc7180_gem_noc},
-> +	{ .compatible = "qcom,sc7180-ipa-virt",
-> +	  .data = &sc7180_ipa_virt},
-> +	{ .compatible = "qcom,sc7180-mc-virt",
-> +	  .data = &sc7180_mc_virt},
-> +	{ .compatible = "qcom,sc7180-mmss-noc",
-> +	  .data = &sc7180_mmss_noc},
-> +	{ .compatible = "qcom,sc7180-npu-noc",
-> +	  .data = &sc7180_npu_noc},
-> +	{ .compatible = "qcom,sc7180-qup-virt",
-> +	  .data = &sc7180_qup_virt},
-> +	{ .compatible = "qcom,sc7180-system-noc",
-> +	  .data = &sc7180_system_noc},
-
-Nit: I would put these on a same line and ignore the 80 cols, but
-it's up to you.
-
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, qnoc_of_match);
-> +
-> +static struct platform_driver qnoc_driver = {
-> +	.probe = qnoc_probe,
-> +	.remove = qnoc_remove,
-> +	.driver = {
-> +		.name = "qnoc-sc7180",
-> +		.of_match_table = qnoc_of_match,
-> +	},
-> +};
-> +module_platform_driver(qnoc_driver);
-> +
-> +MODULE_DESCRIPTION("Qualcomm SC7180 NoC driver");
-> +MODULE_LICENSE("GPL v2");
-> 
-
-Thanks,
-Georgi
