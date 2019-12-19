@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9954B126A33
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBE7812693C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:35:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfLSSpC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37168 "EHLO mail.kernel.org"
+        id S1727279AbfLSSfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:35:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728806AbfLSSpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:00 -0500
+        id S1727262AbfLSSfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:35:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21C642465E;
-        Thu, 19 Dec 2019 18:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B9A1222C2;
+        Thu, 19 Dec 2019 18:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781099;
-        bh=XOTApJkCiuammR73DmCm1PlS4Vhi+iv3evwzFFAsCI4=;
+        s=default; t=1576780544;
+        bh=6h8/HF5JaHlVvQxwfiJqOQenju0p/dbWVLnPBinmTRM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RZoOmBMhQ9mqFI5RoS6oKvjB9CNdo/thhsDeRLZQHJRtV5B/HOFPtlSwmQzf7HDzE
-         9fI9l/5ndwRHa5wXT9Zoxqq1LWSZ2O2h4QsrxXzXEgGCUN6H28uUwk9DDxD9YddGkc
-         9ZVkWe1JQwow8JNQruuwsx2NUYzdBSySpZsr1umM=
+        b=KfPL68XYs+B1PoJv+nwUsdCATrxjIOcz16zjR4foCWKNvUTTjys8uYD7VMQ9/3Qe7
+         A2sGoVVCwgmKXzHoVqXiCG1IWaikn9WgaLOs3g1xYSmtWui55g4NPbxxYGEvKfEO+O
+         M1YjYlcedBGg8/CLftPzNyKPZP+y2QBX7WcLz1B0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        stable@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 043/199] altera-stapl: check for a null key before strcasecmping it
-Date:   Thu, 19 Dec 2019 19:32:05 +0100
-Message-Id: <20191219183217.321655080@linuxfoundation.org>
+Subject: [PATCH 4.4 018/162] clk: rockchip: fix rk3188 sclk_mac_lbtest parameter ordering
+Date:   Thu, 19 Dec 2019 19:32:06 +0100
+Message-Id: <20191219183207.478952122@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,39 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Heiko Stuebner <heiko@sntech.de>
 
-[ Upstream commit 9ccb645683ef46e3c52c12c088a368baa58447d4 ]
+[ Upstream commit ac8cb53829a6ba119082e067f5bc8fab3611ce6a ]
 
-Currently the null check on key is occurring after the strcasecmp on
-the key, hence there is a potential null pointer dereference on key.
-Fix this by checking if key is null first. Also replace the == 0
-check on strcasecmp with just the ! operator.
+Similar to commit a9f0c0e56371 ("clk: rockchip: fix rk3188 sclk_smc
+gate data") there is one other gate clock in the rk3188 clock driver
+with a similar wrong ordering, the sclk_mac_lbtest. So fix it as well.
 
-Detected by CoverityScan, CID#1248787 ("Dereference before null check")
-
-Fixes: fa766c9be58b ("[media] Altera FPGA firmware download module")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/altera-stapl/altera.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/rockchip/clk-rk3188.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/altera-stapl/altera.c b/drivers/misc/altera-stapl/altera.c
-index f53e217e963f5..494e263daa748 100644
---- a/drivers/misc/altera-stapl/altera.c
-+++ b/drivers/misc/altera-stapl/altera.c
-@@ -2176,8 +2176,7 @@ static int altera_get_note(u8 *p, s32 program_size,
- 			key_ptr = &p[note_strings +
- 					get_unaligned_be32(
- 					&p[note_table + (8 * i)])];
--			if ((strncasecmp(key, key_ptr, strlen(key_ptr)) == 0) &&
--						(key != NULL)) {
-+			if (key && !strncasecmp(key, key_ptr, strlen(key_ptr))) {
- 				status = 0;
+diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
+index 986a558c361d6..4051782b6f844 100644
+--- a/drivers/clk/rockchip/clk-rk3188.c
++++ b/drivers/clk/rockchip/clk-rk3188.c
+@@ -329,8 +329,8 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
+ 			RK2928_CLKGATE_CON(2), 5, GFLAGS),
+ 	MUX(SCLK_MAC, "sclk_macref", mux_sclk_macref_p, CLK_SET_RATE_PARENT,
+ 			RK2928_CLKSEL_CON(21), 4, 1, MFLAGS),
+-	GATE(0, "sclk_mac_lbtest", "sclk_macref",
+-			RK2928_CLKGATE_CON(2), 12, 0, GFLAGS),
++	GATE(0, "sclk_mac_lbtest", "sclk_macref", 0,
++			RK2928_CLKGATE_CON(2), 12, GFLAGS),
  
- 				value_ptr = &p[note_strings +
+ 	COMPOSITE(0, "hsadc_src", mux_pll_src_gpll_cpll_p, 0,
+ 			RK2928_CLKSEL_CON(22), 0, 1, MFLAGS, 8, 8, DFLAGS,
 -- 
 2.20.1
 
