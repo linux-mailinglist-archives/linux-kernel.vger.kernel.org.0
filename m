@@ -2,76 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 596E3126C16
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:01:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA79126DC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbfLSSvA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:51:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729443AbfLSSu5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:50:57 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A518024683;
-        Thu, 19 Dec 2019 18:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781457;
-        bh=79g9pLY07WZmLFOzBXbMh+TNjI7ClABAga+/NDBVIk4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDL1w2S9CftpMoecnb3zxkpio9/hAMwS0J9X0CCraLxsZ6847r8LQa5JoiC24cUHt
-         A7OJdGTlnW1uDuZg5CzAncj7xjX5N9pj86GE8pHq/qclShslKMtwKgH/YnMmZG/DvW
-         z7g/3iqik2NMeiFegjEwTQsr0JV/Fd45FGoUeBhM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.14 30/36] dma-buf: Fix memory leak in sync_file_merge()
-Date:   Thu, 19 Dec 2019 19:34:47 +0100
-Message-Id: <20191219182923.110075074@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1728259AbfLSTM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:12:28 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40809 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727699AbfLSSgw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:36:52 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w21so567177otj.7;
+        Thu, 19 Dec 2019 10:36:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zivQ+zB9chH5mQdMiQjMKA9RY31jCG6HIj79CgErI2w=;
+        b=kAf6ihh9wxbIvATjCIk1XzOueTAb4ILK6QSqWOi+Gn2QSle6Oo4KugnsE/9PreFHgb
+         Hh6d/6dYReYu5rty5VKIn4U1+E719XEXUCWyA6HTGpDMVTvO2l+Jj7Nl1WOedUdWsCYE
+         mGRHIGhOD+HXYMiQXUuKsUvxtUvSbCZQkaCr2MQCwo0c5DcWDzQbozJN+XpFejHfKCFR
+         6ZbPxqt9DXkAjifwP9RKxuJLMzp6UkOSfo5D9FuPVnrD0lcXItvKGkpJQd/oIi6JgplA
+         duSIZuPCkkVVEWZw9+aXSBIbbpCH3xAmlv/zUHWDYH6LVLWIZn1STSYuzNvyMKKodhkr
+         Ywtw==
+X-Gm-Message-State: APjAAAVztAg9dfsLjmjq0d0KrWB4P88MuWnVoif7fwDO6czTP748hFT/
+        zXDe2Uw17Z28atTNU22IC+S3vB0YAA==
+X-Google-Smtp-Source: APXvYqw33b/AA4V/6L+JZWrNjHnU++RQzimV+ODRfuMYe8enaJtZW+SQb2ERW5KuWVojra9xd/zYhQ==
+X-Received: by 2002:a05:6830:1116:: with SMTP id w22mr10593033otq.216.1576780611093;
+        Thu, 19 Dec 2019 10:36:51 -0800 (PST)
+Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
+        by smtp.gmail.com with ESMTPSA id w12sm2371730otk.75.2019.12.19.10.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 10:36:50 -0800 (PST)
+Date:   Thu, 19 Dec 2019 12:36:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: Re: [PATCH v4 2/3] dt-bindings: arm: move sprd board file to vendor
+ directory
+Message-ID: <20191219183648.GA11279@bogus>
+References: <20191209114404.22483-1-zhang.lyra@gmail.com>
+ <20191209114404.22483-3-zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209114404.22483-3-zhang.lyra@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+On Mon,  9 Dec 2019 19:44:03 +0800, Chunyan Zhang wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> 
+> We've created a vendor directory for sprd, so move the board bindings to
+> there.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+>  Documentation/devicetree/bindings/arm/{ => sprd}/sprd.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>  rename Documentation/devicetree/bindings/arm/{ => sprd}/sprd.yaml (92%)
+> 
 
-commit 6645d42d79d33e8a9fe262660a75d5f4556bbea9 upstream.
-
-In the implementation of sync_file_merge() the allocated sync_file is
-leaked if number of fences overflows. Release sync_file by goto err.
-
-Fixes: a02b9dc90d84 ("dma-buf/sync_file: refactor fence storage in struct sync_file")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191122220957.30427-1-navid.emamdoost@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/dma-buf/sync_file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/dma-buf/sync_file.c
-+++ b/drivers/dma-buf/sync_file.c
-@@ -230,7 +230,7 @@ static struct sync_file *sync_file_merge
- 	a_fences = get_fences(a, &a_num_fences);
- 	b_fences = get_fences(b, &b_num_fences);
- 	if (a_num_fences > INT_MAX - b_num_fences)
--		return NULL;
-+		goto err;
- 
- 	num_fences = a_num_fences + b_num_fences;
- 
-
-
+Acked-by: Rob Herring <robh@kernel.org>
