@@ -2,97 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9CA712667A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:16:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B8B12668E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:19:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfLSQQH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:16:07 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:42395 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbfLSQQH (ORCPT
+        id S1726998AbfLSQSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:18:54 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:51372 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfLSQSw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:16:07 -0500
-Received: by mail-ed1-f65.google.com with SMTP id e10so5415564edv.9
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:16:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xgC42fe1N8wsAY2Zpi//y6cU+ssloLAYZDPn1Fg0a/Q=;
-        b=CRdleZru1BN0IO10qM3c/+ShZhD9u54Ow/x+ihrZrMg1kMI/Uhc5n0Kz0jBVzovz2A
-         7wBAnnk2QTrZykncxgmLNoo9u1auLtLGveneGj6/nZ4QhSB4vBB1zMz+ft2e03lT8zXY
-         vxB5O8DU6BJacQeiY76F3DU2JM0AgLJ/hqGtU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xgC42fe1N8wsAY2Zpi//y6cU+ssloLAYZDPn1Fg0a/Q=;
-        b=TKOm9HTOOSN/1dA419/7hEqnANpGxX+hq9/mgt9pX8qGRpkIweOxt9Fi8C/PdxuQe8
-         jUq8XNPvfGpgM3/TvzERUmsGwpKHhbOasexbGijwlt9HCDGXjap89iMoiCPX8RtMz0fO
-         3H9oJCoy6kQ0O6TJv/yvJMQ5XEN/xOFCtvvEzdxmIpRbqZljiWKUtF5ZA7+KPC7xJQmV
-         APzWOTrCBcbXTyJgNoy4EQDjinMkX2GCBVTCVtnFrWdySRf2DfBySbIIqqPA2v8e56VR
-         e9m6F/h5cAaKtUqWjX40ZWABK52MmcGMuCRgBqOWEWIS50SoOdU0boWf/M5xscJyHx6y
-         yWVw==
-X-Gm-Message-State: APjAAAXYJIG7B9E5iD9HeiK8s41zsEm8kJ9aEJS8eGNPjZl1/OW9To0s
-        ed3aAdB8qIyzFKtyUoOVZA6uQHSojmuXI2GUr720dw==
-X-Google-Smtp-Source: APXvYqzO/uAhMSfNB8MjlZnPiJ5czTYp4nAlpcNumi04dxRBB+6KCzUzjEJgBeMvk27GNs+8F2b3SaBxP/hJE8qwgB4=
-X-Received: by 2002:a17:906:5358:: with SMTP id j24mr10598276ejo.44.1576772164912;
- Thu, 19 Dec 2019 08:16:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
- <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com> <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
-In-Reply-To: <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
-From:   Sargun Dhillon <sargun@sargun.me>
-Date:   Thu, 19 Dec 2019 08:15:29 -0800
-Message-ID: <CAMp4zn_z-CCQYMpT=GjZeGVLobjHBCSbmfha1rtWdmptOQ8JtA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        =?UTF-8?Q?Emilio_Cobos_=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Jed Davis <jld@mozilla.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Dec 2019 11:18:52 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJGEJ8D119693;
+        Thu, 19 Dec 2019 16:18:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=U9cMW9SZLbBtmgqabstWfkfHdgUKUAYyt+h4V5ncAvQ=;
+ b=EnMlWN7XJ8d4XAnJgNhonGydb1id4LSO8iIVmr74nEOBXKdL4cPB7rAvwyEpgx3ynG+W
+ T0qNfvCqIMeRUCDa4ATdAHhKaAsEB7wFs2VIHNjW6C0t+pd8sEblwwt00/yxaPNig5PK
+ VW6sXzwwZXKiXSDZlpQxZXemvQhx/qxjgYGQHKooLjpDIipWB9+lSae+o3ou/Lz891RQ
+ xOw/k4x94SMZKiEL4GDZQeY37SeHay+YKKvJ9Ors/YcIFjOgfLAh+v5HIQYqES2fjGv7
+ SrnarZn3ldjSF8T+8wB3AMFg2wCm8yJ5oybCL+JWjxZ9ih6MRd0trgStWC68l3Y7ymji rQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2x0ag10v6j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 16:18:20 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJGESba136853;
+        Thu, 19 Dec 2019 16:18:20 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2wyut5jj2w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 16:18:19 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJGI8O9019545;
+        Thu, 19 Dec 2019 16:18:09 GMT
+Received: from dhcp-10-175-212-35.vpn.oracle.com (/10.175.212.35)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 08:18:08 -0800
+From:   Alan Maguire <alan.maguire@oracle.com>
+To:     brendanhiggins@google.com, linux-kselftest@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kunit-dev@googlegroups.com,
+        keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, yamada.masahiro@socionext.com,
+        catalin.marinas@arm.com, joe.lawrence@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, urezki@gmail.com,
+        andriy.shevchenko@linux.intel.com, corbet@lwn.net,
+        davidgow@google.com, adilger.kernel@dilger.ca, tytso@mit.edu,
+        mcgrof@kernel.org, linux-doc@vger.kernel.org, rjw@rjwysocki.net,
+        pavel@ucw.cz, len.brown@intel.com, gregkh@linuxfoundation.org,
+        krzk@kernel.org, linux-pm@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Alan Maguire <alan.maguire@oracle.com>
+Subject: [PATCH v7 linux-kselftest-test 0/6] kunit: support building core/tests as modules
+Date:   Thu, 19 Dec 2019 16:17:33 +0000
+Message-Id: <1576772259-31382-1-git-send-email-alan.maguire@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 2:35 AM Christian Brauner
-<christian.brauner@ubuntu.com> wrote:
-> I guess this is the remaining question we should settle, i.e. what do we
-> prefer.
-> I still think that adding a new syscall for this seems a bit rich. On
-> the other hand it seems that a lot more people agree that using a
-> dedicated syscall instead of an ioctl is the correct way; especially
-> when it touches core kernel functionality. I mean that was one of the
-> takeaways from the pidfd API ioctl-vs-syscall discussion.
->
-> A syscall is nicer especially for core-kernel code like this.
-> So I guess the only way to find out is to try the syscall approach and
-> either get yelled and switch to an ioctl() or have it accepted.
->
-> What does everyone else think? Arnd, still in favor of a syscall I take
-> it. Oleg, you had suggested a syscall too, right? Florian, any
-> thoughts/worries on/about this from the glibc side?
->
-> Christian
+The current kunit execution model is to provide base kunit functionality
+and tests built-in to the kernel.  The aim of this series is to allow
+building kunit itself and tests as modules.  This in turn allows a
+simple form of selective execution; load the module you wish to test.
+In doing so, kunit itself (if also built as a module) will be loaded as
+an implicit dependency.
 
-My feelings towards this are that syscalls might pose a problem if we
-ever want to extend this API. Of course we can have a reserved
-"flags" field, and populate it later, but what if we turn out to need
-a proper struct? I already know we're going to want to add one
-around cgroup metadata (net_cls), and likely we'll want to add
-a "steal" flag as well. As Arnd mentioned earlier, this is trivial to
-fix in a traditional ioctl environment, as ioctls are "cheap". How
-do we feel about potentially adding a pidfd_getfd2? Or are we
-confident that reserved flags will save us?
+Because this requires a core API modification - if a module delivers
+multiple suites, they must be declared with the kunit_test_suites()
+macro - we're proposing this patch set as a candidate to be applied to the
+test tree before too many kunit consumers appear.  We attempt to deal
+with existing consumers in patch 3.
+
+Changes since v6:
+ - reintroduce kunit_test_suite() definition to handle users in other trees
+   not yet converted to using kunit_test_suites() (kbuild error when
+   applying patches to ext4/dev tree)
+ - modify drivers/base/power/qos-test.c to use kunit_test_suites()
+   to register suite.  We do not convert it to support module build now as
+   the suite uses a few unexported function; see patch 3 for details.
+   
+Changes since v5:
+ - fixed fs/ext4/Makefile to remove unneeded conditional compilation
+   (Iurii, patch 3)
+ - added Reviewed-by, Acked-by to patches 3, 4, 5 and 6
+
+Changes since v4:
+ - fixed signoff chain to use Co-developed-by: prior to Knut's signoff
+   (Stephen, all patches)
+ - added Reviewed-by, Tested-by for patches 1, 2, 4 and 6
+ - updated comment describing try-catch-impl.h (Stephen, patch 2)
+ - fixed MODULE_LICENSEs to be GPL v2 (Stephen, patches 3, 5)
+ - added __init to kunit_init() (Stephen, patch 5)
+
+Changes since v3:
+ - removed symbol lookup patch for separate submission later
+ - removed use of sysctl_hung_task_timeout_seconds (patch 4, as discussed
+   with Brendan and Stephen)
+ - disabled build of string-stream-test when CONFIG_KUNIT_TEST=m; this
+   is to avoid having to deal with symbol lookup issues
+ - changed string-stream-impl.h back to string-stream.h (Brendan)
+ - added module build support to new list, ext4 tests
+
+Changes since v2:
+ - moved string-stream.h header to lib/kunit/string-stream-impl.h (Brendan)
+   (patch 1)
+ - split out non-exported interfaces in try-catch-impl.h (Brendan)
+   (patch 2)
+ - added kunit_find_symbol() and KUNIT_INIT_SYMBOL to lookup non-exported
+   symbols (patches 3, 4)
+ - removed #ifdef MODULE around module licenses (Randy, Brendan, Andy)
+   (patch 4)
+ - replaced kunit_test_suite() with kunit_test_suites() rather than
+   supporting both (Brendan) (patch 4)
+ - lookup sysctl_hung_task_timeout_secs as kunit may be built as a module
+   and the symbol may not be available (patch 5)
+
+Alan Maguire (6):
+  kunit: move string-stream.h to lib/kunit
+  kunit: hide unexported try-catch interface in try-catch-impl.h
+  kunit: allow kunit tests to be loaded as a module
+  kunit: remove timeout dependence on sysctl_hung_task_timeout_seconds
+  kunit: allow kunit to be loaded as a module
+  kunit: update documentation to describe module-based build
+
+ Documentation/dev-tools/kunit/faq.rst              |  3 +-
+ Documentation/dev-tools/kunit/index.rst            |  3 ++
+ Documentation/dev-tools/kunit/usage.rst            | 16 ++++++++++
+ drivers/base/power/qos-test.c                      |  2 +-
+ fs/ext4/Kconfig                                    |  2 +-
+ fs/ext4/Makefile                                   |  3 +-
+ fs/ext4/inode-test.c                               |  4 ++-
+ include/kunit/assert.h                             |  3 +-
+ include/kunit/test.h                               | 37 ++++++++++++++++------
+ include/kunit/try-catch.h                          | 10 ------
+ kernel/sysctl-test.c                               |  4 ++-
+ lib/Kconfig.debug                                  |  4 +--
+ lib/kunit/Kconfig                                  |  6 ++--
+ lib/kunit/Makefile                                 | 14 +++++---
+ lib/kunit/assert.c                                 | 10 ++++++
+ lib/kunit/{example-test.c => kunit-example-test.c} |  4 ++-
+ lib/kunit/{test-test.c => kunit-test.c}            |  7 ++--
+ lib/kunit/string-stream-test.c                     |  5 +--
+ lib/kunit/string-stream.c                          |  3 +-
+ {include => lib}/kunit/string-stream.h             |  0
+ lib/kunit/test.c                                   | 25 ++++++++++++++-
+ lib/kunit/try-catch-impl.h                         | 27 ++++++++++++++++
+ lib/kunit/try-catch.c                              | 37 +++++-----------------
+ lib/list-test.c                                    |  4 ++-
+ 24 files changed, 160 insertions(+), 73 deletions(-)
+ rename lib/kunit/{example-test.c => kunit-example-test.c} (97%)
+ rename lib/kunit/{test-test.c => kunit-test.c} (98%)
+ rename {include => lib}/kunit/string-stream.h (100%)
+ create mode 100644 lib/kunit/try-catch-impl.h
+
+-- 
+1.8.3.1
+
