@@ -2,127 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E14DB125CA3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:29:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B05E2125CB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:30:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfLSI3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 03:29:32 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:54724 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfLSI3c (ORCPT
+        id S1726681AbfLSIau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 03:30:50 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:54728 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726609AbfLSIat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 03:29:32 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJ8TOcM038842;
-        Thu, 19 Dec 2019 02:29:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576744164;
-        bh=qHodQfVRoxRI6Q5T0UwFr5pC1wfIqkcyWERy28q6efM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=rFFo8hMSSugW3xBnanhPdce0vj4r2wn92etK1aDt7i4TSJMWFK6pylOxtFH49rT4V
-         elwE09sGfpgkdY5/VOCCo02Ah2TbXfRK+rvq9L+dx8B7zFYW4+9u3S9JtfBLmi+dAg
-         cnFSx3j0bzRviyHkJqSyCL1xrM3fSOgKyoqm4OVM=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBJ8TO6E124868
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Dec 2019 02:29:24 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Dec 2019 02:29:23 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Dec 2019 02:29:24 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJ8TKFJ062210;
-        Thu, 19 Dec 2019 02:29:21 -0600
-Subject: Re: [PATCH 01/13] PCI: cadence: Remove stray "pm_runtime_put_sync()"
- in error path
-To:     Andrew Murray <andrew.murray@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-2-kishon@ti.com>
- <20191216134526.GW24359@e119886-lin.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a1b70012-9cfc-0420-2717-8bdd9df1b4de@ti.com>
-Date:   Thu, 19 Dec 2019 14:01:03 +0530
+        Thu, 19 Dec 2019 03:30:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576744248;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ewCaJOfBy9nGeq4Yo9i7Tisg8do5u5i6meu8ilRSTEg=;
+        b=AcYqS8G6ARWDTs6BdzFV43vMMHQ6pghjTMuk8u/2Xl+2Ak48mzj52Q9i0LH86yJ6WXkbHI
+        ld3N7C/FRsDL377MWO7Qitp5UXF0retCXBiBpKUm7YPkeo+aYioSapsM9XPvrKANwSnW4E
+        ZPKSEfAPcqlrXNUeABnRLMYGatXLVZY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-303-h0mgv-GBMdKdrvS_ZDI-TQ-1; Thu, 19 Dec 2019 03:30:41 -0500
+X-MC-Unique: h0mgv-GBMdKdrvS_ZDI-TQ-1
+Received: by mail-wr1-f71.google.com with SMTP id o6so2057707wrp.8
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 00:30:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ewCaJOfBy9nGeq4Yo9i7Tisg8do5u5i6meu8ilRSTEg=;
+        b=NIzqBhek4q6gQP366KuuVRCYCza/4ve6kwQsEKwL8PC2Zyx/ZBN3gky0KTDe9nbKfW
+         MLVjVz6aI5MkgueVw6rSz7zBjjGa4gS+udyUlzVMel8KzwLaHJesmQEUy/q8Gvyx9H9Y
+         ZMpfOJ787XLEt6FfW2501ckDUkywnl+eZJER0z9ZzATHes3daU/hsC+y5F+wEJcwGEAw
+         TpS82iPNRmercz6TE4dxZ2/NvIaPdUUYnL8HIa8eXKStfWdj7KZErDd3iJxLhOMYXyOA
+         zndKbzt6OdNt63kl7CWfISyGs/ghcyZJlgbF7zz6G6+kgoJljqIxgULISAQXFFyuwCkO
+         Bfcg==
+X-Gm-Message-State: APjAAAUWoYe9o/yGrr1eCQKHXFDeMFiBvUP2dZvzVs5whI/GpBjzU5Pa
+        gVRWpbedxCUGDQ/nZWNMGUd4BLjXXTj3eu/Tj6qTMtG3Eipk6/j8gEsLkI2npCD2TirJ1ehPg1T
+        dzj+1dT2dCdBlB2pgW5LAh74C
+X-Received: by 2002:a5d:5708:: with SMTP id a8mr8421054wrv.79.1576744240550;
+        Thu, 19 Dec 2019 00:30:40 -0800 (PST)
+X-Google-Smtp-Source: APXvYqza16homzGLdCX3FZ2ghQQQEoyB9HUoq4Lc+0whtn5OtM6iey5RpTK+S2JgsXBTOpT2hWKVDg==
+X-Received: by 2002:a5d:5708:: with SMTP id a8mr8421038wrv.79.1576744240393;
+        Thu, 19 Dec 2019 00:30:40 -0800 (PST)
+Received: from shalem.localdomain (2001-1c00-0c0c-fe00-7e79-4dac-39d0-9c14.cable.dynamic.v6.ziggo.nl. [2001:1c00:c0c:fe00:7e79:4dac:39d0:9c14])
+        by smtp.gmail.com with ESMTPSA id e6sm5586381wru.44.2019.12.19.00.30.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Dec 2019 00:30:39 -0800 (PST)
+Subject: Re: [PATCH] serdev: Don't claim unsupported serial devices
+To:     Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+Cc:     linux-serial@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
+        shrirang.bagul@canonical.com, stable@vger.kernel.org,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Johan Hovold <johan@kernel.org>
+References: <20191218065646.817493-1-punit1.agrawal@toshiba.co.jp>
+ <096046b6-324a-8496-8599-ed7e5ffc6e3c@redhat.com>
+ <87eex1noak.fsf@kokedama.swc.toshiba.co.jp>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <a2e86d54-287a-16b4-3dac-9e3fe3dee753@redhat.com>
+Date:   Thu, 19 Dec 2019 09:30:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.2
 MIME-Version: 1.0
-In-Reply-To: <20191216134526.GW24359@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <87eex1noak.fsf@kokedama.swc.toshiba.co.jp>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+Hi,
 
-On 16/12/19 7:15 pm, Andrew Murray wrote:
-> On Mon, Dec 09, 2019 at 02:51:35PM +0530, Kishon Vijay Abraham I wrote:
->> commit bd22885aa188f135fd9 ("PCI: cadence: Refactor driver to use
->> as a core library") while refactoring the Cadence PCIe driver to be
->> used as library, removed pm_runtime_get_sync() from cdns_pcie_ep_setup()
->> and cdns_pcie_host_setup() but missed to remove the corresponding
->> pm_runtime_put_sync() in the error path. Fix it here.
+On 19-12-2019 01:37, Punit Agrawal wrote:
+> Hans de Goede <hdegoede@redhat.com> writes:
+> 
+>> Hi,
 >>
->> Fixes: commit bd22885aa188f135fd9 ("PCI: cadence: Refactor driver to use
-> 
-> As this is a fix, a commit subject starting with PCI: cadence: Fix ... may
-> be more obvious.
-> 
-> I'd suggest you use the shorter form of this, i.e. Fixes: %h (\"%s\"))
-> 
-> Fixes: bd22885aa188 ("PCI: cadence: Refactor driver to use as a core library")
-> 
->> as a core library")
-
-Okay.
+>> On 18-12-2019 07:56, Punit Agrawal wrote:
+>>> Serdev sub-system claims all serial devices that are not already
+>>> enumerated. As a result, no device node is created for serial port on
+>>> certain boards such as the Apollo Lake based UP2. This has the
+>>> unintended consequence of not being able to raise the login prompt via
+>>> serial connection.
+>>>
+>>> Introduce a blacklist to reject devices that should not be treated as
+>>> a serdev device. Add the Intel HS UART peripheral ids to the blacklist
+>>> to bring back serial port on SoCs carrying them.
+>>>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
+>>> Cc: Rob Herring <robh@kernel.org>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Johan Hovold <johan@kernel.org>
+>>> Cc: Hans de Goede <hdegoede@redhat.com>
 >>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>   drivers/pci/controller/cadence/pcie-cadence-ep.c   | 2 --
->>   drivers/pci/controller/cadence/pcie-cadence-host.c | 2 --
->>   2 files changed, 4 deletions(-)
->>
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> index 1c173dad67d1..560f22b4d165 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> @@ -473,7 +473,5 @@ int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
->>   	pci_epc_mem_exit(epc);
->>   
->>    err_init:
->> -	pm_runtime_put_sync(dev);
->> -
->>   	return ret;
->>   }
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> index 9b1c3966414b..ccf55e143e1d 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> @@ -275,7 +275,5 @@ int cdns_pcie_host_setup(struct cdns_pcie_rc *rc)
->>   	pci_free_resource_list(&resources);
->>   
->>    err_init:
->> -	pm_runtime_put_sync(dev);
->> -
+>> Thank you for addressing this long standing issue.
 > 
-> There is probably more you can do here for both -host and -ep:
-> 
->   - Remove the possibly now unused <linux/pm_runtime.h> include
->   - Remove the err_init label and return directly from source.
+> I am surprised there hasn't been more people complaining! Maybe even on
+> x86 mainline isn't that widely used on development boards.
 
-Okay, will fix this up.
+I think it is also a case of there not being that manu x86 development
+boards.
 
-Thanks
-Kishon
+Regards,
+
+Hans
+
