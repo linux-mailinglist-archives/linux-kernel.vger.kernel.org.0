@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A089126952
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D58126A15
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfLSSge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:36:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53548 "EHLO mail.kernel.org"
+        id S1728932AbfLSSn7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:43:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727617AbfLSSgb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:36:31 -0500
+        id S1728923AbfLSSn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:43:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA5F024672;
-        Thu, 19 Dec 2019 18:36:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2930C222C2;
+        Thu, 19 Dec 2019 18:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780591;
-        bh=Isu3PsevsWCapFsKhQtOcN0Gn243im6GOktkJsovBIY=;
+        s=default; t=1576781036;
+        bh=5c+/LOE4VJVhhZOOjd+xD/vKB1b/odbuOaqjEBdegP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rsdnvBjusCu+2bVCr5DAZhpuNX4keSRLeStVuKt90kgWKJdIcArWVqA08ISUWDQKr
-         5+vPQrVwTDHAoWhYIZVVMAByJi2SwnTH5vaYoW6LQUMpa3Rs3vfOoc3Yt69FBJJiQg
-         2kZpyZeUfYd1lDZZ6B+eRNqz6tcdpn8ZCKs+xTYs=
+        b=UxKl6SrnktfWnF9log1T/B+97jvRGwCSrcQhOKKtaT0uWHBW3DIpk++DegTnOa5/M
+         kdpZHBY6JqWuZS31bL/d00er/gqMdECS9sKyg3Nm9o6D8vD9z8ftwyGZ8GrhsDQRGi
+         jBjWgWcvzsB1c8uDf+IUpc1DDkIHgYFMjgHkq3ME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 029/162] ARM: dts: exynos: Use Samsung SoC specific compatible for DWC2 module
-Date:   Thu, 19 Dec 2019 19:32:17 +0100
-Message-Id: <20191219183209.421641412@linuxfoundation.org>
+Subject: [PATCH 4.9 057/199] kbuild: fix single target build for external module
+Date:   Thu, 19 Dec 2019 19:32:19 +0100
+Message-Id: <20191219183218.120498975@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +44,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 6035cbcceb069f87296b3cd0bc4736ad5618bf47 ]
+[ Upstream commit e07db28eea38ed4e332b3a89f3995c86b713cb5b ]
 
-DWC2 hardware module integrated in Samsung SoCs requires some quirks to
-operate properly, so use Samsung SoC specific compatible to notify driver
-to apply respective fixes.
+Building a single target in an external module fails due to missing
+.tmp_versions directory.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+For example,
+
+  $ make -C /lib/modules/$(uname -r)/build M=$PWD foo.o
+
+will fail in the following way:
+
+  CC [M]  /home/masahiro/foo/foo.o
+/bin/sh: 1: cannot create /home/masahiro/foo/.tmp_versions/foo.mod: Directory nonexistent
+
+This is because $(cmd_crmodverdir) is executed only before building
+/, %/, %.ko single targets of external modules. Create .tmp_versions
+in the 'prepare' target.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/exynos3250.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Makefile | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index e81a27214188c..cbe3507e6e249 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -325,7 +325,7 @@
- 		};
+diff --git a/Makefile b/Makefile
+index 55a91bc3d8f9c..6baf1e6324255 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1521,9 +1521,6 @@ else # KBUILD_EXTMOD
  
- 		hsotg: hsotg@12480000 {
--			compatible = "snps,dwc2";
-+			compatible = "samsung,s3c6400-hsotg", "snps,dwc2";
- 			reg = <0x12480000 0x20000>;
- 			interrupts = <0 141 0>;
- 			clocks = <&cmu CLK_USBOTG>;
+ # We are always building modules
+ KBUILD_MODULES := 1
+-PHONY += crmodverdir
+-crmodverdir:
+-	$(cmd_crmodverdir)
+ 
+ PHONY += $(objtree)/Module.symvers
+ $(objtree)/Module.symvers:
+@@ -1535,7 +1532,7 @@ $(objtree)/Module.symvers:
+ 
+ module-dirs := $(addprefix _module_,$(KBUILD_EXTMOD))
+ PHONY += $(module-dirs) modules
+-$(module-dirs): crmodverdir $(objtree)/Module.symvers
++$(module-dirs): prepare $(objtree)/Module.symvers
+ 	$(Q)$(MAKE) $(build)=$(patsubst _module_%,%,$@)
+ 
+ modules: $(module-dirs)
+@@ -1576,7 +1573,8 @@ help:
+ 
+ # Dummies...
+ PHONY += prepare scripts
+-prepare: ;
++prepare:
++	$(cmd_crmodverdir)
+ scripts: ;
+ endif # KBUILD_EXTMOD
+ 
+@@ -1701,17 +1699,14 @@ endif
+ 
+ # Modules
+ /: prepare scripts FORCE
+-	$(cmd_crmodverdir)
+ 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
+ 	$(build)=$(build-dir)
+ # Make sure the latest headers are built for Documentation
+ Documentation/ samples/: headers_install
+ %/: prepare scripts FORCE
+-	$(cmd_crmodverdir)
+ 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
+ 	$(build)=$(build-dir)
+ %.ko: prepare scripts FORCE
+-	$(cmd_crmodverdir)
+ 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1)   \
+ 	$(build)=$(build-dir) $(@:.ko=.o)
+ 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
 -- 
 2.20.1
 
