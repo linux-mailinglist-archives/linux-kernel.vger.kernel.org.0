@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86A27126C68
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E46DB126C92
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfLSTDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:03:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41538 "EHLO mail.kernel.org"
+        id S1729390AbfLSTEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:04:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729612AbfLSSsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:48:24 -0500
+        id S1729068AbfLSSq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:46:56 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 011122465E;
-        Thu, 19 Dec 2019 18:48:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5822222C2;
+        Thu, 19 Dec 2019 18:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781303;
-        bh=1+1OGB3VdkIyWboiVeGZSZUACmrDWdP3BsfYbuhOQCw=;
+        s=default; t=1576781216;
+        bh=fNccwqWA+SRuS5QnXcv5KmJy7FvExzlUIFIQAkUaYT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tdjYFUDnYp70dsh3xxT9O3AiV06iPd4Dw0tKtOJuFZX4UYDtJ9YR9kB76buP4rjyu
-         32zRfZxe/AIpDaV838dbe6zlTAlP8JPZmll2bOFMXYLvSTZ4JpCnUm+Sw+Wb5RomSn
-         TCWXBDec+HNaRPO2Ts3da0K/ZCVC8gXrVhMVxsjM=
+        b=QVLnQebRz1Vh0+k8sQyMrvHajZ+H/ZQzVwgARxZQnuuzwkAW6/O3Cphugc8NLV+8c
+         V/9il/9R6W+XFMJTp+xsdalRFp87CRhDmmU0yIrzdCufnQyScCCpQFrw1+kwEz6pVf
+         9b0Sr5Mvf39kbqtymi9NSCvKLQF16y8zOGs9TMsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Marcin Pawlowski <mpawlowski@fb.com>,
-        "Williams, Gerald S" <gerald.s.williams@intel.com>
-Subject: [PATCH 4.9 125/199] workqueue: Fix spurious sanity check failures in destroy_workqueue()
-Date:   Thu, 19 Dec 2019 19:33:27 +0100
-Message-Id: <20191219183221.890901895@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Fabien Dessenne <fabien.dessenne@st.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH 4.9 131/199] media: bdisp: fix memleak on release
+Date:   Thu, 19 Dec 2019 19:33:33 +0100
+Message-Id: <20191219183222.299466691@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,83 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Johan Hovold <johan@kernel.org>
 
-commit def98c84b6cdf2eeea19ec5736e90e316df5206b upstream.
+commit 11609a7e21f8cea42630350aa57662928fa4dc63 upstream.
 
-Before actually destrying a workqueue, destroy_workqueue() checks
-whether it's actually idle.  If it isn't, it prints out a bunch of
-warning messages and leaves the workqueue dangling.  It unfortunately
-has a couple issues.
+If a process is interrupted while accessing the video device and the
+device lock is contended, release() could return early and fail to free
+related resources.
 
-* Mayday list queueing increments pwq's refcnts which gets detected as
-  busy and fails the sanity checks.  However, because mayday list
-  queueing is asynchronous, this condition can happen without any
-  actual work items left in the workqueue.
+Note that the return value of the v4l2 release file operation is
+ignored.
 
-* Sanity check failure leaves the sysfs interface behind too which can
-  lead to init failure of newer instances of the workqueue.
-
-This patch fixes the above two by
-
-* If a workqueue has a rescuer, disable and kill the rescuer before
-  sanity checks.  Disabling and killing is guaranteed to flush the
-  existing mayday list.
-
-* Remove sysfs interface before sanity checks.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Marcin Pawlowski <mpawlowski@fb.com>
-Reported-by: "Williams, Gerald S" <gerald.s.williams@intel.com>
-Cc: stable@vger.kernel.org
+Fixes: 28ffeebbb7bd ("[media] bdisp: 2D blitter driver using v4l2 mem2mem framework")
+Cc: stable <stable@vger.kernel.org>     # 4.2
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Fabien Dessenne <fabien.dessenne@st.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/workqueue.c |   24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4031,9 +4031,28 @@ void destroy_workqueue(struct workqueue_
- 	struct pool_workqueue *pwq;
- 	int node;
+--- a/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
++++ b/drivers/media/platform/sti/bdisp/bdisp-v4l2.c
+@@ -651,8 +651,7 @@ static int bdisp_release(struct file *fi
  
-+	/*
-+	 * Remove it from sysfs first so that sanity check failure doesn't
-+	 * lead to sysfs name conflicts.
-+	 */
-+	workqueue_sysfs_unregister(wq);
-+
- 	/* drain it before proceeding with destruction */
- 	drain_workqueue(wq);
+ 	dev_dbg(bdisp->dev, "%s\n", __func__);
  
-+	/* kill rescuer, if sanity checks fail, leave it w/o rescuer */
-+	if (wq->rescuer) {
-+		struct worker *rescuer = wq->rescuer;
-+
-+		/* this prevents new queueing */
-+		spin_lock_irq(&wq_mayday_lock);
-+		wq->rescuer = NULL;
-+		spin_unlock_irq(&wq_mayday_lock);
-+
-+		/* rescuer will empty maydays list before exiting */
-+		kthread_stop(rescuer->task);
-+	}
-+
- 	/* sanity checks */
- 	mutex_lock(&wq->mutex);
- 	for_each_pwq(pwq, wq) {
-@@ -4063,11 +4082,6 @@ void destroy_workqueue(struct workqueue_
- 	list_del_rcu(&wq->list);
- 	mutex_unlock(&wq_pool_mutex);
+-	if (mutex_lock_interruptible(&bdisp->lock))
+-		return -ERESTARTSYS;
++	mutex_lock(&bdisp->lock);
  
--	workqueue_sysfs_unregister(wq);
--
--	if (wq->rescuer)
--		kthread_stop(wq->rescuer->task);
--
- 	if (!(wq->flags & WQ_UNBOUND)) {
- 		/*
- 		 * The base ref is never dropped on per-cpu pwqs.  Directly
+ 	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+ 
 
 
