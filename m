@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF0D1269D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:41:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 90E19126A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbfLSSlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
+        id S1729465AbfLSSr0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727764AbfLSSlP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:41:15 -0500
+        id S1729229AbfLSSrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:23 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B7CB206D7;
-        Thu, 19 Dec 2019 18:41:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A9E1206D7;
+        Thu, 19 Dec 2019 18:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780875;
-        bh=2wwxcX9JNVn3hALx+KjwATnrP0ljQZEHAVh7JGVs7ZQ=;
+        s=default; t=1576781243;
+        bh=nuHAsepJtngeuassJ0DTBPKJvjsLu9vQprBq1cI/L3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/kocsN7/7JWyJSs4bl52KKjNfPDaj13fEysUz+9fH6n1PaUekKd0XguNO+YJ0pdv
-         WCJK5J+5W7HQLyqvjRxQG2Yfz/IIxhVmYkjduAWRBVRG5dBwryYYMMocDRnctxcv34
-         9Yo1O+v67TMYlu0qAW0jZEFc874rfhAshi1kkc7Q=
+        b=YBcyH0zNZTphoEgz7OHafA+krKDksNRg3wiEhi/jIULlvwbShb5bzeiSe34Mgl4EB
+         Y0eFJHDsvOPP19KzMij5fY5FaW36STrb38RYvgM/6SUtU5b4RQVRNFEn4VC9uN+vQN
+         SfxdntyNSawSR1eZLFgP/MqiJ59jA9qlsqC/5UR8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.4 115/162] ACPI: bus: Fix NULL pointer check in acpi_bus_get_private_data()
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.9 141/199] ppdev: fix PPGETTIME/PPSETTIME ioctls
 Date:   Thu, 19 Dec 2019 19:33:43 +0100
-Message-Id: <20191219183214.761567085@linuxfoundation.org>
+Message-Id: <20191219183222.973502841@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +42,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 627ead724eff33673597216f5020b72118827de4 upstream.
+commit 998174042da229e2cf5841f574aba4a743e69650 upstream.
 
-kmemleak reported backtrace:
-    [<bbee0454>] kmem_cache_alloc_trace+0x128/0x260
-    [<6677f215>] i2c_acpi_install_space_handler+0x4b/0xe0
-    [<1180f4fc>] i2c_register_adapter+0x186/0x400
-    [<6083baf7>] i2c_add_adapter+0x4e/0x70
-    [<a3ddf966>] intel_gmbus_setup+0x1a2/0x2c0 [i915]
-    [<84cb69ae>] i915_driver_probe+0x8d8/0x13a0 [i915]
-    [<81911d4b>] i915_pci_probe+0x48/0x160 [i915]
-    [<4b159af1>] pci_device_probe+0xdc/0x160
-    [<b3c64704>] really_probe+0x1ee/0x450
-    [<bc029f5a>] driver_probe_device+0x142/0x1b0
-    [<d8829d20>] device_driver_attach+0x49/0x50
-    [<de71f045>] __driver_attach+0xc9/0x150
-    [<df33ac83>] bus_for_each_dev+0x56/0xa0
-    [<80089bba>] driver_attach+0x19/0x20
-    [<cc73f583>] bus_add_driver+0x177/0x220
-    [<7b29d8c7>] driver_register+0x56/0xf0
+Going through the uses of timeval in the user space API,
+I noticed two bugs in ppdev that were introduced in the y2038
+conversion:
 
-In i2c_acpi_remove_space_handler(), a leak occurs whenever the
-"data" parameter is initialized to 0 before being passed to
-acpi_bus_get_private_data().
+* The range check was accidentally moved from ppsettime to
+  ppgettime
 
-This is because the NULL pointer check in acpi_bus_get_private_data()
-(condition->if(!*data)) returns EINVAL and, in consequence, memory is
-never freed in i2c_acpi_remove_space_handler().
+* On sparc64, the microseconds are in the other half of the
+  64-bit word.
 
-Fix the NULL pointer check in acpi_bus_get_private_data() to follow
-the analogous check in acpi_get_data_full().
+Fix both, and mark the fix for stable backports.
 
-Signed-off-by: Vamshi K Sthambamkadi <vamshi.k.sthambamkadi@gmail.com>
-[ rjw: Subject & changelog ]
-Cc: All applicable <stable@vger.kernel.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable@vger.kernel.org
+Fixes: 3b9ab374a1e6 ("ppdev: convert to y2038 safe")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20191108203435.112759-8-arnd@arndb.de
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/acpi/bus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/char/ppdev.c |   16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
---- a/drivers/acpi/bus.c
-+++ b/drivers/acpi/bus.c
-@@ -154,7 +154,7 @@ int acpi_bus_get_private_data(acpi_handl
- {
- 	acpi_status status;
+--- a/drivers/char/ppdev.c
++++ b/drivers/char/ppdev.c
+@@ -624,20 +624,27 @@ static int pp_do_ioctl(struct file *file
+ 		if (copy_from_user(time32, argp, sizeof(time32)))
+ 			return -EFAULT;
  
--	if (!*data)
-+	if (!data)
- 		return -EINVAL;
++		if ((time32[0] < 0) || (time32[1] < 0))
++			return -EINVAL;
++
+ 		return pp_set_timeout(pp->pdev, time32[0], time32[1]);
  
- 	status = acpi_get_data(handle, acpi_bus_private_data_handler, data);
+ 	case PPSETTIME64:
+ 		if (copy_from_user(time64, argp, sizeof(time64)))
+ 			return -EFAULT;
+ 
++		if ((time64[0] < 0) || (time64[1] < 0))
++			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] >>= 32;
++
+ 		return pp_set_timeout(pp->pdev, time64[0], time64[1]);
+ 
+ 	case PPGETTIME32:
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time32[0] = ts.tv_sec;
+ 		time32[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time32[0] < 0) || (time32[1] < 0))
+-			return -EINVAL;
+ 
+ 		if (copy_to_user(argp, time32, sizeof(time32)))
+ 			return -EFAULT;
+@@ -648,8 +655,9 @@ static int pp_do_ioctl(struct file *file
+ 		jiffies_to_timespec64(pp->pdev->timeout, &ts);
+ 		time64[0] = ts.tv_sec;
+ 		time64[1] = ts.tv_nsec / NSEC_PER_USEC;
+-		if ((time64[0] < 0) || (time64[1] < 0))
+-			return -EINVAL;
++
++		if (IS_ENABLED(CONFIG_SPARC64) && !in_compat_syscall())
++			time64[1] <<= 32;
+ 
+ 		if (copy_to_user(argp, time64, sizeof(time64)))
+ 			return -EFAULT;
 
 
