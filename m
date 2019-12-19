@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50E5D12619F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 252531261A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:05:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbfLSMEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36536 "EHLO mail.kernel.org"
+        id S1727274AbfLSME5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727144AbfLSMEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:33 -0500
+        id S1727126AbfLSMEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:04:36 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AEE224679;
-        Thu, 19 Dec 2019 12:04:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0272524684;
+        Thu, 19 Dec 2019 12:04:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757072;
-        bh=hr0j2ciKuJVzbWUymTBVFfm1s+/LxgMJpRZN60cwSuw=;
+        s=default; t=1576757075;
+        bh=ZWu/BRMh45ey2/+NOodYySlbK+BJsxdZgItFNtS2Vzs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eNN7UrwM6z6VgCYQJmtp1gol6K5vWJCuBjE/bc4COHcvIrw9aWiZc7T2NLOHKW1Ci
-         1Qk1Q4J8mOsJKtNxjpsTfmpl3PR0o69nPh6uOr7GojdaZ7dBngKIeSzkHkohjfcR4B
-         c6NsAQzjX20C/z7I0EdM7QPmEneYXkv0pnEqsQP0=
+        b=z4buwxKD9N1mp2Bklv1roxu3ObpRgjzsbf0LGyVbNONyxjW7apNDAHSTSbQb4Ht3Z
+         HMkrmKiXWR56IInnoR70ShrQZkwW7+unCDsJCqcmBPIbaYB1tOEluqq9Ead3czW6k8
+         0s5Mg90QZqAtzJh8+m4nAJ42Egl4Uk8mrGPrzmwM=
 From:   Will Deacon <will@kernel.org>
 To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
 Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
@@ -37,9 +37,9 @@ Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 11/16] iommu/arm-smmu-v3: Unregister IOMMU and bus ops on device removal
-Date:   Thu, 19 Dec 2019 12:03:47 +0000
-Message-Id: <20191219120352.382-12-will@kernel.org>
+Subject: [PATCH v4 12/16] iommu/arm-smmu: Support SMMU module probing from the IORT
+Date:   Thu, 19 Dec 2019 12:03:48 +0000
+Message-Id: <20191219120352.382-13-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191219120352.382-1-will@kernel.org>
 References: <20191219120352.382-1-will@kernel.org>
@@ -50,103 +50,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When removing the SMMUv3 driver, we need to clear any state that we
-registered during probe. This includes our bus ops, sysfs entries and
-the IOMMU device registered for early firmware probing of masters.
+From: Ard Biesheuvel <ardb@kernel.org>
 
+Add support for SMMU drivers built as modules to the ACPI/IORT device
+probing path, by deferring the probe of the master if the SMMU driver is
+known to exist but has not been loaded yet. Given that the IORT code
+registers a platform device for each SMMU that it discovers, we can
+easily trigger the udev based autoloading of the SMMU drivers by making
+the platform device identifier part of the module alias.
+
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Tested-by: John Garry <john.garry@huawei.com> # only manual smmu ko loading
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 64 +++++++++++++++++++++++++------------
- 1 file changed, 43 insertions(+), 21 deletions(-)
+ drivers/acpi/arm64/iort.c   | 4 ++--
+ drivers/iommu/arm-smmu-v3.c | 1 +
+ drivers/iommu/arm-smmu.c    | 1 +
+ 3 files changed, 4 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 33f71983e001..4a560fdf7386 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -850,9 +850,9 @@ static inline bool iort_iommu_driver_enabled(u8 type)
+ {
+ 	switch (type) {
+ 	case ACPI_IORT_NODE_SMMU_V3:
+-		return IS_BUILTIN(CONFIG_ARM_SMMU_V3);
++		return IS_ENABLED(CONFIG_ARM_SMMU_V3);
+ 	case ACPI_IORT_NODE_SMMU:
+-		return IS_BUILTIN(CONFIG_ARM_SMMU);
++		return IS_ENABLED(CONFIG_ARM_SMMU);
+ 	default:
+ 		pr_warn("IORT node type %u does not describe an SMMU\n", type);
+ 		return false;
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 9d4c9de6172d..46160a2fec3e 100644
+index 46160a2fec3e..da9474a02668 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -3565,6 +3565,45 @@ static unsigned long arm_smmu_resource_size(struct arm_smmu_device *smmu)
- 		return SZ_128K;
- }
+@@ -3734,4 +3734,5 @@ module_platform_driver(arm_smmu_driver);
  
-+static int arm_smmu_set_bus_ops(struct iommu_ops *ops)
-+{
-+	int err;
-+
-+#ifdef CONFIG_PCI
-+	if (pci_bus_type.iommu_ops != ops) {
-+		if (ops)
-+			pci_request_acs();
-+		err = bus_set_iommu(&pci_bus_type, ops);
-+		if (err)
-+			return err;
-+	}
-+#endif
-+#ifdef CONFIG_ARM_AMBA
-+	if (amba_bustype.iommu_ops != ops) {
-+		err = bus_set_iommu(&amba_bustype, ops);
-+		if (err)
-+			goto err_reset_pci_ops;
-+	}
-+#endif
-+	if (platform_bus_type.iommu_ops != ops) {
-+		err = bus_set_iommu(&platform_bus_type, ops);
-+		if (err)
-+			goto err_reset_amba_ops;
-+	}
-+
-+	return 0;
-+
-+err_reset_amba_ops:
-+#ifdef CONFIG_ARM_AMBA
-+	bus_set_iommu(&amba_bustype, NULL);
-+#endif
-+err_reset_pci_ops: __maybe_unused;
-+#ifdef CONFIG_PCI
-+	bus_set_iommu(&pci_bus_type, NULL);
-+#endif
-+	return err;
-+}
-+
- static int arm_smmu_device_probe(struct platform_device *pdev)
- {
- 	int irq, ret;
-@@ -3655,33 +3694,16 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+ MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
+ MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
++MODULE_ALIAS("platform:arm-smmu-v3");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 5cbee88a3b83..5d2f60bb9e50 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -2281,4 +2281,5 @@ module_platform_driver(arm_smmu_driver);
  
--#ifdef CONFIG_PCI
--	if (pci_bus_type.iommu_ops != &arm_smmu_ops) {
--		pci_request_acs();
--		ret = bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--#endif
--#ifdef CONFIG_ARM_AMBA
--	if (amba_bustype.iommu_ops != &arm_smmu_ops) {
--		ret = bus_set_iommu(&amba_bustype, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--#endif
--	if (platform_bus_type.iommu_ops != &arm_smmu_ops) {
--		ret = bus_set_iommu(&platform_bus_type, &arm_smmu_ops);
--		if (ret)
--			return ret;
--	}
--	return 0;
-+	return arm_smmu_set_bus_ops(&arm_smmu_ops);
- }
- 
- static int arm_smmu_device_remove(struct platform_device *pdev)
- {
- 	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
- 
-+	arm_smmu_set_bus_ops(NULL);
-+	iommu_device_unregister(&smmu->iommu);
-+	iommu_device_sysfs_remove(&smmu->iommu);
- 	arm_smmu_device_disable(smmu);
- 
- 	return 0;
+ MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
+ MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
++MODULE_ALIAS("platform:arm-smmu");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.24.1.735.g03f4e72817-goog
 
