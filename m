@@ -2,156 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1218812616A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:59:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 205A4126170
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfLSL7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:59:34 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50150 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSL7e (ORCPT
+        id S1726961AbfLSMA1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:00:27 -0500
+Received: from us-smtp-2.mimecast.com ([207.211.31.81]:37125 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726712AbfLSMA1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:59:34 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJBxQv3029312;
-        Thu, 19 Dec 2019 05:59:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576756766;
-        bh=yxnvtS3Y6dPrnMhLpxgcSG/4NfRE2DXlNbtemhtrESM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Y4Y/y3I/vtDVqaru8Sb8k5lFOAcIPq6QsfYkosMiBcJ57TtTSq0dWCTol/3doRSMR
-         1PO38ehyG9OpRZ0hDg21crEDpPFOIoHy41N+aFPL1bOXRyKlKscZsNqtqYzt6ZeVK9
-         iJGeAuQBmOkiu8asV6Ges6w1RXfrjDIMh/PWicw4=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBJBxQJO118229
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Dec 2019 05:59:26 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Dec 2019 05:59:24 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Dec 2019 05:59:25 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJBxLn4096682;
-        Thu, 19 Dec 2019 05:59:22 -0600
-Subject: Re: [PATCH 04/13] PCI: cadence: Add support to start link and verify
- link status
-To:     Andrew Murray <andrew.murray@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-5-kishon@ti.com>
- <20191217115826.GA24359@e119886-lin.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <16ffe86d-9061-1a9a-d536-561e20ecbdd7@ti.com>
-Date:   Thu, 19 Dec 2019 17:31:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 19 Dec 2019 07:00:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576756826;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G9ICZdw8d/Cy5yfs9thcebSbyLAgCLlMcpKJwHMxudo=;
+        b=ihoUWUnz0XrymbcJNSYdCLDTxPRGfdD1shbxgUGMx1iBix8ZgEkYFi6RkotCiO9a3NoPZD
+        JImz6X4vZeItG9vSJ1scT26YrNnt3nJAs8azXQtA8rq/UMySAsdWXGp7v/VrhWZmA14guI
+        86cmNkyLRsU3izEADXU45mKSsMKknZg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-213-76UIkLS3MkOts9zWSA2hgg-1; Thu, 19 Dec 2019 07:00:22 -0500
+X-MC-Unique: 76UIkLS3MkOts9zWSA2hgg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id B272B477;
+        Thu, 19 Dec 2019 12:00:20 +0000 (UTC)
+Received: from carbon (ovpn-200-37.brq.redhat.com [10.40.200.37])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 921325D9E2;
+        Thu, 19 Dec 2019 12:00:15 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 13:00:13 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     "Li,Rongqing" <lirongqing@baidu.com>
+Cc:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linyunsheng@huawei.com" <linyunsheng@huawei.com>,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        brouer@redhat.com
+Subject: Re: [net-next v4 PATCH] page_pool: handle page recycle for
+ NUMA_NO_NODE condition
+Message-ID: <20191219130013.7707683f@carbon>
+In-Reply-To: <7d1d07c680b6411aada4840edaff3b12@baidu.com>
+References: <20191218084437.6db92d32@carbon>
+        <157665609556.170047.13435503155369210509.stgit@firesoul>
+        <7d1d07c680b6411aada4840edaff3b12@baidu.com>
 MIME-Version: 1.0
-In-Reply-To: <20191217115826.GA24359@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Wed, 18 Dec 2019 14:27:13 +0000
+"Li,Rongqing" <lirongqing@baidu.com> wrote:
 
-On 17/12/19 5:28 pm, Andrew Murray wrote:
-> On Mon, Dec 09, 2019 at 02:51:38PM +0530, Kishon Vijay Abraham I wrote:
->> Add cdns_pcie_ops to start link and verify link status. The registers
->> to start link and to check link status is in Platform specific PCIe
->> wrapper. Add support for platform specific drivers to add callback
->> functions for the PCIe Cadence core to start link and verify link status.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../pci/controller/cadence/pcie-cadence-ep.c  |  8 ++++++
->>  .../controller/cadence/pcie-cadence-host.c    | 28 +++++++++++++++++++
->>  drivers/pci/controller/cadence/pcie-cadence.h | 23 +++++++++++++++
->>  3 files changed, 59 insertions(+)
->>
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> index 560f22b4d165..088394b6be04 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
->> @@ -355,8 +355,10 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
->>  {
->>  	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
->>  	struct cdns_pcie *pcie = &ep->pcie;
->> +	struct device *dev = pcie->dev;
->>  	struct pci_epf *epf;
->>  	u32 cfg;
->> +	int ret;
->>  
->>  	/*
->>  	 * BIT(0) is hardwired to 1, hence function 0 is always enabled
->> @@ -367,6 +369,12 @@ static int cdns_pcie_ep_start(struct pci_epc *epc)
->>  		cfg |= BIT(epf->func_no);
->>  	cdns_pcie_writel(pcie, CDNS_PCIE_LM_EP_FUNC_CFG, cfg);
->>  
->> +	ret = cdns_pcie_start_link(pcie, true);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to start link\n");
->> +		return ret;
->> +	}
->> +
->>  	return 0;
->>  }
->>  
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> index ccf55e143e1d..0929554f5a81 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> @@ -3,6 +3,7 @@
->>  // Cadence PCIe host controller driver.
->>  // Author: Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
->>  
->> +#include <linux/delay.h>
->>  #include <linux/kernel.h>
->>  #include <linux/of_address.h>
->>  #include <linux/of_pci.h>
->> @@ -201,6 +202,23 @@ static int cdns_pcie_host_init(struct device *dev,
->>  	return err;
->>  }
->>  
->> +static int cdns_pcie_host_wait_for_link(struct cdns_pcie *pcie)
->> +{
->> +	struct device *dev = pcie->dev;
->> +	int retries;
->> +
->> +	/* Check if the link is up or not */
->> +	for (retries = 0; retries < LINK_WAIT_MAX_RETRIES; retries++) {
->> +		if (cdns_pcie_is_link_up(pcie)) {
->> +			dev_info(dev, "Link up\n");
->> +			return 0;
->> +		}
->> +		usleep_range(LINK_WAIT_USLEEP_MIN, LINK_WAIT_USLEEP_MAX);
->> +	}
->> +
->> +	return -ETIMEDOUT;
->> +}
-> 
-> This patch looks fine, except this function (above) is identical to
-> dw_pcie_wait_for_link, advk_pcie_wait_for_link and nwl_wait_for_link. Even
-> the definitions of LINK_WAIT_USLEEP_xx are the same.
-> 
-> I don't see any justification to duplicating this again - can you consolidate
-> these functions to something that all controller drivers can use?
+> seem it can not handle the in-flight pages if remove the check node
+> id from pool_page_reusable?
 
-This involves reading a register, so this in entirety cannot be in a
-generic layer. We could add "ops" for checking the link status (in
-pci_ops?), but I'm not sure if that's really required.
+I don't follow.
+I do think this patch handle in-flight pages, as they have to travel
+back-through the ptr_ring.
 
-Thanks
-Kishon
+-- 
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
+
