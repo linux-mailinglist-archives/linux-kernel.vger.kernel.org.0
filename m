@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF88C126C74
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F990126C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbfLSTED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:04:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
+        id S1729535AbfLSSrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729505AbfLSSrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:41 -0500
+        id S1728733AbfLSSrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 822BD24676;
-        Thu, 19 Dec 2019 18:47:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C13B524672;
+        Thu, 19 Dec 2019 18:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781260;
-        bh=xk1tIqNjLFRnwg9xoZIT5CzHjs7SKE0SIte7IcnCkLM=;
+        s=default; t=1576781267;
+        bh=dzjhsd4HD5RJSwDFnYLAi5QD2ZG6TARO/PGXcTkFSCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GE4/6YuwDFGt67q1b2uV+Pi+3Menfj1I8HKNXFNB701zLzRXuS2gKrFC3I+qkPjb4
-         K/owl5k2BAofsrIouqpsCfpGVZaxXs/5pU/gysmOQqd+gtcvg7Pp+kBM7nZuiQEemd
-         uK2L21CvL08WjkUr6Bh5h/J8a9EUdB5qTqe4DogY=
+        b=SiiEFWnQncpYU4MPEAjnvJeY0lP7sd7YJidMvmGVSj5SWFwPp4i3ra+2uYI/OKNNt
+         wI0ek5Dx7R9TY3bjcGZwdUg13b7rIkbGzm//oXs6fZr9NLX3WVBwbC/CVcGhnxdok6
+         adRqRz4JMZLJW6+mRj0Y7C1V0hvdiMmZIwkngsOQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
+        stable@vger.kernel.org,
         Mathias Nyman <mathias.nyman@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 148/199] usb: xhci: only set D3hot for pci device
-Date:   Thu, 19 Dec 2019 19:33:50 +0100
-Message-Id: <20191219183223.435482981@linuxfoundation.org>
+Subject: [PATCH 4.9 150/199] xhci: make sure interrupts are restored to correct state
+Date:   Thu, 19 Dec 2019 19:33:52 +0100
+Message-Id: <20191219183223.571399248@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,87 +44,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Lin <henryl@nvidia.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit f2c710f7dca8457e88b4ac9de2060f011254f9dd ]
+[ Upstream commit bd82873f23c9a6ad834348f8b83f3b6a5bca2c65 ]
 
-Xhci driver cannot call pci_set_power_state() on non-pci xhci host
-controllers. For example, NVIDIA Tegra XHCI host controller which acts
-as platform device with XHCI_SPURIOUS_WAKEUP quirk set in some platform
-hits this issue during shutdown.
+spin_unlock_irqrestore() might be called with stale flags after
+reading port status, possibly restoring interrupts to a incorrect
+state.
 
-Cc: <stable@vger.kernel.org>
-Fixes: 638298dc66ea ("xhci: Fix spurious wakeups after S5 on Haswell")
-Signed-off-by: Henry Lin <henryl@nvidia.com>
+If a usb2 port just finished resuming while the port status is read
+the spin lock will be temporary released and re-acquired in a separate
+function. The flags parameter is passed as value instead of a pointer,
+not updating flags properly before the final spin_unlock_irqrestore()
+is called.
+
+Cc: <stable@vger.kernel.org> # v3.12+
+Fixes: 8b3d45705e54 ("usb: Fix xHCI host issues on remote wakeup.")
 Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-4-mathias.nyman@linux.intel.com
+Link: https://lore.kernel.org/r/20191211142007.8847-7-mathias.nyman@linux.intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-pci.c | 13 +++++++++++++
- drivers/usb/host/xhci.c     |  5 +----
- drivers/usb/host/xhci.h     |  1 +
- 3 files changed, 15 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci-hub.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index b5140555a8d51..99bef8518fd2f 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -470,6 +470,18 @@ static int xhci_pci_resume(struct usb_hcd *hcd, bool hibernated)
- }
- #endif /* CONFIG_PM */
+diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+index 39e2d32710355..6777a81fb372b 100644
+--- a/drivers/usb/host/xhci-hub.c
++++ b/drivers/usb/host/xhci-hub.c
+@@ -728,7 +728,7 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
+ 		struct xhci_bus_state *bus_state,
+ 		__le32 __iomem **port_array,
+ 		u16 wIndex, u32 raw_port_status,
+-		unsigned long flags)
++		unsigned long *flags)
+ 	__releases(&xhci->lock)
+ 	__acquires(&xhci->lock)
+ {
+@@ -810,12 +810,12 @@ static u32 xhci_get_port_status(struct usb_hcd *hcd,
+ 			xhci_set_link_state(xhci, port_array, wIndex,
+ 					XDEV_U0);
  
-+static void xhci_pci_shutdown(struct usb_hcd *hcd)
-+{
-+	struct xhci_hcd		*xhci = hcd_to_xhci(hcd);
-+	struct pci_dev		*pdev = to_pci_dev(hcd->self.controller);
-+
-+	xhci_shutdown(hcd);
-+
-+	/* Yet another workaround for spurious wakeups at shutdown with HSW */
-+	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
-+		pci_set_power_state(pdev, PCI_D3hot);
-+}
-+
- /*-------------------------------------------------------------------------*/
+-			spin_unlock_irqrestore(&xhci->lock, flags);
++			spin_unlock_irqrestore(&xhci->lock, *flags);
+ 			time_left = wait_for_completion_timeout(
+ 					&bus_state->rexit_done[wIndex],
+ 					msecs_to_jiffies(
+ 						XHCI_MAX_REXIT_TIMEOUT_MS));
+-			spin_lock_irqsave(&xhci->lock, flags);
++			spin_lock_irqsave(&xhci->lock, *flags);
  
- /* PCI driver selection metadata; PCI hotplugging uses this */
-@@ -505,6 +517,7 @@ static int __init xhci_pci_init(void)
- #ifdef CONFIG_PM
- 	xhci_pci_hc_driver.pci_suspend = xhci_pci_suspend;
- 	xhci_pci_hc_driver.pci_resume = xhci_pci_resume;
-+	xhci_pci_hc_driver.shutdown = xhci_pci_shutdown;
- #endif
- 	return pci_register_driver(&xhci_pci_driver);
- }
-diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-index 06568a26de339..baacc442ec6a2 100644
---- a/drivers/usb/host/xhci.c
-+++ b/drivers/usb/host/xhci.c
-@@ -758,11 +758,8 @@ void xhci_shutdown(struct usb_hcd *hcd)
- 	xhci_dbg_trace(xhci, trace_xhci_dbg_init,
- 			"xhci_shutdown completed - status = %x",
- 			readl(&xhci->op_regs->status));
--
--	/* Yet another workaround for spurious wakeups at shutdown with HSW */
--	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
--		pci_set_power_state(to_pci_dev(hcd->self.controller), PCI_D3hot);
- }
-+EXPORT_SYMBOL_GPL(xhci_shutdown);
- 
- #ifdef CONFIG_PM
- static void xhci_save_registers(struct xhci_hcd *xhci)
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index de4771ce0df66..7472de2f704e3 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1865,6 +1865,7 @@ int xhci_run(struct usb_hcd *hcd);
- void xhci_stop(struct usb_hcd *hcd);
- void xhci_shutdown(struct usb_hcd *hcd);
- int xhci_gen_setup(struct usb_hcd *hcd, xhci_get_quirks_t get_quirks);
-+void xhci_shutdown(struct usb_hcd *hcd);
- void xhci_init_driver(struct hc_driver *drv,
- 		      const struct xhci_driver_overrides *over);
+ 			if (time_left) {
+ 				slot_id = xhci_find_slot_id_by_port(hcd,
+@@ -961,7 +961,7 @@ int xhci_hub_control(struct usb_hcd *hcd, u16 typeReq, u16 wValue,
+ 			break;
+ 		}
+ 		status = xhci_get_port_status(hcd, bus_state, port_array,
+-				wIndex, temp, flags);
++				wIndex, temp, &flags);
+ 		if (status == 0xffffffff)
+ 			goto error;
  
 -- 
 2.20.1
