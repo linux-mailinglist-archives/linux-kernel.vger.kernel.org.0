@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FB2A126AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8629126ABB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbfLSSwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47508 "EHLO mail.kernel.org"
+        id S1729992AbfLSSu3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730289AbfLSSwr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:47 -0500
+        id S1729979AbfLSSu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F00C6222C2;
-        Thu, 19 Dec 2019 18:52:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAC402064B;
+        Thu, 19 Dec 2019 18:50:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781566;
-        bh=MSTmn19y5LfHBUQ5A/ONZHHDbesMDuEavtreafrtXao=;
+        s=default; t=1576781425;
+        bh=vVlHfKK7lbNM4dstoY77z0seU4XGgjMCnhLHwYP2yaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z1sChXQmsQOCN+F1sF4XPcJUqEo87zUxBpngRwCRy16mTr0J3ApR6LE8EWjMLHmyX
-         u7yjtJgvaRefJNpZ0+7UEe4kAt3VtEKi7AXzjdWhR8UB/PI1ZnlUUmNqrXUhNrhepG
-         gDAX+RuUvR/wJl2It06Qtr/sxxmWpzvCmlsPhFxA=
+        b=YfGxqdq4QBn0li4zZxTIS7m6DdAmlNlGD2xeJD2xhhgzzfOEGMVGMMsW/CHzoIKNK
+         hJPIOWiRbuRNIFR+qEcDoRR3qu5GSSbbEjOBbSLKLrw6Ka0+P9ROPdIPJQHv6b+yS7
+         GutXF+D67U1KN5E2X4WTQ/0Qq0Zt21pyK2RH3Svs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -31,12 +31,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Neal Cardwell <ncardwell@google.com>,
         Soheil Hassas Yeganeh <soheil@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 09/47] tcp: md5: fix potential overestimation of TCP option space
+Subject: [PATCH 4.14 06/36] tcp: md5: fix potential overestimation of TCP option space
 Date:   Thu, 19 Dec 2019 19:34:23 +0100
-Message-Id: <20191219182906.185214546@linuxfoundation.org>
+Message-Id: <20191219182855.431781197@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -75,7 +75,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/net/ipv4/tcp_output.c
 +++ b/net/ipv4/tcp_output.c
-@@ -740,8 +740,9 @@ static unsigned int tcp_established_opti
+@@ -708,8 +708,9 @@ static unsigned int tcp_established_opti
  			min_t(unsigned int, eff_sacks,
  			      (remaining - TCPOLEN_SACK_BASE_ALIGNED) /
  			      TCPOLEN_SACK_PERBLOCK);
