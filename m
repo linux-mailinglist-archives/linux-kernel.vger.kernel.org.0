@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A88126D90
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C14B6126D92
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfLSShf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:37:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55226 "EHLO mail.kernel.org"
+        id S1727893AbfLSSht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfLSShc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:32 -0500
+        id S1727535AbfLSShm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:37:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77B4224679;
-        Thu, 19 Dec 2019 18:37:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CD61222C2;
+        Thu, 19 Dec 2019 18:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780651;
-        bh=U4z2sRDYdJKHX1PNo+xR3U0qZN1owb1vJ9hDYEmbJF4=;
+        s=default; t=1576780661;
+        bh=61R/NdHf82RLsqLQhBJmvUPZm4nSs/T2wCwYyyd8fuU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ej1v8VLU3IRWn9lpGvZSRfD2PjGp8bowlzQJwjymcMc7AH2r6cvikj1QYy5nqEZKX
-         kaGra04H1UFprDLDzmBT4CdEGlfG3FnYCy4578kobl/6XzGJsPAfve9qNGmrOugFAl
-         jlGk+6vb8MtrzhTVk4r3hWKc15xTYPrGw5W1Jg4E=
+        b=jrXElFJJBFl4tDtUoXKqhSaMUhYwQ2T3Z6dKLM/m7JyJM4ohYPUXRubg4qey4oCrO
+         GnZ56PhwOfLe8GC3oaiGH/Tycsir6nooOw73A24K9cBMtvGui/itLMfeh9CuH2KB/S
+         tQd7IYTAJwdi0O1G+k7eVb7yDxxCPaZ/dGYhD3Q0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 060/162] tty: vt: keyboard: reject invalid keycodes
-Date:   Thu, 19 Dec 2019 19:32:48 +0100
-Message-Id: <20191219183211.520428414@linuxfoundation.org>
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 064/162] KVM: x86: do not modify masked bits of shared MSRs
+Date:   Thu, 19 Dec 2019 19:32:52 +0100
+Message-Id: <20191219183211.746261732@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
 References: <20191219183150.477687052@linuxfoundation.org>
@@ -44,52 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit b2b2dd71e0859436d4e05b2f61f86140250ed3f8 upstream.
+commit de1fca5d6e0105c9d33924e1247e2f386efc3ece upstream.
 
-Do not try to handle keycodes that are too big, otherwise we risk doing
-out-of-bounds writes:
+"Shared MSRs" are guest MSRs that are written to the host MSRs but
+keep their value until the next return to userspace.  They support
+a mask, so that some bits keep the host value, but this mask is
+only used to skip an unnecessary MSR write and the value written
+to the MSR is always the guest MSR.
 
-BUG: KASAN: global-out-of-bounds in clear_bit include/asm-generic/bitops-instrumented.h:56 [inline]
-BUG: KASAN: global-out-of-bounds in kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
-BUG: KASAN: global-out-of-bounds in kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
-Write of size 8 at addr ffffffff89a1b2d8 by task syz-executor108/1722
-...
- kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
- kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
- input_to_handler+0x3b6/0x4c0 drivers/input/input.c:118
- input_pass_values.part.0+0x2e3/0x720 drivers/input/input.c:145
- input_pass_values drivers/input/input.c:949 [inline]
- input_set_keycode+0x290/0x320 drivers/input/input.c:954
- evdev_handle_set_keycode_v2+0xc4/0x120 drivers/input/evdev.c:882
- evdev_do_ioctl drivers/input/evdev.c:1150 [inline]
+Fix this and, while at it, do not update smsr->values[slot].curr if
+for whatever reason the wrmsr fails.  This should only happen due to
+reserved bits, so the value written to smsr->values[slot].curr
+will not match when the user-return notifier and the host value will
+always be restored.  However, it is untidy and in rare cases this
+can actually avoid spurious WRMSRs on return to userspace.
 
-In this case we were dealing with a fuzzed HID device that declared over
-12K buttons, and while HID layer should not be reporting to us such big
-keycodes, we should also be defensive and reject invalid data ourselves as
-well.
-
-Reported-by: syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191122204220.GA129459@dtor-ws
+Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Tested-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/vt/keyboard.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/vt/keyboard.c
-+++ b/drivers/tty/vt/keyboard.c
-@@ -1460,7 +1460,7 @@ static void kbd_event(struct input_handl
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -260,13 +260,14 @@ int kvm_set_shared_msr(unsigned slot, u6
+ 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
+ 	int err;
  
- 	if (event_type == EV_MSC && event_code == MSC_RAW && HW_RAW(handle->dev))
- 		kbd_rawcode(value);
--	if (event_type == EV_KEY)
-+	if (event_type == EV_KEY && event_code <= KEY_MAX)
- 		kbd_keycode(event_code, value, HW_RAW(handle->dev));
+-	if (((value ^ smsr->values[slot].curr) & mask) == 0)
++	value = (value & mask) | (smsr->values[slot].host & ~mask);
++	if (value == smsr->values[slot].curr)
+ 		return 0;
+-	smsr->values[slot].curr = value;
+ 	err = wrmsrl_safe(shared_msrs_global.msrs[slot], value);
+ 	if (err)
+ 		return 1;
  
- 	spin_unlock(&kbd_event_lock);
++	smsr->values[slot].curr = value;
+ 	if (!smsr->registered) {
+ 		smsr->urn.on_user_return = kvm_on_user_return;
+ 		user_return_notifier_register(&smsr->urn);
 
 
