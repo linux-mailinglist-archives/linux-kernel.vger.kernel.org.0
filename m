@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DD961267C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A5561267DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfLSRPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:15:43 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40098 "EHLO
+        id S1727276AbfLSRQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:16:21 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34603 "EHLO
         mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726971AbfLSRPj (ORCPT
+        with ESMTP id S1726992AbfLSRPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:15:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t14so6432148wmi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:15:39 -0800 (PST)
+        Thu, 19 Dec 2019 12:15:41 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f4so7504849wmj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:15:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=XhiSom0iVO5AHRS5ZUjMyBcC2AAQ3b6I6WYo2HMzPrk=;
-        b=SWPQN6U52q64ZPmqFofySJ402F+H0ckaDHl99RXhe/e2LryuutBlW6t+dABXiDAhFe
-         QJPJx/w5IjIIhfP2oEGkB//h2+TWYEcLNBOcOUOU4Jz12ml54NanVvwcsNHLXITUzMSP
-         m049gzgohL4S579+RX136l3jd/9UwjBewrdlLOn/o+KbFwasTlukpH8xERZoXQPcuQ6+
-         +TU7TF53TVQ03wpSSJf08n0PkvV1p9/qUOddg4uvymTXTKis3AD256c5VBlKFD63KmHS
-         d8Qnhh5rWpQmmbT5rzyFfi4tC2eYLR5PbIosb+0q3JzVknLsdcU8WE9KlqxhhfWFkU0E
-         Pe5w==
+        bh=ZKnof9NnGnWaz5Wg5PNLvyOb/wEdh4vzWoDXW3CwsIs=;
+        b=oOE+JHQMOaM2l1QZYogpzJH6M7Wn3Dp2n5HfS+vV9Nr7K85412tv8ZdYFI1dhaCtDD
+         ++YFBXokMGS6KEFagBjki2uJesGJIgREumCwOdU9e2+v21zYxDYi2U8oPDVG9OcEm7/i
+         xZbd3W+OlbjSLaOzwMM2rg3rETgaiRzWxf9onnmMPPKOYf+Fe3x2+WcKN39U/41wTmpN
+         ZkTueFGigG84uc7joqvVY9tmyOgWWcddHiPhSXHcJ81j3fA/cY7nD4CWzX8cGrIWM/Y7
+         XOxgbm7YkMD+lLRoLBtBdyIuSKEUDAOf64BBogI3nIhsGUCAWX4zLuZHfvutISOK+xBT
+         fTlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=XhiSom0iVO5AHRS5ZUjMyBcC2AAQ3b6I6WYo2HMzPrk=;
-        b=oY1NS7CiLa3LWlD47Ag/tEherw/MJJDlCs9ZFiWzBHCz8cLTZcExFJeclkcxOipSBs
-         GgxdCz6dtaQMXvp8Qms33hm96BMVsT/YV/JinT+gtUYdpxhIzKeLjUNiZLHgAnrQLIh3
-         Zat+G2RLNet7y8M+3o4PHdxBlz/uEW4cpIl2x3qmRJGb8ahm+YNat6fI4lHrCd6Fmalc
-         mJICQHmkmZnEWvQ35cwn3M2Lic0mIFV2bjqUL0JEpGROKGglptaSECWB3+2OF1H3eYDn
-         2SrkqvqgxdM11Lrp/I83BM+aHvRApQPd5Rx0awaUNVvdwbd2W99Kt/DojTGEgbL9VQpe
-         fVgw==
-X-Gm-Message-State: APjAAAX7wMnFwfM53/EKG0KnNjCtsXt8sb3Xl21Z+BSisL5VhYEBXiu3
-        VJGtoIInAObaGl8JCXNb6tMoYQ==
-X-Google-Smtp-Source: APXvYqwE6tJDR5YKpKGyKSmR7DJqhpeUc9tFwjGGXDRfmjIokbxHVco+zkNTNvsbYfDHAgfdyiDTwA==
-X-Received: by 2002:a05:600c:2218:: with SMTP id z24mr11302607wml.50.1576775738540;
-        Thu, 19 Dec 2019 09:15:38 -0800 (PST)
+        bh=ZKnof9NnGnWaz5Wg5PNLvyOb/wEdh4vzWoDXW3CwsIs=;
+        b=mHivEt5vegjEcUNbJp5VOTDIEdU51WIPRHYmSR7QgEs+2H8rUvO3oP2G5nn3thNCfB
+         WeEFMjjxrzJ+W8li9pBiYuuKWbBz7UYRxmyvLZ1d47SH16tC7F3JIZCZIGqdJcs2G/x6
+         lFq+Cd8O0hq4MEILWxAsH41BZVCa3aPksugtkMvcjnMaRvcUAx1glYh69fQwxZA2uV3z
+         NfaQ6G4KgHQfSneOh/ksiBqQZvZW52/0MAOq12TGmn6uHNUqNcqkOm7jpnccb/3cmI/N
+         LKqnkNp9tlJHbnIGhIofmO0YZ/O88C2GgL6bUYDGnNnc9Z2z/y9KP/zr/R+LduveMrLQ
+         FmSg==
+X-Gm-Message-State: APjAAAXS1eRLwba44dovWqfe5HyliYj65B7wMgCuFtBJkggQMEmWtx4S
+        INmS87iJHGHn8KvB4Mg1H4IT+g==
+X-Google-Smtp-Source: APXvYqxyed9XQDWxCA7f59327N+KYa5GAs0nDM+2pUGQ5XO2gXAyJSlmK01+XGMkzke8l8r38BZI+w==
+X-Received: by 2002:a1c:6404:: with SMTP id y4mr11340453wmb.143.1576775739740;
+        Thu, 19 Dec 2019 09:15:39 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id q6sm7401428wrx.72.2019.12.19.09.15.37
+        by smtp.gmail.com with ESMTPSA id q6sm7401428wrx.72.2019.12.19.09.15.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 09:15:38 -0800 (PST)
+        Thu, 19 Dec 2019 09:15:39 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Kent Gibson <warthog618@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -53,9 +53,9 @@ To:     Kent Gibson <warthog618@gmail.com>,
 Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v3 03/13] gpiolib: convert the type of hwnum to unsigned int in gpiochip_get_desc()
-Date:   Thu, 19 Dec 2019 18:15:18 +0100
-Message-Id: <20191219171528.6348-4-brgl@bgdev.pl>
+Subject: [PATCH v3 04/13] gpiolib: use gpiochip_get_desc() in linehandle_create()
+Date:   Thu, 19 Dec 2019 18:15:19 +0100
+Message-Id: <20191219171528.6348-5-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191219171528.6348-1-brgl@bgdev.pl>
 References: <20191219171528.6348-1-brgl@bgdev.pl>
@@ -68,74 +68,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-gpiochip_get_desc() takes a u16 hwnum, but it turns out most users don't
-respect that and usually pass an unsigned int. Since implicit casting to
-a smaller type is dangerous - let's change the type of hwnum to unsigned
-int in gpiochip_get_desc() and in gpiochip_request_own_desc() where the
-size of hwnum is not respected either and who's a user of the former.
-
-This is safe as we then check the hwnum against the number of lines
-before proceeding in gpiochip_get_desc().
+Unduplicate the ngpio check by simply calling gpiochip_get_desc() and
+checking its return value.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 ---
- drivers/gpio/gpiolib.c      | 5 +++--
- drivers/gpio/gpiolib.h      | 3 ++-
- include/linux/gpio/driver.h | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpio/gpiolib.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 72211407469f..b3ffb079e323 100644
+index b3ffb079e323..6ef55cc1188b 100644
 --- a/drivers/gpio/gpiolib.c
 +++ b/drivers/gpio/gpiolib.c
-@@ -140,7 +140,7 @@ EXPORT_SYMBOL_GPL(gpio_to_desc);
-  * in the given chip for the specified hardware number.
-  */
- struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
--				    u16 hwnum)
-+				    unsigned int hwnum)
- {
- 	struct gpio_device *gdev = chip->gpiodev;
+@@ -678,14 +678,13 @@ static int linehandle_create(struct gpio_device *gdev, void __user *ip)
+ 	/* Request each GPIO */
+ 	for (i = 0; i < handlereq.lines; i++) {
+ 		u32 offset = handlereq.lineoffsets[i];
+-		struct gpio_desc *desc;
++		struct gpio_desc *desc = gpiochip_get_desc(gdev->chip, offset);
  
-@@ -2990,7 +2990,8 @@ EXPORT_SYMBOL_GPL(gpiochip_is_requested);
-  * A pointer to the GPIO descriptor, or an ERR_PTR()-encoded negative error
-  * code on failure.
-  */
--struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
-+struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
-+					    unsigned int hwnum,
- 					    const char *label,
- 					    enum gpio_lookup_flags lflags,
- 					    enum gpiod_flags dflags)
-diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
-index ca9bc1e4803c..a1cbeabadc69 100644
---- a/drivers/gpio/gpiolib.h
-+++ b/drivers/gpio/gpiolib.h
-@@ -78,7 +78,8 @@ struct gpio_array {
- 	unsigned long		invert_mask[];
- };
+-		if (offset >= gdev->ngpio) {
+-			ret = -EINVAL;
++		if (IS_ERR(desc)) {
++			ret = PTR_ERR(desc);
+ 			goto out_free_descs;
+ 		}
  
--struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip, u16 hwnum);
-+struct gpio_desc *gpiochip_get_desc(struct gpio_chip *chip,
-+				    unsigned int hwnum);
- int gpiod_get_array_value_complex(bool raw, bool can_sleep,
- 				  unsigned int array_size,
- 				  struct gpio_desc **desc_array,
-diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
-index e2480ef94c55..4f032de10bae 100644
---- a/include/linux/gpio/driver.h
-+++ b/include/linux/gpio/driver.h
-@@ -715,7 +715,8 @@ gpiochip_remove_pin_ranges(struct gpio_chip *chip)
- 
- #endif /* CONFIG_PINCTRL */
- 
--struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip, u16 hwnum,
-+struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *chip,
-+					    unsigned int hwnum,
- 					    const char *label,
- 					    enum gpio_lookup_flags lflags,
- 					    enum gpiod_flags dflags);
+-		desc = &gdev->descs[offset];
+ 		ret = gpiod_request(desc, lh->label);
+ 		if (ret)
+ 			goto out_free_descs;
 -- 
 2.23.0
 
