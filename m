@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8A1126A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CE33126940
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfLSSpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37338 "EHLO mail.kernel.org"
+        id S1726911AbfLSSfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:35:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728413AbfLSSpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:07 -0500
+        id S1727333AbfLSSfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:35:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FA63222C2;
-        Thu, 19 Dec 2019 18:45:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88EAD24683;
+        Thu, 19 Dec 2019 18:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781106;
-        bh=o0097HBGczPpjO6uj/IUnUpcuRfOFsYqRgOdD/t3OHA=;
+        s=default; t=1576780552;
+        bh=wCr4oXlxYFh5iatZpY7G7s/BwOUP0VA8+9jnlrIjENg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=COl3K0YM/czO9sJUC4sf+IckrwnzDZsinx2g3txz1KgDbzQrk3UcbILAosoyS4I49
-         Zi0FftifBTCbZ3oqnooqQVmBtAyFlRmewSVY1WP+IcgWUSGC8gIi3O1as4khrhGwM4
-         crgpyvUbg7g03Gwyv2tH8cKwRfy4A+vwsozzz2rI=
+        b=lDXZdpDHDmhGEFu41ftcQVUoauHytDAoNjEIYGm7QEewDxN50rNp1QM5OthVlLlCU
+         eFdN43uUsY2/tdJcpZ3SpfV12681nDWxEs7/H6ElLe4znqZFAoIePV07Wkvcsrpj7Y
+         4vUySayIXz8hTbc/KlP7ucM8cDHzwtHiJPVGrRM8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        David Teigland <teigland@redhat.com>,
+        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 046/199] dlm: NULL check before kmem_cache_destroy is not needed
+Subject: [PATCH 4.4 020/162] MIPS: SiByte: Enable ZONE_DMA32 for LittleSur
 Date:   Thu, 19 Dec 2019 19:32:08 +0100
-Message-Id: <20191219183217.492770079@linuxfoundation.org>
+Message-Id: <20191219183208.127758298@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,47 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
+From: Maciej W. Rozycki <macro@linux-mips.org>
 
-[ Upstream commit f31a89692830061bceba8469607e4e4b0f900159 ]
+[ Upstream commit 756d6d836dbfb04a5a486bc2ec89397aa4533737 ]
 
-kmem_cache_destroy(NULL) is safe, so removes NULL check before
-freeing the mem. This patch also fix ifnullfree.cocci warnings.
+The LittleSur board is marked for high memory support and therefore
+clearly must provide a way to have enough memory installed for some to
+be present outside the low 4GiB physical address range.  With the memory
+map of the BCM1250 SOC it has been built around it means over 1GiB of
+actual DRAM, as only the first 1GiB is mapped in the low 4GiB physical
+address range[1].
 
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Complement commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
+DMA32.") then and also enable ZONE_DMA32 for LittleSur.
+
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
+    "Memory Map", pp. 34-38
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Patchwork: https://patchwork.linux-mips.org/patch/21107/
+Fixes: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/memory.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ arch/mips/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
-index 7cd24bccd4fe5..37be29f21d04d 100644
---- a/fs/dlm/memory.c
-+++ b/fs/dlm/memory.c
-@@ -38,10 +38,8 @@ int __init dlm_memory_init(void)
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 422624ca01329..596cbda9cb3d3 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -773,6 +773,7 @@ config SIBYTE_LITTLESUR
+ 	select SYS_SUPPORTS_BIG_ENDIAN
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
++	select ZONE_DMA32 if 64BIT
  
- void dlm_memory_exit(void)
- {
--	if (lkb_cache)
--		kmem_cache_destroy(lkb_cache);
--	if (rsb_cache)
--		kmem_cache_destroy(rsb_cache);
-+	kmem_cache_destroy(lkb_cache);
-+	kmem_cache_destroy(rsb_cache);
- }
- 
- char *dlm_allocate_lvb(struct dlm_ls *ls)
-@@ -86,8 +84,7 @@ void dlm_free_lkb(struct dlm_lkb *lkb)
- 		struct dlm_user_args *ua;
- 		ua = lkb->lkb_ua;
- 		if (ua) {
--			if (ua->lksb.sb_lvbptr)
--				kfree(ua->lksb.sb_lvbptr);
-+			kfree(ua->lksb.sb_lvbptr);
- 			kfree(ua);
- 		}
- 	}
+ config SIBYTE_SENTOSA
+ 	bool "Sibyte BCM91250E-Sentosa"
 -- 
 2.20.1
 
