@@ -2,103 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3DBD127027
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:00:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BFF712704C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:05:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfLSWAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 17:00:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45165 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726866AbfLSWAm (ORCPT
+        id S1727197AbfLSWFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 17:05:09 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38253 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfLSWFI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:00:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 59so9036592otp.12;
-        Thu, 19 Dec 2019 14:00:41 -0800 (PST)
+        Thu, 19 Dec 2019 17:05:08 -0500
+Received: by mail-yw1-f68.google.com with SMTP id 10so2787824ywv.5;
+        Thu, 19 Dec 2019 14:05:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UBtNLSUS6Ywl14BNvofHDMyiiz+12f6G6YvH8Y2fDv4=;
-        b=iQQ80VQnJ5dVL+B7BY42H8gKgNGme4c9CVijYbkO84SHLO8tkMHikdkHFXeIP/dSHe
-         jlQD6em8O3N4ipOQtThat1YlDTyCKMBHqssZ3OGrD7x1H0BOqH1hejhnDlgZhFotyMcu
-         qCWl1mww57QUKI1IHLSg+k2ffjV8o18vQaOSKyF6Tpc9lDpxtzv8Qhh5ys8eZOW75FnT
-         3cakEALWD1DYOMc0J5/UeD0ZBaFYDkegYHy5WQXbq/Ove4Yzo0+NrpwI/fc3Cb2K+bW7
-         XP1xmHbwFAXJsGRFmUOQB7FT+s2575Zx+idbovzpbxlx38s3rLBJOHUsIDLHvpatF9bh
-         +Uyw==
-X-Gm-Message-State: APjAAAWDlkuAfC/L9cQvMpKJcSJmQXV7O1cCwNgIK6qWQ7FQtN8Gp10W
-        FCLfywOMVN/cbZ3s6Mf+eRNMu9tzXd8rQPe4LEU=
-X-Google-Smtp-Source: APXvYqwiVD+oDHmcpes3nrdTtRvyPemViEdYSagqOmt9aEw9isgiCAphhYN/oWpii69DP7p7Z5ZTxFbwmHOAJM2v4Xk=
-X-Received: by 2002:a05:6830:1cd3:: with SMTP id p19mr9090434otg.118.1576792841468;
- Thu, 19 Dec 2019 14:00:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1ZLXo5NjpSRAxo1kpGOmOXM5hSzlfuVkSp439RA+RFk=;
+        b=nKJyvfLPIkNgXq4Vk/HErscJQSHFoqz5/4vhCEeQFBRKYh3ZlJZ6WFhcbfsSu5qxei
+         g3Ldc+yb64XScCUUVauW9iSVVzzhhjaTAqsDT/wIYbKlWBRA4Xxf9ojPJj74aAe0H44v
+         q5JN7pImy1oGOP7EdWB9wPqGPPoXSbZUsQayL5tqia+tkNL9gt1E+FG+YwiZCHbyKUYQ
+         g0Txe/XceSRkViY1kV23JGOTd9SLUa5vvUs1EAIjG4Rnn1jTX0kDqZwHcniFqrygbB/3
+         aqNMQEPvjfw5gA+81kAMlg9hsDmI4Im/uVQMXao/gfug8NMNC2eDhlpMp7q2/1KbjU7S
+         ShAw==
+X-Gm-Message-State: APjAAAXRwXuqM9DlbMV37OvAVsF7wTebrJdttuOaM05aXFcIw2r7wwLa
+        AAW7tDi+VFGgE9u61gCoww==
+X-Google-Smtp-Source: APXvYqwGDJJUF+JP/PfFSSCbn62gaMUqUnaNPm8Ka78UNu1rFv1DVCnAhHZw9+75RosiSxzI4EHmkg==
+X-Received: by 2002:a0d:c243:: with SMTP id e64mr8252091ywd.12.1576793107781;
+        Thu, 19 Dec 2019 14:05:07 -0800 (PST)
+Received: from localhost (ip-99-203-15-82.pools.spcsdns.net. [99.203.15.82])
+        by smtp.gmail.com with ESMTPSA id h193sm2928138ywc.88.2019.12.19.14.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 14:05:07 -0800 (PST)
+Date:   Thu, 19 Dec 2019 16:03:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: Add UniPhier PCIe endpoint
+ controller description
+Message-ID: <20191219215617.GA11666@bogus>
+References: <1576116138-16501-1-git-send-email-hayashi.kunihiko@socionext.com>
+ <1576116138-16501-2-git-send-email-hayashi.kunihiko@socionext.com>
 MIME-Version: 1.0
-References: <20191217104856.24987-1-peter.ujfalusi@ti.com>
-In-Reply-To: <20191217104856.24987-1-peter.ujfalusi@ti.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 19 Dec 2019 23:00:30 +0100
-Message-ID: <CAJZ5v0gFD8AVCoLkeuQ47ab4eqN-9idf=p5jq3Nhc8DbOKBdSw@mail.gmail.com>
-Subject: Re: [PATCH] docs: firmware-guide: acpi: Change dma_request_slave_channel
- to dma_request_chan
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576116138-16501-2-git-send-email-hayashi.kunihiko@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 11:48 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->
-> dma_request_chan() is the preferred API to request slave channels.
->
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+On Thu, 12 Dec 2019 11:02:17 +0900, Kunihiko Hayashi wrote:
+> Add DT bindings for PCIe controller implemented in UniPhier SoCs
+> when configured in endpoint mode. This controller is based on
+> the DesignWare PCIe core.
+> 
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 > ---
->  .../firmware-guide/acpi/enumeration.rst          | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/firmware-guide/acpi/enumeration.rst b/Documentation/firmware-guide/acpi/enumeration.rst
-> index 0a72b6321f5f..c13fee8b02ba 100644
-> --- a/Documentation/firmware-guide/acpi/enumeration.rst
-> +++ b/Documentation/firmware-guide/acpi/enumeration.rst
-> @@ -71,8 +71,8 @@ DMA support
->  DMA controllers enumerated via ACPI should be registered in the system to
->  provide generic access to their resources. For example, a driver that would
->  like to be accessible to slave devices via generic API call
-> -dma_request_slave_channel() must register itself at the end of the probe
-> -function like this::
-> +dma_request_chan() must register itself at the end of the probe function like
-> +this::
->
->         err = devm_acpi_dma_controller_register(dev, xlate_func, dw);
->         /* Handle the error if it's not a case of !CONFIG_ACPI */
-> @@ -112,15 +112,15 @@ could look like::
->         }
->         #endif
->
-> -dma_request_slave_channel() will call xlate_func() for each registered DMA
-> -controller. In the xlate function the proper channel must be chosen based on
-> +dma_request_chan() will call xlate_func() for each registered DMA controller.
-> +In the xlate function the proper channel must be chosen based on
->  information in struct acpi_dma_spec and the properties of the controller
->  provided by struct acpi_dma.
->
-> -Clients must call dma_request_slave_channel() with the string parameter that
-> -corresponds to a specific FixedDMA resource. By default "tx" means the first
-> -entry of the FixedDMA resource array, "rx" means the second entry. The table
-> -below shows a layout::
-> +Clients must call dma_request_chan() with the string parameter that corresponds
-> +to a specific FixedDMA resource. By default "tx" means the first entry of the
-> +FixedDMA resource array, "rx" means the second entry. The table below shows a
-> +layout::
->
->         Device (I2C0)
->         {
-> --
-> Peter
->
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>  .../devicetree/bindings/pci/uniphier-pcie-ep.txt   | 47 ++++++++++++++++++++++
+>  MAINTAINERS                                        |  2 +-
+>  2 files changed, 48 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/uniphier-pcie-ep.txt
+> 
 
-Applying with modified subject as 5.6 material, thanks!
+Reviewed-by: Rob Herring <robh@kernel.org>
