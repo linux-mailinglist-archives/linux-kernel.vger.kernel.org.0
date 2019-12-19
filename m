@@ -2,136 +2,312 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEDC126A7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE2AF12692D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbfLSSrp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40650 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729512AbfLSSrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:43 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD02024672;
-        Thu, 19 Dec 2019 18:47:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781262;
-        bh=91XH1GDDOmrZSUmM+Gft43WB64RqaYf64kQ1SWB7K+Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I7sBTwDKELCs9Pq+ReAPwQAkHSQQ7K01CGaAaV8C+xv2QXsNZ7oRJWSFi75aEY+BI
-         4KPAusTNnr6P1jUtjVompL95NWK1TYOJObGiWVx7exaPS1BtHlcOa8c9m8m7VK2jeu
-         kTkxZzNR0XHbhWz4VZICyKUv5uhTlUiuFj4fnlvU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 149/199] xhci: Fix memory leak in xhci_add_in_port()
-Date:   Thu, 19 Dec 2019 19:33:51 +0100
-Message-Id: <20191219183223.502477436@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
-User-Agent: quilt/0.66
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1727024AbfLSSed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:34:33 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:46842 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfLSSed (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:34:33 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJIR9Ik046131;
+        Thu, 19 Dec 2019 18:34:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2019-08-05; bh=612PohDcN+LPYumX+nTCZyXRMRyst9GqwLbWBrVVPXA=;
+ b=UiF/N5tIgThnT0MhlVg4bwDWoTSMT/gZY2EpLJpvUY8evcpXoFfyMP+e/JSc1o9G8GjW
+ kSxT0RBwi7yZUwkmuhDs8nOwi46uV3F6LOVKseCXDQNjM0mRANH/9GXxHkxPrbmeNEIN
+ JiD8IfZggBiK4t1a2Ft+5XKxlEsJmMo4fkMvtAHVbehaXuYkLT5slT2LTQ/f5qaEul0t
+ augila4KZ7McfY1wDzV9tjbb+T97vWJ54gkSAzrkZCVtkBLgAmH7mqqCra4VAjRbRd7/
+ pT+SpNRctKAMW9CaMS+2mgT3Fb4WXyCibYL9A7W9/lpYjvsnV7sOQryaUGNLDFJjqdLk Rg== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by aserp2120.oracle.com with ESMTP id 2x01knmmrv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 18:34:01 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJGEJtM035040;
+        Thu, 19 Dec 2019 18:34:00 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wyxqj3t1p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 18:34:00 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJIXuM9030907;
+        Thu, 19 Dec 2019 18:33:56 GMT
+Received: from dhcp-10-154-178-61.vpn.oracle.com (/10.154.178.61)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 10:33:55 -0800
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 11.5 \(3445.9.1\))
+Subject: `
+From:   John Donnelly <john.p.donnelly@oracle.com>
+In-Reply-To: <94c4540b-6467-002f-6cfc-bacc4ac45d24@huawei.com>
+Date:   Thu, 19 Dec 2019 12:33:51 -0600
+Cc:     tglx@linutronix.de, mingo@redhat.com, catalin.marinas@arm.com,
+        will@kernel.org, james.morse@arm.com, dyoung@redhat.com,
+        bhsharma@redhat.com, horms@verge.net.au, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        guohanjun@huawei.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <EA397BBF-56F6-4E8A-964D-ACB78F1DD9B4@oracle.com>
+References: <20190830071200.56169-1-chenzhou10@huawei.com>
+ <2a97b296-59e7-0a26-84fa-e2ddcd7987b6@huawei.com>
+ <11E080AF-28F1-481A-BF16-9C062091D900@oracle.com>
+ <94c4540b-6467-002f-6cfc-bacc4ac45d24@huawei.com>
+To:     Chen Zhou <chenzhou10@huawei.com>
+X-Mailer: Apple Mail (2.3445.9.1)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-
-[ Upstream commit ce91f1a43b37463f517155bdfbd525eb43adbd1a ]
-
-When xHCI is part of Alpine or Titan Ridge Thunderbolt controller and
-the xHCI device is hot-removed as a result of unplugging a dock for
-example, the driver leaks memory it allocates for xhci->usb3_rhub.psi
-and xhci->usb2_rhub.psi in xhci_add_in_port() as reported by kmemleak:
-
-unreferenced object 0xffff922c24ef42f0 (size 16):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 16 bytes):
-    21 00 0c 00 12 00 dc 05 23 00 e0 01 00 00 00 00  !.......#.......
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
-unreferenced object 0xffff922c24ef3318 (size 8):
-  comm "kworker/u16:2", pid 178, jiffies 4294711640 (age 956.620s)
-  hex dump (first 8 bytes):
-    34 01 05 00 35 41 0a 00                          4...5A..
-  backtrace:
-    [<000000007ac80914>] xhci_mem_init+0xcf8/0xeb7
-    [<0000000001b6d775>] xhci_init+0x7c/0x160
-    [<00000000db443fe3>] xhci_gen_setup+0x214/0x340
-    [<00000000fdffd320>] xhci_pci_setup+0x48/0x110
-    [<00000000541e1e03>] usb_add_hcd.cold+0x265/0x747
-    [<00000000ca47a56b>] usb_hcd_pci_probe+0x219/0x3b4
-    [<0000000021043861>] xhci_pci_probe+0x24/0x1c0
-    [<00000000b9231f25>] local_pci_probe+0x3d/0x70
-    [<000000006385c9d7>] pci_device_probe+0xd0/0x150
-    [<0000000070241068>] really_probe+0xf5/0x3c0
-    [<0000000061f35c0a>] driver_probe_device+0x58/0x100
-    [<000000009da11198>] bus_for_each_drv+0x79/0xc0
-    [<000000009ce45f69>] __device_attach+0xda/0x160
-    [<00000000df201aaf>] pci_bus_add_device+0x46/0x70
-    [<0000000088a1bc48>] pci_bus_add_devices+0x27/0x60
-    [<00000000ad9ee708>] pci_bus_add_devices+0x52/0x60
-
-Fix this by calling kfree() for the both psi objects in
-xhci_mem_cleanup().
-
-Cc: <stable@vger.kernel.org> # 4.4+
-Fixes: 47189098f8be ("xhci: parse xhci protocol speed ID list for usb 3.1 usage")
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-2-mathias.nyman@linux.intel.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/host/xhci-mem.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-index 7199e400fbace..19818367ff5c3 100644
---- a/drivers/usb/host/xhci-mem.c
-+++ b/drivers/usb/host/xhci-mem.c
-@@ -1940,10 +1940,14 @@ void xhci_mem_cleanup(struct xhci_hcd *xhci)
- 	kfree(xhci->port_array);
- 	kfree(xhci->rh_bw);
- 	kfree(xhci->ext_caps);
-+	kfree(xhci->usb2_rhub.psi);
-+	kfree(xhci->usb3_rhub.psi);
- 
- 	xhci->usb2_ports = NULL;
- 	xhci->usb3_ports = NULL;
- 	xhci->port_array = NULL;
-+	xhci->usb2_rhub.psi = NULL;
-+	xhci->usb3_rhub.psi = NULL;
- 	xhci->rh_bw = NULL;
- 	xhci->ext_caps = NULL;
- 
--- 
-2.20.1
 
 
+> On Dec 18, 2019, at 8:56 PM, Chen Zhou <chenzhou10@huawei.com> wrote:
+>=20
+> Hi John,
+>=20
+> On 2019/12/19 1:18, John Donnelly wrote:
+>> HI=20
+>>=20
+>> SEE INLINE ON A QUESTION :
+>>=20
+>>> On Dec 17, 2019, at 8:07 PM, Chen Zhou <chenzhou10@huawei.com> =
+wrote:
+>>>=20
+>>> Hi all,
+>>>=20
+>>> Friendly ping...
+>>>=20
+>>> On 2019/8/30 15:11, Chen Zhou wrote:
+>>>> I am busy with other things, so it was a long time before this =
+version was
+>>>> released.
+>>>>=20
+>>>> This patch series enable reserving crashkernel above 4G in arm64.
+>>>>=20
+>>>> There are following issues in arm64 kdump:
+>>>> 1. We use crashkernel=3DX to reserve crashkernel below 4G, which =
+will fail
+>>>> when there is no enough low memory.
+>>>> 2. Currently, crashkernel=3DY@X can be used to reserve crashkernel =
+above 4G,
+>>>> in this case, if swiotlb or DMA buffers are requierd, crash dump =
+kernel
+>>>> will boot failure because there is no low memory available for =
+allocation.
+>>=20
+>>=20
+>>      Can you elaborate when the boot failures may fail due to lacking =
+ swiotlb or DMA buffers ? Are these related to certain adapters or =
+specific  platforms  ?=20
+>>=20
+>>     I have not seen this when using   crashkernel=3D2024M@35GB .=20
+>>=20
+>=20
+> For example, in my environment "Huawei TaiShan 2280",
+> we need to use mpt3sas driver in crash dump kernel for dumping vmcore.
+>=20
+> mpt3sas driver needs to call dma_pool_alloc to allocate some pages,
+> if there is no DMA buffer, page allocation will fail, which leads to =
+crash dump kernel boot failure,
+> like this:
+>=20
+> [2019/12/19 9:12:41] [   12.403501] mpt3sas_cm0: diag reset: SUCCESS
+> [2019/12/19 9:12:41] [   12.456076] mpt3sas_cm0: reply_post_free pool: =
+dma_pool_alloc failed
+> [2019/12/19 9:12:41] [   12.462515] pci 0004:48:00.0: can't derive =
+routing for PCI INT A
+> [2019/12/19 9:12:41] [   12.468761] mpt3sas 0004:49:00.0: PCI INT A: =
+no GSI
+> [2019/12/19 9:12:41] [   12.476348] mpt3sas_cm0: failure at =
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:10626/_scsih_probe()!
+> [2019/12/19 9:14:38] [ TIME ] Timed out waiting for device =
+dev-di=E2=80=A6b3\x2d890a\x2d2ead7df26f48.device.
+> [2019/12/19 9:14:38] [DEPEND] Dependency failed for Initrd Root =
+Device.
+> [2019/12/19 9:14:38] [DEPEND] Dependency failed for /sysroot.
+> [2019/12/19 9:14:38] [DEPEND] Dependency failed for Initrd Root File =
+System.
+> [2019/12/19 9:14:38] [DEPEND] Dependency failed for Reload =
+Configuration from the Real Root.
+> [2019/12/19 9:14:38] [DEPEND] Dependency failed for File System =
+C=E2=80=A640bae-9eb8-46b3-890a-2ead7df26f48.
+
+
+ Thank you for sharing .  We are not seeing this issue on a 5.4.0.rc8 ;  =
+  Like I said in a previous email we can  take crash dumps using =
+crashkernel=3D768M for a  =E2=80=9C standard =E2=80=9C small VMcore to =
+local storage :
+
+0004:01:00.0 RAID bus controller: Broadcom / LSI MegaRAID SAS-3 3316 =
+[Intruder] (rev 01)
+	Subsystem: Broadcom / LSI MegaRAID SAS 9361-16i
+	Kernel driver in use: megaraid_sas=20
+
+
+What version of the kernel are you using ?
+
+
+>=20
+> Thanks,
+> Chen Zhou
+>=20
+>>=20
+>>>>=20
+>>>> To solve these issues, introduce crashkernel=3DX,low to reserve =
+specified
+>>>> size low memory.
+>>>> Crashkernel=3DX tries to reserve memory for the crash dump kernel =
+under
+>>>> 4G. If crashkernel=3DY,low is specified simultaneously, reserve =
+spcified
+>>>> size low memory for crash kdump kernel devices firstly and then =
+reserve
+>>>> memory above 4G.
+>>>>=20
+>>>> When crashkernel is reserved above 4G in memory, that is, =
+crashkernel=3DX,low
+>>>> is specified simultaneously, kernel should reserve specified size =
+low memory
+>>>> for crash dump kernel devices. So there may be two crash kernel =
+regions, one
+>>>> is below 4G, the other is above 4G.
+>>>> In order to distinct from the high region and make no effect to the =
+use of
+>>>> kexec-tools, rename the low region as "Crash kernel (low)", and add =
+DT property
+>>>> "linux,low-memory-range" to crash dump kernel's dtb to pass the low =
+region.
+>>>>=20
+>>>> Besides, we need to modify kexec-tools:
+>>>> arm64: kdump: add another DT property to crash dump kernel's =
+dtb(see [1])
+>>>>=20
+>>>> The previous changes and discussions can be retrieved from:
+>>>>=20
+>>>> Changes since [v5]
+>>>> - Move reserve_crashkernel_low() into kernel/crash_core.c.
+>>>> - Delete crashkernel=3DX,high.
+>>>> - Modify crashkernel=3DX,low.
+>>>> If crashkernel=3DX,low is specified simultaneously, reserve =
+spcified size low
+>>>> memory for crash kdump kernel devices firstly and then reserve =
+memory above 4G.
+>>>> In addition, rename crashk_low_res as "Crash kernel (low)" for =
+arm64, and then
+>>>> pass to crash dump kernel by DT property "linux,low-memory-range".
+>>>> - Update Documentation/admin-guide/kdump/kdump.rst.
+>>>>=20
+>>>> Changes since [v4]
+>>>> - Reimplement memblock_cap_memory_ranges for multiple ranges by =
+Mike.
+>>>>=20
+>>>> Changes since [v3]
+>>>> - Add memblock_cap_memory_ranges back for multiple ranges.
+>>>> - Fix some compiling warnings.
+>>>>=20
+>>>> Changes since [v2]
+>>>> - Split patch "arm64: kdump: support reserving crashkernel above =
+4G" as
+>>>> two. Put "move reserve_crashkernel_low() into kexec_core.c" in a =
+separate
+>>>> patch.
+>>>>=20
+>>>> Changes since [v1]:
+>>>> - Move common reserve_crashkernel_low() code into =
+kernel/kexec_core.c.
+>>>> - Remove memblock_cap_memory_ranges() i added in v1 and implement =
+that
+>>>> in fdt_enforce_memory_region().
+>>>> There are at most two crash kernel regions, for two crash kernel =
+regions
+>>>> case, we cap the memory range [min(regs[*].start), =
+max(regs[*].end)]
+>>>> and then remove the memory range in the middle.
+>>>>=20
+>>>> [1]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infradead.org_=
+pipermail_kexec_2019-2DAugust_023569.html&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZ=
+YR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc=
+&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzGWSphuvXXlXow68&s=3D9tn9kUBabiuYhVtXauANS=
+DGaISnCnHLYcAUQgsPBFxs&e=3D=20
+>>>> [v1]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_2_1174&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DF-lM7II2cuMF_sK3b6-QhSbWM3X-pI_WZEs0sZitS7A&e=3D=20
+>>>> [v2]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_9_86&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2fP=
+g9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzGW=
+SphuvXXlXow68&s=3D5Y-S6sqMTklHkOQsNtjTX3C7pV05BjKLGhJVfMHEvDs&e=3D=20
+>>>> [v3]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_9_306&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2f=
+Pg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWzG=
+WSphuvXXlXow68&s=3DcWn4zSRQupaZ3jjz4eDvD-pNkoLyL_hsZoRx4yJoD0c&e=3D=20
+>>>> [v4]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+4_15_273&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DNslk4RJKIyIuT0IoQoolXNjupEDXplPhQQwnTSoXNWE&e=3D=20
+>>>> [v5]: =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lkml.org_lkml_2019_=
+5_6_1360&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65eapI_JnE&r=3Dt2=
+fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3Dvevd09m6neWWz=
+GWSphuvXXlXow68&s=3DHJVAM6sCxV2DnNg5d4pw8WPqtkmQnKvztEmkSIgtQ5M&e=3D=20
+>>>>=20
+>>>> Chen Zhou (4):
+>>>> x86: kdump: move reserve_crashkernel_low() into crash_core.c
+>>>> arm64: kdump: reserve crashkenel above 4G for crash dump kernel
+>>>> arm64: kdump: add memory for devices by DT property, =
+low-memory-range
+>>>> kdump: update Documentation about crashkernel on arm64
+>>>>=20
+>>>> Documentation/admin-guide/kdump/kdump.rst       | 13 ++++-
+>>>> Documentation/admin-guide/kernel-parameters.txt | 12 ++++-
+>>>> arch/arm64/include/asm/kexec.h                  |  3 ++
+>>>> arch/arm64/kernel/setup.c                       |  8 ++-
+>>>> arch/arm64/mm/init.c                            | 61 =
++++++++++++++++++++++--
+>>>> arch/x86/include/asm/kexec.h                    |  3 ++
+>>>> arch/x86/kernel/setup.c                         | 65 =
++++----------------------
+>>>> include/linux/crash_core.h                      |  4 ++
+>>>> include/linux/kexec.h                           |  1 -
+>>>> kernel/crash_core.c                             | 65 =
++++++++++++++++++++++++++
+>>>> 10 files changed, 168 insertions(+), 67 deletions(-)
+>>>>=20
+>>>=20
+>>>=20
+>>> _______________________________________________
+>>> kexec mailing list
+>>> kexec@lists.infradead.org
+>>> =
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists.infradead.org_=
+mailman_listinfo_kexec&d=3DDwICAg&c=3DRoP1YumCXCgaWHvlZYR8PZh8Bv7qIrMUB65e=
+apI_JnE&r=3Dt2fPg9D87F7D8jm0_3CG9yoiIKdRg4qc_thBw4bzMhc&m=3DZAC6UYbT-3qLR3=
+Dvevd09m6neWWzGWSphuvXXlXow68&s=3DXMcFx61B_QPg-FUfG_-t88DKCnGm4grqu6zRguiH=
+YrU&e=3D=20
+>>=20
+>>=20
+>> .
 
