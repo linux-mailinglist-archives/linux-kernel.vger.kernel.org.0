@@ -2,107 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CE26126EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:22:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A93126EE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:28:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfLSUWC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:22:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47988 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727473AbfLSUV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:21:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 28E59B2EF;
-        Thu, 19 Dec 2019 20:21:57 +0000 (UTC)
-Message-ID: <1576787264.8929.10.camel@suse.cz>
-Subject: Re: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
-From:   Giovanni Gherdovich <ggherdovich@suse.cz>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ionela Voinescu <ionela.voinescu@arm.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Len Brown <lenb@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Paul Turner <pjt@google.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Quentin Perret <qperret@qperret.net>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Doug Smythies <dsmythies@telus.net>
-Date:   Thu, 19 Dec 2019 21:27:44 +0100
-In-Reply-To: <20191218193429.GH11457@worktop.programming.kicks-ass.net>
-References: <20191113124654.18122-1-ggherdovich@suse.cz>
-         <20191113124654.18122-2-ggherdovich@suse.cz>
-         <20191202162232.GA9777@arm.com> <4d1b776d8e797224e92952a4d590a625@suse.cz>
-         <20191218193429.GH11457@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1727315AbfLSU2K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:28:10 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33122 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfLSU2K (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 15:28:10 -0500
+Received: by mail-pl1-f194.google.com with SMTP id c13so3092459pls.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 12:28:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iYkVZqyXvPlx+fIEnulqGYvT8K8hQvvLGTRkxC+sfqQ=;
+        b=Ph++/qrA450zlZKpiEEsHQkhDtqwSwglWc77UJZ8pmMlVmX1g5boEaiatKqfGfTfNn
+         QYBFt9Shna2KWx0iLva3l99HN2xerVQP8pp1R2paOTl3f11LFpOaQlaKvYRgli3nA4wc
+         1s/ZgEfSYOernV8HzkjcBOimOwQzM0ZgDSJlb42clm7HD5l60Fe4NfUcVEcBY3QBEVCF
+         N8Ve/yIdVF4FxE+wWa3dHn+t3eWAXfLyz4yTAkDrFovRMWcFQpDnd3GHexeyL2tdaS7J
+         pYpSzBcYjQjI2kLb6jvfaXb+0YQKblFtHdE8mScAerr7JSA3kRbHvnyKUXejwfXVJuvM
+         0RLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iYkVZqyXvPlx+fIEnulqGYvT8K8hQvvLGTRkxC+sfqQ=;
+        b=cZKLaFVuGp8OW2fmcZYtaoAZMT5j4Jxn1022rPMYax6/IfI4dT+8M1gwpMGwVOlWIp
+         Nuc1uPxJitKzfruhR3BfGJzj7UZ4CNQk9bvGNtKe3mP9jPGeDT41gcsVlNBjrGyzUZ4T
+         L2lxl2/5ldqn2SOX0T91x2FImYqA7+g95OFtY5kKlbo6Na6t+BT4m++3fCBM0gVOCrCZ
+         pwOwWk8ytpbKyvajs4wGn32jRiCQQp0Dass6jD1rcLc/KuZmehDx0PyGka5Gujvh92gk
+         soVgFkjLM9uyOM6U7Lbm12bW5jdE3i2UhLoYLqarC119SbPoeRz8UY0F/qMQbiaLLAv9
+         HbvQ==
+X-Gm-Message-State: APjAAAUamld5m71PRTo2zZ3JFgnCoFszzLoIj4QOU3VC64XpwEatBsoE
+        swlsHqA4NEuZRf0+ADW8ZCO/IA==
+X-Google-Smtp-Source: APXvYqxWN3nMJPaIxUx7KO54CeZUzmOoZKEHpsGfFpM1rL60SfgNFV//hbNSBGqBjXj6xvpy6pv3Yw==
+X-Received: by 2002:a17:902:6544:: with SMTP id d4mr11307470pln.278.1576787288997;
+        Thu, 19 Dec 2019 12:28:08 -0800 (PST)
+Received: from vader ([2601:602:8b80:8e0:e6a7:a0ff:fe0b:c9a8])
+        by smtp.gmail.com with ESMTPSA id m3sm5321973pfh.116.2019.12.19.12.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 12:28:08 -0800 (PST)
+Date:   Thu, 19 Dec 2019 12:28:07 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: define arch_crash_save_vmcoreinfo() if
+ CONFIG_CRASH_CORE=y
+Message-ID: <20191219202807.GA826140@vader>
+References: <9e9eb78c157d26d80f8781f8ce0e088fd12120b4.1575309711.git.osandov@fb.com>
+ <20191218104113.GB24886@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218104113.GB24886@zn.tnic>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-18 at 20:34 +0100, Peter Zijlstra wrote:
-> On Fri, Dec 06, 2019 at 12:57:46PM +0100, Giovanni Gherdovich wrote:
-> > > On Wednesday 13 Nov 2019 at 13:46:49 (+0100), Giovanni Gherdovich wrote:
-> > > I see above that you enable the static key (and therefore frequency
-> > > invariance before setting the max frequency ratio (if possible) and
-> > > before you initialise the counter references. Is there any reason for
-> > > doing this?
-> > This is a fair point; mine was a deliberate choice but you're the second
-> > person making this remark (Peter Zijlstra also suggested I find the max
-> > frequency before I set the static key), so it appears this design is
-> > unpopular
-> > enough to warrant a change in v5.
+On Wed, Dec 18, 2019 at 11:41:13AM +0100, Borislav Petkov wrote:
+> On Mon, Dec 02, 2019 at 10:02:29AM -0800, Omar Sandoval wrote:
+> > From: Omar Sandoval <osandov@fb.com>
+> > 
+> > kernel/crash_core.c calls arch_crash_save_vmcoreinfo() to get
+> > arch-specific bits for vmcoreinfo. If it is not defined, then it has a
+> > no-op fallback. kernel/crash_core.c is gated behind CONFIG_CRASH_CORE.
+> > However, x86 defines arch_crash_save_vmcoreinfo() in
+> > arch/x86/kernel/machine_kexec_*.c, which is gated behind
+> > CONFIG_KEXEC_CORE. So, a kernel with CONFIG_CRASH_CORE=y and
+> > CONFIG_KEXEC_CORE=n
 > 
-> You actually 'fix' this in the next patch. I thought it was a patch
-> management 'fail' that it didn't end up in this patch.
-
-Uhm. I'm not sure I agree; let me paste the function intel_set_cpu_max_freq
-after the entire series is applied:
-
-> static void intel_set_cpu_max_freq(void)
-> {
->         u64 ratio = 1, turbo_ratio = 1;
+> How does that even happen?
 > 
->         if (slv_set_cpu_max_freq(&ratio, &turbo_ratio))
->                 goto set_value;
+> Symbol: KEXEC_CORE [=y]
+> Type  : bool
+>   Defined at arch/Kconfig:17
+>   Selects: CRASH_CORE [=y]
+>   Selected by [y]:
+>   - KEXEC [=y]
+>   - KEXEC_FILE [=y] && X86_64 [=y] && CRYPTO [=y]=y && CRYPTO_SHA256 [=y]=y
 > 
->         if (glm_set_cpu_max_freq(&ratio, &turbo_ratio))
->                 goto set_value;
+> In order to do crash dumps, you need to select KEXEC, which selects
+> KEXEC_CORE, which selects CRASH_CORE...
 > 
->         if (knl_set_cpu_max_freq(&ratio, &turbo_ratio))
->                 goto set_value;
-> 
->         if (skx_set_cpu_max_freq(&ratio, &turbo_ratio))
->                 goto set_value;
-> 
->         core_set_cpu_max_freq(&ratio, &turbo_ratio);
->
+> Or are you talking about the PROC_KCORE use angle where it selects
+> CRASH_CORE and the crash_save_vmcoreinfo_init() initcall is then
+> supposed to save arch-specific crash info?
 
-let's say that all functions return false; as I don't check the return value of
-the last one, you can very well end up here with 'ratio' and 'turbo_ratio'
-that are still untouched, =1 since their initialization, and I would go on and
-set the static key anyway (because I previously checked X86_FEATURE_APERFMPERF).
+Yes, I'm talking about reading VMCOREINFO from /proc/kcore at runtime,
+no kdump involved. crash [1] and my own tool, drgn [2], use this for
+live debugging.
 
-Right?
+I can set CONFIG_PROC_KCORE=y, which selects CONFIG_CRASH_CORE=y, but if
+CONFIG_KEXEC_CORE=n, the VMCOREINFO is incomplete.
 
-> set_value:
->         arch_max_turbo_freq = div_u64(turbo_ratio * SCHED_CAPACITY_SCALE,
->                                         ratio);
->         set_arch_max_freq(turbo_disabled());
->         static_branch_enable(&arch_scale_freq_key);
-> }
-
-But again, not only people disagree with this behavior, it's probably a little
-misleading too in how it's written. Changing in v5.
-
-Giovanni
+1: https://github.com/crash-utility/crash/commit/60a42d709280cdf38ab06327a5b4fa9d9208ef86
+2: https://github.com/osandov/drgn/blob/73dd7def1217e24cc83d8ca95c995decbd9ba24c/libdrgn/program.c#L385
