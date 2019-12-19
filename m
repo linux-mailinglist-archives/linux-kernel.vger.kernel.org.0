@@ -2,147 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 347E2126F77
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A20E126F83
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:15:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbfLSVMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:12:25 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36977 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726967AbfLSVMZ (ORCPT
+        id S1727121AbfLSVPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:15:40 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43786 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfLSVPj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:12:25 -0500
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 3923122614;
-        Thu, 19 Dec 2019 16:12:24 -0500 (EST)
-Received: from imap2 ([10.202.2.52])
-  by compute4.internal (MEProxy); Thu, 19 Dec 2019 16:12:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
-        mime-version:message-id:in-reply-to:references:date:from:to:cc
-        :subject:content-type; s=fm1; bh=eznQB8qUZinkMYctriI1OeMIbCpVh3R
-        vgB+uxFjKcWw=; b=e+qOP6LoW0qwuw9Uy2AdChYbjp/8fd4FmeD+84lql6Nzysg
-        Q5EEtzLFgHTT4ZLHh61HJ3qfKWvstLoYMaQrkZDYYqDwd+/zKtbxRnfqHZvssd91
-        sa37bQFA3ZnScxeTGmW9ZjFJJ6S6BUXGfzGwne2LNEp2+t39dMIey0l/kcEqJ/jf
-        KuoHCdqSRnnlSJE6K2MO0oGjIlnYwDst1a6oCn20bsFT7pkrRDNexhBRPrYEp4pF
-        AeUu0E7nVJPmFPYwutsxS2gCIpHJQ1LEeEeNPgqn9lu21kUEwM2L/Dtg8atJzYcx
-        rXLZ8tlvkMR91AXdifiCjEFsx63JqF1zjoUPimg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=eznQB8
-        qUZinkMYctriI1OeMIbCpVh3RvgB+uxFjKcWw=; b=vsijnZkHJ3FMzCkUiKcL/U
-        9L2QM7/PfasuZQQGhBbkj6zuYKUg9J4j6/FtNjCRMvQgwzsHNR+mgyg4WOr/3+6D
-        jroxkgIdapQ337qTg8dFfeorONhrceuRpKegqiNJ/CGVUasNQJJgxjhrTTf1Ouas
-        0yf4CYMM66dvboAwxoJbnEVpsfoH/8vTuyZQfw9K+Ooa1cW02iYSsar+rNxoYkvH
-        uyLPbv2DjLJ6PvMf234WqpBZ7KQjTnwHnFyDRugNHU/6Hzt0CFHp8fvxABEf+jRt
-        2wwRdtzJQHdlw5nrI7fojEYgc43hr6xs6XrySKUtfa6OVS0ih8duOsQrRFJqVjrQ
-        ==
-X-ME-Sender: <xms:tuf7XUAaIrlSc6I45LWw2QxR5lOYMlGrotBtz_xGl7gxiUHW-ruOfQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdduuddgudeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehn
-    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrg
-    hrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushht
-    vghrufhiiigvpedt
-X-ME-Proxy: <xmx:tuf7Xa3aCNRbF3LPHQcfxXsNjuVdhABKVgQG6pYJLc7jD4ZpzNcPOw>
-    <xmx:tuf7XSeMGytFWFt3f20NPqk0cXpG8bYoHcBsQ0c8CiCX_zuuSy3JcQ>
-    <xmx:tuf7XV9O5L_xCSl87Fbmbikz6JmWYGgydNveAvZ7CmNcKyvdi0F13Q>
-    <xmx:uOf7XWcf9HHjmavtyrAGPWnGqeSSywyNzMQrvAK59HtZIT99pec4FA>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id A5516E00A3; Thu, 19 Dec 2019 16:12:22 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.1.7-694-gd5bab98-fmstable-20191218v1
-Mime-Version: 1.0
-Message-Id: <a0b5728c-4022-4cfb-bcd1-8816e4d80e4a@www.fastmail.com>
-In-Reply-To: <45cabf88-063d-aea1-6c2b-fa8cc0d8cbd3@linux.ibm.com>
-References: <1576681778-18737-1-git-send-email-eajames@linux.ibm.com>
- <1576681778-18737-6-git-send-email-eajames@linux.ibm.com>
- <73cbffea-89f1-4212-99af-10c32968cf15@www.fastmail.com>
- <45cabf88-063d-aea1-6c2b-fa8cc0d8cbd3@linux.ibm.com>
-Date:   Fri, 20 Dec 2019 07:44:05 +1030
-From:   "Andrew Jeffery" <andrew@aj.id.au>
-To:     "Eddie James" <eajames@linux.ibm.com>,
-        linux-aspeed@lists.ozlabs.org
+        Thu, 19 Dec 2019 16:15:39 -0500
+Received: by mail-ot1-f68.google.com with SMTP id p8so8880734oth.10;
+        Thu, 19 Dec 2019 13:15:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0xC+wpXWMUIqOw+a/OxtRwSmn/rGkdHgjrx5rfxU+UE=;
+        b=i+EjdI452kZFcgCXz/HMIhDHRNw05bvOWOXRYrmnroPD17WNOgVEvNdMKucZMLY8Mu
+         2jx/GoOdiChr3qtOoPxPYqQ3/L56ED+5TimgJ4xppL5v05ec1tBq+hhI01IRN7AyrgH9
+         Mx2pCY9uUK6hie2BgNyUNpnN2GKG4Xrmoo05kRMNIfZ+oS5llEFWPhAUh3lDlsvUgRco
+         2A0DJw7AZeWpve4vwWduK+i0Uyp54RRnTkYvA/n6KidZtzwN4FcQkKS4/nvSVP/8O5i9
+         91PCNyDEHSP5jg8BOH/mzhc/qdZPSn9/wucwsqFF/oq8EUPJryGl872tqqOGauS3+PL3
+         dz+A==
+X-Gm-Message-State: APjAAAV2usf0meSqxYbLTlNc+IQP0yMU3H7HExLlCzAAgF0jU8pqeGWN
+        nemCZRvjKQ2idP+bVwzGRtjYtylq8g==
+X-Google-Smtp-Source: APXvYqz6lOzn3r96kUG+oxphG2Cda/2wTdIIqnUFxOl527gFCWlQkfjEHUUod08DRAknBbhAGf6Gbg==
+X-Received: by 2002:a9d:4796:: with SMTP id b22mr10256701otf.353.1576790138802;
+        Thu, 19 Dec 2019 13:15:38 -0800 (PST)
+Received: from localhost ([172.58.107.107])
+        by smtp.gmail.com with ESMTPSA id w201sm2408927oif.29.2019.12.19.13.15.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 13:15:38 -0800 (PST)
+Date:   Thu, 19 Dec 2019 15:14:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yuti Amonkar <yamonkar@cadence.com>
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
-        "Marc Zyngier" <maz@kernel.org>,
-        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
-        "Joel Stanley" <joel@jms.id.au>
-Subject: Re: [PATCH v3 05/12] dt-bindings: soc: Add Aspeed XDMA Engine
-Content-Type: text/plain
+        kishon@ti.com, mark.rutland@arm.com, jsarha@ti.com,
+        tomi.valkeinen@ti.com, praneeth@ti.com, mparab@cadence.com,
+        sjakhade@cadence.com
+Subject: Re: [RESEND PATCH v1 08/15] dt-bindings: phy: phy-cadence-torrent:
+ Add clock bindings
+Message-ID: <20191219211314.GA15184@bogus>
+References: <1576069760-11473-1-git-send-email-yamonkar@cadence.com>
+ <1576069760-11473-9-git-send-email-yamonkar@cadence.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576069760-11473-9-git-send-email-yamonkar@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 11, 2019 at 02:09:13PM +0100, Yuti Amonkar wrote:
+> Add Torrent PHY reference clock bindings.
+> 
+> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
+> ---
+>  .../devicetree/bindings/phy/phy-cadence-torrent.yaml         | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> index 4fa9d0a..8069498 100644
+> --- a/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> +++ b/Documentation/devicetree/bindings/phy/phy-cadence-torrent.yaml
+> @@ -17,6 +17,14 @@ properties:
+>    compatible:
+>      const: cdns,torrent-phy
+>  
+> +  clocks:
+> +    maxItems: 1
+> +    description:
+> +      PHY reference clock. Must contain an entry in clock-names.
+> +
+> +  clock-names:
+> +    const: "refclk"
 
+Don't need quotes. You don't really need *-names when there's only one 
+entry.
 
-On Fri, 20 Dec 2019, at 02:18, Eddie James wrote:
-> 
-> On 12/18/19 5:12 PM, Andrew Jeffery wrote:
-> >
-> > On Thu, 19 Dec 2019, at 01:39, Eddie James wrote:
-> >> Document the bindings for the Aspeed AST25XX and AST26XX XDMA engine.
-> >>
-> >> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >> ---
-> >> Changes since v2:
-> >>   - Remove 'sdmc', rename 'vga-mem' to 'memory'
-> >>
-> >>   .../devicetree/bindings/soc/aspeed/xdma.txt   | 40 +++++++++++++++++++
-> >>   MAINTAINERS                                   |  6 +++
-> >>   2 files changed, 46 insertions(+)
-> >>   create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
-> >> b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
-> >> new file mode 100644
-> >> index 000000000000..58253ea1587b
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
-> >> @@ -0,0 +1,40 @@
-> >> +Aspeed AST25XX and AST26XX XDMA Engine
-> >> +
-> >> +The XDMA Engine embedded in the AST2500 and AST2600 SOCs can perform
-> >> automatic
-> >> +DMA operations over PCI between the SOC (acting as a BMC) and a host
-> >> processor.
-> >> +
-> >> +Required properties:
-> >> + - compatible		: must be "aspeed,ast2500-xdma" or
-> >> +			  "aspeed,ast2600-xdma"
-> >> + - reg			: contains the address and size of the memory region
-> >> +			  associated with the XDMA engine registers
-> >> + - clocks		: clock specifier for the clock associated with the
-> >> +			  XDMA engine
-> >> + - resets		: reset specifier for the syscon reset associated with
-> >> +			  the XDMA engine
-> >> + - interrupts-extended	: two interrupt cells; the first specifies the
-> >> global
-> >> +			  interrupt for the XDMA engine and the second
-> >> +			  specifies the PCI-E reset or PERST interrupt.
-> >> + - scu			: a phandle to the syscon node for the system control
-> >> +			  unit of the SOC
-> > I think this should be aspeed,scu.
-> 
-> 
-> Sure.
-> 
-> 
-> >
-> >> + - memory		: contains the address and size of the memory area to
-> >> +			  be used by the XDMA engine for DMA operations
-> > Hmm, I was thinking more like a phandle to a reserved memory region,
-> > like we have in the aspeed-lpc-ctrl binding.
-> 
-> 
-> I think I mentioned before, but that doesn't work with the VGA memory. 
-> Linux can't reserve it. I haven't quite understood what happens in the 
-> memory system but I've tried it and it didn't work.
-> 
+> +
+>    reg:
+>      items:
+>        - description: Offset of the DPTX PHY configuration registers.
+> @@ -41,6 +49,8 @@ properties:
+>  
+>  required:
+>    - compatible
+> +  - clocks
+> +  - clock-names
 
-Yeah, I think you have mentioned that before, sorry for the noise.
+ABI again. You can't add new required properties.
 
-Andrew
+>    - reg
+>    - "#phy-cells"
+>  
+> @@ -53,5 +63,7 @@ examples:
+>            num_lanes = <4>;
+>            max_bit_rate = <8100>;
+>            #phy-cells = <0>;
+> +          clocks = <&ref_clk>;
+> +          clock-names = "refclk";
+>      };
+>  ...
+> -- 
+> 2.7.4
+> 
