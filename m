@@ -2,86 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0748126181
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA80B126186
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfLSMDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:03:48 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:55627 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfLSMDs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:03:48 -0500
-Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MXH3Y-1iBNa345AU-00Yfyv; Thu, 19 Dec 2019 13:03:46 +0100
-Received: by mail-qv1-f53.google.com with SMTP id m14so2113644qvl.3;
-        Thu, 19 Dec 2019 04:03:45 -0800 (PST)
-X-Gm-Message-State: APjAAAXMlQFMB2P/264RYR8qG8bHAqtVvXZiWmueKgL7wxk/lTdZe/Nk
-        lOzae+eApQqXFmaZG3jgQSCd8S+cee5xbPRzixk=
-X-Google-Smtp-Source: APXvYqyRYAthWWOFbK4JwdbfUGnK3IkCerPrE6//l+bsXhqevvRLK6TVQiG7yBNWDpk0m44tuJY3intXaCEenSLn4+0=
-X-Received: by 2002:a0c:d788:: with SMTP id z8mr1183000qvi.211.1576757024622;
- Thu, 19 Dec 2019 04:03:44 -0800 (PST)
-MIME-Version: 1.0
-References: <20191209092147.22901-1-kishon@ti.com> <20191209092147.22901-6-kishon@ti.com>
- <20191216144932.GY24359@e119886-lin.cambridge.arm.com> <d1ee4579-a3da-6a73-3516-a6d264f80995@ti.com>
-In-Reply-To: <d1ee4579-a3da-6a73-3516-a6d264f80995@ti.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 19 Dec 2019 13:03:28 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a06XLSa-FHNGsN=b10JrddjbOKAvfU=iXdMa+0L43m5fA@mail.gmail.com>
-Message-ID: <CAK8P3a06XLSa-FHNGsN=b10JrddjbOKAvfU=iXdMa+0L43m5fA@mail.gmail.com>
-Subject: Re: [PATCH 05/13] PCI: cadence: Add read and write accessors to
- perform only 32-bit accesses
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Andrew Murray <andrew.murray@arm.com>,
+        id S1726890AbfLSMEC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:04:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbfLSMEC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:04:02 -0500
+Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 763C1222C2;
+        Thu, 19 Dec 2019 12:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576757040;
+        bh=RJ3mvIaVqDC3kz+hjtWcHLqxdB4ZpdxAR3Q1j/eZavs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UPODlAURU4Z6I+ZrIbrO0SwBJGmkgWWMDyFoiiFjTqfXFRdrfca7ndq+YCw86qEvK
+         dUWwMDy+/62dPQbFI2VNuPVd6OYISizRVts5FY3fimLiL+5N+7iJwev74E6KNf52Dh
+         2oXUJOsfYsvuV0fRDMezfl0w/bexYbzxGEVXyWQU=
+From:   Will Deacon <will@kernel.org>
+To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
+Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
+        Robin Murphy <robin.murphy@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:r6T3/CcYpNS86A2Hvx7bMZm1KM8FiNbjscHFDmZ+OK596/2FHQw
- 14vK4BjTgsPQWg4SSBHNWwqS6TU86YPVztPL/xXH5371kxHFXCsOvIde4HG5UNt1u8wGx55
- AWkOYni8+6x1/5B6p+HXnwF3lJ9Q0z5E62HCsdQbWJgy7ex2BMVj4+VbB231e4izNmOxWfJ
- 0wGPd+fGDcyCzLxj0dAUA==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:XyO0F0+TXjA=:r/8VdwCanuBYUQ4DTNJuie
- QffNdRqHrA0PKHo66OByfUYaRxiUtIsPRrHvHxTt1zL5lT8EoXHNMPX2q+M8d9+lHMpd1aebu
- Gp/ebIp1FCuP/ZiTLo5vkO8coqiWo6Q9O6dVZhwx0agYKLAjnVdKgaJLpPV2l5YB1jJIi4ihQ
- t2QuYf8cAMoLsLQYJbniTt6Z19W5dGHv3BY3WR76XSOOtdvLKqPn0QLUVSj0zg/UMasDZHG7H
- kW1NCbJmxsUpak2z2DSRSJEGIlXHpCDvxbNTUjdFmjdMYClFdGSWo0kYQM903zK72v4JM5+nI
- 0lXxrbubQPRvxq2PQKoOWKD9nQGp4l6CG2QKsh2LQl3Qt3ymNIbPsLNPznGX3b/GNhUWt6tV6
- ijGGsDUWuVKFxgoKuAdjizL2ncUp4pyW1OJwsrLkRB3aeZ6K5ILBlBpOVtMf3yOau4ZeNdUQN
- 2ah/h3Zd02t85RB5YOuNQQRZPpMhPJaHWuRVdJWeqekgFmRqHH3DocCIlsP2cB0mnaf0nge0U
- Yt/PKaBs73aspwFTixChOQYD/y+RrY2IBtUJxWm3O6EAV0Tmu3lSsNUc0k1PKvp3+073euJAc
- Gna6Ai5KQoQpszqJIQKDSujU+4sIsk7SJkwAJ9eX4tKVwyXABq9NNxKiK/LMs4zbYewnrA/C7
- x06Jrh2YnaZ4urjdevC9gRfdxkhj5HNKgatjJIG49k9kG9VGsfRaz2Vbgv92VEy5mA08P1RJB
- 5YCK/X8cl+tTLVq8kAtzWiXT+OhcTwjeer2YmBM7fapkJhpyvTr0xr0h3yPZHxDEqHXlyXB2R
- TZ6ZmjQOy1aA+uJZkPRzqjjwTdVro8AvcUjbNjRlTZSnOpR78z8Pl/mpb5gQkGLlW+VxQ6JCZ
- QbqpeebYENhYnrghRqrQ==
+        Joerg Roedel <joro@8bytes.org>,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: [PATCH v4 00/16] iommu: Permit modular builds of ARM SMMU[v3] drivers
+Date:   Thu, 19 Dec 2019 12:03:36 +0000
+Message-Id: <20191219120352.382-1-will@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 12:54 PM Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> Hi Andrew,
->
-> On 16/12/19 8:19 pm, Andrew Murray wrote:
-> > On Mon, Dec 09, 2019 at 02:51:39PM +0530, Kishon Vijay Abraham I wrote:
-> >> Certain platforms like TI's J721E allow only 32-bit register accesses.
-> >
-> > When I first read this I thought you meant only 32-bit accesses are allowed
-> > and not other sizes (such as 64-bit). However the limitation you address
-> > here is that the J721E allows only 32-bit *aligned* register accesses.
->
-> It's both, it allows only 32-bit aligned accesses and the size should be
-> only 32 bits. That's why I always use "readl" in the APIs below.
+Hi all,
 
-In that case, can't you use the pci_generic_config_read32/write32
-functions with a cadence specific .map_bus() function?
+This is version four of the patches I previously posted here:
 
-       Arnd
+  v1: https://lore.kernel.org/lkml/20191030145112.19738-1-will@kernel.org/
+  v2: https://lore.kernel.org/lkml/20191108151608.20932-1-will@kernel.org
+  v3: https://lore.kernel.org/lkml/20191121114918.2293-1-will@kernel.org
+
+Changes since v3 include:
+
+  * Based on v5.5-rc1
+  * ACPI/IORT support (thanks to Ard)
+  * Export pci_{enable,disable}_ats() (thanks to Greg)
+  * Added review tags
+
+I tested this on AMD Seattle by loading arm-smmu-mod.ko from the initrd.
+
+Cheers,
+
+Will
+
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Saravana Kannan <saravanak@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Isaac J. Manjarres" <isaacm@codeaurora.org>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+
+--->8
+
+Ard Biesheuvel (1):
+  iommu/arm-smmu: Support SMMU module probing from the IORT
+
+Greg Kroah-Hartman (1):
+  PCI/ATS: Restore EXPORT_SYMBOL_GPL() for pci_{enable,disable}_ats()
+
+Will Deacon (14):
+  drivers/iommu: Export core IOMMU API symbols to permit modular drivers
+  iommu/of: Request ACS from the PCI core when configuring IOMMU linkage
+  PCI: Export pci_ats_disabled() as a GPL symbol to modules
+  drivers/iommu: Take a ref to the IOMMU driver prior to ->add_device()
+  iommu/of: Take a ref to the IOMMU driver during ->of_xlate()
+  drivers/iommu: Allow IOMMU bus ops to be unregistered
+  Revert "iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular"
+  Revert "iommu/arm-smmu: Make arm-smmu explicitly non-modular"
+  iommu/arm-smmu: Prevent forced unbinding of Arm SMMU drivers
+  iommu/arm-smmu-v3: Unregister IOMMU and bus ops on device removal
+  iommu/arm-smmu-v3: Allow building as a module
+  iommu/arm-smmu: Unregister IOMMU and bus ops on device removal
+  iommu/arm-smmu: Allow building as a module
+  iommu/arm-smmu: Update my email address in MODULE_AUTHOR()
+
+ drivers/acpi/arm64/iort.c   |   4 +-
+ drivers/iommu/Kconfig       |  16 ++++-
+ drivers/iommu/Makefile      |   3 +-
+ drivers/iommu/arm-smmu-v3.c |  94 +++++++++++++++++---------
+ drivers/iommu/arm-smmu.c    | 128 +++++++++++++++++++++++++-----------
+ drivers/iommu/iommu-sysfs.c |   5 ++
+ drivers/iommu/iommu.c       |  32 ++++++++-
+ drivers/iommu/of_iommu.c    |  19 ++++--
+ drivers/pci/ats.c           |   2 +
+ drivers/pci/pci.c           |   1 +
+ include/linux/iommu.h       |   4 +-
+ 11 files changed, 223 insertions(+), 85 deletions(-)
+
+-- 
+2.24.1.735.g03f4e72817-goog
+
