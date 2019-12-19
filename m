@@ -2,148 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C320126927
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:34:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3628C126997
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:39:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLSSd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:33:59 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48078 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726858AbfLSSd7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:33:59 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.42/8.16.0.42) with SMTP id xBJIOl9n028495
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 10:33:57 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=3JRBFKRpQH94huaiHVUb2DXHVLx5xpYAZyUWzz+kx7c=;
- b=VGZLUlUKoCM0oSy8t96sgj6bgrn5cq4RdC1w6+VJWVjuzahszuSbtiDMOnmJd9g9Psnz
- jvox/YsjtpFWsOMqhGe4hJ4Ouwl2s/iHevPD69FHGVwGFpoh4XgWBphZ5t/fSKaW9A8T
- /Zqe6B7rlB+USs2TBdrkL+fr67SB4TpDz2c= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by m0001303.ppops.net with ESMTP id 2x063cjgeq-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 10:33:57 -0800
-Received: from intmgw004.06.prn3.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Thu, 19 Dec 2019 10:33:44 -0800
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
-        id 7964818A1DBBE; Thu, 19 Dec 2019 10:33:42 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>, <sdasari@fb.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH] ARM: dts: aspeed: tiogapass: Add gpio line names
-Date:   Thu, 19 Dec 2019 10:33:30 -0800
-Message-ID: <20191219183330.2860724-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        id S1727951AbfLSSjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:39:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727507AbfLSSjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:39:14 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57BAC222C2;
+        Thu, 19 Dec 2019 18:39:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576780753;
+        bh=t9tvHhA04/aiiLzjrLCxtD1JyJV9fKexIXDsX4Gg0zw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=LEO0G8Z+1acksCNbfvBhyL6LxrsMH7rjMK9wxgTn498IMuw4NXvGVMrxgIyEPttf2
+         nSKaG76wZq6mK0ukcl594EQzEacb60JTI3rzzYEmQfWwAlzczJnY2eWdPbo4diA67+
+         XtOFxek+APDMc56lz1d9ZHLPg3KaOaIRrmGjDI4M=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 102/162] rtlwifi: rtl8192de: Fix missing callback that tests for hw release of buffer
+Date:   Thu, 19 Dec 2019 19:33:30 +0100
+Message-Id: <20191219183213.975401652@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-19_06:2019-12-17,2019-12-19 signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0
- priorityscore=1501 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
- mlxlogscore=999 malwarescore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912190135
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added GPIO line names for all gpio used in tiogapass platform,
-these line names will be used by libgpiod to control GPIOs
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+commit 3155db7613edea8fb943624062baf1e4f9cfbfd6 upstream.
+
+In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
+new drivers"), a callback needed to check if the hardware has released
+a buffer indicating that a DMA operation is completed was not added.
+
+Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
+Cc: Stable <stable@vger.kernel.org>	# v3.18+
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- .../dts/aspeed-bmc-facebook-tiogapass.dts     | 63 +++++++++++++++++++
- 1 file changed, 63 insertions(+)
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c  |    1 +
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |   17 +++++++++++++++++
+ drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h |    2 ++
+ 3 files changed, 20 insertions(+)
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-index 682f729ea25e..28c3a69437b1 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-@@ -121,6 +121,69 @@
- 	kcs_addr = <0xca2>;
- };
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/sw.c
+@@ -242,6 +242,7 @@ static struct rtl_hal_ops rtl8192de_hal_
+ 	.led_control = rtl92de_led_control,
+ 	.set_desc = rtl92de_set_desc,
+ 	.get_desc = rtl92de_get_desc,
++	.is_tx_desc_closed = rtl92de_is_tx_desc_closed,
+ 	.tx_polling = rtl92de_tx_polling,
+ 	.enable_hw_sec = rtl92de_enable_hw_security_config,
+ 	.set_key = rtl92de_set_key,
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
+@@ -862,6 +862,23 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
+ 	return ret;
+ }
  
-+&gpio {
-+	status = "okay";
-+	gpio-line-names =
-+	/*A0-A7*/	"BMC_CPLD_FPGA_SEL","","","","","","","",
-+	/*B0-B7*/	"","BMC_DEBUG_EN","","","","BMC_PPIN","PS_PWROK",
-+			"IRQ_PVDDQ_GHJ_VRHOT_LVT3",
-+	/*C0-C7*/	"","","","","","","","",
-+	/*D0-D7*/	"BIOS_MRC_DEBUG_MSG_DIS","BOARD_REV_ID0","",
-+			"BOARD_REV_ID1","IRQ_DIMM_SAVE_LVT3","BOARD_REV_ID2",
-+			"CPU_ERR0_LVT3_BMC","CPU_ERR1_LVT3_BMC",
-+	/*E0-E7*/	"RESET_BUTTON","RESET_OUT","POWER_BUTTON",
-+			"POWER_OUT","NMI_BUTTON","","CPU0_PROCHOT_LVT3_ BMC",
-+			"CPU1_PROCHOT_LVT3_ BMC",
-+	/*F0-F7*/	"IRQ_PVDDQ_ABC_VRHOT_LVT3","",
-+			"IRQ_PVCCIN_CPU0_VRHOT_LVC3",
-+			"IRQ_PVCCIN_CPU1_VRHOT_LVC3",
-+			"IRQ_PVDDQ_KLM_VRHOT_LVT3","","P3VBAT_BRIDGE_EN","",
-+	/*G0-G7*/	"CPU_ERR2_LVT3","CPU_CATERR_LVT3","PCH_BMC_THERMTRIP",
-+			"CPU0_SKTOCC_LVT3","","","","BIOS_SMI_ACTIVE",
-+	/*H0-H7*/	"LED_POST_CODE_0","LED_POST_CODE_1","LED_POST_CODE_2",
-+			"LED_POST_CODE_3","LED_POST_CODE_4","LED_POST_CODE_5",
-+			"LED_POST_CODE_6","LED_POST_CODE_7",
-+	/*I0-I7*/	"CPU0_FIVR_FAULT_LVT3","CPU1_FIVR_FAULT_LVT3",
-+			"FORCE_ADR","UV_ADR_TRIGGER_EN","","","","",
-+	/*J0-J7*/	"","","","","","","","",
-+	/*K0-K7*/	"","","","","","","","",
-+	/*L0-L7*/	"IRQ_UV_DETECT","IRQ_OC_DETECT","HSC_TIMER_EXP","",
-+			"MEM_THERM_EVENT_PCH","PMBUS_ALERT_BUF_EN","","",
-+	/*M0-M7*/	"CPU0_RC_ERROR","CPU1_RC_ERROR","","OC_DETECT_EN",
-+			"CPU0_THERMTRIP_LATCH_LVT3",
-+			"CPU1_THERMTRIP_LATCH_LVT3","","",
-+	/*N0-N7*/	"","","","CPU_MSMI_LVT3","","","","",
-+	/*O0-O7*/	"","","","","","","","",
-+	/*P0-P7*/	"BOARD_SKU_ID0","BOARD_SKU_ID1","BOARD_SKU_ID2",
-+			"BOARD_SKU_ID3","BOARD_SKU_ID4","BMC_PREQ",
-+			"BMC_PWR_DEBUG","RST_RSMRST",
-+	/*Q0-Q7*/	"","","","","UARTSW_LSB","UARTSW_MSB",
-+			"POST_CARD_PRES_BMC","PE_BMC_WAKE",
-+	/*R0-R7*/	"","","BMC_TCK_MUX_SEL","BMC_PRDY",
-+			"BMC_XDP_PRSNT_IN","RST_BMC_PLTRST_BUF","SLT_CFG0",
-+			"SLT_CFG1",
-+	/*S0-S7*/	"THROTTLE","BMC_READY","","HSC_SMBUS_SWITCH_EN","",
-+			"","","",
-+	/*T0-T7*/	"","","","","","","","",
-+	/*U0-U7*/	"","","","","","BMC_FAULT","","",
-+	/*V0-V7*/	"","","","FAST_PROCHOT_EN","","","","",
-+	/*W0-W7*/	"","","","","","","","",
-+	/*X0-X7*/	"","","","GLOBAL_RST_WARN",
-+			"CPU0_MEMABC_MEMHOT_LVT3_BMC",
-+			"CPU0_MEMDEF_MEMHOT_LVT3_BMC",
-+			"CPU1_MEMGHJ_MEMHOT_LVT3_BMC",
-+			"CPU1_MEMKLM_MEMHOT_LVT3_BMC",
-+	/*Y0-Y7*/	"SIO_S3","SIO_S5","BMC_JTAG_SEL","SIO_ONCONTROL","",
-+			"","","",
-+	/*Z0-Z7*/	"","SIO_POWER_GOOD","IRQ_PVDDQ_DEF_VRHOT_LVT3","",
-+			"","","","",
-+	/*AA0-AA7*/	"CPU1_SKTOCC_LVT3","IRQ_SML1_PMBUS_ALERT",
-+			"SERVER_POWER_LED","","PECI_MUX_SELECT","UV_HIGH_SET",
-+			"","POST_COMPLETE",
-+	/*AB0-AB7*/	"IRQ_HSC_FAULT","OCP_MEZZA_PRES","","","","","","",
-+	/*AC0-AC7*/	"","","","","","","","";
-+};
++bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
++			       u8 hw_queue, u16 index)
++{
++	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
++	struct rtl8192_tx_ring *ring = &rtlpci->tx_ring[hw_queue];
++	u8 *entry = (u8 *)(&ring->desc[ring->idx]);
++	u8 own = (u8)rtl92de_get_desc(entry, true, HW_DESC_OWN);
 +
- &mac0 {
- 	status = "okay";
- 
--- 
-2.17.1
++	/* a beacon packet will only use the first
++	 * descriptor by defaut, and the own bit may not
++	 * be cleared by the hardware
++	 */
++	if (own)
++		return false;
++	return true;
++}
++
+ void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.h
+@@ -740,6 +740,8 @@ bool rtl92de_rx_query_desc(struct ieee80
+ void rtl92de_set_desc(struct ieee80211_hw *hw, u8 *pdesc, bool istx,
+ 		      u8 desc_name, u8 *val);
+ u32 rtl92de_get_desc(u8 *pdesc, bool istx, u8 desc_name);
++bool rtl92de_is_tx_desc_closed(struct ieee80211_hw *hw,
++			       u8 hw_queue, u16 index);
+ void rtl92de_tx_polling(struct ieee80211_hw *hw, u8 hw_queue);
+ void rtl92de_tx_fill_cmddesc(struct ieee80211_hw *hw, u8 *pdesc,
+ 			     bool b_firstseg, bool b_lastseg,
+
 
