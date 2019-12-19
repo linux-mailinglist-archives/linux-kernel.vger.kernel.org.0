@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 612D1126BB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:59:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 909FD126AEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbfLSS6X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50536 "EHLO mail.kernel.org"
+        id S1730237AbfLSSwM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:52:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730273AbfLSSyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:54:55 -0500
+        id S1730229AbfLSSwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9334D206EC;
-        Thu, 19 Dec 2019 18:54:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35DEC24685;
+        Thu, 19 Dec 2019 18:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781695;
-        bh=jM4AaFsdUm+PCgilD4TxVD2a/AGAmFNdPl4DlFC+EvU=;
+        s=default; t=1576781527;
+        bh=rwsOWEu9rxz3FJIISfOWzxd38wpAApF+6l0CcPtX2qw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nwpdwecqpy74LXwL7VivJDnDmds/T6W3ciX2Cd5CHPGlxtUEaMVE2QAn+23C5M1A4
-         6cMV3h4eDytV5X07Eqxy9lMTX65fcum3wX74yw1XIBYk6gqzBRMlTPPtt/qrYlkgGz
-         UfC4+PVqHLt5eaDOjy/qBD/ctQXqFX889KGQ6zM8=
+        b=JCYcPSi0hrkJfJW+vlrXwwW1l7u00aSquEPru/ZpseBpA81rskgNvGcIFgljvvpjS
+         LdTLaFsSOz144iTGX4Xb3hqIozhkAqp/i2aEgYL8VJLSwHULbBejjzj2aIBoyiybiA
+         W8i8BP1XB0WXEJQtB4qm4l7GBc1Cg85/TsatbYmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Steven Price <steven.price@arm.com>,
-        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 5.4 43/80] drm/panfrost: Fix a race in panfrost_ioctl_madvise()
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH 4.19 21/47] PCI/MSI: Fix incorrect MSI-X masking on resume
 Date:   Thu, 19 Dec 2019 19:34:35 +0100
-Message-Id: <20191219183111.174687637@linuxfoundation.org>
+Message-Id: <20191219182924.120568737@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,56 +43,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Boris Brezillon <boris.brezillon@collabora.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit 70cc77952efebf6722d483cb83cfb563ac9768db upstream.
+commit e045fa29e89383c717e308609edd19d2fd29e1be upstream.
 
-If 2 threads change the MADVISE property of the same BO in parallel we
-might end up with an shmem->madv value that's inconsistent with the
-presence of the BO in the shrinker list.
+When a driver enables MSI-X, msix_program_entries() reads the MSI-X Vector
+Control register for each vector and saves it in desc->masked.  Each
+register is 32 bits and bit 0 is the actual Mask bit.
 
-The easiest solution to fix that is to protect the
-drm_gem_shmem_madvise() call with the shrinker lock.
+When we restored these registers during resume, we previously set the Mask
+bit if *any* bit in desc->masked was set instead of when the Mask bit
+itself was set:
 
-Fixes: 013b65101315 ("drm/panfrost: Add madvise and shrinker support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-Reviewed-by: Steven Price <steven.price@arm.com>
-Acked-by: Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191129135908.2439529-3-boris.brezillon@collabora.com
+  pci_restore_state
+    pci_restore_msi_state
+      __pci_restore_msix_state
+        for_each_pci_msi_entry
+          msix_mask_irq(entry, entry->masked)   <-- entire u32 word
+            __pci_msix_desc_mask_irq(desc, flag)
+              mask_bits = desc->masked & ~PCI_MSIX_ENTRY_CTRL_MASKBIT
+              if (flag)       <-- testing entire u32, not just bit 0
+                mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT
+              writel(mask_bits, desc_addr + PCI_MSIX_ENTRY_VECTOR_CTRL)
+
+This means that after resume, MSI-X vectors were masked when they shouldn't
+be, which leads to timeouts like this:
+
+  nvme nvme0: I/O 978 QID 3 timeout, completion polled
+
+On resume, set the Mask bit only when the saved Mask bit from suspend was
+set.
+
+This should remove the need for 19ea025e1d28 ("nvme: Add quirk for Kingston
+NVME SSD running FW E8FK11.T").
+
+[bhelgaas: commit log, move fix to __pci_msix_desc_mask_irq()]
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=204887
+Link: https://lore.kernel.org/r/20191008034238.2503-1-jian-hong@endlessm.com
+Fixes: f2440d9acbe8 ("PCI MSI: Refactor interrupt masking code")
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/panfrost/panfrost_drv.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/pci/msi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -347,20 +347,19 @@ static int panfrost_ioctl_madvise(struct
- 		return -ENOENT;
- 	}
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -211,7 +211,7 @@ u32 __pci_msix_desc_mask_irq(struct msi_
+ 		return 0;
  
-+	mutex_lock(&pfdev->shrinker_lock);
- 	args->retained = drm_gem_shmem_madvise(gem_obj, args->madv);
+ 	mask_bits &= ~PCI_MSIX_ENTRY_CTRL_MASKBIT;
+-	if (flag)
++	if (flag & PCI_MSIX_ENTRY_CTRL_MASKBIT)
+ 		mask_bits |= PCI_MSIX_ENTRY_CTRL_MASKBIT;
+ 	writel(mask_bits, pci_msix_desc_addr(desc) + PCI_MSIX_ENTRY_VECTOR_CTRL);
  
- 	if (args->retained) {
- 		struct panfrost_gem_object *bo = to_panfrost_bo(gem_obj);
- 
--		mutex_lock(&pfdev->shrinker_lock);
--
- 		if (args->madv == PANFROST_MADV_DONTNEED)
--			list_add_tail(&bo->base.madv_list, &pfdev->shrinker_list);
-+			list_add_tail(&bo->base.madv_list,
-+				      &pfdev->shrinker_list);
- 		else if (args->madv == PANFROST_MADV_WILLNEED)
- 			list_del_init(&bo->base.madv_list);
--
--		mutex_unlock(&pfdev->shrinker_lock);
- 	}
-+	mutex_unlock(&pfdev->shrinker_lock);
- 
- 	drm_gem_object_put_unlocked(gem_obj);
- 	return 0;
 
 
