@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784EC1269A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:40:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA29126A41
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfLSSju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:39:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58272 "EHLO mail.kernel.org"
+        id S1728605AbfLSSpe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727980AbfLSSjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:39:48 -0500
+        id S1729176AbfLSSpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D51BA206D7;
-        Thu, 19 Dec 2019 18:39:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C452F206D7;
+        Thu, 19 Dec 2019 18:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780787;
-        bh=bMEM8CgX/6uIErmN9B5ttGlNi4wBwVVcAmuXfFf4Z8U=;
+        s=default; t=1576781131;
+        bh=ezkUZWW+aPPfL0HkbGgYbkSBfbUVCtbeF5lLBa77mFo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SsJkkgjuVbytuqrCY0aDQ3JHaMQ50TPjldHBU3AyLaJpAOJuoi5P0Nkp62OBVtCvI
-         BVmai9aiV+S/NeNCYs/Y+wKOvZY+OXH2rejdMQDBOVvpbk4qJJ9SQbHVAey9F41uRh
-         dpaER00qXLA/mlvRGyjL2WUTnUa2jyGUWDUt4MJ4=
+        b=eMM6yWoFT6Ta9imeLyUUCs3U4quZhQD4DpvK5d71KwtVVskNLFzzEVhE/q7lkmWbL
+         0dbNuaPE/MMh/J/XGAMP+mmLGy8v6evWbrEhpmh1xO+TMbNlcytgjVLUIuloMLDX69
+         9mFMe/l0F2dk5dFnAiLJxTbiswOC0iSictojtFog=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 069/162] RDMA/qib: Validate ->show()/store() callbacks before calling them
-Date:   Thu, 19 Dec 2019 19:32:57 +0100
-Message-Id: <20191219183212.021314208@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
+        Peter Chen <peter.chen@nxp.com>
+Subject: [PATCH 4.9 096/199] usb: gadget: configfs: Fix missing spin_lock_init()
+Date:   Thu, 19 Dec 2019 19:32:58 +0100
+Message-Id: <20191219183220.231253066@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +43,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Wei Yongjun <weiyongjun1@huawei.com>
 
-commit 7ee23491b39259ae83899dd93b2a29ef0f22f0a7 upstream.
+commit 093edc2baad2c258b1f55d1ab9c63c2b5ae67e42 upstream.
 
-The permissions of the read-only or write-only sysfs files can be
-changed (as root) and the user can then try to read a write-only file or
-write to a read-only file which will lead to kernel crash here.
+The driver allocates the spinlock but not initialize it.
+Use spin_lock_init() on it to initialize it correctly.
 
-Protect against that by always validating the show/store callbacks.
+This is detected by Coccinelle semantic patch.
 
-Link: https://lore.kernel.org/r/d45cc26361a174ae12dbb86c994ef334d257924b.1573096807.git.viresh.kumar@linaro.org
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 1a1c851bbd70 ("usb: gadget: configfs: fix concurrent issue between composite APIs")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Peter Chen <peter.chen@nxp.com>
+Link: https://lore.kernel.org/r/20191030034046.188808-1-weiyongjun1@huawei.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/hw/qib/qib_sysfs.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/usb/gadget/configfs.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/hw/qib/qib_sysfs.c
-+++ b/drivers/infiniband/hw/qib/qib_sysfs.c
-@@ -301,6 +301,9 @@ static ssize_t qib_portattr_show(struct
- 	struct qib_pportdata *ppd =
- 		container_of(kobj, struct qib_pportdata, pport_kobj);
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1541,6 +1541,7 @@ static struct config_group *gadgets_make
+ 	gi->composite.resume = NULL;
+ 	gi->composite.max_speed = USB_SPEED_SUPER;
  
-+	if (!pattr->show)
-+		return -EIO;
-+
- 	return pattr->show(ppd, buf);
- }
- 
-@@ -312,6 +315,9 @@ static ssize_t qib_portattr_store(struct
- 	struct qib_pportdata *ppd =
- 		container_of(kobj, struct qib_pportdata, pport_kobj);
- 
-+	if (!pattr->store)
-+		return -EIO;
-+
- 	return pattr->store(ppd, buf, len);
- }
- 
++	spin_lock_init(&gi->spinlock);
+ 	mutex_init(&gi->lock);
+ 	INIT_LIST_HEAD(&gi->string_list);
+ 	INIT_LIST_HEAD(&gi->available_func);
 
 
