@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2079B126B0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:53:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A3E4126AFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:53:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbfLSSxd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:53:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48548 "EHLO mail.kernel.org"
+        id S1729933AbfLSSxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730208AbfLSSx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:53:28 -0500
+        id S1728282AbfLSSwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E36D2468C;
-        Thu, 19 Dec 2019 18:53:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35FED222C2;
+        Thu, 19 Dec 2019 18:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781607;
-        bh=79g9pLY07WZmLFOzBXbMh+TNjI7ClABAga+/NDBVIk4=;
+        s=default; t=1576781573;
+        bh=vzMQgDQrlZjofySHvl/yJRY+sRlQbQMzJBRjP5xclpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0tc5plUpAmBSLhySkv0XDYYp/nbZ+M3mvDOCyArrnLKX1j//Yez0unkSRNWHunOb7
-         IPtkkuovodNW0WfuOASdyGyQOCP2sFJQyMVffQtmM5KAa537wBWZh2QG63TrxcmhMo
-         kpM1584S0h8ziU4gj32CjE/WMfExaqb3/5mmwBG4=
+        b=gfBZyJdmnSCGXRFkXD6ZqnjG3AphJaUd/MdtM6Oc/36MAyTSxdPj3JwuwD62x3b2y
+         JTypR1xmcJy1FqCQ/8wXBICt59l/yhPhXCn06aOB7VtE4LTtIlLIfKnPUrXkrElSEx
+         Vw4ghxCiIgq5+jiRqIn0O18QSC8RyV2pP0dDiKrk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 4.19 40/47] dma-buf: Fix memory leak in sync_file_merge()
-Date:   Thu, 19 Dec 2019 19:34:54 +0100
-Message-Id: <20191219182946.667518659@linuxfoundation.org>
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 4.19 41/47] drm: meson: venc: cvbs: fix CVBS mode matching
+Date:   Thu, 19 Dec 2019 19:34:55 +0100
+Message-Id: <20191219182948.310765323@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
 References: <20191219182857.659088743@linuxfoundation.org>
@@ -44,34 +44,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-commit 6645d42d79d33e8a9fe262660a75d5f4556bbea9 upstream.
+commit 43cb86799ff03e9819c07f37f72f80f8246ad7ed upstream.
 
-In the implementation of sync_file_merge() the allocated sync_file is
-leaked if number of fences overflows. Release sync_file by goto err.
+With commit 222ec1618c3ace ("drm: Add aspect ratio parsing in DRM
+layer") the drm core started honoring the picture_aspect_ratio field
+when comparing two drm_display_modes. Prior to that it was ignored.
+When the CVBS encoder driver was initially submitted there was no aspect
+ratio check.
 
-Fixes: a02b9dc90d84 ("dma-buf/sync_file: refactor fence storage in struct sync_file")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191122220957.30427-1-navid.emamdoost@gmail.com
+Switch from drm_mode_equal() to drm_mode_match() without
+DRM_MODE_MATCH_ASPECT_RATIO to fix "kmscube" and X.org output using the
+CVBS connector. When (for example) kmscube sets the output mode when
+using the CVBS connector it passes HDMI_PICTURE_ASPECT_NONE, making the
+drm_mode_equal() fail as it include the aspect ratio.
+
+Prior to this patch kmscube reported:
+  failed to set mode: Invalid argument
+
+The CVBS mode checking in the sun4i (drivers/gpu/drm/sun4i/sun4i_tv.c
+sun4i_tv_mode_to_drm_mode) and ZTE (drivers/gpu/drm/zte/zx_tvenc.c
+tvenc_mode_{pal,ntsc}) drivers don't set the "picture_aspect_ratio" at
+all. The Meson VPU driver does not rely on the aspect ratio for the CVBS
+output so we can safely decouple it from the hdmi_picture_aspect
+setting.
+
+Cc: <stable@vger.kernel.org>
+Fixes: 222ec1618c3ace ("drm: Add aspect ratio parsing in DRM layer")
+Fixes: bbbe775ec5b5da ("drm: Add support for Amlogic Meson Graphic Controller")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+[narmstrong: squashed with drm: meson: venc: cvbs: deduplicate the meson_cvbs_mode lookup code]
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191208171832.1064772-3-martin.blumenstingl@googlemail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma-buf/sync_file.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/meson/meson_venc_cvbs.c |   48 ++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 21 deletions(-)
 
---- a/drivers/dma-buf/sync_file.c
-+++ b/drivers/dma-buf/sync_file.c
-@@ -230,7 +230,7 @@ static struct sync_file *sync_file_merge
- 	a_fences = get_fences(a, &a_num_fences);
- 	b_fences = get_fences(b, &b_num_fences);
- 	if (a_num_fences > INT_MAX - b_num_fences)
--		return NULL;
-+		goto err;
+--- a/drivers/gpu/drm/meson/meson_venc_cvbs.c
++++ b/drivers/gpu/drm/meson/meson_venc_cvbs.c
+@@ -75,6 +75,25 @@ struct meson_cvbs_mode meson_cvbs_modes[
+ 	},
+ };
  
- 	num_fences = a_num_fences + b_num_fences;
++static const struct meson_cvbs_mode *
++meson_cvbs_get_mode(const struct drm_display_mode *req_mode)
++{
++	int i;
++
++	for (i = 0; i < MESON_CVBS_MODES_COUNT; ++i) {
++		struct meson_cvbs_mode *meson_mode = &meson_cvbs_modes[i];
++
++		if (drm_mode_match(req_mode, &meson_mode->mode,
++				   DRM_MODE_MATCH_TIMINGS |
++				   DRM_MODE_MATCH_CLOCK |
++				   DRM_MODE_MATCH_FLAGS |
++				   DRM_MODE_MATCH_3D_FLAGS))
++			return meson_mode;
++	}
++
++	return NULL;
++}
++
+ /* Connector */
+ 
+ static void meson_cvbs_connector_destroy(struct drm_connector *connector)
+@@ -147,14 +166,8 @@ static int meson_venc_cvbs_encoder_atomi
+ 					struct drm_crtc_state *crtc_state,
+ 					struct drm_connector_state *conn_state)
+ {
+-	int i;
+-
+-	for (i = 0; i < MESON_CVBS_MODES_COUNT; ++i) {
+-		struct meson_cvbs_mode *meson_mode = &meson_cvbs_modes[i];
+-
+-		if (drm_mode_equal(&crtc_state->mode, &meson_mode->mode))
+-			return 0;
+-	}
++	if (meson_cvbs_get_mode(&crtc_state->mode))
++		return 0;
+ 
+ 	return -EINVAL;
+ }
+@@ -192,24 +205,17 @@ static void meson_venc_cvbs_encoder_mode
+ 				   struct drm_display_mode *mode,
+ 				   struct drm_display_mode *adjusted_mode)
+ {
++	const struct meson_cvbs_mode *meson_mode = meson_cvbs_get_mode(mode);
+ 	struct meson_venc_cvbs *meson_venc_cvbs =
+ 					encoder_to_meson_venc_cvbs(encoder);
+ 	struct meson_drm *priv = meson_venc_cvbs->priv;
+-	int i;
+ 
+-	for (i = 0; i < MESON_CVBS_MODES_COUNT; ++i) {
+-		struct meson_cvbs_mode *meson_mode = &meson_cvbs_modes[i];
++	if (meson_mode) {
++		meson_venci_cvbs_mode_set(priv, meson_mode->enci);
+ 
+-		if (drm_mode_equal(mode, &meson_mode->mode)) {
+-			meson_venci_cvbs_mode_set(priv,
+-						  meson_mode->enci);
+-
+-			/* Setup 27MHz vclk2 for ENCI and VDAC */
+-			meson_vclk_setup(priv, MESON_VCLK_TARGET_CVBS,
+-					 MESON_VCLK_CVBS, MESON_VCLK_CVBS,
+-					 MESON_VCLK_CVBS, true);
+-			break;
+-		}
++		/* Setup 27MHz vclk2 for ENCI and VDAC */
++		meson_vclk_setup(priv, MESON_VCLK_TARGET_CVBS, MESON_VCLK_CVBS,
++				 MESON_VCLK_CVBS, MESON_VCLK_CVBS, true);
+ 	}
+ }
  
 
 
