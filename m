@@ -2,65 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F23EF125FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:51:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C9B2125FEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbfLSKvs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:51:48 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54964 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726836AbfLSKvp (ORCPT
+        id S1726880AbfLSKwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:52:15 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53701 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfLSKwP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:51:45 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b19so4938266wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:51:44 -0800 (PST)
+        Thu, 19 Dec 2019 05:52:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m24so4938613wmc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:52:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=AHcgDnG+4B/fOMPXVM0OtdDtgVdqPAu1gFVGhHkedBU=;
-        b=PIJVkAgYzurVsLG3CEij7N7uAfX13xHLy2HMwTEJiCPq8Yy5pa+gzMqZIZ+TWTWkID
-         yHDOqbLx/tDPUD4vpQaLUfEJVvPLuVurrHvNpZp0ilbSb002pfJimB5X2sj2Qm22iNHo
-         w4ZC5MI9/fmDuogZxRIX+m0lWFzByaDrTiOrRMl153CSR8cH5KyT/IMo8MOUhPygw8Xv
-         pTdFAVokgRAnby2N1PKD2KnzJIK/nJnuor1TRj4crxBsab+GSlALSxduWjB5JljQc2sF
-         T77SzliNPAnS+gW1VxJWSUIyQivodEQo0K9Z/Qlcqvde7wquuoqCdb/yTncJdtbqi8Qi
-         hFiw==
+        bh=/1iWCzYi3gScJH+ZKu4IAouDVwkUnYO+J1BdKnXhQTg=;
+        b=kRJeBsd8VIqqFAlxQLTEATMz0dlQldjkF/yvYns6xcit9rPY2lQWlTSwcM429xZ7S/
+         QF/bR2oRu/Il5W4LQgzDYUyrHowxQfpJElyZgWln1Nq+iLDdr+Snhx8vmI1NnPnmUTjD
+         pjBEYm7TZJRTlSP2wjwzu7ViRnKBCNpOolpQ0Yvnz57WHmGmoU3vhZy0R5M6WWp2a+h2
+         qeyBcRPPLBxGtiswdAg2Fd6/5ofl1LLWXcaIeIx45q9omIwCsRQlpjA5v9INOy3ShcYY
+         YZCxlseRTs3p986ZRv0VSTmLmgLrcSUw3LT1/Kayfzvrn78dNAc+p8BSkcZGPVsTgVQP
+         OwXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=AHcgDnG+4B/fOMPXVM0OtdDtgVdqPAu1gFVGhHkedBU=;
-        b=NCzh+qd222K/7ujmG4yOpVIZMKlyIsAq93gxLJ924r7dupOlFEn+GutQWlGsY4vKN/
-         Euj6iKhCKllPTwQML6DBEJL3BFjPrty3iBy4rL0VT7i9TOenUEUJGYzVLL8uy5wL7uAN
-         HA9VaurksjJT6mF1Bvm2Sdv6ybaYXVt2b5ET91RMEgV/dXPJLgAHbcndrC9HbB/YXeo3
-         vto8/rUUU4bf4u7qrh4OLBBu4DSyHrszhDiWUv249kKczOeguFx1h5Ssw6/nBeeTW7Gp
-         cmnBt+r5d+Ui9My+nCL4qaLnxCFPzqBb9bG1AzTtNQx/WTTWiyybtjBeYGZ9NT24/cAl
-         /PNQ==
-X-Gm-Message-State: APjAAAU9GKFyDWutxHx5qWTWQGjEc3PogknQv5LulP54nQKiomZ0gq9I
-        OWeRvgBCUmt2q8YTD7TOdXr9fw==
-X-Google-Smtp-Source: APXvYqzUppHZ9MXvAXF3lT0iqwtk0JC3H7rxAWOmJlNvqgo86afcy2yRnfh3wV8+oXtWOB9cM9MAWQ==
-X-Received: by 2002:a7b:c318:: with SMTP id k24mr9596970wmj.54.1576752703724;
-        Thu, 19 Dec 2019 02:51:43 -0800 (PST)
+        bh=/1iWCzYi3gScJH+ZKu4IAouDVwkUnYO+J1BdKnXhQTg=;
+        b=hkxEftoP9jiJQKz5lud5evN9JKpxYPFMdmsx9c/1MbsF2SA/iPmPV5ZFz1B/vBWO57
+         cH6u5pxPGm1bKzuC/VysHfKAoNBbvNPrUrCz1o2i91mOLK3DHysc/kJmhHxJfK+dOFXB
+         d0zMDhvi8zxVyVa338WN+MrrY3kyRvVv+KZHueIo+9ouR/h/waKXmVWtdQuyU9JCcizq
+         MCUpfmqzS68vEcfzy16LjuIKvGSppuuhDbHRdFF5Wmmqz0YZMzz7QhqpMaXn7dRhTm8y
+         Utlzm4kqO9j+sUgKBRuyqAm5stJlkiUcA0M2abK9qIJPZ5d3UeAHK6NJFEG5WzuOnxJs
+         Epeg==
+X-Gm-Message-State: APjAAAULWlS3ng+5XZpueXM9PwM76I3ZODF9TZklUBiJo5BL8fE8KlWD
+        tMWYgsCFz+PlR7b1kEBVTBtuTg==
+X-Google-Smtp-Source: APXvYqzStH+1157P1Cv3/akiouCWbHXle1czPtvxUgDMCyd4SeBRSabTb/W+TZKuJ11C1gGBaJ4A8A==
+X-Received: by 2002:a1c:7901:: with SMTP id l1mr9079872wme.67.1576752733307;
+        Thu, 19 Dec 2019 02:52:13 -0800 (PST)
 Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id y20sm5528069wmi.25.2019.12.19.02.51.42
+        by smtp.googlemail.com with ESMTPSA id u16sm5590079wmj.41.2019.12.19.02.52.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 02:51:43 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] at24: move write-protect pin handling to nvmem
- core
-To:     Khouloud Touil <ktouil@baylibre.com>, bgolaszewski@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        baylibre-upstreaming@groups.io
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linus.walleij@linaro.org
-References: <20191210154157.21930-1-ktouil@baylibre.com>
+        Thu, 19 Dec 2019 02:52:12 -0800 (PST)
+Subject: Re: [PATCH] nvmem: imx: scu: fix write SIP
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Alice Guo <alice.guo@nxp.com>
+References: <1575340217-1402-1-git-send-email-peng.fan@nxp.com>
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <cd9f342c-5576-57f5-c62d-a78c5876a7fd@linaro.org>
-Date:   Thu, 19 Dec 2019 10:51:42 +0000
+Message-ID: <feeeacd0-3d0e-08b8-2a43-8527e6840b94@linaro.org>
+Date:   Thu, 19 Dec 2019 10:52:11 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191210154157.21930-1-ktouil@baylibre.com>
+In-Reply-To: <1575340217-1402-1-git-send-email-peng.fan@nxp.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,50 +76,14 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 10/12/2019 15:41, Khouloud Touil wrote:
-> The write-protect pin handling looks like a standard property that
-> could benefit other users if available in the core nvmem framework.
->      
-> Instead of modifying all the drivers to check this pin, make the
-> nvmem subsystem check if the write-protect GPIO being passed
-> through the nvmem_config or defined in the device tree and pull it
-> low whenever writing to the memory.
+On 03/12/2019 02:32, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> This patchset:
+> SIP number 0xC200000A is for reading, 0xC200000B is for writing.
+> And the following two args for write are word index, data to write.
 > 
-> - adds support for the write-protect pin split into two parts.
-> The first patch modifies modifies the relevant binding document,
-> while the second modifies the nvmem code to pull the write-protect
-> GPIO low (if present) during write operations.
-> 
-> - removes support for the write-protect pin split into two parts.
-> The first patch modifies the relevant binding document to remove
-> the wp-gpio, while the second removes the relevant code in the
-> at24 driver.
-> 
-> Changes since v1:
-> -Add an explenation on how the wp-gpios works
-> -keep reference to the wp-gpios in the at24 binding
-> 
-> Khouloud Touil (4):
->    dt-bindings: nvmem: new optional property write-protect-gpios
->    nvmem: add support for the write-protect pin
->    dt-bindings: at24: remove the optional property write-protect-gpios
->    eeprom: at24: remove the write-protect pin support
-> 
+> Fixes: 885ce72a09d0 ("nvmem: imx: scu: support write")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Thanks Khouloud for this patchset,
-
-I can take this via nvmem tree once we get an ack on dt bindings from DT 
-maintainers.
-
-
---srini
->   .../devicetree/bindings/eeprom/at24.yaml      |  6 +-----
->   .../devicetree/bindings/nvmem/nvmem.yaml      |  9 +++++++++
->   drivers/misc/eeprom/at24.c                    |  9 ---------
->   drivers/nvmem/core.c                          | 19 +++++++++++++++++--
->   drivers/nvmem/nvmem.h                         |  2 ++
->   include/linux/nvmem-provider.h                |  3 +++
->   6 files changed, 32 insertions(+), 16 deletions(-)
-> 
+Applied Thanks,
+srini
