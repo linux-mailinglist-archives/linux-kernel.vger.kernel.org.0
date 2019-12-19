@@ -2,88 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E5C2125F24
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C710125F32
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:36:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfLSKfc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:35:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37547 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfLSKfb (ORCPT
+        id S1726944AbfLSKgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:36:08 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:21166 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726622AbfLSKgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:35:31 -0500
-Received: from [79.140.121.60] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1iht9T-00014D-C2; Thu, 19 Dec 2019 10:35:27 +0000
-Date:   Thu, 19 Dec 2019 11:35:26 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
-        jld@mozilla.com
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-Message-ID: <20191219103525.yqb5f4pbd2dvztkb@wittgenstein>
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
- <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
+        Thu, 19 Dec 2019 05:36:07 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBJAWcHB023188;
+        Thu, 19 Dec 2019 11:35:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=STMicroelectronics;
+ bh=Iemh3RU/aIK2iehtIHFQuSP9XvVK+0CTJ21s2KN63yo=;
+ b=gXqqZMtt1rmXVv8DSNqowaaZF4CP5ipsS+CfHYPDclIlhMGNjgvC3kxymw3NCIhfk0KE
+ T5DvKrwgHt3a+8s7URBKXpykwiUPAMK3ND/B8JIsTjaSzhs11IldghDLHb7J32f4H0oV
+ HN63TEwVe7Q/GTCM9a0I6k4LJw07OtB+vRgmRELcvlpDBuVwr2fFpheErYYIMNRwoMMf
+ 4yIAMuw+E/LXFw1zUPZjrMFDr9RzHyub6GyY0sk7hCH2k19PaQjA8M2hp1SQ6fAu+Ikb
+ HA9Z9SBVGmO0SeWO6+dfv5mERJaEyTuUtbNucceK3ZAinG+jADU2H12If5VY7dmHL35H tA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2wvpd1s21e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 19 Dec 2019 11:35:51 +0100
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 04B32100039;
+        Thu, 19 Dec 2019 11:35:41 +0100 (CET)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C51142A467F;
+        Thu, 19 Dec 2019 11:35:40 +0100 (CET)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE3.st.com (10.75.127.9)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 19 Dec 2019 11:35:40
+ +0100
+From:   Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <kgene@kernel.org>, <krzk@kernel.org>,
+        <hminas@synopsys.com>
+CC:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <m.szyprowski@samsung.com>,
+        <amelie.delaunay@st.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH v2 0/2] Add yaml DWC2 bindings
+Date:   Thu, 19 Dec 2019 11:35:34 +0100
+Message-ID: <20191219103536.25485-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG3NODE3.st.com
+ (10.75.127.9)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-19_01:2019-12-17,2019-12-19 signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 09:03:09AM +0100, Arnd Bergmann wrote:
-> On Thu, Dec 19, 2019 at 12:55 AM Sargun Dhillon <sargun@sargun.me> wrote:
-> 
-> > +#define PIDFD_IOCTL_GETFD      _IOWR('p', 0xb0, __u32)
-> 
-> This describes an ioctl command that reads and writes a __u32 variable
-> using a pointer passed as the argument, which doesn't match the
-> implementation:
-> 
-> > +static long pidfd_getfd(struct pid *pid, u32 fd)
-> > +{
-> ...
-> > +       return retfd;
-> 
-> This function passes an fd as the argument and returns a new
-> fd, so the command number would be
-> 
-> #define PIDFD_IOCTL_GETFD      _IO('p', 0xb0)
-> 
-> While this implementation looks easy enough, and it is roughly what
-> I would do in case of a system call, I would recommend for an ioctl
+Convert DWC2 bindings to json-schema and fix issue in dtsi file.
 
-I guess this is the remaining question we should settle, i.e. what do we
-prefer.
-I still think that adding a new syscall for this seems a bit rich. On
-the other hand it seems that a lot more people agree that using a
-dedicated syscall instead of an ioctl is the correct way; especially
-when it touches core kernel functionality. I mean that was one of the
-takeaways from the pidfd API ioctl-vs-syscall discussion.
+Benjamin Gaignard (2):
+  dt-bindings: usb: Convert DWC2 bindings to json-schema
+  ARM: dts: exynos: Remove unneeded "snps,dwc2" from hsotg node
 
-A syscall is nicer especially for core-kernel code like this.
-So I guess the only way to find out is to try the syscall approach and
-either get yelled and switch to an ioctl() or have it accepted.
+ Documentation/devicetree/bindings/usb/dwc2.txt  |  64 ----------
+ Documentation/devicetree/bindings/usb/dwc2.yaml | 152 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi               |   2 +-
+ 3 files changed, 153 insertions(+), 65 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/dwc2.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/dwc2.yaml
 
-What does everyone else think? Arnd, still in favor of a syscall I take
-it. Oleg, you had suggested a syscall too, right? Florian, any
-thoughts/worries on/about this from the glibc side?
+-- 
+2.15.0
 
-Christian
