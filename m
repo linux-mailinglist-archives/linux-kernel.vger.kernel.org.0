@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3D3126BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B5511269DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:42:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbfLSS75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:59:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
+        id S1728584AbfLSSlp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:41:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60722 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730279AbfLSSwm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:42 -0500
+        id S1728560AbfLSSli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:41:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 304EA227BF;
-        Thu, 19 Dec 2019 18:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED544206D7;
+        Thu, 19 Dec 2019 18:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781561;
-        bh=smHb2yJslfRp7JzvVGL6X+y/C/ALUdM8xW4zzojIxAU=;
+        s=default; t=1576780897;
+        bh=GqAFOTv0a9RtHQ56hi09qCi4T7GetSCA3QHzEhxSVjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SWL4DoTEyr4qu7mJL72S6ltkdAS0MhVBnfvOWRsmRAsrhbGe8gknDvLKg3GKaeZn3
-         XeaZT8R6yIQtlijTz9M5lNCG+xxjD9pg3SldZf1UtUduagZc8V7xZx46JcCFdX+Wqp
-         r+2dLBPAexIHJtVvd5qH2RDOpTJ/s0QMJ/cYrTpw=
+        b=S9HmRLRdVlp4sVrblvg52nnFF1TqtknATTrAO41RuKL9Il4Ik6CmELPtqWpXBsQtw
+         1D9+fP6/V6LnKQ6++89jryzRhf1HuhbAm/yi7CfdF0ok4yFzEdsttwt7JSNGncTXvh
+         HZgGEJXWa/5jEEk849Naf8CnbofXVO40y+Fohk64=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mian Yousaf Kaukab <ykaukab@suse.de>,
-        Andrew Lunn <andrew@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 07/47] net: thunderx: start phy before starting autonegotiation
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.4 153/162] xtensa: fix TLB sanity checker
 Date:   Thu, 19 Dec 2019 19:34:21 +0100
-Message-Id: <20191219182902.771900337@linuxfoundation.org>
+Message-Id: <20191219183217.085516474@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mian Yousaf Kaukab <ykaukab@suse.de>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-[ Upstream commit a350d2e7adbb57181d33e3aa6f0565632747feaa ]
+commit 36de10c4788efc6efe6ff9aa10d38cb7eea4c818 upstream.
 
-Since commit 2b3e88ea6528 ("net: phy: improve phy state checking")
-phy_start_aneg() expects phy state to be >= PHY_UP. Call phy_start()
-before calling phy_start_aneg() during probe so that autonegotiation
-is initiated.
+Virtual and translated addresses retrieved by the xtensa TLB sanity
+checker must be consistent, i.e. correspond to the same state of the
+checked TLB entry. KASAN shadow memory is mapped dynamically using
+auto-refill TLB entries and thus may change TLB state between the
+virtual and translated address retrieval, resulting in false TLB
+insanity report.
+Move read_xtlb_translation close to read_xtlb_virtual to make sure that
+read values are consistent.
 
-As phy_start() takes care of calling phy_start_aneg(), drop the explicit
-call to phy_start_aneg().
-
-Network fails without this patch on Octeon TX.
-
-Fixes: 2b3e88ea6528 ("net: phy: improve phy state checking")
-Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Fixes: a99e07ee5e88 ("xtensa: check TLB sanity on return to userspace")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/cavium/thunder/thunder_bgx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1118,7 +1118,7 @@ static int bgx_lmac_enable(struct bgx *b
- 				       phy_interface_mode(lmac->lmac_type)))
- 			return -ENODEV;
- 
--		phy_start_aneg(lmac->phydev);
-+		phy_start(lmac->phydev);
- 		return 0;
+---
+ arch/xtensa/mm/tlb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/xtensa/mm/tlb.c
++++ b/arch/xtensa/mm/tlb.c
+@@ -218,6 +218,8 @@ static int check_tlb_entry(unsigned w, u
+ 	unsigned tlbidx = w | (e << PAGE_SHIFT);
+ 	unsigned r0 = dtlb ?
+ 		read_dtlb_virtual(tlbidx) : read_itlb_virtual(tlbidx);
++	unsigned r1 = dtlb ?
++		read_dtlb_translation(tlbidx) : read_itlb_translation(tlbidx);
+ 	unsigned vpn = (r0 & PAGE_MASK) | (e << PAGE_SHIFT);
+ 	unsigned pte = get_pte_for_vaddr(vpn);
+ 	unsigned mm_asid = (get_rasid_register() >> 8) & ASID_MASK;
+@@ -233,8 +235,6 @@ static int check_tlb_entry(unsigned w, u
  	}
  
+ 	if (tlb_asid == mm_asid) {
+-		unsigned r1 = dtlb ? read_dtlb_translation(tlbidx) :
+-			read_itlb_translation(tlbidx);
+ 		if ((pte ^ r1) & PAGE_MASK) {
+ 			pr_err("%cTLB: way: %u, entry: %u, mapping: %08x->%08x, PTE: %08x\n",
+ 					dtlb ? 'D' : 'I', w, e, r0, r1, pte);
 
 
