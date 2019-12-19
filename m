@@ -2,91 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F6011264C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD9501264D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:32:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLSObZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 09:31:25 -0500
-Received: from relay.sw.ru ([185.231.240.75]:54454 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbfLSObY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 09:31:24 -0500
-Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
-        by relay.sw.ru with esmtp (Exim 4.92.3)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ihwpc-0006gx-Ov; Thu, 19 Dec 2019 17:31:12 +0300
-Subject: Re: [PATCH RFC] sched: Micro optimization in pick_next_task() and in
- check_preempt_curr()
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
-References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
- <20191219131242.GK2827@hirez.programming.kicks-ass.net>
- <20191219140252.GS2871@hirez.programming.kicks-ass.net>
- <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
-Message-ID: <423860b3-b35a-ff25-6abf-845ef4be6e8e@virtuozzo.com>
-Date:   Thu, 19 Dec 2019 17:31:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726933AbfLSOcw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 09:32:52 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:34004 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbfLSOcv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 09:32:51 -0500
+Received: by mail-vk1-f196.google.com with SMTP id w67so1686191vkf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 06:32:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YPrqmPawyC7QTitP+v5HFjQOiA2/JytHSGJGmUaJYSo=;
+        b=HnkBmt7aQRcHDcMGiqeIVNQlFoTrNa80ZEsz/jq67ZFporQI48fPP1pB//sfII7cmp
+         NV++BTuBM0fMSP3sCw40kxNz704Xs6z28/t22qeVeYvFWYC+LqiHRgil6I6MFdRSAmBI
+         aiKeNDuitN1aHXmZP1AraJ/vV0PUVmt0AB7kOica+Pj4G8AZKnYYiG2UqReg6Y0H1JlL
+         S9oofysNrjhnJ6OBygsD7XwR4WlPNbb2uGBSFPh1X5Xi0aueoG4hPNh9WK4gDgpooymS
+         Hvl2e+WE78CehJerRxhHjb3qbsP/vtPoIvX0VXkzADx4nosf40jZ0Z5QJc7BRCSVZ5wE
+         LOhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YPrqmPawyC7QTitP+v5HFjQOiA2/JytHSGJGmUaJYSo=;
+        b=a5IHOZGZg0gN38G8uOwouLhz6N2EZWIYePlkLbBvgOCV+X7RD3Kt5RU1GUWxNFa6YM
+         c2b9CIulsN8atUEQel0S2ejL81Uew/xolofNqhLG+0AuoVuzbAJyrWx2MtTBx2uSoPB9
+         +Dz+upQkjveMyr3tg6NYrzIUQBIT5FywmGsPST7PGH5nW6NELQBNNOsx8rSji1TQrPM9
+         INznEERBQ5iRYF1hgW+BnnqH5RqpwE3K28JC37OFGiwyG89Awt8NKDX/bss885STrfct
+         QgavBd4kT9s+IT3tOX8EafcvI/rvICM7vRsEzOhNf7H2dAGGWPu4523xTvNDmA43/SL0
+         0g9Q==
+X-Gm-Message-State: APjAAAVX9pFcDQ2P/0ZQ7vc6pgCgNMwSttyup4P763Qu6Nl67mNQcrQP
+        Ut8jSktKExwcxX73QI/wyAIevA7NQD3mZaw0SYgdDA==
+X-Google-Smtp-Source: APXvYqyql89PtQng31jiu4OfIUWL4pxdszTl7Rb2Z0v5tsXV+OuRCLt9eYGrN14WQCjnYoJhY9CerE7OOqyoBGkSmMA=
+X-Received: by 2002:a1f:914b:: with SMTP id t72mr1596441vkd.101.1576765970818;
+ Thu, 19 Dec 2019 06:32:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191217122254.7103-1-peter.ujfalusi@ti.com>
+In-Reply-To: <20191217122254.7103-1-peter.ujfalusi@ti.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 19 Dec 2019 15:32:13 +0100
+Message-ID: <CAPDyKFrsq6Kua8Nr7GCVmvEHgDT9MWV05Lue3Z3Ha-_Aa744Rg@mail.gmail.com>
+Subject: Re: [PATCH v2] mmc: bcm2835: Use dma_request_chan() instead dma_request_slave_channel()
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Vinod Koul <vkoul@kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-rpi-kernel@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.12.2019 17:25, Kirill Tkhai wrote:
-> On 19.12.2019 17:02, Peter Zijlstra wrote:
->> On Thu, Dec 19, 2019 at 02:12:42PM +0100, Peter Zijlstra wrote:
->>> On Thu, Dec 19, 2019 at 03:39:14PM +0300, Kirill Tkhai wrote:
->>>> In kernel/sched/Makefile files, describing different sched classes, already
->>>> go in the order from the lowest priority class to the highest priority class:
->>>>
->>>> idle.o fair.o rt.o deadline.o stop_task.o
->>>>
->>>> The documentation of GNU linker says, that section appears in the order
->>>> they are seen during link time (see [1]):
->>>>
->>>>> Normally, the linker will place files and sections matched by wildcards
->>>>> in the order in which they are seen during the link. You can change this
->>>>> by using the SORT keyword, which appears before a wildcard pattern
->>>>> in parentheses (e.g., SORT(.text*)).
->>>>
->>>> So, we may expect const variables from idle.o will go before ro variables
->>>> from fair.o in RO_DATA section, while ro variables from fair.o will go
->>>> before ro variables from rt.o, etc.
->>>>
->>>> (Also, it looks like the linking order is already used in kernel, e.g.
->>>>  in drivers/md/Makefile)
->>>>
->>>> Thus, we may introduce an optimization based on xxx_sched_class addresses
->>>> in these two hot scheduler functions: pick_next_task() and check_preempt_curr().
->>>>
->>>> One more result of the patch is that size of object file becomes a little
->>>> less (excluding added BUG_ON(), which goes in __init section):
->>>>
->>>> $size kernel/sched/core.o
->>>>          text     data      bss	    dec	    hex	filename
->>>> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
->>>> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
->>>
->>> Does LTO preserve this behaviour? I've never quite dared do this exact
->>> optimization.
->>
->> Also, ld.lld seems a popular option.
-> 
-> I asked on their IRC. Oh, it looks like no way is for this.
-> 
-> About the link: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html
-> 
-> (17:19:25) nbjoerg: but it is not guarenteed behavior
-> (17:19:50) nbjoerg: if for some strange reason you really need to enforce relative orders of global objects, put them in consecutively named sections
+On Tue, 17 Dec 2019 at 13:22, Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>
+> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> eating up the error code.
+>
+> By using dma_request_chan() directly the driver can support deferred
+> probing against DMA.
+>
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
-Introduction of sched_class::id instead of this patch's approach does not have a big sense,
-since this will help in check_preempt_curr() only. And this requires too many new lines of code.
+Applied this one and the other related patches, thanks!
+
+Kind regards
+Uffe
+
+
+> ---
+> Hi,
+>
+> Changes since v1:
+> - instead of returning jump to err: to free up resources
+>
+> Regards,
+> Peter
+>
+>  drivers/mmc/host/bcm2835.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+> index 99f61fd2a658..c3d949847cbd 100644
+> --- a/drivers/mmc/host/bcm2835.c
+> +++ b/drivers/mmc/host/bcm2835.c
+> @@ -1393,7 +1393,17 @@ static int bcm2835_probe(struct platform_device *pdev)
+>         host->dma_chan = NULL;
+>         host->dma_desc = NULL;
+>
+> -       host->dma_chan_rxtx = dma_request_slave_channel(dev, "rx-tx");
+> +       host->dma_chan_rxtx = dma_request_chan(dev, "rx-tx");
+> +       if (IS_ERR(host->dma_chan_rxtx)) {
+> +               ret = PTR_ERR(host->dma_chan_rxtx);
+> +               host->dma_chan_rxtx = NULL;
+> +
+> +               if (ret == -EPROBE_DEFER)
+> +                       goto err;
+> +
+> +               /* Ignore errors to fall back to PIO mode */
+> +       }
+> +
+>
+>         clk = devm_clk_get(dev, NULL);
+>         if (IS_ERR(clk)) {
+> --
+> Peter
+>
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>
