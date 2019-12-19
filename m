@@ -2,144 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4F31260E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C19412610D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:40:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbfLSLfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:35:47 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:47908 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSLfr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:35:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1576755342; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ckop6Kqk0CV79KVL4zcYWdYOX/VFrNEJtlGjWhAJS+I=;
-        b=cHB0INpO3f2CogS5CbRHjpHON4couUPO673zqq7Nuzt+0O+Ra3tG1zlgjfXmhQ2Kt3PwMz
-        PHDsiKkqjNju5o4p8QeS2Z3/WPfYnErBSN8CD/X2l05m+WBKnaDH4WED7emxpQl0M3cUd5
-        xAKnVCRlloCicTthjywCisc97X4H6dU=
-Date:   Thu, 19 Dec 2019 12:35:37 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: RE: [PATCH v2 3/3] power/supply: Add generic USB charger driver
-To:     Peter Chen <peter.chen@nxp.com>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, od@zcrc.me,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Message-Id: <1576755337.3.0@crapouillou.net>
-In-Reply-To: <VI1PR04MB53273342340E350BFFFDE12F8B530@VI1PR04MB5327.eurprd04.prod.outlook.c
-        om>
-References: <20191211155032.167032-1-paul@crapouillou.net>
-        <20191211155032.167032-3-paul@crapouillou.net>
-        <20191212091814.GA7035@b29397-desktop> <1576270147.3.0@crapouillou.net>
-        <VI1PR04MB5327401FFD2D32E937548DD48B510@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <1576493525.3.0@crapouillou.net>
-        <VI1PR04MB5327B8EF35340FC4B2D02DE88B500@VI1PR04MB5327.eurprd04.prod.outlook.com>
-        <1576617863.3.1@crapouillou.net>
-        <VI1PR04MB53273342340E350BFFFDE12F8B530@VI1PR04MB5327.eurprd04.prod.outlook.com>
+        id S1726875AbfLSLkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:40:51 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7719 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726692AbfLSLkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:40:51 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1341DFDCE93905C41A01;
+        Thu, 19 Dec 2019 19:40:47 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.58) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 19 Dec 2019 19:40:40 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <yanaijie@huawei.com>, <chenxiang66@hisilicon.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] scsi: libsas: Tidy SAS address print format
+Date:   Thu, 19 Dec 2019 19:37:17 +0800
+Message-ID: <1576755437-188389-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.58]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Currently we use a mixture of %016llx, %llx, and %16llx when printing a
+SAS address.
 
+Typically byte 0 will be 0x50, so this formatting is not so important -
+but some fake SAS addresses for SATA devices may not be. And we have
+mangled/invalid address to consider also. And it's better to be consistent
+in the code, so use a fixed format.
 
-Le mer., d=E9c. 18, 2019 at 02:46, Peter Chen <peter.chen@nxp.com> a=20
-=E9crit :
->=20
->>  >>  >
->>  >>  >>  >>  +
->>  >>  >>  >>  +	desc =3D &charger->desc;
->>  >>  >>  >>  +	desc->name =3D "usb-charger";
->>  >>  >>  >>  +	desc->properties =3D usb_charger_properties;
->>  >>  >>  >>  +	desc->num_properties =3D=20
->> ARRAY_SIZE(usb_charger_properties);
->>  >>  >>  >>  +	desc->get_property =3D usb_charger_get_property;
->>  >>  >>  >>  +	desc->type =3D POWER_SUPPLY_TYPE_USB;
->>  >>  >>  >
->>  >>  >>  > What's your further plan for this generic USB charger?
->>  >>  >>  > To support BC1.2, we need to know charger type, and how we
->>  >> could  >> get  > it?
->>  >>  >>  >
->>  >>  >>  > Peter
->>  >>  >>
->>  >>  >>  Well I don't really know. The USB role framework does not=20
->> give
->>  >> any  >> info about  what's plugged.
->>  >>  >>
->>  >>  >
->>  >>  > What's the use case for this patch set? How it be used?
->>  >>
->>  >>  My devicetree:
->>  >>
->>  >>  usb_otg: usb@13440000 {
->>  >>  	compatible =3D "ingenic,jz4770-musb", "simple-mfd";
->>  >>  	reg =3D <0x13440000 0x10000>;
->>  >>  	[...]
->>  >>
->>  >>  	usb-role-switch;
->>  >>
->>  >>  	connector {
->>  >>  		compatible =3D "gpio-usb-b-connector", "usb-b-connector";
->>  >>  		label =3D "mini-USB";
->>  >>  		type =3D "mini";
->>  >>
->>  >>  		id-gpios =3D <&gpf 18 GPIO_ACTIVE_HIGH>;
->>  >>  		vbus-gpios =3D <&gpb 5 GPIO_ACTIVE_HIGH>;
->>  >>  		[...]
->>  >>  	};
->>  >>
->>  >>  	usb_charger: usb-charger {
->>  >>  		compatible =3D "usb-charger";
->>  >>  	};
->>  >>  };
->>  >>
->>  >>  The new gpio-usb-connector driver uses the ID/VBUS GPIOs to=20
->> detect
->>  >> in  which state (device, host, unconnected) a OTG connector is.
->>  >> However,  that means I cannot use the standard gpio-charger=20
->> driver to
->>  >> detect the  presence of a charger based on the state of the VBUS
->>  >> gpio, since it's  already requested here. So the point of this
->>  >> patchset is to provide an  alternative to gpio-charger that works
->>  >> with OTG controllers compatible  with 'usb-role-switch'.
->>  >>
->>  >
->>  > Thanks for explaining it.
->>  >
->>  > What's the user for this USB charger,  PMIC or what else? How the=20
->> user
->>  > uses this USB charger interface?
->>=20
->>  It's exported as a standard charger, so it can be passed to client=20
->> drivers through
->>  devicetree, and its online status can be retrieved from sysfs.
->>=20
->=20
-> Hi Paul,
->=20
-> If you would like to get role from usb-role-switch, the udc driver=20
-> may probably have already worked.
-> There is a 'state' entry under the udc device to indicate USB Ch9=20
-> state. Try to see if it could
-> satisfy your requirement.
+The SAS address is a fixed size at 64b, so we want to 0 byte extend to 16
+nibbles, so use %016llx globally.
 
-This is not the proper way to retrieve charger status.
-Linux supports chargers through the power supply subsystem, that's=20
-where it should be exported.
+Also make some prints to be explicitly hex, and tidy some whitespace issue.
 
-Cheers,
--Paul
+Signed-off-by: John Garry <john.garry@huawei.com>
 
-=
+diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
+index e9e00740f7ca..c5a828a041e0 100644
+--- a/drivers/scsi/libsas/sas_ata.c
++++ b/drivers/scsi/libsas/sas_ata.c
+@@ -137,7 +137,7 @@ static void sas_ata_task_done(struct sas_task *task)
+ 	} else {
+ 		ac = sas_to_ata_err(stat);
+ 		if (ac) {
+-			pr_warn("%s: SAS error %x\n", __func__, stat->stat);
++			pr_warn("%s: SAS error 0x%x\n", __func__, stat->stat);
+ 			/* We saw a SAS error. Send a vague error. */
+ 			if (!link->sactive) {
+ 				qc->err_mask = ac;
+diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
+index f47b4b281b14..fef58185a644 100644
+--- a/drivers/scsi/libsas/sas_discover.c
++++ b/drivers/scsi/libsas/sas_discover.c
+@@ -170,7 +170,7 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
+ 
+ 	res = i->dft->lldd_dev_found(dev);
+ 	if (res) {
+-		pr_warn("driver on host %s cannot handle device %llx, error:%d\n",
++		pr_warn("driver on host %s cannot handle device %016llx, error:%d\n",
+ 			dev_name(sas_ha->dev),
+ 			SAS_ADDR(dev->sas_addr), res);
+ 	}
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 9fdb9c9fbda4..ab671cdd4cfb 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -500,7 +500,7 @@ static int sas_ex_general(struct domain_device *dev)
+ 		ex_assign_report_general(dev, rg_resp);
+ 
+ 		if (dev->ex_dev.configuring) {
+-			pr_debug("RG: ex %llx self-configuring...\n",
++			pr_debug("RG: ex %016llx self-configuring...\n",
+ 				 SAS_ADDR(dev->sas_addr));
+ 			schedule_timeout_interruptible(5*HZ);
+ 		} else
+@@ -881,7 +881,7 @@ static struct domain_device *sas_ex_discover_end_dev(
+ 
+ 		res = sas_discover_end_dev(child);
+ 		if (res) {
+-			pr_notice("sas_discover_end_dev() for device %16llx at %016llx:%02d returned 0x%x\n",
++			pr_notice("sas_discover_end_dev() for device %016llx at %016llx:%02d returned 0x%x\n",
+ 				  SAS_ADDR(child->sas_addr),
+ 				  SAS_ADDR(parent->sas_addr), phy_id, res);
+ 			goto out_list_del;
+diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+index 01f1738ce6df..1f1d01901978 100644
+--- a/drivers/scsi/libsas/sas_internal.h
++++ b/drivers/scsi/libsas/sas_internal.h
+@@ -107,7 +107,7 @@ static inline void sas_smp_host_handler(struct bsg_job *job,
+ 
+ static inline void sas_fail_probe(struct domain_device *dev, const char *func, int err)
+ {
+-	pr_warn("%s: for %s device %16llx returned %d\n",
++	pr_warn("%s: for %s device %016llx returned %d\n",
+ 		func, dev->parent ? "exp-attached" :
+ 		"direct-attached",
+ 		SAS_ADDR(dev->sas_addr), err);
+diff --git a/drivers/scsi/libsas/sas_port.c b/drivers/scsi/libsas/sas_port.c
+index 7c86fd248129..19cf418928fa 100644
+--- a/drivers/scsi/libsas/sas_port.c
++++ b/drivers/scsi/libsas/sas_port.c
+@@ -165,7 +165,7 @@ static void sas_form_port(struct asd_sas_phy *phy)
+ 	}
+ 	sas_port_add_phy(port->port, phy->phy);
+ 
+-	pr_debug("%s added to %s, phy_mask:0x%x (%16llx)\n",
++	pr_debug("%s added to %s, phy_mask:0x%x (%016llx)\n",
+ 		 dev_name(&phy->phy->dev), dev_name(&port->port->dev),
+ 		 port->phy_mask,
+ 		 SAS_ADDR(port->attached_sas_addr));
+diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
+index bec83eb8ab87..9e0975e55c27 100644
+--- a/drivers/scsi/libsas/sas_scsi_host.c
++++ b/drivers/scsi/libsas/sas_scsi_host.c
+@@ -330,7 +330,7 @@ static int sas_recover_lu(struct domain_device *dev, struct scsi_cmnd *cmd)
+ 
+ 	int_to_scsilun(cmd->device->lun, &lun);
+ 
+-	pr_notice("eh: device %llx LUN %llx has the task\n",
++	pr_notice("eh: device %016llx LUN 0x%llx has the task\n",
+ 		  SAS_ADDR(dev->sas_addr),
+ 		  cmd->device->lun);
+ 
+@@ -615,7 +615,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
+  reset:
+ 			tmf_resp = sas_recover_lu(task->dev, cmd);
+ 			if (tmf_resp == TMF_RESP_FUNC_COMPLETE) {
+-				pr_notice("dev %016llx LU %llx is recovered\n",
++				pr_notice("dev %016llx LU 0x%llx is recovered\n",
+ 					  SAS_ADDR(task->dev),
+ 					  cmd->device->lun);
+ 				sas_eh_finish_cmd(cmd);
+@@ -666,7 +666,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
+ 			 * of effort could recover from errors.  Quite
+ 			 * possibly the HA just disappeared.
+ 			 */
+-			pr_err("error from  device %llx, LUN %llx couldn't be recovered in any way\n",
++			pr_err("error from device %016llx, LUN 0x%llx couldn't be recovered in any way\n",
+ 			       SAS_ADDR(task->dev->sas_addr),
+ 			       cmd->device->lun);
+ 
+@@ -851,7 +851,7 @@ int sas_slave_configure(struct scsi_device *scsi_dev)
+ 	if (scsi_dev->tagged_supported) {
+ 		scsi_change_queue_depth(scsi_dev, SAS_DEF_QD);
+ 	} else {
+-		pr_notice("device %llx, LUN %llx doesn't support TCQ\n",
++		pr_notice("device %016llx, LUN 0x%llx doesn't support TCQ\n",
+ 			  SAS_ADDR(dev->sas_addr), scsi_dev->lun);
+ 		scsi_change_queue_depth(scsi_dev, 1);
+ 	}
+diff --git a/drivers/scsi/libsas/sas_task.c b/drivers/scsi/libsas/sas_task.c
+index 1ded7d85027e..e2d42593ce52 100644
+--- a/drivers/scsi/libsas/sas_task.c
++++ b/drivers/scsi/libsas/sas_task.c
+@@ -27,7 +27,7 @@ void sas_ssp_task_response(struct device *dev, struct sas_task *task,
+ 		memcpy(tstat->buf, iu->sense_data, tstat->buf_valid_size);
+ 
+ 		if (iu->status != SAM_STAT_CHECK_CONDITION)
+-			dev_warn(dev, "dev %llx sent sense data, but stat(%x) is not CHECK CONDITION\n",
++			dev_warn(dev, "dev %016llx sent sense data, but stat(0x%x) is not CHECK CONDITION\n",
+ 				 SAS_ADDR(task->dev->sas_addr), iu->status);
+ 	}
+ 	else
+-- 
+2.17.1
 
