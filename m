@@ -2,63 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9268A126748
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:39:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAC8E12674C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLSQjV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:39:21 -0500
-Received: from ms.lwn.net ([45.79.88.28]:37184 "EHLO ms.lwn.net"
+        id S1726961AbfLSQkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:40:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726801AbfLSQjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:39:20 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 6745E382;
-        Thu, 19 Dec 2019 16:39:20 +0000 (UTC)
-Date:   Thu, 19 Dec 2019 09:39:19 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Federico Vaga <federico.vaga@vaga.pv.it>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] doc:locking: fix locktorture parameter description
-Message-ID: <20191219093919.59de5cf6@lwn.net>
-In-Reply-To: <20191201121941.6971-1-federico.vaga@vaga.pv.it>
-References: <20191201121941.6971-1-federico.vaga@vaga.pv.it>
-Organization: LWN.net
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+        id S1726801AbfLSQkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 11:40:11 -0500
+Subject: Re: [GIT PULL] Power management fix for v5.5-rc2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576773610;
+        bh=kVZO1y7O7/FeMWl1i0VTlzIBrjOvi3NOrNm0YAIByyk=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=kprPBqkGFsL/3lQQGPTSf25JKXQ8jud2aVvzaTdAJUDNIN4gvnupJAhCXVxxIs7aB
+         /GW+DIpi5U/j9c+BLztfbZeP1ZSyMcTyWxkOS8EJ0RAoQ0p0qo6SMPPux5AiIBHCz1
+         xMIhz2yYgcSR7LkUK6TFFq1EP5wZvqwSrODwTN4o=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <CAJZ5v0hm1D5CJq81Ew9YjGc_ik8nw9Q_-w0a+7iMdarwPmsH7A@mail.gmail.com>
+References: <CAJZ5v0hm1D5CJq81Ew9YjGc_ik8nw9Q_-w0a+7iMdarwPmsH7A@mail.gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <CAJZ5v0hm1D5CJq81Ew9YjGc_ik8nw9Q_-w0a+7iMdarwPmsH7A@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc3
+X-PR-Tracked-Commit-Id: 505b308b6944a91fa8437a3fd9f2dab29b5c3c88
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5f096c0ecd53263a94124bdfa516a29f154e44ed
+Message-Id: <157677361077.29970.17745239851738773392.pr-tracker-bot@kernel.org>
+Date:   Thu, 19 Dec 2019 16:40:10 +0000
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun,  1 Dec 2019 13:19:41 +0100
-Federico Vaga <federico.vaga@vaga.pv.it> wrote:
+The pull request you sent on Thu, 19 Dec 2019 16:35:29 +0100:
 
-> The description was talking about two default values: I removed the
-> wrong one.
-> 
-> Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
-> ---
->  Documentation/locking/locktorture.rst | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/locking/locktorture.rst b/Documentation/locking/locktorture.rst
-> index 54899c95e45e..e49da0a0bf94 100644
-> --- a/Documentation/locking/locktorture.rst
-> +++ b/Documentation/locking/locktorture.rst
-> @@ -105,8 +105,7 @@ stat_interval
->  		  Number of seconds between statistics-related printk()s.
->  		  By default, locktorture will report stats every 60 seconds.
->  		  Setting the interval to zero causes the statistics to
-> -		  be printed -only- when the module is unloaded, and this
-> -		  is the default.
-> +		  be printed -only- when the module is unloaded.
->  
->  stutter
->  		  The length of time to run the test before pausing for this
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc3
 
-Applied (finally) thanks.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5f096c0ecd53263a94124bdfa516a29f154e44ed
 
-jon
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
