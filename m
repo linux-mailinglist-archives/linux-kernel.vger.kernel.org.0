@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E57126AD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29F81126A9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729334AbfLSSvH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:51:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45224 "EHLO mail.kernel.org"
+        id S1729784AbfLSStY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:49:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730087AbfLSSvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:51:05 -0500
+        id S1729769AbfLSStW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E313224685;
-        Thu, 19 Dec 2019 18:51:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B1042465E;
+        Thu, 19 Dec 2019 18:49:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781464;
-        bh=sKj9dKNPh7LtuldzJsMWW7xOyu3jdMpa/F+Jy+biODo=;
+        s=default; t=1576781361;
+        bh=Jrwpqvl/NbwnQ3Y/vpkLFz7VYCol0WrRQ/VbLcu30NI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MomtK3COdNt4MPxHf+7rNAm52Q8X/zpPcrxmad5dr9Ekoj3CdbIBkPmdt7fn1wzzu
-         KwRz4UT8HpbvWt1rmfLgIIYCCoIagoZsj8Iwx9X3o4rBQvohwk3Pzxr4WCPXCCHZkn
-         CdEu9fcN6FAL037G72GQ3iQOnZh1iORBzE/GKygc=
+        b=G3X/gQXvB4LcDHlh644pgnGBcWPFwTDC3NVbdSe2jG/FYL3EIfNmqCU6SGMOHa+Ok
+         hkb1i5FcL+PMxeyS6t5TGsRBAyQy8Yn4GO1JgVspqhFx6xG6V1TVSHLRwdr16Gz+q+
+         7S8F8NrwIageHzpG3FvJ2/YbyqkFuA7ROZs0b0jU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Ashok Raj <ashok.raj@intel.com>
-Subject: [PATCH 4.14 15/36] PCI: Fix Intel ACS quirk UPDCR register address
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.9 190/199] ARM: dts: s3c64xx: Fix init order of clock providers
 Date:   Thu, 19 Dec 2019 19:34:32 +0100
-Message-Id: <20191219182900.407406273@linuxfoundation.org>
+Message-Id: <20191219183226.251009553@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,46 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-commit d8558ac8c93d429d65d7490b512a3a67e559d0d4 upstream.
+commit d60d0cff4ab01255b25375425745c3cff69558ad upstream.
 
-According to documentation [0] the correct offset for the Upstream Peer
-Decode Configuration Register (UPDCR) is 0x1014.  It was previously defined
-as 0x1114.
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
-d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
-intended to enforce isolation between PCI devices allowing them to be put
-into separate IOMMU groups.  Due to the wrong register offset the intended
-isolation was not fully enforced.  This is fixed with this patch.
+without this patch:
+[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
+[    0.000000]  epll = 0, arm_clk = 0
 
-Please note that I did not test this patch because I have no hardware that
-implements this register.
+with this patch:
+[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
+[    0.000000]  epll = 24000000, arm_clk = 532000000
 
-[0] https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/4th-gen-core-family-mobile-i-o-datasheet.pdf (page 325)
-Fixes: d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
-Link: https://lore.kernel.org/r/7a3505df-79ba-8a28-464c-88b83eefffa6@kernkonzept.com
-Signed-off-by: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andrew Murray <andrew.murray@arm.com>
-Acked-by: Ashok Raj <ashok.raj@intel.com>
-Cc: stable@vger.kernel.org	# v3.15+
+Cc: <stable@vger.kernel.org>
+Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/s3c6410-mini6410.dts |    4 ++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts |    4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4600,7 +4600,7 @@ int pci_dev_specific_acs_enabled(struct
- #define INTEL_BSPR_REG_BPPD  (1 << 9)
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -167,6 +167,10 @@
+ 	};
+ };
  
- /* Upstream Peer Decode Configuration Register */
--#define INTEL_UPDCR_REG 0x1114
-+#define INTEL_UPDCR_REG 0x1014
- /* 5:0 Peer Decode Enable bits */
- #define INTEL_UPDCR_REG_MASK 0x3f
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -71,6 +71,10 @@
+ 	};
+ };
  
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
 
 
