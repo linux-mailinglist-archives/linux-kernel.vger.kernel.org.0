@@ -2,82 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1AD3126150
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:54:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED611260E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfLSLyb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:54:31 -0500
-Received: from dougal.metanate.com ([90.155.101.14]:56605 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726692AbfLSLya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:54:30 -0500
-X-Greylist: delayed 1185 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 06:54:28 EST
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=+t6meyLimxsT415ahj+53VXcHIGJZ/WJo/94BvkPdTY=; b=UlGRgHp21+xHu2nMO7AWkfEW4A
-        mDEXjAbJflenPqPZLThzcCYXiA70nWlPSpejUMm9Jcsvml+WyBVWjOXD4eosyP1uYGWuIfROYCC06
-        zinHZgjgBhQZ8WcGHE9c8NQFqbilFl5FGF0sw/lZ2Jz4+g0cjJ7j/uqu2LweRSCoDVfh3rVBC+WaU
-        +IJcBeNvDZdbOKOxBKpBKKrt8BHf4ED2A1yj7UuBgrSv41+HDCpDl3yOZxjAc3dGQ+24A9z5DnVnW
-        JrY93X8Es0bzPFnrils6GJxnstoRzH9Q96pgh2vwsV/ruk5O8m67ERaGHKMPgjnKNvhri5baM3skh
-        ZrRIiehA==;
-Received: from 188-39-28-98.static.enta.net ([188.39.28.98] helo=donbot.metanate.com)
-        by email.metanate.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <john@metanate.com>)
-        id 1ihu4k-00024T-7h; Thu, 19 Dec 2019 11:34:38 +0000
-From:   John Keeping <john@metanate.com>
-To:     Minas Harutyunyan <hminas@synopsys.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        John Keeping <john@metanate.com>
-Subject: [PATCH 2/2] usb: dwc2: fix debugfs FIFO count
-Date:   Thu, 19 Dec 2019 11:34:32 +0000
-Message-Id: <20191219113432.1229852-2-john@metanate.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219113432.1229852-1-john@metanate.com>
-References: <20191219113432.1229852-1-john@metanate.com>
+        id S1726768AbfLSLe4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:34:56 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40388 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726656AbfLSLe4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:34:56 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i23so4101700lfo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 03:34:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=UWTcxLjRNGx3qhOx1gaC3pYwCsh+7bFhFzDxuEIhOJc=;
+        b=Uum80g68qNuQv9eN9ufdefnm46JRsfmzhEZHyq6QfRcJOQbqTxuS/KQAJPGLwQTYHe
+         sUxdOonv/QohZXe5sxOMUrpgvKkUnVDrKKPPpYd3KnHvtTns9NkD8gGwZ7wCB2bgDoCI
+         8Enx8vQfP0Vsc5sWcPuQhUabEhz+NGU8GmfZu56uh6P3eCnIMHrteAyKttsBflPhNJLG
+         vXkRvYJN+cW3lMY4EFXOm/6hCPD3Zho8PRIfh6gvKFTg5Z/4hT9CukCTRW/BQH6J9V8z
+         ZxYnJbaigZuiAFxoeQoGjXUe2Bm3RtV4mbGRseLulAzIKhWyEvhu5bsEK1UmY0/siass
+         XhyA==
+X-Gm-Message-State: APjAAAVaNe+/2q1sVdVTooUl+cl374qZF4JTEAZ/qfid57KaGt6aeGxJ
+        JmhVFbM1BEfukMd+oohMp/E=
+X-Google-Smtp-Source: APXvYqyMapJ/JH5Bv0qFxvEqmKYmywXIpq/Yq+KTp6XVcip+HSNOV+6PRF0avcrbDMiRVGfBhnQ3rg==
+X-Received: by 2002:a19:4f46:: with SMTP id a6mr5080638lfk.143.1576755294050;
+        Thu, 19 Dec 2019 03:34:54 -0800 (PST)
+Received: from localhost.localdomain (dyt4gctb359myxd0pkwmt-4.rev.dnainternet.fi. [2001:14bb:430:5140:37cf:5409:8fcc:4495])
+        by smtp.gmail.com with ESMTPSA id t2sm2634098ljj.11.2019.12.19.03.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 03:34:53 -0800 (PST)
+Date:   Thu, 19 Dec 2019 13:34:44 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: bd71828: remove get_voltage operation
+Message-ID: <20191219113444.GA28299@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of FIFOs may be lower than the number of endpoints.  Use the
-correct total when printing FIFO details in debugfs.
+Simplify LDO6 voltage getting on BD71828 by removing the
+get_voltage call-back and providing the fixed voltage in
+regulator_desc instead
 
-Signed-off-by: John Keeping <john@metanate.com>
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Suggested-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/usb/dwc2/debugfs.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/regulator/bd71828-regulator.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/drivers/usb/dwc2/debugfs.c b/drivers/usb/dwc2/debugfs.c
-index b8f2790abf91..3a0dcbfbc827 100644
---- a/drivers/usb/dwc2/debugfs.c
-+++ b/drivers/usb/dwc2/debugfs.c
-@@ -183,6 +183,7 @@ DEFINE_SHOW_ATTRIBUTE(state);
- static int fifo_show(struct seq_file *seq, void *v)
- {
- 	struct dwc2_hsotg *hsotg = seq->private;
-+	int fifo_count = dwc2_hsotg_tx_fifo_count(hsotg);
- 	u32 val;
- 	int idx;
+diff --git a/drivers/regulator/bd71828-regulator.c b/drivers/regulator/bd71828-regulator.c
+index edba51da5661..b2fa17be4988 100644
+--- a/drivers/regulator/bd71828-regulator.c
++++ b/drivers/regulator/bd71828-regulator.c
+@@ -197,15 +197,9 @@ static const struct regulator_ops bd71828_ldo_ops = {
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ };
  
-@@ -196,7 +197,7 @@ static int fifo_show(struct seq_file *seq, void *v)
+-static int bd71828_ldo6_get_voltage(struct regulator_dev *rdev)
+-{
+-	return BD71828_LDO_6_VOLTAGE;
+-}
+-
+ static const struct regulator_ops bd71828_ldo6_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+-	.get_voltage = bd71828_ldo6_get_voltage,
+ 	.is_enabled = regulator_is_enabled_regmap,
+ };
  
- 	seq_puts(seq, "\nPeriodic TXFIFOs:\n");
- 
--	for (idx = 1; idx < hsotg->num_of_eps; idx++) {
-+	for (idx = 1; idx <= fifo_count; idx++) {
- 		val = dwc2_readl(hsotg, DPTXFSIZN(idx));
- 
- 		seq_printf(seq, "\tDPTXFIFO%2d: Size %d, Start 0x%08x\n", idx,
+@@ -697,6 +691,7 @@ static const struct bd71828_regulator_data bd71828_rdata[] = {
+ 			.id = BD71828_LDO6,
+ 			.ops = &bd71828_ldo6_ops,
+ 			.type = REGULATOR_VOLTAGE,
++			.fixed_uV = BD71828_LDO_6_VOLTAGE,
+ 			.n_voltages = 1,
+ 			.enable_reg = BD71828_REG_LDO6_EN,
+ 			.enable_mask = BD71828_MASK_RUN_EN,
+
+base-commit: 522498f8cb8c547f415a9a39fb54fd1f7e1a1eda
 -- 
-2.24.1
+2.21.0
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
