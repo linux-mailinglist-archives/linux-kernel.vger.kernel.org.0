@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E39126A44
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:46:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8C5126A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:46:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729212AbfLSSpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38038 "EHLO mail.kernel.org"
+        id S1729226AbfLSSpq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729188AbfLSSpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:36 -0500
+        id S1728797AbfLSSpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9978A206D7;
-        Thu, 19 Dec 2019 18:45:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE1012465E;
+        Thu, 19 Dec 2019 18:45:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781136;
-        bh=SLLA6soTRudvRmoUb9fkFaD2Y3fKHbuYA00w0PGg8UI=;
+        s=default; t=1576781143;
+        bh=y6rnEU77n16s4mST6pvUdKrdxHfmcibG65MT/rSN5tE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xoYqe/o1pKPFUS9isYjHcxXdYXx2b2/mW7xQt/uWctprhInzQEoOqRO3HhiaaFw5J
-         PI0kau7JRhjG0A2Xjd4uN72EeVHe+CoKxdOdux8wCoJe/VlyC+kSmmR4SGN5FebCIo
-         v26PixWVSikQtfjIyUlhcrhkoHLpFVoCLvC3ukhw=
+        b=wi1UrXoaqzwk0/f1l3cXZvZfP6wl478IsPtnwnj1a2sb6dal20IyOjZ2wI6zSs3i7
+         r6XFbH+sVOUinfVbQKZ9tlqyfSm5C9+/ecIdHtSRLNxAqCRIbIhQ5f+uCEfYm+Udhg
+         KQVvfwQnjQIcK+UnApi9WGBubx4eNpNdxIlMO7z0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.9 098/199] USB: uas: heed CAPACITY_HEURISTICS
-Date:   Thu, 19 Dec 2019 19:33:00 +0100
-Message-Id: <20191219183220.335219691@linuxfoundation.org>
+        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 100/199] staging: rtl8188eu: fix interface sanity check
+Date:   Thu, 19 Dec 2019 19:33:02 +0100
+Message-Id: <20191219183220.438131683@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -42,37 +42,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 335cbbd5762d5e5c67a8ddd6e6362c2aa42a328f upstream.
+commit 74ca34118a0e05793935d804ccffcedd6eb56596 upstream.
 
-There is no need to ignore this flag. We should be as close
-to storage in that regard as makes sense, so honor flags whose
-cost is tiny.
+Make sure to use the current alternate setting when verifying the
+interface descriptors to avoid binding to an invalid interface.
 
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191114112758.32747-3-oneukum@suse.com
+Failing to do so could cause the driver to misbehave or trigger a WARN()
+in usb_submit_urb() that kernels with panic_on_warn set would choke on.
+
+Fixes: c2478d39076b ("staging: r8188eu: Add files for new driver - part 20")
+Cc: stable <stable@vger.kernel.org>     # 3.12
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Link: https://lore.kernel.org/r/20191210114751.5119-2-johan@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/staging/rtl8188eu/os_dep/usb_intf.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -845,6 +845,12 @@ static int uas_slave_configure(struct sc
- 		sdev->fix_capacity = 1;
+--- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
++++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
+@@ -78,7 +78,7 @@ static struct dvobj_priv *usb_dvobj_init
+ 	phost_conf = pusbd->actconfig;
+ 	pconf_desc = &phost_conf->desc;
  
- 	/*
-+	 * in some cases we have to guess
-+	 */
-+	if (devinfo->flags & US_FL_CAPACITY_HEURISTICS)
-+		sdev->guess_capacity = 1;
-+
-+	/*
- 	 * Some devices don't like MODE SENSE with page=0x3f,
- 	 * which is the command used for checking if a device
- 	 * is write-protected.  Now that we tell the sd driver
+-	phost_iface = &usb_intf->altsetting[0];
++	phost_iface = usb_intf->cur_altsetting;
+ 	piface_desc = &phost_iface->desc;
+ 
+ 	pdvobjpriv->NumInterfaces = pconf_desc->bNumInterfaces;
 
 
