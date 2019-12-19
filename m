@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB7F9126AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9DB8126AAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbfLSSw1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46984 "EHLO mail.kernel.org"
+        id S1729863AbfLSSts (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:49:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730263AbfLSSwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:23 -0500
+        id S1729850AbfLSStq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF7E3227BF;
-        Thu, 19 Dec 2019 18:52:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8217E24672;
+        Thu, 19 Dec 2019 18:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781542;
-        bh=+QFZ0PqQXFrX1Li2tQ3mjalt/hJvFDccFtVHz/pMezo=;
+        s=default; t=1576781386;
+        bh=o3ktvA+EiatetoIy9/RAgk8wlz/pnSPTx9v3FR2top8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SAQaZNAkFCJAWucfa2tjGkDpA/GxtaaIUQA3nd0dXVINN3fRVDS+HVGJee6qhX0EQ
-         Cn57ikkqeWfFjbmOuNvZGtLPwwuiJNIMS8BhbtPw56sflRqAliYapqBf15ZHyEUv/d
-         rJdm6gL3awhG+w070wMymalECBlk7ABFiYhr6aLQ=
+        b=GK0fU52NNHAPwU1+CdAW4uC+/PRMcldfMYCIdU50zY7nQomgDDjRHYIBfuYbsimhT
+         SL6kQ55LrMuuqlND/eiq0WPjHCGQ5W1cBMw9sBPe9BUJHfDoyDOav7ErOryypDSWLY
+         FeAjeGAT7AV46vB+hRGtbjh+b3FXCYlTiCOSAGdY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 4.19 27/47] rpmsg: glink: Put an extra reference during cleanup
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@nokia.com>,
+        "David S. Miller" <davem@davemloft.net>, Aviraj CJ <acj@cisco.com>
+Subject: [PATCH 4.9 199/199] net: stmmac: dont stop NAPI processing when dropping a packet
 Date:   Thu, 19 Dec 2019 19:34:41 +0100
-Message-Id: <20191219182932.332192007@linuxfoundation.org>
+Message-Id: <20191219183226.843312108@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,39 +43,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Lew <clew@codeaurora.org>
+From: Aaro Koskinen <aaro.koskinen@nokia.com>
 
-commit b646293e272816dd0719529dcebbd659de0722f7 upstream.
+commit 07b3975352374c3f5ebb4a42ef0b253fe370542d upstream.
 
-In a remote processor crash scenario, there is no guarantee the remote
-processor sent close requests before it went into a bad state. Remove
-the reference that is normally handled by the close command in the
-so channel resources can be released.
+Currently, if we drop a packet, we exit from NAPI loop before the budget
+is consumed. In some situations this will make the RX processing stall
+e.g. when flood pinging the system with oversized packets, as the
+errorneous packets are not dropped efficiently.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Reported-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+If we drop a packet, we should just continue to the next one as long as
+the budget allows.
+
+Signed-off-by: Aaro Koskinen <aaro.koskinen@nokia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+[acj: backport v4.9 -stable
+-adjust context]
+Signed-off-by: Aviraj CJ <acj@cisco.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/rpmsg/qcom_glink_native.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1644,6 +1644,10 @@ void qcom_glink_native_remove(struct qco
- 	idr_for_each_entry(&glink->lcids, channel, cid)
- 		kref_put(&channel->refcount, qcom_glink_channel_release);
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -2499,8 +2499,7 @@ static inline void stmmac_rx_refill(stru
+  */
+ static int stmmac_rx(struct stmmac_priv *priv, int limit)
+ {
+-	unsigned int entry = priv->cur_rx;
+-	unsigned int next_entry;
++	unsigned int next_entry = priv->cur_rx;
+ 	unsigned int count = 0;
+ 	int coe = priv->hw->rx_csum;
  
-+	/* Release any defunct local channels, waiting for close-req */
-+	idr_for_each_entry(&glink->rcids, channel, cid)
-+		kref_put(&channel->refcount, qcom_glink_channel_release);
+@@ -2516,10 +2515,12 @@ static int stmmac_rx(struct stmmac_priv
+ 		priv->hw->desc->display_ring(rx_head, DMA_RX_SIZE, true);
+ 	}
+ 	while (count < limit) {
+-		int status;
++		int entry, status;
+ 		struct dma_desc *p;
+ 		struct dma_desc *np;
+ 
++		entry = next_entry;
 +
- 	idr_destroy(&glink->lcids);
- 	idr_destroy(&glink->rcids);
- 	spin_unlock_irqrestore(&glink->idr_lock, flags);
+ 		if (priv->extend_desc)
+ 			p = (struct dma_desc *)(priv->dma_erx + entry);
+ 		else
+@@ -2584,7 +2585,7 @@ static int stmmac_rx(struct stmmac_priv
+ 				       priv->dev->name, frame_len,
+ 				       priv->dma_buf_sz);
+ 				priv->dev->stats.rx_length_errors++;
+-				break;
++				continue;
+ 			}
+ 
+ 			/* ACS is set; GMAC core strips PAD/FCS for IEEE 802.3
+@@ -2615,7 +2616,7 @@ static int stmmac_rx(struct stmmac_priv
+ 						dev_warn(priv->device,
+ 							 "packet dropped\n");
+ 					priv->dev->stats.rx_dropped++;
+-					break;
++					continue;
+ 				}
+ 
+ 				dma_sync_single_for_cpu(priv->device,
+@@ -2638,7 +2639,7 @@ static int stmmac_rx(struct stmmac_priv
+ 					pr_err("%s: Inconsistent Rx chain\n",
+ 					       priv->dev->name);
+ 					priv->dev->stats.rx_dropped++;
+-					break;
++					continue;
+ 				}
+ 				prefetch(skb->data - NET_IP_ALIGN);
+ 				priv->rx_skbuff[entry] = NULL;
+@@ -2672,7 +2673,6 @@ static int stmmac_rx(struct stmmac_priv
+ 			priv->dev->stats.rx_packets++;
+ 			priv->dev->stats.rx_bytes += frame_len;
+ 		}
+-		entry = next_entry;
+ 	}
+ 
+ 	stmmac_rx_refill(priv);
 
 
