@@ -2,77 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5390C1271E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:56:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A6B1271DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfLSX4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 18:56:50 -0500
-Received: from baldur.buserror.net ([165.227.176.147]:43332 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfLSX4u (ORCPT
+        id S1727070AbfLSX4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 18:56:18 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:41101 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbfLSX4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:56:50 -0500
-Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1ii5cf-0001SV-7t; Thu, 19 Dec 2019 17:54:25 -0600
-Message-ID: <7f0bd277632942acbdc0c41c6cd149d8543c2b3e.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     yingjie_bai@126.com, Kumar Gala <galak@kernel.crashing.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Bai Yingjie <byj.tea@gmail.com>
-Date:   Thu, 19 Dec 2019 17:54:24 -0600
-In-Reply-To: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
-References: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: yingjie_bai@126.com, galak@kernel.crashing.org, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, byj.tea@gmail.com
-X-SA-Exim-Mail-From: oss@buserror.net
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
-X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=5.0 tests=ALL_TRUSTED,BAYES_00
-        autolearn=ham autolearn_force=no version=3.4.2
-X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
-        *      [score: 0.0000]
-Subject: Re: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for
- 64bit boot entry
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
+        Thu, 19 Dec 2019 18:56:18 -0500
+Received: by mail-yw1-f68.google.com with SMTP id l22so2888679ywc.8;
+        Thu, 19 Dec 2019 15:56:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ARCZQqxf+0FzEB5iVazPT6aK74bYUEn3HXg9HU6qLcQ=;
+        b=ft4CGVGj9P3ADcFH2s0rWIZqKgjcZUAA3MNbf05NPZY1mM00zhiVvN3jLvPpb0R6pt
+         x0dfNuNC1ocn2NFfsusOGDrZZndPGS7VHWjI5p/bW5Omi+gW+m66YyjHihnPnaeA3MAo
+         eqjYbQp6cN6r8NFjkL2Pp57Q1/tKYIoW6cX0drdwMONW8en25UwQOedK8uyxp/7K5RLP
+         qUUkVTsHmHUImGghHFxgc10q0VPKZbygYyXYinLRUatc+UgiWQ4DOt0MqOiYG+fvN6E/
+         5LsNC9J5zmRNIqjeVoPXxmSZmRzb7LC5Zcgp0BXYjj06cgtPm2Xofwg94E6nEK7qNTDV
+         g4cg==
+X-Gm-Message-State: APjAAAXlE5zB2Inxl/qOD11wKhG4NmYG0ATeotWUo+1Ud98tdeJ/CtJq
+        bPlosmROMD1xgSJ2gIHjYzSd/Rg=
+X-Google-Smtp-Source: APXvYqywBAQDOyS21IT+zvRVl4XolNmnzFYexAWz8fo5ibiktWXARwDGoYAPr7Xhqa1RU911jzX1Pg==
+X-Received: by 2002:a9d:5885:: with SMTP id x5mr11347193otg.132.1576799776295;
+        Thu, 19 Dec 2019 15:56:16 -0800 (PST)
+Received: from localhost (ip-184-205-174-147.ftwttx.spcsdns.net. [184.205.174.147])
+        by smtp.gmail.com with ESMTPSA id z12sm2730992oti.22.2019.12.19.15.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 15:56:15 -0800 (PST)
+Date:   Thu, 19 Dec 2019 17:56:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chen-Yu Tsai <wens@kernel.org>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@kernel.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH 01/14] dt-bindings: media: sun4i-csi: Add compatible for
+ CSI1 on A10/A20
+Message-ID: <20191219235613.GA9523@bogus>
+References: <20191215165924.28314-1-wens@kernel.org>
+ <20191215165924.28314-2-wens@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191215165924.28314-2-wens@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-11-25 at 23:15 +0800, yingjie_bai@126.com wrote:
-> From: Bai Yingjie <byj.tea@gmail.com>
+On Mon, 16 Dec 2019 00:59:11 +0800, Chen-Yu Tsai wrote:
+> From: Chen-Yu Tsai <wens@csie.org>
 > 
-> CPU like P4080 has 36bit physical address, its DDR physical
-> start address can be configured above 4G by LAW registers.
+> The CSI1 block has the same structure and layout as the CSI0 block.
+> Differences include:
 > 
-> For such systems in which their physical memory start address was
-> configured higher than 4G, we need also to write addr_h into the spin
-> table of the target secondary CPU, so that addr_h and addr_l together
-> represent a 64bit physical address.
-> Otherwise the secondary core can not get correct entry to start from.
+>   - Only one channel in BT.656 instead of four in CSI0
+>   - 10-bit raw data input vs 8-bit in CSI0
+>   - 24-bit RGB888/YUV444 input vs 16-bit RGB565/YUV422 in CSI0
+>   - No ISP hardware
 > 
-> This should do no harm for normal case where addr_h is all 0.
+> The hardware found in the A20 is the same as in the A10.
 > 
-> Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  arch/powerpc/platforms/85xx/smp.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  .../bindings/media/allwinner,sun4i-a10-csi.yaml       | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
 
-Acked-by: Scott Wood <oss@buserror.net>
-
--Scott
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
