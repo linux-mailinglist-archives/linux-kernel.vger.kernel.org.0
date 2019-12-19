@@ -2,41 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1419126BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CC12126B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfLSS7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:59:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47848 "EHLO mail.kernel.org"
+        id S1730756AbfLSS4C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:56:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728282AbfLSSxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:53:02 -0500
+        id S1730546AbfLSSz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:55:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A563924682;
-        Thu, 19 Dec 2019 18:53:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB85D24676;
+        Thu, 19 Dec 2019 18:55:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781581;
-        bh=p8dB0fu0e6zGFu9JknCYcoZlcc9X7MljYCt2XpIyreY=;
+        s=default; t=1576781757;
+        bh=l20x0N8iOE800no7wscCQ9zrDlT0O+piafAQgz+VTc4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DXFp4MClZQuxpfgPYJoiI1ki9ODBKQ5tbtfrEEQ3i9bgSDJKNTX/t9C/yLjiq052c
-         lhB03s/1xSwcLB71TlRq/2Mj8y8kcYcX0wtj6ipM+T66K9w2GExiv4CsIL5QdCz3Ea
-         g08f0t5CY8Y9/uYKdFnkd5tVqlW7gwNHcVN2Tzbs=
+        b=qWxI4bTBWNpFTK7ZKxm0w/8mcR1FyMLsE8ZJs7TK7pCOf7bfB61AUKflYiR/d1ODn
+         x3uizOuBupqBz5yhMcWSZ2iceEJH41VCXomd113Iuh/zBP5uVLFH/39cPP7DeccFlR
+         2YcoKIw3DJ6IyEdHraCawPYH/hImPxgWXsdGuA/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.19 44/47] scsi: iscsi: Fix a potential deadlock in the timeout handler
-Date:   Thu, 19 Dec 2019 19:34:58 +0100
-Message-Id: <20191219182952.440917660@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        David Airlie <airlied@redhat.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Juston Li <juston.li@intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 5.4 67/80] drm/nouveau/kms/nv50-: Store the bpc were using in nv50_head_atom
+Date:   Thu, 19 Dec 2019 19:34:59 +0100
+Message-Id: <20191219183138.336254526@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,119 +50,186 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 5480e299b5ae57956af01d4839c9fc88a465eeab upstream.
+commit ac2d9275f371346922b31a388bbaa6a54f1154a4 upstream.
 
-Some time ago the block layer was modified such that timeout handlers are
-called from thread context instead of interrupt context. Make it safe to
-run the iSCSI timeout handler in thread context. This patch fixes the
-following lockdep complaint:
+In order to be able to use bpc values that are different from what the
+connector reports, we want to be able to store the bpc value we decide
+on using for an atomic state in nv50_head_atom and refer to that instead
+of simply using the value that the connector reports throughout the
+whole atomic check phase and commit phase. This will let us (eventually)
+implement the max bpc connector property, and will also be needed for
+limiting the bpc we use on MST displays to 8 in the next commit.
 
-================================
-WARNING: inconsistent lock state
-5.5.1-dbg+ #11 Not tainted
---------------------------------
-inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
-kworker/7:1H/206 [HC0[0]:SC0[0]:HE1:SE1] takes:
-ffff88802d9827e8 (&(&session->frwd_lock)->rlock){+.?.}, at: iscsi_eh_cmd_timed_out+0xa6/0x6d0 [libiscsi]
-{IN-SOFTIRQ-W} state was registered at:
-  lock_acquire+0x106/0x240
-  _raw_spin_lock+0x38/0x50
-  iscsi_check_transport_timeouts+0x3e/0x210 [libiscsi]
-  call_timer_fn+0x132/0x470
-  __run_timers.part.0+0x39f/0x5b0
-  run_timer_softirq+0x63/0xc0
-  __do_softirq+0x12d/0x5fd
-  irq_exit+0xb3/0x110
-  smp_apic_timer_interrupt+0x131/0x3d0
-  apic_timer_interrupt+0xf/0x20
-  default_idle+0x31/0x230
-  arch_cpu_idle+0x13/0x20
-  default_idle_call+0x53/0x60
-  do_idle+0x38a/0x3f0
-  cpu_startup_entry+0x24/0x30
-  start_secondary+0x222/0x290
-  secondary_startup_64+0xa4/0xb0
-irq event stamp: 1383705
-hardirqs last  enabled at (1383705): [<ffffffff81aace5c>] _raw_spin_unlock_irq+0x2c/0x50
-hardirqs last disabled at (1383704): [<ffffffff81aacb98>] _raw_spin_lock_irq+0x18/0x50
-softirqs last  enabled at (1383690): [<ffffffffa0e2efea>] iscsi_queuecommand+0x76a/0xa20 [libiscsi]
-softirqs last disabled at (1383682): [<ffffffffa0e2e998>] iscsi_queuecommand+0x118/0xa20 [libiscsi]
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&(&session->frwd_lock)->rlock);
-  <Interrupt>
-    lock(&(&session->frwd_lock)->rlock);
-
- *** DEADLOCK ***
-
-2 locks held by kworker/7:1H/206:
- #0: ffff8880d57bf928 ((wq_completion)kblockd){+.+.}, at: process_one_work+0x472/0xab0
- #1: ffff88802b9c7de8 ((work_completion)(&q->timeout_work)){+.+.}, at: process_one_work+0x476/0xab0
-
-stack backtrace:
-CPU: 7 PID: 206 Comm: kworker/7:1H Not tainted 5.5.1-dbg+ #11
-Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
-Workqueue: kblockd blk_mq_timeout_work
-Call Trace:
- dump_stack+0xa5/0xe6
- print_usage_bug.cold+0x232/0x23b
- mark_lock+0x8dc/0xa70
- __lock_acquire+0xcea/0x2af0
- lock_acquire+0x106/0x240
- _raw_spin_lock+0x38/0x50
- iscsi_eh_cmd_timed_out+0xa6/0x6d0 [libiscsi]
- scsi_times_out+0xf4/0x440 [scsi_mod]
- scsi_timeout+0x1d/0x20 [scsi_mod]
- blk_mq_check_expired+0x365/0x3a0
- bt_iter+0xd6/0xf0
- blk_mq_queue_tag_busy_iter+0x3de/0x650
- blk_mq_timeout_work+0x1af/0x380
- process_one_work+0x56d/0xab0
- worker_thread+0x7a/0x5d0
- kthread+0x1bc/0x210
- ret_from_fork+0x24/0x30
-
-Fixes: 287922eb0b18 ("block: defer timeouts to a workqueue")
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Lee Duncan <lduncan@suse.com>
-Cc: Chris Leech <cleech@redhat.com>
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191209173457.187370-1-bvanassche@acm.org
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: 232c9eec417a ("drm/nouveau: Use atomic VCPI helpers for MST")
+Cc: Ben Skeggs <bskeggs@redhat.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: David Airlie <airlied@redhat.com>
+Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+Cc: Harry Wentland <harry.wentland@amd.com>
+Cc: Juston Li <juston.li@intel.com>
+Cc: Sean Paul <seanpaul@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: <stable@vger.kernel.org> # v5.1+
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/libiscsi.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/atom.h |    1 
+ drivers/gpu/drm/nouveau/dispnv50/disp.c |   57 ++++++++++++++++++--------------
+ drivers/gpu/drm/nouveau/dispnv50/head.c |    5 +-
+ 3 files changed, 36 insertions(+), 27 deletions(-)
 
---- a/drivers/scsi/libiscsi.c
-+++ b/drivers/scsi/libiscsi.c
-@@ -1983,7 +1983,7 @@ enum blk_eh_timer_return iscsi_eh_cmd_ti
+--- a/drivers/gpu/drm/nouveau/dispnv50/atom.h
++++ b/drivers/gpu/drm/nouveau/dispnv50/atom.h
+@@ -114,6 +114,7 @@ struct nv50_head_atom {
+ 		u8 nhsync:1;
+ 		u8 nvsync:1;
+ 		u8 depth:4;
++		u8 bpc;
+ 	} or;
  
- 	ISCSI_DBG_EH(session, "scsi cmd %p timedout\n", sc);
+ 	/* Currently only used for MST */
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -353,10 +353,20 @@ nv50_outp_atomic_check(struct drm_encode
+ 		       struct drm_crtc_state *crtc_state,
+ 		       struct drm_connector_state *conn_state)
+ {
+-	struct nouveau_connector *nv_connector =
+-		nouveau_connector(conn_state->connector);
+-	return nv50_outp_atomic_check_view(encoder, crtc_state, conn_state,
+-					   nv_connector->native_mode);
++	struct drm_connector *connector = conn_state->connector;
++	struct nouveau_connector *nv_connector = nouveau_connector(connector);
++	struct nv50_head_atom *asyh = nv50_head_atom(crtc_state);
++	int ret;
++
++	ret = nv50_outp_atomic_check_view(encoder, crtc_state, conn_state,
++					  nv_connector->native_mode);
++	if (ret)
++		return ret;
++
++	if (crtc_state->mode_changed || crtc_state->connectors_changed)
++		asyh->or.bpc = connector->display_info.bpc;
++
++	return 0;
+ }
  
--	spin_lock(&session->frwd_lock);
-+	spin_lock_bh(&session->frwd_lock);
- 	task = (struct iscsi_task *)sc->SCp.ptr;
- 	if (!task) {
- 		/*
-@@ -2110,7 +2110,7 @@ enum blk_eh_timer_return iscsi_eh_cmd_ti
- done:
- 	if (task)
- 		task->last_timeout = jiffies;
--	spin_unlock(&session->frwd_lock);
-+	spin_unlock_bh(&session->frwd_lock);
- 	ISCSI_DBG_EH(session, "return %s\n", rc == BLK_EH_RESET_TIMER ?
- 		     "timer reset" : "shutdown or nh");
- 	return rc;
+ /******************************************************************************
+@@ -786,10 +796,10 @@ nv50_msto_atomic_check(struct drm_encode
+ 	 * may have changed after the state was duplicated
+ 	 */
+ 	if (!state->duplicated) {
+-		const int bpp = connector->display_info.bpc * 3;
+ 		const int clock = crtc_state->adjusted_mode.clock;
+ 
+-		asyh->dp.pbn = drm_dp_calc_pbn_mode(clock, bpp);
++		asyh->or.bpc = connector->display_info.bpc;
++		asyh->dp.pbn = drm_dp_calc_pbn_mode(clock, asyh->or.bpc * 3);
+ 	}
+ 
+ 	slots = drm_dp_atomic_find_vcpi_slots(state, &mstm->mgr, mstc->port,
+@@ -802,6 +812,17 @@ nv50_msto_atomic_check(struct drm_encode
+ 	return 0;
+ }
+ 
++static u8
++nv50_dp_bpc_to_depth(unsigned int bpc)
++{
++	switch (bpc) {
++	case  6: return 0x2;
++	case  8: return 0x5;
++	case 10: /* fall-through */
++	default: return 0x6;
++	}
++}
++
+ static void
+ nv50_msto_enable(struct drm_encoder *encoder)
+ {
+@@ -812,7 +833,7 @@ nv50_msto_enable(struct drm_encoder *enc
+ 	struct nv50_mstm *mstm = NULL;
+ 	struct drm_connector *connector;
+ 	struct drm_connector_list_iter conn_iter;
+-	u8 proto, depth;
++	u8 proto;
+ 	bool r;
+ 
+ 	drm_connector_list_iter_begin(encoder->dev, &conn_iter);
+@@ -841,14 +862,8 @@ nv50_msto_enable(struct drm_encoder *enc
+ 	else
+ 		proto = 0x9;
+ 
+-	switch (mstc->connector.display_info.bpc) {
+-	case  6: depth = 0x2; break;
+-	case  8: depth = 0x5; break;
+-	case 10:
+-	default: depth = 0x6; break;
+-	}
+-
+-	mstm->outp->update(mstm->outp, head->base.index, armh, proto, depth);
++	mstm->outp->update(mstm->outp, head->base.index, armh, proto,
++			   nv50_dp_bpc_to_depth(armh->or.bpc));
+ 
+ 	msto->head = head;
+ 	msto->mstc = mstc;
+@@ -1502,20 +1517,14 @@ nv50_sor_enable(struct drm_encoder *enco
+ 					lvds.lvds.script |= 0x0200;
+ 			}
+ 
+-			if (nv_connector->base.display_info.bpc == 8)
++			if (asyh->or.bpc == 8)
+ 				lvds.lvds.script |= 0x0200;
+ 		}
+ 
+ 		nvif_mthd(&disp->disp->object, 0, &lvds, sizeof(lvds));
+ 		break;
+ 	case DCB_OUTPUT_DP:
+-		if (nv_connector->base.display_info.bpc == 6)
+-			depth = 0x2;
+-		else
+-		if (nv_connector->base.display_info.bpc == 8)
+-			depth = 0x5;
+-		else
+-			depth = 0x6;
++		depth = nv50_dp_bpc_to_depth(asyh->or.bpc);
+ 
+ 		if (nv_encoder->link & 1)
+ 			proto = 0x8;
+@@ -1666,7 +1675,7 @@ nv50_pior_enable(struct drm_encoder *enc
+ 	nv50_outp_acquire(nv_encoder);
+ 
+ 	nv_connector = nouveau_encoder_connector_get(nv_encoder);
+-	switch (nv_connector->base.display_info.bpc) {
++	switch (asyh->or.bpc) {
+ 	case 10: asyh->or.depth = 0x6; break;
+ 	case  8: asyh->or.depth = 0x5; break;
+ 	case  6: asyh->or.depth = 0x2; break;
+--- a/drivers/gpu/drm/nouveau/dispnv50/head.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
+@@ -81,18 +81,17 @@ nv50_head_atomic_check_dither(struct nv5
+ 			      struct nv50_head_atom *asyh,
+ 			      struct nouveau_conn_atom *asyc)
+ {
+-	struct drm_connector *connector = asyc->state.connector;
+ 	u32 mode = 0x00;
+ 
+ 	if (asyc->dither.mode == DITHERING_MODE_AUTO) {
+-		if (asyh->base.depth > connector->display_info.bpc * 3)
++		if (asyh->base.depth > asyh->or.bpc * 3)
+ 			mode = DITHERING_MODE_DYNAMIC2X2;
+ 	} else {
+ 		mode = asyc->dither.mode;
+ 	}
+ 
+ 	if (asyc->dither.depth == DITHERING_DEPTH_AUTO) {
+-		if (connector->display_info.bpc >= 8)
++		if (asyh->or.bpc >= 8)
+ 			mode |= DITHERING_DEPTH_8BPC;
+ 	} else {
+ 		mode |= asyc->dither.depth;
 
 
