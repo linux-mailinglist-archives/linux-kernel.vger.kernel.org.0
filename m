@@ -2,89 +2,193 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 955E3125E88
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68233125E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:08:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfLSKH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:07:59 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:45445 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbfLSKH7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:07:59 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id d951a01c;
-        Thu, 19 Dec 2019 09:11:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=grSjh8ZYo6kNeSpD6HM/l+7r1Mo=; b=FV3R3e
-        Z6vTu1Jr9LLECtX9dsaP1iiZ+lIz33emDMD/YS2L4FJB/MyhPSeZHv2KIVIYOAtv
-        QRDW3qwEVNWSfqry1i+rS0huWRSvMDrUzYT/QMV9ezVh+WJkkMgQPoFh2YI237hK
-        4HbuJHjVkCzVQ0Kmv135pe/9AdelFZS36CbwrZugN2P7tlHc7YFE0qEnshUi6/E4
-        lwlEfa/NwBcPfIlkygjnTofXbR0pZwWLI4rQWCqyJZvSoeHdk0AGhDbK4IzZs756
-        vAZ/Zp21022VIZe7OvZJ4X13jYZAqkdEGUEyaHm2B6rFQ+Ir3h1nKfrDVvnh/ElS
-        kbJ5jAYRG40RwveQ==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3f89190a (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 19 Dec 2019 09:11:15 +0000 (UTC)
-Received: by mail-ot1-f46.google.com with SMTP id w1so6592527otg.3;
+        id S1726779AbfLSKIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:08:09 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:56753 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726759AbfLSKII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:08:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576750087;
+        h=from:from:reply-to:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:in-reply-to:in-reply-to:  references:references;
+        bh=l5IEbrYkGbA+uzv9F0SWz6YFiqb5Twn8DMBOAdSn76Y=;
+        b=KTho/DViCc5AWl1AGQcI7ufSxZF4Ava155m0ykf6ynt5nHq2ddW+w/eHdRgySS0AWNjlv2
+        4c6pFwhf8IvCwY15Fo8+4oN2/MICbPfCDq8oYovJmkQEcnVtrl6WuPrPD3jsYSHI29B+aK
+        abFfNk77+TA5+UBT0pTdXa1bvOmwgN0=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-71-LYut9MbhNLSAp9WcIvklOg-1; Thu, 19 Dec 2019 05:07:55 -0500
+X-MC-Unique: LYut9MbhNLSAp9WcIvklOg-1
+Received: by mail-qk1-f199.google.com with SMTP id a6so639565qkl.7
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:07:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to;
+        bh=l5IEbrYkGbA+uzv9F0SWz6YFiqb5Twn8DMBOAdSn76Y=;
+        b=hdOwNMqJvV1rClDXC2darqftIS10a6ETJd7uX6p94cCclOzBaAw33KNjadAex8lMQA
+         +FII1G1wjFtNxDfTRP562aWgLFABYe8sflfT2ZKLl4fey+qQygMRGkhsArgR9x+0H/yf
+         aqQZu+tWOERgQWVr8u8mI7Ngt6ictiSbwGxMyStyjEo8V9Pmwchjqqm8W5itHiIADzdh
+         xmGCbqQ1aOkrPcRbk8FHkC9vO/SpXVIHtkAlg+UA5+2Ur+mBG9Az9+JRixJKCun1mF74
+         qaryuC7rj7VwtYSUR1PIyfx5ZB3ByGbYHudcK98IZzOY5B68DLLuRfI91kQngqPU2Erw
+         buyA==
+X-Gm-Message-State: APjAAAVkwBCPFiKfIPqFh2PBxtcTGhRGwzpTAqNREKEEAlxnISnA+xvt
+        fYwM0gKYyHOjUK70GHpKkoh1nDGsFxyfyzSAKKR+P7qNwSbeoUElH6soBDKuGD2/4D71woezvH/
+        95C6HW/nHNSxP2HzOZ+AqbHtC
+X-Received: by 2002:a05:6214:1150:: with SMTP id b16mr6773874qvt.71.1576750075526;
         Thu, 19 Dec 2019 02:07:55 -0800 (PST)
-X-Gm-Message-State: APjAAAXzTUvVKi21zlhv2EqryQPE7eu6as1VO8E6JYfOHw8RZqywGfzH
-        5kEA/gWw6MXV6lYmPYezSZJZ2NfKrDH6Y5z/8oE=
-X-Google-Smtp-Source: APXvYqzwOVzplTvcddAygWVCVuqVraVrkajgnmf85Z8HESCRMPzl+88fjE14dVdEE+NGWAqidEvjjCceKSo3+7NE680=
-X-Received: by 2002:a9d:4f18:: with SMTP id d24mr2423429otl.179.1576750074960;
- Thu, 19 Dec 2019 02:07:54 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzGQHlbLu28ChVwBf+PQOYB9WLnMKuof8pJdCAO3zkW4CCjNgvuJfhbmqigII0eHNeYPs9//A==
+X-Received: by 2002:a05:6214:1150:: with SMTP id b16mr6773857qvt.71.1576750075235;
+        Thu, 19 Dec 2019 02:07:55 -0800 (PST)
+Received: from localhost (ip70-163-223-149.ph.ph.cox.net. [70.163.223.149])
+        by smtp.gmail.com with ESMTPSA id w21sm1769397qth.17.2019.12.19.02.07.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 02:07:54 -0800 (PST)
+Date:   Thu, 19 Dec 2019 03:07:47 -0700
+From:   Jerry Snitselaar <jsnitsel@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+Subject: Re: [PATCH v2] tpm_tis: reserve chip for duration of
+ tpm_tis_core_init
+Message-ID: <20191219100747.fhbqmzk7xby3tt3l@cantor>
+Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
+Mail-Followup-To: Dan Williams <dan.j.williams@intel.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian Bundy <christianbundy@fraction.io>,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        stable <stable@vger.kernel.org>, linux-integrity@vger.kernel.org
+References: <20191211231758.22263-1-jsnitsel@redhat.com>
+ <20191211235455.24424-1-jsnitsel@redhat.com>
+ <5aef0fbe28ed23b963c53d61445b0bac6f108642.camel@linux.intel.com>
+ <CAPcyv4h60z889bfbiwvVhsj6MxmOPiPY8ZuPB_skxkZx-N+OGw@mail.gmail.com>
+ <20191217020022.knh7uxt4pn77wk5m@cantor>
+ <CAPcyv4iepQup4bwMuWzq6r5gdx83hgYckUWFF7yF=rszjz3dtQ@mail.gmail.com>
+ <5d0763334def7d7ae1e7cf931ef9b14184dce238.camel@linux.intel.com>
+ <20191217171844.huqlj5csr262zkkk@cantor>
+ <37f4ed0d6145dbe1e8724a5d05d0da82b593bf9c.camel@linux.intel.com>
+ <CAPcyv4h8sK+geVvBb1534V9CgdvOnkpPeStV3B8Q1Qdve3is0A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191208232734.225161-1-Jason@zx2c4.com> <CACT4Y+bsJVmgbD-WogwU=LfWiPN1JgjBrwx4s8Y14hDd7vqqhQ@mail.gmail.com>
- <CAHmME9o0AparjaaOSoZD14RAW8_AJTfKfcx3Y2ndDAPFNC-MeQ@mail.gmail.com>
- <CACT4Y+Zssd6OZ2-U4kjw18mNthQyzPWZV_gkH3uATnSv1SVDfA@mail.gmail.com>
- <CAHmME9oM=YHMZyg23WEzmZAof=7iv-A01VazB3ihhR99f6X1cg@mail.gmail.com> <CACT4Y+aCEZm_BA5mmVTnK2cR8CQUky5w1qvmb2KpSR4-Pzp4Ow@mail.gmail.com>
-In-Reply-To: <CACT4Y+aCEZm_BA5mmVTnK2cR8CQUky5w1qvmb2KpSR4-Pzp4Ow@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 19 Dec 2019 11:07:43 +0100
-X-Gmail-Original-Message-ID: <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com>
-Message-ID: <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: WireGuard secure network tunnel
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4h8sK+geVvBb1534V9CgdvOnkpPeStV3B8Q1Qdve3is0A@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 10:35 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > Is this precise enough for race
-> > condition bugs?
+On Wed Dec 18 19, Dan Williams wrote:
+>On Wed, Dec 18, 2019 at 3:07 PM Jarkko Sakkinen
+><jarkko.sakkinen@linux.intel.com> wrote:
+>>
+>> On Tue, 2019-12-17 at 10:18 -0700, Jerry Snitselaar wrote:
+>> > On Tue Dec 17 19, Jarkko Sakkinen wrote:
+>> > > On Mon, 2019-12-16 at 18:14 -0800, Dan Williams wrote:
+>> > > > On Mon, Dec 16, 2019 at 6:00 PM Jerry Snitselaar <jsnitsel@redhat.com> wrote:
+>> > > > > On Mon Dec 16 19, Dan Williams wrote:
+>> > > > > > On Mon, Dec 16, 2019 at 4:59 PM Jarkko Sakkinen
+>> > > > > > <jarkko.sakkinen@linux.intel.com> wrote:
+>> > > > > > > On Wed, 2019-12-11 at 16:54 -0700, Jerry Snitselaar wrote:
+>> > > > > > > > Instead of repeatedly calling tpm_chip_start/tpm_chip_stop when
+>> > > > > > > > issuing commands to the tpm during initialization, just reserve the
+>> > > > > > > > chip after wait_startup, and release it when we are ready to call
+>> > > > > > > > tpm_chip_register.
+>> > > > > > > >
+>> > > > > > > > Cc: Christian Bundy <christianbundy@fraction.io>
+>> > > > > > > > Cc: Dan Williams <dan.j.williams@intel.com>
+>> > > > > > > > Cc: Peter Huewe <peterhuewe@gmx.de>
+>> > > > > > > > Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+>> > > > > > > > Cc: Jason Gunthorpe <jgg@ziepe.ca>
+>> > > > > > > > Cc: Stefan Berger <stefanb@linux.vnet.ibm.com>
+>> > > > > > > > Cc: stable@vger.kernel.org
+>> > > > > > > > Cc: linux-integrity@vger.kernel.org
+>> > > > > > > > Fixes: a3fbfae82b4c ("tpm: take TPM chip power gating out of tpm_transmit()")
+>> > > > > > > > Fixes: 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")
+>> > > > > > > > Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+>> > > > > > >
+>> > > > > > > I pushed to my master with minor tweaks and added my tags.
+>> > > > > > >
+>> > > > > > > Please check before I put it to linux-next.
+>> > > > > >
+>> > > > > > I don't see it yet here:
+>> > > > > >
+>> > > > > > http://git.infradead.org/users/jjs/linux-tpmdd.git/shortlog/refs/heads/master
+>> > > > > >
+>> > > > > > However, I wanted to make sure you captured that this does *not* fix
+>> > > > > > the interrupt issue. I.e. make sure you remove the "Fixes:
+>> > > > > > 5b359c7c4372 ("tpm_tis_core: Turn on the TPM before probing IRQ's")"
+>> > > > > > tag.
+>> > > > > >
+>> > > > > > With that said, are you going to include the revert of:
+>> > > > > >
+>> > > > > > 1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+>> > > > >
+>> > > > > Dan, with the above reverted do you still get the screaming interrupt?
+>> > > >
+>> > > > Yes, the screaming interrupt goes away, although it is replaced by
+>> > > > these messages when the driver starts:
+>> > > >
+>> > > > [    3.725131] tpm_tis IFX0740:00: 2.0 TPM (device-id 0x1B, rev-id 16)
+>> > > > [    3.725358] tpm tpm0: tpm_try_transmit: send(): error -5
+>> > > > [    3.725359] tpm tpm0: [Firmware Bug]: TPM interrupt not working,
+>> > > > polling instead
+>> > > >
+>> > > > If the choice is "error message + polled-mode" vs "pinning a cpu with
+>> > > > interrupts" I'd accept the former, but wanted Jarkko with his
+>> > > > maintainer hat to weigh in.
+>> > > >
+>> > > > Is there a simple sanity check I can run to see if the TPM is still
+>> > > > operational in this state?
+>> > >
+>> > > What about T490S?
+>> > >
+>> > > /Jarkko
+>> > >
+>> >
+>> > Hi Jarkko, I'm waiting to hear back from the t490s user, but I imagine
+>> > it still has the problem as well.
+>> >
+>> > Christian, were you able to try this patch and verify it still
+>> > resolves the issue you were having with the kernel failing to get the
+>> > timeouts and durations from the tpm?
+>>
+>> Including those reverts would be a bogus change at this point.
 >
-> It's finding lots of race conditions provoked bugs (I would say it's
-> the most common cause of kernel bugs).
+>I'm failing to see how you arrived at that conclusion.
+>
+>> The fix that I already applied obviously fixes an issue even if
+>> it does not fix all the issues.
+>
+>These patches take a usable system and make it unusable:
+>
+>1ea32c83c699 tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before probing for interrupts
+>5b359c7c4372 tpm_tis_core: Turn on the TPM before probing IRQ's
+>
+>...they need to be reverted, or the regression needs to be fixed, but
+>asserting that you fixed something else unrelated does not help.
+>
 
-I meant -- are the reproducers it makes precise enough to retrigger
-network-level race conditions?
+Reverting 1ea32c83c699 ("tpm_tis_core: Set TPM_CHIP_FLAG_IRQ before
+probing for interrupts") would at least allow people impacted by this
+to boot their systems without disabling the tpm, or blacklisting the
+module while we figure this out. From what I can tell the tpm_tis code
+was operating in that state since 570a36097f30 ("tpm: drop 'irq' from
+struct tpm_vendor_specific") until Stefan's patch.
 
-> Well, you are missing that wireguard is not the only subsystem
-> syzkaller tests (in fact, it does not test it at all) and there are
-> 3000 other subsystems :)
+Regards,
+Jerry
 
-Oooo! Everything is tested at the same time. I understand now; that
-makes a lot more sense.
-
-I'll look into splitting out the option, as you've asked. Note,
-though, that there are currently only three spots that have the "extra
-checks" at the moment, and one of them can be optimized out by the
-compiler with aggressive enough inlining added everywhere. The other
-two will result in an immediately corrupted stack frame that should be
-caught immediately by other things. So for now, I think you can get
-away with turning the debug option off, and you won't be missing much
-from the "extra checks", at least until we add more.
-
-That's exciting about syzcaller having at it with WireGuard. Is there
-some place where I can "see" it fuzzing WireGuard, or do I just wait
-for the bug reports to come rolling in?
-
-Jason
