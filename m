@@ -2,77 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 404951267E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:17:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6791E1267E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:19:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfLSRRK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:17:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40862 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbfLSRRJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:17:09 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 967E824679;
-        Thu, 19 Dec 2019 17:17:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576775828;
-        bh=MzC3dLLt7wxhUDAIJyt8yIc7gxTOe+1dNpFUlIRQ9H8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lT5qCXuwnJRyIN8zWcqKwZVkFnhboCavPIHO9Q8VxksUoUp/m8n2LclOLDgtITJiE
-         E2ysJY6QQRQUyfluVszquWH7at0CuP/Y9HAwqD70oz9WyyDO7OBE/8TSdmce15D8Eg
-         KgDyfRtCIhwc0BgFQH3Md8P/IfD5sgZur1IgiKk4=
-Date:   Thu, 19 Dec 2019 18:17:05 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     patrick.rudolph@9elements.com
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Alexios Zavras <alexios.zavras@intel.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Samuel Holland <samuel@sholland.org>,
-        Julius Werner <jwerner@chromium.org>
-Subject: Re: [PATCH v3 1/2] firmware: google: Expose CBMEM over sysfs
-Message-ID: <20191219171705.GA2092676@kroah.com>
-References: <20191128125100.14291-1-patrick.rudolph@9elements.com>
- <20191128125100.14291-2-patrick.rudolph@9elements.com>
+        id S1726905AbfLSRTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:19:14 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:49576 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726797AbfLSRTN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:19:13 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 2CDC528E9F9
+Received: by earth.universe (Postfix, from userid 1000)
+        id 1B6663C0C7B; Thu, 19 Dec 2019 18:19:10 +0100 (CET)
+Date:   Thu, 19 Dec 2019 18:19:10 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] power_supply: Add additional health properties to
+ the header
+Message-ID: <20191219171910.wbx4ry6hgip6g4fm@earth.universe>
+References: <20191029200201.24483-1-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rfodonbtdmwl44qm"
 Content-Disposition: inline
-In-Reply-To: <20191128125100.14291-2-patrick.rudolph@9elements.com>
+In-Reply-To: <20191029200201.24483-1-dmurphy@ti.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 01:50:50PM +0100, patrick.rudolph@9elements.com wrote:
-> +static int cbmem_probe(struct coreboot_device *cdev)
-> +{
-> +	struct device *dev = &cdev->dev;
-> +	struct cb_priv *priv;
-> +	int err;
-> +
-> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	memcpy(&priv->entry, &cdev->cbmem_entry, sizeof(priv->entry));
-> +
-> +	priv->remap = memremap(priv->entry.address,
-> +			       priv->entry.entry_size, MEMREMAP_WB);
-> +	if (!priv->remap) {
-> +		err = -ENOMEM;
-> +		goto failure;
-> +	}
-> +
-> +	err = sysfs_create_group(&dev->kobj, &cb_mem_attr_group);
 
-You just raced with userspace and lost :(
+--rfodonbtdmwl44qm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Set the driver's default attribute group up to point at
-cb_mem_attr_group and the driver core will handle creating and removing
-the group automatically for you correctly.
+Hi Dan,
 
-thanks,
+On Tue, Oct 29, 2019 at 03:01:59PM -0500, Dan Murphy wrote:
+> Add HEALTH_WARM, HEALTH_COOL and HEALTH_HOT to the health enum.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+> ---
 
-greg k-h
+This needs to update /sys/class/power_supply/<supply_name>/health
+entry in Documentation/ABI/testing/sysfs-class-power. Also it needs
+to update power_supply_health_text in drivers/power/supply/power_supply_sys=
+fs.c.
+
+-- Sebastian
+
+>=20
+> v2 - No changes
+>=20
+>  include/linux/power_supply.h | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
+> index 28413f737e7d..bd0d3225f245 100644
+> --- a/include/linux/power_supply.h
+> +++ b/include/linux/power_supply.h
+> @@ -61,6 +61,9 @@ enum {
+>  	POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE,
+>  	POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE,
+>  	POWER_SUPPLY_HEALTH_OVERCURRENT,
+> +	POWER_SUPPLY_HEALTH_WARM,
+> +	POWER_SUPPLY_HEALTH_COOL,
+> +	POWER_SUPPLY_HEALTH_HOT,
+>  };
+> =20
+>  enum {
+> --=20
+> 2.22.0.214.g8dca754b1e
+>=20
+
+--rfodonbtdmwl44qm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl37sQ0ACgkQ2O7X88g7
++po14xAAmDxEnXqbxBAs2CMJUrQnAZA00F70xGwzaZ0QDJPRm2fa5ug0GIWlnN8G
+DVRucn9lsg/PfWcWSXV0lLqh1zIHYMKuyeRzxeQs4Q3cY6ZTf4nwDzlVGBZfVmKD
+zCrJF64eoaYKXmdaB7AB/AJFE52hHDdceu781UB+4OTI8uukXYxy0iFgYBsD5w2o
+y4oLQ668ZnQHIY0Yi6aqpT3ym60SrAUQsdQdt0jMv1k5PkfkLcHBq0YxxHTPxIRO
+d7aY8Nkj9LzET1//SBONnigJA8hgl3LJmc8aIlQFK2uQeTyMVLmcc2CwaInXjWvP
+0zJ/TGua4qOMwD6Cb4g50Zhy4IxJlnnfwQ4Ur1jSDhMU/Ljrx0vgRQqyFwY/0S7C
+TNYY4VB9lWq+LlovKiNiw2uhIM13YLFxB2sRfmjJGDZd9xF6jl/I0Oij1PVpNQ6C
+1fU6wmJm7ybvEheX2mbTOCqCKaKCwVVvY5HYauS74FfFGaLxONDqTz/Ccy+WrVSM
+el+bRnS4M1o7guL+ZjApUTmBguMPnbcNprvGcEYmMDliUXUpeeKJNoh137iS1RPA
+3VnmtgkxOmLVHh2CSsvC2fEPeB9JIIWWykZ7YX6W7y2To3SPVV2Ol4tx2DzxnqHW
+bckeQ5UYGRTo2PFVEsRtcqWBXILOeo2wQnEaCAdXe0YuKuzMY0s=
+=J1KW
+-----END PGP SIGNATURE-----
+
+--rfodonbtdmwl44qm--
