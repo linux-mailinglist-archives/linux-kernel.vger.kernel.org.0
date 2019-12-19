@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B4D126A6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ED4E61269A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:39:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfLSSrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39898 "EHLO mail.kernel.org"
+        id S1728239AbfLSSje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:39:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729406AbfLSSrB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:01 -0500
+        id S1727920AbfLSSj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:39:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF161222C2;
-        Thu, 19 Dec 2019 18:47:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8BF8720716;
+        Thu, 19 Dec 2019 18:39:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781221;
-        bh=thMYs7Pso3z3nCP5kKe2+F7DwqxhPwkfJ29Py85+nNg=;
+        s=default; t=1576780766;
+        bh=2W/pubB/NGofUWGdwzpKRkBMf3PPruaJEe5OyHSlTYM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+2rFN3j0fppUI7HKime6c7p6JXR5w+upInWM38A//xWK2mSYbdMVoNf+Bxw76odA
-         7ejoKwHbkHCAbFi9BGdKOOfuesiAcTReP8XO2iT7J34uF6GqDfDWCrJD61dEePF0Vy
-         CzQ6ixA/DJn8kWxFP2nEGCwrgu70JT1AWUe51vtw=
+        b=Z8dcWiKABoxCGru/2jqhS7SkqDqQBBE2+fDAUte6V4GdFlhMCWCg/qX7hupe54+YH
+         Ta5JNwMdYAP/GtEZmDfMs8GYNRvUhA7lrmAvlyy+n3rlsmHp6UTKUIeLeAs0XiRkLh
+         UvbbHz6TZusIMZb8ZXB6sfomg5CTKKm+anZSxC0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.9 133/199] cpuidle: Do not unset the driver if it is there already
+        stable@vger.kernel.org,
+        Pawel Harlozinski <pawel.harlozinski@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.4 107/162] ASoC: Jack: Fix NULL pointer dereference in snd_soc_jack_report
 Date:   Thu, 19 Dec 2019 19:33:35 +0100
-Message-Id: <20191219183222.434745018@linuxfoundation.org>
+Message-Id: <20191219183214.267661379@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+From: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
 
-commit 918c1fe9fbbe46fcf56837ff21f0ef96424e8b29 upstream.
+commit 8f157d4ff039e03e2ed4cb602eeed2fd4687a58f upstream.
 
-Fix __cpuidle_set_driver() to check if any of the CPUs in the mask has
-a driver different from drv already and, if so, return -EBUSY before
-updating any cpuidle_drivers per-CPU pointers.
+Check for existance of jack before tracing.
+NULL pointer dereference has been reported by KASAN while unloading
+machine driver (snd_soc_cnl_rt274).
 
-Fixes: 82467a5a885d ("cpuidle: simplify multiple driver support")
-Cc: 3.11+ <stable@vger.kernel.org> # 3.11+
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-[ rjw: Subject & changelog ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Pawel Harlozinski <pawel.harlozinski@linux.intel.com>
+Link: https://lore.kernel.org/r/20191112130237.10141-1-pawel.harlozinski@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/cpuidle/driver.c |   15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ sound/soc/soc-jack.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/cpuidle/driver.c
-+++ b/drivers/cpuidle/driver.c
-@@ -61,24 +61,23 @@ static inline void __cpuidle_unset_drive
-  * __cpuidle_set_driver - set per CPU driver variables for the given driver.
-  * @drv: a valid pointer to a struct cpuidle_driver
-  *
-- * For each CPU in the driver's cpumask, unset the registered driver per CPU
-- * to @drv.
-- *
-- * Returns 0 on success, -EBUSY if the CPUs have driver(s) already.
-+ * Returns 0 on success, -EBUSY if any CPU in the cpumask have a driver
-+ * different from drv already.
-  */
- static inline int __cpuidle_set_driver(struct cpuidle_driver *drv)
- {
- 	int cpu;
+--- a/sound/soc/soc-jack.c
++++ b/sound/soc/soc-jack.c
+@@ -80,10 +80,9 @@ void snd_soc_jack_report(struct snd_soc_
+ 	unsigned int sync = 0;
+ 	int enable;
  
- 	for_each_cpu(cpu, drv->cpumask) {
-+		struct cpuidle_driver *old_drv;
+-	trace_snd_soc_jack_report(jack, mask, status);
+-
+ 	if (!jack)
+ 		return;
++	trace_snd_soc_jack_report(jack, mask, status);
  
--		if (__cpuidle_get_cpu_driver(cpu)) {
--			__cpuidle_unset_driver(drv);
-+		old_drv = __cpuidle_get_cpu_driver(cpu);
-+		if (old_drv && old_drv != drv)
- 			return -EBUSY;
--		}
-+	}
+ 	dapm = &jack->card->dapm;
  
-+	for_each_cpu(cpu, drv->cpumask)
- 		per_cpu(cpuidle_drivers, cpu) = drv;
--	}
- 
- 	return 0;
- }
 
 
