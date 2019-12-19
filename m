@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F81126B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D0B1269DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730520AbfLSSye (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:54:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50012 "EHLO mail.kernel.org"
+        id S1728595AbfLSSlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:41:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729720AbfLSSyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:54:31 -0500
+        id S1727815AbfLSSlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:41:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3932920674;
-        Thu, 19 Dec 2019 18:54:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2FAF24672;
+        Thu, 19 Dec 2019 18:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781670;
-        bh=vtycg2qbFBVyk9aM23uGYOQRX/P88p05zOSrazU58Co=;
+        s=default; t=1576780902;
+        bh=Jrwpqvl/NbwnQ3Y/vpkLFz7VYCol0WrRQ/VbLcu30NI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rxTsNQZFcxMVZUeBw8pXZJi6kSw+fPsUB+4CVA3QnqQvfBqxC4NJJiI6cPQRVKLgG
-         5wFVsSc+oqOm8ETzR4Nm+dnMwvB58yL5U89pEme/d3ovHcUQagBKg3ShyYBQgZIum4
-         Eo1JnYB97ARQ0da2yN+C3Mh77XHTOON9u/yZGcgs=
+        b=V67LpTJZ/YKKIMmfu8prbBEmJukchTorNRhaxbRZL8WXX6GoIZJZsy7qRnuoVY3Ka
+         HM1xE9dQs/CzxNaSQ7tVMXOmg8/g/yu5BbUaVe2xVd1fS+l8J7MLXy4MQrVA2ZyWfR
+         Do5Y8ODVF0C2mqlomF23a3VgaDGczpO1/FXw0+AE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.4 31/80] cifs: smbd: Return -EINVAL when the number of iovs exceeds SMBDIRECT_MAX_SGE
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.4 155/162] ARM: dts: s3c64xx: Fix init order of clock providers
 Date:   Thu, 19 Dec 2019 19:34:23 +0100
-Message-Id: <20191219183104.637344341@linuxfoundation.org>
+Message-Id: <20191219183217.213774864@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-commit 37941ea17d3f8eb2f5ac2f59346fab9e8439271a upstream.
+commit d60d0cff4ab01255b25375425745c3cff69558ad upstream.
 
-While it's not friendly to fail user processes that issue more iovs
-than we support, at least we should return the correct error code so the
-user process gets a chance to retry with smaller number of iovs.
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
-Signed-off-by: Long Li <longli@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
+without this patch:
+[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
+[    0.000000]  epll = 0, arm_clk = 0
+
+with this patch:
+[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
+[    0.000000]  epll = 24000000, arm_clk = 532000000
+
+Cc: <stable@vger.kernel.org>
+Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smbdirect.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/s3c6410-mini6410.dts |    4 ++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts |    4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1069,7 +1069,7 @@ static int smbd_post_send_data(
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -167,6 +167,10 @@
+ 	};
+ };
  
- 	if (n_vec > SMBDIRECT_MAX_SGE) {
- 		cifs_dbg(VFS, "Can't fit data to SGL, n_vec=%d\n", n_vec);
--		return -ENOMEM;
-+		return -EINVAL;
- 	}
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -71,6 +71,10 @@
+ 	};
+ };
  
- 	sg_init_table(sgl, n_vec);
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
 
 
