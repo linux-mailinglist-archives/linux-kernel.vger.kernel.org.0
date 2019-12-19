@@ -2,83 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78E4C12593F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 02:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33EC412594B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 02:37:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfLSBbx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 20:31:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726463AbfLSBbx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 20:31:53 -0500
-Received: from paulmck-ThinkPad-P72.home (50-39-105-78.bvtn.or.frontiernet.net [50.39.105.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18D8321D7D;
-        Thu, 19 Dec 2019 01:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576719112;
-        bh=FUwPJOYHJ3OW+g+0iV37qhsarMV4/RI0u2+E1s9aMHY=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=nODoOUVQGeZHE6tBs8bLcmdl0O2kB6Y2oAZaGw67NaKbWGwpDbjfTJh699nk1sTI5
-         uHv+ggA14qkC7AFaAouiaRfggZa7xgFLr7A9/yDW8bu8EDGwn/3hrKch1rSca/O/Pm
-         jB7NiJe4z2xr/o8ioA75zOwgwAs+giv3rhAsa9XE=
-Received: by paulmck-ThinkPad-P72.home (Postfix, from userid 1000)
-        id E23E13522771; Wed, 18 Dec 2019 17:31:51 -0800 (PST)
-Date:   Wed, 18 Dec 2019 17:31:51 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
-Message-ID: <20191219013151.GA21768@paulmck-ThinkPad-P72>
-Reply-To: paulmck@kernel.org
-References: <20191219115036.4699721c@canb.auug.org.au>
- <20191219012726.GY2889@paulmck-ThinkPad-P72>
+        id S1726801AbfLSBhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 20:37:01 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58530 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726463AbfLSBhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 20:37:01 -0500
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8CAE8E6E34F961F4045C;
+        Thu, 19 Dec 2019 09:36:58 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Thu, 19 Dec 2019 09:36:48 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <davem@davemloft.net>, <maowenan@huawei.com>,
+        <edumazet@google.com>, <willemb@google.com>,
+        <maximmi@mellanox.com>, <pabeni@redhat.com>,
+        <yuehaibing@huawei.com>, <nhorman@tuxdriver.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net] af_packet: refactoring code for prb_calc_retire_blk_tmo
+Date:   Thu, 19 Dec 2019 09:33:44 +0800
+Message-ID: <20191219013344.34603-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219012726.GY2889@paulmck-ThinkPad-P72>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 05:27:26PM -0800, Paul E. McKenney wrote:
-> On Thu, Dec 19, 2019 at 11:50:35AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the rcu tree got a conflict in:
-> > 
-> >   kernel/cpu.c
-> > 
-> > between commit:
-> > 
-> >   45178ac0cea8 ("cpu/hotplug, stop_machine: Fix stop_machine vs hotplug order")
-> > 
-> > from the tip tree and commit:
-> > 
-> >   d62c673f4cfc ("cpu/hotplug, stop_machine: Fix stop_machine vs hotplug order")
-> > 
-> > from the rcu tree.
-> > 
-> > I fixed it up (I just used the tip tree version) and can carry the fix
-> > as necessary. This is now fixed as far as linux-next is concerned, but
-> > any non trivial conflicts should be mentioned to your upstream maintainer
-> > when your tree is submitted for merging.  You may also want to consider
-> > cooperating with the maintainer of the conflicting tree to minimise any
-> > particularly complex conflicts.
-> 
-> I will pull this one out of the set that I mark for -next.  That way
-> I can test and you can avoid at least this one conflict.  ;-)
+If __ethtool_get_link_ksettings() is failed and with
+non-zero value, prb_calc_retire_blk_tmo() should return
+DEFAULT_PRB_RETIRE_TOV firstly. Refactoring code and make
+it more readable.
 
-Heh.  And the reason that it conflicts is that I fixed at least one
-spelling error...  ;-)
+Fixes: b43d1f9f7067 ("af_packet: set defaule value for tmo")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ net/packet/af_packet.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
-Still, the one in tip is the official one, so I will proceed as planned.
+diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
+index 118cd66..843ebf8 100644
+--- a/net/packet/af_packet.c
++++ b/net/packet/af_packet.c
+@@ -520,7 +520,7 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 				int blk_size_in_bytes)
+ {
+ 	struct net_device *dev;
+-	unsigned int mbits = 0, msec = 0, div = 0, tmo = 0;
++	unsigned int mbits = 0, msec = 1, div = 0, tmo = 0;
+ 	struct ethtool_link_ksettings ecmd;
+ 	int err;
+ 
+@@ -532,21 +532,17 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 	}
+ 	err = __ethtool_get_link_ksettings(dev, &ecmd);
+ 	rtnl_unlock();
+-	if (!err) {
+-		/*
+-		 * If the link speed is so slow you don't really
+-		 * need to worry about perf anyways
+-		 */
+-		if (ecmd.base.speed < SPEED_1000 ||
+-		    ecmd.base.speed == SPEED_UNKNOWN) {
+-			return DEFAULT_PRB_RETIRE_TOV;
+-		} else {
+-			msec = 1;
+-			div = ecmd.base.speed / 1000;
+-		}
+-	} else
++	if (err)
++		return DEFAULT_PRB_RETIRE_TOV;
++
++	/* If the link speed is so slow you don't really
++	 * need to worry about perf anyways
++	 */
++	if (ecmd.base.speed < SPEED_1000 ||
++	    ecmd.base.speed == SPEED_UNKNOWN)
+ 		return DEFAULT_PRB_RETIRE_TOV;
+ 
++	div = ecmd.base.speed / 1000;
+ 	mbits = (blk_size_in_bytes * 8) / (1024 * 1024);
+ 
+ 	if (div)
+@@ -555,7 +551,7 @@ static int prb_calc_retire_blk_tmo(struct packet_sock *po,
+ 	tmo = mbits * msec;
+ 
+ 	if (div)
+-		return tmo+1;
++		return tmo + 1;
+ 	return tmo;
+ }
+ 
+-- 
+2.7.4
 
-							Thanx, Paul
