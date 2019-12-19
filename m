@@ -2,82 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA82126A3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D24126BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:00:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbfLSSp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:29 -0500
-Received: from foss.arm.com ([217.140.110.172]:42266 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729148AbfLSSp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBE141FB;
-        Thu, 19 Dec 2019 10:45:27 -0800 (PST)
-Received: from [10.1.194.46] (e113632-lin.cambridge.arm.com [10.1.194.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D43C93F67D;
-        Thu, 19 Dec 2019 10:45:26 -0800 (PST)
-Subject: Re: [PATCH] tracing: Fix printing ptrs in preempt/irq enable/disable
- events
-To:     Antonio Borneo <antonio.borneo@st.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, ambroise.vincent@arm.com
-References: <20191127154428.191095-1-antonio.borneo@st.com>
- <20191204160407.GB17404@google.com>
- <6b5b74cede87a61d5f04f2a95bc4389830467fe9.camel@st.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <68b3b7db-d278-6cd2-f2b6-cbba05df6db4@arm.com>
-Date:   Thu, 19 Dec 2019 18:45:25 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730268AbfLSSwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:52:39 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44332 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730084AbfLSSwe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id h9so5813963otj.11;
+        Thu, 19 Dec 2019 10:52:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mIqFeu8O9eY39QwBv57QNH/NMiJEQE200I7/+vun34w=;
+        b=pOxz9xQ05aKRaue236tLhbk7uEaufzoa03CxO6U5mW6ktnO5pwcqc32FAf1MY8IYph
+         mBGBf0D5e8WrICffCliW83cc2c2rlUbI74ClSk9dLs0LWVNzspSXg9dgG1tRswqa7qqX
+         0fE7dWdE0tlX/zkY4zqL9RBuajHZ3LY2TJsG3SB2FLBfeh/UhdbjkWp/U6Gp0hGL4I0j
+         JfrWrabj6/9cJL/WYtMBU2obhyp9PWkbE3QfQ1LxHmREWORy4BQf+TiZb7eN3hG+pVtO
+         /lK9FkXhbw9OLq8n85GJhw8lUcHJUhrRuGPnyFV/kW7UPHJ8j8NWyx/ooNgeQOQjfzVO
+         Kxog==
+X-Gm-Message-State: APjAAAUDVPuJG86Te2fiOI0zKVd17flJGnXEDqJJVgg/YZdYSq4Estzg
+        0nTPvLFpb46PLgsMb7D68g==
+X-Google-Smtp-Source: APXvYqyt22PLuxSNwzWF6VKaHrtiX5AuQMISU1O6yYYzhVCKQ814h8IA6WNyeX95p2do8NixhzWh6g==
+X-Received: by 2002:a05:6830:1bd5:: with SMTP id v21mr10899479ota.154.1576781553463;
+        Thu, 19 Dec 2019 10:52:33 -0800 (PST)
+Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
+        by smtp.gmail.com with ESMTPSA id k17sm2238501oic.45.2019.12.19.10.52.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 10:52:32 -0800 (PST)
+Date:   Thu, 19 Dec 2019 12:52:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Hanna Hawa <hhhawa@amazon.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, tsahee@annapurnalabs.com,
+        antoine.tenart@bootlin.com, hhhawa@amazon.com,
+        mchehab+samsung@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        tglx@linutronix.de, khilman@baylibre.com, chanho.min@lge.com,
+        heiko@sntech.de, nm@ti.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dwmw@amazon.co.uk, benh@amazon.com, ronenk@amazon.com,
+        talel@amazon.com, jonnyc@amazon.com, hanochu@amazon.com,
+        barakw@amazon.com
+Subject: Re: [PATCH v2 1/6] dt-bindings: arm: amazon: rename al,alpine DT
+ binding to amazon,al
+Message-ID: <20191219185231.GA32332@bogus>
+References: <20191209161341.29607-1-hhhawa@amazon.com>
+ <20191209161341.29607-2-hhhawa@amazon.com>
 MIME-Version: 1.0
-In-Reply-To: <6b5b74cede87a61d5f04f2a95bc4389830467fe9.camel@st.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191209161341.29607-2-hhhawa@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2019 00:00, Antonio Borneo wrote:
-> At login:
-> trace-cmd record -e preemptirq:irq_enable sleep 1
-> trace-cmd report trace.dat | head
-> and I incorrectly get only the offsets to _stext:
-> cpus=1
->            sleep-197   [000]   280.378022: irq_enable:           caller=0x1afaS parent=0xc00091S
->            sleep-197   [000]   280.378026: irq_enable:           caller=0x54d34S parent=0x78e00000S
->            sleep-197   [000]   280.378029: irq_enable:           caller=0x1afaS parent=0xc00a84S
->            sleep-197   [000]   280.378032: irq_enable:           caller=0x263dS parent=0x78e00000S
-> ...
+On Mon, 9 Dec 2019 16:13:36 +0000, Hanna Hawa wrote:
+> As preparation to add device tree binding for Amazon's Annapurna Labs
+> Alpine v3 support. Rename al,alpine DT binding to amazon,al.
 > 
-> With this patch I get the expected/right result:
-> cpus=1
->            sleep-210   [000]   525.177583: irq_enable:           caller=trace_hardirqs_on_thunk parent=entry_SYSCALL_64_after_hwframe
->            sleep-210   [000]   525.177587: irq_enable:           caller=__do_page_fault parent=(nil)S
->            sleep-210   [000]   525.177590: irq_enable:           caller=trace_hardirqs_on_thunk parent=swapgs_restore_regs_and_return_to_usermode
->            sleep-210   [000]   525.177593: irq_enable:           caller=do_syscall_64 parent=(nil)S
-> ...
-
-FWIW Ambroise (in Cc) and I were staring at some irq enable/disable traces,
-and encountered exactly this on a Pixel3 running a mainline kernel. With
-Antonio's patch we got the expected result, so you can have:
-
-Tested-by: Valentin Schneider <valentin.schneider@arm.com>
-
->> I am not comfortable with this patch at the moment, mainly because it will
->> increase the size of this rather high frequency event. But I'm not saying
->> there isn't an issue on 32-bit. Let's discuss more.
->>
-> 
-> Sure, the pressure on the trace buffer will increase on a 64 bit system, but in general it also has more memory than an embedded 32 bit system.
-> The key point is, instead, can we feel safe with a 32 bit offset in a 64 bit system? Is there any guarantee a module is loaded within 32 bits offset from _stext?
+> Signed-off-by: Hanna Hawa <hhhawa@amazon.com>
+> ---
+>  .../bindings/arm/{al,alpine.yaml => amazon,al.yaml}           | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>  rename Documentation/devicetree/bindings/arm/{al,alpine.yaml => amazon,al.yaml} (74%)
 > 
 
-You're better placed than I to know if and when this is the case, but I
-wouldn't use this in a production environment. To me this is more of a
-debugging tool (and a really good one at that), so I am less concerned
-about the memory overhead.
+Acked-by: Rob Herring <robh@kernel.org>
