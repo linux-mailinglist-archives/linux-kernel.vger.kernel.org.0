@@ -2,101 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F65D125ACB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B37F8125AC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfLSF2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 00:28:49 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38241 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725821AbfLSF2s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:28:48 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x185so2531853pfc.5;
-        Wed, 18 Dec 2019 21:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lWOehvqpXv6OawJrlmRDByhBUZ+tWPDIeTBZc/6GCfQ=;
-        b=qiLztxrZMsI9XLuisxdv0QIs5ojPlPFLlGH1KBeFxij5Kvfk4r+LDXcJyOGzUBRoVT
-         3cuS3GoP+j5+kgQM6jobGYKl3lRufCq+2VL1ovUkBtyT7To001eRSD7hefvVj8oNeeGB
-         KlqK/eEl0iFN2yOPedfqa3F/1ADCzfk09o0D5YizkuQGGlRDePgcSDcNDKNSosYqtQp1
-         L3vu4zpg2JAZ6XNRoIhdX0Fg41SFkyc2/p/FGGTcPeDDoXzGwxqg0qGGCl67RASYsDdU
-         8Z80zMOXxg50eYj5c4jgjkqFS0N/vJoFl019Zyty40mSp33FZrqKO+/+2ewYG8WnxlA8
-         B7xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=lWOehvqpXv6OawJrlmRDByhBUZ+tWPDIeTBZc/6GCfQ=;
-        b=uPdebBpKAt88SXTa0wlPznQ7LFN5i0cMZXQtZbSLvcDNDcHHXmCYWmYFTY6tOQDJ3G
-         1SYDBUVTGowgiXnc23SNYMzt7RjPUnOsEpHXhKr7YkFCTLDjJn0beaS8rO89ZVd8Hrko
-         Ics8fsRm+ckGwdSAWQA8MKeSo6dZ1Kbxd7PEJVaQBR06g49ANJ8vzMJ5hTxyj00NILxO
-         tfeejyx+gkLj4V6uC3ribFnhAaZ0+Yg5/MjOwf+QscifZKkUv9BRb9HuxrKb9Yi8ePB2
-         9BPIsFE93vArD1Smd/XdAw856/BG25L6qcMwoIkLIL6ihP89NxrfVtqp/fa8+YU/nY4q
-         r1sw==
-X-Gm-Message-State: APjAAAXsIviISXrCcZrX1QF4MHdzgCpjJurvEglWeSVi/TS1qkeXUkpx
-        /8MOF2/50ipQrf6eolBDQ2o+eIbgtPU=
-X-Google-Smtp-Source: APXvYqzGeo5jRRDBKjCYPgpdsBTeYU9wvWq7UqMVJVQnl/d5yhSP0a36sKDjfd5cEC5gGaYgT9Nquw==
-X-Received: by 2002:a63:5950:: with SMTP id j16mr7441814pgm.314.1576733327995;
-        Wed, 18 Dec 2019 21:28:47 -0800 (PST)
-Received: from vipul.mgc.mentorg.com (nat-sch.mentorg.com. [139.181.36.34])
-        by smtp.googlemail.com with ESMTPSA id j22sm4818129pji.16.2019.12.18.21.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 21:28:47 -0800 (PST)
-From:   Vipul Kumar <vipulk0511@gmail.com>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Stable <stable@vger.kernel.org>,
-        Cedric Hombourger <Cedric_Hombourger@mentor.com>,
-        Vipul Kumar <vipul_kumar@mentor.com>,
-        Srikanth Krishnakar <Srikanth_Krishnakar@mentor.com>,
-        Vipul Kumar <vipulk0511@gmail.com>
-Subject: [V2] x86/tsc: Unset TSC_KNOWN_FREQ and TSC_RELIABLE flags on Intel Bay Trail SoC
-Date:   Thu, 19 Dec 2019 10:58:25 +0530
-Message-Id: <20191219052825.4146-1-vipulk0511@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726887AbfLSF2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 00:28:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725821AbfLSF2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 00:28:36 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A51BC222C2;
+        Thu, 19 Dec 2019 05:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576733315;
+        bh=MpoQxHyyLbRJPfu30dKVSWep8ADBkVL7n3FffMiyMs0=;
+        h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
+        b=pGeeHcrdAq+hOu7Aov1mnNEXjXz1puMDe1+9GhAb0JTif8lsWs+JvJBeAa1WF3mpP
+         Dsvq8cnsk5wckElJJUpDkLZ9D//Lm/l+17BXfMth7Fzu7omLXpirhTk0TOr6kfj0At
+         YhYDzOazLGxWSvxfBsTdFzhQIILBOBllw6qz8m2c=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191115123931.18919-1-masneyb@onstation.org>
+References: <20191115123931.18919-1-masneyb@onstation.org>
+Cc:     mturquette@baylibre.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        jonathan@marek.ca
+Subject: Re: [PATCH] clk: qcom: mmcc8974: move gfx3d_clk_src from the mmcc to rpm
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Brian Masney <masneyb@onstation.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 18 Dec 2019 21:28:34 -0800
+Message-Id: <20191219052835.A51BC222C2@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vipul Kumar <vipul_kumar@mentor.com>
+Quoting Brian Masney (2019-11-15 04:39:31)
+> gfx3d_clk_src for msm8974 was introduced into the MMCC by
+> commit d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia
+> clock controller (MMCC)") to ensure that all of the clocks for
+> this platform are documented upstream. This clock actually belongs
+> on the RPM. Since then, commit 685dc94b7d8f ("clk: qcom: smd-rpmcc:
+> Add msm8974 clocks") was introduced, which contains the proper
+> definition for gfx3d_clk_src. Let's drop the definition from the
+> mmcc and register the clock with the rpm instead.
+>=20
+> This change was tested on a Nexus 5 (hammerhead) phone.
+>=20
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
 
-'commit f3a02ecebed7 ("x86/tsc: Set TSC_KNOWN_FREQ and TSC_RELIABLE
-flags on Intel Atom SoCs")', causing time drift for Bay trail SoC.
-These flags are set for SoCs having cpuid_level 0x15 or more.
-Bay trail is having cpuid_level 0xb.
-
-So, unset both flags to make sure the clocksource calibration can
-be done.
-
-Signed-off-by: Vipul Kumar <vipul_kumar@mentor.com>
-Cc: <stable@vger.kernel.org> # 4.14+
----
-- Changes in v2:
-- Added linux-stable along with kernel version in CC
----
- arch/x86/kernel/tsc_msr.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/kernel/tsc_msr.c b/arch/x86/kernel/tsc_msr.c
-index e0cbe4f2af49..1ca27c28db98 100644
---- a/arch/x86/kernel/tsc_msr.c
-+++ b/arch/x86/kernel/tsc_msr.c
-@@ -112,6 +112,9 @@ unsigned long cpu_khz_from_msr(void)
- 	lapic_timer_period = (freq * 1000) / HZ;
- #endif
- 
-+	if (boot_cpu_data.cpuid_level < 0x15)
-+		return res;
-+
- 	/*
- 	 * TSC frequency determined by MSR is always considered "known"
- 	 * because it is reported by HW.
--- 
-2.20.1
+Applied to clk-next
 
