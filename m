@@ -2,355 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F8E812584D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC547125852
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:15:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbfLSAO7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 19:14:59 -0500
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:48031 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfLSAO6 (ORCPT
+        id S1726762AbfLSAPy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 19:15:54 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50310 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbfLSAPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:14:58 -0500
-X-Originating-IP: 50.39.173.182
-Received: from localhost (50-39-173-182.bvtn.or.frontiernet.net [50.39.173.182])
-        (Authenticated sender: josh@joshtriplett.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 2E9A5FF805;
-        Thu, 19 Dec 2019 00:14:48 +0000 (UTC)
-Date:   Wed, 18 Dec 2019 16:14:46 -0800
-From:   Josh Triplett <josh@joshtriplett.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Akemi Yagi <toracat@elrepo.org>, DJ Delorie <dj@redhat.com>,
-        David Sterba <dsterba@suse.cz>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: Re: [PATCH 0/2] pipe: Fixes [ver #2]
-Message-ID: <20191219001446.GA49812@localhost>
-References: <157558502272.10278.8718685637610645781.stgit@warthog.procyon.org.uk>
- <20191206135604.GB2734@twin.jikos.cz>
- <CAHk-=wiN_pWbcRaw5L-J2EFUyCn49Due0McwETKwmFFPp88K8Q@mail.gmail.com>
- <CAHk-=wjvO1V912ya=1rdXwrm1OBTi6GqnqryH_E8OR69cZuVOg@mail.gmail.com>
- <CAHk-=wizsHmCwUAyQKdU7hBPXHYQn-fOtJKBqMs-79br2pWxeQ@mail.gmail.com>
- <CAHk-=wjeG0q1vgzu4iJhW5juPkTsjTYmiqiMUYAebWW+0bam6w@mail.gmail.com>
- <b2ae78da-1c29-8ef7-d0bb-376c52af37c3@yandex-team.ru>
- <CAHk-=wgTisLQ9k-hsQeyrT5qBS0xuQPYsueFWNT3RxbkkVmbjw@mail.gmail.com>
- <20191219000013.GB13065@localhost>
+        Wed, 18 Dec 2019 19:15:53 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ0EEPG158600;
+        Thu, 19 Dec 2019 00:15:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=EPBwbki9EZdxxDrWcZ24qhfNq3w08d1404ygElG60JE=;
+ b=pNdyvgfEE1eMxZkueum391Od8j2anR8KolD4HRQb4ieKJmdJTgPiHFX/ZmoYagdZM6nH
+ enrjf9DRFURQ+5yd5+uKCxMzeOYNS2oZE7xJh/lgF81gh1vYTGhFDN46JMbd3J+sWxlU
+ CWdIJruk0SA2eqzfRrEE9r8FMBo8GQE2TkSwGsGB2ZCYrm2jBzk6eZPgaSQfOZ9AUvg2
+ p6nEzhxMYSUzt8wUwg5Bx0SzZ9XvIsFmX06DpMlkmlEGfhSSAx4n5TFzcqq0iuSBEE98
+ tSRB5p1gZO7fBu9ePhAuFIXEFVcQWBq7pV5wATXvpNUhPakDtHMLaJAWHAZagxmF05u8 EA== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by userp2130.oracle.com with ESMTP id 2wvq5urxt0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 00:15:14 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ09O8K015978;
+        Thu, 19 Dec 2019 00:15:14 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wyp08gqdb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 00:15:14 +0000
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBJ0FBv4027621;
+        Thu, 19 Dec 2019 00:15:11 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Dec 2019 16:15:10 -0800
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-ide@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH v2] hwmon: Driver for temperature sensors on SATA drives
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191215174509.1847-1-linux@roeck-us.net>
+        <20191215174509.1847-2-linux@roeck-us.net>
+Date:   Wed, 18 Dec 2019 19:15:07 -0500
+In-Reply-To: <20191215174509.1847-2-linux@roeck-us.net> (Guenter Roeck's
+        message of "Sun, 15 Dec 2019 09:45:09 -0800")
+Message-ID: <yq1r211dvck.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="Dxnq1zWXvFF0Q93v"
-Content-Disposition: inline
-In-Reply-To: <20191219000013.GB13065@localhost>
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190000
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Guenter,
 
-On Wed, Dec 18, 2019 at 04:03:18PM -0800, Josh Triplett wrote:
-> On Wed, Dec 18, 2019 at 02:51:27PM -0800, Linus Torvalds wrote:
-> > That's my latest version, but you'll have to tweak it a tiny bit
-> > because of d1c6a2aa02af ("pipe: simplify signal handling in
-> > pipe_read() and add comments") which I did after that patch.
-> 
-> That's what I encountered, and I ended up manually fixing it up,
-> resulting in the attached patch. Does that look reasonable?
+> This driver solves this problem by adding support for reading the
+> temperature of SATA drives from the kernel using the hwmon API and
+> by adding a temperature zone for each drive.
 
-Er, wrong file. That's the original patch; the attached patch is the
-right one.
+My working tree is available here:
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="linux-pipe-fix.patch"
+  https://git.kernel.org/pub/scm/linux/kernel/git/mkp/linux.git/log/?h=5.6/drivetemp
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index b1ea7dfbd149..f8296a82d01d 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -517,7 +517,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	pipe_lock(pipe);
- 	pipe->readers++;
- 	pipe->writers--;
--	wake_up_interruptible_sync(&pipe->wait);
-+	wake_up_interruptible_sync(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	pipe_unlock(pipe);
- 
-@@ -525,7 +525,7 @@ static void wait_for_dump_helpers(struct file *file)
- 	 * We actually want wait_event_freezable() but then we need
- 	 * to clear TIF_SIGPENDING and improve dump_interrupted().
- 	 */
--	wait_event_interruptible(pipe->wait, pipe->readers == 1);
-+	wait_event_interruptible(pipe->rd_wait, pipe->readers == 1);
- 
- 	pipe_lock(pipe);
- 	pipe->readers--;
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 04d004ee2e8c..5ca6446ca2b1 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -108,16 +108,19 @@ void pipe_double_lock(struct pipe_inode_info *pipe1,
- /* Drop the inode semaphore and wait for a pipe event, atomically */
- void pipe_wait(struct pipe_inode_info *pipe)
- {
--	DEFINE_WAIT(wait);
-+	DEFINE_WAIT(rdwait);
-+	DEFINE_WAIT(wrwait);
- 
- 	/*
- 	 * Pipes are system-local resources, so sleeping on them
- 	 * is considered a noninteractive wait:
- 	 */
--	prepare_to_wait(&pipe->wait, &wait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->rd_wait, &rdwait, TASK_INTERRUPTIBLE);
-+	prepare_to_wait(&pipe->wr_wait, &wrwait, TASK_INTERRUPTIBLE);
- 	pipe_unlock(pipe);
- 	schedule();
--	finish_wait(&pipe->wait, &wait);
-+	finish_wait(&pipe->rd_wait, &rdwait);
-+	finish_wait(&pipe->wr_wait, &wrwait);
- 	pipe_lock(pipe);
- }
- 
-@@ -286,7 +289,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	size_t total_len = iov_iter_count(to);
- 	struct file *filp = iocb->ki_filp;
- 	struct pipe_inode_info *pipe = filp->private_data;
--	bool was_full;
-+	bool was_full, wake_next_reader = false;
- 	ssize_t ret;
- 
- 	/* Null read succeeds. */
-@@ -344,10 +347,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->wait.lock);
-+				spin_lock_irq(&pipe->rd_wait.lock);
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -384,7 +387,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * no data.
- 		 */
- 		if (unlikely(was_full)) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 			kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 		}
- 
-@@ -394,18 +397,23 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 		 * since we've done any required wakeups and there's no need
- 		 * to mark anything accessed. And we've dropped the lock.
- 		 */
--		if (wait_event_interruptible(pipe->wait, pipe_readable(pipe)) < 0)
-+		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
- 			return -ERESTARTSYS;
- 
- 		__pipe_lock(pipe);
- 		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-+		wake_next_reader = true;
- 	}
-+	if (pipe_empty(pipe->head, pipe->tail))
-+		wake_next_reader = false;
- 	__pipe_unlock(pipe);
- 
- 	if (was_full) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLOUT | EPOLLWRNORM);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-+	if (wake_next_reader)
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	if (ret > 0)
- 		file_accessed(filp);
- 	return ret;
-@@ -437,6 +445,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	size_t total_len = iov_iter_count(from);
- 	ssize_t chars;
- 	bool was_empty = false;
-+	bool wake_next_writer = false;
- 
- 	/* Null write succeeds. */
- 	if (unlikely(total_len == 0))
-@@ -515,16 +524,16 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->wait.lock);
-+			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->wait.lock);
-+				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->wait.lock);
-+			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -576,14 +585,17 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 */
- 		__pipe_unlock(pipe);
- 		if (was_empty) {
--			wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 			kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		}
--		wait_event_interruptible(pipe->wait, pipe_writable(pipe));
-+		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
- 		__pipe_lock(pipe);
- 		was_empty = pipe_empty(head, pipe->tail);
-+		wake_next_writer = true;
- 	}
- out:
-+	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
-+		wake_next_writer = false;
- 	__pipe_unlock(pipe);
- 
- 	/*
-@@ -596,9 +608,11 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 	 * wake up pending jobs
- 	 */
- 	if (was_empty) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLRDNORM);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	}
-+	if (wake_next_writer)
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
- 	if (ret > 0 && sb_start_write_trylock(file_inode(filp)->i_sb)) {
- 		int err = file_update_time(filp);
- 		if (err)
-@@ -642,12 +656,15 @@ pipe_poll(struct file *filp, poll_table *wait)
- 	unsigned int head, tail;
- 
- 	/*
--	 * Reading only -- no need for acquiring the semaphore.
-+	 * Reading pipe state only -- no need for acquiring the semaphore.
- 	 *
- 	 * But because this is racy, the code has to add the
- 	 * entry to the poll table _first_ ..
- 	 */
--	poll_wait(filp, &pipe->wait, wait);
-+	if (filp->f_mode & FMODE_READ)
-+		poll_wait(filp, &pipe->rd_wait, wait);
-+	if (filp->f_mode & FMODE_WRITE)
-+		poll_wait(filp, &pipe->wr_wait, wait);
- 
- 	/*
- 	 * .. and only then can you do the racy tests. That way,
-@@ -706,7 +723,8 @@ pipe_release(struct inode *inode, struct file *file)
- 		pipe->writers--;
- 
- 	if (pipe->readers || pipe->writers) {
--		wake_up_interruptible_sync_poll(&pipe->wait, EPOLLIN | EPOLLOUT | EPOLLRDNORM | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLHUP);
-+		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM | EPOLLERR | EPOLLHUP);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- 	}
-@@ -789,7 +807,8 @@ struct pipe_inode_info *alloc_pipe_info(void)
- 			     GFP_KERNEL_ACCOUNT);
- 
- 	if (pipe->bufs) {
--		init_waitqueue_head(&pipe->wait);
-+		init_waitqueue_head(&pipe->rd_wait);
-+		init_waitqueue_head(&pipe->wr_wait);
- 		pipe->r_counter = pipe->w_counter = 1;
- 		pipe->max_usage = pipe_bufs;
- 		pipe->ring_size = pipe_bufs;
-@@ -1007,7 +1026,8 @@ static int wait_for_partner(struct pipe_inode_info *pipe, unsigned int *cnt)
- 
- static void wake_up_partner(struct pipe_inode_info *pipe)
- {
--	wake_up_interruptible(&pipe->wait);
-+	wake_up_interruptible(&pipe->rd_wait);
-+	wake_up_interruptible(&pipe->wr_wait);
- }
- 
- static int fifo_open(struct inode *inode, struct file *filp)
-@@ -1118,13 +1138,13 @@ static int fifo_open(struct inode *inode, struct file *filp)
- 
- err_rd:
- 	if (!--pipe->readers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->wr_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
- err_wr:
- 	if (!--pipe->writers)
--		wake_up_interruptible(&pipe->wait);
-+		wake_up_interruptible(&pipe->rd_wait);
- 	ret = -ERESTARTSYS;
- 	goto err;
- 
-@@ -1251,7 +1271,8 @@ static long pipe_set_size(struct pipe_inode_info *pipe, unsigned long arg)
- 	pipe->max_usage = nr_slots;
- 	pipe->tail = tail;
- 	pipe->head = head;
--	wake_up_interruptible_all(&pipe->wait);
-+	wake_up_interruptible_all(&pipe->rd_wait);
-+	wake_up_interruptible_all(&pipe->wr_wait);
- 	return pipe->max_usage * PAGE_SIZE;
- 
- out_revert_acct:
-diff --git a/fs/splice.c b/fs/splice.c
-index 3009652a41c8..d671936d0aad 100644
---- a/fs/splice.c
-+++ b/fs/splice.c
-@@ -165,8 +165,8 @@ static const struct pipe_buf_operations user_page_pipe_buf_ops = {
- static void wakeup_pipe_readers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->rd_wait))
-+		wake_up_interruptible(&pipe->rd_wait);
- 	kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- }
- 
-@@ -462,8 +462,8 @@ static int pipe_to_sendpage(struct pipe_inode_info *pipe,
- static void wakeup_pipe_writers(struct pipe_inode_info *pipe)
- {
- 	smp_mb();
--	if (waitqueue_active(&pipe->wait))
--		wake_up_interruptible(&pipe->wait);
-+	if (waitqueue_active(&pipe->wr_wait))
-+		wake_up_interruptible(&pipe->wr_wait);
- 	kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
- }
- 
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index dbcfa6892384..d5765039652a 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -47,7 +47,7 @@ struct pipe_buffer {
-  **/
- struct pipe_inode_info {
- 	struct mutex mutex;
--	wait_queue_head_t wait;
-+	wait_queue_head_t rd_wait, wr_wait;
- 	unsigned int head;
- 	unsigned int tail;
- 	unsigned int max_usage;
+A few notes:
 
---Dxnq1zWXvFF0Q93v--
+ - Before applying your patch I did s/satatemp/drivetemp/
+
+ - I get a crash in the driver core during probe if the drivetemp module
+   is loaded prior to loading ahci or a SCSI HBA driver. This crash is
+   unrelated to my changes. Haven't had time to debug.
+
+ - I tweaked your ATA detection heuristics and now use the cached VPD
+   page 0x89 instead of fetching one from the device.
+
+ - I also added support for reading the temperature log page on SCSI
+   drives.
+
+ - Tested with a mixed bag of about 40 SCSI and SATA drives attached.
+
+ - I still think sensor naming needs work. How and where are the
+   "drivetemp-scsi-8-140" names generated?
+
+I'll tinker some more but thought I'd share what I have for now.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
