@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86C7B126A11
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:43:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A422212697D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfLSSnw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:43:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35560 "EHLO mail.kernel.org"
+        id S1727665AbfLSSiM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:38:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728865AbfLSSnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:47 -0500
+        id S1727970AbfLSSiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:08 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34C6D24672;
-        Thu, 19 Dec 2019 18:43:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E931E20716;
+        Thu, 19 Dec 2019 18:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781026;
-        bh=VSBIhfZCukb3KkAC7X5bF+mpEdHCaVQdLhX+frrXC4s=;
+        s=default; t=1576780688;
+        bh=JMtLdH5N/pRayjeq4ysU3riAaYpsmdHp8ifQ324osZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bC5pC1wMBS9hH3vdfadh96lQ9OhzpygtI8szRUGWRm/zgSKkmkC8tzg7s08va7/EZ
-         K9Q8Q9ROBTqbEtdCuB94hBh6vDy7r419QLqnb+FSZJC0RfH2rGomoeAl/L+m0kT+U+
-         8ErceuFzVs+BXPBHpZYTLKbzZx8hKZQBd+cKw3+w=
+        b=NWtQ2pmD9RoAvoE6EC1QFW+pTkAO1hMBCwBtIoVrKnoo+r/BoqyCF4twrmQdFyIJW
+         DPMp/iN8TO1ci8m2bhYAjiCDx5ghtfTfkVsTpwNdo55Bb331/esScUdXAYdACqnmSG
+         Abo8ARqcMu0oQLNiZua/JvgYDwPK28EY9YcaEOf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh@kernel.org>, Olof Johansson <olof@lixom.net>,
+        stable@vger.kernel.org, Baruch Siach <baruch@tkos.co.il>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 053/199] ARM: dts: realview-pbx: Fix duplicate regulator nodes
-Date:   Thu, 19 Dec 2019 19:32:15 +0100
-Message-Id: <20191219183217.894949173@linuxfoundation.org>
+Subject: [PATCH 4.4 028/162] rtc: dt-binding: abx80x: fix resistance scale
+Date:   Thu, 19 Dec 2019 19:32:16 +0100
+Message-Id: <20191219183209.309009431@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,53 +44,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Baruch Siach <baruch@tkos.co.il>
 
-[ Upstream commit 7f4b001b7f6e0480b5bdab9cd8ce1711e43e5cb5 ]
+[ Upstream commit 73852e56827f5cb5db9d6e8dd8191fc2f2e8f424 ]
 
-There's a bug in dtc in checking for duplicate node names when there's
-another section (e.g. "/ { };"). In this case, skeleton.dtsi provides
-another section. Upon removal of skeleton.dtsi, the dtb fails to build
-due to a duplicate node 'fixedregulator@0'. As both nodes were pretty
-much the same 3.3V fixed regulator, it hasn't really mattered. Fix this
-by renaming the nodes to something unique. In the process, drop the
-unit-address which shouldn't be present wtihout reg property.
+The abracon,tc-resistor property value is in kOhm.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/arm-realview-pbx.dtsi | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/rtc/abracon,abx80x.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/arm-realview-pbx.dtsi b/arch/arm/boot/dts/arm-realview-pbx.dtsi
-index 2bf3958b2e6b9..068293254fbb8 100644
---- a/arch/arm/boot/dts/arm-realview-pbx.dtsi
-+++ b/arch/arm/boot/dts/arm-realview-pbx.dtsi
-@@ -43,7 +43,7 @@
- 	};
+diff --git a/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt b/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
+index be789685a1c24..18b892d010d87 100644
+--- a/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
++++ b/Documentation/devicetree/bindings/rtc/abracon,abx80x.txt
+@@ -27,4 +27,4 @@ and valid to enable charging:
  
- 	/* The voltage to the MMC card is hardwired at 3.3V */
--	vmmc: fixedregulator@0 {
-+	vmmc: regulator-vmmc {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vmmc";
- 		regulator-min-microvolt = <3300000>;
-@@ -51,7 +51,7 @@
- 		regulator-boot-on;
-         };
- 
--	veth: fixedregulator@0 {
-+	veth: regulator-veth {
- 		compatible = "regulator-fixed";
- 		regulator-name = "veth";
- 		regulator-min-microvolt = <3300000>;
-@@ -539,4 +539,3 @@
- 		};
- 	};
- };
--
+  - "abracon,tc-diode": should be "standard" (0.6V) or "schottky" (0.3V)
+  - "abracon,tc-resistor": should be <0>, <3>, <6> or <11>. 0 disables the output
+-                          resistor, the other values are in ohm.
++                          resistor, the other values are in kOhm.
 -- 
 2.20.1
 
