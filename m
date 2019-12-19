@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A4E03126CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:07:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E41126D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:08:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfLSTHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34970 "EHLO mail.kernel.org"
+        id S1728373AbfLSSmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:42:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbfLSSnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:22 -0500
+        id S1728612AbfLSSmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:42:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75195206D7;
-        Thu, 19 Dec 2019 18:43:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E4E2206D7;
+        Thu, 19 Dec 2019 18:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781001;
-        bh=FiuL7yGSuoi3HNK42m9pi1FS4FRVWMscdsf/ueJ9uoE=;
+        s=default; t=1576780921;
+        bh=KBWdRp1C0diqcB72JfhHtC2PPDRx4lRZjSBB2xMIzcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GDgPIgjhEa2lAs8zWoPVMd/4IZotEolpV3JDxCmXLQjc+gPbZcjAn0oY3mkcHIt/A
-         fosl8h4XNcUaB7JnAsIWsw3HlBFVg4une4T6FAiSqGP/oowK2487WX33v/5f2p4lVu
-         ou/U+zDkyfCxiB8a62OCJ2r3VDkAT0PX8KAry0+A=
+        b=BSxhnRjqBFUZypjHa2LnstYMGIwOT3iBpauyyTJoNaGExgJXD2+MVPQEBIYhSCE1A
+         c0h6csqP56jpg/jDt9JiOlARM5eR8IHGvKz7nnSxjDSTqFpVwvFgP2MuWLuV0sAC6q
+         B+KWvx41cKm4kSEyqDMNRVHBqOXLvsBSf3mS7iHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
-Subject: [PATCH 4.9 007/199] serial: ifx6x60: add missed pm_runtime_disable
-Date:   Thu, 19 Dec 2019 19:31:29 +0100
-Message-Id: <20191219183215.070695516@linuxfoundation.org>
+        stable@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 010/199] exportfs_decode_fh(): negative pinned may become positive without the parent locked
+Date:   Thu, 19 Dec 2019 19:31:32 +0100
+Message-Id: <20191219183215.271141184@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -42,33 +43,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-commit 50b2b571c5f3df721fc81bf9a12c521dfbe019ba upstream.
+[ Upstream commit a2ece088882666e1dc7113744ac912eb161e3f87 ]
 
-The driver forgets to call pm_runtime_disable in remove.
-Add the missed calls to fix it.
-
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191118024833.21587-1-hslester96@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/ifx6x60.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/exportfs/expfs.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
---- a/drivers/tty/serial/ifx6x60.c
-+++ b/drivers/tty/serial/ifx6x60.c
-@@ -1244,6 +1244,9 @@ static int ifx_spi_spi_remove(struct spi
- 	struct ifx_spi_device *ifx_dev = spi_get_drvdata(spi);
- 	/* stop activity */
- 	tasklet_kill(&ifx_dev->io_work_tasklet);
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 7a7bba7c23284..3706939e5dd5e 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -506,26 +506,33 @@ struct dentry *exportfs_decode_fh(struct vfsmount *mnt, struct fid *fid,
+ 		 * inode is actually connected to the parent.
+ 		 */
+ 		err = exportfs_get_name(mnt, target_dir, nbuf, result);
+-		if (!err) {
+-			inode_lock(target_dir->d_inode);
+-			nresult = lookup_one_len(nbuf, target_dir,
+-						 strlen(nbuf));
+-			inode_unlock(target_dir->d_inode);
+-			if (!IS_ERR(nresult)) {
+-				if (nresult->d_inode) {
+-					dput(result);
+-					result = nresult;
+-				} else
+-					dput(nresult);
+-			}
++		if (err) {
++			dput(target_dir);
++			goto err_result;
+ 		}
+ 
++		inode_lock(target_dir->d_inode);
++		nresult = lookup_one_len(nbuf, target_dir, strlen(nbuf));
++		if (!IS_ERR(nresult)) {
++			if (unlikely(nresult->d_inode != result->d_inode)) {
++				dput(nresult);
++				nresult = ERR_PTR(-ESTALE);
++			}
++		}
++		inode_unlock(target_dir->d_inode);
+ 		/*
+ 		 * At this point we are done with the parent, but it's pinned
+ 		 * by the child dentry anyway.
+ 		 */
+ 		dput(target_dir);
+ 
++		if (IS_ERR(nresult)) {
++			err = PTR_ERR(nresult);
++			goto err_result;
++		}
++		dput(result);
++		result = nresult;
 +
-+	pm_runtime_disable(&spi->dev);
-+
- 	/* free irq */
- 	free_irq(gpio_to_irq(ifx_dev->gpio.reset_out), ifx_dev);
- 	free_irq(gpio_to_irq(ifx_dev->gpio.srdy), ifx_dev);
+ 		/*
+ 		 * And finally make sure the dentry is actually acceptable
+ 		 * to NFSD.
+-- 
+2.20.1
+
 
 
