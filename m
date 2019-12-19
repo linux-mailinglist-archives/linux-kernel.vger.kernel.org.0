@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209E4126AD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99509126B08
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:53:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbfLSSvP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:51:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45372 "EHLO mail.kernel.org"
+        id S1730375AbfLSSxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727497AbfLSSvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:51:10 -0500
+        id S1729583AbfLSSxV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCC1724682;
-        Thu, 19 Dec 2019 18:51:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E956E227BF;
+        Thu, 19 Dec 2019 18:53:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781469;
-        bh=Pb9ciWE7BhqDKqGciFvETrPxdloWHMdXD7raHOQIW/0=;
+        s=default; t=1576781600;
+        bh=p1Mnta1SqL0RwazWoE7/sborPswyjbp4DYjTcxwHCOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fhIR04bdFAEvTMUs9mNyWkfOY2rF4F29oxq/5TQDbWWS03QL+tvumtkzwiACV8n8l
-         wS+ew36FQEWbr4qujWzJBhcBUPEoK/jMZaeHEsMr8xnorpLLDoaATjTmQ/fafKPUf8
-         leHhNj1k6b5o1wg9yiBqc2tyOfaq3YoAacJioGVE=
+        b=z42pA+yzlqM9ma/DZqcx0DYreWjfT1TSQApx0DG4Deh4bpE+nzGjZdKQJMXyr+Wjg
+         ghHSbDasZ1UgwOsr6ZbOrhxT8unrYwcZUg4oiAYNYpeLe6n2pq+x+kDhOrW1kkzycO
+         bmEnjQ0Odza3gyrsnSkACbjd0ssSV2CTUKqZzVK4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Lee, Hou-hsun" <hou-hsun.lee@intel.com>,
-        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Lee@vger.kernel.org
-Subject: [PATCH 4.14 34/36] xhci: fix USB3 device initiated resume race with roothub autosuspend
+        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.19 37/47] ARM: dts: s3c64xx: Fix init order of clock providers
 Date:   Thu, 19 Dec 2019 19:34:51 +0100
-Message-Id: <20191219182926.614880725@linuxfoundation.org>
+Message-Id: <20191219182939.224882575@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,104 +44,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Lihua Yao <ylhuajnu@outlook.com>
 
-commit 057d476fff778f1d3b9f861fdb5437ea1a3cfc99 upstream.
+commit d60d0cff4ab01255b25375425745c3cff69558ad upstream.
 
-A race in xhci USB3 remote wake handling may force device back to suspend
-after it initiated resume siganaling, causing a missed resume event or warm
-reset of device.
+fin_pll is the parent of clock-controller@7e00f000, specify
+the dependency to ensure proper initialization order of clock
+providers.
 
-When a USB3 link completes resume signaling and goes to enabled (UO)
-state a interrupt is issued and the interrupt handler will clear the
-bus_state->port_remote_wakeup resume flag, allowing bus suspend.
+without this patch:
+[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
+[    0.000000]  epll = 0, arm_clk = 0
 
-If the USB3 roothub thread just finished reading port status before
-the interrupt, finding ports still in suspended (U3) state, but hasn't
-yet started suspending the hub, then the xhci interrupt handler will clear
-the flag that prevented roothub suspend and allow bus to suspend, forcing
-all port links back to suspended (U3) state.
-
-Example case:
-usb_runtime_suspend() # because all ports still show suspended U3
-  usb_suspend_both()
-    hub_suspend();   # successful as hub->wakeup_bits not set yet
-==> INTERRUPT
-xhci_irq()
-  handle_port_status()
-    clear bus_state->port_remote_wakeup
-    usb_wakeup_notification()
-      sets hub->wakeup_bits;
-        kick_hub_wq()
-<== END INTERRUPT
-      hcd_bus_suspend()
-        xhci_bus_suspend() # success as port_remote_wakeup bits cleared
-
-Fix this by increasing roothub usage count during port resume to prevent
-roothub autosuspend, and by making sure bus_state->port_remote_wakeup
-flag is only cleared after resume completion is visible, i.e.
-after xhci roothub returned U0 or other non-U3 link state link on a
-get port status request.
-
-Issue rootcaused by Chiasheng Lee
+with this patch:
+[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
+[    0.000000]  epll = 24000000, arm_clk = 532000000
 
 Cc: <stable@vger.kernel.org>
-Cc: Lee, Hou-hsun <hou-hsun.lee@intel.com>
-Reported-by: Lee, Chiasheng <chiasheng.lee@intel.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191211142007.8847-3-mathias.nyman@linux.intel.com
+Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
+Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/host/xhci-hub.c  |    8 ++++++++
- drivers/usb/host/xhci-ring.c |    6 +-----
- 2 files changed, 9 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/s3c6410-mini6410.dts |    4 ++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts |    4 ++++
+ 2 files changed, 8 insertions(+)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -887,6 +887,14 @@ static u32 xhci_get_port_status(struct u
- 			status |= USB_PORT_STAT_C_BH_RESET << 16;
- 		if ((raw_port_status & PORT_CEC))
- 			status |= USB_PORT_STAT_C_CONFIG_ERROR << 16;
+--- a/arch/arm/boot/dts/s3c6410-mini6410.dts
++++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
+@@ -165,6 +165,10 @@
+ 	};
+ };
+ 
++&clocks {
++	clocks = <&fin_pll>;
++};
 +
-+		/* USB3 remote wake resume signaling completed */
-+		if (bus_state->port_remote_wakeup & (1 << wIndex) &&
-+		    (raw_port_status & PORT_PLS_MASK) != XDEV_RESUME &&
-+		    (raw_port_status & PORT_PLS_MASK) != XDEV_RECOVERY) {
-+			bus_state->port_remote_wakeup &= ~(1 << wIndex);
-+			usb_hcd_end_port_resume(&hcd->self, wIndex);
-+		}
- 	}
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+--- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -69,6 +69,10 @@
+ 	};
+ };
  
- 	if (hcd->speed < HCD_USB3) {
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1679,9 +1679,6 @@ static void handle_port_status(struct xh
- 		usb_hcd_resume_root_hub(hcd);
- 	}
- 
--	if (hcd->speed >= HCD_USB3 && (portsc & PORT_PLS_MASK) == XDEV_INACTIVE)
--		bus_state->port_remote_wakeup &= ~(1 << faked_port_index);
--
- 	if ((portsc & PORT_PLC) && (portsc & PORT_PLS_MASK) == XDEV_RESUME) {
- 		xhci_dbg(xhci, "port resume event for port %d\n", port_id);
- 
-@@ -1700,6 +1697,7 @@ static void handle_port_status(struct xh
- 			bus_state->port_remote_wakeup |= 1 << faked_port_index;
- 			xhci_test_and_clear_bit(xhci, port_array,
- 					faked_port_index, PORT_PLC);
-+			usb_hcd_start_port_resume(&hcd->self, faked_port_index);
- 			xhci_set_link_state(xhci, port_array, faked_port_index,
- 						XDEV_U0);
- 			/* Need to wait until the next link state change
-@@ -1737,8 +1735,6 @@ static void handle_port_status(struct xh
- 		if (slot_id && xhci->devs[slot_id])
- 			xhci_ring_device(xhci, slot_id);
- 		if (bus_state->port_remote_wakeup & (1 << faked_port_index)) {
--			bus_state->port_remote_wakeup &=
--				~(1 << faked_port_index);
- 			xhci_test_and_clear_bit(xhci, port_array,
- 					faked_port_index, PORT_PLC);
- 			usb_wakeup_notification(hcd->self.root_hub,
++&clocks {
++	clocks = <&fin_pll>;
++};
++
+ &sdhci0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
 
 
