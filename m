@@ -2,156 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90E9B126802
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DCC212682E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:32:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfLSR2r (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:28:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54428 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727039AbfLSR2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:28:42 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b19so6273162wmj.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:28:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KM9qiMDfWKFWWdCAAPZQUcLR4rcoEPUjfLdlA5II0go=;
-        b=Xk3y9UvfTT0+Ov2hyWIqLRGjMtYrhB1HcKktCLIY0h/JLmVYGwjuV1P6zpdiJh8qNR
-         TmcZB+0dGj0Ko3YCsB5487mevpccX9VqujsdaaNeoIbRIPcvy+J99YXACmc1m25VD2A7
-         iDPWOs6laaTvmsHw+2v027T3QnXfBukqPbs2fuaxKJaX3o1acyRS0+qG5C+fpC8cvg+1
-         78LrhSHW5jUUSCN4QsQMGkQ/4wB7aT1m9qMe2lTBVhHnmT3k5z4zpBhg9A1tRkeSuU8e
-         UnuM4Va7wx0yd+kY6cgbyjh7Ha/FSiT/CTkLVrOx349EcPEat7shDxLuOkLv9fpX6B48
-         n0gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KM9qiMDfWKFWWdCAAPZQUcLR4rcoEPUjfLdlA5II0go=;
-        b=Drz9wWflXlpMW+mS9MzajzFRDBhrQG11Qajf0QewyJSYaLF0tREvyxEAiRFoKbVp/S
-         wJ3lotKjvgnlA5acGeJMdqTaOLhnAEmP5YLIDUyVzLOz5sF347pAA2M4lh3lVjNLbGHu
-         kdjIexvtGQQq24+XMv093Vb8xORWe/u3N+qXIffyXoN7vQABZL/48v+o69oVkz5ON4My
-         7JHH4gvmdO+SaKnt93Sivad29TmtGveG/ZMRDrEm2AbYz4QGweKlgma5cvxHEZJ7ODmo
-         kjJS+VIhooA23bfPjP5/cjX8MqSPih9jzOfmjwPjIr3zYpStIv/LtSOySOi11iQ8+WRn
-         t1cw==
-X-Gm-Message-State: APjAAAVg7bGPySjePWC6WC2v7Kw+8Six1HIX3w3yO1/SSyl7CglUfBPt
-        bXuvQYEnzBVWUapj2xM5hgwg3A==
-X-Google-Smtp-Source: APXvYqxEChvbzvXz1AWKw3LjAHZoXrlun6tgfrVy7bOQosew+hDZAwYPv96u+0LKl9otucSH4hTVGg==
-X-Received: by 2002:a7b:c93a:: with SMTP id h26mr11102986wml.83.1576776520153;
-        Thu, 19 Dec 2019 09:28:40 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id n67sm6887821wmf.46.2019.12.19.09.28.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 09:28:39 -0800 (PST)
-Subject: Re: [alsa-devel] [PATCH v6 02/11] mfd: wcd934x: add support to
- wcd9340/wcd9341 codec
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc:     robh@kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        devicetree@vger.kernel.org, spapothi@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
- <20191219103153.14875-3-srinivas.kandagatla@linaro.org>
- <af48cd71-fa1a-dbc5-0e88-e315ea13c28c@linux.intel.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
-Date:   Thu, 19 Dec 2019 17:28:38 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726906AbfLSRcn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:32:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726818AbfLSRcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:32:42 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62FF221655;
+        Thu, 19 Dec 2019 17:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576776761;
+        bh=k50cd5B88xhBvXY5ZkbJXqjGZEzoE+Hb2bzMFriQpZ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l+pkf4mWOw9JhNDQ7HH184KSQ2rLXHpRDxLiDMXneBjcfNPsiqN9pwBDqncxUqp3y
+         02V9/Hy5Xt7Ba71s2LypscPsGoMfVn7kl28ZVRnwLrByw9Peto+nA532n1Y8Fgg0hZ
+         gS09GGMTJWITcGexVVTd9FY8vVCbldDv++OTw5tQ=
+Date:   Thu, 19 Dec 2019 18:32:38 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 2/7] dt-bindings: thermal: add YAML schema for
+ sun8i-thermal driver bindings
+Message-ID: <20191219173238.zfcpfac46bs2gejk@gilmour.lan>
+References: <20191219172823.1652600-1-anarsoul@gmail.com>
+ <20191219172823.1652600-3-anarsoul@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <af48cd71-fa1a-dbc5-0e88-e315ea13c28c@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qvpkkhg37mvl6gwe"
+Content-Disposition: inline
+In-Reply-To: <20191219172823.1652600-3-anarsoul@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--qvpkkhg37mvl6gwe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 19/12/2019 16:36, Pierre-Louis Bossart wrote:
-> 
->> +static int wcd934x_slim_status(struct slim_device *sdev,
->> +                   enum slim_device_status status)
->> +{
->> +    switch (status) {
->> +    case SLIM_DEVICE_STATUS_UP:
->> +        return wcd934x_slim_status_up(sdev);
->> +    case SLIM_DEVICE_STATUS_DOWN:
->> +        mfd_remove_devices(&sdev->dev);
->> +        break;
->> +    default:
->> +        return -EINVAL;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
-> 
-> this is interesting/surprising - I just noticed what looks like a 
-> significant change in how probe/initialization are handled.
-> 
-> It was my understanding that in SLIMbus the Linux devices are created at 
-> probe time, and when the device reports present this 'device_status' 
-> callback is used to notify the codec driver of a change. The rationale 
-> for this was that the codec driver may control power switches/gpios that 
-> are necessary for the device to appear on the bus.
+On Thu, Dec 19, 2019 at 09:28:18AM -0800, Vasily Khoruzhick wrote:
+> From: Yangtao Li <tiny.windzz@gmail.com>
+>
+> sun8i-thermal driver supports thermal sensor in wide range of Allwinner
+> SoCs. Add YAML schema for its bindings.
+>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 
-We use same rational here to power switch and flip reset pins in device 
-probe to power up the actual SLIMBus device in device probe.
+Acked-by: Maxime Ripard <mripard@kernel.org>
 
-Only difference here is that the actual SLIMBus device itself is 
-represented as many child devices based on there functionality.
+Thanks!
+Maxime
 
-SLIMBus parent device in this case is MFD device which is created at 
-probe time. However child devices for that device like gpio controller, 
-codec, clock controller and soundwire controller are created only after 
-the device is enumerated on the bus. Before that none of these devices 
-will be in a position to talk on the bus.
+--qvpkkhg37mvl6gwe
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> This argument was used to require an change in the SoundWire 
-> implementation, so we followed this model of creating devices at probe 
-> time based on information reported by ACPI/DT, and used the 
-> 'update_status' callback when the device is present on the bus (which 
-> may happen after a delay or controlled by an external power switch). 
-> This approach can lead to 'ghost devices' described in firmware but not 
-> populated in hardware, and power management opens on how long a bus 
-> needs to remain active if no devices report present.
-> 
-> What I understand from the code above is that the devices are actually 
-> created when the SLIMbus device reports PRESENT, which seems a 180 
-> degree change in directions?
-> 
-Note these are the child devices of the MFD SLIMBus device.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfu0NgAKCRDj7w1vZxhR
+xTsHAP4pjKvGwYzFATi3ZRZ9Icy+5en/9wH9EXDxgCLFt/7Z2gD/WbLkhcAZQUIg
+h4Q76OJzfvYCKvCdvc/BVGFPYmKwQwU=
+=TiK5
+-----END PGP SIGNATURE-----
 
-
-> I actually prefer it this way, and all current discussions in MIPI 
-> circles point to the fact that when the bus starts all devices on that 
-> bus should already be powered and have the ability to report present 
-> immediately (if the bus starts in a 'safe' mode and then later programs 
-> different PHY parameters, a device can no longer join the bus)
-
-In our case we need to switch on few regulators and flip the reset pio 
-to be able to bring the device to enumerate.
-
-> 
-> I would however not remove the devices when the status is down but only 
-> on an explicit .remove.
-
-Am open for suggestions but I would not like the child devices to talk 
-on the bus once the SLIMbus device is down! Only way to ensure or make 
-it silent is to remove.
-
-Thanks,
-srini
-> 
-> Feedback welcome.
-> -Pierre
-> 
+--qvpkkhg37mvl6gwe--
