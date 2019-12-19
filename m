@@ -2,123 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F214126796
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE83612679A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:04:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfLSRCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:02:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56858 "EHLO mail.kernel.org"
+        id S1726967AbfLSREO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:04:14 -0500
+Received: from muru.com ([72.249.23.125]:49176 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbfLSRCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:02:15 -0500
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E449124672;
-        Thu, 19 Dec 2019 17:02:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576774934;
-        bh=Gf6fKzJZuUvXAHQkWvxm55YxdWNDzJNdosA6mUGKHjA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TQSEStuFgF7/JuT7Nq1X2HLaXZOiPmH15GI9c3S5NciCRZgcu5ua6eFxscAd1vxoY
-         EdgjxJzrKnIySNbcSpK0IFtvqkoc7XnQGZvin7Di/w1GBEQqrIhjtK4sBdUQnnIBtm
-         fR99zovTezoaed3BLXJsuvAzjSHYyOeL+svDUu2E=
-Received: by mail-qk1-f173.google.com with SMTP id x1so5181803qkl.12;
-        Thu, 19 Dec 2019 09:02:13 -0800 (PST)
-X-Gm-Message-State: APjAAAWvCHVTdrPKnNkbBKyObKgdmcF0A4i0Q8yTLIOF8hNHDYaXeV0y
-        S2l43uR9OZz4Y8jFSTl1h1BBgM6bglje+lHE0A==
-X-Google-Smtp-Source: APXvYqxfo/7e9wzlMy580Vd/102R/rWBP0PwZ//fNoQ8yxxiQhL+I/hOaEas3Y+kT2x51tzh7mSZJnDkNL/eoDWO7/0=
-X-Received: by 2002:a05:620a:135b:: with SMTP id c27mr8421615qkl.119.1576774933015;
- Thu, 19 Dec 2019 09:02:13 -0800 (PST)
+        id S1726760AbfLSREN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:04:13 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 635D98030;
+        Thu, 19 Dec 2019 17:04:52 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 09:04:09 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     lee.jones@linaro.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>
+Subject: Re: [PATCH] mfd: motorola-cpcap: Do not hardcode SPI mode flags
+Message-ID: <20191219170409.GH35479@atomide.com>
+References: <20191204231931.21378-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
-References: <20191218114625.28438-1-frank-w@public-files.de>
- <CAK7LNARWYE4-4Qp-YfTrrt1YCZ68b28FDoE45cDJkZTqUyXNUw@mail.gmail.com>
- <CAL_Jsq+we-0c25Hn+eGDTsyTDwKEvs9LWV9QtLX1+8V3DmtFtg@mail.gmail.com> <trinity-76f78a91-fc1f-479c-bd38-a7b989b28234-1576757117258@3c-app-gmx-bap68>
-In-Reply-To: <trinity-76f78a91-fc1f-479c-bd38-a7b989b28234-1576757117258@3c-app-gmx-bap68>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 19 Dec 2019 11:02:01 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL9gZbVC5X3gwYWpYc9-Geb4FvUP0cED8NC_MCEGQCy3g@mail.gmail.com>
-Message-ID: <CAL_JsqL9gZbVC5X3gwYWpYc9-Geb4FvUP0cED8NC_MCEGQCy3g@mail.gmail.com>
-Subject: Re: Re: [PATCH] kbuild: Add DTC_CPP_FLAGS
-To:     Frank Wunderlich <frank-w@public-files.de>
-Cc:     Masahiro Yamada <masahiroy@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204231931.21378-1-linus.walleij@linaro.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 6:05 AM Frank Wunderlich
-<frank-w@public-files.de> wrote:
->
-> Hi Rob,
->
-> so the way you prefer is this one (use new file for additions and including the board dts):
+Hi Linus,
 
-Yes, or you could use an overlay, but that will raise other issues
-(current lack of support building them in the kernel).
+* Linus Walleij <linus.walleij@linaro.org> [700101 00:00]:
+> The current use of mode flags to us SPI_MODE_0 and
+> SPI_CS_HIGH is fragile: it overwrites anything already
+> assigned by the SPI core. Change it thusly:
+> 
+> - Just |= the SPI_MODE_0 so we keep other flags
+> - Assign ^= SPI_CS_HIGH since we might be active high
+>   already, and that is usually the case with GPIOs used
+>   for chip select, even if they are in practice active low.
+> 
+> Add a comment clarifying why ^= SPI_CS_HIGH is the right
+> choice here.
 
-> arch/arm64/boot/dts/mediatek/mt7622-bpi-r64-mt7531.dts (example for mt7531-phy)
->
-> /*
->  * Copyright (c) 2018 MediaTek Inc.
->  * Author:
->  *
->  * SPDX-License-Identifier: (GPL-2.0 OR MIT)
->  */
->
-> /dts-v1/;
->
-> #include "mt7622-bananapi-bpi-r64.dts"
->
-> / {
->         gsw: gsw@0 {
->                 compatible = "mediatek,mt753x";
->                 mediatek,ethsys = <&ethsys>;
->                 #address-cells = <1>;
->                 #size-cells = <0>;
->         };
-> };
->
-> &gsw {
->         mediatek,mdio = <&mdio>;
->         mediatek,portmap = "wllll";
->         mediatek,mdio_master_pinmux = <0>;
->         reset-gpios = <&pio 54 0>;
->         interrupt-parent = <&pio>;
->         interrupts = <53 IRQ_TYPE_LEVEL_HIGH>;
->         status = "okay";
->
->         port5: port@5 {
->                 compatible = "mediatek,mt753x-port";
->                 reg = <5>;
->                 phy-mode = "rgmii";
->                 fixed-link {
->                         speed = <1000>;
->                         full-duplex;
->                 };
->         };
->
->         port6: port@6 {
->                 compatible = "mediatek,mt753x-port";
->                 reg = <6>;
->                 phy-mode = "2500base-x";
->                 fixed-link {
->                         speed = <2500>;
->                         full-duplex;
->                 };
->         };
-> };
->
-> at least it compiles and after decompile the new nodes are visible...
->
-> is there any way to drop nodes (in case dsa-driver gets merged i don't need it in the other 2)? i can disable them, but they will be present.
+Looks like this breaks booting for droid4 with a cpcap
+PMIC, probably as regulators won't work. There's no GPIO
+controller involved in this case for the chip select, the
+pins are directly controlled by the spi-omap2-mcspi.c
+driver.
 
-Yes, use '/delete-node/'.
+From the pin muxing setup we see there's a pull-down on
+mcspi1_cs0 pin meaning it's active high:
 
-Rob
+/* 0x4a100138 mcspi1_cs0.mcspi1_cs0 ae23 */
+OMAP4_IOPAD(0x138, PIN_INPUT_PULLDOWN | MUX_MODE0)
+
+My guess a similar issue is with similar patches for
+all non-gpio spi controllers?
+
+Let me know if you want me to test some other changes,
+or if this patch depends on some other changes.
+
+Regards,
+
+Tony
+
+
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/mfd/motorola-cpcap.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mfd/motorola-cpcap.c b/drivers/mfd/motorola-cpcap.c
+> index 52f38e57cdc1..a3bc61b8008c 100644
+> --- a/drivers/mfd/motorola-cpcap.c
+> +++ b/drivers/mfd/motorola-cpcap.c
+> @@ -279,7 +279,13 @@ static int cpcap_probe(struct spi_device *spi)
+>  	spi_set_drvdata(spi, cpcap);
+>  
+>  	spi->bits_per_word = 16;
+> -	spi->mode = SPI_MODE_0 | SPI_CS_HIGH;
+> +	spi->mode |= SPI_MODE_0;
+> +	/*
+> +	 * Active high should be defined as "inverse polarity" as GPIO-based
+> +	 * chip selects can be logically active high but inverted by the GPIO
+> +	 * library.
+> +	 */
+> +	spi->mode ^= SPI_CS_HIGH;
+>  
+>  	ret = spi_setup(spi);
+>  	if (ret)
+> -- 
+> 2.23.0
+> 
