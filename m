@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD14126A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B55D612695B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:37:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729023AbfLSSog (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
+        id S1727702AbfLSSgu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:36:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729015AbfLSSod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:33 -0500
+        id S1727688AbfLSSgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:36:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A078224672;
-        Thu, 19 Dec 2019 18:44:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 088EC24672;
+        Thu, 19 Dec 2019 18:36:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781073;
-        bh=V2jUsRlq3Dv+MZnM3Ro+bAzdwMYFMhTFt8fR+Zou3Ss=;
+        s=default; t=1576780608;
+        bh=BbG1MRN8dBGmcn2B4PnnDIylaywchjGJrrAUibn852c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJI3eskGr1yI6sogbqMGPcgDpbhtSURXNFtkeTaZp8fSmOPRrhjrL6dUvbNKn3sRa
-         6KqNLvxu58XEpD3hCP3xw1qwFQ/R/D8fP4l+cXDO7ucxaWs3UK2zrPbnRne9xnf7H4
-         Jik6chEhmt1yUECeOQsHfSI311bstsc+7rM8/hVg=
+        b=tC+5aVvccleqJ+PoZuzYGThB3NcwmK2Qhlp2L0k3roChUOOQmaUGLrRJ5qwkc2PpJ
+         76Atj1LfU2hDp7CojNHIkT6nAOQsw8ufKWF12o9pJqHNU/eB7LiOfcNnL5k65ZJVln
+         RbXCjiHKRCxQGKHVFoCmC8YAKIzKz7Njyf8+5D4w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
+        Paul Walmsley <paul@pwsan.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 070/199] ARM: dts: sunxi: Fix PMU compatible strings
+Subject: [PATCH 4.4 044/162] modpost: skip ELF local symbols during section mismatch check
 Date:   Thu, 19 Dec 2019 19:32:32 +0100
-Message-Id: <20191219183218.866619677@linuxfoundation.org>
+Message-Id: <20191219183210.598801805@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +46,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Paul Walmsley <paul.walmsley@sifive.com>
 
-[ Upstream commit 5719ac19fc32d892434939c1756c2f9a8322e6ef ]
+[ Upstream commit a4d26f1a0958bb1c2b60c6f1e67c6f5d43e2647b ]
 
-"arm,cortex-a15-pmu" is not a valid fallback compatible string for an
-Cortex-A7 PMU, so drop it.
+During development of a serial console driver with a gcc 8.2.0
+toolchain for RISC-V, the following modpost warning appeared:
 
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+----
+WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
+The variable .LANCHOR1 references
+the function __init sifive_serial_console_setup()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+----
+
+".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
+anchor generation code:
+
+https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
+
+https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
+
+This was verified by compiling the kernel with -fno-section-anchors
+and observing that the ".LANCHOR1" ELF local symbol disappeared, and
+modpost no longer warned about the section mismatch.  The serial
+driver code idiom triggering the warning is standard Linux serial
+driver practice that has a specific whitelist inclusion in modpost.c.
+
+I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
+useful for modpost to report section mismatch warnings caused by ELF
+local symbols by default.  Local symbols have compiler-generated
+names, and thus bypass modpost's whitelisting algorithm, which relies
+on the presence of a non-autogenerated symbol name.  This increases
+the likelihood that false positive warnings will be generated (as in
+the above case).
+
+Thus, disable section mismatch reporting on ELF local symbols.  The
+rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
+ARM binutils leaking ELF local symbols") and of similar code already
+present in modpost.c:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
+
+This third version of the patch implements a suggestion from Masahiro
+Yamada <yamada.masahiro@socionext.com> to restructure the code as an
+additional pattern matching step inside secref_whitelist(), and
+further improves the patch description.
+
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Paul Walmsley <paul@pwsan.com>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sun6i-a31.dtsi | 2 +-
- arch/arm/boot/dts/sun7i-a20.dtsi | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ scripts/mod/modpost.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index ce1960453a0bb..3bfa79717dfab 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -174,7 +174,7 @@
- 	};
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index 81b1c02a76fad..f27df76059995 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -1156,6 +1156,14 @@ static const struct sectioncheck *section_mismatch(
+  *   fromsec = text section
+  *   refsymname = *.constprop.*
+  *
++ * Pattern 6:
++ *   Hide section mismatch warnings for ELF local symbols.  The goal
++ *   is to eliminate false positive modpost warnings caused by
++ *   compiler-generated ELF local symbol names such as ".LANCHOR1".
++ *   Autogenerated symbol names bypass modpost's "Pattern 2"
++ *   whitelisting, which relies on pattern-matching against symbol
++ *   names to work.  (One situation where gcc can autogenerate ELF
++ *   local symbols is when "-fsection-anchors" is used.)
+  **/
+ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 			    const char *fromsec, const char *fromsym,
+@@ -1194,6 +1202,10 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
+ 	    match(fromsym, optim_symbols))
+ 		return 0;
  
- 	pmu {
--		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
-+		compatible = "arm,cortex-a7-pmu";
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 94cf5a1c71723..db5d30598ad66 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -172,7 +172,7 @@
- 	};
++	/* Check for pattern 6 */
++	if (strstarts(fromsym, ".L"))
++		return 0;
++
+ 	return 1;
+ }
  
- 	pmu {
--		compatible = "arm,cortex-a7-pmu", "arm,cortex-a15-pmu";
-+		compatible = "arm,cortex-a7-pmu";
- 		interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
- 			     <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
- 	};
 -- 
 2.20.1
 
