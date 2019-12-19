@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 70CAD126ADE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B74126ABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729943AbfLSSvn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:51:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46000 "EHLO mail.kernel.org"
+        id S1729617AbfLSSub (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729914AbfLSSvj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:51:39 -0500
+        id S1729985AbfLSSu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D4B32064B;
-        Thu, 19 Dec 2019 18:51:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5698324686;
+        Thu, 19 Dec 2019 18:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781498;
-        bh=uwbsH1ug9PaiCVZDYE78+LciTlu5HfsGYmkej1Wx1Zk=;
+        s=default; t=1576781427;
+        bh=MJhyBHNFm+oS/zufH9lzZeJjjT9w7wQBJHb8qnISolI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=plBeNJsufgwkBoPcE76ReAkScWpQCuwdV80/R9rb+ZRk6emokqekvlZMiHdqoN9Jr
-         ru1gvTgyWU6KE8UTcFIqritIvlgx5oke20sqc47hi3c+zGsoRg55FI3zPMCloMo+zb
-         o6yxGqORDSIONb3ba0lwmgdKboMBYATlTaWVHpRM=
+        b=OBlUt2wevyGYEEKK1t/5u6Qdy3I3Sb7GiIbIX44M/EDo5/VQMv6gwdrn6/iAvSzT9
+         /Sqe5CrGjXbz5FwsyC8mpjSUldZagruHZd7MYhcBZwmZA112x+VFwS5UM4PWzNe/DR
+         BJP56a5xmaMSWv7CrTQvN4Hehfdc2loV9Fu+Ud9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
         Jon Maloy <jon.maloy@ericsson.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 10/47] tipc: fix ordering of tipc module init and exit routine
+Subject: [PATCH 4.14 07/36] tipc: fix ordering of tipc module init and exit routine
 Date:   Thu, 19 Dec 2019 19:34:24 +0100
-Message-Id: <20191219182907.255018607@linuxfoundation.org>
+Message-Id: <20191219182855.680654180@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -136,7 +136,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/net/tipc/core.c
 +++ b/net/tipc/core.c
-@@ -120,14 +120,6 @@ static int __init tipc_init(void)
+@@ -116,14 +116,6 @@ static int __init tipc_init(void)
  	sysctl_tipc_rmem[1] = RCVBUF_DEF;
  	sysctl_tipc_rmem[2] = RCVBUF_MAX;
  
@@ -151,7 +151,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	err = tipc_register_sysctl();
  	if (err)
  		goto out_sysctl;
-@@ -148,8 +140,21 @@ static int __init tipc_init(void)
+@@ -144,8 +136,21 @@ static int __init tipc_init(void)
  	if (err)
  		goto out_bearer;
  
@@ -173,7 +173,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  out_bearer:
  	unregister_pernet_device(&tipc_topsrv_net_ops);
  out_pernet_topsrv:
-@@ -159,22 +164,18 @@ out_socket:
+@@ -155,22 +160,18 @@ out_socket:
  out_pernet:
  	tipc_unregister_sysctl();
  out_sysctl:
