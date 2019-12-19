@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F731126AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23E29126BD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbfLSSux (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:50:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44824 "EHLO mail.kernel.org"
+        id S1730244AbfLSS7X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:59:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbfLSSuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:50:50 -0500
+        id S1730180AbfLSSxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F62A20674;
-        Thu, 19 Dec 2019 18:50:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2B7524684;
+        Thu, 19 Dec 2019 18:53:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781449;
-        bh=Jrwpqvl/NbwnQ3Y/vpkLFz7VYCol0WrRQ/VbLcu30NI=;
+        s=default; t=1576781610;
+        bh=k0PGHl9AFF8Jmbw1yT7FRXieSApRaycBklTB0R9iL2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ruB9mpo2TsfXwVp2oXp4H6lnNlJEaPOK4TKRy5l54U8tAm9tQyRerbix8MQuhVxYu
-         WrTRSxhCIpwr9QqGTS5gGd+/KPFFeGgKLH3KRwDddFzyWjaoT2I60kqK7mOq7wKKqx
-         XlF/pCyL8iqyGpIXsDk4cVE4hagePV4VTgwYF/ms=
+        b=yhqPHKAry7nP5PrwSRmlgU5pJDAQLdeh97JF1Ai5Lpb3k1h5hu9MnAx5UUb9OUy3i
+         VlInfmEEGvrLUAIBsU5/pgy4l6hkrZ7Iv/cSkVImg/no2KKevzCkBButYgIprTDRym
+         U3SBXnLEovfXS40U4NAzebWW064BiQwFkluIsavc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lihua Yao <ylhuajnu@outlook.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.14 27/36] ARM: dts: s3c64xx: Fix init order of clock providers
-Date:   Thu, 19 Dec 2019 19:34:44 +0100
-Message-Id: <20191219182918.731649550@linuxfoundation.org>
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 31/47] cifs: smbd: Return -EAGAIN when transport is reconnecting
+Date:   Thu, 19 Dec 2019 19:34:45 +0100
+Message-Id: <20191219182934.398750129@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,59 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lihua Yao <ylhuajnu@outlook.com>
+From: Long Li <longli@microsoft.com>
 
-commit d60d0cff4ab01255b25375425745c3cff69558ad upstream.
+commit 4357d45f50e58672e1d17648d792f27df01dfccd upstream.
 
-fin_pll is the parent of clock-controller@7e00f000, specify
-the dependency to ensure proper initialization order of clock
-providers.
+During reconnecting, the transport may have already been destroyed and is in
+the process being reconnected. In this case, return -EAGAIN to not fail and
+to retry this I/O.
 
-without this patch:
-[    0.000000] S3C6410 clocks: apll = 0, mpll = 0
-[    0.000000]  epll = 0, arm_clk = 0
-
-with this patch:
-[    0.000000] S3C6410 clocks: apll = 532000000, mpll = 532000000
-[    0.000000]  epll = 24000000, arm_clk = 532000000
-
-Cc: <stable@vger.kernel.org>
-Fixes: 3f6d439f2022 ("clk: reverse default clk provider initialization order in of_clk_init()")
-Signed-off-by: Lihua Yao <ylhuajnu@outlook.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Long Li <longli@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/s3c6410-mini6410.dts |    4 ++++
- arch/arm/boot/dts/s3c6410-smdk6410.dts |    4 ++++
- 2 files changed, 8 insertions(+)
+ fs/cifs/transport.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/arch/arm/boot/dts/s3c6410-mini6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
-@@ -167,6 +167,10 @@
- 	};
- };
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -286,8 +286,11 @@ __smb_send_rqst(struct TCP_Server_Info *
+ 	int val = 1;
+ 	__be32 rfc1002_marker;
  
-+&clocks {
-+	clocks = <&fin_pll>;
-+};
-+
- &sdhci0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
---- a/arch/arm/boot/dts/s3c6410-smdk6410.dts
-+++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-@@ -71,6 +71,10 @@
- 	};
- };
- 
-+&clocks {
-+	clocks = <&fin_pll>;
-+};
-+
- &sdhci0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
+-	if (cifs_rdma_enabled(server) && server->smbd_conn) {
+-		rc = smbd_send(server, num_rqst, rqst);
++	if (cifs_rdma_enabled(server)) {
++		/* return -EAGAIN when connecting or reconnecting */
++		rc = -EAGAIN;
++		if (server->smbd_conn)
++			rc = smbd_send(server, num_rqst, rqst);
+ 		goto smbd_done;
+ 	}
+ 	if (ssocket == NULL)
 
 
