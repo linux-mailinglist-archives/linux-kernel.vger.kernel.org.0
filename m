@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB435126AB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32657126B23
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbfLSSuD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:50:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43666 "EHLO mail.kernel.org"
+        id S1730471AbfLSSyP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:54:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729893AbfLSSuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:50:01 -0500
+        id S1730463AbfLSSyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:54:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4383024672;
-        Thu, 19 Dec 2019 18:50:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 945BF222C2;
+        Thu, 19 Dec 2019 18:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781400;
-        bh=iaX4qoWzrHJ87FANjOxQtE9U3qI0YIdir/spzdB2Z/E=;
+        s=default; t=1576781649;
+        bh=5ELXbSbF1Du+eE8S1HGc9K2ygWD6qoJiSIfCoeAqHGk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/6HTMUOFnO+GDUJsI4QLCGRXj1IGRljHDN/izlfBwvJD51OwsH7CvWHaMr/SF/hI
-         CW78nZuVRqYoAChq377dv1gZXMqSJaOIrW8xERofjQ0ZdR4seSLvh38lmzuFrtrO6y
-         2cRu5pUdaUUltFOKvAsV72u48oNuPLAN9ehQdTBk=
+        b=pBNCfUONceOoSzevxp3qBoXAqyp6dAX83SL6MKZKf14lxbQFYrttJRCqgXtY2l5bQ
+         PRydYpzcXLO57Z0sMnOxCaET/1jcZgNIY86P0cZw8W8Od6VBfGzq1CCW0eTAuqzrC8
+         YJAAcI8Nmxa6Gg/fg+5LhtsDsXf3ijh8BY4zhFkk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
-        Aya Levin <ayal@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 173/199] net/mlx5e: Fix SFF 8472 eeprom length
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH 5.4 23/80] rpmsg: glink: Fix use after free in open_ack TIMEOUT case
 Date:   Thu, 19 Dec 2019 19:34:15 +0100
-Message-Id: <20191219183225.110570192@linuxfoundation.org>
+Message-Id: <20191219183101.776120362@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
+References: <20191219183031.278083125@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,37 +45,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Arun Kumar Neelakantam <aneela@codeaurora.org>
 
-[ Upstream commit c431f8597863a91eea6024926e0c1b179cfa4852 ]
+commit ac74ea01860170699fb3b6ea80c0476774c8e94f upstream.
 
-SFF 8472 eeprom length is 512 bytes. Fix module info return value to
-support 512 bytes read.
+Extra channel reference put when remote sending OPEN_ACK after timeout
+causes use-after-free while handling next remote CLOSE command.
 
-Fixes: ace329f4ab3b ("net/mlx5e: ethtool, Remove unsupported SFP EEPROM high pages query")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Reviewed-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Remove extra reference put in timeout case to avoid use-after-free.
+
+Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
+Cc: stable@vger.kernel.org
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/rpmsg/qcom_glink_native.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-index e42ece20cd0b1..e13a6cd5163f4 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
-@@ -1368,7 +1368,7 @@ static int mlx5e_get_module_info(struct net_device *netdev,
- 		break;
- 	case MLX5_MODULE_ID_SFP:
- 		modinfo->type       = ETH_MODULE_SFF_8472;
--		modinfo->eeprom_len = MLX5_EEPROM_PAGE_LENGTH;
-+		modinfo->eeprom_len = ETH_MODULE_SFF_8472_LEN;
- 		break;
- 	default:
- 		netdev_err(priv->netdev, "%s: cable type not recognized:0x%x\n",
--- 
-2.20.1
-
+--- a/drivers/rpmsg/qcom_glink_native.c
++++ b/drivers/rpmsg/qcom_glink_native.c
+@@ -1103,13 +1103,12 @@ static int qcom_glink_create_remote(stru
+ close_link:
+ 	/*
+ 	 * Send a close request to "undo" our open-ack. The close-ack will
+-	 * release the last reference.
++	 * release qcom_glink_send_open_req() reference and the last reference
++	 * will be relesed after receiving remote_close or transport unregister
++	 * by calling qcom_glink_native_remove().
+ 	 */
+ 	qcom_glink_send_close_req(glink, channel);
+ 
+-	/* Release qcom_glink_send_open_req() reference */
+-	kref_put(&channel->refcount, qcom_glink_channel_release);
+-
+ 	return ret;
+ }
+ 
 
 
