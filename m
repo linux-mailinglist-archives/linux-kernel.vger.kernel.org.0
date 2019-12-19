@@ -2,93 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4EE125850
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:15:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 482EC125857
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:16:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfLSAPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 19:15:36 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38880 "EHLO
+        id S1726770AbfLSAQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 19:16:27 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38888 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbfLSAPg (ORCPT
+        with ESMTP id S1726713AbfLSAQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:15:36 -0500
+        Wed, 18 Dec 2019 19:16:26 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: sre)
-        with ESMTPSA id A161D2929C1
+        with ESMTPSA id 45E6F2929BD
 Received: by earth.universe (Postfix, from userid 1000)
-        id EB1DA3C0C7B; Thu, 19 Dec 2019 01:15:31 +0100 (CET)
-Date:   Thu, 19 Dec 2019 01:15:31 +0100
+        id E4A793C0C7B; Thu, 19 Dec 2019 01:16:22 +0100 (CET)
+Date:   Thu, 19 Dec 2019 01:16:22 +0100
 From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
-Cc:     krzk@kernel.org, Rob Herring <robh@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@puri.sm
-Subject: Re: [PATCH v2 0/2] Add MAX17055 fuel guage
-Message-ID: <20191219001531.gnav4roprttdwknc@earth.universe>
-References: <20191214152755.25138-1-angus@akkea.ca>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] power: reset: gpio-restart: don't error on deferral
+Message-ID: <20191219001622.ymsv54rnnrmgkvnt@earth.universe>
+References: <20191029201726.12786-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ldrttufjxpp4b6bw"
+        protocol="application/pgp-signature"; boundary="bbcvvkyn2dmty7za"
 Content-Disposition: inline
-In-Reply-To: <20191214152755.25138-1-angus@akkea.ca>
+In-Reply-To: <20191029201726.12786-1-chris.packham@alliedtelesis.co.nz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ldrttufjxpp4b6bw
+--bbcvvkyn2dmty7za
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Sat, Dec 14, 2019 at 07:27:53AM -0800, Angus Ainslie (Purism) wrote:
-> Extend the max17042_battery driver to include the MAX17055.
+On Wed, Oct 30, 2019 at 09:17:26AM +1300, Chris Packham wrote:
+> Don't generate an error message when devm_gpiod_get fails with
+> -EPROBE_DEFER.
+>=20
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 
-Thanks, queued to power-suply's for-next branch.
+Thanks, queued to power-supply's for-next branch.
 
 -- Sebastian
 
 >=20
-> Changes since v1:
+> Notes:
+>     Changes in v2:
+>     - use PTR_ERR_OR_ZERO() to avoid excessive PTR_ERR()
 >=20
-> Change blacklist driver checks to whitelists.
+>  drivers/power/reset/gpio-restart.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 >=20
-> Angus Ainslie (Purism) (2):
->   power: supply: max17042: add MAX17055 support
->   device-tree: bindings: max17042_battery: add all of the compatible
->     strings
->=20
->  .../power/supply/max17042_battery.txt         |  6 ++-
->  drivers/power/supply/max17042_battery.c       | 17 +++++--
->  include/linux/power/max17042_battery.h        | 48 ++++++++++++++++++-
->  3 files changed, 66 insertions(+), 5 deletions(-)
->=20
+> diff --git a/drivers/power/reset/gpio-restart.c b/drivers/power/reset/gpi=
+o-restart.c
+> index 308ca9d9d276..5466eeea261c 100644
+> --- a/drivers/power/reset/gpio-restart.c
+> +++ b/drivers/power/reset/gpio-restart.c
+> @@ -64,9 +64,11 @@ static int gpio_restart_probe(struct platform_device *=
+pdev)
+> =20
+>  	gpio_restart->reset_gpio =3D devm_gpiod_get(&pdev->dev, NULL,
+>  			open_source ? GPIOD_IN : GPIOD_OUT_LOW);
+> -	if (IS_ERR(gpio_restart->reset_gpio)) {
+> -		dev_err(&pdev->dev, "Could not get reset GPIO\n");
+> -		return PTR_ERR(gpio_restart->reset_gpio);
+> +	ret =3D PTR_ERR_OR_ZERO(gpio_restart->reset_gpio);
+> +	if (ret) {
+> +		if (ret !=3D -EPROBE_DEFER)
+> +			dev_err(&pdev->dev, "Could not get reset GPIO\n");
+> +		return ret;
+>  	}
+> =20
+>  	gpio_restart->restart_handler.notifier_call =3D gpio_restart_notify;
 > --=20
-> 2.17.1
+> 2.23.0
 >=20
 
---ldrttufjxpp4b6bw
+--bbcvvkyn2dmty7za
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl36wSMACgkQ2O7X88g7
-+prFWg//T5ntYoriOV0sVbe5bCXhTS18S9n3MAj7Hs+duWtve7xbPHcs3O1BV44O
-IbqHmQLQtH+U7aWnaCkAzgMfK7YuoXmWgxFQTdYnAsmbjSN8DEd39BS7xUdLmJtE
-Lfvk3nxlzeS2EveNYb5XGkjGQIjITUauyc+eKqKcgY6HMXedrlNzRUJaRCZYmUGn
-0FAr3OxJ79L6Q/UYT/FomElClPYF9CXPs/klh/yD70unAunigCU0Qyvm2nj6uPRI
-w18nyHijjmz+TD2MfKiHaNiVvtsRzvDPRgo7FfZ7g00SwYy20gWqnibYpOs9TYFI
-Mzg8LBmpngGbGj0xPfX9KxfFRGWHAYPlltdXndvLYAywXZ3w+BKLCYL2JoiVVPdW
-43eUaBqXa1m8wxZMswz4xV4ouk68kAkh1gs3loxB06+Az4hrqBjJLTGSIMUzhm3y
-s8Vvo5BFthKYNETL2X+ruzSSWCw/yHAcPYj8lIvoCSeB0BWdwXrO5e3u62kAZgi5
-rOwF+Zxv+iyUZMgh0zKnBkFDCGBI9TR3tcuQcLc9ta6G6u4/oIxn23CbcruN0VJO
-kf4X3k0l/rLBsyKCYqGtUMe3SoWz0CUB6zakGTzYUERZXV7LcsfhAVsxcbeV2Opa
-FN7uQO/5il0cCN3/A6Mis6v7cvVxolYl8mB56UUPFZ5FgK+BrpM=
-=aycy
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl36wVYACgkQ2O7X88g7
++pr9KA/+LmLaWD+a8hdmp0lQVGOdig5qGUaN+qIhDOJ6uudR2m15nhe/bgN6Vdf+
+xUXXsb18SEHAKDJqK0k2pdHySbbhCHM0r8J/ThwbB5AopW2/1cotus+5ndBYF17o
+Bv6NrDB7ClHxw78vgPvfx6TavBRrv+O1G2BeclYOT1CiC3yib1sDlOIwFnUJ9iZg
+FmiMlSSgT2arxod3kjGPteL2LhUFNXb8GUve2KheexvnYCcHL8WC1zj7DTiNXl1W
+HOjmR0cmDnMusQY4vgXBulRPF6vz3LTrRv0qtx88DnXVwM3c4dfkRX0/KKy93cAv
+TAf5FwqIu6aAAV0MAuRRPUEzjOIUqJ6h4hLSp2MIA4fAubLYhZbyTNAqz3xboZZg
+3Q/ONParYlnS9M3vqZ/cX0nDf5Vc1/TtlUdnAksotUM+sy4C3HEW8uzqO8vAitM/
+OMgeyjIHQ9/6TcY83f2geoTy+LD7zafOW8kTOIfElNFfRQ7d26ENcPf88497NpEd
++W6GEAQQwCM4ZU4Ah4uIWI6LjpU3N5UGYMFC2AYpjubZvrSoUMTLuNfn956lhj1D
+3qkKdgxYTdNaKTFP91RP6HUF/v39oYlddROIOs3qEKb8W6U/aqOoHXrKWC2DU+we
+lHJ+udbHrrRQNWJTerSMo0ro8xvCv6jTrYYjnip5HyejNbr2Y28=
+=d+tO
 -----END PGP SIGNATURE-----
 
---ldrttufjxpp4b6bw--
+--bbcvvkyn2dmty7za--
