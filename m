@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85741126C8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A493F126C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfLSTEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:04:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39840 "EHLO mail.kernel.org"
+        id S1729155AbfLSSrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729404AbfLSSq7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:59 -0500
+        id S1728456AbfLSSrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 629FC24679;
-        Thu, 19 Dec 2019 18:46:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F8422465E;
+        Thu, 19 Dec 2019 18:47:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781218;
-        bh=t4gPPwpKYB+p3CGg1LOOHBYsxOHEph6hE6VO8OEGwRU=;
+        s=default; t=1576781231;
+        bh=H3DGoz85rgMJVtyTskbKIpEhEN4V6tNiokZN7CwuBEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z0yyoTB/vbueu6F4GonsIw1gLjRc54csR3oCqekKen2lTFtLuioxlmlfem8m42BG/
-         xR6lImaa5ndB5u7zX4cccrjq1WfR+EF7hMdU2d7eCQqlIvob9RRCvQbA+2CI8PwE4m
-         37otWqsuzIv/YbKjTEI/BjIT+153KZ7osdzMM9i4=
+        b=aXmqYQ0Ckmq4zxFFh4cbEziozA/tEkXZi19aJ/t/0bRHEbAMHQiI+cUcYKA4HNVsF
+         iWcmVnUjWnPx9o5aa1m4gloXiwhD2T7FxAub++iw49N38rIRaW78shw3MPBVQH05P9
+         TxDkYBXiiahZGzsQ3XcoRvxi5+i8h7KgNcxCbvH4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Matti Aaltonen <matti.j.aaltonen@nokia.com>,
-        Johan Hovold <johan@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: [PATCH 4.9 132/199] media: radio: wl1273: fix interrupt masking on release
-Date:   Thu, 19 Dec 2019 19:33:34 +0100
-Message-Id: <20191219183222.368499968@linuxfoundation.org>
+        stable@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+        Todd Brandt <todd.e.brandt@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 137/199] ACPI: PM: Avoid attaching ACPI PM domain to certain devices
+Date:   Thu, 19 Dec 2019 19:33:39 +0100
+Message-Id: <20191219183222.704767523@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -46,40 +44,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hovold <johan@kernel.org>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit 1091eb830627625dcf79958d99353c2391f41708 upstream.
+commit b9ea0bae260f6aae546db224daa6ac1bd9d94b91 upstream.
 
-If a process is interrupted while accessing the radio device and the
-core lock is contended, release() could return early and fail to update
-the interrupt mask.
+Certain ACPI-enumerated devices represented as platform devices in
+Linux, like fans, require special low-level power management handling
+implemented by their drivers that is not in agreement with the ACPI
+PM domain behavior.  That leads to problems with managing ACPI fans
+during system-wide suspend and resume.
 
-Note that the return value of the v4l2 release file operation is
-ignored.
+For this reason, make acpi_dev_pm_attach() skip the affected devices
+by adding a list of device IDs to avoid to it and putting the IDs of
+the affected devices into that list.
 
-Fixes: 87d1a50ce451 ("[media] V4L2: WL1273 FM Radio: TI WL1273 FM radio driver")
-Cc: stable <stable@vger.kernel.org>     # 2.6.38
-Cc: Matti Aaltonen <matti.j.aaltonen@nokia.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Fixes: e5cc8ef31267 (ACPI / PM: Provide ACPI PM callback routines for subsystems)
+Reported-by: Zhang Rui <rui.zhang@intel.com>
+Tested-by: Todd Brandt <todd.e.brandt@linux.intel.com>
+Cc: 3.10+ <stable@vger.kernel.org> # 3.10+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/radio/radio-wl1273.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/acpi/device_pm.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/drivers/media/radio/radio-wl1273.c
-+++ b/drivers/media/radio/radio-wl1273.c
-@@ -1149,8 +1149,7 @@ static int wl1273_fm_fops_release(struct
- 	if (radio->rds_users > 0) {
- 		radio->rds_users--;
- 		if (radio->rds_users == 0) {
--			if (mutex_lock_interruptible(&core->lock))
--				return -EINTR;
-+			mutex_lock(&core->lock);
+--- a/drivers/acpi/device_pm.c
++++ b/drivers/acpi/device_pm.c
+@@ -1096,9 +1096,19 @@ static void acpi_dev_pm_detach(struct de
+  */
+ int acpi_dev_pm_attach(struct device *dev, bool power_on)
+ {
++	/*
++	 * Skip devices whose ACPI companions match the device IDs below,
++	 * because they require special power management handling incompatible
++	 * with the generic ACPI PM domain.
++	 */
++	static const struct acpi_device_id special_pm_ids[] = {
++		{"PNP0C0B", }, /* Generic ACPI fan */
++		{"INT3404", }, /* Fan */
++		{}
++	};
+ 	struct acpi_device *adev = ACPI_COMPANION(dev);
  
- 			radio->irq_flags &= ~WL1273_RDS_EVENT;
+-	if (!adev)
++	if (!adev || !acpi_match_device_ids(adev, special_pm_ids))
+ 		return -ENODEV;
  
+ 	if (dev->pm_domain)
 
 
