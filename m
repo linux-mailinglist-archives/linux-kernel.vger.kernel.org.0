@@ -2,60 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CED2125F48
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:37:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B615125FCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfLSKhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:37:37 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37192 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726736AbfLSKhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:37:35 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id CEACD2CF50DD0D6A9E70
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 18:37:32 +0800 (CST)
-Received: from huawei.com (10.90.53.225) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Dec 2019
- 18:37:25 +0800
-From:   zhengbin <zhengbin13@huawei.com>
-To:     <mikulas@artax.karlin.mff.cuni.cz>, <linux-kernel@vger.kernel.org>
-CC:     <zhengbin13@huawei.com>
-Subject: [PATCH] hpfs: Remove unneeded semicolon
-Date:   Thu, 19 Dec 2019 18:44:46 +0800
-Message-ID: <1576752286-17549-1-git-send-email-zhengbin13@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726708AbfLSKsU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:48:20 -0500
+Received: from foss.arm.com ([217.140.110.172]:36864 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726633AbfLSKsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:48:20 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D30B31B;
+        Thu, 19 Dec 2019 02:48:19 -0800 (PST)
+Received: from e107158-lin (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA4C13F719;
+        Thu, 19 Dec 2019 02:48:16 -0800 (PST)
+Date:   Thu, 19 Dec 2019 10:48:14 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Doug Smythies <dsmythies@telus.net>
+Cc:     'Giovanni Gherdovich' <ggherdovich@suse.cz>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        'Mel Gorman' <mgorman@techsingularity.net>,
+        'Matt Fleming' <matt@codeblueprint.co.uk>,
+        'Viresh Kumar' <viresh.kumar@linaro.org>,
+        'Juri Lelli' <juri.lelli@redhat.com>,
+        'Paul Turner' <pjt@google.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Vincent Guittot' <vincent.guittot@linaro.org>,
+        'Quentin Perret' <qperret@qperret.net>,
+        'Dietmar Eggemann' <dietmar.eggemann@arm.com>,
+        'Srinivas Pandruvada' <srinivas.pandruvada@linux.intel.com>,
+        'Thomas Gleixner' <tglx@linutronix.de>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Borislav Petkov' <bp@suse.de>, 'Len Brown' <lenb@kernel.org>,
+        "'Rafael J . Wysocki'" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
+Message-ID: <20191219104813.6fr34qavpaplecoz@e107158-lin>
+References: <20191113124654.18122-1-ggherdovich@suse.cz>
+ <20191113124654.18122-2-ggherdovich@suse.cz>
+ <000001d5a29b$c944fd70$5bcef850$@net>
+ <1574697961.16378.5.camel@suse.cz>
+ <000801d5a41e$a7fce2c0$f7f6a840$@net>
+ <1574781600.7677.2.camel@suse.cz>
+ <001d01d5a4f4$d96b21b0$8c416510$@net>
+ <003d01d5a63d$f6ab3950$e401abf0$@net>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <003d01d5a63d$f6ab3950$e401abf0$@net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
+Hi Doug
 
-fs/hpfs/buffer.c:56:2-3: Unneeded semicolon
+On 11/28/19 14:48, Doug Smythies wrote:
+> Summary: There never was an issue here.
+> 
+> Sorry for the noise of this thread, and the resulting waste of time.
+> 
+> On 2019.11.26 23:33 Doug Smythies wrote:
+> > On 2019.11.26 07:20 Giovanni Gherdovich wrote:
+> >> On Mon, 2019-11-25 at 21:59 -0800, Doug Smythies wrote:
+> >>> [...]
+> >>> The issue with the schedutil governor not working properly in the 5.4 RC series
+> >>> appears to be hardware dependant.
+> 
+> No it 's not.
+> 
+> Issues with my Sandy Bridge, i7-2600K, test computer and kernel 5.4
+> seem to be because it is running an older Ubuntu server version,
+> apparently somewhat dependant on cgroup V1 and their cgmanager package.
+> I am unable to remove the package to test further because I do use VMs
+> that seem to depend on it.
+> 
+> In the kernel configuration when CONFIG_UCLAMP_TASK_GROUP=y
+> the computer behaves as though the new parameter "cpu.uclamp.min"
+> is set to max rather than 0, but I can not prove it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: zhengbin <zhengbin13@huawei.com>
----
- fs/hpfs/buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I just noticed this. This option shouldn't cause any problem, if it does there
+might be a bug that we need to fix.
 
-diff --git a/fs/hpfs/buffer.c b/fs/hpfs/buffer.c
-index e285d6b..d392468 100644
---- a/fs/hpfs/buffer.c
-+++ b/fs/hpfs/buffer.c
-@@ -53,7 +53,7 @@ void hpfs_prefetch_sectors(struct super_block *s, unsigned secno, int n)
- 			return;
- 		}
- 		brelse(bh);
--	};
-+	}
+So cpu.uclamp.min reads 0 but you think it's not taking effect, correct?
 
- 	blk_start_plug(&plug);
- 	while (n > 0) {
+In the quotes above I see 5.4 RC, if you haven't tried this against the final
+5.4 release, do you mind trying to see if you can reproduce? Trying 5.5-rc2
+would be helpful too if 5.4 fails.
+
+Thanks
+
 --
-2.7.4
-
+Qais Yousef
