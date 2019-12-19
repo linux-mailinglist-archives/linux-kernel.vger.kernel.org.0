@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B03E126B27
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:54:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99052126A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbfLSSy0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49846 "EHLO mail.kernel.org"
+        id S1729703AbfLSSs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730209AbfLSSyY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:54:24 -0500
+        id S1729303AbfLSSsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FF89227BF;
-        Thu, 19 Dec 2019 18:54:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BFF624679;
+        Thu, 19 Dec 2019 18:48:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781663;
-        bh=NDHlV/5kiS7r+Hm2Cfj1Jf69PpoWZ1Y7BukYPq+qrKU=;
+        s=default; t=1576781332;
+        bh=rQowdWk19egIDGrY5XsUDWtWxNl2hW95nTrBlTxALQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RTwbj+t/UDqO7k+ta/pAT1Ko8RLFSm3rV1Guu00beu/9pUR269hST4b62wT9f18lS
-         4MeYE2XbuPXPCwZeZZZRtAif2LZdESavXthcPwKS/YgPE6Ht7nS5tRHQu+4KEALDEK
-         OMYllSk7hEzgAznxk7avT+6sWke22QhvBaEe2j1s=
+        b=DIJbHD0b5Dpg3gncZ3+ndVBmxyA4hiw3q4RDnzNaJFcKz/Iw7IGLlY0m/FMLH5Abq
+         4vtrlv5rvnubKEvD51rpr17kLVcsLj9YsEsv0nQaNUhBkdyns0YeloSOsFVcaB0k4k
+         XmGC/Cemm+L+8gBe8WH78cQtWBGemLX+jJixv/y4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.4 29/80] cifs: smbd: Only queue work for error recovery on memory registration
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 179/199] tcp: md5: fix potential overestimation of TCP option space
 Date:   Thu, 19 Dec 2019 19:34:21 +0100
-Message-Id: <20191219183103.776965717@linuxfoundation.org>
+Message-Id: <20191219183225.513466043@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,65 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit c21ce58eab1eda4c66507897207e20c82e62a5ac upstream.
+[ Upstream commit 9424e2e7ad93ffffa88f882c9bc5023570904b55 ]
 
-It's not necessary to queue invalidated memory registration to work queue, as
-all we need to do is to unmap the SG and make it usable again. This can save
-CPU cycles in normal data paths as memory registration errors are rare and
-normally only happens during reconnection.
+Back in 2008, Adam Langley fixed the corner case of packets for flows
+having all of the following options : MD5 TS SACK
 
-Signed-off-by: Long Li <longli@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Since MD5 needs 20 bytes, and TS needs 12 bytes, no sack block
+can be cooked from the remaining 8 bytes.
+
+tcp_established_options() correctly sets opts->num_sack_blocks
+to zero, but returns 36 instead of 32.
+
+This means TCP cooks packets with 4 extra bytes at the end
+of options, containing unitialized bytes.
+
+Fixes: 33ad798c924b ("tcp: options clean up")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smbdirect.c |   26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ net/ipv4/tcp_output.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -2269,12 +2269,7 @@ static void smbd_mr_recovery_work(struct
- 	int rc;
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -707,8 +707,9 @@ static unsigned int tcp_established_opti
+ 			min_t(unsigned int, eff_sacks,
+ 			      (remaining - TCPOLEN_SACK_BASE_ALIGNED) /
+ 			      TCPOLEN_SACK_PERBLOCK);
+-		size += TCPOLEN_SACK_BASE_ALIGNED +
+-			opts->num_sack_blocks * TCPOLEN_SACK_PERBLOCK;
++		if (likely(opts->num_sack_blocks))
++			size += TCPOLEN_SACK_BASE_ALIGNED +
++				opts->num_sack_blocks * TCPOLEN_SACK_PERBLOCK;
+ 	}
  
- 	list_for_each_entry(smbdirect_mr, &info->mr_list, list) {
--		if (smbdirect_mr->state == MR_INVALIDATED)
--			ib_dma_unmap_sg(
--				info->id->device, smbdirect_mr->sgl,
--				smbdirect_mr->sgl_count,
--				smbdirect_mr->dir);
--		else if (smbdirect_mr->state == MR_ERROR) {
-+		if (smbdirect_mr->state == MR_ERROR) {
- 
- 			/* recover this MR entry */
- 			rc = ib_dereg_mr(smbdirect_mr->mr);
-@@ -2602,11 +2597,20 @@ int smbd_deregister_mr(struct smbd_mr *s
- 		 */
- 		smbdirect_mr->state = MR_INVALIDATED;
- 
--	/*
--	 * Schedule the work to do MR recovery for future I/Os
--	 * MR recovery is slow and we don't want it to block the current I/O
--	 */
--	queue_work(info->workqueue, &info->mr_recovery_work);
-+	if (smbdirect_mr->state == MR_INVALIDATED) {
-+		ib_dma_unmap_sg(
-+			info->id->device, smbdirect_mr->sgl,
-+			smbdirect_mr->sgl_count,
-+			smbdirect_mr->dir);
-+		smbdirect_mr->state = MR_READY;
-+		if (atomic_inc_return(&info->mr_ready_count) == 1)
-+			wake_up_interruptible(&info->wait_mr);
-+	} else
-+		/*
-+		 * Schedule the work to do MR recovery for future I/Os MR
-+		 * recovery is slow and don't want it to block current I/O
-+		 */
-+		queue_work(info->workqueue, &info->mr_recovery_work);
- 
- done:
- 	if (atomic_dec_and_test(&info->mr_used_count))
+ 	return size;
 
 
