@@ -2,225 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B831259E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 04:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F09B1259F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 04:19:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfLSDRz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 22:17:55 -0500
-Received: from mga12.intel.com ([192.55.52.136]:62656 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726961AbfLSDRu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 22:17:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 19:17:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="222160433"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga001.fm.intel.com with ESMTP; 18 Dec 2019 19:17:47 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
-        jacob.jun.pan@linux.intel.com, kevin.tian@intel.com,
-        yi.l.liu@intel.com, yi.y.sun@intel.com,
-        Peter Xu <peterx@redhat.com>, iommu@lists.linux-foundation.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH v4 7/7] iommu/vt-d: debugfs: Add support to show page table internals
-Date:   Thu, 19 Dec 2019 11:16:34 +0800
-Message-Id: <20191219031634.15168-8-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191219031634.15168-1-baolu.lu@linux.intel.com>
-References: <20191219031634.15168-1-baolu.lu@linux.intel.com>
+        id S1727140AbfLSDTL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 22:19:11 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:49688 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfLSDTK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 22:19:10 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ39uYC068077;
+        Thu, 19 Dec 2019 03:18:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=oLFGR/WhIs5dA3HxvsHBFdeGRs+wvX0i1xh6f2MYyak=;
+ b=fUfP3frzqd+rvFOH7JcewpXXCeJ3/2sQfUXbVYzrcjnegAmXD+1cw+nkY6p1n8WC/jfq
+ 2T0ejE4lcRIcgqh3bPB9O/uE1jZWOAYo+JrI7UTtWdOFaI40Sv3aeUyzl12bXLyrk32G
+ FRjWhE79aO5nPaGPKHkX+WRqehzPNfVTQuPrb56Mu0rJi55OPzR/wsJAWebKD2ickLL4
+ oizKrdcRrkkBIYEMp7fSmKGq0A4IF0TUKCypatDE6Gtz3Z3jEG3vmlB4zXRgXTVPFHHe
+ lfgq4tZyurWkw0Yw8Hd7AwbZLL0VMV1yL4kpLx3A+3PGJ0ycjkZbx1sgz+vmqD6Cjr57 mA== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2wvqpqhfwf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 03:18:49 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJ39t0O038689;
+        Thu, 19 Dec 2019 03:18:49 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3030.oracle.com with ESMTP id 2wyut4nd60-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 03:18:49 +0000
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBJ3IX95010331;
+        Thu, 19 Dec 2019 03:18:33 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 18 Dec 2019 19:18:33 -0800
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        "open list\:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: [GIT PULL v2 00/27] block, scsi: final compat_ioctl cleanup
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191217221708.3730997-1-arnd@arndb.de>
+        <CAK8P3a3fsDRsZh--vn4SWA-NfeeSpzueqGDvjF5jDSZ91P9+Hw@mail.gmail.com>
+Date:   Wed, 18 Dec 2019 22:18:28 -0500
+In-Reply-To: <CAK8P3a3fsDRsZh--vn4SWA-NfeeSpzueqGDvjF5jDSZ91P9+Hw@mail.gmail.com>
+        (Arnd Bergmann's message of "Wed, 18 Dec 2019 18:24:32 +0100")
+Message-ID: <yq1sglhc8aj.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190025
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9475 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Export page table internals of the domain attached to each device.
-Example of such dump on a Skylake machine:
 
-$ sudo cat /sys/kernel/debug/iommu/intel/domain_translation_struct
-[ ... ]
-Device 0000:00:14.0 with pasid 0 @0x15f3d9000
-IOVA_PFN                PML5E                   PML4E
-0x000000008ced0 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced1 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced2 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced3 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced4 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced5 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced6 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced7 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced8 |       0x0000000000000000      0x000000015f3da003
-0x000000008ced9 |       0x0000000000000000      0x000000015f3da003
+Hi Arnd!
 
-PDPE                    PDE                     PTE
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced0003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced1003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced2003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced3003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced4003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced5003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced6003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced7003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced8003
-0x000000015f3db003      0x000000015f3dc003      0x000000008ced9003
-[ ... ]
+> Any suggestion for how this should be merged?
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu-debugfs.c | 75 +++++++++++++++++++++++++++++
- drivers/iommu/intel-iommu.c         |  4 +-
- include/linux/intel-iommu.h         |  2 +
- 3 files changed, 79 insertions(+), 2 deletions(-)
+I'm pretty flexible. When you post v3 I'll try to set up a branch to get
+an idea what conflicts we might have to deal with. And then we can take
+it from there.
 
-diff --git a/drivers/iommu/intel-iommu-debugfs.c b/drivers/iommu/intel-iommu-debugfs.c
-index 471f05d452e0..c1257bef553c 100644
---- a/drivers/iommu/intel-iommu-debugfs.c
-+++ b/drivers/iommu/intel-iommu-debugfs.c
-@@ -5,6 +5,7 @@
-  * Authors: Gayatri Kammela <gayatri.kammela@intel.com>
-  *	    Sohil Mehta <sohil.mehta@intel.com>
-  *	    Jacob Pan <jacob.jun.pan@linux.intel.com>
-+ *	    Lu Baolu <baolu.lu@linux.intel.com>
-  */
- 
- #include <linux/debugfs.h>
-@@ -283,6 +284,77 @@ static int dmar_translation_struct_show(struct seq_file *m, void *unused)
- }
- DEFINE_SHOW_ATTRIBUTE(dmar_translation_struct);
- 
-+static inline unsigned long level_to_directory_size(int level)
-+{
-+	return BIT_ULL(VTD_PAGE_SHIFT + VTD_STRIDE_SHIFT * (level - 1));
-+}
-+
-+static inline void
-+dump_page_info(struct seq_file *m, unsigned long iova, u64 *path)
-+{
-+	seq_printf(m, "0x%013lx |\t0x%016llx\t0x%016llx\t0x%016llx\t0x%016llx\t0x%016llx\n",
-+		   iova >> VTD_PAGE_SHIFT, path[5], path[4],
-+		   path[3], path[2], path[1]);
-+}
-+
-+static void pgtable_walk_level(struct seq_file *m, struct dma_pte *pde,
-+			       int level, unsigned long start,
-+			       u64 *path)
-+{
-+	int i;
-+
-+	if (level > 5 || level < 1)
-+		return;
-+
-+	for (i = 0; i < BIT_ULL(VTD_STRIDE_SHIFT);
-+			i++, pde++, start += level_to_directory_size(level)) {
-+		if (!dma_pte_present(pde))
-+			continue;
-+
-+		path[level] = pde->val;
-+		if (dma_pte_superpage(pde) || level == 1)
-+			dump_page_info(m, start, path);
-+		else
-+			pgtable_walk_level(m, phys_to_virt(dma_pte_addr(pde)),
-+					   level - 1, start, path);
-+		path[level] = 0;
-+	}
-+}
-+
-+static int show_device_domain_translation(struct device *dev, void *data)
-+{
-+	struct dmar_domain *domain = find_domain(dev);
-+	struct seq_file *m = data;
-+	u64 path[6] = { 0 };
-+
-+	if (!domain)
-+		return 0;
-+
-+	seq_printf(m, "Device %s with pasid %d @0x%llx\n",
-+		   dev_name(dev), domain->default_pasid,
-+		   (u64)virt_to_phys(domain->pgd));
-+	seq_puts(m, "IOVA_PFN\t\tPML5E\t\t\tPML4E\t\t\tPDPE\t\t\tPDE\t\t\tPTE\n");
-+
-+	pgtable_walk_level(m, domain->pgd, domain->agaw + 2, 0, path);
-+	seq_putc(m, '\n');
-+
-+	return 0;
-+}
-+
-+static int domain_translation_struct_show(struct seq_file *m, void *unused)
-+{
-+	unsigned long flags;
-+	int ret;
-+
-+	spin_lock_irqsave(&device_domain_lock, flags);
-+	ret = bus_for_each_dev(&pci_bus_type, NULL, m,
-+			       show_device_domain_translation);
-+	spin_unlock_irqrestore(&device_domain_lock, flags);
-+
-+	return ret;
-+}
-+DEFINE_SHOW_ATTRIBUTE(domain_translation_struct);
-+
- #ifdef CONFIG_IRQ_REMAP
- static void ir_tbl_remap_entry_show(struct seq_file *m,
- 				    struct intel_iommu *iommu)
-@@ -396,6 +468,9 @@ void __init intel_iommu_debugfs_init(void)
- 			    &iommu_regset_fops);
- 	debugfs_create_file("dmar_translation_struct", 0444, intel_iommu_debug,
- 			    NULL, &dmar_translation_struct_fops);
-+	debugfs_create_file("domain_translation_struct", 0444,
-+			    intel_iommu_debug, NULL,
-+			    &domain_translation_struct_fops);
- #ifdef CONFIG_IRQ_REMAP
- 	debugfs_create_file("ir_translation_struct", 0444, intel_iommu_debug,
- 			    NULL, &ir_translation_struct_fops);
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 6a2b2d72c7a5..41b031d5ba65 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -396,7 +396,7 @@ EXPORT_SYMBOL_GPL(intel_iommu_gfx_mapped);
- 
- #define DUMMY_DEVICE_DOMAIN_INFO ((struct device_domain_info *)(-1))
- #define DEFER_DEVICE_DOMAIN_INFO ((struct device_domain_info *)(-2))
--static DEFINE_SPINLOCK(device_domain_lock);
-+DEFINE_SPINLOCK(device_domain_lock);
- static LIST_HEAD(device_domain_list);
- 
- #define device_needs_bounce(d) (!intel_no_bounce && dev_is_pci(d) &&	\
-@@ -2503,7 +2503,7 @@ static void domain_remove_dev_info(struct dmar_domain *domain)
- 	spin_unlock_irqrestore(&device_domain_lock, flags);
- }
- 
--static struct dmar_domain *find_domain(struct device *dev)
-+struct dmar_domain *find_domain(struct device *dev)
- {
- 	struct device_domain_info *info;
- 
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 3a4708a8a414..4a16b39ae353 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -441,6 +441,7 @@ enum {
- #define VTD_FLAG_SVM_CAPABLE		(1 << 2)
- 
- extern int intel_iommu_sm;
-+extern spinlock_t device_domain_lock;
- 
- #define sm_supported(iommu)	(intel_iommu_sm && ecap_smts((iommu)->ecap))
- #define pasid_supported(iommu)	(sm_supported(iommu) &&			\
-@@ -663,6 +664,7 @@ int for_each_device_domain(int (*fn)(struct device_domain_info *info,
- 				     void *data), void *data);
- void iommu_flush_write_buffer(struct intel_iommu *iommu);
- int intel_iommu_enable_pasid(struct intel_iommu *iommu, struct device *dev);
-+struct dmar_domain *find_domain(struct device *dev);
- 
- #ifdef CONFIG_INTEL_IOMMU_SVM
- extern void intel_svm_check(struct intel_iommu *iommu);
 -- 
-2.17.1
-
+Martin K. Petersen	Oracle Linux Engineering
