@@ -2,70 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11372125F76
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:43:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CED2125F48
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfLSKnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:43:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48032 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfLSKnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:43:12 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1E71CAC0C;
-        Thu, 19 Dec 2019 10:43:10 +0000 (UTC)
-Date:   Thu, 19 Dec 2019 11:43:47 +0100
-From:   Daniel Wagner <dwagner@suse.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        John Garry <john.garry@huawei.com>,
-        Hannes Reinecke <hare@suse.com>
-Subject: Re: [RFC PATCH 2/3] softirq: implement interrupt flood detection
-Message-ID: <20191219104347.ql6shgh2x7hk6iid@boron>
-References: <20191218071942.22336-1-ming.lei@redhat.com>
- <20191218071942.22336-3-ming.lei@redhat.com>
- <20191218104941.GR2844@hirez.programming.kicks-ass.net>
- <20191219015948.GB6080@ming.t460p>
- <20191219092319.GX2844@hirez.programming.kicks-ass.net>
+        id S1726846AbfLSKhh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:37:37 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37192 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726736AbfLSKhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:37:35 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id CEACD2CF50DD0D6A9E70
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 18:37:32 +0800 (CST)
+Received: from huawei.com (10.90.53.225) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Dec 2019
+ 18:37:25 +0800
+From:   zhengbin <zhengbin13@huawei.com>
+To:     <mikulas@artax.karlin.mff.cuni.cz>, <linux-kernel@vger.kernel.org>
+CC:     <zhengbin13@huawei.com>
+Subject: [PATCH] hpfs: Remove unneeded semicolon
+Date:   Thu, 19 Dec 2019 18:44:46 +0800
+Message-ID: <1576752286-17549-1-git-send-email-zhengbin13@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219092319.GX2844@hirez.programming.kicks-ass.net>
+Content-Type: text/plain
+X-Originating-IP: [10.90.53.225]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Fixes coccicheck warning:
 
-On Thu, Dec 19, 2019 at 10:23:19AM +0100, Peter Zijlstra wrote:
-> On Thu, Dec 19, 2019 at 09:59:48AM +0800, Ming Lei wrote:
-> > > So pray tell, why did you not integrate this with IRQ_TIME_ACCOUNTING ?
-> > > That already takes a timestamp and does most of what you need.
-> > 
-> > Yeah, that was the 1st approach I thought of, but IRQ_TIME_ACCOUNTING
-> > may be disabled, and enabling it may cause observable effect on IO
-> > performance.
-> 
-> Is that an actual concern, are people disabling it?
+fs/hpfs/buffer.c:56:2-3: Unneeded semicolon
 
-In SLE and openSUSE kernels it is disabled for x86_64 at this
-point. And if I am not completely misstaken only x86_64 supports it at
-this point. I was looking at enable_sched_clock_irqtime() which is
-only called from x86_64.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+---
+ fs/hpfs/buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Another thing I noticed get_util_irq() is defined in
-kernel/sched/sched.h. I don't think the block/blq-mq.c driver should
-include it direclty.
+diff --git a/fs/hpfs/buffer.c b/fs/hpfs/buffer.c
+index e285d6b..d392468 100644
+--- a/fs/hpfs/buffer.c
++++ b/fs/hpfs/buffer.c
+@@ -53,7 +53,7 @@ void hpfs_prefetch_sectors(struct super_block *s, unsigned secno, int n)
+ 			return;
+ 		}
+ 		brelse(bh);
+-	};
++	}
 
-Thanks,
-Daniel
+ 	blk_start_plug(&plug);
+ 	while (n > 0) {
+--
+2.7.4
 
-ps: A customer observes the same problem as Ming is reporting.
