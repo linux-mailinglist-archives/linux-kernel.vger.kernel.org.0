@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93EFD126A98
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49197126AC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:50:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbfLSStE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:49:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42364 "EHLO mail.kernel.org"
+        id S1729712AbfLSSug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728691AbfLSStD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:03 -0500
+        id S1729722AbfLSSue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6AAF24683;
-        Thu, 19 Dec 2019 18:49:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AEE820674;
+        Thu, 19 Dec 2019 18:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781342;
-        bh=AymR5qxAwCK6CAvuXi2A7WqMJzdyKMalmH4cBmxL0W0=;
+        s=default; t=1576781432;
+        bh=SITc7/PEGxVwVplmUK2aVfm5gJJQYv4EfPlG7C40O1U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2EXe1ZHwkGlxbc9FII8hqTypEypDG3olnS5Tr+1Y2MXu+SkYI13iJddzxwJkWu5la
-         PKy4mHISK9K7B1aCxfA8RggYxNgsRz7p1WG9mSeNJvZYuS7ytLnNzWMGBJHcSn1f4M
-         wkuu138jGfYdJoFPQ4zllB+mje2sOyvOWyrkKd+Y=
+        b=l2Eeg9shGSdq4AIbs2KQTJdkgsNhmgCLHGeSBbbVyxnDX9ErC5veF5nTzlV6LZFNA
+         iQYuJyQSxNwMlYiYUj8mSBvjbpJHaYGX+e3KGtcd16MW2NgJtHfS/GK4ZlWkUaRuiW
+         HlYAGeTenlYN+y0fTSU6I/bq8byMk6c9Bmz/R5qQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
         Eric Dumazet <edumazet@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 183/199] tcp: tighten acceptance of ACKs not matching a child socket
-Date:   Thu, 19 Dec 2019 19:34:25 +0100
-Message-Id: <20191219183225.783038211@linuxfoundation.org>
+Subject: [PATCH 4.14 09/36] tcp: tighten acceptance of ACKs not matching a child socket
+Date:   Thu, 19 Dec 2019 19:34:26 +0100
+Message-Id: <20191219182856.561120120@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -98,7 +98,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/include/net/tcp.h
 +++ b/include/net/tcp.h
-@@ -506,7 +506,15 @@ static inline bool tcp_synq_no_recent_ov
+@@ -512,7 +512,15 @@ static inline bool tcp_synq_no_recent_ov
  {
  	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
  
