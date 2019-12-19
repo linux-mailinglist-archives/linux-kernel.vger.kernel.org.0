@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08B45126CCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C67F126D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfLSSoE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35894 "EHLO mail.kernel.org"
+        id S1727974AbfLSSiJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:38:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728937AbfLSSoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:01 -0500
+        id S1727960AbfLSSiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D749B24679;
-        Thu, 19 Dec 2019 18:44:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7566E222C2;
+        Thu, 19 Dec 2019 18:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781041;
-        bh=y+nQxC6lag84zSjjpeCKCucJBQKq2nK/mD3DhW0tzUQ=;
+        s=default; t=1576780685;
+        bh=o0097HBGczPpjO6uj/IUnUpcuRfOFsYqRgOdD/t3OHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dp4GshD2/Nhrl96CbVifs2gG/FakKdukLyULg1Z5O9xtrSZRR6khZWeJAhSuYETgc
-         bES6dIhzfn82YHssvsKczc27aBRZry/MkaaA6NGtnyO7otlok/VPmZmpu4WJGKUC2a
-         6xvPXgGiV2DE1Vwh7LOtVxKoZvg19agoZE8W949c=
+        b=V/XTH/JsTsEgxiW+No+Mn07oe3QOI0Uc3uXQDCr0NE3WYbzW6nC+soglkErkClnui
+         5OUDRLieB2pq5WucA/JppJ7cwzSxl/zh0eWdX5xHLx+6FDI/VjgwfCXnCGzntv6E2A
+         vMfuY/Ao13BDHgspd3mGT0zX05yCW0fs6rTNntX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        David Teigland <teigland@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 058/199] mtd: fix mtd_oobavail() incoherent returned value
-Date:   Thu, 19 Dec 2019 19:32:20 +0100
-Message-Id: <20191219183218.172518536@linuxfoundation.org>
+Subject: [PATCH 4.4 037/162] dlm: NULL check before kmem_cache_destroy is not needed
+Date:   Thu, 19 Dec 2019 19:32:25 +0100
+Message-Id: <20191219183210.080196584@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,34 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miquel Raynal <miquel.raynal@bootlin.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 4348433d8c0234f44adb6e12112e69343f50f0c5 ]
+[ Upstream commit f31a89692830061bceba8469607e4e4b0f900159 ]
 
-mtd_oobavail() returns either mtd->oovabail or mtd->oobsize. Both
-values are unsigned 32-bit entities, so there is no reason to pretend
-returning a signed one.
+kmem_cache_destroy(NULL) is safe, so removes NULL check before
+freeing the mem. This patch also fix ifnullfree.cocci warnings.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/mtd/mtd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dlm/memory.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/mtd/mtd.h b/include/linux/mtd/mtd.h
-index 13f8052b9ff92..13ddba5e531d3 100644
---- a/include/linux/mtd/mtd.h
-+++ b/include/linux/mtd/mtd.h
-@@ -392,7 +392,7 @@ static inline struct device_node *mtd_get_of_node(struct mtd_info *mtd)
- 	return mtd->dev.of_node;
+diff --git a/fs/dlm/memory.c b/fs/dlm/memory.c
+index 7cd24bccd4fe5..37be29f21d04d 100644
+--- a/fs/dlm/memory.c
++++ b/fs/dlm/memory.c
+@@ -38,10 +38,8 @@ int __init dlm_memory_init(void)
+ 
+ void dlm_memory_exit(void)
+ {
+-	if (lkb_cache)
+-		kmem_cache_destroy(lkb_cache);
+-	if (rsb_cache)
+-		kmem_cache_destroy(rsb_cache);
++	kmem_cache_destroy(lkb_cache);
++	kmem_cache_destroy(rsb_cache);
  }
  
--static inline int mtd_oobavail(struct mtd_info *mtd, struct mtd_oob_ops *ops)
-+static inline u32 mtd_oobavail(struct mtd_info *mtd, struct mtd_oob_ops *ops)
- {
- 	return ops->mode == MTD_OPS_AUTO_OOB ? mtd->oobavail : mtd->oobsize;
- }
+ char *dlm_allocate_lvb(struct dlm_ls *ls)
+@@ -86,8 +84,7 @@ void dlm_free_lkb(struct dlm_lkb *lkb)
+ 		struct dlm_user_args *ua;
+ 		ua = lkb->lkb_ua;
+ 		if (ua) {
+-			if (ua->lksb.sb_lvbptr)
+-				kfree(ua->lksb.sb_lvbptr);
++			kfree(ua->lksb.sb_lvbptr);
+ 			kfree(ua);
+ 		}
+ 	}
 -- 
 2.20.1
 
