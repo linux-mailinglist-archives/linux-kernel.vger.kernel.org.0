@@ -2,111 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78642126F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:51:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B76126F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:50:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfLSUu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:50:56 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37140 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727422AbfLSUuz (ORCPT
+        id S1727265AbfLSUu1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:50:27 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39264 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfLSUu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:50:55 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBJKleqQ026074;
-        Thu, 19 Dec 2019 15:50:29 -0500
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2x0g299500-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Dec 2019 15:50:29 -0500
-Received: from m0098399.ppops.net (m0098399.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id xBJKliKj026433;
-        Thu, 19 Dec 2019 15:50:28 -0500
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2x0g2994yh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Dec 2019 15:50:28 -0500
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id xBJKo1DO016922;
-        Thu, 19 Dec 2019 20:50:27 GMT
-Received: from b03cxnp08026.gho.boulder.ibm.com (b03cxnp08026.gho.boulder.ibm.com [9.17.130.18])
-        by ppma03wdc.us.ibm.com with ESMTP id 2wvqc71km5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 Dec 2019 20:50:27 +0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBJKoQW560424642
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 20:50:26 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A62A0C605A;
-        Thu, 19 Dec 2019 20:50:26 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C102C6059;
-        Thu, 19 Dec 2019 20:50:26 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.103.158])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Dec 2019 20:50:26 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-hwmon@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux@roeck-us.net,
-        jdelvare@suse.com, bjwyman@gmail.com,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH 3/3] hwmon: (pmbus/ibm-cffps) Fix the LED behavior when turned off
-Date:   Thu, 19 Dec 2019 14:50:07 -0600
-Message-Id: <1576788607-13567-4-git-send-email-eajames@linux.ibm.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1576788607-13567-1-git-send-email-eajames@linux.ibm.com>
-References: <1576788607-13567-1-git-send-email-eajames@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-19_06:2019-12-17,2019-12-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 phishscore=0 spamscore=0 adultscore=0 mlxscore=0
- mlxlogscore=904 suspectscore=1 lowpriorityscore=0 clxscore=1015
- bulkscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912190154
+        Thu, 19 Dec 2019 15:50:26 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q10so3954072pfs.6;
+        Thu, 19 Dec 2019 12:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5hHtLxBl/f/KnEapSkPu95KSvj6JTeXO1zosJzNLAX4=;
+        b=BGg9GWWFEXfp+7yFaa1ERgtN83b1thcWilPQs4ysQl0wuEEtolZ3kx+a1bO2BXB13f
+         92IVsJKDKKL1FZKQ9s6i3+aRM2tc+mX2DGX4bwwmfMLzfIXch3nIoHTOXy9iIV1pkJuo
+         estjdOXP0/3myvkLrNXZ6arc+e9T/7nY9TjDku0M1SuXA/rl5jBhgvzDxJOdq6tr1JUb
+         JNIvS8UmjHITtk3tItNmh/jjErBJiTRSKJBmygeC2hjBL/aedSQSX1uxb2LgCCYkgcg5
+         TmkuoMqZX6RaSKXZlZJSoOPLZGGQho9/gazWoSq5wUxsPtJpmOpTSG7XX/4FYyBAW2zZ
+         KL1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5hHtLxBl/f/KnEapSkPu95KSvj6JTeXO1zosJzNLAX4=;
+        b=FI0en9QCzWFuy+PJWA5/ywpS2GeA4++DNjcXteQBTZsWqoYWQ9DjwPUwNhzFBQG75L
+         C4K5Dt86DjZJiaenQEJqKkWUBAGrW5IRrGIdF0O+Xdp7nI5ilN2r5eRRyo00uf3g1pf2
+         qcjgv1UTWpEvO0MEpdeF3HAWoiPGV0ekY4T9XStYM+zafdmdg075Fw6fIRaVoYC3U+EM
+         p4O2HnvZX31UxKtB7aKfh447gsZLw4qllnAYjttLylH5c4F/cM9ts2dB1tbykGXFgIOp
+         cuq4gQBj9VnNIC1kdJMhxoj2aL9ADsaH4Q49V7vYur6QOCjMPGOEm6IQy1DHgu1L3tYd
+         txGw==
+X-Gm-Message-State: APjAAAVIbERfXWNsmwtg/Aj2VUiNp1cd90C6XJKxcAKDa+TTBZLkMRKv
+        QRrCtKvJ0IHs9susU2om3ZcXYSlBX13MJ0tpEC8=
+X-Google-Smtp-Source: APXvYqxVE7snj7/boXLc4VKXjR5n9umgqtVwrRs4lwMNg2JFniIYd6iyLQPDp9obQymytdQQzu5rTOj9caDZhbR9hKM=
+X-Received: by 2002:a63:4e0e:: with SMTP id c14mr10940202pgb.237.1576788625590;
+ Thu, 19 Dec 2019 12:50:25 -0800 (PST)
+MIME-Version: 1.0
+References: <git-mailbomb-linux-master-8ffb055beae58574d3e77b4bf9d4d15eace1ca27@kernel.org>
+ <CAMuHMdVgF0PVmqXbaWqkrcML0O-hhWB3akj8UAn8Q_hN2evm+A@mail.gmail.com>
+In-Reply-To: <CAMuHMdVgF0PVmqXbaWqkrcML0O-hhWB3akj8UAn8Q_hN2evm+A@mail.gmail.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu, 19 Dec 2019 12:50:14 -0800
+Message-ID: <CAM_iQpWOhXR=x10i0S88qXTfG2nv9EypONTp6_vpBzs=iOySRQ@mail.gmail.com>
+Subject: Re: refcount_warn_saturate WARNING (was: Re: cls_flower: Fix the
+ behavior using port ranges with hw-offload)
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Yoshiki Komachi <komachi.yoshiki@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jamal Hadi Salim <jhs@mojatatu.com>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Amritha Nambiar <amritha.nambiar@intel.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver should remain in control of the LED on the PSU, even while
-off, not the PSU firmware as previously indicated.
+On Thu, Dec 19, 2019 at 2:12 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> I still see the below warning on m68k/ARAnyM during boot with v5.5-rc2
+> and next-20191219.
+> Reverting commit 8ffb055beae58574 ("cls_flower: Fix the behavior using
+> port ranges with hw-offload") fixes that.
+>
+> As this is networking, perhaps this is seen on big-endian only?
+> Or !CONFIG_SMP?
+>
+> Do you have a clue?
+> I'm especially worried as this commit is already being backported to stable.
+> Thanks!
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/hwmon/pmbus/ibm-cffps.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+I did a quick look at the offending commit, I can't even connect it to
+any dst refcnt.
 
-diff --git a/drivers/hwmon/pmbus/ibm-cffps.c b/drivers/hwmon/pmbus/ibm-cffps.c
-index b37faf1..1c91ee1 100644
---- a/drivers/hwmon/pmbus/ibm-cffps.c
-+++ b/drivers/hwmon/pmbus/ibm-cffps.c
-@@ -47,13 +47,9 @@
- #define CFFPS_MFR_VAUX_FAULT			BIT(6)
- #define CFFPS_MFR_CURRENT_SHARE_WARNING		BIT(7)
- 
--/*
-- * LED off state actually relinquishes LED control to PSU firmware, so it can
-- * turn on the LED for faults.
-- */
--#define CFFPS_LED_OFF				0
- #define CFFPS_LED_BLINK				BIT(0)
- #define CFFPS_LED_ON				BIT(1)
-+#define CFFPS_LED_OFF				BIT(2)
- #define CFFPS_BLINK_RATE_MS			250
- 
- enum {
-@@ -436,6 +432,9 @@ static void ibm_cffps_create_led_class(struct ibm_cffps *psu)
- 	rc = devm_led_classdev_register(dev, &psu->led);
- 	if (rc)
- 		dev_warn(dev, "failed to register led class: %d\n", rc);
-+	else
-+		i2c_smbus_write_byte_data(client, CFFPS_SYS_CONFIG_CMD,
-+					  CFFPS_LED_OFF);
- }
- 
- static struct pmbus_driver_info ibm_cffps_info[] = {
--- 
-1.8.3.1
+Do you have any more information? Like what happened before the
+warning? Does your system use cls_flower filters at all? If so, please
+share your tc configurations.
 
+Thanks.
