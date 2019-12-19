@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 34200126D14
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B52D126C00
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:01:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbfLSTI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:08:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32844 "EHLO mail.kernel.org"
+        id S1729898AbfLSSvw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:51:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728183AbfLSSlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:41:52 -0500
+        id S1729777AbfLSSvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:51:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8651A206D7;
-        Thu, 19 Dec 2019 18:41:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C65282064B;
+        Thu, 19 Dec 2019 18:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780912;
-        bh=F/DzLy0Md+yRJaxTa2YpI3P8cDeNkEsaZq3s1CPzwF0=;
+        s=default; t=1576781508;
+        bh=PG9KEUH7TkC5EcssOfLAyGK+OCnkSeHV3uybCoZxYCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xFv52IgMuSFBp0xaY5z64V8wSgzCN2uigvSs3lizLqOUpXZwnN5jB8xsWMAULHCQi
-         AC4METz4Mxumt35WjXJJu92jH1GBhKDy2RALi0qGaWTtJ+kksFWAlXxGMvF05Rvtm8
-         t4EYyfeOR16Fwb8OyUBv6YHm2+g54JSuAe2/NTA4=
+        b=W/emO/zChAMpyL4DEafBCXJzFl1AHuNCJ5nRmUtXn+4jfmPJYEawTe/yaAfRUzO9g
+         KVoKwK07Sb9Cm1uoaRdjZwyt8z1G9cniQklCsiO0yph8d/64MmpMvwJgJnOdZ11nIr
+         mGSt9KWS7dgpjGXHq7W23mb1VhPYjBB5OxP8soqA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <mdaenzer@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.4 159/162] drm/radeon: fix r1xx/r2xx register checker for POT textures
-Date:   Thu, 19 Dec 2019 19:34:27 +0100
-Message-Id: <20191219183217.451198500@linuxfoundation.org>
+        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 14/47] tcp: Protect accesses to .ts_recent_stamp with {READ,WRITE}_ONCE()
+Date:   Thu, 19 Dec 2019 19:34:28 +0100
+Message-Id: <20191219182912.205576955@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,48 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Guillaume Nault <gnault@redhat.com>
 
-commit 008037d4d972c9c47b273e40e52ae34f9d9e33e7 upstream.
+[ Upstream commit 721c8dafad26ccfa90ff659ee19755e3377b829d ]
 
-Shift and mask were reversed.  Noticed by chance.
+Syncookies borrow the ->rx_opt.ts_recent_stamp field to store the
+timestamp of the last synflood. Protect them with READ_ONCE() and
+WRITE_ONCE() since reads and writes aren't serialised.
 
-Tested-by: Meelis Roos <mroos@linux.ee>
-Reviewed-by: Michel Dänzer <mdaenzer@redhat.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
+Use of .rx_opt.ts_recent_stamp for storing the synflood timestamp was
+introduced by a0f82f64e269 ("syncookies: remove last_synq_overflow from
+struct tcp_sock"). But unprotected accesses were already there when
+timestamp was stored in .last_synq_overflow.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/radeon/r100.c |    4 ++--
- drivers/gpu/drm/radeon/r200.c |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/net/tcp.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/gpu/drm/radeon/r100.c
-+++ b/drivers/gpu/drm/radeon/r100.c
-@@ -1826,8 +1826,8 @@ static int r100_packet0_check(struct rad
- 			track->textures[i].use_pitch = 1;
- 		} else {
- 			track->textures[i].use_pitch = 0;
--			track->textures[i].width = 1 << ((idx_value >> RADEON_TXFORMAT_WIDTH_SHIFT) & RADEON_TXFORMAT_WIDTH_MASK);
--			track->textures[i].height = 1 << ((idx_value >> RADEON_TXFORMAT_HEIGHT_SHIFT) & RADEON_TXFORMAT_HEIGHT_MASK);
-+			track->textures[i].width = 1 << ((idx_value & RADEON_TXFORMAT_WIDTH_MASK) >> RADEON_TXFORMAT_WIDTH_SHIFT);
-+			track->textures[i].height = 1 << ((idx_value & RADEON_TXFORMAT_HEIGHT_MASK) >> RADEON_TXFORMAT_HEIGHT_SHIFT);
+--- a/include/net/tcp.h
++++ b/include/net/tcp.h
+@@ -492,9 +492,9 @@ static inline void tcp_synq_overflow(con
  		}
- 		if (idx_value & RADEON_TXFORMAT_CUBIC_MAP_ENABLE)
- 			track->textures[i].tex_coord_type = 2;
---- a/drivers/gpu/drm/radeon/r200.c
-+++ b/drivers/gpu/drm/radeon/r200.c
-@@ -476,8 +476,8 @@ int r200_packet0_check(struct radeon_cs_
- 			track->textures[i].use_pitch = 1;
- 		} else {
- 			track->textures[i].use_pitch = 0;
--			track->textures[i].width = 1 << ((idx_value >> RADEON_TXFORMAT_WIDTH_SHIFT) & RADEON_TXFORMAT_WIDTH_MASK);
--			track->textures[i].height = 1 << ((idx_value >> RADEON_TXFORMAT_HEIGHT_SHIFT) & RADEON_TXFORMAT_HEIGHT_MASK);
-+			track->textures[i].width = 1 << ((idx_value & RADEON_TXFORMAT_WIDTH_MASK) >> RADEON_TXFORMAT_WIDTH_SHIFT);
-+			track->textures[i].height = 1 << ((idx_value & RADEON_TXFORMAT_HEIGHT_MASK) >> RADEON_TXFORMAT_HEIGHT_SHIFT);
+ 	}
+ 
+-	last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
++	last_overflow = READ_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp);
+ 	if (!time_between32(now, last_overflow, last_overflow + HZ))
+-		tcp_sk(sk)->rx_opt.ts_recent_stamp = now;
++		WRITE_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp, now);
+ }
+ 
+ /* syncookies: no recent synqueue overflow on this listening socket? */
+@@ -515,7 +515,7 @@ static inline bool tcp_synq_no_recent_ov
  		}
- 		if (idx_value & R200_TXFORMAT_LOOKUP_DISABLE)
- 			track->textures[i].lookup_disable = true;
+ 	}
+ 
+-	last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
++	last_overflow = READ_ONCE(tcp_sk(sk)->rx_opt.ts_recent_stamp);
+ 
+ 	/* If last_overflow <= jiffies <= last_overflow + TCP_SYNCOOKIE_VALID,
+ 	 * then we're under synflood. However, we have to use
 
 
