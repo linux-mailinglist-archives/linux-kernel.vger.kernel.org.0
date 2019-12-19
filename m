@@ -2,89 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CFA26125A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:19:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD91125A7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLSFT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 00:19:57 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30641 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726439AbfLSFTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:19:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 21:19:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
-   d="scan'208";a="213131740"
-Received: from allen-box.sh.intel.com ([10.239.159.136])
-  by fmsmga008.fm.intel.com with ESMTP; 18 Dec 2019 21:19:52 -0800
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Subject: [PATCH 2/2] iommu/vt-d: Loose requirement for flush queue initializaton
-Date:   Thu, 19 Dec 2019 13:18:51 +0800
-Message-Id: <20191219051851.25159-2-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191219051851.25159-1-baolu.lu@linux.intel.com>
-References: <20191219051851.25159-1-baolu.lu@linux.intel.com>
+        id S1726389AbfLSFTh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 00:19:37 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:47020 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfLSFTh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 00:19:37 -0500
+Received: by mail-ot1-f65.google.com with SMTP id c22so5560824otj.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 21:19:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ebFIMmIFcRXMNWKUGHUPVzk5pgnyLGBQyisFaU/FwbA=;
+        b=k0e84dPH4htoykVcj9saaY4VEZM4fFiDoj23iKL7NDpna4Dyr28UklvE4Qm1hEnppc
+         4EbUbfCTOn/b8lUfCNu2jNxUj1froCEK5Z8ZrX+n4cNMtHyy3HHVdQ4F0Dnz6W644vIS
+         CoypM4ri8MnlsjoxJl6sNO2YIoAd65qi9vuKkshigdqdkOxib4j6DAXomkzWIUoKIo8T
+         SMzh8t1qvWHtMDnhP1avLg6zE5zGJQFkYt3QsG1u0q3paSZqxZo4s2JqOmXvs03sYzR8
+         qqPl9RGItEiN72UPcuWzspy7AXHNrvdYBRk7bebD4oCBZa+e0MhCf52+QgTmd1tU/laL
+         8nww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ebFIMmIFcRXMNWKUGHUPVzk5pgnyLGBQyisFaU/FwbA=;
+        b=k+j2kAdNGWtAQ96JxasSHfEk6Ad9vfCeBzBnOqCScKXyeb5peinVwkDv6W7Bo2iXeM
+         akYcgfTdnE8yzmOF/0BAcEOuQu1pmgWRIiAC57Jta0UxMevkfWkAHms2zKPzFHNOgCvy
+         RzEYgVJ7OyZ0WHCQUeP5i+VFTxV/P8/d/wVgijecL1ypczFrPFS9YwUVyuMweRzX0YJT
+         CxY2ivftieXg99HEXjIUg/jX3xr5Ah7MZWaXqmxkx+hH1oSln8qkLObDKgMp7zIVtdRY
+         sY15P59Hcri+PoCSwnIUyytE1B5QwkqUekNjJRbdfLkjwxV9mXrcKdS5697nmfQE0gjr
+         DvHg==
+X-Gm-Message-State: APjAAAXAZzLx62z8HMWE7Yq0cFX1zy5R2oCvWpbxz8HsqknfjMHbAfn3
+        TdjfJEtpmwqP+k/V4wg1ELOwKGypt4x6VUkPyGvmWHEC
+X-Google-Smtp-Source: APXvYqxhpUIvpLGge5tDFBoL23b9F+f851RUtQ3m9EXuu4PlCjXNQWpf9BjSiCVPHeeUOCcme8JMICpJQ2zNNvAoUtY=
+X-Received: by 2002:a05:6830:1744:: with SMTP id 4mr6553170otz.71.1576732776609;
+ Wed, 18 Dec 2019 21:19:36 -0800 (PST)
+MIME-Version: 1.0
+References: <1576728650-13867-1-git-send-email-anshuman.khandual@arm.com>
+In-Reply-To: <1576728650-13867-1-git-send-email-anshuman.khandual@arm.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 18 Dec 2019 21:19:25 -0800
+Message-ID: <CAPcyv4gCqt1cfEb4KFWW+J+FcQj8ZnYEFz-ggLzgR2Zs+Wg13w@mail.gmail.com>
+Subject: Re: [PATCH] mm: Drop elements 'hw' and 'phys_callback' from struct memory_block
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently if flush queue initialization fails, we return error
-or enforce the system-wide strict mode. These are unnecessary
-because we always check the existence of a flush queue before
-queuing any iova's for lazy flushing. Printing a informational
-message is enough.
+On Wed, Dec 18, 2019 at 8:10 PM Anshuman Khandual
+<anshuman.khandual@arm.com> wrote:
+>
+> memory_block structure elements 'hw' and 'phys_callback' are not getting
+> used. This was originally added with commit 3947be1969a9 ("[PATCH] memory
+> hotplug: sysfs and add/remove functions") but never seem to have been used.
+> Just drop them now.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  include/linux/memory.h | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index 0ebb105eb261..4e95a9eb8061 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -29,8 +29,6 @@ struct memory_block {
+>         int section_count;              /* serialized by mem_sysfs_mutex */
+>         int online_type;                /* for passing data to online routine */
+>         int phys_device;                /* to which fru does this belong? */
+> -       void *hw;                       /* optional pointer to fw/hw data */
+> -       int (*phys_callback)(struct memory_block *);
+>         struct device dev;
+>         int nid;                        /* NID for this memory block */
+>  };
+> --
+> 2.20.1
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel-iommu.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Looks good.
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 93e1d7c3ac7c..65eee8cf6d59 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1854,15 +1854,15 @@ static int domain_init(struct dmar_domain *domain, struct intel_iommu *iommu,
- {
- 	int adjust_width, agaw;
- 	unsigned long sagaw;
--	int err;
-+	int ret;
- 
- 	init_iova_domain(&domain->iovad, VTD_PAGE_SIZE, IOVA_START_PFN);
- 
- 	if (!intel_iommu_strict) {
--		err = init_iova_flush_queue(&domain->iovad,
-+		ret = init_iova_flush_queue(&domain->iovad,
- 					    iommu_flush_iova, iova_entry_free);
--		if (err)
--			return err;
-+		if (ret)
-+			pr_info("iova flush queue initialization failed\n");
- 	}
- 
- 	domain_reserve_special_ranges(domain);
-@@ -5222,10 +5222,8 @@ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
- 			ret = init_iova_flush_queue(&dmar_domain->iovad,
- 						    iommu_flush_iova,
- 						    iova_entry_free);
--			if (ret) {
--				pr_warn("iova flush queue initialization failed\n");
--				intel_iommu_strict = 1;
--			}
-+			if (ret)
-+				pr_info("iova flush queue initialization failed\n");
- 		}
- 
- 		domain_update_iommu_cap(dmar_domain);
--- 
-2.17.1
-
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
