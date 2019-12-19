@@ -2,168 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE85E126F8A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:16:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 347E2126F77
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:12:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfLSVQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:16:47 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:10406 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfLSVQq (ORCPT
+        id S1727370AbfLSVMZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:12:25 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:36977 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726967AbfLSVMZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:16:46 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfbe8b30000>; Thu, 19 Dec 2019 13:16:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 19 Dec 2019 13:16:45 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 19 Dec 2019 13:16:45 -0800
-Received: from [10.2.165.11] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Dec
- 2019 21:16:42 +0000
-Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-CC:     Leon Romanovsky <leon@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Chinner <david@fromorbit.com>,
-        David Airlie <airlied@linux.ie>,
-        "David S . Miller" <davem@davemloft.net>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
-        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
-        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        Maor Gottlieb <maorg@mellanox.com>
-References: <20191216222537.491123-1-jhubbard@nvidia.com>
- <20191219132607.GA410823@unreal>
- <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
- <20191219210743.GN17227@ziepe.ca>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <42a3e5c1-6301-db0b-5d09-212edf5ecf2a@nvidia.com>
-Date:   Thu, 19 Dec 2019 13:13:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
-MIME-Version: 1.0
-In-Reply-To: <20191219210743.GN17227@ziepe.ca>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576790195; bh=e+stzM4MKJvMbnHvF2MQtGYZPTDUXmhAC++H/dKblxU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=DpAgGRtLU03goQ45lwT7ONh8PGmHo2uEl58mvIXxDE1nHXoSem5kfykU7etb/JcJL
-         /yvdQuNedqWs+SUfVSLa4E60NrM+DSMnCAe2ItTu7yCQ5BHkbAsDg8Mpyow9MA1pYC
-         3jVYe0GuNI9xJv3hjbBlrnChECIJB3Q5siLf6V5xGWCqbhXjMLlDdPH405dRvVKPVH
-         0B/YfWOP+8DomZJl09OCXT8zLxeag4uByq64+u082UEQpj/kDFhFOsIPO4HgJs9I5d
-         GI+vJAY5OMeBcbGVYpOeSe0O73rRuIYou0nCs6Mvptf4ghAI7UtlU7flZFGsoZAujM
-         ZE4962uBaaz9A==
+        Thu, 19 Dec 2019 16:12:25 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3923122614;
+        Thu, 19 Dec 2019 16:12:24 -0500 (EST)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Thu, 19 Dec 2019 16:12:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm1; bh=eznQB8qUZinkMYctriI1OeMIbCpVh3R
+        vgB+uxFjKcWw=; b=e+qOP6LoW0qwuw9Uy2AdChYbjp/8fd4FmeD+84lql6Nzysg
+        Q5EEtzLFgHTT4ZLHh61HJ3qfKWvstLoYMaQrkZDYYqDwd+/zKtbxRnfqHZvssd91
+        sa37bQFA3ZnScxeTGmW9ZjFJJ6S6BUXGfzGwne2LNEp2+t39dMIey0l/kcEqJ/jf
+        KuoHCdqSRnnlSJE6K2MO0oGjIlnYwDst1a6oCn20bsFT7pkrRDNexhBRPrYEp4pF
+        AeUu0E7nVJPmFPYwutsxS2gCIpHJQ1LEeEeNPgqn9lu21kUEwM2L/Dtg8atJzYcx
+        rXLZ8tlvkMR91AXdifiCjEFsx63JqF1zjoUPimg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=eznQB8
+        qUZinkMYctriI1OeMIbCpVh3RvgB+uxFjKcWw=; b=vsijnZkHJ3FMzCkUiKcL/U
+        9L2QM7/PfasuZQQGhBbkj6zuYKUg9J4j6/FtNjCRMvQgwzsHNR+mgyg4WOr/3+6D
+        jroxkgIdapQ337qTg8dFfeorONhrceuRpKegqiNJ/CGVUasNQJJgxjhrTTf1Ouas
+        0yf4CYMM66dvboAwxoJbnEVpsfoH/8vTuyZQfw9K+Ooa1cW02iYSsar+rNxoYkvH
+        uyLPbv2DjLJ6PvMf234WqpBZ7KQjTnwHnFyDRugNHU/6Hzt0CFHp8fvxABEf+jRt
+        2wwRdtzJQHdlw5nrI7fojEYgc43hr6xs6XrySKUtfa6OVS0ih8duOsQrRFJqVjrQ
+        ==
+X-ME-Sender: <xms:tuf7XUAaIrlSc6I45LWw2QxR5lOYMlGrotBtz_xGl7gxiUHW-ruOfQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdduuddgudeggecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehn
+    ughrvgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrg
+    hrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushht
+    vghrufhiiigvpedt
+X-ME-Proxy: <xmx:tuf7Xa3aCNRbF3LPHQcfxXsNjuVdhABKVgQG6pYJLc7jD4ZpzNcPOw>
+    <xmx:tuf7XSeMGytFWFt3f20NPqk0cXpG8bYoHcBsQ0c8CiCX_zuuSy3JcQ>
+    <xmx:tuf7XV9O5L_xCSl87Fbmbikz6JmWYGgydNveAvZ7CmNcKyvdi0F13Q>
+    <xmx:uOf7XWcf9HHjmavtyrAGPWnGqeSSywyNzMQrvAK59HtZIT99pec4FA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id A5516E00A3; Thu, 19 Dec 2019 16:12:22 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-694-gd5bab98-fmstable-20191218v1
+Mime-Version: 1.0
+Message-Id: <a0b5728c-4022-4cfb-bcd1-8816e4d80e4a@www.fastmail.com>
+In-Reply-To: <45cabf88-063d-aea1-6c2b-fa8cc0d8cbd3@linux.ibm.com>
+References: <1576681778-18737-1-git-send-email-eajames@linux.ibm.com>
+ <1576681778-18737-6-git-send-email-eajames@linux.ibm.com>
+ <73cbffea-89f1-4212-99af-10c32968cf15@www.fastmail.com>
+ <45cabf88-063d-aea1-6c2b-fa8cc0d8cbd3@linux.ibm.com>
+Date:   Fri, 20 Dec 2019 07:44:05 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>,
+        linux-aspeed@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, "Jason Cooper" <jason@lakedaemon.net>,
+        "Marc Zyngier" <maz@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>, tglx@linutronix.de,
+        "Joel Stanley" <joel@jms.id.au>
+Subject: Re: [PATCH v3 05/12] dt-bindings: soc: Add Aspeed XDMA Engine
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/19/19 1:07 PM, Jason Gunthorpe wrote:
-> On Thu, Dec 19, 2019 at 12:30:31PM -0800, John Hubbard wrote:
->> On 12/19/19 5:26 AM, Leon Romanovsky wrote:
->>> On Mon, Dec 16, 2019 at 02:25:12PM -0800, John Hubbard wrote:
->>>> Hi,
->>>>
->>>> This implements an API naming change (put_user_page*() -->
->>>> unpin_user_page*()), and also implements tracking of FOLL_PIN pages. It
->>>> extends that tracking to a few select subsystems. More subsystems will
->>>> be added in follow up work.
->>>
->>> Hi John,
->>>
->>> The patchset generates kernel panics in our IB testing. In our tests, we
->>> allocated single memory block and registered multiple MRs using the single
->>> block.
->>>
->>> The possible bad flow is:
->>>    ib_umem_geti() ->
->>>     pin_user_pages_fast(FOLL_WRITE) ->
->>>      internal_get_user_pages_fast(FOLL_WRITE) ->
->>>       gup_pgd_range() ->
->>>        gup_huge_pd() ->
->>>         gup_hugepte() ->
->>>          try_grab_compound_head() ->
->>
->> Hi Leon,
->>
->> Thanks very much for the detailed report! So we're overflowing...
->>
->> At first look, this seems likely to be hitting a weak point in the
->> GUP_PIN_COUNTING_BIAS-based design, one that I believed could be deferred
->> (there's a writeup in Documentation/core-api/pin_user_page.rst, lines
->> 99-121). Basically it's pretty easy to overflow the page->_refcount
->> with huge pages if the pages have a *lot* of subpages.
->>
->> We can only do about 7 pins on 1GB huge pages that use 4KB subpages.
-> 
-> Considering that establishing these pins is entirely under user
-> control, we can't have a limit here.
-
-There's already a limit, it's just a much larger one. :) What does "no limit"
-really mean, numerically, to you in this case?
-
-> 
-> If the number of allowed pins are exhausted then the
-> pin_user_pages_fast() must fail back to the user.
 
 
-I'll poke around the IB call stack and see how much of that return path
-is in place, if any. Because it's the same situation for get_user_pages_fast().
-This code just added a warning on overflow so we could spot it early.
+On Fri, 20 Dec 2019, at 02:18, Eddie James wrote:
+> 
+> On 12/18/19 5:12 PM, Andrew Jeffery wrote:
+> >
+> > On Thu, 19 Dec 2019, at 01:39, Eddie James wrote:
+> >> Document the bindings for the Aspeed AST25XX and AST26XX XDMA engine.
+> >>
+> >> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >> ---
+> >> Changes since v2:
+> >>   - Remove 'sdmc', rename 'vga-mem' to 'memory'
+> >>
+> >>   .../devicetree/bindings/soc/aspeed/xdma.txt   | 40 +++++++++++++++++++
+> >>   MAINTAINERS                                   |  6 +++
+> >>   2 files changed, 46 insertions(+)
+> >>   create mode 100644 Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> >> b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> >> new file mode 100644
+> >> index 000000000000..58253ea1587b
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/soc/aspeed/xdma.txt
+> >> @@ -0,0 +1,40 @@
+> >> +Aspeed AST25XX and AST26XX XDMA Engine
+> >> +
+> >> +The XDMA Engine embedded in the AST2500 and AST2600 SOCs can perform
+> >> automatic
+> >> +DMA operations over PCI between the SOC (acting as a BMC) and a host
+> >> processor.
+> >> +
+> >> +Required properties:
+> >> + - compatible		: must be "aspeed,ast2500-xdma" or
+> >> +			  "aspeed,ast2600-xdma"
+> >> + - reg			: contains the address and size of the memory region
+> >> +			  associated with the XDMA engine registers
+> >> + - clocks		: clock specifier for the clock associated with the
+> >> +			  XDMA engine
+> >> + - resets		: reset specifier for the syscon reset associated with
+> >> +			  the XDMA engine
+> >> + - interrupts-extended	: two interrupt cells; the first specifies the
+> >> global
+> >> +			  interrupt for the XDMA engine and the second
+> >> +			  specifies the PCI-E reset or PERST interrupt.
+> >> + - scu			: a phandle to the syscon node for the system control
+> >> +			  unit of the SOC
+> > I think this should be aspeed,scu.
+> 
+> 
+> Sure.
+> 
+> 
+> >
+> >> + - memory		: contains the address and size of the memory area to
+> >> +			  be used by the XDMA engine for DMA operations
+> > Hmm, I was thinking more like a phandle to a reserved memory region,
+> > like we have in the aspeed-lpc-ctrl binding.
+> 
+> 
+> I think I mentioned before, but that doesn't work with the VGA memory. 
+> Linux can't reserve it. I haven't quite understood what happens in the 
+> memory system but I've tried it and it didn't work.
+> 
 
-> 
->> 3. It would be nice if I could reproduce this. I have a two-node mlx5 Infiniband
->> test setup, but I have done only the tiniest bit of user space IB coding, so
->> if you have any test programs that aren't too hard to deal with that could
->> possibly hit this, or be tweaked to hit it, I'd be grateful. Keeping in mind
->> that I'm not an advanced IB programmer. At all. :)
-> 
-> Clone this:
-> 
-> https://github.com/linux-rdma/rdma-core.git
-> 
-> Install all the required deps to build it (notably cython), see the README.md
-> 
-> $ ./build.sh
-> $ build/bin/run_tests.py
-> 
-> If you get things that far I think Leon can get a reproduction for you
-> 
+Yeah, I think you have mentioned that before, sorry for the noise.
 
-OK, here goes.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+Andrew
