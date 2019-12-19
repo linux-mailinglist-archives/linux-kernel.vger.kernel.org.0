@@ -2,62 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8C381266B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:22:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3082C1266BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:22:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfLSQWS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:22:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726873AbfLSQWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:22:17 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8BE0A206EC;
-        Thu, 19 Dec 2019 16:22:16 +0000 (UTC)
-Date:   Thu, 19 Dec 2019 11:22:14 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched: Micro optimization in pick_next_task() and in
- check_preempt_curr()
-Message-ID: <20191219112214.37f1f0af@gandalf.local.home>
-In-Reply-To: <af65cbaf-2f8e-0384-03e8-262d35e3790e@virtuozzo.com>
-References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
-        <20191219131242.GK2827@hirez.programming.kicks-ass.net>
-        <20191219140252.GS2871@hirez.programming.kicks-ass.net>
-        <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
-        <20191219094330.0e44c748@gandalf.local.home>
-        <11d755e9-e4f8-dd9e-30b0-45aebe260b2f@virtuozzo.com>
-        <20191219095941.2eebed84@gandalf.local.home>
-        <44c95c18-7593-f3e7-f710-a7d424af7442@virtuozzo.com>
-        <20191219104018.5f8e50d2@gandalf.local.home>
-        <af65cbaf-2f8e-0384-03e8-262d35e3790e@virtuozzo.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727002AbfLSQWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:22:48 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44997 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfLSQWs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 11:22:48 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 195so2670914pfw.11
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:22:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XjhTktDNNIa4enH2Adg8E64+TNvvSeb3MU4xDD4N6y4=;
+        b=S+1TVgtFUfcAkeVMZX15JSnrsSR+b4mHrDAJZPEW0YIuzlFcPMY/jQ6QIbrny4bqxR
+         KV+6ieZWWcuNCefV0X0KZl5TJ85CuQsLOjJUe1RvKwLmj0JOXxDpE5V1wk7VsqFaJxAg
+         EBaG9nxlhkZKlC6W9cAgW+V8qNBEd+61ZHu4s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XjhTktDNNIa4enH2Adg8E64+TNvvSeb3MU4xDD4N6y4=;
+        b=ZczIKWlj9hvKwuWmefCyBDaxYtaGzAwp6sLzHPPuoGbPt/6kBAl3PEbt7Wq+5XsOtG
+         bHJMMAzMMsNCw+cNhk+ZSEP5zt4Bqe4MBdIJn1+hIYvRa5uOYBq8RYNvqsZWvsC733IK
+         c2rPDv4hXN4IsfBKZpnOoWv/rQKa7d/GPxPfjTNGaAJ1NIBC7AUk6sWnufc+41PArT/N
+         OF2FgrsbSc0HJ9LlrpQurz9n6Ojiepp4P0sl4mK9BsFCMuuZdnxJDmpBKn3xjMj3ppzb
+         q8yG/F0GwsOJELIkRShPN1Lgx5I6ovKXnENQMR8npC9V2Xwn5PlIiAg4dELHhN9Ssq6Q
+         fo3w==
+X-Gm-Message-State: APjAAAVleGde/lZ9Du2M49vCWWp5HdqPn4IuVGCtpPKCDsda7k0A6cb0
+        57VmQkjCMkP7Cn5npZ63JqRiJBRPLAw=
+X-Google-Smtp-Source: APXvYqxHXwpOEGvBlevCbs/eVfPnI8BV0/eirURjLaUDm0uj6xZohikXALfWZdJ0pnLprPjRBCREvA==
+X-Received: by 2002:aa7:90c9:: with SMTP id k9mr10699178pfk.53.1576772567094;
+        Thu, 19 Dec 2019 08:22:47 -0800 (PST)
+Received: from joelaf.cam.corp.google.com ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id k21sm8033830pgt.22.2019.12.19.08.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 08:22:46 -0800 (PST)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        bristot@redhat.com, frextrite@gmail.com,
+        madhuparnabhowmik04@gmail.com, urezki@gmail.com,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v2 rcu-dev] rcuperf: Measure memory footprint during kfree_rcu() test
+Date:   Thu, 19 Dec 2019 11:22:42 -0500
+Message-Id: <20191219162242.128282-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Dec 2019 19:08:05 +0300
-Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+During changes to kfree_rcu() code, we often check how much is free
+memory. Instead of doing so manually, add a measurement in the test
+itself. We measure 4 times during the test for available memory and
+compare with the beginning.
 
-> Should I resend this as two patches, with your changes in a separate?
+A sample run shows something like:
 
-You don't have to, you can include multiple SOBs if a patch was written
-by two people.
+Total time taken by all kfree'ers: 6369738407 ns, loops: 10000, batches: 764, memory footprint: 216MB
 
-But perhaps it will better to do so, that way people will know who to
-blame when the linker breaks ;-)
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-I'll send you a patch that you can apply just before your change. That
-may be the cleanest way.
 
--- Steve
+---
+v1->v2 : Minor corrections
+
+Cc: bristot@redhat.com
+Cc: frextrite@gmail.com
+Cc: madhuparnabhowmik04@gmail.com
+Cc: urezki@gmail.com
+
+ kernel/rcu/rcuperf.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
+index da94b89cd531..91f0650914cc 100644
+--- a/kernel/rcu/rcuperf.c
++++ b/kernel/rcu/rcuperf.c
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
++#include <linux/mm.h>
+ #include <linux/module.h>
+ #include <linux/kthread.h>
+ #include <linux/err.h>
+@@ -611,6 +612,7 @@ kfree_perf_thread(void *arg)
+ 	long me = (long)arg;
+ 	struct kfree_obj *alloc_ptr;
+ 	u64 start_time, end_time;
++	long mem_begin, mem_during = 0;
+ 
+ 	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
+ 	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+@@ -626,6 +628,12 @@ kfree_perf_thread(void *arg)
+ 	}
+ 
+ 	do {
++		if (!mem_during) {
++			mem_during = mem_begin = si_mem_available();
++		} else if (loop % (kfree_loops / 4) == 0) {
++			mem_during = (mem_during + si_mem_available()) / 2;
++		}
++
+ 		for (i = 0; i < kfree_alloc_num; i++) {
+ 			alloc_ptr = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
+ 			if (!alloc_ptr)
+@@ -645,9 +653,11 @@ kfree_perf_thread(void *arg)
+ 		else
+ 			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
+ 
+-		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
++		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld, memory footprint: %ldMB\n",
+ 		       (unsigned long long)(end_time - start_time), kfree_loops,
+-		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
++		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started),
++		       (mem_begin - mem_during) >> (20 - PAGE_SHIFT));
++
+ 		if (shutdown) {
+ 			smp_mb(); /* Assign before wake. */
+ 			wake_up(&shutdown_wq);
+-- 
+2.24.1.735.g03f4e72817-goog
