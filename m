@@ -2,98 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 036A31270A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A708C1270AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:28:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfLSW0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 17:26:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfLSW0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:26:40 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E7812465E;
-        Thu, 19 Dec 2019 22:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576794399;
-        bh=BdxQB7ZSwpAKwtK0q7O8WB6T9KEqcDWx9oV6YYKU1yE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xeKp3emR/vcXvAEBwMnM2kiL7cWKcDjM2mTeGnzAfzCB5mxZgB2q+exWBl6sLXkaV
-         MmAtLNeK9ggqD5nzAPd8Fi14TMgOdo4JAov0ycKif6Ru46LbAGh/XlMAwP5kzk5bwj
-         KnfhPJuEEXpk2S1I6Esw9VouM18G9PO9MZU1Un64=
-Date:   Thu, 19 Dec 2019 17:26:38 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     Guenter Roeck <groeck@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "# v4 . 10+" <stable@vger.kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        linux-integrity@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 277/350] tpm: Add a flag to indicate TPM
- power is managed by firmware
-Message-ID: <20191219222638.GS17708@sasha-vm>
-References: <20191210210735.9077-1-sashal@kernel.org>
- <20191210210735.9077-238-sashal@kernel.org>
- <CABXOdTdO16V4AtO1t=BwXW2=HAtT6CYoSddmrn5T2qZP9hs0eQ@mail.gmail.com>
- <20191211175651.GK4516@linux.intel.com>
- <CABXOdTcsnAVaPo-492tVPtjOYMbNtu2Zvz4GwSBGcDEHAMGw5Q@mail.gmail.com>
- <20191213001654.GD7854@linux.intel.com>
+        id S1727063AbfLSW2f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 17:28:35 -0500
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:47031 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfLSW2e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 17:28:34 -0500
+Received: by mail-oi1-f174.google.com with SMTP id p67so3800776oib.13;
+        Thu, 19 Dec 2019 14:28:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CG1TQExIKa6xTwkbkBBNEpCtxTDKQQZLa+V9hmrricU=;
+        b=JPpQ3ttnv6Lj6ciAHxPCAiS16C16Y6JXZgz3k8UoljQayQlr+FQm9ZL8i80Oh4dnR4
+         6f0Pq9voBY2ELbBN6iktwlyc9dY6NkgrHQXixdliYKDKUhT453xYBzNypCE+62YJklTV
+         9yOC+6pRYCgzmxnzVWsyyXm4TkjzzwIjjgjhX8pTfDmM6xRHP/Bl8+ZK2KKh4ewX5V/n
+         RuvxdbMK2RkxseVxCrXoYvZVhyNd8RNmHUWf4zwocUQprdk/3M5jYShcT2u22Fb8zmHV
+         wqXirdeAB8xUsAsACkNwtlSQKrmPqhxMQUvQk4J0QVEXXDzfuI21VvPwQ+3a9Tz+p/gd
+         0p3A==
+X-Gm-Message-State: APjAAAUHvhNHUcqJb41R9GpXCVLIe0eRQqIk7aSr0xagSKBxPdekE70l
+        eIKsTkBdM0alRto2trPzhXk8tFpPaw==
+X-Google-Smtp-Source: APXvYqwF9Y5Ucq1Gi42m6K9hm0SFCab7SapBwLG3M8U7fm6ikNNcp1DajiIpmtkkgkM8oUnW12ocAQ==
+X-Received: by 2002:aca:48d6:: with SMTP id v205mr3003921oia.10.1576794513723;
+        Thu, 19 Dec 2019 14:28:33 -0800 (PST)
+Received: from localhost (ip-184-205-0-249.ftwttx.spcsdns.net. [184.205.0.249])
+        by smtp.gmail.com with ESMTPSA id t9sm2592913otm.76.2019.12.19.14.28.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 14:28:33 -0800 (PST)
+Date:   Thu, 19 Dec 2019 16:27:26 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     linux-realtek-soc@lists.infradead.org, linux-leds@vger.kernel.org,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [RFC 02/25] dt-bindings: arm: realtek: Add Xnano X5
+Message-ID: <20191219222726.GA20255@bogus>
+References: <20191212033952.5967-1-afaerber@suse.de>
+ <20191212033952.5967-3-afaerber@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20191213001654.GD7854@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191212033952.5967-3-afaerber@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 02:17:31AM +0200, Jarkko Sakkinen wrote:
->On Wed, Dec 11, 2019 at 10:05:52AM -0800, Guenter Roeck wrote:
->> On Wed, Dec 11, 2019 at 9:57 AM Jarkko Sakkinen
->> <jarkko.sakkinen@linux.intel.com> wrote:
->> >
->> > On Tue, Dec 10, 2019 at 01:32:15PM -0800, Guenter Roeck wrote:
->> > > On Tue, Dec 10, 2019 at 1:12 PM Sasha Levin <sashal@kernel.org> wrote:
->> > > >
->> > > > From: Stephen Boyd <swboyd@chromium.org>
->> > > >
->> > > > [ Upstream commit 2e2ee5a2db06c4b81315514b01d06fe5644342e9 ]
->> > > >
->> > > > On some platforms, the TPM power is managed by firmware and therefore we
->> > > > don't need to stop the TPM on suspend when going to a light version of
->> > > > suspend such as S0ix ("freeze" suspend state). Add a chip flag,
->> > > > TPM_CHIP_FLAG_FIRMWARE_POWER_MANAGED, to indicate this so that certain
->> > > > platforms can probe for the usage of this light suspend and avoid
->> > > > touching the TPM state across suspend/resume.
->> > > >
->> > >
->> > > Are the patches needed to support CR50 (which need this patch) going
->> > > to be applied to v5.4.y as well ? If not, what is the purpose of
->> > > applying this patch to v5.4.y ?
->> > >
->> > > Thanks,
->> > > Guenter
->> >
->> > Thanks Guenter. I think not.
->> >
->> Thought so. In that case this patch should be dropped.
->>
->> Guenter
->
->I fully agree with you.
+On Thu, 12 Dec 2019 04:39:29 +0100, =?UTF-8?q?Andreas=20F=C3=A4rber?= wrote:
+> Define a compatible string for Xnano X5 OTT TV Box.
+> 
+> Signed-off-by: Andreas Färber <afaerber@suse.de>
+> ---
+>  Documentation/devicetree/bindings/arm/realtek.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-I've dropped it, thanks!
-
--- 
-Thanks,
-Sasha
+Acked-by: Rob Herring <robh@kernel.org>
