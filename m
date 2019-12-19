@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1490126B34
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EE69126A84
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730541AbfLSSyk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:54:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50174 "EHLO mail.kernel.org"
+        id S1729350AbfLSSsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730531AbfLSSyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:54:38 -0500
+        id S1728761AbfLSSsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76A07206EC;
-        Thu, 19 Dec 2019 18:54:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EA5C24679;
+        Thu, 19 Dec 2019 18:48:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781677;
-        bh=dqupO76jGLS7AojuD8LNGxHXPHitJQ7TttMVQLFsQIM=;
+        s=default; t=1576781281;
+        bh=KunmRHYVd7NTxlf9m6OM9s34ezRZxez81ev+5ss5gYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XZeMMBn9hLtpXc8MND+Mc2Vb3Kkg+IDGRt+owTQt3jr4dxahbPg1Ceh45d7TF7Hi+
-         77dg7OnGyG/knMTkhHAn+gVzZQCfHlQHxXW+zshOmwIUVwtD7AdcuBIatujxzh35CR
-         ohQJp8sx1oTAQTfnk6SH/snLoh0Tqu5Ib2S8UTn0=
+        b=Yl1JBswqN2eafEYxWjRbC0GVdozbD48TJ+Ju5fmF7jUoBsfNZ/ndSdWSiaUHdZhYp
+         N99YJj9RtDCFvImpHr3ymEwppex2WzhpuAu4NXuLwdtByXzwuWRf2xhkaSg3jWxvbO
+         7OviVueOkRbd8VolbHgO4dtbY1lU+kbmQUXH68Cs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Meyer <dmeyer@gigaio.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kelvin Cao <Kelvin.Cao@microchip.com>
-Subject: [PATCH 5.4 06/80] PCI/switchtec: Read all 64 bits of part_event_bitmap
+        stable@vger.kernel.org, Shirish S <shirish.s@amd.com>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 156/199] x86/MCE/AMD: Turn off MC4_MISC thresholding on all family 0x15 models
 Date:   Thu, 19 Dec 2019 19:33:58 +0100
-Message-Id: <20191219183036.508108102@linuxfoundation.org>
+Message-Id: <20191219183223.968354314@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +48,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Logan Gunthorpe <logang@deltatee.com>
+From: Shirish S <Shirish.S@amd.com>
 
-commit 6acdf7e19b37cb3a9258603d0eab315079c19c5e upstream.
+[ Upstream commit c95b323dcd3598dd7ef5005d6723c1ba3b801093 ]
 
-The part_event_bitmap register is 64 bits wide, so read it with ioread64()
-instead of the 32-bit ioread32().
+MC4_MISC thresholding is not supported on all family 0x15 processors,
+hence skip the x86_model check when applying the quirk.
 
-Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
-Link: https://lore.kernel.org/r/20190910195833.3891-1-logang@deltatee.com
-Reported-by: Doug Meyer <dmeyer@gigaio.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org	# v4.12+
-Cc: Kelvin Cao <Kelvin.Cao@microchip.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ [ bp: massage commit message. ]
 
+Signed-off-by: Shirish S <shirish.s@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/1547106849-3476-2-git-send-email-shirish.s@amd.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/switch/switchtec.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/pci/switch/switchtec.c
-+++ b/drivers/pci/switch/switchtec.c
-@@ -675,7 +675,7 @@ static int ioctl_event_summary(struct sw
- 		return -ENOMEM;
+diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
+index e348bee411e35..2664c3df85a60 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -1649,11 +1649,10 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 			mce_flags.overflow_recov = 1;
  
- 	s->global = ioread32(&stdev->mmio_sw_event->global_summary);
--	s->part_bitmap = ioread32(&stdev->mmio_sw_event->part_event_bitmap);
-+	s->part_bitmap = ioread64(&stdev->mmio_sw_event->part_event_bitmap);
- 	s->local_part = ioread32(&stdev->mmio_part_cfg->part_event_summary);
- 
- 	for (i = 0; i < stdev->partition_count; i++) {
+ 		/*
+-		 * Turn off MC4_MISC thresholding banks on those models since
++		 * Turn off MC4_MISC thresholding banks on all models since
+ 		 * they're not supported there.
+ 		 */
+-		if (c->x86 == 0x15 &&
+-		    (c->x86_model >= 0x10 && c->x86_model <= 0x1f)) {
++		if (c->x86 == 0x15) {
+ 			int i;
+ 			u64 hwcr;
+ 			bool need_toggle;
+-- 
+2.20.1
+
 
 
