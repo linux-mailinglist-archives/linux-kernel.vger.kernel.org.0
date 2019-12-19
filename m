@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82448126AA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85448126AE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729387AbfLSSta (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:49:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42862 "EHLO mail.kernel.org"
+        id S1730028AbfLSSwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:52:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729786AbfLSSt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:27 -0500
+        id S1730220AbfLSSwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:05 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253832465E;
-        Thu, 19 Dec 2019 18:49:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3275222C2;
+        Thu, 19 Dec 2019 18:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781366;
-        bh=RkCqlMxkWpQHQAgkiX7rCYVVXYAeeMu3h4lelkadcqI=;
+        s=default; t=1576781525;
+        bh=8YmT3snhR5BU8vBdUnd/UyYp03pPb1pC78cc4Piu0vM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kj4tDzZ7L5ZEMBpRezyT90lsdQbUoaffDTxwZAt90FHFsVAFvyamTQGcT3oIm3xAT
-         EAkUTC/fsllvnzWtDVJrWTT5TXBlqloXzW3K4gV6O+K1ZkdtRGAv1eYB7tyD6yqwAF
-         7K7ErHty3ZfH+20prMyVOLVVUo0NWw/rkngD4mII=
+        b=YRalh3A1JlRniABesIQ8wSfCYyb/qN/Gf/Xg+To6btGfL6P0FniLXn0g0xILKvmTg
+         9HzZeR3LU7kwDBs/+KfoeDI2t7NdGrwEniyq+cjVM9qFEIOVceHWxCtjJ4d61WmViX
+         4aTUaCv7UL0pBrsBFZVEIuipsRyoWwcsU/6XrCMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiang Yi <giangyi@amazon.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.9 192/199] vfio/pci: call irq_bypass_unregister_producer() before freeing irq
+        stable@vger.kernel.org,
+        Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Ashok Raj <ashok.raj@intel.com>
+Subject: [PATCH 4.19 20/47] PCI: Fix Intel ACS quirk UPDCR register address
 Date:   Thu, 19 Dec 2019 19:34:34 +0100
-Message-Id: <20191219183226.382696816@linuxfoundation.org>
+Message-Id: <20191219182923.108186669@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiang Yi <giangyi@amazon.com>
+From: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
 
-commit d567fb8819162099035e546b11a736e29c2af0ea upstream.
+commit d8558ac8c93d429d65d7490b512a3a67e559d0d4 upstream.
 
-Since irq_bypass_register_producer() is called after request_irq(), we
-should do tear-down in reverse order: irq_bypass_unregister_producer()
-then free_irq().
+According to documentation [0] the correct offset for the Upstream Peer
+Decode Configuration Register (UPDCR) is 0x1014.  It was previously defined
+as 0x1114.
 
-Specifically free_irq() may release resources required by the
-irqbypass del_producer() callback.  Notably an example provided by
-Marc Zyngier on arm64 with GICv4 that he indicates has the potential
-to wedge the hardware:
+d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
+intended to enforce isolation between PCI devices allowing them to be put
+into separate IOMMU groups.  Due to the wrong register offset the intended
+isolation was not fully enforced.  This is fixed with this patch.
 
- free_irq(irq)
-   __free_irq(irq)
-     irq_domain_deactivate_irq(irq)
-       its_irq_domain_deactivate()
-         [unmap the VLPI from the ITS]
+Please note that I did not test this patch because I have no hardware that
+implements this register.
 
- kvm_arch_irq_bypass_del_producer(cons, prod)
-   kvm_vgic_v4_unset_forwarding(kvm, irq, ...)
-     its_unmap_vlpi(irq)
-       [Unmap the VLPI from the ITS (again), remap the original LPI]
-
-Signed-off-by: Jiang Yi <giangyi@amazon.com>
-Cc: stable@vger.kernel.org # v4.4+
-Fixes: 6d7425f109d26 ("vfio: Register/unregister irq_bypass_producer")
-Link: https://lore.kernel.org/kvm/20191127164910.15888-1-giangyi@amazon.com
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-[aw: commit log]
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+[0] https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/4th-gen-core-family-mobile-i-o-datasheet.pdf (page 325)
+Fixes: d99321b63b1f ("PCI: Enable quirks for PCIe ACS on Intel PCH root ports")
+Link: https://lore.kernel.org/r/7a3505df-79ba-8a28-464c-88b83eefffa6@kernkonzept.com
+Signed-off-by: Steffen Liebergeld <steffen.liebergeld@kernkonzept.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
+Acked-by: Ashok Raj <ashok.raj@intel.com>
+Cc: stable@vger.kernel.org	# v3.15+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/pci/vfio_pci_intrs.c |    2 +-
+ drivers/pci/quirks.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -297,8 +297,8 @@ static int vfio_msi_set_vector_signal(st
- 	irq = pci_irq_vector(pdev, vector);
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4576,7 +4576,7 @@ int pci_dev_specific_acs_enabled(struct
+ #define INTEL_BSPR_REG_BPPD  (1 << 9)
  
- 	if (vdev->ctx[vector].trigger) {
--		free_irq(irq, vdev->ctx[vector].trigger);
- 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
-+		free_irq(irq, vdev->ctx[vector].trigger);
- 		kfree(vdev->ctx[vector].name);
- 		eventfd_ctx_put(vdev->ctx[vector].trigger);
- 		vdev->ctx[vector].trigger = NULL;
+ /* Upstream Peer Decode Configuration Register */
+-#define INTEL_UPDCR_REG 0x1114
++#define INTEL_UPDCR_REG 0x1014
+ /* 5:0 Peer Decode Enable bits */
+ #define INTEL_UPDCR_REG_MASK 0x3f
+ 
 
 
