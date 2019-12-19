@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC5F4126D2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:09:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 030D7126C5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:03:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbfLSTJF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:09:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60010 "EHLO mail.kernel.org"
+        id S1729662AbfLSTDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:03:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727574AbfLSSlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:41:07 -0500
+        id S1728472AbfLSSsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 381EF206D7;
-        Thu, 19 Dec 2019 18:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B26E2465E;
+        Thu, 19 Dec 2019 18:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780865;
-        bh=k/Vn97eY/o48QnUPvrMfmIs4W8FZyzJ3R15DAh3PVyY=;
+        s=default; t=1576781320;
+        bh=cvmxQ3pO4VoFUH6m+dMfaat/Qo5N3IdyNKWRcLij1as=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0hQfjfk6h5VNbnEdhKf17EsIIyHyZhugZdCKAvoZH9bfeswTcB+UKvuSTYVq1TiPh
-         Saeai+OOqSEMdiGeICw6RXRTzP4VH3KxfWTaCP557aqXnc25myLHMrqtA3itkFmb4g
-         8+CeeUoTZmLTx9ut84aWn/rKD7d5glwKF6TGFwW4=
+        b=KA/DQ0CSUchn8h8JWeYr4VG6AqZOXfycAmwutq8ssIT3UqCZYyMfgtun2s4qMG01+
+         pgGy/gC4ctXFHAdYv/grqfSk1dpNQCkqlwBJVI4LbpZft5HcGL6k4RmoTA0rL1gWDY
+         9VHsBna9HvKvmX1cUbDu2Q3DahloHfhyoX8oyPr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 148/162] tcp: tighten acceptance of ACKs not matching a child socket
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Jessica Yu <jeyu@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 174/199] kernel/module.c: wakeup processes in module_wq on module unload
 Date:   Thu, 19 Dec 2019 19:34:16 +0100
-Message-Id: <20191219183216.782494552@linuxfoundation.org>
+Message-Id: <20191219183225.177799954@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,76 +44,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guillaume Nault <gnault@redhat.com>
+From: Konstantin Khorenko <khorenko@virtuozzo.com>
 
-[ Upstream commit cb44a08f8647fd2e8db5cc9ac27cd8355fa392d8 ]
+[ Upstream commit 5d603311615f612320bb77bd2a82553ef1ced5b7 ]
 
-When no synflood occurs, the synflood timestamp isn't updated.
-Therefore it can be so old that time_after32() can consider it to be
-in the future.
+Fix the race between load and unload a kernel module.
 
-That's a problem for tcp_synq_no_recent_overflow() as it may report
-that a recent overflow occurred while, in fact, it's just that jiffies
-has grown past 'last_overflow' + TCP_SYNCOOKIE_VALID + 2^31.
+sys_delete_module()
+ try_stop_module()
+  mod->state = _GOING
+					add_unformed_module()
+					 old = find_module_all()
+					 (old->state == _GOING =>
+					  wait_event_interruptible())
 
-Spurious detection of recent overflows lead to extra syncookie
-verification in cookie_v[46]_check(). At that point, the verification
-should fail and the packet dropped. But we should have dropped the
-packet earlier as we didn't even send a syncookie.
+					 During pre-condition
+					 finished_loading() rets 0
+					 schedule()
+					 (never gets waken up later)
+ free_module()
+  mod->state = _UNFORMED
+   list_del_rcu(&mod->list)
+   (dels mod from "modules" list)
 
-Let's refine tcp_synq_no_recent_overflow() to report a recent overflow
-only if jiffies is within the
-[last_overflow, last_overflow + TCP_SYNCOOKIE_VALID] interval. This
-way, no spurious recent overflow is reported when jiffies wraps and
-'last_overflow' becomes in the future from the point of view of
-time_after32().
+return
 
-However, if jiffies wraps and enters the
-[last_overflow, last_overflow + TCP_SYNCOOKIE_VALID] interval (with
-'last_overflow' being a stale synflood timestamp), then
-tcp_synq_no_recent_overflow() still erroneously reports an
-overflow. In such cases, we have to rely on syncookie verification
-to drop the packet. We unfortunately have no way to differentiate
-between a fresh and a stale syncookie timestamp.
+The race above leads to modprobe hanging forever on loading
+a module.
 
-In practice, using last_overflow as lower bound is problematic.
-If the synflood timestamp is concurrently updated between the time
-we read jiffies and the moment we store the timestamp in
-'last_overflow', then 'now' becomes smaller than 'last_overflow' and
-tcp_synq_no_recent_overflow() returns true, potentially dropping a
-valid syncookie.
+Error paths on loading module call wake_up_all(&module_wq) after
+freeing module, so let's do the same on straight module unload.
 
-Reading jiffies after loading the timestamp could fix the problem,
-but that'd require a memory barrier. Let's just accommodate for
-potential timestamp growth instead and extend the interval using
-'last_overflow - HZ' as lower bound.
-
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 6e6de3dee51a ("kernel/module.c: Only return -EEXIST for modules that have finished loading")
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/tcp.h |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ kernel/module.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -514,7 +514,15 @@ static inline bool tcp_synq_no_recent_ov
- {
- 	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
+diff --git a/kernel/module.c b/kernel/module.c
+index fb9e07aec49e0..9cb1437151ae7 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -995,6 +995,8 @@ SYSCALL_DEFINE2(delete_module, const char __user *, name_user,
+ 	strlcpy(last_unloaded_module, mod->name, sizeof(last_unloaded_module));
  
--	return time_after(jiffies, last_overflow + TCP_SYNCOOKIE_VALID);
-+	/* If last_overflow <= jiffies <= last_overflow + TCP_SYNCOOKIE_VALID,
-+	 * then we're under synflood. However, we have to use
-+	 * 'last_overflow - HZ' as lower bound. That's because a concurrent
-+	 * tcp_synq_overflow() could update .ts_recent_stamp after we read
-+	 * jiffies but before we store .ts_recent_stamp into last_overflow,
-+	 * which could lead to rejecting a valid syncookie.
-+	 */
-+	return !time_between32(jiffies, last_overflow - HZ,
-+			       last_overflow + TCP_SYNCOOKIE_VALID);
- }
- 
- static inline u32 tcp_cookie_time(void)
+ 	free_module(mod);
++	/* someone could wait for the module in add_unformed_module() */
++	wake_up_all(&module_wq);
+ 	return 0;
+ out:
+ 	mutex_unlock(&module_mutex);
+-- 
+2.20.1
+
 
 
