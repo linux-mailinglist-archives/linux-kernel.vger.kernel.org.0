@@ -2,105 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B36126FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:44:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 50971126FEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:46:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfLSVoj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:44:39 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:29237 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727105AbfLSVoj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:44:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576791877;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Jb+1TKkOTFzUUbC+u4I7+JV/0cWuAZT7ftqKW8glD68=;
-        b=ENtro1j+NpNo742tlcZUz6gPJtNjSOjjcduwmpTXF+6QZnnKRUrorV0x7N4n9HmRQhGsUD
-        XqvpdTxk0yi0i7WFBBV1MEhkSiLeoFTkrK9JSrKX96SwMUCFXju6MRyTNoERiPBsrKq/xe
-        7Zh9nf8ajoul/XtXDspKV2dlvRPcEpI=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-289-FIegl3ayOfayCSpwsdyYbQ-1; Thu, 19 Dec 2019 16:44:34 -0500
-X-MC-Unique: FIegl3ayOfayCSpwsdyYbQ-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727483AbfLSVqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:46:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726963AbfLSVqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 16:46:00 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 0B611100550E;
-        Thu, 19 Dec 2019 21:44:32 +0000 (UTC)
-Received: from krava (ovpn-204-20.brq.redhat.com [10.40.204.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 470ED6940B;
-        Thu, 19 Dec 2019 21:44:27 +0000 (UTC)
-Date:   Thu, 19 Dec 2019 22:44:24 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 8182C2467B;
+        Thu, 19 Dec 2019 21:45:59 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1ii3cM-000Uks-FM; Thu, 19 Dec 2019 16:45:58 -0500
+Message-Id: <20191219214451.340746474@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Thu, 19 Dec 2019 16:44:51 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kirill Tkhai <tkhai@yandex.ru>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+        "bsegall@google.com" <bsegall@google.com>,
+        "mgorman@suse.de" <mgorman@suse.de>,
         Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kan Liang <kan.liang@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 07/12] perf hists browser: Allow passing an initial hotkey
-Message-ID: <20191219214424.GB27481@krava>
-References: <20191217144828.2460-1-acme@kernel.org>
- <20191217144828.2460-8-acme@kernel.org>
- <20191218080818.GD19062@krava>
- <20191218140831.GC13395@kernel.org>
- <20191218142321.GB15571@krava>
- <20191219172642.GB13699@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219172642.GB13699@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [RFC][PATCH 0/4] sched: Optimizations to sched_class processing
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 02:26:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Wed, Dec 18, 2019 at 03:23:21PM +0100, Jiri Olsa escreveu:
-> > On Wed, Dec 18, 2019 at 11:08:31AM -0300, Arnaldo Carvalho de Melo wrote:
-> > > Em Wed, Dec 18, 2019 at 09:08:18AM +0100, Jiri Olsa escreveu:
-> > > > On Tue, Dec 17, 2019 at 11:48:23AM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > > +	if (key)
-> > > > > +		goto do_hotkey;
-> > > > > +
-> > > > >  	while (1) {
-> > > > >  		key = ui_browser__run(&browser->b, delay_secs);
-> > > > > -
-> > > > > +do_hotkey:
-> 
-> > > > or we could switch the 'swtich' and ui_browser__run, and get rid of the goto, like:
-> 
-> > > > 	while (1) {
-> > > >   		switch (key) {
-> > > > 		...
-> > > > 		}
-> > > > 
-> > > > 		key = ui_browser__run(&browser->b, delay_secs);
-> > > > 	}
-> 
-> > > I think those are equivalent and having the test like I did is more
-> > > clear, i.e. "has this key been provided" instead of going to the switch
-> > > just to hit the default case for the zero in key and call
-> > > ui_browser__run().
-> 
-> > sure, I just don't like goto other than for error handling,
-> > looks too hacky to me ;-) but of course it's your call
-> 
-> How about the one below?
 
-looks good, thanks
+As Kirill made a micro-optimization to the processing of pick_next_task()
+that required the address locations of the sched_class descriptors to
+be that of their priority to one another. This required a linker
+script modification to guarantee that order.
 
-jirka
+After adding the forced order in the linker script, I realized that
+we no longer needed the 'next' field in the sched_class descriptor.
+Thus, I changed it to use the order of the linker script.
 
+Then decided that the sched_class_highest define could be moved
+to the linker script as well to keep the defines of the order to
+be in one location, and it be obvious what the highest sched_class is
+when SMP is not configured. (BTW, I have not tested this with
+!CONFIG_SMP yet, but who does ;-). As the removal of next was a bit
+more invasive than the highest sched class change, I moved that to
+be the second patch.
+
+Finally I added Kirill's patch at the end, (Which may not have made it
+to LKML due to trying to not get it mangled by Exchange).
+
+Kirill Tkhai (1):
+      sched: Micro optimization in pick_next_task() and in check_preempt_curr()
+
+Steven Rostedt (VMware) (3):
+      sched: Force the address order of each sched class descriptor
+      sched: Have sched_class_highest define by vmlinux.lds.h
+      sched: Remove struct sched_class next field
+
+----
+ include/asm-generic/vmlinux.lds.h | 29 +++++++++++++++++++++++++++++
+ kernel/sched/core.c               | 24 +++++++++---------------
+ kernel/sched/deadline.c           |  4 ++--
+ kernel/sched/fair.c               |  4 ++--
+ kernel/sched/idle.c               |  4 ++--
+ kernel/sched/rt.c                 |  4 ++--
+ kernel/sched/sched.h              | 13 +++++--------
+ kernel/sched/stop_task.c          |  4 ++--
+ 8 files changed, 53 insertions(+), 33 deletions(-)
