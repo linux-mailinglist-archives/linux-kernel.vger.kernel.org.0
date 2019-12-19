@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9621126ACA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AD7E126B04
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:53:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfLSSu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:50:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
+        id S1730348AbfLSSxN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:53:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729728AbfLSSuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:50:55 -0500
+        id S1730338AbfLSSxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:53:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3470720674;
-        Thu, 19 Dec 2019 18:50:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57E9624682;
+        Thu, 19 Dec 2019 18:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781454;
-        bh=RkCqlMxkWpQHQAgkiX7rCYVVXYAeeMu3h4lelkadcqI=;
+        s=default; t=1576781590;
+        bh=WQenRLrZDkwW+vI+f6c2c5mZGuhSMwWB2m9IQwuTozk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dBV5kNRdQcedBoA6BTzEYQxTBiruh3p8EvL4YA/qnWKC51VPLyWEQkus7sNa2LlSN
-         0mcCkwiLs3R9DPpFcPo6TQebNHqAC99/6XnBRb3Kg5F2AnhR4rHPo15cWW2gfQuSym
-         EWnulpQTQZx50Bc/jjLvXQO8LtjJvSL0AHFCG9yo=
+        b=oJl51gfVAv/QOyrjrtJLJOZn6JwvLPd17NxZbbF7Ihr6eaNPXyFHfDO6170yeeufd
+         SQaIWXJ1X7luFqYQot4mUkD6qfAZ6ASo6z2owSh9m3xWoeKqVQlFgMgKAKES2Gwqs2
+         0qt1mVIttBmyR1vPmbIx6mgrBjHiM/BY9cJ86VPY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiang Yi <giangyi@amazon.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.14 29/36] vfio/pci: call irq_bypass_unregister_producer() before freeing irq
-Date:   Thu, 19 Dec 2019 19:34:46 +0100
-Message-Id: <20191219182920.242386926@linuxfoundation.org>
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.19 33/47] cifs: smbd: Return -EINVAL when the number of iovs exceeds SMBDIRECT_MAX_SGE
+Date:   Thu, 19 Dec 2019 19:34:47 +0100
+Message-Id: <20191219182935.476928876@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,55 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiang Yi <giangyi@amazon.com>
+From: Long Li <longli@microsoft.com>
 
-commit d567fb8819162099035e546b11a736e29c2af0ea upstream.
+commit 37941ea17d3f8eb2f5ac2f59346fab9e8439271a upstream.
 
-Since irq_bypass_register_producer() is called after request_irq(), we
-should do tear-down in reverse order: irq_bypass_unregister_producer()
-then free_irq().
+While it's not friendly to fail user processes that issue more iovs
+than we support, at least we should return the correct error code so the
+user process gets a chance to retry with smaller number of iovs.
 
-Specifically free_irq() may release resources required by the
-irqbypass del_producer() callback.  Notably an example provided by
-Marc Zyngier on arm64 with GICv4 that he indicates has the potential
-to wedge the hardware:
-
- free_irq(irq)
-   __free_irq(irq)
-     irq_domain_deactivate_irq(irq)
-       its_irq_domain_deactivate()
-         [unmap the VLPI from the ITS]
-
- kvm_arch_irq_bypass_del_producer(cons, prod)
-   kvm_vgic_v4_unset_forwarding(kvm, irq, ...)
-     its_unmap_vlpi(irq)
-       [Unmap the VLPI from the ITS (again), remap the original LPI]
-
-Signed-off-by: Jiang Yi <giangyi@amazon.com>
-Cc: stable@vger.kernel.org # v4.4+
-Fixes: 6d7425f109d26 ("vfio: Register/unregister irq_bypass_producer")
-Link: https://lore.kernel.org/kvm/20191127164910.15888-1-giangyi@amazon.com
-Reviewed-by: Marc Zyngier <maz@kernel.org>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-[aw: commit log]
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Long Li <longli@microsoft.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/pci/vfio_pci_intrs.c |    2 +-
+ fs/cifs/smbdirect.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -297,8 +297,8 @@ static int vfio_msi_set_vector_signal(st
- 	irq = pci_irq_vector(pdev, vector);
+--- a/fs/cifs/smbdirect.c
++++ b/fs/cifs/smbdirect.c
+@@ -1164,7 +1164,7 @@ static int smbd_post_send_data(
  
- 	if (vdev->ctx[vector].trigger) {
--		free_irq(irq, vdev->ctx[vector].trigger);
- 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
-+		free_irq(irq, vdev->ctx[vector].trigger);
- 		kfree(vdev->ctx[vector].name);
- 		eventfd_ctx_put(vdev->ctx[vector].trigger);
- 		vdev->ctx[vector].trigger = NULL;
+ 	if (n_vec > SMBDIRECT_MAX_SGE) {
+ 		cifs_dbg(VFS, "Can't fit data to SGL, n_vec=%d\n", n_vec);
+-		return -ENOMEM;
++		return -EINVAL;
+ 	}
+ 
+ 	sg_init_table(sgl, n_vec);
 
 
