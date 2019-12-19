@@ -2,67 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CC712616F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:00:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EB41260D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:30:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLSMAE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:00:04 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:46517 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSMAE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:00:04 -0500
-Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.2) with ESMTPS id xBJ7vCh1015012
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 18 Dec 2019 23:57:12 -0800 (PST)
-Received: from pek-jsun4-d1.corp.ad.wrs.com (147.11.105.121) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.50) with Microsoft SMTP Server id
- 14.3.468.0; Wed, 18 Dec 2019 23:57:11 -0800
-From:   Jiwei Sun <jiwei.sun@windriver.com>
-To:     <tudor.ambarus@microchip.com>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <miquel.raynal@bootlin.com>, <richard@nod.at>, <vigneshr@ti.com>,
-        <jiwei.sun.bj@qq.com>, <jiwei.sun@windriver.com>
-Subject: [PATCH] mtd: spi-nor: make s25fl129p1 skip SFDP parsing
-Date:   Thu, 19 Dec 2019 15:57:08 +0800
-Message-ID: <20191219075708.15891-1-jiwei.sun@windriver.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726760AbfLSLag (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:30:36 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:45977 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbfLSLag (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:30:36 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47dqS80dMlz9sPJ;
+        Thu, 19 Dec 2019 22:30:31 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1576755033;
+        bh=6lBsCkHyaN0GoUoK5YulVgcI4GDTGjPtr5Z7BZ10PVA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TS12gv9GC0kxPJAMxsqZrOVOVNgj39/e/bSIOmXMqC+lDLVUK/qR91R/n7P+9r1T8
+         Bj9OZvyeEVAnWGaKYGCVIabn4YsK7nCJ1GBwZ2kEq41hQaiP5AKw3gT7QR6NFE4wa6
+         sdUZx8An50ewUOpOFjmtsfglzGdwv6yU60QlCno2OdPFT9zyTAwTdkCb2gqzxMU/jQ
+         lWtvLnPiz06dph5B6g09oJJrgoXLb2g+ijzBGZFybpFRSZvnK/tAqiTuCYVRcxqjbx
+         ulXDUgvtVaA95aOVpld9JqtT7vUv5fMGOh6m8Hg+2hJ/LpMZyAby8MCiapzx8i2zgC
+         0PUlgcTVC3j8w==
+Date:   Thu, 19 Dec 2019 22:30:30 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commits in the
+ drm-intel-fixes tree
+Message-ID: <20191219223030.1747f04b@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: multipart/signed; boundary="Sig_/PVy.JeA=7gTRi=texyQFMjh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: jsun4 <jiwei.sun@windriver.com>
+--Sig_/PVy.JeA=7gTRi=texyQFMjh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The right page size of S25FL129P has been gotten in the function
-spi_nor_info_init_params() before invoking spi_nor_parse_bfpt(),
-it is 256-bytes, but the size will be changed to 512 bytes in the
-following function spi_nor_parse_bfpt(). And there is no explanation of
-the SFDP according to the datasheet of S25FL129P. So we can skip
-SFDP parsing.
+Hi all,
 
-Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Commits
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index f4afe123e9dc..dcb4471c735c 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2504,7 +2504,7 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "s25sl12800", INFO(0x012018, 0x0300, 256 * 1024,  64, 0) },
- 	{ "s25sl12801", INFO(0x012018, 0x0301,  64 * 1024, 256, 0) },
- 	{ "s25fl129p0", INFO(0x012018, 0x4d00, 256 * 1024,  64, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
--	{ "s25fl129p1", INFO(0x012018, 0x4d01,  64 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
-+	{ "s25fl129p1", INFO(0x012018, 0x4d01,  64 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR | SPI_NOR_SKIP_SFDP) },
- 	{ "s25sl004a",  INFO(0x010212,      0,  64 * 1024,   8, 0) },
- 	{ "s25sl008a",  INFO(0x010213,      0,  64 * 1024,  16, 0) },
- 	{ "s25sl016a",  INFO(0x010214,      0,  64 * 1024,  32, 0) },
--- 
-2.20.1
+  987e379d7500 ("Revert "devtmpfs: use do_mount() instead of ksys_mount()"")
+  9bd5ba4fe25a ("Revert "initrd: use do_mount() instead of ksys_mount()"")
+  fa31001c96ad ("Revert "init: use do_mount() instead of ksys_mount()"")
 
+are missing a Signed-off-by from their author and committer.
+
+Reverts are commits too and should have reasonable commit messages.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PVy.JeA=7gTRi=texyQFMjh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl37X1YACgkQAVBC80lX
+0GxWlgf/bAhMqppXRsR38Gc3y9hw0JI708FL964r+7yrzRrkj7VqrGPnXQDnUyZY
+jCWlrmN1n/FFcQ5WLN56Ly0ZRIx7naaVYKNN2Yg9fAP4fcPX36WnvYOd/lF+XORZ
+yF5LwD72vMISD07Vq4s8C+oqryZQESJzQPjb4hwS0Bd6/vzv+lnis8ECPO/pSMrE
+5x58r4NcN/YcB83+NxxdakBI1Q1hxRX9b2vRwXFmHWzuD4OtxfcnFb0AiFV903G9
+dCRVEAAy0Mx14hQq7cOEB9yzJka0YJYoLUwld/u9WIB1t6wWGRgkinz90OOrWL2e
+iRUhZtFzNOBNJdbe9XJDxIfYlBY5XA==
+=96zL
+-----END PGP SIGNATURE-----
+
+--Sig_/PVy.JeA=7gTRi=texyQFMjh--
