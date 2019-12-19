@@ -2,66 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A51126762
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:48:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6524126764
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:49:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfLSQsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:48:51 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34569 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726840AbfLSQsv (ORCPT
+        id S1726925AbfLSQtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:49:22 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44024 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbfLSQtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:48:51 -0500
-Received: by mail-ed1-f66.google.com with SMTP id l8so5557373edw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:48:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=rKWEur7AxDmHFHrHr+I6fU2xxmWeFZAeCcMO1iTnOaQ=;
-        b=Y6MbKgyikYR725L4WKuPpi14zkmc+2wVcRdpy/tlj3WYQTT3lFXc5r8dSh+pxoEDlz
-         qIRuioY8CLlSSagv25gvN6oP8/tiECtqastD761WL91hW4dJK4g/TD2ZHq55ecyqcPfm
-         wDEVQ5/SGRQ+LPRqYMX9ejCZs8JD3sbI5ArwqbzfkWHwSagdGv7MweUc6MU8B2f4jUvS
-         +Ze2i+t8563CbhQvogSv2vyhv73g0pMXr2Za1aG6IL7B9lQV4ubVRKFY3w3mF41inQhA
-         GT1TdS21pFLxG28jMC824SmTOeTE3jz2EEpNjXxAxRn51hBcndRDCHRlwfLe38yUNyhl
-         mujA==
+        Thu, 19 Dec 2019 11:49:21 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 9so4815002lfq.10;
+        Thu, 19 Dec 2019 08:49:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=rKWEur7AxDmHFHrHr+I6fU2xxmWeFZAeCcMO1iTnOaQ=;
-        b=mo+LKiDBKXt0UUaZjkx5U6fK1sWNcuKSjFDL5jxVlLBYzpVPKqRSHBpMufz6NWhklO
-         2NxktPirySGD9VqH7g/Cf/zrz1sIVjH4WpuhFQEIPTscBpAeyqDruDULvD3wUoD9yBNI
-         ps/xbdWKeluqDR/1z9zwZfmf3g3PTqB3FfAbJN0+8B3orCnA0sWYnAsTN/GLmxQbasnv
-         j2yvebHnjwqsj4Y6o7lrxCtY1VjpfETeIyG+wBQ7SmecicX1YhFL7MM9XtEZ8m5Kpu9G
-         Nh9sd9Nwn/rLaH1Vrawt8iEXEccMxyeuR5Kfgs3wmO8zegQ8F4ou4/o811qO8HFykxZ4
-         3FJA==
-X-Gm-Message-State: APjAAAWOaTvAauNMHCmjlP+RRw8p8XwQZrgyz3+d/Zgi46WoHgZ3ZicX
-        ZvW5KZ0XxCMdqOyrMqakT1xLgN9NdHVEJmwuLQ==
-X-Google-Smtp-Source: APXvYqz2N4Rc35YziWqzHWaccANcZh4TNhmKz0bqjm6Bpw1B5SKCrDzA1ZkNEvJTLg+Aoz9Gks7OA07IX/J2tJAm0Bk=
-X-Received: by 2002:a17:906:7e18:: with SMTP id e24mr10651576ejr.119.1576774129044;
- Thu, 19 Dec 2019 08:48:49 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WE2WXEHobAtFaKSC5ahqXYcN8VdT1sBo35QYjIRF4RY=;
+        b=Tv85NBDZt8fQQohw0frLYLcVpjK/OatRq26QucOW7zksSQDTqV1xn4in2mOfkgsxJC
+         sDjpTrJ7bX3wfmeTu1mRPSD7Ujw99DPct46g1+cPMT+zI3H8HLD+8ZP/Ue+QA9R8cmIm
+         QZzEUzxJ1E7JLXNgETVBQnwtL5APcQKHhbHTu7yH49MdVD2lLIjYWHg/tbLdo4s5IRdo
+         vblkOfM8heEUUe1DaA9b55e3t2ne38Hv86VkkuvHCUm4EWdZ1CQNb9IoPc4EBkwVIcnj
+         x9MGnfRQOXzd521xjPyzcG/g1cNwODDGNu9dexzQY55fioX5gK4n+Xj4tg2Oe+vkH/fd
+         nzYw==
+X-Gm-Message-State: APjAAAVjno59fiTaOV1eFPYlKx38ulxXHOuy1SYtc9Ts2y0zl77FQXHg
+        IPSL2vppT6PacIYftzxcyeE=
+X-Google-Smtp-Source: APXvYqzp14RJ669Fg6GM0NVmqvVcjWt/Bm5wxrknP4frrRfuVYa/vzOF6bdMihkgowHLajytukdOFQ==
+X-Received: by 2002:ac2:43af:: with SMTP id t15mr6130492lfl.154.1576774159351;
+        Thu, 19 Dec 2019 08:49:19 -0800 (PST)
+Received: from xi.terra (c-14b8e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.184.20])
+        by smtp.gmail.com with ESMTPSA id r20sm2832384lfi.91.2019.12.19.08.49.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 08:49:18 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.92.3)
+        (envelope-from <johan@kernel.org>)
+        id 1ihyzD-0001vm-Kr; Thu, 19 Dec 2019 17:49:15 +0100
+Date:   Thu, 19 Dec 2019 17:49:15 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Masahiro Yamada <masahiroy@kernel.org>
+Cc:     linux-kbuild@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Johan Hovold <johan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: clarify the difference between obj-y and obj-m
+ w.r.t. descending
+Message-ID: <20191219164915.GS22665@localhost>
+References: <20191219115100.958-1-masahiroy@kernel.org>
 MIME-Version: 1.0
-Received: by 2002:aa7:c99a:0:0:0:0:0 with HTTP; Thu, 19 Dec 2019 08:48:48
- -0800 (PST)
-From:   Kelly Guaruah <kguaruah1@gmail.com>
-Date:   Thu, 19 Dec 2019 08:48:48 -0800
-Message-ID: <CAHr-wQHabZMbBqGTjW4_G+7Oqi_b6Ge-HoP7fF3Fu7sSo951tw@mail.gmail.com>
-Subject: YOUR ASSISTANCE
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219115100.958-1-masahiroy@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Mikulas,
-I want to negotiate with you this transaction on inheritance related
-matters based on the same surname you have with my late
-client,Engineer Victor Mikulas which allows or mandates you to receive
-his estates value of US$12.4 Million into your bank account or ATM
-VISA CARD.
-I have with me the relevant documents to back up the claim.The sharing
-ratio of the funds after a successful transfer to your
-bank account shall be 40/60 of which I do have trust that the funds
-would be secured pending my arrival to meet you in your country.
-Reply for more details
-Barrister Kelly Guaruah
+On Thu, Dec 19, 2019 at 08:51:00PM +0900, Masahiro Yamada wrote:
+> Kbuild descends into a directory by either 'y' or 'm', but there is an
+> important difference.
+> 
+> Kbuild combines the built-in objects into built-in.a in each directory.
+> The built-in.a in the directory visited by obj-y is merged into the
+> built-in.a in the parent directory. This merge happens recursively when
+> Kbuild is ascending back towards the top directory, so built-in objects
+> are linked into vmlinux eventually. This works properly only when the
+> Makefile that specifies obj-y is reachable by the chain of obj-y.
+> 
+> On the other hand, Kbuild does not take built-in.a from the directory
+> visited by obj-m. This it, all the objects in that directory are supposed
+> to be modular. If Kbuild descends into a directory by obj-m, but the
+> Makefile in the sub-directory specifies obj-y, those objects are just
+> left orphan.
+> 
+> The current statement "Kbuild only uses this information to decide that
+> it needs to visit the directory" is misleading. Clarify the difference.
+> 
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Looks good! Thanks for fixing this.
+
+Reviewed-by: Johan Hovold <johan@kernel.org>
+
+> ---
+> 
+>  Documentation/kbuild/makefiles.rst | 16 +++++++++++++---
+>  1 file changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/kbuild/makefiles.rst b/Documentation/kbuild/makefiles.rst
+> index b9b50553bfc5..d7e6534a8505 100644
+> --- a/Documentation/kbuild/makefiles.rst
+> +++ b/Documentation/kbuild/makefiles.rst
+> @@ -297,9 +297,19 @@ more details, with real examples.
+>  	If CONFIG_EXT2_FS is set to either 'y' (built-in) or 'm' (modular)
+>  	the corresponding obj- variable will be set, and kbuild will descend
+>  	down in the ext2 directory.
+> -	Kbuild only uses this information to decide that it needs to visit
+> -	the directory, it is the Makefile in the subdirectory that
+> -	specifies what is modular and what is built-in.
+> +
+> +	Kbuild uses this information not only to decide that it needs to visit
+> +	the directory, but also to decide whether or not to link objects from
+> +	the directory into vmlinux.
+> +
+> +	When Kbuild descends into the directory with 'y', all built-in objects
+> +	from that directory are combined into the built-in.a, which will be
+> +	eventually linked into vmlinux.
+> +
+> +	When Kbuild descends into the directory with 'm', in contrast, nothing
+> +	from that directory will be linked into vmlinux. If the Makefile in
+> +	that directory specifies obj-y, those objects will be left orphan.
+> +	It is very likely a bug of the Makefile or of dependencies in Kconfig.
+>  
+>  	It is good practice to use a `CONFIG_` variable when assigning directory
+>  	names. This allows kbuild to totally skip the directory if the
