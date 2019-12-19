@@ -2,87 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B507126888
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:58:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 52213126863
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfLSR6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:58:51 -0500
-Received: from mga17.intel.com ([192.55.52.151]:4392 "EHLO mga17.intel.com"
+        id S1726959AbfLSRsK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:48:10 -0500
+Received: from mout02.posteo.de ([185.67.36.142]:46773 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726840AbfLSR6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:58:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 09:58:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,332,1571727600"; 
-   d="scan'208";a="213075151"
-Received: from yyu32-desk.sc.intel.com ([143.183.136.51])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Dec 2019 09:58:50 -0800
-Message-ID: <1607597639a6c6255127fef07704ee9193e33166.camel@intel.com>
-Subject: Re: [PATCH v2 3/3] x86/fpu/xstate: Invalidate fpregs when
- __fpu_restore_sig() fails
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Rik van Riel <riel@surriel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Date:   Thu, 19 Dec 2019 09:40:06 -0800
-In-Reply-To: <20191219171635.phdsfkvsyazwaq7s@linutronix.de>
-References: <20191212210855.19260-1-yu-cheng.yu@intel.com>
-         <20191212210855.19260-4-yu-cheng.yu@intel.com>
-         <20191218155449.sk4gjabtynh67jqb@linutronix.de>
-         <587463c4e5fa82dff8748e5f753890ac390e993e.camel@intel.com>
-         <20191219142217.axgpqlb7zzluoxnf@linutronix.de>
-         <19a94f88f1bc66bb81dbf5dd72083d03ca5090e9.camel@intel.com>
-         <20191219171635.phdsfkvsyazwaq7s@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1726855AbfLSRsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 12:48:10 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id DFECF240101
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 18:40:47 +0100 (CET)
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 47dzgL4SfTz9rxM;
+        Thu, 19 Dec 2019 18:40:46 +0100 (CET)
+Date:   Thu, 19 Dec 2019 18:40:45 +0100 (CET)
+From:   Marc Dietrich <marvin24@gmx.de>
+X-X-Sender: lucile@macbook-pro.fritz.box
+To:     Xidong Wang <wangxidong_97@163.com>
+cc:     Marc Dietrich <marvin24@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] staging: nvec: check return value
+In-Reply-To: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
+Message-ID: <alpine.OSX.2.21.1912191837580.5811@macbook-pro.fritz.box>
+References: <1576648598-12257-1-git-send-email-wangxidong_97@163.com>
+User-Agent: Alpine 2.21 (OSX 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-12-19 at 18:16 +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-12-19 08:44:08 [-0800], Yu-cheng Yu wrote:
-> > Yes, this works.  But then everywhere that calls copy_*_to_xregs_*() etc. needs to be checked.
-> > Are there other alternatives?
-> 
-> I don't like the big hammer approach of your very much. It might make
-> all it "correct" but then it might lead to more "invalids" then needed.
-> It also required to export the symbol which I would like to avoid.
+Hello Xidong,
 
-Copying to registers invalids current fpregs context.  It might not cause
-extra register loading, because registers are in fact already invalidated
-and any task owning the context needs to reload anyway.  Setting
-fpu_fpregs_owner_ctx is only to let the rest of the kernel know the
-fact that already happened.
+On Wed, 18 Dec 2019, Xidong Wang wrote:
 
-But, I agree with you the patch does look biggish.
+> In nvec_kbd_probe(), the return value of devm_input_allocate_device()
+> should be checked before it is used.
+>
+> Signed-off-by: Xidong Wang <wangxidong_97@163.com>
 
-> 
-> So if this patch works for you and you don't find anything else where it
-> falls apart then I will audit tomorrow all callers which got the
-> "invalidator" added and check for that angle.
+looks good to me. Thanks!
 
-Yes, that works for me.  Also, most of these call sites are under fpregs_lock(),
-and we could use __cpu_invalidate_fpregs_state().
+Acked-by: Marc Dietrich <marvin24@gmx.de>
 
-I was also thinking maybe add warnings when any new code re-introduces the issue,
-but not sure where to add that.  Do you think that is needed?
-
-Thanks,
-Yu-cheng
-
+> ---
+> drivers/staging/nvec/nvec_kbd.c | 2 ++
+> 1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/staging/nvec/nvec_kbd.c b/drivers/staging/nvec/nvec_kbd.c
+> index 01dbb66..386d619 100644
+> --- a/drivers/staging/nvec/nvec_kbd.c
+> +++ b/drivers/staging/nvec/nvec_kbd.c
+> @@ -123,6 +123,8 @@ static int nvec_kbd_probe(struct platform_device *pdev)
+> 		keycodes[j++] = extcode_tab_us102[i];
+>
+> 	idev = devm_input_allocate_device(&pdev->dev);
+> +	if (!idev)
+> +		return -ENOMEM;
+> 	idev->name = "nvec keyboard";
+> 	idev->phys = "nvec";
+> 	idev->evbit[0] = BIT_MASK(EV_KEY) | BIT_MASK(EV_REP) | BIT_MASK(EV_LED);
+> -- 
+> 2.7.4
+>
+>
