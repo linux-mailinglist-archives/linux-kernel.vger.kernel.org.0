@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91EE8126B88
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:57:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E8E2126B5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730576AbfLSS5f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:57:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52308 "EHLO mail.kernel.org"
+        id S1730767AbfLSS4G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:56:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730470AbfLSS4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:56:00 -0500
+        id S1730757AbfLSS4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:56:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18FC5206EC;
-        Thu, 19 Dec 2019 18:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85C872465E;
+        Thu, 19 Dec 2019 18:56:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781759;
-        bh=ziShp+8CXKXiSUANFpqSVBSkVhPf9J2ROseHKxsZvNI=;
+        s=default; t=1576781762;
+        bh=TV7reKbOwC/Y7RHTX7qKGlBuIi38AILlTu9b0ggzADY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y+Ii/Kn4ef+KhgE9v8cNZyqj/RwuiWBZHXEG74S6fuCtkT7/aGbwS3kZS0p5S05Vt
-         bMk5OHW+sl2Eqx3AP/ReCdSB8LjgXsTrZhPsbjilG1dtbSs4X9JnjwtfCCdV0TV6jf
-         T7mOySTCXqkHRDPqIr1jnhqJ76gw44N5UqptbNd4=
+        b=aQQWg4Toge7/Pw0ATEpIGtDjGW+sVt1WVfuqdACCZ+3U01Bw+1Ek0heU6zCxlMHYV
+         h6ZVzfdxXPlsvX91xoXf8eljz6tx6YyO6Zk2N3VSp9VL74SNzPFSShEtQhIP0DkGhl
+         PLVP+I9a1SkxHTMCLdx5tKh03xpa51HYk8LfRT/k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        David Airlie <airlied@redhat.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Juston Li <juston.li@intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 5.4 68/80] drm/nouveau/kms/nv50-: Limit MST BPC to 8
-Date:   Thu, 19 Dec 2019 19:35:00 +0100
-Message-Id: <20191219183139.213169231@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: [PATCH 5.4 69/80] drm/i915/fbc: Disable fbc by default on all glk+
+Date:   Thu, 19 Dec 2019 19:35:01 +0100
+Message-Id: <20191219183140.351406355@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
 References: <20191219183031.278083125@linuxfoundation.org>
@@ -50,63 +48,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit ae5769d4670982bc483885b120b557a9ffd57527 upstream.
+commit 0eb8e74f7202a4a98bbc0c1adeed3986cf50b66a upstream.
 
-Noticed this while working on some unrelated CRC stuff. Currently,
-userspace has very little support for BPCs higher than 8. While this
-doesn't matter for most things, on MST topologies we need to be careful
-about ensuring that we do our best to make any given display
-configuration fit within the bandwidth restraints of the topology, since
-otherwise less people's monitor configurations will work.
+We're missing a workaround in the fbc code for all glk+ platforms
+which can cause corruption around the top of the screen. So
+enabling fbc by default is a bad idea. I'm not keen to backport
+the w/a so let's start by disabling fbc by default on all glk+.
+We'll lift the restriction once the w/a is in place.
 
-Allowing for BPC settings higher than 8 dramatically increases the
-required bandwidth for displays in most configurations, and consequently
-makes it a lot less likely that said display configurations will pass
-the atomic check.
-
-In the future we want to fix this correctly by making it so that we
-adjust the bpp for each display in a topology to be as high as possible,
-while making sure to lower the bpp of each display in the event that we
-run out of bandwidth and need to rerun our atomic check. But for now,
-follow the behavior that both i915 and amdgpu are sticking to.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Fixes: 232c9eec417a ("drm/nouveau: Use atomic VCPI helpers for MST")
-Cc: Ben Skeggs <bskeggs@redhat.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: David Airlie <airlied@redhat.com>
-Cc: Jerry Zuo <Jerry.Zuo@amd.com>
-Cc: Harry Wentland <harry.wentland@amd.com>
-Cc: Juston Li <juston.li@intel.com>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: Sean Paul <seanpaul@chromium.org>
-Cc: <stable@vger.kernel.org> # v5.1+
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Cc: stable@vger.kernel.org
+Cc: Daniel Drake <drake@endlessm.com>
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Cc: Jian-Hong Pan <jian-hong@endlessm.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191127201222.16669-2-ville.syrjala@linux.intel.com
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+(cherry picked from commit cd8c021b36a66833cefe2c90a79a9e312a2a5690)
+Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/i915/display/intel_fbc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-+++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -798,7 +798,14 @@ nv50_msto_atomic_check(struct drm_encode
- 	if (!state->duplicated) {
- 		const int clock = crtc_state->adjusted_mode.clock;
+--- a/drivers/gpu/drm/i915/display/intel_fbc.c
++++ b/drivers/gpu/drm/i915/display/intel_fbc.c
+@@ -1284,7 +1284,7 @@ static int intel_sanitize_fbc_option(str
+ 		return 0;
  
--		asyh->or.bpc = connector->display_info.bpc;
-+		/*
-+		 * XXX: Since we don't use HDR in userspace quite yet, limit
-+		 * the bpc to 8 to save bandwidth on the topology. In the
-+		 * future, we'll want to properly fix this by dynamically
-+		 * selecting the highest possible bpc that would fit in the
-+		 * topology
-+		 */
-+		asyh->or.bpc = min(connector->display_info.bpc, 8U);
- 		asyh->dp.pbn = drm_dp_calc_pbn_mode(clock, asyh->or.bpc * 3);
- 	}
+ 	/* https://bugs.freedesktop.org/show_bug.cgi?id=108085 */
+-	if (IS_GEMINILAKE(dev_priv))
++	if (INTEL_GEN(dev_priv) >= 10 || IS_GEMINILAKE(dev_priv))
+ 		return 0;
  
+ 	if (IS_BROADWELL(dev_priv) || INTEL_GEN(dev_priv) >= 9)
 
 
