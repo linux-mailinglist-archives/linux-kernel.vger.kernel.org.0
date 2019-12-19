@@ -2,137 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E7A8126CEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:07:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A803E126C44
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:02:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728857AbfLSTHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:07:11 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41860 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728137AbfLSSnX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:43:23 -0500
-Received: by mail-ot1-f66.google.com with SMTP id r27so8339997otc.8;
-        Thu, 19 Dec 2019 10:43:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ATCr26B2OQVBaMy930gvC8+YwzqQLoxjbV1kq1l7KCk=;
-        b=CjcHXC7bZXk5AsbMcdwa+6cfASsiCGVz+wR56vMtBUcxd5jDPbYMhnK4oYaexzOTug
-         u4tPYpYd/NxUejUhl6V7DD2j/rnc9CjQfNcFAWc4DBZdm9V3DWI+h0I3aHq1myFSFS+Q
-         8ybcBFLJBnTCDB+UTlzxm7b+10RKjTQ1PgQnXPLnPITiKn2/zZkuYp1hnOOVWKzCah2B
-         ssY7r1rMqo+YB98MYw6hQF8ir91mb6C92kPJbgAwLQ8LkUtqYirtdsiJVI8v97ZB2Cny
-         OdpTnwj6ZdsRbOc19lj+G07GCvVQ711SdE7AjTqev9emjZquJkqr6Q5ZVug8Hxeogqma
-         sUoA==
-X-Gm-Message-State: APjAAAXB2965kvh0ogAd3ywbMTXMzOc2chjy2Dto3hLAktctn5Mx8Cop
-        ycUUAzUva8gjldq+f1tmWbD5vYRMlQ==
-X-Google-Smtp-Source: APXvYqzHVHy4Y8bxjQIOFjcCok4NiCDbPD19EFZ7LpJjtchr7wNNUALhEQj3m9Oz59bjfHKnScEnxw==
-X-Received: by 2002:a9d:6d06:: with SMTP id o6mr10381223otp.239.1576781002486;
-        Thu, 19 Dec 2019 10:43:22 -0800 (PST)
-Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
-        by smtp.gmail.com with ESMTPSA id r205sm2279361oih.54.2019.12.19.10.43.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 10:43:21 -0800 (PST)
-Date:   Thu, 19 Dec 2019 12:43:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     shubhrajyoti.datta@gmail.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        michal.simek@xilinx.com, gregkh@linuxfoundation.org,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: Re: [PATCH v2 2/2] devicetree: bindings: Add the binding doc for
- xilinx APM
-Message-ID: <20191219184318.GA13328@bogus>
-References: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
- <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
+        id S1729336AbfLSTCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:02:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42616 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729498AbfLSStN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:13 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38B8F24680;
+        Thu, 19 Dec 2019 18:49:12 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 13:49:10 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <wagi@monom.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: [ANNOUNCE] 4.19.90-rt35
+Message-ID: <20191219134910.29a2ff23@gandalf.local.home>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 07:53:25PM +0530, shubhrajyoti.datta@gmail.com wrote:
-> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> 
-> Add the devicetree binding for xilinx APM.
-> 
-> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> ---
-> v2:
-> patch added
-> 
->  .../devicetree/bindings/perf/xilinx_apm.txt        | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/perf/xilinx_apm.txt
 
-As Michal said, DT schema please.
-> 
-> diff --git a/Documentation/devicetree/bindings/perf/xilinx_apm.txt b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
-> new file mode 100644
-> index 0000000..a11c82e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
-> @@ -0,0 +1,44 @@
-> +* Xilinx AXI Performance monitor IP
-> +
-> +Required properties:
-> +- compatible: "xlnx,axi-perf-monitor"
+Dear RT Folks,
 
-Version?
+I'm pleased to announce the 4.19.90-rt35 stable release.
 
-> +- interrupts: Should contain APM interrupts.
-> +- interrupt-parent: Must be core interrupt controller.
 
-Drop this.
+This release is just an update to the new stable 4.19.90 version
+and no RT specific changes have been made.
 
-> +- reg: Should contain APM registers location and length.
-> +- xlnx,enable-profile: Enables the profile mode.
-> +- xlnx,enable-trace: Enables trace mode.
-> +- xlnx,num-monitor-slots: Maximum number of slots in APM.
-> +- xlnx,enable-event-count: Enable event count.
-> +- xlnx,enable-event-log: Enable event logging.
-> +- xlnx,have-sampled-metric-cnt:Sampled metric counters enabled in APM.
-> +- xlnx,num-of-counters: Number of counters in APM
-> +- xlnx,metric-count-width: Metric Counter width (32/64)
-> +- xlnx,metrics-sample-count-width: Sampled metric counter width
-> +- xlnx,global-count-width: Global Clock counter width
+Note, I had to revert 64694b276d74 from stable 4.19 (which was upstream
+commit 7faa313f05c) because it depended on commit 396244692232 which
+was not added until 5.0, and this broke arm64.
 
-All these synthesis time config and not discoverable?
+Link: https://lore.kernel.org/r/20191214021403.GA1357@home.goodmis.org
 
-Tell h/w designers to add feature registers so all this is 
-discoverable. </rant>
+You can get this release via the git tree at:
 
-> +- clocks: Input clock specifier.
-> +
-> +Optional properties:
-> +- xlnx,id-filter-32bit: APM is in 32-bit mode
-> +
-> +Example:
-> +++++++++
-> +
-> +apm: apm@44a00000 {
-> +    compatible = "xlnx,axi-perf-monitor";
-> +    interrupt-parent = <&axi_intc_1>;
-> +    interrupts = <1 2>;
-> +    reg = <0x44a00000 0x1000>;
-> +    clocks = <&clkc 15>;
-> +    xlnx,enable-profile = <0>;
-> +    xlnx,enable-trace = <0>;
-> +    xlnx,num-monitor-slots = <4>;
-> +    xlnx,enable-event-count = <1>;
-> +    xlnx,enable-event-log = <1>;
-> +    xlnx,have-sampled-metric-cnt = <1>;
-> +    xlnx,num-of-counters = <8>;
-> +    xlnx,metric-count-width = <32>;
-> +    xlnx,metrics-sample-count-width = <32>;
-> +    xlnx,global-count-width = <32>;
-> +    xlnx,metric-count-scale = <1>;
-> +    xlnx,id-filter-32bit;
-> +};
-> -- 
-> 2.1.1
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v4.19-rt
+  Head SHA1: 5e45a0ea52bc99c515828b0ef501cb320a17f383
+
+
+Or to build 4.19.90-rt35 directly, the following patches should be applied:
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.19.tar.xz
+
+  http://www.kernel.org/pub/linux/kernel/v4.x/patch-4.19.90.xz
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/4.19/patch-4.19.90-rt35.patch.xz
+
+
+
+
+Enjoy,
+
+-- Steve
+
