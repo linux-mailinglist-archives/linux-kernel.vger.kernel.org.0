@@ -2,85 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D01F12589B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:36:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A23CD1258A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 01:39:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbfLSAgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 19:36:55 -0500
-Received: from mo-csw1514.securemx.jp ([210.130.202.153]:48690 "EHLO
-        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfLSAgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 19:36:51 -0500
-Received: by mo-csw.securemx.jp (mx-mo-csw1514) id xBJ0aYfM008093; Thu, 19 Dec 2019 09:36:34 +0900
-X-Iguazu-Qid: 34tKGlJZZqk6vL4KLA
-X-Iguazu-QSIG: v=2; s=0; t=1576715794; q=34tKGlJZZqk6vL4KLA; m=SwoY/TSCZoTPn4z9YK3xPmEM2rXSGc3P6PU8pEkguk4=
-Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
-        by relay.securemx.jp (mx-mr1511) id xBJ0aXjQ029406;
-        Thu, 19 Dec 2019 09:36:33 +0900
-Received: from enc02.toshiba.co.jp ([61.202.160.51])
-        by imx12.toshiba.co.jp  with ESMTP id xBJ0aXh7020534;
-        Thu, 19 Dec 2019 09:36:33 +0900 (JST)
-Received: from hop101.toshiba.co.jp ([133.199.85.107])
-        by enc02.toshiba.co.jp  with ESMTP id xBJ0aWCm015498;
-        Thu, 19 Dec 2019 09:36:32 +0900
-From:   Punit Agrawal <punit1.agrawal@toshiba.co.jp>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-serial@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nobuhiro1.iwamatsu@toshiba.co.jp,
-        shrirang.bagul@canonical.com, stable@vger.kernel.org,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH] serdev: Don't claim unsupported serial devices
-References: <20191218065646.817493-1-punit1.agrawal@toshiba.co.jp>
-        <096046b6-324a-8496-8599-ed7e5ffc6e3c@redhat.com>
-Date:   Thu, 19 Dec 2019 09:37:23 +0900
-In-Reply-To: <096046b6-324a-8496-8599-ed7e5ffc6e3c@redhat.com> (Hans de
-        Goede's message of "Wed, 18 Dec 2019 11:05:40 +0100")
-X-TSB-HOP: ON
-Message-ID: <87eex1noak.fsf@kokedama.swc.toshiba.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        id S1726700AbfLSAjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 19:39:08 -0500
+Received: from mga12.intel.com ([192.55.52.136]:56776 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbfLSAjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 18 Dec 2019 19:39:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Dec 2019 16:39:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,330,1571727600"; 
+   d="scan'208";a="228070707"
+Received: from jtreacy-mobl1.ger.corp.intel.com ([10.251.82.127])
+  by orsmga002.jf.intel.com with ESMTP; 18 Dec 2019 16:39:00 -0800
+Message-ID: <dd33820c8874f8e4c7628243e0583a419be7fed4.camel@linux.intel.com>
+Subject: Re: [PATCH v24 06/24] x86/sgx: Add wrappers for ENCLS leaf functions
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-sgx@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, josh@joshtriplett.org, luto@kernel.org,
+        kai.huang@intel.com, rientjes@google.com, cedric.xing@intel.com,
+        puiterwijk@redhat.com
+Date:   Thu, 19 Dec 2019 02:39:00 +0200
+In-Reply-To: <20191217144548.GF28788@zn.tnic>
+References: <20191129231326.18076-1-jarkko.sakkinen@linux.intel.com>
+         <20191129231326.18076-7-jarkko.sakkinen@linux.intel.com>
+         <20191217144548.GF28788@zn.tnic>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hans de Goede <hdegoede@redhat.com> writes:
+On Tue, 2019-12-17 at 15:45 +0100, Borislav Petkov wrote:
+> On Sat, Nov 30, 2019 at 01:13:08AM +0200, Jarkko Sakkinen wrote:
+> > +/**
+> > + * encls_failed() - Check if an ENCLS leaf function failed
+> > + * @ret:	the return value of an ENCLS leaf function call
+> > + *
+> > + * Check if an ENCLS leaf function failed. This happens when the leaf function
+> > + * causes a fault that is not caused by an EPCM conflict or when the leaf
+> > + * function returns a non-zero value.
+> > + */
+> > +static inline bool encls_failed(int ret)
+> > +{
+> > +	int epcm_trapnr =
+> > +		boot_cpu_has(X86_FEATURE_SGX2) ? X86_TRAP_PF : X86_TRAP_GP;
+> > +	bool fault = ret & ENCLS_FAULT_FLAG;
+> > +
+> > +	return (fault && ENCLS_TRAPNR(ret) != epcm_trapnr) || (!fault && ret);
+> > +}
+> 
+> Can we make this function more readable?
+> 
+> static inline bool encls_failed(int ret)
+> {
+>         int epcm_trapnr;
+> 
+>         if (boot_cpu_has(X86_FEATURE_SGX2))
+>                 epcm_trapnr = X86_TRAP_PF;
+>         else
+>                 epcm_trapnr = X86_TRAP_GP;
+> 
+>         if (ret & ENCLS_FAULT_FLAG)
+>                 return ENCLS_TRAPNR(ret) != epcm_trapnr;
+> 
+>         return !!ret;
+> }
+> 
+> I hope I've converted it correctly but I might've missed some corner
+> case...
+> 
+> Thx.
 
-> Hi,
->
-> On 18-12-2019 07:56, Punit Agrawal wrote:
->> Serdev sub-system claims all serial devices that are not already
->> enumerated. As a result, no device node is created for serial port on
->> certain boards such as the Apollo Lake based UP2. This has the
->> unintended consequence of not being able to raise the login prompt via
->> serial connection.
->>
->> Introduce a blacklist to reject devices that should not be treated as
->> a serdev device. Add the Intel HS UART peripheral ids to the blacklist
->> to bring back serial port on SoCs carrying them.
->>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Punit Agrawal <punit1.agrawal@toshiba.co.jp>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Johan Hovold <johan@kernel.org>
->> Cc: Hans de Goede <hdegoede@redhat.com>
->
-> Thank you for addressing this long standing issue.
+Absolutely. I absolutely hate too "clever code".
 
-I am surprised there hasn't been more people complaining! Maybe even on
-x86 mainline isn't that widely used on development boards.
-
-> The basic approach here looks good to me, once the minor
-> comments from other reviewers are addressed you can add my:
->
-> Acked-by: Hans de Goede <hdegoede@redhat.com>
-
-Thanks!
-
-[...]
+/Jarkko
 
