@@ -2,95 +2,342 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 088BD125DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:40:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 03846125DE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:44:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfLSJkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 04:40:10 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55813 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726789AbfLSJkI (ORCPT
+        id S1726696AbfLSJoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 04:44:14 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43942 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfLSJoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 04:40:08 -0500
-Received: by mail-pj1-f68.google.com with SMTP id d5so2245390pjz.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 01:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UaU6i9zWU3yr9QJvcRz0VGGzrcUKaBIv86YipeMOKo8=;
-        b=LyDg1/LfFyRwWJTxBF/LnsfrTJSpgla5kvA98Hg+eeijCP9Q4VYEvCBGyN5xVxKn7p
-         eEsQscd3wujq8XMHgepAaRQXBH0E1PQZo9FaDL3lWv8qT+wBABdwjQ6wBRbPQczrwZhV
-         xi1HLrIQxvVPsnnXebX2B39JQ8NlNTXox5+ak=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UaU6i9zWU3yr9QJvcRz0VGGzrcUKaBIv86YipeMOKo8=;
-        b=cN5WLF832nIQwuaiCcl43Gq7PuigfEddf37JAEmbhHfdn1ts+zVl6SE2HNc7olNYQz
-         IfD4oooIN1gJusH1wfF0sttIOmTYcZIcyO6htT5778DAuOEXRwZcLdIX4atXZFZeIhkX
-         7cpeGdiIxWG7TaOML+n4LHFU92SKrd8Q4Iz2OKzpXzD6HCh4MLsysSCi269d+QvvW0D6
-         BDLt05MufYBIxkvgNLRcTx9cQTEYV4jX186I7ZbZ48knbIZALBrZMHlOyMJb3bSfHlvi
-         memifPuq4y5ieOu1DVdNItLh7HlX220MKyoZJeRQER0ZlMBvz/Z772SToROe2LpcCMqf
-         SNeA==
-X-Gm-Message-State: APjAAAWCDEBu2aTrC0JwMt5blS7T4ePYF89pFThlCdg72CUjx4Jl6xIS
-        ZBZM+id8guRH43cy17FKdOqXvQ==
-X-Google-Smtp-Source: APXvYqzL4Uv3f/vYWiTWGoQqppzSjCV/VAXe3mUM5lmKJDJ2u9Tql+pWQk6EMSv57P1oNg9ofZmndA==
-X-Received: by 2002:a17:902:8bc5:: with SMTP id r5mr8257114plo.189.1576748408099;
-        Thu, 19 Dec 2019 01:40:08 -0800 (PST)
-Received: from tfiga.tok.corp.google.com ([2401:fa00:8f:203:f5fe:2a5e:f953:c0ed])
-        by smtp.gmail.com with ESMTPSA id d22sm7057694pfo.187.2019.12.19.01.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 01:40:07 -0800 (PST)
-From:   Tomasz Figa <tfiga@chromium.org>
-To:     linux-usb@vger.kernel.org
-Cc:     Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Changqi Hu <Changqi.Hu@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Shik Chen <shik@chromium.org>, Tomasz Figa <tfiga@chromium.org>
-Subject: [PATCH] usb: mtk-xhci: Do not explicitly set the DMA mask
-Date:   Thu, 19 Dec 2019 18:39:54 +0900
-Message-Id: <20191219093954.163417-1-tfiga@chromium.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+        Thu, 19 Dec 2019 04:44:14 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id AE60D292BB0
+Subject: Re: [PATCH v2] platform: chrome: Add cros-ec-pd-notify driver
+To:     Prashant Malani <pmalani@chromium.org>, groeck@chromium.org,
+        bleung@chromium.org, lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org, Jon Flatley <jflat@chromium.org>
+References: <20191218230701.59166-1-pmalani@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <d9aea1f0-1b5d-44bc-7fcc-eb0b8f9634fd@collabora.com>
+Date:   Thu, 19 Dec 2019 10:44:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191218230701.59166-1-pmalani@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mtk-xhci platform glue sets the DMA mask to 32 bits on its own,
-which was needed before commit fda182d80a0b ("usb: xhci: configure
-32-bit DMA if the controller does not support 64-bit DMA"), but now it
-has no effect, because xhci_gen_setup() sets it up for us according to
-hardware capabilities. Remove the useless code.
+Hello Prashant and Jon,
 
-Signed-off-by: Tomasz Figa <tfiga@chromium.org>
----
- drivers/usb/host/xhci-mtk.c | 5 -----
- 1 file changed, 5 deletions(-)
+Thank you for the patch.
 
-diff --git a/drivers/usb/host/xhci-mtk.c b/drivers/usb/host/xhci-mtk.c
-index b18a6baef204a..bfbdb3ceed291 100644
---- a/drivers/usb/host/xhci-mtk.c
-+++ b/drivers/usb/host/xhci-mtk.c
-@@ -488,11 +488,6 @@ static int xhci_mtk_probe(struct platform_device *pdev)
- 		goto disable_clk;
- 	}
- 
--	/* Initialize dma_mask and coherent_dma_mask to 32-bits */
--	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
--	if (ret)
--		goto disable_clk;
--
- 	hcd = usb_create_hcd(driver, dev, dev_name(dev));
- 	if (!hcd) {
- 		ret = -ENOMEM;
--- 
-2.24.1.735.g03f4e72817-goog
+On 19/12/19 0:07, Prashant Malani wrote:
+> From: Jon Flatley <jflat@chromium.org>
+> 
+> ChromiumOS uses ACPI device with HID "GOOG0003" for power delivery
+> related events. The existing cros-usbpd-charger driver relies on these
+> events without ever actually receiving them on ACPI platforms. This is
+> because in the ChromeOS kernel trees, the GOOG0003 device is owned by an
+> ACPI driver that offers firmware updates to USB-C chargers.
+> 
+> Introduce a new platform driver under cros-ec, the ChromeOS embedded
+> controller, that handles these PD events and dispatches them
+> appropriately over a notifier chain to all drivers that use them.
+> 
+> On non-ACPI platforms, the driver gets instantiated for ECs which
+> support the EC_FEATURE_USB_PD feature bit, and on such platforms, the
+> notification events will get delivered using the MKBP event handling
+> mechanism.
+> 
+> Signed-off-by: Jon Flatley <jflat@chromium.org>
+> Signed-off-by: Prashant Malani <pmalani@chromium.org>
+> ---
+> 
+> Changes in v2 (pmalani@chromium.org):
+> - Removed dependency on DT entry; instead, we will instantiate the
+>   driver on detecting EC_FEATURE_USB_PD for non-ACPI platforms.
+> - Modified the cros-ec-pd-notify device to be an mfd_cell under
+>   usbpdcharger for non-ACPI platforms. Altered the platform_probe() call
+>   to derive the cros EC structs appropriately.
+> - Replaced "usbpd_notify" with "pd_notify" in functions and structures.
+> - Addressed comments from upstream maintainer.
+> 
+>  drivers/mfd/cros_ec_dev.c                     |   3 +
+
+Please use a different patch for this. That way Lee can pick this patch
+independently and I can pick the chrome/platform bits.
+
+
+>  drivers/platform/chrome/Kconfig               |   9 ++
+>  drivers/platform/chrome/Makefile              |   1 +
+>  drivers/platform/chrome/cros_ec_pd_notify.c   | 151 ++++++++++++++++++
+>  .../linux/platform_data/cros_ec_pd_notify.h   |  17 ++
+>  5 files changed, 181 insertions(+)
+>  create mode 100644 drivers/platform/chrome/cros_ec_pd_notify.c
+>  create mode 100644 include/linux/platform_data/cros_ec_pd_notify.h
+> 
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index c4b977a5dd966..cc6a6788cd5c2 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -85,6 +85,9 @@ static const struct mfd_cell cros_ec_sensorhub_cells[] = {
+>  static const struct mfd_cell cros_usbpd_charger_cells[] = {
+>  	{ .name = "cros-usbpd-charger", },
+>  	{ .name = "cros-usbpd-logger", },
+> +#ifndef CONFIG_ACPI
+> +	{ .name = "cros-ec-pd-notify", },
+
+Could make sense name as cros-usbpd-notify to be coherent with the other drivers
+names?
+
+> +#endif
+>  };
+>  
+>  static const struct cros_feature_to_cells cros_subdevices[] = {
+> diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+> index 5f57282a28da0..972c129b7b7ba 100644
+> --- a/drivers/platform/chrome/Kconfig
+> +++ b/drivers/platform/chrome/Kconfig
+> @@ -131,6 +131,15 @@ config CROS_EC_LPC
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called cros_ec_lpcs.
+>  
+> +config CROS_EC_PD_NOTIFY
+
+CROS_USBPD_NOTIFY ?
+
+> +	tristate "ChromeOS Type-C power delivery event notifier"
+> +	depends on CROS_EC
+> +	help
+> +	  If you say Y here, you get support for Type-C PD event notifications
+> +	  from the ChromeOS EC. On ACPI platorms this driver will bind to the
+> +	  GOOG0003 ACPI device, and on non-ACPI platforms this driver will get
+> +	  initialized on ECs which support the feature EC_FEATURE_USB_PD.
+> +
+
+Add all this below CROS_USBPD_LOGGER
+
+>  config CROS_EC_PROTO
+>  	bool
+>  	help
+> diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+> index aacd5920d8a18..6070baa8320ca 100644
+> --- a/drivers/platform/chrome/Makefile
+> +++ b/drivers/platform/chrome/Makefile
+> @@ -22,5 +22,6 @@ obj-$(CONFIG_CROS_EC_DEBUGFS)		+= cros_ec_debugfs.o
+>  obj-$(CONFIG_CROS_EC_SENSORHUB)		+= cros_ec_sensorhub.o
+>  obj-$(CONFIG_CROS_EC_SYSFS)		+= cros_ec_sysfs.o
+>  obj-$(CONFIG_CROS_USBPD_LOGGER)		+= cros_usbpd_logger.o
+> +obj-$(CONFIG_CROS_EC_PD_NOTIFY)		+= cros_ec_pd_notify.o
+>  
+>  obj-$(CONFIG_WILCO_EC)			+= wilco_ec/
+> diff --git a/drivers/platform/chrome/cros_ec_pd_notify.c b/drivers/platform/chrome/cros_ec_pd_notify.c
+> new file mode 100644
+> index 0000000000000..b1d98a171cff5
+> --- /dev/null
+> +++ b/drivers/platform/chrome/cros_ec_pd_notify.c
+> @@ -0,0 +1,151 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2019 Google LLC
+> + *
+> + * This driver serves as the receiver of cros_ec PD host events.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/module.h>
+> +#include <linux/mfd/cros_ec.h>
+
+No need to worry about this for now, but just to let you know, this include will
+be unnecessary after https://lkml.org/lkml/2019/12/3/530
+
+It is fine for now, I'll remove the include when I pick up the patch.
+
+> +#include <linux/platform_data/cros_ec_commands.h>
+> +#include <linux/platform_data/cros_ec_pd_notify.h>
+> +#include <linux/platform_data/cros_ec_proto.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define DRV_NAME "cros-ec-pd-notify"
+> +#define ACPI_DRV_NAME "GOOG0003"
+> +
+> +static BLOCKING_NOTIFIER_HEAD(cros_ec_pd_notifier_list);
+> +
+> +/**
+> + * cros_ec_pd_register_notify - Register a notifier callback for PD events.
+> + * @nb: Notifier block pointer to register
+> + *
+> + * On ACPI platforms this corresponds to host events on the ECPD
+> + * "GOOG0003" ACPI device. On non-ACPI platforms this will filter mkbp events
+> + * for USB PD events.
+> + *
+> + * Return: 0 on success or negative error code.
+> + */
+> +int cros_ec_pd_register_notify(struct notifier_block *nb)
+> +{
+> +	return blocking_notifier_chain_register(
+> +			&cros_ec_pd_notifier_list, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(cros_ec_pd_register_notify);
+> +
+> +
+> +/**
+> + * cros_ec_pd_unregister_notify - Unregister notifier callback for PD events.
+> + * @nb: Notifier block pointer to unregister
+> + *
+> + * Unregister a notifier callback that was previously registered with
+> + * cros_ec_pd_register_notify().
+> + */
+> +void cros_ec_pd_unregister_notify(struct notifier_block *nb)
+> +{
+> +	blocking_notifier_chain_unregister(&cros_ec_pd_notifier_list, nb);
+> +}
+> +EXPORT_SYMBOL_GPL(cros_ec_pd_unregister_notify);
+> +
+> +#ifdef CONFIG_ACPI
+> +
+> +static int cros_ec_pd_notify_add_acpi(struct acpi_device *adev)
+> +{
+> +	return 0;
+> +}
+> +
+> +static void cros_ec_pd_notify_acpi(struct acpi_device *adev, u32 event)
+> +{
+> +	blocking_notifier_call_chain(&cros_ec_pd_notifier_list, event, NULL);
+> +}
+> +
+> +static const struct acpi_device_id cros_ec_pd_acpi_device_ids[] = {
+> +	{ ACPI_DRV_NAME, 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, cros_ec_pd_acpi_device_ids);
+> +
+> +static struct acpi_driver cros_ec_pd_notify_driver = {
+> +	.name = DRV_NAME,
+> +	.class = DRV_NAME,
+> +	.ids = cros_ec_pd_acpi_device_ids,
+> +	.ops = {
+> +		.add = cros_ec_pd_notify_add_acpi,
+> +		.notify = cros_ec_pd_notify_acpi,
+> +	},
+> +};
+> +module_acpi_driver(cros_ec_pd_notify_driver);
+> +
+> +#else /* CONFIG_ACPI */
+> +
+> +static int cros_ec_pd_notify_plat(struct notifier_block *nb,
+> +		unsigned long queued_during_suspend, void *data)
+> +{
+> +	struct cros_ec_device *ec_dev = (struct cros_ec_device *)data;
+> +	u32 host_event = cros_ec_get_host_event(ec_dev);
+> +
+> +	if (!host_event)
+> +		return NOTIFY_BAD;
+> +
+> +	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_PD_MCU)) {
+> +		blocking_notifier_call_chain(&cros_ec_pd_notifier_list,
+> +				host_event, NULL);
+> +		return NOTIFY_OK;
+> +	}
+> +	return NOTIFY_DONE;
+> +}
+> +
+> +static int cros_ec_pd_notify_probe_plat(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct cros_ec_dev *ecdev = dev_get_drvdata(dev->parent);
+> +	struct notifier_block *nb;
+> +	int ret;
+> +
+> +	nb = devm_kzalloc(dev, sizeof(*nb), GFP_KERNEL);
+> +	if (!nb)
+> +		return -ENOMEM;
+> +
+> +	nb->notifier_call = cros_ec_pd_notify_plat;
+> +	dev_set_drvdata(dev, nb);
+> +
+> +	ret = blocking_notifier_chain_register(&ecdev->ec_dev->event_notifier,
+> +						nb);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to register notifier\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int cros_ec_pd_notify_remove_plat(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct cros_ec_dev *ecdev = dev_get_drvdata(dev->parent);
+> +	struct notifier_block *nb =
+> +		(struct notifier_block *)dev_get_drvdata(dev);
+> +
+> +	blocking_notifier_chain_unregister(&ecdev->ec_dev->event_notifier,
+> +			nb);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver cros_ec_pd_notify_driver = {
+> +	.driver = {
+> +		.name = DRV_NAME,
+> +	},
+> +	.probe = cros_ec_pd_notify_probe_plat,
+> +	.remove = cros_ec_pd_notify_remove_plat,
+> +};
+> +module_platform_driver(cros_ec_pd_notify_driver);
+> +
+> +#endif /* CONFIG_ACPI */
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("ChromeOS power delivery notifier device");
+> +MODULE_AUTHOR("Jon Flatley <jflat@chromium.org>");
+> +MODULE_ALIAS("platform:" DRV_NAME);
+> diff --git a/include/linux/platform_data/cros_ec_pd_notify.h b/include/linux/platform_data/cros_ec_pd_notify.h
+> new file mode 100644
+> index 0000000000000..907be5a130d60
+> --- /dev/null
+> +++ b/include/linux/platform_data/cros_ec_pd_notify.h
+
+cros_usbpd_notify.h?
+
+> @@ -0,0 +1,17 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * ChromeOS EC Power Delivery Notifier Driver
+> + *
+> + * Copyright 2019 Google LLC
+> + */
+> +
+> +#ifndef __LINUX_PLATFORM_DATA_CROS_EC_PD_NOTIFY_H
+> +#define __LINUX_PLATFORM_DATA_CROS_EC_PD_NOTIFY_H
+> +
+> +#include <linux/notifier.h>
+> +
+> +int cros_ec_pd_register_notify(struct notifier_block *nb);
+> +
+> +void cros_ec_pd_unregister_notify(struct notifier_block *nb);
+> +
+> +#endif  /* __LINUX_PLATFORM_DATA_CROS_EC_PD_NOTIFY_H */
+> 
+
+The driver looks good to me, the only real complain is split the patch in two,
+one for the MFD subsystem and another one for chrome/platform. Also, my
+preference is rename cros_ec_pd_notify to cros_usbpd_notify to be coherent with
+previous related drivera, but is not a must.
+
+Thanks,
+ Enric
+
+
+
 
