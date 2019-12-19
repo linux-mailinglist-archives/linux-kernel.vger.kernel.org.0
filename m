@@ -2,72 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA79126DC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD3A1126DBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfLSTM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:12:28 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40809 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727699AbfLSSgw (ORCPT
+        id S1727894AbfLSTL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:11:59 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:60540 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727419AbfLSSh3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:36:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w21so567177otj.7;
-        Thu, 19 Dec 2019 10:36:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zivQ+zB9chH5mQdMiQjMKA9RY31jCG6HIj79CgErI2w=;
-        b=kAf6ihh9wxbIvATjCIk1XzOueTAb4ILK6QSqWOi+Gn2QSle6Oo4KugnsE/9PreFHgb
-         Hh6d/6dYReYu5rty5VKIn4U1+E719XEXUCWyA6HTGpDMVTvO2l+Jj7Nl1WOedUdWsCYE
-         mGRHIGhOD+HXYMiQXUuKsUvxtUvSbCZQkaCr2MQCwo0c5DcWDzQbozJN+XpFejHfKCFR
-         6ZbPxqt9DXkAjifwP9RKxuJLMzp6UkOSfo5D9FuPVnrD0lcXItvKGkpJQd/oIi6JgplA
-         duSIZuPCkkVVEWZw9+aXSBIbbpCH3xAmlv/zUHWDYH6LVLWIZn1STSYuzNvyMKKodhkr
-         Ywtw==
-X-Gm-Message-State: APjAAAVztAg9dfsLjmjq0d0KrWB4P88MuWnVoif7fwDO6czTP748hFT/
-        zXDe2Uw17Z28atTNU22IC+S3vB0YAA==
-X-Google-Smtp-Source: APXvYqw33b/AA4V/6L+JZWrNjHnU++RQzimV+ODRfuMYe8enaJtZW+SQb2ERW5KuWVojra9xd/zYhQ==
-X-Received: by 2002:a05:6830:1116:: with SMTP id w22mr10593033otq.216.1576780611093;
-        Thu, 19 Dec 2019 10:36:51 -0800 (PST)
-Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
-        by smtp.gmail.com with ESMTPSA id w12sm2371730otk.75.2019.12.19.10.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 10:36:50 -0800 (PST)
-Date:   Thu, 19 Dec 2019 12:36:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH v4 2/3] dt-bindings: arm: move sprd board file to vendor
- directory
-Message-ID: <20191219183648.GA11279@bogus>
-References: <20191209114404.22483-1-zhang.lyra@gmail.com>
- <20191209114404.22483-3-zhang.lyra@gmail.com>
+        Thu, 19 Dec 2019 13:37:29 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJIRKut040429;
+        Thu, 19 Dec 2019 18:37:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=6VMYi03ucpKRxaK+aRiAulrKES+92kJ5vwbETKnXJTg=;
+ b=nP0dp7dl8t4EUJQ7Fi36v526PnHIr5hBJ1CC4MzOPmHOjnffyiYdVCZ5CP3OGWfYn6IZ
+ XRwFksgGgXkNjofQI2nKX+5hAmif8v5PQx1v8WFHFlR+B5f22yQbc7S+1Hp/CDtHJNJD
+ rW4+zELA/c+zkuO0QwUXNcG5/R4YGqzk5YGqMwL0AI+rsvDiyJk2DAmMb4EfU6LXWUSB
+ AH2O5oMrzYSOSJTrQVVoNFYoiT47iHdhq13u6HFghFj6h7D9TYCJUrhnzbFr/Qn/Q4sD
+ NQPrX1MBqADjqBFDvzjTVYG3TBM1p23/zJT2wkDqi2W9FCCji9nClagDdctNA38M3/50 ag== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2x0ag11p43-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 18:37:18 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJGEKcj035094;
+        Thu, 19 Dec 2019 18:37:18 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wyxqj3x8h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 18:37:17 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJIbGuk032674;
+        Thu, 19 Dec 2019 18:37:16 GMT
+Received: from [192.168.1.2] (/98.210.179.99)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 10:37:16 -0800
+Subject: Re: [PATCH v2 1/2] Introduce maximum WQE size to check limits
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     monis@mellanox.com, dledford@redhat.com, sean.hefty@intel.com,
+        hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1574106879-19211-1-git-send-email-rao.shoaib@oracle.com>
+ <1574106879-19211-2-git-send-email-rao.shoaib@oracle.com>
+ <20191119203138.GA13145@ziepe.ca>
+ <44d1242a-fc32-9918-dd53-cd27ebf61811@oracle.com>
+ <20191119231334.GO4991@ziepe.ca>
+ <dff3da9b-06a3-3904-e9eb-7feaa1ae9e01@oracle.com>
+ <20191120000840.GQ4991@ziepe.ca>
+ <ccceac68-db4f-77a3-500d-12f60a8a1354@oracle.com>
+ <20191219182511.GI17227@ziepe.ca>
+From:   Rao Shoaib <rao.shoaib@oracle.com>
+Message-ID: <91987df4-8853-a087-97a0-a2f09f906340@oracle.com>
+Date:   Thu, 19 Dec 2019 10:37:15 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191209114404.22483-3-zhang.lyra@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191219182511.GI17227@ziepe.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=707
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=746 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  9 Dec 2019 19:44:03 +0800, Chunyan Zhang wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> 
-> We've created a vendor directory for sprd, so move the board bindings to
-> there.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  Documentation/devicetree/bindings/arm/{ => sprd}/sprd.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->  rename Documentation/devicetree/bindings/arm/{ => sprd}/sprd.yaml (92%)
-> 
+Hi Jason,
 
-Acked-by: Rob Herring <robh@kernel.org>
+I thought I had addressed the comments and literally did what you 
+suggested. Sorry if I missed something, can you please point it out.
+
+Shoaib
+
+On 12/19/19 10:25 AM, Jason Gunthorpe wrote:
+> On Tue, Dec 17, 2019 at 11:38:52AM -0800, Rao Shoaib wrote:
+>> Any update on my patch?
+>>
+>> If there is some change needed please let me know.
+> You need to repost it with the comments addressed
+>
+> https://patchwork.kernel.org/patch/11250179/
+>
+> Jason
+>
