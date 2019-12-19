@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9ACDA126D86
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B800126CC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:06:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfLSSgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:36:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54058 "EHLO mail.kernel.org"
+        id S1729026AbfLSTGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727688AbfLSSgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:36:51 -0500
+        id S1729040AbfLSSon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:44:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 459CD24679;
-        Thu, 19 Dec 2019 18:36:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31D9D24672;
+        Thu, 19 Dec 2019 18:44:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780610;
-        bh=Ry25ZJNwSjwRt9dR556q7Qn9xzg36UfXvQGRWDhy/jM=;
+        s=default; t=1576781082;
+        bh=YOOKKu7KZKalCYc9fcrbvluf+Q6hWobR9h7/kUaryYI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z6b0IQ89qfoNWKmnxl4QVaLdV+A3euAPJmbweoIwSWGseI78IBTvDJGeh8AFHOi/V
-         PJWs69MIv4xDE6Zs3B6zfgHCZ/qcgS6Jw7M/j5jdy62AVZhM5y+wL57fOQv+TBQjQQ
-         GTGH8ZyBFUHDEykhxJvQlywdKB/4/6+7zZVz2BgY=
+        b=0NGuWEa2+NK/AP/ACPc2Uud8u0m+5FOzwnGKa+F9Y4RuKEOZNsoc6Eiq/vHrZZ57n
+         zGRkQw5xlsq4VeeDzCpioT21rn4CRwC4OU3wI5bd+CA/Z+VvOXZ0VC1MIHmJMFaJBw
+         g0jL+J79lcJOcH3Vc9y0zCft8CIN/PZYQVTg6rUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 045/162] kbuild: fix single target build for external module
-Date:   Thu, 19 Dec 2019 19:32:33 +0100
-Message-Id: <20191219183210.650928864@linuxfoundation.org>
+        syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 074/199] ALSA: pcm: oss: Avoid potential buffer overflows
+Date:   Thu, 19 Dec 2019 19:32:36 +0100
+Message-Id: <20191219183219.079341521@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,85 +44,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit e07db28eea38ed4e332b3a89f3995c86b713cb5b ]
+commit 4cc8d6505ab82db3357613d36e6c58a297f57f7c upstream.
 
-Building a single target in an external module fails due to missing
-.tmp_versions directory.
+syzkaller reported an invalid access in PCM OSS read, and this seems
+to be an overflow of the internal buffer allocated for a plugin.
+Since the rate plugin adjusts its transfer size dynamically, the
+calculation for the chained plugin might be bigger than the given
+buffer size in some extreme cases, which lead to such an buffer
+overflow as caught by KASAN.
 
-For example,
+Fix it by limiting the max transfer size properly by checking against
+the destination size in each plugin transfer callback.
 
-  $ make -C /lib/modules/$(uname -r)/build M=$PWD foo.o
+Reported-by: syzbot+f153bde47a62e0b05f83@syzkaller.appspotmail.com
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191204144824.17801-1-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-will fail in the following way:
-
-  CC [M]  /home/masahiro/foo/foo.o
-/bin/sh: 1: cannot create /home/masahiro/foo/.tmp_versions/foo.mod: Directory nonexistent
-
-This is because $(cmd_crmodverdir) is executed only before building
-/, %/, %.ko single targets of external modules. Create .tmp_versions
-in the 'prepare' target.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Makefile | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ sound/core/oss/linear.c |    2 ++
+ sound/core/oss/mulaw.c  |    2 ++
+ sound/core/oss/route.c  |    2 ++
+ 3 files changed, 6 insertions(+)
 
-diff --git a/Makefile b/Makefile
-index eb4f5b889a1cc..42102ffb9eff8 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1424,9 +1424,6 @@ else # KBUILD_EXTMOD
+--- a/sound/core/oss/linear.c
++++ b/sound/core/oss/linear.c
+@@ -107,6 +107,8 @@ static snd_pcm_sframes_t linear_transfer
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	convert(plugin, src_channels, dst_channels, frames);
+ 	return frames;
+ }
+--- a/sound/core/oss/mulaw.c
++++ b/sound/core/oss/mulaw.c
+@@ -269,6 +269,8 @@ static snd_pcm_sframes_t mulaw_transfer(
+ 		}
+ 	}
+ #endif
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
+ 	data = (struct mulaw_priv *)plugin->extra_data;
+ 	data->func(plugin, src_channels, dst_channels, frames);
+ 	return frames;
+--- a/sound/core/oss/route.c
++++ b/sound/core/oss/route.c
+@@ -57,6 +57,8 @@ static snd_pcm_sframes_t route_transfer(
+ 		return -ENXIO;
+ 	if (frames == 0)
+ 		return 0;
++	if (frames > dst_channels[0].frames)
++		frames = dst_channels[0].frames;
  
- # We are always building modules
- KBUILD_MODULES := 1
--PHONY += crmodverdir
--crmodverdir:
--	$(cmd_crmodverdir)
- 
- PHONY += $(objtree)/Module.symvers
- $(objtree)/Module.symvers:
-@@ -1438,7 +1435,7 @@ $(objtree)/Module.symvers:
- 
- module-dirs := $(addprefix _module_,$(KBUILD_EXTMOD))
- PHONY += $(module-dirs) modules
--$(module-dirs): crmodverdir $(objtree)/Module.symvers
-+$(module-dirs): prepare $(objtree)/Module.symvers
- 	$(Q)$(MAKE) $(build)=$(patsubst _module_%,%,$@)
- 
- modules: $(module-dirs)
-@@ -1478,7 +1475,8 @@ help:
- 
- # Dummies...
- PHONY += prepare scripts
--prepare: ;
-+prepare:
-+	$(cmd_crmodverdir)
- scripts: ;
- endif # KBUILD_EXTMOD
- 
-@@ -1602,17 +1600,14 @@ endif
- 
- # Modules
- /: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
- # Make sure the latest headers are built for Documentation
- Documentation/: headers_install
- %/: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1) \
- 	$(build)=$(build-dir)
- %.ko: prepare scripts FORCE
--	$(cmd_crmodverdir)
- 	$(Q)$(MAKE) KBUILD_MODULES=$(if $(CONFIG_MODULES),1)   \
- 	$(build)=$(build-dir) $(@:.ko=.o)
- 	$(Q)$(MAKE) -f $(srctree)/scripts/Makefile.modpost
--- 
-2.20.1
-
+ 	nsrcs = plugin->src_format.channels;
+ 	ndsts = plugin->dst_format.channels;
 
 
