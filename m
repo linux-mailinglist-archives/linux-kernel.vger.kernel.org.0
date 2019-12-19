@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F65E126AEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D46126AA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:49:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730245AbfLSSwP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46654 "EHLO mail.kernel.org"
+        id S1729828AbfLSStf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:49:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729824AbfLSSwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:10 -0500
+        id S1729814AbfLSSte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:49:34 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94130222C2;
-        Thu, 19 Dec 2019 18:52:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78AAD2064B;
+        Thu, 19 Dec 2019 18:49:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781530;
-        bh=DGLDLv+d3n/O9WVynloj1PVnNCkOjp5CdHLJ8EgL49k=;
+        s=default; t=1576781373;
+        bh=ZDWjkucWnuNDUFia2/GxQNQEtlT4iZWmBPaU8zSh7vg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cql1eLErDsAodsU+P8Hnofbby40zsbWJ/hopkZVqf7jp0MnSTRYnl/BLqSGuUIyg4
-         l0T7hKh5sSA5OYHOBmRVVyQtJqSIJxKhLmDUH9L0uN2T3pL/dX3JZjNCukiNNoSpTB
-         kP9+vUyE7TUFMExydNdWtxaX40FGwgGNGTAdOPpI=
+        b=ljLAPKdnBJZMqCBjvnvYoVyMyD+ttiZKu/micDpkBH/Da5WpwhSQxSazpVUtF5lQy
+         XUtwGvUjxxEB+vEVNi43HynE3AXfEa1P4v5lOxYG5aHYWeOFvwsp+RLnqaqcPXEjH6
+         0ImagnGhjS0Ou2M8OKg+eG//tgUKH2mhJ57KvZ28=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        George Cherian <george.cherian@marvell.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Robert Richter <rrichter@marvell.com>
-Subject: [PATCH 4.19 22/47] PCI: Apply Cavium ACS quirk to ThunderX2 and ThunderX3
+        stable@vger.kernel.org, Hou Tao <houtao1@huawei.com>,
+        Joe Thornber <ejt@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.9 194/199] dm btree: increase rebalance threshold in __rebalance2()
 Date:   Thu, 19 Dec 2019 19:34:36 +0100
-Message-Id: <20191219182924.729980116@linuxfoundation.org>
+Message-Id: <20191219183226.514476773@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,56 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: George Cherian <george.cherian@marvell.com>
+From: Hou Tao <houtao1@huawei.com>
 
-commit f338bb9f0179cb959977b74e8331b312264d720b upstream.
+commit 474e559567fa631dea8fb8407ab1b6090c903755 upstream.
 
-Enhance the ACS quirk for Cavium Processors. Add the root port vendor IDs
-for ThunderX2 and ThunderX3 series of processors.
+We got the following warnings from thin_check during thin-pool setup:
 
-[bhelgaas: add Fixes: and stable tag]
-Fixes: f2ddaf8dfd4a ("PCI: Apply Cavium ThunderX ACS quirk to more Root Ports")
-Link: https://lore.kernel.org/r/20191111024243.GA11408@dc5-eodlnx05.marvell.com
-Signed-off-by: George Cherian <george.cherian@marvell.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Robert Richter <rrichter@marvell.com>
-Cc: stable@vger.kernel.org	# v4.12+
+  $ thin_check /dev/vdb
+  examining superblock
+  examining devices tree
+    missing devices: [1, 84]
+      too few entries in btree_node: 41, expected at least 42 (block 138, max_entries = 126)
+  examining mapping tree
+
+The phenomenon is the number of entries in one node of details_info tree is
+less than (max_entries / 3). And it can be easily reproduced by the following
+procedures:
+
+  $ new a thin pool
+  $ presume the max entries of details_info tree is 126
+  $ new 127 thin devices (e.g. 1~127) to make the root node being full
+    and then split
+  $ remove the first 43 (e.g. 1~43) thin devices to make the children
+    reblance repeatedly
+  $ stop the thin pool
+  $ thin_check
+
+The root cause is that the B-tree removal procedure in __rebalance2()
+doesn't guarantee the invariance: the minimal number of entries in
+non-root node should be >= (max_entries / 3).
+
+Simply fix the problem by increasing the rebalance threshold to
+make sure the number of entries in each child will be greater
+than or equal to (max_entries / 3 + 1), so no matter which
+child is used for removal, the number will still be valid.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Hou Tao <houtao1@huawei.com>
+Acked-by: Joe Thornber <ejt@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/quirks.c |   20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+ drivers/md/persistent-data/dm-btree-remove.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -4219,15 +4219,21 @@ static int pci_quirk_amd_sb_acs(struct p
+--- a/drivers/md/persistent-data/dm-btree-remove.c
++++ b/drivers/md/persistent-data/dm-btree-remove.c
+@@ -203,7 +203,13 @@ static void __rebalance2(struct dm_btree
+ 	struct btree_node *right = r->n;
+ 	uint32_t nr_left = le32_to_cpu(left->header.nr_entries);
+ 	uint32_t nr_right = le32_to_cpu(right->header.nr_entries);
+-	unsigned threshold = 2 * merge_threshold(left) + 1;
++	/*
++	 * Ensure the number of entries in each child will be greater
++	 * than or equal to (max_entries / 3 + 1), so no matter which
++	 * child is used for removal, the number will still be not
++	 * less than (max_entries / 3).
++	 */
++	unsigned int threshold = 2 * (merge_threshold(left) + 1);
  
- static bool pci_quirk_cavium_acs_match(struct pci_dev *dev)
- {
-+	if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
-+		return false;
-+
-+	switch (dev->device) {
- 	/*
--	 * Effectively selects all downstream ports for whole ThunderX 1
--	 * family by 0xf800 mask (which represents 8 SoCs), while the lower
--	 * bits of device ID are used to indicate which subdevice is used
--	 * within the SoC.
-+	 * Effectively selects all downstream ports for whole ThunderX1
-+	 * (which represents 8 SoCs).
- 	 */
--	return (pci_is_pcie(dev) &&
--		(pci_pcie_type(dev) == PCI_EXP_TYPE_ROOT_PORT) &&
--		((dev->device & 0xf800) == 0xa000));
-+	case 0xa000 ... 0xa7ff: /* ThunderX1 */
-+	case 0xaf84:  /* ThunderX2 */
-+	case 0xb884:  /* ThunderX3 */
-+		return true;
-+	default:
-+		return false;
-+	}
- }
- 
- static int pci_quirk_cavium_acs(struct pci_dev *dev, u16 acs_flags)
+ 	if (nr_left + nr_right < threshold) {
+ 		/*
 
 
