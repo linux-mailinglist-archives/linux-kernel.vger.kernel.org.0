@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83B7D1269EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0284E1269EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728407AbfLSSmT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33384 "EHLO mail.kernel.org"
+        id S1728266AbfLSSmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:42:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728663AbfLSSmR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:42:17 -0500
+        id S1728668AbfLSSmV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:42:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC564206D7;
-        Thu, 19 Dec 2019 18:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE9D524672;
+        Thu, 19 Dec 2019 18:42:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780936;
-        bh=bA+AWX+r9jIYVn9fb0mavTdRwonn+lP6pVz/FSvOLoM=;
+        s=default; t=1576780941;
+        bh=T7u2irnWSC/2m8h2ZdstuWwYRqy/ABA0atxUzbDIXpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTlPlZnKCh1kJzglryIOeGO/GV/jqxYDm6QP0MFJvrQSdQIUXpdyergEf/mTMMnLD
-         gJY/Ri4FsJbbYqDGc1IY+bZMBXM7dk6uKRQn0BiKrn7fCdiQhQayktcU7RqgxzobAq
-         swQqy8r9Y5BQRXFe5tiqgrT70P1jcCY9f/LQvdvU=
+        b=CD7Efqp6H7ussMLoUvdjtFSwZAub7kRvAQTxNv8UK2FDiZbNfb9ofvyQYfdA3UClL
+         1ypMLfJDC+dMGss6K1n0EFQv4SCsjvw1rDr5VbKMOGlGWU0s+rW++VmUu5Fucv6eRc
+         QvqxqJkvRw4xjKK9eaurbVG1nN0AOoonZyIxqDDM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        stable@vger.kernel.org, Arjun Vynipadath <arjun@chelsio.com>,
+        Ganesh Goudar <ganeshgr@chelsio.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 016/199] net: ep93xx_eth: fix mismatch of request_mem_region in remove
-Date:   Thu, 19 Dec 2019 19:31:38 +0100
-Message-Id: <20191219183215.670147273@linuxfoundation.org>
+Subject: [PATCH 4.9 018/199] cxgb4vf: fix memleak in mac_hlist initialization
+Date:   Thu, 19 Dec 2019 19:31:40 +0100
+Message-Id: <20191219183215.800062634@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,44 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Arjun Vynipadath <arjun@chelsio.com>
 
-[ Upstream commit 3df70afe8d33f4977d0e0891bdcfb639320b5257 ]
+[ Upstream commit 24357e06ba511ad874d664d39475dbb01c1ca450 ]
 
-The driver calls release_resource in remove to match request_mem_region
-in probe, which is incorrect.
-Fix it by using the right one, release_mem_region.
+mac_hlist was initialized during adapter_up, which will be called
+every time a vf device is first brought up, or every time when device
+is brought up again after bringing all devices down. This means our
+state of previous list is lost, causing a memleak if entries are
+present in the list. To fix that, move list init to the condition
+that performs initial one time adapter setup.
 
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Signed-off-by: Arjun Vynipadath <arjun@chelsio.com>
+Signed-off-by: Ganesh Goudar <ganeshgr@chelsio.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cirrus/ep93xx_eth.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/cirrus/ep93xx_eth.c b/drivers/net/ethernet/cirrus/ep93xx_eth.c
-index 9a161e9815297..24f69034f52c4 100644
---- a/drivers/net/ethernet/cirrus/ep93xx_eth.c
-+++ b/drivers/net/ethernet/cirrus/ep93xx_eth.c
-@@ -780,6 +780,7 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
- {
- 	struct net_device *dev;
- 	struct ep93xx_priv *ep;
-+	struct resource *mem;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+index a37481c04a87b..9eb3071b69a42 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+@@ -718,6 +718,10 @@ static int adapter_up(struct adapter *adapter)
  
- 	dev = platform_get_drvdata(pdev);
- 	if (dev == NULL)
-@@ -795,8 +796,8 @@ static int ep93xx_eth_remove(struct platform_device *pdev)
- 		iounmap(ep->base_addr);
- 
- 	if (ep->res != NULL) {
--		release_resource(ep->res);
--		kfree(ep->res);
-+		mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+		release_mem_region(mem->start, resource_size(mem));
+ 		if (adapter->flags & USING_MSIX)
+ 			name_msix_vecs(adapter);
++
++		/* Initialize hash mac addr list*/
++		INIT_LIST_HEAD(&adapter->mac_hlist);
++
+ 		adapter->flags |= FULL_INIT_DONE;
  	}
  
- 	free_netdev(dev);
+@@ -743,8 +747,6 @@ static int adapter_up(struct adapter *adapter)
+ 	enable_rx(adapter);
+ 	t4vf_sge_start(adapter);
+ 
+-	/* Initialize hash mac addr list*/
+-	INIT_LIST_HEAD(&adapter->mac_hlist);
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
