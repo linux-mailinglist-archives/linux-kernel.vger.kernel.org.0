@@ -2,127 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BB3A12653A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:52:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB3F126536
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:52:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfLSOwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 09:52:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726757AbfLSOwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 09:52:12 -0500
-Received: from localhost (unknown [122.178.234.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B66121D7D;
-        Thu, 19 Dec 2019 14:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576767131;
-        bh=FCHQHL3L/UK6uaZ8WVrUOXc9X18q5rOgFQVpTjuknYw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gMgluTEjYhz70bDTfkmZIMD0skjFVzgkaygNbOg3PDR4HAPTebm4D+4OJCUqx10TL
-         5zxRiCntZCiDxJ1Gs0wbT0yO39Zo7tSpmK4lrbEG5KW4MVuI0QcANj39ph5bLsrXam
-         841tBMInPqDhjUCcD7RnmK7UMjZoT+Cd3oMH+8hs=
-Date:   Thu, 19 Dec 2019 20:22:06 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Can Guo <cang@codeaurora.org>, asutoshd@codeaurora.org,
-        nguyenb@codeaurora.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-scsi@vger.kernel.org, kernel-team@android.com,
-        saravanak@google.com, Mark Salyzyn <salyzyn@google.com>,
-        Andy Gross <agross@kernel.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Avri Altman <avri.altman@wdc.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/7] scsi: ufs-qcom: Add reset control support for
- host controller
-Message-ID: <20191219145206.GW2536@vkoul-mobl>
-References: <763d7b30593b31646f3c198c2be99671@codeaurora.org>
- <20191217092433.GN2536@vkoul-mobl>
- <fc8952a0eee5c010fe14e5f107d89e64@codeaurora.org>
- <20191217150852.GO2536@vkoul-mobl>
- <CAOCk7Np691Hau1FdJqWs1UY6jvEvYfzA6NnG9U--ZcRsuV5=Zw@mail.gmail.com>
- <75f7065d08f450c6cbb2b2662658ecaa@codeaurora.org>
- <20191218041200.GP2536@vkoul-mobl>
- <983c21bb5ad2d38e11c074528d8898b9@codeaurora.org>
- <20191219142145.GV2536@vkoul-mobl>
- <CAOCk7NrKRXsTffNyQFt_tQmdNq7+SaH+kAJVk8AAPJWJjPxYYw@mail.gmail.com>
+        id S1726903AbfLSOwK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 09:52:10 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34078 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfLSOwJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 09:52:09 -0500
+Received: by mail-wm1-f67.google.com with SMTP id f4so7214147wmj.1;
+        Thu, 19 Dec 2019 06:52:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6a2uv8yUsIcld92k0bZWXnT9m14VpNvshEjzyMppfcI=;
+        b=Y5xsgeFA8cv/mLuHZ0jf+dXTL+/obYi+FPWI1V7Ln7pQ6yW0+El6MbHHMIe3PyKjDD
+         V2ter9Y2Kr7hYMnwHFbg/8pLwF8Cm0164gU/5+QS5Dyyu4Rv8k6Xo9aQJO7Txve7/Qwl
+         Jkp/1cMk3OvQrL80j4WQVnyIE1zXX4SEKhpb368f1r18bs99mIEZCsvviMd68Cd3Odmu
+         K2C5BOF5vATwlIbz5+DwkwOQPyvjg+D80YXx/OcCs4cYlPA7a01QaWmQmjKtQM930j4g
+         lY10EvCBNZY98vKlIiBGLIb9wlz4GuzjngGEsDYRICoI9xv1e5tG93oQL+cOerFqSqO6
+         YDuA==
+X-Gm-Message-State: APjAAAU0jEbtmsL0B2eOMP73o4QdYNbEN1ZPn0qmnX4yQvA4VidoxUQg
+        saMej3DygXQ7Vf86Ax5MLEQ=
+X-Google-Smtp-Source: APXvYqwxXeasoFx/Mf1e5pfruwgNAsTmVPaOVqfgHL3Pl9myImdedJoXolvtkk+EpYAhczAcGz7y4w==
+X-Received: by 2002:a1c:4d18:: with SMTP id o24mr10436735wmh.35.1576767127725;
+        Thu, 19 Dec 2019 06:52:07 -0800 (PST)
+Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id c4sm6450772wml.7.2019.12.19.06.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 06:52:06 -0800 (PST)
+Date:   Thu, 19 Dec 2019 15:52:06 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     netdev@vger.kernel.org, lirongqing@baidu.com,
+        linyunsheng@huawei.com,
+        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+        Saeed Mahameed <saeedm@mellanox.com>, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [net-next v4 PATCH] page_pool: handle page recycle for
+ NUMA_NO_NODE condition
+Message-ID: <20191219145206.GE26945@dhcp22.suse.cz>
+References: <20191218084437.6db92d32@carbon>
+ <157665609556.170047.13435503155369210509.stgit@firesoul>
+ <20191219120925.GD26945@dhcp22.suse.cz>
+ <20191219143535.6c7bc880@carbon>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOCk7NrKRXsTffNyQFt_tQmdNq7+SaH+kAJVk8AAPJWJjPxYYw@mail.gmail.com>
+In-Reply-To: <20191219143535.6c7bc880@carbon>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-12-19, 07:25, Jeffrey Hugo wrote:
-> On Thu, Dec 19, 2019 at 7:21 AM Vinod Koul <vkoul@kernel.org> wrote:
-> >
-> > On 19-12-19, 15:12, cang@codeaurora.org wrote:
-> > > On 2019-12-18 12:12, Vinod Koul wrote:
-> > > > On 18-12-19, 02:44, cang@codeaurora.org wrote:
-> >
-> > >
-> > > Aside of the phy settings, your DT needs some modifications too,
-> > > seems you copied most of them from sdm845.
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git/commit/?h=for-next&id=3834a2e92229ef26d30de28acb698b2b23d3e397
-> > >
-> > > <--snip-->
-> > > > +           ufs_mem_phy: phy@1d87000 {
-> > > > +                   compatible = "qcom,sm8150-qmp-ufs-phy";
-> > > > +                   reg = <0 0x01d87000 0 0x18c>;
-> > >
-> > > The size 0x18c is wrong, in the code you are even accessing registers
-> > > whose offsets are beyond 0x18c, see
-> > >
-> > > #define QSERDES_V4_COM_BIN_VCOCAL_CMP_CODE1_MODE0     0x1ac
-> > > #define QSERDES_V4_COM_BIN_VCOCAL_CMP_CODE2_MODE0     0x1b0
-> > > #define QSERDES_V4_COM_BIN_VCOCAL_CMP_CODE1_MODE1     0x1b4
-> > > #define QSERDES_V4_COM_BIN_VCOCAL_HSCLK_SEL           0x1bc
-> > > #define QSERDES_V4_COM_BIN_VCOCAL_CMP_CODE2_MODE1     0x1b8
-> > >
-> > > FYI, the total size of serdes registers is 0x1c0.
-> >
-> > Yeah I will update it to 0x1c0
-> >
-> > >
-> > > <--snip-->
-> > > > +                   ufs_mem_phy_lanes: lanes@1d87400 {
-> > > > +                           reg = <0 0x01d87400 0 0x108>,
-> > > > +                                 <0 0x01d87600 0 0x1e0>,
-> > > > +                                 <0 0x01d87c00 0 0x1dc>,
-> > >
-> > > Same as above, see
-> > >
-> > > #define QPHY_V4_MULTI_LANE_CTRL1                      0x1e0
-> > >
-> > > FYI, the total size of PCS registers is 0x200
-> > >
-> > > > +                                 <0 0x01d87800 0 0x108>,
-> > > > +                                 <0 0x01d87a00 0 0x1e0>;
-> > > > +                           #phy-cells = <0>;
-> > > > +                   };
-> > > <--snip-->
-> >
-> > So I managed to fix it by configuring QPHY_SW_RESET in
-> > qcom_qmp_phy_com_init() before invoking the configuration. That makes it
-> > work for me. Will send patches shortly
+On Thu 19-12-19 14:35:35, Jesper Dangaard Brouer wrote:
+> On Thu, 19 Dec 2019 13:09:25 +0100
+> Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> So, you are going to send some fixes to make sm8150 work.  We also
-> need the extended timeout for all platforms, yes?  Who is going to
-> send up the patch for the timeout?  All of this should be -rc material
-> since Can's change caused these issues to appear, and thus impact
-> users, no?
+> > On Wed 18-12-19 09:01:35, Jesper Dangaard Brouer wrote:
+> > [...]
+> > > For the NUMA_NO_NODE case, when a NIC IRQ is moved to another NUMA
+> > > node, then ptr_ring will be emptied in 65 (PP_ALLOC_CACHE_REFILL+1)
+> > > chunks per allocation and allocation fall-through to the real
+> > > page-allocator with the new nid derived from numa_mem_id(). We accept
+> > > that transitioning the alloc cache doesn't happen immediately.  
+> 
+> Oh, I just realized that the drivers usually refill several RX
+> packet-pages at once, this means that this is called N times, meaning
+> during a NUMA change this will result in N * 65 pages returned.
+> 
+> 
+> > Could you explain what is the expected semantic of NUMA_NO_NODE in this
+> > case? Does it imply always the preferred locality? See my other email[1] to
+> > this matter.
+> 
+> I do think we want NUMA_NO_NODE to mean preferred locality.
 
-yeah I have tested a timeout of 10ms and seems to look good for me on
-sm8150 and sdm845. I will be sending the patches in few minutes :) and
-yes the timeout should be marked to 5.5 fixes
+I obviously have no saying here because I am not really familiar with
+the users of this API but I would note that if there is such an implicit
+assumption then you make it impossible to use the numa agnostic page
+pool allocator (aka fast reallocation). This might be not important here
+but future extension would be harder (you can still hack it around aka
+NUMA_REALLY_NO_NODE). My experience tells me that people are quite
+creative and usually require (or worse assume) semantics that you
+thought were not useful.
 
-Thanks
+That being said, if the NUMA_NO_NODE really should have a special
+locality meaning then document it explicitly at least.
 -- 
-~Vinod
+Michal Hocko
+SUSE Labs
