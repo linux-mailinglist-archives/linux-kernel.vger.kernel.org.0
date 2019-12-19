@@ -2,126 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C164E125C5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:03:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EDBC125C75
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:15:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfLSID3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 03:03:29 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:53755 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726303AbfLSID3 (ORCPT
+        id S1726664AbfLSIPq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 03:15:46 -0500
+Received: from esa3.fujitsucc.c3s2.iphmx.com ([68.232.151.212]:61319 "EHLO
+        esa3.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726439AbfLSIPp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 03:03:29 -0500
-Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1M6lUk-1ibnpx1XRO-008KmM; Thu, 19 Dec 2019 09:03:27 +0100
-Received: by mail-qk1-f174.google.com with SMTP id z14so2675913qkg.9;
-        Thu, 19 Dec 2019 00:03:26 -0800 (PST)
-X-Gm-Message-State: APjAAAV49yOs3eUl8ZUzbvhQ7rduRPS6YNXnz/QjcYdF2zy63nd1XpP1
-        sUFjPcjrlMZnKPJLYtcRYp+y0fmax9CmfWLSdjQ=
-X-Google-Smtp-Source: APXvYqxXQF6sR2skniit5JgCT5kH+gYfBPMf8t/20i/mEzMIIkYTsPQO26NNE6VO7z/gvWUC1MyADsYJWrkMuIMYl9A=
-X-Received: by 2002:a37:a8d4:: with SMTP id r203mr6933223qke.394.1576742606043;
- Thu, 19 Dec 2019 00:03:26 -0800 (PST)
+        Thu, 19 Dec 2019 03:15:45 -0500
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 03:15:44 EST
+IronPort-SDR: fOHYE+nkkP2aQIKySW1sNeskNgcV80UVnY+txGM529WMW8Wa1agSaTvDpOKQFZDjU9/YtREpq7
+ AJ6bYMz7oUP8rwEBKm7PGTGojQEdKQtvZqsfTLKdAFnHqLTxmhsui5mxmW3TLOR+G1mB62yUyD
+ 1jmcfSm+OaUiob6qq9MXP4RzVr6Ywa0nYRrJhFlBg9zfKxBekHt5qNHXME7ECL+5lyznSaSpma
+ 4WlwK5CVZ0A3tTSgWb3IFWp16fwQwR4ip5D2XE6HzCD2uRYk85d9N91EaEmgmETTZFl6Parpx8
+ vl0=
+X-IronPort-AV: E=McAfee;i="6000,8403,9475"; a="16853559"
+X-IronPort-AV: E=Sophos;i="5.69,330,1571670000"; 
+   d="scan'208";a="16853559"
+Received: from mail-os2jpn01lp2056.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([104.47.92.56])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 17:08:35 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=CEQ2Ygnbg/mRfxLG5lll36pHI60XGFcChFttQAlHJBT2ngOZR4Bbd4HonEEoSJ2ulmRdM+A4gAzBx5MutJke70CRQHP8Afpps5PYdMbWCuLNH1pUzlICfYtkvoq9GXAVqge5cOCDpBxu4bBVqWcpj1JHxBPaPcQBgZR1FylNNbNnaSyJnN9T4vDy30U8mlOuK/QK19JZNTQNyOlyhmmrU539MAbevFnip4Q+UjK4Muzc8Sbc98SyWAatZcpj4xv/y4UpHWFdvTlwlxi1LQn1mr0wZYTfbWui8eTYaVNW3wpLTAP6Def2uKt1CP9r3EkVYDbU3ruu5dQY680jmKSkSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WSHJ5trFHjaMPU9QgjaR3XV2KWTJltrSuGZlkmWE/TU=;
+ b=FCC70m1PO8lhiavFyINk4agCoOJvS1EG2lXDE4+zGj8EfQREFUmgf5YVia+xbmxm5qVFzku4X1ePknMvAiObjiuV16gcVDWxE1XRm/8ozNEE2nu8L3yrB/CwqgyZsFtDlmE4b6Hm+fNoocsRmxNE4LJRBmVAEpb8CCnxPOKpBmve9QfRT1C5Nptu6jTzjkTr3wOEWmYvCaqi6WxqG+cohRPQ+ymjSws26zVppAOCaSR4G3k+JFiWCIzo+/M4akqj3oEtwy8fGtZTXoZ3Apo1SX+ScJone5cUYfROoSGop3NsihgVp6MGcp2pZSXmjyRCxDjigctCTm7cRKgaHwVd7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WSHJ5trFHjaMPU9QgjaR3XV2KWTJltrSuGZlkmWE/TU=;
+ b=RcJupqvtCuLW+84K+ydVBZ/nmfL2M1Z3j/9olk++v75LMoVDFKzxRyNwKHPWkghdlng01rw52pH+wqOmFmoqrD6yYXivAaBLLgHbMLwgQib+QkaHjevyaWyCA1nMYXDHYvQgH10WqMGc0SRlhggWYE6S7gPtEtQUfkNB661avtA=
+Received: from OSAPR01MB1588.jpnprd01.prod.outlook.com (52.134.230.145) by
+ OSAPR01MB3604.jpnprd01.prod.outlook.com (20.178.101.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.15; Thu, 19 Dec 2019 08:08:33 +0000
+Received: from OSAPR01MB1588.jpnprd01.prod.outlook.com
+ ([fe80::ed23:d4ce:558e:fab0]) by OSAPR01MB1588.jpnprd01.prod.outlook.com
+ ([fe80::ed23:d4ce:558e:fab0%6]) with mapi id 15.20.2559.012; Thu, 19 Dec 2019
+ 08:08:33 +0000
+From:   "fujita.yuya@fujitsu.com" <fujita.yuya@fujitsu.com>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Arnaldo Carvalho de Melo' <acme@kernel.org>,
+        'Jiri Olsa' <jolsa@kernel.org>
+CC:     "fujita.yuya@fujitsu.com" <fujita.yuya@fujitsu.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] perf tools: Fix variable name's inconsistency in
+ hists__for_each macro
+Thread-Topic: [PATCH] perf tools: Fix variable name's inconsistency in
+ hists__for_each macro
+Thread-Index: AdW2QzdRSj0h+PCsTGKjyjyItPyt0Q==
+Date:   Thu, 19 Dec 2019 08:08:32 +0000
+Message-ID: <OSAPR01MB1588E1C47AC22043175DE1B2E8520@OSAPR01MB1588.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20181130-VDI-enc
+x-securitypolicycheck: OK by SHieldMailChecker v2.6.2
+x-shieldmailcheckermailid: 44d9c91dbaca4bfbb8be409b17047868
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fujita.yuya@fujitsu.com; 
+x-originating-ip: [210.162.184.123]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 719688fb-eaae-4e2e-0147-08d7845aa40e
+x-ms-traffictypediagnostic: OSAPR01MB3604:|OSAPR01MB3604:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSAPR01MB3604482BB774EFCEA2CA3DBEE8520@OSAPR01MB3604.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 0256C18696
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(376002)(346002)(136003)(366004)(199004)(189003)(66446008)(6506007)(55016002)(33656002)(26005)(85182001)(54906003)(2906002)(316002)(9686003)(110136005)(8676002)(81156014)(8936002)(81166006)(478600001)(86362001)(64756008)(76116006)(52536014)(5660300002)(4326008)(71200400001)(7696005)(66476007)(186003)(66946007)(66556008)(777600001)(101420200001);DIR:OUT;SFP:1101;SCL:1;SRVR:OSAPR01MB3604;H:OSAPR01MB1588.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: uozTE0mkf+g5HOxWiU2rHF9qysbTk0roRthTzxN1C6RHg3QsQvJtdO25tzfcHQzFvfJE87xsY9eCPkdzjNzCnbDTdwbNL24+Vh+yEuZecQaclZGtObKzIp3SkkUWCew6EKNJtUxovwoqLCt9CZvTz4MF0obFZocjdA6MUARYjZoKG+nn9wkRf9C5UtF2niDl8fTMMmIMJmBkvk4wPvvA97ZAtFjL6AwPTET09JNwhxITPXJxAnRrYbc0XEX5CKwuLwAoPnflfwjd2g4/rGmTNxtJBXJhkLPpj/+SVUaArVNiwzypqja4gblFEGWLuUak5e5wtcj/SSe/v0r7nkfp5u53udxgehKUT7IDe/ThGohy+q2UXLTL0kioFAQAhyOKjFOVv6pBFELUB1t26+WHh3XUH2RwVAf0LJo9RufllpHVHT5is0ox8cuXwAuhJYFDSmWmlBfJg+OOVE4H09r22saBbEpmxD3bi3+P5RhQc38iZ55zzEMV8kgEyeoU9loXbFnCE7x84C6+ZEopdrTiDQ==
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
-In-Reply-To: <20191218235459.GA17271@ircssh-2.c.rugged-nimbus-611.internal>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 19 Dec 2019 09:03:09 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
-Message-ID: <CAK8P3a2eT=bHkUamyp-P3Y2adNq1KBk7UknCYBY5_aR4zJmYaQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] pid: Add PIDFD_IOCTL_GETFD to fetch file
- descriptors from processes
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>, gpascutto@mozilla.com,
-        ealvarez@mozilla.com, Florian Weimer <fweimer@redhat.com>,
-        jld@mozilla.com
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:IiokMjtel7Ht/qXKLtr7vWPyiJm5ObDabfNBLD0croeK4+f9DuZ
- R4eTY4HQL06tF0ng7Ld5H++ri/uZgzWaJ+EmX5gMrtOQAjul7+vqHo0mIj1uuk/OYHV0LBh
- +7qV0XseDO18FgfrNaWZXF43LUBacU3SUqB3SfBKzpjQMNIOlg6flwUcPCkaK9DvkNHgnH4
- ijGS8Hl9D4poXlab8qnDQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:/bWUbbeESK4=:K3P5dPIBMosadcWX12v0Wf
- yecallTrqRqcbthXQiUfh7uxcJtfno+hmx6KezWAQGmF8UcFy0IAK/b7FHOTu5cajmdNdRKlS
- iwEVHS4nIze351xxRhP++RS4dtYTZAwdRFjLG8j1fZaTmyyEQu5J0Us43xbI0zC74lRdhjIZx
- EyG2A6HykJ5TH7ndEG9qVU6hcOzSsHzAMd7Ji78Qmu43GytKjbNrUAVTF/Nhvn349u+RTf79F
- DF+NTIWscDSXjxd0/T4F31m9rkB5JzBnrQgM1XCQ4+r86liyV+L5nSQos3uIl+m3GcOvJ00rf
- PqJatkAoxsDUDftTPLWXt/AOywxVAMv6dHftP1K1wHm5FM19EIHhLpFw9IJ1KwsOr8ZOG9o+B
- YLu6LHgEYSlqrujH7xGvC+5AXenIQ9KAb+9eIa/Lr4uATB/JxZz1xl/hYUKXQ+NShRlwrA1GY
- ggvS65TgSSGq5ro8jhI5zIQI+80WexLwul4jFG0mnoKXNic2I9IcNyPJjuQkOBZnfAKegP+fo
- UFpOrNGeGDuDC1SJUIkce6np4967tD05UkpunImNv5uWVIlN9dD5vnJhUj5HcBHgUGCo6RYKY
- mWqApzVcw8L0RVxeZ0CF0CV+X+HNRVEyEESSmh7pvapslmU49KgKKDjtClwOdCxYnimmZbRqG
- YDVkKWkJ5M3z5+8BH73PIERQNWfQLCsK+RkZO5gyWicPwF9D7AFA7vhFi4RLJBbh2C4yTjmxi
- jl76bxcloBA1gp1QQqGdApvLD723BVFyPAViT3vdMaDbvS3aYZ21ZVsVrkJKA3BiU3MwDQIok
- 1wiQmDC0HAQGypikE+76GnqlVbWf/IXXFxQcfH4XjC8qarX1OoS1nOwiF+XYHgXSde22cbQ/n
- xfKAz6ePdJcbSD6VPc+g==
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 719688fb-eaae-4e2e-0147-08d7845aa40e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 08:08:32.9879
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LQ80Jr5bfSIpddP4Xgjne8OY7UfZD+FDuaJ/7ciOAMPG6jMtamas+IAICJaTX59r2ixjZ+vx++fsMP8AbvcAXWfN9+MlUBxUWVPCY4nwroo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB3604
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 12:55 AM Sargun Dhillon <sargun@sargun.me> wrote:
+From: Yuya Fujita <fujita.yuya@fujitsu.com>
 
-> +#define PIDFD_IOCTL_GETFD      _IOWR('p', 0xb0, __u32)
+Variable names are inconsistent in hists__for_each macro.
+Due to this inconsistency, the macro replaces its second argument with "fmt=
+"=20
+regardless of its original name.
+So far it works because only "fmt" is passed to the second argument.
+However, this behavior is not expected and should be fixed.
 
-This describes an ioctl command that reads and writes a __u32 variable
-using a pointer passed as the argument, which doesn't match the
-implementation:
+Fixes: f0786af536bb ("perf hists: Introduce hists__for_each_format macro")
+Fixes: aa6f50af822a ("perf hists: Introduce hists__for_each_sort_list macro=
+")
+Signed-off-by: Yuya Fujita <fujita.yuya@fujitsu.com>
+---
+ tools/perf/util/hist.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-> +static long pidfd_getfd(struct pid *pid, u32 fd)
-> +{
-...
-> +       return retfd;
-
-This function passes an fd as the argument and returns a new
-fd, so the command number would be
-
-#define PIDFD_IOCTL_GETFD      _IO('p', 0xb0)
-
-While this implementation looks easy enough, and it is roughly what
-I would do in case of a system call, I would recommend for an ioctl
-implementation to use the __u32 pointer instead:
-
-static long pidfd_getfd_ioctl(struct pid *pid, u32 __user *arg)
-{
-         int their_fd, new_fd;
-         int ret;
-
-         ret = get_user(their_fd, arg);
-         if (ret)
-              return ret;
-
-        new_fd = pidfd_getfd(pid, their_fd);
-        if (new_fd < 0)
-                return new_fd;
-
-         return put_user(new_fd, arg);
-}
-
-Direct argument passing in ioctls may confuse readers because it
-is fairly unusual, and it doesn't work with this:
-
->  const struct file_operations pidfd_fops = {
->         .release = pidfd_release,
->         .poll = pidfd_poll,
-> +       .unlocked_ioctl = pidfd_ioctl,
-> +       .compat_ioctl = compat_ptr_ioctl,
-
-compat_ptr_ioctl() only works if the argument is a pointer, as it
-mangles the argument to turn it from a 32-bit pointer value into
-a 64-bit pointer value. These are almost always the same
-(arch/s390 being the sole exception), but you should not rely
-on it. For now it would be find to do '.compat_ioctl = pidfd_ioctl',
-but that in turn is wrong if you ever add another ioctl command
-that does pass a pointer.
-
-       Arnd
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 4528690..0aa63ae 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -339,10 +339,10 @@ static inline void perf_hpp__prepend_sort_field(struc=
+t perf_hpp_fmt *format)
+ 	list_for_each_entry_safe(format, tmp, &(_list)->sorts, sort_list)
+=20
+ #define hists__for_each_format(hists, format) \
+-	perf_hpp_list__for_each_format((hists)->hpp_list, fmt)
++	perf_hpp_list__for_each_format((hists)->hpp_list, format)
+=20
+ #define hists__for_each_sort_list(hists, format) \
+-	perf_hpp_list__for_each_sort_list((hists)->hpp_list, fmt)
++	perf_hpp_list__for_each_sort_list((hists)->hpp_list, format)
+=20
+ extern struct perf_hpp_fmt perf_hpp__format[];
+=20
+--=20
+1.7.1
