@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EDA0126A60
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31A1712696D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfLSSql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:46:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        id S1727837AbfLSShd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:37:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729347AbfLSSqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:35 -0500
+        id S1727824AbfLSSh3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:37:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A20824676;
-        Thu, 19 Dec 2019 18:46:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0765D24679;
+        Thu, 19 Dec 2019 18:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781194;
-        bh=/2LOJfKNLozt90aEKK9v/cPlnAKXVlic9b08xEtYXu0=;
+        s=default; t=1576780649;
+        bh=BH8qikRBDt42ngMKoPw5Pib1vwe/elbNsYhbcf3y2MA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IO7w6zqgeS+VAFhygZP1fkezb1z3EoK9hCjAJVV4fNkmWwCZJsWh32C6QJZ9fT9Rf
-         bEP6UIk+WkRdfD1FRiQK1Lvbi/BOXEXiRLRuGS4XrzyasPGJq+jlKzyLH+Eo0gItFf
-         XeZ5bLbQEclCHVfELyQnpIlReBrBPpSQGyR8Q/Dg=
+        b=cFhzklpTP+HnOT2JnJkwGIwP3uxwvHj6HNNTTnRuVcqRQmZn71/ZNGDJQoysHYbQ4
+         tgJOj9LU6lXhQJK+wDHxOcdbzXmEBmNs4Du+0dHVAbhbeIp31tdETeZ2nvJ+T5Rr8h
+         aQhl0HU3VTfKqznCtctJ2OwQ7vKzxU2dFzXz/SKM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 084/199] KVM: x86: do not modify masked bits of shared MSRs
-Date:   Thu, 19 Dec 2019 19:32:46 +0100
-Message-Id: <20191219183219.600878872@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.4 059/162] CIFS: Fix SMB2 oplock break processing
+Date:   Thu, 19 Dec 2019 19:32:47 +0100
+Message-Id: <20191219183211.467075228@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,51 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit de1fca5d6e0105c9d33924e1247e2f386efc3ece upstream.
+commit fa9c2362497fbd64788063288dc4e74daf977ebb upstream.
 
-"Shared MSRs" are guest MSRs that are written to the host MSRs but
-keep their value until the next return to userspace.  They support
-a mask, so that some bits keep the host value, but this mask is
-only used to skip an unnecessary MSR write and the value written
-to the MSR is always the guest MSR.
+Even when mounting modern protocol version the server may be
+configured without supporting SMB2.1 leases and the client
+uses SMB2 oplock to optimize IO performance through local caching.
 
-Fix this and, while at it, do not update smsr->values[slot].curr if
-for whatever reason the wrmsr fails.  This should only happen due to
-reserved bits, so the value written to smsr->values[slot].curr
-will not match when the user-return notifier and the host value will
-always be restored.  However, it is untidy and in rare cases this
-can actually avoid spurious WRMSRs on return to userspace.
+However there is a problem in oplock break handling that leads
+to missing a break notification on the client who has a file
+opened. It latter causes big latencies to other clients that
+are trying to open the same file.
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Tested-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+The problem reproduces when there are multiple shares from the
+same server mounted on the client. The processing code tries to
+match persistent and volatile file ids from the break notification
+with an open file but it skips all share besides the first one.
+Fix this by looking up in all shares belonging to the server that
+issued the oplock break.
+
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/cifs/smb2misc.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -273,13 +273,14 @@ int kvm_set_shared_msr(unsigned slot, u6
- 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
- 	int err;
+--- a/fs/cifs/smb2misc.c
++++ b/fs/cifs/smb2misc.c
+@@ -582,10 +582,10 @@ smb2_is_valid_oplock_break(char *buffer,
+ 	spin_lock(&cifs_tcp_ses_lock);
+ 	list_for_each(tmp, &server->smb_ses_list) {
+ 		ses = list_entry(tmp, struct cifs_ses, smb_ses_list);
++
+ 		list_for_each(tmp1, &ses->tcon_list) {
+ 			tcon = list_entry(tmp1, struct cifs_tcon, tcon_list);
  
--	if (((value ^ smsr->values[slot].curr) & mask) == 0)
-+	value = (value & mask) | (smsr->values[slot].host & ~mask);
-+	if (value == smsr->values[slot].curr)
- 		return 0;
--	smsr->values[slot].curr = value;
- 	err = wrmsrl_safe(shared_msrs_global.msrs[slot], value);
- 	if (err)
- 		return 1;
+-			cifs_stats_inc(&tcon->stats.cifs_stats.num_oplock_brks);
+ 			spin_lock(&tcon->open_file_lock);
+ 			list_for_each(tmp2, &tcon->openFileList) {
+ 				cfile = list_entry(tmp2, struct cifsFileInfo,
+@@ -597,6 +597,8 @@ smb2_is_valid_oplock_break(char *buffer,
+ 					continue;
  
-+	smsr->values[slot].curr = value;
- 	if (!smsr->registered) {
- 		smsr->urn.on_user_return = kvm_on_user_return;
- 		user_return_notifier_register(&smsr->urn);
+ 				cifs_dbg(FYI, "file id match, oplock break\n");
++				cifs_stats_inc(
++				    &tcon->stats.cifs_stats.num_oplock_brks);
+ 				cinode = CIFS_I(d_inode(cfile->dentry));
+ 				spin_lock(&cfile->file_info_lock);
+ 				if (!CIFS_CACHE_WRITE(cinode) &&
+@@ -628,9 +630,6 @@ smb2_is_valid_oplock_break(char *buffer,
+ 				return true;
+ 			}
+ 			spin_unlock(&tcon->open_file_lock);
+-			spin_unlock(&cifs_tcp_ses_lock);
+-			cifs_dbg(FYI, "No matching file for oplock break\n");
+-			return true;
+ 		}
+ 	}
+ 	spin_unlock(&cifs_tcp_ses_lock);
 
 
