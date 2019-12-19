@@ -2,90 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A261C126D1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E7F0126D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:09:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfLSTIi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:08:38 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45785 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727209AbfLSTIg (ORCPT
+        id S1728765AbfLSTJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:09:30 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50374 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbfLSTJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 14:08:36 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 59so8429083otp.12;
-        Thu, 19 Dec 2019 11:08:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QsMq4tK6Zqo8Cpzm50yk74qQajXSjQqRrWgVIrvvuts=;
-        b=Xk2P4fp4Ski6KcDfQzGm5eFD3wPRRBveSrwLC3srh3QUtbuP4Lx1YfIplB3Nkn86gH
-         3DtlbmCEt0sa4JboTQGfgh8Ubs2K5NarzZLIsvtRALPFOmt8bYX9AUPk6yqkuAsVdue5
-         8tSTldj1a4+BIyIymz8BK38WfUfQIPMrPD76+8RphkPIwIl1Em6Uwb1lpiJ8inuKshhV
-         GqpCxZsrSY8TPHQ9gioUg/hm9GNLfjp9/+FVSLW+XAKmnIqR1TxYeLOwPtauR/bxL/zL
-         JiiC+8vHoGvzeH1lw74SRn0GnaWYn6rqaXjMInRy8llXO+Li6P5aIdyQ5IUmcWy8YUfB
-         ujdg==
-X-Gm-Message-State: APjAAAWTmf4Mk7JvDsmQ6liPAIjNOQhUl73bmSV/JD6hYshLShlgR7nS
-        eKLYsDejM1NxtqpkQ0NlKw==
-X-Google-Smtp-Source: APXvYqyA+C+YR9NLQNTQeygvAYER9H4Q3aJ5eWPMrh0WmckliHnJZQZLoczFwSIXApPVNHBCdP46/A==
-X-Received: by 2002:a9d:4d99:: with SMTP id u25mr9960611otk.56.1576782516136;
-        Thu, 19 Dec 2019 11:08:36 -0800 (PST)
-Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
-        by smtp.gmail.com with ESMTPSA id f3sm2403895oto.57.2019.12.19.11.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 11:08:35 -0800 (PST)
-Date:   Thu, 19 Dec 2019 13:08:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jyri Sarha <jsarha@ti.com>
-Cc:     kishon@ti.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, tomi.valkeinen@ti.com, praneeth@ti.com,
-        yamonkar@cadence.com, sjakhade@cadence.com, rogerq@ti.com
-Subject: Re: [PATCH 2/3] dt-bindings: phy: Add lane<n>-mode property to WIZ
- (SERDES wrapper)
-Message-ID: <20191219190833.GA16358@bogus>
-References: <cover.1575906694.git.jsarha@ti.com>
- <fb79923b1591cc5f26b6973beb92ce503ad3f4d1.1575906694.git.jsarha@ti.com>
+        Thu, 19 Dec 2019 14:09:26 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ii1Aj-0004qM-07; Thu, 19 Dec 2019 19:09:17 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/i915: fix uninitialized pointer reads on pointers to and from
+Date:   Thu, 19 Dec 2019 19:09:16 +0000
+Message-Id: <20191219190916.24693-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fb79923b1591cc5f26b6973beb92ce503ad3f4d1.1575906694.git.jsarha@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 06:22:11PM +0200, Jyri Sarha wrote:
-> Add property to indicate the usage of SERDES lane controlled by the
-> WIZ wrapper. The wrapper configuration has some variation depending on
-> how each lane is going to be used.
-> 
-> Signed-off-by: Jyri Sarha <jsarha@ti.com>
-> ---
->  .../devicetree/bindings/phy/ti,phy-j721e-wiz.yaml    | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> index 94e3b4b5ed8e..399725f65278 100644
-> --- a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> @@ -97,6 +97,18 @@ patternProperties:
->        Torrent SERDES should follow the bindings specified in
->        Documentation/devicetree/bindings/phy/phy-cadence-dp.txt
->  
-> +  "^lane[1-4]-mode$":
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +      - enum: [0, 1, 2, 3, 4, 5, 6]
-> +    description: |
-> +     Integer describing static lane usage for the lane indicated in
-> +     the property name. For Sierra there may be properties lane0 and
-> +     lane1, for Torrent all lane[1-4]-mode properties may be
-> +     there. The constants to indicate the lane usage are defined in
-> +     "include/dt-bindings/phy/phy.h". The lane is assumed to be unused
-> +     if its lane<n>-use property does not exist.
+From: Colin Ian King <colin.king@canonical.com>
 
-The defines were intended to be in 'phys' cells. Does putting both lane 
-and mode in the client 'phys' properties not work?
+Currently pointers to and from are not initialized and may contain
+garbage values. This will cause uninitialized pointer reads in the
+call to intel_frontbuffer_track and later checks to see if to and from
+are null.  Fix this by ensuring to and from are initialized to NULL.
 
-Rob
+Addresses-Coverity: ("Uninitialised pointer read)"
+Fixes: da42104f589d ("drm/i915: Hold reference to intel_frontbuffer as we track activity")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/i915/display/intel_overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/display/intel_overlay.c b/drivers/gpu/drm/i915/display/intel_overlay.c
+index 6097594468a9..e869a3d86522 100644
+--- a/drivers/gpu/drm/i915/display/intel_overlay.c
++++ b/drivers/gpu/drm/i915/display/intel_overlay.c
+@@ -279,7 +279,7 @@ static void intel_overlay_flip_prepare(struct intel_overlay *overlay,
+ 				       struct i915_vma *vma)
+ {
+ 	enum pipe pipe = overlay->crtc->pipe;
+-	struct intel_frontbuffer *from, *to;
++	struct intel_frontbuffer *from = NULL, *to = NULL;
+ 
+ 	WARN_ON(overlay->old_vma);
+ 
+-- 
+2.24.0
+
