@@ -2,85 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F29B5126EA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:21:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF6F126ECA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfLSUVc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:21:32 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42182 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbfLSUVb (ORCPT
+        id S1727585AbfLSUWa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:22:30 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38411 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727180AbfLSUWV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:21:31 -0500
-Received: by mail-ed1-f67.google.com with SMTP id e10so6139850edv.9;
-        Thu, 19 Dec 2019 12:21:30 -0800 (PST)
+        Thu, 19 Dec 2019 15:22:21 -0500
+Received: by mail-pg1-f195.google.com with SMTP id a33so3727653pgm.5
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 12:22:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PsW/j1Crrs313MkKDSnDNbKlrshzMf4od6PZBBKr95I=;
+        b=Cxx1pArMA1dCG+vdMqR0CO3SVpBUWxpFIs3cuP3P27CupTI87usG38HorhvjALmrX6
+         QyzgEyCgcDkramgZ7qIh+L+TKfuJPmdXxExRJpnjB7Zx0IP+0BOYdBXG2RJMUmTJD60v
+         OjtsQQ6z3UTnMwyQJCuCHoYO9lqbg3DtrWnSkYk1vicghmJwdbzV4dRZz1qvfOZvDHwN
+         zHHwcPJLSp9OU2JbBzjmbFZyY8iqt2XdlluHAPATqSBTWhu2J0HjuzAESm4mEfIT1lMp
+         JnWNWeyi2tI6mJcfcYkKvW2v5gCkYlwkxYqP/mBow6aJ3NByA/sJPaQjT/u7Vy0fFFC/
+         6sbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GR1PmJOvhGpPpzVfO8kgGmz6p0Ok+BYanL+ypVYCuIo=;
-        b=VHE0h/z8QUohGr0nxIUjLPnxbiZBiczVgQ7CLypXARylblDBDbT56ycS7qfgca7I2N
-         auOka92SQcKGx0XGKWzvtegmnm0vqflHXidkL+V8oPep3qo5Grnyqv/1g/icuFwiiO6c
-         RJH+4xtU2s5sLUKLCUrdLBsfGAKsSW59VXA/2OkFTaOor8o+X90GL3Ix+FzNH6jaDE8H
-         miubaUMCV1uiYOvebxGn27psdfNRpBPcczaxDyjmK0oKKzRZWgumqyfPe3p/isfF/o1I
-         KGQFQKZT5vameJ9Yspbsgl2xIquC7V6yp4w9/rFfxGDV7AqNFQZNllO1KpI8GS6Fb8o0
-         2SCw==
-X-Gm-Message-State: APjAAAXUHxPK/5zZeBWP0+9UKF0ZUvso5Q2/sNgz7CwEEl1HSGV0S8wL
-        qtvJru+lYvsJnzzQ3CRwSv8=
-X-Google-Smtp-Source: APXvYqwZwMHJTRig+SXE0kz2DegMMU7qPuSgopAX7Pwr9Y8S6Q8VfZ+NYpDzWXBIncow4tB/gDtDLA==
-X-Received: by 2002:a17:906:4a12:: with SMTP id w18mr11475789eju.321.1576786889413;
-        Thu, 19 Dec 2019 12:21:29 -0800 (PST)
-Received: from kozik-lap ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id u25sm722974ejb.53.2019.12.19.12.21.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 19 Dec 2019 12:21:28 -0800 (PST)
-Date:   Thu, 19 Dec 2019 21:21:26 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, heiko@sntech.de,
-        leonard.crestez@nxp.com, lukasz.luba@arm.com, a.swigon@samsung.com,
-        m.szyprowski@samsung.com, kgene@kernel.org,
-        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 8/9] ARM: dts: exynos: Replace deprecated property for
- Exynos bus and DMC
-Message-ID: <20191219202126.GB21576@kozik-lap>
-References: <20191217055738.28445-1-cw00.choi@samsung.com>
- <CGME20191217055106epcas1p4c0f65bec74e53b38d95e984e146bf8b6@epcas1p4.samsung.com>
- <20191217055738.28445-9-cw00.choi@samsung.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PsW/j1Crrs313MkKDSnDNbKlrshzMf4od6PZBBKr95I=;
+        b=UuCczGEqEDQvQ3wwd5AeBVPlkPQq5LGStjT90YgBx7kbKKbDKtbg4Vb0j84T0aRVrn
+         KrMUyaO/iHl2d8sXGiEnJmViWM3hrRd2KrUzZFio25fbRbPYaMBtK2JKbAOUJy56oCLF
+         0yRaAAQZEQLSSE49+rQ2RRVGWqDM2s45uUlSxJrYdSYlDr0U2asdn5nQrcN2DFXmO7xg
+         G4qvbe26d+3yzHji+wrcG2sRq0KEbUmk/+Xv6kSfIyEXGtKC9SVPZTqQx9kdgn0ejSS/
+         w2nV1G2LH/XHP7scWrfOKG5jgN7xvygUWMHIr2eEEifvFms/hOMyy2nxpYBc7J9dznny
+         5DFQ==
+X-Gm-Message-State: APjAAAXRRZlDKqaGrD4UjiXl3ptE8mJ17LNyElcIvpMRMNqUPliMPVRc
+        y/W7QCw88zaY0US8zxS/qq7zD3UDNkVqw/HdHX/A/g==
+X-Google-Smtp-Source: APXvYqx7TULpvCuBBqKMKSSguT898fWlQzY/uebdX+PZW3Yo9Etjdi39QBGNAUnvO/GUVvsaElIAhNEYkDPFmQEqwbA=
+X-Received: by 2002:a63:d249:: with SMTP id t9mr11165747pgi.263.1576786940683;
+ Thu, 19 Dec 2019 12:22:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191217055738.28445-9-cw00.choi@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20191218015252.20890-1-natechancellor@gmail.com>
+In-Reply-To: <20191218015252.20890-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 19 Dec 2019 12:22:09 -0800
+Message-ID: <CAKwvOdk_CqpdJdKLQ-a5AK8pci7yMic9pgJW5x-iFosYbk8CMw@mail.gmail.com>
+Subject: Re: [PATCH] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     QLogic-Storage-Upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 02:57:37PM +0900, Chanwoo Choi wrote:
-> Replace the property related to devfreq and devfreq-event device
-> to remove the deprecated property name.
-> - Replace 'devfreq' with 'exynos,parent-bus' property
->   for getting the parent devfreq device of exynos-bus.
-> - Replace 'devfreq-events' with 'exynos,ppmu-device' property
->   for getting the devfreq-event device to monitor bus utilization.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+On Tue, Dec 17, 2019 at 5:52 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns:
+>
+> ../drivers/scsi/qla4xxx/ql4_os.c:4148:3: warning: misleading
+> indentation; statement is not part of the previous 'if'
+> [-Wmisleading-indentation]
+>          if (ha->fw_dump)
+>          ^
+> ../drivers/scsi/qla4xxx/ql4_os.c:4144:2: note: previous statement is
+> here
+>         if (ha->queues)
+>         ^
+> 1 warning generated.
+>
+> This warning occurs because there is a space after the tab on this line.
+> Remove it so that the indentation is consistent with the Linux kernel
+> coding style and clang no longer warns.
+>
+> Fixes: 068237c87c64 ("[SCSI] qla4xxx: Capture minidump for ISP82XX on firmware failure")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/819
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+
+Thanks for the patch!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+
 > ---
->  arch/arm/boot/dts/exynos3250-monk.dts         |  2 +-
->  arch/arm/boot/dts/exynos3250-rinato.dts       | 18 +++++-----
->  .../boot/dts/exynos4412-itop-scp-core.dtsi    | 16 ++++-----
->  arch/arm/boot/dts/exynos4412-midas.dtsi       | 18 +++++-----
->  .../boot/dts/exynos4412-odroid-common.dtsi    | 18 +++++-----
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 34 +++++++++----------
->  6 files changed, 53 insertions(+), 53 deletions(-)
-> 
+>  drivers/scsi/qla4xxx/ql4_os.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+> index 2323432a0edb..5504ab11decc 100644
+> --- a/drivers/scsi/qla4xxx/ql4_os.c
+> +++ b/drivers/scsi/qla4xxx/ql4_os.c
+> @@ -4145,7 +4145,7 @@ static void qla4xxx_mem_free(struct scsi_qla_host *ha)
+>                 dma_free_coherent(&ha->pdev->dev, ha->queues_len, ha->queues,
+>                                   ha->queues_dma);
+>
+> -        if (ha->fw_dump)
+> +       if (ha->fw_dump)
+>                 vfree(ha->fw_dump);
+>
+>         ha->queues_len = 0;
+> --
 
-It will have to wait till next release, after driver changes get
-accepted.
-
-Best regards,
-Krzysztof
+-- 
+Thanks,
+~Nick Desaulniers
