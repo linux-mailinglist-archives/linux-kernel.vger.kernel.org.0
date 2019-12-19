@@ -2,126 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A11125BBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 07:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA7A0125BD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 08:07:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727006AbfLSG6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 01:58:12 -0500
-Received: from mail-eopbgr140085.outbound.protection.outlook.com ([40.107.14.85]:39014
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726882AbfLSG6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:58:06 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fveJ7MHx9iAeNat5J7doDg/QOm85UVtvnHhgTe9k0JmPlkza8CxfLdRGUtQ306W0bhqG+zmRiEy7tNOkMLwEvwM6wSGN7G1utr0irsZi+l3OKsMBIZF0IzbWthnuSGIHXLwHCi4OS1qgMWA/xwFSkHgT1o8Y02gLDv6GwUjDXa0/W/CE92wxOxV+TkHYTNTgUZo04/dNQfNCjHQBRhwpsj61VLErKlz8eofnuGjsABfcWidXPaWIEBTeEX7eiRIhXHXHsCFGvNv7FiiCZiRob+9XVbb4YDJ/NeQG26DwBl7/B65r++xW7bffpDx7s/QRv1uP2CsAS9dFpsmytoEaMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=osTIJzd5BdDhsoxmnt7CRuFq/aUPhgoanv00jxTz2G0=;
- b=nJ9i7qHIbh4iYVrT3zZYxK2rgniA7Xhv2ZkTDqkIaYplySYJc/KKwB+adHwogIu7KFbLwDXRGvKbXbAexHaXeRh+QcWy7Ajza/0q/o3RALcSSzwSDLmUH6NxOpLi1rHyruBZdtYBR3/N8BPpItqJ2wyRuBPf2BLB6u+3gWV/S5Rx9DUT47BokFgX/1seN+u561gnpAPa408HkSGUY87/KQ8rlbD9Zoj4AQDqnnsdq4HiOpJ91Ft+AVY6kYhx2Om8Yj+5EWvkoTkmIY7Lfd5IY58cnljGu/4GrZKti1F0eC77GnHrcppQFcZ7J4eBlnX18S6Xi82RW/hJkMVsM3CdIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=osTIJzd5BdDhsoxmnt7CRuFq/aUPhgoanv00jxTz2G0=;
- b=JMoTnPc9Xdl5LAX9lWxTJFT5Tfu6+swdajJ1qi6mxAGGLcXHa+SwCCeN169u8WzlYw4I0exzKiR+cxwHfd6E+urCYJJhcMBKW8QS4XwmvprsqWd5fd0BhlhNCWNitJUj3Ux0pAMgpjx/iwge8+fvOMN3nO6Tpn6nhUsjNVQFVyM=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
- VI1PR04MB4589.eurprd04.prod.outlook.com (20.177.55.223) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.15; Thu, 19 Dec 2019 06:58:03 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::cd33:501f:b25:51a9%7]) with mapi id 15.20.2538.019; Thu, 19 Dec 2019
- 06:58:03 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/4] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA
- Tegra support
-Thread-Topic: [PATCH v1 1/4] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA
- Tegra support
-Thread-Index: AQHVtcwUkMMUkU3UcUKBBXgSTVt7iafBB7QA
-Date:   Thu, 19 Dec 2019 06:58:03 +0000
-Message-ID: <20191219065800.GB19921@b29397-desktop>
-References: <20191218175313.16235-1-digetx@gmail.com>
- <20191218175313.16235-2-digetx@gmail.com>
-In-Reply-To: <20191218175313.16235-2-digetx@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 3630267c-720e-4ffa-bf5f-08d78450cad7
-x-ms-traffictypediagnostic: VI1PR04MB4589:
-x-microsoft-antispam-prvs: <VI1PR04MB458966E1219BE7D35288D4018B520@VI1PR04MB4589.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4941;
-x-forefront-prvs: 0256C18696
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(366004)(346002)(136003)(376002)(396003)(189003)(199004)(26005)(8936002)(81166006)(81156014)(186003)(53546011)(33716001)(6506007)(6486002)(66446008)(66476007)(66556008)(64756008)(7416002)(91956017)(76116006)(66946007)(6512007)(6916009)(44832011)(9686003)(86362001)(4326008)(1076003)(4744005)(71200400001)(316002)(8676002)(54906003)(478600001)(2906002)(33656002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4589;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: s7NEMo6LKIRgdmM+zu6mCrsTEL/ANoJCxQJCuHSHzec9m9cMPAs/ammMQutEob99MfUzwL4rRioOxVY7PidJDRT4rDtf9XkYzDPxSHRn7zs+zVajcZGGXbCs7WcHpUloUImEsRyEGeROAflkd0fmfoLinPOXxX+iW+e2TPDz49gTbKcNqbKEzHnJTcgrzyiR0amKfWWnRZrWir7IqCFCygDDZLcCG3J0af2QK7vf/XJf3ezAlKYC4ESDkZTnfLpvjDVzBx8QEjCQetmIyyL6o3VXkhNgvpUfIKtjjMHKxJJpDYIcudQZ3YBVAMv7HIUK8ZzKKgJvp5a2TXH4H2InYXrJcrAOODfCWvibcLwsNfY+GpvGEa2eT7u06PfupbRYGEmZQP5fqENrR4g9iGWjWMP1KePFyLGf+0ZUIFYzuUtOhx3NLnm960keDrXcFRJC
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B49D0639DF65C0448C79274696758281@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726599AbfLSHHD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 02:07:03 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41597 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726155AbfLSHHC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 02:07:02 -0500
+Received: by mail-pf1-f194.google.com with SMTP id w62so2662781pfw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 23:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Fm+w6iomcjuXCL8fauWtHgK7waEj6ZumdluEW3weLEo=;
+        b=r3M3HqwWGDHXJkn+/B3N+HIx9K4alkicLq5wXf4pwfxInFuBgNoIrLLzH8GU+7rifv
+         ExT6eL7+5mQnp7eqwVEenErdKk2oI+kR4wv/UhIpVSWND3R7u/RHcy6QOcMxJ0EBAgcf
+         FQ4APK7Gb7mzk2wNVT/BhU+5cW5vm0CDW91MWBRAWspq2jGlfrwNpP/xh31AfzV7pnKo
+         kQ868nBQiwwk3dx4ZC1mwOMXLN8u8aRs3P4q/hrR7URj1Sl976Mm+k0lQNW9+HBb+oqZ
+         rNPYfrJkwd/vsPNFmrIinL3izYGRmGXPv7wI4Aj0+9wXSDXOd1lLZsnEfK2r7M3OJ6k3
+         dOpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Fm+w6iomcjuXCL8fauWtHgK7waEj6ZumdluEW3weLEo=;
+        b=Gab0TN13NSlfMw2enUA7vAxcjGS2QFjnPmI93IZA82RcgExZVn88eUWpx8ntjvi2B7
+         koKdKwgVObVSw6NPv7NA7Rc+mqd5cSM/3q+NxAUVu7/DeBbGHXsHZ6yv0ZmutDNtSB+a
+         usg83zc+m/PH/moTpfeoU77OH56DiDdUokG2oP/Pbd85QuE7bNNY7PSjIEfQZLr3SfLT
+         OYaL0W6eFBxNE6tPabWyn9oApDRQZpg1RQpo/A9ve4iImx1Z8T33fXJOdZXK4KW70DoT
+         sBa9C0DilzXSyLgSQe3UpBc7bysJ9szDnDx4Yc2WD96Ecf5AoaybzhvgYzTpv9jsgWeb
+         l3gw==
+X-Gm-Message-State: APjAAAXuuLzNtnuc2axVV8ti2S49J/cB+mGZKVIGk5CZqOaLF1Iol4Pv
+        axnA+37L6VFBGDVraDA8xG1s3Q==
+X-Google-Smtp-Source: APXvYqxUxu7IoSGnaMb1R6YodG3fNsxk/So/wu5Hx35rfBLQvcUPgZkuAWdrltM/xiI4H0ih+4erTQ==
+X-Received: by 2002:a65:5608:: with SMTP id l8mr7727226pgs.210.1576739221708;
+        Wed, 18 Dec 2019 23:07:01 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id r30sm2812990pfl.162.2019.12.18.23.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 23:07:01 -0800 (PST)
+Date:   Wed, 18 Dec 2019 23:06:58 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] phy: qcom-qmp: Add MSM8996 UFS QMP support
+Message-ID: <20191219070658.GG448416@yoga>
+References: <20191207202147.2314248-1-bjorn.andersson@linaro.org>
+ <20191207202147.2314248-2-bjorn.andersson@linaro.org>
+ <20191219042047.GT2536@vkoul-mobl>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3630267c-720e-4ffa-bf5f-08d78450cad7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 06:58:03.0742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: rkNaNKHzk8dyqqLr6mjo16RNDarwRURi8WtF28stkLMPtXpb+yPR6BwtWp9sLgR62+RV6ZHSMK7BVoFPDQEdZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4589
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219042047.GT2536@vkoul-mobl>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-12-18 20:53:10, Dmitry Osipenko wrote:
-> NVIDIA Tegra SoCs use ChipIdea silicon IP for the USB controllers.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt b/Doc=
-umentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
-> index cfc9f40ab641..51376cbe5f3d 100644
-> --- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
-> +++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
-> @@ -15,6 +15,10 @@ Required properties:
->  	"qcom,ci-hdrc"
->  	"chipidea,usb2"
->  	"xlnx,zynq-usb-2.20a"
-> +	"nvidia,tegra20-udc"
-> +	"nvidia,tegra30-udc"
-> +	"nvidia,tegra114-udc"
-> +	"nvidia,tegra124-udc"
->  - reg: base address and length of the registers
->  - interrupts: interrupt for the USB controller
-> =20
+On Wed 18 Dec 20:20 PST 2019, Vinod Koul wrote:
 
-Acked-by: Peter Chen <peter.chen@nxp.com>
+> On 07-12-19, 12:21, Bjorn Andersson wrote:
+> > The support for the 14nm MSM8996 UFS PHY is currently handled by the
+> > UFS-specific 14nm QMP driver, due to the earlier need for additional
+> > operations beyond the standard PHY API.
+> > 
+> > Add support for this PHY to the common QMP driver, to allow us to remove
+> > the old driver.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  .../devicetree/bindings/phy/qcom-qmp-phy.txt  |   5 +
+> >  drivers/phy/qualcomm/phy-qcom-qmp.c           | 106 ++++++++++++++++++
+> >  2 files changed, 111 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> > index eac9ad3cbbc8..5b99cf081817 100644
+> > --- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> > +++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
+> > @@ -8,6 +8,7 @@ Required properties:
+> >   - compatible: compatible list, contains:
+> >  	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
+> >  	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
+> > +	       "qcom,msm8996-qmp-ufs-phy" for 14nm UFS phy on msm8996,
+> >  	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
+> >  	       "qcom,msm8998-qmp-usb3-phy" for USB3 QMP V3 phy on msm8998,
+> >  	       "qcom,msm8998-qmp-ufs-phy" for UFS QMP phy on msm8998,
+> > @@ -44,6 +45,8 @@ Required properties:
+> >  		For "qcom,ipq8074-qmp-pcie-phy": no clocks are listed.
+> >  		For "qcom,msm8996-qmp-pcie-phy" must contain:
+> >  			"aux", "cfg_ahb", "ref".
+> > +		For "qcom,msm8996-qmp-ufs-phy" must contain:
+> > +			"ref".
+> >  		For "qcom,msm8996-qmp-usb3-phy" must contain:
+> >  			"aux", "cfg_ahb", "ref".
+> >  		For "qcom,msm8998-qmp-usb3-phy" must contain:
+> > @@ -72,6 +75,8 @@ Required properties:
+> >  			"phy", "common".
+> >  		For "qcom,msm8996-qmp-pcie-phy" must contain:
+> >  			"phy", "common", "cfg".
+> > +		For "qcom,msm8996-qmp-ufs-phy": must contain:
+> > +			"ufsphy".
+> >  		For "qcom,msm8996-qmp-usb3-phy" must contain
+> >  			"phy", "common".
+> >  		For "qcom,msm8998-qmp-usb3-phy" must contain
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> > index a6b8fc5798e2..d81516c4d747 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> > @@ -121,6 +121,11 @@ enum qphy_reg_layout {
+> >  	QPHY_PCS_LFPS_RXTERM_IRQ_STATUS,
+> >  };
+> >  
+> > +static const unsigned int msm8996_ufsphy_regs_layout[] = {
+> > +	[QPHY_START_CTRL]		= 0x00,
+> > +	[QPHY_PCS_READY_STATUS]		= 0x168,
+> > +};
+> > +
+> >  static const unsigned int pciephy_regs_layout[] = {
+> >  	[QPHY_COM_SW_RESET]		= 0x400,
+> >  	[QPHY_COM_POWER_DOWN_CONTROL]	= 0x404,
+> > @@ -330,6 +335,75 @@ static const struct qmp_phy_init_tbl msm8998_pcie_pcs_tbl[] = {
+> >  	QMP_PHY_INIT_CFG(QPHY_V3_PCS_SIGDET_CNTRL, 0x03),
+> >  };
+> >  
+> > +static const struct qmp_phy_init_tbl msm8996_ufs_serdes_tbl[] = {
+> > +	QMP_PHY_INIT_CFG(QPHY_POWER_DOWN_CONTROL, 0x01),
+> 
+> Can you check this after adding the reset for ufs, I suspect you might
+> run into same issue as I am seeing on 8150, power down here does not
+> seem correct.
+> 
 
---=20
+I'm not sure why we need to tickle POWER_DOWN here, but it's documented
+as such, done in the old driver and without it the PHY does not come up.
 
-Thanks,
-Peter Chen=
+Regards,
+Bjorn
