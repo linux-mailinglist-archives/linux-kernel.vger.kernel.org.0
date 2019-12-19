@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E6058126975
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AC002126A3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727903AbfLSShu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:37:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55512 "EHLO mail.kernel.org"
+        id S1729143AbfLSSpW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727874AbfLSShp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:45 -0500
+        id S1729126AbfLSSpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B1F924672;
-        Thu, 19 Dec 2019 18:37:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAB092465E;
+        Thu, 19 Dec 2019 18:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780664;
-        bh=BLYYGhasJUgseKVq2KbMLgRmg3y+QLplYPJMrvf+rFQ=;
+        s=default; t=1576781119;
+        bh=bMEM8CgX/6uIErmN9B5ttGlNi4wBwVVcAmuXfFf4Z8U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W1Oq6ENkn+l0yBm+TV24zhfq5B2+XspiGVUmL7k7cYqDkVD08oJkozQSrOOb8Drki
-         WKqnjg0SITTxs02cD1wftAKNicD22JbWBvDem2+JK0gwjuDaXIJJ9VMZl72pX7zpFp
-         q5fY3CaHLu2dWA7qQfx+3e2NhnuxZa7U8vBLZT50=
+        b=TKSn5/3Gvvs34FQg7SwvJAsJ8DqL4PFxWAKjBzHYnzC1Pj6Q0ToyW6UD2v9D0soVN
+         B9fHGx6eIF8Fka3Cx6QFRFfmN6XtAFUX2vQi1sg6SHv9mtZ1ee6vHDXOGLJSMuw+/J
+         j366lPkpMYlw729KRwLUqJ9EsdKDbyPQPuh8AnV8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 065/162] KVM: x86: fix presentation of TSX feature in ARCH_CAPABILITIES
+        stable@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 091/199] RDMA/qib: Validate ->show()/store() callbacks before calling them
 Date:   Thu, 19 Dec 2019 19:32:53 +0100
-Message-Id: <20191219183211.803963252@linuxfoundation.org>
+Message-Id: <20191219183219.965713070@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,43 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-commit cbbaa2727aa3ae9e0a844803da7cef7fd3b94f2b upstream.
+commit 7ee23491b39259ae83899dd93b2a29ef0f22f0a7 upstream.
 
-KVM does not implement MSR_IA32_TSX_CTRL, so it must not be presented
-to the guests.  It is also confusing to have !ARCH_CAP_TSX_CTRL_MSR &&
-!RTM && ARCH_CAP_TAA_NO: lack of MSR_IA32_TSX_CTRL suggests TSX was not
-hidden (it actually was), yet the value says that TSX is not vulnerable
-to microarchitectural data sampling.  Fix both.
+The permissions of the read-only or write-only sysfs files can be
+changed (as root) and the user can then try to read a write-only file or
+write to a read-only file which will lead to kernel crash here.
 
-Cc: stable@vger.kernel.org
-Tested-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Protect against that by always validating the show/store callbacks.
+
+Link: https://lore.kernel.org/r/d45cc26361a174ae12dbb86c994ef334d257924b.1573096807.git.viresh.kumar@linaro.org
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/x86.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/qib/qib_sysfs.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1024,10 +1024,15 @@ u64 kvm_get_arch_capabilities(void)
- 	 * If TSX is disabled on the system, guests are also mitigated against
- 	 * TAA and clear CPU buffer mitigation is not required for guests.
- 	 */
--	if (boot_cpu_has_bug(X86_BUG_TAA) && boot_cpu_has(X86_FEATURE_RTM) &&
--	    (data & ARCH_CAP_TSX_CTRL_MSR))
-+	if (!boot_cpu_has(X86_FEATURE_RTM))
-+		data &= ~ARCH_CAP_TAA_NO;
-+	else if (!boot_cpu_has_bug(X86_BUG_TAA))
-+		data |= ARCH_CAP_TAA_NO;
-+	else if (data & ARCH_CAP_TSX_CTRL_MSR)
- 		data &= ~ARCH_CAP_MDS_NO;
+--- a/drivers/infiniband/hw/qib/qib_sysfs.c
++++ b/drivers/infiniband/hw/qib/qib_sysfs.c
+@@ -301,6 +301,9 @@ static ssize_t qib_portattr_show(struct
+ 	struct qib_pportdata *ppd =
+ 		container_of(kobj, struct qib_pportdata, pport_kobj);
  
-+	/* KVM does not emulate MSR_IA32_TSX_CTRL.  */
-+	data &= ~ARCH_CAP_TSX_CTRL_MSR;
- 	return data;
++	if (!pattr->show)
++		return -EIO;
++
+ 	return pattr->show(ppd, buf);
+ }
+ 
+@@ -312,6 +315,9 @@ static ssize_t qib_portattr_store(struct
+ 	struct qib_pportdata *ppd =
+ 		container_of(kobj, struct qib_pportdata, pport_kobj);
+ 
++	if (!pattr->store)
++		return -EIO;
++
+ 	return pattr->store(ppd, buf, len);
  }
  
 
