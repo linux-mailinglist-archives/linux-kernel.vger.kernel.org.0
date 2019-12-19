@@ -2,129 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7475E12617C
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:02:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96E501261A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:05:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfLSMCc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:02:32 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50454 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfLSMCc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:02:32 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2I7s030349;
-        Thu, 19 Dec 2019 06:02:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576756938;
-        bh=SJ4hNptUJk4P4x4SOwGjpOGBMqMzUELoedaw1b+jwHI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RFvRJCXO0HNrMEcTcs4Fcr3tvG2qzsk0ASlEc41wcAlIV1j1EOg9iX3ITF/TeAP62
-         pNUMfAKHW+v53YNoTRjTq67JrWwAQXmYAH5BVzcf8Y/dCQPYFQzZls5F6DrLZbYE4x
-         rJHv+WPgKFUV5JWWnd08mRG45SCctKuFBZZobeXk=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2H8k014202;
-        Thu, 19 Dec 2019 06:02:17 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
- Dec 2019 06:02:17 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Thu, 19 Dec 2019 06:02:17 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJC2DRK102964;
-        Thu, 19 Dec 2019 06:02:14 -0600
-Subject: Re: [PATCH 07/13] PCI: cadence: Add new *ops* for CPU addr fixup
-To:     Andrew Murray <andrew.murray@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-8-kishon@ti.com>
- <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <936cd6d6-33fc-6432-6fec-2b5173cb9ca4@ti.com>
-Date:   Thu, 19 Dec 2019 17:33:56 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726944AbfLSMFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:05:23 -0500
+Received: from mout.gmx.net ([212.227.17.20]:47773 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726744AbfLSMFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:05:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1576757117;
+        bh=oHbd8+naRUDak1t7HyPoUb8otyLjLJCOQAcfK+Mtclw=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=BUj3BqTBMoOpb5xvOJVATNemxDnFJpV9ikmWOi/eIwg5ozA/WbgDfSTVEqE1z2L6N
+         lj4Bhgi546G3avdCloexk27s3O+Qi2s6Vy+iqzDwTO7XxZ9gKB7KCb4U2v5fMnuL0/
+         aa78MZPQJWt1Fc6hEf8WayNG2Xq5sKm9SoE3Hz2U=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [185.76.99.135] ([185.76.99.135]) by web-mail.gmx.net
+ (3c-app-gmx-bap68.server.lan [172.19.172.68]) (via HTTP); Thu, 19 Dec 2019
+ 13:05:17 +0100
 MIME-Version: 1.0
-In-Reply-To: <20191217124050.GD24359@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-ID: <trinity-76f78a91-fc1f-479c-bd38-a7b989b28234-1576757117258@3c-app-gmx-bap68>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Rob Herring" <robh+dt@kernel.org>
+Cc:     "Masahiro Yamada" <masahiroy@kernel.org>,
+        "Linux Kbuild mailing list" <linux-kbuild@vger.kernel.org>,
+        "Michal Marek" <michal.lkml@markovi.net>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "Frank Rowand" <frowand.list@gmail.com>,
+        DTML <devicetree@vger.kernel.org>
+Subject: Aw: Re: [PATCH] kbuild: Add DTC_CPP_FLAGS
+Content-Type: text/plain; charset=UTF-8
+Date:   Thu, 19 Dec 2019 13:05:17 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <CAL_Jsq+we-0c25Hn+eGDTsyTDwKEvs9LWV9QtLX1+8V3DmtFtg@mail.gmail.com>
+References: <20191218114625.28438-1-frank-w@public-files.de>
+ <CAK7LNARWYE4-4Qp-YfTrrt1YCZ68b28FDoE45cDJkZTqUyXNUw@mail.gmail.com>
+ <CAL_Jsq+we-0c25Hn+eGDTsyTDwKEvs9LWV9QtLX1+8V3DmtFtg@mail.gmail.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:DinXypny3FYqi5CzziIi3ovA308cTpeTvs+7Oy2eWnoyOsphl0VSMhahYhaMGtihK1fXV
+ vpN/wCa5IDmiyqUhmKUQQNDZ1vWBbirdvM0YPz5A1vG40flYbB4dFXBvRtFDbY7xcSdWEPl9wUVP
+ SVq/Sk7qK+aHohKkYAYVtvJ1c1FblmjShV+5u/z5LFCY1N3xM7THpUCzExldJreEIWAetivgrst4
+ twq6rizclVTQyWi5z2hQLR/y/euTJfVENSrqX8eBVuxL7ZbOdf5teOCQ3kuB/fyUVV1IBy7vKRvU
+ 4U=
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mDqwi3hrEVw=:1T4JUV+00BktsWI/C2ulmh
+ ZsMYnSjqf/cLm7gKHivmgzw3MUl33Qz8WAHPJgMq7luSL25eShs2KWVmPkGIOP1+3+3g5M1QF
+ 0RRz3JNze9TJdOmEOlJSJpphwXRrUjrgAAyGp5So0sVZ3i2qRIJ72kwrWQspOWg71jsJ0Swvv
+ k+EEoayHcf4mTCRBtkw56ZfBndtvxw4uznk4pVn4G+ET9DZHOsvJEQIoOTJ7lkODRfifiW1kp
+ Xk96mPO/G3TBp2boZBYJjJxQ8Mjkb7qQwrjMfUD+ogvTPugMutXO0uJ5iascIeTBmaVwX+477
+ +hrqL8MnzkNM1nE1b9rE78TJpsVmfZJXdYB9XQEwyX1rn0Oa/qT4+ctx7T5Nc4yzXxcTKXDwx
+ fmEtTi4LTrvroKdlT94qhgxPkTvavtkZmSbf9hlEp6FZi0jw2iPq2oBjAgJUP84HTZaQ+JjP2
+ NdQGH1vGlKtuUSncxNAGo+ozteS02X8QmR/073aOl16puqLT+JTqDeiBB9qvdbjfMFv+n3dNS
+ XCo4bswfiN3edBY/zUDSNPGRKfl2Z5rRum5wz1r336hUCHaMCYnXuL257DAC1VpPeiXBBJgWV
+ 7n4CgiR9pscLdWHu5yvYAZGzWnAV1FG48NMnU3uuRSX0r0hg/3Uo287r6RpZE5NpOfsD3ZQpS
+ 9eWitBN15Ai7KKI3+3wKaO7HF5KR/n6g7QKFhK5f5y5+8i+7OETtS/sPnIJosEZe6KMg=
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Rob,
 
-On 17/12/19 6:10 pm, Andrew Murray wrote:
-> On Mon, Dec 09, 2019 at 02:51:41PM +0530, Kishon Vijay Abraham I wrote:
->> Cadence driver uses "mem" memory resource to obtain the offset of
->> configuration space address region, memory space address region and
->> message space address region. The obtained offset is used to program
->> the Address Translation Unit (ATU). However certain platforms like TI's
->> J721E SoC require the absolute address to be programmed in the ATU and not
->> just the offset.
->>
->> The same problem was solved in designware driver using a platform specific
->> ops for CPU addr fixup in commit a660083eb06c5bb0 ("PCI: dwc: designware:
-> 
-> Thanks for this reference, though this doesn't need to be in the commit
-> log, please put such comments underneath a ---.
-> 
->> Add new *ops* for CPU addr fixup"). Follow a similar mechanism in
->> Cadence too instead of directly using "mem" memory resource in Cadence
->> PCIe core.
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../pci/controller/cadence/pcie-cadence-host.c    | 15 ++++-----------
->>  drivers/pci/controller/cadence/pcie-cadence.c     |  8 ++++++--
->>  drivers/pci/controller/cadence/pcie-cadence.h     |  1 +
->>  3 files changed, 11 insertions(+), 13 deletions(-)
->>
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> index 2efc33b1cade..cf817be237af 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> @@ -105,15 +105,14 @@ static int cdns_pcie_host_init_root_port(struct cdns_pcie_rc *rc)
->>  static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->>  {
->>  	struct cdns_pcie *pcie = &rc->pcie;
->> -	struct resource *mem_res = pcie->mem_res;
->>  	struct resource *bus_range = rc->bus_range;
->>  	struct resource *cfg_res = rc->cfg_res;
->>  	struct device *dev = pcie->dev;
->>  	struct device_node *np = dev->of_node;
->>  	struct of_pci_range_parser parser;
->> +	u64 cpu_addr = cfg_res->start;
->>  	struct of_pci_range range;
->>  	u32 addr0, addr1, desc1;
->> -	u64 cpu_addr;
->>  	int r, err;
->>  
->>  	/*
->> @@ -126,7 +125,9 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
->>  	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
->>  
->> -	cpu_addr = cfg_res->start - mem_res->start;
->> +	if (pcie->ops->cpu_addr_fixup)
->> +		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->> +
-> 
-> Won't this patch cause a breakage for existing users that won't have defined a
-> cpu_addr_fixup? The offset isn't being calculated and so cpu_addr will be wrong?
+so the way you prefer is this one (use new file for additions and includin=
+g the board dts):
 
-Correct, this will need an additional patch in pcie-cadence-plat.c.
+arch/arm64/boot/dts/mediatek/mt7622-bpi-r64-mt7531.dts (example for mt7531=
+-phy)
 
-Thanks
-Kishon
+/*
+ * Copyright (c) 2018 MediaTek Inc.
+ * Author:
+ *
+ * SPDX-License-Identifier: (GPL-2.0 OR MIT)
+ */
+
+/dts-v1/;
+
+#include "mt7622-bananapi-bpi-r64.dts"
+
+/ {
+        gsw: gsw@0 {
+                compatible =3D "mediatek,mt753x";
+                mediatek,ethsys =3D <&ethsys>;
+                #address-cells =3D <1>;
+                #size-cells =3D <0>;
+        };
+};
+
+&gsw {
+        mediatek,mdio =3D <&mdio>;
+        mediatek,portmap =3D "wllll";
+        mediatek,mdio_master_pinmux =3D <0>;
+        reset-gpios =3D <&pio 54 0>;
+        interrupt-parent =3D <&pio>;
+        interrupts =3D <53 IRQ_TYPE_LEVEL_HIGH>;
+        status =3D "okay";
+
+        port5: port@5 {
+                compatible =3D "mediatek,mt753x-port";
+                reg =3D <5>;
+                phy-mode =3D "rgmii";
+                fixed-link {
+                        speed =3D <1000>;
+                        full-duplex;
+                };
+        };
+
+        port6: port@6 {
+                compatible =3D "mediatek,mt753x-port";
+                reg =3D <6>;
+                phy-mode =3D "2500base-x";
+                fixed-link {
+                        speed =3D <2500>;
+                        full-duplex;
+                };
+        };
+};
+
+at least it compiles and after decompile the new nodes are visible...
+
+is there any way to drop nodes (in case dsa-driver gets merged i don't nee=
+d it in the other 2)? i can disable them, but they will be present.
+
+regards Frank
+
+
+> Gesendet: Mittwoch, 18. Dezember 2019 um 14:51 Uhr
+> Von: "Rob Herring" <robh+dt@kernel.org>
+> NAK. #ifdefs and complex macros in particular are features we don't
+> want in dts files.
+>
+> Rob
