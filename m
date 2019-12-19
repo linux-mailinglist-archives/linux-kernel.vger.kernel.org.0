@@ -2,69 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E7F0126D3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:09:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A5F2126D4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbfLSTJa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:09:30 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:50374 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbfLSTJ0 (ORCPT
+        id S1728567AbfLSTKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:10:08 -0500
+Received: from us-smtp-2.mimecast.com ([205.139.110.61]:56793 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726945AbfLSTKG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 14:09:26 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ii1Aj-0004qM-07; Thu, 19 Dec 2019 19:09:17 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915: fix uninitialized pointer reads on pointers to and from
-Date:   Thu, 19 Dec 2019 19:09:16 +0000
-Message-Id: <20191219190916.24693-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        Thu, 19 Dec 2019 14:10:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576782604;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=TsFvSsTqVBZ+tF91hnxKk0O+iZiuPyz2pCFwyuo+kkY=;
+        b=Vi8Oaw85Ju3XcuQ2UDLXXfAadUpjWLJFKI+ylyBu4Mdsyy8e07+7/uS4d/oUCXqdvKQLGE
+        9wO/AUYzGHaX/D4Ho8HUR69/uHCcRqpit/GB+dlmWVqfcEHGuuq2Q6T+SCoj0UYJ5QQKxb
+        UYEedLlxWITs+dJVJUmqoR9BScy0gtw=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-86-BPpn836kPWi9Ccny7his-Q-1; Thu, 19 Dec 2019 14:10:01 -0500
+X-MC-Unique: BPpn836kPWi9Ccny7his-Q-1
+Received: by mail-wr1-f70.google.com with SMTP id f17so2729225wrt.19
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 11:10:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=TsFvSsTqVBZ+tF91hnxKk0O+iZiuPyz2pCFwyuo+kkY=;
+        b=WcgxoIafFfmLBuZ6lIVpJw+PnUCCXDUhlc7O2DWI4XVoI8dzc7NqAIan0RE7WeMUVT
+         DDzEQWwnbatWDp/cqmAgA0WDL56CmkH/hyxYXv6QdVfi65dBG320CHvSDxTOeXO5b8el
+         7cS85tenQ8LpxOFpMkwWzKAQJJ2PChdITSWoFkQeOzYGw55ZKc5gHu5A6KZU0UrH+mMZ
+         llDz5dx4I0GUGXc5KmnB6HbsAR9skzw2XnJqPNQ95YD205h/5DNeAaBvcblsF6HM987M
+         N+ZGsoGR1jO7J4c/LZlHo/swylv4KpH4/Ru8wxw7/jofl9taH+OdwhyGGZeyiYFWZc6S
+         e1Pw==
+X-Gm-Message-State: APjAAAUNBVy3N3ek6/02lHtm6BuyELHVwmNflozmhbrmaU9S17RjY3/A
+        2W7VW0ILE+D9H3GdFVR9/kUTppxOdNptvo7m1oAxqAxjozjHJOzWr9t+pjTgjVZ3MKSY77xh6St
+        waIVKMFOnhiep8L9r/kqgcAVL
+X-Received: by 2002:a1c:4d03:: with SMTP id o3mr11976160wmh.164.1576782599915;
+        Thu, 19 Dec 2019 11:09:59 -0800 (PST)
+X-Google-Smtp-Source: APXvYqyCPSAQBtZpVyCHuMDoSVEQwEOPH4leBjaVKeWb7GppTaUWkTOvT9jwqDl7h6ChPbVt3S9Xrw==
+X-Received: by 2002:a1c:4d03:: with SMTP id o3mr11976139wmh.164.1576782599685;
+        Thu, 19 Dec 2019 11:09:59 -0800 (PST)
+Received: from vitty.brq.redhat.com (g-server-2.ign.cz. [91.219.240.2])
+        by smtp.gmail.com with ESMTPSA id f65sm7124998wmf.2.2019.12.19.11.09.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 11:09:58 -0800 (PST)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     John Allen <john.allen@amd.com>, kvm@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        rkrcmar@redhat.com, John Allen <john.allen@amd.com>
+Subject: Re: [PATCH] kvm/svm: PKU not currently supported
+In-Reply-To: <20191219152332.28857-1-john.allen@amd.com>
+References: <20191219152332.28857-1-john.allen@amd.com>
+Date:   Thu, 19 Dec 2019 20:09:57 +0100
+Message-ID: <87immc873u.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+John Allen <john.allen@amd.com> writes:
 
-Currently pointers to and from are not initialized and may contain
-garbage values. This will cause uninitialized pointer reads in the
-call to intel_frontbuffer_track and later checks to see if to and from
-are null.  Fix this by ensuring to and from are initialized to NULL.
+> Current SVM implementation does not have support for handling PKU. Guests
+> running on a host with future AMD cpus that support the feature will read
+> garbage from the PKRU register and will hit segmentation faults on boot as
+> memory is getting marked as protected that should not be. Ensure that cpuid
+> from SVM does not advertise the feature.
+>
+> Signed-off-by: John Allen <john.allen@amd.com>
+> ---
+>  arch/x86/kvm/svm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index 122d4ce3b1ab..f911aa1b41c8 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -5933,6 +5933,8 @@ static void svm_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
+>  		if (avic)
+>  			entry->ecx &= ~bit(X86_FEATURE_X2APIC);
+>  		break;
+> +	case 0x7:
+> +		entry->ecx &= ~bit(X86_FEATURE_PKU);
 
-Addresses-Coverity: ("Uninitialised pointer read)"
-Fixes: da42104f589d ("drm/i915: Hold reference to intel_frontbuffer as we track activity")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/gpu/drm/i915/display/intel_overlay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Would it make more sense to introduce kvm_x86_ops->pku_supported() (and
+return false for SVM and boot_cpu_has(X86_FEATURE_PKU) for vmx) so we
+don't set the bit in the first place?
 
-diff --git a/drivers/gpu/drm/i915/display/intel_overlay.c b/drivers/gpu/drm/i915/display/intel_overlay.c
-index 6097594468a9..e869a3d86522 100644
---- a/drivers/gpu/drm/i915/display/intel_overlay.c
-+++ b/drivers/gpu/drm/i915/display/intel_overlay.c
-@@ -279,7 +279,7 @@ static void intel_overlay_flip_prepare(struct intel_overlay *overlay,
- 				       struct i915_vma *vma)
- {
- 	enum pipe pipe = overlay->crtc->pipe;
--	struct intel_frontbuffer *from, *to;
-+	struct intel_frontbuffer *from = NULL, *to = NULL;
- 
- 	WARN_ON(overlay->old_vma);
- 
+>  	case 0x80000001:
+>  		if (nested)
+>  			entry->ecx |= (1 << 2); /* Set SVM bit */
+
 -- 
-2.24.0
+Vitaly
 
