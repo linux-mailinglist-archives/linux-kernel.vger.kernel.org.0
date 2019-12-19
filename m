@@ -2,113 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1AB4126249
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:38:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2459A126256
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:39:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLSMio (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:38:44 -0500
-Received: from mga01.intel.com ([192.55.52.88]:46391 "EHLO mga01.intel.com"
+        id S1726887AbfLSMju (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:39:50 -0500
+Received: from relay.sw.ru ([185.231.240.75]:50550 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfLSMin (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:38:43 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 04:38:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,331,1571727600"; 
-   d="scan'208";a="222278232"
-Received: from licongzh-mobl.ccr.corp.intel.com (HELO [10.254.208.198]) ([10.254.208.198])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Dec 2019 04:38:40 -0800
-Subject: Re: [PATCH v5 4/4] perf report: support hotkey to let user select any
- event for sorting
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
-        kan.liang@intel.com, yao.jin@intel.com
-References: <20191219060929.3714-1-yao.jin@linux.intel.com>
- <20191219060929.3714-4-yao.jin@linux.intel.com> <20191219091008.GB8141@krava>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <c1f18601-41d5-451d-4278-b7adb08674c3@linux.intel.com>
-Date:   Thu, 19 Dec 2019 20:38:39 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726695AbfLSMjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:39:49 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104] helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ihv5G-0005qc-Ro; Thu, 19 Dec 2019 15:39:14 +0300
+Subject: [PATCH RFC] sched: Micro optimization in pick_next_task() and in
+ check_preempt_curr()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        ktkhai@virtuozzo.com
+Cc:     linux-kernel@vger.kernel.org
+Date:   Thu, 19 Dec 2019 15:39:14 +0300
+Message-ID: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-In-Reply-To: <20191219091008.GB8141@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In kernel/sched/Makefile files, describing different sched classes, already
+go in the order from the lowest priority class to the highest priority class:
+
+idle.o fair.o rt.o deadline.o stop_task.o
+
+The documentation of GNU linker says, that section appears in the order
+they are seen during link time (see [1]):
+
+>Normally, the linker will place files and sections matched by wildcards
+>in the order in which they are seen during the link. You can change this
+>by using the SORT keyword, which appears before a wildcard pattern
+>in parentheses (e.g., SORT(.text*)).
+
+So, we may expect const variables from idle.o will go before ro variables
+from fair.o in RO_DATA section, while ro variables from fair.o will go
+before ro variables from rt.o, etc.
+
+(Also, it looks like the linking order is already used in kernel, e.g.
+ in drivers/md/Makefile)
+
+Thus, we may introduce an optimization based on xxx_sched_class addresses
+in these two hot scheduler functions: pick_next_task() and check_preempt_curr().
+
+One more result of the patch is that size of object file becomes a little
+less (excluding added BUG_ON(), which goes in __init section):
+
+$size kernel/sched/core.o
+         text     data      bss	    dec	    hex	filename
+before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
+after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
+
+[1] https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html
+
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ kernel/sched/Makefile |    2 ++
+ kernel/sched/core.c   |   24 +++++++++---------------
+ 2 files changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
+index 5fc9c9b70862..f78f177c660a 100644
+--- a/kernel/sched/Makefile
++++ b/kernel/sched/Makefile
+@@ -23,6 +23,8 @@ CFLAGS_core.o := $(PROFILING) -fno-omit-frame-pointer
+ endif
+ 
+ obj-y += core.o loadavg.o clock.o cputime.o
++# Order is significant: a more priority class xxx is described by variable
++# xxx_sched_class with a bigger address. See BUG_ON() in sched_init().
+ obj-y += idle.o fair.o rt.o deadline.o
+ obj-y += wait.o wait_bit.o swait.o completion.o
+ 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 15508c202bf5..befdd7158b27 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -1416,20 +1416,10 @@ static inline void check_class_changed(struct rq *rq, struct task_struct *p,
+ 
+ void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	const struct sched_class *class;
+-
+-	if (p->sched_class == rq->curr->sched_class) {
++	if (p->sched_class == rq->curr->sched_class)
+ 		rq->curr->sched_class->check_preempt_curr(rq, p, flags);
+-	} else {
+-		for_each_class(class) {
+-			if (class == rq->curr->sched_class)
+-				break;
+-			if (class == p->sched_class) {
+-				resched_curr(rq);
+-				break;
+-			}
+-		}
+-	}
++	else if (p->sched_class > rq->curr->sched_class)
++		resched_curr(rq);
+ 
+ 	/*
+ 	 * A queue event has occurred, and we're going to schedule.  In
+@@ -3914,8 +3904,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 	 * higher scheduling class, because otherwise those loose the
+ 	 * opportunity to pull in more work from other CPUs.
+ 	 */
+-	if (likely((prev->sched_class == &idle_sched_class ||
+-		    prev->sched_class == &fair_sched_class) &&
++	if (likely(prev->sched_class <= &fair_sched_class &&
+ 		   rq->nr_running == rq->cfs.h_nr_running)) {
+ 
+ 		p = pick_next_task_fair(rq, prev, rf);
+@@ -6569,6 +6558,11 @@ void __init sched_init(void)
+ 	unsigned long ptr = 0;
+ 	int i;
+ 
++	BUG_ON(&idle_sched_class > &fair_sched_class ||
++		&fair_sched_class > &rt_sched_class ||
++		&rt_sched_class > &dl_sched_class ||
++		&dl_sched_class > &stop_sched_class);
++
+ 	wait_bit_init();
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
 
 
-On 12/19/2019 5:10 PM, Jiri Olsa wrote:
-> On Thu, Dec 19, 2019 at 02:09:29PM +0800, Jin Yao wrote:
-> 
-> SNIP
-> 
->> +		case '0' ... '9':
->> +			if (!symbol_conf.event_group ||
->> +			    evsel->core.nr_members < 2) {
->> +				snprintf(buf, sizeof(buf),
->> +					 "Sort by index only available with group events!");
->> +				helpline = buf;
->> +				continue;
->> +			}
->> +
->> +			symbol_conf.group_sort_idx = key - '0';
->> +
->> +			if (symbol_conf.group_sort_idx >= evsel->core.nr_members) {
->> +				snprintf(buf, sizeof(buf),
->> +					 "Max event group index to sort is %d (index from 0 to %d)",
->> +					 evsel->core.nr_members - 1,
->> +					 evsel->core.nr_members - 1);
->> +				helpline = buf;
->> +				continue;
->> +			}
->> +
->> +			key = K_RELOAD;
->> +			goto out_free_stack;
->>   		case 'a':
->>   			if (!hists__has(hists, sym)) {
->>   				ui_browser__warning(&browser->b, delay_secs * 2,
->> -- 
->> 2.17.1
->>
-> 
-> maybe also something like this to eliminate unneeded refresh?
-> 
-> jirka
-> 
-> 
-> ---
-> diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
-> index 22e76bd1a2d9..9f5dd48500a2 100644
-> --- a/tools/perf/ui/browsers/hists.c
-> +++ b/tools/perf/ui/browsers/hists.c
-> @@ -2947,6 +2947,9 @@ static int perf_evsel__hists_browse(struct evsel *evsel, int nr_events,
->   				continue;
->   			}
->   
-> +			if (key - '0' == symbol_conf.group_sort_idx)
-> +				continue;
-> +
->   			symbol_conf.group_sort_idx = key - '0';
->   
->   			if (symbol_conf.group_sort_idx >= evsel->core.nr_members) {
-> 
-
-Hi Jiri,
-
-Thanks, I think it's a good improvement. It can avoid the unnecessary 
-refresh.
-
-If no more comments on this patch-set, I will add this improvement and 
-then post v6.
-
-Thanks
-Jin Yao
