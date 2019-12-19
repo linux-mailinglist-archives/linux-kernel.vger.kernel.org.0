@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4490A126AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:52:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37AE0126AC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbfLSSwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47014 "EHLO mail.kernel.org"
+        id S1727687AbfLSSuu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730265AbfLSSwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:25 -0500
+        id S1730017AbfLSSus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4226A222C2;
-        Thu, 19 Dec 2019 18:52:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC1F924683;
+        Thu, 19 Dec 2019 18:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781544;
-        bh=alPUIt9fvvu4Ub+u2jMdfrF2T7+b/UGE1nGLWapuekY=;
+        s=default; t=1576781447;
+        bh=YZq17bvqHn0RDecNk9gGgHoIlYXiGXKbQkcatew4jYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VgGlRPxy0tUm9VueMmEMRTU596abH+FyIrI5FCSujHGITClPuRm5zcymOE9KduHjH
-         SSWC37EzgDc4yRbOVWDIKGOZoxjcweLUOe9+wCHHAivKkh7DCubWMVumAbMt2vcjCa
-         IVTbpCgBfQcvGWKvM6qwUru1rPQf2RTyu/uB1sKg=
+        b=oqsNaFUlcrt6bmrZ9vCl4l3r0BfpR05LRwbr2tWU7QD+899kc3JRf1iqFPKX+b4rU
+         KoAig6yBLWQZUECZa6jZBcCsMyZ6JEWFJoP7dSjyqor0gbNpF+xnh8cyP9wwV6J4FZ
+         dPjDVyBWtaw1CGtfYlE0OHjUVMGFQY1CLD2586Qg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Chris Lew <clew@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 4.19 28/47] rpmsg: glink: Fix rpmsg_register_device err handling
-Date:   Thu, 19 Dec 2019 19:34:42 +0100
-Message-Id: <20191219182932.985268698@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 26/36] CIFS: Respect O_SYNC and O_DIRECT flags during reconnect
+Date:   Thu, 19 Dec 2019 19:34:43 +0100
+Message-Id: <20191219182917.831351899@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,44 +43,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Lew <clew@codeaurora.org>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit f7e714988edaffe6ac578318e99501149b067ba0 upstream.
+commit 44805b0e62f15e90d233485420e1847133716bdc upstream.
 
-The device release function is set before registering with rpmsg. If
-rpmsg registration fails, the framework will call device_put(), which
-invokes the release function. The channel create logic does not need to
-free rpdev if rpmsg_register_device() fails and release is called.
+Currently the client translates O_SYNC and O_DIRECT flags
+into corresponding SMB create options when openning a file.
+The problem is that on reconnect when the file is being
+re-opened the client doesn't set those flags and it causes
+a server to reject re-open requests because create options
+don't match. The latter means that any subsequent system
+call against that open file fail until a share is re-mounted.
 
-Fixes: b4f8e52b89f6 ("rpmsg: Introduce Qualcomm RPM glink driver")
-Cc: stable@vger.kernel.org
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fix this by properly setting SMB create options when
+re-openning files after reconnects.
+
+Fixes: 1013e760d10e6: ("SMB3: Don't ignore O_SYNC/O_DSYNC and O_DIRECT flags")
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rpmsg/qcom_glink_native.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/cifs/file.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -1426,15 +1426,13 @@ static int qcom_glink_rx_open(struct qco
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -722,6 +722,13 @@ cifs_reopen_file(struct cifsFileInfo *cf
+ 	if (backup_cred(cifs_sb))
+ 		create_options |= CREATE_OPEN_BACKUP_INTENT;
  
- 		ret = rpmsg_register_device(rpdev);
- 		if (ret)
--			goto free_rpdev;
-+			goto rcid_remove;
++	/* O_SYNC also has bit for O_DSYNC so following check picks up either */
++	if (cfile->f_flags & O_SYNC)
++		create_options |= CREATE_WRITE_THROUGH;
++
++	if (cfile->f_flags & O_DIRECT)
++		create_options |= CREATE_NO_BUFFER;
++
+ 	if (server->ops->get_lease_key)
+ 		server->ops->get_lease_key(inode, &cfile->fid);
  
- 		channel->rpdev = rpdev;
- 	}
- 
- 	return 0;
- 
--free_rpdev:
--	kfree(rpdev);
- rcid_remove:
- 	spin_lock_irqsave(&glink->idr_lock, flags);
- 	idr_remove(&glink->rcids, channel->rcid);
 
 
