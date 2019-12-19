@@ -2,125 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C0B96126498
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:26:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEE6312649E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:28:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbfLSO0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 09:26:12 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36664 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSO0L (ORCPT
+        id S1726869AbfLSO2H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 09:28:07 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:55167 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbfLSO2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 09:26:11 -0500
-Received: by mail-lj1-f194.google.com with SMTP id r19so6460068ljg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 06:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eYZf2PAZk6wJlce5o8wLQfqz+k895+yefprdeiTmKqI=;
-        b=UG2Rag9zPQHoaQ48g84ISujxsEL3CqlKjU167VCafzjKPq2OPtDP05/RKbX+aRaJBK
-         APiv1iiZcjwGZTm+NVk2vrUzQ4YLNxb5rMznUGV+krOQdXLjZ+xUj0LUN8C/AUaSkfJ3
-         lKeKpUPFNJN/pzwh3MvnV8mzR6XmKkuniKawcKtmCnvylPrt2Yzs9S77wwzQ27mWXdb+
-         yl0i6MMzFQhg4sNQRHJoK1h9nMrKUVF+TPIOPDbJ1r7M8eShQkbnae0/lES/OdBvjIFS
-         08z2nH846N9EuofyWjdcAX1QLeqdAosv8iJQhcW6cE5fBFcLg1qw6mIPCZOV0WMK+wk/
-         P2Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eYZf2PAZk6wJlce5o8wLQfqz+k895+yefprdeiTmKqI=;
-        b=Hp91ATMbLqnfCe3oLYwEV9LXO/Ml7hUYQTxrPl7ViFxkvr89X+2WnW3hlNcSwPD++E
-         VlelskupghyR5ig+kEI0JHxl+qzdXU/s9zLEIsuFvQL2qt0ks+J73brXKK3FFIZwesIQ
-         L5oz4nL5jFm4pqGVsu4yNDr2ex/OcZz91e1bvza6NpIWEjmVEyzGUPe9cSulhDewL1aD
-         CYkeiNf2m7rSMgtBI5SGg1DxzrPhNCVzWyLlUuZp8ckpS/h7IR7JpL3nsIHyd8YaSHe/
-         BvRIGDa8TwplEbF26a/Zyz6/nAaanavjmOSG/eTRX5gq/ur/HJ6phjnEZZAH2TXwj4Aw
-         VOgw==
-X-Gm-Message-State: APjAAAWJ/YK8G+Z4HyVZkdF7Yc9iEPmXeOggLjgeZ5kwqun+JZUli1HA
-        MNMMjufK9dA0NCgR6r8RX2U=
-X-Google-Smtp-Source: APXvYqwoDSKjOq8wwxmkSZnXq/HfNtdJzzk7qU8k6Ew6E7DXu96p7VMBGYDJB60KDr7YWng8euHmIA==
-X-Received: by 2002:a2e:800b:: with SMTP id j11mr5690943ljg.126.1576765569240;
-        Thu, 19 Dec 2019 06:26:09 -0800 (PST)
-Received: from assa ([109.252.14.238])
-        by smtp.gmail.com with ESMTPSA id y1sm611437ljm.12.2019.12.19.06.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 06:26:08 -0800 (PST)
-Date:   Thu, 19 Dec 2019 15:26:07 +0100
-From:   Vitaly Wool <vitalywool@gmail.com>
-To:     Linux-MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Streetman <ddstreet@ieee.org>,
-        Minchan Kim <minchan@kernel.org>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Shakeel Butt <shakeelb@google.com>,
-        Henry Burns <henrywolfeburns@gmail.com>,
-        Theodore Ts'o <tytso@thunk.org>
-Subject: [PATCHv2 2/3] zsmalloc: add compaction and huge class callbacks
-Message-Id: <20191219152607.03b458b910625d95f388f4d1@gmail.com>
-In-Reply-To: <20191219151928.ad4ccf732b64b7f8a26116db@gmail.com>
-References: <20191219151928.ad4ccf732b64b7f8a26116db@gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 19 Dec 2019 09:28:06 -0500
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: BjzMGNHgLHlMgecpf3LgkN2t6TBT0tWRHistvDcqmTy96ic0bJm8JJj4fxOlKD0FTBHcqMAArf
+ ZHgPcRLMIVO15+DcQgjMm8aoEeoZ/X9o8iyzECCAVpSBRMvIm5IZlvgaP7AVitR1or+CxpJ98j
+ 1FCFT0QG6tjhjKYzcRsDYxyPdDEAl7DBImBND03w78KlR73okUied+ByOXyKoMj2pielpUXwmy
+ vqhXd0eExOtrOwPkrT7KVmaX0o9IMsCy1MeODlOQLZ3Ig2wd6tf3uLiZbnbBuQOiQzBW9z8FQl
+ k/A=
+X-IronPort-AV: E=Sophos;i="5.69,332,1571727600"; 
+   d="scan'208";a="60355274"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 19 Dec 2019 07:28:05 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 19 Dec 2019 07:28:04 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 19 Dec 2019 07:28:06 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <nicolas.ferre@microchip.com>, <sre@kernel.org>,
+        <alexandre.belloni@bootlin.com>
+CC:     <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/2] at91-sama5d2_shdwc shutdown controller
+Date:   Thu, 19 Dec 2019 16:27:52 +0200
+Message-ID: <1576765674-22070-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compaction callbacks for zpool compaction API extension.
-Add huge_class_size callback too to be fully aligned.
+PMC master clock register offset is different b/w sam9x60 and
+other SoCs. Since there is a need of this register offset in
+shutdown procedure we need to have it per SoC. This is what
+this series does.
 
-Signed-off-by: Vitaly Wool <vitaly.wool@konsulko.com>
----
- mm/zsmalloc.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Claudiu Beznea (2):
+  power: reset: at91-sama5d2_shdwc: introduce struct shdwc_reg_config
+  power: reset: at91-sama5d2_shdwc: use proper master clock register
+    offset
 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 2b2b9aae8a3c..43f43272b998 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -437,11 +437,29 @@ static void zs_zpool_unmap(void *pool, unsigned long handle)
- 	zs_unmap_object(pool, handle);
- }
- 
-+static unsigned long zs_zpool_compact(void *pool)
-+{
-+	return zs_compact(pool);
-+}
-+
-+static unsigned long zs_zpool_get_compacted(void *pool)
-+{
-+	struct zs_pool_stats stats;
-+
-+	zs_pool_stats(pool, &stats);
-+	return stats.pages_compacted;
-+}
-+
- static u64 zs_zpool_total_size(void *pool)
- {
- 	return zs_get_total_pages(pool) << PAGE_SHIFT;
- }
- 
-+static size_t zs_zpool_huge_class_size(void *pool)
-+{
-+	return zs_huge_class_size(pool);
-+}
-+
- static struct zpool_driver zs_zpool_driver = {
- 	.type =			  "zsmalloc",
- 	.owner =		  THIS_MODULE,
-@@ -453,6 +471,9 @@ static struct zpool_driver zs_zpool_driver = {
- 	.map =			  zs_zpool_map,
- 	.unmap =		  zs_zpool_unmap,
- 	.total_size =		  zs_zpool_total_size,
-+	.compact =		  zs_zpool_compact,
-+	.get_num_compacted =	  zs_zpool_get_compacted,
-+	.huge_class_size =	  zs_zpool_huge_class_size,
- };
- 
- MODULE_ALIAS("zpool-zsmalloc");
+ drivers/power/reset/at91-sama5d2_shdwc.c | 75 +++++++++++++++++++++-----------
+ 1 file changed, 49 insertions(+), 26 deletions(-)
+
 -- 
-2.20.1
+2.7.4
+
