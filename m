@@ -2,114 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDD291271AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:41:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 699B412717B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfLSXlm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 18:41:42 -0500
-Received: from sender4-of-o51.zoho.com ([136.143.188.51]:21170 "EHLO
-        sender4-of-o51.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbfLSXlk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:41:40 -0500
-X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Thu, 19 Dec 2019 18:41:40 EST
-ARC-Seal: i=1; a=rsa-sha256; t=1576797983; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=Inz6YHSYhC779548yK6cPFAYkj1L6vFEDExMEGkTZFEfNqb+yuiWIFLTSzj0lMF4ksjpiqRGr8D6utPqQyjLGPRg4EqSSOiSnGU0RHVzezzQ1sZbMiIWv0g6zChqPaUmGiKTDWjRJPce6gK08WgReO2UxM0z0NTs/r4SeY+RaDw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1576797983; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=YRwMCe3+7E5yL5rCzLP2abaTZ1SGUf1q183PkTOBBBU=; 
-        b=HeAPxRLUuUDKJnJaSXxWlZaKAsWPT3LweVlf9nBcuReGrhEpUhWwsJXo9xwZmh7E47q/J572kGQCsMVS8wXOGcp9SbW3fnEVkFObY+B4Q1ImlEfsOC/iTOIzkk4v3+BBk8svsvleWa+iDEQ9GYAuVIQdPtd1IloKngISI4DWwws=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        dkim=pass  header.i=zv.io;
-        spf=pass  smtp.mailfrom=me@zv.io;
-        dmarc=pass header.from=<me@zv.io> header.from=<me@zv.io>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1576797983;
-        s=zoho; d=zv.io; i=me@zv.io;
-        h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:Content-Type:Mime-Version:Content-Transfer-Encoding;
-        bh=YRwMCe3+7E5yL5rCzLP2abaTZ1SGUf1q183PkTOBBBU=;
-        b=iuvrt6wT4Yin5Ozj9gAnzkOUjr2JJrFPULCIr3ZIQdGTRqFP8cq/U+F+i/NhdGGH
-        zjxEsXKWm64CmkgpUa+KjTUNcMXDKeAI7aOdyoHpmLdHW87ZSPjQB6hxMhPrX0ik9Zm
-        mkw8KE905hUFEck5K37QbEAq5VBufSJAynk6iEkY=
-Received: from lighthouse (cpe-70-114-218-141.austin.res.rr.com [70.114.218.141]) by mx.zohomail.com
-        with SMTPS id 1576797982566959.8883413676132; Thu, 19 Dec 2019 15:26:22 -0800 (PST)
-Message-ID: <1576797980.31912.110.camel@zv.io>
-Subject: Re: [PATCH v5 6/8] media: v4l2-core: fix v4l2_buffer handling for
- time64 ABI
-From:   Zach van Rijn <me@zv.io>
-To:     Arnd Bergmann <arnd@arndb.de>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 19 Dec 2019 17:26:20 -0600
-In-Reply-To: <CAK8P3a1-xLUn368Lajia1=2GEXa92srQ2s9wH--MrRHj+kSTtQ@mail.gmail.com>
-References: <20191126161824.337724-1-arnd@arndb.de>
-         <20191126161824.337724-7-arnd@arndb.de>
-         <09c664fd-87fb-4fac-f104-9afbe7d33aa2@xs4all.nl>
-         <CAK8P3a1TvFCJf8t9T1yOXjsp088s9dbEOKLVDPinfwJe2B-27g@mail.gmail.com>
-         <81bb5da1-6b84-8473-4ada-c174f43bbae2@xs4all.nl>
-         <0843718f-1391-3379-38be-41fa9558ea6d@xs4all.nl>
-         <CAK8P3a1-xLUn368Lajia1=2GEXa92srQ2s9wH--MrRHj+kSTtQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+        id S1727031AbfLSXa5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 18:30:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33924 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726963AbfLSXa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 18:30:57 -0500
+Received: from localhost (unknown [104.132.0.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7BAC24676;
+        Thu, 19 Dec 2019 23:30:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576798256;
+        bh=S5VBe2V6XP9JXlwOSx/7XHsQVvqLUe9FX070QiGd6qk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jouYPEszKYtzl/CocDFcQQYTx62Jl0JUpge2h6STkcmp2WiwygnpEuC9YmaHBhSZC
+         bnW4VuvICgNarPIfvbd4jLyXqVOVigNx4/gjcWLCpOukr9aTNwwCt70ztR5wUpt8/7
+         vT3pohVtwoZZQJvAiAi2CmH2nyK4j6F+Ea0WNNoI=
+Date:   Thu, 19 Dec 2019 15:30:56 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Subject: Re: kernel BUG at fs/buffer.c:LINE!
+Message-ID: <20191219233056.GA81515@jaegeuk-macbookpro.roam.corp.google.com>
+References: <0000000000009716290599fcd496@google.com>
+ <31033055-c245-4eda-2814-3fd8b0d59cb9@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <31033055-c245-4eda-2814-3fd8b0d59cb9@acm.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-12-14 at 22:44 +0100, Arnd Bergmann wrote:
-> On Sat, Dec 14, 2019 at 12:27 PM Hans Verkuil <hverkuil@xs4all
-> .nl> wrote:
+On 12/18, Bart Van Assche wrote:
+> On 2019-12-18 08:21, syzbot wrote:
+> > syzbot has bisected this bug to:
 > > 
-> > On 12/13/19 4:32 PM, Hans Verkuil wrote:
-> > > > > ...
-> > > > 
-> > > > I've heard good things about the prebuilt toolchains
-> > > > from http://musl.cc/.
-> > > > These seems to come with a libstdc++, but I have not
-> > > > tried that myself.
-> > > 
-> > > I'll see if I can give those a spin, but if I can't get it
-> > > to work quickly,
-> > > then I don't plan on spending much time on it.
+> > commit 5db470e229e22b7eda6e23b5566e532c96fb5bc3
+> > Author: Jaegeuk Kim <jaegeuk@kernel.org>
+> > Date:   Thu Jan 10 03:17:14 2019 +0000
 > > 
-> > I managed to build v4l2-ctl/compliance with those
-> > toolchains, but they seem to be
-> > still using a 32-bit time_t.
+> >     loop: drop caches if offset or block_size are changed
 > > 
-> > Do I need to get a specific version or do something special?
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f3ca8ee00000
+> > start commit:   2187f215 Merge tag 'for-5.5-rc2-tag' of
+> > git://git.kernel.o..
+> > git tree:       upstream
+> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=100bca8ee00000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=17f3ca8ee00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=dcf10bf83926432a
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=cfed5b56649bddf80d6e
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1171ba8ee00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107440aee00000
 > 
-> My mistake: only musl-1.2.0 and up have 64-bit time_t, but
-> this isn't released yet. According to https://wiki.musl-
-> libc.org/roadmap.html, the release was planned for last month,
-> no idea how long it will take.
+> Hi Jaegeuk,
 > 
-> It appears that a snapshot build at
-> http://more.musl.cc/7.5.0/x86_64-linux-musl/i686-linux-musl-
-> native.tgz is new enough to have 64-bit time_t (according to
-> include/bits/alltypes.h), but this is a month old as well, so
-> it may have known bugs.
+> Since syzbot has identified a reproducer I think that it's easy to test
+> whether your new patch fixes what syzbot discovered. Have you already
+> had the chance to test this?
 > 
-> Adding Zach to Cc here, maybe he already has plans for another
-> build with the latest version.
 
-Yes, that's correct. The current (as of 2019-12-19) GCC 9.2.1
-offering is based on musl 1.1.24, though the 7.5.0 release is
-using a more recent git tag only due to timing/availability.
+I can't reproduce it with C reproducer. Hmmm...
 
-Within reason, I'm happy to bump versions with justification.
-Rebuilding takes about a full day but no time on my end.
-
-Rich sent out a message [1] just today suggesting there is still
-some time64 work to be done, so once he pushes those patches
-I'll build and release new toolchains for 9.2, 8.3, and 7.5.
-
-
-ZV
-
-[1]: https://www.openwall.com/lists/musl/2019/12/19/6
-
+> Thanks,
+> 
+> Bart.
