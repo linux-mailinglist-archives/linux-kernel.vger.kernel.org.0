@@ -2,77 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C454C125CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7313D125CC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 09:34:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfLSIdH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 03:33:07 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43075 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726498AbfLSIdH (ORCPT
+        id S1726834AbfLSIei (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 03:34:38 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:36831 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfLSIeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 03:33:07 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 9so3694636lfq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 00:33:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pKdZfjZH2e9GPk64PhPrvn+Af7qtk63t1BrhD8ePLsU=;
-        b=ups+DeAFHChjjhe00lTLkddxXH/4Fj4vJxKQxTZyRQUhNa5WYcT4QLFVaOYgIG9r11
-         XZjY6i2KSGElJ85ll3SVN9fSLBUUnDpLdtvHv6ij7Kx3Kat91MkOSlk73ASzPJPqAAWA
-         IYhXOv9N59rxPghhC5IaLpRXKdjN0DeiNFlNpWuvXHHWbYuNXsZZUla0UsCKpd+r14z7
-         0khEuAjteuDiUihfU6aNrx6+5Dgs+XNpoqFSm90V60ro55cP2ZDIgMW90B4N2AbZ5Wf+
-         l7euIyQ6SYTeF8sXuKMX3kooTwhq+MOUafqIzgO3OQgdIh7ek+W9F33brCanGDw0CfL5
-         bOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pKdZfjZH2e9GPk64PhPrvn+Af7qtk63t1BrhD8ePLsU=;
-        b=OTeB4yfQAG7k2yc/m71IwSXXzwcgUefkkcdoCk38113V8HNf+Pnp6WN0x/QQQQtFr6
-         35GAJ9jyWefnBUNpDDqcIrk4w4OEGeZmeYg7njo9cV0sxEFIbTuuM1XRmDDJEz2+OREe
-         lrk5CRIPg4z5HUSkLRQC0lFSAMNztiWGCg6IZZPKk6CNAqQvJmP3WGy609ioJLsi2chY
-         i0lBwE6BCZZPESLvb3Yocerc2zbqTA7zog/CiYn9nqP4tlt7qIHrmtl2vEbE2QNZRKZL
-         ncBUHV0a5LUtH6kPDOieDChKx86qdGuoj3dlOswquWzCtWTWeKFAdCpVy5XcFHCNYrHg
-         JNVw==
-X-Gm-Message-State: APjAAAVrvH11a2mPI3RM6WqCPf83uDbh0tOvwns1zmb4Rs0NsGXHFTm+
-        rubMwGXbTDfOfzkPOhnp7yHWRpEeQSFFoqOFkLReZtSc+1s=
-X-Google-Smtp-Source: APXvYqzaAgCVHUdj5DNEslSqFxuU1AVBFaR71PPbkZqONekNTb+Jgw52NqXDCfJNyzkThI+t+ljGL6aObMtlDFqv8Ps=
-X-Received: by 2002:ac2:5c4b:: with SMTP id s11mr4543811lfp.133.1576744385217;
- Thu, 19 Dec 2019 00:33:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20191219041039.23396-1-dan@dlrobertson.com> <20191219041039.23396-2-dan@dlrobertson.com>
-In-Reply-To: <20191219041039.23396-2-dan@dlrobertson.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 19 Dec 2019 09:32:53 +0100
-Message-ID: <CACRpkdbNZMfUtpYXEJVNyHA+TnoT_vAnR5c++_LDZ3XADZYOkg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] dt-bindings: iio: accel: bma400: add bindings
-To:     Dan Robertson <dan@dlrobertson.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 19 Dec 2019 03:34:36 -0500
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id xBJ8XVeB026051;
+        Thu, 19 Dec 2019 17:33:32 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com xBJ8XVeB026051
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1576744412;
+        bh=qI5mMd1cAwycq3B8kLudFXZgwvG5Ji5YZpa3DkyTil0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G53E+sLqx0KukWN7HDXX4hwLlfe5erHOz4O8LADMWlDcIYtkBmHrrWEk2J/JTd500
+         fzEaMzqAtjfXuv4Ipq57ovnkCU3opY/rmKde7nfKtF3KAJ5f7LQSuCWxui3kjAFFEq
+         dfeNIJ5g+6KNgWs7xgxUrM7t42TGCgAPm2prs9XZvUC7GFazrm+2KQFiKsbc9tWLPU
+         212tZIiRia5zCDhV/kPtatDoZ2jGFnvUgGetoiaoKoqoQMEN/71wYDENpJkchbusPW
+         axlHcBgpUJIN4S9ofRUcFrCIrVQAoMMe7aD3kEgI9X+jJqkR1OPqCsL+dHIHwkL8oB
+         dHuZel67E0BvQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <masahiroy@kernel.org>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Lucas De Marchi <lucas.de.marchi@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>, Jessica Yu <jeyu@kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] kbuild: generate modules.builtin without Makefile.modbuiltin or tristate.conf
+Date:   Thu, 19 Dec 2019 17:33:26 +0900
+Message-Id: <20191219083329.5926-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 5:27 AM Dan Robertson <dan@dlrobertson.com> wrote:
 
-> Add devicetree binding for the Bosch BMA400 3-axes ultra-low power
-> accelerometer sensor.
->
-> Signed-off-by: Dan Robertson <dan@dlrobertson.com>
+This series re-implements the way of generating modules.builtin
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Current approach:
+   Collect all CONFIG options with 'tristate' type into tristate.conf,
+   and parse Makefiles to get the list of builtin modules.
 
-Yours,
-Linus Walleij
+New approach:
+   Use MODULE_LICENSE() tags that compiled into vmlinux.
+   This information appears in modules.builtin.info,
+   but trimmed from vmlinux itself. So the image size does
+   not change.
+
+This slightly speeds up builds because Kbuild no longer needs
+to traverse the source tree twice.
+
+Also, the code diff is appealing:
+ 8 files changed, 35 insertions(+), 135 deletions(-)
+
+I think this is OK, but I hope module people can check it.
+
+
+
+Masahiro Yamada (3):
+  kbuild: add stringify helper to quote a string passed to C files
+  kbuild: pass KBUILD_MODFILE when compiling builtin objects
+  kbuild: create modules.builtin without Makefile.modbuiltin or
+    tristate.conf
+
+ Documentation/kbuild/kconfig.rst |  5 ---
+ Makefile                         | 21 +++---------
+ include/linux/module.h           | 12 ++++++-
+ scripts/Kbuild.include           | 10 +++---
+ scripts/Makefile.lib             | 17 ++++++----
+ scripts/Makefile.modbuiltin      | 57 --------------------------------
+ scripts/kconfig/confdata.c       | 45 ++-----------------------
+ scripts/link-vmlinux.sh          |  4 +++
+ 8 files changed, 36 insertions(+), 135 deletions(-)
+ delete mode 100644 scripts/Makefile.modbuiltin
+
+-- 
+2.17.1
+
