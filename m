@@ -2,102 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3EF5127093
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DBD127027
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 23:00:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLSWVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 17:21:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:45120 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726866AbfLSWVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 17:21:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 14:21:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,333,1571727600"; 
-   d="scan'208";a="267347305"
-Received: from dmulla-mobl.amr.corp.intel.com (HELO [10.254.112.28]) ([10.254.112.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 19 Dec 2019 14:21:32 -0800
-Subject: Re: [alsa-devel] [PATCH v6 02/11] mfd: wcd934x: add support to
- wcd9340/wcd9341 codec
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
-Cc:     robh@kernel.org, alsa-devel@alsa-project.org,
-        bgoswami@codeaurora.org, vinod.koul@linaro.org,
-        devicetree@vger.kernel.org, spapothi@codeaurora.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
- <20191219103153.14875-3-srinivas.kandagatla@linaro.org>
- <af48cd71-fa1a-dbc5-0e88-e315ea13c28c@linux.intel.com>
- <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <4492b71e-9923-365c-f22c-3766e2d5bae2@linux.intel.com>
-Date:   Thu, 19 Dec 2019 14:05:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727119AbfLSWAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 17:00:42 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45165 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726866AbfLSWAm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 17:00:42 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 59so9036592otp.12;
+        Thu, 19 Dec 2019 14:00:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UBtNLSUS6Ywl14BNvofHDMyiiz+12f6G6YvH8Y2fDv4=;
+        b=iQQ80VQnJ5dVL+B7BY42H8gKgNGme4c9CVijYbkO84SHLO8tkMHikdkHFXeIP/dSHe
+         jlQD6em8O3N4ipOQtThat1YlDTyCKMBHqssZ3OGrD7x1H0BOqH1hejhnDlgZhFotyMcu
+         qCWl1mww57QUKI1IHLSg+k2ffjV8o18vQaOSKyF6Tpc9lDpxtzv8Qhh5ys8eZOW75FnT
+         3cakEALWD1DYOMc0J5/UeD0ZBaFYDkegYHy5WQXbq/Ove4Yzo0+NrpwI/fc3Cb2K+bW7
+         XP1xmHbwFAXJsGRFmUOQB7FT+s2575Zx+idbovzpbxlx38s3rLBJOHUsIDLHvpatF9bh
+         +Uyw==
+X-Gm-Message-State: APjAAAWDlkuAfC/L9cQvMpKJcSJmQXV7O1cCwNgIK6qWQ7FQtN8Gp10W
+        FCLfywOMVN/cbZ3s6Mf+eRNMu9tzXd8rQPe4LEU=
+X-Google-Smtp-Source: APXvYqwiVD+oDHmcpes3nrdTtRvyPemViEdYSagqOmt9aEw9isgiCAphhYN/oWpii69DP7p7Z5ZTxFbwmHOAJM2v4Xk=
+X-Received: by 2002:a05:6830:1cd3:: with SMTP id p19mr9090434otg.118.1576792841468;
+ Thu, 19 Dec 2019 14:00:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191217104856.24987-1-peter.ujfalusi@ti.com>
+In-Reply-To: <20191217104856.24987-1-peter.ujfalusi@ti.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 19 Dec 2019 23:00:30 +0100
+Message-ID: <CAJZ5v0gFD8AVCoLkeuQ47ab4eqN-9idf=p5jq3Nhc8DbOKBdSw@mail.gmail.com>
+Subject: Re: [PATCH] docs: firmware-guide: acpi: Change dma_request_slave_channel
+ to dma_request_chan
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 17, 2019 at 11:48 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+>
+> dma_request_chan() is the preferred API to request slave channels.
+>
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+>  .../firmware-guide/acpi/enumeration.rst          | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/firmware-guide/acpi/enumeration.rst b/Documentation/firmware-guide/acpi/enumeration.rst
+> index 0a72b6321f5f..c13fee8b02ba 100644
+> --- a/Documentation/firmware-guide/acpi/enumeration.rst
+> +++ b/Documentation/firmware-guide/acpi/enumeration.rst
+> @@ -71,8 +71,8 @@ DMA support
+>  DMA controllers enumerated via ACPI should be registered in the system to
+>  provide generic access to their resources. For example, a driver that would
+>  like to be accessible to slave devices via generic API call
+> -dma_request_slave_channel() must register itself at the end of the probe
+> -function like this::
+> +dma_request_chan() must register itself at the end of the probe function like
+> +this::
+>
+>         err = devm_acpi_dma_controller_register(dev, xlate_func, dw);
+>         /* Handle the error if it's not a case of !CONFIG_ACPI */
+> @@ -112,15 +112,15 @@ could look like::
+>         }
+>         #endif
+>
+> -dma_request_slave_channel() will call xlate_func() for each registered DMA
+> -controller. In the xlate function the proper channel must be chosen based on
+> +dma_request_chan() will call xlate_func() for each registered DMA controller.
+> +In the xlate function the proper channel must be chosen based on
+>  information in struct acpi_dma_spec and the properties of the controller
+>  provided by struct acpi_dma.
+>
+> -Clients must call dma_request_slave_channel() with the string parameter that
+> -corresponds to a specific FixedDMA resource. By default "tx" means the first
+> -entry of the FixedDMA resource array, "rx" means the second entry. The table
+> -below shows a layout::
+> +Clients must call dma_request_chan() with the string parameter that corresponds
+> +to a specific FixedDMA resource. By default "tx" means the first entry of the
+> +FixedDMA resource array, "rx" means the second entry. The table below shows a
+> +layout::
+>
+>         Device (I2C0)
+>         {
+> --
+> Peter
+>
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
-
->> It was my understanding that in SLIMbus the Linux devices are created 
->> at probe time, and when the device reports present this 
->> 'device_status' callback is used to notify the codec driver of a 
->> change. The rationale for this was that the codec driver may control 
->> power switches/gpios that are necessary for the device to appear on 
->> the bus.
-> 
-> We use same rational here to power switch and flip reset pins in device 
-> probe to power up the actual SLIMBus device in device probe.
-> 
-> Only difference here is that the actual SLIMBus device itself is 
-> represented as many child devices based on there functionality.
-> 
-> SLIMBus parent device in this case is MFD device which is created at 
-> probe time. However child devices for that device like gpio controller, 
-> codec, clock controller and soundwire controller are created only after 
-> the device is enumerated on the bus. Before that none of these devices 
-> will be in a position to talk on the bus.
-> 
-> 
->>
->> This argument was used to require an change in the SoundWire 
->> implementation, so we followed this model of creating devices at probe 
->> time based on information reported by ACPI/DT, and used the 
->> 'update_status' callback when the device is present on the bus (which 
->> may happen after a delay or controlled by an external power switch). 
->> This approach can lead to 'ghost devices' described in firmware but 
->> not populated in hardware, and power management opens on how long a 
->> bus needs to remain active if no devices report present.
->>
->> What I understand from the code above is that the devices are actually 
->> created when the SLIMbus device reports PRESENT, which seems a 180 
->> degree change in directions?
->>
-> Note these are the child devices of the MFD SLIMBus device.
-
-Ah ok. I guess the creation of those child devices when the parent 
-SLIMbus device reports PRESENT initially if fine, it's the part where 
-you remove them if the device loses sync or gets powered off which is 
-odd. And I guess technically you could still have race conditions where 
-a child device starts a transaction just as the parent is no longer 
-attached to the bus.
-
->> I would however not remove the devices when the status is down but 
->> only on an explicit .remove.
-> 
-> Am open for suggestions but I would not like the child devices to talk 
-> on the bus once the SLIMbus device is down! Only way to ensure or make 
-> it silent is to remove.
-
-it's as if you are missing a mechanism to forward the parent status to 
-the children so use remove() for lack of a better solution?
+Applying with modified subject as 5.6 material, thanks!
