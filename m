@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AE8B126D6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 949D8126CBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:06:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbfLSSfp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:35:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52374 "EHLO mail.kernel.org"
+        id S1729100AbfLSSpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37264 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726836AbfLSSfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:35:42 -0500
+        id S1728446AbfLSSpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2C9624679;
-        Thu, 19 Dec 2019 18:35:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 953142465E;
+        Thu, 19 Dec 2019 18:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780542;
-        bh=qGW1AnRfHulQuoxOcJ1quQ3TEjBJS6JUQMxrNU41tGI=;
+        s=default; t=1576781102;
+        bh=Pz3oXwnhBnyh5QoKhGy5gN1yyj4plupGvpSL/A4Xxwo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OcxQ0ZO4zYH7gE3YUn36QYBJbZXLmMtdbtam8IZ5DHFTakWFWdF7dPOJH+uq3IdKw
-         XwE2jgBThriX/5jU26+wxNF4N7j3HOSPV1g94Ke1VZc7AecJQX0IRIwAfc4r9vH3We
-         HOFlCwLr7AOWpjRs784fgviV1SFZhoHT4iUn/wGo=
+        b=ss+bMsZwlW7peQgOW5Vq6kh3O95ZonOCVqRs5SPxonWtHMAA5LfCNPLCHlBdWo0L3
+         /DrKLkjtvnKAz2cc3jb3zowMZIJ2AG/Gz06Nf6cM+adBXHIyCvJRemkzO0HsA/CYI0
+         I/3pe6Zg8aguOpZ6b9agy53wF1TJ7wKZTNX7QjUU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Finley Xiao <finley.xiao@rock-chips.com>,
-        Johan Jonker <jbx9999@hotmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 017/162] clk: rockchip: fix rk3188 sclk_smc gate data
-Date:   Thu, 19 Dec 2019 19:32:05 +0100
-Message-Id: <20191219183207.397022772@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 044/199] serial: imx: fix error handling in console_setup
+Date:   Thu, 19 Dec 2019 19:32:06 +0100
+Message-Id: <20191219183217.385205660@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Finley Xiao <finley.xiao@rock-chips.com>
+From: Stefan Agner <stefan@agner.ch>
 
-[ Upstream commit a9f0c0e563717b9f63b3bb1c4a7c2df436a206d9 ]
+[ Upstream commit 63fd4b94b948c14eeb27a3bbf50ea0f7f0593bad ]
 
-Fix sclk_smc gate data.
-Change variable order, flags come before the register address.
+The ipg clock only needs to be unprepared in case preparing
+per clock fails. The ipg clock has already disabled at the point.
 
-Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-Signed-off-by: Johan Jonker <jbx9999@hotmail.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fixes: 1cf93e0d5488 ("serial: imx: remove the uart_console() check")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3188.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index fe728f8dcbe43..986a558c361d6 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -360,8 +360,8 @@ static struct rockchip_clk_branch common_clk_branches[] __initdata = {
- 	 * Clock-Architecture Diagram 4
- 	 */
+diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+index 0d82be145c680..6d596c6351591 100644
+--- a/drivers/tty/serial/imx.c
++++ b/drivers/tty/serial/imx.c
+@@ -1943,7 +1943,7 @@ imx_console_setup(struct console *co, char *options)
  
--	GATE(SCLK_SMC, "sclk_smc", "hclk_peri",
--			RK2928_CLKGATE_CON(2), 4, 0, GFLAGS),
-+	GATE(SCLK_SMC, "sclk_smc", "hclk_peri", 0,
-+			RK2928_CLKGATE_CON(2), 4, GFLAGS),
+ 	retval = clk_prepare(sport->clk_per);
+ 	if (retval)
+-		clk_disable_unprepare(sport->clk_ipg);
++		clk_unprepare(sport->clk_ipg);
  
- 	COMPOSITE_NOMUX(SCLK_SPI0, "sclk_spi0", "pclk_peri", 0,
- 			RK2928_CLKSEL_CON(25), 0, 7, DFLAGS,
+ error_console:
+ 	return retval;
 -- 
 2.20.1
 
