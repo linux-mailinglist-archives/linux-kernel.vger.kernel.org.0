@@ -2,125 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C3CA3126FED
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:46:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA2B6126FE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 22:45:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfLSVqP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 16:46:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727460AbfLSVqA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 16:46:00 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727441AbfLSVph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 16:45:37 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:53726 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727217AbfLSVph (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 16:45:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576791936;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=vQsQ64j8rIzWWFMU2EqmrtWGy2tcICz2bdufNKttS6Y=;
+        b=LPvnJcQV9dkkOiRqx0a5eyRuCTLwMTKaed6PJUdRUf0JhjAm0Np8AJn4270UcOD8aEIqbi
+        3wj/Y/KIb9nnWQYOcEwYg/QebvTCqIFW3fgG9vmkO0fuMoA0f8b+JyUsLG3d2lTWh2giVI
+        RIZ5G1sjwKW1MCexpfES39ZI3UspP5U=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-420-UZ8bwUbMM1-XkVRULI5pig-1; Thu, 19 Dec 2019 16:45:33 -0500
+X-MC-Unique: UZ8bwUbMM1-XkVRULI5pig-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07B6B24687;
-        Thu, 19 Dec 2019 21:46:00 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1ii3cN-000Un0-56; Thu, 19 Dec 2019 16:45:59 -0500
-Message-Id: <20191219214559.014320534@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Thu, 19 Dec 2019 16:44:55 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Kirill Tkhai <tkhai@yandex.ru>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-        "bsegall@google.com" <bsegall@google.com>,
-        "mgorman@suse.de" <mgorman@suse.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [RFC][PATCH 4/4] sched: Micro optimization in pick_next_task() and in
- check_preempt_curr()
-References: <20191219214451.340746474@goodmis.org>
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E6618107ACC5;
+        Thu, 19 Dec 2019 21:45:31 +0000 (UTC)
+Received: from krava (ovpn-204-20.brq.redhat.com [10.40.204.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 805F51001DC0;
+        Thu, 19 Dec 2019 21:45:30 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 22:45:27 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     'Arnaldo Carvalho de Melo' <acme@kernel.org>
+Cc:     "fujita.yuya@fujitsu.com" <fujita.yuya@fujitsu.com>,
+        'Peter Zijlstra' <peterz@infradead.org>,
+        'Ingo Molnar' <mingo@redhat.com>,
+        'Jiri Olsa' <jolsa@kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf tools: Fix variable name's inconsistency in
+ hists__for_each macro
+Message-ID: <20191219214527.GD27481@krava>
+References: <OSAPR01MB1588E1C47AC22043175DE1B2E8520@OSAPR01MB1588.jpnprd01.prod.outlook.com>
+ <20191219085106.GA8141@krava>
+ <20191219165424.GA13699@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219165424.GA13699@kernel.org>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kirill Tkhai <tkhai@yandex.ru>
+On Thu, Dec 19, 2019 at 01:54:24PM -0300, 'Arnaldo Carvalho de Melo' wrote:
+> Em Thu, Dec 19, 2019 at 09:51:06AM +0100, Jiri Olsa escreveu:
+> > On Thu, Dec 19, 2019 at 08:08:32AM +0000, fujita.yuya@fujitsu.com wrote:
+> > > From: Yuya Fujita <fujita.yuya@fujitsu.com>
+> > > 
+> > > Variable names are inconsistent in hists__for_each macro.
+> > > Due to this inconsistency, the macro replaces its second argument with "fmt" 
+> > > regardless of its original name.
+> > > So far it works because only "fmt" is passed to the second argument.
+> > 
+> > hum, I think it works because all the instances that use these macros
+> > have 'fmt' variable passed in
+> 
+> Exactly, that is what he said :-)
 
-This introduces an optimization based on xxx_sched_class addresses
-in two hot scheduler functions: pick_next_task() and check_preempt_curr().
+ugh, I read too fast, sry
 
-It is possible to compare pointers to sched classes to check, which
-of them has a higher priority, instead of current iterations using
-for_each_class().
+jirka
 
-One more result of the patch is that size of object file becomes a little
-less (excluding added BUG_ON(), which goes in __init section):
-
-$size kernel/sched/core.o
-         text     data      bss	    dec	    hex	filename
-before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
-after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
-
-Link: http://lkml.kernel.org/r/711a9c4b-ff32-1136-b848-17c622d548f3@yandex.ru
-
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/sched/core.c | 24 +++++++++---------------
- 1 file changed, 9 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 90e4b00ace89..63401807fcf0 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1416,20 +1416,10 @@ static inline void check_class_changed(struct rq *rq, struct task_struct *p,
- 
- void check_preempt_curr(struct rq *rq, struct task_struct *p, int flags)
- {
--	const struct sched_class *class;
--
--	if (p->sched_class == rq->curr->sched_class) {
-+	if (p->sched_class == rq->curr->sched_class)
- 		rq->curr->sched_class->check_preempt_curr(rq, p, flags);
--	} else {
--		for_each_class(class) {
--			if (class == rq->curr->sched_class)
--				break;
--			if (class == p->sched_class) {
--				resched_curr(rq);
--				break;
--			}
--		}
--	}
-+	else if (p->sched_class > rq->curr->sched_class)
-+		resched_curr(rq);
- 
- 	/*
- 	 * A queue event has occurred, and we're going to schedule.  In
-@@ -3914,8 +3904,7 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	 * higher scheduling class, because otherwise those loose the
- 	 * opportunity to pull in more work from other CPUs.
- 	 */
--	if (likely((prev->sched_class == &idle_sched_class ||
--		    prev->sched_class == &fair_sched_class) &&
-+	if (likely(prev->sched_class <= &fair_sched_class &&
- 		   rq->nr_running == rq->cfs.h_nr_running)) {
- 
- 		p = pick_next_task_fair(rq, prev, rf);
-@@ -6569,6 +6558,11 @@ void __init sched_init(void)
- 	unsigned long ptr = 0;
- 	int i;
- 
-+	BUG_ON(&idle_sched_class > &fair_sched_class ||
-+		&fair_sched_class > &rt_sched_class ||
-+		&rt_sched_class > &dl_sched_class ||
-+		&dl_sched_class > &stop_sched_class);
-+
- 	wait_bit_init();
- 
- #ifdef CONFIG_FAIR_GROUP_SCHED
--- 
-2.24.0
-
+> 
+> Nice catch!
+>  
+> > > However, this behavior is not expected and should be fixed.
+> > > 
+> > > Fixes: f0786af536bb ("perf hists: Introduce hists__for_each_format macro")
+> > > Fixes: aa6f50af822a ("perf hists: Introduce hists__for_each_sort_list macro")
+> > 
+> > nice ;-)
+> > 
+> > Acked-by: Jiri Olsa <jolsa@kernel.org>
+> 
+> Applied.
+>  
+> > thanks,
+> > jirka
+> > 
+> > > Signed-off-by: Yuya Fujita <fujita.yuya@fujitsu.com>
+> > > ---
+> > >  tools/perf/util/hist.h |    4 ++--
+> > >  1 files changed, 2 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+> > > index 4528690..0aa63ae 100644
+> > > --- a/tools/perf/util/hist.h
+> > > +++ b/tools/perf/util/hist.h
+> > > @@ -339,10 +339,10 @@ static inline void perf_hpp__prepend_sort_field(struct perf_hpp_fmt *format)
+> > >  	list_for_each_entry_safe(format, tmp, &(_list)->sorts, sort_list)
+> > >  
+> > >  #define hists__for_each_format(hists, format) \
+> > > -	perf_hpp_list__for_each_format((hists)->hpp_list, fmt)
+> > > +	perf_hpp_list__for_each_format((hists)->hpp_list, format)
+> > >  
+> > >  #define hists__for_each_sort_list(hists, format) \
+> > > -	perf_hpp_list__for_each_sort_list((hists)->hpp_list, fmt)
+> > > +	perf_hpp_list__for_each_sort_list((hists)->hpp_list, format)
+> > >  
+> > >  extern struct perf_hpp_fmt perf_hpp__format[];
+> > >  
+> > > -- 
+> > > 1.7.1
+> > > 
+> 
+> -- 
+> 
+> - Arnaldo
+> 
 
