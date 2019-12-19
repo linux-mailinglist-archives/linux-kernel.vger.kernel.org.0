@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4594126C0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4340B126BEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:00:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730343AbfLSTBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:01:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45678 "EHLO mail.kernel.org"
+        id S1730094AbfLSTAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:00:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729870AbfLSSvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:51:25 -0500
+        id S1730238AbfLSSwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:52:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 876962467F;
-        Thu, 19 Dec 2019 18:51:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06888227BF;
+        Thu, 19 Dec 2019 18:52:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781484;
-        bh=QXdiI/ulzS+Uh0MfYsWtw0lyrQyJtkOT3X4Om3aBep4=;
+        s=default; t=1576781532;
+        bh=CAsP/cz+uN6p3m+stKxFiBXB48v0Z5X4p7HEq9Umdws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bkNTku7Lyi9IIVonQRfKRnL9OgbWYP6x5bQXIlnVlmlcqqDYomm+wfSIZH2UdbOO9
-         WofPNJa+dXxMSbFOU+I2Hs5ctRKcLTS2hJOaQlgmpwOUzhr4iuXgGZlV8OObLvF2IN
-         kVH08buNGqejyqTCExiEaWSQsf0CAGlPJu9387so=
+        b=dZugztOwSl+NStGeVDEY1AIQalLzKVqNNcXAUr+iks+RPUTEw7IJ3vQJqEyhl2ag0
+         mIcKdKkuzi9JFzCXY5mn4qM+I1cuPI2OOKhe76elaGTzTeSeQhIWQ4+slIJAPQgkfw
+         J82sO6ZxBrVc0KzPP/FBTiYXZHU8sTeZuDj8UHRY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Lew <clew@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH 4.14 19/36] rpmsg: glink: Set tail pointer to 0 at end of FIFO
-Date:   Thu, 19 Dec 2019 19:34:36 +0100
-Message-Id: <20191219182908.061383143@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.19 23/47] xtensa: fix TLB sanity checker
+Date:   Thu, 19 Dec 2019 19:34:37 +0100
+Message-Id: <20191219182927.391060732@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
-References: <20191219182848.708141124@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +42,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Lew <clew@codeaurora.org>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 4623e8bf1de0b86e23a56cdb39a72f054e89c3bd upstream.
+commit 36de10c4788efc6efe6ff9aa10d38cb7eea4c818 upstream.
 
-When wrapping around the FIFO, the remote expects the tail pointer to
-be reset to 0 on the edge case where the tail equals the FIFO length.
+Virtual and translated addresses retrieved by the xtensa TLB sanity
+checker must be consistent, i.e. correspond to the same state of the
+checked TLB entry. KASAN shadow memory is mapped dynamically using
+auto-refill TLB entries and thus may change TLB state between the
+virtual and translated address retrieval, resulting in false TLB
+insanity report.
+Move read_xtlb_translation close to read_xtlb_virtual to make sure that
+read values are consistent.
 
-Fixes: caf989c350e8 ("rpmsg: glink: Introduce glink smem based transport")
 Cc: stable@vger.kernel.org
-Signed-off-by: Chris Lew <clew@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Fixes: a99e07ee5e88 ("xtensa: check TLB sanity on return to userspace")
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/rpmsg/qcom_glink_smem.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/xtensa/mm/tlb.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/rpmsg/qcom_glink_smem.c
-+++ b/drivers/rpmsg/qcom_glink_smem.c
-@@ -119,7 +119,7 @@ static void glink_smem_rx_advance(struct
- 	tail = le32_to_cpu(*pipe->tail);
+--- a/arch/xtensa/mm/tlb.c
++++ b/arch/xtensa/mm/tlb.c
+@@ -216,6 +216,8 @@ static int check_tlb_entry(unsigned w, u
+ 	unsigned tlbidx = w | (e << PAGE_SHIFT);
+ 	unsigned r0 = dtlb ?
+ 		read_dtlb_virtual(tlbidx) : read_itlb_virtual(tlbidx);
++	unsigned r1 = dtlb ?
++		read_dtlb_translation(tlbidx) : read_itlb_translation(tlbidx);
+ 	unsigned vpn = (r0 & PAGE_MASK) | (e << PAGE_SHIFT);
+ 	unsigned pte = get_pte_for_vaddr(vpn);
+ 	unsigned mm_asid = (get_rasid_register() >> 8) & ASID_MASK;
+@@ -231,8 +233,6 @@ static int check_tlb_entry(unsigned w, u
+ 	}
  
- 	tail += count;
--	if (tail > pipe->native.length)
-+	if (tail >= pipe->native.length)
- 		tail -= pipe->native.length;
- 
- 	*pipe->tail = cpu_to_le32(tail);
+ 	if (tlb_asid == mm_asid) {
+-		unsigned r1 = dtlb ? read_dtlb_translation(tlbidx) :
+-			read_itlb_translation(tlbidx);
+ 		if ((pte ^ r1) & PAGE_MASK) {
+ 			pr_err("%cTLB: way: %u, entry: %u, mapping: %08x->%08x, PTE: %08x\n",
+ 					dtlb ? 'D' : 'I', w, e, r0, r1, pte);
 
 
