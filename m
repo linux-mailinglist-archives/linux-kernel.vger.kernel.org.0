@@ -2,100 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD3A1126DBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7A8126CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:07:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfLSTL7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:11:59 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:60540 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727419AbfLSSh3 (ORCPT
+        id S1728857AbfLSTHL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:07:11 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41860 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728137AbfLSSnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:29 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJIRKut040429;
-        Thu, 19 Dec 2019 18:37:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=6VMYi03ucpKRxaK+aRiAulrKES+92kJ5vwbETKnXJTg=;
- b=nP0dp7dl8t4EUJQ7Fi36v526PnHIr5hBJ1CC4MzOPmHOjnffyiYdVCZ5CP3OGWfYn6IZ
- XRwFksgGgXkNjofQI2nKX+5hAmif8v5PQx1v8WFHFlR+B5f22yQbc7S+1Hp/CDtHJNJD
- rW4+zELA/c+zkuO0QwUXNcG5/R4YGqzk5YGqMwL0AI+rsvDiyJk2DAmMb4EfU6LXWUSB
- AH2O5oMrzYSOSJTrQVVoNFYoiT47iHdhq13u6HFghFj6h7D9TYCJUrhnzbFr/Qn/Q4sD
- NQPrX1MBqADjqBFDvzjTVYG3TBM1p23/zJT2wkDqi2W9FCCji9nClagDdctNA38M3/50 ag== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2x0ag11p43-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 18:37:18 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJGEKcj035094;
-        Thu, 19 Dec 2019 18:37:18 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2wyxqj3x8h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 18:37:17 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBJIbGuk032674;
-        Thu, 19 Dec 2019 18:37:16 GMT
-Received: from [192.168.1.2] (/98.210.179.99)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 19 Dec 2019 10:37:16 -0800
-Subject: Re: [PATCH v2 1/2] Introduce maximum WQE size to check limits
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     monis@mellanox.com, dledford@redhat.com, sean.hefty@intel.com,
-        hal.rosenstock@gmail.com, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1574106879-19211-1-git-send-email-rao.shoaib@oracle.com>
- <1574106879-19211-2-git-send-email-rao.shoaib@oracle.com>
- <20191119203138.GA13145@ziepe.ca>
- <44d1242a-fc32-9918-dd53-cd27ebf61811@oracle.com>
- <20191119231334.GO4991@ziepe.ca>
- <dff3da9b-06a3-3904-e9eb-7feaa1ae9e01@oracle.com>
- <20191120000840.GQ4991@ziepe.ca>
- <ccceac68-db4f-77a3-500d-12f60a8a1354@oracle.com>
- <20191219182511.GI17227@ziepe.ca>
-From:   Rao Shoaib <rao.shoaib@oracle.com>
-Message-ID: <91987df4-8853-a087-97a0-a2f09f906340@oracle.com>
-Date:   Thu, 19 Dec 2019 10:37:15 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Thu, 19 Dec 2019 13:43:23 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r27so8339997otc.8;
+        Thu, 19 Dec 2019 10:43:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ATCr26B2OQVBaMy930gvC8+YwzqQLoxjbV1kq1l7KCk=;
+        b=CjcHXC7bZXk5AsbMcdwa+6cfASsiCGVz+wR56vMtBUcxd5jDPbYMhnK4oYaexzOTug
+         u4tPYpYd/NxUejUhl6V7DD2j/rnc9CjQfNcFAWc4DBZdm9V3DWI+h0I3aHq1myFSFS+Q
+         8ybcBFLJBnTCDB+UTlzxm7b+10RKjTQ1PgQnXPLnPITiKn2/zZkuYp1hnOOVWKzCah2B
+         ssY7r1rMqo+YB98MYw6hQF8ir91mb6C92kPJbgAwLQ8LkUtqYirtdsiJVI8v97ZB2Cny
+         OdpTnwj6ZdsRbOc19lj+G07GCvVQ711SdE7AjTqev9emjZquJkqr6Q5ZVug8Hxeogqma
+         sUoA==
+X-Gm-Message-State: APjAAAXB2965kvh0ogAd3ywbMTXMzOc2chjy2Dto3hLAktctn5Mx8Cop
+        ycUUAzUva8gjldq+f1tmWbD5vYRMlQ==
+X-Google-Smtp-Source: APXvYqzHVHy4Y8bxjQIOFjcCok4NiCDbPD19EFZ7LpJjtchr7wNNUALhEQj3m9Oz59bjfHKnScEnxw==
+X-Received: by 2002:a9d:6d06:: with SMTP id o6mr10381223otp.239.1576781002486;
+        Thu, 19 Dec 2019 10:43:22 -0800 (PST)
+Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
+        by smtp.gmail.com with ESMTPSA id r205sm2279361oih.54.2019.12.19.10.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 10:43:21 -0800 (PST)
+Date:   Thu, 19 Dec 2019 12:43:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     shubhrajyoti.datta@gmail.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        michal.simek@xilinx.com, gregkh@linuxfoundation.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH v2 2/2] devicetree: bindings: Add the binding doc for
+ xilinx APM
+Message-ID: <20191219184318.GA13328@bogus>
+References: <1575901405-3084-1-git-send-email-shubhrajyoti.datta@gmail.com>
+ <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191219182511.GI17227@ziepe.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=707
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912190135
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=746 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912190135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1575901405-3084-2-git-send-email-shubhrajyoti.datta@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jason,
+On Mon, Dec 09, 2019 at 07:53:25PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> 
+> Add the devicetree binding for xilinx APM.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+> v2:
+> patch added
+> 
+>  .../devicetree/bindings/perf/xilinx_apm.txt        | 44 ++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/perf/xilinx_apm.txt
 
-I thought I had addressed the comments and literally did what you 
-suggested. Sorry if I missed something, can you please point it out.
+As Michal said, DT schema please.
+> 
+> diff --git a/Documentation/devicetree/bindings/perf/xilinx_apm.txt b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
+> new file mode 100644
+> index 0000000..a11c82e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/perf/xilinx_apm.txt
+> @@ -0,0 +1,44 @@
+> +* Xilinx AXI Performance monitor IP
+> +
+> +Required properties:
+> +- compatible: "xlnx,axi-perf-monitor"
 
-Shoaib
+Version?
 
-On 12/19/19 10:25 AM, Jason Gunthorpe wrote:
-> On Tue, Dec 17, 2019 at 11:38:52AM -0800, Rao Shoaib wrote:
->> Any update on my patch?
->>
->> If there is some change needed please let me know.
-> You need to repost it with the comments addressed
->
-> https://patchwork.kernel.org/patch/11250179/
->
-> Jason
->
+> +- interrupts: Should contain APM interrupts.
+> +- interrupt-parent: Must be core interrupt controller.
+
+Drop this.
+
+> +- reg: Should contain APM registers location and length.
+> +- xlnx,enable-profile: Enables the profile mode.
+> +- xlnx,enable-trace: Enables trace mode.
+> +- xlnx,num-monitor-slots: Maximum number of slots in APM.
+> +- xlnx,enable-event-count: Enable event count.
+> +- xlnx,enable-event-log: Enable event logging.
+> +- xlnx,have-sampled-metric-cnt:Sampled metric counters enabled in APM.
+> +- xlnx,num-of-counters: Number of counters in APM
+> +- xlnx,metric-count-width: Metric Counter width (32/64)
+> +- xlnx,metrics-sample-count-width: Sampled metric counter width
+> +- xlnx,global-count-width: Global Clock counter width
+
+All these synthesis time config and not discoverable?
+
+Tell h/w designers to add feature registers so all this is 
+discoverable. </rant>
+
+> +- clocks: Input clock specifier.
+> +
+> +Optional properties:
+> +- xlnx,id-filter-32bit: APM is in 32-bit mode
+> +
+> +Example:
+> +++++++++
+> +
+> +apm: apm@44a00000 {
+> +    compatible = "xlnx,axi-perf-monitor";
+> +    interrupt-parent = <&axi_intc_1>;
+> +    interrupts = <1 2>;
+> +    reg = <0x44a00000 0x1000>;
+> +    clocks = <&clkc 15>;
+> +    xlnx,enable-profile = <0>;
+> +    xlnx,enable-trace = <0>;
+> +    xlnx,num-monitor-slots = <4>;
+> +    xlnx,enable-event-count = <1>;
+> +    xlnx,enable-event-log = <1>;
+> +    xlnx,have-sampled-metric-cnt = <1>;
+> +    xlnx,num-of-counters = <8>;
+> +    xlnx,metric-count-width = <32>;
+> +    xlnx,metrics-sample-count-width = <32>;
+> +    xlnx,global-count-width = <32>;
+> +    xlnx,metric-count-scale = <1>;
+> +    xlnx,id-filter-32bit;
+> +};
+> -- 
+> 2.1.1
+> 
