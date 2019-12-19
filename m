@@ -2,209 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A1E512677F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9002F12671B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:32:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726935AbfLSQ6m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:58:42 -0500
-Received: from mga02.intel.com ([134.134.136.20]:14807 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbfLSQ6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:58:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 08:58:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,332,1571727600"; 
-   d="scan'208";a="228308842"
-Received: from dpshah-mobl1.amr.corp.intel.com (HELO [10.254.191.243]) ([10.254.191.243])
-  by orsmga002.jf.intel.com with ESMTP; 19 Dec 2019 08:58:40 -0800
-Subject: Re: [alsa-devel] [PATCH v5 2/2] soundwire: qcom: add support for
- SoundWire controller
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        vkoul@kernel.org
-Cc:     robh@kernel.org, bgoswami@codeaurora.org, broonie@kernel.org,
-        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, spapothi@codeaurora.org
-References: <20191219092842.10885-1-srinivas.kandagatla@linaro.org>
- <20191219092842.10885-3-srinivas.kandagatla@linaro.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <c791e241-cd71-4c05-dac5-04e3ecaaf995@linux.intel.com>
-Date:   Thu, 19 Dec 2019 10:07:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727005AbfLSQcW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:32:22 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37408 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726855AbfLSQcV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 11:32:21 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f129so6289110wmf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:32:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CSJhDs+idA5i15qY0cV5g4g/iFY0uQiRgrR8CPqPVSM=;
+        b=BpYWgUdRl0eRXOIWAcU433Q43vwSWIlqGYUsv/yFhLn2mUs5YSJMn2aZXab2PwV3B4
+         OULs1AAdt70Nxb7nGXYifJWKKv/p/azTb3IiL/CIudz8e3poW4d9EEJnevapQHDrY+2g
+         60dqb97fKwdXYmh6+DoI/Z4/H+CMgNEZL8ZDo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CSJhDs+idA5i15qY0cV5g4g/iFY0uQiRgrR8CPqPVSM=;
+        b=eYnrQJK4XnOg+LMMk3eiVjIH5IYrP/VA/ge5QAM92sJRU8ofl948IdPezCx1N/Lggh
+         zaHwEaKH7sUGBHPA5MfBlyZ5Iw56pFNzE4c+KCE+3SO11eEH5C4tNF+f9475PVjfcTYB
+         ZN/617Q/TjG3IqV7ZXG5+aQOPZW1Dr+pJzns65U+m2M6DI6lI4U8FkNdvu/7RBKqQM63
+         VUegio+OmWLdBnIKq7V1aY2/1xG+UuXG2KxArngGZMo6ybaW4RJ1up4FXiaK7+POa8ey
+         EDxijY4KdD9LrzpfuisYP6W11RrXju9I+ODwA57TGvWuSyTvrfYk8R851dOkAo8Va+MR
+         ZQWw==
+X-Gm-Message-State: APjAAAUlgvOXxEvIWFLlQNar4aZdRyj+iqj9ygbFIWd4KC+7Aw1XY2BU
+        pwPlhnP3PcB23YoHewBnWl4tPTrd0du192Nmy+OwJfUF8Gg=
+X-Google-Smtp-Source: APXvYqwxWdg1BrVmDIVN4oLwnu28aYRPTQAChh10jcApQWJojYvRePOj7s8dQvmhClMuLhaFhTvv4w6m/euxO7vbkUQ=
+X-Received: by 2002:a7b:c00c:: with SMTP id c12mr10925795wmb.174.1576773139080;
+ Thu, 19 Dec 2019 08:32:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191219092842.10885-3-srinivas.kandagatla@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20191216161650.21844-1-lukasz.luba@arm.com> <20191218120900.GA28599@bogus>
+ <7b59a2f1-0786-d24f-a653-76a60c15a8ae@broadcom.com>
+In-Reply-To: <7b59a2f1-0786-d24f-a653-76a60c15a8ae@broadcom.com>
+From:   Jim Quinlan <james.quinlan@broadcom.com>
+Date:   Thu, 19 Dec 2019 11:32:07 -0500
+Message-ID: <CA+-6iNxn29WpUrbc9gL4EMTJfZj7FRCeO-_QaUqbjJYd1JAEKA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] include: trace: Add SCMI header with trace events
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     lukasz.luba@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, mingo@redhat.com, rostedt@goodmis.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> I also see a stretch of over 100 (contiguous) of these
+>
+> ... scmi_rx_done: transfer_id=48321 msg_id=7 protocol_id=128 seq=0 msg_type=0
+> ... scmi_rx_done: transfer_id=48322 msg_id=8 protocol_id=128 seq=0 msg_type=0
+> ... scmi_rx_done: transfer_id=48323 msg_id=7 protocol_id=128 seq=0 msg_type=0
+> ... scmi_rx_done: transfer_id=48324 msg_id=8 protocol_id=128 seq=0 msg_type=0
+>
+> which I cannot explain -- perhaps ftrace doesn't work well in interrupt context?
 
+Hello,
+Please ignore my previous results; I've switched to using 'nop' as the
+current_tracer and the above issue has cleared up.  I now get traces
+like below:
 
-On 12/19/19 3:28 AM, Srinivas Kandagatla wrote:
-> Qualcomm SoundWire Master controller is present in most Qualcomm SoCs
-> either integrated as part of WCD audio codecs via slimbus or
-> as part of SOC I/O.
-> 
-> This patchset adds support to a very basic controller which has been
-> tested with WCD934x SoundWire controller connected to WSA881x smart
-> speaker amplifiers.
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+          <idle>-0     [000] d.h.   907.608763: scmi_rx_done:
+transfer_id=10599 msg_id=7 protocol_id=128 seq=2 msg_type=0
+       t1-sensor-1817  [003] ....   907.608879: scmi_xfer_begin:
+transfer_id=10601 msg_id=6 protocol_id=21 seq=1 poll=0
+         t0-brcm-1815  [000] d.h.   907.614133: scmi_rx_done:
+transfer_id=10600 msg_id=7 protocol_id=20 seq=0 msg_type=0
+         t0-brcm-1815  [000] ....   907.614189: scmi_xfer_end:
+transfer_id=10599 msg_id=7 protocol_id=128 seq=2 status=0
+         t0-brcm-1815  [000] ....   907.614215: scmi_xfer_begin:
+transfer_id=10602 msg_id=8 protocol_id=128 seq=2 poll=0
+          <idle>-0     [000] d.h.   907.616380: scmi_rx_done:
+transfer_id=10601 msg_id=6 protocol_id=21 seq=1 msg_type=0
+        t2-clock-1818  [003] ....   907.616418: scmi_xfer_end:
+transfer_id=10600 msg_id=7 protocol_id=20 seq=0 status=0
+        t2-clock-1818  [003] ....   907.616440: scmi_xfer_begin:
+transfer_id=10603 msg_id=7 protocol_id=20 seq=0 poll=0
+       t1-sensor-1817  [003] ....   907.616474: scmi_xfer_end:
+transfer_id=10601 msg_id=6 protocol_id=21 seq=1 status=0
+          <idle>-0     [000] d.h.   907.616478: scmi_rx_done:
+transfer_id=10602 msg_id=8 protocol_id=128 seq=2 msg_type=0
+         t0-brcm-1815  [000] d.h.   907.616526: scmi_rx_done:
+transfer_id=10603 msg_id=7 protocol_id=20 seq=0 msg_type=0
+         t0-brcm-1815  [000] ....   907.616559: scmi_xfer_end:
+transfer_id=10602 msg_id=8 protocol_id=128 seq=2 status=0
+         t0-brcm-1815  [000] .n..   907.616588: scmi_xfer_begin:
+transfer_id=10604 msg_id=7 protocol_id=128 seq=1 poll=0
+       t1-sensor-1817  [003] ....   907.616628: scmi_xfer_begin:
+transfer_id=10605 msg_id=6 protocol_id=21 seq=2 poll=0
+        t2-clock-1818  [003] ....   907.616660: scmi_xfer_end:
+transfer_id=10603 msg_id=7 protocol_id=20 seq=0 status=0
+          <idle>-0     [000] d.h.   907.616665: scmi_rx_done:
+transfer_id=10604 msg_id=7 protocol_id=128 seq=1 msg_type=0
+        t2-clock-1818  [003] ....   907.616673: scmi_xfer_begin:
+transfer_id=10606 msg_id=7 protocol_id=20 seq=0 poll=0
+         t0-brcm-1815  [000] d.h.   907.618782: scmi_rx_done:
+transfer_id=10605 msg_id=6 protocol_id=21 seq=2 msg_type=0
+       t1-sensor-1817  [003] ....   907.618829: scmi_xfer_end:
+transfer_id=10605 msg_id=6 protocol_id=21 seq=2 status=0
+         t0-brcm-1815  [000] dnH.   907.618834: scmi_rx_done:
+transfer_id=10606 msg_id=7 protocol_id=20 seq=0 msg_type=0
+         t0-brcm-1815  [000] .n..   907.618855: scmi_xfer_end:
+transfer_id=10604 msg_id=7 protocol_id=128 seq=1 status=0
+         t0-brcm-1815  [000] .n..   907.618873: scmi_xfer_begin:
+transfer_id=10607 msg_id=8 protocol_id=128 seq=1 poll=0
+        t2-clock-1818  [003] ....   907.618890: scmi_xfer_end:
+transfer_id=10606 msg_id=7 protocol_id=20 seq=0 status=0
+       rcu_sched-7     [000] d.h.   907.618898: scmi_rx_done:
+transfer_id=10607 msg_id=8 protocol_id=128 seq=1 msg_type=0
+         t0-brcm-1815  [000] ....   907.618934: scmi_xfer_end:
+transfer_id=10607 msg_id=8 protocol_id=128 seq=1 status=0
+         t3-brcm-1819  [003] ....   907.618958: scmi_xfer_begin:
+transfer_id=10608 msg_id=7 protocol_id=128 seq=0 poll=0
+          <idle>-0     [000] d.h.   907.618974: scmi_rx_done:
+transfer_id=10608 msg_id=7 protocol_id=128 seq=0 msg_type=0
+         t3-brcm-1819  [003] ....   907.619005: scmi_xfer_end:
+transfer_id=10608 msg_id=7 protocol_id=128 seq=0 status=0
+         t3-brcm-1819  [003] ....   907.619013: scmi_xfer_begin:
+transfer_id=10609 msg_id=8 protocol_id=128 seq=0 poll=0
 
-This looks quite good, I only have a couple of nit-picks/questions below.
-> +static int qcom_swrm_abh_reg_read(struct qcom_swrm_ctrl *ctrl, int reg,
-> +				  u32 *val)
-> +{
-> +	struct regmap *wcd_regmap = ctrl->regmap;
-> +	int ret;
-> +
-> +	/* pg register + offset */
-> +	ret = regmap_bulk_write(wcd_regmap, SWRM_AHB_BRIDGE_RD_ADDR_0,
-> +			  (u8 *)&reg, 4);
-> +	if (ret < 0)
-> +		return SDW_CMD_FAIL;
-> +
-> +	ret = regmap_bulk_read(wcd_regmap, SWRM_AHB_BRIDGE_RD_DATA_0,
-> +			       val, 4);
-> +	if (ret < 0)
-> +		return SDW_CMD_FAIL;
-> +
-> +	return SDW_CMD_OK;
-> +}
+And with V2 having the added xfer id allows me to more easily post
+process the above with a script and highlight messages that took too
+long (round trip times > 3msec get a double asterisk):
 
-I think I asked the question before but don't remember the answer so you 
-may want to add a comment explaining why SDW_CMD_IGNORED is not a 
-possible return value?
+     10585      0.02 ms  proto=128  cmd=8  seq=0
+     10586      2.16 ms  proto= 21  cmd=6  seq=0
+     10587      0.87 ms  proto=128  cmd=7  seq=1
+     10588      0.02 ms  proto=128  cmd=8  seq=0
+     10589      0.05 ms  proto=128  cmd=7  seq=0
+     10590      2.15 ms  proto= 21  cmd=6  seq=1
+     10591      2.19 ms  proto=128  cmd=8  seq=0
+     10592      2.13 ms  proto= 21  cmd=6  seq=0
+     10593      0.03 ms  proto=128  cmd=7  seq=0
+     10594      0.02 ms  proto=128  cmd=8  seq=0
+     10595      0.02 ms  proto=128  cmd=7  seq=0
+     10596      0.02 ms  proto=128  cmd=8  seq=0
+     10597  **  7.16 ms  proto= 20  cmd=7  seq=0
+     10598  **  7.12 ms  proto= 21  cmd=6  seq=1
+     10599  ** 11.58 ms  proto=128  cmd=7  seq=2
+     10600  **  9.28 ms  proto= 20  cmd=7  seq=0
+     10601  **  7.60 ms  proto= 21  cmd=6  seq=1
+     10602      2.34 ms  proto=128  cmd=8  seq=2
+     10603      0.22 ms  proto= 20  cmd=7  seq=0
+     10604      2.27 ms  proto=128  cmd=7  seq=1
+     10605      2.20 ms  proto= 21  cmd=6  seq=2
 
-The BER is supposed to be very very low but there is a non-zero 
-possibility of a device losing sync.
+So I do find the extra msg id helpful as well as the extra traceprint.
 
-> +
-> +static int qcom_swrm_ahb_reg_write(struct qcom_swrm_ctrl *ctrl,
-> +				   int reg, int val)
-> +{
-> +	struct regmap *wcd_regmap = ctrl->regmap;
-> +	int ret;
-> +	/* pg register + offset */
-> +	ret = regmap_bulk_write(wcd_regmap, SWRM_AHB_BRIDGE_WR_DATA_0,
-> +			  (u8 *)&val, 4);
-> +	if (ret)
-> +		return SDW_CMD_FAIL;
-> +
-> +	/* write address register */
-> +	ret = regmap_bulk_write(wcd_regmap, SWRM_AHB_BRIDGE_WR_ADDR_0,
-> +			  (u8 *)&reg, 4);
-> +	if (ret)
-> +		return SDW_CMD_FAIL;
-> +
-> +	return SDW_CMD_OK;
-> +}
-
-same here, how is a CMD_IGNORED case handled?
-
-> +
-> +static int qcom_swrm_cmd_fifo_wr_cmd(struct qcom_swrm_ctrl *ctrl, u8 cmd_data,
-> +				     u8 dev_addr, u16 reg_addr)
-> +{
-> +	DECLARE_COMPLETION_ONSTACK(comp);
-> +	unsigned long flags;
-> +	u32 val;
-> +	int ret;
-> +
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = &comp;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +	val = SWRM_REG_VAL_PACK(cmd_data, dev_addr,
-> +				SWRM_SPECIAL_CMD_ID, reg_addr);
-> +	ret = ctrl->reg_write(ctrl, SWRM_CMD_FIFO_WR_CMD, val);
-> +	if (ret)
-> +		goto err;
-
-the code is a bit inconsistent at the moment on how errors are handled.
-In some cases you explicitly test for errors, but ...
-
-
-> +
-> +	for (i = 0; i < len; i++) {
-> +		ctrl->reg_read(ctrl, SWRM_CMD_FIFO_RD_FIFO_ADDR, &val);
-
-... here you don't ...
-
-> +		rval[i] = val & 0xFF;
-> +	}
-> +
-> +err:
-> +	spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +	ctrl->comp = NULL;
-> +	spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static void qcom_swrm_get_device_status(struct qcom_swrm_ctrl *ctrl)
-> +{
-> +	u32 val;
-> +	int i;
-> +
-> +	ctrl->reg_read(ctrl, SWRM_MCP_SLV_STATUS, &val);
-
-... and not here ...
-
-> +
-> +	for (i = 0; i < SDW_MAX_DEVICES; i++) {
-> +		u32 s;
-> +
-> +		s = (val >> (i * 2));
-> +		s &= SWRM_MCP_SLV_STATUS_MASK;
-> +		ctrl->status[i] = s;
-> +	}
-> +}
-> +
-> +static irqreturn_t qcom_swrm_irq_handler(int irq, void *dev_id)
-> +{
-> +	struct qcom_swrm_ctrl *ctrl = dev_id;
-> +	u32 sts, value;
-> +	unsigned long flags;
-> +
-> +	ctrl->reg_read(ctrl, SWRM_INTERRUPT_STATUS, &sts);
-
-... and here same the reg_read/writes are no longer tested for?
-
-> +
-> +	if (sts & SWRM_INTERRUPT_STATUS_CMD_ERROR) {
-> +		ctrl->reg_read(ctrl, SWRM_CMD_FIFO_STATUS, &value);
-> +		dev_err_ratelimited(ctrl->dev,
-> +				    "CMD error, fifo status 0x%x\n",
-> +				     value);
-> +		ctrl->reg_write(ctrl, SWRM_CMD_FIFO_CMD, 0x1);
-> +	}
-> +
-> +	if ((sts & SWRM_INTERRUPT_STATUS_NEW_SLAVE_ATTACHED) ||
-> +	    sts & SWRM_INTERRUPT_STATUS_CHANGE_ENUM_SLAVE_STATUS)
-> +		schedule_work(&ctrl->slave_work);
-> +
-> +	ctrl->reg_write(ctrl, SWRM_INTERRUPT_CLEAR, sts);
-
-is it intentional to clear the interrupts first, before doing additional 
-checks?
-
-Or could it be done immediately after reading the status. It's not clear 
-to me if the position of this clear matters, and if yes you should 
-probably add a comment?
-
-> +
-> +	if (sts & SWRM_INTERRUPT_STATUS_SPECIAL_CMD_ID_FINISHED) {
-> +		spin_lock_irqsave(&ctrl->comp_lock, flags);
-> +		if (ctrl->comp)
-> +			complete(ctrl->comp);
-> +		spin_unlock_irqrestore(&ctrl->comp_lock, flags);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-The rest looks fine. nice work.
+Regards,
+Jim Quinlan
