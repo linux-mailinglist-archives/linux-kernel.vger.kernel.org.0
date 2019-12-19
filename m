@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 772C4126D74
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2A9126DCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfLSSgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:36:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
+        id S1727735AbfLSTNA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:13:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727411AbfLSSgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:36:02 -0500
+        id S1726984AbfLSSgE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:36:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 584202467B;
-        Thu, 19 Dec 2019 18:36:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9E052467E;
+        Thu, 19 Dec 2019 18:36:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780561;
-        bh=k2Tugx47zeg+LMX++8o2J3UvSOhXZuufBvGIQnE3IIw=;
+        s=default; t=1576780564;
+        bh=NgaDp8ria1OxDrw2K/1iYyfGnKeCvu5YH/rIDxYsvHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RJGyTSc+xIfqnbapY2y8sxnOHEteXropBRt91jV4dPwCWFHkrVyFwYCBQhfFN8GlC
-         ulQP6E4PbwZwZ1GBexsmOAipegWaDsy+IZra/qW5lP9bqIkK14gUt99wfAHk+S2kOd
-         UaQ6ZVvB/JB5kdjLs03WEaz2C1LamnZad08NYdas=
+        b=Qz6WLU/mEOukgAhCFkPIqWW+KYk/nxY9C1JG/aZ3zCCxVJ3rZNQyHyPvRvJWy/SKk
+         pbALWxxwtt2fG6GuQnzQPhlQEftnTRKfOza7v4Sc259dYxDIdcmyU3mT3rmb4o8fLs
+         fOKWuVKsWJ2PF/1/c6aiArRktfKJ3j+jHwVAZFQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Cheng-Yi Chiang <cychiang@chromium.org>,
-        Mark Brown <broonie@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@linux-mips.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 024/162] regulator: Fix return value of _set_load() stub
-Date:   Thu, 19 Dec 2019 19:32:12 +0100
-Message-Id: <20191219183208.988306001@linuxfoundation.org>
+Subject: [PATCH 4.4 025/162] MIPS: OCTEON: octeon-platform: fix typing
+Date:   Thu, 19 Dec 2019 19:32:13 +0100
+Message-Id: <20191219183209.053268444@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
 References: <20191219183150.477687052@linuxfoundation.org>
@@ -45,37 +46,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Brown <broonie@kernel.org>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-[ Upstream commit f1abf67217de91f5cd3c757ae857632ca565099a ]
+[ Upstream commit 2cf1c8933dd93088cfb5f8f58b3bb9bbdf1781b9 ]
 
-The stub implementation of _set_load() returns a mode value which is
-within the bounds of valid return codes for success (the documentation
-just says that failures are negative error codes) but not sensible or
-what the actual implementation does.  Fix it to just return 0.
+Use correct type for fdt_property nameoff field.
 
-Reported-by: Cheng-Yi Chiang <cychiang@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21204/
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/regulator/consumer.h | 2 +-
+ arch/mips/cavium-octeon/octeon-platform.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index 9e0e76992be08..bf62713af290e 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -485,7 +485,7 @@ static inline unsigned int regulator_get_mode(struct regulator *regulator)
+diff --git a/arch/mips/cavium-octeon/octeon-platform.c b/arch/mips/cavium-octeon/octeon-platform.c
+index 6df3a4ea77fc5..a56620cb7cad2 100644
+--- a/arch/mips/cavium-octeon/octeon-platform.c
++++ b/arch/mips/cavium-octeon/octeon-platform.c
+@@ -485,7 +485,7 @@ static void __init octeon_fdt_set_phy(int eth, int phy_addr)
+ 	if (phy_addr >= 256 && alt_phy > 0) {
+ 		const struct fdt_property *phy_prop;
+ 		struct fdt_property *alt_prop;
+-		u32 phy_handle_name;
++		fdt32_t phy_handle_name;
  
- static inline int regulator_set_load(struct regulator *regulator, int load_uA)
- {
--	return REGULATOR_MODE_NORMAL;
-+	return 0;
- }
- 
- static inline int regulator_allow_bypass(struct regulator *regulator,
+ 		/* Use the alt phy node instead.*/
+ 		phy_prop = fdt_get_property(initial_boot_params, eth, "phy-handle", NULL);
 -- 
 2.20.1
 
