@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FA82126A74
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D9A591269D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729263AbfLSSr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40310 "EHLO mail.kernel.org"
+        id S1727985AbfLSSlX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:41:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728808AbfLSSr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:26 -0500
+        id S1728520AbfLSSlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:41:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8B8524672;
-        Thu, 19 Dec 2019 18:47:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1DFC206D7;
+        Thu, 19 Dec 2019 18:41:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781245;
-        bh=Z8anMrWmTZjHIUgn0N7JaWIaabcZ42ch5MZ7XopHJD4=;
+        s=default; t=1576780880;
+        bh=IUtYO+uS0Eddzxw4xtQEOjWU5msvKA9bePjJTUT7/rY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X1d9ZBNkrIf1pKlBjR6Uo2StBKreSR9TgyMI+ZMpxf7wUaS+XaXv1LBR8UpjfFlEW
-         dSRguVnsK0cmVsp/r6erjydOolX2JmsD8W8KlGnwr6JY2COXQEZacROlpDAYlefYi7
-         MhUNlf/JpBBPMqIcYhoatQ9P3+qGvzkb3xOCKcvQ=
+        b=OZWYM+k2wbkxOEV2W4KYQvPAqIe7Azasyekmsmp82zuW++wcKiJkyk9geadGEpQ4v
+         nhXFWP0mHeAKPr3I1v6cnKFy7ULQjH9ig+bBS26f/iXe/s3eewLRMX01ONala5uNuq
+         toUqi7Jxc1hopgHALSaar182SOBFvTwF5+2Z3zhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alastair DSilva <alastair@d-silva.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 142/199] powerpc: Allow 64bit VDSO __kernel_sync_dicache to work across ranges >4GB
-Date:   Thu, 19 Dec 2019 19:33:44 +0100
-Message-Id: <20191219183223.040531662@linuxfoundation.org>
+        stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 4.4 117/162] pinctrl: samsung: Fix device node refcount leaks in S3C24xx wakeup controller init
+Date:   Thu, 19 Dec 2019 19:33:45 +0100
+Message-Id: <20191219183214.873454724@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +42,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit f9ec11165301982585e5e5f606739b5bae5331f3 upstream.
+commit 6fbbcb050802d6ea109f387e961b1dbcc3a80c96 upstream.
 
-When calling __kernel_sync_dicache with a size >4GB, we were masking
-off the upper 32 bits, so we would incorrectly flush a range smaller
-than intended.
+In s3c24xx_eint_init() the for_each_child_of_node() loop is used with a
+break to find a matching child node.  Although each iteration of
+for_each_child_of_node puts the previous node, but early exit from loop
+misses it.  This leads to leak of device node.
 
-This patch replaces the 32 bit shifts with 64 bit ones, so that
-the full size is accounted for.
-
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191104023305.9581-3-alastair@au1.ibm.com
+Cc: <stable@vger.kernel.org>
+Fixes: af99a7507469 ("pinctrl: Add pinctrl-s3c24xx driver")
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/powerpc/kernel/vdso64/cacheflush.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/powerpc/kernel/vdso64/cacheflush.S
-+++ b/arch/powerpc/kernel/vdso64/cacheflush.S
-@@ -39,7 +39,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5		/* ensure we get enough */
- 	lwz	r9,CFG_DCACHE_LOGBLOCKSZ(r10)
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	crclr	cr0*4+so
- 	beqlr				/* nothing to do? */
- 	mtctr	r8
-@@ -56,7 +56,7 @@ V_FUNCTION_BEGIN(__kernel_sync_dicache)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5
- 	lwz	r9,CFG_ICACHE_LOGBLOCKSZ(r10)
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	crclr	cr0*4+so
- 	beqlr				/* nothing to do? */
- 	mtctr	r8
+--- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
++++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
+@@ -495,8 +495,10 @@ static int s3c24xx_eint_init(struct sams
+ 		return -ENODEV;
+ 
+ 	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
+-	if (!eint_data)
++	if (!eint_data) {
++		of_node_put(eint_np);
+ 		return -ENOMEM;
++	}
+ 
+ 	eint_data->drvdata = d;
+ 
+@@ -508,12 +510,14 @@ static int s3c24xx_eint_init(struct sams
+ 		irq = irq_of_parse_and_map(eint_np, i);
+ 		if (!irq) {
+ 			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
++			of_node_put(eint_np);
+ 			return -ENXIO;
+ 		}
+ 
+ 		eint_data->parents[i] = irq;
+ 		irq_set_chained_handler_and_data(irq, handlers[i], eint_data);
+ 	}
++	of_node_put(eint_np);
+ 
+ 	bank = d->pin_banks;
+ 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
 
 
