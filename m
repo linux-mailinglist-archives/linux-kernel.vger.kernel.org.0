@@ -2,421 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECC51125A08
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 04:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3761E125A0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 04:42:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLSDiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 18 Dec 2019 22:38:52 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44186 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbfLSDiv (ORCPT
+        id S1726867AbfLSDmb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 18 Dec 2019 22:42:31 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:46553 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726779AbfLSDma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 18 Dec 2019 22:38:51 -0500
-Received: by mail-yb1-f193.google.com with SMTP id j6so1680724ybc.11;
-        Wed, 18 Dec 2019 19:38:50 -0800 (PST)
+        Wed, 18 Dec 2019 22:42:30 -0500
+Received: by mail-qk1-f193.google.com with SMTP id r14so3484612qke.13
+        for <linux-kernel@vger.kernel.org>; Wed, 18 Dec 2019 19:42:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=jtkWS/yjiMKfkbXKI3WL2bmYpx2cmC+C53/JYQWDpLg=;
-        b=Ao+PP2soFSK8LjCVBNMuoENGjdv4ZjnJclCDXm2GoMoycYi65cRSoPgrrIYTg6FHql
-         CsgY38bOHWXTG2PcoR0wfm88F0yKdeSRVAHmeyMJY9KgFHb7/JDOKhMvmmgisRQpp9oJ
-         wdFnMKtiOIs1EUgvRnqV2/a+ISd4GNVNwkywdi3oVkclNuZMYNs6BaTMymEuY22Jvhg3
-         yCOh60yi0BUwyz26hyL33VKSsKxyadoRCi98fP+lhpMKfRI5GBR7VHp3LczGJ9nAr4vF
-         ZmCS+5qNupDRmej5HWlk/PHFGvc9MVVCO7mbvXGHXGI6+PtN8A8rymOtscnYBd2RzvJ0
-         fDTw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O6LOFVunh/OJDC7JvnA4isOAWmQTXpcdKGgNnEbH64k=;
+        b=TpULE9OXsOToVRsqIEUUz/0B5xzbX3OOmWBLyc4F5l6u3dO1p8OyzXbWfPNaWQy/Q9
+         oFe99o0qfiy2B83AF2rbUCC0TwM4oTtWJhe97usSuT8iNv4jUH11GbTHJn0uNooIQdAt
+         vJqLFDMdnIOQsjKsyCNjK5+w0TSJK6ToFOiNg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jtkWS/yjiMKfkbXKI3WL2bmYpx2cmC+C53/JYQWDpLg=;
-        b=sJFycAJf30pBRZWTagUeSpCVEMctaemzZGKnmvEOJe3BSYBjVwRQYBeqd/jrJ7mVH6
-         76D2WnuLYxqb76RYCe921BONH+p8w8P8oIFwzFOQSAk0uCvMmmVJCEBoXVB69zPm+hsS
-         NfQYwqd+IFy2wxRUwk01sUiCp8Ad1b1e+Xc+WYfM8j7ycTLPgYEeLQ7JKhIP63T+iSD+
-         JIVhTviOj/GU3qtZ04WazTjM4Wy4hdCIv7GdL22zyL6qWWhcRcwZoPT8Eu9oeOdL8Gzx
-         t79rb9tS0ph1k0UnW2UehatjIWUO6Gg5ViO6K5BycllksBpJU80sNCX3mkfi9xG//D5Z
-         D2WQ==
-X-Gm-Message-State: APjAAAX/xno8zPUJvsggyLdkaVHHDjjfKZoz5qaMfjwIreO/gYTSXgeG
-        OKhd+McZp4G1GDkv3YHh+Uk=
-X-Google-Smtp-Source: APXvYqyoE6Ngf4u83Jj2Vxp2qtUNRbQ9N2YgAOGdR2TzcOIFgS39rDf1SN/qdXTr8IC1ynOpXy4IlQ==
-X-Received: by 2002:a5b:d4f:: with SMTP id f15mr4685436ybr.134.1576726729988;
-        Wed, 18 Dec 2019 19:38:49 -0800 (PST)
-Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
-        by smtp.gmail.com with ESMTPSA id y129sm1877181ywd.40.2019.12.18.19.38.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Dec 2019 19:38:49 -0800 (PST)
-Subject: Re: [PATCH] of: Rework and simplify phandle cache to use a fixed size
-From:   Frank Rowand <frowand.list@gmail.com>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Chintan Pandya <cpandya@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-References: <20191211232345.24810-1-robh@kernel.org>
- <9a0c89aa-4d16-a8b8-8643-40bb130d0cc5@gmail.com>
-Message-ID: <da376ece-1c1c-c074-4b5d-9ec3aae637d8@gmail.com>
-Date:   Wed, 18 Dec 2019 21:38:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O6LOFVunh/OJDC7JvnA4isOAWmQTXpcdKGgNnEbH64k=;
+        b=g6t56k9wpuK6y5+r2KLIxY1ClTGxAbB7VgvBlBOa4FAnETvzkWtdhYxc4bwxyT8JDO
+         Dhx6BzoRpDRw2aq8kopFdEshc2ixE+uisRgr+GizGJZuqisQHaKA4y29sFu6FwhpQhDt
+         5XsGUl4enCpyKlfFvKEm+9eMzsG4YTXBAM2/4DkNssCipBo6f4iZMxJu0qiOaeAC8SnI
+         k09wXxvGPznrQR8gHWWmEOQnN/47K8/w9MrB+0GBvXlN24ghjwNh8IShUw1BOvuaASFm
+         CbuTrab1yJwfZnCZ92Qkf6BsD3q5K/R0XyHjqtrTUlbdOpvIu9OHiy4DBjr4nJFJGF81
+         GNpA==
+X-Gm-Message-State: APjAAAVhpHu3+F1rxyRQsGgFGIdFgH+hz4dLzBvZCoKGMZtijdoFR4LX
+        H4BJ9KZijBD+x6LwJHHPeX46/syzHompZwmubUELoA==
+X-Google-Smtp-Source: APXvYqyLgkLmeEnazbCRrjSZ2SBiwnCH2DOGyt2BMNtf/xUV1tD8U3wu7lA97+V5Un2IAowvdm70tIGk8nRKyyJ08zM=
+X-Received: by 2002:a37:6551:: with SMTP id z78mr6443627qkb.144.1576726949364;
+ Wed, 18 Dec 2019 19:42:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9a0c89aa-4d16-a8b8-8643-40bb130d0cc5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1575960413-6900-1-git-send-email-weiyi.lu@mediatek.com>
+ <1575960413-6900-5-git-send-email-weiyi.lu@mediatek.com> <CANMq1KA4KL=ZpU=cQtw3LV79DKRdG3Eb16og6vU1SdsnnL=0CA@mail.gmail.com>
+ <1576551056.14035.19.camel@mtksdaap41> <CANMq1KAn3vwCm5=LJPjE=STw9=XLSwdQ7_LZA2_okkA-V8R_3A@mail.gmail.com>
+ <1576635932.13343.8.camel@mtksdaap41>
+In-Reply-To: <1576635932.13343.8.camel@mtksdaap41>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 19 Dec 2019 11:42:18 +0800
+Message-ID: <CANMq1KDeoRK8KcSqX9nA0d2iHAeq4oLnzgO16yCM5jK5uNJsSQ@mail.gmail.com>
+Subject: Re: [PATCH v9 4/9] soc: mediatek: Add multiple step bus protection control
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Yong Wu <yong.wu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 18, 2019 at 10:25 AM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+>
+> On Tue, 2019-12-17 at 13:33 +0800, Nicolas Boichat wrote:
+> > On Tue, Dec 17, 2019 at 10:51 AM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> > >
+> > > On Mon, 2019-12-16 at 15:21 +0800, Nicolas Boichat wrote:
+> > > > On Tue, Dec 10, 2019 at 2:47 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> > > > >
+> > > > > Both MT8183 & MT6765 have more control steps of bus protection
+> > > > > than previous project. And there add more bus protection registers
+> > > > > reside at infracfg & smi-common. Also add new APIs for multiple
+> > > > > step bus protection control with more customized arguments.
+> > > > >
+> > > > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > > > > ---
+> > > > >  drivers/soc/mediatek/Makefile           |  2 +-
+> > > > >  drivers/soc/mediatek/mtk-scpsys-ext.c   | 99 +++++++++++++++++++++++++++++++++
+> > > > >  drivers/soc/mediatek/mtk-scpsys.c       | 39 +++++++++----
+> > > > >  include/linux/soc/mediatek/scpsys-ext.h | 39 +++++++++++++
+> > > > >  4 files changed, 168 insertions(+), 11 deletions(-)
+> > > > >  create mode 100644 drivers/soc/mediatek/mtk-scpsys-ext.c
+> > > > >  create mode 100644 include/linux/soc/mediatek/scpsys-ext.h
+> > > > >
+> > > > > diff --git a/drivers/soc/mediatek/Makefile b/drivers/soc/mediatek/Makefile
+> > > > > index b017330..b442be9 100644
+> > > > > --- a/drivers/soc/mediatek/Makefile
+> > > > > +++ b/drivers/soc/mediatek/Makefile
+> > > > > @@ -1,5 +1,5 @@
+> > > > >  # SPDX-License-Identifier: GPL-2.0-only
+> > > > >  obj-$(CONFIG_MTK_CMDQ) += mtk-cmdq-helper.o
+> > > > > -obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o
+> > > > > +obj-$(CONFIG_MTK_INFRACFG) += mtk-infracfg.o mtk-scpsys-ext.o
+> > > > >  obj-$(CONFIG_MTK_PMIC_WRAP) += mtk-pmic-wrap.o
+> > > > >  obj-$(CONFIG_MTK_SCPSYS) += mtk-scpsys.o
+> > > > > diff --git a/drivers/soc/mediatek/mtk-scpsys-ext.c b/drivers/soc/mediatek/mtk-scpsys-ext.c
+> > > > > new file mode 100644
+> > > > > index 0000000..4f1adda
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/soc/mediatek/mtk-scpsys-ext.c
+> > > > > @@ -0,0 +1,99 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > > > +/*
+> > > > > + * Copyright (c) 2018 MediaTek Inc.
+> > > > > + * Author: Owen Chen <Owen.Chen@mediatek.com>
+> > > > > + */
+> > > > > +#include <linux/ktime.h>
+> > > > > +#include <linux/mfd/syscon.h>
+> > > > > +#include <linux/of_device.h>
+> > > > > +#include <linux/regmap.h>
+> > > > > +#include <linux/soc/mediatek/scpsys-ext.h>
+> > > > > +
+> > > > > +#define MTK_POLL_DELAY_US   10
+> > > > > +#define MTK_POLL_TIMEOUT    USEC_PER_SEC
+> > > > > +
+> > > > > +static int set_bus_protection(struct regmap *map, u32 mask, u32 ack_mask,
+> > > > > +               u32 reg_set, u32 reg_sta, u32 reg_en)
+> > > > > +{
+> > > > > +       u32 val;
+> > > > > +
+> > > > > +       if (reg_set)
+> > > > > +               regmap_write(map, reg_set, mask);
+> > > > > +       else
+> > > > > +               regmap_update_bits(map, reg_en, mask, mask);
+> > > >
+> > > > At least for 8183, we never seen to use the reg_set case, can we
+> > > > simplify this function?
+> > > >
+> > >
+> > > Actually 6765 will use it and all the other MediaTek chips at least in
+> > > near future.
+> > > https://patchwork.kernel.org/patch/11042003/
+> >
+> > Ok, that's fine then.
+> >
+> > > > > +
+> > > > > +       return regmap_read_poll_timeout(map, reg_sta,
+> > > > > +                       val, (val & ack_mask) == ack_mask,
+> > > > > +                       MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> > > >
+> > > > From 8183, I see that you have either:
+> > > >  1. mask == ack_mask
+> > > >  2. ack_mask == 0 (essentially this skips this test)
+> > > >
+> > > > Would it be simpler to just skip this test if reg_sta == 0, and always
+> > > > assume mask == ack_mask otherwise?
+> > > >
+> > > > e.g.
+> > > > if (reg_sta == 0)
+> > > >    return 0;
+> > > >
+> > > > return regmap_read_poll_timeout(map, reg_sta,
+> > > >                        val, (val & mask) == mask,
+> > > >                        MTK_POLL_DELAY_US, MTK_POLL_TIMEOUT);
+> > > >
+> > >
+> > > I'm not sure if you mean ack_mask == 0?
+> > > reg_sta would be possible to be 0 because it's a register address
+> > > offset.
+> >
+> > Right, so maybe "0" is not a good invalid value, or maybe you can have a
+> > #define REG_STA_INVALID U32_MAX
+> >
+> > And then test for:
+> > if (reg_sta == REG_STA_INVALID)
+> >    return 0;
+> >
+> > My point here is that mask and ack_mask are always the same (unless
+> > you don't care about reading back the status), so maybe you only need
+> > to specify mask?
+> >
+> > (but if you need different mask and ack_mask for future chips, feel
+> > free to ignore)
+> >
+>
+> I do need different mask and ack_mask.
+> For the special case of 8183 here, we still have to check the ack status
+> when setting bus protection but only ignore the ack status when clearing
+> bus protection.
+>
+> case A.
+> SET: reg_set, reg_sta, mask == ack mask
+> CLEAR: reg_clr, reg_sta, mask == clear ack mask
+>
+> case B. (the special case we discussed)
+> SET: reg_set, reg_sta, mask == ack mask
+> CLEAR: reg_clr, reg_sta, mask != clear ack mask(which is 0 now)
+>
+> If I use the REG_STA_INVALID to replace the clear ack mask way.
+> I might need two reg_sta to satisfy the check of set and clear bus
+> protection.
+> One is valid for setting case and another is invalid for clearing case,
+> e.g. case 2 below
+>
+> case 1.
+> SET: reg_set, reg_sta(valid), mask == ack mask
+> CLEAR: reg_clr, reg_sta(valid), mask == ack mask
+>
+> case 2.
+> SET: reg_set, reg_sta(valid), mask == ack mask
+> CLEAR: reg_clr, reg_sta(invalid then return), mask == ack mask
+>
+> so I'd like to keep the original proposal. What do you think?
 
--Chintan
-
-On 12/12/19 5:50 AM, Frank Rowand wrote:
-> 
-> +Chintan
-> 
-> Hi Chintan,
-> 
-> On 12/11/19 5:23 PM, Rob Herring wrote:
->> The phandle cache was added to speed up of_find_node_by_phandle() by
->> avoiding walking the whole DT to find a matching phandle. The
->> implementation has several shortcomings:
->>
->>   - The cache is designed to work on a linear set of phandle values.
->>     This is true for dtc generated DTs, but not for other cases such as
->>     Power.
->>   - The cache isn't enabled until of_core_init() and a typical system
->>     may see hundreds of calls to of_find_node_by_phandle() before that
->>     point.
->>   - The cache is freed and re-allocated when the number of phandles
->>     changes.
->>   - It takes a raw spinlock around a memory allocation which breaks on
->>     RT.
->>
->> Change the implementation to a fixed size and use hash_32() as the
->> cache index. This greatly simplifies the implementation. It avoids
->> the need for any re-alloc of the cache and taking a reference on nodes
->> in the cache. We only have a single source of removing cache entries
->> which is of_detach_node().
-> 
-> Can you check this patch on the system that you reported phandle lookup
-> overhead issues for?
-
-Adding Chintan to the distribution list was not successful -- his email
-address bounces.
-
-If anyone else from Qualcomm wants to look at this, the system Chintan
-was measuring was:
-
-https://source.codeaurora.org/quic/la/kernel/msm-4.9/tree/arch/arm64/boot/dts/qcom/sda670-mtp.dts?h=msm-4.9
-
-The various email threads were in January and February 2018.
-
--Frank
-
-> 
-> -Frank
-> 
-> 
->>
->> Using hash_32() removes any assumption on phandle values improving
->> the hit rate for non-linear phandle values. The effect on linear values
->> using hash_32() is about a 10% collision. The chances of thrashing on
->> colliding values seems to be low.
->>
->> To compare performance, I used a RK3399 board which is a pretty typical
->> system. I found that just measuring boot time as done previously is
->> noisy and may be impacted by other things. Also bringing up secondary
->> cores causes some issues with measuring, so I booted with 'nr_cpus=1'.
->> With no caching, calls to of_find_node_by_phandle() take about 20124 us
->> for 1248 calls. There's an additional 288 calls before time keeping is
->> up. Using the average time per hit/miss with the cache, we can calculate
->> these calls to take 690 us (277 hit / 11 miss) with a 128 entry cache
->> and 13319 us with no cache or an uninitialized cache.
->>
->> Comparing the 3 implementations the time spent in
->> of_find_node_by_phandle() is:
->>
->> no cache:        20124 us (+ 13319 us)
->> 128 entry cache:  5134 us (+ 690 us)
->> current cache:     819 us (+ 13319 us)
->>
->> We could move the allocation of the cache earlier to improve the
->> current cache, but that just further complicates the situation as it
->> needs to be after slab is up, so we can't do it when unflattening (which
->> uses memblock).
->>
->> Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Segher Boessenkool <segher@kernel.crashing.org>
->> Cc: Frank Rowand <frowand.list@gmail.com>
->> Signed-off-by: Rob Herring <robh@kernel.org>
->> ---
->>  drivers/of/base.c       | 133 ++++++++--------------------------------
->>  drivers/of/dynamic.c    |   2 +-
->>  drivers/of/of_private.h |   4 +-
->>  drivers/of/overlay.c    |  10 ---
->>  4 files changed, 28 insertions(+), 121 deletions(-)
->>
->> diff --git a/drivers/of/base.c b/drivers/of/base.c
->> index db7fbc0c0893..f7da162f126d 100644
->> --- a/drivers/of/base.c
->> +++ b/drivers/of/base.c
->> @@ -135,115 +135,38 @@ int __weak of_node_to_nid(struct device_node *np)
->>  }
->>  #endif
->>  
->> -/*
->> - * Assumptions behind phandle_cache implementation:
->> - *   - phandle property values are in a contiguous range of 1..n
->> - *
->> - * If the assumptions do not hold, then
->> - *   - the phandle lookup overhead reduction provided by the cache
->> - *     will likely be less
->> - */
->> +#define OF_PHANDLE_CACHE_BITS	7
->> +#define OF_PHANDLE_CACHE_SZ	BIT(OF_PHANDLE_CACHE_BITS)
->>  
->> -static struct device_node **phandle_cache;
->> -static u32 phandle_cache_mask;
->> +static struct device_node *phandle_cache[OF_PHANDLE_CACHE_SZ];
->>  
->> -/*
->> - * Caller must hold devtree_lock.
->> - */
->> -static void __of_free_phandle_cache(void)
->> +static u32 of_phandle_cache_hash(phandle handle)
->>  {
->> -	u32 cache_entries = phandle_cache_mask + 1;
->> -	u32 k;
->> -
->> -	if (!phandle_cache)
->> -		return;
->> -
->> -	for (k = 0; k < cache_entries; k++)
->> -		of_node_put(phandle_cache[k]);
->> -
->> -	kfree(phandle_cache);
->> -	phandle_cache = NULL;
->> +	return hash_32(handle, OF_PHANDLE_CACHE_BITS);
->>  }
->>  
->> -int of_free_phandle_cache(void)
->> -{
->> -	unsigned long flags;
->> -
->> -	raw_spin_lock_irqsave(&devtree_lock, flags);
->> -
->> -	__of_free_phandle_cache();
->> -
->> -	raw_spin_unlock_irqrestore(&devtree_lock, flags);
->> -
->> -	return 0;
->> -}
->> -#if !defined(CONFIG_MODULES)
->> -late_initcall_sync(of_free_phandle_cache);
->> -#endif
->> -
->>  /*
->>   * Caller must hold devtree_lock.
->>   */
->> -void __of_free_phandle_cache_entry(phandle handle)
->> +void __of_phandle_cache_inv_entry(phandle handle)
->>  {
->> -	phandle masked_handle;
->> +	u32 handle_hash;
->>  	struct device_node *np;
->>  
->>  	if (!handle)
->>  		return;
->>  
->> -	masked_handle = handle & phandle_cache_mask;
->> +	handle_hash = of_phandle_cache_hash(handle);
->>  
->> -	if (phandle_cache) {
->> -		np = phandle_cache[masked_handle];
->> -		if (np && handle == np->phandle) {
->> -			of_node_put(np);
->> -			phandle_cache[masked_handle] = NULL;
->> -		}
->> -	}
->> -}
->> -
->> -void of_populate_phandle_cache(void)
->> -{
->> -	unsigned long flags;
->> -	u32 cache_entries;
->> -	struct device_node *np;
->> -	u32 phandles = 0;
->> -
->> -	raw_spin_lock_irqsave(&devtree_lock, flags);
->> -
->> -	__of_free_phandle_cache();
->> -
->> -	for_each_of_allnodes(np)
->> -		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
->> -			phandles++;
->> -
->> -	if (!phandles)
->> -		goto out;
->> -
->> -	cache_entries = roundup_pow_of_two(phandles);
->> -	phandle_cache_mask = cache_entries - 1;
->> -
->> -	phandle_cache = kcalloc(cache_entries, sizeof(*phandle_cache),
->> -				GFP_ATOMIC);
->> -	if (!phandle_cache)
->> -		goto out;
->> -
->> -	for_each_of_allnodes(np)
->> -		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL) {
->> -			of_node_get(np);
->> -			phandle_cache[np->phandle & phandle_cache_mask] = np;
->> -		}
->> -
->> -out:
->> -	raw_spin_unlock_irqrestore(&devtree_lock, flags);
->> +	np = phandle_cache[handle_hash];
->> +	if (np && handle == np->phandle)
->> +		phandle_cache[handle_hash] = NULL;
->>  }
->>  
->>  void __init of_core_init(void)
->>  {
->>  	struct device_node *np;
->>  
->> -	of_populate_phandle_cache();
->>  
->>  	/* Create the kset, and register existing nodes */
->>  	mutex_lock(&of_mutex);
->> @@ -253,8 +176,11 @@ void __init of_core_init(void)
->>  		pr_err("failed to register existing nodes\n");
->>  		return;
->>  	}
->> -	for_each_of_allnodes(np)
->> +	for_each_of_allnodes(np) {
->>  		__of_attach_node_sysfs(np);
->> +		if (np->phandle && !phandle_cache[of_phandle_cache_hash(np->phandle)])
->> +			phandle_cache[of_phandle_cache_hash(np->phandle)] = np;
->> +	}
->>  	mutex_unlock(&of_mutex);
->>  
->>  	/* Symlink in /proc as required by userspace ABI */
->> @@ -1235,36 +1161,29 @@ struct device_node *of_find_node_by_phandle(phandle handle)
->>  {
->>  	struct device_node *np = NULL;
->>  	unsigned long flags;
->> -	phandle masked_handle;
->> +	u32 handle_hash;
->>  
->>  	if (!handle)
->>  		return NULL;
->>  
->> +	handle_hash = of_phandle_cache_hash(handle);
->> +
->>  	raw_spin_lock_irqsave(&devtree_lock, flags);
->>  
->> -	masked_handle = handle & phandle_cache_mask;
->> -
->> -	if (phandle_cache) {
->> -		if (phandle_cache[masked_handle] &&
->> -		    handle == phandle_cache[masked_handle]->phandle)
->> -			np = phandle_cache[masked_handle];
->> -		if (np && of_node_check_flag(np, OF_DETACHED)) {
->> -			WARN_ON(1); /* did not uncache np on node removal */
->> -			of_node_put(np);
->> -			phandle_cache[masked_handle] = NULL;
->> -			np = NULL;
->> -		}
->> +	if (phandle_cache[handle_hash] &&
->> +	    handle == phandle_cache[handle_hash]->phandle)
->> +		np = phandle_cache[handle_hash];
->> +	if (np && of_node_check_flag(np, OF_DETACHED)) {
->> +		WARN_ON(1); /* did not uncache np on node removal */
->> +		phandle_cache[handle_hash] = NULL;
->> +		np = NULL;
->>  	}
->>  
->>  	if (!np) {
->>  		for_each_of_allnodes(np)
->>  			if (np->phandle == handle &&
->>  			    !of_node_check_flag(np, OF_DETACHED)) {
->> -				if (phandle_cache) {
->> -					/* will put when removed from cache */
->> -					of_node_get(np);
->> -					phandle_cache[masked_handle] = np;
->> -				}
->> +				phandle_cache[handle_hash] = np;
->>  				break;
->>  			}
->>  	}
->> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->> index 49b16f76d78e..08fd823edac9 100644
->> --- a/drivers/of/dynamic.c
->> +++ b/drivers/of/dynamic.c
->> @@ -276,7 +276,7 @@ void __of_detach_node(struct device_node *np)
->>  	of_node_set_flag(np, OF_DETACHED);
->>  
->>  	/* race with of_find_node_by_phandle() prevented by devtree_lock */
->> -	__of_free_phandle_cache_entry(np->phandle);
->> +	__of_phandle_cache_inv_entry(np->phandle);
->>  }
->>  
->>  /**
->> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
->> index 66294d29942a..582844c158ae 100644
->> --- a/drivers/of/of_private.h
->> +++ b/drivers/of/of_private.h
->> @@ -85,14 +85,12 @@ int of_resolve_phandles(struct device_node *tree);
->>  #endif
->>  
->>  #if defined(CONFIG_OF_DYNAMIC)
->> -void __of_free_phandle_cache_entry(phandle handle);
->> +void __of_phandle_cache_inv_entry(phandle handle);
->>  #endif
->>  
->>  #if defined(CONFIG_OF_OVERLAY)
->>  void of_overlay_mutex_lock(void);
->>  void of_overlay_mutex_unlock(void);
->> -int of_free_phandle_cache(void);
->> -void of_populate_phandle_cache(void);
->>  #else
->>  static inline void of_overlay_mutex_lock(void) {};
->>  static inline void of_overlay_mutex_unlock(void) {};
->> diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
->> index 9617b7df7c4d..97fe92c1f1d2 100644
->> --- a/drivers/of/overlay.c
->> +++ b/drivers/of/overlay.c
->> @@ -974,8 +974,6 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
->>  		goto err_free_overlay_changeset;
->>  	}
->>  
->> -	of_populate_phandle_cache();
->> -
->>  	ret = __of_changeset_apply_notify(&ovcs->cset);
->>  	if (ret)
->>  		pr_err("overlay apply changeset entry notify error %d\n", ret);
->> @@ -1218,17 +1216,9 @@ int of_overlay_remove(int *ovcs_id)
->>  
->>  	list_del(&ovcs->ovcs_list);
->>  
->> -	/*
->> -	 * Disable phandle cache.  Avoids race condition that would arise
->> -	 * from removing cache entry when the associated node is deleted.
->> -	 */
->> -	of_free_phandle_cache();
->> -
->>  	ret_apply = 0;
->>  	ret = __of_changeset_revert_entries(&ovcs->cset, &ret_apply);
->>  
->> -	of_populate_phandle_cache();
->> -
->>  	if (ret) {
->>  		if (ret_apply)
->>  			devicetree_state_flags |= DTSF_REVERT_FAIL;
->>
-> 
-> 
-
+Ooh, I see. This is quite confusing to be honest... I wonder if it
+wouldn't be clearer to have a boolean instead in bus_prot (something
+like "clk_no_check", can't find a better name right now).
