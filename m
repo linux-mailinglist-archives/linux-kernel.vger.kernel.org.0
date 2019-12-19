@@ -2,117 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F20D1267E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E52901267EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 18:21:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726909AbfLSRVY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 12:21:24 -0500
-Received: from mta-p6.oit.umn.edu ([134.84.196.206]:45910 "EHLO
-        mta-p6.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfLSRVX (ORCPT
+        id S1726959AbfLSRVr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 12:21:47 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:37729 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726840AbfLSRVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 12:21:23 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p6.oit.umn.edu (Postfix) with ESMTP id 47dzDz05z8z9vhYt
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 17:21:23 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p6.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p6.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id kQC3kW0Rk04H for <linux-kernel@vger.kernel.org>;
-        Thu, 19 Dec 2019 11:21:22 -0600 (CST)
-Received: from mail-yw1-f69.google.com (mail-yw1-f69.google.com [209.85.161.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p6.oit.umn.edu (Postfix) with ESMTPS id 47dzDy5ld6z9vhYj
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 11:21:22 -0600 (CST)
-Received: by mail-yw1-f69.google.com with SMTP id 16so4496467ywz.5
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:21:22 -0800 (PST)
+        Thu, 19 Dec 2019 12:21:46 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 21so5290261qky.4
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 09:21:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dZet5/8oAF/RkVe8aOI8XLGZBrvCqMDHvpE19fg8kTA=;
-        b=HcVWnhPGj57k0g+tWAn2Av/8Bukx9CzCkdb+BN1itEFxQINnpef0Jd1yXfwSC9aAf8
-         yRH9lEj8qOgs0MS/Ta7ppmyMwGgn282Rzvq5DVm9Lux3/EH3ZoJlGvY4lSlea+Wtya3a
-         eCGR/9Zc0H7rlQv6d4wZcHU8IVBL81eHfL8Ufs7hlLEXTiXKOCy+LXM9KTGMRuVnRj27
-         jx/kYJa6ik9/UtMZu/8QArDjcLD0l6Nze95zhbHxHnFvMz1aMHKbDa0IXSwURWskQUCW
-         +Sormf5EHb8z/RnLAbFmnEaqY5/v1/Z6oM0CYQbX16+D/5HceDtXt955S5lv9F89VoFG
-         PDCw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RmaASdN+fyGlEAB/n41jrDgKEHVzUdiRVPVYkhanzT8=;
+        b=VLkjzbdqeF1Y/7abRB0Qpl3dnfpFPBxUaJOX2Hl+C+Nhw/BM6Nmg+v4A0W2QsfeK0L
+         lcMSBEE/ME3OaezUIbJShpF4VRgRdRbgl8NU7odLWY62s0qZ3EE07LZdM/z3qhJD4j3a
+         p3uF1d6WM5EfPAdTE3x+aVHfduRPBPJFlFn5nNncRiYqsAVA6GGFagpMQDOPGhRDbDrZ
+         hOG568bOuaZN7QvzlXe6cLvD4CxYowBrO6iN41VgsT6r/jgZvek3BqE/WobVTgy44Oez
+         s1tFniQA14DJXRoJB0do9RLBCR/sRayI6JSrvM0oJIT0nEP6fCHqkKfc2/9i4+92nzpm
+         mQqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dZet5/8oAF/RkVe8aOI8XLGZBrvCqMDHvpE19fg8kTA=;
-        b=bFH/Dop4qk//i4kxdqoDKAm9G+G4K8f7VTMdLI8poLBzOjeM9/e1h30FuTxiaPVNwS
-         E3BezaI+QasA+XBriRmvhHoX8mUwvIiVNqyyVByfqsrzkQjJFNyv8xl4t87KOyqUjxf5
-         GQUR/17cHXiVQef6dg1oEROqQeABO9GhoS5pbu2PMmF2p/KOlf9SacjIWk8w1RmCYpyp
-         QBTWCoR7qRL36NjhfhM8GthZrnlbzeOOP+HBWPgFZ6yZy73EPhqVzRROcsTVTFDlO6MP
-         niWxsKnH1grJUXu+hK3RQZX4fJA5hCwYe69qXqx2CRfWksJn8EjMziyec0TG/ijzdgxW
-         j5mw==
-X-Gm-Message-State: APjAAAVbYAdVvN8HePFskey+IufOSmnJI0aKUqIuPphOayySD2BSFek0
-        eq3/xnJFceDv52oJtfVc2wyjJf4/KrpRrkWx6PXpXE7H/Pj4t7rkh9ypdQwJ+9UjonWpWhtxx5w
-        QLQJZOlcve5GtRoln0f48HXp2G+IU
-X-Received: by 2002:a81:8451:: with SMTP id u78mr6848979ywf.127.1576776082215;
-        Thu, 19 Dec 2019 09:21:22 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxm6MhF/Zip53QgVRHuvPGYfTUuzQeQ5ipzeYUp0KU1vA33iZSd8Cc0ZwbsC2mIH4Cj9Bl8HA==
-X-Received: by 2002:a81:8451:: with SMTP id u78mr6848962ywf.127.1576776081989;
-        Thu, 19 Dec 2019 09:21:21 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id h68sm2696217ywe.21.2019.12.19.09.21.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 09:21:21 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vandana BN <bnvandana@gmail.com>,
-        =?UTF-8?q?Simon=20Sandstr=C3=B6m?= <simon@nikanor.nu>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Madhumitha Prabakaran <madhumithabiw@gmail.com>,
-        Matt Sickler <Matt.Sickler@daktronics.com>,
-        Jeremy Sowden <jeremy@azazel.net>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] staging: kpc2000: remove unnecessary assertions in kpc_dma_transfer
-Date:   Thu, 19 Dec 2019 11:21:11 -0600
-Message-Id: <20191219172118.17456-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RmaASdN+fyGlEAB/n41jrDgKEHVzUdiRVPVYkhanzT8=;
+        b=PANfeVneZfHJA6An+Y+EyG6qlAjYM7F2if1Ie3RLx4AHOa/ldfEOKTIf0kDE9V6rHR
+         RmXiX0qqnTtRszuCw0nShD0dYLC0eb7kO15PY3C3YfW8fw0pa6m9cGydGldHzrXYKDxB
+         WjJp+eRsLgp7oGipyLfDpF/3nD2U6rXjXrAYs06o3EO2rRdE59CHlmtmbf3rh4qPlRG9
+         XjJBiVFQuGNg+lIWTsmfW4RKMp/Wa0FojxJLnVMZqixJ8btJyDs7EsMMP/RJpKAbxM8M
+         z9CDAnjrolar+v8KUdSQIYWqRwDACm53/B4TWJVbW2wnhscp/hleK4eFRJfH5RoRFUQR
+         6jrQ==
+X-Gm-Message-State: APjAAAXZ9DFEZyJ8igUuj6yaFQXrwlxuv36Ku8AfDSyvVPyYUxV1DALx
+        LHQ4ZqT/JSten4qIRWpTYGxQLGj1QPdh60OmEJjAFw==
+X-Google-Smtp-Source: APXvYqxiDkmDJTDpwzh53k3zUeMi6OLAduLXPof9CXJMJ7fyNblHqPRu9Uwa1owOKchVJyUi0Vx6bRrOm3Rq+Dd2/Fk=
+X-Received: by 2002:a05:620a:1136:: with SMTP id p22mr9333906qkk.8.1576776103716;
+ Thu, 19 Dec 2019 09:21:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191216095955.9886-1-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20191216114636.GB1515069@kroah.com> <ce36371b-0ca6-5819-2604-65627ce58fc8@i-love.sakura.ne.jp>
+ <20191216201834.GA785904@mit.edu> <46e8f6b3-46ac-6600-ba40-9545b7e44016@i-love.sakura.ne.jp>
+ <CACT4Y+ZLaR=GR2nssb_buGC0ULNpQW6jvX0p8NAE-vReDY5fPA@mail.gmail.com> <cca315b2-d2c0-0bcb-35d9-f830b028fb4d@i-love.sakura.ne.jp>
+In-Reply-To: <cca315b2-d2c0-0bcb-35d9-f830b028fb4d@i-love.sakura.ne.jp>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 19 Dec 2019 18:21:31 +0100
+Message-ID: <CACT4Y+aRqZ7r-XedUS6P51Dpf+GRAuZABH6FuKDU19UepE6KCw@mail.gmail.com>
+Subject: Re: [PATCH] kconfig: Add kernel config option for fuzz testing.
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jiri Slaby <jslaby@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kpc_dma_transfer(), the assertion that priv is NULL and priv->ldev
-is NULL, are never satisfied. The two callers of the function,
-dereference the fields before the function is called. This patch
-removes the two BUG_ON calls.
+On Wed, Dec 18, 2019 at 11:30 AM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2019/12/17 17:36, Dmitry Vyukov wrote:
+> > FWIW we've just disabled sysrq entirely:
+> > https://github.com/google/syzkaller/blob/master/dashboard/config/bits-syzbot.config#L182
+> > because random packets over usb can trigger a panic sysrq (again
+> > almost impossible to reliably filter these out on fuzzer side).
+>
+> Excuse me, but CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE=0x0 helps only if show_state() etc. are
+> called via the __handle_sysrq() handler in drivers/tty/sysrq.c .
+>
+>   static void sysrq_handle_showstate(int key)
+>   {
+>         show_state();
+>         show_workqueue_state();
+>   }
+>   static struct sysrq_key_op sysrq_showstate_op = {
+>         .handler        = sysrq_handle_showstate,
+>         .help_msg       = "show-task-states(t)",
+>         .action_msg     = "Show State",
+>         .enable_mask    = SYSRQ_ENABLE_DUMP,
+>   };
+>
+> The k_spec() handler in drivers/tty/vt/keyboard.c calls show_state() etc. without
+> evaluating sysrq_enabled value.
+>
+>   #define FN_HANDLERS\
+>         fn_null,        fn_enter,       fn_show_ptregs, fn_show_mem,\
+>         fn_show_state,  fn_send_intr,   fn_lastcons,    fn_caps_toggle,\
+>         fn_num,         fn_hold,        fn_scroll_forw, fn_scroll_back,\
+>         fn_boot_it,     fn_caps_on,     fn_compose,     fn_SAK,\
+>         fn_dec_console, fn_inc_console, fn_spawn_con,   fn_bare_num
+>
+>   typedef void (fn_handler_fn)(struct vc_data *vc);
+>   static fn_handler_fn FN_HANDLERS;
+>   static fn_handler_fn *fn_handler[] = { FN_HANDLERS };
+>
+>   static void fn_show_state(struct vc_data *vc)
+>   {
+>         show_state();
+>   }
+>
+>   static void k_spec(struct vc_data *vc, unsigned char value, char up_flag)
+>   {
+>         if (up_flag)
+>                 return;
+>         if (value >= ARRAY_SIZE(fn_handler))
+>                 return;
+>         if ((kbd->kbdmode == VC_RAW ||
+>              kbd->kbdmode == VC_MEDIUMRAW ||
+>              kbd->kbdmode == VC_OFF) &&
+>              value != KVAL(K_SAK))
+>                 return;         /* SAK is allowed even in raw mode */
+>         fn_handler[value](vc);
+>   }
+>
+> Therefore, we need to guard at either callee side (e.g. show_state_filter())
+> or caller side (e.g. k_spec()) using kernel config (or something equivalent)
+> in order to avoid forever calling show_state() from timer function.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
-v2: Also remove BUG_ON call for ldev, suggested by Greg.
-
-v1: Replace the recovery code by removing the assertion, as suggested
-by Greg Kroah-Hartman.
----
- drivers/staging/kpc2000/kpc_dma/fileops.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/staging/kpc2000/kpc_dma/fileops.c b/drivers/staging/kpc2000/kpc_dma/fileops.c
-index cb52bd9a6d2f..40525540dde6 100644
---- a/drivers/staging/kpc2000/kpc_dma/fileops.c
-+++ b/drivers/staging/kpc2000/kpc_dma/fileops.c
-@@ -49,9 +49,7 @@ static int kpc_dma_transfer(struct dev_private_data *priv,
- 	u64 dma_addr;
- 	u64 user_ctl;
- 
--	BUG_ON(priv == NULL);
- 	ldev = priv->ldev;
--	BUG_ON(ldev == NULL);
- 
- 	acd = kzalloc(sizeof(*acd), GFP_KERNEL);
- 	if (!acd) {
--- 
-2.20.1
-
++Andrey, please take a look if CONFIG_MAGIC_SYSRQ_DEFAULT_ENABLE
+covers everything we need, or we need to disable sysrq entirely.
