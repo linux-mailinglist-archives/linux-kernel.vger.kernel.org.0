@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66EA7126CAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F36BF126D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:10:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbfLSSpk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38106 "EHLO mail.kernel.org"
+        id S1727766AbfLSSjk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:39:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728747AbfLSSpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:39 -0500
+        id S1728008AbfLSSjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:39:36 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D45F222C2;
-        Thu, 19 Dec 2019 18:45:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69DEA24650;
+        Thu, 19 Dec 2019 18:39:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781138;
-        bh=3eOHlhhZ4JggXT+v9dFcgV/InBG74HOpelJ4C45GhHU=;
+        s=default; t=1576780775;
+        bh=MfkPB+3mgjzOlIIfBKi6A47gBvuFAvcm/AU/f2h8Kzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tmqTrZAT0Qe86GsTDgRbqGI+BnU/VY/HVnW4i2PffB7sEFW7ugDV7MJac0/u+TLq5
-         QS5KMv/sIM30lt0yjMkUK0s44fnoA09+d69dQYd+EPhhxokVrLlMqD44vjmRKDiJvr
-         R1fziu3ONMqac5xgFTopi9BUQpL3bIL9RhK2UGYI=
+        b=clq2Ep/+w2KmGH5jMWsd854qbCUGn5FTy93AEMM2i+bTqj6Jgj2Ok9cxU4lE7uuFw
+         kZpHWrbKDFbSDk8rMP0/mxMmHUXyMxNNPYOq2RwSLX7E5hhgKBwiRx9j8B8TykELco
+         cvitRYPEFb6M/E+VX9F7p8O9igivtXlH7Xkdq2yE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.9 099/199] usb: Allow USB device to be warm reset in suspended state
-Date:   Thu, 19 Dec 2019 19:33:01 +0100
-Message-Id: <20191219183220.386374712@linuxfoundation.org>
+        stable@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 074/162] ALSA: hda - Fix pending unsol events at shutdown
+Date:   Thu, 19 Dec 2019 19:33:02 +0100
+Message-Id: <20191219183212.308417467@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,104 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit e76b3bf7654c3c94554c24ba15a3d105f4006c80 upstream.
+[ Upstream commit ca58f55108fee41d87c9123f85ad4863e5de7f45 ]
 
-On Dell WD15 dock, sometimes USB ethernet cannot be detected after plugging
-cable to the ethernet port, the hub and roothub get runtime resumed and
-runtime suspended immediately:
-...
-[  433.315169] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.315204] usb usb4: usb auto-resume
-[  433.315226] hub 4-0:1.0: hub_resume
-[  433.315239] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10202e2, return 0x10343
-[  433.315264] usb usb4-port1: status 0343 change 0001
-[  433.315279] xhci_hcd 0000:3a:00.0: clear port1 connect change, portsc: 0x10002e2
-[  433.315293] xhci_hcd 0000:3a:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
-[  433.317012] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.422282] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-[  433.422307] usb usb4-port1: do warm reset
-[  433.422311] usb 4-1: device reset not allowed in state 8
-[  433.422339] hub 4-0:1.0: state 7 ports 2 chg 0002 evt 0000
-[  433.422346] xhci_hcd 0000:3a:00.0: Get port status 4-1 read: 0x10002e2, return 0x343
-[  433.422356] usb usb4-port1: do warm reset
-[  433.422358] usb 4-1: device reset not allowed in state 8
-[  433.422428] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 0 status  = 0xf0002e2
-[  433.422455] xhci_hcd 0000:3a:00.0: set port remote wake mask, actual port 1 status  = 0xe0002a0
-[  433.422465] hub 4-0:1.0: hub_suspend
-[  433.422475] usb usb4: bus auto-suspend, wakeup 1
-[  433.426161] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.466209] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.510204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.554051] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.598235] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.642154] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.686204] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.730205] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.774203] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.818207] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862040] xhci_hcd 0000:3a:00.0: port 0 polling in bus suspend, waiting
-[  433.862053] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.862077] xhci_hcd 0000:3a:00.0: xhci_suspend: stopping port polling.
-[  433.862096] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.862312] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_suspend: 0
-[  433.862445] xhci_hcd 0000:3a:00.0: PME# enabled
-[  433.902376] xhci_hcd 0000:3a:00.0: restoring config space at offset 0xc (was 0x0, writing 0x20)
-[  433.902395] xhci_hcd 0000:3a:00.0: restoring config space at offset 0x4 (was 0x100000, writing 0x100403)
-[  433.902490] xhci_hcd 0000:3a:00.0: PME# disabled
-[  433.902504] xhci_hcd 0000:3a:00.0: enabling bus mastering
-[  433.902547] xhci_hcd 0000:3a:00.0: // Setting command ring address to 0x8578fc001
-[  433.902649] pcieport 0000:00:1b.0: PME: Spurious native interrupt!
-[  433.902839] xhci_hcd 0000:3a:00.0: Port change event, 4-1, id 3, portsc: 0xb0202e2
-[  433.902842] xhci_hcd 0000:3a:00.0: resume root hub
-[  433.902845] xhci_hcd 0000:3a:00.0: handle_port_status: starting port polling.
-[  433.902877] xhci_hcd 0000:3a:00.0: xhci_resume: starting port polling.
-[  433.902889] xhci_hcd 0000:3a:00.0: xhci_hub_status_data: stopping port polling.
-[  433.902891] xhci_hcd 0000:3a:00.0: hcd_pci_runtime_resume: 0
-[  433.902919] usb usb4: usb wakeup-resume
-[  433.902942] usb usb4: usb auto-resume
-[  433.902966] hub 4-0:1.0: hub_resume
-...
+This is an alternative fix attemp for the issue reported in the commit
+caa8422d01e9 ("ALSA: hda: Flush interrupts on disabling") that was
+reverted later due to regressions.  Instead of tweaking the hardware
+disablement order and the enforced irq flushing, do calling
+cancel_work_sync() of the unsol work early enough, and explicitly
+ignore the unsol events during the shutdown by checking the
+bus->shutdown flag.
 
-As Mathias pointed out, the hub enters Cold Attach Status state and
-requires a warm reset. However usb_reset_device() bails out early when
-the device is in suspended state, as its callers port_event() and
-hub_event() don't always resume the device.
-
-Since there's nothing wrong to reset a suspended device, allow
-usb_reset_device() to do so to solve the issue.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191106062710.29880-1-kai.heng.feng@canonical.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: caa8422d01e9 ("ALSA: hda: Flush interrupts on disabling")
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://lore.kernel.org/r/s5h1ruxt9cz.wl-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hub.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ sound/pci/hda/hda_bind.c  | 4 ++++
+ sound/pci/hda/hda_intel.c | 3 +++
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -5620,7 +5620,7 @@ re_enumerate_no_bos:
+diff --git a/sound/pci/hda/hda_bind.c b/sound/pci/hda/hda_bind.c
+index 7ea201c05e5da..d0d6dfbfcfdf8 100644
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -42,6 +42,10 @@ static void hda_codec_unsol_event(struct hdac_device *dev, unsigned int ev)
+ {
+ 	struct hda_codec *codec = container_of(dev, struct hda_codec, core);
  
- /**
-  * usb_reset_device - warn interface drivers and perform a USB port reset
-- * @udev: device to reset (not in SUSPENDED or NOTATTACHED state)
-+ * @udev: device to reset (not in NOTATTACHED state)
-  *
-  * Warns all drivers bound to registered interfaces (using their pre_reset
-  * method), performs the port reset, and then lets the drivers know that
-@@ -5648,8 +5648,7 @@ int usb_reset_device(struct usb_device *
- 	struct usb_host_config *config = udev->actconfig;
- 	struct usb_hub *hub = usb_hub_to_struct_hub(udev->parent);
++	/* ignore unsol events during shutdown */
++	if (codec->bus->shutdown)
++		return;
++
+ 	if (codec->patch_ops.unsol_event)
+ 		codec->patch_ops.unsol_event(codec, ev);
+ }
+diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
+index ef8955abd9186..3e3277100f08a 100644
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -1310,8 +1310,11 @@ static int azx_free(struct azx *chip)
+ static int azx_dev_disconnect(struct snd_device *device)
+ {
+ 	struct azx *chip = device->device_data;
++	struct hdac_bus *bus = azx_bus(chip);
  
--	if (udev->state == USB_STATE_NOTATTACHED ||
--			udev->state == USB_STATE_SUSPENDED) {
-+	if (udev->state == USB_STATE_NOTATTACHED) {
- 		dev_dbg(&udev->dev, "device reset not allowed in state %d\n",
- 				udev->state);
- 		return -EINVAL;
+ 	chip->bus.shutdown = 1;
++	cancel_work_sync(&bus->unsol_work);
++
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
 
 
