@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4E48126A2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81D9D12695F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:37:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbfLSSom (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
+        id S1727071AbfLSShD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:37:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728615AbfLSSol (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:41 -0500
+        id S1727229AbfLSShB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:37:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1EE72465E;
-        Thu, 19 Dec 2019 18:44:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 06A4324672;
+        Thu, 19 Dec 2019 18:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781080;
-        bh=NzR97RwD8MzjY5GTfyC2TPQM15rKS34g3vdOFrLKDDA=;
+        s=default; t=1576780620;
+        bh=m0Xi4nTk+oGEpyZ0wdmXOfeFk6InEJHjaHdGJ/1h9rE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MJk37k07qNrWWLIP4TiQMP+SNvrPEHXx5UmeuTzLoJK+rsEhL9RZm75JxJOzJLR0g
-         9AyAemrHCF4yFwnjJGXND8kQfVNn6rxc8/gQZw7nfPItpwbuugR/i/FrYIVV3QLgTM
-         7qVsVqQL/N8asNsgLB607r7UWCDJ/U1oAmu7frC8=
+        b=ns43stbNQJi85jv9JsG1XUYlcfLToWqip/gN9INC0Dy5PCWlnROxQXGNbQbhpLQmH
+         lr32jw9Yb1Bc70hTqReHSpVCo8U9opth6zv0juKBQfZvNe6ZxigJA5CcA7HLWZtP2j
+         c07WMQD5L2FqVzlJoOGFjg9HIZzqDwuQXn8Ox4V8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arijit Banerjee <arijit@rubrik.com>,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH 4.9 073/199] fuse: verify attributes
-Date:   Thu, 19 Dec 2019 19:32:35 +0100
-Message-Id: <20191219183219.024463431@linuxfoundation.org>
+        stable@vger.kernel.org, Joel Stanley <joel@jms.id.au>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 048/162] powerpc/math-emu: Update macros from GCC
+Date:   Thu, 19 Dec 2019 19:32:36 +0100
+Message-Id: <20191219183210.816865498@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,121 +46,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miklos Szeredi <mszeredi@redhat.com>
+From: Joel Stanley <joel@jms.id.au>
 
-commit eb59bd17d2fa6e5e84fba61a5ebdea984222e6d5 upstream.
+[ Upstream commit b682c8692442711684befe413cf93cf01c5324ea ]
 
-If a filesystem returns negative inode sizes, future reads on the file were
-causing the cpu to spin on truncate_pagecache.
+The add_ssaaaa, sub_ddmmss, umul_ppmm and udiv_qrnnd macros originate
+from GCC's longlong.h which in turn was copied from GMP's longlong.h a
+few decades ago.
 
-Create a helper to validate the attributes.  This now does two things:
+This was found when compiling with clang:
 
- - check the file mode
- - check if the file size fits in i_size without overflowing
+   arch/powerpc/math-emu/fnmsub.c:46:2: error: invalid use of a cast in a
+   inline asm context requiring an l-value: remove the cast or build with
+   -fheinous-gnu-extensions
+           FP_ADD_D(R, T, B);
+           ^~~~~~~~~~~~~~~~~
+   ...
 
-Reported-by: Arijit Banerjee <arijit@rubrik.com>
-Fixes: d8a5ba45457e ("[PATCH] FUSE - core")
-Cc: <stable@vger.kernel.org> # v2.6.14
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+   ./arch/powerpc/include/asm/sfp-machine.h:283:27: note: expanded from
+   macro 'sub_ddmmss'
+                  : "=r" ((USItype)(sh)),                                  \
+                          ~~~~~~~~~~^~~
 
+Segher points out: this was fixed in GCC over 16 years ago
+( https://gcc.gnu.org/r56600 ), and in GMP (where it comes from)
+presumably before that.
+
+Update the add_ssaaaa, sub_ddmmss, umul_ppmm and udiv_qrnnd macros to
+the latest GCC version in order to git rid of the invalid casts. These
+were taken as-is from GCC's longlong in order to make future syncs
+obvious. Other parts of sfp-machine.h were left as-is as the file
+contains more features than present in longlong.h.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/260
+Signed-off-by: Joel Stanley <joel@jms.id.au>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Reviewed-by: Segher Boessenkool <segher@kernel.crashing.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fuse/dir.c    |   24 +++++++++++++++++-------
- fs/fuse/fuse_i.h |    2 ++
- 2 files changed, 19 insertions(+), 7 deletions(-)
+ arch/powerpc/include/asm/sfp-machine.h | 92 ++++++++------------------
+ 1 file changed, 29 insertions(+), 63 deletions(-)
 
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -234,7 +234,8 @@ static int fuse_dentry_revalidate(struct
- 		kfree(forget);
- 		if (ret == -ENOMEM)
- 			goto out;
--		if (ret || (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
-+		if (ret || fuse_invalid_attr(&outarg.attr) ||
-+		    (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
- 			goto invalid;
- 
- 		forget_all_cached_acls(inode);
-@@ -297,6 +298,12 @@ int fuse_valid_type(int m)
- 		S_ISBLK(m) || S_ISFIFO(m) || S_ISSOCK(m);
- }
- 
-+bool fuse_invalid_attr(struct fuse_attr *attr)
-+{
-+	return !fuse_valid_type(attr->mode) ||
-+		attr->size > LLONG_MAX;
-+}
-+
- int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
- 		     struct fuse_entry_out *outarg, struct inode **inode)
- {
-@@ -328,7 +335,7 @@ int fuse_lookup_name(struct super_block
- 	err = -EIO;
- 	if (!outarg->nodeid)
- 		goto out_put_forget;
--	if (!fuse_valid_type(outarg->attr.mode))
-+	if (fuse_invalid_attr(&outarg->attr))
- 		goto out_put_forget;
- 
- 	*inode = fuse_iget(sb, outarg->nodeid, outarg->generation,
-@@ -451,7 +458,8 @@ static int fuse_create_open(struct inode
- 		goto out_free_ff;
- 
- 	err = -EIO;
--	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid))
-+	if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid) ||
-+	    fuse_invalid_attr(&outentry.attr))
- 		goto out_free_ff;
- 
- 	ff->fh = outopen.fh;
-@@ -557,7 +565,7 @@ static int create_new_entry(struct fuse_
- 		goto out_put_forget_req;
- 
- 	err = -EIO;
--	if (invalid_nodeid(outarg.nodeid))
-+	if (invalid_nodeid(outarg.nodeid) || fuse_invalid_attr(&outarg.attr))
- 		goto out_put_forget_req;
- 
- 	if ((outarg.attr.mode ^ mode) & S_IFMT)
-@@ -911,7 +919,8 @@ static int fuse_do_getattr(struct inode
- 	args.out.args[0].value = &outarg;
- 	err = fuse_simple_request(fc, &args);
- 	if (!err) {
--		if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+		if (fuse_invalid_attr(&outarg.attr) ||
-+		    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 			make_bad_inode(inode);
- 			err = -EIO;
- 		} else {
-@@ -1219,7 +1228,7 @@ static int fuse_direntplus_link(struct f
- 
- 	if (invalid_nodeid(o->nodeid))
- 		return -EIO;
--	if (!fuse_valid_type(o->attr.mode))
-+	if (fuse_invalid_attr(&o->attr))
- 		return -EIO;
- 
- 	fc = get_fuse_conn(dir);
-@@ -1696,7 +1705,8 @@ int fuse_do_setattr(struct dentry *dentr
- 		goto error;
- 	}
- 
--	if ((inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
-+	if (fuse_invalid_attr(&outarg.attr) ||
-+	    (inode->i_mode ^ outarg.attr.mode) & S_IFMT) {
- 		make_bad_inode(inode);
- 		err = -EIO;
- 		goto error;
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -898,6 +898,8 @@ void fuse_ctl_remove_conn(struct fuse_co
+diff --git a/arch/powerpc/include/asm/sfp-machine.h b/arch/powerpc/include/asm/sfp-machine.h
+index d89beaba26ff9..8b957aabb826d 100644
+--- a/arch/powerpc/include/asm/sfp-machine.h
++++ b/arch/powerpc/include/asm/sfp-machine.h
+@@ -213,30 +213,18 @@
+  * respectively.  The result is placed in HIGH_SUM and LOW_SUM.  Overflow
+  * (i.e. carry out) is not stored anywhere, and is lost.
   */
- int fuse_valid_type(int m);
+-#define add_ssaaaa(sh, sl, ah, al, bh, bl)				\
++#define add_ssaaaa(sh, sl, ah, al, bh, bl) \
+   do {									\
+     if (__builtin_constant_p (bh) && (bh) == 0)				\
+-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{aze|addze} %0,%2"		\
+-	     : "=r" ((USItype)(sh)),					\
+-	       "=&r" ((USItype)(sl))					\
+-	     : "%r" ((USItype)(ah)),					\
+-	       "%r" ((USItype)(al)),					\
+-	       "rI" ((USItype)(bl)));					\
+-    else if (__builtin_constant_p (bh) && (bh) ==~(USItype) 0)		\
+-      __asm__ ("{a%I4|add%I4c} %1,%3,%4\n\t{ame|addme} %0,%2"		\
+-	     : "=r" ((USItype)(sh)),					\
+-	       "=&r" ((USItype)(sl))					\
+-	     : "%r" ((USItype)(ah)),					\
+-	       "%r" ((USItype)(al)),					\
+-	       "rI" ((USItype)(bl)));					\
++      __asm__ ("add%I4c %1,%3,%4\n\taddze %0,%2"		\
++	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
++    else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
++      __asm__ ("add%I4c %1,%3,%4\n\taddme %0,%2"		\
++	     : "=r" (sh), "=&r" (sl) : "r" (ah), "%r" (al), "rI" (bl));\
+     else								\
+-      __asm__ ("{a%I5|add%I5c} %1,%4,%5\n\t{ae|adde} %0,%2,%3"		\
+-	     : "=r" ((USItype)(sh)),					\
+-	       "=&r" ((USItype)(sl))					\
+-	     : "%r" ((USItype)(ah)),					\
+-	       "r" ((USItype)(bh)),					\
+-	       "%r" ((USItype)(al)),					\
+-	       "rI" ((USItype)(bl)));					\
++      __asm__ ("add%I5c %1,%4,%5\n\tadde %0,%2,%3"		\
++	     : "=r" (sh), "=&r" (sl)					\
++	     : "%r" (ah), "r" (bh), "%r" (al), "rI" (bl));		\
+   } while (0)
  
-+bool fuse_invalid_attr(struct fuse_attr *attr);
-+
- /**
-  * Is current process allowed to perform filesystem operation?
+ /* sub_ddmmss is used in op-2.h and udivmodti4.c and should be equivalent to
+@@ -248,44 +236,24 @@
+  * and LOW_DIFFERENCE.  Overflow (i.e. carry out) is not stored anywhere,
+  * and is lost.
   */
+-#define sub_ddmmss(sh, sl, ah, al, bh, bl)				\
++#define sub_ddmmss(sh, sl, ah, al, bh, bl) \
+   do {									\
+     if (__builtin_constant_p (ah) && (ah) == 0)				\
+-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfze|subfze} %0,%2"	\
+-	       : "=r" ((USItype)(sh)),					\
+-		 "=&r" ((USItype)(sl))					\
+-	       : "r" ((USItype)(bh)),					\
+-		 "rI" ((USItype)(al)),					\
+-		 "r" ((USItype)(bl)));					\
+-    else if (__builtin_constant_p (ah) && (ah) ==~(USItype) 0)		\
+-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{sfme|subfme} %0,%2"	\
+-	       : "=r" ((USItype)(sh)),					\
+-		 "=&r" ((USItype)(sl))					\
+-	       : "r" ((USItype)(bh)),					\
+-		 "rI" ((USItype)(al)),					\
+-		 "r" ((USItype)(bl)));					\
++      __asm__ ("subf%I3c %1,%4,%3\n\tsubfze %0,%2"	\
++	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
++    else if (__builtin_constant_p (ah) && (ah) == ~(USItype) 0)		\
++      __asm__ ("subf%I3c %1,%4,%3\n\tsubfme %0,%2"	\
++	       : "=r" (sh), "=&r" (sl) : "r" (bh), "rI" (al), "r" (bl));\
+     else if (__builtin_constant_p (bh) && (bh) == 0)			\
+-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{ame|addme} %0,%2"		\
+-	       : "=r" ((USItype)(sh)),					\
+-		 "=&r" ((USItype)(sl))					\
+-	       : "r" ((USItype)(ah)),					\
+-		 "rI" ((USItype)(al)),					\
+-		 "r" ((USItype)(bl)));					\
+-    else if (__builtin_constant_p (bh) && (bh) ==~(USItype) 0)		\
+-      __asm__ ("{sf%I3|subf%I3c} %1,%4,%3\n\t{aze|addze} %0,%2"		\
+-	       : "=r" ((USItype)(sh)),					\
+-		 "=&r" ((USItype)(sl))					\
+-	       : "r" ((USItype)(ah)),					\
+-		 "rI" ((USItype)(al)),					\
+-		 "r" ((USItype)(bl)));					\
++      __asm__ ("subf%I3c %1,%4,%3\n\taddme %0,%2"		\
++	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
++    else if (__builtin_constant_p (bh) && (bh) == ~(USItype) 0)		\
++      __asm__ ("subf%I3c %1,%4,%3\n\taddze %0,%2"		\
++	       : "=r" (sh), "=&r" (sl) : "r" (ah), "rI" (al), "r" (bl));\
+     else								\
+-      __asm__ ("{sf%I4|subf%I4c} %1,%5,%4\n\t{sfe|subfe} %0,%3,%2"	\
+-	       : "=r" ((USItype)(sh)),					\
+-		 "=&r" ((USItype)(sl))					\
+-	       : "r" ((USItype)(ah)),					\
+-		 "r" ((USItype)(bh)),					\
+-		 "rI" ((USItype)(al)),					\
+-		 "r" ((USItype)(bl)));					\
++      __asm__ ("subf%I4c %1,%5,%4\n\tsubfe %0,%3,%2"	\
++	       : "=r" (sh), "=&r" (sl)					\
++	       : "r" (ah), "r" (bh), "rI" (al), "r" (bl));		\
+   } while (0)
+ 
+ /* asm fragments for mul and div */
+@@ -294,13 +262,10 @@
+  * UWtype integers MULTIPLER and MULTIPLICAND, and generates a two UWtype
+  * word product in HIGH_PROD and LOW_PROD.
+  */
+-#define umul_ppmm(ph, pl, m0, m1)					\
++#define umul_ppmm(ph, pl, m0, m1) \
+   do {									\
+     USItype __m0 = (m0), __m1 = (m1);					\
+-    __asm__ ("mulhwu %0,%1,%2"						\
+-	     : "=r" ((USItype)(ph))					\
+-	     : "%r" (__m0),						\
+-               "r" (__m1));						\
++    __asm__ ("mulhwu %0,%1,%2" : "=r" (ph) : "%r" (m0), "r" (m1));	\
+     (pl) = __m0 * __m1;							\
+   } while (0)
+ 
+@@ -312,9 +277,10 @@
+  * significant bit of DENOMINATOR must be 1, then the pre-processor symbol
+  * UDIV_NEEDS_NORMALIZATION is defined to 1.
+  */
+-#define udiv_qrnnd(q, r, n1, n0, d)					\
++#define udiv_qrnnd(q, r, n1, n0, d) \
+   do {									\
+-    UWtype __d1, __d0, __q1, __q0, __r1, __r0, __m;			\
++    UWtype __d1, __d0, __q1, __q0;					\
++    UWtype __r1, __r0, __m;						\
+     __d1 = __ll_highpart (d);						\
+     __d0 = __ll_lowpart (d);						\
+ 									\
+@@ -325,7 +291,7 @@
+     if (__r1 < __m)							\
+       {									\
+ 	__q1--, __r1 += (d);						\
+-	if (__r1 >= (d)) /* we didn't get carry when adding to __r1 */	\
++	if (__r1 >= (d)) /* i.e. we didn't get carry when adding to __r1 */\
+ 	  if (__r1 < __m)						\
+ 	    __q1--, __r1 += (d);					\
+       }									\
+-- 
+2.20.1
+
 
 
