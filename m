@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88C65126A77
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12103126A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729020AbfLSSri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
+        id S1729506AbfLSSrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727897AbfLSSre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:34 -0500
+        id S1729493AbfLSSrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3949824672;
-        Thu, 19 Dec 2019 18:47:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A93F224676;
+        Thu, 19 Dec 2019 18:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781252;
-        bh=9FubyB4qTzRFj06GrIGGnjrCfJo8O3HnVdYMlZw0lPI=;
+        s=default; t=1576781255;
+        bh=7o+5IgHJs/NzrUR6SmPzn5+OzS688lDaby8Qs6fz98Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DpUrklPNqHWWJWt0x+Evzbwm7MkGMArFJ2YuPtSkwBrRMfs8+Lr7nhHGSI3FNBxCU
-         gfZibiGqYc4P9AYBSV++ZXgqCuaY88ozPTlC1AV6Q/9oBUGoH8xq7sJnnIy55RS//g
-         /7Nprov0UJUNcH5tpSTWAP2MbkHWxKOyGJAtmjyA=
+        b=2R/gHUIS1tEbGpDlppLr3gEfUAyXgRN8u8Bm9Fy0J5835fBw7hu5AifvCbKX6NmMs
+         e8ZeBwvlFmFzMSXqlt1xk+h/vtap9LzqmUK9shV0ZOpi8X//3DlaUwTik10nnApry7
+         00VCYkaVevvZITkyRZ/kile/aBWTPt1UYL/KbnvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@mykernel.net>,
+        stable@vger.kernel.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
         Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.9 145/199] ext2: check err when partial != NULL
-Date:   Thu, 19 Dec 2019 19:33:47 +0100
-Message-Id: <20191219183223.238400832@linuxfoundation.org>
+Subject: [PATCH 4.9 146/199] quota: fix livelock in dquot_writeback_dquots
+Date:   Thu, 19 Dec 2019 19:33:48 +0100
+Message-Id: <20191219183223.303556132@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -43,41 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chengguang Xu <cgxu519@mykernel.net>
+From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 
-commit e705f4b8aa27a59f8933e8f384e9752f052c469c upstream.
+commit 6ff33d99fc5c96797103b48b7b0902c296f09c05 upstream.
 
-Check err when partial == NULL is meaningless because
-partial == NULL means getting branch successfully without
-error.
+Write only quotas which are dirty at entry.
 
+XFSTEST: https://github.com/dmonakhov/xfstests/commit/b10ad23566a5bf75832a6f500e1236084083cddc
+
+Link: https://lore.kernel.org/r/20191031103920.3919-1-dmonakhov@openvz.org
 CC: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20191105045100.7104-1-cgxu519@mykernel.net
-Signed-off-by: Chengguang Xu <cgxu519@mykernel.net>
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
 Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext2/inode.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/quota/dquot.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -697,10 +697,13 @@ static int ext2_get_blocks(struct inode
- 		if (!partial) {
- 			count++;
- 			mutex_unlock(&ei->truncate_mutex);
--			if (err)
--				goto cleanup;
- 			goto got_it;
- 		}
-+
-+		if (err) {
-+			mutex_unlock(&ei->truncate_mutex);
-+			goto cleanup;
-+		}
- 	}
- 
- 	/*
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -611,7 +611,7 @@ EXPORT_SYMBOL(dquot_scan_active);
+ /* Write all dquot structures to quota files */
+ int dquot_writeback_dquots(struct super_block *sb, int type)
+ {
+-	struct list_head *dirty;
++	struct list_head dirty;
+ 	struct dquot *dquot;
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 	int cnt;
+@@ -624,9 +624,10 @@ int dquot_writeback_dquots(struct super_
+ 		if (!sb_has_quota_active(sb, cnt))
+ 			continue;
+ 		spin_lock(&dq_list_lock);
+-		dirty = &dqopt->info[cnt].dqi_dirty_list;
+-		while (!list_empty(dirty)) {
+-			dquot = list_first_entry(dirty, struct dquot,
++		/* Move list away to avoid livelock. */
++		list_replace_init(&dqopt->info[cnt].dqi_dirty_list, &dirty);
++		while (!list_empty(&dirty)) {
++			dquot = list_first_entry(&dirty, struct dquot,
+ 						 dq_dirty);
+ 			/* Dirty and inactive can be only bad dquot... */
+ 			if (!test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
 
 
