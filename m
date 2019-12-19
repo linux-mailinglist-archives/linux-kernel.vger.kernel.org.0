@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3947126D3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A4E5126D3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:09:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfLSSkp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:40:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59494 "EHLO mail.kernel.org"
+        id S1728784AbfLSTJR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728408AbfLSSkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:40:41 -0500
+        id S1728437AbfLSSkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:40:51 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 900E724679;
-        Thu, 19 Dec 2019 18:40:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E82F24672;
+        Thu, 19 Dec 2019 18:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780841;
-        bh=chLQgsXuHkoQm2h4ueJb1deFdiqcUC5TRor73eu385Q=;
+        s=default; t=1576780851;
+        bh=uQUVYng6M2m7kzxbBQV0vOzdqoLKSFhgyXgpvSS2DUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qb0FUGYpyBu7cuee/009EDQt69lk55KQoFWKopImXYXTQAj0vSkfl+LqzPwXWKrHU
-         uwmDKo0+myDv8n6nY8q/azs7SUo4aqhIKAkjnc2ZAxX8JJNcrAQFciLi5HR6erna+5
-         jos7HciPKj81I8ww7CjvmjCsuDv7dEb+ePZP0qJM=
+        b=Msc3qdehJy7u8Pc20PC+t76aHkFINb2bJMjfC4Zhj3vgrdO7FTuM+irdNHDgn7C36
+         JUlCAa33ZXFOkIlMoSTuWUfhCDiQwf4W4BZMEI/DVBiLOCG2N9GSyR876Ct1rmehvL
+         zUme/ZBWLT1Du0JEeW23AtABN/6Kr9jY8nNS1AlU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: [PATCH 4.4 139/162] blk-mq: make sure that line break can be printed
-Date:   Thu, 19 Dec 2019 19:34:07 +0100
-Message-Id: <20191219183216.228258091@linuxfoundation.org>
+        stable@vger.kernel.org, Prarit Bhargava <prarit@redhat.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Jessica Yu <jeyu@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 142/162] kernel/module.c: wakeup processes in module_wq on module unload
+Date:   Thu, 19 Dec 2019 19:34:10 +0100
+Message-Id: <20191219183216.407633843@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
 References: <20191219183150.477687052@linuxfoundation.org>
@@ -44,35 +44,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Konstantin Khorenko <khorenko@virtuozzo.com>
 
-commit d2c9be89f8ebe7ebcc97676ac40f8dec1cf9b43a upstream.
+[ Upstream commit 5d603311615f612320bb77bd2a82553ef1ced5b7 ]
 
-8962842ca5ab ("blk-mq: avoid sysfs buffer overflow with too many CPU cores")
-avoids sysfs buffer overflow, and reserves one character for line break.
-However, the last snprintf() doesn't get correct 'size' parameter passed
-in, so fixed it.
+Fix the race between load and unload a kernel module.
 
-Fixes: 8962842ca5ab ("blk-mq: avoid sysfs buffer overflow with too many CPU cores")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Cc: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+sys_delete_module()
+ try_stop_module()
+  mod->state = _GOING
+					add_unformed_module()
+					 old = find_module_all()
+					 (old->state == _GOING =>
+					  wait_event_interruptible())
 
+					 During pre-condition
+					 finished_loading() rets 0
+					 schedule()
+					 (never gets waken up later)
+ free_module()
+  mod->state = _UNFORMED
+   list_del_rcu(&mod->list)
+   (dels mod from "modules" list)
+
+return
+
+The race above leads to modprobe hanging forever on loading
+a module.
+
+Error paths on loading module call wake_up_all(&module_wq) after
+freeing module, so let's do the same on straight module unload.
+
+Fixes: 6e6de3dee51a ("kernel/module.c: Only return -EEXIST for modules that have finished loading")
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Signed-off-by: Jessica Yu <jeyu@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-mq-sysfs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/module.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/block/blk-mq-sysfs.c
-+++ b/block/blk-mq-sysfs.c
-@@ -248,7 +248,7 @@ static ssize_t blk_mq_hw_sysfs_cpus_show
- 		pos += ret;
- 	}
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1014,6 +1014,8 @@ SYSCALL_DEFINE2(delete_module, const cha
+ 	strlcpy(last_unloaded_module, mod->name, sizeof(last_unloaded_module));
  
--	ret = snprintf(pos + page, size - pos, "\n");
-+	ret = snprintf(pos + page, size + 1 - pos, "\n");
- 	return pos + ret;
- }
- 
+ 	free_module(mod);
++	/* someone could wait for the module in add_unformed_module() */
++	wake_up_all(&module_wq);
+ 	return 0;
+ out:
+ 	mutex_unlock(&module_mutex);
 
 
