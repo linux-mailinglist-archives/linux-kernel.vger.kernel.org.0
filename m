@@ -2,60 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 813B4125B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 07:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69782125B7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 07:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfLSGZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 01:25:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725843AbfLSGZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:25:33 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F8CB21582;
-        Thu, 19 Dec 2019 06:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576736733;
-        bh=UpgA+QE6yYvToQ6OyIV2s/X7Htht2BUjpTTkVZS41qo=;
-        h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
-        b=WdL6MAbbpBqOp+N+DGQ/q4lypMV0hvAkRzUzXdCVi9gxdQWRobmGsZQPB16RmOp7H
-         A9ahPWWmG1ul9RBPfTEyC69eApmVXjHcqodredl+0Q9OX3b8sjUcwkAsSCpZDHM1or
-         34ijHVx/9DphXMGmymJByao+ZditXCvQdexWO2Vk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726498AbfLSG2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 01:28:40 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8150 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725843AbfLSG2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 01:28:40 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 61B6D702EAF8926871A8;
+        Thu, 19 Dec 2019 14:28:38 +0800 (CST)
+Received: from huawei.com (10.175.127.16) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 19 Dec 2019
+ 14:28:28 +0800
+From:   Pan Zhang <zhangpan26@huawei.com>
+To:     <ulf.hansson@linaro.org>, <p.zabel@pengutronix.de>,
+        <jh80.chung@samsung.com>, <zhangpan26@huawei.com>,
+        <hushiyuan@huawei.com>
+CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH] mmc: host: fix a possible null pointer access.
+Date:   Thu, 19 Dec 2019 14:28:09 +0800
+Message-ID: <1576736889-4430-1-git-send-email-zhangpan26@huawei.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <CAPDyKFr8aVWVydT5U6mpuZr5_waH=bn6F8rjryfDJ15FDaAXUw@mail.gmail.com>
+References: <CAPDyKFr8aVWVydT5U6mpuZr5_waH=bn6F8rjryfDJ15FDaAXUw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191125135910.679310-7-niklas.cassel@linaro.org>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org> <20191125135910.679310-7-niklas.cassel@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] clk: qcom: apcs-msm8916: silently error out on EPROBE_DEFER
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 18 Dec 2019 22:25:32 -0800
-Message-Id: <20191219062533.0F8CB21582@mail.kernel.org>
+Content-Type: text/plain
+X-Originating-IP: [10.175.127.16]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Niklas Cassel (2019-11-25 05:59:08)
-> From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->=20
-> If devm_clk_get() fails due to probe deferral, we shouldn't print an
-> error message. Just be silent in this case.
->=20
-> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> ---
+On Wed, 18 Dec 2019 at 7:52 p.m., Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>
+>> 3419     if (host->slot &&
+>> 3420         (mmc_can_gpio_cd(host->slot->mmc) ||
+>> 3421          !mmc_card_is_removable(host->slot->mmc))) {
+>> 3422         ret = clk_prepare_enable(host->biu_clk);
+>> 3423         if (ret)
+>> 3424             return ret;
+>> 3425     }
+>>
+>> We previously assumed 'host->slot' could be null (see line 3419).
+>>
+>> The following situation is similar, so add a judgement.
+>>
+>> Signed-off-by: Pan Zhang <zhangpan26@huawei.com>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c 
+>> index fc9d4d0..8e27c52 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -3454,7 +3454,7 @@ int dw_mci_runtime_resume(struct device *dev)
+>>         mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE);
+>>
+>>
+>> -       if (host->slot->mmc->pm_flags & MMC_PM_KEEP_POWER)
+>> +       if (host->slot && (host->slot->mmc->pm_flags & 
+>> + MMC_PM_KEEP_POWER))
+>>                 dw_mci_set_ios(host->slot->mmc, 
+>> &host->slot->mmc->ios);
 
-Applied to clk-next
+>This shouldn't be a problem as the ->runtime_resume() callback can't be invoked, unless there is a slot.
+
+>>
+>>         /* Force setup bus to guarantee available clock output */
+>> --
+>> 2.7.4
+>>
+
+If so, there is no need to assume host->slot pointer previously(line 3419)?
 
