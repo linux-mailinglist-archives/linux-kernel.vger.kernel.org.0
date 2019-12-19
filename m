@@ -2,129 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EB5A126300
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AAD112630E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:13:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfLSNLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:11:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30494 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726754AbfLSNLy (ORCPT
+        id S1726808AbfLSNM4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:12:56 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:60714 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfLSNMz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:11:54 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBJD9uTx111655
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:11:53 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2x09cy1781-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:11:53 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 19 Dec 2019 13:11:50 -0000
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 19 Dec 2019 13:11:47 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBJDB3tR50331954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 19 Dec 2019 13:11:03 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 76833A4040;
-        Thu, 19 Dec 2019 13:11:46 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 19F02A404D;
-        Thu, 19 Dec 2019 13:11:45 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.200.39])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 19 Dec 2019 13:11:44 +0000 (GMT)
-Subject: Re: [PATCH v5 1/2] IMA: Define workqueue for early boot "key"
- measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Thu, 19 Dec 2019 08:11:44 -0500
-In-Reply-To: <20191218164434.2877-2-nramas@linux.microsoft.com>
-References: <20191218164434.2877-1-nramas@linux.microsoft.com>
-         <20191218164434.2877-2-nramas@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19121913-0008-0000-0000-000003429419
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19121913-0009-0000-0000-00004A62AD76
-Message-Id: <1576761104.4579.426.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-19_01:2019-12-17,2019-12-19 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1015 mlxscore=0 phishscore=0 adultscore=0
- suspectscore=2 bulkscore=0 malwarescore=0 impostorscore=0 spamscore=0
- mlxlogscore=972 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912190115
+        Thu, 19 Dec 2019 08:12:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=X2rxmFp1nN4MsfxtIvmlE76kILeHh88dwPXVZiG/rcc=; b=Y4ndwh0tsVYEEvEZDSgCnUAwC
+        4F5CwU7Z9BQdZxHvnSoeKOxsw2z7wftTAWGMymZc+Ebc9UElG8eCiV7T/5lxavnWV09M/gZ2Sfbyl
+        Z9W6HvrZ2qxnOQXKV00FLEbny+/ONiB0RnzP/S4aG5gMQ8+LMn4ETV5mNnh9Yv8MWdYdUXiOSzJVD
+        e2RxNqZ9VzoMk4H9ZPSL5C78aaBAfPkDZwWl3WaltXVZcdmGtQPi3K8rMKjunV/jSYsmvrCnBwohm
+        esrMXcEJW7q13+NW3OfoRVzKt8eUYaULJmav+m55KdFekV+ypmu5DoWKpWoFM/6iwTvC7s0lmTlrl
+        pj3d+fB4Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ihvbg-0000Vn-9r; Thu, 19 Dec 2019 13:12:44 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 885BC3007F2;
+        Thu, 19 Dec 2019 14:11:18 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1B1782B3DB890; Thu, 19 Dec 2019 14:12:42 +0100 (CET)
+Date:   Thu, 19 Dec 2019 14:12:42 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] sched: Micro optimization in pick_next_task() and in
+ check_preempt_curr()
+Message-ID: <20191219131242.GK2827@hirez.programming.kicks-ass.net>
+References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-12-18 at 08:44 -0800, Lakshmi Ramasubramanian wrote:
-> +/*
-> + * ima_process_queued_keys() - process keys queued for measurement
-> + *
-> + * This function sets ima_process_keys to true and processes queued keys.
-> + * From here on keys will be processed right away (not queued).
-> + */
-> +void ima_process_queued_keys(void)
-> +{
-> +	struct ima_key_entry *entry, *tmp;
-> +	bool process = false;
-> +
-> +	if (ima_process_keys)
-> +		return;
-> +
-> +	/*
-> +	 * Since ima_process_keys is set to true, any new key will be
-> +	 * processed immediately and not be queued to ima_keys list.
-> +	 * First one setting the ima_process_keys flag to true will
-> +	 * process the queued keys.
-> +	 */
-> +	mutex_lock(&ima_keys_mutex);
-> +	if (!ima_process_keys) {
-> +		ima_process_keys = true;
-> +		process = true;
-> +	}
-> +	mutex_unlock(&ima_keys_mutex);
-> +
-> +	if (!process)
-> +		return;
-> +
-> +	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
-> +		process_buffer_measurement(entry->payload, entry->payload_len,
-> +					   entry->keyring_name, KEY_CHECK, 0,
-> +					   entry->keyring_name);
-> +		list_del(&entry->list);
-> +		ima_free_key_entry(entry);
-> +	}
-> +}
-> +
+On Thu, Dec 19, 2019 at 03:39:14PM +0300, Kirill Tkhai wrote:
+> In kernel/sched/Makefile files, describing different sched classes, already
+> go in the order from the lowest priority class to the highest priority class:
+> 
+> idle.o fair.o rt.o deadline.o stop_task.o
+> 
+> The documentation of GNU linker says, that section appears in the order
+> they are seen during link time (see [1]):
+> 
+> >Normally, the linker will place files and sections matched by wildcards
+> >in the order in which they are seen during the link. You can change this
+> >by using the SORT keyword, which appears before a wildcard pattern
+> >in parentheses (e.g., SORT(.text*)).
+> 
+> So, we may expect const variables from idle.o will go before ro variables
+> from fair.o in RO_DATA section, while ro variables from fair.o will go
+> before ro variables from rt.o, etc.
+> 
+> (Also, it looks like the linking order is already used in kernel, e.g.
+>  in drivers/md/Makefile)
+> 
+> Thus, we may introduce an optimization based on xxx_sched_class addresses
+> in these two hot scheduler functions: pick_next_task() and check_preempt_curr().
+> 
+> One more result of the patch is that size of object file becomes a little
+> less (excluding added BUG_ON(), which goes in __init section):
+> 
+> $size kernel/sched/core.o
+>          text     data      bss	    dec	    hex	filename
+> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
+> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
 
-Getting rid of the temporary list is definitely a big improvement.  As
-James suggested, using test_and_set_bit() and test_bit() would improve
-this code even more.  I think, James correct me if I'm wrong, you
-would be able to get rid of both the mutex and "process".
-
-Mimi
-
-
->  /**
->   * ima_post_key_create_or_update - measure asymmetric keys
->   * @keyring: keyring to which the key is linked to
-
+Does LTO preserve this behaviour? I've never quite dared do this exact
+optimization.
