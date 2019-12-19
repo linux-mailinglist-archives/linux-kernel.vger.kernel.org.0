@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E3D2126A2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5909126962
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:37:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728828AbfLSSox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36916 "EHLO mail.kernel.org"
+        id S1727773AbfLSShJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:37:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729057AbfLSSos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:48 -0500
+        id S1727750AbfLSShG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:37:06 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2E2424672;
-        Thu, 19 Dec 2019 18:44:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D75F624684;
+        Thu, 19 Dec 2019 18:37:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781087;
-        bh=cvPAg9I2YwVLNkWL6x0/cKoqr1AmKIBCDJShQFg1R7k=;
+        s=default; t=1576780625;
+        bh=WQUBj7643v5jylzIosNbCTZXOGCNhDXR1gPNRvuH/qc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kvvfGzjDcAVAYEeLVESnRUxQP0WhRTwQZkzbCuBW+LpupRdlcHIqB4eqYvtRLt/PL
-         hLdhFht7UnKnNkDZ/4LMDEPWMtH2hyVx4c062nxkyLiTKlcptiNQEG/scwm3nTWLD2
-         gycpKESXXSgRidWSYZkFXzji5R2SdEmGuTBLqzDk=
+        b=OhvfdmPdIQucCEfA9OgfFWaNi2H5GffronlztfK2OGhYJyltV+/m5tIWUxV3KvQ1U
+         lOXtAUWPKdYJ+28fpHiS2M/fy8jq2OL5P5vUPvvGzJuOOs7/2me2+Exb4tc89ib/l7
+         QBglnwsxJIHLnI+GgLF/LCS7AEhcvkz2OAM663RQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>
-Subject: [PATCH 4.9 076/199] coresight: etm4x: Fix input validation for sysfs.
+        stable@vger.kernel.org, zhengbin <zhengbin13@huawei.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 050/162] nfsd: Return EPERM, not EACCES, in some SETATTR cases
 Date:   Thu, 19 Dec 2019 19:32:38 +0100
-Message-Id: <20191219183219.183611335@linuxfoundation.org>
+Message-Id: <20191219183210.939485236@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,90 +44,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Leach <mike.leach@linaro.org>
+From: zhengbin <zhengbin13@huawei.com>
 
-commit 2fe6899e36aa174abefd017887f9cfe0cb60c43a upstream.
+[ Upstream commit 255fbca65137e25b12bced18ec9a014dc77ecda0 ]
 
-A number of issues are fixed relating to sysfs input validation:-
+As the man(2) page for utime/utimes states, EPERM is returned when the
+second parameter of utime or utimes is not NULL, the caller's effective UID
+does not match the owner of the file, and the caller is not privileged.
 
-1) bb_ctrl_store() - incorrect compare of bit select field to absolute
-value. Reworked per ETMv4 specification.
-2) seq_event_store() - incorrect mask value - register has two
-event values.
-3) cyc_threshold_store() - must mask with max before checking min
-otherwise wrapped values can set illegal value below min.
-4) res_ctrl_store() - update to mask off all res0 bits.
+However, in a NFS directory mounted from knfsd, it will return EACCES
+(from nfsd_setattr-> fh_verify->nfsd_permission).  This patch fixes
+that.
 
-Reviewed-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Mike Leach <mike.leach@linaro.org>
-Fixes: a77de2637c9eb ("coresight: etm4x: moving sysFS entries to a dedicated file")
-Cc: stable <stable@vger.kernel.org> # 4.9+
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Link: https://lore.kernel.org/r/20191104181251.26732-6-mathieu.poirier@linaro.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: zhengbin <zhengbin13@huawei.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-etm4x-sysfs.c |   21 ++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ fs/nfsd/vfs.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-sysfs.c
-@@ -667,10 +667,13 @@ static ssize_t cyc_threshold_store(struc
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index 17138a97f306c..7745d0a9029c7 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -387,10 +387,23 @@ nfsd_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp, struct iattr *iap,
+ 	bool		get_write_count;
+ 	bool		size_change = (iap->ia_valid & ATTR_SIZE);
  
- 	if (kstrtoul(buf, 16, &val))
- 		return -EINVAL;
+-	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME | ATTR_SIZE))
++	if (iap->ia_valid & ATTR_SIZE) {
+ 		accmode |= NFSD_MAY_WRITE|NFSD_MAY_OWNER_OVERRIDE;
+-	if (iap->ia_valid & ATTR_SIZE)
+ 		ftype = S_IFREG;
++	}
 +
-+	/* mask off max threshold before checking min value */
-+	val &= ETM_CYC_THRESHOLD_MASK;
- 	if (val < drvdata->ccitmin)
- 		return -EINVAL;
++	/*
++	 * If utimes(2) and friends are called with times not NULL, we should
++	 * not set NFSD_MAY_WRITE bit. Otherwise fh_verify->nfsd_permission
++	 * will return EACCESS, when the caller's effective UID does not match
++	 * the owner of the file, and the caller is not privileged. In this
++	 * situation, we should return EPERM(notify_change will return this).
++	 */
++	if (iap->ia_valid & (ATTR_ATIME | ATTR_MTIME)) {
++		accmode |= NFSD_MAY_OWNER_OVERRIDE;
++		if (!(iap->ia_valid & (ATTR_ATIME_SET | ATTR_MTIME_SET)))
++			accmode |= NFSD_MAY_WRITE;
++	}
  
--	config->ccctlr = val & ETM_CYC_THRESHOLD_MASK;
-+	config->ccctlr = val;
- 	return size;
- }
- static DEVICE_ATTR_RW(cyc_threshold);
-@@ -701,14 +704,16 @@ static ssize_t bb_ctrl_store(struct devi
- 		return -EINVAL;
- 	if (!drvdata->nr_addr_cmp)
- 		return -EINVAL;
-+
- 	/*
--	 * Bit[7:0] selects which address range comparator is used for
--	 * branch broadcast control.
-+	 * Bit[8] controls include(1) / exclude(0), bits[0-7] select
-+	 * individual range comparators. If include then at least 1
-+	 * range must be selected.
- 	 */
--	if (BMVAL(val, 0, 7) > drvdata->nr_addr_cmp)
-+	if ((val & BIT(8)) && (BMVAL(val, 0, 7) == 0))
- 		return -EINVAL;
- 
--	config->bb_ctrl = val;
-+	config->bb_ctrl = val & GENMASK(8, 0);
- 	return size;
- }
- static DEVICE_ATTR_RW(bb_ctrl);
-@@ -1341,8 +1346,8 @@ static ssize_t seq_event_store(struct de
- 
- 	spin_lock(&drvdata->spinlock);
- 	idx = config->seq_idx;
--	/* RST, bits[7:0] */
--	config->seq_ctrl[idx] = val & 0xFF;
-+	/* Seq control has two masks B[15:8] F[7:0] */
-+	config->seq_ctrl[idx] = val & 0xFFFF;
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
-@@ -1597,7 +1602,7 @@ static ssize_t res_ctrl_store(struct dev
- 	if (idx % 2 != 0)
- 		/* PAIRINV, bit[21] */
- 		val &= ~BIT(21);
--	config->res_ctrl[idx] = val;
-+	config->res_ctrl[idx] = val & GENMASK(21, 0);
- 	spin_unlock(&drvdata->spinlock);
- 	return size;
- }
+ 	/* Callers that do fh_verify should do the fh_want_write: */
+ 	get_write_count = !fhp->fh_dentry;
+-- 
+2.20.1
+
 
 
