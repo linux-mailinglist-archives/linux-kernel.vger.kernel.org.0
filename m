@@ -2,79 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BACBE12631F
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:15:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 264BB126336
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:16:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfLSNPc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:15:32 -0500
-Received: from mail.loongson.cn ([114.242.206.163]:58724 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726701AbfLSNPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:15:32 -0500
-Received: from linux.localdomain (unknown [123.138.236.242])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxjxTod_tdXZIMAA--.55S2;
-        Thu, 19 Dec 2019 21:15:20 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] afs: Fix compile warning in afs_dynroot_lookup()
-Date:   Thu, 19 Dec 2019 21:14:51 +0800
-Message-Id: <1576761291-30121-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf9DxjxTod_tdXZIMAA--.55S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4xuFW7ZrW3Jw4fXr1xuFg_yoWfJwcEyF
-        47K3s5CrWUJr92yF4FgFWUtFs5Wws8GF4DurZxWr4DKayUAa15t3WDArZxJF47Gwnayr98
-        Cw18KrsxJry7KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb7AYjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
-        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
-        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
-        8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-        64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJw
-        Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc2xSY4AK67AK6ry8MxAIw28I
-        cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
-        IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
-        42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
-        IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
-        jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU0rgA7UUUUU==
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1727014AbfLSNP7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:15:59 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:54589 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbfLSNP6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 08:15:58 -0500
+Received: by mail-pj1-f65.google.com with SMTP id ep17so2506308pjb.4;
+        Thu, 19 Dec 2019 05:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EVebG2mxl2pFbRKmtKvplGDYfctGq6ipwixunLpsjMo=;
+        b=i1fphoqZCkW4TfNecoJIQUs7pOzb64NjVceblA4niuUzc3lN9qr7fCDirz8Qtly2pU
+         7mats1aY7LeNSFoqLpabz+qUtMSf5S4LBHNu2d0EAdu/Pxy/7ufPxtANYZbYsF/SdZ5V
+         iq7rO/HUELq6aJ82b3X35Pov1K1hzLY0ATZbM8fSMFF4dkn1/2k6AA+EjFwBT1BpkBlS
+         I6nDHwepj2UKBWwMNO33djHVHeNHUf7fXOKf3RZtyhcZHHjaVBaXDS50+g0845Km4l50
+         VFcVZRytMHgnq1qyS7JfeySpMOjUewwcXZJNmoS4ORL2Uk+A6oq3sho7e8ODrMqrCrLj
+         ew2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EVebG2mxl2pFbRKmtKvplGDYfctGq6ipwixunLpsjMo=;
+        b=IrzQoKjFOiXxfPs64PyFMqAVGZtj/4IoNLMoe3O2faLxaEaVJPTdEqhKhRySCn4wiQ
+         DL7QL7Sro8Viu/BQZa6jQSTLo06r5fkgiD1pmiFHsXpRVyfPny38liyT8bKM+SY4R1FT
+         600Usz+1kHDbcHQmLufENtvNlLXlEFC42mfRH/5Zmv8LYqMHHKRzwm6s4XvcG1kTTgUL
+         MPscaG+Xpmxh+/cbEOXgeXmkYvgHO1KT2liaDkilKjlbBGabt7XT+qDfWl2d5RQXoibH
+         h0Q5SSguVbmH3k2k7c0X2rrjDnAPpLXkYXmG+OVseThTbQI7gs5VBq/W6cMI8BZ1LW9c
+         RT0w==
+X-Gm-Message-State: APjAAAVbi+6KXbMwUW2R5IPjJr9xhP7CkTDdBqxXH5hQcpqwCSf4wZQG
+        WnqStRGa6f3/qX4wnGmKwgM=
+X-Google-Smtp-Source: APXvYqx0fVJulRJtPx/+jJSN0Soric4f4PecZWngEHjcQePZUFaRW9bCzm5WXlZtsWup7o1/aBb8QQ==
+X-Received: by 2002:a17:90a:d145:: with SMTP id t5mr9755894pjw.57.1576761357616;
+        Thu, 19 Dec 2019 05:15:57 -0800 (PST)
+Received: from oslab.tsinghua.edu.cn ([166.111.139.172])
+        by smtp.gmail.com with ESMTPSA id d22sm8079229pfo.187.2019.12.19.05.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 05:15:56 -0800 (PST)
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+To:     linus.walleij@linaro.org, bgolaszewski@baylibre.com
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jia-Ju Bai <baijiaju1990@gmail.com>
+Subject: [PATCH 1/2 v2] gpio: gpio-grgpio: fix possible sleep-in-atomic-context bugs in grgpio_remove()
+Date:   Thu, 19 Dec 2019 21:14:59 +0800
+Message-Id: <20191219131459.18640-1-baijiaju1990@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following compile warning:
+drivers/gpio/gpiolib-sysfs.c, 796:
+	mutex_lock in gpiochip_sysfs_unregister
+drivers/gpio/gpiolib.c, 1455:
+	gpiochip_sysfs_unregister in gpiochip_remove
+drivers/gpio/gpio-grgpio.c, 460:
+	gpiochip_remove in grgpio_remove
+drivers/gpio/gpio-grgpio.c, 449:
+	_raw_spin_lock_irqsave in grgpio_remove
 
-  CC      fs/afs/dynroot.o
-fs/afs/dynroot.c: In function ‘afs_dynroot_lookup’:
-fs/afs/dynroot.c:117:6: warning: ‘len’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-  ret = lookup_one_len(name, dentry->d_parent, len);
-      ^
-fs/afs/dynroot.c:91:6: note: ‘len’ was declared here
-  int len;
-      ^
+kernel/irq/irqdomain.c, 243:
+	mutex_lock in irq_domain_remove
+drivers/gpio/gpio-grgpio.c, 463:
+	irq_domain_remove in grgpio_remove
+drivers/gpio/gpio-grgpio.c, 449:
+	_raw_spin_lock_irqsave in grgpio_remove
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+mutex_lock() can sleep at runtime.
+
+To fix these bugs, the lock is dropped in grgpio_remove(), because there
+is no need for locking in remove() callbacks.
+
+These bugs are found by a static analysis tool STCheck written by
+myself.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
 ---
- fs/afs/dynroot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+* Drop the lock instead of moving the calls to lock functions.
+  Thank Bartosz for good advice.
 
-diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
-index 7503899..303f712 100644
---- a/fs/afs/dynroot.c
-+++ b/fs/afs/dynroot.c
-@@ -88,7 +88,7 @@ static struct dentry *afs_lookup_atcell(struct dentry *dentry)
- 	struct dentry *ret;
- 	unsigned int seq = 0;
- 	char *name;
--	int len;
-+	int len = 0;
+---
+ drivers/gpio/gpio-grgpio.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
+index 08234e64993a..a49f0711ca94 100644
+--- a/drivers/gpio/gpio-grgpio.c
++++ b/drivers/gpio/gpio-grgpio.c
+@@ -437,8 +437,6 @@ static int grgpio_remove(struct platform_device *ofdev)
+ 	int i;
+ 	int ret = 0;
  
- 	if (!net->ws_cell)
- 		return ERR_PTR(-ENOENT);
+-	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
+-
+ 	if (priv->domain) {
+ 		for (i = 0; i < GRGPIO_MAX_NGPIO; i++) {
+ 			if (priv->uirqs[i].refcnt != 0) {
+@@ -454,8 +452,6 @@ static int grgpio_remove(struct platform_device *ofdev)
+ 		irq_domain_remove(priv->domain);
+ 
+ out:
+-	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
+-
+ 	return ret;
+ }
+ 
 -- 
-2.1.0
+2.17.1
 
