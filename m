@@ -2,102 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE1081271A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B411271B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 00:43:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfLSXlE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 18:41:04 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40577 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726967AbfLSXlE (ORCPT
+        id S1727261AbfLSXnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 18:43:45 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:56800 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfLSXnp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 18:41:04 -0500
-Received: by mail-ot1-f67.google.com with SMTP id w21so1583502otj.7;
-        Thu, 19 Dec 2019 15:41:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3NfDG7avH+ujpcCBpbFffoQ4me1PnPp49OU9/9ftPuE=;
-        b=QNVJURKqy99mz8SlvQjSgapNbZc3lVtDbzBYq3sINJnpJICcBwEvKVBcy01mTzZEqu
-         fx52bbtwyQTEvfDq0yfOA1ATxGu+uwoooYBvhoAr9RYBsP8BHvFTzT+b6mwD6czx0SRC
-         341jziKyAXFilnNUCysIwg3ToPJpR8zvBat7ZNfAT643ekTB/qImuYlBAtn0Zj8ff1N1
-         80PUdMVMoW87Q22docLQjcwjV23iLURmtBY3hGd9a1Cy2rpeNab6wJEj5Fv9IqyS7sDK
-         0hk+EXnCqMFVb0hbByMdOao6auHaE/ym2UKUleJec79HRy0ajE5/qoQsLYf18G9br9KE
-         wYag==
-X-Gm-Message-State: APjAAAV8ws0Dy4CvU6I1rv8mEe8piHurOAoD1OlQXnFV2zTCctkgPpXi
-        ZRhIssg0bSD8sd0KwcOMAQ==
-X-Google-Smtp-Source: APXvYqzAQ3Wpwz3g5jix2Do+I3Pb2ucPQFPn2hVTxMKOwUBxxicCkn6k6qUaRkAyoO5pODcIC0pAJw==
-X-Received: by 2002:a9d:5c02:: with SMTP id o2mr2095128otk.176.1576798863533;
-        Thu, 19 Dec 2019 15:41:03 -0800 (PST)
-Received: from localhost (ip-184-205-174-147.ftwttx.spcsdns.net. [184.205.174.147])
-        by smtp.gmail.com with ESMTPSA id 4sm2767680otu.0.2019.12.19.15.41.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 15:41:02 -0800 (PST)
-Date:   Thu, 19 Dec 2019 17:41:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org, peng.fan@nxp.com,
-        ping.bai@nxp.com, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 2/7] soc: imx: gpcv2: Update imx8m-power.h to include
- iMX8M Mini
-Message-ID: <20191219234100.GA19269@bogus>
-References: <20191213160542.15757-1-aford173@gmail.com>
- <20191213160542.15757-3-aford173@gmail.com>
+        Thu, 19 Dec 2019 18:43:45 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJNT1pR079308;
+        Thu, 19 Dec 2019 23:43:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=V40tARymiv39q2cmnKqiqtnzC46o+QgO8uC2+bbWTHs=;
+ b=j2LsY6xPOd0x5OZxlgZJQpZf6YfGKuEAxaeGbPKgJ0BMcdNxYcNzzqsrmES1N4JtTreI
+ vgwdpOmSX8HqE56xR4/JUTlz4onJqbQswSgOHt6QzHh4PTMHf5CBvThbusXt7mfxQ+uy
+ CzpX81N03jYlD0/4X8kB2ayCDzp1o71wPD+EC5HG6y0S0At5YDOMWWQftvY5w6vbPjQQ
+ b7b4qBc/9uVRTYuQGMSJVHgQRzlF3W3dARHmdt3dmXlZ/PIeYAumJ8V0i2FEBUE1XqPB
+ pxtAk8069N4kpbVhlbWqKXl/Ux+UaP1S+xQET+rnEYzoijcONOqek446Spu6MV07JLc4 iw== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by aserp2120.oracle.com with ESMTP id 2x01knnv9c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 23:43:37 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBJNYFR1011128;
+        Thu, 19 Dec 2019 23:41:36 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2wyut62r92-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 19 Dec 2019 23:41:36 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBJNfYra009356;
+        Thu, 19 Dec 2019 23:41:34 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 15:41:34 -0800
+To:     Chen Zhou <chenzhou10@huawei.com>
+Cc:     <mikecyr@linux.ibm.com>, <jejb@linux.ibm.com>,
+        <martin.petersen@oracle.com>, <linux-scsi@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scsi: ibmvscsi_tgt: remove set but not used variables 'iue' and 'sd'
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20191213064042.161840-1-chenzhou10@huawei.com>
+Date:   Thu, 19 Dec 2019 18:41:31 -0500
+In-Reply-To: <20191213064042.161840-1-chenzhou10@huawei.com> (Chen Zhou's
+        message of "Fri, 13 Dec 2019 14:40:42 +0800")
+Message-ID: <yq1h81vc28k.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191213160542.15757-3-aford173@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912190173
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912190173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 10:05:37AM -0600, Adam Ford wrote:
-> In preparation for i.MX8M Mini support in the GPC driver, the
-> include file used by both the device tree and the source needs to
-> have the appropriate references for it.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> ---
-> V2:  No Change
-> 
->  include/dt-bindings/power/imx8m-power.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/include/dt-bindings/power/imx8m-power.h b/include/dt-bindings/power/imx8m-power.h
-> index 8a513bd9166e..0054bba744b8 100644
-> --- a/include/dt-bindings/power/imx8m-power.h
-> +++ b/include/dt-bindings/power/imx8m-power.h
-> @@ -18,4 +18,18 @@
->  #define IMX8M_POWER_DOMAIN_MIPI_CSI2	9
->  #define IMX8M_POWER_DOMAIN_PCIE2	10
->  
-> +#define IMX8MM_POWER_DOMAIN_MIPI	0
-> +#define IMX8MM_POWER_DOMAIN_PCIE	1
-> +#define IMX8MM_POWER_DOMAIN_USB_OTG1	2
-> +#define IMX8MM_POWER_DOMAIN_USB_OTG2	3
-> +#define IMX8MM_POWER_DOMAIN_DDR1	4
-> +#define IMX8MM_POWER_DOMAIN_GPU2D	5
-> +#define IMX8MM_POWER_DOMAIN_GPU	6
-> +#define IMX8MM_POWER_DOMAIN_VPU	7
-> +#define IMX8MM_POWER_DOMAIN_GPU3D	8
-> +#define IMX8MM_POWER_DOMAIN_DISP	9
-> +#define IMX8MM_POWER_VPU_G1		10
-> +#define IMX8MM_POWER_VPU_G2		11
-> +#define IMX8MM_POWER_VPU_H1		12
 
-Why is _DOMAIN missing from the last 3?
+Chen,
 
-> +
->  #endif
-> -- 
-> 2.20.1
-> 
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_send_messages:
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:1888:19: warning: variable iue set but not used [-Wunused-but-set-variable]
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function ibmvscsis_queue_data_in:
+> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3806:8: warning: variable sd set but not used [-Wunused-but-set-variable]
+
+Applied to 5.6/scsi-queue, thanks!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
