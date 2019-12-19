@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 882CC126B75
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B755126B3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfLSS4j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:56:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53080 "EHLO mail.kernel.org"
+        id S1730588AbfLSSy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:54:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730819AbfLSS43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:56:29 -0500
+        id S1729702AbfLSSyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:54:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1199424680;
-        Thu, 19 Dec 2019 18:56:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5E95227BF;
+        Thu, 19 Dec 2019 18:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781788;
-        bh=Yo9CFf4PoozPwftEeU9+puyfoaQCOgPONOUKYf5ajww=;
+        s=default; t=1576781690;
+        bh=TRjs8bxBQvu1ekSCCmNtZ0zJVUQ5t1Naq2n7iuyAVjM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HyAcvWhlV4AQLa030c4M7RzPFYwIWMGC/UTk8IW4mZrP4R/b63Gk1eZ5mX7mAhOln
-         WD4+gSMnXhq3TL85lG6NJDzXIe9MaWG44zyEkD06x08pEzOEcpu0QVVQLYlbvOiewf
-         LgdVx+lIlMegwjh14mCG+UTmlGDuetRtFSGY/VCg=
+        b=P5XRWXWcekJIQFacQgjJC+EUf0tvE0x4J6HPiOMDm/vhXvBaLA+0ILMPCrm6C4hGn
+         49M08XZPLxTg0BaaEzW73KBcVR2gjI7pMgTlTzpStF42i4ezRoB7cIJW2YALGlJQmS
+         UXMjyGQThEcSJQMK3Td1/Y/bw0KVSZHPi+QdzdsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Long Li <longli@microsoft.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 5.4 32/80] cifs: smbd: Return -ECONNABORTED when trasnport is not in connected state
-Date:   Thu, 19 Dec 2019 19:34:24 +0100
-Message-Id: <20191219183105.601289021@linuxfoundation.org>
+Subject: [PATCH 5.4 33/80] cifs: Dont display RDMA transport on reconnect
+Date:   Thu, 19 Dec 2019 19:34:25 +0100
+Message-Id: <20191219183106.105637638@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
 References: <20191219183031.278083125@linuxfoundation.org>
@@ -45,9 +45,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Long Li <longli@microsoft.com>
 
-commit acd4680e2bef2405a0e1ef2149fbb01cce7e116c upstream.
+commit 14cc639c17ab0b6671526a7459087352507609e4 upstream.
 
-The transport should return this error so the upper layer will reconnect.
+On reconnect, the transport data structure is NULL and its information is not
+available.
 
 Signed-off-by: Long Li <longli@microsoft.com>
 Cc: stable@vger.kernel.org
@@ -55,19 +56,22 @@ Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smbdirect.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifs_debug.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1972,7 +1972,7 @@ read_rfc1002_done:
+--- a/fs/cifs/cifs_debug.c
++++ b/fs/cifs/cifs_debug.c
+@@ -256,6 +256,11 @@ static int cifs_debug_data_proc_show(str
+ 		if (!server->rdma)
+ 			goto skip_rdma;
  
- 	if (info->transport_status != SMBD_CONNECTED) {
- 		log_read(ERR, "disconnected\n");
--		return 0;
-+		return -ECONNABORTED;
- 	}
- 
- 	goto again;
++		if (!server->smbd_conn) {
++			seq_printf(m, "\nSMBDirect transport not available");
++			goto skip_rdma;
++		}
++
+ 		seq_printf(m, "\nSMBDirect (in hex) protocol version: %x "
+ 			"transport status: %x",
+ 			server->smbd_conn->protocol,
 
 
