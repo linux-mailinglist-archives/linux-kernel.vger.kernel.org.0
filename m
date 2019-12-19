@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2B7B126A51
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EDA0126A60
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729298AbfLSSqJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:46:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38718 "EHLO mail.kernel.org"
+        id S1729356AbfLSSql (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:46:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729287AbfLSSqI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:08 -0500
+        id S1729347AbfLSSqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:46:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D74C24679;
-        Thu, 19 Dec 2019 18:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A20824676;
+        Thu, 19 Dec 2019 18:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781167;
-        bh=ukK3tZ03T2ojLubsfuqKbVnsJ0LNvG8yLEX+MReaYbk=;
+        s=default; t=1576781194;
+        bh=/2LOJfKNLozt90aEKK9v/cPlnAKXVlic9b08xEtYXu0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yK41FEhz4nKRO3f+vM7R9xTsiVvsVEIyJKRTxUQydM+H0B2imLYbWQAEeZlauMkjQ
-         m13LiCqZdDtH7ygnhTuuTx9sb5F/FzEQk+KT3q7b599BTwiy5OxgtqgKru8aevbMYy
-         1QxwofepZNy/yNZJsO6e7ZGFzqvvm/l2eQHruUrw=
+        b=IO7w6zqgeS+VAFhygZP1fkezb1z3EoK9hCjAJVV4fNkmWwCZJsWh32C6QJZ9fT9Rf
+         bEP6UIk+WkRdfD1FRiQK1Lvbi/BOXEXiRLRuGS4XrzyasPGJq+jlKzyLH+Eo0gItFf
+         XeZ5bLbQEclCHVfELyQnpIlReBrBPpSQGyR8Q/Dg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Subject: [PATCH 4.9 083/199] drm/i810: Prevent underflow in ioctl
-Date:   Thu, 19 Dec 2019 19:32:45 +0100
-Message-Id: <20191219183219.549159529@linuxfoundation.org>
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 084/199] KVM: x86: do not modify masked bits of shared MSRs
+Date:   Thu, 19 Dec 2019 19:32:46 +0100
+Message-Id: <20191219183219.600878872@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -43,43 +43,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 4f69851fbaa26b155330be35ce8ac393e93e7442 upstream.
+commit de1fca5d6e0105c9d33924e1247e2f386efc3ece upstream.
 
-The "used" variables here come from the user in the ioctl and it can be
-negative.  It could result in an out of bounds write.
+"Shared MSRs" are guest MSRs that are written to the host MSRs but
+keep their value until the next return to userspace.  They support
+a mask, so that some bits keep the host value, but this mask is
+only used to skip an unnecessary MSR write and the value written
+to the MSR is always the guest MSR.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191004102251.GC823@mwanda
+Fix this and, while at it, do not update smsr->values[slot].curr if
+for whatever reason the wrmsr fails.  This should only happen due to
+reserved bits, so the value written to smsr->values[slot].curr
+will not match when the user-return notifier and the host value will
+always be restored.  However, it is untidy and in rare cases this
+can actually avoid spurious WRMSRs on return to userspace.
+
 Cc: stable@vger.kernel.org
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Tested-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i810/i810_dma.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/kvm/x86.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/i810/i810_dma.c
-+++ b/drivers/gpu/drm/i810/i810_dma.c
-@@ -723,7 +723,7 @@ static void i810_dma_dispatch_vertex(str
- 	if (nbox > I810_NR_SAREA_CLIPRECTS)
- 		nbox = I810_NR_SAREA_CLIPRECTS;
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -273,13 +273,14 @@ int kvm_set_shared_msr(unsigned slot, u6
+ 	struct kvm_shared_msrs *smsr = per_cpu_ptr(shared_msrs, cpu);
+ 	int err;
  
--	if (used > 4 * 1024)
-+	if (used < 0 || used > 4 * 1024)
- 		used = 0;
+-	if (((value ^ smsr->values[slot].curr) & mask) == 0)
++	value = (value & mask) | (smsr->values[slot].host & ~mask);
++	if (value == smsr->values[slot].curr)
+ 		return 0;
+-	smsr->values[slot].curr = value;
+ 	err = wrmsrl_safe(shared_msrs_global.msrs[slot], value);
+ 	if (err)
+ 		return 1;
  
- 	if (sarea_priv->dirty)
-@@ -1043,7 +1043,7 @@ static void i810_dma_dispatch_mc(struct
- 	if (u != I810_BUF_CLIENT)
- 		DRM_DEBUG("MC found buffer that isn't mine!\n");
- 
--	if (used > 4 * 1024)
-+	if (used < 0 || used > 4 * 1024)
- 		used = 0;
- 
- 	sarea_priv->dirty = 0x7f;
++	smsr->values[slot].curr = value;
+ 	if (!smsr->registered) {
+ 		smsr->urn.on_user_return = kvm_on_user_return;
+ 		user_return_notifier_register(&smsr->urn);
 
 
