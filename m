@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12103126A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D76E11269A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:40:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfLSSrk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40506 "EHLO mail.kernel.org"
+        id S1728308AbfLSSj4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:39:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729493AbfLSSrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:35 -0500
+        id S1728294AbfLSSjx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:39:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A93F224676;
-        Thu, 19 Dec 2019 18:47:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD3E424650;
+        Thu, 19 Dec 2019 18:39:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781255;
-        bh=7o+5IgHJs/NzrUR6SmPzn5+OzS688lDaby8Qs6fz98Y=;
+        s=default; t=1576780792;
+        bh=3K4N9OE0RaryNp4KTlU4FXDaW7UdwQ7b4wXkp9IHSQQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2R/gHUIS1tEbGpDlppLr3gEfUAyXgRN8u8Bm9Fy0J5835fBw7hu5AifvCbKX6NmMs
-         e8ZeBwvlFmFzMSXqlt1xk+h/vtap9LzqmUK9shV0ZOpi8X//3DlaUwTik10nnApry7
-         00VCYkaVevvZITkyRZ/kile/aBWTPt1UYL/KbnvE=
+        b=NHq03vZOAKEsz8nKbxqwuOHc1IT7mUuBzXR3/VLaIvOR27K0iONojZd+z3TfgnURb
+         EVSz/EnMvhbVHKDNizuqjjUSflIhyZ9KAh7vY9Hg6YE++bJIgPHcvZD3HxSI5L8Vpp
+         +qGUrnr1G+Tbxwf5de1KVyjABATiZPHdNkwmCeME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>,
-        Jan Kara <jack@suse.cz>
-Subject: [PATCH 4.9 146/199] quota: fix livelock in dquot_writeback_dquots
+        stable@vger.kernel.org, linux-media@vger.kernel.org,
+        Martin Bugge <marbugge@cisco.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>
+Subject: [PATCH 4.4 120/162] video/hdmi: Fix AVI bar unpack
 Date:   Thu, 19 Dec 2019 19:33:48 +0100
-Message-Id: <20191219183223.303556132@linuxfoundation.org>
+Message-Id: <20191219183215.056079256@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +48,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-commit 6ff33d99fc5c96797103b48b7b0902c296f09c05 upstream.
+commit 6039f37dd6b76641198e290f26b31c475248f567 upstream.
 
-Write only quotas which are dirty at entry.
+The bar values are little endian, not big endian. The pack
+function did it right but the unpack got it wrong. Fix it.
 
-XFSTEST: https://github.com/dmonakhov/xfstests/commit/b10ad23566a5bf75832a6f500e1236084083cddc
-
-Link: https://lore.kernel.org/r/20191031103920.3919-1-dmonakhov@openvz.org
-CC: stable@vger.kernel.org
-Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Signed-off-by: Dmitry Monakhov <dmtrmonakhov@yandex-team.ru>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Cc: stable@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: Martin Bugge <marbugge@cisco.com>
+Cc: Hans Verkuil <hans.verkuil@cisco.com>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Fixes: 2c676f378edb ("[media] hdmi: added unpack and logging functions for InfoFrames")
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190919132853.30954-1-ville.syrjala@linux.intel.com
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/quota/dquot.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/video/hdmi.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -611,7 +611,7 @@ EXPORT_SYMBOL(dquot_scan_active);
- /* Write all dquot structures to quota files */
- int dquot_writeback_dquots(struct super_block *sb, int type)
- {
--	struct list_head *dirty;
-+	struct list_head dirty;
- 	struct dquot *dquot;
- 	struct quota_info *dqopt = sb_dqopt(sb);
- 	int cnt;
-@@ -624,9 +624,10 @@ int dquot_writeback_dquots(struct super_
- 		if (!sb_has_quota_active(sb, cnt))
- 			continue;
- 		spin_lock(&dq_list_lock);
--		dirty = &dqopt->info[cnt].dqi_dirty_list;
--		while (!list_empty(dirty)) {
--			dquot = list_first_entry(dirty, struct dquot,
-+		/* Move list away to avoid livelock. */
-+		list_replace_init(&dqopt->info[cnt].dqi_dirty_list, &dirty);
-+		while (!list_empty(&dirty)) {
-+			dquot = list_first_entry(&dirty, struct dquot,
- 						 dq_dirty);
- 			/* Dirty and inactive can be only bad dquot... */
- 			if (!test_bit(DQ_ACTIVE_B, &dquot->dq_flags)) {
+--- a/drivers/video/hdmi.c
++++ b/drivers/video/hdmi.c
+@@ -1032,12 +1032,12 @@ static int hdmi_avi_infoframe_unpack(str
+ 	if (ptr[0] & 0x10)
+ 		frame->active_aspect = ptr[1] & 0xf;
+ 	if (ptr[0] & 0x8) {
+-		frame->top_bar = (ptr[5] << 8) + ptr[6];
+-		frame->bottom_bar = (ptr[7] << 8) + ptr[8];
++		frame->top_bar = (ptr[6] << 8) | ptr[5];
++		frame->bottom_bar = (ptr[8] << 8) | ptr[7];
+ 	}
+ 	if (ptr[0] & 0x4) {
+-		frame->left_bar = (ptr[9] << 8) + ptr[10];
+-		frame->right_bar = (ptr[11] << 8) + ptr[12];
++		frame->left_bar = (ptr[10] << 8) | ptr[9];
++		frame->right_bar = (ptr[12] << 8) | ptr[11];
+ 	}
+ 	frame->scan_mode = ptr[0] & 0x3;
+ 
 
 
