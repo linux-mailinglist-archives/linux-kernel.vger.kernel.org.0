@@ -2,84 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8880F125BB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 07:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09A11125BBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 07:58:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfLSG5v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 01:57:51 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51092 "EHLO huawei.com"
+        id S1727006AbfLSG6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 01:58:12 -0500
+Received: from mail-eopbgr140085.outbound.protection.outlook.com ([40.107.14.85]:39014
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726340AbfLSG5t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:57:49 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id E02947F46256DAE7E1FA;
-        Thu, 19 Dec 2019 14:57:46 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 19 Dec 2019 14:57:40 +0800
-From:   Huazhong Tan <tanhuazhong@huawei.com>
-To:     <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
-        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 8/8] net: hns3: only print misc interrupt status when handling fails
-Date:   Thu, 19 Dec 2019 14:57:47 +0800
-Message-ID: <1576738667-37960-9-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576738667-37960-1-git-send-email-tanhuazhong@huawei.com>
-References: <1576738667-37960-1-git-send-email-tanhuazhong@huawei.com>
+        id S1726882AbfLSG6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 01:58:06 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fveJ7MHx9iAeNat5J7doDg/QOm85UVtvnHhgTe9k0JmPlkza8CxfLdRGUtQ306W0bhqG+zmRiEy7tNOkMLwEvwM6wSGN7G1utr0irsZi+l3OKsMBIZF0IzbWthnuSGIHXLwHCi4OS1qgMWA/xwFSkHgT1o8Y02gLDv6GwUjDXa0/W/CE92wxOxV+TkHYTNTgUZo04/dNQfNCjHQBRhwpsj61VLErKlz8eofnuGjsABfcWidXPaWIEBTeEX7eiRIhXHXHsCFGvNv7FiiCZiRob+9XVbb4YDJ/NeQG26DwBl7/B65r++xW7bffpDx7s/QRv1uP2CsAS9dFpsmytoEaMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=osTIJzd5BdDhsoxmnt7CRuFq/aUPhgoanv00jxTz2G0=;
+ b=nJ9i7qHIbh4iYVrT3zZYxK2rgniA7Xhv2ZkTDqkIaYplySYJc/KKwB+adHwogIu7KFbLwDXRGvKbXbAexHaXeRh+QcWy7Ajza/0q/o3RALcSSzwSDLmUH6NxOpLi1rHyruBZdtYBR3/N8BPpItqJ2wyRuBPf2BLB6u+3gWV/S5Rx9DUT47BokFgX/1seN+u561gnpAPa408HkSGUY87/KQ8rlbD9Zoj4AQDqnnsdq4HiOpJ91Ft+AVY6kYhx2Om8Yj+5EWvkoTkmIY7Lfd5IY58cnljGu/4GrZKti1F0eC77GnHrcppQFcZ7J4eBlnX18S6Xi82RW/hJkMVsM3CdIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=osTIJzd5BdDhsoxmnt7CRuFq/aUPhgoanv00jxTz2G0=;
+ b=JMoTnPc9Xdl5LAX9lWxTJFT5Tfu6+swdajJ1qi6mxAGGLcXHa+SwCCeN169u8WzlYw4I0exzKiR+cxwHfd6E+urCYJJhcMBKW8QS4XwmvprsqWd5fd0BhlhNCWNitJUj3Ux0pAMgpjx/iwge8+fvOMN3nO6Tpn6nhUsjNVQFVyM=
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.51.23) by
+ VI1PR04MB4589.eurprd04.prod.outlook.com (20.177.55.223) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.15; Thu, 19 Dec 2019 06:58:03 +0000
+Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::cd33:501f:b25:51a9]) by VI1PR04MB5327.eurprd04.prod.outlook.com
+ ([fe80::cd33:501f:b25:51a9%7]) with mapi id 15.20.2538.019; Thu, 19 Dec 2019
+ 06:58:03 +0000
+From:   Peter Chen <peter.chen@nxp.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/4] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA
+ Tegra support
+Thread-Topic: [PATCH v1 1/4] dt-binding: usb: ci-hdrc-usb2: Document NVIDIA
+ Tegra support
+Thread-Index: AQHVtcwUkMMUkU3UcUKBBXgSTVt7iafBB7QA
+Date:   Thu, 19 Dec 2019 06:58:03 +0000
+Message-ID: <20191219065800.GB19921@b29397-desktop>
+References: <20191218175313.16235-1-digetx@gmail.com>
+ <20191218175313.16235-2-digetx@gmail.com>
+In-Reply-To: <20191218175313.16235-2-digetx@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peter.chen@nxp.com; 
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 3630267c-720e-4ffa-bf5f-08d78450cad7
+x-ms-traffictypediagnostic: VI1PR04MB4589:
+x-microsoft-antispam-prvs: <VI1PR04MB458966E1219BE7D35288D4018B520@VI1PR04MB4589.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0256C18696
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(366004)(346002)(136003)(376002)(396003)(189003)(199004)(26005)(8936002)(81166006)(81156014)(186003)(53546011)(33716001)(6506007)(6486002)(66446008)(66476007)(66556008)(64756008)(7416002)(91956017)(76116006)(66946007)(6512007)(6916009)(44832011)(9686003)(86362001)(4326008)(1076003)(4744005)(71200400001)(316002)(8676002)(54906003)(478600001)(2906002)(33656002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4589;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: s7NEMo6LKIRgdmM+zu6mCrsTEL/ANoJCxQJCuHSHzec9m9cMPAs/ammMQutEob99MfUzwL4rRioOxVY7PidJDRT4rDtf9XkYzDPxSHRn7zs+zVajcZGGXbCs7WcHpUloUImEsRyEGeROAflkd0fmfoLinPOXxX+iW+e2TPDz49gTbKcNqbKEzHnJTcgrzyiR0amKfWWnRZrWir7IqCFCygDDZLcCG3J0af2QK7vf/XJf3ezAlKYC4ESDkZTnfLpvjDVzBx8QEjCQetmIyyL6o3VXkhNgvpUfIKtjjMHKxJJpDYIcudQZ3YBVAMv7HIUK8ZzKKgJvp5a2TXH4H2InYXrJcrAOODfCWvibcLwsNfY+GpvGEa2eT7u06PfupbRYGEmZQP5fqENrR4g9iGWjWMP1KePFyLGf+0ZUIFYzuUtOhx3NLnm960keDrXcFRJC
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <B49D0639DF65C0448C79274696758281@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3630267c-720e-4ffa-bf5f-08d78450cad7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 06:58:03.0742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rkNaNKHzk8dyqqLr6mjo16RNDarwRURi8WtF28stkLMPtXpb+yPR6BwtWp9sLgR62+RV6ZHSMK7BVoFPDQEdZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4589
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Printing misc interrupt status of hardware error event in the
-IRQ handler is unnecessary, since hclge_handle_hw_msix_error()
-will print out the detail information for this hardware error
-when handling success. So, this patch removes the print in
-IRQ handler, and prints it when hclge_handle_hw_msix_error()
-fails.
+On 19-12-18 20:53:10, Dmitry Osipenko wrote:
+> NVIDIA Tegra SoCs use ChipIdea silicon IP for the USB controllers.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt b/Doc=
+umentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+> index cfc9f40ab641..51376cbe5f3d 100644
+> --- a/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+> +++ b/Documentation/devicetree/bindings/usb/ci-hdrc-usb2.txt
+> @@ -15,6 +15,10 @@ Required properties:
+>  	"qcom,ci-hdrc"
+>  	"chipidea,usb2"
+>  	"xlnx,zynq-usb-2.20a"
+> +	"nvidia,tegra20-udc"
+> +	"nvidia,tegra30-udc"
+> +	"nvidia,tegra114-udc"
+> +	"nvidia,tegra124-udc"
+>  - reg: base address and length of the registers
+>  - interrupts: interrupt for the USB controller
+> =20
 
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Acked-by: Peter Chen <peter.chen@nxp.com>
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index d1aafea..a510f00 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -3005,8 +3005,6 @@ static u32 hclge_check_event_cause(struct hclge_dev *hdev, u32 *clearval)
- 
- 	/* check for vector0 msix event source */
- 	if (msix_src_reg & HCLGE_VECTOR0_REG_MSIX_MASK) {
--		dev_info(&hdev->pdev->dev, "received event 0x%x\n",
--			 msix_src_reg);
- 		*clearval = msix_src_reg;
- 		return HCLGE_VECTOR0_EVENT_ERR;
- 	}
-@@ -3505,10 +3503,15 @@ static enum hnae3_reset_type hclge_get_reset_level(struct hnae3_ae_dev *ae_dev,
- 
- 	/* first, resolve any unknown reset type to the known type(s) */
- 	if (test_bit(HNAE3_UNKNOWN_RESET, addr)) {
-+		u32 msix_sts_reg = hclge_read_dev(&hdev->hw,
-+					HCLGE_VECTOR0_PF_OTHER_INT_STS_REG);
- 		/* we will intentionally ignore any errors from this function
- 		 *  as we will end up in *some* reset request in any case
- 		 */
--		hclge_handle_hw_msix_error(hdev, addr);
-+		if (hclge_handle_hw_msix_error(hdev, addr))
-+			dev_info(&hdev->pdev->dev, "received msix interrupt 0x%x\n",
-+				 msix_sts_reg);
-+
- 		clear_bit(HNAE3_UNKNOWN_RESET, addr);
- 		/* We defered the clearing of the error event which caused
- 		 * interrupt since it was not posssible to do that in
--- 
-2.7.4
+--=20
 
+Thanks,
+Peter Chen=
