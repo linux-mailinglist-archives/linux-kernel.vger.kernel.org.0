@@ -2,51 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A8AB126D56
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:10:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81961126C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfLSTKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:10:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58192 "EHLO mail.kernel.org"
+        id S1729268AbfLSSqA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:46:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728271AbfLSSjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:39:45 -0500
+        id S1728640AbfLSSp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7281D2467F;
-        Thu, 19 Dec 2019 18:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EDE3206D7;
+        Thu, 19 Dec 2019 18:45:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780784;
-        bh=CqvtxM5wQOaMFWkK5dFmK0FDjGmValcb6z/pJpqMHoA=;
+        s=default; t=1576781157;
+        bh=tXiHxWutDSqcxAY5guEkaYdDDjqecu9sBI3xxjh9P34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aRgheYh9TaazUcYMW+nV+JjLrJ7fNO9snKT+36l85gGZvf9m1E1I+cT6+JxienyyP
-         6eSdqjBSUBYBUqEzvsLkKrDmeEFxPNzrflhtWvsuL1E79B0u32QZllQUwUiLGyL7Ms
-         itZYmDEHRI7uQeyWbFN1or8utrheZ9ZaxHPzh9l0=
+        b=nLbsqq7fNRO+aasNw04y22kUYxVT0emYBBT7GJi6Y4UBtXgalqVtf4uqgU5Z0P+aQ
+         oVBfwgh3lPLXz2+48214gMNziWOEGROMg6PQZ+ME8oiIKnxet9yV5duAAkK6bCN8ir
+         cpxBjJMREVwRE3Uo/9mgqhOFM7UDbLGmUkCbYq+k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jann@thejh.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tycho Andersen <tycho.andersen@canonical.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: [PATCH 4.4 078/162] fs/proc: Stop reporting eip and esp in /proc/PID/stat
-Date:   Thu, 19 Dec 2019 19:33:06 +0100
-Message-Id: <20191219183212.539842175@linuxfoundation.org>
+        stable@vger.kernel.org, "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 106/199] ARM: dts: pandora-common: define wl1251 as child node of mmc3
+Date:   Thu, 19 Dec 2019 19:33:08 +0100
+Message-Id: <20191219183220.755085420@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -56,58 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Lutomirski <luto@kernel.org>
+From: H. Nikolaus Schaller <hns@goldelico.com>
 
-commit 0a1eb2d474edfe75466be6b4677ad84e5e8ca3f5 upstream.
+commit 4f9007d692017cef38baf2a9b82b7879d5b2407b upstream.
 
-Reporting these fields on a non-current task is dangerous.  If the
-task is in any state other than normal kernel code, they may contain
-garbage or even kernel addresses on some architectures.  (x86_64
-used to do this.  I bet lots of architectures still do.)  With
-CONFIG_THREAD_INFO_IN_TASK=y, it can OOPS, too.
+Since v4.7 the dma initialization requires that there is a
+device tree property for "rx" and "tx" channels which is
+not provided by the pdata-quirks initialization.
 
-As far as I know, there are no use programs that make any material
-use of these fields, so just get rid of them.
+By conversion of the mmc3 setup to device tree this will
+finally allows to remove the OpenPandora wlan specific omap3
+data-quirks.
 
-Reported-by: Jann Horn <jann@thejh.net>
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux API <linux-api@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Tycho Andersen <tycho.andersen@canonical.com>
-Link: http://lkml.kernel.org/r/a5fed4c3f4e33ed25d4bb03567e329bc5a712bcc.1475257877.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+Fixes: 81eef6ca9201 ("mmc: omap_hsmmc: Use dma_request_chan() for requesting DMA channel")
+Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Cc: <stable@vger.kernel.org> # v4.7+
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/proc/array.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/omap3-pandora-common.dtsi |   36 ++++++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 2 deletions(-)
 
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -425,10 +425,11 @@ static int do_task_stat(struct seq_file
- 	mm = get_task_mm(task);
- 	if (mm) {
- 		vsize = task_vsize(mm);
--		if (permitted) {
--			eip = KSTK_EIP(task);
--			esp = KSTK_ESP(task);
--		}
-+		/*
-+		 * esp and eip are intentionally zeroed out.  There is no
-+		 * non-racy way to read them without freezing the task.
-+		 * Programs that need reliable values can use ptrace(2).
-+		 */
- 	}
+--- a/arch/arm/boot/dts/omap3-pandora-common.dtsi
++++ b/arch/arm/boot/dts/omap3-pandora-common.dtsi
+@@ -221,6 +221,17 @@
+ 		gpio = <&gpio6 4 GPIO_ACTIVE_HIGH>;	/* GPIO_164 */
+ 	};
  
- 	get_task_comm(tcomm, task);
++	/* wl1251 wifi+bt module */
++	wlan_en: fixed-regulator-wg7210_en {
++		compatible = "regulator-fixed";
++		regulator-name = "vwlan";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		startup-delay-us = <50000>;
++		enable-active-high;
++		gpio = <&gpio1 23 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	/* wg7210 (wifi+bt module) 32k clock buffer */
+ 	wg7210_32k: fixed-regulator-wg7210_32k {
+ 		compatible = "regulator-fixed";
+@@ -514,9 +525,30 @@
+ 	/*wp-gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>;*/	/* GPIO_127 */
+ };
+ 
+-/* mmc3 is probed using pdata-quirks to pass wl1251 card data */
+ &mmc3 {
+-	status = "disabled";
++	vmmc-supply = <&wlan_en>;
++
++	bus-width = <4>;
++	non-removable;
++	ti,non-removable;
++	cap-power-off-card;
++
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc3_pins>;
++
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	wlan: wifi@1 {
++		compatible = "ti,wl1251";
++
++		reg = <1>;
++
++		interrupt-parent = <&gpio1>;
++		interrupts = <21 IRQ_TYPE_LEVEL_HIGH>;	/* GPIO_21 */
++
++		ti,wl1251-has-eeprom;
++	};
+ };
+ 
+ /* bluetooth*/
 
 
