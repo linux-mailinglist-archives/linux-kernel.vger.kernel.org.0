@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABC69126C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DAB4126C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbfLSTEZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:04:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40074 "EHLO mail.kernel.org"
+        id S1729446AbfLSSrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40154 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729425AbfLSSrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:14 -0500
+        id S1728126AbfLSSrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E884C2465E;
-        Thu, 19 Dec 2019 18:47:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A0CC24672;
+        Thu, 19 Dec 2019 18:47:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781233;
-        bh=IUtYO+uS0Eddzxw4xtQEOjWU5msvKA9bePjJTUT7/rY=;
+        s=default; t=1576781235;
+        bh=PGBoSnLW4Rb1DhKStngull8p7dQLICcEIG8kZDgP+9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e+Jfqm8Ce1mojECZ4itsfXl8pZjhtWmT1BUNriqeAu680UqFBqYW1KKo5QhqlDPjD
-         NSiPD5LYFcFEK6vl+0rYoN3IP4SH0Ziul7UtskwBAScaEr1oU0d4uKLQB0a6C3dJOa
-         jMAqp4kOnxf0933cKNIsj64aqQ66KhZaVC+w2UtE=
+        b=RFNysEBEDBEQ2eD8NaouLei9WZZU+UvELzaRqtQtU6fX+FJ4orvOPaNkFPPfl9OCZ
+         +nLdR+gntLk6vMBb8pyqprz0GNEOLX/mhbMC5214oociR8VRDG2ukddmM7MCw3nS4M
+         QUAZN2No7mhxT2S/MEaar5TgJdt/K6Jbq2nA867U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.9 138/199] pinctrl: samsung: Fix device node refcount leaks in S3C24xx wakeup controller init
-Date:   Thu, 19 Dec 2019 19:33:40 +0100
-Message-Id: <20191219183222.773358566@linuxfoundation.org>
+Subject: [PATCH 4.9 139/199] pinctrl: samsung: Fix device node refcount leaks in init code
+Date:   Thu, 19 Dec 2019 19:33:41 +0100
+Message-Id: <20191219183222.838135508@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,50 +44,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Krzysztof Kozlowski <krzk@kernel.org>
 
-commit 6fbbcb050802d6ea109f387e961b1dbcc3a80c96 upstream.
+commit a322b3377f4bac32aa25fb1acb9e7afbbbbd0137 upstream.
 
-In s3c24xx_eint_init() the for_each_child_of_node() loop is used with a
-break to find a matching child node.  Although each iteration of
+Several functions use for_each_child_of_node() loop with a break to find
+a matching child node.  Although each iteration of
 for_each_child_of_node puts the previous node, but early exit from loop
 misses it.  This leads to leak of device node.
 
 Cc: <stable@vger.kernel.org>
-Fixes: af99a7507469 ("pinctrl: Add pinctrl-s3c24xx driver")
+Fixes: 9a2c1c3b91aa ("pinctrl: samsung: Allow grouping multiple pinmux/pinconf nodes")
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/samsung/pinctrl-s3c24xx.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-samsung.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-+++ b/drivers/pinctrl/samsung/pinctrl-s3c24xx.c
-@@ -495,8 +495,10 @@ static int s3c24xx_eint_init(struct sams
- 		return -ENODEV;
- 
- 	eint_data = devm_kzalloc(dev, sizeof(*eint_data), GFP_KERNEL);
--	if (!eint_data)
-+	if (!eint_data) {
-+		of_node_put(eint_np);
- 		return -ENOMEM;
-+	}
- 
- 	eint_data->drvdata = d;
- 
-@@ -508,12 +510,14 @@ static int s3c24xx_eint_init(struct sams
- 		irq = irq_of_parse_and_map(eint_np, i);
- 		if (!irq) {
- 			dev_err(dev, "failed to get wakeup EINT IRQ %d\n", i);
-+			of_node_put(eint_np);
- 			return -ENXIO;
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -281,6 +281,7 @@ static int samsung_dt_node_to_map(struct
+ 						&reserved_maps, num_maps);
+ 		if (ret < 0) {
+ 			samsung_dt_free_map(pctldev, *map, *num_maps);
++			of_node_put(np);
+ 			return ret;
  		}
- 
- 		eint_data->parents[i] = irq;
- 		irq_set_chained_handler_and_data(irq, handlers[i], eint_data);
  	}
-+	of_node_put(eint_np);
- 
- 	bank = d->pin_banks;
- 	for (i = 0; i < d->nr_banks; ++i, ++bank) {
+@@ -770,8 +771,10 @@ static struct samsung_pmx_func *samsung_
+ 		if (!of_get_child_count(cfg_np)) {
+ 			ret = samsung_pinctrl_create_function(dev, drvdata,
+ 							cfg_np, func);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(cfg_np);
+ 				return ERR_PTR(ret);
++			}
+ 			if (ret > 0) {
+ 				++func;
+ 				++func_cnt;
+@@ -782,8 +785,11 @@ static struct samsung_pmx_func *samsung_
+ 		for_each_child_of_node(cfg_np, func_np) {
+ 			ret = samsung_pinctrl_create_function(dev, drvdata,
+ 						func_np, func);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(func_np);
++				of_node_put(cfg_np);
+ 				return ERR_PTR(ret);
++			}
+ 			if (ret > 0) {
+ 				++func;
+ 				++func_cnt;
 
 
