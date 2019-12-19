@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949D8126CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 981B7126CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfLSSpF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:45:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37264 "EHLO mail.kernel.org"
+        id S1729120AbfLSSpP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728446AbfLSSpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:02 -0500
+        id S1729114AbfLSSpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 953142465E;
-        Thu, 19 Dec 2019 18:45:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA6DA2465E;
+        Thu, 19 Dec 2019 18:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781102;
-        bh=Pz3oXwnhBnyh5QoKhGy5gN1yyj4plupGvpSL/A4Xxwo=;
+        s=default; t=1576781109;
+        bh=ffTe4d7s93MEfe2IPClkV/CGEEI3SDnmgDMPU/pkQz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ss+bMsZwlW7peQgOW5Vq6kh3O95ZonOCVqRs5SPxonWtHMAA5LfCNPLCHlBdWo0L3
-         /DrKLkjtvnKAz2cc3jb3zowMZIJ2AG/Gz06Nf6cM+adBXHIyCvJRemkzO0HsA/CYI0
-         I/3pe6Zg8aguOpZ6b9agy53wF1TJ7wKZTNX7QjUU=
+        b=Yc4XIGq/RZLvCMHpHE8pNB+TpUVrXH5EJwcvyVOPkChi0tverBo6kRxbL3V9aPgbo
+         d/vkliGlB3o41pLSWG6rvCTKjtcHGqTfkgpps8gSV+l10gudHwAr0TGkREdsX91JQZ
+         kLGKg4TbH2cYGrZfdbAyOX/7Eoq9tUWnKRszrJxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 044/199] serial: imx: fix error handling in console_setup
-Date:   Thu, 19 Dec 2019 19:32:06 +0100
-Message-Id: <20191219183217.385205660@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 047/199] ARM: debug: enable UART1 for socfpga Cyclone5
+Date:   Thu, 19 Dec 2019 19:32:09 +0100
+Message-Id: <20191219183217.548758301@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,35 +45,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Clément Péron <peron.clem@gmail.com>
 
-[ Upstream commit 63fd4b94b948c14eeb27a3bbf50ea0f7f0593bad ]
+[ Upstream commit f6628486c8489e91c513b62608f89ccdb745600d ]
 
-The ipg clock only needs to be unprepared in case preparing
-per clock fails. The ipg clock has already disabled at the point.
+Cyclone5 and Arria10 doesn't have the same memory map for UART1.
 
-Fixes: 1cf93e0d5488 ("serial: imx: remove the uart_console() check")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cyclone5.
+
+Signed-off-by: Clément Péron <peron.clem@gmail.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/Kconfig.debug | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 0d82be145c680..6d596c6351591 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1943,7 +1943,7 @@ imx_console_setup(struct console *co, char *options)
+diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
+index a5625430bef64..bb8f39fe3a225 100644
+--- a/arch/arm/Kconfig.debug
++++ b/arch/arm/Kconfig.debug
+@@ -987,14 +987,21 @@ choice
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on SOCFPGA(Cyclone 5 and Arria 5) based platforms.
  
- 	retval = clk_prepare(sport->clk_per);
- 	if (retval)
--		clk_disable_unprepare(sport->clk_ipg);
-+		clk_unprepare(sport->clk_ipg);
+-	config DEBUG_SOCFPGA_UART1
++	config DEBUG_SOCFPGA_ARRIA10_UART1
+ 		depends on ARCH_SOCFPGA
+-		bool "Use SOCFPGA UART1 for low-level debug"
++		bool "Use SOCFPGA Arria10 UART1 for low-level debug"
+ 		select DEBUG_UART_8250
+ 		help
+ 		  Say Y here if you want kernel low-level debugging support
+ 		  on SOCFPGA(Arria 10) based platforms.
  
- error_console:
- 	return retval;
++	config DEBUG_SOCFPGA_CYCLONE5_UART1
++		depends on ARCH_SOCFPGA
++		bool "Use SOCFPGA Cyclone 5 UART1 for low-level debug"
++		select DEBUG_UART_8250
++		help
++		  Say Y here if you want kernel low-level debugging support
++		  on SOCFPGA(Cyclone 5 and Arria 5) based platforms.
+ 
+ 	config DEBUG_SUN9I_UART0
+ 		bool "Kernel low-level debugging messages via sun9i UART0"
+@@ -1534,7 +1541,8 @@ config DEBUG_UART_PHYS
+ 	default 0xfe800000 if ARCH_IOP32X
+ 	default 0xff690000 if DEBUG_RK32_UART2
+ 	default 0xffc02000 if DEBUG_SOCFPGA_UART0
+-	default 0xffc02100 if DEBUG_SOCFPGA_UART1
++	default 0xffc02100 if DEBUG_SOCFPGA_ARRIA10_UART1
++	default 0xffc03000 if DEBUG_SOCFPGA_CYCLONE5_UART1
+ 	default 0xffd82340 if ARCH_IOP13XX
+ 	default 0xffe40000 if DEBUG_RCAR_GEN1_SCIF0
+ 	default 0xffe42000 if DEBUG_RCAR_GEN1_SCIF2
+@@ -1624,7 +1632,8 @@ config DEBUG_UART_VIRT
+ 	default 0xfeb30c00 if DEBUG_KEYSTONE_UART0
+ 	default 0xfeb31000 if DEBUG_KEYSTONE_UART1
+ 	default 0xfec02000 if DEBUG_SOCFPGA_UART0
+-	default 0xfec02100 if DEBUG_SOCFPGA_UART1
++	default 0xfec02100 if DEBUG_SOCFPGA_ARRIA10_UART1
++	default 0xfec03000 if DEBUG_SOCFPGA_CYCLONE5_UART1
+ 	default 0xfec12000 if (DEBUG_MVEBU_UART0 || DEBUG_MVEBU_UART0_ALTERNATE) && ARCH_MVEBU
+ 	default 0xfec12100 if DEBUG_MVEBU_UART1_ALTERNATE
+ 	default 0xfec10000 if DEBUG_SIRFATLAS7_UART0
+@@ -1672,9 +1681,9 @@ config DEBUG_UART_8250_WORD
+ 	depends on DEBUG_LL_UART_8250 || DEBUG_UART_8250
+ 	depends on DEBUG_UART_8250_SHIFT >= 2
+ 	default y if DEBUG_PICOXCELL_UART || \
+-		DEBUG_SOCFPGA_UART0 || DEBUG_SOCFPGA_UART1 || \
+-		DEBUG_KEYSTONE_UART0 || DEBUG_KEYSTONE_UART1 || \
+-		DEBUG_ALPINE_UART0 || \
++		DEBUG_SOCFPGA_UART0 || DEBUG_SOCFPGA_ARRIA10_UART1 || \
++		DEBUG_SOCFPGA_CYCLONE5_UART1 || DEBUG_KEYSTONE_UART0 || \
++		DEBUG_KEYSTONE_UART1 || DEBUG_ALPINE_UART0 || \
+ 		DEBUG_DAVINCI_DMx_UART0 || DEBUG_DAVINCI_DA8XX_UART1 || \
+ 		DEBUG_DAVINCI_DA8XX_UART2 || \
+ 		DEBUG_BCM_KONA_UART || DEBUG_RK32_UART2
 -- 
 2.20.1
 
