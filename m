@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6537126996
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 318F7126A8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbfLSSjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:39:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57336 "EHLO mail.kernel.org"
+        id S1729271AbfLSSsh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727824AbfLSSjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:39:12 -0500
+        id S1729641AbfLSSsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:31 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E22102467F;
-        Thu, 19 Dec 2019 18:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5446524672;
+        Thu, 19 Dec 2019 18:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780751;
-        bh=RWxwab80TY1PaH/MVpLU0B8OeDnTrNO7TreYWl8Nzmg=;
+        s=default; t=1576781310;
+        bh=wLwQlMeEYv/NL2uzCNnJdO5ELlnKe/9pJiyN1sUCszo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C72c/2BxyHBnrJizRVQtvk8tgdJ7PCPHS4RTnFcCV6l7An6Qzuegv3vF8RPYBbL6j
-         7XtX/M3oB90RgDtpIANE41jrV1BMk+KY1ZMYpixMuSmdItXF+8UrXy4Pf1fcvYuEt5
-         b893ELUnq8u4hXI1Q4G+1jCvHSfGTr0pSnQOA7Hg=
+        b=fV02F7tZJclWdNvW1wvuG3b7rBfYGHZqKd7ZmMFVgFqNZTi9IVGfxMBL6d1A4MJ64
+         5CAlO0aywWzgwrX17DC+AYUfqiOmTSQu6AeA4GXbQYQlyb+TvIkpuQEyQJmjhqfx19
+         +tIdTTUiZREjqhHP50UTPNYOk0GMs0VVKpDTqhmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.4 101/162] rtlwifi: rtl8192de: Fix missing code to retrieve RX buffer address
-Date:   Thu, 19 Dec 2019 19:33:29 +0100
-Message-Id: <20191219183213.921191089@linuxfoundation.org>
+        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 128/199] blk-mq: avoid sysfs buffer overflow with too many CPU cores
+Date:   Thu, 19 Dec 2019 19:33:30 +0100
+Message-Id: <20191219183222.094589863@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,46 +43,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Ming Lei <ming.lei@redhat.com>
 
-commit 0e531cc575c4e9e3dd52ad287b49d3c2dc74c810 upstream.
+commit 8962842ca5abdcf98e22ab3b2b45a103f0408b95 upstream.
 
-In commit 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for
-new drivers"), a callback to get the RX buffer address was added to
-the PCI driver. Unfortunately, driver rtl8192de was not modified
-appropriately and the code runs into a WARN_ONCE() call. The use
-of an incorrect array is also fixed.
+It is reported that sysfs buffer overflow can be triggered if the system
+has too many CPU cores(>841 on 4K PAGE_SIZE) when showing CPUs of
+hctx via /sys/block/$DEV/mq/$N/cpu_list.
 
-Fixes: 38506ecefab9 ("rtlwifi: rtl_pci: Start modification for new drivers")
-Cc: Stable <stable@vger.kernel.org> # 3.18+
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Use snprintf to avoid the potential buffer overflow.
+
+This version doesn't change the attribute format, and simply stops
+showing CPU numbers if the buffer is going to overflow.
+
+Cc: stable@vger.kernel.org
+Fixes: 676141e48af7("blk-mq: don't dump CPU -> hw queue map on driver load")
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c |    8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ block/blk-mq-sysfs.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192de/trx.c
-@@ -843,13 +843,15 @@ u32 rtl92de_get_desc(u8 *p_desc, bool is
- 			break;
- 		}
- 	} else {
--		struct rx_desc_92c *pdesc = (struct rx_desc_92c *)p_desc;
- 		switch (desc_name) {
- 		case HW_DESC_OWN:
--			ret = GET_RX_DESC_OWN(pdesc);
-+			ret = GET_RX_DESC_OWN(p_desc);
- 			break;
- 		case HW_DESC_RXPKT_LEN:
--			ret = GET_RX_DESC_PKT_LEN(pdesc);
-+			ret = GET_RX_DESC_PKT_LEN(p_desc);
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -243,20 +243,25 @@ static ssize_t blk_mq_hw_sysfs_active_sh
+ 
+ static ssize_t blk_mq_hw_sysfs_cpus_show(struct blk_mq_hw_ctx *hctx, char *page)
+ {
++	const size_t size = PAGE_SIZE - 1;
+ 	unsigned int i, first = 1;
+-	ssize_t ret = 0;
++	int ret = 0, pos = 0;
+ 
+ 	for_each_cpu(i, hctx->cpumask) {
+ 		if (first)
+-			ret += sprintf(ret + page, "%u", i);
++			ret = snprintf(pos + page, size - pos, "%u", i);
+ 		else
+-			ret += sprintf(ret + page, ", %u", i);
++			ret = snprintf(pos + page, size - pos, ", %u", i);
++
++		if (ret >= size - pos)
 +			break;
-+		case HW_DESC_RXBUFF_ADDR:
-+			ret = GET_RX_DESC_BUFF_ADDR(p_desc);
- 			break;
- 		default:
- 			RT_ASSERT(false, "ERR rxdesc :%d not process\n",
+ 
+ 		first = 0;
++		pos += ret;
+ 	}
+ 
+-	ret += sprintf(ret + page, "\n");
+-	return ret;
++	ret = snprintf(pos + page, size - pos, "\n");
++	return pos + ret;
+ }
+ 
+ static struct blk_mq_ctx_sysfs_entry blk_mq_sysfs_dispatched = {
 
 
