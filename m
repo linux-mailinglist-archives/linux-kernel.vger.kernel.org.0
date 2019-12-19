@@ -2,80 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C80761266B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:21:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 852551266BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:22:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLSQVA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:21:00 -0500
-Received: from www62.your-server.de ([213.133.104.62]:56570 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbfLSQU7 (ORCPT
+        id S1726985AbfLSQWW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:22:22 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32931 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726818AbfLSQWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:20:59 -0500
-Received: from [2001:1620:665:0:5795:5b0a:e5d5:5944] (helo=localhost)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1ihyXk-0003mT-CK; Thu, 19 Dec 2019 17:20:52 +0100
-Date:   Thu, 19 Dec 2019 17:20:51 +0100
-From:   Daniel Borkmann <daniel@iogearbox.net>
-To:     Alexander Lobakin <alobakin@dlink.ru>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Edward Cree <ecree@solarflare.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH net] net: core: sysctl: fix compiler warning when only
- cBPF is present
-Message-ID: <20191219162051.GA11015@linux-9.fritz.box>
-References: <20191218091821.7080-1-alobakin@dlink.ru>
+        Thu, 19 Dec 2019 11:22:22 -0500
+Received: by mail-io1-f65.google.com with SMTP id z8so6368800ioh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 08:22:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=n81r7QrGuep9hV+3PKVLL2hvZEUY0LLXJO5ENAZWN5M=;
+        b=c1P8t0wKClU8n5NQN4ppo/B0Q6B38XEbPLd+ORo1cUS0Ixx/Pd/iga9Cc18cdU7CeE
+         UXl8s+dSoQAfchCg17VhEJDCRX2lQLhLjstfXDaficT9/33zFS+0APdxVTnZxmMDnH1Y
+         iQjnZcbyuvHKCQP9Xp7FpcBXaPeNKDgR4EhMxDad4Vaw4sxX9dIQorIBVYFWLGzrFBkR
+         Zrov6PpiYn4lKtvyYIN7CRc7I2DW1ghFz/WecChzSCTAd8Uh5bIfvo/5Llop5KNcJ7Qk
+         /jHJ6tLN2hoy5f8sHmvIcONL98AvLePH3Dc+ERTxpTjcto1L2nYon0kM6i3TnOm4a8Nt
+         A3KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=n81r7QrGuep9hV+3PKVLL2hvZEUY0LLXJO5ENAZWN5M=;
+        b=EmiI6kp3UfH9gy8/ha22kSVj0snQTTQXQS9lPRRAJLUvt5RlfgHSQm9i7yK405GwwJ
+         cvLb0Ab/Ky84rdEpAXTpnvEgLWfsuz8wt6+rf9rEjzE5USJI6AV0Y23tdP2nG9QnYQYc
+         MXuUO58fp/W8dz0JuXyO1WW5sMGlhV011I5IHPArq5d98XOJLK+VdsX+FP7nTL82zhUM
+         Xeg+Wb4VyZ3X0QW576iELwRPfpbZqfxTT0NIToH32bhwxaJgHMd75gB9daolk4F30mOK
+         dz6ZFKgNEgGIeu7n/Co/eloXHL0oEBREZPD6VaLFwiaucj4uwK5ajTmpaNkLCxj9+4rL
+         Um0A==
+X-Gm-Message-State: APjAAAWZAqp/NEx9ZDZL7gwfk+22xywxuEeewx4unnVtSKI2rAGbEFw4
+        krUR4u9xXaspWl4gVWPxHssk7Fvlj4VvqnntNqE/KQ==
+X-Google-Smtp-Source: APXvYqyrT8wvS1ZFGoN+rfRmHHdo8+PM6oEXfu/rT2FKRX2JOC1Q5EaDaqpRdCWbu6cVS8DAwmn+7enb8iEi+Sa2Omg=
+X-Received: by 2002:a02:3312:: with SMTP id c18mr7785705jae.24.1576772541788;
+ Thu, 19 Dec 2019 08:22:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191218091821.7080-1-alobakin@dlink.ru>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.101.4/25668/Thu Dec 19 10:55:58 2019)
+References: <20191204155912.17590-1-brgl@bgdev.pl> <20191204155912.17590-9-brgl@bgdev.pl>
+ <CAHp75VfVHr2LGZYSVhQ+KmhvGrnH=1ZNAPzJOTdZDh7wsjFddw@mail.gmail.com>
+In-Reply-To: <CAHp75VfVHr2LGZYSVhQ+KmhvGrnH=1ZNAPzJOTdZDh7wsjFddw@mail.gmail.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Thu, 19 Dec 2019 17:22:11 +0100
+Message-ID: <CAMRc=Meb78=x2+0+aFoZkSgRP3b+f9FvUNs_AJJ4rahpM=PPbw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/11] gpiolib: emit a debug message when adding events
+ to a full kfifo
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Kent Gibson <warthog618@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 12:18:21PM +0300, Alexander Lobakin wrote:
-> proc_dointvec_minmax_bpf_restricted() has been firstly introduced
-> in commit 2e4a30983b0f ("bpf: restrict access to core bpf sysctls")
-> under CONFIG_HAVE_EBPF_JIT. Then, this ifdef has been removed in
-> ede95a63b5e8 ("bpf: add bpf_jit_limit knob to restrict unpriv
-> allocations"), because a new sysctl, bpf_jit_limit, made use of it.
-> Finally, this parameter has become long instead of integer with
-> fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
-> and thus, a new proc_dolongvec_minmax_bpf_restricted() has been
-> added.
-> With this last change, we got back to that
-> proc_dointvec_minmax_bpf_restricted() is used only under
-> CONFIG_HAVE_EBPF_JIT, but the corresponding ifdef has not been
-> brought back.
-> 
-> So, in configurations like CONFIG_BPF_JIT=y && CONFIG_HAVE_EBPF_JIT=n
-> since v4.20 we have:
-> 
->   CC      net/core/sysctl_net_core.o
-> net/core/sysctl_net_core.c:292:1: warning: ‘proc_dointvec_minmax_bpf_restricted’ defined but not used [-Wunused-function]
->   292 | proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
->       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> Suppress this by guarding it with CONFIG_HAVE_EBPF_JIT again.
-> 
-> Fixes: fdadd04931c2 ("bpf: fix bpf_jit_limit knob for PAGE_SIZE >= 64K")
-> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+=C5=9Br., 4 gru 2019 o 23:28 Andy Shevchenko <andy.shevchenko@gmail.com> na=
+pisa=C5=82(a):
+>
+> On Wed, Dec 4, 2019 at 6:04 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Currently if the line-event kfifo is full, we just silently drop any ne=
+w
+> > events. Add a ratelimited debug message so that we at least have some
+> > trace in the kernel log of event overflow.
+> >
+>
+> Hmm... I don't like prints in IRQ context (even threaded).
+> Can we rather switch to trace points at some point?
+>
 
-Applied, thanks!
+This is something that will be very rare and unlikely - I don't see
+how trace points will help here with all the boiler-plate.
+
+Bart
