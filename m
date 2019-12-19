@@ -2,181 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C19412610D
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:40:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACBE61260F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 12:38:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfLSLkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 06:40:51 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7719 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726692AbfLSLkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 06:40:51 -0500
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1341DFDCE93905C41A01;
-        Thu, 19 Dec 2019 19:40:47 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.58) by
- DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 19 Dec 2019 19:40:40 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <yanaijie@huawei.com>, <chenxiang66@hisilicon.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        John Garry <john.garry@huawei.com>
-Subject: [PATCH] scsi: libsas: Tidy SAS address print format
-Date:   Thu, 19 Dec 2019 19:37:17 +0800
-Message-ID: <1576755437-188389-1-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
+        id S1726778AbfLSLiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 06:38:17 -0500
+Received: from frisell.zx2c4.com ([192.95.5.64]:39827 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbfLSLiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 06:38:17 -0500
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 03462d03;
+        Thu, 19 Dec 2019 10:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=Tgcd43aWDxXZtpWtji0zzfPGJtY=; b=2MOlb0
+        fyyxUyHUas9uVDw3nIhy+OOdK5hxgL5H9Uiw3KUlveqEAdSZUQxhKeRnUs8717lA
+        XoM96yXyMZ8JjhQ+GsobmsmNX5t3Tj9GCNfUxsHAjZl28FIRAqA0A9Nmctv/k065
+        65VIaCeHbFRTA8J0xyP+PVU68f/saptzma6Z8By5q/1JJEX1fmV41wu4vVE8ZzS1
+        wIzBlPghAHqSPLs5s3pfGqPe9PsnYwfLsJKRBhffU7kAQOttgMGKrVviR09mnoFj
+        68zjaJ2thGkz5NF+q7anw6ZFsEy2zG6bFyY6TQu6jLLvOryY3vZKJbLhd2lCCZt/
+        Xhsxxp9kzrPfpdvg==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 8b6c411a (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Thu, 19 Dec 2019 10:41:33 +0000 (UTC)
+Received: by mail-oi1-f179.google.com with SMTP id p67so2500294oib.13;
+        Thu, 19 Dec 2019 03:38:14 -0800 (PST)
+X-Gm-Message-State: APjAAAWc77uvhHNvjGHC5iaBEaWWq+HLUmGrocykK2bVLFTpT5G62pDN
+        KmURJf2zv4w8KTAYxtM3luRc3Y5DRAisbsSuIFs=
+X-Google-Smtp-Source: APXvYqyOfRgA2LULJU+futc2BpZr5n2mauTNGPfK4NbUrTbjuRpU36JofFYDe5gGWlSaz/8BPxQdZm6hA9C1Yz+Z9+g=
+X-Received: by 2002:aca:815:: with SMTP id 21mr1974457oii.52.1576755493704;
+ Thu, 19 Dec 2019 03:38:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.58]
-X-CFilter-Loop: Reflected
+References: <20191208232734.225161-1-Jason@zx2c4.com> <CACT4Y+bsJVmgbD-WogwU=LfWiPN1JgjBrwx4s8Y14hDd7vqqhQ@mail.gmail.com>
+ <CAHmME9o0AparjaaOSoZD14RAW8_AJTfKfcx3Y2ndDAPFNC-MeQ@mail.gmail.com>
+ <CACT4Y+Zssd6OZ2-U4kjw18mNthQyzPWZV_gkH3uATnSv1SVDfA@mail.gmail.com>
+ <CAHmME9oM=YHMZyg23WEzmZAof=7iv-A01VazB3ihhR99f6X1cg@mail.gmail.com>
+ <CACT4Y+aCEZm_BA5mmVTnK2cR8CQUky5w1qvmb2KpSR4-Pzp4Ow@mail.gmail.com>
+ <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com>
+ <CAHmME9qUWr69o0r+Mtm8tRSeQq3P780DhWAhpJkNWBfZ+J5OYA@mail.gmail.com>
+ <CACT4Y+YfBDvQHdK24ybyyy5p07MXNMnLA7+gq9axq-EizN6jhA@mail.gmail.com>
+ <CAHmME9qcv5izLz-_Z2fQefhgxDKwgVU=MkkJmAkAn3O_dXs5fA@mail.gmail.com> <CACT4Y+arVNCYpJZsY7vMhBEKQsaig_o6j7E=ib4tF5d25c-cjw@mail.gmail.com>
+In-Reply-To: <CACT4Y+arVNCYpJZsY7vMhBEKQsaig_o6j7E=ib4tF5d25c-cjw@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 19 Dec 2019 12:38:02 +0100
+X-Gmail-Original-Message-ID: <CAHmME9ofmwig2=G+8vc1fbOCawuRzv+CcAE=85spadtbneqGag@mail.gmail.com>
+Message-ID: <CAHmME9ofmwig2=G+8vc1fbOCawuRzv+CcAE=85spadtbneqGag@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: WireGuard secure network tunnel
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we use a mixture of %016llx, %llx, and %16llx when printing a
-SAS address.
+On Thu, Dec 19, 2019 at 12:19 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > Ahh, cool, okay. Netlink, device creation, and basic packet structure
+> > is a good start. What about the crypto, though?
+>
+> It depends. What exactly we need there?
+> syzkaller uses comparison operand interception which allows it e.g. to
+> guess signatures/checksums in some cases.
 
-Typically byte 0 will be 0x50, so this formatting is not so important -
-but some fake SAS addresses for SATA devices may not be. And we have
-mangled/invalid address to consider also. And it's better to be consistent
-in the code, so use a fixed format.
+I don't think you'll have too much luck with WireGuard here. Fuzzing
+your way to a valid handshake message involves guessing the 4th
+preimage of some elliptic curve scalar multiplication, with some
+random/changing data mixed in there every time you make a new try.
+There's a condensed protocol description here which should be less bad
+to glance at than the academic paper:
+https://www.wireguard.com/protocol/#first-message-initiator-to-responder
+. The fuzzers I've written for the crypto bits of WireGuard always
+involve taking a complete handshake implementation and mutating things
+from there. So maybe the "outer packet" won't be too fruitful without
+a bunch of work. At the very least, we can generate packets that have
+the right field sizes and such, and that should test the first level
+of error cases I guess.
 
-The SAS address is a fixed size at 64b, so we want to 0 byte extend to 16
-nibbles, so use %016llx globally.
-
-Also make some prints to be explicitly hex, and tidy some whitespace issue.
-
-Signed-off-by: John Garry <john.garry@huawei.com>
-
-diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-index e9e00740f7ca..c5a828a041e0 100644
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -137,7 +137,7 @@ static void sas_ata_task_done(struct sas_task *task)
- 	} else {
- 		ac = sas_to_ata_err(stat);
- 		if (ac) {
--			pr_warn("%s: SAS error %x\n", __func__, stat->stat);
-+			pr_warn("%s: SAS error 0x%x\n", __func__, stat->stat);
- 			/* We saw a SAS error. Send a vague error. */
- 			if (!link->sactive) {
- 				qc->err_mask = ac;
-diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-index f47b4b281b14..fef58185a644 100644
---- a/drivers/scsi/libsas/sas_discover.c
-+++ b/drivers/scsi/libsas/sas_discover.c
-@@ -170,7 +170,7 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
- 
- 	res = i->dft->lldd_dev_found(dev);
- 	if (res) {
--		pr_warn("driver on host %s cannot handle device %llx, error:%d\n",
-+		pr_warn("driver on host %s cannot handle device %016llx, error:%d\n",
- 			dev_name(sas_ha->dev),
- 			SAS_ADDR(dev->sas_addr), res);
- 	}
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 9fdb9c9fbda4..ab671cdd4cfb 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -500,7 +500,7 @@ static int sas_ex_general(struct domain_device *dev)
- 		ex_assign_report_general(dev, rg_resp);
- 
- 		if (dev->ex_dev.configuring) {
--			pr_debug("RG: ex %llx self-configuring...\n",
-+			pr_debug("RG: ex %016llx self-configuring...\n",
- 				 SAS_ADDR(dev->sas_addr));
- 			schedule_timeout_interruptible(5*HZ);
- 		} else
-@@ -881,7 +881,7 @@ static struct domain_device *sas_ex_discover_end_dev(
- 
- 		res = sas_discover_end_dev(child);
- 		if (res) {
--			pr_notice("sas_discover_end_dev() for device %16llx at %016llx:%02d returned 0x%x\n",
-+			pr_notice("sas_discover_end_dev() for device %016llx at %016llx:%02d returned 0x%x\n",
- 				  SAS_ADDR(child->sas_addr),
- 				  SAS_ADDR(parent->sas_addr), phy_id, res);
- 			goto out_list_del;
-diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-index 01f1738ce6df..1f1d01901978 100644
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -107,7 +107,7 @@ static inline void sas_smp_host_handler(struct bsg_job *job,
- 
- static inline void sas_fail_probe(struct domain_device *dev, const char *func, int err)
- {
--	pr_warn("%s: for %s device %16llx returned %d\n",
-+	pr_warn("%s: for %s device %016llx returned %d\n",
- 		func, dev->parent ? "exp-attached" :
- 		"direct-attached",
- 		SAS_ADDR(dev->sas_addr), err);
-diff --git a/drivers/scsi/libsas/sas_port.c b/drivers/scsi/libsas/sas_port.c
-index 7c86fd248129..19cf418928fa 100644
---- a/drivers/scsi/libsas/sas_port.c
-+++ b/drivers/scsi/libsas/sas_port.c
-@@ -165,7 +165,7 @@ static void sas_form_port(struct asd_sas_phy *phy)
- 	}
- 	sas_port_add_phy(port->port, phy->phy);
- 
--	pr_debug("%s added to %s, phy_mask:0x%x (%16llx)\n",
-+	pr_debug("%s added to %s, phy_mask:0x%x (%016llx)\n",
- 		 dev_name(&phy->phy->dev), dev_name(&port->port->dev),
- 		 port->phy_mask,
- 		 SAS_ADDR(port->attached_sas_addr));
-diff --git a/drivers/scsi/libsas/sas_scsi_host.c b/drivers/scsi/libsas/sas_scsi_host.c
-index bec83eb8ab87..9e0975e55c27 100644
---- a/drivers/scsi/libsas/sas_scsi_host.c
-+++ b/drivers/scsi/libsas/sas_scsi_host.c
-@@ -330,7 +330,7 @@ static int sas_recover_lu(struct domain_device *dev, struct scsi_cmnd *cmd)
- 
- 	int_to_scsilun(cmd->device->lun, &lun);
- 
--	pr_notice("eh: device %llx LUN %llx has the task\n",
-+	pr_notice("eh: device %016llx LUN 0x%llx has the task\n",
- 		  SAS_ADDR(dev->sas_addr),
- 		  cmd->device->lun);
- 
-@@ -615,7 +615,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
-  reset:
- 			tmf_resp = sas_recover_lu(task->dev, cmd);
- 			if (tmf_resp == TMF_RESP_FUNC_COMPLETE) {
--				pr_notice("dev %016llx LU %llx is recovered\n",
-+				pr_notice("dev %016llx LU 0x%llx is recovered\n",
- 					  SAS_ADDR(task->dev),
- 					  cmd->device->lun);
- 				sas_eh_finish_cmd(cmd);
-@@ -666,7 +666,7 @@ static void sas_eh_handle_sas_errors(struct Scsi_Host *shost, struct list_head *
- 			 * of effort could recover from errors.  Quite
- 			 * possibly the HA just disappeared.
- 			 */
--			pr_err("error from  device %llx, LUN %llx couldn't be recovered in any way\n",
-+			pr_err("error from device %016llx, LUN 0x%llx couldn't be recovered in any way\n",
- 			       SAS_ADDR(task->dev->sas_addr),
- 			       cmd->device->lun);
- 
-@@ -851,7 +851,7 @@ int sas_slave_configure(struct scsi_device *scsi_dev)
- 	if (scsi_dev->tagged_supported) {
- 		scsi_change_queue_depth(scsi_dev, SAS_DEF_QD);
- 	} else {
--		pr_notice("device %llx, LUN %llx doesn't support TCQ\n",
-+		pr_notice("device %016llx, LUN 0x%llx doesn't support TCQ\n",
- 			  SAS_ADDR(dev->sas_addr), scsi_dev->lun);
- 		scsi_change_queue_depth(scsi_dev, 1);
- 	}
-diff --git a/drivers/scsi/libsas/sas_task.c b/drivers/scsi/libsas/sas_task.c
-index 1ded7d85027e..e2d42593ce52 100644
---- a/drivers/scsi/libsas/sas_task.c
-+++ b/drivers/scsi/libsas/sas_task.c
-@@ -27,7 +27,7 @@ void sas_ssp_task_response(struct device *dev, struct sas_task *task,
- 		memcpy(tstat->buf, iu->sense_data, tstat->buf_valid_size);
- 
- 		if (iu->status != SAM_STAT_CHECK_CONDITION)
--			dev_warn(dev, "dev %llx sent sense data, but stat(%x) is not CHECK CONDITION\n",
-+			dev_warn(dev, "dev %016llx sent sense data, but stat(0x%x) is not CHECK CONDITION\n",
- 				 SAS_ADDR(task->dev->sas_addr), iu->status);
- 	}
- 	else
--- 
-2.17.1
-
+However, there's still a decent amount of surface on the "inner
+packet". For this, we can set up a pair of wireguard interfaces that
+are preconfigured to talk to each other (in common_linux.h, right? Or
+do you have some Go file that'd be easier to do that initialization
+in?), and then syzkaller will figure out itself how to send nasty IP
+packets through them with send/recv and such. There's a bit of surface
+here because sending packets provokes the aforementioned handshake,
+and also moves around the timer state machine. The receiver also needs
+to do some minimal parsing of the received packet to check
+"allowedips". So, good fodder for fuzzing.
