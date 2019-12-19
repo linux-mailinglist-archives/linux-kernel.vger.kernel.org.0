@@ -2,73 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D45F31264E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:34:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F6011264C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 15:31:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfLSOeb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 09:34:31 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8154 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726701AbfLSOeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 09:34:31 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id BF39BA5643C43FECAB3D;
-        Thu, 19 Dec 2019 22:34:18 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 19 Dec 2019 22:34:09 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <mathias.nyman@linux.intel.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH] usb: xhci: fix unused function warning
-Date:   Thu, 19 Dec 2019 22:30:50 +0800
-Message-ID: <20191219143050.86205-1-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726880AbfLSObZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 09:31:25 -0500
+Received: from relay.sw.ru ([185.231.240.75]:54454 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726757AbfLSObY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 09:31:24 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ihwpc-0006gx-Ov; Thu, 19 Dec 2019 17:31:12 +0300
+Subject: Re: [PATCH RFC] sched: Micro optimization in pick_next_task() and in
+ check_preempt_curr()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org
+References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
+ <20191219131242.GK2827@hirez.programming.kicks-ass.net>
+ <20191219140252.GS2871@hirez.programming.kicks-ass.net>
+ <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
+Message-ID: <423860b3-b35a-ff25-6abf-845ef4be6e8e@virtuozzo.com>
+Date:   Thu, 19 Dec 2019 17:31:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+In-Reply-To: <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xhci_pci_shutdown() function is no longer called outside of the
-CONFIG_PM #ifdef section, causing a harmless warning:
+On 19.12.2019 17:25, Kirill Tkhai wrote:
+> On 19.12.2019 17:02, Peter Zijlstra wrote:
+>> On Thu, Dec 19, 2019 at 02:12:42PM +0100, Peter Zijlstra wrote:
+>>> On Thu, Dec 19, 2019 at 03:39:14PM +0300, Kirill Tkhai wrote:
+>>>> In kernel/sched/Makefile files, describing different sched classes, already
+>>>> go in the order from the lowest priority class to the highest priority class:
+>>>>
+>>>> idle.o fair.o rt.o deadline.o stop_task.o
+>>>>
+>>>> The documentation of GNU linker says, that section appears in the order
+>>>> they are seen during link time (see [1]):
+>>>>
+>>>>> Normally, the linker will place files and sections matched by wildcards
+>>>>> in the order in which they are seen during the link. You can change this
+>>>>> by using the SORT keyword, which appears before a wildcard pattern
+>>>>> in parentheses (e.g., SORT(.text*)).
+>>>>
+>>>> So, we may expect const variables from idle.o will go before ro variables
+>>>> from fair.o in RO_DATA section, while ro variables from fair.o will go
+>>>> before ro variables from rt.o, etc.
+>>>>
+>>>> (Also, it looks like the linking order is already used in kernel, e.g.
+>>>>  in drivers/md/Makefile)
+>>>>
+>>>> Thus, we may introduce an optimization based on xxx_sched_class addresses
+>>>> in these two hot scheduler functions: pick_next_task() and check_preempt_curr().
+>>>>
+>>>> One more result of the patch is that size of object file becomes a little
+>>>> less (excluding added BUG_ON(), which goes in __init section):
+>>>>
+>>>> $size kernel/sched/core.o
+>>>>          text     data      bss	    dec	    hex	filename
+>>>> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
+>>>> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
+>>>
+>>> Does LTO preserve this behaviour? I've never quite dared do this exact
+>>> optimization.
+>>
+>> Also, ld.lld seems a popular option.
+> 
+> I asked on their IRC. Oh, it looks like no way is for this.
+> 
+> About the link: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Using_ld_the_GNU_Linker/sections.html
+> 
+> (17:19:25) nbjoerg: but it is not guarenteed behavior
+> (17:19:50) nbjoerg: if for some strange reason you really need to enforce relative orders of global objects, put them in consecutively named sections
 
-drivers/usb/host/xhci-pci.c:524:13: warning: ‘xhci_pci_shutdown’ defined but not used [-Wunused-function]
- static void xhci_pci_shutdown(struct usb_hcd *hcd)
-
-This moves the function into the #ifdef to get a clean build again.
-
-Fixes: f2c710f7dca8 ("usb: xhci: only set D3hot for pci device")
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- drivers/usb/host/xhci-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 2907fe4..4917c5b 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -519,7 +519,6 @@ static int xhci_pci_resume(struct usb_hcd *hcd, bool hibernated)
- 	retval = xhci_resume(xhci, hibernated);
- 	return retval;
- }
--#endif /* CONFIG_PM */
- 
- static void xhci_pci_shutdown(struct usb_hcd *hcd)
- {
-@@ -532,6 +531,7 @@ static void xhci_pci_shutdown(struct usb_hcd *hcd)
- 	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
- 		pci_set_power_state(pdev, PCI_D3hot);
- }
-+#endif /* CONFIG_PM */
- 
- /*-------------------------------------------------------------------------*/
- 
--- 
-2.7.4
-
+Introduction of sched_class::id instead of this patch's approach does not have a big sense,
+since this will help in check_preempt_curr() only. And this requires too many new lines of code.
