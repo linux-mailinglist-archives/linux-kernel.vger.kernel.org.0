@@ -2,135 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EA6F125F63
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:42:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11372125F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:43:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfLSKmy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:42:54 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43131 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726769AbfLSKmw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:42:52 -0500
-Received: by mail-qk1-f195.google.com with SMTP id t129so4219117qke.10
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 02:42:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TIJoAL5csx0AH4gB66J6qIB3eLqxZFfBPv363NryzWs=;
-        b=FWGpE+/tATqsqoZhk4l/cJS3y5dgDzxaD16oz9r2KsraAID77vrBQFp6MJiPSLPaL0
-         oY3Fq6R3LDIldJq3TnQw+39pNsIiso1cNmOVoa3KemvXixxLbUW49wIOg/KMNs+9JGk4
-         pe6QEFUgk4NnxTrBnRn8dTGRjsooqDrSwV7PoHtc4Y3svj0PbGCLd1d33hlFTAdsgX0e
-         LSOh2AuJi5YpV9/4clDFF/7uKx5CbBfXX2sQyOJ88zWpYv+d+KNeoDsqWRys+kJB0x6F
-         Zu4PgJtbfcYZbslfN5r12sYdh/cXod2sGvBl2N0wTnsMZ+cNa97wd9ZmKcgCKGr3fD6/
-         0d6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TIJoAL5csx0AH4gB66J6qIB3eLqxZFfBPv363NryzWs=;
-        b=pI4TcGCAzTMEIaNqjWokHbBZqKK2UW4eDHZpFhzKaQkWY8nCPTnq92tvsXNMvTSsIv
-         mG8+cOOuZ8OOGk22BWPo0LfQcdPs40gyPA2l4nwI8l2wvu/oU8tQdqA5YVDoKRsJ3Idr
-         ispHPwVtNuULDP4o9mKVewNod5MpqS19+pJwyL9Ie5lueSrZsagSYLLNHnYQBiLBGOk5
-         9RQjodXwjHE7PPGO+sOmAkJBLVUIbuA5LkQ7jnrjTzOupWZ9GNPJgMlyhZb8oy5eylgI
-         BDMog+Iq45ibRwYdwKX8rHySjFYHlPy6u89tszVP+hKhk33lxTXDXZy3g25UwT5GEyhI
-         XsJw==
-X-Gm-Message-State: APjAAAXjzBgK932uuZhzcjrKqn2vLKvqVwpdRUIX9Z8r6fPIsu0Nsqx7
-        Als96GSqdnTOZJqXpV4lGOBU1iFCs5tAOfGhT4Jj7Q==
-X-Google-Smtp-Source: APXvYqw/yNawVnJ0g/UoZK4sjZJEHIQt2stccVEGiGHGtRLqhjXr4s7hTjInKYxTRBRNf6xwo9D1pmq14OCcP13kjqk=
-X-Received: by 2002:ae9:e50c:: with SMTP id w12mr6739925qkf.407.1576752170800;
- Thu, 19 Dec 2019 02:42:50 -0800 (PST)
+        id S1726992AbfLSKnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:43:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48032 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfLSKnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:43:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 1E71CAC0C;
+        Thu, 19 Dec 2019 10:43:10 +0000 (UTC)
+Date:   Thu, 19 Dec 2019 11:43:47 +0100
+From:   Daniel Wagner <dwagner@suse.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Ingo Molnar <mingo@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        John Garry <john.garry@huawei.com>,
+        Hannes Reinecke <hare@suse.com>
+Subject: Re: [RFC PATCH 2/3] softirq: implement interrupt flood detection
+Message-ID: <20191219104347.ql6shgh2x7hk6iid@boron>
+References: <20191218071942.22336-1-ming.lei@redhat.com>
+ <20191218071942.22336-3-ming.lei@redhat.com>
+ <20191218104941.GR2844@hirez.programming.kicks-ass.net>
+ <20191219015948.GB6080@ming.t460p>
+ <20191219092319.GX2844@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-References: <20191208232734.225161-1-Jason@zx2c4.com> <CACT4Y+bsJVmgbD-WogwU=LfWiPN1JgjBrwx4s8Y14hDd7vqqhQ@mail.gmail.com>
- <CAHmME9o0AparjaaOSoZD14RAW8_AJTfKfcx3Y2ndDAPFNC-MeQ@mail.gmail.com>
- <CACT4Y+Zssd6OZ2-U4kjw18mNthQyzPWZV_gkH3uATnSv1SVDfA@mail.gmail.com>
- <CAHmME9oM=YHMZyg23WEzmZAof=7iv-A01VazB3ihhR99f6X1cg@mail.gmail.com>
- <CACT4Y+aCEZm_BA5mmVTnK2cR8CQUky5w1qvmb2KpSR4-Pzp4Ow@mail.gmail.com> <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com>
-In-Reply-To: <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 19 Dec 2019 11:42:39 +0100
-Message-ID: <CACT4Y+Zs=SQwYS8yx3ds7HBhr1RHkDwRe_av2XjJty-5wMTFEA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: WireGuard secure network tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219092319.GX2844@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 11:07 AM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> On Thu, Dec 19, 2019 at 10:35 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > > Is this precise enough for race
-> > > condition bugs?
-> >
-> > It's finding lots of race conditions provoked bugs (I would say it's
-> > the most common cause of kernel bugs).
->
-> I meant -- are the reproducers it makes precise enough to retrigger
-> network-level race conditions?
+Hi,
 
-We provide a simple invariant: if it claims a reproducer, it was able
-to provide the exact reported crash using that exact program on a
-freshly booted kernel.
-However, the crash may be reproducible on the first iteration, or may
-require running it for a few seconds/minutes. And obviously for race
-conditions the rate on your machine may be different (in both
-directions) from the rate on the syzbot machine.
-Reproducers don't try to fix the exact execution (generally not
-feasible), instead they are just threaded stress tests with some
-amount of natural randomness is execution. But as I notes, it was able
-to trigger that exact crash using that exact program.
+On Thu, Dec 19, 2019 at 10:23:19AM +0100, Peter Zijlstra wrote:
+> On Thu, Dec 19, 2019 at 09:59:48AM +0800, Ming Lei wrote:
+> > > So pray tell, why did you not integrate this with IRQ_TIME_ACCOUNTING ?
+> > > That already takes a timestamp and does most of what you need.
+> > 
+> > Yeah, that was the 1st approach I thought of, but IRQ_TIME_ACCOUNTING
+> > may be disabled, and enabling it may cause observable effect on IO
+> > performance.
+> 
+> Is that an actual concern, are people disabling it?
 
-A shorter version: it's good enough to tr-trigger lots of race conditions.
+In SLE and openSUSE kernels it is disabled for x86_64 at this
+point. And if I am not completely misstaken only x86_64 supports it at
+this point. I was looking at enable_sched_clock_irqtime() which is
+only called from x86_64.
 
+Another thing I noticed get_util_irq() is defined in
+kernel/sched/sched.h. I don't think the block/blq-mq.c driver should
+include it direclty.
 
+Thanks,
+Daniel
 
-> > Well, you are missing that wireguard is not the only subsystem
-> > syzkaller tests (in fact, it does not test it at all) and there are
-> > 3000 other subsystems :)
->
-> Oooo! Everything is tested at the same time. I understand now; that
-> makes a lot more sense.
-
-Yes, it's generally whole kernel. Partitioning it into 3000 separate
-instances is lots of problems on multiple fronts and in the end it's
-not really possible to draw strict boundaries, in end whole kernel is
-tied via mm/fs/pipes/splice/vmslice/etc. E.g. what if you vmsplice
-some device-mapped memory into wireguard using io_uring and setup some
-bpf filter somewhere and ptrace it at the same time while sending a
-signal? :)
-
-
-> I'll look into splitting out the option, as you've asked. Note,
-> though, that there are currently only three spots that have the "extra
-> checks" at the moment, and one of them can be optimized out by the
-> compiler with aggressive enough inlining added everywhere. The other
-> two will result in an immediately corrupted stack frame that should be
-> caught immediately by other things. So for now, I think you can get
-> away with turning the debug option off, and you won't be missing much
-> from the "extra checks", at least until we add more.
-
-I see. Maybe something to keep in mind for future.
-
-> That's exciting about syzcaller having at it with WireGuard. Is there
-> some place where I can "see" it fuzzing WireGuard, or do I just wait
-> for the bug reports to come rolling in?
-
-Well, unfortunately it does not test wireguard at the moment. I've
-enabled the config as I saw it appeared in linux-next:
-https://github.com/google/syzkaller/commit/240ba66ba8a0a99f27e1aac01f376331051a65c2
-but that's it for now.
-There are 3000 subsystems, are you ready to describe precise interface
-for all of them with all the necessary setup and prerequisites? Nobody
-can do it for all subsystems. Developer of a particular subsystem is
-the best candidate for also describing what it takes to test it ;)
+ps: A customer observes the same problem as Ming is reporting.
