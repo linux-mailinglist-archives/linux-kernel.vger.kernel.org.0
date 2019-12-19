@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA487126CB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65845126DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbfLSTFn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:05:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37904 "EHLO mail.kernel.org"
+        id S1728033AbfLSTLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:11:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729162AbfLSSp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:45:29 -0500
+        id S1728064AbfLSSih (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:38:37 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 598B9222C2;
-        Thu, 19 Dec 2019 18:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E66C920716;
+        Thu, 19 Dec 2019 18:38:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781128;
-        bh=yTxjhlA0GOCxsjuGn4rKAiPTxp3UhagqMA/rASlPzQ8=;
+        s=default; t=1576780717;
+        bh=qaydUwFNV8QbsvqmK/euyD3/C8wfwLaanQlvwBD5aJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q8HaGQAxycPM9htZmdvT7nCpPPUkW7ddjnSjgO+3Vfk2dfIHmPn1PmmBtF3eIVG9o
-         SV1tVGiks/axd8w0v+KfpsDQNb6IFKW9iEU8Lt/jm8AllZpyzg/F2kKqcYL8S+H0Ax
-         PL0SiVummb88yuYME0qr8tx5czfdJaEBtCLC5FQs=
+        b=L/R3NX8eFddYxY+Yj6zRNhk+uLF5/xdNIK+pvo9v61PJy4GzDMFaBWsx1qL6oAJ4i
+         00ysQEr+ZI605x3WmfmgZ3u1oSUQIOX+KsBVixpcGRYlcJ3hmRsfZ6XkyOKAbwtWb/
+         KG/v/Wko4SPohdujYqfKOcwSJvMohqpwpdmTAVJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 095/199] appletalk: Set error code if register_snap_client failed
-Date:   Thu, 19 Dec 2019 19:32:57 +0100
-Message-Id: <20191219183220.178908810@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+e3f4897236c4eeb8af4f@syzkaller.appspotmail.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Ben Hutchings <ben@decadent.org.uk>
+Subject: [PATCH 4.4 071/162] KVM: x86: fix out-of-bounds write in KVM_GET_EMULATED_CPUID (CVE-2019-19332)
+Date:   Thu, 19 Dec 2019 19:32:59 +0100
+Message-Id: <20191219183212.137220374@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
+References: <20191219183150.477687052@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit c93ad1337ad06a718890a89cdd85188ff9a5a5cc upstream.
+commit 433f4ba1904100da65a311033f17a9bf586b287e upstream.
 
-If register_snap_client fails in atalk_init,
-error code should be set, otherwise it will
-triggers NULL pointer dereference while unloading
-module.
+The bounds check was present in KVM_GET_SUPPORTED_CPUID but not
+KVM_GET_EMULATED_CPUID.
 
-Fixes: 9804501fa122 ("appletalk: Fix potential NULL pointer dereference in unregister_snap_client")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: syzbot+e3f4897236c4eeb8af4f@syzkaller.appspotmail.com
+Fixes: 84cffe499b94 ("kvm: Emulate MOVBE", 2013-10-29)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Ben Hutchings <ben@decadent.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/appletalk/ddp.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/cpuid.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/net/appletalk/ddp.c
-+++ b/net/appletalk/ddp.c
-@@ -1927,6 +1927,7 @@ static int __init atalk_init(void)
- 	ddp_dl = register_snap_client(ddp_snap_id, atalk_rcv);
- 	if (!ddp_dl) {
- 		pr_crit("Unable to register DDP with SNAP.\n");
-+		rc = -ENOMEM;
- 		goto out_sock;
- 	}
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -373,7 +373,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	r = -E2BIG;
+ 
+-	if (*nent >= maxnent)
++	if (WARN_ON(*nent >= maxnent))
+ 		goto out;
+ 
+ 	do_cpuid_1_ent(entry, function, index);
+@@ -669,6 +669,9 @@ out:
+ static int do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 func,
+ 			u32 idx, int *nent, int maxnent, unsigned int type)
+ {
++	if (*nent >= maxnent)
++		return -E2BIG;
++
+ 	if (type == KVM_GET_EMULATED_CPUID)
+ 		return __do_cpuid_ent_emulated(entry, func, idx, nent, maxnent);
  
 
 
