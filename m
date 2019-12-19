@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 252531261A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:05:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3A421261A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727274AbfLSME5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36596 "EHLO mail.kernel.org"
+        id S1727193AbfLSMEm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:04:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbfLSMEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:36 -0500
+        id S1726751AbfLSMEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:04:38 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0272524684;
-        Thu, 19 Dec 2019 12:04:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0A56206D3;
+        Thu, 19 Dec 2019 12:04:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757075;
-        bh=ZWu/BRMh45ey2/+NOodYySlbK+BJsxdZgItFNtS2Vzs=;
+        s=default; t=1576757078;
+        bh=5RCz2TMZMRkkASXCp+AqxpJ05Mrpr53WCYjlykmdXF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z4buwxKD9N1mp2Bklv1roxu3ObpRgjzsbf0LGyVbNONyxjW7apNDAHSTSbQb4Ht3Z
-         HMkrmKiXWR56IInnoR70ShrQZkwW7+unCDsJCqcmBPIbaYB1tOEluqq9Ead3czW6k8
-         0s5Mg90QZqAtzJh8+m4nAJ42Egl4Uk8mrGPrzmwM=
+        b=1h0V17RF7vekeTkTWYpjgjz9Zszmn7oujavAur3jPEoV9CAkAOX6COvnqg+ZAQy+N
+         XUK571oj+uXNTPSSYeExCGo+6ySFnnJdGNmg6cgB7eoWoMxjMp2pAxgNu0luj20VSN
+         l4Tp4Yq1mxrSTM+UqFme3nSfOX3dh9nIhYMseM50=
 From:   Will Deacon <will@kernel.org>
 To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
 Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
@@ -37,9 +37,9 @@ Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 12/16] iommu/arm-smmu: Support SMMU module probing from the IORT
-Date:   Thu, 19 Dec 2019 12:03:48 +0000
-Message-Id: <20191219120352.382-13-will@kernel.org>
+Subject: [PATCH v4 13/16] iommu/arm-smmu-v3: Allow building as a module
+Date:   Thu, 19 Dec 2019 12:03:49 +0000
+Message-Id: <20191219120352.382-14-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191219120352.382-1-will@kernel.org>
 References: <20191219120352.382-1-will@kernel.org>
@@ -50,62 +50,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+By removing the redundant call to 'pci_request_acs()' we can allow the
+ARM SMMUv3 driver to be built as a module.
 
-Add support for SMMU drivers built as modules to the ACPI/IORT device
-probing path, by deferring the probe of the master if the SMMU driver is
-known to exist but has not been loaded yet. Given that the IORT code
-registers a platform device for each SMMU that it discovers, we can
-easily trigger the udev based autoloading of the SMMU drivers by making
-the platform device identifier part of the module alias.
-
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Tested-by: John Garry <john.garry@huawei.com> # only manual smmu ko loading
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/acpi/arm64/iort.c   | 4 ++--
- drivers/iommu/arm-smmu-v3.c | 1 +
- drivers/iommu/arm-smmu.c    | 1 +
- 3 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/iommu/Kconfig       | 2 +-
+ drivers/iommu/arm-smmu-v3.c | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 33f71983e001..4a560fdf7386 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -850,9 +850,9 @@ static inline bool iort_iommu_driver_enabled(u8 type)
- {
- 	switch (type) {
- 	case ACPI_IORT_NODE_SMMU_V3:
--		return IS_BUILTIN(CONFIG_ARM_SMMU_V3);
-+		return IS_ENABLED(CONFIG_ARM_SMMU_V3);
- 	case ACPI_IORT_NODE_SMMU:
--		return IS_BUILTIN(CONFIG_ARM_SMMU);
-+		return IS_ENABLED(CONFIG_ARM_SMMU);
- 	default:
- 		pr_warn("IORT node type %u does not describe an SMMU\n", type);
- 		return false;
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index 0b9d78a0f3ac..31f0f376ad11 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -394,7 +394,7 @@ config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
+ 	  config.
+ 
+ config ARM_SMMU_V3
+-	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
++	tristate "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+ 	depends on ARM64
+ 	select IOMMU_API
+ 	select IOMMU_IO_PGTABLE_LPAE
 diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 46160a2fec3e..da9474a02668 100644
+index da9474a02668..2a65d9b87125 100644
 --- a/drivers/iommu/arm-smmu-v3.c
 +++ b/drivers/iommu/arm-smmu-v3.c
-@@ -3734,4 +3734,5 @@ module_platform_driver(arm_smmu_driver);
+@@ -2733,6 +2733,7 @@ static struct iommu_ops arm_smmu_ops = {
+ 	.get_resv_regions	= arm_smmu_get_resv_regions,
+ 	.put_resv_regions	= arm_smmu_put_resv_regions,
+ 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
++	.owner			= THIS_MODULE,
+ };
  
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-+MODULE_ALIAS("platform:arm-smmu-v3");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 5cbee88a3b83..5d2f60bb9e50 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2281,4 +2281,5 @@ module_platform_driver(arm_smmu_driver);
+ /* Probing and initialisation functions */
+@@ -3571,8 +3572,6 @@ static int arm_smmu_set_bus_ops(struct iommu_ops *ops)
  
- MODULE_DESCRIPTION("IOMMU API for ARM architected SMMU implementations");
- MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
-+MODULE_ALIAS("platform:arm-smmu");
- MODULE_LICENSE("GPL v2");
+ #ifdef CONFIG_PCI
+ 	if (pci_bus_type.iommu_ops != ops) {
+-		if (ops)
+-			pci_request_acs();
+ 		err = bus_set_iommu(&pci_bus_type, ops);
+ 		if (err)
+ 			return err;
 -- 
 2.24.1.735.g03f4e72817-goog
 
