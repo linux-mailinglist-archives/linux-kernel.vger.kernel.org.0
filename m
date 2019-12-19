@@ -2,99 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 67B6E12633A
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:16:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F33C212633F
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:17:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfLSNP6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:15:58 -0500
-Received: from foss.arm.com ([217.140.110.172]:38664 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfLSNP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:15:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9FC5328;
-        Thu, 19 Dec 2019 05:15:57 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D56373F67D;
-        Thu, 19 Dec 2019 05:15:56 -0800 (PST)
-Date:   Thu, 19 Dec 2019 13:15:54 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     vishnu <vravulap@amd.com>
-Cc:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>, Alexander.Deucher@amd.com,
-        djkurtz@google.com, pierre-louis.bossart@linux.intel.com,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "Tabian, Reza" <Reza.Tabian@amd.com>
-Subject: Re: [PATCH v14 7/7] ASoC: amd MMAP_INTERLEAVED Support
-Message-ID: <20191219131554.GF5047@sirena.org.uk>
-References: <1575553053-18344-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <1575553053-18344-8-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
- <3688990f-0ac3-08bf-20b8-93a4ab17441e@amd.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sDKAb4OeUBrWWL6P"
-Content-Disposition: inline
-In-Reply-To: <3688990f-0ac3-08bf-20b8-93a4ab17441e@amd.com>
-X-Cookie: I smell a RANCID CORN DOG!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726768AbfLSNRC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:17:02 -0500
+Received: from mail-qv1-f67.google.com ([209.85.219.67]:34740 "EHLO
+        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfLSNRB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 08:17:01 -0500
+Received: by mail-qv1-f67.google.com with SMTP id o18so2199092qvf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 05:17:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=Czyg8raj0B+YOEM11FuK7yWFRFG2cJHM8oF7MR8OthI=;
+        b=knUifbxm9XpiUMsx5PSkNk7Fh6cV2bDoAwhEMKu5B+L+utmXgMfxVaHdc1Qvn8k0Uh
+         gMroxCEny8JfJmRlo1YCaabTSctr5+8LgXbhCLjmBtJ3V8MN8pkhcYh0yoIMOpybqX/i
+         w/wlJsi7vTOSPVOoaPtQUUnVbmVS9QH4e5yvtwbMEYerfsoV2umQQqiRc8SJVo0McQY/
+         by5yJ09Yci9LaC12m3ztDSlEzbtviMVeo4UVcl+Yzo0BIF76FQ3a86UPILr/fztLg5XX
+         d8SUJK+8hIDyrjU5t04X25Auwx7kyx+/2T8HJPJLZuuGV1BwjGp41rn6El+nEjch5NkE
+         583g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=Czyg8raj0B+YOEM11FuK7yWFRFG2cJHM8oF7MR8OthI=;
+        b=CUe+VjHAHFXHEyHQO/PEM03nHOs1c5dtbi4ra+f0PFifnA3CpLq1uaKdj8UA7oV+e5
+         fVtC6KjKYix6dNJWIMaOmGffhiW18x5sxKH4NO1Yj2sTHAKcNIxkFTSJSmnxMu8u5I9C
+         +jQU0rocdhnVdYDvhYWBMKxD/ENhhwbvDLWf8WM1JuDa6sxZYtkl7wi8dPaQim8d+zpj
+         1B1EbkaPW5j8qpqMFMxqrAc1aYHIuoiD6JfBfXam9yV+InAM1vRMUcg42m0jMB5dLYGS
+         NnykCH+w/UWCmyZsNKjc0AkcoTZmKsI2kXqFHYQYPN7xrTJ9r7APCE9Lc2Dlpeu/v0he
+         Vdyg==
+X-Gm-Message-State: APjAAAVOTBemkIQg5aYOpuJRbYqLVqo3RlUhSuQNdc2rLwAaKzy637Ja
+        gnS+5iI02WwNag3j3RLvoJ37MA==
+X-Google-Smtp-Source: APXvYqwJTdKi20YBRpmYBhkBYp1tZ6kHGBosfFgFkRzdLWFGYQS/CHgxr+iSHDITbWRvRbT6sOavMw==
+X-Received: by 2002:ad4:4f84:: with SMTP id em4mr7510252qvb.119.1576761420649;
+        Thu, 19 Dec 2019 05:17:00 -0800 (PST)
+Received: from [192.168.1.183] (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id e19sm1892659qtc.75.2019.12.19.05.16.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 Dec 2019 05:17:00 -0800 (PST)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+From:   Qian Cai <cai@lca.pw>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] mm, debug_pagealloc: don't rely on static keys too early
+Date:   Thu, 19 Dec 2019 08:16:59 -0500
+Message-Id: <83B24C03-1484-4DD6-9B42-029FF1B27287@lca.pw>
+References: <20191219130612.23171-1-vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>
+In-Reply-To: <20191219130612.23171-1-vbabka@suse.cz>
+To:     Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---sDKAb4OeUBrWWL6P
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2019 at 11:59:56AM +0530, vishnu wrote:
-> Hi Mark,
+> On Dec 19, 2019, at 8:06 AM, Vlastimil Babka <vbabka@suse.cz> wrote:
 >=20
-> Patches have been reviewed by Dan and pierre-louis.bossart@linux.intel.com
+> Commit 96a2b03f281d ("mm, debug_pagelloc: use static keys to enable debugg=
+ing")
+> has introduced a static key to reduce overhead when debug_pagealloc is com=
+piled
+> in but not enabled. It relied on the assumption that jump_label_init() is
+> called before parse_early_param() as in start_kernel(), so when the
+> "debug_pagealloc=3Don" option is parsed, it is safe to enable the static k=
+ey.
+>=20
+> However, it turns out multiple architectures call parse_early_param() earl=
+ier
+> from their setup_arch(). x86 also calls jump_label_init() even earlier, so=
+ no
+> issue was found while testing the commit, but same is not true for e.g. pp=
+c64
+> and s390 where the kernel would not boot with debug_pagealloc=3Don as foun=
+d by
+> our QA.
 
-I see no reviewed-by tags on most of this.
-
-> Please can you upstream these please.
-
-No, I will review them first.  Given the problems that have been seen on
-previous reviews I don't intend to rush that.
-
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
-
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
-
---sDKAb4OeUBrWWL6P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl37eAkACgkQJNaLcl1U
-h9CVpAf+K32nHGUcXJWEpJjWpcGVQiWjEjbsF9z+jhCBspPCGKsl08RI1cXbo87P
-/OjYMebtkwJqflBz5c947lIF2SA9ofMD6uu4y+C5/JfaSDkz2XtRElnRNQq568rz
-CsuEikfk3MDeZ8atNXGeh/U/qT5QnJT/9pjUSTiQv0E1dn/fnke715mrjuMLuGGa
-WSfl5qgHp7mOF5rGb63PcI4pWK0vo+fs8X+pbOOrR1+IluSE6qSU1aqdggo/4mTA
-rzGDIb2FyaMSmhL5muM4atXu02VHkosSZ4Ae9nqY8rWQta9a2tkKyzF+rqJmJTjd
-CfpApBIsMtlhkNb4gQ/rAPtXJBkrAQ==
-=XtBZ
------END PGP SIGNATURE-----
-
---sDKAb4OeUBrWWL6P--
+This was daily tested on linux-next here for those arches and never saw an i=
+ssue. Are you able to reproduce it on mainline or linux-next?=
