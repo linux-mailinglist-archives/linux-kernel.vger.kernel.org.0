@@ -2,123 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26A15126980
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:38:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2D5E126924
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:33:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfLSSiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:38:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727991AbfLSSiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:38:14 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6192222C2;
-        Thu, 19 Dec 2019 18:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780693;
-        bh=5IK6K/5emsZlqCtcxohp7khTC0xD+HkYdcob0eXt/4Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RPDN67OCntBaZC84JsFfBKaucG6OJFGWAs8C/St2iN4vRNYWQRtOLVh4qXo8rb9WX
-         U0WObGYYu/MGnlZdIC2v1IEKY8oLRR7iZUCchr5LDXBd9U4CR9xo2icuLsaxhG0i3w
-         JVYHFYBNgC+Hj4+iLyJhMRX5zP6cHMX5gJ+DpDrY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marco Felsch <marco.felsch@preh.de>,
-        John Ogness <john.ogness@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Tycho Andersen <tycho.andersen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Borislav Petkov <bp@alien8.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
-Subject: [PATCH 4.4 079/162] fs/proc: Report eip/esp in /prod/PID/stat for coredumping
-Date:   Thu, 19 Dec 2019 19:33:07 +0100
-Message-Id: <20191219183212.607563852@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1727029AbfLSSdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:33:44 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:37962 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfLSSdo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:33:44 -0500
+Received: by mail-vk1-f194.google.com with SMTP id d17so1907638vke.5;
+        Thu, 19 Dec 2019 10:33:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ml4mAJAjd+UzALjuvInIbq2ljDjbxyxCZlmTfZ9UxCk=;
+        b=FkJK2kMXU/9fnYvBIr1pmuDBc/Q4Sb9TKnfUaJQ1oGe4RNu9T/nhYd4+rUNAmtJyvv
+         8Q2KMCV8W5KOW3EqmHVLyLsU2HGFdKykwecFg/lDk4PIhR+U0jWK61TeH0Fh5w4S+UTl
+         vZcLbPi306O1yUfb/1DudDZsFoHN7K9Ad6Jivgm5IjuxpJNLGsMUokzNv2e1gNtmORX3
+         w1HfECY+fFGnurtud2eXIApj668AfEunCX9Ulm/vVb59FhI5uYFQnvtn+5fgZrJNICwP
+         104Vfo66LHfLmpTygUCT0XLGtVbGeds4qm27YjzLyEA41/YL2LrmwuctfqITBeB7jRWK
+         U9pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ml4mAJAjd+UzALjuvInIbq2ljDjbxyxCZlmTfZ9UxCk=;
+        b=d8XhkVTrHBZjcRu5JUmAo/edBE6t9PGwoJB3qvXOui63GUAfVYqzxipFEu9ru8YfwP
+         Db4ftfIHdXMUIfILzpT//Ime2LL1qxDLpV+Ie0R7iIj+SCyQ95SkMnQBv5yOfMhW0LHN
+         gt4MaWbpqCXsmjbb/v6s6jIIUmUKNVlpi0JfnFoq0WAA279dpPG5TAwMAHze0HkoDzYh
+         P799FwkC2uNJFZIkvKypskzZ4oitPTTm4XL0eX4QxqIcsABbFo8So+BWbjYih33CGfK8
+         xZn6shqlVAqqy/I6RpRnq+7UtH8yQTwyys01TET/1fV4lDlvF24OHQPARoCRb7NKxuNC
+         F+4g==
+X-Gm-Message-State: APjAAAWfXAolkweTnz6hLTjROsBPCzueR3bYmqIiw8UM98APcL7u38vZ
+        MijCe6dXtEVpo7sRzLhjwZ31yayqsyxS2tfoXW4=
+X-Google-Smtp-Source: APXvYqzIKnrV2MFDOoxVD8lAQN7aW5bueKopZBhGbsA12grhFVgxAF32grZKsQMBuFY1Kl4E16Tfj31nxPSxsQzBbPE=
+X-Received: by 2002:a1f:db81:: with SMTP id s123mr7008579vkg.45.1576780423321;
+ Thu, 19 Dec 2019 10:33:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com> <1576224695-22657-5-git-send-email-stanley.chu@mediatek.com>
+In-Reply-To: <1576224695-22657-5-git-send-email-stanley.chu@mediatek.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Fri, 20 Dec 2019 00:03:07 +0530
+Message-ID: <CAGOxZ524P=fDR3Y7+EH381xex8RHWT0Qgw3GvVaAMJsdJZFtgQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/4] scsi: ufs-mediatek: configure and enable clk-gating
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     linux-scsi@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        peter.wang@mediatek.com, chun-hung.wu@mediatek.com,
+        andy.teng@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Ogness <john.ogness@linutronix.de>
+On Fri, Dec 13, 2019 at 2:42 PM Stanley Chu <stanley.chu@mediatek.com> wrote:
+>
+> Enable clk-gating with customized delayed timer value in
+> MediaTek Chipsets.
+>
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
 
-commit fd7d56270b526ca3ed0c224362e3c64a0f86687a upstream.
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-Commit 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in
-/proc/PID/stat") stopped reporting eip/esp because it is
-racy and dangerous for executing tasks. The comment adds:
-
-    As far as I know, there are no use programs that make any
-    material use of these fields, so just get rid of them.
-
-However, existing userspace core-dump-handler applications (for
-example, minicoredumper) are using these fields since they
-provide an excellent cross-platform interface to these valuable
-pointers. So that commit introduced a user space visible
-regression.
-
-Partially revert the change and make the readout possible for
-tasks with the proper permissions and only if the target task
-has the PF_DUMPCORE flag set.
-
-Fixes: 0a1eb2d474ed ("fs/proc: Stop reporting eip and esp in> /proc/PID/stat")
-Reported-by: Marco Felsch <marco.felsch@preh.de>
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
-Cc: Tycho Andersen <tycho.andersen@canonical.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: stable@vger.kernel.org
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux API <linux-api@vger.kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: http://lkml.kernel.org/r/87poatfwg6.fsf@linutronix.de
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[ zhangyi: 68db0cf10678 does not merged, skip the task_stack.h for 4.4]
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/proc/array.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- a/fs/proc/array.c
-+++ b/fs/proc/array.c
-@@ -429,7 +429,15 @@ static int do_task_stat(struct seq_file
- 		 * esp and eip are intentionally zeroed out.  There is no
- 		 * non-racy way to read them without freezing the task.
- 		 * Programs that need reliable values can use ptrace(2).
-+		 *
-+		 * The only exception is if the task is core dumping because
-+		 * a program is not able to use ptrace(2) in that case. It is
-+		 * safe because the task has stopped executing permanently.
- 		 */
-+		if (permitted && (task->flags & PF_DUMPCORE)) {
-+			eip = KSTK_EIP(task);
-+			esp = KSTK_ESP(task);
-+		}
- 	}
- 
- 	get_task_comm(tcomm, task);
+> ---
+>  drivers/scsi/ufs/ufs-mediatek.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/drivers/scsi/ufs/ufs-mediatek.c b/drivers/scsi/ufs/ufs-mediatek.c
+> index 71e2e0e4ea11..282ad06ec846 100644
+> --- a/drivers/scsi/ufs/ufs-mediatek.c
+> +++ b/drivers/scsi/ufs/ufs-mediatek.c
+> @@ -205,6 +205,9 @@ static int ufs_mtk_init(struct ufs_hba *hba)
+>         /* Enable runtime autosuspend */
+>         hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
+>
+> +       /* Enable clock-gating */
+> +       hba->caps |= UFSHCD_CAP_CLK_GATING;
+> +
+>         /*
+>          * ufshcd_vops_init() is invoked after
+>          * ufshcd_setup_clock(true) in ufshcd_hba_init() thus
+> @@ -293,6 +296,23 @@ static int ufs_mtk_pre_link(struct ufs_hba *hba)
+>         return ret;
+>  }
+>
+> +static void ufs_mtk_setup_clk_gating(struct ufs_hba *hba)
+> +{
+> +       unsigned long flags;
+> +       u32 ah_ms;
+> +
+> +       if (ufshcd_is_clkgating_allowed(hba)) {
+> +               if (ufshcd_is_auto_hibern8_supported(hba) && hba->ahit)
+> +                       ah_ms = FIELD_GET(UFSHCI_AHIBERN8_TIMER_MASK,
+> +                                         hba->ahit);
+> +               else
+> +                       ah_ms = 10;
+> +               spin_lock_irqsave(hba->host->host_lock, flags);
+> +               hba->clk_gating.delay_ms = ah_ms + 5;
+> +               spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +       }
+> +}
+> +
+>  static int ufs_mtk_post_link(struct ufs_hba *hba)
+>  {
+>         /* disable device LCC */
+> @@ -308,6 +328,8 @@ static int ufs_mtk_post_link(struct ufs_hba *hba)
+>                         FIELD_PREP(UFSHCI_AHIBERN8_SCALE_MASK, 3));
+>         }
+>
+> +       ufs_mtk_setup_clk_gating(hba);
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.18.0
 
 
+
+-- 
+Regards,
+Alim
