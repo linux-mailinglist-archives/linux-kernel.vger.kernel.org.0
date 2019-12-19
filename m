@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FCDB126B4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:56:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB24126ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730680AbfLSSze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:55:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51558 "EHLO mail.kernel.org"
+        id S1730099AbfLSSvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:51:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730675AbfLSSzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:55:31 -0500
+        id S1730087AbfLSSvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:51:03 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CEE1227BF;
-        Thu, 19 Dec 2019 18:55:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 759652064B;
+        Thu, 19 Dec 2019 18:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781731;
-        bh=pzxbQw8yXBhI/4CS0KyYK1idrVsZN5R/unWIoJKQVRw=;
+        s=default; t=1576781461;
+        bh=p8dB0fu0e6zGFu9JknCYcoZlcc9X7MljYCt2XpIyreY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vEgi7RbTQFUrHDfIQr2Ywmr9AexxvoamDXo+SLCOcqvc1585v93N3zJFFfovhYPJE
-         DXGuG/dLytKk32P9oK6ZG9GjaywVY3gVKBZI9w7HxJIAP8N33D8XgtVlvX99n+TbbK
-         AtjTgUhhWtc+vFkq/mHtoyrXzBBbx8NBFZkSKSg8=
+        b=qtDuilndEQ51/0qHSVpzPGt3uCUOqRAjBayV2Qh20xNob8mIrhWKAzhUjTlJeJUW5
+         +PlYrLWC+kLXN0pUTzPQ9gcSQdmJRMhvmgqRPne2oThbQVYCKki908WfcBu6ITaawP
+         kBpZMa1MH2gCHHP5DZbqQ+x1gvT2SSROVtQK6ZSY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikos Tsironis <ntsironis@arrikto.com>,
-        Joe Thornber <ejt@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>
-Subject: [PATCH 5.4 57/80] dm thin: Flush data device before committing metadata
+        stable@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Lee Duncan <lduncan@suse.com>, Chris Leech <cleech@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 32/36] scsi: iscsi: Fix a potential deadlock in the timeout handler
 Date:   Thu, 19 Dec 2019 19:34:49 +0100
-Message-Id: <20191219183130.904727172@linuxfoundation.org>
+Message-Id: <20191219182924.175808423@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183031.278083125@linuxfoundation.org>
-References: <20191219183031.278083125@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,170 +46,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-commit 694cfe7f31db36912725e63a38a5179c8628a496 upstream.
+commit 5480e299b5ae57956af01d4839c9fc88a465eeab upstream.
 
-The thin provisioning target maintains per thin device mappings that map
-virtual blocks to data blocks in the data device.
+Some time ago the block layer was modified such that timeout handlers are
+called from thread context instead of interrupt context. Make it safe to
+run the iSCSI timeout handler in thread context. This patch fixes the
+following lockdep complaint:
 
-When we write to a shared block, in case of internal snapshots, or
-provision a new block, in case of external snapshots, we copy the shared
-block to a new data block (COW), update the mapping for the relevant
-virtual block and then issue the write to the new data block.
+================================
+WARNING: inconsistent lock state
+5.5.1-dbg+ #11 Not tainted
+--------------------------------
+inconsistent {IN-SOFTIRQ-W} -> {SOFTIRQ-ON-W} usage.
+kworker/7:1H/206 [HC0[0]:SC0[0]:HE1:SE1] takes:
+ffff88802d9827e8 (&(&session->frwd_lock)->rlock){+.?.}, at: iscsi_eh_cmd_timed_out+0xa6/0x6d0 [libiscsi]
+{IN-SOFTIRQ-W} state was registered at:
+  lock_acquire+0x106/0x240
+  _raw_spin_lock+0x38/0x50
+  iscsi_check_transport_timeouts+0x3e/0x210 [libiscsi]
+  call_timer_fn+0x132/0x470
+  __run_timers.part.0+0x39f/0x5b0
+  run_timer_softirq+0x63/0xc0
+  __do_softirq+0x12d/0x5fd
+  irq_exit+0xb3/0x110
+  smp_apic_timer_interrupt+0x131/0x3d0
+  apic_timer_interrupt+0xf/0x20
+  default_idle+0x31/0x230
+  arch_cpu_idle+0x13/0x20
+  default_idle_call+0x53/0x60
+  do_idle+0x38a/0x3f0
+  cpu_startup_entry+0x24/0x30
+  start_secondary+0x222/0x290
+  secondary_startup_64+0xa4/0xb0
+irq event stamp: 1383705
+hardirqs last  enabled at (1383705): [<ffffffff81aace5c>] _raw_spin_unlock_irq+0x2c/0x50
+hardirqs last disabled at (1383704): [<ffffffff81aacb98>] _raw_spin_lock_irq+0x18/0x50
+softirqs last  enabled at (1383690): [<ffffffffa0e2efea>] iscsi_queuecommand+0x76a/0xa20 [libiscsi]
+softirqs last disabled at (1383682): [<ffffffffa0e2e998>] iscsi_queuecommand+0x118/0xa20 [libiscsi]
 
-Suppose the data device has a volatile write-back cache and the
-following sequence of events occur:
+other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-1. We write to a shared block
-2. A new data block is allocated
-3. We copy the shared block to the new data block using kcopyd (COW)
-4. We insert the new mapping for the virtual block in the btree for that
-   thin device.
-5. The commit timeout expires and we commit the metadata, that now
-   includes the new mapping from step (4).
-6. The system crashes and the data device's cache has not been flushed,
-   meaning that the COWed data are lost.
+       CPU0
+       ----
+  lock(&(&session->frwd_lock)->rlock);
+  <Interrupt>
+    lock(&(&session->frwd_lock)->rlock);
 
-The next time we read that virtual block of the thin device we read it
-from the data block allocated in step (2), since the metadata have been
-successfully committed. The data are lost due to the crash, so we read
-garbage instead of the old, shared data.
+ *** DEADLOCK ***
 
-This has the following implications:
+2 locks held by kworker/7:1H/206:
+ #0: ffff8880d57bf928 ((wq_completion)kblockd){+.+.}, at: process_one_work+0x472/0xab0
+ #1: ffff88802b9c7de8 ((work_completion)(&q->timeout_work)){+.+.}, at: process_one_work+0x476/0xab0
 
-1. In case of writes to shared blocks, with size smaller than the pool's
-   block size (which means we first copy the whole block and then issue
-   the smaller write), we corrupt data that the user never touched.
+stack backtrace:
+CPU: 7 PID: 206 Comm: kworker/7:1H Not tainted 5.5.1-dbg+ #11
+Hardware name: Bochs Bochs, BIOS Bochs 01/01/2011
+Workqueue: kblockd blk_mq_timeout_work
+Call Trace:
+ dump_stack+0xa5/0xe6
+ print_usage_bug.cold+0x232/0x23b
+ mark_lock+0x8dc/0xa70
+ __lock_acquire+0xcea/0x2af0
+ lock_acquire+0x106/0x240
+ _raw_spin_lock+0x38/0x50
+ iscsi_eh_cmd_timed_out+0xa6/0x6d0 [libiscsi]
+ scsi_times_out+0xf4/0x440 [scsi_mod]
+ scsi_timeout+0x1d/0x20 [scsi_mod]
+ blk_mq_check_expired+0x365/0x3a0
+ bt_iter+0xd6/0xf0
+ blk_mq_queue_tag_busy_iter+0x3de/0x650
+ blk_mq_timeout_work+0x1af/0x380
+ process_one_work+0x56d/0xab0
+ worker_thread+0x7a/0x5d0
+ kthread+0x1bc/0x210
+ ret_from_fork+0x24/0x30
 
-2. In case of writes to shared blocks, with size equal to the device's
-   logical block size, we fail to provide atomic sector writes. When the
-   system recovers the user will read garbage from that sector instead
-   of the old data or the new data.
-
-3. Even for writes to shared blocks, with size equal to the pool's block
-   size (overwrites), after the system recovers, the written sectors
-   will contain garbage instead of a random mix of sectors containing
-   either old data or new data, thus we fail again to provide atomic
-   sectors writes.
-
-4. Even when the user flushes the thin device, because we first commit
-   the metadata and then pass down the flush, the same risk for
-   corruption exists (if the system crashes after the metadata have been
-   committed but before the flush is passed down to the data device.)
-
-The only case which is unaffected is that of writes with size equal to
-the pool's block size and with the FUA flag set. But, because FUA writes
-trigger metadata commits, this case can trigger the corruption
-indirectly.
-
-Moreover, apart from internal and external snapshots, the same issue
-exists for newly provisioned blocks, when block zeroing is enabled.
-After the system recovers the provisioned blocks might contain garbage
-instead of zeroes.
-
-To solve this and avoid the potential data corruption we flush the
-pool's data device **before** committing its metadata.
-
-This ensures that the data blocks of any newly inserted mappings are
-properly written to non-volatile storage and won't be lost in case of a
-crash.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Acked-by: Joe Thornber <ejt@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 287922eb0b18 ("block: defer timeouts to a workqueue")
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Lee Duncan <lduncan@suse.com>
+Cc: Chris Leech <cleech@redhat.com>
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191209173457.187370-1-bvanassche@acm.org
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/dm-thin.c |   42 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+ drivers/scsi/libiscsi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/md/dm-thin.c
-+++ b/drivers/md/dm-thin.c
-@@ -328,6 +328,7 @@ struct pool_c {
- 	dm_block_t low_water_blocks;
- 	struct pool_features requested_pf; /* Features requested during table load */
- 	struct pool_features adjusted_pf;  /* Features used after adjusting for constituent devices */
-+	struct bio flush_bio;
- };
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -1983,7 +1983,7 @@ enum blk_eh_timer_return iscsi_eh_cmd_ti
  
- /*
-@@ -2392,8 +2393,16 @@ static void process_deferred_bios(struct
- 	while ((bio = bio_list_pop(&bio_completions)))
- 		bio_endio(bio);
+ 	ISCSI_DBG_EH(session, "scsi cmd %p timedout\n", sc);
  
--	while ((bio = bio_list_pop(&bios)))
--		generic_make_request(bio);
-+	while ((bio = bio_list_pop(&bios))) {
-+		/*
-+		 * The data device was flushed as part of metadata commit,
-+		 * so complete redundant flushes immediately.
-+		 */
-+		if (bio->bi_opf & REQ_PREFLUSH)
-+			bio_endio(bio);
-+		else
-+			generic_make_request(bio);
-+	}
- }
- 
- static void do_worker(struct work_struct *ws)
-@@ -3127,6 +3136,7 @@ static void pool_dtr(struct dm_target *t
- 	__pool_dec(pt->pool);
- 	dm_put_device(ti, pt->metadata_dev);
- 	dm_put_device(ti, pt->data_dev);
-+	bio_uninit(&pt->flush_bio);
- 	kfree(pt);
- 
- 	mutex_unlock(&dm_thin_pool_table.mutex);
-@@ -3192,6 +3202,29 @@ static void metadata_low_callback(void *
- 	dm_table_event(pool->ti->table);
- }
- 
-+/*
-+ * We need to flush the data device **before** committing the metadata.
-+ *
-+ * This ensures that the data blocks of any newly inserted mappings are
-+ * properly written to non-volatile storage and won't be lost in case of a
-+ * crash.
-+ *
-+ * Failure to do so can result in data corruption in the case of internal or
-+ * external snapshots and in the case of newly provisioned blocks, when block
-+ * zeroing is enabled.
-+ */
-+static int metadata_pre_commit_callback(void *context)
-+{
-+	struct pool_c *pt = context;
-+	struct bio *flush_bio = &pt->flush_bio;
-+
-+	bio_reset(flush_bio);
-+	bio_set_dev(flush_bio, pt->data_dev->bdev);
-+	flush_bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH;
-+
-+	return submit_bio_wait(flush_bio);
-+}
-+
- static sector_t get_dev_size(struct block_device *bdev)
- {
- 	return i_size_read(bdev->bd_inode) >> SECTOR_SHIFT;
-@@ -3360,6 +3393,7 @@ static int pool_ctr(struct dm_target *ti
- 	pt->data_dev = data_dev;
- 	pt->low_water_blocks = low_water_blocks;
- 	pt->adjusted_pf = pt->requested_pf = pf;
-+	bio_init(&pt->flush_bio, NULL, 0);
- 	ti->num_flush_bios = 1;
- 
- 	/*
-@@ -3386,6 +3420,10 @@ static int pool_ctr(struct dm_target *ti
- 	if (r)
- 		goto out_flags_changed;
- 
-+	dm_pool_register_pre_commit_callback(pt->pool->pmd,
-+					     metadata_pre_commit_callback,
-+					     pt);
-+
- 	pt->callbacks.congested_fn = pool_is_congested;
- 	dm_table_add_target_callbacks(ti->table, &pt->callbacks);
- 
+-	spin_lock(&session->frwd_lock);
++	spin_lock_bh(&session->frwd_lock);
+ 	task = (struct iscsi_task *)sc->SCp.ptr;
+ 	if (!task) {
+ 		/*
+@@ -2110,7 +2110,7 @@ enum blk_eh_timer_return iscsi_eh_cmd_ti
+ done:
+ 	if (task)
+ 		task->last_timeout = jiffies;
+-	spin_unlock(&session->frwd_lock);
++	spin_unlock_bh(&session->frwd_lock);
+ 	ISCSI_DBG_EH(session, "return %s\n", rc == BLK_EH_RESET_TIMER ?
+ 		     "timer reset" : "shutdown or nh");
+ 	return rc;
 
 
