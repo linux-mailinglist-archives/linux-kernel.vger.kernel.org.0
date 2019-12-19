@@ -2,49 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50267126DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BD9126C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:05:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbfLSTMN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54636 "EHLO mail.kernel.org"
+        id S1729732AbfLSTEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:04:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbfLSShO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:37:14 -0500
+        id S1728829AbfLSSqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:46:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9475222C2;
-        Thu, 19 Dec 2019 18:37:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A29D2222C2;
+        Thu, 19 Dec 2019 18:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780632;
-        bh=aDbn1bwYxv0Fr5AI2V6CwZjwn0FgbesOi5xWBwJ9Abs=;
+        s=default; t=1576781209;
+        bh=U4z2sRDYdJKHX1PNo+xR3U0qZN1owb1vJ9hDYEmbJF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xnu5nD02Kl+NNvqy7XqBpRhakr/iPb3WbvgQTdDmcA54D9pPf5QoKzUl6LGnGFjIG
-         EjicQbf21CJmq89wJO7cGFkzrITyz2If1i9yBWxdJqNJ2lvXkc/V6UfJfKitVMt84E
-         metVJgW4LFPN6xjRCi3rbZ8oldHrD7BEfzxW7TGA=
+        b=JHYFoKl0sJRk+EmB4cp2Z8js2WL98g3LlnOXHpw6G6KS/TzZKpqhALsgLBoe+BV5H
+         I9q4MzIGyevn7dc8wsP4cLKD524Dofe1VfO/BypwG4jQqefFcc2b+Q/Jo//L68yQuY
+         RAq53cWe9qKnPd3BLLPBqumvzWBZwEyzjGoRWluQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Phil Auld <pauld@redhat.com>,
-        Xuewei Zhang <xueweiz@google.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Anton Blanchard <anton@ozlabs.org>,
-        Ben Segall <bsegall@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 053/162] sched/fair: Scale bandwidth quota and period without losing quota/period ratio precision
-Date:   Thu, 19 Dec 2019 19:32:41 +0100
-Message-Id: <20191219183211.113172209@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.9 080/199] tty: vt: keyboard: reject invalid keycodes
+Date:   Thu, 19 Dec 2019 19:32:42 +0100
+Message-Id: <20191219183219.392442234@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -54,107 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xuewei Zhang <xueweiz@google.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-commit 4929a4e6faa0f13289a67cae98139e727f0d4a97 upstream.
+commit b2b2dd71e0859436d4e05b2f61f86140250ed3f8 upstream.
 
-The quota/period ratio is used to ensure a child task group won't get
-more bandwidth than the parent task group, and is calculated as:
+Do not try to handle keycodes that are too big, otherwise we risk doing
+out-of-bounds writes:
 
-  normalized_cfs_quota() = [(quota_us << 20) / period_us]
+BUG: KASAN: global-out-of-bounds in clear_bit include/asm-generic/bitops-instrumented.h:56 [inline]
+BUG: KASAN: global-out-of-bounds in kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
+BUG: KASAN: global-out-of-bounds in kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
+Write of size 8 at addr ffffffff89a1b2d8 by task syz-executor108/1722
+...
+ kbd_keycode drivers/tty/vt/keyboard.c:1411 [inline]
+ kbd_event+0xe6b/0x3790 drivers/tty/vt/keyboard.c:1495
+ input_to_handler+0x3b6/0x4c0 drivers/input/input.c:118
+ input_pass_values.part.0+0x2e3/0x720 drivers/input/input.c:145
+ input_pass_values drivers/input/input.c:949 [inline]
+ input_set_keycode+0x290/0x320 drivers/input/input.c:954
+ evdev_handle_set_keycode_v2+0xc4/0x120 drivers/input/evdev.c:882
+ evdev_do_ioctl drivers/input/evdev.c:1150 [inline]
 
-If the quota/period ratio was changed during this scaling due to
-precision loss, it will cause inconsistency between parent and child
-task groups.
+In this case we were dealing with a fuzzed HID device that declared over
+12K buttons, and while HID layer should not be reporting to us such big
+keycodes, we should also be defensive and reject invalid data ourselves as
+well.
 
-See below example:
-
-A userspace container manager (kubelet) does three operations:
-
- 1) Create a parent cgroup, set quota to 1,000us and period to 10,000us.
- 2) Create a few children cgroups.
- 3) Set quota to 1,000us and period to 10,000us on a child cgroup.
-
-These operations are expected to succeed. However, if the scaling of
-147/128 happens before step 3, quota and period of the parent cgroup
-will be changed:
-
-  new_quota: 1148437ns,   1148us
- new_period: 11484375ns, 11484us
-
-And when step 3 comes in, the ratio of the child cgroup will be
-104857, which will be larger than the parent cgroup ratio (104821),
-and will fail.
-
-Scaling them by a factor of 2 will fix the problem.
-
-Tested-by: Phil Auld <pauld@redhat.com>
-Signed-off-by: Xuewei Zhang <xueweiz@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Phil Auld <pauld@redhat.com>
-Cc: Anton Blanchard <anton@ozlabs.org>
-Cc: Ben Segall <bsegall@google.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mel Gorman <mgorman@suse.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Fixes: 2e8e19226398 ("sched/fair: Limit sched_cfs_period_timer() loop to avoid hard lockup")
-Link: https://lkml.kernel.org/r/20191004001243.140897-1-xueweiz@google.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reported-by: syzbot+19340dff067c2d3835c0@syzkaller.appspotmail.com
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191122204220.GA129459@dtor-ws
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- kernel/sched/fair.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+ drivers/tty/vt/keyboard.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4055,20 +4055,28 @@ static enum hrtimer_restart sched_cfs_pe
- 		if (++count > 3) {
- 			u64 new, old = ktime_to_ns(cfs_b->period);
+--- a/drivers/tty/vt/keyboard.c
++++ b/drivers/tty/vt/keyboard.c
+@@ -1460,7 +1460,7 @@ static void kbd_event(struct input_handl
  
--			new = (old * 147) / 128; /* ~115% */
--			new = min(new, max_cfs_quota_period);
-+			/*
-+			 * Grow period by a factor of 2 to avoid losing precision.
-+			 * Precision loss in the quota/period ratio can cause __cfs_schedulable
-+			 * to fail.
-+			 */
-+			new = old * 2;
-+			if (new < max_cfs_quota_period) {
-+				cfs_b->period = ns_to_ktime(new);
-+				cfs_b->quota *= 2;
+ 	if (event_type == EV_MSC && event_code == MSC_RAW && HW_RAW(handle->dev))
+ 		kbd_rawcode(value);
+-	if (event_type == EV_KEY)
++	if (event_type == EV_KEY && event_code <= KEY_MAX)
+ 		kbd_keycode(event_code, value, HW_RAW(handle->dev));
  
--			cfs_b->period = ns_to_ktime(new);
--
--			/* since max is 1s, this is limited to 1e9^2, which fits in u64 */
--			cfs_b->quota *= new;
--			cfs_b->quota = div64_u64(cfs_b->quota, old);
--
--			pr_warn_ratelimited(
--        "cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us %lld, cfs_quota_us = %lld)\n",
--	                        smp_processor_id(),
--	                        div_u64(new, NSEC_PER_USEC),
--                                div_u64(cfs_b->quota, NSEC_PER_USEC));
-+				pr_warn_ratelimited(
-+	"cfs_period_timer[cpu%d]: period too short, scaling up (new cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-+					smp_processor_id(),
-+					div_u64(new, NSEC_PER_USEC),
-+					div_u64(cfs_b->quota, NSEC_PER_USEC));
-+			} else {
-+				pr_warn_ratelimited(
-+	"cfs_period_timer[cpu%d]: period too short, but cannot scale up without losing precision (cfs_period_us = %lld, cfs_quota_us = %lld)\n",
-+					smp_processor_id(),
-+					div_u64(old, NSEC_PER_USEC),
-+					div_u64(cfs_b->quota, NSEC_PER_USEC));
-+			}
- 
- 			/* reset count so we don't come right back in here */
- 			count = 0;
+ 	spin_unlock(&kbd_event_lock);
 
 
