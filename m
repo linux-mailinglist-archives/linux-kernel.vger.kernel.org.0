@@ -2,174 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456F4125B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A412F125B15
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 06:57:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbfLSFzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 00:55:54 -0500
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:53700 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725821AbfLSFzy (ORCPT
+        id S1726713AbfLSF5g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 00:57:36 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:31205 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726620AbfLSF5d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:55:54 -0500
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-        by mx0a-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBJ5tn8R019697;
-        Wed, 18 Dec 2019 21:55:49 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=qw5oUp9krnNDjUaPn+q6MTYZm2jYH6NJzEZ2HyyXoQM=;
- b=qB/TGdCa2PODoEMhX6RDW+hKtTnk8Cg4RrenEU6/fBCIOB/vZgeqZYB1k7aycTfhZ7Q9
- OAFMgJ8iWPW9XKK5acx/+sSXFwpgNn/gvQaW98HwPHv015zq7uL5IiOf8UkFgelDMpo6
- IUDGFTeNMg9Tq16vUbJRwDh0C2YSrDLfYZpJUBPXU6yRubTCWNuq/X2nkAzDgoo3LDiD
- /8OhxKRN7eOtJhCxUiFI0MZpt16fnGP8tLY78bVPPnduMtqWOgitGoCyTymfWLLKRVFN
- NbeRO6BbwiL7z+D7o9SIPX704b94raw0lMFTlstE4cYXIZhWvJT6/lgx0f+32Kj+H70p +g== 
-Received: from sc-exch02.marvell.com ([199.233.58.182])
-        by mx0a-0016f401.pphosted.com with ESMTP id 2wxneb1s4v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 18 Dec 2019 21:55:49 -0800
-Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH02.marvell.com
- (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 18 Dec
- 2019 21:55:47 -0800
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.106)
- by SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2 via Frontend Transport; Wed, 18 Dec 2019 21:55:47 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EKTmPq1TTb7iNR31vnJTCZ/AZAAQEAlW3uANFAg9f8Zzi+ln5++4aQgt0/l6EgYhkQ2jJT5ODcPbXS4fmntNGFWETteJhNo3L0hnN9sNSq1SR+bW8K9lakT2IYSSvs64ELUOkvXROCqZB1UG41KCMMJ1MkuO2+oTUPfs/b87hgLxLkbT6GNt7Jj8BGDLfGObidcL5hJV3V4h1SP09n4hOREzgVdy9Gqz07a0sbzxroGlbSVQ+vY08XpABAEBIKo0uJqYzPaBeWiViZGXxE5yZ1mGM0e/1nnN3LR5/TcFNSUltNINtCzBFS4E7HyCuvUkiA1zILdV/4Qk+QR75+IkXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qw5oUp9krnNDjUaPn+q6MTYZm2jYH6NJzEZ2HyyXoQM=;
- b=KYM2RCByGe+dILEO0ThNVts0eB2gvoNh3Iy/1bHYQZWyYEp1KXtK82gEUQDDe9qIFBxIjb7Z8Dtj0YNUdqlTuiaWki+Bq0ZxOzZokzi/faYv6MmFgkZe4A7UsEs2Zh7AekfUB4HpNqnLEnfbiHjOQ0IfuiLM4BAhdr4Do1Ecxp/tHBReTPaXv1RxmprJiWmG2kETuXpEQuPvxijX78patmkIyX+I1rZgNl7G58UhVSbiLOSQo8c0aENozHgQzXbGO73ImMPW8CnrybTz+y5eLGwUCKa30w5dwPeyBYr2jZ7lQIOcaRibCnatMwGqM8Q8FU4VVg1EqgRYJjV3Hg2K7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qw5oUp9krnNDjUaPn+q6MTYZm2jYH6NJzEZ2HyyXoQM=;
- b=WlgampbxJC1UBjbp35MGOBpJdqcCulmtFCtNVSXn9ImfNUIgDKbTrkNibJzEamqyYhsVRZuPxfwvMLlUvoJEeiOoUqw1Px7TZ8HjFZDsTaTZbeFBEvwMle3ImQ2MN9nlrfJtGs8RH0rzlc9Y8QObcPya692nDu2ITyQEzGX5nHw=
-Received: from MN2PR18MB3022.namprd18.prod.outlook.com (20.179.81.79) by
- MN2PR18MB2814.namprd18.prod.outlook.com (20.179.23.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.14; Thu, 19 Dec 2019 05:55:46 +0000
-Received: from MN2PR18MB3022.namprd18.prod.outlook.com
- ([fe80::71b6:15a6:296b:d72e]) by MN2PR18MB3022.namprd18.prod.outlook.com
- ([fe80::71b6:15a6:296b:d72e%5]) with mapi id 15.20.2538.022; Thu, 19 Dec 2019
- 05:55:45 +0000
-From:   Manish Rangankar <mrangankar@marvell.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        "QLogic-Storage-Upstream@qlogic.com" 
-        <QLogic-Storage-Upstream@qlogic.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "clang-built-linux@googlegroups.com" 
-        <clang-built-linux@googlegroups.com>
-Subject: RE: [PATCH] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
-Thread-Topic: [PATCH] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
-Thread-Index: AQHVtUXiqoQyQCCWl0SuaAvTA+GDZ6fA9vfw
-Date:   Thu, 19 Dec 2019 05:55:45 +0000
-Message-ID: <MN2PR18MB30227FB22733182ACF0BEFD8D8520@MN2PR18MB3022.namprd18.prod.outlook.com>
-References: <20191218015252.20890-1-natechancellor@gmail.com>
-In-Reply-To: <20191218015252.20890-1-natechancellor@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [114.143.185.87]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 30dbd85b-fc7c-4c20-0958-08d784481747
-x-ms-traffictypediagnostic: MN2PR18MB2814:
-x-microsoft-antispam-prvs: <MN2PR18MB28140AD3B1D71450D9FCBFE3D8520@MN2PR18MB2814.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:79;
-x-forefront-prvs: 0256C18696
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(396003)(39850400004)(376002)(346002)(199004)(189003)(13464003)(33656002)(19627235002)(9686003)(52536014)(81156014)(71200400001)(7696005)(54906003)(110136005)(81166006)(8676002)(4326008)(66476007)(64756008)(76116006)(316002)(5660300002)(966005)(478600001)(66556008)(66446008)(66946007)(26005)(2906002)(186003)(8936002)(55016002)(86362001)(53546011)(6506007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2814;H:MN2PR18MB3022.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lRmnKY7r/tf/Ag7blQCG1S81wxE7TQJvJK2ViY7afZ8YR0MxeRbanz4qG/CguEkVDQ/HFAd8BebfGxVFPgTSU68A8KXrWegTlhfIGIjLbc0GwCUD/wEDHcDyq2jYWnbg/lHvJGzGm29in/PluJYEYs2uXYnBg78Tn4yT3zz7+rldipzB2ncLT3cgwf2kkdUNtnzDFYPhJs0XcBonYwESa2tg3dpgLeChKXXyxTCPZy+UFWy+CBJyXNlr3NiG6HWnR5qzPUtzeWKyw/ccSpJNxLqNQe5OlzOfSsovTbBeZ+ZdHa791n1snt58p8QnfpEdRbwiT7s49AfOVyiWofI68Y370wQ80dLt89vNeIJRT084Qnm0UbWSBfoQd4Typc5gaUJLqWmsg7nnarXbVMKEYfeuQlpoB0WHawiO1rJtVx31T6YADtE/XqLi0N7Umi18Vj8BM7gSNF7F1g/+NqsY+zthSz0tIv+l4yIAc1Uvyao7iyyZA4YWHWEPZrAr7tXwBvUUteNsx2IUQsh6bN3QueMuHLRmOKXvpFnRGKt61xE=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 19 Dec 2019 00:57:33 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576735052; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-ID: Date: Subject: In-Reply-To: References: Cc:
+ To: From: Sender; bh=gij6s46FDaVHWH1PKbNbofgZ7vDlisgHp23/Qe0e81A=; b=Djp2JghR/DTf6gNrluKZR6JZ5I+8Y29XBb0b0X1kAxUGtlQvmDS4xJXfZKd8FKhh3zwwi3go
+ eibBCh4LhL2shjmS0dE8pmiRxow8gtPGyJKSiio/uNuXz7iRPlhswpK5AC+eS+QTmTAzexGN
+ I2OPrW9DNoAOuhi1YzcZgR1m9Zk=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfb1148.7f5b1df62030-smtp-out-n01;
+ Thu, 19 Dec 2019 05:57:28 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A7E9BC48B02; Thu, 19 Dec 2019 05:57:27 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from Pillair (unknown [183.83.68.224])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: pillair)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9B8BC3863A;
+        Thu, 19 Dec 2019 05:57:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9B8BC3863A
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=pillair@codeaurora.org
+From:   <pillair@codeaurora.org>
+To:     "'Bjorn Andersson'" <bjorn.andersson@linaro.org>
+Cc:     <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <0101016ed018cde9-da3dc3e0-de6e-4b18-9add-bc6f88511ab2-000000@us-west-2.amazonses.com> <20191211072053.GH3143381@builder>
+In-Reply-To: <20191211072053.GH3143381@builder>
+Subject: RE: [PATCH] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
+Date:   Thu, 19 Dec 2019 11:27:20 +0530
+Message-ID: <000b01d5b631$30ae26f0$920a74d0$@codeaurora.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 30dbd85b-fc7c-4c20-0958-08d784481747
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Dec 2019 05:55:45.7328
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3kcUL4iNB2bZCLVsMPcCbIJ5EHnQ/71kuZ6TOXyu8dEkdKAnh5esrrdZ5dWdhkAXdio6i12oPeTeOIhw85ocCw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2814
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-18_08:2019-12-17,2019-12-18 signatures=0
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMb6H2dXQ8o6wUj3EGWt532+Zf66wHvDMacpSUYhgA=
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I will raise the next patchset with the comments addressed.
 
 > -----Original Message-----
-> From: linux-scsi-owner@vger.kernel.org <linux-scsi-
-> owner@vger.kernel.org> On Behalf Of Nathan Chancellor
-> Sent: Wednesday, December 18, 2019 7:23 AM
-> To: QLogic-Storage-Upstream@qlogic.com; James E.J. Bottomley
-> <jejb@linux.ibm.com>; Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: linux-scsi@vger.kernel.org; linux-kernel@vger.kernel.org; clang-built=
--
-> linux@googlegroups.com; Nathan Chancellor <natechancellor@gmail.com>
-> Subject: [PATCH] scsi: qla4xxx: Adjust indentation in qla4xxx_mem_free
->=20
-> Clang warns:
->=20
-> ../drivers/scsi/qla4xxx/ql4_os.c:4148:3: warning: misleading indentation;
-> statement is not part of the previous 'if'
-> [-Wmisleading-indentation]
->          if (ha->fw_dump)
->          ^
-> ../drivers/scsi/qla4xxx/ql4_os.c:4144:2: note: previous statement is here
->         if (ha->queues)
->         ^
-> 1 warning generated.
->=20
-> This warning occurs because there is a space after the tab on this line.
-> Remove it so that the indentation is consistent with the Linux kernel cod=
-ing
-> style and clang no longer warns.
->=20
-> Fixes: 068237c87c64 ("[SCSI] qla4xxx: Capture minidump for ISP82XX on
-> firmware failure")
-> Link: https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
-> 3A__github.com_ClangBuiltLinux_linux_issues_819&d=3DDwIDAg&c=3DnKjWec
-> 2b6R0mOyPaz7xtfQ&r=3DAt6ko6G2bmE5NMB-
-> 6KMSliwRneAzZrOmmK21YHGCrqw&m=3DuRvAonUUcyFaz2S6vZ8po-
-> QrrPYNB3gw84QZKl9wS78&s=3Dt3EPVR3mOgGj_emNe0i_rdomyiK4K9noSBB
-> WMFBt2Ag&e=3D
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/scsi/qla4xxx/ql4_os.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.=
-c
-> index 2323432a0edb..5504ab11decc 100644
-> --- a/drivers/scsi/qla4xxx/ql4_os.c
-> +++ b/drivers/scsi/qla4xxx/ql4_os.c
-> @@ -4145,7 +4145,7 @@ static void qla4xxx_mem_free(struct
-> scsi_qla_host *ha)
->  		dma_free_coherent(&ha->pdev->dev, ha->queues_len, ha-
-> >queues,
->  				  ha->queues_dma);
->=20
-> -	 if (ha->fw_dump)
-> +	if (ha->fw_dump)
->  		vfree(ha->fw_dump);
->=20
->  	ha->queues_len =3D 0;
-> --
+> From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Sent: Wednesday, December 11, 2019 12:51 PM
+> To: Rakesh Pillai <pillair@codeaurora.org>
+> Cc: devicetree@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+> Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module
+> device node
+> 
+> On Wed 04 Dec 00:48 PST 2019, Rakesh Pillai wrote:
+> 
+> > Add device node for the ath10k SNOC platform driver probe
+> > and add resources required for WCN3990 on sc7180 soc.
+> >
+> > Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+> > ---
+> > This change is dependent on the below set of changes
+> > arm64: dts: sc7180: Add qupv3_0 and qupv3_1
+> (https://lore.kernel.org/patchwork/patch/1150367/)
+> 
+> Why?
 
-Thanks
-Acked-by: Manish Rangankar <mrangankar@marvell.com>
+The mentioned series of patchset brings the DTSI for sc7180.
+Hence the addition of wifi node is dependent on this series
+https://lore.kernel.org/patchwork/patch/1150367/
+
+
+> 
+> > ---
+> >  arch/arm64/boot/dts/qcom/sc7180-idp.dts |  4 ++++
+> >  arch/arm64/boot/dts/qcom/sc7180.dtsi    | 27
+> +++++++++++++++++++++++++++
+> >  2 files changed, 31 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > index 189254f..8a6a760 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > +++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+> > @@ -248,6 +248,10 @@
+> >  	status = "okay";
+> >  };
+> >
+> > +&wifi {
+> > +	status = "okay";
+> 
+> Please conclude on the representation of the "skip-hyp-mem-assign" and
+> add it here, rather than in a subsequent patch - which implies that this
+> patch doesn't work on its own.
+
+
+Sure, I will update the next patchset.
+
+
+> 
+> > +};
+> > +
+> >  /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+> >
+> >  &qup_i2c2_default {
+> > diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > index 666e9b9..40c9971 100644
+> > --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+> > @@ -42,6 +42,12 @@
+> >  			compatible = "qcom,cmd-db";
+> >  			no-map;
+> >  		};
+> > +
+> > +		wlan_fw_mem: wlan_fw_region@93900000 {
+> 
+> wlan_fw_mem: memory@93900000 {
+> 
+> > +			compatible = "removed-dma-pool";
+> > +			no-map;
+> > +			reg = <0 0x93900000 0 0x200000>;
+> > +		};
+> >  	};
+> >
+> >  	cpus {
+> > @@ -1119,6 +1125,27 @@
+> >  				#clock-cells = <1>;
+> >  			};
+> >  		};
+> > +
+> > +		wifi: wifi@18800000 {
+> > +			status = "disabled";
+> > +			compatible = "qcom,wcn3990-wifi";
+> > +			reg = <0 0x18800000 0 0x800000>;
+> > +			reg-names = "membase";
+> > +			interrupts =
+> > +				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0
+> */ >,
+> > +				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1
+> */ >,
+> > +				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2
+> */ >,
+> > +				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3
+> */ >,
+> > +				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4
+> */ >,
+> > +				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5
+> */ >,
+> > +				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6
+> */ >,
+> > +				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7
+> */ >,
+> > +				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8
+> */ >,
+> > +				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9
+> */ >,
+> > +				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10
+> */>,
+> > +				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11
+> */>;
+> > +			memory-region = <&wlan_fw_mem>;
+> 
+> No iommus in sc7180?
+> 
+> Regards,
+> Bjorn
+> 
+> > +		};
+> >  	};
+> >
+> >  	timer {
+> > --
+> > 2.7.4
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
