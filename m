@@ -2,42 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3988B126664
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:08:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67C6D126666
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 17:09:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfLSQIY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 11:08:24 -0500
-Received: from relay.sw.ru ([185.231.240.75]:57908 "EHLO relay.sw.ru"
+        id S1726907AbfLSQJA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 11:09:00 -0500
+Received: from relay.sw.ru ([185.231.240.75]:57942 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726778AbfLSQIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 11:08:24 -0500
+        id S1726778AbfLSQJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 11:09:00 -0500
 Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
         by relay.sw.ru with esmtp (Exim 4.92.3)
         (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ihyLP-0007T1-L5; Thu, 19 Dec 2019 19:08:07 +0300
-Subject: Re: [PATCH v2] sched: Micro optimization in pick_next_task() and in
- check_preempt_curr()
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
-        linux-kernel@vger.kernel.org
+        id 1ihyM7-0007Tl-FY; Thu, 19 Dec 2019 19:08:51 +0300
+Subject: Re: [Q] ld: Does LTO reorder ro variables in two files?
+To:     Alexander Monakov <amonakov@ispras.ru>
+Cc:     Peter Zijlstra <peterz@infradead.org>, gcc-help@gcc.gnu.org,
+        mingo@redhat.com, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, Jan Hubicka <hubicka@ucw.cz>
 References: <157675913272.349305.8936736338884044103.stgit@localhost.localdomain>
  <20191219131242.GK2827@hirez.programming.kicks-ass.net>
- <20191219140252.GS2871@hirez.programming.kicks-ass.net>
- <bfaa72ca-8bc6-f93c-30d7-5d62f2600f53@virtuozzo.com>
- <20191219094330.0e44c748@gandalf.local.home>
- <11d755e9-e4f8-dd9e-30b0-45aebe260b2f@virtuozzo.com>
- <20191219095941.2eebed84@gandalf.local.home>
- <44c95c18-7593-f3e7-f710-a7d424af7442@virtuozzo.com>
- <20191219104018.5f8e50d2@gandalf.local.home>
+ <3db1b1c8-0228-56e4-a04f-e8d24cd1dd51@virtuozzo.com>
+ <alpine.LNX.2.20.13.1912191817440.18668@monopod.intra.ispras.ru>
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <af65cbaf-2f8e-0384-03e8-262d35e3790e@virtuozzo.com>
-Date:   Thu, 19 Dec 2019 19:08:05 +0300
+Message-ID: <f8ecf41d-2f0e-1c17-8c71-1956ca8cf465@virtuozzo.com>
+Date:   Thu, 19 Dec 2019 19:08:50 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191219104018.5f8e50d2@gandalf.local.home>
+In-Reply-To: <alpine.LNX.2.20.13.1912191817440.18668@monopod.intra.ispras.ru>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -46,57 +41,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.12.2019 18:40, Steven Rostedt wrote:
-> On Thu, 19 Dec 2019 18:20:58 +0300
-> Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+On 19.12.2019 18:45, Alexander Monakov wrote:
+> [adding Jan Hubicka, GCC LTO maintainer]
 > 
->> From: Kirill Tkhai <ktkhai@virtuozzo.com>
->>
->> This introduces an optimization based on xxx_sched_class addresses
->> in two hot scheduler functions: pick_next_task() and check_preempt_curr().
->>
->> After this patch, it will be possible to compare pointers to sched classes
->> to check, which of them has a higher priority, instead of current iterations
->> using for_each_class().
->>
->> One more result of the patch is that size of object file becomes a little
->> less (excluding added BUG_ON(), which goes in __init section):
->>
->> $size kernel/sched/core.o
->>          text     data      bss	    dec	    hex	filename
->> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
->> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
->>
->> SCHED_DATA improvements guaranteeing order of sched classes are made
->> by Steven Rostedt <rostedt@goodmis.org>
+> On Thu, 19 Dec 2019, Kirill Tkhai wrote:
 > 
-> For the above changes, you can add:
+>> CC: gcc-help@gcc.gnu.org
+>>
+>> Hi, gcc guys,
+>>
+>> this thread starts here: https://lkml.org/lkml/2019/12/19/403
+>>
+>> There are two const variables:
+>>
+>>    struct sched_class idle_sched_class
+>> and
+>>    struct sched_class fair_sched_class,
+>>
+>> which are declared in two files idle.c and fair.c.
+>>
+>> 1)In Makefile the order is: idle.o fair.o
+>> 2)the variables go to the same ro section
+>> 3)there is no SORT(.*) keyword in linker script.
+>>
+>> Is it always true, that after linkage &idle_sched_class < &fair_sched_class?
 > 
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> No, with LTO you don't have that guarantee. For functions it's more obvious,
+> GCC wants to analyze functions in reverse topological order so callees are
+> generally optimized before callers, and it will emit assembly as it goes, so
+> function ordering with LTO does not give much care to translation unit
+> boundaries. For variables it's a bit more subtle, GCC partitions all variables
+> and functions so it can hand them off to multiple compiler processes while doing
+> LTO. There's no guarantees about order of variables that end up in different
+> partitions.
+> 
+> There's __attribute__((no_reorder)) that is intended to enforce ordering even
+> with LTO (it's documented under "Common function attributes" but works for
+> global variables as well).
 
-Should I resend this as two patches, with your changes in a separate?
+Thanks, Alexander!
 
-> 
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->>
->> v2: Steven's data sections ordering. Hunk with comment in Makefile is removed.
->> ---
->>  include/asm-generic/vmlinux.lds.h |    8 ++++++++
->>  kernel/sched/core.c               |   24 +++++++++---------------
->>  kernel/sched/deadline.c           |    3 ++-
->>  kernel/sched/fair.c               |    3 ++-
->>  kernel/sched/idle.c               |    3 ++-
->>  kernel/sched/rt.c                 |    3 ++-
->>  kernel/sched/stop_task.c          |    3 ++-
->>  7 files changed, 27 insertions(+), 20 deletions(-)
->>
->> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
->> index e00f41aa8ec4..ff12a422ff19 100644
->> --- a/include/asm-generic/vmlinux.lds.h
->> +++ b/include/asm-generic/vmlinux.lds.h
->> @@ -108,6 +108,13 @@
->>  #define SBSS_MAIN .sbss
->>  #endif
->>  
-
+Kirill
