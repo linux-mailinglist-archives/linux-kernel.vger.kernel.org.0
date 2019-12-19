@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B15DC126EBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:22:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB94126EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:21:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfLSUWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:22:17 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:16079 "EHLO
+        id S1727454AbfLSUVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:21:53 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.171]:11294 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfLSUVr (ORCPT
+        with ESMTP id S1726963AbfLSUVs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:21:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1576786905;
+        Thu, 19 Dec 2019 15:21:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1576786906;
         s=strato-dkim-0002; d=gerhold.net;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=TdmaWHXYZcW1R+/Rup5KpwyfgOBgzcXrSUBNzmQYpiw=;
-        b=cB0VKW/3YlaGJcw5TFpwBq5vbSQ++veq6MdY53dSvjY510MkGzpvXElPhWE1V1iuTq
-        NNnkkQYxriDvZ6FlCBvrnfR6s4PHJ4heq5ppg1QzsRnL1UIr4yVW3fTpl4SLCQfRGrN+
-        K1Y0Bhg1aNlNP3yvXyDjlKfTs3v3CXltlX4f2b1OZ88Q06YF1dh1RvuZc0RVnWKGc4yt
-        oILZt00GG2JLAxaFj5fsaeV7/HUoiH517sivRcicO+9/wC1z6bWxXYd+Yfw2Pj3ErXcD
-        iArLlxde2NoG+4qvo9whX/PKhcXZfHvlZXm5owQ1A5HxvnwsLJFtKbjcxxiPfyPVElD/
-        MAeA==
+        bh=HAbd9d4NTDF2e/QveCagzTM33lrIAhUfv351iriFU0E=;
+        b=RQa5TSbO0TIAMR7K/dIx0L2qgf1rq/2ochS5vhwV+8iPff9LOWjcMyFaFPzsbNNXSX
+        l43SOBlA7tP5IT1r13SGbHActVNUHyCkrbNCbE0M0DgxtnKe5TmuX37dor8eEc7M4xLT
+        EUwq9jstQwFZH8a/Rhh6YHUCHBbxiHXaypcuSwSjSY/HQf28i4gSMN2eeUgGwqof8V7f
+        lATVm8oBETt25tqnam0m7frao2hi8PZODRzWfsw/67hzx7jYadF59I1CWQdjnu2VpPDQ
+        +QTTl/rXKVPnMSAjJwVNPz+ke6kz4To295hy+p33uDwnXz/fRqpQ2AuOosqoQp6ISizm
+        73LA==
 X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVORvLd4SsytBXQrEOHTIXtszvsxM1"
 X-RZG-CLASS-ID: mo00
 Received: from localhost.localdomain
         by smtp.strato.de (RZmta 46.1.1 AUTH)
-        with ESMTPSA id f021e2vBJKLi3ZD
+        with ESMTPSA id f021e2vBJKLj3ZF
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Thu, 19 Dec 2019 21:21:44 +0100 (CET)
+        Thu, 19 Dec 2019 21:21:45 +0100 (CET)
 From:   Stephan Gerhold <stephan@gerhold.net>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-arm-kernel@lists.infradead.org,
@@ -38,9 +38,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         Mark Rutland <mark.rutland@arm.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH 6/9] ARM: dts: ux500: samsung-golden: Add touch screen
-Date:   Thu, 19 Dec 2019 21:20:49 +0100
-Message-Id: <20191219202052.19039-7-stephan@gerhold.net>
+Subject: [PATCH 7/9] ARM: dts: ux500: samsung-golden: Add WiFi
+Date:   Thu, 19 Dec 2019 21:20:50 +0100
+Message-Id: <20191219202052.19039-8-stephan@gerhold.net>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219202052.19039-1-stephan@gerhold.net>
 References: <20191219202052.19039-1-stephan@gerhold.net>
@@ -51,74 +51,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-samsung-golden has an Atmel mXT224S touch controller connected to I2C.
-It is supported by the existing driver for atmel,maxtouch, so all we
-need to do to make it work is to define the necessary device tree nodes.
+samsung-golden uses a BCM4334 WiFi+BT combo chip, connected to SDIO.
+It is supported by the brcmfmac driver in mainline,
+so we only need to set up the device tree to make it work correctly.
 
-The atmel_mxt_ts driver does not support controlling regulators yet,
-so add regulator-always-on for now to turn on the necessary regulators.
+Note: brcmfmac requires (proprietary) firmware + a device-specific
+NVRAM file. Both can be extracted from the stock Android system
+used on samsung-golden:
+  - /system/etc/wifi/bcmdhd_sta.bin_b2   -> /lib/firmware/brcm/brcmfmac4334-sdio.bin
+  - /system/etc/wifi/nvram_net.txt_GPIO4 -> /lib/firmware/brcm/brcmfmac4334-sdio.samsung,golden.txt
+
+brcmfmac4334-sdio.bin from linux-firmware also seems to work,
+but results in occasional errors for some reason.
 
 Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
 ---
- .../arm/boot/dts/ste-ux500-samsung-golden.dts | 31 +++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../arm/boot/dts/ste-ux500-samsung-golden.dts | 56 +++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/arch/arm/boot/dts/ste-ux500-samsung-golden.dts b/arch/arm/boot/dts/ste-ux500-samsung-golden.dts
-index 14a084e1846b..e75a425d177e 100644
+index e75a425d177e..d22b2879c46a 100644
 --- a/arch/arm/boot/dts/ste-ux500-samsung-golden.dts
 +++ b/arch/arm/boot/dts/ste-ux500-samsung-golden.dts
-@@ -142,6 +142,26 @@ imu@68 {
- 			};
- 		};
+@@ -64,9 +64,27 @@ sdi1_per2@80118000 {
+ 			non-removable;
+ 			cap-sd-highspeed;
  
-+		i2c@80110000 {
-+			status = "okay";
++			vmmc-supply = <&wl_reg_on>;
 +
-+			pinctrl-names = "default", "sleep";
-+			pinctrl-0 = <&i2c3_c_2_default>;
-+			pinctrl-1 = <&i2c3_c_2_sleep>;
+ 			pinctrl-names = "default", "sleep";
+ 			pinctrl-0 = <&mc1_a_2_default>;
+ 			pinctrl-1 = <&mc1_a_2_sleep>;
 +
-+			touchscreen@4a {
-+				compatible = "atmel,maxtouch";
-+				reg = <0x4a>;
++			#address-cells = <1>;
++			#size-cells = <0>;
 +
-+				/* GPIO218 (TSP_INT_1V8) */
++			wifi@1 {
++				compatible = "brcm,bcm4329-fmac";
++				reg = <1>;
++
++				/* GPIO216 (WLAN_HOST_WAKE) */
 +				interrupt-parent = <&gpio6>;
-+				interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
++				interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
++				interrupt-names = "host-wake";
 +
 +				pinctrl-names = "default";
-+				pinctrl-0 = <&tsp_default>;
++				pinctrl-0 = <&wlan_default>;
 +			};
-+		};
+ 		};
+ 
+ 		/* eMMC */
+@@ -290,6 +308,28 @@ sd_level_translator: regulator-sd-level-translator {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&sd_level_translator_default>;
+ 	};
 +
- 		prcmu@80157000 {
- 			ab8505 {
- 				ab8500_usb {
-@@ -161,6 +181,7 @@ ab8500_ldo_aux2 {
- 						regulator-name = "vreg_tsp_a3v3";
- 						regulator-min-microvolt = <3300000>;
- 						regulator-max-microvolt = <3300000>;
-+						regulator-always-on; /* FIXME */
- 					};
++	/*
++	 * WL_REG_ON takes WLAN out of reset and enables the internal regulators.
++	 * The voltage specified here is only used to determine the OCR mask,
++	 * the BCM chip is actually connected directly to VBAT.
++	 */
++	wl_reg_on: regulator-wl-reg-on {
++		compatible = "regulator-fixed";
++
++		regulator-name = "wl-reg-on";
++		regulator-min-microvolt = <3000000>;
++		regulator-max-microvolt = <3000000>;
++
++		startup-delay-us = <100000>;
++
++		/* GPIO215 (WLAN_EN) */
++		gpio = <&gpio6 23 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&wlan_en_default>;
++	};
+ };
  
- 					ab8500_ldo_aux3 {
-@@ -177,6 +198,7 @@ ab8500_ldo_aux5 {
- 						regulator-name = "vreg_tsp_1v8";
- 						regulator-min-microvolt = <1800000>;
- 						regulator-max-microvolt = <1800000>;
-+						regulator-always-on; /* FIXME */
- 					};
- 
- 					ab8500_ldo_aux6 {
-@@ -309,6 +331,15 @@ golden_cfg1 {
+ &pinctrl {
+@@ -340,6 +380,22 @@ golden_cfg1 {
  		};
  	};
  
-+	tsp {
-+		tsp_default: tsp_default {
++	wlan {
++		wlan_default: wlan_default {
 +			golden_cfg1 {
-+				pins = "GPIO218_AH11";	/* TSP_INT_1V8 */
-+				ste,config = <&gpio_in_nopull>;
++				pins = "GPIO216_AG12";	/* WLAN_HOST_WAKE */
++				ste,config = <&gpio_in_pd>;
++			};
++		};
++
++		wlan_en_default: wlan_en_default {
++			golden_cfg1 {
++				pins = "GPIO215_AH13";	/* WLAN_EN */
++				ste,config = <&gpio_out_lo>;
 +			};
 +		};
 +	};
