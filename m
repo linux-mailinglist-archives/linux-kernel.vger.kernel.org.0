@@ -2,75 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B48125DCB
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E442125DDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 10:40:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbfLSJg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 04:36:26 -0500
-Received: from regular1.263xmail.com ([211.150.70.195]:49736 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbfLSJg0 (ORCPT
+        id S1726702AbfLSJj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 04:39:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54859 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726622AbfLSJj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 04:36:26 -0500
-Received: from localhost (unknown [192.168.167.172])
-        by regular1.263xmail.com (Postfix) with ESMTP id D8A67BC9;
-        Thu, 19 Dec 2019 17:36:01 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [192.168.30.14] (42.17.110.36.static.bjtelecom.net [36.110.17.42])
-        by smtp.263.net (postfix) whith ESMTP id P31486T140079980852992S1576748159913946_;
-        Thu, 19 Dec 2019 17:36:01 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <8333cc4fcc79c2999bf3f5f41739d6d9>
-X-RL-SENDER: chengang@emindsoft.com.cn
-X-SENDER: chengang@emindsoft.com.cn
-X-LOGIN-NAME: chengang@emindsoft.com.cn
-X-FST-TO: lvlisong@emindsoft.com.cn
-X-SENDER-IP: 36.110.17.42
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 5
-Subject: Re: [PATCH] drivers: tty: serial: 8250: fintek: Can enable or disable
- irq sharing based on isa or pci bus
-From:   Chen Gang <chengang@emindsoft.com.cn>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     gregkh@linuxfoundation.org, jslaby@suse.com, sr@denx.de,
-        mika.westerberg@linux.intel.com, yegorslists@googlemail.com,
-        yuehaibing@huawei.com, haolee.swjtu@gmail.com, dsterba@suse.com,
-        mojha@codeaurora.org, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lv Li-song <lvlisong@emindsoft.com.cn>
-References: <20191213051717.2058-1-chengang@emindsoft.com.cn>
- <20191213105033.GT32742@smile.fi.intel.com>
- <758a0ca9-8f81-1a10-d9e1-11f86fac3de1@emindsoft.com.cn>
- <20191216095120.GN32742@smile.fi.intel.com>
- <2c4cba36-5833-ca08-4153-2061edf33186@emindsoft.com.cn>
-Message-ID: <1d0dae5a-cf47-1682-de62-468f60fc621a@emindsoft.com.cn>
-Date:   Thu, 19 Dec 2019 17:35:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 19 Dec 2019 04:39:58 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihsHi-0004Lc-Nk; Thu, 19 Dec 2019 10:39:54 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1ihsHg-0004As-K4; Thu, 19 Dec 2019 10:39:52 +0100
+From:   =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [PATCH v5 0/3] tty/leds: implement a trigger for ttys
+Date:   Thu, 19 Dec 2019 10:39:44 +0100
+Message-Id: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <2c4cba36-5833-ca08-4153-2061edf33186@emindsoft.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After check the linux-next tree, the core content is already fixed by
-the patch "4da22f1418cb serial: 8250_fintek: fix the mismatched IRQ
-mode" (it was applied on 2016-05-27).
+Hello,
 
-And it looks my original modification for 8250_pnp.c is unnecessary, I
-guess originally I only wanted to make sure it should work well, but did
-not cleanup the code.
+the only change since v4 (sent starting with Message-Id:
+<20191217165816.19324-1-u.kleine-koenig@pengutronix.de> is that I now
+added a file Documentation/ABI/testing/sysfs-class-led-trigger-tty in
+patch 3.
 
-So this patch is useless, sorry to bother you. And again, thank you for
-reviewing the code.
+As before this depends on patch "tty: drop useless variable
+initialisation in tty_kopen()" which is already on tty-next.
 
+Best regards
+Uwe
+
+Uwe Kleine-König (3):
+  tty: rename tty_kopen() and add new function tty_kopen_shared()
+  tty: new helper function tty_get_icount()
+  leds: trigger: implement a tty trigger
+
+ .../ABI/testing/sysfs-class-led-trigger-tty   |   6 +
+ drivers/leds/trigger/Kconfig                  |   7 +
+ drivers/leds/trigger/Makefile                 |   1 +
+ drivers/leds/trigger/ledtrig-tty.c            | 153 ++++++++++++++++++
+ drivers/staging/speakup/spk_ttyio.c           |   2 +-
+ drivers/tty/tty_io.c                          |  87 +++++++---
+ include/linux/tty.h                           |   7 +-
+ 7 files changed, 238 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-led-trigger-tty
+ create mode 100644 drivers/leds/trigger/ledtrig-tty.c
+
+-- 
+2.24.0
 
