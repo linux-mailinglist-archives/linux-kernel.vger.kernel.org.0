@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6834D126A66
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F1CF126A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:45:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729392AbfLSSqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:46:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39552 "EHLO mail.kernel.org"
+        id S1727421AbfLSSpT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:45:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729068AbfLSSqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:46:47 -0500
+        id S1729126AbfLSSpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:45:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EBF4222C2;
-        Thu, 19 Dec 2019 18:46:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C4ED2465E;
+        Thu, 19 Dec 2019 18:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781206;
-        bh=wg6xEPyzN+QW9rUxBPw/45Bdi9Xh4+pcfjxZdhhjDe4=;
+        s=default; t=1576781116;
+        bh=1HKDtvWYNVyMJcPdD5ufXrP3BQadBttkknjlLK6HduI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPZCwpO+hrej151AKIAJGJ7Y2a+rkU9KrAFVYzzLL3koiVxol/Due/oEtgBceTqs7
-         Cba9wSUmFKBQxgz0bgoW6BBA8D6PP+3vqRFMnytRNeZ9eThrSHd6M6/PcDI+Be+Z2a
-         OfhQI7Rfz/6WGXYEqowAMVxOYbEtEDm3LuwqeM3U=
+        b=1xUgC7arZ80sLZEx4Mk1cVcLS99Q4wYqrteCA2Tb36qXJj7cxbpCyXxX2ThfzLBLV
+         nscZAl91pGZxpQMbuhFcjRzvDCUQ8/DGdohgkS0vh88snmKaqoxkBOBy8s3AOCRunh
+         BCFUwdspR0ApUNCPHxiha0VDDeXURra8JoM0WDlc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 089/199] crypto: user - fix memory leak in crypto_report
-Date:   Thu, 19 Dec 2019 19:32:51 +0100
-Message-Id: <20191219183219.861072954@linuxfoundation.org>
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: [PATCH 4.9 090/199] spi: atmel: Fix CS high support
+Date:   Thu, 19 Dec 2019 19:32:52 +0100
+Message-Id: <20191219183219.913710934@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,36 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
 
-commit ffdde5932042600c6807d46c1550b28b0db6a3bc upstream.
+commit 7cbb16b2122c09f2ae393a1542fed628505b9da6 upstream.
 
-In crypto_report, a new skb is created via nlmsg_new(). This skb should
-be released if crypto_report_alg() fails.
+Until a few years ago, this driver was only used with CS GPIO. The
+only exception is CS0 on AT91RM9200 which has to use internal CS. A
+limitation of the internal CS is that they don't support CS High.
 
-Fixes: a38f7907b926 ("crypto: Add userspace configuration API")
+So by using the CS GPIO the CS high configuration was available except
+for the particular case CS0 on RM9200.
+
+When the support for the internal chip-select was added, the check of
+the CS high support was not updated. Due to this the driver accepts
+this configuration for all the SPI controller v2 (used by all SoCs
+excepting the AT91RM9200) whereas the hardware doesn't support it for
+infernal CS.
+
+This patch fixes the test to match the hardware capabilities.
+
+Fixes: 4820303480a1 ("spi: atmel: add support for the internal chip-select of the spi controller")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Link: https://lore.kernel.org/r/20191017141846.7523-3-gregory.clement@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- crypto/crypto_user.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/spi/spi-atmel.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/crypto/crypto_user.c
-+++ b/crypto/crypto_user.c
-@@ -269,8 +269,10 @@ static int crypto_report(struct sk_buff
- drop_alg:
- 	crypto_mod_put(alg);
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -1209,10 +1209,8 @@ static int atmel_spi_setup(struct spi_de
+ 	as = spi_master_get_devdata(spi->master);
  
--	if (err)
-+	if (err) {
-+		kfree_skb(skb);
- 		return err;
-+	}
+ 	/* see notes above re chipselect */
+-	if (!atmel_spi_is_v2(as)
+-			&& spi->chip_select == 0
+-			&& (spi->mode & SPI_CS_HIGH)) {
+-		dev_dbg(&spi->dev, "setup: can't be active-high\n");
++	if (!as->use_cs_gpios && (spi->mode & SPI_CS_HIGH)) {
++		dev_warn(&spi->dev, "setup: non GPIO CS can't be active-high\n");
+ 		return -EINVAL;
+ 	}
  
- 	return nlmsg_unicast(crypto_nlsk, skb, NETLINK_CB(in_skb).portid);
- }
 
 
