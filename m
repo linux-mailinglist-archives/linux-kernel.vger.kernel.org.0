@@ -2,119 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7264E126310
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:13:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9850D1262FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 14:11:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfLSNNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 08:13:01 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32772 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSNNB (ORCPT
+        id S1726873AbfLSNLe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 08:11:34 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57394 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfLSNLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 08:13:01 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z16so3246930pfk.0;
-        Thu, 19 Dec 2019 05:13:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1gRwWTLS967Ubmo9QBFf6oeS3GYO3y9qdE++OzuCjo8=;
-        b=WKhevbX3LE/LkS46gPKn0pKaWJ1UCYgcM/cOiNU2eJNXWeJsUyqiRs/NsDzOWFuXaG
-         DHUhnDLQgUmbEA7kPJjVcaXltfn1NdN4M5HO0EF1R37j0qMHWpWutAqHDPSrEckIZdYD
-         bJiT+XP8zeKlbNGUYT6XKe/IIPVN9OoNEHrEjv3xJLP10qsRU5EOLSIanlGodcna33c+
-         b07r47q5KK9YkOWTO5zhje/FAhCTL/rZ36ZN4WGxuN6s0jF+aGPOPE5zOzRYSAyDxaAa
-         FkviBuNB2o9n7tKLzHqojXxgwyfh4ASBE1HJmXL54iw4KBxUtqgGiiaqtBwCGB+V8eBx
-         3v9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1gRwWTLS967Ubmo9QBFf6oeS3GYO3y9qdE++OzuCjo8=;
-        b=EBROHK4wnHw+Xx8L8+GP5zsHclvU2APBLAi3WxPXuakTKIn271yE43x/4vzp5NCIwf
-         S5RCnBXeZxuAQcbZfaJuESJiUsE6ArM5a89N4RjkuNUUBCLcE3BsAk0f4yhfHBGGQ+cX
-         BKNZPj7GOawCDDTxgrpNOQ06O4sPpeM5PbmCrvQnwFhMfFszGNqO31Ejon3DIkEAKPl7
-         Dnyntq2Ou1iXbi3SC+VH3VEl+aF2jq1GZ9ga4Burf5bGfeZDWGVnlUaxqZJdm2uIgG8B
-         UGqFdC6JIiVLtZ+HcLaZGoQaJ14VTEy+zo1TDiDfonVcZYI0qnwcfpsuVW/hx1vUNO+I
-         JoKg==
-X-Gm-Message-State: APjAAAW/bxxSNdEvjya+/keCF5j5sir8OnLshSZ0Lrrp6HK9LtAtlz0S
-        PPiR2Mcbp1UTmspQSfDqhw0=
-X-Google-Smtp-Source: APXvYqy0izi6mgWThqnu1MUAe9tocw6rn0MpkH29qND2aoM9yGkQdgIqZuH/xgG3IqQ6u4j/XtcGEQ==
-X-Received: by 2002:aa7:8007:: with SMTP id j7mr9721396pfi.73.1576761180732;
-        Thu, 19 Dec 2019 05:13:00 -0800 (PST)
-Received: from firefly (220-235-124-2.dyn.iinet.net.au. [220.235.124.2])
-        by smtp.gmail.com with ESMTPSA id w66sm8631924pfw.102.2019.12.19.05.12.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 05:13:00 -0800 (PST)
-Date:   Thu, 19 Dec 2019 13:12:49 +0000
-From:   Kent Gibson <warthog618@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 10/11] gpiolib: add new ioctl() for monitoring changes
- in line info
-Message-ID: <20191219131249.GA12008@firefly>
-References: <20191204155941.17814-1-brgl@bgdev.pl>
- <CAHp75VdiAtHtdrUP2EmLULh86oO37ha8si10gFKYRavXCEwRRQ@mail.gmail.com>
- <CAMpxmJVXVVVMPA_hRbs3mUsFs=s_VtQK9SvvYK3Xc5X27NPTKw@mail.gmail.com>
- <CAHp75VfXc88Fa6=zs=9iToz27QdXHqRCDPQwBPs2P-rsBF8nHw@mail.gmail.com>
- <CAMRc=Me4xWsQggmr=BvJrA9-FnPkxFkOYsRTsSXCtyNwFnsHNw@mail.gmail.com>
- <CAHp75VfzP8-0wKmPTTKYe+fc6=r_4sVcJPyOsM8YTuH=i4rxmA@mail.gmail.com>
- <CAMRc=MfxteQDmeZn_Et0uFs2cPvLGpJ5BTeBOn37o=2Oo_eU=Q@mail.gmail.com>
- <CAHp75VfeEB5RudwMaoiMTMMY3zW-kz-h=rJ3Cu5_tyRL6ZuF1w@mail.gmail.com>
- <CAMRc=Mcy=Q+9Eb6mb5JEq+CCbxgBY1CfTDsYj1Rt9bcLXgeY=g@mail.gmail.com>
+        Thu, 19 Dec 2019 08:11:33 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBJDBQsl052727;
+        Thu, 19 Dec 2019 07:11:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576761086;
+        bh=i559tmImdB2C8E9k2UVVXe+nlV6Y3cE9qW3tVaTY3co=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=nojvxPlYz4iAWt9AfMUf+QMWqQcTeG5HEqbgaAajcJ+CFZ3IOO5Awn5YmI1rb4ilk
+         NRt4ApovoDImeVH8NR1pww4zBzjdeTHD7AGgJBFl/4lvFsuXJqVtQAUhLi1aWxcCx/
+         8/AHGwrQQKOO6p8L94j4Gmv5+J7dboq/r7xSVrYI=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBJDBQhK087007
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Dec 2019 07:11:26 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Dec 2019 07:11:25 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Dec 2019 07:11:25 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBJDBM58034668;
+        Thu, 19 Dec 2019 07:11:23 -0600
+Subject: Re: [PATCH 09/13] dt-bindings: PCI: Add host mode dt-bindings for
+ TI's J721E SoC
+To:     Rob Herring <robh@kernel.org>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Murray <andrew.murray@arm.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
+References: <20191209092147.22901-1-kishon@ti.com>
+ <20191209092147.22901-10-kishon@ti.com> <20191219000841.GA4251@bogus>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2c6984cc-731a-622f-7d90-c53e22f09f7b@ti.com>
+Date:   Thu, 19 Dec 2019 18:43:05 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Mcy=Q+9Eb6mb5JEq+CCbxgBY1CfTDsYj1Rt9bcLXgeY=g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191219000841.GA4251@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 02:05:19PM +0100, Bartosz Golaszewski wrote:
-> wt., 10 gru 2019 o 18:00 Andy Shevchenko <andy.shevchenko@gmail.com> napisał(a):
-> >
-> > > On a different note: why would endianness be an issue here? 32-bit
-> > > variables with 64-bit alignment should still be in the same place in
-> > > memory, right?
-> >
-> > With explicit padding, yes.
-> >
-> > > Any reason not to use __packed for this structure and not deal with
-> > > this whole compat mess?
-> >
-> > Have been suggested that explicit padding is better approach.
-> > (See my answer to Kent)
-> >
-> > > I also noticed that my change will only allow user-space to read one
-> > > event at a time which seems to be a regression with regard to the
-> > > current implementation. I probably need to address this too.
-> >
-> > Yes, but we have to have ABI v2 in place.
+Hi,
+
+On 19/12/19 5:38 am, Rob Herring wrote:
+> On Mon, Dec 09, 2019 at 02:51:43PM +0530, Kishon Vijay Abraham I wrote:
+>> Add host mode dt-bindings for TI's J721E SoC.
+>>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+>> ---
+>>  .../bindings/pci/ti,j721e-pci-host.yaml       | 161 ++++++++++++++++++
+>>  1 file changed, 161 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+>> new file mode 100644
+>> index 000000000000..96184e1f419f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
+>> @@ -0,0 +1,161 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/pci/ti,j721e-pci-host.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: TI J721E PCI Host (PCIe Wrapper)
+>> +
+>> +maintainers:
+>> +  - Kishon Vijay Abraham I <kishon@ti.com>
 > 
-> Hi Andy,
+> There's now a PCI bus schema. Reference it here:
 > 
-> I was playing with some ideas for the new ABI and noticed that on
-> 64-bit architecture the size of struct gpiochip_info is reported to be
-> 68 bytes, not 72 as I would expect. Is implicit alignment padding not
-> applied to a struct if there's a non-64bit-aligned 32-bit field at the
-> end of it? Is there something I'm missing here?
+> allOf:
+>   - $ref: "/schemas/pci/pci-bus.yaml#"
 > 
+>> +
+>> +properties:
+>> +  compatible:
+>> +      enum:
+>> +          - ti,j721e-pcie-host
+> 
+> Indentation.
+> 
+>> +
+>> +  reg:
+>> +    maxItems: 4
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: intd_cfg
+>> +      - const: user_cfg
+>> +      - const: reg
+>> +      - const: cfg
+>> +
+>> +  ti,syscon-pcie-ctrl:
+>> +    description: Phandle to the SYSCON entry required for configuring PCIe mode
+>> +                 and link speed.
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/phandle
+> 
+> You can drop the 'allOf' here if there aren't more constraints.
+> 
+>> +
+>> +  max-link-speed:
+>> +    minimum: 1
+>> +    maximum: 3
+>> +
+>> +  num-lanes:
+>> +    minimum: 1
+>> +    maximum: 2
+>> +
+>> +  power-domains:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: clock-specifier to represent input to the PCIe
+>> +
+>> +  clock-names:
+>> +    items:
+>> +      - const: fck
+>> +
+> 
+>> +  "#address-cells":
+>> +    const: 3
+>> +
+>> +  "#size-cells":
+>> +    const: 2
+>> +
+>> +  bus-range:
+>> +    description: Range of bus numbers associated with this controller.
+> 
+> Drop these 3 as they are all standard.
+> 
+>> +
+>> +  cdns,max-outbound-regions:
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/int32
+> 
+> Can be negative? Use uint32.
+> 
+> The int* definitions are kind of broken until dtc is fixed to maintain 
+> sign.
+> 
+>> +      - enum: [16]
+> 
+> const: 16
+> 
+>> +
+>> +  cdns,no-bar-match-nbits:
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>> +    allOf:
+>> +      - $ref: /schemas/types.yaml#/definitions/int32
+>> +      - enum: [64]
+>> +
+>> +  vendor-id:
+>> +    const: 0x104c
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+> 
+> And elsewhere. Drop the description.
+> 
+>> +
+>> +  device-id:
+>> +    const: 0xb00d
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>> +
+>> +  msi-map: true
+>> +
+>> +  dma-coherent:
+>> +    description: Indicates that the PCIe IP block can ensure the coherency
+>> +
+>> +  ranges: true
+> 
+> Don't you know how many?
+> 
+>> +
+>> +  reset-gpios:
+>> +    description: GPIO specifier for the PERST# signal
+>> +
+>> +  phys:
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>> +
+>> +  phy-names:
+>> +    description: As defined in
+>> +                 Documentation/devicetree/bindings/pci/cdns,cdns-pcie-host.txt
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - ti,syscon-pcie-ctrl
+>> +  - max-link-speed
+>> +  - num-lanes
+>> +  - power-domains
+>> +  - clocks
+>> +  - clock-names
+> 
+>> +  - "#address-cells"
+>> +  - "#size-cells"
+> 
+> Can drop these 2. The bus schema requires them.
+> 
+>> +  - bus-range
+>> +  - cdns,max-outbound-regions
+>> +  - cdns,no-bar-match-nbits
+>> +  - vendor-id
+>> +  - device-id
+>> +  - msi-map
+>> +  - dma-coherent
+>> +  - ranges
+> 
+> Can drop, too.
+> 
+>> +  - reset-gpios
+> 
+> Isn't having this board dependent?
 
-Struct alignment is based on the size of the largest element.
-The largest element of struct gpiopchip_info is a __u32, so the struct
-gets 32-bit alignment, even on 64-bit.
+All board dts files should have it though.
+I'll fix all the comments given here.
 
-The structs with the problems all contain a __u64, and so get padded out
-to a 64-bit boundary.
-
-Cheers,
-Kent.
-
+Thanks
+Kishon
