@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E30CE126A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DBF126A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:47:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfLSSrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:47:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39950 "EHLO mail.kernel.org"
+        id S1729430AbfLSSrK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:47:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729147AbfLSSrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:47:04 -0500
+        id S1727462AbfLSSrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:47:07 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3931F24676;
-        Thu, 19 Dec 2019 18:47:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D4C024672;
+        Thu, 19 Dec 2019 18:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781223;
-        bh=fHrbUCUbox+/VKqWzedN0KhyVov7PkUo1FGuGQCnq2E=;
+        s=default; t=1576781226;
+        bh=wIOxz9h/1fpnplrRfLmE8p8swLUE7URyYaiVcoUWFug=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bn07AwvJVQTmGobn5c66dtrDkRqQIwzU0WSkKPauPwfDedc0VWxTdgiMIrvqc7Wgk
-         j7yb6Zn0gEAAgpFzxp/3ZOWrtJLcSMm2azvv3sMfQ5I/aaQKnbd7b53TPsGmijCKNj
-         naI393M5hWrfiTm+5eXkyBxE4edWJjOuDMYmc/pQ=
+        b=uI2ZbCX+U6XsXVDktR8AR/w/aABLYlDg2T9lSP27g+hbKqj0zOXMqdhun59YICzbt
+         PM6JBR/SwDKaaCJ5i1BP0HACyWDiyTdvlTVda1mpHvJcnOLZQvvMJgcJ5/EHmrs+JK
+         n4x2kh07TiUKJcVhoI8d1imxQysm83VfzaJcEOyA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leonard Crestez <leonard.crestez@nxp.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4.9 134/199] PM / devfreq: Lock devfreq in trans_stat_show
-Date:   Thu, 19 Dec 2019 19:33:36 +0100
-Message-Id: <20191219183222.501723636@linuxfoundation.org>
+        stable@vger.kernel.org, Francesco Ruggeri <fruggeri@arista.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.9 135/199] ACPI: OSL: only free map once in osl.c
+Date:   Thu, 19 Dec 2019 19:33:37 +0100
+Message-Id: <20191219183222.569036787@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
 References: <20191219183214.629503389@linuxfoundation.org>
@@ -44,59 +44,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Francesco Ruggeri <fruggeri@arista.com>
 
-commit 2abb0d5268ae7b5ddf82099b1f8d5aa8414637d4 upstream.
+commit 833a426cc471b6088011b3d67f1dc4e147614647 upstream.
 
-There is no locking in this sysfs show function so stats printing can
-race with a devfreq_update_status called as part of freq switching or
-with initialization.
+acpi_os_map_cleanup checks map->refcount outside of acpi_ioremap_lock
+before freeing the map. This creates a race condition the can result
+in the map being freed more than once.
+A panic can be caused by running
 
-Also add an assert in devfreq_update_status to make it clear that lock
-must be held by caller.
+for ((i=0; i<10; i++))
+do
+        for ((j=0; j<100000; j++))
+        do
+                cat /sys/firmware/acpi/tables/data/BERT >/dev/null
+        done &
+done
 
-Fixes: 39688ce6facd ("PM / devfreq: account suspend/resume for stats")
-Cc: stable@vger.kernel.org
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+This patch makes sure that only the process that drops the reference
+to 0 does the freeing.
+
+Fixes: b7c1fadd6c2e ("ACPI: Do not use krefs under a mutex in osl.c")
+Signed-off-by: Francesco Ruggeri <fruggeri@arista.com>
+Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: All applicable <stable@vger.kernel.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/devfreq/devfreq.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/acpi/osl.c |   28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -135,6 +135,7 @@ int devfreq_update_status(struct devfreq
- 	int lev, prev_lev, ret = 0;
- 	unsigned long cur_time;
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -375,19 +375,21 @@ void *__ref acpi_os_map_memory(acpi_phys
+ }
+ EXPORT_SYMBOL_GPL(acpi_os_map_memory);
  
-+	lockdep_assert_held(&devfreq->lock);
- 	cur_time = jiffies;
- 
- 	/* Immediately exit if previous_freq is not initialized yet. */
-@@ -1170,12 +1171,17 @@ static ssize_t trans_stat_show(struct de
- 	int i, j;
- 	unsigned int max_state = devfreq->profile->max_state;
- 
--	if (!devfreq->stop_polling &&
--			devfreq_update_status(devfreq, devfreq->previous_freq))
--		return 0;
- 	if (max_state == 0)
- 		return sprintf(buf, "Not Supported.\n");
- 
-+	mutex_lock(&devfreq->lock);
-+	if (!devfreq->stop_polling &&
-+			devfreq_update_status(devfreq, devfreq->previous_freq)) {
-+		mutex_unlock(&devfreq->lock);
-+		return 0;
-+	}
-+	mutex_unlock(&devfreq->lock);
+-static void acpi_os_drop_map_ref(struct acpi_ioremap *map)
++/* Must be called with mutex_lock(&acpi_ioremap_lock) */
++static unsigned long acpi_os_drop_map_ref(struct acpi_ioremap *map)
+ {
+-	if (!--map->refcount)
++	unsigned long refcount = --map->refcount;
 +
- 	len = sprintf(buf, "     From  :   To\n");
- 	len += sprintf(buf + len, "           :");
- 	for (i = 0; i < max_state; i++)
++	if (!refcount)
+ 		list_del_rcu(&map->list);
++	return refcount;
+ }
+ 
+ static void acpi_os_map_cleanup(struct acpi_ioremap *map)
+ {
+-	if (!map->refcount) {
+-		synchronize_rcu_expedited();
+-		acpi_unmap(map->phys, map->virt);
+-		kfree(map);
+-	}
++	synchronize_rcu_expedited();
++	acpi_unmap(map->phys, map->virt);
++	kfree(map);
+ }
+ 
+ /**
+@@ -407,6 +409,7 @@ static void acpi_os_map_cleanup(struct a
+ void __ref acpi_os_unmap_iomem(void __iomem *virt, acpi_size size)
+ {
+ 	struct acpi_ioremap *map;
++	unsigned long refcount;
+ 
+ 	if (!acpi_gbl_permanent_mmap) {
+ 		__acpi_unmap_table(virt, size);
+@@ -420,10 +423,11 @@ void __ref acpi_os_unmap_iomem(void __io
+ 		WARN(true, PREFIX "%s: bad address %p\n", __func__, virt);
+ 		return;
+ 	}
+-	acpi_os_drop_map_ref(map);
++	refcount = acpi_os_drop_map_ref(map);
+ 	mutex_unlock(&acpi_ioremap_lock);
+ 
+-	acpi_os_map_cleanup(map);
++	if (!refcount)
++		acpi_os_map_cleanup(map);
+ }
+ EXPORT_SYMBOL_GPL(acpi_os_unmap_iomem);
+ 
+@@ -464,6 +468,7 @@ void acpi_os_unmap_generic_address(struc
+ {
+ 	u64 addr;
+ 	struct acpi_ioremap *map;
++	unsigned long refcount;
+ 
+ 	if (gas->space_id != ACPI_ADR_SPACE_SYSTEM_MEMORY)
+ 		return;
+@@ -479,10 +484,11 @@ void acpi_os_unmap_generic_address(struc
+ 		mutex_unlock(&acpi_ioremap_lock);
+ 		return;
+ 	}
+-	acpi_os_drop_map_ref(map);
++	refcount = acpi_os_drop_map_ref(map);
+ 	mutex_unlock(&acpi_ioremap_lock);
+ 
+-	acpi_os_map_cleanup(map);
++	if (!refcount)
++		acpi_os_map_cleanup(map);
+ }
+ EXPORT_SYMBOL(acpi_os_unmap_generic_address);
+ 
 
 
