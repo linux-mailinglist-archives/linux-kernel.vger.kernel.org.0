@@ -2,156 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D6971261A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95FE7126184
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:03:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfLSMEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36776 "EHLO mail.kernel.org"
+        id S1726776AbfLSMDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:03:55 -0500
+Received: from mga11.intel.com ([192.55.52.93]:25457 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726708AbfLSMEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:41 -0500
-Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A53A924688;
-        Thu, 19 Dec 2019 12:04:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757081;
-        bh=Ou1QSenIX/ZPR01QhZ3Eov9oYA+rmJXBLNuMfDc7+GQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGIC12OyAsd4qU9XFvo2hKhdFDR9Iq/fk+P3S0i7ojRAectu6hh+ois+Lzktyw5f/
-         Ta74IyXCFRoLCd+dXC6b7ZYEVdYREYyDXK/htuqb69Ij06HpRZgVrePBtP9qT1l1ky
-         9DyZQAGzSu+zJBQDSgrsS61n16Wrg8p2OIKFHAkU=
-From:   Will Deacon <will@kernel.org>
-To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
-Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Saravana Kannan <saravanak@google.com>,
+        id S1726668AbfLSMDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:03:55 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 04:03:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,331,1571727600"; 
+   d="scan'208";a="222273880"
+Received: from kuha.fi.intel.com ([10.237.72.53])
+  by fmsmga001.fm.intel.com with SMTP; 19 Dec 2019 04:03:51 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 19 Dec 2019 14:03:50 +0200
+Date:   Thu, 19 Dec 2019 14:03:50 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Mat King <mathewk@google.com>
+Cc:     Stephen Boyd <swboyd@chromium.org>,
+        Julius Werner <jwerner@chromium.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 14/16] iommu/arm-smmu: Unregister IOMMU and bus ops on device removal
-Date:   Thu, 19 Dec 2019 12:03:50 +0000
-Message-Id: <20191219120352.382-15-will@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191219120352.382-1-will@kernel.org>
-References: <20191219120352.382-1-will@kernel.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH v3 1/2] firmware: google: Expose CBMEM over sysfs
+Message-ID: <20191219120350.GD22923@kuha.fi.intel.com>
+References: <20191128125100.14291-1-patrick.rudolph@9elements.com>
+ <20191128125100.14291-2-patrick.rudolph@9elements.com>
+ <CAODwPW8Koy1BvKGJU6PKexYx+PNE+WY7+m69gcxT689vBy+AoQ@mail.gmail.com>
+ <CAOxpaSXUgNXaZ40ScZKZQ+iDEQ=vqPytLgicBx==hxp5uL_+dA@mail.gmail.com>
+ <CAL_quvScPUuocogrghzH_vNb2uxyBupBKYikG0Bwf4OcfSRWsQ@mail.gmail.com>
+ <5df87d6e.1c69fb81.f0643.a6b6@mx.google.com>
+ <CAL_quvS_3o7UNmqP+QDCcHosw8JkQ03Kx5NjgUxFhO5FO=_-Mg@mail.gmail.com>
+ <20191218094729.GC22923@kuha.fi.intel.com>
+ <CAL_quvSKHwOTeatoju=nTmhyf6iTRGD3zY1Nxv=DcJrzQNV3sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_quvSKHwOTeatoju=nTmhyf6iTRGD3zY1Nxv=DcJrzQNV3sg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When removing the SMMU driver, we need to clear any state that we
-registered during probe. This includes our bus ops, sysfs entries and
-the IOMMU device registered for early firmware probing of masters.
+On Wed, Dec 18, 2019 at 04:35:29PM -0700, Mat King wrote:
+> On Wed, Dec 18, 2019 at 2:47 AM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > On Tue, Dec 17, 2019 at 01:16:33PM -0700, Mat King wrote:
+> > > On Tue, Dec 17, 2019 at 12:02 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> > > >
+> > > > Quoting Mat King (2019-12-13 13:31:46)
+> > > > > On Mon, Dec 9, 2019 at 11:57 PM Julius Werner <jwerner@chromium.org> wrote:
+> > > > > > > +static int cbmem_probe(struct coreboot_device *cdev)
+> > > > > > > +{
+> > > > > > > +       struct device *dev = &cdev->dev;
+> > > > > > > +       struct cb_priv *priv;
+> > > > > > > +       int err;
+> > > > > > > +
+> > > > > > > +       priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> > > > > > > +       if (!priv)
+> > > > > > > +               return -ENOMEM;
+> > > > > > > +
+> > > > > > > +       memcpy(&priv->entry, &cdev->cbmem_entry, sizeof(priv->entry));
+> > > > > > > +
+> > > > > > > +       priv->remap = memremap(priv->entry.address,
+> > > > > > > +                              priv->entry.entry_size, MEMREMAP_WB);
+> > > > > >
+> > > > > > We've just been discussing some problems with CBMEM areas and memory
+> > > > > > mapping types in Chrome OS. CBMEM is not guaranteed to be page-aligned
+> > > > > > (at least not the "small" entries), but the kernel can only assign
+> > > > > > memory attributes for a page at a time (and refuses to map the same
+> > > > > > area twice with two different memory types, for good reason). So if
+> > > > > > CBMEM entries sharing a page are mapped as writeback by one driver but
+> > > > > > uncached by the other, things break.
+> > > > > >
+> > > > > > There are some CBMEM entries that need to be mapped uncached (e.g. the
+> > > > > > ACPI UCSI table, which isn't even handled by anything using this CBMEM
+> > > > > > code) and others for which it would make more sense (e.g. the memory
+> > > > > > console, where firmware may add more lines at runtime), but I don't
+> > > > > > think there are any regions that really *need* to be writeback. None
+> > > > > > of the stuff accessing these areas should access them often enough
+> > > > > > that caching matters, and I think it's generally more common to map
+> > > > > > firmware memory areas as uncached anyway. So how about we standardize
+> > > > > > on mapping it all uncached to avoid any attribute clashes? (That would
+> > > > > > mean changing the existing VPD and memconsole drivers to use
+> > > > > > ioremap(), too.)
+> > > > >
+> > > > > I don't think that uncached would work here either because the acpi
+> > > > > driver will have already mapped some of these regions as write-back
+> > > > > before this driver is loaded so the mapping will fail.
+> > > >
+> > > > Presumably the ucsi driver is drivers/usb/typec/ucsi/ucsi_acpi.c? Is
+> > > > that right? And on ACPI based systems is this I/O memory or just some
+> > > > carved out memory region that is used to communicate something to the
+> > > > ACPI firmware? From looking at the ucsi driver it seems like it should
+> > > > be mapped with memremap() instead of ioremap() given that it's not
+> > > > actual I/O memory that has any sort of memory barrier or access width
+> > > > constraints. It looks more like some sort of memory region that is being
+> > > > copied into and out of while triggering some DSM. Can it at least be
+> > > > memremap()ed with MEMREMAP_WT?
+> > >
+> > > Yes this is the ucsi_acpi.c driver that has caused this issue to come
+> > > up. It does just use a region of memory carved in the BIOS out for the
+> > > purpose of this device. The kernel can write to this memory and call a
+> > > _DSM to push data to an EC or call the _DSM to pull from the EC into
+> > > this memory region. See
+> > > https://www.intel.com/content/dam/www/public/us/en/documents/white-papers/bios-implementation-of-ucsi.pdf
+> > > . The driver is very explicit about using uncached memory and I
+> > > suspect that is why memremap() was not used, but I am not sure why
+> > > uncahed memory is needed. The only consumers of this memory are the
+> > > driver itself and the ACPI asl code in the _DSM which as far as I know
+> > > is being exectued by the kernel directly. Are there any other reasons
+> > > to use uncached memory when dealing with ACPI asl code?
+> >
+> > The reason why I did not use memremap() was because I was convinced
+> > that there will soon be physical devices such as PD controllers that
+> > supply the interface, and with those the memory resource given to the
+> > driver would be real bus memory. But that was already years ago,
+> > and there still are no such devices that I know of, so if you guys
+> > want to change the driver so that it uses memremap() instead of
+> > ioremap(), I'm not going to be against it. But just be warned: We can
+> > not guarantee that there isn't going to be IO side effects in every
+> > case.
+> 
+> I am a little confused how this hypothetical PD controller would look
+> with regards to the ACPI table. Would it still have an OperationRegion
+> for the MMIO address of the controllers mailbox? Would the _CRS point
+> to the MMIO of the mailbox directly or would it still use physical
+> memory? If it is pointing to the MMIO mailbox is the _DSM essentially
+> a noop?
 
-Signed-off-by: Will Deacon <will@kernel.org>
----
- drivers/iommu/arm-smmu.c | 50 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 40 insertions(+), 10 deletions(-)
+In this case I believe the idea is exactly like you said. The OpRegion
+would just be SystemIO OpRegion instead of SystemMemory OpRegion, and
+the _DSD may or may not do something.
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 5d2f60bb9e50..1f0c09bf112a 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2009,25 +2009,51 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
- 	return 0;
- }
- 
--static void arm_smmu_bus_init(void)
-+static int arm_smmu_bus_init(struct iommu_ops *ops)
- {
-+	int err;
-+
- 	/* Oh, for a proper bus abstraction */
--	if (!iommu_present(&platform_bus_type))
--		bus_set_iommu(&platform_bus_type, &arm_smmu_ops);
-+	if (!iommu_present(&platform_bus_type)) {
-+		err = bus_set_iommu(&platform_bus_type, ops);
-+		if (err)
-+			return err;
-+	}
- #ifdef CONFIG_ARM_AMBA
--	if (!iommu_present(&amba_bustype))
--		bus_set_iommu(&amba_bustype, &arm_smmu_ops);
-+	if (!iommu_present(&amba_bustype)) {
-+		err = bus_set_iommu(&amba_bustype, ops);
-+		if (err)
-+			goto err_reset_platform_ops;
-+	}
- #endif
- #ifdef CONFIG_PCI
- 	if (!iommu_present(&pci_bus_type)) {
- 		pci_request_acs();
--		bus_set_iommu(&pci_bus_type, &arm_smmu_ops);
-+		err = bus_set_iommu(&pci_bus_type, ops);
-+		if (err)
-+			goto err_reset_amba_ops;
- 	}
- #endif
- #ifdef CONFIG_FSL_MC_BUS
--	if (!iommu_present(&fsl_mc_bus_type))
--		bus_set_iommu(&fsl_mc_bus_type, &arm_smmu_ops);
-+	if (!iommu_present(&fsl_mc_bus_type)) {
-+		err = bus_set_iommu(&fsl_mc_bus_type, ops);
-+		if (err)
-+			goto err_reset_pci_ops;
-+	}
-+#endif
-+	return 0;
-+
-+err_reset_pci_ops: __maybe_unused;
-+#ifdef CONFIG_PCI
-+	bus_set_iommu(&pci_bus_type, NULL);
- #endif
-+err_reset_amba_ops: __maybe_unused;
-+#ifdef CONFIG_ARM_AMBA
-+	bus_set_iommu(&amba_bustype, NULL);
-+#endif
-+err_reset_platform_ops: __maybe_unused;
-+	bus_set_iommu(&platform_bus_type, NULL);
-+	return err;
- }
- 
- static int arm_smmu_device_probe(struct platform_device *pdev)
-@@ -2173,7 +2199,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- 	 * ready to handle default domain setup as soon as any SMMU exists.
- 	 */
- 	if (!using_legacy_binding)
--		arm_smmu_bus_init();
-+		return arm_smmu_bus_init(&arm_smmu_ops);
- 
- 	return 0;
- }
-@@ -2187,7 +2213,7 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
- static int arm_smmu_legacy_bus_init(void)
- {
- 	if (using_legacy_binding)
--		arm_smmu_bus_init();
-+		return arm_smmu_bus_init(&arm_smmu_ops);
- 	return 0;
- }
- device_initcall_sync(arm_smmu_legacy_bus_init);
-@@ -2202,6 +2228,10 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
- 	if (!bitmap_empty(smmu->context_map, ARM_SMMU_MAX_CBS))
- 		dev_err(&pdev->dev, "removing device with active domains!\n");
- 
-+	arm_smmu_bus_init(NULL);
-+	iommu_device_unregister(&smmu->iommu);
-+	iommu_device_sysfs_remove(&smmu->iommu);
-+
- 	arm_smmu_rpm_get(smmu);
- 	/* Turn the thing off */
- 	arm_smmu_gr0_write(smmu, ARM_SMMU_GR0_sCR0, sCR0_CLIENTPD);
+The goal appears to be to be able to support the same UCSI device
+driver (in Windows) regardless of which component actually supplies
+the interface (USB PD controller, EC firmware...), and regardless how
+that component is attached to the SOC (I2C, PCI, mailbox...). The real
+hardware is meant to be hidden in AML. The problem with that is of
+course that UCSI now always depends on ACPI.
+
+I think the main problem is that the mailbox was never separated from
+the UCSI interface like it should have. If the ACPI mailbox was
+separated from the interface (or generalized) it could have been
+handled as a bus in the operating system, fake bus that looks like
+SMBus (or I2C). We would have needed a separate "fake I2C host
+adapter" driver for the mailbox, but now if a real USB PD controller
+I2C slave device supplies the UCSI interface (most of them are I2C
+slave devices), the same UCSI driver would still work without any
+changes needed.
+
+But I guess it's too late to change that now :-(.
+
+thanks,
+
 -- 
-2.24.1.735.g03f4e72817-goog
-
+heikki
