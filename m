@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F8D126995
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:39:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1642B126A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:48:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfLSSjM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:39:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        id S1729284AbfLSSs3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:48:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbfLSSjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:39:09 -0500
+        id S1729630AbfLSSs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:48:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80A1D222C2;
-        Thu, 19 Dec 2019 18:39:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71C5E2465E;
+        Thu, 19 Dec 2019 18:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780749;
-        bh=pOaiTSfXfkzb4yCkG99q6kYmRc3WfbW5SLo/nngysWg=;
+        s=default; t=1576781305;
+        bh=YU3DxByc+F69niV6pf6clyyEWdlANzDaTxDs6Yqk0Ts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sKbN3QlA20O6/IXaYeioVqnbZ7+7UoW43ehBHpN0goFQbSUlgYEUoWaAYtr7vDP3i
-         eKRNT9KLs/X62Yw2ye2ZTGNmstiFN6kHIzRHht+hyYmommBSZTiw7ML2WVnkE+uxq7
-         8pAfuPhyALY0I4e42AdHx9s0kueAca6xcYoU7NOo=
+        b=PpHRFZAaFcPRC9nnxTKv+h0DgjUDStFm1We4z47dw9/Ums07NDMeuXNi9hdwvfLq4
+         VEfKqIVgf78I0kG0OA8QI8LFUUMZgyRpTFK5t8KqZSorUVTESTvUwCjhQwlvsYp4gb
+         M/ayCYHvTLkhva7MBXfiHsQhGuodAk93shAgej9c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qu Wenruo <wqu@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.4 100/162] btrfs: Remove btrfs_bio::flags member
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        "Williams, Gerald S" <gerald.s.williams@intel.com>,
+        NeilBrown <neilb@suse.de>
+Subject: [PATCH 4.9 126/199] workqueue: Fix pwq ref leak in rescuer_thread()
 Date:   Thu, 19 Dec 2019 19:33:28 +0100
-Message-Id: <20191219183213.864044070@linuxfoundation.org>
+Message-Id: <20191219183221.957027353@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Tejun Heo <tj@kernel.org>
 
-commit 34b127aecd4fe8e6a3903e10f204a7b7ffddca22 upstream.
+commit e66b39af00f426b3356b96433d620cb3367ba1ff upstream.
 
-The last user of btrfs_bio::flags was removed in commit 326e1dbb5736
-("block: remove management of bi_remaining when restoring original
-bi_end_io"), remove it.
+008847f66c3 ("workqueue: allow rescuer thread to do more work.") made
+the rescuer worker requeue the pwq immediately if there may be more
+work items which need rescuing instead of waiting for the next mayday
+timer expiration.  Unfortunately, it doesn't check whether the pwq is
+already on the mayday list and unconditionally gets the ref and moves
+it onto the list.  This doesn't corrupt the list but creates an
+additional reference to the pwq.  It got queued twice but will only be
+removed once.
 
-(Tagged for stable as the structure is heavily used and space savings
-are desirable.)
+This leak later can trigger pwq refcnt warning on workqueue
+destruction and prevent freeing of the workqueue.
 
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: "Williams, Gerald S" <gerald.s.williams@intel.com>
+Cc: NeilBrown <neilb@suse.de>
+Cc: stable@vger.kernel.org # v3.19+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/volumes.h |    1 -
- 1 file changed, 1 deletion(-)
+ kernel/workqueue.c |   13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -312,7 +312,6 @@ struct btrfs_bio {
- 	u64 map_type; /* get from map_lookup->type */
- 	bio_end_io_t *end_io;
- 	struct bio *orig_bio;
--	unsigned long flags;
- 	void *private;
- 	atomic_t error;
- 	int max_errors;
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -2344,8 +2344,14 @@ repeat:
+ 			 */
+ 			if (need_to_create_worker(pool)) {
+ 				spin_lock(&wq_mayday_lock);
+-				get_pwq(pwq);
+-				list_move_tail(&pwq->mayday_node, &wq->maydays);
++				/*
++				 * Queue iff we aren't racing destruction
++				 * and somebody else hasn't queued it already.
++				 */
++				if (wq->rescuer && list_empty(&pwq->mayday_node)) {
++					get_pwq(pwq);
++					list_add_tail(&pwq->mayday_node, &wq->maydays);
++				}
+ 				spin_unlock(&wq_mayday_lock);
+ 			}
+ 		}
+@@ -4358,7 +4364,8 @@ static void show_pwq(struct pool_workque
+ 	pr_info("  pwq %d:", pool->id);
+ 	pr_cont_pool_info(pool);
+ 
+-	pr_cont(" active=%d/%d%s\n", pwq->nr_active, pwq->max_active,
++	pr_cont(" active=%d/%d refcnt=%d%s\n",
++		pwq->nr_active, pwq->max_active, pwq->refcnt,
+ 		!list_empty(&pwq->mayday_node) ? " MAYDAY" : "");
+ 
+ 	hash_for_each(pool->busy_hash, bkt, worker, hentry) {
 
 
