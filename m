@@ -2,122 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADD3126EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:29:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 027BA126ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 21:23:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfLSU3A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 15:29:00 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:54738 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfLSU3A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 15:29:00 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ep17so3051662pjb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 12:29:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RqzxT6mrWsbaIeSRURSlPRTTrfPOgvLrfU674s46ZS4=;
-        b=JHUvIbK/+L4HVr3NgelPDooqz+SUR0A7IPxyuLymVu6hr5drzLNV8lA9w0pOYwLWNi
-         H0TTlxwQ8fSdNCnE0CbI5VMqnbdkqD+QVBjfgnV71R7VExGpxulJ5tw18480KLsAf0oi
-         mxKY9ZaIzCFJ6hU8RdsVgILrAnQj8302qcORSx0Hr38OJI8QPIrOBmDUHJjzV5hyngrG
-         8ShC0xWu9tNeB+8hRRhE9PSAHl+qAcfkD0pv551fkPfsVyF1LpH+WHY5FQcj5V/YUQGN
-         9ozIhLywGfbbQvcqvrB3KigXXm6gCGySm0gG9R+5FUVmKqndjWbdFe7jhSlA0hBtZQ2e
-         BimA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RqzxT6mrWsbaIeSRURSlPRTTrfPOgvLrfU674s46ZS4=;
-        b=ZHP0QKBTCo5Q7bMS6hL0LD/McPmZ11C35ETWPueBro81MOpwVIP8IlLE+SVNlws19e
-         57PB/aEC8Te562P7OnxqCrvC/mr+xix7uJVTtcJxeylNsQyAcpVAuBSNCBCSnn5EGSZw
-         NNl509qH39kWcFodaYIamnXNSWyBF+rVSJhn5XbADjs4UYBqHa/9HNGtaOkIttC7vElQ
-         SXLt7dv4JmHhoCdcoKrh60+acIxHhJse/RrYippE9NxJwvH1OGJQuIRkf3e72Kyddfmc
-         lgzQDHfy9/gIfGCKvk3BsvdEzufrc2n3NQwTKn1wRcAASL1wRy8yqaD+OCmISncvR8TW
-         +Bng==
-X-Gm-Message-State: APjAAAUSfwdBM5O+xGDbcHmnky4e1Bvv1ktRQ010N6X9A8+aM44XOJRc
-        uRqxE+GJBPlvKBfxXk5ZHveOMWsR8ySQYwDokO7ZoA==
-X-Google-Smtp-Source: APXvYqytjFvCj74dY3WNhU9s/+3nsvJRtaXXSEdscBye1JkLzXuFS79r+12e5mLtSovK2cogylBvVhUzYP+1cr1TSiY=
-X-Received: by 2002:a17:902:9f91:: with SMTP id g17mr10768022plq.179.1576787339454;
- Thu, 19 Dec 2019 12:28:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20191218032932.37479-1-natechancellor@gmail.com>
-In-Reply-To: <20191218032932.37479-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 19 Dec 2019 12:28:48 -0800
-Message-ID: <CAKwvOdnJddjhijk4pyHuEKAGKFXiG200rvJg+Mk7EPw3oKcYwA@mail.gmail.com>
-Subject: Re: [PATCH] ipc/msg.c: Adjust indentation in ksys_msgctl
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Lu Shuaibing <shuaibinglu@126.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
+        id S1727185AbfLSUXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 15:23:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48472 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726869AbfLSUXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 15:23:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 74D57B2EF;
+        Thu, 19 Dec 2019 20:23:29 +0000 (UTC)
+Message-ID: <1576787357.8929.12.camel@suse.cz>
+Subject: Re: [PATCH v4 2/6] x86,sched: Add support for frequency invariance
+ on SKYLAKE_X
+From:   Giovanni Gherdovich <ggherdovich@suse.cz>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, x86@kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Paul Turner <pjt@google.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Quentin Perret <qperret@qperret.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Doug Smythies <dsmythies@telus.net>
+Date:   Thu, 19 Dec 2019 21:29:17 +0100
+In-Reply-To: <20191218200624.GI11457@worktop.programming.kicks-ass.net>
+References: <20191113124654.18122-1-ggherdovich@suse.cz>
+         <20191113124654.18122-3-ggherdovich@suse.cz>
+         <20191218200624.GI11457@worktop.programming.kicks-ass.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 7:30 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> ../ipc/msg.c:621:4: warning: misleading indentation; statement is not
-> part of the previous 'if' [-Wmisleading-indentation]
->                  return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm,
-> msqid64.msg_qbytes);
->                  ^
-> ../ipc/msg.c:619:3: note: previous statement is here
->                 if (copy_msqid_from_user(&msqid64, buf, version))
->                 ^
-> 1 warning generated.
->
-> This warning occurs because there is a space after the tab on this line.
-> Remove it so that the indentation is consistent with the Linux kernel
-> coding style and clang no longer warns.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/829
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+On Wed, 2019-12-18 at 21:06 +0100, Peter Zijlstra wrote:
+> On Wed, Nov 13, 2019 at 01:46:50PM +0100, Giovanni Gherdovich wrote:
+> > The scheduler needs the ratio freq_curr/freq_max for frequency-invariant
+> > accounting. On SKYLAKE_X CPUs set freq_max to the highest frequency that can
+> > be sustained by a group of at least 4 cores.
+> > 
+> > From the changelog of commit 31e07522be56 ("tools/power turbostat: fix
+> > decoding for GLM, DNV, SKX turbo-ratio limits"):
+> > 
+> > >   Newer processors do not hard-code the the number of cpus in each bin
+> > >   to {1, 2, 3, 4, 5, 6, 7, 8}  Rather, they can specify any number
+> > >   of CPUS in each of the 8 bins:
+> > > 
+> > >   eg.
+> > > 
+> > >   ...
+> > >   37 * 100.0 = 3600.0 MHz max turbo 4 active cores
+> > >   38 * 100.0 = 3700.0 MHz max turbo 3 active cores
+> > >   39 * 100.0 = 3800.0 MHz max turbo 2 active cores
+> > >   39 * 100.0 = 3900.0 MHz max turbo 1 active cores
+> > > 
+> > >   could now look something like this:
+> > > 
+> > >   ...
+> > >   37 * 100.0 = 3600.0 MHz max turbo 16 active cores
+> > >   38 * 100.0 = 3700.0 MHz max turbo 8 active cores
+> > >   39 * 100.0 = 3800.0 MHz max turbo 4 active cores
+> > >   39 * 100.0 = 3900.0 MHz max turbo 2 active cores
+> > 
+> > This encoding of turbo levels applies to both SKYLAKE_X and GOLDMONT/GOLDMONT_D,
+> > but we treat these two classes in separate commits because their freq_max
+> > values need to be different. For SKX we prefer a lower freq_max in the ratio
+> > freq_curr/freq_max, allowing load and utilization to overshoot and the
+> > schedutil governor to be more performance-oriented. Models from the Atom
+> > series (such as GOLDMONT*) are handled in a forthcoming commit as they have to
+> > favor power-efficiency over performance.
+> 
+> Can we at least use a single function to decode both? A little like the
+> below. I'm not married to the naming, but I think it is a little silly
+> to have 2 different functions to decode the exact same MSRs.
+> 
+> (one could even go as far as to make a boot param to override the {1,4}
+> default core count for these things)
 
-Thanks for the patch!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Sure, that was actually a gross oversight on my part for not seeing that.
+Thanks for catching it and sketching a solution.
 
-> ---
->
-> I assume this will be squashed into the offending patch since it is
-> still in -next:
->
-> https://git.kernel.org/next/linux-next/c/658622e448a6e6a6a69471daeff7e95e98d34ed1
->
->  ipc/msg.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/ipc/msg.c b/ipc/msg.c
-> index 22ed09ded601..caca67368cb5 100644
-> --- a/ipc/msg.c
-> +++ b/ipc/msg.c
-> @@ -618,7 +618,8 @@ static long ksys_msgctl(int msqid, int cmd, struct msqid_ds __user *buf, int ver
->         case IPC_SET:
->                 if (copy_msqid_from_user(&msqid64, buf, version))
->                         return -EFAULT;
-> -                return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm, msqid64.msg_qbytes);
-> +               return msgctl_down(ns, msqid, cmd, &msqid64.msg_perm,
-> +                                  msqid64.msg_qbytes);
->         case IPC_RMID:
->                 return msgctl_down(ns, msqid, cmd, NULL, 0);
->         default:
-> --
-> 2.24.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20191218032932.37479-1-natechancellor%40gmail.com.
-
-
-
--- 
-Thanks,
-~Nick Desaulniers
+Giovanni
