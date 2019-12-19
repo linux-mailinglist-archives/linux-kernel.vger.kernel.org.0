@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D39A3126C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:03:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DAE1126C05
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:01:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbfLSTC7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 14:02:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42304 "EHLO mail.kernel.org"
+        id S1729825AbfLSTAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 14:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727780AbfLSStA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:49:00 -0500
+        id S1729385AbfLSSvl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:51:41 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5419624686;
-        Thu, 19 Dec 2019 18:48:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8239320674;
+        Thu, 19 Dec 2019 18:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781339;
-        bh=yYRGy6ghmv3t/ei2FP8SuSFVxrz8N7pQuxBrYEG6MNE=;
+        s=default; t=1576781501;
+        bh=FfnKSyZoMFlkOL6GydMHuUSODldEug/qdjcyseevXTY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=05Fm9W+DuScakkNV+GSeA1JAWfCkNOJRS4OK0V0M5h2NaE30wsXdXX+6LeL8fLUVP
-         7v8dlOXV0mR293oiSHjNverwuYVXl99e7/BhB/5Z0qxtI3wPR3bAn48SC2r/w+L9D5
-         tKD+E9dH5cFCXJ+cCM2MZlITTkeFu3qk7L1u191E=
+        b=0MpbCGAWjPe5ulJCNYtckvZCyL/BEERGkHd3CUg3ouG2LE6gzH5lmAK9npfaEh/4D
+         btOFhEPnTrPH26UPhyF+PK7XuwhI8G52oJHV/UnWvDdzRHoXSVEadeAHtkw1YJVDBb
+         eYNb6fk1rI3hXEVyxS1KtyVg33rtWAl1bZEO8+tI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 182/199] tcp: fix rejected syncookies due to stale timestamps
-Date:   Thu, 19 Dec 2019 19:34:24 +0100
-Message-Id: <20191219183225.716038281@linuxfoundation.org>
+        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 11/47] net/mlx5e: Query global pause state before setting prio2buffer
+Date:   Thu, 19 Dec 2019 19:34:25 +0100
+Message-Id: <20191219182908.132827581@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
+In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
+References: <20191219182857.659088743@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,107 +43,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guillaume Nault <gnault@redhat.com>
+From: Huy Nguyen <huyn@mellanox.com>
 
-[ Upstream commit 04d26e7b159a396372646a480f4caa166d1b6720 ]
+[ Upstream commit 73e6551699a32fac703ceea09214d6580edcf2d5 ]
 
-If no synflood happens for a long enough period of time, then the
-synflood timestamp isn't refreshed and jiffies can advance so much
-that time_after32() can't accurately compare them any more.
+When the user changes prio2buffer mapping while global pause is
+enabled, mlx5 driver incorrectly sets all active buffers
+(buffer that has at least one priority mapped) to lossy.
 
-Therefore, we can end up in a situation where time_after32(now,
-last_overflow + HZ) returns false, just because these two values are
-too far apart. In that case, the synflood timestamp isn't updated as
-it should be, which can trick tcp_synq_no_recent_overflow() into
-rejecting valid syncookies.
+Solution:
+If global pause is enabled, set all the active buffers to lossless
+in prio2buffer command.
+Also, add error message when buffer size is not enough to meet
+xoff threshold.
 
-For example, let's consider the following scenario on a system
-with HZ=1000:
-
-  * The synflood timestamp is 0, either because that's the timestamp
-    of the last synflood or, more commonly, because we're working with
-    a freshly created socket.
-
-  * We receive a new SYN, which triggers synflood protection. Let's say
-    that this happens when jiffies == 2147484649 (that is,
-    'synflood timestamp' + HZ + 2^31 + 1).
-
-  * Then tcp_synq_overflow() doesn't update the synflood timestamp,
-    because time_after32(2147484649, 1000) returns false.
-    With:
-      - 2147484649: the value of jiffies, aka. 'now'.
-      - 1000: the value of 'last_overflow' + HZ.
-
-  * A bit later, we receive the ACK completing the 3WHS. But
-    cookie_v[46]_check() rejects it because tcp_synq_no_recent_overflow()
-    says that we're not under synflood. That's because
-    time_after32(2147484649, 120000) returns false.
-    With:
-      - 2147484649: the value of jiffies, aka. 'now'.
-      - 120000: the value of 'last_overflow' + TCP_SYNCOOKIE_VALID.
-
-    Of course, in reality jiffies would have increased a bit, but this
-    condition will last for the next 119 seconds, which is far enough
-    to accommodate for jiffie's growth.
-
-Fix this by updating the overflow timestamp whenever jiffies isn't
-within the [last_overflow, last_overflow + HZ] range. That shouldn't
-have any performance impact since the update still happens at most once
-per second.
-
-Now we're guaranteed to have fresh timestamps while under synflood, so
-tcp_synq_no_recent_overflow() can safely use it with time_after32() in
-such situations.
-
-Stale timestamps can still make tcp_synq_no_recent_overflow() return
-the wrong verdict when not under synflood. This will be handled in the
-next patch.
-
-For 64 bits architectures, the problem was introduced with the
-conversion of ->tw_ts_recent_stamp to 32 bits integer by commit
-cca9bab1b72c ("tcp: use monotonic timestamps for PAWS").
-The problem has always been there on 32 bits architectures.
-
-Fixes: cca9bab1b72c ("tcp: use monotonic timestamps for PAWS")
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Guillaume Nault <gnault@redhat.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0696d60853d5 ("net/mlx5e: Receive buffer configuration")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/linux/time.h |   12 ++++++++++++
- include/net/tcp.h    |    2 +-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c |   27 +++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
---- a/include/linux/time.h
-+++ b/include/linux/time.h
-@@ -275,4 +275,16 @@ static __always_inline void timespec_add
- 	a->tv_nsec = ns;
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en/port_buffer.c
+@@ -155,8 +155,11 @@ static int update_xoff_threshold(struct
+ 		}
+ 
+ 		if (port_buffer->buffer[i].size <
+-		    (xoff + max_mtu + (1 << MLX5E_BUFFER_CELL_SHIFT)))
++		    (xoff + max_mtu + (1 << MLX5E_BUFFER_CELL_SHIFT))) {
++			pr_err("buffer_size[%d]=%d is not enough for lossless buffer\n",
++			       i, port_buffer->buffer[i].size);
+ 			return -ENOMEM;
++		}
+ 
+ 		port_buffer->buffer[i].xoff = port_buffer->buffer[i].size - xoff;
+ 		port_buffer->buffer[i].xon  =
+@@ -232,6 +235,26 @@ static int update_buffer_lossy(unsigned
+ 	return 0;
  }
  
-+/**
-+ * time_between32 - check if a 32-bit timestamp is within a given time range
-+ * @t:	the time which may be within [l,h]
-+ * @l:	the lower bound of the range
-+ * @h:	the higher bound of the range
-+ *
-+ * time_before32(t, l, h) returns true if @l <= @t <= @h. All operands are
-+ * treated as 32-bit integers.
-+ *
-+ * Equivalent to !(time_before32(@t, @l) || time_after32(@t, @h)).
-+ */
-+#define time_between32(t, l, h) ((u32)(h) - (u32)(l) >= (u32)(t) - (u32)(l))
- #endif
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -497,7 +497,7 @@ static inline void tcp_synq_overflow(con
- 	unsigned long last_overflow = tcp_sk(sk)->rx_opt.ts_recent_stamp;
- 	unsigned long now = jiffies;
++static int fill_pfc_en(struct mlx5_core_dev *mdev, u8 *pfc_en)
++{
++	u32 g_rx_pause, g_tx_pause;
++	int err;
++
++	err = mlx5_query_port_pause(mdev, &g_rx_pause, &g_tx_pause);
++	if (err)
++		return err;
++
++	/* If global pause enabled, set all active buffers to lossless.
++	 * Otherwise, check PFC setting.
++	 */
++	if (g_rx_pause || g_tx_pause)
++		*pfc_en = 0xff;
++	else
++		err = mlx5_query_port_pfc(mdev, pfc_en, NULL);
++
++	return err;
++}
++
+ #define MINIMUM_MAX_MTU 9216
+ int mlx5e_port_manual_buffer_config(struct mlx5e_priv *priv,
+ 				    u32 change, unsigned int mtu,
+@@ -277,7 +300,7 @@ int mlx5e_port_manual_buffer_config(stru
  
--	if (time_after(now, last_overflow + HZ))
-+	if (!time_between32(now, last_overflow, last_overflow + HZ))
- 		tcp_sk(sk)->rx_opt.ts_recent_stamp = now;
- }
+ 	if (change & MLX5E_PORT_BUFFER_PRIO2BUFFER) {
+ 		update_prio2buffer = true;
+-		err = mlx5_query_port_pfc(priv->mdev, &curr_pfc_en, NULL);
++		err = fill_pfc_en(priv->mdev, &curr_pfc_en);
+ 		if (err)
+ 			return err;
  
 
 
