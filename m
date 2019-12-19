@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0402B126D73
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEE53126CE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:07:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727393AbfLSSgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:36:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52672 "EHLO mail.kernel.org"
+        id S1728874AbfLSSnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:43:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727354AbfLSSfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:35:55 -0500
+        id S1727551AbfLSSnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:43:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0754124684;
-        Thu, 19 Dec 2019 18:35:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E952424672;
+        Thu, 19 Dec 2019 18:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576780554;
-        bh=gI9ePgusSsFa9b87u0tWBwlUXgH8iTKtcqzc0ElY/y4=;
+        s=default; t=1576781014;
+        bh=pO4lacVKq57i/HeIY8f9aUj1nN3FE2OYzqeHQmrqVrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HdUuh00pyOYykgRn7OpEXIvUe3IuaigdN52tBTJakXVq8vKuZPlLm9/nMdK6FaoAo
-         FJ6XcaR0qqRU0UNO4HaaEAw0YW7Qn07q6Ba0ZKOtuxWhvdpDgBAX0psQmP0ZqYb6xq
-         e69gKRLct5PIlFVofQFbZBmz+4EVy/qgvgfFUw6M=
+        b=UF12j+qu6PLj9y5k6rXGNyPb16DKW93kvH6Kko5o7kWnex8LngrsmHtdHIA0g16tU
+         iBH7b01HasOUmvjw8cfOkUo5+XtbJPsBLTeyLlUPERW3gXiKXVF2qmfm5HXlZQWDRw
+         ZyLvD/SbC+kXNgkj7havtE40B7V7K+1q5xL8QsKg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steffen Maier <maier@linux.ibm.com>,
-        Benjamin Block <bblock@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Scott Mayhew <smayhew@redhat.com>,
+        "J. Bruce Fields" <bfields@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 021/162] scsi: zfcp: drop default switch case which might paper over missing case
-Date:   Thu, 19 Dec 2019 19:32:09 +0100
-Message-Id: <20191219183208.204028251@linuxfoundation.org>
+Subject: [PATCH 4.9 048/199] nfsd: fix a warning in __cld_pipe_upcall()
+Date:   Thu, 19 Dec 2019 19:32:10 +0100
+Message-Id: <20191219183217.615536127@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183150.477687052@linuxfoundation.org>
-References: <20191219183150.477687052@linuxfoundation.org>
+In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
+References: <20191219183214.629503389@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,51 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steffen Maier <maier@linux.ibm.com>
+From: Scott Mayhew <smayhew@redhat.com>
 
-[ Upstream commit 0c902936e55cff9335b27ed632fc45e7115ced75 ]
+[ Upstream commit b493fd31c0b89d9453917e977002de58bebc3802 ]
 
-This was introduced with v4.18 commit 8c3d20aada70 ("scsi: zfcp: fix
-missing REC trigger trace for all objects in ERP_FAILED") but would now
-suppress helpful -Wswitch compiler warnings when building with W=1 such as
-the following forced example:
+__cld_pipe_upcall() emits a "do not call blocking ops when
+!TASK_RUNNING" warning due to the dput() call in rpc_queue_upcall().
+Fix it by using a completion instead of hand coding the wait.
 
-drivers/s390/scsi/zfcp_erp.c: In function 'zfcp_erp_handle_failed':
-drivers/s390/scsi/zfcp_erp.c:126:2: warning: enumeration value 'ZFCP_ERP_ACTION_REOPEN_PORT_FORCED' not handled in switch [-Wswitch]
-  switch (want) {
-  ^~~~~~
-
-But then again, only with W=1 we would notice unhandled enum cases.
-Without the default cases and a missed unhandled enum case, the code might
-perform unforeseen things we might not want...
-
-As of today, we never run through the removed default case, so removing it
-is no functional change.  In the future, we never should run through a
-default case but introduce the necessary specific case(s) to handle new
-functionality.
-
-Signed-off-by: Steffen Maier <maier@linux.ibm.com>
-Reviewed-by: Benjamin Block <bblock@linux.ibm.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Scott Mayhew <smayhew@redhat.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/scsi/zfcp_erp.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/nfsd/nfs4recover.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/s390/scsi/zfcp_erp.c b/drivers/s390/scsi/zfcp_erp.c
-index cc62d8cc8cfdd..d5214c4eb9ddb 100644
---- a/drivers/s390/scsi/zfcp_erp.c
-+++ b/drivers/s390/scsi/zfcp_erp.c
-@@ -178,9 +178,6 @@ static int zfcp_erp_handle_failed(int want, struct zfcp_adapter *adapter,
- 				adapter, ZFCP_STATUS_COMMON_ERP_FAILED);
- 		}
- 		break;
--	default:
--		need = 0;
--		break;
+diff --git a/fs/nfsd/nfs4recover.c b/fs/nfsd/nfs4recover.c
+index 66eaeb1e8c2ce..dc9586feab317 100644
+--- a/fs/nfsd/nfs4recover.c
++++ b/fs/nfsd/nfs4recover.c
+@@ -661,7 +661,7 @@ struct cld_net {
+ struct cld_upcall {
+ 	struct list_head	 cu_list;
+ 	struct cld_net		*cu_net;
+-	struct task_struct	*cu_task;
++	struct completion	 cu_done;
+ 	struct cld_msg		 cu_msg;
+ };
+ 
+@@ -670,23 +670,18 @@ __cld_pipe_upcall(struct rpc_pipe *pipe, struct cld_msg *cmsg)
+ {
+ 	int ret;
+ 	struct rpc_pipe_msg msg;
++	struct cld_upcall *cup = container_of(cmsg, struct cld_upcall, cu_msg);
+ 
+ 	memset(&msg, 0, sizeof(msg));
+ 	msg.data = cmsg;
+ 	msg.len = sizeof(*cmsg);
+ 
+-	/*
+-	 * Set task state before we queue the upcall. That prevents
+-	 * wake_up_process in the downcall from racing with schedule.
+-	 */
+-	set_current_state(TASK_UNINTERRUPTIBLE);
+ 	ret = rpc_queue_upcall(pipe, &msg);
+ 	if (ret < 0) {
+-		set_current_state(TASK_RUNNING);
+ 		goto out;
  	}
  
- 	return need;
+-	schedule();
++	wait_for_completion(&cup->cu_done);
+ 
+ 	if (msg.errno < 0)
+ 		ret = msg.errno;
+@@ -753,7 +748,7 @@ cld_pipe_downcall(struct file *filp, const char __user *src, size_t mlen)
+ 	if (copy_from_user(&cup->cu_msg, src, mlen) != 0)
+ 		return -EFAULT;
+ 
+-	wake_up_process(cup->cu_task);
++	complete(&cup->cu_done);
+ 	return mlen;
+ }
+ 
+@@ -768,7 +763,7 @@ cld_pipe_destroy_msg(struct rpc_pipe_msg *msg)
+ 	if (msg->errno >= 0)
+ 		return;
+ 
+-	wake_up_process(cup->cu_task);
++	complete(&cup->cu_done);
+ }
+ 
+ static const struct rpc_pipe_ops cld_upcall_ops = {
+@@ -899,7 +894,7 @@ restart_search:
+ 			goto restart_search;
+ 		}
+ 	}
+-	new->cu_task = current;
++	init_completion(&new->cu_done);
+ 	new->cu_msg.cm_vers = CLD_UPCALL_VERSION;
+ 	put_unaligned(cn->cn_xid++, &new->cu_msg.cm_xid);
+ 	new->cu_net = cn;
 -- 
 2.20.1
 
