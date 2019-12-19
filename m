@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BE2A6126196
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 47460126198
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 13:04:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727105AbfLSMEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 07:04:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36246 "EHLO mail.kernel.org"
+        id S1727125AbfLSME1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 07:04:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbfLSMEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 07:04:21 -0500
+        id S1727106AbfLSMEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 07:04:24 -0500
 Received: from localhost.localdomain (236.31.169.217.in-addr.arpa [217.169.31.236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D602024650;
-        Thu, 19 Dec 2019 12:04:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A956F24686;
+        Thu, 19 Dec 2019 12:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576757061;
-        bh=6Rc1r90+NZsHmspNGdC3SZJUr1ZhyG4GU4NbJn+UbJg=;
+        s=default; t=1576757064;
+        bh=BJ4leKK2d+/l9rSIHZ5yn0CQ4f+BTWKCdATIGPkCJaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ScAdaU1fUpklI+A/7mXyfEunMCoXsvnAczSUOLH2sbfBUNN2WxiP/TKbyfI03fXjR
-         Pkui+/oCeJfUZtnoh8QzSRydyyqU+vaYbgahwGNw7nXUSZhSx+LmfVPRVlAmKsXjGP
-         M9XCslZDtJCPjV+AWo8kC96dekWQ1AVduS+y7RYw=
+        b=evAl+v21dZHV+zLWv8P1xviKtC1MvaEX2rL82A2AVbXvObPXffv/K14ICH4VxCU5M
+         qBR9D7IrENhUXj02xWOQLOaK2W/xlHccbxx4ZNaDqP3WR3k1joE7hzFKkN8dYn6GPa
+         Iqby0HFjv2GhCZZWeuH0ApOvMzjvHKqvfQ5W42UY=
 From:   Will Deacon <will@kernel.org>
 To:     linux-kernel@vger.kernel.org, iommu@lists.linuxfoundation.org
 Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
@@ -37,9 +37,9 @@ Cc:     kernel-team@android.com, Will Deacon <will@kernel.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Joerg Roedel <joro@8bytes.org>,
         Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v4 07/16] drivers/iommu: Allow IOMMU bus ops to be unregistered
-Date:   Thu, 19 Dec 2019 12:03:43 +0000
-Message-Id: <20191219120352.382-8-will@kernel.org>
+Subject: [PATCH v4 08/16] Revert "iommu/arm-smmu: Make arm-smmu-v3 explicitly non-modular"
+Date:   Thu, 19 Dec 2019 12:03:44 +0000
+Message-Id: <20191219120352.382-9-will@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191219120352.382-1-will@kernel.org>
 References: <20191219120352.382-1-will@kernel.org>
@@ -50,35 +50,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'bus_set_iommu()' allows IOMMU drivers to register their ops for a given
-bus type. Unfortunately, it then doesn't allow them to be removed, which
-is necessary for modular drivers to shutdown cleanly so that they can be
-reloaded later on.
+This reverts commit c07b6426df922d21a13a959cf785d46e9c531941.
 
-Allow 'bus_set_iommu()' to take a NULL 'ops' argument, which clear the
-ops pointer for the selected bus_type.
+Let's get the SMMUv3 driver building as a module, which means putting
+back some dead code that we used to carry.
 
 Signed-off-by: Will Deacon <will@kernel.org>
 ---
- drivers/iommu/iommu.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/iommu/arm-smmu-v3.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index bc8edf90e729..433101f0853c 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -1558,6 +1558,11 @@ int bus_set_iommu(struct bus_type *bus, const struct iommu_ops *ops)
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index effe72eb89e7..68163b1d680d 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -21,8 +21,7 @@
+ #include <linux/io-pgtable.h>
+ #include <linux/iommu.h>
+ #include <linux/iopoll.h>
+-#include <linux/init.h>
+-#include <linux/moduleparam.h>
++#include <linux/module.h>
+ #include <linux/msi.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+@@ -384,10 +383,6 @@
+ #define MSI_IOVA_BASE			0x8000000
+ #define MSI_IOVA_LENGTH			0x100000
+ 
+-/*
+- * not really modular, but the easiest way to keep compat with existing
+- * bootargs behaviour is to continue using module_param_named here.
+- */
+ static bool disable_bypass = 1;
+ module_param_named(disable_bypass, disable_bypass, bool, S_IRUGO);
+ MODULE_PARM_DESC(disable_bypass,
+@@ -3683,25 +3678,37 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static void arm_smmu_device_shutdown(struct platform_device *pdev)
++static int arm_smmu_device_remove(struct platform_device *pdev)
  {
- 	int err;
+ 	struct arm_smmu_device *smmu = platform_get_drvdata(pdev);
  
-+	if (ops == NULL) {
-+		bus->iommu_ops = NULL;
-+		return 0;
-+	}
+ 	arm_smmu_device_disable(smmu);
 +
- 	if (bus->iommu_ops != NULL)
- 		return -EBUSY;
++	return 0;
++}
++
++static void arm_smmu_device_shutdown(struct platform_device *pdev)
++{
++	arm_smmu_device_remove(pdev);
+ }
  
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v3", },
+ 	{ },
+ };
++MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ 
+ static struct platform_driver arm_smmu_driver = {
+ 	.driver	= {
+ 		.name		= "arm-smmu-v3",
+ 		.of_match_table	= of_match_ptr(arm_smmu_of_match),
+-		.suppress_bind_attrs = true,
+ 	},
+ 	.probe	= arm_smmu_device_probe,
++	.remove	= arm_smmu_device_remove,
+ 	.shutdown = arm_smmu_device_shutdown,
+ };
+-builtin_platform_driver(arm_smmu_driver);
++module_platform_driver(arm_smmu_driver);
++
++MODULE_DESCRIPTION("IOMMU API for ARM architected SMMUv3 implementations");
++MODULE_AUTHOR("Will Deacon <will.deacon@arm.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.24.1.735.g03f4e72817-goog
 
