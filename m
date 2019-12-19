@@ -2,80 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F03D4125FD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:50:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBAC2125FE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 11:51:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfLSKuf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 05:50:35 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:46277 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbfLSKuf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 05:50:35 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c667ec1b;
-        Thu, 19 Dec 2019 09:53:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=GyQANekzB2h7Mmd6y6oCcFxKVhQ=; b=s/qYlt
-        PnIM6A6GkurQlk2Ar8T8qSTXpvyPWHiAEVHfURilOwXrjs3NjyyWNxyNrLK4PL+Y
-        z2T5Qhb6++Ohx9SpLX39m0ULf91XXHGYp3dbTNPBdc7EHleQrWp74iR2QvlzZlks
-        7PEd4Narcu6X0L02O7+WY4CoEpSDhY2QszJBmDyYP/3Df+YSp4uOskXlSMOoe2m2
-        M8XX1nktJ1zndrhm/eq4ftTkPU75ZwZnT4sfC5fFILa3ZW9GagNyUkSP3NHEnfRo
-        NJx3yV0usVkLzzCw9WYhpHpSDN/eNdYlRye5kdW6Zb/VdD+56rLrR4yV6ysQD52j
-        z/dsG686jbmbz9QA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 135ea1c5 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Thu, 19 Dec 2019 09:53:52 +0000 (UTC)
-Received: by mail-ot1-f43.google.com with SMTP id h9so4145295otj.11;
-        Thu, 19 Dec 2019 02:50:33 -0800 (PST)
-X-Gm-Message-State: APjAAAUVn57XkLUuXcdJWVbFbEWmyzfi2OsMIzwqoi2/8zxdfyGPp8Bh
-        sCaPtuxOU6TDabggpT1sajpCpNHvw478RAkgWII=
-X-Google-Smtp-Source: APXvYqyOjDE/JGl4JOdsCt2LI14BVtDqDKXAQqVTZdkqtmpAnah60r/cQNnslAxZCzGGekHa84RO/mvbmWXDJrEBApU=
-X-Received: by 2002:a9d:674f:: with SMTP id w15mr8304067otm.243.1576752632820;
- Thu, 19 Dec 2019 02:50:32 -0800 (PST)
-MIME-Version: 1.0
-References: <20191208232734.225161-1-Jason@zx2c4.com> <CACT4Y+bsJVmgbD-WogwU=LfWiPN1JgjBrwx4s8Y14hDd7vqqhQ@mail.gmail.com>
- <CAHmME9o0AparjaaOSoZD14RAW8_AJTfKfcx3Y2ndDAPFNC-MeQ@mail.gmail.com>
- <CACT4Y+Zssd6OZ2-U4kjw18mNthQyzPWZV_gkH3uATnSv1SVDfA@mail.gmail.com>
- <CAHmME9oM=YHMZyg23WEzmZAof=7iv-A01VazB3ihhR99f6X1cg@mail.gmail.com>
- <CACT4Y+aCEZm_BA5mmVTnK2cR8CQUky5w1qvmb2KpSR4-Pzp4Ow@mail.gmail.com>
- <CAHmME9rYstVLCBOgdMLqMeVDrX1V-f92vRKDqWsREROWdPbb6g@mail.gmail.com> <CACT4Y+Zs=SQwYS8yx3ds7HBhr1RHkDwRe_av2XjJty-5wMTFEA@mail.gmail.com>
-In-Reply-To: <CACT4Y+Zs=SQwYS8yx3ds7HBhr1RHkDwRe_av2XjJty-5wMTFEA@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Thu, 19 Dec 2019 11:50:21 +0100
-X-Gmail-Original-Message-ID: <CAHmME9pe1XNfT5LN0---WQgQYEHVaFRC9fkqTBsTYcU6GbGnFA@mail.gmail.com>
-Message-ID: <CAHmME9pe1XNfT5LN0---WQgQYEHVaFRC9fkqTBsTYcU6GbGnFA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] net: WireGuard secure network tunnel
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726776AbfLSKvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 05:51:42 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45876 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfLSKvj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 05:51:39 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191219105137euoutp01c0acc5c69f7f74bfaee97481591ac8b3~hwDlgDu-12483824838euoutp01R
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 10:51:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191219105137euoutp01c0acc5c69f7f74bfaee97481591ac8b3~hwDlgDu-12483824838euoutp01R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576752697;
+        bh=eKuqKqF6Zf3VdrfAJAAbhWfEQqEDS8o77momAoIwge4=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=K4fQ8rJXE+j4zn3E6RAlxmQpu1d6kpLCQMWbxcrPV47NVncw5h3bPO5xgaKYi6nnI
+         T1R9Omk78BxiN7O5G3wyYAy5aBzYuL5y7RlX/69ovYJS+HIvsf5mFZBtFbcEZlRCyk
+         h70yh1R5/OWLcdTao46rDQDjfUrMrw3shI8G8DAw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191219105136eucas1p2a7aab45ff8de7bf0ed48bc84916b6b58~hwDlRfY270600306003eucas1p2k;
+        Thu, 19 Dec 2019 10:51:36 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 24.11.60679.8365BFD5; Thu, 19
+        Dec 2019 10:51:36 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219105135eucas1p1f11713cb6c1583524ca8af0ba6a7e145~hwDkQAGpl1661316613eucas1p1b;
+        Thu, 19 Dec 2019 10:51:35 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191219105135eusmtrp1cecbc3fba78d22939c10ef9197a2d641~hwDkPXBHd2881728817eusmtrp1C;
+        Thu, 19 Dec 2019 10:51:35 +0000 (GMT)
+X-AuditID: cbfec7f4-0cbff7000001ed07-e3-5dfb56386993
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 24.BB.08375.7365BFD5; Thu, 19
+        Dec 2019 10:51:35 +0000 (GMT)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219105135eusmtip1554bd1c13703f0f4a1ae647dc3e2d9a5~hwDjvWuoM0871308713eusmtip1c;
+        Thu, 19 Dec 2019 10:51:35 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Kamil Konieczny <k.konieczny@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH v2 0/2] Exynos5422: fix bus related OPPs for Odroid
+ XU3/XU4/HC1
+Date:   Thu, 19 Dec 2019 11:51:28 +0100
+Message-Id: <20191219105130.29394-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrNIsWRmVeSWpSXmKPExsWy7djP87oWYb9jDXq6rCw2zljPanH9y3NW
+        iwWfZrBanD+/gd3i8q45bBafe48wWsw4v4/JYu2Ru+wOHB6bVnWyefRtWcXo8XmTXABzFJdN
+        SmpOZllqkb5dAlfGta6nLAXLBCsaz0xka2Bs5eti5OSQEDCR+PJpPlsXIxeHkMAKRokDE5cw
+        QjhfGCU6fzSzgVQJCXxmlLi+xBum4/3B31Adyxklvk+9zAbXse9kKwtIFZuAoUTX2y6wbhGB
+        eIlH/XdZQIqYBR4zShz/d4oJJCEsECjxe8F2VhCbRUBVYvOrx2BxXgFbiS/b7rJCrJOXWL3h
+        ADNIs4TACTaJrQ8/QiVcJBqnPYCyhSVeHd/CDmHLSJye3MMC0dDMKPHw3Fp2CKeHUeJy0wxG
+        iCpricPHLwJ1cwDdpCmxfpc+RNhR4tzOa4wgYQkBPokbbwVBwsxA5qRt05khwrwSHW1CENVq
+        ErOOr4Nbe/DCJWYI20Ni7+cb7JCgi5VYtOof0wRGuVkIuxYwMq5iFE8tLc5NTy02ykst1ytO
+        zC0uzUvXS87P3cQITAKn/x3/soNx15+kQ4wCHIxKPLw/XH/FCrEmlhVX5h5ilOBgVhLhvd3x
+        M1aINyWxsiq1KD++qDQntfgQozQHi5I4r/Gil7FCAumJJanZqakFqUUwWSYOTqkGxsVzFbRT
+        PGJUI5WPq885NmGuclr67ieLd4QfPzJBaaoye8icJY+9L6+1fPjnq1npvaxdcir+c1jLjXiK
+        Y823yP1uEn2c+P2l3SVtF42rH8KdvAQt1I7P5jWWqatR0Tz12Oy4+Lno9ebX5u5Ys9y4oDLv
+        xSf1yZsjQ34c8KzY9UTjp8UvJ8fCVCWW4oxEQy3mouJEANflSS/+AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrALMWRmVeSWpSXmKPExsVy+t/xu7rmYb9jDRZ+1LfYOGM9q8X1L89Z
+        LRZ8msFqcf78BnaLy7vmsFl87j3CaDHj/D4mi7VH7rI7cHhsWtXJ5tG3ZRWjx+dNcgHMUXo2
+        RfmlJakKGfnFJbZK0YYWRnqGlhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZ17qeshQs
+        E6xoPDORrYGxla+LkZNDQsBE4v3B32wgtpDAUkaJ9efLIeIyEienNbBC2MISf651AdVwAdV8
+        YpT40fsULMEmYCjR9bYLrFlEIFFi9sfZYEXMAk8ZJVatmQJWJCzgL7HzykUwm0VAVWLzq8dM
+        IDavgK3El213oTbIS6zecIB5AiPPAkaGVYwiqaXFuem5xYZ6xYm5xaV56XrJ+bmbGIGht+3Y
+        z807GC9tDD7EKMDBqMTD+8P1V6wQa2JZcWXuIUYJDmYlEd7bHT9jhXhTEiurUovy44tKc1KL
+        DzGaAi2fyCwlmpwPjIu8knhDU0NzC0tDc2NzYzMLJXHeDoGDMUIC6YklqdmpqQWpRTB9TByc
+        Ug2MluvTw198Sa5NXT1rlj13CGtCwQ7Gty9bNwu6mPIWLzhzu78gSL518jP2LUXvf9lHLaiR
+        2PFrj1/45v6NU5bdXVx1NFxi3qebZrrzjxZpiD+8GhF+e4Xfphs3bmw1jz6Y3rZiKZdH8o83
+        D1YZJX9iCNzv8DJ4Y+rCmhWf+ONW8R4WXfxo3xJ5RiWW4oxEQy3mouJEAJyJNLRTAgAA
+X-CMS-MailID: 20191219105135eucas1p1f11713cb6c1583524ca8af0ba6a7e145
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191219105135eucas1p1f11713cb6c1583524ca8af0ba6a7e145
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191219105135eucas1p1f11713cb6c1583524ca8af0ba6a7e145
+References: <CGME20191219105135eucas1p1f11713cb6c1583524ca8af0ba6a7e145@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 11:42 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> Well, unfortunately it does not test wireguard at the moment. I've
-> enabled the config as I saw it appeared in linux-next:
-> https://github.com/google/syzkaller/commit/240ba66ba8a0a99f27e1aac01f376331051a65c2
-> but that's it for now.
+Dear All,
 
-I do see that in the linux-next and net-next instances you have
-running, it's at least hitting interface creation and netlink.
+Currently the only Exynos5422-based boards that support bus frequency
+scaling are Hardkernel's Odroid XU3/XU4/HC1. The recent changes in the
+devfreq framework revealed that some operating points for the defined
+busses cannot be applied, because the rates defined in the OPPs cannot
+be derived from the top PLL clocks (due to lack of common integer
+dividers). This issue has been first noticed by Lukasz Luba in:
+https://lkml.org/lkml/2019/7/15/276
 
-> There are 3000 subsystems, are you ready to describe precise interface
-> for all of them with all the necessary setup and prerequisites? Nobody
-> can do it for all subsystems. Developer of a particular subsystem is
-> the best candidate for also describing what it takes to test it ;)
+To use the rates currently defined in the OPPs, one would need to change
+the rate and the topology of the top PLL clocks. The best place for such
+operation is the bootloader, because later when kernel boots, more and
+more devices (like UART, MMC, and so on) are enabled and get the clocks
+from those top PLLs. Changing the rate of the clock for the already
+enabled/operating device is very tricky.
 
-Sure, I'd be happy to help get things rolling on WireGuard. What do
-you need from me? A small shell script to set up a few interfaces that
-are peered with each other? Sample packets to begin mutations from?
-Since most of WireGuard's surface is behind constant-time/branchless
-crypto, I doubt you'll fuzz your way to having valid key agreement,
-which makes me think some sort of setup is necessary.
+To avoid that issue I've decided to keep the current top PLL clocks
+configuration prepared by the bootloader on Odroid XU3/XU4/HC1 boards and
+adjust the OPPs for it. This means that the bus related OPPs are board
+dependant, so I've moved the to the respective DTS files. For other
+boards (for example Peach Pi/Pit Chromebooks), slightly different OPPs
+might need to be defined due to different clock topology and top PLLs
+rates configured by their bootloader.
+
+The provided approach is probably the simplest fix to let all busses
+operate on the highest possible speeds, which match the configuration
+applied initially by the bootloader.
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+
+Changelog:
+
+v2:
+- removed incorrect 'opp-shared' property from bus_fsys_apb_opp_table
+- renamed dmc opp table to opp_table17
+- added tags
+
+v1: https://patchwork.kernel.org/cover/11302803/
+- initial version
+
+Patch summary:
+
+Marek Szyprowski (2):
+  ARM: dts: exynos: Move bus related OPPs to the boards DTS
+  ARM: dts: exynos: Adjust bus related OPPs to the values correct for
+    Odroids
+
+ arch/arm/boot/dts/exynos5420.dtsi             | 259 -----------------
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 275 +++++++++++++++++-
+ 2 files changed, 274 insertions(+), 260 deletions(-)
+
+-- 
+2.17.1
+
