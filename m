@@ -2,116 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABEC2126A18
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:44:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B26B126920
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfLSSoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:44:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728946AbfLSSoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:44:04 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5575C24679;
-        Thu, 19 Dec 2019 18:44:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781043;
-        bh=vKGtRTAO9OrO2yKIbWWQ9WkANzVXLGsOgVLPAQ7WQCM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wXeETxqkuucWvHixDOEmUD/rBU9n2TUwkESdlR8EFUfj9l2flJ4KOdksOsfpwW9sZ
-         LhStwhTYuY8tPuy6gHphZNMwWUw27oaNyZ+AgWHcm+RrgQqDnw/AOWNg8ve5jqhFVY
-         3hhloBQSLooEDC2/gDu+sxfFfNr2crOhWjIvE9GM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Mack <daniel@zonque.org>,
-        Sergey Yanovich <ynvich@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 059/199] ARM: dts: pxa: clean up USB controller nodes
-Date:   Thu, 19 Dec 2019 19:32:21 +0100
-Message-Id: <20191219183218.257793815@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219183214.629503389@linuxfoundation.org>
-References: <20191219183214.629503389@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1726996AbfLSSdB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:33:01 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36517 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726858AbfLSSdA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:33:00 -0500
+Received: by mail-ua1-f68.google.com with SMTP id k33so2320431uag.3;
+        Thu, 19 Dec 2019 10:32:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VOyymaYGcmSJ1WRzuqz4Ak0rmhgIqLCqZ8zG2kPHNMo=;
+        b=glXTEz6xo8pZIYtMNXBEZKiZ6kJgRXxgzHEMYNU3S58gEmx1YdW2HvnbOPO9ixmQ1w
+         JTqyRLAr76LLdCT4bxMI1SmmDS/6dXWPYgyri6gBmzDXrBgFdhKFUgezb0cIDPigANgE
+         E9IZQvFNURFRyGqU7OKos8+sbog3m8xUCEzQCYb4PR/viN3IIsMviu0e1K/E5IbFVg4t
+         oPHGjpJNZInKrcf3fI8mbv5IeegUQpAy8NxZ4n9nvDz3nSOZYq9q7WQZ9J6+V08tlCJl
+         sylHG8fEiJAvulZsLjgf3pWqz+Jj4RgxEue9g0gKXdrtHYI/6Nz0A9v/zZ5U0kZbdVX0
+         awWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VOyymaYGcmSJ1WRzuqz4Ak0rmhgIqLCqZ8zG2kPHNMo=;
+        b=mxtjBEeEKNZyTak+W9hlYkZ3xTpgE0hb/9FroS+ZixytH6tiJU3DHUVmPTIFI1zoPd
+         RqIuPjxg5kgEAn5z+ptAD/Q5QTpOdVkSJkUcJh80k4fq5J8xyPt/SXWljEQac/FVkq3a
+         2tHOmJ+QX+MpoyJ7e0PFg6jmQQdtXd+RtpnQ06HWazKTPqaU6mNmGvw6x4cxpCnlhpG4
+         w7ZEd3NpJy1gTHMfpirHmtj0hlKFu7FiXcgk8zirO4lVyjv4n/zMhYre2d/g//ZRDgGL
+         m9LAc4QO6bIjAWjMdJAYl7lU4rfTqY9VzBTHywgnWTcGJDuwHo8/KT5S6ath5YzGODsY
+         OMzA==
+X-Gm-Message-State: APjAAAV7LVPtp7Q4vtDUJo0Dnweu0XTtKP5y9qg7AWh9jHK+wnlkL3h2
+        zQZwxOOWerj4nvVjpGdEYAlyvw0xOakgSABdKTo=
+X-Google-Smtp-Source: APXvYqwM3UEwSjHttH0IdDl/GVqzd05+x7SvoHGEo+WgDCx2bVOHaGPhK0SsHTOHsJq/GpXPgXIoNGKQmA3xGy6FlWA=
+X-Received: by 2002:ab0:7049:: with SMTP id v9mr6389360ual.95.1576780379310;
+ Thu, 19 Dec 2019 10:32:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1576224695-22657-1-git-send-email-stanley.chu@mediatek.com> <1576224695-22657-3-git-send-email-stanley.chu@mediatek.com>
+In-Reply-To: <1576224695-22657-3-git-send-email-stanley.chu@mediatek.com>
+From:   Alim Akhtar <alim.akhtar@gmail.com>
+Date:   Fri, 20 Dec 2019 00:02:22 +0530
+Message-ID: <CAGOxZ52ffkFwkcrdyq+gjuXarjr-aqGRw2ck25Yu0QgppGh9hQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] scsi: ufs: export ufshcd_auto_hibern8_update for
+ vendor usage
+To:     Stanley Chu <stanley.chu@mediatek.com>
+Cc:     linux-scsi@vger.kernel.org,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        Kuohong Wang <kuohong.wang@mediatek.com>,
+        peter.wang@mediatek.com, chun-hung.wu@mediatek.com,
+        andy.teng@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Mack <daniel@zonque.org>
+On Fri, Dec 13, 2019 at 2:07 PM Stanley Chu <stanley.chu@mediatek.com> wrote:
+>
+> Export ufshcd_auto_hibern8_update to allow vendors to use common
+> interface to customize auto-hibernate timer.
+>
+> Signed-off-by: Stanley Chu <stanley.chu@mediatek.com>
 
-[ Upstream commit c40ad24254f1dbd54f2df5f5f524130dc1862122 ]
+Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
 
-PXA25xx SoCs don't have a USB controller, so drop the node from the
-common pxa2xx.dtsi base file. Both pxa27x and pxa3xx have a dedicated
-node already anyway.
+> ---
+>  drivers/scsi/ufs/ufs-sysfs.c | 20 --------------------
+>  drivers/scsi/ufs/ufshcd.c    | 18 ++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h    |  1 +
+>  3 files changed, 19 insertions(+), 20 deletions(-)
+>
+> diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+> index ad2abc96c0f1..720be3f64be7 100644
+> --- a/drivers/scsi/ufs/ufs-sysfs.c
+> +++ b/drivers/scsi/ufs/ufs-sysfs.c
+> @@ -118,26 +118,6 @@ static ssize_t spm_target_link_state_show(struct device *dev,
+>                                 ufs_pm_lvl_states[hba->spm_lvl].link_state));
+>  }
+>
+> -static void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit)
+> -{
+> -       unsigned long flags;
+> -
+> -       if (!ufshcd_is_auto_hibern8_supported(hba))
+> -               return;
+> -
+> -       spin_lock_irqsave(hba->host->host_lock, flags);
+> -       if (hba->ahit != ahit)
+> -               hba->ahit = ahit;
+> -       spin_unlock_irqrestore(hba->host->host_lock, flags);
+> -       if (!pm_runtime_suspended(hba->dev)) {
+> -               pm_runtime_get_sync(hba->dev);
+> -               ufshcd_hold(hba, false);
+> -               ufshcd_auto_hibern8_enable(hba);
+> -               ufshcd_release(hba);
+> -               pm_runtime_put(hba->dev);
+> -       }
+> -}
+> -
+>  /* Convert Auto-Hibernate Idle Timer register value to microseconds */
+>  static int ufshcd_ahit_to_us(u32 ahit)
+>  {
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index b5966faf3e98..589f519316aa 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -3956,6 +3956,24 @@ static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba)
+>         return ret;
+>  }
+>
+> +void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit)
+> +{
+> +       unsigned long flags;
+> +
+> +       if (!(hba->capabilities & MASK_AUTO_HIBERN8_SUPPORT))
+> +               return;
+> +
+> +       spin_lock_irqsave(hba->host->host_lock, flags);
+> +       if (hba->ahit == ahit)
+> +               goto out_unlock;
+> +       hba->ahit = ahit;
+> +       if (!pm_runtime_suspended(hba->dev))
+> +               ufshcd_writel(hba, hba->ahit, REG_AUTO_HIBERNATE_IDLE_TIMER);
+> +out_unlock:
+> +       spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +}
+> +EXPORT_SYMBOL_GPL(ufshcd_auto_hibern8_update);
+> +
+>  void ufshcd_auto_hibern8_enable(struct ufs_hba *hba)
+>  {
+>         unsigned long flags;
+> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+> index 2740f6941ec6..86586a0b9aa5 100644
+> --- a/drivers/scsi/ufs/ufshcd.h
+> +++ b/drivers/scsi/ufs/ufshcd.h
+> @@ -927,6 +927,7 @@ int ufshcd_query_flag(struct ufs_hba *hba, enum query_opcode opcode,
+>         enum flag_idn idn, bool *flag_res);
+>
+>  void ufshcd_auto_hibern8_enable(struct ufs_hba *hba);
+> +void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit);
+>
+>  #define SD_ASCII_STD true
+>  #define SD_RAW false
+> --
+> 2.18.0
 
-While at it, unify the names for the nodes across all pxa platforms.
 
-Signed-off-by: Daniel Mack <daniel@zonque.org>
-Reported-by: Sergey Yanovich <ynvich@gmail.com>
-Link: https://patchwork.kernel.org/patch/8375421/
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/pxa27x.dtsi | 2 +-
- arch/arm/boot/dts/pxa2xx.dtsi | 7 -------
- arch/arm/boot/dts/pxa3xx.dtsi | 2 +-
- 3 files changed, 2 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/boot/dts/pxa27x.dtsi b/arch/arm/boot/dts/pxa27x.dtsi
-index 0e1320afa1562..d629948000db1 100644
---- a/arch/arm/boot/dts/pxa27x.dtsi
-+++ b/arch/arm/boot/dts/pxa27x.dtsi
-@@ -34,7 +34,7 @@
- 			clocks = <&clks CLK_NONE>;
- 		};
- 
--		pxa27x_ohci: usb@4c000000 {
-+		usb0: usb@4c000000 {
- 			compatible = "marvell,pxa-ohci";
- 			reg = <0x4c000000 0x10000>;
- 			interrupts = <3>;
-diff --git a/arch/arm/boot/dts/pxa2xx.dtsi b/arch/arm/boot/dts/pxa2xx.dtsi
-index 3ff077ca44002..5a6f4ed92dac3 100644
---- a/arch/arm/boot/dts/pxa2xx.dtsi
-+++ b/arch/arm/boot/dts/pxa2xx.dtsi
-@@ -117,13 +117,6 @@
- 			status = "disabled";
- 		};
- 
--		usb0: ohci@4c000000 {
--			compatible = "marvell,pxa-ohci";
--			reg = <0x4c000000 0x10000>;
--			interrupts = <3>;
--			status = "disabled";
--		};
--
- 		mmc0: mmc@41100000 {
- 			compatible = "marvell,pxa-mmc";
- 			reg = <0x41100000 0x1000>;
-diff --git a/arch/arm/boot/dts/pxa3xx.dtsi b/arch/arm/boot/dts/pxa3xx.dtsi
-index 9d6f3aacedb70..4aee150626902 100644
---- a/arch/arm/boot/dts/pxa3xx.dtsi
-+++ b/arch/arm/boot/dts/pxa3xx.dtsi
-@@ -187,7 +187,7 @@
- 			status = "disabled";
- 		};
- 
--		pxa3xx_ohci: usb@4c000000 {
-+		usb0: usb@4c000000 {
- 			compatible = "marvell,pxa-ohci";
- 			reg = <0x4c000000 0x10000>;
- 			interrupts = <3>;
 -- 
-2.20.1
-
-
-
+Regards,
+Alim
