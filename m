@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B3F5126BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 20:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9621126ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 19 Dec 2019 19:51:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbfLSSwz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 13:52:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
+        id S1730068AbfLSSu6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 13:50:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730289AbfLSSwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 13:52:51 -0500
+        id S1729728AbfLSSuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 13:50:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C178F20674;
-        Thu, 19 Dec 2019 18:52:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3470720674;
+        Thu, 19 Dec 2019 18:50:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576781571;
-        bh=Kh6G4BGpbP4/7ZLkRXwjPM16uNGZAWbqwyulwAiVOQI=;
+        s=default; t=1576781454;
+        bh=RkCqlMxkWpQHQAgkiX7rCYVVXYAeeMu3h4lelkadcqI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h5B8p6HsnesooB+uqT5AuQRMzl4IeyUXurEVc44ntk+8elFjaa7uzydIY928W5kLI
-         CWQjasGBtsS0oGMz9tx9Jpq3E6DSl/0DdW9o53Lf2xawItp3xmZImH5chXlUgWFHv9
-         Hbe5Ywseq/l325TMQfKbNFLZdUWPWSdhvAT8cXb4=
+        b=dBV5kNRdQcedBoA6BTzEYQxTBiruh3p8EvL4YA/qnWKC51VPLyWEQkus7sNa2LlSN
+         0mcCkwiLs3R9DPpFcPo6TQebNHqAC99/6XnBRb3Kg5F2AnhR4rHPo15cWW2gfQuSym
+         EWnulpQTQZx50Bc/jjLvXQO8LtjJvSL0AHFCG9yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.19 32/47] cifs: smbd: Add messages on RDMA session destroy and reconnection
+        stable@vger.kernel.org, Jiang Yi <giangyi@amazon.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.14 29/36] vfio/pci: call irq_bypass_unregister_producer() before freeing irq
 Date:   Thu, 19 Dec 2019 19:34:46 +0100
-Message-Id: <20191219182935.051730593@linuxfoundation.org>
+Message-Id: <20191219182920.242386926@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-References: <20191219182857.659088743@linuxfoundation.org>
+In-Reply-To: <20191219182848.708141124@linuxfoundation.org>
+References: <20191219182848.708141124@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,42 +45,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+From: Jiang Yi <giangyi@amazon.com>
 
-commit d63cdbae60ac6fbb2864bd3d8df7404f12b7407d upstream.
+commit d567fb8819162099035e546b11a736e29c2af0ea upstream.
 
-Log these activities to help production support.
+Since irq_bypass_register_producer() is called after request_irq(), we
+should do tear-down in reverse order: irq_bypass_unregister_producer()
+then free_irq().
 
-Signed-off-by: Long Li <longli@microsoft.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Specifically free_irq() may release resources required by the
+irqbypass del_producer() callback.  Notably an example provided by
+Marc Zyngier on arm64 with GICv4 that he indicates has the potential
+to wedge the hardware:
+
+ free_irq(irq)
+   __free_irq(irq)
+     irq_domain_deactivate_irq(irq)
+       its_irq_domain_deactivate()
+         [unmap the VLPI from the ITS]
+
+ kvm_arch_irq_bypass_del_producer(cons, prod)
+   kvm_vgic_v4_unset_forwarding(kvm, irq, ...)
+     its_unmap_vlpi(irq)
+       [Unmap the VLPI from the ITS (again), remap the original LPI]
+
+Signed-off-by: Jiang Yi <giangyi@amazon.com>
+Cc: stable@vger.kernel.org # v4.4+
+Fixes: 6d7425f109d26 ("vfio: Register/unregister irq_bypass_producer")
+Link: https://lore.kernel.org/kvm/20191127164910.15888-1-giangyi@amazon.com
+Reviewed-by: Marc Zyngier <maz@kernel.org>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+[aw: commit log]
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smbdirect.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/vfio/pci/vfio_pci_intrs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1491,6 +1491,7 @@ void smbd_destroy(struct smbd_connection
- 		info->transport_status == SMBD_DESTROYED);
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -297,8 +297,8 @@ static int vfio_msi_set_vector_signal(st
+ 	irq = pci_irq_vector(pdev, vector);
  
- 	destroy_workqueue(info->workqueue);
-+	log_rdma_event(INFO,  "rdma session destroyed\n");
- 	kfree(info);
- }
- 
-@@ -1528,8 +1529,9 @@ create_conn:
- 	log_rdma_event(INFO, "creating rdma session\n");
- 	server->smbd_conn = smbd_get_connection(
- 		server, (struct sockaddr *) &server->dstaddr);
--	log_rdma_event(INFO, "created rdma session info=%p\n",
--		server->smbd_conn);
-+
-+	if (server->smbd_conn)
-+		cifs_dbg(VFS, "RDMA transport re-established\n");
- 
- 	return server->smbd_conn ? 0 : -ENOENT;
- }
+ 	if (vdev->ctx[vector].trigger) {
+-		free_irq(irq, vdev->ctx[vector].trigger);
+ 		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
++		free_irq(irq, vdev->ctx[vector].trigger);
+ 		kfree(vdev->ctx[vector].name);
+ 		eventfd_ctx_put(vdev->ctx[vector].trigger);
+ 		vdev->ctx[vector].trigger = NULL;
 
 
