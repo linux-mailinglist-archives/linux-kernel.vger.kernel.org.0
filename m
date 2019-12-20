@@ -2,62 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5772E12817D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 18:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A7C9128180
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 18:36:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfLTRfs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 12:35:48 -0500
-Received: from mga05.intel.com ([192.55.52.43]:14901 "EHLO mga05.intel.com"
+        id S1727482AbfLTRgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 12:36:24 -0500
+Received: from foss.arm.com ([217.140.110.172]:53638 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727388AbfLTRfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 12:35:48 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 09:35:47 -0800
-X-IronPort-AV: E=Sophos;i="5.69,336,1571727600"; 
-   d="scan'208";a="390933689"
-Received: from rchatre-mobl.amr.corp.intel.com (HELO [10.24.14.83]) ([10.24.14.83])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 20 Dec 2019 09:35:47 -0800
-Subject: Re: [PATCH v2] x86/resctrl: Fix potential memory leak
-To:     Shakeel Butt <shakeelb@google.com>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <20191220164358.177202-1-shakeelb@google.com>
-From:   Reinette Chatre <reinette.chatre@intel.com>
-Message-ID: <4312bfd5-2b31-8f29-03a4-677daf8ee331@intel.com>
-Date:   Fri, 20 Dec 2019 09:35:45 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727388AbfLTRgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 12:36:23 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1204C1FB;
+        Fri, 20 Dec 2019 09:36:23 -0800 (PST)
+Received: from e107158-lin.cambridge.arm.com (e107158-lin.cambridge.arm.com [10.1.195.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D01A13F6CF;
+        Fri, 20 Dec 2019 09:36:21 -0800 (PST)
+Date:   Fri, 20 Dec 2019 17:36:19 +0000
+From:   Qais Yousef <qais.yousef@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched: rt: Make RT capacity aware
+Message-ID: <20191220173619.rf4riiayfrcqqo3o@e107158-lin.cambridge.arm.com>
+References: <20191009104611.15363-1-qais.yousef@arm.com>
+ <20191028143749.GE4114@hirez.programming.kicks-ass.net>
+ <20191028140147.036a0001@grimm.local.home>
+ <20191028205034.GL4643@worktop.programming.kicks-ass.net>
+ <20191220160149.fj5gdkaxm763fhfl@e107158-lin.cambridge.arm.com>
+ <20191220171806.GQ2827@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20191220164358.177202-1-shakeelb@google.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20191220171806.GQ2827@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shakeel,
-
-On 12/20/2019 8:43 AM, Shakeel Butt wrote:
-> The set_cache_qos_cfg() is leaking memory when the given level is not
-> RDT_RESOURCE_L3 or RDT_RESOURCE_L2. However at the moment, this function
-> is called with only valid levels but to make it more robust and future
-> proof, we should be handling the error path gracefully.
+On 12/20/19 18:18, Peter Zijlstra wrote:
+> On Fri, Dec 20, 2019 at 04:01:49PM +0000, Qais Yousef wrote:
+> > On 10/28/19 21:50, Peter Zijlstra wrote:
+> > > On Mon, Oct 28, 2019 at 02:01:47PM -0400, Steven Rostedt wrote:
+> > > > On Mon, 28 Oct 2019 15:37:49 +0100
+> > > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > > 
+> > > > > Works for me; Steve you OK with this?
+> > > > 
+> > > > Nothing against it, but I want to take a deeper look before we accept
+> > > > it. Are you OK in waiting a week? I'm currently at Open Source Summit
+> > > > and still have two more talks to write (giving them Thursday). I wont
+> > > > have time to look till next week.
+> > > 
+> > > Sure, I'll keep it in my queue, but will make sure it doesn't hit -tip
+> > > until you've had time.
+> > 
+> > Reviewers are happy with this now. It'd be nice if you can pick it up again for
+> > the next round to -tip.
+> > 
 > 
-> Fixes: 99adde9b370de ("x86/intel_rdt: Enable L2 CDP in MSR IA32_L2_QOS_CFG")
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> Acked-by: Fenghua Yu <fenghua.yu@intel.com>
-> ---
-> Changes since v1:
-> - Updated the commit message
+> Sorry, I missed Steve's and Dietmar's replies. It should shorty appear
+> in queue.git and I'll try and push to -tip over the weekend (provided
+> the robots don't come up with something fishy).
 
-Thank you.
+No worries, thanks! It missed the 5.5 merge window anyway.
 
-Acked-by: Reinette Chatre <reinette.chatre@intel.com>
+We had 2 reports by the buildbot last time, luckily I kept the fixups at the
+top of my local branch.
 
-Reinette
+Happy to apply locally again or prefer I send v3?
+
+Cheers
+
+---
+
+diff --git a/kernel/sched/cpupri.c b/kernel/sched/cpupri.c
+index 799791c01d60..bdfb802d4c12 100644
+--- a/kernel/sched/cpupri.c
++++ b/kernel/sched/cpupri.c
+@@ -46,6 +46,8 @@ static int convert_prio(int prio)
+  * @cp: The cpupri context
+  * @p: The task
+  * @lowest_mask: A mask to fill in with selected CPUs (or NULL)
++ * @fitness_fn: A pointer to a function to do custom checks whether the CPU
++ *             fits a specific criteria so that we only return those CPUs.
+  *
+  * Note: This function returns the recommended CPUs as calculated during the
+  * current invocation.  By the time the call returns, the CPUs may have in
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 3a68054e15b3..6afecb5557db 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -452,7 +452,7 @@ static inline int on_rt_rq(struct sched_rt_entity *rt_se)
+  * Note that uclamp_min will be clamped to uclamp_max if uclamp_min
+  * > uclamp_max.
+  */
+-inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
++static inline bool rt_task_fits_capacity(struct task_struct *p, int cpu)
+ {
+        unsigned int min_cap;
+        unsigned int max_cap;
+
