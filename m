@@ -2,72 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D2112784B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C733D12784F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:36:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLTJf1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:35:27 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52180 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727205AbfLTJf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:35:27 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7D9E1552C1D1377195F9;
-        Fri, 20 Dec 2019 17:35:21 +0800 (CST)
-Received: from linux-lmwb.huawei.com (10.175.103.112) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 20 Dec 2019 17:35:19 +0800
-From:   Ma Feng <mafeng.ma@huawei.com>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/amdgpu: Remove unneeded variable 'ret' in navi10_ih.c
-Date:   Fri, 20 Dec 2019 17:36:08 +0800
-Message-ID: <1576834568-82874-1-git-send-email-mafeng.ma@huawei.com>
-X-Mailer: git-send-email 2.6.2
+        id S1727403AbfLTJg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:36:28 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55170 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfLTJg1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:36:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=IeC3Wh4lNy11h5SgeP1/xOYlLb3Jw6kDXhcV/C+ENkU=; b=FzuMgYO0pde3xh1++9b24OYgG
+        LCeSCwVdXvQF3MKcL5fdI4Q9y6s0yuwPArFJb0716ETxmW7FgnuBZ3K0VUcTZVqkfyE9xHK+ovcT/
+        zw2rPT1YVc+rmhJfj/2GuH+W8nlgLoABVxxiM3WFh6mXslAz3aC8ghImCxCwOnXJMWISdSnsq3hUi
+        4ev4QSQ3nSftSsqTebVPslge2m9gIK9L3VkFRtxsRMoOVTFquoL/wi5CmaNXt0Gto9+OZzLydwy4k
+        5m584NgatcPfdFYDbnSKhZUnrjUBRedMqNCvdf5tDjwq+hEHeHTF/aXG44S17rhatarrnC/3Q0Ulc
+        KyAbwUjKA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iiEhi-0000IZ-R4; Fri, 20 Dec 2019 09:36:15 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9FFDC3007F2;
+        Fri, 20 Dec 2019 10:34:49 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8CAD82B4061AD; Fri, 20 Dec 2019 10:36:13 +0100 (CET)
+Date:   Fri, 20 Dec 2019 10:36:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephane Eranian <eranian@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 2/9] perf/core: Add PERF_SAMPLE_CGROUP feature
+Message-ID: <20191220093613.GD2844@hirez.programming.kicks-ass.net>
+References: <20191220043253.3278951-1-namhyung@kernel.org>
+ <20191220043253.3278951-3-namhyung@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.103.112]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191220043253.3278951-3-namhyung@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes coccicheck warning:
+On Fri, Dec 20, 2019 at 01:32:46PM +0900, Namhyung Kim wrote:
+> The PERF_SAMPLE_CGROUP bit is to save (perf_event) cgroup information
+> in the sample.  It will add a 64-bit id to identify current cgroup and
+> it's the file handle in the cgroup file system.  Userspace should use
+> this information with PERF_RECORD_CGROUP event to match which cgroup
+> it belongs.
+> 
+> I put it before PERF_SAMPLE_AUX for simplicity since it just needs a
+> 64-bit word.  But if we want bigger samples, I can work on that
+> direction too.
+> 
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Li Zefan <lizefan@huawei.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
 
-drivers/gpu/drm/amd/amdgpu/navi10_ih.c:113:5-8: Unneeded variable: "ret". Return "0" on line 182
+> @@ -6895,6 +6901,18 @@ void perf_prepare_sample(struct perf_event_header *header,
+>  	if (sample_type & PERF_SAMPLE_PHYS_ADDR)
+>  		data->phys_addr = perf_virt_to_phys(data->addr);
+>  
+> +	if (sample_type & PERF_SAMPLE_CGROUP) {
+> +		u64 cgrp_id = 0;
+> +#ifdef CONFIG_CGROUP_PERF
+> +		struct cgroup *cgrp;
+> +
+> +		/* protected by RCU */
+> +		cgrp = task_css_check(current, perf_event_cgrp_id, 1)->cgroup;
+> +		cgrp_id = cgroup_id(cgrp);
+> +#endif
+> +		data->cgroup = cgrp_id;
+> +	}
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
----
- drivers/gpu/drm/amd/amdgpu/navi10_ih.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/navi10_ih.c b/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-index 9af7356..f737ce4 100644
---- a/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-+++ b/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-@@ -110,7 +110,6 @@ static uint32_t navi10_ih_rb_cntl(struct amdgpu_ih_ring *ih, uint32_t ih_rb_cntl
- static int navi10_ih_irq_init(struct amdgpu_device *adev)
- {
- 	struct amdgpu_ih_ring *ih = &adev->irq.ih;
--	int ret = 0;
- 	u32 ih_rb_cntl, ih_doorbell_rtpr, ih_chicken;
- 	u32 tmp;
-
-@@ -179,7 +178,7 @@ static int navi10_ih_irq_init(struct amdgpu_device *adev)
- 	/* enable interrupts */
- 	navi10_ih_enable_interrupts(adev);
-
--	return ret;
-+	return 0;
- }
-
- /**
---
-2.6.2
-
+Would it make more sense to refuse SAMPLE_CGROUP if !CGROUP_PERF?
