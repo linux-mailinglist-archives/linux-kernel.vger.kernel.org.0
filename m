@@ -2,70 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A55D9127E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:42:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4B6B127E4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:42:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfLTOja (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:39:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:39186 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727525AbfLTOj0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:39:26 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 16D27ADFE;
-        Fri, 20 Dec 2019 14:39:24 +0000 (UTC)
-Date:   Fri, 20 Dec 2019 15:39:22 +0100
-From:   Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] scsi: blacklist: add VMware ESXi cdrom - broken tray
- emulation
-Message-ID: <20191220143922.GM4113@kitsune.suse.cz>
-References: <20191217180840.9414-1-msuchanek@suse.de>
- <yq1bls6h9ir.fsf@oracle.com>
- <20191219143422.GJ4113@kitsune.suse.cz>
- <yq1pngjc2pr.fsf@oracle.com>
+        id S1727437AbfLTOmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:42:06 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:33835 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbfLTOmF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:42:05 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id 995B123D1F;
+        Fri, 20 Dec 2019 15:42:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1576852922;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=26uu/iYvQFOJAnS0060bLZ77XfkUo39xWpFGhKD5fKs=;
+        b=NlxVAmZmUO38pfDyNXoynkyFDgU1V0eXyf1nIOlEk9kdTStG9NyOotZfMEhNR8s93LF1hE
+        pyLvfMKhWEqp29Xk7ecYyJBg3IwOBjOcMkSEeGoDuYXURcFQB2EDwpr2HRb5aWvhU1F/4y
+        1P4YpQn5q+kezks5d/mGVM4kQjvCnG4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yq1pngjc2pr.fsf@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 20 Dec 2019 15:42:02 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Wen He <wen.he_1@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Leo Li <leoyang.li@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [EXT] Re: [v11 2/2] clk: ls1028a: Add clock driver for Display
+ output interface
+In-Reply-To: <DB7PR04MB519563398D95F64E44E795CEE2500@DB7PR04MB5195.eurprd04.prod.outlook.com>
+References: <20191205072653.34701-1-wen.he_1@nxp.com>
+ <20191205072653.34701-2-wen.he_1@nxp.com>
+ <20191212221817.B7FF1206DA@mail.kernel.org>
+ <F2C21019-79F4-450F-A575-9621E5747C4E@walle.cc>
+ <20191216175543.F2C60206B7@mail.kernel.org>
+ <DB7PR04MB519563398D95F64E44E795CEE2500@DB7PR04MB5195.eurprd04.prod.outlook.com>
+Message-ID: <289c144119601032f701a4560ca1902a@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: +
+X-Spam-Level: *
+X-Rspamd-Server: web
+X-Spam-Status: No, score=1.40
+X-Spam-Score: 1.40
+X-Rspamd-Queue-Id: 995B123D1F
+X-Spamd-Result: default: False [1.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[9];
+         NEURAL_HAM(-0.00)[-0.262];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 06:31:12PM -0500, Martin K. Petersen wrote:
+Am 2019-12-17 08:08, schrieb Wen He:
+>> -----Original Message-----
+>> From: Stephen Boyd <sboyd@kernel.org>
+>> Sent: 2019年12月17日 1:56
+>> To: Leo Li <leoyang.li@nxp.com>; Mark Rutland <mark.rutland@arm.com>;
+>> Michael Turquette <mturquette@baylibre.com>; Michael Walle
+>> <michael@walle.cc>; Rob Herring <robh+dt@kernel.org>; Wen He
+>> <wen.he_1@nxp.com>; devicetree@vger.kernel.org; 
+>> linux-clk@vger.kernel.org;
+>> linux-kernel@vger.kernel.org
+>> Subject: [EXT] Re: [v11 2/2] clk: ls1028a: Add clock driver for 
+>> Display output
+>> interface
+>> 
+>> Caution: EXT Email
+>> 
+>> Quoting Michael Walle (2019-12-12 16:06:16)
+>> > Am 12. Dezember 2019 23:18:16 MEZ schrieb Stephen Boyd
+>> <sboyd@kernel.org>:
+>> > >Quoting Wen He (2019-12-04 23:26:53)
+>> > >> Add clock driver for QorIQ LS1028A Display output interfaces(LCD,
+>> > >DPHY),
+>> > >> as implemented in TSMC CLN28HPM PLL, this PLL supports the
+>> > >programmable
+>> > >> integer division and range of the display output pixel clock's
+>> > >27-594MHz.
+>> > >>
+>> > >> Signed-off-by: Wen He <wen.he_1@nxp.com>
+>> > >> Signed-off-by: Michael Walle <michael@walle.cc>
+>> > >
+>> > >Is Michael the author? SoB chain is backwards here.
+>> >
+>> > the original driver was from Wen. I've just supplied some code and the
+>> > vco frequency stuff. so its basically a sob of us both.
+>> >
+>> > -michael
+>> 
+>> Ok. That's a Co-developed-by: tag then. Thanks for letting us know.
 > 
-> Michal,
-> 
-> >> Please don't introduce a blist flag to work around deficiencies in the
-> >> matching interface. I suggest you tweak the matching functions so they
-> >> handle a NULL vendor string correctly.
-> >
-> > I don't think that will work with the interface for dynamically adding
-> > entries through sysfs.
-> 
-> Please make it work :)
-> 
-> There's nothing conceptually wrong with being able to do:
-> 
->         echo ":Model:Flags" > /proc/scsi/device_info
-> 
-> We keep running into issues where the same device needs to be listed
-> many times because it gets branded by different vendors.
-> 
-Is there any description of what the format is supposed to be?
+> The v12 version patch was sent out.
+> Does need I change the author sign to below?
 
-From the current code it looks like comma separated list of blacklist
-entries that may be optionally quoted in some way.
+I guess you mean the MODULE_AUTHOR()? I don't care if you add me or not,
+so do as you like.
 
-The quoting is basically ignored but it is not clear if the inidividual
-entries are supposed to be quoted or the whole thing.
+> Co-developed-by: Wen He <wen.he_1@nxp.com>
+> Signed-off-by: Wen He <wen.he_1@nxp.com>
+> Co-developed-by: Michael Walle <michael.@walle.cc>
+> Signed-off-by: Michael Walle <michael.@walle.cc>
+> Signed-off-by: Wen He <wen.he_1@nxp.com>
 
-Thanks
+Judging by the other Co-developed-by: lines it should be
 
-Michal
+Co-developed-by: Michael Walle <michael.@walle.cc>
+Signed-off-by: Michael Walle <michael.@walle.cc>
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+
+-michael
