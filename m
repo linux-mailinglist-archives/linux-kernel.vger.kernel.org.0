@@ -2,149 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A21C1274A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 05:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14DFD1274CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 05:48:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfLTEbN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 23:31:13 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43652 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfLTEbN (ORCPT
+        id S1727262AbfLTEsQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 23:48:16 -0500
+Received: from sender4-op-o11.zoho.com ([136.143.188.11]:17102 "EHLO
+        sender4-op-o11.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbfLTEsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 23:31:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id a13so8579229ljm.10;
-        Thu, 19 Dec 2019 20:31:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fVajutgU4AewzvJs6rRQbIrAoLOoOEBhPs/ZIUmI/WI=;
-        b=N34TX41KkQ2aIKXv0ieUAt1On2i09BoudreHVP5xBn3DYfcijrJKR3tF1kwIC+w59P
-         iGdTCAUy4ePy741kZvD/fIl5Wc9MZZLeOdTo+auOdALGWm4FvMco0vieil2J03adNMhs
-         Y5Jua19qrP0P3Ywi+RYmI168KGk+NcVIHaNrjWAeVel/QP07OBkNfGWCdGG9Fp1BDTrB
-         KWTK38LLM8G3eEIZAkGFkP5LHHECrsf67uFN2a/MHtt4ILq0pgw93DuvM03CKkj7ZyDA
-         s5fsJEF3Q2BP2BL409xCcR/vXsnfGCDnx5geVDPmVp0JySKfEsF/CyS59DU8Vn0K0cfZ
-         hApg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fVajutgU4AewzvJs6rRQbIrAoLOoOEBhPs/ZIUmI/WI=;
-        b=stsLll9pZ3bVj4kykKFlnYPvLtJcA8VNBcSJPy+IZNSaJl2rGEfnEeIi4reU5xYbHz
-         jCABoCMH5KiS6cwZp9jV6OQ/MHy4WILUlqpEi2dF5tUh+Vzz0EhjH8RRFBKUvUac6xED
-         RcZbBF8IEKbQRveYMytWUid/xJbtCPClN0RJGKjhIErKHqk2cf7QZ88upKe25sxGa8kQ
-         9ErgEfa5aH1swMElz2GLKpn63jFxnv9zKnu8+epJt98a9eitNGcDfUSxrowpm5dbaAsV
-         o9LcCNnFLfHafNklEE62luQQn1V9b6JwS55+GEYRtohqN3AYweIhvtJkfN6v9LXAkmuF
-         cXzw==
-X-Gm-Message-State: APjAAAVbTXTTmuKrKzY9yEHE4sZIo965c+aUrr1YeGLK3z6ytbnATbyT
-        b75+1AilQtWWpcIu6/WvdQhUTQ5s
-X-Google-Smtp-Source: APXvYqwvoC56XGHrrnK9Of2G6/T/tDdXAkvpzoJVH6+G6hYRKOW19PKn373vR4bt92ZUAWqXOPDb7g==
-X-Received: by 2002:a2e:824a:: with SMTP id j10mr8488846ljh.209.1576816270045;
-        Thu, 19 Dec 2019 20:31:10 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id d9sm3623012lja.73.2019.12.19.20.31.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 20:31:09 -0800 (PST)
-Subject: Re: [PATCH v2 10/10] usb: chipidea: tegra: Add USB_TEGRA_PHY module
- to driver's dependencies
-To:     Peter Chen <peter.chen@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-11-digetx@gmail.com>
- <20191220035650.GC19921@b29397-desktop>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <fb7dee6e-e645-fe45-126c-c5f1e280bc26@gmail.com>
-Date:   Fri, 20 Dec 2019 07:31:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Thu, 19 Dec 2019 23:48:16 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1576817274; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=Uhi6saMEWIF0W4SD6a/cVY+ZqyC7nFUsZkDlAhSFmL+10LBQStxb8XuQz8o7RldZP1hrzR2lniJR3Ih+6ZxkS9QoDOLPAvLxfHPcyG/Yj1bX/WvC9M92HyhVfxGImiLJ+pRt+uWDpQKZpRanDySa9lFvOphTivFJPikdzFDokoM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1576817274; h=Content-Type:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=WqQYmIHqakoWmZLNCLRr/lqEXOvRhny8BmoO3hRYEBE=; 
+        b=Bx4erN8TJRQnJjaS/dVim0hWZiyITIUfcb1Qm9i3cbmmFnFVb43Rw5MZPzYgEWHY6fcDFgnXPoBgiCkdM1l1OoRTB2V966Nejs6bX7/v5xSzITFigmx9OMvinqslxg/Dyus9hjcYiqwS8BG44llIaNpChzHEOPOIGUhinvn6aIQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=dlrobertson.com;
+        spf=pass  smtp.mailfrom=dan@dlrobertson.com;
+        dmarc=pass header.from=<dan@dlrobertson.com> header.from=<dan@dlrobertson.com>
+Received: from nessie (pool-173-73-58-202.washdc.fios.verizon.net [173.73.58.202]) by mx.zohomail.com
+        with SMTPS id 1576817271424413.5772173135234; Thu, 19 Dec 2019 20:47:51 -0800 (PST)
+Date:   Fri, 20 Dec 2019 04:32:20 +0000
+From:   Dan Robertson <dan@dlrobertson.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7 2/3] iio: (bma400) add driver for the BMA400
+Message-ID: <20191220043220.GA16415@nessie>
+References: <20191219041039.23396-1-dan@dlrobertson.com>
+ <20191219041039.23396-3-dan@dlrobertson.com>
+ <CAHp75VdVmfAi5hSp23Gn8nm6LmX-Mr5Tnxcbus90DrRL+gVFRA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191220035650.GC19921@b29397-desktop>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHp75VdVmfAi5hSp23Gn8nm6LmX-Mr5Tnxcbus90DrRL+gVFRA@mail.gmail.com>
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-20.12.2019 06:56, Peter Chen пишет:
-> On 19-12-20 04:52:38, Dmitry Osipenko wrote:
->> Now, when ci_hdrc_tegra kernel module is loaded, the phy_tegra_usb module
->> is loaded too regardless of kernel's configuration. Previously this
->> problem was masked because Tegra's EHCI driver is usually enabled in
->> kernel's config and thus PHY driver was getting loaded because of it, but
->> now I was making some more thorough testing and noticed that PHY's module
->> isn't getting auto-loaded without the host driver.
->>
->> Note that ChipIdea's driver doesn't use any of the exported functions of
->> phy_tegra_usb module and thus the module needs to be requested explicitly.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/usb/chipidea/Kconfig         | 1 +
->>  drivers/usb/chipidea/ci_hdrc_tegra.c | 6 ++++++
->>  2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/usb/chipidea/Kconfig b/drivers/usb/chipidea/Kconfig
->> index ae850b3fddf2..d53db520e209 100644
->> --- a/drivers/usb/chipidea/Kconfig
->> +++ b/drivers/usb/chipidea/Kconfig
->> @@ -7,6 +7,7 @@ config USB_CHIPIDEA
->>  	select RESET_CONTROLLER
->>  	select USB_ULPI_BUS
->>  	select USB_ROLE_SWITCH
->> +	select USB_TEGRA_PHY if ARCH_TEGRA
->>  	help
->>  	  Say Y here if your system has a dual role high speed USB
->>  	  controller based on ChipIdea silicon IP. It supports:
->> diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
->> index 7455df0ede49..8bc11100245d 100644
->> --- a/drivers/usb/chipidea/ci_hdrc_tegra.c
->> +++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
->> @@ -53,6 +53,12 @@ static int tegra_udc_probe(struct platform_device *pdev)
->>  	struct tegra_udc *udc;
->>  	int err;
->>  
->> +	if (IS_MODULE(CONFIG_USB_TEGRA_PHY)) {
->> +		err = request_module("phy_tegra_usb");
->> +		if (err)
->> +			return err;
->> +	}
->> +
+On Thu, Dec 19, 2019 at 01:02:28PM +0200, Andy Shevchenko wrote:
+> On Thu, Dec 19, 2019 at 6:27 AM Dan Robertson <dan@dlrobertson.com> wrote:
+> > Add a IIO driver for the Bosch BMA400 3-axes ultra-low power accelerometer.
+> > The driver supports reading from the acceleration and temperature
+> > registers. The driver also supports reading and configuring the output data
+> > rate, oversampling ratio, and scale.
 > 
-> Why you do this dependency, if this controller driver can't
-> get USB PHY, it should return error. What's the return value
-> after calling below:
+> ...
 > 
-> 	udc->phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
+> > +static int bma400_set_accel_output_data_rate(struct bma400_data *data,
+> > +                                            int hz, int uhz)
+> > +{
+> > +       unsigned int idx;
+> > +       unsigned int odr;
+> > +       unsigned int val;
+> > +       int ret;
+> > +
+> > +       if (hz >= BMA400_ACC_ODR_MIN_WHOLE_HZ) {
+> > +               if (uhz || hz % BMA400_ACC_ODR_MIN_WHOLE_HZ)
+> > +                       return -EINVAL;
+> > +
+> > +               val = hz / BMA400_ACC_ODR_MIN_WHOLE_HZ;
+> 
+> Again, AFAICS division may be avoided in both cases (% and / above)
+> because of is_power_of_2() check below.
+> Can you revisit this?
 
-It returns -EPROBE_DEFER when phy_tegra_usb isn't loaded.
+Yeah I can update this in the next patchset, but I don't know if it is much more
+readable this way.
 
-So if you'll do:
+> > +               if (!is_power_of_2(val))
+> > +                       return -EINVAL;
+> > +
+> > +               idx = __ffs(val) + BMA400_ACC_ODR_MIN_RAW + 1;
+> > +       } else if (hz == BMA400_ACC_ODR_MIN_HZ && uhz == 500000) {
+> > +               idx = BMA400_ACC_ODR_MIN_RAW;
+> > +       } else {
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       ret = regmap_read(data->regmap, BMA400_ACC_CONFIG1_REG, &val);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* preserve the range and normal mode osr */
+> 
+> > +       odr = idx | (~BMA400_ACC_ODR_MASK & val);
+> 
+> Yoda style?
 
-# rmmod ci_hdrc_tegra; rmmod ci_hdrc; rmmod phy_tegra_usb;
-# modprobe ci_hdrc_tegra
-# lsmod
-Module                  Size  Used by
-ci_hdrc_tegra          16384  0
-ci_hdrc                45056  1 ci_hdrc_tegra
+Fixed in v8.
 
-After this patch:
+> > +
+> > +       ret = regmap_write(data->regmap, BMA400_ACC_CONFIG1_REG, odr);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       bma400_output_data_rate_from_raw(idx, &data->sample_freq.hz,
+> > +                                        &data->sample_freq.uhz);
+> > +       return 0;
+> > +}
+> ...
+> 
+> > +int bma400_accel_scale_to_raw(struct bma400_data *data, unsigned int val)
+> > +{
+> > +       int scale = val / BMA400_SCALE_MIN;
+> > +       int raw;
+> > +
+> > +       if (scale == 0)
+> > +               return -EINVAL;
+> > +
+> > +       raw = __ffs(scale);
+> > +
+> > +       if (val % BMA400_SCALE_MIN || !is_power_of_2(scale))
+> > +               return -EINVAL;
+> 
+> Ditto.
+> 
+> > +
+> > +       return raw;
+> > +}
+> 
+> ...
+> 
+> > +out:
+> 
+> Make a little sense. Why not return directly?
 
-# rmmod ci_hdrc_tegra; rmmod ci_hdrc; rmmod phy_tegra_usb;
-# modprobe ci_hdrc_tegra
-# lsmod
-Module                  Size  Used by
-Module                  Size  Used by
-phy_tegra_usb          20480  1
-ci_hdrc_tegra          16384  0
-ci_hdrc                45056  1 ci_hdrc_tegra
+Mostly setup for the next patch in this patchset.
+
+> > +       return ret;
+> 
+> ...
+> 
+> > +       ret = bma400_init(data);
+> > +       if (ret < 0)
+> 
+> May it be positive value returned?
+
+Fixed in v8.
+
+Cheers,
+
+ - Dan
+
