@@ -2,232 +2,254 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E462B127D6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:37:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09C60127E48
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:42:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728269AbfLTOdu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Dec 2019 09:33:50 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55294 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbfLTOds (ORCPT
+        id S1727687AbfLTOkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:40:23 -0500
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:34868 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727407AbfLTOkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:33:48 -0500
-Received: by mail-wm1-f68.google.com with SMTP id b19so9141800wmj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:33:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:user-agent:in-reply-to:references
-         :mime-version:content-transfer-encoding:subject:to:cc:from
-         :message-id;
-        bh=V6peUYVw+8q1XalOpqZ1ayFyqbTEFtfcEYX2FP9pROo=;
-        b=DGIqFWbneDiWc+SMGgiTvURuXdwebez9c2sTP56btp/Q2J4E6Jau9/AXQyFyw/2Ajl
-         uuwmXdsgW/9nxENozyheDMw9qtg7EyKkMyOGQ52zIs7GM1XKAUpBelADn+Icw7x3cwzD
-         akO2wnfHkpd+E9gQKCDa0gLWGVD6gDX/2ZM2ksQqHXvzFP3f54SxOMBYT18CtGSt9YHy
-         GKBfZRrCRZd1DQOLg/fx6ufo/x4bsFT3oTglgzHTD1aHJ1DFwzqG4q8TtyBLkc3UosTO
-         fbMmYhKsYZqaaZZLXQ/112uf6iwVupY/ImOyq7+re0EQI8cPN0rbWTjXns8VL/oZftGQ
-         8eaA==
-X-Gm-Message-State: APjAAAVrf8vq4JCXYKNyggCwUsfP94uadnMKA3xOlqwLcsKG+I5ardQJ
-        z60TIYY3O6cgxRmWh8Qd48Mtiw==
-X-Google-Smtp-Source: APXvYqxVS8YAU3RLQWiNFWWhq3mf++gLHMleVdt7qSTwX9NrqFbPr8TqBrxxQzLMRWsCwz0CaURhTQ==
-X-Received: by 2002:a7b:c851:: with SMTP id c17mr17423248wml.71.1576852426193;
-        Fri, 20 Dec 2019 06:33:46 -0800 (PST)
-Received: from [10.140.78.238] ([46.114.38.238])
-        by smtp.gmail.com with ESMTPSA id l15sm9907506wrv.39.2019.12.20.06.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 06:33:43 -0800 (PST)
-Date:   Fri, 20 Dec 2019 15:33:39 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20191220140328.20907-2-cyphar@cyphar.com>
-References: <20191220140328.20907-1-cyphar@cyphar.com> <20191220140328.20907-2-cyphar@cyphar.com>
+        Fri, 20 Dec 2019 09:40:23 -0500
+X-Greylist: delayed 379 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Dec 2019 09:40:21 EST
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 84F9D3F36C;
+        Fri, 20 Dec 2019 15:33:59 +0100 (CET)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=u5oB4Mzu;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 4iaXAKwHxOaC; Fri, 20 Dec 2019 15:33:58 +0100 (CET)
+Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
+        (Authenticated sender: mb274189)
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id F07543F363;
+        Fri, 20 Dec 2019 15:33:57 +0100 (CET)
+Received: by flawful.org (Postfix, from userid 1001)
+        id 7C724778; Fri, 20 Dec 2019 15:33:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
+        t=1576852436; bh=uIwpsC9CqzY2wzmFL/L7G29tuR1CW3dSiiv7KHs724c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=u5oB4Mzu1xVtBR0eepkJZ8Ots2kLODostidNmYqaMn/1ESctkrTfsnWtfqMMC/xDv
+         oFORI+O8DkK+muqQmsN6M4VPflFYMJpviD8fcowOM8Fm0rjNqtCfgAnGB6g6Ww0goA
+         at7lAqcKUFmsqUxKlg7lGVthKl5LRxWhC4CSJl34=
+Date:   Fri, 20 Dec 2019 15:33:56 +0100
+From:   Niklas Cassel <nks@flawful.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
+        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/5] dt-bindings: power: avs: Add support for CPR
+ (Core Power Reduction)
+Message-ID: <20191220143356.cprp55jmuhtcx7wr@flawful.org>
+References: <20191129213917.1301110-1-niklas.cassel@linaro.org>
+ <20191129213917.1301110-2-niklas.cassel@linaro.org>
+ <121319954.uyNvbQYpoT@kreacher>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v2 1/2] openat2: drop open_how->__padding field
-To:     containers@lists.linux-foundation.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Shuah Khan <shuah@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-CC:     libc-alpha@sourceware.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dev@opencontainers.org,
-        David Laight <david.laight@aculab.com>,
-        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-Message-ID: <88F5533A-9C91-41D1-A2E6-3622FCEEEDB1@ubuntu.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <121319954.uyNvbQYpoT@kreacher>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Cc Arnd for struct layout sanity checking]
+On Fri, Dec 20, 2019 at 10:31:53AM +0100, Rafael J. Wysocki wrote:
+> On Friday, November 29, 2019 10:39:11 PM CET Niklas Cassel wrote:
+> > Add DT bindings to describe the CPR HW found on certain Qualcomm SoCs.
+> > 
+> > Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > ---
+> > Changes since v6:
+> > -Picked up Bjorn's and Ulf's Reviewed-by.
+> > 
+> >  .../bindings/power/avs/qcom,cpr.txt           | 130 ++++++++++++++++++
+> >  1 file changed, 130 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt b/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
+> > new file mode 100644
+> > index 000000000000..ab0d5ebbad4e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
+> > @@ -0,0 +1,130 @@
+> > +QCOM CPR (Core Power Reduction)
+> > +
+> > +CPR (Core Power Reduction) is a technology to reduce core power on a CPU
+> > +or other device. Each OPP of a device corresponds to a "corner" that has
+> > +a range of valid voltages for a particular frequency. While the device is
+> > +running at a particular frequency, CPR monitors dynamic factors such as
+> > +temperature, etc. and suggests adjustments to the voltage to save power
+> > +and meet silicon characteristic requirements.
+> > +
+> > +- compatible:
+> > +	Usage: required
+> > +	Value type: <string>
+> > +	Definition: should be "qcom,qcs404-cpr", "qcom,cpr" for qcs404
+> > +
+> > +- reg:
+> > +	Usage: required
+> > +	Value type: <prop-encoded-array>
+> > +	Definition: base address and size of the rbcpr register region
+> > +
+> > +- interrupts:
+> > +	Usage: required
+> > +	Value type: <prop-encoded-array>
+> > +	Definition: should specify the CPR interrupt
+> > +
+> > +- clocks:
+> > +	Usage: required
+> > +	Value type: <prop-encoded-array>
+> > +	Definition: phandle to the reference clock
+> > +
+> > +- clock-names:
+> > +	Usage: required
+> > +	Value type: <stringlist>
+> > +	Definition: must be "ref"
+> > +
+> > +- vdd-apc-supply:
+> > +	Usage: required
+> > +	Value type: <phandle>
+> > +	Definition: phandle to the vdd-apc-supply regulator
+> > +
+> > +- #power-domain-cells:
+> > +	Usage: required
+> > +	Value type: <u32>
+> > +	Definition: should be 0
+> > +
+> > +- operating-points-v2:
+> > +	Usage: required
+> > +	Value type: <phandle>
+> > +	Definition: A phandle to the OPP table containing the
+> > +		    performance states supported by the CPR
+> > +		    power domain
+> > +
+> > +- acc-syscon:
+> > +	Usage: optional
+> > +	Value type: <phandle>
+> > +	Definition: phandle to syscon for writing ACC settings
+> > +
+> > +- nvmem-cells:
+> > +	Usage: required
+> > +	Value type: <phandle>
+> > +	Definition: phandle to nvmem cells containing the data
+> > +		    that makes up a fuse corner, for each fuse corner.
+> > +		    As well as the CPR fuse revision.
+> > +
+> > +- nvmem-cell-names:
+> > +	Usage: required
+> > +	Value type: <stringlist>
+> > +	Definition: should be "cpr_quotient_offset1", "cpr_quotient_offset2",
+> > +		    "cpr_quotient_offset3", "cpr_init_voltage1",
+> > +		    "cpr_init_voltage2", "cpr_init_voltage3", "cpr_quotient1",
+> > +		    "cpr_quotient2", "cpr_quotient3", "cpr_ring_osc1",
+> > +		    "cpr_ring_osc2", "cpr_ring_osc3", "cpr_fuse_revision"
+> > +		    for qcs404.
+> > +
+> > +Example:
+> > +
+> > +	cpr_opp_table: cpr-opp-table {
+> > +		compatible = "operating-points-v2-qcom-level";
+> > +
+> > +		cpr_opp1: opp1 {
+> > +			opp-level = <1>;
+> > +			qcom,opp-fuse-level = <1>;
+> > +		};
+> > +		cpr_opp2: opp2 {
+> > +			opp-level = <2>;
+> > +			qcom,opp-fuse-level = <2>;
+> > +		};
+> > +		cpr_opp3: opp3 {
+> > +			opp-level = <3>;
+> > +			qcom,opp-fuse-level = <3>;
+> > +		};
+> > +	};
+> > +
+> > +	power-controller@b018000 {
+> > +		compatible = "qcom,qcs404-cpr", "qcom,cpr";
+> > +		reg = <0x0b018000 0x1000>;
+> > +		interrupts = <0 15 IRQ_TYPE_EDGE_RISING>;
+> > +		clocks = <&xo_board>;
+> > +		clock-names = "ref";
+> > +		vdd-apc-supply = <&pms405_s3>;
+> > +		#power-domain-cells = <0>;
+> > +		operating-points-v2 = <&cpr_opp_table>;
+> > +		acc-syscon = <&tcsr>;
+> > +
+> > +		nvmem-cells = <&cpr_efuse_quot_offset1>,
+> > +			<&cpr_efuse_quot_offset2>,
+> > +			<&cpr_efuse_quot_offset3>,
+> > +			<&cpr_efuse_init_voltage1>,
+> > +			<&cpr_efuse_init_voltage2>,
+> > +			<&cpr_efuse_init_voltage3>,
+> > +			<&cpr_efuse_quot1>,
+> > +			<&cpr_efuse_quot2>,
+> > +			<&cpr_efuse_quot3>,
+> > +			<&cpr_efuse_ring1>,
+> > +			<&cpr_efuse_ring2>,
+> > +			<&cpr_efuse_ring3>,
+> > +			<&cpr_efuse_revision>;
+> > +		nvmem-cell-names = "cpr_quotient_offset1",
+> > +			"cpr_quotient_offset2",
+> > +			"cpr_quotient_offset3",
+> > +			"cpr_init_voltage1",
+> > +			"cpr_init_voltage2",
+> > +			"cpr_init_voltage3",
+> > +			"cpr_quotient1",
+> > +			"cpr_quotient2",
+> > +			"cpr_quotient3",
+> > +			"cpr_ring_osc1",
+> > +			"cpr_ring_osc2",
+> > +			"cpr_ring_osc3",
+> > +			"cpr_fuse_revision";
+> > +	};
+> > 
+> 
+> I have queued up this one and the [2/5] for 5.6, but if you'd rather want them
+> to go in via a different patch, please let me know and I'll drop them.
+> 
 
-On December 20, 2019 3:03:27 PM GMT+01:00, Aleksa Sarai <cyphar@cyphar.com> wrote:
->The purpose of explicit padding was to allow us to use the space in the
->future (C provides no guarantee about the value of padding bytes and
->thus userspace could've provided garbage).
->
->However, the downside of explicit padding is that any extension we wish
->to add should fit the space exactly (otherwise we may end up with a u16
->which will never be used). In addition, the correct error to return for
->non-zero padding is not clear (-EINVAL doesn't imply "you're using an
->extension field unsupported by this kernel", but -E2BIG seems a bit odd
->if the structure size isn't different).
->
->The simplest solution is to just match the design of clone3(2) -- use
->u64s for all fields. The extra few-bytes cost of extra fields is not
->significant (it's unlikely configuration structs will ever be extremely
->large) and it allows for more flag space if necessary. There is also no
->need to align the u64s because we will not permit any padding in the
->structure.
->
->As openat2(2) is not yet in Linus's tree, we can iron out these minor
->warts before we commit to this as a stable ABI.
->
->Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
->Suggested-by: David Laight <david.laight@aculab.com>
->Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
->---
-> fs/open.c                                     |  2 --
-> include/uapi/linux/fcntl.h                    | 17 +++++++------
-> tools/testing/selftests/openat2/helpers.h     |  7 +++---
-> .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
-> 4 files changed, 19 insertions(+), 31 deletions(-)
->
->diff --git a/fs/open.c b/fs/open.c
->index 50a46501bcc9..8cdb2b675867 100644
->--- a/fs/open.c
->+++ b/fs/open.c
->@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct
->open_how *how,
-> 		return -EINVAL;
-> 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
-> 		return -EINVAL;
->-	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
->-		return -EINVAL;
-> 
-> 	/* Deal with the mode. */
-> 	if (WILL_CREATE(flags)) {
->diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
->index d886bdb585e4..5aaadfd79dd5 100644
->--- a/include/uapi/linux/fcntl.h
->+++ b/include/uapi/linux/fcntl.h
->@@ -101,22 +101,21 @@
-> #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-> 
-> /*
->- * Arguments for how openat2(2) should open the target path. If
->@resolve is
->- * zero, then openat2(2) operates very similarly to openat(2).
->+ * Arguments for how openat2(2) should open the target path. If only
->@flags and
->+ * @mode are non-zero, then openat2(2) operates very similarly to
->openat(2).
->  *
->- * However, unlike openat(2), unknown bits in @flags result in -EINVAL
->rather
->- * than being silently ignored. @mode must be zero unless one of
->{O_CREAT,
->- * O_TMPFILE} are set.
->+ * However, unlike openat(2), unknown or invalid bits in @flags result
->in
->+ * -EINVAL rather than being silently ignored. @mode must be zero
->unless one of
->+ *  {O_CREAT, O_TMPFILE} are set.
->  *
->  * @flags: O_* flags.
->  * @mode: O_CREAT/O_TMPFILE file mode.
->  * @resolve: RESOLVE_* flags.
->  */
-> struct open_how {
->-	__aligned_u64 flags;
->-	__u16 mode;
->-	__u16 __padding[3]; /* must be zeroed */
->-	__aligned_u64 resolve;
->+	__u64 flags;
->+	__u64 mode;
->+	__u64 resolve;
-> };
-> 
-> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
->diff --git a/tools/testing/selftests/openat2/helpers.h
->b/tools/testing/selftests/openat2/helpers.h
->index 43ca5ceab6e3..a6ea27344db2 100644
->--- a/tools/testing/selftests/openat2/helpers.h
->+++ b/tools/testing/selftests/openat2/helpers.h
->@@ -36,10 +36,9 @@
->  * @resolve: RESOLVE_* flags.
->  */
-> struct open_how {
->-	__aligned_u64 flags;
->-	__u16 mode;
->-	__u16 __padding[3]; /* must be zeroed */
->-	__aligned_u64 resolve;
->+	__u64 flags;
->+	__u64 mode;
->+	__u64 resolve;
-> };
-> 
-> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
->diff --git a/tools/testing/selftests/openat2/openat2_test.c
->b/tools/testing/selftests/openat2/openat2_test.c
->index 0b64fedc008b..b386367c606b 100644
->--- a/tools/testing/selftests/openat2/openat2_test.c
->+++ b/tools/testing/selftests/openat2/openat2_test.c
->@@ -40,7 +40,7 @@ struct struct_test {
-> 	int err;
-> };
-> 
->-#define NUM_OPENAT2_STRUCT_TESTS 10
->+#define NUM_OPENAT2_STRUCT_TESTS 7
-> #define NUM_OPENAT2_STRUCT_VARIATIONS 13
-> 
-> void test_openat2_struct(void)
->@@ -57,20 +57,6 @@ void test_openat2_struct(void)
-> 		  .arg.inner.flags = O_RDONLY,
-> 		  .size = sizeof(struct open_how_ext) },
-> 
->-		/* Normal struct with broken padding. */
->-		{ .name = "normal struct (non-zero padding[0])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-		{ .name = "normal struct (non-zero padding[1])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-		{ .name = "normal struct (non-zero padding[2])",
->-		  .arg.inner.flags = O_RDONLY,
->-		  .arg.inner.__padding = {0x00, 0x00, 0xef},
->-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
->-
-> 		/* TODO: Once expanded, check zero-padding. */
-> 
-> 		/* Smaller than version-0 struct. */
->@@ -169,7 +155,7 @@ struct flag_test {
-> 	int err;
-> };
-> 
->-#define NUM_OPENAT2_FLAG_TESTS 21
->+#define NUM_OPENAT2_FLAG_TESTS 23
-> 
-> void test_openat2_flags(void)
-> {
->@@ -214,9 +200,15 @@ void test_openat2_flags(void)
-> 		{ .name = "invalid how.mode and O_CREAT",
-> 		  .how.flags = O_CREAT,
-> 		  .how.mode = 0xFFFF, .err = -EINVAL },
->+		{ .name = "invalid (very large) how.mode and O_CREAT",
->+		  .how.flags = O_CREAT,
->+		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
-> 		{ .name = "invalid how.mode and O_TMPFILE",
-> 		  .how.flags = O_TMPFILE | O_RDWR,
-> 		  .how.mode = 0x1337, .err = -EINVAL },
->+		{ .name = "invalid (very large) how.mode and O_TMPFILE",
->+		  .how.flags = O_TMPFILE | O_RDWR,
->+		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
-> 
-> 		/* ->resolve must only contain RESOLVE_* flags. */
-> 		{ .name = "invalid how.resolve and O_RDONLY",
+Thanks a lot Rafael!
 
+I would very much prefer them to go via your tree.
+
+Unfortunately it seems like kbuild test robot
+found an incorrect printk format specifier in
+one of the debug prints.
+
+Line 838
+dev_dbg(dev, "efuse read(%s) = %x, bytes %ld\n", cname, *data, len);
+
+should be
+dev_dbg(dev, "efuse read(%s) = %x, bytes %zd\n", cname, *data, len);
+
+So %zd rather than %ld.
+
+This was obviously an error, but didn't show when
+compiling on arm64 or x86_64.
+
+Sorry for this inconvenience.
+
+Could you fix up the commit or do I need to do a respin?
+
+
+Kind regards,
+Niklas
