@@ -2,133 +2,266 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4982F1275FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 07:58:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5B8127605
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 08:00:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726428AbfLTG6v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 01:58:51 -0500
-Received: from mail-mw2nam12on2056.outbound.protection.outlook.com ([40.107.244.56]:6164
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725874AbfLTG6u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 01:58:50 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HOh6gcEyx0j6g80syGuZHh0+uQ29IVx3CGRcBADIPs7e+GDkptG7uW3xFB82y2UZ996zz8CvMI9kf1bUuvYTaG02XfkjWo3MgLfFfDdfLi5+cmyYcn6OvQZxlDlDtG5pV33Z0qnslrAutuG4j/nvNUj5bOWdxMC/KNq9yCRIYWZH5au7oTxE6E5/wYYlSqIJ8IyCr2gk5T94P2lDjWycsNitmcmvQbU1142QfzYGaOyzbJNmYhs42BRAfGup+/uJXiZrYaK1doXxEFlWDzUjaKMuun5Hi0+T5y2DeDPwU4Aj/oeHGh25OPG8/LtdnavGUekvlQbnOwnAZYNUwhWtBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4heOmA9Yh9glwYyw7jSt6o5ywg3XqMK2awkKp0hZSG0=;
- b=OPlou1IXNCy5jHrDjdhdCozyEdHmSFLUUWWFewTaoumtlDK+3NnKvm69nvL8Lo8g2Kv5u2Jq0Kps4YCQErW7ySGl5yExZ7NujfSC3V9LCzXgM48L/Irb3dGrFrewxEYOQOCAQPmP/p3hGwOyBqw1WUp7D1AIgO3GjqUh1s16ig+Epe2QbqRXM7GxHYgm4o12nf7A+sqN+ttG6z11P0xEku6dTE+5GAkpdOtUsr/2VRdSPdgcSTvb6bso2IENR88b8AL4LK9qgQFVqfsIBgucgiM1yNszsP5IVL3ET6ByzXurXIzprypdWVxzswfGnJWjd8Mi1XS56tCK7SiiqTyRiA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
+        id S1727211AbfLTHAG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 02:00:06 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42055 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfLTHAF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 02:00:05 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p9so3684796plk.9
+        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 23:00:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4heOmA9Yh9glwYyw7jSt6o5ywg3XqMK2awkKp0hZSG0=;
- b=Hfjeob8DyFJtmm87fF8AT8Ho4PeN+R6E8Pp6I2X+JPISFUHkz060mDt6dJEwblrIt5puMPfj39T0hteyiMRz2nBVuH58WCsED2dctm5okd13cBUQZwYR2B+TlrISacAQvURzmwiprphEFD449lw3CTUxtwLqBeHsIRK7dX+EpBY=
-Received: from SN4PR0201CA0045.namprd02.prod.outlook.com
- (2603:10b6:803:2e::31) by DM5PR02MB3306.namprd02.prod.outlook.com
- (2603:10b6:4:66::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.17; Fri, 20 Dec
- 2019 06:58:46 +0000
-Received: from CY1NAM02FT007.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::201) by SN4PR0201CA0045.outlook.office365.com
- (2603:10b6:803:2e::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.14 via Frontend
- Transport; Fri, 20 Dec 2019 06:58:46 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT007.mail.protection.outlook.com (10.152.75.5) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2559.14
- via Frontend Transport; Fri, 20 Dec 2019 06:58:45 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1iiCFJ-0007KK-CQ; Thu, 19 Dec 2019 22:58:45 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1iiCFE-0006Xj-9H; Thu, 19 Dec 2019 22:58:40 -0800
-Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBK6wboe032515;
-        Thu, 19 Dec 2019 22:58:37 -0800
-Received: from [10.140.6.6] (helo=xhdappanad40.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <srinivas.neeli@xilinx.com>)
-        id 1iiCFA-0006WQ-Gh; Thu, 19 Dec 2019 22:58:37 -0800
-From:   Srinivas Neeli <srinivas.neeli@xilinx.com>
-To:     linux@roeck-us.net, shubhraj@xilinx.com, sgoud@xilinx.com,
-        michal.simek@xilinx.com
-Cc:     wim@linux-watchdog.org, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org, git@xilinx.com,
-        Srinivas Neeli <srinivas.neeli@xilinx.com>
-Subject: [PATCH] watchdog: cadence: Skip printing pointer value
-Date:   Fri, 20 Dec 2019 12:28:16 +0530
-Message-Id: <1576825096-26605-1-git-send-email-srinivas.neeli@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(346002)(396003)(199004)(189003)(5660300002)(81166006)(44832011)(70586007)(356004)(36756003)(426003)(7696005)(6666004)(4744005)(26005)(2906002)(478600001)(70206006)(316002)(8936002)(2616005)(186003)(8676002)(107886003)(336012)(4326008)(81156014)(6636002)(9786002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB3306;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=fC3JoLkbnwXvlpi7t/a7WSOC0sr7d5AZj1xh2J+UQWc=;
+        b=fgUzCoxZIrK8T+zhBZBxenZpkETpNWuij5YvgiDRqexvZ6DuCnw1A5aHv48ouQ77ib
+         CtIfZpOF1PzVz0Ozn9aVjnmio8aK2cITR3+NmlKwRzHxk3SV/A4tUMcWEKWON5GHCFCV
+         xBCpkJb17a3FBh88qlrJmml4whEOSaX4p4BxufL66ZLSqT2Cjy5aLgp5so+es+pM6Duu
+         VPEKZOxMj5VnJllBsku7+B26djfOC4Qx+xfNGAp5l+ZQGmEVsie1Fd1WEZFHYCjVYPOT
+         Qi+DwE7kqGOpvV6VIxgnQPRa6Rchh/wS6XogUPvc3JpRVNMShUwgK9VdXy7g6gqRqSjP
+         3oWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=fC3JoLkbnwXvlpi7t/a7WSOC0sr7d5AZj1xh2J+UQWc=;
+        b=SEhBdhMRcggcOsjf9/3Qd3t0BS5VPT7EucpDKD+niXpOfJRQCYNCQJwqWpYJOsW3Km
+         ftUWoio7OMRNriCXnvOHC1xru2m9OXm2OODcEWCfGb3iSFsYsDqTEq/OwyFwB2PqaCAG
+         WRwsTwxkjqG6IgJknbQ8ZGAYDYhBdCVf64iQcEOZr8ZDSf2po1dvxL6OilWacfQt4N+k
+         iQh3kgTdTmLXhGlFjkbjdLpwJ9HNSWMzq/Ehm+cwD5sG76mBXInS6paZVFoAPy8Ceha6
+         q+7W7MLHNHvVH2Ks/dw4TVUTnSAt3vKm8q0d87osFSeVWn0+G4YJ50bVEXKdUMgRG1RP
+         ZtfA==
+X-Gm-Message-State: APjAAAVCec7cgmc8i1s+Nue6Kr3HCQhFoIL490nNlTi6ttKDFhN9GvxD
+        Fg39GmIGz00m2kuC4F/Nl8AQNQ==
+X-Google-Smtp-Source: APXvYqyvF8WqOEnDOKkQl2mto0QI+sqGXOJYxmZaqRoa8Klu1NtQWWmTfOdd/Szh3Agx5Dhifxokrw==
+X-Received: by 2002:a17:90a:2467:: with SMTP id h94mr6695795pje.79.1576825204473;
+        Thu, 19 Dec 2019 23:00:04 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id v4sm11046290pgo.63.2019.12.19.23.00.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 23:00:03 -0800 (PST)
+Date:   Thu, 19 Dec 2019 22:59:54 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     jhugo@codeaurora.org, robh+dt@kernel.org, ohad@wizery.com,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, agross@kernel.org
+Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: msm8998: Add ADSP, MPSS and
+ SLPI nodes
+Message-ID: <20191220065954.GA1908628@ripper>
+References: <20191218132217.28141-1-sibis@codeaurora.org>
+ <20191218132217.28141-6-sibis@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b6af0f72-a6c2-457d-8fac-08d7851a0ec8
-X-MS-TrafficTypeDiagnostic: DM5PR02MB3306:
-X-Microsoft-Antispam-PRVS: <DM5PR02MB3306C6A0CE6522F3F9685DB3AF2D0@DM5PR02MB3306.namprd02.prod.outlook.com>
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:177;
-X-Forefront-PRVS: 025796F161
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zSsq6nDel56+e2shLRLEYn40b7NQSxcVa1RAGFqDcVqXPwJIigjQvTdng99Pi3KXMAXGDO8axdAWlM4LQakcuTNdpO2Zn9Bsp4Y9L8g7MdtzlMen42nWZB59XXPIjMh2cUyvJty28ZwRr+ZP4p+VIPjEg8MuuNUvlX3B7broVVuCsh9ZHxpnGuHcDkq7B3WuZhWz22WCyP7PwegiKF/ZW6Y9+XL0pnd2PZWlSfk0PLjLM73DX+LKfWUmwcsbTghQ3VETau/kqy4yI/W83v4HSnh4vxuRoWzBBtOdhXM842HMBfLgcBgSOBCLBAbJjSr6RmPGS9U++sCG+junK+ngiQWoy6h85ODeI43gqv93WlaapnSFxgZZPNLZTOFOjvqR7keNF5MWVwMYFdeR6UxnEYUdDkBrCO7GjI6QzKOcQ0h3tUzhdQJiy7Myj1aEIAw3
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Dec 2019 06:58:45.8612
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6af0f72-a6c2-457d-8fac-08d7851a0ec8
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB3306
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218132217.28141-6-sibis@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"%p" is not printing the pointer value.
-In driver, printing pointer value is not useful so avoiding print.
+On Wed 18 Dec 05:22 PST 2019, Sibi Sankar wrote:
 
-Signed-off-by: Srinivas Neeli <srinivas.neeli@xilinx.com>
----
- drivers/watchdog/cadence_wdt.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+> This patch adds ADSP, MPSS and SLPI nodes for MSM8998 SoCs.
+> 
+> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |   8 ++
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi     | 124 ++++++++++++++++++++++
+>  2 files changed, 132 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> index 6db3f9e0344d1..e87094665c52c 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> @@ -312,6 +312,14 @@
+>  	};
+>  };
+>  
+> +&remoteproc_adsp {
+> +	status = "okay";
+> +};
+> +
+> +&remoteproc_slpi {
+> +	status = "okay";
+> +};
+> +
+>  &tlmm {
+>  	gpio-reserved-ranges = <0 4>, <81 4>;
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> index 8d799e868a5d3..014127700afb0 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+> @@ -1075,6 +1075,61 @@
+>  			#interrupt-cells = <0x2>;
+>  		};
+>  
+> +		remoteproc_mss: remoteproc@4080000 {
+> +			compatible = "qcom,msm8998-mss-pil";
+> +			reg = <0x04080000 0x100>, <0x04180000 0x20>;
+> +			reg-names = "qdsp6", "rmb";
+> +
+> +			interrupts-extended =
+> +				<&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+> +				<&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +				<&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +				<&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +				<&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
+> +				<&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack",
+> +					  "shutdown-ack";
+> +
+> +			clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
+> +				 <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
+> +				 <&gcc GCC_BOOT_ROM_AHB_CLK>,
+> +				 <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
+> +				 <&gcc GCC_MSS_SNOC_AXI_CLK>,
+> +				 <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
+> +				 <&rpmcc RPM_SMD_QDSS_CLK>,
+> +				 <&rpmcc RPM_SMD_XO_CLK_SRC>;
 
-diff --git a/drivers/watchdog/cadence_wdt.c b/drivers/watchdog/cadence_wdt.c
-index 06bd4e1a5923..672b184da875 100644
---- a/drivers/watchdog/cadence_wdt.c
-+++ b/drivers/watchdog/cadence_wdt.c
-@@ -369,9 +369,8 @@ static int cdns_wdt_probe(struct platform_device *pdev)
- 		return ret;
- 	platform_set_drvdata(pdev, wdt);
- 
--	dev_info(dev, "Xilinx Watchdog Timer at %p with timeout %ds%s\n",
--		 wdt->regs, cdns_wdt_device->timeout,
--		 nowayout ? ", nowayout" : "");
-+	dev_info(dev, "Xilinx Watchdog Timer with timeout %ds%s\n",
-+		 cdns_wdt_device->timeout, nowayout ? ", nowayout" : "");
- 
- 	return 0;
- }
--- 
-2.7.4
+RPM_SMD_XO_CLK_SRC doesn't seem to be implemented...
 
+I did pull in a patch from Jeff that defines it, but when I boot the
+modem I see the following error repeatedly:
+
+[  616.632227] qcom-q6v5-mss 4080000.remoteproc: fatal error received: dog_hb.c:266:DOG_HB detects starvation of task 0xda172640, triage with its own
+
+
+
+All the qrtr services seems registered nicely, so the remote does come
+up before it goes down.
+
+Also, adsp comes up nicely.
+
+Regards,
+Bjorn
+
+> +			clock-names = "iface", "bus", "mem", "gpll0_mss",
+> +				      "snoc_axi", "mnoc_axi", "qdss", "xo";
+> +
+> +			qcom,smem-states = <&modem_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			resets = <&gcc GCC_MSS_RESTART>;
+> +			reset-names = "mss_restart";
+> +
+> +			qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
+> +
+> +			power-domains = <&rpmpd MSM8998_VDDCX>,
+> +					<&rpmpd MSM8998_VDDMX>;
+> +			power-domain-names = "cx", "mx";
+> +
+> +			mba {
+> +				memory-region = <&mba_mem>;
+> +			};
+> +
+> +			mpss {
+> +				memory-region = <&mpss_mem>;
+> +			};
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
+> +				label = "modem";
+> +				qcom,remote-pid = <1>;
+> +				mboxes = <&apcs_glb 15>;
+> +			};
+> +		};
+> +
+>  		gpucc: clock-controller@5065000 {
+>  			compatible = "qcom,msm8998-gpucc";
+>  			#clock-cells = <1>;
+> @@ -1088,6 +1143,42 @@
+>  				      "gpll0";
+>  		};
+>  
+> +		remoteproc_slpi: remoteproc@5800000 {
+> +			compatible = "qcom,msm8998-slpi-pas";
+> +			reg = <0x05800000 0x4040>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 390 IRQ_TYPE_EDGE_RISING>,
+> +					      <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack";
+> +
+> +			px-supply = <&vreg_lvs2a_1p8>;
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> +				 <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
+> +			clock-names = "xo", "aggre2";
+> +
+> +			memory-region = <&slpi_mem>;
+> +
+> +			qcom,smem-states = <&slpi_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			power-domains = <&rpmpd MSM8998_SSCCX>;
+> +			power-domain-names = "ssc_cx";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
+> +				label = "dsps";
+> +				qcom,remote-pid = <3>;
+> +				mboxes = <&apcs_glb 27>;
+> +			};
+> +		};
+> +
+>  		stm: stm@6002000 {
+>  			compatible = "arm,coresight-stm", "arm,primecell";
+>  			reg = <0x06002000 0x1000>,
+> @@ -1880,6 +1971,39 @@
+>  			#size-cells = <0>;
+>  		};
+>  
+> +		remoteproc_adsp: remoteproc@17300000 {
+> +			compatible = "qcom,msm8998-adsp-pas";
+> +			reg = <0x17300000 0x4040>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+> +					      <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
+> +			interrupt-names = "wdog", "fatal", "ready",
+> +					  "handover", "stop-ack";
+> +
+> +			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
+> +			clock-names = "xo";
+> +
+> +			memory-region = <&adsp_mem>;
+> +
+> +			qcom,smem-states = <&adsp_smp2p_out 0>;
+> +			qcom,smem-state-names = "stop";
+> +
+> +			power-domains = <&rpmpd MSM8998_VDDCX>;
+> +			power-domain-names = "cx";
+> +
+> +			status = "disabled";
+> +
+> +			glink-edge {
+> +				interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
+> +				label = "lpass";
+> +				qcom,remote-pid = <2>;
+> +				mboxes = <&apcs_glb 9>;
+> +			};
+> +		};
+> +
+>  		apcs_glb: mailbox@17911000 {
+>  			compatible = "qcom,msm8998-apcs-hmss-global";
+>  			reg = <0x17911000 0x1000>;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
