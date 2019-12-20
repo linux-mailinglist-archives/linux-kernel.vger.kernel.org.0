@@ -2,98 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2667D127DFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E99E5127E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:42:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727426AbfLTOiL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:38:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42266 "EHLO mail.kernel.org"
+        id S1728284AbfLTOjI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:39:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728415AbfLTOiG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:38:06 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727501AbfLTOi7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:38:59 -0500
+Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0AC424682;
-        Fri, 20 Dec 2019 14:38:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F53E222C2;
+        Fri, 20 Dec 2019 14:38:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576852685;
-        bh=Jk/Fp54pKF09pvwjzon7f27VFJRrXW+Yq1xkymArVS4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LLAMh5YKBCRIjHqZycNkB3e8f0Z+/wnFH3TIPfZkol5BPZdj5GHG3fO5QrwZ0RzKM
-         tPwfmSNRTBWDMRQyEAJ1Jv/ZAGwuo4o25qr1U/FczcSL+S67X/EpGoMGeR7o8ZduI4
-         nTn0wd3TyC/+PKBdJtD8Df2m7mUJBS99tn5nOmvg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 19/19] PM / hibernate: memory_bm_find_bit(): Tighten node optimisation
-Date:   Fri, 20 Dec 2019 09:37:40 -0500
-Message-Id: <20191220143741.10220-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191220143741.10220-1-sashal@kernel.org>
-References: <20191220143741.10220-1-sashal@kernel.org>
+        s=default; t=1576852738;
+        bh=Q0oWbWwjhrJYvZiFi0omMIk0e9XmFnsXGySlMCDM7Po=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=S34cSLnz12brD6nSM5Rwvixbj3fIdNLvk2cQmB4xCXmZqVEaPjAbPBX1kurbLh00D
+         4NIaxKUGoxQIx9HF316jcCLSslG/mXt8hOzpLFgv1/jjGodLeIhyiHu0RuDEHyQBod
+         VYNRotRitMSXsFa32ko6DYaBtMj6FZJsmiiP9a64=
+Date:   Fri, 20 Dec 2019 08:38:56 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Subject: Re: [PATCH v12 0/4] PCI: Patch series to improve Thunderbolt
+ enumeration
+Message-ID: <20191220143856.GA92795@google.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PSXP216MB043888F94710A361E4D84DFF802D0@PSXP216MB0438.KORP216.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Whitcroft <apw@canonical.com>
+On Fri, Dec 20, 2019 at 08:50:14AM +0000, Nicholas Johnson wrote:
+> On Thu, Dec 19, 2019 at 06:03:58PM -0600, Bjorn Helgaas wrote:
+> > On Wed, Dec 18, 2019 at 12:54:25AM +0000, Nicholas Johnson wrote:
+> > > On Tue, Dec 17, 2019 at 09:12:48AM -0600, Bjorn Helgaas wrote:
+> > > > On Mon, Dec 09, 2019 at 12:59:29PM +0000, Nicholas Johnson wrote:
 
-[ Upstream commit da6043fe85eb5ec621e34a92540735dcebbea134 ]
+> > > > > Nicholas Johnson (4):
+> > > > >   PCI: Consider alignment of hot-added bridges when distributing
+> > > > >     available resources
+> Prevent failure to assign hot-added Thunderbolt PCI BARs with alignment >1M 
+> 
+> > > > >   PCI: In extend_bridge_window() change available to new_size
+> Change variable name in extend_bridge_window() to better reflect its 
+> purpose
+> 
+> ^ I would have preferred this not be its own commit. Is it too late to 
+> squash it back together with patch 3/4?
 
-When looking for a bit by number we make use of the cached result from the
-preceding lookup to speed up operation.  Firstly we check if the requested
-pfn is within the cached zone and if not lookup the new zone.  We then
-check if the offset for that pfn falls within the existing cached node.
-This happens regardless of whether the node is within the zone we are
-now scanning.  With certain memory layouts it is possible for this to
-false trigger creating a temporary alias for the pfn to a different bit.
-This leads the hibernation code to free memory which it was never allocated
-with the expected fallout.
+Not too late; it's trivial to squash it.  I consider these branches to
+be drafts, subject to revision until I ask Linus to pull them.
 
-Ensure the zone we are scanning matches the cached zone before considering
-the cached node.
+But ... why?  In general, the smaller the patch the better.
 
-Deep thanks go to Andrea for many, many, many hours of hacking and testing
-that went into cornering this bug.
+> > Basically, I'm not comfortable asking Linus to pull material unless I
+> > can explain what the benefit is.  I'm still struggling to articulate
+> > the benefit in this case.  I think it makes hotplug work better in
+> > some cases where we need more alignment than we currently have, but
+> > that's pretty sketchy.
+>
+> In my opinion, fixing failure to assign is a clear reason to merge, 
+> especially when the failure will result in a user wondering why the 
+> device they plugged in does not work.
 
-Reported-by: Andrea Righi <andrea.righi@canonical.com>
-Tested-by: Andrea Righi <andrea.righi@canonical.com>
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/power/snapshot.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Sure.  But there's nothing specific in the commit logs about what the
+problem is and how these fix it.
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 0972a8e09d082..ff2aabb70de93 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -734,8 +734,15 @@ static int memory_bm_find_bit(struct memory_bitmap *bm, unsigned long pfn,
- 	 * We have found the zone. Now walk the radix tree to find the leaf node
- 	 * for our PFN.
- 	 */
-+
-+	/*
-+	 * If the zone we wish to scan is the the current zone and the
-+	 * pfn falls into the current node then we do not need to walk
-+	 * the tree.
-+	 */
- 	node = bm->cur.node;
--	if (((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
-+	if (zone == bm->cur.zone &&
-+	    ((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
- 		goto node_found;
- 
- 	node      = zone->rtree;
--- 
-2.20.1
+For example, I think the first patch ("PCI: Consider alignment of
+hot-added bridges when distributing available resources") is something
+to do with increasing the alignment of bridge windows to account for
+descendants that require greater alignment.
 
+But the log says "Rewrite pci_bus_distribute_available_resources to
+better handle bridges with different resource alignment requirements."
+That says nothing about what the problem was or how you fix it.
+
+Ideally that patch would very specifically change *alignment* details.
+It currently also contains a bunch of other changes (interface change,
+removing "b" in favor "dev->subordinate", etc).  These make the patch
+bigger and harder to understand and justify.  Some of these lead up to
+the alignment change but possibly could be split to separate patches.
+
+Bjorn
