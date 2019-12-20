@@ -2,113 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7531285B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 00:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E9E1285BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 00:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbfLTXwv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 18:52:51 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:46176 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfLTXwv (ORCPT
+        id S1726671AbfLTXyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 18:54:16 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53146 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfLTXyQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 18:52:51 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 32B7872CCE9;
-        Sat, 21 Dec 2019 02:52:48 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id B4EFF4A4AEF;
-        Sat, 21 Dec 2019 02:52:47 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] tools lib: Fix builds when glibc contains strlcpy
-Date:   Sat, 21 Dec 2019 02:52:39 +0300
-Message-Id: <20191220235239.26928-1-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
+        Fri, 20 Dec 2019 18:54:16 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p9so10572117wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 15:54:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=2JIcr6JqHRV4hFWAToeX1vJxvkJxv8d50MDsHSxmd8Q=;
+        b=t9Xy7XqsvRYJwIEIW5NtYiIL2B9D1ZkqZ9KHj+QiItz7vkeOPyCfrasjSMf3uYcqvu
+         odCn0fNBDoLGL/Yi/E4lzZ7mM3QKBqv0vgk1xy0FTmlxepAGEYgCZdTo/R2mzHRIemfj
+         YWUHb6I1y2Or8uofay81HdQDu+cJ/bzEcKEFsCHMIIM9P3js589jdDEkoFBvLconlwNG
+         /uC2dxCyVNu6wPQLCTneWR0ZVpqtA8bByqSWslEEOBu39gPYIRtlSzKtIYr901j78Ng2
+         UWTBPUR8umRgyl12JK+K1C3zPyJjS6PuK6Bl5CRSbNtehY2F4Iv0ABnp58Zxf9kEVc+d
+         rCBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=2JIcr6JqHRV4hFWAToeX1vJxvkJxv8d50MDsHSxmd8Q=;
+        b=LPc7UEJtQ1dziJrTXcmuLJ1I9eceweLdvjP/LWaEGp1c67AHFNxqqQPLOVTDHsR42S
+         xLrcXIi9p/MPg37/78nOUUPfG+tuhK+xFkupbcsyYL/kvshdJB9cbSCuSmG+A+JuxL9r
+         AekYs/9bIrJq76A6LjMOK419j77AzvPi5jAujKrdSchUJAf3eIy8kABrQxsdr1TXckDb
+         n1ubwtCvVpwl3u2XtYjSZLs5Ulv6C24nDD6kEjKeiRSLiy4dhZxhLQ+iVAY2VrUmPf9U
+         9451ODCguOF2WxMgfaKqZEBn2970djL7+AUCkt9fMCEIIY3pwn19e6qxf8/9Lr49t2rZ
+         3SOg==
+X-Gm-Message-State: APjAAAVjn0b05VWq7xz9Tja2ztkdtx8gifa/ht/Q4IVz94qzKvYoAzF9
+        hBpVFf//7djIGfwSePostuY3FqzkgbZikrH/GNY=
+X-Google-Smtp-Source: APXvYqzlScw/nvW/5ejDxxQgD20u1ie/sq5bionKsy7yenyc2Fcwv66ZL12+DylUYPZ56qasRw3A2rzt53bjXcGvX+I=
+X-Received: by 2002:a1c:2355:: with SMTP id j82mr19543653wmj.135.1576886054385;
+ Fri, 20 Dec 2019 15:54:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a05:6000:1188:0:0:0:0 with HTTP; Fri, 20 Dec 2019 15:54:13
+ -0800 (PST)
+From:   Solomon Brandy <ehisodia7410@gmail.com>
+Date:   Sat, 21 Dec 2019 02:54:13 +0300
+Message-ID: <CAN_-HqoYR0y0SxYV6C7VuXJ1bbu-6w5rYUyZD9Qd-npYKHnb6g@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Disable a couple of compilation warning (which are treated as errors) on
-strlcpy definition and declaration, allow users to compile perf and
-kernel (objtool).
+Hello
 
-1. When glibc have strlcpy (such as in ALT Linux since 2004) objtool and
-perf build fails with this (in gcc):
+    Am Dr. Solomon Brandy, Legitimate and reliable loan lender From
+Solomon Brandy Financial Service. We offer loans on clear and
+understandable terms and conditions at a 3% interest rate. From
+$5,000.00 to $450,000,000.00 USD, Euro And Pounds Only. we Offer
+Business Loans, Personal Loans, Student Loans, Car Loans And Loans To
+Pay Off Bills, BG/SBLC at low rates also available, Contact us now via
+bellow email address.
 
-  In file included from exec-cmd.c:3:
-  tools/include/linux/string.h:20:15: error: redundant redeclaration of ‘strlcpy’ [-Werror=redundant-decls]
-     20 | extern size_t strlcpy(char *dest, const char *src, size_t size);
+Only messages to this email will be answered (berndhava@outlook.dk)
 
-2. Clang ignores `-Wredundant-decls', but produces another warning when
-building perf:
-
-    CC       util/string.o
-  ../lib/string.c:99:8: error: attribute declaration must precede definition [-Werror,-Wignored-attributes]
-  size_t __weak strlcpy(char *dest, const char *src, size_t size)
-  ../../tools/include/linux/compiler.h:66:34: note: expanded from macro '__weak'
-  # define __weak                 __attribute__((weak))
-  /usr/include/bits/string_fortified.h:151:8: note: previous definition is here
-  __NTH (strlcpy (char *__restrict __dest, const char *__restrict __src,
-
-Fixes: ce99091 ("perf tools: Move strlcpy() from perf to tools/lib/string.c")
-Fixes: 0215d59 ("tools lib: Reinstate strlcpy() header guard with __UCLIBC__")
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Cc: Dmitry V. Levin <ldv@altlinux.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: stable@vger.kernel.org
----
- tools/include/linux/string.h | 3 +++
- tools/lib/string.c           | 3 +++
- 2 files changed, 6 insertions(+)
-
-diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
-index 980cb9266718..99ede7f5dfb8 100644
---- a/tools/include/linux/string.h
-+++ b/tools/include/linux/string.h
-@@ -17,7 +17,10 @@ int strtobool(const char *s, bool *res);
-  * However uClibc headers also define __GLIBC__ hence the hack below
-  */
- #if defined(__GLIBC__) && !defined(__UCLIBC__)
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wredundant-decls"
- extern size_t strlcpy(char *dest, const char *src, size_t size);
-+#pragma GCC diagnostic pop
- #endif
- 
- char *str_error_r(int errnum, char *buf, size_t buflen);
-diff --git a/tools/lib/string.c b/tools/lib/string.c
-index f2ae1b87c719..65b569014446 100644
---- a/tools/lib/string.c
-+++ b/tools/lib/string.c
-@@ -96,6 +96,8 @@ int strtobool(const char *s, bool *res)
-  * If libc has strlcpy() then that version will override this
-  * implementation:
-  */
-+#pragma GCC diagnostic push
-+#pragma GCC diagnostic ignored "-Wignored-attributes"
- size_t __weak strlcpy(char *dest, const char *src, size_t size)
- {
- 	size_t ret = strlen(src);
-@@ -107,6 +109,7 @@ size_t __weak strlcpy(char *dest, const char *src, size_t size)
- 	}
- 	return ret;
- }
-+#pragma GCC diagnostic pop
- 
- /**
-  * skip_spaces - Removes leading whitespace from @str.
--- 
-2.11.0
-
+Name: Solomon Brandy
+E-mail:  berndhava@outlook.dk
+Executive Finance/Loan Officer.
+Skype: solo.brandy1
+Tele:  17865445764
+(c)2019 SOLOMON BRANDY FINANCIAL SERVICE =C2=AE.
