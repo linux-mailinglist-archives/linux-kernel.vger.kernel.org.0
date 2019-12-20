@@ -2,190 +2,310 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A853127382
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:30:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44093127393
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfLTCaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 21:30:14 -0500
-Received: from mail-eopbgr760115.outbound.protection.outlook.com ([40.107.76.115]:20490
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726964AbfLTCaO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 21:30:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HpORmJzJL1SkrI9b7aDlejhsq6/LoOCPwzxHLCKMkAcP7NIVkPkMdhKl4z+3HRoMldhnjQ9f2pDdl1qqTS5+H1NZVH8+1PhaV3MTsxUvf1dN9Auw35M/85kOYjKlsk2xIiu0jZVWG2sPvp/xxre9JGUDa8s+lZLjereQpvhhJCYmh4EXy6zVBneCD0HyMY9IO/ov3WyRem32wLeI7cT/jY0W3SZ8/YBH8ZVMdTgGSFdW43aygmcpAmWn9lnN0ALmhr5/dqreAaPV0jeXbSzA1FoWV1YzNAGhIXSrhX1fv4ovPGIn3ADfFo7D8MUtAobxdO87Ze4rQre8Mao53r3z3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YUErxkwJxf/TDdpi8gYXLJBEg+vu3u25t/g3+9uL53g=;
- b=Ib5hUwJ79dnKCwSY2UKIhsT33kGmnATz+dUDmDI+A/TWDFBfV5YauWvjmJW+P9zcc6nyZ8hukb9BC3DIc7qg/0kF99CPTnMC9LjlEH9CR3f7w1q0DCFocXQx9R4LSBzMzrJoCFEIBJENFm4styqrxig6ml21p/nwePlKl+phyc1nOS9zUZxbtXhTctiTli8RwJVhjC7lPcTJx0yp3FRaxU2yyxGKo+pT8TTb25fb4cslenqpGXB2TrAn1AxQ9+PtSXYXdCdmZP7MY+o6cD4rTU58CdPOs+xwZYg6QGCroXJ3wzKi9kOYNsVzxWv0r2DxBNpxOLT0QUdby1Qi+n/U7w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YUErxkwJxf/TDdpi8gYXLJBEg+vu3u25t/g3+9uL53g=;
- b=MkGqRIE4kJBMgFErSzOIdoIkfSHdWH3T42FqdbUsl9K4IyLVPKKSYE2t/ZDC1LZ8tll+OxkRN+FrWhNxcLeOkiWF/9KJ6XewvLiM084mEYbIljHGDQ9Tl76D0IdlS5mJfzfAhPmbYu5jFwptcIT5cyfSjFqjK8kIpxcw4nCBavc=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=lkmlhyz@microsoft.com; 
-Received: from DM5PR2101MB0901.namprd21.prod.outlook.com (52.132.132.158) by
- DM5PR2101MB1064.namprd21.prod.outlook.com (52.132.130.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.3; Fri, 20 Dec 2019 02:30:11 +0000
-Received: from DM5PR2101MB0901.namprd21.prod.outlook.com
- ([fe80::6099:4461:d0ca:f3f6]) by DM5PR2101MB0901.namprd21.prod.outlook.com
- ([fe80::6099:4461:d0ca:f3f6%9]) with mapi id 15.20.2581.005; Fri, 20 Dec 2019
- 02:30:10 +0000
-From:   Haiyang Zhang <haiyangz@microsoft.com>
-To:     sashal@kernel.org, linux-hyperv@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, davem@davemloft.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net] hv_netvsc: Fix unwanted rx_table reset
-Date:   Thu, 19 Dec 2019 18:28:10 -0800
-Message-Id: <1576808890-71212-1-git-send-email-haiyangz@microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain
-X-ClientProxiedBy: CO1PR15CA0065.namprd15.prod.outlook.com
- (2603:10b6:101:1f::33) To DM5PR2101MB0901.namprd21.prod.outlook.com
- (2603:10b6:4:a7::30)
+        id S1727169AbfLTCoC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 21:44:02 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57948 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbfLTCoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 21:44:02 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBK2FUTE097491;
+        Thu, 19 Dec 2019 20:15:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576808130;
+        bh=zfRRgmenEvjUog94sf5leKSGDx4lfpSPTyPI1QrPCqw=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=wxhbAUzg6CK6yLhZVhlJ0bAC9qs43tBYW4HxA7K8eTl/DGFspMMvzlCa5r53K4+iY
+         uvgFcRv+VUQt40+yM0r1Fnp/ViEkbQ3KK2APJ+AqIoHFxW3HqgJmbVDrI35DKXrR6f
+         TmIdEu4zKadCSvHCbFVP+ctMgwU9PWQSoqWk0UCo=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBK2FUq5108214
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Dec 2019 20:15:30 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Dec 2019 20:15:29 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Dec 2019 20:15:29 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBK2FTgT049569;
+        Thu, 19 Dec 2019 20:15:29 -0600
+Subject: Re: [PATCHv3 04/15] remoteproc/omap: Add support to parse internal
+ memories from DT
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        <linux-remoteproc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20191213125537.11509-1-t-kristo@ti.com>
+ <20191213125537.11509-5-t-kristo@ti.com> <20191218002257.GB16271@xps15>
+ <021d0654-5e78-85cd-4737-c1eccc8c07ce@ti.com>
+ <CANLsYkxqA4jm3igF9hfppzPGx4fyvmc+5LTY8uMCYNvZBCJoSQ@mail.gmail.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <c60ce8fd-1933-a1ad-5ceb-230d96f17126@ti.com>
+Date:   Thu, 19 Dec 2019 20:15:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (13.77.154.182) by CO1PR15CA0065.namprd15.prod.outlook.com (2603:10b6:101:1f::33) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.14 via Frontend Transport; Fri, 20 Dec 2019 02:30:09 +0000
-X-Mailer: git-send-email 1.8.3.1
-X-Originating-IP: [13.77.154.182]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 7690528f-bd74-4c67-d873-08d784f488d1
-X-MS-TrafficTypeDiagnostic: DM5PR2101MB1064:|DM5PR2101MB1064:|DM5PR2101MB1064:
-X-MS-Exchange-Transport-Forked: True
-X-LD-Processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-X-Microsoft-Antispam-PRVS: <DM5PR2101MB1064A258119424AAE9456F09AC2D0@DM5PR2101MB1064.namprd21.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
-X-Forefront-PRVS: 025796F161
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(366004)(396003)(39860400002)(376002)(346002)(199004)(189003)(6486002)(81156014)(81166006)(10290500003)(2616005)(8936002)(2906002)(478600001)(6512007)(6666004)(956004)(66476007)(66556008)(5660300002)(6506007)(186003)(8676002)(26005)(66946007)(52116002)(16526019)(316002)(4326008)(36756003)(26123001);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR2101MB1064;H:DM5PR2101MB0901.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: p1zFQWt69BIqaZy4L3SBvDRBjJgUHdRC9bLWG2REwYfnLyw9tSsF92VNS/98lDZoAqvrOdLhjwNvtq7vPrWk0iMMrw6sfumRqZYbSYHrZ7nsBRmpMUzoSooHkFmNtT33N54O0XpniTUefTlXZnWwgjwIr9QKo4p/pBiVe/eNAoBTX2h/yK/l8UxuJ1kDj2Mgly4vS2UlqoodonGvM0PbkwhZQev95ltmHnmJgElhQ7HRWrV1dNvpuycmQ7u/KUoL/7rsefg5Dz8Zap7IypLn/DefTqJ9LHRNP/Tc1MTme3YK5iMX6cA6DUZWJfVYiJfn7g4jRCscpan+2CPoNC13xpAUHJDrvl+mJ/mK6hsVi5Wv9y93NPnNGo+oaQp0eTdjpjJZsSXSfkk65t8bt5pkuffAsqlLo2i/2v5kg0iN5vS4arMLSs/DFiHAbKm2IVIo9EltMWfySIQ5OwSlucqYLI0/OoUmw0gK/6cw5h/+0RRp6vhBvtFPoyQ1BhhdMJsh
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7690528f-bd74-4c67-d873-08d784f488d1
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Dec 2019 02:30:10.8919
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZN15GyaE1c9pzYVZcIj06tOghLQ1XUnLmkcu+cj96fRMsn7pQQgm2d3DD2Z6xCgftW67fcR0a7QSX7qEN0nykg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR2101MB1064
+In-Reply-To: <CANLsYkxqA4jm3igF9hfppzPGx4fyvmc+5LTY8uMCYNvZBCJoSQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In existing code, the receive indirection table, rx_table, is in
-struct rndis_device, which will be reset when changing MTU, ringparam,
-etc. User configured receive indirection table values will be lost.
+On 12/19/19 11:37 AM, Mathieu Poirier wrote:
+> On Thu, 19 Dec 2019 at 05:31, Tero Kristo <t-kristo@ti.com> wrote:
+>>
+>> On 18/12/2019 02:22, Mathieu Poirier wrote:
+>>> On Fri, Dec 13, 2019 at 02:55:26PM +0200, Tero Kristo wrote:
+>>>> From: Suman Anna <s-anna@ti.com>
+>>>>
+>>>> The OMAP remoteproc driver has been enhanced to parse and store
+>>>> the kernel mappings for different internal RAM memories that may
+>>>> be present within each remote processor IP subsystem. Different
+>>>> devices have varying memories present on current SoCs. The current
+>>>> support handles the L2RAM for all IPU devices on OMAP4+ SoCs. The
+>>>> DSPs on OMAP4/OMAP5 only have Unicaches and do not have any L1 or
+>>>> L2 RAM memories.
+>>>>
+>>>> IPUs are expected to have the L2RAM at a fixed device address of
+>>>> 0x20000000, based on the current limitations on Attribute MMU
+>>>> configurations.
+>>>>
+>>>> NOTE:
+>>>> The current logic doesn't handle the parsing of memories for DRA7
+>>>> remoteproc devices, and will be added alongside the DRA7 support.
+>>>>
+>>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>>> [t-kristo: converted to parse mem names / device addresses from pdata]
+>>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>>> ---
+>>>>   drivers/remoteproc/omap_remoteproc.c | 86 ++++++++++++++++++++++++++++
+>>>>   1 file changed, 86 insertions(+)
+>>>>
+>>>> diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
+>>>> index d80f5d7b5931..844703507a74 100644
+>>>> --- a/drivers/remoteproc/omap_remoteproc.c
+>>>> +++ b/drivers/remoteproc/omap_remoteproc.c
+>>>> @@ -39,11 +39,27 @@ struct omap_rproc_boot_data {
+>>>>      unsigned int boot_reg;
+>>>>   };
+>>>>
+>>>> +/*
 
-To fix this, move rx_table to struct net_device_context, and check
-netif_is_rxfh_configured(), so rx_table will be set to default only
-if no user configured value.
+Somehow a second trailing * got dropped by mistake here.
 
-Fixes: ff4a44199012 ("netvsc: allow get/set of RSS indirection table")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/hyperv_net.h   |  3 ++-
- drivers/net/hyperv/netvsc_drv.c   |  4 ++--
- drivers/net/hyperv/rndis_filter.c | 10 +++++++---
- 3 files changed, 11 insertions(+), 6 deletions(-)
+>>>> + * struct omap_rproc_mem - internal memory structure
+>>>> + * @cpu_addr: MPU virtual address of the memory region
+>>>> + * @bus_addr: bus address used to access the memory region
+>>>> + * @dev_addr: device address of the memory region from DSP view
+>>>> + * @size: size of the memory region
+>>>> + */
+>>>> +struct omap_rproc_mem {
+>>>> +    void __iomem *cpu_addr;
+>>>> +    phys_addr_t bus_addr;
+>>>> +    u32 dev_addr;
+>>>> +    size_t size;
+>>>> +};
+>>>> +
+>>>>   /**
+>>>>    * struct omap_rproc - omap remote processor state
+>>>>    * @mbox: mailbox channel handle
+>>>>    * @client: mailbox client to request the mailbox channel
+>>>>    * @boot_data: boot data structure for setting processor boot address
+>>>> + * @mem: internal memory regions data
+>>>> + * @num_mems: number of internal memory regions
+>>>>    * @rproc: rproc handle
+>>>>    * @reset: reset handle
+>>>>    */
+>>>> @@ -51,6 +67,8 @@ struct omap_rproc {
+>>>>      struct mbox_chan *mbox;
+>>>>      struct mbox_client client;
+>>>>      struct omap_rproc_boot_data *boot_data;
+>>>> +    struct omap_rproc_mem *mem;
+>>>> +    int num_mems;
+>>>>      struct rproc *rproc;
+>>>>      struct reset_control *reset;
+>>>>   };
+>>>> @@ -59,10 +77,14 @@ struct omap_rproc {
+>>>>    * struct omap_rproc_dev_data - device data for the omap remote processor
+>>>>    * @device_name: device name of the remote processor
+>>>>    * @has_bootreg: true if this remote processor has boot register
+>>>> + * @mem_names: memory names for this remote processor
+>>>> + * @dev_addrs: device addresses corresponding to the memory names
+>>>>    */
+>>>>   struct omap_rproc_dev_data {
+>>>>      const char *device_name;
+>>>>      bool has_bootreg;
+>>>> +    const char * const *mem_names;
+>>>> +    const u32 *dev_addrs;
+>>>
+>>> Bunching these two in a new structure like omap_rproc_mem_data would clean
+>>> things up.  That way the two arrays in the next hunk get merged and there can't
+>>> be a difference in sizes, somthing that will sturdy the main loop in
+>>> omap_rproc_of_get_internal_memories() below.
+>>
+>> Will fix this.
+>>
+>>>
+>>>>   };
+>>>>
+>>>>   /**
+>>>> @@ -216,6 +238,14 @@ static const struct rproc_ops omap_rproc_ops = {
+>>>>      .kick           = omap_rproc_kick,
+>>>>   };
+>>>>
+>>>> +static const char * const ipu_mem_names[] = {
+>>>> +    "l2ram", NULL
+>>>> +};
+>>>> +
+>>>> +static const u32 ipu_dev_addrs[] = {
+>>>> +    0x20000000,
+>>>> +};
+>>>> +
+>>>>   static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+>>>>      .device_name    = "dsp",
+>>>>      .has_bootreg    = true,
+>>>> @@ -223,6 +253,8 @@ static const struct omap_rproc_dev_data omap4_dsp_dev_data = {
+>>>>
+>>>>   static const struct omap_rproc_dev_data omap4_ipu_dev_data = {
+>>>>      .device_name    = "ipu",
+>>>> +    .mem_names      = ipu_mem_names,
+>>>> +    .dev_addrs      = ipu_dev_addrs,
+>>>>   };
+>>>>
+>>>>   static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+>>>> @@ -232,6 +264,8 @@ static const struct omap_rproc_dev_data omap5_dsp_dev_data = {
+>>>>
+>>>>   static const struct omap_rproc_dev_data omap5_ipu_dev_data = {
+>>>>      .device_name    = "ipu",
+>>>> +    .mem_names      = ipu_mem_names,
+>>>> +    .dev_addrs      = ipu_dev_addrs,
+>>>>   };
+>>>>
+>>>>   static const struct of_device_id omap_rproc_of_match[] = {
+>>>> @@ -311,6 +345,54 @@ static int omap_rproc_get_boot_data(struct platform_device *pdev,
+>>>>      return 0;
+>>>>   }
+>>>>
+>>>> +static int omap_rproc_of_get_internal_memories(struct platform_device *pdev,
+>>>> +                                           struct rproc *rproc)
+>>>> +{
+>>>> +    struct omap_rproc *oproc = rproc->priv;
+>>>> +    struct device *dev = &pdev->dev;
+>>>> +    const struct omap_rproc_dev_data *data;
+>>>> +    struct resource *res;
+>>>> +    int num_mems;
+>>>> +    int i;
+>>>> +
+>>>> +    data = of_device_get_match_data(&pdev->dev);
+>>>> +    if (!data)
+>>>> +            return -ENODEV;
+>>>> +
+>>>> +    if (!data->mem_names)
+>>>> +            return 0;
+>>>> +
+>>>> +    for (num_mems = 0; data->mem_names[num_mems]; num_mems++)
+>>>> +            ;
+>>>
+>>> Instead of doing this function of_property_count_elems_of_size() can be used on
+>>> the "reg" property.
+>>
+>> Hmm right, but the problem is then we don't know if someone left out one
+>> of the memories in DT. We want to check the presence for all defined in
+>> the platform data.
+>>
+> 
+> In my opinion (and to go along what I advocated in a comment on
+> another patch) everything should be dictated from the DT.  If an area
+> of reserved memory is missing in the DT then the infrastructure should
+> recognise it and refuse to move forward with initialisation.
 
-diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
-index 9caa876..dc44819 100644
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -169,7 +169,6 @@ struct rndis_device {
- 
- 	u8 hw_mac_adr[ETH_ALEN];
- 	u8 rss_key[NETVSC_HASH_KEYLEN];
--	u16 rx_table[ITAB_NUM];
- };
- 
- 
-@@ -940,6 +939,8 @@ struct net_device_context {
- 
- 	u32 tx_table[VRSS_SEND_TAB_SIZE];
- 
-+	u16 rx_table[ITAB_NUM];
-+
- 	/* Ethtool settings */
- 	u8 duplex;
- 	u32 speed;
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index eff8fef..68bf671 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -1662,7 +1662,7 @@ static int netvsc_get_rxfh(struct net_device *dev, u32 *indir, u8 *key,
- 	rndis_dev = ndev->extension;
- 	if (indir) {
- 		for (i = 0; i < ITAB_NUM; i++)
--			indir[i] = rndis_dev->rx_table[i];
-+			indir[i] = ndc->rx_table[i];
- 	}
- 
- 	if (key)
-@@ -1692,7 +1692,7 @@ static int netvsc_set_rxfh(struct net_device *dev, const u32 *indir,
- 				return -EINVAL;
- 
- 		for (i = 0; i < ITAB_NUM; i++)
--			rndis_dev->rx_table[i] = indir[i];
-+			ndc->rx_table[i] = indir[i];
- 	}
- 
- 	if (!key) {
-diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-index 05bc5ec8..857c4be 100644
---- a/drivers/net/hyperv/rndis_filter.c
-+++ b/drivers/net/hyperv/rndis_filter.c
-@@ -773,6 +773,7 @@ static int rndis_set_rss_param_msg(struct rndis_device *rdev,
- 				   const u8 *rss_key, u16 flag)
- {
- 	struct net_device *ndev = rdev->ndev;
-+	struct net_device_context *ndc = netdev_priv(ndev);
- 	struct rndis_request *request;
- 	struct rndis_set_request *set;
- 	struct rndis_set_complete *set_complete;
-@@ -812,7 +813,7 @@ static int rndis_set_rss_param_msg(struct rndis_device *rdev,
- 	/* Set indirection table entries */
- 	itab = (u32 *)(rssp + 1);
- 	for (i = 0; i < ITAB_NUM; i++)
--		itab[i] = rdev->rx_table[i];
-+		itab[i] = ndc->rx_table[i];
- 
- 	/* Set hask key values */
- 	keyp = (u8 *)((unsigned long)rssp + rssp->hashkey_offset);
-@@ -1312,6 +1313,7 @@ struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
- 				      struct netvsc_device_info *device_info)
- {
- 	struct net_device *net = hv_get_drvdata(dev);
-+	struct net_device_context *ndc = netdev_priv(net);
- 	struct netvsc_device *net_device;
- 	struct rndis_device *rndis_device;
- 	struct ndis_recv_scale_cap rsscap;
-@@ -1398,9 +1400,11 @@ struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
- 	/* We will use the given number of channels if available. */
- 	net_device->num_chn = min(net_device->max_chn, device_info->num_chn);
- 
--	for (i = 0; i < ITAB_NUM; i++)
--		rndis_device->rx_table[i] = ethtool_rxfh_indir_default(
-+	if (!netif_is_rxfh_configured(net)) {
-+		for (i = 0; i < ITAB_NUM; i++)
-+			ndc->rx_table[i] = ethtool_rxfh_indir_default(
- 						i, net_device->num_chn);
-+	}
- 
- 	atomic_set(&net_device->open_chn, 1);
- 	vmbus_set_sc_create_callback(dev->channel, netvsc_sc_open);
--- 
-1.8.3.1
+That's actually what the code does too. It is just different remoteprocs
+have different internal memories, and that array of names is actually
+retrieved here based on match data.
+
+regards
+Suman
+
+> 
+> Thanks
+> Mathieu
+> 
+>>>
+>>> In the loop below a check should be done to see if data->mem_data[i] (see above
+>>> comment) is valid before calling platform_get_resource_byname().  If not then
+>>> an error can be returned.
+>>
+>> Will add a check to it.
+>>
+>> -Tero
+>>
+>>>
+>>> I'm running out of time for today - I will continue reviewing the other patches
+>>> tomorrow.
+>>>
+>>>> +
+>>>> +    oproc->mem = devm_kcalloc(dev, num_mems, sizeof(*oproc->mem),
+>>>> +                              GFP_KERNEL);
+>>>> +    if (!oproc->mem)
+>>>> +            return -ENOMEM;
+>>>> +
+>>>> +    for (i = 0; i < num_mems; i++) {
+>>>> +            res = platform_get_resource_byname(pdev, IORESOURCE_MEM,
+>>>> +                                               data->mem_names[i]);
+>>>> +            oproc->mem[i].cpu_addr = devm_ioremap_resource(dev, res);
+>>>> +            if (IS_ERR(oproc->mem[i].cpu_addr)) {
+>>>> +                    dev_err(dev, "failed to parse and map %s memory\n",
+>>>> +                            data->mem_names[i]);
+>>>> +                    return PTR_ERR(oproc->mem[i].cpu_addr);
+>>>> +            }
+>>>> +            oproc->mem[i].bus_addr = res->start;
+>>>> +            oproc->mem[i].dev_addr = data->dev_addrs[i];
+>>>> +            oproc->mem[i].size = resource_size(res);
+>>>> +
+>>>> +            dev_dbg(dev, "memory %8s: bus addr %pa size 0x%x va %p da 0x%x\n",
+>>>> +                    data->mem_names[i], &oproc->mem[i].bus_addr,
+>>>> +                    oproc->mem[i].size, oproc->mem[i].cpu_addr,
+>>>> +                    oproc->mem[i].dev_addr);
+>>>> +    }
+>>>> +    oproc->num_mems = num_mems;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>   static int omap_rproc_probe(struct platform_device *pdev)
+>>>>   {
+>>>>      struct device_node *np = pdev->dev.of_node;
+>>>> @@ -350,6 +432,10 @@ static int omap_rproc_probe(struct platform_device *pdev)
+>>>>      /* All existing OMAP IPU and DSP processors have an MMU */
+>>>>      rproc->has_iommu = true;
+>>>>
+>>>> +    ret = omap_rproc_of_get_internal_memories(pdev, rproc);
+>>>> +    if (ret)
+>>>> +            goto free_rproc;
+>>>> +
+>>>>      ret = omap_rproc_get_boot_data(pdev, rproc);
+>>>>      if (ret)
+>>>>              goto free_rproc;
+>>>> --
+>>>> 2.17.1
+>>>>
+>>>> --
+>>
+>> --
+>> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
