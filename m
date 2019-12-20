@@ -2,116 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B43D127A17
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F4D5127A23
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:41:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfLTLht (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:37:49 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53923 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfLTLht (ORCPT
+        id S1727364AbfLTLlz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:41:55 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49560 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727177AbfLTLlz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:37:49 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m24so8595226wmc.3;
-        Fri, 20 Dec 2019 03:37:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+xqrG/Fr+lk5K0m1pptDnTQOO1AdoG749ulUXApgoJo=;
-        b=PjsD4G79liFs7IK7ZIxgjW2sIjJcOIfF+7D7HWaxyXYhsvxdmoVfdm6JcF9Nx73Z1R
-         TyohPsE7Cu/VZJ6zF2X2we0ZT2jojRde9jJfztrNF1L9GVPHyFe3RYwUudRcgyekELW7
-         WWXZIM1jZeqvL8Yy6TCLojYuNcVEnswyssEMe20oFdgX42rcvIczqRv9XBzTHRxT83u5
-         hhIWjkdJM2TGxu0+lr6k7jao1sKPUuH89boBbj0Xkz65zGTtkIfasMH1zfZFFOYiPnhr
-         OoDuK7ugzv4yViuSre3YsmfCaAtgKUuU6yhXNxzqdhXHOoPZtudqwCZgY5BTrZQvfn/u
-         qm4w==
-X-Gm-Message-State: APjAAAVe85pwyqnDUtNdqIXch42djNI2d3K2fmoy/mJ61rsZto6pDFNk
-        HUWg7i/y0H0UrHFADaryFlc=
-X-Google-Smtp-Source: APXvYqxea3sQYL0zemf/BDfh/Fngl+lzOAoLU0x312PESG6f2yo0GmWBhUf3frSoVwbx7/PQps66Kg==
-X-Received: by 2002:a1c:638a:: with SMTP id x132mr16983341wmb.43.1576841866625;
-        Fri, 20 Dec 2019 03:37:46 -0800 (PST)
-Received: from localhost (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id f1sm9955905wrp.93.2019.12.20.03.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 03:37:45 -0800 (PST)
-Date:   Fri, 20 Dec 2019 12:37:44 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     =?utf-8?B?5b2t5b+X5Yia?= <zgpeng.linux@gmail.com>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, Shakeel Butt <shakeelb@google.com>,
-        linux-mm@kvack.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zgpeng <zgpeng@tencent.com>
-Subject: Re: [PATCH] oom: choose a more suitable process to kill while all
- processes are not killable
-Message-ID: <20191220113744.GF20332@dhcp22.suse.cz>
-References: <1576823172-25943-1-git-send-email-zgpeng.linux@gmail.com>
- <20191220071334.GB20332@dhcp22.suse.cz>
- <CAE5vP3mHjdM-PwjUURwXgZDfgQ0b2BbgHkWZCHe-ysSmZ58pFw@mail.gmail.com>
+        Fri, 20 Dec 2019 06:41:55 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKBfOh9010342;
+        Fri, 20 Dec 2019 05:41:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576842084;
+        bh=w9s9i7Ww44rCNohjRaPm+5Se46XEGbZcF1GgQsc7m0Y=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=g2ShrcW3zsqpojqXbe9w2gE0RKYmB8+5O8Je41uReBbDOIVzuoSWzMKcrN8RZ33IS
+         cFc+7H6gpdoA0RevVYJhRaAtfq/ESB7qdIAgAqBHwxyIaIkGlAASHYYvdyZzES6Jrw
+         BV0ibljWPVgc2xfBtkCCg9IlytbXqrnmUDxNRTyY=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBKBfOpe007487
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Dec 2019 05:41:24 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
+ Dec 2019 05:41:23 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 20 Dec 2019 05:41:23 -0600
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKBfJ6t015527;
+        Fri, 20 Dec 2019 05:41:20 -0600
+Subject: Re: [PATCH V3 1/2] dt-bindings/irq: add binding for NXP INTMUX
+ interrupt multiplexer
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>, <maz@kernel.org>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>
+CC:     <fugang.duan@nxp.com>, <linux-kernel@vger.kernel.org>,
+        <linux-imx@nxp.com>, <kernel@pengutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1576827431-31942-1-git-send-email-qiangqing.zhang@nxp.com>
+ <1576827431-31942-2-git-send-email-qiangqing.zhang@nxp.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <0cecd3af-8bca-c0d3-1312-925624c63dbf@ti.com>
+Date:   Fri, 20 Dec 2019 17:10:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE5vP3mHjdM-PwjUURwXgZDfgQ0b2BbgHkWZCHe-ysSmZ58pFw@mail.gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1576827431-31942-2-git-send-email-qiangqing.zhang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Please do not top post]
 
-On Fri 20-12-19 17:56:20, 彭志刚 wrote:
-> certainly.
+
+On 20/12/19 1:07 PM, Joakim Zhang wrote:
+> This patch adds the DT bindings for the NXP INTMUX interrupt multiplexer
+> for i.MX8 family SoCs.
 > 
-> Steps to reproduce:
-> (1)Create a mm cgroup and set memory.limit_in_bytes
-> (2)Move the bash process to the newly created cgroup, and set the
-> oom_score_adj of the  bash process to -998.
-> (3)In bash, start multiple processes, each process consumes different
-> memory until cgroup oom is triggered.
+> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+> ---
+>  .../interrupt-controller/fsl,intmux.txt       | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
 > 
-> The triggered phenomenon is shown below. We can see that when cgroup oom
-> happened, process 23777 was killed, but in fact, 23772 consumes more memory;
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+> new file mode 100644
+> index 000000000000..3ebe9cac5f20
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+> @@ -0,0 +1,36 @@
+> +Freescale INTMUX interrupt multiplexer
+> +
+> +Required properties:
+> +
+> +- compatible: Should be:
+> +   - "fsl,imx-intmux"
+> +- reg: Physical base address and size of registers.
+> +- interrupts: Should contain the parent interrupt lines (up to 8) used to
+> +  multiplex the input interrupts.
+> +- clocks: Should contain one clock for entry in clock-names.
+> +- clock-names:
+> +   - "ipg": main logic clock
+> +- interrupt-controller: Identifies the node as an interrupt controller.
+> +- #interrupt-cells: Specifies the number of cells needed to encode an
+> +  interrupt source. The value must be 2.
+> +   - the 1st cell: hardware interrupt number> +   - the 2nd cell: channel index, value must smaller than channels used
+
+As per the xlate function, 1st cell is channel index and 2nd cell is hw
+interrupt number no?
+
+Thanks and regards,
+Lokesh
+
+> +
+> +Optional properties:
+> +
+> +- fsl,intmux_chans: The number of channels used for interrupt source. The
+> +  Maximum value is 8. If this property is not set in DT then driver uses
+> +  1 channel by default.
+> +
+> +Example:
+> +
+> +	intmux@37400000 {
+> +		compatible = "fsl,imx-intmux";
+> +		reg = <0x37400000 0x1000>;
+> +		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&clk IMX8QM_CM40_IPG_CLK>;
+> +		clock-names = "ipg";
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +	};
+> +
 > 
-> [  591.000970] Tasks state (memory values in pages):
-> [  591.000970] [  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name
-> [  591.000973] [  23344]     0 23344     2863      923    61440        0        -998 bash
-> [  591.000975] [  23714]     0 23714    27522    25935   258048        0        -998 test
-> [  591.000976] [  23772]     0 23772   104622   103032   876544        0        -998 test
-
-points = 103032 + 0 + 876544/4096 = 103246
-
-> [  591.000978] [  23777]     0 23777    78922    77335   667648        0        -998 test
-
-points = 77335 + 0 + 667648/4096 = 77498
-
-It is not clear what is the actual hard limit but let's assume that
-rss+page_tables is the only charged memory (or at least the majority of
-it). That would be 207680 so the normalized oom_score_adj would be
--206586 which is way too big for both tasks so from the OOM killer
-perspective both tasks are equal.
-
-The question is whether this is a bug or a (mis)feature. The
-oom_score_adj je documented as follows:
-Documentation/filesystems/proc.txt
-: Consequently, it is very simple for userspace to define the amount of memory to
-: consider for each task.  Setting a /proc/<pid>/oom_score_adj value of +500, for
-: example, is roughly equivalent to allowing the remainder of tasks sharing the
-: same system, cpuset, mempolicy, or memory controller resources to use at least
-: 50% more memory.  A value of -500, on the other hand, would be roughly
-: equivalent to discounting 50% of the task's allowed memory from being considered
-: as scoring against the task.
-
-Which implies that we are talking about the budget based on a usable
-memory (aka hard limit in this case). I do agree that the semantic is
-awkward. I know there are usecases which try to use the existing scheme
-for oom_score_adj to fine tune oom decisions and I am worried your patch
-might break those.
-
-That being said, I am not sure this change is safe wrt. to backward
-compatibility. I would rather recommend to not using oom_score_adj for
-anything but OOM_SCORE_ADJ_MIN resp OOM_SCORE_ADJ_MAX.
--- 
-Michal Hocko
-SUSE Labs
