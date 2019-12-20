@@ -2,114 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE92412738C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B8BE127397
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:44:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727229AbfLTCec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 21:34:32 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36787 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfLTCeb (ORCPT
+        id S1727216AbfLTCoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 21:44:11 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:57984 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbfLTCoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 21:34:31 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x184so4379851pfb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 18:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mVLwMYU9a1Ur9p84n79pZdcxfrBVZ9dl3tOWS7SY+xA=;
-        b=A5XLiLj5XSorkfvQSx4vNY7HKLa68YNU6fUVPeKVnsYSZxhYpHtADihv6LVt/KThhw
-         abQr4Lo1YZ70r6Yhzt10AHq7H8T4cjrLV5hutX6T0x/76ECM+WY8MccHN1292kSeidFS
-         +lq66CmXgUyXMFeHnmljFNydyHmw5XUejn6zHWNL4ZI1R9NkCKrHDWtpUP3vnKcGT7Kd
-         bU5mUETfLlbIRvAgZNr9RksSLcfEBrSTRAJPsaTAXTRW+ZePHwsgiTmNvtbqKOfpg+Gu
-         lnb4RlFSEv1mYTe2rn1/Z8X9nam7y5eArPaygWDvKNnvYNd55ba+LXn4qYCXQETYs6eE
-         BcGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mVLwMYU9a1Ur9p84n79pZdcxfrBVZ9dl3tOWS7SY+xA=;
-        b=MHosZeJLTF4FsNkE9WBWT+QOGtMiHQDhF+caGEL1LIKbutoVPFqTuWJwBMhM95d910
-         YpUyqz1L7Js2++ln2N9LgWKphSGB91bUnp2QwEzxl5WZGZpJxHwTY/vluwBwFmj2gOQp
-         ERZ2LCgkvt3hILN3kMjDWZqjSPFHcfmyWeKaG322gjj2COxC1VyAYcrmcypDx/wxGG/d
-         jt4QssZdcWJlO2tE53eIhn84EsGOPbbd5JpFaBW/X8m+FteEPIUBx2NGR4Z0E0GAn6AL
-         h745K2ES0h/xdfvukVXv/Ke3V0WOf4QnyIYxIH13TexyKNyCWOGsEKI6IywaH9Wtt61V
-         fEQA==
-X-Gm-Message-State: APjAAAVIoPLMPglmUUUIqeVIDlF601yGG/TBGFSCQivQ13pQDlzNb1iB
-        UZW7Tv8Rn7D24gDIbsPt6XNuNg==
-X-Google-Smtp-Source: APXvYqzQxouN9+tP55/5fJi1dLRhTZxq4NQnMIOJeo5MymuGtB8QKOUaMrH+A5MNTCh7N14bYMd1UA==
-X-Received: by 2002:a62:e30f:: with SMTP id g15mr13168064pfh.124.1576809270507;
-        Thu, 19 Dec 2019 18:34:30 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x33sm8946698pga.86.2019.12.19.18.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 18:34:29 -0800 (PST)
-Date:   Thu, 19 Dec 2019 18:34:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
-Message-ID: <20191220023427.GL448416@yoga>
-References: <20191207203603.2314424-1-bjorn.andersson@linaro.org>
- <20191207203603.2314424-2-bjorn.andersson@linaro.org>
- <20191219063719.5AF942146E@mail.kernel.org>
+        Thu, 19 Dec 2019 21:44:10 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBK2i9re108129;
+        Thu, 19 Dec 2019 20:44:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576809849;
+        bh=XrL+lkvSptcyfruvE92Sj2A7lcMkgZ64kMa54ko5wHA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=KA97jGRSbnRSgg2q0+jKAouP5BsYQOg1/Zf7VWpltQbKar4taQJ8A7fBIdz0aoI9d
+         ATwdylyxCMXblSiqTXzCGma/TvlVr//L5CIgfJKsxQSMAEtxFH/cHdQz/gsuBShY3C
+         ZllH9JhcEUHS9uAoWVdaJDR2Ba4SrKbKs5nCILW8=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBK2i9TB022794
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 19 Dec 2019 20:44:09 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Thu, 19
+ Dec 2019 20:44:08 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Thu, 19 Dec 2019 20:44:08 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBK2i7j1106631;
+        Thu, 19 Dec 2019 20:44:07 -0600
+Subject: Re: [PATCHv3 08/15] remoteproc/omap: Remove the unused fields from
+ platform data
+To:     Tero Kristo <t-kristo@ti.com>, <bjorn.andersson@linaro.org>,
+        <ohad@wizery.com>, <linux-remoteproc@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <mathieu.poirier@linaro.org>,
+        <linux-omap@vger.kernel.org>
+References: <20191213125537.11509-1-t-kristo@ti.com>
+ <20191213125537.11509-9-t-kristo@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <abc17f7b-7664-9064-2e48-4b429847b105@ti.com>
+Date:   Thu, 19 Dec 2019 20:44:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219063719.5AF942146E@mail.kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191213125537.11509-9-t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 18 Dec 22:37 PST 2019, Stephen Boyd wrote:
+Hi Tero,
 
-> Quoting Bjorn Andersson (2019-12-07 12:36:02)
-> > The CLKREF clocks are all fed by the clock signal on the CXO2 pad on the
-> > SoC. Update the definition of these clocks to allow this to be wired up
-> > to the appropriate clock source.
-> > 
-> > Retain "xo" as the global named parent to make the change a nop in the
-> > event that DT doesn't carry the necessary clocks definition.
+On 12/13/19 6:55 AM, Tero Kristo wrote:
+> From: Suman Anna <s-anna@ti.com>
 > 
-> Something seems wrong still.
+> The following fields: .name, .oh_name, .oh_name_opt, .mbox_name,
+> .firmware, .ops and .set_bootaddr, are removed from the platform data,
+> as these are no longer needed after the addition of DT support to the
+> OMAP remoteproc driver.
 > 
-> I wonder if we need to add the XO "active only" clk to the rpm clk
-> driver(s) and mark it as CLK_IS_CRITICAL. In theory that is really the
-> truth for most of the SoCs out there because it's the only crystal that
-> needs to be on all the time when the CPU is active. The "normal" XO clk
-> will then be on all the time unless deep idle is entered and nobody has
-> turned that on via some clk_prepare() call. That's because we root all
-> other clks through the "normal" XO clk that will be on in deep
-> idle/suspend if someone needs it to be.
+> The .name field was used to give a name to the remoteproc, and this
+> is replaced with the device name. The .ops field was never used by
+> the OMAP remoteproc driver. The .mbox_name was used to define the
+> sub-mailbox node used for communication with the remote processor,
+> and is retrieved using the 'mboxes' property in the DT node. The
+> .firmware field is encoded directly in the OMAP remoteproc driver and
+> is retrieved using driver match data. The .set_bootaddr ops was used
+> for using a OMAP Control Module API to configure the boot address for
+> the processor, and is now implemented within the driver using a
+> syscon property.
+> 
+> The .oh_name field is used to define the primary hwmod for the processor
+> node, and is represented using the 'ti,hwmods' property in the DT node.
+> The .oh_name_opt field was primarily defined to identify the hwmod for
+> the second cpu in a dual Cortex-M3/M4 IPU processor sub-system. This
+> hwmod entry is no longer defined usually, but rather a single hwmod
+> representing both the processors in the IPU sub-system is defined.
+> A single firmware image (either in SMP-mode or a combined image for
+> non-SMP mode) is used, with both the resets released together always
+> as part of the device management. Any power management and recovery
+> aspects require that both the processors be managed as one entity due
+> to the presence of shared MMU and unicache within the IPU sub-system.
+> 
+> The OMAP remoteproc platform data structure is eventually expected
+> to be removed completely once the other dependencies with the
+> mach-omap layer are met.
+
+This patch was a cleanup patch with DT using hwmod, and some of the
+description is pertinent to that. Now that you have converted to ti,sysc
+& reset with no dependencies against hwmod, the time for removing the
+structure is here. Some of the patch description is no longer correct as
+well since there is no 'ti,hwmods' :)
+
+> 
+> Signed-off-by: Suman Anna <s-anna@ti.com>
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  include/linux/platform_data/remoteproc-omap.h | 17 +----------------
+>  1 file changed, 1 insertion(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/platform_data/remoteproc-omap.h b/include/linux/platform_data/remoteproc-omap.h
+> index 7e3a16097672..6bea01e199fe 100644
+> --- a/include/linux/platform_data/remoteproc-omap.h
+> +++ b/include/linux/platform_data/remoteproc-omap.h
+> @@ -2,38 +2,23 @@
+>  /*
+>   * Remote Processor - omap-specific bits
+>   *
+> - * Copyright (C) 2011 Texas Instruments, Inc.
+> + * Copyright (C) 2011-2018 Texas Instruments Incorporated - http://www.ti.com/
+
+%s/2018/2019 when you do update the patch.
+
+regards
+Suman
+
+>   * Copyright (C) 2011 Google, Inc.
+>   */
+>  
+>  #ifndef _PLAT_REMOTEPROC_H
+>  #define _PLAT_REMOTEPROC_H
+>  
+> -struct rproc_ops;
+>  struct platform_device;
+>  
+>  /*
+>   * struct omap_rproc_pdata - omap remoteproc's platform data
+> - * @name: the remoteproc's name
+> - * @oh_name: omap hwmod device
+> - * @oh_name_opt: optional, secondary omap hwmod device
+> - * @firmware: name of firmware file to load
+> - * @mbox_name: name of omap mailbox device to use with this rproc
+> - * @ops: start/stop rproc handlers
+>   * @device_enable: omap-specific handler for enabling a device
+>   * @device_shutdown: omap-specific handler for shutting down a device
+> - * @set_bootaddr: omap-specific handler for setting the rproc boot address
+>   */
+>  struct omap_rproc_pdata {
+> -	const char *name;
+> -	const char *oh_name;
+> -	const char *oh_name_opt;
+> -	const char *firmware;
+> -	const char *mbox_name;
+> -	const struct rproc_ops *ops;
+>  	int (*device_enable)(struct platform_device *pdev);
+>  	int (*device_shutdown)(struct platform_device *pdev);
+> -	void (*set_bootaddr)(u32);
+>  };
+>  
+>  #if defined(CONFIG_OMAP_REMOTEPROC) || defined(CONFIG_OMAP_REMOTEPROC_MODULE)
 > 
 
-The patch doesn't attempt to address the fact that our representation of
-XO is incomplete, only the fact that CXO2 isn't properly described.
-
-Looking at the clock distribution, we do have RPM_SMD_BB_CLK1_A which
-presumably is the clock you're referring to here - i.e. the clock
-resource connected to CXO.
-
-> Did the downstream code explicitly enable this ln_bb_clk in the phy
-> drivers? I think it may have?
-> 
-
-Yes, afaict all downstream drivers consuming a CLKREF also consumes
-LN_BB and ensures that this is enabled. So we've been relying on UFS to
-either not have probed yet or that UFS probed successfully for PCIe and
-USB to be functional.
-
-So either we need this patch to ensure that the requests propagates
-down, or I need to patch up the PHY drivers to ensure that they also
-vote for the PMIC clock - and I do prefer this patch.
-
-Regards,
-Bjorn
