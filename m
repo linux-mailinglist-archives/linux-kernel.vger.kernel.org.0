@@ -2,172 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 31FC512728F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:50:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1FC0F127292
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:52:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbfLTAt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 19:49:59 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:34373 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726998AbfLTAt7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 19:49:59 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576802998; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=jUpr23tiVEby6XBvi3JbQitdR58sTc5kIsZaB83jplw=;
- b=ATnpg4dk2+vg7gnZmYUvQJ0ePSBvT0y+pU0bvjl82KEOdrX/zIzdw9EsBuqnRVDFJmep8FqS
- utD/MG4fvaBBMjHdQcmyIBAOq4lwJl0jFsceXb7A/iZBYnM3MhFaru0DPrwPTwvVwuGdtbI7
- EicKdxz3WJ0E9HdbWrOQTvHkDbY=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfc1ab3.7efbe2d7c768-smtp-out-n01;
- Fri, 20 Dec 2019 00:49:55 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 377D1C4479D; Fri, 20 Dec 2019 00:49:54 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83C20C433A2;
-        Fri, 20 Dec 2019 00:49:53 +0000 (UTC)
+        id S1727119AbfLTAwi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 19:52:38 -0500
+Received: from mail-mw2nam12on2071.outbound.protection.outlook.com ([40.107.244.71]:6107
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726952AbfLTAwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 19:52:38 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=k3RAA6rJH93YQjz5sK9OYnm+fz7xPd5ZrN5E2imtXzBT9paKSkr3HdMgWMRWfifNBQ+gvfgT34N4GCO6ENNtJjw9aliNxMHuylmm5Tq2UJrfSHHOnDZQuIAxvGR71pSaRK0aaeqZa+yH/O0aszJMM55qpv3nQSwG3eoXiugZXL/Ec2FsGizZbl+wFL0QyiCKqmwXnO7dYCgAL/pNtA9fwIIklmyL26idFthg/ffJ1MIbRJNj/TY+zpQDVMQ4VNkKKn4VqpXqdnH2rSYDtR0BJ1Rp0RwdYuDEYxNUr+ClrLfyTtHNcDoqRZQc2TnPzk2KAV9L5RkDbI79KYjwSTJ09w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X5PZYdo8XBquULSzWmV+VywqtlPEXF9y4o31GuZB5SI=;
+ b=FkRXqguwsJQ/JbP8AQhyzZOayNCFynRlWWI647ZRILWFrDbrBsM7uE2b+qVkKl0nWgBtRzHPiLGSiOGMe2+M0gPlnJnmqM6EoxYVSr0fl8JCVKWxHXPZJ7GRxO//aZy7k6KPPVCmCUpIahxJcdI4gerDHvJmAC1vdVW164xXGy45g7HH3/wwF00uB8qb0SLAMOrDxYpZf1Mv1XjBwbZ2u+G+zgrt1TTb4e9elfrgtuMBE891gYL7tVYizXY8mlM5oQeKzMyqdcY9OHb+rNEMTexdMmDHPOnEagJYlDEJrm+qPi8dveSCfVRbjEnZM7a30/9MMiDESmy0tJm7GlJhqw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=X5PZYdo8XBquULSzWmV+VywqtlPEXF9y4o31GuZB5SI=;
+ b=rNLyeV0fY0VIOB3mWaN8fc/eX5zrpxVGfffkBOEVR4LbRXZmrUF6yA113c6x5OJqAA85KB958k275h+J2W5N7utVMEIpQJ41ibu4RGsA+/UCrcUEh7yX/sPWaT+5p2Ttdk0JVioYGct35Xzyi2s4VwhU8+us8Rcp+R/6DjuMXOk=
+Received: from BYAPR12MB2806.namprd12.prod.outlook.com (20.176.254.20) by
+ BYAPR12MB3509.namprd12.prod.outlook.com (20.179.94.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.16; Fri, 20 Dec 2019 00:52:35 +0000
+Received: from BYAPR12MB2806.namprd12.prod.outlook.com
+ ([fe80::bccf:40ec:3b93:4269]) by BYAPR12MB2806.namprd12.prod.outlook.com
+ ([fe80::bccf:40ec:3b93:4269%6]) with mapi id 15.20.2538.019; Fri, 20 Dec 2019
+ 00:52:34 +0000
+From:   "Chen, Guchun" <Guchun.Chen@amd.com>
+To:     Alex Deucher <alexdeucher@gmail.com>
+CC:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: linux-next: Fixes tag needs some work in the amdgpu tree
+Thread-Topic: linux-next: Fixes tag needs some work in the amdgpu tree
+Thread-Index: AQHVtenBDREYp5T5WEStp+oONEi+uKfAqYHQgAA5RACAAVCkMA==
+Date:   Fri, 20 Dec 2019 00:52:34 +0000
+Message-ID: <BYAPR12MB2806BBCC7DCC63F2AC83297EF12D0@BYAPR12MB2806.namprd12.prod.outlook.com>
+References: <20191219082557.16092126@canb.auug.org.au>
+ <BYAPR12MB2806A8EBBB8B6F9AE29FBC00F1520@BYAPR12MB2806.namprd12.prod.outlook.com>
+ <CADnq5_PTLEXHd3U8fkKVcckFjCDN_p3n9PoQWwLkzRODqDd71A@mail.gmail.com>
+In-Reply-To: <CADnq5_PTLEXHd3U8fkKVcckFjCDN_p3n9PoQWwLkzRODqDd71A@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Guchun.Chen@amd.com; 
+x-originating-ip: [180.167.199.189]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 714330b4-984d-47a0-4a8a-08d784e6e6e2
+x-ms-traffictypediagnostic: BYAPR12MB3509:
+x-microsoft-antispam-prvs: <BYAPR12MB35091D585B64F8EB5E7BB767F12D0@BYAPR12MB3509.namprd12.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 025796F161
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(376002)(39860400002)(346002)(136003)(53754006)(13464003)(199004)(189003)(186003)(6916009)(54906003)(9686003)(316002)(71200400001)(6506007)(81166006)(52536014)(81156014)(7696005)(53546011)(478600001)(4326008)(76116006)(66446008)(64756008)(8936002)(66556008)(66476007)(33656002)(26005)(2906002)(55016002)(8676002)(86362001)(66946007)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3509;H:BYAPR12MB2806.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: r9Vm47ZsSRRVn4YL9RDmiv8Y0h9r0WQQm2GyecHDCxjSb3JQBQOedLloIzIHDYCBozRrJSxMo0i80g2xDpUY7E2I4IXWdJyvrhTA1Py5atM+5X1aR0HxP95UR+qhYFxDXnYPxf8mUsJ16uPrq4b/jcQThBA8uDBtXXydaF3pm29+MVhs7sgLU6AKlqHIrvm8zsOqw0rjdLDDZvISTAe1yavl0yDe7PLrMvSXSkv3xywWZ8ECqQkdYhTBwRIOCOlvYX334JqQOrBL0sqKB8TupKgagSGgEqQIUq8azCtCYeLCVUfwrygIRUMOfeQcZzk2XJt6rO0E+Rrqpk0KvmTHdzpePLa4//GcQH2dGSUm3XhDHI7Dqdbiu5aTMeV2u/iaYz6mrzQWq8JqoHP/w8NhCC4MEYrVY3NLRDwB1eFZnrqQhoc8wiP6MBVzU7cvsPrHWLgO6yOKgakvJ4xTcV6gft5qcTriWcZB4gtmkEBABuH7r7KIOlujzbCgEOuW+hYWNWCLhJLAeDOaq2hG/UMYSw==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Dec 2019 08:49:53 +0800
-From:   cang@codeaurora.org
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] phy: qcom-qmp: Add optional SW reset
-In-Reply-To: <ff83ac1f0ec6bca1379e8b873fd30aa2@codeaurora.org>
-References: <20191219150433.2785427-1-vkoul@kernel.org>
- <20191219150433.2785427-4-vkoul@kernel.org>
- <ff83ac1f0ec6bca1379e8b873fd30aa2@codeaurora.org>
-Message-ID: <9ef99dcac59dbdc59c7e5eb1a8724ea2@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 714330b4-984d-47a0-4a8a-08d784e6e6e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2019 00:52:34.6509
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: snpZnpq9UpXMAI5DdmyfdxvGULBYe9dBBldCnBWOudrevLNDT+kc9yvtR8qqg4nhtBv/YuQNvlwMNKYb02I6PQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3509
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-20 08:22, cang@codeaurora.org wrote:
-> On 2019-12-19 23:04, Vinod Koul wrote:
->> For V4 QMP UFS Phy, we need to assert reset bits, configure the phy 
->> and
->> then deassert it, so add optional has_sw_reset flag and use that to
->> configure the QPHY_SW_RESET register.
->> 
->> Signed-off-by: Vinod Koul <vkoul@kernel.org>
->> ---
->>  drivers/phy/qualcomm/phy-qcom-qmp.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->> 
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c
->> b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> index 06f971ca518e..80304b7cd895 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> @@ -1023,6 +1023,9 @@ struct qmp_phy_cfg {
->> 
->>  	/* true, if PCS block has no separate SW_RESET register */
->>  	bool no_pcs_sw_reset;
->> +
->> +	/* true if sw reset needs to be invoked */
->> +	bool has_sw_reset;
->>  };
->> 
->>  /**
->> @@ -1391,6 +1394,7 @@ static const struct qmp_phy_cfg 
->> sm8150_ufsphy_cfg = {
->> 
->>  	.is_dual_lane_phy	= true,
->>  	.no_pcs_sw_reset	= true,
->> +	.has_sw_reset		= true,
->>  };
->> 
->>  static void qcom_qmp_phy_configure(void __iomem *base,
->> @@ -1475,6 +1479,9 @@ static int qcom_qmp_phy_com_init(struct qmp_phy 
->> *qphy)
->>  			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
->>  	}
->> 
->> +	if (cfg->has_sw_reset)
->> +		qphy_setbits(serdes, cfg->regs[QPHY_SW_RESET], SW_RESET);
->> +
-> 
-> Are you sure you want to set this in the serdes register? QPHY_SW_RESET
-> is in its pcs register.
-> 
->>  	if (cfg->has_phy_com_ctrl)
->>  		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
->>  			     SW_PWRDN);
->> @@ -1651,6 +1658,9 @@ static int qcom_qmp_phy_enable(struct phy *phy)
->>  	if (cfg->has_phy_dp_com_ctrl)
->>  		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
->> 
->> +	if (cfg->has_sw_reset)
->> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
->> +
-> 
-> Yet you are clearing it from pcs register.
-> 
-> Regards,
-> Can Guo
-> 
->>  	/* start SerDes and Phy-Coding-Sublayer */
->>  	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
-
-I thought your change would be like this
-
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
-b/drivers/phy/qualcomm/phy-qcom-qmp.c
-index 8e642a6..a4ab4b7 100755
---- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-@@ -166,6 +166,7 @@ static const unsigned int 
-sdm845_ufsphy_regs_layout[] = {
-  };
-
-  static const unsigned int sm8150_ufsphy_regs_layout[] = {
-+       [QPHY_SW_RESET]                 = 0x08,
-         [QPHY_START_CTRL]               = 0x00,
-         [QPHY_PCS_READY_STATUS]         = 0x180,
-  };
-@@ -1390,7 +1391,6 @@ static const struct qmp_phy_cfg sm8150_ufsphy_cfg 
-= {
-         .pwrdn_ctrl             = SW_PWRDN,
-
-         .is_dual_lane_phy       = true,
--       .no_pcs_sw_reset        = true,
-  };
-
-  static void qcom_qmp_phy_configure(void __iomem *base,
-@@ -1475,6 +1475,9 @@ static int qcom_qmp_phy_com_init(struct qmp_phy 
-*qphy)
-                              SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
-         }
-
-+       if ((cfg->type == PHY_TYPE_UFS) && (!cfg->no_pcs_sw_reset))
-+               qphy_setbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-+
-         if (cfg->has_phy_com_ctrl)
-                 qphy_setbits(serdes, 
-cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
-                              SW_PWRDN);
-
-Regards,
-Can Guo.
+VGhhbmtzIEFsZXggYW5kIFN0ZXBoZW4uDQpJIHdpbGwgYmUgYXdhcmUgb2YgdGhpcyBuZXh0IHRp
+bWUuIFNvcnJ5IGZvciB0aGUgaW5jb252ZW5pZW5jZSBhZ2Fpbi4NCg0KUmVnYXJkcywNCkd1Y2h1
+bg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQWxleCBEZXVjaGVyIDxhbGV4
+ZGV1Y2hlckBnbWFpbC5jb20+IA0KU2VudDogVGh1cnNkYXksIERlY2VtYmVyIDE5LCAyMDE5IDEy
+OjQ3IFBNDQpUbzogQ2hlbiwgR3VjaHVuIDxHdWNodW4uQ2hlbkBhbWQuY29tPg0KQ2M6IFN0ZXBo
+ZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PjsgTGludXggTmV4dCBNYWlsaW5nIExp
+c3QgPGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1haWxpbmcgTGlz
+dCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4NClN1YmplY3Q6IFJlOiBsaW51eC1uZXh0
+OiBGaXhlcyB0YWcgbmVlZHMgc29tZSB3b3JrIGluIHRoZSBhbWRncHUgdHJlZQ0KDQpPbiBXZWQs
+IERlYyAxOCwgMjAxOSBhdCA4OjIyIFBNIENoZW4sIEd1Y2h1biA8R3VjaHVuLkNoZW5AYW1kLmNv
+bT4gd3JvdGU6DQo+DQo+IFtBTUQgT2ZmaWNpYWwgVXNlIE9ubHkgLSBJbnRlcm5hbCBEaXN0cmli
+dXRpb24gT25seV0NCj4NCj4gSGkgU3RlcGhlbiwNCj4NCj4gU29ycnkgZm9yIHRoZSBpbmNvbnZl
+bmllbmNlLiBIb3cgSSBjYW4gZml4IHRoaXM/DQo+DQoNCkFscmVhZHkgZml4ZWQuDQoNCkFsZXgN
+Cg0KPiBSZWdhcmRzLA0KPiBHdWNodW4NCj4NCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+Cj4gRnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+IFNlbnQ6
+IFRodXJzZGF5LCBEZWNlbWJlciAxOSwgMjAxOSA1OjI2IEFNDQo+IFRvOiBBbGV4IERldWNoZXIg
+PGFsZXhkZXVjaGVyQGdtYWlsLmNvbT4NCj4gQ2M6IExpbnV4IE5leHQgTWFpbGluZyBMaXN0IDxs
+aW51eC1uZXh0QHZnZXIua2VybmVsLm9yZz47IExpbnV4IEtlcm5lbCBNYWlsaW5nIExpc3QgPGxp
+bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc+OyBDaGVuLCBHdWNodW4gPEd1Y2h1bi5DaGVuQGFt
+ZC5jb20+DQo+IFN1YmplY3Q6IGxpbnV4LW5leHQ6IEZpeGVzIHRhZyBuZWVkcyBzb21lIHdvcmsg
+aW4gdGhlIGFtZGdwdSB0cmVlDQo+DQo+IEhpIGFsbCwNCj4NCj4gSW4gY29tbWl0DQo+DQo+ICAg
+Y2FhMDE2NTkwMjhhICgiZHJtL2FtZGdwdTogbW92ZSB1bWMgb2Zmc2V0IHRvIG9uZSBuZXcgaGVh
+ZGVyIGZpbGUgZm9yIEFyY3R1cnVzIikNCj4NCj4gRml4ZXMgdGFnDQo+DQo+ICAgRml4ZXM6IDk2
+ODY1NjNjNGM0MiBkcm0vYW1kZ3B1OiBBZGRlZCBSQVMgVU1DIGVycm9yIHF1ZXJ5IHN1cHBvcnQg
+Zm9yIEFyY3R1cnVzDQo+DQo+IGhhcyB0aGVzZSBwcm9ibGVtKHMpOg0KPg0KPiAgIC0gVGFyZ2V0
+IFNIQTEgZG9lcyBub3QgZXhpc3QNCj4NCj4gRGlkIHlvdSBtZWFuDQo+DQo+IEZpeGVzOiA0Y2Y3
+ODFjMjRjM2IgKCJkcm0vYW1kZ3B1OiBBZGRlZCBSQVMgVU1DIGVycm9yIHF1ZXJ5IHN1cHBvcnQg
+Zm9yIEFyY3R1cnVzIikNCj4NCj4gQWxzbywgcGxlYXNlIGtlZXAgYWxsIHRoZSB0YWdzIHRvZ2V0
+aGVyIGF0IHRoZSBlbmQgb2YgdGhlIGNvbW1pdCBtZXNzYWdlLg0KPg0KPiAtLQ0KPiBDaGVlcnMs
+DQo+IFN0ZXBoZW4gUm90aHdlbGwNCg==
