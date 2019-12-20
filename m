@@ -2,96 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07F721284BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 23:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 496E01284E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 23:29:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfLTW1g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 17:27:36 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:7326 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfLTW12 (ORCPT
+        id S1727507AbfLTW3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 17:29:32 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:33091 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbfLTW3c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 17:27:28 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfd4ab00002>; Fri, 20 Dec 2019 14:26:56 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 20 Dec 2019 14:27:27 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 20 Dec 2019 14:27:27 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
- 2019 22:27:27 +0000
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
- 2019 22:27:26 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 20 Dec 2019 22:27:26 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.197]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dfd4acd0003>; Fri, 20 Dec 2019 14:27:26 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 19/19] ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
-Date:   Fri, 20 Dec 2019 14:27:05 -0800
-Message-ID: <1576880825-15010-20-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Fri, 20 Dec 2019 17:29:32 -0500
+Received: by mail-il1-f195.google.com with SMTP id v15so9282819iln.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 14:29:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SxT9S/D7O//cYzKYLsrhvKwwVG4SCgEZz+NAdL3+U5Q=;
+        b=X/akbPBWsfdZSp5G+j8P28Aelh08kzfqaYSSeV7+y19Zi1sV/RL/eCdWnV27FHLG2P
+         EQRJdTjbSHdcV/ApCLjSWGWjqZvmzYs6dScyi4K4xpQybh/mlAzaWbvhTtb8Ju8a3M++
+         qYFouGgxLMhvdLNAM1zSqJpeoY5qcxHAhZuuafFitcFS1pcYJxLy3yfoBN7+IVIjnPAU
+         Lo42qgzVk6MKHeoMx/ow0YHO2B+UYq1bf2JWUI9jdIG7IOfnSjZBLEQwE1GpNs8s8IJk
+         M+Qn8NlFKu4U+W5/r3EWTzUCZfMmc7HksPCXtYOQWQhp7Ql5z7ZD6Gw/dZBmhwIyPQAm
+         L7qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SxT9S/D7O//cYzKYLsrhvKwwVG4SCgEZz+NAdL3+U5Q=;
+        b=Iqj8uMPOlZRFEFr7VxdRYARYItfgFNytygVAp6LYLpyrqHq0POaU8fn88TSdHzc1hT
+         Y8B17PJs1ZYclwpBd634lCezvYzLhkc6yrdqNEFSIXLhRuIDHzApODeSXb3bz++3K8DR
+         71SGPiy+9WJMbB5EUCdxcjz6S3BLLoEnrlX5LbT4XTolN3aSeEjTcVneg4gBXLKTMN+8
+         HRjASP4F92HXkv+SFZQY9VkAPR6VpkV/1cT2fjmJA0+bCP4JvjbOrqEvWgwTS1mjAXD9
+         MV2raBHR1CxZrDkf1EutRhhJ9/uXxLvjRAzdhYapDWrcgK8A+PwggNBlmUVh9yCRyoTs
+         IaUA==
+X-Gm-Message-State: APjAAAXHcORT5hjGCt3SDoFuY8E7omAwj9Iaub3LH5QxfxYfDZ3WPoRy
+        sHKgILF3t9JxTzuVD2cNF07PD6v0YxLa6P4jEaQxqA==
+X-Google-Smtp-Source: APXvYqxLXJqkYvqWBb61uln9iVY4bKA8u4x7YyqWnVhlvxP53ixXA+H6Dubqv63T2mi3IMTN0gxD97MeT3MAXwMVGes=
+X-Received: by 2002:a92:afc5:: with SMTP id v66mr13507241ill.123.1576880971835;
+ Fri, 20 Dec 2019 14:29:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576880816; bh=3/z4wcLO56+BeZp414C24586DH5MDkYRn6sb6Gjt3tk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=I4QBlSkN4a4SkV9E11r6WC2jv6cdvz0hwSKml+HIr8/XK4haC+IUEGaavKcKz5jO4
-         HYDvA+f5/M9wyqAuF55F50BYadlW5G8abhQjgOiUW/YRJWed1Xkp/t9wE1x7XTPte7
-         nY3l2ZkAXF8P7E/HyXmk5i5T9BK/3A2AXhnAnfL30CkyRFv2Xbsmrn4lC0oPORvfYe
-         Im/TJ2zwum15H+Oo7L6w/eF08vr2N+ROvTvV2rL5Q6mU8ePDNrhi/ZeSqeYl6RHSlp
-         zKeXF9CVK2SF3S/6U76v2pomDxEblV5EB4KNqyfRpFP3ySJZZR5BEDo4fuquqUG4LC
-         9tOUa/fHXhbbA==
+References: <20191217040704.91995-1-olof@lixom.net> <alpine.DEB.2.21.9999.1912200302290.3767@viisi.sifive.com>
+In-Reply-To: <alpine.DEB.2.21.9999.1912200302290.3767@viisi.sifive.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Fri, 20 Dec 2019 14:29:20 -0800
+Message-ID: <CAOesGMg_VySkckuTfeMWkfcQ6fUBokAQbCGXP9emz9WvtX4fKQ@mail.gmail.com>
+Subject: Re: [PATCH] riscv: export flush_icache_all to modules
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra clk_out_1, clk_out_2, and clk_out_3 are part of PMC block and
-these clocks are moved from clock drvier to pmc driver with pmc as
-a provider for these clocks.
+On Fri, Dec 20, 2019 at 3:05 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+>
+> On Mon, 16 Dec 2019, Olof Johansson wrote:
+>
+> > This is needed by LKDTM (crash dump test module), it calls
+> > flush_icache_range(), which on RISC-V turns into flush_icache_all(). On
+> > other architectures, the actual implementation is exported, so follow
+> > that precedence and export it here too.
+> >
+> > Fixes build of CONFIG_LKDTM that fails with:
+> > ERROR: "flush_icache_all" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+>
+> In the past we've resisted doing this; see
+>
+> https://lore.kernel.org/linux-riscv/20190611134945.GA28532@lst.de/
+>
+> under the principle that we don't want modules to be able to flush the I$
+> directly via this interface.  But maybe, like moving the L2 related code
+> out of arch/riscv, we should just do it.
 
-Update bindings document to use pmc as clock provider for clk_out_2 and
-change id to pmc clock id.
+So you are aware that all other architectures that don't have coherent
+icache already exports this, right?
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- Documentation/devicetree/bindings/sound/nau8825.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Being more puritan on RISC-V buys nothing w.r.t. keeping modules from
+doing anything, you'll just end up having to mark a bunch of them
+broken on your architecture. :(
 
-diff --git a/Documentation/devicetree/bindings/sound/nau8825.txt b/Documentation/devicetree/bindings/sound/nau8825.txt
-index d16d96839bcb..388a7bc60b1f 100644
---- a/Documentation/devicetree/bindings/sound/nau8825.txt
-+++ b/Documentation/devicetree/bindings/sound/nau8825.txt
-@@ -101,5 +101,5 @@ Example:
-       nuvoton,crosstalk-enable;
- 
-       clock-names = "mclk";
--      clocks = <&tegra_car TEGRA210_CLK_CLK_OUT_2>;
-+      clocks = <&tegra_pmc TEGRA_PMC_CLK_OUT_2>;
-   };
--- 
-2.7.4
 
+-Olof
