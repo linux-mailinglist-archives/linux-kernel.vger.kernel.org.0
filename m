@@ -2,109 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C2CB41282C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E33B1282C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:36:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfLTTgA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 14:36:00 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33102 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbfLTTgA (ORCPT
+        id S1727535AbfLTTgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 14:36:45 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:12142 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727413AbfLTTgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 14:36:00 -0500
-Received: by mail-qt1-f195.google.com with SMTP id d5so9183441qto.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 11:35:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6ccQDi1F9SPbcPBXhrPvQY95LBc5kJhF17D3pnjjDvU=;
-        b=dzeo1u9lXJAwfs3L4kdz9fc21Io6Hve8ECQKPAi4L6/gQvOc6Uz/5vD1BqxwlD7qUC
-         04vL5BKOLAUlWUAxeGx5hkMEiu2qXO4uyIMW+TsVMVSYJRGTaZsBMFgE2dpyDvJPgHyb
-         TENcNgpO7OF//s1sajTWTR3aELFVgXjX7bNJs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6ccQDi1F9SPbcPBXhrPvQY95LBc5kJhF17D3pnjjDvU=;
-        b=pHmO/pebOXO/ZJynuof8IXJQQULRlbWaEcVKT2xcFVCdjh36hs9p0yLIw/XLrPjN4Z
-         Y/3PmFivOFfTCTjB9MHA13CXTYbggJ0QYUS7vcMn2BagjSvtyE0172FR1vQxHPsnlUPV
-         5FBPrJO2YpNtbemt5MizmmDqqnbtS51tDbxv5bWIY/jtbS+VDqEXmLMDheeEO/eTUGU1
-         ftzn/Ch5Hm0bjgjY9Qexf9BZn/vNJHVH9fHScx2LfrD52obQmdB2T+bm951eQP7VIg+P
-         pxdV23i1DlbCafEF5nYL+jkJ+FFsUB2PXOJ8eKJxjGt3jjaftBhQV1nWZo252ZTWyySW
-         GRxw==
-X-Gm-Message-State: APjAAAWfMZFV38riWIoz6DP1NiS9DU1VwcqULSayrzdE5Y/xF3uXlQQD
-        fOOyYDgywAtM/v2uyhuD4ECp0R6qJgY8aHA6ZtGEzA==
-X-Google-Smtp-Source: APXvYqwqq2ZP022vPEMoI8NimGYtJK2qQ9JDC10HfvpGkzkmjuzJ0DgEoz+I72XV8pRfVgRQhVvwTxyQYPYKEW/0MDI=
-X-Received: by 2002:ac8:5457:: with SMTP id d23mr12606355qtq.93.1576870558756;
- Fri, 20 Dec 2019 11:35:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20191219201340.196259-1-pmalani@chromium.org> <20191219201340.196259-2-pmalani@chromium.org>
- <f3d6267e-2429-e5a0-2a0e-60cab5bb1bb9@collabora.com> <20191220105252.GR18955@dell>
-In-Reply-To: <20191220105252.GR18955@dell>
-From:   Prashant Malani <pmalani@chromium.org>
-Date:   Fri, 20 Dec 2019 11:35:47 -0800
-Message-ID: <CACeCKadb7tadNEWg-0=8c_km3XXB25JA=rj1UBiFdWMDj37fYQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mfd: cros_ec: Add usbpd-notify to usbpd_charger
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Fri, 20 Dec 2019 14:36:45 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBKJJI59131594
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 14:36:44 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2x0xccmvks-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 14:36:44 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 20 Dec 2019 19:36:41 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 20 Dec 2019 19:36:37 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBKJaaAV60620848
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 19:36:37 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF5D511C05C;
+        Fri, 20 Dec 2019 19:36:36 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BC80A11C054;
+        Fri, 20 Dec 2019 19:36:35 +0000 (GMT)
+Received: from dhcp-9-31-103-79.watson.ibm.com (unknown [9.31.103.79])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 20 Dec 2019 19:36:35 +0000 (GMT)
+Subject: Re: [PATCH v5 0/2] IMA: Deferred measurement of keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Fri, 20 Dec 2019 14:36:35 -0500
+In-Reply-To: <589b893b-52e4-783c-0f32-608ed1cfd7f9@linux.microsoft.com>
+References: <20191218164434.2877-1-nramas@linux.microsoft.com>
+         <1576868506.5241.65.camel@linux.ibm.com>
+         <589b893b-52e4-783c-0f32-608ed1cfd7f9@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19122019-0020-0000-0000-0000039A55B5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19122019-0021-0000-0000-000021F18521
+Message-Id: <1576870595.5241.83.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-20_05:2019-12-17,2019-12-20 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 suspectscore=11 spamscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912200143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 2:52 AM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Fri, 20 Dec 2019, Enric Balletbo i Serra wrote:
->
-> > Hi Prashant,
-> >
-> > This should be [PATCH v3 2/2]. All the patches in the series should hav=
-e the
-> > same version otherwise makes difficult to follow.
-> >
-> > Thanks,
-> >  Enric
-> >
-> > On 19/12/19 21:13, Prashant Malani wrote:
-> > > Add the cros-usbpd-notify driver as a cell for the cros_usbpd_charger
-> > > subdevice on non-ACPI platforms.
-> > >
-> > > This driver allows other cros-ec devices to receive PD event
-> > > notifications from the Chrome OS Embedded Controller (EC) via a
-> > > notification chain.
-> > >
-> > > Change-Id: I4c062d261fa1a504b43b0a0c0a98a661829593b9
-> > > Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> > > ---
-> > >  drivers/mfd/cros_ec_dev.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > > index c4b977a5dd966..1dde480f35b93 100644
-> > > --- a/drivers/mfd/cros_ec_dev.c
-> > > +++ b/drivers/mfd/cros_ec_dev.c
-> > > @@ -85,6 +85,9 @@ static const struct mfd_cell cros_ec_sensorhub_cell=
-s[] =3D {
-> > >  static const struct mfd_cell cros_usbpd_charger_cells[] =3D {
-> > >     { .name =3D "cros-usbpd-charger", },
-> > >     { .name =3D "cros-usbpd-logger", },
-> > > +#ifndef CONFIG_ACPI
-> > > +   { .name =3D "cros-usbpd-notify", },
-> > > +#endif
->
-> We don't want #iferry all over our c-files.  If you *have* to rely on
-> Kconfig configurations, split this out into a separate cell and use
-> IS_ENABLED().
-Done. Thanks.
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+On Fri, 2019-12-20 at 11:25 -0800, Lakshmi Ramasubramanian wrote:
+> On 12/20/2019 11:01 AM, Mimi Zohar wrote:
+> 
+> Hi Mimi,
+> 
+> >> If the kernel is built with both CONFIG_IMA and
+> >> CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE enabled then the IMA policy
+> >> must be applied as a custom policy. Not providing a custom policy
+> >> in the above configuration would result in asymmeteric keys being queued
+> >> until a custom policy is loaded. This is by design.
+> > 
+> > I didn't notice the "This is by design" here, referring to the memory
+> > never being freed.  "This is by design" was suppose to refer to
+> > requiring a custom policy for measuring keys.
+> > 
+> > For now, these two patches are queued in the next-integrity-testing
+> > branch, but I would appreciate your addressing not freeing the memory
+> > associated with the keys, if a custom policy is not loaded.
+> > 
+> > Please note that I truncated the 2/2 patch description, as it repeats
+> > the existing verification example in commit ("2b60c0ecedf8 IMA: Read
+> > keyrings= option from the IMA policy").
+> > 
+> > thanks,
+> > 
+> > Mimi
+> > 
+> 
+> Sure - I am fine with truncating the 2/2 patch description. Thanks for 
+> doing that.
+> 
+> Regarding "Freeing the queued keys if custom policy is not loaded":
+> 
+> Shall I create a new patch set to address that and have that be reviewed 
+> independent of this patch set?
+
+If it is just a single additional patch, feel free to post it without
+a cover letter.
+
+> 
+> Like you'd suggested earlier, we can wait for a certain time, after IMA 
+> is initialized, and free the queue if a custom policy was not loaded.
+
+Different types of systems vary in boot time, but perhaps a certain
+amount of time after IMA is initialized would be consistent.  This
+would need to work for IoT devices/sensors to servers.
+
+Mimi 
+
