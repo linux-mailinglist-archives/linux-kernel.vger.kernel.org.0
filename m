@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B32D2127C8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:30:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B19127C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:30:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfLTO35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:29:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
+        id S1727473AbfLTOaC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:30:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727369AbfLTO35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:29:57 -0500
+        id S1727359AbfLTOaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:30:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CBE4206CB;
-        Fri, 20 Dec 2019 14:29:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB3EA2465E;
+        Fri, 20 Dec 2019 14:29:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576852196;
-        bh=DaKcY2ZpqbDstz9wKYKjtF3MBp5yvPnCH85aOptTh+g=;
-        h=From:To:Cc:Subject:Date:From;
-        b=pd69Fkx3rDQ1+5mFJx9W0sSYc63XiA6PYX0lhklgJ2u/dscvGoe98DFCoHIKfGUQP
-         /oEZXBukDQZt1fc5ovGeDcPr8Wx1dmHl2Cn5KUXqc24eIoBcx9SAdN9zrhqJYxtxBy
-         yhLYqCtDFqNKmDfAcZ00Z5so2OhB9emI9VNZZWFM=
+        s=default; t=1576852199;
+        bh=/5aMJwaRdDLfbRD/8GZC/1uh8M6TUwSDTLCSzcArVNU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pC19sYxhb2LTSNuk6y9JyT6uURc55ZKIKjWCO8885Zn8kOhrzhCrx+cIo5Z8SnHTv
+         A9MtUzcZ6Q43Oq76Htts62kQRz6p1+ii3DgeIvU8e/YcEzSRqFYhTwZlazwT9cwtJN
+         npC9xm+jWm5//MuhM8NN0qblBuEYOkGs0rGd7Tnk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephan Gerhold <stephan@gerhold.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.4 01/52] drm/mcde: dsi: Fix invalid pointer dereference if panel cannot be found
-Date:   Fri, 20 Dec 2019 09:29:03 -0500
-Message-Id: <20191220142954.9500-1-sashal@kernel.org>
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Ewan D . Milne" <emilne@redhat.com>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 03/52] nvme-fc: fix double-free scenarios on hw queues
+Date:   Fri, 20 Dec 2019 09:29:05 -0500
+Message-Id: <20191220142954.9500-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191220142954.9500-1-sashal@kernel.org>
+References: <20191220142954.9500-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -42,57 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit c131280c03bd1c225c2e64e9ef75873ffca3d96e ]
+[ Upstream commit c869e494ef8b5846d9ba91f1e922c23cd444f0c1 ]
 
-The "panel" pointer is not reset to NULL if of_drm_find_panel()
-returns an error. Therefore we later assume that a panel was found,
-and try to dereference the error pointer, resulting in:
+If an error occurs on one of the ios used for creating an
+association, the creating routine has error paths that are
+invoked by the command failure and the error paths will free
+up the controller resources created to that point.
 
-    mcde-dsi a0351000.dsi: failed to find panel try bridge (4294966779)
-    Unable to handle kernel paging request at virtual address fffffe03
-    PC is at drm_panel_bridge_add.part.0+0x10/0x5c
-    LR is at mcde_dsi_bind+0x120/0x464
-    ...
+But... the io was ultimately determined by an asynchronous
+completion routine that detected the error and which
+unconditionally invokes the error_recovery path which calls
+delete_association. Delete association deletes all outstanding
+io then tears down the controller resources. So the
+create_association thread can be running in parallel with
+the error_recovery thread. What was seen was the LLDD received
+a call to delete a queue, causing the LLDD to do a free of a
+resource, then the transport called the delete queue again
+causing the driver to repeat the free call. The second free
+routine corrupted the allocator. The transport shouldn't be
+making the duplicate call, and the delete queue is just one
+of the resources being freed.
 
-Reset "panel" to NULL to avoid this problem.
-Also change the format string of the error to %ld to print
-the negative errors correctly. The crash above then becomes:
+To fix, it is realized that the create_association path is
+completely serialized with one command at a time. So the
+failed io completion will always be seen by the create_association
+path and as of the failure, there are no ios to terminate and there
+is no reason to be manipulating queue freeze states, etc.
+The serialized condition stays true until the controller is
+transitioned to the LIVE state. Thus the fix is to change the
+error recovery path to check the controller state and only
+invoke the teardown path if not already in the CONNECTING state.
 
-    mcde-dsi a0351000.dsi: failed to find panel try bridge (-517)
-    mcde-dsi a0351000.dsi: no panel or bridge
-    ...
-
-Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20191118130252.170324-1-stephan@gerhold.net
+Reviewed-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/mcde/mcde_dsi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/nvme/host/fc.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
-index f9c9e32b299c9..35bb825d19188 100644
---- a/drivers/gpu/drm/mcde/mcde_dsi.c
-+++ b/drivers/gpu/drm/mcde/mcde_dsi.c
-@@ -935,11 +935,13 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		panel = of_drm_find_panel(child);
- 		if (IS_ERR(panel)) {
--			dev_err(dev, "failed to find panel try bridge (%lu)\n",
-+			dev_err(dev, "failed to find panel try bridge (%ld)\n",
- 				PTR_ERR(panel));
-+			panel = NULL;
-+
- 			bridge = of_drm_find_bridge(child);
- 			if (IS_ERR(bridge)) {
--				dev_err(dev, "failed to find bridge (%lu)\n",
-+				dev_err(dev, "failed to find bridge (%ld)\n",
- 					PTR_ERR(bridge));
- 				return PTR_ERR(bridge);
- 			}
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 3f102d9f39b83..59474bd0c728d 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -2910,10 +2910,22 @@ nvme_fc_reconnect_or_delete(struct nvme_fc_ctrl *ctrl, int status)
+ static void
+ __nvme_fc_terminate_io(struct nvme_fc_ctrl *ctrl)
+ {
+-	nvme_stop_keep_alive(&ctrl->ctrl);
++	/*
++	 * if state is connecting - the error occurred as part of a
++	 * reconnect attempt. The create_association error paths will
++	 * clean up any outstanding io.
++	 *
++	 * if it's a different state - ensure all pending io is
++	 * terminated. Given this can delay while waiting for the
++	 * aborted io to return, we recheck adapter state below
++	 * before changing state.
++	 */
++	if (ctrl->ctrl.state != NVME_CTRL_CONNECTING) {
++		nvme_stop_keep_alive(&ctrl->ctrl);
+ 
+-	/* will block will waiting for io to terminate */
+-	nvme_fc_delete_association(ctrl);
++		/* will block will waiting for io to terminate */
++		nvme_fc_delete_association(ctrl);
++	}
+ 
+ 	if (ctrl->ctrl.state != NVME_CTRL_CONNECTING &&
+ 	    !nvme_change_ctrl_state(&ctrl->ctrl, NVME_CTRL_CONNECTING))
 -- 
 2.20.1
 
