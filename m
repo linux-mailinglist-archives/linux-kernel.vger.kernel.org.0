@@ -2,85 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E90127268
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:29:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30CD6127271
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:32:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727024AbfLTA3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 19:29:34 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37187 "EHLO
+        id S1727135AbfLTAcd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 19:32:33 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45436 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfLTA3d (ORCPT
+        with ESMTP id S1726964AbfLTAcc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 19:29:33 -0500
-Received: by mail-pl1-f195.google.com with SMTP id c23so3328160plz.4
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 16:29:33 -0800 (PST)
+        Thu, 19 Dec 2019 19:32:32 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b22so3314676pls.12;
+        Thu, 19 Dec 2019 16:32:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eX0+hKMYcJo8oBSEwdDTOyo7vFKsKuywhqNqQ3gnd9c=;
-        b=IXHYa4eu6/nT1cGBEnEO7gnNoLSOy6TN1udA1k99BPkuUvT8WFfQeaSMAEbmqUk6a7
-         aQ1jaME3xR3qP/wFQFMFijqSey8bkl70nre6AH4Bei84xPZYE+Orx4KM/cQARiIifmnI
-         7h+J+ZtUFn9dw4T0HwB3XBsQTtCmZt9qtd7mmAGrFmnZXUICmBHnugxU7JMI4TA9hC7m
-         gPgJy9lLZMLZ/U1uYaOUIpP5LT/mLSOniOAAAbxk4hSeQxEb9xwbvAx5w0AgguXBcYWk
-         Jm+jkLGiFeyscj9bjsXZx/skIY4/q3ZfEF8ek+MIEaV68EORn4YmPOQrp0XUoOwEFTRD
-         EMow==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7/Hluy6r2VW8M5PHO8z1hcbWtjMcwj/79LYueYPEReY=;
+        b=bVabQMVqnaD1wxYaqbc41uMz1hUBO6Y6CTs8bokHeGCAwwt5Zcp7i3fptcZFlK/iwB
+         dbVyVoiXdVOH81rG1Uz/+dTwvngouWGqQqUrCu7VSbFH8BdyIXalmtC4kj8HvLNmjt3L
+         VC+HLZkHFViqlmPjws24dF8llKxYYOHG1i5iyecaLfMm3mkFFdyFWLXhoLlIi0XtAOEN
+         /GvheGWlmXZNKQNmx2m5CJVzdc8+YExe5DxcDxu4Tt0HxbAZFkPKoeLM0lIyslg2Xqr6
+         k/8A4PzPhRUoUU3cR7C+WhgNNrTq2us95DbcrgyMSM/3c2Rf+mppm+pZ+lSMGuVoVson
+         suOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eX0+hKMYcJo8oBSEwdDTOyo7vFKsKuywhqNqQ3gnd9c=;
-        b=frlHtv71pzEFB1TSBxmfM+5MBNA5jmdgOJdo+YpiZiNMIGWJArJ2JzKLHSJPHZa0J3
-         P8FGT75WAYwNSh2D+Ngye3Y2pUSuejLappbV77iQ72Fpr1pIn65cpBU7vhZSzaldoyy5
-         IDOmLzkOttojOeW8qbRpYHyhWpYSnb/O/dwqLZmJmmMkRza6mwQLn/PAV8ZtAieRLvMO
-         iLLWV76U/C/XhBhefXTOCwKLkmxjC/SLGxIk15P3vVT2wf9EtaHS5oqdS1+QYJtpzj3l
-         AUO24fS9eVYZAgfb7/jne/a0XoZM7xRy0BkYfvrTf9OxWIsnzVJIcNJJat6MwVlZCMfV
-         ZzNQ==
-X-Gm-Message-State: APjAAAXV6dqrxeSNm0gbBrmr9m4Hi+wEGuK7HfODojNbV2MjuzzUY9cV
-        ci9be/mfAgvVZj/5BEuwLcDy2w==
-X-Google-Smtp-Source: APXvYqzj4L30fXYvdhcn+1Z20UqVHtvyYJaC+EXHuHEQjLIsGtvvTqubS6mgEOKOe+0n+3Optp3Jvw==
-X-Received: by 2002:a17:902:9302:: with SMTP id bc2mr12223170plb.148.1576801772778;
-        Thu, 19 Dec 2019 16:29:32 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id gc1sm7676050pjb.20.2019.12.19.16.29.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7/Hluy6r2VW8M5PHO8z1hcbWtjMcwj/79LYueYPEReY=;
+        b=n4mHD9/r5Ft90ExG/oWVbaIFKj8rQCXgH2CZpb22ILvVzGKQB7g8sFDmH58naX212x
+         QuSUm2O93bWauQ8NxSVlUyIqasPJEEhe38Ulcs+xg3pIKKMMS8MQRnhSccOMG7dQVBiE
+         A6zaVg26uu1BPdPtthbhvXixZWnM8sZTzSa/i6OS2L+aNZyivbG5AXjN4DwA3ll7OgjK
+         bJuZgcXGdJ3R3IQeFwKq/v7/qxp8FO3hRUKQZfL47pSwv+yBFlI8Tl9rwVH/OwSWvxN5
+         MC4c4YRfK+1HsSDMedKmC3zEu35ns3wTtJU1lATcwXWO647TOrsGRlGyRbX3hkUY/rf8
+         kQhA==
+X-Gm-Message-State: APjAAAU/mzowXH6JXdZlViT8OCYZVsEg2T0RxIM9evbl6ImpmwGKT5S+
+        SpN+93I2Bkw30tz1hQoOL3wkmDW1
+X-Google-Smtp-Source: APXvYqyejX7YMmVp34ctzUEmdK5Wj6hSszdLT49vgsiUfowiWDd13bl0Ef/tISxORYtldA5F34R+bg==
+X-Received: by 2002:a17:902:aa41:: with SMTP id c1mr2608420plr.340.1576801951886;
+        Thu, 19 Dec 2019 16:32:31 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id a23sm10145845pfg.82.2019.12.19.16.32.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 16:29:32 -0800 (PST)
-Date:   Thu, 19 Dec 2019 16:29:29 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     sthella@codeaurora.org
-Cc:     srinivas.kandagatla@linaro.org, agross@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] nvmem: add QTI SDAM driver
-Message-ID: <20191220002929.GJ448416@yoga>
-References: <1576574432-9649-1-git-send-email-sthella@codeaurora.org>
- <20191218061400.GV3143381@builder>
- <17c718c483db710b32b2dbbcf4637783@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <17c718c483db710b32b2dbbcf4637783@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        Thu, 19 Dec 2019 16:32:31 -0800 (PST)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     thierry.reding@gmail.com, joro@8bytes.org
+Cc:     jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] iommu/tegra-smmu: A set of small fixes
+Date:   Thu, 19 Dec 2019 16:29:10 -0800
+Message-Id: <20191220002914.19043-1-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 19 Dec 02:29 PST 2019, sthella@codeaurora.org wrote:
+Hi all,
 
-> On 2019-12-18 11:44, Bjorn Andersson wrote:
-> > On Tue 17 Dec 01:20 PST 2019, Shyam Kumar Thella wrote:
-[..]
-> > > +subsys_initcall(sdam_init);
-> > 
-> > module_platform_driver(sdam_driver), unless you have some strong
-> > arguments for why this needs to be subsys_initcall
-> There are some critical sybsystems which depend on nvmem data. So I would
-> prefer using subsys_initcall().
+This series of patches are some small fixes for tegra-smmu, mainly
+tested Tegra210 with downstream kernel. As we only enabled limited
+clients for Tegra210 on mainline tree, I am not sure how critical
+these fixes are, so not CCing stable tree.
 
-How critical? Needed to kernel module loading?
+Nicolin Chen (4):
+  memory: tegra: Correct reset value of xusb_hostr
+  iommu/tegra-smmu: Do not use PAGE_SHIFT and PAGE_MASK
+  iommu/tegra-smmu: Fix iova->phy translation
+  iommu/tegra-smmu: Prevent race condition between map and unmap
 
-Can you please document this need somehow? (either a comment here or
-something in the commit message). Be specific.
+ drivers/iommu/tegra-smmu.c      | 29 ++++++++++++++++++++++++-----
+ drivers/memory/tegra/tegra210.c |  2 +-
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-THanks,
-Bjorn
+-- 
+2.17.1
+
