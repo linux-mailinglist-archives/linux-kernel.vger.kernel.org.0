@@ -2,111 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47EC812806B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 17:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B93312807E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 17:18:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727403AbfLTQQj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 11:16:39 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:51493 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727233AbfLTQQi (ORCPT
+        id S1727499AbfLTQSC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 11:18:02 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34869 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbfLTQSB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 11:16:38 -0500
-Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iiKx5-0001gJ-Gq; Fri, 20 Dec 2019 17:16:31 +0100
-To:     John Garry <john.garry@huawei.com>
-Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity  for managed interrupt
-X-PHP-Originating-Script: 0:main.inc
+        Fri, 20 Dec 2019 11:18:01 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i23so48001pfo.2;
+        Fri, 20 Dec 2019 08:18:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AqkgzktUk7nsSLM/WAVDti6Aflq7wK5MTqZ2lh/ZIII=;
+        b=E3ngOCH4+SL4XA6LQr2XXpt8CEw4OsC4BwMvz9V8vqB5U0z/6UcKklx8sLc3sNExMH
+         GtjEP/t5weYM3zN14IHA0HihpqxCQiCcV5EnrSAvF+bEY76fBzVfvA76S3oFuKmJNcdb
+         PvVRhU+6qwKESf5lbvPshTzNIYhPy8q9pTm3K6+fLc4eyB/0AHNRExDii8osHS5mOMb+
+         BnkClbcg83CJVP1rHwok/Lnpxt0Pjzlbz9N3P4dsDkLnY9Qo64dzAMDqgmRZEEsBjnBH
+         y9tljtfFWwaXZ3ZEwC7wiEMtXSkqRGgiDugBa9zbttpoiGsJIQ0LVXoPaPI68sTZCbJM
+         kY2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AqkgzktUk7nsSLM/WAVDti6Aflq7wK5MTqZ2lh/ZIII=;
+        b=B6I5yCdYUm/rh9nE+3rXbLHTlyBM30unM1bhyXFRlT9otREaeGwJ1wOCijqCUUM/Ts
+         UgWcYkFQoUiZwKUKlscGK7ga6zmrQffov8iQIvpju7mByz8AjziwCB0x0aTNrtZIfNzn
+         SbtERQE1AvQpk9/W7k9GD8oItEqgmpiyGevUiaR+qD6Xq/HrDeUqmaOSXMQTVuxXpkMv
+         z0nKRK+5zSqDRb01po8whc8TLJlQEckkF7IJ0Vs3czLJByROF8l3ploduqRn62YyA1J9
+         BVy1X9YJJPD0RIBi0ylRh4z9FQ2HoM7F3wv80xKkF3IvrW04ylyEFzYO780M58PkKf9S
+         6QAw==
+X-Gm-Message-State: APjAAAUdwrhXmnCZ5o0mixmmcA2f8SiGVMgeOQQyIqnWiHebyCosCch6
+        ekuem27HIShVK1torR2BzRg=
+X-Google-Smtp-Source: APXvYqy4SOv1qzQ7lBfnjpE+QlCZbQ3RDwk1EnvAKPtPfBtw8osJz0TIReDLfMZ96mFI3Fd4XiFcQw==
+X-Received: by 2002:a62:cec3:: with SMTP id y186mr16642630pfg.129.1576858680592;
+        Fri, 20 Dec 2019 08:18:00 -0800 (PST)
+Received: from localhost.localdomain ([2001:1284:f013:b9c8:9c5e:a64b:e068:9fbd])
+        by smtp.gmail.com with ESMTPSA id k60sm11472356pjh.22.2019.12.20.08.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2019 08:17:59 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id E8497C161F; Fri, 20 Dec 2019 13:17:56 -0300 (-03)
+Date:   Fri, 20 Dec 2019 13:17:56 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Kevin Kou <qdkevin.kou@gmail.com>
+Cc:     vyasevich@gmail.com, nhorman@tuxdriver.com, davem@davemloft.net,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sctp: do trace_sctp_probe after SACK validation and check
+Message-ID: <20191220161756.GE5058@localhost.localdomain>
+References: <20191220044703.88-1-qdkevin.kou@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Dec 2019 16:16:31 +0000
-From:   Marc Zyngier <maz@kernel.org>
-Cc:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
-        "chenxiang (M)" <chenxiang66@hisilicon.com>,
-        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
-        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
-In-Reply-To: <a5154365-59c5-429b-559e-94ad6dffcdb0@huawei.com>
-References: <1575642904-58295-1-git-send-email-john.garry@huawei.com>
- <1575642904-58295-2-git-send-email-john.garry@huawei.com>
- <20191207080335.GA6077@ming.t460p>
- <78a10958-fdc9-0576-0c39-6079b9749d39@huawei.com>
- <20191210014335.GA25022@ming.t460p>
- <0ad37515-c22d-6857-65a2-cc28256a8afa@huawei.com>
- <20191212223805.GA24463@ming.t460p>
- <d4b89ecf-7ced-d5d6-fc02-6d4257580465@huawei.com>
- <20191213131822.GA19876@ming.t460p>
- <b7f3bcea-84ec-f9f6-a3aa-007ae712415f@huawei.com>
- <20191214135641.5a817512@why>
- <7db89b97-1b9e-8dd1-684a-3eef1b1af244@huawei.com>
- <50d9ba606e1e3ee1665a0328ffac67ac@www.loen.fr>
- <a5f6a542-2dbc-62de-52e2-bd5413b5db51@huawei.com>
- <68058fd28c939b8e065524715494de95@www.loen.fr>
- <ac5b5a25-df2e-18e9-6b0f-60af8c7cec3b@huawei.com>
- <687cbcc4-89d9-63ea-a246-ce2abaae501a@huawei.com>
- <0fd543f8ffd90f90deb691aea1c275b4@www.loen.fr>
- <a5154365-59c5-429b-559e-94ad6dffcdb0@huawei.com>
-Message-ID: <a46aaad9e00dbfa5817b3698450ae7be@www.loen.fr>
-X-Sender: maz@kernel.org
-User-Agent: Roundcube Webmail/0.7.2
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Rcpt-To: john.garry@huawei.com, ming.lei@redhat.com, tglx@linutronix.de, chenxiang66@hisilicon.com, bigeasy@linutronix.de, linux-kernel@vger.kernel.org, hare@suse.com, hch@lst.de, axboe@kernel.dk, bvanassche@acm.org, peterz@infradead.org, mingo@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191220044703.88-1-qdkevin.kou@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-20 15:38, John Garry wrote:
-
-> I've already done something experimental for the driver to manage the
-> affinity, and performance is generally much better:
->
+On Fri, Dec 20, 2019 at 04:47:03AM +0000, Kevin Kou wrote:
+> The function sctp_sf_eat_sack_6_2 now performs
+> the Verification Tag validation, Chunk length validation, Bogu check,
+> and also the detection of out-of-order SACK based on the RFC2960
+> Section 6.2 at the beginning, and finally performs the further
+> processing of SACK. The trace_sctp_probe now triggered before
+> the above necessary validation and check.
 > 
-> https://github.com/hisilicon/kernel-dev/commit/e15bd404ed1086fed44da34ed3bd37a8433688a7
->
-> But I still think it's wise to only consider managed interrupts for 
-> now.
+> This patch is to do the trace_sctp_probe after the necessary check
+> and validation to SACK.
+> 
+> Signed-off-by: Kevin Kou <qdkevin.kou@gmail.com>
+> ---
+>  net/sctp/sm_statefuns.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
+> index 42558fa..b4a54df 100644
+> --- a/net/sctp/sm_statefuns.c
+> +++ b/net/sctp/sm_statefuns.c
+> @@ -3281,7 +3281,6 @@ enum sctp_disposition sctp_sf_eat_sack_6_2(struct net *net,
+>  	struct sctp_sackhdr *sackh;
+>  	__u32 ctsn;
+>  
+> -	trace_sctp_probe(ep, asoc, chunk);
+>  
+>  	if (!sctp_vtag_verify(chunk, asoc))
+>  		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
+> @@ -3319,6 +3318,8 @@ enum sctp_disposition sctp_sf_eat_sack_6_2(struct net *net,
+>  	if (!TSN_lt(ctsn, asoc->next_tsn))
+>  		return sctp_sf_violation_ctsn(net, ep, asoc, type, arg, commands);
+>  
+> +	trace_sctp_probe(ep, asoc, chunk);
+> +
 
-Sure. We've lived with it so far, we can make it last a bit longer... 
-;-)
+Moving it here will be after the check against ctsn_ack_point, which
+could cause duplicated SACKs to be missed from the log.
 
->>
->>> JFYI, about NVMe CPU lockup issue, there are 2 works on going here:
->>>
->>> 
->>> https://lore.kernel.org/linux-nvme/20191209175622.1964-1-kbusch@kernel.org/T/#t
->>>
->>>
->>> 
->>> https://lore.kernel.org/linux-block/20191218071942.22336-1-ming.lei@redhat.com/T/#t
->>>
->> I've also managed to trigger some of them now that I have access to
->> a decent box with nvme storage.
->
-> I only have 2x NVMe SSDs when this occurs - I should not be hitting 
-> this...
+Yes, from the sender-side CC we don't care about it (yet), but it
+helps to spot probably avoidable retransmissions.
 
-Same configuration here. And the number of interrupts is pretty
-low (less that 20k/s per CPU), so I doubt this is interrupt related.
+I think this is cleaning up the noise too much. I can agree with
+moving it to after the chunk sanity tests, though.
 
-> Out of curiosity, have you tried
->> with the SMMU disabled? I'm wondering whether we hit some livelock
->> condition on unmapping buffers...
->
-> No, but I can give it a try. Doing that should lower the CPU usage,
-> though, so maybe masks the issue - probably not.
-
-I wonder whether we could end-up in some form of unmap storm on
-completion, with a CPU being starved trying to insert its TLBI
-command into the queue.
-
-Anyway, more digging in perspective.
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+>  	/* Return this SACK for further processing.  */
+>  	sctp_add_cmd_sf(commands, SCTP_CMD_PROCESS_SACK, SCTP_CHUNK(chunk));
+>  
+> -- 
+> 1.8.3.1
+> 
