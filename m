@@ -2,63 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76FD61278C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:05:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6F631278BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:04:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfLTKFj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 05:05:39 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43270 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbfLTKFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:05:39 -0500
-Received: from zn.tnic (p200300EC2F0ED600DC469E28B29B59E9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:d600:dc46:9e28:b29b:59e9])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4668A1EC0BED;
-        Fri, 20 Dec 2019 11:05:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1576836338;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=DMfNsoTS3Jp30mfhEhFAKDx1K58MITCksuLDayfcbsM=;
-        b=YecgCsSj5vMtOTmSNAo6x+yiSPr1N0aUpxNBseaRMwiYbqF9C6ZX4SOyarqri/2BPy/97B
-        hq1Qsb0SkQGlFx3hoIlBRDI2hBpc9JzS6pEtOX3GZ5X3uairxSXil2dcl4i58hR0nSmBWc
-        BsagUdp06Aj3EyMaFefc1SAEO/IDQtk=
-Date:   Fri, 20 Dec 2019 11:05:36 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: define arch_crash_save_vmcoreinfo() if
- CONFIG_CRASH_CORE=y
-Message-ID: <20191220100536.GC1397@zn.tnic>
-References: <9e9eb78c157d26d80f8781f8ce0e088fd12120b4.1575309711.git.osandov@fb.com>
- <20191218104113.GB24886@zn.tnic>
- <20191219202807.GA826140@vader>
+        id S1727261AbfLTKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 05:04:18 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:54476 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbfLTKER (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 05:04:17 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKA4BPO016735;
+        Fri, 20 Dec 2019 04:04:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576836251;
+        bh=Ma1U2A/pFmH8hrjGx2OkWa/HQjXzqaF1j16RnDWo8mY=;
+        h=From:To:CC:Subject:Date;
+        b=AAJUBnieER3BPQr+lYbn0N/wcjXZLQ9rEsz8j9KxUcwiIr/6CqaBJmKOeYXonEZgo
+         a5BL2f4SMHwDQjf99/a9MzLJBg89rEdYbAaEO/MjYexc5Jo4Tpia4D+zk/9fwqvcFy
+         Rar3go/cyO9cL8rDF4i5SvR53EZ+z6xN8IhPbS0Y=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBKA4Bxg044521
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Dec 2019 04:04:11 -0600
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
+ Dec 2019 04:04:10 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 20 Dec 2019 04:04:09 -0600
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKA47W6113355;
+        Fri, 20 Dec 2019 04:04:07 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PCI: dwc: Use private data pointer of "struct irq_domain" to get pcie_port
+Date:   Fri, 20 Dec 2019 15:35:50 +0530
+Message-ID: <20191220100550.777-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191219202807.GA826140@vader>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 12:28:07PM -0800, Omar Sandoval wrote:
-> Yes, I'm talking about reading VMCOREINFO from /proc/kcore at runtime,
-> no kdump involved. crash [1] and my own tool, drgn [2], use this for
-> live debugging.
+No functional change. Get "struct pcie_port *" from private data
+pointer of "struct irq_domain" in dw_pcie_irq_domain_free() to make
+it look similar to how "struct pcie_port *" is obtained in
+dw_pcie_irq_domain_alloc()
 
-Ok, please state the gist of the use cases in the commit message so that
-it is clear why you're doing this.
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ drivers/pci/controller/dwc/pcie-designware-host.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thx.
-
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index 395feb8ca051..c3d72b06e964 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -236,7 +236,7 @@ static void dw_pcie_irq_domain_free(struct irq_domain *domain,
+ 				    unsigned int virq, unsigned int nr_irqs)
+ {
+ 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
+-	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
++	struct pcie_port *pp = domain->host_data;
+ 	unsigned long flags;
+ 
+ 	raw_spin_lock_irqsave(&pp->lock, flags);
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
