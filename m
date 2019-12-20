@@ -2,85 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABA4127215
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:15:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 539A8127263
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:22:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfLTAPk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 19:15:40 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36123 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfLTAPk (ORCPT
+        id S1727031AbfLTAWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 19:22:36 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:13671 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726964AbfLTAWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 19:15:40 -0500
-Received: by mail-pf1-f195.google.com with SMTP id x184so4219020pfb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 16:15:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Xza35VKEvSvjMP8PzRVZ35j7UizUwWQ11TtoEWfsA3Q=;
-        b=NNy98T7dz4IUNnNLaJQft6RAEhtwCcTFXv02GozymvM1Ea1jNkJFQv2PQ+QRRXSLFk
-         Mk5zTLKbBusvQPv+bg/u7qv8XzRqAPNTtdH+4maUWOK8PwJVrv6imA3+TuoGotcjr/rq
-         WeaXXWd19uZ6bdYkMrnQAJmo+Q55zv1IfdYygUO/CGVTxuS5zngvmsySsLuWoGoKa2zG
-         PxqsjNI4ya8KxN5qjphBTmkxJTPQoMpLZ6fLFikgoG2+MMx6ywYVBEYidrg7wqU/s40N
-         8g6m8CfYBp5/K3xC38QRkgsNQ2VUJEBe9gbcJJnF5RGAFwvBjneY+pxLSV0c3juCFZnW
-         T5JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Xza35VKEvSvjMP8PzRVZ35j7UizUwWQ11TtoEWfsA3Q=;
-        b=Wl7AP9FLS1qmVj7tjPiMcgFMyD0K9NftQyZu0nVDZjOt15apcUEWlWRrkBfQ3RaboK
-         ET7gdFg9Wf7rA61yWQ6HiP4VQtDzClC6DOIVYNqTfxvs4tKGJj2tC/8o3TUjabLw5kYh
-         W8O+a2dTMEDDNvSQgU94cVjG41b9PQURHbG536Ezmupb8T6y1e6MsdpnhJiPUrTbf+jR
-         aFBFiHryFXF8qIEMWtno+PDypmSoJixPMdmhB66nKj2imOYjOzbyyL4VKMUmZliN0j0h
-         89VHXy6ckK1hf0+QL/vBHQfdP0lMFveW1xN9nI59ORCWMVx+jg6brtZPgerdUHWaUQQf
-         qmgQ==
-X-Gm-Message-State: APjAAAVRZE/lNQOkMwnHptE/L5jWIyosmrbguFmtwbD+tDkHKL6CkyPD
-        DNhBx4oPDy3IOqgsVKUR4yG+xrlqEgpfLw==
-X-Google-Smtp-Source: APXvYqzHTcFOfPjIOzxBXsbVb01FSma/OGljIvD3S6xqG+A2sFrTNEZIUktiv1IzutARjpJbzkpXRg==
-X-Received: by 2002:a65:58ce:: with SMTP id e14mr11807199pgu.153.1576800939356;
-        Thu, 19 Dec 2019 16:15:39 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id e16sm8603679pgk.77.2019.12.19.16.15.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 16:15:37 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
-Subject: [PATCH] net/mlx5e: Fix printk format warning
-Date:   Thu, 19 Dec 2019 16:15:17 -0800
-Message-Id: <20191220001517.105297-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        Thu, 19 Dec 2019 19:22:36 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576801355; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=0HCPeM+2tQgXQBZ2loRXEQuQRtDGjn8UcT4p31niOms=;
+ b=mjGdugZqEq+bZYoqZk792WM1QIcrTOj/BwiK9OYpvryn+XeM4NI2papGaVLJpuSd//kZo4LM
+ 8++YW+4rLzGUldGU/eqIUqBC+pEfzNv8jRyjxkwRWb/ZVNxYyQGhafQ1f/lpa5XXmXB8B6vP
+ d9aljT2rkne0bw79JKnAldaE1pA=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfc144a.7faa39a1d8b8-smtp-out-n03;
+ Fri, 20 Dec 2019 00:22:34 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 2237EC433A2; Fri, 20 Dec 2019 00:22:33 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: cang)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9FA20C433CB;
+        Fri, 20 Dec 2019 00:22:32 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 20 Dec 2019 08:22:32 +0800
+From:   cang@codeaurora.org
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Asutosh Das <asutoshd@codeaurora.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] phy: qcom-qmp: Add optional SW reset
+In-Reply-To: <20191219150433.2785427-4-vkoul@kernel.org>
+References: <20191219150433.2785427-1-vkoul@kernel.org>
+ <20191219150433.2785427-4-vkoul@kernel.org>
+Message-ID: <ff83ac1f0ec6bca1379e8b873fd30aa2@codeaurora.org>
+X-Sender: cang@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use "%zu" for size_t. Seen on ARM allmodconfig:
+On 2019-12-19 23:04, Vinod Koul wrote:
+> For V4 QMP UFS Phy, we need to assert reset bits, configure the phy and
+> then deassert it, so add optional has_sw_reset flag and use that to
+> configure the QPHY_SW_RESET register.
+> 
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index 06f971ca518e..80304b7cd895 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -1023,6 +1023,9 @@ struct qmp_phy_cfg {
+> 
+>  	/* true, if PCS block has no separate SW_RESET register */
+>  	bool no_pcs_sw_reset;
+> +
+> +	/* true if sw reset needs to be invoked */
+> +	bool has_sw_reset;
+>  };
+> 
+>  /**
+> @@ -1391,6 +1394,7 @@ static const struct qmp_phy_cfg sm8150_ufsphy_cfg 
+> = {
+> 
+>  	.is_dual_lane_phy	= true,
+>  	.no_pcs_sw_reset	= true,
+> +	.has_sw_reset		= true,
+>  };
+> 
+>  static void qcom_qmp_phy_configure(void __iomem *base,
+> @@ -1475,6 +1479,9 @@ static int qcom_qmp_phy_com_init(struct qmp_phy 
+> *qphy)
+>  			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
+>  	}
+> 
+> +	if (cfg->has_sw_reset)
+> +		qphy_setbits(serdes, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> +
 
-drivers/net/ethernet/mellanox/mlx5/core/wq.c: In function 'mlx5_wq_cyc_wqe_dump':
-include/linux/kern_levels.h:5:18: warning: format '%ld' expects argument of type 'long int', but argument 5 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
+Are you sure you want to set this in the serdes register? QPHY_SW_RESET
+is in its pcs register.
 
-Fixes: 130c7b46c93d ("net/mlx5e: TX, Dump WQs wqe descriptors on CQE with error events")
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- drivers/net/ethernet/mellanox/mlx5/core/wq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  	if (cfg->has_phy_com_ctrl)
+>  		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
+>  			     SW_PWRDN);
+> @@ -1651,6 +1658,9 @@ static int qcom_qmp_phy_enable(struct phy *phy)
+>  	if (cfg->has_phy_dp_com_ctrl)
+>  		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
+> 
+> +	if (cfg->has_sw_reset)
+> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+> +
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wq.c b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-index f2a0e72285bac..02f7e4a39578a 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
-@@ -89,7 +89,7 @@ void mlx5_wq_cyc_wqe_dump(struct mlx5_wq_cyc *wq, u16 ix, u8 nstrides)
- 	len = nstrides << wq->fbc.log_stride;
- 	wqe = mlx5_wq_cyc_get_wqe(wq, ix);
- 
--	pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %ld\n",
-+	pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %zu\n",
- 		mlx5_wq_cyc_get_size(wq), wq->cur_sz, ix, len);
- 	print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET, 16, 1, wqe, len, false);
- }
--- 
-2.11.0
+Yet you are clearing it from pcs register.
 
+Regards,
+Can Guo
+
+>  	/* start SerDes and Phy-Coding-Sublayer */
+>  	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
