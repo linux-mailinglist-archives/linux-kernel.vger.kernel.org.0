@@ -2,290 +2,196 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A6D127295
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:54:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EDF01272A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:06:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfLTAyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 19:54:23 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:25475 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbfLTAyX (ORCPT
+        id S1727125AbfLTBGL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 20:06:11 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:52615 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfLTBGL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 19:54:23 -0500
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191220005420epoutp0226285a76fc9ac70ee77d2d7fdb1b8109~h7jX08n540460204602epoutp02_
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 00:54:20 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191220005420epoutp0226285a76fc9ac70ee77d2d7fdb1b8109~h7jX08n540460204602epoutp02_
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576803260;
-        bh=V7U3VumFo0nUAtyifHEmVEByUWo4iAOoKH8fKt6nBCI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=nPjJUqFxCQT5v12h0Q6PhyRxR+2ths3iAkaLE8M9cbtokV5mbc1cvzSZL8OsPKcHS
-         YL2YRYYJB3z+Kp8TtZIxoNN/ssxU/LZ+c9mYq2RpCTOKt7vQ0v1poIzCQEh0x5MtTI
-         cLZ+Zzz2grBXAT1w+UoOaf/sJoScoAoJny9Qudmg=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20191220005419epcas1p49978660954303b810a10a1733e7e9090~h7jXLTk4o2694726947epcas1p4m;
-        Fri, 20 Dec 2019 00:54:19 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 47f9HX2QpbzMqYm7; Fri, 20 Dec
-        2019 00:54:16 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BD.CF.51241.4BB1CFD5; Fri, 20 Dec 2019 09:54:12 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191220005412epcas1p191afcc20fc8ff95891f1570cb9d85df7~h7jQUv8v72171721717epcas1p1d;
-        Fri, 20 Dec 2019 00:54:12 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191220005411epsmtrp1076b9711cd356ce46c27b46087643a85~h7jQTlkkV0350703507epsmtrp1w;
-        Fri, 20 Dec 2019 00:54:11 +0000 (GMT)
-X-AuditID: b6c32a39-14bff7000001c829-c4-5dfc1bb481dc
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        17.9D.10238.3BB1CFD5; Fri, 20 Dec 2019 09:54:11 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191220005411epsmtip2b05ce6a0164691926ba3490dfbb2733a~h7jQB03gQ3127531275epsmtip2G;
-        Fri, 20 Dec 2019 00:54:11 +0000 (GMT)
-Subject: Re: [PATCH v2 02/11] PM / devfreq: Remove
- devfreq_get_devfreq_by_phandle function
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "krzk@kernel.org" <krzk@kernel.org>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "a.swigon@samsung.com" <a.swigon@samsung.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "kgene@kernel.org" <kgene@kernel.org>,
-        "myungjoo.ham@samsung.com" <myungjoo.ham@samsung.com>,
-        "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rockchip@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <46e629e0-fee4-21a6-3baa-f347ff6417d8@samsung.com>
-Date:   Fri, 20 Dec 2019 10:00:43 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
-        Thunderbird/59.0
+        Thu, 19 Dec 2019 20:06:11 -0500
+X-Originating-IP: 209.85.217.42
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+        (Authenticated sender: pshelar@ovn.org)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 23E5320007;
+        Fri, 20 Dec 2019 01:06:07 +0000 (UTC)
+Received: by mail-vs1-f42.google.com with SMTP id v12so5022825vsv.5;
+        Thu, 19 Dec 2019 17:06:07 -0800 (PST)
+X-Gm-Message-State: APjAAAWLf8zDhUE4M3HDckqbNsLjAMB55AeOP5FOPCE/anwOP9VUGkVK
+        MRFBCrVuxg3jSJLTMUeYOOI+NEQsinBE4QBTLgU=
+X-Google-Smtp-Source: APXvYqzdAdOolKAsiA39U4G+O/Wg9/TOx9O5RpmRYAxyWgnx+q7PQmxCFZSk/izM5zYNJt5TXfdAN/d0EOrILv6HigA=
+X-Received: by 2002:a67:d007:: with SMTP id r7mr6912927vsi.93.1576803966767;
+ Thu, 19 Dec 2019 17:06:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <VI1PR04MB70235291D8E40CB6225A0AF0EE2D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAJsWRmVeSWpSXmKPExsWy7bCmge4W6T+xBgd2m1jcn9fKaDH/yDlW
-        i/+PXrNa9D9+zWxx/vwGdouzTW/YLVbc/chqsenxNVaLy7vmsFl87j3CaPHpwX9mixnn9zFZ
-        LGxqYbdYe+Quu8XS6xeZLG43rmCzaN17hN1B0GPNvDWMHptWdbJ5bF5S77Hx3Q4mj74tqxg9
-        tl+bx+zxeZNcAHtUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJeYm6qrZKL
-        T4CuW2YO0AdKCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALLAr3ixNzi0rx0veT8
-        XCtDAwMjU6DChOyME7fa2AvWaVXsXfGGvYHxiFIXIyeHhICJRMvqFYxdjFwcQgI7GCVONO1l
-        h3A+MUp8nzcdKvONUeL8mwYghwOs5cmeMoj4XqCiFy+YIZz3jBJLrv9gBZkrLBAj8XHhBlaQ
-        BhGBEIkjB9NAapgFbrJJXLg1hQmkhk1AS2L/ixtsIDa/gKLE1R+PGUFsXgE7iU0Pm8HiLAKq
-        EqeOzgWzRQXCJE5ua4GqEZQ4OfMJC4jNKRArsXPaYjCbWUBc4taT+UwQtrzE9rdzwI6TEDjH
-        LtHw4xELxNMuEj3rbkPZwhKvjm9hh7ClJF72t0HZ1RIrTx5hg2juYJTYsv8CK0TCWGL/0slM
-        IJ8xC2hKrN+lDxFWlNj5ey4jxGI+iXdfe1ghocUr0dEmBFGiLHH5wV0mCFtSYnF7J9sERqVZ
-        SN6ZheSFWUhemIWwbAEjyypGsdSC4tz01GLDAlPk2N7ECE7dWpY7GI+d8znEKMDBqMTD65D2
-        O1aINbGsuDL3EKMEB7OSCO/tjp+xQrwpiZVVqUX58UWlOanFhxhNgaE9kVlKNDkfmFfySuIN
-        TY2MjY0tTAzNTA0NlcR5OX5cjBUSSE8sSc1OTS1ILYLpY+LglGpglNrdvODx55KgW+Eb2XuT
-        j9yIfd562Z3xXdPqhrn/Y1WMamU32rdcLf50abNAb/3XZdGhGy7WbQgP3VdrHrdJ5sibCTw6
-        Du0d3geDL4kvN2hWbmEMVY53+7TLg315v/qmAA+NyvKLfCkZrYFTOzY96xfZwCtTemTTy73V
-        ntG7H4if2Lst4/osJZbijERDLeai4kQACubJ+vMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsWy7bCSvO5m6T+xBht/mFvcn9fKaDH/yDlW
-        i/+PXrNa9D9+zWxx/vwGdouzTW/YLVbc/chqsenxNVaLy7vmsFl87j3CaPHpwX9mixnn9zFZ
-        LGxqYbdYe+Quu8XS6xeZLG43rmCzaN17hN1B0GPNvDWMHptWdbJ5bF5S77Hx3Q4mj74tqxg9
-        tl+bx+zxeZNcAHsUl01Kak5mWWqRvl0CV8aJW23sBeu0KvaueMPewHhEqYuRg0NCwETiyZ6y
-        LkYuDiGB3YwSzRO3snUxcgLFJSWmXTzKDFEjLHH4cDFEzVtGiU2XDzKB1AgLxEh8XLiBFcQW
-        EQiR6H+7mAWkiFngLpvEl53/mUESQgKTmCTa15aC2GwCWhL7X9wAW8AvoChx9cdjRhCbV8BO
-        YtPDZrA4i4CqxKmjc8FsUYEwiZ1LHjNB1AhKnJz5hAXE5hSIldg5bTGYzSygLvFn3iVmCFtc
-        4taT+UwQtrzE9rdzmCcwCs9C0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhgmJdarlecmFtc
-        mpeul5yfu4kRHMNamjsYLy+JP8QowMGoxMPrkPY7Vog1say4MvcQowQHs5II7+2On7FCvCmJ
-        lVWpRfnxRaU5qcWHGKU5WJTEeZ/mHYsUEkhPLEnNTk0tSC2CyTJxcEo1MKpHvd711etDram2
-        3RzN6YqrD9w//z2q2/3Evvvy89UXb3rF8+bPrJ5JrIZW5sUnzMukEyew65/bqGagtOvYOhGT
-        r4+vx5sXOL9a9IJfbRXLPKXIQ0yH1VWfbF8klCcsNXXnu1n+z3/yB4ZlZv/7FNDtO2Wf3/ZP
-        P2/VLn4W4/R9TW+qy1/Pd3ZKLMUZiYZazEXFiQACGwif3QIAAA==
-X-CMS-MailID: 20191220005412epcas1p191afcc20fc8ff95891f1570cb9d85df7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191220001759epcas1p4ce1c2017937a35de84eab720b9732df0
-References: <20191220002430.11995-1-cw00.choi@samsung.com>
-        <CGME20191220001759epcas1p4ce1c2017937a35de84eab720b9732df0@epcas1p4.samsung.com>
-        <20191220002430.11995-3-cw00.choi@samsung.com>
-        <VI1PR04MB70235291D8E40CB6225A0AF0EE2D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <20191217155102.46039-1-mcroce@redhat.com> <CAOrHB_BVf8mXuCUehMy0_Sbq=pgfg7Zu1ivPFT8Y9Zatdj1yPw@mail.gmail.com>
+ <CAGnkfhyojPg9ZxrR=NcNdsndxZpdpjgArzO+HHsVWnCKTBg1Tg@mail.gmail.com>
+In-Reply-To: <CAGnkfhyojPg9ZxrR=NcNdsndxZpdpjgArzO+HHsVWnCKTBg1Tg@mail.gmail.com>
+From:   Pravin Shelar <pshelar@ovn.org>
+Date:   Thu, 19 Dec 2019 17:05:55 -0800
+X-Gmail-Original-Message-ID: <CAOrHB_BnE=pZY-ciAA-vWw0fY0T-u-BCCQyhqNZYK+MOC1C5pA@mail.gmail.com>
+Message-ID: <CAOrHB_BnE=pZY-ciAA-vWw0fY0T-u-BCCQyhqNZYK+MOC1C5pA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] openvswitch: add TTL decrement action
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        ovs dev <dev@openvswitch.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Bindiya Kurle <bindiyakurle@gmail.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        Ben Pfaff <blp@ovn.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/19 9:46 AM, Leonard Crestez wrote:
-> On 20.12.2019 02:18, Chanwoo Choi wrote:
->> Previously, devfreq core support 'devfreq' property in order to get
->> the devfreq device by phandle. But, 'devfreq' property name is not proper
->> on devicetree binding because this name doesn't mean the any h/w attribute.
->>
->> The devfreq core hand over the right to decide the property name
->> for getting the devfreq device on devicetree. Each devfreq driver
->> will decide the property name on devicetree binding and then get
->> the devfreq device by using devfreq_get_devfreq_by_node().
->>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>   drivers/devfreq/devfreq.c    | 35 -----------------------------------
->>   drivers/devfreq/exynos-bus.c | 12 +++++++++++-
->>   include/linux/devfreq.h      |  8 --------
->>   3 files changed, 11 insertions(+), 44 deletions(-)
->>
->> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->> index cb8ca81c8973..c3d3c7c802a0 100644
->> --- a/drivers/devfreq/devfreq.c
->> +++ b/drivers/devfreq/devfreq.c
->> @@ -991,48 +991,13 @@ struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
->>   
->>   	return ERR_PTR(-ENODEV);
->>   }
->> -
->> -/*
->> - * devfreq_get_devfreq_by_phandle - Get the devfreq device from devicetree
->> - * @dev - instance to the given device
->> - * @index - index into list of devfreq
->> - *
->> - * return the instance of devfreq device
->> - */
->> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->> -{
->> -	struct device_node *node;
->> -	struct devfreq *devfreq;
->> -
->> -	if (!dev)
->> -		return ERR_PTR(-EINVAL);
->> -
->> -	if (!dev->of_node)
->> -		return ERR_PTR(-EINVAL);
->> -
->> -	node = of_parse_phandle(dev->of_node, "devfreq", index);
->> -	if (!node)
->> -		return ERR_PTR(-ENODEV);
->> -
->> -	devfreq = devfreq_get_devfreq_by_node(node);
->> -	of_node_put(node);
->> -
->> -	return devfreq;
->> -}
->> -
->>   #else
->>   struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node)
->>   {
->>   	return ERR_PTR(-ENODEV);
->>   }
->> -
->> -struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev, int index)
->> -{
->> -	return ERR_PTR(-ENODEV);
->> -}
->>   #endif /* CONFIG_OF */
->>   EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_node);
->> -EXPORT_SYMBOL_GPL(devfreq_get_devfreq_by_phandle);
->>   
->>   /**
->>    * devm_devfreq_remove_device() - Resource-managed devfreq_remove_device()
->> diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
->> index 7f5917d59072..1bc4e3c81115 100644
->> --- a/drivers/devfreq/exynos-bus.c
->> +++ b/drivers/devfreq/exynos-bus.c
->> @@ -86,6 +86,16 @@ static int exynos_bus_get_event(struct exynos_bus *bus,
->>   	return ret;
->>   }
->>   
->> +static struct devfreq *exynos_bus_get_parent_devfreq(struct device_node *np)
->> +{
->> +	struct device_node *node = of_parse_phandle(np, "devfreq", 0);
->> +
->> +	if (!node)
->> +		return ERR_PTR(-ENODEV);
->> +
->> +	return devfreq_get_devfreq_by_node(node);
-> 
-> You need to call of_node_put(node) here and in several other places.
-> 
-> The old devfreq_get_devfreq_by_phandle API handled this internally but 
-> devfreq_get_devfreq_by_node doesn't.
-
-Thanks. I'll fix it.
-
-> 
-> Maybe the _by_phandle API could be kept and just take the property name 
-> instead of always using "devfreq"?
-
-Do you mean like below?
-devfreq_get_devfreq_by_phandle(struct device *dev, int index)
--> devfreq_get_devfreq_by_phandle(struct device *dev, char *property_name, int index)
-
-In case of devfreq-event.c,
-struct devfreq_event_dev *devfreq_event_get_edev_by_phandle(
-						struct device *dev,
-						char property_name,
-						int index)
-int devfreq_event_get_edev_count(struct device *dev, char *property_name)
-
-> 
->> +}
->> +
->>   /*
->>    * devfreq function for both simple-ondemand and passive governor
->>    */
->> @@ -353,7 +363,7 @@ static int exynos_bus_profile_init_passive(struct exynos_bus *bus,
->>   	profile->exit = exynos_bus_passive_exit;
->>   
->>   	/* Get the instance of parent devfreq device */
->> -	parent_devfreq = devfreq_get_devfreq_by_phandle(dev, 0);
->> +	parent_devfreq = exynos_bus_get_parent_devfreq(dev->of_node);
->>   	if (IS_ERR(parent_devfreq))
->>   		return -EPROBE_DEFER;
->>   
->> diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
->> index 1dccc47acbce..a4351698fb64 100644
->> --- a/include/linux/devfreq.h
->> +++ b/include/linux/devfreq.h
->> @@ -254,8 +254,6 @@ extern void devm_devfreq_unregister_notifier(struct device *dev,
->>   				struct notifier_block *nb,
->>   				unsigned int list);
->>   extern struct devfreq *devfreq_get_devfreq_by_node(struct device_node *node);
->> -extern struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
->> -						int index);
->>   
->>   #if IS_ENABLED(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)
->>   /**
->> @@ -413,12 +411,6 @@ static inline struct devfreq *devfreq_get_devfreq_by_node(struct device_node *no
->>   	return ERR_PTR(-ENODEV);
->>   }
->>   
->> -static inline struct devfreq *devfreq_get_devfreq_by_phandle(struct device *dev,
->> -							int index)
->> -{
->> -	return ERR_PTR(-ENODEV);
->> -}
->> -
->>   static inline int devfreq_update_stats(struct devfreq *df)
->>   {
->>   	return -EINVAL;
->>
-> 
-> 
-> 
-
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+On Thu, Dec 19, 2019 at 8:36 AM Matteo Croce <mcroce@redhat.com> wrote:
+>
+> On Wed, Dec 18, 2019 at 4:06 AM Pravin Shelar <pshelar@ovn.org> wrote:
+> >
+> > On Tue, Dec 17, 2019 at 7:51 AM Matteo Croce <mcroce@redhat.com> wrote:
+> > >
+> > > New action to decrement TTL instead of setting it to a fixed value.
+> > > This action will decrement the TTL and, in case of expired TTL, drop it
+> > > or execute an action passed via a nested attribute.
+> > > The default TTL expired action is to drop the packet.
+> > >
+> > > Supports both IPv4 and IPv6 via the ttl and hop_limit fields, respectively.
+> > >
+> > > Tested with a corresponding change in the userspace:
+> > >
+> > >     # ovs-dpctl dump-flows
+> > >     in_port(2),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},1,1
+> > >     in_port(1),eth(),eth_type(0x0800), packets:0, bytes:0, used:never, actions:dec_ttl{ttl<=1 action:(drop)},1,2
+> > >     in_port(1),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:2
+> > >     in_port(2),eth(),eth_type(0x0806), packets:0, bytes:0, used:never, actions:1
+> > >
+> > >     # ping -c1 192.168.0.2 -t 42
+> > >     IP (tos 0x0, ttl 41, id 61647, offset 0, flags [DF], proto ICMP (1), length 84)
+> > >         192.168.0.1 > 192.168.0.2: ICMP echo request, id 386, seq 1, length 64
+> > >     # ping -c1 192.168.0.2 -t 120
+> > >     IP (tos 0x0, ttl 119, id 62070, offset 0, flags [DF], proto ICMP (1), length 84)
+> > >         192.168.0.1 > 192.168.0.2: ICMP echo request, id 388, seq 1, length 64
+> > >     # ping -c1 192.168.0.2 -t 1
+> > >     #
+> > >
+> > > Co-authored-by: Bindiya Kurle <bindiyakurle@gmail.com>
+> > > Signed-off-by: Bindiya Kurle <bindiyakurle@gmail.com>
+> > > Signed-off-by: Matteo Croce <mcroce@redhat.com>
+> > > ---
+> > >  include/uapi/linux/openvswitch.h |  22 +++++++
+> > >  net/openvswitch/actions.c        |  71 +++++++++++++++++++++
+> > >  net/openvswitch/flow_netlink.c   | 105 +++++++++++++++++++++++++++++++
+> > >  3 files changed, 198 insertions(+)
+> > >
+> > > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/openvswitch.h
+> > > index a87b44cd5590..b6684bc04883 100644
+> > > --- a/include/uapi/linux/openvswitch.h
+> > > +++ b/include/uapi/linux/openvswitch.h
+> > > @@ -927,6 +927,7 @@ enum ovs_action_attr {
+> > >         OVS_ACTION_ATTR_METER,        /* u32 meter ID. */
+> > >         OVS_ACTION_ATTR_CLONE,        /* Nested OVS_CLONE_ATTR_*.  */
+> > >         OVS_ACTION_ATTR_CHECK_PKT_LEN, /* Nested OVS_CHECK_PKT_LEN_ATTR_*. */
+> > > +       OVS_ACTION_ATTR_DEC_TTL,       /* Nested OVS_DEC_TTL_ATTR_*. */
+> > >
+> > >         __OVS_ACTION_ATTR_MAX,        /* Nothing past this will be accepted
+> > >                                        * from userspace. */
+> > > @@ -939,6 +940,23 @@ enum ovs_action_attr {
+> > >  };
+> > >
+> > >  #define OVS_ACTION_ATTR_MAX (__OVS_ACTION_ATTR_MAX - 1)
+> > > +enum ovs_dec_ttl_attr {
+> > > +       OVS_DEC_TTL_ATTR_UNSPEC,
+> > > +       OVS_DEC_TTL_ATTR_ACTION_TYPE,    /* Action Type u32 */
+> > > +       OVS_DEC_TTL_ATTR_ACTION,         /* nested action */
+> > > +       __OVS_DEC_TTL_ATTR_MAX,
+> > > +#ifdef __KERNEL__
+> > > +       OVS_DEC_TTL_ATTR_ARG          /* struct sample_arg  */
+> > > +#endif
+> > > +};
+> > > +
+> >
+> > I do not see need for type or OVS_DEC_TTL_ACTION_DROP, if there are no
+> > nested action the datapath can drop the packet.
+> >
+> > > +#ifdef __KERNEL__
+> > > +struct dec_ttl_arg {
+> > > +       u32 action_type;            /* dec_ttl action type.*/
+> > > +};
+> > > +#endif
+> > > +
+> > > +#define OVS_DEC_TTL_ATTR_MAX (__OVS_DEC_TTL_ATTR_MAX - 1)
+> > >
+> > >  /* Meters. */
+> > >  #define OVS_METER_FAMILY  "ovs_meter"
+> > > @@ -1009,6 +1027,10 @@ enum ovs_ct_limit_attr {
+> > >         __OVS_CT_LIMIT_ATTR_MAX
+> > >  };
+> > >
+> > > +enum ovs_dec_ttl_action {            /*Actions supported by dec_ttl */
+> > > +       OVS_DEC_TTL_ACTION_DROP,
+> > > +       OVS_DEC_TTL_ACTION_USER_SPACE
+> > > +};
+> > >  #define OVS_CT_LIMIT_ATTR_MAX (__OVS_CT_LIMIT_ATTR_MAX - 1)
+> > >
+> > >  #define OVS_ZONE_LIMIT_DEFAULT_ZONE -1
+> > > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+> > > index 4c8395462303..5329668732b1 100644
+> > > --- a/net/openvswitch/actions.c
+> > > +++ b/net/openvswitch/actions.c
+> > > @@ -960,6 +960,31 @@ static int output_userspace(struct datapath *dp, struct sk_buff *skb,
+> > >         return ovs_dp_upcall(dp, skb, key, &upcall, cutlen);
+> > >  }
+> > >
+> > > +static int dec_ttl(struct datapath *dp, struct sk_buff *skb,
+> > > +                  struct sw_flow_key *fk, const struct nlattr *attr, bool last)
+> > > +{
+> > > +       struct nlattr *actions;
+> > > +       struct nlattr *dec_ttl_arg;
+> > > +       int rem = nla_len(attr);
+> > > +       const struct dec_ttl_arg *arg;
+> > > +
+> > > +       /* The first action is always OVS_DEC_TTL_ATTR_ARG. */
+> > > +       dec_ttl_arg = nla_data(attr);
+> > > +       arg = nla_data(dec_ttl_arg);
+> > > +       actions = nla_next(dec_ttl_arg, &rem);
+> > > +
+> > > +       switch (arg->action_type) {
+> > > +       case OVS_DEC_TTL_ACTION_DROP:
+> > > +               consume_skb(skb);
+> > > +               break;
+> > > +
+> > > +       case OVS_DEC_TTL_ACTION_USER_SPACE:
+> > > +               return clone_execute(dp, skb, fk, 0, actions, rem, last, false);
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  /* When 'last' is true, sample() should always consume the 'skb'.
+> > >   * Otherwise, sample() should keep 'skb' intact regardless what
+> > >   * actions are executed within sample().
+> > > @@ -1176,6 +1201,44 @@ static int execute_check_pkt_len(struct datapath *dp, struct sk_buff *skb,
+> > >                              nla_len(actions), last, clone_flow_key);
+> > >  }
+> > >
+> > > +static int execute_dec_ttl(struct sk_buff *skb, struct sw_flow_key *key)
+> > > +{
+> > > +       int err;
+> > > +
+> > > +       if (skb->protocol == htons(ETH_P_IPV6)) {
+> > > +               struct ipv6hdr *nh = ipv6_hdr(skb);
+> > > +
+> > > +               err = skb_ensure_writable(skb, skb_network_offset(skb) +
+> > > +                                         sizeof(*nh));
+> > There is no need to initialize 'nh', just use 'struct ipv6hdr' to get the size.
+>
+> But I have to set it later to have nh->hop_limit.
+> Do you mean to assign it before the skb_ensure_writable check?
+> What differs sizeof(*nh) and sizeof(struct ipv6hdr)? The former will
+> work also after a refactor.
+>
+I meant you can initialize it after skb_ensure_writable() call to
+avoid refreshing the pointer after this call.
