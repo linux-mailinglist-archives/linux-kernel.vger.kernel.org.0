@@ -2,71 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE0F7127884
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:53:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF11712788A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:54:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfLTJxb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:53:31 -0500
-Received: from mga01.intel.com ([192.55.52.88]:8042 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727167AbfLTJxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:53:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 01:53:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,335,1571727600"; 
-   d="scan'208";a="206500229"
-Received: from sgsxdev004.isng.intel.com (HELO localhost) ([10.226.88.13])
-  by orsmga007.jf.intel.com with ESMTP; 20 Dec 2019 01:53:27 -0800
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-To:     lorenzo.pieralisi@arm.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        andrew.murray@arm.com, robh@kernel.org,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com, Dilip Kota <eswara.kota@linux.intel.com>
-Subject: [PATCH 1/1] dt-bindings: PCI: intel: Fix dt_binding_check compilation failure
-Date:   Fri, 20 Dec 2019 17:53:24 +0800
-Message-Id: <3319036bb29e0b25fc3b85293301e32aee0540dc.1576833842.git.eswara.kota@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
+        id S1727298AbfLTJyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:54:36 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45573 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727216AbfLTJyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:54:35 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b22so3864501pls.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 01:54:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=wf9sPxcYwAT6rtclj5mEhandYCSWH43MC5nKBUwJuGM=;
+        b=fvn+2Rpl605tnXkQqhGdtZsyiBiUBjtrCYGHG4JMthe4+lQhqaErHBg1/wHaO9+jF1
+         CcKIZuv7Ocyln3O52KXCyCco6FYQZ6QQqpb59r4S24F/1axjhABlyfhuY5o+fV2oJe6P
+         uOOTjQOL7JjYdAw15Mg8a4/4FU41C+BYeP0WFnNxLuALv726T5jv6g84i8SoaDlEr4SZ
+         +5nQeC414qPC155X/NrgTKJlOUt5rEmrrPRfAiv4c6feajv2Fk5CfRgWHJWhViVf0odx
+         f/mDEMqNryLRMNZMXeQ6WaoZLZFFLT6mwEi40mkbvIQE+GJknrf3CS5cU1VWlBUjX0MQ
+         skpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=wf9sPxcYwAT6rtclj5mEhandYCSWH43MC5nKBUwJuGM=;
+        b=s4arlbbu9ktiO0k/um3iVfMMk/EzvJUD5vDhS47JDgV9DIrgfVtW7l4/WCXnbfuWAU
+         m1nCEKRkNDc++v979N3cUq4Cj4KYdg2mtIYet/o5yAxkKUdWIrukM0otxEAZXAjj2hi9
+         H5oZFCd/UQLhmCpQpqmJN9pbac/4JIOnHT3HMS/x1oSJNyRJe+QCtqj9QTM7SuM+eWfx
+         0UVFSlsWH/YG5XZFvErc07zur/aabfWNzecJmc4zZMqUwdVdsPJUFJHPFFV+9n7KF498
+         U+TchPe0Z2f28kQHIVl4Ii+vmqt1Tmuwb/aD4QCMlHo0fuOXyUdRo3bV2TodxiXVu/ye
+         enfw==
+X-Gm-Message-State: APjAAAWFJKlpdDs4NDXwtm3NrFOlen5fV5grJTO/7qkHDRmzZl3aj4zj
+        rxebpd8Gg3Ywmx/U5N10Grsf22EQ9MzEY2BYEDk=
+X-Google-Smtp-Source: APXvYqwzo70bmGoyUpDutpmFMwxY/bnGORNBxZZ2Rqmk0u2WTQJuKEXUDeY+7RFzUFIVEB2h517h5P/mXzkxT83ArCc=
+X-Received: by 2002:a17:902:8f94:: with SMTP id z20mr4763097plo.62.1576835674571;
+ Fri, 20 Dec 2019 01:54:34 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a17:90a:6286:0:0:0:0 with HTTP; Fri, 20 Dec 2019 01:54:33
+ -0800 (PST)
+Reply-To: convy009@gmail.com
+From:   Ruben CONVY <gabrielmomoh99@gmail.com>
+Date:   Fri, 20 Dec 2019 01:54:33 -0800
+Message-ID: <CAHYRtW=ZiHdR1bFbVqh75skkiQaj4diaNtsZQMQE=nubnT2pfA@mail.gmail.com>
+Subject: Why continued silence 2
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove <dt-bindings/clock/intel,lgm-clk.h> dependency as
-it is not present in the mainline tree. Use numeric value
-instead of LGM_GCLK_PCIE10 macro.
-
-Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
----
- Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
-index db605d8a387d..a7da5141b8e0 100644
---- a/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
-@@ -107,7 +107,6 @@ additionalProperties: false
- examples:
-   - |
-     #include <dt-bindings/gpio/gpio.h>
--    #include <dt-bindings/clock/intel,lgm-clk.h>
-     pcie10: pcie@d0e00000 {
-       compatible = "intel,lgm-pcie", "snps,dw-pcie";
-       device_type = "pci";
-@@ -129,7 +128,7 @@ examples:
-                       <0 0 0 4 &ioapic1 30 1>;
-       ranges = <0x02000000 0 0xd4000000 0xd4000000 0 0x04000000>;
-       resets = <&rcu0 0x50 0>;
--      clocks = <&cgu0 LGM_GCLK_PCIE10>;
-+      clocks = <&cgu0 120>;
-       phys = <&cb0phy0>;
-       phy-names = "pcie";
-       reset-assert-ms = <500>;
--- 
-2.11.0
-
+Did you receive my previous email regarding your family inheritance?
+Reply strictly through: convy009@gmail.com
+Best Regards,
+Ruben CONVY
