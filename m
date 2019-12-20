@@ -2,70 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EA1A127663
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 08:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2198312763D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 08:08:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLTHRm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 02:17:42 -0500
-Received: from mx59.baidu.com ([61.135.168.59]:58639 "EHLO
-        tc-sys-mailedm01.tc.baidu.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726142AbfLTHRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 02:17:42 -0500
-X-Greylist: delayed 570 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Dec 2019 02:17:40 EST
-Received: from localhost (cp01-cos-dev01.cp01.baidu.com [10.92.119.46])
-        by tc-sys-mailedm01.tc.baidu.com (Postfix) with ESMTP id 1DE5D204005E;
-        Fri, 20 Dec 2019 15:07:54 +0800 (CST)
-From:   jimyan <jimyan@baidu.com>
-To:     joro@8bytes.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        jimyan@baidu.com
-Subject: [PATCH] iommu/vt-d: Don't reject nvme host due to scope mismatch
-Date:   Fri, 20 Dec 2019 15:07:54 +0800
-Message-Id: <1576825674-18022-1-git-send-email-jimyan@baidu.com>
-X-Mailer: git-send-email 1.7.1
+        id S1727422AbfLTHIL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 02:08:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58142 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727298AbfLTHIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 02:08:11 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE2C824679;
+        Fri, 20 Dec 2019 07:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576825690;
+        bh=ShcbXlpFdXilKh58f9Dmtn2A8cXnIYIsKLvamhRUsQU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=X8932mrlA4KqrE33D0NO1+bWX1GSbKRYyA1kIi5eFcID5yezP95okCEruFFpKXfPW
+         NpaYKFbxOS26/LKFNQXZnaxaPF7u6VQA83jjZHeEHqXN+wGrfs9GwyitsVX05R/Viq
+         4su0K1aFz4ZBHtgplyhN/1VrfQWKdmVr6aj75mdY=
+Date:   Fri, 20 Dec 2019 08:08:08 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Staging driver fixes for 5.5-rc3
+Message-ID: <20191220070808.GA2190290@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a system with an Intel PCIe port configured as a nvme host device, iommu
-initialization fails with
+The following changes since commit d1eef1c619749b2a57e514a3fa67d9a516ffa919:
 
-    DMAR: Device scope type does not match for 0000:80:00.0
+  Linux 5.5-rc2 (2019-12-15 15:16:08 -0800)
 
-This is because the DMAR table reports this device as having scope 2
-(ACPI_DMAR_SCOPE_TYPE_BRIDGE):
+are available in the Git repository at:
 
-but the device has a type 0 PCI header:
-80:00.0 Class 0600: Device 8086:2020 (rev 06)
-00: 86 80 20 20 47 05 10 00 06 00 00 06 10 00 00 00
-10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-20: 00 00 00 00 00 00 00 00 00 00 00 00 86 80 00 00
-30: 00 00 00 00 90 00 00 00 00 00 00 00 00 01 00 00
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-5.5-rc3
 
-VT-d works perfectly on this system, so there's no reason to bail out
-on initialization due to this apparent scope mismatch. Add the class
-0x600 ("PCI_CLASS_BRIDGE_HOST") as a heuristic for allowing DMAR
-initialization for non-bridge PCI devices listed with scope bridge.
+for you to fetch changes up to c05c403b1d123031f86e65e867be2c2e9ee1e7e3:
 
-Signed-off-by: jimyan <jimyan@baidu.com>
----
- drivers/iommu/dmar.c | 1 +
- 1 file changed, 1 insertion(+)
+  staging: wfx: fix wrong error message (2019-12-18 15:51:06 +0100)
 
-diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-index eecd6a421667..9faf2f0e0237 100644
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -244,6 +244,7 @@ int dmar_insert_dev_scope(struct dmar_pci_notify_info *info,
- 		     info->dev->hdr_type != PCI_HEADER_TYPE_NORMAL) ||
- 		    (scope->entry_type == ACPI_DMAR_SCOPE_TYPE_BRIDGE &&
- 		     (info->dev->hdr_type == PCI_HEADER_TYPE_NORMAL &&
-+			  info->dev->class >> 8 != PCI_CLASS_BRIDGE_HOST &&
- 		      info->dev->class >> 8 != PCI_CLASS_BRIDGE_OTHER))) {
- 			pr_warn("Device scope type does not match for %s\n",
- 				pci_name(info->dev));
--- 
-2.11.0
+----------------------------------------------------------------
+Staging driver fixes for 5.5-rc3
 
+Here are some small staging driver fixes for a number of reported
+issues.
+
+The majority here are some fixes for the wfx driver, but also in here is
+a comedi driver fix found during some code review, and an axis-fifo
+build dependancy issue to resolve some reported testing problems.
+
+All of these have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Brendan Higgins (1):
+      staging: axis-fifo: add unspecified HAS_IOMEM dependency
+
+Ian Abbott (1):
+      staging: comedi: gsc_hpdi: check dma_alloc_coherent() return value
+
+Jérôme Pouiller (10):
+      staging: wfx: fix the cache of rate policies on interface reset
+      staging: wfx: fix case of lack of tx_retry_policies
+      staging: wfx: fix counter overflow
+      staging: wfx: use boolean appropriately
+      staging: wfx: firmware does not support more than 32 total retries
+      staging: wfx: fix rate control handling
+      staging: wfx: ensure that retry policy always fallbacks to MCS0 / 1Mbps
+      staging: wfx: detect race condition in WEP authentication
+      staging: wfx: fix hif_set_mfp() with big endian hosts
+      staging: wfx: fix wrong error message
+
+ drivers/staging/axis-fifo/Kconfig         |  2 +-
+ drivers/staging/comedi/drivers/gsc_hpdi.c | 10 +++++++++
+ drivers/staging/wfx/data_tx.c             | 35 ++++++++++++++++++++++---------
+ drivers/staging/wfx/data_tx.h             |  5 +++--
+ drivers/staging/wfx/hif_tx_mib.h          |  1 -
+ drivers/staging/wfx/main.c                |  2 +-
+ drivers/staging/wfx/queue.c               |  1 +
+ drivers/staging/wfx/sta.c                 |  6 +++++-
+ 8 files changed, 46 insertions(+), 16 deletions(-)
