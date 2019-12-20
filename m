@@ -2,84 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 481E1127A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:00:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 27787127AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:05:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbfLTMAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 07:00:33 -0500
-Received: from mx.socionext.com ([202.248.49.38]:46351 "EHLO mx.socionext.com"
+        id S1727277AbfLTMFt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 07:05:49 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:51078 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727241AbfLTMAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:00:33 -0500
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 20 Dec 2019 21:00:31 +0900
-Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id 953D2603AB;
-        Fri, 20 Dec 2019 21:00:31 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 20 Dec 2019 21:01:08 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 098D24044A;
-        Fri, 20 Dec 2019 21:00:31 +0900 (JST)
-Received: from [10.213.132.48] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id CC2D012044A;
-        Fri, 20 Dec 2019 21:00:30 +0900 (JST)
-Date:   Fri, 20 Dec 2019 21:00:30 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 0/6] phy: socionext: Add some improvements and legacy SoC support
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <1573035979-32200-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1573035979-32200-1-git-send-email-hayashi.kunihiko@socionext.com>
-Message-Id: <20191220210030.BD1F.4A936039@socionext.com>
+        id S1727184AbfLTMFs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 07:05:48 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 0ED2E21875;
+        Fri, 20 Dec 2019 13:05:44 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id E7CB02186A;
+        Fri, 20 Dec 2019 13:05:43 +0100 (CET)
+Subject: Re: [RFC PATCH v1] devres: align devres.data strictly only for
+ devm_kmalloc()
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>
+References: <74ae22cd-08c1-d846-3e1d-cbc38db87442@free.fr>
+ <bf020a68-00fd-2bb7-c3b6-00f5befa293a@free.fr>
+ <20191220102218.GA2259862@kroah.com> <20191220102256.GB2259862@kroah.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <5b12b473-bf9a-6dc9-838c-f9312eb10635@free.fr>
+Date:   Fri, 20 Dec 2019 13:05:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20191220102256.GB2259862@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Fri Dec 20 13:05:44 2019 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 20/12/2019 11:22, Greg Kroah-Hartman wrote:
 
-Gentle ping.
-Are there any comments about this series?
-
-Thank you,
-
-On Wed, 6 Nov 2019 19:26:13 +0900 <hayashi.kunihiko@socionext.com> wrote:
-
-> This series adds some improvements to PHY interface drivers, and adds legacy SoC
-> support that needs to manage gio clock and reset.
+> On Fri, Dec 20, 2019 at 11:22:18AM +0100, Greg Kroah-Hartman wrote:
+>
+>> On Fri, Dec 20, 2019 at 11:19:27AM +0100, Marc Gonzalez wrote:
+>>
+>>> I keep thinking about the memory waste caused by the strict alignment requirement
+>>> on arm64. Is there a way to inspect how much memory has been requested vs how much
+>>> has been allocated? (Turning on SLAB DEBUG perhaps?)
+>>>
+>>> Couldn't there be a kmalloc flag saying "this alloc will not require strict
+>>> alignment, so just give me something 8-byte aligned" ?
+>>
+>> Or you can not use the devm interface for lots of tiny allocations :)
 > 
-> Kunihiko Hayashi (6):
->   phy: socionext: Use devm_platform_ioremap_resource()
->   dt-bindings: phy: socionext: Add Pro5 support and remove Pro4 from
->     usb3-hsphy
->   phy: uniphier-usb3ss: Add Pro5 support
->   phy: uniphier-usb3hs: Add legacy SoC support for Pro5
->   phy: uniphier-usb3hs: Change Rx sync mode to avoid communication
->     failure
->   phy: uniphier-pcie: Add legacy SoC support for Pro5
-> 
->  .../devicetree/bindings/phy/uniphier-pcie-phy.txt  | 13 ++-
->  .../bindings/phy/uniphier-usb3-hsphy.txt           |  6 +-
->  .../bindings/phy/uniphier-usb3-ssphy.txt           |  5 +-
->  drivers/phy/socionext/phy-uniphier-pcie.c          | 87 ++++++++++++++++----
->  drivers/phy/socionext/phy-uniphier-usb3hs.c        | 92 ++++++++++++++++------
->  drivers/phy/socionext/phy-uniphier-usb3ss.c        |  8 +-
->  6 files changed, 163 insertions(+), 48 deletions(-)
-> 
-> -- 
-> 2.7.4
+> Oh nevermind, "normal" kmalloc allocations are all aligned that way
+> anyway, so that's not going to solve anything, sorry.
 
----
-Best Regards,
-Kunihiko Hayashi
+(For some context, and for what it's worth, my opinion is that device-managed
+deallocation is the best thing since sliced bread.)
 
+Typical devm use-case is:
+1) user allocates a resource
+2) user registers release_func+resource_context to devm
+
+So typically, only 2 pointers (which is no issue when the alignment
+requirement is 8 bytes). By nature, these are "small" allocations.
+
+devm_kmalloc does not follow this pattern, it is a kind of optimization.
+1) user does not allocate the resource (RAM)...
+2) ...because the devm framework "merges" the user's memory request with
+its own memory request for storing metadata -- as a memory allocator does
+when it stores metadata for the request "in front of" the memory block.
+(this is the reason why devm_kmalloc_release() is a noop)
+
+
+(The following is just random thinking out loud)
+
+If "fixing" the kmalloc strict alignment requirement on arm64 is too
+hard, maybe it would be possible to shave some of the devm memory
+waste by working with (chained) arrays of devm nodes, instead
+of a straight-up linked list. (Akin to a C++ vector) Removal would
+be expensive, but that's supposed to be a rare operation, right?
+
+Regards.
