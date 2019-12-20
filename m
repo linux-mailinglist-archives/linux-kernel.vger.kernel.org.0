@@ -2,116 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BFFC12783F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D3C4127835
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727394AbfLTJeA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:34:00 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:55114 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727193AbfLTJeA (ORCPT
+        id S1727399AbfLTJdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:33:43 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35375 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727262AbfLTJdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:34:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/9YQTDX1rQMnRpGjo8v0aRdduxI1RsOgNUg+1Xxv8xU=; b=yTdS75r0aWwucLsKyw+wk+PmF
-        cLq1DvfA0ELGQR7NF5nSilho2SzKSDeeijmcyQ8lJtMnGsK+vrThJuuWDTCSC5GyyMCC6+JHGEqBV
-        VHyFwPSkAc4icj6zV1qntdkcikuitH0zi42r3f0Al+6ueWUmmEYhR9/A46Ttu+BLWzWKDDH0RYqwj
-        sTN8Mt+G4PfF4j3CB5XauNjGYDKvd5nbwuL1+HR1eTuT64HWiltuLfOZuLfiWREfvEV/ABtSr0uz+
-        doxTOZHgQlWX9NdPZggqUeTBqnNq/DiT0V2mFDoKLusxUTSE/bJaI4t8RTbA5c2SoGHYmfy9VdyAa
-        4sV3LxQeA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iiEfC-0000FS-15; Fri, 20 Dec 2019 09:33:38 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id C8C8F30073C;
-        Fri, 20 Dec 2019 10:32:11 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 935062B46862F; Fri, 20 Dec 2019 10:33:35 +0100 (CET)
-Date:   Fri, 20 Dec 2019 10:33:35 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 1/9] perf/core: Add PERF_RECORD_CGROUP event
-Message-ID: <20191220093335.GC2844@hirez.programming.kicks-ass.net>
-References: <20191220043253.3278951-1-namhyung@kernel.org>
- <20191220043253.3278951-2-namhyung@kernel.org>
+        Fri, 20 Dec 2019 04:33:43 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f8so7624946edv.2
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 01:33:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IdRAcGLRRg8iKt3mImCAWyzVNXDNfr3GQXuYmx9xEBc=;
+        b=c/r8EebMIT04qDRK32za4rw3kkCHqeJihYbC/JuIH5uKb2pINtIbYx1BMVb5HlGgrA
+         rZ04UxrGuKKVmEhy/6vrlAkCcQLHFSPNVEZ+5fs5aBufrHW9sVug77pRH7b/+c3251/O
+         NOxG9SzKAzUzdjhSCk7pugFRACejjYiHeq9Y3zgbR8M4LxtfdtAp7mQm77rqbw/Kg+YA
+         +MYNSgLiJdU488X7zdi/Nz7EgIGIXOIcp+wtV2g9gFe5GtZnP4/Gl2hSJbnSWRJzb83k
+         itY4K+L7MhblfKTmWCQ0CIDMs7g14Dyyt+q3QYPXGECwHgPyO0foPFqpY3icWZDVVpTS
+         RPyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IdRAcGLRRg8iKt3mImCAWyzVNXDNfr3GQXuYmx9xEBc=;
+        b=eM3AVjXDuxqija9Z3LnxBi3XbCJW7fxYs55TfGioZTCO1QIIQCeJOmyBgnJtPQtfCi
+         X9PYdsGYTJw5JCHCWCC1TD4D2P6St85CvZ40sHxtVg7HGDRQKnC0LeX/blZ3/MRfSNt5
+         TUYpiXzX9mXMwFsWD6+igunxCi3QjrwL8V8V6ViHmU6BZJeESE1sWfKdiwvDrJ12MtJp
+         aa789TQvoQVninQph4HF5XBT+4vppRtmsV3c3AE7tYn0vhBRpjBTpx3SAsBYgL+r9/O1
+         nr93kMhMOeC+Guj8Xl443UVpDu4FGLlbvPeR9xfsS5FjQfhLkPLKW293+dmZpNcxZ3cJ
+         wqCw==
+X-Gm-Message-State: APjAAAW3O2oyuMJwquqb7OHIW2WsL1jQoeeNdhRtyyAAucErT/vpFdfu
+        4LAdkPEb0UwWIxAQpthh1AJzwQ==
+X-Google-Smtp-Source: APXvYqzWCfqm8KGSdm+UnLUG2XwPn5sKlp0oZPiMWYuaTmOCE/DBPs/XpccD3F2EzBw03B9ho0xHAA==
+X-Received: by 2002:a50:e108:: with SMTP id h8mr14849903edl.196.1576834421273;
+        Fri, 20 Dec 2019 01:33:41 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.193])
+        by smtp.googlemail.com with ESMTPSA id ay24sm856223edb.29.2019.12.20.01.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2019 01:33:40 -0800 (PST)
+Subject: Re: [PATCH 3/3] venus: core: add sc7180 DT compatible and resource
+ struct
+To:     Dikshita Agarwal <dikshita@codeaurora.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, vgarodia@codeaurora.org
+References: <1576828760-13176-1-git-send-email-dikshita@codeaurora.org>
+ <1576828760-13176-4-git-send-email-dikshita@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <b1b5ee06-bc39-cfc0-b2c8-8073f8857fde@linaro.org>
+Date:   Fri, 20 Dec 2019 11:33:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220043253.3278951-2-namhyung@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1576828760-13176-4-git-send-email-dikshita@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 01:32:45PM +0900, Namhyung Kim wrote:
-> To support cgroup tracking, add CGROUP event to save a link between
-> cgroup path and inode number.  The attr.cgroup bit was also added to
-> enable cgroup tracking from userspace.
-> 
-> This event will be generated when a new cgroup becomes active.
-> Userspace might need to synthesize those events for existing cgroups.
-> 
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Li Zefan <lizefan@huawei.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Hi Dikshita,
 
-TJ, is this the right thing to do? ISTR you had concerns on this topic
-on the past.
+Thanks for the patch!
 
+On 12/20/19 9:59 AM, Dikshita Agarwal wrote:
+> This add DT compatible string and resource structure for sc7180.
+> 
+> Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
 > ---
->  include/uapi/linux/perf_event.h |  14 +++-
->  kernel/events/core.c            | 112 ++++++++++++++++++++++++++++++++
->  2 files changed, 125 insertions(+), 1 deletion(-)
+>  drivers/media/platform/qcom/venus/core.c | 58 +++++++++++++++++++++++++++++++-
+>  1 file changed, 57 insertions(+), 1 deletion(-)
 > 
-> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> index 377d794d3105..7bae2d3380a6 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -377,7 +377,8 @@ struct perf_event_attr {
->  				ksymbol        :  1, /* include ksymbol events */
->  				bpf_event      :  1, /* include bpf events */
->  				aux_output     :  1, /* generate AUX records instead of events */
-> -				__reserved_1   : 32;
-> +				cgroup         :  1, /* include cgroup events */
-> +				__reserved_1   : 31;
->  
->  	union {
->  		__u32		wakeup_events;	  /* wakeup every n events */
-> @@ -1006,6 +1007,17 @@ enum perf_event_type {
->  	 */
->  	PERF_RECORD_BPF_EVENT			= 18,
->  
-> +	/*
-> +	 * struct {
-> +	 *	struct perf_event_header	header;
-> +	 *	u64				id;
-> +	 *	u64				path_len;
+> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+> index c7525d9..e8c8b28 100644
+> --- a/drivers/media/platform/qcom/venus/core.c
+> +++ b/drivers/media/platform/qcom/venus/core.c
+> @@ -469,7 +469,7 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
+>  	{ 2073600, 3929000, 0, 5551000, 0 },	/* 4096x2160@60 */
+>  	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
+>  	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
+> -	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
+> +	{  244800,  442000, 0,  659000, 0 },	/* 1920x1080@30 */
 
-You can leave out path_len (also u64 for a length field is silly).
+unrelated change, please drop it
 
-> +	 *	char				path[];
-> +	 *	struct sample_id		sample_id;
-> +	 * };
-> +	 */
-> +	PERF_RECORD_CGROUP			= 19,
+>  };
+>  
+>  static const struct venus_resources sdm845_res = {
+> @@ -521,11 +521,67 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
+>  	.fwname = "qcom/venus-5.2/venus.mdt",
+>  };
+>  
+> +static const struct freq_tbl sc7180_freq_table[] = {
+> +	{  0, 380000000 },
+> +	{  0, 340000000 },
+> +	{  0, 270000000 },
+> +	{  0, 150000000 },
+
+why .load is zero?
+
+> +};
+> +
+> +static struct codec_freq_data sc7180_codec_freq_data[] =  {
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
+> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
+> +	{ V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200, 10 },
+> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200, 10 },
+> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200, 10 },
+> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200, 10 },
+> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10 },
+> +};
+
+the table is exactly the same as sdm845 one, please reuse it.
+
+> +
+> +static const struct bw_tbl sc7180_bw_table_enc[] = {
+> +	{  972000,  750000, 0, 0, 0 },	/* 3840x2160@30 */
+> +	{  489600,  451000, 0, 0, 0 },	/* 1920x1080@60 */
+> +	{  244800,  234000, 0, 0, 0 },	/* 1920x1080@30 */
+> +};
+> +
+> +static const struct bw_tbl sc7180_bw_table_dec[] = {
+> +	{ 1036800, 1386000, 0, 1875000, 0 },	/* 4096x2160@30 */
+> +	{  489600,  865000, 0, 1146000, 0 },	/* 1920x1080@60 */
+> +	{  244800,  530000, 0,  583000, 0 },	/* 1920x1080@30 */
+> +};
+> +
+> +static const struct venus_resources sc7180_res = {
+> +	.freq_tbl = sc7180_freq_table,
+> +	.freq_tbl_size = ARRAY_SIZE(sc7180_freq_table),
+> +	.bw_tbl_enc = sc7180_bw_table_enc,
+> +	.bw_tbl_enc_size = ARRAY_SIZE(sc7180_bw_table_enc),
+> +	.bw_tbl_dec = sc7180_bw_table_dec,
+> +	.bw_tbl_dec_size = ARRAY_SIZE(sc7180_bw_table_dec),
+> +	.codec_freq_data = sc7180_codec_freq_data,
+> +	.codec_freq_data_size = ARRAY_SIZE(sc7180_codec_freq_data),
+> +	.clks = {"core", "iface", "bus" },
+> +	.clks_num = 3,
+> +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
+> +	.vcodec_clks_num = 2,
+> +	.vcodec_pmdomains = { "venus", "vcodec0" },
+> +	.vcodec_pmdomains_num = 2,
+> +	.vcodec_num = 1,
+> +	.max_load = 3110400,	/* 4096x2160@90 */
+
+Looking into above bandwidth tables I can guess that the maximimum load
+is reached at 4096x2160@30? If so you have to change it here.
+
+<cut>
+
+-- 
+regards,
+Stan
