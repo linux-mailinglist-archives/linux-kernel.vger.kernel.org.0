@@ -2,101 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D1C127B57
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00744127B5D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:55:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727469AbfLTMxR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 07:53:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:30672 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727397AbfLTMxQ (ORCPT
+        id S1727378AbfLTMz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 07:55:29 -0500
+Received: from mail-wm1-f46.google.com ([209.85.128.46]:52999 "EHLO
+        mail-wm1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727344AbfLTMz3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:53:16 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBKCosoh102131
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 07:53:15 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2x0ufv6axv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 07:53:15 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 20 Dec 2019 12:53:13 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 20 Dec 2019 12:53:09 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBKCr8eo31457450
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 20 Dec 2019 12:53:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5DD0AA4054;
-        Fri, 20 Dec 2019 12:53:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 201F0A4060;
-        Fri, 20 Dec 2019 12:53:07 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.85.154.31])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 20 Dec 2019 12:53:07 +0000 (GMT)
-Subject: Re: [PATCH v5 1/2] IMA: Define workqueue for early boot "key"
- measurements
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
-        James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-Date:   Fri, 20 Dec 2019 07:53:06 -0500
-In-Reply-To: <503845c9-beeb-b520-ec3f-af5fa7d2b91f@linux.microsoft.com>
-References: <20191218164434.2877-1-nramas@linux.microsoft.com>
-         <20191218164434.2877-2-nramas@linux.microsoft.com>
-         <1576761104.4579.426.camel@linux.ibm.com>
-         <503845c9-beeb-b520-ec3f-af5fa7d2b91f@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19122012-0028-0000-0000-000003CA9DAE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19122012-0029-0000-0000-0000248DF269
-Message-Id: <1576846386.5241.13.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
- definitions=2019-12-20_02:2019-12-17,2019-12-20 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- priorityscore=1501 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1910280000 definitions=main-1912200102
+        Fri, 20 Dec 2019 07:55:29 -0500
+Received: by mail-wm1-f46.google.com with SMTP id p9so8845033wmc.2;
+        Fri, 20 Dec 2019 04:55:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=47U1otsxYlinLNAscqJD75X6EAli96RR6XYpuDRuenk=;
+        b=BYTTQMKllgycraKHarnwqJf8SP4/xmLzv9sqBRHH5Jlky2jdi7TsjV0FpyLasstZXX
+         Gnz3BQ23iT6rF2wjm8aR/p2cANBU5xasgeSZacD8RBsWIOq+FzDUv4aX3n0gqaDQZSum
+         0bv0gkqK2DxGD83GZfUu3FCfcCg4GCvwM7HfxIMewlav5ZsxG80YBOic1rrgmF6LbfdP
+         2/JEsjMRO+HLj3QEzUSrSWYCnOFYmB9rnwpUQ26KXVdU+1otPKfeJEF8+av//+18iQfd
+         FU6qDpqC/QcHo+mezj/JB4lnKNSZNeRmWCsmSt+2mhAYAsCOmN/QVffUnH/Di1JHXZSE
+         UxeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=47U1otsxYlinLNAscqJD75X6EAli96RR6XYpuDRuenk=;
+        b=MPLy/JTcMUbfTy/m9JqXoaUHHt+e83aIz03ymQl7bOrXt5LhmSHTdbzDYe6iPajiRo
+         4kUsL+ssjNlSr+VxIllI76bdMfts8Eaw+HjqrnulvAt/fFM2RO42tMY67tZHIrsG9OKW
+         ZUNbUqP7eFZKZR78AXYvKFhcW8tYOOVjh8O+VbNeOn79LLQQGDc+15vZnDeU2mXwMO9j
+         zkJ9QPGV3o9vAkKdTK8PHK3T9p4e8xaP1EJ5vOtNVJboBG5LQ8ajo0TismImFGfiC0DI
+         NyzgfdNEM+mf0qGJpyVehEGfZWhOTb6AxurxwBIx180IdQbm8W5NaqunKWjpL3j1aq5w
+         8kKg==
+X-Gm-Message-State: APjAAAUuz0+aiBV7w7tsgUiAlxhv0lFMINKgPeWpgvQOTwPrOG1jxVUc
+        DFEwxY4My7jTg2aaz64Et6RR2BE7
+X-Google-Smtp-Source: APXvYqyag6PPQfT7+x6ofkH7w6P6paES7VP6Wm61XxrDabaVQVUo7j2A4lOVwoTmjNVhlw0slPBRIg==
+X-Received: by 2002:a7b:c1d8:: with SMTP id a24mr16446761wmj.130.1576846526989;
+        Fri, 20 Dec 2019 04:55:26 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id k16sm10148078wru.0.2019.12.20.04.55.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 20 Dec 2019 04:55:26 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: rk3368-lion-haikou: remove identical &uart0 node
+Date:   Fri, 20 Dec 2019 13:55:20 +0100
+Message-Id: <20191220125520.29871-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-12-19 at 08:55 -0800, Lakshmi Ramasubramanian wrote:
-> I am not sure if the mutex can be removed.
-> 
-> In ima_queue_key() we need to test the flag and add the key to the list 
-> as an atomic operation:
-> 
->   if (!test_bit())
->      insert_key_to_list
-> 
-> Suppose the if condition is true, but before we could insert the key to 
-> the list, ima_process_queued_keys() runs and processes queued keys we'll 
-> add the key to the list and never process it.
-> 
-> Is there an API in the kernel to test and add an entry to a list 
-> atomically?
+Remove identical &uart0 node.
+Sort nodes in alphabetical order.
 
-Ok, using test_and_set_bit() and test_bit() only helps, if we can get
-rid of the mutex.  I'll queue these patches.
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../arm64/boot/dts/rockchip/rk3368-lion-haikou.dts | 76 ++++++++++------------
+ 1 file changed, 35 insertions(+), 41 deletions(-)
 
-thanks,
-
-Mimi
+diff --git a/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
+index 8251f3c0d..93601fe05 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3368-lion-haikou.dts
+@@ -64,47 +64,6 @@
+ 	};
+ };
+ 
+-&sdmmc {
+-	bus-width = <4>;
+-	cap-mmc-highspeed;
+-	cap-sd-highspeed;
+-	cd-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
+-	disable-wp;
+-	max-frequency = <25000000>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
+-	rockchip,default-sample-phase = <90>;
+-	vmmc-supply = <&vcc3v3_baseboard>;
+-	status = "okay";
+-};
+-
+-&spi2 {
+-	cs-gpios = <0>, <&gpio2 RK_PC3 GPIO_ACTIVE_LOW>;
+-	status = "okay";
+-};
+-
+-&uart0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
+-	status = "okay";
+-};
+-
+-&usb_otg {
+-	dr_mode = "otg";
+-	status = "okay";
+-};
+-
+-&uart0 {
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
+-	status = "okay";
+-};
+-
+-&uart1 {
+-	/* alternate function of GPIO5/6 */
+-	status = "disabled";
+-};
+-
+ &pinctrl {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&haikou_pin_hog>;
+@@ -144,3 +103,38 @@
+ 		};
+ 	};
+ };
++
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	cd-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
++	disable-wp;
++	max-frequency = <25000000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_bus4>;
++	rockchip,default-sample-phase = <90>;
++	vmmc-supply = <&vcc3v3_baseboard>;
++	status = "okay";
++};
++
++&spi2 {
++	cs-gpios = <0>, <&gpio2 RK_PC3 GPIO_ACTIVE_LOW>;
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
++	status = "okay";
++};
++
++&uart1 {
++	/* alternate function of GPIO5/6 */
++	status = "disabled";
++};
++
++&usb_otg {
++	dr_mode = "otg";
++	status = "okay";
++};
+-- 
+2.11.0
 
