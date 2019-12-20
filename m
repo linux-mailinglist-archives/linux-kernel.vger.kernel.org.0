@@ -2,190 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 016EE127848
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D12B4127843
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:34:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfLTJfF convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Dec 2019 04:35:05 -0500
-Received: from smtp.h3c.com ([60.191.123.50]:28864 "EHLO h3cspam02-ex.h3c.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbfLTJfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:35:04 -0500
-Received: from DAG2EX08-IDC.srv.huawei-3com.com ([10.8.0.71])
-        by h3cspam02-ex.h3c.com with ESMTPS id xBK9XmAw010530
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Dec 2019 17:33:48 +0800 (GMT-8)
-        (envelope-from li.kai4@h3c.com)
-Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
- DAG2EX08-IDC.srv.huawei-3com.com (10.8.0.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 20 Dec 2019 17:33:50 +0800
-Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
- DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
- 15.01.1713.004; Fri, 20 Dec 2019 17:33:50 +0800
-From:   Likai <li.kai4@h3c.com>
-To:     piaojun <piaojun@huawei.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        "mark@fasheh.com" <mark@fasheh.com>,
-        "jlbec@evilplan.org" <jlbec@evilplan.org>,
-        "chge@linux.alibaba.com" <chge@linux.alibaba.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
-Subject: Re: [Ocfs2-devel] [PATCH v3] ocfs2: call journal flush to mark
- journal as empty after journal recovery when mount
-Thread-Topic: [Ocfs2-devel] [PATCH v3] ocfs2: call journal flush to mark
- journal as empty after journal recovery when mount
-Thread-Index: AQHVtH3735no2U4KqkqbYTsYHZS4qw==
-Date:   Fri, 20 Dec 2019 09:33:50 +0000
-Message-ID: <1faf04ac23384fb2a17a8a569f9fce8f@h3c.com>
-References: <20191217020140.2197-1-li.kai4@h3c.com>
- <5DFB860A.6020501@huawei.com>
- <05cf7457-31f2-0698-14ae-21a9e7b659cb@linux.alibaba.com>
- <5DFC90C0.7020704@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.125.108.72]
-x-sender-location: DAG2
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727436AbfLTJed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:34:33 -0500
+Received: from us-smtp-1.mimecast.com ([205.139.110.61]:41192 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727279AbfLTJec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:34:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576834471;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0/UxvPCeTXUKVldWIXLXTiQznfkGrThtTbge0OdQKe4=;
+        b=Wr73SsqLoUnzP0qsA+LNqwxJnV7UETTmNcjUAqU4jlb9W37Lxg5+FoBMBm472gBMnd9uN2
+        VWV55W3nT7fudccG0+budwK+SwkvapTznOG/+y0bhtsntmn+qAyJZ0wPdbxgrqmEWMhbzK
+        gRY3OGLXWMYiwaT3QSTEWxwUamAfBmo=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-102--qmUq0DYNauUF-7U1HEAow-1; Fri, 20 Dec 2019 04:34:28 -0500
+X-MC-Unique: -qmUq0DYNauUF-7U1HEAow-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E9D3510054E3;
+        Fri, 20 Dec 2019 09:34:26 +0000 (UTC)
+Received: from carbon (ovpn-200-18.brq.redhat.com [10.40.200.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 42B5A67009;
+        Fri, 20 Dec 2019 09:34:21 +0000 (UTC)
+Date:   Fri, 20 Dec 2019 10:34:20 +0100
+From:   Jesper Dangaard Brouer <brouer@redhat.com>
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc:     bpf <bpf@vger.kernel.org>, brouer@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>, Tejun Heo <tj@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Dennis Zhou <dennis@kernel.org>
+Subject: Re: Percpu variables, benchmarking, and performance weirdness
+Message-ID: <20191220103420.6f9304ab@carbon>
+In-Reply-To: <CAJ+HfNgNAzvdBw7gBJTCDQsne-HnWm90H50zNvXBSp4izbwFTA@mail.gmail.com>
+References: <CAJ+HfNgNAzvdBw7gBJTCDQsne-HnWm90H50zNvXBSp4izbwFTA@mail.gmail.com>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-MAIL: h3cspam02-ex.h3c.com xBK9XmAw010530
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/12/20 17:14, piaojun wrote:
->
-> On 2019/12/20 9:11, Joseph Qi wrote:
->>
->> On 19/12/19 22:15, piaojun wrote:
->>>
->>> On 2019/12/17 10:01, Kai Li wrote:
->>>> If journal is dirty when mount, it will be replayed but jbd2 sb
->>>> log tail cannot be updated to mark a new start because
->>>> journal->j_flag has already been set with JBD2_ABORT first
->>>> in journal_init_common. When a new transaction is committed, it
->>>> will be recored in block 1 first(journal->j_tail is set to 1 in
->>>> journal_reset).If emergency restart happens again before journal
->>>> super block is updated unfortunately, the new recorded trans will
->>>> not be replayed in the next mount.
->>>>
->>>> The following steps describe this procedure in detail.
->>>> 1. mount and touch some files
->>>> 2. these transactions are committed to journal area but not checkpointed
->>>> 3. emergency restart
->>>> 4. mount again and its journals are replayed
->>>> 5. journal super block's first s_start is 1, but its s_seq is not updated
->>>> 6. touch a new file and its trans is committed but not checkpointed
->>>> 7. emergency restart again
->>>> 8. mount and journal is dirty, but trans committed in 6 will not be
->>>> replayed.
->>>>
->>>> This exception happens easily when this lun is used by only one node. If it
->>>> is used by multi-nodes, other node will replay its journal and its
->>>> journal super block will be updated after recovery like what this patch
->>>> does.
->>>>
->>>> ocfs2_recover_node->ocfs2_replay_journal.
->>>>
->>>> The following jbd2 journal can be generated by touching a new file after
->>>> journal is replayed, and seq 15 is the first valid commit, but first seq
->>>> is 13 in journal super block.
->>>> logdump:
->>>> Block 0: Journal Superblock
->>>> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
->>>> Blocksize: 4096   Total Blocks: 32768   First Block: 1
->>>> First Commit ID: 13   Start Log Blknum: 1
->>>> Error: 0
->>>> Feature Compat: 0
->>>> Feature Incompat: 2 block64
->>>> Feature RO compat: 0
->>>> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
->>>> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
->>>> Per Txn Block Limit    Journal: 0    Data: 0
->>>>
->>>> Block 1: Journal Commit Block
->>>> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
->>>>
->>>> Block 2: Journal Descriptor
->>>> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
->>>> No. Blocknum        Flags
->>>>  0. 587             none
->>>> UUID: 00000000000000000000000000000000
->>>>  1. 8257792         JBD2_FLAG_SAME_UUID
->>>>  2. 619             JBD2_FLAG_SAME_UUID
->>>>  3. 24772864        JBD2_FLAG_SAME_UUID
->>>>  4. 8257802         JBD2_FLAG_SAME_UUID
->>>>  5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
->>>> ...
->>>> Block 7: Inode
->>>> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
->>>> FS Generation: 2839773110 (0xa9437fb6)
->>>> CRC32: 00000000   ECC: 0000
->>>> Type: Regular   Attr: 0x0   Flags: Valid
->>>> Dynamic Features: (0x1) InlineData
->>>> User: 0 (root)   Group: 0 (root)   Size: 7
->>>> Links: 1   Clusters: 0
->>>> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->>>> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
->>>> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
->>>> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
->>>> ...
->>>> Block 9: Journal Commit Block
->>>> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
->>>>
->>>> The following is jouranl recovery log when recovering the upper jbd2
->>>> journal when mount again.
->>>> syslog:
->>>> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
->>>> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
->>>> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
->>>> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
->>>> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
->>>>
->>>> Due to first commit seq 13 recorded in journal super is not consistent
->>>> with the value recorded in block 1(seq is 14), journal recovery will be
->>>> terminated before seq 15 even though it is an unbroken commit, inode
->>>> 8257802 is a new file and it will be lost.
->>>>
->>>> Signed-off-by: Kai Li <li.kai4@h3c.com>
->>>> ---
->>>>  fs/ocfs2/journal.c | 8 ++++++++
->>>>  1 file changed, 8 insertions(+)
->>>>
->>>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
->>>> index 1afe57f425a0..68ba354cf361 100644
->>>> --- a/fs/ocfs2/journal.c
->>>> +++ b/fs/ocfs2/journal.c
->>>> @@ -1066,6 +1066,14 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
->>>>  
->>>>  	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
->>>>  
->>>> +	if (replayed) {
->>>> +		jbd2_journal_lock_updates(journal->j_journal);
->>>> +		status = jbd2_journal_flush(journal->j_journal);
->>> What if jbd2_journal_flush gets failed? The 's_sequence' and 's_start'
->>> won't be reset, and I wonder if the problem still remains.
->>>
->> Yes, but we don't want this to fail the mount process, instead we just log
->> an error and system administrator should know the result.
->>
-> Thanks for your reply and I have another question about this issue. IMO
-> the second trans is not complete as jbd2 sb has not been updated, so we
-> do not need to replay it when mount again.
->
-> Jun
->
->
-I don't think so. The problem is that jbd2 sb should be updated to mark
-a new start after mount rather than whether trans committed later is
-complete or not.
+On Fri, 20 Dec 2019 09:25:43 +0100
+Bj=C3=B6rn T=C3=B6pel <bjorn.topel@gmail.com> wrote:
 
-In fact , the trans is complete too as the commit log described.
+> I've been doing some benchmarking with AF_XDP, and more specific the
+> bpf_xdp_redirect_map() helper and xdp_do_redirect(). One thing that
+> puzzles me is that the percpu-variable accesses stands out.
+>=20
+> I did a horrible hack that just accesses a regular global variable,
+> instead of the percpu struct bpf_redirect_info, and got a performance
+> boost from 22.7 Mpps to 23.8 Mpps with the rxdrop scenario from
+> xdpsock.
 
-Thanks
+Yes, this an 2 ns overhead, which is annoying in XDP context.
+ (1/22.7-1/23.8)*1000 =3D 2 ns
+
+> Have anyone else seen this?
+
+Yes, I see it all the time...
+
+> So, my question to the uarch/percpu folks out there: Why are percpu
+> accesses (%gs segment register) more expensive than regular global
+> variables in this scenario.
+
+I'm also VERY interested in knowing the answer to above question!?
+(Adding LKML to reach more people)
+
+
+> One way around that is changing BPF_PROG_RUN, and BPF_CALL_x to pass a
+> context (struct bpf_redirect_info) explicitly, and access that instead
+> of doing percpu access. That would be a pretty churny patch, and
+> before doing that it would be nice to understand why percpu stands out
+> performance-wise.
+
+--=20
+Best regards,
+  Jesper Dangaard Brouer
+  MSc.CS, Principal Kernel Engineer at Red Hat
+  LinkedIn: http://www.linkedin.com/in/brouer
 
