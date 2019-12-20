@@ -2,142 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6E2212805B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 17:07:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8D31128068
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 17:13:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfLTQGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 11:06:55 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53378 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbfLTQGz (ORCPT
+        id S1727426AbfLTQNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 11:13:21 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37979 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727181AbfLTQNT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 11:06:55 -0500
-Received: by mail-wm1-f65.google.com with SMTP id m24so9461770wmc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 08:06:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7RYQGeZeAiJlCSmLOt1RG/lJJr6hqYlQYOlVZADBBeA=;
-        b=Fibdeup0c7dyY5S/P2Ll9cyvCNFUYwfSc9O81jQFKYEGrJe1gmPmq7m2NCscxdcBw9
-         7VEKmMi6MYhXp0DjD/RWc7MVr0L8S5ImhihJIK7PDbe5lVULPgYnyoAfgkFOgP5kpbRq
-         R1T7awUqgW8+T6JtoKcyrMiUyKV7+BFn46m3WAksrIvaCPYH4peTE1CnIXoKkpVM0jEG
-         JujC1EsXtEbXbEEdZuppX5h7U9Vf+Ov/VJpjMysfm9MDsFEEODpxs7DYIxJU/lySFDHw
-         IuVlWHYxmj5AMhfh1SXAlTd13NSynKCMQ4CSoJP41XIBLqPDK+ld8Aw7nVB/sDRZfNmR
-         opvQ==
+        Fri, 20 Dec 2019 11:13:19 -0500
+Received: by mail-ot1-f67.google.com with SMTP id d7so8046795otf.5;
+        Fri, 20 Dec 2019 08:13:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7RYQGeZeAiJlCSmLOt1RG/lJJr6hqYlQYOlVZADBBeA=;
-        b=fY2GYy/2Iuu1QMqD3QGFLHEVDtni4wfqYn+q9yyYW0h20GLuaxGxRGzc4HAwj7wiIA
-         4z+8oCZqRYUr/+tfWcH33a6DVPjOgfEBPG6JjV+cDptCOFHHTbMKLI7IEN2eHw1SE/k1
-         TKeSTB0LCgtU0P6LHUGCCQ/Vu1jsWAKK/9SA6VV0ShroZjjmQO6SN0nRp+USUlCGQjKy
-         AD94nJhyZ3i57MTYYCkDudgTos2/WHBqHn10xpxXjW/jUNFC6d4YFx/jAeZjdfFHNoTC
-         LHCO7Msj7Kgxf+sUt2jmLqtpBTQnNza9u4+7X0QNldZeyrgnSbGaJ/wlLjYID8+ZiLb1
-         901w==
-X-Gm-Message-State: APjAAAXS5fKld0oNLRD3wnbpAfszausmqPItxf3lS4I/4AFA7BB0Tzym
-        ydoh4KtDsMoiOcv+eFvrA9Yf8w==
-X-Google-Smtp-Source: APXvYqy+T6boSrBnRoWvQxd+VXT4NB7tvQ0dXSNrh3hoRtWToVG89Rug2th6I2z7sjFE7qRBCi4flA==
-X-Received: by 2002:a05:600c:22d3:: with SMTP id 19mr16855019wmg.92.1576858012823;
-        Fri, 20 Dec 2019 08:06:52 -0800 (PST)
-Received: from apalos.home (ppp-94-64-118-170.home.otenet.gr. [94.64.118.170])
-        by smtp.gmail.com with ESMTPSA id j2sm10329263wmk.23.2019.12.20.08.06.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 08:06:52 -0800 (PST)
-Date:   Fri, 20 Dec 2019 18:06:49 +0200
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Jesper Dangaard Brouer <brouer@redhat.com>
-Cc:     netdev@vger.kernel.org, lirongqing@baidu.com,
-        linyunsheng@huawei.com, Saeed Mahameed <saeedm@mellanox.com>,
-        mhocko@kernel.org, peterz@infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [net-next v5 PATCH] page_pool: handle page recycle for
- NUMA_NO_NODE condition
-Message-ID: <20191220160649.GA26788@apalos.home>
-References: <20191218084437.6db92d32@carbon>
- <157676523108.200893.4571988797174399927.stgit@firesoul>
- <20191220102314.GB14269@apalos.home>
- <20191220114116.59d86ff6@carbon>
- <20191220104937.GA15487@apalos.home>
- <20191220162254.0138263e@carbon>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BEyJkL5nJjdN0xBLrqIKs638OAVTma/KQjSXpanBYC0=;
+        b=b31w2Mk7mNSPj32SGqZKZDTdo+/1pl8/tKcWc2+QvmriQmXgqs1jXebtZQgdT+n7M0
+         /cTUlxs3LgOuZnQisbLs47pPOvuuTuImjiQ5y0kaSZx9eNxSxrr5pfA71LGONbr6RPZ3
+         qjhqUVElcnXVLZSxuyOex+rlbIzqqBimmEwVVfojAD/k9mBc9AxB1sNQ6aC9XDSLkM6Z
+         2Rz9JiNVW3jwj2bq4tBm2hck/Z5GsdKTZcNHsZBNW/O8iZc+nTwLs3A9bF7ugGonoW1v
+         GeBjS3Gq0ThEaMcHaL1NX1CAVsR2CdY4hq8eMUyLIOaKaby7wbz8egCd2nhIhEmATWrl
+         zi2w==
+X-Gm-Message-State: APjAAAURGjH3GSkl50CdhvPc2y4UtcZIU8OGYJEPqtiadrgBJPucR0is
+        Fo1dsMtViy6uqBkdaEkbIGHoXQ7M+/RvDP5Y/aqp22JK
+X-Google-Smtp-Source: APXvYqw2edjR1mdY9qcPfm42FIvOAjdlNrhZq3ZMLOJGE/Ujtj9AfteAIggoEIn8QqzEsgg0qFFoNnGcOZZJD9Z5O7c=
+X-Received: by 2002:a9d:2073:: with SMTP id n106mr5985808ota.145.1576858398139;
+ Fri, 20 Dec 2019 08:13:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220162254.0138263e@carbon>
+References: <20191218135230.2610161-1-ben.dooks@codethink.co.uk>
+In-Reply-To: <20191218135230.2610161-1-ben.dooks@codethink.co.uk>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Dec 2019 17:13:07 +0100
+Message-ID: <CAMuHMdWgtOh=MN3wEgTcnQFTBjUwxXUaBvRknxhzQk2DYzN7gA@mail.gmail.com>
+Subject: Re: [PATCH] soc: renesas: rcar-rst: fix __iomem on configure call
+To:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 04:22:54PM +0100, Jesper Dangaard Brouer wrote:
-> On Fri, 20 Dec 2019 12:49:37 +0200
-> Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
-> 
-> > On Fri, Dec 20, 2019 at 11:41:16AM +0100, Jesper Dangaard Brouer wrote:
-> > > On Fri, 20 Dec 2019 12:23:14 +0200
-> > > Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
-> > >   
-> > > > Hi Jesper, 
-> > > > 
-> > > > I like the overall approach since this moves the check out of  the hotpath. 
-> > > > @Saeed, since i got no hardware to test this on, would it be possible to check
-> > > > that it still works fine for mlx5?
-> > > > 
-> > > > [...]  
-> > > > > +	struct ptr_ring *r = &pool->ring;
-> > > > > +	struct page *page;
-> > > > > +	int pref_nid; /* preferred NUMA node */
-> > > > > +
-> > > > > +	/* Quicker fallback, avoid locks when ring is empty */
-> > > > > +	if (__ptr_ring_empty(r))
-> > > > > +		return NULL;
-> > > > > +
-> > > > > +	/* Softirq guarantee CPU and thus NUMA node is stable. This,
-> > > > > +	 * assumes CPU refilling driver RX-ring will also run RX-NAPI.
-> > > > > +	 */
-> > > > > +	pref_nid = (pool->p.nid == NUMA_NO_NODE) ? numa_mem_id() : pool->p.nid;    
-> > > > 
-> > > > One of the use cases for this is that during the allocation we are not
-> > > > guaranteed to pick up the correct NUMA node. 
-> > > > This will get automatically fixed once the driver starts recycling packets. 
-> > > > 
-> > > > I don't feel strongly about this, since i don't usually like hiding value
-> > > > changes from the user but, would it make sense to move this into 
-> > > > __page_pool_alloc_pages_slow() and change the pool->p.nid?
-> > > > 
-> > > > Since alloc_pages_node() will replace NUMA_NO_NODE with numa_mem_id()
-> > > > regardless, why not store the actual node in our page pool information?
-> > > > You can then skip this and check pool->p.nid == numa_mem_id(), regardless of
-> > > > what's configured.   
-> > > 
-> > > This single code line helps support that drivers can control the nid
-> > > themselves.  This is a feature that is only used my mlx5 AFAIK.
-> > > 
-> > > I do think that is useful to allow the driver to "control" the nid, as
-> > > pinning/preferring the pages to come from the NUMA node that matches
-> > > the PCI-e controller hardware is installed in does have benefits.  
-> > 
-> > Sure you can keep the if statement as-is, it won't break anything. 
-> > Would we want to store the actual numa id in pool->p.nid if the user
-> > selects 'NUMA_NO_NODE'?
->  
-> No. pool->p.nid should stay as NUMA_NO_NODE, because that makes it
-> dynamic.  If someone moves an RX IRQ to another CPU on another NUMA
-> node, then this 'NUMA_NO_NODE' setting makes pages transitioned
-> automatically.
-Ok this assumed that drivers were going to use page_pool_nid_changed(), but with
-the current code we don't have to force them to do that. Let's keep this as-is.
+Hi Ben,
 
-I'll be running a few more tests  and wait in case Saeed gets a chance to test
-it and send my reviewed-by
+On Wed, Dec 18, 2019 at 2:52 PM Ben Dooks (Codethink)
+<ben.dooks@codethink.co.uk> wrote:
+> The configure call back takes a register pointer, so should
+> have been marked with __iomem. Add this to silence the
+> following sparse warnings:
+>
+> rivers/soc/renesas/rcar-rst.c:33:22: warning: incorrect type in initializer (incompatible argument 1 (different address spaces))
 
-Cheers
-/Ilias
-> 
-> -- 
-> Best regards,
->   Jesper Dangaard Brouer
->   MSc.CS, Principal Kernel Engineer at Red Hat
->   LinkedIn: http://www.linkedin.com/in/brouer
-> 
+d
+
+> drivers/soc/renesas/rcar-rst.c:33:22:    expected int ( *configure )( ... )
+> drivers/soc/renesas/rcar-rst.c:33:22:    got int ( * )( ... )
+> drivers/soc/renesas/rcar-rst.c:97:40: warning: incorrect type in argument 1 (different address spaces)
+> drivers/soc/renesas/rcar-rst.c:97:40:    expected void *base
+> drivers/soc/renesas/rcar-rst.c:97:40:    got void [noderef] <asn:2> *[assigned] base
+>
+> Signed-off-by: Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>
+
+Thanks!
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.6...
+
+> --- a/drivers/soc/renesas/rcar-rst.c
+> +++ b/drivers/soc/renesas/rcar-rst.c
+> @@ -21,7 +21,7 @@ static int rcar_rst_enable_wdt_reset(void __iomem *base)
+>
+>  struct rst_config {
+>         unsigned int modemr;            /* Mode Monitoring Register Offset */
+> -       int (*configure)(void *base);   /* Platform specific configuration */
+> +       int (*configure)(void __iomem *base);   /* Platform specific configuration */
+
+... with s/configuration/config/ to conform to the 80-char line limit.
+
+>  };
+>
+>  static const struct rst_config rcar_rst_gen1 __initconst = {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
