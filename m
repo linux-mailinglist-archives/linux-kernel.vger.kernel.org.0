@@ -2,98 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C732127CFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:32:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 05CA1127D3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:37:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728138AbfLTObt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:31:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35188 "EHLO mail.kernel.org"
+        id S1727767AbfLTOaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:30:35 -0500
+Received: from foss.arm.com ([217.140.110.172]:51172 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728003AbfLTObE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:31:04 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB7C824685;
-        Fri, 20 Dec 2019 14:31:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576852263;
-        bh=2+PQTogONJItXGpQy4p8JegmmDr3maW7+wELWTIaNis=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KdjDSSf5ntKhR7/N7xxWB802UKXMGerO9q4PpgAlLcysVMYCmkuqPFuGS7GaL/ZQ/
-         Lux5W5Dfx8n/gD5k3oyD+mPcXn0ksWgc08HWByan8YEu2a7geVYZBCJk435KW8641Z
-         rK02CA5o30dPK1jcJEvBNJxNzh6soDkr3D0ekFC4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andy Whitcroft <apw@canonical.com>,
-        Andrea Righi <andrea.righi@canonical.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 52/52] PM / hibernate: memory_bm_find_bit(): Tighten node optimisation
-Date:   Fri, 20 Dec 2019 09:29:54 -0500
-Message-Id: <20191220142954.9500-52-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191220142954.9500-1-sashal@kernel.org>
-References: <20191220142954.9500-1-sashal@kernel.org>
+        id S1727732AbfLTOad (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:30:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 648A130E;
+        Fri, 20 Dec 2019 06:30:32 -0800 (PST)
+Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ABF43F718;
+        Fri, 20 Dec 2019 06:30:30 -0800 (PST)
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 00/18] arm64: KVM: add SPE profiling support
+Date:   Fri, 20 Dec 2019 14:30:07 +0000
+Message-Id: <20191220143025.33853-1-andrew.murray@arm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andy Whitcroft <apw@canonical.com>
+This series implements support for allowing KVM guests to use the Arm
+Statistical Profiling Extension (SPE).
 
-[ Upstream commit da6043fe85eb5ec621e34a92540735dcebbea134 ]
+It has been tested on a model to ensure that both host and guest can
+simultaneously use SPE with valid data. E.g.
 
-When looking for a bit by number we make use of the cached result from the
-preceding lookup to speed up operation.  Firstly we check if the requested
-pfn is within the cached zone and if not lookup the new zone.  We then
-check if the offset for that pfn falls within the existing cached node.
-This happens regardless of whether the node is within the zone we are
-now scanning.  With certain memory layouts it is possible for this to
-false trigger creating a temporary alias for the pfn to a different bit.
-This leads the hibernation code to free memory which it was never allocated
-with the expected fallout.
+$ perf record -e arm_spe/ts_enable=1,pa_enable=1,pct_enable=1/ \
+        dd if=/dev/zero of=/dev/null count=1000
+$ perf report --dump-raw-trace > spe_buf.txt
 
-Ensure the zone we are scanning matches the cached zone before considering
-the cached node.
+As we save and restore the SPE context, the guest can access the SPE
+registers directly, thus in this version of the series we remove the
+trapping and emulation.
 
-Deep thanks go to Andrea for many, many, many hours of hacking and testing
-that went into cornering this bug.
+In the previous series of this support, when KVM SPE isn't supported
+(e.g. via CONFIG_KVM_ARM_SPE) we were able to return a value of 0 to
+all reads of the SPE registers - as we can no longer do this there isn't
+a mechanism to prevent the guest from using SPE - thus I'm keen for
+feedback on the best way of resolving this.
 
-Reported-by: Andrea Righi <andrea.righi@canonical.com>
-Tested-by: Andrea Righi <andrea.righi@canonical.com>
-Signed-off-by: Andy Whitcroft <apw@canonical.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/power/snapshot.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+It appears necessary to pin the entire guest memory in order to provide
+guest SPE access - otherwise it is possible for the guest to receive
+Stage-2 faults.
 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index 83105874f255b..26b9168321e76 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -734,8 +734,15 @@ static int memory_bm_find_bit(struct memory_bitmap *bm, unsigned long pfn,
- 	 * We have found the zone. Now walk the radix tree to find the leaf node
- 	 * for our PFN.
- 	 */
-+
-+	/*
-+	 * If the zone we wish to scan is the the current zone and the
-+	 * pfn falls into the current node then we do not need to walk
-+	 * the tree.
-+	 */
- 	node = bm->cur.node;
--	if (((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
-+	if (zone == bm->cur.zone &&
-+	    ((pfn - zone->start_pfn) & ~BM_BLOCK_MASK) == bm->cur.node_pfn)
- 		goto node_found;
- 
- 	node      = zone->rtree;
+The last two extra patches are for the kvmtool if someone wants to play
+with it.
+
+Changes since v2:
+	- Rebased on v5.5-rc2
+	- Renamed kvm_spe structure 'irq' member to 'irq_num'
+	- Added irq_level to kvm_spe structure
+	- Clear PMBSR service bit on save to avoid spurious interrupts
+	- Update kvmtool headers to 5.4
+	- Enabled SPE in KVM init features
+	- No longer trap and emulate
+	- Add support for guest/host exclusion flags
+	- Fix virq support for SPE
+	- Adjusted sysreg_elx_s macros with merged clang build support
+
+Andrew Murray (4):
+  KVM: arm64: don't trap Statistical Profiling controls to EL2
+  perf: arm_spe: Add KVM structure for obtaining IRQ info
+  KVM: arm64: spe: Provide guest virtual interrupts for SPE
+  perf: arm_spe: Handle guest/host exclusion flags
+
+Sudeep Holla (12):
+  dt-bindings: ARM SPE: highlight the need for PPI partitions on
+    heterogeneous systems
+  arm64: KVM: reset E2PB correctly in MDCR_EL2 when exiting the
+    guest(VHE)
+  arm64: KVM: define SPE data structure for each vcpu
+  arm64: KVM: add SPE system registers to sys_reg_descs
+  arm64: KVM/VHE: enable the use PMSCR_EL12 on VHE systems
+  arm64: KVM: split debug save restore across vm/traps activation
+  arm64: KVM/debug: drop pmscr_el1 and use sys_regs[PMSCR_EL1] in
+    kvm_cpu_context
+  arm64: KVM: add support to save/restore SPE profiling buffer controls
+  arm64: KVM: enable conditional save/restore full SPE profiling buffer
+    controls
+  arm64: KVM/debug: use EL1&0 stage 1 translation regime
+  KVM: arm64: add a new vcpu device control group for SPEv1
+  KVM: arm64: enable SPE support
+  KVMTOOL: update_headers: Sync kvm UAPI headers with linux v5.5-rc2
+  KVMTOOL: kvm: add a vcpu feature for SPEv1 support
+
+ .../devicetree/bindings/arm/spe-pmu.txt       |   5 +-
+ Documentation/virt/kvm/devices/vcpu.txt       |  28 +++
+ arch/arm64/include/asm/kvm_host.h             |  18 +-
+ arch/arm64/include/asm/kvm_hyp.h              |   6 +-
+ arch/arm64/include/asm/sysreg.h               |   1 +
+ arch/arm64/include/uapi/asm/kvm.h             |   4 +
+ arch/arm64/kvm/Kconfig                        |   7 +
+ arch/arm64/kvm/Makefile                       |   1 +
+ arch/arm64/kvm/debug.c                        |   2 -
+ arch/arm64/kvm/guest.c                        |   6 +
+ arch/arm64/kvm/hyp/debug-sr.c                 | 105 +++++---
+ arch/arm64/kvm/hyp/switch.c                   |  18 +-
+ arch/arm64/kvm/reset.c                        |   3 +
+ arch/arm64/kvm/sys_regs.c                     |  11 +
+ drivers/perf/arm_spe_pmu.c                    |  26 ++
+ include/kvm/arm_spe.h                         |  82 ++++++
+ include/uapi/linux/kvm.h                      |   1 +
+ virt/kvm/arm/arm.c                            |  10 +-
+ virt/kvm/arm/spe.c                            | 234 ++++++++++++++++++
+ 19 files changed, 521 insertions(+), 47 deletions(-)
+ create mode 100644 include/kvm/arm_spe.h
+ create mode 100644 virt/kvm/arm/spe.c
+
 -- 
-2.20.1
+2.21.0
 
