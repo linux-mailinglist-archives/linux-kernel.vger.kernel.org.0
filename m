@@ -2,75 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95E9E1285BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 00:54:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5ECC11285BF
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 00:55:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfLTXyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 18:54:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53146 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfLTXyQ (ORCPT
+        id S1726799AbfLTXzG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 18:55:06 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10960 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfLTXzF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 18:54:16 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so10572117wmc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 15:54:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=2JIcr6JqHRV4hFWAToeX1vJxvkJxv8d50MDsHSxmd8Q=;
-        b=t9Xy7XqsvRYJwIEIW5NtYiIL2B9D1ZkqZ9KHj+QiItz7vkeOPyCfrasjSMf3uYcqvu
-         odCn0fNBDoLGL/Yi/E4lzZ7mM3QKBqv0vgk1xy0FTmlxepAGEYgCZdTo/R2mzHRIemfj
-         YWUHb6I1y2Or8uofay81HdQDu+cJ/bzEcKEFsCHMIIM9P3js589jdDEkoFBvLconlwNG
-         /uC2dxCyVNu6wPQLCTneWR0ZVpqtA8bByqSWslEEOBu39gPYIRtlSzKtIYr901j78Ng2
-         UWTBPUR8umRgyl12JK+K1C3zPyJjS6PuK6Bl5CRSbNtehY2F4Iv0ABnp58Zxf9kEVc+d
-         rCBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=2JIcr6JqHRV4hFWAToeX1vJxvkJxv8d50MDsHSxmd8Q=;
-        b=LPc7UEJtQ1dziJrTXcmuLJ1I9eceweLdvjP/LWaEGp1c67AHFNxqqQPLOVTDHsR42S
-         xLrcXIi9p/MPg37/78nOUUPfG+tuhK+xFkupbcsyYL/kvshdJB9cbSCuSmG+A+JuxL9r
-         AekYs/9bIrJq76A6LjMOK419j77AzvPi5jAujKrdSchUJAf3eIy8kABrQxsdr1TXckDb
-         n1ubwtCvVpwl3u2XtYjSZLs5Ulv6C24nDD6kEjKeiRSLiy4dhZxhLQ+iVAY2VrUmPf9U
-         9451ODCguOF2WxMgfaKqZEBn2970djL7+AUCkt9fMCEIIY3pwn19e6qxf8/9Lr49t2rZ
-         3SOg==
-X-Gm-Message-State: APjAAAVjn0b05VWq7xz9Tja2ztkdtx8gifa/ht/Q4IVz94qzKvYoAzF9
-        hBpVFf//7djIGfwSePostuY3FqzkgbZikrH/GNY=
-X-Google-Smtp-Source: APXvYqzlScw/nvW/5ejDxxQgD20u1ie/sq5bionKsy7yenyc2Fcwv66ZL12+DylUYPZ56qasRw3A2rzt53bjXcGvX+I=
-X-Received: by 2002:a1c:2355:: with SMTP id j82mr19543653wmj.135.1576886054385;
- Fri, 20 Dec 2019 15:54:14 -0800 (PST)
+        Fri, 20 Dec 2019 18:55:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dfd5f350000>; Fri, 20 Dec 2019 15:54:29 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 20 Dec 2019 15:55:00 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 20 Dec 2019 15:55:00 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
+ 2019 23:54:55 +0000
+Subject: Re: [PATCH v11 00/25] mm/gup: track dma-pinned pages: FOLL_PIN
+To:     Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Chinner <david@fromorbit.com>,
+        David Airlie <airlied@linux.ie>,
+        "David S . Miller" <davem@davemloft.net>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "Paul Mackerras" <paulus@samba.org>, Shuah Khan <shuah@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>, <bpf@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <kvm@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <netdev@vger.kernel.org>,
+        <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        Maor Gottlieb <maorg@mellanox.com>
+References: <20191216222537.491123-1-jhubbard@nvidia.com>
+ <20191219132607.GA410823@unreal>
+ <a4849322-8e17-119e-a664-80d9f95d850b@nvidia.com>
+ <20191219210743.GN17227@ziepe.ca> <20191220182939.GA10944@unreal>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <1001a5fc-a71d-9c0f-1090-546c4913d8a2@nvidia.com>
+Date:   Fri, 20 Dec 2019 15:54:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Received: by 2002:a05:6000:1188:0:0:0:0 with HTTP; Fri, 20 Dec 2019 15:54:13
- -0800 (PST)
-From:   Solomon Brandy <ehisodia7410@gmail.com>
-Date:   Sat, 21 Dec 2019 02:54:13 +0300
-Message-ID: <CAN_-HqoYR0y0SxYV6C7VuXJ1bbu-6w5rYUyZD9Qd-npYKHnb6g@mail.gmail.com>
-Subject: 
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191220182939.GA10944@unreal>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576886069; bh=/03FljbsYciU5tHAkbKg2NU1vxam4rPGvNuyvBOvTmI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=oRvXZWdofYZmMnKtHbC887r9WWAfrydUr/UibodWJ1qaNTyMPy3+W8R0NcaZhg7dS
+         971HGgJD6LwSffJ62pj2tIvxp3eHI8BXVOtdjk7S3sjdZSz9tGHLzm7ujCZVURuC8a
+         irEUmm/OhCMXyR+iqtnm6nCO/xQp89VT1WotayqMgxGp4mpoDDX+NNHJX4q0B3UwU3
+         +RvXPnLJz1mCrbJfx3TkKb0L+jPAoTDVjeRU4xrKmbuD30tHozBBlUpnyYWoaOHmat
+         YDkXozvEZrxOc0h7qKS+l5AK23MRif8N+YKUGoUxe7vXoCKoEk2wdk8r2SNOo6On86
+         EItNjAud0AHkw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello
+On 12/20/19 10:29 AM, Leon Romanovsky wrote:
+...
+>> $ ./build.sh
+>> $ build/bin/run_tests.py
+>>
+>> If you get things that far I think Leon can get a reproduction for you
+> 
+> I'm not so optimistic about that.
+> 
 
-    Am Dr. Solomon Brandy, Legitimate and reliable loan lender From
-Solomon Brandy Financial Service. We offer loans on clear and
-understandable terms and conditions at a 3% interest rate. From
-$5,000.00 to $450,000,000.00 USD, Euro And Pounds Only. we Offer
-Business Loans, Personal Loans, Student Loans, Car Loans And Loans To
-Pay Off Bills, BG/SBLC at low rates also available, Contact us now via
-bellow email address.
+OK, I'm going to proceed for now on the assumption that I've got an overflow
+problem that happens when huge pages are pinned. If I can get more information,
+great, otherwise it's probably enough.
 
-Only messages to this email will be answered (berndhava@outlook.dk)
+One thing: for your repro, if you know the huge page size, and the system
+page size for that case, that would really help. Also the number of pins per
+page, more or less, that you'd expect. Because Jason says that only 2M huge 
+pages are used...
 
-Name: Solomon Brandy
-E-mail:  berndhava@outlook.dk
-Executive Finance/Loan Officer.
-Skype: solo.brandy1
-Tele:  17865445764
-(c)2019 SOLOMON BRANDY FINANCIAL SERVICE =C2=AE.
+Because the other possibility is that the refcount really is going negative, 
+likely due to a mismatched pin/unpin somehow.
+
+If there's not an obvious repro case available, but you do have one (is it easy
+to repro, though?), then *if* you have the time, I could point you to a github
+branch that reduces GUP_PIN_COUNTING_BIAS by, say, 4x, by applying this:
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index bb44c4d2ada7..8526fd03b978 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1077,7 +1077,7 @@ static inline void put_page(struct page *page)
+  * get_user_pages and page_mkclean and other calls that race to set up page
+  * table entries.
+  */
+-#define GUP_PIN_COUNTING_BIAS (1U << 10)
++#define GUP_PIN_COUNTING_BIAS (1U << 8)
+ 
+ void unpin_user_page(struct page *page);
+ void unpin_user_pages_dirty_lock(struct page **pages, unsigned long npages,
+
+If that fails to repro, then we would be zeroing in on the root cause. 
+
+The branch is here (I just tested it and it seems healthy):
+
+git@github.com:johnhubbard/linux.git  pin_user_pages_tracking_v11_with_diags
+
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
