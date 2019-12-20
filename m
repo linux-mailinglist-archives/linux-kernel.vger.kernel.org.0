@@ -2,148 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 822601283BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 22:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D366E1283C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 22:21:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727720AbfLTVRG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 16:17:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:41946 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727639AbfLTVQx (ORCPT
+        id S1727507AbfLTVUx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 16:20:53 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45328 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLTVUx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 16:16:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576876612;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G5ujQPtmC0gFSTE7FNk323KNrK3wygZRxxl448+O6gM=;
-        b=Kqq5Or5Ca4y7fLoiHXmXPE1a8JXoEcOuk1o9swE2bOL9yaOXOmMfhlh0G8JtM644vtlJMl
-        dTTCURUHlQUEndboDnjJZ7tfi2/PjUu3QTNxL8A4v3ORIGPlCLJuKNOxULMn5pmpvyfmU2
-        miYIzckBcXMiyb5/6DaNZjOl3DoHPPo=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-176-dVP8v3ryOZC_FBJuw0Rilg-1; Fri, 20 Dec 2019 16:16:51 -0500
-X-MC-Unique: dVP8v3ryOZC_FBJuw0Rilg-1
-Received: by mail-qv1-f72.google.com with SMTP id r9so6739270qvs.19
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 13:16:51 -0800 (PST)
+        Fri, 20 Dec 2019 16:20:53 -0500
+Received: by mail-oi1-f196.google.com with SMTP id n16so1319635oie.12
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 13:20:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=content-transfer-encoding:from:mime-version:subject:date:message-id
+         :references:cc:in-reply-to:to;
+        bh=9Qnmp0WI/wJPh5obkk1eDEi0Xc1HmFywljm1WZKRD54=;
+        b=VmdN32C+3faE2DeglNJ2zDUowKjP03iZiRJy1BWyUMp2kNO7p0RHDaRvQQFqs/HURe
+         ILXuVhylyKt7wb20SZYWfC9uGAHzFCq5WPih4QMncAEVOlk++e1Ypt7aQqxmsMT3yD4j
+         36CxC4W0ALOHxaOxIqrEK2F1GZCnv+Zfqsrm13SAIG1OxWSDY7auUPDcsPijHW7xw/UZ
+         R7KqAIbIBgBhNki4cidE5XxyU9Zg6mb1mBwv0shtQKxfGktY1nVym73u/k3c4HtjADcV
+         Id1GIuy3gIGspl3G7KGMGkAwUni3RqIsC6Q4KRWVPeRLiHeLLOho5cSqpVOToQDU7KFN
+         wTuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G5ujQPtmC0gFSTE7FNk323KNrK3wygZRxxl448+O6gM=;
-        b=IZhuFrWqM/oRCVLjs4lKiBQsyzJk4BYZWJKN7DFsevvi+Hc8lH5aCKs2FiURWcoR/R
-         tFb1vfLDk3122wpCdW9d/XO7nwpugVsTk/MgHMfFmi9PY8nsmtE3zYGY8zUl1teJdYgX
-         /NVsjXZCH8Yj7HelL88Iruar5hTMg+8vn/vaWBCmxc1VmQ2pqPoF+pFblS0pOFgjG9DQ
-         Wg+YHX+qxx5Fea2Z0cCUBIXWKWK65dir0/9DWxI/CCIfJQbasgDby5ObGPl1+JAATLVE
-         FtDNBC0/25Bw4e4BYBGBCogbrs0OqAxpmuIFHSqLB9MVbT0k+79cqVreLse6/3waXUil
-         MrhA==
-X-Gm-Message-State: APjAAAXSZ1V3A6i+RgDdm8GBWmx5gEpOXB+pWqfphr/ZSQXUttUPNL4R
-        qto/tz1QWm2RmcqlEHhOGU2XoD0y3ysBofu5hWONS+HGh2ceMNZQfmYUknHgOJl4I9Bp7zjz3zs
-        De4roBXD/mEomYiRqdMgK35+Z
-X-Received: by 2002:ac8:3490:: with SMTP id w16mr13210716qtb.56.1576876611533;
-        Fri, 20 Dec 2019 13:16:51 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzSrZAmXC/1u4+R+RuRj9JXAORp5RlHPuTigmYzCZAtc9v6Xy+S4ykD1fOWMTcCwtA4xfb2Rg==
-X-Received: by 2002:ac8:3490:: with SMTP id w16mr13210693qtb.56.1576876611302;
-        Fri, 20 Dec 2019 13:16:51 -0800 (PST)
-Received: from xz-x1.redhat.com ([104.156.64.74])
-        by smtp.gmail.com with ESMTPSA id d25sm3385231qtq.11.2019.12.20.13.16.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 13:16:50 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, peterx@redhat.com,
-        Jason Wang <jasowang@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>
-Subject: [PATCH v2 09/17] KVM: Make dirty ring exclusive to dirty bitmap log
-Date:   Fri, 20 Dec 2019 16:16:26 -0500
-Message-Id: <20191220211634.51231-10-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191220211634.51231-1-peterx@redhat.com>
-References: <20191220211634.51231-1-peterx@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:content-transfer-encoding:from:mime-version
+         :subject:date:message-id:references:cc:in-reply-to:to;
+        bh=9Qnmp0WI/wJPh5obkk1eDEi0Xc1HmFywljm1WZKRD54=;
+        b=lTyT9jgRbjSYrIJE5KTZFvEGL7SRT5NbMz6afFI2tIHe/3ixj6gGCj33aTpRSU277z
+         FWM2ebjGfZqlZP9X3lbKwmtBOce8/ls52G6DB9rCrh0hv/S+NXzYCX7lBupfq4y5Ie9q
+         GKLNEmlDzveYefqGNsPi4SwyjvU3SB8bbgIRu03tlL6fGR7n8Ae1IlJ3BcVC/4Mvq7mG
+         IgzpRNALmNn4vfNfzZB2TfonKb4kWStyFabWcehs2Sz58aDlvXX1t5HrtgTkv2/OdtJZ
+         Lsd59KmFXmNUY+oxD4jw4VskcQ6J4dJq1irUQvMRV+W16PjZpIfhOI/dE3/z0lM9UfTm
+         100A==
+X-Gm-Message-State: APjAAAVL/IhEB8FGfnE8S04Vne+fDFkjtHPwNTYNWPxcuGJp7nXL+rgH
+        uU62PB9F02H5DDqYxsnFSQa9uQ==
+X-Google-Smtp-Source: APXvYqx5CXpDGFWd07MxIxOkmCrgSCU+qG1n8l8D1GpIN60/Wzmaj8zotokOH8zdfBTWDwFJfz79SA==
+X-Received: by 2002:a05:6808:3d0:: with SMTP id o16mr1542733oie.79.1576876851262;
+        Fri, 20 Dec 2019 13:20:51 -0800 (PST)
+Received: from [26.82.234.166] ([172.58.110.182])
+        by smtp.gmail.com with ESMTPSA id a15sm3951509otn.64.2019.12.20.13.20.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2019 13:20:50 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andy Lutomirski <luto@amacapital.net>
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] x86: Remove force_iret()
+Date:   Sat, 21 Dec 2019 05:20:46 +0800
+Message-Id: <A5CA1E6B-B755-4F5A-8813-10713C1C192C@amacapital.net>
+References: <227c8442919d44a790370870aaba416c@AcuMS.aculab.com>
+Cc:     Brian Gerst <brgerst@gmail.com>, Andy Lutomirski <luto@kernel.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>
+In-Reply-To: <227c8442919d44a790370870aaba416c@AcuMS.aculab.com>
+To:     David Laight <David.Laight@aculab.com>
+X-Mailer: iPhone Mail (17C54)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no good reason to use both the dirty bitmap logging and the
-new dirty ring buffer to track dirty bits.  We should be able to even
-support both of them at the same time, but it could complicate things
-which could actually help little.  Let's simply make it the rule
-before we enable dirty ring on any arch, that we don't allow these two
-interfaces to be used together.
 
-The big world switch would be KVM_CAP_DIRTY_LOG_RING capability
-enablement.  That's where we'll switch from the default dirty logging
-way to the dirty ring way.  As long as kvm->dirty_ring_size is setup
-correctly, we'll once and for all switch to the dirty ring buffer mode
-for the current virtual machine.
+> On Dec 20, 2019, at 6:59 PM, David Laight <David.Laight@aculab.com> wrote:=
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- Documentation/virt/kvm/api.txt |  7 +++++++
- virt/kvm/kvm_main.c            | 12 ++++++++++++
- 2 files changed, 19 insertions(+)
+>=20
+> =EF=BB=BFFrom: Andy Lutomirski
+>> Sent: 20 December 2019 10:30
+>>>> On Dec 20, 2019, at 6:10 PM, David Laight <David.Laight@aculab.com> wro=
+te:
+>>>=20
+>>> =EF=BB=BFFrom: Brian Gerst
+>>>> Sent: 20 December 2019 03:48
+>>>>> On Thu, Dec 19, 2019 at 8:50 PM Andy Lutomirski <luto@kernel.org> wrot=
+e:
+>>>>>=20
+>>>>> On Thu, Dec 19, 2019 at 3:58 AM Brian Gerst <brgerst@gmail.com> wrote:=
 
-diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
-index c141b285e673..b507b966f9f1 100644
---- a/Documentation/virt/kvm/api.txt
-+++ b/Documentation/virt/kvm/api.txt
-@@ -5411,3 +5411,10 @@ all the existing dirty gfns are flushed to the dirty rings.
- If one of the ring buffers is full, the guest will exit to userspace
- with the exit reason set to KVM_EXIT_DIRTY_LOG_FULL, and the KVM_RUN
- ioctl will return to userspace with zero.
-+
-+NOTE: the KVM_CAP_DIRTY_LOG_RING capability and the new ioctl
-+KVM_RESET_DIRTY_RINGS are exclusive to the existing KVM_GET_DIRTY_LOG
-+interface.  After enabling KVM_CAP_DIRTY_LOG_RING with an acceptable
-+dirty ring size, the virtual machine will switch to the dirty ring
-+tracking mode, and KVM_GET_DIRTY_LOG, KVM_CLEAR_DIRTY_LOG ioctls will
-+stop working.
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4050631d05f3..b69d34425f8d 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1204,6 +1204,10 @@ int kvm_get_dirty_log(struct kvm *kvm,
- 	unsigned long n;
- 	unsigned long any = 0;
- 
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
-+
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
-@@ -1261,6 +1265,10 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
- 
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
-+
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
-@@ -1332,6 +1340,10 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
- 
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
-+
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
--- 
-2.24.1
+>>>>>>=20
+>>>>>> force_iret() was originally intended to prevent the return to user mo=
+de with
+>>>>>> the SYSRET or SYSEXIT instructions, in cases where the register state=
+ could
+>>>>>> have been changed to be incompatible with those instructions.
+>>>>>=20
+>>>>> It's more than that.  Before the big syscall rework, we didn't restore=
 
+>>>>> the caller-saved regs.  See:
+>>>>>=20
+>>>>> commit 21d375b6b34ff511a507de27bf316b3dde6938d9
+>>>>> Author: Andy Lutomirski <luto@kernel.org>
+>>>>> Date:   Sun Jan 28 10:38:49 2018 -0800
+>>>>>=20
+>>>>>   x86/entry/64: Remove the SYSCALL64 fast path
+>>>>>=20
+>>>>> So if you changed r12, for example, the change would get lost.
+>>>>=20
+>>>> force_iret() specifically dealt with changes to CS, SS and EFLAGS.
+>>>> Saving and restoring the extra registers was a different problem
+>>>> although it affected the same functions like ptrace, signals, and
+>>>> exec.
+>>>=20
+>>> Is it ever possible for any of the segment registers to refer to the LDT=
+
+>>> and for another thread to invalidate the entries 'very late' ?
+>>=20
+>> Not in newer kernels, because the actual LDT is never modified.
+>> Instead, LDT changes create a whole new LDT and propagate it with an IPI.=
+
+>=20
+> Can the IPI be disabled through the SYSRET path?
+
+There=E2=80=99s a whole dance in prepare_exit_to_usermode().  We turn off in=
+terrupts, then check for pending work (which does not include this IPI, but i=
+ncludes plenty of other nasty things), and we keep interrupts off until we a=
+re in user mode.
+
+> Once in user space, the IPI will interrupt the process and, I presume, it w=
+ill
+> pick up the new LDT on 'return to user'.
+
+The new LDT is picked up in the IPI callback.
+
+> But if the IPI happens between the LDT being set and SYSRET it will (presu=
+mably)
+> remain 'pending' until the next system call?
+> Which could be long enough for one thread to have passed a pointer across g=
+iving
+> an unexpected SEGV (or maybe worse, failing to give an expected one).
+
+modify_ldt() won=E2=80=99t return until all threads have the new LDT.=
