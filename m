@@ -2,76 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 357BD127368
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D40127374
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 03:23:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbfLTCTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 21:19:42 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8156 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726963AbfLTCTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 21:19:41 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 658332DE0C0B8ACCE7E0;
-        Fri, 20 Dec 2019 10:19:39 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Fri, 20 Dec 2019
- 10:19:33 +0800
-Subject: Re: [PATCH net] af_packet: refactoring code for
- prb_calc_retire_blk_tmo
-To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-CC:     David Miller <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, <maximmi@mellanox.com>,
-        Paolo Abeni <pabeni@redhat.com>, <yuehaibing@huawei.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "Network Development" <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20191219013344.34603-1-maowenan@huawei.com>
- <CA+FuTScgWi905_NhGNsRzpwaQ+OPwahj6NtKgPjLZRjuqJvhXQ@mail.gmail.com>
-From:   maowenan <maowenan@huawei.com>
-Message-ID: <c0944cb6-eb63-b1e6-01da-4cddd2ab7f91@huawei.com>
-Date:   Fri, 20 Dec 2019 10:19:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727151AbfLTCXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 21:23:07 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:58666 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfLTCXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 19 Dec 2019 21:23:07 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK2Ft2F010080;
+        Fri, 20 Dec 2019 02:22:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=UJWbPBLIw8v2NtR3K7tOCA0lIPKrvRnjfNoGkJqvNLw=;
+ b=o5pMNgBDCHodm/dDo4k5bp6zaRnszLzYsSQ6dlBmtYwhtkmGmUloMpGFYtzOWATVgkKc
+ 2cvRtFmz+7cLmKVFuPt69Qwm4Fheg1CTuVGtiv9Hk9EcQc7ALk1PKUKjnJKSDw9JcBcU
+ 9K5s3KfPUohCuerXob0/O/tJHDFwxn+qDkIwhA8vmatQ2UFQtbcrVm111kgd6Op98QiM
+ 4KfJuubjS51m2LNYMgPfuCagwdwIKqGed23iSBwX7LgoKeTIsn/ThLeDgseP8IPrV3fB
+ 61cLD202Ge8PbHEKBRXsn3BOgJ/CnTy3YoALqRdZNCHyEleu7oPathSVdRJ9CvKp6PjA cQ== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2130.oracle.com with ESMTP id 2x01jae80k-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 02:22:46 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK2JN0t072948;
+        Fri, 20 Dec 2019 02:22:46 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2wyxqjmt50-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 02:22:46 +0000
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBK2MfI4026306;
+        Fri, 20 Dec 2019 02:22:41 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 18:22:41 -0800
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, ming.lei@redhat.com, osandov@fb.com,
+        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com
+Subject: Re: [PATCH RFC 1/3] block: Add support for REQ_OP_ASSIGN_RANGE operation
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
+        <157599696813.12112.14140818972910110796.stgit@localhost.localdomain>
+        <yq1woatc8zd.fsf@oracle.com>
+        <3f2e341b-dea4-c5d0-8eb0-568b6ad2f17b@virtuozzo.com>
+        <yq1a77oc56s.fsf@oracle.com> <20191220015338.GB7473@magnolia>
+Date:   Thu, 19 Dec 2019 21:22:36 -0500
+In-Reply-To: <20191220015338.GB7473@magnolia> (Darrick J. Wong's message of
+        "Thu, 19 Dec 2019 17:53:39 -0800")
+Message-ID: <yq1a77nag7n.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CA+FuTScgWi905_NhGNsRzpwaQ+OPwahj6NtKgPjLZRjuqJvhXQ@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912200014
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912200014
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Darrick,
 
-On 2019/12/19 21:56, Willem de Bruijn wrote:
-> On Wed, Dec 18, 2019 at 8:37 PM Mao Wenan <maowenan@huawei.com> wrote:
->>
->> If __ethtool_get_link_ksettings() is failed and with
->> non-zero value, prb_calc_retire_blk_tmo() should return
->> DEFAULT_PRB_RETIRE_TOV firstly. Refactoring code and make
->> it more readable.
->>
->> Fixes: b43d1f9f7067 ("af_packet: set defaule value for tmo")
-> 
-> This is a pure refactor, not a fix.
-yes , it is not a fix.
-> 
-> Code refactors make backporting fixes across releases harder, among
-> other things. I think this code is better left as is. Either way, it
-> would be a candidate for net-next, not net.
-sorry, it would be net-next.
-> 
->> -       unsigned int mbits = 0, msec = 0, div = 0, tmo = 0;
->> +       unsigned int mbits = 0, msec = 1, div = 0, tmo = 0;
-> 
-> Most of these do not need to be initialized here at all, really.
-> 
-some of them do not need to be initialized,
-msec=1 can be reserved because it can indicate tmo is for millisecond and msec
-initialized value is 1ms.
+[Anchor]
 
+> What happens if you anchor and then try to read the results?  IO
+> error?
+
+Depends on the device. Typically you get the same results as UNMAP.
+
+Anchoring is essentially a way to preallocate blocks on a thinly
+provisioned device. If you then run out of actual storage capacity you
+won't get a write failure writing to those LBAs. It is intended to
+protect block ranges that do not tolerate write failures (journals,
+metadata).
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
