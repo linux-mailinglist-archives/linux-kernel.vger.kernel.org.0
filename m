@@ -2,110 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60D7D127873
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:51:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FAB127854
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbfLTJvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:51:03 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:52037 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727177AbfLTJvD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:51:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576835461;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=99eauVFberJXv2fQAwZtixMy3egbUdn3Of2y1/7QSBo=;
-        b=IVln0UOQ+zyEwEHp55eUIZiZy/FvqttwaBseZUpaEi7qW2GKRk21WB3vBefLls1NXRIba7
-        mTZBO7WsPcULlQ8CaX2KBHZHTnf2YOwlQPFXXXyOPKD/UeoA8CHkVQQ21Cdub+kB1Vagr4
-        EjLD6zOjQX+oe7DSP6lxjcGM4VP2kJo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-232-KSOnSj7mOiGqSWdMbp1wmw-1; Fri, 20 Dec 2019 04:51:00 -0500
-X-MC-Unique: KSOnSj7mOiGqSWdMbp1wmw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 04477189CD00;
-        Fri, 20 Dec 2019 09:50:58 +0000 (UTC)
-Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0B7C26FC4;
-        Fri, 20 Dec 2019 09:50:51 +0000 (UTC)
-Date:   Fri, 20 Dec 2019 10:50:49 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kurz <groug@kaod.org>
-Subject: Re: [PATCH v2 32/45] KVM: Move initialization of preempt notifier
- to kvm_vcpu_init()
-Message-ID: <20191220105049.3fbdbbcc.cohuck@redhat.com>
-In-Reply-To: <20191218215530.2280-33-sean.j.christopherson@intel.com>
-References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
-        <20191218215530.2280-33-sean.j.christopherson@intel.com>
-Organization: Red Hat GmbH
+        id S1727413AbfLTJhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:37:16 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7723 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727269AbfLTJhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:37:14 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7471C67DC73F0406B35C;
+        Fri, 20 Dec 2019 17:37:11 +0800 (CST)
+Received: from euler.huawei.com (10.175.104.193) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 20 Dec 2019 17:37:02 +0800
+From:   Chen Wandun <chenwandun@huawei.com>
+To:     <darrick.wong@oracle.com>, <linux-xfs@vger.kernel.org>,
+        <bfoster@redhat.com>, <dchinner@redhat.com>, <preichl@redhat.com>,
+        <sandeen@sandeen.net>, <linux-kernel@vger.kernel.org>
+CC:     <chenwandun@huawei.com>
+Subject: [PATCH next] xfs: Make the symbol 'xfs_rtalloc_log_count' static
+Date:   Fri, 20 Dec 2019 17:51:57 +0800
+Message-ID: <20191220095157.42619-1-chenwandun@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Type: text/plain
+X-Originating-IP: [10.175.104.193]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 18 Dec 2019 13:55:17 -0800
-Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+Fix the following sparse warning:
 
-> Initialize the preempt notifier immediately in kvm_vcpu_init() to pave
-> the way for removing kvm_arch_vcpu_setup(), i.e. to allow arch specific
-> code to call vcpu_load() during kvm_arch_vcpu_create().
-> 
-> Back when preemption support was added, the location of the call to init
-> the preempt notifier was perfectly sane.  The overall vCPU creation flow
-> featured a single arch specific hook and the preempt notifer was used
-> immediately after its initialization (by vcpu_load()).  E.g.:
-> 
->         vcpu = kvm_arch_ops->vcpu_create(kvm, n);
->         if (IS_ERR(vcpu))
->                 return PTR_ERR(vcpu);
-> 
->         preempt_notifier_init(&vcpu->preempt_notifier, &kvm_preempt_ops);
-> 
->         vcpu_load(vcpu);
->         r = kvm_mmu_setup(vcpu);
->         vcpu_put(vcpu);
->         if (r < 0)
->                 goto free_vcpu;
-> 
-> Today, the call to preempt_notifier_init() is sandwiched between two
-> arch specific calls, kvm_arch_vcpu_create() and kvm_arch_vcpu_setup(),
-> which needlessly forces x86 (and possibly others?) to split its vCPU
-> creation flow.  Init the preempt notifier prior to any arch specific
-> call so that each arch can independently decide how best to organize
-> its creation flow.
-> 
-> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
->  virt/kvm/kvm_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+fs/xfs/libxfs/xfs_trans_resv.c:206:1: warning: symbol 'xfs_rtalloc_log_count' was not declared. Should it be static?
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Fixes: b1de6fc7520f ("xfs: fix log reservation overflows when allocating large rt extents")
+Signed-off-by: Chen Wandun <chenwandun@huawei.com>
+---
+ fs/xfs/libxfs/xfs_trans_resv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/xfs/libxfs/xfs_trans_resv.c b/fs/xfs/libxfs/xfs_trans_resv.c
+index 824073a839ac..7a9c04920505 100644
+--- a/fs/xfs/libxfs/xfs_trans_resv.c
++++ b/fs/xfs/libxfs/xfs_trans_resv.c
+@@ -202,7 +202,7 @@ xfs_calc_inode_chunk_res(
+  * blocks as needed to mark inuse MAXEXTLEN blocks' worth of realtime extents,
+  * as well as the realtime summary block.
+  */
+-unsigned int
++static unsigned int
+ xfs_rtalloc_log_count(
+ 	struct xfs_mount	*mp,
+ 	unsigned int		num_ops)
+-- 
+2.17.1
 
