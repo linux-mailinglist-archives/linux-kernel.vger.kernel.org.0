@@ -2,102 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B77E128178
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 18:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD05212817E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 18:35:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfLTRdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 12:33:04 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45179 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727390AbfLTRdD (ORCPT
+        id S1727465AbfLTRfv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 12:35:51 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:39167 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727388AbfLTRfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 12:33:03 -0500
-Received: by mail-qk1-f194.google.com with SMTP id x1so8232008qkl.12
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 09:33:03 -0800 (PST)
+        Fri, 20 Dec 2019 12:35:50 -0500
+Received: by mail-io1-f66.google.com with SMTP id c16so8749734ioh.6;
+        Fri, 20 Dec 2019 09:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=I4GRO/tWiHbtugNhV7RJoylU3LHor0URi+UMEUF74qE=;
-        b=d1sfmHOoN92uPuLuu8fgnRwjyA5F1JWhhVFF57FV7A2DSxKQqRF4LGQa69tbTalwUh
-         1zL8yEdkg72wO0woe+DVlrUMKZ8uS9dQaa+SmFcwb+JeUY4UPw64tQXdrq93FETmgWDo
-         Qse0URFDLMNwpusPCyMWsdhUpgpPL0BfRXU6U=
+        bh=wLQc/GdbaTxAeCv2i12B87WYv/+yect1z7boH4l+zxc=;
+        b=Snbp1guXp8WJMDJ7NEVUNEciyC9/XuhqMy9fNg3+bjS7yLK55or/hnw71baS4sJ1Mt
+         gzT94sJGeHuW14jm+2j6qfFPKE4fxYOMefHHNOyWm4Vx6iUMBpQA3pOBR3Hz1jiE5bzd
+         3XIYrAbuX9Rs5d01UVLArDmRdGdajXIfhotqQPWNBW8BhhRazdOCFAqEp7wb4B7WA5oi
+         R8ERO6pLFKULtxTKJX1gm+JWcAa1SWcuZtqWpraDjNiZD3GNoQJbRUq0E7kt7TFN0IVN
+         Yt6/DqIt5P2n1Ldst1jhjRK8ttvNUA8gjjClChFZHWY3we+2+1G+vHfDP1Mcp2Y8OjvI
+         35pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=I4GRO/tWiHbtugNhV7RJoylU3LHor0URi+UMEUF74qE=;
-        b=Rst9A2SmE/tAKyhU2njizjPXbqc4/2MUA/ZnOFitVpVCxEfVRzfwLE1UWuXV57ASXi
-         C033o4aQO4p1xBlxfCyPHN/VmOv8sWzFrrQ4vnQprEjQgNPfqmYpp/YYtliLRq0ygudJ
-         oPSczvL4MPvd+S6qepnS+imyLLZTCthTo7EjI4i9tDNMEGS/Wq01TDK//hKvGHHirJwS
-         Rx9DFhcW9Ponm9CLMZkXiO8GfBQgI25mpN255EuirI92CLKN3ZbnHkcIycHsdhS7zw81
-         rgsUXT/kmn87JZX9gSaekNsqpOiBZ2HD2B8wiyhQoQPAjJ5n+Mm/7yy6Ai1WMLbthneY
-         UBkg==
-X-Gm-Message-State: APjAAAUqaDUrXcBjlLfEl+xt1n53tV+TgcJa9issfoHdD8weZ2bcYtvX
-        b0kJCG3+dOIDFoYbXo0AYAEoUVv4oxHdxiIOQc31cQ==
-X-Google-Smtp-Source: APXvYqyECW5ukaLyBjYrwaRekIeLNwYlDah24gVYQkCKTiWSXa2ygEc+b0DkuTHIrCff61ddxAEKw1t+6msgwF6EG38=
-X-Received: by 2002:a37:5b41:: with SMTP id p62mr14388232qkb.442.1576863182554;
- Fri, 20 Dec 2019 09:33:02 -0800 (PST)
+        bh=wLQc/GdbaTxAeCv2i12B87WYv/+yect1z7boH4l+zxc=;
+        b=Y8hJlwY0YQMgCVL5laDXvTg3hn72/mlgy3A5DBOv2RqDCWGQxEgexRsFOHXoxoqpYq
+         FR8vz0/mx9ioJfdM1ZruXf4dYnxmejY/VvnFtS6M0VWzdxvIwk1pVTFzzJqtf2jcGi1l
+         mv5IyA6bIMOFX/DDjFEOxS5cIpvaSI55Yq57RyQZLOlBONk8wZCvjoy48GhN7tPIZH6L
+         bcaf5gKMF3rFFZ+7Fx9F9Yeuqo6bJQeZCbkGjY0nwh8D+EzE+iv3Q5DF0AM4MHJ7KvzB
+         MisHNocBop/llqcsdAdUXvPKc7LUJ0etPYzyGnvzBOpu74OJ21WTZMH+Z//q3ObdW1Yd
+         +qJg==
+X-Gm-Message-State: APjAAAVbYZFeOZ8na8HPz7gpP5HXzX2+Sfuv2yFzGQ1TYuF6m5reGvms
+        HBipZ822o8wnV5I7IcE9U06KQ/PQKZWHBKffh2Q=
+X-Google-Smtp-Source: APXvYqyd6lNdaHFBiEIhRmMdonT6ZPlDDmQi7UK/M23u6kJ0+lmsitobqqCafVHaJ6YJ8DClym6dn6Yf+v+vBHKzdj8=
+X-Received: by 2002:a05:6602:280b:: with SMTP id d11mr10717971ioe.250.1576863349472;
+ Fri, 20 Dec 2019 09:35:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20191219201340.196259-1-pmalani@chromium.org> <20191219201340.196259-2-pmalani@chromium.org>
- <f3d6267e-2429-e5a0-2a0e-60cab5bb1bb9@collabora.com>
-In-Reply-To: <f3d6267e-2429-e5a0-2a0e-60cab5bb1bb9@collabora.com>
-From:   Prashant Malani <pmalani@chromium.org>
-Date:   Fri, 20 Dec 2019 09:32:51 -0800
-Message-ID: <CACeCKafK+XpHnQzjXePMLiv7F7dVDVcNJNO4nOF3VvSqCR-+fA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mfd: cros_ec: Add usbpd-notify to usbpd_charger
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Guenter Roeck <groeck@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20191220024936.GA380394@chrisdown.name> <CAOQ4uxjqSWcrA1reiyit9DRt+aq2tXBxLdPE31RrYw1yr=4hjg@mail.gmail.com>
+ <20191220121615.GB388018@chrisdown.name> <CAOQ4uxgo_kAttnB4N1+om5gScYSDn3FXAr+_GUiqNy_79iiLXQ@mail.gmail.com>
+ <20191220164632.GA26902@bombadil.infradead.org>
+In-Reply-To: <20191220164632.GA26902@bombadil.infradead.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 20 Dec 2019 19:35:38 +0200
+Message-ID: <CAOQ4uxhYY9Ep1ncpU+E3bWg4ZpR8pjvLJMA5vj+7frEJ2KTwsg@mail.gmail.com>
+Subject: Re: [PATCH] fs: inode: Reduce volatile inode wraparound risk when
+ ino_t is 64 bit
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Chris Down <chris@chrisdown.name>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Hugh Dickins <hughd@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "zhengbin (A)" <zhengbin13@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 12:55 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
+On Fri, Dec 20, 2019 at 6:46 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> Hi Prashant,
+> On Fri, Dec 20, 2019 at 03:41:11PM +0200, Amir Goldstein wrote:
+> > Suggestion:
+> > 1. Extend the kmem_cache API to let the ctor() know if it is
+> > initializing an object
+> >     for the first time (new page) or recycling an object.
 >
-> This should be [PATCH v3 2/2]. All the patches in the series should have the
-> same version otherwise makes difficult to follow.
->
-Noted. I was under the impression that  new patches would have
-individual version numbers. I will correct this in the next version.
-Thanks!
+> Uh, what?  The ctor is _only_ called when new pages are allocated.
+> Part of the contract with the slab user is that objects are returned to
+> the slab in an initialised state.
 
-> Thanks,
->  Enric
->
-> On 19/12/19 21:13, Prashant Malani wrote:
-> > Add the cros-usbpd-notify driver as a cell for the cros_usbpd_charger
-> > subdevice on non-ACPI platforms.
-> >
-> > This driver allows other cros-ec devices to receive PD event
-> > notifications from the Chrome OS Embedded Controller (EC) via a
-> > notification chain.
-> >
-> > Change-Id: I4c062d261fa1a504b43b0a0c0a98a661829593b9
-> > Signed-off-by: Prashant Malani <pmalani@chromium.org>
-> > ---
-> >  drivers/mfd/cros_ec_dev.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-> > index c4b977a5dd966..1dde480f35b93 100644
-> > --- a/drivers/mfd/cros_ec_dev.c
-> > +++ b/drivers/mfd/cros_ec_dev.c
-> > @@ -85,6 +85,9 @@ static const struct mfd_cell cros_ec_sensorhub_cells[] = {
-> >  static const struct mfd_cell cros_usbpd_charger_cells[] = {
-> >       { .name = "cros-usbpd-charger", },
-> >       { .name = "cros-usbpd-logger", },
-> > +#ifndef CONFIG_ACPI
-> > +     { .name = "cros-usbpd-notify", },
-> > +#endif
-> >  };
-> >
-> >  static const struct cros_feature_to_cells cros_subdevices[] = {
-> >
+Right. I mixed up the ctor() with alloc_inode().
+So is there anything stopping us from reusing an existing non-zero
+value of  i_ino in shmem_get_inode()? for recycling shmem ino
+numbers?
+
+Thanks,
+Amir.
