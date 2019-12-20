@@ -2,77 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0E8128361
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 21:50:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3A78128369
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 21:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727509AbfLTUug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 15:50:36 -0500
-Received: from linux.microsoft.com ([13.77.154.182]:45136 "EHLO
-        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbfLTUuf (ORCPT
+        id S1727510AbfLTUyQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 15:54:16 -0500
+Received: from mail.efficios.com ([167.114.142.138]:56160 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLTUyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 15:50:35 -0500
-Received: from [10.137.112.108] (unknown [131.107.174.108])
-        by linux.microsoft.com (Postfix) with ESMTPSA id CCD0120106BA;
-        Fri, 20 Dec 2019 12:50:34 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CCD0120106BA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-        s=default; t=1576875035;
-        bh=nCXI723Paiou2qhM6Iep4RO6p6kZcLH60+OZE/A0Wj0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=P0+F991oIoc1uIRq2J/OZoa8NNdiJNVhpC3IYKHSoWeKEVzWoyGJpgn/IA0hfphjZ
-         nCpVTpTjTT/XO4EE8LWgHUL/5WmRvhOHCWBTF224K04MJRhQJqoH9udQdNhI5h6Cbx
-         THFVWApuNdTRqU0hXUxLvUP+mtueX23TYjvW8Ibo=
-Subject: Re: [PATCH v5 0/2] IMA: Deferred measurement of keys
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James.Bottomley@HansenPartnership.com,
-        linux-integrity@vger.kernel.org
-Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
-        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
-        sashal@kernel.org, jamorris@linux.microsoft.com,
-        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
-References: <20191218164434.2877-1-nramas@linux.microsoft.com>
- <1576868506.5241.65.camel@linux.ibm.com>
- <589b893b-52e4-783c-0f32-608ed1cfd7f9@linux.microsoft.com>
- <1576870595.5241.83.camel@linux.ibm.com>
-From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Message-ID: <9f346e6d-04f2-b8cd-bf67-f1cee59d9630@linux.microsoft.com>
-Date:   Fri, 20 Dec 2019 12:50:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Fri, 20 Dec 2019 15:54:15 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 292C568FA4B;
+        Fri, 20 Dec 2019 15:54:14 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id Tm2CvV_XYdmJ; Fri, 20 Dec 2019 15:54:13 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9CBDF68FA48;
+        Fri, 20 Dec 2019 15:54:13 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9CBDF68FA48
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1576875253;
+        bh=ETinDr1CVgC3p7TD6XfvCrnRXYlKlrPDMZgCwRtUlNY=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=DTA6eZsGHQo50solOTM9RLt0dPzlA9oZPFTBIDUKqQqAS8vEK0+x3z6t73nGx0zTB
+         29b8dC5cze6KjdwqHRIX2PPYzlafNgygFxHSiJz0v0YLXFl9ibwjVHcfCDeXrRqsFG
+         kMT2owxr4HcGwEM4kwJdsAhAFivj8I9G2q3MiUQzogeB9Q8hqLFSAo37y7qQRuhAlO
+         Rvz40HcCzMmV6puNE+82qOJ8dH4/rf/O9fIr0DNKtD43r3XOgzaaFRLiyfcVBbAJoJ
+         szYEPDqayewpCUBMGOn7L/sue4dj0qi24lGSken+3t+TUz/VvJaaDWiqGycKVJWoyW
+         gnPWFGdXG+fPQ==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 1ww5H04DdUF8; Fri, 20 Dec 2019 15:54:13 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 83BF568FA32;
+        Fri, 20 Dec 2019 15:54:13 -0500 (EST)
+Date:   Fri, 20 Dec 2019 15:54:13 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Florian Weimer <fw@deneb.enyo.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        paulmck <paulmck@linux.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Paul Turner <pjt@google.com>,
+        linux-api <linux-api@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Neel Natu <neelnatu@google.com>
+Message-ID: <173832695.14381.1576875253374.JavaMail.zimbra@efficios.com>
+In-Reply-To: <87imman36g.fsf@mid.deneb.enyo.de>
+References: <20191220201207.17389-1-mathieu.desnoyers@efficios.com> <87imman36g.fsf@mid.deneb.enyo.de>
+Subject: Re: [PATCH for 5.5 1/2] rseq: Fix: Clarify rseq.h UAPI rseq_cs
+ memory reclaim requirements
 MIME-Version: 1.0
-In-Reply-To: <1576870595.5241.83.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3888 (ZimbraWebClient - FF71 (Linux)/8.8.15_GA_3890)
+Thread-Topic: rseq: Fix: Clarify rseq.h UAPI rseq_cs memory reclaim requirements
+Thread-Index: yDR6ZuRNLoc+9BIlwZu3JhxAJn1lkg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/19 11:36 AM, Mimi Zohar wrote:
+----- On Dec 20, 2019, at 3:37 PM, Florian Weimer fw@deneb.enyo.de wrote:
 
->>
->> Shall I create a new patch set to address that and have that be reviewed
->> independent of this patch set?
+> * Mathieu Desnoyers:
 > 
-> If it is just a single additional patch, feel free to post it without
-> a cover letter.
-
-Sure
-
->>
->> Like you'd suggested earlier, we can wait for a certain time, after IMA
->> is initialized, and free the queue if a custom policy was not loaded.
+>> diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+>> index 9a402fdb60e9..6f26b0b148a6 100644
+>> --- a/include/uapi/linux/rseq.h
+>> +++ b/include/uapi/linux/rseq.h
+>> @@ -100,7 +100,9 @@ struct rseq {
+>>  	 * instruction sequence block, as well as when the kernel detects that
+>>  	 * it is preempting or delivering a signal outside of the range
+>>  	 * targeted by the rseq_cs. Also needs to be set to NULL by user-space
+>> -	 * before reclaiming memory that contains the targeted struct rseq_cs.
+>> +	 * before reclaiming memory that contains the targeted struct rseq_cs
+>> +	 * or reclaiming memory that contains the code refered to by the
+>> +	 * start_ip and post_commit_offset fields of struct rseq_cs.
 > 
-> Different types of systems vary in boot time, but perhaps a certain
-> amount of time after IMA is initialized would be consistent.  This
-> would need to work for IoT devices/sensors to servers.
-> 
-> Mimi
-> 
+> Maybe mention that it's good practice to clear rseq_cs before
+> returning from a function that contains a restartable sequence?
 
-Yes - I agree.
+Unfortunately, clearing it is not free. Considering that rseq is meant to
+be used in very hot code paths, it would be preferable that applications
+clear it in the very infrequent case where the rseq_cs or code will
+vanish (e.g. dlclose or JIT reclaim), and not require it to be cleared
+after each critical section. I am therefore reluctant to document the
+behavior you describe as a "good practice" for rseq.
 
-thanks,
-  -lakshmi
+> That will deal with the dlclose issue because even if the function
+> calls dlclose itself, unmapping something on call stack for dlclose is
+> already undefined.
+
+It would, but at the cost of adding an extra NULL store on pretty much
+every use of rseq (think memory allocator fast-path for instance).
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
