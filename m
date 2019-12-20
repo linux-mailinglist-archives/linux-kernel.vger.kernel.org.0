@@ -2,102 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 520BE1274C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 05:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C7C1274DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 06:00:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLTErY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 23:47:24 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35208 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfLTErX (ORCPT
+        id S1726002AbfLTFAy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 00:00:54 -0500
+Received: from mail.parknet.co.jp ([210.171.160.6]:39866 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfLTFAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 23:47:23 -0500
-Received: by mail-pj1-f66.google.com with SMTP id s7so3576607pjc.0;
-        Thu, 19 Dec 2019 20:47:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aN12zhf4mlcaV2E22of1kpbrgx4U0ucUVjsbOQtDUz4=;
-        b=ET8Oh+6fwGiwWp5+wSIhFpTodb5pMe8Q9Lu4rNBzrlmuWs/wkoIsN8eUlDqoIYfZBF
-         Ydi9A8CEL6d4MDX3HTpwx0+raVMffPTPCAdm8b9SDzILaMsaygKkTMTDBNlpI+/Np7HR
-         avi/LhBdaTZW8RBs38H8WKyi2K0wgnkWpUVZSBJMJvGU/Jjm6v2vMNZ8H8tsbkd99GSl
-         s23Pv9rKa0/ZH3JSoef9xVsUBCxT1zp7POKFZXiHEx7aBkByeGJQkjgcpPSDzohzkmvk
-         PVNtF+XPTdnGK2u7l1ldy1JbynIJMKduFYcPK4calelYcfzfdzHFQwO8dHnaWGCRXp+3
-         Un9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aN12zhf4mlcaV2E22of1kpbrgx4U0ucUVjsbOQtDUz4=;
-        b=TGkhsxjg2R7BfekxCSjSFp4px+fUFbK/W9arGLnTuCtjFRtj4Mll2G6JjzWtPIe2yT
-         v4hEGCNk+f0rAIbaAWNtD7jqRuBBeNVOma47wiN5/yFLFRRkitaRuwYwDtMhjXl8r41R
-         eO/auCP60FvR+Z2WBL1oqc6wVbzoRxABMfZ5Qsz2hPUnLXsOmMk62OjbF5h5V4AKjOl2
-         eU6Z9MGasPCclgNo1IXiQX+4OR5TlDpNrwuW0yve2vo0BkcMlVcrTlvlK69qvY3VHpn/
-         NPWozj5cFD2guAZ31/8xT4Vp4ATNzT0evFOTOYVfeIzgKdQRNG69L+PlovAbxyFM+szG
-         9R5A==
-X-Gm-Message-State: APjAAAWGViT8KINQNAtJB7Rit+nS+tQlJY3yoGENxgg6MjykxavQbyD+
-        GwDAtDIkcDbVS7/PMvGQdzQ=
-X-Google-Smtp-Source: APXvYqyv2IK999RPM2ym3Yanh5DI+R4t8BSC5a74wES6xt7xZmhV0ugy6lV0u9RfbCSBd7GObf74jg==
-X-Received: by 2002:a17:902:6906:: with SMTP id j6mr7693199plk.321.1576817242890;
-        Thu, 19 Dec 2019 20:47:22 -0800 (PST)
-Received: from CV0038107N9.nsn-intra.net ([2408:84e4:400:2e74:469:cb33:67e2:581f])
-        by smtp.gmail.com with ESMTPSA id u26sm10089189pfn.46.2019.12.19.20.47.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 19 Dec 2019 20:47:22 -0800 (PST)
-From:   Kevin Kou <qdkevin.kou@gmail.com>
-To:     vyasevich@gmail.com
-Cc:     nhorman@tuxdriver.com, marcelo.leitner@gmail.com,
-        davem@davemloft.net, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qdkevin.kou@gmail.com
-Subject: [PATCH] sctp: do trace_sctp_probe after SACK validation and check
-Date:   Fri, 20 Dec 2019 04:47:03 +0000
-Message-Id: <20191220044703.88-1-qdkevin.kou@gmail.com>
-X-Mailer: git-send-email 2.23.0.windows.1
+        Fri, 20 Dec 2019 00:00:54 -0500
+X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Dec 2019 00:00:54 EST
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 96E0115CBE3;
+        Fri, 20 Dec 2019 13:53:37 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xBK4raVv037128
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 20 Dec 2019 13:53:37 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-15) with ESMTPS id xBK4raLR170506
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 20 Dec 2019 13:53:36 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id xBK4rZcW170504;
+        Fri, 20 Dec 2019 13:53:35 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] Documentation: filesystems: convert vfat.txt to RST
+References: <20191121130605.29074-1-dwlsalmeida@gmail.com>
+        <20191219100025.255003e6@lwn.net>
+Date:   Fri, 20 Dec 2019 13:53:35 +0900
+In-Reply-To: <20191219100025.255003e6@lwn.net> (Jonathan Corbet's message of
+        "Thu, 19 Dec 2019 10:00:25 -0700")
+Message-ID: <87immbwqb4.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function sctp_sf_eat_sack_6_2 now performs
-the Verification Tag validation, Chunk length validation, Bogu check,
-and also the detection of out-of-order SACK based on the RFC2960
-Section 6.2 at the beginning, and finally performs the further
-processing of SACK. The trace_sctp_probe now triggered before
-the above necessary validation and check.
+Jonathan Corbet <corbet@lwn.net> writes:
 
-This patch is to do the trace_sctp_probe after the necessary check
-and validation to SACK.
+> On Thu, 21 Nov 2019 10:06:05 -0300
+> "Daniel W. S. Almeida" <dwlsalmeida@gmail.com> wrote:
+>
+>> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+>> 
+>> Converts vfat.txt to the reStructuredText format, improving presentation
+>> without changing the underlying content.
+>> 
+>> Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+>> -----------------------------------------------------------
+>> Changes in v2:
+>> Refactored long lines as pointed out by Jonathan
+>> Copied the maintainer
+>> Updated the reference in the MAINTAINERS file for vfat
+>> 
+>> I did not move this into admin-guide, waiting on what the 
+>> maintainer has to say about this and also about old sections
+>> in the text, if any.
+>
+> This one, too, could user a bit less markup, and more consistent markup.
+> If you have to mark up literal text, for example, it should be ``literal``,
+> not *emphasis*.  But please think about whether it needs marking up at all.
+>
+> I have one other thing here, that could use input from the vfat maintainer:
 
-Signed-off-by: Kevin Kou <qdkevin.kou@gmail.com>
----
- net/sctp/sm_statefuns.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sorry, I have very small knowledge in Documentation stuff. So I was
+thinking no need my input...
 
-diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-index 42558fa..b4a54df 100644
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -3281,7 +3281,6 @@ enum sctp_disposition sctp_sf_eat_sack_6_2(struct net *net,
- 	struct sctp_sackhdr *sackh;
- 	__u32 ctsn;
- 
--	trace_sctp_probe(ep, asoc, chunk);
- 
- 	if (!sctp_vtag_verify(chunk, asoc))
- 		return sctp_sf_pdiscard(net, ep, asoc, type, arg, commands);
-@@ -3319,6 +3318,8 @@ enum sctp_disposition sctp_sf_eat_sack_6_2(struct net *net,
- 	if (!TSN_lt(ctsn, asoc->next_tsn))
- 		return sctp_sf_violation_ctsn(net, ep, asoc, type, arg, commands);
- 
-+	trace_sctp_probe(ep, asoc, chunk);
-+
- 	/* Return this SACK for further processing.  */
- 	sctp_add_cmd_sf(commands, SCTP_CMD_PROCESS_SACK, SCTP_CHUNK(chunk));
- 
+I don't know what markup is proper here. My opinion would be, let's
+make it be consistent with other Documents/*.
+
+>> +BUG REPORTS
+>> +===========
+>> +If you have trouble with the *VFAT* filesystem, mail bug reports to
+>> +chaffee@bmrc.cs.berkeley.edu.
+>> +
+>> +Please specify the filename and the operation that gave you trouble.
+>> +
+>> +TEST SUITE
+>> +==========
+>> +If you plan to make any modifications to the vfat filesystem, please
+>> +get the test suite that comes with the vfat distribution at
+>> +
+>> +`<http://web.archive.org/web/*/http://bmrc.berkeley.edu/people/chaffee/vfat.html>`_
+>> +
+>> +This tests quite a few parts of the vfat filesystem and additional
+>> +tests for new features or untested features would be appreciated.
+>
+> What are the chances that the above email address works at all, especially
+> given that the associated web page has to be dug out of the wayback
+> machine?  We should really try to avoid perpetuating obviously wrong
+> information when we can.  Hirofumi, do you have any thoughts on what might
+> replace this section?
+
+Those sections are so long years didn't work, IIRC. So IMHO, we can
+remove those simply. The address for bug report would work from
+MAINTAINER, lkml as usual, and even bugzilla.
+
+Thanks.
 -- 
-1.8.3.1
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
