@@ -2,128 +2,175 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539A8127263
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:22:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1622127244
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 01:18:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfLTAWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 19:22:36 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:13671 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726964AbfLTAWg (ORCPT
+        id S1727462AbfLTASt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 19:18:49 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:57632 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbfLTASG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 19:22:36 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1576801355; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=0HCPeM+2tQgXQBZ2loRXEQuQRtDGjn8UcT4p31niOms=;
- b=mjGdugZqEq+bZYoqZk792WM1QIcrTOj/BwiK9OYpvryn+XeM4NI2papGaVLJpuSd//kZo4LM
- 8++YW+4rLzGUldGU/eqIUqBC+pEfzNv8jRyjxkwRWb/ZVNxYyQGhafQ1f/lpa5XXmXB8B6vP
- d9aljT2rkne0bw79JKnAldaE1pA=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5dfc144a.7faa39a1d8b8-smtp-out-n03;
- Fri, 20 Dec 2019 00:22:34 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 2237EC433A2; Fri, 20 Dec 2019 00:22:33 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED
-        autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: cang)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9FA20C433CB;
-        Fri, 20 Dec 2019 00:22:32 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 20 Dec 2019 08:22:32 +0800
-From:   cang@codeaurora.org
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Asutosh Das <asutoshd@codeaurora.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] phy: qcom-qmp: Add optional SW reset
-In-Reply-To: <20191219150433.2785427-4-vkoul@kernel.org>
-References: <20191219150433.2785427-1-vkoul@kernel.org>
- <20191219150433.2785427-4-vkoul@kernel.org>
-Message-ID: <ff83ac1f0ec6bca1379e8b873fd30aa2@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        Thu, 19 Dec 2019 19:18:06 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191220001803epoutp038d7161b13fd2f7aa065c674e12cf2bb8~h7Ds-O4Q21346513465epoutp03v
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 00:18:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191220001803epoutp038d7161b13fd2f7aa065c674e12cf2bb8~h7Ds-O4Q21346513465epoutp03v
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576801083;
+        bh=LsS7Y5v4gHckhscaO7bdEkbINdoC+Eq455a3ddtFDaw=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=KCLa9sKpoVl5USantYCzF0kCOE10VqlAPnQO8bG43OIz7Bowz38KdMOAgMElV5PrT
+         CdZ3KfyhNqVzywda8JlGnUwgzmkgBjelMJvjPRnGzO7a+zYWP3hm5uSIuQbpVaJW8P
+         xSR4OshR8cxg/40M9Auv4SqUsCzfrd+0VrNJzM/M=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191220001803epcas1p15df8d25bf26bac9f895d5955d02f1478~h7DsZMUeR3044730447epcas1p1O;
+        Fri, 20 Dec 2019 00:18:03 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 47f8Th2gQZzMqYm1; Fri, 20 Dec
+        2019 00:18:00 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.14.48498.8331CFD5; Fri, 20 Dec 2019 09:18:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191220001759epcas1p131a41a619847d80c64470f7c1920121f~h7Do4W95c3044730447epcas1p1F;
+        Fri, 20 Dec 2019 00:17:59 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191220001759epsmtrp1ebc539bbaf257bc316b74055d8111222~h7Do3UZVZ1705617056epsmtrp1N;
+        Fri, 20 Dec 2019 00:17:59 +0000 (GMT)
+X-AuditID: b6c32a36-a3dff7000001bd72-5b-5dfc1338e161
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6B.6C.06569.7331CFD5; Fri, 20 Dec 2019 09:17:59 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191220001759epsmtip15e131ad165cc815dec38651f097c191a~h7DomX5g82050220502epsmtip1x;
+        Fri, 20 Dec 2019 00:17:59 +0000 (GMT)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     robh+dt@kernel.org, krzk@kernel.org, heiko@sntech.de,
+        leonard.crestez@nxp.com, lukasz.luba@arm.com
+Cc:     mark.rutland@arm.com, a.swigon@samsung.com,
+        m.szyprowski@samsung.com, kgene@kernel.org, cw00.choi@samsung.com,
+        myungjoo.ham@samsung.com, kyungmin.park@samsung.com,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Chanwoo Choi <cw00.choi@samsun.com>
+Subject: [PATCH v2 00/11] PM / devfreq: Remove deprecated 'devfreq' and
+ 'devfreq-events' properties
+Date:   Fri, 20 Dec 2019 09:24:19 +0900
+Message-Id: <20191220002430.11995-1-cw00.choi@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOJsWRmVeSWpSXmKPExsWy7bCmnq6F8J9YgycrBSzuz2tltNj+rovJ
+        4vqX56wW84+cY7X4/+g1q0X/49fMFufPb2C3ONv0ht1ixd2PrBabHl9jtbi8aw6bxefeI4wW
+        nx78Z7aYcX4fk8XCphZ2i7VH7rJbLL1+kcniduMKNovWvUfYHYQ91sxbw+ixaVUnm8fmJfUe
+        G9/tYPK4ffAzs0ffllWMHtuvzWP2+LxJLoAjKtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTM
+        wFDX0NLCXEkhLzE31VbJxSdA1y0zB+ghJYWyxJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpB
+        Sk6BZYFecWJucWleul5yfq6VoYGBkSlQYUJ2xo3OrUwF16UrFn5cz9LAeE20i5GTQ0LARGLG
+        sk8sXYxcHEICOxgl/l3cxwjhfGKUeLf4AhuE841RYtGMFcwwLd2HZkMl9jJKLJ42mR0kISTw
+        hVHi6h8ZEJtNQEti/4sbbCC2iECGxMzXl1lBGpgFpjFLNN/7xNTFyMEhLJAqcX9nDkgNi4Cq
+        RH/XGbB6XgErict/Z7JDLJOXWL3hADNIr4TAdzaJTefOsUAkXCT+rP0PZQtLvDq+BapBSuJl
+        fxuUXS2x8uQRNojmDkaJLfsvsEIkjCX2L50MdgSzgKbE+l36EGFFiZ2/5zKC2MwCfBLvvvaw
+        gpRICPBKdLQJQZQoS1x+cJcJwpaUWNzeyQZhe0jsOTOFBRIOsRJLHn1gnMAoOwthwQJGxlWM
+        YqkFxbnpqcWGBUbIsbSJEZxItcx2MC4653OIUYCDUYmH1yHtd6wQa2JZcWXuIUYJDmYlEd7b
+        HT9jhXhTEiurUovy44tKc1KLDzGaAkNvIrOUaHI+MMnnlcQbmhoZGxtbmBiamRoaKonzcvy4
+        GCskkJ5YkpqdmlqQWgTTx8TBKdXA6LK0ZF2ovPAd99/V1z9WaD9mP37k84NFR+x2KMQcuq+o
+        FhK/7SGnhG4A8+ZQwZreu/9iziRd+5B74OpD9Yfn/q7/dtBymxn/Ut+FUQ378rfWPF6nqVmc
+        nDmRZ9+hXXu7xVNPvdA7lynPeqcnZmXf9EhxZmcWwz6N31NKJzic/v+w5J6k4JVaJSWW4oxE
+        Qy3mouJEAHN6TIm6AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsWy7bCSnK658J9Yg1VXeS3uz2tltNj+rovJ
+        4vqX56wW84+cY7X4/+g1q0X/49fMFufPb2C3ONv0ht1ixd2PrBabHl9jtbi8aw6bxefeI4wW
+        nx78Z7aYcX4fk8XCphZ2i7VH7rJbLL1+kcniduMKNovWvUfYHYQ91sxbw+ixaVUnm8fmJfUe
+        G9/tYPK4ffAzs0ffllWMHtuvzWP2+LxJLoAjissmJTUnsyy1SN8ugSvjRudWpoLr0hULP65n
+        aWC8JtrFyMkhIWAi0X1oNlsXIxeHkMBuRok9t78zQiQkJaZdPMrcxcgBZAtLHD5cDFHziVHi
+        y/8nrCA1bAJaEvtf3GADsUUE8iQ2bfzKDFLELLCMWWLC62awhLBAssS+T9PBGlgEVCX6u86A
+        xXkFrCQu/53JDrFMXmL1hgPMExh5FjAyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vOz93E
+        CA5tLa0djCdOxB9iFOBgVOLhdUj7HSvEmlhWXJl7iFGCg1lJhPd2x89YId6UxMqq1KL8+KLS
+        nNTiQ4zSHCxK4rzy+ccihQTSE0tSs1NTC1KLYLJMHJxSDYyxO4KtbmndfTbX9f4JZ9Hk34tb
+        jVm3bdIx9nPhr5bf7rnY3yUwaONbrpTGvS9k+W+sf7T31tIfZsJTHt/f8fTCrvMpZ4/n2dld
+        +9o+IUdX9LJ9SlHYzrSFqwy/8q6fd07+/fxT57aGeU9emlVYvTx11rnHGkqvDi2vOLbu4F6d
+        xcrp9Ts/fL3yT4mlOCPRUIu5qDgRABu9dCZpAgAA
+X-CMS-MailID: 20191220001759epcas1p131a41a619847d80c64470f7c1920121f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191220001759epcas1p131a41a619847d80c64470f7c1920121f
+References: <CGME20191220001759epcas1p131a41a619847d80c64470f7c1920121f@epcas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-19 23:04, Vinod Koul wrote:
-> For V4 QMP UFS Phy, we need to assert reset bits, configure the phy and
-> then deassert it, so add optional has_sw_reset flag and use that to
-> configure the QPHY_SW_RESET register.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> index 06f971ca518e..80304b7cd895 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -1023,6 +1023,9 @@ struct qmp_phy_cfg {
-> 
->  	/* true, if PCS block has no separate SW_RESET register */
->  	bool no_pcs_sw_reset;
-> +
-> +	/* true if sw reset needs to be invoked */
-> +	bool has_sw_reset;
->  };
-> 
->  /**
-> @@ -1391,6 +1394,7 @@ static const struct qmp_phy_cfg sm8150_ufsphy_cfg 
-> = {
-> 
->  	.is_dual_lane_phy	= true,
->  	.no_pcs_sw_reset	= true,
-> +	.has_sw_reset		= true,
->  };
-> 
->  static void qcom_qmp_phy_configure(void __iomem *base,
-> @@ -1475,6 +1479,9 @@ static int qcom_qmp_phy_com_init(struct qmp_phy 
-> *qphy)
->  			     SW_USB3PHY_RESET_MUX | SW_USB3PHY_RESET);
->  	}
-> 
-> +	if (cfg->has_sw_reset)
-> +		qphy_setbits(serdes, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +
+From: Chanwoo Choi <cw00.choi@samsun.com>
 
-Are you sure you want to set this in the serdes register? QPHY_SW_RESET
-is in its pcs register.
+The devfreq and devfreq-event subsystem provided the following two properties:
+- Provide 'devfreq' property in order to get the parent devfreq device
+  by devfreq_get_devfreq_by_phandle() if devfreq device use passive governor.
+- Provide 'devfreq-events' property in order to get the devfreq-event device
+  by devfreq_event_get_edev_by_phandle().
 
->  	if (cfg->has_phy_com_ctrl)
->  		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
->  			     SW_PWRDN);
-> @@ -1651,6 +1658,9 @@ static int qcom_qmp_phy_enable(struct phy *phy)
->  	if (cfg->has_phy_dp_com_ctrl)
->  		qphy_clrbits(dp_com, QPHY_V3_DP_COM_SW_RESET, SW_RESET);
-> 
-> +	if (cfg->has_sw_reset)
-> +		qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
-> +
+But, two properties name is not proper expressing the h/w
+and 'devfreq' word is name of linux subsystem instead of any h/w name.
 
-Yet you are clearing it from pcs register.
+Hand over the rights for deciding the property name for getting
+the devfreq/devfreq-event device on devicetree, to each devfreq driver.
 
-Regards,
-Can Guo
+So, replace 'devfreq' and 'devfreq-events' property with following property
+name according to each devfreq driver:
+--------------------------------------------------------------------
+Old property  | New property       | Device driver name            |
+--------------------------------------------------------------------
+devfreq       | exynos,parent-bus  | exynos-bus.c                  |
+              |                    |                               |
+devfreq-events| exynos,ppmu-device | exynos-bus.c, exynos5422-dmc.c|
+              | rockchip,dfi-device| rk3399_dmc.c                  |
+--------------------------------------------------------------------
 
->  	/* start SerDes and Phy-Coding-Sublayer */
->  	qphy_setbits(pcs, cfg->regs[QPHY_START_CTRL], cfg->start_ctrl);
+Changes from v1:
+- Edit function name by removing '_by_node' postfix.
+- Split out dt-binding patch to make it the separte patch.j
+- Add Lukasz's tag for exynos5422-dmc
+
+Chanwoo Choi (10):
+  PM / devfreq: Remove devfreq_get_devfreq_by_phandle function
+  PM / devfreq: event: Add devfreq_event_get_edev_by_node function
+  dt-bindings: devfreq: exynos-bus: Replace deprecated 'devfreq' and 'devfreq-events' property
+  dt-bindings: devfreq: rk3399_dmc:  Replace deprecated 'devfreq-events' property
+  dt-bindings: memory: exynos5422-dmc: Replace the deprecated 'devfreq-events' property
+  PM / devfreq: exynos-bus: Replace the deprecated 'devfreq' and 'devfreq-events' property
+  PM / devfreq: rk3399_dmc: Replace the deprecated 'devfreq-events' property
+  memory: samsung: exynos5422-dmc: Replace the deprecated 'devfreq-events' property
+  ARM: dts: exynos: Replace deprecated property for Exynos bus and DMC
+  arm64: dts: exynos: Replace deprecated property for Exynos bus on TM2
+
+Leonard Crestez (1):
+  PM / devfreq: Add devfreq_get_devfreq_by_node function
+
+ .../bindings/devfreq/exynos-bus.txt           | 22 +++----
+ .../bindings/devfreq/rk3399_dmc.txt           |  4 +-
+ .../memory-controllers/exynos5422-dmc.txt     |  8 +--
+ arch/arm/boot/dts/exynos3250-monk.dts         |  2 +-
+ arch/arm/boot/dts/exynos3250-rinato.dts       | 18 +++---
+ .../boot/dts/exynos4412-itop-scp-core.dtsi    | 16 ++---
+ arch/arm/boot/dts/exynos4412-midas.dtsi       | 18 +++---
+ .../boot/dts/exynos4412-odroid-common.dtsi    | 18 +++---
+ arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 34 +++++------
+ .../dts/exynos/exynos5433-tm2-common.dtsi     | 20 +++----
+ drivers/devfreq/devfreq-event.c               | 53 +++--------------
+ drivers/devfreq/devfreq.c                     | 25 +++-----
+ drivers/devfreq/exynos-bus.c                  | 58 ++++++++++++++++---
+ drivers/devfreq/rk3399_dmc.c                  | 16 ++++-
+ drivers/memory/samsung/exynos5422-dmc.c       | 37 ++++++++++--
+ include/linux/devfreq-event.h                 | 14 ++---
+ include/linux/devfreq.h                       |  6 +-
+ 17 files changed, 198 insertions(+), 171 deletions(-)
+
+-- 
+2.17.1
+
