@@ -2,100 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66D37127B0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:30:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F00B127B0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:32:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfLTMau (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 07:30:50 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:56712 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbfLTMau (ORCPT
+        id S1727404AbfLTMb6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 07:31:58 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:35150 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727301AbfLTMb6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:30:50 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 47fSlD381Gz1rdjG;
-        Fri, 20 Dec 2019 13:30:48 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 47fSlD2XJHz1rYZN;
-        Fri, 20 Dec 2019 13:30:48 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id BNEWlVKDnHqf; Fri, 20 Dec 2019 13:30:47 +0100 (CET)
-X-Auth-Info: /8d85fX2ezcvOGNU+aU4qC5uYFUpU5VTeYosAXHRaIM=
-Received: from maia.denx.de (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 20 Dec 2019 13:30:47 +0100 (CET)
-From:   Harald Seiler <hws@denx.de>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Harald Seiler <hws@denx.de>
-Subject: [PATCH] perf python: Convert tracepoint example to python 3
-Date:   Fri, 20 Dec 2019 13:29:57 +0100
-Message-Id: <20191220122957.8091-1-hws@denx.de>
-X-Mailer: git-send-email 2.20.1
+        Fri, 20 Dec 2019 07:31:58 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKCVQhb094857;
+        Fri, 20 Dec 2019 06:31:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576845086;
+        bh=lmntjsYZD2zvLWbmw/UGvX0UwtRYBUAg3GKS2/RioC0=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=EdqfovjoXUhrUmZVLvo8IG25HziLhocUDtW2NRqPV9bkHbuBhEdHxyBBXNbPNRPtA
+         SMQVWE0yJrWuCdVCV8Gu3oO2MyJGbP1IipzHxhobmi9Jtr0aevopl2Qz0aJjaeDs/x
+         BtzegG4jogMKo3v20oXUXYzq+5QXzD5DmdJCPnb8=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKCVP4F030517;
+        Fri, 20 Dec 2019 06:31:25 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
+ Dec 2019 06:31:25 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 20 Dec 2019 06:31:25 -0600
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKCVLPG099921;
+        Fri, 20 Dec 2019 06:31:22 -0600
+Subject: Re: [PATCH V3 1/2] dt-bindings/irq: add binding for NXP INTMUX
+ interrupt multiplexer
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>, <maz@kernel.org>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <shawnguo@kernel.org>,
+        <s.hauer@pengutronix.de>
+CC:     <linux-arm-kernel@lists.infradead.org>, <fugang.duan@nxp.com>,
+        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>,
+        <linux-imx@nxp.com>
+References: <1576827431-31942-1-git-send-email-qiangqing.zhang@nxp.com>
+ <1576827431-31942-2-git-send-email-qiangqing.zhang@nxp.com>
+ <0cecd3af-8bca-c0d3-1312-925624c63dbf@ti.com>
+Message-ID: <dab8f6ba-2b5e-7b98-55c9-ace98f14842e@ti.com>
+Date:   Fri, 20 Dec 2019 18:00:28 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0cecd3af-8bca-c0d3-1312-925624c63dbf@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the tracepoint example compatible with python 3 and fix string
-handling of the prev_comm and next_comm fields so they are properly
-truncated.
 
-Signed-off-by: Harald Seiler <hws@denx.de>
----
- tools/perf/python/tracepoint.py | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/python/tracepoint.py b/tools/perf/python/tracepoint.py
-index eb76f6516247..a5420cfb3a31 100755
---- a/tools/perf/python/tracepoint.py
-+++ b/tools/perf/python/tracepoint.py
-@@ -3,6 +3,8 @@
- # -*- python -*-
- # -*- coding: utf-8 -*-
- 
-+from __future__ import print_function
-+
- import perf
- 
- class tracepoint(perf.evsel):
-@@ -34,15 +36,23 @@ def main():
-             if not isinstance(event, perf.sample_event):
-                 continue
- 
--            print "time %u prev_comm=%s prev_pid=%d prev_prio=%d prev_state=0x%x ==> next_comm=%s next_pid=%d next_prio=%d" % (
-+            # The prev_comm and next_comm fields are `bytes` objects but they
-+            # are not truncated to the first \x00.  This is due to the
-+            # underlying code treating the strings as just an array of
-+            # arbitrary bytes.  Convert them to properly truncated python
-+            # strings.
-+            prev_comm_str = event.prev_comm.split(b'\x00', 1)[0].decode(errors="ignore")
-+            next_comm_str = event.next_comm.split(b'\x00', 1)[0].decode(errors="ignore")
-+
-+            print("time {} prev_comm={} prev_pid={} prev_prio={} prev_state=0x{:x} ==> next_comm={} next_pid={} next_prio={}".format(
-                    event.sample_time,
--                   event.prev_comm,
-+                   prev_comm_str,
-                    event.prev_pid,
-                    event.prev_prio,
-                    event.prev_state,
--                   event.next_comm,
-+                   next_comm_str,
-                    event.next_pid,
--                   event.next_prio)
-+                   event.next_prio))
- 
- if __name__ == '__main__':
-     main()
--- 
-2.20.1
+On 20/12/19 5:10 PM, Lokesh Vutla wrote:
+> 
+> 
+> On 20/12/19 1:07 PM, Joakim Zhang wrote:
+>> This patch adds the DT bindings for the NXP INTMUX interrupt multiplexer
+>> for i.MX8 family SoCs.
+>>
+>> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+>> ---
+>>  .../interrupt-controller/fsl,intmux.txt       | 36 +++++++++++++++++++
+>>  1 file changed, 36 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+>> new file mode 100644
+>> index 000000000000..3ebe9cac5f20
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+>> @@ -0,0 +1,36 @@
+>> +Freescale INTMUX interrupt multiplexer
+>> +
+>> +Required properties:
+>> +
+>> +- compatible: Should be:
+>> +   - "fsl,imx-intmux"
+>> +- reg: Physical base address and size of registers.
+>> +- interrupts: Should contain the parent interrupt lines (up to 8) used to
+>> +  multiplex the input interrupts.
+>> +- clocks: Should contain one clock for entry in clock-names.
+>> +- clock-names:
+>> +   - "ipg": main logic clock
+>> +- interrupt-controller: Identifies the node as an interrupt controller.
+>> +- #interrupt-cells: Specifies the number of cells needed to encode an
+>> +  interrupt source. The value must be 2.
+>> +   - the 1st cell: hardware interrupt number> +   - the 2nd cell: channel index, value must smaller than channels used
+> 
+> As per the xlate function, 1st cell is channel index and 2nd cell is hw
+> interrupt number no?
 
+Sorry my bad, I read it wrong. Ignore this comment.
+
+Thanks and regards,
+Lokesh
+
+> 
+> Thanks and regards,
+> Lokesh
+> 
+>> +
+>> +Optional properties:
+>> +
+>> +- fsl,intmux_chans: The number of channels used for interrupt source. The
+>> +  Maximum value is 8. If this property is not set in DT then driver uses
+>> +  1 channel by default.
+>> +
+>> +Example:
+>> +
+>> +	intmux@37400000 {
+>> +		compatible = "fsl,imx-intmux";
+>> +		reg = <0x37400000 0x1000>;
+>> +		interrupts = <GIC_SPI 16 IRQ_TYPE_LEVEL_HIGH>;
+>> +		clocks = <&clk IMX8QM_CM40_IPG_CLK>;
+>> +		clock-names = "ipg";
+>> +		interrupt-controller;
+>> +		#interrupt-cells = <1>;
+>> +	};
+>> +
+>>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
