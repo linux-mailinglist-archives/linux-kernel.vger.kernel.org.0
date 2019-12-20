@@ -2,43 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC881127A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D140127A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:34:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727402AbfLTLeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:34:03 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36601 "EHLO
+        id S1727388AbfLTLeC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:34:02 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36599 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727261AbfLTLd6 (ORCPT
+        with ESMTP id S1727258AbfLTLd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:33:58 -0500
+        Fri, 20 Dec 2019 06:33:57 -0500
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xBKBW2Wv010984;
-        Fri, 20 Dec 2019 20:32:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBKBW2Wv010984
+        by conuserg-08.nifty.com with ESMTP id xBKBW2Ww010984;
+        Fri, 20 Dec 2019 20:32:06 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBKBW2Ww010984
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1576841526;
-        bh=v9133Ufzc3+ic87B/K3hcV7PpJe8R3xx9bGS9VeHmEc=;
+        s=dec2015msa; t=1576841527;
+        bh=ebkAQxjiSXSHSZJ50xrvpwnSGWgbaQckYjuIVK7i+/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M98RO5g7Dl+IAFl7CBY+mE2aAH6WsodGaRO14yB70GRQtJ/zXz5KxVoKOYBEwkVqD
-         nvBZtrCP3vhs0Y+rqnXwygAFssqIuSPG5RA+th90akWkzXELLHOgpWbOJq6K4lPqmU
-         DlG33DyVywWfSGPVGK2KL20+W0S1Po59s1hjfK0ux31s9VACxK60mKHCQD/TykjcPp
-         hiHE44ptkLTt95kgcWQg5Ga6nB3OhwdmrHehB/FadonjX97MTSKx7S9pcUBuuej2ge
-         OvxWrWQtlM4tv0vTZZL1tbkrP/EcwxIdqITIN0czJgAvnLTDGN1bzW7q/8wD0KFCoT
-         GzswpdCvKwEaA==
+        b=q9tqyp34bhuaZ8GMgUE6ux1iJpphWD4rLGw+wcOCE6Rmvg9RsG2iADpLVJq23mfEH
+         EKszhamf4xolnnBF9Tk0a1T51iAqU7ozV67syYV0bhjRgOZwTMjiD0uz+7A+MPhhsd
+         KrNKu4L6JeP8gJk9W68BijvkwYfn1N2tSDJ6Ul2f/pwakP53oMZNTbpVpNwOqV6p/6
+         y7dDFdFHv6qW4DFaiwqtHxF1OQI+s13YiYpijQCjUGiIpkuxxZJBdcYiUOL9n5csuR
+         v//dM1ziup0I4YKIn1nhiMEdKFJWrNuyJeEgzyplbWpUZgmdZ2cLmL3Vzuf8uALnPo
+         oFqGr1ohj2VOw==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-mtd@lists.infradead.org
 Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
         Ley Foon Tan <ley.foon.tan@intel.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] mtd: rawnand: denali_dt: Add support for configuring SPARE_AREA_SKIP_BYTES
-Date:   Fri, 20 Dec 2019 20:31:52 +0900
-Message-Id: <20191220113155.28177-3-yamada.masahiro@socionext.com>
+        Mark Rutland <mark.rutland@arm.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/5] dt-bindings: mtd: denali_dt: document reset property
+Date:   Fri, 20 Dec 2019 20:31:53 +0900
+Message-Id: <20191220113155.28177-4-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191220113155.28177-1-yamada.masahiro@socionext.com>
 References: <20191220113155.28177-1-yamada.masahiro@socionext.com>
@@ -47,117 +49,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Vasut <marex@denx.de>
+According to the Denali NAND Flash Memory Controller User's Guide,
+this IP has two reset signals.
 
-The SPARE_AREA_SKIP_BYTES register is reset when the controller reset
-signal is toggled. Yet, this register must be configured to match the
-content of the NAND OOB area. The current default value is always set
-to 8 and is programmed into the hardware in case the hardware was not
-programmed before (e.g. in a bootloader) with a different value. This
-however does not work when the block is reset properly by Linux.
+  rst_n:     reset most of FFs in the controller core
+  reg_rst_n: reset all FFs in the register interface, and in the
+             initialization sequencer
 
-On Altera SoCFPGA CycloneV, ArriaV and Arria10, which are the SoCFPGA
-platforms which support booting from NAND, the SPARE_AREA_SKIP_BYTES
-value must be set to 2. On Socionext Uniphier, the value is 8. This
-patch adds support for preconfiguring the default value and handles
-the special SoCFPGA case by setting the default to 2 on all SoCFPGA
-platforms, while retaining the original behavior and default value of
-8 on all the other platforms.
+This commit specifies these reset signals.
 
-Signed-off-by: Marek Vasut <marex@denx.de>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>
-To: linux-mtd@lists.infradead.org
-Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+It is possible to control them separately from the IP point of view
+although they might be often tied up together in actual SoC integration.
+
+At least for the upstream platforms, Altera/Intel SOCFPGA and Socionext
+UniPhier, the reset controller seems to provide only 1-bit control for
+the NAND controller. If it is the case, the resets property should
+reference to the same phandles for "nand" and "reg" resets, like this:
+
+    resets = <&nand_rst>, <&nand_rst>;
+    reset-names = "nand", "reg";
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
 
-Changes in v3:
-  [Masahiro]
-   - Rebase and give my Acked-by
-
+Changes in v3: None
 Changes in v2:
-  - V2: Move denali->oob_skip_bytes = data->oob_skip_bytes; right after
-    of_device_get_match_data()
+  - Split into two patches
 
- drivers/mtd/nand/raw/denali.c    | 13 ++++++++++---
- drivers/mtd/nand/raw/denali_dt.c |  5 +++++
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/mtd/denali-nand.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index 3102ddbd8abd..b6c463d02167 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -1302,14 +1302,21 @@ int denali_init(struct denali_controller *denali)
+diff --git a/Documentation/devicetree/bindings/mtd/denali-nand.txt b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+index b32aed1db46d..98916a84bbf6 100644
+--- a/Documentation/devicetree/bindings/mtd/denali-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/denali-nand.txt
+@@ -14,6 +14,11 @@ Required properties:
+     interface clock, and the ECC circuit clock.
+   - clock-names: should contain "nand", "nand_x", "ecc"
  
- 	/*
- 	 * Set how many bytes should be skipped before writing data in OOB.
-+	 * If a non-zero value has already been configured, update it in HW.
- 	 * If a non-zero value has already been set (by firmware or something),
- 	 * just use it. Otherwise, set the driver's default.
- 	 */
--	denali->oob_skip_bytes = ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
--	if (!denali->oob_skip_bytes) {
--		denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
-+	if (denali->oob_skip_bytes) {
- 		iowrite32(denali->oob_skip_bytes,
- 			  denali->reg + SPARE_AREA_SKIP_BYTES);
-+	} else {
-+		denali->oob_skip_bytes =
-+			ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
-+		if (!denali->oob_skip_bytes) {
-+			denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
-+			iowrite32(denali->oob_skip_bytes,
-+				  denali->reg + SPARE_AREA_SKIP_BYTES);
-+		}
- 	}
++Optional properties:
++  - resets: may contain phandles to the controller core reset, the register
++    reset
++  - reset-names: may contain "nand", "reg"
++
+ Sub-nodes:
+   Sub-nodes represent available NAND chips.
  
- 	iowrite32(0, denali->reg + TRANSFER_SPARE_REG);
-diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-index 276187939689..699255fb2dd8 100644
---- a/drivers/mtd/nand/raw/denali_dt.c
-+++ b/drivers/mtd/nand/raw/denali_dt.c
-@@ -27,6 +27,7 @@ struct denali_dt {
- struct denali_dt_data {
- 	unsigned int revision;
- 	unsigned int caps;
-+	unsigned int oob_skip_bytes;
- 	const struct nand_ecc_caps *ecc_caps;
- };
+@@ -46,6 +51,8 @@ nand: nand@ff900000 {
+ 	reg-names = "nand_data", "denali_reg";
+ 	clocks = <&nand_clk>, <&nand_x_clk>, <&nand_ecc_clk>;
+ 	clock-names = "nand", "nand_x", "ecc";
++	resets = <&nand_rst>, <&nand_reg_rst>;
++	reset-names = "nand", "reg";
+ 	interrupts = <0 144 4>;
  
-@@ -34,6 +35,7 @@ NAND_ECC_CAPS_SINGLE(denali_socfpga_ecc_caps, denali_calc_ecc_bytes,
- 		     512, 8, 15);
- static const struct denali_dt_data denali_socfpga_data = {
- 	.caps = DENALI_CAP_HW_ECC_FIXUP,
-+	.oob_skip_bytes = 2,
- 	.ecc_caps = &denali_socfpga_ecc_caps,
- };
- 
-@@ -42,6 +44,7 @@ NAND_ECC_CAPS_SINGLE(denali_uniphier_v5a_ecc_caps, denali_calc_ecc_bytes,
- static const struct denali_dt_data denali_uniphier_v5a_data = {
- 	.caps = DENALI_CAP_HW_ECC_FIXUP |
- 		DENALI_CAP_DMA_64BIT,
-+	.oob_skip_bytes = 8,
- 	.ecc_caps = &denali_uniphier_v5a_ecc_caps,
- };
- 
-@@ -51,6 +54,7 @@ static const struct denali_dt_data denali_uniphier_v5b_data = {
- 	.revision = 0x0501,
- 	.caps = DENALI_CAP_HW_ECC_FIXUP |
- 		DENALI_CAP_DMA_64BIT,
-+	.oob_skip_bytes = 8,
- 	.ecc_caps = &denali_uniphier_v5b_ecc_caps,
- };
- 
-@@ -123,6 +127,7 @@ static int denali_dt_probe(struct platform_device *pdev)
- 
- 	denali->revision = data->revision;
- 	denali->caps = data->caps;
-+	denali->oob_skip_bytes = data->oob_skip_bytes;
- 	denali->ecc_caps = data->ecc_caps;
- 
- 	denali->dev = dev;
+ 	nand@0 {
 -- 
 2.17.1
 
