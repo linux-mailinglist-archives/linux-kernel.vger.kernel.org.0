@@ -2,109 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9940E1282D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:40:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 773551282DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfLTTki (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 14:40:38 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51146 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbfLTTkh (ORCPT
+        id S1727498AbfLTTm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 14:42:28 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43768 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLTTm2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 14:40:37 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a5so10078549wmb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 11:40:36 -0800 (PST)
+        Fri, 20 Dec 2019 14:42:28 -0500
+Received: by mail-wr1-f65.google.com with SMTP id d16so10482445wre.10
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 11:42:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hdYNVeVJ9zG7uGLj2brLM5VkYYRU60Z3UwUXj26j7Y4=;
-        b=CQjMpL4hpX1WnvIacGuyzDar6rEtOQ1Hzw1EWSkC5XHG14fswPnJF+1QV21ZfGULQA
-         mo9Kz7hvURKWJsuf04nj3n1t675ntsjJiu6YgdNBoPx+1I1VLVA5sNxdGONzPvsomlcy
-         UR35nKhJ3NFWeMAlJz/Nm17pxvMqiK3/R8cLZjLuwX6skmzUW6/NBiL2F2E609zQBP6l
-         EnMNIw+vKToWzJCrnqHUKuW0T16VZaqdkAwBDK6jOZHj/wAb62pB9QGbeOGw3vzCBrQS
-         jvsjALrM4HfNat7B+63vHH17sL5/w5yEgaPTkOdOdi4e1Ph+JDDG6mRaza3jnjxOT1nt
-         9TBA==
+        bh=Il1oF0g3ydughv8Jds3YmOufzmr6Qzx+GD4OK+haAtA=;
+        b=PYzMKyTpUL0K26WI+Dr6m1u9kWHpKKbZXQiSG0uoqZQAS46qonqRLrJ6rHzuxQHVE4
+         yTTSeMlZlsEI5X/IyrYu8mNqVYOKCTi0szti9CVKA0nQhuCnREJO/+5H9PGZbYG/YQHI
+         ktd+sIy5QrTGEAbaZDASuQV1k9EzdA4p23+wvd62/ktHw61PMKY9Ocj5yrNblluyNKfy
+         XZp0ZFxSTrNOvGxvxNfOXS1X/DLKRSe/JgU5tGGLOu+xbNOQYVCx921LS4/RMRttWNNV
+         Y301Zh3lq64UXVN0WHcs6VmRDbj1H8YvEsgb2Ct3p++lZe0hyHcWCCuFxRVC3Iv1142g
+         P1sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hdYNVeVJ9zG7uGLj2brLM5VkYYRU60Z3UwUXj26j7Y4=;
-        b=bXWwet4XTukZ85YjRXGM7mSQ0N214nczAIFkAFQmiQ1m28KVk+pa36wsiaG+9Xt2pr
-         +QwpNZTrIS4bqxssPS34BSgOpvYrKALoSz6NUf8XYzs3Yy+mykyL0gf1kKVKUFSEli5I
-         MegFxlg/0xu4EDwYaLusGGLUCSV+syIowOe1SGtWhx34daF9ehXNJ7PWbhO02+YRoCat
-         xXCHShZHNIlZu5bGUtzndCE1TFJI56zzr7hivuU8QVQ72QwdIhwMhSLHSNp75EHCFXH7
-         9X3xVWcoWxUxMbQkq2UBSmRo9RsXBHUiHjxzriMlLOrri77v8vIHowqvf4Iw3S1QEMlo
-         fzDQ==
-X-Gm-Message-State: APjAAAV77Yc9XiLQwun/BNJOjoriu51j7rt0+snzd6vDkaeRskjbKqLC
-        NQvwt+x5KAjzBOfljb7LR9ECbj4JqpQr9YXtq6h/kA==
-X-Google-Smtp-Source: APXvYqym0wfGn4MUh0Q5DxHRfhzWymg3X0lx1rvhD/+srbD8Wct7zzVCcUi8kXTeECHde0dGL3nXAC88Ujygt72NEnw=
-X-Received: by 2002:a1c:6404:: with SMTP id y4mr18312577wmb.143.1576870835379;
- Fri, 20 Dec 2019 11:40:35 -0800 (PST)
+        bh=Il1oF0g3ydughv8Jds3YmOufzmr6Qzx+GD4OK+haAtA=;
+        b=IF0LJbDhUwAlVtwvXlWdl0vwghwS8ajTNUK30e4jPXcC/e0wG9rPpGqlvyqrucOef7
+         WKXkEUdTHm+Bg+kxr3pLClYvAEvPQ3WZxTV+RuZtmnqStRRwWTkEMY39Px8DVhSTp40o
+         Fj3FykcJrJc42xFLeyliF5bkyL+iJEwREaG+6IuYi0Vh/pisQZsJ0q1XFCTxPfu9Dbe5
+         Fg7nlWD9IFOs9MNTaNfRYrWhEzSu02I7j78FO9NuU6TeLlWVrQcrHiFT/HubY4MN9S0u
+         0PCViZLy0+ttaLqM+H+RVMg9Nbgm78iDks+EATMU8MYBDZi7jHgkmw4KaZ/bWykoNR2j
+         0Srg==
+X-Gm-Message-State: APjAAAXGzLgKWDDljDMGET5TK3GCRpk18e1+rGYWmmd0jf6m6DQdmDhr
+        nyWdG12pDVFMVJuKu5v1PVeUgWSyetfX+oLDQkw=
+X-Google-Smtp-Source: APXvYqwS3x4ycvpu21JJuqMEX6UIs51kUKgvD6zRDQswANHwI6xv7rw2TIDsASMikMs8u5f31Yyr/YGm/upuu+kif0c=
+X-Received: by 2002:a5d:4692:: with SMTP id u18mr13744281wrq.206.1576870944945;
+ Fri, 20 Dec 2019 11:42:24 -0800 (PST)
 MIME-Version: 1.0
-References: <1576834568-82874-1-git-send-email-mafeng.ma@huawei.com>
-In-Reply-To: <1576834568-82874-1-git-send-email-mafeng.ma@huawei.com>
+References: <20191202214713.41001-1-thomasanderson@google.com>
+ <20191210185924.GA20941@google.com> <20191219233303.GA131109@google.com>
+In-Reply-To: <20191219233303.GA131109@google.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Fri, 20 Dec 2019 14:40:23 -0500
-Message-ID: <CADnq5_MgHpY4NJg+QcneaEWjVUa0qtdN8WX4aBrsx=hv2ukVdw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: Remove unneeded variable 'ret' in navi10_ih.c
-To:     Ma Feng <mafeng.ma@huawei.com>
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Christian Koenig <christian.koenig@amd.com>,
-        Chunming Zhou <David1.Zhou@amd.com>,
+Date:   Fri, 20 Dec 2019 14:42:13 -0500
+Message-ID: <CADnq5_OtVFEuiM9eByRpkPX9Vhgu0Oq0aCzbctxOSTL1XJcm7w@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/amd/display: Reduce HDMI pixel encoding if max
+ clock is exceeded
+To:     Tom Anderson <thomasanderson@google.com>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Mario Kleiner <mario.kleiner.de@gmail.com>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel@ffwll.ch>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 10:10 AM Ma Feng <mafeng.ma@huawei.com> wrote:
+On Fri, Dec 20, 2019 at 10:10 AM Tom Anderson <thomasanderson@google.com> wrote:
 >
-> Fixes coccicheck warning:
->
-> drivers/gpu/drm/amd/amdgpu/navi10_ih.c:113:5-8: Unneeded variable: "ret". Return "0" on line 182
->
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
+> Ping.  Is there any action required to get this landed?
 
-Applied.  Thanks!
+Looks good to me, but I'd like to hear from the display guys.
 
 Alex
 
-> ---
->  drivers/gpu/drm/amd/amdgpu/navi10_ih.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+
 >
-> diff --git a/drivers/gpu/drm/amd/amdgpu/navi10_ih.c b/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-> index 9af7356..f737ce4 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/navi10_ih.c
-> @@ -110,7 +110,6 @@ static uint32_t navi10_ih_rb_cntl(struct amdgpu_ih_ring *ih, uint32_t ih_rb_cntl
->  static int navi10_ih_irq_init(struct amdgpu_device *adev)
->  {
->         struct amdgpu_ih_ring *ih = &adev->irq.ih;
-> -       int ret = 0;
->         u32 ih_rb_cntl, ih_doorbell_rtpr, ih_chicken;
->         u32 tmp;
->
-> @@ -179,7 +178,7 @@ static int navi10_ih_irq_init(struct amdgpu_device *adev)
->         /* enable interrupts */
->         navi10_ih_enable_interrupts(adev);
->
-> -       return ret;
-> +       return 0;
->  }
->
->  /**
-> --
-> 2.6.2
->
+> On Tue, Dec 10, 2019 at 10:59:24AM -0800, Tom Anderson wrote:
+> > Friendly ping.
+> >
+> > On Mon, Dec 02, 2019 at 01:47:13PM -0800, Thomas Anderson wrote:
+> > > For high-res (8K) or HFR (4K120) displays, using uncompressed pixel
+> > > formats like YCbCr444 would exceed the bandwidth of HDMI 2.0, so the
+> > > "interesting" modes would be disabled, leaving only low-res or low
+> > > framerate modes.
+> > >
+> > > This change lowers the pixel encoding to 4:2:2 or 4:2:0 if the max TMDS
+> > > clock is exceeded. Verified that 8K30 and 4K120 are now available and
+> > > working with a Samsung Q900R over an HDMI 2.0b link from a Radeon 5700.
+> > >
+> > > Signed-off-by: Thomas Anderson <thomasanderson@google.com>
+> > > ---
+> > >  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 45 ++++++++++---------
+> > >  1 file changed, 23 insertions(+), 22 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > > index 7aac9568d3be..803e59d97411 100644
+> > > --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > > +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> > > @@ -3356,27 +3356,21 @@ get_output_color_space(const struct dc_crtc_timing *dc_crtc_timing)
+> > >     return color_space;
+> > >  }
+> > >
+> > > -static void reduce_mode_colour_depth(struct dc_crtc_timing *timing_out)
+> > > -{
+> > > -   if (timing_out->display_color_depth <= COLOR_DEPTH_888)
+> > > -           return;
+> > > -
+> > > -   timing_out->display_color_depth--;
+> > > -}
+> > > -
+> > > -static void adjust_colour_depth_from_display_info(struct dc_crtc_timing *timing_out,
+> > > -                                           const struct drm_display_info *info)
+> > > +static bool adjust_colour_depth_from_display_info(
+> > > +   struct dc_crtc_timing *timing_out,
+> > > +   const struct drm_display_info *info)
+> > >  {
+> > > +   enum dc_color_depth depth = timing_out->display_color_depth;
+> > >     int normalized_clk;
+> > > -   if (timing_out->display_color_depth <= COLOR_DEPTH_888)
+> > > -           return;
+> > >     do {
+> > >             normalized_clk = timing_out->pix_clk_100hz / 10;
+> > >             /* YCbCr 4:2:0 requires additional adjustment of 1/2 */
+> > >             if (timing_out->pixel_encoding == PIXEL_ENCODING_YCBCR420)
+> > >                     normalized_clk /= 2;
+> > >             /* Adjusting pix clock following on HDMI spec based on colour depth */
+> > > -           switch (timing_out->display_color_depth) {
+> > > +           switch (depth) {
+> > > +           case COLOR_DEPTH_888:
+> > > +                   break;
+> > >             case COLOR_DEPTH_101010:
+> > >                     normalized_clk = (normalized_clk * 30) / 24;
+> > >                     break;
+> > > @@ -3387,14 +3381,15 @@ static void adjust_colour_depth_from_display_info(struct dc_crtc_timing *timing_
+> > >                     normalized_clk = (normalized_clk * 48) / 24;
+> > >                     break;
+> > >             default:
+> > > -                   return;
+> > > +                   /* The above depths are the only ones valid for HDMI. */
+> > > +                   return false;
+> > >             }
+> > > -           if (normalized_clk <= info->max_tmds_clock)
+> > > -                   return;
+> > > -           reduce_mode_colour_depth(timing_out);
+> > > -
+> > > -   } while (timing_out->display_color_depth > COLOR_DEPTH_888);
+> > > -
+> > > +           if (normalized_clk <= info->max_tmds_clock) {
+> > > +                   timing_out->display_color_depth = depth;
+> > > +                   return true;
+> > > +           }
+> > > +   } while (--depth > COLOR_DEPTH_666);
+> > > +   return false;
+> > >  }
+> > >
+> > >  static void fill_stream_properties_from_drm_display_mode(
+> > > @@ -3474,8 +3469,14 @@ static void fill_stream_properties_from_drm_display_mode(
+> > >
+> > >     stream->out_transfer_func->type = TF_TYPE_PREDEFINED;
+> > >     stream->out_transfer_func->tf = TRANSFER_FUNCTION_SRGB;
+> > > -   if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A)
+> > > -           adjust_colour_depth_from_display_info(timing_out, info);
+> > > +   if (stream->signal == SIGNAL_TYPE_HDMI_TYPE_A) {
+> > > +           if (!adjust_colour_depth_from_display_info(timing_out, info) &&
+> > > +               drm_mode_is_420_also(info, mode_in) &&
+> > > +               timing_out->pixel_encoding != PIXEL_ENCODING_YCBCR420) {
+> > > +                   timing_out->pixel_encoding = PIXEL_ENCODING_YCBCR420;
+> > > +                   adjust_colour_depth_from_display_info(timing_out, info);
+> > > +           }
+> > > +   }
+> > >  }
+> > >
+> > >  static void fill_audio_info(struct audio_info *audio_info,
+> > > --
+> > > 2.24.0.393.g34dc348eaf-goog
+> > >
 > _______________________________________________
 > amd-gfx mailing list
 > amd-gfx@lists.freedesktop.org
