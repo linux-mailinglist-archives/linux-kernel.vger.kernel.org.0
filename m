@@ -2,176 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B479127B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:34:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49384127B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:38:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbfLTMeL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 07:34:11 -0500
-Received: from mail-qv1-f67.google.com ([209.85.219.67]:38579 "EHLO
-        mail-qv1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727298AbfLTMeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 07:34:11 -0500
-Received: by mail-qv1-f67.google.com with SMTP id t6so3546135qvs.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 04:34:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OM+8DC58J3a1Ql31mcDf8DJoUej0i6n4zpuo/9t+noM=;
-        b=Teeb0IyvGBgEsXC2FUlY9Jj8vaOWfLiTgSTFn2BvkRD5ZneA6TfW521uY8dyShqNmq
-         kOrZnE+CrofE8hYE9gtEigmbo/3NSu3GYRTZNnzSoUB9+/tSxfmdSEHJxy3dI/yV3r+w
-         vxzYMowRH3yiGAp0vJIs36MzTdgudugCMcS6nHxqNdW1vUuBSFmqQPHDx4cSYSwBiKUL
-         qD+p6esS0BXk8YMffgOC9OfbCjl/Jxzhy3qS8oI9xO14xBxICze1vSxaMMqSiNQrdVBo
-         GW3Y7L6dPSEg+7bQrFzoPg11otBGNXUy7zqWY991NzHmvUPAPRmmXS/JV4BqMFBM6ueF
-         8itg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OM+8DC58J3a1Ql31mcDf8DJoUej0i6n4zpuo/9t+noM=;
-        b=OngROYOEC8KQC6Cp9wWMEf8bkeBSECEzFppCkuFrsjCoSk6SsmXWPTq3uyO+Wr5IwU
-         DWPinDFzPaOspmcSHCAIl8NKxfspXAzYzEXhfcO+gv0WdwUg1GrukgWhM27sRMXM+1i4
-         dH6mShIPCTofdok50X8im5rXx5naDv8L0Ibpzz5PD52pJUMFR/wYLM1T9iqTRDAwKwvc
-         Y/ZepkiGtKnBw8/St/zIybFOKtWBnIBKZrGa9ut0S5KRcsqd+eYvarY0ZVvoLp4Rtipx
-         IK554ZMA7vUY46Qhaon35E6KbbbdnsUDBNmwnv0A1cRgooxvh0zSC++E0JWR4VF9LYq8
-         NKMA==
-X-Gm-Message-State: APjAAAVPE2IOmIiuC51XZS14Vn1Jf7itbCcUzNC0q1ZOR284mahqcex2
-        FfvVvdvr3roektupAU9InsXdVlNM8r/5CkJMlA7DRw==
-X-Google-Smtp-Source: APXvYqyKI5y4pA6tV7V4WabZMrtDehFiaFukF68PpW0zRcn+eFsKt3hAK4ZqwXgE6QO/xNOP1AtOUW3XIb6X2q62uSg=
-X-Received: by 2002:a0c:ead1:: with SMTP id y17mr11501073qvp.210.1576845250032;
- Fri, 20 Dec 2019 04:34:10 -0800 (PST)
-MIME-Version: 1.0
-References: <1574850218-13257-1-git-send-email-yannick.fertre@st.com> <90e15f5b-0b65-1de7-229d-c8e0470071b5@st.com>
-In-Reply-To: <90e15f5b-0b65-1de7-229d-c8e0470071b5@st.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Fri, 20 Dec 2019 13:33:59 +0100
-Message-ID: <CA+M3ks663uFr-fpTXoKXd--yKi6q4o525H-eYM9ZsO4dpFS6yg@mail.gmail.com>
-Subject: Re: [PATCH] drm/stm: ltdc: move pinctrl to encoder mode set
-To:     Philippe CORNU <philippe.cornu@st.com>
-Cc:     Yannick FERTRE <yannick.fertre@st.com>,
-        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727426AbfLTMiA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 07:38:00 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:44298 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727298AbfLTMiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 07:38:00 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 483BB2004C7;
+        Fri, 20 Dec 2019 13:37:59 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 138D02002BE;
+        Fri, 20 Dec 2019 13:37:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 55A83402B7;
+        Fri, 20 Dec 2019 20:37:45 +0800 (SGT)
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     maz@kernel.org, tglx@linutronix.de, jason@lakedaemon.net,
+        robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org, fugang.duan@nxp.com,
+        linux-arm-kernel@lists.infradead.org,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+Subject: [PATCH V4 0/2] irqchip: add NXP INTMUX interrupt controller
+Date:   Fri, 20 Dec 2019 20:34:39 +0800
+Message-Id: <1576845281-32675-1-git-send-email-qiangqing.zhang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 2 d=C3=A9c. 2019 =C3=A0 18:19, Philippe CORNU <philippe.cornu@st.co=
-m> a =C3=A9crit :
->
-> Dear Yannick,
-> Thank you for your patch,
->
-> Acked-by: Philippe Cornu <philippe.cornu@st.com>
->
+This patch set adds driver for NXP INTMUX interrupt controller.
 
-Applied on drm-misc-next,
+ChangeLogs:
+V3->V4:
+	*set IRQ_TYPE_LEVEL_HIGH flag in .xlate callback.
+	*fix comment format.
+	*use an intermediate variable for irq_domain_add_linear().
+	*disable interrupts before enabling chained interrupt.
+	*disable interrupt in imx_remove() for level interrupt.
 
-Thanks,
-Benjamin
+V2->V3:
+	*impletement .xlate and .select callback.
 
-> Philippe :-)
->
-> On 11/27/19 11:23 AM, Yannick Fertre wrote:
-> > From: Yannick Fertr=C3=A9 <yannick.fertre@st.com>
-> >
-> > The pin control must be set to default as soon as possible to
-> > establish a good video link between tv & bridge hdmi
-> > (encoder mode set is call before encoder enable).
-> >
-> > Signed-off-by: Yannick Fertre <yannick.fertre@st.com>
-> > ---
-> >   drivers/gpu/drm/stm/ltdc.c | 24 ++++++++++++++++++------
-> >   1 file changed, 18 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/stm/ltdc.c b/drivers/gpu/drm/stm/ltdc.c
-> > index 49ef406..dba8e7f 100644
-> > --- a/drivers/gpu/drm/stm/ltdc.c
-> > +++ b/drivers/gpu/drm/stm/ltdc.c
-> > @@ -435,9 +435,6 @@ static void ltdc_crtc_atomic_enable(struct drm_crtc=
- *crtc,
-> >       /* Commit shadow registers =3D update planes at next vblank */
-> >       reg_set(ldev->regs, LTDC_SRCR, SRCR_VBR);
-> >
-> > -     /* Enable LTDC */
-> > -     reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
-> > -
-> >       drm_crtc_vblank_on(crtc);
-> >   }
-> >
-> > @@ -451,9 +448,6 @@ static void ltdc_crtc_atomic_disable(struct drm_crt=
-c *crtc,
-> >
-> >       drm_crtc_vblank_off(crtc);
-> >
-> > -     /* disable LTDC */
-> > -     reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
-> > -
-> >       /* disable IRQ */
-> >       reg_clear(ldev->regs, LTDC_IER, IER_RRIE | IER_FUIE | IER_TERRIE)=
-;
-> >
-> > @@ -1042,9 +1036,13 @@ static const struct drm_encoder_funcs ltdc_encod=
-er_funcs =3D {
-> >   static void ltdc_encoder_disable(struct drm_encoder *encoder)
-> >   {
-> >       struct drm_device *ddev =3D encoder->dev;
-> > +     struct ltdc_device *ldev =3D ddev->dev_private;
-> >
-> >       DRM_DEBUG_DRIVER("\n");
-> >
-> > +     /* Disable LTDC */
-> > +     reg_clear(ldev->regs, LTDC_GCR, GCR_LTDCEN);
-> > +
-> >       /* Set to sleep state the pinctrl whatever type of encoder */
-> >       pinctrl_pm_select_sleep_state(ddev->dev);
-> >   }
-> > @@ -1052,6 +1050,19 @@ static void ltdc_encoder_disable(struct drm_enco=
-der *encoder)
-> >   static void ltdc_encoder_enable(struct drm_encoder *encoder)
-> >   {
-> >       struct drm_device *ddev =3D encoder->dev;
-> > +     struct ltdc_device *ldev =3D ddev->dev_private;
-> > +
-> > +     DRM_DEBUG_DRIVER("\n");
-> > +
-> > +     /* Enable LTDC */
-> > +     reg_set(ldev->regs, LTDC_GCR, GCR_LTDCEN);
-> > +}
-> > +
-> > +static void ltdc_encoder_mode_set(struct drm_encoder *encoder,
-> > +                               struct drm_display_mode *mode,
-> > +                               struct drm_display_mode *adjusted_mode)
-> > +{
-> > +     struct drm_device *ddev =3D encoder->dev;
-> >
-> >       DRM_DEBUG_DRIVER("\n");
-> >
-> > @@ -1067,6 +1078,7 @@ static void ltdc_encoder_enable(struct drm_encode=
-r *encoder)
-> >   static const struct drm_encoder_helper_funcs ltdc_encoder_helper_func=
-s =3D {
-> >       .disable =3D ltdc_encoder_disable,
-> >       .enable =3D ltdc_encoder_enable,
-> > +     .mode_set =3D ltdc_encoder_mode_set,
-> >   };
-> >
-> >   static int ltdc_encoder_init(struct drm_device *ddev, struct drm_brid=
-ge *bridge)
-> >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+V1->V2:
+	*squash patches:
+		drivers/irqchip: enable INTMUX interrupt controller driver
+ 		drivers/irqchip: add NXP INTMUX interrupt multiplexer support
+	*remove properity "fsl,intmux_chans", only support channel 0 by
+	default.
+	*delete two unused macros.
+	*align the various field in struct intmux_data.
+	*turn to spin lock _irqsave version.
+	*delete struct intmux_irqchip_data.
+	*disable interrupt in probe stage and clear pending status in remove
+	stage.
+
+Joakim Zhang (2):
+  dt-bindings/irq: add binding for NXP INTMUX interrupt multiplexer
+  drivers/irqchip: add NXP INTMUX interrupt multiplexer support
+
+ .../interrupt-controller/fsl,intmux.txt       |  36 ++
+ drivers/irqchip/Kconfig                       |   6 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-imx-intmux.c              | 309 ++++++++++++++++++
+ 4 files changed, 352 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,intmux.txt
+ create mode 100644 drivers/irqchip/irq-imx-intmux.c
+
+-- 
+2.17.1
+
