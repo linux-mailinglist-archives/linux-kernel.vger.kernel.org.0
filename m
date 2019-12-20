@@ -2,254 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09C60127E48
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:42:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18426127D7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:37:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfLTOkX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:40:23 -0500
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:34868 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbfLTOkX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:40:23 -0500
-X-Greylist: delayed 379 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Dec 2019 09:40:21 EST
-Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 84F9D3F36C;
-        Fri, 20 Dec 2019 15:33:59 +0100 (CET)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=u5oB4Mzu;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 4iaXAKwHxOaC; Fri, 20 Dec 2019 15:33:58 +0100 (CET)
-Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
-        (Authenticated sender: mb274189)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id F07543F363;
-        Fri, 20 Dec 2019 15:33:57 +0100 (CET)
-Received: by flawful.org (Postfix, from userid 1001)
-        id 7C724778; Fri, 20 Dec 2019 15:33:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
-        t=1576852436; bh=uIwpsC9CqzY2wzmFL/L7G29tuR1CW3dSiiv7KHs724c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=u5oB4Mzu1xVtBR0eepkJZ8Ots2kLODostidNmYqaMn/1ESctkrTfsnWtfqMMC/xDv
-         oFORI+O8DkK+muqQmsN6M4VPflFYMJpviD8fcowOM8Fm0rjNqtCfgAnGB6g6Ww0goA
-         at7lAqcKUFmsqUxKlg7lGVthKl5LRxWhC4CSJl34=
-Date:   Fri, 20 Dec 2019 15:33:56 +0100
-From:   Niklas Cassel <nks@flawful.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org, vireshk@kernel.org, bjorn.andersson@linaro.org,
-        ulf.hansson@linaro.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 1/5] dt-bindings: power: avs: Add support for CPR
- (Core Power Reduction)
-Message-ID: <20191220143356.cprp55jmuhtcx7wr@flawful.org>
-References: <20191129213917.1301110-1-niklas.cassel@linaro.org>
- <20191129213917.1301110-2-niklas.cassel@linaro.org>
- <121319954.uyNvbQYpoT@kreacher>
+        id S1728157AbfLTOek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:34:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727580AbfLTOeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:34:37 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70D2421D7D;
+        Fri, 20 Dec 2019 14:34:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576852475;
+        bh=E3M3Rk+EtBVG5nA2dJqBGAMJi8GXyVnnEdorwCIOzTI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EOogzwtg/6H9jSoJ7BmQI1EXt7baaBmVqzt3ajOCOlT/10tvDNhlV8uMVwuZ5Xl/U
+         PQ2wZkbzIvxyR7BafhZZCeBTTpDTAts2zpB3c7Fi86cx8PEyqykKgzUhdq+Ll7nTRK
+         7x0l9HowfbvsywIR3vyMMPVMqcDFnCY8CcLGzPlA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 01/34] nvme_fc: add module to ops template to allow module references
+Date:   Fri, 20 Dec 2019 09:34:00 -0500
+Message-Id: <20191220143433.9922-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <121319954.uyNvbQYpoT@kreacher>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 10:31:53AM +0100, Rafael J. Wysocki wrote:
-> On Friday, November 29, 2019 10:39:11 PM CET Niklas Cassel wrote:
-> > Add DT bindings to describe the CPR HW found on certain Qualcomm SoCs.
-> > 
-> > Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> > Changes since v6:
-> > -Picked up Bjorn's and Ulf's Reviewed-by.
-> > 
-> >  .../bindings/power/avs/qcom,cpr.txt           | 130 ++++++++++++++++++
-> >  1 file changed, 130 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt b/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
-> > new file mode 100644
-> > index 000000000000..ab0d5ebbad4e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/power/avs/qcom,cpr.txt
-> > @@ -0,0 +1,130 @@
-> > +QCOM CPR (Core Power Reduction)
-> > +
-> > +CPR (Core Power Reduction) is a technology to reduce core power on a CPU
-> > +or other device. Each OPP of a device corresponds to a "corner" that has
-> > +a range of valid voltages for a particular frequency. While the device is
-> > +running at a particular frequency, CPR monitors dynamic factors such as
-> > +temperature, etc. and suggests adjustments to the voltage to save power
-> > +and meet silicon characteristic requirements.
-> > +
-> > +- compatible:
-> > +	Usage: required
-> > +	Value type: <string>
-> > +	Definition: should be "qcom,qcs404-cpr", "qcom,cpr" for qcs404
-> > +
-> > +- reg:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: base address and size of the rbcpr register region
-> > +
-> > +- interrupts:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: should specify the CPR interrupt
-> > +
-> > +- clocks:
-> > +	Usage: required
-> > +	Value type: <prop-encoded-array>
-> > +	Definition: phandle to the reference clock
-> > +
-> > +- clock-names:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: must be "ref"
-> > +
-> > +- vdd-apc-supply:
-> > +	Usage: required
-> > +	Value type: <phandle>
-> > +	Definition: phandle to the vdd-apc-supply regulator
-> > +
-> > +- #power-domain-cells:
-> > +	Usage: required
-> > +	Value type: <u32>
-> > +	Definition: should be 0
-> > +
-> > +- operating-points-v2:
-> > +	Usage: required
-> > +	Value type: <phandle>
-> > +	Definition: A phandle to the OPP table containing the
-> > +		    performance states supported by the CPR
-> > +		    power domain
-> > +
-> > +- acc-syscon:
-> > +	Usage: optional
-> > +	Value type: <phandle>
-> > +	Definition: phandle to syscon for writing ACC settings
-> > +
-> > +- nvmem-cells:
-> > +	Usage: required
-> > +	Value type: <phandle>
-> > +	Definition: phandle to nvmem cells containing the data
-> > +		    that makes up a fuse corner, for each fuse corner.
-> > +		    As well as the CPR fuse revision.
-> > +
-> > +- nvmem-cell-names:
-> > +	Usage: required
-> > +	Value type: <stringlist>
-> > +	Definition: should be "cpr_quotient_offset1", "cpr_quotient_offset2",
-> > +		    "cpr_quotient_offset3", "cpr_init_voltage1",
-> > +		    "cpr_init_voltage2", "cpr_init_voltage3", "cpr_quotient1",
-> > +		    "cpr_quotient2", "cpr_quotient3", "cpr_ring_osc1",
-> > +		    "cpr_ring_osc2", "cpr_ring_osc3", "cpr_fuse_revision"
-> > +		    for qcs404.
-> > +
-> > +Example:
-> > +
-> > +	cpr_opp_table: cpr-opp-table {
-> > +		compatible = "operating-points-v2-qcom-level";
-> > +
-> > +		cpr_opp1: opp1 {
-> > +			opp-level = <1>;
-> > +			qcom,opp-fuse-level = <1>;
-> > +		};
-> > +		cpr_opp2: opp2 {
-> > +			opp-level = <2>;
-> > +			qcom,opp-fuse-level = <2>;
-> > +		};
-> > +		cpr_opp3: opp3 {
-> > +			opp-level = <3>;
-> > +			qcom,opp-fuse-level = <3>;
-> > +		};
-> > +	};
-> > +
-> > +	power-controller@b018000 {
-> > +		compatible = "qcom,qcs404-cpr", "qcom,cpr";
-> > +		reg = <0x0b018000 0x1000>;
-> > +		interrupts = <0 15 IRQ_TYPE_EDGE_RISING>;
-> > +		clocks = <&xo_board>;
-> > +		clock-names = "ref";
-> > +		vdd-apc-supply = <&pms405_s3>;
-> > +		#power-domain-cells = <0>;
-> > +		operating-points-v2 = <&cpr_opp_table>;
-> > +		acc-syscon = <&tcsr>;
-> > +
-> > +		nvmem-cells = <&cpr_efuse_quot_offset1>,
-> > +			<&cpr_efuse_quot_offset2>,
-> > +			<&cpr_efuse_quot_offset3>,
-> > +			<&cpr_efuse_init_voltage1>,
-> > +			<&cpr_efuse_init_voltage2>,
-> > +			<&cpr_efuse_init_voltage3>,
-> > +			<&cpr_efuse_quot1>,
-> > +			<&cpr_efuse_quot2>,
-> > +			<&cpr_efuse_quot3>,
-> > +			<&cpr_efuse_ring1>,
-> > +			<&cpr_efuse_ring2>,
-> > +			<&cpr_efuse_ring3>,
-> > +			<&cpr_efuse_revision>;
-> > +		nvmem-cell-names = "cpr_quotient_offset1",
-> > +			"cpr_quotient_offset2",
-> > +			"cpr_quotient_offset3",
-> > +			"cpr_init_voltage1",
-> > +			"cpr_init_voltage2",
-> > +			"cpr_init_voltage3",
-> > +			"cpr_quotient1",
-> > +			"cpr_quotient2",
-> > +			"cpr_quotient3",
-> > +			"cpr_ring_osc1",
-> > +			"cpr_ring_osc2",
-> > +			"cpr_ring_osc3",
-> > +			"cpr_fuse_revision";
-> > +	};
-> > 
-> 
-> I have queued up this one and the [2/5] for 5.6, but if you'd rather want them
-> to go in via a different patch, please let me know and I'll drop them.
-> 
+From: James Smart <jsmart2021@gmail.com>
 
-Thanks a lot Rafael!
+[ Upstream commit 863fbae929c7a5b64e96b8a3ffb34a29eefb9f8f ]
 
-I would very much prefer them to go via your tree.
+In nvme-fc: it's possible to have connected active controllers
+and as no references are taken on the LLDD, the LLDD can be
+unloaded.  The controller would enter a reconnect state and as
+long as the LLDD resumed within the reconnect timeout, the
+controller would resume.  But if a namespace on the controller
+is the root device, allowing the driver to unload can be problematic.
+To reload the driver, it may require new io to the boot device,
+and as it's no longer connected we get into a catch-22 that
+eventually fails, and the system locks up.
 
-Unfortunately it seems like kbuild test robot
-found an incorrect printk format specifier in
-one of the debug prints.
+Fix this issue by taking a module reference for every connected
+controller (which is what the core layer did to the transport
+module). Reference is cleared when the controller is removed.
 
-Line 838
-dev_dbg(dev, "efuse read(%s) = %x, bytes %ld\n", cname, *data, len);
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/nvme/host/fc.c          | 14 ++++++++++++--
+ drivers/nvme/target/fcloop.c    |  1 +
+ drivers/scsi/lpfc/lpfc_nvme.c   |  2 ++
+ drivers/scsi/qla2xxx/qla_nvme.c |  1 +
+ include/linux/nvme-fc-driver.h  |  4 ++++
+ 5 files changed, 20 insertions(+), 2 deletions(-)
 
-should be
-dev_dbg(dev, "efuse read(%s) = %x, bytes %zd\n", cname, *data, len);
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 565bddcfd130d..d567035571bf2 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -342,7 +342,8 @@ nvme_fc_register_localport(struct nvme_fc_port_info *pinfo,
+ 	    !template->ls_req || !template->fcp_io ||
+ 	    !template->ls_abort || !template->fcp_abort ||
+ 	    !template->max_hw_queues || !template->max_sgl_segments ||
+-	    !template->max_dif_sgl_segments || !template->dma_boundary) {
++	    !template->max_dif_sgl_segments || !template->dma_boundary ||
++	    !template->module) {
+ 		ret = -EINVAL;
+ 		goto out_reghost_failed;
+ 	}
+@@ -1986,6 +1987,7 @@ nvme_fc_ctrl_free(struct kref *ref)
+ {
+ 	struct nvme_fc_ctrl *ctrl =
+ 		container_of(ref, struct nvme_fc_ctrl, ref);
++	struct nvme_fc_lport *lport = ctrl->lport;
+ 	unsigned long flags;
+ 
+ 	if (ctrl->ctrl.tagset) {
+@@ -2011,6 +2013,7 @@ nvme_fc_ctrl_free(struct kref *ref)
+ 	if (ctrl->ctrl.opts)
+ 		nvmf_free_options(ctrl->ctrl.opts);
+ 	kfree(ctrl);
++	module_put(lport->ops->module);
+ }
+ 
+ static void
+@@ -3040,10 +3043,15 @@ nvme_fc_init_ctrl(struct device *dev, struct nvmf_ctrl_options *opts,
+ 		goto out_fail;
+ 	}
+ 
++	if (!try_module_get(lport->ops->module)) {
++		ret = -EUNATCH;
++		goto out_free_ctrl;
++	}
++
+ 	idx = ida_simple_get(&nvme_fc_ctrl_cnt, 0, 0, GFP_KERNEL);
+ 	if (idx < 0) {
+ 		ret = -ENOSPC;
+-		goto out_free_ctrl;
++		goto out_mod_put;
+ 	}
+ 
+ 	ctrl->ctrl.opts = opts;
+@@ -3185,6 +3193,8 @@ nvme_fc_init_ctrl(struct device *dev, struct nvmf_ctrl_options *opts,
+ out_free_ida:
+ 	put_device(ctrl->dev);
+ 	ida_simple_remove(&nvme_fc_ctrl_cnt, ctrl->cnum);
++out_mod_put:
++	module_put(lport->ops->module);
+ out_free_ctrl:
+ 	kfree(ctrl);
+ out_fail:
+diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
+index 291f4121f516a..f0536d341f2f2 100644
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -825,6 +825,7 @@ fcloop_targetport_delete(struct nvmet_fc_target_port *targetport)
+ #define FCLOOP_DMABOUND_4G		0xFFFFFFFF
+ 
+ static struct nvme_fc_port_template fctemplate = {
++	.module			= THIS_MODULE,
+ 	.localport_delete	= fcloop_localport_delete,
+ 	.remoteport_delete	= fcloop_remoteport_delete,
+ 	.create_queue		= fcloop_create_queue,
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index f73726e55e44d..6c355d87c709d 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -1903,6 +1903,8 @@ lpfc_nvme_fcp_abort(struct nvme_fc_local_port *pnvme_lport,
+ 
+ /* Declare and initialization an instance of the FC NVME template. */
+ static struct nvme_fc_port_template lpfc_nvme_template = {
++	.module	= THIS_MODULE,
++
+ 	/* initiator-based functions */
+ 	.localport_delete  = lpfc_nvme_localport_delete,
+ 	.remoteport_delete = lpfc_nvme_remoteport_delete,
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
+index 5590d6e8b5762..db367e428095d 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -560,6 +560,7 @@ static void qla_nvme_remoteport_delete(struct nvme_fc_remote_port *rport)
+ }
+ 
+ static struct nvme_fc_port_template qla_nvme_fc_transport = {
++	.module	= THIS_MODULE,
+ 	.localport_delete = qla_nvme_localport_delete,
+ 	.remoteport_delete = qla_nvme_remoteport_delete,
+ 	.create_queue   = qla_nvme_alloc_queue,
+diff --git a/include/linux/nvme-fc-driver.h b/include/linux/nvme-fc-driver.h
+index 496ff759f84c6..2f3ae41c212dc 100644
+--- a/include/linux/nvme-fc-driver.h
++++ b/include/linux/nvme-fc-driver.h
+@@ -282,6 +282,8 @@ struct nvme_fc_remote_port {
+  *
+  * Host/Initiator Transport Entrypoints/Parameters:
+  *
++ * @module:  The LLDD module using the interface
++ *
+  * @localport_delete:  The LLDD initiates deletion of a localport via
+  *       nvme_fc_deregister_localport(). However, the teardown is
+  *       asynchronous. This routine is called upon the completion of the
+@@ -395,6 +397,8 @@ struct nvme_fc_remote_port {
+  *       Value is Mandatory. Allowed to be zero.
+  */
+ struct nvme_fc_port_template {
++	struct module	*module;
++
+ 	/* initiator-based functions */
+ 	void	(*localport_delete)(struct nvme_fc_local_port *);
+ 	void	(*remoteport_delete)(struct nvme_fc_remote_port *);
+-- 
+2.20.1
 
-So %zd rather than %ld.
-
-This was obviously an error, but didn't show when
-compiling on arm64 or x86_64.
-
-Sorry for this inconvenience.
-
-Could you fix up the commit or do I need to do a respin?
-
-
-Kind regards,
-Niklas
