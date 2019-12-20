@@ -2,111 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA55212780F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FB93127817
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:27:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfLTJZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:25:22 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:28404 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727188AbfLTJZT (ORCPT
+        id S1727351AbfLTJ1B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:27:01 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55036 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfLTJ1B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:25:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576833918;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=LsxcLVbBun1f96xBFFfgPOlzuKGlq4r29EdM+SsmX7k=;
-        b=XCSvcuHZl4fYpSg3+lJGo7wB9zu/5eGQ/Sk161B0dNiEKY/TWOPMT4PKIswsjbfsgWmozX
-        30WcZ2NxviW42XxYvpMCXrNS4PQvI3F//kMadPHcURTdX5+TGwZjCutY6tAVNbdh0tM9XC
-        VNIv2l6v3eIrXbxeJYOQ8yICFjiWQr0=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-227-DN7bz1JNNq-O5ERHkaPWew-1; Fri, 20 Dec 2019 04:25:17 -0500
-X-MC-Unique: DN7bz1JNNq-O5ERHkaPWew-1
-Received: by mail-wr1-f70.google.com with SMTP id z15so915952wrw.0
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 01:25:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LsxcLVbBun1f96xBFFfgPOlzuKGlq4r29EdM+SsmX7k=;
-        b=BxhYflSWIamtWaqafq9ptcVlKqEOwwtJFh7/2nEnj/3uSaoRSScv84Ya0DWLDk3uNc
-         jUZ8N6GlYlUzrF4y/V9U9HzH5l20CQavFHpw914qMgY2MTxIe2SHElVGlz0VWYFQHmpA
-         OQisBnJunPs0TROHzgIjae4SUfmAMpGsMLQ6dvVRsjn8kl9BdVEvuQ8nng61oqvNAyZ/
-         K+XPyJK/MX5cwir6NtfekFws1D9t/FGLLWsK1NW7fV+A2BcMmdkUVNrih5S9oeE8Liyw
-         7+Ko5DaQ8VTGVR9Yt93+Qr3sJupvdgUsZ3KdCY3j+dm+ud7DzNOLJsPUwqpYryL4sAu3
-         U7kQ==
-X-Gm-Message-State: APjAAAU56jsobPB+iDtI6wDjuAl2EVY8OkEGUpxudbdff3X8aUDei+Km
-        SLUiJEf0HfiaJjKfJNyoNQFDRoKuN8DljpevPDyiK968iEyWdKOYkuRBlKR2/n+dack+WA2EyIH
-        Mu0clu8kxFuLKPcA+2FdES3/0
-X-Received: by 2002:a05:600c:246:: with SMTP id 6mr15371254wmj.122.1576833916356;
-        Fri, 20 Dec 2019 01:25:16 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzw8wZPLS7TkKIeuMQ4kT47hh6TgBs/pAj1q7SP7litoY6M7b4efDd9KnpDPbJZMMJOaN3lqQ==
-X-Received: by 2002:a05:600c:246:: with SMTP id 6mr15371232wmj.122.1576833916119;
-        Fri, 20 Dec 2019 01:25:16 -0800 (PST)
-Received: from [192.168.10.150] ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id m7sm9097969wrr.40.2019.12.20.01.25.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 01:25:15 -0800 (PST)
-Subject: Re: [PATCH v2] kvm/svm: PKU not currently supported
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        John Allen <john.allen@amd.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rkrcmar@redhat.com, vkuznets@redhat.com
-References: <20191219201759.21860-1-john.allen@amd.com>
- <20191219203214.GC6439@linux.intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <8a77e3b9-049e-e622-9332-9bebb829bc3d@redhat.com>
-Date:   Fri, 20 Dec 2019 10:25:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        Fri, 20 Dec 2019 04:27:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2OQ9lQQmbneD1QkUqtwBua7tuO8oAf4tE8FPYgHDOPM=; b=ZR2a8he6LlYujC/9UGcarATUJ
+        95QwCzrzx7czmmOT7PpYgl77Isv1Ujmq3D5y123v+SktdTXmNdVGg8EAPT2bH+2coxMTAxNvt8e34
+        ZY+Z4mnu55TlHg8yj0ywXxB0DSHjwyF4cLqJS673fJyU0RXlm46cX4ad2ikjrUFlAGtEXm6WZThRa
+        RH5W57NO+qdNgyNQPfVXjBGy/FVenTTKw8cWz9pdejbquTLh8Bt9MoFcrRr09jCICzWdt3BwmX4Vj
+        M0n3132BtAd7IQvYAR7jUs5AnDlZ6DS3SDtexABk6oRMr7mXupEBNJxH9wZ1vnRrGGJ4pCHPOvvi9
+        LlEidBcxg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iiEYO-00009J-Oq; Fri, 20 Dec 2019 09:26:37 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 21EF03007F2;
+        Fri, 20 Dec 2019 10:25:08 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 015D62B3E1689; Fri, 20 Dec 2019 10:26:31 +0100 (CET)
+Date:   Fri, 20 Dec 2019 10:26:31 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     ktkhai@virtuozzo.com
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
+        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
+        "bsegall@google.com" <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: Re: [PATCH RESEND v3] sched: Micro optimization in pick_next_task()
+ and in check_preempt_curr()
+Message-ID: <20191220092631.GB2844@hirez.programming.kicks-ass.net>
+References: <20191219113517.65617a7b@gandalf.local.home>
+ <47a00e0e-69c0-2a2f-6ae1-1a8ec9b01ede@virtuozzo.com>
+ <20191219160422.4eb28a2e@gandalf.local.home>
+ <711a9c4b-ff32-1136-b848-17c622d548f3@yandex.ru>
 MIME-Version: 1.0
-In-Reply-To: <20191219203214.GC6439@linux.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <711a9c4b-ff32-1136-b848-17c622d548f3@yandex.ru>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/19 21:32, Sean Christopherson wrote:
-> On Thu, Dec 19, 2019 at 02:17:59PM -0600, John Allen wrote:
->> Current SVM implementation does not have support for handling PKU. Guests
->> running on a host with future AMD cpus that support the feature will read
->> garbage from the PKRU register and will hit segmentation faults on boot as
->> memory is getting marked as protected that should not be. Ensure that cpuid
->> from SVM does not advertise the feature.
->>
->> Signed-off-by: John Allen <john.allen@amd.com>
->> ---
->> v2:
->>   -Introduce kvm_x86_ops->pku_supported()
+On Fri, Dec 20, 2019 at 12:27:05AM +0300, Kirill Tkhai wrote:
+> This introduces an optimization based on xxx_sched_class addresses
+> in two hot scheduler functions: pick_next_task() and check_preempt_curr().
 > 
-> I like the v1 approach better, it's less code to unwind when SVM gains
-> support for virtualizaing PKU.
+> It is possible to compare pointers to sched classes to check, which
+> of them has a higher priority, instead of current iterations using
+> for_each_class().
 > 
-> The existing cases of kvm_x86_ops->*_supported() in __do_cpuid_func() are
-> necessary to handle cases where it may not be possible to expose a feature
-> even though it's supported in hardware, host and KVM, e.g. VMX's separate
-> MSR-based features and PT's software control to hide it from guest.  In
-> this case, hiding PKU is purely due to lack of support in KVM.  The SVM
-> series to enable PKU can then delete a single line of SVM code instead of
-> having to go back in and do surgery on x86 and VMX.
+> One more result of the patch is that size of object file becomes a little
+> less (excluding added BUG_ON(), which goes in __init section):
 > 
+> $size kernel/sched/core.o
+>          text     data      bss	    dec	    hex	filename
+> before:  66446    18957	    676	  86079	  1503f	kernel/sched/core.o
+> after:   66398    18957	    676	  86031	  1500f	kernel/sched/core.o
+> 
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-I sort of liked the V1 approach better, in that I liked using
-set_supported_cpuid but I didn't like *removing* features from it.
-
-I think all *_supported() should be removed, and the code moved from
-__do_cpuid_func() to set_supported_cpuid.
-
-For now, however, this one is consistent with other features so I am
-applying it.
-
-Paolo
-
+Thanks guys!
