@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78879127323
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:56:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B645012731B
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:56:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfLTB4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 20:56:17 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33672 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727378AbfLTB4N (ORCPT
+        id S1727487AbfLTB4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 20:56:18 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46586 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727390AbfLTB4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 20:56:13 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n25so5786956lfl.0;
-        Thu, 19 Dec 2019 17:56:11 -0800 (PST)
+        Thu, 19 Dec 2019 20:56:14 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f15so5742233lfl.13;
+        Thu, 19 Dec 2019 17:56:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Wfs/bL17FYKf1Oxn2bv75LBzwxXdI6zeR8Zv69vdpMc=;
-        b=gVkAYwSUeLMoZUIfwmnbf5CPDleYy7WG1dyoyk18Y26SwKQVtB0dqGKQVQB85sGWKM
-         v+tP9K9NUtg0/eNaEPsV0FBF6qcxLhKKHhSre1gEge6cqYWWFG2hm0FEp5bCGKimVMI6
-         dnLVBmTc0OQY90DWdGGc57JecSASCcfGwt2a5k8Qy2XZG0Ig08Gt+PoSrs/8r3YXUoXv
-         hhWlDZ/vs87qre/vhuNbhd306yizCguGvs38wE02EV4xsPrHf/crE7Uu7u4n3uqQWc48
-         VKc7usE37UiqFddLmKsOYkbEjDI4c7B1aScY+IocKrkfDHocnX2ITbfn8wUMbDmvcMDH
-         1IhQ==
+        bh=gtkA3peZEMiQiasILLoJEvV2SQjJRrgtV9+sf4LMnXM=;
+        b=HWfl77F+IvmeKqDiV00NPnWuwRBxIc/099eACUbKtTsD12v1OyPn0jvz91sBae1smV
+         NKMCeNpLFNbbm7uGW5hn6x1dSrAF2K6eSnYiVANSXZaVxH0duIVo8menhSc534ShmnUd
+         SOguaX/nLjNSYASFsZTGJ5uYbD6cUYCtyLHJq2+Aov3t50o79BUddC5c7T6fWc7noc39
+         460oFROd1KUdcSq4yBBTUWa/4TC/aPH1xTy3Z5myCRGCJfiLCSyqDZQMu/Ic+ze4HFDe
+         is3vw9yJng9ldtb3v2QqsBDjUIKTE3gRL5o8jXzDk1Slu9k+9E2xX7WI3zINRqQohdbM
+         idMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Wfs/bL17FYKf1Oxn2bv75LBzwxXdI6zeR8Zv69vdpMc=;
-        b=lk+ubzfUBz7GWpTIPu2IqGweLt7gT/i3LXufgj0CIJQ7kSimtbilbNK6AcyH9tEM4u
-         IautSmdBiUMYnCIgPE5A7eyAFVW7YSzkNBgOVEevQULll/Z0M9NoQL3RQ0pdZRkB8bcY
-         D95HgVdvxjy5iNA/gqtXtSgqt8U0SA9bU0LzkNuftd8H7PZlXBl8kjrHfCDe0b5ajOwm
-         rYkQL/RRbM/e6ImlL9frmbdIv3BBO1CCJ5BPbjs9RkLilm/J09IF+y6TKzC9k/PP4+gm
-         JZcI1tHR9jQRTsM4IPajhHYHEqOB7li/ykk68eOf8rPDPT9tK/+dfZyevhHIRPYtTKcp
-         SvDQ==
-X-Gm-Message-State: APjAAAULflneBLRvjpPbbu94aMhv4YflchnP+vSRG3LGbmHoVAbm5lkU
-        SaaU+RP3Th5AQcl2Gz/rzLw=
-X-Google-Smtp-Source: APXvYqyd57XxObnq9R19oKnH1DoSNkwh8KXdDAJuQ+1mHvJJYgp+mq2rHpzhWkqon2RkWRQpk6PLVA==
-X-Received: by 2002:a19:4b55:: with SMTP id y82mr7226840lfa.171.1576806970827;
-        Thu, 19 Dec 2019 17:56:10 -0800 (PST)
+        bh=gtkA3peZEMiQiasILLoJEvV2SQjJRrgtV9+sf4LMnXM=;
+        b=ob7ycIbZsNPJum12T84PfjcSV+zh0f38Hb1M3TjX/1MQhDZpRVSOSz2MmHH4Vqs10z
+         YZGO9bcpqhUmtzK1rMwSYC5EUFZUI7XcqFkTCxINqvqF7lPi2J9wQj04x8MsJwTrnquZ
+         kQkxf2uyP+p95URTBPJ43m4aHH05Uw12wVWqmWhAs+jUbjJrGJc9qR2gRhEcyECER62Q
+         Tp9wHOVFGb5TcGvK6TO5+mq5Rs1i6+yAybco6f5KINp1aHm4GH/bnbrbglp1lVGwZF8b
+         7ybfbmcyzeJzFVbiOD64NpSdlo/7dKJVJVJ3jpbOaloZVLTZ8XfJVLEfBl1/wvU59HVc
+         +YFQ==
+X-Gm-Message-State: APjAAAXBEyRQbb9wMlVhFkGVrKCHTm/o+Ot2gc9yheZHOv/X1oNwJcRs
+        wBsGZTUPEmw+MpyqEXWv2jg=
+X-Google-Smtp-Source: APXvYqyAhiBefq45zCzS1L1EYjIt2qdRvy+5FQW4NSANWKJUXfLH5Ujy7VPvTp+eFbuTXxwbzXVRSg==
+X-Received: by 2002:ac2:4c31:: with SMTP id u17mr7241219lfq.57.1576806971795;
+        Thu, 19 Dec 2019 17:56:11 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id m13sm3270901lfo.40.2019.12.19.17.56.09
+        by smtp.gmail.com with ESMTPSA id m13sm3270901lfo.40.2019.12.19.17.56.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 17:56:10 -0800 (PST)
+        Thu, 19 Dec 2019 17:56:11 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Felipe Balbi <balbi@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 06/10] usb: ulpi: Add resource-managed variant of otg_ulpi_create()
-Date:   Fri, 20 Dec 2019 04:52:34 +0300
-Message-Id: <20191220015238.9228-7-digetx@gmail.com>
+Subject: [PATCH v2 07/10] usb: phy: tegra: Use devm_otg_ulpi_create()
+Date:   Fri, 20 Dec 2019 04:52:35 +0300
+Message-Id: <20191220015238.9228-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191220015238.9228-1-digetx@gmail.com>
 References: <20191220015238.9228-1-digetx@gmail.com>
@@ -67,113 +67,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now drivers (like NVIDIA Tegra USB PHY for example) will be able to
-benefit from the resource-managed variant, making driver's code a bit
-cleaner.
+The resource-managed variant removes the necessity for the driver to care
+about freeing ULPI resources.
 
 Suggested-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-ulpi.c | 48 +++++++++++++++++++++++++++++++-------
- include/linux/usb/ulpi.h   | 11 +++++++++
- 2 files changed, 50 insertions(+), 9 deletions(-)
+ drivers/usb/phy/phy-tegra-usb.c | 21 +++++----------------
+ 1 file changed, 5 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-ulpi.c b/drivers/usb/phy/phy-ulpi.c
-index a43c49369a60..e683a37e3a7a 100644
---- a/drivers/usb/phy/phy-ulpi.c
-+++ b/drivers/usb/phy/phy-ulpi.c
-@@ -240,6 +240,21 @@ static int ulpi_set_vbus(struct usb_otg *otg, bool on)
- 	return usb_phy_io_write(phy, flags, ULPI_OTG_CTRL);
- }
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 9ce6699f40e7..d5739b6e0b6c 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -1170,7 +1170,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 			return err;
+ 		}
  
-+static void otg_ulpi_init(struct usb_phy *phy, struct usb_otg *otg,
-+			  struct usb_phy_io_ops *ops,
-+			  unsigned int flags)
-+{
-+	phy->label	= "ULPI";
-+	phy->flags	= flags;
-+	phy->io_ops	= ops;
-+	phy->otg	= otg;
-+	phy->init	= ulpi_init;
-+
-+	otg->usb_phy	= phy;
-+	otg->set_host	= ulpi_set_host;
-+	otg->set_vbus	= ulpi_set_vbus;
-+}
-+
- struct usb_phy *
- otg_ulpi_create(struct usb_phy_io_ops *ops,
- 		unsigned int flags)
-@@ -257,17 +272,32 @@ otg_ulpi_create(struct usb_phy_io_ops *ops,
- 		return NULL;
- 	}
+-		tegra_phy->ulpi = otg_ulpi_create(&ulpi_viewport_access_ops, 0);
++		tegra_phy->ulpi = devm_otg_ulpi_create(&pdev->dev,
++						       &ulpi_viewport_access_ops,
++						       0);
+ 		if (!tegra_phy->ulpi) {
+ 			dev_err(&pdev->dev, "Failed to create ULPI OTG\n");
+ 			err = -ENOMEM;
+@@ -1205,18 +1207,10 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, tegra_phy);
  
--	phy->label	= "ULPI";
--	phy->flags	= flags;
--	phy->io_ops	= ops;
--	phy->otg	= otg;
--	phy->init	= ulpi_init;
+ 	err = usb_add_phy_dev(&tegra_phy->u_phy);
+-	if (err < 0)
+-		goto free_ulpi;
++	if (err)
++		return err;
+ 
+ 	return 0;
 -
--	otg->usb_phy	= phy;
--	otg->set_host	= ulpi_set_host;
--	otg->set_vbus	= ulpi_set_vbus;
-+	otg_ulpi_init(phy, otg, ops, flags);
- 
- 	return phy;
+-free_ulpi:
+-	if (tegra_phy->ulpi) {
+-		kfree(tegra_phy->ulpi->otg);
+-		kfree(tegra_phy->ulpi);
+-	}
+-
+-	return err;
  }
- EXPORT_SYMBOL_GPL(otg_ulpi_create);
  
-+struct usb_phy *
-+devm_otg_ulpi_create(struct device *dev,
-+		     struct usb_phy_io_ops *ops,
-+		     unsigned int flags)
-+{
-+	struct usb_phy *phy;
-+	struct usb_otg *otg;
-+
-+	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
-+	if (!phy)
-+		return NULL;
-+
-+	otg = devm_kzalloc(dev, sizeof(*otg), GFP_KERNEL);
-+	if (!otg) {
-+		devm_kfree(dev, phy);
-+		return NULL;
-+	}
-+
-+	otg_ulpi_init(phy, otg, ops, flags);
-+
-+	return phy;
-+}
-+EXPORT_SYMBOL_GPL(devm_otg_ulpi_create);
-diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
-index c515765adab7..36c2982780ad 100644
---- a/include/linux/usb/ulpi.h
-+++ b/include/linux/usb/ulpi.h
-@@ -55,12 +55,23 @@
- #if IS_ENABLED(CONFIG_USB_ULPI)
- struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
- 					unsigned int flags);
-+
-+struct usb_phy *devm_otg_ulpi_create(struct device *dev,
-+				     struct usb_phy_io_ops *ops,
-+				     unsigned int flags);
- #else
- static inline struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
- 					      unsigned int flags)
- {
- 	return NULL;
+ static int tegra_usb_phy_remove(struct platform_device *pdev)
+@@ -1225,11 +1219,6 @@ static int tegra_usb_phy_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_phy(&tegra_phy->u_phy);
+ 
+-	if (tegra_phy->ulpi) {
+-		kfree(tegra_phy->ulpi->otg);
+-		kfree(tegra_phy->ulpi);
+-	}
+-
+ 	return 0;
  }
-+
-+static inline struct usb_phy *devm_otg_ulpi_create(struct device *dev,
-+						   struct usb_phy_io_ops *ops,
-+						   unsigned int flags)
-+{
-+	return NULL;
-+}
- #endif
  
- #ifdef CONFIG_USB_ULPI_VIEWPORT
 -- 
 2.24.0
 
