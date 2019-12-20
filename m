@@ -2,94 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F79D127F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:30:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEBF8127FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:49:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfLTPaW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 10:30:22 -0500
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.112]:37018 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727384AbfLTPaW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 10:30:22 -0500
-Received: from [85.158.142.199] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-b.eu-central-1.aws.symcld.net id 04/E1-12462-B09ECFD5; Fri, 20 Dec 2019 15:30:19 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1VSZ0wTURzncddyrT18tCCPRho4olG0tY18wA3
-  uBA3EEQOKepWT1pSj9o6picSouGLQIGhlGlFBjQRCVFRUwrASXDhxAIKjEkciIwFE76gofnn5
-  vfdb/+T/CExZLlETTCrP2FjaQknl+MuAhxKt3DkUqy+oDwltqc6ThoHlPyo0USBGYmaNiambJ
-  abWrGoPa5k8dd+TryADnJAfBHJCCWsA6s/JAa5LM0DlHS0eB4GMkMJgdKLqOBCxN5yCnPWtuC
-  jC4AGAXnXfFgiCUMEIdOXTOJdmBcos7P2jn42qBnslIsbhJJSfmy0V5SRcifLOrHF1ZQHUVOS
-  QihoZNKDK2jZ3EQPoj96VDozMgEFf1NpVOPKOIERnbjzAXNgHOTuHJS6sR1UlNbgLB6IXF+5K
-  xC4E56AX7eNFiMGp6HL1DFdiIMo+1DGSTkIv5DjZhWeBCfYxZfZ/DvsYh32MowjgZSDUaDPHm
-  /gE2mzRGvR6rcEwUxuinanX0elao45J0m5hWN5GC6SOTuF0XFrCFkucjmX4CiAsLG47rrkKjv
-  V90dUCP8Kd8iGNkUOxSk9jYlyaieZMm2xJFoarBRMJgkJkzweB87Ix8UzqVrNFWPsojQgF5U3
-  6fRRokrPSCZw53kXdA7OILGf+aYy4U18gnHX5JacxJc4msozal/QQDVA0mJLYv3GjH+kx8Fer
-  SODm5qZUWBlbgpn/n/8MfAlAqcg9YorCzPJ/Wz8LA7kLAxFTB8SBePofpc5wvzhN8Spl9/5or
-  /Ik9fq2e4qY+d+Vh47lPVq396IjaMOtnpyjMRQZPXx4mab0qfPWtsrugCk98uGb0/OXyp5das
-  p9s3gdP6efabyZHreQ3151YJYjojivEXRe2mkrvZaJb5g8mNFwuaOmoc3IlmjWBu2SL+V2sNb
-  Gk+VR+w8nb0xL5hxdLRQcvNp8rdvB5nhZmnPnZeeqzg/Vstvq3mKV/W7rg7+1L/j187s8aFy7
-  55H43jX2STMCC+8fvxF9ru/967lQlV6hYEL0lCzZKmNW9L7bqT719HZ71JJQu/fP59KC2MoIP
-  DIsvBhpDMWrfFaT2oXhPtfPdprYRV/LBrIzqxkK50y0IRizcfRvjw0uosMDAAA=
-X-Env-Sender: david.kim@ncipher.com
-X-Msg-Ref: server-13.tower-244.messagelabs.com!1576855818!1021151!2
-X-Originating-IP: [217.32.208.5]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.44.22; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 28300 invoked from network); 20 Dec 2019 15:30:18 -0000
-Received: from unknown (HELO exukdagfar02.INTERNAL.ROOT.TES) (217.32.208.5)
-  by server-13.tower-244.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 20 Dec 2019 15:30:18 -0000
-Received: from exukdagfar01.INTERNAL.ROOT.TES (10.194.2.70) by
- exukdagfar02.INTERNAL.ROOT.TES (10.194.2.71) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 20 Dec 2019 15:30:18 +0000
-Received: from exukdagfar01.INTERNAL.ROOT.TES ([fe80::48de:aa33:fc4c:d1f5]) by
- exukdagfar01.INTERNAL.ROOT.TES ([fe80::48de:aa33:fc4c:d1f5%14]) with mapi id
- 15.00.1497.000; Fri, 20 Dec 2019 15:30:18 +0000
-From:   "Kim, David" <david.kim@ncipher.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Magee, Tim" <tim.magee@ncipher.com>
-Subject: RE: [PATCH 1/1] drivers: misc: Add support for nCipher HSM devices
-Thread-Topic: [PATCH 1/1] drivers: misc: Add support for nCipher HSM devices
-Thread-Index: AQHVtN0iUtD2ObauYk2ExPz0BKUZFqe+VNMAgATVq5A=
-Date:   Fri, 20 Dec 2019 15:30:17 +0000
-Message-ID: <f0a52eb552a54a2c8c447145eec9bd47@exukdagfar01.INTERNAL.ROOT.TES>
-References: <20191217132244.14768-1-david.kim@ncipher.com>
- <20191217132244.14768-2-david.kim@ncipher.com>
- <20191217133834.GE3362771@kroah.com>
-In-Reply-To: <20191217133834.GE3362771@kroah.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.194.37.115]
-x-exclaimer-md-config: 7ae4f661-56ee-4cc7-9363-621ce9eeb65f
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727498AbfLTPtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 10:49:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:27460 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727270AbfLTPtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 10:49:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 07:49:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,336,1571727600"; 
+   d="scan'208";a="267551905"
+Received: from pkriegsm-mobl.amr.corp.intel.com (HELO [10.252.132.172]) ([10.252.132.172])
+  by FMSMGA003.fm.intel.com with ESMTP; 20 Dec 2019 07:49:34 -0800
+Subject: Re: [alsa-devel] [PATCH v6 02/11] mfd: wcd934x: add support to
+ wcd9340/wcd9341 codec
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        broonie@kernel.org, lee.jones@linaro.org, linus.walleij@linaro.org
+Cc:     robh@kernel.org, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, vinod.koul@linaro.org,
+        devicetree@vger.kernel.org, spapothi@codeaurora.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+References: <20191219103153.14875-1-srinivas.kandagatla@linaro.org>
+ <20191219103153.14875-3-srinivas.kandagatla@linaro.org>
+ <af48cd71-fa1a-dbc5-0e88-e315ea13c28c@linux.intel.com>
+ <db36d6d7-40a2-bbd2-f299-838abf4d92cc@linaro.org>
+ <4492b71e-9923-365c-f22c-3766e2d5bae2@linux.intel.com>
+ <3fa4997f-4409-97f6-ba10-a87013383eb7@linaro.org>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <df1c8ef8-2619-99b7-317c-1970c9413d00@linux.intel.com>
+Date:   Fri, 20 Dec 2019 09:22:48 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <3fa4997f-4409-97f6-ba10-a87013383eb7@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ICsvKioNCj4gPiArICogUENJIGRldmljZSBJRCB0YWJsZS4gIFdlIHVzZSB0aGUgZHJpdmVy
-X2RhdGEgZmllbGQgdG8gaG9sZCBhbg0KPiA+ICtpbmRleCBpbnRvDQo+ID4gKyAqIG5mcF9kcnZs
-aXN0LCBzbyBiZWFyIHRoYW4gaW4gbWluZCB3aGVuIGVkaXRpbmcgZWl0aGVyLg0KPiA+ICsgKi8N
-Cj4gPiArc3RhdGljIHN0cnVjdCBwY2lfZGV2aWNlX2lkIG5mcF9wY2lfdGJsW10gPSB7DQo+ID4g
-K3sNCj4gPiArUENJX1ZFTkRPUl9JRF9JTlRFTCwgUENJX0RFVklDRV9JRF9JTlRFTF8yMTU1NSwN
-Cj4gPiArUENJX1ZFTkRPUl9JRF9OQ0lQSEVSLA0KPiBQQ0lfU1VCU1lTVEVNX0lEX05GQVNUX1JF
-VjEsIDAsDQo+ID4gKzAsIC8qIElnbm9yZSBjbGFzcyAqLw0KPiA+ICswIC8qIEluZGV4IGludG8g
-bmZwX2Rydmxpc3QgKi8NCj4NCj4gUGxlYXNlIHVzZSB0aGUgY29ycmVjdCBQQ0lfREVWSUNFKCkg
-bWFjcm9zLCB0aGF0IHNob3VsZCB3b3JrIGhlcmUsIHJpZ2h0Pw0KPg0KPiBBbmQgeW91IGFyZSBn
-cmFiYmluZyBhbiBJbnRlbCBQQ0kgZGV2aWNlIGlkPw0KDQpXZSd2ZSByZW1vdmVkIG91ciByZWRl
-ZmluaXRpb24gb2YgUENJX1ZFTkRPUl9JRF9JTlRFTCBhbmQgYXJlIG5vdyB1c2luZyB0aGUgUENJ
-X0RFVklDRV9TVUIgbWFjcm8gdG8gZGVmaW5lIHRoZXNlIHN0cnVjdHMuDQoNCj4NCj4gQW5kIGtl
-cm5lbGRvYyBldmVyeXdoZXJlLCB5b3VyIGNvbW1lbnRpbmcgZm9ybWF0IGZvciBhbGwgb2YgdGhl
-IGNvZGUgaXMgYQ0KPiBiaXQgIm9kZCIuDQo+DQoNCkFsbCB0aGUgY29tbWVudGluZyBmb3JtYXQg
-c2hvdWxkIGJlIGJldHRlciBub3cuDQoNClRoYW5rcywNCkRhdmUNCg0KDQpEYXZpZCBLaW0NClNl
-bmlvciBTb2Z0d2FyZSBFbmdpbmVlcg0KVGVsOiArNDQgMTIyMyA3MDM0NDkNCg0KbkNpcGhlciBT
-ZWN1cml0eQ0KT25lIFN0YXRpb24gU3F1YXJlDQpDYW1icmlkZ2UgQ0IxIDJHQQ0KVW5pdGVkIEtp
-bmdkb20NCg0K
+
+
+>>> Note these are the child devices of the MFD SLIMBus device.
+>>
+>> Ah ok. I guess the creation of those child devices when the parent 
+>> SLIMbus device reports PRESENT initially if fine, it's the part where 
+>> you remove them if the device loses sync or gets powered off which is 
+>> odd. And I guess technically you could still have race conditions 
+>> where a child device starts a transaction just as the parent is no 
+>> longer attached to the bus.
+> 
+> Losing power to SLIMBus device is very odd usecase and if it happens 
+> suggests that threre are bigger issues on the board design itself. This 
+> case should never happen. Even if it happens we would get timeout errors 
+> on every SLIMbus transactions.
+> 
+>>
+>>>> I would however not remove the devices when the status is down but 
+>>>> only on an explicit .remove.
+>>>
+>>> Am open for suggestions but I would not like the child devices to 
+>>> talk on the bus once the SLIMbus device is down! Only way to ensure 
+>>> or make it silent is to remove.
+>>
+>> it's as if you are missing a mechanism to forward the parent status to 
+>> the children so use remove() for lack of a better solution?
+> That is true. This gives bit more control on the slave device lifecycle.
+> Current solution works fine for now with less complexities across 
+> multiple drivers. I also agree that there is scope of improvement in 
+> future for this.
+
+ok, makes sense, thanks for the answers. No further questions, so
+
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
