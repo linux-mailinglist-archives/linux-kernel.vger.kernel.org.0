@@ -2,110 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9396F1278D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:07:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B0331278E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:10:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfLTKHg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 05:07:36 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40398 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfLTKHg (ORCPT
+        id S1727283AbfLTKKQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 05:10:16 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:58149 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726210AbfLTKKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:07:36 -0500
-Received: by mail-pf1-f195.google.com with SMTP id q8so4928825pfh.7;
-        Fri, 20 Dec 2019 02:07:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6PgYWM5KLlV9J2tK3zk6I8nnNGwI4hbAz2zL2Wrn36s=;
-        b=mzAc3uScoLZwAwBmOTgWFx3Cdq1fgLMiP/eMZBb89JPZRCbQsfQbLR051CPKV1+USw
-         uJUZcaqk+aFpUl2MG3sASSqslUGB1a/9J5kK5diM12XPZ6t4Pyk+AHYDCIH626wUKNEO
-         yzykF3rxIBBMOJm3DXclTGMUDpzgnp1iQWZlNAwDNd9WXC3kU1VWdJcEdeZZwTUQgEzf
-         Eq5zUFTq34HgBhd8FOYQeCqvGFST8jNNxoggaXx4jw51WOt8sB8+4qTxuLuWqaS2dIEg
-         T2OF/D8/+1QuiMdOT35tOe/71p8vlAmujb34YXxBb1kc+cXqszYhr8awk66r+Ni59ITK
-         lYQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6PgYWM5KLlV9J2tK3zk6I8nnNGwI4hbAz2zL2Wrn36s=;
-        b=HazFXY2QQduo1xZHErur9AnVUUnc0WX0CSRohCvehDNWRkl61HCjL74uWwMlt7ays6
-         0hYBtnfI8g3HY6rsTMHZoNGIKtZRO0LkzPhuDeTAsGhw+B6HM2p9EOzCGNufZ2VAPNBJ
-         EbM9kwUoVwkRhc6Huw3ZruaVoodDTgiac4jrLhxUhPp2JtAumgy7FoivhIAJ0reE7G9M
-         FhmY0BGLQ/lOa7x3NdRb0c+zIXD6BA4ByhICyoUx2VRds4Ab64CXcPQ4tEI7fHED1mge
-         Svvt+XiIG+RHUMB90rhHR/B0ArC6jN5fox5lfTZ4iWtDJl0Rjv/fWfXOYZ78f9vsdvlZ
-         Cewg==
-X-Gm-Message-State: APjAAAVDg9DXxixrwPJCxwj3Uimad0caEiiQCWQjw27JdJDZql5pxdMr
-        Y0dnwQZH4OHeWKqqJabEHREtHXvn
-X-Google-Smtp-Source: APXvYqzyrJiJfKc8rX8lBjjvKmrULKgmcXJij4rS1WiLYuEauayMSHOhA4KYXPWhs3IvVFAfwO5yUA==
-X-Received: by 2002:aa7:9218:: with SMTP id 24mr14842974pfo.145.1576836455648;
-        Fri, 20 Dec 2019 02:07:35 -0800 (PST)
-Received: from ubuntu.localdomain ([118.193.245.26])
-        by smtp.gmail.com with ESMTPSA id n7sm437345pjq.8.2019.12.20.02.07.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 20 Dec 2019 02:07:34 -0800 (PST)
-From:   hui yang <yanghui.def@gmail.com>
-To:     paul@paul-moore.com
-Cc:     sds@tycho.nsa.gov, eparis@parisplace.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, YangHui <yanghui.def@gmail.com>
-Subject: [PATCH] netnode.c : fix sel_netnode_hash be destroyed
-Date:   Fri, 20 Dec 2019 18:07:21 +0800
-Message-Id: <1576836441-4140-1-git-send-email-yanghui.def@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 20 Dec 2019 05:10:15 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-133-yPtZzMMDPiugfTa6rRJszw-1; Fri, 20 Dec 2019 10:10:11 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 20 Dec 2019 10:10:10 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 20 Dec 2019 10:10:10 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Brian Gerst' <brgerst@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>
+CC:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: RE: [PATCH] x86: Remove force_iret()
+Thread-Topic: [PATCH] x86: Remove force_iret()
+Thread-Index: AQHVtuhWtS7aVpT6VkyrDyqz06b2R6fCyteg
+Date:   Fri, 20 Dec 2019 10:10:10 +0000
+Message-ID: <431a146f6461402da61d09fff155f35b@AcuMS.aculab.com>
+References: <20191219115812.102620-1-brgerst@gmail.com>
+ <CALCETrW1zE0Uufrg_UG4JNQKMy3UFxnd+XmZye2gdTV36C-yTw@mail.gmail.com>
+ <CAMzpN2if2m4McWpL49U4QAEM1MJ+qgTe-emN8vKcjVc1H+84vA@mail.gmail.com>
+In-Reply-To: <CAMzpN2if2m4McWpL49U4QAEM1MJ+qgTe-emN8vKcjVc1H+84vA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: yPtZzMMDPiugfTa6rRJszw-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YangHui <yanghui.def@gmail.com>
-
-we often find below error :
-[   30.729718] Unable to handle kernel paging request at virtual address fffffffffffffffc
-[   30.747478] Kernel BUG at sel_netnode_find+0x6c/0xf0 [verbose debug info unavailable]
-[   30.818858] PC is at sel_netnode_find+0x6c/0xf0
-[   30.824671] LR is at sel_netnode_sid+0x3c/0x248
-[   30.829170] pc : [<ffffff8008428094>] lr : [<ffffff8008428154>] pstate: a0400145
-[   30.833701] sp : ffffffc026f27c50
-[   30.841319] x29: ffffffc026f27c50 x28: ffffffc026f27e40
-[   30.849634] x27: ffffff8009132000 x26: 0000000000000000
-[   30.854932] x25: ffffffc016f0aa80 x24: 0000000000000000
-[   30.860224] x23: ffffffc026f27e38 x22: ffffffc026f27d34
-[   30.865520] x21: 000000000000000a x20: ffffffc026f27e40
-[   30.870818] x19: 000000000000000a x18: 0000007a13b48000
-[   30.876118] x17: 0000007a16ca93c0 x16: ffffff8008e56b2c
-[   30.881406] x15: 0000000000000020 x14: 002dc6bffa5d9e00
-[   30.886701] x13: 203a644974654e4c x12: 00000000000017c1
-[   30.891997] x11: 0000000000000000 x10: 0000000000000001
-[   30.897292] x9 : 0000000000000002 x8 : ffffff8009933090
-[   30.902588] x7 : ffffffc0725fd090 x6 : 0000000004fd9f2c
-[   30.907881] x5 : 0000000000000000 x4 : 0000000000000000
-[   30.913176] x3 : 00000001ffffffff x2 : 0000000000000000
-[   30.918475] x1 : ffffff800a10ca80 x0 : ffffffffffffffe8
-some sel_netnode_hash[idx].list==NULL,so happend this.
-I add spin_lock_bh on sel_netnode_init.
-
-Signed-off-by: YangHui <yanghui.def@gmail.com>
----
- security/selinux/netnode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/selinux/netnode.c b/security/selinux/netnode.c
-index 9ab84ef..aa0eeb7 100644
---- a/security/selinux/netnode.c
-+++ b/security/selinux/netnode.c
-@@ -293,11 +293,12 @@ static __init int sel_netnode_init(void)
- 
- 	if (!selinux_enabled)
- 		return 0;
--
-+	spin_lock_bh(&sel_netnode_lock);
- 	for (iter = 0; iter < SEL_NETNODE_HASH_SIZE; iter++) {
- 		INIT_LIST_HEAD(&sel_netnode_hash[iter].list);
- 		sel_netnode_hash[iter].size = 0;
- 	}
-+	spin_unlock_bh(&sel_netnode_lock);
- 
- 	return 0;
- }
--- 
-2.7.4
+RnJvbTogQnJpYW4gR2Vyc3QNCj4gU2VudDogMjAgRGVjZW1iZXIgMjAxOSAwMzo0OA0KPiBPbiBU
+aHUsIERlYyAxOSwgMjAxOSBhdCA4OjUwIFBNIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJuZWwu
+b3JnPiB3cm90ZToNCj4gPg0KPiA+IE9uIFRodSwgRGVjIDE5LCAyMDE5IGF0IDM6NTggQU0gQnJp
+YW4gR2Vyc3QgPGJyZ2Vyc3RAZ21haWwuY29tPiB3cm90ZToNCj4gPiA+DQo+ID4gPiBmb3JjZV9p
+cmV0KCkgd2FzIG9yaWdpbmFsbHkgaW50ZW5kZWQgdG8gcHJldmVudCB0aGUgcmV0dXJuIHRvIHVz
+ZXIgbW9kZSB3aXRoDQo+ID4gPiB0aGUgU1lTUkVUIG9yIFNZU0VYSVQgaW5zdHJ1Y3Rpb25zLCBp
+biBjYXNlcyB3aGVyZSB0aGUgcmVnaXN0ZXIgc3RhdGUgY291bGQNCj4gPiA+IGhhdmUgYmVlbiBj
+aGFuZ2VkIHRvIGJlIGluY29tcGF0aWJsZSB3aXRoIHRob3NlIGluc3RydWN0aW9ucy4NCj4gPg0K
+PiA+IEl0J3MgbW9yZSB0aGFuIHRoYXQuICBCZWZvcmUgdGhlIGJpZyBzeXNjYWxsIHJld29yaywg
+d2UgZGlkbid0IHJlc3RvcmUNCj4gPiB0aGUgY2FsbGVyLXNhdmVkIHJlZ3MuICBTZWU6DQo+ID4N
+Cj4gPiBjb21taXQgMjFkMzc1YjZiMzRmZjUxMWE1MDdkZTI3YmYzMTZiM2RkZTY5MzhkOQ0KPiA+
+IEF1dGhvcjogQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtlcm5lbC5vcmc+DQo+ID4gRGF0ZTogICBT
+dW4gSmFuIDI4IDEwOjM4OjQ5IDIwMTggLTA4MDANCj4gPg0KPiA+ICAgICB4ODYvZW50cnkvNjQ6
+IFJlbW92ZSB0aGUgU1lTQ0FMTDY0IGZhc3QgcGF0aA0KPiA+DQo+ID4gU28gaWYgeW91IGNoYW5n
+ZWQgcjEyLCBmb3IgZXhhbXBsZSwgdGhlIGNoYW5nZSB3b3VsZCBnZXQgbG9zdC4NCj4gDQo+IGZv
+cmNlX2lyZXQoKSBzcGVjaWZpY2FsbHkgZGVhbHQgd2l0aCBjaGFuZ2VzIHRvIENTLCBTUyBhbmQg
+RUZMQUdTLg0KPiBTYXZpbmcgYW5kIHJlc3RvcmluZyB0aGUgZXh0cmEgcmVnaXN0ZXJzIHdhcyBh
+IGRpZmZlcmVudCBwcm9ibGVtDQo+IGFsdGhvdWdoIGl0IGFmZmVjdGVkIHRoZSBzYW1lIGZ1bmN0
+aW9ucyBsaWtlIHB0cmFjZSwgc2lnbmFscywgYW5kDQo+IGV4ZWMuDQoNCklzIGl0IGV2ZXIgcG9z
+c2libGUgZm9yIGFueSBvZiB0aGUgc2VnbWVudCByZWdpc3RlcnMgdG8gcmVmZXIgdG8gdGhlIExE
+VA0KYW5kIGZvciBhbm90aGVyIHRocmVhZCB0byBpbnZhbGlkYXRlIHRoZSBlbnRyaWVzICd2ZXJ5
+IGxhdGUnID8NCg0KU28gZXZlbiB0aG91Z2ggdGhlIHZhbHVlcyB3ZXJlIHZhbGlkIHdoZW4gY2hh
+bmdlZCwgdGhleSBhcmUNCmludmFsaWQgZHVyaW5nIHRoZSAncmV0dXJuIHRvIHVzZXInIHNlcXVl
+bmNlLg0KDQpJIHJlbWVtYmVyIHdyaXRpbmcgYSBzaWduYWwgaGFuZGxlciB0aGF0ICdjb3JydXB0
+ZWQnIGFsbCB0aGUNCnNlZ21lbnQgcmVnaXN0ZXJzIChldGMpIGFuZCBmaXhpbmcgdGhlIE5ldEJT
+RCBrZXJuZWwgdG8gaGFuZGxlDQphbGwgdGhlIGZhdWx0cyByZXN0b3JpbmcgdGhlIHNlZ21lbnQg
+cmVnaXN0ZXJzIGFuZCBJUkVUIGZhdWx0aW5nDQppbiBrZXJuZWwgKElJUkMgaW52YWxpZCB1c2Vy
+ICVTUyBvciAlQ1MpLg0KKElSRVQgY2FuIGFsc28gZmF1bHQgaW4gdXNlciBzcGFjZSwgYnV0IHRo
+YXQgaXMgYSBub3JtYWwgZmF1bHQuKQ0KDQpJcyBpdCBhY3R1YWxseSBjaGVhcGVyIHRvIHByb3Bl
+cmx5IHZhbGlkYXRlIHRoZSBzZWdtZW50IHJlZ2lzdGVycywNCm9yIHRha2UgdGhlICdoaXQnIG9m
+IHRoZSBzbGlnaHRseSBzbG93ZXIgSVJFVCBwYXRoIGFuZCBnZXQgdGhlIGNwdQ0KdG8gZG8gaXQg
+Zm9yIHlvdT8NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJh
+bWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0
+cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
