@@ -2,164 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1760412765E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 08:16:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4859C127665
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 08:19:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfLTHQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 02:16:22 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41143 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfLTHQV (ORCPT
+        id S1727167AbfLTHTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 02:19:42 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:16681 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725914AbfLTHTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 02:16:21 -0500
-Received: by mail-lj1-f194.google.com with SMTP id h23so8913742ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 23:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=rU63DQoZ1O4aDPnpUtZw0pffZuCh8kRgyB9M3LIWb4E=;
-        b=gtO6XXyDoTOM5n+mXwcKILSvoVqjlbvl5cD47Lyey1mnjdeMhU9VY2iCkr/u5Oxp2S
-         RXPp9gZKSdfi4o2ufGkUSGO7NH/QUlc2V9m6vYYOW/bBKF5sml3zKpTTOwMtUUFzZUkC
-         4QhdgfsRxSB+cF8mdnoQ9pkTmdD8eq+KSYWugc71NLv/J1+BqfWQn63EAquBotZbIoVE
-         PUlOy7GevxBx2fVj4yzgorLXIE00gjZHCRWO9Naxt2RyL2jGT+KWu+k6OwujOWMLnTe2
-         uOEZhnE03MhiEqoRKnrMgOZAOlRdY7lDvGLGR4LjDCC8hIdVEzIoaTWxppzlDBtnyOks
-         Nkug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=rU63DQoZ1O4aDPnpUtZw0pffZuCh8kRgyB9M3LIWb4E=;
-        b=S/Ebl1hxYoULF59zX7syf6HCZw6ei6t/p0HKV4QpWcrctSSTIFdl0Z9uH1sZ3Dui96
-         mnggXSDxzHj4LyjnfMzdH5/MaaCRs/xiNhGWFPu+/FKSWZ/ofpdbx+kuBiXp80fHo/0D
-         Z/sSFGujDsoNYdY+qUttofRoxe42u0o8ZxTezzKxTMqtEuMXi5LmBwcu1h9hwVBy+sCQ
-         LR5Kz6wrwR6zyaHNlOMcEQAaf9ZGeejUt9oLmiWJXwElt/KCXpp4ZQeg1TPiRYW4etRX
-         IpdCUnqQ0qrb76T19hcMymzbyQMfYdiCYgza0AEn9eCzTrud5u+X8EK8Oqo44KAO2SOx
-         nsUA==
-X-Gm-Message-State: APjAAAV8gRLccFVJreAZq1XJzgdEy4IMNqn4hpYXl6uUvSCGU8lFCcPD
-        hUhD0ifbl+eaAUeTK8QvLzlzg1jG1CXCZDys2sUmVF2XxMY=
-X-Google-Smtp-Source: APXvYqzR9QnQOEeLIgxF/fG1xNuYVLN/zbfx0Rv89IsGu9U0rr72BDLAKp0m7xxG114XhbS3FnLJYGAGj3Ik//uuM3U=
-X-Received: by 2002:a2e:5357:: with SMTP id t23mr8876682ljd.227.1576826179423;
- Thu, 19 Dec 2019 23:16:19 -0800 (PST)
+        Fri, 20 Dec 2019 02:19:41 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576826381; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=qQnAOBnm851gvtQP9RARiafEiullQAdZpKpw996rOSk=; b=LK+J1zGwcyMsY9map+ofgfL+RI6uZaFvetVaCYLvEDOLJWxeXKpS78fk6PUlYuv7t2Jg/vnI
+ UEVQvDOJDTLdtRObq/UJ8oEjmHp9FwDJlqI3u8W3HNXMvU+7XcLcuV817Y6WrJjFnz5RHnTJ
+ 4SyBsAWj1O3P9t1Tkphn9HJ1caY=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfc7608.7fdada0a99d0-smtp-out-n02;
+ Fri, 20 Dec 2019 07:19:36 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 76001C4479C; Fri, 20 Dec 2019 07:19:35 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 04C50C433CB;
+        Fri, 20 Dec 2019 07:19:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04C50C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Network Development <netdev@vger.kernel.org>,
+        linux-wireless@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        ath11k@lists.infradead.org
+Subject: Re: [PATCH] ath11k: Remove unnecessary enum scan_priority
+References: <20191211192252.35024-1-natechancellor@gmail.com>
+        <CAKwvOdmQp+Rjgh49kbTp1ocLCjv4SUACEO4+tX5vz4stX-pPpg@mail.gmail.com>
+        <87a77o786o.fsf@kamboji.qca.qualcomm.com>
+        <CAKwvOdk3EPurHLMf81VHowauRYZ4FZXxNg98hJvp8CLgu=SSPw@mail.gmail.com>
+Date:   Fri, 20 Dec 2019 09:19:30 +0200
+In-Reply-To: <CAKwvOdk3EPurHLMf81VHowauRYZ4FZXxNg98hJvp8CLgu=SSPw@mail.gmail.com>
+        (Nick Desaulniers's message of "Thu, 19 Dec 2019 09:06:37 -0800")
+Message-ID: <877e2r4g71.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <20191219182857.659088743@linuxfoundation.org>
-In-Reply-To: <20191219182857.659088743@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 20 Dec 2019 12:46:06 +0530
-Message-ID: <CA+G9fYsSD5eNC8aMH6=o4fKC+1hs085mW2ZAhJPPR-tSn3=n1g@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/47] 4.19.91-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019 at 00:22, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+Nick Desaulniers <ndesaulniers@google.com> writes:
+
+> On Thu, Dec 19, 2019 at 5:32 AM Kalle Valo <kvalo@codeaurora.org> wrote:
+>>
+>> Nick Desaulniers <ndesaulniers@google.com> writes:
+>>
+>> > On Wed, Dec 11, 2019 at 11:23 AM Nathan Chancellor
+>> > <natechancellor@gmail.com> wrote:
+>> >> wmi_scan_priority and scan_priority have the same values but the wmi one
+>> >> has WMI prefixed to the names. Since that enum is already being used,
+>> >> get rid of scan_priority and switch its one use to wmi_scan_priority to
+>> >> fix this warning.
+>> >>
+>> > Also, I don't know if the more concisely named enum is preferable?
+>>
+>> I didn't get this comment.
 >
-> This is the start of the stable review cycle for the 4.19.91 release.
-> There are 47 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 21 Dec 2019 18:24:44 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.91-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+> Given two enums with the same values:
+> enum scan_priority
+> enum wmi_scan_priority
+> wouldn't you prefer to type wmi_ a few times less?  Doesn't really
+> matter, but that was the point I was making.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Ah, now I got it :) This enum is part of firmware interface (WMI) so
+yes, I prefer to use the wmi_ prefix to make that obvious.
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.19.91-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 631e9861976dab68c01c22dcd7d1a07ea91d4462
-git describe: v4.19.90-48-g631e9861976d
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.90-48-g631e9861976d
-
-No regressions (compared to build v4.19.90)
-
-No fixes (compared to build v4.19.90)
-
-Ran 21464 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* linux-log-parser
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-securebits-tests
-* spectre-meltdown-checker-test
-* ltp-cap_bounds-tests
-* ltp-cpuhotplug-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-sched-tests
-* ltp-syscalls-tests
-* network-basic-tests
-* perf
-* v4l2-compliance
-* ltp-open-posix-tests
-* kvm-unit-tests
-* ssuite
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
