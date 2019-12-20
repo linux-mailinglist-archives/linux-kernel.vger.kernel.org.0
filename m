@@ -2,126 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6AA31278B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28AAF1278BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:05:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727211AbfLTKAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 05:00:51 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40686 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbfLTKAv (ORCPT
+        id S1727344AbfLTKFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 05:05:01 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:56200 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727180AbfLTKFB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:00:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wboPPEei1XiVNkDt31D2yRaQW4+eIhEEINuouiM8mHs=; b=liu0G248vBLt3Qt+Ml3sDhNlh
-        tezLJ/pa61Z8Xhs06DZMX2gql+tWaeJboBSKoye+Cf/KqEe6UcMQgD7mdk7HHAvfE1Vx+0Qy5vNyx
-        jb0/gzwzvmXPtG5N+uScPU15AFjkkebxz+Y7bi4RLxv2I4JToK0A5KskndSo5xPi/fsDQ7EAVvhfy
-        0yRFFhuer/eFrSSJ3w3iDwIAR6J1qkxRzdv2vlaz1CswR3UTbw0Dz0gnWmh+RkO20VsOPVX31ylRg
-        na/Zpukcnils7eh9/A4Tjw3ZscY9TNX6ApjU4/KOIjTF8CqhqacmwK/L7mLR2wcSK0BTpQIAkT4IB
-        7UAbmeVsw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1iiF5I-0004aP-Pv; Fri, 20 Dec 2019 10:00:36 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 03A5D30073C;
-        Fri, 20 Dec 2019 10:59:09 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E05A72B4061B0; Fri, 20 Dec 2019 11:00:33 +0100 (CET)
-Date:   Fri, 20 Dec 2019 11:00:33 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Kirill Tkhai <tkhai@yandex.ru>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-        "bsegall@google.com" <bsegall@google.com>,
-        "mgorman@suse.de" <mgorman@suse.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RFC][PATCH 1/4] sched: Force the address order of each sched
- class descriptor
-Message-ID: <20191220100033.GE2844@hirez.programming.kicks-ass.net>
-References: <20191219214451.340746474@goodmis.org>
- <20191219214558.510271353@goodmis.org>
- <0a957e8d-7af8-613c-11ae-f51b9b241eb7@rasmusvillemoes.dk>
+        Fri, 20 Dec 2019 05:05:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576836300;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=QvzvT9KTfyHDuiqD0CTUkv7t6l7JQ96ZSNVZ4d8CIR8=;
+        b=JDIe9Q96TibzSJ0B5gco8g9cXQpCfAs9Inl7IzZ2jxRWc9H96nJXhhuJNut0SVFo0IxGm9
+        P5ZKR0d74k7vIOUQtaFQ1aQo/3op6tlfTC4vZ/wAplIQYYIJV3rkw2Z/mVtoWuQNl+Qiya
+        V1BiVxfG0w1cR3z9DCz0mpCzOugbgt4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-6-Z1PL8IVtM1GYv6o7quyz3w-1; Fri, 20 Dec 2019 05:04:56 -0500
+X-MC-Unique: Z1PL8IVtM1GYv6o7quyz3w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 1D83A911F0;
+        Fri, 20 Dec 2019 10:04:54 +0000 (UTC)
+Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EB85060C18;
+        Fri, 20 Dec 2019 10:04:47 +0000 (UTC)
+Date:   Fri, 20 Dec 2019 11:04:45 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [PATCH v2 35/45] KVM: s390: Manually invoke vcpu setup during
+ kvm_arch_vcpu_create()
+Message-ID: <20191220110445.3a42041a.cohuck@redhat.com>
+In-Reply-To: <20191218215530.2280-36-sean.j.christopherson@intel.com>
+References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+        <20191218215530.2280-36-sean.j.christopherson@intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a957e8d-7af8-613c-11ae-f51b9b241eb7@rasmusvillemoes.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 09:52:37AM +0100, Rasmus Villemoes wrote:
-> On 19/12/2019 22.44, Steven Rostedt wrote:
-> > From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> > 
-> > In order to make a micro optimization in pick_next_task(), the order of the
-> > sched class descriptor address must be in the same order as their priority
-> > to each other. That is:
-> > 
-> >  &idle_sched_class < &fair_sched_class < &rt_sched_class <
-> >  &dl_sched_class < &stop_sched_class
-> > 
-> > In order to guarantee this order of the sched class descriptors, add each
-> > one into their own data section and force the order in the linker script.
+On Wed, 18 Dec 2019 13:55:20 -0800
+Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+
+> Rename kvm_arch_vcpu_setup() to kvm_s390_vcpu_setup() and manually call
+> the new function during kvm_arch_vcpu_create().  Define an empty
+> kvm_arch_vcpu_setup() as it's still required for compilation.  This
+> is effectively a nop as kvm_arch_vcpu_create() and kvm_arch_vcpu_setup()
+> are called back-to-back by common KVM code.  Obsoleting
+> kvm_arch_vcpu_setup() paves the way for its removal.
 > 
-> I think it would make the code simpler if one reverses these, see other
-> reply.
+> Note, gmap_remove() is now called if setup fails, as s390 was previously
+> freeing it via kvm_arch_vcpu_destroy(), which is called by common KVM
+> code if kvm_arch_vcpu_setup() fails.
 
-I started out agreeing, because of that mess around STOP_SCHED_CLASS and
-that horrid BEFORE_CRUD thing.
+Yes, this looks like the only thing that needs to be undone
+(sca_add_vcpu() is done later in the process.)
 
-Then, when I fixed it all up, I saw what it did to Kyrill's patch (#4)
-and that ends up looking like:
+Maybe mention that gmap_remove() is for ucontrol only? I was confused
+for a moment :)
 
--       if (likely((prev->sched_class == &idle_sched_class ||
--                   prev->sched_class == &fair_sched_class) &&
-+       if (likely(prev->sched_class >= &fair_sched_class &&
 
-And that's just weird.
-
-Then I had a better look and now...
-
-> > +/*
-> > + * The order of the sched class addresses are important, as they are
-> > + * used to determine the order of the priority of each sched class in
-> > + * relation to each other.
-> > + */
-> > +#define SCHED_DATA				\
-> > +	*(__idle_sched_class)			\
-> > +	*(__fair_sched_class)			\
-> > +	*(__rt_sched_class)			\
-> > +	*(__dl_sched_class)			\
-> > +	STOP_SCHED_CLASS
-
-I'm confused, why does that STOP_SCHED_CLASS need magic here at all?
-Doesn't the linker deal with empty sections already by making them 0
-sized?
-
-> >  /*
-> >   * Align to a 32 byte boundary equal to the
-> >   * alignment gcc 4.5 uses for a struct
-> > @@ -308,6 +326,7 @@
-> >  #define DATA_DATA							\
-> >  	*(.xiptext)							\
-> >  	*(DATA_MAIN)							\
-> > +	SCHED_DATA							\
-> >  	*(.ref.data)							\
 > 
-> Doesn't this make the structs end up in .data (writable) rather than
-> .rodata?
+> No functional change intended.
+> 
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/s390/kvm/kvm-s390.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 
-Right! That wants fixing.
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+
