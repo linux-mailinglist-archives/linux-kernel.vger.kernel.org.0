@@ -2,138 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 204DF127A4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1EE41127A6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 13:00:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfLTLzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:55:24 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40153 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfLTLzX (ORCPT
+        id S1727404AbfLTL7t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:59:49 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:39522 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727388AbfLTL7r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:55:23 -0500
-Received: by mail-lf1-f68.google.com with SMTP id i23so6820813lfo.7
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 03:55:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DPm8u606XYLiFYRzZPxYwiipRU6meoWwaOXT6w0bjOM=;
-        b=LpLIk+iWEQmCJKmxxQtjOBI5VPgYmQDAki9aDGhAS5pRI26oTknEGVSkm+aWTsM91S
-         2433nhpaTvJk79vRxSNlSJbZLx0VzRRaWvNq5tQ7IGd84VjyDNNlRaObga3xfNmsLXml
-         o5leSv2l4rwD1xzRNn5TVD/86OC/oBRDoxYT0vjK2jVgBZotNnqBraKgqsKOTYaU4NIz
-         kchm8GamnHjLnQRBycri25rloiDJTTfcRfDjHc+EWQZkCO7HXrxAQKaSs9Bqo7coBPP/
-         DI9veVI5XkDQfIK+TgJePmtO3gMnAUdW0vsLpuat50vIMmgswqIQnfRZKBC2KusAxdUn
-         uZ0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DPm8u606XYLiFYRzZPxYwiipRU6meoWwaOXT6w0bjOM=;
-        b=GF1Pd7KK509F7aGt0mmWB9xCFBlHuCej4fHEY9Fl+q9AEEnFZlsc+zSQ1clFiGLwO3
-         Ji8HIN68kmRi9IheMd7igjHUcgE7dloPkukJGk2QUgmpmdshqxH+bLHX4YoGjehwVS2v
-         S4zI6CiSJXkOry8DfaQlznp2FRSHxiYyQWWD7LCpfM5XICtKT18ZjauwnKgae+tfo5Pp
-         eINPME/l0aINz2xvKJ4rlQmNwsTfJFWJnnELO2waX52y7fn8X3npLonLKbwidTSnTbMe
-         VZuQLDVv6D0+wuwBp87YC7k2GhiXj+CeIVBoGVvgRi/NkAVC4sM622+YLLUo6dIrTD+6
-         4+bQ==
-X-Gm-Message-State: APjAAAVg7QR1KwnYMgvxagR5E+6TEnbJwtJnL9cVNMA9ugHq3pc/V63n
-        xFgzYwSKUpd4yd18jhatfufUFJdcQFqcNjMtSOK6mg==
-X-Google-Smtp-Source: APXvYqx1g+drEwy2vCmHS5tkE2wiSoi/HAfHYDfVNuMQEs0wR3lCx84+yKxERoWVh28TXKUehXa2+CgnbmkpWleGBuo=
-X-Received: by 2002:ac2:5147:: with SMTP id q7mr8670447lfd.87.1576842921377;
- Fri, 20 Dec 2019 03:55:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20191220160639.3406a5de@canb.auug.org.au>
-In-Reply-To: <20191220160639.3406a5de@canb.auug.org.au>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Fri, 20 Dec 2019 12:55:10 +0100
-Message-ID: <CADYN=9JjqvNWEsHLW5+GgSvkUkuz_6iMpD=X4Vk6nLQXtXa2Dw@mail.gmail.com>
-Subject: Re: linux-next: Tree for Dec 20
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        martin.petersen@oracle.com, Stanley Chu <stanley.chu@mediatek.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 20 Dec 2019 06:59:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576843187;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:in-reply-to:in-reply-to:references:references;
+        bh=aOOYqVPrj4S2St31AUk2Ye43S8BIUm6kjTFmGx5Z+/A=;
+        b=XerEBZgvnVkhaWBGF/bC0AlydKVk83Y+aF8Tvrem9M9EU3/ux866UlOy84S7u3ZnpVcdUy
+        RwbGOgF358DIoQUt4SNelb9BqBnhkntuge/+qzKAfqtA5OeiQRtowgsBX37ejIWx02Da0e
+        dPK+XcD2+oVHS8Y8fpPBXUygrW8PAnc=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-340-rVnDIYr_NoWoY4vSySONOQ-1; Fri, 20 Dec 2019 06:59:40 -0500
+X-MC-Unique: rVnDIYr_NoWoY4vSySONOQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 349FB107ACC7;
+        Fri, 20 Dec 2019 11:59:39 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-98.ams2.redhat.com [10.36.116.98])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3BF087D9D4;
+        Fri, 20 Dec 2019 11:59:36 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 79C463F13D; Fri, 20 Dec 2019 12:59:35 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gurchetan Singh <gurchetansingh@chromium.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/4] drm/bochs: add drm_driver.release callback.
+Date:   Fri, 20 Dec 2019 12:59:32 +0100
+Message-Id: <20191220115935.15152-2-kraxel@redhat.com>
+In-Reply-To: <20191220115935.15152-1-kraxel@redhat.com>
+References: <20191220115935.15152-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019 at 06:06, Stephen Rothwell <sfr@canb.auug.org.au> wrote=
-:
->
-> Hi all,
+From: Gurchetan Singh <gurchetansingh@chromium.org>
 
-Hi all,
+Move bochs_unload call from bochs_remove() to the new bochs_release()
+callback.  Also call drm_dev_unregister() first in bochs_remove().
 
->
-> News: There will be no linux-next releases until January 6 (unless I
-> get very bored :-)).
->
-> Changes since 20191219:
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs_drv.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-on arm64 I see this:
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index 10460878414e..87ee1eb21a4d 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -60,6 +60,11 @@ static int bochs_load(struct drm_device *dev)
+ 
+ DEFINE_DRM_GEM_FOPS(bochs_fops);
+ 
++static void bochs_release(struct drm_device *dev)
++{
++	bochs_unload(dev);
++}
++
+ static struct drm_driver bochs_driver = {
+ 	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+ 	.fops			= &bochs_fops,
+@@ -69,6 +74,7 @@ static struct drm_driver bochs_driver = {
+ 	.major			= 1,
+ 	.minor			= 0,
+ 	DRM_GEM_VRAM_DRIVER,
++	.release                = bochs_release,
+ };
+ 
+ /* ---------------------------------------------------------------------- */
+@@ -148,9 +154,8 @@ static void bochs_pci_remove(struct pci_dev *pdev)
+ {
+ 	struct drm_device *dev = pci_get_drvdata(pdev);
+ 
+-	drm_atomic_helper_shutdown(dev);
+ 	drm_dev_unregister(dev);
+-	bochs_unload(dev);
++	drm_atomic_helper_shutdown(dev);
+ 	drm_dev_put(dev);
+ }
+ 
+-- 
+2.18.1
 
-../drivers/scsi/ufs/ufs-mediatek.c: In function =C3=A2=E2=82=AC=CB=9Cufs_mt=
-k_setup_ref_clk=C3=A2=E2=82=AC=E2=84=A2:
-../drivers/scsi/ufs/ufs-mediatek.c:93:23: error: storage size of
-=C3=A2=E2=82=AC=CB=9Cres=C3=A2=E2=82=AC=E2=84=A2 isn=C3=A2=E2=82=AC=E2=84=
-=A2t known
-  struct arm_smccc_res res;
-                       ^~~
-../drivers/scsi/ufs/ufs-mediatek.c:21:2: error: implicit declaration
-of function =C3=A2=E2=82=AC=CB=9Carm_smccc_smc=C3=A2=E2=82=AC=E2=84=A2
-[-Werror=3Dimplicit-function-declaration]
-  arm_smccc_smc(MTK_SIP_UFS_CONTROL, \
-  ^~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:101:3: note: in expansion of macro
-=C3=A2=E2=82=AC=CB=9Cufs_mtk_ref_clk_notify=C3=A2=E2=82=AC=E2=84=A2
-   ufs_mtk_ref_clk_notify(on, res);
-   ^~~~~~~~~~~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:21:16: error:
-=C3=A2=E2=82=AC=CB=9CMTK_SIP_UFS_CONTROL=C3=A2=E2=82=AC=E2=84=A2 undeclared=
- (first use in this function); did
-you mean =C3=A2=E2=82=AC=CB=9CTX_HIBERN8_CONTROL=C3=A2=E2=82=AC=E2=84=A2?
-  arm_smccc_smc(MTK_SIP_UFS_CONTROL, \
-                ^~~~~~~~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:101:3: note: in expansion of macro
-=C3=A2=E2=82=AC=CB=9Cufs_mtk_ref_clk_notify=C3=A2=E2=82=AC=E2=84=A2
-   ufs_mtk_ref_clk_notify(on, res);
-   ^~~~~~~~~~~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:21:16: note: each undeclared
-identifier is reported only once for each function it appears in
-  arm_smccc_smc(MTK_SIP_UFS_CONTROL, \
-                ^~~~~~~~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:101:3: note: in expansion of macro
-=C3=A2=E2=82=AC=CB=9Cufs_mtk_ref_clk_notify=C3=A2=E2=82=AC=E2=84=A2
-   ufs_mtk_ref_clk_notify(on, res);
-   ^~~~~~~~~~~~~~~~~~~~~~
-../drivers/scsi/ufs/ufs-mediatek.c:93:23: warning: unused variable
-=C3=A2=E2=82=AC=CB=9Cres=C3=A2=E2=82=AC=E2=84=A2 [-Wunused-variable]
-  struct arm_smccc_res res;
-                       ^~~
-cc1: some warnings being treated as errors
-make[4]: *** [../scripts/Makefile.build:266:
-drivers/scsi/ufs/ufs-mediatek.o] Error 1
-make[4]: Target '__build' not remade because of errors.
-make[3]: *** [../scripts/Makefile.build:503: drivers/scsi/ufs] Error 2
-make[3]: Target '__build' not remade because of errors.
-make[2]: *** [../scripts/Makefile.build:503: drivers/scsi] Error 2
-../drivers/staging/wilc1000/hif.c: In function =C3=A2=E2=82=AC=CB=9Cwilc_pa=
-rse_join_bss_param=C3=A2=E2=82=AC=E2=84=A2:
-../drivers/staging/wilc1000/hif.c:574:45: warning: array subscript 2
-is above array bounds of =C3=A2=E2=82=AC=CB=9Cu32[2]=C3=A2=E2=82=AC=E2=84=
-=A2 {aka =C3=A2=E2=82=AC=CB=9Cunsigned int[2]=C3=A2=E2=82=AC=E2=84=A2}
-[-Warray-bounds]
-    param->akm_suites[i] =3D crypto->akm_suites[i] & 0xFF;
-                           ~~~~~~~~~~~~~~~~~~^~~
-make[2]: Target '__build' not remade because of errors.
-make[1]: *** [/srv/jenkins/kernel/next/Makefile:1694: drivers] Error 2
-make[1]: Target 'Image' not remade because of errors.
-make[1]: Target 'modules' not remade because of errors.
-make: *** [Makefile:179: sub-make] Error 2
-make: Target 'Image' not remade because of errors.
-make: Target 'modules' not remade because of errors.
-
-Cheers,
-Anders
