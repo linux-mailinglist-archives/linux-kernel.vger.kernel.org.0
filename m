@@ -2,164 +2,1377 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4261283E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 22:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 293791283F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 22:38:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbfLTVfL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 16:35:11 -0500
-Received: from mail-il1-f200.google.com ([209.85.166.200]:38907 "EHLO
-        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727510AbfLTVfK (ORCPT
+        id S1727593AbfLTVib (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 16:38:31 -0500
+Received: from mail.efficios.com ([167.114.142.138]:57456 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727422AbfLTVia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 16:35:10 -0500
-Received: by mail-il1-f200.google.com with SMTP id i67so8654537ilf.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 13:35:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=wfGBWjmItVt3DfW1Y+0jHm4muOZNGwKi+vppyTSZe+0=;
-        b=hHUO+5MYuxkxJ6Co6O57k0yETLLgyomGl1cEbI7gTYzDLjDyZMLia9E5ETxA0TAUa0
-         86PtjtOtJDVzCfyzM1z3MgYAb6lokjCyzqAtuRCRAIZB5g/Q4U00CXptkncNgnPwoLat
-         xQsa/d1hrxQkc3aJMF5kpOtOef4Nv7J7mhMlGp0NeUodlrZCTDWHFfbsgqQ8rWd4WpDI
-         M/MvS4eP61BbhfOs32X4N4VapznLiO4GHtId4u7MrmTcOFMsYoS0HB/FpoQXag+hY+tj
-         7fyUkNnqGq+is0bwS+g9iEKp+B9sUnMVuVDg3PK/h1A644G2sI1NoKmIEQwTh3OVcsJI
-         XhoQ==
-X-Gm-Message-State: APjAAAXKi+9LMibosELwGo6KMQdPW3wEqHe9iBLBlChUQJyNusEDxuEf
-        1eVUcpEyXNxO9niI9zUdLKugVNRPmnQ7uwoU5MH6+rGmGAFI
-X-Google-Smtp-Source: APXvYqwRE1w1DzwCNNXFQEj41fP7B1Lt/3mZcXuVQbrwHAWWRMiFZAEp5+RullaASJ/qlzG2XKFghcJuW9p+PvFjJ2sgTis6ln+O
-MIME-Version: 1.0
-X-Received: by 2002:a6b:f913:: with SMTP id j19mr10899368iog.124.1576877708426;
- Fri, 20 Dec 2019 13:35:08 -0800 (PST)
-Date:   Fri, 20 Dec 2019 13:35:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aa4ede059a297356@google.com>
-Subject: KASAN: use-after-free Read in io_wq_flush
-From:   syzbot <syzbot+a2cf8365eb32fc6dbb5e@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, io-uring@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Fri, 20 Dec 2019 16:38:30 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 1881A690A4F;
+        Fri, 20 Dec 2019 16:38:26 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 6ZKrVwXPQnmp; Fri, 20 Dec 2019 16:38:24 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 52BEC690A3C;
+        Fri, 20 Dec 2019 16:38:24 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 52BEC690A3C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1576877904;
+        bh=zThuuILBN3xUNZJp9C4VkVQ5TbUzY7EY9zQZpBrDtuI=;
+        h=From:To:Date:Message-Id;
+        b=HxxcQ1dW9vg5cWejeH6+USatzZzOHiEPFKjDjAEFpPXlxejNvnW3Lsf4528FofaSn
+         BdcvC6D5OrPIZWzUL/UjYpp2NbP3pogJgtIW96Y2ZOAq3/BNcAa1LJhVan2CXlu1mz
+         /ncWCiorFlYaXy4q7dJzg1/HNDzoAstoFkYCs7C5aAHQShoOlVMwokHdDjRZoDn6u1
+         hxGKmnKw3HBkNIXWZmxfuYS/fKO9F6SoiVE3gu+OyTYH0hZajyzFkAYRW0XjUTkqNg
+         Aas4Ljkz/hxjcaYrnqKEUgzlbomODLj/LL9My5p3Q5h3BAIUrJUns7CWLpZ/VmigXR
+         Cvsildsqw4Cxg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id uqTDoZOljfLN; Fri, 20 Dec 2019 16:38:24 -0500 (EST)
+Received: from localhost.localdomain (192-222-181-218.qc.cable.ebox.net [192.222.181.218])
+        by mail.efficios.com (Postfix) with ESMTPSA id EA650690A29;
+        Fri, 20 Dec 2019 16:38:23 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Carlos O'Donell <carlos@redhat.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        Joseph Myers <joseph@codesourcery.com>,
+        Szabolcs Nagy <szabolcs.nagy@arm.com>,
+        libc-alpha@sourceware.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ben Maurer <bmaurer@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
+        Rich Felker <dalias@libc.org>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Subject: [RFC PATCH glibc 09/13] glibc: Perform rseq(2) registration at C startup and thread creation (v13)
+Date:   Fri, 20 Dec 2019 16:36:46 -0500
+Message-Id: <20191220213650.11281-10-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191220213650.11281-1-mathieu.desnoyers@efficios.com>
+References: <20191220213650.11281-1-mathieu.desnoyers@efficios.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Register rseq(2) TLS for each thread (including main), and unregister
+for each thread (excluding main). "rseq" stands for Restartable
+Sequences.
 
-syzbot found the following crash on:
+See the rseq(2) man page proposed here:
+  https://lkml.org/lkml/2018/9/19/647
 
-HEAD commit:    7ddd09fc Add linux-next specific files for 20191220
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a074c1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f183b01c3088afc6
-dashboard link: https://syzkaller.appspot.com/bug?extid=a2cf8365eb32fc6dbb5e
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1190743ee00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b97f1ee00000
+This patch is based on glibc-2.30. The rseq(2) system call was merged
+into Linux 4.18.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a2cf8365eb32fc6dbb5e@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
-Read of size 8 at addr ffff88809ea14b00 by task kworker/1:2/2797
-
-CPU: 1 PID: 2797 Comm: kworker/1:2 Not tainted  
-5.5.0-rc2-next-20191220-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events io_ring_file_ref_switch
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:639
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
-  io_wq_flush+0x1f7/0x210 fs/io-wq.c:1009
-  io_destruct_skb+0x8e/0xc0 fs/io_uring.c:4668
-  skb_release_head_state+0xeb/0x260 net/core/skbuff.c:652
-  skb_release_all+0x16/0x60 net/core/skbuff.c:663
-  __kfree_skb net/core/skbuff.c:679 [inline]
-  kfree_skb net/core/skbuff.c:697 [inline]
-  kfree_skb+0x101/0x420 net/core/skbuff.c:691
-  io_ring_file_put fs/io_uring.c:4836 [inline]
-  io_ring_file_ref_switch+0x68a/0xac0 fs/io_uring.c:4881
-  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
-  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
-  kthread+0x361/0x430 kernel/kthread.c:255
-  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-
-Allocated by task 9381:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  __kasan_kmalloc mm/kasan/common.c:513 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
-  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
-  kmalloc include/linux/slab.h:555 [inline]
-  kzalloc include/linux/slab.h:669 [inline]
-  io_wq_create+0x52/0xa40 fs/io-wq.c:1024
-  io_sq_offload_start fs/io_uring.c:5244 [inline]
-  io_uring_create fs/io_uring.c:6002 [inline]
-  io_uring_setup+0xf4a/0x2080 fs/io_uring.c:6062
-  __do_sys_io_uring_setup fs/io_uring.c:6075 [inline]
-  __se_sys_io_uring_setup fs/io_uring.c:6072 [inline]
-  __x64_sys_io_uring_setup+0x54/0x80 fs/io_uring.c:6072
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 9381:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  kasan_set_free_info mm/kasan/common.c:335 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  io_wq_destroy+0x2ce/0x3c0 fs/io-wq.c:1116
-  io_finish_async+0x128/0x1b0 fs/io_uring.c:4657
-  io_ring_ctx_free fs/io_uring.c:5569 [inline]
-  io_ring_ctx_wait_and_kill+0x330/0x9a0 fs/io_uring.c:5644
-  io_uring_release+0x42/0x50 fs/io_uring.c:5652
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
-  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
-  do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff88809ea14b00
-  which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 0 bytes inside of
-  192-byte region [ffff88809ea14b00, ffff88809ea14bc0)
-The buggy address belongs to the page:
-page:ffffea00027a8500 refcount:1 mapcount:0 mapping:ffff8880aa400000  
-index:0x0
-raw: 00fffe0000000200 ffffea00027a8148 ffffea00027a8f08 ffff8880aa400000
-raw: 0000000000000000 ffff88809ea14000 0000000100000010 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88809ea14a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88809ea14a80: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-> ffff88809ea14b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                    ^
-  ffff88809ea14b80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff88809ea14c00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Carlos O'Donell <carlos@redhat.com>
+CC: Florian Weimer <fweimer@redhat.com>
+CC: Joseph Myers <joseph@codesourcery.com>
+CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Paul Turner <pjt@google.com>
+CC: Rich Felker <dalias@libc.org>
+CC: libc-alpha@sourceware.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-api@vger.kernel.org
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes since v1:
+- Move __rseq_refcount to an extra field at the end of __rseq_abi to
+  eliminate one symbol.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+  All libraries/programs which try to register rseq (glibc,
+  early-adopter applications, early-adopter libraries) should use the
+  rseq refcount. It becomes part of the ABI within a user-space
+  process, but it's not part of the ABI shared with the kernel per se.
+
+- Restructure how this code is organized so glibc keeps building on
+  non-Linux targets.
+
+- Use non-weak symbol for __rseq_abi.
+
+- Move rseq registration/unregistration implementation into its own
+  nptl/rseq.c compile unit.
+
+- Move __rseq_abi symbol under GLIBC_2.29.
+
+Changes since v2:
+- Move __rseq_refcount to its own symbol, which is less ugly than
+  trying to play tricks with the rseq uapi.
+- Move __rseq_abi from nptl to csu (C start up), so it can be used
+  across glibc, including memory allocator and sched_getcpu(). The
+  __rseq_refcount symbol is kept in nptl, because there is no reason
+  to use it elsewhere in glibc.
+
+Changes since v3:
+- Set __rseq_refcount TLS to 1 on register/set to 0 on unregister
+  because glibc is the first/last user.
+- Unconditionally register/unregister rseq at thread start/exit, because
+  glibc is the first/last user.
+- Add missing abilist items.
+- Rebase on glibc master commit a502c5294.
+- Add NEWS entry.
+
+Changes since v4:
+- Do not use "weak" symbols for __rseq_abi and __rseq_refcount. Based on
+  "System V Application Binary Interface", weak only affects the link
+  editor, not the dynamic linker.
+- Install a new sys/rseq.h system header on Linux, which contains the
+  RSEQ_SIG definition, __rseq_abi declaration and __rseq_refcount
+  declaration. Move those definition/declarations from rseq-internal.h
+  to the installed sys/rseq.h header.
+- Considering that rseq is only available on Linux, move csu/rseq.c to
+  sysdeps/unix/sysv/linux/rseq-sym.c.
+- Move __rseq_refcount from nptl/rseq.c to
+  sysdeps/unix/sysv/linux/rseq-sym.c, so it is only defined on Linux.
+- Move both ABI definitions for __rseq_abi and __rseq_refcount to
+  sysdeps/unix/sysv/linux/Versions, so they only appear on Linux.
+- Document __rseq_abi and __rseq_refcount volatile.
+- Document the RSEQ_SIG signature define.
+- Move registration functions from rseq.c to rseq-internal.h static
+  inline functions. Introduce empty stubs in misc/rseq-internal.h,
+  which can be overridden by architecture code in
+  sysdeps/unix/sysv/linux/rseq-internal.h.
+- Rename __rseq_register_current_thread and __rseq_unregister_current_thread
+  to rseq_register_current_thread and rseq_unregister_current_thread,
+  now that those are only visible as internal static inline functions.
+- Invoke rseq_register_current_thread() from libc-start.c LIBC_START_MAIN
+  rather than nptl init, so applications not linked against
+  libpthread.so have rseq registered for their main() thread. Note that
+  it is invoked separately for SHARED and !SHARED builds.
+
+Changes since v5:
+- Replace __rseq_refcount by __rseq_lib_abi, which contains two
+  uint32_t: register_state and refcount. The "register_state" field
+  allows inhibiting rseq registration from signal handlers nested on top
+  of glibc registration and occuring after rseq unregistration by glibc.
+- Introduce enum rseq_register_state, which contains the states allowed
+  for the struct rseq_lib_abi register_state field.
+
+Changes since v6:
+- Introduce bits/rseq.h to define RSEQ_SIG for each architecture.
+  The generic bits/rseq.h does not define RSEQ_SIG, meaning that each
+  architecture implementing rseq needs to implement bits/rseq.h.
+- Rename enum item RSEQ_REGISTER_NESTED to RSEQ_REGISTER_ONGOING.
+- Port to glibc-2.29.
+
+Changes since v7:
+- Remove __rseq_lib_abi symbol, including refcount and register_state
+  fields.
+- Remove reference counting and nested signals handling from
+  registration/unregistration functions.
+- Introduce new __rseq_handled exported symbol, which is set to 1
+  by glibc on C startup when it handles restartable sequences.
+  This allows glibc to coexist with early adopter libraries and
+  applications wishing to register restartable sequences when it
+  is not handled by glibc.
+- Introduce rseq_init (), which sets __rseq_handled to 1 from
+  C startup.
+- Update NEWS entry.
+- Update comments at the beginning of new files.
+- Registration depends on both __NR_rseq and RSEQ_SIG.
+- Remove ARM, powerpc, MIPS RSEQ_SIG until we agree with maintainers
+  on the signature choice.
+- Update x86, s390 RSEQ_SIG based on discussion with arch maintainers.
+- Remove rseq-internal.h from headers list of misc/Makefile, so it
+  it not installed by make install.
+
+Changes since v8:
+- Introduce RSEQ_SIG_CODE and RSEQ_SIG_DATA on aarch64 to handle
+  compiling with -mbig-endian.
+
+Changes since v9:
+- Update Changelog.
+- Remove unneeded new file comment header newlines.
+
+Changes since v10:
+- Remove volatile from __rseq_abi declaration.
+- Document that __rseq_handled is about library managing rseq
+  registration, independently of whether rseq is available or not.
+- Move __rseq_handled symbol to ld.so, initialize this symbol within
+  the dynamic linker initialization for both shared (rtld.c) and static
+  (dl-support.c) builds.
+- Only register the rseq TLS on initialization once in multiple-libc
+  scenarios. Use rtld_active () for this purpose.
+- In the static libc case, register the rseq TLS after LD_PRELOAD
+  constructors are run, so it matches the order of this initialization
+  vs LD_PRELOAD contructors execution for the shared libc.
+- Agreed on signature choice with powerpc and MIPS maintainers,
+  re-adding those signatures,
+- The main architecture still left out signature-wise is ARM32.
+
+Changes since v11:
+- Rebase on glibc 2.30.
+- Re-introduce ARM RSEQ_SIG following feedback from Will Deacon.
+
+Changes since v12:
+- Remove __rseq_handled,
+- Rely on OS implicit rseq unregistration on thread teardown,
+- Register main thread in __libc_early_init ().
+- Add Restartable Sequences entry to threads manual.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Carlos O'Donell <carlos@redhat.com>
+CC: Florian Weimer <fweimer@redhat.com>
+CC: Joseph Myers <joseph@codesourcery.com>
+CC: Szabolcs Nagy <szabolcs.nagy@arm.com>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ben Maurer <bmaurer@fb.com>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+CC: Boqun Feng <boqun.feng@gmail.com>
+CC: Will Deacon <will.deacon@arm.com>
+CC: Dave Watson <davejwatson@fb.com>
+CC: Paul Turner <pjt@google.com>
+CC: Rich Felker <dalias@libc.org>
+CC: libc-alpha@sourceware.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-api@vger.kernel.org
+---
+ ChangeLog.old/ChangeLog.19                    | 50 +++++++++++
+ NEWS                                          | 10 +++
+ elf/libc_early_init.c                         |  3 +
+ manual/threads.texi                           | 17 ++++
+ misc/rseq-internal.h                          | 33 ++++++++
+ nptl/pthread_create.c                         | 12 +++
+ sysdeps/unix/sysv/linux/Makefile              |  5 +-
+ sysdeps/unix/sysv/linux/Versions              |  3 +
+ sysdeps/unix/sysv/linux/aarch64/bits/rseq.h   | 43 ++++++++++
+ sysdeps/unix/sysv/linux/aarch64/libc.abilist  |  1 +
+ sysdeps/unix/sysv/linux/alpha/libc.abilist    |  1 +
+ sysdeps/unix/sysv/linux/arm/bits/rseq.h       | 83 +++++++++++++++++++
+ sysdeps/unix/sysv/linux/arm/le/libc.abilist   |  1 +
+ sysdeps/unix/sysv/linux/bits/rseq.h           | 29 +++++++
+ sysdeps/unix/sysv/linux/csky/libc.abilist     |  1 +
+ sysdeps/unix/sysv/linux/hppa/libc.abilist     |  1 +
+ sysdeps/unix/sysv/linux/i386/libc.abilist     |  1 +
+ sysdeps/unix/sysv/linux/ia64/libc.abilist     |  1 +
+ .../sysv/linux/m68k/coldfire/libc.abilist     |  1 +
+ .../unix/sysv/linux/m68k/m680x0/libc.abilist  |  1 +
+ .../sysv/linux/microblaze/le/libc.abilist     |  1 +
+ sysdeps/unix/sysv/linux/mips/bits/rseq.h      | 62 ++++++++++++++
+ .../sysv/linux/mips/mips32/fpu/libc.abilist   |  1 +
+ .../sysv/linux/mips/mips32/nofpu/libc.abilist |  1 +
+ .../sysv/linux/mips/mips64/n32/libc.abilist   |  1 +
+ .../sysv/linux/mips/mips64/n64/libc.abilist   |  1 +
+ sysdeps/unix/sysv/linux/nios2/libc.abilist    |  1 +
+ sysdeps/unix/sysv/linux/powerpc/bits/rseq.h   | 37 +++++++++
+ .../linux/powerpc/powerpc32/fpu/libc.abilist  |  1 +
+ .../powerpc/powerpc32/nofpu/libc.abilist      |  1 +
+ .../linux/powerpc/powerpc64/be/libc.abilist   |  1 +
+ .../linux/powerpc/powerpc64/le/libc.abilist   |  1 +
+ .../unix/sysv/linux/riscv/rv64/libc.abilist   |  1 +
+ sysdeps/unix/sysv/linux/rseq-internal.h       | 77 +++++++++++++++++
+ sysdeps/unix/sysv/linux/rseq-sym.c            | 43 ++++++++++
+ sysdeps/unix/sysv/linux/s390/bits/rseq.h      | 37 +++++++++
+ .../unix/sysv/linux/s390/s390-32/libc.abilist |  1 +
+ .../unix/sysv/linux/s390/s390-64/libc.abilist |  1 +
+ sysdeps/unix/sysv/linux/sh/le/libc.abilist    |  1 +
+ .../sysv/linux/sparc/sparc32/libc.abilist     |  1 +
+ .../sysv/linux/sparc/sparc64/libc.abilist     |  1 +
+ sysdeps/unix/sysv/linux/sys/rseq.h            | 30 +++++++
+ sysdeps/unix/sysv/linux/x86/bits/rseq.h       | 30 +++++++
+ .../unix/sysv/linux/x86_64/64/libc.abilist    |  1 +
+ .../unix/sysv/linux/x86_64/x32/libc.abilist   |  1 +
+ 45 files changed, 629 insertions(+), 2 deletions(-)
+ create mode 100644 misc/rseq-internal.h
+ create mode 100644 sysdeps/unix/sysv/linux/aarch64/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/arm/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/mips/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/powerpc/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/rseq-internal.h
+ create mode 100644 sysdeps/unix/sysv/linux/rseq-sym.c
+ create mode 100644 sysdeps/unix/sysv/linux/s390/bits/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/sys/rseq.h
+ create mode 100644 sysdeps/unix/sysv/linux/x86/bits/rseq.h
+
+diff --git a/ChangeLog.old/ChangeLog.19 b/ChangeLog.old/ChangeLog.19
+index 9f06c9ce0c..9d6496c747 100644
+--- a/ChangeLog.old/ChangeLog.19
++++ b/ChangeLog.old/ChangeLog.19
+@@ -1,3 +1,53 @@
++2019-12-17  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++
++	* NEWS: Add Restartable Sequences feature description.
++	* elf/libc_early_init.c: Perform rseq(2) registration at C startup.
++	startup for shared libc.
++	* nptl/pthread_create.c: Perform rseq(2) registration at thread
++	creation.
++	* manual/threads.texi: Document __rseq_abi, RSEQ_SIG, sys/rseq.h.
++	* sysdeps/unix/sysv/linux/Makefile: Add rseq-sym, sys/rseq.h,
++	bits/rseq.h.
++	* sysdeps/unix/sysv/linux/Versions: Export __rseq_abi from libc.
++	* sysdeps/unix/sysv/linux/aarch64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/alpha/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/arm/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/csky/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/hppa/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/i386/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/ia64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/microblaze/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/nios2/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/sh/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/64/libc.abilist: Likewise.
++	* sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist: Likewise.
++	* misc/rseq-internal.h: New file.
++	* sysdeps/unix/sysv/linux/rseq-internal.h: Likewise.
++	* sysdeps/unix/sysv/linux/rseq-sym.c: Likewise.
++	* sysdeps/unix/sysv/linux/sys/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/aarch64/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/arm/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/mips/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/powerpc/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/s390/bits/rseq.h: Likewise.
++	* sysdeps/unix/sysv/linux/x86/bits/rseq.h: Likewise.
++
+ 2019-10-11  Florian Weimer  <fweimer@redhat.com>
+ 
+ 	* csu/init-first.c (_init): Remove call to __ctype_init.  Moved to
+diff --git a/NEWS b/NEWS
+index 65140cbc42..e2830450d1 100644
+--- a/NEWS
++++ b/NEWS
+@@ -49,6 +49,16 @@ Major new features:
+   responses, indicating a lack of DNSSEC validation.  (Therefore, the name
+   servers and the network path to them are treated as untrusted.)
+ 
++* Support for automatically registering threads with the Linux rseq(2)
++  system call has been added.  This system call is implemented starting
++  from Linux 4.18.  The Restartable Sequences ABI accelerates user-space
++  operations on per-cpu data.  It allows user-space to perform updates
++  on per-cpu data without requiring heavy-weight atomic operations.
++  Automatically registering threads allows all libraries, including libc,
++  to make immediate use of the rseq(2) support by using the documented ABI.
++  See 'man 2 rseq' for the details of the ABI shared between libc and the
++  kernel.
++
+ Deprecated and removed features, and other changes affecting compatibility:
+ 
+ * The totalorder and totalordermag functions, and the corresponding
+diff --git a/elf/libc_early_init.c b/elf/libc_early_init.c
+index 1ac66d895d..30466afea0 100644
+--- a/elf/libc_early_init.c
++++ b/elf/libc_early_init.c
+@@ -18,10 +18,13 @@
+ 
+ #include <ctype.h>
+ #include <libc-early-init.h>
++#include <rseq-internal.h>
+ 
+ void
+ __libc_early_init (void)
+ {
+   /* Initialize ctype data.  */
+   __ctype_init ();
++  /* Register rseq ABI to the kernel.   */
++  (void) rseq_register_current_thread ();
+ }
+diff --git a/manual/threads.texi b/manual/threads.texi
+index 0858ef8f92..059f781120 100644
+--- a/manual/threads.texi
++++ b/manual/threads.texi
+@@ -881,3 +881,20 @@ Behaves like @code{pthread_timedjoin_np} except that the absolute time in
+ @c pthread_spin_unlock
+ @c pthread_testcancel
+ @c pthread_yield
++
++@node Restartable Sequences
++@section Restartable Sequences
++@cindex rseq
++
++This section describes the @glibcadj{} Restartable Sequences integration.
++
++The @glibcadj{} implements a __rseq_abi TLS symbol to interact with the
++Restartable Sequences system call (Linux-specific). The layout of this
++structure is defined by the Linux kernel rseq.h UAPI. Registration of each
++thread's __rseq_abi is performed by @glibcadj{} at libc initialization and
++pthread creation.
++
++Each supported architecture provide a RSEQ_SIG signature in sys/rseq.h. That
++signature is expected to be present in the code before each Restartable
++Sequences abort handler. Failure to provide the expected signature may
++terminate the process with a Segmentation fault.
+diff --git a/misc/rseq-internal.h b/misc/rseq-internal.h
+new file mode 100644
+index 0000000000..df8fc6c006
+--- /dev/null
++++ b/misc/rseq-internal.h
+@@ -0,0 +1,33 @@
++/* Restartable Sequences internal API. Stub version.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef RSEQ_INTERNAL_H
++#define RSEQ_INTERNAL_H
++
++static inline int
++rseq_register_current_thread (void)
++{
++  return -1;
++}
++
++static inline int
++rseq_unregister_current_thread (void)
++{
++  return -1;
++}
++
++#endif /* rseq-internal.h */
+diff --git a/nptl/pthread_create.c b/nptl/pthread_create.c
+index b220ec526b..253443701c 100644
+--- a/nptl/pthread_create.c
++++ b/nptl/pthread_create.c
+@@ -33,6 +33,7 @@
+ #include <default-sched.h>
+ #include <futex-internal.h>
+ #include <tls-setup.h>
++#include <rseq-internal.h>
+ #include "libioP.h"
+ 
+ #include <shlib-compat.h>
+@@ -384,6 +385,9 @@ START_THREAD_DEFN
+   /* Initialize pointers to locale data.  */
+   __ctype_init ();
+ 
++  /* Register rseq TLS to the kernel. */
++  (void) rseq_register_current_thread ();
++
+ #ifdef __NR_set_robust_list
+ # ifndef __ASSUME_SET_ROBUST_LIST
+   if (__set_robust_list_avail >= 0)
+@@ -581,6 +585,14 @@ START_THREAD_DEFN
+      process is really dead since 'clone' got passed the CLONE_CHILD_CLEARTID
+      flag.  The 'tid' field in the TCB will be set to zero.
+ 
++     rseq TLS is still registered at this point. Rely on implicit unregistration
++     performed by the kernel on thread teardown. This is not a problem because the
++     rseq TLS lives on the stack, and the stack outlives the thread. If TCB
++     allocation is ever changed, additional steps may be required, such as
++     performing explicit rseq unregistration before reclaiming the rseq TLS area
++     memory. It is NOT sufficient to block signals because the kernel may write
++     to the rseq area even without signals.
++
+      The exit code is zero since in case all threads exit by calling
+      'pthread_exit' the exit status must be 0 (zero).  */
+   __exit_thread ();
+diff --git a/sysdeps/unix/sysv/linux/Makefile b/sysdeps/unix/sysv/linux/Makefile
+index 502589c330..9da43b393e 100644
+--- a/sysdeps/unix/sysv/linux/Makefile
++++ b/sysdeps/unix/sysv/linux/Makefile
+@@ -37,7 +37,7 @@ update-syscall-lists: arch-syscall.h
+ endif
+ 
+ ifeq ($(subdir),csu)
+-sysdep_routines += errno-loc
++sysdep_routines += errno-loc rseq-sym
+ endif
+ 
+ ifeq ($(subdir),assert)
+@@ -87,7 +87,8 @@ sysdep_headers += sys/mount.h sys/acct.h sys/sysctl.h \
+ 		  bits/termios-baud.h bits/termios-c_cflag.h \
+ 		  bits/termios-c_lflag.h bits/termios-tcflow.h \
+ 		  bits/termios-misc.h \
+-		  bits/ipc-perm.h
++		  bits/ipc-perm.h \
++		  sys/rseq.h bits/rseq.h
+ 
+ tests += tst-clone tst-clone2 tst-clone3 tst-fanotify tst-personality \
+ 	 tst-quota tst-sync_file_range tst-sysconf-iov_max tst-ttyname \
+diff --git a/sysdeps/unix/sysv/linux/Versions b/sysdeps/unix/sysv/linux/Versions
+index d385085c61..7f0da50580 100644
+--- a/sysdeps/unix/sysv/linux/Versions
++++ b/sysdeps/unix/sysv/linux/Versions
+@@ -177,6 +177,9 @@ libc {
+   GLIBC_2.30 {
+     getdents64; gettid; tgkill;
+   }
++  GLIBC_2.31 {
++    __rseq_abi;
++  }
+   GLIBC_PRIVATE {
+     # functions used in other libraries
+     __syscall_rt_sigqueueinfo;
+diff --git a/sysdeps/unix/sysv/linux/aarch64/bits/rseq.h b/sysdeps/unix/sysv/linux/aarch64/bits/rseq.h
+new file mode 100644
+index 0000000000..35fcc41f1e
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/aarch64/bits/rseq.h
+@@ -0,0 +1,43 @@
++/* Restartable Sequences Linux aarch64 architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.
++
++   aarch64 -mbig-endian generates mixed endianness code vs data:
++   little-endian code and big-endian data. Ensure the RSEQ_SIG signature
++   matches code endianness.  */
++
++#define RSEQ_SIG_CODE	0xd428bc00	/* BRK #0x45E0.  */
++
++#ifdef __AARCH64EB__
++#define RSEQ_SIG_DATA	0x00bc28d4	/* BRK #0x45E0.  */
++#else
++#define RSEQ_SIG_DATA	RSEQ_SIG_CODE
++#endif
++
++#define RSEQ_SIG	RSEQ_SIG_DATA
+diff --git a/sysdeps/unix/sysv/linux/aarch64/libc.abilist b/sysdeps/unix/sysv/linux/aarch64/libc.abilist
+index a4c31932cb..6784f13c09 100644
+--- a/sysdeps/unix/sysv/linux/aarch64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/aarch64/libc.abilist
+@@ -2145,3 +2145,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/alpha/libc.abilist b/sysdeps/unix/sysv/linux/alpha/libc.abilist
+index e7f2174ac2..71db8422a2 100644
+--- a/sysdeps/unix/sysv/linux/alpha/libc.abilist
++++ b/sysdeps/unix/sysv/linux/alpha/libc.abilist
+@@ -2225,6 +2225,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/arm/bits/rseq.h b/sysdeps/unix/sysv/linux/arm/bits/rseq.h
+new file mode 100644
+index 0000000000..cd00513bfb
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/arm/bits/rseq.h
+@@ -0,0 +1,83 @@
++/* Restartable Sequences Linux arm architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/*
++   RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.
++
++   - ARM little endian
++
++   RSEQ_SIG uses the udf A32 instruction with an uncommon immediate operand
++   value 0x5de3. This traps if user-space reaches this instruction by mistake,
++   and the uncommon operand ensures the kernel does not move the instruction
++   pointer to attacker-controlled code on rseq abort.
++
++   The instruction pattern in the A32 instruction set is:
++
++   e7f5def3    udf    #24035    ; 0x5de3
++
++   This translates to the following instruction pattern in the T16 instruction
++   set:
++
++   little endian:
++   def3        udf    #243      ; 0xf3
++   e7f5        b.n    <7f5>
++
++   - ARMv6+ big endian (BE8):
++
++   ARMv6+ -mbig-endian generates mixed endianness code vs data: little-endian
++   code and big-endian data. The data value of the signature needs to have its
++   byte order reversed to generate the trap instruction:
++
++   Data: 0xf3def5e7
++
++   Translates to this A32 instruction pattern:
++
++   e7f5def3    udf    #24035    ; 0x5de3
++
++   Translates to this T16 instruction pattern:
++
++   def3        udf    #243      ; 0xf3
++   e7f5        b.n    <7f5>
++
++   - Prior to ARMv6 big endian (BE32):
++
++   Prior to ARMv6, -mbig-endian generates big-endian code and data
++   (which match), so the endianness of the data representation of the
++   signature should not be reversed. However, the choice between BE32
++   and BE8 is done by the linker, so we cannot know whether code and
++   data endianness will be mixed before the linker is invoked. So rather
++   than try to play tricks with the linker, the rseq signature is simply
++   data (not a trap instruction) prior to ARMv6 on big endian. This is
++   why the signature is expressed as data (.word) rather than as
++   instruction (.inst) in assembler.  */
++
++#ifdef __ARMEB__
++#define RSEQ_SIG    0xf3def5e7      /* udf    #24035    ; 0x5de3 (ARMv6+) */
++#else
++#define RSEQ_SIG    0xe7f5def3      /* udf    #24035    ; 0x5de3 */
++#endif
+diff --git a/sysdeps/unix/sysv/linux/arm/le/libc.abilist b/sysdeps/unix/sysv/linux/arm/le/libc.abilist
+index 9371927927..3e7434d3d5 100644
+--- a/sysdeps/unix/sysv/linux/arm/le/libc.abilist
++++ b/sysdeps/unix/sysv/linux/arm/le/libc.abilist
+@@ -130,6 +130,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _Exit F
+ GLIBC_2.4 _IO_2_1_stderr_ D 0xa0
+ GLIBC_2.4 _IO_2_1_stdin_ D 0xa0
+diff --git a/sysdeps/unix/sysv/linux/bits/rseq.h b/sysdeps/unix/sysv/linux/bits/rseq.h
+new file mode 100644
+index 0000000000..a3c023f5c7
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/bits/rseq.h
+@@ -0,0 +1,29 @@
++/* Restartable Sequences architecture header. Stub version.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.  */
+diff --git a/sysdeps/unix/sysv/linux/csky/libc.abilist b/sysdeps/unix/sysv/linux/csky/libc.abilist
+index 9b3cee65bb..b7ed346b1c 100644
+--- a/sysdeps/unix/sysv/linux/csky/libc.abilist
++++ b/sysdeps/unix/sysv/linux/csky/libc.abilist
+@@ -2089,3 +2089,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/hppa/libc.abilist b/sysdeps/unix/sysv/linux/hppa/libc.abilist
+index df6d96fbae..d55b153c48 100644
+--- a/sysdeps/unix/sysv/linux/hppa/libc.abilist
++++ b/sysdeps/unix/sysv/linux/hppa/libc.abilist
+@@ -2046,6 +2046,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/i386/libc.abilist b/sysdeps/unix/sysv/linux/i386/libc.abilist
+index fcb625b6bf..c9061600f6 100644
+--- a/sysdeps/unix/sysv/linux/i386/libc.abilist
++++ b/sysdeps/unix/sysv/linux/i386/libc.abilist
+@@ -2212,6 +2212,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/ia64/libc.abilist b/sysdeps/unix/sysv/linux/ia64/libc.abilist
+index cb556c5998..f794303f0e 100644
+--- a/sysdeps/unix/sysv/linux/ia64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/ia64/libc.abilist
+@@ -2078,6 +2078,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist b/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
+index 5e3cdea246..e5e545f3af 100644
+--- a/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
++++ b/sysdeps/unix/sysv/linux/m68k/coldfire/libc.abilist
+@@ -134,6 +134,7 @@ GLIBC_2.30 twalk_r F
+ GLIBC_2.31 msgctl F
+ GLIBC_2.31 semctl F
+ GLIBC_2.31 shmctl F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _Exit F
+ GLIBC_2.4 _IO_2_1_stderr_ D 0x98
+ GLIBC_2.4 _IO_2_1_stdin_ D 0x98
+diff --git a/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist b/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
+index ea5e7a41af..3fc1223e2c 100644
+--- a/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
++++ b/sysdeps/unix/sysv/linux/m68k/m680x0/libc.abilist
+@@ -2158,6 +2158,7 @@ GLIBC_2.30 twalk_r F
+ GLIBC_2.31 msgctl F
+ GLIBC_2.31 semctl F
+ GLIBC_2.31 shmctl F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/microblaze/le/libc.abilist b/sysdeps/unix/sysv/linux/microblaze/le/libc.abilist
+index f7ced487f7..a2ce147dde 100644
+--- a/sysdeps/unix/sysv/linux/microblaze/le/libc.abilist
++++ b/sysdeps/unix/sysv/linux/microblaze/le/libc.abilist
+@@ -2137,3 +2137,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/mips/bits/rseq.h b/sysdeps/unix/sysv/linux/mips/bits/rseq.h
+new file mode 100644
+index 0000000000..8c75f107e7
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/mips/bits/rseq.h
+@@ -0,0 +1,62 @@
++/* Restartable Sequences Linux mips architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.
++
++   RSEQ_SIG uses the break instruction. The instruction pattern is:
++
++   On MIPS:
++        0350000d        break     0x350
++
++   On nanoMIPS:
++        00100350        break     0x350
++
++   On microMIPS:
++        0000d407        break     0x350
++
++   For nanoMIPS32 and microMIPS, the instruction stream is encoded as
++   16-bit halfwords, so the signature halfwords need to be swapped
++   accordingly for little-endian.  */
++
++#if defined(__nanomips__)
++# ifdef __MIPSEL__
++#  define RSEQ_SIG	0x03500010
++# else
++#  define RSEQ_SIG	0x00100350
++# endif
++#elif defined(__mips_micromips)
++# ifdef __MIPSEL__
++#  define RSEQ_SIG	0xd4070000
++# else
++#  define RSEQ_SIG	0x0000d407
++# endif
++#elif defined(__mips__)
++# define RSEQ_SIG	0x0350000d
++#else
++/* Unknown MIPS architecture. */
++#endif
+diff --git a/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
+index 06c2e64edd..c0040ddd4e 100644
+--- a/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
++++ b/sysdeps/unix/sysv/linux/mips/mips32/fpu/libc.abilist
+@@ -2129,6 +2129,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
+index bdfd073b86..61f19076eb 100644
+--- a/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
++++ b/sysdeps/unix/sysv/linux/mips/mips32/nofpu/libc.abilist
+@@ -2127,6 +2127,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
+index 3d61d4974a..df4f3a3c04 100644
+--- a/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
++++ b/sysdeps/unix/sysv/linux/mips/mips64/n32/libc.abilist
+@@ -2135,6 +2135,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist b/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
+index 675acca5db..a96de2e467 100644
+--- a/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/mips/mips64/n64/libc.abilist
+@@ -2129,6 +2129,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/nios2/libc.abilist b/sysdeps/unix/sysv/linux/nios2/libc.abilist
+index 7fec0c9670..7b2ccbe953 100644
+--- a/sysdeps/unix/sysv/linux/nios2/libc.abilist
++++ b/sysdeps/unix/sysv/linux/nios2/libc.abilist
+@@ -2178,3 +2178,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/powerpc/bits/rseq.h b/sysdeps/unix/sysv/linux/powerpc/bits/rseq.h
+new file mode 100644
+index 0000000000..bae8f4aaa1
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/powerpc/bits/rseq.h
+@@ -0,0 +1,37 @@
++/* Restartable Sequences Linux powerpc architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.
++
++   RSEQ_SIG uses the following trap instruction:
++
++   powerpc-be:    0f e5 00 0b           twui   r5,11
++   powerpc64-le:  0b 00 e5 0f           twui   r5,11
++   powerpc64-be:  0f e5 00 0b           twui   r5,11  */
++
++#define RSEQ_SIG	0x0fe5000b
+diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
+index 1e8ff6f83e..6f4c6515dc 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
++++ b/sysdeps/unix/sysv/linux/powerpc/powerpc32/fpu/libc.abilist
+@@ -2185,6 +2185,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
+index b5a0751d90..f9875b4e22 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
++++ b/sysdeps/unix/sysv/linux/powerpc/powerpc32/nofpu/libc.abilist
+@@ -2218,6 +2218,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist
+index 0c86217fc6..db06080db8 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist
++++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/be/libc.abilist
+@@ -2048,6 +2048,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist b/sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist
+index 2229a1dcc0..608ad49593 100644
+--- a/sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist
++++ b/sysdeps/unix/sysv/linux/powerpc/powerpc64/le/libc.abilist
+@@ -2247,3 +2247,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist b/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
+index 31010e6cf7..c7657ce7f6 100644
+--- a/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/riscv/rv64/libc.abilist
+@@ -2107,3 +2107,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+diff --git a/sysdeps/unix/sysv/linux/rseq-internal.h b/sysdeps/unix/sysv/linux/rseq-internal.h
+new file mode 100644
+index 0000000000..1dd3b9a968
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/rseq-internal.h
+@@ -0,0 +1,77 @@
++/* Restartable Sequences internal API. Linux implementation.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef RSEQ_INTERNAL_H
++#define RSEQ_INTERNAL_H
++
++#include <sysdep.h>
++#include <errno.h>
++
++#ifdef __NR_rseq
++#include <sys/rseq.h>
++#endif
++
++#if defined __NR_rseq && defined RSEQ_SIG
++
++static inline int
++rseq_register_current_thread (void)
++{
++  int rc, ret = 0;
++  INTERNAL_SYSCALL_DECL (err);
++
++  if (__rseq_abi.cpu_id == RSEQ_CPU_ID_REGISTRATION_FAILED)
++    return -1;
++  rc = INTERNAL_SYSCALL_CALL (rseq, err, &__rseq_abi, sizeof (struct rseq),
++                              0, RSEQ_SIG);
++  if (!rc)
++    goto end;
++  if (INTERNAL_SYSCALL_ERRNO (rc, err) != EBUSY)
++    __rseq_abi.cpu_id = RSEQ_CPU_ID_REGISTRATION_FAILED;
++  ret = -1;
++end:
++  return ret;
++}
++
++static inline int
++rseq_unregister_current_thread (void)
++{
++  int rc, ret = 0;
++  INTERNAL_SYSCALL_DECL (err);
++
++  rc = INTERNAL_SYSCALL_CALL (rseq, err, &__rseq_abi, sizeof (struct rseq),
++                              RSEQ_FLAG_UNREGISTER, RSEQ_SIG);
++  if (!rc)
++    goto end;
++  ret = -1;
++end:
++  return ret;
++}
++#else
++static inline int
++rseq_register_current_thread (void)
++{
++  return -1;
++}
++
++static inline int
++rseq_unregister_current_thread (void)
++{
++  return -1;
++}
++#endif
++
++#endif /* rseq-internal.h */
+diff --git a/sysdeps/unix/sysv/linux/rseq-sym.c b/sysdeps/unix/sysv/linux/rseq-sym.c
+new file mode 100644
+index 0000000000..f86869a380
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/rseq-sym.c
+@@ -0,0 +1,43 @@
++/* Restartable Sequences exported symbols. Linux Implementation.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#include <sys/syscall.h>
++#include <stdint.h>
++
++#ifdef __NR_rseq
++#include <sys/rseq.h>
++#else
++
++enum rseq_cpu_id_state {
++  RSEQ_CPU_ID_UNINITIALIZED = -1,
++  RSEQ_CPU_ID_REGISTRATION_FAILED = -2,
++};
++
++/* linux/rseq.h defines struct rseq as aligned on 32 bytes. The kernel ABI
++   size is 20 bytes.  */
++struct rseq {
++  uint32_t cpu_id_start;
++  uint32_t cpu_id;
++  uint64_t rseq_cs;
++  uint32_t flags;
++} __attribute__ ((aligned(4 * sizeof(uint64_t))));
++
++#endif
++
++__thread struct rseq __rseq_abi = {
++  .cpu_id = RSEQ_CPU_ID_UNINITIALIZED,
++};
+diff --git a/sysdeps/unix/sysv/linux/s390/bits/rseq.h b/sysdeps/unix/sysv/linux/s390/bits/rseq.h
+new file mode 100644
+index 0000000000..453250d761
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/s390/bits/rseq.h
+@@ -0,0 +1,37 @@
++/* Restartable Sequences Linux s390 architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   It is a 32-bit value that maps to actual architecture code compiled
++   into applications and libraries. It needs to be defined for each
++   architecture. When choosing this value, it needs to be taken into
++   account that generating invalid instructions may have ill effects on
++   tools like objdump, and may also have impact on the CPU speculative
++   execution efficiency in some cases.
++
++   RSEQ_SIG uses the trap4 instruction. As Linux does not make use of the
++   access-register mode nor the linkage stack this instruction will always
++   cause a special-operation exception (the trap-enabled bit in the DUCT
++   is and will stay 0). The instruction pattern is
++       b2 ff 0f ff        trap4   4095(%r0)  */
++
++#define RSEQ_SIG	0xB2FF0FFF
+diff --git a/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist b/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
+index 4feca641b0..9c29ec0d2d 100644
+--- a/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
++++ b/sysdeps/unix/sysv/linux/s390/s390-32/libc.abilist
+@@ -2183,6 +2183,7 @@ GLIBC_2.30 twalk_r F
+ GLIBC_2.31 msgctl F
+ GLIBC_2.31 semctl F
+ GLIBC_2.31 shmctl F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist b/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
+index efe588a072..99424ceac9 100644
+--- a/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/s390/s390-64/libc.abilist
+@@ -2084,6 +2084,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/sh/le/libc.abilist b/sysdeps/unix/sysv/linux/sh/le/libc.abilist
+index 4b057bf4a2..916aa0b7f0 100644
+--- a/sysdeps/unix/sysv/linux/sh/le/libc.abilist
++++ b/sysdeps/unix/sysv/linux/sh/le/libc.abilist
+@@ -2050,6 +2050,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist b/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
+index 49cd597fd6..9a27df8e43 100644
+--- a/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
++++ b/sysdeps/unix/sysv/linux/sparc/sparc32/libc.abilist
+@@ -2174,6 +2174,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 _IO_fprintf F
+ GLIBC_2.4 _IO_printf F
+ GLIBC_2.4 _IO_sprintf F
+diff --git a/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist b/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
+index 95e68e0ba1..32908666c4 100644
+--- a/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/sparc/sparc64/libc.abilist
+@@ -2101,6 +2101,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/sys/rseq.h b/sysdeps/unix/sysv/linux/sys/rseq.h
+new file mode 100644
+index 0000000000..e675219ace
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/sys/rseq.h
+@@ -0,0 +1,30 @@
++/* Restartable Sequences exported symbols. Linux header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++#define _SYS_RSEQ_H	1
++
++/* We use the structures declarations from the kernel headers.  */
++#include <linux/rseq.h>
++/* Architecture-specific rseq signature.  */
++#include <bits/rseq.h>
++#include <stdint.h>
++
++extern __thread struct rseq __rseq_abi
++__attribute__ ((tls_model ("initial-exec")));
++
++#endif /* sys/rseq.h */
+diff --git a/sysdeps/unix/sysv/linux/x86/bits/rseq.h b/sysdeps/unix/sysv/linux/x86/bits/rseq.h
+new file mode 100644
+index 0000000000..a2918c4617
+--- /dev/null
++++ b/sysdeps/unix/sysv/linux/x86/bits/rseq.h
+@@ -0,0 +1,30 @@
++/* Restartable Sequences Linux x86 architecture header.
++   Copyright (C) 2019 Free Software Foundation, Inc.
++
++   The GNU C Library is free software; you can redistribute it and/or
++   modify it under the terms of the GNU Lesser General Public
++   License as published by the Free Software Foundation; either
++   version 2.1 of the License, or (at your option) any later version.
++
++   The GNU C Library is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++   Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public
++   License along with the GNU C Library; if not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#ifndef _SYS_RSEQ_H
++# error "Never use <bits/rseq.h> directly; include <sys/rseq.h> instead."
++#endif
++
++/* RSEQ_SIG is a signature required before each abort handler code.
++
++   RSEQ_SIG is used with the following reserved undefined instructions, which
++   trap in user-space:
++
++   x86-32:    0f b9 3d 53 30 05 53      ud1    0x53053053,%edi
++   x86-64:    0f b9 3d 53 30 05 53      ud1    0x53053053(%rip),%edi  */
++
++#define RSEQ_SIG	0x53053053
+diff --git a/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist b/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
+index 1f2dbd1451..7366565608 100644
+--- a/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
++++ b/sysdeps/unix/sysv/linux/x86_64/64/libc.abilist
+@@ -2059,6 +2059,7 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+ GLIBC_2.4 __confstr_chk F
+ GLIBC_2.4 __fgets_chk F
+ GLIBC_2.4 __fgets_unlocked_chk F
+diff --git a/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist b/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
+index 59da85a5d8..c1aa86f06e 100644
+--- a/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
++++ b/sysdeps/unix/sysv/linux/x86_64/x32/libc.abilist
+@@ -2158,3 +2158,4 @@ GLIBC_2.30 getdents64 F
+ GLIBC_2.30 gettid F
+ GLIBC_2.30 tgkill F
+ GLIBC_2.30 twalk_r F
++GLIBC_2.31 __rseq_abi T 0x20
+-- 
+2.17.1
+
