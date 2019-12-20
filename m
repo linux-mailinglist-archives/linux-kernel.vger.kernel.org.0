@@ -2,129 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 190621282DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFE31282D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 20:39:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727489AbfLTTp3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 14:45:29 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38520 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727402AbfLTTp3 (ORCPT
+        id S1727504AbfLTTjf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 14:39:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41029 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727402AbfLTTjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 14:45:29 -0500
-Received: by mail-pf1-f194.google.com with SMTP id x185so5772220pfc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 11:45:28 -0800 (PST)
+        Fri, 20 Dec 2019 14:39:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c9so10509618wrw.8
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 11:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OFXuqjqzuhn3j1yuWZII1AUzQtpErQYsp8G46vS6mF4=;
-        b=a4IdLhQannJ0qodNcoBz7md9hndFw94LDA+Kg7EBZwStErRSTLpg3OOLjC4tRHqQbZ
-         K3ckmn1Cp0U0eBVD0qlUclHoDWHGgP5kXfzaL8A99Z0JTIZHG+XUSkjtxWTTFEnc2qRn
-         7lJOQXlin31D9yOAyPxDsEgbNGvvrm98t6mow=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hg66hkKf1/l6gSi7Ru8j+0F4eQ0bALANcCRIs1Swg2o=;
+        b=r/+yaoUAVeaMIGg3aNjF1y+tpFeSm1Ds7vqOIVrpyjRCx2u/9/6Ymr9/+P87/OCQRE
+         +Nk77dJwyms5xgFPK4+f/eSnyCDgP0Gn4nwxhWVtUTA2C5eZWRLrvcOLyK2uwyWL1Lhf
+         M4Ro385jhulqaoz57QOvwJrKtcSRJOT70A3UKDwx1A9xyfn7dxsKbNgBcj6zx851qfOB
+         mK+7+An8JhIjPYonOvPOqmCgGa33/PBWjnvlb67MqwshycWxFHM4awVofKI4JJNmuz4j
+         q4OpajkPXuZiRIUYtxQ56Y3DRUMsHKaoeB/3sXMzO6dAhyD4U2Vo9Bx1GGfgl3ngWyfF
+         21kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OFXuqjqzuhn3j1yuWZII1AUzQtpErQYsp8G46vS6mF4=;
-        b=C/Vz0Y7EI6/TVRKBKIGFZY4EhPDkS+a8wz2GcAIc/+hh/O/E6UwgmT97Myk+WQu+AK
-         Vrebqi7P6y5CDTFRaOm05Ge8Oc3p4eCABn4KmkxgCP5lRDRGAHwxsNUm45QX5m9412bh
-         1+OUFlXr+bHKLKGhNRqfTlx717k3Ip/CN5AixQb3VJjWj8E4w4URQCMGukbpaol/vsDv
-         +RbvxtiKro2eH5vEYfSmV9EELWfTmkJXiPEv2vCsvJ+oRDo+YqplKC2bJ18laLMbB/5P
-         6QC2puJYAeiomPaVF+fKA6YqTh/0Uw+Two3XqYm1Q7UCPNwmst+UMQ2Ac5AgRuohk4nT
-         Sezg==
-X-Gm-Message-State: APjAAAVr0j+Nr+QxV6eeTJFT+YZp3qIhxTx1GZIy/8r5KQ+YC4KQxxfi
-        JDuLX/eHVkbbWLzXCiQ13Rxhtw==
-X-Google-Smtp-Source: APXvYqz4tfLA5dGoFl3czZFqWKsyQLX7lWtx9vJX3GzhFQiR/3+PQHzV0STbyufYZ1IZv9vvRnyJfA==
-X-Received: by 2002:a62:7c58:: with SMTP id x85mr18030206pfc.76.1576871128522;
-        Fri, 20 Dec 2019 11:45:28 -0800 (PST)
-Received: from pmalani2.mtv.corp.google.com ([2620:15c:202:201:172e:4646:c089:ce59])
-        by smtp.gmail.com with ESMTPSA id e2sm14109577pfh.84.2019.12.20.11.45.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 11:45:28 -0800 (PST)
-From:   Prashant Malani <pmalani@chromium.org>
-To:     enric.balletbo@collabora.com, groeck@chromium.org,
-        bleung@chromium.org, lee.jones@linaro.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prashant Malani <pmalani@chromium.org>
-Subject: [PATCH v4 2/2] mfd: cros_ec: Add cros-usbpd-notify subdevice
-Date:   Fri, 20 Dec 2019 11:38:47 -0800
-Message-Id: <20191220193843.47182-2-pmalani@chromium.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-In-Reply-To: <20191220193843.47182-1-pmalani@chromium.org>
-References: <20191220193843.47182-1-pmalani@chromium.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hg66hkKf1/l6gSi7Ru8j+0F4eQ0bALANcCRIs1Swg2o=;
+        b=QS1NoUPCiKGiKpkKYrIiZT8WQZsuhzvNshxj2ly2BDD54X9nXo2u7O7JwoBUs5SCSh
+         /9Pr8xl3FpZ7P6C/sYxydLFj0wh+t7MXfXa0c4W9ABnQRXIl6bHZP9B8TM7OjGcX7yMI
+         wRv281gUieWWnA+VxSdHGdEFBJpCyL/DQG6W6SX1Hcz7k8EgSGJHACEEtfMfC9WDlDZW
+         RhHz6wJ2KJNivsnVxCfWgsbL7Zt9zvLRxZ4UltuOQLqSrEmO6kR1uPypJCExM6wN2ywo
+         VEnuSLQtxdhkIvLNHeKlZlmhsc0UWmt4v8M+fVXze+Kw9bhbkXvSWcicj6VKsCWV/aot
+         +BnQ==
+X-Gm-Message-State: APjAAAUbtWSLpLsGEDNydU/Z6JxlFPALQqha8oeQUJHyr2ofg87ckOO7
+        hCXYTiXFBUVHSriBf46pdaztUJC8994mwY3/POvtvQ==
+X-Google-Smtp-Source: APXvYqwDmNTqWZW+leKA59a8gVyfZird0232HELGZmTDZotesfmREMjGXBz0jjcX0ntchFAScxKEm4Gi5Tuy0oass+U=
+X-Received: by 2002:a5d:6a0f:: with SMTP id m15mr16913087wru.40.1576870773493;
+ Fri, 20 Dec 2019 11:39:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1576824253-47863-1-git-send-email-mafeng.ma@huawei.com>
+In-Reply-To: <1576824253-47863-1-git-send-email-mafeng.ma@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 20 Dec 2019 14:39:20 -0500
+Message-ID: <CADnq5_PBt3LeLPc48C5rP=G9d8TgBNj71XiyXo6kZChr30hyWQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: Remove unneeded variable 'ret' in amdgpu_device.c
+To:     Ma Feng <mafeng.ma@huawei.com>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the cros-usbpd-notify driver as a subdevice on non-ACPI platforms
-that support the EC_FEATURE_USB_PD EC feature flag.
+On Fri, Dec 20, 2019 at 10:10 AM Ma Feng <mafeng.ma@huawei.com> wrote:
+>
+> Fixes coccicheck warning:
+>
+> drivers/gpu/drm/amd/amdgpu/amdgpu_device.c:1036:5-8: Unneeded variable: "ret". Return "0" on line 1079
+>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
 
-This driver allows other cros-ec devices to receive PD event
-notifications from the Chrome OS Embedded Controller (EC) via a
-notification chain.
+Applied.  thanks!
 
-Signed-off-by: Prashant Malani <pmalani@chromium.org>
----
+Alex
 
-Changes in v4:
-- Removed #ifndef usage; instead, moved cros-usbpd-notify to a separate
-  mfd_cell and used an IS_ENABLED() check.
-- Changed commit title and description slightly to reflect change in
-  code.
-
- drivers/mfd/cros_ec_dev.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index c4b977a5dd966..da198abe2b0a6 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2014 Google, Inc.
-  */
- 
-+#include <linux/kconfig.h>
- #include <linux/mfd/core.h>
- #include <linux/mfd/cros_ec.h>
- #include <linux/module.h>
-@@ -87,6 +88,10 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
- 	{ .name = "cros-usbpd-logger", },
- };
- 
-+static const struct mfd_cell cros_usbpd_notify_cells[] = {
-+	{ .name = "cros-usbpd-notify", },
-+};
-+
- static const struct cros_feature_to_cells cros_subdevices[] = {
- 	{
- 		.id		= EC_FEATURE_CEC,
-@@ -202,6 +207,22 @@ static int ec_device_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	/*
-+	 * The PD notifier driver cell is separate since it only needs to be
-+	 * explicitly added on non-ACPI platforms.
-+	 */
-+	if (!IS_ENABLED(CONFIG_ACPI)) {
-+		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
-+			retval = mfd_add_hotplug_devices(ec->dev,
-+					cros_usbpd_notify_cells,
-+					ARRAY_SIZE(cros_usbpd_notify_cells));
-+			if (retval)
-+				dev_err(ec->dev,
-+					"failed to add PD notify devices: %d\n",
-+					retval);
-+		}
-+	}
-+
- 	/*
- 	 * The following subdevices cannot be detected by sending the
- 	 * EC_FEATURE_GET_CMD to the Embedded Controller device.
--- 
-2.24.1.735.g03f4e72817-goog
-
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> index 080ec18..6a4b142 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+> @@ -1033,8 +1033,6 @@ static void amdgpu_device_check_smu_prv_buffer_size(struct amdgpu_device *adev)
+>   */
+>  static int amdgpu_device_check_arguments(struct amdgpu_device *adev)
+>  {
+> -       int ret = 0;
+> -
+>         if (amdgpu_sched_jobs < 4) {
+>                 dev_warn(adev->dev, "sched jobs (%d) must be at least 4\n",
+>                          amdgpu_sched_jobs);
+> @@ -1076,7 +1074,7 @@ static int amdgpu_device_check_arguments(struct amdgpu_device *adev)
+>
+>         adev->tmz.enabled = amdgpu_is_tmz(adev);
+>
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  /**
+> --
+> 2.6.2
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
