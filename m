@@ -2,93 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2922E127FC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:48:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5286F127FD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:51:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727495AbfLTPsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 10:48:39 -0500
-Received: from netrider.rowland.org ([192.131.102.5]:44493 "HELO
-        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727270AbfLTPsj (ORCPT
+        id S1727486AbfLTPvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 10:51:16 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55643 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbfLTPvP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 10:48:39 -0500
-Received: (qmail 4678 invoked by uid 500); 20 Dec 2019 10:48:38 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 20 Dec 2019 10:48:38 -0500
-Date:   Fri, 20 Dec 2019 10:48:38 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@netrider.rowland.org
-To:     AceLan Kao <acelan.kao@canonical.com>
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        Harry Pan <harry.pan@intel.com>,
-        David Heinzelmann <heinzelmann.david@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mathieu Malaterre <malat@debian.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: hub: move resume delay at the head of all USB access
- functions
-In-Reply-To: <20191220025917.11886-1-acelan.kao@canonical.com>
-Message-ID: <Pine.LNX.4.44L0.1912201040000.2513-100000@netrider.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Fri, 20 Dec 2019 10:51:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q9so9422269wmj.5;
+        Fri, 20 Dec 2019 07:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=FBGFHijkhBj8M8ct4LxcxlGMdgTinywxn+ZNcqtzm4E=;
+        b=MWRgizaWZzKENAU+jjYV2UrApTSuNpS0c3Nnkq2jKK6gcb4XbP+ml31aRay2V9Dkmj
+         ct1Zs2JoimGE4568wzb2dday18ftEgu1IlEedu/rCymy0rFerCuL4mZbL76UC+65Q0Qm
+         doe1V3gFCFf8q/stalROUIu3KHnJJFxlISApJWj53xAQXr1UcpfcpC9KsADR78puWGBN
+         ZYspBJ1kmWhfyZXZ/zQlx9jwk3iEzGcARmRPEgavKCWQN/RjLERVa0BRY6F774HnPeVY
+         tYn2KF1BIGZxyyKmYFSDsL0rpA4epS8Ndah8jLTcmxiR9PLRGlKtqgj99irueHrqilBe
+         VQnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=FBGFHijkhBj8M8ct4LxcxlGMdgTinywxn+ZNcqtzm4E=;
+        b=OC7ogm9c3orScSWSfQ6IkdjILbipTeHgqXtNl25dMBkSzmwnx8fWBWCDHjz9n70ydb
+         /ljLcbSHlGDRvI215oLIUg6tfHKhw+gDjpxhLx/PXBN51/KtDhw41QSVNx8ojFq+U0AH
+         I2xKfE7y+vf5Az+9ekS4DdoF/488aKp3PpqhOaFcJAYoHwupfNpCGEf8/2gPIddC54uO
+         44/ztY+qWlM6BcgEbY/L7AEyAAj25AcCEace6hZc1OrdVMtLM7Ghyd9hyXgrTIGPcS80
+         QYlcXgui9v3SWL5j6Ug+ASK3+JsNZMLGJ6DPtn4c7214lluu1v4Z8JV+f7xKjPw4LSmT
+         OFXQ==
+X-Gm-Message-State: APjAAAU9nQ4vk2xOxLIk0wCWMSmRnrbTEzBYtSkV+X7vwF+kl0Lh8ibq
+        7+Kp8qixx6vlrKtjm7Xz9+riqXvnAks=
+X-Google-Smtp-Source: APXvYqzrHGMJgV2ucmBoCK8NwW3h6j8TxTWzJ5fzXyW4p8wJCyhoGnLEMNNzPGhH+tQUTKoUUhgUEw==
+X-Received: by 2002:a05:600c:24d1:: with SMTP id 17mr16885255wmu.136.1576857072864;
+        Fri, 20 Dec 2019 07:51:12 -0800 (PST)
+Received: from jwang-Latitude-5491.fritz.box ([2001:16b8:4972:cc00:b9e0:6ef7:286d:4897])
+        by smtp.gmail.com with ESMTPSA id u14sm10372139wrm.51.2019.12.20.07.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2019 07:51:12 -0800 (PST)
+From:   Jack Wang <jinpuwang@gmail.com>
+To:     linux-block@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc:     axboe@kernel.dk, hch@infradead.org, sagi@grimberg.me,
+        bvanassche@acm.org, leon@kernel.org, dledford@redhat.com,
+        danil.kipnis@cloud.ionos.com, jinpu.wang@cloud.ionos.com,
+        rpenyaev@suse.de, Jack Wang <jinpu.wang@cloud.iono.com>,
+        Roman Pen <roman.penyaev@profitbricks.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 01/25] sysfs: export sysfs_remove_file_self()
+Date:   Fri, 20 Dec 2019 16:50:45 +0100
+Message-Id: <20191220155109.8959-2-jinpuwang@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191220155109.8959-1-jinpuwang@gmail.com>
+References: <20191220155109.8959-1-jinpuwang@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019, AceLan Kao wrote:
+From: Jack Wang <jinpu.wang@cloud.iono.com>
 
-> usb_control_msg() function should be called after the resume delay, or
+Function is going to be used in transport over RDMA module
+in subsequent patches, so export it to GPL modules.
 
-Which usb_control_msg() call are you referring to?  Is it the call
-under hub_port_status()?
+Signed-off-by: Roman Pen <roman.penyaev@profitbricks.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+[jwang: extend the commit message]
+Signed-off-by: Jack Wang <jinpu.wang@cloud.iono.com>
+---
+ fs/sysfs/file.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> you'll encounter the below errors sometime.
-> After the issue happens, have to re-plug the USB cable to recover.
-> 
-> [ 837.483573] hub 2-3:1.0: hub_ext_port_status failed (err = -71)
-> [ 837.490889] hub 2-3:1.0: hub_ext_port_status failed (err = -71)
-> [ 837.506780] usb 2-3-port4: cannot disable (err = -71)
-
-You need to do a better job of figuring out why these errors occur.  It 
-is not connected to the resume delay; there must be a different reason.
-Hint: This is the sort of error you would expect to see if the kernel 
-tried to resume a device while its parent hub was still suspended.
-
-> Signed-off-by: AceLan Kao <acelan.kao@canonical.com>
-> ---
->  drivers/usb/core/hub.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index f229ad6952c0..2fb2816b0d38 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -3522,6 +3522,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
->  		}
->  	}
->  
-> +	msleep(USB_RESUME_TIMEOUT);
-
-This makes no sense at all.  At this point we haven't even started to
-do the resume signalling, so there's no reason to wait for it to 
-finish.
-
->  	usb_lock_port(port_dev);
->  
->  	/* Skip the initial Clear-Suspend step for a remote wakeup */
-> @@ -3544,7 +3545,6 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
->  		/* drive resume for USB_RESUME_TIMEOUT msec */
->  		dev_dbg(&udev->dev, "usb %sresume\n",
->  				(PMSG_IS_AUTO(msg) ? "auto-" : ""));
-> -		msleep(USB_RESUME_TIMEOUT);
-
-This is wrong also.  At this point the resume signal _is_ being sent, 
-and the USB spec requires that we wait a minimum amount of time for the 
-device to fully resume.
-
-Alan Stern
+diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+index 130fc6fbcc03..1ff4672d7746 100644
+--- a/fs/sysfs/file.c
++++ b/fs/sysfs/file.c
+@@ -492,6 +492,7 @@ bool sysfs_remove_file_self(struct kobject *kobj, const struct attribute *attr)
+ 	kernfs_put(kn);
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(sysfs_remove_file_self);
+ 
+ void sysfs_remove_files(struct kobject *kobj, const struct attribute * const *ptr)
+ {
+-- 
+2.17.1
 
