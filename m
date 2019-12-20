@@ -2,75 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A3A7128544
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 23:54:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F4012854D
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 00:00:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfLTWyu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 17:54:50 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:40609 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfLTWyu (ORCPT
+        id S1726598AbfLTXAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 18:00:44 -0500
+Received: from mail-il1-f194.google.com ([209.85.166.194]:33562 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfLTXAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 17:54:50 -0500
-Received: by mail-io1-f67.google.com with SMTP id x1so10974266iop.7;
-        Fri, 20 Dec 2019 14:54:49 -0800 (PST)
+        Fri, 20 Dec 2019 18:00:44 -0500
+Received: by mail-il1-f194.google.com with SMTP id v15so9334567iln.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 15:00:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=kYpUFg+g66OYb+0+NDvmD3uzMBedPiin3i8BKFrTBZw=;
+        b=Dg9+0JwC0nl7+te1/6kqnsS0yw2ym/KBliialLPLp3KLENQXrsQ4hs3MFdyjzlKqld
+         vpzcmhBHAeVo3JiNOTOyT/5OIaLPkflMLAg4itd7iEy48e5e8vjRSNXw2KmuWLpDVen5
+         u8m+o6D6Ce1KBC1GYrdSC66voxU6MWkOuVGk3PbdmodUuWlMmW70Htw1XT4hiqGRAf8b
+         46RX3autdlYKZy4ZamcrjI7G2dJDRScbr1MSx5z5aPoC6bVuo9qd4iyRCZ2dZBOzr+yc
+         9LAp5wSkwuGE01uyjAyCBKszam+XUgI6Y0SZMSFT0rVe0zYxU1Y7vvTDPbhdDcA/cTxQ
+         KV5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N6aXh/oY7lMy+cARmMvGPpZJvUooMcIfU6lzBw92zjc=;
-        b=IYva/2omyTOYtBLWDNUwb3/8fJ9o4jDg1NiTwpX7uzPY+HiLhFsiSbKrQsfR3F44rv
-         G3ffU3wr+iSh6aPLBv30dhXpAQTPeEIWqa0SnQ3ehKXjqOacFz5ZsXlF072zmar6A9Mz
-         zBAs6/IcZyCFZKTytJ5Ih00xEX7L6uWtSaeUG12TBz2WoM9TsB0cbK6tFKYzoc8Du+gm
-         asXwaccypTN0SFx5abyelLwhx1DFcvMO+NaI+LajNt1AMoEwG+PE2Hqn5/euwPvl1DVZ
-         Nj2PsfkwCXk7iuM8VNl/1YHEnvuQi1nukrO2NzzIkEbKxoSt/+eYgKVcz6WlnVsAuBmw
-         OtGA==
-X-Gm-Message-State: APjAAAVWHw6ib6cwhh6Ju5wV9l5RgLpy3f8rxZ45B1Sc/fONM9HgG3b0
-        LdoC8rzlGUK/yP9FK+L8pw==
-X-Google-Smtp-Source: APXvYqxRHv3mavUCCTrXPMpUhFxucuGGurQ6Fm6MRXBtA0U0dF6vAMO9RsEqh8V50CJdUZic7aVDsg==
-X-Received: by 2002:a02:8817:: with SMTP id r23mr14536778jai.120.1576882489464;
-        Fri, 20 Dec 2019 14:54:49 -0800 (PST)
-Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id z15sm5471450ill.20.2019.12.20.14.54.48
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=kYpUFg+g66OYb+0+NDvmD3uzMBedPiin3i8BKFrTBZw=;
+        b=eFjqQXPHlQg9FFZpMp6RPb99MaB73VZky+IqaiiaxFXY4URA8VVZ/dhkCRciSIBVvL
+         bJCYXsB9L9dwoCsbqCIQ3NskgsNsKCa//RIoDxh/HxjJpJJpy1L8579HeQE4NCeJGr/c
+         Wc94cmWMQZWPouE0ar9R0P15fLvLcCKhqVJQrjDTDCs+XYb3k3lfKC8S8xhO8qXHpANi
+         W+dNTRZW8w0aU0R7hZ77z/HQ+YDTEcnDaLNAgrB8NnhKe02ogV9XAGEBbCcwc6cvWJvW
+         Ngg82Xj+dRZcFPHfmNjgOOKzSdQFNkfRwJGpu6Gqh/wZDWFHUogOi+Es/sBPRxKhrSE6
+         c2eg==
+X-Gm-Message-State: APjAAAWYFjbOPH96pDODSMx3VOL41TZkxDig/bUuWCBjRuo8NNCOF3IX
+        3yu8I4S0xSczp2lrRsPiKcclWA==
+X-Google-Smtp-Source: APXvYqwHDVsOJy6xq6j6CKHzVDaMD3x7chhr2BoQe/hKpFFOE+Zlw2OuSvViO0uW1zFxhD1O/Go46w==
+X-Received: by 2002:a92:d708:: with SMTP id m8mr14116422iln.244.1576882843543;
+        Fri, 20 Dec 2019 15:00:43 -0800 (PST)
+Received: from localhost ([64.62.168.194])
+        by smtp.gmail.com with ESMTPSA id h23sm5524854ilf.57.2019.12.20.15.00.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 14:54:48 -0800 (PST)
-Date:   Fri, 20 Dec 2019 15:54:48 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, mcoquelin.stm32@gmail.com,
-        alexandre.torgue@st.com, fabrice.gasnier@st.com,
-        devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH 1/3] dt-bindings: nvmem: Convert STM32 ROMEM to
- json-schema
-Message-ID: <20191220225448.GA5275@bogus>
-References: <20191219144117.21527-1-benjamin.gaignard@st.com>
- <20191219144117.21527-2-benjamin.gaignard@st.com>
+        Fri, 20 Dec 2019 15:00:43 -0800 (PST)
+Date:   Fri, 20 Dec 2019 15:00:41 -0800 (PST)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Olof Johansson <olof@lixom.net>
+cc:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] riscv: export flush_icache_all to modules
+In-Reply-To: <CAOesGMg_VySkckuTfeMWkfcQ6fUBokAQbCGXP9emz9WvtX4fKQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.9999.1912201500230.57866@viisi.sifive.com>
+References: <20191217040704.91995-1-olof@lixom.net> <alpine.DEB.2.21.9999.1912200302290.3767@viisi.sifive.com> <CAOesGMg_VySkckuTfeMWkfcQ6fUBokAQbCGXP9emz9WvtX4fKQ@mail.gmail.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219144117.21527-2-benjamin.gaignard@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Dec 2019 15:41:15 +0100, Benjamin Gaignard wrote:
-> Convert the STM32 ROMEM binding to DT schema format using json-schema
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
->  .../devicetree/bindings/nvmem/st,stm32-romem.txt   | 31 ---------------
->  .../devicetree/bindings/nvmem/st,stm32-romem.yaml  | 46 ++++++++++++++++++++++
->  2 files changed, 46 insertions(+), 31 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/nvmem/st,stm32-romem.txt
->  create mode 100644 Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
-> 
+On Fri, 20 Dec 2019, Olof Johansson wrote:
 
-Applied, thanks.
+> On Fri, Dec 20, 2019 at 3:05 AM Paul Walmsley <paul.walmsley@sifive.com> wrote:
+> >
+> > On Mon, 16 Dec 2019, Olof Johansson wrote:
+> >
+> > > This is needed by LKDTM (crash dump test module), it calls
+> > > flush_icache_range(), which on RISC-V turns into flush_icache_all(). On
+> > > other architectures, the actual implementation is exported, so follow
+> > > that precedence and export it here too.
+> > >
+> > > Fixes build of CONFIG_LKDTM that fails with:
+> > > ERROR: "flush_icache_all" [drivers/misc/lkdtm/lkdtm.ko] undefined!
+> >
+> > In the past we've resisted doing this; see
+> >
+> > https://lore.kernel.org/linux-riscv/20190611134945.GA28532@lst.de/
+> >
+> > under the principle that we don't want modules to be able to flush the I$
+> > directly via this interface.  But maybe, like moving the L2 related code
+> > out of arch/riscv, we should just do it.
+> 
+> So you are aware that all other architectures that don't have coherent
+> icache already exports this, right?
+> 
+> Being more puritan on RISC-V buys nothing w.r.t. keeping modules from
+> doing anything, you'll just end up having to mark a bunch of them
+> broken on your architecture. :(
 
-Rob
+Yep, we'll pick it up.
+
+
+- Paul
