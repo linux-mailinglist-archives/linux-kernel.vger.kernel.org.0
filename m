@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02E0E127A0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:34:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC881127A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:34:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727351AbfLTLeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:34:01 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36600 "EHLO
+        id S1727402AbfLTLeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:34:03 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:36601 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727241AbfLTLd6 (ORCPT
+        with ESMTP id S1727261AbfLTLd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 20 Dec 2019 06:33:58 -0500
 Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xBKBW2Wu010984;
-        Fri, 20 Dec 2019 20:32:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBKBW2Wu010984
+        by conuserg-08.nifty.com with ESMTP id xBKBW2Wv010984;
+        Fri, 20 Dec 2019 20:32:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBKBW2Wv010984
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1576841525;
-        bh=WGVhzVxsVRHHV9K5PX1qsTPL9sZ/TX/2a6e9iLEFkEE=;
+        s=dec2015msa; t=1576841526;
+        bh=v9133Ufzc3+ic87B/K3hcV7PpJe8R3xx9bGS9VeHmEc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pL9OgSTYihHRsBMj0HJjckEVg+6jPwcYJ1MVymxrrVFMOSwkVPwH7zMi6+cqfTCpH
-         waSMA/0JLXDGt1amff3gogIeH8tQIeV5TIkhEp2veEcozWQkOyN1cDfw4CG9S9mzme
-         VmWg0vxUnZMBUwaYk9yc+DBk5l32sknvf8bf3mW1erkUZix5UhNzdBni865Gv6eH/c
-         sH7HiR2XHewDHs29xNJCrqoBlyd3Nc+9MS6sLcsGT3qRvd3uMmk1ax8dGPrrOuQ3Q+
-         J6o0e8RgsGWUsXhszV0iZoHaqDbv4dJ/MQYhcl8JCrwjZE1oWUjazczErtLbQ09cbS
-         E1FDCqDymC9iw==
+        b=M98RO5g7Dl+IAFl7CBY+mE2aAH6WsodGaRO14yB70GRQtJ/zXz5KxVoKOYBEwkVqD
+         nvBZtrCP3vhs0Y+rqnXwygAFssqIuSPG5RA+th90akWkzXELLHOgpWbOJq6K4lPqmU
+         DlG33DyVywWfSGPVGK2KL20+W0S1Po59s1hjfK0ux31s9VACxK60mKHCQD/TykjcPp
+         hiHE44ptkLTt95kgcWQg5Ga6nB3OhwdmrHehB/FadonjX97MTSKx7S9pcUBuuej2ge
+         OvxWrWQtlM4tv0vTZZL1tbkrP/EcwxIdqITIN0czJgAvnLTDGN1bzW7q/8wD0KFCoT
+         GzswpdCvKwEaA==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-mtd@lists.infradead.org
 Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
         Ley Foon Tan <ley.foon.tan@intel.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/5] mtd: rawnand: denali_dt: error out if platform has no associated data
-Date:   Fri, 20 Dec 2019 20:31:51 +0900
-Message-Id: <20191220113155.28177-2-yamada.masahiro@socionext.com>
+Subject: [PATCH v3 2/5] mtd: rawnand: denali_dt: Add support for configuring SPARE_AREA_SKIP_BYTES
+Date:   Fri, 20 Dec 2019 20:31:52 +0900
+Message-Id: <20191220113155.28177-3-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191220113155.28177-1-yamada.masahiro@socionext.com>
 References: <20191220113155.28177-1-yamada.masahiro@socionext.com>
@@ -47,43 +47,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-denali->ecc_caps is a mandatory parameter. If it were left unset,
-nand_ecc_choose_conf() would end up with NULL pointer access.
+From: Marek Vasut <marex@denx.de>
 
-So, every compatible must be associated with proper denali_dt_data.
-If of_device_get_match_data() returns NULL, let it fail immediately.
+The SPARE_AREA_SKIP_BYTES register is reset when the controller reset
+signal is toggled. Yet, this register must be configured to match the
+content of the NAND OOB area. The current default value is always set
+to 8 and is programmed into the hardware in case the hardware was not
+programmed before (e.g. in a bootloader) with a different value. This
+however does not work when the block is reset properly by Linux.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On Altera SoCFPGA CycloneV, ArriaV and Arria10, which are the SoCFPGA
+platforms which support booting from NAND, the SPARE_AREA_SKIP_BYTES
+value must be set to 2. On Socionext Uniphier, the value is 8. This
+patch adds support for preconfiguring the default value and handles
+the special SoCFPGA case by setting the default to 2 on all SoCFPGA
+platforms, while retaining the original behavior and default value of
+8 on all the other platforms.
+
+Signed-off-by: Marek Vasut <marex@denx.de>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+To: linux-mtd@lists.infradead.org
+Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-Changes in v3: None
-Changes in v2: None
+Changes in v3:
+  [Masahiro]
+   - Rebase and give my Acked-by
 
- drivers/mtd/nand/raw/denali_dt.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Changes in v2:
+  - V2: Move denali->oob_skip_bytes = data->oob_skip_bytes; right after
+    of_device_get_match_data()
 
+ drivers/mtd/nand/raw/denali.c    | 13 ++++++++++---
+ drivers/mtd/nand/raw/denali_dt.c |  5 +++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
+index 3102ddbd8abd..b6c463d02167 100644
+--- a/drivers/mtd/nand/raw/denali.c
++++ b/drivers/mtd/nand/raw/denali.c
+@@ -1302,14 +1302,21 @@ int denali_init(struct denali_controller *denali)
+ 
+ 	/*
+ 	 * Set how many bytes should be skipped before writing data in OOB.
++	 * If a non-zero value has already been configured, update it in HW.
+ 	 * If a non-zero value has already been set (by firmware or something),
+ 	 * just use it. Otherwise, set the driver's default.
+ 	 */
+-	denali->oob_skip_bytes = ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
+-	if (!denali->oob_skip_bytes) {
+-		denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
++	if (denali->oob_skip_bytes) {
+ 		iowrite32(denali->oob_skip_bytes,
+ 			  denali->reg + SPARE_AREA_SKIP_BYTES);
++	} else {
++		denali->oob_skip_bytes =
++			ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
++		if (!denali->oob_skip_bytes) {
++			denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
++			iowrite32(denali->oob_skip_bytes,
++				  denali->reg + SPARE_AREA_SKIP_BYTES);
++		}
+ 	}
+ 
+ 	iowrite32(0, denali->reg + TRANSFER_SPARE_REG);
 diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
-index 8b779a899dcf..276187939689 100644
+index 276187939689..699255fb2dd8 100644
 --- a/drivers/mtd/nand/raw/denali_dt.c
 +++ b/drivers/mtd/nand/raw/denali_dt.c
-@@ -118,11 +118,12 @@ static int denali_dt_probe(struct platform_device *pdev)
- 	denali = &dt->controller;
+@@ -27,6 +27,7 @@ struct denali_dt {
+ struct denali_dt_data {
+ 	unsigned int revision;
+ 	unsigned int caps;
++	unsigned int oob_skip_bytes;
+ 	const struct nand_ecc_caps *ecc_caps;
+ };
  
- 	data = of_device_get_match_data(dev);
--	if (data) {
--		denali->revision = data->revision;
--		denali->caps = data->caps;
--		denali->ecc_caps = data->ecc_caps;
--	}
-+	if (WARN_ON(!data))
-+		return -EINVAL;
-+
-+	denali->revision = data->revision;
-+	denali->caps = data->caps;
-+	denali->ecc_caps = data->ecc_caps;
+@@ -34,6 +35,7 @@ NAND_ECC_CAPS_SINGLE(denali_socfpga_ecc_caps, denali_calc_ecc_bytes,
+ 		     512, 8, 15);
+ static const struct denali_dt_data denali_socfpga_data = {
+ 	.caps = DENALI_CAP_HW_ECC_FIXUP,
++	.oob_skip_bytes = 2,
+ 	.ecc_caps = &denali_socfpga_ecc_caps,
+ };
+ 
+@@ -42,6 +44,7 @@ NAND_ECC_CAPS_SINGLE(denali_uniphier_v5a_ecc_caps, denali_calc_ecc_bytes,
+ static const struct denali_dt_data denali_uniphier_v5a_data = {
+ 	.caps = DENALI_CAP_HW_ECC_FIXUP |
+ 		DENALI_CAP_DMA_64BIT,
++	.oob_skip_bytes = 8,
+ 	.ecc_caps = &denali_uniphier_v5a_ecc_caps,
+ };
+ 
+@@ -51,6 +54,7 @@ static const struct denali_dt_data denali_uniphier_v5b_data = {
+ 	.revision = 0x0501,
+ 	.caps = DENALI_CAP_HW_ECC_FIXUP |
+ 		DENALI_CAP_DMA_64BIT,
++	.oob_skip_bytes = 8,
+ 	.ecc_caps = &denali_uniphier_v5b_ecc_caps,
+ };
+ 
+@@ -123,6 +127,7 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 
+ 	denali->revision = data->revision;
+ 	denali->caps = data->caps;
++	denali->oob_skip_bytes = data->oob_skip_bytes;
+ 	denali->ecc_caps = data->ecc_caps;
  
  	denali->dev = dev;
- 	denali->irq = platform_get_irq(pdev, 0);
 -- 
 2.17.1
 
