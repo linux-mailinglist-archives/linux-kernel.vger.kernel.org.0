@@ -2,230 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F35E127815
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:26:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEFF512781C
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:27:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfLTJ0l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:26:41 -0500
-Received: from mga14.intel.com ([192.55.52.115]:33849 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727167AbfLTJ0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:26:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 01:26:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,335,1571727600"; 
-   d="scan'208";a="298971795"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 20 Dec 2019 01:26:39 -0800
-Received: from [10.226.39.9] (unknown [10.226.39.9])
-        by linux.intel.com (Postfix) with ESMTP id C428758042B;
-        Fri, 20 Dec 2019 01:26:36 -0800 (PST)
-Subject: Re: [PATCH v11 1/3] dt-bindings: PCI: intel: Add YAML schemas for the
- PCIe RC controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        PCI <linux-pci@vger.kernel.org>, devicetree@vger.kernel.org,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
-References: <cover.1575860791.git.eswara.kota@linux.intel.com>
- <a276c1107d40917901a4265d4d8622dee060e4f5.1575860791.git.eswara.kota@linux.intel.com>
- <CAL_JsqJE=7P3z8AzWUfWu1PCV4EVC1PBJ+ZAu3vmAcq5G5D34g@mail.gmail.com>
-From:   Dilip Kota <eswara.kota@linux.intel.com>
-Message-ID: <621fb081-e3de-0c4f-3d3d-03c5ad19fa07@linux.intel.com>
-Date:   Fri, 20 Dec 2019 17:26:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727402AbfLTJ1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:27:21 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44449 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfLTJ1V (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:27:21 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 195so4005454pfw.11;
+        Fri, 20 Dec 2019 01:27:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UNKiOniHzSKU3M0oT+PWGTepgoOHttWen9RJRN7cbpk=;
+        b=uH0KpIPuYsKhauy6uDQhR85oanHO0ONzdFK7YxazqR6sWO9AwuAefTRRLoK/BWBk6Q
+         CTt4LtkBoZ87Na9BXfi97V5YLBsPuD0UV9e5IcniNMOlKjjgRAJ+d2Lasbchk9lQSpSt
+         AAs2v73a9RCHWpbm9qz5q+3kgLG8l6T7DoF4juV+sEM2pwMN1MbyrcmK8cLDy7ApOcxg
+         MerYx4DlqEJ/0awwoKr2crZ/Y9G5pbv01mKyWL93w+w7UB3vKy7uu3CtBMQniuMNb5Qs
+         81tlO/0iXZy228ouq1IMN4VomlwZBhrAu4N546u3gCQjLb9g36UlQD7q5zBlUcd8URuY
+         fZrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UNKiOniHzSKU3M0oT+PWGTepgoOHttWen9RJRN7cbpk=;
+        b=dFylgAAtfum9DdSMcEdO+1kB383jHG+bgnWGhhNo75iKCNIAjQKrkg8nVr2B6hSlXG
+         mH/szNVRzSzJOcJETrCq4aZZVaRaPjWDy2sDwrn8FKA579IxQzSKiU/R5oCWW5s0Cq3G
+         hYNFWhuBasXp4CxcZ8SV9P4hus8p8eATpvkhgMIqeDBqawjEiNFKsUVmtkyrotVSc9Tg
+         viLSvDBwbluKvRo3RAGD2l/mwVwFyoj6LsqfMOYJP0ioAg1yusmjUqTwY6cNlO0j37i2
+         7NzufRx6gzmDUPKOFT7vFmZ1lCPzJi7k9t9HL9beu8yQPkZZku9U12z6qinG1cx4W1Hy
+         DTvg==
+X-Gm-Message-State: APjAAAWn4nUxoNA4JOM/9x/ElUigqHaX03vLl/27EV5dddLk1+TVdzo6
+        4Hafqp+yU+UKOr58+365azh5gMcp3PtXmckjqfc=
+X-Google-Smtp-Source: APXvYqyh1hbkXRo8C51/PO5I/y84aZ4jUWZTawBw/0oDDbc5KxDjYVnkag2sPe7rExGKev7pFacrKd2Ne5qbnrqiDpA=
+X-Received: by 2002:a63:941:: with SMTP id 62mr14407335pgj.203.1576834040029;
+ Fri, 20 Dec 2019 01:27:20 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqJE=7P3z8AzWUfWu1PCV4EVC1PBJ+ZAu3vmAcq5G5D34g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20191219041039.23396-1-dan@dlrobertson.com> <20191219041039.23396-3-dan@dlrobertson.com>
+ <CAHp75VdVmfAi5hSp23Gn8nm6LmX-Mr5Tnxcbus90DrRL+gVFRA@mail.gmail.com> <20191220043220.GA16415@nessie>
+In-Reply-To: <20191220043220.GA16415@nessie>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 20 Dec 2019 11:27:10 +0200
+Message-ID: <CAHp75Vec5ADoFH9KoTnU5+uEZvGqS2+NUN+MLTiwzofDtGG0+A@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] iio: (bma400) add driver for the BMA400
+To:     Dan Robertson <dan@dlrobertson.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        linux-iio <linux-iio@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree <devicetree@vger.kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 20, 2019 at 6:48 AM Dan Robertson <dan@dlrobertson.com> wrote:
+> On Thu, Dec 19, 2019 at 01:02:28PM +0200, Andy Shevchenko wrote:
+> > On Thu, Dec 19, 2019 at 6:27 AM Dan Robertson <dan@dlrobertson.com> wrote:
 
-On 12/20/2019 12:32 AM, Rob Herring wrote:
-> On Sun, Dec 8, 2019 at 9:20 PM Dilip Kota <eswara.kota@linux.intel.com> wrote:
->> Add YAML schemas for PCIe RC controller on Intel Gateway SoCs
->> which is Synopsys DesignWare based PCIe core.
->>
->> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
->> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> Reviewed-by: Andrew Murray <andrew.murray@arm.com>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->>   .../devicetree/bindings/pci/intel-gw-pcie.yaml     | 138 +++++++++++++++++++++
->>   1 file changed, 138 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
->> new file mode 100644
->> index 000000000000..db605d8a387d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
->> @@ -0,0 +1,138 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pci/intel-gw-pcie.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: PCIe RC controller on Intel Gateway SoCs
->> +
->> +maintainers:
->> +  - Dilip Kota <eswara.kota@linux.intel.com>
->> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: intel,lgm-pcie
->> +      - const: snps,dw-pcie
->> +
->> +  device_type:
->> +    const: pci
->> +
->> +  "#address-cells":
->> +    const: 3
->> +
->> +  "#size-cells":
->> +    const: 2
->> +
->> +  reg:
->> +    items:
->> +      - description: Controller control and status registers.
->> +      - description: PCIe configuration registers.
->> +      - description: Controller application registers.
->> +
->> +  reg-names:
->> +    items:
->> +      - const: dbi
->> +      - const: config
->> +      - const: app
->> +
->> +  ranges:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  phys:
->> +    maxItems: 1
->> +
->> +  phy-names:
->> +    const: pcie
->> +
->> +  reset-gpios:
->> +    maxItems: 1
->> +
->> +  linux,pci-domain: true
->> +
->> +  num-lanes:
->> +    maximum: 2
->> +    description: Number of lanes to use for this port.
->> +
->> +  '#interrupt-cells':
->> +    const: 1
->> +
->> +  interrupt-map-mask:
->> +    description: Standard PCI IRQ mapping properties.
->> +
->> +  interrupt-map:
->> +    description: Standard PCI IRQ mapping properties.
->> +
->> +  max-link-speed:
->> +    description: Specify PCI Gen for link capability.
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/uint32
->> +      - enum: [ 1, 2, 3, 4 ]
->> +      - default: 1
->> +
->> +  bus-range:
->> +    description: Range of bus numbers associated with this controller.
->> +
->> +  reset-assert-ms:
->> +    description: |
->> +      Delay after asserting reset to the PCIe device.
->> +    maximum: 500
->> +    default: 100
->> +
->> +required:
->> +  - compatible
->> +  - device_type
->> +  - "#address-cells"
->> +  - "#size-cells"
->> +  - reg
->> +  - reg-names
->> +  - ranges
->> +  - resets
->> +  - clocks
->> +  - phys
->> +  - phy-names
->> +  - reset-gpios
->> +  - '#interrupt-cells'
->> +  - interrupt-map
->> +  - interrupt-map-mask
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/gpio/gpio.h>
->> +    #include <dt-bindings/clock/intel,lgm-clk.h>
-> I guess this is applied now as the example fails to build in
-> linux-next as this header is missing.
+> > > +static int bma400_set_accel_output_data_rate(struct bma400_data *data,
+> > > +                                            int hz, int uhz)
+> > > +{
+> > > +       unsigned int idx;
+> > > +       unsigned int odr;
+> > > +       unsigned int val;
+> > > +       int ret;
+> > > +
+> > > +       if (hz >= BMA400_ACC_ODR_MIN_WHOLE_HZ) {
+> > > +               if (uhz || hz % BMA400_ACC_ODR_MIN_WHOLE_HZ)
+> > > +                       return -EINVAL;
+> > > +
+> > > +               val = hz / BMA400_ACC_ODR_MIN_WHOLE_HZ;
+> >
+> > Again, AFAICS division may be avoided in both cases (% and / above)
+> > because of is_power_of_2() check below.
+> > Can you revisit this?
 >
-> At this point I'd settle for just 'make dt_binding_check' passing on
-> linux-next even though it should pass on maintainer trees too.
-> However, it doesn't appear the clock driver with this header is close
-> to being merged. The binding was sent on Aug 28 and not to the DT list
-> so I hadn't seen it. Given that, I'd suggest a follow-up patch to
-> remove the header dependency here. Just change LGM_GCLK_PCIE10 to the
-> value.
-Sure, i will send the patch.
+> Yeah I can update this in the next patchset, but I don't know if it is much more
+> readable this way.
 
-Regards,
-Dilip
->> +    pcie10: pcie@d0e00000 {
->> +      compatible = "intel,lgm-pcie", "snps,dw-pcie";
->> +      device_type = "pci";
->> +      #address-cells = <3>;
->> +      #size-cells = <2>;
->> +      reg = <0xd0e00000 0x1000>,
->> +            <0xd2000000 0x800000>,
->> +            <0xd0a41000 0x1000>;
->> +      reg-names = "dbi", "config", "app";
->> +      linux,pci-domain = <0>;
->> +      max-link-speed = <4>;
->> +      bus-range = <0x00 0x08>;
->> +      interrupt-parent = <&ioapic1>;
->> +      #interrupt-cells = <1>;
->> +      interrupt-map-mask = <0 0 0 0x7>;
->> +      interrupt-map = <0 0 0 1 &ioapic1 27 1>,
->> +                      <0 0 0 2 &ioapic1 28 1>,
->> +                      <0 0 0 3 &ioapic1 29 1>,
->> +                      <0 0 0 4 &ioapic1 30 1>;
->> +      ranges = <0x02000000 0 0xd4000000 0xd4000000 0 0x04000000>;
->> +      resets = <&rcu0 0x50 0>;
->> +      clocks = <&cgu0 LGM_GCLK_PCIE10>;
->> +      phys = <&cb0phy0>;
->> +      phy-names = "pcie";
->> +      reset-assert-ms = <500>;
->> +      reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
->> +      num-lanes = <2>;
->> +    };
->> --
->> 2.11.0
->>
+You may describe the algo in the comment.
+
+Let's see how it might look like
+
+  if (uhz)
+    return -EINVAL;
+  idx = __ffs(val);
+  /* We're expecting value to be 2^n * ODR_MIN_WHOLE_HZ */
+  if ((val >> idx) != BMA400_ACC_ODR_MIN_WHOLE_HZ)
+    retutn -EINVAL;
+  idx += BMA400_ACC_ODR_MIN_RAW + 1;
+
+Would it work?
+
+> > > +               if (!is_power_of_2(val))
+> > > +                       return -EINVAL;
+> > > +
+> > > +               idx = __ffs(val) + BMA400_ACC_ODR_MIN_RAW + 1;
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
