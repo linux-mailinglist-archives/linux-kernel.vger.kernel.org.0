@@ -2,240 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82098127309
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33373127311
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:55:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfLTBwu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 20:52:50 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45080 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726964AbfLTBwt (ORCPT
+        id S1727229AbfLTBzW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 20:55:22 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34658 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726963AbfLTBzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 20:52:49 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l12so6799506qtq.12
-        for <linux-kernel@vger.kernel.org>; Thu, 19 Dec 2019 17:52:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=CCSISgtL7V8q9QzteOk0TtxD6M/0tQtEP4MUsyWTHdY=;
-        b=gOaH9GoxzGYN498MOlNcrkcsTwVBFU5rEcYT0q8i6Gt7Xlz00HRMAfxIgfudrfEd3v
-         mY/JFetkm4h7jGUNaWFVWbIt0hFRfM4oTe1FK0pgweSnospRz8tp6ZuvIUvm+Y67Zsr3
-         DorRN3MY/Dn01rwI/p7EAIBQ/8MS5+MvYXVNTjNny7IpDjElbh6bR5C+uwrWOS3SC0af
-         NOrONYHdm8wI6wJ4fp465deSnxdSj8yI6t1AmeIXF8mTi9xLE1lquWhIPtxhYQO8cr6c
-         wFmR6NkvP1JKqfMdsuVXcymXSYzUGt7lPasrwHLQyjRcaAd8XJIet5B14Rtm+P1055aa
-         yBQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=CCSISgtL7V8q9QzteOk0TtxD6M/0tQtEP4MUsyWTHdY=;
-        b=qShGCaQdH28PspHwCdRDR5ENXeW4Skw8ErSF2IotzIwLNqwYEpJeiWtmHiMLfik3Ou
-         MWTRL3djBT2I1BEuey7Iczsht9ShkW+sZ1l+3/j7dmRZg5bpbzATbl3JMVbrtD7bbdAO
-         WaPv4VCGLz729ml0eRcxRp/xZamhXYtjH8IgvebjJ0R8Gp9EJuvOPx+X/5Euarorfiuv
-         xQP8ZgRywjieHX68eDP2wp/P5n49/1l0mI8aReH4GmRUlOK1l8nOxHp8pwJqYAYPRoaK
-         XyIV1bEO6NaqNoQPbz33Da/Tt/vhV5CWQluhWscJdcmJxLCWZ39Ykc37sxiSWd5gR8pt
-         pcDg==
-X-Gm-Message-State: APjAAAX4hXeHIxB4FQrjxjMisrhhQ6j/fjUOWFkbNlO/0Z0TBQuRLJqq
-        5eIa+F0ujCjW9ZQXhHsMH9jmrO8ae94=
-X-Google-Smtp-Source: APXvYqwZzRJYZaDplMj+cs7gO/EShqkHd/IVN0lblFKUygOJQPmh7grAKNTN8o+yJbQNopfjIqa2dg==
-X-Received: by 2002:aed:2f45:: with SMTP id l63mr9965730qtd.221.1576806768487;
-        Thu, 19 Dec 2019 17:52:48 -0800 (PST)
-Received: from localhost.localdomain (209-6-36-129.s6527.c3-0.smr-cbr2.sbo-smr.ma.cable.rcncustomer.com. [209.6.36.129])
-        by smtp.gmail.com with ESMTPSA id f42sm2568030qta.0.2019.12.19.17.52.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 17:52:47 -0800 (PST)
-Date:   Thu, 19 Dec 2019 20:52:45 -0500
-From:   Konrad Rzeszutek Wilk <konrad@darnok.org>
-To:     Ashish Kalra <Ashish.Kalra@amd.com>
-Cc:     hch@lst.de, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        hpa@zytor.com, x86@kernel.org, luto@kernel.org,
-        peterz@infradead.org, dave.hansen@linux-intel.com,
-        konrad.wilk@oracle.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, brijesh.singh@amd.com,
-        Thomas.Lendacky@amd.com
-Subject: Re: [PATCH v2] swiotlb: Adjust SWIOTBL bounce buffer size for SEV
- guests.
-Message-ID: <20191220015245.GA7010@localhost.localdomain>
-References: <20191209231346.5602-1-Ashish.Kalra@amd.com>
+        Thu, 19 Dec 2019 20:55:22 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK1YQvW178885;
+        Fri, 20 Dec 2019 01:54:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=yvWe495ldICiygqOjZaczcPhEGKNXC0rTc5IDLPnmg0=;
+ b=TQC1fmettNcpPG+K0+r5uCWd4QbxtaXxHbLeXWr6uYZR0w8qvXec9nz2V3nqd/rsA7G0
+ +840JBvsu6VKJK0saZjQckAjjnp3kM4dblPfYXGbEs6kOTqCsU7OW8wjY5CnXpL2LVer
+ Lmz0GdGblAcbt2Tlx9FAhFLBvNgeNw/RSenBOGDSPlfRZLnmki+NxIsW8YFZwIy6GZZK
+ hlPDQBNnE4+QSs86PfkG+PE3xqR9RW6pxgXerp5yENFxo/3DxiR0GA3F0q17n3+WbNMY
+ pqBf0lTcc0y/yuvaL051enyPxjy0h7i1rmPaa5WviRThLmxMKt2VRj5MnaWWhMKGJBst 2g== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2130.oracle.com with ESMTP id 2x01jae617-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 01:54:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK1sfDV073498;
+        Fri, 20 Dec 2019 01:54:48 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3020.oracle.com with ESMTP id 2x04mst1n8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 01:54:47 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBK1rgwj030477;
+        Fri, 20 Dec 2019 01:53:44 GMT
+Received: from localhost (/10.145.178.64)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 17:53:41 -0800
+Date:   Thu, 19 Dec 2019 17:53:39 -0800
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Kirill Tkhai <ktkhai@virtuozzo.com>, axboe@kernel.dk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, ming.lei@redhat.com, osandov@fb.com,
+        jthumshirn@suse.de, minwoo.im.dev@gmail.com, damien.lemoal@wdc.com,
+        andrea.parri@amarulasolutions.com, hare@suse.com, tj@kernel.org,
+        ajay.joshi@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com
+Subject: Re: [PATCH RFC 1/3] block: Add support for REQ_OP_ASSIGN_RANGE
+ operation
+Message-ID: <20191220015338.GB7473@magnolia>
+References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
+ <157599696813.12112.14140818972910110796.stgit@localhost.localdomain>
+ <yq1woatc8zd.fsf@oracle.com>
+ <3f2e341b-dea4-c5d0-8eb0-568b6ad2f17b@virtuozzo.com>
+ <yq1a77oc56s.fsf@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191209231346.5602-1-Ashish.Kalra@amd.com>
+In-Reply-To: <yq1a77oc56s.fsf@oracle.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912200011
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912200010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 11:13:46PM +0000, Ashish Kalra wrote:
-> From: Ashish Kalra <ashish.kalra@amd.com>
+On Thu, Dec 19, 2019 at 05:37:47PM -0500, Martin K. Petersen wrote:
 > 
-> For SEV, all DMA to and from guest has to use shared
-> (un-encrypted) pages. SEV uses SWIOTLB to make this happen
-> without requiring changes to device drivers. However,
-> depending on workload being run, the default 64MB of SWIOTLB
-> might not be enough and SWIOTLB may run out of buffers to
-> use for DMA, resulting in I/O errors.
+> Kirill,
 > 
-> Increase the default size of SWIOTLB for SEV guests using
-> a minimum value of 128MB and a maximum value of 512MB,
-> determining on amount of provisioned guest memory.
+> > Hm. BLKDEV_ZERO_NOUNMAP is used in __blkdev_issue_write_zeroes() only.
+> > So, do I understand right that we should the below two?:
+> >
+> > 1) Introduce a new flag BLKDEV_ZERO_ALLOCATE for
+> > blkdev_issue_write_zeroes().
 > 
-> The SWIOTLB default size adjustment is added as an
-> architecture specific interface/callback to allow
-> architectures such as those supporting memory encryption
-> to adjust/expand SWIOTLB size for their use.
+> > 2) Introduce a new flag REQ_NOZERO in enum req_opf.
+> 
+> Something like that. If zeroing is a problem for you.
+> 
+> Right now we offer the following semantics:
+> 
+> 	Deallocate, no zeroing (discard)
+> 
+> 	Optionally deallocate, zeroing (zeroout)
+> 
+> 	Allocate, zeroing (zeroout + NOUNMAP)
+> 
+> Some devices also implement a fourth option which would be:
+> 
+> 	Anchor: Allocate, no zeroing
 
-What if this was made dynamic? That is if there is a memory
-pressure you end up expanding the SWIOTLB dynamically?
+What happens if you anchor and then try to read the results?  IO error?
 
-Also is it worth doing this calculation based on memory or
-more on the # of PCI devices + their MMIO ranges size?
+(Yeah, I'm being lazy and not digging through SBC-3, sorry...)
 
+--D
+
+> > Won't this confuse a reader that we have blkdev_issue_write_zeroes(),
+> > which does not write zeroes sometimes? Maybe we should rename
+> > blkdev_issue_write_zeroes() in some more generic name?
 > 
-> Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-> ---
-> Changes in v2:
->  - Fix compile errors as
-> Reported-by: kbuild test robot <lkp@intel.com>
+> Maybe. The naming is what it is for hysterical raisins and reflects how
+> things are implemented in the storage protocols. I wouldn't worry too
+> much about that. We can rename things if need be but we shouldn't plumb
+> an essentially identical operation through the block stack just to
+> expose a different name at the top.
 > 
->  arch/x86/Kconfig           |  1 +
->  arch/x86/mm/mem_encrypt.c  | 36 ++++++++++++++++++++++++++++++++++++
->  include/linux/dma-direct.h | 10 ++++++++++
->  kernel/dma/Kconfig         |  3 +++
->  kernel/dma/swiotlb.c       | 14 ++++++++++++--
->  5 files changed, 62 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 5e8949953660..e75622e58d34 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1522,6 +1522,7 @@ config AMD_MEM_ENCRYPT
->  	select DYNAMIC_PHYSICAL_MASK
->  	select ARCH_USE_MEMREMAP_PROT
->  	select ARCH_HAS_FORCE_DMA_UNENCRYPTED
-> +	select ARCH_HAS_ADJUST_SWIOTLB_DEFAULT
->  	---help---
->  	  Say yes to enable support for the encryption of system memory.
->  	  This requires an AMD processor that supports Secure Memory
-> diff --git a/arch/x86/mm/mem_encrypt.c b/arch/x86/mm/mem_encrypt.c
-> index a03614bd3e1a..f4bd4b431ba1 100644
-> --- a/arch/x86/mm/mem_encrypt.c
-> +++ b/arch/x86/mm/mem_encrypt.c
-> @@ -376,6 +376,42 @@ bool force_dma_unencrypted(struct device *dev)
->  	return false;
->  }
->  
-> +#define TOTAL_MEM_1G	0x40000000U
-> +#define TOTAL_MEM_4G	0x100000000U
-> +
-> +/*
-> + * Override for SWIOTLB default size adjustment -
-> + * ARCH_HAS_ADJUST_SWIOTLB_DEFAULT
-> + */
-> +unsigned long adjust_swiotlb_default_size(unsigned long default_size)
-> +{
-> +	/*
-> +	 * For SEV, all DMA has to occur via shared/unencrypted pages.
-> +	 * SEV uses SWOTLB to make this happen without changing device
-> +	 * drivers. However, depending on the workload being run, the
-> +	 * default 64MB of SWIOTLB may not be enough & SWIOTLB may
-> +	 * run out of buffers for using DMA, resulting in I/O errors.
-> +	 * Increase the default size of SWIOTLB for SEV guests using
-> +	 * a minimum value of 128MB and a maximum value of 512GB,
-> +	 * depending on amount of provisioned guest memory.
-> +	 */
-> +	if (sev_active()) {
-> +		unsigned long total_mem = get_num_physpages() << PAGE_SHIFT;
-> +
-> +		if (total_mem <= TOTAL_MEM_1G)
-> +			default_size = default_size * 2;
-> +		else if (total_mem <= TOTAL_MEM_4G)
-> +			default_size = default_size * 4;
-> +		else
-> +			default_size = default_size * 8;
-> +
-> +		pr_info_once("SEV is active, SWIOTLB default size set to %luMB\n",
-> +			     default_size >> 20);
-> +	}
-> +
-> +	return default_size;
-> +}
-> +
->  /* Architecture __weak replacement functions */
->  void __init mem_encrypt_free_decrypted_mem(void)
->  {
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index 24b8684aa21d..85507d21493f 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -35,6 +35,16 @@ static inline bool force_dma_unencrypted(struct device *dev)
->  }
->  #endif /* CONFIG_ARCH_HAS_FORCE_DMA_UNENCRYPTED */
->  
-> +#ifdef CONFIG_ARCH_HAS_ADJUST_SWIOTLB_DEFAULT
-> +unsigned long adjust_swiotlb_default_size(unsigned long default_size);
-> +#else
-> +static inline unsigned long adjust_swiotlb_default_size
-> +		(unsigned long default_size)
-> +{
-> +	return default_size;
-> +}
-> +#endif	/* CONFIG_ARCH_HAS_ADJUST_SWIOTLB_DEFAULT */
-> +
->  /*
->   * If memory encryption is supported, phys_to_dma will set the memory encryption
->   * bit in the DMA address, and dma_to_phys will clear it.  The raw __phys_to_dma
-> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-> index 4c103a24e380..851c4500ff88 100644
-> --- a/kernel/dma/Kconfig
-> +++ b/kernel/dma/Kconfig
-> @@ -54,6 +54,9 @@ config ARCH_HAS_DMA_PREP_COHERENT
->  config ARCH_HAS_FORCE_DMA_UNENCRYPTED
->  	bool
->  
-> +config ARCH_HAS_ADJUST_SWIOTLB_DEFAULT
-> +	bool
-> +
->  config DMA_NONCOHERENT_CACHE_SYNC
->  	bool
->  
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index 9280d6f8271e..7dd72bd88f1c 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -155,11 +155,21 @@ void swiotlb_set_max_segment(unsigned int val)
->  #define IO_TLB_DEFAULT_SIZE (64UL<<20)
->  unsigned long swiotlb_size_or_default(void)
->  {
-> +	unsigned long default_size = IO_TLB_DEFAULT_SIZE;
->  	unsigned long size;
->  
-> +	/*
-> +	 * If swiotlb size/amount of slabs are not defined on kernel command
-> +	 * line, then give a chance to architectures to adjust swiotlb
-> +	 * size, this may be required by some architectures such as those
-> +	 * supporting memory encryption.
-> +	 */
-> +	if (!io_tlb_nslabs)
-> +		default_size = adjust_swiotlb_default_size(default_size);
-> +
->  	size = io_tlb_nslabs << IO_TLB_SHIFT;
->  
-> -	return size ? size : (IO_TLB_DEFAULT_SIZE);
-> +	return size ? size : default_size;
->  }
->  
->  void swiotlb_print_info(void)
-> @@ -245,7 +255,7 @@ int __init swiotlb_init_with_tbl(char *tlb, unsigned long nslabs, int verbose)
->  void  __init
->  swiotlb_init(int verbose)
->  {
-> -	size_t default_size = IO_TLB_DEFAULT_SIZE;
-> +	unsigned long default_size = swiotlb_size_or_default();
->  	unsigned char *vstart;
->  	unsigned long bytes;
->  
 > -- 
-> 2.17.1
-> 
+> Martin K. Petersen	Oracle Linux Engineering
