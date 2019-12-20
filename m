@@ -2,122 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14BE1127A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:34:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E414F127A10
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:36:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727298AbfLTLd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:33:57 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:36546 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfLTLd4 (ORCPT
+        id S1727276AbfLTLgV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:36:21 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:41828 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfLTLgV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:33:56 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id xBKBW2X0010984;
-        Fri, 20 Dec 2019 20:32:09 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com xBKBW2X0010984
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1576841529;
-        bh=FaE1Dy6PORZJLZr2fPoSaDCJ2/3nG0fTHRJYBhAtI20=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vJ9ZNkKccYowU4XwyMyk1kgJ+wlThcFKimxyMyfxqOs5uY6exrWz0FoCHerjFbbLW
-         39Dm0r+sC3zkRT2yGDJLLnwnN6qRFzDNm7NvgGGEv5LoDj3q5WbqsXQdUhQZs2piXI
-         HViI9D9pFxujyGfh70LFHdYUvPpKeG9UmtuaxdN9I/HUQsjbKXUYOwds2ig+ef/Ltk
-         tW9CzTGmWIJj+8GIsTswmHvcYoSdiYjNiV93VpDUvqljwt7guxUynFuDFzzIdyoeYh
-         HONq89bXg5O55aqmuGvaVOVJpuW9z4t35HgkeZBSLOXvcH3r8Z617ZuQUgEr12tZiN
-         olIjV5eQNagRw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mtd@lists.infradead.org
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>,
-        Ley Foon Tan <ley.foon.tan@intel.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] mtd: rawnand: denali: remove hard-coded DENALI_DEFAULT_OOB_SKIP_BYTES
-Date:   Fri, 20 Dec 2019 20:31:55 +0900
-Message-Id: <20191220113155.28177-6-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191220113155.28177-1-yamada.masahiro@socionext.com>
-References: <20191220113155.28177-1-yamada.masahiro@socionext.com>
+        Fri, 20 Dec 2019 06:36:21 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKBaCQX082593;
+        Fri, 20 Dec 2019 05:36:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1576841772;
+        bh=d8cyfo8OyAOfShKNXXpATI8DY9tGfXH5dt3KHImZgQo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=hifFTbq4sjEBmMAUIuWwMNBNnNHRQNMbU0UdtVxaAT26c7HteBIB0mpHju8nnuYH2
+         0B5jqJokNyHQVqX4YugMm6/fKRXQkLBPpp25VIIU/aME5FFpBBoJjCyFGeacy8SgH5
+         YYplNFnVZ3cWCkO0A5I4xo5a30BYv5O6u2/QL2m0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKBaBE3079658;
+        Fri, 20 Dec 2019 05:36:11 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
+ Dec 2019 05:36:10 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 20 Dec 2019 05:36:08 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKBa64o011347;
+        Fri, 20 Dec 2019 05:36:06 -0600
+Subject: Re: [PATCH] mfd: stm32-timers: Use dma_request_chan() instead
+ dma_request_slave_channel()
+To:     Fabrice Gasnier <fabrice.gasnier@st.com>, <lee.jones@linaro.org>,
+        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>
+CC:     <vkoul@kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>
+References: <20191217105240.25648-1-peter.ujfalusi@ti.com>
+ <a9184949-94e0-97fb-5fa8-77693e71e99a@st.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <bdfba9d1-d22b-fd55-2dce-1262017f1110@ti.com>
+Date:   Fri, 20 Dec 2019 13:36:24 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <a9184949-94e0-97fb-5fa8-77693e71e99a@st.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As commit 0d55c668b218 (mtd: rawnand: denali: set SPARE_AREA_SKIP_BYTES
-register to 8 if unset") says, there were three solutions discussed:
+Hi Fabrice,
 
-  [1] Add a DT property to specify the skipped bytes in OOB
-  [2] Associate the preferred value with compatible
-  [3] Hard-code the default value in the driver
+On 20/12/2019 10.54, Fabrice Gasnier wrote:
+> On 12/17/19 11:52 AM, Peter Ujfalusi wrote:
+>> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+>> eating up the error code.
+>>
+>> By using dma_request_chan() directly the driver can support deferred
+>> probing against DMA.
+>>
+>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+>> ---
+>>  drivers/mfd/stm32-timers.c | 31 ++++++++++++++++++++++---------
+>>  1 file changed, 22 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/mfd/stm32-timers.c b/drivers/mfd/stm32-timers.c
+>> index efcd4b980c94..34747e8a4a40 100644
+>> --- a/drivers/mfd/stm32-timers.c
+>> +++ b/drivers/mfd/stm32-timers.c
+>> @@ -167,10 +167,11 @@ static void stm32_timers_get_arr_size(struct stm32_timers *ddata)
+>>  	regmap_write(ddata->regmap, TIM_ARR, 0x0);
+>>  }
+>>  
+>> -static void stm32_timers_dma_probe(struct device *dev,
+>> +static int stm32_timers_dma_probe(struct device *dev,
+>>  				   struct stm32_timers *ddata)
+>>  {
+>>  	int i;
+>> +	int ret = 0;
+>>  	char name[4];
+>>  
+>>  	init_completion(&ddata->dma.completion);
+>> @@ -179,14 +180,22 @@ static void stm32_timers_dma_probe(struct device *dev,
+>>  	/* Optional DMA support: get valid DMA channel(s) or NULL */
+>>  	for (i = STM32_TIMERS_DMA_CH1; i <= STM32_TIMERS_DMA_CH4; i++) {
+>>  		snprintf(name, ARRAY_SIZE(name), "ch%1d", i + 1);
+>> -		ddata->dma.chans[i] = dma_request_slave_channel(dev, name);
+>> +		ddata->dma.chans[i] = dma_request_chan(dev, name);
+>>  	}
+>> -	ddata->dma.chans[STM32_TIMERS_DMA_UP] =
+>> -		dma_request_slave_channel(dev, "up");
+>> -	ddata->dma.chans[STM32_TIMERS_DMA_TRIG] =
+>> -		dma_request_slave_channel(dev, "trig");
+>> -	ddata->dma.chans[STM32_TIMERS_DMA_COM] =
+>> -		dma_request_slave_channel(dev, "com");
+>> +	ddata->dma.chans[STM32_TIMERS_DMA_UP] = dma_request_chan(dev, "up");
+>> +	ddata->dma.chans[STM32_TIMERS_DMA_TRIG] = dma_request_chan(dev, "trig");
+>> +	ddata->dma.chans[STM32_TIMERS_DMA_COM] = dma_request_chan(dev, "com");
+>> +
+>> +	for (i = STM32_TIMERS_DMA_CH1; i < STM32_TIMERS_MAX_DMAS; i++) {
+>> +		if (IS_ERR(ddata->dma.chans[i])) {
+>> +			if (PTR_ERR(ddata->dma.chans[i]) == -EPROBE_DEFER)> +				ret = -EPROBE_DEFER;
+> 
+> Hi Peter,
+> 
+> Thanks for the patch,
+> 
+> As the DMA is optional, I'd rather prefer to check explicitly there's no
+> device, and return any other error case, basically:
+> 
+> 			if (PTR_ERR(ddata->dma.chans[i]) != -ENODEV)
+> 				return PTR_ERR(ddata->dma.chans[i]);
 
-At that time, [3] was chosen because I did not have enough information
-about the other platforms than UniPhier.
+My intention was to specifically pick and handle EPROBE_DEFER while not
+changing how the driver handles other errors, whether it because there
+is no DMA channel specified or there is a failure to get the channel.
 
-That commit also says "The preferred value may vary by platform. If so,
-please trade up to a different solution." My intention was to replace
-[3] with [2], not keep both [2] and [3].
+But if you prefer to ignore only ENODEV and report other errors then I
+can send v2.
+It could expose otherwise ignored configuration error (from DT?) and the
+change in the driver will be blamed for the regression.
 
-Now that we have switched to [2] for SOCFPGA's SPARE_AREA_SKIP_BYTES=2,
-[3] should be removed. This should be OK because denali_pci.c just
-gets back to the original behavior.
+Would it make sense to add the change you suggested as an iteration on
+top of this patch?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+> 
+>> +
+>> +			ddata->dma.chans[i] = NULL;
+>> +		}
+>> +	}
+>> +
+>> +	return ret;
+> 
+> With that, return 0 here.
+> 
+>>  }
+>>  
+>>  static void stm32_timers_dma_remove(struct device *dev,
+>> @@ -230,7 +239,11 @@ static int stm32_timers_probe(struct platform_device *pdev)
+>>  
+>>  	stm32_timers_get_arr_size(ddata);
+>>  
+>> -	stm32_timers_dma_probe(dev, ddata);
+>> +	ret = stm32_timers_dma_probe(dev, ddata);
+>> +	if (ret) {
+>> +		stm32_timers_dma_remove(dev, ddata);
+> 
+> With that, stm32_timers_dma_remove() likely need to be updated:
+> 
+> -		if (ddata->dma.chans[i])
+> +		if (!IS_ERR_OR_NULL(ddata->dma.chans[i]))
+> 			dma_release_channel(ddata->dma.chans[i]);
+> 
+> Best regards,
+> Fabrice
+> 
+>> +		return ret;
+>> +	}
+>>  
+>>  	platform_set_drvdata(pdev, ddata);
+>>  
+>>
 
-Changes in v3:
-  - New patch
+Kind regards,
+- Péter
 
-Changes in v2: None
-
- drivers/mtd/nand/raw/denali.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/mtd/nand/raw/denali.c b/drivers/mtd/nand/raw/denali.c
-index b6c463d02167..fafd0a0aa8e2 100644
---- a/drivers/mtd/nand/raw/denali.c
-+++ b/drivers/mtd/nand/raw/denali.c
-@@ -21,7 +21,6 @@
- #include "denali.h"
- 
- #define DENALI_NAND_NAME    "denali-nand"
--#define DENALI_DEFAULT_OOB_SKIP_BYTES	8
- 
- /* for Indexed Addressing */
- #define DENALI_INDEXED_CTRL	0x00
-@@ -1302,22 +1301,16 @@ int denali_init(struct denali_controller *denali)
- 
- 	/*
- 	 * Set how many bytes should be skipped before writing data in OOB.
--	 * If a non-zero value has already been configured, update it in HW.
--	 * If a non-zero value has already been set (by firmware or something),
--	 * just use it. Otherwise, set the driver's default.
-+	 * If a platform requests a non-zero value, set it to the register.
-+	 * Otherwise, read the value out, expecting it has already been set up
-+	 * by firmware.
- 	 */
--	if (denali->oob_skip_bytes) {
-+	if (denali->oob_skip_bytes)
- 		iowrite32(denali->oob_skip_bytes,
- 			  denali->reg + SPARE_AREA_SKIP_BYTES);
--	} else {
--		denali->oob_skip_bytes =
--			ioread32(denali->reg + SPARE_AREA_SKIP_BYTES);
--		if (!denali->oob_skip_bytes) {
--			denali->oob_skip_bytes = DENALI_DEFAULT_OOB_SKIP_BYTES;
--			iowrite32(denali->oob_skip_bytes,
--				  denali->reg + SPARE_AREA_SKIP_BYTES);
--		}
--	}
-+	else
-+		denali->oob_skip_bytes = ioread32(denali->reg +
-+						  SPARE_AREA_SKIP_BYTES);
- 
- 	iowrite32(0, denali->reg + TRANSFER_SPARE_REG);
- 	iowrite32(GENMASK(denali->nbanks - 1, 0), denali->reg + RB_PIN_ENABLED);
--- 
-2.17.1
-
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
