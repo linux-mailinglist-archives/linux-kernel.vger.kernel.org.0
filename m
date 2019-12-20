@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 722CA1284AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 23:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C6C0128498
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 23:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbfLTW1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 17:27:25 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:7283 "EHLO
+        id S1727681AbfLTW1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 17:27:24 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:7294 "EHLO
         hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727641AbfLTW1V (ORCPT
+        with ESMTP id S1727655AbfLTW1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 17:27:21 -0500
+        Fri, 20 Dec 2019 17:27:22 -0500
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dfd4aa90000>; Fri, 20 Dec 2019 14:26:49 -0800
+        id <B5dfd4aaa0000>; Fri, 20 Dec 2019 14:26:50 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
   Fri, 20 Dec 2019 14:27:20 -0800
 X-PGP-Universal: processed;
         by hqpgpgate101.nvidia.com on Fri, 20 Dec 2019 14:27:20 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
- 2019 22:27:19 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 20 Dec 2019 22:27:19 +0000
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 20 Dec
+ 2019 22:27:20 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 20 Dec 2019 22:27:20 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.197]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dfd4ac60001>; Fri, 20 Dec 2019 14:27:19 -0800
+        id <B5dfd4ac70001>; Fri, 20 Dec 2019 14:27:20 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <broonie@kernel.org>,
@@ -40,9 +40,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 11/19] ASoC: tegra: Use device managed resource APIs to get the clock
-Date:   Fri, 20 Dec 2019 14:26:57 -0800
-Message-ID: <1576880825-15010-12-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration for audio mclk
+Date:   Fri, 20 Dec 2019 14:26:58 -0800
+Message-ID: <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
 References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
@@ -50,593 +50,172 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576880809; bh=gd1l/RxSd8OqK1FcAMxEpj+OlZcOBeA1qoOAhMdN6aE=;
+        t=1576880810; bh=QdOc3YnjVu/XgzWmSUXmDjziKb9PvXaQKhX3Ck5gCQQ=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=Anted+JzxJbeAgIfm5DI91i41u1xf53iTJ/J3yPjkDklXEcEDZwru7kSIwjYatCun
-         xj2LX0jQLDftM3dLeqmsuWWKV7pAItU5/LyYB9CZrftq9EhCxRrGSHqkAPtMa/7WYY
-         VpEUBPt/tiLA7y93W2B9Lof9AkacFOyd66sMohYSb95UpCsePVkQY2+xWJRtyflcXM
-         HgnopV5ytf+pla7qk+mlIuybvTu8zdvEFyJp/A/WMgMy71fQIl5lmuzusjtYOvr06F
-         GAfD2GOaGivihUAxXLawej8snR+ceCae+cxu8V2Mp1T0FxJKS+iXg+GUZFAoB2ERoO
-         UjjYt2fYWVc8Q==
+        b=D5ugB35j57lGioe9GAzJ0Ff7guuRW2UvKteHKPQVs0C6VmxXOBELAHMrsFMAUMCGK
+         H+gn9byE92Dl5VgiokGGMAck77JZN/l09YnUWtQyQ2ljwaUpjvP5AH6OHimFegr05U
+         TF96G79AktJrQtFiORF0h8d/88cm5mongBf1IzfrZmQZ7TO4BBQ3B1DI/pSpg4jkMQ
+         TYlP69uZsMCEZk71t62L9B5uUSFOLmO4kzCFYVuXLVgXT9Zqw1DizUQvxUS0Rm99NM
+         zgsaEPmBPx3VBm/zEA/lL7naMbPc/2PHWlsIMk1nckDstmogH1mPRdGP/D3KMuFx5a
+         QvQjmZE6anPmQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tegra_asoc_utils uses clk_get() and clk_put() to get the clock
-and to free them explicitly.
+Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+through Tegra210 and currently Tegra clock driver does initial parent
+configuration for audio mclk "clk_out_1" and enables them by default.
 
-This patch updates it to use device managed resource API
-devm_clk_get() so the clock will be automatically released and freed
-when the device is unbound and removes tegra_asoc_utils_fini() as
-its no longer needed.
+With the move of Tera PMC clocks from clock driver to Tegra PMC
+driver, initial parent configuration for audio clocks are through
+the device tree using assigned-clock-parents property.
+
+Default clock parents can be specified in device tree using
+assigned-clocks and assigned-clock-parents and there is no need
+to have clock driver do parent configuration and enable audio related
+clocks.
+
+This patch has implementation for initial parent configuration in
+audio driver when default parent configuration is not specified in the
+device tree using assigned-clock properties and enables audio clocks
+during the clock rate change.
+
+This patch configures PLLA_OUT0 as parent to extern1 and extern1
+as parent to clk_out_1 and uses clk_out_1 as cdev1 clock to allow
+mclk control from this driver.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- sound/soc/tegra/tegra_alc5632.c    |  7 +------
- sound/soc/tegra/tegra_asoc_utils.c | 34 ++++++----------------------------
- sound/soc/tegra/tegra_asoc_utils.h |  1 -
- sound/soc/tegra/tegra_max98090.c   | 22 ++++++----------------
- sound/soc/tegra/tegra_rt5640.c     | 22 ++++++----------------
- sound/soc/tegra/tegra_rt5677.c     |  7 +------
- sound/soc/tegra/tegra_sgtl5000.c   |  7 +------
- sound/soc/tegra/tegra_wm8753.c     | 22 ++++++----------------
- sound/soc/tegra/tegra_wm8903.c     | 22 ++++++----------------
- sound/soc/tegra/tegra_wm9712.c     |  8 ++------
- sound/soc/tegra/trimslice.c        | 18 ++++--------------
- 11 files changed, 39 insertions(+), 131 deletions(-)
+ sound/soc/tegra/tegra_asoc_utils.c | 71 ++++++++++++++++++++++----------------
+ 1 file changed, 41 insertions(+), 30 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
-index 9e8b1497efd3..50a6d2ff4442 100644
---- a/sound/soc/tegra/tegra_alc5632.c
-+++ b/sound/soc/tegra/tegra_alc5632.c
-@@ -205,13 +205,11 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		goto err_put_cpu_of_node;
- 	}
- 
- 	return 0;
- 
--err_fini_utils:
--	tegra_asoc_utils_fini(&alc5632->util_data);
- err_put_cpu_of_node:
- 	of_node_put(tegra_alc5632_dai.cpus->of_node);
- 	tegra_alc5632_dai.cpus->of_node = NULL;
-@@ -226,12 +224,9 @@ static int tegra_alc5632_probe(struct platform_device *pdev)
- static int tegra_alc5632_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	of_node_put(tegra_alc5632_dai.cpus->of_node);
- 	tegra_alc5632_dai.cpus->of_node = NULL;
- 	tegra_alc5632_dai.platforms->of_node = NULL;
 diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-index 536a578e9512..38535962029c 100644
+index 38535962029c..fc3135c08f43 100644
 --- a/sound/soc/tegra/tegra_asoc_utils.c
 +++ b/sound/soc/tegra/tegra_asoc_utils.c
-@@ -175,52 +175,30 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
- 		return -EINVAL;
- 	}
+@@ -7,6 +7,7 @@
+  */
  
--	data->clk_pll_a = clk_get(dev, "pll_a");
-+	data->clk_pll_a = devm_clk_get(dev, "pll_a");
- 	if (IS_ERR(data->clk_pll_a)) {
- 		dev_err(data->dev, "Can't retrieve clk pll_a\n");
--		ret = PTR_ERR(data->clk_pll_a);
--		goto err;
-+		return PTR_ERR(data->clk_pll_a);
- 	}
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+@@ -59,9 +60,8 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+ 	data->set_baseclock = 0;
+ 	data->set_mclk = 0;
  
--	data->clk_pll_a_out0 = clk_get(dev, "pll_a_out0");
-+	data->clk_pll_a_out0 = devm_clk_get(dev, "pll_a_out0");
- 	if (IS_ERR(data->clk_pll_a_out0)) {
- 		dev_err(data->dev, "Can't retrieve clk pll_a_out0\n");
--		ret = PTR_ERR(data->clk_pll_a_out0);
--		goto err_put_pll_a;
-+		return PTR_ERR(data->clk_pll_a_out0);
- 	}
+-	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
++	if (__clk_is_enabled(data->clk_cdev1))
++		clk_disable_unprepare(data->clk_cdev1);
  
--	data->clk_cdev1 = clk_get(dev, "mclk");
-+	data->clk_cdev1 = devm_clk_get(dev, "mclk");
- 	if (IS_ERR(data->clk_cdev1)) {
- 		dev_err(data->dev, "Can't retrieve clk cdev1\n");
--		ret = PTR_ERR(data->clk_cdev1);
--		goto err_put_pll_a_out0;
-+		return PTR_ERR(data->clk_cdev1);
- 	}
+ 	err = clk_set_rate(data->clk_pll_a, new_baseclock);
+ 	if (err) {
+@@ -77,18 +77,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
  
- 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
--	if (ret)
--		goto err_put_cdev1;
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
  
--	return 0;
+-	err = clk_prepare_enable(data->clk_pll_a);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+-		return err;
+-	}
 -
--err_put_cdev1:
--	clk_put(data->clk_cdev1);
--err_put_pll_a_out0:
--	clk_put(data->clk_pll_a_out0);
--err_put_pll_a:
--	clk_put(data->clk_pll_a);
--err:
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
- 
--void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data)
--{
--	clk_put(data->clk_cdev1);
--	clk_put(data->clk_pll_a_out0);
--	clk_put(data->clk_pll_a);
--}
--EXPORT_SYMBOL_GPL(tegra_asoc_utils_fini);
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
 -
- MODULE_AUTHOR("Stephen Warren <swarren@nvidia.com>");
- MODULE_DESCRIPTION("Tegra ASoC utility code");
- MODULE_LICENSE("GPL");
-diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
-index 0c13818dee75..a34439587d59 100644
---- a/sound/soc/tegra/tegra_asoc_utils.h
-+++ b/sound/soc/tegra/tegra_asoc_utils.h
-@@ -34,6 +34,5 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
- int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data);
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -108,9 +96,8 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 	const int ac97_rate = 24576000;
+ 	int err;
+ 
+-	clk_disable_unprepare(data->clk_cdev1);
+-	clk_disable_unprepare(data->clk_pll_a_out0);
+-	clk_disable_unprepare(data->clk_pll_a);
++	if (__clk_is_enabled(data->clk_cdev1))
++		clk_disable_unprepare(data->clk_cdev1);
+ 
+ 	/*
+ 	 * AC97 rate is fixed at 24.576MHz and is used for both the host
+@@ -130,18 +117,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+ 
+ 	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+ 
+-	err = clk_prepare_enable(data->clk_pll_a);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+-		return err;
+-	}
+-
+-	err = clk_prepare_enable(data->clk_pll_a_out0);
+-	if (err) {
+-		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+-		return err;
+-	}
+-
+ 	err = clk_prepare_enable(data->clk_cdev1);
+ 	if (err) {
+ 		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+@@ -158,6 +133,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
  int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
- 			  struct device *dev);
--void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *data);
- 
- #endif
-diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
-index 4954a33ff46b..f554a3d4571f 100644
---- a/sound/soc/tegra/tegra_max98090.c
-+++ b/sound/soc/tegra/tegra_max98090.c
-@@ -218,19 +218,18 @@ static int tegra_max98090_probe(struct platform_device *pdev)
- 
- 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	tegra_max98090_dai.codecs->of_node = of_parse_phandle(np,
- 			"nvidia,audio-codec", 0);
- 	if (!tegra_max98090_dai.codecs->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,audio-codec' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_max98090_dai.cpus->of_node = of_parse_phandle(np,
-@@ -238,40 +237,31 @@ static int tegra_max98090_probe(struct platform_device *pdev)
- 	if (!tegra_max98090_dai.cpus->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_max98090_dai.platforms->of_node = tegra_max98090_dai.cpus->of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
--err:
--	return ret;
- }
- 
- static int tegra_max98090_remove(struct platform_device *pdev)
+ 			  struct device *dev)
  {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	return 0;
- }
- 
-diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
-index d46915a3ec4c..5c695dfea009 100644
---- a/sound/soc/tegra/tegra_rt5640.c
-+++ b/sound/soc/tegra/tegra_rt5640.c
-@@ -164,19 +164,18 @@ static int tegra_rt5640_probe(struct platform_device *pdev)
- 
- 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	tegra_rt5640_dai.codecs->of_node = of_parse_phandle(np,
- 			"nvidia,audio-codec", 0);
- 	if (!tegra_rt5640_dai.codecs->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,audio-codec' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_rt5640_dai.cpus->of_node = of_parse_phandle(np,
-@@ -184,40 +183,31 @@ static int tegra_rt5640_probe(struct platform_device *pdev)
- 	if (!tegra_rt5640_dai.cpus->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_rt5640_dai.platforms->of_node = tegra_rt5640_dai.cpus->of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
--err:
--	return ret;
- }
- 
- static int tegra_rt5640_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	return 0;
- }
- 
-diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-index 81cb6cc6236e..fb86f76728b3 100644
---- a/sound/soc/tegra/tegra_rt5677.c
-+++ b/sound/soc/tegra/tegra_rt5677.c
-@@ -270,13 +270,11 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		goto err_put_cpu_of_node;
- 	}
- 
- 	return 0;
- 
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
- err_put_cpu_of_node:
- 	of_node_put(tegra_rt5677_dai.cpus->of_node);
- 	tegra_rt5677_dai.cpus->of_node = NULL;
-@@ -291,12 +289,9 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
- static int tegra_rt5677_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	tegra_rt5677_dai.platforms->of_node = NULL;
- 	of_node_put(tegra_rt5677_dai.codecs->of_node);
- 	tegra_rt5677_dai.codecs->of_node = NULL;
-diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
-index e13b81d29cf3..586f56f435f4 100644
---- a/sound/soc/tegra/tegra_sgtl5000.c
-+++ b/sound/soc/tegra/tegra_sgtl5000.c
-@@ -156,13 +156,11 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		goto err_put_cpu_of_node;
- 	}
- 
- 	return 0;
- 
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
- err_put_cpu_of_node:
- 	of_node_put(tegra_sgtl5000_dai.cpus->of_node);
- 	tegra_sgtl5000_dai.cpus->of_node = NULL;
-@@ -177,13 +175,10 @@ static int tegra_sgtl5000_driver_probe(struct platform_device *pdev)
- static int tegra_sgtl5000_driver_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(card);
++	struct clk *clk_out_1, *clk_extern1;
  	int ret;
  
- 	ret = snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	of_node_put(tegra_sgtl5000_dai.cpus->of_node);
- 	tegra_sgtl5000_dai.cpus->of_node = NULL;
- 	tegra_sgtl5000_dai.platforms->of_node = NULL;
-diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
-index f6dd790dad71..f76cfdc963ed 100644
---- a/sound/soc/tegra/tegra_wm8753.c
-+++ b/sound/soc/tegra/tegra_wm8753.c
-@@ -127,19 +127,18 @@ static int tegra_wm8753_driver_probe(struct platform_device *pdev)
- 
- 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	tegra_wm8753_dai.codecs->of_node = of_parse_phandle(np,
- 			"nvidia,audio-codec", 0);
- 	if (!tegra_wm8753_dai.codecs->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,audio-codec' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
+ 	data->dev = dev;
+@@ -193,6 +169,41 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+ 		return PTR_ERR(data->clk_cdev1);
  	}
  
- 	tegra_wm8753_dai.cpus->of_node = of_parse_phandle(np,
-@@ -147,40 +146,31 @@ static int tegra_wm8753_driver_probe(struct platform_device *pdev)
- 	if (!tegra_wm8753_dai.cpus->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
++	/*
++	 * If clock parents are not set in DT, configure here to use clk_out_1
++	 * as mclk and extern1 as parent for Tegra30 and higher.
++	 */
++	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
++	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
++		clk_extern1 = devm_clk_get(dev, "extern1");
++		if (IS_ERR(clk_extern1)) {
++			dev_err(data->dev, "Can't retrieve clk extern1\n");
++			return PTR_ERR(clk_extern1);
++		}
++
++		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk extern1\n");
++			return ret;
++		}
++
++		clk_out_1 = devm_clk_get(dev, "clk_out_1");
++		if (IS_ERR(clk_out_1)) {
++			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
++			return PTR_ERR(clk_out_1);
++		}
++
++		ret = clk_set_parent(clk_out_1, clk_extern1);
++		if (ret < 0) {
++			dev_err(data->dev,
++				"Set parent failed for clk_out_1\n");
++			return ret;
++		}
++
++		data->clk_cdev1 = clk_out_1;
++	}
++
+ 	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
  
- 	tegra_wm8753_dai.platforms->of_node = tegra_wm8753_dai.cpus->of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
--err:
--	return ret;
- }
- 
- static int tegra_wm8753_driver_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	return 0;
- }
- 
-diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
-index f08d3489c3cf..f5f78c3512cd 100644
---- a/sound/soc/tegra/tegra_wm8903.c
-+++ b/sound/soc/tegra/tegra_wm8903.c
-@@ -301,19 +301,18 @@ static int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 
- 	ret = snd_soc_of_parse_card_name(card, "nvidia,model");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_of_parse_audio_routing(card, "nvidia,audio-routing");
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	tegra_wm8903_dai.codecs->of_node = of_parse_phandle(np,
- 						"nvidia,audio-codec", 0);
- 	if (!tegra_wm8903_dai.codecs->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,audio-codec' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_wm8903_dai.cpus->of_node = of_parse_phandle(np,
-@@ -321,40 +320,31 @@ static int tegra_wm8903_driver_probe(struct platform_device *pdev)
- 	if (!tegra_wm8903_dai.cpus->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	tegra_wm8903_dai.platforms->of_node = tegra_wm8903_dai.cpus->of_node;
- 
- 	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_fini_utils:
--	tegra_asoc_utils_fini(&machine->util_data);
--err:
--	return ret;
- }
- 
- static int tegra_wm8903_driver_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	return 0;
- }
- 
-diff --git a/sound/soc/tegra/tegra_wm9712.c b/sound/soc/tegra/tegra_wm9712.c
-index b85bd9f89073..726edfa21a29 100644
---- a/sound/soc/tegra/tegra_wm9712.c
-+++ b/sound/soc/tegra/tegra_wm9712.c
-@@ -113,19 +113,17 @@ static int tegra_wm9712_driver_probe(struct platform_device *pdev)
- 
- 	ret = tegra_asoc_utils_set_ac97_rate(&machine->util_data);
- 	if (ret)
--		goto asoc_utils_fini;
-+		goto codec_unregister;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto asoc_utils_fini;
-+		goto codec_unregister;
- 	}
- 
- 	return 0;
- 
--asoc_utils_fini:
--	tegra_asoc_utils_fini(&machine->util_data);
- codec_unregister:
- 	platform_device_del(machine->codec);
- codec_put:
-@@ -140,8 +138,6 @@ static int tegra_wm9712_driver_remove(struct platform_device *pdev)
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&machine->util_data);
--
- 	platform_device_unregister(machine->codec);
- 
- 	return 0;
-diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
-index 3f67ddd13674..e51c67092c8f 100644
---- a/sound/soc/tegra/trimslice.c
-+++ b/sound/soc/tegra/trimslice.c
-@@ -125,8 +125,7 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
- 	if (!trimslice_tlv320aic23_dai.codecs->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,audio-codec' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	trimslice_tlv320aic23_dai.cpus->of_node = of_parse_phandle(np,
-@@ -134,8 +133,7 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
- 	if (!trimslice_tlv320aic23_dai.cpus->of_node) {
- 		dev_err(&pdev->dev,
- 			"Property 'nvidia,i2s-controller' missing or invalid\n");
--		ret = -EINVAL;
--		goto err;
-+		return -EINVAL;
- 	}
- 
- 	trimslice_tlv320aic23_dai.platforms->of_node =
-@@ -143,32 +141,24 @@ static int tegra_snd_trimslice_probe(struct platform_device *pdev)
- 
- 	ret = tegra_asoc_utils_init(&trimslice->util_data, &pdev->dev);
- 	if (ret)
--		goto err;
-+		return ret;
- 
- 	ret = snd_soc_register_card(card);
- 	if (ret) {
- 		dev_err(&pdev->dev, "snd_soc_register_card failed (%d)\n",
- 			ret);
--		goto err_fini_utils;
-+		return ret;
- 	}
- 
- 	return 0;
--
--err_fini_utils:
--	tegra_asoc_utils_fini(&trimslice->util_data);
--err:
--	return ret;
- }
- 
- static int tegra_snd_trimslice_remove(struct platform_device *pdev)
- {
- 	struct snd_soc_card *card = platform_get_drvdata(pdev);
--	struct tegra_trimslice *trimslice = snd_soc_card_get_drvdata(card);
- 
- 	snd_soc_unregister_card(card);
- 
--	tegra_asoc_utils_fini(&trimslice->util_data);
--
- 	return 0;
- }
- 
+ 	return ret;
 -- 
 2.7.4
 
