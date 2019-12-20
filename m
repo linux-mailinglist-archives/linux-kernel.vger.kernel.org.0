@@ -2,83 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6F631278BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F376A1278CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:06:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfLTKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 05:04:18 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:54476 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbfLTKER (ORCPT
+        id S1727400AbfLTKGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 05:06:35 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:29328 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727184AbfLTKGf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:04:17 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKA4BPO016735;
-        Fri, 20 Dec 2019 04:04:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576836251;
-        bh=Ma1U2A/pFmH8hrjGx2OkWa/HQjXzqaF1j16RnDWo8mY=;
-        h=From:To:CC:Subject:Date;
-        b=AAJUBnieER3BPQr+lYbn0N/wcjXZLQ9rEsz8j9KxUcwiIr/6CqaBJmKOeYXonEZgo
-         a5BL2f4SMHwDQjf99/a9MzLJBg89rEdYbAaEO/MjYexc5Jo4Tpia4D+zk/9fwqvcFy
-         Rar3go/cyO9cL8rDF4i5SvR53EZ+z6xN8IhPbS0Y=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBKA4Bxg044521
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Dec 2019 04:04:11 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
- Dec 2019 04:04:10 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 20 Dec 2019 04:04:09 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKA47W6113355;
-        Fri, 20 Dec 2019 04:04:07 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] PCI: dwc: Use private data pointer of "struct irq_domain" to get pcie_port
-Date:   Fri, 20 Dec 2019 15:35:50 +0530
-Message-ID: <20191220100550.777-1-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 20 Dec 2019 05:06:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576836394;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TJRAO3L22Ih+Pz3y1jOIE97EY53hqHdNJLLu6DqeuvU=;
+        b=DQ87E3uKlcmKSmYWWnszQbwsu7l7Jux6fhXJxrQ4J70EMxD5faikeocPsPB6gM2V883zS4
+        usYAwEP7H2n3OoC+US/AqRz8SXdFdzVVArs+CLZlCJQyJFKJoNcVkxtwmhKspKT0sr8Aau
+        QCgNCQ6a2gxjOcBmghbZtM0MLnYkMOI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-209-Q-jcCQ3WOJCPBNkNsbH44Q-1; Fri, 20 Dec 2019 05:06:30 -0500
+X-MC-Unique: Q-jcCQ3WOJCPBNkNsbH44Q-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E665694D13;
+        Fri, 20 Dec 2019 10:06:26 +0000 (UTC)
+Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B2431001B00;
+        Fri, 20 Dec 2019 10:06:20 +0000 (UTC)
+Date:   Fri, 20 Dec 2019 11:06:18 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [PATCH v2 37/45] KVM: Drop kvm_arch_vcpu_setup()
+Message-ID: <20191220110618.05b1dc86.cohuck@redhat.com>
+In-Reply-To: <20191218215530.2280-38-sean.j.christopherson@intel.com>
+References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+        <20191218215530.2280-38-sean.j.christopherson@intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No functional change. Get "struct pcie_port *" from private data
-pointer of "struct irq_domain" in dw_pcie_irq_domain_free() to make
-it look similar to how "struct pcie_port *" is obtained in
-dw_pcie_irq_domain_alloc()
+On Wed, 18 Dec 2019 13:55:22 -0800
+Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Remove kvm_arch_vcpu_setup() now that all arch specific implementations
+> are nops.
+> 
+> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/arm/kvm/guest.c      | 5 -----
+>  arch/arm64/kvm/guest.c    | 5 -----
+>  arch/mips/kvm/mips.c      | 5 -----
+>  arch/powerpc/kvm/book3s.c | 5 -----
+>  arch/powerpc/kvm/booke.c  | 5 -----
+>  arch/s390/kvm/kvm-s390.c  | 5 -----
+>  arch/x86/kvm/x86.c        | 5 -----
+>  include/linux/kvm_host.h  | 1 -
+>  virt/kvm/kvm_main.c       | 5 -----
+>  9 files changed, 41 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 395feb8ca051..c3d72b06e964 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -236,7 +236,7 @@ static void dw_pcie_irq_domain_free(struct irq_domain *domain,
- 				    unsigned int virq, unsigned int nr_irqs)
- {
- 	struct irq_data *d = irq_domain_get_irq_data(domain, virq);
--	struct pcie_port *pp = irq_data_get_irq_chip_data(d);
-+	struct pcie_port *pp = domain->host_data;
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&pp->lock, flags);
--- 
-2.17.1
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
 
