@@ -2,67 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9EAD12741E
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 04:46:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7637E127427
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 04:49:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfLTDqp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 22:46:45 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:56706 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727071AbfLTDqQ (ORCPT
+        id S1727190AbfLTDte (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 22:49:34 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:48008 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727024AbfLTDte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 22:46:16 -0500
-X-UUID: d3ad0c5a7e2249c688cc229d43be6718-20191220
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=k477Yin3YYJsBHpEx1LJG/SeYRoLXIpqmsdtWHjiaaQ=;
-        b=WObTnHwAHs3d1aAI9wfgfFfiRv4zm7nDP0v01qHZGhB4sg8tCuLIGYWzzw1blFktdySkmoaD1f/pWI0MfkYKLww9lqG4CJt++y6oozSmJ+iRYiM2DBIp35BMDqvu/01PNYiTLIll0TDeQmPfxBY2y0GVTibHZz5qOoozKWgi9WU=;
-X-UUID: d3ad0c5a7e2249c688cc229d43be6718-20191220
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1999116621; Fri, 20 Dec 2019 11:46:10 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 20 Dec 2019 11:45:50 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 20 Dec 2019 11:46:08 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v11 10/10] arm64: dts: Add power-domains properity to mfgcfg
-Date:   Fri, 20 Dec 2019 11:46:04 +0800
-Message-ID: <1576813564-23927-11-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1576813564-23927-1-git-send-email-weiyi.lu@mediatek.com>
-References: <1576813564-23927-1-git-send-email-weiyi.lu@mediatek.com>
+        Thu, 19 Dec 2019 22:49:34 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK3nLfQ051685;
+        Fri, 20 Dec 2019 03:49:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2019-08-05;
+ bh=GTiOcXJQunO//AwjgksBQNuwNz7ld2diMaJL2w78mIw=;
+ b=iFdZFh7BMzxdmaJTWACH4bQdhMJvAfy7aEG0HKQQDtNp2MS4TIFeZet1jl3C+tmyaguY
+ /DgRP0kpBXgdbBfQalBUPwSkawRW0sm1DMme8Qp+9RXFQR7qmhU8RzOY3+0oCauu0w2I
+ IWibW1IyosN0kCDZiJTEJTkhzVuueo7JOBHDKFX1y3ezoKlAAc0obzO/tuRcTtS/Axg7
+ 0rlu7Af4jv1DlWehURhGT3YJGyUOhoH8374+OjdMFMFUyOlYIpNAanLAeNNi4jBD8QLj
+ YUVN3/D0iMqf68GM8XNUO4IV1YVRaUmELTaYQHBJLatmEl4E99vAfC98ySLJMYc+Cfqu PQ== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by aserp2120.oracle.com with ESMTP id 2x01knpexe-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 03:49:21 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBK3huSJ064540;
+        Fri, 20 Dec 2019 03:47:21 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2x04mt9ja6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 20 Dec 2019 03:47:21 +0000
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBK3lHJt008028;
+        Fri, 20 Dec 2019 03:47:18 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 19 Dec 2019 19:47:17 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <yanaijie@huawei.com>, <chenxiang66@hisilicon.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v2] scsi: libsas: Tidy SAS address print format
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1576758957-227350-1-git-send-email-john.garry@huawei.com>
+Date:   Thu, 19 Dec 2019 22:47:15 -0500
+In-Reply-To: <1576758957-227350-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Thu, 19 Dec 2019 20:35:57 +0800")
+Message-ID: <yq1o8w38xq4.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.92 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=829
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912200025
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9476 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=909 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912200026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-bWZnY2ZnIGNsb2NrIGlzIHVuZGVyIE1GR19BU1lOQyBwb3dlciBkb21haW4NCg0KU2lnbmVkLW9m
-Zi1ieTogV2VpeWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGFyY2gvYXJtNjQv
-Ym9vdC9kdHMvbWVkaWF0ZWsvbXQ4MTgzLmR0c2kgfCAxICsNCiAxIGZpbGUgY2hhbmdlZCwgMSBp
-bnNlcnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
-bXQ4MTgzLmR0c2kgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL21lZGlhdGVrL210ODE4My5kdHNpDQpp
-bmRleCA5MTIxN2U0Zi4uNDAxNDVkYyAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtNjQvYm9vdC9kdHMv
-bWVkaWF0ZWsvbXQ4MTgzLmR0c2kNCisrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbWVkaWF0ZWsv
-bXQ4MTgzLmR0c2kNCkBAIC02NDMsNiArNjQzLDcgQEANCiAJCQljb21wYXRpYmxlID0gIm1lZGlh
-dGVrLG10ODE4My1tZmdjZmciLCAic3lzY29uIjsNCiAJCQlyZWcgPSA8MCAweDEzMDAwMDAwIDAg
-MHgxMDAwPjsNCiAJCQkjY2xvY2stY2VsbHMgPSA8MT47DQorCQkJcG93ZXItZG9tYWlucyA9IDwm
-c2Nwc3lzIE1UODE4M19QT1dFUl9ET01BSU5fTUZHX0FTWU5DPjsNCiAJCX07DQogDQogCQltbXN5
-czogc3lzY29uQDE0MDAwMDAwIHsNCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
 
+John,
+
+> Currently we use a mixture of %016llx, %llx, and %16llx when printing a
+> SAS address.
+
+Applied to 5.6/scsi-queue, thank you!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
