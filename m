@@ -2,150 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E5C8C127935
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:23:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144AB12793A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 11:23:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727285AbfLTKXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 05:23:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54304 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727129AbfLTKXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:23:01 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5128424679;
-        Fri, 20 Dec 2019 10:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576837378;
-        bh=oXJTDWjAVH/J7yvy36BCAHHmI3aXwzYFQcnv4ilprBo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kT6AJVQ6a4RxBqVBlw3D+/mPHEJfdKuIedv0DtMX832DCW9MpGs2YZXUCvJIxDk39
-         K5MLGVE8JehAH5bXRrFeWLh+t3rYtgtyLSguJsPKsGXldXM/Ys32Yk5WZ2j5wQHZfe
-         ikdLj6XlWcccherIiwm62t57C4eTsiFSN0oPKcvc=
-Date:   Fri, 20 Dec 2019 11:22:56 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Tejun Heo <tj@kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH v1] devres: align devres.data strictly only for
- devm_kmalloc()
-Message-ID: <20191220102256.GB2259862@kroah.com>
-References: <74ae22cd-08c1-d846-3e1d-cbc38db87442@free.fr>
- <bf020a68-00fd-2bb7-c3b6-00f5befa293a@free.fr>
- <20191220102218.GA2259862@kroah.com>
+        id S1727388AbfLTKX0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 05:23:26 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35043 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727167AbfLTKXT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 05:23:19 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p17so8662679wmb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 02:23:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=uQdPlsn4yWeKR+P38HI2aR4JDYgkGH7cKD0IIfa/6Fc=;
+        b=jirLvM+45Mm+kCnkPb1PBEZ3dBor6q81/EXh8ttVUS/A0vTzgIYSZDzjfmGjFuXFIe
+         gsD5C1kowEtYt3aXLevBGa4Q2IHwZhgA64ewav4/isbWiLjWs5FDXszXMK9IQV2qT0CO
+         7Vg/i8/dB05ZMmnhB+9ob27DTES72p3VhKK7J4bVtMGlTRQ8uSoLGZ1N3LlBpdZ1tncP
+         Pm340rTErQZ0m5Sjljtl5FnB7pj1tLBsJ6oVKYptRgcIiSdh147tGidGZRmkwQu6hC8n
+         MWY6QBuj26wnMhKQxpgeZUS9RnrwwQ44LBx2BVZREVzL+U1B1vgCDINbMRHv7JDWhZkD
+         QNJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=uQdPlsn4yWeKR+P38HI2aR4JDYgkGH7cKD0IIfa/6Fc=;
+        b=GMoDs42Kp4fkXeKU/WNevi1RHh8qLQEMDKNsigRcUKXOzgmnxJAFwI5UrBVYQ8NhJv
+         rw/U2cOBN4jznEsTlTVZa3VWdcNWp0sFwbQp1+7Q4f8tLLQWs2DdHrZlR50KYDxTYw3c
+         Po39jvUmivpDBhzZWg471fXGGvkiPOteD8/bmnIBhLwCfZpSRPhiPtIK9xddrUi2I3gf
+         B6YxBACecjqq+3Fv5sCWzQQHF9ZI3U4jobGCCARAcfNf4tR3vg3NmDXOurfpzkRPXj5T
+         Rbwf1f12JBx84/REwIJgSNWo7pFxsM10B0eNH364hCwTXsPfO7u0yNR77vmdCwDqxD/i
+         Lm4A==
+X-Gm-Message-State: APjAAAXx+w7ceAqcwemr14UvjH0TZApG8qDJyNKz95tLsOK+d+bpSRru
+        NA9E5UQ5UWjwoOFddQHd9oZ5HA==
+X-Google-Smtp-Source: APXvYqxj5tK9m0x1h+AojOEUs+hkHY7x0TGAJPxJY/PS/z7eZ+XWW6Dp1nUpWbfNd9XwnsII9Tlhcg==
+X-Received: by 2002:a7b:cf2d:: with SMTP id m13mr15511250wmg.163.1576837397900;
+        Fri, 20 Dec 2019 02:23:17 -0800 (PST)
+Received: from apalos.home (ppp-94-64-118-170.home.otenet.gr. [94.64.118.170])
+        by smtp.gmail.com with ESMTPSA id q11sm9523141wrp.24.2019.12.20.02.23.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2019 02:23:17 -0800 (PST)
+Date:   Fri, 20 Dec 2019 12:23:14 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     netdev@vger.kernel.org, lirongqing@baidu.com,
+        linyunsheng@huawei.com, Saeed Mahameed <saeedm@mellanox.com>,
+        mhocko@kernel.org, peterz@infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [net-next v5 PATCH] page_pool: handle page recycle for
+ NUMA_NO_NODE condition
+Message-ID: <20191220102314.GB14269@apalos.home>
+References: <20191218084437.6db92d32@carbon>
+ <157676523108.200893.4571988797174399927.stgit@firesoul>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191220102218.GA2259862@kroah.com>
+In-Reply-To: <157676523108.200893.4571988797174399927.stgit@firesoul>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 11:22:18AM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Dec 20, 2019 at 11:19:27AM +0100, Marc Gonzalez wrote:
-> > On 17/12/2019 16:30, Marc Gonzalez wrote:
-> > 
-> > > Commit a66d972465d15 ("devres: Align data[] to ARCH_KMALLOC_MINALIGN")
-> > > increased the alignment of devres.data unconditionally.
-> > > 
-> > > Some platforms have very strict alignment requirements for DMA-safe
-> > > addresses, e.g. 128 bytes on arm64. There, struct devres amounts to:
-> > > 	3 pointers + pad_to_128 + data + pad_to_256
-> > > i.e. ~220 bytes of padding.
-> > > 
-> > > Let's enforce the alignment only for devm_kmalloc().
-> > > 
-> > > Suggested-by: Robin Murphy <robin.murphy@arm.com>
-> > > Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> > > ---
-> > > I had not been aware that dynamic allocation granularity on arm64 was
-> > > 128 bytes. This means there's a lot of waste on small allocations.
-> > > I suppose there's no easy solution, though.
-> > > ---
-> > >  drivers/base/devres.c | 23 +++++++++++++----------
-> > >  1 file changed, 13 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-> > > index 0bbb328bd17f..bf39188613d9 100644
-> > > --- a/drivers/base/devres.c
-> > > +++ b/drivers/base/devres.c
-> > > @@ -26,14 +26,7 @@ struct devres_node {
-> > >  
-> > >  struct devres {
-> > >  	struct devres_node		node;
-> > > -	/*
-> > > -	 * Some archs want to perform DMA into kmalloc caches
-> > > -	 * and need a guaranteed alignment larger than
-> > > -	 * the alignment of a 64-bit integer.
-> > > -	 * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
-> > > -	 * buffer alignment as if it was allocated by plain kmalloc().
-> > > -	 */
-> > > -	u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
-> > > +	u8				data[];
-> > >  };
-> > >  
-> > >  struct devres_group {
-> > > @@ -789,9 +782,16 @@ static void devm_kmalloc_release(struct device *dev, void *res)
-> > >  	/* noop */
-> > >  }
-> > >  
-> > > +#define DEVM_KMALLOC_PADDING_SIZE \
-> > > +	(ARCH_KMALLOC_MINALIGN - sizeof(struct devres) % ARCH_KMALLOC_MINALIGN)
-> > > +
-> > >  static int devm_kmalloc_match(struct device *dev, void *res, void *data)
-> > >  {
-> > > -	return res == data;
-> > > +	/*
-> > > +	 * 'res' is dr->data (not DMA-safe)
-> > > +	 * 'data' is the hand-aligned address from devm_kmalloc
-> > > +	 */
-> > > +	return res + DEVM_KMALLOC_PADDING_SIZE == data;
-> > >  }
-> > >  
-> > >  /**
-> > > @@ -811,6 +811,9 @@ void * devm_kmalloc(struct device *dev, size_t size, gfp_t gfp)
-> > >  {
-> > >  	struct devres *dr;
-> > >  
-> > > +	/* Add enough padding to provide a DMA-safe address */
-> > > +	size += DEVM_KMALLOC_PADDING_SIZE;
-> > > +
-> > >  	/* use raw alloc_dr for kmalloc caller tracing */
-> > >  	dr = alloc_dr(devm_kmalloc_release, size, gfp, dev_to_node(dev));
-> > >  	if (unlikely(!dr))
-> > > @@ -822,7 +825,7 @@ void * devm_kmalloc(struct device *dev, size_t size, gfp_t gfp)
-> > >  	 */
-> > >  	set_node_dbginfo(&dr->node, "devm_kzalloc_release", size);
-> > >  	devres_add(dev, dr->data);
-> > > -	return dr->data;
-> > > +	return dr->data + DEVM_KMALLOC_PADDING_SIZE;
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(devm_kmalloc);
-> > 
-> > Would anyone else have any suggestions, comments, insights, recommendations,
-> > improvements, guidance, or wisdom? :-)
-> > 
-> > I keep thinking about the memory waste caused by the strict alignment requirement
-> > on arm64. Is there a way to inspect how much memory has been requested vs how much
-> > has been allocated? (Turning on SLAB DEBUG perhaps?)
-> > 
-> > Couldn't there be a kmalloc flag saying "this alloc will not require strict
-> > alignment, so just give me something 8-byte aligned" ?
-> 
-> Or you can not use the devm interface for lots of tiny allocations :)
+Hi Jesper, 
 
-Oh nevermind, "normal" kmalloc allocations are all aligned that way
-anyway, so that's not going to solve anything, sorry.
+I like the overall approach since this moves the check out of  the hotpath. 
+@Saeed, since i got no hardware to test this on, would it be possible to check
+that it still works fine for mlx5?
 
-greg k-h
+[...]
+> +	struct ptr_ring *r = &pool->ring;
+> +	struct page *page;
+> +	int pref_nid; /* preferred NUMA node */
+> +
+> +	/* Quicker fallback, avoid locks when ring is empty */
+> +	if (__ptr_ring_empty(r))
+> +		return NULL;
+> +
+> +	/* Softirq guarantee CPU and thus NUMA node is stable. This,
+> +	 * assumes CPU refilling driver RX-ring will also run RX-NAPI.
+> +	 */
+> +	pref_nid = (pool->p.nid == NUMA_NO_NODE) ? numa_mem_id() : pool->p.nid;
+
+One of the use cases for this is that during the allocation we are not
+guaranteed to pick up the correct NUMA node. 
+This will get automatically fixed once the driver starts recycling packets. 
+
+I don't feel strongly about this, since i don't usually like hiding value
+changes from the user but, would it make sense to move this into 
+__page_pool_alloc_pages_slow() and change the pool->p.nid?
+
+Since alloc_pages_node() will replace NUMA_NO_NODE with numa_mem_id()
+regardless, why not store the actual node in our page pool information?
+You can then skip this and check pool->p.nid == numa_mem_id(), regardless of
+what's configured. 
+
+Thanks
+/Ilias
