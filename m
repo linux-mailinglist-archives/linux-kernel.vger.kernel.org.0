@@ -2,164 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D3C4127835
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:33:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 016EE127848
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfLTJdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:33:43 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35375 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727262AbfLTJdn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:33:43 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f8so7624946edv.2
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 01:33:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IdRAcGLRRg8iKt3mImCAWyzVNXDNfr3GQXuYmx9xEBc=;
-        b=c/r8EebMIT04qDRK32za4rw3kkCHqeJihYbC/JuIH5uKb2pINtIbYx1BMVb5HlGgrA
-         rZ04UxrGuKKVmEhy/6vrlAkCcQLHFSPNVEZ+5fs5aBufrHW9sVug77pRH7b/+c3251/O
-         NOxG9SzKAzUzdjhSCk7pugFRACejjYiHeq9Y3zgbR8M4LxtfdtAp7mQm77rqbw/Kg+YA
-         +MYNSgLiJdU488X7zdi/Nz7EgIGIXOIcp+wtV2g9gFe5GtZnP4/Gl2hSJbnSWRJzb83k
-         itY4K+L7MhblfKTmWCQ0CIDMs7g14Dyyt+q3QYPXGECwHgPyO0foPFqpY3icWZDVVpTS
-         RPyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IdRAcGLRRg8iKt3mImCAWyzVNXDNfr3GQXuYmx9xEBc=;
-        b=eM3AVjXDuxqija9Z3LnxBi3XbCJW7fxYs55TfGioZTCO1QIIQCeJOmyBgnJtPQtfCi
-         X9PYdsGYTJw5JCHCWCC1TD4D2P6St85CvZ40sHxtVg7HGDRQKnC0LeX/blZ3/MRfSNt5
-         TUYpiXzX9mXMwFsWD6+igunxCi3QjrwL8V8V6ViHmU6BZJeESE1sWfKdiwvDrJ12MtJp
-         aa789TQvoQVninQph4HF5XBT+4vppRtmsV3c3AE7tYn0vhBRpjBTpx3SAsBYgL+r9/O1
-         nr93kMhMOeC+Guj8Xl443UVpDu4FGLlbvPeR9xfsS5FjQfhLkPLKW293+dmZpNcxZ3cJ
-         wqCw==
-X-Gm-Message-State: APjAAAW3O2oyuMJwquqb7OHIW2WsL1jQoeeNdhRtyyAAucErT/vpFdfu
-        4LAdkPEb0UwWIxAQpthh1AJzwQ==
-X-Google-Smtp-Source: APXvYqzWCfqm8KGSdm+UnLUG2XwPn5sKlp0oZPiMWYuaTmOCE/DBPs/XpccD3F2EzBw03B9ho0xHAA==
-X-Received: by 2002:a50:e108:: with SMTP id h8mr14849903edl.196.1576834421273;
-        Fri, 20 Dec 2019 01:33:41 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.193])
-        by smtp.googlemail.com with ESMTPSA id ay24sm856223edb.29.2019.12.20.01.33.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 01:33:40 -0800 (PST)
-Subject: Re: [PATCH 3/3] venus: core: add sc7180 DT compatible and resource
- struct
-To:     Dikshita Agarwal <dikshita@codeaurora.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, vgarodia@codeaurora.org
-References: <1576828760-13176-1-git-send-email-dikshita@codeaurora.org>
- <1576828760-13176-4-git-send-email-dikshita@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <b1b5ee06-bc39-cfc0-b2c8-8073f8857fde@linaro.org>
-Date:   Fri, 20 Dec 2019 11:33:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <1576828760-13176-4-git-send-email-dikshita@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
+        id S1727357AbfLTJfF convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Dec 2019 04:35:05 -0500
+Received: from smtp.h3c.com ([60.191.123.50]:28864 "EHLO h3cspam02-ex.h3c.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727233AbfLTJfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 04:35:04 -0500
+Received: from DAG2EX08-IDC.srv.huawei-3com.com ([10.8.0.71])
+        by h3cspam02-ex.h3c.com with ESMTPS id xBK9XmAw010530
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 20 Dec 2019 17:33:48 +0800 (GMT-8)
+        (envelope-from li.kai4@h3c.com)
+Received: from DAG2EX07-IDC.srv.huawei-3com.com (10.8.0.70) by
+ DAG2EX08-IDC.srv.huawei-3com.com (10.8.0.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 20 Dec 2019 17:33:50 +0800
+Received: from DAG2EX07-IDC.srv.huawei-3com.com ([::1]) by
+ DAG2EX07-IDC.srv.huawei-3com.com ([fe80::c439:37f7:8e24:31c4%9]) with mapi id
+ 15.01.1713.004; Fri, 20 Dec 2019 17:33:50 +0800
+From:   Likai <li.kai4@h3c.com>
+To:     piaojun <piaojun@huawei.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "mark@fasheh.com" <mark@fasheh.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "chge@linux.alibaba.com" <chge@linux.alibaba.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: Re: [Ocfs2-devel] [PATCH v3] ocfs2: call journal flush to mark
+ journal as empty after journal recovery when mount
+Thread-Topic: [Ocfs2-devel] [PATCH v3] ocfs2: call journal flush to mark
+ journal as empty after journal recovery when mount
+Thread-Index: AQHVtH3735no2U4KqkqbYTsYHZS4qw==
+Date:   Fri, 20 Dec 2019 09:33:50 +0000
+Message-ID: <1faf04ac23384fb2a17a8a569f9fce8f@h3c.com>
+References: <20191217020140.2197-1-li.kai4@h3c.com>
+ <5DFB860A.6020501@huawei.com>
+ <05cf7457-31f2-0698-14ae-21a9e7b659cb@linux.alibaba.com>
+ <5DFC90C0.7020704@huawei.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.125.108.72]
+x-sender-location: DAG2
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-DNSRBL: 
+X-MAIL: h3cspam02-ex.h3c.com xBK9XmAw010530
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dikshita,
+On 2019/12/20 17:14, piaojun wrote:
+>
+> On 2019/12/20 9:11, Joseph Qi wrote:
+>>
+>> On 19/12/19 22:15, piaojun wrote:
+>>>
+>>> On 2019/12/17 10:01, Kai Li wrote:
+>>>> If journal is dirty when mount, it will be replayed but jbd2 sb
+>>>> log tail cannot be updated to mark a new start because
+>>>> journal->j_flag has already been set with JBD2_ABORT first
+>>>> in journal_init_common. When a new transaction is committed, it
+>>>> will be recored in block 1 first(journal->j_tail is set to 1 in
+>>>> journal_reset).If emergency restart happens again before journal
+>>>> super block is updated unfortunately, the new recorded trans will
+>>>> not be replayed in the next mount.
+>>>>
+>>>> The following steps describe this procedure in detail.
+>>>> 1. mount and touch some files
+>>>> 2. these transactions are committed to journal area but not checkpointed
+>>>> 3. emergency restart
+>>>> 4. mount again and its journals are replayed
+>>>> 5. journal super block's first s_start is 1, but its s_seq is not updated
+>>>> 6. touch a new file and its trans is committed but not checkpointed
+>>>> 7. emergency restart again
+>>>> 8. mount and journal is dirty, but trans committed in 6 will not be
+>>>> replayed.
+>>>>
+>>>> This exception happens easily when this lun is used by only one node. If it
+>>>> is used by multi-nodes, other node will replay its journal and its
+>>>> journal super block will be updated after recovery like what this patch
+>>>> does.
+>>>>
+>>>> ocfs2_recover_node->ocfs2_replay_journal.
+>>>>
+>>>> The following jbd2 journal can be generated by touching a new file after
+>>>> journal is replayed, and seq 15 is the first valid commit, but first seq
+>>>> is 13 in journal super block.
+>>>> logdump:
+>>>> Block 0: Journal Superblock
+>>>> Seq: 0   Type: 4 (JBD2_SUPERBLOCK_V2)
+>>>> Blocksize: 4096   Total Blocks: 32768   First Block: 1
+>>>> First Commit ID: 13   Start Log Blknum: 1
+>>>> Error: 0
+>>>> Feature Compat: 0
+>>>> Feature Incompat: 2 block64
+>>>> Feature RO compat: 0
+>>>> Journal UUID: 4ED3822C54294467A4F8E87D2BA4BC36
+>>>> FS Share Cnt: 1   Dynamic Superblk Blknum: 0
+>>>> Per Txn Block Limit    Journal: 0    Data: 0
+>>>>
+>>>> Block 1: Journal Commit Block
+>>>> Seq: 14   Type: 2 (JBD2_COMMIT_BLOCK)
+>>>>
+>>>> Block 2: Journal Descriptor
+>>>> Seq: 15   Type: 1 (JBD2_DESCRIPTOR_BLOCK)
+>>>> No. Blocknum        Flags
+>>>>  0. 587             none
+>>>> UUID: 00000000000000000000000000000000
+>>>>  1. 8257792         JBD2_FLAG_SAME_UUID
+>>>>  2. 619             JBD2_FLAG_SAME_UUID
+>>>>  3. 24772864        JBD2_FLAG_SAME_UUID
+>>>>  4. 8257802         JBD2_FLAG_SAME_UUID
+>>>>  5. 513             JBD2_FLAG_SAME_UUID JBD2_FLAG_LAST_TAG
+>>>> ...
+>>>> Block 7: Inode
+>>>> Inode: 8257802   Mode: 0640   Generation: 57157641 (0x3682809)
+>>>> FS Generation: 2839773110 (0xa9437fb6)
+>>>> CRC32: 00000000   ECC: 0000
+>>>> Type: Regular   Attr: 0x0   Flags: Valid
+>>>> Dynamic Features: (0x1) InlineData
+>>>> User: 0 (root)   Group: 0 (root)   Size: 7
+>>>> Links: 1   Clusters: 0
+>>>> ctime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+>>>> atime: 0x5de5d870 0x113181a1 -- Tue Dec  3 11:37:20.288457121 2019
+>>>> mtime: 0x5de5d870 0x11104c61 -- Tue Dec  3 11:37:20.286280801 2019
+>>>> dtime: 0x0 -- Thu Jan  1 08:00:00 1970
+>>>> ...
+>>>> Block 9: Journal Commit Block
+>>>> Seq: 15   Type: 2 (JBD2_COMMIT_BLOCK)
+>>>>
+>>>> The following is jouranl recovery log when recovering the upper jbd2
+>>>> journal when mount again.
+>>>> syslog:
+>>>> [ 2265.648622] ocfs2: File system on device (252,1) was not unmounted cleanly, recovering it.
+>>>> [ 2265.649695] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 0
+>>>> [ 2265.650407] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 1
+>>>> [ 2265.650409] fs/jbd2/recovery.c:(do_one_pass, 449): Starting recovery pass 2
+>>>> [ 2265.650410] fs/jbd2/recovery.c:(jbd2_journal_recover, 278): JBD2: recovery, exit status 0, recovered transactions 13 to 13
+>>>>
+>>>> Due to first commit seq 13 recorded in journal super is not consistent
+>>>> with the value recorded in block 1(seq is 14), journal recovery will be
+>>>> terminated before seq 15 even though it is an unbroken commit, inode
+>>>> 8257802 is a new file and it will be lost.
+>>>>
+>>>> Signed-off-by: Kai Li <li.kai4@h3c.com>
+>>>> ---
+>>>>  fs/ocfs2/journal.c | 8 ++++++++
+>>>>  1 file changed, 8 insertions(+)
+>>>>
+>>>> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+>>>> index 1afe57f425a0..68ba354cf361 100644
+>>>> --- a/fs/ocfs2/journal.c
+>>>> +++ b/fs/ocfs2/journal.c
+>>>> @@ -1066,6 +1066,14 @@ int ocfs2_journal_load(struct ocfs2_journal *journal, int local, int replayed)
+>>>>  
+>>>>  	ocfs2_clear_journal_error(osb->sb, journal->j_journal, osb->slot_num);
+>>>>  
+>>>> +	if (replayed) {
+>>>> +		jbd2_journal_lock_updates(journal->j_journal);
+>>>> +		status = jbd2_journal_flush(journal->j_journal);
+>>> What if jbd2_journal_flush gets failed? The 's_sequence' and 's_start'
+>>> won't be reset, and I wonder if the problem still remains.
+>>>
+>> Yes, but we don't want this to fail the mount process, instead we just log
+>> an error and system administrator should know the result.
+>>
+> Thanks for your reply and I have another question about this issue. IMO
+> the second trans is not complete as jbd2 sb has not been updated, so we
+> do not need to replay it when mount again.
+>
+> Jun
+>
+>
+I don't think so. The problem is that jbd2 sb should be updated to mark
+a new start after mount rather than whether trans committed later is
+complete or not.
 
-Thanks for the patch!
+In fact , the trans is complete too as the commit log described.
 
-On 12/20/19 9:59 AM, Dikshita Agarwal wrote:
-> This add DT compatible string and resource structure for sc7180.
-> 
-> Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
-> ---
->  drivers/media/platform/qcom/venus/core.c | 58 +++++++++++++++++++++++++++++++-
->  1 file changed, 57 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-> index c7525d9..e8c8b28 100644
-> --- a/drivers/media/platform/qcom/venus/core.c
-> +++ b/drivers/media/platform/qcom/venus/core.c
-> @@ -469,7 +469,7 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
->  	{ 2073600, 3929000, 0, 5551000, 0 },	/* 4096x2160@60 */
->  	{ 1036800, 1987000, 0, 2797000, 0 },	/* 4096x2160@30 */
->  	{  489600, 1040000, 0, 1298000, 0 },	/* 1920x1080@60 */
-> -	{  244800,  530000, 0,  659000, 0 },	/* 1920x1080@30 */
-> +	{  244800,  442000, 0,  659000, 0 },	/* 1920x1080@30 */
+Thanks
 
-unrelated change, please drop it
-
->  };
->  
->  static const struct venus_resources sdm845_res = {
-> @@ -521,11 +521,67 @@ static __maybe_unused int venus_runtime_resume(struct device *dev)
->  	.fwname = "qcom/venus-5.2/venus.mdt",
->  };
->  
-> +static const struct freq_tbl sc7180_freq_table[] = {
-> +	{  0, 380000000 },
-> +	{  0, 340000000 },
-> +	{  0, 270000000 },
-> +	{  0, 150000000 },
-
-why .load is zero?
-
-> +};
-> +
-> +static struct codec_freq_data sc7180_codec_freq_data[] =  {
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
-> +	{ V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +	{ V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10 },
-> +};
-
-the table is exactly the same as sdm845 one, please reuse it.
-
-> +
-> +static const struct bw_tbl sc7180_bw_table_enc[] = {
-> +	{  972000,  750000, 0, 0, 0 },	/* 3840x2160@30 */
-> +	{  489600,  451000, 0, 0, 0 },	/* 1920x1080@60 */
-> +	{  244800,  234000, 0, 0, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct bw_tbl sc7180_bw_table_dec[] = {
-> +	{ 1036800, 1386000, 0, 1875000, 0 },	/* 4096x2160@30 */
-> +	{  489600,  865000, 0, 1146000, 0 },	/* 1920x1080@60 */
-> +	{  244800,  530000, 0,  583000, 0 },	/* 1920x1080@30 */
-> +};
-> +
-> +static const struct venus_resources sc7180_res = {
-> +	.freq_tbl = sc7180_freq_table,
-> +	.freq_tbl_size = ARRAY_SIZE(sc7180_freq_table),
-> +	.bw_tbl_enc = sc7180_bw_table_enc,
-> +	.bw_tbl_enc_size = ARRAY_SIZE(sc7180_bw_table_enc),
-> +	.bw_tbl_dec = sc7180_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(sc7180_bw_table_dec),
-> +	.codec_freq_data = sc7180_codec_freq_data,
-> +	.codec_freq_data_size = ARRAY_SIZE(sc7180_codec_freq_data),
-> +	.clks = {"core", "iface", "bus" },
-> +	.clks_num = 3,
-> +	.vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
-> +	.vcodec_clks_num = 2,
-> +	.vcodec_pmdomains = { "venus", "vcodec0" },
-> +	.vcodec_pmdomains_num = 2,
-> +	.vcodec_num = 1,
-> +	.max_load = 3110400,	/* 4096x2160@90 */
-
-Looking into above bandwidth tables I can guess that the maximimum load
-is reached at 4096x2160@30? If so you have to change it here.
-
-<cut>
-
--- 
-regards,
-Stan
