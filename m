@@ -2,100 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CA1D5127778
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 09:48:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C499512777E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 09:49:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfLTIsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 03:48:01 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:58524 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbfLTIsB (ORCPT
+        id S1727283AbfLTIs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 03:48:59 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:19342 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727176AbfLTIs6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 03:48:01 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBK8lkiC080256;
-        Fri, 20 Dec 2019 02:47:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576831667;
-        bh=Y8SJjnPJ2zTuwuUuXvi/iusPn5VXym1DpE2Ni2sJVGo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=ttjR8bV7NcwEdlkksg4iqfMbc72kqxA+NZTKn9KmxuhtXaL3iKjJXdhaOe2e/Ezqv
-         nbs7Au55+6yRYcCGdvlleszGHyIlbb+kJmuFygZ5ljUOwzoBIN2whH0Z78c5MJHrjJ
-         Izudz+vTDeyFhiiD6C7C8kAp+755Iw8c7TO64hFI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBK8lkr6065686;
-        Fri, 20 Dec 2019 02:47:46 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
- Dec 2019 02:47:46 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 20 Dec 2019 02:47:46 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBK8lgp6045691;
-        Fri, 20 Dec 2019 02:47:43 -0600
-Subject: Re: [PATCH v7 04/12] dmaengine: Add metadata_ops for
- dma_async_tx_descriptor
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     <robh+dt@kernel.org>, <nm@ti.com>, <ssantosh@kernel.org>,
-        <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <grygorii.strashko@ti.com>, <lokeshvutla@ti.com>,
-        <t-kristo@ti.com>, <tony@atomide.com>, <j-keerthy@ti.com>,
-        <vigneshr@ti.com>
-References: <20191209094332.4047-1-peter.ujfalusi@ti.com>
- <20191209094332.4047-5-peter.ujfalusi@ti.com>
- <20191220083216.GK2536@vkoul-mobl>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <8f66594b-3c4a-dae2-9445-0e7d28e017b8@ti.com>
-Date:   Fri, 20 Dec 2019 10:48:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Fri, 20 Dec 2019 03:48:58 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576831738; h=Content-Type: MIME-Version: Message-ID:
+ In-Reply-To: Date: References: Subject: Cc: To: From: Sender;
+ bh=GgfymSp4WXJavxzZ/gU/V2dOSz8ELQUdgDkVM3WpurY=; b=bXWnVX8SCULJ+se0uwBo9bjDudnOYuwu52SDdnCAMyek0o/KbxEEi6JmmLeVP/p0FFmfNqRs
+ 3mAZ1flh8h9kyho5RO7lSKP1pJ/Did75b47u3GhMkEQlmRJ3h3NMlWK7AdL4L3pmdY/I46GN
+ EfE9gsdR4pAlzNF1UhlPSJKvGPg=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5dfc8af3.7f6b64ac8ea0-smtp-out-n03;
+ Fri, 20 Dec 2019 08:48:51 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 91266C433A2; Fri, 20 Dec 2019 08:48:51 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.0
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B9805C43383;
+        Fri, 20 Dec 2019 08:48:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B9805C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     John Crispin <john@phrozen.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Wireless <linux-wireless@vger.kernel.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pradeep Kumar Chitrapu <pradeepc@codeaurora.org>
+Subject: Re: linux-next: Fixes tag needs some work in the wireless-drivers tree
+References: <20191220075337.789971fe@canb.auug.org.au>
+        <739b70e9-6a77-9d4e-2331-16022325cd34@phrozen.org>
+Date:   Fri, 20 Dec 2019 10:48:45 +0200
+In-Reply-To: <739b70e9-6a77-9d4e-2331-16022325cd34@phrozen.org> (John
+        Crispin's message of "Thu, 19 Dec 2019 21:55:32 +0100")
+Message-ID: <87y2v72xhu.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20191220083216.GK2536@vkoul-mobl>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vinod,
+John Crispin <john@phrozen.org> writes:
 
-On 20/12/2019 10.32, Vinod Koul wrote:
-> Hi Peter,
-> 
-> On 09-12-19, 11:43, Peter Ujfalusi wrote:
-> 
->> +int dmaengine_desc_attach_metadata(struct dma_async_tx_descriptor *desc,
->> +				   void *data, size_t len)
->> +{
->> +	int ret;
->> +
->> +	if (!desc)
->> +		return -EINVAL;
->> +
->> +	ret = desc_check_and_set_metadata_mode(desc, DESC_METADATA_CLIENT);
->> +	if (ret)
->> +		return ret;
->> +
->> +	if (!desc->metadata_ops || !desc->metadata_ops->attach)
->> +		return -ENOTSUPP;
->> +
->> +	return desc->metadata_ops->attach(desc, data, len);
-> 
-> this looks good to me, only thing is we should check if people are
-> mixing the modes :)
+> On 19/12/2019 21:53, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> In commit
+>>
+>>    485add35771b ("ath11k: fix pdev when invoking ath11k_wmi_send_twt_enable_cmd()")
+>>
+>> Fixes tag
+>>
+>>    Fixes: e65a616f4e74 ("ath11k: add TWT support")
+>>
+>> has these problem(s):
+>>
+>>    - Target SHA1 does not exist
+>>
+>> Did you mean
+>>
+>> Fixes: 6d293d447670 ("ath11k: add TWT support")
+>>
+>
+> My bad, sorry, I was sitting on an old tree apparently.
 
-desc_check_and_set_metadata_mode() does the checking to make sure that
-the modes are not mixed.
+And I didn't catch it either. I try to avoid rebasing my trees so I'm
+not planning fix this, let's just avoid this in the future.
 
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+-- 
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
