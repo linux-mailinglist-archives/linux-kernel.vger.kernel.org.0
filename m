@@ -2,104 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46D961277A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 09:56:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74A261277A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 09:57:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727252AbfLTI4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 03:56:18 -0500
-Received: from mail-eopbgr750058.outbound.protection.outlook.com ([40.107.75.58]:18499
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1727403AbfLTI5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 03:57:21 -0500
+Received: from mail-mw2nam12on2084.outbound.protection.outlook.com ([40.107.244.84]:6024
+        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727174AbfLTI4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 03:56:17 -0500
+        id S1727164AbfLTI5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 03:57:21 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kXXDyt5CCVoxyEPGd/tRuTUjMAYGdk61RGSGKvS+nUzAMAu7uCjFRp3zXMh+59voJ1U9zeHdloFQgEtVSMLGeRtPm3fyEbN3FUzeR1F5gTHoRWYvIWApiBP25C7BzmWA1BkKjZetu+96h+vTZI3bql5P/tkKc3z9aZ1PGghaVt1yo9cccKUrLtqW/Zu0CaSmtWc4M3YfaFYKFI6aDEFhyXAGaExu7AOL+zvgIauJUrZERZZKR8q0ULH/+WwxHfuBoQlw/bD2ZuWcdhQilPW33nxUef/oBUXqnKLUZKhAZHoGq5sBAoquqUEP+9hhfYazJMAVq1IFC0wTV4lMM8CNsw==
+ b=JkMQM6swAn+6Qmw9/pvhp0wIpJCz9lLMpqRjoWygB/cIN11s3KTeykEP5iQBBcfxBtKqlXq3aGd/ognQPDQDGKrkZac3j89uHjpkWr2xI0Cs4K8Aby2cawjzvNgK0QMkejAPm9M8byhTd8PfC2AeYzgyIjUYQhuFtnehMXllPXNGiWQdOZemmyO1RhZcVriz+cRsOusGJ0M3IsX+ry0s2w36XBPWHs7Dr/IUdxJk3vS7mc8kQtIwuQx/k9a3lBFfuvAtCx9ZR8OIXrFfIaUuzIqZB4mveFkuuNL1Y1ABly7Uu4dYm8s/vj8RCZPKSP8kMiig9ejab3Vv4JgCMOKTXw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Mwd/Z+9Mmp3hoR9xUXyrOgJ8/kIUSshjLuQmZUa7zE=;
- b=mZxXSFbe0RRxDWo3XWMg/utxgBbIjDjjGg7xYrAzSwx1bO3uGAXsd+8Jl+/h3dO2yISdC6GroBW4OwZMjmPLNS4GNmJz/6UMxZ/H+snjzw5myfv0z77gHuZ3gBiZUFXc2nMVkffZxXtmUZbtf+aQx/3bUNMFdnyuRYgTEzSGLKUnVtEsciJMQci0dTQ9dfi1jvz0yAmPH/2wMvV2gJcMIIfRlwerGRX92gH+2yknthWsUs3FZBxGOA0Xhds6Lq66jsq1WJ3GMsfj0C99llVe9vwGLkj/s3xdukN5VIoxKeiFRBWEfjL7Fikn0ag2VhYdx0o0l3mhgXzyIay2P5Ol4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vmware.com; dmarc=pass action=none header.from=vmware.com;
- dkim=pass header.d=vmware.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector2;
+ bh=Dvc+2z3f1d2YnIHf5PXpxa1mRPpFheqQ8eot7NzEjY8=;
+ b=ITc9lz3GFaJUzu8fIM+R1GqmzmUPerNORKF6Qqt2fcNo8qJmg3gxGvcS7m4aWW/HS4JiVikMEEk8hc/8ErnVb40rPLFXKE3LqgR9i+HTR6PYAQEiz9rBcJhZJmcAqLU5XJ+2VvNb7Gw+QSme5cW4wq3ZoahE0XSA1bdGTRQaS6zousgSMOiCfrIBVyJ4flSG/BRZXNtLvHfql3mJZtDTqC+j+XL0OhFSpmb+ZPOcMWRdiX7mx4Bu6N+3B20fSL9XXRzQvoBCDoe6o+1a5IR+MW/CfGNCwS54Xop7W5CNMz4bRN1MVywpLksMdnqT3bxISW4HRbfKT5C2on4jgS7tFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=xhdpunnaia40.localdomain; dmarc=none action=none
+ header.from=xilinx.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1Mwd/Z+9Mmp3hoR9xUXyrOgJ8/kIUSshjLuQmZUa7zE=;
- b=iYRMy9x7CfHK6x2r7EcOZ6yXimW8KyBkOd3snPJEwZvnUCuxBOnnJ+epjkqstT9fifbsC8G7+PHlTZn5jyd7obJSU2iswVJvF3+zd9FlKNGGNuxKu4WPa2H2k9zEV7lt6yJrjDuJSy6ckaBgdQMAfn6gvXTu9LYIOV8Q/n+C1E0=
-Received: from MN2PR05MB6141.namprd05.prod.outlook.com (20.178.241.217) by
- MN2PR05MB6784.namprd05.prod.outlook.com (10.255.7.81) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.9; Fri, 20 Dec 2019 08:56:12 +0000
-Received: from MN2PR05MB6141.namprd05.prod.outlook.com
- ([fe80::75e5:6ff0:553e:7401]) by MN2PR05MB6141.namprd05.prod.outlook.com
- ([fe80::75e5:6ff0:553e:7401%6]) with mapi id 15.20.2581.007; Fri, 20 Dec 2019
- 08:56:12 +0000
-From:   Thomas Hellstrom <thellstrom@vmware.com>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        =?iso-8859-1?Q?Thomas_Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Pv-drivers <Pv-drivers@vmware.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        Vishal Bhakta <vbhakta@vmware.com>, Jim Gill <jgill@vmware.com>
-Subject: Re: [PATCH RESEND 1/2] scsi: vmw_pvscsi: Fix swiotlb operation
-Thread-Topic: [PATCH RESEND 1/2] scsi: vmw_pvscsi: Fix swiotlb operation
-Thread-Index: AQHVqhA88VALO66GgU+znrgwAg1BSA==
-Date:   Fri, 20 Dec 2019 08:56:12 +0000
-Message-ID: <MN2PR05MB61418001C0180C55D4D72B45A12D0@MN2PR05MB6141.namprd05.prod.outlook.com>
-References: <20191203193052.7583-1-thomas_os@shipmail.org>
- <yq1sglf8xv0.fsf@oracle.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=thellstrom@vmware.com; 
-x-originating-ip: [155.4.205.35]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ce1ed8f8-46b4-448a-431e-08d7852a76dc
-x-ms-traffictypediagnostic: MN2PR05MB6784:|MN2PR05MB6784:
-x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <MN2PR05MB67843547EB66F0117A1AA9A1A12D0@MN2PR05MB6784.namprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-forefront-prvs: 025796F161
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(376002)(396003)(39860400002)(136003)(189003)(199004)(2906002)(5660300002)(52536014)(53546011)(33656002)(4744005)(54906003)(26005)(66476007)(66556008)(86362001)(9686003)(7696005)(55016002)(186003)(4326008)(107886003)(76116006)(6506007)(478600001)(71200400001)(66446008)(81166006)(8676002)(81156014)(316002)(110136005)(66946007)(91956017)(64756008)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR05MB6784;H:MN2PR05MB6141.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: y/QPFFoZyuIwsT46XUv0Fah9DDcUlQsiwmckPyWYJpnh9PecA1YY4LL9BpnclGaiM76vdNZjT0k312Ur2SJs9ADOgJXcYLcjJPDTnKytetvHxzVMYtkXiMt88F3jU5phAf4yCfT3YqlifLETUabvw8ly0a6SG/9J/KRrXCxpp3BFB3d3IBGb/eSpZ3AnsujKQuMNqDwA24Jlk/Mw3ls3uch12ZRDmuXzVGTfklQi+a7Wo4javc7c656WA4YoYDGE1d7cfbLh3BWJpJn5nF8PW9JkpdSm8XlRVgv48iWb3PxenjR8BWu7Aq8P3vzV9BrdgRmNxWMo5a5vc0Q0lQr8m3KTZHa558ZrT5dWoyNIsQ2aDmnm80SHe0oAEyeVGDrWlWvprVwD1Y3lPDtFrBMM/qHxqcELwXyvDukt+Qlu0sa/x/hl3CF31/w8Iv7wJgAe
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ bh=Dvc+2z3f1d2YnIHf5PXpxa1mRPpFheqQ8eot7NzEjY8=;
+ b=e7X8lPnvZKoXbOmRfzUGq1IIsgCGLCdaVSKG8WrOi2pIro8YyiNHNcln2He+hLS3Pw8QSbtIx075l002htygfPJFQmQqJ5NTl1D8ntWHlnEcnfUyLNBpq9bmqe1S2K0ExB8vzxgMTIX5qYzE3HIRLuwGEzLG3OPpR/PTQJRxORo=
+Received: from CY4PR02CA0026.namprd02.prod.outlook.com (2603:10b6:903:117::12)
+ by DM6PR02MB5178.namprd02.prod.outlook.com (2603:10b6:5:50::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2538.18; Fri, 20 Dec
+ 2019 08:57:15 +0000
+Received: from CY1NAM02FT059.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::204) by CY4PR02CA0026.outlook.office365.com
+ (2603:10b6:903:117::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.14 via Frontend
+ Transport; Fri, 20 Dec 2019 08:57:15 +0000
+Authentication-Results: spf=none (sender IP is 149.199.60.83)
+ smtp.mailfrom=xhdpunnaia40.localdomain; vger.kernel.org; dkim=none (message
+ not signed) header.d=none;vger.kernel.org; dmarc=none action=none
+ header.from=xilinx.com;
+Received-SPF: None (protection.outlook.com: xhdpunnaia40.localdomain does not
+ designate permitted sender hosts)
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT059.mail.protection.outlook.com (10.152.74.211) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2559.14
+ via Frontend Transport; Fri, 20 Dec 2019 08:57:15 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@xhdpunnaia40.localdomain>)
+        id 1iiE5x-0003Di-Tr; Fri, 20 Dec 2019 00:57:13 -0800
+Received: from [127.0.0.1] (helo=xsj-smtp-dlp2.xlnx.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@xhdpunnaia40.localdomain>)
+        id 1iiE5s-000100-5o; Fri, 20 Dec 2019 00:57:08 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id xBK8v7Rn010840;
+        Fri, 20 Dec 2019 00:57:07 -0800
+Received: from [10.140.184.180] (helo=xhdpunnaia40.localdomain)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@xhdpunnaia40.localdomain>)
+        id 1iiE5q-0000zg-Qm; Fri, 20 Dec 2019 00:57:07 -0800
+Received: by xhdpunnaia40.localdomain (Postfix, from userid 13245)
+        id 07325103F29; Fri, 20 Dec 2019 14:27:05 +0530 (IST)
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+To:     davem@davemloft.net, michal.simek@xilinx.com
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, git@xilinx.com,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Subject: [PATCH net-next v2 0/3] net: emaclite: support arm64 platform
+Date:   Fri, 20 Dec 2019 14:26:57 +0530
+Message-Id: <1576832220-9631-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-Mailer: git-send-email 2.7.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-Result: No--1.562-7.0-31-1
+X-imss-scan-details: No--1.562-7.0-31-1;No--1.562-5.0-31-1
+X-TM-AS-User-Approved-Sender: No;No
+X-TM-AS-Result-Xfilter: Match text exemption rules:No
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(136003)(39860400002)(428003)(249900001)(199004)(189003)(36756003)(107886003)(450100002)(5660300002)(6266002)(6636002)(4326008)(81166006)(26005)(4744005)(8676002)(8936002)(42186006)(2906002)(70586007)(42882007)(70206006)(2616005)(336012)(356004)(81156014)(316002)(498600001)(6666004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB5178;H:xsj-pvapsmtpgw01;FPR:;SPF:None;LANG:en;PTR:unknown-60-83.xilinx.com;A:0;MX:0;
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce1ed8f8-46b4-448a-431e-08d7852a76dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Dec 2019 08:56:12.3952
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 70ec4394-3c81-41e3-8633-08d7852a9c75
+X-MS-TrafficTypeDiagnostic: DM6PR02MB5178:
+X-Microsoft-Antispam-PRVS: <DM6PR02MB5178B4F8FEC996129937D3BAD52D0@DM6PR02MB5178.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-Forefront-PRVS: 025796F161
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: +SbURcGkBVRRuJt0PCxrhvy297/AfjaTP+sWxaurQzCb0y7lPUEGs+CqTYmqr5fCcjjN3TEBeY+9KFphxI0VERAVzKTRsh19BDMyw4U6MOsrD6cTS16vobBde6sAoWH7aTOb8MubqWq9gUCxR0tKf5ZDZJ8xaL47oycMAwOene5CvsD8U9u5yJewzL3rbKFykWG+zydgExfCxcPTDTpk7NRPemZbwzMTd2alAL8vB7kfvh8z2haZi+Yl0CXI69/aHGP/0V7BoDa+wCrSt6PwmDx0S8JdcLcTFB+X2JUDwrq3v9t8nku7rYuxTl9qQrJD4UTHCo5SZN0fMA7GliVNZhBZbkWZ5TpYi//U7K189aUcMxQDc01w3XSgTBnsN5WlVdF/MnY2FFOTfn00TlWXvn6jErrp6Iac2RSATh1In/F7Aao/PI54KtedxVgor1p3
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Dec 2019 08:57:15.5001
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oYQOGx7nA8VVlre/2FjTYPcNykOjFCe7rdgY2vHrkrbR2YmpZ/J7YVZHcm9F0keUX+6Awqrb5OFAczA/SXGYSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR05MB6784
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70ec4394-3c81-41e3-8633-08d7852a9c75
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB5178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/20/19 4:44 AM, Martin K. Petersen wrote:=0A=
-> Thomas,=0A=
->=0A=
->> With swiotlb, the first byte of the sense buffer may in some cases be=0A=
->> uninitialized since we use DMA_FROM_DEVICE, and the device incorrectly=
-=0A=
->> doesn't clear it. In those cases, clear it after DMA unmapping.=0A=
-> Applied 1+2 to 5.6/scsi-queue, thanks!=0A=
->=0A=
-Thanks!=0A=
-=0A=
-Thomas=0A=
-=0A=
-=0A=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patchset fixes the checkpatch warning reported in xilinx emaclite
+driver. It also remove obsolete arch dependency in kconfig to support
+aarch64 platform and fixes related gcc warnings.
+
+Changes for v2:
+- Modified description of reset_lock spinlock variable.
+
+Michal Simek (1):
+  net: emaclite: Fix arm64 compilation warnings
+
+Radhey Shyam Pandey (2):
+  net: emaclite: Fix coding style
+  net: emaclite: In kconfig remove arch dependency
+
+ drivers/net/ethernet/xilinx/Kconfig           |  2 +-
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c | 47 ++++++++++++---------------
+ 2 files changed, 22 insertions(+), 27 deletions(-)
+
+-- 
+2.7.4
+
