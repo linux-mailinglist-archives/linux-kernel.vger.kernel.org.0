@@ -2,126 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE3B127A3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:50:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 93725127A44
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfLTLut (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:50:49 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:50486 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727177AbfLTLus (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:50:48 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBKBoYQM012834;
-        Fri, 20 Dec 2019 05:50:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576842634;
-        bh=F5NzVoBOc0H3AQcimqUogeBFtzoUavarjXQ1aoFfC+w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=UAzsxaeaHZa/6OX3d/fo2uAFhLLjO25PaTZG0YDWhMMaGMH8rWWv2O57BRHwOpUVh
-         jQDc/OO/rXAXHSTHRlez4SQRqn+b+T7pNdCF3LGEdy8bvbRKJ0qdQvjIGky9milvMu
-         vpfzhb3uZC1jmi57D40RpZ5qWbFHJ9XGlyFHix+A=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBKBoX41111098
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 20 Dec 2019 05:50:34 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 20
- Dec 2019 05:50:33 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 20 Dec 2019 05:50:33 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBKBoUCE033381;
-        Fri, 20 Dec 2019 05:50:31 -0600
-Subject: Re: [PATCH RESEND 1/2] dt-bindings: phy: drop #clock-cells from
- rockchip,px30-dsi-dphy
-To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>
-CC:     Rob Herring <robh@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-References: <20191216122448.27867-1-heiko@sntech.de>
- <12525836.FhlgEYrHGb@diego> <45c59145-5705-90f9-ff0e-c84cf8d17e8b@ti.com>
- <3795174.JdKOkfR0EK@diego>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <400d28a9-6ae3-5ff3-8d95-005714cfca33@ti.com>
-Date:   Fri, 20 Dec 2019 17:22:14 +0530
+        id S1727277AbfLTLxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:53:49 -0500
+Received: from foss.arm.com ([217.140.110.172]:49922 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727177AbfLTLxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 06:53:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 395A030E;
+        Fri, 20 Dec 2019 03:53:48 -0800 (PST)
+Received: from [10.1.194.52] (e112269-lin.cambridge.arm.com [10.1.194.52])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 567D63F719;
+        Fri, 20 Dec 2019 03:53:45 -0800 (PST)
+Subject: Re: [PATCH v17 06/23] powerpc: mm: Add p?d_leaf() definitions
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Mark Rutland <Mark.Rutland@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Paul Mackerras <paulus@samba.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
+        "Liang, Kan" <kan.liang@linux.intel.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>, kvm-ppc@vger.kernel.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20191218162402.45610-1-steven.price@arm.com>
+ <20191218162402.45610-7-steven.price@arm.com>
+ <877e2smt6r.fsf@mpe.ellerman.id.au>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <e99a9857-e9f4-588a-ad12-4d5f3a9de739@arm.com>
+Date:   Fri, 20 Dec 2019 11:53:44 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <3795174.JdKOkfR0EK@diego>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <877e2smt6r.fsf@mpe.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 20/12/19 5:07 pm, Heiko Stübner wrote:
-> Hi Kishon,
-> 
-> Am Freitag, 20. Dezember 2019, 12:21:28 CET schrieb Kishon Vijay Abraham I:
+On 19/12/2019 11:49, Michael Ellerman wrote:
+> Steven Price <steven.price@arm.com> writes:
+>> walk_page_range() is going to be allowed to walk page tables other than
+>> those of user space. For this it needs to know when it has reached a
+>> 'leaf' entry in the page tables. This information is provided by the
+>> p?d_leaf() functions/macros.
 >>
->> On 16/12/19 11:31 pm, Heiko Stübner wrote:
->>> Hi Rob,
->>>
->>> Am Montag, 16. Dezember 2019, 18:56:15 CET schrieb Rob Herring:
->>>> On Mon, 16 Dec 2019 13:24:47 +0100, Heiko Stuebner wrote:
->>>>> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
->>>>>
->>>>> Further review of the dsi components for the px30 revealed that the
->>>>> phy shouldn't expose the pll as clock but instead handle settings
->>>>> via phy parameters.
->>>>>
->>>>> As the phy binding is new and not used anywhere yet, just drop them
->>>>> so they don't get used.
->>>>>
->>>>> Fixes: 3817c7961179 ("dt-bindings: phy: add yaml binding for rockchip,px30-dsi-dphy")
->>>>> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
->>>>> ---
->>>>> Hi Kishon,
->>>>>
->>>>> maybe suitable as a fix for 5.5-rc?
->>>>>
->>>>> Thanks
->>>>> Heiko
->>>>>
->>>>>  .../devicetree/bindings/phy/rockchip,px30-dsi-dphy.yaml      | 5 -----
->>>>>  1 file changed, 5 deletions(-)
->>>>>
->>>>
->>>> Please add Acked-by/Reviewed-by tags when posting new versions. However,
->>>> there's no need to repost patches *only* to add the tags. The upstream
->>>> maintainer will do that for acks received on the version they apply.
->>>>
->>>> If a tag was not added on purpose, please state why and what changed.
->>>
->>> sorry about that. The original response somehow did not thread correctly
->>> in my mail client, probably some fault on my side, so I've only found your
->>> mail just now by digging hard.
->>>
->>> @Kishon, the original mail already got an
->>>
->>> Acked-by: Rob Herring <robh@kernel.org>
+>> For powerpc p?d_is_leaf() functions already exist. Export them using the
+>> new p?d_leaf() name.
 >>
->> merged now, Thanks!
+>> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> CC: Paul Mackerras <paulus@samba.org>
+>> CC: Michael Ellerman <mpe@ellerman.id.au>
+>> CC: linuxppc-dev@lists.ozlabs.org
+>> CC: kvm-ppc@vger.kernel.org
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>  arch/powerpc/include/asm/book3s/64/pgtable.h | 3 +++
+>>  1 file changed, 3 insertions(+)
 > 
-> thanks ... just to make sure, did you also see the driver changes in patch2?
-> As I don't see them in either of your branches :-)
+> We have fallback versions of our pmd_is_leaf() etc. in
+> arch/powerpc/include/asm/pgtable.h, eg:
+> 
+> #ifndef pmd_is_leaf
+> #define pmd_is_leaf pmd_is_leaf
+> static inline bool pmd_is_leaf(pmd_t pmd)
+> {
+> 	return false;
+> }
+> #endif
+> 
+> Because we support several different MMUs and most of them don't need to
+> do anything.
+> 
+> So we could put the compatibility #defines to your names along with the
+> fallback versions in asm/pgtable.h, rather than in
+> asm/book3s/64/pgtable.h
+> 
+> But I see you also have fallbacks for your versions, so it probably
+> doesn't matter either way.
+> 
+> So I'm OK with this version, unless you think there's a compelling
+> reason to do the compatibility #defines in our asm/pgtable.h
 
-For some reason, patch 2 of the "RESEND" series is not in my inbox.
-However looking at your original series, looks like this is a candidate
-for 5.6. I'll take patch 2 from your original series.
+I was thinking that (assuming this series actually gets merged this
+time), the p?d_is_leaf() versions could be removed and replaced by
+p?d_leaf() in the future. Since the fallbacks are in the asm-generic
+code it makes sense for the pmd_leaf() definitions to be next to the
+non-fallback versions.
 
-Thanks
-Kishon
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+
+Thanks!
+
+Steve
+
+> cheers
+> 
+> 
+>> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
+>> index b01624e5c467..201a69e6a355 100644
+>> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
+>> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+>> @@ -1355,18 +1355,21 @@ static inline bool is_pte_rw_upgrade(unsigned long old_val, unsigned long new_va
+>>   * Like pmd_huge() and pmd_large(), but works regardless of config options
+>>   */
+>>  #define pmd_is_leaf pmd_is_leaf
+>> +#define pmd_leaf pmd_is_leaf
+>>  static inline bool pmd_is_leaf(pmd_t pmd)
+>>  {
+>>  	return !!(pmd_raw(pmd) & cpu_to_be64(_PAGE_PTE));
+>>  }
+>>  
+>>  #define pud_is_leaf pud_is_leaf
+>> +#define pud_leaf pud_is_leaf
+>>  static inline bool pud_is_leaf(pud_t pud)
+>>  {
+>>  	return !!(pud_raw(pud) & cpu_to_be64(_PAGE_PTE));
+>>  }
+>>  
+>>  #define pgd_is_leaf pgd_is_leaf
+>> +#define pgd_leaf pgd_is_leaf
+>>  static inline bool pgd_is_leaf(pgd_t pgd)
+>>  {
+>>  	return !!(pgd_raw(pgd) & cpu_to_be64(_PAGE_PTE));
+>> -- 
+>> 2.20.1
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+
