@@ -2,52 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93725127A44
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7241A127A4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 12:56:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfLTLxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 06:53:49 -0500
-Received: from foss.arm.com ([217.140.110.172]:49922 "EHLO foss.arm.com"
+        id S1727346AbfLTL4P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 06:56:15 -0500
+Received: from relay.sw.ru ([185.231.240.75]:41354 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727177AbfLTLxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 06:53:49 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 395A030E;
-        Fri, 20 Dec 2019 03:53:48 -0800 (PST)
-Received: from [10.1.194.52] (e112269-lin.cambridge.arm.com [10.1.194.52])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 567D63F719;
-        Fri, 20 Dec 2019 03:53:45 -0800 (PST)
-Subject: Re: [PATCH v17 06/23] powerpc: mm: Add p?d_leaf() definitions
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Mark Rutland <Mark.Rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Paul Mackerras <paulus@samba.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Will Deacon <will@kernel.org>,
-        "Liang, Kan" <kan.liang@linux.intel.com>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, kvm-ppc@vger.kernel.org,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20191218162402.45610-1-steven.price@arm.com>
- <20191218162402.45610-7-steven.price@arm.com>
- <877e2smt6r.fsf@mpe.ellerman.id.au>
-From:   Steven Price <steven.price@arm.com>
-Message-ID: <e99a9857-e9f4-588a-ad12-4d5f3a9de739@arm.com>
-Date:   Fri, 20 Dec 2019 11:53:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727177AbfLTL4P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 06:56:15 -0500
+Received: from dhcp-172-16-24-104.sw.ru ([172.16.24.104])
+        by relay.sw.ru with esmtp (Exim 4.92.3)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1iiGs9-0006Sg-TL; Fri, 20 Dec 2019 14:55:10 +0300
+Subject: Re: [PATCH RFC 1/3] block: Add support for REQ_OP_ASSIGN_RANGE
+ operation
+To:     "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca, ming.lei@redhat.com,
+        osandov@fb.com, jthumshirn@suse.de, minwoo.im.dev@gmail.com,
+        damien.lemoal@wdc.com, andrea.parri@amarulasolutions.com,
+        hare@suse.com, tj@kernel.org, ajay.joshi@wdc.com, sagi@grimberg.me,
+        dsterba@suse.com, chaitanya.kulkarni@wdc.com, bvanassche@acm.org,
+        dhowells@redhat.com, asml.silence@gmail.com
+References: <157599668662.12112.10184894900037871860.stgit@localhost.localdomain>
+ <157599696813.12112.14140818972910110796.stgit@localhost.localdomain>
+ <yq1woatc8zd.fsf@oracle.com>
+ <3f2e341b-dea4-c5d0-8eb0-568b6ad2f17b@virtuozzo.com>
+ <yq1a77oc56s.fsf@oracle.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <625c9ee4-bedb-ff60-845e-2d440c4f58aa@virtuozzo.com>
+Date:   Fri, 20 Dec 2019 14:55:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <877e2smt6r.fsf@mpe.ellerman.id.au>
+In-Reply-To: <yq1a77oc56s.fsf@oracle.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -56,97 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/12/2019 11:49, Michael Ellerman wrote:
-> Steven Price <steven.price@arm.com> writes:
->> walk_page_range() is going to be allowed to walk page tables other than
->> those of user space. For this it needs to know when it has reached a
->> 'leaf' entry in the page tables. This information is provided by the
->> p?d_leaf() functions/macros.
+Hi, Martin,
+
+On 20.12.2019 01:37, Martin K. Petersen wrote:
+> 
+> Kirill,
+> 
+>> Hm. BLKDEV_ZERO_NOUNMAP is used in __blkdev_issue_write_zeroes() only.
+>> So, do I understand right that we should the below two?:
 >>
->> For powerpc p?d_is_leaf() functions already exist. Export them using the
->> new p?d_leaf() name.
->>
->> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->> CC: Paul Mackerras <paulus@samba.org>
->> CC: Michael Ellerman <mpe@ellerman.id.au>
->> CC: linuxppc-dev@lists.ozlabs.org
->> CC: kvm-ppc@vger.kernel.org
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->>  arch/powerpc/include/asm/book3s/64/pgtable.h | 3 +++
->>  1 file changed, 3 insertions(+)
+>> 1) Introduce a new flag BLKDEV_ZERO_ALLOCATE for
+>> blkdev_issue_write_zeroes().
 > 
-> We have fallback versions of our pmd_is_leaf() etc. in
-> arch/powerpc/include/asm/pgtable.h, eg:
+>> 2) Introduce a new flag REQ_NOZERO in enum req_opf.
 > 
-> #ifndef pmd_is_leaf
-> #define pmd_is_leaf pmd_is_leaf
-> static inline bool pmd_is_leaf(pmd_t pmd)
-> {
-> 	return false;
-> }
-> #endif
-> 
-> Because we support several different MMUs and most of them don't need to
-> do anything.
-> 
-> So we could put the compatibility #defines to your names along with the
-> fallback versions in asm/pgtable.h, rather than in
-> asm/book3s/64/pgtable.h
-> 
-> But I see you also have fallbacks for your versions, so it probably
-> doesn't matter either way.
-> 
-> So I'm OK with this version, unless you think there's a compelling
-> reason to do the compatibility #defines in our asm/pgtable.h
+> Something like that. If zeroing is a problem for you.
 
-I was thinking that (assuming this series actually gets merged this
-time), the p?d_is_leaf() versions could be removed and replaced by
-p?d_leaf() in the future. Since the fallbacks are in the asm-generic
-code it makes sense for the pmd_leaf() definitions to be next to the
-non-fallback versions.
+My intention is to use this in fs allocators to notify virtual block devices
+about allocated blocks (like in patch [3/3]). Filesystems allocators know about
+written and unwritten extents, and they don't need a zeroing of allocated blocks.
 
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Since a block range allocation action is less complicated (and faster), than
+operation of allocation + zeroing of allocated blocks (at least for some devices),
+we just choose it as the fastest. This is the reason we avoid zeroing.
 
-Thanks!
-
-Steve
-
-> cheers
+> Right now we offer the following semantics:
 > 
+> 	Deallocate, no zeroing (discard)
 > 
->> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
->> index b01624e5c467..201a69e6a355 100644
->> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
->> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
->> @@ -1355,18 +1355,21 @@ static inline bool is_pte_rw_upgrade(unsigned long old_val, unsigned long new_va
->>   * Like pmd_huge() and pmd_large(), but works regardless of config options
->>   */
->>  #define pmd_is_leaf pmd_is_leaf
->> +#define pmd_leaf pmd_is_leaf
->>  static inline bool pmd_is_leaf(pmd_t pmd)
->>  {
->>  	return !!(pmd_raw(pmd) & cpu_to_be64(_PAGE_PTE));
->>  }
->>  
->>  #define pud_is_leaf pud_is_leaf
->> +#define pud_leaf pud_is_leaf
->>  static inline bool pud_is_leaf(pud_t pud)
->>  {
->>  	return !!(pud_raw(pud) & cpu_to_be64(_PAGE_PTE));
->>  }
->>  
->>  #define pgd_is_leaf pgd_is_leaf
->> +#define pgd_leaf pgd_is_leaf
->>  static inline bool pgd_is_leaf(pgd_t pgd)
->>  {
->>  	return !!(pgd_raw(pgd) & cpu_to_be64(_PAGE_PTE));
->> -- 
->> 2.20.1
+> 	Optionally deallocate, zeroing (zeroout)
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 	Allocate, zeroing (zeroout + NOUNMAP)
 > 
+> Some devices also implement a fourth option which would be:
+> 
+> 	Anchor: Allocate, no zeroing
+> 
+>> Won't this confuse a reader that we have blkdev_issue_write_zeroes(),
+>> which does not write zeroes sometimes? Maybe we should rename
+>> blkdev_issue_write_zeroes() in some more generic name?
+> 
+> Maybe. The naming is what it is for hysterical raisins and reflects how
+> things are implemented in the storage protocols. I wouldn't worry too
+> much about that. We can rename things if need be but we shouldn't plumb
+> an essentially identical operation through the block stack just to
+> expose a different name at the top.
 
+Not introduction a new operation is a good thing. Especially, since we don't
+need a specific max_xxx_xxx_sectors != max_write_zeroes_sectors for it.
+
+I'll rework the patch in this way (it seems it will become pretty small
+after that).
+
+One more thing to discuss. The new REQ_NOZERO flag won't be supported
+by many block devices (their number will be even less, than number of
+REQ_OP_WRITE_ZEROES supporters). Will this be a good thing, in case
+of we will be completing BLKDEV_ZERO_ALLOCATE bios in __blkdev_issue_write_zeroes()
+before splitting? I mean introduction of some flag in struct request_queue::limits.
+Completion of them with -EOPNOTSUPP in block devices drivers looks
+suboptimal for me.
+
+Thanks,
+Kirill
