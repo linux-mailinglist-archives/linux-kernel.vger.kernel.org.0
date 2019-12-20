@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AFE3127334
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:57:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5DCE12731D
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 02:56:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727527AbfLTB4f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 19 Dec 2019 20:56:35 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36566 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727406AbfLTB4P (ORCPT
+        id S1727511AbfLTB4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 19 Dec 2019 20:56:25 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38982 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727425AbfLTB4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 19 Dec 2019 20:56:15 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n12so5769509lfe.3;
-        Thu, 19 Dec 2019 17:56:13 -0800 (PST)
+        Thu, 19 Dec 2019 20:56:16 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l2so8315043lja.6;
+        Thu, 19 Dec 2019 17:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=3XNfmZ2hjnhg2qNhklB7JqCGu2d7AOuV7BZtvYddOdo=;
-        b=HSqEOwJw/zMDkejr/IlMLusTy4Cie2f0YUVoAnqlfNPwtHmAm+RAWNS8RA9k3OYMBM
-         mmzy/2GUOPkgxtYFJ3taDbkl3MrqOPVDKtyWKC6C60MHuYCeYISFu9N77HVLasA5A8/s
-         YNsAVvziC8pS4rX63Jmzr3/J1d/PfvudxZhiCsmR+hizSORR4xyodUJkgdp0z9O2H8aF
-         FSdJmyBer1UlFmftUJCraqSzOfUAc37gOd1uGqXJjqOy9ryVc0+8ph2dAfSNUb1fIz5P
-         d8DQCLPM1qUuLPMXSmyc/i2eYrCJiiu1VvTr7Tl077qkMWhZzn4bTarZfPSd9NHkldis
-         laVg==
+        bh=RdRgeWTtviiIWS4YZZN2UoUeCEyNPX48xbOaYwnMDFE=;
+        b=dcS1TlxAOy/1bGVnMXVpE+SWtXzV0w/w3yEAu6hMpfXuYmlTkV4sUi8KVzS5hmGysN
+         Qw+r+dKjngb882nDf555o4voGsyrWxs3fkNnk4vqKOXQH7wMjrfL3zdeAMGwK7LWOPSz
+         EwMgHpzGo+23dY5Vpm8Px50FjMC+Oq6JbMBkhJN/dUAoFht9I5jBP1FFqqN3xPJ6/N0n
+         dH923D4CgrsDx5MRpkN+2AkYOVYs21+aY1h4A/I7JXpmFnixmJ8sguKtsgg4VxJYH4VL
+         thQdXq4uPG2pwSJqeZqlAlO3HSSYdP1du8B/AcAops7EIQ9KnsdyV88Hs73q1hu72MCa
+         +YfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=3XNfmZ2hjnhg2qNhklB7JqCGu2d7AOuV7BZtvYddOdo=;
-        b=ohMZABpBC0EFQO6bHJlJjFIUV+bAHCggh5+7FkZNEN3KdYZKs7987NIZoY/fhptx7b
-         W+31byRKVbCyiP8yiJ2VU+M7H60nJa2sBK4uKExY8+r/Bo7HRtwvzVJVWk0KaDYeE3zl
-         iB53QLUAFCJJWF6RsjOWZq32Fe1KHECxvovZzdKa4f8UlJ8dq0cRODYrhOWnMxhpbZ3g
-         qMzBgGsHmOcXIFoNAPqhzBY8cx13+1MXi4Ss1OYBTGkybMNL4Tjbp09XBOXbyWKd+xcm
-         gZDD0UUc8I5UElR49QVJ6u7soEq0GN9ZsEhfoeMH44YlcOWIkLd/xQvBUqd5V8CRzHPW
-         IQeg==
-X-Gm-Message-State: APjAAAUacNuT4N7RRGmLDVFvHrvx/ChZyWGuGVlnnI5cOeRqs3xNWKpA
-        jhqWeVkNNRt29iDizKu0gQY=
-X-Google-Smtp-Source: APXvYqyjbv45vqVVMVP8f5/41fyY2ncr6rPHHPcyaGS2gZOeoW6OxfWjSX4CkP/TiuD9k4jd/CGCjg==
-X-Received: by 2002:a19:48c5:: with SMTP id v188mr7344296lfa.100.1576806972706;
-        Thu, 19 Dec 2019 17:56:12 -0800 (PST)
+        bh=RdRgeWTtviiIWS4YZZN2UoUeCEyNPX48xbOaYwnMDFE=;
+        b=k1bnEjJc/Ll7xl6fETxLpo35+SdwjVIfFTYLe5bVyLONFGgudRzm6sElxdQhV+kQIH
+         N20IjSI386VZmyqtpVonYN43yL91tVGwczqIIqQKGWu9P9hamhgR0zc2C7B4YLtaZk5y
+         DBaIQ3jku+P1GV7t5vH8oF/gCc7ZvaAf+qEBipkl1UxokxQz3QFEjd4t+X14D83QWBzs
+         u15NCK6yE/+CVWH7688GgPerhsVu1L4vBmnpvyYetTfASZaNV9B1puLHhox+fb8MFgS/
+         oiGtZudV301ceZYJ7asSm5UA4UaXU2RBTUCCNicIBkJY67Za5dSVSQvm1Ly8Ab6zq+qa
+         T2cg==
+X-Gm-Message-State: APjAAAVraOU9lSI2i2mnRUliDG9AnN+fS9/A8V4FK9pp+a5pF6q9C3uo
+        sogfKABqmq5tu8nz+jzHy+8=
+X-Google-Smtp-Source: APXvYqwHB2ubVpnJ68AxDl/uLyNqcPLfnu5LbydQhPsl6C6kNHP66ITjL4WSOOYmi0vbLh2TwfFTsQ==
+X-Received: by 2002:a2e:914d:: with SMTP id q13mr8262950ljg.198.1576806973842;
+        Thu, 19 Dec 2019 17:56:13 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id m13sm3270901lfo.40.2019.12.19.17.56.11
+        by smtp.gmail.com with ESMTPSA id m13sm3270901lfo.40.2019.12.19.17.56.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 17:56:12 -0800 (PST)
+        Thu, 19 Dec 2019 17:56:13 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Felipe Balbi <balbi@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/10] usb: phy: tegra: Use u32 for hardware register variables
-Date:   Fri, 20 Dec 2019 04:52:36 +0300
-Message-Id: <20191220015238.9228-9-digetx@gmail.com>
+Subject: [PATCH v2 09/10] usb: chipidea: tegra: Stop managing PHY's power
+Date:   Fri, 20 Dec 2019 04:52:37 +0300
+Message-Id: <20191220015238.9228-10-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191220015238.9228-1-digetx@gmail.com>
 References: <20191220015238.9228-1-digetx@gmail.com>
@@ -67,138 +67,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a mix of u32/ULONG usage in the driver's code. Let's switch to
-u32 uniformly, for consistency.
+Tegra's USB PHY driver now provides generic PHY init/shutdown callbacks
+and thus the custom PHY management could be removed from Tegra-specific
+part of the ChipIdea driver.
 
-Suggested-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++++++++-------------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/usb/chipidea/ci_hdrc_tegra.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index d5739b6e0b6c..551c94e3877a 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -202,7 +202,7 @@ static inline struct tegra_usb_phy *to_tegra_usb_phy(struct usb_phy *u_phy)
- static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
+diff --git a/drivers/usb/chipidea/ci_hdrc_tegra.c b/drivers/usb/chipidea/ci_hdrc_tegra.c
+index 0c9911d44ee5..7455df0ede49 100644
+--- a/drivers/usb/chipidea/ci_hdrc_tegra.c
++++ b/drivers/usb/chipidea/ci_hdrc_tegra.c
+@@ -83,13 +83,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
  
- 	if (phy->soc_config->has_hostpc) {
- 		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-@@ -221,7 +221,7 @@ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
- static void set_phcd(struct tegra_usb_phy *phy, bool enable)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
+-	/*
+-	 * Tegra's USB PHY driver doesn't implement optional phy_init()
+-	 * hook, so we have to power on UDC controller before ChipIdea
+-	 * driver initialization kicks in.
+-	 */
+-	usb_phy_set_suspend(udc->phy, 0);
+-
+ 	/* setup and register ChipIdea HDRC device */
+ 	udc->data.name = "tegra-udc";
+ 	udc->data.flags = soc->flags;
+@@ -109,7 +102,6 @@ static int tegra_udc_probe(struct platform_device *pdev)
+ 	return 0;
  
- 	if (phy->soc_config->has_hostpc) {
- 		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-@@ -320,7 +320,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- {
- 	struct tegra_utmip_config *config = phy->config;
- 	void __iomem *base = phy->pad_regs;
--	unsigned long val, flags;
-+	unsigned long flags;
-+	u32 val;
- 	int err;
+ fail_power_off:
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
+ 	return err;
+ }
+@@ -119,7 +111,6 @@ static int tegra_udc_remove(struct platform_device *pdev)
+ 	struct tegra_udc *udc = platform_get_drvdata(pdev);
  
- 	err = clk_prepare_enable(phy->pad_clk);
-@@ -355,7 +356,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
- static int utmip_pad_power_off(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->pad_regs;
--	unsigned long val, flags;
-+	unsigned long flags;
-+	u32 val;
- 	int err;
+ 	ci_hdrc_remove_device(udc->dev);
+-	usb_phy_set_suspend(udc->phy, 1);
+ 	clk_disable_unprepare(udc->clk);
  
- 	if (!utmip_pad_count) {
-@@ -393,7 +395,7 @@ static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
- static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	/*
- 	 * The USB driver may have already initiated the phy clock
-@@ -425,7 +427,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
- static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	/*
- 	 * The USB driver may have already initiated the phy clock
-@@ -460,7 +462,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- {
- 	struct tegra_utmip_config *config = phy->config;
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 	int err;
- 
- 	val = readl_relaxed(base + USB_SUSP_CTRL);
-@@ -611,7 +613,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
- static int utmi_phy_power_off(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	utmi_phy_clk_disable(phy);
- 
-@@ -646,7 +648,7 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
- static void utmi_phy_preresume(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	val = readl_relaxed(base + UTMIP_TX_CFG0);
- 	val |= UTMIP_HS_DISCON_DISABLE;
-@@ -656,7 +658,7 @@ static void utmi_phy_preresume(struct tegra_usb_phy *phy)
- static void utmi_phy_postresume(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	val = readl_relaxed(base + UTMIP_TX_CFG0);
- 	val &= ~UTMIP_HS_DISCON_DISABLE;
-@@ -667,7 +669,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
- 				   enum tegra_usb_phy_port_speed port_speed)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	val = readl_relaxed(base + UTMIP_MISC_CFG0);
- 	val &= ~UTMIP_DPDM_OBSERVE_SEL(~0);
-@@ -687,7 +689,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
- static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 
- 	val = readl_relaxed(base + UTMIP_MISC_CFG0);
- 	val &= ~UTMIP_DPDM_OBSERVE;
-@@ -698,7 +700,7 @@ static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
- static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
- {
- 	void __iomem *base = phy->regs;
--	unsigned long val;
-+	u32 val;
- 	int err;
- 
- 	err = gpio_direction_output(phy->reset_gpio, 0);
+ 	return 0;
 -- 
 2.24.0
 
