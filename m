@@ -2,88 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7062127EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:03:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDED127EF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 16:04:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727500AbfLTPDS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 10:03:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727233AbfLTPDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 10:03:18 -0500
-Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
+        id S1727494AbfLTPEY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 10:04:24 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39068 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727233AbfLTPEY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 10:04:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mvyWFYK2DloxkwKiLTdIi4VUiymLqX0pzem4JYVIosA=; b=lNAfVsG/5sW3OZV6PrGhsAdJ2
+        XoDul6sr7cKBpEd8OGujI05e3M0a7TU0EDbSd85owyCOc0c8QWnwghUoa6wqE20eR+8RxlHGXwTd+
+        GPxLGEx/OSavzJz0MUdmVsECVDXYKyeozBX2D8tc6gH/EhLjgklXkIh9ZsR3VR0Uch6a2pjew9A0N
+        oysxLzcDvpwyeUIRLy42uOKXIJIaSzGtpbRH+V4O3wNRoGwoGhJ6tx0NtSEYqSssu1Ix2Lj82gnXm
+        2Igar2+9t4sAl0s6zfVfy52f1n4YJRZFBNhf0ulj53TLZWVwl4HXkHQcNXQBkapQMv5QWZsFCCCFH
+        cdj4tNubg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1iiJpE-0003Jf-0I; Fri, 20 Dec 2019 15:04:20 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B35D21655;
-        Fri, 20 Dec 2019 15:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576854197;
-        bh=CPY22g81OiRavk7/O94Lph0D5YCaRfHVDFMECFgqwe8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=cY0BevEbdLDwsL1Ocs55xioO9NT9DJ4cSwjnN9hMVYH8rxx7hewQXPNFXvrgmGRHN
-         HQWw3E8LZhoRR5snduR0sw8QBdkr2bSZQl9mAYCww3KXvlzpiGiUKVCtiDu1/1NQm9
-         I0XBzXYS8VR8q5pJaAqX06moFepjoThNNAvQycaM=
-Date:   Fri, 20 Dec 2019 09:03:15 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-        iommu@lists.linuxfoundation.org, kernel-team@android.com,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Isaac J. Manjarres" <isaacm@codeaurora.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Greg Kroah-Hartman <gregkh@google.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH v4 03/16] PCI/ATS: Restore EXPORT_SYMBOL_GPL() for
- pci_{enable,disable}_ats()
-Message-ID: <20191220150315.GA97598@google.com>
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 470053007F2;
+        Fri, 20 Dec 2019 16:02:54 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4B653201E8305; Fri, 20 Dec 2019 16:04:18 +0100 (CET)
+Date:   Fri, 20 Dec 2019 16:04:18 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        vincent.guittot@linaro.org, patrick.bellasi@matbug.net,
+        qperret@google.com, qais.yousef@arm.com, morten.rasmussen@arm.com
+Subject: Re: [PATCH v3 0/5] sched/fair: Task placement biasing using uclamp
+Message-ID: <20191220150418.GK2844@hirez.programming.kicks-ass.net>
+References: <20191211113851.24241-1-valentin.schneider@arm.com>
+ <7c9caf20-de5b-3fa2-2663-e712ba3d7829@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191220084303.GA9347@8bytes.org>
+In-Reply-To: <7c9caf20-de5b-3fa2-2663-e712ba3d7829@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 09:43:03AM +0100, Joerg Roedel wrote:
-> Hi Bjorn,
+On Thu, Dec 12, 2019 at 04:06:38PM +0100, Dietmar Eggemann wrote:
+> On 11/12/2019 12:38, Valentin Schneider wrote:
+> > Hi,
+> > 
+> > While uclamp restrictions currently only impact schedutil's frequency
+> > selection, it would make sense to also let them impact CPU selection in
+> > asymmetric topologies. This would let us steer specific tasks towards
+> > certain CPU capacities regardless of their actual utilization - I give a
+> > few examples in patch 4.
+> > 
+> > The first three patches are mainly cleanups, the meat of the thing is
+> > in patches 4 and 5.
+> > 
+> > Note that this is in the same spirit as what Patrick had proposed for EAS
+> > on Android [1]
+> > 
+> > [1]: https://android.googlesource.com/kernel/common/+/b61876ed122f816660fe49e0de1b7ee4891deaa2%5E%21
 > 
-> On Thu, Dec 19, 2019 at 12:03:39PM +0000, Will Deacon wrote:
-> > From: Greg Kroah-Hartman <gregkh@google.com>
-> > 
-> > Commit d355bb209783 ("PCI/ATS: Remove unnecessary EXPORT_SYMBOL_GPL()")
-> > unexported a bunch of symbols from the PCI core since the only external
-> > users were non-modular IOMMU drivers. Although most of those symbols
-> > can remain private for now, 'pci_{enable,disable_ats()' is required for
-> > the ARM SMMUv3 driver to build as a module, otherwise we get a build
-> > failure as follows:
-> > 
-> >   | ERROR: "pci_enable_ats" [drivers/iommu/arm-smmu-v3.ko] undefined!
-> >   | ERROR: "pci_disable_ats" [drivers/iommu/arm-smmu-v3.ko] undefined!
-> > 
-> > Re-export these two functions so that the ARM SMMUv3 driver can be build
-> > as a module.
-> > 
-> > Cc: Bjorn Helgaas <bhelgaas@google.com>
-> > Cc: Joerg Roedel <jroedel@suse.de>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@google.com>
-> > [will: rewrote commit message]
-> > Signed-off-by: Will Deacon <will@kernel.org>
-> > ---
-> >  drivers/pci/ats.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> 
-> Are you fine with this change? I would apply this series to my tree
-> then.
+> Reviewed-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Tested-By: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-Yep, thanks!  You can add my
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
+Thanks!
