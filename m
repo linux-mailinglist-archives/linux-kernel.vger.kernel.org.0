@@ -2,150 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1245127D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:38:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 689CF127DF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:38:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728347AbfLTOfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:35:04 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42554 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbfLTOey (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:34:54 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y19so7196859lfl.9
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:34:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BeVvZ5ULmCKhMB2XUpJLoUDx0KaU5Mu7ZvT0f+qPzPo=;
-        b=JDeoIkN5MW8F+U+eT5tHXIDU+Lz3jf5NgsiY79uZl+d2YxHx9HPcIfA9CXw6XLTWgf
-         7+XYngBiTWUlVuFjgWNWgZEvoTbaZA94tPQbPrhkCQmojoGh+njifHbE39b0QMhWyTd5
-         Q6LxXTFxKHD+i9HGTLqp8CCkZsICiDe2DejfQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BeVvZ5ULmCKhMB2XUpJLoUDx0KaU5Mu7ZvT0f+qPzPo=;
-        b=kO4kfLuYeTGYR9mzLNoVnBgHFad59Pkh60h7yKGhJZRV5pNtKUhmu0YfBpHD+kG1qc
-         rp4zrKSqrzPBRiBWIUM6BhoAMq5vTJsiip+EHNjx8LcTkXi0V+d232VrAbuGk1PlfZ/A
-         7QvpGMzW7uptvm2Wzf1zN4gLgzrgK9pLLU6G7D24qYSIOqtqWE8LHLU+0kTLOU8PxgbU
-         JzoEwvKw9K4EoagtCEUIWAabbztq+KyoPMDi1fgB4Oyg+lZmIQP8Hda+pJzo8EAtDf40
-         Faw6EnjROayQsqpuNVaM1kTNGa2i2cOjw0H3iXmWDdjkGeEqYVuEG0XpWq2egaURdvdp
-         hpLA==
-X-Gm-Message-State: APjAAAVGF0uNi/MxojNGV+3FUZTq8H7FVC+RUZ2C+ISx4F1gjv3mTwej
-        qdEoCjg0QyboZo2iqSfUOmbwtQ==
-X-Google-Smtp-Source: APXvYqxWeNP+cIbOsSlJ/ZU7OWJA1Do1iV+COZxyRZIyaE2ULfeq+9Zro/Yx8jsraijlk5DiQWP0nA==
-X-Received: by 2002:ac2:44d9:: with SMTP id d25mr9491550lfm.15.1576852491701;
-        Fri, 20 Dec 2019 06:34:51 -0800 (PST)
-Received: from [172.16.11.28] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id q10sm4349387ljj.60.2019.12.20.06.34.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 20 Dec 2019 06:34:50 -0800 (PST)
-Subject: Re: [RFC][PATCH 1/4] sched: Force the address order of each sched
- class descriptor
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-        Kirill Tkhai <tkhai@yandex.ru>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "juri.lelli@redhat.com" <juri.lelli@redhat.com>,
-        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>,
-        "dietmar.eggemann@arm.com" <dietmar.eggemann@arm.com>,
-        "bsegall@google.com" <bsegall@google.com>,
-        "mgorman@suse.de" <mgorman@suse.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20191219214451.340746474@goodmis.org>
- <20191219214558.510271353@goodmis.org>
- <0a957e8d-7af8-613c-11ae-f51b9b241eb7@rasmusvillemoes.dk>
- <20191220100033.GE2844@hirez.programming.kicks-ass.net>
- <1ac359e8-fa7f-7ded-e2f2-9f7d0b23a4e1@rasmusvillemoes.dk>
- <20191220121947.GH2844@hirez.programming.kicks-ass.net>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <f580513e-b6a1-db1f-4df8-924adb438179@rasmusvillemoes.dk>
-Date:   Fri, 20 Dec 2019 15:34:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1727868AbfLTOhs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:37:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41832 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727709AbfLTOhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:37:45 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76EBB21D7E;
+        Fri, 20 Dec 2019 14:37:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576852663;
+        bh=h8/rVvVlXD4qTJQp9CRzTZ8qD1HEPbNwGWApU53B5mk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=L5ItyQsqlBEjnXaxBDpNFA6+/86neCjnyPnORCQruvQaSdFH+MdZUeaGb2Q167suz
+         haoBWGVdeNK2lb8Xg1aY38lnpeVu8jC8Ga7eBcaIM62QjRbLCABpM453O/vdeyQSnr
+         JhvfmuDBSorYQSoCtpwQti7RB7iTsp5LgywrWQfQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Keith Busch <kbusch@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/19] nvme_fc: add module to ops template to allow module references
+Date:   Fri, 20 Dec 2019 09:37:22 -0500
+Message-Id: <20191220143741.10220-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191220121947.GH2844@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/12/2019 13.19, Peter Zijlstra wrote:
-> On Fri, Dec 20, 2019 at 11:12:37AM +0100, Rasmus Villemoes wrote:
->> On 20/12/2019 11.00, Peter Zijlstra wrote:
-> 
->>>>> +/*
->>>>> + * The order of the sched class addresses are important, as they are
->>>>> + * used to determine the order of the priority of each sched class in
->>>>> + * relation to each other.
->>>>> + */
->>>>> +#define SCHED_DATA				\
->>>>> +	*(__idle_sched_class)			\
->>>>> +	*(__fair_sched_class)			\
->>>>> +	*(__rt_sched_class)			\
->>>>> +	*(__dl_sched_class)			\
->>>>> +	STOP_SCHED_CLASS
->>>
->>> I'm confused, why does that STOP_SCHED_CLASS need magic here at all?
->>> Doesn't the linker deal with empty sections already by making them 0
->>> sized?
->>
->> Yes, but dropping the STOP_SCHED_CLASS define doesn't prevent one from
->> needing some ifdeffery to define highest_sched_class if they are laid
->> out in (higher sched class <-> higher address) order.
-> 
-> Would not something like:
-> 
-> 	__begin_sched_classes = .;
-> 	*(__idle_sched_class)
-> 	*(__fair_sched_class)
-> 	*(__rt_sched_class)
-> 	*(__dl_sched_class)
-> 	*(__stop_sched_class)
-> 	__end_sched_classes = .;
-> 
-> combined with something like:
-> 
-> extern struct sched_class *__begin_sched_classes;
-> extern struct sched_class *__end_sched_classes;
+From: James Smart <jsmart2021@gmail.com>
 
-extern const struct sched_class __begin_sched_classes[];
+[ Upstream commit 863fbae929c7a5b64e96b8a3ffb34a29eefb9f8f ]
 
-but yes, I get the idea.
+In nvme-fc: it's possible to have connected active controllers
+and as no references are taken on the LLDD, the LLDD can be
+unloaded.  The controller would enter a reconnect state and as
+long as the LLDD resumed within the reconnect timeout, the
+controller would resume.  But if a namespace on the controller
+is the root device, allowing the driver to unload can be problematic.
+To reload the driver, it may require new io to the boot device,
+and as it's no longer connected we get into a catch-22 that
+eventually fails, and the system locks up.
 
-> #define sched_class_highest (__end_sched_classes - 1)
-> #define sched_class_lowest  (__begin_sched_classes - 1)
-> 
-> #define for_class_range(class, _from, _to) \
-> 	for (class = (_from); class != (_to), class--)
-> 
-> #define for_each_class(class) \
-> 	for_class_range(class, sched_class_highest, sched_class_lowest)
-> 
-> just work?
+Fix this issue by taking a module reference for every connected
+controller (which is what the core layer did to the transport
+module). Reference is cleared when the controller is removed.
 
-Yes, I think so - I was only thinking of the case where all the symbols
-would be defined in the linker script, and for this to work you need the
-C compiler to subtract the sizeof().
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/nvme/host/fc.c          | 14 ++++++++++++--
+ drivers/nvme/target/fcloop.c    |  1 +
+ drivers/scsi/lpfc/lpfc_nvme.c   |  2 ++
+ drivers/scsi/qla2xxx/qla_nvme.c |  1 +
+ include/linux/nvme-fc-driver.h  |  4 ++++
+ 5 files changed, 20 insertions(+), 2 deletions(-)
 
-I'd probably not include the -1 in the definition of sched_class_lowest,
-but instead put it in the for_each_class definition (i.e. use
-sched_class_lowest-1 as _to parameter).
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 058d542647dd5..9e4d2ecf736d5 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -337,7 +337,8 @@ nvme_fc_register_localport(struct nvme_fc_port_info *pinfo,
+ 	    !template->ls_req || !template->fcp_io ||
+ 	    !template->ls_abort || !template->fcp_abort ||
+ 	    !template->max_hw_queues || !template->max_sgl_segments ||
+-	    !template->max_dif_sgl_segments || !template->dma_boundary) {
++	    !template->max_dif_sgl_segments || !template->dma_boundary ||
++	    !template->module) {
+ 		ret = -EINVAL;
+ 		goto out_reghost_failed;
+ 	}
+@@ -1762,6 +1763,7 @@ nvme_fc_ctrl_free(struct kref *ref)
+ {
+ 	struct nvme_fc_ctrl *ctrl =
+ 		container_of(ref, struct nvme_fc_ctrl, ref);
++	struct nvme_fc_lport *lport = ctrl->lport;
+ 	unsigned long flags;
+ 
+ 	if (ctrl->ctrl.tagset) {
+@@ -1787,6 +1789,7 @@ nvme_fc_ctrl_free(struct kref *ref)
+ 	if (ctrl->ctrl.opts)
+ 		nvmf_free_options(ctrl->ctrl.opts);
+ 	kfree(ctrl);
++	module_put(lport->ops->module);
+ }
+ 
+ static void
+@@ -2765,10 +2768,15 @@ nvme_fc_init_ctrl(struct device *dev, struct nvmf_ctrl_options *opts,
+ 		goto out_fail;
+ 	}
+ 
++	if (!try_module_get(lport->ops->module)) {
++		ret = -EUNATCH;
++		goto out_free_ctrl;
++	}
++
+ 	idx = ida_simple_get(&nvme_fc_ctrl_cnt, 0, 0, GFP_KERNEL);
+ 	if (idx < 0) {
+ 		ret = -ENOSPC;
+-		goto out_free_ctrl;
++		goto out_mod_put;
+ 	}
+ 
+ 	ctrl->ctrl.opts = opts;
+@@ -2915,6 +2923,8 @@ nvme_fc_init_ctrl(struct device *dev, struct nvmf_ctrl_options *opts,
+ out_free_ida:
+ 	put_device(ctrl->dev);
+ 	ida_simple_remove(&nvme_fc_ctrl_cnt, ctrl->cnum);
++out_mod_put:
++	module_put(lport->ops->module);
+ out_free_ctrl:
+ 	kfree(ctrl);
+ out_fail:
+diff --git a/drivers/nvme/target/fcloop.c b/drivers/nvme/target/fcloop.c
+index 096523d8dd422..b8fe8702065bc 100644
+--- a/drivers/nvme/target/fcloop.c
++++ b/drivers/nvme/target/fcloop.c
+@@ -693,6 +693,7 @@ fcloop_targetport_delete(struct nvmet_fc_target_port *targetport)
+ #define FCLOOP_DMABOUND_4G		0xFFFFFFFF
+ 
+ static struct nvme_fc_port_template fctemplate = {
++	.module			= THIS_MODULE,
+ 	.localport_delete	= fcloop_localport_delete,
+ 	.remoteport_delete	= fcloop_remoteport_delete,
+ 	.create_queue		= fcloop_create_queue,
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index fcf4b4175d771..af937b91765e6 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -1591,6 +1591,8 @@ lpfc_nvme_fcp_abort(struct nvme_fc_local_port *pnvme_lport,
+ 
+ /* Declare and initialization an instance of the FC NVME template. */
+ static struct nvme_fc_port_template lpfc_nvme_template = {
++	.module	= THIS_MODULE,
++
+ 	/* initiator-based functions */
+ 	.localport_delete  = lpfc_nvme_localport_delete,
+ 	.remoteport_delete = lpfc_nvme_remoteport_delete,
+diff --git a/drivers/scsi/qla2xxx/qla_nvme.c b/drivers/scsi/qla2xxx/qla_nvme.c
+index 6b33a1f24f561..7dceed0212361 100644
+--- a/drivers/scsi/qla2xxx/qla_nvme.c
++++ b/drivers/scsi/qla2xxx/qla_nvme.c
+@@ -578,6 +578,7 @@ static void qla_nvme_remoteport_delete(struct nvme_fc_remote_port *rport)
+ }
+ 
+ static struct nvme_fc_port_template qla_nvme_fc_transport = {
++	.module	= THIS_MODULE,
+ 	.localport_delete = qla_nvme_localport_delete,
+ 	.remoteport_delete = qla_nvme_remoteport_delete,
+ 	.create_queue   = qla_nvme_alloc_queue,
+diff --git a/include/linux/nvme-fc-driver.h b/include/linux/nvme-fc-driver.h
+index a726f96010d59..e9c3b98df3e25 100644
+--- a/include/linux/nvme-fc-driver.h
++++ b/include/linux/nvme-fc-driver.h
+@@ -279,6 +279,8 @@ struct nvme_fc_remote_port {
+  *
+  * Host/Initiator Transport Entrypoints/Parameters:
+  *
++ * @module:  The LLDD module using the interface
++ *
+  * @localport_delete:  The LLDD initiates deletion of a localport via
+  *       nvme_fc_deregister_localport(). However, the teardown is
+  *       asynchronous. This routine is called upon the completion of the
+@@ -392,6 +394,8 @@ struct nvme_fc_remote_port {
+  *       Value is Mandatory. Allowed to be zero.
+  */
+ struct nvme_fc_port_template {
++	struct module	*module;
++
+ 	/* initiator-based functions */
+ 	void	(*localport_delete)(struct nvme_fc_local_port *);
+ 	void	(*remoteport_delete)(struct nvme_fc_remote_port *);
+-- 
+2.20.1
 
-A whole other option is of course to make the whole thing a bona fide C
-array defined in sched/core.c, with fair_sched_class being defined as
-&sched_classes[1] etc. But that requires giving all the methods extern
-linkage. The advantage might be that the compiler can see how much we
-iterate over, though I wouldn't expect it to actually unroll the
-for_each_class loops five times. So yes, the above is probably the best
-way to go.
-
-Rasmus
