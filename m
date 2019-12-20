@@ -2,128 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284A3127C7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B32D2127C8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:30:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfLTO0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:26:01 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39795 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727362AbfLTO0B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:26:01 -0500
-Received: by mail-lj1-f195.google.com with SMTP id l2so10197405lja.6
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:25:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=9WqhstskUuONOhk/w+gyZwreQrEykNzgK1l1VnxD33s=;
-        b=zMuS2dgvlkKxVxxI8JtGHSQUeKku32DXHsiX4HgwhvWFUTUQrOcWey2c7sxjWbQcb2
-         Lya2wZ2LgrMRnub1NYNq4lVqtPR7GXOZUNAxFJuWiQhzRgXz/bYw6QG+tOzMRQuxyD2d
-         UidurIjM5hB5JSOahBqyYlwsq4VXOY9h2zJm6ACP7qLvGL34gFlLYX9z0N05hgsM9PDc
-         NU+Fb1mzJA5EPJePj5fdiFzLdskrmz/sodj5LpO+WGGaoiQ/pdyZEfMar4KWDiR6VDbw
-         DGsCfhoAYdBk1HjdXUjFq1lRHnGF0bXEHXGE5wSgPd0jizemwt6aBoJRo4a/fSzl1eOR
-         xn3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=9WqhstskUuONOhk/w+gyZwreQrEykNzgK1l1VnxD33s=;
-        b=EM/yHoc0B1qvaLQch7e/PaPuUi3wFLJnAQe+vXrHUotTrgWqI36AsTX44tCnbqWiVR
-         t9LQvS5JvicEOHqGB1gJem79st1OfprU2FlfkhuvanN4ZP4A0faH3aNNoMB6OP7yV2vG
-         gkAmyyxmP78my/ya5WHkf7nGDqLmjhVoWNQHEYGRDdJXK0smDu9c5zZX5g22WyeJNgOU
-         xRCsmBped8D7PB7qKqOq/woNLB4SzBKdHfSXfY7OghcZ3KIOeAInHYJJXZJ6RmNQTGOW
-         tbt6dNUvXstaFSxuqYHNWloL/daXveACrXBGUz5mXXqtWinF6Vzb4GQ6nXKnACkvQeab
-         4mjQ==
-X-Gm-Message-State: APjAAAW50Y4CC/cLQIsSwnHV14gHpuyfr7T7qAHk9Gkkfh6hpL0+/ubF
-        Tb/m9QYdB+FjYmwJmWnd9BxqTA==
-X-Google-Smtp-Source: APXvYqy1P1YNJauGj7NRz5haqIY7txUzCE4ENcU904LzYlGyPRf3lLLbOhOcL3xZoZexkkXT/5uXpQ==
-X-Received: by 2002:a2e:a0d5:: with SMTP id f21mr10236743ljm.106.1576851958001;
-        Fri, 20 Dec 2019 06:25:58 -0800 (PST)
-Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id w17sm4083642lfn.22.2019.12.20.06.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 06:25:56 -0800 (PST)
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Received: by box.localdomain (Postfix, from userid 1000)
-        id 3E3631012A8; Fri, 20 Dec 2019 17:25:59 +0300 (+03)
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Willhalm, Thomas" <thomas.willhalm@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 2/2] thp, shmem: Fix conflict of above-47bit hint address and PMD alignment
-Date:   Fri, 20 Dec 2019 17:25:48 +0300
-Message-Id: <20191220142548.7118-3-kirill.shutemov@linux.intel.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191220142548.7118-1-kirill.shutemov@linux.intel.com>
-References: <20191220142548.7118-1-kirill.shutemov@linux.intel.com>
+        id S1727419AbfLTO35 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:29:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbfLTO35 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 09:29:57 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CBE4206CB;
+        Fri, 20 Dec 2019 14:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576852196;
+        bh=DaKcY2ZpqbDstz9wKYKjtF3MBp5yvPnCH85aOptTh+g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=pd69Fkx3rDQ1+5mFJx9W0sSYc63XiA6PYX0lhklgJ2u/dscvGoe98DFCoHIKfGUQP
+         /oEZXBukDQZt1fc5ovGeDcPr8Wx1dmHl2Cn5KUXqc24eIoBcx9SAdN9zrhqJYxtxBy
+         yhLYqCtDFqNKmDfAcZ00Z5so2OhB9emI9VNZZWFM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 5.4 01/52] drm/mcde: dsi: Fix invalid pointer dereference if panel cannot be found
+Date:   Fri, 20 Dec 2019 09:29:03 -0500
+Message-Id: <20191220142954.9500-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shmem/tmpfs tries to provide THP-friendly mappings if huge pages are
-enabled. But it doesn't work well with above-47bit hint address.
+From: Stephan Gerhold <stephan@gerhold.net>
 
-Normally, the kernel doesn't create userspace mappings above 47-bit,
-even if the machine allows this (such as with 5-level paging on x86-64).
-Not all user space is ready to handle wide addresses. It's known that
-at least some JIT compilers use higher bits in pointers to encode their
-information.
+[ Upstream commit c131280c03bd1c225c2e64e9ef75873ffca3d96e ]
 
-Userspace can ask for allocation from full address space by specifying
-hint address (with or without MAP_FIXED) above 47-bits. If the
-application doesn't need a particular address, but wants to allocate
-from whole address space it can specify -1 as a hint address.
+The "panel" pointer is not reset to NULL if of_drm_find_panel()
+returns an error. Therefore we later assume that a panel was found,
+and try to dereference the error pointer, resulting in:
 
-Unfortunately, this trick breaks THP alignment in shmem/tmp:
-shmem_get_unmapped_area() would not try to allocate PMD-aligned area if
-*any* hint address specified.
+    mcde-dsi a0351000.dsi: failed to find panel try bridge (4294966779)
+    Unable to handle kernel paging request at virtual address fffffe03
+    PC is at drm_panel_bridge_add.part.0+0x10/0x5c
+    LR is at mcde_dsi_bind+0x120/0x464
+    ...
 
-This can be fixed by requesting the aligned area if the we failed to
-allocated at user-specified hint address. The request with inflated
-length will also take the user-specified hint address. This way we will
-not lose an allocation request from the full address space.
+Reset "panel" to NULL to avoid this problem.
+Also change the format string of the error to %ld to print
+the negative errors correctly. The crash above then becomes:
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
+    mcde-dsi a0351000.dsi: failed to find panel try bridge (-517)
+    mcde-dsi a0351000.dsi: no panel or bridge
+    ...
+
+Fixes: 5fc537bfd000 ("drm/mcde: Add new driver for ST-Ericsson MCDE")
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20191118130252.170324-1-stephan@gerhold.net
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/shmem.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/mcde/mcde_dsi.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 165fa6332993..dc539482ce67 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2107,9 +2107,10 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	/*
- 	 * Our priority is to support MAP_SHARED mapped hugely;
- 	 * and support MAP_PRIVATE mapped hugely too, until it is COWed.
--	 * But if caller specified an address hint, respect that as before.
-+	 * But if caller specified an address hint and we allocated area there
-+	 * successfully, respect that as before.
- 	 */
--	if (uaddr)
-+	if (uaddr == addr)
- 		return addr;
- 
- 	if (shmem_huge != SHMEM_HUGE_FORCE) {
-@@ -2143,7 +2144,7 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	if (inflated_len < len)
- 		return addr;
- 
--	inflated_addr = get_area(NULL, 0, inflated_len, 0, flags);
-+	inflated_addr = get_area(uaddr, 0, inflated_len, 0, flags);
- 	if (IS_ERR_VALUE(inflated_addr))
- 		return addr;
- 	if (inflated_addr & ~PAGE_MASK)
+diff --git a/drivers/gpu/drm/mcde/mcde_dsi.c b/drivers/gpu/drm/mcde/mcde_dsi.c
+index f9c9e32b299c9..35bb825d19188 100644
+--- a/drivers/gpu/drm/mcde/mcde_dsi.c
++++ b/drivers/gpu/drm/mcde/mcde_dsi.c
+@@ -935,11 +935,13 @@ static int mcde_dsi_bind(struct device *dev, struct device *master,
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		panel = of_drm_find_panel(child);
+ 		if (IS_ERR(panel)) {
+-			dev_err(dev, "failed to find panel try bridge (%lu)\n",
++			dev_err(dev, "failed to find panel try bridge (%ld)\n",
+ 				PTR_ERR(panel));
++			panel = NULL;
++
+ 			bridge = of_drm_find_bridge(child);
+ 			if (IS_ERR(bridge)) {
+-				dev_err(dev, "failed to find bridge (%lu)\n",
++				dev_err(dev, "failed to find bridge (%ld)\n",
+ 					PTR_ERR(bridge));
+ 				return PTR_ERR(bridge);
+ 			}
 -- 
-2.24.1
+2.20.1
 
