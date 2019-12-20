@@ -2,123 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705D0127831
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:33:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6915127836
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 10:33:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727419AbfLTJc4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 04:32:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:34283 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727184AbfLTJc4 (ORCPT
+        id S1727431AbfLTJdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 04:33:44 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:33277 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727279AbfLTJdn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 04:32:56 -0500
-Received: by mail-pf1-f194.google.com with SMTP id l127so4896139pfl.1;
-        Fri, 20 Dec 2019 01:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hXPvfKvwAwee7RsrZpIamZ8UANcZvc4/7hzUJ9vWG30=;
-        b=ufnVJ3iPxZcZtJ92hsB9jBbHS38GFsw9MyCcx9SHRHdXmWo1pI6ZDU4ZFgZ9JeU7ZS
-         j2irv1vy1DCI/tEIMvh7yIDPtZ4T2IudbrsSUY7w2xI/3TNYdhDJNK4F0fqI2AjK4S1B
-         DZnLX8Uk0BHcXbzLOK9slVuYcpDEF75U/nEREA0vm3SQj7PKE3i2dUru17xsbs7PGUa+
-         uHOr1Rs58B+A9FuO5Dp9W3nhFJ2wYxY31YasiyNKs/k1RteF/C5jxwRfvHem7LcAOi9t
-         +DDteb1doMFCbUdUvGAAcbhL1yk50HwuVaCqH7+UjW7Kjt6F/GNcQIPX9MVEwJgoIE42
-         UdBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hXPvfKvwAwee7RsrZpIamZ8UANcZvc4/7hzUJ9vWG30=;
-        b=HPtTG0JCTxOaBNgAIsfMmf+tNOeaRwFQ7NhINxvzxBhxfSSSuc8V2q5315PjkjKH2E
-         aiKGEWFlL5gaJ4hpBo22WUXTS93EW9ODw+xyWBu/Y2fT1gbtaxlkpCGgp3Jp2O5JwukQ
-         1dUgYwR31j78hLrdSMAVveGCZQSD6iCqK6JIpixrcxCQ6S/psee2yA9sMZzUE/6Zecmk
-         BXfXig3Tx2il9wo2kW4xaB8eYW+bA2Ku/4VjMVKjJKFWKxr0zBaJ4ZMBS+l909oNGHMd
-         TEqCWnUgUhzGX1/qnOdQJkG5np2HkscRP+oab9xZL/PfRFLuBt0VZI198XqV5WarmnKQ
-         uzYg==
-X-Gm-Message-State: APjAAAWwpY9dpUzpGVRoG7MhYV++Eq9GUzOuMobX9ujt2jHMyj6Qqqrk
-        7TNZlSkdmnElOIg4Vgz1rMTmnZc1X5ETp+7G9OA=
-X-Google-Smtp-Source: APXvYqy89KLn49Y7AOaiBDwvJUbGIwKrXpVrAXbM6ogcz28z1+7I0//57vSQh5E6i+knbxU9bqCwYbEzCfkP8R4ECrQ=
-X-Received: by 2002:a62:1944:: with SMTP id 65mr15366030pfz.151.1576834375318;
- Fri, 20 Dec 2019 01:32:55 -0800 (PST)
+        Fri, 20 Dec 2019 04:33:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1576834422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=kARvpg6EeSn47uf+HJvOWWm63eTYV3jwqH0aHeRURHY=;
+        b=KoEe95fXnH3+7rYUbP5Hts1DNLWdfbNzptZwkKz2TRf2ARuv2Kj6C3PfBIF5D5C4MleZbj
+        ljBUto9BjwrkUvIZDoZyQHGHU7XupKqHT7UrTi25AT2KCzsey2jJXMnfSj4yTq7vb9CfZX
+        v02eH6fh8zjJ9iQ8/niHvCplbCniFL4=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-63-euuv6RBAMwGCsT-Q338LuQ-1; Fri, 20 Dec 2019 04:33:41 -0500
+X-MC-Unique: euuv6RBAMwGCsT-Q338LuQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 444D1911EB;
+        Fri, 20 Dec 2019 09:33:38 +0000 (UTC)
+Received: from gondolin (dhcp-192-245.str.redhat.com [10.33.192.245])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 82CC560BF3;
+        Fri, 20 Dec 2019 09:33:27 +0000 (UTC)
+Date:   Fri, 20 Dec 2019 10:33:25 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Marc Zyngier <maz@kernel.org>, James Hogan <jhogan@kernel.org>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Greg Kurz <groug@kaod.org>
+Subject: Re: [PATCH v2 30/45] KVM: Move vcpu alloc and init invocation to
+ common code
+Message-ID: <20191220103325.34fc2bf0.cohuck@redhat.com>
+In-Reply-To: <20191218215530.2280-31-sean.j.christopherson@intel.com>
+References: <20191218215530.2280-1-sean.j.christopherson@intel.com>
+        <20191218215530.2280-31-sean.j.christopherson@intel.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <20191219041039.23396-1-dan@dlrobertson.com> <20191219041039.23396-3-dan@dlrobertson.com>
- <CAHp75VdVmfAi5hSp23Gn8nm6LmX-Mr5Tnxcbus90DrRL+gVFRA@mail.gmail.com>
- <20191220043220.GA16415@nessie> <CAHp75Vec5ADoFH9KoTnU5+uEZvGqS2+NUN+MLTiwzofDtGG0+A@mail.gmail.com>
-In-Reply-To: <CAHp75Vec5ADoFH9KoTnU5+uEZvGqS2+NUN+MLTiwzofDtGG0+A@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 20 Dec 2019 11:32:42 +0200
-Message-ID: <CAHp75VdzE4uKKJ_5g8eMZR+GSX9W+7Lc+kh2OYt5o7_8_NHTpw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] iio: (bma400) add driver for the BMA400
-To:     Dan Robertson <dan@dlrobertson.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree <devicetree@vger.kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 11:27 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Fri, Dec 20, 2019 at 6:48 AM Dan Robertson <dan@dlrobertson.com> wrote:
-> > On Thu, Dec 19, 2019 at 01:02:28PM +0200, Andy Shevchenko wrote:
-> > > On Thu, Dec 19, 2019 at 6:27 AM Dan Robertson <dan@dlrobertson.com> wrote:
->
-> > > > +static int bma400_set_accel_output_data_rate(struct bma400_data *data,
-> > > > +                                            int hz, int uhz)
-> > > > +{
-> > > > +       unsigned int idx;
-> > > > +       unsigned int odr;
-> > > > +       unsigned int val;
-> > > > +       int ret;
-> > > > +
-> > > > +       if (hz >= BMA400_ACC_ODR_MIN_WHOLE_HZ) {
-> > > > +               if (uhz || hz % BMA400_ACC_ODR_MIN_WHOLE_HZ)
-> > > > +                       return -EINVAL;
-> > > > +
-> > > > +               val = hz / BMA400_ACC_ODR_MIN_WHOLE_HZ;
-> > >
-> > > Again, AFAICS division may be avoided in both cases (% and / above)
-> > > because of is_power_of_2() check below.
-> > > Can you revisit this?
-> >
-> > Yeah I can update this in the next patchset, but I don't know if it is much more
-> > readable this way.
->
-> You may describe the algo in the comment.
->
-> Let's see how it might look like
->
->   if (uhz)
->     return -EINVAL;
->   idx = __ffs(val);
->   /* We're expecting value to be 2^n * ODR_MIN_WHOLE_HZ */
->   if ((val >> idx) != BMA400_ACC_ODR_MIN_WHOLE_HZ)
+On Wed, 18 Dec 2019 13:55:15 -0800
+Sean Christopherson <sean.j.christopherson@intel.com> wrote:
 
-Okay, this would require trickier conditional for the cases when
-MIN_WHOLE_HZ can be divided by 2^k...
-Still from performance point of view it might be much faster than division.
+> Now that all architectures tightly couple vcpu allocation/free with the
+> mandatory calls to kvm_{un}init_vcpu(), move the sequences verbatim to
+> common KVM code.
+> 
+> Move both allocation and initialization in a single patch to eliminate
+> thrash in arch specific code.  The bisection benefits of moving the two
+> pieces in separate patches is marginal at best, whereas the odds of
+> introducing a transient arch specific bug are non-zero.
+> 
+> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> ---
+>  arch/mips/kvm/mips.c       | 33 ++++++---------------------------
+>  arch/powerpc/kvm/powerpc.c | 27 ++++-----------------------
+>  arch/s390/kvm/kvm-s390.c   | 31 +++++--------------------------
+>  arch/x86/kvm/x86.c         | 28 ++--------------------------
+>  include/linux/kvm_host.h   |  2 +-
+>  virt/kvm/arm/arm.c         | 29 ++---------------------------
+>  virt/kvm/kvm_main.c        | 21 ++++++++++++++++++---
+>  7 files changed, 38 insertions(+), 133 deletions(-)
 
->     retutn -EINVAL;
->   idx += BMA400_ACC_ODR_MIN_RAW + 1;
->
-> Would it work?
->
-> > > > +               if (!is_power_of_2(val))
-> > > > +                       return -EINVAL;
-> > > > +
-> > > > +               idx = __ffs(val) + BMA400_ACC_ODR_MIN_RAW + 1;
+(...)
 
--- 
-With Best Regards,
-Andy Shevchenko
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index 8543d338a06a..2ed76584ebd9 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -2530,9 +2530,6 @@ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+>  	if (vcpu->kvm->arch.use_cmma)
+>  		kvm_s390_vcpu_unsetup_cmma(vcpu);
+>  	free_page((unsigned long)(vcpu->arch.sie_block));
+> -
+> -	kvm_vcpu_uninit(vcpu);
+> -	kmem_cache_free(kvm_vcpu_cache, vcpu);
+>  }
+>  
+>  static void kvm_free_vcpus(struct kvm *kvm)
+> @@ -3014,29 +3011,15 @@ int kvm_arch_vcpu_precreate(struct kvm *kvm, unsigned int id)
+>  	return 0;
+>  }
+>  
+> -struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm,
+> -				      unsigned int id)
+> +int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+>  {
+> -	struct kvm_vcpu *vcpu;
+>  	struct sie_page *sie_page;
+>  	int rc;
+>  
+> -	rc = -ENOMEM;
+> -
+> -	vcpu = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL);
+> -	if (!vcpu)
+> -		goto out;
+> -
+> -	rc = kvm_vcpu_init(vcpu, kvm, id);
+> -	if (rc)
+> -		goto out_free_cpu;
+> -
+> -	rc = -ENOMEM;
+> -
+>  	BUILD_BUG_ON(sizeof(struct sie_page) != 4096);
+>  	sie_page = (struct sie_page *) get_zeroed_page(GFP_KERNEL);
+>  	if (!sie_page)
+> -		goto out_uninit_vcpu;
+> +		return -ENOMEM;
+>  
+>  	vcpu->arch.sie_block = &sie_page->sie_block;
+>  	vcpu->arch.sie_block->itdba = (unsigned long) &sie_page->itdb;
+> @@ -3087,15 +3070,11 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm,
+>  		 vcpu->arch.sie_block);
+>  	trace_kvm_s390_create_vcpu(id, vcpu, vcpu->arch.sie_block);
+>  
+> -	return vcpu;
+> +	return 0;
+> +
+>  out_free_sie_block:
+>  	free_page((unsigned long)(vcpu->arch.sie_block));
+> -out_uninit_vcpu:
+> -	kvm_vcpu_uninit(vcpu);
+> -out_free_cpu:
+> -	kmem_cache_free(kvm_vcpu_cache, vcpu);
+> -out:
+> -	return ERR_PTR(rc);
+> +	return rc;
+
+This is getting a bit hard to follow across the patches, but I think rc
+is now only set for ucontrol guests. So this looks correct right now,
+but feels a bit brittle... should we maybe init rc to 0 and always
+return rc instead?
+
+>  }
+>  
+>  int kvm_arch_vcpu_runnable(struct kvm_vcpu *vcpu)
+
+Otherwise, looks good.
+
