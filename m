@@ -2,53 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8724127C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B462127C7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:26:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbfLTO0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:26:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44258 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727359AbfLTO0B (ORCPT
+        id S1727460AbfLTO0F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 09:26:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40985 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbfLTO0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:26:01 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u71so10188671lje.11
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:25:58 -0800 (PST)
+        Fri, 20 Dec 2019 09:26:02 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so10189911ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:25:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=je3VhWK4L1xwgtUZ1dTlP8wEWW2OyupachAHCPAhUxw=;
-        b=xps8RWHkl+7mcH+yV4Sx0iUf14Rt0lK/97Bvuq4RY0vND+WwVdokc3CMQjP2OXZCnl
-         2SIVaQZmNzSuGFHzz8hoPfPu4q4jRfsWUmOWteACs1yt6qlcSBZGKEOzTlRguwAeHTdC
-         KgwmDJl9cPSW4TDVQS0NjCs025+/WQESyf92Np8j5qQlUFeped9Gb48eGTP41wA7Klmj
-         bSFI9/rmF7+Kd4b0aH/1jcY4ODT89H3D+HsTbdbXfah0ytl401ZHsiEXEflhA/Wdwuyj
-         Xfrb7RmTLmqJi4ObipTkZy+M8Uh9XY8Bp6YKW2Y/rRM3VbscrHqj+hpQdb5cUXObI1kK
-         LuGQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=1aqJaMPhZ/LdjH/pzYf9S/QghCRA9LSMRsvTbXKKDeI=;
+        b=PckJPvOugvXBXBrEBUqMIwlz8UBJbGbd2J43VDNcLAolBMRZ4byslRdYeWQaVz7Obx
+         4R0B6iJrB+Bcc73zIRff+qQ7uUsqdgp1GaoBiVcszCYtEptuvAqElel306DaUnKO+NXk
+         0JIuCY3jRAmkbGOLfedKYnbbKTOYXA6T+oKrdIWSXph/zZwskDO8ekzaHUbBnEIGlRmm
+         1/Sd5mCU5lobONzW7fTpTuvo9m9T2+FvaOSRiwjhdQ5+NW8A6CX7O6wsovBibyN31Tci
+         92EAdKncazj099YD/eoptvL8C0m50EHtVdf6a7jD/Bvq0VJbkt+T5sHWroDYqz1XRwsQ
+         h2ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=je3VhWK4L1xwgtUZ1dTlP8wEWW2OyupachAHCPAhUxw=;
-        b=N18ybSQ616dIkglEsS3waU+jIGTzaegDJ7P+n0VAiLOdLmlvOL2y9yS+Tjt4x/415J
-         AAt39QOqFSOnKDLmFCm1NGD173y3xcOdqLOJqAb9xEvA5MNWoxQ74qBSVNYfx8iCqC0s
-         zze4AP2jHeGDfNHA7kjR+n+DtLEY0AMmCwy1UCD2AbcGR2t1YQN40uum/7n9aUXIz1FZ
-         ZU+/pqLIEgwN5lliRT+8b/zijG0j8au4oAILYRiymezNJa9iuY50/4CQEwEn0CLf12di
-         e+qK4PxcDzFvnZ+kFrp7Y0w20ZepJX90gQUO6B+tID4kZ3t/a4FzAsENrNaY+dSg2ilq
-         HCtA==
-X-Gm-Message-State: APjAAAXIHkZ32KsuQJ0AhGksj77ySYSKyRqLBxEyvvO0kyMN9hDPsVBY
-        VEYc96vRHPY/LdmvTIQMY617EQ==
-X-Google-Smtp-Source: APXvYqwS3i53B5Z2qtdboztOMu59K0SEFYHAAYcQ/tdGVI2Xv5HxsMTwiqX3QXCESI3WaJjx4Hfm4A==
-X-Received: by 2002:a2e:86c8:: with SMTP id n8mr8856186ljj.205.1576851957808;
-        Fri, 20 Dec 2019 06:25:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=1aqJaMPhZ/LdjH/pzYf9S/QghCRA9LSMRsvTbXKKDeI=;
+        b=YB23jEj9ioS10JHFpur5MaiA/UsSfyIGZM8ppCUidq0EJecve4U9E8LnokVhPBoe0l
+         cRjAVc68LisM5yoW8NSfZNSPGa/4pohzCmCl40m22Sntnc5QYKDUYO5uogJ2e/2xORuf
+         MhdGowCPti+jc/mwiqZFXJ6rBhU6hLjwm89OGQcSoNi0fh+5Q3dv3XytfCsF5w4PskbR
+         zomjJWCsHJrn66Duqy6mNYLYurd7+BxfCFbAyLw6SOs8Z/VDfIiDxUNDbS9uPiDc0e7F
+         Ob4d4JVDHmwYOsFxifHr7ZVv0nX06+/lGuSiu+Kg2hxwQ02P6untKKZ/CVo1BbU6sV61
+         Udng==
+X-Gm-Message-State: APjAAAWvZcIVPgcGMzYsrwlGvj8ewvGtp+1knOqby9p7yZHCPS7kdxlw
+        ELb5n/7EP6Clh7KmLUbxRQ6xRw==
+X-Google-Smtp-Source: APXvYqwgRZair3v7dcpcAV9A4xU5RH+vM2FKRLJfLSIhHs9JOyWmUyRsV2oGsT0Cbiqqk0ZHhQQkuQ==
+X-Received: by 2002:a2e:9806:: with SMTP id a6mr9736008ljj.178.1576851958332;
+        Fri, 20 Dec 2019 06:25:58 -0800 (PST)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id y7sm4298527ljj.58.2019.12.20.06.25.56
+        by smtp.gmail.com with ESMTPSA id h10sm4310863ljc.39.2019.12.20.06.25.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 20 Dec 2019 06:25:56 -0800 (PST)
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
 X-Google-Original-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Received: by box.localdomain (Postfix, from userid 1000)
-        id 32A511012A6; Fri, 20 Dec 2019 17:25:59 +0300 (+03)
+        id 373B01006EA; Fri, 20 Dec 2019 17:25:59 +0300 (+03)
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     "Willhalm, Thomas" <thomas.willhalm@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
@@ -56,10 +56,12 @@ Cc:     "Willhalm, Thomas" <thomas.willhalm@intel.com>,
         "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
         linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: [PATCH 0/2] Fix two above-47bit hint address vs. THP bugs
-Date:   Fri, 20 Dec 2019 17:25:46 +0300
-Message-Id: <20191220142548.7118-1-kirill.shutemov@linux.intel.com>
+Subject: [PATCH 1/2] thp: Fix conflict of above-47bit hint address and PMD alignment
+Date:   Fri, 20 Dec 2019 17:25:47 +0300
+Message-Id: <20191220142548.7118-2-kirill.shutemov@linux.intel.com>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191220142548.7118-1-kirill.shutemov@linux.intel.com>
+References: <20191220142548.7118-1-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,17 +69,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The two get_unmapped_area() implementations have to be fixed to provide
-THP-friendly mappings if above-47bit hint address is specified.
+Filesystems use thp_get_unmapped_area() to provide THP-friendly
+mappings. For DAX in particular.
 
-Kirill A. Shutemov (2):
-  thp: Fix conflict of above-47bit hint address and PMD alignment
-  thp, shmem: Fix conflict of above-47bit hint address and PMD alignment
+Normally, the kernel doesn't create userspace mappings above 47-bit,
+even if the machine allows this (such as with 5-level paging on x86-64).
+Not all user space is ready to handle wide addresses. It's known that
+at least some JIT compilers use higher bits in pointers to encode their
+information.
 
+Userspace can ask for allocation from full address space by specifying
+hint address (with or without MAP_FIXED) above 47-bits. If the
+application doesn't need a particular address, but wants to allocate
+from whole address space it can specify -1 as a hint address.
+
+Unfortunately, this trick breaks thp_get_unmapped_area(): the function
+would not try to allocate PMD-aligned area if *any* hint address
+specified.
+
+Modify the routine to handle it correctly:
+
+ - Try to allocate the space at the specified hint address with length
+   padding required for PMD alignment.
+ - If failed, retry without length padding (but with the same hint
+   address);
+ - If the returned address matches the hint address return it.
+ - Otherwise, align the address as required for THP and return.
+
+The user specified hint address is passed down to get_unmapped_area() so
+above-47bit hint address will be taken into account without breaking
+alignment requirements.
+
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Fixes: b569bab78d8d ("x86/mm: Prepare to expose larger address space to userspace")
+Reported-by: Thomas Willhalm <thomas.willhalm@intel.com>
+Tested-by: Dan Williams <dan.j.williams@intel.com>
+---
  mm/huge_memory.c | 38 ++++++++++++++++++++++++--------------
- mm/shmem.c       |  7 ++++---
- 2 files changed, 28 insertions(+), 17 deletions(-)
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 969653530c8f..dccadfbc9994 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -527,13 +527,13 @@ void prep_transhuge_page(struct page *page)
+ 	set_compound_page_dtor(page, TRANSHUGE_PAGE_DTOR);
+ }
+ 
+-static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long len,
++static unsigned long __thp_get_unmapped_area(struct file *filp,
++		unsigned long addr, unsigned long len,
+ 		loff_t off, unsigned long flags, unsigned long size)
+ {
+-	unsigned long addr;
+ 	loff_t off_end = off + len;
+ 	loff_t off_align = round_up(off, size);
+-	unsigned long len_pad;
++	unsigned long len_pad, ret;
+ 
+ 	if (off_end <= off_align || (off_end - off_align) < size)
+ 		return 0;
+@@ -542,30 +542,40 @@ static unsigned long __thp_get_unmapped_area(struct file *filp, unsigned long le
+ 	if (len_pad < len || (off + len_pad) < off)
+ 		return 0;
+ 
+-	addr = current->mm->get_unmapped_area(filp, 0, len_pad,
++	ret = current->mm->get_unmapped_area(filp, addr, len_pad,
+ 					      off >> PAGE_SHIFT, flags);
+-	if (IS_ERR_VALUE(addr))
++
++	/*
++	 * The failure might be due to length padding. The caller will retry
++	 * without the padding.
++	 */
++	if (IS_ERR_VALUE(ret))
+ 		return 0;
+ 
+-	addr += (off - addr) & (size - 1);
+-	return addr;
++	/*
++	 * Do not try to align to THP boundary if allocation at the address
++	 * hint succeeds.
++	 */
++	if (ret == addr)
++		return addr;
++
++	ret += (off - ret) & (size - 1);
++	return ret;
+ }
+ 
+ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags)
+ {
++	unsigned long ret;
+ 	loff_t off = (loff_t)pgoff << PAGE_SHIFT;
+ 
+-	if (addr)
+-		goto out;
+ 	if (!IS_DAX(filp->f_mapping->host) || !IS_ENABLED(CONFIG_FS_DAX_PMD))
+ 		goto out;
+ 
+-	addr = __thp_get_unmapped_area(filp, len, off, flags, PMD_SIZE);
+-	if (addr)
+-		return addr;
+-
+- out:
++	ret = __thp_get_unmapped_area(filp, addr, len, off, flags, PMD_SIZE);
++	if (ret)
++		return ret;
++out:
+ 	return current->mm->get_unmapped_area(filp, addr, len, pgoff, flags);
+ }
+ EXPORT_SYMBOL_GPL(thp_get_unmapped_area);
 -- 
 2.24.1
 
