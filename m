@@ -2,278 +2,232 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 01F1E127D62
-	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:37:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E462B127D6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 20 Dec 2019 15:37:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbfLTOd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 09:33:26 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:43243 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbfLTOdX (ORCPT
+        id S1728269AbfLTOdu convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 20 Dec 2019 09:33:50 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55294 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728266AbfLTOds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 09:33:23 -0500
-Received: by mail-il1-f196.google.com with SMTP id v69so8090558ili.10;
-        Fri, 20 Dec 2019 06:33:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B7zRI5HFZ9GdOv7/nuMrwlmDNkCl7lHHGMLGFpofT+E=;
-        b=fB6Gur4QH9KukcvwvfXarOJODwF4Cj8kYhFYHj92mj89R38WMd+4D6+qXvS02ibmDN
-         nmiCag1Iq36Y/OoVirpVXpYThuT4m1WeI3fIvUJNtbXp6XqO93+1PSgTyje9oIcsLd4w
-         DPSftyDp7iy0EaPbhK56tb7K2XIa8yESSOhLrtByhcK5cxET6CQ5LOdesQyfB6rt4k+r
-         Z8qrnko03b72rFxPMcff+vvdykOdSr3xbSb5A5EdXW0qDRZ9JQbWH+AZaoxXBWJnYWBn
-         aPMhV1hz37HQm00sBnYfzZ8SOA8fUTOxu+0rBBKQspC2/nrqcdErlcsC7PT+f0rNmjCE
-         vTag==
+        Fri, 20 Dec 2019 09:33:48 -0500
+Received: by mail-wm1-f68.google.com with SMTP id b19so9141800wmj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 06:33:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B7zRI5HFZ9GdOv7/nuMrwlmDNkCl7lHHGMLGFpofT+E=;
-        b=Oh4kAO7NtOGX3hn9m4sJ7aRc2MDr1Aj5LBhyw5DKo/xTtA3aa2DmBFRSeiD3NwfJFt
-         bL8+nMGJJ8MWLEguP179aEz5f+UGkZ6dn3XJxF8IXPq58iyofP0MFBh3tAkxLuui4Q8a
-         bw2DQwvP0K9H3qeDA6sp84c0EXoXjvrr+alFFzp/1+3Qxnd5rdmoASoTez5D3idsGmtH
-         7rVuWJ+MoayDVcG7TThDC6HAbAgWhOEY7l3XVhmzCZfrZgBxoKAr3ksni3GxBC7+MFEd
-         r8YnODr9vP8zCrw1pTsuESBs1cQZqZhjC9XBjDQQelGBKT+CQI/QToyZzRaTi/eWSdEo
-         7oDg==
-X-Gm-Message-State: APjAAAVYE3d3TpBcjqrmyCXBgUDex7VX+ZTnUo1YAp+q6s+ugfhllsc+
-        5boiPa58wTkzxK3khlrwoRv+0hcRsJfyY6GBc1U=
-X-Google-Smtp-Source: APXvYqziBD0NHeii8XJfTXHcWaB5cMulU0ZxJuLhN36rkOAlUk9SmN8ImVZQtX/lp8iQVt5ZG1U2Dd6RJLNTZHnrEqA=
-X-Received: by 2002:a92:465c:: with SMTP id t89mr13064188ila.263.1576852402106;
- Fri, 20 Dec 2019 06:33:22 -0800 (PST)
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=V6peUYVw+8q1XalOpqZ1ayFyqbTEFtfcEYX2FP9pROo=;
+        b=DGIqFWbneDiWc+SMGgiTvURuXdwebez9c2sTP56btp/Q2J4E6Jau9/AXQyFyw/2Ajl
+         uuwmXdsgW/9nxENozyheDMw9qtg7EyKkMyOGQ52zIs7GM1XKAUpBelADn+Icw7x3cwzD
+         akO2wnfHkpd+E9gQKCDa0gLWGVD6gDX/2ZM2ksQqHXvzFP3f54SxOMBYT18CtGSt9YHy
+         GKBfZRrCRZd1DQOLg/fx6ufo/x4bsFT3oTglgzHTD1aHJ1DFwzqG4q8TtyBLkc3UosTO
+         fbMmYhKsYZqaaZZLXQ/112uf6iwVupY/ImOyq7+re0EQI8cPN0rbWTjXns8VL/oZftGQ
+         8eaA==
+X-Gm-Message-State: APjAAAVrf8vq4JCXYKNyggCwUsfP94uadnMKA3xOlqwLcsKG+I5ardQJ
+        z60TIYY3O6cgxRmWh8Qd48Mtiw==
+X-Google-Smtp-Source: APXvYqxVS8YAU3RLQWiNFWWhq3mf++gLHMleVdt7qSTwX9NrqFbPr8TqBrxxQzLMRWsCwz0CaURhTQ==
+X-Received: by 2002:a7b:c851:: with SMTP id c17mr17423248wml.71.1576852426193;
+        Fri, 20 Dec 2019 06:33:46 -0800 (PST)
+Received: from [10.140.78.238] ([46.114.38.238])
+        by smtp.gmail.com with ESMTPSA id l15sm9907506wrv.39.2019.12.20.06.33.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Dec 2019 06:33:43 -0800 (PST)
+Date:   Fri, 20 Dec 2019 15:33:39 +0100
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20191220140328.20907-2-cyphar@cyphar.com>
+References: <20191220140328.20907-1-cyphar@cyphar.com> <20191220140328.20907-2-cyphar@cyphar.com>
 MIME-Version: 1.0
-References: <20191218132217.28141-1-sibis@codeaurora.org> <20191218132217.28141-6-sibis@codeaurora.org>
- <20191220065954.GA1908628@ripper>
-In-Reply-To: <20191220065954.GA1908628@ripper>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Fri, 20 Dec 2019 07:33:11 -0700
-Message-ID: <CAOCk7NoaWw8Tor-P02SESztWEGpGMK6GbRNG45yMVYhMdDCEnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: msm8998: Add ADSP, MPSS and SLPI nodes
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Sibi Sankar <sibis@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org,
-        DTML <devicetree@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v2 1/2] openat2: drop open_how->__padding field
+To:     containers@lists.linux-foundation.org,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Shuah Khan <shuah@kernel.org>, Arnd Bergmann <arnd@arndb.de>
+CC:     libc-alpha@sourceware.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dev@opencontainers.org,
+        David Laight <david.laight@aculab.com>,
+        linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+Message-ID: <88F5533A-9C91-41D1-A2E6-3622FCEEEDB1@ubuntu.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 12:00 AM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
->
-> On Wed 18 Dec 05:22 PST 2019, Sibi Sankar wrote:
->
-> > This patch adds ADSP, MPSS and SLPI nodes for MSM8998 SoCs.
-> >
-> > Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi |   8 ++
-> >  arch/arm64/boot/dts/qcom/msm8998.dtsi     | 124 ++++++++++++++++++++++
-> >  2 files changed, 132 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> > index 6db3f9e0344d1..e87094665c52c 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> > @@ -312,6 +312,14 @@
-> >       };
-> >  };
-> >
-> > +&remoteproc_adsp {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&remoteproc_slpi {
-> > +     status = "okay";
-> > +};
-> > +
-> >  &tlmm {
-> >       gpio-reserved-ranges = <0 4>, <81 4>;
-> >  };
-> > diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> > index 8d799e868a5d3..014127700afb0 100644
-> > --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> > @@ -1075,6 +1075,61 @@
-> >                       #interrupt-cells = <0x2>;
-> >               };
-> >
-> > +             remoteproc_mss: remoteproc@4080000 {
-> > +                     compatible = "qcom,msm8998-mss-pil";
-> > +                     reg = <0x04080000 0x100>, <0x04180000 0x20>;
-> > +                     reg-names = "qdsp6", "rmb";
-> > +
-> > +                     interrupts-extended =
-> > +                             <&intc GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
-> > +                             <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> > +                             <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> > +                             <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> > +                             <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>,
-> > +                             <&modem_smp2p_in 7 IRQ_TYPE_EDGE_RISING>;
-> > +                     interrupt-names = "wdog", "fatal", "ready",
-> > +                                       "handover", "stop-ack",
-> > +                                       "shutdown-ack";
-> > +
-> > +                     clocks = <&gcc GCC_MSS_CFG_AHB_CLK>,
-> > +                              <&gcc GCC_BIMC_MSS_Q6_AXI_CLK>,
-> > +                              <&gcc GCC_BOOT_ROM_AHB_CLK>,
-> > +                              <&gcc GCC_MSS_GPLL0_DIV_CLK_SRC>,
-> > +                              <&gcc GCC_MSS_SNOC_AXI_CLK>,
-> > +                              <&gcc GCC_MSS_MNOC_BIMC_AXI_CLK>,
-> > +                              <&rpmcc RPM_SMD_QDSS_CLK>,
-> > +                              <&rpmcc RPM_SMD_XO_CLK_SRC>;
->
-> RPM_SMD_XO_CLK_SRC doesn't seem to be implemented...
->
-> I did pull in a patch from Jeff that defines it, but when I boot the
-> modem I see the following error repeatedly:
+[Cc Arnd for struct layout sanity checking]
 
-Yeah, we need to figure out a solution for rpmcc to actually provide
-this since the previous N solutions were not acceptable.  Its on my
-todo list to look into in Jan.  However, I really think the DT should
-be defined this way, since it replicates the hardware config.
+On December 20, 2019 3:03:27 PM GMT+01:00, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>The purpose of explicit padding was to allow us to use the space in the
+>future (C provides no guarantee about the value of padding bytes and
+>thus userspace could've provided garbage).
+>
+>However, the downside of explicit padding is that any extension we wish
+>to add should fit the space exactly (otherwise we may end up with a u16
+>which will never be used). In addition, the correct error to return for
+>non-zero padding is not clear (-EINVAL doesn't imply "you're using an
+>extension field unsupported by this kernel", but -E2BIG seems a bit odd
+>if the structure size isn't different).
+>
+>The simplest solution is to just match the design of clone3(2) -- use
+>u64s for all fields. The extra few-bytes cost of extra fields is not
+>significant (it's unlikely configuration structs will ever be extremely
+>large) and it allows for more flag space if necessary. There is also no
+>need to align the u64s because we will not permit any padding in the
+>structure.
+>
+>As openat2(2) is not yet in Linus's tree, we can iron out these minor
+>warts before we commit to this as a stable ABI.
+>
+>Acked-by: Christian Brauner <christian.brauner@ubuntu.com>
+>Suggested-by: David Laight <david.laight@aculab.com>
+>Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+>---
+> fs/open.c                                     |  2 --
+> include/uapi/linux/fcntl.h                    | 17 +++++++------
+> tools/testing/selftests/openat2/helpers.h     |  7 +++---
+> .../testing/selftests/openat2/openat2_test.c  | 24 +++++++------------
+> 4 files changed, 19 insertions(+), 31 deletions(-)
+>
+>diff --git a/fs/open.c b/fs/open.c
+>index 50a46501bcc9..8cdb2b675867 100644
+>--- a/fs/open.c
+>+++ b/fs/open.c
+>@@ -993,8 +993,6 @@ static inline int build_open_flags(const struct
+>open_how *how,
+> 		return -EINVAL;
+> 	if (how->resolve & ~VALID_RESOLVE_FLAGS)
+> 		return -EINVAL;
+>-	if (memchr_inv(how->__padding, 0, sizeof(how->__padding)))
+>-		return -EINVAL;
+> 
+> 	/* Deal with the mode. */
+> 	if (WILL_CREATE(flags)) {
+>diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+>index d886bdb585e4..5aaadfd79dd5 100644
+>--- a/include/uapi/linux/fcntl.h
+>+++ b/include/uapi/linux/fcntl.h
+>@@ -101,22 +101,21 @@
+> #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
+> 
+> /*
+>- * Arguments for how openat2(2) should open the target path. If
+>@resolve is
+>- * zero, then openat2(2) operates very similarly to openat(2).
+>+ * Arguments for how openat2(2) should open the target path. If only
+>@flags and
+>+ * @mode are non-zero, then openat2(2) operates very similarly to
+>openat(2).
+>  *
+>- * However, unlike openat(2), unknown bits in @flags result in -EINVAL
+>rather
+>- * than being silently ignored. @mode must be zero unless one of
+>{O_CREAT,
+>- * O_TMPFILE} are set.
+>+ * However, unlike openat(2), unknown or invalid bits in @flags result
+>in
+>+ * -EINVAL rather than being silently ignored. @mode must be zero
+>unless one of
+>+ *  {O_CREAT, O_TMPFILE} are set.
+>  *
+>  * @flags: O_* flags.
+>  * @mode: O_CREAT/O_TMPFILE file mode.
+>  * @resolve: RESOLVE_* flags.
+>  */
+> struct open_how {
+>-	__aligned_u64 flags;
+>-	__u16 mode;
+>-	__u16 __padding[3]; /* must be zeroed */
+>-	__aligned_u64 resolve;
+>+	__u64 flags;
+>+	__u64 mode;
+>+	__u64 resolve;
+> };
+> 
+> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+>diff --git a/tools/testing/selftests/openat2/helpers.h
+>b/tools/testing/selftests/openat2/helpers.h
+>index 43ca5ceab6e3..a6ea27344db2 100644
+>--- a/tools/testing/selftests/openat2/helpers.h
+>+++ b/tools/testing/selftests/openat2/helpers.h
+>@@ -36,10 +36,9 @@
+>  * @resolve: RESOLVE_* flags.
+>  */
+> struct open_how {
+>-	__aligned_u64 flags;
+>-	__u16 mode;
+>-	__u16 __padding[3]; /* must be zeroed */
+>-	__aligned_u64 resolve;
+>+	__u64 flags;
+>+	__u64 mode;
+>+	__u64 resolve;
+> };
+> 
+> #define OPEN_HOW_SIZE_VER0	24 /* sizeof first published struct */
+>diff --git a/tools/testing/selftests/openat2/openat2_test.c
+>b/tools/testing/selftests/openat2/openat2_test.c
+>index 0b64fedc008b..b386367c606b 100644
+>--- a/tools/testing/selftests/openat2/openat2_test.c
+>+++ b/tools/testing/selftests/openat2/openat2_test.c
+>@@ -40,7 +40,7 @@ struct struct_test {
+> 	int err;
+> };
+> 
+>-#define NUM_OPENAT2_STRUCT_TESTS 10
+>+#define NUM_OPENAT2_STRUCT_TESTS 7
+> #define NUM_OPENAT2_STRUCT_VARIATIONS 13
+> 
+> void test_openat2_struct(void)
+>@@ -57,20 +57,6 @@ void test_openat2_struct(void)
+> 		  .arg.inner.flags = O_RDONLY,
+> 		  .size = sizeof(struct open_how_ext) },
+> 
+>-		/* Normal struct with broken padding. */
+>-		{ .name = "normal struct (non-zero padding[0])",
+>-		  .arg.inner.flags = O_RDONLY,
+>-		  .arg.inner.__padding = {0xa0, 0x00, 0x00},
+>-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+>-		{ .name = "normal struct (non-zero padding[1])",
+>-		  .arg.inner.flags = O_RDONLY,
+>-		  .arg.inner.__padding = {0x00, 0x1a, 0x00},
+>-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+>-		{ .name = "normal struct (non-zero padding[2])",
+>-		  .arg.inner.flags = O_RDONLY,
+>-		  .arg.inner.__padding = {0x00, 0x00, 0xef},
+>-		  .size = sizeof(struct open_how_ext), .err = -EINVAL },
+>-
+> 		/* TODO: Once expanded, check zero-padding. */
+> 
+> 		/* Smaller than version-0 struct. */
+>@@ -169,7 +155,7 @@ struct flag_test {
+> 	int err;
+> };
+> 
+>-#define NUM_OPENAT2_FLAG_TESTS 21
+>+#define NUM_OPENAT2_FLAG_TESTS 23
+> 
+> void test_openat2_flags(void)
+> {
+>@@ -214,9 +200,15 @@ void test_openat2_flags(void)
+> 		{ .name = "invalid how.mode and O_CREAT",
+> 		  .how.flags = O_CREAT,
+> 		  .how.mode = 0xFFFF, .err = -EINVAL },
+>+		{ .name = "invalid (very large) how.mode and O_CREAT",
+>+		  .how.flags = O_CREAT,
+>+		  .how.mode = 0xC000000000000000ULL, .err = -EINVAL },
+> 		{ .name = "invalid how.mode and O_TMPFILE",
+> 		  .how.flags = O_TMPFILE | O_RDWR,
+> 		  .how.mode = 0x1337, .err = -EINVAL },
+>+		{ .name = "invalid (very large) how.mode and O_TMPFILE",
+>+		  .how.flags = O_TMPFILE | O_RDWR,
+>+		  .how.mode = 0x0000A00000000000ULL, .err = -EINVAL },
+> 
+> 		/* ->resolve must only contain RESOLVE_* flags. */
+> 		{ .name = "invalid how.resolve and O_RDONLY",
 
->
-> [  616.632227] qcom-q6v5-mss 4080000.remoteproc: fatal error received: dog_hb.c:266:DOG_HB detects starvation of task 0xda172640, triage with its own
-
-Maybe the BIMC fix will address this?
-
->
->
->
-> All the qrtr services seems registered nicely, so the remote does come
-> up before it goes down.
->
-> Also, adsp comes up nicely.
->
-> Regards,
-> Bjorn
->
-> > +                     clock-names = "iface", "bus", "mem", "gpll0_mss",
-> > +                                   "snoc_axi", "mnoc_axi", "qdss", "xo";
-> > +
-> > +                     qcom,smem-states = <&modem_smp2p_out 0>;
-> > +                     qcom,smem-state-names = "stop";
-> > +
-> > +                     resets = <&gcc GCC_MSS_RESTART>;
-> > +                     reset-names = "mss_restart";
-> > +
-> > +                     qcom,halt-regs = <&tcsr_mutex_regs 0x23000 0x25000 0x24000>;
-> > +
-> > +                     power-domains = <&rpmpd MSM8998_VDDCX>,
-> > +                                     <&rpmpd MSM8998_VDDMX>;
-> > +                     power-domain-names = "cx", "mx";
-> > +
-> > +                     mba {
-> > +                             memory-region = <&mba_mem>;
-> > +                     };
-> > +
-> > +                     mpss {
-> > +                             memory-region = <&mpss_mem>;
-> > +                     };
-> > +
-> > +                     glink-edge {
-> > +                             interrupts = <GIC_SPI 452 IRQ_TYPE_EDGE_RISING>;
-> > +                             label = "modem";
-> > +                             qcom,remote-pid = <1>;
-> > +                             mboxes = <&apcs_glb 15>;
-> > +                     };
-> > +             };
-> > +
-> >               gpucc: clock-controller@5065000 {
-> >                       compatible = "qcom,msm8998-gpucc";
-> >                       #clock-cells = <1>;
-> > @@ -1088,6 +1143,42 @@
-> >                                     "gpll0";
-> >               };
-> >
-> > +             remoteproc_slpi: remoteproc@5800000 {
-> > +                     compatible = "qcom,msm8998-slpi-pas";
-> > +                     reg = <0x05800000 0x4040>;
-> > +
-> > +                     interrupts-extended = <&intc GIC_SPI 390 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&slpi_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&slpi_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&slpi_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&slpi_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> > +                     interrupt-names = "wdog", "fatal", "ready",
-> > +                                       "handover", "stop-ack";
-> > +
-> > +                     px-supply = <&vreg_lvs2a_1p8>;
-> > +
-> > +                     clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-> > +                              <&rpmcc RPM_SMD_AGGR2_NOC_CLK>;
-> > +                     clock-names = "xo", "aggre2";
-> > +
-> > +                     memory-region = <&slpi_mem>;
-> > +
-> > +                     qcom,smem-states = <&slpi_smp2p_out 0>;
-> > +                     qcom,smem-state-names = "stop";
-> > +
-> > +                     power-domains = <&rpmpd MSM8998_SSCCX>;
-> > +                     power-domain-names = "ssc_cx";
-> > +
-> > +                     status = "disabled";
-> > +
-> > +                     glink-edge {
-> > +                             interrupts = <GIC_SPI 179 IRQ_TYPE_EDGE_RISING>;
-> > +                             label = "dsps";
-> > +                             qcom,remote-pid = <3>;
-> > +                             mboxes = <&apcs_glb 27>;
-> > +                     };
-> > +             };
-> > +
-> >               stm: stm@6002000 {
-> >                       compatible = "arm,coresight-stm", "arm,primecell";
-> >                       reg = <0x06002000 0x1000>,
-> > @@ -1880,6 +1971,39 @@
-> >                       #size-cells = <0>;
-> >               };
-> >
-> > +             remoteproc_adsp: remoteproc@17300000 {
-> > +                     compatible = "qcom,msm8998-adsp-pas";
-> > +                     reg = <0x17300000 0x4040>;
-> > +
-> > +                     interrupts-extended = <&intc GIC_SPI 162 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&adsp_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&adsp_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&adsp_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
-> > +                                           <&adsp_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
-> > +                     interrupt-names = "wdog", "fatal", "ready",
-> > +                                       "handover", "stop-ack";
-> > +
-> > +                     clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>;
-> > +                     clock-names = "xo";
-> > +
-> > +                     memory-region = <&adsp_mem>;
-> > +
-> > +                     qcom,smem-states = <&adsp_smp2p_out 0>;
-> > +                     qcom,smem-state-names = "stop";
-> > +
-> > +                     power-domains = <&rpmpd MSM8998_VDDCX>;
-> > +                     power-domain-names = "cx";
-> > +
-> > +                     status = "disabled";
-> > +
-> > +                     glink-edge {
-> > +                             interrupts = <GIC_SPI 157 IRQ_TYPE_EDGE_RISING>;
-> > +                             label = "lpass";
-> > +                             qcom,remote-pid = <2>;
-> > +                             mboxes = <&apcs_glb 9>;
-> > +                     };
-> > +             };
-> > +
-> >               apcs_glb: mailbox@17911000 {
-> >                       compatible = "qcom,msm8998-apcs-hmss-global";
-> >                       reg = <0x17911000 0x1000>;
-> > --
-> > The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> > a Linux Foundation Collaborative Project
