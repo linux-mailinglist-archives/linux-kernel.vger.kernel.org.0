@@ -2,93 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF8C2128BAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 22:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6165F128BB4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 22:20:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfLUVLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 16:11:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727412AbfLUVLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 16:11:35 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC8272166E;
-        Sat, 21 Dec 2019 21:11:34 +0000 (UTC)
-Received: from rostedt by gandalf.local.home with local (Exim 4.92.3)
-        (envelope-from <rostedt@goodmis.org>)
-        id 1iim29-000o3L-QZ; Sat, 21 Dec 2019 16:11:33 -0500
-Message-Id: <20191221211133.694338753@goodmis.org>
-User-Agent: quilt/0.65
-Date:   Sat, 21 Dec 2019 16:11:11 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable@vger.kernel.org, Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: [for-linus][PATCH 5/5] tracing: Fix endianness bug in histogram trigger
-References: <20191221211106.338673631@goodmis.org>
+        id S1727467AbfLUVTw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 16:19:52 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:35445 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726905AbfLUVTw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Dec 2019 16:19:52 -0500
+Received: by mail-il1-f195.google.com with SMTP id g12so11034001ild.2
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 13:19:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ryiHDUuNAqP4QzqBSFVAqfWHx+GwcCe8K4qYuGFe+7I=;
+        b=IofBVGqCwyHx05OokV0/Mi+GsZfFqUWPEqHXlE8SD7ljZnKjNn33dyid4kaub9mkZW
+         Lh6gjQaG3b0cWchmJgUviTVtAwH/tp2kfExkrCyISdbITfud9qZ8MoOIJ4CupFu9B4QY
+         A7LU+eXgYy/ZTnxP5ZYSXCLIBo5iJmdxSQYbHTxmH2N/nlS5b/2D7e/72bvp6pBhF/eL
+         a5OuFiIu9F61BhYaMjmBov3wTOsqld80xy8q0OAxS3MS9tJxxureDAyiSOE02absgiUX
+         wgCfUAYXeQw9C4PXaKZ8bi7aJ8xo1j0ZKQd3TbXXdGnH91ZSX1hd5yfG13/qRZDISFMJ
+         JbPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ryiHDUuNAqP4QzqBSFVAqfWHx+GwcCe8K4qYuGFe+7I=;
+        b=m7bR6BBthkXfjvH81qGZ512xalcQc7k1ANlaGTECM+jv8B1PNdkBR2SdwHBY76EKY9
+         A8r4ehwQIbP0HmfeL9g8Pr3tyzaVhT81IfcwufONysVRXV/DR7CK+u9LEurQaArdfBM6
+         IfwkGsdbAj68Nxuj682DTXc0tmkdKeabQyFgLr8OXItvyRPAePFn+JR5zOqq1Qnn9YpA
+         zqnL+WI2UrZrnjJdjXjb3cvGvBcmVYJIyPiZbWWea2bhNl71YKBfSEHQNxJT1tjWFA5L
+         RfoF2bfTzkQ8fpP7ygZKp0dUnjWau+1gg9qyVCmejLA7ifdequXINpuGul2k+4NwQcYA
+         wStg==
+X-Gm-Message-State: APjAAAXK366kpUBklet+5vCbuUNM8akAzuIAgL7vV2hMumA/nsZ51Vn0
+        hMxsmLrvf9Z1IxfTtJP0s8Z5MuDiO+3VxfSwzFeY/g==
+X-Google-Smtp-Source: APXvYqyZE+QmAxWd9UXymtVOG+xl/oD9BEsoFWN9iahucCvKUbShAtJn3CxLUCBFxha+65qoTZX33gYHmhNnxPK2uuA=
+X-Received: by 2002:a92:afc5:: with SMTP id v66mr17505932ill.123.1576963191681;
+ Sat, 21 Dec 2019 13:19:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20191220001517.105297-1-olof@lixom.net> <ff6dc8997083c5d8968df48cc191e5b9e8797618.camel@perches.com>
+In-Reply-To: <ff6dc8997083c5d8968df48cc191e5b9e8797618.camel@perches.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Sat, 21 Dec 2019 13:19:40 -0800
+Message-ID: <CAOesGMgxHGBdkdVOoWYpqSF-13iP3itJksCRL8QSiS0diL26dA@mail.gmail.com>
+Subject: Re: [PATCH] net/mlx5e: Fix printk format warning
+To:     Joe Perches <joe@perches.com>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        linux-rdma@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Schnelle <svens@linux.ibm.com>
+On Thu, Dec 19, 2019 at 6:07 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Thu, 2019-12-19 at 16:15 -0800, Olof Johansson wrote:
+> > Use "%zu" for size_t. Seen on ARM allmodconfig:
+> []
+> > diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wq.c b/drivers/net/ethernet/mellanox/mlx5/core/wq.c
+> []
+> > @@ -89,7 +89,7 @@ void mlx5_wq_cyc_wqe_dump(struct mlx5_wq_cyc *wq, u16 ix, u8 nstrides)
+> >       len = nstrides << wq->fbc.log_stride;
+> >       wqe = mlx5_wq_cyc_get_wqe(wq, ix);
+> >
+> > -     pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %ld\n",
+> > +     pr_info("WQE DUMP: WQ size %d WQ cur size %d, WQE index 0x%x, len: %zu\n",
+> >               mlx5_wq_cyc_get_size(wq), wq->cur_sz, ix, len);
+> >       print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET, 16, 1, wqe, len, false);
+> >  }
+>
+> One might expect these 2 outputs to be at the same KERN_<LEVEL> too.
+> One is KERN_INFO the other KERN_WARNING
 
-At least on PA-RISC and s390 synthetic histogram triggers are failing
-selftests because trace_event_raw_event_synth() always writes a 64 bit
-values, but the reader expects a field->size sized value. On little endian
-machines this doesn't hurt, but on big endian this makes the reader always
-read zero values.
-
-Link: http://lore.kernel.org/linux-trace-devel/20191218074427.96184-4-svens@linux.ibm.com
-
-Cc: stable@vger.kernel.org
-Fixes: 4b147936fa509 ("tracing: Add support for 'synthetic' events")
-Acked-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
- kernel/trace/trace_events_hist.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index f49d1a36d3ae..f62de5f43e79 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -911,7 +911,26 @@ static notrace void trace_event_raw_event_synth(void *__data,
- 			strscpy(str_field, str_val, STR_VAR_LEN_MAX);
- 			n_u64 += STR_VAR_LEN_MAX / sizeof(u64);
- 		} else {
--			entry->fields[n_u64] = var_ref_vals[var_ref_idx + i];
-+			struct synth_field *field = event->fields[i];
-+			u64 val = var_ref_vals[var_ref_idx + i];
-+
-+			switch (field->size) {
-+			case 1:
-+				*(u8 *)&entry->fields[n_u64] = (u8)val;
-+				break;
-+
-+			case 2:
-+				*(u16 *)&entry->fields[n_u64] = (u16)val;
-+				break;
-+
-+			case 4:
-+				*(u32 *)&entry->fields[n_u64] = (u32)val;
-+				break;
-+
-+			default:
-+				entry->fields[n_u64] = val;
-+				break;
-+			}
- 			n_u64++;
- 		}
- 	}
--- 
-2.24.0
+Sure, but I'll leave that up to the driver maintainers to decide/fix
+-- I'm just addressing the type warning here.
 
 
+-Olof
