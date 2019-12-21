@@ -2,75 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 05CC6128A82
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 18:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13A58128A85
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 18:01:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbfLURAm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 12:00:42 -0500
-Received: from mail.nic.cz ([217.31.204.67]:46844 "EHLO mail.nic.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbfLURAm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 12:00:42 -0500
-Received: from localhost (unknown [172.20.6.135])
-        by mail.nic.cz (Postfix) with ESMTPSA id C0D6F140E64;
-        Sat, 21 Dec 2019 18:00:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
-        t=1576947640; bh=syvtdT4FCeJPdP11/qcAox6n6e58pSFJbJE5mMlIACM=;
-        h=Date:From:To;
-        b=Q7N++Ej/AZ47yHBYghFaIyDGfxiOLxQvseo1WJ1IUhmIBcXRnPiiO0o12/cYoaxTa
-         +NJ//P+oVPgIc1gerFAVw48Sr29F0N373W+dCGa6unvWGqHPLyM+wOOaXoA8OTSudC
-         IMm/NNY3LS/jzxQ8wrrcm93SZJ5A9CZ4o2FzZDdI=
-Date:   Sat, 21 Dec 2019 18:00:40 +0100
-From:   Marek Behun <marek.behun@nic.cz>
-To:     Colin King <colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: turris-mox-rwtm: fix indentation issue
-Message-ID: <20191221180040.4e22c245@nic.cz>
-In-Reply-To: <20191221153623.32564-1-colin.king@canonical.com>
-References: <20191221153623.32564-1-colin.king@canonical.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727161AbfLURBK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 12:01:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37995 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726900AbfLURBK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Dec 2019 12:01:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id x185so6961854pfc.5
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 09:01:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=EfhtVqbfRNchJXGKYNnjK189Wzr7z0ljLBenvVe83Bg=;
+        b=kEG9PFRG9Uvdbot3yMEjUmv3moIuUezSLDNHOAIixNkkHFJXpSNIRVmICZgWU8NZEv
+         nJDnkPrcfJejWqIJbxwZ7YrESHetwJa437nxiTD6E+tm1Gs47bmdGjfrZWHHnp9IZqrI
+         juv4rK7JUzqxpA9C9ls1wqFREP9WtcoqlZ3+h2H55xeTZ2vTvwoPhyy+MseCX7+R7/fS
+         a2MnX1cOJVbdUI78I52WllUVXcOxKrDqInDw/plgj2bORSNLbsxwzZuhh0QG3ayppOej
+         QXsocBfLfudKEZKmAGpvX5bhN8pb0j2zn8MBicJvXV2pk57flO5/uGqMi+rOrVwAcYQA
+         OhBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EfhtVqbfRNchJXGKYNnjK189Wzr7z0ljLBenvVe83Bg=;
+        b=Z/+tGGd9mBDpAIPKG/Dwot7gG4KRS7VQFho59hGJCkHp8A/9FapZ0F2Y/chMXgvJ7d
+         HBqGDd2s1iRVNNtdbIkwICG/022Ln0o89+rJxgf047UGHSDBGMjdZ29bkrN5Ge7rAVgq
+         M8oe0hAD+4GqbaFamNOGTs2q90cOGGZFu6CiBx9L0UmhTUvlfLNCWOQP9VbqZSwacBxA
+         eMoFqmYA9b9mmIY1dfX6Nmc0EU5QS/A3/5FROkqHQc1NATKUeP8CPoPFQtZ4YVDRTlhy
+         A7WbgFI9ktR1hjaksyjyDZipkf7R9JB/4Y6V3ErjYsbQyU18s/j7sNoKYzaOwIeYGNii
+         dwfg==
+X-Gm-Message-State: APjAAAWRlI7JwqfI0sTakqLAwPfnZBhB3Yotn8dvM0lpkeE0wJdFk3so
+        aG44a3gYB4vEC1yXZWZH3Bm4vw==
+X-Google-Smtp-Source: APXvYqzL9SlCQt49ptIpUkigX4FhPLwOhk0xJThIen+rDzELZJAXyqvGnAF3NxdNPB5zhtAaTGBeYw==
+X-Received: by 2002:aa7:85d3:: with SMTP id z19mr23130341pfn.62.1576947669033;
+        Sat, 21 Dec 2019 09:01:09 -0800 (PST)
+Received: from [192.168.1.188] ([66.219.217.145])
+        by smtp.gmail.com with ESMTPSA id c199sm18140362pfb.126.2019.12.21.09.01.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Dec 2019 09:01:08 -0800 (PST)
+Subject: Re: [PATCH RFC v2 3/3] io_uring: batch get(ctx->ref) across submits
+To:     Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Christoph Lameter <cl@linux.com>
+References: <cover.1576944502.git.asml.silence@gmail.com>
+ <925d8fe5406779bbfa108caa3d1f9fd16e3434b5.1576944502.git.asml.silence@gmail.com>
+ <da858877-0801-34c3-4508-dabead959410@gmail.com>
+ <ff85b807-83e1-fd05-5f85-dcf465a50c11@kernel.dk>
+ <fef4b765-338b-d3b0-7fd5-5672b92fd3e8@gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <fef3a245-d2a2-23b3-ff03-3e05af19b752@kernel.dk>
+Date:   Sat, 21 Dec 2019 10:01:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <fef4b765-338b-d3b0-7fd5-5672b92fd3e8@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-X-Virus-Status: Clean
-X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
-        shortcircuit=ham autolearn=disabled version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.nic.cz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
-this was sent to mvebu-next, Gregory did not apply it yet but replied
-that he is going to.
-Marek
+On 12/21/19 9:48 AM, Pavel Begunkov wrote:
+> On 21/12/2019 19:38, Jens Axboe wrote:
+>> On 12/21/19 9:20 AM, Pavel Begunkov wrote:
+>>> On 21/12/2019 19:15, Pavel Begunkov wrote:
+>>>> Double account ctx->refs keeping number of taken refs in ctx. As
+>>>> io_uring gets per-request ctx->refs during submission, while holding
+>>>> ctx->uring_lock, this allows in most of the time to bypass
+>>>> percpu_ref_get*() and its overhead.
+>>>
+>>> Jens, could you please benchmark with this one? Especially for offloaded QD1
+>>> case. I haven't got any difference for nops test and don't have a decent SSD
+>>> at hands to test it myself. We could drop it, if there is no benefit.
+>>>
+>>> This rewrites that @extra_refs from the second one, so I left it for now.
+>>
+>> Sure, let me run a peak test, qd1 test, qd1+sqpoll test on
+>> for-5.6/io_uring, same branch with 1-2, and same branch with 1-3. That
+>> should give us a good comparison. One core used for all, and we're going
+>> to be core speed bound for the performance in all cases on this setup.
+>> So it'll be a good comparison.
+>>
+> Great, thanks!
 
-On Sat, 21 Dec 2019 15:36:23 +0000
-Colin King <colin.king@canonical.com> wrote:
+For some reason, not seeing much of a change between for-5.6/io_uring
+and 1+2 and 1+2+3, it's about the same and results seem very stable.
+For reference, top of profile with 1-3 applied looks like this:
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is a statement that is indented one level too deeply, remove
-> the extraneous tab.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/firmware/turris-mox-rwtm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/turris-mox-rwtm.c b/drivers/firmware/turris-mox-rwtm.c
-> index 72be58960e54..e27f68437b56 100644
-> --- a/drivers/firmware/turris-mox-rwtm.c
-> +++ b/drivers/firmware/turris-mox-rwtm.c
-> @@ -197,7 +197,7 @@ static int mox_get_board_info(struct mox_rwtm *rwtm)
->  		rwtm->serial_number = reply->status[1];
->  		rwtm->serial_number <<= 32;
->  		rwtm->serial_number |= reply->status[0];
-> -			rwtm->board_version = reply->status[2];
-> +		rwtm->board_version = reply->status[2];
->  		rwtm->ram_size = reply->status[3];
->  		reply_to_mac_addr(rwtm->mac_address1, reply->status[4],
->  				  reply->status[5]);
++    3.92%  io_uring  [kernel.vmlinux]  [k] blkdev_direct_IO
++    3.87%  io_uring  [kernel.vmlinux]  [k] blk_mq_get_request
++    3.43%  io_uring  [kernel.vmlinux]  [k] io_iopoll_getevents
++    3.03%  io_uring  [kernel.vmlinux]  [k] __slab_free
++    2.87%  io_uring  io_uring          [.] submitter_fn
++    2.79%  io_uring  [kernel.vmlinux]  [k] io_submit_sqes
++    2.75%  io_uring  [kernel.vmlinux]  [k] bio_alloc_bioset
++    2.70%  io_uring  [nvme_core]       [k] nvme_setup_cmd
++    2.59%  io_uring  [kernel.vmlinux]  [k] blk_mq_make_request
++    2.46%  io_uring  [kernel.vmlinux]  [k] io_prep_rw
++    2.32%  io_uring  [kernel.vmlinux]  [k] io_read
++    2.25%  io_uring  [kernel.vmlinux]  [k] blk_mq_free_request
++    2.19%  io_uring  [kernel.vmlinux]  [k] io_put_req
++    2.06%  io_uring  [kernel.vmlinux]  [k] kmem_cache_alloc
++    2.01%  io_uring  [kernel.vmlinux]  [k] generic_make_request_checks
++    1.90%  io_uring  [kernel.vmlinux]  [k] __sbitmap_get_word
++    1.86%  io_uring  [kernel.vmlinux]  [k] sbitmap_queue_clear
++    1.85%  io_uring  [kernel.vmlinux]  [k] io_issue_sqe
+
+
+-- 
+Jens Axboe
 
