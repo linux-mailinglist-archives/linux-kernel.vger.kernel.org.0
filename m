@@ -2,80 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2ECCD128AD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 19:37:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F339C128AD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 19:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfLUSgq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 13:36:46 -0500
-Received: from mga07.intel.com ([134.134.136.100]:12751 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbfLUSgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 13:36:46 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2019 10:36:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,340,1571727600"; 
-   d="scan'208";a="213565121"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 21 Dec 2019 10:36:43 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iijcI-000EZQ-Q5; Sun, 22 Dec 2019 02:36:42 +0800
-Date:   Sun, 22 Dec 2019 02:36:11 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     kbuild-all@lists.01.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: Re: [PATCH] vfs: Handle file systems without ->parse_params better
-Message-ID: <201912220244.6ohMQ4WK%lkp@intel.com>
-References: <20191212213604.19525-1-labbott@redhat.com>
+        id S1727040AbfLUSgO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 13:36:14 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:39482 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfLUSgO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Dec 2019 13:36:14 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id 3B8E01C24DF; Sat, 21 Dec 2019 19:36:12 +0100 (CET)
+Date:   Sat, 21 Dec 2019 19:36:11 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Jiri Slaby <jslaby@suse.com>,
+        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] tty/leds: implement a trigger for ttys
+Message-ID: <20191221183611.GB32732@amd>
+References: <20191217165816.19324-1-u.kleine-koenig@pengutronix.de>
+ <20191217172232.GC3829986@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="eJnRUKwClWJh1Khz"
 Content-Disposition: inline
-In-Reply-To: <20191212213604.19525-1-labbott@redhat.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191217172232.GC3829986@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Laura,
 
-I love your patch! Perhaps something to improve:
+--eJnRUKwClWJh1Khz
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[auto build test WARNING on vfs/for-next]
-[cannot apply to dhowells-fs/fscache-next linus/master v5.5-rc2 next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+On Tue 2019-12-17 18:22:32, Greg Kroah-Hartman wrote:
+> On Tue, Dec 17, 2019 at 05:58:13PM +0100, Uwe Kleine-K=F6nig wrote:
+> > Hello,
+> >=20
+> > v3 of this series was sent earlier today starting with Message-Id:
+> > 20191217150736.1479-1-u.kleine-koenig@pengutronix.de.
+> >=20
+> > v4 only changes patch 3 dropping a few printks, fixing the show callback
+> > for the dev attribute to match its store function. And I moved
+> > ledtrig_tty_restart() into the already existing if (tty) {...} block in
+> > dev_store and dropped the same check from the former function.
+> >=20
+>=20
+> All looks good to me, so if the LED developers give their ack, I can
+> take it in my tty tree.
 
-url:    https://github.com/0day-ci/linux/commits/Laura-Abbott/vfs-Handle-file-systems-without-parse_params-better/20191216-053622
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git for-next
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-129-g341daf20-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+Nothing obviously wrong in 1 and 2 of the series. Feel free to take
+them.
 
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
+I fear conflicts if you take 3/ through your tree, so perhaps I can
+take it through the LEDs?
 
+But I'll have some comments there.
 
-sparse warnings: (new ones prefixed by >>)
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
->> fs/fs_context.c:119:39: sparse: sparse: symbol 'generic_fs_parameters' was not declared. Should it be static?
+--eJnRUKwClWJh1Khz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Please review and possibly fold the followup patch.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+iEYEARECAAYFAl3+ZhsACgkQMOfwapXb+vLQmgCeN4Dl711bxMSjllrFTouPrdDS
+JLQAn19dkCkBWTbK/6Zlh26xzy2x8fng
+=KokU
+-----END PGP SIGNATURE-----
+
+--eJnRUKwClWJh1Khz--
