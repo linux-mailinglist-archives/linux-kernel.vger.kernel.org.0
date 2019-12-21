@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33F08128674
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 02:50:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5ED12866C
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 02:50:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfLUBuY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 20:50:24 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:54381 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726879AbfLUBty (ORCPT
+        id S1727012AbfLUBuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 20:50:00 -0500
+Received: from us-smtp-1.mimecast.com ([207.211.31.81]:53591 "EHLO
+        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726933AbfLUBt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 20:49:54 -0500
+        Fri, 20 Dec 2019 20:49:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576892993;
+        s=mimecast20190719; t=1576892995;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vtGsufOEBQRYi5aVidxZ4SgIBK6STwpDg+qKmGEtjBY=;
-        b=iSZ8GIppd/xgOY+9traGKM22Zlu1sKaYS4nYG/u3HOLpQCf/3fbhNdDKztTlWLt6hr8wgC
-        UAiDIn9ALnhSvgPkONFhsm2jvaf/mS5q7YokwDoh0JWFI1haP2dO/u0Icwl8TKa5Hj1eGP
-        rqSFdcV9mosCeVwQqxdiu2Soz2nT5AU=
+        bh=Pol5PWFpYE9QDZtFO4p/0Ih4s1j3WxPFfstxyW/mAdA=;
+        b=Kj515We8Tvq170gtJt8vvKjxbSzzEOPnr/s4RcjaPAO2X2XkIteoJQd1TsnY81i3H1kXkd
+        wn74fF5zsAXh+UEsxzQ8v6bh+xcqY4DOMktfNzgnzOMPFlKFRHERIZRrrBwTviCWOk54Fr
+        HfFmMOpMGJdDRY89ZDQs7UDFDec71jA=
 Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
  [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-160-BkXQqxxQOFKphVbUG_WO_w-1; Fri, 20 Dec 2019 20:49:52 -0500
-X-MC-Unique: BkXQqxxQOFKphVbUG_WO_w-1
-Received: by mail-qv1-f71.google.com with SMTP id dw11so7089516qvb.16
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 17:49:52 -0800 (PST)
+ us-mta-405-YZxZ8jdwMLqC4moQzRBzjA-1; Fri, 20 Dec 2019 20:49:54 -0500
+X-MC-Unique: YZxZ8jdwMLqC4moQzRBzjA-1
+Received: by mail-qv1-f71.google.com with SMTP id z9so2813287qvo.10
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 17:49:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=vtGsufOEBQRYi5aVidxZ4SgIBK6STwpDg+qKmGEtjBY=;
-        b=Rn8mfCPAOCc1I89O8r+X200/hFyMr5QWOlZsx9KNdTYRITEPaDJ32elMXBtco7Mz7g
-         p//exwjSzx6HigqILzZlDD/KO2vj5KKHjFJ8jhyae0TC/XcQZWjvjrEKL+LFWpl0v8U3
-         wjNwUkTtElV7nZyvG606viTKJOT+OnlBnHosWVl0z/VeLceMa8y6iOGWLXO6QBSavpFW
-         8GUD0I7M2d3nunqsD9qRLEOm52TYiHHVukb9jcRmn27v+ujUTBjGglsgxcFsBP9LYYeQ
-         9IjV4CdfTjcxaKEk9QemcibjqnOEgHokdeQ4WxU+q8ZNrOG96v1B0hBqbXdypCWRL51m
-         GEfg==
-X-Gm-Message-State: APjAAAUksHc32CoCigNuZF/+vYW2Y8RsYcMTdzyCqQaiZisoxfwY1ZW4
-        gzh0alpEgSezDTDcRwXYmWcoXzeDnycLNNTRS5+umrvwzjDz+yofjObRlyQ4byK6SUfywsnPixQ
-        YyfQ1Td5dAGzznVl3ZTlshbQQ
-X-Received: by 2002:a05:620a:1415:: with SMTP id d21mr15599590qkj.17.1576892992029;
-        Fri, 20 Dec 2019 17:49:52 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzBTIArtN4lEEvPhJ1OsMpqJjIbDkpETEk2hJbP6m1uKORdGncfp8pEiB1fiQ0lbIaC1pBwiQ==
-X-Received: by 2002:a05:620a:1415:: with SMTP id d21mr15599581qkj.17.1576892991799;
-        Fri, 20 Dec 2019 17:49:51 -0800 (PST)
+        bh=Pol5PWFpYE9QDZtFO4p/0Ih4s1j3WxPFfstxyW/mAdA=;
+        b=PgrvFzXpYSJMEPiy9ppKT5WWor74jPrgsRdOu6RVOpwvtO9ueVtLiwJ3iC15Qj3r4a
+         46lS/lvet5aB28ypOUnXi5xWfRBvpFEyfvF8BZ4DINkbg1wfY9o8iI6DzYtWrYtOzxbo
+         Y40TXbjmDFxCHgTlRkYSwZ+oWh9kHBNNCTlbBow4OxX2TbI4vNz/HGA5vXWO1Om7tUeb
+         iIC5p8dQbJwc8t6WZBeYdOn5JNqpQ1n+tW7wIL81V0jOa7o6hyUk/W0gtfCCGDWYT/VI
+         8x6Hx4Y9MbjrkrR3V2GGhTu2IuqXNiZJQ9nbABMArreNoA1ojBKmgVEXr77B2a7iddf4
+         6U6Q==
+X-Gm-Message-State: APjAAAWGuRaUZEILDSslq2bposNRQg3TSMMKbwj+fAO7GK3ob+8TAdwo
+        5dUxM7CKJsmQ8zELCRVdKWwWsvkIUXQ3kEQx2T8DIl0Q2TPVUK9UN1OO9E9VbNJmfGy9CiNRaky
+        NNyHXCK2yFjtV+0nTWYMX6nAf
+X-Received: by 2002:ac8:43c1:: with SMTP id w1mr3396755qtn.156.1576892993863;
+        Fri, 20 Dec 2019 17:49:53 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwexdTgJ4zu662hB1w/QZ+qxEl14+TJcNVwxCuytbomEU65sXvbKltJEPimaJYhb8IhcKe3kw==
+X-Received: by 2002:ac8:43c1:: with SMTP id w1mr3396744qtn.156.1576892993680;
+        Fri, 20 Dec 2019 17:49:53 -0800 (PST)
 Received: from xz-x1.hitronhub.home (CPEf81d0fb19163-CMf81d0fb19160.cpe.net.fido.ca. [72.137.123.47])
-        by smtp.gmail.com with ESMTPSA id e21sm3396932qkm.55.2019.12.20.17.49.50
+        by smtp.gmail.com with ESMTPSA id e21sm3396932qkm.55.2019.12.20.17.49.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 17:49:51 -0800 (PST)
+        Fri, 20 Dec 2019 17:49:53 -0800 (PST)
 From:   Peter Xu <peterx@redhat.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
@@ -61,9 +61,9 @@ Cc:     "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
         "Michael S . Tsirkin" <mst@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH RESEND v2 05/17] KVM: Add build-time error check on kvm_run size
-Date:   Fri, 20 Dec 2019 20:49:26 -0500
-Message-Id: <20191221014938.58831-6-peterx@redhat.com>
+Subject: [PATCH RESEND v2 06/17] KVM: Pass in kvm pointer into mark_page_dirty_in_slot()
+Date:   Fri, 20 Dec 2019 20:49:27 -0500
+Message-Id: <20191221014938.58831-7-peterx@redhat.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191221014938.58831-1-peterx@redhat.com>
 References: <20191221014938.58831-1-peterx@redhat.com>
@@ -74,27 +74,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's already going to reach 2400 Bytes (which is over half of page
-size on 4K page archs), so maybe it's good to have this build-time
-check in case it overflows when adding new fields.
+The context will be needed to implement the kvm dirty ring.
 
 Signed-off-by: Peter Xu <peterx@redhat.com>
 ---
- virt/kvm/kvm_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ virt/kvm/kvm_main.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index cea4b8dd4ac9..c80a363831ae 100644
+index c80a363831ae..17969cf110dd 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -338,6 +338,7 @@ int kvm_vcpu_init(struct kvm_vcpu *vcpu, struct kvm *kvm, unsigned id)
- 	vcpu->pre_pcpu = -1;
- 	INIT_LIST_HEAD(&vcpu->blocked_vcpu_list);
+@@ -144,7 +144,9 @@ static void hardware_disable_all(void);
  
-+	BUILD_BUG_ON(sizeof(struct kvm_run) > PAGE_SIZE);
- 	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
- 	if (!page) {
- 		r = -ENOMEM;
+ static void kvm_io_bus_destroy(struct kvm_io_bus *bus);
+ 
+-static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot, gfn_t gfn);
++static void mark_page_dirty_in_slot(struct kvm *kvm,
++				    struct kvm_memory_slot *memslot,
++				    gfn_t gfn);
+ 
+ __visible bool kvm_rebooting;
+ EXPORT_SYMBOL_GPL(kvm_rebooting);
+@@ -2053,8 +2055,9 @@ int kvm_vcpu_read_guest_atomic(struct kvm_vcpu *vcpu, gpa_t gpa,
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_read_guest_atomic);
+ 
+-static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+-			          const void *data, int offset, int len,
++static int __kvm_write_guest_page(struct kvm *kvm,
++				  struct kvm_memory_slot *memslot, gfn_t gfn,
++				  const void *data, int offset, int len,
+ 				  bool track_dirty)
+ {
+ 	int r;
+@@ -2067,7 +2070,7 @@ static int __kvm_write_guest_page(struct kvm_memory_slot *memslot, gfn_t gfn,
+ 	if (r)
+ 		return -EFAULT;
+ 	if (track_dirty)
+-		mark_page_dirty_in_slot(memslot, gfn);
++		mark_page_dirty_in_slot(kvm, memslot, gfn);
+ 	return 0;
+ }
+ 
+@@ -2077,7 +2080,7 @@ int kvm_write_guest_page(struct kvm *kvm, gfn_t gfn,
+ {
+ 	struct kvm_memory_slot *slot = gfn_to_memslot(kvm, gfn);
+ 
+-	return __kvm_write_guest_page(slot, gfn, data, offset, len,
++	return __kvm_write_guest_page(kvm, slot, gfn, data, offset, len,
+ 				      track_dirty);
+ }
+ EXPORT_SYMBOL_GPL(kvm_write_guest_page);
+@@ -2087,7 +2090,7 @@ int kvm_vcpu_write_guest_page(struct kvm_vcpu *vcpu, gfn_t gfn,
+ {
+ 	struct kvm_memory_slot *slot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+ 
+-	return __kvm_write_guest_page(slot, gfn, data, offset,
++	return __kvm_write_guest_page(vcpu->kvm, slot, gfn, data, offset,
+ 				      len, true);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_write_guest_page);
+@@ -2202,7 +2205,7 @@ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 	r = __copy_to_user((void __user *)ghc->hva + offset, data, len);
+ 	if (r)
+ 		return -EFAULT;
+-	mark_page_dirty_in_slot(ghc->memslot, gpa >> PAGE_SHIFT);
++	mark_page_dirty_in_slot(kvm, ghc->memslot, gpa >> PAGE_SHIFT);
+ 
+ 	return 0;
+ }
+@@ -2269,7 +2272,8 @@ int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len)
+ }
+ EXPORT_SYMBOL_GPL(kvm_clear_guest);
+ 
+-static void mark_page_dirty_in_slot(struct kvm_memory_slot *memslot,
++static void mark_page_dirty_in_slot(struct kvm *kvm,
++				    struct kvm_memory_slot *memslot,
+ 				    gfn_t gfn)
+ {
+ 	if (memslot && memslot->dirty_bitmap) {
+@@ -2284,7 +2288,7 @@ void mark_page_dirty(struct kvm *kvm, gfn_t gfn)
+ 	struct kvm_memory_slot *memslot;
+ 
+ 	memslot = gfn_to_memslot(kvm, gfn);
+-	mark_page_dirty_in_slot(memslot, gfn);
++	mark_page_dirty_in_slot(kvm, memslot, gfn);
+ }
+ EXPORT_SYMBOL_GPL(mark_page_dirty);
+ 
+@@ -2293,7 +2297,7 @@ void kvm_vcpu_mark_page_dirty(struct kvm_vcpu *vcpu, gfn_t gfn)
+ 	struct kvm_memory_slot *memslot;
+ 
+ 	memslot = kvm_vcpu_gfn_to_memslot(vcpu, gfn);
+-	mark_page_dirty_in_slot(memslot, gfn);
++	mark_page_dirty_in_slot(vcpu->kvm, memslot, gfn);
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_mark_page_dirty);
+ 
 -- 
 2.24.1
 
