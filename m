@@ -2,56 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 783B81286CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 04:34:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5421286C9
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 04:32:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbfLUDeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 22:34:18 -0500
-Received: from 190-216-58-21.static.impsat.net.ar ([190.216.58.21]:10198 "EHLO
-        ATS-SG-WSQ-02" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726537AbfLUDeR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 22:34:17 -0500
-X-Greylist: delayed 1023 seconds by postgrey-1.27 at vger.kernel.org; Fri, 20 Dec 2019 22:34:17 EST
-Received: from User ([10.250.229.1]) by ATS-SG-WSQ-02 with Microsoft SMTPSVC(8.5.9600.16384);
-         Sat, 21 Dec 2019 00:17:10 -0300
-Reply-To: <rev.jamesabel@firstbanknig.org>
-From:   "First Bank Of Nigeria Ltd" <postmaster@galileacentro.cl>
-Subject: Dear Honest Partner
-Date:   Sat, 21 Dec 2019 03:17:22 -0000
+        id S1726750AbfLUDcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 22:32:15 -0500
+Received: from ozlabs.org ([203.11.71.1]:53471 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbfLUDcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 22:32:15 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47frlH6GNsz9s4Y;
+        Sat, 21 Dec 2019 14:32:11 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1576899132;
+        bh=GZOz47YKenOi/JA/Kr2YsnlbQYlnTpXT0J6nB83XU9E=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CbsLLkpsR0tz0DIdgpltgMSafJVV/fJZkrePED8kpzgfKfDxoDmXVVUaOH5Z6rL2r
+         4Zwj0Ex3+ovhFVQvdgA0qxIQd0nQLuxsMDaNIxMksEqmWwWP2nPTt4XOJIGr30Tkfw
+         j/H79WBsVxF+ibrufcqnQfhkCmlHB6bto91Tp9+ZS0JDJWTaQifV/WlYkGPko51d5f
+         4UJNImk1zawYk1HVt2yDjkxm61/HSKc/aoCMD0Dbe72Kn0QnOT8r82Snt9+cwjNEM3
+         FmSemRgzQZzOhe49znHw91o2YbIC5Zv/xcbCtx6PdpNrp//yYMgRO2Iwn6bo6v944w
+         3cczxIzOE8bYg==
+Date:   Sat, 21 Dec 2019 14:32:11 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Rob Herring <robherring2@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: linux-next: Fixes tag needs some work in the devicetree tree
+Message-ID: <20191221143211.47eea79d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-X-MSMail-Priority: Normal
-X-Mailer: Microsoft Outlook Express 6.00.2600.0000
-X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2600.0000
-Message-ID: <ATS-SG-WSQ-02tN3Isa000028c3@ATS-SG-WSQ-02>
-X-OriginalArrivalTime: 21 Dec 2019 03:17:11.0472 (UTC) FILETIME=[22951B00:01D5B7AD]
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: multipart/signed; boundary="Sig_/oPQLz6qE1lJiDZvH7rPijIu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-REV JAMES ABEL OF
-FIRST BANK OF NIGERIA LTD
-35 Marina P. O. Box 5216,
-LAGOS- NIGERIA.
+--Sig_/oPQLz6qE1lJiDZvH7rPijIu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Dear Honest Partner.
+Hi all,
 
-I need your assistance to transfer the sum of $7.500.000.00 Million Dollars out of my bank to a foreign country.This fund has been dormant for a very long time and my bank does not know about it.I will put your name as the real owner of this fund and i will present you to the bank.
+n commit
 
-At the end of the successful transfer of this fund to your bank account.We are to share it 70% 30%.70% for you and 30% for me.I will come down to your country and receive my own share of the fund to avoid any detection from my bank and government.
+  13670c493ab8 ("dt-bindings: phy: Fix the PX30 DSI PHY compatible in the e=
+xample")
 
-However,all i need is a trustworthy person.Reply me with your direct phone number and country of origin so that i can call you and brief you more about this transaction.
+Fixes tag
 
-Please note that,this transaction is risk free and safe,because i have all the documents as proof.
+  Fixes: 3200df7fa1d6 ("dt-bindings: phy: add yaml binding for rockchip,px3=
+0-dsi-dphy")
 
-Yours truly,
-Rev. James Abel
-+2349037592530
-(Director International Remittance Department)
-Email: rev.jamesabel@firstbanknig.org
+has these problem(s):
+
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: 3817c7961179 ("dt-bindings: phy: add yaml binding for rockchip,px30-=
+dsi-dphy")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/oPQLz6qE1lJiDZvH7rPijIu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl39kjsACgkQAVBC80lX
+0Gz9PAf/astw6r2VQo0WSVZskzWpzeaory+y/jHNLipn0q58XveOjKjtCOBlCYyS
+mLeNyO+B7skgwVDvUm/TMPhYiyrhsEx1W2e+eFdti9zv6SEgnOp38LnUQGo6UGvd
+fqGh3GniOQHSk6WuoloNXXnMemkvIfoIJl5V0CWgCe0cMGxlLhAYvbPZxUd7iMVd
+DStSasykWsO8JeGobJCzT54oN+rXpvbmS0dh0XrqmObgWIGNi+KpHEujKS1SsyJx
+pk/zw0e6dN4EBpKprldjtKIADIfnRTlJnoZbkCn76tjrLKcU3DZwU1mDvAxsDzkW
+VUjEyGO69N2Q5k49AABGMV6eu3grHQ==
+=WNTD
+-----END PGP SIGNATURE-----
+
+--Sig_/oPQLz6qE1lJiDZvH7rPijIu--
