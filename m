@@ -2,101 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C88A128A5C
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 17:21:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 22F18128A61
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 17:22:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfLUQU7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 11:20:59 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:58948 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfLUQU6 (ORCPT
+        id S1727221AbfLUQWE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 11:22:04 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:55267 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfLUQWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 11:20:58 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 600AC1C24DF; Sat, 21 Dec 2019 17:20:56 +0100 (CET)
-Date:   Sat, 21 Dec 2019 17:20:55 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, sre@kernel.org, nekit1000@gmail.com,
-        mpartap@gmx.net, merlijn@wizzup.org, martin_rysavy@centrum.cz,
-        Sekhar Nori <nsekhar@ti.com>, stable@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Lechner <david@lechnology.com>
-Subject: Re: TI omap compile problem in 5.5-rc1? was Re: [PATCH] ARM:
- davinci: select CONFIG_RESET_CONTROLLER
-Message-ID: <20191221162055.GA28997@amd>
-References: <20191210195202.622734-1-arnd@arndb.de>
- <20191217104520.GA6812@amd>
- <20191217164640.GX35479@atomide.com>
+        Sat, 21 Dec 2019 11:22:03 -0500
+Received: by mail-pj1-f65.google.com with SMTP id kx11so1397234pjb.4;
+        Sat, 21 Dec 2019 08:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4R50o9Q/QVb/27CP47foPm4kgwdQXbgPWO/zyAUY+90=;
+        b=AjOhXEJDNPMP/wrgRNnptbTYHwGAK6hHnqpZJCxUZUfHOJoRLEOkJAImSBuoqAPxXn
+         /576D8uVSTB9a+V4T5xrMZnLRrJuK6+DKt1AY4J6STcwYbm4nmjiF4HTdUy/0Ps2ToB0
+         kvBCIvpWxigroo4sVJRABmLOrJYvddqQqoGFDe56LG1GcyPncAS9ux9ZNI85ja1pAsZs
+         2tjDGiE/bE4dhelGVdNYBWeCZIX3FR6p/xGnwcYzCS6oCSYZqCVmLjBgGh7txVIsH1+y
+         aFga20o+4oevoedsA0x9tIcLPm0kQppU3+0AxyxuqsO7F6cqkSIUGpkS2vhymAQjC6+g
+         sMnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4R50o9Q/QVb/27CP47foPm4kgwdQXbgPWO/zyAUY+90=;
+        b=KHmcP9NKr67odibXw9OoWGEM2VxvmTjiEXi7XJ9VRxhRlyg6SA7EWYA/YrVGpNmh9m
+         L9wySHpCSkwYuvFcTltUug7IFeJsvdhpYeE8eJJcEiq5BT4AJ9VAq0EG+1KFhRlkJMyh
+         bliVpK3OO9fglYw/P8+VKIdAVszEJnn1k8A5240PuTWu9R0syIg2I+6dlKZbEu+k4D01
+         4EFtj4EY6cxBvOiYkwafaygZ/J7t4C4LdKZ96G98qKndMOWz29MnKVxqjkqXGidIsnu8
+         i39iCULSvgyPXhscb9kLysF8J2sHTzmEzToZsXGjv5l06Dnz9BE8hIFmAqNofDW9bJTx
+         aung==
+X-Gm-Message-State: APjAAAWByIUU25h9JEWO1ZPtgMq/5sX7XjFnbF7A7QSApZQfk7ha1gjQ
+        xIUFPbcvagMEXbBkhIkZRbc=
+X-Google-Smtp-Source: APXvYqw2SMp+9K0gAxuviJ2DVsRsv2yXKZ3IIL5C8oC/k4t7sz+XNein9xActbMxq1yHVMhsMD7NlQ==
+X-Received: by 2002:a17:90a:b906:: with SMTP id p6mr22906744pjr.81.1576945322822;
+        Sat, 21 Dec 2019 08:22:02 -0800 (PST)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:180::a285])
+        by smtp.gmail.com with ESMTPSA id a69sm16879243pfa.129.2019.12.21.08.22.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 21 Dec 2019 08:22:02 -0800 (PST)
+Date:   Sat, 21 Dec 2019 08:22:00 -0800
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Namhyung Kim <namhyung@kernel.org>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, bpf <bpf@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] libbpf: Fix build on read-only filesystems
+Message-ID: <20191221162158.rw6xqqktubozg6fg@ast-mbp.dhcp.thefacebook.com>
+References: <20191220032558.3259098-1-namhyung@kernel.org>
+ <CAEf4BzaZBSRK2M4LD-c12_2-QLa8+jpPs1E4nA9BNeUDskOMBQ@mail.gmail.com>
+ <CAM9d7cg0A0+Oq5uDS6ZJNzAgFsWc-Pd30GYC0+PxEXdcxAxBKg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191217164640.GX35479@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAM9d7cg0A0+Oq5uDS6ZJNzAgFsWc-Pd30GYC0+PxEXdcxAxBKg@mail.gmail.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Dec 21, 2019 at 05:25:51PM +0900, Namhyung Kim wrote:
+> Hello,
+> 
+> On Sat, Dec 21, 2019 at 5:29 AM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Thu, Dec 19, 2019 at 7:26 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > I got the following error when I tried to build perf on a read-only
+> > > filesystem with O=dir option.
+> > >
+> > >   $ cd /some/where/ro/linux/tools/perf
+> > >   $ make O=$HOME/build/perf
+> > >   ...
+> > >     CC       /home/namhyung/build/perf/lib.o
+> > >   /bin/sh: bpf_helper_defs.h: Read-only file system
+> > >   make[3]: *** [Makefile:184: bpf_helper_defs.h] Error 1
+> > >   make[2]: *** [Makefile.perf:778: /home/namhyung/build/perf/libbpf.a] Error 2
+> > >   make[2]: *** Waiting for unfinished jobs....
+> > >     LD       /home/namhyung/build/perf/libperf-in.o
+> > >     AR       /home/namhyung/build/perf/libperf.a
+> > >     PERF_VERSION = 5.4.0
+> > >   make[1]: *** [Makefile.perf:225: sub-make] Error 2
+> > >   make: *** [Makefile:70: all] Error 2
+> > >
+> > > It was becaused bpf_helper_defs.h was generated in current directory.
+> > > Move it to OUTPUT directory.
+> > >
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> >
+> > Overall nothing is obviously broken, except you need to fix up
+> > selftests/bpf's Makefile as well.
+> 
+> Thanks for pointing this out.  It's because bpf selftest also needs the
+> bpf_helper_defs.h right?  But I'm currently having a problem with LLVM
+> when building the selftests.  Can you help me testing the patch below?
+> (It should be applied after this patch.  Are you ok with it?)
+> 
+> 
+> >
+> > BTW, this patch doesn't apply cleanly to latest bpf-next, so please rebase.
+> >
+> > Also subject prefix should look like [PATCH bpf-next] if it's meant to
+> > be applied against bpf-next.
+> 
+> Will do.
+> 
+> Thanks
+> Namhyung
+> 
+> -----------8<-------------
+> diff --git a/tools/testing/selftests/bpf/Makefile
+> b/tools/testing/selftests/bpf/Makefile
+> index 866fc1cadd7c..897877f7849b 100644
+> --- a/tools/testing/selftests/bpf/Makefile
+> +++ b/tools/testing/selftests/bpf/Makefile
+> @@ -151,9 +151,9 @@ $(DEFAULT_BPFTOOL): force
+>  $(BPFOBJ): force
+>         $(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/
+> 
+> -BPF_HELPERS := $(BPFDIR)/bpf_helper_defs.h $(wildcard $(BPFDIR)/bpf_*.h)
+> -$(BPFDIR)/bpf_helper_defs.h:
+> -       $(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/ bpf_helper_defs.h
+> +BPF_HELPERS := $(OUTPUT)/bpf_helper_defs.h $(wildcard $(BPFDIR)/bpf_*.h)
+> +$(OUTPUT)/bpf_helper_defs.h:
+> +       $(MAKE) -C $(BPFDIR) OUTPUT=$(OUTPUT)/ $(OUTPUT)/bpf_helper_defs.h
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > > Selecting RESET_CONTROLLER is actually required, otherwise we
-> > > can get a link failure in the clock driver:
-> > >=20
-> > > drivers/clk/davinci/psc.o: In function `__davinci_psc_register_clocks=
-':
-> > > psc.c:(.text+0x9a0): undefined reference to `devm_reset_controller_re=
-gister'
-> > > drivers/clk/davinci/psc-da850.o: In function `da850_psc0_init':
-> > > psc-da850.c:(.text+0x24): undefined reference to
-> > > `reset_controller_add_lookup'
-> >=20
-> > Does omap need similar handing in 5.5-rc1?
-> >=20
-> >   LD      .tmp_vmlinux1
-> >   drivers/soc/ti/omap_prm.o: In function `omap_prm_probe':
-> >   omap_prm.c:(.text+0x4d0): undefined reference to
-> >   `devm_reset_controller_register'
-> >   /data/fast/l/k/Makefile:1077: recipe for target 'vmlinux' failed
-> >   make[1]: *** [vmlinux] Error 1
-> >=20
-> > Enabling reset controller seems to help::
-> >=20
-> > Reset Controller Support (RESET_CONTROLLER) [Y/n/?] (NEW)
-> >   TI SYSCON Reset Driver (RESET_TI_SYSCON) [N/m/y/?] (NEW)
->=20
-> Yes see the patch Arnd recently posted to do that.
-
-Thanks for the hint and sorry for the noise.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl3+RmcACgkQMOfwapXb+vKm5gCdFEsAX+EXEf7Ut87c0ONSz54l
-qhkAn1USmYq8ChLyUnMRl1fbdwed6pTk
-=PjuJ
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+The fix makes sense, but you cannot break it down into two patches.
+The selftests/bpf are absolutely essential for everyone working on bpf.
+For both developers and maintainers. You cannot break them in one patch
+and then try to fix in another.
+Please resubmit as one patch and tag the subject as [PATCH bpf].
