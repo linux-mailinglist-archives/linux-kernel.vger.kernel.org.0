@@ -2,92 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209B3128BE6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 00:40:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A2E128BEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 00:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfLUXks (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 18:40:48 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40025 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfLUXkr (ORCPT
+        id S1726995AbfLUXlA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 18:41:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:31836 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726834AbfLUXkq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 18:40:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so12705842wmi.5;
-        Sat, 21 Dec 2019 15:40:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZYQSBkLnONYX/PnkBykc7VPkafXkRFxOt23+Xt4Hyj4=;
-        b=vbJs8Xa4w/qfeT8hm5vUIRoIlz1EyU1WbXsJrK+a/YuRcmaep9FBGdIbysAyH5WNCq
-         CuyEhJ8unlr7cilQGDNxqh25N5gbBiXIIiChFMUr/ms3AICy0ZTKB7f/WhDQdeUzTbYu
-         5p/XBUQsqE6hYsW6eUn4v0qBB7ZPQDwE0xwwk5YELe7MKoktA5yZXFeRDGyqT1T3vJIt
-         RnBw8lx/vDDRF+Je2+ZbSABK+gcawonOh3Bt3BbHmTMPG/RW9jG+fcy6popGCe0oyiPV
-         35QFMhQzv/mWVCa64SnqsqY323OK14WMV6Pj2iXELoqmiqkEdndwpGgT0STXFHyzkFV+
-         qQPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ZYQSBkLnONYX/PnkBykc7VPkafXkRFxOt23+Xt4Hyj4=;
-        b=sxDl6KMudlbgHuCJCpEa4SbW7/Q8SnWy2GkB7Nkr6PEcEsF5IX5Fj9AUvF++puiQ8V
-         jFJrYyRFBikId+how3+d3fH5aHWDQhjCZHgH94ou+lI3vZry+lGent99wSGGPgP7c9Vy
-         kyjHRJw3/qsgRa1e6cjLPALmSMxrsPrSRwDEvwXQCqy4jOzUy/0KiqD7sMjaeorPFSKv
-         C3ostcAoKtS9+6FDdbCxeV99DwVJ5MNNLFYbVie3QY/eWgleC/YHvDAjS7lwycgJ9RQY
-         LJrjyXoGdewBgfzz6/2mMeYYZeAO65g91OQNLwPeSAxXm5sYJCZTLi5ROXUgxnhIFjm5
-         Vp6A==
-X-Gm-Message-State: APjAAAUVO5QNK4OU0jI6X4nvXBa5eF1QawW79eFLTX16nsthaLbkXc4K
-        TVBHhjWaNk6CLKqFwhEoZhY=
-X-Google-Smtp-Source: APXvYqyxf7sIDPAaRsDn5U90srMvtYW4xh9mIepxtcaBsKhY4ht4JVzmmq/1jeqSP4icm9DE7UhQBA==
-X-Received: by 2002:a1c:20d3:: with SMTP id g202mr24246732wmg.169.1576971645133;
-        Sat, 21 Dec 2019 15:40:45 -0800 (PST)
-Received: from localhost.localdomain (p5B3F6223.dip0.t-ipconnect.de. [91.63.98.35])
-        by smtp.gmail.com with ESMTPSA id q3sm14179151wmj.38.2019.12.21.15.40.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Dec 2019 15:40:44 -0800 (PST)
-From:   Saravanan Sekar <sravanhome@gmail.com>
-To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
-        shawnguo@kernel.org, heiko@sntech.de, sam@ravnborg.org,
-        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
-        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
-        davem@davemloft.net, mchehab+samsung@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] MAINTAINERS: Add entry for mpq7920 PMIC driver
-Date:   Sun, 22 Dec 2019 00:40:29 +0100
-Message-Id: <20191221234029.7796-5-sravanhome@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191221234029.7796-1-sravanhome@gmail.com>
-References: <20191221234029.7796-1-sravanhome@gmail.com>
+        Sat, 21 Dec 2019 18:40:46 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBLNb77Q128144
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 18:40:45 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2x1gf1xew6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 18:40:44 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Sat, 21 Dec 2019 23:40:43 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 21 Dec 2019 23:40:39 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBLNeclA30212178
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 21 Dec 2019 23:40:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74882A404D;
+        Sat, 21 Dec 2019 23:40:38 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EB19A4040;
+        Sat, 21 Dec 2019 23:40:37 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.234.212])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat, 21 Dec 2019 23:40:37 +0000 (GMT)
+Subject: Re: [PATCH] IMA: Defined timer to process queued keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+        James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Date:   Sat, 21 Dec 2019 18:40:36 -0500
+In-Reply-To: <20191221015256.2775-1-nramas@linux.microsoft.com>
+References: <20191221015256.2775-1-nramas@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19122123-0028-0000-0000-000003CAF3A4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19122123-0029-0000-0000-0000248E4B03
+Message-Id: <1576971636.5241.95.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-21_07:2019-12-17,2019-12-21 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 suspectscore=0 mlxlogscore=888
+ adultscore=0 bulkscore=0 malwarescore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1910280000
+ definitions=main-1912210212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Monolithic Power Systems mpq7920 PMIC driver.
+On Fri, 2019-12-20 at 17:52 -0800, Lakshmi Ramasubramanian wrote:
+> keys queued for measurement should still be processed even if
+> a custom IMA policy was not loaded. Otherwise, the keys will
+> remain queued forever consuming kernel memory.
+> 
+> This patch defines a timer to handle the above scenario. The timer
+> is setup to expire 5 minutes after IMA initialization is completed.
+> 
+> If a custom IMA policy is loaded before the timer expires, the timer
+> is removed and any queued keys are processed. But if a custom policy
+> was not loaded, on timer expiration any queued keys are processed.
+> 
+> On timer expiration the keys are still processed. This will enable
+> keys to be measured in case the built-in IMA policy defines a key
+> measurement rule.
 
-Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+If there was a built-in policy rule for measuring the early boot keys,
+then there wouldn't be a need for queueing the "key" measurements.
+ Just free the queued keys.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0fd82e674cf4..8a31285b59c6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11128,6 +11128,13 @@ S:	Maintained
- F:	Documentation/driver-api/serial/moxa-smartio.rst
- F:	drivers/tty/mxser.*
- 
-+MONOLITHIC POWER SYSTEM PMIC DRIVER
-+M:	Saravanan Sekar <sravanhome@gmail.com>
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/regulator/mpq7920.yaml
-+F:	drivers/regulator/mpq7920.c
-+F:	drivers/regulator/mpq7920.h
-+
- MR800 AVERMEDIA USB FM RADIO DRIVER
- M:	Alexey Klimov <klimov.linux@gmail.com>
- L:	linux-media@vger.kernel.org
--- 
-2.17.1
+Mimi
 
