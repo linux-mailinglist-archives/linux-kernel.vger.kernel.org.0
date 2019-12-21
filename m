@@ -2,194 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 19880128961
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 15:13:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B42C6128983
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 15:22:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLUONc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 09:13:32 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:39526 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726650AbfLUONb (ORCPT
+        id S1726925AbfLUOWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 09:22:44 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53080 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbfLUOWo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 09:13:31 -0500
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iifVX-0004U0-4h; Sat, 21 Dec 2019 15:13:27 +0100
-Date:   Sat, 21 Dec 2019 14:13:25 +0000
-From:   Marc Zyngier <maz@kernel.org>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Catalin Marinas <Catalin.Marinas@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>, will@kernel.org,
-        Sudeep Holla <Sudeep.Holla@arm.com>, <kvm@vger.kernel.org>,
-        kvmarm <kvmarm@lists.cs.columbia.edu>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 09/18] arm64: KVM: enable conditional save/restore
- full SPE profiling buffer controls
-Message-ID: <20191221141325.5a177343@why>
-In-Reply-To: <20191220143025.33853-10-andrew.murray@arm.com>
-References: <20191220143025.33853-1-andrew.murray@arm.com>
- <20191220143025.33853-10-andrew.murray@arm.com>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 21 Dec 2019 09:22:44 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p9so11677619wmc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 06:22:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tAExSifujBqvj9jopiXqxarAHCCzEVY7vXvNLNSXQ5I=;
+        b=aK5ubXSh0mGJIF0c/hJ4q4+R15cKMuXITa/XGA4SlvsJsMbCxQDDcNB4fIkNj2yoXn
+         bB1mBa9IZ3aAfTCQFnLid6Y8Twr+gi/L4yEhK4T2a0MEdMTcaaQXT0HReE1N1y7onJKV
+         OcFzTJl2GcoaX09ScfZw6rQObUiyr57kUT93ajqoQCweGf267m8BxsuJy9MB2yJjkAno
+         svn3ih1ZJP4xDTvrB10ocJDH/iY3KtLGFUg4w7PmtSUyb/h/S/XELuHF9tX1dBj1B6Gn
+         /e7mC8kApnp2Ijbs5/jTDP0ZBkhncjeDJVdCqCiaaJhNX52A+y72p6XJvhEfvXYJsq3k
+         Fl5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tAExSifujBqvj9jopiXqxarAHCCzEVY7vXvNLNSXQ5I=;
+        b=QF8NaXOVyfuBaZ+RxDLiqaqR8i+5Ma3zWegYLviGX5jJdtcazZ8m2SYWl0RN8y1jGT
+         XB3EyJdfRTWF4WlKKUOMTFKDd5pashsDMRy90lC67TJR+THVV1g5GezvWtQlKt7Q6EU4
+         gfO6D21tqPZ6+QqeJtsJGiRsKT8bSL5uouXAU1dNX+A/Gr3bH60AT5IXvW4k+A35wz1s
+         Lht81UD2dRw3gvngsIqto7LwYPhw070RsgNmqHaz/+RC3Eq0YiBwh75kAZQF9PNcB7tf
+         mpNJiu8o7RiUasSk3IKT5UHxAwkX28sFnrepvlbnBEvGX0dEu723kNcd0CVdjWmYkb1I
+         +4Pw==
+X-Gm-Message-State: APjAAAVWYD1ncT0GQVpCB6z1aLVnjaEO1dUnUgvxLuBqArVm5R1JCMR1
+        aimM0x0CGva354kGRuMREIM=
+X-Google-Smtp-Source: APXvYqx0fkrceGwLFdcxtfkaBwk9Er1huMVEuf/3WZPs6M60RN0IBs69HBrkYa4PIzqHy8wfAWYH3w==
+X-Received: by 2002:a7b:c407:: with SMTP id k7mr22916761wmi.46.1576938161638;
+        Sat, 21 Dec 2019 06:22:41 -0800 (PST)
+Received: from andrea (ip-213-220-200-127.net.upcbroadband.cz. [213.220.200.127])
+        by smtp.gmail.com with ESMTPSA id i5sm13531276wml.31.2019.12.21.06.22.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 Dec 2019 06:22:40 -0800 (PST)
+Date:   Sat, 21 Dec 2019 15:22:35 +0100
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        kexec@lists.infradead.org
+Subject: Re: [RFC PATCH v5 1/3] printk-rb: new printk ringbuffer
+ implementation (writer)
+Message-ID: <20191221142235.GA7824@andrea>
+References: <20191128015235.12940-1-john.ogness@linutronix.de>
+ <20191128015235.12940-2-john.ogness@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: andrew.murray@arm.com, Catalin.Marinas@arm.com, Mark.Rutland@arm.com, will@kernel.org, Sudeep.Holla@arm.com, kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191128015235.12940-2-john.ogness@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019 14:30:16 +0000
-Andrew Murray <andrew.murray@arm.com> wrote:
+Hi John,
 
-[somehow managed not to do a reply all, re-sending]
+Sorry for the delay.
 
-> From: Sudeep Holla <sudeep.holla@arm.com>
-> 
-> Now that we can save/restore the full SPE controls, we can enable it
-> if SPE is setup and ready to use in KVM. It's supported in KVM only if
-> all the CPUs in the system supports SPE.
-> 
-> However to support heterogenous systems, we need to move the check if
-> host supports SPE and do a partial save/restore.
+I don't have an overall understanding of the patch(-set) yet, so I limit
+to a couple of general questions about the memory barriers introduced by
+the path.  Please see inline comments.
 
-No. Let's just not go down that path. For now, KVM on heterogeneous
-systems do not get SPE. If SPE has been enabled on a guest and a CPU
-comes up without SPE, this CPU should fail to boot (same as exposing a
-feature to userspace).
 
-> 
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> ---
->  arch/arm64/kvm/hyp/debug-sr.c | 33 ++++++++++++++++-----------------
->  include/kvm/arm_spe.h         |  6 ++++++
->  2 files changed, 22 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/debug-sr.c b/arch/arm64/kvm/hyp/debug-sr.c
-> index 12429b212a3a..d8d857067e6d 100644
-> --- a/arch/arm64/kvm/hyp/debug-sr.c
-> +++ b/arch/arm64/kvm/hyp/debug-sr.c
-> @@ -86,18 +86,13 @@
->  	}
->  
->  static void __hyp_text
-> -__debug_save_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> +__debug_save_spe_context(struct kvm_cpu_context *ctxt, bool full_ctxt)
->  {
->  	u64 reg;
->  
->  	/* Clear pmscr in case of early return */
->  	ctxt->sys_regs[PMSCR_EL1] = 0;
->  
-> -	/* SPE present on this CPU? */
-> -	if (!cpuid_feature_extract_unsigned_field(read_sysreg(id_aa64dfr0_el1),
-> -						  ID_AA64DFR0_PMSVER_SHIFT))
-> -		return;
-> -
->  	/* Yes; is it owned by higher EL? */
->  	reg = read_sysreg_s(SYS_PMBIDR_EL1);
->  	if (reg & BIT(SYS_PMBIDR_EL1_P_SHIFT))
-> @@ -142,7 +137,7 @@ __debug_save_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
->  }
->  
->  static void __hyp_text
-> -__debug_restore_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
-> +__debug_restore_spe_context(struct kvm_cpu_context *ctxt, bool full_ctxt)
->  {
->  	if (!ctxt->sys_regs[PMSCR_EL1])
->  		return;
-> @@ -210,11 +205,14 @@ void __hyp_text __debug_restore_guest_context(struct kvm_vcpu *vcpu)
->  	struct kvm_guest_debug_arch *host_dbg;
->  	struct kvm_guest_debug_arch *guest_dbg;
->  
-> +	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> +	guest_ctxt = &vcpu->arch.ctxt;
+> +	*desc_out = READ_ONCE(*desc);
 > +
-> +	__debug_restore_spe_context(guest_ctxt, kvm_arm_spe_v1_ready(vcpu));
-> +
->  	if (!(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY))
->  		return;
->  
-> -	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> -	guest_ctxt = &vcpu->arch.ctxt;
->  	host_dbg = &vcpu->arch.host_debug_state.regs;
->  	guest_dbg = kern_hyp_va(vcpu->arch.debug_ptr);
->  
-> @@ -232,8 +230,7 @@ void __hyp_text __debug_restore_host_context(struct kvm_vcpu *vcpu)
->  	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
->  	guest_ctxt = &vcpu->arch.ctxt;
->  
-> -	if (!has_vhe())
-> -		__debug_restore_spe_nvhe(host_ctxt, false);
-> +	__debug_restore_spe_context(host_ctxt, kvm_arm_spe_v1_ready(vcpu));
+> +	/* Load data before re-checking state. */
+> +	smp_rmb(); /* matches LMM_REF(desc_reserve:A) */
 
-So you now do an unconditional save/restore on the exit path for VHE as
-well? Even if the host isn't using the SPE HW? That's not acceptable
-as, in most cases, only the host /or/ the guest will use SPE. Here, you
-put a measurable overhead on each exit.
+I looked for a matching WRITE_ONCE() or some other type of marked write,
+but I could not find it.  What is the rationale?  Or what did I miss?
 
-If the host is not using SPE, then the restore/save should happen in
-vcpu_load/vcpu_put. Only if the host is using SPE should you do
-something in the run loop. Of course, this only applies to VHE and
-non-VHE must switch eagerly.
 
->  
->  	if (!(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY))
->  		return;
-> @@ -249,19 +246,21 @@ void __hyp_text __debug_restore_host_context(struct kvm_vcpu *vcpu)
->  
->  void __hyp_text __debug_save_host_context(struct kvm_vcpu *vcpu)
->  {
-> -	/*
-> -	 * Non-VHE: Disable and flush SPE data generation
-> -	 * VHE: The vcpu can run, but it can't hide.
-> -	 */
->  	struct kvm_cpu_context *host_ctxt;
->  
->  	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-> -	if (!has_vhe())
-> -		__debug_save_spe_nvhe(host_ctxt, false);
-> +	if (cpuid_feature_extract_unsigned_field(read_sysreg(id_aa64dfr0_el1),
-> +						 ID_AA64DFR0_PMSVER_SHIFT))
-> +		__debug_save_spe_context(host_ctxt, kvm_arm_spe_v1_ready(vcpu));
->  }
->  
->  void __hyp_text __debug_save_guest_context(struct kvm_vcpu *vcpu)
->  {
-> +	bool kvm_spe_ready = kvm_arm_spe_v1_ready(vcpu);
+> +	do {
+> +		next_lpos = get_next_lpos(data_ring, begin_lpos, size);
 > +
-> +	/* SPE present on this vCPU? */
-> +	if (kvm_spe_ready)
-> +		__debug_save_spe_context(&vcpu->arch.ctxt, kvm_spe_ready);
->  }
->  
->  u32 __hyp_text __kvm_get_mdcr_el2(void)
-> diff --git a/include/kvm/arm_spe.h b/include/kvm/arm_spe.h
-> index 48d118fdb174..30c40b1bc385 100644
-> --- a/include/kvm/arm_spe.h
-> +++ b/include/kvm/arm_spe.h
-> @@ -16,4 +16,10 @@ struct kvm_spe {
->  	bool irq_level;
->  };
->  
-> +#ifdef CONFIG_KVM_ARM_SPE
-> +#define kvm_arm_spe_v1_ready(v)		((v)->arch.spe.ready)
-> +#else
-> +#define kvm_arm_spe_v1_ready(v)		(false)
-> +#endif /* CONFIG_KVM_ARM_SPE */
+> +		if (!data_push_tail(rb, data_ring,
+> +				    next_lpos - DATA_SIZE(data_ring))) {
+> +			/* Failed to allocate, specify a data-less block. */
+> +			blk_lpos->begin = INVALID_LPOS;
+> +			blk_lpos->next = INVALID_LPOS;
+> +			return NULL;
+> +		}
+> +	} while (!atomic_long_try_cmpxchg(&data_ring->head_lpos, &begin_lpos,
+> +					  next_lpos));
 > +
->  #endif /* __ASM_ARM_KVM_SPE_H */
+> +	/*
+> +	 * No barrier is needed here. The data validity is defined by
+> +	 * the state of the associated descriptor. They are marked as
+> +	 * invalid at the moment. And only the winner of the above
+> +	 * cmpxchg() could write here.
+> +	 */
+
+The (successful) CMPXCHG provides a full barrier.  This comment suggests
+that that could be somehow relaxed?  Or the comment could be improved?
+
+(The patch introduces a number of CMPXCHG: similar questions would apply
+to those other instances...)
 
 Thanks,
+  Andrea
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+P. S.  Please use my @gmail.com address for future communications.
