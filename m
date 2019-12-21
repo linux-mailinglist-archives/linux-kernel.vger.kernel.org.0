@@ -2,142 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92EBE12868E
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 03:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BC7A128694
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 03:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbfLUCFG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 21:05:06 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:24048 "EHLO
+        id S1726670AbfLUCLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 21:11:10 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58833 "EHLO
         us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726936AbfLUCFC (ORCPT
+        with ESMTP id S1726485AbfLUCLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 21:05:02 -0500
+        Fri, 20 Dec 2019 21:11:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576893900;
+        s=mimecast20190719; t=1576894269;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6AXOUsRryqKjAteH3ZGpL2igYSciQ5+eIxg15f7PMTs=;
-        b=E3+h+HBpLh5lIu7byCdWdOWVnkDDYpu0OGpDiAo5AGp/wMXprSaiLEzGFtvRVLew2Hinle
-        RHpjjZBMxAslcQ0g2O9c2LBAEJpbvcw+huGuBJH1TT/ibRniPqiWTJjg+7ibYhvMdwofYy
-        c/GmGJ4KnDSa34yjgWG6Pa7vOVRwjg8=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-255-sKLYOX96N7Wn2tfrYYmlCg-1; Fri, 20 Dec 2019 21:04:59 -0500
-X-MC-Unique: sKLYOX96N7Wn2tfrYYmlCg-1
-Received: by mail-qv1-f71.google.com with SMTP id j10so365757qvi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 18:04:59 -0800 (PST)
+        bh=Ms7ZM3YmtvF2wzYl19JuRjEHViRq+4SWhLPmVosAqLs=;
+        b=PRaNSTiEwfbkWk7ldshfHcFVbC7dg33vMdwzg0je0fXAE73S2BLsWYYZdnCec38Qo96H0C
+        +pjwYvLqQejarnC+szpv7CrdxcfzhGwyVnirjsLpAl2HXRdcir247/yIzFzfcIksBgf0vo
+        k9S/HeMnp4Pb+UHHgqXgAn9nSESmDBU=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-228-iqRv_6nEOdKWM-1y9TGRGg-1; Fri, 20 Dec 2019 21:11:07 -0500
+X-MC-Unique: iqRv_6nEOdKWM-1y9TGRGg-1
+Received: by mail-qk1-f200.google.com with SMTP id 12so7116176qkf.20
+        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 18:11:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6AXOUsRryqKjAteH3ZGpL2igYSciQ5+eIxg15f7PMTs=;
-        b=EpJj1N6GXz/33xziCJdw7g15wsMLT6q3V37Fgyoks6v9GBqVQzgBfZuDNVdjyIQWAy
-         2hgSAxi9sJWXj9VB1J+Z6+LNJI3KQdQGAZd8gG/Wlln/r96fotTcZA98Z9xzs5gzKYgx
-         siJ2E55MmuirHT98VXToFiDifXeohA+zx2qTKVrIgFaRBna6QEVJLxKRXZRAyyNOP5r3
-         hI45Aid0BEVJYWk8sKwJZTKEfYWBUTIjB7jYlkaJxOm+xqAQCuggHRyEbnTY7p3T7Qes
-         SzaTOfujsJ3B1K54INXMUGs2X6C+btGmDWgJO7RPJhaOM6ifVacN8QngJFzwq9jcaJwB
-         XjbA==
-X-Gm-Message-State: APjAAAVkUnhrqecdNDo0Bilm5DUMUwVShp2QwfdyjiQU5tJVgg7+RRNd
-        CWqYDJVcqPdz5Oc7cFhtusUFPs1eFm3tCEAb4hIyE1LxpZvzEdAN5wNELutIw2td8u9tARRBR5A
-        cpSrxgLa9gcQH0ZGOaPPDINz1
-X-Received: by 2002:ac8:7446:: with SMTP id h6mr4848821qtr.274.1576893899276;
-        Fri, 20 Dec 2019 18:04:59 -0800 (PST)
-X-Google-Smtp-Source: APXvYqz7mCEEH7P71Ua3bJQg30Nbdfqj7jsDcLyCeU6SRd+ba4CAKL8QnQEnh20BOPcL0SFIEUGPhw==
-X-Received: by 2002:ac8:7446:: with SMTP id h6mr4848806qtr.274.1576893899045;
-        Fri, 20 Dec 2019 18:04:59 -0800 (PST)
-Received: from xz-x1.hitronhub.home ([2607:9880:19c0:3f::2])
-        by smtp.gmail.com with ESMTPSA id t7sm3400114qkm.136.2019.12.20.18.04.57
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Ms7ZM3YmtvF2wzYl19JuRjEHViRq+4SWhLPmVosAqLs=;
+        b=soS0hTOgHBkl3pmcFuWmEQOSnL39ILABgJYQv0c9MLssaFkRMd9pwzSdEPEHQUjeOg
+         8kJdLzVzT8DAhx4i44dhCq+spdh7/NfbcjjF33RRCnohizpukGwVcHI27flQczbFkjCt
+         +tCFjtzUytr0eZ2wokHXxJ3CdBHKBG01mlPaPkgAnzIvWwklwXtJNETW3i2S6u+eW1KF
+         xOlvJHrA2Z/uLuJiy+N6BTfiAbr7wVxyaPJMlTbYaBCUilNaxja1f7UpWGNuTHWyfmu0
+         7OHOvMmnkL2pEoDpvmypZSrMQ7nEolW6P81TlHIB8ALdPj/8p3XhN4aAE8RR9sod0mSK
+         U5YA==
+X-Gm-Message-State: APjAAAVl2IiNWDxSM2TyjNgmsns9sVPiOWPk19dxNsMvkt2bi28gfkgR
+        xXVQYmOG1fBCLs04uXqaH+m6heDfFjB2wD8EC9332BCn+5R5crwLjoZcMFVpx44SQEBQQzXZXEr
+        WckoZG6xnhbYV8gB8YBeGnrLj
+X-Received: by 2002:ac8:460a:: with SMTP id p10mr13726113qtn.98.1576894267344;
+        Fri, 20 Dec 2019 18:11:07 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzIQ2ze+nInYWvxAbBHNFji24kDf074ME1rfeNCFt0Tp3IQF5g4xn3qTCSfad+ysEPdCVNd1w==
+X-Received: by 2002:ac8:460a:: with SMTP id p10mr13726102qtn.98.1576894267155;
+        Fri, 20 Dec 2019 18:11:07 -0800 (PST)
+Received: from xz-x1 ([2607:9880:19c0:3f::2])
+        by smtp.gmail.com with ESMTPSA id v5sm3799321qth.70.2019.12.20.18.11.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 18:04:58 -0800 (PST)
+        Fri, 20 Dec 2019 18:11:06 -0800 (PST)
+Date:   Fri, 20 Dec 2019 21:11:04 -0500
 From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dr David Alan Gilbert <dgilbert@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        peterx@redhat.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Michael S . Tsirkin" <mst@redhat.com>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jason Wang <jasowang@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH RESEND v2 17/17] KVM: selftests: Add "-c" parameter to dirty log test
-Date:   Fri, 20 Dec 2019 21:04:45 -0500
-Message-Id: <20191221020445.60476-7-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191221014938.58831-1-peterx@redhat.com>
-References: <20191221020445.60476-1-peterx@redhat.com>
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Christophe de Dinechin <dinechin@redhat.com>
+Subject: Re: [PATCH v2 00/17] KVM: Dirty ring interface
+Message-ID: <20191221021104.GA59330@xz-x1>
+References: <20191220211634.51231-1-peterx@redhat.com>
+ <20191220213803.GA51391@xz-x1>
+ <20191220214354.GE20453@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191220214354.GE20453@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's only used to override the existing dirty ring size/count.  If
-with a bigger ring count, we test async of dirty ring.  If with a
-smaller ring count, we test ring full code path.  Async is default.
+On Fri, Dec 20, 2019 at 01:43:54PM -0800, Sean Christopherson wrote:
+> On Fri, Dec 20, 2019 at 04:38:03PM -0500, Peter Xu wrote:
+> > If you see three identical half-posted series which only contains
+> > patches 00-09... I am very sorry for ruining your inbox...  I think my
+> > mail server is not happy to continue sending the rest of the patches,
+> > and I'll get this during sending the patch 10:
+> > 
+> > 4.3.0 Temporary System Problem.  Try again later (10). d25sm3385231qtq.11 - gsmtp
+> > 
+> > So far I don't see what's wrong with patch 10, either.
+> > 
+> > I'll try to fix it up before I send 4th time (or anyone knows please
+> > hint me)... Please ignore the previous three in-complete versions.
+> 
+> Please add RESEND in the subject when resending an idential patch (set),
+> it gives recipients a heads up that the two (or four :-)) sets are the
+> same, e.g. previous versions can be ignored if he/she received both the
+> original and RESEND version(s).
+> 
+>   [PATCH RESEND v2 00/17] KVM: Dirty ring interface
 
-It has no use for non-dirty-ring tests.
+Thanks Sean, new version sent.  Just in case if anyone read the old
+versions: they have exactly the same content with the RESEND series.
+I still resent the first 10 emails just to make things simple.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
----
- tools/testing/selftests/kvm/dirty_log_test.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/dirty_log_test.c b/tools/testing/selftests/kvm/dirty_log_test.c
-index 4403c6770276..fde3fa751818 100644
---- a/tools/testing/selftests/kvm/dirty_log_test.c
-+++ b/tools/testing/selftests/kvm/dirty_log_test.c
-@@ -163,6 +163,7 @@ enum log_mode_t {
- /* Mode of logging.  Default is LOG_MODE_DIRTY_LOG */
- static enum log_mode_t host_log_mode;
- pthread_t vcpu_thread;
-+static uint32_t test_dirty_ring_count = TEST_DIRTY_RING_COUNT;
- 
- /* Only way to pass this to the signal handler */
- struct kvm_vm *current_vm;
-@@ -235,7 +236,7 @@ static void dirty_ring_create_vm_done(struct kvm_vm *vm)
- 	 * Switch to dirty ring mode after VM creation but before any
- 	 * of the vcpu creation.
- 	 */
--	vm_enable_dirty_ring(vm, TEST_DIRTY_RING_COUNT *
-+	vm_enable_dirty_ring(vm, test_dirty_ring_count *
- 			     sizeof(struct kvm_dirty_gfn));
- }
- 
-@@ -260,7 +261,7 @@ static uint32_t dirty_ring_collect_one(struct kvm_dirty_gfn *dirty_gfns,
- 	DEBUG("ring %d: fetch: 0x%x, avail: 0x%x\n", index, fetch, avail);
- 
- 	while (fetch != avail) {
--		cur = &dirty_gfns[fetch % TEST_DIRTY_RING_COUNT];
-+		cur = &dirty_gfns[fetch % test_dirty_ring_count];
- 		TEST_ASSERT(cur->pad == 0, "Padding is non-zero: 0x%x", cur->pad);
- 		TEST_ASSERT(cur->slot == slot, "Slot number didn't match: "
- 			    "%u != %u", cur->slot, slot);
-@@ -723,6 +724,9 @@ static void help(char *name)
- 	printf("usage: %s [-h] [-i iterations] [-I interval] "
- 	       "[-p offset] [-m mode]\n", name);
- 	puts("");
-+	printf(" -c: specify dirty ring size, in number of entries\n");
-+	printf("     (only useful for dirty-ring test; default: %"PRIu32")\n",
-+	       TEST_DIRTY_RING_COUNT);
- 	printf(" -i: specify iteration counts (default: %"PRIu64")\n",
- 	       TEST_HOST_LOOP_N);
- 	printf(" -I: specify interval in ms (default: %"PRIu64" ms)\n",
-@@ -778,8 +782,11 @@ int main(int argc, char *argv[])
- 	vm_guest_mode_params_init(VM_MODE_P40V48_4K, true, true);
- #endif
- 
--	while ((opt = getopt(argc, argv, "hi:I:p:m:M:")) != -1) {
-+	while ((opt = getopt(argc, argv, "c:hi:I:p:m:M:")) != -1) {
- 		switch (opt) {
-+		case 'c':
-+			test_dirty_ring_count = strtol(optarg, NULL, 10);
-+			break;
- 		case 'i':
- 			iterations = strtol(optarg, NULL, 10);
- 			break;
 -- 
-2.24.1
+Peter Xu
 
