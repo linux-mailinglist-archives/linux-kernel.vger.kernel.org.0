@@ -2,147 +2,294 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CF98128A59
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 17:20:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF6D6128A5F
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 17:21:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbfLUQUD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 11:20:03 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52916 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfLUQUD (ORCPT
+        id S1727130AbfLUQVC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 11:21:02 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42075 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726709AbfLUQVA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 11:20:03 -0500
-Received: by mail-wm1-f67.google.com with SMTP id p9so11855788wmc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 08:20:01 -0800 (PST)
+        Sat, 21 Dec 2019 11:21:00 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q6so12279542wro.9;
+        Sat, 21 Dec 2019 08:20:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=OB2pEWpXztjbOrSXiaXBxW4rKDvn8yaoe0gx19PGPF0=;
-        b=lkDNRbnVmxYlg0nojOiI2geZvKuXLHJJVoyomdGrOV8MjNncDTCHSsRe7T2jvFGSmK
-         NvBy1qrlwrM3/MpSJFSvWRPLdPC8N+G1NlDg2CinZDnLZ/pDjuLvA3Ruqgt0p9/wARxS
-         y1cAvcRboD4zFvEe02R1TkYQ5UG0yc1BXLM12eLtNbBvQypOXTlDxA5udFvs/2qptKsV
-         M/3Un/rEw3TbloFZLiZWRxrIfSnb/EPcFLGNDasofQykldAoAm9D6HWUoU3E5VPKqAgM
-         MatpjG7NVR/5UrhYFFdI47esJIpmFI3/jD02uYnBEZsvORqc4e+amRz1j4SN7Qg7zkVN
-         9Omw==
+        h=subject:from:to:cc:references:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to;
+        bh=+sWXZ2IbOOe8uDsn4gFg7yVsAagg+FAjpKt0gWTLB8w=;
+        b=jmEQs49CTq0EEx4ODp+2uE2wMDS0n1QDUlW/LLTGiakJRgOkxW/dIcWREnTKps0gc8
+         6KoQxb3QBdhOHAyRbiA1NdwdLjstMByFbIIkxaBa6qGhlwBEl3Uaa5pp1rEKcTplrVhl
+         NJNH+XXEiEFlu/g2k+PJjjD0yNxTF2DQl9mXHAY/jGntooLUs6glWGZCqlImdlgOxq9u
+         RnXk0mG6iHWbOJuGQtX/2Sxx2hJQQjT/2lJ0GW/+t50pQJhaoFXlQ9hx96z1A0m0ZRsW
+         xvHIdGYSGs+5O/fSwNtKIpdTYVJCXXwngFUU6fUkkzD72Dm2doYvAePEpy8ezUaCV6wK
+         gAYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=OB2pEWpXztjbOrSXiaXBxW4rKDvn8yaoe0gx19PGPF0=;
-        b=YS+B7GuxZXblWRd0p08h5b36jhEKLne2MTpbIvdJUm20SoxgWaObVyB3+xk1j3ifA0
-         o29XqcF/ObL5wXJYm1Qev+kOixP8cGla4lud0YC4iaFmoBAUryZuu5L6RITk+MtvhBiC
-         AvLtaHU1tPiVdd3LpXdWgu7yp5GTO2lVxFkgNoTkm1ga/g3QCtAGxCQhi9QEEMp9VSBl
-         nnLGgsIAhFGotqloAb0NouL5qE+4aUe7hhIginZZxp9LiL5uYGIDS5bDl4Atp465kzvI
-         mWevgh0se4xIBSDoaO0pgKPhXPhats/0X94p7Rxdhw/VBoNlSq59dMoLGlTIHdvxxMg0
-         B4ZQ==
-X-Gm-Message-State: APjAAAVJYJCeyKTj68GHIfWdIYXzTyg4GUwPf31FG8PTn2TNQ/IlmiF6
-        6B1QzQGa6Z4yWj8bEpvl/d/iyiuO
-X-Google-Smtp-Source: APXvYqxwoHJVcfs/f7yEww+Kjiu3pN1wKHXIQJBEipR0OecYx2MN4YEPKbOZq6ejFVIBPEHx7noskw==
-X-Received: by 2002:a1c:7215:: with SMTP id n21mr23277297wmc.154.1576945200531;
-        Sat, 21 Dec 2019 08:20:00 -0800 (PST)
-Received: from gmail.com (54033286.catv.pool.telekom.hu. [84.3.50.134])
-        by smtp.gmail.com with ESMTPSA id q15sm14227107wrr.11.2019.12.21.08.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Dec 2019 08:20:00 -0800 (PST)
-Date:   Sat, 21 Dec 2019 17:19:58 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] scheduler fixes
-Message-ID: <20191221161958.GA15732@gmail.com>
+        h=x-gm-message-state:subject:from:to:cc:references:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to;
+        bh=+sWXZ2IbOOe8uDsn4gFg7yVsAagg+FAjpKt0gWTLB8w=;
+        b=qdftwmYCxI/cTVwm5irig0eblsHBEA9IAsBqnR4v0PdDYAYAgfIzpRRwiHfhW1MDC7
+         UQoCwmvAneDneUPiVRljyvJaMwKKJnnqmNEn1iLUEhDsRlyhJ5EiMySQon9AZcnIRKFT
+         nUsI8ZHeovGUd4mJ3c2tY3WwI2QdjkMS+lw1tdvk9ewckJ38MhRQZfuMWIQ2sL5MyCR1
+         qWCIYjygdeOyGpC3v/0srIGFUwcMvtGIjJu7yz2/QRkjGV2Mc8JuLIC7PlEqiM+IKkg2
+         WAhIzbOmqz3hC4OldMNt322WeXX5hg3uqQtFWUChMfa7ss/zp+2n65aESlM16x68n8Eg
+         GE/Q==
+X-Gm-Message-State: APjAAAWnUkGeRHjRRoGt1m+1zg6poGC3wfCg5VbMSfYHRXKvAiuMW3oV
+        jTlWLeUYiMp7zT6wld8VtOWIKKZC
+X-Google-Smtp-Source: APXvYqyIZh5zYwaSs5sEw3nb8y9k700QdAhyHOtUZG1rg18Mv3fbL8sxR34mvbv/3P2T3QlnnLY05Q==
+X-Received: by 2002:adf:e2cf:: with SMTP id d15mr21209324wrj.225.1576945256744;
+        Sat, 21 Dec 2019 08:20:56 -0800 (PST)
+Received: from [192.168.43.10] ([109.126.149.134])
+        by smtp.gmail.com with ESMTPSA id f17sm13670724wmc.8.2019.12.21.08.20.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 21 Dec 2019 08:20:56 -0800 (PST)
+Subject: Re: [PATCH RFC v2 3/3] io_uring: batch get(ctx->ref) across submits
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Tejun Heo <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+        Christoph Lameter <cl@linux.com>
+References: <cover.1576944502.git.asml.silence@gmail.com>
+ <925d8fe5406779bbfa108caa3d1f9fd16e3434b5.1576944502.git.asml.silence@gmail.com>
+Autocrypt: addr=asml.silence@gmail.com; prefer-encrypt=mutual; keydata=
+ mQINBFmKBOQBEAC76ZFxLAKpDw0bKQ8CEiYJRGn8MHTUhURL02/7n1t0HkKQx2K1fCXClbps
+ bdwSHrhOWdW61pmfMbDYbTj6ZvGRvhoLWfGkzujB2wjNcbNTXIoOzJEGISHaPf6E2IQx1ik9
+ 6uqVkK1OMb7qRvKH0i7HYP4WJzYbEWVyLiAxUj611mC9tgd73oqZ2pLYzGTqF2j6a/obaqha
+ +hXuWTvpDQXqcOZJXIW43atprH03G1tQs7VwR21Q1eq6Yvy2ESLdc38EqCszBfQRMmKy+cfp
+ W3U9Mb1w0L680pXrONcnlDBCN7/sghGeMHjGKfNANjPc+0hzz3rApPxpoE7HC1uRiwC4et83
+ CKnncH1l7zgeBT9Oa3qEiBlaa1ZCBqrA4dY+z5fWJYjMpwI1SNp37RtF8fKXbKQg+JuUjAa9
+ Y6oXeyEvDHMyJYMcinl6xCqCBAXPHnHmawkMMgjr3BBRzODmMr+CPVvnYe7BFYfoajzqzq+h
+ EyXSl3aBf0IDPTqSUrhbmjj5OEOYgRW5p+mdYtY1cXeK8copmd+fd/eTkghok5li58AojCba
+ jRjp7zVOLOjDlpxxiKhuFmpV4yWNh5JJaTbwCRSd04sCcDNlJj+TehTr+o1QiORzc2t+N5iJ
+ NbILft19Izdn8U39T5oWiynqa1qCLgbuFtnYx1HlUq/HvAm+kwARAQABtDFQYXZlbCBCZWd1
+ bmtvdiAoc2lsZW5jZSkgPGFzbWwuc2lsZW5jZUBnbWFpbC5jb20+iQJOBBMBCAA4FiEE+6Ju
+ PTjTbx479o3OWt5b1Glr+6UFAlmKBOQCGwMFCwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ
+ Wt5b1Glr+6WxZA//QueaKHzgdnOikJ7NA/Vq8FmhRlwgtP0+E+w93kL+ZGLzS/cUCIjn2f4Q
+ Mcutj2Neg0CcYPX3b2nJiKr5Vn0rjJ/suiaOa1h1KzyNTOmxnsqE5fmxOf6C6x+NKE18I5Jy
+ xzLQoktbdDVA7JfB1itt6iWSNoOTVcvFyvfe5ggy6FSCcP+m1RlR58XxVLH+qlAvxxOeEr/e
+ aQfUzrs7gqdSd9zQGEZo0jtuBiB7k98t9y0oC9Jz0PJdvaj1NZUgtXG9pEtww3LdeXP/TkFl
+ HBSxVflzeoFaj4UAuy8+uve7ya/ECNCc8kk0VYaEjoVrzJcYdKP583iRhOLlZA6HEmn/+Gh9
+ 4orG67HNiJlbFiW3whxGizWsrtFNLsSP1YrEReYk9j1SoUHHzsu+ZtNfKuHIhK0sU07G1OPN
+ 2rDLlzUWR9Jc22INAkhVHOogOcc5ajMGhgWcBJMLCoi219HlX69LIDu3Y34uIg9QPZIC2jwr
+ 24W0kxmK6avJr7+n4o8m6sOJvhlumSp5TSNhRiKvAHB1I2JB8Q1yZCIPzx+w1ALxuoWiCdwV
+ M/azguU42R17IuBzK0S3hPjXpEi2sK/k4pEPnHVUv9Cu09HCNnd6BRfFGjo8M9kZvw360gC1
+ reeMdqGjwQ68o9x0R7NBRrtUOh48TDLXCANAg97wjPoy37dQE7e5Ag0EWYoE5AEQAMWS+aBV
+ IJtCjwtfCOV98NamFpDEjBMrCAfLm7wZlmXy5I6o7nzzCxEw06P2rhzp1hIqkaab1kHySU7g
+ dkpjmQ7Jjlrf6KdMP87mC/Hx4+zgVCkTQCKkIxNE76Ff3O9uTvkWCspSh9J0qPYyCaVta2D1
+ Sq5HZ8WFcap71iVO1f2/FEHKJNz/YTSOS/W7dxJdXl2eoj3gYX2UZNfoaVv8OXKaWslZlgqN
+ jSg9wsTv1K73AnQKt4fFhscN9YFxhtgD/SQuOldE5Ws4UlJoaFX/yCoJL3ky2kC0WFngzwRF
+ Yo6u/KON/o28yyP+alYRMBrN0Dm60FuVSIFafSqXoJTIjSZ6olbEoT0u17Rag8BxnxryMrgR
+ dkccq272MaSS0eOC9K2rtvxzddohRFPcy/8bkX+t2iukTDz75KSTKO+chce62Xxdg62dpkZX
+ xK+HeDCZ7gRNZvAbDETr6XI63hPKi891GeZqvqQVYR8e+V2725w+H1iv3THiB1tx4L2bXZDI
+ DtMKQ5D2RvCHNdPNcZeldEoJwKoA60yg6tuUquvsLvfCwtrmVI2rL2djYxRfGNmFMrUDN1Xq
+ F3xozA91q3iZd9OYi9G+M/OA01husBdcIzj1hu0aL+MGg4Gqk6XwjoSxVd4YT41kTU7Kk+/I
+ 5/Nf+i88ULt6HanBYcY/+Daeo/XFABEBAAGJAjYEGAEIACAWIQT7om49ONNvHjv2jc5a3lvU
+ aWv7pQUCWYoE5AIbDAAKCRBa3lvUaWv7pfmcEACKTRQ28b1y5ztKuLdLr79+T+LwZKHjX++P
+ 4wKjEOECCcB6KCv3hP+J2GCXDOPZvdg/ZYZafqP68Yy8AZqkfa4qPYHmIdpODtRzZSL48kM8
+ LRzV8Rl7J3ItvzdBRxf4T/Zseu5U6ELiQdCUkPGsJcPIJkgPjO2ROG/ZtYa9DvnShNWPlp+R
+ uPwPccEQPWO/NP4fJl2zwC6byjljZhW5kxYswGMLBwb5cDUZAisIukyAa8Xshdan6C2RZcNs
+ rB3L7vsg/R8UCehxOH0C+NypG2GqjVejNZsc7bgV49EOVltS+GmGyY+moIzxsuLmT93rqyII
+ 5rSbbcTLe6KBYcs24XEoo49Zm9oDA3jYvNpeYD8rDcnNbuZh9kTgBwFN41JHOPv0W2FEEWqe
+ JsCwQdcOQ56rtezdCJUYmRAt3BsfjN3Jn3N6rpodi4Dkdli8HylM5iq4ooeb5VkQ7UZxbCWt
+ UVMKkOCdFhutRmYp0mbv2e87IK4erwNHQRkHUkzbsuym8RVpAZbLzLPIYK/J3RTErL6Z99N2
+ m3J6pjwSJY/zNwuFPs9zGEnRO4g0BUbwGdbuvDzaq6/3OJLKohr5eLXNU3JkT+3HezydWm3W
+ OPhauth7W0db74Qd49HXK0xe/aPrK+Cp+kU1HRactyNtF8jZQbhMCC8vMGukZtWaAwpjWiiH bA==
+Message-ID: <da858877-0801-34c3-4508-dabead959410@gmail.com>
+Date:   Sat, 21 Dec 2019 19:20:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <925d8fe5406779bbfa108caa3d1f9fd16e3434b5.1576944502.git.asml.silence@gmail.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="ow1cDVrtXZKifTO9wYjzMLzoVJkGTwjAe"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--ow1cDVrtXZKifTO9wYjzMLzoVJkGTwjAe
+Content-Type: multipart/mixed; boundary="W2cy8CHM4527v9y7P13rqyRDRYLtYYsmD";
+ protected-headers="v1"
+From: Pavel Begunkov <asml.silence@gmail.com>
+To: Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Dennis Zhou <dennis@kernel.org>,
+ Christoph Lameter <cl@linux.com>
+Message-ID: <da858877-0801-34c3-4508-dabead959410@gmail.com>
+Subject: Re: [PATCH RFC v2 3/3] io_uring: batch get(ctx->ref) across submits
+References: <cover.1576944502.git.asml.silence@gmail.com>
+ <925d8fe5406779bbfa108caa3d1f9fd16e3434b5.1576944502.git.asml.silence@gmail.com>
+In-Reply-To: <925d8fe5406779bbfa108caa3d1f9fd16e3434b5.1576944502.git.asml.silence@gmail.com>
 
-Please pull the latest sched-urgent-for-linus git tree from:
+--W2cy8CHM4527v9y7P13rqyRDRYLtYYsmD
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+On 21/12/2019 19:15, Pavel Begunkov wrote:
+> Double account ctx->refs keeping number of taken refs in ctx. As
+> io_uring gets per-request ctx->refs during submission, while holding
+> ctx->uring_lock, this allows in most of the time to bypass
+> percpu_ref_get*() and its overhead.
 
-   # HEAD: 6cf82d559e1a1d89f06ff4d428aca479c1dd0be6 sched/cfs: fix spurious active migration
+Jens, could you please benchmark with this one? Especially for offloaded =
+QD1
+case. I haven't got any difference for nops test and don't have a decent =
+SSD
+at hands to test it myself. We could drop it, if there is no benefit.
 
-Misc fixes: a (rare) PSI crash fix, a CPU affinity related balancing fix, 
-and a toning down of active migration attempts.
-
- Thanks,
-
-	Ingo
-
------------------->
-Johannes Weiner (2):
-      sched/psi: Fix sampling error and rare div0 crashes with cgroups and high uptime
-      psi: Fix a division error in psi poll()
-
-Vincent Guittot (2):
-      sched/fair: Fix find_idlest_group() to handle CPU affinity
-      sched/cfs: fix spurious active migration
+This rewrites that @extra_refs from the second one, so I left it for now.=
 
 
- kernel/sched/fair.c | 13 ++++++++++++-
- kernel/sched/psi.c  |  5 +++--
- 2 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 08a233e97a01..ba749f579714 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7328,7 +7328,14 @@ static int detach_tasks(struct lb_env *env)
- 			    load < 16 && !env->sd->nr_balance_failed)
- 				goto next;
- 
--			if (load/2 > env->imbalance)
-+			/*
-+			 * Make sure that we don't migrate too much load.
-+			 * Nevertheless, let relax the constraint if
-+			 * scheduler fails to find a good waiting task to
-+			 * migrate.
-+			 */
-+			if (load/2 > env->imbalance &&
-+			    env->sd->nr_balance_failed <= env->sd->cache_nice_tries)
- 				goto next;
- 
- 			env->imbalance -= load;
-@@ -8417,6 +8424,10 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 	if (!idlest)
- 		return NULL;
- 
-+	/* The local group has been skipped because of CPU affinity */
-+	if (!local)
-+		return idlest;
-+
- 	/*
- 	 * If the local group is idler than the selected idlest group
- 	 * don't try and push the task.
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 517e3719027e..ce8f6748678a 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -185,7 +185,8 @@ static void group_init(struct psi_group *group)
- 
- 	for_each_possible_cpu(cpu)
- 		seqcount_init(&per_cpu_ptr(group->pcpu, cpu)->seq);
--	group->avg_next_update = sched_clock() + psi_period;
-+	group->avg_last_update = sched_clock();
-+	group->avg_next_update = group->avg_last_update + psi_period;
- 	INIT_DELAYED_WORK(&group->avgs_work, psi_avgs_work);
- 	mutex_init(&group->avgs_lock);
- 	/* Init trigger-related members */
-@@ -481,7 +482,7 @@ static u64 window_update(struct psi_window *win, u64 now, u64 value)
- 		u32 remaining;
- 
- 		remaining = win->size - elapsed;
--		growth += div_u64(win->prev_growth * remaining, win->size);
-+		growth += div64_u64(win->prev_growth * remaining, win->size);
- 	}
- 
- 	return growth;
+>=20
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> ---
+>  fs/io_uring.c | 32 +++++++++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/fs/io_uring.c b/fs/io_uring.c
+> index 5392134f042f..eef09de94609 100644
+> --- a/fs/io_uring.c
+> +++ b/fs/io_uring.c
+> @@ -84,6 +84,9 @@
+>  #define IORING_MAX_ENTRIES	32768
+>  #define IORING_MAX_CQ_ENTRIES	(2 * IORING_MAX_ENTRIES)
+> =20
+> +/* Not less than IORING_MAX_ENTRIES, so can grab once per submission l=
+oop */
+> +#define IORING_REFS_THRESHOLD	IORING_MAX_ENTRIES
+> +
+>  /*
+>   * Shift of 9 is 512 entries, or exactly one page on 64-bit archs
+>   */
+> @@ -197,6 +200,7 @@ struct fixed_file_data {
+>  struct io_ring_ctx {
+>  	struct {
+>  		struct percpu_ref	refs;
+> +		unsigned long		taken_refs; /* used under @uring_lock */
+>  	} ____cacheline_aligned_in_smp;
+> =20
+>  	struct {
+> @@ -690,6 +694,13 @@ static void io_ring_ctx_ref_free(struct percpu_ref=
+ *ref)
+>  	complete(&ctx->completions[0]);
+>  }
+> =20
+> +static void io_free_taken_refs(struct io_ring_ctx *ctx)
+> +{
+> +	if (ctx->taken_refs)
+> +		percpu_ref_put_many(&ctx->refs, ctx->taken_refs);
+> +	ctx->taken_refs =3D 0;
+> +}
+> +
+>  static struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p=
+)
+>  {
+>  	struct io_ring_ctx *ctx;
+> @@ -4388,7 +4399,6 @@ static int io_submit_sqes(struct io_ring_ctx *ctx=
+, unsigned int nr,
+>  	struct io_submit_state state, *statep =3D NULL;
+>  	struct io_kiocb *link =3D NULL;
+>  	int i, submitted =3D 0;
+> -	unsigned int extra_refs;
+>  	bool mm_fault =3D false;
+> =20
+>  	/* if we have a backlog and couldn't flush it all, return BUSY */
+> @@ -4398,9 +4408,15 @@ static int io_submit_sqes(struct io_ring_ctx *ct=
+x, unsigned int nr,
+>  			return -EBUSY;
+>  	}
+> =20
+> -	if (!percpu_ref_tryget_many(&ctx->refs, nr))
+> -		return -EAGAIN;
+> -	extra_refs =3D nr;
+> +	if (ctx->taken_refs < IORING_REFS_THRESHOLD) {
+> +		if (unlikely(percpu_ref_is_dying(&ctx->refs))) {
+> +			io_free_taken_refs(ctx);
+> +			return -ENXIO;
+> +		}
+> +		if (!percpu_ref_tryget_many(&ctx->refs, IORING_REFS_THRESHOLD))
+> +			return -EAGAIN;
+> +		ctx->taken_refs +=3D IORING_REFS_THRESHOLD;
+> +	}
+> =20
+>  	if (nr > IO_PLUG_THRESHOLD) {
+>  		io_submit_state_start(&state, nr);
+> @@ -4417,8 +4433,9 @@ static int io_submit_sqes(struct io_ring_ctx *ctx=
+, unsigned int nr,
+>  				submitted =3D -EAGAIN;
+>  			break;
+>  		}
+> -		--extra_refs;
+>  		if (!io_get_sqring(ctx, req, &sqe)) {
+> +			/* not submitted, but a ref is freed */
+> +			ctx->taken_refs--;
+>  			__io_free_req(req);
+>  			break;
+>  		}
+> @@ -4454,8 +4471,7 @@ static int io_submit_sqes(struct io_ring_ctx *ctx=
+, unsigned int nr,
+>  		io_queue_link_head(link);
+>  	if (statep)
+>  		io_submit_state_end(&state);
+> -	if (extra_refs)
+> -		percpu_ref_put_many(&ctx->refs, extra_refs);
+> +	ctx->taken_refs -=3D submitted;
+> =20
+>  	 /* Commit SQ ring head once we've consumed and submitted all SQEs */=
+
+>  	io_commit_sqring(ctx);
+> @@ -5731,6 +5747,7 @@ static int io_uring_fasync(int fd, struct file *f=
+ile, int on)
+>  static void io_ring_ctx_wait_and_kill(struct io_ring_ctx *ctx)
+>  {
+>  	mutex_lock(&ctx->uring_lock);
+> +	io_free_taken_refs(ctx);
+>  	percpu_ref_kill(&ctx->refs);
+>  	mutex_unlock(&ctx->uring_lock);
+> =20
+> @@ -6196,6 +6213,7 @@ static int __io_uring_register(struct io_ring_ctx=
+ *ctx, unsigned opcode,
+> =20
+>  	if (opcode !=3D IORING_UNREGISTER_FILES &&
+>  	    opcode !=3D IORING_REGISTER_FILES_UPDATE) {
+> +		io_free_taken_refs(ctx);
+>  		percpu_ref_kill(&ctx->refs);
+> =20
+>  		/*
+>=20
+
+--=20
+Pavel Begunkov
+
+
+--W2cy8CHM4527v9y7P13rqyRDRYLtYYsmD--
+
+--ow1cDVrtXZKifTO9wYjzMLzoVJkGTwjAe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+6JuPTjTbx479o3OWt5b1Glr+6UFAl3+Rk0ACgkQWt5b1Glr
++6V/Wg//cNJRnigCPb609gdMvttE89kiqQAiHdLiPBObgLLi6kGoV+6j0Cfu5FhN
+aUnd4fKVJ5NXVEDdwSTnMgy7rqM33TnT7Q/MWnnkxxfNFI7JYrXSdxlCZeANsbsm
+vhJ/bmFSOKkbuKkLe9yN9LcJZabIiU5LTyp0UyIbEwD06e0Sp0EU98wZQ+XBxfB7
+gOMNDVO1Jk2U0+yJqrqUXQ6Mam5XDrcb+qsUXPvGCMc46fobJyp75x+LHftdtsga
+XDLT32OAPLh0snFL6VYgow3D0Luko6TCztFM3nIcSxYQFzelK/Lf0+94k3cyssfG
+nKIUirWIMG/Nv69m8Zg19LxZiqlSStma+nYliFFS0lZYpsTIO3c/RfiEnNKpJOlI
+gl/rbyoox8Z1r0enZbtW9M7mLt23pKZ0Seu2AZ5dRs874sBNv0ZyVh9jvWRCFOFb
+SYX88/EDVJ4hK9HQk7dB26B30dbd0WYaljg8aypWuvWb59f4mZ9lPleI6AowZ1UM
+YuPi5wbIL8XML3O21A0MqZSx8BC37ztCGqnSGEEgy6Ooz9UjT2wcvdnuUQnd8MGK
+g6mR5xxUgSbmJDD7YZ0QIYztwfan5T1jk7ZwPBGFTT0w+EBBY2CwM9FfmxSVODcc
+61sdN4JYx9sIOt2JX33lJqZc+an+IAJIuIE3GE+B2CluVS3SvMs=
+=kJHm
+-----END PGP SIGNATURE-----
+
+--ow1cDVrtXZKifTO9wYjzMLzoVJkGTwjAe--
