@@ -2,103 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BC7A128694
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 03:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FFAC128699
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 03:20:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfLUCLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 21:11:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:58833 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726485AbfLUCLK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 21:11:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576894269;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Ms7ZM3YmtvF2wzYl19JuRjEHViRq+4SWhLPmVosAqLs=;
-        b=PRaNSTiEwfbkWk7ldshfHcFVbC7dg33vMdwzg0je0fXAE73S2BLsWYYZdnCec38Qo96H0C
-        +pjwYvLqQejarnC+szpv7CrdxcfzhGwyVnirjsLpAl2HXRdcir247/yIzFzfcIksBgf0vo
-        k9S/HeMnp4Pb+UHHgqXgAn9nSESmDBU=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-228-iqRv_6nEOdKWM-1y9TGRGg-1; Fri, 20 Dec 2019 21:11:07 -0500
-X-MC-Unique: iqRv_6nEOdKWM-1y9TGRGg-1
-Received: by mail-qk1-f200.google.com with SMTP id 12so7116176qkf.20
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 18:11:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Ms7ZM3YmtvF2wzYl19JuRjEHViRq+4SWhLPmVosAqLs=;
-        b=soS0hTOgHBkl3pmcFuWmEQOSnL39ILABgJYQv0c9MLssaFkRMd9pwzSdEPEHQUjeOg
-         8kJdLzVzT8DAhx4i44dhCq+spdh7/NfbcjjF33RRCnohizpukGwVcHI27flQczbFkjCt
-         +tCFjtzUytr0eZ2wokHXxJ3CdBHKBG01mlPaPkgAnzIvWwklwXtJNETW3i2S6u+eW1KF
-         xOlvJHrA2Z/uLuJiy+N6BTfiAbr7wVxyaPJMlTbYaBCUilNaxja1f7UpWGNuTHWyfmu0
-         7OHOvMmnkL2pEoDpvmypZSrMQ7nEolW6P81TlHIB8ALdPj/8p3XhN4aAE8RR9sod0mSK
-         U5YA==
-X-Gm-Message-State: APjAAAVl2IiNWDxSM2TyjNgmsns9sVPiOWPk19dxNsMvkt2bi28gfkgR
-        xXVQYmOG1fBCLs04uXqaH+m6heDfFjB2wD8EC9332BCn+5R5crwLjoZcMFVpx44SQEBQQzXZXEr
-        WckoZG6xnhbYV8gB8YBeGnrLj
-X-Received: by 2002:ac8:460a:: with SMTP id p10mr13726113qtn.98.1576894267344;
-        Fri, 20 Dec 2019 18:11:07 -0800 (PST)
-X-Google-Smtp-Source: APXvYqzIQ2ze+nInYWvxAbBHNFji24kDf074ME1rfeNCFt0Tp3IQF5g4xn3qTCSfad+ysEPdCVNd1w==
-X-Received: by 2002:ac8:460a:: with SMTP id p10mr13726102qtn.98.1576894267155;
-        Fri, 20 Dec 2019 18:11:07 -0800 (PST)
-Received: from xz-x1 ([2607:9880:19c0:3f::2])
-        by smtp.gmail.com with ESMTPSA id v5sm3799321qth.70.2019.12.20.18.11.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 18:11:06 -0800 (PST)
-Date:   Fri, 20 Dec 2019 21:11:04 -0500
-From:   Peter Xu <peterx@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>
-Subject: Re: [PATCH v2 00/17] KVM: Dirty ring interface
-Message-ID: <20191221021104.GA59330@xz-x1>
-References: <20191220211634.51231-1-peterx@redhat.com>
- <20191220213803.GA51391@xz-x1>
- <20191220214354.GE20453@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191220214354.GE20453@linux.intel.com>
+        id S1726715AbfLUCUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 21:20:49 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:63302 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726485AbfLUCUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 20 Dec 2019 21:20:49 -0500
+Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
+        by Forcepoint Email with ESMTPS id C0A33A4FEBF52BB25959;
+        Sat, 21 Dec 2019 10:20:45 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
+        by mse-fl1.zte.com.cn with ESMTP id xBL2KNas037005;
+        Sat, 21 Dec 2019 10:20:23 +0800 (GMT-8)
+        (envelope-from chen.ying153@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019122110210580-1275864 ;
+          Sat, 21 Dec 2019 10:21:05 +0800 
+From:   chenying <chen.ying153@zte.com.cn>
+To:     mingo@redhat.com
+Cc:     peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, jiang.xuexin@zte.com.cn,
+        chenying <chen.ying153@zte.com.cn>
+Subject: [PATCH] fix share rt runtime with offline rq
+Date:   Sat, 21 Dec 2019 10:20:12 +0800
+Message-Id: <1576894812-36688-1-git-send-email-chen.ying153@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-12-21 10:21:05,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-12-21 10:20:29,
+        Serialize complete at 2019-12-21 10:20:29
+X-MAIL: mse-fl1.zte.com.cn xBL2KNas037005
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 01:43:54PM -0800, Sean Christopherson wrote:
-> On Fri, Dec 20, 2019 at 04:38:03PM -0500, Peter Xu wrote:
-> > If you see three identical half-posted series which only contains
-> > patches 00-09... I am very sorry for ruining your inbox...  I think my
-> > mail server is not happy to continue sending the rest of the patches,
-> > and I'll get this during sending the patch 10:
-> > 
-> > 4.3.0 Temporary System Problem.  Try again later (10). d25sm3385231qtq.11 - gsmtp
-> > 
-> > So far I don't see what's wrong with patch 10, either.
-> > 
-> > I'll try to fix it up before I send 4th time (or anyone knows please
-> > hint me)... Please ignore the previous three in-complete versions.
-> 
-> Please add RESEND in the subject when resending an idential patch (set),
-> it gives recipients a heads up that the two (or four :-)) sets are the
-> same, e.g. previous versions can be ignored if he/she received both the
-> original and RESEND version(s).
-> 
->   [PATCH RESEND v2 00/17] KVM: Dirty ring interface
+In my environment,cpu0-11 are online, cpu12-15 are offline, CPU2 is isolated,
+sched_rt_runtime_us is 950000,and then bind a rt process with dead loop to CPU2.
+We can see that CPU usage on CPU2 reaches 100%,but only one cpu is isolated,
+so it can be inferred that CPU2 shares the rt runtime of offline cpu.
 
-Thanks Sean, new version sent.  Just in case if anyone read the old
-versions: they have exactly the same content with the RESEND series.
-I still resent the first 10 emails just to make things simple.
+/ # cat /sys/devices/system/cpu/online
+0-11
+/ # cat /sys/devices/system/cpu/offline
+12-15
+/ # cat /sys/devices/system/cpu/isolated
+2
+/ # cat /proc/sys/kernel/sched_rt_runtime_us
+950000
+/ # chrt -p 357
+pid 357's current scheduling policy: SCHED_FIFO
+pid 357's current scheduling priority: 1
 
+top - 15:52:12 up 4 min,  0 users,  load average: 0.92, 0.41, 0.16
+Tasks: 201 total,   2 running, 199 sleeping,   0 stopped,   0 zombie
+%Cpu0  :  0.3 us,  0.3 sy,  0.0 ni, 99.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu2  :100.0 us,  0.0 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu3  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu4  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu5  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu6  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu7  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu8  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu9  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu10 :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+  357 root      -2   0    4044    172    136 R 100.0  0.0   2:32.99 deadloop
+  366 root      20   0   22060   2404   2128 R   0.7  0.0   0:00.06 top
+    1 root      20   0    2624     20      0 S   0.0  0.0   0:05.93 init
+    2 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kthreadd
+    3 root      20   0       0      0      0 S   0.0  0.0   0:00.00 ksoftirqd/0
+    4 root      20   0       0      0      0 S   0.0  0.0   0:00.00 kworker/0:0
+
+Signed-off-by: chenying <chen.ying153@zte.com.cn>
+---
+ kernel/sched/rt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index a532558..d20dc86 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -648,8 +648,12 @@ static void do_balance_runtime(struct rt_rq *rt_rq)
+ 	rt_period = ktime_to_ns(rt_b->rt_period);
+ 	for_each_cpu(i, rd->span) {
+ 		struct rt_rq *iter = sched_rt_period_rt_rq(rt_b, i);
++		struct rq *rq = rq_of_rt_rq(iter);
+ 		s64 diff;
+ 
++		if (!rq->online)
++			continue;
++
+ 		if (iter == rt_rq)
+ 			continue;
+ 
 -- 
-Peter Xu
+2.15.2
 
