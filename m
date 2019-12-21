@@ -2,69 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E737128AD5
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 19:36:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0149F128ADB
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 19:40:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfLUSgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 13:36:45 -0500
-Received: from mga14.intel.com ([192.55.52.115]:54461 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbfLUSgo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 13:36:44 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2019 10:36:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,340,1571727600"; 
-   d="scan'208";a="213860818"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 21 Dec 2019 10:36:43 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1iijcI-000EYG-IO; Sun, 22 Dec 2019 02:36:42 +0800
-Date:   Sun, 22 Dec 2019 02:36:12 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     kbuild-all@lists.01.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Jeremi Piotrowski <jeremi.piotrowski@gmail.com>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Phillip Lougher <phillip@squashfs.org.uk>,
-        linux-kernel@vger.kernel.org, Ilya Dryomov <idryomov@gmail.com>
-Subject: [RFC PATCH] vfs: generic_fs_parameters can be static
-Message-ID: <20191221183612.pdxvwnkqouoytjvj@4978f4969bb8>
-References: <20191212213604.19525-1-labbott@redhat.com>
+        id S1726877AbfLUSkv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 13:40:51 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:39836 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfLUSkv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Dec 2019 13:40:51 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id E89261C24DF; Sat, 21 Dec 2019 19:40:48 +0100 (CET)
+Date:   Sat, 21 Dec 2019 19:40:47 +0100
+From:   Pavel Machek <pavel@denx.de>
+To:     Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] leds: trigger: implement a tty trigger
+Message-ID: <20191221184047.GC32732@amd>
+References: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
+ <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
 Content-Disposition: inline
-In-Reply-To: <20191212213604.19525-1-labbott@redhat.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Fixes: fa45c7e4862f ("vfs: Handle file systems without ->parse_params better")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- fs_context.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--2JFBq9zoW8cOFH7v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 8c5dc131e29ac..604f1a3d73aac 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -116,7 +116,7 @@ static const struct fs_parameter_spec generic_fs_param_specs[] = {
-         {}
- };
- 
--const struct fs_parameter_description generic_fs_parameters = {
-+static const struct fs_parameter_description generic_fs_parameters = {
-         .name           = "generic_fs",
-         .specs          = generic_fs_param_specs,
- };
+Hi!
+
+> +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
+> @@ -0,0 +1,6 @@
+> +What:		/sys/class/leds/<led>/dev
+> +Date:		Dec 2019
+> +KernelVersion:	5.6
+> +Contact:	linux-leds@vger.kernel.org
+> +Description:
+> +		Specifies $major:$minor of the triggering tty
+
+Ok, sounds reasonable.
+
+> +static ssize_t dev_store(struct device *dev,
+> +			 struct device_attribute *attr, const char *buf,
+> +			 size_t size)
+> +{
+> +	struct ledtrig_tty_data *trigger_data =3D led_trigger_get_drvdata(dev);
+> +	struct tty_struct *tty;
+> +	unsigned major, minor;
+> +	int ret;
+> +
+> +	if (size =3D=3D 0 || (size =3D=3D 1 && buf[0] =3D=3D '\n')) {
+> +		tty =3D NULL;
+> +	} else {
+> +		ret =3D sscanf(buf, "%u:%u", &major, &minor);
+> +		if (ret < 2)
+> +			return -EINVAL;
+
+If user writes 1:2:badparsingofdata into the file, it will pass, right?
+
+> +		tty =3D tty_kopen_shared(MKDEV(major, minor));
+> +		if (IS_ERR(tty))
+> +			return PTR_ERR(tty);
+> +	}
+
+Do you need to do some kind of tty_kclose()? What happens if the
+device disappears, for example because the USB modem is unplugged?
+
+> +static void ledtrig_tty_work(struct work_struct *work)
+> +{
+> +	struct ledtrig_tty_data *trigger_data =3D
+> +		container_of(work, struct ledtrig_tty_data, dwork.work);
+> +	struct serial_icounter_struct icount;
+> +	int ret;
+> +
+> +	if (!trigger_data->tty) {
+> +		led_set_brightness(trigger_data->led_cdev, LED_OFF);
+> +		return;
+> +	}
+> +
+> +	ret =3D tty_get_icount(trigger_data->tty, &icount);
+> +	if (ret)
+> +		return;
+> +
+> +	if (icount.rx !=3D trigger_data->rx ||
+> +	    icount.tx !=3D trigger_data->tx) {
+> +		unsigned long delay_on =3D 100, delay_off =3D 100;
+> +
+> +		led_blink_set_oneshot(trigger_data->led_cdev,
+> +				      &delay_on, &delay_off, 0);
+> +
+> +		trigger_data->rx =3D icount.rx;
+> +		trigger_data->tx =3D icount.tx;
+> +	}
+
+Since you are polling this, anyway, can you just manipulate brightness
+directly instead of using _oneshot()? _oneshot() will likely invoke
+another set of workqueues.
+
+LED triggers were meant to operate directly from the events, not based
+on statistics like this.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--2JFBq9zoW8cOFH7v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl3+Zy8ACgkQMOfwapXb+vJ0dgCeLqD9SCu9m3syOgPa93HY9ffE
+mUEAoJY9gjrZcyazwvSyPr0hxWpq8WMN
+=ip+U
+-----END PGP SIGNATURE-----
+
+--2JFBq9zoW8cOFH7v--
