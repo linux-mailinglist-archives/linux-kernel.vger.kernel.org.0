@@ -2,149 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6433D128670
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 02:50:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44C512867B
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 02:53:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfLUBuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 20 Dec 2019 20:50:09 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:54201 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727007AbfLUBuE (ORCPT
+        id S1726752AbfLUBxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 20 Dec 2019 20:53:02 -0500
+Received: from linux.microsoft.com ([13.77.154.182]:40984 "EHLO
+        linux.microsoft.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726670AbfLUBxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 20 Dec 2019 20:50:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1576893002;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=G5ujQPtmC0gFSTE7FNk323KNrK3wygZRxxl448+O6gM=;
-        b=I1M8c0p5QiQwBlyDveaSZom555aVYHaEqbh4tIwUAEH1PgOxpKaJyKsz0snavmxGqUVSVK
-        E1vKAdUL36wvIoKGsJn5V7u+MjNoALRvaYErWYpYdJloJ3vViMDW4g09gDbXD+somwCEQK
-        axut8GWHLHQPdVnWwBS2M1GD0sKo1Cg=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-43-fxgVQCz8OQmxdA2OcuOs6g-1; Fri, 20 Dec 2019 20:49:59 -0500
-X-MC-Unique: fxgVQCz8OQmxdA2OcuOs6g-1
-Received: by mail-qv1-f71.google.com with SMTP id ce17so7175795qvb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 20 Dec 2019 17:49:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G5ujQPtmC0gFSTE7FNk323KNrK3wygZRxxl448+O6gM=;
-        b=Lm1f4Bp23plE/BeafEyA1jtS1/7BzBhi+gjQVpOPAbSU/QsCYYOMe5sDSrH3v2/e+l
-         MYU1rKOe0lW5vvl0cA/phjd3wfzmFzy9RQ9kwSLPlbiwT/DY9S8evb+GvH7c7UvkY2Ws
-         a+5+h/+vCrSvFcWrQSrEeBv3+HNtaFlhBMMNMc949ruEisqaeEMSEIF2HZjaEhwXFRVs
-         qtGivDc1oyQ3xZVXNfeHhp25vZi1c8b/G1oU/wZoga3d7jBjg+OjKZCxluhk2Dya84J5
-         fSANlCBXrlReh4+bMY1S2D8knoscfmPHLU/femLyDfAu4iFPxngZ8VyTJUMOuyF7r8xW
-         wmkw==
-X-Gm-Message-State: APjAAAWLs7U54wX5VOElO5kiPlI4RxZTKEvcbAuwZhXwEKwdzE5Q6K1W
-        CMXbXekSfnHCUFQJMaWi51A6usuKyCoJBhQZ/8EJTYm5Cth605MmxH6FfoAL26Kty6GBXUfCpk7
-        O/23sSWQe5aGLjT+4I8F94Es+
-X-Received: by 2002:ad4:580e:: with SMTP id dd14mr15219149qvb.84.1576892999198;
-        Fri, 20 Dec 2019 17:49:59 -0800 (PST)
-X-Google-Smtp-Source: APXvYqxXDZ010Jj63Zw0teFHj3SM5N6tHwnvZPO/bBU+WjmdKSJbRxnWfEniJtAF0WxN2PoG7s2b7w==
-X-Received: by 2002:ad4:580e:: with SMTP id dd14mr15219134qvb.84.1576892998922;
-        Fri, 20 Dec 2019 17:49:58 -0800 (PST)
-Received: from xz-x1.hitronhub.home (CPEf81d0fb19163-CMf81d0fb19160.cpe.net.fido.ca. [72.137.123.47])
-        by smtp.gmail.com with ESMTPSA id e21sm3396932qkm.55.2019.12.20.17.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 17:49:58 -0800 (PST)
-From:   Peter Xu <peterx@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Dr . David Alan Gilbert" <dgilbert@redhat.com>,
-        Christophe de Dinechin <dinechin@redhat.com>,
-        peterx@redhat.com,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: [PATCH RESEND v2 09/17] KVM: Make dirty ring exclusive to dirty bitmap log
-Date:   Fri, 20 Dec 2019 20:49:30 -0500
-Message-Id: <20191221014938.58831-10-peterx@redhat.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191221014938.58831-1-peterx@redhat.com>
-References: <20191221014938.58831-1-peterx@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Dec 2019 20:53:02 -0500
+Received: from nramas-ThinkStation-P520.corp.microsoft.com (unknown [131.107.174.108])
+        by linux.microsoft.com (Postfix) with ESMTPSA id D22042010BB8;
+        Fri, 20 Dec 2019 17:53:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D22042010BB8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+        s=default; t=1576893180;
+        bh=cuOPS1a1SFW5TXYIhfieprlMSuE6xnpflHJl+P5ctaQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ynno/VYSsvUIVj7ESD83j+56qW9ak6JHZ2rNaIdEbggIh/v3r8xS9zarEF6PojO81
+         YNIGLi/P2xYYiVrRFJBGDzp+rbwwCS4w6YUnUD0zPVhYEaJ8f9D8a980o+y2g0z2k4
+         nrh+svRjjI6ZtUXjA2+vhpJew8W/tiKZUQcyhQVw=
+From:   Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
+To:     zohar@linux.ibm.com, James.Bottomley@HansenPartnership.com,
+        linux-integrity@vger.kernel.org
+Cc:     eric.snowberg@oracle.com, dhowells@redhat.com,
+        mathew.j.martineau@linux.intel.com, matthewgarrett@google.com,
+        sashal@kernel.org, jamorris@linux.microsoft.com,
+        linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+Subject: [PATCH] IMA: Defined timer to process queued keys
+Date:   Fri, 20 Dec 2019 17:52:56 -0800
+Message-Id: <20191221015256.2775-1-nramas@linux.microsoft.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no good reason to use both the dirty bitmap logging and the
-new dirty ring buffer to track dirty bits.  We should be able to even
-support both of them at the same time, but it could complicate things
-which could actually help little.  Let's simply make it the rule
-before we enable dirty ring on any arch, that we don't allow these two
-interfaces to be used together.
+keys queued for measurement should still be processed even if
+a custom IMA policy was not loaded. Otherwise, the keys will
+remain queued forever consuming kernel memory.
 
-The big world switch would be KVM_CAP_DIRTY_LOG_RING capability
-enablement.  That's where we'll switch from the default dirty logging
-way to the dirty ring way.  As long as kvm->dirty_ring_size is setup
-correctly, we'll once and for all switch to the dirty ring buffer mode
-for the current virtual machine.
+This patch defines a timer to handle the above scenario. The timer
+is setup to expire 5 minutes after IMA initialization is completed.
 
-Signed-off-by: Peter Xu <peterx@redhat.com>
+If a custom IMA policy is loaded before the timer expires, the timer
+is removed and any queued keys are processed. But if a custom policy
+was not loaded, on timer expiration any queued keys are processed.
+
+On timer expiration the keys are still processed. This will enable
+keys to be measured in case the built-in IMA policy defines a key
+measurement rule.
+
+Signed-off-by: Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
 ---
- Documentation/virt/kvm/api.txt |  7 +++++++
- virt/kvm/kvm_main.c            | 12 ++++++++++++
- 2 files changed, 19 insertions(+)
+ security/integrity/ima/ima.h                 |  2 ++
+ security/integrity/ima/ima_asymmetric_keys.c | 34 ++++++++++++++++++++
+ security/integrity/ima/ima_init.c            |  8 ++++-
+ 3 files changed, 43 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/virt/kvm/api.txt b/Documentation/virt/kvm/api.txt
-index c141b285e673..b507b966f9f1 100644
---- a/Documentation/virt/kvm/api.txt
-+++ b/Documentation/virt/kvm/api.txt
-@@ -5411,3 +5411,10 @@ all the existing dirty gfns are flushed to the dirty rings.
- If one of the ring buffers is full, the guest will exit to userspace
- with the exit reason set to KVM_EXIT_DIRTY_LOG_FULL, and the KVM_RUN
- ioctl will return to userspace with zero.
-+
-+NOTE: the KVM_CAP_DIRTY_LOG_RING capability and the new ioctl
-+KVM_RESET_DIRTY_RINGS are exclusive to the existing KVM_GET_DIRTY_LOG
-+interface.  After enabling KVM_CAP_DIRTY_LOG_RING with an acceptable
-+dirty ring size, the virtual machine will switch to the dirty ring
-+tracking mode, and KVM_GET_DIRTY_LOG, KVM_CLEAR_DIRTY_LOG ioctls will
-+stop working.
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 4050631d05f3..b69d34425f8d 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1204,6 +1204,10 @@ int kvm_get_dirty_log(struct kvm *kvm,
- 	unsigned long n;
- 	unsigned long any = 0;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 97f8a4078483..c483215a9ee5 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -216,8 +216,10 @@ struct ima_key_entry {
+ 	char *keyring_name;
+ };
+ void ima_process_queued_keys(void);
++void ima_init_key_queue(void);
+ #else
+ static inline void ima_process_queued_keys(void) {}
++static inline void ima_init_key_queue(void) {}
+ #endif /* CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE */
  
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
-+
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
-@@ -1261,6 +1265,10 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
+ /* LIM API function definitions */
+diff --git a/security/integrity/ima/ima_asymmetric_keys.c b/security/integrity/ima/ima_asymmetric_keys.c
+index 4124f10ff0c2..92a7dcdf39a0 100644
+--- a/security/integrity/ima/ima_asymmetric_keys.c
++++ b/security/integrity/ima/ima_asymmetric_keys.c
+@@ -11,6 +11,7 @@
  
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
-+
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
-@@ -1332,6 +1340,10 @@ int kvm_clear_dirty_log_protect(struct kvm *kvm,
- 	unsigned long *dirty_bitmap;
- 	unsigned long *dirty_bitmap_buffer;
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
-+	/* Dirty ring tracking is exclusive to dirty log tracking */
-+	if (kvm->dirty_ring_size)
-+		return -EINVAL;
++#include <linux/timer.h>
+ #include <keys/asymmetric-type.h>
+ #include "ima.h"
+ 
+@@ -26,6 +27,34 @@ static bool ima_process_keys;
+ static DEFINE_MUTEX(ima_keys_mutex);
+ static LIST_HEAD(ima_keys);
+ 
++/*
++ * If custom IMA policy is not loaded then keys queued up
++ * for measurement should be freed. This timer is used
++ * for handling this scenario.
++ */
++static long ima_key_queue_timeout = 300000; /* 5 Minutes */
++static struct timer_list ima_key_queue_timer;
 +
- 	as_id = log->slot >> 16;
- 	id = (u16)log->slot;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_USER_MEM_SLOTS)
++/*
++ * This timer callback function processes keys that may still be
++ * queued up in case custom IMA policy was not loaded.
++ */
++static void ima_timer_handler(struct timer_list *timer)
++{
++	ima_process_queued_keys();
++}
++
++/*
++ * This function sets up a timer to process queued keys in case
++ * custom IMA policy was never loaded.
++ */
++void ima_init_key_queue(void)
++{
++	timer_setup(&ima_key_queue_timer, ima_timer_handler, 0);
++	mod_timer(&ima_key_queue_timer,
++		  jiffies + msecs_to_jiffies(ima_key_queue_timeout));
++}
++
+ static void ima_free_key_entry(struct ima_key_entry *entry)
+ {
+ 	if (entry) {
+@@ -120,6 +149,11 @@ void ima_process_queued_keys(void)
+ 	if (!process)
+ 		return;
+ 
++	/*
++	 * Timer is no longer needed since queued keys will be processed now.
++	 */
++	del_timer(&ima_key_queue_timer);
++
+ 	list_for_each_entry_safe(entry, tmp, &ima_keys, list) {
+ 		process_buffer_measurement(entry->payload, entry->payload_len,
+ 					   entry->keyring_name, KEY_CHECK, 0,
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 5d55ade5f3b9..195cb4079b2b 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -131,5 +131,11 @@ int __init ima_init(void)
+ 
+ 	ima_init_policy();
+ 
+-	return ima_fs_init();
++	rc = ima_fs_init();
++	if (rc != 0)
++		return rc;
++
++	ima_init_key_queue();
++
++	return rc;
+ }
 -- 
-2.24.1
+2.17.1
 
