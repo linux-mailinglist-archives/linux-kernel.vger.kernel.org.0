@@ -2,41 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAD0128824
-	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 09:32:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 372E1128837
+	for <lists+linux-kernel@lfdr.de>; Sat, 21 Dec 2019 09:33:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726075AbfLUIcP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 21 Dec 2019 03:32:15 -0500
-Received: from verein.lst.de ([213.95.11.211]:50403 "EHLO verein.lst.de"
+        id S1726179AbfLUIcZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 21 Dec 2019 03:32:25 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:29373 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbfLUIcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 21 Dec 2019 03:32:14 -0500
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 3207968B20; Sat, 21 Dec 2019 09:32:12 +0100 (CET)
-Date:   Sat, 21 Dec 2019 09:32:11 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- generic-ioremap tree
-Message-ID: <20191221083211.GA3465@lst.de>
-References: <20191218133025.15356802@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191218133025.15356802@canb.auug.org.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1725845AbfLUIcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 21 Dec 2019 03:32:25 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47fzPd2RhCz9v1Kt;
+        Sat, 21 Dec 2019 09:32:21 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=X/CC3zVj; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 9CZTJWpIb3oz; Sat, 21 Dec 2019 09:32:21 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47fzPd0n8yz9v1Ks;
+        Sat, 21 Dec 2019 09:32:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1576917141; bh=E9RKebUP1SppGa2SP1hXCPrAmxC2lQWVebR4woXcBx4=;
+        h=From:Subject:To:Cc:Date:From;
+        b=X/CC3zVji3J7DK/g7Rrz/AyTo0Y5CoJMc25c7ql5rHqSRlTGaSqbTh4XA6EWt4SON
+         g8dx7mQjw0IIqrUJTPNqMqOKZEn1YAyfja8qRjAHISFddOuN4hWvU9bO+610hzQw4x
+         lGCJEXigJhDEI6ZgPMcq/MuxAcrBh5X+DBf1P/2c=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 02CFC8B77C;
+        Sat, 21 Dec 2019 09:32:22 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id jxdAh1n2NAhk; Sat, 21 Dec 2019 09:32:21 +0100 (CET)
+Received: from localhost.localdomain (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id ACFFE8B752;
+        Sat, 21 Dec 2019 09:32:21 +0100 (CET)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 4B883637B6; Sat, 21 Dec 2019 08:32:21 +0000 (UTC)
+Message-Id: <cover.1576916812.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v5 00/17] Enable CONFIG_VMAP_STACK on PPC32
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, dja@axtens.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Sat, 21 Dec 2019 08:32:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew,
+The purpose of this serie is to enable CONFIG_VMAP_STACK on PPC32.
 
-do you plan to send this to Linus for 5.5 to fix the warning from the
-new devm_ioremap_uc addition in this cycle?  If so I can rebase the
-ioremap tree one more time.
+rfc v1: initial support on 8xx
+
+rfc v2: added stack overflow detection.
+
+v3:
+- Stack overflow detection works, tested with LKDTM STACK_EXHAUST test
+- Support for book3s32 added
+
+v4:
+- Fixed build failure with CONFIG_KVM (patch 14)
+- Fixed boot failure with pmac32_defconfig+VMAP_STACK+KVM (new patch 15)
+- Fixed crash with altivec and fpu (patch 16)
+
+v5:
+- Reduced ifdefs around tophys/tovirt by using macros (patch 5)
+- Reorganised stack overflow handling, making it independent of the existing one which could go away in another series (patch 7)
+- Added vmapped stacks for interrupts (new patch 8)
+
+Christophe Leroy (17):
+  powerpc/32: replace MTMSRD() by mtmsr
+  powerpc/32: Add EXCEPTION_PROLOG_0 in head_32.h
+  powerpc/32: save DEAR/DAR before calling handle_page_fault
+  powerpc/32: move MSR_PR test into EXCEPTION_PROLOG_0
+  powerpc/32: add a macro to get and/or save DAR and DSISR on stack.
+  powerpc/32: prepare for CONFIG_VMAP_STACK
+  powerpc: align stack to 2 * THREAD_SIZE with VMAP_STACK
+  powerpc/32: Add early stack overflow detection with VMAP stack.
+  powerpc/32: Use vmapped stacks for interrupts
+  powerpc/8xx: Use alternative scratch registers in DTLB miss handler
+  powerpc/8xx: drop exception entries for non-existing exceptions
+  powerpc/8xx: move DataStoreTLBMiss perf handler
+  powerpc/8xx: split breakpoint exception
+  powerpc/8xx: Enable CONFIG_VMAP_STACK
+  powerpc/32s: reorganise DSI handler.
+  powerpc/32s: avoid crossing page boundary while changing SRR0/1.
+  powerpc/32s: Enable CONFIG_VMAP_STACK
+
+ arch/powerpc/include/asm/processor.h   |   6 ++
+ arch/powerpc/include/asm/thread_info.h |  18 ++++
+ arch/powerpc/kernel/asm-offsets.c      |   6 ++
+ arch/powerpc/kernel/entry_32.S         |  29 +++---
+ arch/powerpc/kernel/fpu.S              |   3 +
+ arch/powerpc/kernel/head_32.S          |  61 ++++++-----
+ arch/powerpc/kernel/head_32.h          | 178 +++++++++++++++++++++++++++----
+ arch/powerpc/kernel/head_40x.S         |   2 +
+ arch/powerpc/kernel/head_8xx.S         | 184 +++++++++++++++------------------
+ arch/powerpc/kernel/head_booke.h       |   2 +
+ arch/powerpc/kernel/head_fsl_booke.S   |   1 +
+ arch/powerpc/kernel/irq.c              |  22 ++++
+ arch/powerpc/kernel/setup.h            |   2 +-
+ arch/powerpc/kernel/setup_32.c         |  17 ++-
+ arch/powerpc/kernel/setup_64.c         |   2 +-
+ arch/powerpc/kernel/traps.c            |   9 ++
+ arch/powerpc/kernel/vector.S           |   3 +
+ arch/powerpc/kernel/vmlinux.lds.S      |   2 +-
+ arch/powerpc/mm/book3s32/hash_low.S    |  46 ++++++---
+ arch/powerpc/mm/book3s32/mmu.c         |   9 +-
+ arch/powerpc/perf/8xx-pmu.c            |  12 ++-
+ arch/powerpc/platforms/Kconfig.cputype |   3 +
+ 22 files changed, 435 insertions(+), 182 deletions(-)
+
+-- 
+2.13.3
+
