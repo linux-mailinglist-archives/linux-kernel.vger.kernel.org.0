@@ -2,104 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBD78128F6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 19:51:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE41128FA7
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 20:08:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfLVSu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 13:50:57 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44635 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfLVSuv (ORCPT
+        id S1727399AbfLVTIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 14:08:43 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46077 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726729AbfLVTIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 13:50:51 -0500
-Received: by mail-pl1-f193.google.com with SMTP id az3so6311496plb.11;
-        Sun, 22 Dec 2019 10:50:50 -0800 (PST)
+        Sun, 22 Dec 2019 14:08:42 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b22so6322173pls.12
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Dec 2019 11:08:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=obMvYqnbW6FnclvcaTw1U7yQPLStwyHiLSMoMgJ8DMo=;
-        b=RdmiiwF6babAQFWUpUGLy2DZqAwZAi8V33zgiNx7dj87h8phOlTYHtZOMDCQtXFOit
-         coQqalsXFCLZlPp6YJ4THC2t7m8EEi9PnxcIXgnqBv8YojpdwQ8b1z12w3XbHM6gRe2N
-         9cXHFVzTg5EsYmr3AiWsmm30sn/yrNbhfuYIlptfe1Mjzl/GJ0cPIIf7zQeTlWRApwyt
-         ceX5KsTvJkHVzT/jsg270BpkQa+0B9D2w9kYdnxox243iMIwwKPCl092zGtmcZOreNl2
-         ops0dZYFpd4iyt33sNOKbW/8D9fDi76pS+zAn59mN4DcCTF39VQKSGfc5uBhAnozFnSr
-         F3RA==
+        h=from:to:cc:subject:date:message-id;
+        bh=t2pcE/zB/zRFa+D+0DGOcMCSuy9rY9vAk3qxszJwLvo=;
+        b=eK3u6NGTjCt3W6n8+0kujic7kEYU+S23lpnUv4W0WBuW1drRdllW/DFgThMGZVF8/Z
+         w6PtNPkCPEpyp7kEn/OIqwWI7FlvrHh7pbKWdlUpDP4qMfOB8p8NvSyVkaC9CmlENc5m
+         9HbwVrK+GgovJWWsH7G4QJID9V00e9WIpcGVgNblJx+/tGXFWKpQVfV+xZEzUV8ZN1bk
+         tfUV2NjuIcskaaBE7v8wywg9z2+BUYgsrCq8xfnfsYfZTO9uu1/7KDQsPsQgs21EObjo
+         knHrkV3QDFsg7oToxZ/iVXjdN1R/TNuA4FmrJzpZhkuEWx0De3Lnp8Q1XFcuuWvV9ets
+         dCYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=obMvYqnbW6FnclvcaTw1U7yQPLStwyHiLSMoMgJ8DMo=;
-        b=G8PYNmtuMvR6IFaeFdzhSdc8bErBVwYddSXJNs9sGiXm8DFWCkIpqr3X5pU4S8agP1
-         jBky9OWRuIYr9C+ddhq5IYKTAlM4nARrJaddy1S6Fd0BCha08t92Mg0izesKZrv6KG6h
-         7CQN5HMFQokdrlJBU3DedCDc5XyTGCWmbPGrlhrF9ZfmKQk4xxKqSNWsAxIWcYRt4OYq
-         FlCOiNR7F+0krsWl8PxUujbHcSkHaOcxb9/Cty7IYngZIZWjZgOERoASiNLRa5FNmBgK
-         5kN/7M7EQL2dbN0mPCgWyuAV9q1srnNCOa4jE5/D8e6uVcDHFgggo/NoRG3uRHSwgCR+
-         6TxA==
-X-Gm-Message-State: APjAAAUOrQ+8mwvA+9oANuSbpUlFpmm342QAwKLAVR9gEee0kd3YcPYE
-        EpreUJaFfcvXs59AGN0FyS+dXIeY/no=
-X-Google-Smtp-Source: APXvYqynfZtZtMfgSs1bDem4Zo+v6lSrgRDKxVTy4vingOzHr5+fBrYwncpXVgh6n1vtEUTebtVYcQ==
-X-Received: by 2002:a17:902:6bc9:: with SMTP id m9mr26918356plt.260.1577040650351;
-        Sun, 22 Dec 2019 10:50:50 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=t2pcE/zB/zRFa+D+0DGOcMCSuy9rY9vAk3qxszJwLvo=;
+        b=AIvbyU02EYh6vHfbNunXZYqdMD7+6cO6hFaxWAz6UFJ6pS87jVitp1RY1bIQUvj1Fu
+         5Lu9lEJuitP39cNyEZNMbEpelfCJYlFDFV2UMyfihgKVFRXFHCH6Fvt6Py0GhDjrI435
+         i7OpqC2ENMwZKpis4vehkfrhQkc1jq6oAbtMQamX+1xvkvv8dmGwzLltL+TZ0EICY3zH
+         9xcilFBEEM4zIVRBq0xRPBtzcMpmRFUUghisBtP4OeIyswlReKpWQMdGE+2qqbWPG2IU
+         vxF7YJtk1W8Uzv8mg2GGVBgfU9DQP0mObnadb+PfHxfjIDfJRQGdIHucr3ahuQKsjAH4
+         7YPQ==
+X-Gm-Message-State: APjAAAXzTdse5N1tiuv4AL2ijRACobP4/eItgDQKmQdMrCQDXO6bhmLZ
+        9bCaACdPovVQPPUuyRm7z2g=
+X-Google-Smtp-Source: APXvYqz39Vp0a6zPzR6fPNDFQyU57GdaiKA8kXCxB1r5wua09/6D53xwbX3AciCIHG6yNWbyBak+nw==
+X-Received: by 2002:a17:90a:bb0c:: with SMTP id u12mr13130220pjr.100.1577041722010;
+        Sun, 22 Dec 2019 11:08:42 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id x8sm21284906pfd.76.2019.12.22.10.50.49
+        by smtp.gmail.com with ESMTPSA id p28sm19181262pgb.93.2019.12.22.11.08.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Dec 2019 10:50:49 -0800 (PST)
+        Sun, 22 Dec 2019 11:08:41 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     ssantosh@kernel.org, paul@crapouillou.net, matthias.bgg@gmail.com,
-        rogerq@ti.com, tony@atomide.com, lukasz.luba@arm.com,
-        kgene@kernel.org, krzk@kernel.org, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, allison@lohutok.net, tglx@linutronix.de,
-        yong.wu@mediatek.com, jroedel@suse.de, evgreen@chromium.org,
-        rfontana@redhat.com, digetx@gmail.com, pdeschrijver@nvidia.com,
-        john@phrozen.org, alexios.zavras@intel.com, sboyd@kernel.org,
-        kstewart@linuxfoundation.org, info@metux.net,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
-Date:   Sun, 22 Dec 2019 18:50:34 +0000
-Message-Id: <20191222185034.4665-9-tiny.windzz@gmail.com>
+To:     mst@redhat.com, jasowang@redhat.com
+Cc:     virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] virtio-mmio: convert to devm_platform_ioremap_resource
+Date:   Sun, 22 Dec 2019 19:08:39 +0000
+Message-Id: <20191222190839.4863-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191222185034.4665-1-tiny.windzz@gmail.com>
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
-requesting IRQ's resources, as they can be not ready yet. Using
-platform_get_irq() instead is preferred for getting IRQ even if it
-was not retrieved earlier.
+Use devm_platform_ioremap_resource() to simplify code, which
+contains platform_get_resource, devm_request_mem_region and
+devm_ioremap.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/memory/omap-gpmc.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/virtio/virtio_mmio.c | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-index eff26c1b1394..6dd19d168f75 100644
---- a/drivers/memory/omap-gpmc.c
-+++ b/drivers/memory/omap-gpmc.c
-@@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
- 	if (IS_ERR(gpmc_base))
- 		return PTR_ERR(gpmc_base);
+diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+index e09edb5c5e06..97d5725fd9a2 100644
+--- a/drivers/virtio/virtio_mmio.c
++++ b/drivers/virtio/virtio_mmio.c
+@@ -531,18 +531,9 @@ static void virtio_mmio_release_dev(struct device *_d)
+ static int virtio_mmio_probe(struct platform_device *pdev)
+ {
+ 	struct virtio_mmio_device *vm_dev;
+-	struct resource *mem;
+ 	unsigned long magic;
+ 	int rc;
  
--	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
--	if (!res) {
--		dev_err(&pdev->dev, "Failed to get resource: irq\n");
--		return -ENOENT;
--	}
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem)
+-		return -EINVAL;
 -
--	gpmc->irq = res->start;
-+	gpmc->irq = platform_get_irq(pdev, 0);
-+	if (gpmc->irq < 0)
-+		return gpmc->irq;
+-	if (!devm_request_mem_region(&pdev->dev, mem->start,
+-			resource_size(mem), pdev->name))
+-		return -EBUSY;
+-
+ 	vm_dev = devm_kzalloc(&pdev->dev, sizeof(*vm_dev), GFP_KERNEL);
+ 	if (!vm_dev)
+ 		return -ENOMEM;
+@@ -554,9 +545,9 @@ static int virtio_mmio_probe(struct platform_device *pdev)
+ 	INIT_LIST_HEAD(&vm_dev->virtqueues);
+ 	spin_lock_init(&vm_dev->lock);
  
- 	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
- 	if (IS_ERR(gpmc_l3_clk)) {
+-	vm_dev->base = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
+-	if (vm_dev->base == NULL)
+-		return -EFAULT;
++	vm_dev->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(vm_dev->base))
++		return PTR_ERR(vm_dev->base);
+ 
+ 	/* Check magic value */
+ 	magic = readl(vm_dev->base + VIRTIO_MMIO_MAGIC_VALUE);
 -- 
 2.17.1
 
