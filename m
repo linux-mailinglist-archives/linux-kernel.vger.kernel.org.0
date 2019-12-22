@@ -2,79 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D2B5128EDF
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 17:29:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B573F128EE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 17:32:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLVQ0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 11:26:53 -0500
-Received: from node.akkea.ca ([192.155.83.177]:36884 "EHLO node.akkea.ca"
+        id S1726564AbfLVQcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 11:32:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725903AbfLVQ0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 11:26:52 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 5997E4E2006;
-        Sun, 22 Dec 2019 16:26:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1577032012; bh=lk9n/H5OSRh/eNco0XIFOxKBT6v9JzTnq1Z23DQmHEE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=tAU8nMI+A66/QdQwZA2pwNdrzATWia4EeolinMMU1jAcyZL+fglcCS3oUTOFy+ThO
-         BGUxVDCD4QE3O5/vd3sDUj5mNF02iipVrkvGsT87SqV/G8oNmONgVtvh7ye/sGR8Nu
-         gEt3+0Ji/GvnlH5411c40PApaFQoL3h86FH5ujiM=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id c0Ju1VJTmglr; Sun, 22 Dec 2019 16:26:51 +0000 (UTC)
-Received: from www.akkea.ca (node.akkea.ca [192.155.83.177])
-        by node.akkea.ca (Postfix) with ESMTPSA id C44C94E2003;
-        Sun, 22 Dec 2019 16:26:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1577032011; bh=lk9n/H5OSRh/eNco0XIFOxKBT6v9JzTnq1Z23DQmHEE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References;
-        b=QgPaewRv2sRM8fKVBqjqVQMZPUjRwmFsgBADtmiybFwygb8QbDiI/kUQWSWvB/XZA
-         cIRz2yK0Dvi14pAikoDCg2Ce3M32fPvZ2cij7clvJ2AEbU+sl/EnPVxGiO+PHIiCSV
-         0qhPvkRdE2TJ7NYLfESfcIno9oy1y7X0YnDBUWYc=
+        id S1725919AbfLVQcT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 11:32:19 -0500
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2394420684;
+        Sun, 22 Dec 2019 16:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577032339;
+        bh=5SW2T5Nijt/qrSRhZFyckkiMkH+dLeo4Zi67LBsr0f4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=NJkL977ZRx9WCtyHT3E9czhX/VOPXFAu8NmnyX0V9FI04+SV0DIP0BMFa9o59lzxX
+         0UrJL72ytloM63TWWcx2NkymUCN25IVXBNjS89BhcykFJ8BB6MNh/lGliQSasX4dPD
+         Q7cU5gaMbFRNJgMZ+5hP5MP+85X3MrvB9J8wSlss=
+Date:   Sun, 22 Dec 2019 08:32:18 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: fixes for 5.5-rc3
+Message-ID: <20191222163218.GR7489@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Sun, 22 Dec 2019 08:26:51 -0800
-From:   Angus Ainslie <angus@akkea.ca>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     kernel@puri.sm, Liam Girdwood <lgirdwood@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] ASoC: gtm601: add Broadmobi bm818 sound profile
-In-Reply-To: <20191220130143.GF4790@sirena.org.uk>
-References: <20191219210944.18256-1-angus@akkea.ca>
- <20191219210944.18256-2-angus@akkea.ca>
- <20191220130143.GF4790@sirena.org.uk>
-Message-ID: <499dffad51cb7819bd118ad15048816c@akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-12-20 05:01, Mark Brown wrote:
-> On Thu, Dec 19, 2019 at 01:09:43PM -0800, Angus Ainslie (Purism) wrote:
-> 
->>  static int gtm601_platform_probe(struct platform_device *pdev)
->>  {
->> +	struct snd_soc_dai_driver *dai_driver;
->> +
->> +	dai_driver = of_device_get_match_data(&pdev->dev);
->> +
-> 
-> I was going to apply this but it causes build warnings:
-> 
-> sound/soc/codecs/gtm601.c: In function ‘gtm601_platform_probe’:
-> sound/soc/codecs/gtm601.c:83:13: warning: assignment discards ‘const’
-> qualifier from pointer target type [-Wdiscarded-qualifiers]
->   dai_driver = of_device_get_match_data(&pdev->dev);
->              ^
+Hi Linus,
 
-Sorry, missed that.
+Please pull these bug fixes for 5.5-rc3, which fix a few bugs that could
+lead to corrupt files, fsck complaints, and filesystem crashes.
 
-New version inbound.
+The branch has survived a couple of days of xfstests runs and merges
+cleanly with this morning's master.  Please let me know if anything
+strange happens.
 
-Angus
+--D
+
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.5-fixes-2
+
+for you to fetch changes up to 5084bf6b2006fcd46f1e44e3c51b687507b362e2:
+
+  xfs: Make the symbol 'xfs_rtalloc_log_count' static (2019-12-20 08:07:31 -0800)
+
+----------------------------------------------------------------
+Fixes for 5.5:
+- Minor documentation fixes
+- Fix a file corruption due to read racing with an insert range
+operation.
+- Fix log reservation overflows when allocating large rt extents
+- Fix a buffer log item flags check
+- Don't allow administrators to mount with sunit= options that will
+cause later xfs_repair complaints about the root directory being
+suspicious because the fs geometry appeared inconsistent
+- Fix a non-static helper that should have been static
+
+----------------------------------------------------------------
+Brian Foster (2):
+      xfs: stabilize insert range start boundary to avoid COW writeback race
+      xfs: use bitops interface for buf log item AIL flag check
+
+Chen Wandun (1):
+      xfs: Make the symbol 'xfs_rtalloc_log_count' static
+
+Darrick J. Wong (5):
+      xfs: fix log reservation overflows when allocating large rt extents
+      libxfs: resync with the userspace libxfs
+      xfs: refactor agfl length computation function
+      xfs: split the sunit parameter update into two parts
+      xfs: don't commit sunit/swidth updates to disk if that would cause repair failures
+
+Randy Dunlap (1):
+      xfs: fix Sphinx documentation warning
+
+ Documentation/admin-guide/xfs.rst |   2 +-
+ fs/xfs/libxfs/xfs_alloc.c         |  18 ++--
+ fs/xfs/libxfs/xfs_bmap.c          |   5 +-
+ fs/xfs/libxfs/xfs_dir2.c          |  21 +++++
+ fs/xfs/libxfs/xfs_dir2_priv.h     |  29 ++-----
+ fs/xfs/libxfs/xfs_dir2_sf.c       |   6 +-
+ fs/xfs/libxfs/xfs_ialloc.c        |  64 +++++++++++++++
+ fs/xfs/libxfs/xfs_ialloc.h        |   1 +
+ fs/xfs/libxfs/xfs_trans_resv.c    |  96 +++++++++++++++++-----
+ fs/xfs/xfs_bmap_util.c            |  12 +++
+ fs/xfs/xfs_buf_item.c             |   2 +-
+ fs/xfs/xfs_mount.c                | 168 ++++++++++++++++++++++++++------------
+ fs/xfs/xfs_trace.h                |  21 +++++
+ 13 files changed, 341 insertions(+), 104 deletions(-)
