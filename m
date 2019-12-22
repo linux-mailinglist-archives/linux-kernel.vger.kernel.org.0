@@ -2,53 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CDC3128FAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 20:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 754F8128FB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 20:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfLVTKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 14:10:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60768 "EHLO mail.kernel.org"
+        id S1727423AbfLVTKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 14:10:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbfLVTKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 14:10:03 -0500
-Subject: Re: [GIT PULL] xfs: fixes for 5.5-rc3
+        id S1726557AbfLVTKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 14:10:10 -0500
+Subject: Re: [GIT] Networking
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577041803;
-        bh=CCLPMaCkI2p2cTu6Tk8zuYnLnqVdnOGsLQ4omFiZ/jU=;
+        s=default; t=1577041810;
+        bh=YfWTIYVK56PIbIPGF3Bmjaep887Bz+cN6kG0zc76fUk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=MeOZiH+Z0UnDU5Nl2QbpGYm3YJKUJdUAV32hMzPmdcsMEzzrnLg4p9hGZtR+/BC9/
-         wXEqt1RZMVQ6VTj8ra1H3VFnLtz40olB0+R2gT+ISiIUg5yEhasXg0LrocgyBqfMV6
-         pymPpWZkpJMvJypB/XZ6pDmkpESDIaC1NUKJLgf8=
+        b=y5kJylr3GC6pE9akhHFz5iy681LBzim/zyo7744doxAj2rF7lBU1feBt/fM1G338H
+         UONURQCTi1JLp4mTG3t4wZ9iRm7sAhY3KbhI18ngNHOv2a5C5YRitN7SIPjdns1Kgg
+         3gkWezhBTHuFYMXOPzLfLufh+K09BimqYDAprCUY=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20191222163218.GR7489@magnolia>
-References: <20191222163218.GR7489@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20191222163218.GR7489@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/xfs-5.5-fixes-2
-X-PR-Tracked-Commit-Id: 5084bf6b2006fcd46f1e44e3c51b687507b362e2
+In-Reply-To: <20191221.180914.601367701836089009.davem@davemloft.net>
+References: <20191221.180914.601367701836089009.davem@davemloft.net>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191221.180914.601367701836089009.davem@davemloft.net>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
+ refs/heads/master
+X-PR-Tracked-Commit-Id: 4bfeadfc0712bbc8a6556eef6d47cbae1099dea3
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c60174717544aa8959683d7e19d568309c3a0c65
-Message-Id: <157704180292.1067.15216175845431149488.pr-tracker-bot@kernel.org>
-Date:   Sun, 22 Dec 2019 19:10:02 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
+X-PR-Merge-Commit-Id: 78bac77b521b032f96077c21241cc5d5668482c5
+Message-Id: <157704181018.1067.8027416307442100041.pr-tracker-bot@kernel.org>
+Date:   Sun, 22 Dec 2019 19:10:10 +0000
+To:     David Miller <davem@davemloft.net>
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 22 Dec 2019 08:32:18 -0800:
+The pull request you sent on Sat, 21 Dec 2019 18:09:14 -0800 (PST):
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.5-fixes-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net refs/heads/master
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c60174717544aa8959683d7e19d568309c3a0c65
+https://git.kernel.org/torvalds/c/78bac77b521b032f96077c21241cc5d5668482c5
 
 Thank you!
 
