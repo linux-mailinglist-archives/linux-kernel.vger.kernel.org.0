@@ -2,55 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E88EE128E8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 15:41:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2006F128E8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 15:46:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbfLVOkO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 09:40:14 -0500
-Received: from mail-wm1-f50.google.com ([209.85.128.50]:34364 "EHLO
-        mail-wm1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725840AbfLVOkO (ORCPT
+        id S1726189AbfLVOo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 09:44:26 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52997 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725903AbfLVOoZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 09:40:14 -0500
-Received: by mail-wm1-f50.google.com with SMTP id c127so5340941wme.1
-        for <linux-kernel@vger.kernel.org>; Sun, 22 Dec 2019 06:40:12 -0800 (PST)
+        Sun, 22 Dec 2019 09:44:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p9so13428772wmc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Dec 2019 06:44:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition
          :user-agent;
-        bh=oy2LjJSLec2D59fijFx+c67E3+02VMx6+pY3xXIM7tc=;
-        b=uNSUM4XdIsmMeLStHloN9C3c8woduTojbagMd9+QNQ/25pOnk8qryJXpxA0EDjBPNG
-         iyNmmMDJ4A4TzjQV9xGT1Hv0ASfY9gCplTCnRNNITn3K/HJ0H/9NkafBSlhMGdmhHR5a
-         xxu1jq0RqpJlki/ArX+Hw/0uO1y9xnS1SnZD4t/iTxjRMkPWTM3VuoRoXSd0ndavu+OZ
-         GblyHWcQ0TaKhkgrD+oDm7WZPJm+xU3FL/AaKhEA1cptSsyT0n3rz7mrXg2bHENoMD6U
-         Qd8DvWQqqjgE48ol/CAbq8AdpzYfkerWpDHhnjm2mdw8flCEHQ4wmWGqaJQNKVD/3byM
-         U6Og==
+        bh=xq8XOuNVwP6TXYqxslzoWH+d6Qc1GRFVBZ8VHe5rsUw=;
+        b=VUOp+UuEQxDij0F4nExpHqCRVRsxEQM1tGiJ5uLll7rb7JUqhSHfB6cAGt4kkIE1KD
+         g0KfTvSU+orI2QKcWOfOrWQRbHNBaLs+sh00EAd/uK9+iBXucw3WBQCwuRpgW6lhOYiJ
+         FGBUpfEzeIsLPJyP/Vzby8paLhkIG6tbX90OraTyFPp7Amr5ZfPSWw83ft1EYc4NBwf0
+         ERCMmveQXw8uKAgWOobzWEKPiwwrpUnfur/cip6KjQ3iuVXtfRaTJpJeYNCnujVS+tIp
+         lIAdRKRQKEmETP9rYYEHWozaPU0VnocOfZ3QSwb7gwBpkq/OTgxdihYbdutZCfTqXhqK
+         wNTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=oy2LjJSLec2D59fijFx+c67E3+02VMx6+pY3xXIM7tc=;
-        b=IuIEe6TgntENgR6xIbQE2qq7x1+e5r6ChJvG9MIOFA6+0gCmeezE3KYNTI1UH2C8xI
-         m+CTcsFc7LcmgLpHOnJ6gkJDryomI0PLSovjYGOj8BQRc7AHzQudUy4d1Gaars0/WsvZ
-         OyLDkrvl+8GgrSCs7hTtx9UgZpbfoLL+jvOPy0Zl+wqV5AV0nxjrux+VfBdmJoxJvu/O
-         18Z8jOFHkfecxDkFF6X91cxpTpZLPZg5EEhWUaFurNhn7+CegzilxRkbBSV50yupMib9
-         YuJRaLSqC5BWhnfslijQe9QG+ovLQ+M3IupJrdcFbWeCBPudBxXnsM/ZpNIgm+GsCN4k
-         /8PA==
-X-Gm-Message-State: APjAAAUQdunH/uJrQbgd+nTKCZ3FexqKzsW63FQ7xv0ktewWIErAkcbY
-        4swl89m5+WB2EJJpDgcTzOItK8M=
-X-Google-Smtp-Source: APXvYqzHJnblWg/+gDC0Y093ZJBWaUY+19oLjQsYrB4i/B8e+C2OwMreUCINzmHuq8YU03WDA35R2g==
-X-Received: by 2002:a1c:4857:: with SMTP id v84mr13786325wma.8.1577025612295;
-        Sun, 22 Dec 2019 06:40:12 -0800 (PST)
+        bh=xq8XOuNVwP6TXYqxslzoWH+d6Qc1GRFVBZ8VHe5rsUw=;
+        b=rtRVyKXUfPqe+3pKnIQHJ9FvNDmWpW7toRczyn9lvsLfk94BkgFQhU4x6rVBr1CeY8
+         8FYpa5/G5QgXBPAlipyrs/mUVYiOazzlXdK8jFGWmfN6kVw8wuqkQ2qOQxJPc3YZ1ouk
+         +qlLgN0IweLT28xlZL8my1ri8DyrNCTgog8g9NfVr7FTjGRf8Xxk7wmD+EOsWNLdzpwK
+         svVmZfbK3HtycGhW37QA/M9tzBiFKA7Yp5aO+cX2oIqcK7W4IQx6vkfeufD/0rzTJAKc
+         9DEZOIwMegtNcBgm5V4RixBiVrG+WJ7cUN7IwThgyeRxowGpsh4//nziZ4lgEoBC8xIr
+         9G8w==
+X-Gm-Message-State: APjAAAVQGI9eXZDHGqEV2JPa9PwUzwRpJIdALLD7b3fhHMqAhLweN7/0
+        2A0WmfquRhr5AlCRx+bfew==
+X-Google-Smtp-Source: APXvYqzp5ccBwsIw955eyU8ldfXK+Qkd6Bq3iUk5jt5V1wOiKphQaP8OLlVENJkZP4uiBmaE5b+MnQ==
+X-Received: by 2002:a1c:8095:: with SMTP id b143mr27907928wmd.7.1577025864176;
+        Sun, 22 Dec 2019 06:44:24 -0800 (PST)
 Received: from avx2 ([46.53.254.212])
-        by smtp.gmail.com with ESMTPSA id a16sm16959673wrt.37.2019.12.22.06.40.11
+        by smtp.gmail.com with ESMTPSA id c195sm18653673wmd.45.2019.12.22.06.44.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2019 06:40:11 -0800 (PST)
-Date:   Sun, 22 Dec 2019 17:40:09 +0300
+        Sun, 22 Dec 2019 06:44:23 -0800 (PST)
+Date:   Sun, 22 Dec 2019 17:44:21 +0300
 From:   Alexey Dobriyan <adobriyan@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH -mm 2/3] ELF, coredump: delete duplicated overflow check
-Message-ID: <20191222144009.GB24341@avx2>
+Subject: [PATCH -mm 3/3] ELF, coredump: allow process with empty address
+ space to coredump
+Message-ID: <20191222144421.GC24341@avx2>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
@@ -60,22 +61,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-array_size() macro will do overflow check anyway.
+Unmapping whole address space at once with
+
+	munmap(0, (1ULL<<47) - 4096)
+
+or equivalent will create empty coredump.
+
+It is silly way to exit, however registers content may still be useful.
+
+The right to coredump is fundamental right of a process!
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
 
- fs/binfmt_elf.c |    2 --
- 1 file changed, 2 deletions(-)
+ fs/binfmt_elf.c                                  |   10 +++++-
+ tools/testing/selftests/exec/Makefile            |    1 
+ tools/testing/selftests/exec/coredump-zero-vma.c |   38 +++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 1 deletion(-)
 
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
-@@ -2257,8 +2257,6 @@ static int elf_core_dump(struct coredump_params *cprm)
+@@ -1595,6 +1595,10 @@ static int fill_files_note(struct memelfnote *note)
+ 	if (size >= MAX_FILE_NOTE_SIZE) /* paranoia check */
+ 		return -EINVAL;
+ 	size = round_up(size, PAGE_SIZE);
++	/*
++	 * "size" can be 0 here legitimately.
++	 * Let it ENOMEM and omit NT_FILE section which will be empty anyway.
++	 */
+ 	data = kvmalloc(size, GFP_KERNEL);
+ 	if (ZERO_OR_NULL_PTR(data))
+ 		return -ENOMEM;
+@@ -2257,9 +2261,13 @@ static int elf_core_dump(struct coredump_params *cprm)
  
  	dataoff = offset = roundup(offset, ELF_EXEC_PAGESIZE);
  
--	if (segs - 1 > ULONG_MAX / sizeof(*vma_filesz))
--		goto end_coredump;
++	/*
++	 * Zero vma process will get ZERO_SIZE_PTR here.
++	 * Let coredump continue for register state at least.
++	 */
  	vma_filesz = kvmalloc(array_size(sizeof(*vma_filesz), (segs - 1)),
  			      GFP_KERNEL);
- 	if (ZERO_OR_NULL_PTR(vma_filesz))
+-	if (ZERO_OR_NULL_PTR(vma_filesz))
++	if (!vma_filesz)
+ 		goto end_coredump;
+ 
+ 	for (i = 0, vma = first_vma(current, gate_vma); vma != NULL;
+--- a/tools/testing/selftests/exec/Makefile
++++ b/tools/testing/selftests/exec/Makefile
+@@ -8,6 +8,7 @@ TEST_GEN_FILES := execveat.symlink execveat.denatured script subdir
+ # Makefile is a run-time dependency, since it's accessed by the execveat test
+ TEST_FILES := Makefile
+ 
++TEST_GEN_PROGS += coredump-zero-vma
+ TEST_GEN_PROGS += recursion-depth
+ 
+ EXTRA_CLEAN := $(OUTPUT)/subdir.moved $(OUTPUT)/execveat.moved $(OUTPUT)/xxxxx*
+new file mode 100644
+--- /dev/null
++++ b/tools/testing/selftests/exec/coredump-zero-vma.c
+@@ -0,0 +1,38 @@
++/*
++ * Copyright (c) 2019 Alexey Dobriyan
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++/* Test that unmapping whole address space at once doesn't do anything funny. */
++#include <stddef.h>
++#include <sys/mman.h>
++#include <sys/resource.h>
++
++#ifdef __x86_64__
++static const size_t len = ((size_t)1 << 47) - 4096;
++#endif
++
++#ifdef __x86_64__
++int main(void)
++{
++	setrlimit(RLIMIT_CORE, &(struct rlimit){RLIM_INFINITY, RLIM_INFINITY});
++	munmap(NULL, len);
++	/* And... it's gone! */
++	return 1;
++}
++#else
++int main(void)
++{
++	return 4;
++}
++#endif
