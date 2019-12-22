@@ -2,62 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A54F6128F44
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 19:17:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE7D128F49
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 19:25:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfLVSRV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 13:17:21 -0500
-Received: from muru.com ([72.249.23.125]:49338 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725919AbfLVSRU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 13:17:20 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 70D64818C;
-        Sun, 22 Dec 2019 18:18:00 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-omap@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
-        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
-Subject: [PATCH 3/3] phy: cpcap-usb: Drop extra write to usb2 register
-Date:   Sun, 22 Dec 2019 10:17:04 -0800
-Message-Id: <20191222181704.61511-3-tony@atomide.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191222181704.61511-1-tony@atomide.com>
-References: <20191222181704.61511-1-tony@atomide.com>
+        id S1726190AbfLVSZZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 13:25:25 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:53864 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725919AbfLVSZY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 13:25:24 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id DA9461C2453; Sun, 22 Dec 2019 19:25:22 +0100 (CET)
+Date:   Sun, 22 Dec 2019 19:25:07 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v17 07/19] dt: bindings: lp55xx: Be consistent in the
+ document with LED acronym
+Message-ID: <20191222182506.GA23369@amd>
+References: <20191114133023.32185-1-dmurphy@ti.com>
+ <20191114133023.32185-8-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Content-Disposition: inline
+In-Reply-To: <20191114133023.32185-8-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We are currently writing the same register twice. Let's enable the USB
-PHY only at the end of the function.
 
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Pavel Machek <pavel@ucw.cz>
-Cc: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/phy/motorola/phy-cpcap-usb.c | 6 ------
- 1 file changed, 6 deletions(-)
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
---- a/drivers/phy/motorola/phy-cpcap-usb.c
-+++ b/drivers/phy/motorola/phy-cpcap-usb.c
-@@ -489,12 +489,6 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
- 	if (error)
- 		goto out_err;
- 
--	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC2,
--				   CPCAP_BIT_USBXCVREN,
--				   CPCAP_BIT_USBXCVREN);
--	if (error)
--		goto out_err;
--
- 	error = regmap_update_bits(ddata->reg, CPCAP_REG_USBC3,
- 				   CPCAP_BIT_PU_SPI |
- 				   CPCAP_BIT_DMPD_SPI |
--- 
-2.24.1
+On Thu 2019-11-14 07:30:11, Dan Murphy wrote:
+> Update the document to be consistent in case when using "LED".
+> This acronym should be capital throughout the document.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl3/tQIACgkQMOfwapXb+vIo9QCffkV/3nC12Fab1GyZDw9iNU35
+RxgAoJxmZAYBYlo3sw3rNbwxYJa5rZ3h
+=fxUC
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
