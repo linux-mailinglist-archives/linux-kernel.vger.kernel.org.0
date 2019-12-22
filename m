@@ -2,212 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA68128E1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 14:25:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5840F128E45
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 15:01:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLVNZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 08:25:05 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:35851 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726539AbfLVNZE (ORCPT
+        id S1726114AbfLVOA7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 09:00:59 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55744 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbfLVOA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 08:25:04 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a6so5376346plm.3;
-        Sun, 22 Dec 2019 05:25:04 -0800 (PST)
+        Sun, 22 Dec 2019 09:00:59 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q9so13359366wmj.5;
+        Sun, 22 Dec 2019 06:00:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yAOtMUwD/qpfStPtispf3vk9JaKfKQUNKLcLxT26P+w=;
-        b=TX7pOrAwGAXN6pE7nq78PMMvdr4vJzLvqz44HqMKGqbQsNjK5i6RvG5WMB/hR6KGf6
-         4NPr2Qfy5CiPUykEyODKg8lqNrjqq0WnUFUfdnUyt6E5NnM8dPN+ydbjQJFH73UVuK16
-         XaupZPv3e96ASYNJlvURztvPFk85Ks1X68k+Fa+J7QyQIaAwqxYR/VRBesLb8DWm6dhg
-         5JaD48vFawlXW9c/3fe837M17MBHZR1+09CVwQA+qgVrNPv5QmJQ0dTv2uLH8ZNzbSgw
-         rF2icc//h7Vcn1FCO2KphtRVvZYL994ltq/Ldk9k7vltBl6/sPW6bumwtcgKXmI1/ZcK
-         x1Zw==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=1DmSP52cJIOHJ0h9ZkPnnmG+iqTAhNBwbA4QxDziCHM=;
+        b=D4a6V89xdTZ3PjBJ1BzmGo7o7y+X7HFI8LhIiF1iLPimGW2hd7QHH2PP4fK4RpincY
+         1BYXtBghhMCgmqdHVo4P7745nmGtYKAJjBn7E+bYtOCrfrR/hBK+M0hynaD9Cn4sLYy8
+         X9HYCa6mGf50dhI8C5Hp62yzterY0MKX78yCjMfFgVcciPEHjDHKqp+tIVrOYPWOUMT0
+         qx59jOXGmwO4yotPGkK6RLTK2Wkk7GQL2LWFCAf/WRec/MdjkOBmIKpt3sshkZN2ww/+
+         2m6rcB1f2KLmMhjvjt2OCcLXcDcViPGAwnfDyRvMouCbvB1FHMVWIexnsgz3YlaKNGgo
+         7dpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yAOtMUwD/qpfStPtispf3vk9JaKfKQUNKLcLxT26P+w=;
-        b=USBmtuLNzMuNCaYPVSu3roXvWe78C+Oz7OZCpMLUIyvBI2bnazBM13Kn/iz+0O+A5h
-         nmDZgTAaTubszY+3JIixzfF/HYmguEQFRbEf8/ZRsk4jiAEXP3opCtf+Hq16PhhVwrF+
-         9hoDM7OVBoDjAIkANmYmlzVA9RYjPAxgU0eqjaS5HD6tCxsHqwkg6dix0ZMQbgB/CbSs
-         VtXk2H2qMpapeOdBjsbT1rGqUpJNO1XpkbpnvKYstXRvBTufWJ5qn6s35K8ryOCznXZ1
-         ysH24bfPI/NEYuT441bnJfFwQENDT/gJcCp9J3QzCa3jAye2CDwpmlsUHxwdIHLjlpjG
-         wv/w==
-X-Gm-Message-State: APjAAAVfbjRGD7wYHfF5FKko/gdwthfRfS7OLxBTdzIviiLNL0fA2Qt3
-        rNPOK00lpoUhHNJ70EbSw8U=
-X-Google-Smtp-Source: APXvYqz7JAli1bhkUSt9KMgUJ/tuA/JNFlY9P88wOQBoqkeETc3LPCu0h3YXwDXQ7y2NnbxuZ+4qMg==
-X-Received: by 2002:a17:902:8207:: with SMTP id x7mr1160978pln.286.1577021103598;
-        Sun, 22 Dec 2019 05:25:03 -0800 (PST)
-Received: from localhost (64.64.229.47.16clouds.com. [64.64.229.47])
-        by smtp.gmail.com with ESMTPSA id b4sm20816190pfd.18.2019.12.22.05.25.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 22 Dec 2019 05:25:03 -0800 (PST)
-Date:   Sun, 22 Dec 2019 21:24:59 +0800
-From:   Dejin Zheng <zhengdejin5@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Peter Chen <Peter.Chen@nxp.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Felipe Balbi <balbi@kernel.org>, devicetree@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] usb: phy: tegra: Use u32 for hardware register
- variables
-Message-ID: <20191222132227.GA7096@nuc8i5>
-References: <20191220015238.9228-1-digetx@gmail.com>
- <20191220015238.9228-9-digetx@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220015238.9228-9-digetx@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=1DmSP52cJIOHJ0h9ZkPnnmG+iqTAhNBwbA4QxDziCHM=;
+        b=M57c3mMYVDyz7ecUCLtqBvicfeDIWa0CeQXf/R6G+mVPfqxhAsHHlbmei9rngJBVEz
+         /J+LB5yNPbvT/5hl2tPD4Bi6vfmNCBLqi0c3Culidjin5NMawXpYHsGpQ++KToia1u/w
+         5Uk0cVmod4Mfh5KZXKJAikLRJUEnRdWD0JvGmxOz6j8cNwd6ylljfA2It9KKcl06GXRD
+         5Ov3InJ9Gpy2+5B11TNjEk8CymUn7KuVRWBvrG7GyAtmCczIvs4BWDU7EY1NSNIHRioj
+         BsQ701ADcLH6eYgji1HV/lMTBSbX6WBP5grxU37hrlMNcahjyJrx/c/IjjuDFzNId84C
+         3B9A==
+X-Gm-Message-State: APjAAAXE81KZwaYZWmOWIIBOV+Ec8bKa5mZl2wmKCDyIFv6eXmUFuC0K
+        b3CZdNm6NZXrKTBK8RYxOf1AO31Q
+X-Google-Smtp-Source: APXvYqwS72OxVT8F/n8koxi0XBK5hlqCcJhjcoSE1Q83P4krnNX424dw9IKtMF/4gkIwvmYJev+WqA==
+X-Received: by 2002:a1c:f210:: with SMTP id s16mr3439943wmc.57.1577023256646;
+        Sun, 22 Dec 2019 06:00:56 -0800 (PST)
+Received: from 640k.localdomain ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id i10sm17106075wru.16.2019.12.22.06.00.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Dec 2019 06:00:55 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: [GIT PULL] KVM patches for 5.5-rc3
+Date:   Sun, 22 Dec 2019 15:00:54 +0100
+Message-Id: <1577023254-13034-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 04:52:36AM +0300, Dmitry Osipenko wrote:
-> There is a mix of u32/ULONG usage in the driver's code. Let's switch to
-> u32 uniformly, for consistency.
-> 
-> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-> index d5739b6e0b6c..551c94e3877a 100644
-> --- a/drivers/usb/phy/phy-tegra-usb.c
-> +++ b/drivers/usb/phy/phy-tegra-usb.c
-> @@ -202,7 +202,7 @@ static inline struct tegra_usb_phy *to_tegra_usb_phy(struct usb_phy *u_phy)
->  static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	if (phy->soc_config->has_hostpc) {
->  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> @@ -221,7 +221,7 @@ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
->  static void set_phcd(struct tegra_usb_phy *phy, bool enable)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	if (phy->soc_config->has_hostpc) {
->  		val = readl_relaxed(base + TEGRA_USB_HOSTPC1_DEVLC);
-> @@ -320,7 +320,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->  {
->  	struct tegra_utmip_config *config = phy->config;
->  	void __iomem *base = phy->pad_regs;
-> -	unsigned long val, flags;
-> +	unsigned long flags;
-> +	u32 val;
-Why are you still using unsigned long here?
+Linus,
 
->  	int err;
->  
->  	err = clk_prepare_enable(phy->pad_clk);
-> @@ -355,7 +356,8 @@ static int utmip_pad_power_on(struct tegra_usb_phy *phy)
->  static int utmip_pad_power_off(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->pad_regs;
-> -	unsigned long val, flags;
-> +	unsigned long flags;
-> +	u32 val;
-ditto
+The following changes since commit 7d73710d9ca2564f29d291d0b3badc09efdf25e9:
 
->  	int err;
->  
->  	if (!utmip_pad_count) {
-> @@ -393,7 +395,7 @@ static int utmi_wait_register(void __iomem *reg, u32 mask, u32 result)
->  static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	/*
->  	 * The USB driver may have already initiated the phy clock
-> @@ -425,7 +427,7 @@ static void utmi_phy_clk_disable(struct tegra_usb_phy *phy)
->  static void utmi_phy_clk_enable(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	/*
->  	 * The USB driver may have already initiated the phy clock
-> @@ -460,7 +462,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
->  {
->  	struct tegra_utmip_config *config = phy->config;
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  	int err;
->  
->  	val = readl_relaxed(base + USB_SUSP_CTRL);
-> @@ -611,7 +613,7 @@ static int utmi_phy_power_on(struct tegra_usb_phy *phy)
->  static int utmi_phy_power_off(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	utmi_phy_clk_disable(phy);
->  
-> @@ -646,7 +648,7 @@ static int utmi_phy_power_off(struct tegra_usb_phy *phy)
->  static void utmi_phy_preresume(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_TX_CFG0);
->  	val |= UTMIP_HS_DISCON_DISABLE;
-> @@ -656,7 +658,7 @@ static void utmi_phy_preresume(struct tegra_usb_phy *phy)
->  static void utmi_phy_postresume(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_TX_CFG0);
->  	val &= ~UTMIP_HS_DISCON_DISABLE;
-> @@ -667,7 +669,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
->  				   enum tegra_usb_phy_port_speed port_speed)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_MISC_CFG0);
->  	val &= ~UTMIP_DPDM_OBSERVE_SEL(~0);
-> @@ -687,7 +689,7 @@ static void utmi_phy_restore_start(struct tegra_usb_phy *phy,
->  static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  
->  	val = readl_relaxed(base + UTMIP_MISC_CFG0);
->  	val &= ~UTMIP_DPDM_OBSERVE;
-> @@ -698,7 +700,7 @@ static void utmi_phy_restore_end(struct tegra_usb_phy *phy)
->  static int ulpi_phy_power_on(struct tegra_usb_phy *phy)
->  {
->  	void __iomem *base = phy->regs;
-> -	unsigned long val;
-> +	u32 val;
->  	int err;
->  
->  	err = gpio_direction_output(phy->reset_gpio, 0);
-> -- 
-> 2.24.0
-> 
+  kvm: vmx: Stop wasting a page for guest_msrs (2019-12-04 12:23:27 +0100)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to d68321dec1b2234fb32f423e32c3af5915eae36c:
+
+  Merge tag 'kvm-ppc-fixes-5.5-1' of git://git.kernel.org/pub/scm/linux/kernel/git/paulus/powerpc into kvm-master (2019-12-22 13:18:15 +0100)
+
+----------------------------------------------------------------
+
+PPC:
+* Fix a bug where we try to do an ultracall on a system without an ultravisor.
+
+KVM:
+- Fix uninitialised sysreg accessor
+- Fix handling of demand-paged device mappings
+- Stop spamming the console on IMPDEF sysregs
+- Relax mappings of writable memslots
+- Assorted cleanups
+
+MIPS:
+- Now orphan, James Hogan is stepping down
+
+x86:
+- MAINTAINERS change, so long Radim and thanks for all the fish
+- supported CPUID fixes for AMD machines without SPEC_CTRL
+
+----------------------------------------------------------------
+James Hogan (1):
+      MAINTAINERS: Orphan KVM for MIPS
+
+Jia He (1):
+      KVM: arm/arm64: Remove excessive permission check in kvm_arch_prepare_memory_region
+
+Jim Mattson (2):
+      kvm: x86: Host feature SSBD doesn't imply guest feature SPEC_CTRL_SSBD
+      kvm: x86: Host feature SSBD doesn't imply guest feature AMD_SSBD
+
+Marc Zyngier (1):
+      KVM: arm/arm64: Properly handle faulting of device mappings
+
+Mark Rutland (2):
+      KVM: arm64: Sanely ratelimit sysreg messages
+      KVM: arm64: Don't log IMP DEF sysreg traps
+
+Miaohe Lin (3):
+      KVM: arm/arm64: Get rid of unused arg in cpu_init_hyp_mode()
+      KVM: arm/arm64: vgic: Fix potential double free dist->spis in __kvm_vgic_destroy()
+      KVM: arm/arm64: vgic: Use wrapper function to lock/unlock all vcpus in kvm_vgic_create()
+
+Paolo Bonzini (3):
+      Merge tag 'kvmarm-fixes-5.5-1' of git://git.kernel.org/.../kvmarm/kvmarm into kvm-master
+      MAINTAINERS: remove Radim from KVM maintainers
+      Merge tag 'kvm-ppc-fixes-5.5-1' of git://git.kernel.org/.../paulus/powerpc into kvm-master
+
+Paul Mackerras (1):
+      KVM: PPC: Book3S HV: Don't do ultravisor calls on systems without ultravisor
+
+Will Deacon (1):
+      KVM: arm64: Ensure 'params' is initialised when looking up sys register
+
+ MAINTAINERS                   |  6 ++----
+ arch/arm64/kvm/sys_regs.c     | 25 ++++++++++++++++++-------
+ arch/arm64/kvm/sys_regs.h     | 17 +++++++++++++++--
+ arch/powerpc/kvm/book3s_hv.c  |  3 ++-
+ arch/x86/kvm/cpuid.c          |  6 ++++--
+ virt/kvm/arm/arm.c            |  4 ++--
+ virt/kvm/arm/mmu.c            | 30 +++++++++++++++++-------------
+ virt/kvm/arm/vgic/vgic-init.c | 20 +++++---------------
+ 8 files changed, 65 insertions(+), 46 deletions(-)
