@@ -2,109 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8D81128E0C
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 14:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D5D8128E1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 14:29:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfLVNOE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 08:14:04 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37677 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725839AbfLVNOE (ORCPT
+        id S1726114AbfLVN31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 08:29:27 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44712 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfLVN31 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 08:14:04 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7DDBD21EAF;
-        Sun, 22 Dec 2019 08:14:02 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Sun, 22 Dec 2019 08:14:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=6JRtu6/FSoZskdTK01GZ0CTmiB4
-        OHc18FEE2M7YfZ44=; b=c/4QJdYH6JMfXxH0NVyif7qaUzgr2V8inPWeAOBwFV2
-        A4klfeUDeSPZ9Oy+D9Va0C13hveYbiv21kXKt6mJ1H5uKtYSs0yoCYM8itRnWLfp
-        i+HjH7Aji0Co5IuBNoYpmUp9/Hu++9zIc0HMUOZR4fLrEaOriLMYG5R40nyvyclN
-        rUfB6aVZ0Mjob1WS48KvQOWW7cFSXPjmWrlXHQzvf7utUYG0rbDufqYfHOs7LOvc
-        mfz0ry9ujrvsGTzv5ISkVam4PmjwGl7Wyq8mGfHU8nELVLsg8/F78eEHz0PKT3+d
-        vo0ZJpSpziy7qsnzugZfDIpJyVNb1y0rMYOTN3bjibA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=6JRtu6
-        /FSoZskdTK01GZ0CTmiB4OHc18FEE2M7YfZ44=; b=PNu7Iyo/NjcmZ8rHntTCx4
-        KgfzWGPy2rSjuwOhWsLCSFLkNjVMkeUrYQ84Cy/sOtxueIGyIQ1Aqq06QdPFDqfq
-        YaMZxiH3HzbZceY/kCe60pfq6tCGdg3BMLYRT/ErMA1wUemz6n/ssJga/yV/Lxce
-        lzgUSlwt0VkOYk7FKhznITzp+eU+fyEyst8fKCehOVFZlopbbo9OJ9SOGKqbD+FS
-        TN2i8STNbdMinA2Wgx+ghpAB2XsMQA5X4kd+a+AQwET4XiYzJRq2vJZAJUo8MxbP
-        lN0672Pyn2a+aKSnRJPr3SD4q3kScff3eLCvalvWDTro2M0lfFRw7g7Ml9H89+TQ
-        ==
-X-ME-Sender: <xms:GGz_XeL4pKMK6jPnylhuRRydSGJxd_t4_KYkhEeqDXxEI5jGSVAwwg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddukedggeeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggv
-    rhhnohdrthgvtghhnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:GGz_XRVCMCEGNFTmGX-CiZTX6yn5gGfKAO0AoH6xPZRPjOjFJ3lOfg>
-    <xmx:GGz_XSh_f9oQ1wQodakDO4MOrEkwrpTHLAOWFUz5xIdAL63VwzEoZA>
-    <xmx:GGz_XdsZFFzttiHHm4BuQkdOGG6ThE5UnsaWIzs_tQzYLEyokINtEg>
-    <xmx:Gmz_XQQghZIAac85hGTAqKg-Clet6Yw8SBfI0ECEFXvGMh3D8EM4CA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2B3548005A;
-        Sun, 22 Dec 2019 08:14:00 -0500 (EST)
-Date:   Sun, 22 Dec 2019 14:13:57 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     dri-devel@lists.freedesktop.org, thierry.reding@gmail.com,
-        sam@ravnborg.org, robh+dt@kernel.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        christoph.muellner@theobroma-systems.com,
-        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-Subject: Re: [PATCH v3 2/3] dt-bindings: display: panel: Add binding document
- for Leadtek LTK500HD1829
-Message-ID: <20191222131357.e6qropl3tjweh6sv@gilmour.lan>
-References: <20191222000634.11284-1-heiko@sntech.de>
- <20191222000634.11284-2-heiko@sntech.de>
+        Sun, 22 Dec 2019 08:29:27 -0500
+Received: by mail-pl1-f196.google.com with SMTP id az3so6101398plb.11
+        for <linux-kernel@vger.kernel.org>; Sun, 22 Dec 2019 05:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LWZqcIgXzVjxh5QO9iqiielSvIWzDSYtzjB+sutWZrE=;
+        b=XcW78meMsHm0SpaX4VrEA6E4dieJGP37g5HDR1y6DPqGx8T31EVyv2759+sjQgyXBo
+         zKe5IZITHQmhWhUS1fJYiGKuBbLHTC+aTNrSnhGFPDyUBXtW44LDMvlK/r/+FOQE8M+R
+         XUFHsmUeMKxQlxxdHNGeBujV8sNd+fgHDD5No=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LWZqcIgXzVjxh5QO9iqiielSvIWzDSYtzjB+sutWZrE=;
+        b=b/ZPsZcySgyX1AiidhpAvvq+9eCoyriVOX8Gm5sxOiGyJgwCt3UvF3OzmscxmJnNAP
+         k5eUEHhcIktw+YABCj5ltep8ib7q8UQtxzSG53niJ9yOEZEJbBsHMclMy3AP21fEEWFL
+         OyNRItPCWkzdHDwf3rDkGWhY95kjvXsxNZ7HyZQ7qvLgWVLkCXCcM8Hl3zYqf6s8QKnn
+         Adqfnot/MJxg8ORHVHmxLV9R1g8sFKmXMPvQZXCgWMBwKz3thcPWDSQso8WSjU0AVuf0
+         5FI/R9AgTf74QPkM1BnDD8eSubPTUq+i+kpEhA8gb8SlfdblXqLHAUbcZPHAu1dlI5YW
+         YOTg==
+X-Gm-Message-State: APjAAAUwsenNq8PLKhIeYYGq7FOGwmhQC52uKjJted2pBJG2bKYXpvVt
+        vEybnfWWtVcqWZX5d3xWW/fbsg==
+X-Google-Smtp-Source: APXvYqzcNJuWc8MTuhe7A8pH5TeATr3P+P2XEUlqmG+YPokbTDnm72De/WEtbLWj75YMaAAOnnqb+A==
+X-Received: by 2002:a17:902:ac97:: with SMTP id h23mr26261351plr.237.1577021365959;
+        Sun, 22 Dec 2019 05:29:25 -0800 (PST)
+Received: from localhost.localdomain ([49.206.202.16])
+        by smtp.gmail.com with ESMTPSA id o2sm12073058pjo.26.2019.12.22.05.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Dec 2019 05:29:25 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     michael@amarulasolutions.com, Icenowy Zheng <icenowy@aosc.io>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v14 0/7] drm/sun4i: Allwinner A64 MIPI-DSI support
+Date:   Sun, 22 Dec 2019 18:52:22 +0530
+Message-Id: <20191222132229.30276-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sc7sshwacka3qoyv"
-Content-Disposition: inline
-In-Reply-To: <20191222000634.11284-2-heiko@sntech.de>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is v14 version for Allwinner A64 MIPI-DSI support
+and here is the previous version set[1]
 
---sc7sshwacka3qoyv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Changes for v14:
+- drop explicit regmap_exit, clk_put
+Changes for v13:
+- update dt-bindings for A64
+- drop has_mod_clk variant
+- use regmap bus clock properly
+Changes for v12:
+- use enum insted of oneOf+const
+- handle bus clock using regmap attach clk
+- tested on A64, A33 boards.
+Changes for v11:
+- fix dt-bindings for dphy
+- fix dt-bindings for dsi controller
+- add bus clock handling code
+- tested on A64, A33 boards.
+Changes for v10:
+- updated dt-bindings as per .yaml format
+- rebased on drm-misc/for-linux-next
+Changes for v9:
+- moved dsi fixes in separate series on top of A33
+- rebase on linux-next
+Changes for v8:
+- rebased on drm-misc change along with linux-next
+- reworked video start delay patch
+- tested on 4 different dsi panels
+- reworked commit messages
+Changes for v7:
+- moved vcc-dsi binding to required filed.
+- drop quotes on fallback dphy bindings.
+- drop min_rate clock pll-mipi patches.
+- introduce dclk divider computation as like A64 BSP.
+- add A64 DSI quark patches.
+- fixed A64 DSI pipeline.
+- add proper commit messages.
+- collect Merlijn Wajer Tested-by credits.
+Changes for v6:
+- dropped unneeded changes, patches
+- fixed all burst mode patches as per previous version comments
+- rebase on master
+- update proper commit message
+- dropped unneeded comments
+- order the patches that make review easy
+Changes for v5:
+- collect Rob, Acked-by
+- droped "Fix VBP size calculation" patch
+- updated vblk timing calculation.
+- droped techstar, bananapi dsi panel drivers which may require
+  bridge or other setup. it's under discussion.
+Changes for v4:
+- droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+  nkm min, max rate patches
+- create two patches for "Add Allwinner A64 MIPI DSI support"
+  one for has_mod_clk quirk and other one for A64 support
+- use existing driver code construct for hblk computation
+- dropped "Increase hfp packet overhead" patch [2], though BSP added
+  this but we have no issues as of now.
+  (no issues on panel side w/o this change)
+- create separate function for vblk computation 
+- enable vcc-dsi regulator in dsi_runtime_resume
+- collect Rob, Acked-by
+- update MAINTAINERS file for panel drivers
+- cleanup commit messages
+- fixed checkpatch warnings/errors
 
-On Sun, Dec 22, 2019 at 01:06:33AM +0100, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
->
-> The LTK500HD1829 is a 5.0" 720x1280 DSI display.
->
-> changes in v2:
-> - fix id (Maxime)
-> - drop port (Maxime)
->
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+[1] https://patchwork.freedesktop.org/series/71131/
 
-Acked-by: Maxime Ripard <mripard@kernel.org>
+Any inputs?
+Jagan.
 
-Thanks!
-Maxime
+Jagan Teki (7):
+  dt-bindings: sun6i-dsi: Document A64 MIPI-DSI controller
+  dt-bindings: sun6i-dsi: Add A64 DPHY compatible (w/ A31 fallback)
+  drm/sun4i: dsi: Get the mod clock for A31
+  drm/sun4i: dsi: Handle bus clock via regmap_mmio_attach_clk
+  drm/sun4i: dsi: Add Allwinner A64 MIPI DSI support
+  arm64: dts: allwinner: a64: Add MIPI DSI pipeline
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Enable Bananapi S070WV20-CT16 DSI
+    panel
 
---sc7sshwacka3qoyv
-Content-Type: application/pgp-signature; name="signature.asc"
+ .../display/allwinner,sun6i-a31-mipi-dsi.yaml | 33 ++++++++++++-
+ .../phy/allwinner,sun6i-a31-mipi-dphy.yaml    |  6 ++-
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 31 ++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 37 +++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 47 ++++++++++++++-----
+ 5 files changed, 140 insertions(+), 14 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.18.0.321.gffc6fa0e3
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXf9sFQAKCRDj7w1vZxhR
-xeVeAQCeTGqtBrvGfyWczqcpwD5okqbAPsi3jEh+8+Skuvmc/gEA7Andamgcj7F/
-sswb8NI1BlqVqBoIVjiYQLE2K8kb8wE=
-=zYW4
------END PGP SIGNATURE-----
-
---sc7sshwacka3qoyv--
