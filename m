@@ -2,101 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E18128D12
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 06:48:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F14AE128D1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 07:15:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfLVFrc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 00:47:32 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44996 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfLVFrc (ORCPT
+        id S1726010AbfLVGPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 01:15:36 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33086 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725899AbfLVGPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 00:47:32 -0500
-Received: by mail-pg1-f195.google.com with SMTP id x7so7099393pgl.11;
-        Sat, 21 Dec 2019 21:47:32 -0800 (PST)
+        Sun, 22 Dec 2019 01:15:35 -0500
+Received: by mail-lj1-f195.google.com with SMTP id y6so6478683lji.0
+        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 22:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=XjcArXgAKvyfXDBzvMFPB+lHDAxL1AfHT3DO6M8M8pE=;
-        b=QbGggnc4rIBvP1w2ApBWds25yNBz7SrOcuLl9VlQJCYjcADux3y+UglVZooSW4SdPa
-         aASLnMYWp9ViF6BO87ILXkqQ31ecI/dJ95aVsHGvEf4an7NFGG9VRRWXv0GlSWwXiOhe
-         SEeX6HvJncwtqsBCqvOYraM0XN9E025eXKDhV8/HP/yceXDtqY/XfKq96TJsCB7wbQ9d
-         3bzPdDFtPFSX5gh70p2FbaXB1nYNmUvODQkfOB6Z5yltAub3uX+1v4SlAssElHprNXV+
-         JSJ6elEQfi+pGIitKDnzijKqhSpQRTpGbLIcWcwB+FnKXRmNQHosDOEAxyQ6CR3uP7/A
-         7aXQ==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=URqv4QH1eOVvFgVzxMClXMgPNcEU0cB4oi4i2f7iShQ=;
+        b=e7+YcSPgirSkOEX41WXgbZWPYn16rAer+z/yrAQnXDPvvMnRIaflizNJC0b73OO7W6
+         Vo3XN4Ir0eS+Ow50ObLxBXk84Ybb8NpGb4ZZbrvtwz+ZJwqjNeJf7rLX6+1rAnTxmj2i
+         LcDku5rxYE0AaZ/VBIQWq1vK6pWRKEfwXSSu8DpelCDVAx0yRFNSawmXXAQhHE771IZa
+         UzrgT0tGq1QCOJYKvIeqRL/G3SLtKoLjWZ+LOsO6RirdTDqA7QfRt+hMW+E5CePJ3x3s
+         yNV2KbseUTnzGI4QLfHThRfqhXh/knLiqIWG/+oF7DTzQ+Ch7KpGypy81uby25rsaev7
+         +hEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=XjcArXgAKvyfXDBzvMFPB+lHDAxL1AfHT3DO6M8M8pE=;
-        b=IyxwoT9i00bVRfWcdNIlSZbr7HwA9l8iV74/6bxObFOkfZegRZ+TB8VyMWAQFNSrEt
-         gmwCnfWmYTnC5iA6+OSgmlQm9+F5ZR8c7/k4MHjOxx4MV+60tRaXskfC1wYSf50zH7mI
-         Dg4Ua3ARt9VIzqr3Ry1j5SSUzrF3jBDAyN+3m9kdsw5xIO2zwpzk6SrYxbqK4i1aOecm
-         FCoJDMkruyUapWbLj6ZVsvpm32aSdnJTbF783ZdNyKk7rqpMAOTT9pbb4EhGdsdHFCgA
-         8Rh24sV7a7eK3Sep/TxgqQC3MZiF4nmDti4TmrclaIkZ9A5TOMbK5mfibjChowl8HJ87
-         vKCQ==
-X-Gm-Message-State: APjAAAVhI2B88yfDOTg9UwP9P/2VwZjBmEzWbnHiDz315b77Z1hQ9x0K
-        3hKZIae3W7x385CfbQxBVHM=
-X-Google-Smtp-Source: APXvYqx/CXunbtTsMsCA0OTUahlAsoQ/vNvrN9YML3yeUrMBpoBnwEnYlPtdizk64BmU3JLJ3C6eAQ==
-X-Received: by 2002:a63:d017:: with SMTP id z23mr24720347pgf.110.1576993651284;
-        Sat, 21 Dec 2019 21:47:31 -0800 (PST)
-Received: from debian.net.fpt ([2405:4800:58f7:229b:e8c2:8912:129c:d0d])
-        by smtp.gmail.com with ESMTPSA id o2sm10880285pjo.26.2019.12.21.21.47.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Dec 2019 21:47:30 -0800 (PST)
-From:   Phong Tran <tranmanphong@gmail.com>
-To:     syzbot+514595412b80dc817633@syzkaller.appspotmail.com,
-        davem@davemloft.net, gregkh@linuxfoundation.org, oneukum@suse.com
-Cc:     allison@lohutok.net, andreyknvl@google.com,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        swinslow@gmail.com, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, tranmanphong@gmail.com, zhang.run@zte.com.cn
-Subject: [PATCH] ax88172a: fix wrong reading MAC malicious device
-Date:   Sun, 22 Dec 2019 12:47:13 +0700
-Message-Id: <20191222054713.14887-1-tranmanphong@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <000000000000ab9d07059a410fae@google.com>
-References: <000000000000ab9d07059a410fae@google.com>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=URqv4QH1eOVvFgVzxMClXMgPNcEU0cB4oi4i2f7iShQ=;
+        b=VBotaVEROVoPplnEUe3IiWiUwiHtm24/b2fHIbjyXhqImC/9Ro2DJWW1fpz1r+vjRw
+         OdddKI2pr/Wqn3oi4iqcjyJxLCgSZNltTusobzCHDD3cqhij1kNEWnOVlGyCRRgJ6o5n
+         IY432bHlaSRXwshGkrNRWmGNgFYpU+iXR/ua3c0RufVx8RRBes3rjyR3X9grS47VlHCz
+         ShN4xE4x+mMM0ow4povzMGx+OOA+o2EHQLUB8YcI2ud8wsywkkaNU6Qav+4+SxS/88G7
+         /raVMzBN7G8UkmrvySxFdTa3wW6Os7TvCEuvDqnhr1lrT8NPvp6yUsmzF3Ar+wZ0PSGc
+         z2bA==
+X-Gm-Message-State: APjAAAWaId31zg+qzaIQXfhoaQaqPWc2fjF45+tG7JPX5mKoq40AzfdS
+        UJBW5bAX3S8l3ahGp3hsiv3dmZSvomFbhztYoUM=
+X-Google-Smtp-Source: APXvYqyIp0zGewoaJSd3iAnq73Bfct/bMmTCdOhthdyEtk3hCG318I1nMJ+XP+kCOOQtZNVo4NgVhDK+AAELlJXTo3Q=
+X-Received: by 2002:a2e:86c8:: with SMTP id n8mr13399579ljj.205.1576995333340;
+ Sat, 21 Dec 2019 22:15:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ab3:316:0:0:0:0:0 with HTTP; Sat, 21 Dec 2019 22:15:33 -0800 (PST)
+Reply-To: davidanderson7118@gmail.com
+From:   David Anderson <cw4763558@gmail.com>
+Date:   Sun, 22 Dec 2019 07:15:33 +0100
+Message-ID: <CABFr_RXwkyd4_x3GispJkT8K=pyC1XXk2whdOSJ_U2=s--R6hg@mail.gmail.com>
+Subject: Approved to me that you got my mail.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Crash log KASAN: use-after-free Read in asix_suspend
-
-https://syzkaller.appspot.com/text?tag=CrashLog&x=1330a2c6e00000
-(unnamed net_device) (uninitialized): Failed to read MAC address: 0
-
-asix_read_cmd() with ret = 0 but this is a error. Fix the checking
-return value condition.
-
-Reported-by: syzbot+514595412b80dc817633@syzkaller.appspotmail.com
-
-Tested by:
-https://groups.google.com/d/msg/syzkaller-bugs/0hHExZ030LI/yge-2Q_9BAAJ
-
-Signed-off-by: Phong Tran <tranmanphong@gmail.com>
----
- drivers/net/usb/ax88172a.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/usb/ax88172a.c b/drivers/net/usb/ax88172a.c
-index af3994e0853b..525900896ce0 100644
---- a/drivers/net/usb/ax88172a.c
-+++ b/drivers/net/usb/ax88172a.c
-@@ -197,6 +197,8 @@ static int ax88172a_bind(struct usbnet *dev, struct usb_interface *intf)
- 	/* Get the MAC address */
- 	ret = asix_read_cmd(dev, AX_CMD_READ_NODE_ID, 0, 0, ETH_ALEN, buf, 0);
- 	if (ret < ETH_ALEN) {
-+		if (ret >= 0)
-+			ret = -ENXIO;
- 		netdev_err(dev->net, "Failed to read MAC address: %d\n", ret);
- 		goto free;
- 	}
 -- 
-2.20.1
+*Dear Friend,*
+*I am David Anderson. I work as a procurement assistant. I got your
+contact details in my search for a reliable and neutral company or
+individual to partner with me in area of investment. I need your
+assistance to manage investment fund in a profitable business in your
+region with a good annual return on investment (AROI).*
 
+*I know this mail might come to you as a surprise because we neither
+know each other nor have ever met but please accept it with an open
+and positive mind.*
+
+*Details of investment and funding will be furnished to you when your
+response which will also facilitate a face to face meeting with the
+investors.*
+
+*Thank you,*
+
+*Yours Sincerely*
+*David Anderson*
