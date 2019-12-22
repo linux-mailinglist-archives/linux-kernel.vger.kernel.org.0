@@ -2,227 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62923128F3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 19:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9B80128F3E
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 19:17:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfLVSH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 13:07:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43772 "EHLO mail.kernel.org"
+        id S1726549AbfLVSRT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 13:17:19 -0500
+Received: from muru.com ([72.249.23.125]:49320 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfLVSH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 13:07:56 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EE0F206D3;
-        Sun, 22 Dec 2019 18:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577038074;
-        bh=AXO3IG0scX/owDhFJ2EPWEb/thMP3sqao2HJei/CAzc=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=o8qsTO6uyPeA0tG362Hu/HzXq37yTAu6ytXeCbFzGZt6Zgs6CScuaOoqydSfTJt25
-         KCyhR3cgoe9WOiahsqK16E2Iu8SqTgmI382nqu7/8u7RivHx/xisjRY3W3lcG5ELq9
-         WGnYvm84bN5VEtuIs1fMaDpohhGZOWM7dR3bpFJM=
-Date:   Sun, 22 Dec 2019 18:07:49 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Mircea Caprioru <mircea.caprioru@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <alexandru.ardelean@analog.com>,
-        <lars@metafoo.de>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: iio: frequency: Add docs for LTC6952
-Message-ID: <20191222180749.4ad0a939@archlinux>
-In-Reply-To: <20191219134810.6677-1-mircea.caprioru@analog.com>
-References: <20191219134810.6677-1-mircea.caprioru@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725919AbfLVSRT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 13:17:19 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id C89E18117;
+        Sun, 22 Dec 2019 18:17:57 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-omap@vger.kernel.org, Merlijn Wajer <merlijn@wizzup.org>,
+        Pavel Machek <pavel@ucw.cz>, Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 1/3] phy: cpcap-usb: Prevent USB line glitches from waking up modem
+Date:   Sun, 22 Dec 2019 10:17:02 -0800
+Message-Id: <20191222181704.61511-1-tony@atomide.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 19 Dec 2019 15:48:08 +0200
-Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+The micro-USB connector on Motorola Mapphone devices can be muxed between
+the SoC and the mdm6600 modem. But even when used for the SoC, configuring
+the PHY with ID pin grounded will wake up the modem from idle state. Looks
+like the issue is probably caused by line glitches.
 
-> Document support for Analog Devices LTC6952 ultralow jitter, 4.5GHz PLL
-> with 11 outputs and JESD204B/C support.
-> 
-> Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-I''m far from sure if we have the right balance of clock and IIO specific
-+ device specific bindings in here.
+We can prevent the glitches by using a previously unknown mode of the
+GPIO mux to prevent the USB lines from being connected to the moden while
+configuring the USB PHY, and enable the USB lines after configuring the
+PHY.
 
-For example should the divider only be controlled by whatever the clock
-consumer requests?
+Note that this only prevents waking up mdm6600 as regular USB A-host mode,
+and does not help when connected to a lapdock. The lapdock specific issue
+still needs to be debugged separately.
 
-Definitely want some review of this from the clock side of things.
+Cc: Merlijn Wajer <merlijn@wizzup.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: Sebastian Reichel <sre@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/phy/motorola/phy-cpcap-usb.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-Thanks,
-
-Jonathan
-
-
-> ---
->  .../bindings/iio/frequency/adi,ltc6952.yaml   | 127 ++++++++++++++++++
->  1 file changed, 127 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/frequency/adi,ltc6952.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,ltc6952.yaml b/Documentation/devicetree/bindings/iio/frequency/adi,ltc6952.yaml
-> new file mode 100644
-> index 000000000000..a28c773c3948
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/frequency/adi,ltc6952.yaml
-> @@ -0,0 +1,127 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright 2019 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/iio/frequency/adi,ltc6952.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices LTC6952 ultralow jitter, JESD204B/C clock generation IC.
-> +
-> +maintainers:
-> +  - Mircea Caprioru <mircea.caprioru@analog.com>
-> +
-> +description: |
-> +  Analog Devices LTC6952 ultralow jitter, JESD204B/C clock generation IC.
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ltc6952.pdf 
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ltc6952
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clock-output-names:
-> +    description: |
-> +      Clock output signal names indexed by the first cell in the clock
-> +      specifier (see clock/clock-bindings.txt)
-> +    maxItems: 1
-> +
-> +  adi,vco-frequency-hz:
-> +    description: |
-> +      VCO input frequency. This is fed to the internal distribution path and
-> +      feedback dividers.
-
-Superficially this feels like it should be a established via the requested
-output frequencies and some idea of a 'best' value to satisfy them?
-
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    maxItems: 1
-> +
-> +  adi,ref-frequency-hz:
-> +    description: |
-> +      Reference input frequency. This is fed in the reference divider.
-
-Is this not just an upstream clock? 
-
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clock-output-names
-> +
-> +patternProperties:
-> +  "^channel@[0-9]$":
-> +    type: object
-> +    description: Represents the external channels which are connected to the device.
-> +
-> +    properties:
-> +      reg:
-> +        description: |
-> +          The channel number. It can have up to 11 channels numbered from 0 to 10.
-> +        maxItems: 1
-> +
-> +      adi,extended-name:
-> +        description: Descriptive channel name.
-I mention in review of patch 2 this is a definite no.   A separate
-out_chanX_label type attribute could provide this an use standard "label" dt
-binding.  I think we currently have that for the IIO device but not yet its channels.
-
-> +        maxItems: 1
-> +
-> +      adi,divider:
-> +        description: |
-> +          Channel divider. This divides the incoming VCO frequency.
-Fundamental thing here is the output frequency required by any consumer.
-Feels like this should be done through the clock framework bindings rather than
-explicit controls here..
-
-
-> +        maxItems: 1
-> +
-> +      adi,digital-delay:
-
-So I'm assuming there is no binding for this level of fine control in normal
-clock bindings?  I would like some input from people more knowledgeable on
-that framework though.
-
-> +        description: |
-> +          Each output divider can have the start time of the output delayed by
-> +          integer multiples of half of the VCO period after a synchronization
-> +          event.
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 0
-> +          - maximum: 4095
-> +        maxItems: 1
-> +
-> +      adi,analog-delay:
-> +        description: |
-> +          Each output has a fine analog delay feature to further adjust its
-> +          output delay time (tADELx) in small steps.
-
-Umm. Can we do better than 'small steps' for the units of this?
-
-> +        allOf:
-> +          - $ref: /schemas/types.yaml#/definitions/uint32
-> +          - minimum: 0
-> +          - maximum: 63
-> +        maxItems: 1
-> +
-> +    required:
-> +      - reg
-> +
-> +examples:
-> +   - |
-> +     ltc6952@0 {
-> +       compatible = "adi,ltc6952";
-> +       reg = <0>;
-> +
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +
-> +       spi-max-frequency = <10000000>;
-> +
-> +       clock-output-names = "ltc6952_out0", "ltc6952_out1", "ltc6952_out2",
-> +         "ltc6952_out3", "ltc6952_out4", "ltc6952_out5", "ltc6952_out6",
-> +         "ltc6952_out7", "ltc6952_out8", "ltc6952_out9", "ltc6952_out10";
-> +       #clock-cells = <1>;
-> +
-> +       adi,vco-frequency-hz = <4000000000>;
-> +       adi,ref-frequency-hz = <100000000>;
-> +
-> +       ltc6952_c0: channel@0 {
-> +         reg = <0>;
-> +         adi,extended-name = "REF_CLK";
-> +         adi,divider = <10>;
-> +         adi,digital-delay = <100>;
-> +         adi,analog-delay = <0>;
-> +       };
-> +
-> +       ltc6952_c1: channel@1 {
-> +         reg = <1>;
-> +         adi,extended-name = "TEST_CLK";
-> +         adi,divider = <10>;
-> +       };
-> +     };
-
+diff --git a/drivers/phy/motorola/phy-cpcap-usb.c b/drivers/phy/motorola/phy-cpcap-usb.c
+--- a/drivers/phy/motorola/phy-cpcap-usb.c
++++ b/drivers/phy/motorola/phy-cpcap-usb.c
+@@ -115,7 +115,7 @@ struct cpcap_usb_ints_state {
+ enum cpcap_gpio_mode {
+ 	CPCAP_DM_DP,
+ 	CPCAP_MDM_RX_TX,
+-	CPCAP_UNKNOWN,
++	CPCAP_UNKNOWN_DISABLED,	/* Seems to disable USB lines */
+ 	CPCAP_OTG_DM_DP,
+ };
+ 
+@@ -381,7 +381,8 @@ static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata)
+ {
+ 	int error;
+ 
+-	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_DM_DP);
++	/* Disable lines to prevent glitches from waking up mdm6600 */
++	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_UNKNOWN_DISABLED);
+ 	if (error)
+ 		goto out_err;
+ 
+@@ -408,6 +409,11 @@ static int cpcap_usb_set_uart_mode(struct cpcap_phy_ddata *ddata)
+ 	if (error)
+ 		goto out_err;
+ 
++	/* Enable UART mode */
++	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_DM_DP);
++	if (error)
++		goto out_err;
++
+ 	return 0;
+ 
+ out_err:
+@@ -420,7 +426,8 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
+ {
+ 	int error;
+ 
+-	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_OTG_DM_DP);
++	/* Disable lines to prevent glitches from waking up mdm6600 */
++	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_UNKNOWN_DISABLED);
+ 	if (error)
+ 		return error;
+ 
+@@ -460,6 +467,11 @@ static int cpcap_usb_set_usb_mode(struct cpcap_phy_ddata *ddata)
+ 	if (error)
+ 		goto out_err;
+ 
++	/* Enable USB mode */
++	error = cpcap_usb_gpio_set_mode(ddata, CPCAP_OTG_DM_DP);
++	if (error)
++		goto out_err;
++
+ 	return 0;
+ 
+ out_err:
+-- 
+2.24.1
