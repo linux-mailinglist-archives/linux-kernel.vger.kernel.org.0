@@ -2,85 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD92128FC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 21:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44287128FCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 21:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbfLVULv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 15:11:51 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:12127 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725951AbfLVULv (ORCPT
+        id S1726832AbfLVUQQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 15:16:16 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:42128 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfLVUQP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 15:11:51 -0500
-X-UUID: c62fb3d6d6864253a7bdd0b2cbb2ac63-20191223
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=qwrFGFIz+QsHDpFfg3vjjA8jTU7ruwsFDOyFkQxVOwo=;
-        b=XzBePS2oWDOW/O8HlRnO/pinGEhEHV/Ur8WBdG10D7nscXA9/HQPcIhx+SiTTIa2a1ktxji36EEXUHXsJOSy119x+SW9IxtOW1SCDCYuv3FlGchhq0a6RZFx1hQ/Ejbyucs3Pi7NBJLtFIMIql/P82jXj6t6JV3imQZQvZTdW2Y=;
-X-UUID: c62fb3d6d6864253a7bdd0b2cbb2ac63-20191223
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 958929746; Mon, 23 Dec 2019 04:11:44 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 23 Dec 2019 04:11:42 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 23 Dec 2019 04:10:52 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Felix Fietkau <nbd@nbd.name>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-CC:     <linux-wireless@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-        Shayne Chen <shayne.chen@mediatek.com>
-Subject: [PATCH v1 2/2] mt76: mt7615: add set_antenna callback
-Date:   Mon, 23 Dec 2019 04:11:39 +0800
-Message-ID: <965287b3917a6cb0cfd2acbf91dbbd0b9db9b085.1577044827.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <9a37e1340cc8c546587d7cf99d6c4d92e12e1a7d.1577044827.git.ryder.lee@mediatek.com>
-References: <9a37e1340cc8c546587d7cf99d6c4d92e12e1a7d.1577044827.git.ryder.lee@mediatek.com>
+        Sun, 22 Dec 2019 15:16:15 -0500
+Received: from [172.58.30.161] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1ij7e6-0002dA-FH; Sun, 22 Dec 2019 20:16:11 +0000
+Date:   Sun, 22 Dec 2019 21:15:58 +0100
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Sargun Dhillon <sargun@sargun.me>
+Cc:     Emilio Cobos =?utf-8?Q?=C3=81lvarez?= <ealvarez@mozilla.com>,
+        Arnd Bergmann <arnd@arndb.de>, Jann Horn <jannh@google.com>,
+        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Jed Davis <jld@mozilla.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH v5 2/3] pid: Introduce pidfd_getfd syscall
+Message-ID: <20191222201556.zcjceuwpel26jo37@wittgenstein>
+References: <20191220232810.GA20233@ircssh-2.c.rugged-nimbus-611.internal>
+ <20191222124756.o2v2zofseypnqg3t@wittgenstein>
+ <CAMp4zn-x3wiYVgmoVfkA61Epfh7JoEHUn5QCpULERxLPkLoMYA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 8FD17A3244B10A2B92653ADE44844F4B5FF4EAB66C010A873F8A6619B11B88FE2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMp4zn-x3wiYVgmoVfkA61Epfh7JoEHUn5QCpULERxLPkLoMYA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWRkIGEgc2V0X2FudGVubmEgY2FsbGJhY2sgdG8gc2V0dXAgcGVyIHBoeSB0eC9yeCBzdHJlYW1z
-Lg0KDQpTaWduZWQtb2ZmLWJ5OiBTaGF5bmUgQ2hlbiA8c2hheW5lLmNoZW5AbWVkaWF0ZWsuY29t
-Pg0KU2lnbmVkLW9mZi1ieTogUnlkZXIgTGVlIDxyeWRlci5sZWVAbWVkaWF0ZWsuY29tPg0KLS0t
-DQpDaGFuZ2VzIHNpbmNlIHYxOg0KLSByZW1vdmUgdW5uZWNlc3NhcnkgY2FsbCByZWdhcmQgdG8g
-YW50ZW5uYSBzZXR0aW5ncy4NCi0tLQ0KIC4uLi9uZXQvd2lyZWxlc3MvbWVkaWF0ZWsvbXQ3Ni9t
-dDc2MTUvbWFpbi5jICB8IDI3ICsrKysrKysrKysrKysrKysrKysNCiAxIGZpbGUgY2hhbmdlZCwg
-MjcgaW5zZXJ0aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWVk
-aWF0ZWsvbXQ3Ni9tdDc2MTUvbWFpbi5jIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWVkaWF0ZWsv
-bXQ3Ni9tdDc2MTUvbWFpbi5jDQppbmRleCA5MGM0ZTc4NWExYTMuLjViODM1MjhmNzdhMCAxMDA2
-NDQNCi0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21lZGlhdGVrL210NzYvbXQ3NjE1L21haW4u
-Yw0KKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvbWVkaWF0ZWsvbXQ3Ni9tdDc2MTUvbWFpbi5j
-DQpAQCAtNjM3LDYgKzYzNywzMiBAQCBtdDc2MTVfc2V0X2NvdmVyYWdlX2NsYXNzKHN0cnVjdCBp
-ZWVlODAyMTFfaHcgKmh3LCBzMTYgY292ZXJhZ2VfY2xhc3MpDQogCW10NzYxNV9tYWNfc2V0X3Rp
-bWluZyhwaHkpOw0KIH0NCiANCitzdGF0aWMgaW50DQorbXQ3NjE1X3NldF9hbnRlbm5hKHN0cnVj
-dCBpZWVlODAyMTFfaHcgKmh3LCB1MzIgdHhfYW50LCB1MzIgcnhfYW50KQ0KK3sNCisJc3RydWN0
-IG10NzYxNV9kZXYgKmRldiA9IG10NzYxNV9od19kZXYoaHcpOw0KKwlzdHJ1Y3QgbXQ3NjE1X3Bo
-eSAqcGh5ID0gbXQ3NjE1X2h3X3BoeShodyk7DQorCWludCBtYXhfbnNzID0gaHdlaWdodDgoaHct
-PndpcGh5LT5hdmFpbGFibGVfYW50ZW5uYXNfdHgpOw0KKwlib29sIGV4dF9waHkgPSBwaHkgIT0g
-JmRldi0+cGh5Ow0KKw0KKwlpZiAoIXR4X2FudCB8fCB0eF9hbnQgIT0gcnhfYW50IHx8IGZmcyh0
-eF9hbnQpID4gbWF4X25zcykNCisJCXJldHVybiAtRUlOVkFMOw0KKw0KKwlpZiAoKEJJVChod2Vp
-Z2h0OCh0eF9hbnQpKSAtIDEpICE9IHR4X2FudCkNCisJCXR4X2FudCA9IEJJVChmZnModHhfYW50
-KSAtIDEpIC0gMTsNCisNCisJbXV0ZXhfbG9jaygmZGV2LT5tdDc2Lm11dGV4KTsNCisNCisJcGh5
-LT5tdDc2LT5hbnRlbm5hX21hc2sgPSB0eF9hbnQ7DQorCXBoeS0+Y2hhaW5tYXNrID0gZXh0X3Bo
-eSA/IHR4X2FudCA8PCAyIDogdHhfYW50Ow0KKw0KKwltdDc2X3NldF9zdHJlYW1fY2FwcygmZGV2
-LT5tdDc2LCB0cnVlKTsNCisNCisJbXV0ZXhfdW5sb2NrKCZkZXYtPm10NzYubXV0ZXgpOw0KKw0K
-KwlyZXR1cm4gMDsNCit9DQorDQogY29uc3Qgc3RydWN0IGllZWU4MDIxMV9vcHMgbXQ3NjE1X29w
-cyA9IHsNCiAJLnR4ID0gbXQ3NjE1X3R4LA0KIAkuc3RhcnQgPSBtdDc2MTVfc3RhcnQsDQpAQCAt
-NjYxLDUgKzY4Nyw2IEBAIGNvbnN0IHN0cnVjdCBpZWVlODAyMTFfb3BzIG10NzYxNV9vcHMgPSB7
-DQogCS5jaGFubmVsX3N3aXRjaF9iZWFjb24gPSBtdDc2MTVfY2hhbm5lbF9zd2l0Y2hfYmVhY29u
-LA0KIAkuZ2V0X3N1cnZleSA9IG10NzZfZ2V0X3N1cnZleSwNCiAJLmdldF9hbnRlbm5hID0gbXQ3
-Nl9nZXRfYW50ZW5uYSwNCisJLnNldF9hbnRlbm5hID0gbXQ3NjE1X3NldF9hbnRlbm5hLA0KIAku
-c2V0X2NvdmVyYWdlX2NsYXNzID0gbXQ3NjE1X3NldF9jb3ZlcmFnZV9jbGFzcywNCiB9Ow0KLS0g
-DQoyLjE4LjANCg==
+On Sun, Dec 22, 2019 at 10:36:42AM -0800, Sargun Dhillon wrote:
+> , On Sun, Dec 22, 2019 at 4:48 AM Christian Brauner
+> <christian.brauner@ubuntu.com> wrote:
+> >
+> > On Fri, Dec 20, 2019 at 11:28:13PM +0000, Sargun Dhillon wrote:
+> > > This syscall allows for the retrieval of file descriptors from other
+> > > processes, based on their pidfd. This is possible using ptrace, and
+> > > injection of parasitic code along with using SCM_RIGHTS to move
+> > > file descriptors between a tracee and a tracer. Unfortunately, ptrace
+> > > comes with a high cost of requiring the process to be stopped, and
+> > > breaks debuggers. This does not require stopping the process under
+> > > manipulation.
+> > >
+> > > One reason to use this is to allow sandboxers to take actions on file
+> > > descriptors on the behalf of another process. For example, this can be
+> > > combined with seccomp-bpf's user notification to do on-demand fd
+> > > extraction and take privileged actions. For example, it can be used
+> > > to bind a socket to a privileged port.
+> > >
+> > > /* prototype */
+> > >   /*
+> > >    * pidfd_getfd_options is an extensible struct which can have options
+> > >    * added to it. If options is NULL, size, and it will be ignored be
+> > >    * ignored, otherwise, size should be set to sizeof(*options). If
+> > >    * option is newer than the current kernel version, E2BIG will be
+> > >    * returned.
+> > >    */
+> > >   struct pidfd_getfd_options {};
+> > >   long pidfd_getfd(int pidfd, int fd, unsigned int flags,
+> > >                  struct pidfd_getfd_options *options, size_t size);
+> That's embarrassing. This was supposed to read:
+> long pidfd_getfd(int pidfd, int fd, struct pidfd_get_options *options,
+> size_t size);
+> 
+> >
+> > The prototype advertises a flags argument but the actual
+> >
+> > +SYSCALL_DEFINE4(pidfd_getfd, int, pidfd, int, fd,
+> > +               struct pidfd_getfd_options __user *, options, size_t, usize)
+> >
+> > does not have a flags argument...
+> >
+> > I think having a flags argument makes a lot of sense.
+> >
+> > I'm not sure what to think about the struct. I agree with Aleksa that
+> > having an empty struct is not a great idea. From a design perspective it
+> > seems very out of place. If we do a struct at all putting at least a
+> > single reserved field in there might makes more sense.
+> >
+> > In general, I think we need to have a _concrete_ reason why putting a
+> > struct versioned by size as arguments for this syscall.
+> > That means we need to have at least a concrete example for a new feature
+> > for this syscall where a flag would not convey enough information.
+> I can think of at least two reasons we need flags:
+> * Clearing cgroup flags
+> * Closing the process under manipulation's FD when we fetch it.
+> 
+> The original reason for wanting to have two places where we can put
+> flags was to have a different field for fd flags vs. call flags. I'm not sure
+> there's any flags you'd want to set.
+> 
+> Given this, if we want to go down the route of a syscall, we should just
+> leave it as a __u64 flags, and drop the pointer to the struct, if we're
 
+I think it needs to be an unsigned int. Having a 64bit register arg is
+really messy on 32bit and means you need to have a compat syscall
+implementation which handles this.
+
+Christian
