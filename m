@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F14AE128D1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 07:15:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D01128D21
+	for <lists+linux-kernel@lfdr.de>; Sun, 22 Dec 2019 08:02:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726010AbfLVGPg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 01:15:36 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33086 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725899AbfLVGPf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 01:15:35 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y6so6478683lji.0
-        for <linux-kernel@vger.kernel.org>; Sat, 21 Dec 2019 22:15:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=URqv4QH1eOVvFgVzxMClXMgPNcEU0cB4oi4i2f7iShQ=;
-        b=e7+YcSPgirSkOEX41WXgbZWPYn16rAer+z/yrAQnXDPvvMnRIaflizNJC0b73OO7W6
-         Vo3XN4Ir0eS+Ow50ObLxBXk84Ybb8NpGb4ZZbrvtwz+ZJwqjNeJf7rLX6+1rAnTxmj2i
-         LcDku5rxYE0AaZ/VBIQWq1vK6pWRKEfwXSSu8DpelCDVAx0yRFNSawmXXAQhHE771IZa
-         UzrgT0tGq1QCOJYKvIeqRL/G3SLtKoLjWZ+LOsO6RirdTDqA7QfRt+hMW+E5CePJ3x3s
-         yNV2KbseUTnzGI4QLfHThRfqhXh/knLiqIWG/+oF7DTzQ+Ch7KpGypy81uby25rsaev7
-         +hEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=URqv4QH1eOVvFgVzxMClXMgPNcEU0cB4oi4i2f7iShQ=;
-        b=VBotaVEROVoPplnEUe3IiWiUwiHtm24/b2fHIbjyXhqImC/9Ro2DJWW1fpz1r+vjRw
-         OdddKI2pr/Wqn3oi4iqcjyJxLCgSZNltTusobzCHDD3cqhij1kNEWnOVlGyCRRgJ6o5n
-         IY432bHlaSRXwshGkrNRWmGNgFYpU+iXR/ua3c0RufVx8RRBes3rjyR3X9grS47VlHCz
-         ShN4xE4x+mMM0ow4povzMGx+OOA+o2EHQLUB8YcI2ud8wsywkkaNU6Qav+4+SxS/88G7
-         /raVMzBN7G8UkmrvySxFdTa3wW6Os7TvCEuvDqnhr1lrT8NPvp6yUsmzF3Ar+wZ0PSGc
-         z2bA==
-X-Gm-Message-State: APjAAAWaId31zg+qzaIQXfhoaQaqPWc2fjF45+tG7JPX5mKoq40AzfdS
-        UJBW5bAX3S8l3ahGp3hsiv3dmZSvomFbhztYoUM=
-X-Google-Smtp-Source: APXvYqyIp0zGewoaJSd3iAnq73Bfct/bMmTCdOhthdyEtk3hCG318I1nMJ+XP+kCOOQtZNVo4NgVhDK+AAELlJXTo3Q=
-X-Received: by 2002:a2e:86c8:: with SMTP id n8mr13399579ljj.205.1576995333340;
- Sat, 21 Dec 2019 22:15:33 -0800 (PST)
+        id S1725971AbfLVHBh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 02:01:37 -0500
+Received: from mga12.intel.com ([192.55.52.136]:45872 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfLVHBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 02:01:36 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Dec 2019 23:01:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,342,1571727600"; 
+   d="scan'208";a="416946691"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Dec 2019 23:01:33 -0800
+Cc:     "Tian, Kevin" <kevin.tian@intel.com>,
+        "Raj, Ashok" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Kumar, Sanjay K" <sanjay.k.kumar@intel.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Sun, Yi Y" <yi.y.sun@intel.com>
+Subject: Re: [PATCH v4 0/7] Use 1st-level for IOVA translation
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     "Liu, Yi L" <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20191219031634.15168-1-baolu.lu@linux.intel.com>
+ <A2975661238FB949B60364EF0F2C25743A13A364@SHSMSX104.ccr.corp.intel.com>
+ <434d7478-1ed3-1962-ff9d-1b37d0c44b9c@linux.intel.com>
+Message-ID: <46169833-6fae-d37e-89c3-c3abcdd31d79@linux.intel.com>
+Date:   Sun, 22 Dec 2019 15:00:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Received: by 2002:ab3:316:0:0:0:0:0 with HTTP; Sat, 21 Dec 2019 22:15:33 -0800 (PST)
-Reply-To: davidanderson7118@gmail.com
-From:   David Anderson <cw4763558@gmail.com>
-Date:   Sun, 22 Dec 2019 07:15:33 +0100
-Message-ID: <CABFr_RXwkyd4_x3GispJkT8K=pyC1XXk2whdOSJ_U2=s--R6hg@mail.gmail.com>
-Subject: Approved to me that you got my mail.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <434d7478-1ed3-1962-ff9d-1b37d0c44b9c@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
--- 
-*Dear Friend,*
-*I am David Anderson. I work as a procurement assistant. I got your
-contact details in my search for a reliable and neutral company or
-individual to partner with me in area of investment. I need your
-assistance to manage investment fund in a profitable business in your
-region with a good annual return on investment (AROI).*
+Hi Yi,
 
-*I know this mail might come to you as a surprise because we neither
-know each other nor have ever met but please accept it with an open
-and positive mind.*
+On 12/21/19 11:14 AM, Lu Baolu wrote:
+> Hi again,
+> 
+> On 2019/12/20 19:50, Liu, Yi L wrote:
+>> 3) Per VT-d spec, FLPT has canonical requirement to the input
+>> addresses. So I'd suggest to add some enhance regards to it.
+>> Please refer to chapter 3.6:-).
+>>
+>> 3.6 First-Level Translation
+>> First-level translation restricts the input-address to a canonical 
+>> address (i.e., address bits 63:N have
+>> the same value as address bit [N-1], where N is 48-bits with 4-level 
+>> paging and 57-bits with 5-level
+>> paging). Requests subject to first-level translation by remapping 
+>> hardware are subject to canonical
+>> address checking as a pre-condition for first-level translation, and a 
+>> violation is treated as a
+>> translation-fault.
+> 
+> It seems to be a conflict at bit 63. It should be the same as bit[N-1]
+> according to the canonical address requirement; but it is also used as
+> the XD control. Any thought?
 
-*Details of investment and funding will be furnished to you when your
-response which will also facilitate a face to face meeting with the
-investors.*
+Ignore this please. It makes no sense. :-) I confused.
 
-*Thank you,*
-
-*Yours Sincerely*
-*David Anderson*
+Best regards,
+baolu
