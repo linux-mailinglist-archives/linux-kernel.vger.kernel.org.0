@@ -2,193 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09A8C12960E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5746129615
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:44:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfLWMjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 07:39:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8163 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726257AbfLWMjY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 07:39:24 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C0920572CCF3A64A2C29;
-        Mon, 23 Dec 2019 20:39:20 +0800 (CST)
-Received: from [127.0.0.1] (10.133.217.236) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Mon, 23 Dec 2019
- 20:39:12 +0800
-Subject: Re: [PATCH] arm64/kprobe: add support for KPROBES_ON_FTRACE
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <will@kernel.org>, <catalin.marinas@arm.com>,
-        <mhiramat@kernel.org>, <naveen.n.rao@linux.ibm.com>,
-        <sandeepa.s.prabhu@gmail.com>, <bobo.shaobowang@huawei.com>
-References: <20191223123828.39543-1-cj.chengjian@huawei.com>
-From:   "chengjian (D)" <cj.chengjian@huawei.com>
-Message-ID: <a7c7b8f0-126e-a755-43ee-d384de74e43e@huawei.com>
-Date:   Mon, 23 Dec 2019 20:39:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726777AbfLWMoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 07:44:12 -0500
+Received: from mout.web.de ([212.227.17.12]:45661 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726257AbfLWMoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 07:44:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1577105025;
+        bh=uEz+xJ+1PnkNaQn/rWPFbwbuIFzvyLJLoC+/RZkWt/M=;
+        h=X-UI-Sender-Class:Cc:References:Subject:From:To:Date:In-Reply-To;
+        b=OQN4lxiC+Ba0uUSjbbZXPbEuXgpqHhs0leMCyc+nUMChpc07VeiOz8RZy8cBLTdAy
+         hyPYjMSxQFZrm5ituAxHaekZdbr1rmaDYcc1+Xbn+rw5XnyqtDxDOiHdw85XXalerm
+         X8/OEvhH38TaL0BctjfPNe0fRIjsZwWf8ebuo97M=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.131.136.132]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lba7D-1jUEDC0Z8l-00lHak; Mon, 23
+ Dec 2019 13:43:45 +0100
+Cc:     Navid Emamdoost <emamd001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+References: <20191220000923.9924-1-navid.emamdoost@gmail.com>
+Subject: Re: [PATCH] clocksource/drivers: Fix something in
+ ttc_setup_clockevent and ttc_setup_clocksource
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+To:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <7c19ab65-9d11-0e5b-ab53-b4e968d1ae95@web.de>
+Date:   Mon, 23 Dec 2019 13:43:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <20191223123828.39543-1-cj.chengjian@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20191220000923.9924-1-navid.emamdoost@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.133.217.236]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:uMsES8HUB/234qTw9RBTqbYwaZOVC9JdX1rYS6W2AdTI6/hS+TF
+ RkEI59/ov2c9SrRrdV0eoIgaV+HTaCXtaNwmx7NmnIqoMjIyq6/wZnLA53xzWC3Sq14XVM4
+ yIVujQBKwrqvGAe408eyFmgUz2HSFcCYBQqOPDeAkipG+WX14Xwj6bP95N0lKactkWaJjlT
+ ATNWeiFDPSTgGNEQqJsKg==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:RKcnp1yU5Mg=:fhoOUHUPdh83S8JGuB0Hx+
+ drP+a27WBLLaiXMpBZhLlaoOkARYTai3FxaGR7kDEnIps2/wfLXJVAjOZwzd9lu5caFWOTiED
+ oYER3eNfHLrvi323KS4QN0bcQebnYGlpCrYVN6heXY9h9dA+JaMfZ4dVOEtlz0W96JXS1xHEy
+ FteH9XJgQLpZZLontGuG7p/6vdosXLBeGtNOetYL/A9zcrF15MmEEaenVjCqnyEcifMp9S3pB
+ b7f4x3Au/iTii/TApe+R53uaRjE+0kFrzPEl4g12QAb+xT/68KYzUTUGETkdo17wETUOX3ryx
+ +mpHr4riypC9WpMksB31ymyhCJMtbKna53576704urvXkoAQcSUqnmhvmAMpbu5HAN5QF3m8O
+ KbMJCcQGa6pS70qsS45RYfW4Mv7eTbJ+LQGrG19j08HfkUFGmMqG47JnDnkFoyMkjRLVpWPzR
+ KP/k8Eh3OdJRHyzql5fOBhuAQwVZnfOZM9W5jQS3j8v16gOcF8yjQ5Sp5P6XYJcEWlsatTnSj
+ 7P0qYBL9DL+w+gzDf27GaIyxJhtJon13vTAS1lmdB9f9z0g2oBHhn9BeeTA4Vd+xoEtMY/B2R
+ L/yhdqjt1aEg5phAtwIzlGx1O+DRiKpb2DXzZUS6B7cY3VphmP5TdIRR5oAcFIUEJtvkMYumU
+ i4K2MzCeDqAfbfsPdpDSzQU47davJuH0zQrovyk6XpfJweH3NPv5nciQe+oxYD0GflSTFy8XN
+ sSh10bAayaFmxHwsTj0mnzz03mx57TcLI9o6krvLJ1jQkQLSjV6rLE6Sc+HRFY5kDlfwkiaHy
+ rbNFqhlpBPCv8seQHFlOIwNvWTmc7x9GXCg0ZMbs/8VRoAE4KB/Zb1jIU56wGbtFVeLmwuGww
+ VcSnRQXM4NLqJVtBycqmvsIeoJ+gQqAyX91EpMMPZSDcaBadUsuyEHQ6xH0F0j9BucVMUIgQ4
+ j8CtGxQL64JVRpnZzKo1dVch4U66tGwiJA3xEHca7SmGFAOVYuIXkWtrtAhd5hgh9S2TzLacX
+ jt67RtKEYoY0RDy7Z64YNQ8jIu/lVvRh31rcA7pO05DxohQeb4Xz2z+xCc0Xr3tU137tjneZ7
+ eUOvbfBgyUkWJovWOflVY3pIGXjPFOPB+sBL9SWAcsIUJlIE85jWMhb2exmNphLPgbJ7oiu8X
+ G4tahy6EYZahACVTfZLxilNn+d9BVqlG/F9JTpOwUDqlPdPZwN+ISwFWDpNtO+IspuVT5RI6A
+ z7RA/kuehKu3djW4s6oasxoMHesTvdRs3Ut0NvJuFECTwb4SOjcJrttolQKo=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am SORRY.
+> In the implementation of ttc_setup_clockevent() and
+> ttc_setup_clocksource(), the allocated memory for ttccs is leaked when
+> clk_notifier_register() fails.
 
-I searched on patchwork and found this :
-
-arm64: implement KPROBES_ON_FTRACE
-
-https://lore.kernel.org/patchwork/patch/1169445/
-
-So please ignore my EMAIL.
-
-Thank you.
-
----- Cheng Jian
+I suggest to correct your commit message.
 
 
-On 2019/12/23 20:38, Cheng Jian wrote:
-> Allow KPROBES to use the ftrace infrastructure.
-> This depends on HAVE_DYNAMIC_FTRACE_WITH_REGS
-> which introduce by :
->          commit 3b23e4991fb6 ("arm64: implement ftrace with regs")
->
-> Based on the x86 code by Masami.
->
-> With:
->          # cd /sys/kernel/debug/tracing
->          # echo 'p _do_fork+0x4' > kprobe_events
->
-> before patch:
-> 	# cat ../kprobes/list
->          sh: write error: Invalid argument
->
-> after patch:
-> 	# cat ../kprobes/list
->          ffffa00016aa9d4c  k  _do_fork+0x4    [FTRACE]
->
-> Signed-off-by: Cheng Jian <cj.chengjian@huawei.com>
-> ---
->   .../debug/kprobes-on-ftrace/arch-support.txt  |  2 +-
->   arch/arm64/Kconfig                            |  1 +
->   arch/arm64/kernel/probes/Makefile             |  2 +
->   arch/arm64/kernel/probes/ftrace.c             | 65 +++++++++++++++++++
->   4 files changed, 69 insertions(+), 1 deletion(-)
->   create mode 100644 arch/arm64/kernel/probes/ftrace.c
->
-> diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> index 4fae0464ddff..f9dd9dd91e0c 100644
-> --- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> +++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
-> @@ -9,7 +9,7 @@
->       |       alpha: | TODO |
->       |         arc: | TODO |
->       |         arm: | TODO |
-> -    |       arm64: | TODO |
-> +    |       arm64: |  ok  |
->       |         c6x: | TODO |
->       |        csky: | TODO |
->       |       h8300: | TODO |
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index b1b4476ddb83..d613be9c2346 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -144,6 +144,7 @@ config ARM64
->   	select HAVE_DYNAMIC_FTRACE
->   	select HAVE_DYNAMIC_FTRACE_WITH_REGS \
->   		if $(cc-option,-fpatchable-function-entry=2)
-> +	select HAVE_KPROBES_ON_FTRACE if HAVE_DYNAMIC_FTRACE_WITH_REGS
->   	select HAVE_EFFICIENT_UNALIGNED_ACCESS
->   	select HAVE_FAST_GUP
->   	select HAVE_FTRACE_MCOUNT_RECORD
-> diff --git a/arch/arm64/kernel/probes/Makefile b/arch/arm64/kernel/probes/Makefile
-> index 8e4be92e25b1..45a9d916a47d 100644
-> --- a/arch/arm64/kernel/probes/Makefile
-> +++ b/arch/arm64/kernel/probes/Makefile
-> @@ -4,3 +4,5 @@ obj-$(CONFIG_KPROBES)		+= kprobes.o decode-insn.o	\
->   				   simulate-insn.o
->   obj-$(CONFIG_UPROBES)		+= uprobes.o decode-insn.o	\
->   				   simulate-insn.o
+> Use goto to direct the execution into error handling path.
+
+* Should the desired completion of the exception handling be described
+  by an other wording?
+
+* Will it be better to improve the affected functions by
+  separate update steps?
+
+* How do you think about to add the tag =E2=80=9CReported-by=E2=80=9D for =
+Michal Simek?
+  https://lore.kernel.org/linux-arm-kernel/2a6cdb63-397b-280a-7379-740e8f4=
+3ddf6@xilinx.com/
+
+
+=E2=80=A6
+> +++ b/drivers/clocksource/timer-cadence-ttc.c
+=E2=80=A6
+> @@ -363,16 +363,20 @@  static int __init ttc_setup_clocksource(struct cl=
+k *clk, void __iomem *base,
+=E2=80=A6
+>  	return 0;
 > +
-> +obj-$(CONFIG_KPROBES_ON_FTRACE)	+= ftrace.o
-> diff --git a/arch/arm64/kernel/probes/ftrace.c b/arch/arm64/kernel/probes/ftrace.c
-> new file mode 100644
-> index 000000000000..f89bfaa3e5f3
-> --- /dev/null
-> +++ b/arch/arm64/kernel/probes/ftrace.c
-> @@ -0,0 +1,65 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Dynamic Ftrace based Kprobes Optimization
-> + *
-> + * Copyright (C) Hitachi Ltd., 2012
-> + * Copyright (C) 2019 Huawei Inc.
-> + * Copyright 2019 Cheng Jian <cj.chengjian@huawei.com>
-> + */
-> +#include <linux/kprobes.h>
-> +#include <linux/ptrace.h>
-> +#include <linux/hardirq.h>
-> +#include <linux/preempt.h>
-> +#include <linux/ftrace.h>
+> +release_ttcce:
 > +
-> +
-> +/* Ftrace callback handler for kprobes -- called under preepmt disabed */
-> +void kprobe_ftrace_handler(unsigned long pc, unsigned long parent_pc,
-> +			   struct ftrace_ops *ops, struct pt_regs *regs)
-> +{
-> +	struct kprobe *p;
-> +	struct kprobe_ctlblk *kcb;
-> +
-> +	/* Preempt is disabled by ftrace */
-> +	p = get_kprobe((kprobe_opcode_t *)pc);
-> +	if (unlikely(!p) || kprobe_disabled(p))
-> +		return;
-> +
-> +	kcb = get_kprobe_ctlblk();
-> +	if (kprobe_running()) {
-> +		kprobes_inc_nmissed_count(p);
-> +	} else {
-> +		/*
-> +		 * On ARM64, recg->pc is *before* this instruction for the
-> +		 * pre handler.
-> +		 */
-> +		regs->pc -= MCOUNT_INSN_SIZE;
-> +
-> +		__this_cpu_write(current_kprobe, p);
-> +		kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> +		if (!p->pre_handler || !p->pre_handler(p, regs)) {
-> +			/*
-> +			 * Emulate singlestep (and also recover regs->ip)
-> +			 * as if there is a nop
-> +			 */
-> +			regs->pc += MCOUNT_INSN_SIZE;
-> +			if (unlikely(p->post_handler)) {
-> +				kcb->kprobe_status = KPROBE_HIT_SSDONE;
-> +				p->post_handler(p, regs, 0);
-> +			}
-> +		}
-> +		/*
-> +		 * If pre_handler returns !0, it changes regs->ip. We have to
-> +		 * skip emulating post_handler.
-> +		 */
-> +		__this_cpu_write(current_kprobe, NULL);
-> +	}
-> +}
-> +NOKPROBE_SYMBOL(kprobe_ftrace_handler);
-> +
-> +int arch_prepare_kprobe_ftrace(struct kprobe *p)
-> +{
-> +	p->ainsn.api.insn = NULL;
-> +
-> +	return 0;
-> +}
+> +	kfree(ttcce);
+> +	return err;
+=E2=80=A6
 
+* Please omit a blank line after the label.
+
+* Is there a need to call the function =E2=80=9Cclk_disable_unprepare=E2=
+=80=9D
+  by another jump target?
+
+Regards,
+Markus
