@@ -2,72 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59B611290CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:55:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 603DC1290C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfLWBz0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 20:55:26 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:45643 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726215AbfLWBz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 20:55:26 -0500
-Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
-        by Forcepoint Email with ESMTPS id B0F03628B6642F5D2DA1;
-        Mon, 23 Dec 2019 09:55:21 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
-        by mse-fl2.zte.com.cn with ESMTP id xBN1r3cI034081;
-        Mon, 23 Dec 2019 09:53:03 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019122309530535-1467765 ;
-          Mon, 23 Dec 2019 09:53:05 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     steffen.klassert@secunet.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn, up2wing@gmail.com,
-        wang.liang82@zte.com.cn, Huang Zijiang <huang.zijiang@zte.com.cn>
-Subject: [PATCH] xfrm: Use kmem_cache_zalloc() instead of kmem_cache_alloc() with flag GFP_ZERO.
-Date:   Mon, 23 Dec 2019 09:53:02 +0800
-Message-Id: <1577065982-25751-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-12-23 09:53:05,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-12-23 09:53:04,
-        Serialize complete at 2019-12-23 09:53:04
-X-MAIL: mse-fl2.zte.com.cn xBN1r3cI034081
+        id S1726783AbfLWBxo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 20:53:44 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:57211 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfLWBxo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 20:53:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1577066024; x=1608602024;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=+wko5RT25RxW2zeycjxSO5Xakzc/zM0/ZUap54jab14=;
+  b=uynViSAktnp2WPcHnZCDRveb7lE3Si6+CLRmTGzYuTs9kgNzePsZKR9V
+   /ANwZmXjJfIyOziJ+NDN3fdZouLKHgpT1OeyfyeBrjIRRb/3a8OzztcMH
+   OJsE7p6yV/PCyvEtz7G21QRJ9sLM7g7m1ihxLf4jlCO+g5oyxd0hwAB+2
+   A=;
+IronPort-SDR: 7ryDAeCaJipu6dr1NaTh+ZQLiiweTV1ev5z/mCxhwEP8xXivmZ2jz53XmcMjjVnp4eJofiUsxM
+ 2R2IthzTw2WQ==
+X-IronPort-AV: E=Sophos;i="5.69,346,1571702400"; 
+   d="scan'208";a="9713435"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2a-c5104f52.us-west-2.amazon.com) ([10.43.8.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP; 23 Dec 2019 01:53:42 +0000
+Received: from EX13MTAUWB001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
+        by email-inbound-relay-2a-c5104f52.us-west-2.amazon.com (Postfix) with ESMTPS id A8E2CA23BF;
+        Mon, 23 Dec 2019 01:53:41 +0000 (UTC)
+Received: from EX13D11UWB003.ant.amazon.com (10.43.161.206) by
+ EX13MTAUWB001.ant.amazon.com (10.43.161.249) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Dec 2019 01:53:41 +0000
+Received: from EX13D01UWB002.ant.amazon.com (10.43.161.136) by
+ EX13D11UWB003.ant.amazon.com (10.43.161.206) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Dec 2019 01:53:40 +0000
+Received: from EX13D01UWB002.ant.amazon.com ([10.43.161.136]) by
+ EX13d01UWB002.ant.amazon.com ([10.43.161.136]) with mapi id 15.00.1367.000;
+ Mon, 23 Dec 2019 01:53:40 +0000
+From:   "Singh, Balbir" <sblbir@amazon.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "=linux-block@vger.kernel.org" <=linux-block@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>
+CC:     "hch@lst.de" <hch@lst.de>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "Sangaraju, Someswarudu" <ssomesh@amazon.com>
+Subject: Re: [RFC PATCH 1/5] block/genhd: Notify udev about capacity change
+Thread-Topic: [RFC PATCH 1/5] block/genhd: Notify udev about capacity change
+Thread-Index: AQHVuTIQS2D+6UASEUSut4lHWyy8r6fG9TQA
+Date:   Mon, 23 Dec 2019 01:53:40 +0000
+Message-ID: <e452f6a638fe09f065b9e4cd1c25d5d3a2f29e5a.camel@amazon.com>
+References: <20191223014056.17318-1-sblbir@amazon.com>
+In-Reply-To: <20191223014056.17318-1-sblbir@amazon.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.43.161.78]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B7D314F84E432C468D7F28186EDB3776@amazon.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huang Zijiang <huang.zijiang@zte.com.cn>
-
-Use kmem_cache_zalloc instead of manually setting kmem_cache_alloc
-with flag GFP_ZERO since kzalloc sets allocated memory
-to zero.
-
-Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
- net/xfrm/xfrm_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index a5dc319..adfa279 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -612,7 +612,7 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
- {
-     struct xfrm_state *x;
- 
--    x = kmem_cache_alloc(xfrm_state_cache, GFP_ATOMIC | __GFP_ZERO);
-+x = kmem_cache_zalloc(xfrm_state_cache, GFP_ATOMIC);
- 
-     if (x) {
-         write_pnet(&x->xs_net, net);
--- 
-1.9.1
-
+T24gTW9uLCAyMDE5LTEyLTIzIGF0IDAxOjQwICswMDAwLCBCYWxiaXIgU2luZ2ggd3JvdGU6DQo+
+IEFsbG93IGJsb2NrL2dlbmhkIHRvIG5vdGlmeSB1c2VyIHNwYWNlICh2aWEgdWRldikgYWJvdXQg
+ZGlzayBzaXplIGNoYW5nZXMNCj4gdXNpbmcgYSBuZXcgaGVscGVyIGRpc2tfc2V0X2NhcGFjaXR5
+KCksIHdoaWNoIGlzIGEgd3JhcHBlciBvbiB0b3ANCj4gb2Ygc2V0X2NhcGFjaXR5KCkuIGRpc2tf
+c2V0X2NhcGFjaXR5KCkgd2lsbCBvbmx5IG5vdGlmeSB2aWEgdWRldiBpZg0KPiB0aGUgY3VycmVu
+dCBjYXBhY2l0eSBvciB0aGUgdGFyZ2V0IGNhcGFjaXR5IGlzIG5vdCB6ZXJvLg0KPiANCj4gQmFj
+a2dyb3VuZDoNCj4gDQo+IEFzIGEgcGFydCBvZiBhIHBhdGNoIHRvIGFsbG93IHNlbmRpbmcgdGhl
+IFJFU0laRSBldmVudCBvbiBkaXNrIGNhcGFjaXR5DQo+IGNoYW5nZSwgQ2hyaXN0b3BoIChoY2hA
+bHN0LmRlKSByZXF1ZXN0ZWQgdGhhdCB0aGUgcGF0Y2ggYmUgbWFkZSBnZW5lcmljDQo+IGFuZCB0
+aGUgaGFja3MgZm9yIHZpcnRpbyBibG9jayBhbmQgeGVuIGJsb2NrIGRldmljZXMgYmUgcmVtb3Zl
+ZCBhbmQNCj4gbWVyZ2VkIHZpYSBhIGdlbmVyaWMgaGVscGVyLg0KPiANCj4gDQoNCkkgbWVzc2Vk
+IHVwIHdpdGggbGludXgtYmxvY2sgTUwgYWRkcmVzcywgSSBjYW4gcmVzZW5kIHdpdGggdGhlIHJp
+Z2h0IGFkZHJlc3MNCmlmIG5lZWRlZC4gTXkgYXBvbG9naWVzDQoNCkJhbGJpciBTaW5naC4NCg==
