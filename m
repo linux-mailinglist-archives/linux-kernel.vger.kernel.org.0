@@ -2,175 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E241291C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 07:08:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4621D1291C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 07:09:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfLWGIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 01:08:43 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34375 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbfLWGIj (ORCPT
+        id S1726960AbfLWGJh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 01:09:37 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38619 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfLWGJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 01:08:39 -0500
-Received: by mail-pg1-f194.google.com with SMTP id r11so8300649pgf.1;
-        Sun, 22 Dec 2019 22:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4wTOIHrS76ztlN3KfH9i8gs4zRLMioZUYiN9KHxWPxk=;
-        b=VRhfFQGNlPaf7r6rXbjt5CkZzqAuOvKRCJKHlgWpRUHKGzk5dh5+ZiGXV9AjH6Ktgx
-         JQHfRpHRwZzWlbzg2M/5Z08CK5LqjpBMJlCfNBfhyahhvXm6bOp89zhLsmreVjJ5pJEa
-         LjIwMJM7ZnjEJE9HK2kX+obOvxDeEz9MFHur2g6/fYQWsyoPF9QI+dPGLyBWxpgDSYCo
-         g/NfdKS35ovMWhR6vRPteKM6Q/V/dXOvIJ07bBOFLYr2E/mgjvYHbCLNTx08hD4HnrJf
-         yyO/I9gVHyqCL5646/aCQvmK2aK/2XGDj0xy02381e73tzig1wZSDWG28MyyOJiL+hly
-         jNng==
+        Mon, 23 Dec 2019 01:09:37 -0500
+Received: by mail-wm1-f68.google.com with SMTP id u2so15088251wmc.3;
+        Sun, 22 Dec 2019 22:09:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=4wTOIHrS76ztlN3KfH9i8gs4zRLMioZUYiN9KHxWPxk=;
-        b=CYqFTKf/pXYnJH4WsUY1bna73DZIlNb9fxnI8TaWJwVWfsFH4kiQ+izFZXtTB8rgak
-         3Wr2R5o5clD+cHuc8Rx5hlaqQqh48YGwg2CPJN5IS5GOwC1MILueq4rdYvIC1/SXYGsI
-         mBhtU6S1zD8UB2nFoN0ZB6QR0mCjZhK3T4FH4TzMV0UFZ+6rFMSgdj+uKxQ9uZUjy9vL
-         hbFErYATTkr1bmizB98aVakDwOwpCtDkiodl6NlChMesPFLp+ZXC7NibNG6zVbv1+nLl
-         0SXf8U4VUVGscvWxr2D/bYBxMw5oJqNh205pEL6tg7WG+YloR2hYbK3DXzz8SJd29NTH
-         LPlg==
-X-Gm-Message-State: APjAAAXXa6ZNNxeYNnLVcIIX/oEDcIvmFN2IEBsv2gMaRW1mynE3fXeb
-        jSIeyowbauQjqyH0WLSV2v4=
-X-Google-Smtp-Source: APXvYqzTdmWuH+bETIdcdf3sETXajF999GYY/DzAp4mb7X2f/E/a1ZHQ2V1wd9zju5+LnPbKyEX2/A==
-X-Received: by 2002:aa7:9aa5:: with SMTP id x5mr30998929pfi.131.1577081318540;
-        Sun, 22 Dec 2019 22:08:38 -0800 (PST)
-Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
-        by smtp.gmail.com with ESMTPSA id p185sm22978212pfg.61.2019.12.22.22.08.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2019 22:08:38 -0800 (PST)
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users@vger.kernel.org
-Subject: [PATCH 9/9] perf script: Add --show-cgroup-events option
-Date:   Mon, 23 Dec 2019 15:07:59 +0900
-Message-Id: <20191223060759.841176-10-namhyung@kernel.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
-In-Reply-To: <20191223060759.841176-1-namhyung@kernel.org>
-References: <20191223060759.841176-1-namhyung@kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kBek2qMpkl76XzsVkCJQfX3XYSAhe9VKKtzp8ddYINw=;
+        b=QLqFEjkxit+AHR2YIaqlGQBzXeEdZNYEsnovuK8u1VnQuJ9YuuMu2HHVwyzXFH4Qaa
+         iEsSAIdwrDakK5vffy94ciajrYMEqezGrO7jbn8M/3W6By2TxsumAwwN5cA60BUBvXvb
+         Kl4FPZXm4U6/avPEal/PbEaSps8EXzsmVxT1E3j1bpI6AZACqQ0XTfnJ44Kyiz2qo08h
+         rxyy4GKRyVsMLxM+U46w+f38Wfa620SD0MP4IhxPjXVRLCcLVi3Q89PNjQIt5A2+3tHp
+         63yDzFFHW+45pPCOMk7q/XQ/3rRVAZFB0fohk04ca13bW3LmN+F9W8uJ89fG2rQJoqcf
+         Qh3w==
+X-Gm-Message-State: APjAAAXEpXNc+5xTrfVYn7xj98rRsMLwPSRLjazkcGqN0qIGZO0HmSj0
+        L2IXSNDYEl25nO0KmosF7ahO1oiFXn0VyU/PVlU=
+X-Google-Smtp-Source: APXvYqzduGzxW0Eq8AtIuTC/t2Jdrao10koS+96PhhcRz3RUy8glgGTBnhBhSnilH6eoF1DYQito+ijf/Sp8rKfGPwY=
+X-Received: by 2002:a7b:c5d8:: with SMTP id n24mr28455099wmk.124.1577081374906;
+ Sun, 22 Dec 2019 22:09:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191221162158.rw6xqqktubozg6fg@ast-mbp.dhcp.thefacebook.com>
+ <20191223030530.725937-1-namhyung@kernel.org> <CAEf4BzaGfsF352kWu1zZe+yXSRm4c9LQ0U57VnRq2EdtjeQutw@mail.gmail.com>
+ <CAEf4BzbyBgDN5svEcfpyjoViixhn2iGBs1j+jyvNhfjPp_1E=w@mail.gmail.com>
+In-Reply-To: <CAEf4BzbyBgDN5svEcfpyjoViixhn2iGBs1j+jyvNhfjPp_1E=w@mail.gmail.com>
+From:   Namhyung Kim <namhyung@kernel.org>
+Date:   Mon, 23 Dec 2019 15:09:23 +0900
+Message-ID: <CAM9d7ch1=pmgkFbgGr2YignQwdNjke2QeOAFLCFYu8L8J-Z8vw@mail.gmail.com>
+Subject: Re: [PATCH bpf] libbpf: Fix build on read-only filesystems
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, bpf <bpf@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The --show-cgroup-events option is to print CGROUP events in the
-output like others.
+Hello,
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/Documentation/perf-script.txt |  3 ++
- tools/perf/builtin-script.c              | 41 ++++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+On Mon, Dec 23, 2019 at 2:55 PM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Sun, Dec 22, 2019 at 9:45 PM Andrii Nakryiko
+> <andrii.nakryiko@gmail.com> wrote:
+> >
+> > On Sun, Dec 22, 2019 at 7:05 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > >
+> > > I got the following error when I tried to build perf on a read-only
+> > > filesystem with O=dir option.
+> > >
+> > >   $ cd /some/where/ro/linux/tools/perf
+> > >   $ make O=$HOME/build/perf
+> > >   ...
+> > >     CC       /home/namhyung/build/perf/lib.o
+> > >   /bin/sh: bpf_helper_defs.h: Read-only file system
+> > >   make[3]: *** [Makefile:184: bpf_helper_defs.h] Error 1
+> > >   make[2]: *** [Makefile.perf:778: /home/namhyung/build/perf/libbpf.a] Error 2
+> > >   make[2]: *** Waiting for unfinished jobs....
+> > >     LD       /home/namhyung/build/perf/libperf-in.o
+> > >     AR       /home/namhyung/build/perf/libperf.a
+> > >     PERF_VERSION = 5.4.0
+> > >   make[1]: *** [Makefile.perf:225: sub-make] Error 2
+> > >   make: *** [Makefile:70: all] Error 2
+> > >
+> > > It was becaused bpf_helper_defs.h was generated in current directory.
+> > > Move it to OUTPUT directory.
+> > >
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> >
+> > Looks good, thanks!
+>
+> just one minor thing: bpf_helper_defs.h has to be added to .gitignore
+> under selftests/bpf now
+>
+> >
+> > Tested-by: Andrii Nakryiko <andriin@fb.com>
+> > Acked-by: Andrii Nakryiko <andriin@fb.com>
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 2599b057e47b..3dd297600427 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -319,6 +319,9 @@ OPTIONS
- --show-bpf-events
- 	Display bpf events i.e. events of type PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT.
- 
-+--show-cgroup-events
-+	Display cgroup events i.e. events of type PERF_RECORD_CGROUP.
-+
- --demangle::
- 	Demangle symbol names to human readable form. It's enabled by default,
- 	disable with --no-demangle.
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index e2406b291c1c..3db4afc29430 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1681,6 +1681,7 @@ struct perf_script {
- 	bool			show_lost_events;
- 	bool			show_round_events;
- 	bool			show_bpf_events;
-+	bool			show_cgroup_events;
- 	bool			allocated;
- 	bool			per_event_dump;
- 	struct evswitch		evswitch;
-@@ -2199,6 +2200,41 @@ static int process_namespaces_event(struct perf_tool *tool,
- 	return ret;
- }
- 
-+static int process_cgroup_event(struct perf_tool *tool,
-+				union perf_event *event,
-+				struct perf_sample *sample,
-+				struct machine *machine)
-+{
-+	struct thread *thread;
-+	struct perf_script *script = container_of(tool, struct perf_script, tool);
-+	struct perf_session *session = script->session;
-+	struct evsel *evsel = perf_evlist__id2evsel(session->evlist, sample->id);
-+	int ret = -1;
-+
-+	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-+	if (thread == NULL) {
-+		pr_debug("problem processing CGROUP event, skipping it.\n");
-+		return -1;
-+	}
-+
-+	if (perf_event__process_cgroup(tool, event, sample, machine) < 0)
-+		goto out;
-+
-+	if (!evsel->core.attr.sample_id_all) {
-+		sample->cpu = 0;
-+		sample->time = 0;
-+	}
-+	if (!filter_cpu(sample)) {
-+		perf_sample__fprintf_start(sample, thread, evsel,
-+					   PERF_RECORD_CGROUP, stdout);
-+		perf_event__fprintf(event, stdout);
-+	}
-+	ret = 0;
-+out:
-+	thread__put(thread);
-+	return ret;
-+}
-+
- static int process_fork_event(struct perf_tool *tool,
- 			      union perf_event *event,
- 			      struct perf_sample *sample,
-@@ -2538,6 +2574,8 @@ static int __cmd_script(struct perf_script *script)
- 		script->tool.context_switch = process_switch_event;
- 	if (script->show_namespace_events)
- 		script->tool.namespaces = process_namespaces_event;
-+	if (script->show_cgroup_events)
-+		script->tool.cgroup = process_cgroup_event;
- 	if (script->show_lost_events)
- 		script->tool.lost = process_lost_event;
- 	if (script->show_round_events) {
-@@ -3463,6 +3501,7 @@ int cmd_script(int argc, const char **argv)
- 			.mmap2		 = perf_event__process_mmap2,
- 			.comm		 = perf_event__process_comm,
- 			.namespaces	 = perf_event__process_namespaces,
-+			.cgroup		 = perf_event__process_cgroup,
- 			.exit		 = perf_event__process_exit,
- 			.fork		 = perf_event__process_fork,
- 			.attr		 = process_attr,
-@@ -3563,6 +3602,8 @@ int cmd_script(int argc, const char **argv)
- 		    "Show context switch events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-namespace-events", &script.show_namespace_events,
- 		    "Show namespace events (if recorded)"),
-+	OPT_BOOLEAN('\0', "show-cgroup-events", &script.show_cgroup_events,
-+		    "Show cgroup events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-lost-events", &script.show_lost_events,
- 		    "Show lost events (if recorded)"),
- 	OPT_BOOLEAN('\0', "show-round-events", &script.show_round_events,
--- 
-2.24.1.735.g03f4e72817-goog
+Thanks a lot for the review, I'll send v3 soon
 
+Thanks
+Namhyung
