@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AA0B1296E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4726B129722
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:20:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfLWOR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:17:26 -0500
-Received: from mga14.intel.com ([192.55.52.115]:17844 "EHLO mga14.intel.com"
+        id S1727579AbfLWOTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:19:15 -0500
+Received: from mga07.intel.com ([134.134.136.100]:18203 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbfLWOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:17:26 -0500
+        id S1726907AbfLWORZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 09:17:25 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:25 -0800
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:24 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="211567537"
+   d="scan'208";a="268164216"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2019 06:17:22 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Dec 2019 06:17:22 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 9CF1C81F; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
+        id A7E03A07; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     Zha Qipeng <qipeng.zha@intel.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 10/37] platform/x86: intel_scu_ipc: Drop intel_scu_ipc_io[read|write][8|16]()
-Date:   Mon, 23 Dec 2019 17:16:49 +0300
-Message-Id: <20191223141716.13727-11-mika.westerberg@linux.intel.com>
+Subject: [PATCH 11/37] platform/x86: intel_scu_ipc: Drop intel_scu_ipc_raw_command()
+Date:   Mon, 23 Dec 2019 17:16:50 +0300
+Message-Id: <20191223141716.13727-12-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
@@ -48,129 +48,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no users for these so we can remove them.
+There is no user for this function so we can drop it from the driver.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- arch/x86/include/asm/intel_scu_ipc.h | 12 -----
- drivers/platform/x86/intel_scu_ipc.c | 68 ----------------------------
- 2 files changed, 80 deletions(-)
+ arch/x86/include/asm/intel_scu_ipc.h |  2 -
+ drivers/platform/x86/intel_scu_ipc.c | 63 ----------------------------
+ 2 files changed, 65 deletions(-)
 
 diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
-index b2dde96e0611..b59afa59a4cb 100644
+index b59afa59a4cb..2a1442ba6e78 100644
 --- a/arch/x86/include/asm/intel_scu_ipc.h
 +++ b/arch/x86/include/asm/intel_scu_ipc.h
-@@ -22,24 +22,12 @@
- /* Read single register */
- int intel_scu_ipc_ioread8(u16 addr, u8 *data);
+@@ -38,8 +38,6 @@ int intel_scu_ipc_update_register(u16 addr, u8 data, u8 mask);
+ int intel_scu_ipc_simple_command(int cmd, int sub);
+ int intel_scu_ipc_command(int cmd, int sub, u32 *in, int inlen,
+ 			  u32 *out, int outlen);
+-int intel_scu_ipc_raw_command(int cmd, int sub, u8 *in, int inlen,
+-			      u32 *out, int outlen, u32 dptr, u32 sptr);
  
--/* Read two sequential registers */
--int intel_scu_ipc_ioread16(u16 addr, u16 *data);
--
--/* Read four sequential registers */
--int intel_scu_ipc_ioread32(u16 addr, u32 *data);
--
- /* Read a vector */
- int intel_scu_ipc_readv(u16 *addr, u8 *data, int len);
- 
- /* Write single register */
- int intel_scu_ipc_iowrite8(u16 addr, u8 data);
- 
--/* Write two sequential registers */
--int intel_scu_ipc_iowrite16(u16 addr, u16 data);
--
--/* Write four sequential registers */
--int intel_scu_ipc_iowrite32(u16 addr, u32 data);
--
- /* Write a vector */
- int intel_scu_ipc_writev(u16 *addr, u8 *data, int len);
+ extern struct blocking_notifier_head intel_scu_notifier;
  
 diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
-index 997fdac920c6..ba857e54800b 100644
+index ba857e54800b..93a810fa6c8a 100644
 --- a/drivers/platform/x86/intel_scu_ipc.c
 +++ b/drivers/platform/x86/intel_scu_ipc.c
-@@ -237,40 +237,6 @@ int intel_scu_ipc_ioread8(u16 addr, u8 *data)
+@@ -383,69 +383,6 @@ int intel_scu_ipc_command(int cmd, int sub, u32 *in, int inlen,
  }
- EXPORT_SYMBOL(intel_scu_ipc_ioread8);
+ EXPORT_SYMBOL(intel_scu_ipc_command);
  
--/**
-- *	intel_scu_ipc_ioread16		-	read a word via the SCU
-- *	@addr: register on SCU
-- *	@data: return pointer for read word
-- *
-- *	Read a register pair. Returns 0 on success or an error code. All
-- *	locking between SCU accesses is handled for the caller.
-- *
-- *	This function may sleep.
-- */
--int intel_scu_ipc_ioread16(u16 addr, u16 *data)
--{
--	u16 x[2] = {addr, addr + 1};
--	return pwr_reg_rdwr(x, (u8 *)data, 2, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_R);
--}
--EXPORT_SYMBOL(intel_scu_ipc_ioread16);
+-#define IPC_SPTR		0x08
+-#define IPC_DPTR		0x0C
 -
 -/**
-- *	intel_scu_ipc_ioread32		-	read a dword via the SCU
-- *	@addr: register on SCU
-- *	@data: return pointer for read dword
+- * intel_scu_ipc_raw_command() - IPC command with data and pointers
+- * @cmd:	IPC command code.
+- * @sub:	IPC command sub type.
+- * @in:		input data of this IPC command.
+- * @inlen:	input data length in dwords.
+- * @out:	output data of this IPC command.
+- * @outlen:	output data length in dwords.
+- * @sptr:	data writing to SPTR register.
+- * @dptr:	data writing to DPTR register.
 - *
-- *	Read four registers. Returns 0 on success or an error code. All
-- *	locking between SCU accesses is handled for the caller.
+- * Send an IPC command to SCU with input/output data and source/dest pointers.
 - *
-- *	This function may sleep.
+- * Return:	an IPC error code or 0 on success.
 - */
--int intel_scu_ipc_ioread32(u16 addr, u32 *data)
+-int intel_scu_ipc_raw_command(int cmd, int sub, u8 *in, int inlen,
+-			      u32 *out, int outlen, u32 dptr, u32 sptr)
 -{
--	u16 x[4] = {addr, addr + 1, addr + 2, addr + 3};
--	return pwr_reg_rdwr(x, (u8 *)data, 4, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_R);
--}
--EXPORT_SYMBOL(intel_scu_ipc_ioread32);
+-	struct intel_scu_ipc_dev *scu = &ipcdev;
+-	int inbuflen = DIV_ROUND_UP(inlen, 4);
+-	u32 inbuf[4];
+-	int i, err;
 -
- /**
-  *	intel_scu_ipc_iowrite8		-	write a byte via the SCU
-  *	@addr: register on SCU
-@@ -287,40 +253,6 @@ int intel_scu_ipc_iowrite8(u16 addr, u8 data)
- }
- EXPORT_SYMBOL(intel_scu_ipc_iowrite8);
- 
--/**
-- *	intel_scu_ipc_iowrite16		-	write a word via the SCU
-- *	@addr: register on SCU
-- *	@data: word to write
-- *
-- *	Write two registers. Returns 0 on success or an error code. All
-- *	locking between SCU accesses is handled for the caller.
-- *
-- *	This function may sleep.
-- */
--int intel_scu_ipc_iowrite16(u16 addr, u16 data)
--{
--	u16 x[2] = {addr, addr + 1};
--	return pwr_reg_rdwr(x, (u8 *)&data, 2, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_W);
--}
--EXPORT_SYMBOL(intel_scu_ipc_iowrite16);
+-	/* Up to 16 bytes */
+-	if (inbuflen > 4)
+-		return -EINVAL;
 -
--/**
-- *	intel_scu_ipc_iowrite32		-	write a dword via the SCU
-- *	@addr: register on SCU
-- *	@data: dword to write
-- *
-- *	Write four registers. Returns 0 on success or an error code. All
-- *	locking between SCU accesses is handled for the caller.
-- *
-- *	This function may sleep.
-- */
--int intel_scu_ipc_iowrite32(u16 addr, u32 data)
--{
--	u16 x[4] = {addr, addr + 1, addr + 2, addr + 3};
--	return pwr_reg_rdwr(x, (u8 *)&data, 4, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_W);
--}
--EXPORT_SYMBOL(intel_scu_ipc_iowrite32);
+-	mutex_lock(&ipclock);
+-	if (scu->dev == NULL) {
+-		mutex_unlock(&ipclock);
+-		return -ENODEV;
+-	}
 -
- /**
-  *	intel_scu_ipc_readvv		-	read a set of registers
-  *	@addr: register list
+-	writel(dptr, scu->ipc_base + IPC_DPTR);
+-	writel(sptr, scu->ipc_base + IPC_SPTR);
+-
+-	/*
+-	 * SRAM controller doesn't support 8-bit writes, it only
+-	 * supports 32-bit writes, so we have to copy input data into
+-	 * the temporary buffer, and SCU FW will use the inlen to
+-	 * determine the actual input data length in the temporary
+-	 * buffer.
+-	 */
+-	memcpy(inbuf, in, inlen);
+-
+-	for (i = 0; i < inbuflen; i++)
+-		ipc_data_writel(scu, inbuf[i], 4 * i);
+-
+-	ipc_command(scu, (inlen << 16) | (sub << 12) | cmd);
+-	err = intel_scu_ipc_check_status(scu);
+-	if (!err) {
+-		for (i = 0; i < outlen; i++)
+-			*out++ = ipc_data_readl(scu, 4 * i);
+-	}
+-
+-	mutex_unlock(&ipclock);
+-	return err;
+-}
+-EXPORT_SYMBOL_GPL(intel_scu_ipc_raw_command);
+-
+ /*
+  * Interrupt handler gets called when ioc bit of IPC_COMMAND_REG set to 1
+  * When ioc bit is set to 1, caller api must wait for interrupt handler called
 -- 
 2.24.0
 
