@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CD971296EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA0B1296E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfLWOR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:17:29 -0500
-Received: from mga04.intel.com ([192.55.52.120]:8564 "EHLO mga04.intel.com"
+        id S1726995AbfLWOR0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:17:26 -0500
+Received: from mga14.intel.com ([192.55.52.115]:17844 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbfLWOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726944AbfLWOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Dec 2019 09:17:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:26 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:25 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="299688890"
+   d="scan'208";a="211567537"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 23 Dec 2019 06:17:22 -0800
+  by orsmga008.jf.intel.com with ESMTP; 23 Dec 2019 06:17:22 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 8D50D76F; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
+        id 9CF1C81F; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     Zha Qipeng <qipeng.zha@intel.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/37] platform/x86: intel_scu_ipc: Drop unused macros
-Date:   Mon, 23 Dec 2019 17:16:48 +0300
-Message-Id: <20191223141716.13727-10-mika.westerberg@linux.intel.com>
+Subject: [PATCH 10/37] platform/x86: intel_scu_ipc: Drop intel_scu_ipc_io[read|write][8|16]()
+Date:   Mon, 23 Dec 2019 17:16:49 +0300
+Message-Id: <20191223141716.13727-11-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
@@ -48,30 +48,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These macros are not used anywhere in the driver so drop them.
+There are no users for these so we can remove them.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/platform/x86/intel_scu_ipc.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/x86/include/asm/intel_scu_ipc.h | 12 -----
+ drivers/platform/x86/intel_scu_ipc.c | 68 ----------------------------
+ 2 files changed, 80 deletions(-)
 
+diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
+index b2dde96e0611..b59afa59a4cb 100644
+--- a/arch/x86/include/asm/intel_scu_ipc.h
++++ b/arch/x86/include/asm/intel_scu_ipc.h
+@@ -22,24 +22,12 @@
+ /* Read single register */
+ int intel_scu_ipc_ioread8(u16 addr, u8 *data);
+ 
+-/* Read two sequential registers */
+-int intel_scu_ipc_ioread16(u16 addr, u16 *data);
+-
+-/* Read four sequential registers */
+-int intel_scu_ipc_ioread32(u16 addr, u32 *data);
+-
+ /* Read a vector */
+ int intel_scu_ipc_readv(u16 *addr, u8 *data, int len);
+ 
+ /* Write single register */
+ int intel_scu_ipc_iowrite8(u16 addr, u8 data);
+ 
+-/* Write two sequential registers */
+-int intel_scu_ipc_iowrite16(u16 addr, u16 data);
+-
+-/* Write four sequential registers */
+-int intel_scu_ipc_iowrite32(u16 addr, u32 data);
+-
+ /* Write a vector */
+ int intel_scu_ipc_writev(u16 *addr, u8 *data, int len);
+ 
 diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
-index 8db0644900a3..997fdac920c6 100644
+index 997fdac920c6..ba857e54800b 100644
 --- a/drivers/platform/x86/intel_scu_ipc.c
 +++ b/drivers/platform/x86/intel_scu_ipc.c
-@@ -26,11 +26,7 @@
- #include <asm/intel_scu_ipc.h>
+@@ -237,40 +237,6 @@ int intel_scu_ipc_ioread8(u16 addr, u8 *data)
+ }
+ EXPORT_SYMBOL(intel_scu_ipc_ioread8);
  
- /* IPC defines the following message types */
--#define IPCMSG_WATCHDOG_TIMER 0xF8 /* Set Kernel Watchdog Threshold */
--#define IPCMSG_BATTERY        0xEF /* Coulomb Counter Accumulator */
--#define IPCMSG_FW_UPDATE      0xFE /* Firmware update */
--#define IPCMSG_PCNTRL         0xFF /* Power controller unit read/write */
--#define IPCMSG_FW_REVISION    0xF4 /* Get firmware revision */
-+#define IPCMSG_PCNTRL         0xff /* Power controller unit read/write */
+-/**
+- *	intel_scu_ipc_ioread16		-	read a word via the SCU
+- *	@addr: register on SCU
+- *	@data: return pointer for read word
+- *
+- *	Read a register pair. Returns 0 on success or an error code. All
+- *	locking between SCU accesses is handled for the caller.
+- *
+- *	This function may sleep.
+- */
+-int intel_scu_ipc_ioread16(u16 addr, u16 *data)
+-{
+-	u16 x[2] = {addr, addr + 1};
+-	return pwr_reg_rdwr(x, (u8 *)data, 2, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_R);
+-}
+-EXPORT_SYMBOL(intel_scu_ipc_ioread16);
+-
+-/**
+- *	intel_scu_ipc_ioread32		-	read a dword via the SCU
+- *	@addr: register on SCU
+- *	@data: return pointer for read dword
+- *
+- *	Read four registers. Returns 0 on success or an error code. All
+- *	locking between SCU accesses is handled for the caller.
+- *
+- *	This function may sleep.
+- */
+-int intel_scu_ipc_ioread32(u16 addr, u32 *data)
+-{
+-	u16 x[4] = {addr, addr + 1, addr + 2, addr + 3};
+-	return pwr_reg_rdwr(x, (u8 *)data, 4, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_R);
+-}
+-EXPORT_SYMBOL(intel_scu_ipc_ioread32);
+-
+ /**
+  *	intel_scu_ipc_iowrite8		-	write a byte via the SCU
+  *	@addr: register on SCU
+@@ -287,40 +253,6 @@ int intel_scu_ipc_iowrite8(u16 addr, u8 data)
+ }
+ EXPORT_SYMBOL(intel_scu_ipc_iowrite8);
  
- /* Command id associated with message IPCMSG_PCNTRL */
- #define IPC_CMD_PCNTRL_W      0 /* Register write */
+-/**
+- *	intel_scu_ipc_iowrite16		-	write a word via the SCU
+- *	@addr: register on SCU
+- *	@data: word to write
+- *
+- *	Write two registers. Returns 0 on success or an error code. All
+- *	locking between SCU accesses is handled for the caller.
+- *
+- *	This function may sleep.
+- */
+-int intel_scu_ipc_iowrite16(u16 addr, u16 data)
+-{
+-	u16 x[2] = {addr, addr + 1};
+-	return pwr_reg_rdwr(x, (u8 *)&data, 2, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_W);
+-}
+-EXPORT_SYMBOL(intel_scu_ipc_iowrite16);
+-
+-/**
+- *	intel_scu_ipc_iowrite32		-	write a dword via the SCU
+- *	@addr: register on SCU
+- *	@data: dword to write
+- *
+- *	Write four registers. Returns 0 on success or an error code. All
+- *	locking between SCU accesses is handled for the caller.
+- *
+- *	This function may sleep.
+- */
+-int intel_scu_ipc_iowrite32(u16 addr, u32 data)
+-{
+-	u16 x[4] = {addr, addr + 1, addr + 2, addr + 3};
+-	return pwr_reg_rdwr(x, (u8 *)&data, 4, IPCMSG_PCNTRL, IPC_CMD_PCNTRL_W);
+-}
+-EXPORT_SYMBOL(intel_scu_ipc_iowrite32);
+-
+ /**
+  *	intel_scu_ipc_readvv		-	read a set of registers
+  *	@addr: register list
 -- 
 2.24.0
 
