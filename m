@@ -2,121 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60CC8129B50
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 22:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B364129B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 23:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfLWV7I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 16:59:08 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60986 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfLWV7H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 16:59:07 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBNLwtxn036585;
-        Mon, 23 Dec 2019 15:58:55 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577138335;
-        bh=9TpDm7eS6HN2w04yodlknk3nngqfWC6wufnnQos0dn8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pzWn7xR9jggLLSJ1p74hAr0iXOs8Z4PWDBDA5hQk78buN009lG4KyBOoU6xKYt8yn
-         d+0z9vhv8dOAi7x7y8b+duDf0cs5ZlgVr/4PJf8TnWvrH+E7Q92bXZh37VG/Lf1Wv0
-         FOu4kuLIFczvflXWPFn9qhvvZAqKc0lrNG0uhvOU=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBNLwtAl096172;
-        Mon, 23 Dec 2019 15:58:55 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
- Dec 2019 15:58:53 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 23 Dec 2019 15:58:53 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBNLwpqH086181;
-        Mon, 23 Dec 2019 15:58:52 -0600
-Subject: Re: [PATCH] iio: adc: stm32-dfsdm: Use dma_request_chan() instead
- dma_request_slave_channel()
-To:     Jonathan Cameron <jic23@kernel.org>
-CC:     <mcoquelin.stm32@gmail.com>, <alexandre.torgue@st.com>,
-        <vkoul@kernel.org>, <linux-iio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20191217075221.23895-1-peter.ujfalusi@ti.com>
- <20191223154538.74a76f94@archlinux>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <66c0d161-007f-5c92-01c8-d73ebca9f2cc@ti.com>
-Date:   Tue, 24 Dec 2019 00:00:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191223154538.74a76f94@archlinux>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        id S1726899AbfLWWBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 17:01:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33156 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726817AbfLWWBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 17:01:52 -0500
+Received: from X1 (nat-ab2241.sltdut.senawave.net [162.218.216.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A6D4206B7;
+        Mon, 23 Dec 2019 22:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577138512;
+        bh=cvBxc4WmSagTT1y4VAUM0/tpLY90rFtmuzPh60X44l0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=dUQyymDZpS8ieDiLpX7hkhz6mBdQuLmrcPET7KIRfHOhXojpwj0s0BlzgLCJpWaj2
+         E2oPEZcZqqs4seNr/Mu0YH/rkQXPgdtJN03vRggrcdL7QWwnRzd8IAOxWfdZZ9GSjA
+         37rmBkc5T3XJVAHC7iLWSs0+PEpIHWksAKbeBCvA=
+Date:   Mon, 23 Dec 2019 14:01:51 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ generic-ioremap tree
+Message-Id: <20191223140151.7aceb059297338f5912b0f35@linux-foundation.org>
+In-Reply-To: <20191221083211.GA3465@lst.de>
+References: <20191218133025.15356802@canb.auug.org.au>
+        <20191221083211.GA3465@lst.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
+On Sat, 21 Dec 2019 09:32:11 +0100 Christoph Hellwig <hch@lst.de> wrote:
 
-On 12/23/19 5:45 PM, Jonathan Cameron wrote:
-> On Tue, 17 Dec 2019 09:52:21 +0200
-> Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
+> Andrew,
 > 
->> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
->> eating up the error code.
->>
->> By using dma_request_chan() directly the driver can support deferred
->> probing against DMA.
->>
->> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> I don't think this one goes far enough.  
-> 
-> One of the paths does:
-> 
-> 	/* Optionally request DMA */
-> 	if (stm32_dfsdm_dma_request(indio_dev)) {
-> 		dev_dbg(&indio_dev->dev, "No DMA support\n");
-> 		return 0;
-> 	}
-> 
-> That needs specific handling for deferred probing.
+> do you plan to send this to Linus for 5.5 to fix the warning from the
+> new devm_ioremap_uc addition in this cycle?  If so I can rebase the
+> ioremap tree one more time.
 
-Right, I have checked the stm32_dfsdm_audio_init() path, via that the
-error is propagated correctly.
+I'm not sure what to do about this because of
+https://lore.kernel.org/lkml/CAMuHMdUO=cZMsFx4t_uULNRuwnGLjbRYOJAo7j5gC-iSV3wy5w@mail.gmail.com/
 
-I'll send an update next year ;)
+I'd rather just drop the patch.  Can you please take care of it all?  
 
-> 
->> ---
->>  drivers/iio/adc/stm32-dfsdm-adc.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/iio/adc/stm32-dfsdm-adc.c b/drivers/iio/adc/stm32-dfsdm-adc.c
->> index e493242c266e..3aac1a21f9d0 100644
->> --- a/drivers/iio/adc/stm32-dfsdm-adc.c
->> +++ b/drivers/iio/adc/stm32-dfsdm-adc.c
->> @@ -1383,9 +1383,9 @@ static int stm32_dfsdm_dma_request(struct iio_dev *indio_dev)
->>  {
->>  	struct stm32_dfsdm_adc *adc = iio_priv(indio_dev);
->>  
->> -	adc->dma_chan = dma_request_slave_channel(&indio_dev->dev, "rx");
->> -	if (!adc->dma_chan)
->> -		return -EINVAL;
->> +	adc->dma_chan = dma_request_chan(&indio_dev->dev, "rx");
->> +	if (IS_ERR(adc->dma_chan))
->> +		return PTR_ERR(adc->dma_chan);
->>  
->>  	adc->rx_buf = dma_alloc_coherent(adc->dma_chan->device->dev,
->>  					 DFSDM_DMA_BUFFER_SIZE,
-> 
 
-- Peter
+From: Nick Desaulniers <ndesaulniers@google.com>
+Subject: hexagon: define ioremap_uc
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Similar to commit 38e45d81d14e ("sparc64: implement ioremap_uc") define
+ioremap_uc for hexagon to avoid errors from
+-Wimplicit-function-definition.
+
+Link: http://lkml.kernel.org/r/20191209222956.239798-2-ndesaulniers@google.com
+Link: https://github.com/ClangBuiltLinux/linux/issues/797
+Fixes: e537654b7039 ("lib: devres: add a helper function for ioremap_uc")
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Acked-by: Brian Cain <bcain@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Tuowen Zhao <ztuowen@gmail.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alexios Zavras <alexios.zavras@intel.com>
+Cc: Allison Randal <allison@lohutok.net>
+Cc: Will Deacon <will@kernel.org>
+Cc: Richard Fontana <rfontana@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ arch/hexagon/include/asm/io.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/hexagon/include/asm/io.h~hexagon-define-ioremap_uc
++++ a/arch/hexagon/include/asm/io.h
+@@ -173,6 +173,7 @@ static inline void writel(u32 data, vola
+ 
+ void __iomem *ioremap(unsigned long phys_addr, unsigned long size);
+ #define ioremap_nocache ioremap
++#define ioremap_uc(X, Y) ioremap((X), (Y))
+ 
+ 
+ #define __raw_writel writel
+_
+
