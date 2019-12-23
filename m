@@ -2,106 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E142129233
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:20:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 364C9129239
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:26:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726007AbfLWHUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 02:20:49 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:36756 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725855AbfLWHUt (ORCPT
+        id S1726059AbfLWH0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 02:26:22 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:42226 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfLWH0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:20:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577085648;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MW6YhL+RcyQYvYpj5YrVwXN8MDvDRWOnMuiAt/nHw6w=;
-        b=BKvS60xxrDyGPxcHtlBgjcjNqD9a/6K/bFjDzZxTegfUrLvKN4Tvx8Mn1KYdyDiNMts4+c
-        apJnNY9wDigX95BU6Kwoe/V9wYH0g7rOw2TeO9h4/0JJB+XqADkXVZxR7gL0+5ec02hGEq
-        R1lLAfOA1TsXVXv3x+cQL9YVRUZ3PY8=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-336-KC-JDB_cOcm-mTCqJAK6MA-1; Mon, 23 Dec 2019 02:20:45 -0500
-X-MC-Unique: KC-JDB_cOcm-mTCqJAK6MA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 63424800D48;
-        Mon, 23 Dec 2019 07:20:44 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-202.pek2.redhat.com [10.72.12.202])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CD95A808F5;
-        Mon, 23 Dec 2019 07:20:38 +0000 (UTC)
-Subject: Re: [4/5] drm/i915: Auto detect DPCD backlight support by default
-To:     Lyude Paul <lyude@redhat.com>, intel-gfx@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20191122231616.2574-5-lyude@redhat.com>
-From:   Perr Yuan <pyuan@redhat.com>
-Message-ID: <3ba84125-ab4c-e1a7-cb74-b65638f1c2d5@redhat.com>
-Date:   Mon, 23 Dec 2019 02:20:36 -0500
+        Mon, 23 Dec 2019 02:26:22 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PSNE092418;
+        Mon, 23 Dec 2019 01:25:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577085928;
+        bh=TZCdQwanBajUmjnrjOmrqqKE92Iuel2n9DhlReItHps=;
+        h=Subject:To:References:From:Date:In-Reply-To;
+        b=hPz3RnaVl31ARYBIL0RBmD5SzKuqviJ1KkCDboXFBZxeOJ9IcZzvmsXZHdkQFxI6B
+         Oz2OLdqF2IrpsXzqxe/wyQ6tZKGMEnhZuTUXG072+jQU9lzBfvdxi3+C27Z7O3J3z1
+         A7WMeFB+ewaknC0/CBCcFJqM/AZiK2GJJxucI/+g=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBN7PSuh040126
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Dec 2019 01:25:28 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
+ Dec 2019 01:25:27 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 23 Dec 2019 01:25:27 -0600
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PL0n037979;
+        Mon, 23 Dec 2019 01:25:21 -0600
+Subject: Re: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
+To:     Yangtao Li <tiny.windzz@gmail.com>, <ssantosh@kernel.org>,
+        <paul@crapouillou.net>, <matthias.bgg@gmail.com>,
+        <tony@atomide.com>, <lukasz.luba@arm.com>, <kgene@kernel.org>,
+        <krzk@kernel.org>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <allison@lohutok.net>,
+        <tglx@linutronix.de>, <yong.wu@mediatek.com>, <jroedel@suse.de>,
+        <evgreen@chromium.org>, <rfontana@redhat.com>, <digetx@gmail.com>,
+        <pdeschrijver@nvidia.com>, <john@phrozen.org>,
+        <alexios.zavras@intel.com>, <sboyd@kernel.org>,
+        <kstewart@linuxfoundation.org>, <info@metux.net>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-omap@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <20191222185034.4665-1-tiny.windzz@gmail.com>
+ <20191222185034.4665-9-tiny.windzz@gmail.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <7dc78b4c-d1a7-a990-669c-8d3ddbacee0d@ti.com>
+Date:   Mon, 23 Dec 2019 09:25:20 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191122231616.2574-5-lyude@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20191222185034.4665-9-tiny.windzz@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/22/19 6:16 PM, Lyude Paul wrote:
-> Turns out we actually already have some companies, such as Lenovo,
-> shipping machines with AMOLED screens that don't allow controlling the
-> backlight through the usual PWM interface and only allow controlling it
-> through the standard EDP DPCD interface. One example of one of these
-> laptops is the X1 Extreme 2nd Generation.
+
+On 22/12/2019 20:50, Yangtao Li wrote:
+> platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
+> requesting IRQ's resources, as they can be not ready yet. Using
+> platform_get_irq() instead is preferred for getting IRQ even if it
+> was not retrieved earlier.
 > 
-> Since we've got systems that need this turned on by default now to have
-> backlight controls working out of the box, let's start auto-detecting it
-> for systems by default based on what the VBT tells us. We do this by
-> changing the default value for the enable_dpcd_backlight module param
-> from 0 to -1.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Reviewed-by: Jani Nikula <jani.nikula@intel.com>
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+
+Acked-by: Roger Quadros <rogerq@ti.com>
+
 > ---
->   drivers/gpu/drm/i915/i915_params.c | 2 +-
->   drivers/gpu/drm/i915/i915_params.h | 2 +-
->   2 files changed, 2 insertions(+), 2 deletions(-)
+>   drivers/memory/omap-gpmc.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/i915/i915_params.c b/drivers/gpu/drm/i915/i915_params.c
-> index 1dd1f3652795..31eed60c167e 100644
-> --- a/drivers/gpu/drm/i915/i915_params.c
-> +++ b/drivers/gpu/drm/i915/i915_params.c
-> @@ -172,7 +172,7 @@ i915_param_named_unsafe(inject_probe_failure, uint, 0400,
+> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
+> index eff26c1b1394..6dd19d168f75 100644
+> --- a/drivers/memory/omap-gpmc.c
+> +++ b/drivers/memory/omap-gpmc.c
+> @@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
+>   	if (IS_ERR(gpmc_base))
+>   		return PTR_ERR(gpmc_base);
 >   
->   i915_param_named(enable_dpcd_backlight, int, 0600,
->   	"Enable support for DPCD backlight control"
-> -	"(-1=use per-VBT LFP backlight type setting, 0=disabled [default], 1=enabled)");
-> +	"(-1=use per-VBT LFP backlight type setting [default], 0=disabled, 1=enabled)");
+> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> -	if (!res) {
+> -		dev_err(&pdev->dev, "Failed to get resource: irq\n");
+> -		return -ENOENT;
+> -	}
+> -
+> -	gpmc->irq = res->start;
+> +	gpmc->irq = platform_get_irq(pdev, 0);
+> +	if (gpmc->irq < 0)
+> +		return gpmc->irq;
 >   
->   #if IS_ENABLED(CONFIG_DRM_I915_GVT)
->   i915_param_named(enable_gvt, bool, 0400,
-> diff --git a/drivers/gpu/drm/i915/i915_params.h b/drivers/gpu/drm/i915/i915_params.h
-> index 31b88f297fbc..a79d0867f77a 100644
-> --- a/drivers/gpu/drm/i915/i915_params.h
-> +++ b/drivers/gpu/drm/i915/i915_params.h
-> @@ -64,7 +64,7 @@ struct drm_printer;
->   	param(int, reset, 3) \
->   	param(unsigned int, inject_probe_failure, 0) \
->   	param(int, fastboot, -1) \
-> -	param(int, enable_dpcd_backlight, 0) \
-> +	param(int, enable_dpcd_backlight, -1) \
->   	param(char *, force_probe, CONFIG_DRM_I915_FORCE_PROBE) \
->   	param(unsigned long, fake_lmem_start, 0) \
->   	/* leave bools at the end to not create holes */ \
+>   	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
+>   	if (IS_ERR(gpmc_l3_clk)) {
 > 
 
-Tested-by:Perry Yuan <pyuan@redhat.com>
+-- 
+cheers,
+-roger
 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
