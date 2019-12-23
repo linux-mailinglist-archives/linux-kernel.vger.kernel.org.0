@@ -2,69 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C64031290AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:35:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5378D1290B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfLWBfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 20:35:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726393AbfLWBfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 20:35:17 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58163206B7;
-        Mon, 23 Dec 2019 01:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577064916;
-        bh=jQLYVwMMyYcEWqK6/IFzR9AduPaoKnyANcTsHakSj9A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pOfCSlmgZbNgN0s0MwtUZUTBnVJDpD7si/VSXf+mKY6hxK2+7U9JaqoqJbLUbhkJ0
-         J4XHl1AMtvjKcSBxuc41z4RercNfc3q3Q3X6x1hokywtQFTTMzXw3SVFP120X4sS7u
-         nQcHplv5uA5fEpq6tU4WKWRchoYZwSZFVSU8G8Vw=
-Date:   Mon, 23 Dec 2019 09:34:52 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Robert Jones <rjones@gateworks.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] ARM: dts: imx: Add GW5907 board support
-Message-ID: <20191223013451.GB11523@dragon>
-References: <20191205220825.22915-1-rjones@gateworks.com>
- <20191212195212.30433-1-rjones@gateworks.com>
+        id S1726880AbfLWBlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 20:41:32 -0500
+Received: from smtp-fw-9101.amazon.com ([207.171.184.25]:46524 "EHLO
+        smtp-fw-9101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfLWBl3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 20:41:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1577065289; x=1608601289;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=wKr/9yXKpnMZ0LLL0aLH8/g6Iv24/1LIBi7EblWcw/k=;
+  b=TgNTEqb2bESEInE3pkAp3EeyhCRqb39amxgaQO/0Mf5H1s14JEgLul/e
+   aF1V/m4GJKEtZl3bENrNSNPY6Bf6dt7XWblQLjqxNOUg8z2rNGtgzzqBB
+   h9ndaeskTSEx3uuKbUpdthxnZh/4qLVE2cesJSxFhToS6IXrFv0LHZQg/
+   s=;
+IronPort-SDR: n71q9NroV3bOEIgKDK8Blv+rWlMYMqLTjJCg5LMBf37eccoympL9f8TkpiAQXjKZ4t9oAtsm7/
+ k5ehTZknrP8w==
+X-IronPort-AV: E=Sophos;i="5.69,345,1571702400"; 
+   d="scan'208";a="6656913"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1a-67b371d8.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9101.sea19.amazon.com with ESMTP; 23 Dec 2019 01:41:18 +0000
+Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1a-67b371d8.us-east-1.amazon.com (Postfix) with ESMTPS id 74829A1DF2;
+        Mon, 23 Dec 2019 01:41:15 +0000 (UTC)
+Received: from EX13D11UWC002.ant.amazon.com (10.43.162.174) by
+ EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Dec 2019 01:41:14 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D11UWC002.ant.amazon.com (10.43.162.174) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Mon, 23 Dec 2019 01:41:14 +0000
+Received: from localhost (172.23.204.141) by mail-relay.amazon.com
+ (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Mon, 23 Dec 2019 01:41:13 +0000
+From:   Balbir Singh <sblbir@amazon.com>
+To:     <=linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>
+CC:     <axboe@kernel.dk>, <mst@redhat.com>, <jejb@linux.ibm.com>,
+        <hch@lst.de>, <ssomesh@amazon.com>,
+        Balbir Singh <sblbir@amazon.com>
+Subject: [RFC PATCH 1/5] block/genhd: Notify udev about capacity change
+Date:   Mon, 23 Dec 2019 01:40:52 +0000
+Message-ID: <20191223014056.17318-1-sblbir@amazon.com>
+X-Mailer: git-send-email 2.16.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191212195212.30433-1-rjones@gateworks.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 11:52:12AM -0800, Robert Jones wrote:
-> The Gateworks GW5907 is an IMX6 SoC based single board computer with:
->  - IMX6Q or IMX6DL
->  - 32bit DDR3 DRAM
->  - FEC GbE Phy
->  - bi-color front-panel LED
->  - 256MB NAND boot device
->  - Gateworks System Controller (hwmon, pushbutton controller, EEPROM)
->  - Digital IO expander (pca9555)
->  - Joystick 12bit adc (ads1015)
-> 
-> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> Signed-off-by: Robert Jones <rjones@gateworks.com>
+Allow block/genhd to notify user space (via udev) about disk size changes
+using a new helper disk_set_capacity(), which is a wrapper on top
+of set_capacity(). disk_set_capacity() will only notify via udev if
+the current capacity or the target capacity is not zero.
 
-It doesn't apply to my imx/dt branch.  Please rebase and resend.  Also
-could you make a patch series to include this one and the other 3 adding
-GW5910, GW5912 and GW5913 support?
+Background:
 
-Shawn
+As a part of a patch to allow sending the RESIZE event on disk capacity
+change, Christoph (hch@lst.de) requested that the patch be made generic
+and the hacks for virtio block and xen block devices be removed and
+merged via a generic helper.
+
+Testing:
+1. I did some basic testing with an NVME device, by resizing it in
+the backend and ensured that udevd received the event.
+
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Balbir Singh <sblbir@amazon.com>
+Signed-off-by: Someswarudu Sangaraju <ssomesh@amazon.com>
+Signed-off-by: Balbir Singh <sblbir@amazon.com>
+---
+ block/genhd.c         | 19 +++++++++++++++++++
+ include/linux/genhd.h |  1 +
+ 2 files changed, 20 insertions(+)
+
+diff --git a/block/genhd.c b/block/genhd.c
+index ff6268970ddc..94faec98607b 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -46,6 +46,25 @@ static void disk_add_events(struct gendisk *disk);
+ static void disk_del_events(struct gendisk *disk);
+ static void disk_release_events(struct gendisk *disk);
+ 
++/*
++ * Set disk capacity and notify if the size is not currently
++ * zero and will not be set to zero
++ */
++void disk_set_capacity(struct gendisk *disk, sector_t size)
++{
++	sector_t capacity = get_capacity(disk);
++
++	set_capacity(disk, size);
++	if (capacity != 0 && size != 0) {
++		char *envp[] = { "RESIZE=1", NULL };
++
++		kobject_uevent_env(&disk_to_dev(disk)->kobj, KOBJ_CHANGE, envp);
++	}
++}
++
++EXPORT_SYMBOL_GPL(disk_set_capacity);
++
++
+ void part_inc_in_flight(struct request_queue *q, struct hd_struct *part, int rw)
+ {
+ 	if (queue_is_mq(q))
+diff --git a/include/linux/genhd.h b/include/linux/genhd.h
+index a927829bb73a..f1a5ddcc781d 100644
+--- a/include/linux/genhd.h
++++ b/include/linux/genhd.h
+@@ -449,6 +449,7 @@ static inline int get_disk_ro(struct gendisk *disk)
+ extern void disk_block_events(struct gendisk *disk);
+ extern void disk_unblock_events(struct gendisk *disk);
+ extern void disk_flush_events(struct gendisk *disk, unsigned int mask);
++extern void disk_set_capacity(struct gendisk *disk, sector_t size);
+ extern unsigned int disk_clear_events(struct gendisk *disk, unsigned int mask);
+ 
+ /* drivers/char/random.c */
+-- 
+2.16.5
+
