@@ -2,82 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A86C9129B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 22:37:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BE7129B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 22:42:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfLWVhz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 16:37:55 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43353 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbfLWVhy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 16:37:54 -0500
-Received: by mail-lj1-f195.google.com with SMTP id a13so19040999ljm.10
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 13:37:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oMvN3IfikatrxqeZLIO+wKS6AjEL5TBJnJcInwPc4v4=;
-        b=AHY1kkqkbL1tyy0EQQ2o/SCXBRNog8yZ62J7u1trb0v/5+rMwfBnjLsRlYVIrsoH2x
-         7x1ydt+L97VLLbGvLV9tURyW7dF0P8ZB0exo9F9mH/lSxP3GeX1+9Bk9srnVE0X9mXyl
-         I487XNsOYBklM8DDxsGBuBcnAkjeBi036ZQ6fx9P9RINmqqpH6xALb59aZrDGC4LEeIx
-         6pn57qESQhukSkHQSaZ5yWrODtPOo5D9Ax/SZ9kfIPfbeTWCDlWiJhkYhcGy3kvmFuPC
-         Jh9M97fnE8K+wSPWc0k5+iOIExBXQIXHdikT9YEse63GbYy/sxj9jh0h3So4Nnlo+nQ1
-         Mkfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oMvN3IfikatrxqeZLIO+wKS6AjEL5TBJnJcInwPc4v4=;
-        b=oMpJvjOYJlgThHci8H6ToiC7+5+MNIIvB9qhpX62Cyc5cA8lNYousbTbbqNdMCvmRg
-         nYTRfDuruvSww9F8L6R1QheoPx10L1Nfqt+rwTt+ryO5nTkRiY26n2We7MaJ5XpskOyE
-         7dqJoNRZ9CQzi3bj4BQ/TmxwkDtIfYrxpRw1pJyqr7D/4g1jzarYDODIAeWAO8s+UE0F
-         25uIgAgYn9GZ1RxojHSKfhpnkVhWMLRNfIx6Fk80HVftpBuENnlnXbJtNEglYDYLfE6j
-         oBtcl83gVgvAw4TfAvhxHpeJ3/nEqHMZAER/oXM+cQF9bKZ4bSg4dDVYDx2XsVaW/Tw3
-         5vdQ==
-X-Gm-Message-State: APjAAAVN562l3Avx+7Krb9Xo1SK+HIvxEXReuMuxNtDE8K7gR3QqlyB6
-        yEn7C/UDNu/pOLiWtKN6rejb/xAA89C9UPCEa1bY
-X-Google-Smtp-Source: APXvYqxoPcTQjHi2HpjbnyoXdggoClkjePbiD8iRyX3l8RqNHg5v4Ul7+zS6oq66FdgU5U9Vg18wI1qDl/piB1Yq6rs=
-X-Received: by 2002:a2e:800b:: with SMTP id j11mr17392415ljg.126.1577137072223;
- Mon, 23 Dec 2019 13:37:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20191223091512.GL2760@shao2-debian> <CAHC9VhQfCmWbd7Yt0Jcz-QpSqXidri5PNgb_514+sfah5w3K6g@mail.gmail.com>
-In-Reply-To: <CAHC9VhQfCmWbd7Yt0Jcz-QpSqXidri5PNgb_514+sfah5w3K6g@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 23 Dec 2019 16:37:40 -0500
-Message-ID: <CAHC9VhQTphqNxZ7ndNRCy-iff3ugFjLan+CoWT8v6joF_smNzg@mail.gmail.com>
-Subject: Re: [selinux] 66f8e2f03c: RIP:sidtab_hash_stats
-To:     Jeff Vander Stoep <jeffv@google.com>
-Cc:     Stephen Smalley <sds@tycho.nsa.gov>,
-        Jovana Knezevic <jovanak@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, selinux@vger.kernel.org,
-        lkp@lists.01.org, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726873AbfLWVmi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 16:42:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:44984 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726817AbfLWVmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 16:42:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 13:42:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,349,1571727600"; 
+   d="scan'208";a="417383532"
+Received: from adixit-mobl.amr.corp.intel.com (HELO adixit-arch.intel.com) ([10.254.180.4])
+  by fmsmga005.fm.intel.com with ESMTP; 23 Dec 2019 13:42:36 -0800
+Date:   Mon, 23 Dec 2019 13:42:36 -0800
+Message-ID: <87v9q6afcj.wl-ashutosh.dixit@intel.com>
+From:   "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Yi Wang <wang.yi59@zte.com.cn>, <sudeep.dutt@intel.com>,
+        <arnd@arndb.de>, <vincent.whitchurch@axis.com>,
+        <alexios.zavras@intel.com>, <tglx@linutronix.de>,
+        <allison@lohutok.net>, <linux-kernel@vger.kernel.org>,
+        <xue.zhihong@zte.com.cn>, <up2wing@gmail.com>,
+        <wang.liang82@zte.com.cn>, Huang Zijiang <huang.zijiang@zte.com.cn>
+Subject: Re: [PATCH] misc: Use kzalloc() instead of kmalloc() with flag GFP_ZERO.
+In-Reply-To: <20191223120428.GB114474@kroah.com>
+References: <1577065918-25513-1-git-send-email-wang.yi59@zte.com.cn>
+        <20191223120428.GB114474@kroah.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/26
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 9:37 AM Paul Moore <paul@paul-moore.com> wrote:
+On Mon, 23 Dec 2019 04:04:28 -0800, Greg KH wrote:
 >
-> On Mon, Dec 23, 2019 at 4:15 AM kernel test robot <lkp@intel.com> wrote:
-> > FYI, we noticed the following commit (built with gcc-7):
+> On Mon, Dec 23, 2019 at 09:51:58AM +0800, Yi Wang wrote:
+> > From: Huang Zijiang <huang.zijiang@zte.com.cn>
 > >
-> > commit: 66f8e2f03c02e812002f8e9e465681cc62edda5b ("selinux: sidtab reverse lookup hash table")
-> > https://git.kernel.org/cgit/linux/kernel/git/pcmoore/selinux.git next
+> > Use kzalloc instead of manually setting kmalloc
+> > with flag GFP_ZERO since kzalloc sets allocated memory
+> > to zero.
 > >
-> > ...
+> > Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
+> > Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> > ---
+> >  drivers/misc/mic/host/mic_boot.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/misc/mic/host/mic_boot.c b/drivers/misc/mic/host/mic_boot.c
+> > index 7335759..c1f87a4 100644
+> > --- a/drivers/misc/mic/host/mic_boot.c
+> > +++ b/drivers/misc/mic/host/mic_boot.c
+> > @@ -137,7 +137,7 @@ static void *__mic_dma_alloc(struct device *dev, size_t size,
+> >      struct scif_hw_dev *scdev = dev_get_drvdata(dev);
+> >      struct mic_device *mdev = scdev_to_mdev(scdev);
+> >      dma_addr_t tmp;
+> > -    void *va = kmalloc(size, gfp | __GFP_ZERO);
+> > +void *va = kzalloc(size, gfp);
 >
-> Jeff, please look into this.  I suspect we may need to check
-> state->initialized in security_sidtab_hash_stats(...) (or similar).
+> Odd indation :(
+>
+> Always use checkpatch.pl on your patches to ensure you do not add new
+> problems.
+>
+> How did this get past 2 different people???
 
-I realized that Jeff may very well be on a holiday so I took a closer
-look and this does appear to be the/a problem.  If you try to "cat
-/sys/fs/selinux/ss/sidtab_hash_stats" on a system where the policy
-hasn't been loaded it blows up in a bad way.  I'll write up a fix
-right now and post it as soon as I've verified it fixes the problem.
-
--- 
-paul moore
-www.paul-moore.com
+Sorry, didn't see the mail, it ended up in Junk. Thanks for catching it.
