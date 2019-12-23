@@ -2,103 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE56712912F
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 04:42:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD2AB129125
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 04:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfLWDm1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 22:42:27 -0500
-Received: from mx24.baidu.com ([111.206.215.185]:33166 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726539AbfLWDm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 22:42:26 -0500
-X-Greylist: delayed 927 seconds by postgrey-1.27 at vger.kernel.org; Sun, 22 Dec 2019 22:42:25 EST
-Received: from BC-Mail-Ex19.internal.baidu.com (unknown [172.31.51.13])
-        by Forcepoint Email with ESMTPS id 3E3F2743DD336EB3B57F;
-        Mon, 23 Dec 2019 11:26:53 +0800 (CST)
-Received: from BJHW-Mail-Ex02.internal.baidu.com (10.127.64.12) by
- BC-Mail-Ex19.internal.baidu.com (172.31.51.13) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Mon, 23 Dec 2019 11:26:53 +0800
-Received: from BC-Mail-Ex03.internal.baidu.com (172.31.51.43) by
- BJHW-Mail-Ex02.internal.baidu.com (10.127.64.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1713.5; Mon, 23 Dec 2019 11:26:52 +0800
-Received: from BC-Mail-Ex03.internal.baidu.com ([100.100.100.102]) by
- BC-Mail-Ex03.internal.baidu.com ([100.100.100.102]) with mapi id
- 15.01.1531.010; Mon, 23 Dec 2019 11:26:52 +0800
-From:   "Jim,Yan" <jimyan@baidu.com>
-To:     Jerry Snitselaar <jsnitsel@redhat.com>
-CC:     "joro@8bytes.org" <joro@8bytes.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0hdIGlvbW11L3Z0LWQ6IERvbid0IHJlamVjdCBudm1l?=
- =?utf-8?Q?_host_due_to_scope_mismatch?=
-Thread-Topic: [PATCH] iommu/vt-d: Don't reject nvme host due to scope mismatch
-Thread-Index: AQHVtwQzqYN7wsrm/0GpGcDkRO8H3qfCOiCAgATKDsA=
-Date:   Mon, 23 Dec 2019 03:26:52 +0000
-Message-ID: <7a3ec348f7c24785931b8bd00c58fffb@baidu.com>
-References: <1576825674-18022-1-git-send-email-jimyan@baidu.com>
- <20191220092327.do34gtk3lcafzr6q@cantor>
-In-Reply-To: <20191220092327.do34gtk3lcafzr6q@cantor>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.22.200.92]
-x-baidu-bdmsfe-datecheck: 1_BJHW-Mail-Ex02_2019-12-23 11:26:52:994
-x-baidu-bdmsfe-viruscheck: BJHW-Mail-Ex02_GRAY_Inside_WithoutAtta_2019-12-23
- 11:26:52:978
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726664AbfLWDbg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 22:31:36 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34495 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726539AbfLWDbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 22:31:36 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i6so1634684pfc.1;
+        Sun, 22 Dec 2019 19:31:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wDk9eb7F2WxO7x5adDBGN43VlmnnZ5rDg1TMYWO8AcU=;
+        b=aG1zyt/Z2Phm31nUAnlEmVfeRFW3Z+k9xOf+fSEYyBZY5LrxUHcY1bS+MCadB8+8/x
+         bIz+JJ6jlbNazR81bTamAfPf8AvcG/vg9haZ0nqQi7ZcCyFEpSNbf43VKITHz/Ae3KIa
+         bgC/v0FvhIx9PpJaMX7kD9md5juR0gh/DArWT6JjlqzISemtbE/me29ooDk6cE559fb9
+         /G/ZK/GHaAwvTEmqfQ8S1yGFNjRHJdT46P8DAFKrF250/5i1h5bxPbaY1glSndVYRLmf
+         ikDSmZpSS9H6vxURj2gM6gJvJQu6mJhkLNroEuzuaPSbWfmVYBj20NDqrHvsfwbZ7o18
+         bqVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wDk9eb7F2WxO7x5adDBGN43VlmnnZ5rDg1TMYWO8AcU=;
+        b=geBKH095oLAzVEb3utvN2tQYtwfoGWiiXwH8JoJAYjMVTNDGB95S3p40b/qefzDmzn
+         A36VXod+QPKJqGT/xEgEXsHSYMCmRKens8Jc9pdavI5bzpFMUms42U66PCC+crEftNwI
+         lKaor8QDfQIFRqS6jDdddxnb2y46eZUIeB7JzZR19MYX4yMnDDhmz8aVgls4D/WbHA5Q
+         wfpSLXsi8pze9OIOfszmsUUk4kN63/jNGAqEihRzCmrVhn0sdBpMOCspDemEpeDjkvwo
+         1C6K7VUaCY8R0C9V/RFlCThpcVPl0/UpQ2iM0+zxmS2RBjTlKQ1kJXyupMgL6+vuSHHJ
+         BY+w==
+X-Gm-Message-State: APjAAAXkKD917Wty7q3OQR9U9mKox3pU+OKIIrFGRc+f5WT8dwlStDDr
+        NE92eFmV9jMgQS0jrIOyXzw=
+X-Google-Smtp-Source: APXvYqw6cYeESIHewXsTj5ZOMfVsL360DyEGQXE+t1uEQIKtnZ5cv7gAEB6mPAUShLtobJ5UD0k7Gw==
+X-Received: by 2002:a63:4f54:: with SMTP id p20mr29174948pgl.246.1577071895412;
+        Sun, 22 Dec 2019 19:31:35 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:a2ce:f815:f14d:bfac])
+        by smtp.gmail.com with ESMTPSA id f30sm19932481pga.20.2019.12.22.19.31.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Dec 2019 19:31:34 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, corbet@lwn.net
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] Documentation: boot.rst: fix warnings
+Date:   Mon, 23 Dec 2019 00:31:21 -0300
+Message-Id: <20191223033121.1584930-1-dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-X-Baidu-BdMsfe-DateCheck: 1_BC-Mail-Ex19_2019-12-23 11:26:53:196
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLemCruS7tuWOn+S7ti0tLS0tDQo+5Y+R5Lu25Lq6OiBKZXJyeSBTbml0c2VsYWFyIFtt
-YWlsdG86anNuaXRzZWxAcmVkaGF0LmNvbV0gDQo+5Y+R6YCB5pe26Ze0OiAyMDE55bm0MTLmnIgy
-MOaXpSAxNzoyMw0KPuaUtuS7tuS6ujogSmltLFlhbiA8amlteWFuQGJhaWR1LmNvbT4NCj7mioTp
-gIE6IGpvcm9AOGJ5dGVzLm9yZzsgaW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmc7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj7kuLvpopg6IFJlOiBbUEFUQ0hdIGlvbW11L3Z0
-LWQ6IERvbid0IHJlamVjdCBudm1lIGhvc3QgZHVlIHRvIHNjb3BlIG1pc21hdGNoDQo+DQo+IE9u
-IEZyaSBEZWMgMjAgMTksIGppbXlhbiB3cm90ZToNCj4gPk9uIGEgc3lzdGVtIHdpdGggYW4gSW50
-ZWwgUENJZSBwb3J0IGNvbmZpZ3VyZWQgYXMgYSBudm1lIGhvc3QgZGV2aWNlLCANCj4gPmlvbW11
-IGluaXRpYWxpemF0aW9uIGZhaWxzIHdpdGgNCj4gPg0KPiA+ICAgIERNQVI6IERldmljZSBzY29w
-ZSB0eXBlIGRvZXMgbm90IG1hdGNoIGZvciAwMDAwOjgwOjAwLjANCj4gPg0KPiA+VGhpcyBpcyBi
-ZWNhdXNlIHRoZSBETUFSIHRhYmxlIHJlcG9ydHMgdGhpcyBkZXZpY2UgYXMgaGF2aW5nIHNjb3Bl
-IDINCj4gPihBQ1BJX0RNQVJfU0NPUEVfVFlQRV9CUklER0UpOg0KPiA+DQo+DQo+IElzbid0IHRo
-YXQgYSBwcm9ibGVtIHRvIGJlIGZpeGVkIGluIHRoZSBETUFSIHRhYmxlIHRoZW4/DQo+DQo+ID5i
-dXQgdGhlIGRldmljZSBoYXMgYSB0eXBlIDAgUENJIGhlYWRlcjoNCj4gPjgwOjAwLjAgQ2xhc3Mg
-MDYwMDogRGV2aWNlIDgwODY6MjAyMCAocmV2IDA2KQ0KPiA+MDA6IDg2IDgwIDIwIDIwIDQ3IDA1
-IDEwIDAwIDA2IDAwIDAwIDA2IDEwIDAwIDAwIDAwDQo+ID4xMDogMDAgMDAgMDAgMDAgMDAgMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCj4gPjIwOiAwMCAwMCAwMCAwMCAwMCAwMCAw
-MCAwMCAwMCAwMCAwMCAwMCA4NiA4MCAwMCAwMA0KPiA+MzA6IDAwIDAwIDAwIDAwIDkwIDAwIDAw
-IDAwIDAwIDAwIDAwIDAwIDAwIDAxIDAwIDAwDQo+ID4NCj4gPlZULWQgd29ya3MgcGVyZmVjdGx5
-IG9uIHRoaXMgc3lzdGVtLCBzbyB0aGVyZSdzIG5vIHJlYXNvbiB0byBiYWlsIG91dCANCj4gPm9u
-IGluaXRpYWxpemF0aW9uIGR1ZSB0byB0aGlzIGFwcGFyZW50IHNjb3BlIG1pc21hdGNoLiBBZGQg
-dGhlIGNsYXNzDQo+ID4weDYwMCAoIlBDSV9DTEFTU19CUklER0VfSE9TVCIpIGFzIGEgaGV1cmlz
-dGljIGZvciBhbGxvd2luZyBETUFSIA0KPiA+aW5pdGlhbGl6YXRpb24gZm9yIG5vbi1icmlkZ2Ug
-UENJIGRldmljZXMgbGlzdGVkIHdpdGggc2NvcGUgYnJpZGdlLg0KPiA+DQo+ID5TaWduZWQtb2Zm
-LWJ5OiBqaW15YW4gPGppbXlhbkBiYWlkdS5jb20+DQo+ID4tLS0NCj4gPiBkcml2ZXJzL2lvbW11
-L2RtYXIuYyB8IDEgKw0KPiA+IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiA+DQo+
-ID5kaWZmIC0tZ2l0IGEvZHJpdmVycy9pb21tdS9kbWFyLmMgYi9kcml2ZXJzL2lvbW11L2RtYXIu
-YyBpbmRleCANCj4gPmVlY2Q2YTQyMTY2Ny4uOWZhZjJmMGUwMjM3IDEwMDY0NA0KPiA+LS0tIGEv
-ZHJpdmVycy9pb21tdS9kbWFyLmMNCj4gPisrKyBiL2RyaXZlcnMvaW9tbXUvZG1hci5jDQo+ID5A
-QCAtMjQ0LDYgKzI0NCw3IEBAIGludCBkbWFyX2luc2VydF9kZXZfc2NvcGUoc3RydWN0IGRtYXJf
-cGNpX25vdGlmeV9pbmZvICppbmZvLA0KPiA+IAkJICAgICBpbmZvLT5kZXYtPmhkcl90eXBlICE9
-IFBDSV9IRUFERVJfVFlQRV9OT1JNQUwpIHx8DQo+ID4gCQkgICAgKHNjb3BlLT5lbnRyeV90eXBl
-ID09IEFDUElfRE1BUl9TQ09QRV9UWVBFX0JSSURHRSAmJg0KPiA+IAkJICAgICAoaW5mby0+ZGV2
-LT5oZHJfdHlwZSA9PSBQQ0lfSEVBREVSX1RZUEVfTk9STUFMICYmDQo+ID4rCQkJICBpbmZvLT5k
-ZXYtPmNsYXNzID4+IDggIT0gUENJX0NMQVNTX0JSSURHRV9IT1NUICYmDQo+ID4gCQkgICAgICBp
-bmZvLT5kZXYtPmNsYXNzID4+IDggIT0gUENJX0NMQVNTX0JSSURHRV9PVEhFUikpKSB7DQo+ID4g
-CQkJcHJfd2FybigiRGV2aWNlIHNjb3BlIHR5cGUgZG9lcyBub3QgbWF0Y2ggZm9yICVzXG4iLA0K
-PiA+IAkJCQlwY2lfbmFtZShpbmZvLT5kZXYpKTsNCj4gPi0tDQo+ID4yLjExLjANCj4gPg0KPiA+
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gPmlvbW11
-IG1haWxpbmcgbGlzdA0KPiA+aW9tbXVAbGlzdHMubGludXgtZm91bmRhdGlvbi5vcmcNCj4gPmh0
-dHBzOi8vbGlzdHMubGludXhmb3VuZGF0aW9uLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lvbW11DQo+
-ID4NCkFjdHVhbGx5IHRoaXMgcGF0Y2ggaXMgc2ltaWxhciB0byB0aGUgY29tbWl0OiBmZmIyZDFl
-Yjg4YzMoImlvbW11L3Z0LWQ6IERvbid0IHJlamVjdCBOVEIgZGV2aWNlcyBkdWUgdG8gc2NvcGUg
-bWlzbWF0Y2giKS4gQmVzaWRlcywgbW9kaWZ5aW5nIERNQVIgdGFibGUgbmVlZCBPRU0gdXBkYXRl
-IEJJT1MuIEl0IGlzIGhhcmQgdG8gaW1wbGVtZW50Lg0KDQpKaW0NCg==
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+
+Fix WARNING: Inline emphasis start-string without end-string.
+This warning was due to wrong syntax being used.
+
+Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
+---
+ Documentation/x86/boot.rst | 40 +++++++++++++++++++-------------------
+ 1 file changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/Documentation/x86/boot.rst b/Documentation/x86/boot.rst
+index 90bb8f5ab384..94c2a2775a31 100644
+--- a/Documentation/x86/boot.rst
++++ b/Documentation/x86/boot.rst
+@@ -834,14 +834,14 @@ Protocol:	2.09+
+   chunks of memory are occupied by kernel data.
+ 
+   Thus setup_indirect struct and SETUP_INDIRECT type were introduced in
+-  protocol 2.15.
++  protocol 2.15::
+ 
+-  struct setup_indirect {
+-    __u32 type;
+-    __u32 reserved;  /* Reserved, must be set to zero. */
+-    __u64 len;
+-    __u64 addr;
+-  };
++    struct setup_indirect {
++      __u32 type;
++      __u32 reserved;  /* Reserved, must be set to zero. */
++      __u64 len;
++      __u64 addr;
++    };
+ 
+   The type member is a SETUP_INDIRECT | SETUP_* type. However, it cannot be
+   SETUP_INDIRECT itself since making the setup_indirect a tree structure
+@@ -849,19 +849,19 @@ Protocol:	2.09+
+   and stack space can be limited in boot contexts.
+ 
+   Let's give an example how to point to SETUP_E820_EXT data using setup_indirect.
+-  In this case setup_data and setup_indirect will look like this:
+-
+-  struct setup_data {
+-    __u64 next = 0 or <addr_of_next_setup_data_struct>;
+-    __u32 type = SETUP_INDIRECT;
+-    __u32 len = sizeof(setup_data);
+-    __u8 data[sizeof(setup_indirect)] = struct setup_indirect {
+-      __u32 type = SETUP_INDIRECT | SETUP_E820_EXT;
+-      __u32 reserved = 0;
+-      __u64 len = <len_of_SETUP_E820_EXT_data>;
+-      __u64 addr = <addr_of_SETUP_E820_EXT_data>;
++  In this case setup_data and setup_indirect will look like this::
++
++    struct setup_data {
++      __u64 next = 0 or <addr_of_next_setup_data_struct>;
++      __u32 type = SETUP_INDIRECT;
++      __u32 len = sizeof(setup_data);
++      __u8 data[sizeof(setup_indirect)] = struct setup_indirect {
++        __u32 type = SETUP_INDIRECT | SETUP_E820_EXT;
++        __u32 reserved = 0;
++        __u64 len = <len_of_SETUP_E820_EXT_data>;
++        __u64 addr = <addr_of_SETUP_E820_EXT_data>;
++      }
+     }
+-  }
+ 
+ .. note::
+      SETUP_INDIRECT | SETUP_NONE objects cannot be properly distinguished
+@@ -964,7 +964,7 @@ expected to copy into a setup_data chunk.
+ All kernel_info data should be part of this structure. Fixed size data have to
+ be put before kernel_info_var_len_data label. Variable size data have to be put
+ after kernel_info_var_len_data label. Each chunk of variable size data has to
+-be prefixed with header/magic and its size, e.g.:
++be prefixed with header/magic and its size, e.g.::
+ 
+   kernel_info:
+           .ascii  "LToP"          /* Header, Linux top (structure). */
+-- 
+2.24.1
+
