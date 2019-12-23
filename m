@@ -2,145 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB301293F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7985A1293FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:12:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfLWKId (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 05:08:33 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:39035 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbfLWKId (ORCPT
+        id S1726824AbfLWKMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 05:12:12 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:33694 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbfLWKMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 05:08:33 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ijKdZ-0007QU-7o; Mon, 23 Dec 2019 11:08:29 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1ijKdY-00049x-De; Mon, 23 Dec 2019 11:08:28 +0100
-Date:   Mon, 23 Dec 2019 11:08:28 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] leds: trigger: implement a tty trigger
-Message-ID: <20191223100828.bqtda4zilc74fqfk@pengutronix.de>
-References: <20191219093947.15502-1-u.kleine-koenig@pengutronix.de>
- <20191219093947.15502-4-u.kleine-koenig@pengutronix.de>
- <20191221184047.GC32732@amd>
+        Mon, 23 Dec 2019 05:12:12 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBNABjPi016210;
+        Mon, 23 Dec 2019 04:11:45 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577095905;
+        bh=k+tddIamd1GoffpRlXypzqb1aH//9w2l3PTAw6k6ivk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=XdZDPG1BdBY3eniRcgcc0wE2sFeoqj26AvQ/1upCR53cLTTn/ynkbDKdv7ePE7jwH
+         +wakbPP9IbfzX+i3gbbbBWiN3F+hKQMFQCsVCDjZDAqI8/YoRVkm1g/ko29ncuDS/X
+         IhwqRJ6zYZ+a4jl8RJYbqiKOAifOpBRTP0CYLFXg=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBNABjWd078419
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 23 Dec 2019 04:11:45 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
+ Dec 2019 04:11:45 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 23 Dec 2019 04:11:45 -0600
+Received: from [10.24.69.20] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBNABe33065334;
+        Mon, 23 Dec 2019 04:11:41 -0600
+Subject: Re: [PATCH V3 2/2] drivers/irqchip: add NXP INTMUX interrupt
+ multiplexer support
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Marc Zyngier <maz@kernel.org>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1576827431-31942-1-git-send-email-qiangqing.zhang@nxp.com>
+ <1576827431-31942-3-git-send-email-qiangqing.zhang@nxp.com>
+ <ad5165ba-24d7-ceeb-8794-cdbe4e564bd5@ti.com>
+ <DB7PR04MB4618B9A227807CCF884910C6E62D0@DB7PR04MB4618.eurprd04.prod.outlook.com>
+ <8bc6bcf113cce13816c62c166f091785@www.loen.fr>
+ <DB7PR04MB4618A390C538DCD6929DE998E62D0@DB7PR04MB4618.eurprd04.prod.outlook.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <d7ee5841-0b99-32d3-1d62-d2b47adf4476@ti.com>
+Date:   Mon, 23 Dec 2019 15:40:52 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <DB7PR04MB4618A390C538DCD6929DE998E62D0@DB7PR04MB4618.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191221184047.GC32732@amd>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Pavel,
 
-On Sat, Dec 21, 2019 at 07:40:47PM +0100, Pavel Machek wrote:
-> > +++ b/Documentation/ABI/testing/sysfs-class-led-trigger-tty
-> > @@ -0,0 +1,6 @@
-> > +What:		/sys/class/leds/<led>/dev
-> > +Date:		Dec 2019
-> > +KernelVersion:	5.6
-> > +Contact:	linux-leds@vger.kernel.org
-> > +Description:
-> > +		Specifies $major:$minor of the triggering tty
+
+On 20/12/19 8:56 PM, Joakim Zhang wrote:
 > 
-> Ok, sounds reasonable.
+>> -----Original Message-----
+>> From: Marc Zyngier <maz@kernel.org>
+>> Sent: 2019年12月20日 22:20
+>> To: Joakim Zhang <qiangqing.zhang@nxp.com>
+>> Cc: Lokesh Vutla <lokeshvutla@ti.com>; tglx@linutronix.de;
+>> jason@lakedaemon.net; robh+dt@kernel.org; mark.rutland@arm.com;
+>> shawnguo@kernel.org; s.hauer@pengutronix.de; Andy Duan
+>> <fugang.duan@nxp.com>; S.j. Wang <shengjiu.wang@nxp.com>;
+>> linux-kernel@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>;
+>> kernel@pengutronix.de; linux-arm-kernel@lists.infradead.org
+>> Subject: RE: [PATCH V3 2/2] drivers/irqchip: add NXP INTMUX interrupt
+>> multiplexer support
+>>
+>> On 2019-12-20 14:10, Joakim Zhang wrote:
+>>>> -----Original Message-----
+>>>> From: Lokesh Vutla <lokeshvutla@ti.com>
+>>
+>> [...]
+>>
+>>>> Does the user care to which channel does the interrupt source goes
+>>>> to? If not, interrupt-cells in DT can just be a single entry and the
+>>>> channel selection can be controlled by the driver no? I am trying to
+>>>> understand why user should specify the channel no.
+>>> Hi Lokesh,
+>>>
+>>> If a fixed channel is specified in the driver, all interrupt sources
+>>> will be connected to this channel, affecting the interrupt priority to
+>>> some extent.
+>>>
+>>> From my point of view, a fixed channel could be enough if don't care
+>>> interrupt priority.
+>>
+>> Hold on a sec:
+>>
+>> Is the channel to which an interrupt is routed to programmable? What has the
+>> priority of the interrupt to do with this? How does this affect interrupt
+>> delivery?
+>>
+>> It looks like this HW does more that you initially explained...
+> Hi Marc,
 > 
-> > +static ssize_t dev_store(struct device *dev,
-> > +			 struct device_attribute *attr, const char *buf,
-> > +			 size_t size)
-> > +{
-> > +	struct ledtrig_tty_data *trigger_data = led_trigger_get_drvdata(dev);
-> > +	struct tty_struct *tty;
-> > +	unsigned major, minor;
-> > +	int ret;
-> > +
-> > +	if (size == 0 || (size == 1 && buf[0] == '\n')) {
-> > +		tty = NULL;
-> > +	} else {
-> > +		ret = sscanf(buf, "%u:%u", &major, &minor);
-> > +		if (ret < 2)
-> > +			return -EINVAL;
+> The channel to which an interrupt is routed to is not programmable. Each channel has the same 32 interrupt sources.
+
+But the interrupt source to channel is programmable right? I guess you are
+worried about the affinity for each interrupt. You can bring the logic inside
+the driver to assign the channel to each interrupt source and can maintain the
+affinity to some extent..
+
+> Each channel has mask, unmask and status register.
+> If use 1 channel, 32 interrupt sources input and 1 interrupt output.
+> If use 2 channels, 32 interrupt sources input and 2 interrupts output.
+> And so on. You can see above INTMUX block diagram. This is how HW works.
 > 
-> If user writes 1:2:badparsingofdata into the file, it will pass, right?
+> For example:
+> 1) use 1 channel:
+> We can enable 0~31 interrupt in channel 0. And 1 interrupt output. If generate interrupt, we cannot figure out which half happened first.
 
-Yes, and it will have the same effect as writing 1:2. I wonder if this
-is bad.
+Hmm...does this mean that each channel is capable of handling only 15 interrupt
+sources or did I missunderstood the hardware?
 
-> > +		tty = tty_kopen_shared(MKDEV(major, minor));
-> > +		if (IS_ERR(tty))
-> > +			return PTR_ERR(tty);
-> > +	}
+Thanks and regards,
+Lokesh
+
+> 2)use 2 channels:
+> We can enable 0~15 interrupt in channel 0, and enable 16~31 in channel 1. And 2 interrupts output. If generate interrupt, at least we can find channel 0 or channel 1 first. Then find 0~15 or 16~31 first.
 > 
-> Do you need to do some kind of tty_kclose()? What happens if the
-> device disappears, for example because the USB modem is unplugged?
-
-Only tty_kref_put is needed to close.
-
-> > +static void ledtrig_tty_work(struct work_struct *work)
-> > +{
-> > +	struct ledtrig_tty_data *trigger_data =
-> > +		container_of(work, struct ledtrig_tty_data, dwork.work);
-> > +	struct serial_icounter_struct icount;
-> > +	int ret;
-> > +
-> > +	if (!trigger_data->tty) {
-> > +		led_set_brightness(trigger_data->led_cdev, LED_OFF);
-> > +		return;
-> > +	}
-> > +
-> > +	ret = tty_get_icount(trigger_data->tty, &icount);
-> > +	if (ret)
-> > +		return;
-> > +
-> > +	if (icount.rx != trigger_data->rx ||
-> > +	    icount.tx != trigger_data->tx) {
-> > +		unsigned long delay_on = 100, delay_off = 100;
-> > +
-> > +		led_blink_set_oneshot(trigger_data->led_cdev,
-> > +				      &delay_on, &delay_off, 0);
-> > +
-> > +		trigger_data->rx = icount.rx;
-> > +		trigger_data->tx = icount.tx;
-> > +	}
+> This is my understanding of the interrupt priority from this intmux, I don't know if it is my misunderstanding.
 > 
-> Since you are polling this, anyway, can you just manipulate brightness
-> directly instead of using _oneshot()? _oneshot() will likely invoke
-> another set of workqueues.
-
-I copied that from the netdev trigger. I failed to find a suitable
-helper function, did I miss that or does it need creating?
- 
-> LED triggers were meant to operate directly from the events, not based
-> on statistics like this.
-
-Ditto; just copied from the netdev trigger. I tried to find a suitable
-place to add a trigger in the core, but this is hard without having to
-modify all drivers; additionally this is in thier hot path. So I
-considered using statistics a good idea. Greg also liked it and someone
-before us for the network trigger, too ...
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+> Best Regards,
+> Joakim Zhang
+>>          M.
+>> --
+>> Jazz is not dead. It just smells funny...
