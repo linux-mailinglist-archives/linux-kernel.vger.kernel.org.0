@@ -2,59 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 925FA129244
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D65FA12926C
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:47:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725927AbfLWHhd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 02:37:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51752 "EHLO mail.kernel.org"
+        id S1726239AbfLWHrG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 02:47:06 -0500
+Received: from smtp1-3.goneo.de ([85.220.129.32]:49335 "EHLO smtp1-3.goneo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbfLWHhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:37:33 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0381206CB;
-        Mon, 23 Dec 2019 07:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577086652;
-        bh=frMuERvhOc4pr13v4ZKKMbrcM0fjSe7l2O10OUZ4wU8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E3+AADcWyPZn4YRNip4q10FhpU+MoMvjOmHcfHGBVpf4pdGYP4o6ThNQgrFqvKWqS
-         5YbrmJtJKZ9R9VeowdCZbhzKzEn7ZzpQSV4QUm8pfkvLcrQQgWXtkT/vSjYXSQi+Bc
-         qAKruJuf6U+eNaAVpO1fduK7239STbprfnOI+VFo=
-Date:   Mon, 23 Dec 2019 15:37:10 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: imx8mm: Change SDMA1 ahb clock for imx8mm
-Message-ID: <20191223073708.GS11523@dragon>
-References: <20191216111530.29558-1-aford173@gmail.com>
+        id S1725880AbfLWHrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 02:47:05 -0500
+X-Greylist: delayed 568 seconds by postgrey-1.27 at vger.kernel.org; Mon, 23 Dec 2019 02:47:05 EST
+Received: from localhost (localhost [127.0.0.1])
+        by smtp1.goneo.de (Postfix) with ESMTP id 9A2B323F0D5;
+        Mon, 23 Dec 2019 08:37:35 +0100 (CET)
+X-Virus-Scanned: by goneo
+X-Spam-Flag: NO
+X-Spam-Score: -2.752
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.752 tagged_above=-999 tests=[ALL_TRUSTED=-1,
+        AWL=0.148, BAYES_00=-1.9] autolearn=ham
+Received: from smtp1.goneo.de ([127.0.0.1])
+        by localhost (smtp1.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Uz_X5WMlX-IY; Mon, 23 Dec 2019 08:37:34 +0100 (CET)
+Received: from [192.168.1.127] (dyndsl-085-016-047-111.ewe-ip-backbone.de [85.16.47.111])
+        by smtp1.goneo.de (Postfix) with ESMTPSA id 1D2C523F0C6;
+        Mon, 23 Dec 2019 08:37:34 +0100 (CET)
+Subject: Re: [PATCH v3] Documentation: filesystems: convert fuse to RST
+To:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>, corbet@lwn.net,
+        miklos@szeredi.hu
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org
+References: <20191223012248.606168-1-dwlsalmeida@gmail.com>
+From:   Markus Heiser <markus.heiser@darmarit.de>
+Message-ID: <91ded87c-ca70-bcf7-49fc-fa2988f4e36b@darmarit.de>
+Date:   Mon, 23 Dec 2019 08:37:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216111530.29558-1-aford173@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20191223012248.606168-1-dwlsalmeida@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 05:15:30AM -0600, Adam Ford wrote:
-> Using SDMA1 with UART1 is causing a "Timeout waiting for CH0" error.
-> This patch changes to ahb clock from SDMA1_ROOT to AHB which
-> fixes the timeout error.
-> 
-> Fixes:  a05ea40eb384 ("arm64: dts: imx: Add i.mx8mm dtsi support")
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
+Hi Daniel,
 
-Applied, thanks.
+just some nits ...
+
+Am 23.12.19 um 02:22 schrieb Daniel W. S. Almeida:
+> From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+...
+
+> diff --git a/Documentation/filesystems/fuse.txt b/Documentation/filesystems/fuse.rst
+> similarity index 79%
+> rename from Documentation/filesystems/fuse.txt
+> rename to Documentation/filesystems/fuse.rst
+> index 13af4a49e7db..1ca3aac04606 100644
+> --- a/Documentation/filesystems/fuse.txt
+> +++ b/Documentation/filesystems/fuse.rst
+> @@ -1,41 +1,39 @@
+
+...
+
+>   Filesystem type
+> -~~~~~~~~~~~~~~~
+> +===============
+>   
+>   The filesystem type given to mount(2) can be one of the following:
+>   
+> -'fuse'
+> +    **fuse**
+>   
+
+drop empty line, use definition list[1] / you used definition list everywhere 
+except here.  I guess the follwowing matches better:
+
+
+``fuse``
+   This is the usual way to mount a FUSE filesystem. ...
+
+``fuseblk``
+   The filesystem is block device based. ..
+
+[1] 
+https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html#definition-lists
+
+-- Markus --
