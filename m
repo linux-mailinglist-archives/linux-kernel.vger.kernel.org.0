@@ -2,98 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69634129644
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 14:08:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0052F129656
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 14:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbfLWNIu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 08:08:50 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:54811 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbfLWNIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 08:08:49 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id aa521add;
-        Mon, 23 Dec 2019 12:11:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=date:from:to
-        :subject:message-id:mime-version:content-type
-        :content-transfer-encoding; s=mail; bh=wTgMZEUZRBvg+FUoKnmV0TjLF
-        8I=; b=Rt2oBm5E2RxTXUBuozP/1P1v98X3S9goVj0mzdIcdw4ytPXNbMEI0baOY
-        yct2I4vk2Q73mG49juZG8pVeRTX+TTovyfItnVqEmsYD/fttWcBWVlOiAF/M1Wnk
-        mEpwyggN4aHlDwVcilPwEwtdQIh2U16L/S474tLtAMFPZekPMrHxuabD4eeZrd91
-        25joYEuzf044lXgEiW5l3nDXtXaOvVquiwWhryjhBecegGWfnEJUmrsYkFFlMoco
-        HbHLW6rZEKijZBug3Sr5aOV48F+fvemwmyrzHDZESNbA/cgCqdd/tR1MaPWJ9Q9o
-        GzPAOpOkH1K7oYRlGBEs+ppCMl4wA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 3fc974c8 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Mon, 23 Dec 2019 12:11:34 +0000 (UTC)
-Date:   Mon, 23 Dec 2019 14:08:34 +0100
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        arnd@arndb.de, paulburton@kernel.org
-Subject: vdso-related userspace crashes on 5.5 mips64
-Message-ID: <20191223130834.GA102399@zx2c4.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        id S1726832AbfLWNQp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 08:16:45 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:64670 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726676AbfLWNQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 08:16:44 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 23 Dec 2019 18:45:12 +0530
+Received: from c-rkambl-linux1.qualcomm.com ([10.242.50.190])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 23 Dec 2019 18:44:46 +0530
+Received: by c-rkambl-linux1.qualcomm.com (Postfix, from userid 2344811)
+        id B6463121E; Mon, 23 Dec 2019 18:44:45 +0530 (IST)
+From:   Rajeshwari <rkambl@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sanm@codeaurora.org, sivaa@codeaurora.org, manafm@codeaurora.org,
+        Rajeshwari <rkambl@codeaurora.org>
+Subject: [PATCH 0/2] Add critical interrupt and cooling maps for TSENS in SC7180
+Date:   Mon, 23 Dec 2019 18:44:29 +0530
+Message-Id: <1577106871-19863-1-git-send-email-rkambl@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Added critical interrupt support cooling maps support in SC7180 changed sensors 
+name under thermal-zones and added configuration for SC7180 in yaml.
 
-I'm experiencing VDSO-related crashes on 5.5 with MIPS64. The MIPS64
-builders on build.wireguard.com are all red at the moment.
+Rajeshwari (2):
+  arm64: dts: qcom: sc7180:  Add critical interrupt and cooling maps for
+    TSENS in SC7180.
+  dt-bindings: thermal: tsens: Add configuration for sc7180 in yaml
 
-It looks like libc is crashing with a null pointer dereference when
-doing any work after returning from clock_gettime. This manifests
-itself, for me, with calls to clock_gettime(CLOCK_PROCESS_CPUTIME_ID),
-because CLOCK_PROCESS_CPUTIME_ID is not in the VDSO. It looks in the
-VDSO, doesn't find it, and then proceeds to make the real syscall, when
-it crashes. I can simulate the same crash by simply adding a printf
-after a successful call to the vdso before returning. For example:
+ .../devicetree/bindings/thermal/qcom-tsens.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/sc7180.dtsi               | 289 +++++++++++++++++----
+ 2 files changed, 240 insertions(+), 50 deletions(-)
 
-int __clock_gettime(clockid_t clk, struct timespec *ts)
-{
-  int r;
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
+of Code Aurora Forum, hosted by The Linux Foundation
 
-#ifdef VDSO_CGT_SYM
-  int (*f)(clockid_t, struct timespec *) =
-    (int (*)(clockid_t, struct timespec *))vdso_func;
-  printf("vdso %p\n", f); // <-- this line does NOT crash.
-  if (f) {
-    r = f(clk, ts);
-    if (!r) {
-      printf("ret %d\n", r); // <-- this line DOES crash.
-      return r;
-    }
-    if (r == -EINVAL)
-      return __syscall_ret(r);
-  }
-#endif
-  printf("falling through\n"); // <--- this line DOES crash.
-  r = __syscall(SYS_clock_gettime, clk, ts); // <-- also, this line will crash too
-  if (r == -ENOSYS) {
-    if (clk == CLOCK_REALTIME) {
-      __syscall(SYS_gettimeofday, ts, 0);
-      ts->tv_nsec = (int)ts->tv_nsec * 1000;
-      return 0;
-    }
-    r = -EINVAL;
-  }
-  return __syscall_ret(r);
-}
-
-It seems like somehow the stack frame is corrupted/unusable after a call
-to the vdso. But, returning immediately from clock_gettime after a call
-to the vdso allows the program to continue. Thus, this problem only
-manifests itself when using clocks that aren't handled by the vdso.
-
-It's possible this is due to some compiler ABI mismatch situation
-between userspace and kernelspace. However, I've only started seeing
-this happen with 5.5 and not on 5.4.
-
-Does the above description immediately point to some recognizable
-change? If not, I'll keep debugging.
-
-Thanks,
-Jason
