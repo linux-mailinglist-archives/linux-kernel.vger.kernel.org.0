@@ -2,83 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CDC412977E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76DBD12979A
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:39:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfLWOcR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:32:17 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8164 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726777AbfLWOcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:32:17 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2E9D8E26C98A02438037;
-        Mon, 23 Dec 2019 22:32:15 +0800 (CST)
-Received: from localhost.localdomain (10.90.53.225) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 23 Dec 2019 22:32:06 +0800
-From:   Chen Wandun <chenwandun@huawei.com>
-To:     <jlayton@kernel.org>, <sage@redhat.com>, <idryomov@gmail.com>,
-        <ceph-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <chenwandun@huawei.com>
-Subject: [PATCH next] ceph: Fix debugfs_simple_attr.cocci warnings
-Date:   Mon, 23 Dec 2019 22:39:18 +0800
-Message-ID: <1577111958-100981-1-git-send-email-chenwandun@huawei.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726899AbfLWOjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:39:49 -0500
+Received: from www62.your-server.de ([213.133.104.62]:41776 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726777AbfLWOjs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 09:39:48 -0500
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1ijOs2-0006DU-Ro; Mon, 23 Dec 2019 15:39:42 +0100
+Received: from [185.105.41.126] (helo=linux-9.fritz.box)
+        by sslproxy02.your-server.de with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1ijOs2-000Dco-CN; Mon, 23 Dec 2019 15:39:42 +0100
+Subject: Re: [PATCH bpf v3] libbpf: Fix build on read-only filesystems
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        bpf <bpf@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+References: <CAM9d7ch1=pmgkFbgGr2YignQwdNjke2QeOAFLCFYu8L8J-Z8vw@mail.gmail.com>
+ <20191223061326.843366-1-namhyung@kernel.org>
+ <CAEf4BzY1HvhkPzR1HE7-reGhfZnfySe-LxQ-5MS7Nx-Uv4oVug@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <2d6767c6-ff4c-8f88-f186-23cddbb4969a@iogearbox.net>
+Date:   Mon, 23 Dec 2019 15:39:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.90.53.225]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAEf4BzY1HvhkPzR1HE7-reGhfZnfySe-LxQ-5MS7Nx-Uv4oVug@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.101.4/25672/Mon Dec 23 10:53:10 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_DEBUGFS_ATTRIBUTE rather than DEFINE_SIMPLE_ATTRIBUTE
-for debugfs files.
+On 12/23/19 7:29 AM, Andrii Nakryiko wrote:
+> On Sun, Dec 22, 2019 at 10:14 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>
+>> I got the following error when I tried to build perf on a read-only
+>> filesystem with O=dir option.
+>>
+>>    $ cd /some/where/ro/linux/tools/perf
+>>    $ make O=$HOME/build/perf
+>>    ...
+>>      CC       /home/namhyung/build/perf/lib.o
+>>    /bin/sh: bpf_helper_defs.h: Read-only file system
+>>    make[3]: *** [Makefile:184: bpf_helper_defs.h] Error 1
+>>    make[2]: *** [Makefile.perf:778: /home/namhyung/build/perf/libbpf.a] Error 2
+>>    make[2]: *** Waiting for unfinished jobs....
+>>      LD       /home/namhyung/build/perf/libperf-in.o
+>>      AR       /home/namhyung/build/perf/libperf.a
+>>      PERF_VERSION = 5.4.0
+>>    make[1]: *** [Makefile.perf:225: sub-make] Error 2
+>>    make: *** [Makefile:70: all] Error 2
+>>
+>> It was becaused bpf_helper_defs.h was generated in current directory.
+>> Move it to OUTPUT directory.
+>>
+>> Tested-by: Andrii Nakryiko <andriin@fb.com>
+>> Acked-by: Andrii Nakryiko <andriin@fb.com>
+>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+>> ---
+>>   tools/lib/bpf/Makefile                 | 15 ++++++++-------
+>>   tools/testing/selftests/bpf/.gitignore |  1 +
+>>   tools/testing/selftests/bpf/Makefile   |  6 +++---
+>>   3 files changed, 12 insertions(+), 10 deletions(-)
+>>
+> 
+> [...]
+> 
+>> diff --git a/tools/testing/selftests/bpf/.gitignore b/tools/testing/selftests/bpf/.gitignore
+>> index 419652458da4..1ff0a9f49c01 100644
+>> --- a/tools/testing/selftests/bpf/.gitignore
+>> +++ b/tools/testing/selftests/bpf/.gitignore
+>> @@ -40,3 +40,4 @@ xdping
+>>   test_cpp
+>>   /no_alu32
+>>   /bpf_gcc
+>> +bpf_helper_defs.h
+> 
+> looks good, thanks!
 
-Semantic patch information:
-Rationale: DEFINE_SIMPLE_ATTRIBUTE + debugfs_create_file()
-imposes some significant overhead as compared to
-DEFINE_DEBUGFS_ATTRIBUTE + debugfs_create_file_unsafe().
-
-Signed-off-by: Chen Wandun <chenwandun@huawei.com>
----
- fs/ceph/debugfs.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/fs/ceph/debugfs.c b/fs/ceph/debugfs.c
-index c281f32..60a0f1a 100644
---- a/fs/ceph/debugfs.c
-+++ b/fs/ceph/debugfs.c
-@@ -243,8 +243,8 @@ static int congestion_kb_get(void *data, u64 *val)
- 	return 0;
- }
- 
--DEFINE_SIMPLE_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
--			congestion_kb_set, "%llu\n");
-+DEFINE_DEBUGFS_ATTRIBUTE(congestion_kb_fops, congestion_kb_get,
-+			 congestion_kb_set, "%llu\n");
- 
- 
- void ceph_fs_debugfs_cleanup(struct ceph_fs_client *fsc)
-@@ -264,11 +264,11 @@ void ceph_fs_debugfs_init(struct ceph_fs_client *fsc)
- 
- 	dout("ceph_fs_debugfs_init\n");
- 	fsc->debugfs_congestion_kb =
--		debugfs_create_file("writeback_congestion_kb",
--				    0600,
--				    fsc->client->debugfs_dir,
--				    fsc,
--				    &congestion_kb_fops);
-+		debugfs_create_file_unsafe("writeback_congestion_kb",
-+					   0600,
-+					   fsc->client->debugfs_dir,
-+					   fsc,
-+					   &congestion_kb_fops);
- 
- 	snprintf(name, sizeof(name), "../../bdi/%s",
- 		 dev_name(fsc->sb->s_bdi->dev));
--- 
-2.7.4
-
+Applied, thanks!
