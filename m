@@ -2,74 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BECC1298BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 17:34:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 932DA1298C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 17:35:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfLWQeK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 11:34:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34602 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726717AbfLWQeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 11:34:10 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1477620663;
-        Mon, 23 Dec 2019 16:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577118849;
-        bh=hqhFk3w8zw+TLBSiP+m5sgLeq7J7E5pbm7SpAEzkrk8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=QylS0lLDLCI/84CTFSftcDYt3oiuA+Xa8CyyWUsK3C1rZFHBRyag5kffkqlVGsfw8
-         Kvfgt3MAlT7l6FGzrboX0O+hGLRAh/Qb0vidP6iMFwCBoA4llx4fLXhTBgNaXMhHaG
-         iIGBY66KyR9FgJ4KEaj+9R+7OfGooEV6k69N1iiU=
-Date:   Mon, 23 Dec 2019 16:34:06 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Chen Zhou <chenzhou10@huawei.com>
-Cc:     <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: light: remove unneeded semicolon
-Message-ID: <20191223163406.33fe6673@archlinux>
-In-Reply-To: <20191216105101.7200-1-chenzhou10@huawei.com>
-References: <20191216105101.7200-1-chenzhou10@huawei.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726829AbfLWQfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 11:35:53 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:36964 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfLWQfx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 11:35:53 -0500
+Received: by mail-wr1-f49.google.com with SMTP id w15so4574281wru.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 08:35:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=6pYALjvCMONqPlKDdfwUfxSZqlLUSb8zwcvL/ighjfc=;
+        b=QeposXQXkhj29XcZaTg19lPt95+VRwICWCIHRIUV17SKXN9vNqUfOATigRv3DO4zTI
+         NPfzlSctWIqyUiV7iR1sEvmj7G/f/4B1Esw/H7Z23M9OWtCqc5VpRD4nTNDp4Ks0jWgs
+         2UR1naPPgcyNcZE6RWA0iEbF8TV0fluMyoERI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6pYALjvCMONqPlKDdfwUfxSZqlLUSb8zwcvL/ighjfc=;
+        b=U3iGD3JpvwM508hZbOk4xc6ASJCo0MvDIAbUTWSm+FD/myNnGTy5owCsHLBK3CO7Oz
+         B9jcDx26FJwmPm0oUphW0+o8BBT/VJCtlJe1Oq1JCE33bOKT57KxL03zfQHcS8vOU9ZL
+         K7GEcwGHgucBuDaPD+A8xcPLDQNZXJePpfACPXNsAFFK5k/y5d702eybXIfsvse2GbRh
+         TFdSAx4kcVm2SXakqj20q3nEACAmkFHUmLD81diUgkQomVem4EVr+4vRk8DQm5obh/9A
+         4VyimDUWuW+0LhBDcvnJnbQ3sbKWRdpUcDfOJ/0E55D9jbdTgvAst0LP4XXkct687yje
+         vulg==
+X-Gm-Message-State: APjAAAWD+tMpkfNxtzsFcIyD4YeNhiNt8Aiy1fVQFeGFXOM/jymRm64b
+        o/yxhdLhrcs4FXtMfSF08L3RFA==
+X-Google-Smtp-Source: APXvYqx6phOTxFluVkbXRrN7JXc5+NhmvV4f/omDkOTdewNBC0PpQPfOtn+hhlM6OPsEf2czRVf39Q==
+X-Received: by 2002:a5d:4a84:: with SMTP id o4mr30584003wrq.396.1577118950458;
+        Mon, 23 Dec 2019 08:35:50 -0800 (PST)
+Received: from localhost.localdomain ([37.160.152.81])
+        by smtp.gmail.com with ESMTPSA id s8sm20412498wrt.57.2019.12.23.08.35.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Dec 2019 08:35:49 -0800 (PST)
+From:   Michael Trimarchi <michael@amarulasolutions.com>
+To:     Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 0/3] Engicam icore fixes
+Date:   Mon, 23 Dec 2019 17:35:43 +0100
+Message-Id: <20191223163546.29637-1-michael@amarulasolutions.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019 18:51:01 +0800
-Chen Zhou <chenzhou10@huawei.com> wrote:
+Fix ethernet in imx6dl-icore-1.5 mipi developent kit. Adjust ethernet
+reset in icore boards
 
-> Fixes coccicheck warning:
-> 
-> ./drivers/iio/light/lm3533-als.c:745:2-3: Unneeded semicolon
-> 
-> Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders poke at the various other patches.
+Michael Trimarchi (3):
+  ARM: dts: imx6dl: Fix typo in i.CoreM6 1.5 Dual MIPI starter kit
+  ARM: dts: imx6dl: Remove duplication in Engicam i.CoreM6 1.5 Quad/Dual
+    MIPI
+  arm: dts: imx6qdl: Move the phy reset at device level
 
-Thanks,
+ arch/arm/boot/dts/imx6dl-icore-mipi.dts  |  2 +-
+ arch/arm/boot/dts/imx6qdl-icore-1.5.dtsi |  2 --
+ arch/arm/boot/dts/imx6qdl-icore.dtsi     | 15 ++++++++++++++-
+ 3 files changed, 15 insertions(+), 4 deletions(-)
 
-Jonathan
-
-> ---
->  drivers/iio/light/lm3533-als.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm3533-als.c
-> index 6733b52..bc196c2 100644
-> --- a/drivers/iio/light/lm3533-als.c
-> +++ b/drivers/iio/light/lm3533-als.c
-> @@ -742,7 +742,7 @@ static int lm3533_als_set_resistor(struct lm3533_als *als, u8 val)
->  	if (val < LM3533_ALS_RESISTOR_MIN || val > LM3533_ALS_RESISTOR_MAX) {
->  		dev_err(&als->pdev->dev, "invalid resistor value\n");
->  		return -EINVAL;
-> -	};
-> +	}
->  
->  	ret = lm3533_write(als->lm3533, LM3533_REG_ALS_RESISTOR_SELECT, val);
->  	if (ret) {
+-- 
+2.17.1
 
