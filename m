@@ -2,250 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D36B31293B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:37:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9666B1293B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:45:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726717AbfLWJhY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 04:37:24 -0500
-Received: from mga18.intel.com ([134.134.136.126]:35890 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726177AbfLWJhY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 04:37:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 01:37:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="299630945"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.170]) ([10.237.72.170])
-  by orsmga001.jf.intel.com with ESMTP; 23 Dec 2019 01:37:21 -0800
-Subject: Re: USB devices on Dell TB16 dock stop working after resuming
-To:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ck@xatom.net>, linux-kernel@vger.kernel.org,
-        Anthony Wong <anthony.wong@canonical.com>
-References: <20191104154446.GH2552@lahna.fi.intel.com>
- <ea829adedf0445c0845e25d6e4b47905@AUSX13MPC105.AMER.DELL.COM>
- <d8cb6bc6-8145-eaed-5ba4-d7291478bdd7@molgen.mpg.de>
- <20191104162103.GI2552@lahna.fi.intel.com>
- <f0257624-920e-eec4-a2ec-7adf8ecbcc9d@molgen.mpg.de>
- <20191120105048.GY11621@lahna.fi.intel.com>
- <20191122105012.GD11621@lahna.fi.intel.com>
- <edfe1e3c-779b-61e4-8551-f2e13d46d733@molgen.mpg.de>
- <20191122112921.GF11621@lahna.fi.intel.com>
- <ae67c377-4763-4648-a91c-b9351e3b1cf1@molgen.mpg.de>
- <20191122114108.GG11621@lahna.fi.intel.com>
- <cf4140c8-5b92-f1e5-c9e4-e362ab06d6f8@linux.intel.com>
- <e5e3df06-4ddd-aadb-f1ad-6dd24fa2a5c2@molgen.mpg.de>
- <4b25e707-d2b5-11d1-4b16-48122828fde7@linux.intel.com>
- <a9e12353-6f88-edeb-0d78-15c1ac75666b@molgen.mpg.de>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <87670037-8af5-c209-cbf8-70042e0a8fc5@linux.intel.com>
-Date:   Mon, 23 Dec 2019 11:39:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726709AbfLWJpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 04:45:09 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:56310 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726623AbfLWJpJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 04:45:09 -0500
+Received: by mail-il1-f200.google.com with SMTP id p8so13929375ilp.22
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 01:45:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Z+CQlnHVX35fvnVEwFLg2quUohMffSJb9JQx/WmSmok=;
+        b=Zd/j5jMye0kpD27n+bHzjQf4REkEZ3jtLCDN8T8YY2wI3abWXnHJYqtpnhY1zhyeOd
+         G2+3nchJNrk7tUp0j0kSDu/Js9DeruQaIGz2ObygMMcdPUWQsfGho+SUIAROUDbjLq4J
+         4gTv304Isv4p1vOw4o1FqA9XNwtnUTffhqg3bB0BxM4LsXTOTlENObRXdBssr4RuylP7
+         4Q772Jq31KH5bHBvRE2l2UgmXTYtiricFfi/VwyJHu6wRF3BCiBscuMwlfiBAkIW0GlY
+         zuGPkji0u/Mc0EElXieVU2tgfDR2X0sShCjEIZC/VMqvdh2V5dm/eB79/+rCwpToJ+1/
+         SNRg==
+X-Gm-Message-State: APjAAAW3teBqAfCugfeGvlidhvBg4SNZqjfcN7I7FNMqNMe/wuf6Qlrk
+        Yegs9DjW/Jos0S4Bbz1vVN4i5felKO+c/ErBrLpvVNPl17j/
+X-Google-Smtp-Source: APXvYqxJRyiVxk8tcxfdBBk0B6QVEzMA42SWsxyRS627pqugEQqvqAwzt2X9AHxRpE6AQ9epGt8yWLt1gTJX0xkHPLSjzfrfOgh3
 MIME-Version: 1.0
-In-Reply-To: <a9e12353-6f88-edeb-0d78-15c1ac75666b@molgen.mpg.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a5e:d616:: with SMTP id w22mr18472866iom.57.1577094307832;
+ Mon, 23 Dec 2019 01:45:07 -0800 (PST)
+Date:   Mon, 23 Dec 2019 01:45:07 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000feecd9059a5be1b7@google.com>
+Subject: INFO: rcu detected stall in do_signal (4)
+From:   syzbot <syzbot+7e600afa7f6059f9a30e@syzkaller.appspotmail.com>
+To:     christian@brauner.io, ebiederm@xmission.com,
+        linux-kernel@vger.kernel.org, oleg@redhat.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.12.2019 16.25, Paul Menzel wrote:
-> Dear Mathias,
-> 
-> 
-> On 2019-11-26 13:44, Mathias Nyman wrote:
->> On 26.11.2019 13.33, Paul Menzel wrote:
-> 
->>> On 2019-11-25 10:20, Mathias Nyman wrote:
->>>> On 22.11.2019 13.41, Mika Westerberg wrote:
->>>>> On Fri, Nov 22, 2019 at 12:33:44PM +0100, Paul Menzel wrote:
->>>
->>>>>> On 2019-11-22 12:29, Mika Westerberg wrote:
->>>>>>> On Fri, Nov 22, 2019 at 12:05:13PM +0100, Paul Menzel wrote:
->>>>>>
->>>>>>>> On 2019-11-22 11:50, Mika Westerberg wrote:
->>>>>>>>> On Wed, Nov 20, 2019 at 12:50:53PM +0200, Mika Westerberg wrote:
->>>>>>>>>> On Tue, Nov 19, 2019 at 05:55:43PM +0100, Paul Menzel wrote:
->>>>>>>>
->>>>>>>>>>> On 2019-11-04 17:21, Mika Westerberg wrote:
->>>>>>>>>>>> On Mon, Nov 04, 2019 at 05:11:10PM +0100, Paul Menzel wrote:
->>>>>>>>>>>
->>>>>>>>>>>>> On 2019-11-04 16:49, Mario.Limonciello@dell.com wrote:
->>>>>>>>>>>>>
->>>>>>>>>>>>>>> From: Mika Westerberg <mika.westerberg@linux.intel.com>
->>>>>>>>>>>>>>> Sent: Monday, November 4, 2019 9:45 AM
->>>>>>>>>>>>>
->>>>>>>>>>>>>>> On Mon, Nov 04, 2019 at 04:44:40PM +0200, Mika Westerberg wrote:
->>>>>>>>>>>>>>>> On Mon, Nov 04, 2019 at 04:25:03PM +0200, Mika Westerberg wrote:
->>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> On Mon, Nov 04, 2019 at 02:13:13PM +0100, Paul Menzel wrote:
->>>>>>>>>>>>>
->>>>>>>>>>>>>>>>>> On the Dell XPS 13 9380 with Debian Sid/unstable with Linux 5.3.7
->>>>>>>>>>>>>>>>>> suspending the system, and resuming with Dell’s Thunderbolt TB16
->>>>>>>>>>>>>>>>>> dock connected, the USB input devices, keyboard and mouse,
->>>>>>>>>>>>>>>>>> connected to the TB16 stop working. They work for a few seconds
->>>>>>>>>>>>>>>>>> (mouse cursor can be moved), but then stop working. The laptop
->>>>>>>>>>>>>>>>>> keyboard and touchpad still works fine. All firmware is up-to-date
->>>>>>>>>>>>>>>>>> according to `fwupdmgr`.
->>>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>>> What are the exact steps to reproduce? Just "echo mem >
->>>>>>>>>>>>>>>>> /sys/power/state" and then resume by pressing power button?
->>>>>>>>>>>>>
->>>>>>>>>>>>> GNOME Shell 3.34.1+git20191024-1 is used, and the user just closes the
->>>>>>>>>>>>> display. So more than `echo mem > /sys/power/state` is done. What
->>>>>>>>>>>>> distribution do you use?
->>>>>>>>>>>>
->>>>>>>>>>>> I have buildroot based "distro" so there is no UI running.
->>>>>>>>>>>
->>>>>>>>>>> Hmm, this is quite different from the “normal” use-case of the these devices.
->>>>>>>>>>> That way you won’t hit the bugs of the normal users. ;-)
->>>>>>>>>>
->>>>>>>>>> Well, I can install some distro to that thing also :) I suppose Debian
->>>>>>>>>> 10.2 does have this issue, no?
->>>>>>>>>>
->>>>>>>>>>>>>>>> I tried v5.4-rc6 on my 9380 with TB16 dock connected and did a couple of
->>>>>>>>>>>>>>>> suspend/resume cycles (to s2idle) but I don't see any issues.
->>>>>>>>>>>>>>>>
->>>>>>>>>>>>>>>> I may have older/different firmware than you, though.
->>>>>>>>>>>>>>>
->>>>>>>>>>>>>>> Upgraded BIOS to 1.8.0 and TBT NVM to v44 but still can't reproduce this
->>>>>>>>>>>>>>> on my system :/
->>>>>>>>>>>>>
->>>>>>>>>>>>> The user reported the issue with the previous firmwares 1.x and TBT NVM v40.
->>>>>>>>>>>>> Updating to the recent version (I got the logs with) did not fix the issue.
->>>>>>>>>>>>
->>>>>>>>>>>> I also tried v40 (that was originally on that system) but I was not able
->>>>>>>>>>>> to reproduce it.
->>>>>>>>>>>>
->>>>>>>>>>>> Do you know if the user changed any BIOS settings?
->>>>>>>>>>>
->>>>>>>>>>> We had to disable the Thunderbolt security settings as otherwise the USB
->>>>>>>>>>> devices wouldn’t work at cold boot either.
->>>>>>>>>>
->>>>>>>>>> That does not sound right at all. There is the preboot ACL that allows
->>>>>>>>>> you to use TBT dock aready on boot. Bolt takes care of this.
->>>>>>>>>>
->>>>>>>>>> Are you talking about USB devices connected to the TB16 dock?
->>>>>>>>>>
->>>>>>>>>> Also are you connecting the TB16 dock to the Thunderbolt ports (left
->>>>>>>>>> side of the system marked with small lightning logo) or to the normal
->>>>>>>>>> Type-C ports (right side)?
->>>>>>>>>>
->>>>>>>>>>> So, I built Linux 5.4-rc8 (`make bindeb-pkg -j8`), but unfortunately the
->>>>>>>>>>> error is still there. Sometimes, re-plugging the dock helped, and sometimes
->>>>>>>>>>> it did not.
->>>>>>>>>>>
->>>>>>>>>>> Please find the logs attached. The strange thing is, the Linux kernel detects
->>>>>>>>>>> the devices and I do not see any disconnect events. But, `lsusb` does not list
->>>>>>>>>>> the keyboard and the mouse. Is that expected.
->>>>>>>>>>
->>>>>>>>>> I'm bit confused. Can you describe the exact steps what you do (so I can
->>>>>>>>>> replicate them).
->>>>>>>>>
->>>>>>>>> I managed to reproduce following scenario.
->>>>>>>>>
->>>>>>>>> 1. Boot the system up to UI
->>>>>>>>> 2. Connect TB16 dock (and see that it gets authorized by bolt)
->>>>>>>>> 3. Connect keyboard and mouse to the TB16 dock
->>>>>>>>> 4. Both mouse and keyboard are functional
->>>>>>>>> 5. Enter s2idle by closing laptop lid
->>>>>>>>> 6. Exit s2idle by opening the laptop lid
->>>>>>>>> 7. After ~10 seconds or so the mouse or keyboard or both do not work
->>>>>>>>>       anymore. They do not respond but they are still "present".
->>>>>>>>>
->>>>>>>>> The above does not happen always but from time to time.
->>>>>>>>>
->>>>>>>>> Is this the scenario you see as well?
->>>>>>>>
->>>>>>>> Yes, it is. Though I’d say it’s only five seconds or so.
->>>>>>>>
->>>>>>>>> This is on Ubuntu 19.10 with the 5.3 stock kernel.
->>>>>>>>
->>>>>>>> “stock” in upstream’s or Ubuntu’s?
->>>>>>>
->>>>>>> It is Ubuntu's.
->>>>>>>
->>>>>>>>> I can get them work again by unplugging them and plugging back (leaving
->>>>>>>>> the TBT16 dock connected). Also if you run lspci when the problem
->>>>>>>>> occurs it still shows the dock so PCIe link stays up.
->>>>>>>>
->>>>>>>> Re-connecting the USB devices does not help here, but I still suspect it’s
->>>>>>>> the same issue.
->>>>>>>
->>>>>>> Yeah, sounds like so. Did you try to connect the device (mouse,
->>>>>>> keyboard) to another USB port?
->>>>>>
->>>>>> I do not think I did, but I can’t remember. Next week would be the next chance
->>>>>> to test this.
->>>>>>
->>>>>>>> Yesterday, I had my hand on a Dell XPS 13 7390 (10th Intel generation) and
->>>>>>>> tried it with the shipped Ubuntu 18.04 LTS. There, the problem was not
->>>>>>>> always reproducible, but it still happened. Sometimes, only one of the USB
->>>>>>>> device (either keyboard or mouse) stopped working.
->>>>>>>
->>>>>>> I suppose this is also with the TB16 dock connected, correct?
->>>>>>
->>>>>> Correct.
->>>>>>
->>>>>> Can I ask again, how the USB devices connected to the dock can be listed on
->>>>>> the command line? lsusb needs to be adapted for that or is a different
->>>>>> mechanism needed?
->>>>>
->>>>> The TB16 dock has ASMEDIA xHCI controller, which is PCIe device so you
->>>>> can see it by running lsusb and looking at the devices under that
->>>>> controller. I think maybe 'lsusb -t' is helpful.
->>>>>
->>>>> The xHCI controller itself you can see by running lspci.
->>>>
->>>> I got traces from the ASMedia xHC controller in the TB16 dock.
->>>
->>> Nice. Thank you for looking into that. How can these traces be captured?
->>
->> The Linux tracepoints added to the xhci driver can be enabled by:
->>
->> mount -t debugfs none /sys/kernel/debug
->> echo 81920 > /sys/kernel/debug/tracing/buffer_size_kb
->> echo 1 > /sys/kernel/debug/tracing/events/xhci-hcd/enable
->> < Trigger the issue >
->>
->> Copy traces found in /sys/kernel/debug/tracing/trace
->>
->> Trace file grows fast.
-> 
->>>> There are issues with split transactions between the ASMedia host and the 7 port
->>>> High speed hub built in to the dock.
->>>>
->>>> host reports a split transaction error for mouse or keyboard full-speed/low-speed
->>>> interrupt transactions. Endpoint doesn't recover after resetting it.
->>>>
->>>> Split transaction allows full- and low-speed devices to be attached to high-speed
->>>> hubs, and are used only between the host and the HS hub. A transaction translator (TT)
->>>> in the HS hub will translate the high-speed split transactions on its upstream port to
->>>> low/full speed transactions on the downstream port.
->>>>
->>>> I'll see if there are any xHC parameters driver is setting that trigger these
->>>> split transaction errors to trigger more easy.
->>>
->>> I always wonder how Microsoft Windows driver do it.
->>>
->>> Mario, should I contact the Dell support regarding this issue?
-> Sorry for bothering, but were you able to find some workaround for this issue?
-> 
+Hello,
 
-Unfortunately no, I couldn't find any workaround.
-xhci slot and endpoint context values for both the HS hub, and the full/low speed device seem correct.
+syzbot found the following crash on:
 
-I was able to reproduce the issue with an external HS hub as well, so  this issue
-appears to be more related to ASMedia host than the built in HS hub in TB16
+HEAD commit:    2187f215 Merge tag 'for-5.5-rc2-tag' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10031a8ee00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ab2ae0615387ef78
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e600afa7f6059f9a30e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=163852fee00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=135b43b6e00000
 
--Mathias
+Bisection is inconclusive: the bug happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=123dc849e00000
+final crash:    https://syzkaller.appspot.com/x/report.txt?x=113dc849e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=163dc849e00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7e600afa7f6059f9a30e@syzkaller.appspotmail.com
+
+hrtimer: interrupt took 92494 ns
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+	(detected by 0, t=10502 jiffies, g=8669, q=2)
+rcu: All QSes seen, last rcu_preempt kthread activity 10502  
+(4295016466-4295005964), jiffies_till_next_fqs=1, root ->qsmask 0x0
+syz-executor765 R  running task    28552  9407   9389 0x00000000
+Call Trace:
+  <IRQ>
+  sched_show_task kernel/sched/core.c:5954 [inline]
+  sched_show_task.cold+0x2ee/0x35d kernel/sched/core.c:5929
+  print_other_cpu_stall kernel/rcu/tree_stall.h:410 [inline]
+  check_cpu_stall kernel/rcu/tree_stall.h:538 [inline]
+  rcu_pending kernel/rcu/tree.c:2827 [inline]
+  rcu_sched_clock_irq.cold+0xaf4/0xc02 kernel/rcu/tree.c:2271
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1726
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:167
+  tick_sched_timer+0x53/0x140 kernel/time/tick-sched.c:1310
+  __run_hrtimer kernel/time/hrtimer.c:1517 [inline]
+  __hrtimer_run_queues+0x364/0xe40 kernel/time/hrtimer.c:1579
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1641
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1110 [inline]
+  smp_apic_timer_interrupt+0x160/0x610 arch/x86/kernel/apic/apic.c:1135
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:829
+  </IRQ>
+RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:169  
+[inline]
+RIP: 0010:_raw_spin_unlock_irq+0x4f/0x80 kernel/locking/spinlock.c:199
+Code: c0 e8 34 93 89 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00  
+75 33 48 83 3d 52 f5 ca 01 00 74 20 fb 66 0f 1f 44 00 00 <bf> 01 00 00 00  
+e8 e7 7b 88 f9 65 8b 05 d8 de 39 78 85 c0 74 06 41
+RSP: 0000:ffffc90001f47ca0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+RAX: 1ffffffff132669d RBX: 0000000000000000 RCX: 0000000000000000
+RDX: dffffc0000000000 RSI: 0000000000000006 RDI: ffff888095ca8b54
+RBP: ffffc90001f47ca8 R08: ffff888095ca82c0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8880a8ef0b80
+R13: ffff8880a8ef0cc0 R14: dffffc0000000000 R15: 000000000000000b
+  spin_unlock_irq include/linux/spinlock.h:388 [inline]
+  get_signal+0x1bee/0x24f0 kernel/signal.c:2737
+  do_signal+0x87/0x1700 arch/x86/kernel/signal.c:815
+  exit_to_usermode_loop+0x286/0x380 arch/x86/entry/common.c:160
+  prepare_exit_to_usermode+0x321/0x3a0 arch/x86/entry/common.c:195
+  ret_from_intr+0x26/0x36
+RIP: 0033:0x401505
+Code: 00 00 00 be b4 fe 4a 00 e8 48 ee ff ff 48 85 c0 0f 85 d2 fe ff ff e9  
+4a ff ff ff e8 55 d9 04 00 48 6b 44 24 28 18 8b 7c 24 38 <48> 8b 88 50 00  
+00 20 48 8b 90 48 00 00 20 48 8b b0 40 00 00 20 e8
+RSP: 002b:00007f51c6df1b20 EFLAGS: 00010202
+RAX: 0000000002f54358 RBX: 00000000006dcc28 RCX: 0000000000406cc7
+RDX: 60b237aef639e3c2 RSI: 0000000000000000 RDI: 0000000000000004
+RBP: 00000000006dcc20 R08: 00007f51c6df1b20 R09: 00000000006dcc20
+R10: 0000000000000000 R11: 0000000000000000 R12: 00000000006dcc2c
+R13: 00007ffcd25bbb6f R14: 00007f51c6df29c0 R15: 00000000006dcc20
+rcu: rcu_preempt kthread starved for 10502 jiffies! g8669 f0x2  
+RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: RCU grace-period kthread stack dump:
+rcu_preempt     R  running task    29272    10      2 0x80004000
+Call Trace:
+  context_switch kernel/sched/core.c:3385 [inline]
+  __schedule+0x934/0x1f90 kernel/sched/core.c:4081
+  schedule+0xdc/0x2b0 kernel/sched/core.c:4155
+  schedule_timeout+0x486/0xc50 kernel/time/timer.c:1895
+  rcu_gp_fqs_loop kernel/rcu/tree.c:1661 [inline]
+  rcu_gp_kthread+0x9b2/0x18d0 kernel/rcu/tree.c:1821
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
