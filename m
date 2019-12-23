@@ -2,85 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 844321290B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:41:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 650751290C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 02:54:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfLWBl0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 20:41:26 -0500
-Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:34696 "EHLO
-        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfLWBlY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 20:41:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1577065285; x=1608601285;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=x51IhYE1QyMmY3UHAvxQPb23Eyep04ViD2uP480XSao=;
-  b=YxZiHG/Wx421T38Nlg3CjeGNvlWh8mXbVXKFni6pfOQxu1Gnk8GGkxVD
-   OnovRF2tDGbFM12BlOcoeGLhoRqwQnN2YFkeRfe+4Nzvj4H6gGb5/+M+H
-   HbNzT7oekErqNHLD4U5sTxbdBuUHbAfVUNm14yXDQQM0MCOeE5WxTL13a
-   U=;
-IronPort-SDR: u42+C2cWqXai1yZxQ5RHbMfHWMe45P1ZHZVjdw7UCnZe5/KJcLLskVMaz9YebLrkIktGlNlnPd
- F/lMiZ6/3Qyw==
-X-IronPort-AV: E=Sophos;i="5.69,345,1571702400"; 
-   d="scan'208";a="8788841"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP; 23 Dec 2019 01:41:23 +0000
-Received: from EX13MTAUWA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1d-37fd6b3d.us-east-1.amazon.com (Postfix) with ESMTPS id 1FB17282FB5;
-        Mon, 23 Dec 2019 01:41:20 +0000 (UTC)
-Received: from EX13D01UWA001.ant.amazon.com (10.43.160.60) by
- EX13MTAUWA001.ant.amazon.com (10.43.160.118) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 23 Dec 2019 01:41:20 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13d01UWA001.ant.amazon.com (10.43.160.60) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Mon, 23 Dec 2019 01:41:20 +0000
-Received: from localhost (172.23.204.141) by mail-relay.amazon.com
- (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Mon, 23 Dec 2019 01:41:19 +0000
-From:   Balbir Singh <sblbir@amazon.com>
-To:     <=linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-nvme@lists.infradead.org>
-CC:     <axboe@kernel.dk>, <mst@redhat.com>, <jejb@linux.ibm.com>,
-        <hch@lst.de>, <ssomesh@amazon.com>,
-        Balbir Singh <sblbir@amazon.com>
-Subject: [RFC PATCH 5/5] drivers/scsi/sd.c: Convert to use disk_set_capacity
-Date:   Mon, 23 Dec 2019 01:40:56 +0000
-Message-ID: <20191223014056.17318-5-sblbir@amazon.com>
-X-Mailer: git-send-email 2.16.5
-In-Reply-To: <20191223014056.17318-1-sblbir@amazon.com>
-References: <20191223014056.17318-1-sblbir@amazon.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726666AbfLWBt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 20:49:59 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:32910 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfLWBt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 20:49:58 -0500
+Received: from mse-fl2.zte.com.cn (unknown [10.30.14.239])
+        by Forcepoint Email with ESMTPS id 6DB6E44C4802612FF7C7;
+        Mon, 23 Dec 2019 09:49:55 +0800 (CST)
+Received: from notes_smtp.zte.com.cn (notes_smtp.zte.com.cn [10.30.1.239])
+        by mse-fl2.zte.com.cn with ESMTP id xBN1nanf029636;
+        Mon, 23 Dec 2019 09:49:36 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019122309493877-1467356 ;
+          Mon, 23 Dec 2019 09:49:38 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     aryabinin@virtuozzo.com
+Cc:     glider@google.com, dvyukov@google.com, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn,
+        Huang Zijiang <huang.zijiang@zte.com.cn>
+Subject: [PATCH] lib: Use kzalloc() instead of kmalloc() with flag GFP_ZERO.
+Date:   Mon, 23 Dec 2019 09:49:34 +0800
+Message-Id: <1577065774-25142-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-12-23 09:49:38,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-12-23 09:49:37,
+        Serialize complete at 2019-12-23 09:49:37
+X-MAIL: mse-fl2.zte.com.cn xBN1nanf029636
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-block/genhd provides disk_set_capacity() for sending
-RESIZE notifications via uevents. This notification is
-newly added to scsi sd.
+From: Huang Zijiang <huang.zijiang@zte.com.cn>
 
-Signed-off-by: Balbir Singh <sblbir@amazon.com>
+Use kzalloc instead of manually setting kmalloc
+with flag GFP_ZERO since kzalloc sets allocated memory
+to zero.
+
+Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 ---
- drivers/scsi/sd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_kasan.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 5afb0046b12a..1a3be30b6b78 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -3184,7 +3184,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index 05686c8..ff5d21e 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -598,7 +598,7 @@ static noinline void __init kasan_memchr(void)
+     size_t size = 24;
  
- 	sdkp->first_scan = 0;
+     pr_info("out-of-bounds in memchr\n");
+-    ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
++ptr = kzalloc(size, GFP_KERNEL);
+     if (!ptr)
+         return;
  
--	set_capacity(disk, logical_to_sectors(sdp, sdkp->capacity));
-+	disk_set_capacity(disk, logical_to_sectors(sdp, sdkp->capacity));
- 	sd_config_write_same(sdkp);
- 	kfree(buffer);
+@@ -613,7 +613,7 @@ static noinline void __init kasan_memcmp(void)
+     int arr[9];
  
+     pr_info("out-of-bounds in memcmp\n");
+-    ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
++ptr = kzalloc(size, GFP_KERNEL);
+     if (!ptr)
+         return;
+ 
+@@ -628,7 +628,7 @@ static noinline void __init kasan_strings(void)
+     size_t size = 24;
+ 
+     pr_info("use-after-free in strchr\n");
+-    ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
++ptr = kzalloc(size, GFP_KERNEL);
+     if (!ptr)
+         return;
+
 -- 
-2.16.5
+1.9.1
 
