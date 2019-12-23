@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 790861291C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 07:08:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A1F1291C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 07:08:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfLWGIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 01:08:47 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35858 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726777AbfLWGId (ORCPT
+        id S1726879AbfLWGIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 01:08:39 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:39844 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726826AbfLWGIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 01:08:33 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a6so6037317plm.3;
-        Sun, 22 Dec 2019 22:08:32 -0800 (PST)
+        Mon, 23 Dec 2019 01:08:36 -0500
+Received: by mail-pj1-f67.google.com with SMTP id t101so7013487pjb.4;
+        Sun, 22 Dec 2019 22:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=g8zFN4u1s+ibahYyH5XQDwxGFJc14mdBoek3gA8QsyM=;
-        b=aME/RTy6nG0IPetzQX4qR8/nS67W4xvQztASYo0QMa+PdgZepu8J6oaMzs8ULcnDI3
-         2vI4lNd+bAmfCBPOWJbk5w9jxysHPGKrbqs0Vg/q8pG+/kT4EWCNnaUuMZd7WZLgIuLo
-         I+qec5UJLg/oV40fEUUSOCACS6GQ8mtD48c6OsQEbFRwHsluchJn/aXJF1GuoRiiSrDD
-         irJf6C5gVgQvZHUvGo2Km5QYx/XCmXWA16uMS9pPtB4nsJFtjTrhzmGMGTclXG4S8/Jh
-         dE5StifBTSAaB0bLvDhfjgld52oqJkFrGZURK6NK+QUYI5JWEbOKRN8TESWEq3IPETVC
-         yxkQ==
+        bh=0xnigVaaCqW8/KBuzAXnuhlbsCoW2U384fK9hdVaYC0=;
+        b=ngvZThXXSJf6z7N4LgY5xftRi5MmZ64sWtiQoBWr64nJbVMqw6h9KlIvgtfnBy4rZh
+         T5LmycSdz4/zi/Z4cHg2IvGWhHljeO0h2y8/B99LQOTCrBddhMRqfy/h8dJJrDiOr70S
+         joV1327Z4kGYl0ucpjNMwnQL1oD3qoDEGb/9kS2/A7ZlPYqTdHzWHdoWVs+c+65uQwlY
+         5D6PBkc0+Tbee+qjc7WT27cml6jWqhqpMeDjLJnemuOGYeX7Cc1bokfhfixlgx2vxyxi
+         0Vg8ZsUzU8q6wUdhXG4W9Bbyy0O/8l7JGXZySc8I79O70pOq/L2Rte11AnQe6q3fE4eZ
+         abBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=g8zFN4u1s+ibahYyH5XQDwxGFJc14mdBoek3gA8QsyM=;
-        b=NKEo47UWb/e7Zso8chLUETotPZufelEWQq57aYyXYTuTjvbsWwKCNE5SqcnrJGILX3
-         wcBZkMo6uCC/SM3uAsnjdv/3AHy+/MDEgjI3rVvRNezm6wAJ9DNy7qypcJzSmIMJL4NZ
-         IfQp9buidoIDa9e/+D8mITZ640SsVOC9QxW2XO+ZsiO7Gbr6vtD/f2GgenjOBQh+Z6lX
-         yiAeRQhTu9BZtes0TQIPAr9LtH6fsT35yveQG14KJvPTYVBtpG/dJPfev9/g6vI1zYBA
-         LTNsZqtVlOAzxrz2AzIQFKfg9CknC9nTgXYIIK2v88KQ9RXdAdDO8MBhGsSA7PNap2Yd
-         x8uA==
-X-Gm-Message-State: APjAAAXNqaSZPBtXwwfOFBFEZl3N55jBlwBHXtpZkxiDS6DXzVayVK/g
-        ujTy/bPqwC/4QHtAA1TuqY4=
-X-Google-Smtp-Source: APXvYqw/Cw05gkMnL2UmePIu3IBjENm0fgwpFFb2o7YWlCmx+P17DmItnhgR0hFZMR8aWV0h7XPiNg==
-X-Received: by 2002:a17:902:d68e:: with SMTP id v14mr14746054ply.216.1577081312512;
-        Sun, 22 Dec 2019 22:08:32 -0800 (PST)
+        bh=0xnigVaaCqW8/KBuzAXnuhlbsCoW2U384fK9hdVaYC0=;
+        b=tFTuYLY5CHtCGmH0rCcJxeftjhK8/bIqpHowAZ9b1zF44/OgMvuak6p9xVzqzJLvhy
+         W/y27qnmiwv0kLJT8jcGpl+6nZeRYByajX1SXLMiTIPqtgHwTnMo+xHjPBT+yMGU7Ilk
+         nBRGAl7tu84Vd8FsA6XkKePPgjm+6p8HPLaRi3J4mFnT/kFwvZRoAyPu/Niv99op+S3W
+         qMol4+w5pfJZhZBdCYGHAoXsjt1OJUJECpbIJCDMog15EE+9kfL3+SrTo6zSMJHRuujs
+         eihNnnxDd776VqWBlA9s7nfBEuEq04s6YNN7WeeKVUKZN9i0tPoeNp/EdpS6ZM3v+u4R
+         nZzA==
+X-Gm-Message-State: APjAAAXZC5JPs9twQ4m+FIHHV8XbX8tYxDa1UaEBjNp1e7SHR3PUjtoh
+        APKCwk4ewPHFVL7njTUtD30=
+X-Google-Smtp-Source: APXvYqySX+D81sqvnx2YRx4HAYR5b0v2HlJp9aSRAbfEoKsxVl64O+Dy6jg19bm441Fw0yz8gMbAZg==
+X-Received: by 2002:a17:902:d705:: with SMTP id w5mr19997106ply.68.1577081315569;
+        Sun, 22 Dec 2019 22:08:35 -0800 (PST)
 Received: from gaurie.seo.corp.google.com ([2401:fa00:d:1:4eb0:a5ef:3975:7440])
-        by smtp.gmail.com with ESMTPSA id p185sm22978212pfg.61.2019.12.22.22.08.29
+        by smtp.gmail.com with ESMTPSA id p185sm22978212pfg.61.2019.12.22.22.08.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Dec 2019 22:08:31 -0800 (PST)
+        Sun, 22 Dec 2019 22:08:34 -0800 (PST)
 From:   Namhyung Kim <namhyung@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <a.p.zijlstra@chello.nl>,
@@ -55,9 +55,9 @@ Cc:     Jiri Olsa <jolsa@redhat.com>,
         Stephane Eranian <eranian@google.com>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-perf-users@vger.kernel.org
-Subject: [PATCH 7/9] perf record: Add --all-cgroups option
-Date:   Mon, 23 Dec 2019 15:07:57 +0900
-Message-Id: <20191223060759.841176-8-namhyung@kernel.org>
+Subject: [PATCH 8/9] perf top: Add --all-cgroups option
+Date:   Mon, 23 Dec 2019 15:07:58 +0900
+Message-Id: <20191223060759.841176-9-namhyung@kernel.org>
 X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 In-Reply-To: <20191223060759.841176-1-namhyung@kernel.org>
 References: <20191223060759.841176-1-namhyung@kernel.org>
@@ -74,105 +74,59 @@ report can identify task/cgroup association later.
 
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- tools/perf/Documentation/perf-record.txt |  5 ++++-
- tools/perf/builtin-record.c              |  5 +++++
- tools/perf/util/evsel.c                  | 11 ++++++++++-
- tools/perf/util/evsel.h                  |  1 +
- tools/perf/util/record.h                 |  1 +
- 5 files changed, 21 insertions(+), 2 deletions(-)
+ tools/perf/Documentation/perf-top.txt | 4 ++++
+ tools/perf/builtin-top.c              | 9 +++++++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index b23a4012a606..6dd9d69d7dee 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -385,7 +385,10 @@ displayed with the weight and local_weight sort keys.  This currently works for
- abort events and some memory events in precise mode on modern Intel CPUs.
+diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
+index 5596129a71cf..c75507f50071 100644
+--- a/tools/perf/Documentation/perf-top.txt
++++ b/tools/perf/Documentation/perf-top.txt
+@@ -266,6 +266,10 @@ Default is to monitor all CPUS.
+ 	Record events of type PERF_RECORD_NAMESPACES and display it with the
+ 	'cgroup_id' sort key.
  
- --namespaces::
--Record events of type PERF_RECORD_NAMESPACES.
-+Record events of type PERF_RECORD_NAMESPACES.  This enables 'cgroup_id' sort key.
++--cgroup::
++	Record events of type PERF_RECORD_CGROUP and display it with the
++	'cgroup' sort key.
 +
-+--all-cgroups::
-+Record events of type PERF_RECORD_CGROUP.  This enables 'cgroup' sort key.
+ --switch-on EVENT_NAME::
+ 	Only consider events after this event is found.
  
- --transaction::
- Record transaction flags for transaction related events.
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 2802de9538ff..7d7912e121d6 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1433,6 +1433,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 	if (rec->opts.record_namespaces)
- 		tool->namespace_events = true;
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index dc80044bc46f..1aaa1b34feca 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1244,6 +1244,8 @@ static int __cmd_top(struct perf_top *top)
  
-+	if (rec->opts.record_cgroup)
-+		tool->cgroup_events = true;
-+
- 	if (rec->opts.auxtrace_snapshot_mode || rec->switch_output.enabled) {
- 		signal(SIGUSR2, snapshot_sig_handler);
- 		if (rec->opts.auxtrace_snapshot_mode)
-@@ -2363,6 +2366,8 @@ static struct option __record_options[] = {
- 			"per thread proc mmap processing timeout in ms"),
- 	OPT_BOOLEAN(0, "namespaces", &record.opts.record_namespaces,
- 		    "Record namespaces events"),
-+	OPT_BOOLEAN(0, "all-cgroups", &record.opts.record_cgroup,
-+		    "Record cgroup events"),
- 	OPT_BOOLEAN(0, "switch-events", &record.opts.record_switch_events,
- 		    "Record context switch events"),
- 	OPT_BOOLEAN_FLAG(0, "all-kernel", &record.opts.all_kernel,
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 0f5a67603139..ff6c6683a32b 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1102,6 +1102,11 @@ void perf_evsel__config(struct evsel *evsel, struct record_opts *opts,
  	if (opts->record_namespaces)
- 		attr->namespaces  = track;
+ 		top->tool.namespace_events = true;
++	if (opts->record_cgroup)
++		top->tool.cgroup_events = true;
  
-+	if (opts->record_cgroup) {
-+		attr->cgroup = track && !perf_missing_features.cgroup;
-+		perf_evsel__set_sample_bit(evsel, CGROUP);
-+	}
+ 	ret = perf_event__synthesize_bpf_events(top->session, perf_event__process,
+ 						&top->session->machines.host,
+@@ -1251,6 +1253,11 @@ static int __cmd_top(struct perf_top *top)
+ 	if (ret < 0)
+ 		pr_debug("Couldn't synthesize BPF events: Pre-existing BPF programs won't have symbols resolved.\n");
+ 
++	ret = perf_event__synthesize_cgroups(&top->tool, perf_event__process,
++					     &top->session->machines.host);
++	if (ret < 0)
++		pr_debug("Couldn't synthesize cgroup events.\n");
 +
- 	if (opts->record_switch_events)
- 		attr->context_switch = track;
- 
-@@ -1782,7 +1787,11 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
- 	 * Must probe features in the order they were added to the
- 	 * perf_event_attr interface.
- 	 */
--	if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
-+	if (!perf_missing_features.cgroup && evsel->core.attr.cgroup) {
-+		perf_missing_features.cgroup = true;
-+		pr_debug2_peo("Kernel has no cgroup sampling support, bailing out\n");
-+		goto out_close;
-+	} else if (!perf_missing_features.aux_output && evsel->core.attr.aux_output) {
- 		perf_missing_features.aux_output = true;
- 		pr_debug2_peo("Kernel has no attr.aux_output support, bailing out\n");
- 		goto out_close;
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index dc14f4a823cd..df71b530740b 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -119,6 +119,7 @@ struct perf_missing_features {
- 	bool ksymbol;
- 	bool bpf;
- 	bool aux_output;
-+	bool cgroup;
- };
- 
- extern struct perf_missing_features perf_missing_features;
-diff --git a/tools/perf/util/record.h b/tools/perf/util/record.h
-index 5421fd2ad383..24316458be20 100644
---- a/tools/perf/util/record.h
-+++ b/tools/perf/util/record.h
-@@ -34,6 +34,7 @@ struct record_opts {
- 	bool	      auxtrace_snapshot_on_exit;
- 	bool	      auxtrace_sample_mode;
- 	bool	      record_namespaces;
-+	bool	      record_cgroup;
- 	bool	      record_switch_events;
- 	bool	      all_kernel;
- 	bool	      all_user;
+ 	machine__synthesize_threads(&top->session->machines.host, &opts->target,
+ 				    top->evlist->core.threads, false,
+ 				    top->nr_threads_synthesize);
+@@ -1539,6 +1546,8 @@ int cmd_top(int argc, const char **argv)
+ 			"number of thread to run event synthesize"),
+ 	OPT_BOOLEAN(0, "namespaces", &opts->record_namespaces,
+ 		    "Record namespaces events"),
++	OPT_BOOLEAN(0, "all-cgroups", &opts->record_cgroup,
++		    "Record cgroup events"),
+ 	OPTS_EVSWITCH(&top.evswitch),
+ 	OPT_END()
+ 	};
 -- 
 2.24.1.735.g03f4e72817-goog
 
