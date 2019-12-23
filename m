@@ -2,71 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D59C71295D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:06:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D769D1295DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:10:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfLWMGx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 07:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37958 "EHLO mail.kernel.org"
+        id S1726847AbfLWMKF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 07:10:05 -0500
+Received: from foss.arm.com ([217.140.110.172]:44080 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbfLWMGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 07:06:53 -0500
-Received: from localhost (50-198-241-253-static.hfc.comcastbusiness.net [50.198.241.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 963112063A;
-        Mon, 23 Dec 2019 12:06:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577102812;
-        bh=UJGipIs3R0eAFs/+vxP9hO/yM5VYdXO2adysSDweAhc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fz2yc8cDetWe4VFTEb9zU418nJ8+h2ixEHwK4M1+tCvv5q0EELvft/sEOBf9OgdBR
-         g0fKDmEZbkFl2tFeMH9BQ1G7px1JKNKQDztlyAmvqszPwo/LkD3g/nqrzqTVfXE/rK
-         hrYisPKy4oJF9GfEm80pUeULbSfvMr+fxK55XIWY=
-Date:   Mon, 23 Dec 2019 07:06:51 -0500
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Jiri Slaby <jslaby@suse.cz>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Subject: Re: [GIT PULL] TTY/Serial driver fixes for 5.5-rc3
-Message-ID: <20191223120651.GC114474@kroah.com>
-References: <20191220070747.GA2190169@kroah.com>
- <CAHk-=whcLH7EXVZbD0g1Bw7McrofQ-7vwiL2GAeMn=z9PP4VEQ@mail.gmail.com>
+        id S1726257AbfLWMKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 07:10:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C11BA1FB;
+        Mon, 23 Dec 2019 04:10:04 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36A063F68F;
+        Mon, 23 Dec 2019 04:10:04 -0800 (PST)
+Date:   Mon, 23 Dec 2019 12:10:02 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 15/18] perf: arm_spe: Handle guest/host exclusion flags
+Message-ID: <20191223121002.GB42593@e119886-lin.cambridge.arm.com>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-16-andrew.murray@arm.com>
+ <865zi8imr7.wl-maz@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=whcLH7EXVZbD0g1Bw7McrofQ-7vwiL2GAeMn=z9PP4VEQ@mail.gmail.com>
+In-Reply-To: <865zi8imr7.wl-maz@kernel.org>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 10:08:03AM -0800, Linus Torvalds wrote:
-> On Thu, Dec 19, 2019 at 11:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > The last tty core fix should resolve a long-standing bug with a race
-> > at port creation time that some people would see, and Sudip finally
-> > tracked down.
+On Sun, Dec 22, 2019 at 12:10:52PM +0000, Marc Zyngier wrote:
+> On Fri, 20 Dec 2019 14:30:22 +0000,
+> Andrew Murray <andrew.murray@arm.com> wrote:
+> > 
+> > A side effect of supporting the SPE in guests is that we prevent the
+> > host from collecting data whilst inside a guest thus creating a black-out
+> > window. This occurs because instead of emulating the SPE, we share it
+> > with our guests.
+> > 
+> > Let's accurately describe our capabilities by using the perf exclude
+> > flags to prevent !exclude_guest and exclude_host flags from being used.
+> > 
+> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > ---
+> >  drivers/perf/arm_spe_pmu.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> > index 2d24af4cfcab..3703dbf459de 100644
+> > --- a/drivers/perf/arm_spe_pmu.c
+> > +++ b/drivers/perf/arm_spe_pmu.c
+> > @@ -679,6 +679,9 @@ static int arm_spe_pmu_event_init(struct perf_event *event)
+> >  	if (attr->exclude_idle)
+> >  		return -EOPNOTSUPP;
+> >  
+> > +	if (!attr->exclude_guest || attr->exclude_host)
+> > +		return -EOPNOTSUPP;
+> > +
 > 
-> Hmm, looks good. But it makes me wonder if we should now try to remove
-> the second call to tty_port_link_device()?
+> I have the opposite approach. If the host decides to profile the
+> guest, why should that be denied? If there is a black hole, it should
+> take place in the guest. Today, the host does expect this to work, and
+> there is no way that we unconditionally allow it to regress.
+
+That seems reasonable.
+
+Upon entering the guest we'd have to detect if the host is using SPE, and if
+so choose not to restore the guest registers. Instead we'd have to trap them
+and let the guest read/write emulated values until the host has finished with
+SPE - at which time we could restore the guest SPE registers to hardware.
+
+Does that approach make sense?
+
+Thanks,
+
+Andrew Murray
+
 > 
-> Now we have a number of helpers that do that tty_port_link_device()
-> call for the driver (eg tty_port_register_device_attr_serdev(),
-> tty_port_register_device_attr(), and the just added
-> uart_add_one_port()).
+> 	M.
 > 
-> But we also have drivers doing it by hand, and presumably we now have
-> drivers that do it through multiple paths? I guess it's harmless, but
-> it feels a bit odd. No?
-
-It does.  I'll try to look at this after the holidays unless Sudip beats
-me to it.
-
-thanks,
-
-greg k-h
+> -- 
+> Jazz is not dead, it just smells funny.
