@@ -2,97 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF1DE1295B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:57:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBD531295BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfLWL4z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 06:56:55 -0500
-Received: from foss.arm.com ([217.140.110.172]:43766 "EHLO foss.arm.com"
+        id S1726834AbfLWL6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 06:58:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726679AbfLWL4z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 06:56:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BEFA1FB;
-        Mon, 23 Dec 2019 03:56:54 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5C7F3F68F;
-        Mon, 23 Dec 2019 03:56:53 -0800 (PST)
-Date:   Mon, 23 Dec 2019 11:56:52 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 11/18] KVM: arm64: don't trap Statistical Profiling
- controls to EL2
-Message-ID: <20191223115651.GA42593@e119886-lin.cambridge.arm.com>
-References: <20191220143025.33853-1-andrew.murray@arm.com>
- <20191220143025.33853-12-andrew.murray@arm.com>
- <86bls0iqv6.wl-maz@kernel.org>
+        id S1726257AbfLWL6w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 06:58:52 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40F3E20709;
+        Mon, 23 Dec 2019 11:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577102332;
+        bh=QyuoZyIhNs4xmOxwsNxxEhCCg7Gu9hD6h7ZqKd7+bQY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OYvEt+yz5urzWr1WlgfkJ4G2hB4fZdPGZ/uPQp5TtdxwDerjLj47mX9ylrJ49Qo/j
+         HRYwoqj30Xd68PMERLUotZFsxD7O+uwplwlj0IsjbuwF+SROc6LUpXwt/lcepFujDO
+         1QkGz5jX+nZyK8+2dTCa7JcaJuQtyIYuZqLCWdEg=
+Date:   Mon, 23 Dec 2019 11:58:47 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     <Eugen.Hristev@microchip.com>
+Cc:     <robh+dt@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <Nicolas.Ferre@microchip.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>,
+        <a.zummo@towertech.it>, <Ludovic.Desroches@microchip.com>
+Subject: Re: [PATCH 02/10] dt-bindings: iio: adc: at91-sama5d2: add
+ rtc-trigger optional property
+Message-ID: <20191223115847.244c1406@archlinux>
+In-Reply-To: <1576686157-11939-3-git-send-email-eugen.hristev@microchip.com>
+References: <1576686157-11939-1-git-send-email-eugen.hristev@microchip.com>
+        <1576686157-11939-3-git-send-email-eugen.hristev@microchip.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86bls0iqv6.wl-maz@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 22, 2019 at 10:42:05AM +0000, Marc Zyngier wrote:
-> On Fri, 20 Dec 2019 14:30:18 +0000,
-> Andrew Murray <andrew.murray@arm.com> wrote:
-> > 
-> > As we now save/restore the profiler state there is no need to trap
-> > accesses to the statistical profiling controls. Let's unset the
-> > _TPMS bit.
-> > 
-> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> > ---
-> >  arch/arm64/kvm/debug.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
-> > index 43487f035385..07ca783e7d9e 100644
-> > --- a/arch/arm64/kvm/debug.c
-> > +++ b/arch/arm64/kvm/debug.c
-> > @@ -88,7 +88,6 @@ void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu)
-> >   *  - Performance monitors (MDCR_EL2_TPM/MDCR_EL2_TPMCR)
-> >   *  - Debug ROM Address (MDCR_EL2_TDRA)
-> >   *  - OS related registers (MDCR_EL2_TDOSA)
-> > - *  - Statistical profiler (MDCR_EL2_TPMS/MDCR_EL2_E2PB)
-> >   *
-> >   * Additionally, KVM only traps guest accesses to the debug registers if
-> >   * the guest is not actively using them (see the KVM_ARM64_DEBUG_DIRTY
-> > @@ -111,7 +110,6 @@ void kvm_arm_setup_debug(struct kvm_vcpu *vcpu)
-> >  	 */
-> >  	vcpu->arch.mdcr_el2 = __this_cpu_read(mdcr_el2) & MDCR_EL2_HPMN_MASK;
-> >  	vcpu->arch.mdcr_el2 |= (MDCR_EL2_TPM |
-> > -				MDCR_EL2_TPMS |
+On Wed, 18 Dec 2019 16:23:58 +0000
+<Eugen.Hristev@microchip.com> wrote:
+
+> From: Eugen Hristev <eugen.hristev@microchip.com>
 > 
-> No. This is an *optional* feature (the guest could not be presented
-> with the SPE feature, or the the support simply not be compiled in).
+> Add property to connect RTC-type trigger to the ADC block.
+> The ADC is connected internally with a line to the RTC block.
+> The RTC can provide a trigger signal to the ADC to start conversions.
 > 
-> If the guest is not allowed to see the feature, for whichever reason,
-> the traps *must* be enabled and handled.
+> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+As discussed, might want to just be the rtc handle rather than a new
+trigger one.
 
-I'll update this (and similar) to trap such registers when we don't support
-SPE in the guest.
-
-My original concern in the cover letter was in how to prevent the guest
-from attempting to use these registers in the first place - I think the
-solution I was looking for is to trap-and-emulate ID_AA64DFR0_EL1 such that
-the PMSVer bits indicate that SPE is not emulated.
-
-Thanks,
-
-Andrew Murray
-
-
+> ---
+>  Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> 	M.
-> 
-> -- 
-> Jazz is not dead, it just smells funny.
+> diff --git a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> index 4a3c1d4..1980f0e 100644
+> --- a/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> +++ b/Documentation/devicetree/bindings/iio/adc/at91-sama5d2_adc.txt
+> @@ -23,6 +23,9 @@ Optional properties:
+>    See ../../dma/dma.txt for details.
+>    - #io-channel-cells: in case consumer drivers are attached, this must be 1.
+>    See <Documentation/devicetree/bindings/iio/iio-bindings.txt> for details.
+> +  - atmel,rtc-trigger: The ADC IP block can be triggered by the RTC block
+> +inside the SoC. This property is a phandle to a node that provides a
+> +trigger device, if the ADC block supports it.
+
+Do we want to be more specific on devices that do support it?
+Maybe it's enough of a complex mess that we don't.
+
+>  
+>  Properties for consumer drivers:
+>    - Consumer drivers can be connected to this producer device, as specified
+> @@ -44,6 +47,7 @@ adc: adc@fc030000 {
+>  	vddana-supply = <&vdd_3v3_lp_reg>;
+>  	vref-supply = <&vdd_3v3_lp_reg>;
+>  	atmel,trigger-edge-type = <IRQ_TYPE_EDGE_BOTH>;
+> +	atmel,rtc-trigger = <&rtc_adc_trigger>;
+>  	dmas = <&dma0 (AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) | AT91_XDMAC_DT_PERID(25))>;
+>  	dma-names = "rx";
+>  	#io-channel-cells = <1>;
+
