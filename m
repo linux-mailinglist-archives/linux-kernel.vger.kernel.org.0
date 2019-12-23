@@ -2,85 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 552C8129874
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C44A312987D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:50:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbfLWPrz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 10:47:55 -0500
-Received: from node.akkea.ca ([192.155.83.177]:39008 "EHLO node.akkea.ca"
+        id S1726833AbfLWPuH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 10:50:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46550 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbfLWPrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 10:47:55 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 19B934E2010;
-        Mon, 23 Dec 2019 15:47:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1577116075; bh=l91r0YDEN+oe9jxf3D6wJpDm6U1PN8Ku0lGaSjCm2s8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=hRnL2nMMVwL+nce9WFkgKmJXsZ4RcKCTA2Ygm2lc9ItXuygoCZMCb17IgSEHtOc1D
-         hXjGtIugvpDo421/z2dVb2RftAQAXd3/MjwFNd9KZclSlthNp90oMvORCKl1n9TqxZ
-         IjmP3IiPrXrQCR4wETvFw2ucM3Sesc6igWr13vAs=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NxrCUansM3_G; Mon, 23 Dec 2019 15:47:54 +0000 (UTC)
-Received: from midas.localdomain (S0106788a2041785e.gv.shawcable.net [70.66.86.75])
-        by node.akkea.ca (Postfix) with ESMTPSA id 80F804E2003;
-        Mon, 23 Dec 2019 15:47:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1577116074; bh=l91r0YDEN+oe9jxf3D6wJpDm6U1PN8Ku0lGaSjCm2s8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=WQTq/9PAYT8c5stV9E7wa1+BFWRJMaMeLSGEK21UeOUtftJ/iyb8IrAFeQD6pMVk6
-         Mv+jLvnkJxo+DLiYllp1zDhtDbyXl8jFZS640nSHKiVRkFWlq5UvoRFHJ1R8HPFa0t
-         gOPMI0DIAtc6JlHlqHUFkYt41wzdzj5XogMqpB9M=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     broonie@kernel.org
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, kernel@puri.sm, robh@kernel.org,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>
-Subject: [PATCH v4 2/2] dt-bindings: sound: gtm601: add the broadmobi interface
-Date:   Mon, 23 Dec 2019 07:47:12 -0800
-Message-Id: <20191223154712.18581-3-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191223154712.18581-1-angus@akkea.ca>
-References: <20191223154712.18581-1-angus@akkea.ca>
+        id S1725912AbfLWPuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 10:50:07 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBEEE20663;
+        Mon, 23 Dec 2019 15:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577116206;
+        bh=RMoTjXwZcjIZ4sWdkpbd+CDNN2WUkeQnAYsgLbSVu54=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=FDm6HjWvnEvmXVY0d+ZFGhVyJKlxV+7EhJpQtv6xEMM41psUFVFCb57loxIJZgKiJ
+         8ESQcAoSB6lRrFp44fsrTaQP6YSbeMkKuLIiIstmeTo2dJg78X7g2ywMc2LZiExtCp
+         /Ukdrs/au3+oxV4Rfu/LE4M+uEPDymjU8xXO+It8=
+Date:   Mon, 23 Dec 2019 15:50:01 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     <vkoul@kernel.org>, <ludovic.desroches@microchip.com>,
+        <eugen.hristev@microchip.com>, <linux-iio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] iio: adc: at91-sama5d2_adc: Use dma_request_chan()
+ instead dma_request_slave_channel()
+Message-ID: <20191223155001.3c4c7261@archlinux>
+In-Reply-To: <20191217103100.21737-1-peter.ujfalusi@ti.com>
+References: <20191217103100.21737-1-peter.ujfalusi@ti.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Broadmobi BM818 uses a different sample rate and channels from the
-option modem.
+On Tue, 17 Dec 2019 12:31:00 +0200
+Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/sound/gtm601.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+> eating up the error code.
+> 
+> By using dma_request_chan() directly the driver can support deferred
+> probing against DMA.
+Unfortunately that doesn't seem to be true.
+The function in question returns void...
 
-diff --git a/Documentation/devicetree/bindings/sound/gtm601.txt b/Documentation/devicetree/bindings/sound/gtm601.txt
-index 5efc8c068de0..efa32a486c4a 100644
---- a/Documentation/devicetree/bindings/sound/gtm601.txt
-+++ b/Documentation/devicetree/bindings/sound/gtm601.txt
-@@ -1,10 +1,16 @@
- GTM601 UMTS modem audio interface CODEC
- 
--This device has no configuration interface. Sample rate is fixed - 8kHz.
-+This device has no configuration interface. The sample rate and channels are
-+based on the compatible string
-+	"option,gtm601" = 8kHz mono
-+	"broadmobi,bm818" = 48KHz stereo
- 
- Required properties:
- 
--  - compatible : "option,gtm601"
-+  - compatible : one of
-+	"option,gtm601"
-+	"broadmobi,bm818"
-+
- 
- Example:
- 
--- 
-2.17.1
+And for that matter is called only from the set_watermark callback which
+doesn't run at probe time.
+
+So if we were to get a deferred response at runtime there isn't a whole
+lot we could do with it.
+
+Jonathan
+
+
+
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> Hi,
+> 
+> Changes since v1:
+> - Subject prefix is corrected to "iio: adc: at91-sama5d2_adc:"
+> 
+> Regards,
+> Peter
+> 
+>  drivers/iio/adc/at91-sama5d2_adc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+> index e1850f3d5cf3..a5c7771227d5 100644
+> --- a/drivers/iio/adc/at91-sama5d2_adc.c
+> +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+> @@ -1444,10 +1444,10 @@ static void at91_adc_dma_init(struct platform_device *pdev)
+>  	if (st->dma_st.dma_chan)
+>  		return;
+>  
+> -	st->dma_st.dma_chan = dma_request_slave_channel(&pdev->dev, "rx");
+> -
+> -	if (!st->dma_st.dma_chan)  {
+> +	st->dma_st.dma_chan = dma_request_chan(&pdev->dev, "rx");
+> +	if (IS_ERR(st->dma_st.dma_chan))  {
+>  		dev_info(&pdev->dev, "can't get DMA channel\n");
+> +		st->dma_st.dma_chan = NULL;
+>  		goto dma_exit;
+>  	}
+>  
 
