@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B6421293A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:30:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F08331293A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:30:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbfLWJaJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 04:30:09 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:38926 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726059AbfLWJaI (ORCPT
+        id S1726733AbfLWJak (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 04:30:40 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39824 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726096AbfLWJaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 04:30:08 -0500
-Received: by mail-pj1-f65.google.com with SMTP id t101so7231398pjb.4;
-        Mon, 23 Dec 2019 01:30:08 -0800 (PST)
+        Mon, 23 Dec 2019 04:30:39 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q10so8888073pfs.6;
+        Mon, 23 Dec 2019 01:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E6Rxt5mTP6uQSUFNQdkev/Gx4HMwNUXESrGV3msFxjU=;
-        b=AQD5dm/xrPHJRAbvT0ND3uDS924lgRAjufBAD0in06aCdKyS8PoMQlAgoLVTB5x9kq
-         5WBUEtv7kOfWTCV8C6nVlEqNhJT8101sSqVa4T/jQdNR6qdrCL/t33h25ozeJNrzOFu9
-         CmUJTvyhr2qFN54ImlAljnueIFqfztbOE8I9cF+4GTCYthxj7zBzCPfxNU94ZTi2iKI+
-         0irJdkHqf6lppHTzYgptMkLnk1U1jL2uyrCoVmlM7tFW3/vdl/8GhvS8TvnOvCi3nKKP
-         c6SH8LreWdQFnTZ1/UyB/uJCNlQKU6tfv+tAdOWjIxEQo1D42WGHq7468Ty13dVgUlNx
-         QTzw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=y0PAkFn9zoMouugxeRSrbgzuXq1FaZx49kjzBfMutLw=;
+        b=dwRLioQR6RiTr9TfH4DsBbrWip7Wa+pltvgf/1CcXEzUt4rWqpdW32yLqiXOSbiEhW
+         9fp3ykVdQSravFC/+NYwZ8OMilUe51z/eRyJ9A4zs0urv6CDkr/NcM5qogJTiPTgTMc9
+         KjO2WMkUVjKh5zki868f2Wd2rzpiFLCjMtGEwreY/O5OwJfiQY9s/+YCGnX89zurB43w
+         DnaVpYtoVSdXcqnQ4e+z/idnm+rh2k5oiKTTpXd5rJkVAn16Tq7d3FLlbawVDsBXf0tH
+         mOYIkpNtw1n4k3qvWZ5WyHY8OatVRkxthhf+H4Cv8rgZ/Q4K+z8TKyxV1dRsGku/7/nt
+         CBmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E6Rxt5mTP6uQSUFNQdkev/Gx4HMwNUXESrGV3msFxjU=;
-        b=sWNbNA8q2+/VZWRp6RenTgO/33mwGMcbVhjR+7m0BPEfaPz214zmm5pPbObnVaBF6f
-         uZ1HofmCeTb00R8Mo+hokxpM0kXzpnieqFueH2iFmMCryewq4DaXMECowPxI7EeKk6hw
-         VwZpqaMZmZp4LXOMxF2oupcdxiEebSrMJgrJaAHvvbUpnhyMbaAa/BoGwIgSMVILo1+0
-         VCWuhtIxwiOaTq7/XgHWONAbIcA6vzs1hD+7UO1Q63KULpwFq9tNPZYj9JixTCB6V7XJ
-         8NPNkThG0pu4T7dDPDNCv1LqaJb9zWUkyDf+b6vurRUOaa6kEsyqJFuN0Eu4Fj+DRPKJ
-         P4pg==
-X-Gm-Message-State: APjAAAUXSqrOeIWaSNRtTpyp6r7NJ5bR3dkAr5AhYc1MkVT3TbpblQnn
-        7Emtpkqn5E9hv7+tsIeFhhM=
-X-Google-Smtp-Source: APXvYqyaaI7uOGrpKdqVEHRttrmOmOL34BXrpCBwgAATEruJifXFkHyfN+Sit9JuGuxyNXhDQH+s8w==
-X-Received: by 2002:a17:902:265:: with SMTP id 92mr29128079plc.313.1577093407770;
-        Mon, 23 Dec 2019 01:30:07 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=y0PAkFn9zoMouugxeRSrbgzuXq1FaZx49kjzBfMutLw=;
+        b=A2xArUtDSUuC0XLPDvE64oC8lsEQRAppyACAuiJNCerwWVvywciMIWzIJelBVnKu8Q
+         WIEwV2F4LGMTNALuWT6RUAvCgZESlBhd01YnnhSUI7yRVslXLLl4dRZGzWIHj9O+mqf+
+         FwDEdFG3S1hss6zm6fY3Nntqn7rPHFjmITQ3ppMvZyAj19yUajL8K9GLJFyqC5J8VLAi
+         ix8QqNwUQUXkMK5Dp1sIG5U2AEDhPEAcc/El3g5nGkAR6xOKcc59758k3wO0UlzHlgSL
+         DpulaKApPVTGz+Pwn7x/oYV+PSLZwjKcXlLVJH2XUVNd3tvgiuLpkprIi2t9XSSI+lte
+         tJFg==
+X-Gm-Message-State: APjAAAUmu8PXN8nxg4+h3GduAEF27QprZFxzTH3Xb5mIjPmMHF2QkNAf
+        62T2ER9zsZE9v4NwWlz4X/4=
+X-Google-Smtp-Source: APXvYqza5MD792QT+nyRwcyGu7WT8kB0fIjU+ImLq/F0W/YGH+avcbTNUD3sHcm/TzClUblK7TUxQA==
+X-Received: by 2002:a63:f202:: with SMTP id v2mr29843658pgh.420.1577093438868;
+        Mon, 23 Dec 2019 01:30:38 -0800 (PST)
 Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id i127sm24625970pfc.55.2019.12.23.01.30.03
+        by smtp.gmail.com with ESMTPSA id i127sm24625970pfc.55.2019.12.23.01.30.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Dec 2019 01:30:06 -0800 (PST)
+        Mon, 23 Dec 2019 01:30:38 -0800 (PST)
 From:   Chunyan Zhang <zhang.lyra@gmail.com>
 To:     soc@kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -53,10 +53,12 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Baolin Wang <baolin.wang7@gmail.com>,
         Chunyan Zhang <zhang.lyra@gmail.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH v5 0/3] Add Unisoc's SC9863A support
-Date:   Mon, 23 Dec 2019 17:29:45 +0800
-Message-Id: <20191223092948.24824-1-zhang.lyra@gmail.com>
+Subject: [PATCH v5 1/3] dt-bindings: arm: sprd: add global registers bindings
+Date:   Mon, 23 Dec 2019 17:29:46 +0800
+Message-Id: <20191223092948.24824-2-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191223092948.24824-1-zhang.lyra@gmail.com>
+References: <20191223092948.24824-1-zhang.lyra@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -66,52 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-SC9863A has Octa-core ARM Cortex A55 application processor. Find more
-details about it on the website: http://www.unisoc.com/sc9863a
+The global registers would be used by different peripheral devices which
+we can see them as syscon clients which can use regmap interface that
+syscon driver provides.
 
-Changes from v4:
-* Removed syscon nodes which should be added when used.
-* Added Acked-by from Rob Herring.
-
-Changes from v3:
-* Rebased on v5.5-rc1;
-* Fix the cpu-map to put all cpus into the single cluster;
-* Fixed a bindings error.
-
-Changes from v2:
-* Discard some dt-bindings patches which have been applied by Rob Herring.
-* Added a new dt-binding file for sprd global-regs, also added a vendor directory for sprd.
-* Moved sprd.yaml to the vendor directory.
-* Addressed comments from Rob:
-- fixed dtbs_check errors;
-- move gic under to the bus node;
-- removed msi-controller from gic, sinceSC9863A doesn't provide ITS;
-- added specific compatible string for syscon nodes;
-- cut down registers range of syscon nodes;
-- removed unnecessary property "sprd,sc-id";
-- added earlycon support in devicetree.
-
-Changes from v1: 
-- Convert DT bindings to json-schema.
-
-Chunyan Zhang (3):
-  dt-bindings: arm: sprd: add global registers bindings
-  dt-bindings: arm: move sprd board file to vendor directory
-  arm64: dts: Add Unisoc's SC9863A SoC support
-
- .../bindings/arm/sprd/global-regs.yaml        |  34 ++
- .../bindings/arm/{ => sprd}/sprd.yaml         |   2 +-
- arch/arm64/boot/dts/sprd/Makefile             |   3 +-
- arch/arm64/boot/dts/sprd/sc9863a.dtsi         | 523 ++++++++++++++++++
- arch/arm64/boot/dts/sprd/sharkl3.dtsi         |  78 +++
- arch/arm64/boot/dts/sprd/sp9863a-1h10.dts     |  39 ++
- 6 files changed, 677 insertions(+), 2 deletions(-)
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ .../bindings/arm/sprd/global-regs.yaml        | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/arm/sprd/global-regs.yaml
- rename Documentation/devicetree/bindings/arm/{ => sprd}/sprd.yaml (92%)
- create mode 100644 arch/arm64/boot/dts/sprd/sc9863a.dtsi
- create mode 100644 arch/arm64/boot/dts/sprd/sharkl3.dtsi
- create mode 100644 arch/arm64/boot/dts/sprd/sp9863a-1h10.dts
 
+diff --git a/Documentation/devicetree/bindings/arm/sprd/global-regs.yaml b/Documentation/devicetree/bindings/arm/sprd/global-regs.yaml
+new file mode 100644
+index 000000000000..012207166116
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/sprd/global-regs.yaml
+@@ -0,0 +1,34 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++# Copyright 2019 Unisoc Inc.
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/arm/sprd/global-regs.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Unisoc Global Registers
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - sprd,sc9860-glbregs
++              - sprd,sc9863a-glbregs
++          - const: syscon
++
++  reg:
++    maxItems: 1
++
++examples:
++  - |
++    apb_regs: syscon@402e0000 {
++      compatible = "sprd,sc9863a-glbregs", "syscon";
++      reg = <0x402e0000 0x4000>;
++    };
++
++...
 -- 
 2.20.1
 
