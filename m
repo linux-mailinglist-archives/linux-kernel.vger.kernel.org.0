@@ -2,226 +2,327 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 021D7129514
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:33:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CFEE12954D
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:35:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfLWLdl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 06:33:41 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63952 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726666AbfLWLdl (ORCPT
+        id S1726878AbfLWLfV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 06:35:21 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:54845 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726257AbfLWLfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 06:33:41 -0500
-X-UUID: ff6927678b874ed6bc52e90e70d90812-20191223
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=qX14vySNe6dWHS9CVDjOljRuxmLr34hwjucjAyQrc40=;
-        b=hjqqHWujsKPp7M8G3XBepzWUuos1NXZO7NRHReI4zK9WxsB0H96Tdw1RN3Gdf3uxTi/KCiM4UTstKJ7K/MifEvdv74G7Scu7htGYhonscSWa33NWPVbWzLL7YmfSmKOpCBBFu9s55Ebebv1+Uxxc9I2Hg2msUn+kv+g99bAi+C0=;
-X-UUID: ff6927678b874ed6bc52e90e70d90812-20191223
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 13804429; Mon, 23 Dec 2019 19:33:30 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 23 Dec 2019 19:33:27 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 23 Dec 2019 19:32:33 +0800
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Michal Hocko <mhocko@suse.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-mediatek@lists.infradead.org>,
-        <wsd_upstream@mediatek.com>, Miles Chen <miles.chen@mediatek.com>
-Subject: [PATCH] mm/page_owner: print largest memory consumer when OOM panic occurs
-Date:   Mon, 23 Dec 2019 19:33:26 +0800
-Message-ID: <20191223113326.13828-1-miles.chen@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+        Mon, 23 Dec 2019 06:35:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1577100920; x=1608636920;
+  h=from:to:cc:subject:date:message-id:
+   content-transfer-encoding:mime-version;
+  bh=yeSaGfLMF5FXGAxTwBHOx/9uAdE9VhgbQj5S4/15hG4=;
+  b=UV7fc5pHDTGBELQr3gFgIsGmkh+eTEHQ5QdMtyAG8DgGBsLpBsvyrVwj
+   bC16sijSgGQ4ojK97sZJb7ySnFfOpTplTgJFXXuEqk4F9333WqcVBlMW3
+   c+7Lm2FjfJ91NtB+lwgiUQbcOAHGvtDym01QNfK//KQsa3O4WMlAM5nha
+   5Dr5RSy/AwADY0WIaYTHfrsF9EHqe0e7EqXk7zr9sJxmiK9lidFEyd1DQ
+   8Gg32Y7XxinN7xDBPoIwevkh/b6f0OZeTYxUgowqI9Uv9vHsvRx01jr7r
+   X+FOlh4AS4i6QbGfc6J08k8uHOO8u2Ih/sCeIYlembzGgRy6IduuM8oaQ
+   A==;
+IronPort-SDR: kN7wKhJO/Gphp06rSJqOATc6RVXzKRqLXFGmP/fhggDgnKj6hYoMETBxgAndpxX7tZuxUz+954
+ lHBl9ufMKRUsN5pH3AUXx3yCvbWq3tZTrdqgAs9jSgnYi6Go3iYfb8WkPJ+LVVyi0rhOI52aGy
+ +tyEoI4hjnqS+/awd6U6pZ3dTnd5/oV4Ng7oudnJ+z4HUPjgZdp4BjWSbWaDXT/1KwYzLmCz6y
+ M4t+lMFDF3JxUaLtdXW/zVDe8iNmcnz7FSsMxopVJl/RMIaf+kMqHpeAHN85yzzvOq1F+xS5JB
+ Ed8=
+X-IronPort-AV: E=Sophos;i="5.69,347,1571673600"; 
+   d="scan'208";a="125956066"
+Received: from mail-bn7nam10lp2102.outbound.protection.outlook.com (HELO NAM10-BN7-obe.outbound.protection.outlook.com) ([104.47.70.102])
+  by ob1.hgst.iphmx.com with ESMTP; 23 Dec 2019 19:35:11 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wpr92VCpISIkwo3C/o9Mj7oQaByATD7/HeWbiUjb1xXOr3ehm6Ec1pGVextbdSFbML5Ie9NrAtOSWeYjq21AovLwagNXBlI+6TK1O1+lco5DAZ/k9dSXY5dfpxELxm4cyMVjWh4cAHIJab31rDrAO5e9UXSgfls8glUFUESKUhx1gHTASzR1S7kWJnNXOO9XygrWTURf+IUTqfBPMD6/xfwiPb81WRq8yrlRlJjBLSgdY7fcHhyw73WR126V6vt3qXdXv0zXe6jAlm3NiI7TRBVnzwuc0qiqu99weHaEzzR3MHT18/r6dvahkU5V3s8dQYrOTY1FinntZiSgQY3sRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PFR2e+HEgBgux6CBn8kMhzlUmyIw9t4ez5ZhbqwkuMo=;
+ b=MmChiVWyGF4rw/BCwIpc16eI9v1BJIVW+iW2WqHIwjhbNVi1XswcLQeqZ+xJh8kOynfb+Or1ki+tfd77IOlqtPHwpaQgTW/+XF0h57E4oyrPbICyLm8+kP6N6psRwojKuKXRzePLZE6sCkNniQZ/9n6FJEndUL4G/knWzdM9TOLaSjK3FGUnv30FVJW0q/bJLg3w9RJF0EZfoiwW2Z2U+uyTEQF2euq8ohU3MoIK+65FLnMqjyZ9OqicOxOOZYkn7F4QuGYx381+Ucha2gtJeeZMpa0O9/6+02/Sl8aMFuepbpnqQhgIeVTefcJjCIshI1swonLU4rXEYDPPTVg9lg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PFR2e+HEgBgux6CBn8kMhzlUmyIw9t4ez5ZhbqwkuMo=;
+ b=h+X0DJcAXtBNRadgxcusuDUHEUyHlS2OBDAKZIXlllMIgqdn524MGRzH/eohnGKfq54KwL6RbvxM61F736AMDBt7xwwkkfrJhn6tZ36o9o4pdYHOIj+ocwf3DcUp3LE+0Fw3WSh0Ns2C0la02TrFd2c6xH6u9CK0IV/DqMUslX8=
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com (20.178.246.15) by
+ MN2PR04MB7072.namprd04.prod.outlook.com (10.186.146.20) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.15; Mon, 23 Dec 2019 11:35:11 +0000
+Received: from MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::a9a0:3ffa:371f:ad89]) by MN2PR04MB6061.namprd04.prod.outlook.com
+ ([fe80::a9a0:3ffa:371f:ad89%7]) with mapi id 15.20.2559.017; Mon, 23 Dec 2019
+ 11:35:11 +0000
+Received: from wdc.com (106.51.20.238) by MA1PR01CA0077.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::17) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Mon, 23 Dec 2019 11:35:05 +0000
+From:   Anup Patel <Anup.Patel@wdc.com>
+To:     Palmer Dabbelt <palmer@dabbelt.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim K <rkrcmar@redhat.com>
+CC:     Alexander Graf <graf@amazon.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        Alistair Francis <Alistair.Francis@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Anup Patel <anup@brainfault.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anup Patel <Anup.Patel@wdc.com>
+Subject: [PATCH v10 00/19] KVM RISC-V Support
+Thread-Topic: [PATCH v10 00/19] KVM RISC-V Support
+Thread-Index: AQHVuYUI1J4Xji1dIUi4uEOCYb8klQ==
+Date:   Mon, 23 Dec 2019 11:35:10 +0000
+Message-ID: <20191223113443.68969-1-anup.patel@wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR01CA0077.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::17)
+ To MN2PR04MB6061.namprd04.prod.outlook.com (2603:10b6:208:d8::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Anup.Patel@wdc.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-originating-ip: [106.51.20.238]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ab1da0d7-16a6-4008-2166-08d7879c2b35
+x-ms-traffictypediagnostic: MN2PR04MB7072:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <MN2PR04MB70727F31AC7BF641DA3119608D2E0@MN2PR04MB7072.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:277;
+x-forefront-prvs: 0260457E99
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(376002)(396003)(346002)(39860400002)(199004)(189003)(8886007)(478600001)(52116002)(316002)(16526019)(2906002)(8936002)(1076003)(7696005)(36756003)(66946007)(66476007)(86362001)(66446008)(26005)(64756008)(66556008)(4326008)(966005)(5660300002)(8676002)(186003)(7416002)(81156014)(2616005)(956004)(71200400001)(55016002)(44832011)(55236004)(81166006)(1006002)(54906003)(110136005)(6666004)(32040200004);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR04MB7072;H:MN2PR04MB6061.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: RRb8jhm24zD73g3a3Km7EvOk2uNRzMTCIkSpyglgZygpD7oiGQa/4KnHnF+aHEgP0CSaLGjW38ueUeu8Tg5szXqqmFqbpdUbPEl2T97ZUmJhBx4Al5Ik2ItQPBX6pmwR7dnirIZHNJnNkuhNPVrWmouRZPmSIMt4TOQcJ7yJeA26KxiJ/1M6bWqCJ4KnIuj8Qli2ddgcGBkaajPAy0aMQoLjkE4qLmfmQyALE4ZDPpV1V9VN6qM0WgM3zzL32+yLM6uo/x4vUPepneg+KForNXemi/zmzjjOt9/IqsBKJvQja3kVwCppOxY0L1/sJwgcU3lwOB1KfDVp8O8bKfEqCsqnLw4nxehtTLANWnJG06qojP6Cvq9AJ5wsK6z0oMm2+O1T5SOPv18KvwOSlr8yB7/2hrM21M1Uec5IVIW3oupfaKPMZ7NKrY+DHXrWFtVaU8R98xHCXXsEWGQqNJku7CesxALjt0A8wtdoxEHdNGiNRSKdrJ2YrEZaPCZaWfdP+gh9eKs6rRBIeD+M/dXY67BqOCLz2GwkhA4AKPUAvbs=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 9B750EF3048915A1305E13950C7313796853CA057EF394FBE0BAF085AE76E0202000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab1da0d7-16a6-4008-2166-08d7879c2b35
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Dec 2019 11:35:10.8653
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rnAk0P2AHJViUIha5aJ8F8l0nsXBRT8cvH/7Gf4+ubx27K795ab+3y9xoSR20nrfDgpo8Iouue29maaPpOWKJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB7072
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TW90aXZhdGlvbjoNCi0tLS0tLS0tLS0tDQoNCldoZW4gZGVidWcgd2l0aCBhIE9PTSBrZXJuZWwg
-cGFuaWMsIGl0IGlzIGRpZmZpY3VsdCB0byBrbm93IHRoZQ0KbWVtb3J5IGFsbG9jYXRlZCBieSBr
-ZXJuZWwgZHJpdmVycyBvZiB2bWFsbG9jKCkgYnkgY2hlY2tpbmcgdGhlDQpNZW0tSW5mbyBvciBO
-b2RlL1pvbmUgaW5mby4gRm9yIGV4YW1wbGU6DQoNCiAgTWVtLUluZm86DQogIGFjdGl2ZV9hbm9u
-OjUxNDQgaW5hY3RpdmVfYW5vbjoxNjEyMCBpc29sYXRlZF9hbm9uOjANCiAgIGFjdGl2ZV9maWxl
-OjAgaW5hY3RpdmVfZmlsZTowIGlzb2xhdGVkX2ZpbGU6MA0KICAgdW5ldmljdGFibGU6MCBkaXJ0
-eTowIHdyaXRlYmFjazowIHVuc3RhYmxlOjANCiAgIHNsYWJfcmVjbGFpbWFibGU6NzM5IHNsYWJf
-dW5yZWNsYWltYWJsZTo0NDI0NjkNCiAgIG1hcHBlZDo1MzQgc2htZW06MjEwNTAgcGFnZXRhYmxl
-czoyMSBib3VuY2U6MA0KICAgZnJlZToxNDgwOCBmcmVlX3BjcDozMzg5IGZyZWVfY21hOjgxMjgN
-Cg0KICBOb2RlIDAgYWN0aXZlX2Fub246MjA1NzZrQiBpbmFjdGl2ZV9hbm9uOjY0NDgwa0IgYWN0
-aXZlX2ZpbGU6MGtCDQogIGluYWN0aXZlX2ZpbGU6MGtCIHVuZXZpY3RhYmxlOjBrQiBpc29sYXRl
-ZChhbm9uKTowa0IgaXNvbGF0ZWQoZmlsZSk6MGtCDQogIG1hcHBlZDoyMTM2a0IgZGlydHk6MGtC
-IHdyaXRlYmFjazowa0Igc2htZW06ODQyMDBrQiBzaG1lbV90aHA6IDBrQg0KICBzaG1lbV9wbWRt
-YXBwZWQ6IDBrQiBhbm9uX3RocDogMGtCIHdyaXRlYmFja190bXA6MGtCIHVuc3RhYmxlOjBrQg0K
-ICBhbGxfdW5yIGVjbGFpbWFibGU/IHllcw0KDQogIE5vZGUgMCBETUEgZnJlZToxNDQ3NmtCIG1p
-bjoyMTUxMmtCIGxvdzoyNjg4OGtCIGhpZ2g6MzIyNjRrQg0KICByZXNlcnZlZF9oaWdoYXRvbWlj
-OjBLQiBhY3RpdmVfYW5vbjowa0IgaW5hY3RpdmVfYW5vbjowa0INCiAgYWN0aXZlX2ZpbGU6IDBr
-QiBpbmFjdGl2ZV9maWxlOjBrQiB1bmV2aWN0YWJsZTowa0Igd3JpdGVwZW5kaW5nOjBrQg0KICBw
-cmVzZW50OjEwNDg1NzZrQiBtYW5hZ2VkOjk1MjczNmtCIG1sb2NrZWQ6MGtCIGtlcm5lbF9zdGFj
-azowa0INCiAgcGFnZXRhYmxlczowa0IgYm91bmNlOjBrQiBmcmVlX3BjcDoyNzE2a0IgbG9jYWxf
-cGNwOjBrQiBmcmVlX2NtYTowa0INCg0KVGhlIGluZm9ybWF0aW9uIGFib3ZlIHRlbGxzIHVzIHRo
-ZSBtZW1vcnkgdXNhZ2Ugb2YgdGhlIGtub3duIG1lbW9yeQ0KY2F0ZWdvcmllcyBhbmQgd2UgY2Fu
-IGNoZWNrIHRoZSBhYm5vcm1hbCBsYXJnZSBudW1iZXJzLiBIb3dldmVyLCBpZiBhDQptZW1vcnkg
-bGVha2FnZSBjYW5ub3QgYmUgb2JzZXJ2ZWQgaW4gdGhlIGNhdGVnb3JpZXMgYWJvdmUsIHdlIG5l
-ZWQgdG8NCnJlcHJvZHVjZSB0aGUgaXNzdWUgd2l0aCBDT05GSUdfUEFHRV9PV05FUi4NCg0KSXQg
-aXMgcG9zc2libGUgdG8gcmVhZCB0aGUgcGFnZSBvd25lciBpbmZvcm1hdGlvbiBmcm9tIGNvcmVk
-dW1wIGZpbGVzLg0KSG93ZXZlciwgY29yZWR1bXAgZmlsZXMgbWF5IG5vdCBhbHdheXMgYmUgYXZh
-aWxhYmxlLCBzbyBteSBhcHByb2FjaCBpcw0KdG8gcHJpbnQgb3V0IHRoZSBsYXJnZXN0IHBhZ2Ug
-Y29uc3VtZXIgd2hlbiBPT00ga2VybmVsIHBhbmljIG9jY3Vycy4NCg0KVGhlIGhldXJpc3RpYyBh
-cHByb2FjaCBhc3N1bWVzIHRoYXQgdGhlIE9PTSBrZXJuZWwgcGFuaWMgaXMgY2F1c2VkIGJ5DQph
-IHNpbmdsZSBiYWNrdHJhY2UuIFRoZSBhc3N1bXB0aW9uIGlzIG5vdCBhbHdheXMgdHJ1ZSBidXQg
-aXQgd29ya3MgaW4NCm1hbnkgY2FzZXMgZHVyaW5nIG91ciB0ZXN0Lg0KDQpXZSBoYXZlIHRlc3Rl
-ZCB0aGlzIGhldXJpc3RpYyBhcHByb2FjaCBzaW5jZSAyMDE5LzUgb24gYW5kcm9pZCBkZXZpY2Vz
-Lg0KSW4gMzggaW50ZXJuYWwgT09NIGtlcm5lbCBwYW5pYyByZXBvcnRzOg0KDQozMS8zODogY2Fu
-IGJlIGFuYWx5emVkIGJ5IHVzaW5nIGV4aXN0aW5nIGluZm9ybWF0aW9uDQo3LzM4OiBuZWVkIHBh
-Z2Ugb3duZXIgZm9ybWF0aW5vIGFuZCB0aGUgaGV1cmlzdGljIGFwcHJvYWNoIGluIHRoaXMgcGF0
-Y2gNCnByaW50cyB0aGUgY29ycmVjdCBiYWNrdHJhY2VzIG9mIGFibm9ybWFsIG1lbW9yeSBhbGxv
-Y2F0aW9ucy4gTm8gbmVlZCB0bw0KcmVwcm9kdWNlIHRoZSBpc3N1ZXMuDQoNCk91dHB1dDoNCi0t
-LS0tLS0NCg0KVGhpcyBvdXRwdXQgYmVsb3cgaXMgZ2VuZXJhdGVkIGJ5IGEgZHVtbXkgaW5maW5p
-dGUNCmttYWxsb2MoMjU2LCBHRlBfS0VSTkVMKSBsb29wOg0KDQpbICAgNDkuNjkxMDI3XSBPT006
-IGxhcmdlc3QgbWVtb3J5IGNvbnN1bWVyOiA0Mjg0NjggcGFnZXMgYXJlIGFsbG9jYXRlZCBmcm9t
-Og0KWyAgIDQ5LjY5MTI3OF0gIHByZXBfbmV3X3BhZ2UrMHgxOTgvMHgxOWMNClsgICA0OS42OTEz
-OTBdICBnZXRfcGFnZV9mcm9tX2ZyZWVsaXN0KzB4MWNiNC8weDFlNTQNClsgICA0OS42OTE1MDBd
-ICBfX2FsbG9jX3BhZ2VzX25vZGVtYXNrKzB4MTZjLzB4ZTEwDQpbICAgNDkuNjkxNTk5XSAgYWxs
-b2NfcGFnZXNfY3VycmVudCsweDEwNC8weDE5MA0KWyAgIDQ5LjY5MTY5N10gIGFsbG9jX3NsYWJf
-cGFnZSsweDE2MC8weDRlOA0KWyAgIDQ5LjY5MTc4Ml0gIG5ld19zbGFiKzB4YjgvMHg1MTANClsg
-ICA0OS42OTE4NjZdICBfX19zbGFiX2FsbG9jKzB4Mjk0LzB4M2RjDQpbICAgNDkuNjkxOTU3XSAg
-a21lbV9jYWNoZV9hbGxvYysweDFmMC8weDI1MA0KWyAgIDQ5LjY5MjA0N10gIG1lbWluZm9fcHJv
-Y19zaG93KzB4NjgvMHg4ZmMNClsgICA0OS42OTIxMzVdICBzZXFfcmVhZCsweDFkYy8weDQ3Yw0K
-WyAgIDQ5LjY5MjIxN10gIHByb2NfcmVnX3JlYWQrMHg1Yy8weGI0DQpbICAgNDkuNjkyMzAzXSAg
-ZG9faXRlcl9yZWFkKzB4ZGMvMHgxYzANClsgICA0OS42OTIzODldICB2ZnNfcmVhZHYrMHg2MC8w
-eGE4DQpbICAgNDkuNjkyNDcxXSAgZGVmYXVsdF9maWxlX3NwbGljZV9yZWFkKzB4MWYwLzB4MzA0
-DQpbICAgNDkuNjkyNTgyXSAgc3BsaWNlX2RpcmVjdF90b19hY3RvcisweDEwMC8weDI5NA0KWyAg
-IDQ5LjY5MjY3OV0gIGRvX3NwbGljZV9kaXJlY3QrMHg3OC8weGM4DQpbICAgMzkuMzI4NjA3XSBL
-ZXJuZWwgcGFuaWMgLSBub3Qgc3luY2luZzogU3lzdGVtIGlzIGRlYWRsb2NrZWQgb24gbWVtb3J5
-DQoNClNpZ25lZC1vZmYtYnk6IE1pbGVzIENoZW4gPG1pbGVzLmNoZW5AbWVkaWF0ZWsuY29tPg0K
-LS0tDQogaW5jbHVkZS9saW51eC9vb20uaCB8ICAgMSArDQogbW0vb29tX2tpbGwuYyAgICAgICB8
-ICAgNCArKw0KIG1tL3BhZ2Vfb3duZXIuYyAgICAgfCAxMzUgKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysNCiAzIGZpbGVzIGNoYW5nZWQsIDE0MCBpbnNlcnRpb25z
-KCspDQoNCmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L29vbS5oIGIvaW5jbHVkZS9saW51eC9v
-b20uaA0KaW5kZXggYzY5NmMyNjVmMDE5Li5mZTNjOTIzYWM4ZjMgMTAwNjQ0DQotLS0gYS9pbmNs
-dWRlL2xpbnV4L29vbS5oDQorKysgYi9pbmNsdWRlL2xpbnV4L29vbS5oDQpAQCAtMTIxLDYgKzEy
-MSw3IEBAIGV4dGVybiBib29sIG9vbV9raWxsZXJfZGlzYWJsZShzaWduZWQgbG9uZyB0aW1lb3V0
-KTsNCiBleHRlcm4gdm9pZCBvb21fa2lsbGVyX2VuYWJsZSh2b2lkKTsNCiANCiBleHRlcm4gc3Ry
-dWN0IHRhc2tfc3RydWN0ICpmaW5kX2xvY2tfdGFza19tbShzdHJ1Y3QgdGFza19zdHJ1Y3QgKnAp
-Ow0KK2V4dGVybiB2b2lkIHJlcG9ydF9sYXJnZXN0X3BhZ2VfY29uc3VtZXIodm9pZCk7DQogDQog
-Lyogc3lzY3RscyAqLw0KIGV4dGVybiBpbnQgc3lzY3RsX29vbV9kdW1wX3Rhc2tzOw0KZGlmZiAt
-LWdpdCBhL21tL29vbV9raWxsLmMgYi9tbS9vb21fa2lsbC5jDQppbmRleCA3MWUzYWNlYTc4MTcu
-LjliMDY5YjVhNGFmZiAxMDA2NDQNCi0tLSBhL21tL29vbV9raWxsLmMNCisrKyBiL21tL29vbV9r
-aWxsLmMNCkBAIC00Miw2ICs0Miw3IEBADQogI2luY2x1ZGUgPGxpbnV4L2t0aHJlYWQuaD4NCiAj
-aW5jbHVkZSA8bGludXgvaW5pdC5oPg0KICNpbmNsdWRlIDxsaW51eC9tbXVfbm90aWZpZXIuaD4N
-CisjaW5jbHVkZSA8bGludXgvb25jZS5oPg0KIA0KICNpbmNsdWRlIDxhc20vdGxiLmg+DQogI2lu
-Y2x1ZGUgImludGVybmFsLmgiDQpAQCAtMTA5OSw2ICsxMTAwLDkgQEAgYm9vbCBvdXRfb2ZfbWVt
-b3J5KHN0cnVjdCBvb21fY29udHJvbCAqb2MpDQogCWlmICghb2MtPmNob3Nlbikgew0KIAkJZHVt
-cF9oZWFkZXIob2MsIE5VTEwpOw0KIAkJcHJfd2FybigiT3V0IG9mIG1lbW9yeSBhbmQgbm8ga2ls
-bGFibGUgcHJvY2Vzc2VzLi4uXG4iKTsNCisjaWZkZWYgQ09ORklHX1BBR0VfT1dORVINCisJCURP
-X09OQ0UocmVwb3J0X2xhcmdlc3RfcGFnZV9jb25zdW1lcik7DQorI2VuZGlmDQogCQkvKg0KIAkJ
-ICogSWYgd2UgZ290IGhlcmUgZHVlIHRvIGFuIGFjdHVhbCBhbGxvY2F0aW9uIGF0IHRoZQ0KIAkJ
-ICogc3lzdGVtIGxldmVsLCB3ZSBjYW5ub3Qgc3Vydml2ZSB0aGlzIGFuZCB3aWxsIGVudGVyDQpk
-aWZmIC0tZ2l0IGEvbW0vcGFnZV9vd25lci5jIGIvbW0vcGFnZV9vd25lci5jDQppbmRleCAxOGVj
-ZGU5ZjQ1YjIuLmIyM2U1ZmUzNWRhZCAxMDA2NDQNCi0tLSBhL21tL3BhZ2Vfb3duZXIuYw0KKysr
-IGIvbW0vcGFnZV9vd25lci5jDQpAQCAtMTAsNiArMTAsOCBAQA0KICNpbmNsdWRlIDxsaW51eC9t
-aWdyYXRlLmg+DQogI2luY2x1ZGUgPGxpbnV4L3N0YWNrZGVwb3QuaD4NCiAjaW5jbHVkZSA8bGlu
-dXgvc2VxX2ZpbGUuaD4NCisjaW5jbHVkZSA8bGludXgvc3RhY2t0cmFjZS5oPg0KKyNpbmNsdWRl
-IDxsaW51eC9oYXNodGFibGUuaD4NCiANCiAjaW5jbHVkZSAiaW50ZXJuYWwuaCINCiANCkBAIC0x
-OSwxMiArMjEsMTYgQEANCiAgKi8NCiAjZGVmaW5lIFBBR0VfT1dORVJfU1RBQ0tfREVQVEggKDE2
-KQ0KIA0KKyNkZWZpbmUgT09NX0hBTkRMRV9IQVNIX0JJVFMJMTANCisNCiBzdHJ1Y3QgcGFnZV9v
-d25lciB7DQogCXVuc2lnbmVkIHNob3J0IG9yZGVyOw0KIAlzaG9ydCBsYXN0X21pZ3JhdGVfcmVh
-c29uOw0KIAlnZnBfdCBnZnBfbWFzazsNCiAJZGVwb3Rfc3RhY2tfaGFuZGxlX3QgaGFuZGxlOw0K
-IAlkZXBvdF9zdGFja19oYW5kbGVfdCBmcmVlX2hhbmRsZTsNCisJc3RydWN0IGhsaXN0X25vZGUg
-bm9kZTsNCisJdW5zaWduZWQgbG9uZyBwYWdlX2NvdW50OyAvKiBudW1iZXIgb2YgcGFnZXMgcG9p
-bnRzIHRvIHRoaXMgaGFuZGxlICovDQogfTsNCiANCiBzdGF0aWMgYm9vbCBwYWdlX293bmVyX2Vu
-YWJsZWQgPSBmYWxzZTsNCkBAIC0zMyw2ICszOSw4IEBAIERFRklORV9TVEFUSUNfS0VZX0ZBTFNF
-KHBhZ2Vfb3duZXJfaW5pdGVkKTsNCiBzdGF0aWMgZGVwb3Rfc3RhY2tfaGFuZGxlX3QgZHVtbXlf
-aGFuZGxlOw0KIHN0YXRpYyBkZXBvdF9zdGFja19oYW5kbGVfdCBmYWlsdXJlX2hhbmRsZTsNCiBz
-dGF0aWMgZGVwb3Rfc3RhY2tfaGFuZGxlX3QgZWFybHlfaGFuZGxlOw0KK3N0YXRpYyBERUZJTkVf
-SEFTSFRBQkxFKG9vbV9oYW5kbGVfaGFzaCwgT09NX0hBTkRMRV9IQVNIX0JJVFMpOw0KK3N0YXRp
-YyBzdHJ1Y3QgcGFnZV9vd25lciAqbW9zdF9yZWZlcmVuY2VkX3BhZ2Vfb3duZXI7DQogDQogc3Rh
-dGljIHZvaWQgaW5pdF9lYXJseV9hbGxvY2F0ZWRfcGFnZXModm9pZCk7DQogDQpAQCAtNDgsNiAr
-NTYsNTcgQEAgc3RhdGljIGludCBfX2luaXQgZWFybHlfcGFnZV9vd25lcl9wYXJhbShjaGFyICpi
-dWYpDQogfQ0KIGVhcmx5X3BhcmFtKCJwYWdlX293bmVyIiwgZWFybHlfcGFnZV9vd25lcl9wYXJh
-bSk7DQogDQorc3RhdGljIHN0cnVjdCBobGlzdF9oZWFkICpnZXRfYnVja2V0KGRlcG90X3N0YWNr
-X2hhbmRsZV90IGhhbmRsZSkNCit7DQorCXVuc2lnbmVkIGxvbmcgaGFzaDsNCisNCisJaGFzaCA9
-IGhhc2hfbG9uZyhoYW5kbGUsIE9PTV9IQU5ETEVfSEFTSF9CSVRTKTsNCisJcmV0dXJuICZvb21f
-aGFuZGxlX2hhc2hbaGFzaF07DQorfQ0KKw0KKy8qDQorICogbG9va3VwIGEgcGFnZV9vd25lciBp
-biB0aGUgaGFzaCBidWNrZXQNCisgKi8NCitzdGF0aWMgc3RydWN0IHBhZ2Vfb3duZXIgKmxvb2t1
-cF9wYWdlX293bmVyKGRlcG90X3N0YWNrX2hhbmRsZV90IGhhbmRsZSwNCisJCQkJCQlzdHJ1Y3Qg
-aGxpc3RfaGVhZCAqYikNCit7DQorCXN0cnVjdCBwYWdlX293bmVyICpwYWdlX293bmVyOw0KKw0K
-KwlobGlzdF9mb3JfZWFjaF9lbnRyeShwYWdlX293bmVyLCBiLCBub2RlKSB7DQorCQlpZiAocGFn
-ZV9vd25lci0+aGFuZGxlID09IGhhbmRsZSkNCisJCQlyZXR1cm4gcGFnZV9vd25lcjsNCisJfQ0K
-Kw0KKwlyZXR1cm4gTlVMTDsNCit9DQorDQorLyoNCisgKiBJbmNyZWFzZSB0aGUgcGFnZV9vd25l
-ci0+cGFnZV9jb3VudCBpbiB0aGUgaGFuZGxlX2hhc2ggYnkgKDEgPDwgb3JkZXIpDQorICovDQor
-c3RhdGljIHZvaWQgaW5jcmVhc2VfaGFuZGxlX2NvdW50KHN0cnVjdCBwYWdlX293bmVyICpwYWdl
-X293bmVyKQ0KK3sNCisJc3RydWN0IGhsaXN0X2hlYWQgKmJ1Y2tldDsNCisJc3RydWN0IHBhZ2Vf
-b3duZXIgKm93bmVyOw0KKw0KKwlidWNrZXQgPSBnZXRfYnVja2V0KHBhZ2Vfb3duZXItPmhhbmRs
-ZSk7DQorDQorCW93bmVyID0gbG9va3VwX3BhZ2Vfb3duZXIocGFnZV9vd25lci0+aGFuZGxlLCBi
-dWNrZXQpOw0KKw0KKwlpZiAoIW93bmVyKSB7DQorCQlvd25lciA9IHBhZ2Vfb3duZXI7DQorCQlo
-bGlzdF9hZGRfaGVhZCgmcGFnZV9vd25lci0+bm9kZSwgYnVja2V0KTsNCisJfQ0KKw0KKwkvKiBp
-bmNyZWFzZSBwYWdlIGNvdW50ZXIgKi8NCisJb3duZXItPnBhZ2VfY291bnQgKz0gKDEgPDwgb3du
-ZXItPm9yZGVyKTsNCisNCisJLyogdXBkYXRlIG1vc3RfcmVmZXJlbmNlZF9wYWdlX293bmVyICov
-DQorCWlmICghbW9zdF9yZWZlcmVuY2VkX3BhZ2Vfb3duZXIpDQorCQltb3N0X3JlZmVyZW5jZWRf
-cGFnZV9vd25lciA9IG93bmVyOw0KKwlpZiAobW9zdF9yZWZlcmVuY2VkX3BhZ2Vfb3duZXItPnBh
-Z2VfY291bnQgPCBvd25lci0+cGFnZV9jb3VudCkNCisJCW1vc3RfcmVmZXJlbmNlZF9wYWdlX293
-bmVyID0gb3duZXI7DQorfQ0KKw0KIHN0YXRpYyBib29sIG5lZWRfcGFnZV9vd25lcih2b2lkKQ0K
-IHsNCiAJcmV0dXJuIHBhZ2Vfb3duZXJfZW5hYmxlZDsNCkBAIC0xNzIsNiArMjMxLDcgQEAgc3Rh
-dGljIGlubGluZSB2b2lkIF9fc2V0X3BhZ2Vfb3duZXJfaGFuZGxlKHN0cnVjdCBwYWdlICpwYWdl
-LA0KIAkJcGFnZV9vd25lci0+b3JkZXIgPSBvcmRlcjsNCiAJCXBhZ2Vfb3duZXItPmdmcF9tYXNr
-ID0gZ2ZwX21hc2s7DQogCQlwYWdlX293bmVyLT5sYXN0X21pZ3JhdGVfcmVhc29uID0gLTE7DQor
-CQlwYWdlX293bmVyLT5wYWdlX2NvdW50ID0gMDsNCiAJCV9fc2V0X2JpdChQQUdFX0VYVF9PV05F
-UiwgJnBhZ2VfZXh0LT5mbGFncyk7DQogCQlfX3NldF9iaXQoUEFHRV9FWFRfT1dORVJfQUxMT0NB
-VEVELCAmcGFnZV9leHQtPmZsYWdzKTsNCiANCkBAIC0yMTYsNiArMjc2LDcgQEAgdm9pZCBfX3Nw
-bGl0X3BhZ2Vfb3duZXIoc3RydWN0IHBhZ2UgKnBhZ2UsIHVuc2lnbmVkIGludCBvcmRlcikNCiAJ
-Zm9yIChpID0gMDsgaSA8ICgxIDw8IG9yZGVyKTsgaSsrKSB7DQogCQlwYWdlX293bmVyID0gZ2V0
-X3BhZ2Vfb3duZXIocGFnZV9leHQpOw0KIAkJcGFnZV9vd25lci0+b3JkZXIgPSAwOw0KKwkJcGFn
-ZV9vd25lci0+cGFnZV9jb3VudCA9IDA7DQogCQlwYWdlX2V4dCA9IHBhZ2VfZXh0X25leHQocGFn
-ZV9leHQpOw0KIAl9DQogfQ0KQEAgLTIzNiw2ICsyOTcsNyBAQCB2b2lkIF9fY29weV9wYWdlX293
-bmVyKHN0cnVjdCBwYWdlICpvbGRwYWdlLCBzdHJ1Y3QgcGFnZSAqbmV3cGFnZSkNCiAJbmV3X3Bh
-Z2Vfb3duZXItPmxhc3RfbWlncmF0ZV9yZWFzb24gPQ0KIAkJb2xkX3BhZ2Vfb3duZXItPmxhc3Rf
-bWlncmF0ZV9yZWFzb247DQogCW5ld19wYWdlX293bmVyLT5oYW5kbGUgPSBvbGRfcGFnZV9vd25l
-ci0+aGFuZGxlOw0KKwluZXdfcGFnZV9vd25lci0+cGFnZV9jb3VudCA9IG5ld19wYWdlX293bmVy
-LT5wYWdlX2NvdW50Ow0KIA0KIAkvKg0KIAkgKiBXZSBkb24ndCBjbGVhciB0aGUgYml0IG9uIHRo
-ZSBvbGRwYWdlIGFzIGl0J3MgZ29pbmcgdG8gYmUgZnJlZWQNCkBAIC02MTUsNiArNjc3LDc5IEBA
-IHN0YXRpYyB2b2lkIGluaXRfcGFnZXNfaW5fem9uZShwZ19kYXRhX3QgKnBnZGF0LCBzdHJ1Y3Qg
-em9uZSAqem9uZSkNCiAJCXBnZGF0LT5ub2RlX2lkLCB6b25lLT5uYW1lLCBjb3VudCk7DQogfQ0K
-IA0KK3N0YXRpYyB2b2lkIF9fcmVwb3J0X2xhcmdlc3RfcGFnZV9jb25zdW1lcihzdHJ1Y3QgcGFn
-ZV9vd25lciAqcGFnZV9vd25lcikNCit7DQorCXVuc2lnbmVkIGxvbmcgKmVudHJpZXMgPSBOVUxM
-Ow0KKwl1bnNpZ25lZCBpbnQgbnJfZW50cmllczsNCisNCisJbnJfZW50cmllcyA9IHN0YWNrX2Rl
-cG90X2ZldGNoKHBhZ2Vfb3duZXItPmhhbmRsZSwgJmVudHJpZXMpOw0KKwlwcl9pbmZvKCJPT006
-IGxhcmdlc3QgbWVtb3J5IGNvbnN1bWVyOiAlbHUgcGFnZXMgYXJlIGFsbG9jYXRlZCBmcm9tOlxu
-IiwNCisJCQlwYWdlX293bmVyLT5wYWdlX2NvdW50KTsNCisJc3RhY2tfdHJhY2VfcHJpbnQoZW50
-cmllcywgbnJfZW50cmllcywgMCk7DQorfQ0KKw0KK3ZvaWQgcmVwb3J0X2xhcmdlc3RfcGFnZV9j
-b25zdW1lcih2b2lkKQ0KK3sNCisJdW5zaWduZWQgbG9uZyBwZm47DQorCXN0cnVjdCBwYWdlICpw
-YWdlOw0KKwlzdHJ1Y3QgcGFnZV9leHQgKnBhZ2VfZXh0Ow0KKwlzdHJ1Y3QgcGFnZV9vd25lciAq
-cGFnZV9vd25lcjsNCisJZGVwb3Rfc3RhY2tfaGFuZGxlX3QgaGFuZGxlOw0KKw0KKwlwZm4gPSBt
-aW5fbG93X3BmbjsNCisNCisJaWYgKCFzdGF0aWNfYnJhbmNoX3VubGlrZWx5KCZwYWdlX293bmVy
-X2luaXRlZCkpDQorCQlyZXR1cm47DQorDQorCS8qIEZpbmQgYSB2YWxpZCBQRk4gb3IgdGhlIHN0
-YXJ0IG9mIGEgTUFYX09SREVSX05SX1BBR0VTIGFyZWEgKi8NCisJd2hpbGUgKCFwZm5fdmFsaWQo
-cGZuKSAmJiAocGZuICYgKE1BWF9PUkRFUl9OUl9QQUdFUyAtIDEpKSAhPSAwKQ0KKwkJcGZuKys7
-DQorDQorCS8qIEZpbmQgYW4gYWxsb2NhdGVkIHBhZ2UgKi8NCisJZm9yICg7IHBmbiA8IG1heF9w
-Zm47IHBmbisrKSB7DQorCQlpZiAoKHBmbiAmIChNQVhfT1JERVJfTlJfUEFHRVMgLSAxKSkgPT0g
-MCAmJiAhcGZuX3ZhbGlkKHBmbikpIHsNCisJCQlwZm4gKz0gTUFYX09SREVSX05SX1BBR0VTIC0g
-MTsNCisJCQljb250aW51ZTsNCisJCX0NCisNCisJCWlmICghcGZuX3ZhbGlkX3dpdGhpbihwZm4p
-KQ0KKwkJCWNvbnRpbnVlOw0KKw0KKwkJcGFnZSA9IHBmbl90b19wYWdlKHBmbik7DQorCQlpZiAo
-UGFnZUJ1ZGR5KHBhZ2UpKSB7DQorCQkJdW5zaWduZWQgbG9uZyBmcmVlcGFnZV9vcmRlciA9IHBh
-Z2Vfb3JkZXJfdW5zYWZlKHBhZ2UpOw0KKw0KKwkJCWlmIChmcmVlcGFnZV9vcmRlciA8IE1BWF9P
-UkRFUikNCisJCQkJcGZuICs9ICgxVUwgPDwgZnJlZXBhZ2Vfb3JkZXIpIC0gMTsNCisJCQljb250
-aW51ZTsNCisJCX0NCisNCisJCWlmIChQYWdlUmVzZXJ2ZWQocGFnZSkpDQorCQkJY29udGludWU7
-DQorDQorCQlwYWdlX2V4dCA9IGxvb2t1cF9wYWdlX2V4dChwYWdlKTsNCisJCWlmICh1bmxpa2Vs
-eSghcGFnZV9leHQpKQ0KKwkJCWNvbnRpbnVlOw0KKw0KKwkJaWYgKCF0ZXN0X2JpdChQQUdFX0VY
-VF9PV05FUl9BTExPQ0FURUQsICZwYWdlX2V4dC0+ZmxhZ3MpKQ0KKwkJCWNvbnRpbnVlOw0KKw0K
-KwkJcGFnZV9vd25lciA9IGdldF9wYWdlX293bmVyKHBhZ2VfZXh0KTsNCisNCisJCWlmICghSVNf
-QUxJR05FRChwZm4sIDEgPDwgcGFnZV9vd25lci0+b3JkZXIpKQ0KKwkJCWNvbnRpbnVlOw0KKw0K
-KwkJaGFuZGxlID0gUkVBRF9PTkNFKHBhZ2Vfb3duZXItPmhhbmRsZSk7DQorCQlpZiAoIWhhbmRs
-ZSkNCisJCQljb250aW51ZTsNCisNCisJCWluY3JlYXNlX2hhbmRsZV9jb3VudChwYWdlX293bmVy
-KTsNCisJfQ0KKw0KKwlfX3JlcG9ydF9sYXJnZXN0X3BhZ2VfY29uc3VtZXIobW9zdF9yZWZlcmVu
-Y2VkX3BhZ2Vfb3duZXIpOw0KK30NCisNCisNCiBzdGF0aWMgdm9pZCBpbml0X3pvbmVzX2luX25v
-ZGUocGdfZGF0YV90ICpwZ2RhdCkNCiB7DQogCXN0cnVjdCB6b25lICp6b25lOw0KLS0gDQoyLjE4
-LjANCg==
+This series adds initial KVM RISC-V support. Currently, we are able to boot
+RISC-V 64bit Linux Guests with multiple VCPUs.
+
+Few key aspects of KVM RISC-V added by this series are:
+1. Minimal possible KVM world-switch which touches only GPRs and few CSRs.
+2. Full Guest/VM switch is done via vcpu_get/vcpu_put infrastructure.
+3. KVM ONE_REG interface for VCPU register access from user-space.
+4. PLIC emulation is done in user-space.
+5. Timer and IPI emuation is done in-kernel.
+6. MMU notifiers supported.
+7. FP lazy save/restore supported.
+8. SBI v0.1 emulation for KVM Guest available.
+9. Forward unhandled SBI calls to KVM userspace.
+10. Hugepage support for Guest/VM
+
+Here's a brief TODO list which we will work upon after this series:
+1. SBI v0.2 emulation in-kernel
+2. SBI v0.2 hart state management emulation in-kernel
+3. In-kernel PLIC emulation
+4. ..... and more .....
+
+This series can be found in riscv_kvm_v10 branch at:
+https//github.com/avpatel/linux.git
+
+Our work-in-progress KVMTOOL RISC-V port can be found in riscv_v1 branch
+at: https//github.com/avpatel/kvmtool.git
+
+The QEMU RISC-V hypervisor emulation is done by Alistair and is available
+in mainline/alistair/riscv-hyp-ext-v0.5.1 branch at:
+https://github.com/kvm-riscv/qemu.git
+
+To play around with KVM RISC-V, refer KVM RISC-V wiki at:
+https://github.com/kvm-riscv/howto/wiki
+https://github.com/kvm-riscv/howto/wiki/KVM-RISCV64-on-QEMU
+
+Changes since v9:
+ - Squash PATCH19 and PATCH20 into PATCH5
+ - Squash PATCH18 into PATCH11
+ - Squash PATCH17 into PATCH16
+ - Added ONE_REG interface for VCPU timer in PATCH13
+ - Use HTIMEDELTA for VCPU timer in PATCH13
+ - Updated KVM RISC-V mailing list in MAINTAINERS entry
+ - Update KVM kconfig option to depend on RISCV_SBI and MMU
+ - Check for SBI v0.2 and SBI v0.2 RFENCE extension at boot-time
+ - Use SBI v0.2 RFENCE extension in VMID implementation
+ - Use SBI v0.2 RFENCE extension in Stage2 MMU implementation
+ - Use SBI v0.2 RFENCE extension in SBI implementation
+ - Moved to RISC-V Hypervisor v0.5 draft spec
+ - Updated Documentation/virt/kvm/api.txt for timer ONE_REG interface
+ - Rebased patches on Linux-5.5-rc3
+
+Changes since v8:
+ - Rebased series on Linux-5.4-rc3 and Atish's SBI v0.2 patches
+ - Use HRTIMER_MODE_REL instead of HRTIMER_MODE_ABS in timer emulation
+ - Fixed kvm_riscv_stage2_map() to handle hugepages
+ - Added patch to forward unhandled SBI calls to user-space
+ - Added patch for iterative/recursive stage2 page table programming
+ - Added patch to remove per-CPU vsip_shadow variable
+ - Added patch to fix race-condition in kvm_riscv_vcpu_sync_interrupts()
+
+Changes since v7:
+- Rebased series on Linux-5.4-rc1 and Atish's SBI v0.2 patches
+- Removed PATCH1, PATCH3, and PATCH20 because these already merged
+- Use kernel doc style comments for ISA bitmap functions
+- Don't parse X, Y, and Z extension in riscv_fill_hwcap() because it will
+  be added in-future
+- Mark KVM RISC-V kconfig option as EXPERIMENTAL
+- Typo fix in commit description of PATCH6 of v7 series
+- Use separate structs for CORE and CSR registers of ONE_REG interface
+- Explicitly include asm/sbi.h in kvm/vcpu_sbi.c
+- Removed implicit switch-case fall-through in kvm_riscv_vcpu_exit()
+- No need to set VSSTATUS.MXR bit in kvm_riscv_vcpu_unpriv_read()
+- Removed register for instruction length in kvm_riscv_vcpu_unpriv_read()
+- Added defines for checking/decoding instruction length
+- Added separate patch to forward unhandled SBI calls to userspace tool
+
+Changes since v6:
+- Rebased patches on Linux-5.3-rc7
+- Added "return_handled" in struct kvm_mmio_decode to ensure that
+  kvm_riscv_vcpu_mmio_return() updates SEPC only once
+- Removed trap_stval parameter from kvm_riscv_vcpu_unpriv_read()
+- Updated git repo URL in MAINTAINERS entry
+
+Changes since v5:
+- Renamed KVM_REG_RISCV_CONFIG_TIMEBASE register to
+  KVM_REG_RISCV_CONFIG_TBFREQ register in ONE_REG interface
+- Update SPEC in kvm_riscv_vcpu_mmio_return() for MMIO exits
+- Use switch case instead of illegal instruction opcode table for simplicit=
+y
+- Improve comments in stage2_remote_tlb_flush() for a potential remote TLB
+  flush optimization
+- Handle all unsupported SBI calls in default case of
+  kvm_riscv_vcpu_sbi_ecall() function
+- Fixed kvm_riscv_vcpu_sync_interrupts() for software interrupts
+- Improved unprivilege reads to handle traps due to Guest stage1 page table
+- Added separate patch to document RISC-V specific things in
+  Documentation/virt/kvm/api.txt
+
+Changes since v4:
+- Rebased patches on Linux-5.3-rc5
+- Added Paolo's Acked-by and Reviewed-by
+- Updated mailing list in MAINTAINERS entry
+
+Changes since v3:
+- Moved patch for ISA bitmap from KVM prep series to this series
+- Make vsip_shadow as run-time percpu variable instead of compile-time
+- Flush Guest TLBs on all Host CPUs whenever we run-out of VMIDs
+
+Changes since v2:
+- Removed references of KVM_REQ_IRQ_PENDING from all patches
+- Use kvm->srcu within in-kernel KVM run loop
+- Added percpu vsip_shadow to track last value programmed in VSIP CSR
+- Added comments about irqs_pending and irqs_pending_mask
+- Used kvm_arch_vcpu_runnable() in-place-of kvm_riscv_vcpu_has_interrupt()
+  in system_opcode_insn()
+- Removed unwanted smp_wmb() in kvm_riscv_stage2_vmid_update()
+- Use kvm_flush_remote_tlbs() in kvm_riscv_stage2_vmid_update()
+- Use READ_ONCE() in kvm_riscv_stage2_update_hgatp() for vmid
+
+Changes since v1:
+- Fixed compile errors in building KVM RISC-V as module
+- Removed unused kvm_riscv_halt_guest() and kvm_riscv_resume_guest()
+- Set KVM_CAP_SYNC_MMU capability only after MMU notifiers are implemented
+- Made vmid_version as unsigned long instead of atomic
+- Renamed KVM_REQ_UPDATE_PGTBL to KVM_REQ_UPDATE_HGATP
+- Renamed kvm_riscv_stage2_update_pgtbl() to kvm_riscv_stage2_update_hgatp(=
+)
+- Configure HIDELEG and HEDELEG in kvm_arch_hardware_enable()
+- Updated ONE_REG interface for CSR access to user-space
+- Removed irqs_pending_lock and use atomic bitops instead
+- Added separate patch for FP ONE_REG interface
+- Added separate patch for updating MAINTAINERS file
+
+Anup Patel (15):
+  RISC-V: Export riscv_cpuid_to_hartid_mask() API
+  RISC-V: Add bitmap reprensenting ISA features common across CPUs
+  RISC-V: Add hypervisor extension related CSR defines
+  RISC-V: Add initial skeletal KVM support
+  RISC-V: KVM: Implement VCPU create, init and destroy functions
+  RISC-V: KVM: Implement VCPU interrupts and requests handling
+  RISC-V: KVM: Implement KVM_GET_ONE_REG/KVM_SET_ONE_REG ioctls
+  RISC-V: KVM: Implement VCPU world-switch
+  RISC-V: KVM: Handle MMIO exits for VCPU
+  RISC-V: KVM: Handle WFI exits for VCPU
+  RISC-V: KVM: Implement VMID allocator
+  RISC-V: KVM: Implement stage2 page table programming
+  RISC-V: KVM: Implement MMU notifiers
+  RISC-V: KVM: Document RISC-V specific parts of KVM API.
+  RISC-V: KVM: Add MAINTAINERS entry
+
+Atish Patra (4):
+  RISC-V: KVM: Add timer functionality
+  RISC-V: KVM: FP lazy save/restore
+  RISC-V: KVM: Implement ONE REG interface for FP registers
+  RISC-V: KVM: Add SBI v0.1 support
+
+ Documentation/virt/kvm/api.txt          |  169 +++-
+ MAINTAINERS                             |   11 +
+ arch/riscv/Kconfig                      |    2 +
+ arch/riscv/Makefile                     |    2 +
+ arch/riscv/include/asm/csr.h            |   78 +-
+ arch/riscv/include/asm/hwcap.h          |   22 +
+ arch/riscv/include/asm/kvm_host.h       |  264 ++++++
+ arch/riscv/include/asm/kvm_vcpu_timer.h |   44 +
+ arch/riscv/include/asm/pgtable-bits.h   |    1 +
+ arch/riscv/include/uapi/asm/kvm.h       |  127 +++
+ arch/riscv/kernel/asm-offsets.c         |  148 ++++
+ arch/riscv/kernel/cpufeature.c          |   83 +-
+ arch/riscv/kernel/smp.c                 |    2 +
+ arch/riscv/kvm/Kconfig                  |   34 +
+ arch/riscv/kvm/Makefile                 |   14 +
+ arch/riscv/kvm/main.c                   |   97 +++
+ arch/riscv/kvm/mmu.c                    |  762 +++++++++++++++++
+ arch/riscv/kvm/tlb.S                    |   43 +
+ arch/riscv/kvm/vcpu.c                   | 1013 +++++++++++++++++++++++
+ arch/riscv/kvm/vcpu_exit.c              |  639 ++++++++++++++
+ arch/riscv/kvm/vcpu_sbi.c               |  171 ++++
+ arch/riscv/kvm/vcpu_switch.S            |  382 +++++++++
+ arch/riscv/kvm/vcpu_timer.c             |  225 +++++
+ arch/riscv/kvm/vm.c                     |   86 ++
+ arch/riscv/kvm/vmid.c                   |  120 +++
+ drivers/clocksource/timer-riscv.c       |    8 +
+ include/clocksource/timer-riscv.h       |   16 +
+ include/uapi/linux/kvm.h                |    8 +
+ 28 files changed, 4558 insertions(+), 13 deletions(-)
+ create mode 100644 arch/riscv/include/asm/kvm_host.h
+ create mode 100644 arch/riscv/include/asm/kvm_vcpu_timer.h
+ create mode 100644 arch/riscv/include/uapi/asm/kvm.h
+ create mode 100644 arch/riscv/kvm/Kconfig
+ create mode 100644 arch/riscv/kvm/Makefile
+ create mode 100644 arch/riscv/kvm/main.c
+ create mode 100644 arch/riscv/kvm/mmu.c
+ create mode 100644 arch/riscv/kvm/tlb.S
+ create mode 100644 arch/riscv/kvm/vcpu.c
+ create mode 100644 arch/riscv/kvm/vcpu_exit.c
+ create mode 100644 arch/riscv/kvm/vcpu_sbi.c
+ create mode 100644 arch/riscv/kvm/vcpu_switch.S
+ create mode 100644 arch/riscv/kvm/vcpu_timer.c
+ create mode 100644 arch/riscv/kvm/vm.c
+ create mode 100644 arch/riscv/kvm/vmid.c
+ create mode 100644 include/clocksource/timer-riscv.h
+
+--=20
+2.17.1
 
