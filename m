@@ -2,120 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F1C512982D
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64657129809
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:24:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727257AbfLWP1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 10:27:35 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7731 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726828AbfLWP1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 10:27:32 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F084ABCDE26DCA5B8009;
-        Mon, 23 Dec 2019 23:27:29 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 23 Dec 2019 23:27:19 +0800
-From:   Chen Zhou <chenzhou10@huawei.com>
-To:     <tglx@linutronix.de>, <mingo@redhat.com>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <james.morse@arm.com>, <dyoung@redhat.com>, <bhsharma@redhat.com>
-CC:     <horms@verge.net.au>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>, <xiexiuqi@huawei.com>,
-        <chenzhou10@huawei.com>
-Subject: [PATCH v7 4/4] kdump: update Documentation about crashkernel on arm64
-Date:   Mon, 23 Dec 2019 23:23:49 +0800
-Message-ID: <20191223152349.180172-5-chenzhou10@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191223152349.180172-1-chenzhou10@huawei.com>
-References: <20191223152349.180172-1-chenzhou10@huawei.com>
+        id S1726879AbfLWPYL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 10:24:11 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:38378 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726733AbfLWPYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 10:24:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=WxhSTHErLYeR2xHJjtvGbHdEpZYHP8nE7fCcMzqkLxw=; b=EC+KEDyXA5qigr0fOio5UOp5Lj
+        twfjpAZPPSiycoFg8GkflmX7znEdhgICR4BW/s/jxO9ubwzBVbfczcYeZ452vpiAnJ6Cud0QLnLh2
+        hV7ApBEbu3LTvDngxxWipuMZDsxYrGkKob0GK9UfWJdFv+vYbziuId7TZ3kOqu2jZ+1I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ijPZ1-0005HR-KC; Mon, 23 Dec 2019 16:24:07 +0100
+Date:   Mon, 23 Dec 2019 16:24:07 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: Re: [PATCH net] of: mdio: mark stub of_mdiobus_child_is_phy as inline
+Message-ID: <20191223152407.GM32356@lunn.ch>
+References: <20191223132443.115540-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191223132443.115540-1-Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now we support crashkernel=X,[low] on arm64, update the Documentation.
+On Mon, Dec 23, 2019 at 02:24:43PM +0100, Jason A. Donenfeld wrote:
+> The of_mdiobus_child_is_phy function was recently exported, with a stub
+> fallback added to simply return false as a static function. The inline
+> specifier was left out, leading to build time errors:
+> 
+> In file included from linux/include/linux/fs_enet_pd.h:21,
+>                  from linux/arch/powerpc/sysdev/fsl_soc.c:26:
+> linux/include/linux/of_mdio.h:58:13: error: ‘of_mdiobus_child_is_phy’ defined but not used [-Werror=unused-function]
+>    58 | static bool of_mdiobus_child_is_phy(struct device_node *child)
+>       |             ^~~~~~~~~~
+> 
+> This commit simply adds the missing inline keyboard.
 
-Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
----
- Documentation/admin-guide/kdump/kdump.rst       | 13 +++++++++++--
- Documentation/admin-guide/kernel-parameters.txt | 12 +++++++++++-
- 2 files changed, 22 insertions(+), 3 deletions(-)
+Hi Jason
 
-diff --git a/Documentation/admin-guide/kdump/kdump.rst b/Documentation/admin-guide/kdump/kdump.rst
-index ac7e131..e55173e 100644
---- a/Documentation/admin-guide/kdump/kdump.rst
-+++ b/Documentation/admin-guide/kdump/kdump.rst
-@@ -299,7 +299,13 @@ Boot into System Kernel
-    "crashkernel=64M@16M" tells the system kernel to reserve 64 MB of memory
-    starting at physical address 0x01000000 (16MB) for the dump-capture kernel.
- 
--   On x86 and x86_64, use "crashkernel=64M@16M".
-+   On x86 use "crashkernel=64M@16M".
-+
-+   On x86_64, use "crashkernel=Y[@X]" to select a region under 4G first, and
-+   fall back to reserve region above 4G when '@offset' hasn't been specified.
-+   We can also use "crashkernel=X,high" to select a region above 4G, which
-+   also tries to allocate at least 256M below 4G automatically and
-+   "crashkernel=Y,low" can be used to allocate specified size low memory.
- 
-    On ppc64, use "crashkernel=128M@32M".
- 
-@@ -316,8 +322,11 @@ Boot into System Kernel
-    kernel will automatically locate the crash kernel image within the
-    first 512MB of RAM if X is not given.
- 
--   On arm64, use "crashkernel=Y[@X]".  Note that the start address of
-+   On arm64, use "crashkernel=Y[@X]". Note that the start address of
-    the kernel, X if explicitly specified, must be aligned to 2MiB (0x200000).
-+   If crashkernel=Z,low is specified simultaneously, reserve spcified size
-+   low memory for crash kdump kernel devices firstly and then reserve memory
-+   above 4G.
- 
- Load the Dump-capture Kernel
- ============================
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index ade4e6e..bde3ab4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -706,6 +706,9 @@
- 			[KNL, x86_64] select a region under 4G first, and
- 			fall back to reserve region above 4G when '@offset'
- 			hasn't been specified.
-+			[KNL, arm64] If crashkernel=X,low is specified, reserve
-+			spcified size low memory for crash kdump kernel devices
-+			firstly, and then reserve memory above 4G.
- 			See Documentation/admin-guide/kdump/kdump.rst for further details.
- 
- 	crashkernel=range1:size1[,range2:size2,...][@offset]
-@@ -730,12 +733,19 @@
- 			requires at least 64M+32K low memory, also enough extra
- 			low memory is needed to make sure DMA buffers for 32-bit
- 			devices won't run out. Kernel would try to allocate at
--			at least 256M below 4G automatically.
-+			least 256M below 4G automatically.
- 			This one let user to specify own low range under 4G
- 			for second kernel instead.
- 			0: to disable low allocation.
- 			It will be ignored when crashkernel=X,high is not used
- 			or memory reserved is below 4G.
-+			[KNL, arm64] range under 4G.
-+			This one let user to specify own low range under 4G
-+			for crash dump kernel instead.
-+			Different with x86_64, kernel allocates specified size
-+			physical memory region only when this parameter is specified
-+			instead of trying to allocate at least 256M below 4G
-+			automatically.
- 
- 	cryptomgr.notests
- 			[KNL] Disable crypto self-tests
--- 
-2.7.4
+It is a good idea to search the netdev list before fixing things like
+this:
 
+https://lkml.org/lkml/2019/12/23/128
+
+	Andrew
