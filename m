@@ -2,94 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4349C1293FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:11:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 167BA129401
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:13:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbfLWKLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 05:11:22 -0500
-Received: from mga11.intel.com ([192.55.52.93]:43940 "EHLO mga11.intel.com"
+        id S1726817AbfLWKNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 05:13:22 -0500
+Received: from mga11.intel.com ([192.55.52.93]:44066 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbfLWKLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 05:11:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1725799AbfLWKNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 05:13:21 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 02:11:21 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 02:13:21 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="211511893"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.161])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 02:11:18 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
-        airlied@linux.ie, daniel@ffwll.ch
-Cc:     ville.syrjala@linux.intel.com, swati2.sharma@intel.com,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: Re: [PATCH] drm/i915: Re-init lspcon after HPD if lspcon probe failed
-In-Reply-To: <20191223095604.17453-1-kai.heng.feng@canonical.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20191223095604.17453-1-kai.heng.feng@canonical.com>
-Date:   Mon, 23 Dec 2019 12:11:15 +0200
-Message-ID: <87eewvwdvg.fsf@intel.com>
+   d="scan'208";a="222995369"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.163])
+  by fmsmga001.fm.intel.com with SMTP; 23 Dec 2019 02:13:18 -0800
+Received: by lahna (sSMTP sendmail emulation); Mon, 23 Dec 2019 12:13:17 +0200
+Date:   Mon, 23 Dec 2019 12:13:17 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rajmohan Mani <rajmohan.mani@intel.com>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] thunderbolt: fix memory leak of object sw
+Message-ID: <20191223101317.GF2628@lahna.fi.intel.com>
+References: <20191220220526.11307-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191220220526.11307-1-colin.king@canonical.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 23 Dec 2019, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
-> On HP 800 G4 DM, if HDMI cable isn't plugged before boot, the HDMI port
-> becomes useless and never responds to cable hotplugging:
-> [    3.031904] [drm:lspcon_init [i915]] *ERROR* Failed to probe lspcon
-> [    3.031945] [drm:intel_ddi_init [i915]] *ERROR* LSPCON init failed on port D
+On Fri, Dec 20, 2019 at 10:05:26PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> In the case where the call tb_switch_exceeds_max_depth is true
+> the error reurn path leaks memory in sw.  Fix this by setting
+> the return error code to -EADDRNOTAVAIL and returning via the
+> error exit path err_free_sw_ports to free sw. sw has been kzalloc'd
+> so the free of the NULL sw->ports is fine.
 >
-> Seems like the lspcon chip on the system in question only gets powered
-> after the cable is plugged.
->
-> So let's call lspcon_init() dynamically to properly initialize the
-> lspcon chip and make HDMI port work.
->
-> Closes: https://gitlab.freedesktop.org/drm/intel/issues/203
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/gpu/drm/i915/display/intel_hotplug.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/gpu/drm/i915/display/intel_hotplug.c b/drivers/gpu/drm/i915/display/intel_hotplug.c
-> index fc29046d48ea..e2862e36d0bf 100644
-> --- a/drivers/gpu/drm/i915/display/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/display/intel_hotplug.c
-> @@ -28,6 +28,7 @@
->  #include "i915_drv.h"
->  #include "intel_display_types.h"
->  #include "intel_hotplug.h"
-> +#include "intel_lspcon.h"
->  
->  /**
->   * DOC: Hotplug
-> @@ -336,6 +337,8 @@ static void i915_digport_work_func(struct work_struct *work)
->  			continue;
->  
->  		dig_port = enc_to_dig_port(&encoder->base);
-> +		if (HAS_LSPCON(dev_priv) && !dig_port->lspcon.active)
-> +			lspcon_init(dig_port);
+> Addresses-Coverity: ("Resource leak")
+> Fixes: b04079837b20 ("thunderbolt: Add initial support for USB4")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The whole digport work function is platform and encoder agnostic, this
-call has no place in here.
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-One alternative is intel_dp_hpd_pulse().
+Greg, can you take this to your usb-next branch where the rest of the
+USB4 stuff is?
 
-
-BR,
-Jani.
-
-
->  
->  		ret = dig_port->hpd_pulse(dig_port, long_hpd);
->  		if (ret == IRQ_NONE) {
-
--- 
-Jani Nikula, Intel Open Source Graphics Center
+Thanks!
