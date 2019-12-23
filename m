@@ -2,113 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 434AB129119
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 04:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C04E1129104
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 04:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfLWDLJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 22:11:09 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:1861 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726393AbfLWDLI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 22:11:08 -0500
-X-UUID: 50313d1214cd47cd8d8ff6424397f7d6-20191223
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Date:Content-Type:References:In-Reply-To:CC:To:From:Subject:Message-ID; bh=1gjqBsxQJFzTJYcXv+4xkR26006Bc8pqbfyHt8iDVik=;
-        b=bltNlyAcaQK0NROYx4CJosBHds/na0LlyG2rB2vmu2OT42YBTic+cwnHz4E7K6I+LZ1BxQkr6/CTdOiaszTFk05aif+OslcdjvtkCAkyNnHLkrY5XgbCHZcAMjsUGxouo346EPUrzkzbRYiQ/nNU1lR5sfGgsu+bDrvBeX4UFf0=;
-X-UUID: 50313d1214cd47cd8d8ff6424397f7d6-20191223
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 956786830; Mon, 23 Dec 2019 11:11:02 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 23 Dec 2019 11:10:59 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 23 Dec 2019 11:11:12 +0800
-Message-ID: <1577022724.7468.20.camel@mtkswgap22>
-Subject: Re: [PATCH v2 05/11] pinctrl: mediatek: avoid virtual gpio trying
- to set reg
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Mars Cheng <mars.cheng@mediatek.com>,
+        id S1726691AbfLWDBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 22:01:53 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30684 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbfLWDBx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 22:01:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Dec 2019 19:01:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,346,1571727600"; 
+   d="scan'208";a="417121170"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by fmsmga005.fm.intel.com with ESMTP; 22 Dec 2019 19:01:43 -0800
+Cc:     baolu.lu@linux.intel.com,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-In-Reply-To: <CACRpkdZa_sQgvWC3ic0NxrVi9gS1cNTsV-wa-SDpA0e5kutBRw@mail.gmail.com>
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
-         <1566206502-4347-6-git-send-email-mars.cheng@mediatek.com>
-         <CACRpkdZa_sQgvWC3ic0NxrVi9gS1cNTsV-wa-SDpA0e5kutBRw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Date:   Sun, 22 Dec 2019 21:52:04 +0800
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Julien Grall <julien.grall@arm.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org
+Subject: Re: [PATCH 1/8] iommu/vt-d: clean up 32bit si_domain assignment
+To:     Tom Murphy <murphyt7@tcd.ie>, iommu@lists.linux-foundation.org
+References: <20191221150402.13868-1-murphyt7@tcd.ie>
+ <20191221150402.13868-2-murphyt7@tcd.ie>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <e569e246-11a1-e8bd-9347-310284e96885@linux.intel.com>
+Date:   Mon, 23 Dec 2019 11:00:47 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <20191221150402.13868-2-murphyt7@tcd.ie>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE5LTA4LTIzIGF0IDEwOjU3ICswMjAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-PiBPbiBNb24sIEF1ZyAxOSwgMjAxOSBhdCAxMToyMiBBTSBNYXJzIENoZW5nIDxtYXJzLmNoZW5n
-QG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+IA0KPiA+IGZvciB2aXJ0dWFsIGdwaW9zLCB0aGV5IHNo
-b3VsZCBub3QgZG8gcmVnIHNldHRpbmcgYW5kDQo+ID4gc2hvdWxkIGJlaGF2ZSBhcyBleHBlY3Rl
-ZCBmb3IgZWludCBmdW5jdGlvbi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hcnMgQ2hlbmcg
-PG1hcnMuY2hlbmdAbWVkaWF0ZWsuY29tPg0KPiANCj4gVGhpcyBkb2VzIG5vdCBleHBsYWluIHdo
-YXQgYSAidmlydHVhbCBHUElPIiBpcyBpbiB0aGlzDQo+IGNvbnRleHQsIHNvIHBsZWFzZSBlbGFi
-b3JhdGUuIFdoYXQgaXMgdGhpcz8gV2h5IGRvZXMNCj4gaXQgZXhpc3Q/IFdoYXQgaXMgaXQgdXNl
-ZCBmb3I/DQo+IA0KPiBHUElPIGlzICJnZW5lcmFsIHB1cnBvc2UgaW5wdXQvb3V0cHV0IiBhbmQg
-aXQgaXMgYQ0KPiBwcmV0dHkgcnViYmVyeSBjYXRlZ29yeSBhbHJlYWR5IGFzIGl0IGlzLCBzbyB3
-ZSBuZWVkDQo+IHRvIGRlZmluZSBvdXIgdGVybXMgcHJldHR5IHN0cmljdGx5Lg0KPiANClZpcnR1
-YWwgR1BJTyBvbmx5IHVzZWQgaW5zaWRlIFNPQyBhbmQgbm90IGJlaW5nIGV4cG9ydGVkIHRvIG91
-dHNpZGUgU09DDQppbiBNVEsgcGxhdGZvcm0uIFNvbWUgbW9kdWxlcyB1c2UgdmlydHVhbCBHUElP
-IGFzIGVpbnQgKGUuZy4gcG1pYyBvcg0KdXNiKS4NCkluIE1USyBwbGF0Zm9ybSwgZXh0ZXJuYWwg
-aW50ZXJydXB0IChFSU5UKSBhbmQgR1BJTyBpcyAxLTEgbWFwcGluZyBhbmQNCndlIGNhbiBzZXQg
-R1BJTyBhcyBlaW50Lg0KQnV0IHNvbWUgbW9kdWxlcyB1c2Ugc3BlY2lmaWMgZWludCB3aGljaCBk
-b2Vzbid0IGhhdmUgcmVhbCBHUElPIHBpbi4NClNvIHdlIHVzZSB2aXJ0dWFsIEdQSU8gdG8gbWFw
-IGl0Lg0KDQo+ID4gK2Jvb2wgbXRrX2lzX3ZpcnRfZ3BpbyhzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3
-LCB1bnNpZ25lZCBpbnQgZ3Bpb19uKQ0KPiA+ICt7DQo+ID4gKyAgICAgICBjb25zdCBzdHJ1Y3Qg
-bXRrX3Bpbl9kZXNjICpkZXNjOw0KPiA+ICsgICAgICAgYm9vbCB2aXJ0X2dwaW8gPSBmYWxzZTsN
-Cj4gPiArDQo+ID4gKyAgICAgICBpZiAoZ3Bpb19uID49IGh3LT5zb2MtPm5waW5zKQ0KPiA+ICsg
-ICAgICAgICAgICAgICByZXR1cm4gdmlydF9ncGlvOw0KPiA+ICsNCj4gPiArICAgICAgIGRlc2Mg
-PSAoY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9fbl07DQo+
-ID4gKw0KPiA+ICsgICAgICAgaWYgKGRlc2MtPmZ1bmNzICYmDQo+ID4gKyAgICAgICAgICAgZGVz
-Yy0+ZnVuY3NbZGVzYy0+ZWludC5laW50X21dLm5hbWUgPT0gMCkNCj4gDQo+IE5VTEwgY2hlY2sg
-aXMgZG9uZSBsaWtlIHRoaXM6DQo+IA0KPiBpZiAoZGVzYy0+ZnVuY3MgJiYgIWRlc2MtPmZ1bmNz
-W2Rlc2MtPmVpbnQuZWludF9tXS5uYW1lKQ0KPiANCj4gPiArICAgICAgICAgICAgICAgdmlydF9n
-cGlvID0gdHJ1ZTsNCj4gDQoNCmdvdCBpdCwgd2lsbCBmaXggaXQgaW4gdjMuIFRoYW5rcyBmb3Ig
-cmV2aWV3aW5nLg0KDQo+IFNvIHdoeSBpcyB0aGlzIEdQSU8gInZpcnR1YWwiIGJlY2F1c2UgaXQg
-ZG9lcyBub3QgaGF2ZQ0KPiBhIG5hbWUgaW4gdGhlIGZ1bmNzIHRhYmxlPw0KPiANCnllcywgaXQg
-ZG9lc24ndCBoYXZlIHJlYWwgR1BJTyBwaW4gYW5kIG5hbWUsIHNvIHdlIHNldCBpdCBhcyB2aXJ0
-dWFsIEdQSU8uDQoNCj4gPiBAQCAtMjc4LDYgKzI5NSw5IEBAIHN0YXRpYyBpbnQgbXRrX3h0X3Nl
-dF9ncGlvX2FzX2VpbnQodm9pZCAqZGF0YSwgdW5zaWduZWQgbG9uZyBlaW50X24pDQo+ID4gICAg
-ICAgICBpZiAoZXJyKQ0KPiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZXJyOw0KPiA+DQo+ID4g
-KyAgICAgICBpZiAobXRrX2lzX3ZpcnRfZ3BpbyhodywgZ3Bpb19uKSkNCj4gPiArICAgICAgICAg
-ICAgICAgcmV0dXJuIDA7DQo+IA0KPiBTbyBkb2VzIHRoaXMgbWVhbiB3ZSBhbHdheXMgc3VjY2Vl
-ZCBpbiBzZXR0aW5nIGEgR1BJTyBhcyBlaW50DQo+IGlmIGl0IGlzIHZpcnR1YWw/IFdoeT8gRXhw
-bGFuYXRvcnkgY29tbWVudCBpcyBuZWVkZWQuDQo+IA0KeWVzLCB3ZSB1c2UgdmlydHVhbCBHUElP
-IHRvIG1hcCBpdC4NCg0KPiA+IEBAIC02OTMsNiArNjkzLDkgQEAgc3RhdGljIGludCBtdGtfZ3Bp
-b19nZXRfZGlyZWN0aW9uKHN0cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGludCBncGlv
-KQ0KPiA+ICAgICAgICAgY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqZGVzYzsNCj4gPiAgICAg
-ICAgIGludCB2YWx1ZSwgZXJyOw0KPiA+DQo+ID4gKyAgICAgICBpZiAobXRrX2lzX3ZpcnRfZ3Bp
-byhodywgZ3BpbykpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAxOw0KPiANCj4gV2h5IGFy
-ZSAidmlydHVhbCBHUElPcyIgYWx3YXlzIGlucHV0cz8NCj4gDQpXZSBzZXQgdmlydHVhbCBHUElP
-IGFzIGVpbnQuDQpJdCBtZWFuIHZpcnR1YWwgR1BJTyBvbmx5IHVzZWQgaW5zaWRlIFNPQyBhbmQg
-bm90IGJlaW5nIGV4cG9ydGVkIHRvDQpvdXRzaWRlIFNPQy4NCg0KPiBZb3VycywNCj4gTGludXMg
-V2FsbGVpag0KDQpTb3JyeSBmb3IgdGhlIGxhdGUgcmVwbHkuDQoNCkknbSB0aGUgbmV3IGJzcCBj
-b250YWN0IG9mIG10ayBwaG9uZSBwcm9qZWN0Lg0KSSB3aWxsIGJlIHRha2luZyBvdmVyIGZyb20g
-TWFycy4NCg0KVGhhbmtzIGZvciByZXZpZXdpbmcuDQo=
+Hi,
 
+On 12/21/19 11:03 PM, Tom Murphy wrote:
+> @@ -5618,9 +5583,13 @@ static int intel_iommu_add_device(struct device *dev)
+>   	struct iommu_domain *domain;
+>   	struct intel_iommu *iommu;
+>   	struct iommu_group *group;
+> +	u64 dma_mask = *dev->dma_mask;
+>   	u8 bus, devfn;
+>   	int ret;
+>   
+> +	if (dev->coherent_dma_mask && dev->coherent_dma_mask < dma_mask)
+> +		dma_mask = dev->coherent_dma_mask;
+> +
+>   	iommu = device_to_iommu(dev, &bus, &devfn);
+>   	if (!iommu)
+>   		return -ENODEV;
+> @@ -5640,7 +5609,12 @@ static int intel_iommu_add_device(struct device *dev)
+>   	domain = iommu_get_domain_for_dev(dev);
+>   	dmar_domain = to_dmar_domain(domain);
+>   	if (domain->type == IOMMU_DOMAIN_DMA) {
+> -		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY) {
+> +		/*
+> +		 * We check dma_mask >= dma_get_required_mask(dev) because
+> +		 * 32 bit DMA falls back to non-identity mapping.
+> +		 */
+> +		if (device_def_domain_type(dev) == IOMMU_DOMAIN_IDENTITY &&
+> +				dma_mask >= dma_get_required_mask(dev)) {
+>   			ret = iommu_request_dm_for_dev(dev);
+>   			if (ret) {
+>   				dmar_remove_one_dev_info(dev);
+
+dev->dma_mask is set to 32bit by default. During loading driver, it sets
+the real dma_mask with dma_set_mask() according to the real capability.
+Here you will always see 32bit dma_mask for each device.
+
+Best regards,
+baolu
