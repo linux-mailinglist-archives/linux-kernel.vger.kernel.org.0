@@ -2,162 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 821F11296D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E691129727
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:20:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfLWOJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:09:53 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:47775 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726682AbfLWOJx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:09:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577110191;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=8wSK42OvcMSYxzTS5duA9YklNAevUjxL3z2LLorLBbc=;
-        b=RYAk4+BEsTgWspWjk2V3NFAHC8x7d8cbTaumrJQcZ01YCmOYj69WKx+1uBbkuzE0iEReTL
-        s0gNcLX6bE6IJlnzjQgFeMpN5fThRowdoh+dGuBbUePzyArpqVXYjm9D4wm+KjqzwWuXs3
-        9bYAQ9jubRwdaiFudT5XbaYgsCk9NuE=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-70-7X_xW9nqOb-YA84ISajjTw-1; Mon, 23 Dec 2019 09:09:40 -0500
-X-MC-Unique: 7X_xW9nqOb-YA84ISajjTw-1
-Received: by mail-wr1-f69.google.com with SMTP id u12so8037204wrt.15
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 06:09:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=8wSK42OvcMSYxzTS5duA9YklNAevUjxL3z2LLorLBbc=;
-        b=rC099l4zekcEe5PYZ594veqIvthMpYa8RRpZbq1kIkvG92FoOfYt6OSgOCfMsIkMYN
-         EoGgkGekVC4icZZ+iT7SHB4sIv9zOio4Kh6vrx9s8I9ZPFOSu0WIkB1/5TGZtqlUDCo9
-         6ITEzRg00Lddgh0LkkKrB9gRug2tpjzqa3EHFufZJDprhlj6PttOjiXlqd/PDkjQ2HJK
-         wYHR/spByi//PPcWdYijVulel3NIwodFVufJS+WqKSAlMcjcK4uT0P4Y/qydKOsagxgq
-         aosWQm0cDPQ5i2tySZNpvTkCzaOW1JrX36AzPgF0dlY2eQbVEXwsReyNp3UzSsgUUGta
-         EOYQ==
-X-Gm-Message-State: APjAAAV9v7rjPTsVGAftGXex2p1hqOvOAI/IlIWsX1UCcPhZKKDnBrGD
-        cz9u/hcqovkZbErge/n2MbwMMiYTQlgPxr0EtX3bcBlkliBlITsmmHhfQIqQKykkSmi6jHk5cxQ
-        LRwL1F4s5eSDtwnyPB5WDFPni
-X-Received: by 2002:a5d:6b03:: with SMTP id v3mr30639416wrw.289.1577110178507;
-        Mon, 23 Dec 2019 06:09:38 -0800 (PST)
-X-Google-Smtp-Source: APXvYqyXPlHQPWOIs3ZB1650CiD1GjAVkKpoGAxT4H78hPBH+Xf/qPuoSksNwmAZoix5LwHVpqbXpA==
-X-Received: by 2002:a5d:6b03:: with SMTP id v3mr30639395wrw.289.1577110178271;
-        Mon, 23 Dec 2019 06:09:38 -0800 (PST)
-Received: from redhat.com (bzq-109-64-31-13.red.bezeqint.net. [109.64.31.13])
-        by smtp.gmail.com with ESMTPSA id u14sm20878457wrm.51.2019.12.23.06.09.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Dec 2019 06:09:37 -0800 (PST)
-Date:   Mon, 23 Dec 2019 09:09:35 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alistair Delva <adelva@google.com>,
-        Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: [PATCH net] virtio_net: CTRL_GUEST_OFFLOADS depends on CTRL_VQ
-Message-ID: <20191223140322.20013-1-mst@redhat.com>
+        id S1727598AbfLWOTc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:19:32 -0500
+Received: from mga05.intel.com ([192.55.52.43]:58347 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726840AbfLWORW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 09:17:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
+   d="scan'208";a="219181089"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga006.jf.intel.com with ESMTP; 23 Dec 2019 06:17:18 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 2539F107; Mon, 23 Dec 2019 16:17:16 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Lee Jones <lee.jones@linaro.org>, x86@kernel.org
+Cc:     Zha Qipeng <qipeng.zha@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        "David E . Box" <david.e.box@linux.intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/37] platform/x86: Rework intel_scu_ipc and intel_pmc_ipc drivers
+Date:   Mon, 23 Dec 2019 17:16:39 +0300
+Message-Id: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email 2.24.1.751.gd10ce2899c
-X-Mutt-Fcc: =sent
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The only way for guest to control offloads (as enabled by
-VIRTIO_NET_F_CTRL_GUEST_OFFLOADS) is by sending commands
-through CTRL_VQ. So it does not make sense to
-acknowledge VIRTIO_NET_F_CTRL_GUEST_OFFLOADS without
-VIRTIO_NET_F_CTRL_VQ.
+Hi all,
 
-The spec does not outlaw devices with such a configuration,
-but Linux assumed that with VIRTIO_NET_F_CTRL_GUEST_OFFLOADS
-control vq is always there, resulting in the following crash
-when configuring LRO:
+Currently both intel_scu_ipc.c and intel_pmc_ipc.c implement the same SCU
+IPC communications with minor differences. This duplication does not make
+much sense so this series reworks the two drivers so that there is only a
+single implementation of the SCU IPC. In addition to that the API will be
+updated to take SCU instance pointer as an argument, and most of the
+callers will be converted to this new API. The old API is left there but
+the plan is to get rid the callers and then the old API as well (this is
+something we are working with Andy Shevchenko).
 
-kernel BUG at drivers/net/virtio_net.c:1591!
-invalid opcode: 0000 [#1] PREEMPT SMP PTI
-CPU: 1 PID: 483 Comm: Binder:330_1 Not tainted 5.4.5-01326-g19463e9acaac #1
-Hardware name: ChromiumOS crosvm, BIOS 0
-RIP: 0010:virtnet_send_command+0x15d/0x170 [virtio_net]
-Code: d8 00 00 00 80 78 02 00 0f 94 c0 65 48 8b 0c 25 28 00 00 00 48 3b 4c 24 70 75 11 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d
-+c3 <0f> 0b e8 ec a4 12 c8 66 90 66 2e 0f 1f 84 00 00 00 00 00 55 48 89
-RSP: 0018:ffffb97940e7bb50 EFLAGS: 00010246
-RAX: ffffffffc0596020 RBX: ffffa0e1fc8ea840 RCX: 0000000000000017
-RDX: ffffffffc0596110 RSI: 0000000000000011 RDI: 000000000000000d
-RBP: ffffb97940e7bbf8 R08: ffffa0e1fc8ea0b0 R09: ffffa0e1fc8ea0b0
-R10: ffffffffffffffff R11: ffffffffc0590940 R12: 0000000000000005
-R13: ffffa0e1ffad2c00 R14: ffffb97940e7bc08 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffffa0e1fd100000(006b) knlGS:00000000e5ef7494
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 00000000e5eeb82c CR3: 0000000079b06001 CR4: 0000000000360ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- ? preempt_count_add+0x58/0xb0
- ? _raw_spin_lock_irqsave+0x36/0x70
- ? _raw_spin_unlock_irqrestore+0x1a/0x40
- ? __wake_up+0x70/0x190
- virtnet_set_features+0x90/0xf0 [virtio_net]
- __netdev_update_features+0x271/0x980
- ? nlmsg_notify+0x5b/0xa0
- dev_disable_lro+0x2b/0x190
- ? inet_netconf_notify_devconf+0xe2/0x120
- devinet_sysctl_forward+0x176/0x1e0
- proc_sys_call_handler+0x1f0/0x250
- proc_sys_write+0xf/0x20
- __vfs_write+0x3e/0x190
- ? __sb_start_write+0x6d/0xd0
- vfs_write+0xd3/0x190
- ksys_write+0x68/0xd0
- __ia32_sys_write+0x14/0x20
- do_fast_syscall_32+0x86/0xe0
- entry_SYSENTER_compat+0x7c/0x8e
+The intel_pmc_ipc.c is then moved under MFD which suits better for this
+kind of a driver that pretty much sets up the SCU IPC and then creates a
+bunch of platform devices for the things sitting behind the PMC. The driver
+is renamed to intel_pmc_bxt.c which should follow the existing conventions
+under drivers/mfd (and it is only meant for Intel Broxton derivatives).
 
-A similar crash will likely trigger when enabling XDP.
+I would prefer this to be merged through platform/x86 or MFD trees assuming
+there are no objections.
 
-Reported-by: Alistair Delva <adelva@google.com>
-Reported-by: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Fixes: 3f93522ffab2 ("virtio-net: switch off offloads on demand if possible on XDP set")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
+I have tested this on Intel Edison (Merrifield) and Joule (Broxton-M).
 
-Lightly tested.
+Mika Westerberg (37):
+  platform/x86: intel_mid_powerbtn: Take a copy of ddata
+  platform/x86: intel_scu_ipcutil: Remove default y from Kconfig
+  platform/x86: intel_scu_ipc: Add constants for register offsets
+  platform/x86: intel_scu_ipc: Remove Lincroft support
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_i2c_cntrl()
+  platform/x86: intel_scu_ipc: Fix interrupt support
+  platform/x86: intel_scu_ipc: Sleeping is fine when polling
+  platform/x86: intel_scu_ipc: Drop unused prototype intel_scu_ipc_fw_update()
+  platform/x86: intel_scu_ipc: Drop unused macros
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_io[read|write][8|16]()
+  platform/x86: intel_scu_ipc: Drop intel_scu_ipc_raw_command()
+  platform/x86: intel_scu_ipc: Split out SCU IPC functionality from the SCU driver
+  platform/x86: intel_scu_ipc: Reformat kernel-doc comments of exported functions
+  platform/x86: intel_scu_ipc: Introduce new SCU IPC API
+  platform/x86: intel_mid_powerbtn: Convert to use new SCU IPC API
+  watchdog: intel-mid_wdt: Convert to use new SCU IPC API
+  platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Make intel_pmc_gcr_update() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_simple_command() static
+  platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_raw_cmd() static
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_gcr_read() and intel_pmc_gcr_write()
+  platform/x86: intel_pmc_ipc: Drop ipc_data_readb()
+  platform/x86: intel_pmc_ipc: Get rid of unnecessary includes
+  platform/x86: intel_scu_ipc: Add function to remove SCU IPC
+  platform/x86: intel_pmc_ipc: Start using SCU IPC
+  mfd: intel_soc_pmic: Add SCU IPC member to struct intel_soc_pmic
+  mfd: intel_soc_pmic_bxtwc: Convert to use new SCU IPC API
+  mfd: intel_soc_pmic_mrfld: Convert to use new SCU IPC API
+  platform/x86: intel_telemetry: Convert to use new SCU IPC API
+  platform/x86: intel_pmc_ipc: Drop intel_pmc_ipc_command()
+  x86/platform/intel-mid: Add empty stubs for intel_scu_devices_[create|destroy]()
+  platform/x86: intel_pmc_ipc: Move PCI IDs to intel_scu_pcidrv.c
+  platform/x86: intel_pmc_ipc: Move under MFD
+  mfd: intel_pmc_bxt: Convert to use MFD APIs
+  mfd: intel_pmc_bxt: Use octal permissions in sysfs attributes
+  mfd: intel_pmc_bxt: Switch to use driver->dev_groups
+  MAINTAINERS: Update entry for Intel Broxton PMC driver
 
-Alistair, could you please test and confirm that this resolves the
-crash for you?
+ MAINTAINERS                                   |   13 +-
+ arch/x86/Kconfig                              |    2 +-
+ arch/x86/include/asm/intel-mid.h              |    9 +-
+ arch/x86/include/asm/intel_pmc_ipc.h          |   91 --
+ arch/x86/include/asm/intel_scu_ipc.h          |  104 +-
+ arch/x86/include/asm/intel_scu_ipc_legacy.h   |   76 ++
+ arch/x86/include/asm/intel_telemetry.h        |    3 +
+ drivers/mfd/Kconfig                           |   18 +-
+ drivers/mfd/Makefile                          |    1 +
+ drivers/mfd/intel_pmc_bxt.c                   |  539 +++++++++
+ drivers/mfd/intel_soc_pmic_bxtwc.c            |   22 +-
+ drivers/mfd/intel_soc_pmic_mrfld.c            |   10 +-
+ drivers/platform/x86/Kconfig                  |   49 +-
+ drivers/platform/x86/Makefile                 |    2 +-
+ drivers/platform/x86/intel_mid_powerbtn.c     |   20 +-
+ drivers/platform/x86/intel_pmc_ipc.c          | 1031 -----------------
+ drivers/platform/x86/intel_scu_ipc.c          |  681 +++++------
+ drivers/platform/x86/intel_scu_ipcutil.c      |   43 +-
+ drivers/platform/x86/intel_scu_pcidrv.c       |   75 ++
+ .../platform/x86/intel_telemetry_debugfs.c    |    2 +-
+ drivers/platform/x86/intel_telemetry_pltdrv.c |  101 +-
+ drivers/usb/typec/tcpm/Kconfig                |    2 +-
+ drivers/watchdog/intel-mid_wdt.c              |   53 +-
+ include/linux/mfd/intel_pmc_bxt.h             |   50 +
+ include/linux/mfd/intel_soc_pmic.h            |    1 +
+ 25 files changed, 1305 insertions(+), 1693 deletions(-)
+ delete mode 100644 arch/x86/include/asm/intel_pmc_ipc.h
+ create mode 100644 arch/x86/include/asm/intel_scu_ipc_legacy.h
+ create mode 100644 drivers/mfd/intel_pmc_bxt.c
+ delete mode 100644 drivers/platform/x86/intel_pmc_ipc.c
+ create mode 100644 drivers/platform/x86/intel_scu_pcidrv.c
+ create mode 100644 include/linux/mfd/intel_pmc_bxt.h
 
-Dave, after testing confirms the fix, pls queue up for stable.
-
-
- drivers/net/virtio_net.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 4d7d5434cc5d..7b8805b47f0d 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2971,6 +2971,15 @@ static int virtnet_validate(struct virtio_device *vdev)
- 	if (!virtnet_validate_features(vdev))
- 		return -EINVAL;
- 
-+	/* VIRTIO_NET_F_CTRL_GUEST_OFFLOADS does not work without
-+	 * VIRTIO_NET_F_CTRL_VQ. However the virtio spec does not
-+	 * specify that VIRTIO_NET_F_CTRL_GUEST_OFFLOADS depends
-+	 * on VIRTIO_NET_F_CTRL_VQ so devices can set the later but
-+	 * not the former.
-+	 */
-+	if (!virtio_has_feature(vdev, VIRTIO_NET_F_CTRL_VQ))
-+			__virtio_clear_bit(vdev, VIRTIO_NET_F_CTRL_GUEST_OFFLOADS);
-+
- 	if (virtio_has_feature(vdev, VIRTIO_NET_F_MTU)) {
- 		int mtu = virtio_cread16(vdev,
- 					 offsetof(struct virtio_net_config,
 -- 
-MST
+2.24.0
 
