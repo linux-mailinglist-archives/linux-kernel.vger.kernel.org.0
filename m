@@ -2,53 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8984B12928B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:53:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94AEF129290
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:54:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfLWHxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 02:53:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57458 "EHLO mail.kernel.org"
+        id S1726067AbfLWHy1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 02:54:27 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:51881 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbfLWHxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:53:02 -0500
-Received: from localhost (unknown [223.226.34.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D7CC206B7;
-        Mon, 23 Dec 2019 07:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577087582;
-        bh=ZDywtafLELZOwgunZ6njALEVERK9QcJfzVci1TRYhoU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z/LPLi/3mzqScE76JGG4kOKYc70pK5CJ4RsAsaf7vCGWfEYTnR8iJWGDI4XONa2mE
-         GGsNvwizK/gTgbi9ks+Kt1fbXImJdcj2yA+4oBsOuHN0nWtLIHUY8tpCUwJc7bwpVU
-         znUp8cZYhmIzh2OZM2/x/gK3VVXnj1Q0nR4EDcX4=
-Date:   Mon, 23 Dec 2019 13:22:57 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alexandru.ardelean@analog.com,
-        s.hauer@pengutronix.de
-Subject: Re: [PATCH] dmaengine: virt-dma: Fix access after free in
- vcna_complete()
-Message-ID: <20191223075257.GD2536@vkoul-mobl>
-References: <20191220131100.21804-1-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220131100.21804-1-peter.ujfalusi@ti.com>
+        id S1725810AbfLWHy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 02:54:26 -0500
+Received: from localhost (mailhub1-ext [192.168.12.233])
+        by localhost (Postfix) with ESMTP id 47hBSp6LlPz9tyVy;
+        Mon, 23 Dec 2019 08:54:18 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=vB7eCzA7; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id yYpcIDcCzsSE; Mon, 23 Dec 2019 08:54:18 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 47hBSp58wpz9tyVf;
+        Mon, 23 Dec 2019 08:54:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1577087658; bh=hkKxahRiPSAEMe/USu//uOwiIXNh/xpJtVcNhRacSz4=;
+        h=From:Subject:To:Cc:Date:From;
+        b=vB7eCzA7rGplvY2F2ekFh/WjZgrGdfiyQUwmzn6VPp+zHfrTrENwh62td5tKITqea
+         P82kgK0m3HOm56zXeiuQCNym3YmttLCru35zjuGurMcR0QC2/1Ora1qkWflqe1DsLk
+         FRIh6ve/rg3bpkHHs3BYlzfCXqTgnAUR7s74921M=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 552018B798;
+        Mon, 23 Dec 2019 08:54:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id XCcVzaFsk9zN; Mon, 23 Dec 2019 08:54:23 +0100 (CET)
+Received: from po16098vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.100])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 38C3C8B752;
+        Mon, 23 Dec 2019 08:54:23 +0100 (CET)
+Received: by po16098vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 0D547637C8; Mon, 23 Dec 2019 07:54:22 +0000 (UTC)
+Message-Id: <0728849e826ba16f1fbd6fa7f5c6cc87bd64e097.1577087627.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/mm: don't log user reads to 0xffffffff
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Mon, 23 Dec 2019 07:54:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-12-19, 15:11, Peter Ujfalusi wrote:
-> vchan_vdesc_fini() is freeing up 'vd' so the access to vd->tx_result is
-> via already freed up memory.
-> 
-> Move the vchan_vdesc_fini() after invoking the callback to avoid this.
+Running vdsotest leaves many times the following log:
 
-Applied, thanks
+[   79.629901] vdsotest[396]: User access of kernel address (ffffffff) - exploit attempt? (uid: 0)
 
+A pointer set to (-1) is likely a programming error similar to
+a NULL pointer and is not worth logging as an exploit attempt.
+
+Don't log user accesses to 0xffffffff.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/mm/fault.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index b5047f9b5dec..d3b4d444bf3c 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -354,6 +354,9 @@ static void sanity_check_fault(bool is_write, bool is_user,
+ 	 * Userspace trying to access kernel address, we get PROTFAULT for that.
+ 	 */
+ 	if (is_user && address >= TASK_SIZE) {
++		if ((long)address == -1)
++			return;
++
+ 		pr_crit_ratelimited("%s[%d]: User access of kernel address (%lx) - exploit attempt? (uid: %d)\n",
+ 				   current->comm, current->pid, address,
+ 				   from_kuid(&init_user_ns, current_uid()));
 -- 
-~Vinod
+2.13.3
+
