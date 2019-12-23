@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F46129707
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8977C129711
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfLWOSU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:18:20 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18212 "EHLO mga07.intel.com"
+        id S1727524AbfLWOSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:18:39 -0500
+Received: from mga03.intel.com ([134.134.136.65]:47069 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727126AbfLWORa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:17:30 -0500
+        id S1727056AbfLWOR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 09:17:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:28 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="249500534"
+   d="scan'208";a="223029911"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 23 Dec 2019 06:17:25 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 23 Dec 2019 06:17:25 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id E5469BC8; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
+        id F0473A4D; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     Zha Qipeng <qipeng.zha@intel.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 16/37] watchdog: intel-mid_wdt: Convert to use new SCU IPC API
-Date:   Mon, 23 Dec 2019 17:16:55 +0300
-Message-Id: <20191223141716.13727-17-mika.westerberg@linux.intel.com>
+Subject: [PATCH 17/37] platform/x86: intel_scu_ipcutil: Convert to use new SCU IPC API
+Date:   Mon, 23 Dec 2019 17:16:56 +0300
+Message-Id: <20191223141716.13727-18-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
@@ -48,144 +48,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This converts the Intel MID watchdog driver over the new SCU IPC API
-where the SCU IPC instance is passed to the functions.
-
-While there drop useless print at the end of probe.
+Convert the IPC util to use the new SCU IPC API where the SCU IPC
+instance is passed to the functions.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/watchdog/intel-mid_wdt.c | 53 ++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 16 deletions(-)
+ drivers/platform/x86/intel_scu_ipcutil.c | 43 +++++++++++++++++++++---
+ 1 file changed, 39 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/watchdog/intel-mid_wdt.c b/drivers/watchdog/intel-mid_wdt.c
-index 470213abfd3d..1ae03b64ef8b 100644
---- a/drivers/watchdog/intel-mid_wdt.c
-+++ b/drivers/watchdog/intel-mid_wdt.c
-@@ -33,14 +33,24 @@ enum {
- 	SCU_WATCHDOG_KEEPALIVE,
+diff --git a/drivers/platform/x86/intel_scu_ipcutil.c b/drivers/platform/x86/intel_scu_ipcutil.c
+index 8afe6fa06d7b..b7c10c15a3d6 100644
+--- a/drivers/platform/x86/intel_scu_ipcutil.c
++++ b/drivers/platform/x86/intel_scu_ipcutil.c
+@@ -22,6 +22,9 @@
+ 
+ static int major;
+ 
++struct intel_scu_ipc_dev *scu;
++static DEFINE_MUTEX(scu_lock);
++
+ /* IOCTL commands */
+ #define	INTE_SCU_IPC_REGISTER_READ	0
+ #define INTE_SCU_IPC_REGISTER_WRITE	1
+@@ -52,12 +55,12 @@ static int scu_reg_access(u32 cmd, struct scu_ipc_data  *data)
+ 
+ 	switch (cmd) {
+ 	case INTE_SCU_IPC_REGISTER_READ:
+-		return intel_scu_ipc_readv(data->addr, data->data, count);
++		return intel_scu_ipc_dev_readv(scu, data->addr, data->data, count);
+ 	case INTE_SCU_IPC_REGISTER_WRITE:
+-		return intel_scu_ipc_writev(data->addr, data->data, count);
++		return intel_scu_ipc_dev_writev(scu, data->addr, data->data, count);
+ 	case INTE_SCU_IPC_REGISTER_UPDATE:
+-		return intel_scu_ipc_update_register(data->addr[0],
+-						    data->data[0], data->mask);
++		return intel_scu_ipc_dev_update(scu, data->addr[0], data->data[0],
++						data->mask);
+ 	default:
+ 		return -ENOTTY;
+ 	}
+@@ -91,8 +94,40 @@ static long scu_ipc_ioctl(struct file *fp, unsigned int cmd,
+ 	return 0;
+ }
+ 
++static int scu_ipc_open(struct inode *inode, struct file *file)
++{
++	int ret = 0;
++
++	/* Only single open at the time */
++	mutex_lock(&scu_lock);
++	if (scu) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	scu = intel_scu_ipc_dev_get();
++	if (!scu)
++		ret = -ENODEV;
++
++unlock:
++	mutex_unlock(&scu_lock);
++	return ret;
++}
++
++static int scu_ipc_release(struct inode *inode, struct file *file)
++{
++	mutex_lock(&scu_lock);
++	intel_scu_ipc_dev_put(scu);
++	scu = NULL;
++	mutex_unlock(&scu_lock);
++
++	return 0;
++}
++
+ static const struct file_operations scu_ipc_fops = {
+ 	.unlocked_ioctl = scu_ipc_ioctl,
++	.open = scu_ipc_open,
++	.release = scu_ipc_release,
  };
  
--static inline int wdt_command(int sub, u32 *in, int inlen)
-+struct mid_wdt {
-+	struct watchdog_device wd;
-+	struct device *dev;
-+	struct intel_scu_ipc_dev *scu;
-+};
-+
-+static inline int
-+wdt_command(struct mid_wdt *mid, int sub, const void *in, size_t inlen, size_t size)
- {
--	return intel_scu_ipc_command(IPC_WATCHDOG, sub, in, inlen, NULL, 0);
-+	struct intel_scu_ipc_dev *scu = mid->scu;
-+
-+	return intel_scu_ipc_dev_command_with_size(scu, IPC_WATCHDOG, sub, in,
-+						   inlen, size, NULL, 0);
- }
- 
- static int wdt_start(struct watchdog_device *wd)
- {
--	struct device *dev = watchdog_get_drvdata(wd);
-+	struct mid_wdt *mid = watchdog_get_drvdata(wd);
- 	int ret, in_size;
- 	int timeout = wd->timeout;
- 	struct ipc_wd_start {
-@@ -49,38 +59,41 @@ static int wdt_start(struct watchdog_device *wd)
- 	} ipc_wd_start = { timeout - MID_WDT_PRETIMEOUT, timeout };
- 
- 	/*
--	 * SCU expects the input size for watchdog IPC to
--	 * be based on 4 bytes
-+	 * SCU expects the input size for watchdog IPC to be 2 which is the
-+	 * size of the structure in dwords. SCU IPC normally takes bytes
-+	 * but this is a special case where we specify size to be different
-+	 * than inlen.
- 	 */
- 	in_size = DIV_ROUND_UP(sizeof(ipc_wd_start), 4);
- 
--	ret = wdt_command(SCU_WATCHDOG_START, (u32 *)&ipc_wd_start, in_size);
-+	ret = wdt_command(mid, SCU_WATCHDOG_START, &ipc_wd_start,
-+			  sizeof(ipc_wd_start), in_size);
- 	if (ret)
--		dev_crit(dev, "error starting watchdog: %d\n", ret);
-+		dev_crit(mid->dev, "error starting watchdog: %d\n", ret);
- 
- 	return ret;
- }
- 
- static int wdt_ping(struct watchdog_device *wd)
- {
--	struct device *dev = watchdog_get_drvdata(wd);
-+	struct mid_wdt *mid = watchdog_get_drvdata(wd);
- 	int ret;
- 
--	ret = wdt_command(SCU_WATCHDOG_KEEPALIVE, NULL, 0);
-+	ret = wdt_command(mid, SCU_WATCHDOG_KEEPALIVE, NULL, 0, 0);
- 	if (ret)
--		dev_crit(dev, "Error executing keepalive: %d\n", ret);
-+		dev_crit(mid->dev, "Error executing keepalive: %d\n", ret);
- 
- 	return ret;
- }
- 
- static int wdt_stop(struct watchdog_device *wd)
- {
--	struct device *dev = watchdog_get_drvdata(wd);
-+	struct mid_wdt *mid = watchdog_get_drvdata(wd);
- 	int ret;
- 
--	ret = wdt_command(SCU_WATCHDOG_STOP, NULL, 0);
-+	ret = wdt_command(mid, SCU_WATCHDOG_STOP, NULL, 0, 0);
- 	if (ret)
--		dev_crit(dev, "Error stopping watchdog: %d\n", ret);
-+		dev_crit(mid->dev, "Error stopping watchdog: %d\n", ret);
- 
- 	return ret;
- }
-@@ -110,6 +123,7 @@ static int mid_wdt_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct watchdog_device *wdt_dev;
- 	struct intel_mid_wdt_pdata *pdata = dev->platform_data;
-+	struct mid_wdt *mid;
- 	int ret;
- 
- 	if (!pdata) {
-@@ -123,10 +137,13 @@ static int mid_wdt_probe(struct platform_device *pdev)
- 			return ret;
- 	}
- 
--	wdt_dev = devm_kzalloc(dev, sizeof(*wdt_dev), GFP_KERNEL);
--	if (!wdt_dev)
-+	mid = devm_kzalloc(dev, sizeof(*mid), GFP_KERNEL);
-+	if (!mid)
- 		return -ENOMEM;
- 
-+	mid->dev = dev;
-+	wdt_dev = &mid->wd;
-+
- 	wdt_dev->info = &mid_wdt_info;
- 	wdt_dev->ops = &mid_wdt_ops;
- 	wdt_dev->min_timeout = MID_WDT_TIMEOUT_MIN;
-@@ -135,7 +152,7 @@ static int mid_wdt_probe(struct platform_device *pdev)
- 	wdt_dev->parent = dev;
- 
- 	watchdog_set_nowayout(wdt_dev, WATCHDOG_NOWAYOUT);
--	watchdog_set_drvdata(wdt_dev, dev);
-+	watchdog_set_drvdata(wdt_dev, mid);
- 
- 	ret = devm_request_irq(dev, pdata->irq, mid_wdt_irq,
- 			       IRQF_SHARED | IRQF_NO_SUSPEND, "watchdog",
-@@ -145,6 +162,10 @@ static int mid_wdt_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	mid->scu = devm_intel_scu_ipc_dev_get(dev);
-+	if (!mid->scu)
-+		return -EPROBE_DEFER;
-+
- 	/*
- 	 * The firmware followed by U-Boot leaves the watchdog running
- 	 * with the default threshold which may vary. When we get here
+ static int __init ipc_module_init(void)
 -- 
 2.24.0
 
