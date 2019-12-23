@@ -2,102 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ACEC1293B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:36:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 34B301293B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 10:38:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbfLWJga (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 04:36:30 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44966 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726177AbfLWJg2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 04:36:28 -0500
-Received: by mail-lf1-f65.google.com with SMTP id v201so12073764lfa.11
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 01:36:26 -0800 (PST)
+        id S1726679AbfLWJie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 04:38:34 -0500
+Received: from mail-bn8nam11on2077.outbound.protection.outlook.com ([40.107.236.77]:6152
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726211AbfLWJid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 04:38:33 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VMh7YmjJuJGHcNsb2UslqPsKpdmTVLn6xEY2mVM7ADmZOvVUKSOno0A7boGAIUIdHXDQnO2cslOq9pXgFArYm9zFnv97w0Mtw9i3T2bvQxsDLv+BI+p8yW869E5nQxmz5DLgNWfQNE1pc4iFMv9UEbaeRTwexMdqV4mQbQwPhP3huNPn+Vv5HVq8JJNuBwk3FSYBU1I+rLjP6eJ2P04Cx+pUf7l5FgkpULa3zRzwwEE7Gpg7hqhqQb0K974uZUzW2dwRKzRh+EeunZ3ASZH3uUvyOzHN6BXXpjKWur2K0DgLLDkY0UDyrFn5li55pi5VQR3hXKVbUZ2bgJ1/nOqFGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W1LSJHjfTePHXqnX7FZjQjWWgmFiXeod42eBEYMbvss=;
+ b=E6zSW06dv9oqAlN+bz7LtkGX24atOMYb8aqY/a8m6ZbFyhK+UPQRPanW5iUGKeJa9VJ6WsPilwZvX8HO5XOuAAL0jHwy8y3F6s0qjzYlhYO5zHUZf563QawvWN9LTfI2VN/i9V7j+dlSZA/e7MSuVawaZA7ZmRfbFu2D3trppWjt8y4im2LQFS1WT+XEg7iLQGTXp8zrl37OEKDwAZirFwyTKul9fBAxmuzOw5MPAVjc1ujTuwytKB0E1K0BtJYo2wbt6w8DDgSx8BZWLwEsScVmeLYK7MHJJg7mJ3NHXK+uR2B8hk+Tg9/60YW+zchz+GtnZTNgWvBlRwmkSxsCcw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oZMn7o1oy69KXnBYV9LaAvQrLEGDsj3NY515SvELtas=;
-        b=avrYXnWBKOPWaYgT8LTFhU+8vzomKUx2Sl96gHd/iwNBc4P3GDX1FfFnkZcnKICY+e
-         Slbq/3v/7ycDaahDn38eQ9oSjXTJ6ULqiO3QZMglc0oSpktPadcxb7eUCiodL68diTwR
-         HnEDVBNViAuPHot021sCNjg050IlPRdxwr/J2sFitaZu9ahgkKyfE2pmDsPDQOA4Ps9x
-         wa2Mpv7mi50qIahge36tbWPp7ZK49PcoiZu6gmrsWScckY1EdfW49k9GJOLbQK/1BpHc
-         2fgu5iKtLX5MnanjJEpFkUze5Jijl9owFY7Gq8VvHxCQH06aD9rFm4Brqt7bM3kNXtZ6
-         at+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oZMn7o1oy69KXnBYV9LaAvQrLEGDsj3NY515SvELtas=;
-        b=jNfVx3PGabNehT+5bzPmTjJmerL8k+zBFineGdcWAwm4dLQYMoQ+AkWuramb/qv8eO
-         TxI+EzeOYAecb9hEWWnbvGrjQShDYp1M88VsNX72l9JSA8dfhzcARHySDCZ7B5M/l80f
-         YuMWX+uoID66bLevKj9Bh5/93j9uK93CwLkGuS9HDUd2eNOEW9MNPl2/YUm+GXtFrcx5
-         +EQXwbFtQ7BHNc1TZ6mPaFmUI03LGYKR3ccHiVWTICRGa94FnSsBA6Ulf1UZpV1xcG9B
-         /7RR/7KinCMwhJzjjNCJuBqmxPTlRB01y6pjiLCJ44ZFdSp2LQbxXP4Lsdifidv2D4GB
-         uQQQ==
-X-Gm-Message-State: APjAAAV71bMz8RWqo3T3FhE9iz5nd0At92BW7euKBtwX5UohwvbZxzvR
-        WKVe7YQNlmq3KZabKN8zemZoCg==
-X-Google-Smtp-Source: APXvYqzpwoVgjOExyFx7a0NvdeU+5teMlq/PIN4Ppuh7OZligwpt7aMlbtAXk3vXBz+T5ohldr/tlw==
-X-Received: by 2002:ac2:48bc:: with SMTP id u28mr16050434lfg.81.1577093786041;
-        Mon, 23 Dec 2019 01:36:26 -0800 (PST)
-Received: from ?IPv6:2a00:1fa0:4292:b2b4:35ce:e1fb:80c2:d584? ([2a00:1fa0:4292:b2b4:35ce:e1fb:80c2:d584])
-        by smtp.gmail.com with ESMTPSA id p15sm7921857lfo.88.2019.12.23.01.36.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 01:36:25 -0800 (PST)
-Subject: Re: [PATCH] xfrm: Use kmem_cache_zalloc() instead of
- kmem_cache_alloc() with flag GFP_ZERO.
-To:     Yi Wang <wang.yi59@zte.com.cn>, steffen.klassert@secunet.com
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xue.zhihong@zte.com.cn, up2wing@gmail.com, wang.liang82@zte.com.cn,
-        Huang Zijiang <huang.zijiang@zte.com.cn>
-References: <1577065982-25751-1-git-send-email-wang.yi59@zte.com.cn>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <1d8007f1-15ab-a173-a3ed-cf2235cd2cea@cogentembedded.com>
-Date:   Mon, 23 Dec 2019 12:36:22 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <1577065982-25751-1-git-send-email-wang.yi59@zte.com.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W1LSJHjfTePHXqnX7FZjQjWWgmFiXeod42eBEYMbvss=;
+ b=nYMEY3ZzMBTe1k0UGsrU+0yd5KdNY6EOIaldaCxGhk8WDc/JfZC6oesr6BKIwrSP7guj/AD3c13dVOz0CZ06tmLzBkxPwQmTzbeIzwfH0GjaYXtyW0w/e6Z32C2/mngcyqGFPbZ2UYMp6ig5DkhDPr8vNsV1uAAxmT/Kt7a2Xtg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Akshu.Agrawal@amd.com; 
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com (20.179.80.143) by
+ MN2PR12MB2925.namprd12.prod.outlook.com (20.179.81.75) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2559.16; Mon, 23 Dec 2019 09:38:30 +0000
+Received: from MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::c97e:d4c0:bfaf:5edf]) by MN2PR12MB2878.namprd12.prod.outlook.com
+ ([fe80::c97e:d4c0:bfaf:5edf%3]) with mapi id 15.20.2559.017; Mon, 23 Dec 2019
+ 09:38:30 +0000
+Subject: Re: [alsa-devel] [PATCH] ASoC: rt5682: Add option to select pulse IRQ
+ in jack detect
+To:     =?UTF-8?B?U2h1bWluZyBb6IyD5pu46YqYXQ==?= <shumingf@realtek.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     Oder Chiou <oder_chiou@realtek.com>,
+        "moderated list:SOUND" <alsa-devel@alsa-project.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>, Mark Brown <broonie@kernel.org>,
+        "yuhsuan@chromium.org" <yuhsuan@chromium.org>,
+        "Flove(HsinFu)" <flove@realtek.com>
+References: <20191220061220.229679-1-akshu.agrawal@amd.com>
+ <55cbcef1d09e43e0aac057b680c25e17@realtek.com>
+From:   "Agrawal, Akshu" <aagrawal2@amd.com>
+Message-ID: <21ae77ee-c0d1-838f-56e6-a931451b0f6e@amd.com>
+Date:   Mon, 23 Dec 2019 15:08:18 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+In-Reply-To: <55cbcef1d09e43e0aac057b680c25e17@realtek.com>
+Content-Type: text/plain; charset=big5; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXPR0101CA0001.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:c::11) To MN2PR12MB2878.namprd12.prod.outlook.com
+ (2603:10b6:208:aa::15)
+MIME-Version: 1.0
+Received: from [10.136.129.209] (165.204.157.251) by MAXPR0101CA0001.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:c::11) with Microsoft SMTP Server (version=TLS1_2, cipher=) via Frontend Transport; Mon, 23 Dec 2019 09:38:27 +0000
+X-Originating-IP: [165.204.157.251]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: a5043dce-137c-4e00-44e1-08d7878bde64
+X-MS-TrafficTypeDiagnostic: MN2PR12MB2925:|MN2PR12MB2925:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MN2PR12MB2925D5194CA29D32DB2EF1C8F82E0@MN2PR12MB2925.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4125;
+X-Forefront-PRVS: 0260457E99
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(346002)(39860400002)(366004)(396003)(136003)(199004)(189003)(478600001)(4744005)(16576012)(31696002)(81156014)(81166006)(8676002)(5660300002)(31686004)(66476007)(66556008)(66946007)(110136005)(8936002)(2616005)(316002)(6636002)(6666004)(2906002)(5009610100001)(956004)(186003)(54906003)(36756003)(16526019)(53546011)(26005)(6486002)(4326008)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB2925;H:MN2PR12MB2878.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 5m3/GapROT+ve+w1aJSet1VTtTQ+pnZDTVPbQKUvtIhEWYwlHhKYUjZkKa8IoD+ytGokOw6zEhdA18up2DtMfoaBxN++TvsQcHHajiLAjDZzrTuL2WrkApFIiBscoNcG7TMtCWHyVtY2pNPIghVbYDdx1WPIs6+o0pSkLTOM+A+u6ViGrjT6OOAAkOyM0ZmpVN3Ledor2wGW4OaLNXPJ1Y2+VO2y3gQcl85NLSV6i0141mmuZm3ee3lhNy8Odacx+T+lFC96Ck1E+Z4gIjKx5hrQ4dp8YCCwRSR71aK4Kd+a2zZCri8ujOALGlKeBYMEsqYKYvoGu7FXgLoTrI8W39d1dmENCEzD0PL27L/CeRyqvEUragc67HHKFAu5Tb3raqzKfi+BCtoV8mSxagZRS0WjJtPitgc+J/3fVMUZ4Z49EfdNmSljj7A7kiFOtcGH
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5043dce-137c-4e00-44e1-08d7878bde64
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Dec 2019 09:38:30.1909
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4Q3VjlKc7DKehM9FTBxmhXlWGYmkoiRRELIXeSD7gG89occTGKaEezDbr9GoKDuvN51svDoYYz1aoTgxgBKIAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB2925
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
 
-On 23.12.2019 4:53, Yi Wang wrote:
+On 12/23/2019 1:28 PM, Shuming [­S®Ñ»Ê] wrote:
+>> Subject: [alsa-devel] [PATCH] ASoC: rt5682: Add option to select pulse IRQ in
+>> jack detect
+>>
+>> Some SoC need to set IRQ type as pulse along with other JD1 options.
+> Could you configure GPIO IRQ by edge trigger(both rising/falling) and try again?
+> BTW, the modification doesn't make sense to name JD2.
 
-> From: Huang Zijiang <huang.zijiang@zte.com.cn>
-> 
-> Use kmem_cache_zalloc instead of manually setting kmem_cache_alloc
-> with flag GFP_ZERO since kzalloc sets allocated memory
-> to zero.
-> 
-> Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> ---
->   net/xfrm/xfrm_state.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> index a5dc319..adfa279 100644
-> --- a/net/xfrm/xfrm_state.c
-> +++ b/net/xfrm/xfrm_state.c
-> @@ -612,7 +612,7 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
->   {
->       struct xfrm_state *x;
->   
-> -    x = kmem_cache_alloc(xfrm_state_cache, GFP_ATOMIC | __GFP_ZERO);
-> +x = kmem_cache_zalloc(xfrm_state_cache, GFP_ATOMIC);
+Thanks Shuming, was about to send a mail to abandon this patch request.
 
-    You ate the indentation. :-)
+The GPIO connected to codec is not a traditional one, but a wake event. 
+Hence, it took us time to figure out the way to set it active on both 
+the edges.
 
-[...]
 
-MBR, Sergei
+Regards,
+
+Akshu
+
