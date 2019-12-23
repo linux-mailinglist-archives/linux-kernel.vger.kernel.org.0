@@ -2,237 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD4D12960C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:34:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2283129621
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 13:52:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfLWMed (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 07:34:33 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33970 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfLWMed (ORCPT
+        id S1726889AbfLWMw3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 07:52:29 -0500
+Received: from srv2.anyservers.com ([77.79.239.202]:55646 "EHLO
+        srv2.anyservers.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbfLWMw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 07:34:33 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBNCYQVr111236;
-        Mon, 23 Dec 2019 06:34:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577104466;
-        bh=luhAp8x69B7pBfJnUY11gQs7GAIFTA9VMCqiV9I3CoQ=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=mIotBoYGH4Wi7Q9O+3qotWB+ABYFvbtwgbueUsDd5dfMbszs27BJ4fH7TEoM1ubUE
-         nIpGpI/remtyz4jjNyur5FQeAFHzEGC6YREwrKOwKM24+rEeGOBvFz3C2kKv/ElQBA
-         lzmY33F5ani98+ZOunZccsrai42KzsSMKcN7Dy5s=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBNCYQGc028128
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Dec 2019 06:34:26 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
- Dec 2019 06:34:24 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 23 Dec 2019 06:34:24 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBNCYLSk080203;
-        Mon, 23 Dec 2019 06:34:22 -0600
-Subject: Re: [PATCH v1] phy: Add DisplayPort configuration options
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Yuti Amonkar <yamonkar@cadence.com>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        Maxime Ripard <maxime@cerno.tech>
-CC:     <praneeth@ti.com>, <tomi.valkeinen@ti.com>, <jsarha@ti.com>,
-        <mparab@cadence.com>, <sjakhade@cadence.com>
-References: <1577084071-5332-1-git-send-email-yamonkar@cadence.com>
- <ca6d9a16-0cba-cde7-f60c-75305f88bf33@ti.com>
-Message-ID: <64987727-12bd-ec92-ff80-0b3c330b12a3@ti.com>
-Date:   Mon, 23 Dec 2019 18:06:17 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Mon, 23 Dec 2019 07:52:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=asmblr.net;
+         s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
+        In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=TjhyZtVGXeZiT/7ziQoThyRywRWC9b0F5fUg+oxiM5Y=; b=rX6KxPMVrkp6MBh3aQqgueT0Nf
+        MlMdBwLJeOXAtFX1QO5P4C6iTT0ASsbIZPNqE7WQg44BbWrGQ/Hjsa605y8yDF4zmzRrUdhwtUnLn
+        ayLfW7q9raV8TaZVI495E0ERkQBh91JzZITMADzFXZwhHoeuEo3AWmunbE9IZ466FjdyhZcs+JWuH
+        G6kJ53tarH53zTmik6/3LAtXkaANYEJ0gDzo7LaIi0CAQxB/Ly7q8uGchgX5KoqlioFaPDnmpDw4c
+        Eai3/KpVK6CnXo49D0kfDUITuN8i2EAtvWjXqfbDsxB98nwzSxLtRoNE2Byh0ABSJiDUIUFejQIJb
+        KDocwIOg==;
+Received: from 89-64-37-27.dynamic.chello.pl ([89.64.37.27]:49046 helo=milkyway.galaxy)
+        by srv2.anyservers.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <amade@asmblr.net>)
+        id 1ijMxP-00Gi5o-61; Mon, 23 Dec 2019 13:37:07 +0100
+From:   =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
+To:     Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org,
+        =?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amade@asmblr.net>
+Subject: [PATCH 1/9] rtlwifi: rtl8192cu: Fix typo
+Date:   Mon, 23 Dec 2019 13:37:07 +0100
+Message-Id: <20191223123715.7177-2-amade@asmblr.net>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191223123715.7177-1-amade@asmblr.net>
+References: <20191223123715.7177-1-amade@asmblr.net>
 MIME-Version: 1.0
-In-Reply-To: <ca6d9a16-0cba-cde7-f60c-75305f88bf33@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv2.anyservers.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - asmblr.net
+X-Get-Message-Sender-Via: srv2.anyservers.com: authenticated_id: amade@asmblr.net
+X-Authenticated-Sender: srv2.anyservers.com: amade@asmblr.net
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Maxime (Fixed Maxime's email address)
+Replace USB_VENDER_ID_REALTEK with USB_VENDOR_ID_REALTEK.
 
-On 23/12/19 5:57 PM, Kishon Vijay Abraham I wrote:
-> + Maxime
-> 
-> Hi,
-> 
-> On 23/12/19 12:24 PM, Yuti Amonkar wrote:
->> Allow DisplayPort PHYs to be configured through the generic
->> functions through a custom structure added to the generic union.
->> The configuration structure is used for reconfiguration of
->> DisplayPort PHYs during link training operation.
->>
->> The parameters added here are the ones defined in the DisplayPort
->> spec which include link rate, number of lanes, voltage swing
->> and pre-emphasis.
-> 
-> Which version of display port specification?
-> 
-> Rest of commit log should move below the "---"
-> 
-> 
->>
->> This patch was a part of [1] series earlier but we think that it needs
->> to have a separate attention of the reviewers. Also as both [1] & [2] are
->> dependent on this patch, our sincere request to reviewers to have a
->> faster review of this patch.
->>
->> [1]
->>
->> https://lkml.org/lkml/2019/12/11/455
->>
->> [2]
->>
->> https://patchwork.kernel.org/cover/11271191/
-> 
-> Thanks
-> Kishon
-> 
->>
->> Signed-off-by: Yuti Amonkar <yamonkar@cadence.com>
->> ---
->>   include/linux/phy/phy-dp.h | 95
->> ++++++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/phy/phy.h    |  4 ++
->>   2 files changed, 99 insertions(+)
->>   create mode 100644 include/linux/phy/phy-dp.h
->>
->> diff --git a/include/linux/phy/phy-dp.h b/include/linux/phy/phy-dp.h
->> new file mode 100644
->> index 0000000..18cad23
->> --- /dev/null
->> +++ b/include/linux/phy/phy-dp.h
->> @@ -0,0 +1,95 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2019 Cadence Design Systems Inc.
->> + */
->> +
->> +#ifndef __PHY_DP_H_
->> +#define __PHY_DP_H_
->> +
->> +#include <linux/types.h>
->> +
->> +/**
->> + * struct phy_configure_opts_dp - DisplayPort PHY configuration set
->> + *
->> + * This structure is used to represent the configuration state of a
->> + * DisplayPort phy.
->> + */
->> +struct phy_configure_opts_dp {
->> +    /**
->> +     * @link_rate:
->> +     *
->> +     * Link Rate, in Mb/s, of the main link.
->> +     *
->> +     * Allowed values: 1620, 2160, 2430, 2700, 3240, 4320, 5400, 8100
->> Mb/s
->> +     */
->> +    unsigned int link_rate;
->> +
->> +    /**
->> +     * @lanes:
->> +     *
->> +     * Number of active, consecutive, data lanes, starting from
->> +     * lane 0, used for the transmissions on main link.
->> +     *
->> +     * Allowed values: 1, 2, 4
->> +     */
->> +    unsigned int lanes;
->> +
->> +    /**
->> +     * @voltage:
->> +     *
->> +     * Voltage swing levels, as specified by DisplayPort specification,
->> +     * to be used by particular lanes. One value per lane.
->> +     * voltage[0] is for lane 0, voltage[1] is for lane 1, etc.
->> +     *
->> +     * Maximum value: 3
->> +     */
->> +    unsigned int voltage[4];
->> +
->> +    /**
->> +     * @pre:
->> +     *
->> +     * Pre-emphasis levels, as specified by DisplayPort
->> specification, to be
->> +     * used by particular lanes. One value per lane.
->> +     *
->> +     * Maximum value: 3
->> +     */
->> +    unsigned int pre[4];
->> +
->> +    /**
->> +     * @ssc:
->> +     *
->> +     * Flag indicating, whether or not to enable spread-spectrum
->> clocking.
->> +     *
->> +     */
->> +    u8 ssc : 1;
->> +
->> +    /**
->> +     * @set_rate:
->> +     *
->> +     * Flag indicating, whether or not reconfigure link rate and SSC to
->> +     * requested values.
->> +     *
->> +     */
->> +    u8 set_rate : 1;
->> +
->> +    /**
->> +     * @set_lanes:
->> +     *
->> +     * Flag indicating, whether or not reconfigure lane count to
->> +     * requested value.
->> +     *
->> +     */
->> +    u8 set_lanes : 1;
->> +
->> +    /**
->> +     * @set_voltages:
->> +     *
->> +     * Flag indicating, whether or not reconfigure voltage swing
->> +     * and pre-emphasis to requested values. Only lanes specified
->> +     * by "lanes" parameter will be affected.
->> +     *
->> +     */
->> +    u8 set_voltages : 1;
->> +};
->> +
->> +#endif /* __PHY_DP_H_ */
->> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
->> index 15032f14..ba0aab5 100644
->> --- a/include/linux/phy/phy.h
->> +++ b/include/linux/phy/phy.h
->> @@ -16,6 +16,7 @@
->>   #include <linux/pm_runtime.h>
->>   #include <linux/regulator/consumer.h>
->>   +#include <linux/phy/phy-dp.h>
->>   #include <linux/phy/phy-mipi-dphy.h>
->>     struct phy;
->> @@ -46,9 +47,12 @@ enum phy_mode {
->>    *
->>    * @mipi_dphy:    Configuration set applicable for phys supporting
->>    *        the MIPI_DPHY phy mode.
->> + * @dp:        Configuration set applicable for phys supporting
->> + *        the DisplayPort protocol.
->>    */
->>   union phy_configure_opts {
->>       struct phy_configure_opts_mipi_dphy    mipi_dphy;
->> +    struct phy_configure_opts_dp        dp;
->>   };
->>     /**
->>
+Signed-off-by: Amadeusz Sławiński <amade@asmblr.net>
+---
+ .../wireless/realtek/rtlwifi/rtl8192cu/sw.c   | 34 +++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
+index ab3e4aebad39..6b954059e830 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8192cu/sw.c
+@@ -252,45 +252,45 @@ static struct rtl_hal_cfg rtl92cu_hal_cfg = {
+ 	.maps[RTL_RC_HT_RATEMCS15] = DESC_RATEMCS15,
+ };
+ 
+-#define USB_VENDER_ID_REALTEK		0x0bda
++#define USB_VENDOR_ID_REALTEK		0x0bda
+ 
+ /* 2010-10-19 DID_USB_V3.4 */
+ static const struct usb_device_id rtl8192c_usb_ids[] = {
+ 
+ 	/*=== Realtek demoboard ===*/
+ 	/* Default ID */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8191, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8191, rtl92cu_hal_cfg)},
+ 
+ 	/****** 8188CU ********/
+ 	/* RTL8188CTV */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x018a, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x018a, rtl92cu_hal_cfg)},
+ 	/* 8188CE-VAU USB minCard */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8170, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8170, rtl92cu_hal_cfg)},
+ 	/* 8188cu 1*1 dongle */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8176, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8176, rtl92cu_hal_cfg)},
+ 	/* 8188cu 1*1 dongle, (b/g mode only) */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8177, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8177, rtl92cu_hal_cfg)},
+ 	/* 8188cu Slim Solo */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817a, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817a, rtl92cu_hal_cfg)},
+ 	/* 8188cu Slim Combo */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817b, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817b, rtl92cu_hal_cfg)},
+ 	/* 8188RU High-power USB Dongle */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817d, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817d, rtl92cu_hal_cfg)},
+ 	/* 8188CE-VAU USB minCard (b/g mode only) */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817e, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817e, rtl92cu_hal_cfg)},
+ 	/* 8188RU in Alfa AWUS036NHR */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817f, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817f, rtl92cu_hal_cfg)},
+ 	/* RTL8188CUS-VL */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x818a, rtl92cu_hal_cfg)},
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x819a, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x818a, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x819a, rtl92cu_hal_cfg)},
+ 	/* 8188 Combo for BC4 */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8754, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8754, rtl92cu_hal_cfg)},
+ 
+ 	/****** 8192CU ********/
+ 	/* 8192cu 2*2 */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x8178, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x8178, rtl92cu_hal_cfg)},
+ 	/* 8192CE-VAU USB minCard */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x817c, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x817c, rtl92cu_hal_cfg)},
+ 
+ 	/*=== Customer ID ===*/
+ 	/****** 8188CU ********/
+@@ -329,7 +329,7 @@ static const struct usb_device_id rtl8192c_usb_ids[] = {
+ 
+ 	/****** 8188 RU ********/
+ 	/* Netcore */
+-	{RTL_USB_DEVICE(USB_VENDER_ID_REALTEK, 0x317f, rtl92cu_hal_cfg)},
++	{RTL_USB_DEVICE(USB_VENDOR_ID_REALTEK, 0x317f, rtl92cu_hal_cfg)},
+ 
+ 	/****** 8188CUS Slim Solo********/
+ 	{RTL_USB_DEVICE(0x04f2, 0xaff7, rtl92cu_hal_cfg)}, /*Xavi*/
+-- 
+2.24.1
+
