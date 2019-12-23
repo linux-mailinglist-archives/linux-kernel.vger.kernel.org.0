@@ -2,126 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171F612995B
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 18:29:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98C71129962
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 18:31:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726873AbfLWR3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 12:29:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55926 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726783AbfLWR3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 12:29:32 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE559206CB;
-        Mon, 23 Dec 2019 17:29:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577122171;
-        bh=OhBJDQuvvBQRwwpX9+apVAcfuyIsDuFNSzitpLw6gDg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hGjGa7kn159KcoYs07EoVhDAvpjg/dCbpae9Snkz0JnwzGXuIfM5dXtQcHYK9IJtt
-         pMRghJK2u/9o9OEeA2OESfb5tQ/ZLw2tIXWNlLUrCxDRMeGCWkSh4hixly/aRDw10v
-         u2ey43L3MYnQm7acFUNXavlKy44Ap1/3k7jM0omg=
-Date:   Mon, 23 Dec 2019 17:29:27 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "lars@metafoo.de" <lars@metafoo.de>
-Subject: Re: [PATCH] iio: core: use debugfs_remove_recursive() on IIO unload
-Message-ID: <20191223172927.1d7eee6f@archlinux>
-In-Reply-To: <4728487938a37207f20cc5d4cb6fbbdd04f56358.camel@analog.com>
-References: <20191211145903.22395-1-alexandru.ardelean@analog.com>
-        <20191215162525.56516ce4@archlinux>
-        <4728487938a37207f20cc5d4cb6fbbdd04f56358.camel@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726907AbfLWRbM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 12:31:12 -0500
+Received: from mail-io1-f70.google.com ([209.85.166.70]:36899 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfLWRbK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 12:31:10 -0500
+Received: by mail-io1-f70.google.com with SMTP id t70so11924084iof.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 09:31:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=eL67erF5b/D4o9JZa82w4s9J/Ia6904jypmJD84P8Jg=;
+        b=gUuCWcDG3v6aq8MxnOEx83sJystdxKqK/YTKOz+hk7L2B+JI11pwVL3A1kKqvdS/Uz
+         aLf8MNBZi2w18hxSRgS5ju5Quu1RnvDq3n3iLTLD4Oa2VTLyWfKFlzlVwBJN7SbvQSuZ
+         Q46M+fZDt+JjxRZJql7f8IH0JjKPxzrSupy+/THi5WrNw0HfVIqete9Cyjj0Dh/2UzrO
+         kt3C4L+m1z9/zm6zZJ65REg3xCDIX+8XyIHwiBm6lfNXn7D+qhmpVxj/h+3dFuzJXAki
+         4v2nTuH0bu1zKrwP434lSqu0hqYC7ysB9lE3UC0EVB2XQ+3+THhDugwhmgFl4EoOLs9i
+         SRrw==
+X-Gm-Message-State: APjAAAXjjHqb3CXNZ5yJAmTc6ODyF1db7N6bWIKawom6QnmOMvVqQwAM
+        lYlR/0ygSGqsamCUAK7ZXBi3damg+fATz8HbzWarBlmLqlBY
+X-Google-Smtp-Source: APXvYqyw7HWsVjlNRl3b6jvlwBnjYKNCBnTeC9/e8Rn4SkGEtpYdMlCoAuseRdhyiOaw02WHTHfNhxxp3E3BL7UiWNpZZj/WrlaC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:d18a:: with SMTP id z10mr27277028ilz.48.1577122268478;
+ Mon, 23 Dec 2019 09:31:08 -0800 (PST)
+Date:   Mon, 23 Dec 2019 09:31:08 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009484f4059a6264f6@google.com>
+Subject: KASAN: vmalloc-out-of-bounds Write in drm_fb_helper_dirty_work
+From:   syzbot <syzbot+fd418471717e1e1aa783@syzkaller.appspotmail.com>
+To:     airlied@linux.ie, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, sean@poorly.run,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 16 Dec 2019 07:43:30 +0000
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
+Hello,
 
-> On Sun, 2019-12-15 at 16:25 +0000, Jonathan Cameron wrote:
-> > [External]
-> > 
-> > On Wed, 11 Dec 2019 16:59:03 +0200
-> > Alexandru Ardelean <alexandru.ardelean@analog.com> wrote:
-> >   
-> > > From: Lars-Peter Clausen <lars@metafoo.de>
-> > > 
-> > > The debugfs dir may have multiple files/dirs attached to it. Use
-> > > debugfs_remove_recursive() to clean it up when the IIO module unloads.
-> > > 
-> > > Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
-> > > Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> > > ---
-> > > 
-> > > Note: note sure if this needs a Fixes tag. It's been in here for ages
-> > > now,
-> > >       so it may not be a big issue.  
-> > 
-> > There is some argument in favour of doing this as a defensive measure,
-> > but
-> > in current IIO debugfs directories are only created by drivers that call
-> > (indirectly) iio_device_register_debugfs and those must call
-> > (again indirectly) iio_device_unregister_debugfs which has called
-> > the recursive free on everything in their directories.  So unless
-> > something
-> > very odd is going on this isn't a bug.
-> > 
-> > Am I missing something?  
-> 
-> So, I admit my note is open for interpretation.
-> [ Rergarding the "Fixes" tag, I'm still not super-clear on when/why/how
-> it's needed. I'll get there soon though. ]
-> 
-> This patch has been in our tree since 2012, and I'm not sure why it's using
-> debugfs_remove_recursive() vs plain debugfs_remove().
-> 
-> I sometimes take a look at these old patches, try to make some sense of
-> them and upstream them, or override them with the version of upstream code.
-> My intent is to sync ADI code [for IIO] closer to upstream. Which would
-> make it easier to track any divergence.
-> 
-> We're not seeing any bug with/without this.
-> I guess my note about the "Fixes" tag may be a bit clumsy.
-> 
-> From my side, both debugfs_remove_recursive() & plain debugfs_remove() are
-> fine.
-I'd rather leave it be as it kind of avoids people thinking they can get away
-without cleaning up properly at the higher levels.
+syzbot found the following crash on:
 
-Thanks,
+HEAD commit:    62104694 Merge branch 'parisc-5.5-2' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1711b6c1e00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b59a3066828ac4c
+dashboard link: https://syzkaller.appspot.com/bug?extid=fd418471717e1e1aa783
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+userspace arch: i386
 
-Jonathan
+Unfortunately, I don't have any reproducer for this crash yet.
 
-> 
-> Thanks
-> Alex
-> 
-> > 
-> >   
-> > >  drivers/iio/industrialio-core.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/iio/industrialio-core.c
-> > > b/drivers/iio/industrialio-core.c
-> > > index 9a3579943574..dab67cb69fe6 100644
-> > > --- a/drivers/iio/industrialio-core.c
-> > > +++ b/drivers/iio/industrialio-core.c
-> > > @@ -292,7 +292,7 @@ static void __exit iio_exit(void)
-> > >  	if (iio_devt)
-> > >  		unregister_chrdev_region(iio_devt, IIO_DEV_MAX);
-> > >  	bus_unregister(&iio_bus_type);
-> > > -	debugfs_remove(iio_debugfs_dentry);
-> > > +	debugfs_remove_recursive(iio_debugfs_dentry);
-> > >  }
-> > >  
-> > >  #if defined(CONFIG_DEBUG_FS)  
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fd418471717e1e1aa783@syzkaller.appspotmail.com
 
+==================================================================
+BUG: KASAN: vmalloc-out-of-bounds in memcpy include/linux/string.h:380  
+[inline]
+BUG: KASAN: vmalloc-out-of-bounds in drm_fb_helper_dirty_blit_real  
+drivers/gpu/drm/drm_fb_helper.c:399 [inline]
+BUG: KASAN: vmalloc-out-of-bounds in drm_fb_helper_dirty_work+0x44c/0x780  
+drivers/gpu/drm/drm_fb_helper.c:428
+Write of size 4064 at addr ffffc9000adea020 by task kworker/2:2/8685
+
+CPU: 2 PID: 8685 Comm: kworker/2:2 Not tainted 5.5.0-rc2-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS  
+rel-1.12.0-59-gc9ba5276e321-prebuilt.qemu.org 04/01/2014
+Workqueue: events drm_fb_helper_dirty_work
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x197/0x210 lib/dump_stack.c:118
+  print_address_description.constprop.0.cold+0x5/0x30b mm/kasan/report.c:374
+  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
+  kasan_report+0x12/0x20 mm/kasan/common.c:639
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+  memcpy+0x38/0x50 mm/kasan/common.c:126
+  memcpy include/linux/string.h:380 [inline]
+  drm_fb_helper_dirty_blit_real drivers/gpu/drm/drm_fb_helper.c:399 [inline]
+  drm_fb_helper_dirty_work+0x44c/0x780 drivers/gpu/drm/drm_fb_helper.c:428
+  process_one_work+0x9af/0x1740 kernel/workqueue.c:2264
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2410
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+
+Memory state around the buggy address:
+  ffffc9000ade9f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffffc9000ade9f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffffc9000adea000: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+                                ^
+  ffffc9000adea080: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+  ffffc9000adea100: f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
