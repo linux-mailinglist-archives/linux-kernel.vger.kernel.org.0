@@ -2,100 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24E6112963E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 14:07:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FE5B129647
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 14:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfLWNHy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 08:07:54 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34613 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726680AbfLWNHy (ORCPT
+        id S1726903AbfLWNJC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 08:09:02 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:37694 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726680AbfLWNJA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 08:07:54 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l18so4409015lfc.1;
-        Mon, 23 Dec 2019 05:07:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5eJH2So2Y3KqY/K1ixMNRpaPpKx0b38bhcNlkypecC0=;
-        b=N7FN0ncLXb065P3FN14ZDLucMWMpNKGbWPL84vdRLA17Kc3XtT8pnSKLjbseUPj918
-         b9yDdgKBeG55jltDFLk9cDzyCHWPNVXrw4qoKL0NK/RoO24MAp8q04nFdEJcZpgaT5BF
-         Q15J2JBVrmMrQx4zFr9FLZw/VeElcbpyV3hIkGOi1aH3of4W5V7Pz5pv99zVfEeU/F0K
-         SoqCCo4ejdPWZ5XPiDBHIxGsbm8jsgy1f4YZ0a2rDR8r1ttquMOBRfzWSCRjKNS9W/oB
-         PELHjv9r8rJchpunfS3Od1m02nbafGGlA5trUX/4PLKhVRONJM6uv5xUiPD//ox37mFL
-         dK4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5eJH2So2Y3KqY/K1ixMNRpaPpKx0b38bhcNlkypecC0=;
-        b=PWdt69KWzpEnD7AY/7sODWcRHrQjmvZQqUo9v3BCfB6qr7YNZvk+29EOm3Ua821tJ+
-         BE+CG8YXe1VVGx4DVPZli06E/rRWBmmnwsaAxsQZ1q5xtOeYGMTKVfQ1tmsa9NQRTy87
-         vQuEIQCuS1XP+lSHNQ7L43sgNayRHsqrRkOTgPbeaznDsnfADIDpq45myeI49hpL5F2f
-         yjvW73cZ63P8XXcYS/SeFSjXVyIoU363G60MdJ7Yt0EHX0ejCpAjW3cM5tYpHyUhvXsC
-         3wah0m5ZeFz/yKZxJ+QknTvg/tCMwJ5qBnPmvwEkElYfYYy5XBaJBZzCW11U4TjLykvl
-         FtFA==
-X-Gm-Message-State: APjAAAVvB1MMveyg0c/S7qajWwsCOm8QX/dEnxbxul/mgvRJvqaX4ssi
-        8/Ov7Gy+lrdjfOVWPfsLNz4FAomiyjRseJKc2Wo=
-X-Google-Smtp-Source: APXvYqx35NtG2msl9BoMH2SPDevhyYA9MZsbmqBAxBohTRg/NXhM9CHIaYC1N0ZR9f0Dh28z9OhNSEDQtt4irLWQGH0=
-X-Received: by 2002:ac2:4a89:: with SMTP id l9mr16617018lfp.121.1577106471345;
- Mon, 23 Dec 2019 05:07:51 -0800 (PST)
+        Mon, 23 Dec 2019 08:09:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577106537;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=WDhMiuvfU137RixvZJ0tAKSCIy4bdz0SOh6pNb5p+Ik=;
+        b=C7XeO1icm3DsTMxXy6phUaOGsSe4CflJJDEcgKhbkcIIjGEUvSB4bJiLoDrNhGeWgqEBTp
+        Gaxlfk+nznXoEmvx4EK4bn/HyQlnlr5SEqDgQO14uiS+6/XC4Z5NQJv41oEN0M0538anBs
+        ROEU6hDWr6mZ4NiFPqXJd40CnS1e7FI=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-106-edISJ7qrMNyu_VthTGFgoA-1; Mon, 23 Dec 2019 08:08:49 -0500
+X-MC-Unique: edISJ7qrMNyu_VthTGFgoA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BECEC107ACC5;
+        Mon, 23 Dec 2019 13:08:45 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CF5461364;
+        Mon, 23 Dec 2019 13:08:33 +0000 (UTC)
+Date:   Mon, 23 Dec 2019 21:08:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Andrea Vai <andrea.vai@unipv.it>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>
+Cc:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
+        Finn Thain <fthain@telegraphics.com.au>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        USB list <linux-usb@vger.kernel.org>,
+        SCSI development list <linux-scsi@vger.kernel.org>,
+        Himanshu Madhani <himanshu.madhani@cavium.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Omar Sandoval <osandov@fb.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Hans Holmberg <Hans.Holmberg@wdc.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: AW: Slow I/O on USB media after commit
+ f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
+Message-ID: <20191223130828.GA25948@ming.t460p>
+References: <20191203022337.GE25002@ming.t460p>
+ <8196b014b1a4d91169bf3b0d68905109aeaf2191.camel@unipv.it>
+ <20191210080550.GA5699@ming.t460p>
+ <20191211024137.GB61323@mit.edu>
+ <20191211040058.GC6864@ming.t460p>
+ <20191211160745.GA129186@mit.edu>
+ <20191211213316.GA14983@ming.t460p>
+ <f38db337cf26390f7c7488a0bc2076633737775b.camel@unipv.it>
+ <20191218094830.GB30602@ming.t460p>
+ <b1b6a0e9d690ecd9432025acd2db4ac09f834040.camel@unipv.it>
 MIME-Version: 1.0
-References: <1576386975-7941-1-git-send-email-akinobu.mita@gmail.com>
-In-Reply-To: <1576386975-7941-1-git-send-email-akinobu.mita@gmail.com>
-From:   Akinobu Mita <akinobu.mita@gmail.com>
-Date:   Mon, 23 Dec 2019 22:07:39 +0900
-Message-ID: <CAC5umygqpmb0s8zHC+TFEFffQmsU4N1hUs_XWGDLtqkJEccfBw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/12] add header file for kelvin to/from Celsius
- conversion helpers
-To:     Linux NVMe Mailinglist <linux-nvme@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>,
-        linux-iio <linux-iio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Sujith Thomas <sujith.thomas@intel.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Stanislaw Gruszka <sgruszka@redhat.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1b6a0e9d690ecd9432025acd2db4ac09f834040.camel@unipv.it>
+User-Agent: Mutt/1.12.1 (2019-06-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew,
+On Mon, Dec 23, 2019 at 12:22:45PM +0100, Andrea Vai wrote:
+> Il giorno mer, 18/12/2019 alle 17.48 +0800, Ming Lei ha scritto:
+> > On Wed, Dec 18, 2019 at 09:25:02AM +0100, Andrea Vai wrote:
+> > > Il giorno gio, 12/12/2019 alle 05.33 +0800, Ming Lei ha scritto:
+> > > > On Wed, Dec 11, 2019 at 11:07:45AM -0500, Theodore Y. Ts'o
+> > wrote:
+> > > > > On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
+> > > > > > I didn't reproduce the issue in my test environment, and
+> > follows
+> > > > > > Andrea's test commands[1]:
+> > > > > > 
+> > > > > >   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
+> > > > > >   SECONDS=0
+> > > > > >   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
+> > > > > >   umount /mnt/pendrive 2>&1 |tee -a $logfile
+> > > > > > 
+> > > > > > The 'cp' command supposes to open/close the file just once,
+> > > > however
+> > > > > > ext4_release_file() & write pages is observed to run for
+> > 4358
+> > > > times
+> > > > > > when executing the above 'cp' test.
+> > > > > 
+> > > > > Why are we sure the ext4_release_file() / _fput() is coming
+> > from
+> > > > the
+> > > > > cp command, as opposed to something else that might be running
+> > on
+> > > > the
+> > > > > system under test?  _fput() is called by the kernel when the
+> > last
+> > > > 
+> > > > Please see the log:
+> > > > 
+> > > > 
+> > https://lore.kernel.org/linux-scsi/3af3666920e7d46f8f0c6d88612f143ffabc743c.camel@unipv.it/2-log_ming.zip
+> > > > 
+> > > > Which is collected by:
+> > > > 
+> > > > #!/bin/sh
+> > > > MAJ=$1
+> > > > MIN=$2
+> > > > MAJ=$(( $MAJ << 20 ))
+> > > > DEV=$(( $MAJ | $MIN ))
+> > > > 
+> > > > /usr/share/bcc/tools/trace -t -C \
+> > > >     't:block:block_rq_issue (args->dev == '$DEV') "%s %d %d",
+> > args-
+> > > > >rwbs, args->sector, args->nr_sector' \
+> > > >     't:block:block_rq_insert (args->dev == '$DEV') "%s %d %d",
+> > args-
+> > > > >rwbs, args->sector, args->nr_sector'
+> > > > 
+> > > > $MAJ:$MIN points to the USB storage disk.
+> > > > 
+> > > > From the above IO trace, there are two write paths, one is from
+> > cp,
+> > > > another is from writeback wq.
+> > > > 
+> > > > The stackcount trace[1] is consistent with the IO trace log
+> > since it
+> > > > only shows two IO paths, that is why I concluded that the write
+> > done
+> > > > via
+> > > > ext4_release_file() is from 'cp'.
+> > > > 
+> > > > [1] 
+> > > > 
+> > https://lore.kernel.org/linux-scsi/320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it/2-log_ming_20191129_150609.zip
+> > > > 
+> > > > > reference to a struct file is released.  (Specifically, if you
+> > > > have a
+> > > > > fd which is dup'ed, it's only when the last fd corresponding
+> > to
+> > > > the
+> > > > > struct file is closed, and the struct file is about to be
+> > > > released,
+> > > > > does the file system's f_ops->release function get called.)
+> > > > > 
+> > > > > So the first question I'd ask is whether there is anything
+> > else
+> > > > going
+> > > > > on the system, and whether the writes are happening to the USB
+> > > > thumb
+> > > > > drive, or to some other storage device.  And if there is
+> > something
+> > > > > else which is writing to the pendrive, maybe that's why no one
+> > > > else
+> > > > > has been able to reproduce the OP's complaint....
+> > > > 
+> > > > OK, we can ask Andrea to confirm that via the following trace,
+> > which
+> > > > will add pid/comm info in the stack trace:
+> > > > 
+> > > > /usr/share/bcc/tools/stackcount blk_mq_sched_request_inserted
+> > > > 
+> > > > Andrew, could you collect the above log again when running
+> > new/bad
+> > > > kernel for confirming if the write done by ext4_release_file()
+> > is
+> > > > from
+> > > > the 'cp' process?
+> > > 
+> > > You can find the stackcount log attached. It has been produced by:
+> > > 
+> > > - /usr/share/bcc/tools/stackcount blk_mq_sched_request_inserted >
+> > trace.log
+> > > - wait some seconds
+> > > - run the test (1 copy trial), wait for the test to finish, wait
+> > some seconds
+> > > - stop the trace (ctrl+C)
+> > 
+> > Thanks for collecting the log, looks your 'stackcount' doesn't
+> > include
+> > comm/pid info, seems there is difference between your bcc and
+> > my bcc in fedora 30.
+> > 
+> > Could you collect above log again via the following command?
+> > 
+> > /usr/share/bcc/tools/stackcount -P -K t:block:block_rq_insert
+> > 
+> > which will show the comm/pid info.
+> 
+> ok, attached (trace_20191219.txt), the test (1 trial) took 3684
+> seconds.
 
-Could you take a look at this series, and consider including into -mm tree?
+From the above trace:
 
-2019=E5=B9=B412=E6=9C=8815=E6=97=A5(=E6=97=A5) 14:16 Akinobu Mita <akinobu.=
-mita@gmail.com>:
->
-> There are several helper macros to convert kelvin to/from Celsius in
-> <linux/thermal.h> for thermal drivers.  These are useful for any other
-> drivers or subsystems, but it's odd to include <linux/thermal.h> just for
-> the helpers.
->
-> This adds a new <linux/units.h> that provides the equivalent inline
-> functions for any drivers or subsystems, and switches all the users of
-> conversion helpers in <linux/thermal.h> to use <linux/units.h>
-> helpers.
+  b'blk_mq_sched_request_inserted'
+  b'blk_mq_sched_request_inserted'
+  b'dd_insert_requests'
+  b'blk_mq_sched_insert_requests'
+  b'blk_mq_flush_plug_list'
+  b'blk_flush_plug_list'
+  b'io_schedule_prepare'
+  b'io_schedule'
+  b'rq_qos_wait'
+  b'wbt_wait'
+  b'__rq_qos_throttle'
+  b'blk_mq_make_request'
+  b'generic_make_request'
+  b'submit_bio'
+  b'ext4_io_submit'
+  b'ext4_writepages'
+  b'do_writepages'
+  b'__filemap_fdatawrite_range'
+  b'ext4_release_file'
+  b'__fput'
+  b'task_work_run'
+  b'exit_to_usermode_loop'
+  b'do_syscall_64'
+  b'entry_SYSCALL_64_after_hwframe'
+    b'cp' [19863]
+    4400
+
+So this write is clearly from 'cp' process, and it should be one
+ext4 fs issue.
+
+Ted, can you take a look at this issue?
+
+> 
+> > > I also tried the usual test with btrfs and xfs. Btrfs behavior
+> > looks
+> > > "good". xfs seems sometimes better, sometimes worse, I would say.
+> > I
+> > > don't know if it matters, anyway you can also find the results of
+> > the
+> > > two tests (100 trials each). Basically, btrfs is always between 68
+> > and
+> > > 89 seconds, with a cyclicity (?) with "period=2 trials". xfs looks
+> > > almost always very good (63-65s), but sometimes "bad" (>300s).
+> > 
+> > If you are interested in digging into this one, the following trace
+> > should be helpful:
+> > 
+> > https://lore.kernel.org/linux-scsi/f38db337cf26390f7c7488a0bc2076633737775b.camel@unipv.it/T/#m5aa008626e07913172ad40e1eb8e5f2ffd560fc6
+> > 
+> 
+> Attached:
+> - trace_xfs_20191223.txt (7 trials, then aborted while doing the 8th),
+> times to complete:
+> 64s
+> 63s
+> 64s
+> 833s
+> 1105s
+> 63s
+> 64s
+
+oops, looks we have to collect io insert trace with the following bcc script
+on xfs for confirming if there is similar issue with ext4, could you run
+it again on xfs? And only post the trace done in case of slow 'cp'.
+
+
+#!/bin/sh
+
+MAJ=$1
+MIN=$2
+MAJ=$(( $MAJ << 20 ))
+DEV=$(( $MAJ | $MIN ))
+
+/usr/share/bcc/tools/trace -t -C \
+    't:block:block_rq_issue (args->dev == '$DEV') "%s %d %d", args->rwbs, args->sector, args->nr_sector' \
+    't:block:block_rq_insert (args->dev == '$DEV') "%s %d %d", args->rwbs, args->sector, args->nr_sector'
+
+
+Thanks,
+Ming
+
