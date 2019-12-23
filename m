@@ -2,108 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF65712930E
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 09:21:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D33129331
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 09:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727005AbfLWIVa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 03:21:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbfLWIV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 03:21:26 -0500
-Received: from localhost (36-236-5-169.dynamic-ip.hinet.net [36.236.5.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 455C520709;
-        Mon, 23 Dec 2019 08:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577089285;
-        bh=CI4damfoVOqesRhxTqcMsarysNXofJvnDHFVbybcD04=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MRMHerIt/URp/OzCxUrh2EDmUXemsUcaWIUOiiLH1WpdG/7lAOapzpbXBzzY4aYtS
-         MOyp2ktirqjyJhppwNO9pcU185y5CBgikxH83s5ZFqV22jH7Lw22EZEEbQeFT2+h3t
-         Y+uVEnCc3byuX6CRprvEp0rJykeo6zISXtRdFXeg=
-From:   Andy Lutomirski <luto@kernel.org>
-To:     Ted Ts'o <tytso@mit.edu>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        "Ahmed S. Darwish" <darwish.07@gmail.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Alexander E. Patrakov" <patrakov@gmail.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Willy Tarreau <w@1wt.eu>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        Stephan Mueller <smueller@chronox.de>,
-        Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH v3 8/8] random: Remove kernel.random.read_wakeup_threshold
-Date:   Mon, 23 Dec 2019 00:20:51 -0800
-Message-Id: <a74ed2cf0b5a5451428a246a9239f5bc4e29358f.1577088521.git.luto@kernel.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <cover.1577088521.git.luto@kernel.org>
-References: <cover.1577088521.git.luto@kernel.org>
+        id S1726059AbfLWIlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 03:41:14 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41523 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbfLWIlO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 03:41:14 -0500
+Received: by mail-ot1-f66.google.com with SMTP id r27so21194602otc.8;
+        Mon, 23 Dec 2019 00:41:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cDv9UaL4HKxCZwOpeNm1xbtf2cmQl4fg1wQxfmqaPlY=;
+        b=f2zAyaDXwgl4tc6L5OljcVFXROCwReDChWEOjREH3Ho857KqigiMUBkYVvSd9Tj21t
+         T6dDGuVTd4kwkAz9j8VTiyi9MdhvwvMV6WyJgMB8w/jXVz9q0SgmWbn3WaH7m1/x3BDV
+         QjUAnUJh+aL56YOlwDH6jE/T+OTqKsGzF5cbWnWN3s1gyBmhWOuoFK+6YNpwqCwj4p9u
+         en0NQGwgdDcdJy3WAiW4/UeYffsh96tljoF1cLZINldvnRPnD3fEwlQ0mzWYKHDh37wQ
+         bp3Gky2wuhiLt+mUrw1cxYleKMSomU8EstGezn5MiT5fQTNleS7xVoNF83vl/1scPhUa
+         4moQ==
+X-Gm-Message-State: APjAAAUTg841JTkrunoyV5cnT2VNz6KEm8sHHrGmN7htgWkekBzEtLAs
+        JXD/cOcWB1E4rM3nud9ZzJI81cSR6rABozRRZ5Dolbfo
+X-Google-Smtp-Source: APXvYqx2KCiv7cxuDdzBfA2c2NhXkW2xa7BGOvhzkGGauQ0VJ6aD6A5SkDirLFnjAg8AJrwmGlawMoHMEhNiYeHVBR4=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr31479287ots.250.1577090473314;
+ Mon, 23 Dec 2019 00:41:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191223040020.109570-1-yuchao0@huawei.com>
+In-Reply-To: <20191223040020.109570-1-yuchao0@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 23 Dec 2019 09:41:02 +0100
+Message-ID: <CAMuHMdUDMv_mMw_ZU4BtuRKX1OvMhjLWw2owTcAP-0D4j5XROw@mail.gmail.com>
+Subject: Re: [PATCH] f2fs: introduce DEFAULT_IO_TIMEOUT_JIFFIES
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chao Yu <chao@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It has no effect any more, so remove it.  We can revert this if
-there is some user code that expects to be able to set this sysctl.
+Hi,
 
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
----
- drivers/char/random.c | 18 +-----------------
- 1 file changed, 1 insertion(+), 17 deletions(-)
+CC linux-fsdevel
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 920bf771e3e1..2a6818cae2d6 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -369,12 +369,6 @@
- #define ENTROPY_SHIFT 3
- #define ENTROPY_BITS(r) ((r)->entropy_count >> ENTROPY_SHIFT)
- 
--/*
-- * The minimum number of bits of entropy before we wake up a read on
-- * /dev/random.  Should be enough to do a significant reseed.
-- */
--static int random_read_wakeup_bits = 64;
--
- /*
-  * If the entropy count falls under this number of bits, then we
-  * should wake up processes which are selecting or polling on write
-@@ -2053,8 +2047,7 @@ SYSCALL_DEFINE3(getrandom, char __user *, buf, size_t, count,
- 
- #include <linux/sysctl.h>
- 
--static int min_read_thresh = 8, min_write_thresh;
--static int max_read_thresh = OUTPUT_POOL_WORDS * 32;
-+static int min_write_thresh;
- static int max_write_thresh = INPUT_POOL_WORDS * 32;
- static int random_min_urandom_seed = 60;
- static char sysctl_bootid[16];
-@@ -2129,15 +2122,6 @@ struct ctl_table random_table[] = {
- 		.proc_handler	= proc_do_entropy,
- 		.data		= &input_pool.entropy_count,
- 	},
--	{
--		.procname	= "read_wakeup_threshold",
--		.data		= &random_read_wakeup_bits,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= &min_read_thresh,
--		.extra2		= &max_read_thresh,
--	},
- 	{
- 		.procname	= "write_wakeup_threshold",
- 		.data		= &random_write_wakeup_bits,
+On Mon, Dec 23, 2019 at 5:01 AM Chao Yu <yuchao0@huawei.com> wrote:
+> As Geert Uytterhoeven reported:
+>
+> for parameter HZ/50 in congestion_wait(BLK_RW_ASYNC, HZ/50);
+>
+> On some platforms, HZ can be less than 50, then unexpected 0 timeout
+> jiffies will be set in congestion_wait().
+>
+> This patch introduces a macro DEFAULT_IO_TIMEOUT_JIFFIES to limit
+> mininum value of timeout jiffies.
+>
+> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+
+Thanks for your patch!
+
+> ---
+>  fs/f2fs/compress.c |  3 ++-
+>  fs/f2fs/data.c     |  5 +++--
+>  fs/f2fs/f2fs.h     |  2 ++
+>  fs/f2fs/gc.c       |  3 ++-
+>  fs/f2fs/inode.c    |  3 ++-
+>  fs/f2fs/node.c     |  3 ++-
+>  fs/f2fs/recovery.c |  6 ++++--
+>  fs/f2fs/segment.c  | 12 ++++++++----
+>  fs/f2fs/super.c    |  6 ++++--
+>  9 files changed, 29 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index 1bc86a54ad71..ee4fe8e644aa 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -945,7 +945,8 @@ static int f2fs_write_raw_pages(struct compress_ctx *cc,
+>                         } else if (ret == -EAGAIN) {
+>                                 ret = 0;
+>                                 cond_resched();
+> -                               congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +                               congestion_wait(BLK_RW_ASYNC,
+> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                                 lock_page(cc->rpages[i]);
+>                                 clear_page_dirty_for_io(cc->rpages[i]);
+>                                 goto retry_write;
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index f1f5c701228d..78b5c0b0287e 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2320,7 +2320,8 @@ int f2fs_encrypt_one_page(struct f2fs_io_info *fio)
+>                 /* flush pending IOs and wait for a while in the ENOMEM case */
+>                 if (PTR_ERR(fio->encrypted_page) == -ENOMEM) {
+>                         f2fs_flush_merged_writes(fio->sbi);
+> -                       congestion_wait(BLK_RW_ASYNC, HZ/50);
+> +                       congestion_wait(BLK_RW_ASYNC,
+> +                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                         gfp_flags |= __GFP_NOFAIL;
+>                         goto retry_encrypt;
+>                 }
+> @@ -2900,7 +2901,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>                                         if (wbc->sync_mode == WB_SYNC_ALL) {
+>                                                 cond_resched();
+>                                                 congestion_wait(BLK_RW_ASYNC,
+> -                                                               HZ/50);
+> +                                                       DEFAULT_IO_TIMEOUT_JIFFIES);
+>                                                 goto retry_write;
+>                                         }
+>                                         goto next;
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 16edbf4e05e8..4bdc20a94185 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -559,6 +559,8 @@ enum {
+>
+>  #define DEFAULT_RETRY_IO_COUNT 8       /* maximum retry read IO count */
+>
+> +#define        DEFAULT_IO_TIMEOUT_JIFFIES      (max_t(long, HZ/50, 1))
+> +
+>  /* maximum retry quota flush count */
+>  #define DEFAULT_RETRY_QUOTA_FLUSH_COUNT                8
+>
+
+Seeing other file systems (ext4, xfs) and even core MM code suffers from
+the same issue, perhaps it makes sense to move this into congestion_wait(),
+i.e. increase the timeout to 1 if it's zero in the latter function?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.23.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
