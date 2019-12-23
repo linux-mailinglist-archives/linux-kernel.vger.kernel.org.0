@@ -2,85 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA9671290D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 03:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3D0E1290D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 03:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfLWCGu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 22 Dec 2019 21:06:50 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:2535 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726215AbfLWCGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 22 Dec 2019 21:06:50 -0500
-Received: from DGGEMM402-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id 21A7A9D47367D63EB243;
-        Mon, 23 Dec 2019 10:06:47 +0800 (CST)
-Received: from dggeme755-chm.china.huawei.com (10.3.19.101) by
- DGGEMM402-HUB.china.huawei.com (10.3.20.210) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 23 Dec 2019 10:06:46 +0800
-Received: from [127.0.0.1] (10.173.221.248) by dggeme755-chm.china.huawei.com
- (10.3.19.101) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 23
- Dec 2019 10:06:46 +0800
-Subject: Re: [PATCH 1/5] KVM: arm64: Document PV-lock interface
-To:     Markus Elfring <Markus.Elfring@web.de>, <kvm@vger.kernel.org>,
-        <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-doc@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        "Marc Zyngier" <maz@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Steven Price <steven.price@arm.com>,
-        "Suzuki K. Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will@kernel.org>
-References: <20191217135549.3240-2-yezengruan@huawei.com>
- <2337a083-499f-7778-7bf3-9f525a04e17a@web.de>
-From:   yezengruan <yezengruan@huawei.com>
-Message-ID: <6d798e02-7ab2-fc58-9f75-ee74de97ae72@huawei.com>
-Date:   Mon, 23 Dec 2019 10:06:43 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1726671AbfLWCKY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 22 Dec 2019 21:10:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39264 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726215AbfLWCKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 22 Dec 2019 21:10:24 -0500
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 703E8206B7;
+        Mon, 23 Dec 2019 02:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577067023;
+        bh=IP8jrLcMX+FKOOup0LQ7X+9yrMN/Bg1Te1ZjcEOE5SA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yYVxAX3TAylTNpTa/K6tJTOmBFPWzkqHdSuzfj81IJvlXnKaY53ug72iFEyp6w/EH
+         Jvp1HF5udbqXXoOHd+C6/SkMrEoNA409Ts2J6MrsjJ+c7ggAiT1gFlD8/biPtxY+BH
+         Y12bRsVm6C63qv3UWFDL+4Oj/H2wwsvixH++fG2o=
+Date:   Mon, 23 Dec 2019 10:10:04 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] arm64: dts: lx2160a: add EMDIO1 and phy nodes
+Message-ID: <20191223021003.GD11523@dragon>
+References: <20191204165828.29893-1-ioana.ciornei@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <2337a083-499f-7778-7bf3-9f525a04e17a@web.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.173.221.248]
-X-ClientProxiedBy: dggeme703-chm.china.huawei.com (10.1.199.99) To
- dggeme755-chm.china.huawei.com (10.3.19.101)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191204165828.29893-1-ioana.ciornei@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Markus,
+Hi Ioana,
 
-On 2019/12/20 22:32, Markus Elfring wrote:
-> …
->> +++ b/Documentation/virt/kvm/arm/pvlock.rst
-> …
->> +Paravirtualized lock support for arm64
->> +======================================
->> +
->> +KVM/arm64 provids some …
-> …
+On Wed, Dec 04, 2019 at 06:58:26PM +0200, Ioana Ciornei wrote:
+> This patch set adds the External MDIO1 node and the two
+> RGMII PHYs connected to it.
 > 
-> I suggest to avoid a typo here.
-
-Thanks for posting this.
-
+> Changes in v2:
+>  - added a newline between nodes in 2/2
+>  - moved the WRIOP node (sorted by unit address) in 1/2
 > 
-> Regards,
-> Markus
-> 
+> Ioana Ciornei (2):
+>   arm64: dts: lx2160a: add emdio1 node
+>   arm64: dts: lx2160a: add RGMII phy nodes
 
-Thanks,
+I was just reminded by people who want to search the patch on
+linux-arm-kernel@lists.infradead.org, that you should copy that list as
+well.  Generally you should use scripts/get_maintainer.pl to find
+recipients when sending patches.
 
-Zengruan
-
+Shawn
