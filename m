@@ -2,100 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8004D12927C
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:48:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1589F129288
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:51:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbfLWHsP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 02:48:15 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43475 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfLWHsP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:48:15 -0500
-Received: by mail-qt1-f196.google.com with SMTP id d18so12034944qtj.10;
-        Sun, 22 Dec 2019 23:48:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2FJiERJq8seSOSllZH5YEQwwR1oj81w19nx1TE+EiOU=;
-        b=DLtTzH9MNQBe0QaZgTDVJi1ZZHB9hfP3crI9OK2Y0wAG9ltJOO/KTTAH+Ers5VFoWc
-         vCsPz/gxO1GKNLyLLT2INRzujN8gbcoLHi794Klpqqhrf5aUh9kCQY61m0q5FOMv7pWL
-         4vliKQtnC+QVtiSFA7lZB7mraLCi3TbUVbumJioSAWZ7wrBAgfD51yFr+0OHd3dwjbM/
-         DZ4+tTzwy+z3BJpGVwgr1o64tavDOeMuBwh2ciffMRDfutiy0CKnH+ZVPvj88ySgYG+d
-         RZNZDrRjJoo/WcNQcEakrBYwN8Hf2CiU3dsO6AQaY6jsuGIXeJEaWCt2UJfhc+75m/gW
-         tuSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2FJiERJq8seSOSllZH5YEQwwR1oj81w19nx1TE+EiOU=;
-        b=bSMSQfQ6VqjTE8YOte9Pb3Jwt7sHYpN+dpZjRnO+7KztDO0mnjF3mqpi7nWMMlrnnh
-         1oTetJ5+zk9TOnmJ0sCjsljnyFTCep3UcGchvpzYb7ilL8BZddmL9JHN9PB9RBonMI+I
-         w6m9NjfptDvyqfTOtFgJYSHlzvp2muqRTQfW6DPr89C6VOJ+J9v3KeA+lYQegvoxXsSX
-         aVIgy+YTXbphMISjkSM8O5azofxif8XR8cjiuUTWQbGlGfLsCtrnnYkuztwQ7NbRZ2QL
-         DydG2E8ytlDHU6oDl8KRCKMcInMqeRp/fHtTh+mokGM4/SKlTQbqwfXcjbQU8J80hc52
-         9nwQ==
-X-Gm-Message-State: APjAAAU92GSzLsuy3xdYJ3VTE+4JT9vV+PA4AcfYi3TY9pMRZS0aq8WU
-        2oDk/LqgEMOPqjVtgsCyz73En9Ian9uIL5n8V8k=
-X-Google-Smtp-Source: APXvYqyvf3vxurJvXfLOn2BfIE0NvTSP3CZXj/aOJrKdFo9xEcgZ7fdeYCMSQNPTYo8AeyffGkTIQU2xcVU6QMYEmyI=
-X-Received: by 2002:ac8:541a:: with SMTP id b26mr22512155qtq.276.1577087294188;
- Sun, 22 Dec 2019 23:48:14 -0800 (PST)
+        id S1726059AbfLWHvt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 02:51:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57110 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725810AbfLWHvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 02:51:48 -0500
+Received: from localhost (unknown [223.226.34.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7EA992081E;
+        Mon, 23 Dec 2019 07:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577087508;
+        bh=oW2xxtRpv875kyNQhyqk3EKF34qFvDngT6PxUmGhQvg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AbNUWnyGzlxuavrEQZEjE+QUHOcaT4ZawKBP2KmIaMgFxiRvIm6LxqRbQDHzbkVMW
+         N+Ygclbe51F/AwjA2e4Ps6keyWe+IjCnmimn09dsHtOvou3cQblRN05+vhoadF7NJ8
+         oZV8LXmZRW7JhOb4NQUL1+MxVjAxgs4d9c5gSBP8=
+Date:   Mon, 23 Dec 2019 13:21:43 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, ryan@edited.us,
+        aserbinski@gmail.com, dmaengine@vger.kernel.org
+Subject: Re: [PATCH] k3dma: Avoid null pointer traversal
+Message-ID: <20191223075143.GC2536@vkoul-mobl>
+References: <20191218190906.6641-1-john.stultz@linaro.org>
 MIME-Version: 1.0
-References: <8d5358a67746b2aff5f6995cabd11d0d7c9e579e.1575978484.git.baolin.wang7@gmail.com>
- <dd3303a956e7dd5c065ac2b92b1dea7ee5d1df17.1575978484.git.baolin.wang7@gmail.com>
- <CADBw62o3vW_hdFwcMdQFJqx2HpNhCEHOxADQO9LztzpqCVQBpg@mail.gmail.com> <547d91fa-66c5-e3bb-4028-2578f070695c@linaro.org>
-In-Reply-To: <547d91fa-66c5-e3bb-4028-2578f070695c@linaro.org>
-From:   Baolin Wang <baolin.wang7@gmail.com>
-Date:   Mon, 23 Dec 2019 15:48:02 +0800
-Message-ID: <CADBw62pcYZ_GR1OrS3VG-Y1T8CYOcL4pRzTwBt6of4ZmzhhNng@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] thermal: sprd: Add Spreadtrum thermal driver support
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        amit.kucheria@verdurent.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>, freeman.liu@unisoc.com,
-        Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191218190906.6641-1-john.stultz@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+On 18-12-19, 19:09, John Stultz wrote:
+> In some cases we seem to submit two transactions in a row, which
+> causes us to lose track of the first. If we then cancel the
+> request, we may still get an interrupt, which traverses a null
+> ds_run value.
+> 
+> So try to avoid starting a new transaction if the ds_run value
+> is set.
+> 
+> While this patch avoids the null pointer crash, I've had some
+> reports of the k3dma driver still getting confused, which
+> suggests the ds_run/ds_done value handling still isn't quite
+> right. However, I've not run into an issue recently with it
+> so I think this patch is worth pushing upstream to avoid the
+> crash.
 
-On Mon, Dec 23, 2019 at 3:42 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
->
-> Hi Baolin,
->
-> On 23/12/2019 07:31, Baolin Wang wrote:
-> > Hi Rui and Daniel,
-> >
-> > On Tue, Dec 10, 2019 at 8:08 PM Baolin Wang <baolin.wang7@gmail.com> wrote:
-> >>
-> >> From: Freeman Liu <freeman.liu@unisoc.com>
-> >>
-> >> This patch adds the support for Spreadtrum thermal sensor controller,
-> >> which can support maximum 8 sensors.
-> >>
-> >> Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> >> Signed-off-by: Baolin Wang <baolin.wang7@gmail.com>
-> >> ---
-> >> Changes from v1:
-> >>  - None.
-> >> ---
-> >
-> > Any comments for this patch? Thanks.
->
-> as it is a new driver, it takes a bit more time for the review.
+Applied after adding dmaengine tag, thanks
 
-Sure, thanks.
-
->
-> By the way, is there any open documentation for the hardware?
-
-Unfortunately, our company did not supply public documentation for
-thermal until now.
+-- 
+~Vinod
