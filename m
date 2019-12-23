@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23C86129526
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:34:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3400D129533
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 12:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfLWLeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 06:34:01 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44138 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfLWLd7 (ORCPT
+        id S1727260AbfLWLeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 06:34:22 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36941 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727071AbfLWLeA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 06:33:59 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v201so12341835lfa.11
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 03:33:56 -0800 (PST)
+        Mon, 23 Dec 2019 06:34:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b15so12385496lfc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 03:33:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4Sx+Ffce1P6yPQB1Yvs6yRRad8RPj7QM5hUn0Iss1Ak=;
-        b=CJgFlssV6Q26pqI4XnvLGZZpr3PUlJEKjXNorCXRAON27GCx7y19UES7qx9WSjemHL
-         N8jjs+rNVRScoE6oX50pQb+VVM5+U6y4HDPUAdixaboQPBIY9cd4/ME5Leni5kSg4QZB
-         hQhrHBrfjrsghxqbxsT5THsrwjYWLXDz2SNuCCpz9FAEcAs/lUf0Vo8R+zL72dMrLN8Q
-         R/tBXhOtrjTbpou8BkOJQfnUbtk+eq+VNLwupF/9DtVrl25V+YEB1pOy4Gxpde3AbRA0
-         s9i9IOocRabnu5Q8OYvCtK0XDDgI6MWWQV5ZGU3+qENrUctLjaQUn8rGPGj2pAmBWgMk
-         GaLQ==
+        bh=sBimMWrdiMS/SV7r+5Ho5hP1ycHxH3KojpEjAurdcyM=;
+        b=mlSP65helcix43S4kYjoy7IdhCNeN6X9/Gzt8FHVW3rKKkYhTIulY3g7ghBKgjWRMH
+         AEbecyq9sNCDK+1HqQIZacoEFrQeznI+7R6AZP/q/1h3Sd8MA4zy19eZdav30HJJQCsT
+         aYBm5QG7VmFOWr99YH3rDW+Pk7PRRVlKCSDdu6hfDkDZanQPy6r31LKVEdjzVoLeMKGv
+         Pha6gbPBA+uYnNNnVxzJqqkuryRXicySanGWQx/eRhGlBiHqeyWOWzoLLbIo+PcBlLJP
+         P9gJWucyWOpfBMpwEojvR8XeRDrVsDxDwq4vYKF9ngo3JcTYf3EgJPCfG/b02bSvWYzn
+         +ing==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4Sx+Ffce1P6yPQB1Yvs6yRRad8RPj7QM5hUn0Iss1Ak=;
-        b=nMLl8c/DuSnK5YnC1PHNjUABpZ5Km0rNX41jy5tFZoVs94DS/x7LgE3CZ4du9I8lZC
-         yljlxZY/lcj22szoFWbMoBsG1G+yL5mSq7haXtCGMpYztTzVjHZHAvT7h5ClL+ubyaL2
-         HPS1NHaOCzO7kObhwQwDMAx+KOjwQ5GBHIhxQbb+ys3/rDPCBgex5B4Mq87DdhMXRBlR
-         NnbQRayj6Ay7v8Fe++D37PqeqW418W6bwrPhVvW+mXRR+eCqFinKZggZlmpL4Ol608Lc
-         1gqIK7IK/anrTiOvHCh2MzJg9GzVba+eGPobX+TYKYjHELRask1k45nBB5WEsbdCd+zm
-         nysg==
-X-Gm-Message-State: APjAAAVWTH4QVdmb/22dDCv4LagUHAsZyBxFMfL9/pZO6eCR5LcaueSR
-        w6cp9YM67btqgBUOnLmvxxlvcQ==
-X-Google-Smtp-Source: APXvYqzzNRlCX77afyK3/FXf98VOYFsHshktgmtcqghEPAJma5YIwTfOCA6GtEa6JqQOKVF0iRr9eg==
-X-Received: by 2002:ac2:5635:: with SMTP id b21mr16568619lff.127.1577100836099;
-        Mon, 23 Dec 2019 03:33:56 -0800 (PST)
+        bh=sBimMWrdiMS/SV7r+5Ho5hP1ycHxH3KojpEjAurdcyM=;
+        b=b/8MfKvHhCv53RtqW38rP8VAZyZo5nTVKiJ3qsyiGgXotJUVkCAjrfGbL834ffmKd+
+         e/8ZWO1tvaiIpWOY8P7apSW2075oC1J9i07kHwPfUcZm7HH/dxnlbETUwz8h3UNDGWNM
+         F80KqF0V17XkRRBanrc+7SmaZuEE4SymAZr0bapRKIbQDnvNw+c5chKiyYIHYv4pqjti
+         CisZIf1Z2tRV6x9YF+tHccFMTSPhms/D+AMT1eXRyCaMlog0vHGcR9hZfp20J5j+bk4P
+         xSHbVL2pY9cP/OunwY3vVaLRDACz0zMpojDKqTdKOIDQHhxA/GKZ/NWoOq7XfbAVVKtZ
+         l6og==
+X-Gm-Message-State: APjAAAU/BJ6aTDrzpnTPEgeSoaLgjH//qTX14NQZiLMHQcfdTIOqWyqd
+        N39l/7FU3FlhS5EyjZO1lQF+3Q==
+X-Google-Smtp-Source: APXvYqzNQeIlnqJ9Q58fzbaMBMbdzLjp1AzAkBXc7OZXrp63OsEZ2mdJs3uB3vl1oU8eUb4oaGFNhw==
+X-Received: by 2002:ac2:531b:: with SMTP id c27mr16168656lfh.91.1577100837875;
+        Mon, 23 Dec 2019 03:33:57 -0800 (PST)
 Received: from localhost.localdomain ([37.157.136.193])
-        by smtp.gmail.com with ESMTPSA id g15sm8381500ljk.8.2019.12.23.03.33.55
+        by smtp.gmail.com with ESMTPSA id g15sm8381500ljk.8.2019.12.23.03.33.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Dec 2019 03:33:55 -0800 (PST)
+        Mon, 23 Dec 2019 03:33:57 -0800 (PST)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org
 Cc:     Vikash Garodia <vgarodia@codeaurora.org>, dikshita@codeaurora.org,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 08/12] dt-bindings: media: venus: Convert sdm845 to DT schema
-Date:   Mon, 23 Dec 2019 13:33:07 +0200
-Message-Id: <20191223113311.20602-9-stanimir.varbanov@linaro.org>
+Subject: [PATCH v3 09/12] dt-bindings: media: venus: Add sdm845v2 DT schema
+Date:   Mon, 23 Dec 2019 13:33:08 +0200
+Message-Id: <20191223113311.20602-10-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191223113311.20602-1-stanimir.varbanov@linaro.org>
 References: <20191223113311.20602-1-stanimir.varbanov@linaro.org>
@@ -60,25 +60,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert qcom,sdm845-venus Venus binding to DT schema.
+Add new qcom,sdm845-venus-v2 DT binding schema.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 ---
- .../bindings/media/qcom,sdm845-venus.yaml     | 157 ++++++++++++++++++
- 1 file changed, 157 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
+ .../bindings/media/qcom,sdm845-venus-v2.yaml  | 139 ++++++++++++++++++
+ 1 file changed, 139 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
+diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
 new file mode 100644
-index 000000000000..ceae04be96dd
+index 000000000000..d38d932d2722
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus.yaml
-@@ -0,0 +1,157 @@
++++ b/Documentation/devicetree/bindings/media/qcom,sdm845-venus-v2.yaml
+@@ -0,0 +1,139 @@
 +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +
 +%YAML 1.2
 +---
-+$id: "http://devicetree.org/schemas/media/qcom,sdm845-venus.yaml#"
++$id: "http://devicetree.org/schemas/media/qcom,sdm845-venus-v2.yaml#"
 +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
 +
 +title: Qualcomm Venus video encode and decode accelerators
@@ -92,7 +92,7 @@ index 000000000000..ceae04be96dd
 +
 +properties:
 +  compatible:
-+    const: "qcom,sdm845-venus"
++    const: "qcom,sdm845-venus-v2"
 +
 +  reg:
 +    maxItems: 1
@@ -101,17 +101,27 @@ index 000000000000..ceae04be96dd
 +    maxItems: 1
 +
 +  power-domains:
-+    minItems: 1
-+    maxItems: 1
++    maxItems: 3
++
++  power-domain-names:
++    maxItems: 3
++    items:
++      - const: venus
++      - const: vcodec0
++      - const: vcodec1
 +
 +  clocks:
-+    maxItems: 3
++    maxItems: 7
 +
 +  clock-names:
 +    items:
 +      - const: core
 +      - const: iface
 +      - const: bus
++      - const: vcodec0_core
++      - const: vcodec0_bus
++      - const: vcodec1_core
++      - const: vcodec1_bus
 +
 +  iommus:
 +    minItems: 1
@@ -127,23 +137,8 @@ index 000000000000..ceae04be96dd
 +      compatible:
 +        const: "venus-decoder"
 +
-+      clocks:
-+        maxItems: 2
-+
-+      clock-names:
-+        items:
-+          - const: core
-+          - const: bus
-+
-+      power-domains:
-+        minItems: 1
-+        maxItems: 1
-+
 +    required:
 +      - compatible
-+      - clocks
-+      - clock-names
-+      - power-domains
 +
 +    additionalProperties: false
 +
@@ -154,23 +149,8 @@ index 000000000000..ceae04be96dd
 +      compatible:
 +        const: "venus-encoder"
 +
-+      clocks:
-+        maxItems: 2
-+
-+      clock-names:
-+        items:
-+          - const: core
-+          - const: bus
-+
-+      power-domains:
-+        minItems: 1
-+        maxItems: 1
-+
 +    required:
 +      - compatible
-+      - clocks
-+      - clock-names
-+      - power-domains
 +
 +    additionalProperties: false
 +
@@ -190,6 +170,7 @@ index 000000000000..ceae04be96dd
 +  - reg
 +  - interrupts
 +  - power-domains
++  - power-domain-names
 +  - clocks
 +  - clock-names
 +  - iommus
@@ -203,32 +184,33 @@ index 000000000000..ceae04be96dd
 +        #include <dt-bindings/clock/qcom,videocc-sdm845.h>
 +
 +        video-codec@aa00000 {
-+                compatible = "qcom,sdm845-venus";
++                compatible = "qcom,sdm845-venus-v2";
 +                reg = <0 0x0aa00000 0 0xff000>;
 +                interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
 +                clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
 +                         <&videocc VIDEO_CC_VENUS_AHB_CLK>,
-+                         <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>;
-+                clock-names = "core", "iface", "bus";
-+                power-domains = <&videocc VENUS_GDSC>;
++                         <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>,
++                         <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
++                         <&videocc VIDEO_CC_VCODEC0_AXI_CLK>,
++                         <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
++                         <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
++                clock-names = "core", "iface", "bus",
++                              "vcodec0_core", "vcodec0_bus",
++                              "vcodec1_core", "vcodec1_bus";
++                power-domains = <&videocc VENUS_GDSC>,
++                                <&videocc VCODEC0_GDSC>,
++                                <&videocc VCODEC1_GDSC>;
++                power-domain-names = "venus", "vcodec0", "vcodec1";
 +                iommus = <&apps_smmu 0x10a0 0x8>,
 +                         <&apps_smmu 0x10b0 0x0>;
 +                memory-region = <&venus_mem>;
 +
 +                video-core0 {
 +                        compatible = "venus-decoder";
-+                        clocks = <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
-+                                 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
-+                        clock-names = "core", "bus";
-+                        power-domains = <&videocc VCODEC0_GDSC>;
 +                };
 +
 +                video-core1 {
 +                        compatible = "venus-encoder";
-+                        clocks = <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
-+                                 <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
-+                        clock-names = "core", "bus";
-+                        power-domains = <&videocc VCODEC1_GDSC>;
 +                };
 +        };
 -- 
