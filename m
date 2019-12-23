@@ -2,192 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89911129961
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 18:31:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEC42129964
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 18:32:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726833AbfLWRbJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 12:31:09 -0500
-Received: from mail-io1-f70.google.com ([209.85.166.70]:57304 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726754AbfLWRbJ (ORCPT
+        id S1726918AbfLWRcI convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 23 Dec 2019 12:32:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:37208 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726754AbfLWRcH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 12:31:09 -0500
-Received: by mail-io1-f70.google.com with SMTP id d13so2181128ioo.23
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 09:31:08 -0800 (PST)
+        Mon, 23 Dec 2019 12:32:07 -0500
+Received: from mail-pj1-f72.google.com ([209.85.216.72])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1ijRYr-0006RN-Ql
+        for linux-kernel@vger.kernel.org; Mon, 23 Dec 2019 17:32:06 +0000
+Received: by mail-pj1-f72.google.com with SMTP id ie20so57806pjb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 09:32:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TAi4de50NFw+IXqEFchz0vmbBrv1YgEgchSV6bFsoAI=;
-        b=uEgHY9Nz4iLVdlG5fngbJLmanA3aRPPNNjep5+ahMy4qg448uomK16D4F4hYiIWfC/
-         slLtcoLUhxjAzhew+D8JR07X4axDlqj7dzN45YQusXp64ut1073szJv37SR+vyetXaZ3
-         3moTBDjzgocxXicwI/6fM0iafFXuWDJ/EAsxL6GHDW9AXBbUxugrDjHgiCBG319RjlG5
-         oxokLR3/vzKCDzkr8cupZx2bbzkZ+a7Sl1c2e8v6tSLRsxkFT+BxzKdC9XNIJ0o3IEGE
-         czEEFNqvVZ6yQmyp+xLicL/6+q6BQxGNZ4NfX6y7RjPnRDl+F4bznRAkI2vh/75VTQ+J
-         X+Pw==
-X-Gm-Message-State: APjAAAUSNvZUbFdvJwEetpt9lIDcstpE4rNqZjAGImvGGzGJ+EQobBGd
-        Mb4rn0+Bs75Fm8xe8dJ6COoQpN4c+GYDCcS7yerPKa4egRqj
-X-Google-Smtp-Source: APXvYqzQk74CAFnDNTJ0OuyhHEXCR+xpxVjzWKW88kZg7k1pY1jgVBXNbdo0GAON/w9WngpUOU9dDE6KMRytHeDrbXVmPw9u2Gxj
-MIME-Version: 1.0
-X-Received: by 2002:a05:6638:97c:: with SMTP id o28mr24930342jaj.8.1577122268176;
- Mon, 23 Dec 2019 09:31:08 -0800 (PST)
-Date:   Mon, 23 Dec 2019 09:31:08 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008fea66059a6264eb@google.com>
-Subject: KASAN: use-after-free Read in tty_buffer_cancel_work
-From:   syzbot <syzbot+bd5f8de9deae03ace6a6@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=DxkImzWVfef1xCpc56sb8FA6DnZxPPdiLSLtxzu4Snk=;
+        b=tyHl7/R72EwARDKU87M1B8JGCTWdol0Ei/1g+mONNKDWMhHArtd06JKkkdOUNPnsAc
+         72Cl1v6THEElmAeB9HQyMLQACZVdPeymkrrwntvj8s7nGGQkukdp7eoYhB5LNd+To6z8
+         eFKOSM3VBousJrYAaY2VfT7uW7HbDxLjXesre0mRpqNADWMQ73PYX5g6r53pQQAbi0by
+         rZ2U1UtZc7lb2tZ9jHFLURBJDQW0yO+7OGQyPfKZJy5aJPVQj4wt1guzeOzduGwpziRx
+         lX9XhzxY3qpgoI97+N8beKZjKXrB70lUj3/eSrOW95s9gAco6A5eXhYTQwkhI5y5n0tu
+         Mlnw==
+X-Gm-Message-State: APjAAAVTA+t/x+cjCto7KSKcxC5ViK/UiuveTQrKBOvR8oGjvQ1clwZ7
+        FYvDG9CIuUYL+VialeLOxviTQWhor8g3dJBDGmjnSrI3xatR6cbbaLK1QCLZ7qkqTrW0PmquY02
+        vlTVSie6uvoo6SM/1rSB3sD3AeymnUid9ORjoBbj8/w==
+X-Received: by 2002:a17:90a:8902:: with SMTP id u2mr167891pjn.85.1577122324525;
+        Mon, 23 Dec 2019 09:32:04 -0800 (PST)
+X-Google-Smtp-Source: APXvYqz95yQJjQxTt2znMb73aBoBh3sICPYV2Bs/djISQo4DnHkIWiWB5izrBxMRSwUF7z2lyuvb9g==
+X-Received: by 2002:a17:90a:8902:: with SMTP id u2mr167845pjn.85.1577122324151;
+        Mon, 23 Dec 2019 09:32:04 -0800 (PST)
+Received: from 2001-b011-380f-35a3-a059-d6a4-0e9a-8360.dynamic-ip6.hinet.net (2001-b011-380f-35a3-a059-d6a4-0e9a-8360.dynamic-ip6.hinet.net. [2001:b011:380f:35a3:a059:d6a4:e9a:8360])
+        by smtp.gmail.com with ESMTPSA id e10sm26233451pfj.7.2019.12.23.09.32.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 23 Dec 2019 09:32:03 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH v2 2/2] USB: core: Attempt power cycle port when it's in
+ eSS.Disabled state
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <c8fc54db-9037-3635-f6a7-d6220e5d02cb@linux.intel.com>
+Date:   Tue, 24 Dec 2019 01:32:00 +0800
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <9883D946-77E0-4645-89FB-0B61D9E84178@canonical.com>
+References: <Pine.LNX.4.44L0.1912111006280.1549-100000@iolanthe.rowland.org>
+ <c8fc54db-9037-3635-f6a7-d6220e5d02cb@linux.intel.com>
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    7e0165b2 Merge branch 'akpm' (patches from Andrew)
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=154494c1e00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b59a3066828ac4c
-dashboard link: https://syzkaller.appspot.com/bug?extid=bd5f8de9deae03ace6a6
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bd5f8de9deae03ace6a6@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in atomic64_read  
-include/asm-generic/atomic-instrumented.h:836 [inline]
-BUG: KASAN: use-after-free in atomic_long_read  
-include/asm-generic/atomic-long.h:28 [inline]
-BUG: KASAN: use-after-free in work_is_canceling kernel/workqueue.c:751  
-[inline]
-BUG: KASAN: use-after-free in __cancel_work_timer+0x433/0x540  
-kernel/workqueue.c:3113
-Read of size 8 at addr ffff8880a77fc008 by task syz-executor.0/16211
-
-CPU: 1 PID: 16211 Comm: syz-executor.0 Not tainted 5.5.0-rc2-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_address_description.constprop.0.cold+0xd4/0x30b mm/kasan/report.c:374
-  __kasan_report.cold+0x1b/0x41 mm/kasan/report.c:506
-  kasan_report+0x12/0x20 mm/kasan/common.c:639
-  check_memory_region_inline mm/kasan/generic.c:185 [inline]
-  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
-  __kasan_check_read+0x11/0x20 mm/kasan/common.c:95
-  atomic64_read include/asm-generic/atomic-instrumented.h:836 [inline]
-  atomic_long_read include/asm-generic/atomic-long.h:28 [inline]
-  work_is_canceling kernel/workqueue.c:751 [inline]
-  __cancel_work_timer+0x433/0x540 kernel/workqueue.c:3113
-  cancel_work_sync+0x18/0x20 kernel/workqueue.c:3164
-  tty_buffer_cancel_work+0x16/0x20 drivers/tty/tty_buffer.c:613
-  release_tty+0x261/0x470 drivers/tty/tty_io.c:1520
-  tty_release_struct+0x3c/0x50 drivers/tty/tty_io.c:1629
-  tty_release+0xbcb/0xe90 drivers/tty/tty_io.c:1789
-  __fput+0x2ff/0x890 fs/file_table.c:280
-  ____fput+0x16/0x20 fs/file_table.c:313
-  task_work_run+0x145/0x1c0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x316/0x380 arch/x86/entry/common.c:164
-  prepare_exit_to_usermode arch/x86/entry/common.c:195 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:278 [inline]
-  do_syscall_64+0x676/0x790 arch/x86/entry/common.c:304
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4144b1
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 04 1b 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007fff1f1c15d0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000004 RCX: 00000000004144b1
-RDX: 0000001b30420000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000001 R08: 00000000b81729f0 R09: 00000000b81729f4
-R10: 00007fff1f1c16b0 R11: 0000000000000293 R12: 000000000075bf20
-R13: 000000000005bac3 R14: 0000000000760180 R15: 000000000075bf2c
-
-Allocated by task 16213:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  __kasan_kmalloc mm/kasan/common.c:513 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:486
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:527
-  kmem_cache_alloc_trace+0x158/0x790 mm/slab.c:3551
-  kmalloc include/linux/slab.h:556 [inline]
-  kzalloc include/linux/slab.h:670 [inline]
-  vc_allocate drivers/tty/vt/vt.c:1085 [inline]
-  vc_allocate+0x1fc/0x760 drivers/tty/vt/vt.c:1066
-  con_install+0x52/0x410 drivers/tty/vt/vt.c:3229
-  tty_driver_install_tty drivers/tty/tty_io.c:1228 [inline]
-  tty_init_dev drivers/tty/tty_io.c:1341 [inline]
-  tty_init_dev+0xf9/0x470 drivers/tty/tty_io.c:1318
-  tty_open_by_driver drivers/tty/tty_io.c:1987 [inline]
-  tty_open+0x4a5/0xbb0 drivers/tty/tty_io.c:2035
-  chrdev_open+0x245/0x6b0 fs/char_dev.c:414
-  do_dentry_open+0x4e6/0x1380 fs/open.c:797
-  vfs_open+0xa0/0xd0 fs/open.c:914
-  do_last fs/namei.c:3420 [inline]
-  path_openat+0x10df/0x4500 fs/namei.c:3537
-  do_filp_open+0x1a1/0x280 fs/namei.c:3567
-  do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-  __do_sys_open fs/open.c:1115 [inline]
-  __se_sys_open fs/open.c:1110 [inline]
-  __x64_sys_open+0x7e/0xc0 fs/open.c:1110
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 16188:
-  save_stack+0x23/0x90 mm/kasan/common.c:72
-  set_track mm/kasan/common.c:80 [inline]
-  kasan_set_free_info mm/kasan/common.c:335 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:474
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:483
-  __cache_free mm/slab.c:3426 [inline]
-  kfree+0x10a/0x2c0 mm/slab.c:3757
-  vt_disallocate_all+0x2bd/0x3e0 drivers/tty/vt/vt_ioctl.c:323
-  vt_ioctl+0xc38/0x26d0 drivers/tty/vt/vt_ioctl.c:816
-  tty_ioctl+0xa37/0x14f0 drivers/tty/tty_io.c:2660
-  vfs_ioctl fs/ioctl.c:47 [inline]
-  file_ioctl fs/ioctl.c:545 [inline]
-  do_vfs_ioctl+0x977/0x14e0 fs/ioctl.c:732
-  ksys_ioctl+0xab/0xd0 fs/ioctl.c:749
-  __do_sys_ioctl fs/ioctl.c:756 [inline]
-  __se_sys_ioctl fs/ioctl.c:754 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:754
-  do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8880a77fc000
-  which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 8 bytes inside of
-  2048-byte region [ffff8880a77fc000, ffff8880a77fc800)
-The buggy address belongs to the page:
-page:ffffea00029dff00 refcount:1 mapcount:0 mapping:ffff8880aa400e00  
-index:0x0
-raw: 00fffe0000000200 ffffea000251ef08 ffffea00029b5008 ffff8880aa400e00
-raw: 0000000000000000 ffff8880a77fc000 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8880a77fbf00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8880a77fbf80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8880a77fc000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                       ^
-  ffff8880a77fc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8880a77fc100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> On Dec 17, 2019, at 19:16, Mathias Nyman <mathias.nyman@linux.intel.com> wrote:
+> 
+> On 11.12.2019 17.08, Alan Stern wrote:
+>> On Wed, 11 Dec 2019, Kai-Heng Feng wrote:
+>>> 
+>>> 
+>>>> On Nov 30, 2019, at 01:41, Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+>>>> 
+>>>> On Dell TB16, Realtek USB ethernet (r8152) connects to an SMSC hub which
+>>>> then connects to ASMedia xHCI's root hub:
+>>>> 
+>>>> /:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 5000M
+>>>>    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/7p, 5000M
+>>>>            |__ Port 2: Dev 3, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+>>>> 
+>>>> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+>>>> Bus 004 Device 002: ID 0424:5537 Standard Microsystems Corp. USB5537B
+>>>> Bus 004 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
+>>>> 
+>>>> The SMSC hub may disconnect after system resume from suspend. When this
+>>>> happens, the reset resume attempt fails, and the last resort to disable
+>>>> the port and see something comes up later, also fails.
+>>>> 
+>>>> When the issue occurs, the link state stays in eSS.Disabled state
+>>>> despite the warm reset attempts. Accoding to spec this can be caused by
+>>>> invalid VBus, after some expiremets, the SMSC hub can be brought back
+>>>> after a powercycle.
+> 
+> Could you open up a bit more how this happens, mainly codepaths how the
+> USB3 port ends up in eSS.Disabled state
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+It happens right after hub_resume(), the first get_port_status():
+Dec 23 09:46:58 u-XPS-13-9370 kernel: usb usb4: usb resume
+Dec 23 09:46:58 u-XPS-13-9370 kernel: hub 4-0:1.0: hub_resume
+Dec 23 09:46:58 u-XPS-13-9370 kernel: xhci_hcd 0000:3f:00.0: Get port status 4-1 read: 0x280, return 0x280
+Dec 23 09:46:58 u-XPS-13-9370 kernel: usb usb4-port1: status 0280 change 0000
+Dec 23 09:46:58 u-XPS-13-9370 kernel: xhci_hcd 0000:3f:00.0: Get port status 4-2 read: 0x2a0, return 0x2a0
+Dec 23 09:46:58 u-XPS-13-9370 kernel: xhci_hcd 0000:3f:00.0: Get port status 4-1 read: 0x280, return 0x280
+Dec 23 09:46:58 u-XPS-13-9370 kernel: xhci_hcd 0000:3f:00.0: Get port status 4-1 read: 0x280, return 0x280
+Dec 23 09:46:58 u-XPS-13-9370 kernel: xhci_hcd 0000:3f:00.0: Get port status 4-1 read: 0x280, return 0x280
+
+And it keeps getting 0x280. It should mean PP = 1 and PLS = 4, so it's in Disabled state.
+
+> 
+> There might be something else wrong here.
+> My impression is that port should only end up in eSS.Disabled when directed
+> to with a Set_Port_Feature(PORT_LINK_STATE, eSS.Disabled) Request.
+> After this we shouldn't attempt warm resets, they won't work for USB3 ports in
+> ss.Disabled state.
+
+Do you suggest that we should power cycle the port in xHCI instead of USB core?
+
+Kai-Heng
+
+> 
+> -Mathias
+
