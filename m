@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A0D61296E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CD971296EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfLWORZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:17:25 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18203 "EHLO mga07.intel.com"
+        id S1727109AbfLWOR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:17:29 -0500
+Received: from mga04.intel.com ([192.55.52.120]:8564 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbfLWORZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 09:17:25 -0500
+        id S1726981AbfLWOR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 09:17:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:24 -0800
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="268164214"
+   d="scan'208";a="299688890"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Dec 2019 06:17:21 -0800
+  by orsmga001.jf.intel.com with ESMTP; 23 Dec 2019 06:17:22 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 7CD9214F; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
+        id 8D50D76F; Mon, 23 Dec 2019 16:17:17 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     Zha Qipeng <qipeng.zha@intel.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 08/37] platform/x86: intel_scu_ipc: Drop unused prototype intel_scu_ipc_fw_update()
-Date:   Mon, 23 Dec 2019 17:16:47 +0300
-Message-Id: <20191223141716.13727-9-mika.westerberg@linux.intel.com>
+Subject: [PATCH 09/37] platform/x86: intel_scu_ipc: Drop unused macros
+Date:   Mon, 23 Dec 2019 17:16:48 +0300
+Message-Id: <20191223141716.13727-10-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
@@ -48,27 +48,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no implementation for that anymore so drop the prototype.
+These macros are not used anywhere in the driver so drop them.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- arch/x86/include/asm/intel_scu_ipc.h | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/platform/x86/intel_scu_ipc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/intel_scu_ipc.h b/arch/x86/include/asm/intel_scu_ipc.h
-index d7bbebf4b729..b2dde96e0611 100644
---- a/arch/x86/include/asm/intel_scu_ipc.h
-+++ b/arch/x86/include/asm/intel_scu_ipc.h
-@@ -53,9 +53,6 @@ int intel_scu_ipc_command(int cmd, int sub, u32 *in, int inlen,
- int intel_scu_ipc_raw_command(int cmd, int sub, u8 *in, int inlen,
- 			      u32 *out, int outlen, u32 dptr, u32 sptr);
+diff --git a/drivers/platform/x86/intel_scu_ipc.c b/drivers/platform/x86/intel_scu_ipc.c
+index 8db0644900a3..997fdac920c6 100644
+--- a/drivers/platform/x86/intel_scu_ipc.c
++++ b/drivers/platform/x86/intel_scu_ipc.c
+@@ -26,11 +26,7 @@
+ #include <asm/intel_scu_ipc.h>
  
--/* Update FW version */
--int intel_scu_ipc_fw_update(u8 *buffer, u32 length);
--
- extern struct blocking_notifier_head intel_scu_notifier;
+ /* IPC defines the following message types */
+-#define IPCMSG_WATCHDOG_TIMER 0xF8 /* Set Kernel Watchdog Threshold */
+-#define IPCMSG_BATTERY        0xEF /* Coulomb Counter Accumulator */
+-#define IPCMSG_FW_UPDATE      0xFE /* Firmware update */
+-#define IPCMSG_PCNTRL         0xFF /* Power controller unit read/write */
+-#define IPCMSG_FW_REVISION    0xF4 /* Get firmware revision */
++#define IPCMSG_PCNTRL         0xff /* Power controller unit read/write */
  
- static inline void intel_scu_notifier_add(struct notifier_block *nb)
+ /* Command id associated with message IPCMSG_PCNTRL */
+ #define IPC_CMD_PCNTRL_W      0 /* Register write */
 -- 
 2.24.0
 
