@@ -2,196 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 822A512945A
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:43:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A00812945F
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 11:47:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfLWKn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 05:43:27 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38401 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbfLWKn0 (ORCPT
+        id S1726847AbfLWKrP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 05:47:15 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:51272 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725799AbfLWKrO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 05:43:26 -0500
-Received: by mail-ed1-f67.google.com with SMTP id i16so14900253edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 02:43:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uk7naUju2+XbutO3mWqlPuK0fzl6xEjormjMxI+qpl8=;
-        b=hmsl3JEtm3nmnkhumYmwRTOC19hA7BaLhnTRrHH1S5/z6VywLyGNHuRCFtG1Mps340
-         JwYL7ixxMa0X7G2Jm3Hbe0G+GMf5CvjC87tfxTfU5fi9xbr9RbIWy5ssft3S/ZKDkXue
-         xL9+tlHsEP4+yN7KvLQPnTALQTZovIKws3LeFG99J2xTTe4+glksinN5Rtt4ZS3y8IBm
-         P1YkWz5BGkv+S1p2LxDFQucAxMCL+uxaM7k8+EGcaQNHh1Dg0K8MwsSmmk8+eI43KJ+G
-         7NDv/0LWEs2kmgYl3gEC6VHrnudvOypshfYxFWln18a0JCKOmUWciBKgd9d8CQeohHoW
-         THhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uk7naUju2+XbutO3mWqlPuK0fzl6xEjormjMxI+qpl8=;
-        b=nxKu8ziuROCG2EzFGlKR2HIk93SbBbEWfUTMJ/Z2knWcOLP9hn/01OLh58/rCpHZd+
-         4XQePea1MxiReQWWICbaxGzjyAuFSx3z1Mz8LeL38anuUNyXZcVNIgz0slvBC1aeR6mK
-         M2ewVg4iWGpBWQknN+wwX6i2qzXN7lRWkTMhWVhEHBYohtRKz+A/ycaV3KjvYnSaNJ+F
-         WHU/5O2otMkpKJfWM9fyqZS0iVn4H2IDg3ueK3C4NIToYPjN+0ljktTFLivdaqYmOFSd
-         /m5Nbq0nBXhdUve9mOQAW+5Ou42IDPJ4g7y5JhPMeWuHX/1JLNzZzzxktjK4V/UI8t69
-         RTjQ==
-X-Gm-Message-State: APjAAAWf5wvj64uVMJFpdGSFVxjElx/fhMZc3OhxC+pJ0yRdIOMgna6n
-        pMFy6cYC/8TAcx3yfPo9HpOUOw==
-X-Google-Smtp-Source: APXvYqyWEpmt29x0qQj5AT9WoLd0KyIuXpzp58GzNrpJ0iW9CCWNUHZbp3UHiIf4zluasnKm5DBz5Q==
-X-Received: by 2002:a05:6402:12d2:: with SMTP id k18mr31420757edx.253.1577097803403;
-        Mon, 23 Dec 2019 02:43:23 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.193])
-        by smtp.googlemail.com with ESMTPSA id z22sm2200251edq.79.2019.12.23.02.43.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 02:43:22 -0800 (PST)
-Subject: Re: [PATCH 3/3] venus: core: add sc7180 DT compatible and resource
- struct
-To:     dikshita@codeaurora.org
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        vgarodia@codeaurora.org
-References: <1576828760-13176-1-git-send-email-dikshita@codeaurora.org>
- <1576828760-13176-4-git-send-email-dikshita@codeaurora.org>
- <b1b5ee06-bc39-cfc0-b2c8-8073f8857fde@linaro.org>
- <98c83352cae3a5e38a3711f81dc28df5@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <bf25039f-f9de-69f9-0e18-305f39c3eb9d@linaro.org>
-Date:   Mon, 23 Dec 2019 12:43:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Mon, 23 Dec 2019 05:47:14 -0500
+Received: from www-data by cheepnis.misterjones.org with local (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1ijLEx-0001Wa-69; Mon, 23 Dec 2019 11:47:07 +0100
+To:     John Garry <john.garry@huawei.com>
+Subject: Re: [PATCH RFC 1/1] genirq: Make threaded handler use irq affinity  for managed interrupt
+X-PHP-Originating-Script: 0:main.inc
 MIME-Version: 1.0
-In-Reply-To: <98c83352cae3a5e38a3711f81dc28df5@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 23 Dec 2019 10:47:07 +0000
+From:   Marc Zyngier <maz@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, <tglx@linutronix.de>,
+        "chenxiang (M)" <chenxiang66@hisilicon.com>,
+        <bigeasy@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <hare@suse.com>, <hch@lst.de>, <axboe@kernel.dk>,
+        <bvanassche@acm.org>, <peterz@infradead.org>, <mingo@redhat.com>
+In-Reply-To: <d5774e2f-bb60-c27c-bf00-267b88400a12@huawei.com>
+References: <b7f3bcea-84ec-f9f6-a3aa-007ae712415f@huawei.com>
+ <20191214135641.5a817512@why>
+ <7db89b97-1b9e-8dd1-684a-3eef1b1af244@huawei.com>
+ <50d9ba606e1e3ee1665a0328ffac67ac@www.loen.fr>
+ <a5f6a542-2dbc-62de-52e2-bd5413b5db51@huawei.com>
+ <68058fd28c939b8e065524715494de95@www.loen.fr>
+ <ac5b5a25-df2e-18e9-6b0f-60af8c7cec3b@huawei.com>
+ <687cbcc4-89d9-63ea-a246-ce2abaae501a@huawei.com>
+ <0fd543f8ffd90f90deb691aea1c275b4@www.loen.fr>
+ <a5154365-59c5-429b-559e-94ad6dffcdb0@huawei.com>
+ <20191220233138.GB12403@ming.t460p>
+ <fffcd23dd8286615b6e2c99620836cb1@www.loen.fr>
+ <d5774e2f-bb60-c27c-bf00-267b88400a12@huawei.com>
+Message-ID: <e815b5451ea86e99d42045f7067f455a@www.loen.fr>
+X-Sender: maz@kernel.org
+User-Agent: Roundcube Webmail/0.7.2
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: john.garry@huawei.com, ming.lei@redhat.com, tglx@linutronix.de, chenxiang66@hisilicon.com, bigeasy@linutronix.de, linux-kernel@vger.kernel.org, hare@suse.com, hch@lst.de, axboe@kernel.dk, bvanassche@acm.org, peterz@infradead.org, mingo@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dikshita,
-
-On 12/23/19 12:04 PM, dikshita@codeaurora.org wrote:
-> Hi Stan,
-> 
-> Thanks for the review!
-> 
-> On 2019-12-20 15:03, Stanimir Varbanov wrote:
->> Hi Dikshita,
->>
->> Thanks for the patch!
->>
->> On 12/20/19 9:59 AM, Dikshita Agarwal wrote:
->>> This add DT compatible string and resource structure for sc7180.
+On 2019-12-23 10:26, John Garry wrote:
+>>>> > I've also managed to trigger some of them now that I have access 
+>>>> to
+>>>> > a decent box with nvme storage.
+>>>>
+>>>> I only have 2x NVMe SSDs when this occurs - I should not be 
+>>>> hitting this...
+>>>>
+>>>> Out of curiosity, have you tried
+>>>> > with the SMMU disabled? I'm wondering whether we hit some 
+>>>> livelock
+>>>> > condition on unmapping buffers...
+>>>>
+>>>> No, but I can give it a try. Doing that should lower the CPU 
+>>>> usage, though,
+>>>> so maybe masks the issue - probably not.
 >>>
->>> Signed-off-by: Dikshita Agarwal <dikshita@codeaurora.org>
->>> ---
->>>  drivers/media/platform/qcom/venus/core.c | 58
->>> +++++++++++++++++++++++++++++++-
->>>  1 file changed, 57 insertions(+), 1 deletion(-)
+>>> Lots of CPU lockup can is performance issue if there isn't obvious 
+>>> bug.
 >>>
->>> diff --git a/drivers/media/platform/qcom/venus/core.c
->>> b/drivers/media/platform/qcom/venus/core.c
->>> index c7525d9..e8c8b28 100644
->>> --- a/drivers/media/platform/qcom/venus/core.c
->>> +++ b/drivers/media/platform/qcom/venus/core.c
->>> @@ -469,7 +469,7 @@ static __maybe_unused int
->>> venus_runtime_resume(struct device *dev)
->>>      { 2073600, 3929000, 0, 5551000, 0 },    /* 4096x2160@60 */
->>>      { 1036800, 1987000, 0, 2797000, 0 },    /* 4096x2160@30 */
->>>      {  489600, 1040000, 0, 1298000, 0 },    /* 1920x1080@60 */
->>> -    {  244800,  530000, 0,  659000, 0 },    /* 1920x1080@30 */
->>> +    {  244800,  442000, 0,  659000, 0 },    /* 1920x1080@30 */
->>
->> unrelated change, please drop it
-> Sure, I will address this in next version.
->>
->>>  };
->>>
->>>  static const struct venus_resources sdm845_res = {
->>> @@ -521,11 +521,67 @@ static __maybe_unused int
->>> venus_runtime_resume(struct device *dev)
->>>      .fwname = "qcom/venus-5.2/venus.mdt",
->>>  };
->>>
->>> +static const struct freq_tbl sc7180_freq_table[] = {
->>> +    {  0, 380000000 },
->>> +    {  0, 340000000 },
->>> +    {  0, 270000000 },
->>> +    {  0, 150000000 },
->>
->> why .load is zero?
-> .load is not being used any longer to calculate load and is a dummy value.
-> So keeping it 0.
+>>> I am wondering if you may explain it a bit why enabling SMMU may 
+>>> save
+>>> CPU a it?
+>> The other way around. mapping/unmapping IOVAs doesn't comes for 
+>> free.
+>> I'm trying to find out whether the NVMe map/unmap patterns trigger
+>> something unexpected in the SMMU driver, but that's a very long 
+>> shot.
+>
+> So I tested v5.5-rc3 with and without the SMMU enabled, and without
+> the SMMU enabled I don't get the lockup.
 
-Hmm, ok I forgot about that fact. I suppose it is fine then.
+OK, so my hunch wasn't completely off... At least we have something
+to look into.
 
-I found some other issue. Looking into [1], for sc7180 we have two more
-clock-controller frequencies, could you add them too in the table. And
-last, in the same patch we have 19.2MHz do you think such frequency
-makes any sense?
+[...]
 
-[1] https://lkml.org/lkml/2019/11/15/361
-> 
->>
->>> +};
->>> +
->>> +static struct codec_freq_data sc7180_codec_freq_data[] =  {
->>> +    { V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_ENC, 675, 10 },
->>> +    { V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_ENC, 675, 10 },
->>> +    { V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_ENC, 675, 10 },
->>> +    { V4L2_PIX_FMT_MPEG2, VIDC_SESSION_TYPE_DEC, 200, 10 },
->>> +    { V4L2_PIX_FMT_H264, VIDC_SESSION_TYPE_DEC, 200, 10 },
->>> +    { V4L2_PIX_FMT_HEVC, VIDC_SESSION_TYPE_DEC, 200, 10 },
->>> +    { V4L2_PIX_FMT_VP8, VIDC_SESSION_TYPE_DEC, 200, 10 },
->>> +    { V4L2_PIX_FMT_VP9, VIDC_SESSION_TYPE_DEC, 200, 10 },
->>> +};
->>
->> the table is exactly the same as sdm845 one, please reuse it.
-> Sure, I will address this in next version.
->>
->>> +
->>> +static const struct bw_tbl sc7180_bw_table_enc[] = {
->>> +    {  972000,  750000, 0, 0, 0 },    /* 3840x2160@30 */
->>> +    {  489600,  451000, 0, 0, 0 },    /* 1920x1080@60 */
->>> +    {  244800,  234000, 0, 0, 0 },    /* 1920x1080@30 */
->>> +};
->>> +
->>> +static const struct bw_tbl sc7180_bw_table_dec[] = {
->>> +    { 1036800, 1386000, 0, 1875000, 0 },    /* 4096x2160@30 */
->>> +    {  489600,  865000, 0, 1146000, 0 },    /* 1920x1080@60 */
->>> +    {  244800,  530000, 0,  583000, 0 },    /* 1920x1080@30 */
->>> +};
->>> +
->>> +static const struct venus_resources sc7180_res = {
->>> +    .freq_tbl = sc7180_freq_table,
->>> +    .freq_tbl_size = ARRAY_SIZE(sc7180_freq_table),
->>> +    .bw_tbl_enc = sc7180_bw_table_enc,
->>> +    .bw_tbl_enc_size = ARRAY_SIZE(sc7180_bw_table_enc),
->>> +    .bw_tbl_dec = sc7180_bw_table_dec,
->>> +    .bw_tbl_dec_size = ARRAY_SIZE(sc7180_bw_table_dec),
->>> +    .codec_freq_data = sc7180_codec_freq_data,
->>> +    .codec_freq_data_size = ARRAY_SIZE(sc7180_codec_freq_data),
->>> +    .clks = {"core", "iface", "bus" },
->>> +    .clks_num = 3,
->>> +    .vcodec0_clks = { "vcodec0_core", "vcodec0_bus" },
->>> +    .vcodec_clks_num = 2,
->>> +    .vcodec_pmdomains = { "venus", "vcodec0" },
->>> +    .vcodec_pmdomains_num = 2,
->>> +    .vcodec_num = 1,
->>> +    .max_load = 3110400,    /* 4096x2160@90 */
->>
->> Looking into above bandwidth tables I can guess that the maximimum load
->> is reached at 4096x2160@30? If so you have to change it here.
-> 
-> After checking further on this I see that max_load can be removed since
-> it is not being used now to determine if H/W is overloaded or not.
-> What do you suggest?
+> Obviously this is not conclusive, especially with such limited
+> testing - 5 minute runs each. The CPU load goes up when disabling the
+> SMMU, but that could be attributed to extra throughput (1183K ->
+> 1539K) loading.
+>
+> I do notice that since we complete the NVMe request in irq context,
+> we also do the DMA unmap, i.e. talk to the SMMU, in the same context,
+> which is less than ideal.
 
-Lets have it just for informational reasons.
+It depends on how much overhead invalidating the TLB adds to the
+equation, but we should be able to do some tracing and find out.
 
+> I need to finish for the Christmas break today, so can't check this
+> much further ATM.
+
+No worries. May I suggest creating a new thread in the new year, maybe
+involving Robin and Will as well?
+
+Thanks,
+
+         M.
 -- 
-regards,
-Stan
+Jazz is not dead. It just smells funny...
