@@ -2,26 +2,26 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD8C129717
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 168F0129710
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 15:19:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727537AbfLWOSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 09:18:48 -0500
-Received: from mga07.intel.com ([134.134.136.100]:18212 "EHLO mga07.intel.com"
+        id S1727512AbfLWOSj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 09:18:39 -0500
+Received: from mga05.intel.com ([192.55.52.43]:58347 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727083AbfLWOR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727086AbfLWOR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 23 Dec 2019 09:17:29 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:28 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 06:17:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,347,1571727600"; 
-   d="scan'208";a="249500532"
+   d="scan'208";a="219181102"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 23 Dec 2019 06:17:25 -0800
+  by orsmga006.jf.intel.com with ESMTP; 23 Dec 2019 06:17:25 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 1FFCFD1C; Mon, 23 Dec 2019 16:17:18 +0200 (EET)
+        id 2A6C0D49; Mon, 23 Dec 2019 16:17:18 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Darren Hart <dvhart@infradead.org>,
@@ -35,9 +35,9 @@ Cc:     Zha Qipeng <qipeng.zha@intel.com>,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 20/37] platform/x86: intel_pmc_ipc: Make intel_pmc_ipc_raw_cmd() static
-Date:   Mon, 23 Dec 2019 17:16:59 +0300
-Message-Id: <20191223141716.13727-21-mika.westerberg@linux.intel.com>
+Subject: [PATCH 21/37] platform/x86: intel_pmc_ipc: Drop intel_pmc_gcr_read() and intel_pmc_gcr_write()
+Date:   Mon, 23 Dec 2019 17:17:00 +0300
+Message-Id: <20191223141716.13727-22-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
 References: <20191223141716.13727-1-mika.westerberg@linux.intel.com>
@@ -48,64 +48,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This function is not called outside of intel_pmc_ipc.c so we can make it
-static instead.
+These functions are not used anywhere so drop them completely.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- arch/x86/include/asm/intel_pmc_ipc.h | 8 --------
- drivers/platform/x86/intel_pmc_ipc.c | 5 ++---
- 2 files changed, 2 insertions(+), 11 deletions(-)
+ arch/x86/include/asm/intel_pmc_ipc.h | 12 ------
+ drivers/platform/x86/intel_pmc_ipc.c | 59 ----------------------------
+ 2 files changed, 71 deletions(-)
 
 diff --git a/arch/x86/include/asm/intel_pmc_ipc.h b/arch/x86/include/asm/intel_pmc_ipc.h
-index b4f804877651..966ff2171ff9 100644
+index 966ff2171ff9..e6da1ce26256 100644
 --- a/arch/x86/include/asm/intel_pmc_ipc.h
 +++ b/arch/x86/include/asm/intel_pmc_ipc.h
-@@ -31,8 +31,6 @@
- 
- #if IS_ENABLED(CONFIG_INTEL_PMC_IPC)
- 
--int intel_pmc_ipc_raw_cmd(u32 cmd, u32 sub, u8 *in, u32 inlen,
--		u32 *out, u32 outlen, u32 dptr, u32 sptr);
+@@ -34,9 +34,7 @@
  int intel_pmc_ipc_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
  		u32 *out, u32 outlen);
  int intel_pmc_s0ix_counter_read(u64 *data);
-@@ -42,12 +40,6 @@ int intel_pmc_gcr_write(u32 offset, u32 data);
+-int intel_pmc_gcr_read(u32 offset, u32 *data);
+ int intel_pmc_gcr_read64(u32 offset, u64 *data);
+-int intel_pmc_gcr_write(u32 offset, u32 data);
  
  #else
  
--static inline int intel_pmc_ipc_raw_cmd(u32 cmd, u32 sub, u8 *in, u32 inlen,
--		u32 *out, u32 outlen, u32 dptr, u32 sptr)
+@@ -51,21 +49,11 @@ static inline int intel_pmc_s0ix_counter_read(u64 *data)
+ 	return -EINVAL;
+ }
+ 
+-static inline int intel_pmc_gcr_read(u32 offset, u32 *data)
 -{
 -	return -EINVAL;
 -}
 -
- static inline int intel_pmc_ipc_command(u32 cmd, u32 sub, u8 *in, u32 inlen,
- 		u32 *out, u32 outlen)
+ static inline int intel_pmc_gcr_read64(u32 offset, u64 *data)
  {
+ 	return -EINVAL;
+ }
+ 
+-static inline int intel_pmc_gcr_write(u32 offset, u32 data)
+-{
+-	return -EINVAL;
+-}
+-
+ #endif /*CONFIG_INTEL_PMC_IPC*/
+ 
+ #endif
 diff --git a/drivers/platform/x86/intel_pmc_ipc.c b/drivers/platform/x86/intel_pmc_ipc.c
-index 53551f5474a7..83f47df1c4a5 100644
+index 83f47df1c4a5..677ed470e14e 100644
 --- a/drivers/platform/x86/intel_pmc_ipc.c
 +++ b/drivers/platform/x86/intel_pmc_ipc.c
-@@ -435,8 +435,8 @@ static int intel_pmc_ipc_simple_command(int cmd, int sub)
-  *
-  * Return:	an IPC error code or 0 on success.
-  */
--int intel_pmc_ipc_raw_cmd(u32 cmd, u32 sub, u8 *in, u32 inlen, u32 *out,
--			  u32 outlen, u32 dptr, u32 sptr)
-+static int intel_pmc_ipc_raw_cmd(u32 cmd, u32 sub, u8 *in, u32 inlen, u32 *out,
-+				 u32 outlen, u32 dptr, u32 sptr)
- {
- 	u32 wbuf[4] = { 0 };
- 	int ret;
-@@ -468,7 +468,6 @@ int intel_pmc_ipc_raw_cmd(u32 cmd, u32 sub, u8 *in, u32 inlen, u32 *out,
- 
- 	return ret;
+@@ -210,35 +210,6 @@ static inline int is_gcr_valid(u32 offset)
+ 	return 0;
  }
--EXPORT_SYMBOL_GPL(intel_pmc_ipc_raw_cmd);
  
+-/**
+- * intel_pmc_gcr_read() - Read a 32-bit PMC GCR register
+- * @offset:	offset of GCR register from GCR address base
+- * @data:	data pointer for storing the register output
+- *
+- * Reads the 32-bit PMC GCR register at given offset.
+- *
+- * Return:	negative value on error or 0 on success.
+- */
+-int intel_pmc_gcr_read(u32 offset, u32 *data)
+-{
+-	int ret;
+-
+-	spin_lock(&ipcdev.gcr_lock);
+-
+-	ret = is_gcr_valid(offset);
+-	if (ret < 0) {
+-		spin_unlock(&ipcdev.gcr_lock);
+-		return ret;
+-	}
+-
+-	*data = readl(ipcdev.gcr_mem_base + offset);
+-
+-	spin_unlock(&ipcdev.gcr_lock);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(intel_pmc_gcr_read);
+-
  /**
-  * intel_pmc_ipc_command() -  IPC command with input/output data
+  * intel_pmc_gcr_read64() - Read a 64-bit PMC GCR register
+  * @offset:	offset of GCR register from GCR address base
+@@ -268,36 +239,6 @@ int intel_pmc_gcr_read64(u32 offset, u64 *data)
+ }
+ EXPORT_SYMBOL_GPL(intel_pmc_gcr_read64);
+ 
+-/**
+- * intel_pmc_gcr_write() - Write PMC GCR register
+- * @offset:	offset of GCR register from GCR address base
+- * @data:	register update value
+- *
+- * Writes the PMC GCR register of given offset with given
+- * value.
+- *
+- * Return:	negative value on error or 0 on success.
+- */
+-int intel_pmc_gcr_write(u32 offset, u32 data)
+-{
+-	int ret;
+-
+-	spin_lock(&ipcdev.gcr_lock);
+-
+-	ret = is_gcr_valid(offset);
+-	if (ret < 0) {
+-		spin_unlock(&ipcdev.gcr_lock);
+-		return ret;
+-	}
+-
+-	writel(data, ipcdev.gcr_mem_base + offset);
+-
+-	spin_unlock(&ipcdev.gcr_lock);
+-
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(intel_pmc_gcr_write);
+-
+ /**
+  * intel_pmc_gcr_update() - Update PMC GCR register bits
+  * @offset:	offset of GCR register from GCR address base
 -- 
 2.24.0
 
