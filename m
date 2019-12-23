@@ -2,116 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 364C9129239
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:26:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF313129235
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 08:25:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726059AbfLWH0W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 02:26:22 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42226 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfLWH0W (ORCPT
+        id S1725927AbfLWHZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 02:25:32 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:56688 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725822AbfLWHZc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 02:26:22 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PSNE092418;
-        Mon, 23 Dec 2019 01:25:28 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577085928;
-        bh=TZCdQwanBajUmjnrjOmrqqKE92Iuel2n9DhlReItHps=;
-        h=Subject:To:References:From:Date:In-Reply-To;
-        b=hPz3RnaVl31ARYBIL0RBmD5SzKuqviJ1KkCDboXFBZxeOJ9IcZzvmsXZHdkQFxI6B
-         Oz2OLdqF2IrpsXzqxe/wyQ6tZKGMEnhZuTUXG072+jQU9lzBfvdxi3+C27Z7O3J3z1
-         A7WMeFB+ewaknC0/CBCcFJqM/AZiK2GJJxucI/+g=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBN7PSuh040126
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 23 Dec 2019 01:25:28 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 23
- Dec 2019 01:25:27 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 23 Dec 2019 01:25:27 -0600
-Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBN7PL0n037979;
-        Mon, 23 Dec 2019 01:25:21 -0600
-Subject: Re: [PATCH 9/9] memory: omap-gpmc: switch to platform_get_irq
-To:     Yangtao Li <tiny.windzz@gmail.com>, <ssantosh@kernel.org>,
-        <paul@crapouillou.net>, <matthias.bgg@gmail.com>,
-        <tony@atomide.com>, <lukasz.luba@arm.com>, <kgene@kernel.org>,
-        <krzk@kernel.org>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <allison@lohutok.net>,
-        <tglx@linutronix.de>, <yong.wu@mediatek.com>, <jroedel@suse.de>,
-        <evgreen@chromium.org>, <rfontana@redhat.com>, <digetx@gmail.com>,
-        <pdeschrijver@nvidia.com>, <john@phrozen.org>,
-        <alexios.zavras@intel.com>, <sboyd@kernel.org>,
-        <kstewart@linuxfoundation.org>, <info@metux.net>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-omap@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <20191222185034.4665-1-tiny.windzz@gmail.com>
- <20191222185034.4665-9-tiny.windzz@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <7dc78b4c-d1a7-a990-669c-8d3ddbacee0d@ti.com>
-Date:   Mon, 23 Dec 2019 09:25:20 +0200
+        Mon, 23 Dec 2019 02:25:32 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 45ED1283E6C
+Subject: Re: [PATCH v4 2/2] mfd: cros_ec: Add cros-usbpd-notify subdevice
+To:     Prashant Malani <pmalani@chromium.org>, groeck@chromium.org,
+        bleung@chromium.org, lee.jones@linaro.org
+Cc:     linux-kernel@vger.kernel.org
+References: <20191220193843.47182-1-pmalani@chromium.org>
+ <20191220193843.47182-2-pmalani@chromium.org>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <7eecafb2-4686-b448-2837-4181188365b1@collabora.com>
+Date:   Mon, 23 Dec 2019 08:25:27 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <20191222185034.4665-9-tiny.windzz@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20191220193843.47182-2-pmalani@chromium.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Prashant,
 
-On 22/12/2019 20:50, Yangtao Li wrote:
-> platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
-> requesting IRQ's resources, as they can be not ready yet. Using
-> platform_get_irq() instead is preferred for getting IRQ even if it
-> was not retrieved earlier.
+On 20/12/19 20:38, Prashant Malani wrote:
+> Add the cros-usbpd-notify driver as a subdevice on non-ACPI platforms
+> that support the EC_FEATURE_USB_PD EC feature flag.
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-
-Acked-by: Roger Quadros <rogerq@ti.com>
-
+> This driver allows other cros-ec devices to receive PD event
+> notifications from the Chrome OS Embedded Controller (EC) via a
+> notification chain.
+> 
+> Signed-off-by: Prashant Malani <pmalani@chromium.org>
 > ---
->   drivers/memory/omap-gpmc.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
 > 
-> diff --git a/drivers/memory/omap-gpmc.c b/drivers/memory/omap-gpmc.c
-> index eff26c1b1394..6dd19d168f75 100644
-> --- a/drivers/memory/omap-gpmc.c
-> +++ b/drivers/memory/omap-gpmc.c
-> @@ -2366,13 +2366,9 @@ static int gpmc_probe(struct platform_device *pdev)
->   	if (IS_ERR(gpmc_base))
->   		return PTR_ERR(gpmc_base);
->   
-> -	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> -	if (!res) {
-> -		dev_err(&pdev->dev, "Failed to get resource: irq\n");
-> -		return -ENOENT;
-> -	}
-> -
-> -	gpmc->irq = res->start;
-> +	gpmc->irq = platform_get_irq(pdev, 0);
-> +	if (gpmc->irq < 0)
-> +		return gpmc->irq;
->   
->   	gpmc_l3_clk = devm_clk_get(&pdev->dev, "fck");
->   	if (IS_ERR(gpmc_l3_clk)) {
+> Changes in v4:
+> - Removed #ifndef usage; instead, moved cros-usbpd-notify to a separate
+>   mfd_cell and used an IS_ENABLED() check.
+> - Changed commit title and description slightly to reflect change in
+>   code.
 > 
+>  drivers/mfd/cros_ec_dev.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index c4b977a5dd966..da198abe2b0a6 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2014 Google, Inc.
+>   */
+>  
+> +#include <linux/kconfig.h>
+>  #include <linux/mfd/core.h>
+>  #include <linux/mfd/cros_ec.h>
+>  #include <linux/module.h>
+> @@ -87,6 +88,10 @@ static const struct mfd_cell cros_usbpd_charger_cells[] = {
+>  	{ .name = "cros-usbpd-logger", },
+>  };
+>  
+> +static const struct mfd_cell cros_usbpd_notify_cells[] = {
+> +	{ .name = "cros-usbpd-notify", },
+> +};
+> +
+>  static const struct cros_feature_to_cells cros_subdevices[] = {
+>  	{
+>  		.id		= EC_FEATURE_CEC,
+> @@ -202,6 +207,22 @@ static int ec_device_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * The PD notifier driver cell is separate since it only needs to be
+> +	 * explicitly added on non-ACPI platforms.
 
--- 
-cheers,
--roger
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Sorry to not catch this before, but a worry arose. Is non-ACPI platforms or
+non-X86 platforms or on OF platforms?
+
+ARM64 for example has the CONFIG_ACPI symbol set to yes, with the below
+condition condition will not work on Kevin for example and IIUC this is not what
+we want, I think we want IS_ENABLED(CONFIG_OF)?
+
+Thanks,
+ Enric
+
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_ACPI)) {
+> +		if (cros_ec_check_features(ec, EC_FEATURE_USB_PD)) {
+> +			retval = mfd_add_hotplug_devices(ec->dev,
+> +					cros_usbpd_notify_cells,
+> +					ARRAY_SIZE(cros_usbpd_notify_cells));
+> +			if (retval)
+> +				dev_err(ec->dev,
+> +					"failed to add PD notify devices: %d\n",
+> +					retval);
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * The following subdevices cannot be detected by sending the
+>  	 * EC_FEATURE_GET_CMD to the Embedded Controller device.
+> 
