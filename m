@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A2651129855
-	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:36:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC725129859
+	for <lists+linux-kernel@lfdr.de>; Mon, 23 Dec 2019 16:39:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbfLWPgY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 10:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39176 "EHLO mail.kernel.org"
+        id S1726873AbfLWPjO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 10:39:14 -0500
+Received: from foss.arm.com ([217.140.110.172]:46964 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726718AbfLWPgY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 10:36:24 -0500
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1DAA420709;
-        Mon, 23 Dec 2019 15:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577115383;
-        bh=hzPoQ1fvvaQxsqmLyBqPFPkPlBBrXBsg0roCFv+pqOs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=s4MSQy2xmhUVo8/AbEh0aCKi1q4LwtYsKJO4iAXF4ZSJ/enbaPVSONUXcL+pc1/dA
-         aovhls2gAlH9TNRo4SZeYIxvODZjtbaY7vMf768DkL8faFhnveOIBlMEVd9Lecs0TW
-         cntyTLkgwyffKMSduHFWeDDUb9NpN77AynMqT+4E=
-Date:   Mon, 23 Dec 2019 15:36:18 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "lkcamp@lists.libreplanetbr.org" <lkcamp@lists.libreplanetbr.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "djunho@gmail.com" <djunho@gmail.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "Popa, Stefan Serban" <StefanSerban.Popa@analog.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 3/4] iio: adc: ad7923: Add of_device_id table
-Message-ID: <20191223153618.234c29cd@archlinux>
-In-Reply-To: <daf1148cb29129023ebd1c11f2b0fba86c9446f3.camel@analog.com>
-References: <20191217111158.30888-1-djunho@gmail.com>
-        <20191217111158.30888-4-djunho@gmail.com>
-        <daf1148cb29129023ebd1c11f2b0fba86c9446f3.camel@analog.com>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726824AbfLWPjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 10:39:14 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8C9491FB;
+        Mon, 23 Dec 2019 07:39:13 -0800 (PST)
+Received: from [10.37.12.81] (unknown [10.37.12.81])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DA2613F6CF;
+        Mon, 23 Dec 2019 07:39:11 -0800 (PST)
+Subject: Re: [PATCH 1/2] include: trace: Add SCMI header with trace events
+To:     Jim Quinlan <james.quinlan@broadcom.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, rostedt@goodmis.org
+References: <20191216161650.21844-1-lukasz.luba@arm.com>
+ <20191218120900.GA28599@bogus>
+ <7b59a2f1-0786-d24f-a653-76a60c15a8ae@broadcom.com>
+ <CA+-6iNxn29WpUrbc9gL4EMTJfZj7FRCeO-_QaUqbjJYd1JAEKA@mail.gmail.com>
+ <7fe599d3-1ce2-1fde-2911-9516a26090b6@arm.com>
+ <9befbc13-ba00-094d-0064-0d97c1ccbb63@broadcom.com>
+From:   Lukasz Luba <lukasz.luba@arm.com>
+Message-ID: <abad5f94-ce0d-99c9-bb9a-754c56849aee@arm.com>
+Date:   Mon, 23 Dec 2019 15:39:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <9befbc13-ba00-094d-0064-0d97c1ccbb63@broadcom.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 17 Dec 2019 11:30:56 +0000
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
 
-> On Tue, 2019-12-17 at 08:11 -0300, Daniel Junho wrote:
-> > Accomplish device tree compatibility to driver AD7923
-> > by adding of_device_id table and making a subsequent call to
-> > MODULE_DEVICE_TABLE.
-> >   
+On 12/20/19 4:24 PM, Jim Quinlan wrote:
 > 
-> Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
+>> Thank you for sharing your experiments and thoughts. I have probably
+>> similar setup for stressing the communication channel, but I do also
+>> some wired things in the firmware. That's why I need to measure these
+>> delays. I am happy that it is useful for you also.
+>>
+>> I don't know if your firmware supports 'fast channel', but please keep
+>> in mind that it is not tracked in this 'transfer_id'.
+>> This transfer_id in v2 version does not show the real transfers
+>> to the firmware since there is another path called 'fast channel' or
+>> 'fast_switch' in the CPUfreq. It is in drivers/firmware/arm_scmi/perf.c
+>> and the atomic variable is not incremented in that path. Adding it also
+>> there just for atomic_inc() probably would add delays in the fast_switch
+>> and also brings little value.
+>> For the normal channel, where we have spinlocks and other stuff, this
+>> atomic_inc() could stay in my opinion.
+>>
+>> Regards,
+>> Lukasz
+> Hi Lukasz,
+> 
+> We currently do not use "fast channels" - although it is possible we might someday.
+> I find the transfer_id useful per your v2 even if it doesn't cover FC.  Thanks for
+> submitting and discussing this!
 
-Thanks,
+Thank you for cooperation.
 
-Jonathan
+Regards,
+Lukasz
 
 > 
-> > Signed-off-by: Daniel Junho <djunho@gmail.com>
-> > ---
-> >  drivers/iio/adc/ad7923.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-> > index e535cec9fc02..6d56fa0b9e30 100644
-> > --- a/drivers/iio/adc/ad7923.c
-> > +++ b/drivers/iio/adc/ad7923.c
-> > @@ -348,9 +348,19 @@ static const struct spi_device_id ad7923_id[] = {
-> >  };
-> >  MODULE_DEVICE_TABLE(spi, ad7923_id);
-> >  
-> > +static const struct of_device_id ad7923_of_match[] = {
-> > +	{ .compatible = "adi,ad7904", },
-> > +	{ .compatible = "adi,ad7914", },
-> > +	{ .compatible = "adi,ad7923", },
-> > +	{ .compatible = "adi,ad7924", },
-> > +	{ },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, ad7923_of_match);
-> > +
-> >  static struct spi_driver ad7923_driver = {
-> >  	.driver = {
-> >  		.name	= "ad7923",
-> > +		.of_match_table = ad7923_of_match,
-> >  	},
-> >  	.probe		= ad7923_probe,
-> >  	.remove		= ad7923_remove,  
-
+> Regards,
+> Jim Quinlan
+> 
