@@ -2,68 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F40E129C80
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 02:59:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E22CF129C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 03:06:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbfLXB7v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 20:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727007AbfLXB7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 20:59:51 -0500
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7C3A21927
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 01:59:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577152791;
-        bh=mZIM8/IGO6yj32EzkYlDoUvjeWHo1IO0ajLflWLHJ1E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vE/azURLnH3qmHdn1hy96edh/OrB+2oiYVAPcoNChA1APgqTQyUag0cYd3A8FiQ3I
-         z+MecPlyIZpolq5Y/HqAQ51oX17foKhSZtLpPUMoekuaY051HMxyJWgyQ6kFQpJYl/
-         f4fGsUdpfoEdNSCX6ZJ9N8upAriGiQ56oRzvKg4s=
-Received: by mail-wr1-f49.google.com with SMTP id g17so18583141wro.2
-        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 17:59:50 -0800 (PST)
-X-Gm-Message-State: APjAAAVRhKg4vaq1t31aq6vp/o5AVYaq/7B6IY4cku5cWEJj89L6JK0y
-        LeL6ft5b+JipcAdjlo17RpmmWAjr8KL155F3pYVxYQ==
-X-Google-Smtp-Source: APXvYqxAMnRl94bz0dtBWu5DeU1T1h7ThWeUzu+q0KQ6Q4rmgmqNaGXBhJRposss35afzcm4hhvUi2inaUTSmKyfilU=
-X-Received: by 2002:adf:f2c1:: with SMTP id d1mr31723699wrp.111.1577152789083;
- Mon, 23 Dec 2019 17:59:49 -0800 (PST)
+        id S1727014AbfLXCGT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 21:06:19 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:53366 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbfLXCGS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 21:06:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1577153180; x=1608689180;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rJyFssg2r/VXKtVcX1vzyYSq44mKspPdAlg9fnzFV8E=;
+  b=Ml6PTl96/EhHdZnoAZAzWd69l+6UQCdYAFCXG/VzdRClA1d3cHR4srDS
+   lD/fnM/KBdeaE1V5hYMMbNAOTBkvLQbpsDxWByI9Q6TEOXtCKF/VGiH17
+   rY6/u8LPUVel7I5rgfQpa4mu8HHA8GKjHQF5cWjPWybmMtOr5LmGnhsrn
+   0XPSKcQDXsXBZSCsj30GhKV2NfZcFaSTjmWLHhbBlUcS6nB4WTbckH5V+
+   X4IcTAkRfDI5KscrLEQEDQ5Ts3C0t1pIvG1gj19KCUqyRb7feinTE6ELs
+   D8cW1oh3Qo8FsW5/Gqaswp8W1t+Y9OL3PwPHC5+dEj/d+anmItygmNnJq
+   A==;
+IronPort-SDR: w2d3fvTuzMgB0CcpZ8dreoaF+cqpKTQmmyZxTxwY4T07HO2IZdk24Crvihl4+yl/08vvmSKavE
+ K9cFObOz3lGcR9dwSCjg4+YTc1jQa9m8doVg6a7MnhTgk64ydXPjCp56TwnskhGXx85RHWK/mM
+ u08VrWo3AHX3pUvX9OzS7v+TNio+oRen/nPPtkeaYxEEfgtPz0+i5V2gpQHCif2dc8698zbMfw
+ Ivd37MyJeqyVPfMyjmYpLMoyMH343QXM6MkdQ0lnykhOo2XenhgInCYcmSGTq08Cpn9CtxfW5V
+ LGI=
+X-IronPort-AV: E=Sophos;i="5.69,349,1571673600"; 
+   d="scan'208";a="227655365"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 24 Dec 2019 10:06:20 +0800
+IronPort-SDR: ELObOa0HkakgkAWaGpVHiiqQTNKU3t0qdw3e9gbK12ZoKvDxWlJCFOsjg6JsP+mZ9QfjO8Cc5x
+ szxQvTaMRs7guHXANViTFzC2DyKyZi8siiorkoppdCUfiLLW1DVnp6M4cA19yqR44211XJqhmk
+ Fyr+tLt2IC5aGjjj2qV7Pi78pcf8Ec46yUBUSYQiXyw5JX4GjWoFY5j3XkkzSJdOG2JgbmBTWD
+ TBht8RPkdQMqMgsbB8zY/O56pRiE52hKOjsTlxOTb1BkgkWSrnBzrWYCCb6z/UFZFRQfsKHPKX
+ cdzcHwOJO4Ad47aKIBY9jZoR
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 18:00:10 -0800
+IronPort-SDR: yAD7UckSSHKpGggA95egBfqrmtfFFE1xmyOfIYjrZD8l4yKeD94PaKyQz4UxUOzo/US1JlChyV
+ 4PdVDxpoM9354mGD82og6YPUF+hiQIUSuPzfmBQg8ThH6O3nZxOSplUp7YrYIYFhC3NChW+Njw
+ mtuedUzQFOYKWSuuny9t6josxX3f087VqZvydrtHO25HZUKIC7rRc9Fvu3RMXvnIJNM5Q1wiRZ
+ XzdEKbaoWlWtBm8r3BVK3OU+qtVEKnGRcI99iQRNRirJZfqkURrLoAsKT1JMikwUMTfvYoaq0H
+ zSM=
+WDCIronportException: Internal
+Received: from washi.fujisawa.hgst.com ([10.149.53.254])
+  by uls-op-cesaip01.wdc.com with ESMTP; 23 Dec 2019 18:06:17 -0800
+From:   Damien Le Moal <damien.lemoal@wdc.com>
+To:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Johannes Thumshirn <jth@kernel.org>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Hannes Reinecke <hare@suse.de>
+Subject: [PATCH v3 0/2] New zonefs file system
+Date:   Tue, 24 Dec 2019 11:06:13 +0900
+Message-Id: <20191224020615.134668-1-damien.lemoal@wdc.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <cover.1577111363.git.christophe.leroy@c-s.fr> <fdf1a968a8f7edd61456f1689ac44082ebb19c15.1577111367.git.christophe.leroy@c-s.fr>
-In-Reply-To: <fdf1a968a8f7edd61456f1689ac44082ebb19c15.1577111367.git.christophe.leroy@c-s.fr>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 23 Dec 2019 17:59:36 -0800
-X-Gmail-Original-Message-ID: <CALCETrUZ8rhvhJSYutypUoSf2tGBZPais79fx+8BHWH=Vk4dBw@mail.gmail.com>
-Message-ID: <CALCETrUZ8rhvhJSYutypUoSf2tGBZPais79fx+8BHWH=Vk4dBw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 08/10] lib: vdso: Avoid duplication in __cvdso_clock_getres()
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 6:31 AM Christophe Leroy
-<christophe.leroy@c-s.fr> wrote:
->
-> VDSO_HRES and VDSO_RAW clocks are handled the same way.
->
-> Don't duplicate code.
->
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+zonefs is a very simple file system exposing each zone of a zoned block
+device as a file. Unlike a regular file system with zoned block device
+support (e.g. f2fs or the on-going btrfs effort), zonefs does not hide
+the sequential write constraint of zoned block devices to the user.
+Files representing sequential write zones of the device must be written
+sequentially starting from the end of the file (append only writes).
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+zonefs is not a POSIX compliant file system. It's goal is to simplify
+the implementation of zoned block devices support in applications by
+replacing raw block device file accesses with a richer file based API,
+avoiding relying on direct block device file ioctls which may
+be more obscure to developers. One example of this approach is the
+implementation of LSM (log-structured merge) tree structures (such as
+used in RocksDB and LevelDB) on zoned block devices by allowing SSTables
+to be stored in a zone file similarly to a regular file system rather
+than as a range of sectors of a zoned device. The introduction of the
+higher level construct "one file is one zone" can help reducing the
+amount of changes needed in the application while at the same time
+allowing the use of zoned block devices with various programming
+languages other than C.
+
+zonefs IO management implementation uses the new iomap generic code.
+
+Changes from v2:
+* Address comments and suggestions from Darrick:
+  - Make the inode of OFFLINE and READONLY zones immutable when
+    mounting. Also do this during zone information check after an IO
+    error.
+  - Change super block CRC seed to ~0.
+  - Avoid potential compiler warning in zonefs_create_zgroup().
+* Fixed endianness related compilation warning detected by kbuild bot.
+
+Changes from v1:
+* Fixed comment typo
+* Improved documentation as suggested by Hannes
+
+Damien Le Moal (2):
+  fs: New zonefs file system
+  zonefs: Add documentation
+
+ Documentation/filesystems/zonefs.txt |  215 +++++
+ MAINTAINERS                          |   10 +
+ fs/Kconfig                           |    1 +
+ fs/Makefile                          |    1 +
+ fs/zonefs/Kconfig                    |    9 +
+ fs/zonefs/Makefile                   |    4 +
+ fs/zonefs/super.c                    | 1166 ++++++++++++++++++++++++++
+ fs/zonefs/zonefs.h                   |  169 ++++
+ include/uapi/linux/magic.h           |    1 +
+ 9 files changed, 1576 insertions(+)
+ create mode 100644 Documentation/filesystems/zonefs.txt
+ create mode 100644 fs/zonefs/Kconfig
+ create mode 100644 fs/zonefs/Makefile
+ create mode 100644 fs/zonefs/super.c
+ create mode 100644 fs/zonefs/zonefs.h
+
+-- 
+2.24.1
+
