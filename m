@@ -2,99 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66B0C12A01A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:28:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14EEA12A01F
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:30:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfLXK2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 05:28:13 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38085 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfLXK2N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 05:28:13 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so14785094lfm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 02:28:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=wEAIsFHmnbWRgxwH89cPdLnemSA4uWyZy9ApIp5Vwtk=;
-        b=ulgI9Reuu3zEEZK4Wfg+4gPXP/D+JZX9QjgDck3fP14FCB9YmqKcVGSQccFuVVu6vN
-         RLWnNyfVAGDu8lat2vd955bSiBbQLWraI93c0OENsmri5Azd7esuqzCRDyIg7/SyY3Op
-         LZ4dxUDGOCBlyeK2U6O3c5U9qtxTOQJZ59i95z68lCK46PDGM4DxRsfftcPRJ8ZnQS6i
-         cY/bgctzC3WtJNcjrjm9PDJE6myZ+H+Cc7TbC0tWEyvR72HaBt3cCJCU+mvHUJ3BsDRS
-         GkA/IktTNBdIJAvmMCJrdcS2iarfuNmgcjzxGydAemJMwRDspsNRbxzDyPu04+jtMcYK
-         zuLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=wEAIsFHmnbWRgxwH89cPdLnemSA4uWyZy9ApIp5Vwtk=;
-        b=VwlAfQThJ97PsO/7yHE/ojZjc1Yoat+AMPh1wD3VZUH7ZiQlqi5SyJ5XhKBy/9IL/b
-         s6OCPWJX38M5QgaDQBEbbHrAY7y/5JOQ83k2XUdFOggYMk+7jz4QU8xN/Hyrj0/QN7Ho
-         u5CQ4taH/Eb4dw41JpEqAzo0P1kr2aLHXA0QdyI4sraa4EucB66MLt0sAnMz3PWIZk7+
-         ogwbQSLoh8wdROx3Rk/+DDzqvYdn2pk710xzhHTzj8RQbvHhrW0rFYzp9q9dldeVUsHh
-         xwshNuYVoGq5k+d4/PU8CZyyxMuUM6XzLVvlaVMeVnMb6Ybr6fsahUjQCpWUuHNC3NQx
-         zwwQ==
-X-Gm-Message-State: APjAAAXazf47FuqCNoYjxyrx9qrgPcn7HEBPrOey99/TjG/GcKb6IuXX
-        zKR3HnyYK8I2OqFjGj8tMbPnVqNFrf+CCQJUgXk=
-X-Google-Smtp-Source: APXvYqy/mXrixVLrjWZh09/A1gMGV+XhRds9RW3LymrbLzxfGku9jN1K8sQV8G03I/wtU2vEsrpS8TFS6/QGgIt+VMM=
-X-Received: by 2002:a19:f811:: with SMTP id a17mr19652577lff.182.1577183291220;
- Tue, 24 Dec 2019 02:28:11 -0800 (PST)
+        id S1726278AbfLXK3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 05:29:53 -0500
+Received: from foss.arm.com ([217.140.110.172]:50936 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726104AbfLXK3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 05:29:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93FCF31B;
+        Tue, 24 Dec 2019 02:29:52 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0C4773F6CF;
+        Tue, 24 Dec 2019 02:29:51 -0800 (PST)
+Date:   Tue, 24 Dec 2019 10:29:50 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     will@kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 02/18] arm64: KVM: reset E2PB correctly in MDCR_EL2
+ when exiting the guest(VHE)
+Message-ID: <20191224102949.GD42593@e119886-lin.cambridge.arm.com>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-3-andrew.murray@arm.com>
+ <20191221131214.769a140e@why>
 MIME-Version: 1.0
-Received: by 2002:a2e:8887:0:0:0:0:0 with HTTP; Tue, 24 Dec 2019 02:28:10
- -0800 (PST)
-Reply-To: ambassadorsanders46@gmail.com
-From:   "Mrs. Robin Sanders" <muhammadubuhari2015up@gmail.com>
-Date:   Tue, 24 Dec 2019 11:28:10 +0100
-Message-ID: <CAL2PSiXwwiZFu-E0Nimu25VyT2JbWBaf3GEzU0+mALLT+yqDVQ@mail.gmail.com>
-Subject: DON'T IGNORE THIS MESSAGE?
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191221131214.769a140e@why>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Attn Beneficiary
+On Sat, Dec 21, 2019 at 01:12:14PM +0000, Marc Zyngier wrote:
+> On Fri, 20 Dec 2019 14:30:09 +0000
+> Andrew Murray <andrew.murray@arm.com> wrote:
+> 
+> > From: Sudeep Holla <sudeep.holla@arm.com>
+> > 
+> > On VHE systems, the reset value for MDCR_EL2.E2PB=b00 which defaults
+> > to profiling buffer using the EL2 stage 1 translations. 
+> 
+> Does the reset value actually matter here? I don't see it being
+> specific to VHE systems, and all we're trying to achieve is to restore
+> the SPE configuration to a state where it can be used by the host.
+> 
+> > However if the
+> > guest are allowed to use profiling buffers changing E2PB settings, we
+> 
+> How can the guest be allowed to change E2PB settings? Or do you mean
+> here that allowing the guest to use SPE will mandate changes of the
+> E2PB settings, and that we'd better restore the hypervisor state once
+> we exit?
+> 
+> > need to ensure we resume back MDCR_EL2.E2PB=b00. Currently we just
+> > do bitwise '&' with MDCR_EL2_E2PB_MASK which will retain the value.
+> > 
+> > So fix it by clearing all the bits in E2PB.
+> > 
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > ---
+> >  arch/arm64/kvm/hyp/switch.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> > index 72fbbd86eb5e..250f13910882 100644
+> > --- a/arch/arm64/kvm/hyp/switch.c
+> > +++ b/arch/arm64/kvm/hyp/switch.c
+> > @@ -228,9 +228,7 @@ void deactivate_traps_vhe_put(void)
+> >  {
+> >  	u64 mdcr_el2 = read_sysreg(mdcr_el2);
+> >  
+> > -	mdcr_el2 &= MDCR_EL2_HPMN_MASK |
+> > -		    MDCR_EL2_E2PB_MASK << MDCR_EL2_E2PB_SHIFT |
+> > -		    MDCR_EL2_TPMS;
+> > +	mdcr_el2 &= MDCR_EL2_HPMN_MASK | MDCR_EL2_TPMS;
+> >  
+> >  	write_sysreg(mdcr_el2, mdcr_el2);
+> >  
+> 
+> I'm OK with this change, but I believe the commit message could use
+> some tidying up.
 
-I am Mrs Robin Sanders, Former U.S.A Ambassador to Nigeria. With
-reference to your entitlement fund and inline with the CHANGE OF
-BENEFICIARY'S APPLICATION, signed by Mrs. Glenda F. Ward with your
-purported authorization. This issue has been carefully examined and we
-have declined Mrs. Ward's application as the application lacks regular
-signature, But Did you ever instruct Mrs Glenda F. Ward to claim your
-fund worth US$7.000.000? Below is the bank account information
-provided by Mrs Glenda. F. Ward saying that you authorized her to
-claim your fund that you are terminally ill.
+No problem, I'll update the commit message.
 
-1. BANK NAME: BANK OF AMERICA
-2. BANK ADDRESS: Kerrville Texas 78028 USA
-3. ACCOUNT #: 3202650
-4. ROUTING #: 114922443
+Thanks,
 
-If you had not authorized the change of your bank account in respect
-to your outstanding entitlement Payment, therefore notify me
-immediately as the notification / declaration was supported with a
-sworn affidavit from Lagos high court ref: ilk /jj/202/k2019, dated
-19th Dec. 2019 and signed by Mrs. Glenda Ward who claim and stated in
-the sworn declaration that you authorized her to claim the said fund
-on your behalf to a different bank account in the U.S.A as stated
-above because you were terminally ill and the Doctor who is in charge
-of your case stated that you will not stay more than one Month before
-passing away.
+Andrew Murray
 
-This development has caused lots of discrepancies in your payment file
-that is why we had to suspend your payment and prompted to contact you
-directly before re-validating your payment. You can be rest assured
-that I will do everything within my capacity to successfully actualize
-the quick transfer of your fund to any of your nominated bank account.
-
-Kindly contact me with my private email ambassadorsanders46@gmail.com
-as soon as possible so that I will direct you on what to do.
-
-Note: do not fail to contact me with my private email address as
-stated ambassadorsanders46@gmail.com
-
-Sincerely Yours
-Mrs Robin Sanders
-Former. U.S Ambassador
+> 
+> Thanks,
+> 
+> 	M.
+> -- 
+> Jazz is not dead. It just smells funny...
