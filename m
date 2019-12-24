@@ -2,125 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3010B12A057
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:11:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 141E012A045
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:11:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfLXLLc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:11:32 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:37640 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726918AbfLXLLS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:11:18 -0500
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1iji5t-000169-6L; Tue, 24 Dec 2019 12:11:17 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
-Cc:     Eric Auger <eric.auger@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <Andrew.Murray@arm.com>,
-        Zenghui Yu <yuzenghui@huawei.com>,
-        Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v3 09/32] irqchip/gic-v4.1: Plumb skeletal VPE irqchip
-Date:   Tue, 24 Dec 2019 11:10:32 +0000
-Message-Id: <20191224111055.11836-10-maz@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
-References: <20191224111055.11836-1-maz@kernel.org>
+        id S1726284AbfLXLLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:11:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:51126 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726091AbfLXLLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 06:11:11 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7185A1FB;
+        Tue, 24 Dec 2019 03:11:08 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DB9FD3F534;
+        Tue, 24 Dec 2019 03:11:07 -0800 (PST)
+Date:   Tue, 24 Dec 2019 11:11:06 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 10/18] arm64: KVM/debug: use EL1&0 stage 1 translation
+ regime
+Message-ID: <20191224111105.GF42593@e119886-lin.cambridge.arm.com>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-11-andrew.murray@arm.com>
+ <86d0cgir74.wl-maz@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, Andrew.Murray@arm.com, yuzenghui@huawei.com, rrichter@marvell.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86d0cgir74.wl-maz@kernel.org>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just like for GICv4.0, each VPE has its own doorbell interrupt, and
-thus an irqchip that manages them. Since the doorbell management is
-quite different on GICv4.1, let's introduce an almost empty irqchip
-the will get populated over the next new patches.
+On Sun, Dec 22, 2019 at 10:34:55AM +0000, Marc Zyngier wrote:
+> On Fri, 20 Dec 2019 14:30:17 +0000,
+> Andrew Murray <andrew.murray@arm.com> wrote:
+> > 
+> > From: Sudeep Holla <sudeep.holla@arm.com>
+> > 
+> > Now that we have all the save/restore mechanism in place, lets enable
+> > the translation regime used by buffer from EL2 stage 1 to EL1 stage 1
+> > on VHE systems.
+> > 
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > [ Reword commit, don't trap to EL2 ]
+> 
+> Not trapping to EL2 for the case where we don't allow SPE in the
+> guest is not acceptable.
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
----
- drivers/irqchip/irq-gic-v3-its.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+Yes understood (because of this I had meant to send the series as RFC btw).
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index fd9d3b6bb465..157f51398850 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3554,6 +3554,32 @@ static struct irq_chip its_vpe_irq_chip = {
- 	.irq_set_vcpu_affinity	= its_vpe_set_vcpu_affinity,
- };
- 
-+static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
-+{
-+	struct its_cmd_info *info = vcpu_info;
-+
-+	switch (info->cmd_type) {
-+	case SCHEDULE_VPE:
-+		return 0;
-+
-+	case DESCHEDULE_VPE:
-+		return 0;
-+
-+	case INVALL_VPE:
-+		return 0;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static struct irq_chip its_vpe_4_1_irq_chip = {
-+	.name			= "GICv4.1-vpe",
-+	.irq_eoi		= irq_chip_eoi_parent,
-+	.irq_set_affinity	= its_vpe_set_affinity,
-+	.irq_set_vcpu_affinity	= its_vpe_4_1_set_vcpu_affinity,
-+};
-+
- static int its_vpe_id_alloc(void)
- {
- 	return ida_simple_get(&its_vpeid_ida, 0, ITS_MAX_VPEID, GFP_KERNEL);
-@@ -3634,6 +3660,7 @@ static void its_vpe_irq_domain_free(struct irq_domain *domain,
- static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq,
- 				    unsigned int nr_irqs, void *args)
- {
-+	struct irq_chip *irqchip = &its_vpe_irq_chip;
- 	struct its_vm *vm = args;
- 	unsigned long *bitmap;
- 	struct page *vprop_page;
-@@ -3661,6 +3688,9 @@ static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq
- 	vm->nr_db_lpis = nr_ids;
- 	vm->vprop_page = vprop_page;
- 
-+	if (gic_rdists->has_rvpeid)
-+		irqchip = &its_vpe_4_1_irq_chip;
-+
- 	for (i = 0; i < nr_irqs; i++) {
- 		vm->vpes[i]->vpe_db_lpi = base + i;
- 		err = its_vpe_init(vm->vpes[i]);
-@@ -3671,7 +3701,7 @@ static int its_vpe_irq_domain_alloc(struct irq_domain *domain, unsigned int virq
- 		if (err)
- 			break;
- 		irq_domain_set_hwirq_and_chip(domain, virq + i, i,
--					      &its_vpe_irq_chip, vm->vpes[i]);
-+					      irqchip, vm->vpes[i]);
- 		set_bit(i, bitmap);
- 	}
- 
--- 
-2.20.1
 
+> 
+> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > ---
+> >  arch/arm64/kvm/hyp/switch.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> > index 67b7c160f65b..6c153b79829b 100644
+> > --- a/arch/arm64/kvm/hyp/switch.c
+> > +++ b/arch/arm64/kvm/hyp/switch.c
+> > @@ -100,6 +100,7 @@ static void activate_traps_vhe(struct kvm_vcpu *vcpu)
+> >  
+> >  	write_sysreg(val, cpacr_el1);
+> >  
+> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
+> >  	write_sysreg(kvm_get_hyp_vector(), vbar_el1);
+> >  }
+> >  NOKPROBE_SYMBOL(activate_traps_vhe);
+> > @@ -117,6 +118,7 @@ static void __hyp_text __activate_traps_nvhe(struct kvm_vcpu *vcpu)
+> >  		__activate_traps_fpsimd32(vcpu);
+> >  	}
+> >  
+> > +	write_sysreg(vcpu->arch.mdcr_el2 | 3 << MDCR_EL2_E2PB_SHIFT, mdcr_el2);
+> 
+> There is a _MASK macro that can replace this '3', and is in keeping
+> with the rest of the code.
+
+OK.
+
+
+> 
+> It still remains that it looks like the wrong place to do this, and
+> vcpu_load seems much better. Why should you write to mdcr_el2 on each
+> entry to the guest, since you know whether it has SPE enabled at the
+> point where it gets scheduled?
+
+Yes OK, I'll move what I can to vcpu_load.
+
+Thanks,
+
+Andrew Murray
+
+
+> 
+> 	M.
+> 
+> -- 
+> Jazz is not dead, it just smells funny.
