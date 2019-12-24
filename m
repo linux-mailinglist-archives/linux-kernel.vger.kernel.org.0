@@ -2,66 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C149612A02A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:44:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C89A912A02B
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:45:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfLXKoO convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 24 Dec 2019 05:44:14 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42003 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfLXKoO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 05:44:14 -0500
-X-Originating-IP: 91.224.148.103
-Received: from xps13 (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id D507A240007;
-        Tue, 24 Dec 2019 10:44:11 +0000 (UTC)
-Date:   Tue, 24 Dec 2019 11:44:10 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Rob Herring <robherring2@gmail.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the devicetree tree
-Message-ID: <20191224114410.0d72c72f@xps13>
-In-Reply-To: <20191221143211.47eea79d@canb.auug.org.au>
-References: <20191221143211.47eea79d@canb.auug.org.au>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726259AbfLXKpI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 05:45:08 -0500
+Received: from mail.nic.cz ([217.31.204.67]:42568 "EHLO mail.nic.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726076AbfLXKpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 05:45:08 -0500
+Received: from localhost (unknown [172.20.6.135])
+        by mail.nic.cz (Postfix) with ESMTPSA id 36316140A69;
+        Tue, 24 Dec 2019 11:45:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1577184306; bh=q9JcRnvVRFN2Kpu3lsOtU8eTAnkcYLLURVCH8NtB0Ks=;
+        h=Date:From:To;
+        b=QOR8w2ifoKjy+rOiyWuZCFtmh6Z0Yem9ycl5XBt/68uGUzIxiRuxZwPI1CtKBAofe
+         Wtwvl4WZ8yMsjUXcvVDZ1IKRP4i36nMBQ2tNCmvD3jgvT6niVv8ThrBYsaEYaOOGqJ
+         jFnGEGIH4N1kwNhDrnbiWmaafVNwzdMOHxg297Kk=
+Date:   Tue, 24 Dec 2019 11:45:04 +0100
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
+        <f.fainelli@gmail.com>, <davem@davemloft.net>,
+        <linux@rempel-privat.de>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: dsa: drop pointless static qualifier in
+ ar9331_sw_mbus_init
+Message-ID: <20191224114504.2f256ab9@nic.cz>
+In-Reply-To: <20191224024059.184847-1-maowenan@huawei.com>
+References: <20191224024059.184847-1-maowenan@huawei.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.101.4 at mail
+X-Virus-Status: Clean
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED,SHORTCIRCUIT
+        shortcircuit=ham autolearn=disabled version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on mail.nic.cz
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, Rob,
+Hi Mao,
+the commit title should be something of the form
+  net: dsa: qca: ar9331: drop pointless static qualifier
+or
+  net: dsa: ar9331: drop pointless static qualifier
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote on Sat, 21 Dec 2019
-14:32:11 +1100:
+If it begins only with
+  net: dsa:
+then it makes people think you are changing stuff in main dsa code.
 
-> Hi all,
-> 
-> n commit
-> 
->   13670c493ab8 ("dt-bindings: phy: Fix the PX30 DSI PHY compatible in the example")
-> 
-> Fixes tag
-> 
->   Fixes: 3200df7fa1d6 ("dt-bindings: phy: add yaml binding for rockchip,px30-dsi-dphy")
-> 
-> has these problem(s):
-> 
->   - Target SHA1 does not exist
-> 
-> Maybe you meant
-> 
-> Fixes: 3817c7961179 ("dt-bindings: phy: add yaml binding for rockchip,px30-dsi-dphy")
+Marek
 
-Sorry for the mistake, I took the hash from Heiko's tree. This is
-indeed the right one.
+On Tue, 24 Dec 2019 10:40:59 +0800
+Mao Wenan <maowenan@huawei.com> wrote:
 
-Thanks,
-Miquèl
+> There is no need to have the 'T *v' variable static
+> since new value always be assigned before use it.
+> 
+> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+> ---
+>  drivers/net/dsa/qca/ar9331.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/qca/ar9331.c b/drivers/net/dsa/qca/ar9331.c
+> index 0d1a7cd85fe8..da3bece75e21 100644
+> --- a/drivers/net/dsa/qca/ar9331.c
+> +++ b/drivers/net/dsa/qca/ar9331.c
+> @@ -266,7 +266,7 @@ static int ar9331_sw_mbus_read(struct mii_bus *mbus, int port, int regnum)
+>  static int ar9331_sw_mbus_init(struct ar9331_sw_priv *priv)
+>  {
+>  	struct device *dev = priv->dev;
+> -	static struct mii_bus *mbus;
+> +	struct mii_bus *mbus;
+>  	struct device_node *np, *mnp;
+>  	int ret;
+>  
+
