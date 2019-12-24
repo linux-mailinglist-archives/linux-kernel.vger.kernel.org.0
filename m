@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8319712A0AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:40:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9692012A0B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:41:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726943AbfLXLk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:40:56 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:43178 "EHLO
+        id S1727028AbfLXLlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:41:13 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:40775 "EHLO
         inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726407AbfLXLk4 (ORCPT
+        by vger.kernel.org with ESMTP id S1726184AbfLXLlL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:40:56 -0500
+        Tue, 24 Dec 2019 06:41:11 -0500
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.80)
         (envelope-from <maz@kernel.org>)
-        id 1iji5u-000169-TW; Tue, 24 Dec 2019 12:11:19 +0100
+        id 1iji5v-000169-JX; Tue, 24 Dec 2019 12:11:20 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -29,9 +29,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Andrew Murray <Andrew.Murray@arm.com>,
         Zenghui Yu <yuzenghui@huawei.com>,
         Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v3 11/32] irqchip/gic-v4.1: Add VPE residency callback
-Date:   Tue, 24 Dec 2019 11:10:34 +0000
-Message-Id: <20191224111055.11836-12-maz@kernel.org>
+Subject: [PATCH v3 12/32] irqchip/gic-v4.1: Add VPE eviction callback
+Date:   Tue, 24 Dec 2019 11:10:35 +0000
+Message-Id: <20191224111055.11836-13-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
 References: <20191224111055.11836-1-maz@kernel.org>
@@ -46,88 +46,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Making a VPE resident on GICv4.1 is pretty simple, as it is just a
-single write to the local redistributor. We just need extra information
-about which groups to enable, which the KVM code will have to provide.
+When descheduling a VPE, special care must be taken to tell the GIC
+about whether we want to receive a doorbell or not. This is a
+major improvement on GICv4.0, where the doorbell had to be separately
+enabled/disabled.
 
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 17 +++++++++++++++++
- include/linux/irqchip/arm-gic-v3.h |  9 +++++++++
- include/linux/irqchip/arm-gic-v4.h |  5 +++++
- 3 files changed, 31 insertions(+)
+ drivers/irqchip/irq-gic-v3-its.c | 53 +++++++++++++++++++++++++-------
+ 1 file changed, 42 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 0da6baa48153..49850297fe56 100644
+index 49850297fe56..a5567d099a3e 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3625,12 +3625,29 @@ static void its_vpe_4_1_unmask_irq(struct irq_data *d)
- 	its_vpe_4_1_send_inv(d);
+@@ -2631,7 +2631,7 @@ static int __init allocate_lpi_tables(void)
+ 	return 0;
  }
  
-+static void its_vpe_4_1_schedule(struct its_vpe *vpe,
-+				 struct its_cmd_info *info)
+-static u64 its_clear_vpend_valid(void __iomem *vlpi_base)
++static u64 its_clear_vpend_valid(void __iomem *vlpi_base, u64 clr, u64 set)
+ {
+ 	u32 count = 1000000;	/* 1s! */
+ 	bool clean;
+@@ -2639,6 +2639,8 @@ static u64 its_clear_vpend_valid(void __iomem *vlpi_base)
+ 
+ 	val = gits_read_vpendbaser(vlpi_base + GICR_VPENDBASER);
+ 	val &= ~GICR_VPENDBASER_Valid;
++	val &= ~clr;
++	val |= set;
+ 	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
+ 
+ 	do {
+@@ -2651,6 +2653,11 @@ static u64 its_clear_vpend_valid(void __iomem *vlpi_base)
+ 		}
+ 	} while (!clean && count);
+ 
++	if (unlikely(val & GICR_VPENDBASER_Dirty)) {
++		pr_err_ratelimited("ITS virtual pending table not cleaning\n");
++		val |= GICR_VPENDBASER_PendingLast;
++	}
++
+ 	return val;
+ }
+ 
+@@ -2759,7 +2766,7 @@ static void its_cpu_init_lpis(void)
+ 		 * ancient programming gets left in and has possibility of
+ 		 * corrupting memory.
+ 		 */
+-		val = its_clear_vpend_valid(vlpi_base);
++		val = its_clear_vpend_valid(vlpi_base, 0, 0);
+ 		WARN_ON(val & GICR_VPENDBASER_Dirty);
+ 	}
+ 
+@@ -3439,16 +3446,10 @@ static void its_vpe_deschedule(struct its_vpe *vpe)
+ 	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
+ 	u64 val;
+ 
+-	val = its_clear_vpend_valid(vlpi_base);
++	val = its_clear_vpend_valid(vlpi_base, 0, 0);
+ 
+-	if (unlikely(val & GICR_VPENDBASER_Dirty)) {
+-		pr_err_ratelimited("ITS virtual pending table not cleaning\n");
+-		vpe->idai = false;
+-		vpe->pending_last = true;
+-	} else {
+-		vpe->idai = !!(val & GICR_VPENDBASER_IDAI);
+-		vpe->pending_last = !!(val & GICR_VPENDBASER_PendingLast);
+-	}
++	vpe->idai = !!(val & GICR_VPENDBASER_IDAI);
++	vpe->pending_last = !!(val & GICR_VPENDBASER_PendingLast);
+ }
+ 
+ static void its_vpe_invall(struct its_vpe *vpe)
+@@ -3640,6 +3641,35 @@ static void its_vpe_4_1_schedule(struct its_vpe *vpe,
+ 	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
+ }
+ 
++static void its_vpe_4_1_deschedule(struct its_vpe *vpe,
++				   struct its_cmd_info *info)
 +{
 +	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
-+	u64 val = 0;
++	u64 val;
 +
-+	/* Schedule the VPE */
-+	val |= GICR_VPENDBASER_Valid;
-+	val |= info->g0en ? GICR_VPENDBASER_4_1_VGRP0EN : 0;
-+	val |= info->g1en ? GICR_VPENDBASER_4_1_VGRP1EN : 0;
-+	val |= FIELD_PREP(GICR_VPENDBASER_4_1_VPEID, vpe->vpe_id);
-+
-+	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
++	if (info->req_db) {
++		/*
++		 * vPE is going to block: make the vPE non-resident with
++		 * PendingLast clear and DB set. The GIC guarantees that if
++		 * we read-back PendingLast clear, then a doorbell will be
++		 * delivered when an interrupt comes.
++		 */
++		val = its_clear_vpend_valid(vlpi_base,
++					    GICR_VPENDBASER_PendingLast,
++					    GICR_VPENDBASER_4_1_DB);
++		vpe->pending_last = !!(val & GICR_VPENDBASER_PendingLast);
++	} else {
++		/*
++		 * We're not blocking, so just make the vPE non-resident
++		 * with PendingLast set, indicating that we'll be back.
++		 */
++		val = its_clear_vpend_valid(vlpi_base,
++					    0,
++					    GICR_VPENDBASER_PendingLast);
++		vpe->pending_last = true;
++	}
 +}
 +
  static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
  {
-+	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
- 	struct its_cmd_info *info = vcpu_info;
- 
- 	switch (info->cmd_type) {
- 	case SCHEDULE_VPE:
-+		its_vpe_4_1_schedule(vpe, info);
+ 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+@@ -3651,6 +3681,7 @@ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
  		return 0;
  
  	case DESCHEDULE_VPE:
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 33519b7c96cf..1c91dede7663 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -329,6 +329,15 @@
- #define GICR_VPENDBASER_IDAI		(1ULL << 62)
- #define GICR_VPENDBASER_Valid		(1ULL << 63)
++		its_vpe_4_1_deschedule(vpe, info);
+ 		return 0;
  
-+/*
-+ * GICv4.1 VPENDBASER, used for VPE residency. On top of these fields,
-+ * also use the above Valid, PendingLast and Dirty.
-+ */
-+#define GICR_VPENDBASER_4_1_DB		(1ULL << 62)
-+#define GICR_VPENDBASER_4_1_VGRP0EN	(1ULL << 59)
-+#define GICR_VPENDBASER_4_1_VGRP1EN	(1ULL << 58)
-+#define GICR_VPENDBASER_4_1_VPEID	GENMASK_ULL(15, 0)
-+
- /*
-  * ITS registers, offsets from ITS_base
-  */
-diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
-index 498e523085a7..d9c34968467a 100644
---- a/include/linux/irqchip/arm-gic-v4.h
-+++ b/include/linux/irqchip/arm-gic-v4.h
-@@ -100,6 +100,11 @@ struct its_cmd_info {
- 	union {
- 		struct its_vlpi_map	*map;
- 		u8			config;
-+		bool			req_db;
-+		struct {
-+			bool		g0en;
-+			bool		g1en;
-+		};
- 	};
- };
- 
+ 	case INVALL_VPE:
 -- 
 2.20.1
 
