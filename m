@@ -2,824 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1F5712A01B
+	by mail.lfdr.de (Postfix) with ESMTP id 66B0C12A01A
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:28:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfLXK20 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 05:28:26 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33129 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfLXK2Z (ORCPT
+        id S1726201AbfLXK2N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 05:28:13 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38085 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfLXK2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 05:28:25 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d139so1707547wmd.0
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 02:28:23 -0800 (PST)
+        Tue, 24 Dec 2019 05:28:13 -0500
+Received: by mail-lf1-f67.google.com with SMTP id r14so14785094lfm.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 02:28:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vsmcA20nkEWbaKdMcBU028AF1wwdjdd2d7LCq+lz5fI=;
-        b=qkCGbgqqC5A6sWZuAg7LmVgCDlllEIMBvhkY220Nuz04ewhIerPSD4uf1WwrlvYaIr
-         4H1nd2uT6LZ5M5k4PfTMmDUuLPZaw+qS+ftLGsdKf3V0ua456SPD0AuuW2FGPoYPIuYI
-         5miXWHDrTNFU1/yhaz2HyiahJh6HlUmMGi7KzcmWACDgmyun+TpFdpIrJXLukKPBIvmG
-         20nPHUvg/lV1xmalO3EaLd4v1t4S037CUU6RQug71kkW9u4m5z4ZnZcyn2XQTiUjgIc2
-         hduPs4uDdEQhkgRp6fdDWbjArtNG7SNsNzm7NDkB+OdbI/PPGkRm5E0CGwl92INHoEPU
-         Qmlg==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=wEAIsFHmnbWRgxwH89cPdLnemSA4uWyZy9ApIp5Vwtk=;
+        b=ulgI9Reuu3zEEZK4Wfg+4gPXP/D+JZX9QjgDck3fP14FCB9YmqKcVGSQccFuVVu6vN
+         RLWnNyfVAGDu8lat2vd955bSiBbQLWraI93c0OENsmri5Azd7esuqzCRDyIg7/SyY3Op
+         LZ4dxUDGOCBlyeK2U6O3c5U9qtxTOQJZ59i95z68lCK46PDGM4DxRsfftcPRJ8ZnQS6i
+         cY/bgctzC3WtJNcjrjm9PDJE6myZ+H+Cc7TbC0tWEyvR72HaBt3cCJCU+mvHUJ3BsDRS
+         GkA/IktTNBdIJAvmMCJrdcS2iarfuNmgcjzxGydAemJMwRDspsNRbxzDyPu04+jtMcYK
+         zuLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vsmcA20nkEWbaKdMcBU028AF1wwdjdd2d7LCq+lz5fI=;
-        b=dJSgmC6uyG3WXwlm1Wu5wL2EZo3KhSg7WKXAxmf0cXjugJyMxUV8N1tLRkEOiTuxFA
-         Li67CGfdgbKKugfEoMIZstx3YfQhRhOJuOLvorZiRUuC0yCyaHMpMJNb7YOJKRme4823
-         dhBYfQQlTAixVMps0aSa/1qNycww9NKb2EN44M0+pXHR3qQL8V/axOzIEZSXuYB03mkg
-         norLCbmdyYq62IJTdTCVTVBtqRMVl4qtkqQvgmgCKnT+dQEUz+sTO5/kW3qbJ1Vd7Diz
-         jtePYg/7gtlwKTmlEneBcLasDQeHcbqzHRvEM5YRTRbrAFGj2Qa6LcfYhcyuWJhj1Z2E
-         wybQ==
-X-Gm-Message-State: APjAAAU3CDhb/uIGWSA/VdecZ8shclyBaD4W6asZBsXvU8947JC62+R+
-        2e3b9Ea/JUxUcbyuAgooTdfi3guMgXg+Xbxw+3IIsw==
-X-Google-Smtp-Source: APXvYqy2a6aOoUBuloQqZWXrQtkPTqz9mrWRnYzK8rDXd+bBkUG5toVnqIp/N0T4jYahg6vVNe0GvweQK2NHBcC3Qa8=
-X-Received: by 2002:a1c:66d5:: with SMTP id a204mr3375360wmc.64.1577183302010;
- Tue, 24 Dec 2019 02:28:22 -0800 (PST)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=wEAIsFHmnbWRgxwH89cPdLnemSA4uWyZy9ApIp5Vwtk=;
+        b=VwlAfQThJ97PsO/7yHE/ojZjc1Yoat+AMPh1wD3VZUH7ZiQlqi5SyJ5XhKBy/9IL/b
+         s6OCPWJX38M5QgaDQBEbbHrAY7y/5JOQ83k2XUdFOggYMk+7jz4QU8xN/Hyrj0/QN7Ho
+         u5CQ4taH/Eb4dw41JpEqAzo0P1kr2aLHXA0QdyI4sraa4EucB66MLt0sAnMz3PWIZk7+
+         ogwbQSLoh8wdROx3Rk/+DDzqvYdn2pk710xzhHTzj8RQbvHhrW0rFYzp9q9dldeVUsHh
+         xwshNuYVoGq5k+d4/PU8CZyyxMuUM6XzLVvlaVMeVnMb6Ybr6fsahUjQCpWUuHNC3NQx
+         zwwQ==
+X-Gm-Message-State: APjAAAXazf47FuqCNoYjxyrx9qrgPcn7HEBPrOey99/TjG/GcKb6IuXX
+        zKR3HnyYK8I2OqFjGj8tMbPnVqNFrf+CCQJUgXk=
+X-Google-Smtp-Source: APXvYqy/mXrixVLrjWZh09/A1gMGV+XhRds9RW3LymrbLzxfGku9jN1K8sQV8G03I/wtU2vEsrpS8TFS6/QGgIt+VMM=
+X-Received: by 2002:a19:f811:: with SMTP id a17mr19652577lff.182.1577183291220;
+ Tue, 24 Dec 2019 02:28:11 -0800 (PST)
 MIME-Version: 1.0
-References: <20191224085544.24960-1-greentime.hu@sifive.com>
-In-Reply-To: <20191224085544.24960-1-greentime.hu@sifive.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 24 Dec 2019 15:58:10 +0530
-Message-ID: <CAAhSdy0Ot4m7feJa94WJ6h+o_5-fPbdU6Dzs1az2YcH2qq33Mg@mail.gmail.com>
-Subject: Re: [RFC PATCH] riscv: Add numa support for riscv64 platform
-To:     Greentime Hu <greentime.hu@sifive.com>
-Cc:     Greentime Hu <green.hu@gmail.com>, Christoph Hellwig <hch@lst.de>,
-        greentime@kernel.org, Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ganapatrao Prabhakerrao Kulkarni <gkulkarni@marvell.com>
+Received: by 2002:a2e:8887:0:0:0:0:0 with HTTP; Tue, 24 Dec 2019 02:28:10
+ -0800 (PST)
+Reply-To: ambassadorsanders46@gmail.com
+From:   "Mrs. Robin Sanders" <muhammadubuhari2015up@gmail.com>
+Date:   Tue, 24 Dec 2019 11:28:10 +0100
+Message-ID: <CAL2PSiXwwiZFu-E0Nimu25VyT2JbWBaf3GEzU0+mALLT+yqDVQ@mail.gmail.com>
+Subject: DON'T IGNORE THIS MESSAGE?
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Christoph, +Mike, +Ganpatro
+Attn Beneficiary
 
-On Tue, Dec 24, 2019 at 2:25 PM Greentime Hu <greentime.hu@sifive.com> wrote:
->
-> This implementation is based on arm64 porting. It is tested with
-> qemu-system-riscv64, unleashed board and OmniXtend FPGA platform.
->
-> There will be 2 nodes in /sys/devices/system/node if it is described in dts and
-> CONFIG_NUMA is enabled. We can use numastat/numactl/numademo to see its status.
+I am Mrs Robin Sanders, Former U.S.A Ambassador to Nigeria. With
+reference to your entitlement fund and inline with the CHANGE OF
+BENEFICIARY'S APPLICATION, signed by Mrs. Glenda F. Ward with your
+purported authorization. This issue has been carefully examined and we
+have declined Mrs. Ward's application as the application lacks regular
+signature, But Did you ever instruct Mrs Glenda F. Ward to claim your
+fund worth US$7.000.000? Below is the bank account information
+provided by Mrs Glenda. F. Ward saying that you authorized her to
+claim your fund that you are terminally ill.
 
-This patch can be broken down into separate (more granular) patches.
-For example:
-1. asm/pgtable.h change can be separate patch
-2. Movement of unflatten_device_tree() from setup_arch() to paging_init()
-3. changes in kernel/smpboot.c can also be separate patch
+1. BANK NAME: BANK OF AMERICA
+2. BANK ADDRESS: Kerrville Texas 78028 USA
+3. ACCOUNT #: 3202650
+4. ROUTING #: 114922443
 
-Also, since this is ported from arm64 implementation, I strongly
-suggest having a generic NUMA support which can be shared
-between arm64 and riscv. I think Ganpat (CC'ed) here could be
-the best person to maintain the generic NUMA support since he
-originally added it for arm64.
+If you had not authorized the change of your bank account in respect
+to your outstanding entitlement Payment, therefore notify me
+immediately as the notification / declaration was supported with a
+sworn affidavit from Lagos high court ref: ilk /jj/202/k2019, dated
+19th Dec. 2019 and signed by Mrs. Glenda Ward who claim and stated in
+the sworn declaration that you authorized her to claim the said fund
+on your behalf to a different bank account in the U.S.A as stated
+above because you were terminally ill and the Doctor who is in charge
+of your case stated that you will not stay more than one Month before
+passing away.
 
->
-> Signed-off-by: Greentime Hu <greentime.hu@sifive.com>
-> ---
->  arch/riscv/Kconfig               |  30 ++-
->  arch/riscv/include/asm/mmzone.h  |  13 ++
->  arch/riscv/include/asm/numa.h    |  46 ++++
->  arch/riscv/include/asm/pci.h     |  10 +
->  arch/riscv/include/asm/pgtable.h |  20 ++
->  arch/riscv/kernel/setup.c        |  26 ++-
->  arch/riscv/kernel/smpboot.c      |  20 +-
->  arch/riscv/mm/Makefile           |   1 +
->  arch/riscv/mm/init.c             |   3 +
->  arch/riscv/mm/numa.c             | 372 +++++++++++++++++++++++++++++++
->  10 files changed, 536 insertions(+), 5 deletions(-)
->  create mode 100644 arch/riscv/include/asm/mmzone.h
->  create mode 100644 arch/riscv/include/asm/numa.h
->  create mode 100644 arch/riscv/mm/numa.c
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index bc7598fc5f00..53ae1816df50 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -22,7 +22,6 @@ config RISCV
->         select CLONE_BACKWARDS
->         select COMMON_CLK
->         select GENERIC_CLOCKEVENTS
-> -       select GENERIC_CPU_DEVICES
->         select GENERIC_IRQ_SHOW
->         select GENERIC_PCI_IOMAP
->         select GENERIC_SCHED_CLOCK
-> @@ -234,6 +233,35 @@ config TUNE_GENERIC
->         bool "generic"
->
->  endchoice
-> +# Common NUMA Features
-> +config NUMA
-> +       bool "Numa Memory Allocation and Scheduler Support"
-> +       select OF_NUMA
-> +       select ARCH_SUPPORTS_NUMA_BALANCING
-> +       depends on SPARSEMEM
-> +       help
-> +         Enable NUMA (Non Uniform Memory Access) support.
-> +
-> +         The kernel will try to allocate memory used by a CPU on the
-> +         local memory of the CPU and add some more
-> +         NUMA awareness to the kernel.
-> +
-> +config NODES_SHIFT
-> +       int "Maximum NUMA Nodes (as a power of 2)"
-> +       range 1 10
-> +       default "2"
-> +       depends on NEED_MULTIPLE_NODES
-> +       help
-> +         Specify the maximum number of NUMA Nodes available on the target
-> +         system.  Increases memory reserved to accommodate various tables.
-> +
-> +config USE_PERCPU_NUMA_NODE_ID
-> +       def_bool y
-> +       depends on NUMA
-> +
-> +config NEED_PER_CPU_EMBED_FIRST_CHUNK
-> +       def_bool y
-> +       depends on NUMA
->
->  config RISCV_ISA_C
->         bool "Emit compressed instructions when building Linux"
-> diff --git a/arch/riscv/include/asm/mmzone.h b/arch/riscv/include/asm/mmzone.h
-> new file mode 100644
-> index 000000000000..fa17e01d9ab2
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/mmzone.h
-> @@ -0,0 +1,13 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_MMZONE_H
-> +#define __ASM_MMZONE_H
-> +
-> +#ifdef CONFIG_NUMA
-> +
-> +#include <asm/numa.h>
-> +
-> +extern struct pglist_data *node_data[];
-> +#define NODE_DATA(nid)         (node_data[(nid)])
-> +
-> +#endif /* CONFIG_NUMA */
-> +#endif /* __ASM_MMZONE_H */
-> diff --git a/arch/riscv/include/asm/numa.h b/arch/riscv/include/asm/numa.h
-> new file mode 100644
-> index 000000000000..10a4513d078b
-> --- /dev/null
-> +++ b/arch/riscv/include/asm/numa.h
-> @@ -0,0 +1,46 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_NUMA_H
-> +#define __ASM_NUMA_H
-> +
-> +#include <asm/topology.h>
-> +
-> +#ifdef CONFIG_NUMA
-> +
-> +extern nodemask_t numa_nodes_parsed __initdata;
-> +
-> +extern bool numa_off;
-> +
-> +/* Mappings between node number and cpus on that node. */
-> +extern cpumask_var_t node_to_cpumask_map[MAX_NUMNODES];
-> +void numa_clear_node(unsigned int cpu);
-> +
-> +#ifdef CONFIG_DEBUG_PER_CPU_MAPS
-> +const struct cpumask *cpumask_of_node(int node);
-> +#else
-> +/* Returns a pointer to the cpumask of CPUs on Node 'node'. */
-> +static inline const struct cpumask *cpumask_of_node(int node)
-> +{
-> +       return node_to_cpumask_map[node];
-> +}
-> +#endif
-> +
-> +void __init riscv_numa_init(void);
-> +int __init numa_add_memblk(int nodeid, u64 start, u64 end);
-> +void __init numa_set_distance(int from, int to, int distance);
-> +void __init numa_free_distance(void);
-> +void __init early_map_cpu_to_node(unsigned int cpu, int nid);
-> +void numa_store_cpu_info(unsigned int cpu);
-> +void numa_add_cpu(unsigned int cpu);
-> +void numa_remove_cpu(unsigned int cpu);
-> +
-> +#else  /* CONFIG_NUMA */
-> +
-> +static inline void numa_store_cpu_info(unsigned int cpu) { }
-> +static inline void numa_add_cpu(unsigned int cpu) { }
-> +static inline void numa_remove_cpu(unsigned int cpu) { }
-> +static inline void riscv_numa_init(void) { }
-> +static inline void early_map_cpu_to_node(unsigned int cpu, int nid) { }
-> +
-> +#endif /* CONFIG_NUMA */
-> +
-> +#endif /* __ASM_NUMA_H */
-> diff --git a/arch/riscv/include/asm/pci.h b/arch/riscv/include/asm/pci.h
-> index 5ac8daa1cc36..781aa8b6dcd3 100644
-> --- a/arch/riscv/include/asm/pci.h
-> +++ b/arch/riscv/include/asm/pci.h
-> @@ -32,6 +32,16 @@ static inline int pci_proc_domain(struct pci_bus *bus)
->         /* always show the domain in /proc */
->         return 1;
->  }
-> +
-> +#ifdef CONFIG_NUMA
-> +int pcibus_to_node(struct pci_bus *bus);
-> +#ifndef cpumask_of_pcibus
-> +#define cpumask_of_pcibus(bus) (pcibus_to_node(bus) == -1 ?            \
-> +                                cpu_all_mask :                         \
-> +                                cpumask_of_node(pcibus_to_node(bus)))
-> +#endif
-> +#endif /* CONFIG_NUMA */
-> +
->  #endif  /* CONFIG_PCI */
->
->  #endif  /* __ASM_PCI_H */
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index d3221017194d..04b7c38870f7 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -175,6 +175,11 @@ static inline unsigned long pmd_page_vaddr(pmd_t pmd)
->         return (unsigned long)pfn_to_virt(pmd_val(pmd) >> _PAGE_PFN_SHIFT);
->  }
->
-> +static inline pte_t pmd_pte(pmd_t pmd)
-> +{
-> +       return __pte(pmd_val(pmd));
-> +}
-> +
->  /* Yields the page frame number (PFN) of a page table entry */
->  static inline unsigned long pte_pfn(pte_t pte)
->  {
-> @@ -288,6 +293,21 @@ static inline pte_t pte_mkhuge(pte_t pte)
->         return pte;
->  }
->
-> +#ifdef CONFIG_NUMA_BALANCING
-> +/*
-> + * See the comment in include/asm-generic/pgtable.h
-> + */
-> +static inline int pte_protnone(pte_t pte)
-> +{
-> +       return (pte_val(pte) & (_PAGE_PRESENT | _PAGE_PROT_NONE)) == _PAGE_PROT_NONE;
-> +}
-> +
-> +static inline int pmd_protnone(pmd_t pmd)
-> +{
-> +       return pte_protnone(pmd_pte(pmd));
-> +}
-> +#endif
-> +
->  /* Modify page protection bits */
->  static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->  {
-> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> index 845ae0e12115..f6f2354036a0 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -53,6 +53,31 @@ void __init parse_dtb(void)
->  #endif
->  }
->
-> +static DEFINE_PER_CPU(struct cpu, cpu_devices);
-> +
-> +static int __init topology_init(void)
-> +{
-> +       int i, ret;
-> +
-> +#ifdef CONFIG_NEED_MULTIPLE_NODES
-> +       for_each_online_node(i)
-> +               register_one_node(i);
-> +#endif
-> +
-> +       for_each_possible_cpu(i) {
-> +               struct cpu *cpu = &per_cpu(cpu_devices, i);
-> +
-> +               cpu->hotpluggable = 1;
+This development has caused lots of discrepancies in your payment file
+that is why we had to suspend your payment and prompted to contact you
+directly before re-validating your payment. You can be rest assured
+that I will do everything within my capacity to successfully actualize
+the quick transfer of your fund to any of your nominated bank account.
 
-Strange !!!
+Kindly contact me with my private email ambassadorsanders46@gmail.com
+as soon as possible so that I will direct you on what to do.
 
-We cannot claim CPUs are hotpluggable until Atish's
-Linux SBI v0.2 HSM patches are available.
+Note: do not fail to contact me with my private email address as
+stated ambassadorsanders46@gmail.com
 
-If required then Linux RISC-V NUMA patches should
-be based upon Atish's Linux SBI v0.2 HSM support.
-
-> +               ret = register_cpu(cpu, i);
-> +               if (unlikely(ret))
-> +                       pr_warn("Warning: %s: register_cpu %d failed (%d)\n",
-> +                              __func__, i, ret);
-> +       }
-> +
-> +       return 0;
-> +}
-> +subsys_initcall(topology_init);
-> +
->  void __init setup_arch(char **cmdline_p)
->  {
->         init_mm.start_code = (unsigned long) _stext;
-> @@ -66,7 +91,6 @@ void __init setup_arch(char **cmdline_p)
->
->         setup_bootmem();
->         paging_init();
-> -       unflatten_device_tree();
-
-Movement of unflatten_device_tree() call from here to
-paging_init() needs explanation.
-
->
->  #ifdef CONFIG_SWIOTLB
->         swiotlb_init(1);
-> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-> index 261f4087cc39..bcb67ac403e4 100644
-> --- a/arch/riscv/kernel/smpboot.c
-> +++ b/arch/riscv/kernel/smpboot.c
-> @@ -26,6 +26,7 @@
->  #include <linux/sched/mm.h>
->  #include <asm/irq.h>
->  #include <asm/mmu_context.h>
-> +#include <asm/numa.h>
->  #include <asm/tlbflush.h>
->  #include <asm/sections.h>
->  #include <asm/sbi.h>
-> @@ -45,6 +46,11 @@ void __init smp_prepare_boot_cpu(void)
->  void __init smp_prepare_cpus(unsigned int max_cpus)
->  {
->         int cpuid;
-> +       unsigned int this_cpu;
-> +
-> +       this_cpu = smp_processor_id();
-> +       numa_store_cpu_info(this_cpu);
-> +       numa_add_cpu(this_cpu);
->
->         /* This covers non-smp usecase mandated by "nosmp" option */
->         if (max_cpus == 0)
-> @@ -54,6 +60,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
->                 if (cpuid == smp_processor_id())
->                         continue;
->                 set_cpu_present(cpuid, true);
-> +               numa_store_cpu_info(cpuid);
->         }
->  }
->
-> @@ -72,6 +79,7 @@ void __init setup_smp(void)
->                 if (hart == cpuid_to_hartid_map(0)) {
->                         BUG_ON(found_boot_cpu);
->                         found_boot_cpu = 1;
-> +                       early_map_cpu_to_node(0, of_node_to_nid(dn));
->                         continue;
->                 }
->                 if (cpuid >= NR_CPUS) {
-> @@ -81,6 +89,7 @@ void __init setup_smp(void)
->                 }
->
->                 cpuid_to_hartid_map(cpuid) = hart;
-> +               early_map_cpu_to_node(cpuid, of_node_to_nid(dn));
->                 cpuid++;
->         }
->
-> @@ -136,15 +145,20 @@ void __init smp_cpus_done(unsigned int max_cpus)
->  asmlinkage __visible void __init smp_callin(void)
->  {
->         struct mm_struct *mm = &init_mm;
-> +       unsigned int this_cpu;
-> +
-> +       this_cpu = smp_processor_id();
->
->         /* All kernel threads share the same mm context.  */
->         mmgrab(mm);
->         current->active_mm = mm;
->
->         trap_init();
-> -       notify_cpu_starting(smp_processor_id());
-> -       update_siblings_masks(smp_processor_id());
-> -       set_cpu_online(smp_processor_id(), 1);
-> +       notify_cpu_starting(this_cpu);
-> +       numa_store_cpu_info(this_cpu);
-> +       numa_add_cpu(this_cpu);
-> +       update_siblings_masks(this_cpu);
-> +       set_cpu_online(this_cpu, true);
->         /*
->          * Remote TLB flushes are ignored while the CPU is offline, so emit
->          * a local TLB flush right now just in case.
-> diff --git a/arch/riscv/mm/Makefile b/arch/riscv/mm/Makefile
-> index 9d9a17335686..59c956c0b0d0 100644
-> --- a/arch/riscv/mm/Makefile
-> +++ b/arch/riscv/mm/Makefile
-> @@ -17,3 +17,4 @@ ifeq ($(CONFIG_MMU),y)
->  obj-$(CONFIG_SMP) += tlbflush.o
->  endif
->  obj-$(CONFIG_HUGETLB_PAGE) += hugetlbpage.o
-> +obj-$(CONFIG_NUMA)         += numa.o
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 573463d1c799..17c749744e05 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -18,6 +18,7 @@
->  #include <asm/sections.h>
->  #include <asm/pgtable.h>
->  #include <asm/io.h>
-> +#include <asm/numa.h>
->
->  #include "../kernel/head.h"
->
-> @@ -453,6 +454,8 @@ static void __init setup_vm_final(void)
->  void __init paging_init(void)
->  {
->         setup_vm_final();
-> +       unflatten_device_tree();
-> +       riscv_numa_init();
->         memblocks_present();
->         sparse_init();
->         setup_zero_page();
-> diff --git a/arch/riscv/mm/numa.c b/arch/riscv/mm/numa.c
-> new file mode 100644
-> index 000000000000..b679b2831990
-> --- /dev/null
-> +++ b/arch/riscv/mm/numa.c
-> @@ -0,0 +1,372 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * NUMA support, based on the arm64 implementation.
-> + *
-> + * Copyright (C) 2015 Cavium Inc.
-> + * Author: Ganapatrao Kulkarni <gkulkarni@cavium.com>
-> + * Copyright (C) 2019 SiFive, Inc
-> + */
-> +
-> +#define pr_fmt(fmt) "NUMA: " fmt
-> +
-> +#include <linux/memblock.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/device.h>
-> +#include <linux/pci.h>
-> +
-> +struct pglist_data *node_data[MAX_NUMNODES] __read_mostly;
-> +EXPORT_SYMBOL(node_data);
-> +nodemask_t numa_nodes_parsed __initdata;
-> +static int cpu_to_node_map[NR_CPUS] = { [0 ... NR_CPUS-1] = NUMA_NO_NODE };
-> +
-> +static u8 *numa_distance;
-> +static int numa_distance_cnt;
-> +bool numa_off;
-> +
-> +static __init int numa_parse_early_param(char *opt)
-> +{
-> +       if (!opt)
-> +               return -EINVAL;
-> +       if (str_has_prefix(opt, "off"))
-> +               numa_off = true;
-> +
-> +       return 0;
-> +}
-> +early_param("numa", numa_parse_early_param);
-> +
-> +cpumask_var_t node_to_cpumask_map[MAX_NUMNODES];
-> +EXPORT_SYMBOL(node_to_cpumask_map);
-> +
-> +#ifdef CONFIG_DEBUG_PER_CPU_MAPS
-> +
-> +/*
-> + * Returns a pointer to the bitmask of CPUs on Node 'node'.
-> + */
-> +const struct cpumask *cpumask_of_node(int node)
-> +{
-> +       if (WARN_ON(node >= nr_node_ids))
-> +               return cpu_none_mask;
-> +
-> +       if (WARN_ON(node_to_cpumask_map[node] == NULL))
-> +               return cpu_online_mask;
-> +
-> +       return node_to_cpumask_map[node];
-> +}
-> +EXPORT_SYMBOL(cpumask_of_node);
-> +
-> +#endif
-> +
-> +int pcibus_to_node(struct pci_bus *bus)
-> +{
-> +       return dev_to_node(&bus->dev);
-> +}
-> +EXPORT_SYMBOL(pcibus_to_node);
-> +
-> +static void numa_update_cpu(unsigned int cpu, bool remove)
-> +{
-> +       int nid = cpu_to_node(cpu);
-> +
-> +       if (nid == NUMA_NO_NODE)
-> +               return;
-> +
-> +       if (remove)
-> +               cpumask_clear_cpu(cpu, node_to_cpumask_map[nid]);
-> +       else
-> +               cpumask_set_cpu(cpu, node_to_cpumask_map[nid]);
-> +}
-> +
-> +void numa_add_cpu(unsigned int cpu)
-> +{
-> +       numa_update_cpu(cpu, false);
-> +}
-> +
-> +/*
-> + * Set the cpu to node and mem mapping
-> + */
-> +void numa_store_cpu_info(unsigned int cpu)
-> +{
-> +       set_cpu_numa_node(cpu, cpu_to_node_map[cpu]);
-> +}
-> +
-> +void __init early_map_cpu_to_node(unsigned int cpu, int nid)
-> +{
-> +       /* fallback to node 0 */
-> +       if (nid < 0 || nid >= MAX_NUMNODES || numa_off)
-> +               nid = 0;
-> +
-> +       cpu_to_node_map[cpu] = nid;
-> +
-> +       /*
-> +        * We should set the numa node of cpu0 as soon as possible, because it
-> +        * has already been set up online before. cpu_to_node(0) will soon be
-> +        * called.
-> +        */
-> +       if (!cpu)
-> +               set_cpu_numa_node(cpu, nid);
-> +}
-> +
-> +static int __init numa_alloc_distance(void)
-> +{
-> +       size_t size;
-> +       u64 phys;
-> +       int i, j;
-> +
-> +       size = nr_node_ids * nr_node_ids * sizeof(numa_distance[0]);
-> +       phys = memblock_find_in_range(0, PFN_PHYS(max_pfn),
-> +                                     size, PAGE_SIZE);
-> +       if (WARN_ON(!phys))
-> +               return -ENOMEM;
-> +
-> +       memblock_reserve(phys, size);
-> +
-> +       numa_distance = __va(phys);
-> +       numa_distance_cnt = nr_node_ids;
-> +
-> +       /* fill with the default distances */
-> +       for (i = 0; i < numa_distance_cnt; i++)
-> +               for (j = 0; j < numa_distance_cnt; j++)
-> +                       numa_distance[i * numa_distance_cnt + j] = i == j ?
-> +                               LOCAL_DISTANCE : REMOTE_DISTANCE;
-> +
-> +       pr_debug("Initialized distance table, cnt=%d\n", numa_distance_cnt);
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * numa_add_memblk() - Set node id to memblk
-> + * @nid: NUMA node ID of the new memblk
-> + * @start: Start address of the new memblk
-> + * @end:  End address of the new memblk
-> + *
-> + * RETURNS:
-> + * 0 on success, -errno on failure.
-> + */
-> +int __init numa_add_memblk(int nid, u64 start, u64 end)
-> +{
-> +       int ret;
-> +
-> +       ret = memblock_set_node(start, (end - start), &memblock.memory, nid);
-> +       if (ret < 0) {
-> +               pr_err("memblock [0x%llx - 0x%llx] failed to add on node %d\n",
-> +                       start, (end - 1), nid);
-> +               return ret;
-> +       }
-> +
-> +       node_set(nid, numa_nodes_parsed);
-> +       return ret;
-> +}
-> +
-> +/*
-> + * Initialize NODE_DATA for a node on the local memory
-> + */
-> +static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
-> +{
-> +       const size_t nd_size = roundup(sizeof(pg_data_t), SMP_CACHE_BYTES);
-> +       u64 nd_pa;
-> +       void *nd;
-> +       int tnid;
-> +
-> +       if (start_pfn >= end_pfn)
-> +               pr_info("Initmem setup node %d [<memory-less node>]\n", nid);
-> +
-> +       nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
-> +       if (!nd_pa)
-> +               panic("Cannot allocate %zu bytes for node %d data\n",
-> +                     nd_size, nid);
-> +
-> +       nd = __va(nd_pa);
-> +
-> +       /* report and initialize */
-> +       pr_info("NODE_DATA [mem %#010Lx-%#010Lx]\n",
-> +               nd_pa, nd_pa + nd_size - 1);
-> +       tnid = early_pfn_to_nid(nd_pa >> PAGE_SHIFT);
-> +       if (tnid != nid)
-> +               pr_info("NODE_DATA(%d) on node %d\n", nid, tnid);
-> +
-> +       node_data[nid] = nd;
-> +       memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-> +       NODE_DATA(nid)->node_id = nid;
-> +       NODE_DATA(nid)->node_start_pfn = start_pfn;
-> +       NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
-> +}
-> +
-> +void __init numa_set_distance(int from, int to, int distance)
-> +{
-> +       if (!numa_distance) {
-> +               pr_warn_once("Warning: distance table not allocated yet\n");
-> +               return;
-> +       }
-> +
-> +       if (from >= numa_distance_cnt || to >= numa_distance_cnt ||
-> +                       from < 0 || to < 0) {
-> +               pr_warn_once("Warning: node ids are out of bound, from=%d to=%d distance=%d\n",
-> +                           from, to, distance);
-> +               return;
-> +       }
-> +
-> +       if ((u8)distance != distance ||
-> +           (from == to && distance != LOCAL_DISTANCE)) {
-> +               pr_warn_once("Warning: invalid distance parameter, from=%d to=%d distance=%d\n",
-> +                            from, to, distance);
-> +               return;
-> +       }
-> +
-> +       numa_distance[from * numa_distance_cnt + to] = distance;
-> +}
-> +
-> +/*
-> + * Return NUMA distance @from to @to
-> + */
-> +int __node_distance(int from, int to)
-> +{
-> +       if (from >= numa_distance_cnt || to >= numa_distance_cnt)
-> +               return from == to ? LOCAL_DISTANCE : REMOTE_DISTANCE;
-> +       return numa_distance[from * numa_distance_cnt + to];
-> +}
-> +EXPORT_SYMBOL(__node_distance);
-> +
-> +static int __init numa_register_nodes(void)
-> +{
-> +       int nid;
-> +       struct memblock_region *mblk;
-> +
-> +       /* Check that valid nid is set to memblks */
-> +       for_each_memblock(memory, mblk)
-> +               if (mblk->nid == NUMA_NO_NODE || mblk->nid >= MAX_NUMNODES) {
-> +                       pr_warn("Warning: invalid memblk node %d [mem %#010Lx-%#010Lx]\n",
-> +                               mblk->nid, mblk->base,
-> +                               mblk->base + mblk->size - 1);
-> +                       return -EINVAL;
-> +               }
-> +
-> +       /* Finally register nodes. */
-> +       for_each_node_mask(nid, numa_nodes_parsed) {
-> +               unsigned long start_pfn, end_pfn;
-> +
-> +               get_pfn_range_for_nid(nid, &start_pfn, &end_pfn);
-> +               setup_node_data(nid, start_pfn, end_pfn);
-> +               node_set_online(nid);
-> +       }
-> +
-> +       /* Setup online nodes to actual nodes*/
-> +       node_possible_map = numa_nodes_parsed;
-> +
-> +       return 0;
-> +}
-> +static void __init setup_node_to_cpumask_map(void)
-> +{
-> +       int node;
-> +
-> +       /* setup nr_node_ids if not done yet */
-> +       if (nr_node_ids == MAX_NUMNODES)
-> +               setup_nr_node_ids();
-> +
-> +       /* allocate and clear the mapping */
-> +       for (node = 0; node < nr_node_ids; node++) {
-> +               alloc_bootmem_cpumask_var(&node_to_cpumask_map[node]);
-> +               cpumask_clear(node_to_cpumask_map[node]);
-> +       }
-> +
-> +       /* cpumask_of_node() will now work */
-> +       pr_debug("Node to cpumask map for %u nodes\n", nr_node_ids);
-> +}
-> +
-> +void __init numa_free_distance(void)
-> +{
-> +       size_t size;
-> +
-> +       if (!numa_distance)
-> +               return;
-> +
-> +       size = numa_distance_cnt * numa_distance_cnt *
-> +               sizeof(numa_distance[0]);
-> +
-> +       memblock_free(__pa(numa_distance), size);
-> +       numa_distance_cnt = 0;
-> +       numa_distance = NULL;
-> +}
-> +static int __init numa_init(int (*init_func)(void))
-> +{
-> +       int ret;
-> +
-> +       nodes_clear(numa_nodes_parsed);
-> +       nodes_clear(node_possible_map);
-> +       nodes_clear(node_online_map);
-> +
-> +       ret = numa_alloc_distance();
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       ret = init_func();
-> +       if (ret < 0)
-> +               goto out_free_distance;
-> +
-> +       if (nodes_empty(numa_nodes_parsed)) {
-> +               pr_info("No NUMA configuration found\n");
-> +               ret = -EINVAL;
-> +               goto out_free_distance;
-> +       }
-> +
-> +       ret = numa_register_nodes();
-> +       if (ret < 0)
-> +               goto out_free_distance;
-> +
-> +       setup_node_to_cpumask_map();
-> +
-> +       return 0;
-> +out_free_distance:
-> +       numa_free_distance();
-> +       return ret;
-> +}
-> +
-> +/**
-> + * dummy_numa_init() - Fallback dummy NUMA init
-> + *
-> + * Used if there's no underlying NUMA architecture, NUMA initialization
-> + * fails, or NUMA is disabled on the command line.
-> + *
-> + * Must online at least one node (node 0) and add memory blocks that cover all
-> + * allowed memory. It is unlikely that this function fails.
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +static int __init dummy_numa_init(void)
-> +{
-> +       int ret;
-> +       struct memblock_region *mblk;
-> +
-> +       if (numa_off)
-> +               pr_info("NUMA disabled\n"); /* Forced off on command line. */
-> +       pr_info("Faking a node at [mem %#018Lx-%#018Lx]\n",
-> +               memblock_start_of_DRAM(), memblock_end_of_DRAM() - 1);
-> +
-> +       for_each_memblock(memory, mblk) {
-> +               ret = numa_add_memblk(0, mblk->base, mblk->base + mblk->size);
-> +               if (!ret)
-> +                       continue;
-> +
-> +               pr_err("NUMA init failed\n");
-> +               return ret;
-> +       }
-> +
-> +       numa_off = true;
-> +       return 0;
-> +}
-> +
-> +/**
-> + * riscv_numa_init() - Initialize NUMA
-> + *
-> + * Try each configured NUMA initialization method until one succeeds. The
-> + * last fallback is dummy single node config encomapssing whole memory.
-> + */
-> +void __init riscv_numa_init(void)
-> +{
-> +       if (!numa_off) {
-> +               if (!numa_init(of_numa_init))
-> +                       return;
-> +       }
-> +
-> +       numa_init(dummy_numa_init);
-> +}
-> --
-> 2.17.1
->
-
-Regards,
-Anup
+Sincerely Yours
+Mrs Robin Sanders
+Former. U.S Ambassador
