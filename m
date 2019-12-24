@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7444A12A0C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8319712A0AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:40:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727180AbfLXLlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:41:51 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:57163 "EHLO
+        id S1726943AbfLXLk4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:40:56 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:43178 "EHLO
         inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbfLXLlu (ORCPT
+        by vger.kernel.org with ESMTP id S1726407AbfLXLk4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:41:50 -0500
+        Tue, 24 Dec 2019 06:40:56 -0500
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.80)
         (envelope-from <maz@kernel.org>)
-        id 1iji5u-000169-1R; Tue, 24 Dec 2019 12:11:18 +0100
+        id 1iji5u-000169-TW; Tue, 24 Dec 2019 12:11:19 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -29,9 +29,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Andrew Murray <Andrew.Murray@arm.com>,
         Zenghui Yu <yuzenghui@huawei.com>,
         Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v3 10/32] irqchip/gic-v4.1: Add mask/unmask doorbell callbacks
-Date:   Tue, 24 Dec 2019 11:10:33 +0000
-Message-Id: <20191224111055.11836-11-maz@kernel.org>
+Subject: [PATCH v3 11/32] irqchip/gic-v4.1: Add VPE residency callback
+Date:   Tue, 24 Dec 2019 11:10:34 +0000
+Message-Id: <20191224111055.11836-12-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
 References: <20191224111055.11836-1-maz@kernel.org>
@@ -46,146 +46,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-masking/unmasking doorbells on GICv4.1 relies on a new INVDB command,
-which broadcasts the invalidation to all RDs.
-
-Implement the new command as well as the masking callbacks, and plug
-the whole thing into the v4.1 VPE irqchip.
+Making a VPE resident on GICv4.1 is pretty simple, as it is just a
+single write to the local redistributor. We just need extra information
+about which groups to enable, which the KVM code will have to provide.
 
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 73 ++++++++++++++++++++++++++++++
- include/linux/irqchip/arm-gic-v3.h |  3 +-
- 2 files changed, 75 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3-its.c   | 17 +++++++++++++++++
+ include/linux/irqchip/arm-gic-v3.h |  9 +++++++++
+ include/linux/irqchip/arm-gic-v4.h |  5 +++++
+ 3 files changed, 31 insertions(+)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index 157f51398850..0da6baa48153 100644
+index 0da6baa48153..49850297fe56 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -334,6 +334,10 @@ struct its_cmd_desc {
- 			u16 seq_num;
- 			u16 its_list;
- 		} its_vmovp_cmd;
-+
-+		struct {
-+			struct its_vpe *vpe;
-+		} its_invdb_cmd;
- 	};
- };
- 
-@@ -832,6 +836,21 @@ static struct its_vpe *its_build_vclear_cmd(struct its_node *its,
- 	return valid_vpe(its, map->vpe);
+@@ -3625,12 +3625,29 @@ static void its_vpe_4_1_unmask_irq(struct irq_data *d)
+ 	its_vpe_4_1_send_inv(d);
  }
  
-+static struct its_vpe *its_build_invdb_cmd(struct its_node *its,
-+					   struct its_cmd_block *cmd,
-+					   struct its_cmd_desc *desc)
++static void its_vpe_4_1_schedule(struct its_vpe *vpe,
++				 struct its_cmd_info *info)
 +{
-+	if (WARN_ON(!is_v4_1(its)))
-+		return NULL;
++	void __iomem *vlpi_base = gic_data_rdist_vlpi_base();
++	u64 val = 0;
 +
-+	its_encode_cmd(cmd, GITS_CMD_INVDB);
-+	its_encode_vpeid(cmd, desc->its_invdb_cmd.vpe->vpe_id);
++	/* Schedule the VPE */
++	val |= GICR_VPENDBASER_Valid;
++	val |= info->g0en ? GICR_VPENDBASER_4_1_VGRP0EN : 0;
++	val |= info->g1en ? GICR_VPENDBASER_4_1_VGRP1EN : 0;
++	val |= FIELD_PREP(GICR_VPENDBASER_4_1_VPEID, vpe->vpe_id);
 +
-+	its_fixup_cmd(cmd);
-+
-+	return valid_vpe(its, desc->its_invdb_cmd.vpe);
-+}
-+
- static u64 its_cmd_ptr_to_offset(struct its_node *its,
- 				 struct its_cmd_block *ptr)
- {
-@@ -1240,6 +1259,14 @@ static void its_send_vclear(struct its_device *dev, u32 event_id)
- 	its_send_single_vcommand(dev->its, its_build_vclear_cmd, &desc);
- }
- 
-+static void its_send_invdb(struct its_node *its, struct its_vpe *vpe)
-+{
-+	struct its_cmd_desc desc;
-+
-+	desc.its_invdb_cmd.vpe = vpe;
-+	its_send_single_vcommand(its, its_build_invdb_cmd, &desc);
-+}
-+
- /*
-  * irqchip functions - assumes MSI, mostly.
-  */
-@@ -3554,6 +3581,50 @@ static struct irq_chip its_vpe_irq_chip = {
- 	.irq_set_vcpu_affinity	= its_vpe_set_vcpu_affinity,
- };
- 
-+static struct its_node *find_4_1_its(void)
-+{
-+	static struct its_node *its = NULL;
-+
-+	if (!its) {
-+		list_for_each_entry(its, &its_nodes, entry) {
-+			if (is_v4_1(its))
-+				return its;
-+		}
-+
-+		/* Oops? */
-+		its = NULL;
-+	}
-+
-+	return its;
-+}
-+
-+static void its_vpe_4_1_send_inv(struct irq_data *d)
-+{
-+	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-+	struct its_node *its;
-+
-+	/*
-+	 * GICv4.1 wants doorbells to be invalidated using the
-+	 * INVDB command in order to be broadcast to all RDs. Send
-+	 * it to the first valid ITS, and let the HW do its magic.
-+	 */
-+	its = find_4_1_its();
-+	if (its)
-+		its_send_invdb(its, vpe);
-+}
-+
-+static void its_vpe_4_1_mask_irq(struct irq_data *d)
-+{
-+	lpi_write_config(d->parent_data, LPI_PROP_ENABLED, 0);
-+	its_vpe_4_1_send_inv(d);
-+}
-+
-+static void its_vpe_4_1_unmask_irq(struct irq_data *d)
-+{
-+	lpi_write_config(d->parent_data, 0, LPI_PROP_ENABLED);
-+	its_vpe_4_1_send_inv(d);
++	gits_write_vpendbaser(val, vlpi_base + GICR_VPENDBASER);
 +}
 +
  static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
  {
++	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
  	struct its_cmd_info *info = vcpu_info;
-@@ -3575,6 +3646,8 @@ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
  
- static struct irq_chip its_vpe_4_1_irq_chip = {
- 	.name			= "GICv4.1-vpe",
-+	.irq_mask		= its_vpe_4_1_mask_irq,
-+	.irq_unmask		= its_vpe_4_1_unmask_irq,
- 	.irq_eoi		= irq_chip_eoi_parent,
- 	.irq_set_affinity	= its_vpe_set_affinity,
- 	.irq_set_vcpu_affinity	= its_vpe_4_1_set_vcpu_affinity,
+ 	switch (info->cmd_type) {
+ 	case SCHEDULE_VPE:
++		its_vpe_4_1_schedule(vpe, info);
+ 		return 0;
+ 
+ 	case DESCHEDULE_VPE:
 diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index df3b7cb50956..33519b7c96cf 100644
+index 33519b7c96cf..1c91dede7663 100644
 --- a/include/linux/irqchip/arm-gic-v3.h
 +++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -486,8 +486,9 @@
- #define GITS_CMD_VMAPTI			GITS_CMD_GICv4(GITS_CMD_MAPTI)
- #define GITS_CMD_VMOVI			GITS_CMD_GICv4(GITS_CMD_MOVI)
- #define GITS_CMD_VSYNC			GITS_CMD_GICv4(GITS_CMD_SYNC)
--/* VMOVP is the odd one, as it doesn't have a physical counterpart */
-+/* VMOVP and INVDB are the odd ones, as they dont have a physical counterpart */
- #define GITS_CMD_VMOVP			GITS_CMD_GICv4(2)
-+#define GITS_CMD_INVDB			GITS_CMD_GICv4(0xe)
+@@ -329,6 +329,15 @@
+ #define GICR_VPENDBASER_IDAI		(1ULL << 62)
+ #define GICR_VPENDBASER_Valid		(1ULL << 63)
  
++/*
++ * GICv4.1 VPENDBASER, used for VPE residency. On top of these fields,
++ * also use the above Valid, PendingLast and Dirty.
++ */
++#define GICR_VPENDBASER_4_1_DB		(1ULL << 62)
++#define GICR_VPENDBASER_4_1_VGRP0EN	(1ULL << 59)
++#define GICR_VPENDBASER_4_1_VGRP1EN	(1ULL << 58)
++#define GICR_VPENDBASER_4_1_VPEID	GENMASK_ULL(15, 0)
++
  /*
-  * ITS error numbers
+  * ITS registers, offsets from ITS_base
+  */
+diff --git a/include/linux/irqchip/arm-gic-v4.h b/include/linux/irqchip/arm-gic-v4.h
+index 498e523085a7..d9c34968467a 100644
+--- a/include/linux/irqchip/arm-gic-v4.h
++++ b/include/linux/irqchip/arm-gic-v4.h
+@@ -100,6 +100,11 @@ struct its_cmd_info {
+ 	union {
+ 		struct its_vlpi_map	*map;
+ 		u8			config;
++		bool			req_db;
++		struct {
++			bool		g0en;
++			bool		g1en;
++		};
+ 	};
+ };
+ 
 -- 
 2.20.1
 
