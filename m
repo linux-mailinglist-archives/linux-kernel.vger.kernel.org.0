@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5713129E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 08:25:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E79EA129E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 08:25:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfLXHZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 02:25:07 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7741 "EHLO huawei.com"
+        id S1726298AbfLXHZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 02:25:09 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7743 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726065AbfLXHZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:25:06 -0500
+        id S1726043AbfLXHZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 02:25:07 -0500
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 987425FBAF99FA1FBF4E;
+        by Forcepoint Email with ESMTP id AF54E937DA98AD3E0C5E;
         Tue, 24 Dec 2019 15:25:03 +0800 (CST)
 Received: from huawei.com (10.90.53.225) by DGGEMS410-HUB.china.huawei.com
  (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 24 Dec 2019
- 15:24:55 +0800
+ 15:24:56 +0800
 From:   zhengbin <zhengbin13@huawei.com>
 To:     <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <zhengbin13@huawei.com>
-Subject: [PATCH 2/6] mmc: sdhci-tegra: use true,false for bool variable
-Date:   Tue, 24 Dec 2019 15:32:11 +0800
-Message-ID: <1577172735-18869-3-git-send-email-zhengbin13@huawei.com>
+Subject: [PATCH 3/6] mmc: sdhci-msm: use true,false for bool variable
+Date:   Tue, 24 Dec 2019 15:32:12 +0800
+Message-ID: <1577172735-18869-4-git-send-email-zhengbin13@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1577172735-18869-1-git-send-email-zhengbin13@huawei.com>
 References: <1577172735-18869-1-git-send-email-zhengbin13@huawei.com>
@@ -38,27 +38,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes coccicheck warning:
 
-drivers/mmc/host/sdhci-tegra.c:241:6-19: WARNING: Assignment of 0/1 to bool variable
+drivers/mmc/host/sdhci-msm.c:1498:1-23: WARNING: Assignment of 0/1 to bool variable
+drivers/mmc/host/sdhci-msm.c:1611:2-24: WARNING: Assignment of 0/1 to bool variable
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: zhengbin <zhengbin13@huawei.com>
 ---
- drivers/mmc/host/sdhci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-msm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 7bc9505..af91250 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -238,7 +238,7 @@ static bool tegra_sdhci_configure_card_clk(struct sdhci_host *host, bool enable)
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index 71f29ba..91f7ad7 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -1495,7 +1495,7 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
+ 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
 
- static void tegra210_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
- {
--	bool is_tuning_cmd = 0;
-+	bool is_tuning_cmd = false;
- 	bool clk_enabled;
- 	u8 cmd;
+ 	sdhci_msm_handle_pwr_irq(host, irq);
+-	msm_host->pwr_irq_flag = 1;
++	msm_host->pwr_irq_flag = true;
+ 	sdhci_msm_complete_pwr_irq_wait(msm_host);
 
+
+@@ -1608,7 +1608,7 @@ static int __sdhci_msm_check_write(struct sdhci_host *host, u16 val, int reg)
+ 	}
+
+ 	if (req_type) {
+-		msm_host->pwr_irq_flag = 0;
++		msm_host->pwr_irq_flag = false;
+ 		/*
+ 		 * Since this register write may trigger a power irq, ensure
+ 		 * all previous register writes are complete by this point.
 --
 2.7.4
 
