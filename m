@@ -2,129 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F27712A213
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 15:21:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D7312A258
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 15:35:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726246AbfLXOVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 09:21:41 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:54649 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfLXOVk (ORCPT
+        id S1726214AbfLXOdi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 09:33:38 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38546 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfLXOdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 09:21:40 -0500
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 58A5C200006;
-        Tue, 24 Dec 2019 14:21:36 +0000 (UTC)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2] drm/panel: simple: Support reset GPIOs
-Date:   Tue, 24 Dec 2019 15:21:34 +0100
-Message-Id: <20191224142134.22902-1-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 24 Dec 2019 09:33:37 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k8so20954626ljh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 06:33:36 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KPGZel5egxUTitPyz8859YreY0rqMEYVN3LEfGWGArY=;
+        b=ZfMexf37pKFadE1te5ia/KNKGCxdWuHTW202Z3G18VMQqDRuV4GvOLfDObSSX7VSeB
+         Dj2OF/rM6+0IAokF/dBSuPjfF8Yzz21Ls8Zr5sOf2ggR7SefdmMFk22vH6DYQC3OK2Cy
+         NkFP62/DctXiKnZBdbL4Nw59twi1Wtsfnw4j4nkmLm/lhVjXg7CtUOLss3i7HFCB8ghV
+         PNUuyPsC7UWB1GPHgmPG6BJGAFOJy3opi59VxLGQs2g5UNfzQiEbQwgWixoW3MfrErnL
+         1xrAPWD3MQGs4iYoSzJ3bHbui7FaybbsyHgXhwGECEh5p96i6FTeDfwo0uyGj4gOgx2x
+         lZcw==
+X-Gm-Message-State: APjAAAXLM6ZbRPGufGMS3/+vJ21JYaQQYoc5Tk4QDEuALtKOkM+RxLx6
+        wC1t3XFeK9AqYhZpy25olLxwYVpAhtHnuJf7vew=
+X-Google-Smtp-Source: APXvYqzuaeGreMrWFNK73+Z5aaV0f3ay2vDj1XIs3xBZ2cNLsfs6UqLARsLT4D52vYwkhpz8PpPL+lsfmHCsUFe53No=
+X-Received: by 2002:a05:651c:204f:: with SMTP id t15mr21645904ljo.240.1577198015769;
+ Tue, 24 Dec 2019 06:33:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191218111742.29731-1-sudeep.holla@arm.com> <20191218111742.29731-8-sudeep.holla@arm.com>
+In-Reply-To: <20191218111742.29731-8-sudeep.holla@arm.com>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Date:   Tue, 24 Dec 2019 14:33:24 +0000
+Message-ID: <CAPKp9uZznwOgpm=CEMMUDFvHVa=jsmG0-fd4q-_=c_d3HqbKTA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] firmware: arm_scmi: Skip protocol initialisation
+ for additional devices
+To:     linux-arm <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
+Cc:     Cristian Marussi <cristian.marussi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The panel common bindings provide a gpios-reset property. Let's
-support it in the simple driver.
+On Wed, Dec 18, 2019 at 11:19 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> The scmi bus now supports adding multiple devices per protocol,
+> and since scmi_protocol_init is called for each scmi device created,
+> we must avoid allocating protocol private data and initialising the
+> protocol itself if it is already initialised.
+>
+> In order to achieve the same, we can simple replace the idr pointer
+> from protocol initialisation function to a dummy function.
+>
+> Suggested-by: Cristian Marussi <cristian.marussi@arm.com>
 
-Two fields are added to the panel description structure: the time to
-assert the reset and the time to wait right after before starting to
-interact with it in any manner. In case these default values are not
-filled but the GPIO is present in the DT, default values are applied.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
+Hi Cristian,
 
-Changes since v1:
-* Add two parameters in the panel description structure.
-* Ensure the reset is asserted the right amount of time and the
-  deasserted before continuing if a reset GPIO is given.
+Are you fine with this approach ? If yes, I plan to apply this series.
 
- drivers/gpu/drm/panel/panel-simple.c | 32 +++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 28fa6ba7b767..ac6f6b5d200d 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -38,6 +38,9 @@
- #include <drm/drm_mipi_dsi.h>
- #include <drm/drm_panel.h>
- 
-+#define MIN_DEFAULT_RESET_US 10
-+#define MIN_DEFAULT_WAIT_US 10
-+
- /**
-  * @modes: Pointer to array of fixed modes appropriate for this panel.  If
-  *         only one mode then this can just be the address of this the mode.
-@@ -94,6 +97,10 @@ struct panel_desc {
- 
- 	u32 bus_format;
- 	u32 bus_flags;
-+
-+	/* Minimum reset duration and wait period after it in us */
-+	u32 reset_time;
-+	u32 reset_wait;
- };
- 
- struct panel_simple {
-@@ -109,6 +116,7 @@ struct panel_simple {
- 	struct i2c_adapter *ddc;
- 
- 	struct gpio_desc *enable_gpio;
-+	struct gpio_desc *reset_gpio;
- 
- 	struct drm_display_mode override_mode;
- };
-@@ -432,12 +440,34 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
- 	if (IS_ERR(panel->supply))
- 		return PTR_ERR(panel->supply);
- 
-+	panel->reset_gpio = devm_gpiod_get_optional(dev, "reset",
-+						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(panel->reset_gpio)) {
-+		err = PTR_ERR(panel->reset_gpio);
-+		if (err != -EPROBE_DEFER)
-+			dev_err(dev, "failed to request reset pin: %d\n", err);
-+		return err;
-+	} else if (panel->reset_gpio) {
-+		u32 reset_time = panel->desc->reset_time;
-+		u32 reset_wait = panel->desc->reset_wait;
-+
-+		if (!reset_time)
-+			reset_time = MIN_DEFAULT_RESET_US;
-+
-+		if (!reset_wait)
-+			reset_wait = MIN_DEFAULT_WAIT_US;
-+
-+		usleep_range(reset_time, 2 * reset_time);
-+		gpiod_set_value_cansleep(panel->reset_gpio, 0);
-+		usleep_range(reset_wait, 2 * reset_wait);
-+	}
-+
- 	panel->enable_gpio = devm_gpiod_get_optional(dev, "enable",
- 						     GPIOD_OUT_LOW);
- 	if (IS_ERR(panel->enable_gpio)) {
- 		err = PTR_ERR(panel->enable_gpio);
- 		if (err != -EPROBE_DEFER)
--			dev_err(dev, "failed to request GPIO: %d\n", err);
-+			dev_err(dev, "failed to request enable pin: %d\n", err);
- 		return err;
- 	}
- 
--- 
-2.20.1
-
+--
+Regards,
+Sudeep
