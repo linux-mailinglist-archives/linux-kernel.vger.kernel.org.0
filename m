@@ -2,182 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADA3C129D88
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 05:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A6DF129D8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 05:50:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726982AbfLXEpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 23:45:23 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45290 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbfLXEpX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 23:45:23 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 2so10174182pfg.12;
-        Mon, 23 Dec 2019 20:45:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kUcP5CowhZCpBK+l4YfNQ9jTqlumMXA29kQvpAXf9Og=;
-        b=Yf9+meP8XsJgKPHXgor5VnGWDVgOM0Yfojd6NIOnyqnnWbluk7dRq+D8/Lpvt16YSE
-         OjKZGkcdFPsdWMxynAU+Yc6bSPbFdzj1RSahf9smx/MaE8dFMIG4CarUKlLYv/GCF+Zj
-         2swhrQNu0nsRI3RTCCZ0DQGMNC8FHDR6WeovAPeca5yKUHI546/HV96wxqP0HmnGR0go
-         sfPSfYV87EyIdkLByRWPOfrP+qSyonnhymtw3/RELFhRn6w8B5xwheqzg7aPJjqzqDYS
-         56utTqEOXK18/HVjBw9EtJFokj5SyESmWk9VhOiYWW6G5NgXIcmWjz4aN5yKz8U8OAy/
-         Nxcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=kUcP5CowhZCpBK+l4YfNQ9jTqlumMXA29kQvpAXf9Og=;
-        b=svNvdIOvX2ZgXOIokaGeMPQmYIDudNGYtmzMdbJp4oBYb4jpLC6hXEUcEFWCotd38l
-         CP5QSO4rqVs3LxwpVcY9jUdzxPTmhiLzK1d1GDIMApvWOOz2V8EQ3sW7e0WNVQH5EYvq
-         vaxvZdBBTaucdQcJCgrzmnopgWGZu+6GQH643Gy/+8xsVIx+9BorKdVvqMyHZHDk/9wJ
-         rhHF4fKy9xDJMT0T9Su6Ln4ofD0K/bWyii0kqc+9gP0TZrXyhiMc+EJkzSK8bY9Tg71M
-         QqwMs/uh6rva6zIUzwogziEgW7NRZs+/YVbxwFshbc5SJhndTBKdVejxAOhHJJa3d6kr
-         H3Sw==
-X-Gm-Message-State: APjAAAUAJ6a2vQq9o0lCeqWSP5QYuEL979Rzr1ZQ/8BZB3UkBXwcYqFD
-        mGF6vhGeZpNnA4j6zUkASn5gsha5
-X-Google-Smtp-Source: APXvYqwLqbPcmf+BA1WVmgI/YQVhq3ByAia1jRTSjIt4hfV/csvft+ruyT0nVIMjd8btYJ9h299JtA==
-X-Received: by 2002:a63:1c13:: with SMTP id c19mr35522581pgc.450.1577162721766;
-        Mon, 23 Dec 2019 20:45:21 -0800 (PST)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id b1sm1207171pjw.4.2019.12.23.20.45.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 20:45:21 -0800 (PST)
-Subject: Re: [PATCH net-next v8 00/14] ethtool netlink interface, part 1
-To:     Michal Kubecek <mkubecek@suse.cz>
-Cc:     David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-References: <cover.1577052887.git.mkubecek@suse.cz>
- <884c1d40-c0ca-37f2-4149-8c7189dbca3b@gmail.com>
- <20191223220516.GI21614@unicorn.suse.cz>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Message-ID: <cac0adaa-fab6-eaba-a888-5783890564d8@gmail.com>
-Date:   Mon, 23 Dec 2019 20:45:20 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726889AbfLXEuJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 23:50:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52998 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726853AbfLXEuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 23:50:09 -0500
+Received: from localhost (unknown [122.167.68.227])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDE39206CB;
+        Tue, 24 Dec 2019 04:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577163008;
+        bh=UL9b/SbX1WZ6RedDEtgQXJCpnmdECOSxErzvE+HN1eQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1DahhM3gJcOt286sQXsr1sihpHCDy9BrmnkilCr459a+rW6phc8h+yMCqkrQ6VARu
+         r/4GgRBjblHRn4zZyQ63v2oQwg4DkurXppGe6yGm3XKrPWi/QRXaH83M/HzKrmEcpu
+         brCn4XTUGYl9aVy+ud5wFFaZXAkrX2c4/CokRk/8=
+Date:   Tue, 24 Dec 2019 10:20:04 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Kit Chow <kchow@gigaio.com>
+Subject: Re: [PATCH 0/5] Support hot-unbind in IOAT
+Message-ID: <20191224045004.GI2536@vkoul-mobl>
+References: <20191216190120.21374-1-logang@deltatee.com>
 MIME-Version: 1.0
-In-Reply-To: <20191223220516.GI21614@unicorn.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191216190120.21374-1-logang@deltatee.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/23/2019 2:05 PM, Michal Kubecek wrote:
-> On Mon, Dec 23, 2019 at 08:52:01AM -0800, Florian Fainelli wrote:
->> Hi Michal,
->>
->> On 12/22/2019 3:45 PM, Michal Kubecek wrote:
->>> This is first part of netlink based alternative userspace interface for
->>> ethtool. It aims to address some long known issues with the ioctl
->>> interface, mainly lack of extensibility, raciness, limited error reporting
->>> and absence of notifications. The goal is to allow userspace ethtool
->>> utility to provide all features it currently does but without using the
->>> ioctl interface. However, some features provided by ethtool ioctl API will
->>> be available through other netlink interfaces (rtnetlink, devlink) if it's
->>> more appropriate.
->>>
->>> The interface uses generic netlink family "ethtool" and provides multicast
->>> group "monitor" which is used for notifications. Documentation for the
->>> interface is in Documentation/networking/ethtool-netlink.rst file. The
->>> netlink interface is optional, it is built when CONFIG_ETHTOOL_NETLINK
->>> (bool) option is enabled.
->>>
->>> There are three types of request messages distinguished by suffix "_GET"
->>> (query for information), "_SET" (modify parameters) and "_ACT" (perform an
->>> action). Kernel reply messages have name with additional suffix "_REPLY"
->>> (e.g. ETHTOOL_MSG_SETTINGS_GET_REPLY). Most "_SET" and "_ACT" message types
->>> do not have matching reply type as only some of them need additional reply
->>> data beyond numeric error code and extack. Kernel also broadcasts
->>> notification messages ("_NTF" suffix) on changes.
->>
->> Thanks for re-posting these patches again, would you have ethtool and
->> iproute2 branches with your latest ethnl patches applied? I did find
->> your ethnl directory on your github, but it applies to a slightly oldish
->> ethtool version. If you could maintain forks with an "ethnl" branch
->> there, that would help greatly.
+On 16-12-19, 12:01, Logan Gunthorpe wrote:
+> Hey,
 > 
-> The iproute2 patch (adding display of permanent hardware address) is in
-> iproute2 "next" tree. As for (userspace) ethtool code, at the moment
-> it's not in a presentable state. As I wanted on getting v8 out as soon
-> as possible, I focused on making it work somehow so that I can test the
-> kernel patchset. So at the moment, the userspace series is still in the
-> form of an older one (implementing older UAPI) plus one bit "work in
-> progress" patch adapting it to current UAPI.
+> This patchset creates some common infrastructure which I will use in the
+> next version of the PLX driver. It adds a reference count to the
+> dma_device struct which is taken and released every time a channel
+> is allocated or freed. A call back is used to allow the driver to
+> free the underlying memory and do any final cleanup.
 > 
-> The userspace code also still doesn't look the way I would like it to.
-> I would like to spend some more time on it in second half of this week
-> and then I plan to also update the repository on github.
+> For a use-case, I've adjusted the ioat driver to properly support
+> hot-unbind. The driver was already pretty close as it already had
+> a shutdown state; so it mostly only required freeing the memory
+> correctly and calling ioat_shutdown at the correct time.
 
-OK, no problem. The patches do look fine to me with a few comments here
-and there. I hope Jiri likes the user space ABI now, as it would be good
-to get your changes included, from there we can have many more hands to
-help with converting/extending the existing ioctl() interface.
+I didnt find anything else (apart from one change i pointed), so I have
+applied this and will fix the comment. No point in delaying this
+
 -- 
-Florian
+~Vinod
