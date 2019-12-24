@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E51412A04A
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:11:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E099B12A054
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:11:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbfLXLLQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:11:16 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:59757 "EHLO
+        id S1726971AbfLXLLT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:11:19 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:43577 "EHLO
         inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726302AbfLXLLO (ORCPT
+        by vger.kernel.org with ESMTP id S1726091AbfLXLLO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 24 Dec 2019 06:11:14 -0500
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.80)
         (envelope-from <maz@kernel.org>)
-        id 1iji5n-000169-9k; Tue, 24 Dec 2019 12:11:11 +0100
+        id 1iji5n-000169-UG; Tue, 24 Dec 2019 12:11:12 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -29,9 +29,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Andrew Murray <Andrew.Murray@arm.com>,
         Zenghui Yu <yuzenghui@huawei.com>,
         Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v3 02/32] irqchip/gic-v3: Add GICv4.1 VPEID size discovery
-Date:   Tue, 24 Dec 2019 11:10:25 +0000
-Message-Id: <20191224111055.11836-3-maz@kernel.org>
+Subject: [PATCH v3 03/32] irqchip/gic-v3: Workaround Cavium TX1 erratum when reading GICD_TYPER2
+Date:   Tue, 24 Dec 2019 11:10:26 +0000
+Message-Id: <20191224111055.11836-4-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
 References: <20191224111055.11836-1-maz@kernel.org>
@@ -46,84 +46,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While GICv4.0 mandates 16 bit worth of VPEIDs, GICv4.1 allows smaller
-implementations to be built. Add the required glue to dynamically
-compute the limit.
+Despite the architecture spec being extremely clear about the fact
+that reserved registers in the GIC distributor memory map are RES0
+(and thus are not allowed to generate an exception), the Cavium
+ThunderX (aka TX1) SoC explodes as such:
 
-Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+[    0.000000] GICv3: GIC: Using split EOI/Deactivate mode
+[    0.000000] GICv3: 128 SPIs implemented
+[    0.000000] GICv3: 0 Extended SPIs implemented
+[    0.000000] Internal error: synchronous external abort: 96000210 [#1] SMP
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.4.0-rc4-00035-g3cf6a3d5725f #7956
+[    0.000000] Hardware name: cavium,thunder-88xx (DT)
+[    0.000000] pstate: 60000085 (nZCv daIf -PAN -UAO)
+[    0.000000] pc : __raw_readl+0x0/0x8
+[    0.000000] lr : gic_init_bases+0x110/0x560
+[    0.000000] sp : ffff800011243d90
+[    0.000000] x29: ffff800011243d90 x28: 0000000000000000
+[    0.000000] x27: 0000000000000018 x26: 0000000000000002
+[    0.000000] x25: ffff8000116f0000 x24: ffff000fbe6a2c80
+[    0.000000] x23: 0000000000000000 x22: ffff010fdc322b68
+[    0.000000] x21: ffff800010a7a208 x20: 00000000009b0404
+[    0.000000] x19: ffff80001124dad0 x18: 0000000000000010
+[    0.000000] x17: 000000004d8d492b x16: 00000000f67eb9af
+[    0.000000] x15: ffffffffffffffff x14: ffff800011249908
+[    0.000000] x13: ffff800091243ae7 x12: ffff800011243af4
+[    0.000000] x11: ffff80001126e000 x10: ffff800011243a70
+[    0.000000] x9 : 00000000ffffffd0 x8 : ffff80001069c828
+[    0.000000] x7 : 0000000000000059 x6 : ffff8000113fb4d1
+[    0.000000] x5 : 0000000000000001 x4 : 0000000000000000
+[    0.000000] x3 : 0000000000000000 x2 : 0000000000000000
+[    0.000000] x1 : 0000000000000000 x0 : ffff8000116f000c
+[    0.000000] Call trace:
+[    0.000000]  __raw_readl+0x0/0x8
+[    0.000000]  gic_of_init+0x188/0x224
+[    0.000000]  of_irq_init+0x200/0x3cc
+[    0.000000]  irqchip_init+0x1c/0x40
+[    0.000000]  init_IRQ+0x160/0x1d0
+[    0.000000]  start_kernel+0x2ec/0x4b8
+[    0.000000] Code: a8c47bfd d65f03c0 d538d080 d65f03c0 (b9400000)
+
+when reading the GICv4.1 GICD_TYPER2 register, which is unexpected...
+
+Work around it by adding a new quirk flagging all the A1 revisions
+of the distributor, but it remains unknown whether this could affect
+other revisions of this SoC (or even other SoCs from the same silicon
+vendor).
+
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 11 ++++++++++-
- drivers/irqchip/irq-gic-v3.c       |  3 +++
- include/linux/irqchip/arm-gic-v3.h |  5 +++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-v3.c | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index e05673bcd52b..d9d256471dc0 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -121,7 +121,16 @@ struct its_node {
- #define ITS_ITT_ALIGN		SZ_256
- 
- /* The maximum number of VPEID bits supported by VLPI commands */
--#define ITS_MAX_VPEID_BITS	(16)
-+#define ITS_MAX_VPEID_BITS						\
-+	({								\
-+		int nvpeid = 16;					\
-+		if (gic_rdists->has_rvpeid &&				\
-+		    gic_rdists->gicd_typer2 & GICD_TYPER2_VIL)		\
-+			nvpeid = 1 + (gic_rdists->gicd_typer2 &		\
-+				      GICD_TYPER2_VID);			\
-+									\
-+		nvpeid;							\
-+	})
- #define ITS_MAX_VPEID		(1 << (ITS_MAX_VPEID_BITS))
- 
- /* Convert page order to size in bytes */
 diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index ffcb018395ed..286f98222878 100644
+index 286f98222878..640d4db65b78 100644
 --- a/drivers/irqchip/irq-gic-v3.c
 +++ b/drivers/irqchip/irq-gic-v3.c
-@@ -1576,6 +1576,9 @@ static int __init gic_init_bases(void __iomem *dist_base,
+@@ -34,6 +34,7 @@
+ #define GICD_INT_NMI_PRI	(GICD_INT_DEF_PRI & ~0x80)
  
+ #define FLAGS_WORKAROUND_GICR_WAKER_MSM8996	(1ULL << 0)
++#define FLAGS_WORKAROUND_GICD_TYPER2_TX1	(1ULL << 1)
+ 
+ struct redist_region {
+ 	void __iomem		*redist_base;
+@@ -1464,6 +1465,15 @@ static bool gic_enable_quirk_msm8996(void *data)
+ 	return true;
+ }
+ 
++static bool gic_enable_quirk_tx1(void *data)
++{
++	struct gic_chip_data *d = data;
++
++	d->flags |= FLAGS_WORKAROUND_GICD_TYPER2_TX1;
++
++	return true;
++}
++
+ static bool gic_enable_quirk_hip06_07(void *data)
+ {
+ 	struct gic_chip_data *d = data;
+@@ -1502,6 +1512,12 @@ static const struct gic_quirk gic_quirks[] = {
+ 		.mask	= 0xffffffff,
+ 		.init	= gic_enable_quirk_hip06_07,
+ 	},
++	{
++		.desc	= "GICv3: Cavium TX1 GICD_TYPER2 erratum",
++		.iidr	= 0xa100034c,
++		.mask	= 0xfff00fff,
++		.init	= gic_enable_quirk_tx1,
++	},
+ 	{
+ 	}
+ };
+@@ -1577,7 +1593,12 @@ static int __init gic_init_bases(void __iomem *dist_base,
  	pr_info("%d SPIs implemented\n", GIC_LINE_NR - 32);
  	pr_info("%d Extended SPIs implemented\n", GIC_ESPI_NR);
-+
-+	gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
-+
+ 
+-	gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
++	/*
++	 * ThunderX1 explodes on reading GICD_TYPER2, in total violation
++	 * of the spec (which says that reserved addresses are RES0).
++	 */
++	if (!(gic_data.flags & FLAGS_WORKAROUND_GICD_TYPER2_TX1))
++		gic_data.rdists.gicd_typer2 = readl_relaxed(gic_data.dist_base + GICD_TYPER2);
+ 
  	gic_data.domain = irq_domain_create_tree(handle, &gic_irq_domain_ops,
  						 &gic_data);
- 	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 9a5f85d30701..9dfe64189d99 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -13,6 +13,7 @@
- #define GICD_CTLR			0x0000
- #define GICD_TYPER			0x0004
- #define GICD_IIDR			0x0008
-+#define GICD_TYPER2			0x000C
- #define GICD_STATUSR			0x0010
- #define GICD_SETSPI_NSR			0x0040
- #define GICD_CLRSPI_NSR			0x0048
-@@ -89,6 +90,9 @@
- #define GICD_TYPER_ESPIS(typer)						\
- 	(((typer) & GICD_TYPER_ESPI) ? GICD_TYPER_SPIS((typer) >> 27) : 0)
- 
-+#define GICD_TYPER2_VIL			(1U << 7)
-+#define GICD_TYPER2_VID			GENMASK(4, 0)
-+
- #define GICD_IROUTER_SPI_MODE_ONE	(0U << 31)
- #define GICD_IROUTER_SPI_MODE_ANY	(1U << 31)
- 
-@@ -615,6 +619,7 @@ struct rdists {
- 	void			*prop_table_va;
- 	u64			flags;
- 	u32			gicd_typer;
-+	u32			gicd_typer2;
- 	bool			has_vlpis;
- 	bool			has_rvpeid;
- 	bool			has_direct_lpi;
 -- 
 2.20.1
 
