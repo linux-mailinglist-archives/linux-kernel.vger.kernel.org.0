@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A71C12A20E
+	by mail.lfdr.de (Postfix) with ESMTP id E7AC412A20F
 	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 15:19:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbfLXOTP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 09:19:15 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:45991 "EHLO
+        id S1726316AbfLXOTS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 09:19:18 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37199 "EHLO
         relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726157AbfLXOTO (ORCPT
+        with ESMTP id S1726250AbfLXOTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 09:19:14 -0500
+        Tue, 24 Dec 2019 09:19:15 -0500
 X-Originating-IP: 91.224.148.103
 Received: from localhost.localdomain (unknown [91.224.148.103])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 2D7A4E000C;
-        Tue, 24 Dec 2019 14:19:12 +0000 (UTC)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 9F7DFE0003;
+        Tue, 24 Dec 2019 14:19:13 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sam Ravnborg <sam@ravnborg.org>,
@@ -30,9 +30,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 2/3] dt-bindings: display: Add Satoz panel
-Date:   Tue, 24 Dec 2019 15:19:04 +0100
-Message-Id: <20191224141905.22780-2-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 3/3] drm/panel: simple: Add Satoz SAT050AT40H12R2 panel support
+Date:   Tue, 24 Dec 2019 15:19:05 +0100
+Message-Id: <20191224141905.22780-3-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191224141905.22780-1-miquel.raynal@bootlin.com>
 References: <20191224141905.22780-1-miquel.raynal@bootlin.com>
@@ -43,57 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Satoz is a Chinese TFT manufacturer.
-Website: http://www.sat-sz.com/English/index.html
-
-Add (simple) bindings for its SAT050AT40H12R2 5.0 inch LCD panel.
+Add support for the Satoz SAT050AT40H12R2 RGB panel.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
 
 Changes since v2:
-* None.
+* Dropped two uneeded lines which would fail the build.
 
 Changes since v1:
-* New patch
+* Switched to display_timing's instead of display_mode.
 
- .../display/panel/satoz,sat050at40h12r2.yaml  | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/satoz,sat050at40h12r2.yaml
+ drivers/gpu/drm/panel/panel-simple.c | 26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/satoz,sat050at40h12r2.yaml b/Documentation/devicetree/bindings/display/panel/satoz,sat050at40h12r2.yaml
-new file mode 100644
-index 000000000000..567b32a544f3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/satoz,sat050at40h12r2.yaml
-@@ -0,0 +1,27 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/satoz,sat050at40h12r2#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index ac6f6b5d200d..cc1595c5633a 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -2559,6 +2559,29 @@ static const struct panel_desc samsung_ltn140at29_301 = {
+ 	},
+ };
+ 
++static const struct display_timing satoz_sat050at40h12r2_timing = {
++	.pixelclock = { 33300000, 33300000, 50000000 },
++	.hactive = {800, 800, 800},
++	.hfront_porch = {16, 210, 354},
++	.hback_porch = {46, 46, 46},
++	.hsync_len = {1, 1, 40},
++	.vactive = {480, 480, 480},
++	.vfront_porch = {7, 22, 147},
++	.vback_porch = {23, 23, 23},
++	.vsync_len = {1, 1, 20},
++};
 +
-+title: Satoz SAT050AT40H12R2 panel
++static const struct panel_desc satoz_sat050at40h12r2 = {
++	.timings = &satoz_sat050at40h12r2_timing,
++	.num_timings = 1,
++	.bpc = 8,
++	.size = {
++		.width = 108,
++		.height = 65,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
++};
 +
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+description: |+
-+  LCD 5.0 inch 800x480 RGB panel.
-+
-+  This binding is compatible with the simple-panel binding, which is specified
-+  in simple-panel.txt in this directory.
-+
-+allOf:
-+  - $ref: panel-common.yaml#
-+
-+properties:
-+  compatible:
-+    contains:
-+      const: satoz,sat050at40h12r2
-+
-+required:
-+  - compatible
+ static const struct drm_display_mode sharp_ld_d5116z01b_mode = {
+ 	.clock = 168480,
+ 	.hdisplay = 1920,
+@@ -3354,6 +3377,9 @@ static const struct of_device_id platform_of_match[] = {
+ 	}, {
+ 		.compatible = "samsung,ltn140at29-301",
+ 		.data = &samsung_ltn140at29_301,
++	}, {
++		.compatible = "satoz,sat050at40h12r2",
++		.data = &satoz_sat050at40h12r2,
+ 	}, {
+ 		.compatible = "sharp,ld-d5116z01b",
+ 		.data = &sharp_ld_d5116z01b,
 -- 
 2.20.1
 
