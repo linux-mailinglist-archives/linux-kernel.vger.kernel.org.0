@@ -2,158 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DABEA129D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 05:44:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B956129D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 05:45:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfLXEoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 23:44:22 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:54817 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726853AbfLXEoW (ORCPT
+        id S1727007AbfLXEph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 23:45:37 -0500
+Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:39016 "EHLO
+        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726853AbfLXEph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 23:44:22 -0500
-Received: by mail-pj1-f65.google.com with SMTP id kx11so680840pjb.4;
-        Mon, 23 Dec 2019 20:44:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WFYPDpSn46JwPjbFpRAIxd857o4nEm+35HGIctfhwtw=;
-        b=YXANqMvx3LVDCPDqqSJFdzMeVCp9CYAxeDlNR8s4yEeHJKSsSSjAIRWdZj1sMSTALy
-         +07xOb6CbaQ6R6Fc2fXWSVBSOl5/Kz6g28dAO3qt5ABY5/NlmDeD5QBUpmoqHWjorvRA
-         0BteGylIRE8G9HB/WDYuCpLDX6C6GYJegFsEHVv7wFx4Je8HTyGOqOtV2o86UVm/ttQe
-         Jqf1UaSQqYe0hHHjhcwhJo/6UktWs/woVu7l9QHiMiFZFn+L5NJ2U7SmEZATJG+O5TDm
-         2+4rtBTzH6WePRBMztiDJDjuTWt19pEqZT1DOSo5t3faHS+4Kh4GyKuGd8PvQIezg0ZV
-         6GjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=WFYPDpSn46JwPjbFpRAIxd857o4nEm+35HGIctfhwtw=;
-        b=Ma/IYaHzUIYuXp2iI+2utsQeR7FzUFaglVqTX5R6ydKaWoQRI7NTQoLhOk7iCqEqtw
-         /ZxDruxVoEuA+Zi8XW3P/WEdOqv2yJXHfiVvu6Y5Xn6jtggGKVJG+TcAC49s7G9uv3xC
-         jiwv2uQC2etwinUSrbx0i2MV7MT1pt53vanIs6nn03Waq102C0HZwn/Ak8T7pOOOi3Hi
-         hWxUR4KW2Tdicv77QtfGDxdWutc8N5mbIwsFauskLjmiWY1sDyin8NV/VXGVOk/AgGrE
-         hk/U83ivxDIsnLxVbLRPdiPzWVy2FNAleMimntgsTwvQNe1n41fOpNk9tWM1OGXkIyRe
-         kQkg==
-X-Gm-Message-State: APjAAAXG/IUOrrkyS5+0Du3jhjUUN5u5vU9KQFnlyg1NIAKrmRlCdgy3
-        09bT8wv56MQ91GkJkTud0VFVGfE2
-X-Google-Smtp-Source: APXvYqzQJiAwZScfv+vAWKCdAz68QBPlsAdt4WbQpo+jyeeLtXnAmIu/8u87Bmt1fh7B7GTXi6TwDA==
-X-Received: by 2002:a17:902:7043:: with SMTP id h3mr34327594plt.332.1577162661251;
-        Mon, 23 Dec 2019 20:44:21 -0800 (PST)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id f8sm26334210pfn.2.2019.12.23.20.44.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Dec 2019 20:44:20 -0800 (PST)
-Subject: Re: [PATCH net-next v8 14/14] ethtool: provide link state with
- LINKSTATE_GET request
-To:     Michal Kubecek <mkubecek@suse.cz>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Jiri Pirko <jiri@resnulli.us>, Andrew Lunn <andrew@lunn.ch>,
-        John Linville <linville@tuxdriver.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-kernel@vger.kernel.org
-References: <cover.1577052887.git.mkubecek@suse.cz>
- <7a6c4161fc6d29620bdc95a919e03f8be8b91e48.1577052887.git.mkubecek@suse.cz>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Message-ID: <918da8cd-7ebc-b895-85c8-afad9eed6036@gmail.com>
-Date:   Mon, 23 Dec 2019 20:44:19 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        Mon, 23 Dec 2019 23:45:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1577162735;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0QvQOGSsD6BCQ/KZZeRtn8Sn6aNp+vhwPhxNJ2ctz9g=;
+        b=iZ1FOaWV5uZvITwjE6ncOt0nums8TdMg4KvEuAaorFANAeDgxfpICHxKqK5fwYVANQI4fT
+        f0utBJyGhthLX4ebyvFNlCVAgZ1j1dOQqNFFqcFWpxcAGUcSRWp8NwALxDLGJTUMk3KIg3
+        IY3t/WmnDUjBd8Exv+HrFeI3p+G6qAY=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
+ us-mta-65-Hoek3P4zOCSlBGu07fty_A-1; Mon, 23 Dec 2019 23:45:32 -0500
+X-MC-Unique: Hoek3P4zOCSlBGu07fty_A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CAEBB184B461;
+        Tue, 24 Dec 2019 04:45:30 +0000 (UTC)
+Received: from [10.36.116.117] (ovpn-116-117.ams2.redhat.com [10.36.116.117])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 141505DA60;
+        Tue, 24 Dec 2019 04:45:20 +0000 (UTC)
+Subject: Re: [PATCH] KVM: arm/arm64: vgic: Handle GICR_PENDBASER.PTZ filed as
+ RAZ
+To:     Zenghui Yu <yuzenghui@huawei.com>, Marc Zyngier <maz@kernel.org>
+Cc:     andre.przywara@arm.com, linux-kernel@vger.kernel.org,
+        wanghaibin.wang@huawei.com, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+References: <20191220111833.1422-1-yuzenghui@huawei.com>
+ <3a729559-d0eb-e042-d6bd-b69bacb0dd23@huawei.com>
+ <c084aa29c029f97cdfb1b5dc9e6b29ac@www.loen.fr>
+ <1225d839-3cf7-d513-778e-698e12e94875@huawei.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <12a1e25b-617d-6b04-6a5a-4c67a39565a5@redhat.com>
+Date:   Tue, 24 Dec 2019 05:45:19 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <7a6c4161fc6d29620bdc95a919e03f8be8b91e48.1577052887.git.mkubecek@suse.cz>
+In-Reply-To: <1225d839-3cf7-d513-778e-698e12e94875@huawei.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Zenghui,
 
+On 12/24/19 3:52 AM, Zenghui Yu wrote:
+> Hi Marc, Eric,
+>=20
+> On 2019/12/23 22:07, Marc Zyngier wrote:
+>> Hi Zenghui,
+>>
+>> On 2019-12-23 13:43, Zenghui Yu wrote:
+>>> On 2019/12/20 19:18, Zenghui Yu wrote:
+>>>> Although guest will hardly read and use the PTZ (Pending Table Zero)
+>>>> bit in GICR_PENDBASER, let us emulate the architecture strictly.
+>>>> As per IHI 0069E 9.11.30, PTZ field is WO, and reads as 0.
+>>>> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+>>>> ---
+>>>> Noticed when checking all fields of GICR_PENDBASER register.
+>>>> But _not_ sure whether it's worth a fix, as Linux never sets
+>>>> the PTZ bit before enabling LPI (set GICR_CTLR_ENABLE_LPIS).
+>>>> And I wonder under which scenarios can this bit be written as 1.
+>>>> It seems difficult for software to determine whether the pending
+>>>> table contains all zeros when writing this bit.
+>>>> virt/kvm/arm/vgic/vgic-mmio-v3.c | 5 ++++-
+>>>> =C2=A0 1 file changed, 4 insertions(+), 1 deletion(-)
+>>>> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>>>> b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>>>> index 7dfd15dbb308..ebc218840fc2 100644
+>>>> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>>>> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+>>>> @@ -414,8 +414,11 @@ static unsigned long
+>>>> vgic_mmio_read_pendbase(struct kvm_vcpu *vcpu,
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 gpa_t addr, unsigned int len)
+>>>> =C2=A0 {
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vgic_cpu *vgic_cpu =3D &vcpu->=
+arch.vgic_cpu;
+>>>> +=C2=A0=C2=A0=C2=A0 u64 value =3D vgic_cpu->pendbaser;
+>>>> =C2=A0 -=C2=A0=C2=A0=C2=A0 return extract_bytes(vgic_cpu->pendbaser,=
+ addr & 7, len);
+>>>> +=C2=A0=C2=A0=C2=A0 value &=3D ~GICR_PENDBASER_PTZ;
+>>>> +
+>>>> +=C2=A0=C2=A0=C2=A0 return extract_bytes(value, addr & 7, len);
+>>>> =C2=A0 }
+>>>> =C2=A0 static void vgic_mmio_write_pendbase(struct kvm_vcpu *vcpu,
+>>>>
+>>>
+>>> I noticed there is no userspace access callbacks for GICR_PENDBASER,
+>>> so this patch will make the PTZ field also 'Read As Zero' by userspac=
+e.
+>>> Should we consider adding a uaccess_read callback for GICR_PENDBASER
+>>> which just returns the unchanged vgic_cpu->pendbaser to userspace?
+>>> (Though this is really not a big deal. We now always emulate the PTZ
+>>> field to guest as RAZ. And 'vgic_cpu->pendbaser & GICR_PENDBASER_PTZ'
+>>> only indicates whether KVM will optimize the LPI enabling process,
+>>> where Read As Zero indicates never optimize..)
+>>
+>> I don't think adding a userspace accessor would help much. All this
+>> bit tells userspace is that the guest has programmed a zero filled
+>> table. On restore, we'd avoid a rescan of the table if there was
+>> no LPI mapped.
+>=20
+> Yes, I agree.
+>=20
+>> And thinking of it, this fixes a bug for non-Linux guests: If you writ=
+e
+>> PTZ=3D1, we never clear it. Which means that if userspace saves and
+>> restores
+>> PENDBASER with PTZ set, we'll never restore the pending bits, which is
+>> pretty bad (see vgic_enable_lpis()).
+>=20
+> But I'm afraid I can't follow this point. After reading the code (with
+> Qemu) a bit further, the Redistributors are restored before the ITS.
 
-On 12/22/2019 3:46 PM, Michal Kubecek wrote:
-> Implement LINKSTATE_GET netlink request to get link state information.
-> 
-> At the moment, only link up flag as provided by ETHTOOL_GLINK ioctl command
-> is returned.
-> 
-> LINKSTATE_GET request can be used with NLM_F_DUMP (without device
-> identification) to request the information for all devices in current
-> network namespace providing the data.
-> 
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
+This is also part of the kernel documentation:
+Documentation/virt/kvm/devices/arm-vgic-its.txt (ITS restore sequence)
+ So
+> there should be _no_ LPI has been mapped when we're restoring GICR_CTLR
+> and enabling LPI, which says we will not scan the whole pending table
+> and restore pending by vgic_enable_lpis()/its_sync_lpi_pending_table(),
+> regardless of what the PTZ is.
+>=20
+> Instead, vgic_its_restore_ite()/vgic_v3_lpi_sync_pending_status() is
+> where we actually read the guest RAM and restore the LPI pending state.
+yes the pending state is restored from
+vgic_its_restore_ite/vgic_add_lpi/vgic_v3_lpi_sync_pending_status and
+this path ignores the PTZ.
 
-[snip]
+Thanks
 
-> +Kernel response contents:
-> +
-> +  ====================================  ======  ==========================
-> +  ``ETHTOOL_A_LINKSTATE_HEADER``        nested  reply header
-> +  ``ETHTOOL_A_LINKSTATE_LINK``          u8      autonegotiation status
+Eric
+> Which means we will still do the right thing even for non-Linux guests.
+> Not sure if I've got things correctly here.
+>=20
+> In the end, let's keep the patch as it is.
+>=20
+>>
+>> This patch on its own fixes more than one bug!
+>>
+>=20
+> If so, just by luck ;-)
+>=20
+>=20
+> Thanks,
+> Zenghui
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-^ ==== Humm, auto-negotiation status may not be exactly accurate
-especially with complex devices with SerDes/PHY/SFPs/what have you/.
-Other than that, the code looks correct:
-
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
