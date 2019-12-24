@@ -2,83 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B7912A077
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:26:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9176F12A07D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:27:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726258AbfLXL0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:26:23 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:42022 "EHLO honk.sigxcpu.org"
+        id S1726264AbfLXL1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:27:46 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:47150 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726102AbfLXL0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:26:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 8179BFB03;
-        Tue, 24 Dec 2019 12:26:18 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id nHMPm4X5RhAK; Tue, 24 Dec 2019 12:26:17 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 91FB140BD8; Tue, 24 Dec 2019 12:26:16 +0100 (CET)
-Date:   Tue, 24 Dec 2019 12:26:16 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
-Message-ID: <20191224112616.GA23468@bogon.m.sigxcpu.org>
-References: <cover.1576499103.git.agx@sigxcpu.org>
- <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
- <20191221191844.GH32732@amd>
+        id S1726102AbfLXL1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 06:27:46 -0500
+Received: from [46.183.103.17] (helo=phil.sntech)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ijiLe-00033e-WC; Tue, 24 Dec 2019 12:27:37 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     dri-devel@lists.freedesktop.org
+Cc:     thierry.reding@gmail.com, sam@ravnborg.org, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org,
+        christoph.muellner@theobroma-systems.com, heiko@sntech.de,
+        maxime@cerno.tech,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH v4 1/3] dt-bindings: Add vendor prefix for Leadtek Technology
+Date:   Tue, 24 Dec 2019 12:26:39 +0100
+Message-Id: <20191224112641.30647-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191221191844.GH32732@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Sat, Dec 21, 2019 at 08:18:44PM +0100, Pavel Machek wrote:
-> Hi!
-> 
-> > Overvoltage protection and brightness mode are currently hardcoded
-> > as disabled in the driver. Make these configurable via DT.
-> 
-> What exactly is overvoltage protection good for? Should we default to
-> 29V if we have no other information?
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-The OVP protects the IC from overvoltage conditions on the output side.
-While looking at the manual again I noticed that i misremembered the
-'00' value which means 17V - not unprotected. Also the chip defaults
-to 29V OVP so i've adjusted that too.
+Shenzhen Leadtek Technology Co., Ltd. produces for example display
+and touch panels.
 
-Cheers,
- -- Guido
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> 
-> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> 
-> > +	ret = device_property_read_u32(&led->client->dev,
-> > +				       "ti,overvoltage-volts", &ovp);
-> > +	if (!ret) {
-> > +		switch (ovp) {
-> > +		case 0:
-> > +			break;
-> > +		case 22:
-> > +			led->boost_ctrl |= LM3692X_OVP_21V;
-> > +			break;
-> 
-> Should be case 21.
-> 								Pavel
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 85e7c26a05c7..4e6248ec5ed9 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -513,6 +513,8 @@ patternProperties:
+     description: Lantiq Semiconductor
+   "^lattice,.*":
+     description: Lattice Semiconductor
++  "^leadtek,.*":
++    description: Shenzhen Leadtek Technology Co., Ltd.
+   "^leez,.*":
+     description: Leez
+   "^lego,.*":
+-- 
+2.24.0
 
