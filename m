@@ -2,117 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB6512A2C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 16:11:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2609B12A2E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 16:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfLXPLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 10:11:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51462 "EHLO mail.kernel.org"
+        id S1726272AbfLXPRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 10:17:43 -0500
+Received: from foss.arm.com ([217.140.110.172]:52960 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727359AbfLXPLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 10:11:25 -0500
-Received: from localhost.localdomain (aaubervilliers-681-1-7-6.w90-88.abo.wanadoo.fr [90.88.129.6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACAA72075B;
-        Tue, 24 Dec 2019 15:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577200284;
-        bh=bw1aR5xG5oBy6qwC2Fs7sfBU7lQlJ5VpQVJ8qulCHHw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bjFH2pNTvh4ZhTNeh0IZ45WH+J08IwGxLH7In3gqQHoqBE0ea9wAKPvpZMooTN90s
-         sSK/++PtbqfmDF/sxl89empsSL6ADKeydERKnrl7jRrgHkRJeu+dFSs+QbrJThbSef
-         usRytIquRrlHYFjZQlx9BaT6lSk8Kgl0sjXlhewk=
-From:   Ard Biesheuvel <ardb@kernel.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
-        Arvind Sankar <nivedita@alum.mit.edu>
-Subject: [PATCH 25/25] efi/libstub/x86: avoid globals to store context during mixed mode calls
-Date:   Tue, 24 Dec 2019 16:10:25 +0100
-Message-Id: <20191224151025.32482-26-ardb@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191224151025.32482-1-ardb@kernel.org>
-References: <20191224151025.32482-1-ardb@kernel.org>
+        id S1726168AbfLXPRn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 10:17:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3037E1FB;
+        Tue, 24 Dec 2019 07:17:42 -0800 (PST)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 97CCD3F6CF;
+        Tue, 24 Dec 2019 07:17:41 -0800 (PST)
+Date:   Tue, 24 Dec 2019 15:17:39 +0000
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Marc Zyngier <maz@kernel.org>
+Cc:     kvm@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+        Will Deacon <will@kernel.org>, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 08/18] arm64: KVM: add support to save/restore SPE
+ profiling buffer controls
+Message-ID: <20191224151739.GP42593@e119886-lin.cambridge.arm.com>
+References: <20191220143025.33853-1-andrew.murray@arm.com>
+ <20191220143025.33853-9-andrew.murray@arm.com>
+ <20191221135755.70a6e8df@why>
+ <20191224104929.GE42593@e119886-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191224104929.GE42593@e119886-lin.cambridge.arm.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of storing the return address in a global variable when calling
-a 32-bit EFI service from the 64-bit stub, avoid the indirection via
-efi_exit32, and take the return address from the stack.
+On Tue, Dec 24, 2019 at 10:49:30AM +0000, Andrew Murray wrote:
+> On Sat, Dec 21, 2019 at 01:57:55PM +0000, Marc Zyngier wrote:
+> > On Fri, 20 Dec 2019 14:30:15 +0000
+> > Andrew Murray <andrew.murray@arm.com> wrote:
+> > 
+> > > From: Sudeep Holla <sudeep.holla@arm.com>
+> > > 
+> > > Currently since we don't support profiling using SPE in the guests,
+> > > we just save the PMSCR_EL1, flush the profiling buffers and disable
+> > > sampling. However in order to support simultaneous sampling both in
+> > 
+> > Is the sampling actually simultaneous? I don't believe so (the whole
+> > series would be much simpler if it was).
+> 
+> No the SPE is used by either the guest or host at any one time. I guess
+> the term simultaneous was used to refer to illusion given to both guest
+> and host that they are able to use it whenever they like. I'll update
+> the commit message to drop the magic.
+>  
+> 
+> > 
+> > > the host and guests, we need to save and reatore the complete SPE
+> > 
+> > s/reatore/restore/
+> 
+> Noted.
+> 
+> 
+> > 
+> > > profiling buffer controls' context.
+> > > 
+> > > Let's add the support for the same and keep it disabled for now.
+> > > We can enable it conditionally only if guests are allowed to use
+> > > SPE.
+> > > 
+> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > [ Clear PMBSR bit when saving state to prevent spurious interrupts ]
+> > > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > > ---
+> > >  arch/arm64/kvm/hyp/debug-sr.c | 51 +++++++++++++++++++++++++++++------
+> > >  1 file changed, 43 insertions(+), 8 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/kvm/hyp/debug-sr.c b/arch/arm64/kvm/hyp/debug-sr.c
+> > > index 8a70a493345e..12429b212a3a 100644
+> > > --- a/arch/arm64/kvm/hyp/debug-sr.c
+> > > +++ b/arch/arm64/kvm/hyp/debug-sr.c
+> > > @@ -85,7 +85,8 @@
+> > >  	default:	write_debug(ptr[0], reg, 0);			\
+> > >  	}
+> > >  
+> > > -static void __hyp_text __debug_save_spe_nvhe(struct kvm_cpu_context *ctxt)
+> > > +static void __hyp_text
+> > > +__debug_save_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
+> > 
+> > nit: don't split lines like this if you can avoid it. You can put the
+> > full_ctxt parameter on a separate line instead.
+> 
+> Yes understood.
+> 
+> 
+> > 
+> > >  {
+> > >  	u64 reg;
+> > >  
+> > > @@ -102,22 +103,46 @@ static void __hyp_text __debug_save_spe_nvhe(struct kvm_cpu_context *ctxt)
+> > >  	if (reg & BIT(SYS_PMBIDR_EL1_P_SHIFT))
+> > >  		return;
+> > >  
+> > > -	/* No; is the host actually using the thing? */
+> > > -	reg = read_sysreg_s(SYS_PMBLIMITR_EL1);
+> > > -	if (!(reg & BIT(SYS_PMBLIMITR_EL1_E_SHIFT)))
+> > > +	/* Save the control register and disable data generation */
+> > > +	ctxt->sys_regs[PMSCR_EL1] = read_sysreg_el1(SYS_PMSCR);
+> > > +
+> > > +	if (!ctxt->sys_regs[PMSCR_EL1])
+> > 
+> > Shouldn't you check the enable bits instead of relying on the whole
+> > thing being zero?
+> 
+> Yes that would make more sense (E1SPE and E0SPE).
+> 
+> I feel that this check makes an assumption about the guest/host SPE
+> driver... What happens if the SPE driver writes to some SPE registers
+> but doesn't enable PMSCR? If the guest is also using SPE then those
+> writes will be lost, when the host returns and the SPE driver enables
+> SPE it won't work.
+> 
+> With a quick look at the SPE driver I'm not sure this will happen, but
+> even so it makes me nervous relying on these assumptions. I wonder if
+> this risk is present in other devices?
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/boot/compressed/efi_thunk_64.S | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+In fact, this may be a good reason to trap the SPE registers - this would
+allow you to conditionally save/restore based on a dirty bit. It would
+also allow you to re-evaluate the SPE interrupt (for example when the guest
+clears the status register) and thus potentially reduce any black hole.
 
-diff --git a/arch/x86/boot/compressed/efi_thunk_64.S b/arch/x86/boot/compressed/efi_thunk_64.S
-index 593913692d16..6d95eb6b8912 100644
---- a/arch/x86/boot/compressed/efi_thunk_64.S
-+++ b/arch/x86/boot/compressed/efi_thunk_64.S
-@@ -10,7 +10,7 @@
-  * needs to be able to service interrupts.
-  *
-  * On the plus side, we don't have to worry about mangling 64-bit
-- * addresses into 32-bits because we're executing with an identify
-+ * addresses into 32-bits because we're executing with an identity
-  * mapped pagetable and haven't transitioned to 64-bit virtual addresses
-  * yet.
-  */
-@@ -28,7 +28,7 @@ SYM_FUNC_START(efi64_thunk)
- 	push	%rbx
- 
- 	subq	$8, %rsp
--	leaq	efi_exit32(%rip), %rax
-+	leaq	1f(%rip), %rax
- 	movl	%eax, 4(%rsp)
- 	leaq	efi_gdt64(%rip), %rax
- 	movl	%eax, (%rsp)
-@@ -55,9 +55,6 @@ SYM_FUNC_START(efi64_thunk)
- 
- 	sgdt	save_gdt(%rip)
- 
--	leaq	1f(%rip), %rbx
--	movq	%rbx, func_rt_ptr(%rip)
--
- 	/*
- 	 * Switch to gdt with 32-bit segments. This is the firmware GDT
- 	 * that was installed when the kernel started executing. This
-@@ -72,6 +69,7 @@ SYM_FUNC_START(efi64_thunk)
- 	lretq
- 
- 1:	addq	$32, %rsp
-+	movq	%rdi, %rax
- 
- 	lgdt	save_gdt(%rip)
- 
-@@ -99,13 +97,6 @@ SYM_FUNC_START(efi64_thunk)
- 	ret
- SYM_FUNC_END(efi64_thunk)
- 
--SYM_FUNC_START_LOCAL(efi_exit32)
--	movq	func_rt_ptr(%rip), %rax
--	push	%rax
--	mov	%rdi, %rax
--	ret
--SYM_FUNC_END(efi_exit32)
--
- 	.code32
- /*
-  * EFI service pointer must be in %edi.
-@@ -186,8 +177,6 @@ SYM_DATA_START_LOCAL(save_gdt)
- 	.quad	0
- SYM_DATA_END(save_gdt)
- 
--SYM_DATA_LOCAL(func_rt_ptr, .quad 0)
--
- SYM_DATA_START(efi_gdt64)
- 	.word	efi_gdt64_end - efi_gdt64
- 	.long	0			/* Filled out by user */
--- 
-2.20.1
+Thanks,
 
+Andrew Murray
+
+> 
+> 
+> > 
+> > >  		return;
+> > >  
+> > >  	/* Yes; save the control register and disable data generation */
+> > > -	ctxt->sys_regs[PMSCR_EL1] = read_sysreg_el1(SYS_PMSCR);
+> > 
+> > You've already saved the control register...
+> 
+> I'll remove that.
+> 
+> 
+> > 
+> > >  	write_sysreg_el1(0, SYS_PMSCR);
+> > >  	isb();
+> > >  
+> > >  	/* Now drain all buffered data to memory */
+> > >  	psb_csync();
+> > >  	dsb(nsh);
+> > > +
+> > > +	if (!full_ctxt)
+> > > +		return;
+> > > +
+> > > +	ctxt->sys_regs[PMBLIMITR_EL1] = read_sysreg_s(SYS_PMBLIMITR_EL1);
+> > > +	write_sysreg_s(0, SYS_PMBLIMITR_EL1);
+> > > +
+> > > +	/*
+> > > +	 * As PMBSR is conditionally restored when returning to the host we
+> > > +	 * must ensure the service bit is unset here to prevent a spurious
+> > > +	 * host SPE interrupt from being raised.
+> > > +	 */
+> > > +	ctxt->sys_regs[PMBSR_EL1] = read_sysreg_s(SYS_PMBSR_EL1);
+> > > +	write_sysreg_s(0, SYS_PMBSR_EL1);
+> > > +
+> > > +	isb();
+> > > +
+> > > +	ctxt->sys_regs[PMSICR_EL1] = read_sysreg_s(SYS_PMSICR_EL1);
+> > > +	ctxt->sys_regs[PMSIRR_EL1] = read_sysreg_s(SYS_PMSIRR_EL1);
+> > > +	ctxt->sys_regs[PMSFCR_EL1] = read_sysreg_s(SYS_PMSFCR_EL1);
+> > > +	ctxt->sys_regs[PMSEVFR_EL1] = read_sysreg_s(SYS_PMSEVFR_EL1);
+> > > +	ctxt->sys_regs[PMSLATFR_EL1] = read_sysreg_s(SYS_PMSLATFR_EL1);
+> > > +	ctxt->sys_regs[PMBPTR_EL1] = read_sysreg_s(SYS_PMBPTR_EL1);
+> > >  }
+> > >  
+> > > -static void __hyp_text __debug_restore_spe_nvhe(struct kvm_cpu_context *ctxt)
+> > > +static void __hyp_text
+> > > +__debug_restore_spe_nvhe(struct kvm_cpu_context *ctxt, bool full_ctxt)
+> > >  {
+> > >  	if (!ctxt->sys_regs[PMSCR_EL1])
+> > >  		return;
+> > > @@ -126,6 +151,16 @@ static void __hyp_text __debug_restore_spe_nvhe(struct kvm_cpu_context *ctxt)
+> > >  	isb();
+> > >  
+> > >  	/* Re-enable data generation */
+> > > +	if (full_ctxt) {
+> > > +		write_sysreg_s(ctxt->sys_regs[PMBPTR_EL1], SYS_PMBPTR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMBLIMITR_EL1], SYS_PMBLIMITR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMSFCR_EL1], SYS_PMSFCR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMSEVFR_EL1], SYS_PMSEVFR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMSLATFR_EL1], SYS_PMSLATFR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMSIRR_EL1], SYS_PMSIRR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMSICR_EL1], SYS_PMSICR_EL1);
+> > > +		write_sysreg_s(ctxt->sys_regs[PMBSR_EL1], SYS_PMBSR_EL1);
+> > > +	}
+> > >  	write_sysreg_el1(ctxt->sys_regs[PMSCR_EL1], SYS_PMSCR);
+> > >  }
+> > >  
+> > > @@ -198,7 +233,7 @@ void __hyp_text __debug_restore_host_context(struct kvm_vcpu *vcpu)
+> > >  	guest_ctxt = &vcpu->arch.ctxt;
+> > >  
+> > >  	if (!has_vhe())
+> > > -		__debug_restore_spe_nvhe(host_ctxt);
+> > > +		__debug_restore_spe_nvhe(host_ctxt, false);
+> > >  
+> > >  	if (!(vcpu->arch.flags & KVM_ARM64_DEBUG_DIRTY))
+> > >  		return;
+> > > @@ -222,7 +257,7 @@ void __hyp_text __debug_save_host_context(struct kvm_vcpu *vcpu)
+> > >  
+> > >  	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
+> > >  	if (!has_vhe())
+> > > -		__debug_save_spe_nvhe(host_ctxt);
+> > > +		__debug_save_spe_nvhe(host_ctxt, false);
+> > >  }
+> > >  
+> > >  void __hyp_text __debug_save_guest_context(struct kvm_vcpu *vcpu)
+> > 
+> > So all of this is for non-VHE. What happens in the VHE case?
+> 
+> By the end of the series this ends up in __debug_save_host_context which is
+> called for both VHE/nVHE - on the re-spin I'll make it not look so confusing.
+> 
+> Thanks,
+> 
+> Andrew Murray
+> 
+> > 
+> > 	M.
+> > -- 
+> > Jazz is not dead. It just smells funny...
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
