@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7763712A0B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AB6012A0CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:43:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfLXLlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:41:24 -0500
-Received: from inca-roads.misterjones.org ([213.251.177.50]:35881 "EHLO
+        id S1727189AbfLXLnB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:43:01 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:48063 "EHLO
         inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbfLXLlX (ORCPT
+        by vger.kernel.org with ESMTP id S1726237AbfLXLnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:41:23 -0500
+        Tue, 24 Dec 2019 06:43:01 -0500
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.80)
         (envelope-from <maz@kernel.org>)
-        id 1iji5x-000169-CB; Tue, 24 Dec 2019 12:11:21 +0100
+        id 1iji5y-000169-H6; Tue, 24 Dec 2019 12:11:22 +0100
 From:   Marc Zyngier <maz@kernel.org>
 To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
 Cc:     Eric Auger <eric.auger@redhat.com>,
@@ -29,9 +29,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>,
         Andrew Murray <Andrew.Murray@arm.com>,
         Zenghui Yu <yuzenghui@huawei.com>,
         Robert Richter <rrichter@marvell.com>
-Subject: [PATCH v3 13/32] irqchip/gic-v4.1: Add VPE INVALL callback
-Date:   Tue, 24 Dec 2019 11:10:36 +0000
-Message-Id: <20191224111055.11836-14-maz@kernel.org>
+Subject: [PATCH v3 14/32] irqchip/gic-v4.1: Suppress per-VLPI doorbell
+Date:   Tue, 24 Dec 2019 11:10:37 +0000
+Message-Id: <20191224111055.11836-15-maz@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
 References: <20191224111055.11836-1-maz@kernel.org>
@@ -46,66 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-GICv4.1 redistributors have a VPE-aware INVALL register. Progress!
-We can now emulate a guest-requested INVALL without emiting a
-VINVALL command.
+Since GICv4.1 gives us a per-VPE doorbell, avoid programming anything
+else on VMOVI/VMAPI/VMAPTI and on any other action that would have
+otherwise resulted in a per-VLPI doorbell to be programmed.
 
 Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c   | 14 ++++++++++++++
- include/linux/irqchip/arm-gic-v3.h |  6 ++++++
- 2 files changed, 20 insertions(+)
+ drivers/irqchip/irq-gic-v3-its.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index a5567d099a3e..403f5753e1ed 100644
+index 403f5753e1ed..f00c8ddd3798 100644
 --- a/drivers/irqchip/irq-gic-v3-its.c
 +++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3670,6 +3670,19 @@ static void its_vpe_4_1_deschedule(struct its_vpe *vpe,
- 	}
- }
- 
-+static void its_vpe_4_1_invall(struct its_vpe *vpe)
-+{
-+	void __iomem *rdbase;
-+	u64 val;
-+
-+	val  = GICR_INVALLR_V;
-+	val |= FIELD_PREP(GICR_INVALLR_VPEID, vpe->vpe_id);
-+
-+	/* Target the redistributor this vPE is currently known on */
-+	rdbase = per_cpu_ptr(gic_rdists->rdist, vpe->col_idx)->rd_base;
-+	gic_write_lpir(val, rdbase + GICR_INVALLR);
-+}
-+
- static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+@@ -719,7 +719,7 @@ static struct its_vpe *its_build_vmapti_cmd(struct its_node *its,
  {
- 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
-@@ -3685,6 +3698,7 @@ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
- 		return 0;
+ 	u32 db;
  
- 	case INVALL_VPE:
-+		its_vpe_4_1_invall(vpe);
- 		return 0;
+-	if (desc->its_vmapti_cmd.db_enabled)
++	if (!is_v4_1(its) && desc->its_vmapti_cmd.db_enabled)
+ 		db = desc->its_vmapti_cmd.vpe->vpe_db_lpi;
+ 	else
+ 		db = 1023;
+@@ -742,7 +742,7 @@ static struct its_vpe *its_build_vmovi_cmd(struct its_node *its,
+ {
+ 	u32 db;
  
- 	default:
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 1c91dede7663..37b14fb82773 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -249,6 +249,12 @@
- #define GICR_TYPER_COMMON_LPI_AFF	GENMASK_ULL(25, 24)
- #define GICR_TYPER_AFFINITY		GENMASK_ULL(63, 32)
+-	if (desc->its_vmovi_cmd.db_enabled)
++	if (!is_v4_1(its) && desc->its_vmovi_cmd.db_enabled)
+ 		db = desc->its_vmovi_cmd.vpe->vpe_db_lpi;
+ 	else
+ 		db = 1023;
+@@ -1353,6 +1353,13 @@ static void its_vlpi_set_doorbell(struct irq_data *d, bool enable)
+ 	u32 event = its_get_event_id(d);
+ 	struct its_vlpi_map *map;
  
-+#define GICR_INVLPIR_VPEID		GENMASK_ULL(47, 32)
-+#define GICR_INVLPIR_V			GENMASK_ULL(63, 63)
++	/*
++	 * GICv4.1 does away with the per-LPI nonsense, nothing to do
++	 * here.
++	 */
++	if (is_v4_1(its_dev->its))
++		return;
 +
-+#define GICR_INVALLR_VPEID		GICR_INVLPIR_VPEID
-+#define GICR_INVALLR_V			GICR_INVLPIR_V
-+
- #define GIC_V3_REDIST_SIZE		0x20000
+ 	map = dev_event_to_vlpi_map(its_dev, event);
  
- #define LPI_PROP_GROUP1			(1 << 1)
+ 	if (map->db_enabled == enable)
 -- 
 2.20.1
 
