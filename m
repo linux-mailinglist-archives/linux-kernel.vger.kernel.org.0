@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E79EA129E61
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 08:25:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F2B0129E69
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 08:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfLXHZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 02:25:09 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:7743 "EHLO huawei.com"
+        id S1726154AbfLXHZG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 02:25:06 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:7740 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726043AbfLXHZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:25:07 -0500
+        id S1726070AbfLXHZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 02:25:05 -0500
 Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id AF54E937DA98AD3E0C5E;
+        by Forcepoint Email with ESMTP id A3FCAAFB2A10D1299249;
         Tue, 24 Dec 2019 15:25:03 +0800 (CST)
 Received: from huawei.com (10.90.53.225) by DGGEMS410-HUB.china.huawei.com
  (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 24 Dec 2019
@@ -21,9 +21,9 @@ From:   zhengbin <zhengbin13@huawei.com>
 To:     <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <zhengbin13@huawei.com>
-Subject: [PATCH 3/6] mmc: sdhci-msm: use true,false for bool variable
-Date:   Tue, 24 Dec 2019 15:32:12 +0800
-Message-ID: <1577172735-18869-4-git-send-email-zhengbin13@huawei.com>
+Subject: [PATCH 4/6] mmc: omap_hsmmc: use true,false for bool variable
+Date:   Tue, 24 Dec 2019 15:32:13 +0800
+Message-ID: <1577172735-18869-5-git-send-email-zhengbin13@huawei.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1577172735-18869-1-git-send-email-zhengbin13@huawei.com>
 References: <1577172735-18869-1-git-send-email-zhengbin13@huawei.com>
@@ -38,37 +38,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Fixes coccicheck warning:
 
-drivers/mmc/host/sdhci-msm.c:1498:1-23: WARNING: Assignment of 0/1 to bool variable
-drivers/mmc/host/sdhci-msm.c:1611:2-24: WARNING: Assignment of 0/1 to bool variable
+drivers/mmc/host/omap_hsmmc.c:294:3-22: WARNING: Assignment of 0/1 to bool variable
+drivers/mmc/host/omap_hsmmc.c:303:3-22: WARNING: Assignment of 0/1 to bool variable
+drivers/mmc/host/omap_hsmmc.c:1866:1-20: WARNING: Assignment of 0/1 to bool variable
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: zhengbin <zhengbin13@huawei.com>
 ---
- drivers/mmc/host/sdhci-msm.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/omap_hsmmc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 71f29ba..91f7ad7 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -1495,7 +1495,7 @@ static irqreturn_t sdhci_msm_pwr_irq(int irq, void *data)
- 	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-
- 	sdhci_msm_handle_pwr_irq(host, irq);
--	msm_host->pwr_irq_flag = 1;
-+	msm_host->pwr_irq_flag = true;
- 	sdhci_msm_complete_pwr_irq_wait(msm_host);
-
-
-@@ -1608,7 +1608,7 @@ static int __sdhci_msm_check_write(struct sdhci_host *host, u16 val, int reg)
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index a379c45..ce2a929 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -291,7 +291,7 @@ static int omap_hsmmc_set_pbias(struct omap_hsmmc_host *host, bool power_on)
+ 				dev_err(host->dev, "pbias reg enable fail\n");
+ 				return ret;
+ 			}
+-			host->pbias_enabled = 1;
++			host->pbias_enabled = true;
+ 		}
+ 	} else {
+ 		if (host->pbias_enabled == 1) {
+@@ -300,7 +300,7 @@ static int omap_hsmmc_set_pbias(struct omap_hsmmc_host *host, bool power_on)
+ 				dev_err(host->dev, "pbias reg disable fail\n");
+ 				return ret;
+ 			}
+-			host->pbias_enabled = 0;
++			host->pbias_enabled = false;
+ 		}
  	}
 
- 	if (req_type) {
--		msm_host->pwr_irq_flag = 0;
-+		msm_host->pwr_irq_flag = false;
- 		/*
- 		 * Since this register write may trigger a power irq, ensure
- 		 * all previous register writes are complete by this point.
+@@ -1863,7 +1863,7 @@ static int omap_hsmmc_probe(struct platform_device *pdev)
+ 	host->base	= base + pdata->reg_offset;
+ 	host->power_mode = MMC_POWER_OFF;
+ 	host->next_data.cookie = 1;
+-	host->pbias_enabled = 0;
++	host->pbias_enabled = false;
+ 	host->vqmmc_enabled = 0;
+
+ 	platform_set_drvdata(pdev, host);
 --
 2.7.4
 
