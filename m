@@ -2,157 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADEF312A159
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 13:36:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B312712A15D
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 13:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfLXMf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 07:35:58 -0500
-Received: from foss.arm.com ([217.140.110.172]:51810 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726195AbfLXMf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 07:35:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C6A51FB;
-        Tue, 24 Dec 2019 04:35:57 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7BE13F534;
-        Tue, 24 Dec 2019 04:35:56 -0800 (PST)
-Date:   Tue, 24 Dec 2019 12:35:55 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Marc Zyngier <maz@kernel.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 13/18] perf: arm_spe: Add KVM structure for obtaining
- IRQ info
-Message-ID: <20191224123554.GK42593@e119886-lin.cambridge.arm.com>
-References: <20191220143025.33853-1-andrew.murray@arm.com>
- <20191220143025.33853-14-andrew.murray@arm.com>
- <868sn4iowy.wl-maz@kernel.org>
+        id S1726262AbfLXMhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 07:37:23 -0500
+Received: from sonic317-28.consmr.mail.bf2.yahoo.com ([74.6.129.83]:46323 "EHLO
+        sonic317-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726140AbfLXMhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 07:37:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1577191041; bh=E+ks7AydzaUb4ISZTuxin7s0E6gVmk5020fTLYVYB5E=; h=Date:From:Reply-To:Subject:References:From:Subject; b=emubtj4TxrNdbMzPcOrgauPcikhhyNvJzFOJTx0ThejujqB7CqYUccjV/E/nNZH6Oy/n6M4p7j4AY9SFCbun5e27fgHBUg/y0Lj3/gIsizsJWwx85+UeJhPsxJyRiMP1XpZIhdTc7JS8wEuRVCbnylb36UEsdFyWl0z+Ykr6FWxibfLx6ep3YTalsJZE9RaXwIYy4tChDqwlXA7IQ+0eODdn6FDBTRaeAESJa6qywMZGpQpUshFu/FHp584a7g3pWvfsOX8CalZzaqi3vwVcwS3AkY605X2cpSihlvNmQI0CsRyFvz9G9IzlQPW4EdFjMqnEW9KBsFPeexbNKfg5iQ==
+X-YMail-OSG: RIAIcRIVM1mp9LRFSf1R2CQs1NBHNtDwP75KrzU2r9XszKJTWqNB.m2V4TBKyWZ
+ TJBv.tpBtw49gnHo4eTixw.aLXQDi6gUXo6gC1RKsA8_IbWheEP2WXcP_4uH7eAJPV8fpxvzFfwh
+ nOHufPs6DH.uHw7pftBFZP.pdG7m6hvsWV7tNufq6JIkJYD6kr4ayd2B5kMh7jEVXsVu9nbPoQYB
+ HODxf4cdVbBIclP6Hnw6D5qvsJrVo8epR28IZYhVxJen5tuxBzmn7pLLNSgWLRJyR0vA1cjcP6vT
+ 1zTOYrYnLxX_GH1601ROShjcauPfZE_KJ.7n49LLExIyeqsMSWQtGPt.ph6VZXb23nG5dSxLGwg8
+ zDoa_NzH17QOxTlqYrnc9RWj7xCVcC02maxzAfRkVvQtKCN9RPGXNcyII1wBowxBhEyqqH1mSxhO
+ Seu4OJd94j3E9FP0.cF_yHiujHTzzlP4IDJOVd_D4AMZwZSJsNCtreUabvmW6cvmNvz1o5MzjP6g
+ dsACClVbCZe10xvD11slT4F0MxBRUn1xMSAIaqIklz.xDWqLM.srxICqlWI.ZE7mfNaacOnpgJTG
+ 6PlV5Y_v6F7Gnh2f.RiDVKE29Rp4ySdo30_xTAUUu37t0jTAHTKWDSb1pm.DP3khGam4ntZ7Z_eI
+ csS30t84.lmbcUgenKiNmNFdj4UEv7nucLIeFf9f8TN271WC2KTKydYzb1t5uZ_jajDvqpoV_ubC
+ yoJv9hdYisfYjD.NWawvFd2ePxoA9jIbvcx8jNIbZx2kuum1mL_OdLug9qicOOAN4jB_9heyD8L2
+ W7Tjz6VeFO6kb_ic2xNTWWwSLNkip86ZS4KctUd5JzqUOo1ss6c2ZxmcHJh99PvB2OL9SvbwJIJZ
+ zSIOPex_7I2wLfwRTbGmVPqc_ja1iwZoElBG1vdKBjK2vEVWMJUYa2GDp94b3nwvKtsiDg7Nmfna
+ K5i0cXudbGs8mpoEyDf3qdHy6z4VUMZ9CUqpaWt4notjNJcpszVSJMLpT5oUroSUQBdAy5CzgZYH
+ fE6cZ4Hd6.6NLRASAu4.H1tM6ieGZCBoFSb9.po3ykJlYzM80.vmfMlEBJkMnUNosI80JV1u8iJh
+ JdUpl9P4kLiXWvlk4kJ1_wQwJbsuybwDjfpC8_KzaaPQF1F9Fg59auckC8YHuJOASkYPhrM.UU8K
+ lvOZBftaHLfxR9OceuKblPZSSlNWkMXbjU6i8M3Zfwm17r0FpxVZwWNpJyJ05ho7Gx6ZnQqBuj9w
+ Ky2uXnVLL5bE2XN92kJZ2KVLlnMZpV2FWane5YOj0PIkkSEx9JhBd.B8WQscI3Bb11.fovgQJEvW
+ Ddq0w.gnI_cPyIc.NdOIbR8JIVQ--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.bf2.yahoo.com with HTTP; Tue, 24 Dec 2019 12:37:21 +0000
+Date:   Tue, 24 Dec 2019 12:37:16 +0000 (UTC)
+From:   Aisha Gaddafi <gaddafi661@gmail.com>
+Reply-To: gaddafia504@gmail.com
+Message-ID: <2062665538.2049439.1577191036197@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <868sn4iowy.wl-maz@kernel.org>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <2062665538.2049439.1577191036197.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1; rv:71.0) Gecko/20100101 Firefox/71.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 22, 2019 at 11:24:13AM +0000, Marc Zyngier wrote:
-> On Fri, 20 Dec 2019 14:30:20 +0000,
-> Andrew Murray <andrew.murray@arm.com> wrote:
-> > 
-> > KVM requires knowledge of the physical SPE IRQ number such that it can
-> > associate it with any virtual IRQ for guests that require SPE emulation.
-> 
-> This is at best extremely odd. The only reason for KVM to obtain this
-> IRQ number is if it has exclusive access to the device.  This
-> obviously isn't the case, as this device is shared between host and
-> guest.
+Dear Friend,
 
-This was an attempt to set the interrupt as active such that host SPE driver
-doesn't get spurious interrupts due to guest SPE activity. Though let's save
-the discussion to patch 14.
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
-> 
-> > Let's create a structure to hold this information and an accessor that
-> > KVM can use to retrieve this information.
-> > 
-> > We expect that each SPE device will have the same physical PPI number
-> > and thus will warn when this is not the case.
-> > 
-> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> > ---
-> >  drivers/perf/arm_spe_pmu.c | 23 +++++++++++++++++++++++
-> >  include/kvm/arm_spe.h      |  6 ++++++
-> >  2 files changed, 29 insertions(+)
-> > 
-> > diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
-> > index 4e4984a55cd1..2d24af4cfcab 100644
-> > --- a/drivers/perf/arm_spe_pmu.c
-> > +++ b/drivers/perf/arm_spe_pmu.c
-> > @@ -34,6 +34,9 @@
-> >  #include <linux/smp.h>
-> >  #include <linux/vmalloc.h>
-> >  
-> > +#include <linux/kvm_host.h>
-> > +#include <kvm/arm_spe.h>
-> > +
-> >  #include <asm/barrier.h>
-> >  #include <asm/cpufeature.h>
-> >  #include <asm/mmu.h>
-> > @@ -1127,6 +1130,24 @@ static void arm_spe_pmu_dev_teardown(struct arm_spe_pmu *spe_pmu)
-> >  	free_percpu_irq(spe_pmu->irq, spe_pmu->handle);
-> >  }
-> >  
-> > +#ifdef CONFIG_KVM_ARM_SPE
-> > +static struct arm_spe_kvm_info arm_spe_kvm_info;
-> > +
-> > +struct arm_spe_kvm_info *arm_spe_get_kvm_info(void)
-> > +{
-> > +	return &arm_spe_kvm_info;
-> > +}
-> 
-> How does this work when SPE is built as a module?
-> 
-> > +
-> > +static void arm_spe_populate_kvm_info(struct arm_spe_pmu *spe_pmu)
-> > +{
-> > +	WARN_ON_ONCE(arm_spe_kvm_info.physical_irq != 0 &&
-> > +		     arm_spe_kvm_info.physical_irq != spe_pmu->irq);
-> > +	arm_spe_kvm_info.physical_irq = spe_pmu->irq;
-> 
-> What does 'physical' means here? It's an IRQ in the Linux sense, so
-> it's already some random number that bears no relation to anything
-> 'physical'.
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
-It's some random number relating to the SPE device as opposed to the virtual
-SPE device.
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
 
-Thanks,
+Your Urgent Reply Will Be Appreciated.
 
-Andrew Murray
-
-> 
-> > +}
-> > +#else
-> > +static void arm_spe_populate_kvm_info(struct arm_spe_pmu *spe_pmu) {}
-> > +#endif
-> > +
-> >  /* Driver and device probing */
-> >  static int arm_spe_pmu_irq_probe(struct arm_spe_pmu *spe_pmu)
-> >  {
-> > @@ -1149,6 +1170,8 @@ static int arm_spe_pmu_irq_probe(struct arm_spe_pmu *spe_pmu)
-> >  	}
-> >  
-> >  	spe_pmu->irq = irq;
-> > +	arm_spe_populate_kvm_info(spe_pmu);
-> > +
-> >  	return 0;
-> >  }
-> >  
-> > diff --git a/include/kvm/arm_spe.h b/include/kvm/arm_spe.h
-> > index d1f3c564dfd0..9c65130d726d 100644
-> > --- a/include/kvm/arm_spe.h
-> > +++ b/include/kvm/arm_spe.h
-> > @@ -17,6 +17,12 @@ struct kvm_spe {
-> >  	bool irq_level;
-> >  };
-> >  
-> > +struct arm_spe_kvm_info {
-> > +	int physical_irq;
-> > +};
-> > +
-> > +struct arm_spe_kvm_info *arm_spe_get_kvm_info(void);
-> > +
-> >  #ifdef CONFIG_KVM_ARM_SPE
-> >  #define kvm_arm_spe_v1_ready(v)		((v)->arch.spe.ready)
-> >  #define kvm_arm_spe_irq_initialized(v)		\
-> 
-> 	M.
-> 
-> -- 
-> Jazz is not dead, it just smells funny.
+Best Regards
+Mrs Aisha Gaddafi
+(gaddafia504@gmail.com)
