@@ -2,151 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91937129FD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 10:52:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA960129FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 11:01:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfLXJwe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 04:52:34 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38799 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfLXJwe (ORCPT
+        id S1726225AbfLXKBx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 05:01:53 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:59378 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726076AbfLXKBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 04:52:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y17so19376559wrh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 01:52:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=N3HBmWELJ09NCKU7N1TUdxqAH5rNCluFgs2bN3EZVaM=;
-        b=a5SwwLJ7wdPE0l7OEStq9kLfrybjTtNM9B2ahwATRWhdqk04fohhlIqkQG74hqA6Fz
-         +Aj3921DFogeuC7csDkXVEnZLXIELKVyi2PCE6kUhBRPU1MiHjAUkssRhn3TS+AD2OtF
-         yUC7UPi9dtY344RFgjAcsU1QApLLOGY88dg+5N4uAR7UVqv73CakDc+k23Mu6MHOerXd
-         nB4fUsX7i7c7BRFdJrolF1lFVqq1cTeoOCVtCFfw4L5KAXodgx7iT0vMznczToxy8fk6
-         cKbCZCKI13lqNKQJj4CbsWEdfWTyhIw/ddiJsj3sRRwU8VGE2TKbaJ56MNhVXJe2KhGG
-         RGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=N3HBmWELJ09NCKU7N1TUdxqAH5rNCluFgs2bN3EZVaM=;
-        b=Qwr5OIMsd2QNwAjBLoUo3/Ll1DUzXIakacWDNPpcGtyzy1WIVgOJgKLYUvODU/GPbW
-         DiTY+9yAq8sOyCudfsA8uWJVql82NdryZDrLUHWN7xtfjyeJScsE5jSJkpPeHkNXktUJ
-         kkgixgduOCgaHUuOcNj8ZamY723zYsezWVtA6OIGq0z+5yWdUFgKeDMojOJ9z7k0no1Q
-         +C3cZxGYFLnzhTp61CzCmAQs7wT3oqiuwURetormwAXVOZ23FsAjtO4L+Ufftc7559sT
-         nJqBOfS4rbwEi9w2NHWmqrG+ubHnatVYbrfLJsw43YDu7IJmM2BJiR/8FPKa6D43VflR
-         qJuQ==
-X-Gm-Message-State: APjAAAX5GArCQijiYDn/wxrCIALh9ns3Em5X1fOyufUz+VfkZBJHED7I
-        U4VWJbRbWoA0C0WnNAppgYW0qQ==
-X-Google-Smtp-Source: APXvYqx8OEXpOqgIwYiNou/aJcyi8NyZ0Zz3lhggLDmM2qFtxsFeWbTTbrXCsfnE1VKXx1IcnvMZoQ==
-X-Received: by 2002:adf:ee92:: with SMTP id b18mr36084857wro.281.1577181152190;
-        Tue, 24 Dec 2019 01:52:32 -0800 (PST)
-Received: from apalos.home (ppp-94-64-118-170.home.otenet.gr. [94.64.118.170])
-        by smtp.gmail.com with ESMTPSA id v14sm23394678wrm.28.2019.12.24.01.52.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 01:52:31 -0800 (PST)
-Date:   Tue, 24 Dec 2019 11:52:29 +0200
-From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
-To:     Matteo Croce <mcroce@redhat.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Tomislav Tomasic <tomislav.tomasic@sartura.hr>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [RFC net-next 0/2] mvpp2: page_pool support
-Message-ID: <20191224095229.GA24310@apalos.home>
-References: <20191224010103.56407-1-mcroce@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191224010103.56407-1-mcroce@redhat.com>
+        Tue, 24 Dec 2019 05:01:53 -0500
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 24 Dec 2019 15:29:51 +0530
+Received: from pillair-linux.qualcomm.com ([10.204.116.193])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 24 Dec 2019 15:29:41 +0530
+Received: by pillair-linux.qualcomm.com (Postfix, from userid 452944)
+        id AC35E37AC; Tue, 24 Dec 2019 15:29:40 +0530 (IST)
+From:   Rakesh Pillai <pillair@codeaurora.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Rakesh Pillai <pillair@codeaurora.org>
+Subject: [PATCH v3] arm64: dts: qcom: sc7180: Add WCN3990 WLAN module device node
+Date:   Tue, 24 Dec 2019 15:29:35 +0530
+Message-Id: <1577181575-25788-1-git-send-email-pillair@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 24, 2019 at 02:01:01AM +0100, Matteo Croce wrote:
-> This patches change the memory allocator of mvpp2 from the frag allocator to
-> the page_pool API. This change is needed to add later XDP support to mvpp2.
-> 
-> The reason I send it as RFC is that with this changeset, mvpp2 performs much
-> more slower. This is the tc drop rate measured with a single flow:
-> 
-> stock net-next with frag allocator:
-> rx: 900.7 Mbps 1877 Kpps
-> 
-> this patchset with page_pool:
-> rx: 423.5 Mbps 882.3 Kpps
-> 
-> This is the perf top when receiving traffic:
-> 
->   27.68%  [kernel]            [k] __page_pool_clean_page
+Add device node for the ath10k SNOC platform driver probe
+and add resources required for WCN3990 on sc7180 soc.
 
-This seems extremly high on the list. 
+Signed-off-by: Rakesh Pillai <pillair@codeaurora.org>
+---
+This change is dependent on the below set of changes
+arm64: dts: sc7180: Add qupv3_0 and qupv3_1 (https://lore.kernel.org/patchwork/patch/1150367/)
+---
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts |  5 +++++
+ arch/arm64/boot/dts/qcom/sc7180.dtsi    | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
 
->    9.79%  [kernel]            [k] get_page_from_freelist
->    7.18%  [kernel]            [k] free_unref_page
->    4.64%  [kernel]            [k] build_skb
->    4.63%  [kernel]            [k] __netif_receive_skb_core
->    3.83%  [mvpp2]             [k] mvpp2_poll
->    3.64%  [kernel]            [k] eth_type_trans
->    3.61%  [kernel]            [k] kmem_cache_free
->    3.03%  [kernel]            [k] kmem_cache_alloc
->    2.76%  [kernel]            [k] dev_gro_receive
->    2.69%  [mvpp2]             [k] mvpp2_bm_pool_put
->    2.68%  [kernel]            [k] page_frag_free
->    1.83%  [kernel]            [k] inet_gro_receive
->    1.74%  [kernel]            [k] page_pool_alloc_pages
->    1.70%  [kernel]            [k] __build_skb
->    1.47%  [kernel]            [k] __alloc_pages_nodemask
->    1.36%  [mvpp2]             [k] mvpp2_buf_alloc.isra.0
->    1.29%  [kernel]            [k] tcf_action_exec
-> 
-> I tried Ilias patches for page_pool recycling, I get an improvement
-> to ~1100, but I'm still far than the original allocator.
+diff --git a/arch/arm64/boot/dts/qcom/sc7180-idp.dts b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+index 189254f..b2ca143f 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180-idp.dts
++++ b/arch/arm64/boot/dts/qcom/sc7180-idp.dts
+@@ -248,6 +248,11 @@
+ 	status = "okay";
+ };
+ 
++&wifi {
++	status = "okay";
++	qcom,msa_fixed_perm;
++};
++
+ /* PINCTRL - additions to nodes defined in sc7180.dtsi */
+ 
+ &qup_i2c2_default {
+diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+index 666e9b9..7efb97f 100644
+--- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
+@@ -42,6 +42,12 @@
+ 			compatible = "qcom,cmd-db";
+ 			no-map;
+ 		};
++
++		wlan_fw_mem: memory@93900000 {
++			compatible = "removed-dma-pool";
++			no-map;
++			reg = <0 0x93900000 0 0x200000>;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -1119,6 +1125,28 @@
+ 				#clock-cells = <1>;
+ 			};
+ 		};
++
++		wifi: wifi@18800000 {
++			compatible = "qcom,wcn3990-wifi";
++			reg = <0 0x18800000 0 0x800000>;
++			reg-names = "membase";
++			iommus = <&apps_smmu 0xC0 0x1>;
++			interrupts =
++				<GIC_SPI 414 IRQ_TYPE_LEVEL_HIGH /* CE0 */ >,
++				<GIC_SPI 415 IRQ_TYPE_LEVEL_HIGH /* CE1 */ >,
++				<GIC_SPI 416 IRQ_TYPE_LEVEL_HIGH /* CE2 */ >,
++				<GIC_SPI 417 IRQ_TYPE_LEVEL_HIGH /* CE3 */ >,
++				<GIC_SPI 418 IRQ_TYPE_LEVEL_HIGH /* CE4 */ >,
++				<GIC_SPI 419 IRQ_TYPE_LEVEL_HIGH /* CE5 */ >,
++				<GIC_SPI 420 IRQ_TYPE_LEVEL_HIGH /* CE6 */ >,
++				<GIC_SPI 421 IRQ_TYPE_LEVEL_HIGH /* CE7 */ >,
++				<GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH /* CE8 */ >,
++				<GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH /* CE9 */ >,
++				<GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH /* CE10 */>,
++				<GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH /* CE11 */>;
++			memory-region = <&wlan_fw_mem>;
++			status = "disabled";
++		};
+ 	};
+ 
+ 	timer {
+-- 
+2.7.4
 
-Can you post the recycling perf for comparison?
-
-> 
-> Any idea on why I get such bad numbers?
-
-Nop but it's indeed strange
-
-> 
-> Another reason to send it as RFC is that I'm not fully convinced on how to
-> use the page_pool given the HW limitation of the BM.
-
-I'll have a look right after holidays
-
-> 
-> The driver currently uses, for every CPU, a page_pool for short packets and
-> another for long ones. The driver also has 4 rx queue per port, so every
-> RXQ #1 will share the short and long page pools of CPU #1.
-> 
-
-I am not sure i am following the hardware config here
-
-> This means that for every RX queue I call xdp_rxq_info_reg_mem_model() twice,
-> on two different page_pool, can this be a problem?
-> 
-> As usual, ideas are welcome.
-> 
-> Matteo Croce (2):
->   mvpp2: use page_pool allocator
->   mvpp2: memory accounting
-> 
->  drivers/net/ethernet/marvell/Kconfig          |   1 +
->  drivers/net/ethernet/marvell/mvpp2/mvpp2.h    |   7 +
->  .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 142 +++++++++++++++---
->  3 files changed, 125 insertions(+), 25 deletions(-)
-> 
-> -- 
-> 2.24.1
-> 
-Cheers
-/Ilias
