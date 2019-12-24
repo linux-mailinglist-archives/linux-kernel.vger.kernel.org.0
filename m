@@ -2,68 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D2A12A184
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 14:01:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FBDC12A191
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 14:03:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfLXNBV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 08:01:21 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:15946 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726314AbfLXNBT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 08:01:19 -0500
-X-UUID: 0122fa9103a74e5aa3e0a00f7bf9312a-20191224
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=zp98NbaQU/mj61NoYID7Wx6HbOD8Ri6lmcuOBmd0rwY=;
-        b=Fjggs7LllB5jHOUxWkdQPowuU6ddvffbPb+0SS0hJgeKoBPLhBNgmfKXa2xgve7HKnEtv/BDm/ZQc5o1iXYrUwCiOtzpk3maXGyZ20yhZ5+dVNRfzfmCX64H5ABW3+2z/it2qihaeCbrPj7ltf3zkUCzt/Ynv73f+0IymQQ/NFU=;
-X-UUID: 0122fa9103a74e5aa3e0a00f7bf9312a-20191224
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 865832182; Tue, 24 Dec 2019 21:01:15 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 24 Dec 2019 21:00:34 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 24 Dec 2019 21:00:11 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
-        <matthias.bgg@gmail.com>
-CC:     <beanhuo@micron.com>, <cang@codeaurora.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v1 2/2] scsi: ufs: use ufshcd_vops_dbg_register_dump for vendor specific dumps
-Date:   Tue, 24 Dec 2019 21:01:06 +0800
-Message-ID: <1577192466-20762-3-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1577192466-20762-1-git-send-email-stanley.chu@mediatek.com>
-References: <1577192466-20762-1-git-send-email-stanley.chu@mediatek.com>
+        id S1726702AbfLXNDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 08:03:24 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:35750 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbfLXNDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 08:03:23 -0500
+Received: from zn.tnic (p200300EC2F0ED600C09669CD883F0A9D.dip0.t-ipconnect.de [IPv6:2003:ec:2f0e:d600:c096:69cd:883f:a9d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 395AF1EC0AE5;
+        Tue, 24 Dec 2019 14:03:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1577192598;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RPmKXDdfeilER4Cgaeoi2HiLWA8B3GNUxDgJuxdBXfU=;
+        b=reF83Q8gQU8d8BbbxQtuMbOFtz4tNW0TWem/vVoR96GaFFqKuP34eCfMKbkHGHhpKGdri3
+        pyPpxWQoCT/9pskvQWyrWoFHiWRqJx3nXMkEvHac9OE4eXfjVFUgDyv9Abz9tEzv8ew26N
+        WtLUvAmpJ1NPS+Gi5gUtfB2R8Ui/FNQ=
+Date:   Tue, 24 Dec 2019 14:03:10 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        keescook@chromium.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Juergen Gross <jgross@suse.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        "VMware, Inc." <pv-drivers@vmware.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v10 00/11] x86: PIE support to extend KASLR randomization
+Message-ID: <20191224130310.GE21017@zn.tnic>
+References: <20191205000957.112719-1-thgarnie@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191205000957.112719-1-thgarnie@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-V2UgYWxyZWFkeSBoYXZlIHVmc2hjZF92b3BzX2RiZ19yZWdpc3Rlcl9kdW1wKCkgdGh1cyBhbGwN
-CiJoYmEtPnZvcHMtPmRiZ19yZWdpc3Rlcl9kdW1wIiByZWZlcmVuY2VzIGNhbiBiZSByZXBsYWNl
-ZCBieSBpdC4NCg0KU2lnbmVkLW9mZi1ieTogU3RhbmxleSBDaHUgPHN0YW5sZXkuY2h1QG1lZGlh
-dGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMgfCAgICAzICstLQ0KIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMiBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvc2NzaS91ZnMvdWZzaGNkLmMgYi9kcml2ZXJzL3Njc2kvdWZzL3Vmc2hjZC5j
-DQppbmRleCBiNmI5NjY1Li4xYWM5MjcyIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9zY3NpL3Vmcy91
-ZnNoY2QuYw0KKysrIGIvZHJpdmVycy9zY3NpL3Vmcy91ZnNoY2QuYw0KQEAgLTQyOCw4ICs0Mjgs
-NyBAQCBzdGF0aWMgdm9pZCB1ZnNoY2RfcHJpbnRfaG9zdF9yZWdzKHN0cnVjdCB1ZnNfaGJhICpo
-YmEpDQogDQogCXVmc2hjZF9wcmludF9jbGtfZnJlcXMoaGJhKTsNCiANCi0JaWYgKGhiYS0+dm9w
-cyAmJiBoYmEtPnZvcHMtPmRiZ19yZWdpc3Rlcl9kdW1wKQ0KLQkJaGJhLT52b3BzLT5kYmdfcmVn
-aXN0ZXJfZHVtcChoYmEpOw0KKwl1ZnNoY2Rfdm9wc19kYmdfcmVnaXN0ZXJfZHVtcChoYmEpOw0K
-IH0NCiANCiBzdGF0aWMNCi0tIA0KMS43LjkuNQ0K
+On Wed, Dec 04, 2019 at 04:09:37PM -0800, Thomas Garnier wrote:
+> Minor changes based on feedback and rebase from v9.
+> 
+> Splitting the previous serie in two. This part contains assembly code
+> changes required for PIE but without any direct dependencies with the
+> rest of the patchset.
 
+Ok, modulo the minor commit message and comments fixup, this looks ok
+and passes testing here.
+
+I'm going to queue patches 2-11 of the next version unless someone
+complains.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
