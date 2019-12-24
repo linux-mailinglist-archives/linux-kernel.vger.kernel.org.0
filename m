@@ -2,184 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BD3512A095
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:30:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7444A12A0C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:42:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfLXLaM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:30:12 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:42114 "EHLO honk.sigxcpu.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbfLXLaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:30:11 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 8FC0DFB03;
-        Tue, 24 Dec 2019 12:30:09 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Lwf3d9cYzpal; Tue, 24 Dec 2019 12:30:07 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 7D7EF40BD8; Tue, 24 Dec 2019 12:30:07 +0100 (CET)
-Date:   Tue, 24 Dec 2019 12:30:07 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] leds: lm3692x: Allow to set ovp and brigthness mode
-Message-ID: <20191224113007.GB23468@bogon.m.sigxcpu.org>
-References: <cover.1576499103.git.agx@sigxcpu.org>
- <9c87a17aefbf758d58f199f7046114ee7505a1fa.1576499103.git.agx@sigxcpu.org>
- <3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com>
+        id S1727180AbfLXLlv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:41:51 -0500
+Received: from inca-roads.misterjones.org ([213.251.177.50]:57163 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726183AbfLXLlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 06:41:50 -0500
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:DHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1iji5u-000169-1R; Tue, 24 Dec 2019 12:11:18 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Cc:     Eric Auger <eric.auger@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Andrew Murray <Andrew.Murray@arm.com>,
+        Zenghui Yu <yuzenghui@huawei.com>,
+        Robert Richter <rrichter@marvell.com>
+Subject: [PATCH v3 10/32] irqchip/gic-v4.1: Add mask/unmask doorbell callbacks
+Date:   Tue, 24 Dec 2019 11:10:33 +0000
+Message-Id: <20191224111055.11836-11-maz@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191224111055.11836-1-maz@kernel.org>
+References: <20191224111055.11836-1-maz@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3d66b07d-b4c5-43e6-4378-d63cc84b8d43@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org, eric.auger@redhat.com, james.morse@arm.com, julien.thierry.kdev@gmail.com, suzuki.poulose@arm.com, tglx@linutronix.de, jason@lakedaemon.net, lorenzo.pieralisi@arm.com, Andrew.Murray@arm.com, yuzenghui@huawei.com, rrichter@marvell.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-I'm a bit confused about the regmap_write -> regmap_update_bits switch
-(see below), maybe you can shed some light on it?
+masking/unmasking doorbells on GICv4.1 relies on a new INVDB command,
+which broadcasts the invalidation to all RDs.
 
-On Tue, Dec 17, 2019 at 06:53:45AM -0600, Dan Murphy wrote:
-> Guido
-> 
-> On 12/16/19 6:28 AM, Guido Günther wrote:
-> > Overvoltage protection and brightness mode are currently hardcoded
-> > as disabled in the driver. Make these configurable via DT.
-> 
-> Can we split these up to two separate patch series?
-> 
-> We are adding 2 separate features and if something is incorrect with one of
-> the changes it is a bit hard to debug.
-> 
-> > 
-> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
-> > ---
-> >   drivers/leds/leds-lm3692x.c | 43 +++++++++++++++++++++++++++++++------
-> >   1 file changed, 37 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/leds/leds-lm3692x.c b/drivers/leds/leds-lm3692x.c
-> > index 8b408102e138..2c084b333628 100644
-> > --- a/drivers/leds/leds-lm3692x.c
-> > +++ b/drivers/leds/leds-lm3692x.c
-> > @@ -114,6 +114,7 @@ struct lm3692x_led {
-> >   	struct regulator *regulator;
-> >   	int led_enable;
-> >   	int model_id;
-> > +	u8 boost_ctrl, brightness_ctrl;
-> >   };
-> >   static const struct reg_default lm3692x_reg_defs[] = {
-> > @@ -249,10 +250,7 @@ static int lm3692x_init(struct lm3692x_led *led)
-> >   	if (ret)
-> >   		goto out;
-> > -	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL,
-> > -			LM3692X_BOOST_SW_1MHZ |
-> > -			LM3692X_BOOST_SW_NO_SHIFT |
-> > -			LM3692X_OCP_PROT_1_5A);
-> > +	ret = regmap_write(led->regmap, LM3692X_BOOST_CTRL, led->boost_ctrl);
-> >   	if (ret)
-> >   		goto out;
-> 
-> regmap_update_bits
+Implement the new command as well as the masking callbacks, and plug
+the whole thing into the v4.1 VPE irqchip.
 
-The driver is writing full register values (regmap_write) here as
-before, do you want that to change? Likely i'm overlooking something.
+Reviewed-by: Zenghui Yu <yuzenghui@huawei.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c   | 73 ++++++++++++++++++++++++++++++
+ include/linux/irqchip/arm-gic-v3.h |  3 +-
+ 2 files changed, 75 insertions(+), 1 deletion(-)
 
-> > @@ -268,8 +266,7 @@ static int lm3692x_init(struct lm3692x_led *led)
-> >   	if (ret)
-> >   		goto out;
-> > -	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL,
-> > -			LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN);
-> > +	ret = regmap_write(led->regmap, LM3692X_BRT_CTRL, led->brightness_ctrl);
-> >   	if (ret)
-> >   		goto out;
-> regmap_update_bits
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 157f51398850..0da6baa48153 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -334,6 +334,10 @@ struct its_cmd_desc {
+ 			u16 seq_num;
+ 			u16 its_list;
+ 		} its_vmovp_cmd;
++
++		struct {
++			struct its_vpe *vpe;
++		} its_invdb_cmd;
+ 	};
+ };
+ 
+@@ -832,6 +836,21 @@ static struct its_vpe *its_build_vclear_cmd(struct its_node *its,
+ 	return valid_vpe(its, map->vpe);
+ }
+ 
++static struct its_vpe *its_build_invdb_cmd(struct its_node *its,
++					   struct its_cmd_block *cmd,
++					   struct its_cmd_desc *desc)
++{
++	if (WARN_ON(!is_v4_1(its)))
++		return NULL;
++
++	its_encode_cmd(cmd, GITS_CMD_INVDB);
++	its_encode_vpeid(cmd, desc->its_invdb_cmd.vpe->vpe_id);
++
++	its_fixup_cmd(cmd);
++
++	return valid_vpe(its, desc->its_invdb_cmd.vpe);
++}
++
+ static u64 its_cmd_ptr_to_offset(struct its_node *its,
+ 				 struct its_cmd_block *ptr)
+ {
+@@ -1240,6 +1259,14 @@ static void its_send_vclear(struct its_device *dev, u32 event_id)
+ 	its_send_single_vcommand(dev->its, its_build_vclear_cmd, &desc);
+ }
+ 
++static void its_send_invdb(struct its_node *its, struct its_vpe *vpe)
++{
++	struct its_cmd_desc desc;
++
++	desc.its_invdb_cmd.vpe = vpe;
++	its_send_single_vcommand(its, its_build_invdb_cmd, &desc);
++}
++
+ /*
+  * irqchip functions - assumes MSI, mostly.
+  */
+@@ -3554,6 +3581,50 @@ static struct irq_chip its_vpe_irq_chip = {
+ 	.irq_set_vcpu_affinity	= its_vpe_set_vcpu_affinity,
+ };
+ 
++static struct its_node *find_4_1_its(void)
++{
++	static struct its_node *its = NULL;
++
++	if (!its) {
++		list_for_each_entry(its, &its_nodes, entry) {
++			if (is_v4_1(its))
++				return its;
++		}
++
++		/* Oops? */
++		its = NULL;
++	}
++
++	return its;
++}
++
++static void its_vpe_4_1_send_inv(struct irq_data *d)
++{
++	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
++	struct its_node *its;
++
++	/*
++	 * GICv4.1 wants doorbells to be invalidated using the
++	 * INVDB command in order to be broadcast to all RDs. Send
++	 * it to the first valid ITS, and let the HW do its magic.
++	 */
++	its = find_4_1_its();
++	if (its)
++		its_send_invdb(its, vpe);
++}
++
++static void its_vpe_4_1_mask_irq(struct irq_data *d)
++{
++	lpi_write_config(d->parent_data, LPI_PROP_ENABLED, 0);
++	its_vpe_4_1_send_inv(d);
++}
++
++static void its_vpe_4_1_unmask_irq(struct irq_data *d)
++{
++	lpi_write_config(d->parent_data, 0, LPI_PROP_ENABLED);
++	its_vpe_4_1_send_inv(d);
++}
++
+ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+ {
+ 	struct its_cmd_info *info = vcpu_info;
+@@ -3575,6 +3646,8 @@ static int its_vpe_4_1_set_vcpu_affinity(struct irq_data *d, void *vcpu_info)
+ 
+ static struct irq_chip its_vpe_4_1_irq_chip = {
+ 	.name			= "GICv4.1-vpe",
++	.irq_mask		= its_vpe_4_1_mask_irq,
++	.irq_unmask		= its_vpe_4_1_unmask_irq,
+ 	.irq_eoi		= irq_chip_eoi_parent,
+ 	.irq_set_affinity	= its_vpe_set_affinity,
+ 	.irq_set_vcpu_affinity	= its_vpe_4_1_set_vcpu_affinity,
+diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+index df3b7cb50956..33519b7c96cf 100644
+--- a/include/linux/irqchip/arm-gic-v3.h
++++ b/include/linux/irqchip/arm-gic-v3.h
+@@ -486,8 +486,9 @@
+ #define GITS_CMD_VMAPTI			GITS_CMD_GICv4(GITS_CMD_MAPTI)
+ #define GITS_CMD_VMOVI			GITS_CMD_GICv4(GITS_CMD_MOVI)
+ #define GITS_CMD_VSYNC			GITS_CMD_GICv4(GITS_CMD_SYNC)
+-/* VMOVP is the odd one, as it doesn't have a physical counterpart */
++/* VMOVP and INVDB are the odd ones, as they dont have a physical counterpart */
+ #define GITS_CMD_VMOVP			GITS_CMD_GICv4(2)
++#define GITS_CMD_INVDB			GITS_CMD_GICv4(0xe)
+ 
+ /*
+  * ITS error numbers
+-- 
+2.20.1
 
-Same here.
-
-> > @@ -326,6 +323,8 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
-> >   {
-> >   	struct fwnode_handle *child = NULL;
-> >   	struct led_init_data init_data = {};
-> > +	u32 ovp = 0;
-> > +	bool exp_mode;
-> >   	int ret;
-> >   	led->enable_gpio = devm_gpiod_get_optional(&led->client->dev,
-> > @@ -350,6 +349,38 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
-> >   		led->regulator = NULL;
-> >   	}
-> > +	led->boost_ctrl = LM3692X_BOOST_SW_1MHZ |
-> > +		LM3692X_BOOST_SW_NO_SHIFT |
-> > +		LM3692X_OCP_PROT_1_5A;
-> Make this a #define and then it can be reused as a mask for
-> regmap_update_bits
-> > +	ret = device_property_read_u32(&led->client->dev,
-> > +				       "ti,overvoltage-volts", &ovp);
-> > +	if (!ret) {
-> 
-> if (ret)
-> 
->     set boost_ctrl to default value since the default is not 0
->
-> led->boost_ctrl |= LM3692X_OVP_29V;
-> 
-> else
-> 
->      do case
->
-
-Fixed.
-
-> > +		switch (ovp) {
-> > +		case 0:
-> > +			break;
-> > +		case 22:
-> If the value is 21v why is this case 22?  DT binding says 21 is the first
-> value
-
-Fixed, also added the 17V for the case where both bits a are 0.
-
-> > +			led->boost_ctrl |= LM3692X_OVP_21V;
-> > +			break;
-> > +		case 25:
-> > +			led->boost_ctrl |= LM3692X_OVP_25V;
-> > +			break;
-> > +		case 29:
-> > +			led->boost_ctrl |= LM3692X_OVP_29V;
-> > +			break;
-> > +		default:
-> > +			dev_err(&led->client->dev, "Invalid OVP %d\n", ovp);
-> > +			return -EINVAL;
-> > +		}
-> > +	}
-> > +	dev_dbg(&led->client->dev, "OVP: %dV", ovp);
-> > +
-> extra debug statement
-
-dropped.
-
-> > +	led->brightness_ctrl = LM3692X_BL_ADJ_POL | LM3692X_RAMP_EN;
-> Same comment as before on the #define
-> > +	exp_mode = device_property_read_bool(&led->client->dev,
-> > +				     "ti,brightness-mapping-exponential");
-> > +	dev_dbg(&led->client->dev, "Exponential brightness: %d", exp_mode);
-> 
-> extra debug statement
-
-dropped.
-
-Cheers and thanks for the comments,
- -- Guido
-
-> 
-> Dan
-> 
-> 
