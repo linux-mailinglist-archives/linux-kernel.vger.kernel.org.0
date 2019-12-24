@@ -2,331 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4483C129C6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 02:33:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81129129C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 02:35:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfLXBdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 20:33:21 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:30119 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727012AbfLXBdU (ORCPT
+        id S1727109AbfLXBf3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 20:35:29 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35156 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726995AbfLXBf2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 20:33:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577151198;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IWxN0VbsW7XFIgGXfEH7ot0HMoaDI1kn38g+Gr1vwVM=;
-        b=bAgXyXVJgFxBkxfSHKOeZvQjLYu8djWJELPm84RIVPdIK879ubqu1Fmyb+E3is1BfVeaMC
-        eC2bY3WOBCBVyU7WCBeRQ4LJfgnGPIDhPRf+P3mLwhsWW8N0mH95i9rynGw0JX5f+jEwQG
-        OtrozcJa4gfHKOILSbS+bYxLH3Dt2Yw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-102-EK5IlWkrOh-MNEN1GJKK1w-1; Mon, 23 Dec 2019 20:33:10 -0500
-X-MC-Unique: EK5IlWkrOh-MNEN1GJKK1w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E109418B5F69;
-        Tue, 24 Dec 2019 01:33:07 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9407C805FF;
-        Tue, 24 Dec 2019 01:32:45 +0000 (UTC)
-Date:   Tue, 24 Dec 2019 09:32:37 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Andrea Vai <andrea.vai@unipv.it>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Schmid, Carsten" <Carsten_Schmid@mentor.com>,
-        Finn Thain <fthain@telegraphics.com.au>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        USB list <linux-usb@vger.kernel.org>,
-        SCSI development list <linux-scsi@vger.kernel.org>,
-        Himanshu Madhani <himanshu.madhani@cavium.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Omar Sandoval <osandov@fb.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Hans Holmberg <Hans.Holmberg@wdc.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: AW: Slow I/O on USB media after commit
- f664a3cc17b7d0a2bc3b3ab96181e1029b0ec0e6
-Message-ID: <20191224013237.GB13083@ming.t460p>
-References: <20191210080550.GA5699@ming.t460p>
- <20191211024137.GB61323@mit.edu>
- <20191211040058.GC6864@ming.t460p>
- <20191211160745.GA129186@mit.edu>
- <20191211213316.GA14983@ming.t460p>
- <f38db337cf26390f7c7488a0bc2076633737775b.camel@unipv.it>
- <20191218094830.GB30602@ming.t460p>
- <b1b6a0e9d690ecd9432025acd2db4ac09f834040.camel@unipv.it>
- <20191223130828.GA25948@ming.t460p>
- <fc6f73fc5f57ade8890b472d63c7f0bd559de538.camel@unipv.it>
+        Mon, 23 Dec 2019 20:35:28 -0500
+Received: by mail-io1-f65.google.com with SMTP id v18so17870748iol.2
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 17:35:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9lmC0cEb7NijnFrwroELGHeSVAX59tyGYC7C4mWEi2k=;
+        b=B1UuMupMzU6CvsK1M8U19051nfyVhd1G/xTieA9RShOJcjMhmLMUZIfe6A42Cdauwe
+         twErhsT6BCAnhKC5dqqhfxBw3UA+c0i9F7mMX9w2odxxx7vC/onGDursDbiXi23r+zgz
+         hzTBTPHIZTvO1/7BR9JjbMLag7xt/kR4L3q4+Om+9WarzYjTejq8Z4YgrBjzd6KRxYst
+         gFqaeZIaIEyY/gblrioTxzia0VRRLVg5PBX7pHVwiOgE3tj+Owk24iMDyj2hjHXoUueW
+         h7ayQf3MSpnF5O8VTmXeypm/GGN68OwpnMic09yKrVzwGbCSGy3h4V6NZaviJbRsh9Zz
+         gebw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9lmC0cEb7NijnFrwroELGHeSVAX59tyGYC7C4mWEi2k=;
+        b=hz2/3I420F4lrByX4aGNzZY72lF3N8xuieddQ/FR8Zlt6bBFOWltY1URkUm1Uw0bYV
+         hHBOk1g0OchC2/vOgM7mvO/OPPg0DcZ4EEElEqdegJ4b2ksgsRPTMIcIPfX+uyCdaAGQ
+         fWOcIxgCxpZmUBCAxxrvEB9gZ8AXq91hm/3leUdMHU2J/dFCz+0meu7d2+bBO+Tswf8l
+         wEgo0ZTWc/bl3m3Ed1UVnvysH5lhU+zyff9Dur6L5o817LqZwY8l68VPhzB0yBceN8Mk
+         7mCzpgk5TcNwC9nbwQN9DZ4JxBk7ztow/1gPPAtV+TlZBKF3qBmvlcBt5x1V2JDWGmOs
+         Qk5g==
+X-Gm-Message-State: APjAAAXMRKYK6/w7xHE5x6zXRWoqpMs64t3VjFDVzaGCKHPwSHYuzC8q
+        XvdslB7C9CSDVfynwop8zkXjUmgoRvthTL8CpqE=
+X-Google-Smtp-Source: APXvYqyANcx7D97M/9YZtBXmDKHROxQ6MY2zr+nlO+rOorkbsUyKV+d0LGUBSaX2CbaKZFMWuBmHum1Pqwx/EVjcefQ=
+X-Received: by 2002:a5d:9f4f:: with SMTP id u15mr6520488iot.129.1577151327920;
+ Mon, 23 Dec 2019 17:35:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc6f73fc5f57ade8890b472d63c7f0bd559de538.camel@unipv.it>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <1574694943-7883-1-git-send-email-yingjie_bai@126.com> <87pngglmxg.fsf@mpe.ellerman.id.au>
+In-Reply-To: <87pngglmxg.fsf@mpe.ellerman.id.au>
+From:   Yingjie Bai <byj.tea@gmail.com>
+Date:   Tue, 24 Dec 2019 09:35:16 +0800
+Message-ID: <CAFAt38F-YQUVNXEnLut0tMivYUy_OTK7G4wAHfddcmncsEpREQ@mail.gmail.com>
+Subject: Re: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for
+ 64bit boot entry
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     yingjie_bai@126.com, Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 03:02:35PM +0100, Andrea Vai wrote:
-> Il giorno lun, 23/12/2019 alle 21.08 +0800, Ming Lei ha scritto:
-> > On Mon, Dec 23, 2019 at 12:22:45PM +0100, Andrea Vai wrote:
-> > > Il giorno mer, 18/12/2019 alle 17.48 +0800, Ming Lei ha scritto:
-> > > > On Wed, Dec 18, 2019 at 09:25:02AM +0100, Andrea Vai wrote:
-> > > > > Il giorno gio, 12/12/2019 alle 05.33 +0800, Ming Lei ha
-> > scritto:
-> > > > > > On Wed, Dec 11, 2019 at 11:07:45AM -0500, Theodore Y. Ts'o
-> > > > wrote:
-> > > > > > > On Wed, Dec 11, 2019 at 12:00:58PM +0800, Ming Lei wrote:
-> > > > > > > > I didn't reproduce the issue in my test environment, and
-> > > > follows
-> > > > > > > > Andrea's test commands[1]:
-> > > > > > > > 
-> > > > > > > >   mount UUID=$uuid /mnt/pendrive 2>&1 |tee -a $logfile
-> > > > > > > >   SECONDS=0
-> > > > > > > >   cp $testfile /mnt/pendrive 2>&1 |tee -a $logfile
-> > > > > > > >   umount /mnt/pendrive 2>&1 |tee -a $logfile
-> > > > > > > > 
-> > > > > > > > The 'cp' command supposes to open/close the file just
-> > once,
-> > > > > > however
-> > > > > > > > ext4_release_file() & write pages is observed to run for
-> > > > 4358
-> > > > > > times
-> > > > > > > > when executing the above 'cp' test.
-> > > > > > > 
-> > > > > > > Why are we sure the ext4_release_file() / _fput() is
-> > coming
-> > > > from
-> > > > > > the
-> > > > > > > cp command, as opposed to something else that might be
-> > running
-> > > > on
-> > > > > > the
-> > > > > > > system under test?  _fput() is called by the kernel when
-> > the
-> > > > last
-> > > > > > 
-> > > > > > Please see the log:
-> > > > > > 
-> > > > > > 
-> > > > 
-> > https://lore.kernel.org/linux-scsi/3af3666920e7d46f8f0c6d88612f143ffabc743c.camel@unipv.it/2-log_ming.zip
-> > > > > > 
-> > > > > > Which is collected by:
-> > > > > > 
-> > > > > > #!/bin/sh
-> > > > > > MAJ=$1
-> > > > > > MIN=$2
-> > > > > > MAJ=$(( $MAJ << 20 ))
-> > > > > > DEV=$(( $MAJ | $MIN ))
-> > > > > > 
-> > > > > > /usr/share/bcc/tools/trace -t -C \
-> > > > > >     't:block:block_rq_issue (args->dev == '$DEV') "%s %d
-> > %d",
-> > > > args-
-> > > > > > >rwbs, args->sector, args->nr_sector' \
-> > > > > >     't:block:block_rq_insert (args->dev == '$DEV') "%s %d
-> > %d",
-> > > > args-
-> > > > > > >rwbs, args->sector, args->nr_sector'
-> > > > > > 
-> > > > > > $MAJ:$MIN points to the USB storage disk.
-> > > > > > 
-> > > > > > From the above IO trace, there are two write paths, one is
-> > from
-> > > > cp,
-> > > > > > another is from writeback wq.
-> > > > > > 
-> > > > > > The stackcount trace[1] is consistent with the IO trace log
-> > > > since it
-> > > > > > only shows two IO paths, that is why I concluded that the
-> > write
-> > > > done
-> > > > > > via
-> > > > > > ext4_release_file() is from 'cp'.
-> > > > > > 
-> > > > > > [1] 
-> > > > > > 
-> > > > 
-> > https://lore.kernel.org/linux-scsi/320b315b9c87543d4fb919ecbdf841596c8fbcea.camel@unipv.it/2-log_ming_20191129_150609.zip
-> > > > > > 
-> > > > > > > reference to a struct file is released.  (Specifically, if
-> > you
-> > > > > > have a
-> > > > > > > fd which is dup'ed, it's only when the last fd
-> > corresponding
-> > > > to
-> > > > > > the
-> > > > > > > struct file is closed, and the struct file is about to be
-> > > > > > released,
-> > > > > > > does the file system's f_ops->release function get
-> > called.)
-> > > > > > > 
-> > > > > > > So the first question I'd ask is whether there is anything
-> > > > else
-> > > > > > going
-> > > > > > > on the system, and whether the writes are happening to the
-> > USB
-> > > > > > thumb
-> > > > > > > drive, or to some other storage device.  And if there is
-> > > > something
-> > > > > > > else which is writing to the pendrive, maybe that's why no
-> > one
-> > > > > > else
-> > > > > > > has been able to reproduce the OP's complaint....
-> > > > > > 
-> > > > > > OK, we can ask Andrea to confirm that via the following
-> > trace,
-> > > > which
-> > > > > > will add pid/comm info in the stack trace:
-> > > > > > 
-> > > > > > /usr/share/bcc/tools/stackcount
-> > blk_mq_sched_request_inserted
-> > > > > > 
-> > > > > > Andrew, could you collect the above log again when running
-> > > > new/bad
-> > > > > > kernel for confirming if the write done by
-> > ext4_release_file()
-> > > > is
-> > > > > > from
-> > > > > > the 'cp' process?
-> > > > > 
-> > > > > You can find the stackcount log attached. It has been produced
-> > by:
-> > > > > 
-> > > > > - /usr/share/bcc/tools/stackcount
-> > blk_mq_sched_request_inserted >
-> > > > trace.log
-> > > > > - wait some seconds
-> > > > > - run the test (1 copy trial), wait for the test to finish,
-> > wait
-> > > > some seconds
-> > > > > - stop the trace (ctrl+C)
-> > > > 
-> > > > Thanks for collecting the log, looks your 'stackcount' doesn't
-> > > > include
-> > > > comm/pid info, seems there is difference between your bcc and
-> > > > my bcc in fedora 30.
-> > > > 
-> > > > Could you collect above log again via the following command?
-> > > > 
-> > > > /usr/share/bcc/tools/stackcount -P -K t:block:block_rq_insert
-> > > > 
-> > > > which will show the comm/pid info.
-> > > 
-> > > ok, attached (trace_20191219.txt), the test (1 trial) took 3684
-> > > seconds.
-> > 
-> > From the above trace:
-> > 
-> >   b'blk_mq_sched_request_inserted'
-> >   b'blk_mq_sched_request_inserted'
-> >   b'dd_insert_requests'
-> >   b'blk_mq_sched_insert_requests'
-> >   b'blk_mq_flush_plug_list'
-> >   b'blk_flush_plug_list'
-> >   b'io_schedule_prepare'
-> >   b'io_schedule'
-> >   b'rq_qos_wait'
-> >   b'wbt_wait'
-> >   b'__rq_qos_throttle'
-> >   b'blk_mq_make_request'
-> >   b'generic_make_request'
-> >   b'submit_bio'
-> >   b'ext4_io_submit'
-> >   b'ext4_writepages'
-> >   b'do_writepages'
-> >   b'__filemap_fdatawrite_range'
-> >   b'ext4_release_file'
-> >   b'__fput'
-> >   b'task_work_run'
-> >   b'exit_to_usermode_loop'
-> >   b'do_syscall_64'
-> >   b'entry_SYSCALL_64_after_hwframe'
-> >     b'cp' [19863]
-> >     4400
-> > 
-> > So this write is clearly from 'cp' process, and it should be one
-> > ext4 fs issue.
-> > 
-> > Ted, can you take a look at this issue?
-> > 
-> > > 
-> > > > > I also tried the usual test with btrfs and xfs. Btrfs behavior
-> > > > looks
-> > > > > "good". xfs seems sometimes better, sometimes worse, I would
-> > say.
-> > > > I
-> > > > > don't know if it matters, anyway you can also find the results
-> > of
-> > > > the
-> > > > > two tests (100 trials each). Basically, btrfs is always
-> > between 68
-> > > > and
-> > > > > 89 seconds, with a cyclicity (?) with "period=2 trials". xfs
-> > looks
-> > > > > almost always very good (63-65s), but sometimes "bad" (>300s).
-> > > > 
-> > > > If you are interested in digging into this one, the following
-> > trace
-> > > > should be helpful:
-> > > > 
-> > > > 
-> > https://lore.kernel.org/linux-scsi/f38db337cf26390f7c7488a0bc2076633737775b.camel@unipv.it/T/#m5aa008626e07913172ad40e1eb8e5f2ffd560fc6
-> > > > 
-> > > 
-> > > Attached:
-> > > - trace_xfs_20191223.txt (7 trials, then aborted while doing the
-> > 8th),
-> > > times to complete:
-> > > 64s
-> > > 63s
-> > > 64s
-> > > 833s
-> > > 1105s
-> > > 63s
-> > > 64s
-> > 
-> > oops, looks we have to collect io insert trace with the following
-> > bcc script
-> > on xfs for confirming if there is similar issue with ext4, could you
-> > run
-> > it again on xfs? And only post the trace done in case of slow 'cp'.
-> > 
-> > 
-> > #!/bin/sh
-> > 
-> > MAJ=$1
-> > MIN=$2
-> > MAJ=$(( $MAJ << 20 ))
-> > DEV=$(( $MAJ | $MIN ))
-> > 
-> > /usr/share/bcc/tools/trace -t -C \
-> >     't:block:block_rq_issue (args->dev == '$DEV') "%s %d %d", args-
-> > >rwbs, args->sector, args->nr_sector' \
-> >     't:block:block_rq_insert (args->dev == '$DEV') "%s %d %d", args-
-> > >rwbs, args->sector, args->nr_sector'
-> > 
-> > 
-> here it is (1 trial, 313 seconds to finish)
+Hi Michael,
+Thanks for pointing out the issue. My mistake...
+This patch should indeed make sense only when
+CONFIG_PHYS_64BIT=y
 
-The above log shows similar issue with ext4 since there is another
-writeback IO path from 'cp' process. And the following trace can show if
-it is same with ext4's issue:
+I could not find corenet32_smp_defconfig, but I guess in your config,
+CONFIG_PHYS_64BIT=n ?
+I will update the patch later today
 
-/usr/share/bcc/tools/stackcount -P -K t:block:block_rq_insert
-
-
-Thanks,
-Ming
-
+On Sun, Dec 22, 2019 at 5:38 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>
+> yingjie_bai@126.com writes:
+> > From: Bai Yingjie <byj.tea@gmail.com>
+> >
+> > CPU like P4080 has 36bit physical address, its DDR physical
+> > start address can be configured above 4G by LAW registers.
+> >
+> > For such systems in which their physical memory start address was
+> > configured higher than 4G, we need also to write addr_h into the spin
+> > table of the target secondary CPU, so that addr_h and addr_l together
+> > represent a 64bit physical address.
+> > Otherwise the secondary core can not get correct entry to start from.
+> >
+> > This should do no harm for normal case where addr_h is all 0.
+> >
+> > Signed-off-by: Bai Yingjie <byj.tea@gmail.com>
+> > ---
+> >  arch/powerpc/platforms/85xx/smp.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/arch/powerpc/platforms/85xx/smp.c b/arch/powerpc/platforms/85xx/smp.c
+> > index 8c7ea2486bc0..f12cdd1e80ff 100644
+> > --- a/arch/powerpc/platforms/85xx/smp.c
+> > +++ b/arch/powerpc/platforms/85xx/smp.c
+> > @@ -252,6 +252,14 @@ static int smp_85xx_start_cpu(int cpu)
+> >       out_be64((u64 *)(&spin_table->addr_h),
+> >               __pa(ppc_function_entry(generic_secondary_smp_init)));
+> >  #else
+> > +     /*
+> > +      * We need also to write addr_h to spin table for systems
+> > +      * in which their physical memory start address was configured
+> > +      * to above 4G, otherwise the secondary core can not get
+> > +      * correct entry to start from.
+> > +      * This does no harm for normal case where addr_h is all 0.
+> > +      */
+> > +     out_be32(&spin_table->addr_h, __pa(__early_start) >> 32);
+> >       out_be32(&spin_table->addr_l, __pa(__early_start));
+>
+> This breaks the corenet32_smp_defconfig build:
+>
+>   /linux/arch/powerpc/platforms/85xx/smp.c: In function 'smp_85xx_start_cpu':
+>   /linux/arch/powerpc/platforms/85xx/smp.c:262:52: error: right shift count >= width of type [-Werror=shift-count-overflow]
+>     262 |  out_be32(&spin_table->addr_h, __pa(__early_start) >> 32);
+>         |                                                    ^~
+>   cc1: all warnings being treated as errors
+>
+> cheers
