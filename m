@@ -2,172 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0102912A0C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0014F12A0CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 12:43:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfLXLlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 06:41:47 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:51551 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbfLXLlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 06:41:46 -0500
-Received: from localhost (mailhub1-ext [192.168.12.233])
-        by localhost (Postfix) with ESMTP id 47hvSk5rlxz9tvqq;
-        Tue, 24 Dec 2019 12:41:42 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=lYmJlwXj; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id WeNRdbd7lgXn; Tue, 24 Dec 2019 12:41:42 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 47hvSk41pRz9tvqp;
-        Tue, 24 Dec 2019 12:41:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1577187702; bh=zVvs2ouna/B/Vb/2RfZVUK0x0665UncRbgfLeAdSnnY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lYmJlwXjs+sVC+Oy+w8vyY3OjRXZBsUlCFzkOcAtGzQv8VGRTjvaBltJ8BvY0yncd
-         kvWtk3/4+I6R+C35vHzjesQG3ZepSfG0mV/VjcD+JMGNw5tKirhTpTWaYsm2DosM1j
-         4yvJ9P1cylNo9xPKKIo9g95EUbXTD0fvHykyHi40=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C1F0C8B783;
-        Tue, 24 Dec 2019 12:41:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id EbbqCE6Lvv3b; Tue, 24 Dec 2019 12:41:43 +0100 (CET)
-Received: from [192.168.232.53] (unknown [192.168.232.53])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id ACB038B782;
-        Tue, 24 Dec 2019 12:41:42 +0100 (CET)
-Subject: Re: [RFC PATCH v2 02/10] lib: vdso: move call to fallback out of
- common code.
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        X86 ML <x86@kernel.org>
-References: <cover.1577111363.git.christophe.leroy@c-s.fr>
- <de073962c1a5911343e13c183fbbdef0fe95449e.1577111365.git.christophe.leroy@c-s.fr>
- <CALCETrXWHk9J-pYm+eopMuW3x7Jr_LnzRjr94gq8g66xOO6SBg@mail.gmail.com>
-From:   christophe leroy <christophe.leroy@c-s.fr>
-Message-ID: <36f1ce73-d8bc-9c46-8a2a-b6514d4a1ba0@c-s.fr>
-Date:   Tue, 24 Dec 2019 12:41:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726884AbfLXLmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 06:42:25 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35446 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbfLXLmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 06:42:21 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j1so13220448lja.2
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 03:42:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A9+/jlzxejOXGqGuMphO+K4YrVBFVrGdSz2snKyj29o=;
+        b=Rw70dVZwXrsRRVRfmfqeZsX4G9Fe2idWs1COznV7TftE3Sdg2noDkvaR6TNS4tp2Py
+         oF2SFqrXaXhzpukBAhGPD50KAYYuds2zmrISXOsJasPJrVe3gPW7MAQR4Wx7UQuabpBK
+         BRvoY5XLKvxNR6y5KGgjH7p2zYP7likMnikIKNzniGQ84wYy3oRsjZpNqUzvam6Q626m
+         U/q4E9UYL4uR+UjIozFFKQmEz46638H+GE/Ar7KCWlqfciRYciRakNciti21cgjJS7vx
+         9m9jZz7VOA4Vix89Y0wLo39cLE9rSTyy3qyeG1Iku4GtH3CgTM7giADWRr5uNr5SeU0r
+         CamA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=A9+/jlzxejOXGqGuMphO+K4YrVBFVrGdSz2snKyj29o=;
+        b=un+oZMu+lTA121pl9EcxmbFkPgFkfh0w1MuEcBXcfrgmU5pwDuFGAkD9FmKkI2DN+l
+         5cAqxapQaHbRhiPT9qHtg0fnEMUc3xh1Jyzgj+hGxLSOKThn0QYZHPmW40nebhmaQwGY
+         KzvGMN2ml8OLmKEbjtHU3OBVl2zJL+0QqLdCWR2TDyje9CXw4TynI7uDdZGVb20QpGx9
+         qxOL/G1RzZYgtWEKs/uL4MXBMhNDX1kgZj9seKieii61eRR0ijNzzn/jM2pL65/MWe7f
+         uGjF/EiKu02+dm3GWVeE9w7/3UDtiF4L967epl4mN6xbkbG+bpqQjSvQuZnwihGvHkY3
+         PWCQ==
+X-Gm-Message-State: APjAAAUXzy0Jq7ns37C3vOusMyPrth0js6qh+Wbm6LoFOM6WFmgA9DkJ
+        TGXENchWZrvHMKD6JIU92RrHKtrhkKg=
+X-Google-Smtp-Source: APXvYqy7dcoXvIYCuzCyChcVd9xAZaFC/RTj2+GYvm2Sv92TzoZuNlWedBq9tndQdoBgWXppPLhMvw==
+X-Received: by 2002:a2e:2d11:: with SMTP id t17mr20102628ljt.177.1577187739239;
+        Tue, 24 Dec 2019 03:42:19 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:441d:5f5:f336:feb9:305c:b1aa])
+        by smtp.gmail.com with ESMTPSA id r20sm9818028lfi.91.2019.12.24.03.42.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Dec 2019 03:42:18 -0800 (PST)
+Subject: Re: [PATCH] ppp: Remove redundant BUG_ON() check in ppp_pernet
+To:     Xu Wang <vulab@iscas.ac.cn>, paulus@samba.org
+Cc:     davem@davemloft.net, linux-ppp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1577180224-16405-1-git-send-email-vulab@iscas.ac.cn>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <d3b4fbce-3349-d51d-4a2c-220ccadac506@cogentembedded.com>
+Date:   Tue, 24 Dec 2019 14:42:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <CALCETrXWHk9J-pYm+eopMuW3x7Jr_LnzRjr94gq8g66xOO6SBg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Avast (VPS 191223-0, 23/12/2019), Outbound message
-X-Antivirus-Status: Not-Tested
+In-Reply-To: <1577180224-16405-1-git-send-email-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello!
 
+On 12/24/2019 12:37 PM, Xu Wang wrote:
 
-Le 24/12/2019 à 03:24, Andy Lutomirski a écrit :
-> On Mon, Dec 23, 2019 at 6:31 AM Christophe Leroy
-> <christophe.leroy@c-s.fr> wrote:
->>
->> On powerpc, VDSO functions and syscalls cannot be implemented in C
->> because the Linux kernel ABI requires that CR[SO] bit is set in case
->> of error and cleared when no error.
->>
->> As this cannot be done in C, C VDSO functions and syscall'based
->> fallback need a trampoline in ASM.
->>
->> By moving the fallback calls out of the common code, arches like
->> powerpc can implement both the call to C VDSO and the fallback call
->> in a single trampoline function.
+> Passing NULL to ppp_pernet causes a crash via BUG_ON.
+> Dereferencing net in net_generici() also has the same effect.
+
+   s/generici/generic/. :-)
+
+> This patch removes the redundant BUG_ON check on the same parameter.
 > 
-> Maybe the issue is that I'm not a powerpc person, but I don't
-> understand this.  The common vDSO code is in C.  Presumably this means
-> that you need an asm trampoline no matter what to call the C code.  Is
-> the improvement that, with this change, you can have the asm
-> trampoline do a single branch, so it's logically:
-> 
-> ret = [call the C code];
-> if (ret == 0) {
->   set success bit;
-> } else {
->   ret = fallback;
->   if (ret == 0)
->    set success bit;
-> else
->    set failure bit;
-> }
+> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+[...]
 
-More simple than above, in fact it is:
-
-ret = [call the C code];
-if (ret == 0) {
-  set success bit;
-} else {
-  ret = fallback [ which sets the success/failure bit];
-}
-return ret
-
-
-> 
-> return ret;
-> 
-> instead of:
-> 
-> ret = [call the C code, which includes the fallback];
-
-C code cannot handle the success/failure bit so we need to do something 
-which does:
-
-int assembly_to_fallback()
-{
-	ret = [syscall the fallback]
-	if (success bit set)
-		return ret;
-	else
-		return -ret;
-}
-
-Also means going back and forth between the success bit and negative return.
-
-> if (ret == 0)
->    set success bit;
-> else
->    set failure bit;
-> 
-> It's not obvious to me that the former ought to be faster.
-> 
->>
->> The two advantages are:
->> - No need play back and forth with CR[SO] and negative return value.
->> - No stack frame is required in VDSO C functions for the fallbacks.
-> 
-> How is no stack frame required?  Do you mean that the presence of the
-> fallback causes worse code generation?  Can you improve the fallback
-> instead?
-> 
-
-When function F1 calls function F2 (with BL insn), the link register 
-(LR) is set with the return address in F1, so that at the end of F2, F2 
-branches to LR (with BLR insn), that's how you return from functions.
-
-When F2 calls function F3, the same happens, LR is set to the return of 
-F3 into F2. It means that F2 has to save LR in order to be able to 
-return to F1, otherwise the return address from F2 into F1 is lost.
-
-But ... thinking about it once more, indeed fallback means doing a 
-syscall, and in fact I realise that syscalls won't clobber LR, so it 
-should be possible to do something. Let me try it.
-
-Christophe
+MBR, Sergei
