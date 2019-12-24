@@ -2,120 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A4E012A1E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 15:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89CEA12A1E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 15:04:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726314AbfLXOBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 09:01:15 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([205.139.110.120]:48174 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726178AbfLXOBO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 09:01:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577196072;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=dMsDBmBD7JZa0s+34AQ0kDBnfGUFwWvNelpOAou0124=;
-        b=WGDzJ+snLNkXdxmuQ5v4/WZa+mhymPQejlQ+b0yNUB968xhJkOw7MULB/5uJpqvIzjIZ00
-        f1nl+tIKnXmLOB4DzSsto8a+OqTLqwAOj1qTo230jBjmtcu7LF/paf5rtd9fPUE0+RZkn+
-        a0a/5eZAX958BGCR+H6O+waxYM/bPDM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-44-nrrIhL2BM9SBzN9xUOdwig-1; Tue, 24 Dec 2019 09:01:10 -0500
-X-MC-Unique: nrrIhL2BM9SBzN9xUOdwig-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 2D42D800D55;
-        Tue, 24 Dec 2019 14:01:08 +0000 (UTC)
-Received: from carbon (ovpn-200-18.brq.redhat.com [10.40.200.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8AC7660BF3;
-        Tue, 24 Dec 2019 14:01:00 +0000 (UTC)
-Date:   Tue, 24 Dec 2019 15:00:58 +0100
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc:     Matteo Croce <mcroce@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo@kernel.org>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Luka Perkov <luka.perkov@sartura.hr>,
-        Tomislav Tomasic <tomislav.tomasic@sartura.hr>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Stefan Chulski <stefanc@marvell.com>,
-        Nadav Haklai <nadavh@marvell.com>, brouer@redhat.com
-Subject: Re: [RFC net-next 0/2] mvpp2: page_pool support
-Message-ID: <20191224150058.4400ffab@carbon>
-In-Reply-To: <20191224095229.GA24310@apalos.home>
-References: <20191224010103.56407-1-mcroce@redhat.com>
-        <20191224095229.GA24310@apalos.home>
+        id S1726298AbfLXOEj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 09:04:39 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44972 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726124AbfLXOEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 09:04:39 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 63086B251731D4F335E1;
+        Tue, 24 Dec 2019 22:04:36 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.439.0; Tue, 24 Dec 2019
+ 22:04:24 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <cezary.rojewski@intel.com>,
+        <pierre-louis.bossart@linux.intel.com>,
+        <liam.r.girdwood@linux.intel.com>, <yang.jie@linux.intel.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <kuninori.morimoto.gx@renesas.com>, <yuehaibing@huawei.com>,
+        <bleung@chromium.org>, <mac.chiang@intel.com>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ASoC: Intel: kbl_da7219_max98357a: remove unused variable 'constraints_16000' and 'ch_mono'
+Date:   Tue, 24 Dec 2019 22:02:37 +0800
+Message-ID: <20191224140237.36732-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 24 Dec 2019 11:52:29 +0200
-Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+sound/soc/intel/boards/kbl_da7219_max98357a.c:343:48:
+ warning: constraints_16000 defined but not used [-Wunused-const-variable=]
+sound/soc/intel/boards/kbl_da7219_max98357a.c:348:27:
+ warning: ch_mono defined but not used [-Wunused-const-variable=]
 
-> On Tue, Dec 24, 2019 at 02:01:01AM +0100, Matteo Croce wrote:
-> > This patches change the memory allocator of mvpp2 from the frag allocator to
-> > the page_pool API. This change is needed to add later XDP support to mvpp2.
-> > 
-> > The reason I send it as RFC is that with this changeset, mvpp2 performs much
-> > more slower. This is the tc drop rate measured with a single flow:
-> > 
-> > stock net-next with frag allocator:
-> > rx: 900.7 Mbps 1877 Kpps
-> > 
-> > this patchset with page_pool:
-> > rx: 423.5 Mbps 882.3 Kpps
-> > 
-> > This is the perf top when receiving traffic:
-> > 
-> >   27.68%  [kernel]            [k] __page_pool_clean_page  
-> 
-> This seems extremly high on the list. 
+They are never used, so can be removed.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/soc/intel/boards/kbl_da7219_max98357a.c | 13 -------------
+ 1 file changed, 13 deletions(-)
+
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+index 537a889..0d55319 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+@@ -336,19 +336,6 @@ static struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
  
-This looks related to the cost of dma unmap, as page_pool have
-PP_FLAG_DMA_MAP. (It is a little strange, as page_pool have flag
-DMA_ATTR_SKIP_CPU_SYNC, which should make it less expensive).
-
-
-> >    9.79%  [kernel]            [k] get_page_from_freelist
-
-You are clearly hitting page-allocator every time, because you are not
-using page_pool recycle facility.
-
-
-> >    7.18%  [kernel]            [k] free_unref_page
-> >    4.64%  [kernel]            [k] build_skb
-> >    4.63%  [kernel]            [k] __netif_receive_skb_core
-> >    3.83%  [mvpp2]             [k] mvpp2_poll
-> >    3.64%  [kernel]            [k] eth_type_trans
-> >    3.61%  [kernel]            [k] kmem_cache_free
-> >    3.03%  [kernel]            [k] kmem_cache_alloc
-> >    2.76%  [kernel]            [k] dev_gro_receive
-> >    2.69%  [mvpp2]             [k] mvpp2_bm_pool_put
-> >    2.68%  [kernel]            [k] page_frag_free
-> >    1.83%  [kernel]            [k] inet_gro_receive
-> >    1.74%  [kernel]            [k] page_pool_alloc_pages
-> >    1.70%  [kernel]            [k] __build_skb
-> >    1.47%  [kernel]            [k] __alloc_pages_nodemask
-> >    1.36%  [mvpp2]             [k] mvpp2_buf_alloc.isra.0
-> >    1.29%  [kernel]            [k] tcf_action_exec
-> > 
-> > I tried Ilias patches for page_pool recycling, I get an improvement
-> > to ~1100, but I'm still far than the original allocator.  
+-static const unsigned int rates_16000[] = {
+-	16000,
+-};
+-
+-static const struct snd_pcm_hw_constraint_list constraints_16000 = {
+-	.count = ARRAY_SIZE(rates_16000),
+-	.list  = rates_16000,
+-};
+-
+-static const unsigned int ch_mono[] = {
+-	1,
+-};
+-
+ SND_SOC_DAILINK_DEF(dummy,
+ 	DAILINK_COMP_ARRAY(COMP_DUMMY()));
+ 
 -- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+2.7.4
+
 
