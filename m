@@ -2,58 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E468812A321
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 17:17:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0106112A329
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 17:23:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbfLXQQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 11:16:56 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:36391 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfLXQQz (ORCPT
+        id S1726435AbfLXQXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 11:23:00 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45428 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726168AbfLXQW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 11:16:55 -0500
-Received: by mail-yw1-f68.google.com with SMTP id n184so8568730ywc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 08:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
-        b=hJpM5siQWW9/reEGW+cITShdVgMfJvK0f7hTctOHFAFBRp0OOF1vw6RbV0MXzNLlNt
-         LWYhytCaW414nzYqN5t4jFEjpAgR9QCVNNz9VEz0zOvVegybMslUvFV22OIo0xCRtAgr
-         5iVtuypLa50jVLI7PLYhxSl5QSDaDExQoQcPdcKyBnlSMuIACfFZ9Xwopa992IUvhbiq
-         6LvhnRs5znc/srcIfPpxx0cyhp8+K9J54ZdZ6d8OnV1AhxXfFP4Cy7gebOaKKvRvXVGO
-         GUQHXtj/QAjBp2eoFiu3YZ3HoPjQSfckeIflwBCHQiapLCKF/jQVf26TSLAO393mpMEa
-         0l6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=iWBJ9etiBm/hh818InyCY7sxm3rRSJTmMlNUHIhyA9c=;
-        b=gcs8FxG3Jov+0XL35Jq/yy0RPnj0hJLj4Nq2g3Hr/U+ixRoD0d7NvAHgAoE7JOuAtH
-         p1CJ4rlUi1YoBgZj9QN8Y6cwJfxGRFhfTbJ9SB/BhJk8h6T3cxAL9gv1SQcuNPLZ1o37
-         FWOP7PXASOryzg0VZvGm1GGN+1tUgX/IXJVODRNdt9uV4DkhcvIkr4gPjkYXOoCsFm/L
-         1rMnXx/7afzWM7K57dBZzuQZXlYjcq9B2dV0qm3HRouEF/5CIo23sjD2c3qJyQYmNlzS
-         REZIj+RGXEyEr07z9wCSVbe64ROLMS9+Ogv8TSWKqkE/vC4PjTEruDTlLssFVjziuQ+s
-         /hyQ==
-X-Gm-Message-State: APjAAAUT2fErvJWUaWuwzeIpAa1nUc4NwsQOs1qt1nYZ9fzSWG6pOHE7
-        XlXJ+DZJ8K8F5OfKJqPEMDmhv2ddPPnqnVyBFqA=
-X-Google-Smtp-Source: APXvYqzei/xu3rQiKCJR+W5VgLSkOAh6g797Vx1OQVAefbgbXCkChZ5Hu9doIjQf7ODMFByQ36VHcxE5/zf3IgBoTPY=
-X-Received: by 2002:a81:254:: with SMTP id 81mr26503627ywc.243.1577204214944;
- Tue, 24 Dec 2019 08:16:54 -0800 (PST)
+        Tue, 24 Dec 2019 11:22:59 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBOGGx8V132004
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 11:22:58 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2x21kh1ew1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 11:22:58 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Tue, 24 Dec 2019 16:22:56 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 24 Dec 2019 16:22:53 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id xBOGMqP353805150
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 24 Dec 2019 16:22:52 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C4F6911C050;
+        Tue, 24 Dec 2019 16:22:52 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7232111C058;
+        Tue, 24 Dec 2019 16:22:51 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Tue, 24 Dec 2019 16:22:51 +0000 (GMT)
+Date:   Tue, 24 Dec 2019 21:52:50 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     pauld@redhat.com, longman@redhat.com, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/shared: include correct header for static key
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <xagsmtp2.20191223133223.8837@vmsdvm3.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:a25:ec09:0:0:0:0:0 with HTTP; Tue, 24 Dec 2019 08:16:54
- -0800 (PST)
-Reply-To: cfffdfd8brahim4@yandex.com
-From:   Salah Ibrahim <mlchldwrd@gmail.com>
-Date:   Tue, 24 Dec 2019 08:16:54 -0800
-Message-ID: <CACZ0N4rCEh-WTagvJ_+U-WrMJSZ1nEApKUsjZe0FW64LvygMzw@mail.gmail.com>
-Subject: Greetings
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <xagsmtp2.20191223133223.8837@vmsdvm3.vnet.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19122416-0016-0000-0000-000002D7DCCF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19122416-0017-0000-0000-0000333A328F
+Message-Id: <20191224162250.GA1781@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-24_04:2019-12-24,2019-12-24 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 priorityscore=1501 lowpriorityscore=0
+ bulkscore=0 adultscore=0 mlxscore=0 clxscore=1015 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1910280000 definitions=main-1912240142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend. I have a business proposal of  $35 Million USD which i want to
-transact with you  get back for more details.Best Regards From Salah Ibrahim
+* Jason A. Donenfeld <Jason@zx2c4.com> [2019-12-23 14:31:47]:
+
+> Recently, the spinlock implementation grew a static key optimization,
+> but the jump_label.h header include was left out, leading to build
+> errors:
+> 
+> linux/arch/powerpc/include/asm/spinlock.h:44:7: error: implicit declaration of function ???static_branch_unlikely??? [-Werror=implicit-function-declaration]
+>    44 |  if (!static_branch_unlikely(&shared_processor))
+> 
+> This commit adds the missing header.
+
+Right, This was in v4 version of the patchset
+(http://lkml.kernel.org/r/20191212085344.17357-1-srikar@linux.vnet.ibm.com)
+but we missed it in the final v5 version.
+
+Thanks for noticing and fixing it.
+
+Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+
+> 
+> Fixes: 656c21d6af5d ("powerpc/shared: Use static key to detect shared processor")
+> Cc: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> ---
+>  arch/powerpc/include/asm/spinlock.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/powerpc/include/asm/spinlock.h b/arch/powerpc/include/asm/spinlock.h
+> index 1b55fc08f853..860228e917dc 100644
+> --- a/arch/powerpc/include/asm/spinlock.h
+> +++ b/arch/powerpc/include/asm/spinlock.h
+> @@ -15,6 +15,7 @@
+>   *
+>   * (the type definitions are in asm/spinlock_types.h)
+>   */
+> +#include <linux/jump_label.h>
+>  #include <linux/irqflags.h>
+>  #ifdef CONFIG_PPC64
+>  #include <asm/paca.h>
+> -- 
+> 2.24.1
+> 
+
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
