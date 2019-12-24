@@ -2,149 +2,215 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC25E129FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 10:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B3A129FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 10:34:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbfLXJ21 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 04:28:27 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:51404 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726091AbfLXJ20 (ORCPT
+        id S1726203AbfLXJeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 04:34:18 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35998 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfLXJeR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 04:28:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577179704;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=sdq63IePYHAZah7URn5zkx4Y6XBmFNMvwu4Q1uK3z8k=;
-        b=LROux0RQd1gbYcTyt5TDT0z3yxS+2u00Tl7CDNt9LXYZXo34nCybMM7u/ra+MDVV66H+JA
-        ZHbWNKzpQB1V+ozTTQys7SntdkyGXaVJgF2qLY1+lcIsIt3zX7/rG4IV0EaxS1qdGdIMBp
-        1cYO5SfqPhNxeBou/cWcEOkkBcXuwms=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-289-Xyk7uFcUOKWIW8_8ir6xgg-1; Tue, 24 Dec 2019 04:28:22 -0500
-X-MC-Unique: Xyk7uFcUOKWIW8_8ir6xgg-1
-Received: by mail-wr1-f71.google.com with SMTP id r2so7135063wrp.7
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 01:28:22 -0800 (PST)
+        Tue, 24 Dec 2019 04:34:17 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p17so2008311wma.1
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 01:34:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=UtyDToTRhseCzK9/TotzxKj/q4ckgBV14Zj5miZuzXk=;
+        b=hcq6EH2DoFyWxrgAJ1RenPJkLrhXcIWVRTJEXSurFJC9Nicpki94e4VmuYqcP9dnMC
+         WdUfqxRl18WerN3FOhJdh4d0U3V6x5le1fDdalDYEZFdyb4H85w4zid/wYeTmyHxD8aZ
+         cfYDaF0NOJvjnB5KJWByuZE1kR6JwgarvEvgLrPiwC5j2eYAW74v1oQVgH+1+4OY400z
+         czcfooZ6sf4Gn+VCW1C/y3YvzhlyTMTVhjW+Zu2HWQTyYHoxCw+f9CV6u+NQLRGFFUi5
+         e6BGgQb2kZjUcca/epgGMhAWM8ZrB+oRKzicFlBak8YRxx/xTu1BiVdOaolzobGlyT47
+         l1Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:content-transfer-encoding:from:mime-version
-         :subject:date:message-id:references:cc:in-reply-to:to;
-        bh=sdq63IePYHAZah7URn5zkx4Y6XBmFNMvwu4Q1uK3z8k=;
-        b=BoKuGbClrvnS+38vnrYosqPSPqAyG4Zt41jwW1L6OZjCtrr6RqcKzYNTia0uYq5OoC
-         s8ha7AkaZd77PqiSH9yYa8ucwoyLwuze32PKacIqFtDAPMNFJDHybv16bOo9gu8zY4Re
-         tK7uBX/3yCyDU8pDR2Zt04O6yHV+cHDRi9pgwY5vzWnqB+fsPtWk8kpdUOhmIYOcKsGp
-         yu0kfhfOWa70Nr3ww6fYWGDLxxUzNcLYDVKsMgvl+XR/Mrc8ETSwF6BerGmQVZmSlSaU
-         tTA7mHsjDu91tYCSP/obaAJtv7sEN5XKblyA3+XaNMr5JtuKfsexYy2mKFjqZq7lM5tD
-         U5ng==
-X-Gm-Message-State: APjAAAUbgjNEO437h1ZMVhPRCoFgk5fvjWeM2PPJWvchsF4p4XLS8xHM
-        cAp3tericBKEYoDP4NWdMTMa+MWeH/OcPZJfQojeIpj48rk694SQvdEP/WCIxKrlvdhiH32PchI
-        a13r1GPriVFhIa6QPQRwN4lG+
-X-Received: by 2002:a5d:4b47:: with SMTP id w7mr35990712wrs.276.1577179701822;
-        Tue, 24 Dec 2019 01:28:21 -0800 (PST)
-X-Google-Smtp-Source: APXvYqw9/TSLj5c5X1JnE2/hzqVf4qICkFRn7uD3XRturCTmvjkz0LR8yv7IDInsAtlJzkhhu/UF3g==
-X-Received: by 2002:a5d:4b47:: with SMTP id w7mr35990685wrs.276.1577179701626;
-        Tue, 24 Dec 2019 01:28:21 -0800 (PST)
-Received: from ?IPv6:2003:d8:2f31:4c00:d9fc:8de:fc42:5adc? (p200300D82F314C00D9FC08DEFC425ADC.dip0.t-ipconnect.de. [2003:d8:2f31:4c00:d9fc:8de:fc42:5adc])
-        by smtp.gmail.com with ESMTPSA id s3sm2070447wmh.25.2019.12.24.01.28.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Dec 2019 01:28:21 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   David Hildenbrand <david@redhat.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH RFC v4 00/13] virtio-mem: paravirtualized memory
-Date:   Tue, 24 Dec 2019 10:28:20 +0100
-Message-Id: <2828152B-D0EB-4802-A304-4A90CA5C4B6C@redhat.com>
-References: <91ED8152-61FC-4E87-9F7B-44CD05C77279@linux.alibaba.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, virtio-dev@lists.oasis-open.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        Sebastien Boeuf <sebastien.boeuf@intel.com>,
-        Samuel Ortiz <samuel.ortiz@intel.com>,
-        Robert Bradford <robert.bradford@intel.com>,
-        Luiz Capitulino <lcapitulino@redhat.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Alexander Potapenko <glider@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Anthony Yznaga <anthony.yznaga@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Young <dyoung@redhat.com>,
-        Igor Mammedov <imammedo@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Len Brown <lenb@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Pavel Tatashin <pavel.tatashin@microsoft.com>,
-        Pingfan Liu <kernelfans@gmail.com>, Qian Cai <cai@lca.pw>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richard.weiyang@gmail.com>
-In-Reply-To: <91ED8152-61FC-4E87-9F7B-44CD05C77279@linux.alibaba.com>
-To:     teawater <teawaterz@linux.alibaba.com>
-X-Mailer: iPhone Mail (17C54)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=UtyDToTRhseCzK9/TotzxKj/q4ckgBV14Zj5miZuzXk=;
+        b=P3gXZG0eBjoAxfCRNCNVQyV57TpdO4+Ato6KlM+4gFpOxuZ1IHWSoTiZiqJ2wntdfb
+         zlTjUCOMLjJp9wN9Dc7TWGLEJ8g8NTQ5dyj6Nuf9pz99nYEpfuZZUQJvJAZcaRNf4is5
+         1rH0AIq6+A+CzHLBfYnIB2I2oRgRAX3Nfd35C+MOQvQ6Fx4BIjJtTeYYKpvz1BYunCOV
+         KQ/DpA6HnDidh5YJS8jg4y2mr0UGwYCLfji2q5ctfzlefrg+2RVCu9PSdnwnxc0n96ke
+         tmNH1gtbGItr0iKtI+FJG1NjB/qDgzbvhV/5YlFL16viLi6Utsu1qkltCFOfVrRiWlq4
+         VWoQ==
+X-Gm-Message-State: APjAAAXsTgmD5EeUFFqHmkPabzlprdWVha6nTjLvLMsCdYjuglviEBUn
+        nIETkImpJJQUKbyyeRa12mzRLA==
+X-Google-Smtp-Source: APXvYqzVsoxcKksi8FNWJYwOvubGzzFogNOwtejvKmc9lJhYvSUTJnMnqitwQqaom5g3XqOdM8ufEw==
+X-Received: by 2002:a05:600c:2c2:: with SMTP id 2mr3284261wmn.155.1577180054521;
+        Tue, 24 Dec 2019 01:34:14 -0800 (PST)
+Received: from apalos.home (ppp-94-64-118-170.home.otenet.gr. [94.64.118.170])
+        by smtp.gmail.com with ESMTPSA id n3sm2120706wmc.27.2019.12.24.01.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Dec 2019 01:34:14 -0800 (PST)
+Date:   Tue, 24 Dec 2019 11:34:11 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Saeed Mahameed <saeedm@mellanox.com>
+Cc:     "brouer@redhat.com" <brouer@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "linyunsheng@huawei.com" <linyunsheng@huawei.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Li Rongqing <lirongqing@baidu.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next v5 PATCH] page_pool: handle page recycle for
+ NUMA_NO_NODE condition
+Message-ID: <20191224093411.GA23925@apalos.home>
+References: <20191218084437.6db92d32@carbon>
+ <157676523108.200893.4571988797174399927.stgit@firesoul>
+ <20191220102314.GB14269@apalos.home>
+ <20191220114116.59d86ff6@carbon>
+ <20191220104937.GA15487@apalos.home>
+ <20191220162254.0138263e@carbon>
+ <20191220160649.GA26788@apalos.home>
+ <20191223075700.GA5333@apalos.home>
+ <20191223175257.164557cd@carbon>
+ <e5d14b5a9c95adf701219099b30c3effe0d1eb45.camel@mellanox.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e5d14b5a9c95adf701219099b30c3effe0d1eb45.camel@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Saeed, 
+> which is the msix affinity.. the pool has no knowledge of that on
+> initialization.
+> 
+> > The reason I want this behavior is that during driver init/boot, it
+> > can
+> > easily happen that a driver allocates RX-pages from wrong NUMA node.
+> > This will cause a performance slowdown, that normally doesn't happen,
+> > because without a cache (like page_pool) RX-pages would fairly
+> > quickly
+> > transition over to the RX NUMA node (instead we keep recycling these,
+> > in your case #2, where you suggest recycle blindly in case of
+> > NUMA_NO_NODE). IMHO page_pool should hide this border-line case from
+> > driver developers.
+> > 
+> 
+> So, Ilias's #1 suggestion make sense, to always store a valid nid
+> value. 
+> the question is which value to store on initialization if the user
+> provided NUMA_NO_NODE ? I don't think the pool is capable of choosing
+> the right value, so let's just use numa node 0. 
 
+Again i don't mind using the current solution. We could use 0 or the whatever
+numa is choosen from alloc_pages_node()
 
-> Am 24.12.2019 um 08:04 schrieb teawater <teawaterz@linux.alibaba.com>:
->=20
-> =EF=BB=BFHi David,
->=20
-> Thanks for your work.
->=20
-> I Got following build fail if X86_64_ACPI_NUMA is n with rfc3 and rfc4:
-> make -j8 bzImage
->  GEN     Makefile
->  DESCEND  objtool
->  CALL    /home/teawater/kernel/linux-upstream3/scripts/atomic/check-atomic=
-s.sh
->  CALL    /home/teawater/kernel/linux-upstream3/scripts/checksyscalls.sh
->  CHK     include/generated/compile.h
->  CC      drivers/virtio/virtio_mem.o
-> /home/teawater/kernel/linux-upstream3/drivers/virtio/virtio_mem.c: In func=
-tion =E2=80=98virtio_mem_translate_node_id=E2=80=99:
-> /home/teawater/kernel/linux-upstream3/drivers/virtio/virtio_mem.c:478:10: e=
-rror: implicit declaration of function =E2=80=98pxm_to_node=E2=80=99 [-Werro=
-r=3Dimplicit-function-declaration]
->   node =3D pxm_to_node(node_id);
->          ^~~~~~~~~~~
-> cc1: some warnings being treated as errors
-> /home/teawater/kernel/linux-upstream3/scripts/Makefile.build:265: recipe f=
-or target 'drivers/virtio/virtio_mem.o' failed
-> make[3]: *** [drivers/virtio/virtio_mem.o] Error 1
-> /home/teawater/kernel/linux-upstream3/scripts/Makefile.build:503: recipe f=
-or target 'drivers/virtio' failed
-> make[2]: *** [drivers/virtio] Error 2
-> /home/teawater/kernel/linux-upstream3/Makefile:1649: recipe for target 'dr=
-ivers' failed
-> make[1]: *** [drivers] Error 2
-> /home/teawater/kernel/linux-upstream3/Makefile:179: recipe for target 'sub=
--make' failed
-> make: *** [sub-make] Error 2
->=20
+> 
+> If the developer cares,  he would have picked the right affinity on
+> initialization, or he can just call pool_update_nid() when the affinity
+> is determined and every thing will be fine after that point.
+> 
+> My 2cent is that you just can't provide the perfect performance when
+> the user uses NUMA_NO_NODE, so just pick any default concrete node id
+> and avoid dealing with NUMA_NO_NODE in the pool fast or even slow
+> path..
 
-Thanks Hui,
+I don't have strong preference on any of those. I just prefer the homogeneous
+approach of always storing a normal usable memory id. Either way rest of the
+code seems fine, so i'll approve this once you manage to test it on your setup. 
 
-So it has to be wrapped in an ifdef, thanks!
+I did test it on my netsec card using NUMA_NO_NODE. On that machine though it
+doesn't make any difference since page_to_nid(page) and numa_mem_id() always
+return 0 on that. So the allocation is already 'correct', the only thing that
+changes once i call page_pool_update_nid() is pool->p.nid
 
-Cheers!=
-
+Thanks
+/Ilias
+> 
+> > --Jesper
+> > 
+> > 
+> > > On Fri, Dec 20, 2019 at 06:06:49PM +0200, Ilias Apalodimas wrote:
+> > > > On Fri, Dec 20, 2019 at 04:22:54PM +0100, Jesper Dangaard Brouer
+> > > > wrote:  
+> > > > > On Fri, 20 Dec 2019 12:49:37 +0200
+> > > > > Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+> > > > >   
+> > > > > > On Fri, Dec 20, 2019 at 11:41:16AM +0100, Jesper Dangaard
+> > > > > > Brouer wrote:  
+> > > > > > > On Fri, 20 Dec 2019 12:23:14 +0200
+> > > > > > > Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+> > > > > > >     
+> > > > > > > > Hi Jesper, 
+> > > > > > > > 
+> > > > > > > > I like the overall approach since this moves the check
+> > > > > > > > out
+> > > > > > > > of  the hotpath. @Saeed, since i got no hardware to test
+> > > > > > > > this on, would it be possible to check that it still
+> > > > > > > > works
+> > > > > > > > fine for mlx5?
+> > > > > > > > 
+> > > > > > > > [...]    
+> > > > > > > > > +	struct ptr_ring *r = &pool->ring;
+> > > > > > > > > +	struct page *page;
+> > > > > > > > > +	int pref_nid; /* preferred NUMA node */
+> > > > > > > > > +
+> > > > > > > > > +	/* Quicker fallback, avoid locks when ring is
+> > > > > > > > > empty */
+> > > > > > > > > +	if (__ptr_ring_empty(r))
+> > > > > > > > > +		return NULL;
+> > > > > > > > > +
+> > > > > > > > > +	/* Softirq guarantee CPU and thus NUMA node is
+> > > > > > > > > stable. This,
+> > > > > > > > > +	 * assumes CPU refilling driver RX-ring will
+> > > > > > > > > also run RX-NAPI.
+> > > > > > > > > +	 */
+> > > > > > > > > +	pref_nid = (pool->p.nid == NUMA_NO_NODE) ?
+> > > > > > > > > numa_mem_id() : pool->p.nid;      
+> > > > > > > > 
+> > > > > > > > One of the use cases for this is that during the
+> > > > > > > > allocation
+> > > > > > > > we are not guaranteed to pick up the correct NUMA node. 
+> > > > > > > > This will get automatically fixed once the driver starts
+> > > > > > > > recycling packets. 
+> > > > > > > > 
+> > > > > > > > I don't feel strongly about this, since i don't usually
+> > > > > > > > like hiding value changes from the user but, would it
+> > > > > > > > make
+> > > > > > > > sense to move this into __page_pool_alloc_pages_slow()
+> > > > > > > > and
+> > > > > > > > change the pool->p.nid?
+> > > > > > > > 
+> > > > > > > > Since alloc_pages_node() will replace NUMA_NO_NODE with
+> > > > > > > > numa_mem_id() regardless, why not store the actual node
+> > > > > > > > in
+> > > > > > > > our page pool information? You can then skip this and
+> > > > > > > > check
+> > > > > > > > pool->p.nid == numa_mem_id(), regardless of what's
+> > > > > > > > configured.     
+> > > > > > > 
+> > > > > > > This single code line helps support that drivers can
+> > > > > > > control
+> > > > > > > the nid themselves.  This is a feature that is only used my
+> > > > > > > mlx5 AFAIK.
+> > > > > > > 
+> > > > > > > I do think that is useful to allow the driver to "control"
+> > > > > > > the nid, as pinning/preferring the pages to come from the
+> > > > > > > NUMA node that matches the PCI-e controller hardware is
+> > > > > > > installed in does have benefits.    
+> > > > > > 
+> > > > > > Sure you can keep the if statement as-is, it won't break
+> > > > > > anything. Would we want to store the actual numa id in
+> > > > > > pool->p.nid if the user selects 'NUMA_NO_NODE'?  
+> > > > >  
+> > > > > No. pool->p.nid should stay as NUMA_NO_NODE, because that makes
+> > > > > it
+> > > > > dynamic.  If someone moves an RX IRQ to another CPU on another
+> > > > > NUMA node, then this 'NUMA_NO_NODE' setting makes pages
+> > > > > transitioned automatically.  
+> > > > Ok this assumed that drivers were going to use
+> > > > page_pool_nid_changed(), but with the current code we don't have
+> > > > to
+> > > > force them to do that. Let's keep this as-is.
+> > > > 
+> > > > I'll be running a few more tests  and wait in case Saeed gets a
+> > > > chance to test it and send my reviewed-by
+> > 
+> > 
