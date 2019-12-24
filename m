@@ -2,133 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF448129EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 09:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EFAD129ECB
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 09:10:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbfLXIEl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 03:04:41 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48372 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfLXIEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 03:04:41 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBO84WQf044802;
-        Tue, 24 Dec 2019 02:04:32 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577174672;
-        bh=1Ded6pvuMA3oMdmazX4/A7l0KSskT0kDg81kNM68v+Q=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=B0O2k2Wr9saFAaISz01NN4EwJZsrFCOh2m5F9hZDnD2YsjuYdtLRN5c+JPWn2R9sb
-         7wduya7EG5lefJZ5YCtVDMq/9+2PmotsaEVzTpfl2iQs6TOkPAZ79k9Otr+mTolvFM
-         iWnfa4fvzk4uA6k0A/r/u7b9XuQmWwyL9+WcsHEE=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBO84WjW050928
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 24 Dec 2019 02:04:32 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 24
- Dec 2019 02:04:32 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 24 Dec 2019 02:04:32 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBO84TMr013924;
-        Tue, 24 Dec 2019 02:04:30 -0600
-Subject: Re: [PATCH 09/13] dt-bindings: PCI: Add host mode dt-bindings for
- TI's J721E SoC
-To:     Rob Herring <robh@kernel.org>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andrew Murray <andrew.murray@arm.com>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-omap@vger.kernel.org>
-References: <20191209092147.22901-1-kishon@ti.com>
- <20191209092147.22901-10-kishon@ti.com> <20191219000841.GA4251@bogus>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <fc145cbc-88f2-5ccb-5c20-4be1ac81fe25@ti.com>
-Date:   Tue, 24 Dec 2019 13:36:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <20191219000841.GA4251@bogus>
+        id S1726160AbfLXIKk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 03:10:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfLXIKk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 03:10:40 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C9D220643;
+        Tue, 24 Dec 2019 08:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577175039;
+        bh=1L4dp+QiqPHu7wf6E/7HV0BXGvYjQV2y0FxjdXBHZ9s=;
+        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
+        b=RY7QYj5lLy1i/HTUw0wApZHy5nhxgS1JolwiFEk9QB9rxouqZ4NmlxOSYzpJ6Dct+
+         cxdSEqyKOyfU152A91Juvdc5de3oRiufgv4sKmJR6032Wnw9hvP+Be4osDJ5fvlHb/
+         m4T4LhRz0bt5CrrX81pbtANWSI4/DXmNyXXvtAgs=
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191129033534.188257-1-yuehaibing@huawei.com>
+References: <20191129033534.188257-1-yuehaibing@huawei.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Hulk Robot <hulkci@huawei.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] clk: bm1800: Remove set but not used variable 'fref'
+User-Agent: alot/0.8.1
+Date:   Tue, 24 Dec 2019 00:10:38 -0800
+Message-Id: <20191224081039.6C9D220643@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Quoting YueHaibing (2019-11-28 19:35:34)
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>=20
+> drivers/clk/clk-bm1880.c: In function 'bm1880_pll_rate_calc':
+> drivers/clk/clk-bm1880.c:477:13: warning:
+>  variable 'fref' set but not used [-Wunused-but-set-variable]
+>=20
+> It is never used, so remove it.
+>=20
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-On 19/12/19 5:38 AM, Rob Herring wrote:
-> On Mon, Dec 09, 2019 at 02:51:43PM +0530, Kishon Vijay Abraham I wrote:
->> Add host mode dt-bindings for TI's J721E SoC.
->>
->> Cc: Rob Herring <robh+dt@kernel.org>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  .../bindings/pci/ti,j721e-pci-host.yaml       | 161 ++++++++++++++++++
->>  1 file changed, 161 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
->> new file mode 100644
->> index 000000000000..96184e1f419f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/ti,j721e-pci-host.yaml
->> @@ -0,0 +1,161 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +# Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com/
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/pci/ti,j721e-pci-host.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: TI J721E PCI Host (PCIe Wrapper)
->> +
->> +maintainers:
->> +  - Kishon Vijay Abraham I <kishon@ti.com>
-> 
-> There's now a PCI bus schema. Reference it here:
-> 
-> allOf:
->   - $ref: "/schemas/pci/pci-bus.yaml#"
-> 
->> +
->> +properties:
->> +  compatible:
->> +      enum:
->> +          - ti,j721e-pcie-host
-> 
-> Indentation.
-> 
->> +
->> +  reg:
->> +    maxItems: 4
->> +
->> +  reg-names:
->> +    items:
->> +      - const: intd_cfg
->> +      - const: user_cfg
->> +      - const: reg
->> +      - const: cfg
->> +
->> +  ti,syscon-pcie-ctrl:
->> +    description: Phandle to the SYSCON entry required for configuring PCIe mode
->> +                 and link speed.
->> +    allOf:
->> +      - $ref: /schemas/types.yaml#/definitions/phandle
-> 
-> You can drop the 'allOf' here if there aren't more constraints.
+Applied to clk-next
 
-Do you mean I don't have to include phandle schema here? I don't seem to
-be able to include $ref without allOf.
-
-Thanks
-Kishon
