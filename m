@@ -2,96 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DACF4129EE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 09:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4462129ED0
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 09:14:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbfLXIQG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 03:16:06 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:61759 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbfLXIQD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 03:16:03 -0500
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id xBO8F6tP002467;
-        Tue, 24 Dec 2019 17:15:12 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com xBO8F6tP002467
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1577175313;
-        bh=jKX8H24L9P/kDcEFr52nFIN6vZX1dw3qi1ILU0zzQ1g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LH5d5Xb5XetelHCGw0KPciGf1DQ6qgz5oVGoCFofMdCnSzxQwCijuOMxa7tyy8Nae
-         J8ya1rujKnF8/SQ4hvd9Ambys/TIe9W3GoOnvvjH1dNPRxx4KgLuZX662+Kxfx9pGu
-         6ds95X3thYTUHLzGXLz9Pj3II036sln0SGiZZw84ZI87mGEq6glrS1ebEtSZrP1OlY
-         e+d+TG8oVOFV49EzKMexbjYQZckYB2t92lbIuickAk52vdd8zLIn3jfhvse6zCQbgb
-         +SYsgW6YMNFStKmpRhasFF4QBF7qRQ+ce9KCd2SYzQL/ipqJ8eOF4khF9Tk/rM25+4
-         z7TBYuHiwL3+w==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] iommu/arm-smmu: fix -Wunused-const-variable warning
-Date:   Tue, 24 Dec 2019 17:15:00 +0900
-Message-Id: <20191224081500.18628-2-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191224081500.18628-1-yamada.masahiro@socionext.com>
-References: <20191224081500.18628-1-yamada.masahiro@socionext.com>
+        id S1726201AbfLXIO2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 03:14:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:55082 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726043AbfLXIO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 03:14:27 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2C90B50C47FAF58CEBF8;
+        Tue, 24 Dec 2019 16:14:26 +0800 (CST)
+Received: from linux-lmwb.huawei.com (10.175.103.112) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 24 Dec 2019 16:14:23 +0800
+From:   Ma Feng <mafeng.ma@huawei.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     <intel-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 3/3] drm/i915: use true,false for bool variable in intel_crt.c
+Date:   Tue, 24 Dec 2019 16:15:15 +0800
+Message-ID: <1577175315-93406-1-git-send-email-mafeng.ma@huawei.com>
+X-Mailer: git-send-email 2.6.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.103.112]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For ARCH=arm builds, OF is not necessarily enabled, that is, you can
-build this driver without CONFIG_OF.
+Fixes coccicheck warning:
 
-When CONFIG_OF is unset, of_match_ptr() is NULL, and arm_smmu_of_match
-is left orphan.
+drivers/gpu/drm/i915/display/intel_crt.c:1066:1-28: WARNING: Assignment of 0/1 to bool variable
+drivers/gpu/drm/i915/display/intel_crt.c:928:2-29: WARNING: Assignment of 0/1 to bool variable
+drivers/gpu/drm/i915/display/intel_crt.c:443:2-29: WARNING: Assignment of 0/1 to bool variable
 
-Building it with W=1 emits a warning:
-
-drivers/iommu/arm-smmu.c:1904:34: warning: ‘arm_smmu_of_match’ defined but not used [-Wunused-const-variable=]
- static const struct of_device_id arm_smmu_of_match[] = {
-                                  ^~~~~~~~~~~~~~~~~
-
-There are two ways to fix this:
-
- - annotate arm_smmu_of_match with __maybe_unused (or surround the
-   code with #ifdef CONFIG_OF ... #endif)
-
- - stop using of_match_ptr()
-
-This commit took the latter solution.
-
-It slightly increases the object size, but it is probably not a big deal
-because arm_smmu_device_dt_probe() is also compiled irrespective of
-CONFIG_OF.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ma Feng <mafeng.ma@huawei.com>
 ---
+ drivers/gpu/drm/i915/display/intel_crt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
- drivers/iommu/arm-smmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/drivers/gpu/drm/i915/display/intel_crt.c b/drivers/gpu/drm/i915/display/intel_crt.c
+index b2b1336..8596eef 100644
+--- a/drivers/gpu/drm/i915/display/intel_crt.c
++++ b/drivers/gpu/drm/i915/display/intel_crt.c
+@@ -440,7 +440,7 @@ static bool intel_ironlake_crt_detect_hotplug(struct drm_connector *connector)
+ 		bool turn_off_dac = HAS_PCH_SPLIT(dev_priv);
+ 		u32 save_adpa;
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 4f1a350d9529..0446a3bf6bd0 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -2267,7 +2267,7 @@ static const struct dev_pm_ops arm_smmu_pm_ops = {
- static struct platform_driver arm_smmu_driver = {
- 	.driver	= {
- 		.name			= "arm-smmu",
--		.of_match_table		= of_match_ptr(arm_smmu_of_match),
-+		.of_match_table		= arm_smmu_of_match,
- 		.pm			= &arm_smmu_pm_ops,
- 		.suppress_bind_attrs	= true,
- 	},
--- 
-2.17.1
+-		crt->force_hotplug_required = 0;
++		crt->force_hotplug_required = false;
+
+ 		save_adpa = adpa = I915_READ(crt->adpa_reg);
+ 		DRM_DEBUG_KMS("trigger hotplug detect cycle: adpa=0x%x\n", adpa);
+@@ -925,7 +925,7 @@ void intel_crt_reset(struct drm_encoder *encoder)
+ 		POSTING_READ(crt->adpa_reg);
+
+ 		DRM_DEBUG_KMS("crt adpa set to 0x%x\n", adpa);
+-		crt->force_hotplug_required = 1;
++		crt->force_hotplug_required = true;
+ 	}
+
+ }
+@@ -1063,7 +1063,7 @@ void intel_crt_init(struct drm_i915_private *dev_priv)
+ 	/*
+ 	 * Configure the automatic hotplug detection stuff
+ 	 */
+-	crt->force_hotplug_required = 0;
++	crt->force_hotplug_required = false;
+
+ 	/*
+ 	 * TODO: find a proper way to discover whether we need to set the the
+--
+2.6.2
 
