@@ -2,57 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFF49129CD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 03:38:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB190129CDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 03:45:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfLXCil (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 21:38:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbfLXCik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 21:38:40 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCC752070E;
-        Tue, 24 Dec 2019 02:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577155120;
-        bh=3GZ8dfQbJWPhG/4YrIDh0Ag69lL+QHGNO217O7Y9Aj8=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=sSr0AfDgUQll2JCk8RicY0m7Xo7T+pHiLuY5KJx/exqk1HIhM03zFA03bDCeFVMer
-         AbPZ/eYecAFizcNEvPd13HtVY8jy/lzR1ELhC3TtqwsrUgzOuD6hMN9Zu6IBeJGeyy
-         ZsuLfLH0UrsqCA706mlP78E7RDcjUEIanW153nxI=
-Content-Type: text/plain; charset="utf-8"
+        id S1727036AbfLXCoi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 21:44:38 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45802 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726747AbfLXCoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 21:44:38 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 4E948923AD52C7E06906;
+        Tue, 24 Dec 2019 10:44:34 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 24 Dec 2019 10:44:24 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <andrew@lunn.ch>, <vivien.didelot@gmail.com>,
+        <f.fainelli@gmail.com>, <davem@davemloft.net>,
+        <linux@rempel-privat.de>, <maowenan@huawei.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH net-next] net: dsa: drop pointless static qualifier in ar9331_sw_mbus_init
+Date:   Tue, 24 Dec 2019 10:40:59 +0800
+Message-ID: <20191224024059.184847-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1573812245-23827-4-git-send-email-tdas@codeaurora.org>
-References: <1573812245-23827-1-git-send-email-tdas@codeaurora.org> <1573812245-23827-4-git-send-email-tdas@codeaurora.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 3/3] clk: qcom: Add display clock controller driver for SC7180
-User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 18:38:39 -0800
-Message-Id: <20191224023839.DCC752070E@mail.kernel.org>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2019-11-15 02:04:05)
-> Add support for the display clock controller found on SC7180
-> based devices. This would allow display drivers to probe and
-> control their clocks.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+There is no need to have the 'T *v' variable static
+since new value always be assigned before use it.
 
-Applied to clk-next
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/net/dsa/qca/ar9331.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/dsa/qca/ar9331.c b/drivers/net/dsa/qca/ar9331.c
+index 0d1a7cd85fe8..da3bece75e21 100644
+--- a/drivers/net/dsa/qca/ar9331.c
++++ b/drivers/net/dsa/qca/ar9331.c
+@@ -266,7 +266,7 @@ static int ar9331_sw_mbus_read(struct mii_bus *mbus, int port, int regnum)
+ static int ar9331_sw_mbus_init(struct ar9331_sw_priv *priv)
+ {
+ 	struct device *dev = priv->dev;
+-	static struct mii_bus *mbus;
++	struct mii_bus *mbus;
+ 	struct device_node *np, *mnp;
+ 	int ret;
+ 
+-- 
+2.20.1
 
