@@ -2,98 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBF9112A4BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 00:51:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 94F4112A4BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 00:52:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfLXXvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 18:51:16 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36713 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfLXXvQ (ORCPT
+        id S1726730AbfLXXwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 18:52:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60882 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbfLXXwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 18:51:16 -0500
-Received: by mail-vs1-f68.google.com with SMTP id u14so13246148vsu.3
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 15:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=generalsoftwareinc-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6JkYU0nutAHI9fyqNTIL32WnpIq1wjmijBcPApKYOGg=;
-        b=wAjz7cgzlGz0o31FJ6Vx7n5Ba/oOxKvrF7Srl0whxYZ6FhhfaX4I7psp34BLJgG4cx
-         aFCHEUPK5An291BAIsIsuBoEKB/13f3d0wNHxVnJQcbXbTg0JurOs7xiXCr1IcWx1o+8
-         cgEzDy5G1E5ideBv1ZhIrcYHz97Z4z94dUMMfYb7JfklJGvdeuTBuC4cCl2crBKwzxOp
-         AsYC7mHUeaqbVsbAixvMC8y44W9w2EMON7TmltQccq/5IKqaFR5pxJ3DmAA0OGmZVZFV
-         Kpr34ORmfmiSTW36BxKKKGD8NhsOM8zDf30pBKzSOP+5B0fJWJQZtTeCnXdYfAAyfcbc
-         kpmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6JkYU0nutAHI9fyqNTIL32WnpIq1wjmijBcPApKYOGg=;
-        b=cxS110hIorSB2wUSPXQYrgbCqsZDXuAs7/w8ijeVRmq++qH5NeiPAbOjhKdKLBEqKH
-         9wLwJEg0FUVZYl+vXwDJSdsUjJUapxRxQoh88Z0Ppf8Piwv41E2uKoHqPhs5vwpTEqxB
-         N3Zd3uQJlEjKzJoMbIaaxEomrHKkf5hp7srAZHQDIEj3nXJ1SwaAURg9OsTzuI6BCbmP
-         Y0xolA/Af+9iI4Erm50RO17p5QEA2RbSi2H6zHz1mFG8zrFark8NOQf88qzj1AblOEns
-         L6vFj92uKJxjS5yjryKUSPbusiLamYfWUujBL6tIHkjLgDEsV+II3y7EEOBBAWyE8WiI
-         2caw==
-X-Gm-Message-State: APjAAAVdhGtl9lJJG0yTNy0Y4V7meo5rDIL1aUGzY8giZngwgFliXgeS
-        158Z8jxUtUy4NRCE8cKh9w8P3RSzzpb+RQ==
-X-Google-Smtp-Source: APXvYqzPvCHvEG/Y8jIr0SbNCu4DTRUyZvK/m55ySu73VoP7xw1w3PpS1SIAdEknpbK+UKNaDyai5A==
-X-Received: by 2002:a05:6102:52e:: with SMTP id m14mr21120368vsa.25.1577231475315;
-        Tue, 24 Dec 2019 15:51:15 -0800 (PST)
-Received: from frank-laptop ([172.97.41.74])
-        by smtp.gmail.com with ESMTPSA id 111sm6290812uae.17.2019.12.24.15.51.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 15:51:14 -0800 (PST)
-Date:   Tue, 24 Dec 2019 18:51:14 -0500
-From:   "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     joel@joelfernandes.org, saiprakash.ranjan@codeaurora.org,
-        nachukannan@gmail.com, rdunlap@infradead.org
-Subject: [PATCH 1/3] docs: ftrace: Clarify the RAM impact of buffer_size_kb
-Message-ID: <6f33be5f3d60e5ffc061d8d2b329d3d3ccf22a8c.1577230982.git.frank@generalsoftwareinc.com>
-References: <cover.1577230982.git.frank@generalsoftwareinc.com>
+        Tue, 24 Dec 2019 18:52:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wVeG4o2wMLfWamY/spW73kzHgOHGF8sCfwGnxV1QecY=; b=Qqn84oRLhfEoicUtxn8KgThtq
+        ekIL2BYMpXYFkDWCTQa3OkwsKbFICnezYVm5bxWhwismS5YCDkoRJSK3Gjt4AzP0ZPqHh7GgBJ90Z
+        1OjPgDhJpjrvi/XL0xlQRXwvVd91R79HneYLVJhdhyFMiEm9G14s5vKQgfqcz29GZO954=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ijtxr-0007BU-Pt; Tue, 24 Dec 2019 23:51:47 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 9EAB1D01938; Tue, 24 Dec 2019 23:51:45 +0000 (GMT)
+Date:   Tue, 24 Dec 2019 23:51:45 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     =?utf-8?B?amVmZl9jaGFuZyjlvLXkuJbkvbMp?= <jeff_chang@richtek.com>
+Cc:     Jeff Chang <richtek.jeff.chang@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: Add MediaTek MT6660 Speaker Amp Driver
+Message-ID: <20191224235145.GA27497@sirena.org.uk>
+References: <1576836934-5370-1-git-send-email-richtek.jeff.chang@gmail.com>
+ <20191220121152.GC4790@sirena.org.uk>
+ <7a9bcf5d414c4a74ae8e101c54c9e46f@ex1.rt.l>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
 Content-Disposition: inline
-In-Reply-To: <cover.1577230982.git.frank@generalsoftwareinc.com>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <7a9bcf5d414c4a74ae8e101c54c9e46f@ex1.rt.l>
+X-Cookie: I have many CHARTS and DIAGRAMS..
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current text could mislead the user into believing that the number
-of pages allocated by each CPU ring buffer is calculated by the round
-up of the division: buffer_size_kb / PAGE_SIZE.
 
-Clarifies that a few extra pages may be allocated to accommodate buffer
-management meta-data.
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Suggested-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Signed-off-by: Frank A. Cancio Bello <frank@generalsoftwareinc.com>
----
- Documentation/trace/ftrace.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Mon, Dec 23, 2019 at 02:10:12AM +0000, jeff_chang(=E5=BC=B5=E4=B8=96=E4=
+=BD=B3) wrote:
 
-diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
-index d2b5657ed33e..5a037bedbf6a 100644
---- a/Documentation/trace/ftrace.rst
-+++ b/Documentation/trace/ftrace.rst
-@@ -185,7 +185,8 @@ of ftrace. Here is a list of some of the key files:
- 	CPU buffer and not total size of all buffers. The
- 	trace buffers are allocated in pages (blocks of memory
- 	that the kernel uses for allocation, usually 4 KB in size).
--	If the last page allocated has room for more bytes
-+	A few extra pages may be allocated to accommodate buffer management
-+	meta-data. If the last page allocated has room for more bytes
- 	than requested, the rest of the page will be used,
- 	making the actual allocation bigger than requested or shown.
- 	( Note, the size may not be a multiple of the page size
--- 
-2.17.1
+> --> When I check other driver at sound/soc/codecs/ folder, I just follow =
+what others do.
+> It seems in .h --> /* SPDX-Liencese-Identifier: GPL-2.0 */
+>    In .c --> // SPDK-Liencese-Identifier: GPL-2.0
 
+> Is it correct?
+
+Yes, headers use C style comments and source files use C++ style.
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4CpI4ACgkQJNaLcl1U
+h9DFVwf7Bvj8SH/istxSwNkLQ2Tr1SMqR95oagZSg6cNQ4V31uLCUSK/oD+TYaO/
+4JjGHrPKLlwBKweT/nJ6nOX9/YcS1N7hvb5bOwK2dbcpsNb0BmkuDC+fy4sEXqfY
+KyMmaYgN7+lkV2bYC7Y+x3FtZHs3IScuvGLk5pDp4NqXJddKTMEljQRdegtPDP3N
+sAzfTrBMczPhnb320cF+yBQk5xSGCrez8FAJPlpGiaS1TkuHMr4CczYtSgO2qCKW
+DYRLizqBUbJ0l8FkHW87f1YY8KdF4GKig5ihIiF8BQ4Vz7IiNTXiDC9eaayD/V71
+hchxd/+izG1UhhEmm6NiVOIuyyUl9w==
+=YYW7
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
