@@ -2,50 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA6F12A4BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 00:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3761912A4C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 00:52:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726244AbfLXXwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 18:52:04 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:42607 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbfLXXwD (ORCPT
+        id S1726879AbfLXXwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 18:52:54 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:42916 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbfLXXwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 18:52:03 -0500
-Received: by mail-ua1-f65.google.com with SMTP id u17so6206983uap.9
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 15:52:03 -0800 (PST)
+        Tue, 24 Dec 2019 18:52:54 -0500
+Received: by mail-vk1-f194.google.com with SMTP id s142so5400913vkd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 15:52:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=generalsoftwareinc-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Idc35g1w0/GlmcsF+XXoVkvDVls2Q3kl8rta/LhgxNI=;
-        b=rNUdDPYiCzhEgMM1U8c8mrjmiMCjqJFPZ+r2DygvtQ78GHZ/4jmOx6Fzkg48+U4wtR
-         wypDZgaLCWWo0aLI3AMt66KI45rDKW01/1eVrwLdi9dIFXveceCrwoz+lhCMTmULVGqR
-         nPaIALs/FT6v2LmL6PjjDO9mQyXliibiHakeDVTNvzxplhANkR+q8v5j7qFEDP062Icr
-         CdM+GRjdxuZu9X9gDa5zJ8rTMZISVaD+Fv235eGN1SiUinNFDtRt/0rTUrRPqOoNbfCc
-         haD8AoKJ6JfVdofWHxXjfLvWEJG/Sy6sfQo2yxRgbs2jnVm8K/y8Jnjr8hbdPsCS/Sz7
-         EZxQ==
+        bh=4E/2wqIKz28ubvLgIUjPVPO4AakvBg1lZqS8m4r8eSs=;
+        b=X2kIE41s46grKzpmcuW6/7CNY+JcRLYvIilA91dE/yHnHhmJS14VWCKQUHMkULyE9V
+         0eDvHd0Ng+dQNCrxKaHG+mjTxj/VM8z59lwXavB++vYQswHpqOt1hcIrVIqX2TWSmL4d
+         ZI6WT2MD+C1oS30urS4pX/ExUvOteXyLjsPnlZEyrBvTRTBRYGzrVX0ilYvrdnwrL+zO
+         3/B1F+AmUOTMIGjr1SWN+4edlg3BTTphMyAaQSdyY/wxLhgqMOHzxD4dEBZ54TPpq1GL
+         r/8nbmbwkh1feqnYwhAbHJSoNAGiYKGh/OG/0fyXqW7yOgrUEEOIh/W69a6Ir6m7hZzP
+         HZVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Idc35g1w0/GlmcsF+XXoVkvDVls2Q3kl8rta/LhgxNI=;
-        b=DQOGqvYxHsUMDK/u+QbC3KSfBiTNtAERBqqju6mM+OLLJg3QZo7VgED+dqS4QI/tnB
-         ZPHB4UqDmqh7JhWF7tjiXZlVckb75Ce/QINAGpMNKk6SIxLfURy0u6RgPs0GguOgsoiD
-         9AqMGAXn5bXp99aRZIMaS6t6xkLptztEzvBv9vU0Gf/udxZwcelIuRrlh5k4xaIgtuUr
-         Fw6tN8qMcRXDG4zdlbaYECTBFHGkmQ+iPhrOtY4Ctx1TNf9xo1s1QkQtatGDGQbPm3tH
-         X2gIlEW4cs6K0H/3Lm9m6jjqRH+/CEskL6Z+AdQGoMGwNsMaKoFmsCM06gf2weIurIGd
-         Hhtw==
-X-Gm-Message-State: APjAAAX+c95Wl5Xh3mTYRy7kj3Pbv4B3IwSf3YTuTJkEAAPa5o9OGg2P
-        WS/sxuYEqA6leoRlomATTXzhYQ==
-X-Google-Smtp-Source: APXvYqxv7vc0KCp6Bc1Na95c3RUTHz1zfLjCxHUHEjfKcA2EG8fbxxU0Hx+YsyrqqsRde9cDed4fYQ==
-X-Received: by 2002:ab0:5c8:: with SMTP id e66mr23539394uae.120.1577231522820;
-        Tue, 24 Dec 2019 15:52:02 -0800 (PST)
+        bh=4E/2wqIKz28ubvLgIUjPVPO4AakvBg1lZqS8m4r8eSs=;
+        b=EaFuRTbDzThRFsEReBd+6aVV25nJVFEC8Iai/f0l07DoDVZh6Q6W7Dtg7tEkARlXGb
+         s7bJl8cfw7viBd1jNGmkzVJROKM4HOQmfPcw53d48DIq9wTZP4dsHNRV7QTt2p9Y9l/a
+         Cdu5yhUpdIMh2kWA+R1FMvUdm18luU0nnD1PkwRvrreLar2TCG3adgC6hQna2wJeV/Q/
+         5kTVf6LgdkgIbfCyirwhM8J3br7TNzFlvI2HyKCn+bBpVr/y4q/eazwBciJr4XBJYPd0
+         3oyXvSN7Eht1RbEteSn8RVCM2qpWeCOJ2Pg4jjX5Gwp8Xu+JTeUkCYZ5VODKsURnXUNc
+         6rEg==
+X-Gm-Message-State: APjAAAWDECHT/0QnKGxb1ns/DX1BmsOIskbPcpjDTxYCufOmKr3eF7n+
+        oWU1c1HwwzJj5YKtHdVbJ00GMQ==
+X-Google-Smtp-Source: APXvYqypYJpDPduu3tGRpslbAykmUyby9NfpS892YqjPMp/fmzMHbTAr2aQhkFvIA62Di7U1ed1owA==
+X-Received: by 2002:a1f:ae0c:: with SMTP id x12mr23229162vke.88.1577231572942;
+        Tue, 24 Dec 2019 15:52:52 -0800 (PST)
 Received: from frank-laptop ([172.97.41.74])
-        by smtp.gmail.com with ESMTPSA id w125sm7331085vkh.50.2019.12.24.15.52.02
+        by smtp.gmail.com with ESMTPSA id g140sm7534052vkf.18.2019.12.24.15.52.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 15:52:02 -0800 (PST)
-Date:   Tue, 24 Dec 2019 18:52:01 -0500
+        Tue, 24 Dec 2019 15:52:52 -0800 (PST)
+Date:   Tue, 24 Dec 2019 18:52:51 -0500
 From:   "Frank A. Cancio Bello" <frank@generalsoftwareinc.com>
 To:     Steven Rostedt <rostedt@goodmis.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -53,8 +53,8 @@ To:     Steven Rostedt <rostedt@goodmis.org>,
         linux-kernel@vger.kernel.org
 Cc:     joel@joelfernandes.org, saiprakash.ranjan@codeaurora.org,
         nachukannan@gmail.com, rdunlap@infradead.org
-Subject: [PATCH 2/3] docs: ftrace: Fix typos
-Message-ID: <9ef705d0208a4ca0852fed69bc0838a589a4df85.1577230982.git.frank@generalsoftwareinc.com>
+Subject: [PATCH 3/3] docs: ftrace: Fix small notation mistake
+Message-ID: <22f9a98a972c3155c7b478247a087a5efafde774.1577230982.git.frank@generalsoftwareinc.com>
 References: <cover.1577230982.git.frank@generalsoftwareinc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -66,45 +66,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix minor typos in the doc.
+The use of iff ("if and only if") notation is not accurate in this case.
 
-Suggested-by: Randy Dunlap <rdunlap@infradead.org>
+Suggested-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Frank A. Cancio Bello <frank@generalsoftwareinc.com>
 ---
- Documentation/trace/ftrace.rst | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/trace/ring-buffer-design.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/trace/ftrace.rst b/Documentation/trace/ftrace.rst
-index 5a037bedbf6a..1f6e0a794b1c 100644
---- a/Documentation/trace/ftrace.rst
-+++ b/Documentation/trace/ftrace.rst
-@@ -236,7 +236,7 @@ of ftrace. Here is a list of some of the key files:
- 	This interface also allows for commands to be used. See the
- 	"Filter commands" section for more details.
+diff --git a/Documentation/trace/ring-buffer-design.txt b/Documentation/trace/ring-buffer-design.txt
+index ff747b6fa39b..2d53c6f25b91 100644
+--- a/Documentation/trace/ring-buffer-design.txt
++++ b/Documentation/trace/ring-buffer-design.txt
+@@ -37,7 +37,7 @@ commit_page - a pointer to the page with the last finished non-nested write.
  
--	As a speed up, since processing strings can't be quite expensive
-+	As a speed up, since processing strings can be quite expensive
- 	and requires a check of all functions registered to tracing, instead
- 	an index can be written into this file. A number (starting with "1")
- 	written will instead select the same corresponding at the line position
-@@ -383,7 +383,7 @@ of ftrace. Here is a list of some of the key files:
+ cmpxchg - hardware-assisted atomic transaction that performs the following:
  
- 	By default, 128 comms are saved (see "saved_cmdlines" above). To
- 	increase or decrease the amount of comms that are cached, echo
--	in a the number of comms to cache, into this file.
-+	the number of comms to cache into this file.
+-   A = B iff previous A == C
++   A = B if previous A == C
  
-   saved_tgids:
- 
-@@ -3325,7 +3325,7 @@ directories after it is created.
- 
- As you can see, the new directory looks similar to the tracing directory
- itself. In fact, it is very similar, except that the buffer and
--events are agnostic from the main director, or from any other
-+events are agnostic from the main directory, or from any other
- instances that are created.
- 
- The files in the new directory work just like the files with the
+    R = cmpxchg(A, C, B) is saying that we replace A with B if and only if
+       current A is equal to C, and we put the old (current) A into R
 -- 
 2.17.1
 
