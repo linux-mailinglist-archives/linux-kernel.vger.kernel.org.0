@@ -2,135 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB90129C58
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 02:16:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE225129C5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 02:17:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727015AbfLXBQu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 23 Dec 2019 20:16:50 -0500
-Received: from cmta17.telus.net ([209.171.16.90]:53797 "EHLO cmta17.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbfLXBQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 23 Dec 2019 20:16:49 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id jYoTi09cHbg38jYoUiySaO; Mon, 23 Dec 2019 18:16:47 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1577150207; bh=ODYwhfPt6MsqQtLICXCUgpmiQneAod/Apsuhk4WGCHo=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=CtvNc+4euCofzl27ngb+DtU6etJm2HqxrArEbNO9p/SsOH4jAWvGCkRBG4SmmwXex
-         bOqnuOGE9DuyoD3Z/dyFz6UrWqxWwgvsQVk9adjIzqAJ/E6AV0Wbu/swFDdIgPBIoP
-         D27el1CaI2WlYdk5vu8m5yeHReS7zeXmM/jfL18lB6SzGcriU/j8xp6BOuWrZf3Bax
-         bEZ92idlEpeN5xUcOhqF899cdrcAlBW94c8fCEYICWusj4kkyNg7aRGtxSPRZfT/HX
-         ehLPauagEBiEbKjlr3YppaZn+i2oTXnOaKShqlVVQSVZ5ckSIaY3TjosVThM+0Olud
-         2iNZKNDmDufig==
-X-Telus-Authed: none
-X-Authority-Analysis: v=2.3 cv=O/1HQy1W c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19
- a=IkcTkHD0fZMA:10 a=njV4EcZ6lGp_ohjWBiQA:9 a=QEXdDO2ut3YA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Qais Yousef'" <qais.yousef@arm.com>
-Cc:     "'Giovanni Gherdovich'" <ggherdovich@suse.cz>, <x86@kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "'Mel Gorman'" <mgorman@techsingularity.net>,
-        "'Matt Fleming'" <matt@codeblueprint.co.uk>,
-        "'Viresh Kumar'" <viresh.kumar@linaro.org>,
-        "'Juri Lelli'" <juri.lelli@redhat.com>,
-        "'Paul Turner'" <pjt@google.com>,
-        "'Peter Zijlstra'" <peterz@infradead.org>,
-        "'Vincent Guittot'" <vincent.guittot@linaro.org>,
-        "'Quentin Perret'" <qperret@qperret.net>,
-        "'Dietmar Eggemann'" <dietmar.eggemann@arm.com>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Thomas Gleixner'" <tglx@linutronix.de>,
-        "'Ingo Molnar'" <mingo@redhat.com>,
-        "'Borislav Petkov'" <bp@suse.de>, "'Len Brown'" <lenb@kernel.org>,
-        "'Rafael J . Wysocki'" <rjw@rjwysocki.net>
-References: <1574697961.16378.5.camel@suse.cz> <000801d5a41e$a7fce2c0$f7f6a840$@net> <1574781600.7677.2.camel@suse.cz> <001d01d5a4f4$d96b21b0$8c416510$@net> <003d01d5a63d$f6ab3950$e401abf0$@net> <20191219104813.6fr34qavpaplecoz@e107158-lin> <000701d5b965$361b6c60$a2524520$@net> <20191223140743.o2wfoqtf56g4yrk5@e107158-lin.cambridge.arm.com> <20191223144043.ticfxfgbolsqk74i@e107158-lin.cambridge.arm.com> <000301d5b9ae$cd8f5b30$68ae1190$@net> <20191223191014.g7lnxafuadwtcqub@e107158-lin.cambridge.arm.com>
-In-Reply-To: <20191223191014.g7lnxafuadwtcqub@e107158-lin.cambridge.arm.com>
-Subject: RE: [PATCH v4 1/6] x86,sched: Add support for frequency invariance
-Date:   Mon, 23 Dec 2019 17:16:39 -0800
-Message-ID: <000401d5b9f7$cf3782c0$6da68840$@net>
+        id S1727072AbfLXBRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 23 Dec 2019 20:17:03 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:33562 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbfLXBRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 23 Dec 2019 20:17:02 -0500
+Received: by mail-il1-f196.google.com with SMTP id v15so15423048iln.0
+        for <linux-kernel@vger.kernel.org>; Mon, 23 Dec 2019 17:17:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=vrkWjfwrwQriaXKZwq/VvcArq6Om9Zk9/j3cr5r9WPo=;
+        b=Glv4bJpe0rAoONamLoqqsBMdQ7MtAXEKrYEro7YatEAwHShgksbqpkjT4FJt3L6R/V
+         XQLhpnhXx+LhvD5tCH6+3EJ18/oRMsuXi98HVlBwalVoltYqZWUVRy4hdHibWfYmT58x
+         fgCN7cu8wZTlP1LFpNYhWJf1iE/N44h/snFtzck4VGcN5mx1UfZpiGikQOE44LfLuDEA
+         r5sNhWTLGhFLKkUt8YZd087HQLqW+0B7ylBFiPYKR5MTm5jd3yTYEmqVPrm1xbygX926
+         One5YhTrkFcWTS4phtXFO7aVEU3IA1MNFJOYEWKFixDntlkXd5rlpkcgAS+b/k2j4PXQ
+         mZoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=vrkWjfwrwQriaXKZwq/VvcArq6Om9Zk9/j3cr5r9WPo=;
+        b=Y0WE57K0musUZx/BttMReCl3EnqSjDaKH9KdPk2+KBdi38sJMEOGO1tIu9eD1BVRQV
+         t0k6l78uBqVra7nkd/I3l7+SiUwa/dp9FVpUdZW0Tm4pV23CJu4uuwML3BCkA1xMyfCW
+         OLVRD9pHdNzjSnNIz0S2aTTDHM9JXBRZ9zbgbkyzAxcMq7dEDOOR128xh974S7+lTDL6
+         wgV8AY+ZF3koUGPGu7GIr9nTFm38OBriuQRgPZgNaIDKF6vKhSn2cgO/hQ7jl170pqYQ
+         EPXiRZOxIPxpBEn+mq5vx3qGuyl//jHZGu4/Dvz7aDdPdZRI4TaCIFM82+4jb46gZBZl
+         LtzQ==
+X-Gm-Message-State: APjAAAW1KaEeVNTGpOTLFTLkDmWknUVb0Ea5/tVVcNto6BEjt//uC/7H
+        rxj51Vb6qRTErVu3/XkXFHMv5Ac7AfgNAZSfN3I=
+X-Google-Smtp-Source: APXvYqwnDuZtHWHhXzTO2DKXQ6nUr4aYCrXs283L/rMedj0LH55yjOwRzRgrwCyXK5BAAiy5qdgYMDMr+OkjqlbtxuE=
+X-Received: by 2002:a92:48c2:: with SMTP id j63mr7800778ilg.153.1577150221710;
+ Mon, 23 Dec 2019 17:17:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdW5xJ+eVDznPQtVRyqEVUJp7cpgLgAL7hNA
-X-CMAE-Envelope: MS4wfLW1bqXgFcdCQxme3c2zQBvwtsoXAea/u7GIOR0AXN1Dm0TTtTWQTweIHX/qoLPu7TPCRdrMp/L2qPXAHdVYEDHjx1Jqqf7B7BU/kw/ccL1WClkg+rHe
- NIWpDKAAu0MqwJfpLHQcMXzFOaGwsIIyoJWbIeHxQTLH5fWEQp5AofX9bYTPt24DuA3dRZpQMgpYj0H9IFEZ/qLuggfik6hr/FryUt0M8QqznWCu6scf1/U5
- IyKh93PBMcglSb5DVqdzBMWnhd3uAlXLa3w6/4squhasyTfTPDgszgpE4gp1PdIpzWjy6Vrv9yeV1Oh8njlcsJR5qzZhqawDTIyov1BYZRVpgtjkSJf5tY2P
- lC4iA2oDDOcQQP4u2r77e+imoigouFUw1O7wcNTPBaH78w7SU49KSqB+rshCFUbigJyfpZxzJ/znXvZb3Dmsb14csFyD39g0TnOUzK5HjsemRu4ep0bsIXHZ
- avemi0pbySKy/oPcUCWEoA25AsiiR99vZdMwnmx0GFPM9UFT6mgzjneXG4E0xtAA9CgaHUUdotTjFPJvJPyLyOrX2QVrpZT0fqpfIjxaGP3zua1fVjAnlKQ2
- LOLeFpD2Xxe4vWW7WV1xqyzLY1a99P56qhittRqjdSL/1PNsoVowycwai4pFZ4yNpihY1TXZEx+N8TByyYk70cZ7wDUU8q3aAKQK1wP7MpIaDS2KSoDZ7pqZ
- 3BZpvqxfKRgTSf5AVOu9ySyJtOJPH3LucsagPERMy35X+OQeDckhqF703p7NQ4EBj4kH8eV0AqU=
+Reply-To: zaama250@gmx.us
+Received: by 2002:a05:6602:25ca:0:0:0:0 with HTTP; Mon, 23 Dec 2019 17:17:00
+ -0800 (PST)
+From:   ZA ZA <ab9520487@gmail.com>
+Date:   Mon, 23 Dec 2019 17:17:00 -0800
+X-Google-Sender-Auth: qdPOfEMHPWI_gDlbQprRCa_2Egc
+Message-ID: <CAE+yXuSaxN-LSuXoo_ED+aD6mkNkfbskCNRYC9vK1ReQWXOCCw@mail.gmail.com>
+Subject: OK
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019.12.23 11:10 Qais Yousef wrote:
-> On 12/23/19 08:34, Doug Smythies wrote:
->> On 2019.12.23 06:41 Qais Yousef wrote:
->>> On 12/23/19 14:07, Qais Yousef wrote:
->>>>> Re-boot to the nocgv1 (stock + cgroup_no_v1=all) kernel.
->>>>> set the schedutil governor.
->>>>> launch test 2 and related monitoring tools.
->>>>> verify performance governor like behavior.
->>>> 
->>>> So as stated above, by default uclamp_{min, max} = (0, 1024). So it wouldn't
->>>> act as performance governor by default unless you explicitly write 1024 to
->>>> uclamp.min.
->>>> 
->>>> Let me go find Ubuntu mainline tree to see if they applied anything extra in
->>>> there. If they modified the default behavior that could explain what you see.
->>>
->>> Actually I see what you were saying now that you copy the config. So I think
->>>  I misunderstood and you are running Linus' 5.5-rc2 + Ubuntu PPA config.
->> 
->> Yes, exactly.
->> I have a clone of the main Linus git branch, but steal the kernel
->> configuration from the Ubuntu mainline PPA.
->
-> I think I managed to reproduce it. The below seems to fix it for me, can you
-> try it out please?
+Dear Friend,
 
-Yes, it fixes the schedutil governor behaving like the performance governor
-problem on my i7-2600K test system.
+An oil business man made a fixed deposit of =E2=82=AC15 million Euros  in m=
+y
+bank branch where I am an officer and he died with his entire family
+in a plane crash leaving behind no next of kin. I Propose to present
+you as next of kin to claim the funds,if interested contact me with
+your full name, and telephone number to reach you and most
+importantly, a confirmation of acceptance from you.
 
-I re-ran the tests several times, and re-booted back to the stock (problem)
-kernel to verify incorrect schedutil governor performance (i.e. I toggled
-back and forth, 2 times for each of 2 kernels, tests 1 and 2, total 8 tests).
-Kernel 5.5-rc2: 4 tests FAILED (as expected).
-Kernel 5.5-rc2 + this patch: 4 tests PASSED.
-
-Accidentally tested:
-Kernel 5.5-rc2 + this patch + command line "cgroup_no_v1=all": 1 test PASS.
-
-> I think what's going on is that the child group default util_min value isn't
-> propagated correctly after it's created, so we end up using the root_task_group
-> values which is 1024 for both min and max.
-
-O.K. thanks.
-
-> ---
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 90e4b00ace89..cf9d9106d1b5 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -7100,6 +7100,11 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
->
->        if (parent)
->                sched_online_group(tg, parent);
-> +
-> +#ifdef CONFIG_UCLAMP_TASK_GROUP
-> +       cpu_util_update_eff(css);
-> +#endif
-> +
->        return 0;
->  }
-
-... Doug
-
-
+Ahmed Zama
