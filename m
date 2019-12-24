@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A4912A379
-	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 18:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00CFA12A37A
+	for <lists+linux-kernel@lfdr.de>; Tue, 24 Dec 2019 18:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfLXRe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 12:34:57 -0500
-Received: from mail-eopbgr10086.outbound.protection.outlook.com ([40.107.1.86]:62625
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        id S1727217AbfLXRe7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 12:34:59 -0500
+Received: from mail-eopbgr20044.outbound.protection.outlook.com ([40.107.2.44]:46307
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727049AbfLXRew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 12:34:52 -0500
+        id S1727100AbfLXRey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 24 Dec 2019 12:34:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74Er7HGJjw1Cwr3bFeUYspIQ5XLO7ZkancZfqNVar4k=;
- b=ycDhivftC93rR0pUMxG/HoLSv+0QxEXBdqMe9UPYQm9AFHFunOuREpJMIQvqsj6kTlk3rGmfmTCT3DChLCc+b70XVPaLbEFVND7w1qPi7Op/oI6Rrba99b2S0MN89LPnYhaen83P2YbGV5AO+wD5Xh7A+vzxWtChni+er8Mb/DU=
-Received: from VI1PR08CA0123.eurprd08.prod.outlook.com (2603:10a6:800:d4::25)
- by HE1PR0801MB1740.eurprd08.prod.outlook.com (2603:10a6:3:88::7) with
+ bh=/4Fbeyxa4xk1mtIQf01xWGzMfySjhoIiCQk9dUa48Ak=;
+ b=vrmpy9rjq7gbhax22znLTNWddQ1zQ9HtBGWtkFEr6oUzeB2BO9oyIVFD4hFv6gdatmKv0SZbw3zLkHsUCFy7X3oDgT8ZiyfG2W93eNGTlRT9f2Y10odB7Fp7cdqwtPSaM8NSGYhwmZMeP3zh5//4T8ecwAidyQWEIS52i7epeqg=
+Received: from AM4PR08CA0064.eurprd08.prod.outlook.com (2603:10a6:205:2::35)
+ by DB6PR0801MB1927.eurprd08.prod.outlook.com (2603:10a6:4:75::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.16; Tue, 24 Dec
- 2019 17:34:47 +0000
-Received: from AM5EUR03FT064.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e08::200) by VI1PR08CA0123.outlook.office365.com
- (2603:10a6:800:d4::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend
- Transport; Tue, 24 Dec 2019 17:34:47 +0000
+ 2019 17:34:49 +0000
+Received: from AM5EUR03FT017.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e08::206) by AM4PR08CA0064.outlook.office365.com
+ (2603:10a6:205:2::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2559.14 via Frontend
+ Transport; Tue, 24 Dec 2019 17:34:49 +0000
 Authentication-Results: spf=pass (sender IP is 63.35.35.123)
  smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
  header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=bestguesspass
@@ -35,43 +35,43 @@ Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
  63.35.35.123 as permitted sender) receiver=protection.outlook.com;
  client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
 Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM5EUR03FT064.mail.protection.outlook.com (10.152.17.53) with Microsoft SMTP
+ AM5EUR03FT017.mail.protection.outlook.com (10.152.16.89) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.14 via Frontend Transport; Tue, 24 Dec 2019 17:34:47 +0000
-Received: ("Tessian outbound 0eaff1016ea4:v40"); Tue, 24 Dec 2019 17:34:47 +0000
+ 15.20.2559.14 via Frontend Transport; Tue, 24 Dec 2019 17:34:49 +0000
+Received: ("Tessian outbound 1da651c29646:v40"); Tue, 24 Dec 2019 17:34:49 +0000
 X-CheckRecipientChecked: true
-X-CR-MTA-CID: 647041dd202bc325
+X-CR-MTA-CID: 666611e05d6633df
 X-CR-MTA-TID: 64aa7808
-Received: from bdd2edd0996c.3
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 9028DC3C-AB21-4F1A-B25C-9CF4DAA2E21F.1;
-        Tue, 24 Dec 2019 17:34:41 +0000
+Received: from bdd2edd0996c.6
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id DEE49349-58AC-40D8-A225-A0875AD6EF92.1;
+        Tue, 24 Dec 2019 17:34:44 +0000
 Received: from EUR04-HE1-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id bdd2edd0996c.3
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id bdd2edd0996c.6
     (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 24 Dec 2019 17:34:41 +0000
+    Tue, 24 Dec 2019 17:34:44 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KI4mP7Zw9NfJlvIFdK/6Hw1lgCUogkxFtWp9y0c8Yw57lstS1MAHl3gW03QBqxRWSXrLw0MvIZgu2JJ9ajaww3UGKZdWDgLeRMwUbrTo+e6oBObaJOwqtPMA0IiL4jwnaENFMmqfNqlnNdDM9J9HvPrzy/vZjHPxGw7a7uhzL9fVQEwHW4PYjpKJoVX27SkGYWvj+RxGg99yf5DC6yqrGaCQT5TL7AilCLZQM6a6dqwpclcR5xIjfcWYQL83ZcomyVYcDu4gxxI2gJehts7AyZbJcgDquJBt0rPvMtWwLZhIoAn8jmI2Vk9BhOWsvvDSDduZoTkDEz7NFPT0X85Dwg==
+ b=Rr3+mnWJIQVh1AtC5+PQqOMHZsEWbbsSe7J0+MUuTEDtEZET/LDmdAop/p689EQK6e13BkN7o6nu+egGKnHvJQMDSB+EeWLCJkFT9Hr9Wnn+IvRmJD0LIOCtecoDt9xhkyMeqSO0AqS//ksH6CwqshiuKX951LIs2CY99ixU13cge0MyRrgeH/cZr/uIcLfe7JITGUjA81TD/8dxFy68SBitARheL16dhp1cJlZTP7I9yzoJ5hTWdgvxWxQHOEyvgE+2PdkaYA0ZxFCDLbj9NaAhQG8zN5Khs+as1BxCn65hPmUbnbmLtzqzeJGiBPWUbFWfVqEusYRvy9B6eAab6g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74Er7HGJjw1Cwr3bFeUYspIQ5XLO7ZkancZfqNVar4k=;
- b=Dzn2y/ri5z5XeRXQhsq7x3yNJjMVgE8gmd1Di8DpY2v3JhaZxwhNPPMn2VFhrmLtSOLci2ykpI2hk35mCvMd4gddlIH7c4/NLGQ2wng4O8As+zbLow+Ljr22BEFiQaRMGq5tqxzqrvcxEN68ej4njNBdmFE5lH6pDm8QbfA2ttdf0EyVL1yV5IsOKqjyToQ+kITK8rb//1T80hIQgytD5l0NE8Thlp0P+MQIQc+bIP7J4Cr3IM2nG+eeMgOD6CJ9CROJUwP98hv7jGIKvIiPBtrfmuNsXY6SU7vAVwvgb0dKV1FXVQKdAG+u3rJBgXSPv2GEyM9wshUan0U6GQ5bRQ==
+ bh=/4Fbeyxa4xk1mtIQf01xWGzMfySjhoIiCQk9dUa48Ak=;
+ b=GMYE6sDHUOXZAbJfmpiAerTRXGI+PlpO0jKcFmvGVViMZrEDOXftd6otnJ2es/mmPnnIqTiPXGVKnZwK/3jzLW8uQ+rgn93EjG7zZYg9EjP5AzSvY94PXkBrNt8LeLwfJMuXusVoFahbKOGRNHhKksoTjw2yoeOJD/Y7eu0Hcwgq4Cz1CtGzqkcMPrF7iJ11nMPSk3DJBuPzUvE5jKozUIm6P8D9fkLRRtw9au1WlaG0a8Al/lnjBtDHLUsGAAa+ZrJBkQtcGRCwfcyY+ciaHQiPNltAP/j9c80rSYZCF3Y50o6viWJ7yoy1awDrxboTsGpZhERQoIUcxm+1CGk5UQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
  header.d=arm.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
  s=selector2-armh-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=74Er7HGJjw1Cwr3bFeUYspIQ5XLO7ZkancZfqNVar4k=;
- b=ycDhivftC93rR0pUMxG/HoLSv+0QxEXBdqMe9UPYQm9AFHFunOuREpJMIQvqsj6kTlk3rGmfmTCT3DChLCc+b70XVPaLbEFVND7w1qPi7Op/oI6Rrba99b2S0MN89LPnYhaen83P2YbGV5AO+wD5Xh7A+vzxWtChni+er8Mb/DU=
+ bh=/4Fbeyxa4xk1mtIQf01xWGzMfySjhoIiCQk9dUa48Ak=;
+ b=vrmpy9rjq7gbhax22znLTNWddQ1zQ9HtBGWtkFEr6oUzeB2BO9oyIVFD4hFv6gdatmKv0SZbw3zLkHsUCFy7X3oDgT8ZiyfG2W93eNGTlRT9f2Y10odB7Fp7cdqwtPSaM8NSGYhwmZMeP3zh5//4T8ecwAidyQWEIS52i7epeqg=
 Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
  VI1PR08MB2672.eurprd08.prod.outlook.com (10.170.238.27) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2559.16; Tue, 24 Dec 2019 17:34:37 +0000
+ 15.20.2559.16; Tue, 24 Dec 2019 17:34:39 +0000
 Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
  ([fe80::3d0a:7cde:7f1f:fe7c]) by VI1PR08MB4078.eurprd08.prod.outlook.com
  ([fe80::3d0a:7cde:7f1f:fe7c%7]) with mapi id 15.20.2559.017; Tue, 24 Dec 2019
- 17:34:37 +0000
+ 17:34:39 +0000
 From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
 To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
@@ -84,11 +84,11 @@ CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v3 17/35] drm/bridge: panel: Use drm_bridge_init()
-Thread-Topic: [PATCH v3 17/35] drm/bridge: panel: Use drm_bridge_init()
-Thread-Index: AQHVuoBpmY1c5Klab0qW7+hkdLtpeg==
-Date:   Tue, 24 Dec 2019 17:34:36 +0000
-Message-ID: <20191224173408.25624-18-mihail.atanassov@arm.com>
+Subject: [PATCH v3 19/35] drm/bridge: sii902x: Use drm_bridge_init()
+Thread-Topic: [PATCH v3 19/35] drm/bridge: sii902x: Use drm_bridge_init()
+Thread-Index: AQHVuoBq8VaaLiR3k0KgAe5FATOv1w==
+Date:   Tue, 24 Dec 2019 17:34:38 +0000
+Message-ID: <20191224173408.25624-20-mihail.atanassov@arm.com>
 References: <20191224173408.25624-1-mihail.atanassov@arm.com>
 In-Reply-To: <20191224173408.25624-1-mihail.atanassov@arm.com>
 Accept-Language: en-GB, en-US
@@ -105,19 +105,19 @@ Authentication-Results-Original: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: ce6e036f-a86e-425b-64af-08d788979242
-X-MS-TrafficTypeDiagnostic: VI1PR08MB2672:|VI1PR08MB2672:|HE1PR0801MB1740:
+X-MS-Office365-Filtering-Correlation-Id: e794d8ba-16e8-4725-1cc6-08d7889793b6
+X-MS-TrafficTypeDiagnostic: VI1PR08MB2672:|VI1PR08MB2672:|DB6PR0801MB1927:
 x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <HE1PR0801MB1740DCF2CA758B2A59360E588F290@HE1PR0801MB1740.eurprd08.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <DB6PR0801MB1927F73F28FF3C95F29BE3068F290@DB6PR0801MB1927.eurprd08.prod.outlook.com>
 x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:176;OLM:176;
+x-ms-oob-tlc-oobclassifiers: OLM:324;OLM:324;
 x-forefront-prvs: 0261CCEEDF
 X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(396003)(136003)(366004)(199004)(189003)(186003)(26005)(52116002)(6506007)(6486002)(81166006)(6512007)(81156014)(8676002)(8936002)(44832011)(54906003)(478600001)(316002)(6916009)(2906002)(4326008)(2616005)(36756003)(1076003)(66446008)(64756008)(66556008)(66476007)(66946007)(4744005)(5660300002)(71200400001)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB2672;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: arm.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: wcWghvz8NiLzq2Z4JNRdzJSi6cUehBlsWaz11eEnoc9pwHtxzRyYd1CtlSX++gL/dTS99opXownq0zeImIzScv5pw/1IWIv8FtmWv5c36QHr0DmL2qOIyvJCwkTXtWY+sTqFurGJuAyLsgVsJ1M3ZU9Yo2qMgdtuzANtaRG05021GckZGDbMTjf8kHAkIUfRFT1xFsEC/6jzgGb0iuzqbH70nxwHTjlxbVNo7z5nj4e1CjdX34DQkl+yZnXR7ED6L3MGB9NhYs1vMkG9buIVN8b0bMvjFSba3hnTw0rlS4DhUYEo84SfkWqTqRLPLcrvTHETjG87eYAszlkI2ZqWZw8/L4omxWWPqZCpnNa38yk7Fddjyt+t+acBwCm98Qg0gkLzUPX+QzM3sC5nmpp9l2SkL/p13QuLIsliCYYv63cGTof4D/xay++qm/gxcNlV
+X-Microsoft-Antispam-Message-Info-Original: fjANJfh4qqnsFszmQ/eoj61fWnRQEHJ/Hug+FzbvnvMy7+vTiU+Ih+KD9FdnKD7VxnH0FLz1YVJQxyJRrZBl5XloQydgAUhBzrZ5iE+Hyo+zxRGKCTzWLC/JuCTmgkx3Rl9OwSt5qmQrJlWhMrjO1XOM29JJ4UvkQ63gVhy9xezhhY2jlGtIKAHm45KZuL/VrF+nL1VXic6rCae5vSHQKHpzGyzsaGHUHpskEH/gx2RcaCv+jCBQ+DnON2d42xgjRSwpIucFZGoK1mJ89RsUMnKSfVmvKFNeGfFwamqrKGtpwXAjQWKzIMPA720FxUm0pZM3rpadY1gbh96kSAAy0NTv/ecQIgjf3yAq5RT/lFJBTQRwahsqU2LxL9x1OmW3CmZ0OkxbZL+uNMYVkyeM2tiqgm9kAfIHfjS+VRr8ae2kpv9J7f1Hz/oxpYkv0QQQ
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -125,21 +125,21 @@ X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2672
 Original-Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Mihail.Atanassov@arm.com; 
 X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT064.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(136003)(396003)(39860400002)(189003)(199004)(70206006)(81166006)(26826003)(4744005)(81156014)(70586007)(2906002)(478600001)(1076003)(6512007)(4326008)(6486002)(76130400001)(54906003)(8936002)(6506007)(356004)(6862004)(107886003)(86362001)(316002)(36906005)(186003)(2616005)(5660300002)(26005)(36756003)(336012)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0801MB1740;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Pass;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;MX:1;A:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: bb5b6ea5-0a63-4a85-fe16-08d788978c0d
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM5EUR03FT017.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(39860400002)(136003)(199004)(189003)(70586007)(5660300002)(2906002)(76130400001)(4744005)(1076003)(54906003)(26826003)(107886003)(70206006)(6512007)(86362001)(316002)(8676002)(36756003)(6862004)(8936002)(6506007)(4326008)(478600001)(81166006)(81156014)(2616005)(6486002)(26005)(356004)(36906005)(186003)(336012);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0801MB1927;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Pass;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 537341a3-aca3-4a6d-5b9b-08d788978d27
 NoDisclaimer: True
 X-Forefront-PRVS: 0261CCEEDF
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: uRLNRczC5oTv4WSx2IfRVAcQJhvsmVGvWtKBxs1mboVldKAtrmXcRJZ4uA+gj/H94GpcaqAxrxEFKHWBdTofJ6Mg5M1T8ds+F1PtOlzmGVKNqfE+xqKcTLNprxhdhqCg8LWIRQ7fqDrccxJIBnt3ncDvzjQ64Qb5M/Y7OOCZjUiPSSPyfplhmHScrU3OhB6nSviuwfb7FTm4UuzSPsFGL/wCIcTXZb5Kl6ejZPh8cZRvliGrjMoHaHmiNMN8BHmqyzHfCTCRMkjyJd9O3eZ3wBix8LsgEihvaoS1+J3wIrtXChnCG9FnGWjD2KRHh/76vKYpBKapK7g47gd1whkz3G875ZO4SIDW5Xm16ihTVXyzyWhPJcPtZd009KdQ/E+Ujfqhj3SMMwP3cAy8Am83Lm7vvL8ZE1REd0YSnDVy54RjwtoZsAtrC2uI4fxxaPeC
+X-Microsoft-Antispam-Message-Info: zwi7kJkiwgZTuBS4vaVNSJ0uZsjGNLVTBDUxKcC7/VkmePd879FIhsCXHnrbsDpNU2Qq84xAQ8lLmSiK+aLLhg+eqeNdvqBQ6q6jkAY5jr32/8Z92yoBSg9q4zlNUhHEWj6KWwux44/46hAm+pvtlRow/JooDwadzZch7C/Q4fm9o/j8R/kMqACMD8IfuIGltotGYI9C32aSR1eszpAvNondoYuqfHSEo1AOdoqWCCBKXwwBISsM5gJUzI9a8xKlPAoMQkgNI09idhgIanVjRmenC3VPk4PnF1qz3VWRMuOmxEsL+09sO+yyDJH6nOFJwW80nj6psZAXH4J5f8o8qXge9uh379JMYm5p25HhoGiehIrtetxxHHc93D9BFJ352FWsoH1LUz2Nc3lv/wq+808LId3hFofpI7UP4S9zHBs22eeyFlRjFX5Joo2NMwW2
 X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Dec 2019 17:34:47.0777
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Dec 2019 17:34:49.5218
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce6e036f-a86e-425b-64af-08d788979242
+X-MS-Exchange-CrossTenant-Network-Message-Id: e794d8ba-16e8-4725-1cc6-08d7889793b6
 X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1740
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0801MB1927
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -153,29 +153,26 @@ v3:
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
 ---
- drivers/gpu/drm/bridge/panel.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/bridge/sii902x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.=
-c
-index 4ba4e9d9537a..b8a87a4956b6 100644
---- a/drivers/gpu/drm/bridge/panel.c
-+++ b/drivers/gpu/drm/bridge/panel.c
-@@ -192,11 +192,8 @@ struct drm_bridge *drm_panel_bridge_add_typed(struct d=
-rm_panel *panel,
- 	panel_bridge->connector_type =3D connector_type;
- 	panel_bridge->panel =3D panel;
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii9=
+02x.c
+index 6ca297d78a26..6f454e5ce258 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -1017,9 +1017,8 @@ static int sii902x_probe(struct i2c_client *client,
+ 			return ret;
+ 	}
 =20
--	panel_bridge->bridge.funcs =3D &panel_bridge_bridge_funcs;
--#ifdef CONFIG_OF
--	panel_bridge->bridge.of_node =3D panel->dev->of_node;
--#endif
--
-+	drm_bridge_init(&panel_bridge->bridge, panel->dev,
-+			&panel_bridge_bridge_funcs, NULL);
- 	drm_bridge_add(&panel_bridge->bridge);
+-	sii902x->bridge.funcs =3D &sii902x_bridge_funcs;
+-	sii902x->bridge.of_node =3D dev->of_node;
+-	sii902x->bridge.timings =3D &default_sii902x_timings;
++	drm_bridge_init(&sii902x->bridge, dev, &sii902x_bridge_funcs,
++			&default_sii902x_timings);
+ 	drm_bridge_add(&sii902x->bridge);
 =20
- 	return &panel_bridge->bridge;
+ 	sii902x_audio_codec_init(sii902x, dev);
 --=20
 2.24.0
 
