@@ -2,117 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D013612A7ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 13:58:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED5812A7DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 13:53:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbfLYM6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Dec 2019 07:58:13 -0500
-Received: from monster.unsafe.ru ([5.9.28.80]:58664 "EHLO mail.unsafe.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbfLYM6N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Dec 2019 07:58:13 -0500
-Received: from localhost.localdomain (ip-89-102-33-211.net.upcbroadband.cz [89.102.33.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.unsafe.ru (Postfix) with ESMTPSA id 579B7C61B05;
-        Wed, 25 Dec 2019 12:52:58 +0000 (UTC)
-From:   Alexey Gladkov <gladkov.alexey@gmail.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module <linux-security-module@vger.kernel.org>
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Gladkov <gladkov.alexey@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Daniel Micay <danielmicay@gmail.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@poochiereds.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Solar Designer <solar@openwall.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v6 01/10] proc: Rename struct proc_fs_info to proc_fs_opts
-Date:   Wed, 25 Dec 2019 13:51:42 +0100
-Message-Id: <20191225125151.1950142-2-gladkov.alexey@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
-References: <20191225125151.1950142-1-gladkov.alexey@gmail.com>
+        id S1726407AbfLYMxM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Dec 2019 07:53:12 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46801 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726106AbfLYMxL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Dec 2019 07:53:11 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k8so12108879otl.13;
+        Wed, 25 Dec 2019 04:53:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vFjlEPTID7+wvGwi4O8XdLzo/j62NZIF2USQQuU9w9M=;
+        b=Sc2pcOF3376eDsOqdpUZbNhwMHJsdgAMfozUlSuD6ku9yG13IU7vB9T4F17TxAr+jU
+         sM4c1XJutX/HfdzNb6hZngn6BUv8N6t0MbC4zZDYBWHicMXSh0t3H2Us2M584PKQ6KYz
+         Ihjky+LaFbgI1PoXYsmAC2EIcuTefPzWuqtKroZkgxf5qyyb6YwRgjVAsKxywY5frAW1
+         DoYhEgrx1U6FkRHwrLqR5/rAGnL6tj7FwqS465r6uczIeLbn++cqF/XOCYiiZcUa4afI
+         JzDd88jutE7hMVOtNV7dvd1KrDdk0gsQ/IEqCLQhaFSnweFG2IqR63DiBOGWgRNvjL2z
+         yHng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vFjlEPTID7+wvGwi4O8XdLzo/j62NZIF2USQQuU9w9M=;
+        b=Lj9UMKbUriqrEo2D2x8Gt0LF1zzf+8r1QKScknlLMOAHKLVbhA9zzKbnY5kDkILYJU
+         narKR/S/1cLp0nX2B3TWHkkzkzucbCi1Et4zFM6aaA71R5ubwE8HbE2C7Ue8WZMgiAOO
+         Xw0VKRvCItgtR+bwNOy09/30RNj+bWbOS+uM9dCYyM27At1It+LFstSDG+xAaMXibj9R
+         e/UK8has4/Rk40lMNzdlmJ68ZVztUYCbPEhkJpOg5kREEjcWZMjsMCU847WUNO7UOoUL
+         0eTSzP++HahkayHmH21iiU40Wy2F1PIh2LWyNu7qBW9Vmv+f1tJcJ8SSwLXTYbfxB2S8
+         Bgxw==
+X-Gm-Message-State: APjAAAXn64TUUWAShcdt1+wKX8KfJliFLEwRAmpfjpFg3TH9bRtltwQ/
+        zHDuEXzTXZ8sQvcNjZQLXAA88J6ljvXhIYSteyA1wXRA6II=
+X-Google-Smtp-Source: APXvYqz835znKdLdeEWba5fSr4HZoY649al6kisLYRQz09swIr5xk2ZSY1c0KFjwM7tIWRyIihSVPBSspeBWhs6w2oE=
+X-Received: by 2002:a9d:3f61:: with SMTP id m88mr28771702otc.56.1577278390716;
+ Wed, 25 Dec 2019 04:53:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191220070747.GA2190169@kroah.com> <CAHk-=whcLH7EXVZbD0g1Bw7McrofQ-7vwiL2GAeMn=z9PP4VEQ@mail.gmail.com>
+ <20191223120651.GC114474@kroah.com>
+In-Reply-To: <20191223120651.GC114474@kroah.com>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Wed, 25 Dec 2019 12:52:34 +0000
+Message-ID: <CADVatmPA-eYzzTQoOkgVSyi0D0PQo78oQjWJFmWMuMJ4HeU_qg@mail.gmail.com>
+Subject: Re: [GIT PULL] TTY/Serial driver fixes for 5.5-rc3
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Alexey Gladkov <gladkov.alexey@gmail.com>
----
- fs/proc_namespace.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On Mon, Dec 23, 2019 at 12:06 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Fri, Dec 20, 2019 at 10:08:03AM -0800, Linus Torvalds wrote:
+> > On Thu, Dec 19, 2019 at 11:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > The last tty core fix should resolve a long-standing bug with a race
+> > > at port creation time that some people would see, and Sudip finally
+> > > tracked down.
+> >
+> > Hmm, looks good. But it makes me wonder if we should now try to remove
+> > the second call to tty_port_link_device()?
+> >
+> > Now we have a number of helpers that do that tty_port_link_device()
+> > call for the driver (eg tty_port_register_device_attr_serdev(),
+> > tty_port_register_device_attr(), and the just added
+> > uart_add_one_port()).
+> >
+> > But we also have drivers doing it by hand, and presumably we now have
+> > drivers that do it through multiple paths? I guess it's harmless, but
+> > it feels a bit odd. No?
+>
+> It does.  I'll try to look at this after the holidays unless Sudip beats
+> me to it.
 
-diff --git a/fs/proc_namespace.c b/fs/proc_namespace.c
-index 273ee82d8aa9..9a8b624bc3db 100644
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -37,23 +37,23 @@ static __poll_t mounts_poll(struct file *file, poll_table *wait)
- 	return res;
- }
- 
--struct proc_fs_info {
-+struct proc_fs_opts {
- 	int flag;
- 	const char *str;
- };
- 
- static int show_sb_opts(struct seq_file *m, struct super_block *sb)
- {
--	static const struct proc_fs_info fs_info[] = {
-+	static const struct proc_fs_opts fs_opts[] = {
- 		{ SB_SYNCHRONOUS, ",sync" },
- 		{ SB_DIRSYNC, ",dirsync" },
- 		{ SB_MANDLOCK, ",mand" },
- 		{ SB_LAZYTIME, ",lazytime" },
- 		{ 0, NULL }
- 	};
--	const struct proc_fs_info *fs_infop;
-+	const struct proc_fs_opts *fs_infop;
- 
--	for (fs_infop = fs_info; fs_infop->flag; fs_infop++) {
-+	for (fs_infop = fs_opts; fs_infop->flag; fs_infop++) {
- 		if (sb->s_flags & fs_infop->flag)
- 			seq_puts(m, fs_infop->str);
- 	}
-@@ -63,7 +63,7 @@ static int show_sb_opts(struct seq_file *m, struct super_block *sb)
- 
- static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- {
--	static const struct proc_fs_info mnt_info[] = {
-+	static const struct proc_fs_opts mnt_opts[] = {
- 		{ MNT_NOSUID, ",nosuid" },
- 		{ MNT_NODEV, ",nodev" },
- 		{ MNT_NOEXEC, ",noexec" },
-@@ -72,9 +72,9 @@ static void show_mnt_opts(struct seq_file *m, struct vfsmount *mnt)
- 		{ MNT_RELATIME, ",relatime" },
- 		{ 0, NULL }
- 	};
--	const struct proc_fs_info *fs_infop;
-+	const struct proc_fs_opts *fs_infop;
- 
--	for (fs_infop = mnt_info; fs_infop->flag; fs_infop++) {
-+	for (fs_infop = mnt_opts; fs_infop->flag; fs_infop++) {
- 		if (mnt->mnt_flags & fs_infop->flag)
- 			seq_puts(m, fs_infop->str);
- 	}
--- 
-2.24.1
+A regression reported by Kenny for this change. I have sent him a patch to test.
+I think that has to go in rc4. Will remove the second call after he has tested.
 
+
+--
+Regards
+Sudip
