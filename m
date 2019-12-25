@@ -2,94 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D21CC12A55A
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 02:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10D0012A565
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 02:28:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726407AbfLYBG1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 20:06:27 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40725 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfLYBGZ (ORCPT
+        id S1726272AbfLYB1x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 20:27:53 -0500
+Received: from baldur.buserror.net ([165.227.176.147]:52680 "EHLO
+        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbfLYB1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 20:06:25 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so3510686wmi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 24 Dec 2019 17:06:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=G4iZPYSHcETHrh5Mkc153Wxpky0z21UUEkDTh50Atls=;
-        b=msRtbZFynJxyeGYd1lLRmtThZVgLm2dEpIET/tJJqL5w33Yudoh1KnAI1z44ZUCWTp
-         xfufU2VgGKTFimD++HDIvcWWQR3OpZB7AgJRoxq3fNf7Ln/ggHPZTHrk+WwEPdIRNeZu
-         +xLf1p+b2bOs8UbWJ9s6M8XNAEkfZbJPCdf6frKrEf6HlfBAn0PSKAaZscsdrtItC+dB
-         zRermTHOfe0Vk2AfNHPwJKJsbRrXD4ZGEFJaWBHMzc0/ezn21ZBi+2rkJ6lC3xHMaX6a
-         zkKUrI7kSAt4tpv8DxJVICRBIwZgUjJes8tlIe7yNyJhHIyxkLf0foj1DTnc8K6siX4R
-         Xl6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=G4iZPYSHcETHrh5Mkc153Wxpky0z21UUEkDTh50Atls=;
-        b=d4l5xbXBbO4ll42uKQRkEpYNZzSG6wJiitW9nlCaqz1qukJYqFt61tK5PshTZHjfDH
-         Z3xgJHb8xu8VaTerQdpF9fox7J8x0cSQyXm+sFWNIEZqqnjE4LjCVkPbxl5YKv13MzXI
-         HBoYuHo7Lvo9zCACRZrvZDOyGAb6p27+dKHtP9mzoIpBLPhH2dzfmXydfeotUnVPWjPf
-         ClRfJC2YlgO3kt1BQRrmlnczuYdlqGRSIxrmnoK5tNCdsQcV3m+VCf1aMqBd9Q++AOWK
-         rUGgcNhItqhSJmo3Hn6mu2rfZuBOgjRtZA+dhyasWvHtGo/ntAfkfrFJQktixx4HyDW3
-         BUUQ==
-X-Gm-Message-State: APjAAAU8FVCaWuikg0pl4b7senOW97Xkz2Jx+b1ktnDGYfgXKjoPwcqV
-        /NAaMYxICNNSV+lvV3t+w9w=
-X-Google-Smtp-Source: APXvYqx49sT+9J+WOgr59XRUu/8x5Jzm+pok9R0Glahlhx8JQErqlHoMTLJicMdzR504M8AdRVZ4Dg==
-X-Received: by 2002:a1c:5419:: with SMTP id i25mr6508859wmb.150.1577235984382;
-        Tue, 24 Dec 2019 17:06:24 -0800 (PST)
-Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id x26sm4066127wmc.30.2019.12.24.17.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Dec 2019 17:06:23 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/3] ARM: dts: meson8b: use the actual frequency for the GPU's 364MHz OPP
-Date:   Wed, 25 Dec 2019 02:06:07 +0100
-Message-Id: <20191225010607.1504239-4-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191225010607.1504239-1-martin.blumenstingl@googlemail.com>
-References: <20191225010607.1504239-1-martin.blumenstingl@googlemail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 24 Dec 2019 20:27:53 -0500
+Received: from [2601:449:8480:af0:12bf:48ff:fe84:c9a0]
+        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <oss@buserror.net>)
+        id 1ijvOK-00050x-Hj; Tue, 24 Dec 2019 19:23:12 -0600
+Message-ID: <9e680f3798f1a771cba4b41f7a5d7fda7f534522.camel@buserror.net>
+From:   Scott Wood <oss@buserror.net>
+To:     Yingjie Bai <byj.tea@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     yingjie_bai@126.com, Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Tue, 24 Dec 2019 19:23:10 -0600
+In-Reply-To: <CAFAt38F-YQUVNXEnLut0tMivYUy_OTK7G4wAHfddcmncsEpREQ@mail.gmail.com>
+References: <1574694943-7883-1-git-send-email-yingjie_bai@126.com>
+         <87pngglmxg.fsf@mpe.ellerman.id.au>
+         <CAFAt38F-YQUVNXEnLut0tMivYUy_OTK7G4wAHfddcmncsEpREQ@mail.gmail.com>
+Organization: Red Hat
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2601:449:8480:af0:12bf:48ff:fe84:c9a0
+X-SA-Exim-Rcpt-To: byj.tea@gmail.com, mpe@ellerman.id.au, yingjie_bai@126.com, galak@kernel.crashing.org, benh@kernel.crashing.org, paulus@samba.org, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on baldur.localdomain
+X-Spam-Level: 
+X-Spam-Status: No, score=-16.0 required=5.0 tests=ALL_TRUSTED,BAYES_00
+        autolearn=ham autolearn_force=no version=3.4.2
+X-Spam-Report: * -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+        *  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+        *      [score: 0.0000]
+Subject: Re: [PATCH] powerpc/mpc85xx: also write addr_h to spin table for
+ 64bit boot entry
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clock setup on Meson8 cannot achieve a Mali frequency of exactly
-182.15MHz. The vendor driver uses "FCLK_DIV7 / 1" for this frequency,
-which translates to 2550MHz / 7 / 1 = 364285714Hz.
-Update the GPU operating point to that specific frequency to not confuse
-myself when comparing the frequency from the .dts with the actual clock
-rate on the system.
+On Tue, 2019-12-24 at 09:35 +0800, Yingjie Bai wrote:
+> Hi Michael,
+> Thanks for pointing out the issue. My mistake...
+> This patch should indeed make sense only when
+> CONFIG_PHYS_64BIT=y
+> 
+> I could not find corenet32_smp_defconfig, but I guess in your config,
+> CONFIG_PHYS_64BIT=n ?
+> I will update the patch later today
 
-Fixes: c3ea80b6138cae ("ARM: dts: meson8b: add the Mali-450 MP2 GPU")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm/boot/dts/meson8b.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+corenet32_smp_defconfig is a makefile rule that pulls in multiple config
+fragments.  It has CONFIG_PHYS_64BIT=y, but __pa() returns an unsigned long
+regardless (which obviously needs to be fixed if DDR starting beyond 4G is to
+be supported).
 
-diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
-index 5b5791924753..e34b039b9357 100644
---- a/arch/arm/boot/dts/meson8b.dtsi
-+++ b/arch/arm/boot/dts/meson8b.dtsi
-@@ -126,8 +126,8 @@ opp-255000000 {
- 			opp-hz = /bits/ 64 <255000000>;
- 			opp-microvolt = <1100000>;
- 		};
--		opp-364300000 {
--			opp-hz = /bits/ 64 <364300000>;
-+		opp-364285714 {
-+			opp-hz = /bits/ 64 <364285714>;
- 			opp-microvolt = <1100000>;
- 		};
- 		opp-425000000 {
--- 
-2.24.1
+What 32-bit config are you using where this actually builds?
+
+-Scott
+
 
