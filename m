@@ -2,44 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CC4D12A50C
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 01:09:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1ABA412A512
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 01:09:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfLYAJH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 24 Dec 2019 19:09:07 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33046 "EHLO
+        id S1727008AbfLYAJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 24 Dec 2019 19:09:19 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33412 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfLYAJF (ORCPT
+        with ESMTP id S1726352AbfLYAJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 24 Dec 2019 19:09:05 -0500
+        Tue, 24 Dec 2019 19:09:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=p26wgisYxxYMSvvPgu9UbmNcMRVE/Th6vTcPV+OsQJw=; b=uc+NypEqzyEH
-        a/y3n70VYmrfyw0xoV9fXTRRzr8AdE5JrJgqd/SMmC9nbPVxPJBTE17J3JvfDvBsNMgaBJFMjzT2n
-        zRfNWiGYAizT4dCr9lYUqH1hZGNkXG1lnK5jTs3K2oLfBPasmIdvpqC1aJDZrey9KmzG2k9ZuM1s6
-        NjyZM=;
+        List-Archive; bh=ZAC+d2JhJHnHloKpHt3+Xps6PellG/fLmAlbtuVbLVU=; b=bRt/n1MCrO/u
+        xCRVANLJ6/mrTO6xb79b49qi0iI5agKkGFWVD0uD8ka0JAabDUX8Mziun4Vnwg6rZFc+ifcZjTNc1
+        IkaLM+fqNt3PcvicCGJMYiNLA/6xcu1cUvsd6VPvRIVriCjEq92WZb1NqBMnmZEWKS0rP78ZSs33I
+        Ik8ak=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ijuET-0007KY-Rf; Wed, 25 Dec 2019 00:08:57 +0000
+        id 1ijuEa-0007Ld-4Y; Wed, 25 Dec 2019 00:09:04 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 5140BD01963; Wed, 25 Dec 2019 00:08:57 +0000 (GMT)
+        id 9713CD01957; Wed, 25 Dec 2019 00:09:03 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Angus Ainslie (Purism) <angus@akkea.ca>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org, kernel@puri.sm,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        robh@kernel.org
-Subject: Applied "ASoC: gtm601: add Broadmobi bm818 sound profile" to the asoc tree
-In-Reply-To: <20191223154712.18581-2-angus@akkea.ca>
-Message-Id: <applied-20191223154712.18581-2-angus@akkea.ca>
+To:     Olivier Moysan <olivier.moysan@st.com>
+Cc:     alexandre.torgue@st.com, alsa-devel@alsa-project.org,
+        broonie@kernel.org, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Mark Brown <broonie@kernel.org>, mcoquelin.stm32@gmail.com,
+        olivier.moysan@st.com, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: stm32: spdifrx: fix input pin state management" to the asoc tree
+In-Reply-To:  <20191204154333.7152-4-olivier.moysan@st.com>
+Message-Id:  <applied-20191204154333.7152-4-olivier.moysan@st.com>
 X-Patchwork-Hint: ignore
-Date:   Wed, 25 Dec 2019 00:08:57 +0000 (GMT)
+Date:   Wed, 25 Dec 2019 00:09:03 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -47,11 +49,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: gtm601: add Broadmobi bm818 sound profile
+   ASoC: stm32: spdifrx: fix input pin state management
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -72,80 +74,59 @@ to this mail.
 Thanks,
 Mark
 
-From 057a317a8d94136b76a3cc6f7be53ee2b85dc115 Mon Sep 17 00:00:00 2001
-From: "Angus Ainslie (Purism)" <angus@akkea.ca>
-Date: Mon, 23 Dec 2019 07:47:11 -0800
-Subject: [PATCH] ASoC: gtm601: add Broadmobi bm818 sound profile
+From 3b7658679d88b5628939f9bdc8e613f79cd821f9 Mon Sep 17 00:00:00 2001
+From: Olivier Moysan <olivier.moysan@st.com>
+Date: Wed, 4 Dec 2019 16:43:33 +0100
+Subject: [PATCH] ASoC: stm32: spdifrx: fix input pin state management
 
-The Broadmobi bm818 uses stereo sound at 48Khz sample rate
+Changing input state in iec capture control is not safe,
+as the pin state may be changed concurrently by ASoC
+framework.
+Remove pin state handling in iec capture control.
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Link: https://lore.kernel.org/r/20191223154712.18581-2-angus@akkea.ca
+Note: This introduces a restriction on capture control,
+when pin sleep state is defined in device tree. In this case
+channel status can be captured only when an audio stream
+capture is active.
+
+Fixes: f68c2a682d44 ("ASoC: stm32: spdifrx: add power management")
+
+Signed-off-by: Olivier Moysan <olivier.moysan@st.com>
+Link: https://lore.kernel.org/r/20191204154333.7152-4-olivier.moysan@st.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/gtm601.c | 30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ sound/soc/stm/stm32_spdifrx.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/sound/soc/codecs/gtm601.c b/sound/soc/codecs/gtm601.c
-index d454294c8d06..7f05ebcb88d1 100644
---- a/sound/soc/codecs/gtm601.c
-+++ b/sound/soc/codecs/gtm601.c
-@@ -13,7 +13,7 @@
- #include <linux/slab.h>
+diff --git a/sound/soc/stm/stm32_spdifrx.c b/sound/soc/stm/stm32_spdifrx.c
+index 3cb8e6db3eeb..3769d9ce5dbe 100644
+--- a/sound/soc/stm/stm32_spdifrx.c
++++ b/sound/soc/stm/stm32_spdifrx.c
+@@ -12,7 +12,6 @@
+ #include <linux/delay.h>
  #include <linux/module.h>
- #include <linux/kernel.h>
--#include <linux/device.h>
-+#include <linux/of_device.h>
- #include <sound/core.h>
- #include <sound/pcm.h>
- #include <sound/initval.h>
-@@ -47,6 +47,24 @@ static struct snd_soc_dai_driver gtm601_dai = {
- 	},
- };
+ #include <linux/of_platform.h>
+-#include <linux/pinctrl/consumer.h>
+ #include <linux/regmap.h>
+ #include <linux/reset.h>
  
-+static struct snd_soc_dai_driver bm818_dai = {
-+	.name = "bm818",
-+	.playback = {
-+		.stream_name = "Playback",
-+		.channels_min = 2,
-+		.channels_max = 2,
-+		.rates = SNDRV_PCM_RATE_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+	},
-+	.capture = {
-+		.stream_name = "Capture",
-+		.channels_min = 2,
-+		.channels_max = 2,
-+		.rates = SNDRV_PCM_RATE_48000,
-+		.formats = SNDRV_PCM_FMTBIT_S16_LE,
-+	},
-+};
-+
- static const struct snd_soc_component_driver soc_component_dev_gtm601 = {
- 	.dapm_widgets		= gtm601_dapm_widgets,
- 	.num_dapm_widgets	= ARRAY_SIZE(gtm601_dapm_widgets),
-@@ -60,13 +78,19 @@ static const struct snd_soc_component_driver soc_component_dev_gtm601 = {
+@@ -484,8 +483,6 @@ static int stm32_spdifrx_get_ctrl_data(struct stm32_spdifrx_data *spdifrx)
+ 	memset(spdifrx->cs, 0, SPDIFRX_CS_BYTES_NB);
+ 	memset(spdifrx->ub, 0, SPDIFRX_UB_BYTES_NB);
  
- static int gtm601_platform_probe(struct platform_device *pdev)
- {
-+	const struct snd_soc_dai_driver *dai_driver;
-+
-+	dai_driver = of_device_get_match_data(&pdev->dev);
-+
- 	return devm_snd_soc_register_component(&pdev->dev,
--			&soc_component_dev_gtm601, &gtm601_dai, 1);
-+			&soc_component_dev_gtm601,
-+			(struct snd_soc_dai_driver *)dai_driver, 1);
+-	pinctrl_pm_select_default_state(&spdifrx->pdev->dev);
+-
+ 	ret = stm32_spdifrx_dma_ctrl_start(spdifrx);
+ 	if (ret < 0)
+ 		return ret;
+@@ -517,7 +514,6 @@ static int stm32_spdifrx_get_ctrl_data(struct stm32_spdifrx_data *spdifrx)
+ 
+ end:
+ 	clk_disable_unprepare(spdifrx->kclk);
+-	pinctrl_pm_select_sleep_state(&spdifrx->pdev->dev);
+ 
+ 	return ret;
  }
- 
- #if defined(CONFIG_OF)
- static const struct of_device_id gtm601_codec_of_match[] = {
--	{ .compatible = "option,gtm601", },
-+	{ .compatible = "option,gtm601", .data = (void *)&gtm601_dai },
-+	{ .compatible = "broadmobi,bm818", .data = (void *)&bm818_dai },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, gtm601_codec_of_match);
 -- 
 2.20.1
 
