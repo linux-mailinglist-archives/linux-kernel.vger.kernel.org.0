@@ -2,78 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 317FB12A765
-	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 11:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C53312A78B
+	for <lists+linux-kernel@lfdr.de>; Wed, 25 Dec 2019 11:40:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726489AbfLYKhj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Dec 2019 05:37:39 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42330 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbfLYKhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Dec 2019 05:37:38 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7667620084C;
-        Wed, 25 Dec 2019 11:37:36 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6741F2007D4;
-        Wed, 25 Dec 2019 11:37:32 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 17BCB402B3;
-        Wed, 25 Dec 2019 18:37:27 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     peda@axentia.se, leoyang.li@nxp.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Biwen Li <biwen.li@nxp.com>
-Subject: [RESEND v6,3/3] arm64: dts: fsl-ls208xa-rdb: fix an errata E-00013
-Date:   Wed, 25 Dec 2019 18:36:24 +0800
-Message-Id: <20191225103624.48342-3-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191225103624.48342-1-biwen.li@nxp.com>
-References: <20191225103624.48342-1-biwen.li@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726946AbfLYKjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Dec 2019 05:39:06 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:40587 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726395AbfLYKjE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 25 Dec 2019 05:39:04 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1ik445-00085z-V3; Wed, 25 Dec 2019 11:38:54 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 6765A1C2B24;
+        Wed, 25 Dec 2019 11:38:53 +0100 (CET)
+Date:   Wed, 25 Dec 2019 10:38:53 -0000
+From:   "tip-bot2 for Mathieu Desnoyers" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: core/urgent] rseq: Reject unknown flags on rseq unregister
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191211161713.4490-2-mathieu.desnoyers@efficios.com>
+References: <20191211161713.4490-2-mathieu.desnoyers@efficios.com>
+MIME-Version: 1.0
+Message-ID: <157727033331.30329.17206832903007175600.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify a channel zero in idle state to
-avoid enterring tri-stated state for PCA9547.
-About E-00013:
-	- Description: I2C1 and I2C3 buses
-	  are missing pull-up.
-	- Impact: When the PCA954x device is tri-stated, the I2C bus
-	  will float. This makes the I2C bus and its associated
-	  downstream devices inaccessible.
-	- Hardware fix: Populate resistors R189 and R190 for I2C1
-	  and resistors R228 and R229 for I2C3.
-	- Software fix: Remove the tri-state option from the PCA954x
-	  driver(PCA954x always on enable status, specify a
-	  channel zero in dts to fix the errata E-00013).
+The following commit has been merged into the core/urgent branch of tip:
 
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Commit-ID:     66528a4575eee9f5a5270219894ab6178f146e84
+Gitweb:        https://git.kernel.org/tip/66528a4575eee9f5a5270219894ab6178f146e84
+Author:        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+AuthorDate:    Wed, 11 Dec 2019 11:17:11 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 25 Dec 2019 10:41:20 +01:00
+
+rseq: Reject unknown flags on rseq unregister
+
+It is preferrable to reject unknown flags within rseq unregistration
+rather than to ignore them. It is an oversight caused by the fact that
+the check for unknown flags is after the rseq unregister flag check.
+
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lkml.kernel.org/r/20191211161713.4490-2-mathieu.desnoyers@efficios.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
-Change in v6:
-	- none
+ kernel/rseq.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Change in v5:
-	- specify a channel zero when pca9547 in idle state.
-
- arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-index 6fd7f63085c9..412f1bc0db5f 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa-rdb.dtsi
-@@ -49,6 +49,7 @@
- 		reg = <0x75>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		idle-state = <0>;
- 		i2c@1 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.17.1
-
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 27c48eb..a4f86a9 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -310,6 +310,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 	int ret;
+ 
+ 	if (flags & RSEQ_FLAG_UNREGISTER) {
++		if (flags & ~RSEQ_FLAG_UNREGISTER)
++			return -EINVAL;
+ 		/* Unregister rseq for current thread. */
+ 		if (current->rseq != rseq || !current->rseq)
+ 			return -EINVAL;
