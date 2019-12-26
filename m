@@ -2,97 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9735B12AB40
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 10:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AD1E212AB46
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 10:29:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfLZJ0c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 04:26:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfLZJ0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 04:26:32 -0500
-Received: from localhost (lfbn-lyo-1-633-204.w90-119.abo.wanadoo.fr [90.119.206.204])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6C6E20882;
-        Thu, 26 Dec 2019 09:26:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577352391;
-        bh=CkarfyCauXn8wfEDBs9qybSmPYfMeIjIMe3oVYoPHVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WaOnm7esK2ROl3hesRkx1Q9V+CUBQ9D7tRemrBSlQGoakMaVb7IYQ9996xNiLvtd7
-         Kcq+cqu892ies3iBcFxDtBxMcKAQG7yNJn4jqHFs/eRo71GLMzscQGHCuAOerG6MeC
-         YkoRtkj5QT259JCKnYIMP/nBijTXHD4uwXgsn+iw=
-Date:   Thu, 26 Dec 2019 10:27:51 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 0/7] add thermal sensor driver for A64, A83T, H3, H5,
- H6, R40
-Message-ID: <20191226092751.dc3boaxsaeivuhw4@hendrix.home>
-References: <20191219172823.1652600-1-anarsoul@gmail.com>
- <20191219173321.bni4tbrhfkkphv7k@gilmour.lan>
- <4015380d-33ef-312c-a886-6e8bf65c976a@linaro.org>
+        id S1726511AbfLZJ3x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 04:29:53 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:29187 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbfLZJ3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Dec 2019 04:29:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1577352589;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=CrhxrHnI4h8bUXWJL2MnJTVPHP2ek6Df7gTpwCbz51M=;
+        b=k89/rv66PDPoF1L96XVMIgvvWUo8/D2eddLUSHUquEovzEh6LqXa+lGbuhUjbq2+lI
+        Y96U85M+FIczu3XTA/kD/nxNmKmJIbX94SlsMU7g+cXz4akH7Lz76zCuj5a7M9tUJbYj
+        1vTQ3ZNxwN1VeuWuSPWxUUBqLroADbzoooa4M5tD6xKKRmVc1pwJdbLK7MxLSfvLrXar
+        +U7M9m0T49T894/mAm097iQ1IIsdGJLdZm7bMYQ0loyJJJTUW25xUeZDBdrroVeRI3eD
+        2oTQvzjSKhQ6e7HWMT7M9fQ5E5EWR9L4pbqo4NRZM/iYTTPq3oM7kcqLZfLtukQv9rRX
+        aOdg==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaIPSZNQ=="
+X-RZG-CLASS-ID: mo00
+Received: from positron.chronox.de
+        by smtp.strato.de (RZmta 46.1.3 DYNA|AUTH)
+        with ESMTPSA id e09841vBQ9T1B4U
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Thu, 26 Dec 2019 10:29:01 +0100 (CET)
+From:   Stephan =?ISO-8859-1?Q?M=FCller?= <smueller@chronox.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Ted Ts'o <tytso@mit.edu>, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] Rework random blocking
+Date:   Thu, 26 Dec 2019 10:29:00 +0100
+Message-ID: <9872655.prSdhymlXK@positron.chronox.de>
+In-Reply-To: <cover.1577088521.git.luto@kernel.org>
+References: <cover.1577088521.git.luto@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rog6f2soycavkabo"
-Content-Disposition: inline
-In-Reply-To: <4015380d-33ef-312c-a886-6e8bf65c976a@linaro.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Montag, 23. Dezember 2019, 09:20:43 CET schrieb Andy Lutomirski:
 
---rog6f2soycavkabo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Andy,
+>=20
+> There are some open questions and future work here:
+>=20
+> Should the kernel provide an interface to get software-generated
+> "true random" numbers?  I can think of only one legitimate reason to
+> use such an interface: compliance with government standards.  If the
+> kernel provides such an interface going forward, I think it should
+> be a brand new character device, and it should have a default mode
+> 0440 or similar.  Software-generated "true random numbers" are a
+> very limited resource, and resource exhaustion is a big deal.  Ask
+> anyone who has twiddled their thumbs while waiting for gnupg to
+> generate a key.  If we think the kernel might do such a thing, then
+> patches 5-8 could be tabled for now.
 
-On Tue, Dec 24, 2019 at 07:30:55PM +0100, Daniel Lezcano wrote:
-> On 19/12/2019 18:33, Maxime Ripard wrote:
-> > Hi,
-> >
-> > On Thu, Dec 19, 2019 at 09:28:16AM -0800, Vasily Khoruzhick wrote:
-> >> This patchset adds driver for thermal sensor in A64, A83T, H3, H5,
-> >> H6 and R40 SoCs.
-> >
-> > Thanks again for working on this.
-> >
-> > I'll merge the DT patches when the driver will have been merged.
->
-> I've applied patches 1 & 2.
->
-> They are in the testing branch and will go to the linux-next branch as
-> soon as the kernelci passes.
+What about offering a compile-time option to enable or disable such code?=20
+Note, with the existing random.c code base, there is no need to have a=20
+separate blocking_pool. The ChaCha20 DRNG could be used for that very same=
+=20
+purpose, provided that in case these true random numbers are generated when=
+=20
+the Chacha20 DRNG received an equal amount of "unused" entropy.
+>=20
+> Alternatively, perhaps the kernel should instead provide a
+> privileged interface to read out raw samples from the various
+> entropy sources, and users who care could have a user daemon that
+> does something intelligent with them.  This would push the mess of
+> trying to comply with whatever standards are involved to userspace.
+> Userspace could then export "true randomness" via CUSE if it is so
+> inclined, or could have a socket with a well-known name, or whatever
+> else seems appropriate.
 
-I just merged all the other patches (except the patch 6, for the H6,
-as requested by Vasily on IRC).
+With the patch set v26 of my LRNG I offer another possible alternative=20
+avoiding any additional character device file and preventing the starvation=
+ of=20
+legitimate use cases: the LRNG has an entropy pool that leaves different=20
+levels of entropy in the pool depending on the use cases of this data.
 
-Thanks to everyone involved!
-Maxime
+If an unprivileged caller requests true random data, at least 1024 bits of=
+=20
+entropy is left in the pool. I.e. all entropy above that point is available=
+=20
+for this request type. Note, even namespaces fall into this category=20
+considering that unprivileged users can create a user name space in which t=
+hey=20
+can become root.
 
---rog6f2soycavkabo
-Content-Type: application/pgp-signature; name="signature.asc"
+If a non-blocking DRNG serving /dev/urandom or getrandom(2) needs reseeding=
+,=20
+at least 512 bits of entropy is left in the pool. Each DRNG seeding operati=
+on=20
+requires at least 128 bits and at most 256 bits of entropy. This means that=
+ at=20
+least 2 reseed operations worth of entropy is found in the entropy pool eve=
+n=20
+though massive amount of true random numbers are requested by unprivileged=
+=20
+users.
 
------BEGIN PGP SIGNATURE-----
+If a privileged caller requests true random numbers, the entropy pool is=20
+allowed to be exhausted.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXgR9FwAKCRDj7w1vZxhR
-xbdXAPsGHYwewHWWZwWJLF/9xp5VSraGYyM5zFe9REMEM+rRYwD/VjwfBOp0ldc4
-8dHM5uzYOaKYBLrqF1yORYBeEDtCYQw=
-=MvoE
------END PGP SIGNATURE-----
+Access to the true random number generator is provided with getrandom(2) an=
+d=20
+the GRND_TRUERANDOM flag. If the true random number generator (TRNG) is not=
+=20
+compiled or not present, -EOPNOTSUPP is returned.
 
---rog6f2soycavkabo--
+Entire patch set:
+
+Reviewed-by: Stephan M=FCller <smueller@chronox.de>
+
+Ciao
+Stephan
+
+
