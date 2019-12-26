@@ -2,103 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCC1012AC3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 13:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC49512AC43
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 13:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726501AbfLZMrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 07:47:05 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:51019 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbfLZMrF (ORCPT
+        id S1726654AbfLZMsf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 07:48:35 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35908 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbfLZMsf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 07:47:05 -0500
-Received: by mail-pj1-f66.google.com with SMTP id r67so3308730pjb.0;
-        Thu, 26 Dec 2019 04:47:04 -0800 (PST)
+        Thu, 26 Dec 2019 07:48:35 -0500
+Received: by mail-io1-f67.google.com with SMTP id r13so13114328ioa.3;
+        Thu, 26 Dec 2019 04:48:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=VjrrqasrAVtUBkYexP8cTS4R2mKJw8jo9Wmw8KQzHns=;
-        b=crCpRltYcWxhf/UuPq6JSxcWjEj+oEcvzMtWPJzigRpaFGqPgWDl9SYxQKH/dfqByJ
-         RZCCaDG5u/dRl+cTgmnqhew/v00EVbuEO5kPHZT+UxOTpHG5Qe9Uib1+mg462bxrlR3Q
-         xYbAv45huQrhVtyJl3eJDNsz4QQRfAEXhjntTquRSwk9dT2Mfbv3wCbiub/AGpoKTGNe
-         u+nuiPMqKOQD6OAi63yLs1erMCICmPTWir4/BtnzgJtOgArUkq0NOB/1RFDApv72aSDe
-         sa++wbd+Ptr0T9e0ppXDCZc5VVVw96wIFi6NxmbGQIWAo802claa9272ueW5X7p+XErw
-         w7lA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Qyu5/qGz7cbokfaVr/Hbo6e3ec8nfhc/yTVZxVcJAHc=;
+        b=YefnrY+EbXXFw6NCNms+uP2FauCYX8EKKW7IStqcgZ54KItrEGn/LydFpjMviil83f
+         IW1I3cuFJuujnMkaahO8vjHIvrmwA2q81wpVQCAVyvqSefBHQd6tnGsnfs70RejWHS45
+         9M3N3yI3DsqIK6LzRuXKOBTf6Rkkyra6B55MxKyi7GiAlGbcApJ2snZ6JYLsUp4tChO9
+         +FUQkpP5R3u0L9oJhT8ittb4GYvz6lo/boEJwrBNG5+BL2XERJCWwtoiABAshfGI4jVC
+         9hZxJMGZUN+z+Zxks+onaDk2szb+ZRO3a0mWxmJFRVlb5Xz7drOwssgD6oCH6BmfRFt9
+         wkjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VjrrqasrAVtUBkYexP8cTS4R2mKJw8jo9Wmw8KQzHns=;
-        b=SxDCoG7cOw/wPHzE0jmSVJdKy+JsJ2DQJuKO8E3VEG30Vroot7fVQ0xrirx46IROG5
-         PSPmltNybhP20FQbRkMOVH32PZ8CRs+zlQ3OFHoCi1eFx3AsJMPvEeH5DCCFdlSUE4g/
-         q/ANu/ANKC3Dh/Byl/bVF1vratW08G/PdBo1Eml0+fIti7GyXrgKuJFp8yus6hmt/bTz
-         dbxvpLcLPyVDrNyPnUeU+uCPKjCYtIyZz4W4dC+aqipSgp6Os4+0SmNlJEFovAjVhM+5
-         T2MbHf+U9SR8aQU4+8XQgibbtjL0XC/rurxVKQM4UU904MFKBy1Jgbql4NrUDuBZfIVX
-         D0Pg==
-X-Gm-Message-State: APjAAAUT6lQ8H1RR2OdDNVB6cuN1MSzAvAX6sRtqUaLyMk84j1suhJdW
-        2cT7lLXlg4ZQbFzN3Pfsgso=
-X-Google-Smtp-Source: APXvYqwuBLB1sBJkg9fcF0tj7P6bhub+/FTamF8nP6P8VdmwdngazX5VZZlOpEfCeX9GQfsSWcjUZQ==
-X-Received: by 2002:a17:90a:d0c1:: with SMTP id y1mr18628798pjw.126.1577364424213;
-        Thu, 26 Dec 2019 04:47:04 -0800 (PST)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id z4sm36582863pfn.42.2019.12.26.04.47.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 04:47:03 -0800 (PST)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id C6EE340CB9; Thu, 26 Dec 2019 09:46:59 -0300 (-03)
-Date:   Thu, 26 Dec 2019 09:46:59 -0300
-To:     Namhyung Kim <namhyung@kernel.org>
-Cc:     Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephane Eranian <eranian@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCHSET 0/9] perf: Improve cgroup profiling (v3)
-Message-ID: <20191226124659.GA20204@kernel.org>
-References: <20191223060759.841176-1-namhyung@kernel.org>
- <alpine.DEB.2.21.1912231235090.775@macbook-air>
- <CAM9d7cj06Hj3hOSdcyTpRWaoBY0wLjPpt7_+CbUqtsF-_08Czg@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Qyu5/qGz7cbokfaVr/Hbo6e3ec8nfhc/yTVZxVcJAHc=;
+        b=RYJTdnj3nSnXGjXRnPWbnkr/jVbFECX8x8ogAeB40krJgvCnwtYxpGltw2hgSaL4u/
+         2dALbl4qiHnLH/emODaXNH2dKI8jH4e6uAzqkHsErH26Chk/VrlgEjVpOhnm56n4A2Sr
+         6h2oJLWyuKpLnp7EPUleeHy2LzrXL/5pRhZj5KlVNmB2T9MTudIi/jj1/86gIfVQG07m
+         OWYx+PR5SXYQP4/k3e+wd0kRgZX/59oKTruBs44xbLmDDIt5IpFJYZobeVZW6nBcS/e8
+         bshYA7tNu+wNCxwIKkFnbp1bbCap5MOQZb3BQKQ/VpU9sXxx3Kdw3BfQJ1k5AR43/mlP
+         m0sw==
+X-Gm-Message-State: APjAAAW4b5J1ziC2wZ5BMkmoBtDTwj4WX5QSgwAXLvVl8ybD9LFXbaf8
+        patI31KXJwX5gOWSzGkxXUhFPqQOnsMASiYFFJQ=
+X-Google-Smtp-Source: APXvYqzgTHGdCwlE1xHWPIw+T/zvXXg/5Q23YMQERnKG40D0J11GZjNSHiZT89pjLxBM19FDQcJcvzXznwVR1Scakqc=
+X-Received: by 2002:a6b:c410:: with SMTP id y16mr28959521ioa.18.1577364514436;
+ Thu, 26 Dec 2019 04:48:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM9d7cj06Hj3hOSdcyTpRWaoBY0wLjPpt7_+CbUqtsF-_08Czg@mail.gmail.com>
-X-Url:  http://acmel.wordpress.com
+References: <20191219172823.1652600-1-anarsoul@gmail.com> <20191219173321.bni4tbrhfkkphv7k@gilmour.lan>
+ <4015380d-33ef-312c-a886-6e8bf65c976a@linaro.org> <20191226092751.dc3boaxsaeivuhw4@hendrix.home>
+ <20191226104419.GA26677@Red>
+In-Reply-To: <20191226104419.GA26677@Red>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 26 Dec 2019 20:47:47 +0800
+Message-ID: <CAEExFWtNZM3QSSMEksK=-opKZqxvCqyG2=3=iCo3VU6tfie64w@mail.gmail.com>
+Subject: Re: [PATCH v8 0/7] add thermal sensor driver for A64, A83T, H3, H5,
+ H6, R40
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Dec 24, 2019 at 09:40:04AM +0900, Namhyung Kim escreveu:
-> On Tue, Dec 24, 2019 at 2:35 AM Vince Weaver <vincent.weaver@maine.edu> wrote:
-> > On Mon, 23 Dec 2019, Namhyung Kim wrote:
-> > > This work is to improve cgroup profiling in perf.  Currently it only
-> > > supports profiling tasks in a specific cgroup and there's no way to
-> > > identify which cgroup the current sample belongs to.  So I added
-> > > PERF_SAMPLE_CGROUP to add cgroup id into each sample.  It's a 64-bit
-> > > integer having file handle of the cgroup.  And kernel also generates
-> > > PERF_RECORD_CGROUP event for new groups to correlate the cgroup id and
-> > > cgroup name (path in the cgroup filesystem).  The cgroup id can be
-> > > read from userspace by name_to_handle_at() system call so it can
-> > > synthesize the CGROUP event for existing groups.
+On Thu, Dec 26, 2019 at 6:44 PM Corentin Labbe
+<clabbe.montjoie@gmail.com> wrote:
+>
+> On Thu, Dec 26, 2019 at 10:27:51AM +0100, Maxime Ripard wrote:
+> > On Tue, Dec 24, 2019 at 07:30:55PM +0100, Daniel Lezcano wrote:
+> > > On 19/12/2019 18:33, Maxime Ripard wrote:
+> > > > Hi,
+> > > >
+> > > > On Thu, Dec 19, 2019 at 09:28:16AM -0800, Vasily Khoruzhick wrote:
+> > > >> This patchset adds driver for thermal sensor in A64, A83T, H3, H5,
+> > > >> H6 and R40 SoCs.
+> > > >
+> > > > Thanks again for working on this.
+> > > >
+> > > > I'll merge the DT patches when the driver will have been merged.
+> > >
+> > > I've applied patches 1 & 2.
+> > >
+> > > They are in the testing branch and will go to the linux-next branch a=
+s
+> > > soon as the kernelci passes.
+> >
+> > I just merged all the other patches (except the patch 6, for the H6,
+> > as requested by Vasily on IRC).
+> >
+>
+> Hello
+>
+> Vasily asked to not apply H6 due to my test failling on h6 and since he d=
+idnt own any H6 hw.
+> But it was failling due my fault (a failling build).
+>
+> So the patchset work perfect on H6 (opi1+, opi3, pineH64 both model A and=
+ B) as reported by my answer to this thread.
 
-> > so is there a patch to the manpage that describes this new behavior in
-> > perf_event_open()?
+HI Corentin,
 
-> Not yet.  I'll cook a patch once it's merged to the Linus' tree.
+Although it is not calibrated, it should work on the R40. Can you give
+my patch a try?
 
-Vince, was it ever considered to carry the man page in the kernel
-sources and then make it so that new features need to come with the
-respective changes to the man page? I think that would be a good move,
-you would be the maintainer for that file, what do you think?
+Thx=EF=BC=8C
+Yangtao
 
-- Arnaldo
+>
+> Regards
