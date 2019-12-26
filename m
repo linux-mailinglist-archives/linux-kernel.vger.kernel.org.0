@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C41A12AEE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 22:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E2F012AEEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 22:25:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727100AbfLZVZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 16:25:13 -0500
-Received: from mail-il1-f198.google.com ([209.85.166.198]:48931 "EHLO
-        mail-il1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbfLZVZK (ORCPT
+        id S1727136AbfLZVZU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 16:25:20 -0500
+Received: from mail-il1-f200.google.com ([209.85.166.200]:46844 "EHLO
+        mail-il1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726893AbfLZVZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 16:25:10 -0500
-Received: by mail-il1-f198.google.com with SMTP id u14so12328623ilq.15
+        Thu, 26 Dec 2019 16:25:11 -0500
+Received: by mail-il1-f200.google.com with SMTP id a2so7814992ill.13
         for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 13:25:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ZKQ8t0LgRq3eSEQ30gZDP+qRt7+3uldP2yAu+ovI0lM=;
-        b=OSQweBjFuMUebGg0jYHcDMffnvP6H/PCYpXebkvTMZdrsm6DpwZGUkRioWkTUdNpeW
-         6J/DkNPgfuvURpFjYYxe85kRndGfPUStKvdCsJg5if4ae+Sba4WCs9me3BQf90o9SMdT
-         H0BZRFtAyL0KXCHLlW1DszLf6MrDx2CyQVMC5ZCQRKNjaYPvYXRzC2wVOS1Mu1pNXn0M
-         fAs5A0skf7/E4JrJkaReRnHk5+t+4hUyyDKXOajKXdFX6tsQo0TCFK5KM0Ou2w33YpB7
-         YpEJeqNMWmhxPEIZo5dmcEqrAZnS4RXn1FG9x6wy3vMB2aSFjS4cQGI5woTM2h74HgPM
-         nUGg==
-X-Gm-Message-State: APjAAAXYsfoX8X5N7NNcu672opdpsMWOMlT0ZX4eC7BH3s2EUj1ENHR1
-        dIMBQdnoaq5pqiCXcqkwSp3w6Fn6OFWO/nVPcQy5kSpCAiNS
-X-Google-Smtp-Source: APXvYqySw3c5SYTM6WDiwD4RYyo/I1NRODtqLrRrqlDXUw9CGt3QivfVdV9pGcz2LrRCJChL1rfewTyX7Bb2B4uEEkIVNSco22P1
+        bh=RHyjLsdcPao2ajY8JTEr55FeeYChxRbCYPUnLoxRhAA=;
+        b=iScLkP/vWGgTorx+ZrRkxLC/HoYVUY6xXJtWic0tnPgybNdtEnNo9T5aZdbBOKz81M
+         SuBMLVxBB3wCRwWfng2MgUKvRSWABiL1r79ToXQMUAUaXxuQzPdIW3hiqB3wd0wM13cb
+         G9h8AnlRFPiE1bRcy2yy+j059d7ftZN+xJ+IHU4K0Sg/dx0mfkUROD9v9moT/e+ScDa/
+         66llXlA0N4qHxcFhAUlsrw7KsaY8sjYoULuqIhs1dxpTw4eA55jAQFyc++FhxUeWmEgJ
+         p3Ue1FIfjKaVC0q5Rh9CYKfiBVm+dkjFqzAlN9dviOB1YDrB5955rcj6dXoUH5cGjoJs
+         nczQ==
+X-Gm-Message-State: APjAAAUQ/8Ic9uHsIOKbPVNOiTrH9nGL0rRCBT9OTG58ZPRThsL416Vr
+        1sENltG4i4nYSOCgVg5BUQsMuAMPjbrwz4GNg/NNZlsNKARy
+X-Google-Smtp-Source: APXvYqz0tHDyzk2B+GpzLqcrh/cSckh2ans9lg+8PedO8vY86INkBMiK0oDAW0i5PVIspk6GsP/l2FMGcGrbjCk0IrbRi1uhk6mA
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8901:: with SMTP id b1mr30764167ion.246.1577395509730;
- Thu, 26 Dec 2019 13:25:09 -0800 (PST)
+X-Received: by 2002:a92:1f16:: with SMTP id i22mr42250801ile.206.1577395510006;
+ Thu, 26 Dec 2019 13:25:10 -0800 (PST)
 Date:   Thu, 26 Dec 2019 13:25:09 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000072c55059aa2033b@google.com>
-Subject: possible deadlock in uart_write
-From:   syzbot <syzbot+b0e376d3731cd5e82bb7@syzkaller.appspotmail.com>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+Message-ID: <0000000000000b5f9d059aa2037f@google.com>
+Subject: possible deadlock in shmem_fallocate (4)
+From:   syzbot <syzbot+7a0d9d0b26efefe61780@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, hughd@google.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,153 +51,133 @@ syzbot found the following crash on:
 
 HEAD commit:    46cf053e Linux 5.5-rc3
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17295351e00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=162124aee00000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=ed9d672709340e35
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0e376d3731cd5e82bb7
+dashboard link: https://syzkaller.appspot.com/bug?extid=7a0d9d0b26efefe61780
 compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b0e376d3731cd5e82bb7@syzkaller.appspotmail.com
+Reported-by: syzbot+7a0d9d0b26efefe61780@syzkaller.appspotmail.com
 
-============================================
-WARNING: possible recursive locking detected
+======================================================
+WARNING: possible circular locking dependency detected
 5.5.0-rc3-syzkaller #0 Not tainted
---------------------------------------------
-syz-executor.2/25003 is trying to acquire lock:
-ffffffff8c103048 (&port_lock_key){-.-.}, at: uart_write+0x1e1/0x6f0  
-drivers/tty/serial/serial_core.c:592
+------------------------------------------------------
+kswapd0/1852 is trying to acquire lock:
+ffff888098919cd8 (&sb->s_type->i_mutex_key#13){+.+.}, at: inode_lock  
+include/linux/fs.h:791 [inline]
+ffff888098919cd8 (&sb->s_type->i_mutex_key#13){+.+.}, at:  
+shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
 
 but task is already holding lock:
-ffffffff8c103048 (&port_lock_key){-.-.}, at:  
-serial8250_handle_irq.part.0+0x24/0x330  
-drivers/tty/serial/8250/8250_port.c:1823
+ffffffff89a41e00 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30  
+mm/page_alloc.c:4922
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (fs_reclaim){+.+.}:
+        __fs_reclaim_acquire mm/page_alloc.c:4084 [inline]
+        fs_reclaim_acquire.part.0+0x24/0x30 mm/page_alloc.c:4095
+        fs_reclaim_acquire mm/page_alloc.c:4695 [inline]
+        prepare_alloc_pages mm/page_alloc.c:4692 [inline]
+        __alloc_pages_nodemask+0x52d/0x910 mm/page_alloc.c:4744
+        alloc_pages_vma+0xdd/0x620 mm/mempolicy.c:2170
+        shmem_alloc_page+0xc0/0x180 mm/shmem.c:1499
+        shmem_alloc_and_acct_page+0x165/0x990 mm/shmem.c:1524
+        shmem_getpage_gfp+0x56d/0x29a0 mm/shmem.c:1838
+        shmem_getpage mm/shmem.c:154 [inline]
+        shmem_write_begin+0x105/0x1e0 mm/shmem.c:2487
+        generic_perform_write+0x23b/0x540 mm/filemap.c:3309
+        __generic_file_write_iter+0x25e/0x630 mm/filemap.c:3438
+        generic_file_write_iter+0x420/0x68e mm/filemap.c:3470
+        call_write_iter include/linux/fs.h:1902 [inline]
+        new_sync_write+0x4d3/0x770 fs/read_write.c:483
+        __vfs_write+0xe1/0x110 fs/read_write.c:496
+        vfs_write+0x268/0x5d0 fs/read_write.c:558
+        ksys_write+0x14f/0x290 fs/read_write.c:611
+        __do_sys_write fs/read_write.c:623 [inline]
+        __se_sys_write fs/read_write.c:620 [inline]
+        __x64_sys_write+0x73/0xb0 fs/read_write.c:620
+        do_syscall_64+0xfa/0x790 arch/x86/entry/common.c:294
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (&sb->s_type->i_mutex_key#13){+.+.}:
+        check_prev_add kernel/locking/lockdep.c:2476 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+        validate_chain kernel/locking/lockdep.c:2971 [inline]
+        __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
+        lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
+        down_write+0x93/0x150 kernel/locking/rwsem.c:1534
+        inode_lock include/linux/fs.h:791 [inline]
+        shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
+        ashmem_shrink_scan drivers/staging/android/ashmem.c:462 [inline]
+        ashmem_shrink_scan+0x370/0x510 drivers/staging/android/ashmem.c:437
+        do_shrink_slab+0x40f/0xad0 mm/vmscan.c:526
+        shrink_slab mm/vmscan.c:687 [inline]
+        shrink_slab+0x19a/0x680 mm/vmscan.c:660
+        shrink_node_memcgs mm/vmscan.c:2687 [inline]
+        shrink_node+0x46a/0x1ad0 mm/vmscan.c:2791
+        kswapd_shrink_node mm/vmscan.c:3539 [inline]
+        balance_pgdat+0x7c8/0x11f0 mm/vmscan.c:3697
+        kswapd+0x5c3/0xf30 mm/vmscan.c:3948
+        kthread+0x361/0x430 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
 other info that might help us debug this:
+
   Possible unsafe locking scenario:
 
-        CPU0
-        ----
-   lock(&port_lock_key);
-   lock(&port_lock_key);
+        CPU0                    CPU1
+        ----                    ----
+   lock(fs_reclaim);
+                                lock(&sb->s_type->i_mutex_key#13);
+                                lock(fs_reclaim);
+   lock(&sb->s_type->i_mutex_key#13);
 
   *** DEADLOCK ***
 
-  May be due to missing lock nesting notation
-
-5 locks held by syz-executor.2/25003:
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at: spin_lock  
-include/linux/spinlock.h:338 [inline]
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at:  
-zap_pte_range mm/memory.c:1038 [inline]
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at:  
-zap_pmd_range mm/memory.c:1184 [inline]
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at:  
-zap_pud_range mm/memory.c:1213 [inline]
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at:  
-zap_p4d_range mm/memory.c:1234 [inline]
-  #0: ffff8880942de858 (&(ptlock_ptr(page))->rlock#2){+.+.}, at:  
-unmap_page_range+0x885/0x28a0 mm/memory.c:1255
-  #1: ffffffff899a5680 (rcu_read_lock){....}, at: lock_page_memcg+0x0/0x240  
-include/linux/cgroup.h:491
-  #2: ffff88809ed05430 (&(&i->lock)->rlock){-.-.}, at: spin_lock  
-include/linux/spinlock.h:338 [inline]
-  #2: ffff88809ed05430 (&(&i->lock)->rlock){-.-.}, at:  
-serial8250_interrupt+0x2d/0x1a0 drivers/tty/serial/8250/8250_core.c:116
-  #3: ffffffff8c103048 (&port_lock_key){-.-.}, at:  
-serial8250_handle_irq.part.0+0x24/0x330  
-drivers/tty/serial/8250/8250_port.c:1823
-  #4: ffff88808c386090 (&tty->ldisc_sem){++++}, at: tty_ldisc_ref+0x22/0x90  
-drivers/tty/tty_ldisc.c:288
+2 locks held by kswapd0/1852:
+  #0: ffffffff89a41e00 (fs_reclaim){+.+.}, at: __fs_reclaim_acquire+0x0/0x30  
+mm/page_alloc.c:4922
+  #1: ffffffff89a1f948 (shrinker_rwsem){++++}, at: shrink_slab  
+mm/vmscan.c:677 [inline]
+  #1: ffffffff89a1f948 (shrinker_rwsem){++++}, at: shrink_slab+0xe6/0x680  
+mm/vmscan.c:660
 
 stack backtrace:
-CPU: 1 PID: 25003 Comm: syz-executor.2 Not tainted 5.5.0-rc3-syzkaller #0
+CPU: 0 PID: 1852 Comm: kswapd0 Not tainted 5.5.0-rc3-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x197/0x210 lib/dump_stack.c:118
-  print_deadlock_bug kernel/locking/lockdep.c:2371 [inline]
-  check_deadlock kernel/locking/lockdep.c:2412 [inline]
-  validate_chain kernel/locking/lockdep.c:2955 [inline]
-  __lock_acquire.cold+0x15d/0x385 kernel/locking/lockdep.c:3955
+  print_circular_bug.isra.0.cold+0x163/0x172 kernel/locking/lockdep.c:1685
+  check_noncircular+0x32e/0x3e0 kernel/locking/lockdep.c:1809
+  check_prev_add kernel/locking/lockdep.c:2476 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
+  validate_chain kernel/locking/lockdep.c:2971 [inline]
+  __lock_acquire+0x2596/0x4a00 kernel/locking/lockdep.c:3955
   lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4485
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x95/0xcd kernel/locking/spinlock.c:159
-  uart_write+0x1e1/0x6f0 drivers/tty/serial/serial_core.c:592
-  n_hdlc_send_frames+0x29a/0x480 drivers/tty/n_hdlc.c:403
-  n_hdlc_tty_wakeup+0xc0/0xe0 drivers/tty/n_hdlc.c:479
-  tty_wakeup+0xe9/0x120 drivers/tty/tty_io.c:536
-  tty_port_default_wakeup+0x2b/0x40 drivers/tty/tty_port.c:50
-  tty_port_tty_wakeup+0x57/0x70 drivers/tty/tty_port.c:388
-  uart_write_wakeup+0x46/0x70 drivers/tty/serial/serial_core.c:104
-  serial8250_tx_chars+0x495/0xaf0 drivers/tty/serial/8250/8250_port.c:1761
-  serial8250_handle_irq.part.0+0x2a2/0x330  
-drivers/tty/serial/8250/8250_port.c:1834
-  serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1820 [inline]
-  serial8250_default_handle_irq+0xc0/0x150  
-drivers/tty/serial/8250/8250_port.c:1850
-  serial8250_interrupt+0xf1/0x1a0 drivers/tty/serial/8250/8250_core.c:126
-  __handle_irq_event_percpu+0x15d/0x970 kernel/irq/handle.c:149
-  handle_irq_event_percpu+0x74/0x160 kernel/irq/handle.c:189
-  handle_irq_event+0xa7/0x134 kernel/irq/handle.c:206
-  handle_edge_irq+0x25e/0x8d0 kernel/irq/chip.c:830
-  generic_handle_irq_desc include/linux/irqdesc.h:156 [inline]
-  do_IRQ+0xde/0x280 arch/x86/kernel/irq.c:250
-  common_interrupt+0xf/0xf arch/x86/entry/entry_64.S:607
-  </IRQ>
-RIP: 0010:check_memory_region_inline mm/kasan/generic.c:174 [inline]
-RIP: 0010:check_memory_region+0x105/0x1a0 mm/kasan/generic.c:192
-Code: eb 0c 49 83 c0 01 4c 89 c8 4d 39 c8 74 10 41 80 38 00 74 ee 4b 8d 44  
-25 00 4d 85 c0 75 31 49 89 d9 49 29 c1 e9 68 ff ff ff 5b <b8> 01 00 00 00  
-41 5c 41 5d 5d c3 4d 85 c9 74 ef 4d 01 e1 eb 09 48
-RSP: 0018:ffffc9000749f8a0 EFLAGS: 00000246 ORIG_RAX: ffffffffffffffda
-RAX: ffffed1015d2703d RBX: ffff8880ae938100 RCX: ffffffff8162ae44
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffff8880ae9381e0
-RBP: ffffc9000749f8b0 R08: 1ffff11015d2703c R09: ffffed1015d2703d
-R10: ffffed1015d2703c R11: ffff8880ae9381e3 R12: ffffed1015d2703c
-R13: 0000000000000000 R14: ffffea0001b62008 R15: dead000000000100
-  __kasan_check_read+0x11/0x20 mm/kasan/common.c:95
-  atomic_read include/asm-generic/atomic-instrumented.h:26 [inline]
-  rcu_dynticks_curr_cpu_in_eqs+0x54/0xb0 kernel/rcu/tree.c:301
-  rcu_is_watching+0x10/0x30 kernel/rcu/tree.c:922
-  rcu_read_unlock include/linux/rcupdate.h:667 [inline]
-  __unlock_page_memcg+0x73/0x100 mm/memcontrol.c:2019
-  unlock_page_memcg+0x2c/0x40 mm/memcontrol.c:2028
-  page_remove_file_rmap mm/rmap.c:1273 [inline]
-  page_remove_rmap+0x60c/0x11d0 mm/rmap.c:1330
-  zap_pte_range mm/memory.c:1080 [inline]
-  zap_pmd_range mm/memory.c:1184 [inline]
-  zap_pud_range mm/memory.c:1213 [inline]
-  zap_p4d_range mm/memory.c:1234 [inline]
-  unmap_page_range+0xde0/0x28a0 mm/memory.c:1255
-  unmap_single_vma+0x19d/0x300 mm/memory.c:1300
-  unmap_vmas+0x184/0x2f0 mm/memory.c:1332
-  exit_mmap+0x2ba/0x530 mm/mmap.c:3140
-  __mmput kernel/fork.c:1082 [inline]
-  mmput+0x179/0x4d0 kernel/fork.c:1103
-  exit_mm kernel/exit.c:485 [inline]
-  do_exit+0x806/0x2ef0 kernel/exit.c:784
-  do_group_exit+0x135/0x360 kernel/exit.c:895
-  __do_sys_exit_group kernel/exit.c:906 [inline]
-  __se_sys_exit_group kernel/exit.c:904 [inline]
-  __ia32_sys_exit_group+0x44/0x50 kernel/exit.c:904
-  do_syscall_32_irqs_on arch/x86/entry/common.c:337 [inline]
-  do_fast_syscall_32+0x27b/0xe16 arch/x86/entry/common.c:408
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f32a39
-Code: 00 00 00 89 d3 5b 5e 5f 5d c3 b8 80 96 98 00 eb c4 8b 04 24 c3 8b 1c  
-24 c3 8b 34 24 c3 8b 3c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:000000000848fd7c EFLAGS: 00000202 ORIG_RAX: 00000000000000fc
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000000002
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000080589db
-RBP: 00000000fffffff7 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  down_write+0x93/0x150 kernel/locking/rwsem.c:1534
+  inode_lock include/linux/fs.h:791 [inline]
+  shmem_fallocate+0x15a/0xd40 mm/shmem.c:2735
+  ashmem_shrink_scan drivers/staging/android/ashmem.c:462 [inline]
+  ashmem_shrink_scan+0x370/0x510 drivers/staging/android/ashmem.c:437
+  do_shrink_slab+0x40f/0xad0 mm/vmscan.c:526
+  shrink_slab mm/vmscan.c:687 [inline]
+  shrink_slab+0x19a/0x680 mm/vmscan.c:660
+  shrink_node_memcgs mm/vmscan.c:2687 [inline]
+  shrink_node+0x46a/0x1ad0 mm/vmscan.c:2791
+  kswapd_shrink_node mm/vmscan.c:3539 [inline]
+  balance_pgdat+0x7c8/0x11f0 mm/vmscan.c:3697
+  kswapd+0x5c3/0xf30 mm/vmscan.c:3948
+  kthread+0x361/0x430 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
 
 
 ---
