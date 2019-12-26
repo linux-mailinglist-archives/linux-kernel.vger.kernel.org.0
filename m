@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C7012ABE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 12:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D17512ABE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 12:24:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbfLZLUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 06:20:16 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43824 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfLZLUQ (ORCPT
+        id S1726453AbfLZLYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 06:24:34 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44296 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbfLZLYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 06:20:16 -0500
-Received: by mail-pg1-f194.google.com with SMTP id k197so12722446pga.10
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 03:20:15 -0800 (PST)
+        Thu, 26 Dec 2019 06:24:34 -0500
+Received: by mail-lf1-f66.google.com with SMTP id v201so18300295lfa.11
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 03:24:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
         bh=BxoupZSMRE2DTDjIRAiiuu/ngeO3LqFT1wbUZB1u1O0=;
-        b=RmvBPu3wJeWRD3ZmdU+EZfuo3fqe8Cb6PAid3nfuvKc9a+CErELWWL6C06dN2kzP/c
-         CORU+U62Pynun1srO7BpBbgIzFqWnkY6gTXne/zAmqONUIzxAx5Jb2y8G0arNtGyr6vp
-         nT3uhU7OtUjWc1iOhxe1k/U8MpeTC1in+fXa+aMl99bLeKXm0DB5En0dgg8QYZAieeuC
-         2f3IJZEyLVqyPEMNBCjjQkzECUtwNBSL9sVJiC039hRg5ygNrC/ykqrXMH0eO4DrGbzH
-         WhrmICIih2SU5KbBu/SFvYrI9sapyHFQXq9Quogb4XGoLnBV4mvB5z/6OtFeWnTdnNDA
-         /Cdw==
+        b=cvqUoi+l9KsF8YLPZV8hZQTNVJpOh15qUPLjIe4qqRy18MhAhmbOkfhGmxTQ0XhUnS
+         HeYjFCMztgkR4bVZvZ2zoPElaDrF/Qho0ZW0bJwkSl+5BdGCZUV6D2RyZXQyseVswP+K
+         2zLwfp1Jz6XA5xfeCBadD3jtmi1a2d1RbWqi9Lzh4vpTjxxCDUi0rPmt6hbO62INfENc
+         vZO/bCaLdvCyo+B0+nb1+bJYrs8/yEFG/vjHIbxpu8PvdvQJDZ7a8raWpbGX4qEsfjnW
+         GCXT3z12N/W1DK5I+moMeE+becm6Q0u7tPMxa7R5Q9401idpKLHJYlTXseBIDmF1Ny/z
+         9DOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
         bh=BxoupZSMRE2DTDjIRAiiuu/ngeO3LqFT1wbUZB1u1O0=;
-        b=o3hO/rUPBzxu+u3XWshQVwwElQjeuFDA2R4XS0LfaOduZGf0erRvvFKqng3FqHlBLL
-         oZT4tKdI/l1BY5QvLvqIBFzQdR5P3w/Rgqx7cp3Ib7TOR6wMetcwtZTU7z0kf5AmFSGm
-         nbGFxZlwVAXCJb8aR2aysTPzJUpWxCPTWVehtzi3ahMlRbqm4ol/pc/LYJCpYkrBs4UQ
-         AOlf/1JMVU2dy34uwxF7tFgE6rKHqMEEP+aSs4Diead5nYe8UGNwTyiBzQvwuHmi9j6E
-         4s+eRBnqEhUUd0HoMxNj5K0eUdztzwFrGwaWpfboQv+bFS2RHyRrpCgUBO2V8uc4n/RX
-         44sw==
-X-Gm-Message-State: APjAAAWcHnE1sONXfD5IbY1SpIUNn9MzKjyxripyMkYomYYby4CiAeE+
-        V5uNQ2w9JqqAYjnJLHS+rqEKqoPuj/4=
-X-Google-Smtp-Source: APXvYqzD2v97M+XKrvhHamZ3rO080DeZMZorsJSRgqsgwFxVmT+NumZtr7wsuIQwhA3wuVbacKaoTw==
-X-Received: by 2002:aa7:9808:: with SMTP id e8mr48989949pfl.32.1577359215570;
-        Thu, 26 Dec 2019 03:20:15 -0800 (PST)
+        b=MB+57QGOoXjg826sp1trxuEugZIsR3b7L89Zns9KyDJPf9ESuvHEw7gPvysQUqvBfa
+         GeFyFvvOim659S5vgBva5oOOkhbSQ3vs/jAaoVjHTOHv8vgVZVkwLdNJ2CrEkRLuKhGQ
+         zNu7TvCbMGMCa1mrRBKOdrw782qWM3I7KsN5ZAlcG6e2GT0L0G4pGVtmgbWPQd5iYlc+
+         /zTt3dJOJEpVWxGk36v7HgCoY8TfrV7zuw4urv3VUZOD3ieJa3dYRNbi/gzK5yryQSNz
+         ANXYj5fO1wkWsCP9sZSLgOqP/jyKPO+Q1pmShE1NtHYLhMk+rt3CeVwBhaF08UiLyLBo
+         90XQ==
+X-Gm-Message-State: APjAAAXieaEwyR5WOSzT45qZdaclkE/M49hVWGY6vw4Vz3MLRbK/O4y/
+        y1StL5mBxw23L+6lgZLZmjE=
+X-Google-Smtp-Source: APXvYqy/XHFSpSZiHPHa642fbilgs9NkD8T9Xf3MWf/eplr9+K+fNUoZU9viV1eZXP2D63vNKWiVbw==
+X-Received: by 2002:ac2:599c:: with SMTP id w28mr26869616lfn.78.1577359472258;
+        Thu, 26 Dec 2019 03:24:32 -0800 (PST)
 Received: from kbp1-lhp-A00636.cisco.com ([195.238.92.77])
-        by smtp.gmail.com with ESMTPSA id i3sm34384390pfo.72.2019.12.26.03.20.11
+        by smtp.gmail.com with ESMTPSA id a19sm12128205ljb.103.2019.12.26.03.24.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 03:20:15 -0800 (PST)
+        Thu, 26 Dec 2019 03:24:31 -0800 (PST)
 From:   Vasyl Gomonovych <gomonovych@gmail.com>
 To:     openembedded-core@lists.openembedded.org, zhe.he@windriver.com,
         ross.burton@intel.com, andrea.adami@gmail.com
 Cc:     Vasyl Gomonovych <gomonovych@gmail.com>,
         linux-kernel@vger.kernel.org
 Subject: [PATCH] kernel: Make symbol link to vmlinux.64 in boot directory
-Date:   Thu, 26 Dec 2019 13:19:54 +0200
-Message-Id: <20191226111955.8368-1-gomonovych@gmail.com>
+Date:   Thu, 26 Dec 2019 13:24:25 +0200
+Message-Id: <20191226112427.9759-1-gomonovych@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
