@@ -2,102 +2,153 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EDEB12AE8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 21:37:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39A4612AE90
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 21:38:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfLZUhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 15:37:38 -0500
-Received: from mta-p8.oit.umn.edu ([134.84.196.208]:47800 "EHLO
-        mta-p8.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727047AbfLZUhh (ORCPT
+        id S1727120AbfLZUiN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 15:38:13 -0500
+Received: from mail-io1-f47.google.com ([209.85.166.47]:40522 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbfLZUiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 15:37:37 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by mta-p8.oit.umn.edu (Postfix) with ESMTP id 47kMG90SL5z9wK02
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 20:37:37 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p8.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p8.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id lUPUYKM_CnnW for <linux-kernel@vger.kernel.org>;
-        Thu, 26 Dec 2019 14:37:36 -0600 (CST)
-Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com [209.85.219.200])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mta-p8.oit.umn.edu (Postfix) with ESMTPS id 47kMG86QJ7z9wK03
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 14:37:36 -0600 (CST)
-Received: by mail-yb1-f200.google.com with SMTP id y204so19817930yby.18
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 12:37:36 -0800 (PST)
+        Thu, 26 Dec 2019 15:38:13 -0500
+Received: by mail-io1-f47.google.com with SMTP id x1so24134796iop.7
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 12:38:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=umn.edu; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=HImTIUDKCkz90/mVqDadf//lbgFZThYHx2fxEWAm4HE=;
-        b=ntRYZFTwgt+z1MZhyPlGfNMPLcxw29JgS0WhPgImNkqaBbFTC1vOGk7K1oK669JK7+
-         RM5f0Ij/xY/9H40Bz+uHIC9x3IU8wAB6weVq9ayqxNWVeOoEMTGBb9Bzo4ukPCNXGYtX
-         2nBwS+0PmrB0Y58rQrQzr0mnQTDSqySqmfx5wrqy0Nfn7a3NZu9v+4a+DRbR1HBU+tjY
-         k5HyTZ6umwEaA0Yjrkqal4bqG0pmNPL70+batjcNnnCHq+MB+1e+9cRveq6aO3Jme/Bv
-         oM6uP2mcJn3qMyEWDFcYDxBBBdSnGxJqg9fJAyoqWgrAXSPR1tP7adiPTb6Voa6D7kw2
-         S2sA==
+        bh=wdz/YTgDqVmIrzxg/wKv7mwUoanM0ehP9hKBt+o4uvw=;
+        b=UrcNSbTbeVGjRAbjn7iyIn2mDDSUrgmHjrj+kcasBeuJbYautt28QYdCZnySnmfFds
+         FqdgcalSH61wV91mWD9ZsPxx6+OTb4laTe59C2rzcGNPrLVIyqfW1Tf7Xoqce2Z7pRSS
+         5OtZF305gLIKnlr2CfG+aokdlY4wVMTjV0vNAECkV6sYjyvfwSX0Hv943FHkb3X60VRo
+         36XrgVtaEcsNbUD3mS8aRGaP4OSc45f0HmrXpXTOYOblzRn/LZ6W46z7zr13s7FY0gnF
+         I4vRddVnMgqNqwaq/ttqyOkAYscmTEWJcRJdxwvFzf6rKfzawndn8WpJnPIqYUHCHSQA
+         1iDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
          :content-transfer-encoding;
-        bh=HImTIUDKCkz90/mVqDadf//lbgFZThYHx2fxEWAm4HE=;
-        b=b1MRWPolLRonJrDqw3QzdP9AzbW1wWchc5sPGL8K8WozwYGmMSWbiGNPcsstMlixEP
-         qBzzsygcYZDMAElqVlX5K5kxyAyaEsP+bF7GgL2uxPl2fRg6vhUM0g+zDxD888r9JPpl
-         gNeORGQT/qBsO8NXjCx3jNuMXUDoqtTJsK1np4xy7WpRlFtwvrTxcplZGmF6wAAT4f3c
-         ZKEqyx6yh8FsAoM71BD2TTfkmMb8J1MmVcTnsoxdoWnwp7IPq5KlHe09cZUVGdND9ECs
-         RUtJtEJ0pI1YuPtdNs38lJqFz6tJCdC9sVvFFoqTNemtHYn/qkFarveNKBBaoq5miTVY
-         NFjg==
-X-Gm-Message-State: APjAAAVZQm1TvTNeGQDxD9bLKT4ojg/X65arw3dpiNKCZImCzLyrnNgH
-        pMACPw5kJ86kpkiOpG65UpOId5/ZIvEfdp3vQ+8A8nX+JETU0kxnK07v/JBuN4CvZej6DGK5VUb
-        anTgIhCK48gNPTCVGPKntcauV9M/O
-X-Received: by 2002:a81:6fd4:: with SMTP id k203mr34295349ywc.370.1577392656417;
-        Thu, 26 Dec 2019 12:37:36 -0800 (PST)
-X-Google-Smtp-Source: APXvYqx0nn/4FSfZJVjPBvPs8yj+Byn1PGJYTHXNh9kAPj7PGWn9gUqx3rxnw6ePhGqE1GZBTI4thQ==
-X-Received: by 2002:a81:6fd4:: with SMTP id k203mr34295336ywc.370.1577392656189;
-        Thu, 26 Dec 2019 12:37:36 -0800 (PST)
-Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
-        by smtp.gmail.com with ESMTPSA id w74sm12621083ywa.71.2019.12.26.12.37.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 12:37:35 -0800 (PST)
-From:   Aditya Pakki <pakki001@umn.edu>
-To:     pakki001@umn.edu
-Cc:     kjlu@umn.edu, "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: remove unnecessary assertion in nfsd4_layout_setlease
-Date:   Thu, 26 Dec 2019 14:37:33 -0600
-Message-Id: <20191226203733.27808-1-pakki001@umn.edu>
-X-Mailer: git-send-email 2.20.1
+        bh=wdz/YTgDqVmIrzxg/wKv7mwUoanM0ehP9hKBt+o4uvw=;
+        b=gilSHFLWK6E2frwnIP9h3g8Fx059Jmd/KWaBJqOByPP9ZF3Q92gLy0+Z1GMKE+g9Ju
+         GtBwwW6AbVSWuCas8qTuThYoiA1ipH4YVvD38cGb/4fZyGSziU0hye5jFWgStflKMz9F
+         uO/S/ZlGscuZ9exSUJznmOpYawHUmFOU1LttIbaTde9hRHUgxMyZBgb9etNXAKX4oLa8
+         uJXmMoZojEb4N2zxeWOmurdE/HODvYEqvKWC979mbFCxn9NFVeNM44g2F5gzjcojDsE9
+         oeQ4mFRVecBHtzhevuF1TegxTo72nhF/HKAiFFb59A9E4xiRS4trDSe2x7Jiqnv6r1+m
+         nWcA==
+X-Gm-Message-State: APjAAAVobxabsoCeqKKsDyaMO6y/uqT3WThOiNze49HFiU0YFeeDh0GQ
+        aHvKR4LAyrG4OfRkglnghCQbC2NqJwROc42Jewc=
+X-Google-Smtp-Source: APXvYqwCpmZmPC161TYRqhBY2mHPyz1mpe2aixvayidwH9MkDabZr86o3q9KO8hXmEu8MHUNm1vxLvVYe0CPPP+nlsU=
+X-Received: by 2002:a6b:7b41:: with SMTP id m1mr29814761iop.191.1577392692586;
+ Thu, 26 Dec 2019 12:38:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a6b:4a0e:0:0:0:0:0 with HTTP; Thu, 26 Dec 2019 12:38:12
+ -0800 (PST)
+From:   Ultimate Wealth <ultimatewealthmanagementltd@gmail.com>
+Date:   Thu, 26 Dec 2019 12:38:12 -0800
+Message-ID: <CAMpO-c+k588JwWXbywFx7J3KNt=ixDoupgS8i3WX+uGT5_YtxQ@mail.gmail.com>
+Subject: TRANSACTION PROCEDURE:
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In nfsd4_layout_setlease, checking for a valid file lock is
-redundant and can be removed. This patch eliminates such a
-BUG_ON check.
+Pls read through our BG/SBLC Procedure bellow and see if it can work for yo=
+u.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
----
- fs/nfsd/nfs4layouts.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
-index 2681c70283ce..ef5f8e645f4f 100644
---- a/fs/nfsd/nfs4layouts.c
-+++ b/fs/nfsd/nfs4layouts.c
-@@ -204,7 +204,6 @@ nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
- 		locks_free_lock(fl);
- 		return status;
- 	}
--	BUG_ON(fl != NULL);
- 	return 0;
- }
- 
--- 
-2.20.1
 
+TRANSACTION PROCEDURE:
+
+1. Lessee submits signed letter of intent (LOI)/MOU, together with
+International passport scanned copy, full text of MT799 & MT760
+verbiages, Lessee and Beneficiary=E2=80=98s bank details, CIS, and Corporat=
+e
+Registration Copy.
+
+
+
+2. Provider countersigns Agreement along with issuing bank=E2=80=99s full
+banking coordinates.
+
+
+
+3. This LOI automatically becomes a full commercial recourse contract
+and will be notarized and authenticated to avoid contract breach and
+Lessee will be required to pay for the notary authentication cost of
+the contract documents here in UK. After the notary authentication of
+the contract documents here in the UK, both parties shall lodge the
+executed contract with their respective banks.
+
+
+
+4. The Lessor=E2=80=99s bank issues Pre-advice by SWIFT MT199 or MT-799 to
+Lessee Beneficiary=E2=80=99s nominated bank within 48-72 banking hours.
+Simultaneously a copy of the Pre-advice by SWIFT MT199 or MT-799 will
+be sent to the Lessee via email.
+
+
+
+5. Within 48-72 banking hours following issuance of Pre-advice by
+SWIFT MT199 or MT-799 and upon successful authentication, the Lessee=E2=80=
+=99s
+Beneficiary bank replies to the Provider/Issuing Bank via MT799
+confirming readiness to receive the BG/SBLC via SWIFT MT 760.
+Simultaneously a copy of the =E2=80=98readiness to receive=E2=80=99 by SWIF=
+T MT799
+will be sent to the Provider via email.
+
+
+
+6. Successive to the Lessee=E2=80=99s Beneficiary Bank reply confirming
+readiness to receive the BG/SBLC via MT760, Issuing Bank shall within
+24-48 banking hours deliver the bank instrument (BG/SBLC) via SWIFT
+M760 to Lessee=E2=80=99s Beneficiary=E2=80=98s nominated bank.
+
+
+
+7. Within 15-21 banking days Upon receipt of the SWIFT MT760 BG/SBLC
+and upon successful authentication and final confirmation by the
+Lessee Beneficiary=E2=80=98s nominated bank, Lessee agrees to pay by SWIFT
+MT103 wire transfer the total BG/SBLC Lease cost of 6%+2% of face
+value to the nominated banks accounts of Provider and facilitators.
+
+
+
+8. Within 7 banking days after receipt of funds (6%+2%), the hard copy
+will be sent to Lessee Beneficiary=E2=80=99s nominated bank by bank-bonded
+courier.
+
+
+
+According to the provider, review became necessary to bypass certain
+Prudential Banking protocols and to underwrite Provider/Stakeholders
+confidence in providing the BG/SBLC.
+--=20
+
+
+--=20
+
+
+*Ultimate Wealth Management*
+
+Registered address: Unit 1, West Point Court
+Great Park Road, Bradley Stoke
+Bristol, BS32 4PY. United Kingdom.
+
+Tel/Fax: +44 (020) 8185 7409
+Email:  info@ultimatewealthmanagementltd.com
+Website Address: www.ultimatewealthmanagementltd.com
+
+
+*CONFIDENTIALITY NOTE:This communication and any attachments here to
+contain information that may be privileged, confidential and exempt from
+disclosure under applicable law. The information is intended solely for the
+use of the individual or entity to which it is addressed. If you are not
+the intended recipient or the employee or agent entrusted with the
+responsibility of delivering the  message to the intended recipient,
+be aware that any disclosure, copying or distribution of this transmission
+is strictly prohibited. Thank you.*
