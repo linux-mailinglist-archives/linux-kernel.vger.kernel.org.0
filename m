@@ -2,75 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D5DB12A9FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 04:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 495C112AA08
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 04:35:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbfLZDWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 25 Dec 2019 22:22:42 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:44275 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbfLZDWm (ORCPT
+        id S1727014AbfLZDff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 25 Dec 2019 22:35:35 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:49492 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbfLZDfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 25 Dec 2019 22:22:42 -0500
-Received: by mail-io1-f65.google.com with SMTP id b10so22225394iof.11
-        for <linux-kernel@vger.kernel.org>; Wed, 25 Dec 2019 19:22:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=y8xDY9Ww45cWE0v5ND0tzOicOWZ1SmT2fxqjajEP/c4=;
-        b=V0uTSIHffC6RmCMhhz17RMILqkCqzjWC/0LOuahPMTRPqSeJEdy1gcML6KF005NmHP
-         FAu6UrDMmSmAu3FsKm08kNw09mQInyNik3rdN4RM77NrCLjw0IHtPDhDIbyacxBCizOD
-         FhIBMZPJaNEKyvFKeJRd7r5itpiY+FJBQ66f3sPiuj3LYr1W0nVHBxcGO3Psj9NVnPid
-         GOyaQ1/FqK48f0yIlVO4EAz9QyAxADxj4PCbIzUwYUScd91ow1tFycSrNRbzMMLsqoyq
-         OSPndQtXIujRR0CGjuiiBiwWTh2tB/zD3X9QAHfYDQ90LbMhbgUEb9Dpb1OMEJkQhMaK
-         tYig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=y8xDY9Ww45cWE0v5ND0tzOicOWZ1SmT2fxqjajEP/c4=;
-        b=PsTrZqNe+7XyXGNmkVcV3t20xZHP16XP2efH2vabkqVQfyFjXyWubUek47LIqNlMP0
-         uXCioyykEEtCI3gkHOyrQ+M5auvDKXqdqsCS1/z0As1txzuoaMkGaTvLSVFN3ZsBEE6S
-         BTry2YBHOpyf+xREnfTQkN+PQDomIlRcongM/aLdVYVanxleCW+vD6qYVPum0iZwbAt7
-         w8IgOnnHjQophbJytGMwbyGKsA/JeB/vXzcnEA9fBphzOAp2I8HziaFDbTnXyYxcin9U
-         ArteRgqtZCHAEoOt0IRM/aIxJQwucK0NXUDcN5PtoI2DOdrWhCFiBTNrv6yaA7+PWyO8
-         1G0A==
-X-Gm-Message-State: APjAAAX57NMQ164o9Wz2hhejIekSs32qPDge1JlphQIkqVnLixIlck2w
-        UA6eKGzeefq3iYIR93bnCvsDs1lLf77SrGujpaw=
-X-Google-Smtp-Source: APXvYqxlzCBZTZcq7uM1h2ZgjGp8m7yWwRA37Uu8tY8jJcL34aGS0bcp6wKfvwUlC1Kt56STksUuwT5OFTLnPbhoUb0=
-X-Received: by 2002:a6b:b606:: with SMTP id g6mr30725772iof.114.1577330561614;
- Wed, 25 Dec 2019 19:22:41 -0800 (PST)
+        Wed, 25 Dec 2019 22:35:34 -0500
+X-Greylist: delayed 2064 seconds by postgrey-1.27 at vger.kernel.org; Wed, 25 Dec 2019 22:35:33 EST
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23991197AbfLZDBGcj560 (ORCPT
+        <rfc822;stable@vger.kernel.org> + 2 others);
+        Thu, 26 Dec 2019 04:01:06 +0100
+Date:   Thu, 26 Dec 2019 03:01:06 +0000 (GMT)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+cc:     'Paul Burton' <paulburton@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] MIPS: Use __copy_{to,from}_user() for emulated FP
+ loads/stores
+In-Reply-To: <e220ba9a19da41abba599b5873afa494@AcuMS.aculab.com>
+Message-ID: <alpine.LFD.2.21.1912260251520.3762799@eddie.linux-mips.org>
+References: <20191203204933.1642259-1-paulburton@kernel.org> <f5e09155580d417e9dcd07b1c20786ed@AcuMS.aculab.com> <20191204154048.eotzglp4rdlx4yzl@lantea.localdomain> <e220ba9a19da41abba599b5873afa494@AcuMS.aculab.com>
 MIME-Version: 1.0
-Received: by 2002:a92:1f1a:0:0:0:0:0 with HTTP; Wed, 25 Dec 2019 19:22:41
- -0800 (PST)
-Reply-To: dr.jameskabore@yandex.com
-From:   "Dr.James Kabore" <syedrazasyed001@gmail.com>
-Date:   Wed, 25 Dec 2019 19:22:41 -0800
-Message-ID: <CAHBqt5buL22Rh1QL=m5-31SjKbTYK8Y4aupJxG5tfcR+QdmugA@mail.gmail.com>
-Subject: REPLY URGENT PLS.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear friend,
+On Wed, 4 Dec 2019, David Laight wrote:
 
-Greetings to you, I got your contact through International business
-directory, my names are Hon.Dr. James Kabore from Burkina Faso, West
-Africa. I am a politician with government position. am pleased to
-contact you for your assistance to help me invest in real estate or
-any provitable sector in your country through you as my partner and as
-a citizen of your country.
+> > We used to have separate get_user_unaligned() & put_user_unaligned()
+> > which would suggest that it's expected that get_user() & put_user()
+> > require their accesses be aligned, but they were removed by commit
+> > 3170d8d226c2 ("kill {__,}{get,put}_user_unaligned()") in v4.13.
+> > 
+> > But perhaps we should just take the second AdEL exception & recover via
+> > the fixups table. We definitely don't right now... Needs further
+> > investigation...
+> 
+> get/put_user can fault because the user page is absent (etc).
+> So there must be code to 'expect' a fault on those instructions.
 
-I am eager to visit in person with you and of course provide more
-details, once you reply and promise to assist. Because I am aware that
-most of well connected people very rarely use this means of approach
-via inter-net, for a huge business of this size due to scam syndicates
-out there.
+ As I recall we only emulate unaligned accesses with a subset of integer 
+load/store instructions (and then only if TIF_FIXADE is set, which is the 
+default), and never with FP load/store instructions.  Consequently I see 
+no point in doing this in the FP emulator either and I think these ought 
+to just send SIGBUS instead.  Otherwise you'll end up with user code that 
+works differently depending on whether the FP hardware is real or 
+emulated, which is really bad.
 
-Waiting for your urgent respond.
+ FWIW,
 
-Best regards,
-Dr.James Kabore.
+  Maciej
