@@ -2,247 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 767C512AF31
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 23:24:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A4B12AF3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 23:29:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfLZWYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 17:24:52 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36601 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfLZWYw (ORCPT
+        id S1727106AbfLZW3n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 17:29:43 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33692 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfLZW3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 17:24:52 -0500
-Received: by mail-io1-f65.google.com with SMTP id r13so14272074ioa.3;
-        Thu, 26 Dec 2019 14:24:51 -0800 (PST)
+        Thu, 26 Dec 2019 17:29:43 -0500
+Received: by mail-wr1-f65.google.com with SMTP id b6so24712418wrq.0;
+        Thu, 26 Dec 2019 14:29:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=cNvwamoo4dW30eKmzFIFFIcQpw4e7mEPfnTJXuvvdsc=;
+        b=JLlRtcY/8CBDaPzFepxOtonk9vTzRAHaTYqApa/UOMvai0S8wJ8GZW4HU5h1cO7N9r
+         cCes7ekRdCOtbw/jtgcWE20ocoyD/zaNpo3J0IFrhTm3FbEf39kiD/PbpfDOV1/MOq8t
+         84eCIs94LrrY2WNvfqtjGOgJeCpFOyFdktf3L5ntnWU5rG/D8jrbIKabTFuWsSurCRRG
+         0xDXuZ+Tia7tEwtI4aA+53vaqJM+jz2ISPQOby+Hbz9SZzO5XfFNkDGzXYJH2nr3xVTp
+         LB4Q+k/42Y8WU6zuVNzaem3PYqhBL12t689pHwOw46qVfb1/t+TyfgBBHPsgBAPTBkeh
+         0LaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=37uqwtRwSPKrS7mePUoQwRbRxVBQ1BJulsNk0ZshgZ4=;
-        b=hW2qpQV1f1r8UgwfPA+eJshGpiDUYDLTwGHOxaA5NxraSPkGomehuIjOLkjEsHy0a7
-         vsj2HEBoHgYuAZXp7IKPKpEZaC3Jn5sEXcGQBY7MZds9jEIyowRTvm7RBoaXZFF6a+/l
-         lwzx+y9lreGzVJU5UFm4aJGYycAZGIGz8uiJbCCFXZ8ahzSC2mE6kgRz+WNpP/B8lPsy
-         SYUj0VCfCCY3vbwxCxPo5VhshmvkUFpFJPLKeY7LCyXj1fKBKrFa0DQg3RbGkU/YHFZ2
-         lpaAeztx5LT1OuBUti9Kk75myGktYEX9mUUxjSHU8lS+y/T4tUGrE7Tj9rK7hhpaaKuX
-         rRpA==
-X-Gm-Message-State: APjAAAUzGO1D9Qf5t/+E5c7NhX8EwI7jcm1a52sT0hgxJoWZq1VCjEUW
-        cyW9X07h5Xju5K5TBv8r8Q==
-X-Google-Smtp-Source: APXvYqwpmWnPzmhjJucVegrp/qxb0MG6G7PSqjM7NScWUgWQvP5DpgC4uYsIS18fm8wbuiIy81ilQg==
-X-Received: by 2002:a5d:8996:: with SMTP id m22mr33343498iol.141.1577399091059;
-        Thu, 26 Dec 2019 14:24:51 -0800 (PST)
-Received: from localhost ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id m24sm8970619ioc.37.2019.12.26.14.24.50
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cNvwamoo4dW30eKmzFIFFIcQpw4e7mEPfnTJXuvvdsc=;
+        b=kIhUQ1Zfandzg07OM4OKDWlV5FV+AOCLlqY8Ldw8OLu6Is4wGxikqt0AeLXofbrVnw
+         DeHFO9rfK0F/yMkjJLeePrw1LlbP+JRkMau2xzC//jVTp96Vb3gfm+vD7Y2GqRKYLfWp
+         bBsrBjH3+hsvHUSrTJK5MaeGVdx3wduvqf7GQ9CNRGFMTPGEDo0PGd6XPxMcMp6u4mAr
+         ITCkF3zgyG+V6fsgASqI9jDEGDy0qKvUY3EdzyAI4NZh888hlGoWOhcA4pOmtfUBDKwg
+         7aansysGfzSlFSfM0GJeAlOvKkgKIKePKl8mnsKJ7UQSJ8eKQC8Z09JL8Te9ExSvO/DD
+         zUMw==
+X-Gm-Message-State: APjAAAWsP5CEEnorLbp6IZgBzfYh+Uonc4koWJFnEl6c6nh+EXeiPF3+
+        booeW2M1a5xr5zkx1zfJotg=
+X-Google-Smtp-Source: APXvYqz27JK6nLbXAntRU3P2XYprFSagQ5bHWeh2eGH1ngIHB7ECWzyR7wuR+C1tIUamhRGjOIh9KA==
+X-Received: by 2002:adf:dd8a:: with SMTP id x10mr47383927wrl.117.1577399381531;
+        Thu, 26 Dec 2019 14:29:41 -0800 (PST)
+Received: from localhost.localdomain (p5B3F7018.dip0.t-ipconnect.de. [91.63.112.24])
+        by smtp.gmail.com with ESMTPSA id j2sm9731276wmk.23.2019.12.26.14.29.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 14:24:50 -0800 (PST)
-Date:   Thu, 26 Dec 2019 15:24:49 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
-        a.hajda@samsung.com, narmstrong@baylibre.com,
-        tomi.valkeinen@ti.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@siol.net
-Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Add documentation for
- Toshiba tc358768
-Message-ID: <20191226222449.GA8816@bogus>
-References: <20191217101506.18910-1-peter.ujfalusi@ti.com>
- <20191217101506.18910-2-peter.ujfalusi@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191217101506.18910-2-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 26 Dec 2019 14:29:40 -0800 (PST)
+From:   Saravanan Sekar <sravanhome@gmail.com>
+To:     sravanhome@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, mripard@kernel.org,
+        shawnguo@kernel.org, heiko@sntech.de, sam@ravnborg.org,
+        icenowy@aosc.io, laurent.pinchart@ideasonboard.com,
+        gregkh@linuxfoundation.org, Jonathan.Cameron@huawei.com,
+        davem@davemloft.net, mchehab+samsung@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Add regulator support for mpq7920
+Date:   Thu, 26 Dec 2019 23:29:26 +0100
+Message-Id: <20191226222930.8882-1-sravanhome@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 12:15:05PM +0200, Peter Ujfalusi wrote:
-> TC358768/TC358778 is a Parallel RGB to MIPI DSI bridge.
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
->  .../display/bridge/toshiba,tc358768.yaml      | 158 ++++++++++++++++++
->  1 file changed, 158 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
-> new file mode 100644
-> index 000000000000..8f96867caca0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/toshiba,tc358768.yaml
-> @@ -0,0 +1,158 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/toshiba,tc358768.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Toschiba TC358768/TC358778 Parallel RGB to MIPI DSI bridge
-> +
-> +maintainers:
-> +  - Peter Ujfalusi <peter.ujfalusi@ti.com>
-> +
-> +description: |
-> +  The TC358768/TC358778 is bridge device which converts RGB to DSI.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - toshiba,tc358768
-> +      - toshiba,tc358778
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: base I2C address of the device
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description: GPIO connected to active low RESX pin
-> +
-> +  vddc-supply:
-> +    maxItems: 1
+Changes in V4:
+    - fixed 0-DAY warnings
 
-Drop this. Not an array. *-supply doesn't need further constraints.
+Changes in V3:
+    - fixed review comments in Documentation and dt_bindings_check passed 
 
-> +    description: Regulator for 1.2V internal core power.
-> +
-> +  vddmipi-supply:
-> +    maxItems: 1
-> +    description: Regulator for 1.2V for the MIPI.
-> +
-> +  vddio-supply:
-> +    maxItems: 1
-> +    description: Regulator for 1.8V - 3.3V IO power.
+Changes in V2:
+    - fixed all the review comments in the driver, avoid ternery operator, inline & constant
+    - fixed/modifed review comments in Documentation
 
-Blank line here.
+This patch series add support for PMIC regulator driver for Monolithic
+Power System's MPQ7920 chipset. MPQ7920 provides support for 4-BUCK converter,
+one fixed voltage RTCLDO and 4-LDO regualtor, accessed over I2C.
 
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    const: refclk
-> +
-> +  ports:
-> +    type: object
-> +
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +      port@0:
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        description: |
-> +          Video port for RGB input
-> +
-> +        properties:
-> +          reg:
-> +            const: 0
-> +
-> +        patternProperties:
-> +          endpoint:
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              data-lines:
-> +                enum: [ 16, 18, 24 ]
-> +
-> +              remote-endpoint: true
-> +
-> +        required:
-> +          - reg
-> +
-> +      port@1:
-> +        type: object
-> +        description: |
-> +          Video port for DSI output (panel or connector).
-> +
-> +        properties:
-> +          reg:
-> +            const: 1
-> +
-> +        patternProperties:
-> +          endpoint:
-> +            type: object
-> +            additionalProperties: false
-> +
-> +            properties:
-> +              remote-endpoint: true
-> +
-> +        required:
-> +          - reg
+Saravanan Sekar (4):
+  dt-bindings: Add an entry for Monolithic Power System, MPS
+  dt-bindings: regulator: add document bindings for mpq7920
+  regulator: mpq7920: add mpq7920 regulator driver
+  MAINTAINERS: Add entry for mpq7920 PMIC driver
 
-No additionalProperties on this one?
+ .../bindings/regulator/mpq7920.yaml           | 143 +++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   7 +
+ drivers/regulator/Kconfig                     |  10 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/mpq7920.c                   | 392 ++++++++++++++++++
+ drivers/regulator/mpq7920.h                   |  72 ++++
+ 7 files changed, 627 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mpq7920.yaml
+ create mode 100644 drivers/regulator/mpq7920.c
+ create mode 100644 drivers/regulator/mpq7920.h
 
-> +
-> +    required:
-> +      - "#address-cells"
-> +      - "#size-cells"
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vddc-supply
-> +  - vddmipi-supply
-> +  - vddio-supply
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c1 {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +
-> +      dsi_bridge: tc358768@0e {
-> +        compatible = "toshiba,tc358768";
-> +        reg = <0x0e>;
-> +
-> +        clocks = <&tc358768_refclk>;
-> +        clock-names = "refclk";
-> +
-> +        /* GPIO line is inverted before going to the bridge */
-> +        reset-gpios = <&pcf_display_board 0 1 /* GPIO_ACTIVE_LOW */>;
-> +
-> +        vddc-supply = <&v1_2d>;
-> +        vddmipi-supply = <&v1_2d>;
-> +        vddio-supply = <&v3_3d>;
-> +
-> +        dsi_bridge_ports: ports {
-> +          #address-cells = <1>;
-> +          #size-cells = <0>;
-> +
-> +          port@0 {
-> +            reg = <0>;
-> +            rgb_in: endpoint {
-> +              remote-endpoint = <&dpi_out>;
-> +              data-lines = <24>;
-> +            };
-> +          };
-> +
-> +          port@1 {
-> +            reg = <1>;
-> +            dsi_out: endpoint {
-> +              remote-endpoint = <&lcd_in>;
-> +            };
-> +          };
-> +        };
-> +      };
-> +    };
-> +    
-> -- 
-> Peter
-> 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+-- 
+2.17.1
+
