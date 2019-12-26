@@ -2,84 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A596512AF68
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 23:49:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF1F12AF7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 00:04:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfLZWti (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 17:49:38 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34846 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfLZWth (ORCPT
+        id S1726943AbfLZXED (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 18:04:03 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:35818 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726277AbfLZXEC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 17:49:37 -0500
-Received: by mail-wr1-f68.google.com with SMTP id g17so24682075wro.2;
-        Thu, 26 Dec 2019 14:49:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5at3WDW9T3iSZqzougKhzLZuYlvgfZx4445eolFcJMI=;
-        b=ipGfi56KfMvoFQFqCzMpqOAD/XFQyfyWh6PwflY6SeW1Kp4pBeifjBPGnyhZr7em0a
-         44rtzBpvmUIjtXe3dEPYYVxzevMSCyPDtbHhKdKNKutRb6LGgwELS2LKxstBAipM9+o0
-         bb5NUwZCgVjk+jIglRLrU/DfLF83RIDtzCWmeWCs7SF5Yvjx3iAVMtXZfjTf+S3E9naI
-         p6zySolnZ55ISKQxUWPJBOQuRqnOyvxZrvonK8GHwNWl2CAaCJ32oe6B9dxoVBYmpi4i
-         gdzTQbGpXNLom2c2zvELUIs5vfnCD+GzQSVHsrm575Ftn1PY92DdJqp6917zegQbVd9Q
-         6r3Q==
+        Thu, 26 Dec 2019 18:04:02 -0500
+Received: by mail-io1-f66.google.com with SMTP id v18so24407708iol.2;
+        Thu, 26 Dec 2019 15:04:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5at3WDW9T3iSZqzougKhzLZuYlvgfZx4445eolFcJMI=;
-        b=gfH9ai8FqolR9MID+9IARjgx+SOXK28okUO5+6vLPQPtUY/awtij7kMBXD9peRh3q9
-         AEwiZtbG8fCa1SnACpZATs54CpTDtLp1gnfYF/t5Zn5MJp2tjkBwe4NGcodOqZy/NNbR
-         wkvRqUS98YAoAW/tZy7aTQPfQGA50tF0MNfty5GXJjm35haoJp+KvbyGx9+PMdDzC/bH
-         HjlerCONe+Z9o1m8v/pjA0/4YSBJd2oD9sRbZv/9uxJ3X2TTNJHrUd4O77j1918mBEtv
-         2vHPD4Y8vwcMIg7H4nhVyIM402BCkfZCtMltS8dIKD5/8JwuWf/CwbfObbXxRA/6CnjF
-         oOUg==
-X-Gm-Message-State: APjAAAWOfMwWa+IDRkJ5+Qfa0i7z4bQlJTV6i6xDrHXYELpL3HnbafiA
-        10Kp/pw/8o4+bBBF4n/LolZpEEFdaGM=
-X-Google-Smtp-Source: APXvYqxeBLAwP4rgKmx8JG2+a1+YPrmS8JVJ7nqHuki6OV9hCVnrREV1PwVi0u6ZSOwxiSaQVXrj+g==
-X-Received: by 2002:a5d:68cf:: with SMTP id p15mr47548774wrw.31.1577400575245;
-        Thu, 26 Dec 2019 14:49:35 -0800 (PST)
-Received: from debian.office.codethink.co.uk. ([78.40.148.180])
-        by smtp.gmail.com with ESMTPSA id t81sm9541127wmg.6.2019.12.26.14.49.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 26 Dec 2019 14:49:34 -0800 (PST)
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To:     rostedt@goodmis.org, Arnaldo Carvalho de Melo <acme@redhat.com>,
-        arnaldo.melo@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-trace-devel@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] libtraceevent: Add dependency on libdl
-Date:   Thu, 26 Dec 2019 22:49:31 +0000
-Message-Id: <20191226224931.3458-1-sudipm.mukherjee@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4BxjXm5H+PVHzK3XnFpnxXvTcIKYGmKgODVv5UHOsHg=;
+        b=jhYa0XdG6jucyom2rEO5XNwOZjvxQXfQIVg7lVhBedfFrIK04Scj57ByNyFuIoNS1W
+         Kos61ivoZF8rjCTTR4XhTCsPfuY7VhWyTHp2a4bTnnEOPAuGHk7rRokMI9jRAstwoyNV
+         +N4hOf8oWL4CinJ0vwYsbNCnZk6Jgvmbq/hBN06ZEZRhPb+hvUUbfXKMX0z/+k6T2Fo1
+         TXcPIY3HL2BeUb8Si0qQdiXNp5TrO3tNjH0/3khss/cZVftlkygi557/dMHTYgGB4UQs
+         v5EW7usF3jgh+QzE74JZg4nzvc4o+YvuT+4CaRtmfBOHnTWbE72p76zKALFlu6Qj/AmX
+         kKIw==
+X-Gm-Message-State: APjAAAWdcy7UtBL5o0mv4WznWQyp83h6oAhE0YC9cHkrcIOVpRfgn4yo
+        nLG1KYr0FlDN8L3G/zKHLg==
+X-Google-Smtp-Source: APXvYqw2bGRiaMi/uFha0sHVD0awLqueKW90FLWiT0CRk7JBZTxizfad7ua9GqHYh9EH1UVXI14/eg==
+X-Received: by 2002:a5d:93cd:: with SMTP id j13mr31630721ioo.126.1577401442032;
+        Thu, 26 Dec 2019 15:04:02 -0800 (PST)
+Received: from localhost ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id p12sm11217395ils.11.2019.12.26.15.04.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2019 15:04:00 -0800 (PST)
+Date:   Thu, 26 Dec 2019 16:03:59 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Dan Robertson <dan@dlrobertson.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        devicetree@vger.kernel.org, Hartmut Knaack <knaack.h@gmx.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 1/3] dt-bindings: iio: accel: bma400: add bindings
+Message-ID: <20191226230359.GA29435@bogus>
+References: <20191220160051.26321-1-dan@dlrobertson.com>
+ <20191220160051.26321-2-dan@dlrobertson.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191220160051.26321-2-dan@dlrobertson.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-event-plugin.c is calling dl_*() functions but it is not linked with
-libdl. As a result when we use ldd on the generated libtraceevent.so
-file, it does not list libdl as one of its dependencies.
-Add -ldl explicitly as done in tools/lib/lockdep.
+On Fri, Dec 20, 2019 at 04:00:49PM +0000, Dan Robertson wrote:
+> Add devicetree binding for the Bosch BMA400 3-axes ultra-low power
+> accelerometer sensor.
+> 
+> Signed-off-by: Dan Robertson <dan@dlrobertson.com>
+> ---
+>  .../bindings/iio/accel/bosch,bma400.yaml      | 54 +++++++++++++++++++
+>  1 file changed, 54 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+> new file mode 100644
+> index 000000000000..e87cb636b3e2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/accel/bosch,bma400.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bosch BMA400 triaxial acceleration sensor
+> +
+> +maintainers:
+> +  - Dan Robertson <dan@dlrobertson.com>
+> +
+> +description: |
+> +  Acceleration and temerature iio sensors with an i2c interface
 
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
----
- tools/lib/traceevent/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+checkpatch reports a typo here.
 
-diff --git a/tools/lib/traceevent/Makefile b/tools/lib/traceevent/Makefile
-index c874c017c636..0d0575981cc7 100644
---- a/tools/lib/traceevent/Makefile
-+++ b/tools/lib/traceevent/Makefile
-@@ -143,7 +143,7 @@ $(TE_IN): force
- 	$(Q)$(MAKE) $(build)=libtraceevent
- 
- $(OUTPUT)libtraceevent.so.$(EVENT_PARSE_VERSION): $(TE_IN)
--	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
-+	$(QUIET_LINK)$(CC) --shared $(LDFLAGS) $^ -ldl -Wl,-soname,libtraceevent.so.$(EP_VERSION) -o $@
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so
- 	@ln -sf $(@F) $(OUTPUT)libtraceevent.so.$(EP_VERSION)
- 
--- 
-2.11.0
+Otherwise,
 
+Reviewed-by: Rob Herring <robh@kernel.org>
