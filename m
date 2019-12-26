@@ -2,97 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C742A12AC57
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 14:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 429EC12AC5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 14:22:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbfLZNQg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 08:16:36 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41600 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfLZNQg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 08:16:36 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r27so32509003otc.8;
-        Thu, 26 Dec 2019 05:16:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YXEQfNaH8VgTuSjnmguZGyC11qEHXS5tzAGI8RrbPY8=;
-        b=GF4b3ctqjMVQ3Jb+e46vQOkSONVLZM3KfdYhX1urh4bwGFznUnLyqDfv/lU4OUuZXv
-         z/YUjzsd6ag4gY/reT8TJEd11yEJLqFLMQ3CAB447vVWlcIk4g4SZ0JuHWcxsBU7d0Hf
-         kXKC5BPxvuCrJFIHlOFs5j/UJ4/CWLaJ+0mqIIHoZmABDimhlvS2NXLB1pUGQ21MFwtT
-         odAKwTFtE3s6E5cR2og1ncJHV3aVuPgAsGV10eSL6Pmzw/NmCl6prTibmP06QwwGPV6C
-         wo3RDRIOxZ8lbE6ppWHVhgWeB55g+mkejbZxtuxXRc5+qOp5UmT4a4ckB2IbaYqghoUm
-         KVhg==
-X-Gm-Message-State: APjAAAUXbrfw1/GHX/YeJISltDc3BdCWwSuPxYMJ1wICqozjgX2cmffE
-        mm/1dIe2u2OWzwfuiMmdDcMHYiNHShUL4MrW9T8=
-X-Google-Smtp-Source: APXvYqzjoOLS5EFKuY6BxQdWOZeUmiXoP4FsqbIxt6z03pBr9RBXWa7jFuBPKeZecz30modR1jUa5VsfvEbdjxPsOaY=
-X-Received: by 2002:a9d:7984:: with SMTP id h4mr51311676otm.297.1577366195614;
- Thu, 26 Dec 2019 05:16:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20191223040020.109570-1-yuchao0@huawei.com> <CAMuHMdUDMv_mMw_ZU4BtuRKX1OvMhjLWw2owTcAP-0D4j5XROw@mail.gmail.com>
- <1cc2d2a093ebb15a1fc6eb96d683e918a8d5a7d4.camel@dubeyko.com>
- <CAMuHMdV5VtR+vgYKcZtvcz16GPp9YLG_ecAeDsiNCreP4rYKjw@mail.gmail.com> <61e43dcb781c9e880fac95b525830fd384de122a.camel@dubeyko.com>
-In-Reply-To: <61e43dcb781c9e880fac95b525830fd384de122a.camel@dubeyko.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Dec 2019 14:16:24 +0100
-Message-ID: <CAMuHMdU+_RCp6JWsFm7kw4ce2vBimr=4_oEug=R0Jyr9f0L9Tg@mail.gmail.com>
-Subject: Re: [PATCH] f2fs: introduce DEFAULT_IO_TIMEOUT_JIFFIES
-To:     Vyacheslav Dubeyko <slava@dubeyko.com>
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chao Yu <chao@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726505AbfLZNWx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 08:22:53 -0500
+Received: from mail.fudan.edu.cn ([61.129.42.10]:41265 "EHLO fudan.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725954AbfLZNWx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Dec 2019 08:22:53 -0500
+Received: from localhost.localdomain (unknown [10.222.182.212])
+        by app2 (Coremail) with SMTP id XQUFCgAn4fX8swReeGNhAA--.45422S3;
+        Thu, 26 Dec 2019 21:22:04 +0800 (CST)
+From:   xiyuyang19@fudan.edu.cn
+To:     xiyuyang19@fudan.edu.cn
+Cc:     yuanxzhang@fudan.edu.cn, kjlu@umn.edu, leon@kernel.org,
+        Xin Tan <tanxin.ctf@gmail.com>,
+        Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3] infiniband: i40iw: fix a potential NULL pointer dereference
+Date:   Thu, 26 Dec 2019 21:21:56 +0800
+Message-Id: <1577366516-19556-1-git-send-email-xiyuyang19@fudan.edu.cn>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: XQUFCgAn4fX8swReeGNhAA--.45422S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7XF4DKrWfJF18Wr48Zr1UZFb_yoWkXrX_Kr
+        4UZFn7ur98AF12kr4kKFnrXFy2v34YvwsrZw4Dt34fJ34rWw1DJrZ5A3Wrur47urWxGFsr
+        Cas5Cw4xCFWrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUbSAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wA2ocxC64kI
+        II0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7
+        xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2
+        z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4
+        CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E74AGY7Cv6cx26ry5
+        Xr1UJr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc
+        8vx2IErcIFxwACI402YVCY1x02628vn2kIc2xKxwAKzVCY07xG64k0F24lc7CjxVAaw2AF
+        wI0_Jw0_GFylc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_Xr
+        y5Jr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+        7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+        C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+        04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+        IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JjVPfdUUUUU=
+X-CM-SenderInfo: irzsiiysuqikmy6i3vldqovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vyacheslav,
+From: Xiyu Yang <xiyuyang19@fudan.edu.cn>
 
-On Thu, Dec 26, 2019 at 2:08 PM Vyacheslav Dubeyko <slava@dubeyko.com> wrote:
-> On Thu, 2019-12-26 at 11:43 +0100, Geert Uytterhoeven wrote:
-> > On Wed, Dec 25, 2019 at 10:58 AM Vyacheslav Dubeyko <
-> > slava@dubeyko.com> wrote:
-> > > On Mon, 2019-12-23 at 09:41 +0100, Geert Uytterhoeven wrote:
-> > > > On Mon, Dec 23, 2019 at 5:01 AM Chao Yu <yuchao0@huawei.com>
-> > > > wrote:
-> > > > > As Geert Uytterhoeven reported:
-> > > > >
-> > > > > for parameter HZ/50 in congestion_wait(BLK_RW_ASYNC, HZ/50);
-> > > > >
-> > > > > On some platforms, HZ can be less than 50, then unexpected 0
-> > > > > timeout
-> > > > > jiffies will be set in congestion_wait().
-> > >
-> > > It looks like that HZ could have various value on diferent
-> > > platforms.
-> > > So, why does it need to divide HZ on 50? Does it really necessary?
-> > > Could it be used HZ only without the division operation?
-> >
-> > A timeout of HZ means 1 second.
-> > HZ/50 means 20 ms, but has the risk of being zero, if HZ < 50.
-> >
-> > If you want to use a timeout of 20 ms, you best use
-> > msecs_to_jiffies(20),
-> > as that takes care of the special cases, and never returns 0.
-> >
->
-> The msecs_to_jiffies(20) looks much better for my taste. Maybe, we
-> could use this as solution of the issue?
+in_dev_get may return a NULL object. The fix handles the situation
+by adding a check to avoid NULL pointer dereference on idev,
+as pick_local_ipaddrs does.
 
-Thanks, sounds good to me.
+Signed-off-by: Xiyu Yang <xiyuyang19@fudan.edu.cn>
+Signed-off-by: Xin Tan <tanxin.ctf@gmail.com>
+---
+Changes in v2:
+- Release rtnl lock when in_dev_get return NULL
+Changes in v3:
+- Continue the next loop when in_dev_get return NULL
 
-Gr{oetje,eeting}s,
+ drivers/infiniband/hw/i40iw/i40iw_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-                        Geert
-
+diff --git a/drivers/infiniband/hw/i40iw/i40iw_main.c b/drivers/infiniband/hw/i40iw/i40iw_main.c
+index d44cf33d..2386143 100644
+--- a/drivers/infiniband/hw/i40iw/i40iw_main.c
++++ b/drivers/infiniband/hw/i40iw/i40iw_main.c
+@@ -1225,6 +1225,8 @@ static void i40iw_add_ipv4_addr(struct i40iw_device *iwdev)
+ 			const struct in_ifaddr *ifa;
+ 
+ 			idev = in_dev_get(dev);
++			if (!idev)
++				continue;
+ 			in_dev_for_each_ifa_rtnl(ifa, idev) {
+ 				i40iw_debug(&iwdev->sc_dev, I40IW_DEBUG_CM,
+ 					    "IP=%pI4, vlan_id=%d, MAC=%pM\n", &ifa->ifa_address,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
