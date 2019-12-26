@@ -2,307 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C07B012AE5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 21:02:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE84B12AE69
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 21:26:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfLZUCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 15:02:51 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:44523 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726653AbfLZUCu (ORCPT
+        id S1726925AbfLZU0N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 15:26:13 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44861 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726653AbfLZU0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 15:02:50 -0500
-X-Originating-IP: 88.190.179.123
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id AE615E0006;
-        Thu, 26 Dec 2019 20:02:45 +0000 (UTC)
-Date:   Thu, 26 Dec 2019 21:11:46 +0100
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] phy: amlogic: Add Amlogic AXG MIPI/PCIE PHY Driver
-Message-ID: <20191226201146.GA1803@voidbox>
-References: <20191223214529.20377-1-repk@triplefau.lt>
- <20191223214529.20377-2-repk@triplefau.lt>
- <1jeewrpgrr.fsf@starbuckisacylon.baylibre.com>
+        Thu, 26 Dec 2019 15:26:13 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q10so24467016wrm.11;
+        Thu, 26 Dec 2019 12:26:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9U7JTfD4fduXLjfQ1Xx2mG/4Nq5G+aypGi2uRZjCndQ=;
+        b=Y+/E7sdISgFCod6NdnHJW479g8MbWWiNgwWpI5rVpokct4dLSn3EClz4zxD5nUcwHG
+         849iZdjDWcPvqsDGib5WzIiUhGuLV+apNaE8wxvr6ziNcMBV04P+eNSrmZheHrP9KoN5
+         1f56JreZqERgJjZe2LLqBOpErT4GWmzWRSJapOT42TkPWV/3Nch5oKXTNI6qsQQJw59Q
+         /SD+GdekkD7sWS3z770vw6CkDlXPFk3WkuhXb23RpwdtmICcNf6wxMByJxP80Jo5J9kp
+         0QXxbYyDDSjx+3bMkRs9XA5u47uWRz2SYIF9gBE9sbvQScuTJXiC3PGYpDnBV72LD6QP
+         75xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9U7JTfD4fduXLjfQ1Xx2mG/4Nq5G+aypGi2uRZjCndQ=;
+        b=sM5XWbGwh/7bJGfRikfU/udgLvgul2dQ3PsmWuoGHldjpfaeF4bOnE3OdP2IcPSEBc
+         dZ5vRR5odWui31telM2zl9podv8TjcnBTwuqzxnvs2V9ImgnHpilv1TG02bG6xRMgS3V
+         S97AckqI4U+qZ4OkcApmr5sQn7I6DrYNak7Kuv2xq1FamwzzDgR6iZB4fbIQy7K6YXow
+         wcfCMDx7D/r4r8+UifwukB9ao8OKRsq6pVQ/PkQa3yKB26o1HrsroEsEYMMSfH8z7VXg
+         rAeMcXrVECVs09iMXAleUE3TwEKKqTFSKwER36jKo6xXVwkLlswP4awcBCG2oxD4jjWq
+         cV2g==
+X-Gm-Message-State: APjAAAXb1d9dcowY+vAvZldMfcj2uPbvWdriGYMcMrYf8PHl+RzCzS+I
+        vT6kqdJkzF4ncQ16pbIEfQmI9LPe
+X-Google-Smtp-Source: APXvYqwcuB8ziCCtYYFgDEUXH4mvcKEbxT76KLDcss6Q4USj5UvoJ3HbyoEmisuUoyobLrZHRGuolA==
+X-Received: by 2002:a5d:4687:: with SMTP id u7mr46714621wrq.176.1577391971163;
+        Thu, 26 Dec 2019 12:26:11 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id o129sm9470927wmb.1.2019.12.26.12.26.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2019 12:26:10 -0800 (PST)
+Date:   Thu, 26 Dec 2019 21:26:07 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v8 0/7] add thermal sensor driver for A64, A83T, H3, H5,
+ H6, R40
+Message-ID: <20191226202607.GA9524@Red>
+References: <20191219172823.1652600-1-anarsoul@gmail.com>
+ <20191219173321.bni4tbrhfkkphv7k@gilmour.lan>
+ <4015380d-33ef-312c-a886-6e8bf65c976a@linaro.org>
+ <20191226092751.dc3boaxsaeivuhw4@hendrix.home>
+ <20191226104419.GA26677@Red>
+ <CAEExFWtNZM3QSSMEksK=-opKZqxvCqyG2=3=iCo3VU6tfie64w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1jeewrpgrr.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <CAEExFWtNZM3QSSMEksK=-opKZqxvCqyG2=3=iCo3VU6tfie64w@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 10:39:36AM +0100, Jerome Brunet wrote:
-> 
-> On Mon 23 Dec 2019 at 22:45, Remi Pommarel <repk@triplefau.lt> wrote:
-> 
-> > This adds support for the MIPI PHY also needed for PCIE found in the
-> > Amlogic AXG SoC Family.
+On Thu, Dec 26, 2019 at 08:47:47PM +0800, Frank Lee wrote:
+> On Thu, Dec 26, 2019 at 6:44 PM Corentin Labbe
+> <clabbe.montjoie@gmail.com> wrote:
 > >
-> > MIPI or PCIE selection is done by the #phy-cells, making the mode
-> > static and exclusive.
+> > On Thu, Dec 26, 2019 at 10:27:51AM +0100, Maxime Ripard wrote:
+> > > On Tue, Dec 24, 2019 at 07:30:55PM +0100, Daniel Lezcano wrote:
+> > > > On 19/12/2019 18:33, Maxime Ripard wrote:
+> > > > > Hi,
+> > > > >
+> > > > > On Thu, Dec 19, 2019 at 09:28:16AM -0800, Vasily Khoruzhick wrote:
+> > > > >> This patchset adds driver for thermal sensor in A64, A83T, H3, H5,
+> > > > >> H6 and R40 SoCs.
+> > > > >
+> > > > > Thanks again for working on this.
+> > > > >
+> > > > > I'll merge the DT patches when the driver will have been merged.
+> > > >
+> > > > I've applied patches 1 & 2.
+> > > >
+> > > > They are in the testing branch and will go to the linux-next branch as
+> > > > soon as the kernelci passes.
+> > >
+> > > I just merged all the other patches (except the patch 6, for the H6,
+> > > as requested by Vasily on IRC).
+> > >
 > >
-> > For now only PCIE fonctionality is supported.
+> > Hello
 > >
-> > This PHY will be used to replace the mipi_enable clock gating logic
-> > which was mistakenly added in the clock subsystem. This also activate
-> > a non documented band gap bit in those registers that allows reliable
-> > PCIE clock signal generation on AXG platforms.
+> > Vasily asked to not apply H6 due to my test failling on h6 and since he didnt own any H6 hw.
+> > But it was failling due my fault (a failling build).
 > >
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  drivers/phy/amlogic/Kconfig                   |  11 ++
-> >  drivers/phy/amlogic/Makefile                  |   1 +
-> >  drivers/phy/amlogic/phy-meson-axg-mipi-pcie.c | 176 ++++++++++++++++++
-> >  3 files changed, 188 insertions(+)
-> >  create mode 100644 drivers/phy/amlogic/phy-meson-axg-mipi-pcie.c
-> >
-> > diff --git a/drivers/phy/amlogic/Kconfig b/drivers/phy/amlogic/Kconfig
-> > index af774ac2b934..1eeb75d018e3 100644
-> > --- a/drivers/phy/amlogic/Kconfig
-> > +++ b/drivers/phy/amlogic/Kconfig
-> > @@ -59,3 +59,14 @@ config PHY_MESON_G12A_USB3_PCIE
-> >  	  Enable this to support the Meson USB3 + PCIE Combo PHY found
-> >  	  in Meson G12A SoCs.
-> >  	  If unsure, say N.
-> > +
-> > +config PHY_MESON_AXG_MIPI_PCIE
-> > +	tristate "Meson AXG MIPI + PCIE PHY driver"
-> > +	default ARCH_MESON
-> > +	depends on OF && (ARCH_MESON || COMPILE_TEST)
-> > +	select GENERIC_PHY
-> > +	select MFD_SYSCON
-> > +	help
-> > +	  Enable this to support the Meson MIPI + PCIE PHY found
-> > +	  in Meson AXG SoCs.
-> > +	  If unsure, say N.
-> > diff --git a/drivers/phy/amlogic/Makefile b/drivers/phy/amlogic/Makefile
-> > index 11d1c42ac2be..2167330a0ae8 100644
-> > --- a/drivers/phy/amlogic/Makefile
-> > +++ b/drivers/phy/amlogic/Makefile
-> > @@ -4,3 +4,4 @@ obj-$(CONFIG_PHY_MESON_GXL_USB2)	+= phy-meson-gxl-usb2.o
-> >  obj-$(CONFIG_PHY_MESON_G12A_USB2)	+= phy-meson-g12a-usb2.o
-> >  obj-$(CONFIG_PHY_MESON_GXL_USB3)	+= phy-meson-gxl-usb3.o
-> >  obj-$(CONFIG_PHY_MESON_G12A_USB3_PCIE)	+= phy-meson-g12a-usb3-pcie.o
-> > +obj-$(CONFIG_PHY_MESON_AXG_MIPI_PCIE)	+= phy-meson-axg-mipi-pcie.o
-> > diff --git a/drivers/phy/amlogic/phy-meson-axg-mipi-pcie.c b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie.c
-> > new file mode 100644
-> > index 000000000000..006aa8cdfc47
-> > --- /dev/null
-> > +++ b/drivers/phy/amlogic/phy-meson-axg-mipi-pcie.c
-> > @@ -0,0 +1,176 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Amlogic AXG MIPI + PCIE PHY driver
-> > + *
-> > + * Copyright (C) 2019 Remi Pommarel <repk@triplefau.lt>
-> > + */
-> > +#include <linux/module.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/platform_device.h>
-> > +#include <dt-bindings/phy/phy.h>
-> > +
-> > +#define HHI_MIPI_CNTL0 0x00
-> > +#define		HHI_MIPI_CNTL0_COMMON_BLOCK	GENMASK(31, 28)
-> > +#define		HHI_MIPI_CNTL0_ENABLE		BIT(29)
-> > +#define		HHI_MIPI_CNTL0_BANDGAP		BIT(26)
-> > +#define		HHI_MIPI_CNTL0_DECODE_TO_RTERM	GENMASK(15, 12)
-> > +#define		HHI_MIPI_CNTL0_OUTPUT_EN	BIT(3)
-> > +
-> > +#define HHI_MIPI_CNTL1 0x01
-> > +#define		HHI_MIPI_CNTL1_CH0_CML_PDR_EN	BIT(12)
-> > +#define		HHI_MIPI_CNTL1_LP_ABILITY	GENMASK(5, 4)
-> > +#define		HHI_MIPI_CNTL1_LP_RESISTER	BIT(3)
-> > +#define		HHI_MIPI_CNTL1_INPUT_SETTING	BIT(2)
-> > +#define		HHI_MIPI_CNTL1_INPUT_SEL	BIT(1)
-> > +#define		HHI_MIPI_CNTL1_PRBS7_EN		BIT(0)
-> > +
-> > +#define HHI_MIPI_CNTL2 0x02
-> > +#define		HHI_MIPI_CNTL2_CH_PU		GENMASK(31, 25)
-> > +#define		HHI_MIPI_CNTL2_CH_CTL		GENMASK(24, 19)
-> > +#define		HHI_MIPI_CNTL2_CH0_DIGDR_EN	BIT(18)
-> > +#define		HHI_MIPI_CNTL2_CH_DIGDR_EN	BIT(17)
-> > +#define		HHI_MIPI_CNTL2_LPULPS_EN	BIT(16)
-> > +#define		HHI_MIPI_CNTL2_CH_EN(n)		BIT(15 - (n))
-> > +#define		HHI_MIPI_CNTL2_CH0_LP_CTL	GENMASK(10, 1)
-> > +
-> > +struct phy_axg_mipi_pcie_priv {
-> > +	struct phy *phy;
-> > +	unsigned int mode;
-> > +	struct regmap *regmap;
-> > +};
-> > +
-> > +static const struct regmap_config phy_axg_mipi_pcie_regmap_conf = {
-> > +	.reg_bits = 8,
-> > +	.val_bits = 32,
-> > +	.reg_stride = 4,
-> > +	.max_register = HHI_MIPI_CNTL2,
-> > +};
-> > +
-> > +static int phy_axg_mipi_pcie_power_on(struct phy *phy)
-> > +{
-> > +	struct phy_axg_mipi_pcie_priv *priv = phy_get_drvdata(phy);
-> > +
-> > +	/* MIPI not supported yet */
-> > +	if (priv->mode != PHY_TYPE_PCIE)
-> > +		return 0;
-> > +
-> > +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
-> > +			   HHI_MIPI_CNTL0_BANDGAP, HHI_MIPI_CNTL0_BANDGAP);
-> > +
-> > +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
-> > +			   HHI_MIPI_CNTL0_ENABLE, HHI_MIPI_CNTL0_ENABLE);
-> > +	return 0;
-> > +}
-> > +
-> > +static int phy_axg_mipi_pcie_power_off(struct phy *phy)
-> > +{
-> > +	struct phy_axg_mipi_pcie_priv *priv = phy_get_drvdata(phy);
-> > +
-> > +	/* MIPI not supported yet */
-> > +	if (priv->mode != PHY_TYPE_PCIE)
-> > +		return 0;
-> > +
-> > +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
-> > +			   HHI_MIPI_CNTL0_BANDGAP, 0);
-> > +	regmap_update_bits(priv->regmap, HHI_MIPI_CNTL0,
-> > +			   HHI_MIPI_CNTL0_ENABLE, 0);
-> > +	return 0;
-> > +}
-> > +
-> > +static int phy_axg_mipi_pcie_init(struct phy *phy)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static int phy_axg_mipi_pcie_exit(struct phy *phy)
-> > +{
-> > +	return 0;
-> > +}
-> > +
-> > +static const struct phy_ops phy_axg_mipi_pcie_ops = {
-> > +	.init = phy_axg_mipi_pcie_init,
-> > +	.exit = phy_axg_mipi_pcie_exit,
-> > +	.power_on = phy_axg_mipi_pcie_power_on,
-> > +	.power_off = phy_axg_mipi_pcie_power_off,
-> > +	.owner = THIS_MODULE,
-> > +};
-> > +
-> > +static struct phy *phy_axg_mipi_pcie_xlate(struct device *dev,
-> > +					   struct of_phandle_args *args)
-> > +{
-> > +	struct phy_axg_mipi_pcie_priv *priv = dev_get_drvdata(dev);
-> > +	unsigned int mode;
-> > +
-> > +	if (args->args_count != 1) {
-> > +		dev_err(dev, "invalid number of arguments\n");
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
-> > +
-> > +	mode = args->args[0];
-> > +
-> > +	/* MIPI mode is not supported yet */
-> > +	if (mode != PHY_TYPE_PCIE) {
-> > +		dev_err(dev, "invalid phy mode select argument\n");
-> > +		return ERR_PTR(-EINVAL);
-> > +	}
-> > +
-> > +	priv->mode = mode;
-> > +	return priv->phy;
-> > +}
-> > +
-> > +static int phy_axg_mipi_pcie_probe(struct platform_device *pdev)
-> > +{
-> > +	struct phy_provider *pphy;
-> > +	struct device *dev = &pdev->dev;
-> > +	struct phy_axg_mipi_pcie_priv *priv;
-> > +	struct device_node *np = dev->of_node;
-> > +	int ret;
-> > +
-> > +	priv = devm_kmalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	/* Get the hhi system controller node */
-> > +	priv->regmap = syscon_node_to_regmap(of_get_parent(dev->of_node));
-> > +	if (IS_ERR(priv->regmap)) {
-> > +		dev_err(dev, "failed to get HHI regmap\n");
-> > +		return PTR_ERR(priv->regmap);
-> > +	}
+> > So the patchset work perfect on H6 (opi1+, opi3, pineH64 both model A and B) as reported by my answer to this thread.
 > 
-> Remi,
+> HI Corentin,
 > 
-> Unless we are absolutely sure this will be *AXG ONLY*, I would
-> prefer if you get the registers without the syscon.
+> Although it is not calibrated, it should work on the R40. Can you give
+> my patch a try?
 > 
-> Having it introduce some kind of dependency between the 2 which is
-> likely to make this driver SoC specific.
-> 
-> It was clearly wrong for the clock controller to map these regiters, and
-> if there is a possibility that this driver is used on other SoCs, I
-> would prefer if we did not carry that mistake over. I would prefer if we
-> fixed the clock controller so you don't need syscon here.
 
-Jerome thank you for reviewing this,
+Hello
 
-Sure I will remove access to the registers through syscon system. Just
-to be sure we are on the same page here. What you suggest is keeping the
-two PHYs approach from this patchset (instead of the one PHY in v3),
-even if there is not exactly two PHYs, right ?
+It is planned, I will report the result.
 
-Thanks,
-
--- 
-Remi
-
-> 
-> > +
-> > +	priv->phy = devm_phy_create(dev, np, &phy_axg_mipi_pcie_ops);
-> > +	if (IS_ERR(priv->phy)) {
-> > +		ret = PTR_ERR(priv->phy);
-> > +		if (ret != -EPROBE_DEFER)
-> > +			dev_err(dev, "failed to create PHY\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	phy_set_drvdata(priv->phy, priv);
-> > +	dev_set_drvdata(dev, priv);
-> > +	pphy = devm_of_phy_provider_register(dev, phy_axg_mipi_pcie_xlate);
-> > +
-> > +	return PTR_ERR_OR_ZERO(pphy);
-> > +}
-> > +
-> > +static const struct of_device_id phy_axg_mipi_pcie_of_match[] = {
-> > +	{
-> > +		.compatible = "amlogic,axg-mipi-pcie-phy",
-> > +	},
-> > +	{ },
-> > +};
-> > +MODULE_DEVICE_TABLE(of, phy_axg_mipi_pcie_of_match);
-> > +
-> > +static struct platform_driver phy_axg_mipi_pcie_driver = {
-> > +	.probe = phy_axg_mipi_pcie_probe,
-> > +	.driver = {
-> > +		.name = "phy-axg-mipi-pcie",
-> > +		.of_match_table = phy_axg_mipi_pcie_of_match,
-> > +	},
-> > +};
-> > +module_platform_driver(phy_axg_mipi_pcie_driver);
-> > +
-> > +MODULE_AUTHOR("Remi Pommarel <repk@triplefau.lt>");
-> > +MODULE_DESCRIPTION("Amlogic AXG MIPI + PCIE PHY driver");
-> > +MODULE_LICENSE("GPL v2");
-> 
+Regards
