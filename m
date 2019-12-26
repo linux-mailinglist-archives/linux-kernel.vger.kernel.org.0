@@ -2,149 +2,357 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D409412ACAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 15:04:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6673A12ACB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 26 Dec 2019 15:04:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfLZOEc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 09:04:32 -0500
-Received: from mail-eopbgr30051.outbound.protection.outlook.com ([40.107.3.51]:53250
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726074AbfLZOEc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 09:04:32 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Q1lEAqOi+u5enHhacTjsCnAhwFhfkjh4QbbAHSZB7Ebq2aVTwbyfI2+M4KjqUS6ec6aR3GOlBONhgJ/oF9KN5vDEQEEGpZc2k1S/wHqPsPkSC4rACcuIsC+nd0BjlMBC/En8muzaKLaQm7xGu34ekka1zBbNZP3SeOHl9jBxNpHN09FyH97ykcdVx505wIj9vZjNxJSiyiJlX076aBX3Ui1r4z0tSd76OsbTcW19zMAlVI1HhdPwluYHpTw5uKQOEjxkcjMBy3zC2TeQPQl9AaLObyCREVOr8T0LZpu0z7jXmkHz/mbtlP10RCfScqG+H1MWpxk9pzR8F1JYChztIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HdeEwGufP9ZrXewH9YszJbbm5IsOTiS9gXj7hzsa+DY=;
- b=azwmVgNydjLnh9Zro9CRKwPGelGkN6fDdTBA1lWn8yLTvJspQq6pI3UyO0q5TpQIjezQZl1MvmwvdQYaX7a9lLnoZc1M5o+TLhzY83u5jlQrTUBYbqLH5Sd6l9O8NLuOPUV+871vB6w1WlysXKM7SgeXL/X2sRRoXM45tc+oHvgtgQd3swPZ8g4kBzC5mgS7aqf9bOqBmfCztmu1xy0n+ZksxF9e5S11mBmoJNWGAURSGBlQmjEiRXgzkgtgMNetSCjgU23t8LYJ8q1P71WLpRZDzgZ5LTkCfPRlnBSiYWcEhj8LNG+wPL3R833y6uHAWzIaBTUFUGSPk4ni0MpNJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HdeEwGufP9ZrXewH9YszJbbm5IsOTiS9gXj7hzsa+DY=;
- b=RNaQ1gJQD0er9jF4aar5VugS4UidfFHafySUZ2eCsjzKEVjHOGClG6z3GFvTlgM2Zh/K5uzFfs5UTPnTiiSSTqZzm0TjScLGOAqJQC4E89wWXacwSnf7InevFUU1A/6Ig4blaOohZjAZtvHS/cGJWjLFovhXd8SDBItSXByJA3s=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB5060.eurprd04.prod.outlook.com (20.177.41.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.11; Thu, 26 Dec 2019 14:04:28 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::6d52:5678:e02f:95f4]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::6d52:5678:e02f:95f4%3]) with mapi id 15.20.2581.007; Thu, 26 Dec 2019
- 14:04:28 +0000
-Received: from localhost (89.37.124.34) by AM5PR0601CA0032.eurprd06.prod.outlook.com (2603:10a6:203:68::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend Transport; Thu, 26 Dec 2019 14:04:27 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>
-CC:     "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 2/2] cpufreq: imx-cpufreq-dt: Add i.MX8MP support
-Thread-Topic: [PATCH 2/2] cpufreq: imx-cpufreq-dt: Add i.MX8MP support
-Thread-Index: AQHVu7mKaZLuFaepI0S7Z4SaC6NlIKfMc1AA
-Date:   Thu, 26 Dec 2019 14:04:28 +0000
-Message-ID: <20191226140426.ip2vb6dom5hckenc@fsr-ub1664-175>
-References: <1577343167-16376-1-git-send-email-Anson.Huang@nxp.com>
- <1577343167-16376-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1577343167-16376-2-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0601CA0032.eurprd06.prod.outlook.com
- (2603:10a6:203:68::18) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: d51eed90-c363-43d2-ff4e-08d78a0c8568
-x-ms-traffictypediagnostic: AM0PR04MB5060:|AM0PR04MB5060:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB50609D366D9596CAD6282654F62B0@AM0PR04MB5060.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02638D901B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(396003)(366004)(346002)(136003)(39860400002)(376002)(189003)(199004)(5660300002)(66446008)(186003)(16526019)(2906002)(66476007)(8936002)(6862004)(86362001)(1076003)(52116002)(81166006)(6496006)(8676002)(53546011)(66946007)(64756008)(66556008)(26005)(81156014)(71200400001)(54906003)(316002)(44832011)(6486002)(4326008)(956004)(478600001)(33716001)(6636002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5060;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: CEhE1rkYukRZOPVEANut4o4U8hFudjiGvGqIt2XArQr0PBaWE1cvDjR6ZE6qQ0Y5nYlzXx7tGZkZmBzzKGC6i0hWyd/PMS0cUK/le6r7/uV3cf1ajohvQ5T9/S+u8+oJ/T6FVe/P9t3TIr72H/9Dejb3dgCTIN2GXW2iNtyO6+6LtyxcIZLyRLjBPobjTn4m+RebxoJyk2LQSfUoWXFa8feBeaHPjlJrUG08/JYb638sWXKJiDZXLyMNrY2Lm4Zf0aFfP8dpvegzxjwkGfBlO7Nq0D4Lxz8Co+NvoaEVWtu0RkGfypEInz/Ez93X5rlzapxnQmsPYu3xufq2LDwFrGbkwLWgRwPFR2sPAbP1napU7JAjsENtjjKAvBTcUSzoVgBXP8KBt+TuSCkqWu8cnsHiUEO4sRYnA5GzIIfKankMqQrj53AVNODsoj+gg97K
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8F23C618A82F824C80C1441332F2773D@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727034AbfLZOEo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 09:04:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726894AbfLZOEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Dec 2019 09:04:44 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B840C2053B;
+        Thu, 26 Dec 2019 14:04:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577369082;
+        bh=UrLKe13en8Ae59gdp990Ss/s7oineIIoZQuF82ES7Y8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PIKeVQHXrH468HK7cTTYm0Jn1Y6lvQNHRA5JCvuimdDyNbtlyNvzw8C/SXjHJdLPK
+         XG0rL2o12+xbL01QnDL17sI+mFmSL8ddF7+vC1iDFN1QsRV1jBuCkX//xIdTfG8ktU
+         vpla1y6Y5Djhg1WybeHjD0FWrYnz0Fo+TAwJlvtY=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Tim Bird <Tim.Bird@sony.com>, Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 04/22] tools: bootconfig: Add bootconfig test script
+Date:   Thu, 26 Dec 2019 23:04:36 +0900
+Message-Id: <157736907642.11126.379669456310178071.stgit@devnote2>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <157736902773.11126.2531161235817081873.stgit@devnote2>
+References: <157736902773.11126.2531161235817081873.stgit@devnote2>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d51eed90-c363-43d2-ff4e-08d78a0c8568
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Dec 2019 14:04:28.1254
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BCiT2gmbSgN40DgIsZSYRCnUW5fHfLnfeJwjKRtrNQcUQzEwQScM5pkTc3WsjQGWDiekjn9UbaBKWY8SAST0aQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5060
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19-12-26 14:52:47, Anson Huang wrote:
-> Add i.MX8MP cpufreq DT support for speed grading and market
-> segment check.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/cpufreq/imx-cpufreq-dt.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufr=
-eq-dt.c
-> index 85a6efd..912e93d 100644
-> --- a/drivers/cpufreq/imx-cpufreq-dt.c
-> +++ b/drivers/cpufreq/imx-cpufreq-dt.c
-> @@ -35,7 +35,7 @@ static int imx_cpufreq_dt_probe(struct platform_device =
-*pdev)
->  	if (ret)
->  		return ret;
-> =20
-> -	if (of_machine_is_compatible("fsl,imx8mn"))
-> +	if (of_machine_is_compatible("fsl,imx8mn") || of_machine_is_compatible(=
-"fsl,imx8mp"))
+Add a bootconfig test script to ensure the tool and
+boot config parser are working correctly.
 
-Is there a way we could do this more generic so we won't have to add
-another of_machine_is_compatible if a new imx8m comes around ?
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+---
+ Changes in v5:
+  - Show test target bootconfig name
+  - Add printables testcases
+  - Add bad array testcase
+---
+ tools/bootconfig/Makefile                       |    3 +
+ tools/bootconfig/samples/bad-array.bconf        |    2 +
+ tools/bootconfig/samples/bad-dotword.bconf      |    4 +
+ tools/bootconfig/samples/bad-empty.bconf        |    1 
+ tools/bootconfig/samples/bad-keyerror.bconf     |    2 +
+ tools/bootconfig/samples/bad-longkey.bconf      |    1 
+ tools/bootconfig/samples/bad-manywords.bconf    |    1 
+ tools/bootconfig/samples/bad-no-keyword.bconf   |    2 +
+ tools/bootconfig/samples/bad-nonprintable.bconf |    2 +
+ tools/bootconfig/samples/bad-spaceword.bconf    |    2 +
+ tools/bootconfig/samples/bad-tree.bconf         |    5 +
+ tools/bootconfig/samples/bad-value.bconf        |    3 +
+ tools/bootconfig/samples/escaped.bconf          |    3 +
+ tools/bootconfig/samples/good-printables.bconf  |    2 +
+ tools/bootconfig/samples/good-simple.bconf      |   11 +++
+ tools/bootconfig/samples/good-single.bconf      |    4 +
+ tools/bootconfig/samples/good-tree.bconf        |   12 +++
+ tools/bootconfig/test-bootconfig.sh             |   80 +++++++++++++++++++++++
+ 18 files changed, 140 insertions(+)
+ create mode 100644 tools/bootconfig/samples/bad-array.bconf
+ create mode 100644 tools/bootconfig/samples/bad-dotword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-empty.bconf
+ create mode 100644 tools/bootconfig/samples/bad-keyerror.bconf
+ create mode 100644 tools/bootconfig/samples/bad-longkey.bconf
+ create mode 100644 tools/bootconfig/samples/bad-manywords.bconf
+ create mode 100644 tools/bootconfig/samples/bad-no-keyword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-nonprintable.bconf
+ create mode 100644 tools/bootconfig/samples/bad-spaceword.bconf
+ create mode 100644 tools/bootconfig/samples/bad-tree.bconf
+ create mode 100644 tools/bootconfig/samples/bad-value.bconf
+ create mode 100644 tools/bootconfig/samples/escaped.bconf
+ create mode 100644 tools/bootconfig/samples/good-printables.bconf
+ create mode 100644 tools/bootconfig/samples/good-simple.bconf
+ create mode 100644 tools/bootconfig/samples/good-single.bconf
+ create mode 100644 tools/bootconfig/samples/good-tree.bconf
+ create mode 100755 tools/bootconfig/test-bootconfig.sh
 
-If not, please drop the second one on a new line to follow the 80 chars rul=
-e.
+diff --git a/tools/bootconfig/Makefile b/tools/bootconfig/Makefile
+index 681b7aef3e44..a6146ac64458 100644
+--- a/tools/bootconfig/Makefile
++++ b/tools/bootconfig/Makefile
+@@ -16,5 +16,8 @@ bootconfig: ../../lib/bootconfig.c main.c $(HEADER)
+ install: $(PROGS)
+ 	install bootconfig $(DESTDIR)$(bindir)
+ 
++test: bootconfig
++	./test-bootconfig.sh
++
+ clean:
+ 	$(RM) -f *.o bootconfig
+diff --git a/tools/bootconfig/samples/bad-array.bconf b/tools/bootconfig/samples/bad-array.bconf
+new file mode 100644
+index 000000000000..0174af019d7f
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-array.bconf
+@@ -0,0 +1,2 @@
++# Array must be comma separated.
++key = "value1" "value2"
+diff --git a/tools/bootconfig/samples/bad-dotword.bconf b/tools/bootconfig/samples/bad-dotword.bconf
+new file mode 100644
+index 000000000000..ba5557b2bdd3
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-dotword.bconf
+@@ -0,0 +1,4 @@
++# do not start keyword with .
++key {
++  .word = 1
++}
+diff --git a/tools/bootconfig/samples/bad-empty.bconf b/tools/bootconfig/samples/bad-empty.bconf
+new file mode 100644
+index 000000000000..2ba3f6cc6a47
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-empty.bconf
+@@ -0,0 +1 @@
++# Wrong boot config: comment only
+diff --git a/tools/bootconfig/samples/bad-keyerror.bconf b/tools/bootconfig/samples/bad-keyerror.bconf
+new file mode 100644
+index 000000000000..b6e247a099d0
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-keyerror.bconf
+@@ -0,0 +1,2 @@
++# key word can not contain ","
++key,word
+diff --git a/tools/bootconfig/samples/bad-longkey.bconf b/tools/bootconfig/samples/bad-longkey.bconf
+new file mode 100644
+index 000000000000..eb97369f91a8
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-longkey.bconf
+@@ -0,0 +1 @@
++key_word_is_too_long01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+diff --git a/tools/bootconfig/samples/bad-manywords.bconf b/tools/bootconfig/samples/bad-manywords.bconf
+new file mode 100644
+index 000000000000..8db81967c48a
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-manywords.bconf
+@@ -0,0 +1 @@
++key1.is2.too3.long4.5.6.7.8.9.10.11.12.13.14.15.16.17
+diff --git a/tools/bootconfig/samples/bad-no-keyword.bconf b/tools/bootconfig/samples/bad-no-keyword.bconf
+new file mode 100644
+index 000000000000..eff26808566c
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-no-keyword.bconf
+@@ -0,0 +1,2 @@
++# No keyword
++{}
+diff --git a/tools/bootconfig/samples/bad-nonprintable.bconf b/tools/bootconfig/samples/bad-nonprintable.bconf
+new file mode 100644
+index 000000000000..3bb1a2864e52
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-nonprintable.bconf
+@@ -0,0 +1,2 @@
++# Non printable
++key = ""
+diff --git a/tools/bootconfig/samples/bad-spaceword.bconf b/tools/bootconfig/samples/bad-spaceword.bconf
+new file mode 100644
+index 000000000000..90c703d32a9a
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-spaceword.bconf
+@@ -0,0 +1,2 @@
++# No space between words
++key . word
+diff --git a/tools/bootconfig/samples/bad-tree.bconf b/tools/bootconfig/samples/bad-tree.bconf
+new file mode 100644
+index 000000000000..5a6038edcd55
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-tree.bconf
+@@ -0,0 +1,5 @@
++# brace is not closing
++tree {
++  node {
++    value = 1
++}
+diff --git a/tools/bootconfig/samples/bad-value.bconf b/tools/bootconfig/samples/bad-value.bconf
+new file mode 100644
+index 000000000000..a1217fed86cc
+--- /dev/null
++++ b/tools/bootconfig/samples/bad-value.bconf
+@@ -0,0 +1,3 @@
++# Quotes error
++value = "data
++
+diff --git a/tools/bootconfig/samples/escaped.bconf b/tools/bootconfig/samples/escaped.bconf
+new file mode 100644
+index 000000000000..9f72043b3216
+--- /dev/null
++++ b/tools/bootconfig/samples/escaped.bconf
+@@ -0,0 +1,3 @@
++key1 = "A\B\C"
++key2 = '\'\''
++key3 = "\\"
+diff --git a/tools/bootconfig/samples/good-printables.bconf b/tools/bootconfig/samples/good-printables.bconf
+new file mode 100644
+index 000000000000..91b90073c0f8
+--- /dev/null
++++ b/tools/bootconfig/samples/good-printables.bconf
+@@ -0,0 +1,2 @@
++key = "	
++ !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+diff --git a/tools/bootconfig/samples/good-simple.bconf b/tools/bootconfig/samples/good-simple.bconf
+new file mode 100644
+index 000000000000..37dd6d21c176
+--- /dev/null
++++ b/tools/bootconfig/samples/good-simple.bconf
+@@ -0,0 +1,11 @@
++# A good simple bootconfig
++
++key.word1 = 1
++key.word2=2
++key.word3 = 3;
++
++key {
++word4 = 4 }
++
++key { word5 = 5; word6 = 6 }
++
+diff --git a/tools/bootconfig/samples/good-single.bconf b/tools/bootconfig/samples/good-single.bconf
+new file mode 100644
+index 000000000000..98e55ad8b711
+--- /dev/null
++++ b/tools/bootconfig/samples/good-single.bconf
+@@ -0,0 +1,4 @@
++# single key style
++key = 1
++key2 = 2
++key3 = "alpha", "beta"
+diff --git a/tools/bootconfig/samples/good-tree.bconf b/tools/bootconfig/samples/good-tree.bconf
+new file mode 100644
+index 000000000000..f2ddefc8b52a
+--- /dev/null
++++ b/tools/bootconfig/samples/good-tree.bconf
+@@ -0,0 +1,12 @@
++key {
++  word {
++    tree {
++      value = "0"}
++  }
++  word2 {
++    tree {
++      value = 1,2 }
++  }
++}
++other.tree {
++  value = 2; value2 = 3;}
+diff --git a/tools/bootconfig/test-bootconfig.sh b/tools/bootconfig/test-bootconfig.sh
+new file mode 100755
+index 000000000000..e24c09514afb
+--- /dev/null
++++ b/tools/bootconfig/test-bootconfig.sh
+@@ -0,0 +1,80 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0-only
++
++echo "Boot config test script"
++
++BOOTCONF=./bootconfig
++INITRD=`mktemp initrd-XXXX`
++TEMPCONF=`mktemp temp-XXXX.bconf`
++NG=0
++
++cleanup() {
++  rm -f $INITRD $TEMPCONF
++  exit $NG
++}
++
++trap cleanup EXIT TERM
++
++NO=1
++
++xpass() { # pass test command
++  echo "test case $NO ($3)... "
++  if ! ($@ && echo "\t\t[OK]"); then
++     echo "\t\t[NG]"; NG=$((NG + 1))
++  fi
++  NO=$((NO + 1))
++}
++
++xfail() { # fail test command
++  echo "test case $NO ($3)... "
++  if ! (! $@ && echo "\t\t[OK]"); then
++     echo "\t\t[NG]"; NG=$((NG + 1))
++  fi
++  NO=$((NO + 1))
++}
++
++echo "Basic command test"
++xpass $BOOTCONF $INITRD
++
++echo "Delete command should success without bootconfig"
++xpass $BOOTCONF -d $INITRD
++
++echo "Max node number check"
++
++echo -n > $TEMPCONF
++for i in `seq 1 1024` ; do
++   echo "node$i" >> $TEMPCONF
++done
++xpass $BOOTCONF -a $TEMPCONF $INITRD
++
++echo "badnode" >> $TEMPCONF
++xfail $BOOTCONF -a $TEMPCONF $INITRD
++
++echo "Max filesize check"
++
++# Max size is 32767 (including terminal byte)
++echo -n "data = \"" > $TEMPCONF
++dd if=/dev/urandom bs=768 count=32 | base64 -w0 >> $TEMPCONF
++echo "\"" >> $TEMPCONF
++xfail $BOOTCONF -a $TEMPCONF $INITRD
++
++truncate -s 32764 $TEMPCONF
++echo "\"" >> $TEMPCONF	# add 2 bytes + terminal ('\"\n\0')
++xpass $BOOTCONF -a $TEMPCONF $INITRD
++
++echo "=== expected failure cases ==="
++for i in samples/bad-* ; do
++  xfail $BOOTCONF -a $i $INITRD
++done
++
++echo "=== expected success cases ==="
++for i in samples/good-* ; do
++  xpass $BOOTCONF -a $i $INITRD
++done
++
++echo
++if [ $NG -eq 0 ]; then
++	echo "All tests passed"
++else
++	echo "$NG tests failed"
++fi
 
-Then you can add:
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
-
->  		speed_grade =3D (cell_value & IMX8MN_OCOTP_CFG3_SPEED_GRADE_MASK)
->  			      >> OCOTP_CFG3_SPEED_GRADE_SHIFT;
->  	else
-> @@ -54,7 +54,8 @@ static int imx_cpufreq_dt_probe(struct platform_device =
-*pdev)
->  		if (of_machine_is_compatible("fsl,imx8mm") ||
->  		    of_machine_is_compatible("fsl,imx8mq"))
->  			speed_grade =3D 1;
-> -		if (of_machine_is_compatible("fsl,imx8mn"))
-> +		if (of_machine_is_compatible("fsl,imx8mn") ||
-> +			of_machine_is_compatible("fsl,imx8mp"))
->  			speed_grade =3D 0xb;
->  	}
-> =20
-> --=20
-> 2.7.4
->=20
