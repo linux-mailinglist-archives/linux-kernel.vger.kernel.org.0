@@ -2,168 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D97F12B0A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 03:31:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2090112B0AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 03:41:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfL0Cbr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 21:31:47 -0500
-Received: from mout-p-102.mailbox.org ([80.241.56.152]:20124 "EHLO
-        mout-p-102.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfL0Cbq (ORCPT
+        id S1727158AbfL0Cjc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 21:39:32 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53793 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbfL0Cjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 21:31:46 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-102.mailbox.org (Postfix) with ESMTPS id 47kW6l6W6pzKmXM;
-        Fri, 27 Dec 2019 03:31:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id jgUeRFQtEi48; Fri, 27 Dec 2019 03:31:40 +0100 (CET)
-Date:   Fri, 27 Dec 2019 13:31:31 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     Sargun Dhillon <sargun@sargun.me>, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, tycho@tycho.ws, jannh@google.com,
-        keescook@chromium.org
-Subject: Re: [PATCH] seccomp: Check flags on seccomp_notif is unset
-Message-ID: <20191227023131.klnobtlfgeqcmvbb@yavin.dot.cyphar.com>
-References: <20191225214530.GA27780@ircssh-2.c.rugged-nimbus-611.internal>
- <20191226115245.usf7z5dkui7ndp4w@wittgenstein>
- <20191226143229.sbopynwut2hhsiwn@yavin.dot.cyphar.com>
- <57C06925-0CC6-4251-AD57-8FF1BC28F049@ubuntu.com>
- <20191227022446.37e64ag4uaqms2w4@yavin.dot.cyphar.com>
+        Thu, 26 Dec 2019 21:39:32 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m24so7087591wmc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 18:39:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=lNlw2hvCqhTrh/hZvwaoyx35sWfAeV4bWBqxx7AGW0w=;
+        b=F2dPTR2AStguUI0ZR5BTvAtM2jM+BLo5sQxmbXTSSJlXPEQQ3GktJ6lkZ5oYt89sOV
+         zB3Ni790ffOppqiBjBCnN/Hg3BkMX4Xlw0drIGqguSuIriiMYFxGllaetqKDkZsYspTI
+         YYJS571HnR+MNI6xs/xYaeOqgnPfdnj2h8PdNjmdJcrcHAwujiu8/VV6SpS3/wy/sMAv
+         ZCvGGSnfBWFGEb4hHSXKAaBXzaHoJ5f1MoWLNKmcUfgVlyEnFa8wahVAOn/S0sA5zgKK
+         EI6my1UCUKT3/xv81m48pJXo/4LUdFtmfe98hTijeCe+DVhlzhmDQZQRlYy8iWhQmAhP
+         tA7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=lNlw2hvCqhTrh/hZvwaoyx35sWfAeV4bWBqxx7AGW0w=;
+        b=b+7tcbaqZsZG/slACE/uhxMFjGDAxVuSD1SHuUm2FADfB66L/dPFolrl5cis+tVewU
+         XAGFv/JjETCRaM2Evyg4pGcTU8qny+AhEnATLqUHe2cs4pJJMuEtd95s6i/YIBimwPMu
+         TvuoDOSf4YQdQZlHHPjZetIzANafEX6KJnIARjNuSHWNeREE34JqJPhRkmcZFKOSTwkz
+         hkfKde49pjYbfmV2paXKRPWQK+/qvHnpTl52AI06ssgGH4NhQgGlfNXhCcLHGGqumWN5
+         GYmZJrnRvV6Z3PEJYqV4j4NnaH2wKo2K1lEqOoKhy0Z2GTFX0lXq7a9On2OxPJA9IJG9
+         KW5A==
+X-Gm-Message-State: APjAAAVEjXjHLDGZmlBeSbRtj/j0y8jh1zuWPkA4ZDvAg2ehGlZl8OQh
+        29RRZpWgYV+uIatZ33WQgWs=
+X-Google-Smtp-Source: APXvYqx5WlxQynErEfGANcFG7+r9Q10F6BhK86BjHYn2T+iVZVD9jxFpM5SEG6hdH91wW3UV673v7A==
+X-Received: by 2002:a7b:c151:: with SMTP id z17mr16595270wmi.137.1577414370684;
+        Thu, 26 Dec 2019 18:39:30 -0800 (PST)
+Received: from zhanggen-UX430UQ ([95.179.219.143])
+        by smtp.gmail.com with ESMTPSA id p18sm9733931wmb.8.2019.12.26.18.39.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 26 Dec 2019 18:39:30 -0800 (PST)
+Date:   Fri, 27 Dec 2019 10:39:21 +0800
+From:   Gen Zhang <blackgod016574@gmail.com>
+To:     nsekhar@ti.com, bgolaszewski@baylibre.com, linux@armlinux.org.uk
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] board-dm644x-evm: fix 2 missing-check bugs in evm_led_setup()
+Message-ID: <20191227023921.GA21233@zhanggen-UX430UQ>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hmk3t7hh5batxsb5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191227022446.37e64ag4uaqms2w4@yavin.dot.cyphar.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In evm_led_setup(), the allocation result of platform_device_alloc() and 
+platform_device_add_data() should be checked.
 
---hmk3t7hh5batxsb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 2019-12-27, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> On 2019-12-26, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > On December 26, 2019 3:32:29 PM GMT+01:00, Aleksa Sarai <cyphar@cyphar.=
-com> wrote:
-> > >On 2019-12-26, Christian Brauner <christian.brauner@ubuntu.com> wrote:
-> > >> On Wed, Dec 25, 2019 at 09:45:33PM +0000, Sargun Dhillon wrote:
-> > >> > This patch is a small change in enforcement of the uapi for
-> > >> > SECCOMP_IOCTL_NOTIF_RECV ioctl. Specificaly, the datastructure
-> > >which is
-> > >> > passed (seccomp_notif), has a flags member. Previously that could
-> > >be
-> > >> > set to a nonsense value, and we would ignore it. This ensures that
-> > >> > no flags are set.
-> > >> >=20
-> > >> > Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> > >> > Cc: Kees Cook <keescook@chromium.org>
-> > >>=20
-> > >> I'm fine with this since we soon want to make use of the flag
-> > >argument
-> > >> when we add a flag to get a pidfd from the seccomp notifier on
-> > >receive.
-> > >> The major users I could identify already pass in seccomp_notif with
-> > >all
-> > >> fields set to 0. If we really break users we can always revert; this
-> > >> seems very unlikely to me though.
-> > >>=20
-> > >> One more question below, otherwise:
-> > >>=20
-> > >> Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > >>=20
-> > >> > ---
-> > >> >  kernel/seccomp.c | 7 +++++++
-> > >> >  1 file changed, 7 insertions(+)
-> > >> >=20
-> > >> > diff --git a/kernel/seccomp.c b/kernel/seccomp.c
-> > >> > index 12d2227e5786..455925557490 100644
-> > >> > --- a/kernel/seccomp.c
-> > >> > +++ b/kernel/seccomp.c
-> > >> > @@ -1026,6 +1026,13 @@ static long seccomp_notify_recv(struct
-> > >seccomp_filter *filter,
-> > >> >  	struct seccomp_notif unotif;
-> > >> >  	ssize_t ret;
-> > >> > =20
-> > >> > +	if (copy_from_user(&unotif, buf, sizeof(unotif)))
-> > >> > +		return -EFAULT;
-> > >> > +
-> > >> > +	/* flags is reserved right now, make sure it's unset */
-> > >> > +	if (unotif.flags)
-> > >> > +		return -EINVAL;
-> > >> > +
-> > >>=20
-> > >> Might it make sense to use
-> > >>=20
-> > >> 	err =3D copy_struct_from_user(&unotif, sizeof(unotif), buf,
-> > >sizeof(unotif));
-> > >> 	if (err)
-> > >> 		return err;
-> > >>=20
-> > >> This way we check that the whole struct is 0 and report an error as
-> > >soon
-> > >> as one of the members is non-zero. That's more drastic but it'd
-> > >ensure
-> > >> that other fields can be used in the future for whatever purposes.
-> > >> It would also let us get rid of the memset() below.=20
-> > >
-> > >Given that this isn't an extensible struct, it would be simpler to just
-> > >do
-> > >check_zeroed_user() -- copy_struct_from_user() is overkill. That would
-> > >also remove the need for any copy_from_user()s and the memset can be
-> > >dropped by just doing
-> > >
-> > >  struct seccomp_notif unotif =3D {};
-> > >
-> > >> >  	memset(&unotif, 0, sizeof(unotif));
-> > >> > =20
-> > >> >  	ret =3D down_interruptible(&filter->notif->request);
-> > >> > --=20
-> > >> > 2.20.1
-> > >> >=20
-> >=20
-> > It is an extensible struct. That's why we have notifier size checking b=
-uilt in.
->=20
-> Ah right, NOTIF_GET_SIZES. I reckon check_zeroed_user() is still a bit
-> simpler since none of the fields are used right now (and really, this
-> patch should be checking all of them, not just ->flags, if we want to
-> use any of them in the future).
-
-Scratch that -- as Tycho just mentioned, there is un-named padding in
-the struct so check_zeroed_user() is the wrong thing to do. But this
-also will make extensions harder to deal with because (presumably) they
-will also have un-named padding, making copy_struct_from_user() the
-wrong thing to do as well.
-
-So while there's not much to be done to fix the current struct layout, I
-humbly suggest that any future struct extensions should not have any
-un-named padding (so that at the very least you could use
-copy_struct_from_user() in some form).
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---hmk3t7hh5batxsb5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXgVtAAAKCRCdlLljIbnQ
-EpCsAQD8hZGnO2be8H2eL3UnK3gHJS2WBaSQMxOmRuPONZlL4gEAgU4gEuGjnx5E
-/OXBhqnznUT/+Kc5/Hujvo+y2TTbIws=
-=MkQb
------END PGP SIGNATURE-----
-
---hmk3t7hh5batxsb5--
+Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+---
+diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+index 9d87d4e..9cd2785 100644
+--- a/arch/arm/mach-davinci/board-dm644x-evm.c
++++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+@@ -352,15 +352,20 @@ evm_led_setup(struct i2c_client *client, int gpio, unsigned ngpio, void *c)
+ 	 * device unregistration ...
+ 	 */
+ 	evm_led_dev = platform_device_alloc("leds-gpio", 0);
+-	platform_device_add_data(evm_led_dev,
++	if (!evm_led_dev)
++		return -ENOMEM;
++	status = platform_device_add_data(evm_led_dev,
+ 			&evm_led_data, sizeof evm_led_data);
++	if (status)
++		goto err;
+ 
+ 	evm_led_dev->dev.parent = &client->dev;
+ 	status = platform_device_add(evm_led_dev);
+-	if (status < 0) {
+-		platform_device_put(evm_led_dev);
+-		evm_led_dev = NULL;
+-	}
++	if (status)
++		goto err;
++err:
++	platform_device_put(evm_led_dev);
++	evm_led_dev = NULL;
+ 	return status;
+ }
+ 
