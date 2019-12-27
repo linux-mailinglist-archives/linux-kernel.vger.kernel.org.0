@@ -2,98 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53AEF12B4AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 13:59:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7A6812B4D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 14:22:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbfL0M7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 07:59:45 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:33310 "EHLO honk.sigxcpu.org"
+        id S1726927AbfL0NVv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 08:21:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40716 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726377AbfL0M7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 07:59:45 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 59BE2FB03;
-        Fri, 27 Dec 2019 13:59:42 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id R0-rgRbwKwjQ; Fri, 27 Dec 2019 13:59:40 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id C688E49799; Fri, 27 Dec 2019 13:59:39 +0100 (CET)
-Date:   Fri, 27 Dec 2019 13:59:39 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] leds: lm3692x: Make sure we don't exceed the
- maximum led current
-Message-ID: <20191227125939.GA26392@bogon.m.sigxcpu.org>
-References: <cover.1577271823.git.agx@sigxcpu.org>
- <96dad031f3a9ff5bbc311d0ec8768b348b996bcf.1577271823.git.agx@sigxcpu.org>
- <20191226101336.GD4033@amd>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191226101336.GD4033@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726354AbfL0NVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 08:21:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 89819B215;
+        Fri, 27 Dec 2019 13:21:47 +0000 (UTC)
+From:   mrostecki@opensuse.org
+To:     bpf@vger.kernel.org
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michal Rostecki <mrostecki@opensuse.org>
+Subject: [PATCH bpf-next 0/2] bpftool/libbpf: Add probe for large INSN limit
+Date:   Fri, 27 Dec 2019 11:53:44 +0100
+Message-Id: <20191227105346.867-1-mrostecki@opensuse.org>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, Dec 26, 2019 at 11:13:36AM +0100, Pavel Machek wrote:
-> On Wed 2019-12-25 12:07:19, Guido Günther wrote:
-> 1;2802;0c> The current is given by the formular from page 12 of
-> > https://www.ti.com/lit/ds/symlink/lm36922.pdf. We use this to limit the
-> > led's max_brightness using the led-max-microamp DT property.
-> > 
-> > The formular for the lm36923 is identical according to the data
-> sheet.
-> 
-> formula?
-> 
-> >  static int lm3692x_probe_dt(struct lm3692x_led *led)
-> >  {
-> >  	struct fwnode_handle *child = NULL;
-> >  	struct led_init_data init_data = {};
-> > -	u32 ovp;
-> > +	u32 ovp, max_cur;
-> >  	bool exp_mode;
-> >  	int ret;
-> >  
-> > @@ -397,6 +416,10 @@ static int lm3692x_probe_dt(struct lm3692x_led *led)
-> >  		return ret;
-> >  	}
-> >  
-> > +	fwnode_property_read_u32(child, "led-max-microamp", &max_cur);
-> > +	led->led_dev.max_brightness = ret ? LED_FULL :
-> > +		lm3692x_max_brightness(led, max_cur);
-> > +
-> 
-> Umm. Should ret come from this fwnode_property_read_u32()?
+From: Michal Rostecki <mrostecki@opensuse.org>
 
-Argh...i was sure i had that fixed (and tested without setting
-led-max-microamp) but it was sitting on another branch. Thanks a lot for
-catching that!
- -- Guido
+This series implements a new BPF feature probe which checks for the
+commit c04c0d2b968a ("bpf: increase complexity limit and maximum program
+size"), which increases the maximum program size to 1M. It's based on
+the similar check in Cilium, althogh Cilium is already aiming to use
+bpftool checks and eventually drop all its custom checks.
 
-> 
-> With that fixed,
-> 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> (Feel free to wait for Rob before resending the series, and I guess
-> you can merge it with the next one).
-> 
-> Best regards,
-> 									Pavel
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Examples of outputs:
 
+# bpftool feature probe
+[...]
+Scanning miscellaneous eBPF features...
+Large complexity limit and maximum program size (1M) is available
+
+# bpftool feature probe macros
+[...]
+/*** eBPF misc features ***/
+#define HAVE_HAVE_LARGE_INSN_LIMIT
+
+# bpftool feature probe -j | jq '.["misc"]'
+{
+  "have_large_insn_limit": true
+}
+
+Michal Rostecki (2):
+  libbpf: Add probe for large INSN limit
+  bpftool: Add misc secion and probe for large INSN limit
+
+ tools/bpf/bpftool/feature.c   | 18 ++++++++++++++++++
+ tools/lib/bpf/libbpf.h        |  1 +
+ tools/lib/bpf/libbpf.map      |  1 +
+ tools/lib/bpf/libbpf_probes.c | 23 +++++++++++++++++++++++
+ 4 files changed, 43 insertions(+)
+
+-- 
+2.16.4
 
