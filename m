@@ -2,111 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8256A12AFEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 01:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A79E12AFF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 01:41:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727034AbfL0Ae0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 19:34:26 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:46335 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfL0AeZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 19:34:25 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f15so19470125lfl.13;
-        Thu, 26 Dec 2019 16:34:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A0ugGKSdy996G5cCplSFEOG0vQpDh89551RLNUPVsrY=;
-        b=RJXCsoTJsJ6edGiu8VS+CH+D/Dbj3WTIrX4aUJgPw9NYhOJTOvubQ0t/Ibr04akdir
-         Fu6Ai+dWwPh6wOi0pbuhcbNC5hyjwFcF7b9HKCGYnkgyO1gINGyedIAR+CAZ4PPjK5rx
-         NFFn9i4fsO+15oum1AQ5YLYbvJ6MGnp9mUaDgEJvGQGd5PFyjaStWnc6lD+xm66Y78c2
-         UE8yLgl5l7l1Dg1HzL0pO/OTmLbf2sQbEYVaHGLCybnkkT6qEFz7SRBjj1cpeoRvkB8z
-         xcCXdDZL/7k+upNyso0Vnzp8DnU4dvZprpqNC7mv4dpkCwGAqFYcjd9sWfRBreCjAYXf
-         3h8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A0ugGKSdy996G5cCplSFEOG0vQpDh89551RLNUPVsrY=;
-        b=d/X4wM73/3jipHDNmPagUER5eRNXHSIgnKzpGPVIsi8eRaUPxcOBrl+/RAsGhMWAGg
-         WD0hFx45KN5x9kyFjMvIwYMTMbz5g8RNjCWXV4Sael1kV15UhyMvk72a+k6iD0+AS6C9
-         uQxM82A/ku4snT1BSJCJzu3U4xX7mr0XLv20+BNqfIBpiwHG2Mh0o8vOmRMExCE/s8nF
-         3psofsM8ay/k9zyth4OAoMsOe/F0NRdn45FD3EAyVGTBzLa3HcnDuLnp6STbozCWO9Bw
-         97Je39rQWMdfWt9lBN+NjpVIzdmAV8N4uzIsphS2zMYjRo64QyXOTT+UJqOOwQBj68y6
-         TGUQ==
-X-Gm-Message-State: APjAAAUF58XASAQZDpegoa3UXhRgs3bIPxgjC5YhgWHW/xK/VjRO736d
-        5ufABAvsCtNtGftaXaCUhnXkvnUcegsCniMv4Dk=
-X-Google-Smtp-Source: APXvYqxY1gE2xluutA0vYW3bQC/tuQsvTnlKskNTUihkMrt/0z56p8xevQaK89OQG00nOvNGggLiZOMqj1+rHfr3cMA=
-X-Received: by 2002:a19:2d0d:: with SMTP id k13mr26787903lfj.12.1577406863391;
- Thu, 26 Dec 2019 16:34:23 -0800 (PST)
+        id S1727021AbfL0Ale (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 19:41:34 -0500
+Received: from mga01.intel.com ([192.55.52.88]:33488 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbfL0Ald (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Dec 2019 19:41:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Dec 2019 16:41:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,361,1571727600"; 
+   d="scan'208";a="219979332"
+Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
+  by orsmga006.jf.intel.com with ESMTP; 26 Dec 2019 16:41:32 -0800
+From:   sathyanarayanan.kuppuswamy@linux.intel.com
+To:     bhelgaas@google.com
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: [PATCH v11 0/8] Add Error Disconnect Recover (EDR) support
+Date:   Thu, 26 Dec 2019 16:39:06 -0800
+Message-Id: <cover.1577400653.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-References: <20191224010020.15969-1-rjones@gateworks.com> <20191224010020.15969-2-rjones@gateworks.com>
- <20191226232625.GA2186@bogus>
-In-Reply-To: <20191226232625.GA2186@bogus>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 26 Dec 2019 21:34:06 -0300
-Message-ID: <CAOMZO5Aj+PfzXrYoV8LxKStdQ-B0BLdMV16L3ya0NokozG479g@mail.gmail.com>
-Subject: Re: [PATCH v4 1/5] dt-bindings: arm: fsl: Add Gateworks Ventana
- i.MX6DL/Q compatibles
-To:     Rob Herring <robh@kernel.org>
-Cc:     Robert Jones <rjones@gateworks.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
 
-On Thu, Dec 26, 2019 at 8:26 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Mon, Dec 23, 2019 at 05:00:16PM -0800, Robert Jones wrote:
-> > Add the compatible enum entries for Gateworks Ventana boards.
-> >
-> > Signed-off-by: Robert Jones <rjones@gateworks.com>
-> > ---
-> >  Documentation/devicetree/bindings/arm/fsl.yaml | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > index f79683a..a02e980 100644
-> > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > @@ -126,6 +126,7 @@ properties:
-> >                - toradex,apalis_imx6q-ixora      # Apalis iMX6 Module on Ixora
-> >                - toradex,apalis_imx6q-ixora-v1.1 # Apalis iMX6 Module on Ixora V1.1
-> >                - variscite,dt6customboard
-> > +              - gw,ventana                # Gateworks i.MX6DL or i.MX6Q Ventana
->
-> Keep entries sorted.
+This patchset adds support for following features:
 
-Just for clarification: shouldn't the entries inside fsl.yaml match
-the dtb file names?
+1. Error Disconnect Recover (EDR) support.
+2. _OSC based negotiation support for DPC.
 
-In case of the i.MX6Q based gateworks board, this should be:
+You can find EDR spec in the following link.
 
-gw,imx6q-gw51xx
-gw,imx6q-gw52xx
-gw,imx6q-gw53xx
-gw,imx6q-gw5400-a
-gw,imx6q-gw54xx
-gw,imx6q-gw551x
-gw,imx6q-gw552x
-gw,imx6q-gw553x
-gw,imx6q-gw560x
-gw,imx6q-gw5903
-gw,imx6q-gw5904
+https://members.pcisig.com/wg/PCI-SIG/document/12614
 
-Please advise.
+Changes since v10:
+ * Added "edr_enabled" member to dpc priv structure, which is used to cache EDR
+   enabling status based on status of pcie_ports_dpc_native and FF mode.
+ * Changed type of _DSM argument from Integer to Package in acpi_enable_dpc_port()
+   function to fix ACPI related boot warnings.
+ * Rebased on top of v5.5-rc3
+
+Changes since v9:
+ * Removed caching of pcie_aer_get_firmware_first() in dpc driver.
+ * Added proper spec reference in git log for patch 5 & 7.
+ * Added new function parameter "ff_check" to pci_cleanup_aer_uncorrect_error_status(),
+   pci_aer_clear_fatal_status() and pci_cleanup_aer_error_status_regs() functions.
+ * Rebased on top of v5.4-rc5
+
+Changes since v8:
+ * Rebased on top of v5.4-rc1
+
+Changes since v7:
+ * Updated DSM version number to match the spec.
+
+Changes since v6:
+ * Modified the order of patches to enable EDR only after all necessary support is added in kernel.
+ * Addressed Bjorn comments.
+
+Changes since v5:
+ * Addressed Keith's comments.
+ * Added additional check for FF mode in pci_aer_init().
+ * Updated commit history of "PCI/DPC: Add support for DPC recovery on NON_FATAL errors" patch.
+
+Changes since v4:
+ * Rebased on top of v5.3-rc1
+ * Fixed lock/unlock issue in edr_handle_event().
+ * Merged "Update error status after reset_link()" patch into this patchset.
+
+Changes since v3:
+ * Moved EDR related ACPI functions/definitions to pci-acpi.c
+ * Modified commit history in few patches to include spec reference.
+ * Added support to handle DPC triggered by NON_FATAL errors.
+ * Added edr_lock to protect PCI device receiving duplicate EDR notifications.
+ * Addressed Bjorn comments.
+
+Changes since v2:
+ * Split EDR support patch into multiple patches.
+ * Addressed Bjorn comments.
+
+Changes since v1:
+ * Rebased on top of v5.1-rc1
+
+Kuppuswamy Sathyanarayanan (8):
+  PCI/ERR: Update error status after reset_link()
+  PCI/DPC: Allow dpc_probe() even if firmware first mode is enabled
+  PCI/DPC: Add dpc_process_error() wrapper function
+  PCI/DPC: Add Error Disconnect Recover (EDR) support
+  PCI/AER: Allow clearing Error Status Register in FF mode
+  PCI/DPC: Update comments related to DPC recovery on NON_FATAL errors
+  PCI/DPC: Clear AER registers in EDR mode
+  PCI/ACPI: Enable EDR support
+
+ Documentation/PCI/pcieaer-howto.rst       |   2 +-
+ drivers/acpi/pci_root.c                   |   9 +
+ drivers/net/ethernet/intel/ice/ice_main.c |   2 +-
+ drivers/ntb/hw/idt/ntb_hw_idt.c           |   2 +-
+ drivers/pci/pci-acpi.c                    |  98 ++++++++++
+ drivers/pci/pci.c                         |   2 +-
+ drivers/pci/pci.h                         |   2 +-
+ drivers/pci/pcie/Kconfig                  |  10 +
+ drivers/pci/pcie/aer.c                    |  16 +-
+ drivers/pci/pcie/dpc.c                    | 214 ++++++++++++++++++++--
+ drivers/pci/pcie/err.c                    |  12 +-
+ drivers/pci/pcie/portdrv_core.c           |   7 +-
+ drivers/pci/probe.c                       |   1 +
+ drivers/scsi/lpfc/lpfc_attr.c             |   2 +-
+ include/linux/acpi.h                      |   6 +-
+ include/linux/aer.h                       |  12 +-
+ include/linux/pci-acpi.h                  |  11 ++
+ include/linux/pci.h                       |   3 +-
+ 18 files changed, 365 insertions(+), 46 deletions(-)
+
+-- 
+2.21.0
+
