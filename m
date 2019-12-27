@@ -2,230 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F45312B942
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 19:04:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF5A12B9D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 19:14:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfL0SEL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 13:04:11 -0500
-Received: from sv2-smtprelay2.synopsys.com ([149.117.73.133]:38886 "EHLO
-        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727814AbfL0SEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 13:04:00 -0500
-Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S1727144AbfL0SOi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 13:14:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726495AbfL0SOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 13:14:38 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id 9191842CEE;
-        Fri, 27 Dec 2019 18:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1577469839; bh=utiNwzAlM6dfaS8d9tVWHPbqHgFQQV58Tm5uUozf5Tc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OlKS4xutPRXQS5dZjujy5Yy9mZrhlFCVPJ1RSJGzoM7pL0bUekWRcNUAm2aKLRfSV
-         t8WCXEa5IXccZdcz0v2qmtcP9O35pWlhxYZKREyP1TxJohu2Rv0l6TPAigqSYxg1en
-         DTXyag6f5P2VchWsdjhy4FneMLIDdLTf3BJWV0pWMco/qKrmMP3xCaxa/N/pKoKDh7
-         BSjosoBBVtu1XXrSSatWge+wAonVEyPqOuEGp95sA7EPWhqS4Q3y9c7mGV09n46aiA
-         CrdpQlIxNl6E9FApPQpye/HPgxUxbuAzb3hXUVnNhSAhLWUOwDC3VkPD3mH/7o0/vj
-         7RFsVE2aaDLLw==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.65])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 0AF33A005F;
-        Fri, 27 Dec 2019 18:03:57 +0000 (UTC)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH 5/5] ARC: allow userspace DSP applications to use AGU extensions
-Date:   Fri, 27 Dec 2019 21:03:47 +0300
-Message-Id: <20191227180347.3579-6-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20191227180347.3579-1-Eugeniy.Paltsev@synopsys.com>
-References: <20191227180347.3579-1-Eugeniy.Paltsev@synopsys.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id A512820722;
+        Fri, 27 Dec 2019 18:14:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577470477;
+        bh=htFu0h7MnxuTbn86aRRG0Y/vLwjJXBBQsUNcpcYgA8E=;
+        h=From:To:Cc:Subject:Date:From;
+        b=dsaYOgPYcxRA00fQHIPa9oliYdHQVTJYQJ9dZg5UYZxrfUKSnEB2pNjzlVhU+Vgv8
+         UG15a+RMlh/aTWdh7BGhIunAWGEFB3AT4oGu3zVbZUNJlavzwjsT11EsZuWg4UxswN
+         oCaV8khsGJF9q87JYPlH+QCoBFwaK+AMH0TvfmTQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ganapathi Bhat <gbhat@marvell.com>,
+        huangwen <huangwenabc@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 01/38] mwifiex: fix possible heap overflow in mwifiex_process_country_ie()
+Date:   Fri, 27 Dec 2019 13:13:58 -0500
+Message-Id: <20191227181435.7644-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To be able to run DSP-enabled userspace applications with AGU
-(address generation unit) extensions we additionally need to
-save and restore following registers at context switch:
- * AGU_AP*
- * AGU_OS*
- * AGU_MOD*
+From: Ganapathi Bhat <gbhat@marvell.com>
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+[ Upstream commit 3d94a4a8373bf5f45cf5f939e88b8354dbf2311b ]
+
+mwifiex_process_country_ie() function parse elements of bss
+descriptor in beacon packet. When processing WLAN_EID_COUNTRY
+element, there is no upper limit check for country_ie_len before
+calling memcpy. The destination buffer domain_info->triplet is an
+array of length MWIFIEX_MAX_TRIPLET_802_11D(83). The remote
+attacker can build a fake AP with the same ssid as real AP, and
+send malicous beacon packet with long WLAN_EID_COUNTRY elemen
+(country_ie_len > 83). Attacker can  force STA connect to fake AP
+on a different channel. When the victim STA connects to fake AP,
+will trigger the heap buffer overflow. Fix this by checking for
+length and if found invalid, don not connect to the AP.
+
+This fix addresses CVE-2019-14895.
+
+Reported-by: huangwen <huangwenabc@gmail.com>
+Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/Kconfig                |  7 +++++++
- arch/arc/include/asm/arcregs.h  | 12 ++++++++++++
- arch/arc/include/asm/dsp-impl.h | 23 +++++++++++++++++++++++
- arch/arc/include/asm/dsp.h      | 12 ++++++++++--
- arch/arc/kernel/setup.c         | 14 ++++++++++++++
- 5 files changed, 66 insertions(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index c3210754a3d2..c27bb7900ebd 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -439,6 +439,13 @@ config ARC_DSP_USERSPACE
- 	help
- 	  DSP extension presence in HW, support save / restore DSP registers to
- 	  run DSP-enabled userspace applications
-+
-+config ARC_DSP_AGU_USERSPACE
-+	bool "Support DSP with AGU for userspace apps"
-+	select ARC_HAS_ACCL_REGS
-+	help
-+	  DSP and AGU extensions presence in HW, support save / restore DSP
-+	  and AGU registers to run DSP-enabled userspace applications
- endchoice
- 
- config ARC_IRQ_NO_AUTOSAVE
-diff --git a/arch/arc/include/asm/arcregs.h b/arch/arc/include/asm/arcregs.h
-index a713819cab3c..9f6abed8a336 100644
---- a/arch/arc/include/asm/arcregs.h
-+++ b/arch/arc/include/asm/arcregs.h
-@@ -130,6 +130,18 @@
- #define ARC_AUX_DSP_CTRL	0x59F
- #define ARC_AUX_DSP_FFT_CTRL	0x59E
- 
-+#define ARC_AUX_AGU_BUILD	0xCC
-+#define ARC_AUX_AGU_AP0		0x5C0
-+#define ARC_AUX_AGU_AP1		0x5C1
-+#define ARC_AUX_AGU_AP2		0x5C2
-+#define ARC_AUX_AGU_AP3		0x5C3
-+#define ARC_AUX_AGU_OS0		0x5D0
-+#define ARC_AUX_AGU_OS1		0x5D1
-+#define ARC_AUX_AGU_MOD0	0x5E0
-+#define ARC_AUX_AGU_MOD1	0x5E1
-+#define ARC_AUX_AGU_MOD2	0x5E2
-+#define ARC_AUX_AGU_MOD3	0x5E3
-+
- #ifndef __ASSEMBLY__
- 
- #include <soc/arc/aux.h>
-diff --git a/arch/arc/include/asm/dsp-impl.h b/arch/arc/include/asm/dsp-impl.h
-index 7b640a680dfc..d352be2d9f07 100644
---- a/arch/arc/include/asm/dsp-impl.h
-+++ b/arch/arc/include/asm/dsp-impl.h
-@@ -100,6 +100,21 @@ static inline void arc_dsp_save_restore(struct task_struct *prev,
- 
- 	DSP_AUX_SAVE_RESTORE(saveto, readfrom, DSP_BFLY0, zero);
- 	DSP_AUX_SAVE_RESTORE(saveto, readfrom, DSP_FFT_CTRL, zero);
-+
-+#ifdef CONFIG_ARC_DSP_AGU_USERSPACE
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP0, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP1, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP2, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_AP3, zero);
-+
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_OS0, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_OS1, zero);
-+
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD0, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD1, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD2, zero);
-+	DSP_AUX_SAVE_RESTORE(saveto, readfrom, AGU_MOD3, zero);
-+#endif /* CONFIG_ARC_DSP_AGU_USERSPACE */
- }
- 
- #else /* !ARC_DSP_SAVE_RESTORE_REGS */
-@@ -114,5 +129,13 @@ static inline bool dsp_exist(void)
- 	return !!bcr.ver;
- }
- 
-+static inline bool agu_exist(void)
-+{
-+	struct bcr_generic bcr;
-+
-+	READ_BCR(ARC_AUX_AGU_BUILD, bcr);
-+	return !!bcr.ver;
-+}
-+
- #endif /* __ASEMBLY__ */
- #endif /* __ASM_ARC_DSP_IMPL_H */
-diff --git a/arch/arc/include/asm/dsp.h b/arch/arc/include/asm/dsp.h
-index 68507f04dea4..1619cf9c6d28 100644
---- a/arch/arc/include/asm/dsp.h
-+++ b/arch/arc/include/asm/dsp.h
-@@ -7,7 +7,7 @@
- #ifndef __ASM_ARC_DSP_H
- #define __ASM_ARC_DSP_H
- 
--#if defined(CONFIG_ARC_DSP_USERSPACE)
-+#if defined(CONFIG_ARC_DSP_USERSPACE) || defined(CONFIG_ARC_DSP_AGU_USERSPACE)
- #define ARC_DSP_SAVE_RESTORE_REGS	1
- #endif
- 
-@@ -15,7 +15,8 @@
- 
- /* some defines to simplify config sanitize in kernel/setup.c */
- #if defined(CONFIG_ARC_DSP_KERNEL) 	|| \
--    defined(CONFIG_ARC_DSP_USERSPACE)
-+    defined(CONFIG_ARC_DSP_USERSPACE)	|| \
-+    defined(CONFIG_ARC_DSP_AGU_USERSPACE)
- #define ARC_DSP_HANDLED			1
- #else
- #define ARC_DSP_HANDLED			0
-@@ -23,6 +24,8 @@
- 
- #if defined(CONFIG_ARC_DSP_USERSPACE)
- #define ARC_DSP_OPT_NAME		"CONFIG_ARC_DSP_USERSPACE"
-+#elif defined(CONFIG_ARC_DSP_AGU_USERSPACE)
-+#define ARC_DSP_OPT_NAME		"CONFIG_ARC_DSP_AGU_USERSPACE"
- #else
- #define ARC_DSP_OPT_NAME		"CONFIG_ARC_DSP_KERNEL"
- #endif
-@@ -35,6 +38,11 @@
-  */
- struct dsp_callee_regs {
- 	unsigned long DSP_BFLY0, DSP_FFT_CTRL;
-+#ifdef CONFIG_ARC_DSP_AGU_USERSPACE
-+	unsigned long AGU_AP0, AGU_AP1, AGU_AP2, AGU_AP3;
-+	unsigned long AGU_OS0, AGU_OS1;
-+	unsigned long AGU_MOD0, AGU_MOD1, AGU_MOD2, AGU_MOD3;
-+#endif
- };
- 
- #endif /* !__ASSEMBLY__ */
-diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
-index 30d31579c51d..17d58ec69113 100644
---- a/arch/arc/kernel/setup.c
-+++ b/arch/arc/kernel/setup.c
-@@ -398,11 +398,22 @@ static void chk_opt_strict(char *opt_name, bool hw_exists, bool opt_ena)
- 		panic("Disable %s, hardware NOT present\n", opt_name);
- }
- 
-+static void chk_opt_weak(char *opt_name, bool hw_exists, bool opt_ena)
-+{
-+	if (!hw_exists && opt_ena)
-+		panic("Disable %s, hardware NOT present\n", opt_name);
-+}
-+
- #define CHK_OPT_STRICT(opt_name, hw_exists)				\
- ({									\
- 	chk_opt_strict(#opt_name, hw_exists, IS_ENABLED(opt_name));	\
- })
- 
-+#define CHK_OPT_WEAK(opt_name, hw_exists)				\
-+({									\
-+	chk_opt_weak(#opt_name, hw_exists, IS_ENABLED(opt_name));	\
-+})
-+
- static void arc_chk_core_config(void)
- {
- 	struct cpuinfo_arc *cpu = &cpuinfo_arc700[smp_processor_id()];
-@@ -448,6 +459,9 @@ static void arc_chk_core_config(void)
- 
- 		present = dsp_exist();
- 		chk_opt_strict(ARC_DSP_OPT_NAME, present, ARC_DSP_HANDLED);
-+
-+		present = agu_exist();
-+		CHK_OPT_WEAK(CONFIG_ARC_DSP_AGU_USERSPACE, present);
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index 478885afb6c6..be3be7a63cf0 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -271,6 +271,14 @@ static int mwifiex_process_country_ie(struct mwifiex_private *priv,
+ 			    "11D: skip setting domain info in FW\n");
+ 		return 0;
  	}
- }
++
++	if (country_ie_len >
++	    (IEEE80211_COUNTRY_STRING_LEN + MWIFIEX_MAX_TRIPLET_802_11D)) {
++		mwifiex_dbg(priv->adapter, ERROR,
++			    "11D: country_ie_len overflow!, deauth AP\n");
++		return -EINVAL;
++	}
++
+ 	memcpy(priv->adapter->country_code, &country_ie[2], 2);
  
+ 	domain_info->country_code[0] = country_ie[2];
+@@ -314,8 +322,9 @@ int mwifiex_bss_start(struct mwifiex_private *priv, struct cfg80211_bss *bss,
+ 	priv->scan_block = false;
+ 
+ 	if (bss) {
+-		if (adapter->region_code == 0x00)
+-			mwifiex_process_country_ie(priv, bss);
++		if (adapter->region_code == 0x00 &&
++		    mwifiex_process_country_ie(priv, bss))
++			return -EINVAL;
+ 
+ 		/* Allocate and fill new bss descriptor */
+ 		bss_desc = kzalloc(sizeof(struct mwifiex_bssdescriptor),
 -- 
-2.21.0
+2.20.1
 
