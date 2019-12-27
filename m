@@ -2,138 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F73612B4C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 14:08:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9856C12B4D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 14:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbfL0NIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 08:08:43 -0500
-Received: from smtp-fw-6001.amazon.com ([52.95.48.154]:45941 "EHLO
-        smtp-fw-6001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfL0NIn (ORCPT
+        id S1727028AbfL0NXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 08:23:20 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44174 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfL0NXT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 08:08:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1577452123; x=1608988123;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   in-reply-to:content-transfer-encoding;
-  bh=Q5c4P1klft40yJ0p29MuVtu83VklnTxjifywTVem2zo=;
-  b=IM9vqOEuoP5sO3iDcz+CFkjlFWFto7VY9A+EyWf5Yuaa5MoDRLBRNJZ2
-   +PnOtDZlydnd4k/nM7n0HizAqikq0vZKaBP51V1aKgOCW+Y27YiJm6Kox
-   Hg1mRyvRkfwxiNQPhQzrZAOdKNGNBtXH1lT+82+xos8dk3vysWF/ESnpw
-   I=;
-IronPort-SDR: Pk8K7OzuhYrfSsahFWe24b9NEPtZcqwRMxX/tWmi/oPpMJAW1Fd/EBBJBdwvp809wg3MDZgg5D
- dgpU9+MjN18w==
-X-IronPort-AV: E=Sophos;i="5.69,363,1571702400"; 
-   d="scan'208";a="10736271"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-2a-22cc717f.us-west-2.amazon.com) ([10.43.8.6])
-  by smtp-border-fw-out-6001.iad6.amazon.com with ESMTP; 27 Dec 2019 13:08:41 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx4-ws-svc-p6-lb7-vlan3.pdx.amazon.com [10.170.41.166])
-        by email-inbound-relay-2a-22cc717f.us-west-2.amazon.com (Postfix) with ESMTPS id C80EAA0701;
-        Fri, 27 Dec 2019 13:08:39 +0000 (UTC)
-Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 27 Dec 2019 13:08:39 +0000
-Received: from u886c93fd17d25d.ant.amazon.com (10.43.160.44) by
- EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 27 Dec 2019 13:08:32 +0000
-From:   SeongJae Park <sjpark@amazon.com>
-To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-CC:     SeongJae Park <sjpark@amazon.com>, <joe@perches.com>,
-        <brendanhiggins@google.com>, <linux-kselftest@vger.kernel.org>,
-        <kunit-dev@googlegroups.com>, <linux-kernel@vger.kernel.org>,
-        SeongJae Park <sj38.park@gmail.com>
-Subject: Re: Re: What is the best way to compare an unsigned and a constant?
-Date:   Fri, 27 Dec 2019 14:08:11 +0100
-Message-ID: <20191227130811.12839-1-sjpark@amazon.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 27 Dec 2019 08:23:19 -0500
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9ABA228BABE;
+        Fri, 27 Dec 2019 13:23:16 +0000 (GMT)
+Date:   Fri, 27 Dec 2019 14:23:13 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Inki Dae <inki.dae@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/bridge: Fix Exynos DSI after making bridge chain a
+ double-linked list
+Message-ID: <20191227142313.5032ff0f@collabora.com>
+In-Reply-To: <20191227130004.69d7dcad@collabora.com>
+References: <CGME20191227110216eucas1p17cbf91afa905852d3c0b1efeec0f6f8d@eucas1p1.samsung.com>
+        <20191227110135.4961-1-m.szyprowski@samsung.com>
+        <20191227130004.69d7dcad@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <688d8f4b-266f-2c47-d4e9-d0336316a0a9@petrovitsch.priv.at>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.43.160.44]
-X-ClientProxiedBy: EX13D03UWC001.ant.amazon.com (10.43.162.136) To
- EX13D31EUA001.ant.amazon.com (10.43.165.15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 27 Dec 2019 13:52:27 +0100 Bernd Petrovitsch <bernd@petrovitsch.priv.at> wrote:
+On Fri, 27 Dec 2019 13:00:04 +0100
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-> --------------D98A0A31D62B0BC2939BAEE9
-> Content-Type: text/plain; charset="utf-8"
-> Content-Transfer-Encoding: quoted-printable
+> On Fri, 27 Dec 2019 12:01:35 +0100
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 > 
-> Hi all!
+> > Exynos DSI DRM driver uses private calls to out bridge to force certain
+> > order of operations during init/exit sequences. This no longer works after
+> > conversion of bridge chain to a double-linked list. To fix the regression
+> > call bridge related operations manually instead of the generic
+> > drm_bridge_chain_*() operations.  
 > 
-> On 27/12/2019 13:39, SeongJae Park wrote:
-> [...]
-> > I have a function returning 'unsigned long', and would like to write a ku=
-> nit
-> > test for the function, as below.
-> >=20
-> >     unsigned long foo(void)
-> >     {
-> >     	return 42;
-> >     }
-> >=20
-> >     static void foo_test(struct kunit *test)
-> >     {
-> >         KUNIT_EXPECT_EQ(test, 42, foo());
-> >     }
+> I think it'd be worth explaining what the problem is (infinite loop
+> caused by list_for_each_entry() use when the bridge is no longer part
+> of the chain attached to the encoder).
 > 
-> For this case: shouldn't=20
-> ----  snip  ----
-> static void foo_test(struct kunit *test)
-> {
->      KUNIT_EXPECT_EQ(test, 42ul, foo());
-> }
-> ----  snip  ----
-> do the trick?
+> > 
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Fixes: 05193dc38197 ("drm/bridge: Make the bridge chain a double-linked list")  
+> 
+> We also need to fix that in VC4.
+> 
+> > ---
+> > This patch is a result of the following discussion:
+> > https://www.spinics.net/lists/dri-devel/msg239256.html
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 21 ++++++++++++---------
+> >  1 file changed, 12 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > index 3955f84dc893..f5905c239a86 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> > @@ -255,7 +255,6 @@ struct exynos_dsi {
+> >  	struct mipi_dsi_host dsi_host;
+> >  	struct drm_connector connector;
+> >  	struct drm_panel *panel;
+> > -	struct list_head bridge_chain;
+> >  	struct drm_bridge *out_bridge;
+> >  	struct device *dev;
+> >  
+> > @@ -1391,7 +1390,8 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+> >  		if (ret < 0)
+> >  			goto err_put_sync;
+> >  	} else {
+> > -		drm_bridge_chain_pre_enable(dsi->out_bridge);
+> > +		if (dsi->out_bridge->funcs->pre_enable)
+> > +			dsi->out_bridge->funcs->pre_enable(dsi->out_bridge);  
+> 
+> Okay, so you're calling ->{pre_enable,enable,disable,post_disable}() on
+> the first bridge element which only works if the chain contains one
+> bridge (see below). Maybe you should keep exynos_dsi.bridge_chain and
+> create custom helpers to iterate over chain elements instead of calling
+> those hooks only on out_bridge.
 
-Thank you for quick answer :)
-That makes 'checkpatch.pl' be silent, but unfortunately, not kunit.
+The following diff should fix the problem while keeping the solution
+generic enough to support chains containing more than one bridge.
 
-    [13:04:58] Building KUnit Kernel ...
-    In file included from /.../linux/include/linux/list.h:9:0,
-                     from /.../linux/include/linux/wait.h:7,
-                     from /.../linux/include/linux/wait_bit.h:8,
-                     from /.../linux/include/linux/fs.h:6,
-                     from /.../linux/include/linux/debugfs.h:15,
-                     from /.../linux/mm/damon.c:12:
-    /.../linux/mm/damon-test.h: In function ‘damon_test_foo’:
-    /.../linux/include/linux/kernel.h:842:29: warning: comparison of distinct pointer types lacks a cast
-       (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-                                 ^
-    /.../linux/include/kunit/test.h:493:9: note: in expansion of macro ‘__typecheck’
-      ((void)__typecheck(__left, __right));           \
-             ^~~~~~~~~~~
-    /.../linux/include/kunit/test.h:517:2: note: in expansion of macro ‘KUNIT_BASE_BINARY_ASSERTION’
-      KUNIT_BASE_BINARY_ASSERTION(test,           \
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /.../linux/include/kunit/test.h:606:2: note: in expansion of macro ‘KUNIT_BASE_EQ_MSG_ASSERTION’
-      KUNIT_BASE_EQ_MSG_ASSERTION(test,           \
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /.../linux/include/kunit/test.h:616:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_MSG_ASSERTION’
-      KUNIT_BINARY_EQ_MSG_ASSERTION(test,           \
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    /.../linux/include/kunit/test.h:979:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_ASSERTION’
-      KUNIT_BINARY_EQ_ASSERTION(test, KUNIT_EXPECTATION, left, right)
-      ^~~~~~~~~~~~~~~~~~~~~~~~~
-    /.../linux/mm/damon-test.h:565:2: note: in expansion of macro ‘KUNIT_EXPECT_EQ’
-      KUNIT_EXPECT_EQ(test, 42ul, (int)foo());
-      ^~~~~~~~~~~~~~~
-
-Thanks,
-SeongJae Park
-
-> 
-> MfG,
-> 	Bernd
-> --=20
-> "I dislike type abstraction if it has no real reason. And saving
-> on typing is not a good reason - if your typing speed is the main
-> issue when you're coding, you're doing something seriously wrong."
->     - Linus Torvalds
-> 
+--->8---
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 3955f84dc893..c861b640fc59 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1378,6 +1378,7 @@ static void exynos_dsi_unregister_te_irq(struct exynos_dsi *dsi)
+ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ {
+        struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++       struct drm_bridge *iter;
+        int ret;
+ 
+        if (dsi->state & DSIM_STATE_ENABLED)
+@@ -1391,7 +1392,11 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+                if (ret < 0)
+                        goto err_put_sync;
+        } else {
+-               drm_bridge_chain_pre_enable(dsi->out_bridge);
++               list_for_each_entry_reverse(iter, &encoder->bridge_chain,
++                                           chain_node) {
++                       if (iter->funcs->pre_enable)
++                               iter->funcs->pre_enable(iter);
++               }
+        }
+ 
+        exynos_dsi_set_display_mode(dsi);
+@@ -1402,7 +1407,10 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+                if (ret < 0)
+                        goto err_display_disable;
+        } else {
+-               drm_bridge_chain_enable(dsi->out_bridge);
++               list_for_each_entry(iter, &encoder->bridge_chain, chain_node) {
++                       if (iter->funcs->enable)
++                               iter->funcs->enable(iter);
++               }
+        }
+ 
+        dsi->state |= DSIM_STATE_VIDOUT_AVAILABLE;
+@@ -1420,6 +1428,7 @@ static void exynos_dsi_enable(struct drm_encoder *encoder)
+ static void exynos_dsi_disable(struct drm_encoder *encoder)
+ {
+        struct exynos_dsi *dsi = encoder_to_dsi(encoder);
++       struct drm_bridge *iter;
+ 
+        if (!(dsi->state & DSIM_STATE_ENABLED))
+                return;
+@@ -1427,10 +1436,20 @@ static void exynos_dsi_disable(struct drm_encoder *encoder)
+        dsi->state &= ~DSIM_STATE_VIDOUT_AVAILABLE;
+ 
+        drm_panel_disable(dsi->panel);
+-       drm_bridge_chain_disable(dsi->out_bridge);
++
++       list_for_each_entry_reverse(iter, &encoder->bridge_chain, chain_node) {
++               if (iter->funcs->disable)
++                       iter->funcs->disable(iter);
++       }
++
+        exynos_dsi_set_display_enable(dsi, false);
+        drm_panel_unprepare(dsi->panel);
+-       drm_bridge_chain_post_disable(dsi->out_bridge);
++
++       list_for_each_entry(iter, &encoder->bridge_chain, chain_node) {
++               if (iter->funcs->post_disable)
++                       iter->funcs->post_disable(iter);
++       }
++
+        dsi->state &= ~DSIM_STATE_ENABLED;
+        pm_runtime_put_sync(dsi->dev);
+ }
+@@ -1523,7 +1542,7 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+        if (out_bridge) {
+                drm_bridge_attach(encoder, out_bridge, NULL);
+                dsi->out_bridge = out_bridge;
+-               list_splice(&encoder->bridge_chain, &dsi->bridge_chain);
++               list_splice_init(&encoder->bridge_chain, &dsi->bridge_chain);
+        } else {
+                int ret = exynos_dsi_create_connector(encoder);
+ 
