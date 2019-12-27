@@ -2,95 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6A512BB4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 22:35:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEA3212BB65
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 22:41:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfL0Vfh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 16:35:37 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:7363 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfL0Vfg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 16:35:36 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e06791a0000>; Fri, 27 Dec 2019 13:35:22 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 27 Dec 2019 13:35:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 27 Dec 2019 13:35:35 -0800
-Received: from [10.2.173.37] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 27 Dec
- 2019 21:35:34 +0000
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
-        <tiwai@suse.com>, <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
- <20191226181715.GA12506@bogus>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <fe48ca0e-c26e-5163-fb66-1eefe5f45bcc@nvidia.com>
-Date:   Fri, 27 Dec 2019 13:35:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20191226181715.GA12506@bogus>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1577482522; bh=gjae7kUQaHVIjpNoyPiSKLPGAI2ivNMWILmjltYeLiE=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=K6OZ4CJq4Va8v7nnJpw/+SiozblG0ejHVQsa4F2FrFQEl9IWWdC1lGgHOQC9Aszkb
-         +frfb7f8J7BIy4fRS3KvrG4xuxn5yTJW1KJbf49h0gqJSxLqV+q9Z/KPbI3oMVKJoW
-         C8x/6pPBkSz095930A1d1vZZ+cWYY1NCnU0R7wQ0LrXeCayKSIIPreujOn+WJtAlUD
-         CH7ogj04glhJDaH6ZjujErBe0uYUSun1veNeBGjM2vdJK6fi1XCkWq/EDRiSl8lW2M
-         F2nRwqhDRcZAi7t9j1Cml1YYzLd7ngOwu/GRBJP8llqblgDAHgE4S7ORtRPsDeRd/l
-         9583OhnWmtjdg==
+        id S1726416AbfL0VlR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 16:41:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:10704 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbfL0VlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 16:41:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 13:41:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,364,1571727600"; 
+   d="scan'208";a="223815847"
+Received: from spandruv-mobl3.jf.intel.com ([10.255.231.63])
+  by fmsmga001.fm.intel.com with ESMTP; 27 Dec 2019 13:41:15 -0800
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     jikos@kernel.org, benjamin.tissoires@redhat.com
+Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH] HID: intel-ish-hid: ipc: Add Tiger Lake PCI device ID
+Date:   Fri, 27 Dec 2019 13:40:57 -0800
+Message-Id: <20191227214057.31438-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Added Tiger Lake PCI device ID to the supported device list.
 
-On 12/26/19 10:17 AM, Rob Herring wrote:
-> On Fri, 20 Dec 2019 14:26:53 -0800, Sowjanya Komatineni wrote:
->> Tegra PMC has blink functionality that allows 32KHz clock out to
->> blink pin of the Tegra.
->>
->> This patch adds id for this blink clock to use for enabling or
->> disabling blink output through device tree.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
-> Please add Acked-by/Reviewed-by tags when posting new versions. However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
->
-> If a tag was not added on purpose, please state why and what changed.
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+---
+ drivers/hid/intel-ish-hid/ipc/hw-ish.h  | 1 +
+ drivers/hid/intel-ish-hid/ipc/pci-ish.c | 1 +
+ 2 files changed, 2 insertions(+)
 
-Sorry Rob, missed to add Acked-by tag for this patch in this series.
-
-Will make sure of having all received Acked-by/Reviewed-by tags from 
-next time.
+diff --git a/drivers/hid/intel-ish-hid/ipc/hw-ish.h b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
+index 905e1bc3f91d..1fb294ca463e 100644
+--- a/drivers/hid/intel-ish-hid/ipc/hw-ish.h
++++ b/drivers/hid/intel-ish-hid/ipc/hw-ish.h
+@@ -26,6 +26,7 @@
+ #define CML_LP_DEVICE_ID	0x02FC
+ #define CMP_H_DEVICE_ID		0x06FC
+ #define EHL_Ax_DEVICE_ID	0x4BB3
++#define TGL_LP_DEVICE_ID	0xA0FC
+ 
+ #define	REVISION_ID_CHT_A0	0x6
+ #define	REVISION_ID_CHT_Ax_SI	0x0
+diff --git a/drivers/hid/intel-ish-hid/ipc/pci-ish.c b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+index 9c8cefe16af3..f491d8b4e24c 100644
+--- a/drivers/hid/intel-ish-hid/ipc/pci-ish.c
++++ b/drivers/hid/intel-ish-hid/ipc/pci-ish.c
+@@ -36,6 +36,7 @@ static const struct pci_device_id ish_pci_tbl[] = {
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CML_LP_DEVICE_ID)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, CMP_H_DEVICE_ID)},
+ 	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, EHL_Ax_DEVICE_ID)},
++	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, TGL_LP_DEVICE_ID)},
+ 	{0, }
+ };
+ MODULE_DEVICE_TABLE(pci, ish_pci_tbl);
+-- 
+2.17.2
 
