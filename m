@@ -2,202 +2,666 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59BC212B1B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 903B412B199
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:03:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727109AbfL0GUQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 01:20:16 -0500
-Received: from mail-mw2nam12on2040.outbound.protection.outlook.com ([40.107.244.40]:35118
-        "EHLO NAM12-MW2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725854AbfL0GUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 01:20:14 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=gu9JZCFtK4a1Or0TpqBIN7v85Lu3h1tCwdF8nL9LLUA0twiX4dm7m1Oom3p8n/wDFznITVo4zAG3p+LMJfdDsIqEGq7deI1QHzEanQod/XUynb+NisSDN+HziEF4LuLzZV22whGENWZBPXud65jY0xWuv+Fa42zS8dF/Fb5gZweGVLmrsT1QfY0Xu/GHz1SmVpUwPYR0ZTSO18BOD5sgi0n1uDGCSUPnkzZRgVE/70K6kf4ow3NVZVi8cdGgTNBUlfL4NGlC9DNdBMPHplqfQOTMycRr1O+Iw21f0Pc51iOaEH79pvwhCBjbpnGOcZ8J8IHJT1JURclRtBnGT0Wm6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R/z5L72yKVgKh3dYAF2b+K7hwaaTHRjAlkF32xi0n3o=;
- b=fZxgxOKHx6bngL0p2fNGk/ee0A5AfFMDAjqiZARNUO61k6+NpBaBCwdxTAi/J8NaEmMQkUK//RL7r/VE7nkFl7NbW+V2lQARiPQvLd92pccp1px/sSzJ1eAiw+8CGg9PQagZjc33VfNN0c+EBhSdvJd18sECeyrCkjEQxgZ7YHQdlq9nUusK/FRe17wJhYCVLgP0zk6e81qGiSGsAKotufrGmeVhDZKCexvy7eGZlCVOCsBJpbLvrBlHdz4tIWlyO3Zwb5Y5svAt6OQyBw0osCEOihocu+8ibmk2QFP+6e1xOwaLclfqcy4w5Y/2+4OealUQMo5RkXtNJKvIjuRT9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R/z5L72yKVgKh3dYAF2b+K7hwaaTHRjAlkF32xi0n3o=;
- b=C+dz5ncZpjfern75/rhB5h7odhaJuHCBsnGX2AqEUTR6/2Yx9XUulDyzchcWIFScHgXDo7S5JgiLEzZw1jM7Cv4Cx9xNnSEW9bvCwqR3+N8Hi2Zk+bgQEq0CSLtCLGe1aYEwpMZadgYerBmOtUIzk1NhWVYqDntzHJflYWwJidg=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Rijo-john.Thomas@amd.com; 
-Received: from CY4PR12MB1925.namprd12.prod.outlook.com (10.175.62.7) by
- CY4PR12MB1366.namprd12.prod.outlook.com (10.168.168.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.12; Fri, 27 Dec 2019 06:20:07 +0000
-Received: from CY4PR12MB1925.namprd12.prod.outlook.com
- ([fe80::9be:baba:170f:3e2]) by CY4PR12MB1925.namprd12.prod.outlook.com
- ([fe80::9be:baba:170f:3e2%3]) with mapi id 15.20.2581.007; Fri, 27 Dec 2019
- 06:20:07 +0000
-From:   Rijo Thomas <Rijo-john.Thomas@amd.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-        tee-dev@lists.linaro.org
-Cc:     Rijo Thomas <Rijo-john.Thomas@amd.com>,
-        Nimesh Easow <Nimesh.Easow@amd.com>,
-        Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Gary Hook <gary.hook@amd.com>
-Subject: [PATCH 4/4] Documentation: tee: add AMD-TEE driver details
-Date:   Fri, 27 Dec 2019 10:54:03 +0530
-Message-Id: <25ce91ed381479fd0003d2b9670093b8c5cbf638.1577423898.git.Rijo-john.Thomas@amd.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <cover.1577423898.git.Rijo-john.Thomas@amd.com>
-References: <cover.1577423898.git.Rijo-john.Thomas@amd.com>
-Content-Type: text/plain
-X-ClientProxiedBy: MA1PR0101CA0022.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:21::32) To CY4PR12MB1925.namprd12.prod.outlook.com
- (2603:10b6:903:120::7)
-MIME-Version: 1.0
-Received: from andbang1.amd.com (165.204.156.251) by MA1PR0101CA0022.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:21::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2581.11 via Frontend Transport; Fri, 27 Dec 2019 06:20:03 +0000
-X-Mailer: git-send-email 1.9.1
-X-Originating-IP: [165.204.156.251]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 001d203f-2754-48af-6bf3-08d78a94d13f
-X-MS-TrafficTypeDiagnostic: CY4PR12MB1366:|CY4PR12MB1366:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <CY4PR12MB1366851581D77E5E7D16AFA9CF2A0@CY4PR12MB1366.namprd12.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
-X-Forefront-PRVS: 0264FEA5C3
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(189003)(199004)(81166006)(110136005)(316002)(8676002)(66556008)(478600001)(6486002)(66946007)(5660300002)(186003)(26005)(8936002)(2906002)(81156014)(966005)(54906003)(66476007)(956004)(4326008)(86362001)(2616005)(52116002)(16526019)(7696005)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR12MB1366;H:CY4PR12MB1925.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: M2h+IBsvPjZnoXkD63MtdyPHVT9LZToJbYQe/ZMha2H3YMop1cDSDNT48giNC6BWWu2w9N8z/sVG0pBNh/yOofSvFr4T7OqSVuf9TyK+HsRdyFLKjAQwbeEkHlva5KEc5srSgZ2+pboOiWRFcsVrciYRzKFhNKhw4Msd+6HxDro0BLbsSkXmljH3aObFnNFrbrZGXwZffvmTLVC894UDdUT9acHRNeMe3E5ZJu1lOjsPlvJEOw1s8+Ipr5rgzfnj5EFLpnnkx20tXNKOyDMaz8+lOXVhbFG1n0zBzRenL0vUOt5+yEEzPSK/aDfPEdN8mE0C2xonK+sPwgFsLLpWvx8CVjkoB7eaylc9NARBAi/3GWMdVS31LHZkYhfkKLlUkyQwz2z7YgIWefOUTHn3AOzedQ8J3brbxjJmIuc5t9drHbdCZ5+qKn++3p5qAIEbGum42UJ4NUbflXrE6omUwTYlRpE7t16rMdro+wxhgJQ=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 001d203f-2754-48af-6bf3-08d78a94d13f
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Dec 2019 06:20:07.0470
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: moB84e99O1mzdBtVtnlJaz06RjetAUjLPaZDflxulY098vqxehrlqgGySbmE87yEjdaSJrQJiP3gaQlzP8YxAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR12MB1366
+        id S1726677AbfL0GDU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 01:03:20 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:48280 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfL0GDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 01:03:19 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B55C01A17BE;
+        Fri, 27 Dec 2019 07:03:14 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2AE5C1A0DF5;
+        Fri, 27 Dec 2019 07:03:04 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E45ED402AF;
+        Fri, 27 Dec 2019 14:02:51 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        manivannan.sadhasivam@linaro.org, andrew.smirnov@gmail.com,
+        marcel.ziswiler@toradex.com, sebastien.szymanski@armadeus.com,
+        aisheng.dong@nxp.com, l.stach@pengutronix.de, angus@akkea.ca,
+        cosmin.stoica@nxp.com, gary.bisson@boundarydevices.com,
+        leonard.crestez@nxp.com, abel.vesa@nxp.com, jun.li@nxp.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 1/3] arm64: dts: freescale: Add i.MX8MP dtsi support
+Date:   Fri, 27 Dec 2019 13:59:43 +0800
+Message-Id: <1577426385-31273-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update tee.txt with AMD-TEE driver details. The driver is written
-to communicate with AMD's TEE.
+The i.MX8M Plus Media Applications Processor is part of the growing
+mScale family targeting the consumer and industrial market. It brings
+an effective Machine Learning and AI accelerator that enables a new
+class of applications. It is built in Samsung 14LPP to achieve both
+high performance and low power consumption and relies on a powerful
+fully coherent core complex based on a quad core ARM Cortex-A53 cluster
+and Cortex-M7 low-power coprocessor, audio digital signal processor,
+machine learning and graphics accelerators.
 
-Acked-by: Jens Wiklander <jens.wiklander@linaro.org>
-Co-developed-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-Signed-off-by: Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
-Signed-off-by: Rijo Thomas <Rijo-john.Thomas@amd.com>
+Add the basic dtsi support for i.MX8MP.
+
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- Documentation/tee.txt | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 598 ++++++++++++++++++++++++++++++
+ 1 file changed, 598 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8mp.dtsi
 
-diff --git a/Documentation/tee.txt b/Documentation/tee.txt
-index afacdf2..c8fad81 100644
---- a/Documentation/tee.txt
-+++ b/Documentation/tee.txt
-@@ -112,6 +112,83 @@ kernel are handled by the kernel driver. Other RPC messages will be forwarded to
- tee-supplicant without further involvement of the driver, except switching
- shared memory buffer representation.
- 
-+AMD-TEE driver
-+==============
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+new file mode 100644
+index 0000000..0fb29cc
+--- /dev/null
++++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+@@ -0,0 +1,598 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * Copyright 2019 NXP
++ */
 +
-+The AMD-TEE driver handles the communication with AMD's TEE environment. The
-+TEE environment is provided by AMD Secure Processor.
++#include <dt-bindings/clock/imx8mp-clock.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/arm-gic.h>
 +
-+The AMD Secure Processor (formerly called Platform Security Processor or PSP)
-+is a dedicated processor that features ARM TrustZone technology, along with a
-+software-based Trusted Execution Environment (TEE) designed to enable
-+third-party Trusted Applications. This feature is currently enabled only for
-+APUs.
++#include "imx8mp-pinfunc.h"
 +
-+The following picture shows a high level overview of AMD-TEE::
++/ {
++	interrupt-parent = <&gic>;
++	#address-cells = <2>;
++	#size-cells = <2>;
 +
-+                                             |
-+    x86                                      |
-+                                             |
-+ User space            (Kernel space)        |    AMD Secure Processor (PSP)
-+ ~~~~~~~~~~            ~~~~~~~~~~~~~~        |    ~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                                             |
-+ +--------+                                  |       +-------------+
-+ | Client |                                  |       | Trusted     |
-+ +--------+                                  |       | Application |
-+     /\                                      |       +-------------+
-+     ||                                      |             /\
-+     ||                                      |             ||
-+     ||                                      |             \/
-+     ||                                      |         +----------+
-+     ||                                      |         |   TEE    |
-+     ||                                      |         | Internal |
-+     \/                                      |         |   API    |
-+ +---------+           +-----------+---------+         +----------+
-+ | TEE     |           | TEE       | AMD-TEE |         | AMD-TEE  |
-+ | Client  |           | subsystem | driver  |         | Trusted  |
-+ | API     |           |           |         |         |   OS     |
-+ +---------+-----------+----+------+---------+---------+----------+
-+ |   Generic TEE API        |      | ASP     |      Mailbox       |
-+ |   IOCTL (TEE_IOC_*)      |      | driver  | Register Protocol  |
-+ +--------------------------+      +---------+--------------------+
++	aliases {
++		ethernet0 = &fec;
++		gpio0 = &gpio1;
++		gpio1 = &gpio2;
++		gpio2 = &gpio3;
++		gpio3 = &gpio4;
++		gpio4 = &gpio5;
++		mmc0 = &usdhc1;
++		mmc1 = &usdhc2;
++		mmc2 = &usdhc3;
++		serial0 = &uart1;
++		serial1 = &uart2;
++		serial2 = &uart3;
++		serial3 = &uart4;
++	};
 +
-+At the lowest level (in x86), the AMD Secure Processor (ASP) driver uses the
-+CPU to PSP mailbox regsister to submit commands to the PSP. The format of the
-+command buffer is opaque to the ASP driver. It's role is to submit commands to
-+the secure processor and return results to AMD-TEE driver. The interface
-+between AMD-TEE driver and AMD Secure Processor driver can be found in [6].
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+The AMD-TEE driver packages the command buffer payload for processing in TEE.
-+The command buffer format for the different TEE commands can be found in [7].
++		A53_0: cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x0>;
++			clock-latency = <61036>;
++			clocks = <&clk IMX8MP_CLK_ARM>;
++			enable-method = "psci";
++			next-level-cache = <&A53_L2>;
++		};
 +
-+The TEE commands supported by AMD-TEE Trusted OS are:
-+* TEE_CMD_ID_LOAD_TA          - loads a Trusted Application (TA) binary into
-+                                TEE environment.
-+* TEE_CMD_ID_UNLOAD_TA        - unloads TA binary from TEE environment.
-+* TEE_CMD_ID_OPEN_SESSION     - opens a session with a loaded TA.
-+* TEE_CMD_ID_CLOSE_SESSION    - closes session with loaded TA
-+* TEE_CMD_ID_INVOKE_CMD       - invokes a command with loaded TA
-+* TEE_CMD_ID_MAP_SHARED_MEM   - maps shared memory
-+* TEE_CMD_ID_UNMAP_SHARED_MEM - unmaps shared memory
++		A53_1: cpu@1 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x1>;
++			clock-latency = <61036>;
++			clocks = <&clk IMX8MP_CLK_ARM>;
++			enable-method = "psci";
++			next-level-cache = <&A53_L2>;
++		};
 +
-+AMD-TEE Trusted OS is the firmware running on AMD Secure Processor.
++		A53_2: cpu@2 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x2>;
++			clock-latency = <61036>;
++			clocks = <&clk IMX8MP_CLK_ARM>;
++			enable-method = "psci";
++			next-level-cache = <&A53_L2>;
++		};
 +
-+The AMD-TEE driver registers itself with TEE subsystem and implements the
-+following driver function callbacks:
++		A53_3: cpu@3 {
++			device_type = "cpu";
++			compatible = "arm,cortex-a53";
++			reg = <0x3>;
++			clock-latency = <61036>;
++			clocks = <&clk IMX8MP_CLK_ARM>;
++			enable-method = "psci";
++			next-level-cache = <&A53_L2>;
++		};
 +
-+* get_version - returns the driver implementation id and capability.
-+* open - sets up the driver context data structure.
-+* release - frees up driver resources.
-+* open_session - loads the TA binary and opens session with loaded TA.
-+* close_session -  closes session with loaded TA and unloads it.
-+* invoke_func - invokes a command with loaded TA.
++		A53_L2: l2-cache0 {
++			compatible = "cache";
++		};
++	};
 +
-+cancel_req driver callback is not supported by AMD-TEE.
++	osc_32k: clock-osc-32k {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <32768>;
++		clock-output-names = "osc_32k";
++	};
 +
-+The GlobalPlatform TEE Client API [5] can be used by the user space (client) to
-+talk to AMD's TEE. AMD's TEE provides a secure environment for loading, opening
-+a session, invoking commands and clossing session with TA.
++	osc_24m: clock-osc-24m {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <24000000>;
++		clock-output-names = "osc_24m";
++	};
 +
- References
- ==========
- 
-@@ -125,3 +202,7 @@ References
- 
- [5] http://www.globalplatform.org/specificationsdevice.asp look for
-     "TEE Client API Specification v1.0" and click download.
++	clk_ext1: clock-ext1 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <133000000>;
++		clock-output-names = "clk_ext1";
++	};
 +
-+[6] include/linux/psp-tee.h
++	clk_ext2: clock-ext2 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <133000000>;
++		clock-output-names = "clk_ext2";
++	};
 +
-+[7] drivers/tee/amdtee/amdtee_if.h
++	clk_ext3: clock-ext3 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <133000000>;
++		clock-output-names = "clk_ext3";
++	};
++
++	clk_ext4: clock-ext4 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency= <133000000>;
++		clock-output-names = "clk_ext4";
++	};
++
++	psci {
++		compatible = "arm,psci-1.0";
++		method = "smc";
++	};
++
++	timer {
++		compatible = "arm,armv8-timer";
++		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
++			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>;
++		clock-frequency = <8000000>;
++		arm,no-tick-in-suspend;
++	};
++
++	soc@0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x0 0x0 0x3e000000>;
++
++		aips1: bus@30000000 {
++			compatible = "simple-bus";
++			reg = <0x30000000 0x400000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			gpio1: gpio@30200000 {
++				compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
++				reg = <0x30200000 0x10000>;
++				interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_GPIO1_ROOT>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				gpio-ranges = <&iomuxc 0 5 30>;
++			};
++
++			gpio2: gpio@30210000 {
++				compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
++				reg = <0x30210000 0x10000>;
++				interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_GPIO2_ROOT>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				gpio-ranges = <&iomuxc 0 35 21>;
++			};
++
++			gpio3: gpio@30220000 {
++				compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
++				reg = <0x30220000 0x10000>;
++				interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_GPIO3_ROOT>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				gpio-ranges = <&iomuxc 0 56 26>, <&iomuxc 0 144 4>;
++			};
++
++			gpio4: gpio@30230000 {
++				compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
++				reg = <0x30230000 0x10000>;
++				interrupts = <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_GPIO4_ROOT>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				gpio-ranges = <&iomuxc 0 82 32>;
++			};
++
++			gpio5: gpio@30240000 {
++				compatible = "fsl,imx8mp-gpio", "fsl,imx35-gpio";
++				reg = <0x30240000 0x10000>;
++				interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_GPIO5_ROOT>;
++				gpio-controller;
++				#gpio-cells = <2>;
++				interrupt-controller;
++				#interrupt-cells = <2>;
++				gpio-ranges = <&iomuxc 0 114 30>;
++			};
++
++			wdog1: watchdog@30280000 {
++				compatible = "fsl,imx8mp-wdt", "fsl,imx21-wdt";
++				reg = <0x30280000 0x10000>;
++				interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_WDOG1_ROOT>;
++				status = "disabled";
++			};
++
++			iomuxc: pinctrl@30330000 {
++				compatible = "fsl,imx8mp-iomuxc";
++				reg = <0x30330000 0x10000>;
++			};
++
++			gpr: iomuxc-gpr@30340000 {
++				compatible = "fsl,imx8mp-iomuxc-gpr", "syscon";
++				reg = <0x30340000 0x10000>;
++			};
++
++			ocotp: ocotp-ctrl@30350000 {
++				compatible = "fsl,imx8mp-ocotp", "fsl,imx8mm-ocotp", "syscon";
++				reg = <0x30350000 0x10000>;
++				clocks = <&clk IMX8MP_CLK_OCOTP_ROOT>;
++				/* For nvmem subnodes */
++				#address-cells = <1>;
++				#size-cells = <1>;
++
++				cpu_speed_grade: speed-grade@10 {
++					reg = <0x10 4>;
++				};
++			};
++
++			anatop: anatop@30360000 {
++				compatible = "fsl,imx8mp-anatop", "fsl,imx8mm-anatop",
++					     "syscon";
++				reg = <0x30360000 0x10000>;
++			};
++
++			snvs: snvs@30370000 {
++				compatible = "fsl,sec-v4.0-mon","syscon", "simple-mfd";
++				reg = <0x30370000 0x10000>;
++
++				snvs_rtc: snvs-rtc-lp {
++					compatible = "fsl,sec-v4.0-mon-rtc-lp";
++					regmap =<&snvs>;
++					offset = <0x34>;
++					interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
++						     <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++					clocks = <&clk IMX8MP_CLK_SNVS_ROOT>;
++					clock-names = "snvs-rtc";
++				};
++
++				snvs_pwrkey: snvs-powerkey {
++					compatible = "fsl,sec-v4.0-pwrkey";
++					regmap = <&snvs>;
++					interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++					linux,keycode = <KEY_POWER>;
++					wakeup-source;
++					status = "disabled";
++				};
++			};
++
++			clk: clock-controller@30380000 {
++				compatible = "fsl,imx8mp-ccm";
++				reg = <0x30380000 0x10000>;
++				#clock-cells = <1>;
++				clocks = <&osc_32k>, <&osc_24m>, <&clk_ext1>, <&clk_ext2>,
++					 <&clk_ext3>, <&clk_ext4>;
++				clock-names = "osc_32k", "osc_24m", "clk_ext1", "clk_ext2",
++					      "clk_ext3", "clk_ext4";
++				assigned-clocks = <&clk IMX8MP_CLK_AUDIO_AHB>,
++						  <&clk IMX8MP_CLK_IPG_AUDIO_ROOT>,
++						  <&clk IMX8MP_AUDIO_PLL1>,
++						  <&clk IMX8MP_AUDIO_PLL2>;
++			};
++
++			src: src@30390000 {
++				compatible = "fsl,imx8mp-src", "fsl,imx8mq-src", "syscon";
++				reg = <0x30390000 0x10000>;
++				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
++				#reset-cells = <1>;
++			};
++		};
++
++		aips2: bus@30400000 {
++			compatible = "simple-bus";
++			reg = <0x30400000 0x400000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			pwm1: pwm@30660000 {
++				compatible = "fsl,imx8mp-pwm", "fsl,imx27-pwm";
++				reg = <0x30660000 0x10000>;
++				interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_PWM1_ROOT>,
++					 <&clk IMX8MP_CLK_PWM1_ROOT>;
++				clock-names = "ipg", "per";
++				#pwm-cells = <2>;
++				status = "disabled";
++			};
++
++			pwm2: pwm@30670000 {
++				compatible = "fsl,imx8mp-pwm", "fsl,imx27-pwm";
++				reg = <0x30670000 0x10000>;
++				interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_PWM2_ROOT>,
++					 <&clk IMX8MP_CLK_PWM2_ROOT>;
++				clock-names = "ipg", "per";
++				#pwm-cells = <2>;
++				status = "disabled";
++			};
++
++			pwm3: pwm@30680000 {
++				compatible = "fsl,imx8mp-pwm", "fsl,imx27-pwm";
++				reg = <0x30680000 0x10000>;
++				interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_PWM3_ROOT>,
++					 <&clk IMX8MP_CLK_PWM3_ROOT>;
++				clock-names = "ipg", "per";
++				#pwm-cells = <2>;
++				status = "disabled";
++			};
++
++			pwm4: pwm@30690000 {
++				compatible = "fsl,imx8mp-pwm", "fsl,imx27-pwm";
++				reg = <0x30690000 0x10000>;
++				interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_PWM4_ROOT>,
++					 <&clk IMX8MP_CLK_PWM4_ROOT>;
++				clock-names = "ipg", "per";
++				#pwm-cells = <2>;
++				status = "disabled";
++			};
++		};
++
++		aips3: bus@30800000 {
++			compatible = "simple-bus";
++			reg = <0x30800000 0x400000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++
++			ecspi1: spi@30820000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx8mp-ecspi", "fsl,imx51-ecspi";
++				reg = <0x30820000 0x10000>;
++				interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_ECSPI1_ROOT>,
++					 <&clk IMX8MP_CLK_ECSPI1_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 0 7 1>, <&sdma1 1 7 2>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			ecspi2: spi@30830000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx8mp-ecspi", "fsl,imx51-ecspi";
++				reg = <0x30830000 0x10000>;
++				interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_ECSPI2_ROOT>,
++					 <&clk IMX8MP_CLK_ECSPI2_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 2 7 1>, <&sdma1 3 7 2>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			ecspi3: spi@30840000 {
++				#address-cells = <1>;
++				#size-cells = <0>;
++				compatible = "fsl,imx8mp-ecspi", "fsl,imx51-ecspi";
++				reg = <0x30840000 0x10000>;
++				interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_ECSPI3_ROOT>,
++					 <&clk IMX8MP_CLK_ECSPI3_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 4 7 1>, <&sdma1 5 7 2>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			uart1: serial@30860000 {
++				compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
++				reg = <0x30860000 0x10000>;
++				interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_UART1_ROOT>,
++					 <&clk IMX8MP_CLK_UART1_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 22 4 0>, <&sdma1 23 4 0>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			uart3: serial@30880000 {
++				compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
++				reg = <0x30880000 0x10000>;
++				interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_UART3_ROOT>,
++					 <&clk IMX8MP_CLK_UART3_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			uart2: serial@30890000 {
++				compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
++				reg = <0x30890000 0x10000>;
++				interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_UART2_ROOT>,
++					 <&clk IMX8MP_CLK_UART2_ROOT>;
++				clock-names = "ipg", "per";
++				status = "disabled";
++			};
++
++			i2c1: i2c@30a20000 {
++				compatible = "fsl,imx8mp-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30a20000 0x10000>;
++				interrupts = <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C1_ROOT>;
++				status = "disabled";
++			};
++
++			i2c2: i2c@30a30000 {
++				compatible = "fsl,imx8mp-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30a30000 0x10000>;
++				interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C2_ROOT>;
++				status = "disabled";
++			};
++
++			i2c3: i2c@30a40000 {
++				compatible = "fsl,imx8mm-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30a40000 0x10000>;
++				interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C3_ROOT>;
++				status = "disabled";
++			};
++
++			i2c4: i2c@30a50000 {
++				compatible = "fsl,imx8mp-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30a50000 0x10000>;
++				interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C4_ROOT>;
++				status = "disabled";
++			};
++
++			uart4: serial@30a60000 {
++				compatible = "fsl,imx8mp-uart", "fsl,imx6q-uart";
++				reg = <0x30a60000 0x10000>;
++				interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_UART4_ROOT>,
++					 <&clk IMX8MP_CLK_UART4_ROOT>;
++				clock-names = "ipg", "per";
++				dmas = <&sdma1 28 4 0>, <&sdma1 29 4 0>;
++				dma-names = "rx", "tx";
++				status = "disabled";
++			};
++
++			i2c5: i2c@30ad0000 {
++				compatible = "fsl,imx8mp-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30ad0000 0x10000>;
++				interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C5_ROOT>;
++				status = "disabled";
++			};
++
++			i2c6: i2c@30ae0000 {
++				compatible = "fsl,imx8mp-i2c", "fsl,imx21-i2c";
++				#address-cells = <1>;
++				#size-cells = <0>;
++				reg = <0x30ae0000 0x10000>;
++				interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_I2C6_ROOT>;
++				status = "disabled";
++			};
++
++			usdhc1: mmc@30b40000 {
++				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
++				reg = <0x30b40000 0x10000>;
++				interrupts = <GIC_SPI 22 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_DUMMY>,
++					 <&clk IMX8MP_CLK_NAND_USDHC_BUS>,
++					 <&clk IMX8MP_CLK_USDHC1_ROOT>;
++				clock-names = "ipg", "ahb", "per";
++				fsl,tuning-start-tap = <20>;
++				fsl,tuning-step= <2>;
++				bus-width = <4>;
++				status = "disabled";
++			};
++
++			usdhc2: mmc@30b50000 {
++				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
++				reg = <0x30b50000 0x10000>;
++				interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_DUMMY>,
++					 <&clk IMX8MP_CLK_NAND_USDHC_BUS>,
++					 <&clk IMX8MP_CLK_USDHC2_ROOT>;
++				clock-names = "ipg", "ahb", "per";
++				fsl,tuning-start-tap = <20>;
++				fsl,tuning-step= <2>;
++				bus-width = <4>;
++				status = "disabled";
++			};
++
++			usdhc3: mmc@30b60000 {
++				compatible = "fsl,imx8mm-usdhc", "fsl,imx7d-usdhc";
++				reg = <0x30b60000 0x10000>;
++				interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_DUMMY>,
++					 <&clk IMX8MP_CLK_NAND_USDHC_BUS>,
++					 <&clk IMX8MP_CLK_USDHC3_ROOT>;
++				clock-names = "ipg", "ahb", "per";
++				fsl,tuning-start-tap = <20>;
++				fsl,tuning-step= <2>;
++				bus-width = <4>;
++				status = "disabled";
++			};
++
++			sdma1: dma-controller@30bd0000 {
++				compatible = "fsl,imx8mp-sdma", "fsl,imx8mq-sdma";
++				reg = <0x30bd0000 0x10000>;
++				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_SDMA1_ROOT>,
++					 <&clk IMX8MP_CLK_SDMA1_ROOT>;
++				clock-names = "ipg", "ahb";
++				#dma-cells = <3>;
++				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
++			};
++
++			fec: ethernet@30be0000 {
++				compatible = "fsl,imx8mm-fec", "fsl,imx8mq-fec", "fsl,imx6sx-fec";
++				reg = <0x30be0000 0x10000>;
++				interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH>,
++					     <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
++				clocks = <&clk IMX8MP_CLK_ENET1_ROOT>,
++					 <&clk IMX8MP_CLK_SIM_ENET_ROOT>,
++					 <&clk IMX8MP_CLK_ENET_TIMER>,
++					 <&clk IMX8MP_CLK_ENET_REF>,
++					 <&clk IMX8MP_CLK_ENET_PHY_REF>;
++				clock-names = "ipg", "ahb", "ptp",
++					      "enet_clk_ref", "enet_out";
++				assigned-clocks = <&clk IMX8MP_CLK_ENET_AXI>,
++						  <&clk IMX8MP_CLK_ENET_TIMER>,
++						  <&clk IMX8MP_CLK_ENET_REF>,
++						  <&clk IMX8MP_CLK_ENET_TIMER>;
++				assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_266M>,
++							 <&clk IMX8MP_SYS_PLL2_100M>,
++							 <&clk IMX8MP_SYS_PLL2_125M>;
++				assigned-clock-rates = <0>, <0>, <125000000>, <100000000>;
++				fsl,num-tx-queues = <3>;
++				fsl,num-rx-queues = <3>;
++				status = "disabled";
++			};
++		};
++
++		gic: interrupt-controller@38800000 {
++			compatible = "arm,gic-v3";
++			reg = <0x38800000 0x10000>,
++			      <0x38880000 0xc0000>;
++			#interrupt-cells = <3>;
++			interrupt-controller;
++			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-parent = <&gic>;
++		};
++	};
++};
 -- 
-1.9.1
+2.7.4
 
