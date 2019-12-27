@@ -2,52 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B4F12BACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 20:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CC7B12BAC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 20:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfL0TpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727175AbfL0TpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 27 Dec 2019 14:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47592 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726839AbfL0TpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 14:45:08 -0500
-Subject: Re: [GIT PULL] gpio fixes for the v5.5 series
+        id S1726927AbfL0TpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 14:45:09 -0500
+Subject: Re: [GIT PULL] Power management fixes for v5.5-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1577475908;
-        bh=6MmZxWVukgo7MwepA6+knamZU47yNkG6FY80v5p8oDU=;
+        bh=a5nNUZyjTg2XqJzc/piVF19fCap2VesQ+XY7ubonnn4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=kEINk1T9afrOHs+mXfcRyvdZfl9k6SFW+uu2nORuBpcUyFJh21W+8r3KN/n9Gfo4p
-         syMhKpu6o1/yBn0/I0x1hfrRpjsAujCbfcVYmIWFlbZ79X79xtfqFr2NebIrT3kH6D
-         oeRz/z2RJoFjXSqWYjvM9Ho1ydoAZIMW60k5Be+I=
+        b=xJJ7cOjw1rSZXz4A8ujG3pVR2LrsHuVSvZA2MHJOU15Z2O8eoidTfD7BvwwZ4AXaP
+         DoIXG4OptKgZ1Bzj9FkvsS/OELAQgNz5M93FNLtpgzWEveTCMp7B4i67hlFFjD0dAl
+         KN+3aJgvwuF+XVZduU70BTS3Um/RhAMXBpfvR6Cw=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdZucwZNrUo3=WPM-utorFaqOn4AyhxMnX4xM_wvhP8SXg@mail.gmail.com>
-References: <CACRpkdZucwZNrUo3=WPM-utorFaqOn4AyhxMnX4xM_wvhP8SXg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
+References: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdZucwZNrUo3=WPM-utorFaqOn4AyhxMnX4xM_wvhP8SXg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
- tags/gpio-v5.5-2
-X-PR-Tracked-Commit-Id: 286e7beaa4cc7734894ee214569de4669ed9891e
+X-PR-Tracked-Message-Id: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc4
+X-PR-Tracked-Commit-Id: 2cb7bfc1ca9a34ca148ed77f5f6f07373312bb0a
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a305bd7c9c22e2f127b0674104acfa8133e3cd26
-Message-Id: <157747590806.1730.12327621591699474735.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 1413c361328c3ecd2cfe1e331f7b7d222d0712bc
+Message-Id: <157747590843.1730.14734719713637284767.pr-tracker-bot@kernel.org>
 Date:   Fri, 27 Dec 2019 19:45:08 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 26 Dec 2019 00:07:39 +0100:
+The pull request you sent on Fri, 27 Dec 2019 11:21:37 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git tags/gpio-v5.5-2
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc4
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a305bd7c9c22e2f127b0674104acfa8133e3cd26
+https://git.kernel.org/torvalds/c/1413c361328c3ecd2cfe1e331f7b7d222d0712bc
 
 Thank you!
 
