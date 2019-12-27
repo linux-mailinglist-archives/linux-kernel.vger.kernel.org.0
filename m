@@ -2,372 +2,246 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6D4512B206
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:39:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A79212B1D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:37:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727315AbfL0Gjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 01:39:31 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:58619 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727280AbfL0Gja (ORCPT
+        id S1727028AbfL0GhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 01:37:23 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:11826 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726483AbfL0GhW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 01:39:30 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1577428769; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=AZXTG0cslf+YgUMb8uBOFZik8DwvCkPO9lUG4AAn1HM=; b=egFrMr3Sg6NDoN17og4UD7JGuDSIo51GiEkDvVT3noO1uwENbUibJNZMC5aPbGT7bugSopyM
- 73j6nhxrD+OdJ4LVZJ+MskWe9mR6AmUQiDnGsRJ8tAQKkPvpihiTwMomKu2MJxoBxSRJl9mM
- rzw7eZQFjP9fuozNxV7HQh9ZiJs=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e05a71f.7f4b8f6105a8-smtp-out-n03;
- Fri, 27 Dec 2019 06:39:27 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6E450C447A0; Fri, 27 Dec 2019 06:39:26 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 48ADAC447A4;
-        Fri, 27 Dec 2019 06:39:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 48ADAC447A4
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 6/6] clk: qcom: Add video clock controller driver for SC7180
-Date:   Fri, 27 Dec 2019 12:08:34 +0530
-Message-Id: <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
-References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
+        Fri, 27 Dec 2019 01:37:22 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e05a67c0000>; Thu, 26 Dec 2019 22:36:44 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 26 Dec 2019 22:37:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 26 Dec 2019 22:37:21 -0800
+Received: from [10.24.192.96] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 27 Dec
+ 2019 06:37:17 +0000
+Subject: Re: [Patch V2 03/18] phy: tegra: xusb: Add usb-role-switch support
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>,
+        <jonathanh@nvidia.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <kishon@ti.com>,
+        <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1576660591-10383-1-git-send-email-nkristam@nvidia.com>
+ <1576660591-10383-4-git-send-email-nkristam@nvidia.com>
+ <20191219132650.GJ1440537@ulmo>
+X-Nvconfidentiality: public
+From:   Nagarjuna Kristam <nkristam@nvidia.com>
+Message-ID: <74d94004-2022-3b04-6cd9-d6b1e9eca230@nvidia.com>
+Date:   Fri, 27 Dec 2019 12:09:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
+MIME-Version: 1.0
+In-Reply-To: <20191219132650.GJ1440537@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1577428604; bh=bI5VIPedVxKsj8DUcsAVgjGijDib+I6V20ZeTFfznwo=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=Bd37sWm/MXOKGy4t4m8ch8/ipRZjZP5gjJCczchiQbBXV5KJCJG24OqbHCk3CeaYC
+         G6FZ8qg+6o28cCFymUOXnLx1svvZVdTXzmoagRR62kpLQ7nmyqZFDXNt6siOCJ3YtJ
+         pkU6vJthRrTxi2NjhVtY7aIc/YJlgOVNcL2kvIXJMghHXSnA04hnQ+FkfJm5/bhw+0
+         wUbyRUUZa1WHAjM3Tihjhsq2oAiZKFf3JfedyDL1VkKc9IgcXNYa3qa4HDQhJV0HqA
+         +W19rI953ooUFPuBTocsGde19dCbOHYM7dyXnmZaoX++ADkw2gZ/mOXNRx5OycCtOi
+         SAQXTsBOwgCig==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the video clock controller found on SC7180
-based devices. This would allow video drivers to probe
-and control their clocks.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   8 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 268 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sc7180.c
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e648a60..cf21d5c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -253,6 +253,14 @@ config SC_GPUCC_7180
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
+On 19-12-2019 18:56, Thierry Reding wrote:
+> 
+> On Wed, Dec 18, 2019 at 02:46:16PM +0530, Nagarjuna Kristam wrote:
+>> If usb-role-switch property is present in USB 2 port, register
+>> usb-role-switch to receive usb role changes.
+>>
+>> Signed-off-by: Nagarjuna Kristam<nkristam@nvidia.com>
+>> ---
+>> V2:
+>>   - Removed dev_set_drvdata for port->dev.
+>>   - Added of_platform_depopulate during error handling and driver removal.
+>> ---
+>>   drivers/phy/tegra/Kconfig |  1 +
+>>   drivers/phy/tegra/xusb.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/phy/tegra/xusb.h  |  3 +++
+>>   3 files changed, 46 insertions(+)
+>>
+>> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+>> index f9817c3..df07c4d 100644
+>> --- a/drivers/phy/tegra/Kconfig
+>> +++ b/drivers/phy/tegra/Kconfig
+>> @@ -2,6 +2,7 @@
+>>   config PHY_TEGRA_XUSB
+>>   	tristate "NVIDIA Tegra XUSB pad controller driver"
+>>   	depends on ARCH_TEGRA
+>> +	select USB_CONN_GPIO
+>>   	help
+>>   	  Choose this option if you have an NVIDIA Tegra SoC.
+>>   
+>> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+>> index f98ec39..dc00b42 100644
+>> --- a/drivers/phy/tegra/xusb.c
+>> +++ b/drivers/phy/tegra/xusb.c
+>> @@ -523,6 +523,7 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+>>   	port->dev.type = &tegra_xusb_port_type;
+>>   	port->dev.of_node = of_node_get(np);
+>>   	port->dev.parent = padctl->dev;
+>> +	port->dev.driver = padctl->dev->driver;
+>>   
+>>   	err = dev_set_name(&port->dev, "%s-%u", name, index);
+>>   	if (err < 0)
+>> @@ -541,6 +542,10 @@ static int tegra_xusb_port_init(struct tegra_xusb_port *port,
+>>   
+>>   static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
+>>   {
+>> +	if (!IS_ERR_OR_NULL(port->usb_role_sw)) {
+>> +		of_platform_depopulate(&port->dev);
+>> +		usb_role_switch_unregister(port->usb_role_sw);
+>> +	}
+>>   	device_unregister(&port->dev);
+> Nit: I prefer blank lines after blocks for readability.
+> 
+Will update
 
-+config SC_VIDEOCC_7180
-+	tristate "SC7180 Video Clock Controller"
-+	select SC_GCC_7180
-+	help
-+	  Support for the video clock controller on SC7180 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
- 	select SDM_GCC_845
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 5477482..4cdd08f 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
- obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
-+obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-new file mode 100644
-index 0000000..76add30
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -0,0 +1,259 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,videocc-sc7180.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CHIP_SLEEP_CLK,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL0_OUT_ODD,
-+};
-+
-+static const struct pll_vco fabia_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.vco_table = fabia_vco,
-+	.num_vco = ARRAY_SIZE(fabia_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .fw_name = "bi_tcxo" },
-+	{ .hw = &video_pll0.clkr.hw },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-+	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_venus_clk_src = {
-+	.cmd_rcgr = 0x7f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_venus_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_venus_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = 3,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_axi_clk = {
-+	.halt_reg = 0x9ec,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_core_clk = {
-+	.halt_reg = 0x890,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x890,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0xa4c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xa4c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_axi_clk = {
-+	.halt_reg = 0x9cc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_core_clk = {
-+	.halt_reg = 0x850,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x850,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc venus_gdsc = {
-+	.gdscr = 0x814,
-+	.pd = {
-+		.name = "venus_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc vcodec0_gdsc = {
-+	.gdscr = 0x874,
-+	.pd = {
-+		.name = "vcodec0_gdsc",
-+	},
-+	.flags = HW_CTRL,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sc7180_clocks[] = {
-+	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
-+	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
-+	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+};
-+
-+static struct gdsc *video_cc_sc7180_gdscs[] = {
-+	[VENUS_GDSC] = &venus_gdsc,
-+	[VCODEC0_GDSC] = &vcodec0_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sc7180_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0xb94,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sc7180_desc = {
-+	.config = &video_cc_sc7180_regmap_config,
-+	.clks = video_cc_sc7180_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sc7180_clocks),
-+	.gdscs = video_cc_sc7180_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sc7180_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sc7180_match_table[] = {
-+	{ .compatible = "qcom,sc7180-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sc7180_match_table);
-+
-+static int video_cc_sc7180_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct alpha_pll_config video_pll0_config = {};
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sc7180_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	video_pll0_config.l = 0x1f;
-+	video_pll0_config.alpha = 0x4000;
-+	video_pll0_config.user_ctl_val = 0x00000001;
-+	video_pll0_config.user_ctl_hi_val = 0x00004805;
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	/* Keep VIDEO_CC_XO_CLK ALWAYS-ON */
-+	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
-+
-+	return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sc7180_driver = {
-+	.probe = video_cc_sc7180_probe,
-+	.driver = {
-+		.name = "sc7180-videocc",
-+		.of_match_table = video_cc_sc7180_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sc7180_init(void)
-+{
-+	return platform_driver_register(&video_cc_sc7180_driver);
-+}
-+subsys_initcall(video_cc_sc7180_init);
-+
-+static void __exit video_cc_sc7180_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sc7180_driver);
-+}
-+module_exit(video_cc_sc7180_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI VIDEOCC SC7180 Driver");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>   }
+>>   
+>> @@ -551,11 +556,42 @@ static const char *const modes[] = {
+>>   	[USB_DR_MODE_OTG] = "otg",
+>>   };
+>>   
+>> +static int tegra_xusb_role_sw_set(struct device *dev, enum usb_role role)
+>> +{
+>> +	dev_dbg(dev, "%s calling notifier for role is %d\n", __func__, role);
+> I don't understand what "for role is %d" means here. I think perhaps you
+> meant to simply say "for role %d"? Also, perhaps add parentheses after
+> the "%s" to clarify that you're referring to a function.
+> 
+Yes, intention is to print role, Will update as mentioned "for role %d"
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_xusb_setup_usb_role_switch(struct tegra_xusb_port *port)
+>> +{
+>> +	int err = 0;
+>> +	struct usb_role_switch_desc role_sx_desc = {
+>> +					.set = tegra_xusb_role_sw_set,
+>> +					.fwnode = dev_fwnode(&port->dev),
+>> +						   };
+> The indentation here is odd. Use a single tab to indent lines after the
+> opening { and put the closing } on the same column as "struct". Also,
+> the above may become more readable if you follow the "inverse Christmas
+> tree" style of declaring functions, where you order lines by their
+> length, with the longest line first, like so:
+> 
+> 	struct usb_role_switch_desc role_sx_desc = {
+> 		.fwnode = dev_fwnode(&port->dev),
+> 		.set = tegra_xusb_role_sw_set,
+> 	};
+> 	int err = 0;
+> 
+Thanks for inputs, will update accordingly.
+
+>> +
+>> +	port->usb_role_sw = usb_role_switch_register(&port->dev,
+>> +						&role_sx_desc);
+> &role_sx_desc should be aligned with &port->dev.
+> 
+Will align here and at other places wherever missed.
+
+>> +	if (IS_ERR(port->usb_role_sw)) {
+>> +		err = PTR_ERR(port->usb_role_sw);
+>> +		if (err != EPROBE_DEFER)
+>> +			dev_err(&port->dev, "Failed to register USB role SW: %d",
+> Error messages typically start with a lowercase letter (at least in this
+> driver). Also perhaps spell out "switch" above because SW could easily
+> be confused with "software".
+> 
+Will update.
+
+>> +				err);
+> Shouldn't we abort here? Consider the case where this indeed defers
+> probe. If we don't abort here, the of_platform_populate() below will be
+> called multiple times. Shouldn't it only be called when we actually
+> succeed in registering the switch?
+> 
+Yes, we should abort here, "return err;" got moved to next patch during
+re-base. Will move to current patch.
+> Also, looking at usb_role_switch_register(), I don't think it ever can
+> return -EPROBE_DEFER, so I think you can drop that check and print the
+> error unconditionally.
+> 
+> Thierry
+> 
+Will update.
+-Nagarjuna
+>> +	}
+>> +
+>> +	/* populate connector entry */
+>> +	of_platform_populate(port->dev.of_node, NULL, NULL, &port->dev);
+>> +
+>> +	return err;
+>> +}
+>> +
+>>   static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+>>   {
+>>   	struct tegra_xusb_port *port = &usb2->base;
+>>   	struct device_node *np = port->dev.of_node;
+>>   	const char *mode;
+>> +	int err;
+>>   
+>>   	usb2->internal = of_property_read_bool(np, "nvidia,internal");
+>>   
+>> @@ -572,6 +608,12 @@ static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
+>>   		usb2->mode = USB_DR_MODE_HOST;
+>>   	}
+>>   
+>> +	if (of_property_read_bool(np, "usb-role-switch")) {
+>> +		err = tegra_xusb_setup_usb_role_switch(port);
+>> +		if (err < 0)
+>> +			return err;
+>> +	}
+>> +
+>>   	usb2->supply = devm_regulator_get(&port->dev, "vbus");
+>>   	return PTR_ERR_OR_ZERO(usb2->supply);
+>>   }
+>> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+>> index da94fcc..9f27899 100644
+>> --- a/drivers/phy/tegra/xusb.h
+>> +++ b/drivers/phy/tegra/xusb.h
+>> @@ -12,6 +12,7 @@
+>>   #include <linux/workqueue.h>
+>>   
+>>   #include <linux/usb/otg.h>
+>> +#include <linux/usb/role.h>
+>>   
+>>   /* legacy entry points for backwards-compatibility */
+>>   int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
+>> @@ -266,6 +267,8 @@ struct tegra_xusb_port {
+>>   	struct list_head list;
+>>   	struct device dev;
+>>   
+>> +	struct usb_role_switch *usb_role_sw;
+>> +
+>>   	const struct tegra_xusb_port_ops *ops;
+>>   };
+>>   
+>> -- 
+>> 2.7.4
