@@ -2,107 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E906F12B452
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 12:51:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 585E412B457
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 12:52:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfL0LvQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 06:51:16 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:56324 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfL0LvQ (ORCPT
+        id S1727130AbfL0LwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 06:52:04 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51858 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfL0LwD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 06:51:16 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-2e-5e05f03118ce
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 90.F8.08102.130F50E5; Fri, 27 Dec 2019 12:51:13 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Fri, 27 Dec 2019 12:51:08 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "pavel@ucw.cz" <pavel@ucw.cz>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v7 11/12] leds: Add common LED binding parsing support
- to LED class/core
-Thread-Topic: [PATCH v7 11/12] leds: Add common LED binding parsing support
- to LED class/core
-Thread-Index: AQHVtlJMyatI9ieot0i0jk0Qmtw3YKfE7uMAgAjrkIA=
-Date:   Fri, 27 Dec 2019 11:51:07 +0000
-Message-ID: <4f5c3d6b5e10936b3bae672021aec375c2880bf2.camel@fi.rohmeurope.com>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-         <c7abf8d15ea54fee504fbec5666d013c26d3b62a.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191221193758.GJ32732@amd>
-In-Reply-To: <20191221193758.GJ32732@amd>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <35D7AE440FBBEF4692D77DA8C8D1C20F@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        Fri, 27 Dec 2019 06:52:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d73so7893453wmd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 03:52:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=CYKhEBIyq9WsTm4USUtMIQjKjqSO6ixzpKdzAB4oDVs=;
+        b=FJ5H4I1pH8AI9vdRjVpcvyexPVcVWHT4hESrkMD37naCNQrNUAToMg/KzQ63ShscAU
+         7sA1kSWqTuSap7spewyOng+o7oZcYxGmMSlArvHlF2Iup8iAUWmqeU/s6fFg6TYZERNd
+         ZCa1xrm59vHtXlRxvMsUpXpY3gPB2Npwv4YCucND4bjO4x2YAQwYap0pYA8QpedaLPQJ
+         NsvLACvis8dykG/Xi4K2Z28xmKhh0WFPojhK6Y3lVn7Z2sv3cmBdMSAlyFqQzJ4P4MCN
+         ptwtIXAjo87o5/2eURiV3/rZu9WFDLfRGY/z8C5jqmHE/EJFC1jvauq57HoPclwlxRU8
+         dsxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=CYKhEBIyq9WsTm4USUtMIQjKjqSO6ixzpKdzAB4oDVs=;
+        b=aivsKX+2q2VpScNVf9FNo5nSJOZ+Usoxw+A4d7seI/eupLTmhvdHz3bwAiDkfRhJsy
+         QJKVvPxe3aOk4XjAw4xJJRaYm7zVJc1e+7qBlxNxZfvZtMLaPsiXKSi6IW3sgwMqNkjL
+         kQcvNG3vVqPGGvGnQxFIRGqvzqnwhaN1os412kezp6I+iKKrOoudjiTkoJzkXGlmBE4W
+         TE+bJxhm8EJDVfEHp3fVr9CtNLJxRxA4ya4XJvt5ffkiRm4p/80D6OttNxJqPbTXGayT
+         neYBIYbjPMqUb861cyGx1bSHzjStHBH+jkiMlff/9c1UFhtRbvYJel8W7OHYrRSmRuhM
+         JVhA==
+X-Gm-Message-State: APjAAAUUqRWMHqdnVSgD9lrxoyyK0QyKVQGt3nWglZr+Bqrnq2AmLKjN
+        fMlXJM1S4ewRDqd1VixahDZjWQ==
+X-Google-Smtp-Source: APXvYqz2mIvuXnQ4YmVCVQ4oGmz3+KftH7EYXnr0k5f6KQgbzvBbJr3z/NRPaqk+UBpY6/0lrBeEoA==
+X-Received: by 2002:a7b:c389:: with SMTP id s9mr18906638wmj.7.1577447519769;
+        Fri, 27 Dec 2019 03:51:59 -0800 (PST)
+Received: from apalos.home (athedsl-4510215.home.otenet.gr. [94.71.190.15])
+        by smtp.gmail.com with ESMTPSA id s128sm11127104wme.39.2019.12.27.03.51.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Dec 2019 03:51:58 -0800 (PST)
+Date:   Fri, 27 Dec 2019 13:51:56 +0200
+From:   Ilias Apalodimas <ilias.apalodimas@linaro.org>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Jesper Dangaard Brouer <brouer@redhat.com>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lorenzo Bianconi <lorenzo@kernel.org>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Luka Perkov <luka.perkov@sartura.hr>,
+        Tomislav Tomasic <tomislav.tomasic@sartura.hr>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [RFC net-next 0/2] mvpp2: page_pool support
+Message-ID: <20191227115156.GA29682@apalos.home>
+References: <20191224010103.56407-1-mcroce@redhat.com>
+ <20191224095229.GA24310@apalos.home>
+ <20191224150058.4400ffab@carbon>
+ <CAGnkfhzYdqBPvRM8j98HVMzeHSbJ8RyVH+nLpoKBuz2iqErPog@mail.gmail.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0wTWRTHc2emM7fowFhed+sjUjVm1yxKQuJdl6gflIxGjYkaEqN0Bxhb
-        Ip3itBjdJYomPlqQYHyFhhajIqgEtMpiiW4QwQXWFyKoEVSEKBAXMSBqxMdMR4VPc+b8/7/z
-        Px/OhaThGW2E6ZJTlCUhw0SHULVlH/2/xg3qkuf1dfyGT7W0MXjfwGkGD3ubKXykq4fGxfW3
-        dTj3v0s6/LjqPIWfvm0AeOT+fgIfHi0l8Ju8Jzp8sXgU4NaaIhpXvaoA+Ma5+zQuedBC4KKS
-        Rgq3NC/Fnc0NNN5ztZ7Bn9svUIsj+XJfOeBfP9zD8L7yv/iAp5Ph/WddNN/RfoXm/31YTfDH
-        fB8IvuzcO4Yf8k9bHbJ+QkKK4Ny6Jt0izV34xwTrLXcvlVkWuu3u00oqB7xn3UAPEReP8ttP
-        Um4QAg1cG0C9TaWM9tMI0K6XhYoCIc0lIPcjRgUiuBh0Mc9Fqx6S+xuiwIs2QvWEc8mounSm
-        5jGjit5iQqsXoKZbd4MWipuFjnrXqm2WW4UqCw8SWtR1gHx5PUG/nvsZXQ90BLMANxW5cgaC
-        fZKLRv4X73Ta0hw6deUOqdWRqK/787e+CV390BVcmVTmVNbM1dDF6PlgDdDqGHQ4t4vRdpiE
-        mgp7qAIQ5RmX4BmjPeNozzjaM44+DnRnAbIJ6RkWwSnGxcpiVqxst9qUT6rd5gfaxQxfBl/q
-        ltUBAoI68BMkTJHsvRJdsiE0xZ623So4rGY5K0N01AEESVMEK1kUjU0Ttv8pyvbv0mRImaLZ
-        2V0HNxo4NWuzKGaK8nd1CoQmxDpeK+AkWbSI2zalZzjHZALq1eEhxgiHKKWJspDltJrV8zA7
-        lPtQpYlK7kIVZx2Zgk3pamgzmAML+rwnSFjvLTlBGijJLonGaHa6auVUqzVL+hHUD6IhMIWz
-        n/5X1InKs/kxp1+JIJSINwZCjXAKY5IxB+x9+7t++fIRy6qk6uczhPhrW6MoGLbrZuz8hmWZ
-        N7a0hl3ObnQNDWcL7opB8okxsPbjy8TUbH+VfI/IExOiksJz9ZSUvzLM3DN6ZtAf+0/K7oii
-        fG+ifVO2r3DdY3rBtc5ZO2rnxM/bMPvQ0EBijM01ElgUtT90b/fO1iUHOpL6V5goh1WI+4WU
-        HcJX+zfP7PMDAAA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGnkfhzYdqBPvRM8j98HVMzeHSbJ8RyVH+nLpoKBuz2iqErPog@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpPbiBTYXQsIDIwMTktMTItMjEgYXQgMjA6MzcgKzAxMDAsIFBhdmVsIE1hY2hlayB3cm90ZToN
-Cj4gSGkhDQo+IA0KPiA+IFF1Y2lrIGdyZXAgZm9yICdmb3JfZWFjaCcgb3IgJ2xpbnV4LGRlZmF1
-bHQtdHJpZ2dlcicgb3INCj4gDQo+IHF1aWNrLg0KPiANCj4gPiBJZiBpbml0X2RhdGEgaXMgZ292
-ZW4gYnV0IG5vIHN0YXJ0aW5nIHBvaW50IGZvciBub2RlIGxvb2t1cCAtIHRoZW4NCj4gDQo+IGlz
-IGdpdmVuLg0KPiANCj4gPiAocGFyZW50KSBkZXZpY2UncyBvd24gRFQgbm9kZSBpcyB1c2VkLiBJ
-ZiBubyBsZWQtY29tcGF0aWJsZSBpcw0KPiA+IGdpdmVuLA0KPiA+IHRoZW4gb2ZfbWF0Y2ggaXMg
-c2VhcmNoZWQgZm9yLiBJZiBuZWl0aGVyIGxlZC1jb21wYXRpYmxlIG5vdA0KPiA+IG9mX21hdGNo
-DQo+IA0KPiBub3Igb2ZfbWF0Y2guDQo+IA0KPiA+IGlzIGdpdmVuIHRoZW4gZGV2aWNlJ3Mgb3du
-IG5vZGUgb3IgcGFzc2VkIHN0YXJ0aW5nIHBvaW50IGFyZSB1c2VkDQo+ID4gYXMNCj4gPiBzdWNo
-Lg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IE1hdHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRp
-bmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiA+IC0tLQ0KPiA+IA0KDQovL3NuaXANCg0KPiA+IEBA
-IC0zMjIsNiArMzk4LDEwIEBAIGludCBsZWRfY2xhc3NkZXZfcmVnaXN0ZXJfZXh0KHN0cnVjdCBk
-ZXZpY2UNCj4gPiAqcGFyZW50LA0KPiA+ICAJCQlsZWRfY2Rldi0+bmFtZSk7DQo+ID4gIA0KPiA+
-ICAJcmV0dXJuIDA7DQo+ID4gK2Vycl9vdXQ6DQo+ID4gKwlpZiAobGVkX2NkZXYtPmZ3bm9kZV9v
-d25lZCkNCj4gPiArCQlmd25vZGVfaGFuZGxlX3B1dChmdyk7DQo+ID4gKwlyZXR1cm4gcmV0Ow0K
-PiA+ICB9DQo+IA0KPiBsZWRfY2Rldi0+Zndub2RlX293bmVkID0gZmFsc2UgaGVyZT8NCg0KSSBh
-ZGRlZCB0aGlzIGFsdGhvdWdoIHdpdGggdGhlIGN1cnJlbnQgcGF0Y2ggaXQgc2hvdWxkIG5vdCBi
-ZSByZXF1aXJlZC4NClRoZSBsZWRfY2Rldi0+Zndub2RlX293bmVkIGlzIGFueXdheXMgcmUtaW5p
-dGlhbGl6ZWQgYXQgdGhlIGJlZ2lubmluZw0Kb2YgdGhlICdsZWRfY2xhc3NkZXZfcmVnaXN0ZXJf
-ZXh0Jy4gSXQgd29uJ3QgZWF0IG1hbnkgY3ljbGVzIHRvIHplcm8gaXQNCmhlcmUgdGhvdWdoIHNv
-IHBlcmhhcHMgaXQncyBzYWZlciB0byBqdXN0IGRvIGl0Lg0KDQpJIGFtIG5vdCBzdXJlIEkgY2Fu
-IGZpbmlzaCBhbmQgdGVzdCB0aGUgcGF0Y2ggdjcgdG9kYXkuIFNvIGl0IG1heSBiZQ0KbmV4dCB5
-ZWFyIHdoZW4gSSBhbSBhYmxlIHRvIHNlbmQgaXQuLi4gU29ycnkgZm9yIHRoZSBkZWxheSENCg0K
-DQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg==
+On Tue, Dec 24, 2019 at 03:37:49PM +0100, Matteo Croce wrote:
+> On Tue, Dec 24, 2019 at 3:01 PM Jesper Dangaard Brouer
+> <brouer@redhat.com> wrote:
+> >
+> > On Tue, 24 Dec 2019 11:52:29 +0200
+> > Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+> >
+> > > On Tue, Dec 24, 2019 at 02:01:01AM +0100, Matteo Croce wrote:
+> > > > This patches change the memory allocator of mvpp2 from the frag allocator to
+> > > > the page_pool API. This change is needed to add later XDP support to mvpp2.
+> > > >
+> > > > The reason I send it as RFC is that with this changeset, mvpp2 performs much
+> > > > more slower. This is the tc drop rate measured with a single flow:
+> > > >
+> > > > stock net-next with frag allocator:
+> > > > rx: 900.7 Mbps 1877 Kpps
+> > > >
+> > > > this patchset with page_pool:
+> > > > rx: 423.5 Mbps 882.3 Kpps
+> > > >
+> > > > This is the perf top when receiving traffic:
+> > > >
+> > > >   27.68%  [kernel]            [k] __page_pool_clean_page
+> > >
+> > > This seems extremly high on the list.
+> >
+> > This looks related to the cost of dma unmap, as page_pool have
+> > PP_FLAG_DMA_MAP. (It is a little strange, as page_pool have flag
+> > DMA_ATTR_SKIP_CPU_SYNC, which should make it less expensive).
+> >
+> >
+> > > >    9.79%  [kernel]            [k] get_page_from_freelist
+> >
+> > You are clearly hitting page-allocator every time, because you are not
+> > using page_pool recycle facility.
+> >
+> >
+> > > >    7.18%  [kernel]            [k] free_unref_page
+> > > >    4.64%  [kernel]            [k] build_skb
+> > > >    4.63%  [kernel]            [k] __netif_receive_skb_core
+> > > >    3.83%  [mvpp2]             [k] mvpp2_poll
+> > > >    3.64%  [kernel]            [k] eth_type_trans
+> > > >    3.61%  [kernel]            [k] kmem_cache_free
+> > > >    3.03%  [kernel]            [k] kmem_cache_alloc
+> > > >    2.76%  [kernel]            [k] dev_gro_receive
+> > > >    2.69%  [mvpp2]             [k] mvpp2_bm_pool_put
+> > > >    2.68%  [kernel]            [k] page_frag_free
+> > > >    1.83%  [kernel]            [k] inet_gro_receive
+> > > >    1.74%  [kernel]            [k] page_pool_alloc_pages
+> > > >    1.70%  [kernel]            [k] __build_skb
+> > > >    1.47%  [kernel]            [k] __alloc_pages_nodemask
+> > > >    1.36%  [mvpp2]             [k] mvpp2_buf_alloc.isra.0
+> > > >    1.29%  [kernel]            [k] tcf_action_exec
+> > > >
+> > > > I tried Ilias patches for page_pool recycling, I get an improvement
+> > > > to ~1100, but I'm still far than the original allocator.
+> > --
+> > Best regards,
+> >   Jesper Dangaard Brouer
+> >   MSc.CS, Principal Kernel Engineer at Red Hat
+> >   LinkedIn: http://www.linkedin.com/in/brouer
+> >
+> 
+> The change I did to use the recycling is the following:
+> 
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -3071,7 +3071,7 @@ static int mvpp2_rx(struct mvpp2_port *port,
+> struct napi_struct *napi,
+>     if (pp)
+> -       page_pool_release_page(pp, virt_to_page(data));
+> +      skb_mark_for_recycle(skb, virt_to_page(data), &rxq->xdp_rxq.mem);
+>     else
+>          dma_unmap_single_attrs(dev->dev.parent, dma_addr,
+> 
+> 
+Jesper is rightm you aren't recycling anything.
+
+The mark skb_mark_for_recycle() usage seems correct. 
+There are a few more places that we refuse to recycle (for example coalescing
+page pool and slub allocated pages is forbidden). I wonder if you hit any of
+those cases and recycling doesn't take place. 
+We'll hopefully release updated code shortly. I'll ping you and we can test on
+that
+
+
+Thanks
+/Ilias
+> 
+> 
+> --
+> Matteo Croce
+> per aspera ad upstream
+> 
