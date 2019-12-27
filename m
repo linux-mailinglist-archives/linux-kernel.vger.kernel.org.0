@@ -2,75 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 59CDC12B46C
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 13:06:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0396B12B472
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 13:17:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfL0MGt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 07:06:49 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:37355 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726923AbfL0MGs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 07:06:48 -0500
-Received: by mail-il1-f196.google.com with SMTP id t8so22326956iln.4
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 04:06:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WmfgYIlZWxDaZizS0/2PUuLY/qX43M07m582qEI148o=;
-        b=X98BOIzumlFPEjdZ9sUuhS3iBBqL1VUK/pjvCrlYXSS/VMjrahfV6GK8V4NLfCKstl
-         FcnTl8ezBueGukai4CUwLYopsLt6rhnipVOq02y3UOM+V7ta4pYmlEnbudPT6SoSqQ0Q
-         Juv11hh4tpO9NcgZfbm1TSYgDn5hSdsHO8H24=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WmfgYIlZWxDaZizS0/2PUuLY/qX43M07m582qEI148o=;
-        b=COM9PcabyhwubS/J9GU3Pr2lNVKPjGGQZtoIE8OEDq+mpQHCdg4yXx1MLwBxTj99Ok
-         kZxm8jVMIM0lt4xWCXeV6DtvjMu6b0gxI4/3MYqHs4faSuvzAlDCeRpL1bPgF2Fo1IxI
-         tUL9vMbyfECohFS+hhlGGj+wyu92PB8bnJEfSca0g/tqeTG9C5QO4IHtux4ByedXsQLO
-         ijt9b+BiSV3pM2uB0//TlRiSgcpS0LCWncJ/c+J8etWnnsTG56VeT+opLIfSUSOTCWP3
-         H+WtYUEghVcBk4zTzkjnFbbtxT6m+Objp0B+sM+XNNmTG4SahrWuQ5VYj6QcpRjaPS4o
-         eiRQ==
-X-Gm-Message-State: APjAAAXezsBIk04N9+G0NByFDsjI/fycL4Lhy6JHJQfc/3EfD+22n1nD
-        Uq4zPO3L1zuYtor3Ft5vhwq6ivcO9rwZkNWfB0uXGQ==
-X-Google-Smtp-Source: APXvYqz0avfFPQ7KqEa1gHijLD//RP3wLx7cUiHD8+e66tZOfTYRzPwEjDOnRq8Z7uRAutkXR/PIyTrnPMOIPxZ6x2s=
-X-Received: by 2002:a92:860f:: with SMTP id g15mr42716158ild.297.1577448407609;
- Fri, 27 Dec 2019 04:06:47 -0800 (PST)
-MIME-Version: 1.0
-References: <20191222132229.30276-1-jagan@amarulasolutions.com> <20191226093952.i2jttp7tr5hie6jl@hendrix.home>
-In-Reply-To: <20191226093952.i2jttp7tr5hie6jl@hendrix.home>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Fri, 27 Dec 2019 17:36:36 +0530
-Message-ID: <CAMty3ZA9VBj6OxaLYE21Qt01nnTYGhsS8c2JHc5esDMeWe0qYw@mail.gmail.com>
-Subject: Re: [PATCH v14 0/7] drm/sun4i: Allwinner A64 MIPI-DSI support
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1726677AbfL0MRF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 07:17:05 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:60900 "EHLO honk.sigxcpu.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbfL0MRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 07:17:04 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 5C2E4FB03;
+        Fri, 27 Dec 2019 13:17:02 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id TI76RAkMDfvm; Fri, 27 Dec 2019 13:17:01 +0100 (CET)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id 9B10049799; Fri, 27 Dec 2019 13:17:00 +0100 (CET)
+Date:   Fri, 27 Dec 2019 13:17:00 +0100
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>
-Content-Type: text/plain; charset="UTF-8"
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt: bindings: lm3692x: Add ti,ovp-microvolt
+ property
+Message-ID: <20191227121700.GA18032@bogon.m.sigxcpu.org>
+References: <cover.1577271823.git.agx@sigxcpu.org>
+ <f45e30f43b7d20ac14f93309a006249fdb351ddd.1577271823.git.agx@sigxcpu.org>
+ <20191226100615.GA4033@amd>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191226100615.GA4033@amd>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 3:08 PM Maxime Ripard <mripard@kernel.org> wrote:
->
-> On Sun, Dec 22, 2019 at 06:52:22PM +0530, Jagan Teki wrote:
-> > This is v14 version for Allwinner A64 MIPI-DSI support
-> > and here is the previous version set[1]
->
-> I applied the patches 1 to 6, and fixed checkpatch warnings in the
-> patch 5. Make sure to run it before sending patches.
+Hi,
+On Thu, Dec 26, 2019 at 11:06:15AM +0100, Pavel Machek wrote:
+> On Wed 2019-12-25 12:07:14, Guido Günther wrote:
+> > This allows to set the overvoltage protection to 17V, 21V, 25V or 29V.
+> > 
+> > Signed-off-by: Guido Günther <agx@sigxcpu.org>
+> 
+> Acked-by: Pavel	 Machek <pavel@ucw.cz>
 
-Looks like I missed this time, sorry but usually I would do. Thanks.
+Thanks!
+
+> I will need Rob's Ack.
+> 
+> > @@ -44,6 +48,7 @@ led-controller@36 {
+> >  
+> >  	enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+> >  	vled-supply = <&vbatt>;
+> > +	ti,ovp-microvolt = <25000000>;
+> 
+> Wed often put the default values here.
+
+Makes sense, thanks.
+ -- Guido
+
+> 									Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+
