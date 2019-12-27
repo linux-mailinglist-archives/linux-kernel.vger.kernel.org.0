@@ -2,84 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6436512BBA0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 23:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 106F912BBA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 23:44:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726442AbfL0Wne (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 17:43:34 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32944 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbfL0Wne (ORCPT
+        id S1726603AbfL0WoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 17:44:11 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:27636 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725860AbfL0WoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 17:43:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PBsKP8gtbmBJPTI5aIng2BCqn7LuKLBL/0YvXsWQfmE=; b=stCMR1/Sr1/3RfQMgganUG+10
-        1f1GNXYHTXNWSZ2LmteRQgzQp/UopIFgc4crjtQYOvEl5YZy6vmqjmpYnqkZk3dt2o6MVofqOA1Qk
-        skYpw1zaCwUpbdmo7YIA1auXsKjl2TwYXo/IMwRJGLXEd4s26VmNnNi/8zIszbNVuYlNs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ikyKP-0006a6-SZ; Fri, 27 Dec 2019 22:43:29 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 5E21BD01A22; Fri, 27 Dec 2019 22:43:29 +0000 (GMT)
-Date:   Fri, 27 Dec 2019 22:43:29 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Shuming Fan <shumingf@realtek.com>, alsa-devel@alsa-project.org
-Subject: Re: [PATCH AUTOSEL 5.4 001/187] ASoC: rt5682: fix i2c arbitration
- lost issue
-Message-ID: <20191227224329.GM27497@sirena.org.uk>
-References: <20191227172911.4430-1-sashal@kernel.org>
+        Fri, 27 Dec 2019 17:44:10 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xBRMdrDJ020386
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 14:44:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=PBpHMpBlV1Aa9DOQjEjFsW6rz8psMCEge3KgMqaCmYA=;
+ b=lrPzsUsN8trOHVNY/3K3rUSVazEB/JfWYylLxGWtz8UBx1T5S2IgdDF5lWcb28SxDj02
+ dq3UXpVLJodTut6uO83M1g1lKv8guIA1NL/JgEuJ8lAg8fRsZrHX3Cbjm9NOir6UoP9u
+ 6akT/qzOWLJQ4tQnmbc6z6sa+h9pebUgrZs= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2x4wu7wqpv-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 14:44:09 -0800
+Received: from intmgw003.06.prn3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::d) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 27 Dec 2019 14:44:07 -0800
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id 32C8418FE1EBC; Fri, 27 Dec 2019 14:44:06 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>, <joel@jms.id.au>,
+        <linux-aspeed@lists.ozlabs.org>, <sdasari@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [net-next PATCH] net/ncsi: Fix gma flag setting after response
+Date:   Fri, 27 Dec 2019 14:43:49 -0800
+Message-ID: <20191227224349.2182366-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="EOHJn1TVIJfeVXv2"
-Content-Disposition: inline
-In-Reply-To: <20191227172911.4430-1-sashal@kernel.org>
-X-Cookie: I have many CHARTS and DIAGRAMS..
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-12-27_07:2019-12-24,2019-12-27 signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 adultscore=0 mlxscore=0
+ suspectscore=0 bulkscore=0 mlxlogscore=831 clxscore=1015
+ priorityscore=1501 lowpriorityscore=0 spamscore=0 phishscore=0
+ malwarescore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-1910280000 definitions=main-1912270181
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+gma_flag was set at the time of GMA command request but it should
+only be set after getting successful response. Movinng this flag
+setting in GMA response handler.
 
---EOHJn1TVIJfeVXv2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This flag is used mainly for not repeating GMA command once
+received MAC address.
 
-On Fri, Dec 27, 2019 at 12:26:05PM -0500, Sasha Levin wrote:
-> From: Shuming Fan <shumingf@realtek.com>
->=20
-> [ Upstream commit bc094709de0192a756c6946a7c89c543243ae609 ]
->=20
-> This patch modified the HW initial setting to fix i2c arbitration lost is=
-sue.
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ net/ncsi/ncsi-manage.c | 3 ---
+ net/ncsi/ncsi-rsp.c    | 6 ++++++
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-It's not great to send stuff like this out during vacations,
-there's a good chance people won't be looking at their mail these
-two weeks...
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 70fe02697544..e20b81514029 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -764,9 +764,6 @@ static int ncsi_gma_handler(struct ncsi_cmd_arg *nca, unsigned int mf_id)
+ 		return -1;
+ 	}
+ 
+-	/* Set the flag for GMA command which should only be called once */
+-	nca->ndp->gma_flag = 1;
+-
+ 	/* Get Mac address from NCSI device */
+ 	return nch->handler(nca);
+ }
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index d5611f04926d..a94bb59793f0 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -627,6 +627,9 @@ static int ncsi_rsp_handler_oem_mlx_gma(struct ncsi_request *nr)
+ 	saddr.sa_family = ndev->type;
+ 	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
+ 	memcpy(saddr.sa_data, &rsp->data[MLX_MAC_ADDR_OFFSET], ETH_ALEN);
++	/* Set the flag for GMA command which should only be called once */
++	ndp->gma_flag = 1;
++
+ 	ret = ops->ndo_set_mac_address(ndev, &saddr);
+ 	if (ret < 0)
+ 		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
+@@ -671,6 +674,9 @@ static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
+ 	if (!is_valid_ether_addr((const u8 *)saddr.sa_data))
+ 		return -ENXIO;
+ 
++	/* Set the flag for GMA command which should only be called once */
++	ndp->gma_flag = 1;
++
+ 	ret = ops->ndo_set_mac_address(ndev, &saddr);
+ 	if (ret < 0)
+ 		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
+-- 
+2.17.1
 
---EOHJn1TVIJfeVXv2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4GiRAACgkQJNaLcl1U
-h9AyNAf/VopNHKmQBrZ3SbdvrbbTDSyxScjJd/iJURWlKw37+601meo0Y1oDME/Z
-zMcmZBvH17dQDUj7iVJ2EQ0nXt8JXXmbZUUKy18RuEgYsBYpucLB2cqtwqM5Y8tW
-uwr/y0tyFYv+E/NtvYLB+umh8ZccQoyAFrFVimA71Ii6EDt9OgX6Fe7JfPUdZRhZ
-L3/M0vyLAlrPY1XO1Q1Z20V93DxuDZXXY5ura7O31K2JA8+ds3ovt8buQgwKUaS5
-Y9FBh19Fa2Gii5n2WwQ2rX8K7rQZYccHVV31UX1GF85+cUkOUpCVwb8ggj8aqm32
-6LWVBkDn8LC7xsx8rmgtpy2VAcjcTQ==
-=ooCn
------END PGP SIGNATURE-----
-
---EOHJn1TVIJfeVXv2--
