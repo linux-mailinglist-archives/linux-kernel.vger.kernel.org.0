@@ -2,87 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 152C612B737
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 18:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D543412B906
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 19:02:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbfL0Rou (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 12:44:50 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45146 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728524AbfL0Rol (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:44:41 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j42so26629014wrj.12
-        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 09:44:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=1HXhzt2IyWFOUMdQkirC9Hq8z+cMg4U8grq8VYELPXI=;
-        b=uh9RYnq/w/BeVXC/bTMfScw9j1sOr+DwMV/d5YGPZ/2utrxm7lgf46xnt1SfzvQHet
-         hEMvyDZdfSoqDbwqAMVnBSZCCUU49UK5mDEaTWCGp5TR+BfUAc62GhO6QCmeODv0RmtJ
-         WGbleOTQ72/2GLsbL/rFHzpgXZbOvBIKAggPc45ouC9yuTL1Hs1GhKm77CiFcUohzgR0
-         zWMQJW3J9bY0qzNHzN2xLdb+qWIorbmjjRuUmQEVEw172pmRKcrbIqrjBlHcBJk6AtUb
-         VUtm+Ha70+EGfoPiCo7fP7r66acjaGPoqi3MklnUuhVmoiKHV6+fIf/Dk+9JyiwytEBM
-         bRMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1HXhzt2IyWFOUMdQkirC9Hq8z+cMg4U8grq8VYELPXI=;
-        b=sQc5aHEl78/+at1UtVQA781PH3rkzi49F/qTb94lITXr43kABQpgUqRDKuy7VYmPnH
-         jZWmKW19u94g6Zvev2zXjFdr8D+3Mvb9AUixx4mywWe7HFsN6jHBn+oefBnJ+qzXQL4Y
-         5Fyx1k3XajKgzdMZ3CAZCX0m5bSp73g9hUCCxTltDOzzAJ0ytEcMF6EaS/BRrBB3YIEM
-         7ZaX4wwk/omQ7RIJQRcWH81umWmvkD6y9HawKfLrLEW/PO/yHFOAEJJt6h+8rPNHrSyg
-         S+H/RG5VhFekJBfN6tdTXA57p4YYf+DUPkwTfgWANp0DLHWkjiFmPzUts8TTOuLfdfgj
-         zT2g==
-X-Gm-Message-State: APjAAAWI7/bBrr28euiz3ku6DYAlVH030TjbcPIetJJ1RI6vnbNJKiOy
-        7W/Hb58IxkqoiWrKJXEoYb8=
-X-Google-Smtp-Source: APXvYqwAXW3FrwEfV7yJm1iriKeHgMMSG0nbqsOJyZ0BTuHPUZmQvFPqkjoR55qKgghw26BSNuZHAw==
-X-Received: by 2002:adf:f581:: with SMTP id f1mr53051373wro.264.1577468680310;
-        Fri, 27 Dec 2019 09:44:40 -0800 (PST)
-Received: from debian.lan (host-78-144-219-162.as13285.net. [78.144.219.162])
-        by smtp.gmail.com with ESMTPSA id c68sm11819819wme.13.2019.12.27.09.44.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Dec 2019 09:44:39 -0800 (PST)
-From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH] tty: always relink the port
-Date:   Fri, 27 Dec 2019 17:44:34 +0000
-Message-Id: <20191227174434.12057-1-sudipm.mukherjee@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        id S1727218AbfL0SCZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 13:02:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59170 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbfL0SCZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 13:02:25 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 613A4206CB;
+        Fri, 27 Dec 2019 18:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577469744;
+        bh=jr/j3jrEswqc9GNP8w1YoauqfpJQt1KL1M9Hi9N5Mnk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xoxp9554apC/gtk7LTCmrx4c9Fuz5hxMj3BsXZgVRF9Ukbkia8II+c2cFcekwKp5Z
+         4Lg6qk3Vf+ip1tLRwFWK8J+zc2g2TX+ApXLkfxuCtGBFcJtcuVi+V9QoP7jsG8MsiT
+         4G2/DVYpHZblYDwtqDQvN8s+10JGDbS0J1K4UJcs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ganapathi Bhat <gbhat@marvell.com>,
+        huangwen <huangwenabc@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/57] mwifiex: fix possible heap overflow in mwifiex_process_country_ie()
+Date:   Fri, 27 Dec 2019 13:01:26 -0500
+Message-Id: <20191227180222.7076-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the serial device is disconnected and reconnected, it re-enumerates
-properly but does not link it. fwiw, linking means just saving the port
-index, so allow it always as there is no harm in saving the same value
-again even if it tries to relink with the same port.
+From: Ganapathi Bhat <gbhat@marvell.com>
 
-Fixes: fb2b90014d78 ("tty: link tty and port before configuring it as console")
-Reported-by: Kenneth R. Crudup <kenny@panix.com>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+[ Upstream commit 3d94a4a8373bf5f45cf5f939e88b8354dbf2311b ]
+
+mwifiex_process_country_ie() function parse elements of bss
+descriptor in beacon packet. When processing WLAN_EID_COUNTRY
+element, there is no upper limit check for country_ie_len before
+calling memcpy. The destination buffer domain_info->triplet is an
+array of length MWIFIEX_MAX_TRIPLET_802_11D(83). The remote
+attacker can build a fake AP with the same ssid as real AP, and
+send malicous beacon packet with long WLAN_EID_COUNTRY elemen
+(country_ie_len > 83). Attacker can  force STA connect to fake AP
+on a different channel. When the victim STA connects to fake AP,
+will trigger the heap buffer overflow. Fix this by checking for
+length and if found invalid, don not connect to the AP.
+
+This fix addresses CVE-2019-14895.
+
+Reported-by: huangwen <huangwenabc@gmail.com>
+Signed-off-by: Ganapathi Bhat <gbhat@marvell.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/tty_port.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
-index 5023c85ebc6e..044c3cbdcfa4 100644
---- a/drivers/tty/tty_port.c
-+++ b/drivers/tty/tty_port.c
-@@ -89,8 +89,7 @@ void tty_port_link_device(struct tty_port *port,
- {
- 	if (WARN_ON(index >= driver->num))
- 		return;
--	if (!driver->ports[index])
--		driver->ports[index] = port;
-+	driver->ports[index] = port;
- }
- EXPORT_SYMBOL_GPL(tty_port_link_device);
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index a8043d76152a..f88a953b3cd5 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -271,6 +271,14 @@ static int mwifiex_process_country_ie(struct mwifiex_private *priv,
+ 			    "11D: skip setting domain info in FW\n");
+ 		return 0;
+ 	}
++
++	if (country_ie_len >
++	    (IEEE80211_COUNTRY_STRING_LEN + MWIFIEX_MAX_TRIPLET_802_11D)) {
++		mwifiex_dbg(priv->adapter, ERROR,
++			    "11D: country_ie_len overflow!, deauth AP\n");
++		return -EINVAL;
++	}
++
+ 	memcpy(priv->adapter->country_code, &country_ie[2], 2);
  
+ 	domain_info->country_code[0] = country_ie[2];
+@@ -314,8 +322,9 @@ int mwifiex_bss_start(struct mwifiex_private *priv, struct cfg80211_bss *bss,
+ 	priv->scan_block = false;
+ 
+ 	if (bss) {
+-		if (adapter->region_code == 0x00)
+-			mwifiex_process_country_ie(priv, bss);
++		if (adapter->region_code == 0x00 &&
++		    mwifiex_process_country_ie(priv, bss))
++			return -EINVAL;
+ 
+ 		/* Allocate and fill new bss descriptor */
+ 		bss_desc = kzalloc(sizeof(struct mwifiex_bssdescriptor),
 -- 
-2.11.0
+2.20.1
 
