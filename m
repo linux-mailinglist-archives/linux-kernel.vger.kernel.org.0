@@ -2,53 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CC7B12BAC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 20:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE12B12BACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 20:56:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727175AbfL0TpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 14:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47624 "EHLO mail.kernel.org"
+        id S1727050AbfL0Tz6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 14:55:58 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:41741 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726927AbfL0TpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 14:45:09 -0500
-Subject: Re: [GIT PULL] Power management fixes for v5.5-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577475908;
-        bh=a5nNUZyjTg2XqJzc/piVF19fCap2VesQ+XY7ubonnn4=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=xJJ7cOjw1rSZXz4A8ujG3pVR2LrsHuVSvZA2MHJOU15Z2O8eoidTfD7BvwwZ4AXaP
-         DoIXG4OptKgZ1Bzj9FkvsS/OELAQgNz5M93FNLtpgzWEveTCMp7B4i67hlFFjD0dAl
-         KN+3aJgvwuF+XVZduU70BTS3Um/RhAMXBpfvR6Cw=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
-References: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0i02hjtkXqxo=38XByY=G7LEDxdMbagAAvf207tSHXA2w@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc4
-X-PR-Tracked-Commit-Id: 2cb7bfc1ca9a34ca148ed77f5f6f07373312bb0a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1413c361328c3ecd2cfe1e331f7b7d222d0712bc
-Message-Id: <157747590843.1730.14734719713637284767.pr-tracker-bot@kernel.org>
-Date:   Fri, 27 Dec 2019 19:45:08 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        id S1726839AbfL0Tz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 14:55:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47kyHZ6XT3z9sPK;
+        Sat, 28 Dec 2019 06:55:54 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1577476555;
+        bh=j0HmGkYmZP1ENxV3TmAvjzJ+eKBsVqFFPKwareblGA4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WQYBrDKjUyk2dM8jHkdLrNYzprfJeCqHmAsqGbET3XBBrwP5cLYhRhdF+FaLyXr0A
+         KAG5jPzR6IgET4pO2f9dnbKkuoxBwTGn1TY5H70+aIVe1HhkfaczEFbAou4tNb69fR
+         4+7NiQpM5qOKKH7NxFEslKDbLHBhJjsy//1457p/zlml7bft9ymaeWFMs7erZWYfT6
+         v52KSHOtR8M8Vu8jZiUtO//i6VwV3zUpBJl3iAlOtA9o0yVANTe6UFexZ1XBcsWcgm
+         8MDJxZfcrX4By8TdjcVdvU3WdUPZ2kxlQkiAXDJFtRR989bXgQZTzPPrydn5OSJFTG
+         Mw86USBkYla6g==
+Date:   Sat, 28 Dec 2019 06:55:53 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Jaedon Shin <jaedon.shin@gmail.com>
+Subject: linux-next: Fixes tags need some work in the block tree
+Message-ID: <20191228065553.6ba5d28f@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Gmsk4d7kegXJZ8HM.5w8al/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 27 Dec 2019 11:21:37 +0100:
+--Sig_/Gmsk4d7kegXJZ8HM.5w8al/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.5-rc4
+Hi all,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1413c361328c3ecd2cfe1e331f7b7d222d0712bc
+In commit
 
-Thank you!
+  1a3d78cb6e20 ("ata: ahci_brcm: BCM7425 AHCI requires AHCI_HFLAG_DELAY_ENG=
+INE")
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Fixes tags
+
+  Fixes: 9586114cf1e9 ("ata: ahci_brcmstb: add support MIPS-based platforms=
+")
+  Fixes: 423be77daabe ("ata: ahci_brcmstb: add quirk for broken ncq")
+
+have this problem:
+
+  - Target SHA1s do not exist
+
+Perhaps you meant
+
+Fixes: 1980eb9bd7d7 ("ata: ahci_brcmstb: add support for MIPS-based platfor=
+ms")
+Fixes: 7de3244530bf ("ata: ahci_brcmstb: disable NCQ for MIPS-based platfor=
+ms")
+
+or
+
+Fixes: b46f79bc78e0 ("ata: ahci_brcmstb: add a quirk for MIPS-based platfor=
+ms")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Gmsk4d7kegXJZ8HM.5w8al/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4GYckACgkQAVBC80lX
+0GzO/Qf/ft8XyT8foIeUyNA7gvfJesQ0T0QnB3eXewAc2k8WyzVspHnv0p+WmWVb
+eJI9/Y9fVdWDA6Kc65z8k3s1VUA036nsHfl3Q0+6/BSggZtLv+lwyFjInuz32hia
+ZDOWG0KeYAXVhstJ3FqW3OaO02sJiFpoXu6/PduVzyp9iLU1iciCZ/+sI8qXMeWX
+Trh23oliJCuhhDRi7hyAqsVQrjMiI/lj5MLpGg5g4iDAt3sF2svra/sqF5SH5/H+
+WcqRKEsGQPUcfdvKjuQNINezsJsa9/GBMn9Ts2a83a0t9I5j7TXv8wRnn+gI8K2q
+M/28fFfmozVFaHWtsZQVlS3DZiQKxQ==
+=dxgw
+-----END PGP SIGNATURE-----
+
+--Sig_/Gmsk4d7kegXJZ8HM.5w8al/--
