@@ -2,95 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C81112AFE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 01:22:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C8112AFEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 01:33:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726976AbfL0AWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 19:22:47 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38700 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfL0AWr (ORCPT
+        id S1726995AbfL0AdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 19:33:21 -0500
+Received: from Chamillionaire.breakpoint.cc ([193.142.43.52]:35180 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726193AbfL0AdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 19:22:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bc6LEosmx9+Mj/PeBa3ik/jNiTjPpwv/bIYcruuOEhc=; b=DLyqD8tlmKFmsPSUBIbc/bdBJ
-        Sn6OY2G1XGtGYawxyaAlhChpvTRyCIyLw9CGFcvrq81NRvEZWiNRL7x61KQBe+nXtqyczFRyjrQ9g
-        xlyyLoKdGr5rD4Yd3gTnovJOsv37dFuZ5x4kbuBkKSFEQSWLWNyN9aofXKzuRp5f1EWTs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ikdOq-00044p-H6; Fri, 27 Dec 2019 00:22:40 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 08104D01A24; Fri, 27 Dec 2019 00:22:40 +0000 (GMT)
-Date:   Fri, 27 Dec 2019 00:22:40 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Xinwei Kong <kong.kongxinwei@hisilicon.com>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com, fengsheng <fengsheng5@huawei.com>
-Subject: Re: [PATCH] spi: dw: use "smp_mb()" to avoid sending spi data error
-Message-ID: <20191227002239.GH27497@sirena.org.uk>
-References: <1577352088-35856-1-git-send-email-kong.kongxinwei@hisilicon.com>
+        Thu, 26 Dec 2019 19:33:20 -0500
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+        (envelope-from <fw@breakpoint.cc>)
+        id 1ikdZ7-0007YP-Up; Fri, 27 Dec 2019 01:33:18 +0100
+From:   Florian Westphal <fw@strlen.de>
+To:     <netfilter-devel@vger.kernel.org>
+Cc:     syzbot+d7358a458d8a81aee898@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, Florian Westphal <fw@strlen.de>
+Subject: [PATCH nf] netfilter: arp_tables: init netns pointer in xt_tgchk_param struct
+Date:   Fri, 27 Dec 2019 01:33:10 +0100
+Message-Id: <20191227003310.16061-1-fw@strlen.de>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <00000000000057fd27059aa1dfca@google.com>
+References: <00000000000057fd27059aa1dfca@google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="U3BNvdZEnlJXqmh+"
-Content-Disposition: inline
-In-Reply-To: <1577352088-35856-1-git-send-email-kong.kongxinwei@hisilicon.com>
-X-Cookie: I have many CHARTS and DIAGRAMS..
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We get crash when the targets checkentry function tries to make
+use of the network namespace pointer for arptables.
 
---U3BNvdZEnlJXqmh+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When the net pointer got added back in 2010, only ip/ip6/ebtables were
+changed to initialize it, so arptables has this set to NULL.
 
-On Thu, Dec 26, 2019 at 05:21:28PM +0800, Xinwei Kong wrote:
-> this patch will add memory barrier to ensure this "struct dw_spi *dws"
-> to complete data setting before enabling this SPI hardware interrupt.
-> eg:
-> it will fix to this following low possibility error in testing environment
-> which using SPI control to connect TPM Modules
+This isn't a problem for normal arptables because no existing
+arptables target has a checkentry function that makes use of par->net.
 
-> --- a/drivers/spi/spi-dw.c
-> +++ b/drivers/spi/spi-dw.c
-> @@ -288,6 +288,8 @@ static int dw_spi_transfer_one(struct spi_controller =
-*master,
->  	dws->rx_end =3D dws->rx + transfer->len;
->  	dws->len =3D transfer->len;
-> =20
-> +	smp_mb();
-> +
->  	spi_enable_chip(dws, 0);
+However, direct users of the setsockopt interface can provide any
+target they want as long as its registered for ARP or UNPSEC protocols.
 
-I'd be much more comfortable here if I understood what this was
-supposed to be syncing - what exactly gets flushed here and why
-is a memory barrier enough to ensure it's synced?  A comment in
-the code would be especially good so anyone modifying the code
-understands this in future.
+syzkaller managed to send a semi-valid arptables rule for RATEEST target
+which is enough to trigger NULL deref:
 
---U3BNvdZEnlJXqmh+
-Content-Type: application/pgp-signature; name="signature.asc"
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+RIP: xt_rateest_tg_checkentry+0x11d/0xb40 net/netfilter/xt_RATEEST.c:109
+[..]
+ xt_check_target+0x283/0x690 net/netfilter/x_tables.c:1019
+ check_target net/ipv4/netfilter/arp_tables.c:399 [inline]
+ find_check_entry net/ipv4/netfilter/arp_tables.c:422 [inline]
+ translate_table+0x1005/0x1d70 net/ipv4/netfilter/arp_tables.c:572
+ do_replace net/ipv4/netfilter/arp_tables.c:977 [inline]
+ do_arpt_set_ctl+0x310/0x640 net/ipv4/netfilter/arp_tables.c:1456
 
------BEGIN PGP SIGNATURE-----
+Fixes: add67461240c1d ("netfilter: add struct net * to target parameters")
+Reported-by: syzbot+d7358a458d8a81aee898@syzkaller.appspotmail.com
+Signed-off-by: Florian Westphal <fw@strlen.de>
+---
+ net/ipv4/netfilter/arp_tables.c | 27 ++++++++++++++++-----------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4FTs8ACgkQJNaLcl1U
-h9C/WQf+LWz7dH90awV46vXCMPAFHsxgAk2e4Cef1PIjV2AqD5tpjkaJCKTPaO9r
-RZG3L+gFrMzq2VUYQoeENjQqFg1wJsK+yaU/1jPCsdypAX2rb1shLZAClxic0uDG
-JjtToZii33DOzReaNdi0pH3yGkGgekgDWwfQkC/QCpUt/jHsSSI0qpEOHYhsOy8h
-ig9uUTFMMXqV2zNqwfjwu/JFFieJS0v8oVcx1MdYhPoSvUArIAoGq9VTekrRMzcm
-VfSpwRNpVIvK3aiWlesqhkYPd8QGaAwCNBgM+8OO83mkORSQU+PQbvlCE62Tp4ND
-ZWFeeiOPOwN9q9DP1SfDItYPTebcQg==
-=ZE9Q
------END PGP SIGNATURE-----
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index 214154b47d56..069f72edb264 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -384,10 +384,11 @@ next:		;
+ 	return 1;
+ }
+ 
+-static inline int check_target(struct arpt_entry *e, const char *name)
++static int check_target(struct arpt_entry *e, struct net *net, const char *name)
+ {
+ 	struct xt_entry_target *t = arpt_get_target(e);
+ 	struct xt_tgchk_param par = {
++		.net       = net,
+ 		.table     = name,
+ 		.entryinfo = e,
+ 		.target    = t->u.kernel.target,
+@@ -399,8 +400,9 @@ static inline int check_target(struct arpt_entry *e, const char *name)
+ 	return xt_check_target(&par, t->u.target_size - sizeof(*t), 0, false);
+ }
+ 
+-static inline int
+-find_check_entry(struct arpt_entry *e, const char *name, unsigned int size,
++static int
++find_check_entry(struct arpt_entry *e, struct net *net, const char *name,
++		 unsigned int size,
+ 		 struct xt_percpu_counter_alloc_state *alloc_state)
+ {
+ 	struct xt_entry_target *t;
+@@ -419,7 +421,7 @@ find_check_entry(struct arpt_entry *e, const char *name, unsigned int size,
+ 	}
+ 	t->u.kernel.target = target;
+ 
+-	ret = check_target(e, name);
++	ret = check_target(e, net, name);
+ 	if (ret)
+ 		goto err;
+ 	return 0;
+@@ -512,7 +514,9 @@ static inline void cleanup_entry(struct arpt_entry *e)
+ /* Checks and translates the user-supplied table segment (held in
+  * newinfo).
+  */
+-static int translate_table(struct xt_table_info *newinfo, void *entry0,
++static int translate_table(struct net *net,
++			   struct xt_table_info *newinfo,
++			   void *entry0,
+ 			   const struct arpt_replace *repl)
+ {
+ 	struct xt_percpu_counter_alloc_state alloc_state = { 0 };
+@@ -569,7 +573,7 @@ static int translate_table(struct xt_table_info *newinfo, void *entry0,
+ 	/* Finally, each sanity check must pass */
+ 	i = 0;
+ 	xt_entry_foreach(iter, entry0, newinfo->size) {
+-		ret = find_check_entry(iter, repl->name, repl->size,
++		ret = find_check_entry(iter, net, repl->name, repl->size,
+ 				       &alloc_state);
+ 		if (ret != 0)
+ 			break;
+@@ -974,7 +978,7 @@ static int do_replace(struct net *net, const void __user *user,
+ 		goto free_newinfo;
+ 	}
+ 
+-	ret = translate_table(newinfo, loc_cpu_entry, &tmp);
++	ret = translate_table(net, newinfo, loc_cpu_entry, &tmp);
+ 	if (ret != 0)
+ 		goto free_newinfo;
+ 
+@@ -1149,7 +1153,8 @@ compat_copy_entry_from_user(struct compat_arpt_entry *e, void **dstptr,
+ 	}
+ }
+ 
+-static int translate_compat_table(struct xt_table_info **pinfo,
++static int translate_compat_table(struct net *net,
++				  struct xt_table_info **pinfo,
+ 				  void **pentry0,
+ 				  const struct compat_arpt_replace *compatr)
+ {
+@@ -1217,7 +1222,7 @@ static int translate_compat_table(struct xt_table_info **pinfo,
+ 	repl.num_counters = 0;
+ 	repl.counters = NULL;
+ 	repl.size = newinfo->size;
+-	ret = translate_table(newinfo, entry1, &repl);
++	ret = translate_table(net, newinfo, entry1, &repl);
+ 	if (ret)
+ 		goto free_newinfo;
+ 
+@@ -1270,7 +1275,7 @@ static int compat_do_replace(struct net *net, void __user *user,
+ 		goto free_newinfo;
+ 	}
+ 
+-	ret = translate_compat_table(&newinfo, &loc_cpu_entry, &tmp);
++	ret = translate_compat_table(net, &newinfo, &loc_cpu_entry, &tmp);
+ 	if (ret != 0)
+ 		goto free_newinfo;
+ 
+@@ -1546,7 +1551,7 @@ int arpt_register_table(struct net *net,
+ 	loc_cpu_entry = newinfo->entries;
+ 	memcpy(loc_cpu_entry, repl->entries, repl->size);
+ 
+-	ret = translate_table(newinfo, loc_cpu_entry, repl);
++	ret = translate_table(net, newinfo, loc_cpu_entry, repl);
+ 	if (ret != 0)
+ 		goto out_free;
+ 
+-- 
+2.24.1
 
---U3BNvdZEnlJXqmh+--
