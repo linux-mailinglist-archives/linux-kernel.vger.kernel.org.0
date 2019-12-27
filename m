@@ -2,138 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 688EA12B1C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:34:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1D0B12B1E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:38:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfL0GeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 01:34:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfL0GeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 01:34:18 -0500
-Received: from localhost (unknown [106.201.34.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727011AbfL0Git (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 01:38:49 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:40135 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726365AbfL0Git (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 01:38:49 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1577428728; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=nq8/oRwBTL0CHWndYEmMuTpFlMH3x2xQLeaPRjlV7ek=; b=KXpYkvZzEIzhlZNftbb246q9EADa2AXRvtU+5uSHBuDBRji9sgFv5okusc1kNA0Epfm8Wzys
+ F8wn+pAfDLdrjPGsmXDFCLEvk8Dj0qs6y6el9efNUQ9X3vKST83xT5qQnpN6OHbSPbcFU6os
+ doPp9hfCNT4UVY3nPLrcgcK9h3g=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e05a6f7.7f080e93e960-smtp-out-n02;
+ Fri, 27 Dec 2019 06:38:47 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 4D4C8C433A2; Fri, 27 Dec 2019 06:38:46 +0000 (UTC)
+X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
+        aws-us-west-2-caf-mail-1.web.codeaurora.org
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.0
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7251220828;
-        Fri, 27 Dec 2019 06:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577428457;
-        bh=QmhOaQhmStFpEX9h7iiPOQiA3ViF2ugMgnDWtCU9Ek8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j71b1ORR5isd/iuQCkuKk+CZkf8gXZyRZKiNR9MZgAtgIb1azhbGHN4o6PHKvEBvO
-         10xvGkDVQM+Bk8xfelvhFK+bnnZKiBgkzhXwAPSNKQxR/FvxCtP3ZqX3MW4AuQTi95
-         ceEaiwYCt+BlTKfgKiJO5RABJlP+bu1JKrCSxUOg=
-Date:   Fri, 27 Dec 2019 12:04:11 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 2/2] dmaengine: uniphier-xdmac: Add UniPhier external DMA
- controller driver
-Message-ID: <20191227063411.GG3006@vkoul-mobl>
-References: <1576630620-1977-1-git-send-email-hayashi.kunihiko@socionext.com>
- <1576630620-1977-3-git-send-email-hayashi.kunihiko@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576630620-1977-3-git-send-email-hayashi.kunihiko@socionext.com>
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7335C43383;
+        Fri, 27 Dec 2019 06:38:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7335C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/6] Add GPU & Video Clock controller driver for SC7180
+Date:   Fri, 27 Dec 2019 12:08:28 +0530
+Message-Id: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-12-19, 09:57, Kunihiko Hayashi wrote:
-> This adds external DMA controller driver implemented in Socionext
-> UniPhier SoCs. This driver supports DMA_MEMCPY and DMA_SLAVE modes.
-> 
-> Since this driver does not support the the way to transfer size
-> unaligned to burst width, 'src_maxburst' or 'dst_maxburst' of
+[v3]
+ * Update the clock items in Documentation binding with the GPLL0 branch names.
+ * Update gpu_cc_parent_data to remove .name for GCC GPLL0 source.
+ * Mark video_cc_xo_clk clock critical from videocc probe.
 
-You mean driver does not support any unaligned bursts?
+[v2]
+ * Split Fabia code cleanup and calibration code.
+ * Few cleanups for GPU/Video CC are
+    * header file inclusion, const for pll vco table.
+    * removal of always enabled clock from gpucc.
+    * compatibles added in sorted order.
+    * move from core_initcall to subsys_initcall().
+    * cleanup clk_parent_data for clocks to be provided from DT.
 
-> +static int uniphier_xdmac_probe(struct platform_device *pdev)
-> +{
-> +	struct uniphier_xdmac_device *xdev;
-> +	struct device *dev = &pdev->dev;
-> +	struct dma_device *ddev;
-> +	int irq;
-> +	int nr_chans;
-> +	int i, ret;
-> +
-> +	if (of_property_read_u32(dev->of_node, "dma-channels", &nr_chans))
-> +		return -EINVAL;
-> +	if (nr_chans > XDMAC_MAX_CHANS)
-> +		nr_chans = XDMAC_MAX_CHANS;
-> +
-> +	xdev = devm_kzalloc(dev, struct_size(xdev, channels, nr_chans),
-> +			    GFP_KERNEL);
-> +	if (!xdev)
-> +		return -ENOMEM;
-> +
-> +	xdev->nr_chans = nr_chans;
-> +	xdev->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(xdev->reg_base))
-> +		return PTR_ERR(xdev->reg_base);
-> +
-> +	ddev = &xdev->ddev;
-> +	ddev->dev = dev;
-> +	dma_cap_zero(ddev->cap_mask);
-> +	dma_cap_set(DMA_MEMCPY, ddev->cap_mask);
-> +	dma_cap_set(DMA_SLAVE, ddev->cap_mask);
-> +	ddev->src_addr_widths = UNIPHIER_XDMAC_BUSWIDTHS;
-> +	ddev->dst_addr_widths = UNIPHIER_XDMAC_BUSWIDTHS;
-> +	ddev->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV) |
-> +			   BIT(DMA_MEM_TO_MEM);
-> +	ddev->residue_granularity = DMA_RESIDUE_GRANULARITY_BURST;
-> +	ddev->max_burst = XDMAC_MAX_WORDS;
-> +	ddev->device_free_chan_resources = uniphier_xdmac_free_chan_resources;
-> +	ddev->device_prep_dma_memcpy = uniphier_xdmac_prep_dma_memcpy;
-> +	ddev->device_prep_slave_sg = uniphier_xdmac_prep_slave_sg;
-> +	ddev->device_config = uniphier_xdmac_slave_config;
-> +	ddev->device_terminate_all = uniphier_xdmac_terminate_all;
-> +	ddev->device_synchronize = uniphier_xdmac_synchronize;
-> +	ddev->device_tx_status = dma_cookie_status;
-> +	ddev->device_issue_pending = uniphier_xdmac_issue_pending;
-> +	INIT_LIST_HEAD(&ddev->channels);
-> +
-> +	for (i = 0; i < nr_chans; i++) {
-> +		ret = uniphier_xdmac_chan_init(xdev, i);
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"Failed to initialize XDMAC channel %d\n", i);
-> +			return ret;
+[v1]
+ * Fabia PLLs could fail latching in the case where the PLL is not
+   calibrated, so add support to calibrate in prepare clock ops.
 
-so on error for channel N we leave N-1 channels initialized?
+ * Add driver support for Graphics clock controller for SC7180 and also
+   update device tree bindings for the various clocks supported in the
+   clock controller.
 
-> +static int uniphier_xdmac_remove(struct platform_device *pdev)
-> +{
-> +	struct uniphier_xdmac_device *xdev = platform_get_drvdata(pdev);
-> +	struct dma_device *ddev = &xdev->ddev;
-> +	struct dma_chan *chan;
-> +	int ret;
-> +
-> +	/*
-> +	 * Before reaching here, almost all descriptors have been freed by the
-> +	 * ->device_free_chan_resources() hook. However, each channel might
-> +	 * be still holding one descriptor that was on-flight at that moment.
-> +	 * Terminate it to make sure this hardware is no longer running. Then,
-> +	 * free the channel resources once again to avoid memory leak.
-> +	 */
-> +	list_for_each_entry(chan, &ddev->channels, device_node) {
-> +		ret = dmaengine_terminate_sync(chan);
-> +		if (ret)
-> +			return ret;
-> +		uniphier_xdmac_free_chan_resources(chan);
+ * Add driver support for Video clock controller for SC7180 and also
+   update device tree bindings for the various clocks supported in the
+   clock controller.
 
-terminating sounds okayish but not freeing here. .ree_chan_resources()
-should have been called already and that should ensure that termination
-is already done...
+Taniya Das (6):
+  dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
+  dt-bindings: clock: Introduce QCOM Graphics clock bindings
+  clk: qcom: Add graphics clock controller driver for SC7180
+  dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock
+    bindings
+  dt-bindings: clock: Introduce SC7180 QCOM Video clock bindings
+  clk: qcom: Add video clock controller driver for SC7180
 
--- 
-~Vinod
+ .../devicetree/bindings/clock/qcom,gpucc.txt       |  24 --
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  72 ++++++
+ .../devicetree/bindings/clock/qcom,videocc.txt     |  18 --
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  62 +++++
+ drivers/clk/qcom/Kconfig                           |  16 ++
+ drivers/clk/qcom/Makefile                          |   2 +
+ drivers/clk/qcom/gpucc-sc7180.c                    | 266 +++++++++++++++++++++
+ drivers/clk/qcom/videocc-sc7180.c                  | 259 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sc7180.h      |  21 ++
+ include/dt-bindings/clock/qcom,videocc-sc7180.h    |  23 ++
+ 10 files changed, 721 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+ create mode 100644 drivers/clk/qcom/gpucc-sc7180.c
+ create mode 100644 drivers/clk/qcom/videocc-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7180.h
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7180.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
