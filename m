@@ -2,86 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7675D12B4CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 14:21:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B5112B4BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 14:06:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfL0NVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 08:21:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40682 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbfL0NVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 08:21:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 6B559B206;
-        Fri, 27 Dec 2019 13:21:47 +0000 (UTC)
-From:   mrostecki@opensuse.org
-To:     bpf@vger.kernel.org
-Cc:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michal Rostecki <mrostecki@opensuse.org>
-Subject: [PATCH bpf-next 2/2] bpftool: Add misc secion and probe for large INSN limit
-Date:   Fri, 27 Dec 2019 11:53:46 +0100
-Message-Id: <20191227105346.867-3-mrostecki@opensuse.org>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20191227105346.867-1-mrostecki@opensuse.org>
-References: <20191227105346.867-1-mrostecki@opensuse.org>
+        id S1727226AbfL0NFs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 08:05:48 -0500
+Received: from ms11p00im-qufo17281801.me.com ([17.58.38.55]:50028 "EHLO
+        ms11p00im-qufo17281801.me.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726605AbfL0NFh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 08:05:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=me.com; s=1a1hai;
+        t=1577451343; bh=ioN8aTVcTztS0k/o+gYtFU7PV4Hxo3SbxQ0MbxEyeHU=;
+        h=From:To:Subject:Date:Message-Id;
+        b=zZHHlQaeZvMyENCQcJtvQm7YEsI4/iZ1TQJ2KXSnKRlJg01O16MGB6TMuPbxvOc2A
+         u2q624sRhcDR5toBq+yidTEFaidSMNSISLx4Z/36DVvwY+blSZ38U8cqVq4eXITyFP
+         FJ0MWpIJvrdHCNGwB/fDvEzd7lcC35dzFSY5ovBh+gvzoI1HdTvnPRc2TqPJTGXZC9
+         sipFc/Y19uekD3/sx+WOEptYdKwffaIuUDvANc89FOtAQ6Q6XnQwGWmy7keBF+QU4p
+         wMAQ35N9dsWOsX16pf0sHCyf9u6JcKMdDbY1TYUCdLFrFCjNOK6qgo0wtcFbE3nYGP
+         aic3PnGYyRq/g==
+Received: from shwetrath.localdomain (unknown [66.199.8.131])
+        by ms11p00im-qufo17281801.me.com (Postfix) with ESMTPSA id 0B2C81005DA;
+        Fri, 27 Dec 2019 12:55:42 +0000 (UTC)
+From:   Vijay Thakkar <vijaythakkar@me.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Vijay Thakkar <vijaythakkar@me.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kim Phillips <kim.phillips@amd.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        =?UTF-8?q?Martin=20Li=C5=A1ka?= <mliska@suse.cz>,
+        Jon Grimm <jon.grimm@amd.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: [PATCH 0/3] perf vendor events amd: latest PMU events for zen1/zen2 
+Date:   Fri, 27 Dec 2019 07:55:33 -0500
+Message-Id: <20191227125536.1091387-1-vijaythakkar@me.com>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-27_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=885 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1908290000 definitions=main-1912270111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Rostecki <mrostecki@opensuse.org>
+This series of patches brings the PMU events for AMD family 17h series
+of processors up to date with the latest versions of the AMD processor
+programming reference manuals.
 
-Introduce a new probe section (misc) for probes not related to concrete
-map types, program types, functions or kernel configuration. Introduce a
-probe for large INSN limit as the first one in that section.
+The first patch changes the pmu events mapfile to be more selective for
+the model number rather than blanket detecting all f17h processors to
+have the same events directory. This is required for the later patch
+where we add events for zen2 based processors.
 
-Signed-off-by: Michal Rostecki <mrostecki@opensuse.org>
----
- tools/bpf/bpftool/feature.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+The second patch adds the PMU events for zen2.
 
-diff --git a/tools/bpf/bpftool/feature.c b/tools/bpf/bpftool/feature.c
-index 03bdc5b3ac49..4a7359b9a427 100644
---- a/tools/bpf/bpftool/feature.c
-+++ b/tools/bpf/bpftool/feature.c
-@@ -572,6 +572,18 @@ probe_helpers_for_progtype(enum bpf_prog_type prog_type, bool supported_type,
- 		printf("\n");
- }
- 
-+static void
-+probe_large_insn_limit(const char *define_prefix, __u32 ifindex)
-+{
-+	bool res;
-+
-+	res = bpf_probe_large_insn_limit(ifindex);
-+	print_bool_feature("have_large_insn_limit",
-+			   "Large complexity limit and maximum program size (1M)",
-+			   "HAVE_LARGE_INSN_LIMIT",
-+			   res, define_prefix);
-+}
-+
- static int do_probe(int argc, char **argv)
- {
- 	enum probe_component target = COMPONENT_UNSPEC;
-@@ -724,6 +736,12 @@ static int do_probe(int argc, char **argv)
- 		probe_helpers_for_progtype(i, supported_types[i],
- 					   define_prefix, ifindex);
- 
-+	print_end_then_start_section("misc",
-+				     "Scanning miscellaneous eBPF features...",
-+				     "/*** eBPF misc features ***/",
-+				     define_prefix);
-+	probe_large_insn_limit(define_prefix, ifindex);
-+
- exit_close_json:
- 	if (json_output) {
- 		/* End current "section" of probes */
+Finally the third patch updates the zen1 PMU events to be in accordance
+with the latest PPR version and bumps up the events version to v2.
+
+Vijay Thakkar (3):
+  perf vendor events amd: restrict model detection for zen1 based
+    processors
+  perf vendor events amd: add Zen2 events
+  perf vendor events amd: update Zen1 events to V2
+
+ .../x86/{amdfam17h => amdzen1}/branch.json    |   0
+ .../x86/{amdfam17h => amdzen1}/cache.json     |   0
+ .../pmu-events/arch/x86/amdzen1/core.json     | 129 ++++++
+ .../floating-point.json                       |  56 +++
+ .../x86/{amdfam17h => amdzen1}/memory.json    |  18 +
+ .../x86/{amdfam17h => amdzen1}/other.json     |   0
+ .../pmu-events/arch/x86/amdzen2/branch.json   |  56 +++
+ .../pmu-events/arch/x86/amdzen2/cache.json    | 375 ++++++++++++++++++
+ .../arch/x86/{amdfam17h => amdzen2}/core.json |   0
+ .../arch/x86/amdzen2/floating-point.json      | 128 ++++++
+ .../pmu-events/arch/x86/amdzen2/memory.json   | 349 ++++++++++++++++
+ .../pmu-events/arch/x86/amdzen2/other.json    | 137 +++++++
+ tools/perf/pmu-events/arch/x86/mapfile.csv    |   4 +-
+ 13 files changed, 1251 insertions(+), 1 deletion(-)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/branch.json (100%)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/cache.json (100%)
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen1/core.json
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/floating-point.json (63%)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/memory.json (93%)
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen1}/other.json (100%)
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/branch.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/cache.json
+ rename tools/perf/pmu-events/arch/x86/{amdfam17h => amdzen2}/core.json (100%)
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/floating-point.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/memory.json
+ create mode 100644 tools/perf/pmu-events/arch/x86/amdzen2/other.json
+
 -- 
-2.16.4
+2.24.1
 
