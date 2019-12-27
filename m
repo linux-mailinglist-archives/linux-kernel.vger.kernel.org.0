@@ -2,94 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAF5112BBBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 23:58:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A2C12BBC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 00:06:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726416AbfL0W6N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 17:58:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36867 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbfL0W6M (ORCPT
+        id S1726527AbfL0XGJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 18:06:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42742 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfL0XGI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 17:58:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id p14so15368112pfn.4;
-        Fri, 27 Dec 2019 14:58:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=8RTxVfZJ6EIEQO8Ecm2zyDsH5B3TQhp3ssvQ5Vtfb50=;
-        b=V/FwLVRXmVZE7R9WVZY/YG6gdgULD2DEn7t1JwU4VvVhbTLMkWG4Xknl56zn3+7mSo
-         6Ck+Kg1kzZT7JuqLDmCTb2erjX36+czQzDrtk+18dn8hTPz3nUtOadYQDtyr+BnxJ3ml
-         H3BtAINiemDfw+zlIZpxNclCyJCFycOpM3eZhqjVTZxqDz9Gtw4qo1lmSJX11qXxWNxn
-         iZRGmb/+r88wCSpRdgYGsU34A0fCC9oo/8NwuGXmGxApiqEJdEbZ6l3TdH5SebfDrZjn
-         dTBadzGuu9LnEW/epzlckab8JspjjM+0x1j6DOg45TirE0sivGuLfwxZ4uh/QsdO6e3u
-         mScg==
-X-Gm-Message-State: APjAAAWqEczvgctMIZ5dKFVbOPbeiSmlsZrpa0Pc+/EFzpPamyHazlU0
-        76Wn18BkpbXJnyDAHq/oaeKyLS4MRd4=
-X-Google-Smtp-Source: APXvYqxBNGrVUofdeKCZXyZAXfDKi9TdmyXwqUiwg13bmUkQnTi5GKhGDrEh0hIl09l0I4ZsUYRs7Q==
-X-Received: by 2002:aa7:9edd:: with SMTP id r29mr56006733pfq.14.1577487492007;
-        Fri, 27 Dec 2019 14:58:12 -0800 (PST)
-Received: from localhost ([2601:647:5b00:710:1443:739:e13:41a5])
-        by smtp.gmail.com with ESMTPSA id 136sm37790607pgg.74.2019.12.27.14.58.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Dec 2019 14:58:11 -0800 (PST)
-Date:   Fri, 27 Dec 2019 14:58:09 -0800
-From:   Moritz Fischer <mdf@kernel.org>
-To:     yu kuai <yukuai3@huawei.com>
-Cc:     hao.wu@intel.com, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yi.zhang@huawe.com,
-        zhengbin13@huawei.com
-Subject: Re: [PATCH] fpga: dfl: afu: remove set but not used variable 'afu'
-Message-ID: <20191227225809.GB1643@archbook>
-References: <20191226121533.6017-1-yukuai3@huawei.com>
+        Fri, 27 Dec 2019 18:06:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/BtCTup5LkRr84T9j0F3KGj5sfWvVprZyXCfRA8eZ88=; b=RzzMmJyoO8yVlxtsIdXSHGQHF
+        +5VakP72EFqCzomEI4NbEP2CBE/jIeRDvu3IkO4cqKIz857XSw/sEzNEVWRVAWN/gM6vCu3SkhJmX
+        V3tTjD30Cl8Apif9uwKJh0HSIatp7dq/4ppeiNmCwju3EZEBa4PwE1Iw0dqgbKJWTJ5b0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ikyOt-0006aq-2d; Fri, 27 Dec 2019 22:48:07 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 3B9AED01A22; Fri, 27 Dec 2019 22:48:06 +0000 (GMT)
+Date:   Fri, 27 Dec 2019 22:48:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+Message-ID: <20191227224806.GP27497@sirena.org.uk>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+ <20191225175736.GC27497@sirena.org.uk>
+ <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CKf/2jVYos1l2hij"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191226121533.6017-1-yukuai3@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+X-Cookie: I have many CHARTS and DIAGRAMS..
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 08:15:33PM +0800, yu kuai wrote:
-> Fixes gcc '-Wunused-but-set-variable' warning:
-> 
-> drivers/fpga/dfl-afu-main.c: In function ‘afu_dev_destroy’:
-> drivers/fpga/dfl-afu-main.c:816:18: warning: variable ‘afu’
-> set but not used [-Wunused-but-set-variable]
-> 
-> It is never used, and so can be removed.
-> 
-> Signed-off-by: yu kuai <yukuai3@huawei.com>
-> ---
->  drivers/fpga/dfl-afu-main.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> index e4a34dc7947f..65437b6a6842 100644
-> --- a/drivers/fpga/dfl-afu-main.c
-> +++ b/drivers/fpga/dfl-afu-main.c
-> @@ -813,10 +813,8 @@ static int afu_dev_init(struct platform_device *pdev)
->  static int afu_dev_destroy(struct platform_device *pdev)
->  {
->  	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> -	struct dfl_afu *afu;
->  
->  	mutex_lock(&pdata->lock);
-> -	afu = dfl_fpga_pdata_get_private(pdata);
->  	afu_mmio_region_destroy(pdata);
->  	afu_dma_region_destroy(pdata);
->  	dfl_fpga_pdata_set_private(pdata, NULL);
-> -- 
-> 2.17.2
-> 
-Acked-by: Moritz Fischer <mdf@kernel.org>
 
-I'll get to the patches in the new year.
+--CKf/2jVYos1l2hij
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Moritz
+On Fri, Dec 27, 2019 at 05:56:06PM +0300, Dmitry Osipenko wrote:
+> 25.12.2019 20:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+
+> >> I'm not sure why clocks should be disabled during the rate-changing,
+> >> probably this action is not really needed.
+
+> > I know nothing about this particular device but this is not that
+> > unusual a restriction for audio hardware, you often can't
+> > robustly reconfigure the clocking for a device while it's active
+
+> If nobody knows for sure, then will be better to keep
+> tegra_asoc_utils_set_rate() unchanged.
+
+Yeah, that's my instinct - unless we understand the disable it's
+safer not to do it.
+
+--CKf/2jVYos1l2hij
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4GiiUACgkQJNaLcl1U
+h9Df1wf/WpeKIdsJm9CpD2g6l/HiFfNALEg3OrDmzNwzbGiCqrMSTPog6EddD3e6
+5EmfLE3DY2tSCu1nkVCtEhrfteuwqWsQQDmn6x/+iXZrGLzL0GsLVMhF0TwSgd9s
+jIySU0jRy6I/AhnYgQ5qx/UsFjBRIweMVFMeoRJBkn0bzT0T5Q7f84ROYhKZcOtz
+e7CHXFFtNBU0zJ2/VZLoILusTGzrIaNkkrZ82+6Zy76v9FyMdVM8LWMwr0V10C3O
+8fl9hvJIfXB11FSWf7jsENBla9LotrwLLivIkhsPfUxA6ZYsYjWkw1KeYCOfKwE5
+LURwVXe5lfCgCP+WY0M7dh/y2cWpAQ==
+=jKXz
+-----END PGP SIGNATURE-----
+
+--CKf/2jVYos1l2hij--
