@@ -2,79 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A562212B0B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 03:46:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E38512B0BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 03:47:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbfL0Cq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 26 Dec 2019 21:46:57 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33166 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfL0Cq4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 26 Dec 2019 21:46:56 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d71so12817172qkc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 18:46:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=2Hv1x68b8uF72qZPygwNHPWxK1D9MzKDqh0OxaP6oOI=;
-        b=OaCSuZ44PA0LdWeOuVkFrholvWC9bErIn/en6QZwNf9L+FHl4AWu1v1JbH4gXdDwbn
-         Z0nw66O2leUQmi80oPajFbGinKO7zUDWmxXGpm0E7OvM9pRxqsdzO3SDhLPQx6Zjd934
-         Ycr5icaoh087v26l2m6LYODHMOjeqXZDUSBdBpJRboZJSVldByQqYuK5BFnO842b9FLx
-         QtfX67/PL9jcrjUGyg7tZzxCYazODBPTfWkmMq8a9owIN0SNpga9b2bRP0m1Q4lcuVQt
-         3ROzAwwm0S+1MPcPhWr+YfABg8oh8xFvvbCt8V+yfoW1UhMp5e6L02UrMFU5bkkKZAET
-         3rUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=2Hv1x68b8uF72qZPygwNHPWxK1D9MzKDqh0OxaP6oOI=;
-        b=Ey3HJweHufMkFo8Fi5NHICjO6aU/cJ0ovIFD+nI+rOkgK3ENu4GB5li/mJtaoDRuHT
-         YdOSPxJOJCQumOPjJqLeFzNYbXH0tKMzGJnW/87MiDHtbXjEOWAQaLHs/bX90V3sVWmp
-         5sBja6YCFsmtJWrj6298ZBb2/2CMBeQaopsdEDOSVRr3aUNU4jeF8p41Ecge/gK1FpQ6
-         ngprqEbmy4zQVgGfxMa0PlU5VDHUIQn++mEdkAg5/YfwpQ19vi/qvPoP5Pgdrg7tLEgO
-         roO/sAL0MiLVVQ9j94uNDEiJ4/Fz1ZvnlRsEYWU9/OnWR5nw0yTC8S2QcfCfLxCbOecL
-         mXtA==
-X-Gm-Message-State: APjAAAVxmVhqTQNiUSyTa2uFoVt8jVpm4u+Fb0D/D97GYdo3iKFGi1Uj
-        CH7retiJ+3RpwsRxNvXYvVkJHqxy
-X-Google-Smtp-Source: APXvYqyV5WbssGxs6t/AbINJ8WaBk8lSHDKGfTZCyAsOSSMhdPG9vd4MR+31MoRlg7OvvNfZyjWsMQ==
-X-Received: by 2002:a37:4dc1:: with SMTP id a184mr41587857qkb.62.1577414815698;
-        Thu, 26 Dec 2019 18:46:55 -0800 (PST)
-Received: from mandalore.localdomain (pool-71-244-100-50.phlapa.fios.verizon.net. [71.244.100.50])
-        by smtp.gmail.com with ESMTPSA id c8sm10087054qtv.61.2019.12.26.18.46.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 18:46:55 -0800 (PST)
-Date:   Thu, 26 Dec 2019 21:46:38 -0500
-From:   Matthew Hanzelik <mrhanzelik@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Staging: most: core: Fix SPDX License Identifier style issue
-Message-ID: <20191227024638.okfsc2ikeuibujnl@mandalore.localdomain>
+        id S1727217AbfL0CrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 26 Dec 2019 21:47:08 -0500
+Received: from helcar.hmeau.com ([216.24.177.18]:51058 "EHLO deadmen.hmeau.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727002AbfL0CrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 26 Dec 2019 21:47:07 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1ikfeZ-0002ni-4M; Fri, 27 Dec 2019 10:47:03 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1ikfeW-0003Ko-Ai; Fri, 27 Dec 2019 10:47:00 +0800
+Date:   Fri, 27 Dec 2019 10:47:00 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        linux-fscrypt@vger.kernel.org
+Subject: [v4 PATCH] fscrypt: Allow modular crypto algorithms
+Message-ID: <20191227024700.7vrzuux32uyfdgum@gondor.apana.org.au>
+References: <20191221143020.hbgeixvlmzt7nh54@gondor.apana.org.au>
+ <20191221234428.GA551@zzz.localdomain>
+ <20191222084155.n4mbomsw6pl4c7kv@gondor.apana.org.au>
+ <20191222164545.GA157733@zzz.localdomain>
+ <20191223074623.you4ivf2yuxk4ad2@gondor.apana.org.au>
+ <20191224223852.GA178036@zzz.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20191224223852.GA178036@zzz.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixed a style issue with the SPDX License Identifier style.
+On Tue, Dec 24, 2019 at 04:38:52PM -0600, Eric Biggers wrote:
+> 
+> This needs to be under EXT4_FS, not EXT3_FS.  That should address the kbuild
+> test robot error.
 
-Signed-off-by: Matthew Hanzelik <mrhanzelik@gmail.com>
----
- drivers/staging/most/core.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes indeed.
 
-diff --git a/drivers/staging/most/core.h b/drivers/staging/most/core.h
-index 49859aef98df..1380e7586376 100644
---- a/drivers/staging/most/core.h
-+++ b/drivers/staging/most/core.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0
-+/* SPDX-License-Identifier: GPL-2.0 */
- /*
-  * most.h - API for component and adapter drivers
-  *
+---8<---
+The commit 643fa9612bf1 ("fscrypt: remove filesystem specific
+build config option") removed modular support for fs/crypto.  This
+causes the Crypto API to be built-in whenever fscrypt is enabled.
+This makes it very difficult for me to test modular builds of
+the Crypto API without disabling fscrypt which is a pain.
+
+As fscrypt is still evolving and it's developing new ties with the
+fs layer, it's hard to build it as a module for now.
+
+However, the actual algorithms are not required until a filesystem
+is mounted.  Therefore we can allow them to be built as modules.
+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+
+diff --git a/fs/crypto/Kconfig b/fs/crypto/Kconfig
+index ff5a1746cbae..02df95b44331 100644
+--- a/fs/crypto/Kconfig
++++ b/fs/crypto/Kconfig
+@@ -2,13 +2,8 @@
+ config FS_ENCRYPTION
+ 	bool "FS Encryption (Per-file encryption)"
+ 	select CRYPTO
+-	select CRYPTO_AES
+-	select CRYPTO_CBC
+-	select CRYPTO_ECB
+-	select CRYPTO_XTS
+-	select CRYPTO_CTS
+-	select CRYPTO_SHA512
+-	select CRYPTO_HMAC
++	select CRYPTO_HASH
++	select CRYPTO_SKCIPHER
+ 	select KEYS
+ 	help
+ 	  Enable encryption of files and directories.  This
+@@ -16,3 +11,15 @@ config FS_ENCRYPTION
+ 	  efficient since it avoids caching the encrypted and
+ 	  decrypted pages in the page cache.  Currently Ext4,
+ 	  F2FS and UBIFS make use of this feature.
++
++# Filesystems supporting encryption must select this if FS_ENCRYPTION.  This
++# allows the algorithms to be built as modules when all the filesystems are.
++config FS_ENCRYPTION_ALGS
++	tristate
++	select CRYPTO_AES
++	select CRYPTO_CBC
++	select CRYPTO_CTS
++	select CRYPTO_ECB
++	select CRYPTO_HMAC
++	select CRYPTO_SHA512
++	select CRYPTO_XTS
+diff --git a/fs/ext4/Kconfig b/fs/ext4/Kconfig
+index ef42ab040905..db9bfa08d3e0 100644
+--- a/fs/ext4/Kconfig
++++ b/fs/ext4/Kconfig
+@@ -39,6 +39,7 @@ config EXT4_FS
+ 	select CRYPTO
+ 	select CRYPTO_CRC32C
+ 	select FS_IOMAP
++	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+ 	help
+ 	  This is the next generation of the ext3 filesystem.
+ 
+diff --git a/fs/f2fs/Kconfig b/fs/f2fs/Kconfig
+index 652fd2e2b23d..599fb9194c6a 100644
+--- a/fs/f2fs/Kconfig
++++ b/fs/f2fs/Kconfig
+@@ -6,6 +6,7 @@ config F2FS_FS
+ 	select CRYPTO
+ 	select CRYPTO_CRC32
+ 	select F2FS_FS_XATTR if FS_ENCRYPTION
++	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+ 	help
+ 	  F2FS is based on Log-structured File System (LFS), which supports
+ 	  versatile "flash-friendly" features. The design has been focused on
+diff --git a/fs/ubifs/Kconfig b/fs/ubifs/Kconfig
+index 69932bcfa920..45d3d207fb99 100644
+--- a/fs/ubifs/Kconfig
++++ b/fs/ubifs/Kconfig
+@@ -12,6 +12,7 @@ config UBIFS_FS
+ 	select CRYPTO_ZSTD if UBIFS_FS_ZSTD
+ 	select CRYPTO_HASH_INFO
+ 	select UBIFS_FS_XATTR if FS_ENCRYPTION
++	select FS_ENCRYPTION_ALGS if FS_ENCRYPTION
+ 	depends on MTD_UBI
+ 	help
+ 	  UBIFS is a file system for flash devices which works on top of UBI.
+
 -- 
-2.24.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
