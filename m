@@ -2,152 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A416012BBD8
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 00:58:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2B4212BBDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 01:16:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfL0X5I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 18:57:08 -0500
-Received: from mga01.intel.com ([192.55.52.88]:43813 "EHLO mga01.intel.com"
+        id S1726423AbfL1AQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 19:16:08 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58305 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfL0X5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 18:57:08 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725860AbfL1AQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 19:16:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 15:57:08 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 16:16:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,364,1571727600"; 
-   d="scan'208";a="418456292"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Dec 2019 15:57:05 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ikzTd-0001sD-79; Sat, 28 Dec 2019 07:57:05 +0800
-Date:   Sat, 28 Dec 2019 07:56:48 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sanjay R Mehta <Sanju.Mehta@amd.com>
-Cc:     kbuild-all@lists.01.org, vkoul@kernel.org,
-        dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-        Gary.Hook@amd.com, Nehal-bakulchandra.Shah@amd.com,
-        Shyam-sundar.S-k@amd.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, robh@kernel.org,
-        Jonathan.Cameron@huawei.com, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, Sanjay R Mehta <sanju.mehta@amd.com>
-Subject: Re: [PATCH v2 1/3] dmaengine: ptdma: Initial driver for the AMD
- PassThru DMA engine
-Message-ID: <201912280738.zotyIgEi%lkp@intel.com>
-References: <1577458047-109654-1-git-send-email-Sanju.Mehta@amd.com>
+   d="scan'208";a="243364207"
+Received: from vdoan2-mobl.ccr.corp.intel.com (HELO [10.251.152.151]) ([10.251.152.151])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Dec 2019 16:16:06 -0800
+Subject: Re: [alsa-devel] [PATCH v5 03/17] soundwire: rename
+ drv_to_sdw_slave_driver macro
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        tiwai@suse.de, broonie@kernel.org, gregkh@linuxfoundation.org,
+        jank@cadence.com, srinivas.kandagatla@linaro.org,
+        slawomir.blauciak@intel.com,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>
+References: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
+ <20191217210314.20410-4-pierre-louis.bossart@linux.intel.com>
+ <20191227070011.GJ3006@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <e5b45832-6a7e-1538-8069-ef366b87a8b7@linux.intel.com>
+Date:   Fri, 27 Dec 2019 17:23:42 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577458047-109654-1-git-send-email-Sanju.Mehta@amd.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191227070011.GJ3006@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sanjay,
-
-I love your patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.5-rc3 next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Sanjay-R-Mehta/Add-AMD-PassThru-DMA-Engine-driver/20191227-234539
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 46cf053efec6a3a5f343fead837777efe8252a46
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-129-g341daf20-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
 
 
-sparse warnings: (new ones prefixed by >>)
+On 12/27/19 1:00 AM, Vinod Koul wrote:
+> On 17-12-19, 15:03, Pierre-Louis Bossart wrote:
+>> Align with previous renames and shorten macro
+>>
+>> No functionality change
+>>
+>> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+>> ---
+>>   drivers/soundwire/bus_type.c       | 9 ++++-----
+>>   include/linux/soundwire/sdw_type.h | 3 ++-
+>>   2 files changed, 6 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/soundwire/bus_type.c b/drivers/soundwire/bus_type.c
+>> index c0585bcc8a41..2b2830b622fa 100644
+>> --- a/drivers/soundwire/bus_type.c
+>> +++ b/drivers/soundwire/bus_type.c
+>> @@ -34,7 +34,7 @@ sdw_get_device_id(struct sdw_slave *slave, struct sdw_driver *drv)
+>>   static int sdw_bus_match(struct device *dev, struct device_driver *ddrv)
+>>   {
+>>   	struct sdw_slave *slave = to_sdw_slave_device(dev);
+>> -	struct sdw_driver *drv = drv_to_sdw_slave_driver(ddrv);
+>> +	struct sdw_driver *drv = to_sdw_slave_driver(ddrv);
+> 
+> so patch 1 does:
+> 
+> -       struct sdw_driver *drv = drv_to_sdw_driver(dev->driver);
+> +       struct sdw_driver *drv = drv_to_sdw_slave_driver(dev->driver);
+> 
+> and here we move drv_to_sdw_slave_driver to to_sdw_slave_driver... why
+> not do this in first patch and save step1... or did i miss something??
 
->> drivers/dma/ptdma/ptdma-dev.c:151:25: sparse: sparse: cast from restricted __le32
->> drivers/dma/ptdma/ptdma-dev.c:151:23: sparse: sparse: incorrect type in assignment (different base types)
->> drivers/dma/ptdma/ptdma-dev.c:151:23: sparse:    expected unsigned int [usertype]
->> drivers/dma/ptdma/ptdma-dev.c:151:23: sparse:    got restricted __le32 [usertype]
-   drivers/dma/ptdma/ptdma-dev.c:180:21: sparse: sparse: incorrect type in assignment (different base types)
->> drivers/dma/ptdma/ptdma-dev.c:180:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] length
->> drivers/dma/ptdma/ptdma-dev.c:180:21: sparse:    got unsigned long long [usertype] src_len
-   drivers/dma/ptdma/ptdma-dev.c:182:21: sparse: sparse: incorrect type in assignment (different base types)
->> drivers/dma/ptdma/ptdma-dev.c:182:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] src_lo
->> drivers/dma/ptdma/ptdma-dev.c:182:21: sparse:    got unsigned int [usertype]
-   drivers/dma/ptdma/ptdma-dev.c:185:21: sparse: sparse: incorrect type in assignment (different base types)
->> drivers/dma/ptdma/ptdma-dev.c:185:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] dst_lo
-   drivers/dma/ptdma/ptdma-dev.c:185:21: sparse:    got unsigned int [usertype]
+because patch1 introduces replaces 'sdw_' by 'sdw_slave_' in several 
+places, not just for drv_to_sdw_driver()
 
-vim +151 drivers/dma/ptdma/ptdma-dev.c
-
-   132	
-   133	static int pt_core_execute_cmd(struct ptdma_desc *desc,
-   134				       struct pt_cmd_queue *cmd_q)
-   135	{
-   136		u32 *mp;
-   137		__le32 *dp;
-   138		u32 tail;
-   139		int	i;
-   140		int ret = 0;
-   141	
-   142		if (desc->dw0.soc) {
-   143			desc->dw0.ioc = 1;
-   144			desc->dw0.soc = 0;
-   145		}
-   146		mutex_lock(&cmd_q->q_mutex);
-   147	
-   148		mp = (u32 *)&cmd_q->qbase[cmd_q->qidx];
-   149		dp = (__le32 *)desc;
-   150		for (i = 0; i < 8; i++)
- > 151			mp[i] = cpu_to_le32(dp[i]); /* handle endianness */
-   152	
-   153		cmd_q->qidx = (cmd_q->qidx + 1) % cmd_queue_length;
-   154	
-   155		/* The data used by this command must be flushed to memory */
-   156		wmb();
-   157	
-   158		/* Write the new tail address back to the queue register */
-   159		tail = lower_32_bits(cmd_q->qdma_tail + cmd_q->qidx * Q_DESC_SIZE);
-   160		iowrite32(tail, cmd_q->reg_tail_lo);
-   161	
-   162		/* Turn the queue back on using our cached control register */
-   163		iowrite32(cmd_q->qcontrol | CMD_Q_RUN, cmd_q->reg_control);
-   164		mutex_unlock(&cmd_q->q_mutex);
-   165	
-   166		return ret;
-   167	}
-   168	
-   169	int pt_core_perform_passthru(struct pt_cmd_queue *cmd_q,
-   170				     struct pt_passthru_engine *pt_engine)
-   171	{
-   172		struct ptdma_desc desc;
-   173	
-   174		cmd_q->cmd_error = 0;
-   175	
-   176		memset(&desc, 0, Q_DESC_SIZE);
-   177	
-   178		desc.dw0.val = CMD_DESC_DW0_VAL;
-   179	
- > 180		desc.length = pt_engine->src_len;
-   181	
- > 182		desc.src_lo = lower_32_bits(pt_engine->src_dma);
-   183		desc.dw3.src_hi = upper_32_bits(pt_engine->src_dma);
-   184	
- > 185		desc.dst_lo = lower_32_bits(pt_engine->dst_dma);
-   186		desc.dw5.dst_hi = upper_32_bits(pt_engine->dst_dma);
-   187	
-   188		return pt_core_execute_cmd(&desc, cmd_q);
-   189	}
-   190	
-
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
+I can squash all these patches if you want to but then you'll tell me 
+one step at a time...
