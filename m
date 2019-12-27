@@ -2,85 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC43412B476
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 13:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 314FB12B492
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 13:40:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfL0MTN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 07:19:13 -0500
-Received: from mga01.intel.com ([192.55.52.88]:58377 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726053AbfL0MTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 07:19:12 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 04:19:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,363,1571727600"; 
-   d="scan'208";a="419706942"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 27 Dec 2019 04:19:10 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ikoaD-0000Cc-Un; Fri, 27 Dec 2019 20:19:09 +0800
-Date:   Fri, 27 Dec 2019 20:18:51 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: [PATCH] PCI: fix ptr_ret.cocci warnings
-Message-ID: <20191227121851.gpmaugxrysxejmpy@4978f4969bb8>
-References: <201912272041.iVxC623g%lkp@intel.com>
+        id S1727028AbfL0MkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 07:40:24 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:6410 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbfL0MkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 07:40:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1577450423; x=1608986423;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TqWie5+1D5ATHV9gdzwRKMb1Ha1+Oq3U+OrZZ0ZX4K8=;
+  b=c0BJF76Q+2FRXtLoDxL3w2oyG+4VfxeJVHEBJ5iYBlhLkBybKp94vfW8
+   50f5iLB9sxwQQLZnEHVSv3r3InKZfzqupw8/b0tFsOsJTBZirx94YhJNx
+   wytEo6KssBJe83jFcCF2UvL8nhFrAiSTFYMXmpJtCVvVzotP17DlC6P2/
+   8=;
+IronPort-SDR: iD8cDYmZVFb+x36/cyvjanwL1Nwiff6ulXzBAstzWvGZzryhX/RYKugnTo5bTFdu8cDXN7fdyw
+ IR+7ZZjP49Ew==
+X-IronPort-AV: E=Sophos;i="5.69,363,1571702400"; 
+   d="scan'208";a="15731526"
+Received: from sea32-co-svc-lb4-vlan3.sea.corp.amazon.com (HELO email-inbound-relay-1e-17c49630.us-east-1.amazon.com) ([10.47.23.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 27 Dec 2019 12:40:12 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1e-17c49630.us-east-1.amazon.com (Postfix) with ESMTPS id 8EB62A1C8F;
+        Fri, 27 Dec 2019 12:40:09 +0000 (UTC)
+Received: from EX13D31EUA001.ant.amazon.com (10.43.165.15) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 27 Dec 2019 12:40:08 +0000
+Received: from u886c93fd17d25d.ant.amazon.com (10.43.162.242) by
+ EX13D31EUA001.ant.amazon.com (10.43.165.15) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Fri, 27 Dec 2019 12:40:05 +0000
+From:   SeongJae Park <sjpark@amazon.com>
+To:     <brendanhiggins@google.com>
+CC:     <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+        <linux-kernel@vger.kernel.org>, SeongJae Park <sj38.park@gmail.com>
+Subject: What is the best way to compare an unsigned and a constant?
+Date:   Fri, 27 Dec 2019 13:39:38 +0100
+Message-ID: <20191227123938.5271-1-sjpark@amazon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201912272041.iVxC623g%lkp@intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.43.162.242]
+X-ClientProxiedBy: EX13D05UWB004.ant.amazon.com (10.43.161.208) To
+ EX13D31EUA001.ant.amazon.com (10.43.165.15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: kbuild test robot <lkp@intel.com>
-
-drivers/pci/controller/pci-tegra.c:1365:1-3: WARNING: PTR_ERR_OR_ZERO can be used
+Hello,
 
 
- Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+I have a function returning 'unsigned long', and would like to write a kunit
+test for the function, as below.
 
-Generated by: scripts/coccinelle/api/ptr_ret.cocci
+    unsigned long foo(void)
+    {
+    	return 42;
+    }
 
-Fixes: 191d6f91f283 ("PCI: Remove PCI_MSI_IRQ_DOMAIN architecture whitelist")
-CC: Palmer Dabbelt <palmer@sifive.com>
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
+    static void foo_test(struct kunit *test)
+    {
+        KUNIT_EXPECT_EQ(test, 42, foo());
+    }
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   46cf053efec6a3a5f343fead837777efe8252a46
-commit: 191d6f91f283dfb007499bb8529d54c3ac434bd7 PCI: Remove PCI_MSI_IRQ_DOMAIN architecture whitelist
+However, this kunit gives me below warning for the above code:
 
- pci-tegra.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+    /.../linux/include/linux/kernel.h:842:29: warning: comparison of distinct pointer types lacks a cast
+       (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+                                 ^
+    /.../linux/include/kunit/test.h:493:9: note: in expansion of macro ‘__typecheck’
+      ((void)__typecheck(__left, __right));           \
+             ^~~~~~~~~~~
+    /.../linux/include/kunit/test.h:517:2: note: in expansion of macro ‘KUNIT_BASE_BINARY_ASSERTION’
+      KUNIT_BASE_BINARY_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:606:2: note: in expansion of macro ‘KUNIT_BASE_EQ_MSG_ASSERTION’
+      KUNIT_BASE_EQ_MSG_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:616:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_MSG_ASSERTION’
+      KUNIT_BINARY_EQ_MSG_ASSERTION(test,           \
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/include/kunit/test.h:979:2: note: in expansion of macro ‘KUNIT_BINARY_EQ_ASSERTION’
+      KUNIT_BINARY_EQ_ASSERTION(test, KUNIT_EXPECTATION, left, right)
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
+    /.../linux/mm/foo-test.h:565:2: note: in expansion of macro ‘KUNIT_EXPECT_EQ’
+      KUNIT_EXPECT_EQ(test, 42, foo());
+      ^~~~~~~~~~~~~~~
 
---- a/drivers/pci/controller/pci-tegra.c
-+++ b/drivers/pci/controller/pci-tegra.c
-@@ -1362,10 +1362,7 @@ static int tegra_pcie_resets_get(struct
- 		return PTR_ERR(pcie->afi_rst);
- 
- 	pcie->pcie_xrst = devm_reset_control_get_exclusive(dev, "pcie_x");
--	if (IS_ERR(pcie->pcie_xrst))
--		return PTR_ERR(pcie->pcie_xrst);
--
--	return 0;
-+	return PTR_ERR_OR_ZERO(pcie->pcie_xrst);
- }
- 
- static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
+I could remove the warning by explicitly type casting the constant as below:
+
+        KUNIT_EXPECT_EQ(test, (unsigned long)42, foo());
+
+However, now 'checkpatch.pl' complains about the type casting as below.
+
+    WARNING: Unnecessary typecast of c90 int constant
+    #565: FILE: mm/foo-test.h:565:
+    +       KUNIT_EXPECT_EQ(test, (unsigned long)42, foo());
+
+Of course, there could be several work-arounds for these warnings, such as
+using 'EXPECT_TRUE(test, 42 == foo())' or casting the function's return value.
+Nonetheless, I'm not sure what is the right way.  Could you please let me know
+what is the recommended way for this case?
+
+
+Thanks,
+SeongJae Park
