@@ -2,134 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEEB12BA1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 19:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD10112BAA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 19:30:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfL0SQ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 13:16:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41468 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728350AbfL0SQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 13:16:17 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D406F20CC7;
-        Fri, 27 Dec 2019 18:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577470576;
-        bh=Gtk5/0Fmps0CpCMIBKZ69bWUpSgCAMMbRSD/i+uxqNU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmsAgSWRoo4R0FiL47jl5LXjW+MWFofQSDjEUl4Qiol002FUrijZXeaBMOAoZU1jh
-         5635XEVLuHr/vaal8Ae7lrLfxbHzwEzDXh6myxUyOzjaFpy2QsZQvMGzEIZJAj6/EX
-         l6NBwSmM+3nMYOGvxZ6O2OLLNtD84MOOi19aCVXI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiangfeng Xiao <xiaojiangfeng@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 23/25] net: hisilicon: Fix a BUG trigered by wrong bytes_compl
-Date:   Fri, 27 Dec 2019 13:15:47 -0500
-Message-Id: <20191227181549.8040-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191227181549.8040-1-sashal@kernel.org>
-References: <20191227181549.8040-1-sashal@kernel.org>
+        id S1727060AbfL0SaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 13:30:18 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53065 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbfL0SaS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 13:30:18 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p9so8717202wmc.2;
+        Fri, 27 Dec 2019 10:30:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tt4Pc7HYKEhSHSLFHDqLZhfbyrh0xZPyn1XrmozpGLQ=;
+        b=jyLe1gIxAD2xLDv7qkfoxrW8Ii++LkqCIwoU2AfFd3JqScNSPUbahZjsjcAaAt6mLZ
+         NNoGbZH/U9CVCHfPGaC04/ulwPJbunmU4Or3dUDAyGPDuvI/CpX5L2e2FuBgABX9+tEn
+         we5kVyVP6I34DSDVepNHiUOdaW+o8gDdOwpdKHh5NpUQT66lCB9O2XCtJLPjs/quFa3f
+         gW7dNtEXaxls4IIOlHuUpobUhlkEyot3QPhTy0xVSjHqJVEdsA8Nq9ULctpcVMPgRL1d
+         abVYxA6lFgLUownk6mwDWeKOluMQPTFi178P/gs7nyBbUpEDfEi4G5Vv5TPlx78njjHu
+         yRGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tt4Pc7HYKEhSHSLFHDqLZhfbyrh0xZPyn1XrmozpGLQ=;
+        b=OWh/XKFC1IpkT0fjSz5BT7G9qbL/vk8SPSpYW1kxBavagYltRN0cR4ijPr8RaXONIR
+         6K6BWt9RKJ9Vf2DfHjo644rSrDxlt+qBqEIMGFayw4RQtgUk+b2Zr5CmKr02ghuCydMW
+         j6djybIiuX2Easb2nkcHAZtB9CWTa1ac7A1P6NqAvLsEDBvs0R7LLNkpxAuL/UBcwl0i
+         JtELIJGW4ieGJOTNLp+XDLnXKFfFNquo7KnAGpVgsqGGUWXFqpwknn7n4ntdVrqXvCE9
+         w7YB4aZ/jtQ2xoPerNtFio6UZPb0UFfOCwGpl88+f0oAEdFBhRStUHMJ75/g6CrX00tX
+         y46w==
+X-Gm-Message-State: APjAAAWMmQ+N85YC2+E6krkfGWH1sAqKct3+AeRKxsblgpDCiDDkHM/V
+        3muix3cMPdrbv8t9v/jxbeNl0dDGTHg=
+X-Google-Smtp-Source: APXvYqzVFvda+uLl5sPwotnxNMETPYN/BZEdwY9h+ZAw2FopdG6mb6Sh6h6A5oULdI6kb8xactcwKg==
+X-Received: by 2002:a05:600c:251:: with SMTP id 17mr19425167wmj.88.1577471415166;
+        Fri, 27 Dec 2019 10:30:15 -0800 (PST)
+Received: from debian (host-78-144-219-162.as13285.net. [78.144.219.162])
+        by smtp.gmail.com with ESMTPSA id v83sm12033947wmg.16.2019.12.27.10.30.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 27 Dec 2019 10:30:13 -0800 (PST)
+Date:   Fri, 27 Dec 2019 18:30:11 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org
+Subject: Re: [GIT PULL] TTY/Serial driver fixes for 5.5-rc3
+Message-ID: <20191227183011.ij5wcawu6kpf52fb@debian>
+References: <20191220070747.GA2190169@kroah.com>
+ <CAHk-=whcLH7EXVZbD0g1Bw7McrofQ-7vwiL2GAeMn=z9PP4VEQ@mail.gmail.com>
+ <20191223120651.GC114474@kroah.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="spmmowioe5m7hsux"
+Content-Disposition: inline
+In-Reply-To: <20191223120651.GC114474@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
 
-[ Upstream commit 90b3b339364c76baa2436445401ea9ade040c216 ]
+--spmmowioe5m7hsux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When doing stress test, we get the following trace:
-kernel BUG at lib/dynamic_queue_limits.c:26!
-Internal error: Oops - BUG: 0 [#1] SMP ARM
-Modules linked in: hip04_eth
-CPU: 0 PID: 2003 Comm: tDblStackPcap0 Tainted: G           O L  4.4.197 #1
-Hardware name: Hisilicon A15
-task: c3637668 task.stack: de3bc000
-PC is at dql_completed+0x18/0x154
-LR is at hip04_tx_reclaim+0x110/0x174 [hip04_eth]
-pc : [<c041abfc>]    lr : [<bf0003a8>]    psr: 800f0313
-sp : de3bdc2c  ip : 00000000  fp : c020fb10
-r10: 00000000  r9 : c39b4224  r8 : 00000001
-r7 : 00000046  r6 : c39b4000  r5 : 0078f392  r4 : 0078f392
-r3 : 00000047  r2 : 00000000  r1 : 00000046  r0 : df5d5c80
-Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-Control: 32c5387d  Table: 1e189b80  DAC: 55555555
-Process tDblStackPcap0 (pid: 2003, stack limit = 0xde3bc190)
-Stack: (0xde3bdc2c to 0xde3be000)
-[<c041abfc>] (dql_completed) from [<bf0003a8>] (hip04_tx_reclaim+0x110/0x174 [hip04_eth])
-[<bf0003a8>] (hip04_tx_reclaim [hip04_eth]) from [<bf0012c0>] (hip04_rx_poll+0x20/0x388 [hip04_eth])
-[<bf0012c0>] (hip04_rx_poll [hip04_eth]) from [<c04c8d9c>] (net_rx_action+0x120/0x374)
-[<c04c8d9c>] (net_rx_action) from [<c021eaf4>] (__do_softirq+0x218/0x318)
-[<c021eaf4>] (__do_softirq) from [<c021eea0>] (irq_exit+0x88/0xac)
-[<c021eea0>] (irq_exit) from [<c0240130>] (msa_irq_exit+0x11c/0x1d4)
-[<c0240130>] (msa_irq_exit) from [<c0267ba8>] (__handle_domain_irq+0x110/0x148)
-[<c0267ba8>] (__handle_domain_irq) from [<c0201588>] (gic_handle_irq+0xd4/0x118)
-[<c0201588>] (gic_handle_irq) from [<c0558360>] (__irq_svc+0x40/0x58)
-Exception stack(0xde3bdde0 to 0xde3bde28)
-dde0: 00000000 00008001 c3637668 00000000 00000000 a00f0213 dd3627a0 c0af6380
-de00: c086d380 a00f0213 c0a22a50 de3bde6c 00000002 de3bde30 c0558138 c055813c
-de20: 600f0213 ffffffff
-[<c0558360>] (__irq_svc) from [<c055813c>] (_raw_spin_unlock_irqrestore+0x44/0x54)
-Kernel panic - not syncing: Fatal exception in interrupt
+On Mon, Dec 23, 2019 at 07:06:51AM -0500, Greg KH wrote:
+> On Fri, Dec 20, 2019 at 10:08:03AM -0800, Linus Torvalds wrote:
+> > On Thu, Dec 19, 2019 at 11:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > The last tty core fix should resolve a long-standing bug with a race
+> > > at port creation time that some people would see, and Sudip finally
+> > > tracked down.
+> > 
+> > Hmm, looks good. But it makes me wonder if we should now try to remove
+> > the second call to tty_port_link_device()?
+> > 
+> > Now we have a number of helpers that do that tty_port_link_device()
+> > call for the driver (eg tty_port_register_device_attr_serdev(),
+> > tty_port_register_device_attr(), and the just added
+> > uart_add_one_port()).
+> > 
+> > But we also have drivers doing it by hand, and presumably we now have
+> > drivers that do it through multiple paths? I guess it's harmless, but
+> > it feels a bit odd. No?
+> 
+> It does.  I'll try to look at this after the holidays unless Sudip beats
+> me to it.
 
-Pre-modification code:
-int hip04_mac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-{
-[...]
-[1]	priv->tx_head = TX_NEXT(tx_head);
-[2]	count++;
-[3]	netdev_sent_queue(ndev, skb->len);
-[...]
-}
-An rx interrupt occurs if hip04_mac_start_xmit just executes to the line 2,
-tx_head has been updated, but corresponding 'skb->len' has not been
-added to dql_queue.
+The second call to tty_port_link_device() is in
+tty_port_register_device_attr_serdev() and tty_port_register_device_attr()
+is being called from many other places apart from uart_add_one_port().
+The attached patch should be safe. I will test and send it properly unless
+someone objects to it.
 
-And then
-hip04_mac_interrupt->__napi_schedule->hip04_rx_poll->hip04_tx_reclaim
+--
+Regards
+Sudip
 
-In hip04_tx_reclaim, because tx_head has been updated,
-bytes_compl will plus an additional "skb-> len"
-which has not been added to dql_queue. And then
-trigger the BUG_ON(bytes_compl > num_queued - dql->num_completed).
+--spmmowioe5m7hsux
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=patch
 
-To solve the problem described above, we put
-"netdev_sent_queue(ndev, skb->len);"
-before
-"priv->tx_head = TX_NEXT(tx_head);"
-
-Fixes: a41ea46a9a12 ("net: hisilicon: new hip04 ethernet driver")
-Signed-off-by: Jiangfeng Xiao <xiaojiangfeng@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/hisilicon/hip04_eth.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 2a7dfac20546..09c51220b5ca 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -455,9 +455,9 @@ static int hip04_mac_start_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	skb_tx_timestamp(skb);
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 7c2782785736..09df885442ae 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -2858,7 +2858,8 @@ int uart_add_one_port(struct uart_driver *drv, struct uart_port *uport)
+ 	 * setserial to be used to alter this port's parameters.
+ 	 */
+ 	tty_dev = tty_port_register_device_attr_serdev(port, drv->tty_driver,
+-			uport->line, uport->dev, port, uport->tty_groups);
++			uport->line, uport->dev, port, uport->tty_groups,
++			false);
+ 	if (!IS_ERR(tty_dev)) {
+ 		device_set_wakeup_capable(tty_dev, 1);
+ 	} else {
+diff --git a/drivers/tty/tty_port.c b/drivers/tty/tty_port.c
+index 5023c85ebc6e..dc66543fa2c3 100644
+--- a/drivers/tty/tty_port.c
++++ b/drivers/tty/tty_port.c
+@@ -152,11 +152,12 @@ EXPORT_SYMBOL_GPL(tty_port_register_device_attr);
+ struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
+ 		struct tty_driver *driver, unsigned index,
+ 		struct device *device, void *drvdata,
+-		const struct attribute_group **attr_grp)
++		const struct attribute_group **attr_grp, bool link)
+ {
+ 	struct device *dev;
  
- 	hip04_set_xmit_desc(priv, phys);
--	priv->tx_head = TX_NEXT(tx_head);
- 	count++;
- 	netdev_sent_queue(ndev, skb->len);
-+	priv->tx_head = TX_NEXT(tx_head);
+-	tty_port_link_device(port, driver, index);
++	if (link)
++		tty_port_link_device(port, driver, index);
  
- 	stats->tx_bytes += skb->len;
- 	stats->tx_packets++;
--- 
-2.20.1
+ 	dev = serdev_tty_port_register(port, device, driver, index);
+ 	if (PTR_ERR(dev) != -ENODEV) {
+@@ -184,7 +185,7 @@ struct device *tty_port_register_device_serdev(struct tty_port *port,
+ 		struct device *device)
+ {
+ 	return tty_port_register_device_attr_serdev(port, driver, index,
+-			device, NULL, NULL);
++			device, NULL, NULL, true);
+ }
+ EXPORT_SYMBOL_GPL(tty_port_register_device_serdev);
+ 
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index bfa4e2ee94a9..7f2ad47ecf88 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -587,7 +587,7 @@ extern struct device *tty_port_register_device_serdev(struct tty_port *port,
+ extern struct device *tty_port_register_device_attr_serdev(struct tty_port *port,
+ 		struct tty_driver *driver, unsigned index,
+ 		struct device *device, void *drvdata,
+-		const struct attribute_group **attr_grp);
++		const struct attribute_group **attr_grp, bool link);
+ extern void tty_port_unregister_device(struct tty_port *port,
+ 		struct tty_driver *driver, unsigned index);
+ extern int tty_port_alloc_xmit_buf(struct tty_port *port);
 
+--spmmowioe5m7hsux--
