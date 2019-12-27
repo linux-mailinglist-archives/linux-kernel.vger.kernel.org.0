@@ -2,97 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 296E312B1C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:25:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A82B12B1C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 07:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbfL0GZN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 01:25:13 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:35642 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfL0GZN (ORCPT
+        id S1726335AbfL0Gck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 01:32:40 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44413 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725904AbfL0Gck (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 01:25:13 -0500
-Received: by mail-pj1-f66.google.com with SMTP id s7so4507081pjc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 26 Dec 2019 22:25:12 -0800 (PST)
+        Fri, 27 Dec 2019 01:32:40 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 195so13427805pfw.11;
+        Thu, 26 Dec 2019 22:32:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+EKn8We3BkGgywlh1HuV4tzBZYkzn1Xs8GUmEfUy078=;
-        b=hfxVgJ5v1cMuu2MQODqTRoZDn63VkkyCBQ9YJbz3fvFtMUcXeXKRMXXSh0abGiWK3d
-         5ptKXl8F9s+ti0PK+Pk5uPWoMEMZmrqqHAdKl6SEfafchEdU1DmX75ihmffd9x2kbx/s
-         EEcXNkU731Vt8+eVxeFk0tqx6TyLAD+disN2NMTD//X8MI89yUZi3UpCqEUfSwuFS3kF
-         SxSJaHrYR22ozQHh+Uyuz/eQVeQUtKu3Mc/Pjgz+hzoGltHQdOzuVH9qym0ma1DKpeRy
-         CA864jSbQKZDT2EKNhOy4lp7dr7k45+wPTs/ee2NL32lZvUtI3HCb+/o6oXY66a/Bte/
-         mOVA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2aAZsrFg19vll1emaW6XpIeha1H0m56azXvY0CR3CNI=;
+        b=QVLqmpEAbgO2c42Y8tN7yjEwEflGvvFkcpiVcMD3XIqLRILUAeL2JgE94lP0d2l6Jo
+         8Olnde1TWqU37CNeGWvivKNnyz2cP4Hwd2dzMYqXlB6DHV56xEmF/XZO0a1Mhp591qHJ
+         mvrM/dnOi92oltV+os0KafIuom1VBvkfu30pivZzaFTDpeM6K1nLYhUN/Sy5EVtqVfSr
+         7hexdgBSXUopcPY9xUp3khH7XPKs9RJTovJ/mmCKwWcE+7GwuP1GBI2yti1SkprgbHaf
+         iU70Y1IKvUbosCXMhnpvOvCl233EWQzCNc08hlvDR/ahyEG4gHsXFb53b+45hLer3iG/
+         ZBZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+EKn8We3BkGgywlh1HuV4tzBZYkzn1Xs8GUmEfUy078=;
-        b=HwsBYHX5Pbec5CFchK7Z0i54UgcHkGtbzD+VZcX6R++GSUzF7cztuaigVnjU2ZiFU+
-         bvNHQweFq73arMrmNvymQ286sEFz0EturHWSPMlMpOoKgzgLxrpSNPj1QK9ZpX58ss1/
-         547ZcLinYQeSszQvYTLot5BIpaZWHdX7xUo/GBX/FEe5B6pd/nMAYd6qPgpwteZPTEwI
-         bxHeuvtQ82hQbdi97zKfPzOYmp/eZ5soVxBTpZynLbt/dwX2teeyPtUcb06Dxr3yY94X
-         wE2ol0ono9xha8t9BT2aeCXss2NdQAlPD6aZD8vOKG+Tu/wqhU6Zy8Mvm5LJFc20dmd7
-         LWOg==
-X-Gm-Message-State: APjAAAXrcXG05LZXDk8BMkXVnjyxauDGShKa2jpNNAIVPedKNRKvlbuu
-        kcv0dnreCrV6dC27Fs+yjKJfhQ==
-X-Google-Smtp-Source: APXvYqw2qyrZjW+qLKzs/TN5PVizOk8K27jmhhHnPigI4HLMQERBFm/IqC/GFrkiZ9PfVgEfLnXJ8w==
-X-Received: by 2002:a17:90a:aa84:: with SMTP id l4mr24319054pjq.143.1577427912269;
-        Thu, 26 Dec 2019 22:25:12 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v143sm30824367pfc.71.2019.12.26.22.25.10
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2aAZsrFg19vll1emaW6XpIeha1H0m56azXvY0CR3CNI=;
+        b=hbSjwunGcmTvAWLDsEIKmh6ZS3n2QxusLjnpAgdIqkyzrF76T9h5G+6OualvKkNHQN
+         WEiQJuWOlB+qP+axYvFBAsp+MRpTiX2cg9mSMSFfSREmlpAbxfLpyijWqrrvKTdm3NMV
+         dsXhq64TO7pjR1+tDmWXP96O9VuXrvj7o6kNbFZ0bth1j/js8Ek48clNlBFHSpjkYCwn
+         1xFR6zNTGAeNYdnJ3KHMnOVGmUeufDCD53Ypscvu/8ZUusg7O9hlbg/oGw9L0h+XlxLz
+         /fFnO/4pzWCKsgP6mX3j5L7xpLVkjTruER1yl/qxcQbdXCk34/RdF3U3FmR4UW5ZTBRL
+         g57w==
+X-Gm-Message-State: APjAAAWcikk0r6gXeskLZCbGyEtGEDREfihVZZqbH72+BSsg5YBnTgqw
+        4C/HUwMvKBca5Dxm1Nim+mSGebwY
+X-Google-Smtp-Source: APXvYqzpfH2rh0jD8O3cY2+AVWY6TqBk7XZZSc+kF3cJWPXyqCwoDqf0/S76vRyOMV17qmNwfXnOOw==
+X-Received: by 2002:a63:215f:: with SMTP id s31mr51237960pgm.27.1577428359435;
+        Thu, 26 Dec 2019 22:32:39 -0800 (PST)
+Received: from tw-172-25-31-76.office.twttr.net ([8.25.197.24])
+        by smtp.gmail.com with ESMTPSA id s18sm34388938pfh.179.2019.12.26.22.32.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 22:25:11 -0800 (PST)
-Date:   Thu, 26 Dec 2019 22:25:09 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rajeshwari <rkambl@codeaurora.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sanm@codeaurora.org, sivaa@codeaurora.org, manafm@codeaurora.org
-Subject: Re: [PATCH 2/2] dt-bindings: thermal: tsens: Add configuration for
- sc7180 in yaml
-Message-ID: <20191227062509.GN549437@yoga>
-References: <1577106871-19863-1-git-send-email-rkambl@codeaurora.org>
- <1577106871-19863-3-git-send-email-rkambl@codeaurora.org>
+        Thu, 26 Dec 2019 22:32:38 -0800 (PST)
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com,
+        Greg Hackmann <ghackmann@google.com>,
+        Chenbo Feng <fengc@google.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Subject: [PATCH] dma-buf: free dmabuf->name in dma_buf_release()
+Date:   Thu, 26 Dec 2019 22:32:04 -0800
+Message-Id: <20191227063204.5813-1-xiyou.wangcong@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577106871-19863-3-git-send-email-rkambl@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 23 Dec 05:14 PST 2019, Rajeshwari wrote:
+dma-buff name can be set via DMA_BUF_SET_NAME ioctl, but once set
+it never gets freed.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Free it in dma_buf_release().
 
-> Signed-off-by: Rajeshwari <rkambl@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/thermal/qcom-tsens.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> index eef13b9..c0ed030 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
-> @@ -38,6 +38,7 @@ properties:
->            - enum:
->                - qcom,msm8996-tsens
->                - qcom,msm8998-tsens
-> +              - qcom,sc7180-tsens
->                - qcom,sdm845-tsens
->            - const: qcom,tsens-v2
->  
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member 
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+Fixes: bb2bb9030425 ("dma-buf: add DMA_BUF_SET_NAME ioctls")
+Reported-by: syzbot+b2098bc44728a4efb3e9@syzkaller.appspotmail.com
+Cc: Greg Hackmann <ghackmann@google.com>
+Cc: Chenbo Feng <fengc@google.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+---
+ drivers/dma-buf/dma-buf.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index ce41cd9b758a..2427398ff22a 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -108,6 +108,7 @@ static int dma_buf_release(struct inode *inode, struct file *file)
+ 		dma_resv_fini(dmabuf->resv);
+ 
+ 	module_put(dmabuf->owner);
++	kfree(dmabuf->name);
+ 	kfree(dmabuf);
+ 	return 0;
+ }
+-- 
+2.21.0
+
