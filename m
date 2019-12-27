@@ -2,115 +2,171 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 654D712B60F
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 18:13:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E67212B613
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 18:15:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfL0RNd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 12:13:33 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:20189 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727023AbfL0RN3 (ORCPT
+        id S1726971AbfL0RPf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 27 Dec 2019 12:15:35 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52071 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfL0RPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:13:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577466808;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=odbH8gJBbD1Pv+mLxQ4TOL4Mya35csb8zC9B5Ma4whY=;
-        b=YkmngIgluDOFbnT8OijaJPjIc7jnE7nGNg8v1tSPsIPclpNQ2zh3Y8TS4jkCaJLiBTd9hY
-        AzvZVadkPCZRpv0ZJ5P7p1a73QAB1+qN4Ntw+9KLGp8DItW2BzBAXCgyBFo5vBeXdFhUyJ
-        76DckLpBqURYEvVCV0aoS6udavXMr40=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-172-nt8F_wOIOUaO6c-c10SXeg-1; Fri, 27 Dec 2019 12:13:26 -0500
-X-MC-Unique: nt8F_wOIOUaO6c-c10SXeg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 461571005516;
-        Fri, 27 Dec 2019 17:13:25 +0000 (UTC)
-Received: from firesoul.localdomain (ovpn-200-26.brq.redhat.com [10.40.200.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E75515C28C;
-        Fri, 27 Dec 2019 17:13:24 +0000 (UTC)
-Received: from [192.168.42.3] (localhost [IPv6:::1])
-        by firesoul.localdomain (Postfix) with ESMTP id 1451930736C73;
-        Fri, 27 Dec 2019 18:13:24 +0100 (CET)
-Subject: [net-next v6 PATCH 2/2] page_pool: help compiler remove code in case
- CONFIG_NUMA=n
-From:   Jesper Dangaard Brouer <brouer@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, lirongqing@baidu.com,
-        linyunsheng@huawei.com,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Saeed Mahameed <saeedm@mellanox.com>, mhocko@kernel.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org
-Date:   Fri, 27 Dec 2019 18:13:24 +0100
-Message-ID: <157746680401.257308.5144161565322223279.stgit@firesoul>
-In-Reply-To: <157746672570.257308.7385062978550192444.stgit@firesoul>
-References: <157746672570.257308.7385062978550192444.stgit@firesoul>
-User-Agent: StGit/0.19
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+        Fri, 27 Dec 2019 12:15:35 -0500
+Received: from mail-pl1-f198.google.com ([209.85.214.198])
+        by youngberry.canonical.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1iktD2-0002lJ-2E
+        for linux-kernel@vger.kernel.org; Fri, 27 Dec 2019 17:15:32 +0000
+Received: by mail-pl1-f198.google.com with SMTP id o12so13597309pll.7
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 09:15:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=KrWoelJmGiB71bSfb9IY5530bv8sUff/lG3OT8kddIY=;
+        b=kowm0tiV7atUs9hUhmw6OdKnNrOsckrJ3ZAe5uBu+22z9r8xm3ou/wkI+A53Fg8wv5
+         9U0r5WSAgsGFCMKgTIOpUN+d7/o0LLIyhLfa+4cMDau6U1kgrpbZmkt/N8OubQErgyBb
+         tTPZBaYF3OEFIMX0kSzDGLBiilgfxEc3+dkj5u6FGn+ivUC9/by5io2QxSR/o+V07tjm
+         pRGCT/k2ths4nCn6JiJftOkPK+q17Goi1GX1CTY0HkydmBBMV/t03gX77KAiStP2yUa4
+         iAAHQhV26Y1UQhZJ6wfX6hL8dCWf7mftNFG8eesCblzTCPz7UjF1EU61TNvinjrRSlU6
+         uXpw==
+X-Gm-Message-State: APjAAAX3Mvdpj6p5cR90voPqcYE1YdN72MG+loizvIKfssUyIiSsX5OE
+        HJS5ir5k8YBMt2OvkmCE496hoQeYnBPm6gLUF1y3IVu4wf/JEWhwdnLtyTStsFpyTuiy5vJqAkl
+        7lviCP7apbQXk4IbdiGp6PP05j1gGDgxLI3PZwnbQbw==
+X-Received: by 2002:aa7:93ce:: with SMTP id y14mr56102165pff.185.1577466930673;
+        Fri, 27 Dec 2019 09:15:30 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzykHiHnrogfyc+ELP9XKCPhG/DJGzdhgr4sOoR6vPeZQUQ6bZnWl9DucoDstfKWXdUApHyBQ==
+X-Received: by 2002:aa7:93ce:: with SMTP id y14mr56102051pff.185.1577466929498;
+        Fri, 27 Dec 2019 09:15:29 -0800 (PST)
+Received: from 2001-b011-380f-35a3-88bb-5c99-0021-8cca.dynamic-ip6.hinet.net (2001-b011-380f-35a3-88bb-5c99-0021-8cca.dynamic-ip6.hinet.net. [2001:b011:380f:35a3:88bb:5c99:21:8cca])
+        by smtp.gmail.com with ESMTPSA id r2sm37569935pgv.16.2019.12.27.09.15.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Dec 2019 09:15:28 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 13.0 \(3608.40.2.2.4\))
+Subject: Re: [PATCH] PCI/PM: Report runtime wakeup is not supported if bridge
+ isn't bound to driver
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <1948783.ToaVGCCZch@kreacher>
+Date:   Sat, 28 Dec 2019 01:15:26 +0800
+Cc:     bhelgaas@google.com, rafael.j.wysocki@intel.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <C9708CF1-9F01-47BF-A568-53A01725AF95@canonical.com>
+References: <20191227092405.29588-1-kai.heng.feng@canonical.com>
+ <1948783.ToaVGCCZch@kreacher>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+X-Mailer: Apple Mail (2.3608.40.2.2.4)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When kernel is compiled without NUMA support, then page_pool NUMA
-config setting (pool->p.nid) doesn't make any practical sense. The
-compiler cannot see that it can remove the code paths.
 
-This patch avoids reading pool->p.nid setting in case of !CONFIG_NUMA,
-in allocation and numa check code, which helps compiler to see the
-optimisation potential. It leaves update code intact to keep API the
-same.
 
- $ ./scripts/bloat-o-meter net/core/page_pool.o-numa-enabled \
-                           net/core/page_pool.o-numa-disabled
- add/remove: 0/0 grow/shrink: 0/3 up/down: 0/-113 (-113)
- Function                                     old     new   delta
- page_pool_create                             401     398      -3
- __page_pool_alloc_pages_slow                 439     426     -13
- page_pool_refill_alloc_cache                 425     328     -97
- Total: Before=3611, After=3498, chg -3.13%
+> On Dec 27, 2019, at 18:36, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> 
+> On Friday, December 27, 2019 10:24:05 AM CET Kai-Heng Feng wrote:
+>> We have a Pericom USB add-on card that has three USB controller
+>> functions 06:00.[0-2], connected to bridge device 05:03.0, which is
+>> connected to another bridge device 04:00.0:
+>> 
+>> -[0000:00]-+-00.0
+>>           +-1c.6-[04-06]----00.0-[05-06]----03.0-[06]--+-00.0
+>>           |                                            +-00.1
+>>           |                                            \-00.2
+>> 
+>> When bridge device (05:03.0) and all three USB controller functions
+>> (06:00.[0-2]) are runtime suspended, they don't get woken up by plugging
+>> USB devices into the add-on card.
+>> 
+>> This is because the pcieport driver failed to probe on 04:00.0, since
+>> the device supports neither legacy IRQ, MSI nor MSI-X. Because of that,
+>> there's no native PCIe PME can work for devices connected to it.
+> 
+> But in that case the PME driver (drivers/pci/pcie/pme.c) should not bind
+> to the port in question, so the "can_wakeup" flag should not be set for
+> the devices under that port.
 
-Signed-off-by: Jesper Dangaard Brouer <brouer@redhat.com>
----
- net/core/page_pool.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+We can remove the can_wakeup flag for all its child devices once pcieport probe fails, but I think it's not intuitive.
 
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 748f0d36f4be..28fe694f9ab2 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -113,7 +113,12 @@ static struct page *page_pool_refill_alloc_cache(struct page_pool *pool,
- 	/* Softirq guarantee CPU and thus NUMA node is stable. This,
- 	 * assumes CPU refilling driver RX-ring will also run RX-NAPI.
- 	 */
-+#ifdef CONFIG_NUMA
- 	pref_nid = (pool->p.nid == NUMA_NO_NODE) ? numa_mem_id() : pool->p.nid;
-+#else
-+	/* Ignore pool->p.nid setting if !CONFIG_NUMA, helps compiler */
-+	pref_nid = numa_mem_id(); /* will be zero like page_to_nid() */
-+#endif
- 
- 	/* Slower-path: Get pages from locked ring queue */
- 	spin_lock(&r->consumer_lock);
-@@ -200,7 +205,11 @@ static struct page *__page_pool_alloc_pages_slow(struct page_pool *pool,
- 	 */
- 
- 	/* Cache was empty, do real allocation */
-+#ifdef CONFIG_NUMA
- 	page = alloc_pages_node(pool->p.nid, gfp, pool->p.order);
-+#else
-+	page = alloc_pages(gfp, pool->p.order);
-+#endif
- 	if (!page)
- 		return NULL;
- 
+> 
+>> So let's correctly report runtime wakeup isn't supported when any of
+>> PCIe bridges isn't bound to pcieport driver.
+>> 
+>> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=205981
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> drivers/pci/pci.c | 12 ++++++++++++
+>> 1 file changed, 12 insertions(+)
+>> 
+>> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+>> index 951099279192..ca686cfbd65e 100644
+>> --- a/drivers/pci/pci.c
+>> +++ b/drivers/pci/pci.c
+>> @@ -2493,6 +2493,18 @@ bool pci_dev_run_wake(struct pci_dev *dev)
+>> 	if (!pci_pme_capable(dev, pci_target_state(dev, true)))
+>> 		return false;
+>> 
+>> +	/* If any upstream PCIe bridge isn't bound to pcieport driver, there's
+>> +	 * no IRQ for PME.
+>> +	 */
+>> +	if (pci_is_pcie(dev)) {
+>> +		while (bus->parent) {
+>> +			if (!bus->self->driver)
+>> +				return false;
+>> +
+>> +			bus = bus->parent;
+>> +		}
+>> +	}
+>> +
+> 
+> So it looks like device_can_wakeup() returns 'true' for this device, but it
+> should return 'false'.
 
+The USB controllers can assert PME#, so it actually can wakeup, in a way.
+
+I think the logical distinction between pci_dev_run_wake() and device_can_wakeup() is that,
+pci_dev_run_wake() means it can actually do runtime wakeup, while device_can_wakeup()
+only means it has the capability to wakeup. Am I correct here?
+
+> 
+> Do you know why the "can_wakeup" flag is set for it?
+
+All PCI devices with PME cap calls device_set_wakeup_capable() in pci_pm_init().
+
+> 
+>> 	if (device_can_wakeup(&dev->dev))
+>> 		return true;
+>> 
+>> 
+> 
+> Moreover, even if the native PME is not supported, there can be an ACPI GPE (or
+> equivalent) that triggers when WAKE# is asserted by one of the PCIe devices
+> connected to it, so the test added by this patch cannot be used in general.
+
+Ok. So how to know when both native PME isn't supported and it doesn't use ACPI GPE?
+I thought ACPI GPE only works for devices directly connect to Root Complex, but I can't find the reference now.
+
+Another short-term workaround is to make pci_pme_list_scan() not skip bridge when it's in D3hot:
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e87196cc1a7f..3333194a62d3 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2111,7 +2111,7 @@ static void pci_pme_list_scan(struct work_struct *work)
+                         * configuration space of subordinate devices
+                         * may be not accessible
+                         */
+-                       if (bridge && bridge->current_state != PCI_D0)
++                       if (bridge && bridge->current_state == PCI_D3cold)
+                                continue;
+                        /*
+                         * If the device is in D3cold it should not be
+
+I haven't seen any case that config space is not accessible under D3hot, but I don't have PCI spec to check.
+
+Kai-Heng
 
