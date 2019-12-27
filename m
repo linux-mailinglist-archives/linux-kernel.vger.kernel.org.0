@@ -2,75 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E541312B355
-	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 09:54:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E7812B34F
+	for <lists+linux-kernel@lfdr.de>; Fri, 27 Dec 2019 09:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfL0IyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 03:54:05 -0500
-Received: from ns.mm-sol.com ([37.157.136.199]:33784 "EHLO extserv.mm-sol.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfL0IyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 03:54:05 -0500
-X-Greylist: delayed 508 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Dec 2019 03:54:03 EST
-Received: from [192.168.1.13] (87-126-225-137.ip.btc-net.bg [87.126.225.137])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 9EEDECF49;
-        Fri, 27 Dec 2019 10:45:30 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mm-sol.com; s=201706;
-        t=1577436330; bh=rK08qd3GPgKbp4fWxeFCqjHeAZbfvqNcNFr3o32Kgi8=;
-        h=Subject:To:Cc:From:Date:From;
-        b=eqEBgZNcmpMCMkebZFgQZtC2cmzGmwDBO1Ps3izBsOgloWgJx5T4l45/JMyOUKblO
-         4oehlJRzVj1vm9H4kyK4Oiq3U1sShARrqfrCAFQ+gQnLU5d5EMEKz4+xDyxyYwi0mO
-         sxjQEQ9YZoh/b0QWiFEYP0xxHBhUiDOpM8XAkhklarRE1P3EWSCWYW6zoSqCFObrSN
-         DW4FbsJhAiZeYbsZPo7Yk4DZHb3JPr8KJUDVL4T5X3VDZ5Ab3vCF+MgHcee5kUbUt1
-         iz+r291RJYZ9PqP8qc1tPjVW/dKoEctEfzItXoXqVWWpg47lM4IlyHIyKz9XKl4ayN
-         lBHaUkH+1uuhw==
-Subject: Re: [PATCH v3 2/2] PCI: qcom: Add support for SDM845 PCIe controller
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>
-References: <20191107001642.1127561-1-bjorn.andersson@linaro.org>
- <20191107001642.1127561-3-bjorn.andersson@linaro.org>
-From:   Stanimir Varbanov <svarbanov@mm-sol.com>
-Message-ID: <ffdfbe52-d19e-101d-f240-0eabee4c2c8f@mm-sol.com>
-Date:   Fri, 27 Dec 2019 10:45:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726495AbfL0Irl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 03:47:41 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:40193 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbfL0Irk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 03:47:40 -0500
+Received: from dude02.hi.pengutronix.de ([2001:67c:670:100:1d::28] helo=dude02.lab.pengutronix.de)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iklHJ-0002Dw-ML; Fri, 27 Dec 2019 09:47:25 +0100
+Received: from mfe by dude02.lab.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mfe@pengutronix.de>)
+        id 1iklHE-0002Re-Do; Fri, 27 Dec 2019 09:47:20 +0100
+Date:   Fri, 27 Dec 2019 09:47:20 +0100
+From:   Marco Felsch <m.felsch@pengutronix.de>
+To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Cc:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: light: vcnl4000: Fix scale for vcnl4040
+Message-ID: <20191227084720.GA6398@pengutronix.de>
+References: <4f2a980d87a7d5ae27d61ed1d35c4f310bfc607c.1577114947.git.agx@sigxcpu.org>
 MIME-Version: 1.0
-In-Reply-To: <20191107001642.1127561-3-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4f2a980d87a7d5ae27d61ed1d35c4f310bfc607c.1577114947.git.agx@sigxcpu.org>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 09:42:35 up 119 days, 20:56, 75 users,  load average: 0.06, 0.12,
+ 0.09
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::28
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Guido,
 
-On 11/7/19 2:16 AM, Bjorn Andersson wrote:
-> The SDM845 has one Gen2 and one Gen3 controller, add support for these.
+On 19-12-23 16:30, Guido Günther wrote:
+> According to the data sheet the ambient sensors's scale is 0.12
+> lux/step, not 0.024 lux/step as used by vcnl4200.
+
+This is only true if the als_it bits are set to '0'. Is it worth to add
+a comment here?
+
+> See p. 8 in https://www.vishay.com/docs/84307/designingvcnl4040.pdf
 > 
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fixes: 5a441aade5b3 ("light: vcnl4000 add support for the VCNL4040 proximity and light sensor")
+> Signed-off-by: Guido Günther <agx@sigxcpu.org>
+
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+
 > ---
+>  drivers/iio/light/vcnl4000.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Changes since v1:
-> - Don't assert the reset in the failure path
-> 
->  drivers/pci/controller/dwc/pcie-qcom.c | 150 +++++++++++++++++++++++++
->  1 file changed, 150 insertions(+)
-
-I don't see my tag, so:
-
-Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-
--- 
-regards,
-Stan
+> diff --git a/drivers/iio/light/vcnl4000.c b/drivers/iio/light/vcnl4000.c
+> index 16dacea9eadf..b0e241aaefb4 100644
+> --- a/drivers/iio/light/vcnl4000.c
+> +++ b/drivers/iio/light/vcnl4000.c
+> @@ -163,7 +163,6 @@ static int vcnl4200_init(struct vcnl4000_data *data)
+>  	if (ret < 0)
+>  		return ret;
+>  
+> -	data->al_scale = 24000;
+>  	data->vcnl4200_al.reg = VCNL4200_AL_DATA;
+>  	data->vcnl4200_ps.reg = VCNL4200_PS_DATA;
+>  	switch (id) {
+> @@ -172,11 +171,13 @@ static int vcnl4200_init(struct vcnl4000_data *data)
+>  		/* show 54ms in total. */
+>  		data->vcnl4200_al.sampling_rate = ktime_set(0, 54000 * 1000);
+>  		data->vcnl4200_ps.sampling_rate = ktime_set(0, 4200 * 1000);
+> +		data->al_scale = 24000;
+>  		break;
+>  	case VCNL4040_PROD_ID:
+>  		/* Integration time is 80ms, add 10ms. */
+>  		data->vcnl4200_al.sampling_rate = ktime_set(0, 100000 * 1000);
+>  		data->vcnl4200_ps.sampling_rate = ktime_set(0, 100000 * 1000);
+> +		data->al_scale = 120000;
+>  		break;
+>  	}
+>  	data->vcnl4200_al.last_measurement = ktime_set(0, 0);
+> -- 
+> 2.23.0
