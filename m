@@ -2,55 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADFD412BC47
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 03:43:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B001A12BC4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 03:49:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfL1CnM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 21:43:12 -0500
-Received: from mga11.intel.com ([192.55.52.93]:34830 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725957AbfL1CnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 21:43:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 18:43:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,365,1571727600"; 
-   d="scan'208";a="243381779"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Dec 2019 18:43:09 -0800
-Cc:     baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        jacob.jun.pan@intel.com, kevin.tian@intel.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/1] iommu/vt-d: Add Kconfig option to enable/disable
- scalable mode
-To:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>
-References: <20191112063954.19371-1-baolu.lu@linux.intel.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <e8d35743-4f86-5626-e0e3-a107264bc9ba@linux.intel.com>
-Date:   Sat, 28 Dec 2019 10:42:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726562AbfL1CtG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 21:49:06 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39142 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725957AbfL1CtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 21:49:06 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 06223672C37A95790DCF;
+        Sat, 28 Dec 2019 10:49:03 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.439.0; Sat, 28 Dec 2019 10:48:55 +0800
+From:   Chen Zhou <chenzhou10@huawei.com>
+To:     <qiang.zhao@nxp.com>, <leoyang.li@nxp.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <chenzhou10@huawei.com>
+Subject: [PATCH next] soc/fsl/qe: remove set but not used variables 'mm_gc'
+Date:   Sat, 28 Dec 2019 10:45:20 +0800
+Message-ID: <20191228024520.151558-1-chenzhou10@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191112063954.19371-1-baolu.lu@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/19 2:39 PM, Lu Baolu wrote:
-> This adds Kconfig option INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON
-> to make it easier for distributions to enable or disable the
-> Intel IOMMU scalable mode by default during kernel build.
-> 
-> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Queued for v5.6.
+drivers/soc/fsl/qe/gpio.c: In function qe_pin_request:
+drivers/soc/fsl/qe/gpio.c:163:26: warning:
+	variable mm_gc set but not used [-Wunused-but-set-variable]
 
-Thanks,
--baolu
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Chen Zhou <chenzhou10@huawei.com>
+---
+ drivers/soc/fsl/qe/gpio.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/soc/fsl/qe/gpio.c b/drivers/soc/fsl/qe/gpio.c
+index 12bdfd9..ed75198 100644
+--- a/drivers/soc/fsl/qe/gpio.c
++++ b/drivers/soc/fsl/qe/gpio.c
+@@ -160,7 +160,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ {
+ 	struct qe_pin *qe_pin;
+ 	struct gpio_chip *gc;
+-	struct of_mm_gpio_chip *mm_gc;
+ 	struct qe_gpio_chip *qe_gc;
+ 	int err;
+ 	unsigned long flags;
+@@ -186,7 +185,6 @@ struct qe_pin *qe_pin_request(struct device_node *np, int index)
+ 		goto err0;
+ 	}
+ 
+-	mm_gc = to_of_mm_gpio_chip(gc);
+ 	qe_gc = gpiochip_get_data(gc);
+ 
+ 	spin_lock_irqsave(&qe_gc->lock, flags);
+-- 
+2.7.4
+
