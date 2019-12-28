@@ -2,108 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 32B2812BD2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 10:48:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C6F12BD3C
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 11:10:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbfL1JsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 04:48:06 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:58002 "EHLO huawei.com"
+        id S1726508AbfL1KJn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 05:09:43 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46548 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726362AbfL1JsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 04:48:05 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D70F7DAA41F9E5264ECC;
-        Sat, 28 Dec 2019 17:48:02 +0800 (CST)
-Received: from huawei.com (10.175.113.25) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.439.0; Sat, 28 Dec 2019
- 17:47:53 +0800
-From:   Wang ShaoBo <bobo.shaobowang@huawei.com>
-To:     <mark.rutland@arm.com>, <hch@infradead.org>
-CC:     <cj.chengjian@huawei.com>, <huawei.libin@huawei.com>,
-        <xiexiuqi@huawei.com>, <yangyingliang@huawei.com>,
-        <bobo.shaobowang@huawei.com>, <guohanjun@huawei.com>,
-        <wcohen@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <mtk.manpages@gmail.com>, <wezhang@redhat.com>
-Subject: [PATCH v3] sys_personality: Add a optional arch hook arch_check_personality()
-Date:   Sat, 28 Dec 2019 17:44:07 +0800
-Message-ID: <20191228094407.53031-1-bobo.shaobowang@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726369AbfL1KJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 05:09:43 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2EBA8E6CB2E93B2D71F9;
+        Sat, 28 Dec 2019 18:09:38 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.439.0; Sat, 28 Dec
+ 2019 18:09:37 +0800
+Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: free sysfs kobject
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20191218200947.20445-1-jaegeuk@kernel.org>
+ <20191218200947.20445-4-jaegeuk@kernel.org>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <c66c284d-1528-ff0c-41df-552ddbc25235@huawei.com>
+Date:   Sat, 28 Dec 2019 18:09:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
+In-Reply-To: <20191218200947.20445-4-jaegeuk@kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-currently arm64 use __arm64_sys_arm64_personality() as its default
-syscall. Now using a normal hook arch_check_personality() can reject
-personality settings for special case of different archs.
+On 2019/12/19 4:09, Jaegeuk Kim wrote:
+> Detected kmemleak.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-Signed-off-by: Wang ShaoBo <bobo.shaobowang@huawei.com>
----
- arch/arm64/kernel/sys.c |  7 +++----
- kernel/exec_domain.c    | 14 ++++++++++----
- 2 files changed, 13 insertions(+), 8 deletions(-)
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
-index d5ffaaab31a7..5c01816d7a77 100644
---- a/arch/arm64/kernel/sys.c
-+++ b/arch/arm64/kernel/sys.c
-@@ -28,12 +28,13 @@ SYSCALL_DEFINE6(mmap, unsigned long, addr, unsigned long, len,
- 	return ksys_mmap_pgoff(addr, len, prot, flags, fd, off >> PAGE_SHIFT);
- }
- 
--SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
-+int arch_check_personality(unsigned int personality)
- {
- 	if (personality(personality) == PER_LINUX32 &&
- 		!system_supports_32bit_el0())
- 		return -EINVAL;
--	return ksys_personality(personality);
-+
-+	return 0;
- }
- 
- asmlinkage long sys_ni_syscall(void);
-@@ -46,8 +47,6 @@ asmlinkage long __arm64_sys_ni_syscall(const struct pt_regs *__unused)
- /*
-  * Wrappers to pass the pt_regs argument.
-  */
--#define __arm64_sys_personality		__arm64_sys_arm64_personality
--
- #undef __SYSCALL
- #define __SYSCALL(nr, sym)	asmlinkage long __arm64_##sym(const struct pt_regs *);
- #include <asm/unistd.h>
-diff --git a/kernel/exec_domain.c b/kernel/exec_domain.c
-index 33f07c5f2515..d1d5d14441e2 100644
---- a/kernel/exec_domain.c
-+++ b/kernel/exec_domain.c
-@@ -35,12 +35,18 @@ static int __init proc_execdomains_init(void)
- module_init(proc_execdomains_init);
- #endif
- 
-+int __weak arch_check_personality(unsigned int personality)
-+{
-+	return 0;
-+}
-+
- SYSCALL_DEFINE1(personality, unsigned int, personality)
- {
--	unsigned int old = current->personality;
-+	int check;
- 
--	if (personality != 0xffffffff)
--		set_personality(personality);
-+	check = arch_check_personality(personality);
-+	if (check)
-+		return check;
- 
--	return old;
-+	return ksys_personality(personality);
- }
--- 
-2.20.1
-
+Thanks,
