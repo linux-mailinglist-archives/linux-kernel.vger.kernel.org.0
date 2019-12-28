@@ -2,91 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57C0812BC23
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:39:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA60412BC2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:48:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfL1Bj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 20:39:28 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34650 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725820AbfL1Bj1 (ORCPT
+        id S1726559AbfL1Bsn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 20:48:43 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:34520 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfL1Bsm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 20:39:27 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l18so13591710lfc.1;
-        Fri, 27 Dec 2019 17:39:26 -0800 (PST)
+        Fri, 27 Dec 2019 20:48:42 -0500
+Received: by mail-io1-f66.google.com with SMTP id z193so27120334iof.1
+        for <linux-kernel@vger.kernel.org>; Fri, 27 Dec 2019 17:48:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4+o48AMUaNGbgETwlxDhs0abyiUl4r5Mn6wG6J96sBI=;
-        b=NLKKu4Yg5k+4uu9l7NgN/kiad8P6h5A8IrX4Lj6KmexKSqHcyrWijNV5+hYyP2mEeH
-         NLGi1THYh23HKQ2lybqwRutIRoQV7nsL1W6YyFxI/eYtRDPcjqryRZxWhrR1bvS7jet0
-         jG9F7YN/wi2AlkQo7OMBXVF4nU4PCgRV2mVwhughb3G+TtxuYirnPbzIPEf25xqQdwVt
-         Mhegx0s2aMURjzNdrVE07r/WN0x7yN2Qtjcx9ptkAdVW3xGFiQTjoo9Wx2JYZdN0zuZF
-         AaYfUeiqs3iygRBGcwjM2XLNvdmfh06qXbdbiMu/ykVcLrXWhcOb8qll+2YMh8E2XPBm
-         GMKg==
+        d=sargun.me; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=NY2N4q5Dac+G88QX+oQjP46FWyhBolRVkhJcTyB0XSo=;
+        b=AEifvLg1nqDmp9j2ESQm2zzI2MO5rNW2M5ASqEAimcXs9HyA9NLhkvdkmRoXpxyKEQ
+         9H+w3XUhlzcfJ4qB2kS3Nxy5XW1JVEwJY+erWyk2+hsRB/DwVVMUMalmFpSpuruVqs1H
+         hpNbeRboKp2kj1jJq0MCes+u5klrU7+OQo31U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4+o48AMUaNGbgETwlxDhs0abyiUl4r5Mn6wG6J96sBI=;
-        b=DCUtJFGKdr2BsG35Al/dfVWK+rWKcyNAFN+66DiwvzQDtjFvixFz9chnKZEMNlYj18
-         vp36TaY4nRtfMt+zqHypWzOW2oKwJcP4W37FDw1QNXNw/rLt7aTceutbaVEtilqBxiN0
-         xE05CrH2r3ffk4v8N45uqcEYDQtExPVlCTwRaflyVAZK2mHn3lCaz2KvAPsttEGgKMU9
-         PtK+PJLkW0ZFyBjrhUlBRBXJ+1EPhXGepOPOHS+xzTNFgCOAihETMCcLw4K+QbpyvTIg
-         2gnXdFmjzuru3H4156ud3DkaQl0QyL/cy+IS15/e4vj8PhNywbbp9GgHO96OHUT7Zk+7
-         e/ow==
-X-Gm-Message-State: APjAAAXouHe/bYI+2b5GLcOEW4zTrECF3F0cIMwO29cnUnPLEX2VqSdR
-        E2Bbuitz1cBokfKiznp/VHfBimLp2TuVhAxxxOY=
-X-Google-Smtp-Source: APXvYqydB1qXyH+zz0ES+nAhC5c2+sOJfPd8juf7TuwsTrkzTGlJZr7z7xUVwVU7Y5Fj11172EFc8OB1hhFxIY0y+Og=
-X-Received: by 2002:ac2:54b4:: with SMTP id w20mr31692298lfk.67.1577497165626;
- Fri, 27 Dec 2019 17:39:25 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=NY2N4q5Dac+G88QX+oQjP46FWyhBolRVkhJcTyB0XSo=;
+        b=HFjhUIcHjjd+RV8vm9P6vZiwuBAu+11RWC2pTwKvG7nbJNyLw4FEiA53zmNr4kCENS
+         FRJnaix6enPYY4Ry9w/sQP92Q0Ot/I4YxczhjhZ3ZmB+N2TjAuHwnSMjggR+U3IUXD4z
+         CvRcxSSoMalKuZiAW5fPmEOlirqDta3HVKvKX+FRs1Qm8pxlE2qjp/hHvsPc9b5jMOQP
+         eXETXq+esBk3DE32hzEZXhU4BxgI/47UkK6RunHCCTbE7OsjTYkiN6SzCNyvG9Dstq6U
+         CaVgdj8m889GDyy1ZItWvuf1ueCar2tQrqrG1jIpnMPxhn7cl+JjV5TGXzKmiAaoex2j
+         zDMQ==
+X-Gm-Message-State: APjAAAV7k0WbEb6ekHrJsrIwlJgggOgOVZnxyNZgqQSuqgvkp1DpH8F5
+        sXJWFwDc3I9Vn3OeXqI4SJVK6/c8dEU=
+X-Google-Smtp-Source: APXvYqwcPOG8gPwaOwCX82CyVx5cT0LbTQVBKS6Z2IFjbBcGslggL1KjxiZZntuVXmmryyJ0R0XBzA==
+X-Received: by 2002:a02:aa11:: with SMTP id r17mr43270716jam.88.1577497721350;
+        Fri, 27 Dec 2019 17:48:41 -0800 (PST)
+Received: from ircssh-2.c.rugged-nimbus-611.internal (80.60.198.104.bc.googleusercontent.com. [104.198.60.80])
+        by smtp.gmail.com with ESMTPSA id w11sm12061922ilh.55.2019.12.27.17.48.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 27 Dec 2019 17:48:40 -0800 (PST)
+Date:   Sat, 28 Dec 2019 01:48:39 +0000
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     tycho@tycho.ws, jannh@google.com, christian.brauner@ubuntu.com,
+        keescook@chromium.org, cyphar@cyphar.com
+Subject: [PATCH v2 1/2] samples, selftests/seccomp: Zero out seccomp_notif
+Message-ID: <20191228014837.GA31774@ircssh-2.c.rugged-nimbus-611.internal>
 MIME-Version: 1.0
-References: <20191216144907.1931511-1-arnd@arndb.de>
-In-Reply-To: <20191216144907.1931511-1-arnd@arndb.de>
-From:   Julian Calaby <julian.calaby@gmail.com>
-Date:   Sat, 28 Dec 2019 12:39:14 +1100
-Message-ID: <CAGRGNgV=vcDTAYpufqk-12pNnJiX79=-aHsMyOBGbXG1YtN=Lw@mail.gmail.com>
-Subject: Re: [PATCH v2] y2038: sparc: remove use of struct timex
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+The seccomp_notif structure should be zeroed out prior to calling the
+SECCOMP_IOCTL_NOTIF_RECV ioctl. Previously, the kernel did not check
+whether these structures were zeroed out or not, so these worked.
 
-On Tue, Dec 17, 2019 at 1:49 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> 'struct timex' is one of the last users of 'struct timeval' and is
-> only referenced in one place in the kernel any more, to convert the
-> user space timex into the kernel-internal version on sparc64, with a
-> different tv_usec member type.
->
-> As a preparation for hiding the time_t definition and everything
-> using that in the kernel, change the implementation once more
-> to only convert the timeval member, and then enclose the
-> struct definition in an #ifdef.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ samples/seccomp/user-trap.c                   | 2 +-
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-FWIW this is:
-
-Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
-
-Thanks,
-
+diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
+index 6d0125ca8af7..0ca8fb37cd79 100644
+--- a/samples/seccomp/user-trap.c
++++ b/samples/seccomp/user-trap.c
+@@ -298,7 +298,6 @@ int main(void)
+ 		req = malloc(sizes.seccomp_notif);
+ 		if (!req)
+ 			goto out_close;
+-		memset(req, 0, sizeof(*req));
+ 
+ 		resp = malloc(sizes.seccomp_notif_resp);
+ 		if (!resp)
+@@ -306,6 +305,7 @@ int main(void)
+ 		memset(resp, 0, sizeof(*resp));
+ 
+ 		while (1) {
++			memset(req, 0, sizes.seccomp_notif);
+ 			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, req)) {
+ 				perror("ioctl recv");
+ 				goto out_resp;
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 6944b898bb53..f53f14971bff 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -3278,6 +3278,7 @@ TEST(user_notification_signal)
+ 
+ 	close(sk_pair[1]);
+ 
++	memset(&req, 0, sizeof(req));
+ 	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
+ 
+ 	EXPECT_EQ(kill(pid, SIGUSR1), 0);
+@@ -3296,6 +3297,7 @@ TEST(user_notification_signal)
+ 	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_SEND, &resp), -1);
+ 	EXPECT_EQ(errno, ENOENT);
+ 
++	memset(&req, 0, sizeof(req));
+ 	EXPECT_EQ(ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, &req), 0);
+ 
+ 	resp.id = req.id;
 -- 
-Julian Calaby
+2.20.1
 
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
