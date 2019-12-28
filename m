@@ -2,69 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 388F112BC1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 57C0812BC23
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:39:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbfL1BY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 20:24:26 -0500
-Received: from mga03.intel.com ([134.134.136.65]:41107 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfL1BYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 20:24:25 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 17:24:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,365,1571727600"; 
-   d="scan'208";a="300782392"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 27 Dec 2019 17:24:22 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1il0q6-000CXw-9T; Sat, 28 Dec 2019 09:24:22 +0800
-Date:   Sat, 28 Dec 2019 09:24:13 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Sanjay R Mehta <Sanju.Mehta@amd.com>
-Cc:     kbuild-all@lists.01.org, vkoul@kernel.org,
-        dan.j.williams@intel.com, gregkh@linuxfoundation.org,
-        Gary.Hook@amd.com, Nehal-bakulchandra.Shah@amd.com,
-        Shyam-sundar.S-k@amd.com, davem@davemloft.net,
-        mchehab+samsung@kernel.org, robh@kernel.org,
-        Jonathan.Cameron@huawei.com, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, Sanjay R Mehta <sanju.mehta@amd.com>
-Subject: [RFC PATCH] dmaengine: ptdma: pt_present() can be static
-Message-ID: <20191228012413.rinqeaetsufcwdkf@4978f4969bb8>
-References: <1577458112-109734-1-git-send-email-Sanju.Mehta@amd.com>
+        id S1726400AbfL1Bj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 20:39:28 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34650 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbfL1Bj1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 20:39:27 -0500
+Received: by mail-lf1-f66.google.com with SMTP id l18so13591710lfc.1;
+        Fri, 27 Dec 2019 17:39:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4+o48AMUaNGbgETwlxDhs0abyiUl4r5Mn6wG6J96sBI=;
+        b=NLKKu4Yg5k+4uu9l7NgN/kiad8P6h5A8IrX4Lj6KmexKSqHcyrWijNV5+hYyP2mEeH
+         NLGi1THYh23HKQ2lybqwRutIRoQV7nsL1W6YyFxI/eYtRDPcjqryRZxWhrR1bvS7jet0
+         jG9F7YN/wi2AlkQo7OMBXVF4nU4PCgRV2mVwhughb3G+TtxuYirnPbzIPEf25xqQdwVt
+         Mhegx0s2aMURjzNdrVE07r/WN0x7yN2Qtjcx9ptkAdVW3xGFiQTjoo9Wx2JYZdN0zuZF
+         AaYfUeiqs3iygRBGcwjM2XLNvdmfh06qXbdbiMu/ykVcLrXWhcOb8qll+2YMh8E2XPBm
+         GMKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4+o48AMUaNGbgETwlxDhs0abyiUl4r5Mn6wG6J96sBI=;
+        b=DCUtJFGKdr2BsG35Al/dfVWK+rWKcyNAFN+66DiwvzQDtjFvixFz9chnKZEMNlYj18
+         vp36TaY4nRtfMt+zqHypWzOW2oKwJcP4W37FDw1QNXNw/rLt7aTceutbaVEtilqBxiN0
+         xE05CrH2r3ffk4v8N45uqcEYDQtExPVlCTwRaflyVAZK2mHn3lCaz2KvAPsttEGgKMU9
+         PtK+PJLkW0ZFyBjrhUlBRBXJ+1EPhXGepOPOHS+xzTNFgCOAihETMCcLw4K+QbpyvTIg
+         2gnXdFmjzuru3H4156ud3DkaQl0QyL/cy+IS15/e4vj8PhNywbbp9GgHO96OHUT7Zk+7
+         e/ow==
+X-Gm-Message-State: APjAAAXouHe/bYI+2b5GLcOEW4zTrECF3F0cIMwO29cnUnPLEX2VqSdR
+        E2Bbuitz1cBokfKiznp/VHfBimLp2TuVhAxxxOY=
+X-Google-Smtp-Source: APXvYqydB1qXyH+zz0ES+nAhC5c2+sOJfPd8juf7TuwsTrkzTGlJZr7z7xUVwVU7Y5Fj11172EFc8OB1hhFxIY0y+Og=
+X-Received: by 2002:ac2:54b4:: with SMTP id w20mr31692298lfk.67.1577497165626;
+ Fri, 27 Dec 2019 17:39:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1577458112-109734-1-git-send-email-Sanju.Mehta@amd.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <20191216144907.1931511-1-arnd@arndb.de>
+In-Reply-To: <20191216144907.1931511-1-arnd@arndb.de>
+From:   Julian Calaby <julian.calaby@gmail.com>
+Date:   Sat, 28 Dec 2019 12:39:14 +1100
+Message-ID: <CAGRGNgV=vcDTAYpufqk-12pNnJiX79=-aHsMyOBGbXG1YtN=Lw@mail.gmail.com>
+Subject: Re: [PATCH v2] y2038: sparc: remove use of struct timex
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        John Stultz <john.stultz@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        sparclinux <sparclinux@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arnd,
 
-Fixes: ea65c60183d6 ("dmaengine: ptdma: Add debugfs entries for PTDMA information")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- ptdma-dev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Dec 17, 2019 at 1:49 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> 'struct timex' is one of the last users of 'struct timeval' and is
+> only referenced in one place in the kernel any more, to convert the
+> user space timex into the kernel-internal version on sparc64, with a
+> different tv_usec member type.
+>
+> As a preparation for hiding the time_t definition and everything
+> using that in the kernel, change the implementation once more
+> to only convert the timeval member, and then enclose the
+> struct definition in an #ifdef.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-diff --git a/drivers/dma/ptdma/ptdma-dev.c b/drivers/dma/ptdma/ptdma-dev.c
-index 1cb47bbdbd3e1..6df0d5049aa26 100644
---- a/drivers/dma/ptdma/ptdma-dev.c
-+++ b/drivers/dma/ptdma/ptdma-dev.c
-@@ -136,7 +136,7 @@ static void pt_del_device(struct pt_device *pt)
-  *
-  * Returns zero if a PTDMA device is present, -ENODEV otherwise.
-  */
--int pt_present(void)
-+static int pt_present(void)
- {
- 	unsigned long flags;
- 	int ret;
+FWIW this is:
+
+Reviewed-by: Julian Calaby <julian.calaby@gmail.com>
+
+Thanks,
+
+-- 
+Julian Calaby
+
+Email: julian.calaby@gmail.com
+Profile: http://www.google.com/profiles/julian.calaby/
