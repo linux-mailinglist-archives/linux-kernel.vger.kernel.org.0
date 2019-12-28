@@ -2,121 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E8F12BC15
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:15:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6047712BC1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 02:25:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726388AbfL1BOm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 20:14:42 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:8633 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725820AbfL1BOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 20:14:42 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D94C672DA993BA82B74C;
-        Sat, 28 Dec 2019 09:14:39 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.439.0; Sat, 28 Dec 2019 09:14:29 +0800
-From:   Tian Tao <tiantao6@hisilicon.com>
-To:     <puck.chen@hisilicon.com>, <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <tzimmermann@suse.de>, <kraxel@redhat.com>,
-        <alexander.deucher@amd.com>, <tglx@linutronix.de>,
-        <dri-devel@lists.freedesktop.org>, <xinliang.liu@linaro.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <linuxarm@huawei.com>
-Subject: [PATCH] drm/hisilicon: Added three new resolutions and changed the alignment to 128 Bytes
-Date:   Sat, 28 Dec 2019 09:14:40 +0800
-Message-ID: <1577495680-28766-1-git-send-email-tiantao6@hisilicon.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726465AbfL1BY1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 20:24:27 -0500
+Received: from mga07.intel.com ([134.134.136.100]:24404 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725820AbfL1BY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 20:24:26 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 17:24:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,365,1571727600"; 
+   d="scan'208";a="215323905"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga008.fm.intel.com with ESMTP; 27 Dec 2019 17:24:22 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1il0q5-000CPm-Q2; Sat, 28 Dec 2019 09:24:21 +0800
+Date:   Sat, 28 Dec 2019 09:24:11 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Sanjay R Mehta <Sanju.Mehta@amd.com>
+Cc:     kbuild-all@lists.01.org, vkoul@kernel.org,
+        dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        Gary.Hook@amd.com, Nehal-bakulchandra.Shah@amd.com,
+        Shyam-sundar.S-k@amd.com, davem@davemloft.net,
+        mchehab+samsung@kernel.org, robh@kernel.org,
+        Jonathan.Cameron@huawei.com, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org, Sanjay R Mehta <sanju.mehta@amd.com>
+Subject: Re: [PATCH v2 3/3] dmaengine: ptdma: Add debugfs entries for PTDMA
+ information
+Message-ID: <201912280954.bhIA5CBF%lkp@intel.com>
+References: <1577458112-109734-1-git-send-email-Sanju.Mehta@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.69.192.56]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1577458112-109734-1-git-send-email-Sanju.Mehta@amd.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the three new resolution 1440x900 and 1600x900, 640x480 for hibmc
-and Set the FB Offset of the display hardware to 128 Byte alignment
+Hi Sanjay,
 
-Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
-Signed-off-by: Gong junjie <gongjunjie2@huawei.com>
+I love your patch! Perhaps something to improve:
+
+[auto build test WARNING on linus/master]
+[also build test WARNING on v5.5-rc3 next-20191220]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Sanjay-R-Mehta/Add-AMD-PassThru-DMA-Engine-driver/20191227-234539
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 46cf053efec6a3a5f343fead837777efe8252a46
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-129-g341daf20-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+>> drivers/dma/ptdma/ptdma-dev.c:139:5: sparse: sparse: symbol 'pt_present' was not declared. Should it be static?
+   drivers/dma/ptdma/ptdma-dev.c:169:25: sparse: sparse: cast from restricted __le32
+   drivers/dma/ptdma/ptdma-dev.c:169:23: sparse: sparse: incorrect type in assignment (different base types)
+   drivers/dma/ptdma/ptdma-dev.c:169:23: sparse:    expected unsigned int [usertype]
+   drivers/dma/ptdma/ptdma-dev.c:169:23: sparse:    got restricted __le32 [usertype]
+   drivers/dma/ptdma/ptdma-dev.c:199:21: sparse: sparse: incorrect type in assignment (different base types)
+   drivers/dma/ptdma/ptdma-dev.c:199:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] length
+   drivers/dma/ptdma/ptdma-dev.c:199:21: sparse:    got unsigned long long [usertype] src_len
+   drivers/dma/ptdma/ptdma-dev.c:201:21: sparse: sparse: incorrect type in assignment (different base types)
+   drivers/dma/ptdma/ptdma-dev.c:201:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] src_lo
+   drivers/dma/ptdma/ptdma-dev.c:201:21: sparse:    got unsigned int [usertype]
+   drivers/dma/ptdma/ptdma-dev.c:204:21: sparse: sparse: incorrect type in assignment (different base types)
+   drivers/dma/ptdma/ptdma-dev.c:204:21: sparse:    expected restricted __le32 [addressable] [assigned] [usertype] dst_lo
+   drivers/dma/ptdma/ptdma-dev.c:204:21: sparse:    got unsigned int [usertype]
+
+Please review and possibly fold the followup patch.
+
 ---
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c   | 11 +++++------
- drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_regs.h |  2 ++
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
-index f1ce6cb..69389b0 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_de.c
-@@ -40,6 +40,7 @@ struct hibmc_dislay_pll_config {
- };
- 
- static const struct hibmc_dislay_pll_config hibmc_pll_table[] = {
-+	{640, 480, CRT_PLL1_HS_25MHZ, CRT_PLL2_HS_25MHZ},
- 	{800, 600, CRT_PLL1_HS_40MHZ, CRT_PLL2_HS_40MHZ},
- 	{1024, 768, CRT_PLL1_HS_65MHZ, CRT_PLL2_HS_65MHZ},
- 	{1152, 864, CRT_PLL1_HS_80MHZ_1152, CRT_PLL2_HS_80MHZ},
-@@ -47,6 +48,8 @@ static const struct hibmc_dislay_pll_config hibmc_pll_table[] = {
- 	{1280, 720, CRT_PLL1_HS_74MHZ, CRT_PLL2_HS_74MHZ},
- 	{1280, 960, CRT_PLL1_HS_108MHZ, CRT_PLL2_HS_108MHZ},
- 	{1280, 1024, CRT_PLL1_HS_108MHZ, CRT_PLL2_HS_108MHZ},
-+	{1440, 900, CRT_PLL1_HS_106MHZ, CRT_PLL2_HS_106MHZ},
-+	{1600, 900, CRT_PLL1_HS_108MHZ, CRT_PLL2_HS_108MHZ},
- 	{1600, 1200, CRT_PLL1_HS_162MHZ, CRT_PLL2_HS_162MHZ},
- 	{1920, 1080, CRT_PLL1_HS_148MHZ, CRT_PLL2_HS_148MHZ},
- 	{1920, 1200, CRT_PLL1_HS_193MHZ, CRT_PLL2_HS_193MHZ},
-@@ -102,14 +105,12 @@ static void hibmc_plane_atomic_update(struct drm_plane *plane,
- 	s64 gpu_addr = 0;
- 	unsigned int line_l;
- 	struct hibmc_drm_private *priv = plane->dev->dev_private;
--	struct hibmc_framebuffer *hibmc_fb;
- 	struct drm_gem_vram_object *gbo;
- 
- 	if (!state->fb)
- 		return;
- 
--	hibmc_fb = to_hibmc_framebuffer(state->fb);
--	gbo = drm_gem_vram_of_gem(hibmc_fb->obj);
-+	gbo = drm_gem_vram_of_gem(state->fb->obj[0]);
- 
- 	gpu_addr = drm_gem_vram_offset(gbo);
- 	if (WARN_ON_ONCE(gpu_addr < 0))
-@@ -118,11 +119,9 @@ static void hibmc_plane_atomic_update(struct drm_plane *plane,
- 	writel(gpu_addr, priv->mmio + HIBMC_CRT_FB_ADDRESS);
- 
- 	reg = state->fb->width * (state->fb->format->cpp[0]);
--	/* now line_pad is 16 */
--	reg = PADDING(16, reg);
- 
- 	line_l = state->fb->width * state->fb->format->cpp[0];
--	line_l = PADDING(16, line_l);
-+	line_l = PADDING(128, line_l);
- 	writel(HIBMC_FIELD(HIBMC_CRT_FB_WIDTH_WIDTH, reg) |
- 	       HIBMC_FIELD(HIBMC_CRT_FB_WIDTH_OFFS, line_l),
- 	       priv->mmio + HIBMC_CRT_FB_WIDTH);
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_regs.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_regs.h
-index 9b7e859..17b30c3 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_regs.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_regs.h
-@@ -179,6 +179,7 @@
- #define CRT_PLL1_HS_74MHZ			0x23941dc2
- #define CRT_PLL1_HS_80MHZ			0x23941001
- #define CRT_PLL1_HS_80MHZ_1152			0x23540fc2
-+#define CRT_PLL1_HS_106MHZ			0x237C1641
- #define CRT_PLL1_HS_108MHZ			0x23b41b01
- #define CRT_PLL1_HS_162MHZ			0x23480681
- #define CRT_PLL1_HS_148MHZ			0x23541dc2
-@@ -191,6 +192,7 @@
- #define CRT_PLL2_HS_78MHZ			0x50E147AE
- #define CRT_PLL2_HS_74MHZ			0x602B6AE7
- #define CRT_PLL2_HS_80MHZ			0x70000000
-+#define CRT_PLL2_HS_106MHZ			0x0075c28f
- #define CRT_PLL2_HS_108MHZ			0x80000000
- #define CRT_PLL2_HS_162MHZ			0xA0000000
- #define CRT_PLL2_HS_148MHZ			0xB0CCCCCD
--- 
-2.7.4
-
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
