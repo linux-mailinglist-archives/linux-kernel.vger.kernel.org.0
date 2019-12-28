@@ -2,55 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C053112BE92
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 19:54:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F66C12BE93
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 19:54:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbfL1SyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 13:54:12 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35502 "EHLO
+        id S1726479AbfL1SyO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 13:54:14 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45982 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbfL1SyM (ORCPT
+        with ESMTP id S1726310AbfL1SyO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 13:54:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id i23so10923142pfo.2
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 10:54:11 -0800 (PST)
+        Sat, 28 Dec 2019 13:54:14 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 2so16325282pfg.12
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 10:54:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=588nZdPWSQouHjrbTQFmmqqGhpH/jdEr/402TOJdIJc=;
-        b=KzU+fMIscpUWow82dmtcE1NqW4BtUv9qlJ/V66IIlkZOW1slFsk8PIok3Yt6Y1Xohd
-         O7rBugj37TUVCItVg94RKD7rHZNospOTzMhKAcuEKkwZetrwVTxS1TAf4zTj9ec0wxZ4
-         hn2kYpoHyoLA3YvCETC8a3ghKsA4SWv5bCq3lU1ZggIf1PKZVO9iMqZP2XXMa6rxemHB
-         lRUsNUPtrn4bWrL3RwTAev+KCtNaKRPR7RriLMkRIJqs1AGBj5ZWhveSLBPCT2k28NKF
-         60vsaswEps2QEApSLKcau8AyvC6kp4uWs1QxSu8j370Fz0BlLRes/qnOZC4QIxN6k1r0
-         05Rg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=UMpegDdh42rzwNWi4a8X/3LZzmdLDgDCJkziq2QANl8=;
+        b=e9q6UgpsjC8HSol+91vUSHFa8daBZdwfDH9ZaAV2Jp6qXzLG2sx+VRx0s6GWj8/ADO
+         HYGMGVEEMgKjXVJ0AdrCNTV7kiDHSMV8/qNfTrMf+f1GmzI/bebbACkVVz14k/dS82Tj
+         IhYUG14vGzbmhUd73o0R7t2I3cX7SSb6YUHbqZWXHxOq+czkfmzq1I5oyVDPuOMeZAGH
+         BNf12FdFdPkDC9ndIR7pTNCQhi/8qLU3QlbOmDWLsSv8SgtoSdjB1PW1QYu1oheOMUW4
+         Uvi7Rf8iwO7R6LazQsZ6crHj2+WJF4Yxvx/3/uO8zfCmTXvCuMYb4YKWtZlRSvv/i1vm
+         coTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=588nZdPWSQouHjrbTQFmmqqGhpH/jdEr/402TOJdIJc=;
-        b=Fi+HjoO5d2AYQ2KDAtOdOb+h68Yovl4z/NZiBvHTODxRYm2GgaaQiF8NS3GXfvuD9G
-         tj2Gk1apVQl8CBfweq7Eoaza5FwTUxfEmiNs0F7s27OzVMqqkjkgIGj9eOSU9q3L1UFc
-         scfkqH1k/v73DcmR+QJoz6HoIoh8cyD2Ii6uwDPfcvp0fDT2ome9LZPeOmhpsLfwvgdj
-         d8UMXDUKgP/yYGKPDxrPhhwf/JPk7tsEjdia+rPM/HNH+U8nenUFbkslUsgN0W/i/RIK
-         PHq1eORAzSiGm2dhw+A7pG53McRK3e1MORfVWCbpmE5lhjfugokst7zy0UHe/+rCGygU
-         IQLA==
-X-Gm-Message-State: APjAAAUX/YaZxCHVMXCG8aNF/PSnqJjzTaLG/2z57+QTYYYic428Uin+
-        KM+J79d4kr4zgxkSN5w2I3U=
-X-Google-Smtp-Source: APXvYqyMHrB05SJ3/Gp0VgA5qfEvy9nXYHMD8qUa30Vtq3e4UjI6m5ninFt+t5uVVWIN4TnGLFJqyQ==
-X-Received: by 2002:a62:4d87:: with SMTP id a129mr61018157pfb.116.1577559251648;
-        Sat, 28 Dec 2019 10:54:11 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=UMpegDdh42rzwNWi4a8X/3LZzmdLDgDCJkziq2QANl8=;
+        b=i1m80PrbI5NqGjZQslEWiWs/RhLBGigMAEDsSjTsc2WwwC+eIgvuPuQs+8FsK9a7i3
+         ZmvQZsekHxPr1afFArZl0sTmG9UcopIVHXO8cROI0Anu5cUgdkrXzztaYpfsTuay1ZKx
+         A5TfIKHxJeom7lZpvapKNuZ0i2m1fgM9ImtyhN3IIIpfkMxMLAUfSjzEwSF3QhY2aAZL
+         HuiRBmIb7fFu1Cg/hx99b4TcPbSbzy2zFexIE1PgO02sxyE1KYCOeFLvvhaydM3aM9J8
+         Veg4hNx5pHTezPd4asM5LXfLmNFIk9ADx1bhbRc53j9yYAGhz+trWL9aji9UKfAht8AS
+         l8rQ==
+X-Gm-Message-State: APjAAAVgl6Q6LZ5GMxRrwjERVS7dLClil9d3byYPvBJng7Y03v6tskbu
+        T9mJBqB92N6DPe5HyJojpDg=
+X-Google-Smtp-Source: APXvYqxZdd7bCMqliucX1yrrszuwOT+M4ZDG7SqTzywn9D7Id0OiQSUtwWIlN0/jvmlNbs4Auz2/aQ==
+X-Received: by 2002:a63:fe0a:: with SMTP id p10mr59963512pgh.96.1577559253330;
+        Sat, 28 Dec 2019 10:54:13 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id j125sm44497385pfg.160.2019.12.28.10.54.11
+        by smtp.gmail.com with ESMTPSA id 80sm37407784pfw.123.2019.12.28.10.54.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 28 Dec 2019 10:54:11 -0800 (PST)
+        Sat, 28 Dec 2019 10:54:12 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     vitor.soares@synopsys.com, bbrezillon@kernel.org, pgaj@cadence.com
 Cc:     linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
         Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 1/2] i3c: dw: convert to devm_platform_ioremap_resource
-Date:   Sat, 28 Dec 2019 18:54:05 +0000
-Message-Id: <20191228185406.26551-1-tiny.windzz@gmail.com>
+Subject: [PATCH 2/2] i3c: master: cdns: convert to devm_platform_ioremap_resource
+Date:   Sat, 28 Dec 2019 18:54:06 +0000
+Message-Id: <20191228185406.26551-2-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191228185406.26551-1-tiny.windzz@gmail.com>
+References: <20191228185406.26551-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,21 +63,22 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/i3c/master/dw-i3c-master.c | 4 +---
+ drivers/i3c/master/i3c-master-cdns.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index b0ff0e12d84c..7b941e93337f 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1100,15 +1100,13 @@ static const struct i3c_master_controller_ops dw_mipi_i3c_ops = {
- static int dw_i3c_probe(struct platform_device *pdev)
+diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
+index 10db0bf0655a..2fb7ed34f995 100644
+--- a/drivers/i3c/master/i3c-master-cdns.c
++++ b/drivers/i3c/master/i3c-master-cdns.c
+@@ -1524,7 +1524,6 @@ static void cdns_i3c_master_hj(struct work_struct *work)
+ static int cdns_i3c_master_probe(struct platform_device *pdev)
  {
- 	struct dw_i3c_master *master;
+ 	struct cdns_i3c_master *master;
 -	struct resource *res;
  	int ret, irq;
+ 	u32 val;
  
- 	master = devm_kzalloc(&pdev->dev, sizeof(*master), GFP_KERNEL);
+@@ -1532,8 +1531,7 @@ static int cdns_i3c_master_probe(struct platform_device *pdev)
  	if (!master)
  		return -ENOMEM;
  
