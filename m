@@ -2,34 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B1E12BDB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 15:03:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C03912BDBC
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 15:08:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726329AbfL1ODg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 09:03:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49520 "EHLO mx2.suse.de"
+        id S1726315AbfL1OIx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 09:08:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:50362 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726075AbfL1ODf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 09:03:35 -0500
+        id S1726075AbfL1OIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 09:08:52 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id F0112B193;
-        Sat, 28 Dec 2019 14:03:33 +0000 (UTC)
-Subject: Re: [PATCH v4 0/8] ARM: Initial RTD1195 and MeLE X1000 & Horseradish
- support
+        by mx2.suse.de (Postfix) with ESMTP id 24853ACE3;
+        Sat, 28 Dec 2019 14:08:51 +0000 (UTC)
+Subject: Re: [PATCH v2 0/9] arm64: dts: realtek: Initial RTD1395 and BPi-M4 /
+ Lion Skin support
 To:     linux-realtek-soc@lists.infradead.org
-Cc:     Rob Herring <robh@kernel.org>, James Tai <james.tai@realtek.com>,
-        Arnd Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20191123203759.20708-1-afaerber@suse.de>
+Cc:     devicetree@vger.kernel.org, James Tai <james.tai@realtek.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20191202102910.26916-1-afaerber@suse.de>
 From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
 Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <0b8a87e8-057a-27ff-ff10-d1c09d55a585@suse.de>
-Date:   Sat, 28 Dec 2019 15:03:32 +0100
+Message-ID: <1c870687-1f2f-709f-2479-aeeae46dc7d7@suse.de>
+Date:   Sat, 28 Dec 2019 15:08:50 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191123203759.20708-1-afaerber@suse.de>
+In-Reply-To: <20191202102910.26916-1-afaerber@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -38,24 +38,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 23.11.19 um 21:37 schrieb Andreas Färber:
-> Andreas Färber (8):
->    dt-bindings: arm: realtek: Add RTD1195 and MeLE X1000
->    ARM: Prepare Realtek RTD1195
->    ARM: dts: Prepare Realtek RTD1195 and MeLE X1000
->    ARM: dts: rtd1195: Exclude boot ROM from memory ranges
->    ARM: dts: rtd1195: Introduce r-bus
->    dt-bindings: arm: realtek: Add Realtek Horseradish EVB
->    ARM: dts: rtd1195: Add Realtek Horseradish EVB
+Am 02.12.19 um 11:29 schrieb Andreas Färber:
+> Andreas Färber (9):
+>    arm64: dts: realtek: rtd129x: Fix GIC CPU masks for RTD1293
+>    arm64: dts: realtek: rtd129x: Use reserved-memory for RPC regions
+>    arm64: dts: realtek: rtd129x: Introduce r-bus
+>    arm64: dts: realtek: rtd129x: Carve out boot ROM from memory
+>    arm64: dts: realtek: rtd16xx: Carve out boot ROM from memory
+>    dt-bindings: arm: realtek: Add RTD1395 and Banana Pi BPI-M4
+>    arm64: dts: realtek: Add RTD1395 and BPi-M4
+>    dt-bindings: arm: realtek: Add Realtek Lion Skin EVB
+>    arm64: dts: realtek: rtd1395: Add Realtek Lion Skin EVB
 
-Applied these to linux-realtek.git:
+Applied to linux-realtek.git v5.6/dt:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-realtek.git/log/?h=v5.6/dt
-https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-realtek.git/log/?h=v5.6/soc
+https://git.kernel.org/pub/scm/linux/kernel/git/afaerber/linux-realtek.git/commit/?h=v5.6/dt
 
->    ARM: realtek: Enable RTD1195 arch timer
-
-Holding this one back still.
+with RTD16xx rebased onto RTD1395.
 
 Regards,
 Andreas
