@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7519512BEEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 21:36:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A1B912BF02
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 21:36:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfL1UgI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 15:36:08 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:42913 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726827AbfL1UgG (ORCPT
+        id S1727070AbfL1UgN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 15:36:13 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:39490 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726831AbfL1UgH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 15:36:06 -0500
-Received: by mail-lj1-f195.google.com with SMTP id y4so15515668ljj.9;
-        Sat, 28 Dec 2019 12:36:04 -0800 (PST)
+        Sat, 28 Dec 2019 15:36:07 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y1so22890319lfb.6;
+        Sat, 28 Dec 2019 12:36:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=09QqZVe0j7zalGHXPclISoph95GAHOs1aDcqQ5aR3C8=;
-        b=ZO+mnalQH++X/KaR1fh3FdJ94dFgjDUdMwHSRbklDcp535yYnnIVmvji/+AeMS3nS5
-         f833qm4g06Jza5QSzHqcnF5u/ke02TO4G7FZjpzcXs7avVp/l1yKs4Fq+7b+36CShGgL
-         PUYjhqb+Ds9+8WyQE/6ZUPW70wtVfuNEnMzDbiy61NiYlqtU8J3VF/8Idoh3Od6Z36wd
-         oZidHnF+qUzkgdxVgm+52m3HDWhb81Rjtp2MjDshgC6f9kiz2uud/Tu1DJCISM9icABL
-         kqjEL6nkNVy+kWK5dEJrqv6eNbliytPXrQFGQdpxpz/rpZDgqEHMOqKZBno99TwVkb58
-         KxYQ==
+        bh=Wfs/bL17FYKf1Oxn2bv75LBzwxXdI6zeR8Zv69vdpMc=;
+        b=SrC41njW+OfZbCl8EUK7YyYVJNwT1KMBL0GjFXzAlcn6VJmGvGu8esIOKshRiavsLC
+         yQcRgDigSgvfawN+ioSKkIj2hZfJ53lELby30sLY+PJ122o3AR3CjOdiW9+Lvuo7WohI
+         YcwHOPCe8iBTL/eqn0s9+8tnzeDsmfpAYhbLqIRp3G/kDEQyp4YaJZ6iSJEGcUPfZHxo
+         gkb3/0hWSINueuGNNpl1/9tSJAwmGiqkHL+Gdk+XwG0KapF5GaqLzYpnfviXCChC9kDc
+         Nd4Wu5N8nNpNnMG4O23Q5bY1kfTCvoec1xMf0y2RPWgzLuDlX/1EIqZJgcLgAnJvEtdg
+         bplA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=09QqZVe0j7zalGHXPclISoph95GAHOs1aDcqQ5aR3C8=;
-        b=iBSQAbLa5RMlBKLLexPZR4ubx+dzyHvbd15buzrb8OiR1QOkZHggHmdYpNEBNic0+E
-         BJmnUtnm8W5qX2aHPiydM4a6sgDEq9TK19UCvI4n/hvRyc1rbD1mTDuNa5i2r2/dcWc6
-         Fu8KuF49QE13OcVjOMEwUJ+YRiwWT5W+zyH4pmCp/WnNr7iQGkkMlFRzuj4TUCmWNwtV
-         fPHnz9pXmn3WE3nxUQIzyi8Gx/9j0KfA3zDHA13X1H72jEb9MOP2BBcnp+pJSCUF3JUl
-         /yvzGBNQeqyuuNViZOheXjwiUizX5ggCDMvTiCggQHU6gh/vbwHCIO8d3dhZ8XYrGxgI
-         XE0A==
-X-Gm-Message-State: APjAAAVpNUomcNEfL0OEhrZHCcIMgWka72FZGzIBZ/6Gd+e08+zz4WI7
-        NDtBf9uHAMX8+tDgKFyF0SA=
-X-Google-Smtp-Source: APXvYqxW/oDy9y/qgr17eEmwIMTI6JLjz4RMAp24NA6KMU5dG9WSFcCo/vOUq8DHDZerzqg2heKr5Q==
-X-Received: by 2002:a2e:2a86:: with SMTP id q128mr32825246ljq.241.1577565363816;
-        Sat, 28 Dec 2019 12:36:03 -0800 (PST)
+        bh=Wfs/bL17FYKf1Oxn2bv75LBzwxXdI6zeR8Zv69vdpMc=;
+        b=dK7YpVreYZQZ2JuumrcPS6XNVhD3fyAwfilnTys5CN0yv9nQUjYKsGCMknqx+1tItY
+         vEVkxHF2ljm8N/3RoCaA8y+hFNDdfdn54TQCKogJ2y42MUAvhrYyTQN7jqHCSQtERw6C
+         g94qXDGpoFXUj9GdmEw2l8kC693NPIajxOoGEiKyn/sy2AP+Grv5BblpNdimhEJNuE8F
+         XJQlRpVQNSnEtNVKwjrw4WGpc7tg0KhLWmGKy8Gletr5MNRwFaxx5wm9Zp9VK49P2JOx
+         P8z6a71lUvqkN9I3RAnXctrwmrCh1marly+2bo3cMCdWduitI9eHGgjXsREnayMHfc3u
+         Wn7w==
+X-Gm-Message-State: APjAAAU6pXGVfDLf3HPeKZx4aWvEqqjzFllvuFkl3eBjuQgGCa5yAMAt
+        Mu17N35HE/jCDpthm78g74U=
+X-Google-Smtp-Source: APXvYqzRMDrvnMGcnhfiBKOVjkAe4AQcUyEnZcModpquLsAM52hxsRK3Oy4sFtFXAPauj5JzCWlREQ==
+X-Received: by 2002:a05:6512:244:: with SMTP id b4mr32155399lfo.85.1577565364698;
+        Sat, 28 Dec 2019 12:36:04 -0800 (PST)
 Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id d9sm15162614lja.73.2019.12.28.12.36.02
+        by smtp.gmail.com with ESMTPSA id d9sm15162614lja.73.2019.12.28.12.36.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 12:36:03 -0800 (PST)
+        Sat, 28 Dec 2019 12:36:04 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -54,9 +54,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Felipe Balbi <balbi@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 05/16] usb: phy: tegra: Use generic stub for a missing VBUS regulator
-Date:   Sat, 28 Dec 2019 23:33:47 +0300
-Message-Id: <20191228203358.23490-6-digetx@gmail.com>
+Subject: [PATCH v3 06/16] usb: ulpi: Add resource-managed variant of otg_ulpi_create()
+Date:   Sat, 28 Dec 2019 23:33:48 +0300
+Message-Id: <20191228203358.23490-7-digetx@gmail.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191228203358.23490-1-digetx@gmail.com>
 References: <20191228203358.23490-1-digetx@gmail.com>
@@ -67,67 +67,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Regulator core provides dummy regulator if device-tree doesn't define VBUS
-regulator.
+Now drivers (like NVIDIA Tegra USB PHY for example) will be able to
+benefit from the resource-managed variant, making driver's code a bit
+cleaner.
 
+Suggested-by: Thierry Reding <thierry.reding@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/usb/phy/phy-tegra-usb.c | 28 +++++++++-------------------
- 1 file changed, 9 insertions(+), 19 deletions(-)
+ drivers/usb/phy/phy-ulpi.c | 48 +++++++++++++++++++++++++++++++-------
+ include/linux/usb/ulpi.h   | 11 +++++++++
+ 2 files changed, 50 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 4d6d586c49cc..0a07efc9de06 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -798,9 +798,7 @@ static void tegra_usb_phy_shutdown(struct usb_phy *u_phy)
- 	else
- 		utmip_pad_close(phy);
+diff --git a/drivers/usb/phy/phy-ulpi.c b/drivers/usb/phy/phy-ulpi.c
+index a43c49369a60..e683a37e3a7a 100644
+--- a/drivers/usb/phy/phy-ulpi.c
++++ b/drivers/usb/phy/phy-ulpi.c
+@@ -240,6 +240,21 @@ static int ulpi_set_vbus(struct usb_otg *otg, bool on)
+ 	return usb_phy_io_write(phy, flags, ULPI_OTG_CTRL);
+ }
  
--	if (!IS_ERR(phy->vbus))
--		regulator_disable(phy->vbus);
++static void otg_ulpi_init(struct usb_phy *phy, struct usb_otg *otg,
++			  struct usb_phy_io_ops *ops,
++			  unsigned int flags)
++{
++	phy->label	= "ULPI";
++	phy->flags	= flags;
++	phy->io_ops	= ops;
++	phy->otg	= otg;
++	phy->init	= ulpi_init;
++
++	otg->usb_phy	= phy;
++	otg->set_host	= ulpi_set_host;
++	otg->set_vbus	= ulpi_set_vbus;
++}
++
+ struct usb_phy *
+ otg_ulpi_create(struct usb_phy_io_ops *ops,
+ 		unsigned int flags)
+@@ -257,17 +272,32 @@ otg_ulpi_create(struct usb_phy_io_ops *ops,
+ 		return NULL;
+ 	}
+ 
+-	phy->label	= "ULPI";
+-	phy->flags	= flags;
+-	phy->io_ops	= ops;
+-	phy->otg	= otg;
+-	phy->init	= ulpi_init;
 -
-+	regulator_disable(phy->vbus);
- 	clk_disable_unprepare(phy->pll_u);
+-	otg->usb_phy	= phy;
+-	otg->set_host	= ulpi_set_host;
+-	otg->set_vbus	= ulpi_set_vbus;
++	otg_ulpi_init(phy, otg, ops, flags);
  
- 	phy->freq = NULL;
-@@ -878,14 +876,11 @@ static int tegra_usb_phy_init(struct usb_phy *u_phy)
- 		goto fail;
- 	}
+ 	return phy;
+ }
+ EXPORT_SYMBOL_GPL(otg_ulpi_create);
  
--	if (!IS_ERR(phy->vbus)) {
--		err = regulator_enable(phy->vbus);
--		if (err) {
--			dev_err(phy->u_phy.dev,
--				"Failed to enable USB VBUS regulator: %d\n",
--				err);
--			goto fail;
--		}
-+	err = regulator_enable(phy->vbus);
-+	if (err) {
-+		dev_err(phy->u_phy.dev,
-+			"Failed to enable USB VBUS regulator: %d\n", err);
-+		goto fail;
- 	}
++struct usb_phy *
++devm_otg_ulpi_create(struct device *dev,
++		     struct usb_phy_io_ops *ops,
++		     unsigned int flags)
++{
++	struct usb_phy *phy;
++	struct usb_otg *otg;
++
++	phy = devm_kzalloc(dev, sizeof(*phy), GFP_KERNEL);
++	if (!phy)
++		return NULL;
++
++	otg = devm_kzalloc(dev, sizeof(*otg), GFP_KERNEL);
++	if (!otg) {
++		devm_kfree(dev, phy);
++		return NULL;
++	}
++
++	otg_ulpi_init(phy, otg, ops, flags);
++
++	return phy;
++}
++EXPORT_SYMBOL_GPL(devm_otg_ulpi_create);
+diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
+index c515765adab7..36c2982780ad 100644
+--- a/include/linux/usb/ulpi.h
++++ b/include/linux/usb/ulpi.h
+@@ -55,12 +55,23 @@
+ #if IS_ENABLED(CONFIG_USB_ULPI)
+ struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
+ 					unsigned int flags);
++
++struct usb_phy *devm_otg_ulpi_create(struct device *dev,
++				     struct usb_phy_io_ops *ops,
++				     unsigned int flags);
+ #else
+ static inline struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
+ 					      unsigned int flags)
+ {
+ 	return NULL;
+ }
++
++static inline struct usb_phy *devm_otg_ulpi_create(struct device *dev,
++						   struct usb_phy_io_ops *ops,
++						   unsigned int flags)
++{
++	return NULL;
++}
+ #endif
  
- 	if (phy->is_ulpi_phy)
-@@ -1120,14 +1115,9 @@ static int tegra_usb_phy_probe(struct platform_device *pdev)
- 	}
- 
- 	/* On some boards, the VBUS regulator doesn't need to be controlled */
--	if (of_find_property(np, "vbus-supply", NULL)) {
--		tegra_phy->vbus = devm_regulator_get(&pdev->dev, "vbus");
--		if (IS_ERR(tegra_phy->vbus))
--			return PTR_ERR(tegra_phy->vbus);
--	} else {
--		dev_notice(&pdev->dev, "no vbus regulator");
--		tegra_phy->vbus = ERR_PTR(-ENODEV);
--	}
-+	tegra_phy->vbus = devm_regulator_get(&pdev->dev, "vbus");
-+	if (IS_ERR(tegra_phy->vbus))
-+		return PTR_ERR(tegra_phy->vbus);
- 
- 	tegra_phy->pll_u = devm_clk_get(&pdev->dev, "pll_u");
- 	err = PTR_ERR_OR_ZERO(tegra_phy->pll_u);
+ #ifdef CONFIG_USB_ULPI_VIEWPORT
 -- 
 2.24.0
 
