@@ -2,173 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B7C12BBDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 01:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C70C12BBE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 01:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726195AbfL1AKL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 27 Dec 2019 19:10:11 -0500
-Received: from mga11.intel.com ([192.55.52.93]:57911 "EHLO mga11.intel.com"
+        id S1726584AbfL1AQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 27 Dec 2019 19:16:15 -0500
+Received: from mga11.intel.com ([192.55.52.93]:58305 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725306AbfL1AKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 27 Dec 2019 19:10:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725860AbfL1AQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 27 Dec 2019 19:16:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 16:10:10 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Dec 2019 16:16:12 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.69,364,1571727600"; 
-   d="scan'208";a="418459089"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 27 Dec 2019 16:10:08 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1ikzgG-0006Nm-CP; Sat, 28 Dec 2019 08:10:08 +0800
-Date:   Sat, 28 Dec 2019 08:10:07 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     kbuild-all@lists.01.org, Andrew Morton <akpm@linux-foundation.org>,
-        "Willhalm, Thomas" <thomas.willhalm@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Bruggeman, Otto G" <otto.g.bruggeman@intel.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        linux-mm@kvack.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH 2/2] thp, shmem: Fix conflict of above-47bit hint address
- and PMD alignment
-Message-ID: <201912280704.DFqECoHe%lkp@intel.com>
-References: <20191220142548.7118-3-kirill.shutemov@linux.intel.com>
+   d="scan'208";a="243364226"
+Received: from vdoan2-mobl.ccr.corp.intel.com (HELO [10.251.152.151]) ([10.251.152.151])
+  by fmsmga004.fm.intel.com with ESMTP; 27 Dec 2019 16:16:11 -0800
+Subject: Re: [alsa-devel] [PATCH v5 09/17] soundwire: intel: remove platform
+ devices and use 'Master Devices' instead
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+        broonie@kernel.org, srinivas.kandagatla@linaro.org,
+        jank@cadence.com, slawomir.blauciak@intel.com,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Bard liao <yung-chuan.liao@linux.intel.com>,
+        Rander Wang <rander.wang@linux.intel.com>
+References: <20191217210314.20410-1-pierre-louis.bossart@linux.intel.com>
+ <20191217210314.20410-10-pierre-louis.bossart@linux.intel.com>
+ <20191227090826.GM3006@vkoul-mobl>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <5be4d9df-0f46-d36f-471c-aae9e1f55cc0@linux.intel.com>
+Date:   Fri, 27 Dec 2019 18:13:46 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191220142548.7118-3-kirill.shutemov@linux.intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20191227090826.GM3006@vkoul-mobl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi "Kirill,
-
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.5-rc3 next-20191220]
-[if your patch is applied to the wrong git tree, please drop us a note to help
-improve the system. BTW, we also suggest to use '--base' option to specify the
-base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-
-url:    https://github.com/0day-ci/linux/commits/Kirill-A-Shutemov/Fix-two-above-47bit-hint-address-vs-THP-bugs/20191223-221713
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 46cf053efec6a3a5f343fead837777efe8252a46
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.1-129-g341daf20-dirty
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
-
-If you fix the issue, kindly add following tag
-Reported-by: kbuild test robot <lkp@intel.com>
 
 
-sparse warnings: (new ones prefixed by >>)
+>> +extern struct sdw_md_driver intel_sdw_driver;
+> 
+> who uses this intel_sdw_driver? I would assumed someone would register
+> this with the core...
 
->> mm/shmem.c:2147:34: sparse: sparse: incorrect type in argument 1 (different base types)
->> mm/shmem.c:2147:34: sparse:    expected struct file *
->> mm/shmem.c:2147:34: sparse:    got unsigned long uaddr
+this is a structure used by intel_init(), see the following code.
 
-vim +2147 mm/shmem.c
++		md = sdw_md_add(&intel_sdw_driver,
++				res->parent,
++				acpi_fwnode_handle(adev),
++				i);
 
-  2073	
-  2074	unsigned long shmem_get_unmapped_area(struct file *file,
-  2075					      unsigned long uaddr, unsigned long len,
-  2076					      unsigned long pgoff, unsigned long flags)
-  2077	{
-  2078		unsigned long (*get_area)(struct file *,
-  2079			unsigned long, unsigned long, unsigned long, unsigned long);
-  2080		unsigned long addr;
-  2081		unsigned long offset;
-  2082		unsigned long inflated_len;
-  2083		unsigned long inflated_addr;
-  2084		unsigned long inflated_offset;
-  2085	
-  2086		if (len > TASK_SIZE)
-  2087			return -ENOMEM;
-  2088	
-  2089		get_area = current->mm->get_unmapped_area;
-  2090		addr = get_area(file, uaddr, len, pgoff, flags);
-  2091	
-  2092		if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGE_PAGECACHE))
-  2093			return addr;
-  2094		if (IS_ERR_VALUE(addr))
-  2095			return addr;
-  2096		if (addr & ~PAGE_MASK)
-  2097			return addr;
-  2098		if (addr > TASK_SIZE - len)
-  2099			return addr;
-  2100	
-  2101		if (shmem_huge == SHMEM_HUGE_DENY)
-  2102			return addr;
-  2103		if (len < HPAGE_PMD_SIZE)
-  2104			return addr;
-  2105		if (flags & MAP_FIXED)
-  2106			return addr;
-  2107		/*
-  2108		 * Our priority is to support MAP_SHARED mapped hugely;
-  2109		 * and support MAP_PRIVATE mapped hugely too, until it is COWed.
-  2110		 * But if caller specified an address hint and we allocated area there
-  2111		 * successfully, respect that as before.
-  2112		 */
-  2113		if (uaddr == addr)
-  2114			return addr;
-  2115	
-  2116		if (shmem_huge != SHMEM_HUGE_FORCE) {
-  2117			struct super_block *sb;
-  2118	
-  2119			if (file) {
-  2120				VM_BUG_ON(file->f_op != &shmem_file_operations);
-  2121				sb = file_inode(file)->i_sb;
-  2122			} else {
-  2123				/*
-  2124				 * Called directly from mm/mmap.c, or drivers/char/mem.c
-  2125				 * for "/dev/zero", to create a shared anonymous object.
-  2126				 */
-  2127				if (IS_ERR(shm_mnt))
-  2128					return addr;
-  2129				sb = shm_mnt->mnt_sb;
-  2130			}
-  2131			if (SHMEM_SB(sb)->huge == SHMEM_HUGE_NEVER)
-  2132				return addr;
-  2133		}
-  2134	
-  2135		offset = (pgoff << PAGE_SHIFT) & (HPAGE_PMD_SIZE-1);
-  2136		if (offset && offset + len < 2 * HPAGE_PMD_SIZE)
-  2137			return addr;
-  2138		if ((addr & (HPAGE_PMD_SIZE-1)) == offset)
-  2139			return addr;
-  2140	
-  2141		inflated_len = len + HPAGE_PMD_SIZE - PAGE_SIZE;
-  2142		if (inflated_len > TASK_SIZE)
-  2143			return addr;
-  2144		if (inflated_len < len)
-  2145			return addr;
-  2146	
-> 2147		inflated_addr = get_area(uaddr, 0, inflated_len, 0, flags);
-  2148		if (IS_ERR_VALUE(inflated_addr))
-  2149			return addr;
-  2150		if (inflated_addr & ~PAGE_MASK)
-  2151			return addr;
-  2152	
-  2153		inflated_offset = inflated_addr & (HPAGE_PMD_SIZE-1);
-  2154		inflated_addr += offset - inflated_offset;
-  2155		if (inflated_offset > offset)
-  2156			inflated_addr += HPAGE_PMD_SIZE;
-  2157	
-  2158		if (inflated_addr > TASK_SIZE - len)
-  2159			return addr;
-  2160		return inflated_addr;
-  2161	}
-  2162	
+that will in turn call intel_master_probe() as defined below:
 
----
-0-DAY kernel test infrastructure                 Open Source Technology Center
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
++struct sdw_md_driver intel_sdw_driver = {
++	.probe = intel_master_probe,
++	.startup = intel_master_startup,
++	
+
+>> -		link->pdev = pdev;
+>> -		link++;
+>> +		/* let the SoundWire master driver to its probe */
+>> +		md->driver->probe(md, link);
+> 
+> So you are invoking driver probe here.. That is typically role of driver
+> core to do that.. If we need that, make driver core do that for you!
+> 
+> That reminds me I am missing match code for master driver...
+
+There is no match for the master because it doesn't have an existence in 
+ACPI. There are no _ADR or HID that can be used, the only thing that 
+exists is the Controller which has 4 sublinks. Each master must be added 
+  by hand.
+
+Also the SoundWire master cannot be enumerated or matched against a 
+SoundWire bus, since it controls the bus itself (that would be a chicken 
+and egg problem). The SoundWire master would need to be matched on a 
+parent bus (which does not exist for Intel) since the hardware is 
+embedded in a larger audio cluster that's visible on PCI only.
+
+Currently for Intel platforms, the SoundWire master device is created by 
+the SOF driver (via the abstraction in intel_init.c).
+
+> So we seem to be somewhere is middle wrt driver probing here! IIUC this
+> is not a full master driver, thats okay, but then it is not
+> completely transparent either...
+> 
+> I was somehow thinking that the driver will continue to be
+> 'platform/acpi/of' driver and master device abstraction will be
+> handled in the core (for example see how the busses like i2c handle
+> this). The master device is created and used to represent but driver
+> probing etc is not done
+
+I2C controllers are typically PCI devices or have some sort of ACPI 
+description. This is not the case for SoundWire masters on Intel 
+platforms, so even if I wanted to I would have no ability to implement 
+any matching or parent bus registration.
+
+Also the notion of 'probe' does not necessarily mean that the device is 
+attached to a bus, we use DAI 'drivers' in ASoC and still have 
+probe/remove callbacks.
+
+And if you look at the definitions, we added additional callbacks since 
+probe/remove are not enough to deal with hardware restrictions:
+
+For Intel platforms, we have a startup() callback which is only invoked 
+once the DSP is powered and the rails stable. Likewise we added an 
+'autonomous_clock_stop()' callback which will be needed when the Linux 
+driver hands-over control of the hardware to the DSP firmware, e.g. to 
+deal with in-band wakes in D0i3.
+
+FWIW, the implementation here follows what was suggested for Greybus 
+'Host Devices' [1] [2], so it's not like I am creating any sort of 
+dangerous precedent.
+
+[1] 
+https://elixir.bootlin.com/linux/latest/source/drivers/greybus/es2.c#L1275
+[2] https://elixir.bootlin.com/linux/latest/source/drivers/greybus/hd.c#L124
+
