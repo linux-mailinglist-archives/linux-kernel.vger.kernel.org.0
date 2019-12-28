@@ -2,144 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E962B12BDAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 14:43:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58C0F12BDB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Dec 2019 14:48:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726578AbfL1NnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 08:43:24 -0500
-Received: from mail-eopbgr700049.outbound.protection.outlook.com ([40.107.70.49]:21161
-        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726080AbfL1NnX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 08:43:23 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RAOYMSU/O1CD1OuiPnQA7KoFaT+ZwlILbWXmPumY9fOiPk+1AJWqfQBaoEXEH2Dhg7+EB6q64SceR/t6M6XPgEYy333wKQHIEc51VrqOvT5m1hEP2M/NbKYXlf5D217+mjb7PV0lSmCJz2Z/Cgpp9DMAOEe9kE9RQoEwjLhKyVcofGd6vTryDsnJQZY6Mt2naPUne8FZZ0FPhcJBIZVcAYGzG/saIDX7OXKgYFNKynMcXkoaKqyM5rcnYFrKsHECCP+p9oQbd0uW9I2a4FYKgSaJrejZ6ukk9t+62ZiaidcBYCIKxmkKIz2gL+CLCW1qqeJpGxQ+AumGNPY/Jxxsvg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qs1iC6WkRXnElFVdHO5iHBOqfRvBCxLOuccgTbnC/oU=;
- b=NAr7XKotT9nrsLjkRmFZh4AniqXJ21oh1ZEfiitI4oDFLeEG/YRwIPMX7GJxIKJJKGUkvHS0jC3kvH3CL2wThbLw30wf9kHFsqnvwIbNyV8uCzzaYLSdeTD2V1+hVnPA77TueH4eF3JWAWwc+Q4WOj2DmFLDAlKe49BYNJPfHF0gmp83jfSp8t8Eni4Z2E0cT97dvct2TyGwD9fR4lSe/UnZavB5GJHvTj/xgnEIxfmtv1P0WN9M34FbHJaoiYzxGTMwh0npFN7nkM0IyQer2X8JJ/RtzN+Agsl6JQf2+6kjLEeM87ONsRqY9JfV4/o8IUlP3wwsRAmI4q1hHztHRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com;
- dmarc=permerror action=none header.from=amd.com; dkim=none (message not
- signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qs1iC6WkRXnElFVdHO5iHBOqfRvBCxLOuccgTbnC/oU=;
- b=AQgtSQ3II7Cesr3n2SZQLVY3I7G+U6GdchjmJefxkLUEqydElTDdX50FRjmrqwDAHP0+KmIDNa6Az8JYZT75SFvsdw8OC+Bch2J2CMa07qNBHzubaMd0MoBcDnaYnqYTdALhFj/EAXMjJZlVFgpqzxNeDCDJBPCoWS3Or+NxXPs=
-Received: from MWHPR12CA0054.namprd12.prod.outlook.com (2603:10b6:300:103::16)
- by BN7PR12MB2769.namprd12.prod.outlook.com (2603:10b6:408:2b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11; Sat, 28 Dec
- 2019 13:43:18 +0000
-Received: from BN8NAM11FT041.eop-nam11.prod.protection.outlook.com
- (2a01:111:f400:7eae::204) by MWHPR12CA0054.outlook.office365.com
- (2603:10b6:300:103::16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2581.11 via Frontend
- Transport; Sat, 28 Dec 2019 13:43:18 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; google.com; dkim=none (message not signed)
- header.d=none;google.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXMB02.amd.com (165.204.84.17) by
- BN8NAM11FT041.mail.protection.outlook.com (10.13.177.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.2581.11 via Frontend Transport; Sat, 28 Dec 2019 13:43:18 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB02.amd.com
- (10.181.40.143) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Sat, 28 Dec
- 2019 07:43:17 -0600
-Received: from SATLEXMB02.amd.com (10.181.40.143) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Sat, 28 Dec
- 2019 07:43:17 -0600
-Received: from vishnu-All-Series.amd.com (10.180.168.240) by
- SATLEXMB02.amd.com (10.181.40.143) with Microsoft SMTP Server id 15.1.1713.5
- via Frontend Transport; Sat, 28 Dec 2019 07:43:13 -0600
-From:   Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-CC:     <Alexander.Deucher@amd.com>, <djkurtz@google.com>,
-        <broonie@kernel.org>,
-        Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>,
-        "Liam Girdwood" <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "Takashi Iwai" <tiwai@suse.com>,
-        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6/6] ASoC: amd MMAP_INTERLEAVED Support
-Date:   Sat, 28 Dec 2019 19:11:00 +0530
-Message-ID: <1577540460-21438-7-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1577540460-21438-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-References: <1577540460-21438-1-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+        id S1726293AbfL1Nsk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 08:48:40 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:33210 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726075AbfL1Nsk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 08:48:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RCJmzul6XUbomXCbjxTYwriW9jA1/+w+3KTp2D3QCyw=; b=rethQCw+VAf1V48foed947eZr
+        PlhqMB2wsoYmmGRB1tR2rLPNm+c8A+yp8OD3Iw0FTZam8Uwpc2N4eblDPNYxqQU2C/+OFSv8TcKsK
+        JerjC3ctp4j/JibUeCBVYdSwBIXrDHW6Ildjm+hpc2dDLnFiw5ihiMjMEzUN0sDWr6am0k8C+7Hjn
+        aLN+vTK0S6MASwbFGY/mg5gwGPAKOgODs6MYT7UD4S87ngS+hGC3Qd3BdKNZZSrI2kYYay3NId7iX
+        8ESyKEqxBgaIMMCC20WThsuq/z8booLcmJyN1ihT0Tatd5ithZzY42NslIGRLd6yglwzHA7C3XSxO
+        C+P+/EQoQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59090)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1ilCSD-000868-MD; Sat, 28 Dec 2019 13:48:32 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1ilCS8-0005mL-6m; Sat, 28 Dec 2019 13:48:24 +0000
+Date:   Sat, 28 Dec 2019 13:48:24 +0000
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Gen Zhang <blackgod016574@gmail.com>
+Cc:     bgolaszewski@baylibre.com, nsekhar@ti.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] board-dm644x-evm: fix 2 missing-check bugs in
+ evm_led_setup()
+Message-ID: <20191228134824.GX25745@shell.armlinux.org.uk>
+References: <20191227023921.GA21233@zhanggen-UX430UQ>
+ <20191227160142.GW25745@shell.armlinux.org.uk>
+ <20191228131930.GA7214@zhanggen-UX430UQ.lan>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(376002)(39860400002)(396003)(428003)(199004)(189003)(86362001)(2616005)(54906003)(70586007)(356004)(2906002)(36756003)(316002)(426003)(70206006)(6666004)(478600001)(336012)(81156014)(186003)(8936002)(8676002)(109986005)(7696005)(4326008)(5660300002)(26005)(81166006)(7416002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2769;H:SATLEXMB02.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 6ce36e64-1915-44d1-2e6a-08d78b9be573
-X-MS-TrafficTypeDiagnostic: BN7PR12MB2769:|BN7PR12MB2769:
-X-Microsoft-Antispam-PRVS: <BN7PR12MB2769E1CDDAD257E42C4D42D6E7250@BN7PR12MB2769.namprd12.prod.outlook.com>
-X-MS-Exchange-Transport-Forked: True
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 02652BD10A
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: +ZbX5p4uvpOcJ7fVFJBu3snCp0avmkGblr4dMh5ONBqZRfhbiU1EGb15p8HaFJzig5HZpxSvCpvu7vLOHcp/83nPMvcui9aT8nFKOjwmHT8Wx0tk50SPC/S/qXeYguG2VXHlKyf5ViTFG4P/E6VxUWALGpuNrLmqz4eccMlsM7d91hoAybseBVFndcrYTRnEhjo+SNv4xa+oPL5Oh6YFbDSHF954ow+n7Ez7ZBCwUeJtXCVge8JEtJWwaFhAKQhZ62CkWQYfBySusIKFRkCNib/s2QDGFe+ydIeGsiXL3wZYSjbCWVsFOspt3znExdoeiL8aKgnCgBP3ZRj80IuwGAtnIq1zLeXzOmfMG6NQvYGGYb2E/m4PGmM9P2deFFvTI6UaV+/11BUSILg6O5dOHwa0JVbHnXuCh0aNIGHCnVDNMS9a4hifr/zgZdzQJLlbMuDHziycnz8uaH/zcS6LBAa4C0y0ZkbqxuPvm4C/rIw=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Dec 2019 13:43:18.1516
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ce36e64-1915-44d1-2e6a-08d78b9be573
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB02.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2769
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191228131930.GA7214@zhanggen-UX430UQ.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACP-I2S device support MMAP_INTERLEAVED.
-Added support for the same.
+On Sat, Dec 28, 2019 at 09:19:30PM +0800, Gen Zhang wrote:
+> On Fri, Dec 27, 2019 at 04:01:42PM +0000, Russell King - ARM Linux admin wrote:
+> > On Fri, Dec 27, 2019 at 10:39:21AM +0800, Gen Zhang wrote:
+> > > In evm_led_setup(), the allocation result of platform_device_alloc() and 
+> > > platform_device_add_data() should be checked.
+> > > 
+> > > Signed-off-by: Gen Zhang <blackgod016574@gmail.com>
+> > > ---
+> > > diff --git a/arch/arm/mach-davinci/board-dm644x-evm.c b/arch/arm/mach-davinci/board-dm644x-evm.c
+> > > index 9d87d4e..9cd2785 100644
+> > > --- a/arch/arm/mach-davinci/board-dm644x-evm.c
+> > > +++ b/arch/arm/mach-davinci/board-dm644x-evm.c
+> > > @@ -352,15 +352,20 @@ evm_led_setup(struct i2c_client *client, int gpio, unsigned ngpio, void *c)
+> > >  	 * device unregistration ...
+> > >  	 */
+> > >  	evm_led_dev = platform_device_alloc("leds-gpio", 0);
+> > > -	platform_device_add_data(evm_led_dev,
+> > > +	if (!evm_led_dev)
+> > > +		return -ENOMEM;
+> > > +	status = platform_device_add_data(evm_led_dev,
+> > >  			&evm_led_data, sizeof evm_led_data);
+> > > +	if (status)
+> > > +		goto err;
+> > >  
+> > >  	evm_led_dev->dev.parent = &client->dev;
+> > >  	status = platform_device_add(evm_led_dev);
+> > > -	if (status < 0) {
+> > > -		platform_device_put(evm_led_dev);
+> > > -		evm_led_dev = NULL;
+> > > -	}
+> > > +	if (status)
+> > > +		goto err;
+> > > +err:
+> > > +	platform_device_put(evm_led_dev);
+> > > +	evm_led_dev = NULL;
+> > 
+> > Please look again at the above change very closely. You will want to
+> > send an updated patch.
+> > 
+> > -- 
+> > RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> > FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+> > According to speedtest.net: 11.9Mbps down 500kbps up
+> 
+> Thanks for your reply. You mean the if (state < 0 ) to if (state) or
+> anything else? Please point out directly.
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
----
- sound/soc/amd/raven/acp3x-pcm-dma.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This is the old everything-successful path through the code:
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 151daa9..5c3ec3c 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -21,6 +21,7 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_playback = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_BATCH |
-+		SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_MMAP_VALID |
- 		SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
- 	.formats = SNDRV_PCM_FMTBIT_S16_LE |  SNDRV_PCM_FMTBIT_S8 |
- 		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
-@@ -41,7 +42,8 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
- 	.info = SNDRV_PCM_INFO_INTERLEAVED |
- 		SNDRV_PCM_INFO_BLOCK_TRANSFER |
- 		SNDRV_PCM_INFO_BATCH |
--	    SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
-+		SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_MMAP_VALID |
-+		SNDRV_PCM_INFO_PAUSE | SNDRV_PCM_INFO_RESUME,
- 	.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
- 		   SNDRV_PCM_FMTBIT_U8 | SNDRV_PCM_FMTBIT_S24_LE |
- 		   SNDRV_PCM_FMTBIT_S32_LE,
+	platform_device_alloc()
+	platform_device_add_data()
+	platform_device_add()
+	evm_led_dev is set to the device
+
+This is the new everything-successful path through the code:
+
+	platform_device_alloc()
+	platform_device_add_data()
+	platform_device_add()
+	platform_device_put()
+	evm_led_dev = NULL
+
+And, specifically, the code sequence (I quote from your patch):
+
+	if (status)
+		goto err;
+err:
+
+is very stupid; it might as well not exist at all.
+
+Since other code references evm_led_dev, one can assume that we do
+not want it to be NULL for the success path. So, taking all this
+together, your patch is very very wrong, and I also find it very
+worrying too.
+
 -- 
-2.7.4
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
