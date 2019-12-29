@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E93512C9A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B8CD12C779
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730809AbfL2SMO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:12:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47834 "EHLO mail.kernel.org"
+        id S1730288AbfL2RmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730113AbfL2Rl7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:41:59 -0500
+        id S1730265AbfL2RmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:42:14 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81C24206A4;
-        Sun, 29 Dec 2019 17:41:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33AA721744;
+        Sun, 29 Dec 2019 17:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641319;
-        bh=MOYIgWAP8DXe6sfwEWuxE2tRlxNZzRBowLo1xbmA7PU=;
+        s=default; t=1577641333;
+        bh=I6zI39l6Sk+6XVLTpSxrMkQlRx8BuEn9+5eZRkxxKH4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b60lffrRsfDd757e/yoynU+K92qJb00ThM+vH/JdCC79LAmp7/4CEUgg1745T7cxK
-         raIxUm7ThBzFpyoDw23IZS4OqbAJl6mEsRauDZ3K3SMpgiSc5S8szuyWoAuNnKo0l7
-         /Uw25031YWHhSHeUD/bOjyZQlSDgyVHzmSH8b/Fk=
+        b=S5Oq+QX/eaYbdjrGCvBa7X6RbK4vhaQBip9lBcSiwO0yAPl1VV6XdxPqDazAIuv+M
+         2XVSU3IhTKj9e1PmGKIICrRqkXTbzkzQ3vyximQ4/u6FwI3rHmvg9nwW7OfLt7u8Wx
+         mbeWdECak5ru8mEylfGW51JO6VwUvA+gwOS00nu4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 002/434] fjes: fix missed check in fjes_acpi_add
-Date:   Sun, 29 Dec 2019 18:20:55 +0100
-Message-Id: <20191229172702.537468638@linuxfoundation.org>
+Subject: [PATCH 5.4 008/434] net: phy: ensure that phy IDs are correctly typed
+Date:   Sun, 29 Dec 2019 18:21:01 +0100
+Message-Id: <20191229172702.855371602@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -43,32 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuhong Yuan <hslester96@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit a288f105a03a7e0e629a8da2b31f34ebf0343ee2 ]
+[ Upstream commit 7d49a32a66d2215c5b3bf9bc67c9036ea9904111 ]
 
-fjes_acpi_add() misses a check for platform_device_register_simple().
-Add a check to fix it.
+PHY IDs are 32-bit unsigned quantities. Ensure that they are always
+treated as such, and not passed around as "int"s.
 
-Fixes: 658d439b2292 ("fjes: Introduce FUJITSU Extended Socket Network Device driver")
-Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Fixes: 13d0ab6750b2 ("net: phy: check return code when requesting PHY driver module")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/fjes/fjes_main.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/phy/phy_device.c |    8 ++++----
+ include/linux/phy.h          |    2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---- a/drivers/net/fjes/fjes_main.c
-+++ b/drivers/net/fjes/fjes_main.c
-@@ -166,6 +166,9 @@ static int fjes_acpi_add(struct acpi_dev
- 	/* create platform_device */
- 	plat_dev = platform_device_register_simple(DRV_NAME, 0, fjes_resource,
- 						   ARRAY_SIZE(fjes_resource));
-+	if (IS_ERR(plat_dev))
-+		return PTR_ERR(plat_dev);
-+
- 	device->driver_data = plat_dev;
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -552,7 +552,7 @@ static const struct device_type mdio_bus
+ 	.pm = MDIO_BUS_PHY_PM_OPS,
+ };
+ 
+-static int phy_request_driver_module(struct phy_device *dev, int phy_id)
++static int phy_request_driver_module(struct phy_device *dev, u32 phy_id)
+ {
+ 	int ret;
+ 
+@@ -564,15 +564,15 @@ static int phy_request_driver_module(str
+ 	 * then modprobe isn't available.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_MODULES) && ret < 0 && ret != -ENOENT) {
+-		phydev_err(dev, "error %d loading PHY driver module for ID 0x%08x\n",
+-			   ret, phy_id);
++		phydev_err(dev, "error %d loading PHY driver module for ID 0x%08lx\n",
++			   ret, (unsigned long)phy_id);
+ 		return ret;
+ 	}
  
  	return 0;
+ }
+ 
+-struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
++struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
+ 				     bool is_c45,
+ 				     struct phy_c45_device_ids *c45_ids)
+ {
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -993,7 +993,7 @@ int phy_modify_paged_changed(struct phy_
+ int phy_modify_paged(struct phy_device *phydev, int page, u32 regnum,
+ 		     u16 mask, u16 set);
+ 
+-struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
++struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
+ 				     bool is_c45,
+ 				     struct phy_c45_device_ids *c45_ids);
+ #if IS_ENABLED(CONFIG_PHYLIB)
 
 
