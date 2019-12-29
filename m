@@ -2,48 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7EBF12C7E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3748412C7E4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731362AbfL2Rr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:47:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58792 "EHLO mail.kernel.org"
+        id S1731380AbfL2RsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:48:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731019AbfL2Rrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:47:53 -0500
+        id S1731357AbfL2Rrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:47:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 466E4206A4;
-        Sun, 29 Dec 2019 17:47:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4A1120718;
+        Sun, 29 Dec 2019 17:47:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641672;
-        bh=mye650C+sF4IBOpYtJXiGOLwPWidUGX5Vqex7cB2FE4=;
+        s=default; t=1577641675;
+        bh=idPGTwjiKTc0RNMjd0MVtez8N5CATxzLHU4CGWba0e0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ehgtk1xhbWs2mIBPPX8vkYRnLSwPenGUexSg2P1E/rMWnTKToJ9dijwlCuikZP9e/
-         CLrmLsSz+q3eAXdGQSBZi0t9etTL9Z/3MwYjM8AlHNcvwzN7R7SLfvGX79YMN++0cC
-         8Ln0uCHfHMg8lGM3sPkZQTL8ugmvC9wpAiPvF9FY=
+        b=f+j3OE5i/RagePnsUdu4nBe0Dsf2ur/7ETDJ9V1uq+w/8Ll2J+DTR/INjplkoT/N6
+         BkKj+P29FRq4HmQrrIYL+MaA1F2t1dUkwmNa5+f1f27owCcuNGbVI7qpn5nak2UC+m
+         Z7+lHtT2YucoKG91Qmw4KUmaGyqX5vNNO4/WOmXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Will Deacon <will@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Andrii Nakryiko <andriin@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 163/434] perf tests: Disable bp_signal testing for arm64
-Date:   Sun, 29 Dec 2019 18:23:36 +0100
-Message-Id: <20191229172712.608153205@linuxfoundation.org>
+Subject: [PATCH 5.4 164/434] selftests/bpf: Make a copy of subtest name
+Date:   Sun, 29 Dec 2019 18:23:37 +0100
+Message-Id: <20191229172712.692549462@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -56,110 +44,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Andrii Nakryiko <andriin@fb.com>
 
-[ Upstream commit 6a5f3d94cb69a185b921cb92c39888dc31009acb ]
+[ Upstream commit f90415e9600c5227131531c0ed11514a2d3bbe62 ]
 
-As there are several discussions for enabling perf breakpoint signal
-testing on arm64 platform: arm64 needs to rely on single-step to execute
-the breakpointed instruction and then reinstall the breakpoint exception
-handler.  But if we hook the breakpoint with a signal, the signal
-handler will do the stepping rather than the breakpointed instruction,
-this causes infinite loops as below:
+test_progs never created a copy of subtest name, rather just stored
+pointer to whatever string test provided. This is bad as that string
+might be freed or modified by the end of subtest. Fix this by creating
+a copy of given subtest name when subtest starts.
 
-         Kernel space              |            Userspace
-  ---------------------------------|--------------------------------
-                                   |  __test_function() -> hit
-				   |                       breakpoint
-  breakpoint_handler()             |
-    `-> user_enable_single_step()  |
-  do_signal()                      |
-                                   |  sig_handler() -> Step one
-				   |                instruction and
-				   |                trap to kernel
-  single_step_handler()            |
-    `-> reinstall_suspended_bps()  |
-                                   |  __test_function() -> hit
-				   |     breakpoint again and
-				   |     repeat up flow infinitely
-
-As Will Deacon mentioned [1]: "that we require the overflow handler to
-do the stepping on arm/arm64, which is relied upon by GDB/ptrace. The
-hw_breakpoint code is a complete disaster so my preference would be to
-rip out the perf part and just implement something directly in ptrace,
-but it's a pretty horrible job".  Though Will commented this on arm
-architecture, but the comment also can apply on arm64 architecture.
-
-For complete information, I searched online and found a few years back,
-Wang Nan sent one patch 'arm64: Store breakpoint single step state into
-pstate' [2]; the patch tried to resolve this issue by avoiding single
-stepping in signal handler and defer to enable the signal stepping when
-return to __test_function().  The fixing was not merged due to the
-concern for missing to handle different usage cases.
-
-Based on the info, the most feasible way is to skip Perf breakpoint
-signal testing for arm64 and this could avoid the duplicate
-investigation efforts when people see the failure.  This patch skips
-this case on arm64 platform, which is same with arm architecture.
-
-[1] https://lkml.org/lkml/2018/11/15/205
-[2] https://lkml.org/lkml/2015/12/23/477
-
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Will Deacon <will@kernel.org>
-Link: http://lore.kernel.org/lkml/20191018085531.6348-3-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Andrii Nakryiko <andriin@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Link: https://lore.kernel.org/bpf/20191021033902.3856966-6-andriin@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/bp_signal.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ tools/testing/selftests/bpf/test_progs.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/tests/bp_signal.c b/tools/perf/tests/bp_signal.c
-index c1c2c13de254..166f411568a5 100644
---- a/tools/perf/tests/bp_signal.c
-+++ b/tools/perf/tests/bp_signal.c
-@@ -49,14 +49,6 @@ asm (
- 	"__test_function:\n"
- 	"incq (%rdi)\n"
- 	"ret\n");
--#elif defined (__aarch64__)
--extern void __test_function(volatile long *ptr);
--asm (
--	".globl __test_function\n"
--	"__test_function:\n"
--	"str x30, [x0]\n"
--	"ret\n");
--
- #else
- static void __test_function(volatile long *ptr)
+diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+index af75a1c7a458..3bf18364c67c 100644
+--- a/tools/testing/selftests/bpf/test_progs.c
++++ b/tools/testing/selftests/bpf/test_progs.c
+@@ -20,7 +20,7 @@ struct prog_test_def {
+ 	bool tested;
+ 	bool need_cgroup_cleanup;
+ 
+-	const char *subtest_name;
++	char *subtest_name;
+ 	int subtest_num;
+ 
+ 	/* store counts before subtest started */
+@@ -81,16 +81,17 @@ void test__end_subtest()
+ 	fprintf(env.stdout, "#%d/%d %s:%s\n",
+ 	       test->test_num, test->subtest_num,
+ 	       test->subtest_name, sub_error_cnt ? "FAIL" : "OK");
++
++	free(test->subtest_name);
++	test->subtest_name = NULL;
+ }
+ 
+ bool test__start_subtest(const char *name)
  {
-@@ -302,10 +294,15 @@ bool test__bp_signal_is_supported(void)
- 	 * stepping into the SIGIO handler and getting stuck on the
- 	 * breakpointed instruction.
- 	 *
-+	 * Since arm64 has the same issue with arm for the single-step
-+	 * handling, this case also gets suck on the breakpointed
-+	 * instruction.
-+	 *
- 	 * Just disable the test for these architectures until these
- 	 * issues are resolved.
- 	 */
--#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__)
-+#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__) || \
-+    defined(__aarch64__)
- 	return false;
- #else
+ 	struct prog_test_def *test = env.test;
+ 
+-	if (test->subtest_name) {
++	if (test->subtest_name)
+ 		test__end_subtest();
+-		test->subtest_name = NULL;
+-	}
+ 
+ 	test->subtest_num++;
+ 
+@@ -104,7 +105,13 @@ bool test__start_subtest(const char *name)
+ 	if (!should_run(&env.subtest_selector, test->subtest_num, name))
+ 		return false;
+ 
+-	test->subtest_name = name;
++	test->subtest_name = strdup(name);
++	if (!test->subtest_name) {
++		fprintf(env.stderr,
++			"Subtest #%d: failed to copy subtest name!\n",
++			test->subtest_num);
++		return false;
++	}
+ 	env.test->old_error_cnt = env.test->error_cnt;
+ 
  	return true;
 -- 
 2.20.1
