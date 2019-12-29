@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 62B0612C83D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A8C612C94E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732287AbfL2Rwa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:52:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38574 "EHLO mail.kernel.org"
+        id S1733177AbfL2SES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:04:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732231AbfL2RwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:52:23 -0500
+        id S1732278AbfL2Rw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:52:27 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38F9B206A4;
-        Sun, 29 Dec 2019 17:52:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05BB6206A4;
+        Sun, 29 Dec 2019 17:52:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641942;
-        bh=sL4ShtHYbLuEMFytzqA5uk+r7jmYe24heBCvWZwWToE=;
+        s=default; t=1577641947;
+        bh=UBtYpro/1YvQIkaFCtSxpfQi2ecy59GoUIj9DqIT1eo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xGgeJcLXcX7yoPHvB4vtvCvhdzlGIuKHk67pTXP28j4SwDbSS/jBUQgMqT7NGZq4S
-         +KYKXOu9Y6IQlzVqFwJ0Aa9Ok0yk2zgQ8VcyuZX8ZUDUnVW4Op7Wm33vaLQJ4xJOdj
-         wHkvTVSpJ12p8ga4uDR55XZHZJcgvUW63qY7kkpI=
+        b=JdhImBwkmRZeDkwiie5GlUXT3fu3UOopp0TpRlEe4Uf6NCHTX4s41ivIKGFu0U2nw
+         zVqEVptsHkPnuQ+XZg3s9aTktoFQY03eghN3+TBgn9SzJ9KBzhoTDydT2IbZ6LKy0/
+         /oUwstscmds2/N5OViUCZo5LaqJ1MY57QGDuFp7Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 274/434] fsi: core: Fix small accesses and unaligned offsets via sysfs
-Date:   Sun, 29 Dec 2019 18:25:27 +0100
-Message-Id: <20191229172720.141644987@linuxfoundation.org>
+        stable@vger.kernel.org, Mike Isely <isely@pobox.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 276/434] media: pvrusb2: Fix oops on tear-down when radio support is not present
+Date:   Sun, 29 Dec 2019 18:25:29 +0100
+Message-Id: <20191229172720.275557671@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -43,108 +45,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Jeffery <andrew@aj.id.au>
+From: Mike Isely <isely@pobox.com>
 
-[ Upstream commit 9f4c2b516b4f031e3cd0e45957f4150b3c1a083d ]
+[ Upstream commit 7f404ae9cf2a285f73b3c18ab9303d54b7a3d8e1 ]
 
-Subtracting the offset delta from four-byte alignment lead to wrapping
-of the requested length where `count` is less than `off`. Generalise the
-length handling to enable and optimise aligned access sizes for all
-offset and size combinations. The new formula produces the following
-results for given offset and count values:
+In some device configurations there's no radio or radio support in the
+driver.  That's OK, as the driver sets itself up accordingly.  However
+on tear-down in these caes it's still trying to tear down radio
+related context when there isn't anything there, leading to
+dereferences through a null pointer and chaos follows.
 
-    offset  count | length
-    --------------+-------
-    0       1     | 1
-    0       2     | 2
-    0       3     | 2
-    0       4     | 4
-    0       5     | 4
-    1       1     | 1
-    1       2     | 1
-    1       3     | 1
-    1       4     | 1
-    1       5     | 1
-    2       1     | 1
-    2       2     | 2
-    2       3     | 2
-    2       4     | 2
-    2       5     | 2
-    3       1     | 1
-    3       2     | 1
-    3       3     | 1
-    3       4     | 1
-    3       5     | 1
+How this bug survived unfixed for 11 years in the pvrusb2 driver is a
+mystery to me.
 
-We might need something like this for the cfam chardevs as well, for
-example we don't currently implement any alignment restrictions /
-handling in the hardware master driver.
+[hverkuil: fix two checkpatch warnings]
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
-Link: https://lore.kernel.org/r/20191108051945.7109-6-joel@jms.id.au
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Mike Isely <isely@pobox.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/fsi/fsi-core.c | 31 +++++++++++++++++++++++++++----
- 1 file changed, 27 insertions(+), 4 deletions(-)
+ drivers/media/usb/pvrusb2/pvrusb2-v4l2.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/fsi/fsi-core.c b/drivers/fsi/fsi-core.c
-index 1f76740f33b6..9282239b4d95 100644
---- a/drivers/fsi/fsi-core.c
-+++ b/drivers/fsi/fsi-core.c
-@@ -544,6 +544,31 @@ static int fsi_slave_scan(struct fsi_slave *slave)
- 	return 0;
+diff --git a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+index a34717eba409..eaa08c7999d4 100644
+--- a/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
++++ b/drivers/media/usb/pvrusb2/pvrusb2-v4l2.c
+@@ -898,8 +898,12 @@ static void pvr2_v4l2_internal_check(struct pvr2_channel *chp)
+ 	pvr2_v4l2_dev_disassociate_parent(vp->dev_video);
+ 	pvr2_v4l2_dev_disassociate_parent(vp->dev_radio);
+ 	if (!list_empty(&vp->dev_video->devbase.fh_list) ||
+-	    !list_empty(&vp->dev_radio->devbase.fh_list))
++	    (vp->dev_radio &&
++	     !list_empty(&vp->dev_radio->devbase.fh_list))) {
++		pvr2_trace(PVR2_TRACE_STRUCT,
++			   "pvr2_v4l2 internal_check exit-empty id=%p", vp);
+ 		return;
++	}
+ 	pvr2_v4l2_destroy_no_lock(vp);
  }
  
-+static unsigned long aligned_access_size(size_t offset, size_t count)
-+{
-+	unsigned long offset_unit, count_unit;
-+
-+	/* Criteria:
-+	 *
-+	 * 1. Access size must be less than or equal to the maximum access
-+	 *    width or the highest power-of-two factor of offset
-+	 * 2. Access size must be less than or equal to the amount specified by
-+	 *    count
-+	 *
-+	 * The access width is optimal if we can calculate 1 to be strictly
-+	 * equal while still satisfying 2.
-+	 */
-+
-+	/* Find 1 by the bottom bit of offset (with a 4 byte access cap) */
-+	offset_unit = BIT(__builtin_ctzl(offset | 4));
-+
-+	/* Find 2 by the top bit of count */
-+	count_unit = BIT(8 * sizeof(unsigned long) - 1 - __builtin_clzl(count));
-+
-+	/* Constrain the maximum access width to the minimum of both criteria */
-+	return BIT(__builtin_ctzl(offset_unit | count_unit));
-+}
-+
- static ssize_t fsi_slave_sysfs_raw_read(struct file *file,
- 		struct kobject *kobj, struct bin_attribute *attr, char *buf,
- 		loff_t off, size_t count)
-@@ -559,8 +584,7 @@ static ssize_t fsi_slave_sysfs_raw_read(struct file *file,
- 		return -EINVAL;
- 
- 	for (total_len = 0; total_len < count; total_len += read_len) {
--		read_len = min_t(size_t, count, 4);
--		read_len -= off & 0x3;
-+		read_len = aligned_access_size(off, count - total_len);
- 
- 		rc = fsi_slave_read(slave, off, buf + total_len, read_len);
- 		if (rc)
-@@ -587,8 +611,7 @@ static ssize_t fsi_slave_sysfs_raw_write(struct file *file,
- 		return -EINVAL;
- 
- 	for (total_len = 0; total_len < count; total_len += write_len) {
--		write_len = min_t(size_t, count, 4);
--		write_len -= off & 0x3;
-+		write_len = aligned_access_size(off, count - total_len);
- 
- 		rc = fsi_slave_write(slave, off, buf + total_len, write_len);
- 		if (rc)
+@@ -935,7 +939,8 @@ static int pvr2_v4l2_release(struct file *file)
+ 	kfree(fhp);
+ 	if (vp->channel.mc_head->disconnect_flag &&
+ 	    list_empty(&vp->dev_video->devbase.fh_list) &&
+-	    list_empty(&vp->dev_radio->devbase.fh_list)) {
++	    (!vp->dev_radio ||
++	     list_empty(&vp->dev_radio->devbase.fh_list))) {
+ 		pvr2_v4l2_destroy_no_lock(vp);
+ 	}
+ 	return 0;
 -- 
 2.20.1
 
