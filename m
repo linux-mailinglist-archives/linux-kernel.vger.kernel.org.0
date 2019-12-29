@@ -2,54 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A35CE12C349
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 17:12:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE5D512C363
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 17:28:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfL2QMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 11:12:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:35742 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfL2QMF (ORCPT
+        id S1726661AbfL2Q2O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 11:28:14 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42148 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbfL2Q2O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 11:12:05 -0500
-Received: from [172.58.107.62] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ilbAG-00017e-6Q; Sun, 29 Dec 2019 16:11:37 +0000
-Date:   Sun, 29 Dec 2019 17:11:28 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: Re: [PATCH v3 1/3] samples, selftests/seccomp: Zero out seccomp_notif
-Message-ID: <20191229161126.xcrnzdqu5frrov6q@wittgenstein>
-References: <20191229062451.9467-1-sargun@sargun.me>
+        Sun, 29 Dec 2019 11:28:14 -0500
+Received: by mail-pg1-f193.google.com with SMTP id s64so16905384pgb.9;
+        Sun, 29 Dec 2019 08:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HvI5d4aaE+b1gi+5iN8aWxiRIjRZNL1uGE+EfHEfZQk=;
+        b=PBYGlJ0D9gPGe0FmW8TJD9OC0RPCKukP47iBau4B9fq4O14dzRwP4sesF4P5cjwfyw
+         dozPRoYbANtEjZnDVlxntKxNffKZaCWGR0304Y7TwOw5VodfSo6AOc8eePWIooNou/8q
+         bHe3jZZzaU7IIil2bzIzYZUU3kFffVHcNML/WQPoCvacxi+gyEBl0ZNrxzqEPu0wtej4
+         AzJaT7AZepxrPHiU/u0Vae4oIVtAwh+hxUK20nBm0koSLf/oMh8UDZDBdf37yswHZcQb
+         TGQ5U2yD5lSdJK2SOQlAkTpQiiHoSOJGqOOKtnSYkTh85FVB9Ug7XJXRIN1ppa+5qY5u
+         MzuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HvI5d4aaE+b1gi+5iN8aWxiRIjRZNL1uGE+EfHEfZQk=;
+        b=CYqKSlLWjuGUMjbhGspCa7KTG/ogWTK6WrVoYeXP73169SwXQ5DQwOizCHavp5OryW
+         hJdq+rlz8W9i3YXDzVvsuQPiwqLTMukXXCxxnQ1Ft4X2UKZR/4im/JTJxoOi8P3UY8um
+         rNuPLdD5mMS7F1DX42jmDdCvt4n/C8ne8O0OmIztkDCLVFrH5Yx/SzkOAgoGXOycJ8K7
+         kMN2pNZzXzaZe+PFfBC6kLNSvtX20RWONU48jppcU1UdJzWVkyreQ5iN4Q/GI82fitGw
+         YZJd9bH8Bo1ekrlyz2a6XqG9Jrj0QxwJ/nEtCErUrqbavozOV41v6IXd6bm4CjygcfRX
+         wSyA==
+X-Gm-Message-State: APjAAAXpswBjttI0KFly/LH9Ralv6pfxd8bfA8Tfar1XJVsvXXVplX+W
+        +SrS+eBWsaLXscdLybdtVqI=
+X-Google-Smtp-Source: APXvYqzh1668xttmkGagNpJIV4NcN8NMICBHJ5hpyXU8kB3s4sXZdyHSdkPIogj3gq18bZMYshW9ow==
+X-Received: by 2002:a63:3404:: with SMTP id b4mr66183401pga.438.1577636893413;
+        Sun, 29 Dec 2019 08:28:13 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j10sm21812709pjb.14.2019.12.29.08.28.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 29 Dec 2019 08:28:12 -0800 (PST)
+Date:   Sun, 29 Dec 2019 08:28:11 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Peter Chen <peter.chen@freescale.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] usb: chipidea: host: Disable port power only if
+ previously enabled
+Message-ID: <20191229162811.GA21566@roeck-us.net>
+References: <20191227165543.GA15950@roeck-us.net>
+ <Pine.LNX.4.44L0.1912281431190.18379-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191229062451.9467-1-sargun@sargun.me>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <Pine.LNX.4.44L0.1912281431190.18379-100000@netrider.rowland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 28, 2019 at 10:24:49PM -0800, Sargun Dhillon wrote:
-> The seccomp_notif structure should be zeroed out prior to calling the
-> SECCOMP_IOCTL_NOTIF_RECV ioctl. Previously, the kernel did not check
-> whether these structures were zeroed out or not, so these worked.
+On Sat, Dec 28, 2019 at 02:33:01PM -0500, Alan Stern wrote:
 > 
-> This patch zeroes out the seccomp_notif data structure prior to calling
-> the ioctl.
+> Let's try a slightly different approach.  What happens with this patch?
 > 
-> Signed-off-by: Sargun Dhillon <sargun@sargun.me>
-> Reviewed-by: Tycho Andersen <tycho@tycho.ws>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Christian Brauner <christian.brauner@ubuntu.com>
+> Alan Stern
+> 
+> 
+> Index: usb-devel/drivers/usb/core/hub.c
+> ===================================================================
+> --- usb-devel.orig/drivers/usb/core/hub.c
+> +++ usb-devel/drivers/usb/core/hub.c
+> @@ -1065,6 +1065,7 @@ static void hub_activate(struct usb_hub
+>  		if (type == HUB_INIT) {
+>  			delay = hub_power_on_good_delay(hub);
+>  
+> +			hub->power_bits[0] = ~0UL;	/* All ports on */
+>  			hub_power_on(hub, false);
+>  			INIT_DELAYED_WORK(&hub->init_work, hub_init_func2);
+>  			queue_delayed_work(system_power_efficient_wq,
+> 
 
-Thanks!
-Reviewed-by: Christian Brauner <christian.brauner@ubuntu.com>
+That doesn't make a difference - the traceback is still seen with this patch
+applied.
+
+Guenter
