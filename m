@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539AA12C98B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FC212C973
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbfL2SJ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:09:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54136 "EHLO mail.kernel.org"
+        id S1731628AbfL2SIO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:08:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730858AbfL2RpO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:45:14 -0500
+        id S1730985AbfL2RrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:47:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C91D206DB;
-        Sun, 29 Dec 2019 17:45:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D203C20718;
+        Sun, 29 Dec 2019 17:47:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641513;
-        bh=bFNiQNRUnwf7NbQH8R9FB9j32/jBKVRVxDZM5wXzECI=;
+        s=default; t=1577641641;
+        bh=Kz5HlZjaUT9tX8Eyv4AqnpRGD+ixkkCCZAFsG9IcSD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MMeU9ghB37hDMMzq+h2zIeCG2WO75taLM/6vZcJingPdEx0Y0PR+VZsmiEvMdMncl
-         v4zj2iWd2Ilhxtz2MTqJwBYwBQdfDsYd3S9S161R7mH/GcXR0V27yheroYaPo0Dcc6
-         YftG9R14rf+LzI3FMtWao/1cYb6SCqPlRzlc7OZY=
+        b=SLtB6fRNMqs+KGXxXGOBeiWL2FjcfGXEunAbn1S+Osbj2DW43zckr/hcxuc7vsFAn
+         cJUljm1f2AKlRetFWHpBkgB0DGS0c4cWX5SgnvQRsIAy33S82n87j1rzXS5yIikEhB
+         yALPv42B3GRkOaFXWXIyjNpDp+cNS/QBbbjWZsA0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
+        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 096/434] selftests/bpf: Correct path to include msg + path
-Date:   Sun, 29 Dec 2019 18:22:29 +0100
-Message-Id: <20191229172707.955862688@linuxfoundation.org>
+Subject: [PATCH 5.4 101/434] usb: renesas_usbhs: add suspend event support in gadget mode
+Date:   Sun, 29 Dec 2019 18:22:34 +0100
+Message-Id: <20191229172708.307687529@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,67 +46,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+From: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
 
-[ Upstream commit c588146378962786ddeec817f7736a53298a7b01 ]
+[ Upstream commit 39abcc84846bbc0538f13c190b6a9c7e36890cd2 ]
 
-The "path" buf is supposed to contain path + printf msg up to 24 bytes.
-It will be cut anyway, but compiler generates truncation warns like:
+When R-Car Gen3 USB 2.0 is in Gadget mode, if host is detached an interrupt
+will be generated and Suspended state bit is set in interrupt status
+register. Interrupt handler will call driver->suspend(composite_suspend)
+if suspended state bit is set. composite_suspend will call
+ffs_func_suspend which will post FUNCTIONFS_SUSPEND and will be consumed
+by user space application via /dev/ep0.
 
-"
-samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c: In
-function ‘setup_cgroup_environment’:
-samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c:52:34:
-warning: ‘/cgroup.controllers’ directive output may be truncated
-writing 19 bytes into a region of size between 1 and 4097
-[-Wformat-truncation=]
-snprintf(path, sizeof(path), "%s/cgroup.controllers", cgroup_path);
-				  ^~~~~~~~~~~~~~~~~~~
-samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c:52:2:
-note: ‘snprintf’ output between 20 and 4116 bytes into a destination
-of size 4097
-snprintf(path, sizeof(path), "%s/cgroup.controllers", cgroup_path);
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c:72:34:
-warning: ‘/cgroup.subtree_control’ directive output may be truncated
-writing 23 bytes into a region of size between 1 and 4097
-[-Wformat-truncation=]
-snprintf(path, sizeof(path), "%s/cgroup.subtree_control",
-				  ^~~~~~~~~~~~~~~~~~~~~~~
-cgroup_path);
-samples/bpf/../../tools/testing/selftests/bpf/cgroup_helpers.c:72:2:
-note: ‘snprintf’ output between 24 and 4120 bytes into a destination
-of size 4097
-snprintf(path, sizeof(path), "%s/cgroup.subtree_control",
-cgroup_path);
-"
+To be able to detect host detach, extend the DVSQ_MASK to cover the
+Suspended bit of the DVSQ[2:0] bitfield from the Interrupt Status
+Register 0 (INTSTS0) register and perform appropriate action in the
+DVST interrupt handler (usbhsg_irq_dev_state).
 
-In order to avoid warns, lets decrease buf size for cgroup workdir on
-24 bytes with assumption to include also "/cgroup.subtree_control" to
-the address. The cut will never happen anyway.
+Without this commit, disconnection of the phone from R-Car-H3 ES2.0
+Salvator-X CN9 port is not recognized and reverse role switch does
+not happen. If phone is connected again it does not enumerate.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Song Liu <songliubraving@fb.com>
-Link: https://lore.kernel.org/bpf/20191002120404.26962-3-ivan.khoronzhuk@linaro.org
+With this commit, disconnection will be recognized and reverse role
+switch will happen by a user space application. If phone is connected
+again it will enumerate properly and will become visible in the output
+of 'lsusb'.
+
+Signed-off-by: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/1568207756-22325-3-git-send-email-external.veeraiyan.c@de.adit-jv.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/cgroup_helpers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/renesas_usbhs/common.h     |  3 ++-
+ drivers/usb/renesas_usbhs/mod_gadget.c | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/cgroup_helpers.c b/tools/testing/selftests/bpf/cgroup_helpers.c
-index e95c33e333a4..b29a73fe64db 100644
---- a/tools/testing/selftests/bpf/cgroup_helpers.c
-+++ b/tools/testing/selftests/bpf/cgroup_helpers.c
-@@ -98,7 +98,7 @@ int enable_all_controllers(char *cgroup_path)
-  */
- int setup_cgroup_environment(void)
+diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
+index 0824099b905e..ef1735d014da 100644
+--- a/drivers/usb/renesas_usbhs/common.h
++++ b/drivers/usb/renesas_usbhs/common.h
+@@ -161,11 +161,12 @@ struct usbhs_priv;
+ #define VBSTS	(1 << 7)	/* VBUS_0 and VBUSIN_0 Input Status */
+ #define VALID	(1 << 3)	/* USB Request Receive */
+ 
+-#define DVSQ_MASK		(0x3 << 4)	/* Device State */
++#define DVSQ_MASK		(0x7 << 4)	/* Device State */
+ #define  POWER_STATE		(0 << 4)
+ #define  DEFAULT_STATE		(1 << 4)
+ #define  ADDRESS_STATE		(2 << 4)
+ #define  CONFIGURATION_STATE	(3 << 4)
++#define  SUSPENDED_STATE	(4 << 4)
+ 
+ #define CTSQ_MASK		(0x7)	/* Control Transfer Stage */
+ #define  IDLE_SETUP_STAGE	0	/* Idle stage or setup stage */
+diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
+index cd38d74b3223..53489cafecc1 100644
+--- a/drivers/usb/renesas_usbhs/mod_gadget.c
++++ b/drivers/usb/renesas_usbhs/mod_gadget.c
+@@ -457,12 +457,18 @@ static int usbhsg_irq_dev_state(struct usbhs_priv *priv,
  {
--	char cgroup_workdir[PATH_MAX + 1];
-+	char cgroup_workdir[PATH_MAX - 24];
+ 	struct usbhsg_gpriv *gpriv = usbhsg_priv_to_gpriv(priv);
+ 	struct device *dev = usbhsg_gpriv_to_dev(gpriv);
++	int state = usbhs_status_get_device_state(irq_state);
  
- 	format_cgroup_path(cgroup_workdir, "");
+ 	gpriv->gadget.speed = usbhs_bus_get_speed(priv);
  
+-	dev_dbg(dev, "state = %x : speed : %d\n",
+-		usbhs_status_get_device_state(irq_state),
+-		gpriv->gadget.speed);
++	dev_dbg(dev, "state = %x : speed : %d\n", state, gpriv->gadget.speed);
++
++	if (gpriv->gadget.speed != USB_SPEED_UNKNOWN &&
++	    (state & SUSPENDED_STATE)) {
++		if (gpriv->driver && gpriv->driver->suspend)
++			gpriv->driver->suspend(&gpriv->gadget);
++		usb_gadget_set_state(&gpriv->gadget, USB_STATE_SUSPENDED);
++	}
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
