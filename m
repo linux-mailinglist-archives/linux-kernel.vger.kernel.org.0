@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FD2C12C41A
+	by mail.lfdr.de (Postfix) with ESMTP id C1CCD12C41B
 	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:28:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfL2R0Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:26:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47274 "EHLO mail.kernel.org"
+        id S1728227AbfL2R0b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:26:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbfL2R0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:26:21 -0500
+        id S1727382AbfL2R0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:26:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E33EA207FF;
-        Sun, 29 Dec 2019 17:26:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 827F821744;
+        Sun, 29 Dec 2019 17:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640380;
-        bh=QLSXoaU+EitGCTeCJX2uXYUbAWclxZysmq/yrb3//AA=;
+        s=default; t=1577640390;
+        bh=ibYh33WcDqtJFx1fzZSI/8T3+GC6ZOgarCVSzWDpJsQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u1ktnjLNxjTcT4QAJHdnK59xItBXW/Vdg5hKqJ6338L5C/OM+hwz/zQpbK4aI9vGq
-         K4CSruhXRiBwZNisHT10tirLi0YNokD1KhBKE+lHATGEm7CW05rHpgtxUVCOlcGKUR
-         f47PurbHoozVTnG+e4nUg/zrOX5b/7ejq/6W0X7E=
+        b=k6L4F+wdtG9hBqtMvW6Yc17i0LAyasqzmTx5jkPOsdy/lopzUGnuoqznDjvrXZMUs
+         PJrKO/63NuWrl1G8Omba9ddy7bnTmnA4lhFnPbNIkc8S3aDCEDDuOKiEwFvcuTuuCC
+         EBH/xKpWNeD8K4fhvih7UdYpGefbcv50ulqO/pdo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 135/161] net: phy: initialise phydev speed and duplex sanely
-Date:   Sun, 29 Dec 2019 18:19:43 +0100
-Message-Id: <20191229162439.561110593@linuxfoundation.org>
+        stable@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 139/161] mmc: mediatek: fix CMD_TA to 2 for MT8173 HS200/HS400 mode
+Date:   Sun, 29 Dec 2019 18:19:47 +0100
+Message-Id: <20191229162441.327994797@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -44,46 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Chaotian Jing <chaotian.jing@mediatek.com>
 
-[ Upstream commit a5d66f810061e2dd70fb7a108dcd14e535bc639f ]
+commit 8f34e5bd7024d1ffebddd82d7318b1be17be9e9a upstream.
 
-When a phydev is created, the speed and duplex are set to zero and
--1 respectively, rather than using the predefined SPEED_UNKNOWN and
-DUPLEX_UNKNOWN constants.
+there is a chance that always get response CRC error after HS200 tuning,
+the reason is that need set CMD_TA to 2. this modification is only for
+MT8173.
 
-There is a window at initialisation time where we may report link
-down using the 0/-1 values.  Tidy this up and use the predefined
-constants, so debug doesn't complain with:
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: stable@vger.kernel.org
+Fixes: 1ede5cb88a29 ("mmc: mediatek: Use data tune for CMD line tune")
+Link: https://lore.kernel.org/r/20191204071958.18553-1-chaotian.jing@mediatek.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-"Unsupported (update phy-core.c)/Unsupported (update phy-core.c)"
-
-when the speed and duplex settings are printed.
-
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phy_device.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/mtk-sd.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index ed7e3c70b511..a98c227a4c2e 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -367,8 +367,8 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
- 	mdiodev->device_free = phy_mdio_device_free;
- 	mdiodev->device_remove = phy_mdio_device_remove;
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -212,6 +212,8 @@
+ #define MSDC_PATCH_BIT_SPCPUSH    (0x1 << 29)	/* RW */
+ #define MSDC_PATCH_BIT_DECRCTMO   (0x1 << 30)	/* RW */
  
--	dev->speed = 0;
--	dev->duplex = -1;
-+	dev->speed = SPEED_UNKNOWN;
-+	dev->duplex = DUPLEX_UNKNOWN;
- 	dev->pause = 0;
- 	dev->asym_pause = 0;
- 	dev->link = 1;
--- 
-2.20.1
-
++#define MSDC_PATCH_BIT1_CMDTA     (0x7 << 3)    /* RW */
++
+ #define MSDC_PAD_TUNE_DATWRDLY	  (0x1f <<  0)	/* RW */
+ #define MSDC_PAD_TUNE_DATRRDLY	  (0x1f <<  8)	/* RW */
+ #define MSDC_PAD_TUNE_CMDRDLY	  (0x1f << 16)  /* RW */
+@@ -1442,6 +1444,7 @@ static int hs400_tune_response(struct mm
+ 
+ 	/* select EMMC50 PAD CMD tune */
+ 	sdr_set_bits(host->base + PAD_CMD_TUNE, BIT(0));
++	sdr_set_field(host->base + MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMDTA, 2);
+ 
+ 	if (mmc->ios.timing == MMC_TIMING_MMC_HS200 ||
+ 	    mmc->ios.timing == MMC_TIMING_UHS_SDR104)
 
 
