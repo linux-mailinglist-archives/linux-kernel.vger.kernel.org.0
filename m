@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB81912C5F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 29CFE12C5F9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbfL2Rmk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:42:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48824 "EHLO mail.kernel.org"
+        id S1730348AbfL2Rmm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:42:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48882 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730304AbfL2Rmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:42:31 -0500
+        id S1730318AbfL2Rmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:42:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41DEF207FD;
-        Sun, 29 Dec 2019 17:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBAC620718;
+        Sun, 29 Dec 2019 17:42:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641350;
-        bh=aVGBNafn8ccvV1/KO7hDblzXPn28cCskNHJE9l2KE2o=;
+        s=default; t=1577641353;
+        bh=qNId+mJDOfCuB9Q6oTfqRmdaqurH0clH61Pp/JoYDMk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fZaVAxK4qe8DUwYt57yNWinwY/Vej2xYbmL5BzG0inlfNW7fyDjIAfumQmpoulQ/4
-         ipYpHyvAvW2KDf3TIG0pd6/RFGcfQiCHTVoDx5s2nbRggBoFMvD+DHYvVFY7KZuWeb
-         c1ZNIZ7gQmUBc6Vgh0QQ+Aed/ehvUf6Wh5aw7Cqc=
+        b=yJ5lU6/j0PmvRfV4Jv6tJmNSM6h+5WLxemYLNGUbJPF/OECA0af68S55xGVDpxvi5
+         00LCeLrTLoOVMwKNX4wUkWuy9TXWwM2zQWnPX6RV6VL7p4KiAYeI40irAv2NVY59bm
+         qqQ0CEM2mGT7T1Xq+99JSI/A/TFPjzNkUBAHKy48=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 030/434] Btrfs: make tree checker detect checksum items with overlapping ranges
-Date:   Sun, 29 Dec 2019 18:21:23 +0100
-Message-Id: <20191229172704.048754998@linuxfoundation.org>
+Subject: [PATCH 5.4 031/434] btrfs: return error pointer from alloc_test_extent_buffer
+Date:   Sun, 29 Dec 2019 18:21:24 +0100
+Message-Id: <20191229172704.108035251@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -43,73 +43,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit ad1d8c439978ede77cbf73cbdd11bafe810421a5 upstream.
+commit b6293c821ea8fa2a631a2112cd86cd435effeb8b upstream.
 
-Having checksum items, either on the checksums tree or in a log tree, that
-represent ranges that overlap each other is a sign of a corruption. Such
-case confuses the checksum lookup code and can result in not being able to
-find checksums or find stale checksums.
+Callers of alloc_test_extent_buffer have not correctly interpreted the
+return value as error pointer, as alloc_test_extent_buffer should behave
+as alloc_extent_buffer. The self-tests were unaffected but
+btrfs_find_create_tree_block could call both functions and that would
+cause problems up in the call chain.
 
-So add a check for such case.
-
-This is motivated by a recent fix for a case where a log tree had checksum
-items covering ranges that overlap each other due to extent cloning, and
-resulted in missing checksums after replaying the log tree. It also helps
-detect past issues such as stale and outdated checksums due to overlapping,
-commit 27b9a8122ff71a ("Btrfs: fix csum tree corruption, duplicate and
-outdated checksums").
-
+Fixes: faa2dbf004e8 ("Btrfs: add sanity tests for new qgroup accounting code")
 CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-checker.c |   18 ++++++++++++++++--
- 1 file changed, 16 insertions(+), 2 deletions(-)
+ fs/btrfs/extent_io.c                   |    6 ++++--
+ fs/btrfs/tests/free-space-tree-tests.c |    4 ++--
+ fs/btrfs/tests/qgroup-tests.c          |    4 ++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
---- a/fs/btrfs/tree-checker.c
-+++ b/fs/btrfs/tree-checker.c
-@@ -243,7 +243,7 @@ static int check_extent_data_item(struct
- }
- 
- static int check_csum_item(struct extent_buffer *leaf, struct btrfs_key *key,
--			   int slot)
-+			   int slot, struct btrfs_key *prev_key)
- {
- 	struct btrfs_fs_info *fs_info = leaf->fs_info;
- 	u32 sectorsize = fs_info->sectorsize;
-@@ -267,6 +267,20 @@ static int check_csum_item(struct extent
- 			btrfs_item_size_nr(leaf, slot), csumsize);
- 		return -EUCLEAN;
- 	}
-+	if (slot > 0 && prev_key->type == BTRFS_EXTENT_CSUM_KEY) {
-+		u64 prev_csum_end;
-+		u32 prev_item_size;
-+
-+		prev_item_size = btrfs_item_size_nr(leaf, slot - 1);
-+		prev_csum_end = (prev_item_size / csumsize) * sectorsize;
-+		prev_csum_end += prev_key->offset;
-+		if (prev_csum_end > key->offset) {
-+			generic_err(leaf, slot - 1,
-+"csum end range (%llu) goes beyond the start range (%llu) of the next csum item",
-+				    prev_csum_end, key->offset);
-+			return -EUCLEAN;
-+		}
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5066,12 +5066,14 @@ struct extent_buffer *alloc_test_extent_
+ 		return eb;
+ 	eb = alloc_dummy_extent_buffer(fs_info, start);
+ 	if (!eb)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 	eb->fs_info = fs_info;
+ again:
+ 	ret = radix_tree_preload(GFP_NOFS);
+-	if (ret)
++	if (ret) {
++		exists = ERR_PTR(ret);
+ 		goto free_eb;
 +	}
- 	return 0;
- }
+ 	spin_lock(&fs_info->buffer_lock);
+ 	ret = radix_tree_insert(&fs_info->buffer_radix,
+ 				start >> PAGE_SHIFT, eb);
+--- a/fs/btrfs/tests/free-space-tree-tests.c
++++ b/fs/btrfs/tests/free-space-tree-tests.c
+@@ -463,9 +463,9 @@ static int run_test(test_func_t test_fun
+ 	root->fs_info->tree_root = root;
  
-@@ -1239,7 +1253,7 @@ static int check_leaf_item(struct extent
- 		ret = check_extent_data_item(leaf, key, slot, prev_key);
- 		break;
- 	case BTRFS_EXTENT_CSUM_KEY:
--		ret = check_csum_item(leaf, key, slot);
-+		ret = check_csum_item(leaf, key, slot, prev_key);
- 		break;
- 	case BTRFS_DIR_ITEM_KEY:
- 	case BTRFS_DIR_INDEX_KEY:
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_std_err(TEST_ALLOC_EXTENT_BUFFER);
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
+--- a/fs/btrfs/tests/qgroup-tests.c
++++ b/fs/btrfs/tests/qgroup-tests.c
+@@ -484,9 +484,9 @@ int btrfs_test_qgroups(u32 sectorsize, u
+ 	 * *cough*backref walking code*cough*
+ 	 */
+ 	root->node = alloc_test_extent_buffer(root->fs_info, nodesize);
+-	if (!root->node) {
++	if (IS_ERR(root->node)) {
+ 		test_err("couldn't allocate dummy buffer");
+-		ret = -ENOMEM;
++		ret = PTR_ERR(root->node);
+ 		goto out;
+ 	}
+ 	btrfs_set_header_level(root->node, 0);
 
 
