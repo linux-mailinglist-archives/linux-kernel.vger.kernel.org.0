@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3C5112C76E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0D8E12C9BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728797AbfL2R3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:29:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54144 "EHLO mail.kernel.org"
+        id S1729726AbfL2SNn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:13:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728778AbfL2R33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:29:29 -0500
+        id S1728496AbfL2R1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:27:53 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D097207FD;
-        Sun, 29 Dec 2019 17:29:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9984320722;
+        Sun, 29 Dec 2019 17:27:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640568;
-        bh=prkrhnJRoSbtS7JX9q8fq7A4FByQwa0ZP1hOz0/cf8c=;
+        s=default; t=1577640473;
+        bh=3LB8rqRiyIvwRRLvI8gR+OWS2XUtX3mgWIjjIKtzew8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pIgeyKdhmN2kWorL2MaZiaSAH9T7SE/kUZtToIu479RK1XwLA4y/oCB3RKdTBbu3J
-         vYNmMdKFuFDAhFAWmZvCX/xhwLcKpm9go3Apz2J0JQksgM4567gfL5IbpiTfPC36d9
-         Qra/bjuJ5z6QzFAL6V//gmO/msnkBKaGFYRrhLcg=
+        b=Eig6ZBNe2Hfqg2zuyE4PPfPQzLbOI3+NH7wn3FJq9lTFRsY0QWxYUyKLgdIIpr6j7
+         BXEBw8tUfNjRmMprMWHqaWj26VAshzSUSE6iJIIiGQ5rErCZZ0HQnk8koNGh01EJWs
+         ThH+hv61iQES3fw8oYC++1GPgV6NVLpuLz7R4bUA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Cristian Birsan <cristian.birsan@microchip.com>,
+        stable@vger.kernel.org, Manish Chopra <manishc@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 009/219] net: usb: lan78xx: Fix suspend/resume PHY register access error
-Date:   Sun, 29 Dec 2019 18:16:51 +0100
-Message-Id: <20191229162510.345406284@linuxfoundation.org>
+Subject: [PATCH 4.19 011/219] qede: Fix multicast mac configuration
+Date:   Sun, 29 Dec 2019 18:16:53 +0100
+Message-Id: <20191229162510.736284506@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
 References: <20191229162508.458551679@linuxfoundation.org>
@@ -44,34 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cristian Birsan <cristian.birsan@microchip.com>
+From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit 20032b63586ac6c28c936dff696981159913a13f ]
+[ Upstream commit 0af67e49b018e7280a4227bfe7b6005bc9d3e442 ]
 
-Lan78xx driver accesses the PHY registers through MDIO bus over USB
-connection. When performing a suspend/resume, the PHY registers can be
-accessed before the USB connection is resumed. This will generate an
-error and will prevent the device to resume correctly.
-This patch adds the dependency between the MDIO bus and USB device to
-allow correct handling of suspend/resume.
+Driver doesn't accommodate the configuration for max number
+of multicast mac addresses, in such particular case it leaves
+the device with improper/invalid multicast configuration state,
+causing connectivity issues (in lacp bonding like scenarios).
 
-Fixes: ce85e13ad6ef ("lan78xx: Update to use phylib instead of mii_if_info.")
-Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/usb/lan78xx.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/qlogic/qede/qede_filter.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1823,6 +1823,7 @@ static int lan78xx_mdio_init(struct lan7
- 	dev->mdiobus->read = lan78xx_mdiobus_read;
- 	dev->mdiobus->write = lan78xx_mdiobus_write;
- 	dev->mdiobus->name = "lan78xx-mdiobus";
-+	dev->mdiobus->parent = &dev->udev->dev;
+--- a/drivers/net/ethernet/qlogic/qede/qede_filter.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_filter.c
+@@ -1230,7 +1230,7 @@ qede_configure_mcast_filtering(struct ne
+ 	netif_addr_lock_bh(ndev);
  
- 	snprintf(dev->mdiobus->id, MII_BUS_ID_SIZE, "usb-%03d:%03d",
- 		 dev->udev->bus->busnum, dev->udev->devnum);
+ 	mc_count = netdev_mc_count(ndev);
+-	if (mc_count < 64) {
++	if (mc_count <= 64) {
+ 		netdev_for_each_mc_addr(ha, ndev) {
+ 			ether_addr_copy(temp, ha->addr);
+ 			temp += ETH_ALEN;
 
 
