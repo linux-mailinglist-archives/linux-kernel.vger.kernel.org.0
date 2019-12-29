@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7886512C77F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5FB12C99C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfL2Rmx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:42:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
+        id S1732347AbfL2SLg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:11:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730133AbfL2Rmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:42:43 -0500
+        id S1730389AbfL2Rm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:42:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8525C20718;
-        Sun, 29 Dec 2019 17:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF7F0206A4;
+        Sun, 29 Dec 2019 17:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641363;
-        bh=PRylnbn24HwMZ4fyfuSUYYUeY/UQ/uiCoiFt3mZAZhc=;
+        s=default; t=1577641377;
+        bh=6B2gptAjSK2wVW8cOj99jBzyAYI7PCi1oglU0UXSJnk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V4y0IMeh2kO3QprAJfq12HWOUuL+fP6r7iGHjdCKkt9Hni01iAR227jRxo0UK74KV
-         Hy26bubyavFTBLOh26If+CN/nm+ONvBmR/8Cq15Aa1/+uplSBpsRpHIqRdar8aqiK8
-         OrRVEAd9IJtiYoRdaldEh6g1kWJ38tOmJ635kmcM=
+        b=NCGwFR06v9Wf0Mii/mLS53VFWaBwbTafFnnCpWsv3BMa8uB1SAVFDbKhVCm9nPL2a
+         RXmAS5YNx2DOjbkOcs1M18tY9cRY/6EN7D/Ywjc7zY0KIvQ05dcZbd3bV0vIAAEa0Z
+         FEayvucXGenE7ijjhPe6s0jiPX0r1/bdQrUQkMtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 5.4 035/434] btrfs: skip log replay on orphaned roots
-Date:   Sun, 29 Dec 2019 18:21:28 +0100
-Message-Id: <20191229172704.366629402@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.4 040/434] ALSA: hda/ca0132 - Keep power on during processing DSP response
+Date:   Sun, 29 Dec 2019 18:21:33 +0100
+Message-Id: <20191229172704.698827055@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,78 +42,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 9bc574de590510eff899c3ca8dbaf013566b5efe upstream.
+commit 377bc0cfabce0244632dada19060839ced4e6949 upstream.
 
-My fsstress modifications coupled with generic/475 uncovered a failure
-to mount and replay the log if we hit a orphaned root.  We do not want
-to replay the log for an orphan root, but it's completely legitimate to
-have an orphaned root with a log attached.  Fix this by simply skipping
-replaying the log.  We still need to pin it's root node so that we do
-not overwrite it while replaying other logs, as we re-read the log root
-at every stage of the replay.
+We need to keep power on while processing the DSP response via unsol
+event.  Each snd_hda_codec_read() call does the power management, so
+it should work normally, but still it's safer to keep the power up for
+the whole function.
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: a73d511c4867 ("ALSA: hda/ca0132: Add unsol handler for DSP and jack detection")
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191213085111.22855-2-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/tree-log.c |   23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ sound/pci/hda/patch_ca0132.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/btrfs/tree-log.c
-+++ b/fs/btrfs/tree-log.c
-@@ -6337,9 +6337,28 @@ again:
- 		wc.replay_dest = btrfs_read_fs_root_no_name(fs_info, &tmp_key);
- 		if (IS_ERR(wc.replay_dest)) {
- 			ret = PTR_ERR(wc.replay_dest);
-+
-+			/*
-+			 * We didn't find the subvol, likely because it was
-+			 * deleted.  This is ok, simply skip this log and go to
-+			 * the next one.
-+			 *
-+			 * We need to exclude the root because we can't have
-+			 * other log replays overwriting this log as we'll read
-+			 * it back in a few more times.  This will keep our
-+			 * block from being modified, and we'll just bail for
-+			 * each subsequent pass.
-+			 */
-+			if (ret == -ENOENT)
-+				ret = btrfs_pin_extent_for_log_replay(fs_info,
-+							log->node->start,
-+							log->node->len);
- 			free_extent_buffer(log->node);
- 			free_extent_buffer(log->commit_root);
- 			kfree(log);
-+
-+			if (!ret)
-+				goto next;
- 			btrfs_handle_fs_error(fs_info, ret,
- 				"Couldn't read target root for tree log recovery.");
- 			goto error;
-@@ -6371,7 +6390,6 @@ again:
- 						  &root->highest_objectid);
- 		}
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -7588,12 +7588,14 @@ static void ca0132_process_dsp_response(
+ 	struct ca0132_spec *spec = codec->spec;
  
--		key.offset = found_key.offset - 1;
- 		wc.replay_dest->log_root = NULL;
- 		free_extent_buffer(log->node);
- 		free_extent_buffer(log->commit_root);
-@@ -6379,9 +6397,10 @@ again:
- 
- 		if (ret)
- 			goto error;
--
-+next:
- 		if (found_key.offset == 0)
- 			break;
-+		key.offset = found_key.offset - 1;
+ 	codec_dbg(codec, "ca0132_process_dsp_response\n");
++	snd_hda_power_up_pm(codec);
+ 	if (spec->wait_scp) {
+ 		if (dspio_get_response_data(codec) >= 0)
+ 			spec->wait_scp = 0;
  	}
- 	btrfs_release_path(path);
  
+ 	dspio_clear_response_queue(codec);
++	snd_hda_power_down_pm(codec);
+ }
+ 
+ static void hp_callback(struct hda_codec *codec, struct hda_jack_callback *cb)
 
 
