@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3236D12C405
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:25:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1087D12C40B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:28:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfL2RZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:25:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45760 "EHLO mail.kernel.org"
+        id S1728083AbfL2RZx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:25:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727687AbfL2RZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:25:40 -0500
+        id S1728055AbfL2RZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:25:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A83520409;
-        Sun, 29 Dec 2019 17:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4675222C3;
+        Sun, 29 Dec 2019 17:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640339;
-        bh=u1vbAAODFFibUTO2yMqM38STXoTtYukUrreTORXp/oo=;
+        s=default; t=1577640349;
+        bh=uoCCVQ2E57o2gFfchddEt7qarpWnf+VxEsTdlCEr9+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qiB4Rt8zVakqw5p/5MACHIJKN5YnjL8z9QW1SyKRl1geAYVkIJkLXMNLCj4qytaS
-         NWhbuA6/E9BysF3xbTd7Sx8SG2YLrMRhop27O9F7iPBNPUvlUS/uxRUjiKHLOZ3Owj
-         JjQlzN1IpX5yftFr+IF064G7Jtvykm7EgQoT/lSg=
+        b=Y82w45mdpUIvw5Az2/09XP8MwdL3jrh3WsLVg2wezDm1RNd6wKvVNezLiUEvK4WyD
+         Ho/1uuep1hgpwaZh2jnVnPId9l7hUz6I7R/H6SzjC/p1ABDNX550NVuY9peybv6enM
+         9gbBuKwPcez2HsjY7sAUBRoSy0mA2Be4KW5wvTjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        stable@vger.kernel.org, Wang Xuerui <wangxuerui@qiniu.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 116/161] parport: load lowlevel driver if ports not found
-Date:   Sun, 29 Dec 2019 18:19:24 +0100
-Message-Id: <20191229162432.956449135@linuxfoundation.org>
+Subject: [PATCH 4.14 119/161] iwlwifi: mvm: fix unaligned read of rx_pkt_status
+Date:   Sun, 29 Dec 2019 18:19:27 +0100
+Message-Id: <20191229162434.759414101@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -44,70 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+From: Wang Xuerui <wangxuerui@qiniu.com>
 
-[ Upstream commit 231ec2f24dad18d021b361045bbd618ba62a274e ]
+[ Upstream commit c5aaa8be29b25dfe1731e9a8b19fd91b7b789ee3 ]
 
-Usually all the distro will load the parport low level driver as part
-of their initialization. But we can get into a situation where all the
-parallel port drivers are built as module and we unload all the modules
-at a later time. Then if we just do "modprobe parport" it will only
-load the parport module and will not load the low level driver which
-will actually register the ports. So, check the bus if there is any
-parport registered, if not, load the low level driver.
+This is present since the introduction of iwlmvm.
+Example stack trace on MIPS:
 
-We can get into the above situation with all distro but only Suse has
-setup the alias for "parport_lowlevel" and so it only works in Suse.
-Users of Debian based distro will need to load the lowlevel module
-manually.
+[<ffffffffc0789328>] iwl_mvm_rx_rx_mpdu+0xa8/0xb88 [iwlmvm]
+[<ffffffffc0632b40>] iwl_pcie_rx_handle+0x420/0xc48 [iwlwifi]
 
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Link: https://lore.kernel.org/r/20191016144540.18810-3-sudipm.mukherjee@gmail.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Tested with a Wireless AC 7265 for ~6 months, confirmed to fix the
+problem. No other unaligned accesses are spotted yet.
+
+Signed-off-by: Wang Xuerui <wangxuerui@qiniu.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/parport/share.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/rx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/parport/share.c b/drivers/parport/share.c
-index 7b4ee33c1935..15c81cffd2de 100644
---- a/drivers/parport/share.c
-+++ b/drivers/parport/share.c
-@@ -230,6 +230,18 @@ static int port_check(struct device *dev, void *dev_drv)
- 	return 0;
- }
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/rx.c b/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
+index c73e4be9bde3..c31303d13069 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rx.c
+@@ -62,6 +62,7 @@
+  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  *****************************************************************************/
++#include <asm/unaligned.h>
+ #include <linux/etherdevice.h>
+ #include <linux/skbuff.h>
+ #include "iwl-trans.h"
+@@ -290,7 +291,7 @@ void iwl_mvm_rx_rx_mpdu(struct iwl_mvm *mvm, struct napi_struct *napi,
+ 	rx_res = (struct iwl_rx_mpdu_res_start *)pkt->data;
+ 	hdr = (struct ieee80211_hdr *)(pkt->data + sizeof(*rx_res));
+ 	len = le16_to_cpu(rx_res->byte_count);
+-	rx_pkt_status = le32_to_cpup((__le32 *)
++	rx_pkt_status = get_unaligned_le32((__le32 *)
+ 		(pkt->data + sizeof(*rx_res) + len));
  
-+/*
-+ * Iterates through all the devices connected to the bus and return 1
-+ * if the device is a parallel port.
-+ */
-+
-+static int port_detect(struct device *dev, void *dev_drv)
-+{
-+	if (is_parport(dev))
-+		return 1;
-+	return 0;
-+}
-+
- /**
-  *	parport_register_driver - register a parallel port device driver
-  *	@drv: structure describing the driver
-@@ -282,6 +294,15 @@ int __parport_register_driver(struct parport_driver *drv, struct module *owner,
- 		if (ret)
- 			return ret;
- 
-+		/*
-+		 * check if bus has any parallel port registered, if
-+		 * none is found then load the lowlevel driver.
-+		 */
-+		ret = bus_for_each_dev(&parport_bus_type, NULL, NULL,
-+				       port_detect);
-+		if (!ret)
-+			get_lowlevel_driver();
-+
- 		mutex_lock(&registration_lock);
- 		if (drv->match_port)
- 			bus_for_each_dev(&parport_bus_type, NULL, drv,
+ 	/* Dont use dev_alloc_skb(), we'll have enough headroom once
 -- 
 2.20.1
 
