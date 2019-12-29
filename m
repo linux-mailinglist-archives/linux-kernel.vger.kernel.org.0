@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDE3E12C660
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B259F12C662
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731058AbfL2RqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:46:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55928 "EHLO mail.kernel.org"
+        id S1731082AbfL2Rq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:46:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731047AbfL2RqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:46:17 -0500
+        id S1731059AbfL2RqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:46:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 262D824670;
-        Sun, 29 Dec 2019 17:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02C45207FD;
+        Sun, 29 Dec 2019 17:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641576;
-        bh=hXZmK+bkVoyydZcV2t6icF7qk4k967/iyGDHo0RHLoY=;
+        s=default; t=1577641581;
+        bh=7n4dLVhug/MW4tU0tHSU9xP1KOHu9yfjbj2Fml1wVEs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wnZdZOiUoTFUkL/jiNdEa+6ORfKTjZxvfFOiI8bVibpx43aAAe1MnSnN/9l8geAIb
-         qB9mz7RNQyoXef7qs8P0orZCTpxibHPRDtR6X76gia8sA7+B7xSnD/Yd2yW74RIdmQ
-         Q6YHVRIYxHxRhsSxsq1A75545PNGbPcLn51x9zJk=
+        b=MID9bwUAVAHuZiKGFir+8JKd7FnvZBSY1eKWiGhvAktyRinaJ6pnJDz1rjrgvvCfa
+         3zk3au3HafgKLR5p2azZ5+WdrWCedoxalgA9bcyc7++JRJtTkCG7/1ryKTtQitw+sZ
+         wY76eZSqq0syV7jQ9zD2IbP9oBExzgiLWRP4ICAg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Pascal van Leeuwen <pvanleeuwen@verimatrix.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 123/434] crypto: inside-secure - Fix a maybe-uninitialized warning
-Date:   Sun, 29 Dec 2019 18:22:56 +0100
-Message-Id: <20191229172709.865939809@linuxfoundation.org>
+Subject: [PATCH 5.4 125/434] misc: fastrpc: fix memory leak from miscdev->name
+Date:   Sun, 29 Dec 2019 18:22:58 +0100
+Message-Id: <20191229172710.001573260@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,42 +45,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-[ Upstream commit 74e6bd472b6d9e80ec9972989d8991736fe46c51 ]
+[ Upstream commit 2d10d2d170723e9278282458a6704552dcb77eac ]
 
-A previous fixup avoided an unused variable warning but replaced
-it with a slightly scarier warning:
+Fix a memory leak in miscdev->name by using devm_variant
 
-drivers/crypto/inside-secure/safexcel.c:1100:6: error: variable 'irq' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+Orignally reported by kmemleak:
+    [<ffffff80088b74d8>] kmemleak_alloc+0x50/0x84
+    [<ffffff80081e015c>] __kmalloc_track_caller+0xe8/0x168
+    [<ffffff8008371ab0>] kvasprintf+0x78/0x100
+    [<ffffff8008371c6c>] kasprintf+0x50/0x74
+    [<ffffff8008507f2c>] fastrpc_rpmsg_probe+0xd8/0x20c
+    [<ffffff80086b63b4>] rpmsg_dev_probe+0xa8/0x148
+    [<ffffff80084de50c>] really_probe+0x208/0x248
+    [<ffffff80084de2dc>] driver_probe_device+0x98/0xc0
+    [<ffffff80084dec6c>] __device_attach_driver+0x9c/0xac
+    [<ffffff80084dca8c>] bus_for_each_drv+0x60/0x8c
+    [<ffffff80084de64c>] __device_attach+0x8c/0x100
+    [<ffffff80084de6e0>] device_initial_probe+0x20/0x28
+    [<ffffff80084dcbd0>] bus_probe_device+0x34/0x7c
+    [<ffffff80084da32c>] device_add+0x420/0x498
+    [<ffffff80084da680>] device_register+0x24/0x2c
 
-This is harmless as it is impossible to get into this case, but
-the compiler has no way of knowing that. Add an explicit error
-handling case to make it obvious to both compilers and humans
-reading the source.
-
-Fixes: 212ef6f29e5b ("crypto: inside-secure - Fix unused variable warning when CONFIG_PCI=n")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Pascal van Leeuwen <pvanleeuwen@verimatrix.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Link: https://lore.kernel.org/r/20191009144123.24583-3-srinivas.kandagatla@linaro.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/inside-secure/safexcel.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/misc/fastrpc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/crypto/inside-secure/safexcel.c b/drivers/crypto/inside-secure/safexcel.c
-index 294debd435b6..991a4425f006 100644
---- a/drivers/crypto/inside-secure/safexcel.c
-+++ b/drivers/crypto/inside-secure/safexcel.c
-@@ -1120,6 +1120,8 @@ static int safexcel_request_ring_irq(void *pdev, int irqid,
- 				irq_name, irq);
- 			return irq;
- 		}
-+	} else {
-+		return -ENXIO;
- 	}
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 1b1a794d639d..842f2210dc7e 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -1430,8 +1430,8 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+ 		return -ENOMEM;
  
- 	ret = devm_request_threaded_irq(dev, irq, handler,
+ 	data->miscdev.minor = MISC_DYNAMIC_MINOR;
+-	data->miscdev.name = kasprintf(GFP_KERNEL, "fastrpc-%s",
+-				domains[domain_id]);
++	data->miscdev.name = devm_kasprintf(rdev, GFP_KERNEL, "fastrpc-%s",
++					    domains[domain_id]);
+ 	data->miscdev.fops = &fastrpc_fops;
+ 	err = misc_register(&data->miscdev);
+ 	if (err)
 -- 
 2.20.1
 
