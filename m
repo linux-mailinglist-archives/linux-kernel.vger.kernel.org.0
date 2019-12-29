@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1AA212C748
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:56:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E1B912C730
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733007AbfL2Rzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:55:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42944 "EHLO mail.kernel.org"
+        id S1732822AbfL2Ryz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732361AbfL2Ryr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:47 -0500
+        id S1732283AbfL2Ryw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:52 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34C4C206DB;
-        Sun, 29 Dec 2019 17:54:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0686720718;
+        Sun, 29 Dec 2019 17:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642086;
-        bh=Alhvg2+72tn+GgYizr728QgHtDo51MC5aDE2hkDjpc0=;
+        s=default; t=1577642091;
+        bh=r4drbKus9o7E4e65lWGg21h6B6VQGYU7jpaonTNlv+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HqE3p+nFVkOw4EYWqiThqUrLN+8/eAAdodw5RAg2Eqkg4gb86q96CmsoXvax8WcjM
-         xZ5/HWr21AGV3lAcHHktiUiCtueAhMYE6L51m0IS6+nR1Ilcl+qBonFKcGSfX0R06Z
-         KBLiOm3bT65BxMp5nZada4lJGR4yG7FGmFKwxlo4=
+        b=D+9YLcbi30Sjzwmxn1NJqSlI0u3/MuycboTUNm9pU9eTBSWrW8vhjm7TXp6rFyHLt
+         jQ3seTGmN7cDmAMT4WoIXs0m8tc9Hg4YI/KK/tY/T0FqjBL/PpTBMa8fy4k1hfMCT6
+         Yd5diClLELPrvNPPEwCbgdVbEgLbVsbTCndDv8uE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 337/434] iwlwifi: check kasprintf() return value
-Date:   Sun, 29 Dec 2019 18:26:30 +0100
-Message-Id: <20191229172724.354700068@linuxfoundation.org>
+Subject: [PATCH 5.4 339/434] ASoC: soc-pcm: check symmetry before hw_params
+Date:   Sun, 29 Dec 2019 18:26:32 +0100
+Message-Id: <20191229172724.486261658@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,50 +44,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-[ Upstream commit 5974fbb5e10b018fdbe3c3b81cb4cc54e1105ab9 ]
+[ Upstream commit 5cca59516de5df9de6bdecb328dd55fb5bcccb41 ]
 
-kasprintf() can fail, we should check the return value.
+This reverts commit 957ce0c6b8a1f (ASoC: soc-pcm: check symmetry after
+hw_params).
 
-Fixes: 5ed540aecc2a ("iwlwifi: use mac80211 throughput trigger")
-Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+That commit cause soc_pcm_params_symmetry can't take effect.
+cpu_dai->rate, cpu_dai->channels and cpu_dai->sample_bits
+are updated in the middle of soc_pcm_hw_params, so move
+soc_pcm_params_symmetry to the end of soc_pcm_hw_params is
+not a good solution, for judgement of symmetry in the function
+is always true.
+
+FIXME:
+According to the comments of that commit, I think the case
+described in the commit should disable symmetric_rates
+in Back-End, rather than changing the position of
+soc_pcm_params_symmetry.
+
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Link: https://lore.kernel.org/r/1573555602-5403-1-git-send-email-shengjiu.wang@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/dvm/led.c | 3 +++
- drivers/net/wireless/intel/iwlwifi/mvm/led.c | 3 +++
- 2 files changed, 6 insertions(+)
+ sound/soc/soc-pcm.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/led.c b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-index dd387aba3317..e8a4d604b910 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-@@ -171,6 +171,9 @@ void iwl_leds_init(struct iwl_priv *priv)
+diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+index cdce96a3051b..a6e96cf1d8ff 100644
+--- a/sound/soc/soc-pcm.c
++++ b/sound/soc/soc-pcm.c
+@@ -877,6 +877,11 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	int i, ret = 0;
  
- 	priv->led.name = kasprintf(GFP_KERNEL, "%s-led",
- 				   wiphy_name(priv->hw->wiphy));
-+	if (!priv->led.name)
-+		return;
+ 	mutex_lock_nested(&rtd->card->pcm_mutex, rtd->card->pcm_subclass);
 +
- 	priv->led.brightness_set = iwl_led_brightness_set;
- 	priv->led.blink_set = iwl_led_blink_set;
- 	priv->led.max_brightness = 1;
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/led.c b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-index d104da9170ca..72c4b2b8399d 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-@@ -129,6 +129,9 @@ int iwl_mvm_leds_init(struct iwl_mvm *mvm)
- 
- 	mvm->led.name = kasprintf(GFP_KERNEL, "%s-led",
- 				   wiphy_name(mvm->hw->wiphy));
-+	if (!mvm->led.name)
-+		return -ENOMEM;
++	ret = soc_pcm_params_symmetry(substream, params);
++	if (ret)
++		goto out;
 +
- 	mvm->led.brightness_set = iwl_led_brightness_set;
- 	mvm->led.max_brightness = 1;
+ 	if (rtd->dai_link->ops->hw_params) {
+ 		ret = rtd->dai_link->ops->hw_params(substream, params);
+ 		if (ret < 0) {
+@@ -958,9 +963,6 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	}
+ 	component = NULL;
  
+-	ret = soc_pcm_params_symmetry(substream, params);
+-        if (ret)
+-		goto component_err;
+ out:
+ 	mutex_unlock(&rtd->card->pcm_mutex);
+ 	return ret;
 -- 
 2.20.1
 
