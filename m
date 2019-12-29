@@ -2,107 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4267712C134
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 09:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B1C12C20F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 09:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfL2IHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 03:07:07 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37160 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfL2IGw (ORCPT
+        id S1726442AbfL2Iex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 03:34:53 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34083 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfL2Iex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 03:06:52 -0500
-Received: by mail-pl1-f193.google.com with SMTP id c23so13500631plz.4;
-        Sun, 29 Dec 2019 00:06:52 -0800 (PST)
+        Sun, 29 Dec 2019 03:34:53 -0500
+Received: by mail-pl1-f194.google.com with SMTP id x17so13520202pln.1
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 00:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=47el5Owup02YUbMebGEaPI3XvpkPXD+FFtHlPrEyxFA=;
-        b=MIXP/grZx6mWbEPfFXoqRs3JDVjT04SNhSSWru67t/m2eIdF2cqFP0yxHw3B0ADWzA
-         Mj3R/G2Hv0hE88wKCIVgrmJUyZU1RwbGy8FRZe4fVCKonv6vI4DRiJPdpxqydIsjM3Ll
-         MCKmGePOPt3QMQPqZx5luh3T2jxYbH9ahKrCYeSs4sO6/eCjeQcZxqD6zWnTnfkm1VFm
-         4VeDCHj74to92KPKBIPeT1p5Tr6sWXUDo8dBqmrioiHBkpdcY169L96miePLUYBE4YgA
-         TCVBtRbuC058Y/EY2qJFGEXH571X/xpG8vWrH0jA9cQoeT147Yy9P95L7fSgzdeip8Gu
-         i2pA==
+        h=from:to:cc:subject:date:message-id;
+        bh=KfH/WTQPO3RAECd+zAOPLsSZgZBZzVlcd2UC7GE6hHI=;
+        b=HjZhdwZFBILUa0gDqSqR/mg+0PQwknRsIcB/VLzPUY+J+KMvw9OungGwFD89RHhSkE
+         EJiA7z5nkLPYbEyIuAY3IVyfmsnS/wgwShJmDjEqjBYs8QV3V5WbO7rVqruuxCs02Cxo
+         VG7Beby37w6OC9vJGZWgaOIovtAvtIdP30nxzaWO1bq7UogRyYh2k7x7RloFVcuV/zeR
+         +iMHzyTinyElHp5ankRYcCVfT1dnsQJyFb8acxL7YCOAA5rY1szoL6AxvVVVhjaxPrUb
+         /Q2D4kmslrhN7eMuygWxjfl2NcoZRu8zsz7RP0+riWKuZ/dCw0hkoqjlpbftgg7MPpbf
+         dgSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=47el5Owup02YUbMebGEaPI3XvpkPXD+FFtHlPrEyxFA=;
-        b=YTchNnC5dRazcfYwZQnWEGE/HSMM8bcTquPkOgZrgZwHK+okdqPWctUgpJn3pii7d+
-         20fUId15gILbjYR3Hy36hTPyCEVhuHCRbCwaO+ByHQt3jVCoeyLj9yMTYqCffZjBcR8d
-         MlDSVDYyL8WJIo7vM+x1PmT/gb5ssj5eCIAqCgpXkefGkQXhkXosxy0PHa6h0GHUWfZQ
-         V4Fxg2ESC4E8g1BDOaM6EpTE3Ld2GKf9ygNf7aN4Do0v6El/2eFYmlKRiCPZihi/lzCw
-         2EHGq34gMzXfQ5OBmgj16zW1uYbPNujpYFSiNzxpiGcviM0OgyjouxdQermPdDMluymv
-         JMOQ==
-X-Gm-Message-State: APjAAAUf2x+RHVbVPZ2d53ITY4njq6E68bAAt+jf8RNne/HzmGy5fJQZ
-        LM/6NRAl5i0rbds7NWk4caI=
-X-Google-Smtp-Source: APXvYqx0/m9vcRiiE8VyrTjc7rP0/kHdHXJwPeS5Tef1XK44wL7jcNW0xwmNSTXH2Pe6rwcBvhW0LA==
-X-Received: by 2002:a17:90a:3763:: with SMTP id u90mr38493406pjb.107.1577606811634;
-        Sun, 29 Dec 2019 00:06:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KfH/WTQPO3RAECd+zAOPLsSZgZBZzVlcd2UC7GE6hHI=;
+        b=bgJgJt60tHd6EDpSinpW6nSt2EtLg1lJFtsV+bWpsvoDFbPixjwJ7oZSviX0F6t9Sa
+         rYgDId1+x7lJYQlnaHgNd6W8DRm7tfsWYQCZ3TWSX8iny9nFSBwtyRI2EZGqlGXP0eDw
+         s9fnihjDaiLNXDGk3EIvUv51EBkbRJ1Ep+gbBWztxybr2cnBy1TqU9L9VUM8o8zbaQdl
+         75cW42U3pHZ7aeyYHUfvbmAxXHumg+N+pg+dVRUEEcSad2SPx2+zat7P34Xg+Ku6+JWp
+         DLnv4ifphynUVrtf4Ezf+G6lTVYiQ915M6U+1WThI1hZJIRpJ+6dW4BV8Pfv79mTzpcn
+         lwRw==
+X-Gm-Message-State: APjAAAVByCundIkezGbxbo5HhzMSK4d0MlOUSoPx9eDEKHCgh2Njcsfj
+        E23OWq8GbCagsy4y/909Xc0=
+X-Google-Smtp-Source: APXvYqzbiowcOGtzTTQUN2pAqzBokwRtvlna4OMKNSR1mYzHhsYfAJP3oRRLZpQCCvEh/oZLdtTBPg==
+X-Received: by 2002:a17:90b:1115:: with SMTP id gi21mr38495722pjb.95.1577608492912;
+        Sun, 29 Dec 2019 00:34:52 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id a26sm37945389pfo.27.2019.12.29.00.06.50
+        by smtp.gmail.com with ESMTPSA id f30sm43166569pga.20.2019.12.29.00.34.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Dec 2019 00:06:51 -0800 (PST)
+        Sun, 29 Dec 2019 00:34:52 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
-To:     claudiu.beznea@microchip.com, thierry.reding@gmail.com,
-        u.kleine-koenig@pengutronix.de, nicolas.ferre@microchip.com,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, f.fainelli@gmail.com,
-        nsaenzjulienne@suse.de, shc_work@mail.ru, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        linux-imx@nxp.com, vz@mleia.com, slemieux.tyco@gmail.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com, heiko@sntech.de,
-        palmer@dabbelt.com, paul.walmsley@sifive.com, mripard@kernel.org,
-        wens@csie.org, jonathanh@nvidia.com, linux@prisktech.co.nz,
-        linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 32/32] pwm: atmel: convert to devm_platform_ioremap_resource
-Date:   Sun, 29 Dec 2019 08:06:10 +0000
-Message-Id: <20191229080610.7597-32-tiny.windzz@gmail.com>
+To:     ira.weiny@intel.com, hubcap@omnibond.com, akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH] platform: goldfish: pipe: switch to platform_get_irq
+Date:   Sun, 29 Dec 2019 08:34:50 +0000
+Message-Id: <20191229083450.8178-1-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191229080610.7597-1-tiny.windzz@gmail.com>
-References: <20191229080610.7597-1-tiny.windzz@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify code.
+platform_get_resource(pdev, IORESOURCE_IRQ) is not recommended for
+requesting IRQ's resources, as they can be not ready yet. Using
+platform_get_irq() instead is preferred for getting IRQ even if it
+was not retrieved earlier.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/pwm/pwm-atmel.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/platform/goldfish/goldfish_pipe.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index 9ba733467e26..86cc5ccaa46c 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -340,7 +340,6 @@ MODULE_DEVICE_TABLE(of, atmel_pwm_dt_ids);
- static int atmel_pwm_probe(struct platform_device *pdev)
- {
- 	struct atmel_pwm_chip *atmel_pwm;
--	struct resource *res;
- 	int ret;
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+index cef0133aa47a..a1ebaec6eea9 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -913,11 +913,9 @@ static int goldfish_pipe_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- 	atmel_pwm = devm_kzalloc(&pdev->dev, sizeof(*atmel_pwm), GFP_KERNEL);
-@@ -351,8 +350,7 @@ static int atmel_pwm_probe(struct platform_device *pdev)
- 	atmel_pwm->data = of_device_get_match_data(&pdev->dev);
- 	atmel_pwm->updated_pwms = 0;
+-	r = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (!r)
+-		return -EINVAL;
+-
+-	dev->irq = r->start;
++	dev->irq = platform_get_irq(pdev, 0);
++	if (dev->irq < 0)
++		return dev->irq;
  
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	atmel_pwm->base = devm_ioremap_resource(&pdev->dev, res);
-+	atmel_pwm->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(atmel_pwm->base))
- 		return PTR_ERR(atmel_pwm->base);
- 
+ 	/*
+ 	 * Exchange the versions with the host device
 -- 
 2.17.1
 
