@@ -2,113 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19FC12BFED
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 02:59:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 95A7312BFFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:46:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726378AbfL2B7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 20:59:09 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:39590 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfL2B7J (ORCPT
+        id S1726573AbfL2CqX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 21:46:23 -0500
+Received: from sonic303-50.consmr.mail.gq1.yahoo.com ([98.137.64.232]:41285
+        "EHLO sonic303-50.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726329AbfL2CqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 20:59:09 -0500
-Received: by mail-pj1-f68.google.com with SMTP id t101so6669453pjb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 17:59:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B0YqCZdtASo8W3+DNsZKxEkKUnEoAfpsuE3h6bg+BKA=;
-        b=SUBvHzkDy3ObczV/2Tibqb/J+Bch+J+BkQLTRD7VEq1pgSLY5siprwnL8ItHD8F9X0
-         CLYNPAl6cuX+YtWyUz4Jv6O3q5S6xdwYdxId7gchqdvDjxrpI174YpeyGAVnq5OCLnYu
-         mjnk8FJDiqHP2OyS9LeyMpUTtRHfWnHiSWEIuaxjubiE/JKwwlviZBeCb1t/7K0h+fYh
-         0vjWt+KfOtPAEGUy76eHmG3OAfy6XCIgbDlBxBVQINB4iZl4afyF3PioZAzKOKODRE1X
-         oQLqq8b0HCjpBZ3AJYpqPIprChvuIUnjenWvUp0O9V64bXJNy2P1yqNwOkoX6pEoUsOG
-         rZuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B0YqCZdtASo8W3+DNsZKxEkKUnEoAfpsuE3h6bg+BKA=;
-        b=C7VOqMat63Zep3GMJ2VBtAvFlNKFjB/ZIUadzXWPdAvXFqpmr+LjrMwFh9u/MUqalf
-         hJtdLY3XSf+tQs1TM3USo8wZDonwZS2zscj0UdWrXgMkJrk+cDR6XwgFqige0Gh/CuvL
-         GnXwEEjSpQCz83QQDq4M1qrFqRcvfjHxjFgmHqcQ+0oC81m44crvd++Z0O2TiEemNfFr
-         IUj8pEnjfHLXfegRWmyyN0iUuXZ3mXgF2LjCNTelBHjFCT2wwH32Pbq23hgN4piT6xkl
-         TAKpoqTI2l5aJ+kC34QaySMFcdcpIKDAO70G6V4zhdiVISNhjO1Ls7b9pKQSM9FU9ykH
-         Twlw==
-X-Gm-Message-State: APjAAAULyJH87uDPXLwPxXdIhXACtS+VmvgRzLBykOkDJxHL2bZGjtmq
-        LwVVD5I/Q4KjIVt4EAgZgYn/Og==
-X-Google-Smtp-Source: APXvYqwFD0Z6M2ULKf78TvessQAN+owraVNT/WM/LcoBIbydcpRlk+A9rbJjuwmOeeAvLemOFIwgmw==
-X-Received: by 2002:a17:90b:d94:: with SMTP id bg20mr34993201pjb.99.1577584748559;
-        Sat, 28 Dec 2019 17:59:08 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p185sm46804599pfg.61.2019.12.28.17.59.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 17:59:07 -0800 (PST)
-Date:   Sat, 28 Dec 2019 17:59:04 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     jassisinghbrar@gmail.com, nsaenzjulienne@suse.de,
-        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
-        bcm-kernel-feedback-list@broadcom.com, lftan@altera.com,
-        matthias.bgg@gmail.com, agross@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        nios2-dev@lists.rocketboards.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 03/13] mailbox: qcom-apcs: convert to
- devm_platform_ioremap_resource
-Message-ID: <20191229015904.GG3755841@builder>
-References: <20191228183538.26189-1-tiny.windzz@gmail.com>
- <20191228183538.26189-3-tiny.windzz@gmail.com>
+        Sat, 28 Dec 2019 21:46:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1577587580; bh=6/Q6SNynxNQ8G8c617T7+WEqsKRr7oL+1YtlRaUeq+g=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=uFXDgE/66xF3EsVJ5mGL8atE1oRVvcYc6hPaDiBcac66mzEHDWyJ8RhU3AmPuSlOxO8e0TwAFolvxlm3CMZ/snPwUa5Rtrx06Z+y/Hi1e66j5CbsllR/gzCnrSe/Jja7OLU5BwLnGStWQJwhVccBDTfaHyPP8tbbHXXW3PpAvqZasMJ3gzDSYt50VVZuedsHjduwJlRWMATPZMUkO52QBn5rfUWP5bz+JLtXE0Tvw4xkt4ggyl7uu0Rn1b2MzFhbaCg1Nf31LxmP3tK6PqfTzJP71i+7vxQssSjipJ9lAndoXSxUf9zGNflDuEuh6/Kj9pZbm6rqVo3y+xJKwiogQA==
+X-YMail-OSG: N_6BpMEVRDvd.miR6A7lED5GPdAEx7ojsA--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.gq1.yahoo.com with HTTP; Sun, 29 Dec 2019 02:46:20 +0000
+Received: by smtp424.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 9f863a345b562991edc35c48481656f9;
+          Sun, 29 Dec 2019 02:44:18 +0000 (UTC)
+Date:   Sun, 29 Dec 2019 10:44:08 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Miao Xie <miaoxie@huawei.com>
+Subject: Re: [PATCH RESEND] erofs: convert to use the new mount fs_context api
+Message-ID: <20191229024406.GA2215@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20191226022519.53386-1-yuchao0@huawei.com>
+ <20191227035016.GA142350@architecture4>
+ <20191228212156.GU4203@ZenIV.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191228183538.26189-3-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191228212156.GU4203@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Mailer: WebService/1.1.14873 hermes Apache-HttpAsyncClient/4.1.4 (Java/1.8.0_181)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 28 Dec 10:35 PST 2019, Yangtao Li wrote:
-
-> Use devm_platform_ioremap_resource() to simplify code.
+On Sat, Dec 28, 2019 at 09:21:56PM +0000, Al Viro wrote:
+> On Fri, Dec 27, 2019 at 11:50:16AM +0800, Gao Xiang wrote:
+> > Hi Al,
+> > 
+> > Greeting, we plan to convert erofs to new mount api for 5.6
+> > 
+> > and I just notice your branch
+> > https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git/log/?h=untested.fs_parse
+> > 
+> > do a lot further work on fs context (e.g. "get rid of ->enums",
+> > "remove fs_parameter_description name field" and switch to
+> > use XXXfc() instead of XXXf() with prefixed string).
+> > 
+> > Does it plan for 5.6 as well? If yes, we will update this patch
+> > based on the latest branch and maybe have chance to go though
+> > your tree if it can?
 > 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> FWIW, I would add the following to what you've already mentioned:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Thanks for your reply and confirmation.
 
-> ---
->  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
 > 
-> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> index eeebafd546e5..0faf69137780 100644
-> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
-> @@ -49,7 +49,6 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  {
->  	struct qcom_apcs_ipc *apcs;
->  	struct regmap *regmap;
-> -	struct resource *res;
->  	unsigned long offset;
->  	void __iomem *base;
->  	unsigned long i;
-> @@ -64,8 +63,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->  	if (!apcs)
->  		return -ENOMEM;
->  
-> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	base = devm_ioremap_resource(&pdev->dev, res);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -- 
-> 2.17.1
+> > > +static const struct fs_parameter_spec erofs_param_specs[] = {
+> > > +	fsparam_flag("user_xattr",	Opt_user_xattr),
+> > > +	fsparam_flag("nouser_xattr",	Opt_nouser_xattr),
+> > > +	fsparam_flag("acl",		Opt_acl),
+> > > +	fsparam_flag("noacl",		Opt_noacl),
+> better off as
+> 	fsparam_flag_no("user_xattr",	Opt_user_xattr),
+> 	fsparam_flag_no("acl",		Opt_acl),
+
+Got it. We didn't notice this new way. Will fix in the updated version.
+
 > 
+> > > +	case Opt_user_xattr:
+> 		if (result.boolean)
+> 			set_opt(sbi, XATTR_USER);
+> 		else
+> 			clear_opt(sbi, XATTR_USER);
+> > > +		break;
+> ....
+> > > +	default:
+> 		return -ENOPARAM;
+
+Got it.
+
+> 
+> BTW, what's the point of using invalf() in contexts where
+> the return value is ignored?  Why not simply go for errorf()
+> (or errorfc(), for that matter)?
+
+OK, We will check all invalf()s soon.
+
+And may I ask one more question about this... I'm a bit confused,
+since we have erofs_err() which print sb->s_id as well, so which
+one (errorfc or erofs_err) is more perferred to choose in especially
+fill_super()?
+
+> 
+> I do plan that branch (or an equivalent, as far as filesystems
+> are concerned - there might be a bit of additional rework in
+> the beginning + currently missing modifications of docs) for
+> 5.6.  So updated patch would be welcome - I can do that myself,
+> but if you can rebase it on top of that branch it would save
+> time.
+
+Yes, we will update this patch based on the latest branch later
+for this convert.
+
+Thanks,
+Gao Xiang
+
+
