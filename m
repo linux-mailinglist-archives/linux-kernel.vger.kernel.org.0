@@ -2,90 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63BAC12C74B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:56:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 252CB12C665
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732795AbfL2Rz7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733005AbfL2Rzv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:55:51 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDDB1206DB;
-        Sun, 29 Dec 2019 17:55:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642151;
-        bh=u9A/2TLMZQ8DdEHh04gD6YE8RFGrBOOudAH5jdn0k5c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D473GNGf/AHLsk3T9omXtgcAZCgjo3prJmYTZjEyus+EhxQkcWVWKsEZRgGvOKkgx
-         bMJq6TRyKULqwDx1LI0hhrqksU2QC/EjjAl/XOcPl902wkjUIsAYF2tZyUuAcfIX4H
-         7RxYNpQGILivn2C28qValVi9kcvyIwv0pAfKBCJY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        Omar Sandoval <osandov@fb.com>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 362/434] btrfs: dont prematurely free work in scrub_missing_raid56_worker()
-Date:   Sun, 29 Dec 2019 18:26:55 +0100
-Message-Id: <20191229172726.017909858@linuxfoundation.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
-References: <20191229172702.393141737@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S1731099AbfL2Rqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:46:32 -0500
+Received: from smtpgwv02.dogantelekom.com ([213.243.1.84]:62138 "EHLO
+        smtpgwv02.dogantelekom.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731060AbfL2Rq0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:46:26 -0500
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Sun, 29 Dec 2019 12:46:22 EST
+X-AuditID: d5f30154-30bff70000001822-12-5e08e2e6441c
+Received: from dolhst01.dol.com.tr (ftp.kozayonetim.com.tr [213.243.39.2])
+        by smtpgwv02.dogantelekom.com (D-Smart Corporate Messaging Gateway) with SMTP id 9C.BC.06178.6E2E80E5; Sun, 29 Dec 2019 20:31:18 +0300 (MSK)
+Received: from 69.164.194.72 ([69.164.194.72]) by dsmartkurumsal.com with MailEnable WebMail; Sun, 29 Dec 2019 20:31:11 +0300
+From:   "Norman HKMA cs" <nener@enercompany.com>
+Subject: 
+Date:   Sun, 29 Dec 2019 18:31:11 +0100
+Message-ID: <34CBFE7BA78C444F8FC1548BA2453ED7.MAI@dsmartkurumsal.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+        boundary="--=_NextPart_000_000B_4401273EFF49482890298C2F150C4C64"
+X-Mailer: MailEnable WebMail.NET
+X-MimeOLE: Produced By MailEnable WebMail.NET V2.0.0.0
+X-Read: 0
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0wTZxzG8969793BvO1WGbzDLHHN5oyLCItuX5LNmCxmtyVbXDYXsyWw
+        Uy4tgdKuBww2NaDIFlpGoaJrxSqxqwP9Y1RIUEmIRTMHA3Qd2onIOoVl/FJwoYSg7mw187/P
+        +z7P833+eQTW4OLShfyiYtVepBQauWQ8dPcVZu34X0JOZrV7BbTWBQjUtw2wcHr+GIbF1gss
+        OBudDBzub8Mw3TeCYMg/x8CIb4aBpivfseA7P4MhUJEK4TNNHDh/6iBw4+QDAv2+nzkYD9Vi
+        uBU6zsBvnVEWLrU38LBQPUeg8mwMQW3PKIETDj8PF6bfgj2RkyyEDupHrnWeRVDT/TeB4cZT
+        BIIXz+nPvkEMg/tK4Fq0ncDly7ME3FdOcXC/7jYHUwvjGNzfaOAYOYo3rZZnwkO83HVvlpGD
+        tR28HGu5wcmnvSO8XHngXyLfdP7Kyf3nYlh211RhOTjXwMt9Y1lyQ8/vrNxcP8rJh9pcvPxP
+        ZEp3hD/ZkvJp8pt5amF+qWpft/HzZPPV3jucrZ0tc/n3kwo0z9SgJIFK6+m92DT/kA3SH4g6
+        wjsTvIsuRj1xT4qEaUsshh8yJ2XQSs+ZuH+5lESDjsE4Y+llGvXXx1mUNtPKQPgRP0t/8dyK
+        Z1lpO/VXHeYTvSvp4v0mkuDXae/S0CNOopfGvMiFRO8Tce8T8QRn0pare9gEv0oDzZPsUYRb
+        UbpmKbaZvizNfC0jz2pS9L0UqgVWS8YOqyWI4qtBH3eiH6o+CCFJQMZl4vcHhRwDUUq1cksI
+        PS8wxufEI3X619PbrXnlZkUz59pLClUthKjAGlPEIhPJMYh5SvlXqt36WFohYGOamPvS29sM
+        kkkpVgtU1abaH6uMkDSB0vSy5WI0ql9epq9Yyzcl5AmULTBSpJtIkT+JNHnT42PTsWZTLHrX
+        ewKnd2nFyv/2NU8JcY8kUxdKr0BpW8wkt8txaLbl+Bt7N0L1ys+uL6YOh23zBz70KltD2asi
+        /me6l1KO3RVzs3wvLMwNBHYrX6e+XzK+2hKo8wW+HS6b2TrWvMk5saOx01M9tqFoybUuObvd
+        7Or+aFX2F2WjvQO71l5kB/bxBe71XR32H08c2dyTNbuteWrynfP7w+++aMSaWclaw9o15T8a
+        0270owMAAA==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+This is a multi-part message in MIME format.
 
-[ Upstream commit 57d4f0b863272ba04ba85f86bfdc0f976f0af91c ]
+----=_NextPart_000_000B_4401273EFF49482890298C2F150C4C64
+Content-type: text/plain; charset="windows-1254"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, scrub_missing_raid56_worker() puts and potentially frees
-sblock (which embeds the work item) and then submits a bio through
-scrub_wr_submit(). This is another potential instance of the bug in
-"btrfs: don't prematurely free work in run_ordered_work()". Fix it by
-dropping the reference after we submit the bio.
-
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/btrfs/scrub.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-index f7d4e03f4c5d..a0770a6aee00 100644
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -2149,14 +2149,13 @@ static void scrub_missing_raid56_worker(struct btrfs_work *work)
- 		scrub_write_block_to_dev_replace(sblock);
- 	}
- 
--	scrub_block_put(sblock);
--
- 	if (sctx->is_dev_replace && sctx->flush_all_writes) {
- 		mutex_lock(&sctx->wr_lock);
- 		scrub_wr_submit(sctx);
- 		mutex_unlock(&sctx->wr_lock);
- 	}
- 
-+	scrub_block_put(sblock);
- 	scrub_pending_bio_dec(sctx);
- }
- 
--- 
-2.20.1
+I have a business deal worth $150 Million USD which can be invested
+in any business area in your country, reply to me for more info via
+Email: Normanhkma@gmail.com
 
 
+----=_NextPart_000_000B_4401273EFF49482890298C2F150C4C64--
 
