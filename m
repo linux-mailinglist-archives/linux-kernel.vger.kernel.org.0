@@ -2,84 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 303B312C37B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 17:33:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D0D12C384
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 17:40:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfL2QdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 11:33:03 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43395 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726410AbfL2QdD (ORCPT
+        id S1726702AbfL2Qky (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 11:40:54 -0500
+Received: from netrider.rowland.org ([192.131.102.5]:34063 "HELO
+        netrider.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726597AbfL2Qkx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 11:33:03 -0500
-Received: by mail-ed1-f66.google.com with SMTP id dc19so30277380edb.10;
-        Sun, 29 Dec 2019 08:33:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=w8219L+FFqUH9cjSnRUbblLwTHC5hsqSbYNReVBrhuc=;
-        b=sRpgMPCE61t2egxQc4nMr01Sf4kXmRcMUi17WkhMzbGaO9kRz58xvXbQirrtsQgFti
-         XvXARiLmW2LAFlDpGKxjjYtdWqSqitFKr1lEWc53nhOwcxQoXR8h/xAEhaLNYqt674s8
-         y85eRCsHFXloGmAeF+lwPlHycn7eFm9wGwZIKdlHu3xDfZZ8e5wQUZTULX3slJBKcktf
-         2+UGxGm+E2COQ+0iPmAYltgC+3+HLE68J3SYlJs1B7c/cG8QC1ngn0M0MdUcFWE73n8C
-         fnWNoDfviLmTB1Emz6GR1KE9w31Ap6BdEa+ItmEKX2sNAhj+8n3SNZQFk5y6P58Z7DjM
-         sqqg==
-X-Gm-Message-State: APjAAAUClLPGDKfskA1hQxsW4vUNz4oswvlFCdLfIKPbtQ4MgDVlmVu5
-        TQhuVlBLulHq1Wp0yIFWeceo4srF
-X-Google-Smtp-Source: APXvYqzRb6vwdUw8G86aJ7mHh+/AEBuqsi9vNpw708AECo/09tP3fogV3xvK3TJdPC/SJtQeQ+HDGA==
-X-Received: by 2002:a05:6402:3c5:: with SMTP id t5mr65295462edw.217.1577637181592;
-        Sun, 29 Dec 2019 08:33:01 -0800 (PST)
-Received: from kozik-lap ([194.230.155.138])
-        by smtp.googlemail.com with ESMTPSA id pv11sm5178514ejb.75.2019.12.29.08.32.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 29 Dec 2019 08:33:00 -0800 (PST)
-Date:   Sun, 29 Dec 2019 17:32:58 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Hyunki Koo <hyunki00.koo@gmail.com>
-Cc:     Hyunki Koo <hyunki00.koo@samsung.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: define EXYNOS_IRQ_COMBINER
-Message-ID: <20191229163258.GA32260@kozik-lap>
-References: <20191224211108.7128-1-hyunki00.koo@gmail.com>
+        Sun, 29 Dec 2019 11:40:53 -0500
+Received: (qmail 20510 invoked by uid 500); 29 Dec 2019 11:40:52 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 29 Dec 2019 11:40:52 -0500
+Date:   Sun, 29 Dec 2019 11:40:52 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@netrider.rowland.org
+To:     Guenter Roeck <linux@roeck-us.net>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Michael Grzeschik <m.grzeschik@pengutronix.de>,
+        <stable@vger.kernel.org>
+Subject: Re: [PATCH] usb: chipidea: host: Disable port power only if previously
+ enabled
+In-Reply-To: <20191229162811.GA21566@roeck-us.net>
+Message-ID: <Pine.LNX.4.44L0.1912291137150.19645-100000@netrider.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191224211108.7128-1-hyunki00.koo@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 25, 2019 at 06:11:07AM +0900, Hyunki Koo wrote:
-> From: Hyunki Koo <hyunki00.koo@samsung.com>
+On Sun, 29 Dec 2019, Guenter Roeck wrote:
+
+> On Sat, Dec 28, 2019 at 02:33:01PM -0500, Alan Stern wrote:
+> > 
+> > Let's try a slightly different approach.  What happens with this patch?
+> > 
+> > Alan Stern
+> > 
+> > 
+> > Index: usb-devel/drivers/usb/core/hub.c
+> > ===================================================================
+> > --- usb-devel.orig/drivers/usb/core/hub.c
+> > +++ usb-devel/drivers/usb/core/hub.c
+> > @@ -1065,6 +1065,7 @@ static void hub_activate(struct usb_hub
+> >  		if (type == HUB_INIT) {
+> >  			delay = hub_power_on_good_delay(hub);
+> >  
+> > +			hub->power_bits[0] = ~0UL;	/* All ports on */
+> >  			hub_power_on(hub, false);
+> >  			INIT_DELAYED_WORK(&hub->init_work, hub_init_func2);
+> >  			queue_delayed_work(system_power_efficient_wq,
+> > 
 > 
-> This patch is written to clean up dependency of ARCH_EXYNOS
-> Not all exynos device have IRQ_COMBINER, especially aarch64 EXYNOS
-> but it is built for all exynos devices.
-> Thus add the config for EXYNOS_IRQ_COMBINER
-> remove direct dependency between ARCH_EXYNOS and exynos-combiner.c
-> and only selected on the aarch32 devices
-> 
-> Signed-off-by: Hyunki Koo <hyunki00.koo@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig | 1 +
->  drivers/irqchip/Kconfig      | 7 +++++++
->  drivers/irqchip/Makefile     | 2 +-
->  3 files changed, 9 insertions(+), 1 deletion(-)
+> That doesn't make a difference - the traceback is still seen with this patch
+> applied.
 
-I assume it will go through irqchip tree:
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Can you trace what's going on?  Does this code pathway now end up
+calling ehci_port_power() for each root-hub port, and from there down
+into the chipidea driver?  If not, can you find where it gets
+sidetracked?
 
-If not, let me know, so I could take it via samsung-soc.
-
-Best regards,
-Krzysztof
+Alan Stern
 
