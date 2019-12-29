@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5768712C649
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 490FF12C64B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbfL2RpV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:45:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54268 "EHLO mail.kernel.org"
+        id S1730604AbfL2Rp0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:45:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729173AbfL2RpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:45:19 -0500
+        id S1730586AbfL2RpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:45:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E260207FD;
-        Sun, 29 Dec 2019 17:45:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22ADD206A4;
+        Sun, 29 Dec 2019 17:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641518;
-        bh=/15pi5qSvB4ceV78bERpn7re2axBK/lYD0PAppSjBj4=;
+        s=default; t=1577641523;
+        bh=6o/tH8oeO74qTujAoPPNmL7NRmfGfqKYrX5yZ4nllFs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FGQcBkmaFnMJPwh5z/4twO2GO/8MHDZzu5wxl4hzZw4/y4mPAV6ygJpvjPMLBqzdt
-         wNxLkOuI7nUgfIKzUhkuY5D5e/BwpzM7aG8Nhl6xsuaZtcFj+Gx+xeT9wU69Czg3/o
-         lZxH2foV0tD4/HIfTe5N0ldHvzvo3sg8LlgcyrPI=
+        b=wnSyeQx5foXp+T2fjKvkd1eadPrnW0uHb2uX67RP60WOlx7A5pmyETrtHxYjjPtwZ
+         cuoGQg68pXF3Ej6dbpSH1nVhXrlaoOR7kn6h6jpUfBKYI+Cif8zcoAB/0oHbt6Cyo4
+         PRgrKyLwCnPj5wkZ0o11CLKtAeA9Iv+4jRxBBUbE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Ping-Ke Shih <pkshih@realtek.com>,
+        Yan-Hsuan Chuang <yhchuang@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 098/434] media: venus: Fix occasionally failures to suspend
-Date:   Sun, 29 Dec 2019 18:22:31 +0100
-Message-Id: <20191229172708.099982918@linuxfoundation.org>
+Subject: [PATCH 5.4 099/434] rtw88: fix NSS of hw_cap
+Date:   Sun, 29 Dec 2019 18:22:32 +0100
+Message-Id: <20191229172708.170843280@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,55 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+From: Ping-Ke Shih <pkshih@realtek.com>
 
-[ Upstream commit 8dbebb2bd01e6f36e9a215dcde99ace70408f2c8 ]
+[ Upstream commit 4f5bb7ff8b8d4bafd91243fc969ed240e67aa1ca ]
 
-Failure to suspend (venus_suspend_3xx) happens when the system
-is fresh booted and loading venus driver. This happens once and
-after reload the venus driver modules the problem disrepair.
+8822C is a 2x2 11ac chip, and then NSS must be less or equal to 2. However,
+current nss of hw cap is 3, likes
+	hw cap: hci=0x0f, bw=0x07, ptcl=0x03, ant_num=7, nss=3
 
-Fix the failure by skipping the check for WFI and IDLE bits if
-PC_READY is on in control status register.
+This commit adds constraint to make sure NSS <= rf_path_num, and result
+looks like
+	hw cap: hci=0x0f, bw=0x07, ptcl=0x03, ant_num=7, nss=2
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: e3037485c68e ("rtw88: new Realtek 802.11ac driver")
+Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Signed-off-by: Yan-Hsuan Chuang <yhchuang@realtek.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/qcom/venus/hfi_venus.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/wireless/realtek/rtw88/main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 7129a2aea09a..0d8855014ab3 100644
---- a/drivers/media/platform/qcom/venus/hfi_venus.c
-+++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1472,6 +1472,7 @@ static int venus_suspend_3xx(struct venus_core *core)
- {
- 	struct venus_hfi_device *hdev = to_hfi_priv(core);
- 	struct device *dev = core->dev;
-+	u32 ctrl_status;
- 	bool val;
- 	int ret;
+diff --git a/drivers/net/wireless/realtek/rtw88/main.c b/drivers/net/wireless/realtek/rtw88/main.c
+index 6dd457741b15..7a3a4911bde2 100644
+--- a/drivers/net/wireless/realtek/rtw88/main.c
++++ b/drivers/net/wireless/realtek/rtw88/main.c
+@@ -1020,7 +1020,8 @@ static int rtw_dump_hw_feature(struct rtw_dev *rtwdev)
  
-@@ -1487,6 +1488,10 @@ static int venus_suspend_3xx(struct venus_core *core)
- 		return -EINVAL;
- 	}
+ 	rtw_hw_config_rf_ant_num(rtwdev, efuse->hw_cap.ant_num);
  
-+	ctrl_status = venus_readl(hdev, CPU_CS_SCIACMDARG0);
-+	if (ctrl_status & CPU_CS_SCIACMDARG0_PC_READY)
-+		goto power_off;
-+
- 	/*
- 	 * Power collapse sequence for Venus 3xx and 4xx versions:
- 	 * 1. Check for ARM9 and video core to be idle by checking WFI bit
-@@ -1511,6 +1516,7 @@ static int venus_suspend_3xx(struct venus_core *core)
- 	if (ret)
- 		return ret;
+-	if (efuse->hw_cap.nss == EFUSE_HW_CAP_IGNORE)
++	if (efuse->hw_cap.nss == EFUSE_HW_CAP_IGNORE ||
++	    efuse->hw_cap.nss > rtwdev->hal.rf_path_num)
+ 		efuse->hw_cap.nss = rtwdev->hal.rf_path_num;
  
-+power_off:
- 	mutex_lock(&hdev->lock);
- 
- 	ret = venus_power_off(hdev);
+ 	rtw_dbg(rtwdev, RTW_DBG_EFUSE,
 -- 
 2.20.1
 
