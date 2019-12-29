@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F08312C93A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F197012C871
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387680AbfL2SCd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:02:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42812 "EHLO mail.kernel.org"
+        id S1732813AbfL2Ryw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732737AbfL2Rym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:42 -0500
+        id S1732782AbfL2Ryt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7242D206DB;
-        Sun, 29 Dec 2019 17:54:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94DB7206DB;
+        Sun, 29 Dec 2019 17:54:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642081;
-        bh=Jr8t59oHCU9w4yalef6PIXJgCoErclWXFy6+f+VOfrA=;
+        s=default; t=1577642089;
+        bh=AlCnrEr3npurhfSBtdCdt/G29onv/y6kh+UyFeovWpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r/oAt46Cqt/pCGHDGq5lRkxZ9EfCTUetNc3LdbbecnwYVOHEjAzJovALdh2kVm0oV
-         urvLL/M96718S/oJdmFYfGzfwkx7wcBCeuVKDi8lgot6dYjFKhMXDmOQIj+5qfO4WW
-         +gnb+e9iYFHTncfslQcMBP4RUDbf3T4AscsIr1OI=
+        b=Ez62fREi/r4DVFGQ4Og18/TZniPFLu+LoFbFZapK9pmiLNcP/Km5CXFmJqZwov73i
+         yMFW5C8FHegCtrOMuvfNOXvBzrr09iLPdJz+Owr5d21mMY4NZO5G/E/0djsxcytPIB
+         K9IXs2SHnpYlr/UJWqn+XNL+ErVOB0n7TTYwMx7E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Philipp Rudo <prudo@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 335/434] s390/kasan: support memcpy_real with TRACE_IRQFLAGS
-Date:   Sun, 29 Dec 2019 18:26:28 +0100
-Message-Id: <20191229172724.220761956@linuxfoundation.org>
+Subject: [PATCH 5.4 338/434] fbtft: Make sure string is NULL terminated
+Date:   Sun, 29 Dec 2019 18:26:31 +0100
+Message-Id: <20191229172724.420527344@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,74 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit 13f9bae579c6bd051e58f326913dd09af1291208 ]
+[ Upstream commit 21f585480deb4bcf0d92b08879c35d066dfee030 ]
 
-Currently if the kernel is built with CONFIG_TRACE_IRQFLAGS and KASAN
-and used as crash kernel it crashes itself due to
-trace_hardirqs_off/trace_hardirqs_on being called with DAT off. This
-happens because trace_hardirqs_off/trace_hardirqs_on are instrumented and
-kasan code tries to perform access to shadow memory to validate memory
-accesses. Kasan shadow memory is populated with vmemmap, so all accesses
-require DAT on.
+New GCC warns about inappropriate use of strncpy():
 
-memcpy_real could be called with DAT on or off (with kasan enabled DAT
-is set even before early code is executed).
+drivers/staging/fbtft/fbtft-core.c: In function ‘fbtft_framebuffer_alloc’:
+drivers/staging/fbtft/fbtft-core.c:665:2: warning: ‘strncpy’ specified bound 16 equals destination size [-Wstringop-truncation]
+  665 |  strncpy(info->fix.id, dev->driver->name, 16);
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Make sure that trace_hardirqs_off/trace_hardirqs_on are called with DAT
-on and only actual __memcpy_real is called with DAT off.
+Later on the copy is being used with the assumption to be NULL terminated.
+Make sure string is NULL terminated by switching to snprintf().
 
-Also annotate __memcpy_real and _memcpy_real with __no_sanitize_address
-to avoid further problems due to switching DAT off.
-
-Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/r/20191120095716.26628-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/mm/maccess.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/staging/fbtft/fbtft-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/s390/mm/maccess.c b/arch/s390/mm/maccess.c
-index 1864a8bb9622..59ad7997fed1 100644
---- a/arch/s390/mm/maccess.c
-+++ b/arch/s390/mm/maccess.c
-@@ -70,7 +70,7 @@ void notrace s390_kernel_write(void *dst, const void *src, size_t size)
- 	spin_unlock_irqrestore(&s390_kernel_write_lock, flags);
- }
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index a0a67aa517f0..61f0286fb157 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -666,7 +666,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+ 	fbdefio->deferred_io =     fbtft_deferred_io;
+ 	fb_deferred_io_init(info);
  
--static int __memcpy_real(void *dest, void *src, size_t count)
-+static int __no_sanitize_address __memcpy_real(void *dest, void *src, size_t count)
- {
- 	register unsigned long _dest asm("2") = (unsigned long) dest;
- 	register unsigned long _len1 asm("3") = (unsigned long) count;
-@@ -91,19 +91,23 @@ static int __memcpy_real(void *dest, void *src, size_t count)
- 	return rc;
- }
- 
--static unsigned long _memcpy_real(unsigned long dest, unsigned long src,
--				  unsigned long count)
-+static unsigned long __no_sanitize_address _memcpy_real(unsigned long dest,
-+							unsigned long src,
-+							unsigned long count)
- {
- 	int irqs_disabled, rc;
- 	unsigned long flags;
- 
- 	if (!count)
- 		return 0;
--	flags = __arch_local_irq_stnsm(0xf8UL);
-+	flags = arch_local_irq_save();
- 	irqs_disabled = arch_irqs_disabled_flags(flags);
- 	if (!irqs_disabled)
- 		trace_hardirqs_off();
-+	__arch_local_irq_stnsm(0xf8); // disable DAT
- 	rc = __memcpy_real((void *) dest, (void *) src, (size_t) count);
-+	if (flags & PSW_MASK_DAT)
-+		__arch_local_irq_stosm(0x04); // enable DAT
- 	if (!irqs_disabled)
- 		trace_hardirqs_on();
- 	__arch_local_irq_ssm(flags);
+-	strncpy(info->fix.id, dev->driver->name, 16);
++	snprintf(info->fix.id, sizeof(info->fix.id), "%s", dev->driver->name);
+ 	info->fix.type =           FB_TYPE_PACKED_PIXELS;
+ 	info->fix.visual =         FB_VISUAL_TRUECOLOR;
+ 	info->fix.xpanstep =	   0;
 -- 
 2.20.1
 
