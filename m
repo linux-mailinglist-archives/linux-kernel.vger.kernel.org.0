@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8556B12C85D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7719212C85F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732536AbfL2Rxq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:53:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40820 "EHLO mail.kernel.org"
+        id S1732552AbfL2Rxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:53:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732525AbfL2Rxm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:53:42 -0500
+        id S1732538AbfL2Rxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:53:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49CC421D7E;
-        Sun, 29 Dec 2019 17:53:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F605206A4;
+        Sun, 29 Dec 2019 17:53:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642021;
-        bh=LUZPtTD5pM3c04znJpxsc7Ia5Cp7M9WEmADmWiEVL4o=;
+        s=default; t=1577642026;
+        bh=7BlVCiFDwC0vCLjXpAHO61C5t/zW6H3A3ibe++xP7gA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lCQz18XrA4aD2z+Bq1lrRpEiSojQkG3ve2a2+fYXYty0mnR3ctnb6W17c+sBHn8br
-         dlsIjXPyyi14d+DzMV+3iGXcrJoCXI+hfRGiQ4iCpsr34gTcHXf8LgclTOSAVvGcU3
-         ZRdsPgu1CrOXGUeUvEEEx+c5Wh4YdrsHYWOOKF2A=
+        b=0VPrAL/cjW61tYF6JDGO1OVkUtXJ8wlaIYXID0f7JYap2w/QDLg71LuTY59YzU03Z
+         SG7fzCDnGDRX/kwiK+vyUWxaU/QnHGXBnjEWKWBnV+plokSt+DA46vanCbmR5/3x5L
+         tQrr9ontw2XCA9EMX2oXBjXwP+l/aFod+27sGA1A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrea Righi <andrea.righi@canonical.com>,
-        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
+        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 308/434] bcache: fix deadlock in bcache_allocator
-Date:   Sun, 29 Dec 2019 18:26:01 +0100
-Message-Id: <20191229172722.411865283@linuxfoundation.org>
+Subject: [PATCH 5.4 310/434] ASoC: wm8904: fix regcache handling
+Date:   Sun, 29 Dec 2019 18:26:03 +0100
+Message-Id: <20191229172722.544935314@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,154 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Righi <andrea.righi@canonical.com>
+From: Michael Walle <michael@walle.cc>
 
-[ Upstream commit 84c529aea182939e68f618ed9813740c9165c7eb ]
+[ Upstream commit e9149b8c00d25dbaef1aa174fc604bed207e576d ]
 
-bcache_allocator can call the following:
+The current code assumes that the power is turned off in
+SND_SOC_BIAS_OFF. If there are no actual regulator the codec isn't
+turned off and the registers are not reset to their default values but
+the regcache is still marked as dirty. Thus a value might not be written
+to the hardware if it is set to the default value. Do a software reset
+before turning off the power to make sure the registers are always reset
+to their default states.
 
- bch_allocator_thread()
-  -> bch_prio_write()
-     -> bch_bucket_alloc()
-        -> wait on &ca->set->bucket_wait
-
-But the wake up event on bucket_wait is supposed to come from
-bch_allocator_thread() itself => deadlock:
-
-[ 1158.490744] INFO: task bcache_allocato:15861 blocked for more than 10 seconds.
-[ 1158.495929]       Not tainted 5.3.0-050300rc3-generic #201908042232
-[ 1158.500653] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 1158.504413] bcache_allocato D    0 15861      2 0x80004000
-[ 1158.504419] Call Trace:
-[ 1158.504429]  __schedule+0x2a8/0x670
-[ 1158.504432]  schedule+0x2d/0x90
-[ 1158.504448]  bch_bucket_alloc+0xe5/0x370 [bcache]
-[ 1158.504453]  ? wait_woken+0x80/0x80
-[ 1158.504466]  bch_prio_write+0x1dc/0x390 [bcache]
-[ 1158.504476]  bch_allocator_thread+0x233/0x490 [bcache]
-[ 1158.504491]  kthread+0x121/0x140
-[ 1158.504503]  ? invalidate_buckets+0x890/0x890 [bcache]
-[ 1158.504506]  ? kthread_park+0xb0/0xb0
-[ 1158.504510]  ret_from_fork+0x35/0x40
-
-Fix by making the call to bch_prio_write() non-blocking, so that
-bch_allocator_thread() never waits on itself.
-
-Moreover, make sure to wake up the garbage collector thread when
-bch_prio_write() is failing to allocate buckets.
-
-BugLink: https://bugs.launchpad.net/bugs/1784665
-BugLink: https://bugs.launchpad.net/bugs/1796292
-Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
-Signed-off-by: Coly Li <colyli@suse.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Michael Walle <michael@walle.cc>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20191112223629.21867-1-michael@walle.cc
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/bcache/alloc.c  |  5 ++++-
- drivers/md/bcache/bcache.h |  2 +-
- drivers/md/bcache/super.c  | 27 +++++++++++++++++++++------
- 3 files changed, 26 insertions(+), 8 deletions(-)
+ sound/soc/codecs/wm8904.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-index 6f776823b9ba..a1df0d95151c 100644
---- a/drivers/md/bcache/alloc.c
-+++ b/drivers/md/bcache/alloc.c
-@@ -377,7 +377,10 @@ retry_invalidate:
- 			if (!fifo_full(&ca->free_inc))
- 				goto retry_invalidate;
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index bcb3c9d5abf0..9e8c564f6e9c 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -1917,6 +1917,7 @@ static int wm8904_set_bias_level(struct snd_soc_component *component,
+ 		snd_soc_component_update_bits(component, WM8904_BIAS_CONTROL_0,
+ 				    WM8904_BIAS_ENA, 0);
  
--			bch_prio_write(ca);
-+			if (bch_prio_write(ca, false) < 0) {
-+				ca->invalidate_needs_gc = 1;
-+				wake_up_gc(ca->set);
-+			}
- 		}
- 	}
- out:
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 013e35a9e317..deb924e1d790 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -977,7 +977,7 @@ bool bch_cached_dev_error(struct cached_dev *dc);
- __printf(2, 3)
- bool bch_cache_set_error(struct cache_set *c, const char *fmt, ...);
++		snd_soc_component_write(component, WM8904_SW_RESET_AND_ID, 0);
+ 		regcache_cache_only(wm8904->regmap, true);
+ 		regcache_mark_dirty(wm8904->regmap);
  
--void bch_prio_write(struct cache *ca);
-+int bch_prio_write(struct cache *ca, bool wait);
- void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent);
- 
- extern struct workqueue_struct *bcache_wq;
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index d2654880b7b9..64999c7a8033 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -529,12 +529,29 @@ static void prio_io(struct cache *ca, uint64_t bucket, int op,
- 	closure_sync(cl);
- }
- 
--void bch_prio_write(struct cache *ca)
-+int bch_prio_write(struct cache *ca, bool wait)
- {
- 	int i;
- 	struct bucket *b;
- 	struct closure cl;
- 
-+	pr_debug("free_prio=%zu, free_none=%zu, free_inc=%zu",
-+		 fifo_used(&ca->free[RESERVE_PRIO]),
-+		 fifo_used(&ca->free[RESERVE_NONE]),
-+		 fifo_used(&ca->free_inc));
-+
-+	/*
-+	 * Pre-check if there are enough free buckets. In the non-blocking
-+	 * scenario it's better to fail early rather than starting to allocate
-+	 * buckets and do a cleanup later in case of failure.
-+	 */
-+	if (!wait) {
-+		size_t avail = fifo_used(&ca->free[RESERVE_PRIO]) +
-+			       fifo_used(&ca->free[RESERVE_NONE]);
-+		if (prio_buckets(ca) > avail)
-+			return -ENOMEM;
-+	}
-+
- 	closure_init_stack(&cl);
- 
- 	lockdep_assert_held(&ca->set->bucket_lock);
-@@ -544,9 +561,6 @@ void bch_prio_write(struct cache *ca)
- 	atomic_long_add(ca->sb.bucket_size * prio_buckets(ca),
- 			&ca->meta_sectors_written);
- 
--	//pr_debug("free %zu, free_inc %zu, unused %zu", fifo_used(&ca->free),
--	//	 fifo_used(&ca->free_inc), fifo_used(&ca->unused));
--
- 	for (i = prio_buckets(ca) - 1; i >= 0; --i) {
- 		long bucket;
- 		struct prio_set *p = ca->disk_buckets;
-@@ -564,7 +578,7 @@ void bch_prio_write(struct cache *ca)
- 		p->magic	= pset_magic(&ca->sb);
- 		p->csum		= bch_crc64(&p->magic, bucket_bytes(ca) - 8);
- 
--		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, true);
-+		bucket = bch_bucket_alloc(ca, RESERVE_PRIO, wait);
- 		BUG_ON(bucket == -1);
- 
- 		mutex_unlock(&ca->set->bucket_lock);
-@@ -593,6 +607,7 @@ void bch_prio_write(struct cache *ca)
- 
- 		ca->prio_last_buckets[i] = ca->prio_buckets[i];
- 	}
-+	return 0;
- }
- 
- static void prio_read(struct cache *ca, uint64_t bucket)
-@@ -1962,7 +1977,7 @@ static int run_cache_set(struct cache_set *c)
- 
- 		mutex_lock(&c->bucket_lock);
- 		for_each_cache(ca, c, i)
--			bch_prio_write(ca);
-+			bch_prio_write(ca, true);
- 		mutex_unlock(&c->bucket_lock);
- 
- 		err = "cannot allocate new UUID bucket";
 -- 
 2.20.1
 
