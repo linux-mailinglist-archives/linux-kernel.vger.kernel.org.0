@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 985A812C617
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A63212C61C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbfL2RnR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:43:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50276 "EHLO mail.kernel.org"
+        id S1730131AbfL2Rn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:43:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730435AbfL2RnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:12 -0500
+        id S1730452AbfL2RnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:43:17 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AB2821744;
-        Sun, 29 Dec 2019 17:43:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D4D5207FD;
+        Sun, 29 Dec 2019 17:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641391;
-        bh=8bdOIu18jZB6fruSVNfOW/sII9TzV1EYlcWBJzTdZ1I=;
+        s=default; t=1577641396;
+        bh=ue1JsQLc0tV8J5CrdUYqvCo2m/lptz5ZRPhUMwOMwjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LIH/E6ModobQX+0SdeHfeYTmUExYWEYalTDdMn80KJz7NNAMvsjWyev4qaqq4SFi1
-         i2YGccOX9iAgfU8/A49MdvsDlXlkuVxf/ir59cXj+SrCYSCB62noU0WvuBPQ1SX57Q
-         90AQQloEcl1AieDeJX+mV7DHu+DjIKs2yPuatU84=
+        b=Re7WBTYj/puFN835XIVK5IHfa3q3VfxHjhTAS00/r8b8AC3aFos5/jFMPZg4ZWQs0
+         aX1zRxa9xNOCeyz8Z+EoQ646zLRP9c5xvh3JwBOYIIb3QEMaOl6JAeQ9ldC2Go8QX/
+         e960V2upubh3nZh4XNy+pwSdTQgzSxXrHrDWTBME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        stable@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 046/434] drm/mipi-dbi: fix a loop in debugfs code
-Date:   Sun, 29 Dec 2019 18:21:39 +0100
-Message-Id: <20191229172705.060721032@linuxfoundation.org>
+Subject: [PATCH 5.4 047/434] drm/panel: Add missing drm_panel_init() in panel drivers
+Date:   Sun, 29 Dec 2019 18:21:40 +0100
+Message-Id: <20191229172705.113810375@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,51 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-[ Upstream commit d72cf01f410aa09868d98b672f3f92328c96b32d ]
+[ Upstream commit 65abbda8ed7ca48c8807d6b04a77431b438fa659 ]
 
-This code will likely crash if we try to do a zero byte write.  The code
-looks like this:
+Panels must be initialised with drm_panel_init(). Add the missing
+function call in the panel-raspberrypi-touchscreen.c and
+panel-sitronix-st7789v.c drivers.
 
-        /* strip trailing whitespace */
-        for (i = count - 1; i > 0; i--)
-                if (isspace(buf[i]))
-			...
-
-We're writing zero bytes so count = 0.  You would think that "count - 1"
-would be negative one, but because "i" is unsigned it is a large
-positive numer instead.  The "i > 0" condition is true and the "buf[i]"
-access will be out of bounds.
-
-The fix is to make "i" signed and now everything works as expected.  The
-upper bound of "count" is capped in __kernel_write() at MAX_RW_COUNT so
-we don't have to worry about it being higher than INT_MAX.
-
-Fixes: 02dd95fe3169 ("drm/tinydrm: Add MIPI DBI support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-[noralf: Adjust title]
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190821072456.GJ26957@mwanda
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190823193245.23876-2-laurent.pinchart@ideasonboard.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_mipi_dbi.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 1 +
+ drivers/gpu/drm/panel/panel-sitronix-st7789v.c        | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
-index 1961f713aaab..c4ee2709a6f3 100644
---- a/drivers/gpu/drm/drm_mipi_dbi.c
-+++ b/drivers/gpu/drm/drm_mipi_dbi.c
-@@ -1187,8 +1187,7 @@ static ssize_t mipi_dbi_debugfs_command_write(struct file *file,
- 	struct mipi_dbi_dev *dbidev = m->private;
- 	u8 val, cmd = 0, parameters[64];
- 	char *buf, *pos, *token;
--	unsigned int i;
--	int ret, idx;
-+	int i, ret, idx;
+diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+index b5b14aa059ea..2aa89eaecf6f 100644
+--- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
++++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
+@@ -426,6 +426,7 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
+ 		return PTR_ERR(ts->dsi);
+ 	}
  
- 	if (!drm_dev_enter(&dbidev->drm, &idx))
- 		return -ENODEV;
++	drm_panel_init(&ts->base);
+ 	ts->base.dev = dev;
+ 	ts->base.funcs = &rpi_touchscreen_funcs;
+ 
+diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+index 5e3e92ea9ea6..3b2612ae931e 100644
+--- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
++++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
+@@ -381,6 +381,7 @@ static int st7789v_probe(struct spi_device *spi)
+ 	spi_set_drvdata(spi, ctx);
+ 	ctx->spi = spi;
+ 
++	drm_panel_init(&ctx->panel);
+ 	ctx->panel.dev = &spi->dev;
+ 	ctx->panel.funcs = &st7789v_drm_funcs;
+ 
 -- 
 2.20.1
 
