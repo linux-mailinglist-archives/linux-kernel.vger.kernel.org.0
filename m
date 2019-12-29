@@ -2,40 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0531E12C68F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C15812C6A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfL2RsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:48:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59436 "EHLO mail.kernel.org"
+        id S1731565AbfL2RtD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:49:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731424AbfL2RsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:48:17 -0500
+        id S1731261AbfL2Rsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:48:55 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BE27206A4;
-        Sun, 29 Dec 2019 17:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 57D1D207FF;
+        Sun, 29 Dec 2019 17:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641696;
-        bh=oU/WGYFECuodx4Pion/XozfB0+l4f/57ZrurNF6ZRYg=;
+        s=default; t=1577641734;
+        bh=YE6fA8U4hpcf3Who/RGRmXS2l2nWWlDo7ap4HH8yOzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AXloYdIAQxyyDR3dwKGhtRah8LLDLphmsaw6gfqftC7foeEU3r1fY0qOeqLlO0eOk
-         7gFHrpTvWpgAYjSaN9Yi36n7SowdRfToRyJShiiBbbE2QVzVrcJ7M6GjYFbplvaChU
-         ljz1o0sR7LyN885XqhUkJi1Vl+ORBKGjFB4uxSOU=
+        b=hduXkThxZdhgXMqS53jFbeKQtno58EJRZ3ffS20Nk9ceQVCyjQ+8l8cDGxodaPK8J
+         bkhXOmg7vtXcdv0g6HMRRHjgAiQMrirCAA7ZgTZdOKWMzzYFh+onu9oXdPQ5kgTkR/
+         iQUgR5uPwfY8KMMfHryxNW+a44g0j7CekAo/t5DU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-        Kan Liang <kan.liang@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>, linuxarm@huawei.com,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 146/434] perf report: Add warning when libunwind not compiled in
-Date:   Sun, 29 Dec 2019 18:23:19 +0100
-Message-Id: <20191229172711.446001924@linuxfoundation.org>
+Subject: [PATCH 5.4 148/434] perf vendor events arm64: Fix Hisi hip08 DDRC PMU eventname
+Date:   Sun, 29 Dec 2019 18:23:21 +0100
+Message-Id: <20191229172711.582498387@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -48,56 +51,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jin Yao <yao.jin@linux.intel.com>
+From: John Garry <john.garry@huawei.com>
 
-[ Upstream commit 800d3f561659b5436f8c57e7c26dd1f6928b5615 ]
+[ Upstream commit 84b0975f4853ba32d2d9b3c19ffa2b947f023fb3 ]
 
-We received a user report that call-graph DWARF mode was enabled in
-'perf record' but 'perf report' didn't unwind the callstack correctly.
-The reason was, libunwind was not compiled in.
+The "EventName" for the DDRC precharge command event is incorrect, so
+fix it.
 
-We can use 'perf -vv' to check the compiled libraries but it would be
-valuable to report a warning to user directly (especially valuable for
-a perf newbie).
-
-The warning is:
-
-Warning:
-Please install libunwind development packages during the perf build.
-
-Both TUI and stdio are supported.
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Fixes: 57cc732479ba ("perf jevents: Add support for Hisi hip08 DDRC PMU aliasing")
+Signed-off-by: John Garry <john.garry@huawei.com>
+Reviewed-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lore.kernel.org/lkml/20191011022122.26369-1-yao.jin@linux.intel.com
+Cc: Will Deacon <will@kernel.org>
+Cc: linuxarm@huawei.com
+Link: http://lore.kernel.org/lkml/1567612484-195727-2-git-send-email-john.garry@huawei.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-report.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ .../perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index aae0e57c60fb..7accaf8ef689 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -399,6 +399,13 @@ static int report__setup_sample_type(struct report *rep)
- 				PERF_SAMPLE_BRANCH_ANY))
- 		rep->nonany_branch_mode = true;
- 
-+#ifndef HAVE_LIBUNWIND_SUPPORT
-+	if (dwarf_callchain_users) {
-+		ui__warning("Please install libunwind development packages "
-+			    "during the perf build.\n");
-+	}
-+#endif
-+
- 	return 0;
- }
- 
+diff --git a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+index 0d1556fcdffe..99f4fc425564 100644
+--- a/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
++++ b/tools/perf/pmu-events/arch/arm64/hisilicon/hip08/uncore-ddrc.json
+@@ -15,7 +15,7 @@
+    },
+    {
+ 	    "EventCode": "0x04",
+-	    "EventName": "uncore_hisi_ddrc.flux_wr",
++	    "EventName": "uncore_hisi_ddrc.pre_cmd",
+ 	    "BriefDescription": "DDRC precharge commands",
+ 	    "PublicDescription": "DDRC precharge commands",
+ 	    "Unit": "hisi_sccl,ddrc",
 -- 
 2.20.1
 
