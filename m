@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7719212C85F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FA612C861
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbfL2Rxt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:53:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40980 "EHLO mail.kernel.org"
+        id S1732589AbfL2RyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732538AbfL2Rxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:53:47 -0500
+        id S1732566AbfL2Rxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:53:54 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F605206A4;
-        Sun, 29 Dec 2019 17:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69339206A4;
+        Sun, 29 Dec 2019 17:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642026;
-        bh=7BlVCiFDwC0vCLjXpAHO61C5t/zW6H3A3ibe++xP7gA=;
+        s=default; t=1577642033;
+        bh=rloNvJ1sp6nkRYsCpfljBrPrcFA3N1iM3tF9KZ+ySL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0VPrAL/cjW61tYF6JDGO1OVkUtXJ8wlaIYXID0f7JYap2w/QDLg71LuTY59YzU03Z
-         SG7fzCDnGDRX/kwiK+vyUWxaU/QnHGXBnjEWKWBnV+plokSt+DA46vanCbmR5/3x5L
-         tQrr9ontw2XCA9EMX2oXBjXwP+l/aFod+27sGA1A=
+        b=rU8P+ejaug4gSRC0M5QC8waAYPfgdGYmp42X4S26GApMyQ7HUMlAWsA1pYevOV7hP
+         IMzKS93JWsubHxfhgE3aeDQp/oqkJrNbPXzHAK5nCC0tswbbfLIH7Wog/CpAxd+0Pi
+         0XoFL3x9ok0cjs9SRHPFUuauY7dae72uVa7/t4xU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Walle <michael@walle.cc>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Petar Penkov <ppenkov@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 310/434] ASoC: wm8904: fix regcache handling
-Date:   Sun, 29 Dec 2019 18:26:03 +0100
-Message-Id: <20191229172722.544935314@linuxfoundation.org>
+Subject: [PATCH 5.4 313/434] tun: fix data-race in gro_normal_list()
+Date:   Sun, 29 Dec 2019 18:26:06 +0100
+Message-Id: <20191229172722.746198342@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,39 +46,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Walle <michael@walle.cc>
+From: Petar Penkov <ppenkov@google.com>
 
-[ Upstream commit e9149b8c00d25dbaef1aa174fc604bed207e576d ]
+[ Upstream commit c39e342a050a4425348e6fe7f75827c0a1a7ebc5 ]
 
-The current code assumes that the power is turned off in
-SND_SOC_BIAS_OFF. If there are no actual regulator the codec isn't
-turned off and the registers are not reset to their default values but
-the regcache is still marked as dirty. Thus a value might not be written
-to the hardware if it is set to the default value. Do a software reset
-before turning off the power to make sure the registers are always reset
-to their default states.
+There is a race in the TUN driver between napi_busy_loop and
+napi_gro_frags. This commit resolves the race by adding the NAPI struct
+via netif_tx_napi_add, instead of netif_napi_add, which disables polling
+for the NAPI struct.
 
-Signed-off-by: Michael Walle <michael@walle.cc>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20191112223629.21867-1-michael@walle.cc
-Signed-off-by: Mark Brown <broonie@kernel.org>
+KCSAN reported:
+BUG: KCSAN: data-race in gro_normal_list.part.0 / napi_busy_loop
+
+write to 0xffff8880b5d474b0 of 4 bytes by task 11205 on cpu 0:
+ gro_normal_list.part.0+0x77/0xb0 net/core/dev.c:5682
+ gro_normal_list net/core/dev.c:5678 [inline]
+ gro_normal_one net/core/dev.c:5692 [inline]
+ napi_frags_finish net/core/dev.c:5705 [inline]
+ napi_gro_frags+0x625/0x770 net/core/dev.c:5778
+ tun_get_user+0x2150/0x26a0 drivers/net/tun.c:1976
+ tun_chr_write_iter+0x79/0xd0 drivers/net/tun.c:2022
+ call_write_iter include/linux/fs.h:1895 [inline]
+ do_iter_readv_writev+0x487/0x5b0 fs/read_write.c:693
+ do_iter_write fs/read_write.c:970 [inline]
+ do_iter_write+0x13b/0x3c0 fs/read_write.c:951
+ vfs_writev+0x118/0x1c0 fs/read_write.c:1015
+ do_writev+0xe3/0x250 fs/read_write.c:1058
+ __do_sys_writev fs/read_write.c:1131 [inline]
+ __se_sys_writev fs/read_write.c:1128 [inline]
+ __x64_sys_writev+0x4e/0x60 fs/read_write.c:1128
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+read to 0xffff8880b5d474b0 of 4 bytes by task 11168 on cpu 1:
+ gro_normal_list net/core/dev.c:5678 [inline]
+ napi_busy_loop+0xda/0x4f0 net/core/dev.c:6126
+ sk_busy_loop include/net/busy_poll.h:108 [inline]
+ __skb_recv_udp+0x4ad/0x560 net/ipv4/udp.c:1689
+ udpv6_recvmsg+0x29e/0xe90 net/ipv6/udp.c:288
+ inet6_recvmsg+0xbb/0x240 net/ipv6/af_inet6.c:592
+ sock_recvmsg_nosec net/socket.c:871 [inline]
+ sock_recvmsg net/socket.c:889 [inline]
+ sock_recvmsg+0x92/0xb0 net/socket.c:885
+ sock_read_iter+0x15f/0x1e0 net/socket.c:967
+ call_read_iter include/linux/fs.h:1889 [inline]
+ new_sync_read+0x389/0x4f0 fs/read_write.c:414
+ __vfs_read+0xb1/0xc0 fs/read_write.c:427
+ vfs_read fs/read_write.c:461 [inline]
+ vfs_read+0x143/0x2c0 fs/read_write.c:446
+ ksys_read+0xd5/0x1b0 fs/read_write.c:587
+ __do_sys_read fs/read_write.c:597 [inline]
+ __se_sys_read fs/read_write.c:595 [inline]
+ __x64_sys_read+0x4c/0x60 fs/read_write.c:595
+ do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 PID: 11168 Comm: syz-executor.0 Not tainted 5.4.0-rc6+ #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+
+Fixes: 943170998b20 ("tun: enable NAPI for TUN/TAP driver")
+Signed-off-by: Petar Penkov <ppenkov@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/wm8904.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/tun.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index bcb3c9d5abf0..9e8c564f6e9c 100644
---- a/sound/soc/codecs/wm8904.c
-+++ b/sound/soc/codecs/wm8904.c
-@@ -1917,6 +1917,7 @@ static int wm8904_set_bias_level(struct snd_soc_component *component,
- 		snd_soc_component_update_bits(component, WM8904_BIAS_CONTROL_0,
- 				    WM8904_BIAS_ENA, 0);
- 
-+		snd_soc_component_write(component, WM8904_SW_RESET_AND_ID, 0);
- 		regcache_cache_only(wm8904->regmap, true);
- 		regcache_mark_dirty(wm8904->regmap);
- 
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index a8d3141582a5..16564ebcde50 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -313,8 +313,8 @@ static void tun_napi_init(struct tun_struct *tun, struct tun_file *tfile,
+ 	tfile->napi_enabled = napi_en;
+ 	tfile->napi_frags_enabled = napi_en && napi_frags;
+ 	if (napi_en) {
+-		netif_napi_add(tun->dev, &tfile->napi, tun_napi_poll,
+-			       NAPI_POLL_WEIGHT);
++		netif_tx_napi_add(tun->dev, &tfile->napi, tun_napi_poll,
++				  NAPI_POLL_WEIGHT);
+ 		napi_enable(&tfile->napi);
+ 	}
+ }
 -- 
 2.20.1
 
