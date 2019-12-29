@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40CCC12C41C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:28:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DE37112C437
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:29:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbfL2R0f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:26:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47682 "EHLO mail.kernel.org"
+        id S1728446AbfL2R1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:27:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727382AbfL2R0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:26:33 -0500
+        id S1728416AbfL2R10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:27:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D934F207FD;
-        Sun, 29 Dec 2019 17:26:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01C0420409;
+        Sun, 29 Dec 2019 17:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640392;
-        bh=8YBMtFeRVsQhWg3o72pJkuxLeZYBbuMxy5LIiCZsmhU=;
+        s=default; t=1577640445;
+        bh=ppu/jxCIY9aPqj1mE1YypxmXrF99X1+OVGlMFo6tRcg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3uMPab6dAktFKohPVZU1gYQ1XgaKPd3go6hk81j0Uv0F6XxZ0diCCGigtxxI47Ky
-         g/aNpQvISKG/k6/cCGruIvSjrrkttg+fetLQtGHTsfzvhi203gH86SZladt340PB2P
-         KFIUgN7wV95jA9mOxQHXt1fVpsc85ON2FC+CGQGM=
+        b=aKmJQCDQAuTNr6TEqCjWYfLbwFFT8Ld74c6PScL1RGo0cNDLSriPlHm9/Ny4eufsz
+         lUeRRB8p7QXNUBoiaONrSHsRVBMcSkZZ4mnMUMq/8+afINvt6HeZy5lo/ifpCfHnH9
+         SlPVjBGvpyKnSP0grWxCbFlFj5kqGm5KJ296A0Yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Harish Jenny K N <harish_kandiga@mentor.com>
-Subject: [PATCH 4.14 122/161] mmc: tmio: Add MMC_CAP_ERASE to allow erase/discard/trim requests
-Date:   Sun, 29 Dec 2019 18:19:30 +0100
-Message-Id: <20191229162435.771131265@linuxfoundation.org>
+        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 124/161] btrfs: dont prematurely free work in run_ordered_work()
+Date:   Sun, 29 Dec 2019 18:19:32 +0100
+Message-Id: <20191229162436.300687958@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -49,71 +46,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit c91843463e9e821dc3b48fe37e3155fa38299f6e ]
+[ Upstream commit c495dcd6fbe1dce51811a76bb85b4675f6494938 ]
 
-Isolated initially to renesas_sdhi_internal_dmac [1], Ulf suggested
-adding MMC_CAP_ERASE to the TMIO mmc core:
+We hit the following very strange deadlock on a system with Btrfs on a
+loop device backed by another Btrfs filesystem:
 
-On Fri, Nov 15, 2019 at 10:27:25AM +0100, Ulf Hansson wrote:
- -- snip --
- This test and due to the discussions with Wolfram and you in this
- thread, I would actually suggest that you enable MMC_CAP_ERASE for all
- tmio variants, rather than just for this particular one.
+1. The top (loop device) filesystem queues an async_cow work item from
+   cow_file_range_async(). We'll call this work X.
+2. Worker thread A starts work X (normal_work_helper()).
+3. Worker thread A executes the ordered work for the top filesystem
+   (run_ordered_work()).
+4. Worker thread A finishes the ordered work for work X and frees X
+   (work->ordered_free()).
+5. Worker thread A executes another ordered work and gets blocked on I/O
+   to the bottom filesystem (still in run_ordered_work()).
+6. Meanwhile, the bottom filesystem allocates and queues an async_cow
+   work item which happens to be the recently-freed X.
+7. The workqueue code sees that X is already being executed by worker
+   thread A, so it schedules X to be executed _after_ worker thread A
+   finishes (see the find_worker_executing_work() call in
+   process_one_work()).
 
- In other words, set the cap in tmio_mmc_host_probe() should be fine,
- as it seems none of the tmio variants supports HW busy detection at
- this point.
- -- snip --
+Now, the top filesystem is waiting for I/O on the bottom filesystem, but
+the bottom filesystem is waiting for the top filesystem to finish, so we
+deadlock.
 
-Testing on R-Car H3ULCB-KF doesn't reveal any issues (v5.4-rc7):
+This happens because we are breaking the workqueue assumption that a
+work item cannot be recycled while it still depends on other work. Fix
+it by waiting to free the work item until we are done with all of the
+related ordered work.
 
-root@rcar-gen3:~# lsblk
-NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-mmcblk0      179:0    0 59.2G  0 disk  <--- eMMC
-mmcblk0boot0 179:8    0    4M  1 disk
-mmcblk0boot1 179:16   0    4M  1 disk
-mmcblk1      179:24   0   30G  0 disk  <--- SD card
+P.S.:
 
-root@rcar-gen3:~# time blkdiscard /dev/mmcblk0
-real    0m8.659s
-user    0m0.001s
-sys     0m1.920s
+One might ask why the workqueue code doesn't try to detect a recycled
+work item. It actually does try by checking whether the work item has
+the same work function (find_worker_executing_work()), but in our case
+the function is the same. This is the only key that the workqueue code
+has available to compare, short of adding an additional, layer-violating
+"custom key". Considering that we're the only ones that have ever hit
+this, we should just play by the rules.
 
-root@rcar-gen3:~# time blkdiscard /dev/mmcblk1
-real    0m1.176s
-user    0m0.001s
-sys     0m0.124s
+Unfortunately, we haven't been able to create a minimal reproducer other
+than our full container setup using a compress-force=zstd filesystem on
+top of another compress-force=zstd filesystem.
 
-[1] https://lore.kernel.org/linux-renesas-soc/20191112134808.23546-1-erosca@de.adit-jv.com/
-
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Originally-by: Harish Jenny K N <harish_kandiga@mentor.com>
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Suggested-by: Tejun Heo <tj@kernel.org>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/async-thread.c | 56 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 44 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 2fd862dc9770..a09aad9155a5 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1220,7 +1220,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host,
- 		_host->start_signal_voltage_switch;
- 	mmc->ops = &tmio_mmc_ops;
+diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
+index e00c8a9fd5bb..72d7589072f5 100644
+--- a/fs/btrfs/async-thread.c
++++ b/fs/btrfs/async-thread.c
+@@ -265,16 +265,17 @@ out:
+ 	}
+ }
  
--	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
-+	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
- 	mmc->max_segs = pdata->max_segs ? : 32;
- 	mmc->max_blk_size = 512;
+-static void run_ordered_work(struct __btrfs_workqueue *wq)
++static void run_ordered_work(struct __btrfs_workqueue *wq,
++			     struct btrfs_work *self)
+ {
+ 	struct list_head *list = &wq->ordered_list;
+ 	struct btrfs_work *work;
+ 	spinlock_t *lock = &wq->list_lock;
+ 	unsigned long flags;
++	void *wtag;
++	bool free_self = false;
+ 
+ 	while (1) {
+-		void *wtag;
+-
+ 		spin_lock_irqsave(lock, flags);
+ 		if (list_empty(list))
+ 			break;
+@@ -300,16 +301,47 @@ static void run_ordered_work(struct __btrfs_workqueue *wq)
+ 		list_del(&work->ordered_list);
+ 		spin_unlock_irqrestore(lock, flags);
+ 
+-		/*
+-		 * We don't want to call the ordered free functions with the
+-		 * lock held though. Save the work as tag for the trace event,
+-		 * because the callback could free the structure.
+-		 */
+-		wtag = work;
+-		work->ordered_free(work);
+-		trace_btrfs_all_work_done(wq->fs_info, wtag);
++		if (work == self) {
++			/*
++			 * This is the work item that the worker is currently
++			 * executing.
++			 *
++			 * The kernel workqueue code guarantees non-reentrancy
++			 * of work items. I.e., if a work item with the same
++			 * address and work function is queued twice, the second
++			 * execution is blocked until the first one finishes. A
++			 * work item may be freed and recycled with the same
++			 * work function; the workqueue code assumes that the
++			 * original work item cannot depend on the recycled work
++			 * item in that case (see find_worker_executing_work()).
++			 *
++			 * Note that the work of one Btrfs filesystem may depend
++			 * on the work of another Btrfs filesystem via, e.g., a
++			 * loop device. Therefore, we must not allow the current
++			 * work item to be recycled until we are really done,
++			 * otherwise we break the above assumption and can
++			 * deadlock.
++			 */
++			free_self = true;
++		} else {
++			/*
++			 * We don't want to call the ordered free functions with
++			 * the lock held though. Save the work as tag for the
++			 * trace event, because the callback could free the
++			 * structure.
++			 */
++			wtag = work;
++			work->ordered_free(work);
++			trace_btrfs_all_work_done(wq->fs_info, wtag);
++		}
+ 	}
+ 	spin_unlock_irqrestore(lock, flags);
++
++	if (free_self) {
++		wtag = self;
++		self->ordered_free(self);
++		trace_btrfs_all_work_done(wq->fs_info, wtag);
++	}
+ }
+ 
+ static void normal_work_helper(struct btrfs_work *work)
+@@ -337,7 +369,7 @@ static void normal_work_helper(struct btrfs_work *work)
+ 	work->func(work);
+ 	if (need_order) {
+ 		set_bit(WORK_DONE_BIT, &work->flags);
+-		run_ordered_work(wq);
++		run_ordered_work(wq, work);
+ 	}
+ 	if (!need_order)
+ 		trace_btrfs_all_work_done(wq->fs_info, wtag);
 -- 
 2.20.1
 
