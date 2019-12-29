@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195CA12C9AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D3C5112C76E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730819AbfL2SMr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:12:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53942 "EHLO mail.kernel.org"
+        id S1728797AbfL2R3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:29:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728501AbfL2R3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:29:24 -0500
+        id S1728778AbfL2R33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:29:29 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 459AA20409;
-        Sun, 29 Dec 2019 17:29:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D097207FD;
+        Sun, 29 Dec 2019 17:29:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640563;
-        bh=iT8ha0g8v8WDWsKNDeVxAqM6YfuJogpdYejcBs+bGI8=;
+        s=default; t=1577640568;
+        bh=prkrhnJRoSbtS7JX9q8fq7A4FByQwa0ZP1hOz0/cf8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UYjhTsFaL/a7PXUl2wJ4QyuhjJNXhlVnLx2mp3U8qlfkrWwTbhzYG5mEuP8C9KLMU
-         spedTCR0/0O00jCC1NorJ7XYU2Uu53oKT4rzzmwQ2wp0EpDUuGRTuRKYjePjHMIqkv
-         AQhwzJOMwKqlt0+C/LsL31ak5X0QxwKT02WmJ2LQ=
+        b=pIgeyKdhmN2kWorL2MaZiaSAH9T7SE/kUZtToIu479RK1XwLA4y/oCB3RKdTBbu3J
+         vYNmMdKFuFDAhFAWmZvCX/xhwLcKpm9go3Apz2J0JQksgM4567gfL5IbpiTfPC36d9
+         Qra/bjuJ5z6QzFAL6V//gmO/msnkBKaGFYRrhLcg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        stable@vger.kernel.org,
+        Cristian Birsan <cristian.birsan@microchip.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 007/219] net: nfc: nci: fix a possible sleep-in-atomic-context bug in nci_uart_tty_receive()
-Date:   Sun, 29 Dec 2019 18:16:49 +0100
-Message-Id: <20191229162509.987720846@linuxfoundation.org>
+Subject: [PATCH 4.19 009/219] net: usb: lan78xx: Fix suspend/resume PHY register access error
+Date:   Sun, 29 Dec 2019 18:16:51 +0100
+Message-Id: <20191229162510.345406284@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
 References: <20191229162508.458551679@linuxfoundation.org>
@@ -43,45 +44,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Cristian Birsan <cristian.birsan@microchip.com>
 
-[ Upstream commit b7ac893652cafadcf669f78452329727e4e255cc ]
+[ Upstream commit 20032b63586ac6c28c936dff696981159913a13f ]
 
-The kernel may sleep while holding a spinlock.
-The function call path (from bottom to top) in Linux 4.19 is:
+Lan78xx driver accesses the PHY registers through MDIO bus over USB
+connection. When performing a suspend/resume, the PHY registers can be
+accessed before the USB connection is resumed. This will generate an
+error and will prevent the device to resume correctly.
+This patch adds the dependency between the MDIO bus and USB device to
+allow correct handling of suspend/resume.
 
-net/nfc/nci/uart.c, 349:
-	nci_skb_alloc in nci_uart_default_recv_buf
-net/nfc/nci/uart.c, 255:
-	(FUNC_PTR)nci_uart_default_recv_buf in nci_uart_tty_receive
-net/nfc/nci/uart.c, 254:
-	spin_lock in nci_uart_tty_receive
-
-nci_skb_alloc(GFP_KERNEL) can sleep at runtime.
-(FUNC_PTR) means a function pointer is called.
-
-To fix this bug, GFP_KERNEL is replaced with GFP_ATOMIC for
-nci_skb_alloc().
-
-This bug is found by a static analysis tool STCheck written by myself.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Fixes: ce85e13ad6ef ("lan78xx: Update to use phylib instead of mii_if_info.")
+Signed-off-by: Cristian Birsan <cristian.birsan@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/nfc/nci/uart.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/usb/lan78xx.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/nfc/nci/uart.c
-+++ b/net/nfc/nci/uart.c
-@@ -348,7 +348,7 @@ static int nci_uart_default_recv_buf(str
- 			nu->rx_packet_len = -1;
- 			nu->rx_skb = nci_skb_alloc(nu->ndev,
- 						   NCI_MAX_PACKET_SIZE,
--						   GFP_KERNEL);
-+						   GFP_ATOMIC);
- 			if (!nu->rx_skb)
- 				return -ENOMEM;
- 		}
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -1823,6 +1823,7 @@ static int lan78xx_mdio_init(struct lan7
+ 	dev->mdiobus->read = lan78xx_mdiobus_read;
+ 	dev->mdiobus->write = lan78xx_mdiobus_write;
+ 	dev->mdiobus->name = "lan78xx-mdiobus";
++	dev->mdiobus->parent = &dev->udev->dev;
+ 
+ 	snprintf(dev->mdiobus->id, MII_BUS_ID_SIZE, "usb-%03d:%03d",
+ 		 dev->udev->bus->busnum, dev->udev->devnum);
 
 
