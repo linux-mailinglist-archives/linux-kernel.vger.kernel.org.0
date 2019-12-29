@@ -2,159 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0247512C2AC
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 15:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 588B512C2B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 15:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbfL2OZM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 09:25:12 -0500
-Received: from us-smtp-2.mimecast.com ([205.139.110.61]:51434 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726607AbfL2OZM (ORCPT
+        id S1726658AbfL2OhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 09:37:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45227 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfL2OhD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 09:25:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577629509;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=RfWTGUOufJ9bQ4pR2PaE/6zDr2zhuJs0ed/uUQTcRSM=;
-        b=bEJSrD304ZNCC5+kUdwg9pxVc83BpdJYnOMk0h3VZM1/Dvjqfhy9OCuNLAIjMMVPojoxmK
-        XamyQkV26h7Dawe2NTL2pwl4YdElydmEUTOMHX2S2wacmiuSd4lb7Cz1rvND1GdX4rJdTI
-        F03fEpcJb7zgQEpGj+XXGWR9lNp0teo=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-202-vKIOHU98MjaBghCgwbmzGQ-1; Sun, 29 Dec 2019 09:25:05 -0500
-X-MC-Unique: vKIOHU98MjaBghCgwbmzGQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E442310054E3;
-        Sun, 29 Dec 2019 14:25:02 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-73.pek2.redhat.com [10.72.12.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 566EA1A7E4;
-        Sun, 29 Dec 2019 14:24:57 +0000 (UTC)
-Date:   Sun, 29 Dec 2019 22:24:53 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Dan Williams <dan.j.williams.korg@gmail.com>,
-        linux-efi <linux-efi@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michael Weiser <michael@weiser.dinsnail.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kexec@lists.infradead.org, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] x86/efi: update e820 about reserved EFI boot services
- data to fix kexec breakage
-Message-ID: <20191229142453.GA18486@dhcp-128-65.nay.redhat.com>
-References: <20191204075233.GA10520@dhcp-128-65.nay.redhat.com>
- <CANTgghnsdijH90qnm24qat70T7FA5qOwmnXXt+NYVxHYa4SLJA@mail.gmail.com>
- <CAPcyv4iRdJO6xrCaN=vrSvYFLZanLazmJLArT5YMfdJ6rc-PEQ@mail.gmail.com>
+        Sun, 29 Dec 2019 09:37:03 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 2so17098617pfg.12
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 06:37:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v4zwlw+odKSqE3aBhmsXGeIgNGWe/8QP8KYWJ0WS0T4=;
+        b=H/a6FQPdDtwNA6IpBBIjiujGi46fekF4JBFJcCtTal8mYBJeWu7mHpBr64l3HveywM
+         z2NJl27a7SXfqQ/yDmWhofXWIDphR9FfznfGny4KNfsRA8Zyh5HM+/kCGQGcUVjtZixg
+         DoTZv5fKkKZa5MpOI8SNBjuMevy8CCjfZUVmhEp5z5okyt70tj5PId0cRWrP0c/WwG2j
+         DeSutL/2HOO8ly8AKNL52VWUdw+x0gbpy0dNpX9/1amQDJhCMRos93wkPnuMDVPtHS2C
+         apj2qt37Gn59+W21IVRtSnkVIN2fh5K4dHepb0ZgF4jXdI6Co6iLxcj2m6JSaf66B9YM
+         M4Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=v4zwlw+odKSqE3aBhmsXGeIgNGWe/8QP8KYWJ0WS0T4=;
+        b=Q4R0q3J7nB4W+uZdqYmEyErKH1wHzNv4KvzU41w+VcL/jL1T4wm4ZWDuWGmOHMvkur
+         DzTMQrAc/Vga8/TZmqv8CDmSFSUcOPXEbMIvj5FfZa8wP6O4PhFN4rItfOsEOAYRcqpC
+         iP9izygbWvQmR+29BO5mi8OzfQhGhwz6EsE1wP7E7ZOyZENqpNXxo+RJqqdxcT5kW70+
+         f8AK8K1lpaabLsXsLknWWpinsc8LhAJ40h5LUVka8+y/H+R1ttc46BDfevu6afqG6Jge
+         HkMmIafOcC3HQnTt3Pl76e1RDaAc77YVN/6A2w9soiHCryFQGpej5Q70luI6RTIJLxS9
+         u+qQ==
+X-Gm-Message-State: APjAAAUy29XKOxkANdBF8EbUfFwjd18gRmkhSGMDYoTAWKCM3JIKEAdM
+        qRuvri3wves0erDIfC8PadQ=
+X-Google-Smtp-Source: APXvYqz3GsJY58S3hvbZ00NQUWpinbVYDH7+Zzz+T3z9m04BXZQRRk8RPlLWeE4iy5bKpBMOf/4aog==
+X-Received: by 2002:a63:d94b:: with SMTP id e11mr66550963pgj.79.1577630222667;
+        Sun, 29 Dec 2019 06:37:02 -0800 (PST)
+Received: from xndcndeMac-mini.lan ([104.243.28.95])
+        by smtp.gmail.com with ESMTPSA id i9sm47327622pfk.24.2019.12.29.06.36.57
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Sun, 29 Dec 2019 06:37:02 -0800 (PST)
+From:   Xiong <xndchn@gmail.com>
+Cc:     Xiong <xndchn@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts/spelling.txt: add more spellings to spelling.txt
+Date:   Sun, 29 Dec 2019 22:36:23 +0800
+Message-Id: <20191229143626.51238-1-xndchn@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4iRdJO6xrCaN=vrSvYFLZanLazmJLArT5YMfdJ6rc-PEQ@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-On 12/28/19 at 10:13pm, Dan Williams wrote:
-> On Sat, Dec 28, 2019 at 12:54 PM Dan Williams
-> <dan.j.williams.korg@gmail.com> wrote:
-> >
-> > On Tue, Dec 3, 2019 at 11:53 PM Dave Young <dyoung@redhat.com> wrote:
-> > >
-> > > Michael Weiser reported he got below error during a kexec rebooting:
-> > > esrt: Unsupported ESRT version 2904149718861218184.
-> > >
-> > > The ESRT memory stays in EFI boot services data, and it was reserved
-> > > in kernel via efi_mem_reserve().  The initial purpose of the reservation
-> > > is to reuse the EFI boot services data across kexec reboot. For example
-> > > the BGRT image data and some ESRT memory like Michael reported.
-> > >
-> > > But although the memory is reserved it is not updated in X86 e820 table.
-> > > And kexec_file_load iterate system ram in io resource list to find places
-> > > for kernel, initramfs and other stuff. In Michael's case the kexec loaded
-> > > initramfs overwritten the ESRT memory and then the failure happened.
-> > >
-> > > Since kexec_file_load depends on the e820 to be updated, just fix this
-> > > by updating the reserved EFI boot services memory as reserved type in e820.
-> > >
-> > > Originally any memory descriptors with EFI_MEMORY_RUNTIME attribute are
-> > > bypassed in the reservation code path because they are assumed as reserved.
-> > > But the reservation is still needed for multiple kexec reboot.
-> > > And it is the only possible case we come here thus just drop the code
-> > > chunk then everything works without side effects.
-> > >
-> > > On my machine the ESRT memory sits in an EFI runtime data range, it does
-> > > not trigger the problem, but I successfully tested with BGRT instead.
-> > > both kexec_load and kexec_file_load work and kdump works as well.
-> > >
-> > > Signed-off-by: Dave Young <dyoung@redhat.com>
-> > > ---
-> > >  arch/x86/platform/efi/quirks.c |    6 ++----
-> > >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > >
-> > > --- linux-x86.orig/arch/x86/platform/efi/quirks.c
-> > > +++ linux-x86/arch/x86/platform/efi/quirks.c
-> > > @@ -260,10 +260,6 @@ void __init efi_arch_mem_reserve(phys_ad
-> > >                 return;
-> > >         }
-> > >
-> > > -       /* No need to reserve regions that will never be freed. */
-> > > -       if (md.attribute & EFI_MEMORY_RUNTIME)
-> > > -               return;
-> > > -
-> > >         size += addr % EFI_PAGE_SIZE;
-> > >         size = round_up(size, EFI_PAGE_SIZE);
-> > >         addr = round_down(addr, EFI_PAGE_SIZE);
-> > > @@ -293,6 +289,8 @@ void __init efi_arch_mem_reserve(phys_ad
-> > >         early_memunmap(new, new_size);
-> > >
-> > >         efi_memmap_install(new_phys, num_entries);
-> > > +       e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-> > > +       e820__update_table(e820_table);
-> > >  }
-> > >
-> > >  /*
-> > >
-> >
-> > Bisect says this change (commit af1648984828) is triggering a
-> > regression, likely not urgent, in my testing of the new efi_fake_mem=
-> > facility to allow memory to be marked "soft reserved" via the kernel
-> > command line (commit 199c84717612 x86/efi: Add efi_fake_mem support
-> > for EFI_MEMORY_SP). The following command line triggers the crash
-> > signature below:
-> >
-> >     efi_fake_mem=4G@9G:0x40000,4G@13G:0x40000
-> >
-> > However, this command line works ok:
-> >
-> >     efi_fake_mem=8G@9G:0x40000
-> >
-> > So, something about multiple efi_fake_mem statements interacts badly
-> > with this change. Nothing obvious occurs to me at the moment, I'll
-> > keep debugging, but wanted to highlight this in the meantime in case
-> > someone else sees a deeper issue or the root cause.
-> 
-> Still looking, but this failure does not seem to be specific to the
-> "soft reservation" changes. Any update to the efi memmap that pushes
-> it over a page boundary triggers this failure. I.e. I can fix the
-> problem by over-allocating the efi memmap and then page aligning the
-> result. __early_ioremap "should" be handling this case, but it appears
-> something else is messing this up.
+Here are some of the common spelling mistakes and typos that I've found
+while fixing up spelling mistakes in the kernel. Most of them still exist
+in more than two source files.
 
-I seems can not reproduce the bug, but maybe my vm setup is different.
-Can you do some debugging about the efi_memmap_insert function see if
-something wrong happened, maybe happens when memcpy to some new allocated buffer via
-memblock_alloc, just some guess.
+Signed-off-by: Xiong <xndchn@gmail.com>
+---
+ scripts/spelling.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-Thanks
-Dave
+diff --git a/scripts/spelling.txt b/scripts/spelling.txt
+index 672b5931bc8d..e95aea25f975 100644
+--- a/scripts/spelling.txt
++++ b/scripts/spelling.txt
+@@ -39,6 +39,8 @@ accout||account
+ accquire||acquire
+ accquired||acquired
+ accross||across
++accumalate||accumulate
++accumalator||accumulator
+ acessable||accessible
+ acess||access
+ acessing||accessing
+@@ -106,6 +108,7 @@ alogrithm||algorithm
+ alot||a lot
+ alow||allow
+ alows||allows
++alreay||already
+ alredy||already
+ altough||although
+ alue||value
+@@ -241,6 +244,7 @@ calender||calendar
+ calescing||coalescing
+ calle||called
+ callibration||calibration
++callled||called
+ calucate||calculate
+ calulate||calculate
+ cancelation||cancellation
+@@ -311,6 +315,7 @@ compaibility||compatibility
+ comparsion||comparison
+ compatability||compatibility
+ compatable||compatible
++compatibililty||compatibility
+ compatibiliy||compatibility
+ compatibilty||compatibility
+ compatiblity||compatibility
+@@ -330,6 +335,7 @@ comunication||communication
+ conbination||combination
+ conditionaly||conditionally
+ conditon||condition
++condtion||condition
+ conected||connected
+ conector||connector
+ connecetd||connected
+@@ -388,6 +394,8 @@ dafault||default
+ deafult||default
+ deamon||daemon
+ debouce||debounce
++decendant||descendant
++decendants||descendants
+ decompres||decompress
+ decsribed||described
+ decription||description
+@@ -411,11 +419,13 @@ delare||declare
+ delares||declares
+ delaring||declaring
+ delemiter||delimiter
++delievered||delivered
+ demodualtor||demodulator
+ demension||dimension
+ dependancies||dependencies
+ dependancy||dependency
+ dependant||dependent
++dependend||dependent
+ depreacted||deprecated
+ depreacte||deprecate
+ desactivate||deactivate
+@@ -995,6 +1005,7 @@ peice||piece
+ pendantic||pedantic
+ peprocessor||preprocessor
+ perfoming||performing
++perfomring||performing
+ peripherial||peripheral
+ permissons||permissions
+ peroid||period
+@@ -1166,6 +1177,8 @@ retreive||retrieve
+ retreiving||retrieving
+ retrive||retrieve
+ retrived||retrieved
++retrun||return
++retun||return
+ retuned||returned
+ reudce||reduce
+ reuest||request
+-- 
+2.19.1
 
