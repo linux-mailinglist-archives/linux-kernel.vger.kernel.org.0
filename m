@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EBCE12CA17
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2353E12CA1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfL2RYA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:24:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42046 "EHLO mail.kernel.org"
+        id S2387815AbfL2SQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:16:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbfL2RXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:23:54 -0500
+        id S1727632AbfL2RX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:23:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2EA3D207FD;
-        Sun, 29 Dec 2019 17:23:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F248207FD;
+        Sun, 29 Dec 2019 17:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640233;
-        bh=Y6B4UcocmHODRSr5NfFddhSUmsIQrX+k0n9K1yXol78=;
+        s=default; t=1577640238;
+        bh=+pRBD+DXYf0Vx1wWkRljRenYXMJ40s5kRaus2Nqa6xY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vqV1GTMy6k5OLz1u44kHQ80dszzvkP0MGZ9KEx0tLsiC3aDpTNu8f6Kn3tA5VqOc1
-         Jl1QL9eBMbuURMEgJtZwXSb2vndYnhCoBqYhBCnY0t4GEIgOe3IHU5gamJSdemPCcN
-         izOJkYDc1M4wSij0K0KOsJ7xjoUx9vYS1O6/+HmU=
+        b=lNqk6H8JMEzM1lSh8fOODJaEYmjFhHaj0iSIlw+n7ZiBIGmQYOg/YgXFhDZRSbWVq
+         lZOQa4yIZpCEknUlFsYJz/bnz/AK6xj9EviirB9U5kioGvJO03g3KEsg7zf6dd2f7e
+         iXp7CKwr9u9jnz2kf05rj0Lauu9y/TJ/e23A1Dco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ariel Elior <ariel.elior@marvell.com>,
-        Michal Kalderon <michal.kalderon@marvell.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Mao Wenan <maowenan@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 072/161] RDMA/qedr: Fix memory leak in user qp and mr
-Date:   Sun, 29 Dec 2019 18:18:40 +0100
-Message-Id: <20191229162421.774776080@linuxfoundation.org>
+Subject: [PATCH 4.14 074/161] net: dsa: LAN9303: select REGMAP when LAN9303 enable
+Date:   Sun, 29 Dec 2019 18:18:42 +0100
+Message-Id: <20191229162422.387073676@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -45,53 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Kalderon <michal.kalderon@marvell.com>
+From: Mao Wenan <maowenan@huawei.com>
 
-[ Upstream commit 24e412c1e00ebfe73619e6b88cbc26c2c7d41b85 ]
+[ Upstream commit b6989d248a2d13f02895bae1a9321b3bbccc0283 ]
 
-User QPs pbl's weren't freed properly.
-MR pbls weren't freed properly.
+When NET_DSA_SMSC_LAN9303=y and NET_DSA_SMSC_LAN9303_MDIO=y,
+below errors can be seen:
+drivers/net/dsa/lan9303_mdio.c:87:23: error: REGMAP_ENDIAN_LITTLE
+undeclared here (not in a function)
+  .reg_format_endian = REGMAP_ENDIAN_LITTLE,
+drivers/net/dsa/lan9303_mdio.c:93:3: error: const struct regmap_config
+has no member named reg_read
+  .reg_read = lan9303_mdio_read,
 
-Fixes: e0290cce6ac0 ("qedr: Add support for memory registeration verbs")
-Link: https://lore.kernel.org/r/20191027200451.28187-5-michal.kalderon@marvell.com
-Signed-off-by: Ariel Elior <ariel.elior@marvell.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@marvell.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+It should select REGMAP in config NET_DSA_SMSC_LAN9303.
+
+Fixes: dc7005831523 ("net: dsa: LAN9303: add MDIO managed mode support")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/qedr/verbs.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/dsa/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/qedr/verbs.c b/drivers/infiniband/hw/qedr/verbs.c
-index 7f4cc9336442..656e7c1a4449 100644
---- a/drivers/infiniband/hw/qedr/verbs.c
-+++ b/drivers/infiniband/hw/qedr/verbs.c
-@@ -1343,6 +1343,14 @@ static void qedr_cleanup_user(struct qedr_dev *dev, struct qedr_qp *qp)
- 	if (qp->urq.umem)
- 		ib_umem_release(qp->urq.umem);
- 	qp->urq.umem = NULL;
-+
-+	if (rdma_protocol_roce(&dev->ibdev, 1)) {
-+		qedr_free_pbl(dev, &qp->usq.pbl_info, qp->usq.pbl_tbl);
-+		qedr_free_pbl(dev, &qp->urq.pbl_info, qp->urq.pbl_tbl);
-+	} else {
-+		kfree(qp->usq.pbl_tbl);
-+		kfree(qp->urq.pbl_tbl);
-+	}
- }
- 
- static int qedr_create_user_qp(struct qedr_dev *dev,
-@@ -2331,8 +2339,8 @@ int qedr_dereg_mr(struct ib_mr *ib_mr)
- 
- 	dev->ops->rdma_free_tid(dev->rdma_ctx, mr->hw_mr.itid);
- 
--	if ((mr->type != QEDR_MR_DMA) && (mr->type != QEDR_MR_FRMR))
--		qedr_free_pbl(dev, &mr->info.pbl_info, mr->info.pbl_table);
-+	if (mr->type != QEDR_MR_DMA)
-+		free_mr_info(dev, &mr->info);
- 
- 	/* it could be user registered memory. */
- 	if (mr->umem)
+diff --git a/drivers/net/dsa/Kconfig b/drivers/net/dsa/Kconfig
+index 83a9bc892a3b..6ae13f2419e3 100644
+--- a/drivers/net/dsa/Kconfig
++++ b/drivers/net/dsa/Kconfig
+@@ -55,6 +55,7 @@ config NET_DSA_QCA8K
+ config NET_DSA_SMSC_LAN9303
+ 	tristate
+ 	select NET_DSA_TAG_LAN9303
++	select REGMAP
+ 	---help---
+ 	  This enables support for the SMSC/Microchip LAN9303 3 port ethernet
+ 	  switch chips.
 -- 
 2.20.1
 
