@@ -2,115 +2,173 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AF7D12C02D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:59:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E9312C037
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 04:01:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfL2C71 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 21:59:27 -0500
-Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:49349 "EHLO
-        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726502AbfL2C71 (ORCPT
+        id S1726635AbfL2DBn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 22:01:43 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34832 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfL2DBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 21:59:27 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 9057B542;
-        Sat, 28 Dec 2019 21:59:25 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 28 Dec 2019 21:59:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm1; bh=NwHOl9r2jOmJg
-        JvC0fW2SeeCz3WaxtKWL9iSQCd7ocM=; b=HfLeF8aLCBciifaADKWL9e/+rj6Sg
-        PL+rFqHNXg6wC61FFil1fNtmvAublyFRsjhvIc9jWkxBUzHDoyyhfRpJYbknnfvC
-        f1/cxx3zJ9KN+BFi5s8c4s2HEHyfkfb+AF+buDN83id+hJc44N0mf8Kx2wYVtWkK
-        gC1mw/FOtEz0xaoH2E+CyiGfm/Ggg6aQmk3RCf2smiqVXQxlb1Wiwu4ummp0qaGs
-        naZXDP5BjTSGJh/1Dp9QQtbla980Ly9yrmoihEmtilkSLiyyH84vZuuEaVOu5DlR
-        4zkXNjfprV+9ym6W4IMnu4zRkDhSzIym/NnEjbk+DmM8aiR19Z6gue08g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=NwHOl9r2jOmJgJvC0fW2SeeCz3WaxtKWL9iSQCd7ocM=; b=jvpznrSy
-        0c1ULk1LXDfiWtqFXqygbe+vBDBQJBiWWjF69zaGmb0cE5fdwYa5dniLTFjhE8HZ
-        bgoltdiPqQFkRE9frU/tZilhcCGOl5yKx1rwREnjbJfg26RkFEAC7SgxCuim0X9e
-        6t+TgbbfxQny8Wlb4VAj23jNXZkIOUFsWYgecCfZnLJsbQ6UuPyXF7P9WTH+FYn4
-        GS6Ao+9rHmEpG52o42xeFdzhqfOp1NoVV3EkW8x4Y3qGtK7RPuHuemBolFoKygVX
-        QZ5LMbYxwLvaiLNPosDK6Ypes0+5Tsxm35YGgduF755o3iRQpGcKgCDVUmH/5F6n
-        zCt+dhBGy7Guqg==
-X-ME-Sender: <xms:jRYIXgBJZvp5IfAEYJrO83pzFxDVqnBfbqYoxO1xWKOeI8mtmqCuXA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdefuddgheduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
-    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
-    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
-    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:jRYIXto6nzVpeG7P2CYc0voZvqV08WZrxopxs9rjjt9nFoJWp1RlPA>
-    <xmx:jRYIXo8FLlv4TtByjcq0nk09tgoqsx3kwOMsGs9Tig5fBhjqYEj1CA>
-    <xmx:jRYIXmmXsE2GMrafeveknWYzqK10bvktFZnLQX457uZCaIWNIqH8Vg>
-    <xmx:jRYIXuZF8ZZYNBrYbrqtKiSqRQU7nn6gzYB4IVKsjS19joPaol4gfg>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id AC897306099E;
-        Sat, 28 Dec 2019 21:59:24 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 3/3] clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
-Date:   Sat, 28 Dec 2019 20:59:22 -0600
-Message-Id: <20191229025922.46899-4-samuel@sholland.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191229025922.46899-1-samuel@sholland.org>
-References: <20191229025922.46899-1-samuel@sholland.org>
+        Sat, 28 Dec 2019 22:01:43 -0500
+Received: by mail-pg1-f196.google.com with SMTP id l24so16439949pgk.2
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 19:01:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=otzAHEuQRQz5JEZyg1vitpEwm2qVyYHjx2AMIYobrWU=;
+        b=XrrMPzMcmtar6QgFnxMt39dWC1wTvsaWWRW+osd5EWKZdaaGDC8Dwv2mlKiQK/X6d7
+         GOH6rW33UU+7iVy+U2wJ8AA7qCvFyR6jg1iC5Wg+6Xs52wUlm3bgvhrUXXa998pxzgaA
+         t5/PONW0yAxoE6NI/uJbZvVFLHu7NnhYFOnCxmy5ulBYrQ3oaIOylK8MXclG8kfw0Byd
+         wWtdEg5KEJRiqH+nqzIUfGTxCPmhuTt1Pr7hAxNeIx4nbLpgiYW8U+Zo0y7krpD5Qm7e
+         zvodHOeMFH+nNmrG+psyB9IfUlC2rf/+TkV1QAfgYUU9Ndi4igWZoLY3tMCqHhOdg3iS
+         n+8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=otzAHEuQRQz5JEZyg1vitpEwm2qVyYHjx2AMIYobrWU=;
+        b=f6o+tTB12XXqoGYzswV7QMAUCi9CvJOV3z00oDcHfzFZKI/rU9D3VKK3M4K9Acszd3
+         AV+rz0YZFIRPmEXbGjKKoK1intVtZIei/sxGZl0GkQc5fGQV4060zSnhHN7uyEdIlMtM
+         y4YQtj3nPg1oSzpTC+t/PAgvDxwG34fOcVEyjtv36OjdLDMvhi7wFLny2alrPwreLh2v
+         z01Y/sQzER/LRjYtehevu2ay2LT7wR9/kUgqdh4tL/0otphZZIHsfwXdsnQDXgrLwGk3
+         YRZQxdzuckmIoK37eWtYsir0QQ/7LSh8yLjTf9DMDkxpuFldD5PRNbBtCWpiDtqs3JlX
+         PD9A==
+X-Gm-Message-State: APjAAAVkuSCwRISLcDsq8asqIQc7RiW2EKsTQXo1j6thpDZ4dOZ3QmJS
+        4lj4Vy2ohMtoafUlGaK4QN6Z2Cip8gE=
+X-Google-Smtp-Source: APXvYqxCeS5pCH3BOi6UYjDt6eJVBUTzoCmAT6O9GOajpM3LoVIJRRcsZiFJcUkwJpxqQmlJXcv5Sw==
+X-Received: by 2002:a63:5f45:: with SMTP id t66mr61831803pgb.198.1577588502803;
+        Sat, 28 Dec 2019 19:01:42 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id g19sm46419995pfh.134.2019.12.28.19.01.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Dec 2019 19:01:42 -0800 (PST)
+Date:   Sat, 28 Dec 2019 19:01:40 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Shyam Kumar Thella <sthella@codeaurora.org>
+Cc:     agross@kernel.org, srinivas.kandagatla@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: nvmem: add binding for QTI SPMI SDAM
+Message-ID: <20191229030140.GJ3755841@builder>
+References: <1577165532-28772-1-git-send-email-sthella@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1577165532-28772-1-git-send-email-sthella@codeaurora.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to the BSP source code, both the AR100 and R_APB2 clocks have
-PLL_PERIPH0 as mux index 3, not 2 as it was on previous chips. The pre-
-divider used for PLL_PERIPH0 should be changed to index 3 to match.
+On Mon 23 Dec 21:32 PST 2019, Shyam Kumar Thella wrote:
 
-This was verified by running a rough benchmark on the AR100 with various
-clock settings:
+> QTI SDAM allows PMIC peripherals to access the shared memory that is
+> available on QTI PMICs. Add documentation for it.
+> 
+> Signed-off-by: Shyam Kumar Thella <sthella@codeaurora.org>
+> ---
+>  .../devicetree/bindings/nvmem/qcom,spmi-sdam.yaml  | 79 ++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
+> new file mode 100644
+> index 0000000..8961a99
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/qcom,spmi-sdam.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/nvmem/qcom,spmi-sdam.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SPMI SDAM DT bindings
+> +
+> +maintainers:
+> +  - Shyam Kumar Thella <sthella@codeaurora.org>
+> +
+> +description: |
+> +  The SDAM provides scratch register space for the PMIC clients. This
+> +  memory can be used by software to store information or communicate
+> +  to/from the PBUS.
+> +
+> +allOf:
+> +  - $ref: "nvmem.yaml#"
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,spmi-sdam
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#address-cells":
+> +    const: 1
+> +
+> +  "#size-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "^.*@[0-9a-f]+$":
+> +    type: object
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +        description:
+> +          Offset and size in bytes within the storage device.
+> +
+> +      bits:
+> +        maxItems: 1
+> +        items:
+> +          items:
+> +            - minimum: 0
+> +              maximum: 7
+> +              description:
+> +                Offset in bit within the address range specified by reg.
+> +            - minimum: 1
+> +              description:
+> +                Size in bit within the address range specified by reg.
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +      sdam_1: nvram@b000 {
+> +         #address-cells = <1>;
+> +         #size-cells = <1>;
+> +         compatible = "qcom,spmi-sdam";
+> +          reg = <0xb000 0x100>;
+> +
+> +          /* Data cells */
+> +          restart_reason: restart@50 {
 
-        | mux | pre-divider | iterations/second | clock source |
-        |=====|=============|===================|==============|
-        |   0 |           0 |  19033   (stable) |       osc24M |
-        |   2 |           5 |  11466 (unstable) |  iosc/osc16M |
-        |   2 |          17 |  11422 (unstable) |  iosc/osc16M |
-        |   3 |           5 |  85338   (stable) |  pll-periph0 |
-        |   3 |          17 |  27167   (stable) |  pll-periph0 |
+So this register has moved out of the PON register set? What component
+in the system is going to reference this? Should it have a compatible,
+in the same way as "syscon-reboot-mode" does?
 
-The relative performance numbers all match up (with pll-periph0 running
-at its default 600MHz).
+Regards,
+Bjorn
 
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index df9c01831699..50f8d1bc7046 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -23,9 +23,9 @@
-  */
- 
- static const char * const ar100_r_apb2_parents[] = { "osc24M", "osc32k",
--					     "pll-periph0", "iosc" };
-+						     "iosc", "pll-periph0" };
- static const struct ccu_mux_var_prediv ar100_r_apb2_predivs[] = {
--	{ .index = 2, .shift = 0, .width = 5 },
-+	{ .index = 3, .shift = 0, .width = 5 },
- };
- 
- static struct ccu_div ar100_clk = {
--- 
-2.23.0
-
+> +              reg = <0x50 0x1>;
+> +              bits = <7 2>;
+> +          };
+> +      };
+> +...
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+>  a Linux Foundation Collaborative Project
