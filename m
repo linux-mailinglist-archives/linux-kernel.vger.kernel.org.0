@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE52B12C90C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:17:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDF612CA45
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:20:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387683AbfL2R7L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50720 "EHLO mail.kernel.org"
+        id S2387865AbfL2SSF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:18:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387665AbfL2R7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:59:09 -0500
+        id S1727159AbfL2RWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:22:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7ACC2206DB;
-        Sun, 29 Dec 2019 17:59:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 19EE6222D9;
+        Sun, 29 Dec 2019 17:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642348;
-        bh=IXQFGs49QTJBj4A+8b5pYvRSDZKzn6S19OIdWP+ZMVw=;
+        s=default; t=1577640129;
+        bh=10Bch39nQdG2FDKAX+xNLwifrBrfE1LyaeBkCA4N98E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DKnX0kNzACRzfT23LGnsX6/JOkt32vq2mV5zcB69/8gLnhT3XFOUJxPTA4FFbo2dB
-         60pW9NYxah9PGn3ktc/oTEoZ8l4unVKNjqdidV716uYSV4i3Y61tMuKYVL0Irxtuna
-         UanOLcE0cNJtmA7jjlRNuMa2Sl2W8ZWfoxFkh/JY=
+        b=o27vU7U9GL5ZlNzwFa7ATH89AuwX+9LEENfpJyYqQdYl3zPJLTks5NywzPoSSJ6Ah
+         wzbJ7UYOWglrJ7Og1a42BWZphlRcssVe5ml3n3e6KqI6UfrV96C0KGhl4t+pt8zem8
+         gwbEzeCEVyPKxJgPol0rljusg4MHhOQQlL7CtPxk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/219] media: i2c: ov2659: Fix missing 720p register config
-Date:   Sun, 29 Dec 2019 18:17:24 +0100
-Message-Id: <20191229162514.491675746@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 003/161] mod_devicetable: fix PHY module format
+Date:   Sun, 29 Dec 2019 18:17:31 +0100
+Message-Id: <20191229162356.570646860@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
-References: <20191229162508.458551679@linuxfoundation.org>
+In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
+References: <20191229162355.500086350@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,48 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 9d669fbfca20e6035ead814e55d9ef1a6b500540 ]
+[ Upstream commit d2ed49cf6c13e379c5819aa5ac20e1f9674ebc89 ]
 
-The initial registers sequence is only loaded at probe
-time. Afterward only the resolution and format specific
-register are modified. Care must be taken to make sure
-registers modified by one resolution setting are reverted
-back when another resolution is programmed.
+When a PHY is probed, if the top bit is set, we end up requesting a
+module with the string "mdio:-10101110000000100101000101010001" -
+the top bit is printed to a signed -1 value. This leads to the module
+not being loaded.
 
-This was not done properly for the 720p case.
+Fix the module format string and the macro generating the values for
+it to ensure that we only print unsigned types and the top bit is
+always 0/1. We correctly end up with
+"mdio:10101110000000100101000101010001".
 
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 8626d3b43280 ("phylib: Support phy module autoloading")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/i2c/ov2659.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/mod_devicetable.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/ov2659.c b/drivers/media/i2c/ov2659.c
-index ca079996c7ce..4b6be3b0fd52 100644
---- a/drivers/media/i2c/ov2659.c
-+++ b/drivers/media/i2c/ov2659.c
-@@ -419,10 +419,14 @@ static struct sensor_register ov2659_720p[] = {
- 	{ REG_TIMING_YINC, 0x11 },
- 	{ REG_TIMING_VERT_FORMAT, 0x80 },
- 	{ REG_TIMING_HORIZ_FORMAT, 0x00 },
-+	{ 0x370a, 0x12 },
- 	{ 0x3a03, 0xe8 },
- 	{ 0x3a09, 0x6f },
- 	{ 0x3a0b, 0x5d },
- 	{ 0x3a15, 0x9a },
-+	{ REG_VFIFO_READ_START_H, 0x00 },
-+	{ REG_VFIFO_READ_START_L, 0x80 },
-+	{ REG_ISP_CTRL02, 0x00 },
- 	{ REG_NULL, 0x00 },
- };
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -519,9 +519,9 @@ struct platform_device_id {
+ #define MDIO_NAME_SIZE		32
+ #define MDIO_MODULE_PREFIX	"mdio:"
  
--- 
-2.20.1
-
+-#define MDIO_ID_FMT "%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d"
++#define MDIO_ID_FMT "%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u"
+ #define MDIO_ID_ARGS(_id) \
+-	(_id)>>31, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1,	\
++	((_id)>>31) & 1, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1, \
+ 	((_id)>>27) & 1, ((_id)>>26) & 1, ((_id)>>25) & 1, ((_id)>>24) & 1, \
+ 	((_id)>>23) & 1, ((_id)>>22) & 1, ((_id)>>21) & 1, ((_id)>>20) & 1, \
+ 	((_id)>>19) & 1, ((_id)>>18) & 1, ((_id)>>17) & 1, ((_id)>>16) & 1, \
 
 
