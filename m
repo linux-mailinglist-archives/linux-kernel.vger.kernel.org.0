@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABDC612C72E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BA9412C745
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732748AbfL2Ryq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42732 "EHLO mail.kernel.org"
+        id S1732756AbfL2Ryr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732729AbfL2Ryk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:40 -0500
+        id S1732448AbfL2Ryp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F26B320718;
-        Sun, 29 Dec 2019 17:54:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC80E20718;
+        Sun, 29 Dec 2019 17:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642079;
-        bh=ZLwIHzi1b5Z8dT7Nzzujfrv3RFtNodl2dfwFpq/b1Gs=;
+        s=default; t=1577642084;
+        bh=kRdKq7uCA72m1K+GKFvonx8KbbCs1gZwLyCH7jaiwDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JBUJMBbJlDad4JEXJvyhY9JD9AxyZPwHaFseIgZ3zfWqjYIapTPjZoaQpPGZv6WTL
-         M/qP5gReYr7hbDu7bNHM1gUn/DRqeXTkJj+6Iiesl7a1KCD0HZbW4hcgEKfmaFtvlh
-         9buVHPhL7oEl4fP/cYhJWTlHQNouL66fRAFOgy+A=
+        b=yTyX6ULrIQMKmrKaFsF/WT/0V3aP56ewABRR68Sn6iD0wzmpVbfoKumTiiM3Caud3
+         z+ZfMHY2agloMZrdQIRcP8wbNBzYkdypaq9ElGmoJrTVNBgEMJddEJOj2NbYXRRgRz
+         pq3bb6iVxVrZbuvy8HBVZTrHL6iOzXWjDEIKPZRM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Joerg Schmidbauer <jschmidb@linux.vnet.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 334/434] s390/crypto: Fix unsigned variable compared with zero
-Date:   Sun, 29 Dec 2019 18:26:27 +0100
-Message-Id: <20191229172724.154790665@linuxfoundation.org>
+Subject: [PATCH 5.4 336/434] bnxt_en: Improve RX buffer error handling.
+Date:   Sun, 29 Dec 2019 18:26:29 +0100
+Message-Id: <20191229172724.286405221@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,48 +44,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 0398d4ab1677f7d8cd43aac2aa29a93dfcf9e2e3 ]
+[ Upstream commit 19b3751ffa713d04290effb26fe01009010f2206 ]
 
-s390_crypto_shash_parmsize() return type is int, it
-should not be stored in a unsigned variable, which
-compared with zero.
+When hardware reports RX buffer errors, the latest 57500 chips do not
+require reset.  The packet is discarded by the hardware and the
+ring will continue to operate.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 3c2eb6b76cab ("s390/crypto: Support for SHA3 via CPACF (MSA6)")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Joerg Schmidbauer <jschmidb@linux.vnet.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Also, add an rx_buf_errors counter for this type of error.  It can help
+the user to identify if the aggregation ring is too small.
+
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/crypto/sha_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c         | 8 ++++++--
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h         | 1 +
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 2 ++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/crypto/sha_common.c b/arch/s390/crypto/sha_common.c
-index d39e0f079217..686fe7aa192f 100644
---- a/arch/s390/crypto/sha_common.c
-+++ b/arch/s390/crypto/sha_common.c
-@@ -74,14 +74,17 @@ int s390_sha_final(struct shash_desc *desc, u8 *out)
- 	struct s390_sha_ctx *ctx = shash_desc_ctx(desc);
- 	unsigned int bsize = crypto_shash_blocksize(desc->tfm);
- 	u64 bits;
--	unsigned int n, mbl_offset;
-+	unsigned int n;
-+	int mbl_offset;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 04ec909e06df..527e1bf93116 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -1767,8 +1767,12 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_cp_ring_info *cpr,
  
- 	n = ctx->count % bsize;
- 	bits = ctx->count * 8;
--	mbl_offset = s390_crypto_shash_parmsize(ctx->func) / sizeof(u32);
-+	mbl_offset = s390_crypto_shash_parmsize(ctx->func);
- 	if (mbl_offset < 0)
- 		return -EINVAL;
+ 		rc = -EIO;
+ 		if (rx_err & RX_CMPL_ERRORS_BUFFER_ERROR_MASK) {
+-			netdev_warn(bp->dev, "RX buffer error %x\n", rx_err);
+-			bnxt_sched_reset(bp, rxr);
++			bnapi->cp_ring.rx_buf_errors++;
++			if (!(bp->flags & BNXT_FLAG_CHIP_P5)) {
++				netdev_warn(bp->dev, "RX buffer error %x\n",
++					    rx_err);
++				bnxt_sched_reset(bp, rxr);
++			}
+ 		}
+ 		goto next_rx_no_len;
+ 	}
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index d333589811a5..5163bb848618 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -927,6 +927,7 @@ struct bnxt_cp_ring_info {
+ 	dma_addr_t		hw_stats_map;
+ 	u32			hw_stats_ctx_id;
+ 	u64			rx_l4_csum_errors;
++	u64			rx_buf_errors;
+ 	u64			missed_irqs;
  
-+	mbl_offset = mbl_offset / sizeof(u32);
-+
- 	/* set total msg bit length (mbl) in CPACF parmblock */
- 	switch (ctx->func) {
- 	case CPACF_KLMD_SHA_1:
+ 	struct bnxt_ring_struct	cp_ring_struct;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index 51c140476717..89f95428556e 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -173,6 +173,7 @@ static const char * const bnxt_ring_tpa2_stats_str[] = {
+ 
+ static const char * const bnxt_ring_sw_stats_str[] = {
+ 	"rx_l4_csum_errors",
++	"rx_buf_errors",
+ 	"missed_irqs",
+ };
+ 
+@@ -552,6 +553,7 @@ static void bnxt_get_ethtool_stats(struct net_device *dev,
+ 		for (k = 0; k < stat_fields; j++, k++)
+ 			buf[j] = le64_to_cpu(hw_stats[k]);
+ 		buf[j++] = cpr->rx_l4_csum_errors;
++		buf[j++] = cpr->rx_buf_errors;
+ 		buf[j++] = cpr->missed_irqs;
+ 
+ 		bnxt_sw_func_stats[RX_TOTAL_DISCARDS].counter +=
 -- 
 2.20.1
 
