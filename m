@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B383B12C959
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C168712C957
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732513AbfL2SFX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:05:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36580 "EHLO mail.kernel.org"
+        id S2387750AbfL2SFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:05:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732066AbfL2RvV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:51:21 -0500
+        id S1732109AbfL2Rvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:51:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF1B206A4;
-        Sun, 29 Dec 2019 17:51:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 090DB20718;
+        Sun, 29 Dec 2019 17:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641880;
-        bh=ZCMHAaOSkNrzJ6fpbCd+rm7Im/wppjlfjKJwI1hVsCE=;
+        s=default; t=1577641892;
+        bh=adoBnTL3c8ascTWuPdS3qgWuYBBmCMjIas475ss7R6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jOMgJnxx+IjV7HK/EkOcM7YPn4+6iXemUKXfkdlNKeCBdTDpF78vBmzopT40ykXPe
-         mPixjJD/1UvOYQ63V2ISgTaE7596Ikkd7VzVRZBHULlEuLWMV3W9tZfVmCAndeUhXX
-         uqXPtRB0GgI1vZzffbgpa3vVN+Fc4AIYsPSaILyo=
+        b=PvgmAt04gfbsDm9vq9BDgGcujw14s1F4dyDCoQhSKofoM7KfogZCSptWorlrxr5Cc
+         QDr8P4Z2SA4/0gdEvQ7Txw/rxa4HWRnJ5b/E77GzYcJA9s2xxC5gs0CXUDQY9CnXW+
+         OIa5+1t1VJp/zFqUeoHLNz6OxJXnGZeg0ak2dTmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Clark <james.clark@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>, nd <nd@arm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Hawking Zhang <Hawking.Zhang@amd.com>,
+        Candice Li <Candice.Li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 251/434] libsubcmd: Use -O0 with DEBUG=1
-Date:   Sun, 29 Dec 2019 18:25:04 +0100
-Message-Id: <20191229172718.585795461@linuxfoundation.org>
+Subject: [PATCH 5.4 255/434] drm/amdgpu: disallow direct upload save restore list from gfx driver
+Date:   Sun, 29 Dec 2019 18:25:08 +0100
+Message-Id: <20191229172718.864808477@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -48,44 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Clark <James.Clark@arm.com>
+From: Hawking Zhang <Hawking.Zhang@amd.com>
 
-[ Upstream commit 22bd8f1b5a1dd168ba4eba27cb17643a11012f5d ]
+[ Upstream commit 58f46d4b65021083ef4b4d49c6e2c58e5783f626 ]
 
-When a 'make DEBUG=1' build is done, the command parser is still built
-with -O6 and is hard to step through, fix it making it use -O0 in that
-case.
+Direct uploading save/restore list via mmio register writes breaks the security
+policy. Instead, the driver should pass s&r list to psp.
 
-Signed-off-by: James Clark <james.clark@arm.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: nd <nd@arm.com>
-Link: http://lore.kernel.org/lkml/20191028113340.4282-1-james.clark@arm.com
-[ split from a larger patch ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+For all the ASICs that use rlc v2_1 headers, the driver actually upload s&r list
+twice, in non-psp ucode front door loading phase and gfx pg initialization phase.
+The latter is not allowed.
+
+VG12 is the only exception where the driver still keeps legacy approach for S&R
+list uploading. In theory, this can be elimnated if we have valid srcntl ucode
+for VG12.
+
+Signed-off-by: Hawking Zhang <Hawking.Zhang@amd.com>
+Reviewed-by: Candice Li <Candice.Li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/subcmd/Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-index 5b2cd5e58df0..5dbb0dde208c 100644
---- a/tools/lib/subcmd/Makefile
-+++ b/tools/lib/subcmd/Makefile
-@@ -28,7 +28,9 @@ ifeq ($(DEBUG),0)
-   endif
- endif
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index 97cf0b536873..c9ba2ec6d038 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -2930,7 +2930,8 @@ static void gfx_v9_0_init_pg(struct amdgpu_device *adev)
+ 	 * And it's needed by gfxoff feature.
+ 	 */
+ 	if (adev->gfx.rlc.is_rlc_v2_1) {
+-		gfx_v9_1_init_rlc_save_restore_list(adev);
++		if (adev->asic_type == CHIP_VEGA12)
++			gfx_v9_1_init_rlc_save_restore_list(adev);
+ 		gfx_v9_0_enable_save_restore_machine(adev);
+ 	}
  
--ifeq ($(CC_NO_CLANG), 0)
-+ifeq ($(DEBUG),1)
-+  CFLAGS += -O0
-+else ifeq ($(CC_NO_CLANG), 0)
-   CFLAGS += -O3
- else
-   CFLAGS += -O6
 -- 
 2.20.1
 
