@@ -2,91 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 57EB912C2E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 15:57:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9213112C309
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 16:04:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbfL2O5B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 09:57:01 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44976 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfL2O45 (ORCPT
+        id S1726647AbfL2PEV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 10:04:21 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:39295 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726410AbfL2PEV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 09:56:57 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v201so23708258lfa.11;
-        Sun, 29 Dec 2019 06:56:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=d61xLjjxWbxI5eV1Fujn9jWtoC4pEzqs0yuJAlEPGQA=;
-        b=etWVTJZaT3p8VPlVN8QeSiQ46gN7rtZ/ANKmqtVpbKPlKyXl/+ZAvJm2HSxQMBs2zu
-         3Ufe5/SgD0LCr2UrtEmHCJmngmiNwek2rJtOXOB2WQzzllZ/9kMkbMB5SQ/R9ea6xqOX
-         OV3pHGxrAuRDPsF/zfTJVMWi4rEOhOIuYhVIqcgI/s3LuZMO3F61IID8O935GxBK3ex1
-         xVESRfgJNtuoVNyVzLqJxxRgSqD8kSQy9a9BWxOB+hNiyzVL5fi7yPSTtgez1p/2KnzE
-         lTgTsmJOsceoub4xCrlD5/tvCaeRhr7b138p/IUYrUx1P2UyVLccGmy/ZlbU10TttJQ7
-         ljMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=d61xLjjxWbxI5eV1Fujn9jWtoC4pEzqs0yuJAlEPGQA=;
-        b=Wt1jgXbRDv74hioZyoX2MK64mxdzSzSIfrKiNvX6BJGU5DN/j9Cl1KRlakLXMD3WWm
-         A1kOs27WjFt8eV8g1mY3u037jhcreR19iXfBRHYqgJzbwGui5L8Pha7sBsYto3PuVsJu
-         bSpTm0OuOKOUu/bFKJotlvcwcny0dMFir2eRJALeckryA5bBcfE//i4DlmPoryBdmPmt
-         N1xPy0yIj8N7mRpngKbaKRaE+Efe8bd+vr6RqNNAC75E1uEfnJPePhjwhFU/bYtLsXIF
-         lEFbeE3MbAUHhk84UxmgULOoj1ORH0RLIt7Y2aDYttyiJEHkpG+gS71xwFJt4cpUiZ2e
-         0Pcw==
-X-Gm-Message-State: APjAAAW/WNp9FRnXgVU1Drvm5aOi5Or9NtXcppORTRmdAWouzZZhheiO
-        g2S2XlBa/k3ZJtPoDblQZb8=
-X-Google-Smtp-Source: APXvYqz6IXklzOjO/CUbhhhRC452FVyyPClstVpWvjv0naGRCdnjLM2OpgK3B6pFVOGuCBbvWCBoLA==
-X-Received: by 2002:ac2:4add:: with SMTP id m29mr34356272lfp.190.1577631415131;
-        Sun, 29 Dec 2019 06:56:55 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id g15sm11563944ljl.10.2019.12.29.06.56.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 29 Dec 2019 06:56:54 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-Cc:     dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 12/12] dmaengine: tegra-apb: Remove MODULE_ALIAS
-Date:   Sun, 29 Dec 2019 17:55:25 +0300
-Message-Id: <20191229145525.533-13-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191229145525.533-1-digetx@gmail.com>
-References: <20191229145525.533-1-digetx@gmail.com>
+        Sun, 29 Dec 2019 10:04:21 -0500
+Received: from mail-qv1-f48.google.com ([209.85.219.48]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N5lvf-1jo3kv43Gl-017DMl; Sun, 29 Dec 2019 16:04:19 +0100
+Received: by mail-qv1-f48.google.com with SMTP id f16so11620588qvi.4;
+        Sun, 29 Dec 2019 07:04:18 -0800 (PST)
+X-Gm-Message-State: APjAAAXbk/D7K8RJIe9OxqaLwBrHbfDIn4M6nq9xyfxloM7ajJXeYAns
+        cXnZ0wr/qhF7rym/9CR71JpxYlTboCTDzhTmkPQ=
+X-Google-Smtp-Source: APXvYqxUxXT/D/078XI1LlLrxyQBorTz/AC2zq3x4KHkyas9hkBnO2Xi0jo0J8feFrGnUFEBHkIL4pf/yjmbXdEHv6I=
+X-Received: by 2002:a0c:e7c7:: with SMTP id c7mr48140669qvo.222.1577631857753;
+ Sun, 29 Dec 2019 07:04:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20191229104325.10132-1-tiny.windzz@gmail.com> <CAMpxmJUggb7srWeLNzkcrb+L1THhP4DNH8nkkDaYDEs316ywDQ@mail.gmail.com>
+ <CAEExFWt+8FL45kLMWc3odS4GsCRkskD1Z08q6UAF1sYx32Hf-w@mail.gmail.com>
+In-Reply-To: <CAEExFWt+8FL45kLMWc3odS4GsCRkskD1Z08q6UAF1sYx32Hf-w@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 29 Dec 2019 16:04:01 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a00nLxqb6ZYt9HswmFRGEXntjRdAfAW9vMnoH4CgSfcZQ@mail.gmail.com>
+Message-ID: <CAK8P3a00nLxqb6ZYt9HswmFRGEXntjRdAfAW9vMnoH4CgSfcZQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] lib: devres: provide devm_ioremap_resource_nocache()
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        saravanak@google.com,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Joe Perches <joe@perches.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Mans Rullgard <mans@mansr.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Tuowen Zhao <ztuowen@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:1niLBfWCQdqfI3a4OaicmjCLZyEvRMc4GIw0ZKjj/nxFGrmjlBJ
+ lShmrHbayYbiotUIW3mFPnMTQILO+NoQT9zFNefCYz3VDzb65N5FnklnwSXU9zKyRwFCKoj
+ cDGYbD0Yg0wXVHsnWa5WNdlZtCUeEqQDwKdEPHN0ShQJJf2WaR1yYxXslw8a7N5qdE/OH6C
+ CO7oDQHXRY6563EjxatXw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:EZhydo4IAP8=:6VxsjYcOzGi+EOA1BvwfZh
+ N7GXCeoWTOeY+jeuU67EU6evr9qe2nj/KYu7XAZlTYBQZN9U0bfXKoJlNMf1UFsV00Y4D7g0c
+ zc5wnZxNbMuIV8jAKO1jMGLMN+MuOMCBbQx5JpWW9kvJAhcDo8LywMSCPj/z9Fsl26TF4PG26
+ uT67kk4TNksTspUNYL/bfAJkAmJUmjPBc6Fv94G5DfegV/usgAcuLy0F5GTg9SXegffCvvw5x
+ JW+6VM1BxDV9sdmSgSPrnE8zxJDVAe9yzw1uARH5E3dVLO00f/swu2d8fryFoGdDF8nKglfWS
+ 5LipQsHKxlEBW83dBVTlyEgxGPT3YlvGWPX6gBL5bewdGBpMf6gjp4yDctvt8IEpxF2ZfbkLZ
+ deyksHRNLcUexwLqPrGszGxXcr9NcAPe9ReQ/fmQ6oOlEGWQoYmJ5CCQD2L8R4H8iQ65I4cOR
+ OtTn4AERVjMVdsDLGIUSf6pxfYJZrmsvSgu/igWp52pYcSckGqCz8/KgTM6lbbrtLajmFikms
+ CK9gxrxMoylbzLOvmH13QMuex2GPmsCd/hUobrJNv7RofNHwLIG/t1nzucTw1uCPfpd/MCKMs
+ 8WMriZmR/FO8jmkmY5pq1J0HUKix3k/kw7vmwTLx0r/JjwfEmaUgxV3CFNzxSzX9wo/h8M7pZ
+ yUkUibBSLUrv5cremUUPP+fwGHj4qe1c3iTG6MFQzpkiJ9i9IPR8Of8bW9KjLr4xr25xQlzS/
+ ZW6yozsH3tbVKAw3o3E54VJ1MJFf2yaVXFNdu6710romkQEhEvof+uDiCXWV5tHIabyWL40C8
+ o7iDGgXVYsTIrsKXC461hm85hcDYVUNE99LNKi+tzLAOnSxEMaQMi7iBsIs30YNJc8CdQqxS7
+ rpjmMauV474AO16/57Nw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra APB DMA driver is an Open Firmware driver and thus it uses OF alias
-naming scheme which overrides MODULE_ALIAS, meaning that MODULE_ALIAS does
-nothing and could be removed safely.
+On Sun, Dec 29, 2019 at 3:36 PM Frank Lee <tiny.windzz@gmail.com> wrote:
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/dma/tegra20-apb-dma.c | 1 -
- 1 file changed, 1 deletion(-)
+> Thanks for pointing out!
+> I have seen the use of ioremap_nocache in many architectures,
+> so they are wrong and should be changed to ioremap?
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index d96de35c8253..2eae3b3cdc58 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1633,7 +1633,6 @@ static struct platform_driver tegra_dmac_driver = {
- 
- module_platform_driver(tegra_dmac_driver);
- 
--MODULE_ALIAS("platform:tegra20-apbdma");
- MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
- MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
- MODULE_LICENSE("GPL v2");
--- 
-2.24.0
+Yes, those patches are already part of linux-next.
 
+        Arnd
