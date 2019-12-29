@@ -2,109 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CC6212C5A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA20312C9B4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729927AbfL2RjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:39:20 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33380 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729420AbfL2RdS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:33:18 -0500
-Received: by mail-ed1-f67.google.com with SMTP id r21so30447764edq.0
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 09:33:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
-        b=wf71Wq0yMOB58FsNbi2p888B5RLQ+mTavSy4HA7XvUnu6YC98zDS1ey+qK1HxpzbCz
-         6L2tloRWFY4Q7RvQIsEA9ZbK5V1v4V5avPP+9GCeSHiPIbf7Tpmorx0qZXXba7X2DB5W
-         kwmNwUUsBAk2CmQxiD6T2LL+e7bhOpjNvW2pbsPNyLF+/+jQlCa1UL01REnyBo48MJuh
-         JumoHJbyuy81K+RyvAR81dhk9zZwR/fTiDARReOxK4iG/D7vF0f+jbXECX1btRxqyckv
-         0ABHpABgoZ4jGMtVfG/I5hdTjow6AKldsBt3vO0+5UKn1ClaUEw6AKa9x3tu06mRS6wa
-         JArw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
-        b=CMnGkfJA0A1M0AHbbrQPxzJrWlpzQbRt4gldEsCKrEG/S2Yf9QY+xOZEomHoJlZOba
-         D8Ug1KUmn7vzVKjTw5aXDOFnifxsmZesNdT71d27EQJWgaHUtrM9fwCoDisS/gBeZdKH
-         i4nkIhwg+pCe/6+XSzRHO06DICugHFpxtYV5seN2usW8ZXdrh+QjsL1Q8uGGlUXnJ33F
-         7CAx487/xh1Zj0DtA8Fqgm0437UhXnHdcVQ4aa2p6kT/7TTRRnZSh/P9TFAozdcOqPG2
-         YwyCfVT0AmO/609cgXAJMJI1nor1aCaCh1M7o1R9g6CH8ZBJqEL1RcJp3cwS7blKT2iE
-         L9UA==
-X-Gm-Message-State: APjAAAVSEO7BMo2jx2o/KW14ckb0AS3IqH/g2LVpRN8xzI97cI5B4a43
-        4wBb4HOUkSvHbXScZc5rSfA12Q==
-X-Google-Smtp-Source: APXvYqxl8lf/vPqrZynpCjFh+E2DeE1Gmv+uphj+YiOjk0n+Mhaq4H+8GfqCzbvQgw4NmnTE2TrGcg==
-X-Received: by 2002:a17:906:7b96:: with SMTP id s22mr65320610ejo.213.1577640796290;
-        Sun, 29 Dec 2019 09:33:16 -0800 (PST)
-Received: from [192.168.0.104] ([91.139.216.39])
-        by smtp.googlemail.com with ESMTPSA id c19sm5162660edu.76.2019.12.29.09.33.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Dec 2019 09:33:15 -0800 (PST)
-Subject: Re: [PATCH v3 6/6] clk: qcom: Add video clock controller driver for
- SC7180
-To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
- <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <8f744444-428c-56e2-2565-35b55f1e4aae@linaro.org>
-Date:   Sun, 29 Dec 2019 19:33:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1733148AbfL2SNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:13:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728563AbfL2R2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:28:18 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A82AA20722;
+        Sun, 29 Dec 2019 17:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577640498;
+        bh=A+V3kOd7aM3a0kWmJvDD1+pxWSgMnrzbg/E6ybE+yqU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TBq7nwYR7XRvgOHCFffCxwQuKjNrZQQhi1QzVp2hQZCD1QmJKu22+VeAwyITno3ND
+         oi19bIB232L9LbnWQ60o7CBrJZq2ayJ9k+mkEL9P41GDAM4k6iPs6bLmkpzYbtZK9N
+         ivCrdkrad+6aHssrtmEiQ/U4iGbukUX7kn0cqCLI=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 003/219] mod_devicetable: fix PHY module format
+Date:   Sun, 29 Dec 2019 18:16:45 +0100
+Message-Id: <20191229162509.633370446@linuxfoundation.org>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
+References: <20191229162508.458551679@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-In-Reply-To: <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Taniya,
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-On 12/27/19 8:38 AM, Taniya Das wrote:
-> Add support for the video clock controller found on SC7180
-> based devices. This would allow video drivers to probe
-> and control their clocks.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig          |   8 ++
->  drivers/clk/qcom/Makefile         |   1 +
->  drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 268 insertions(+)
->  create mode 100644 drivers/clk/qcom/videocc-sc7180.c
-> 
+[ Upstream commit d2ed49cf6c13e379c5819aa5ac20e1f9674ebc89 ]
 
-<cut>
+When a PHY is probed, if the top bit is set, we end up requesting a
+module with the string "mdio:-10101110000000100101000101010001" -
+the top bit is printed to a signed -1 value. This leads to the module
+not being loaded.
 
-> +static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+Fix the module format string and the macro generating the values for
+it to ensure that we only print unsigned types and the top bit is
+always 0/1. We correctly end up with
+"mdio:10101110000000100101000101010001".
 
-Do you know is this frequency (19.2MHz) has real usage? The lower freq
-I've seen for Venus was 75MHz.
+Fixes: 8626d3b43280 ("phylib: Support phy module autoloading")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ include/linux/mod_devicetable.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-> +	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-> +	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	{ }
-> +};
-> +
--- 
-regards,
-Stan
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -551,9 +551,9 @@ struct platform_device_id {
+ #define MDIO_NAME_SIZE		32
+ #define MDIO_MODULE_PREFIX	"mdio:"
+ 
+-#define MDIO_ID_FMT "%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d"
++#define MDIO_ID_FMT "%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u"
+ #define MDIO_ID_ARGS(_id) \
+-	(_id)>>31, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1,	\
++	((_id)>>31) & 1, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1, \
+ 	((_id)>>27) & 1, ((_id)>>26) & 1, ((_id)>>25) & 1, ((_id)>>24) & 1, \
+ 	((_id)>>23) & 1, ((_id)>>22) & 1, ((_id)>>21) & 1, ((_id)>>20) & 1, \
+ 	((_id)>>19) & 1, ((_id)>>18) & 1, ((_id)>>17) & 1, ((_id)>>16) & 1, \
+
+
