@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC41812C64C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B0512C652
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730910AbfL2Rp2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:45:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54532 "EHLO mail.kernel.org"
+        id S1730961AbfL2Rpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:45:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730901AbfL2Rp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:45:26 -0500
+        id S1730948AbfL2Rpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:45:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86947206A4;
-        Sun, 29 Dec 2019 17:45:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5771F207FF;
+        Sun, 29 Dec 2019 17:45:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641526;
-        bh=/+a2iRJ9NHIO8tf39rt52D+4AhivlCFfPm+5SjMDWoQ=;
+        s=default; t=1577641542;
+        bh=E7izfWPlwyhCF3cCpQ1/HKIJmhsp2mzd5B227t/0c1Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a5EmOQQQkuJ/Radq8Hs5rSGqDUjJPQIv1pFfH1Uc8pzFyO82v+zpW/WXFz578+lH0
-         Op2kNfWGMS2aD4mlKmmDGGSHVjTXRvDdKat+UjExxqZNxJKsXy2jYr/tHAjXRlaA3D
-         dvq08S51CBEBGYeeOvaLXiWD8kWjrnFFZIeZuZcc=
+        b=FHk8xTuj60y05Xrh055uE67u2pwwylHvWy88f/g9Xv5WUojgoRX9p4n9/cKAeKzYt
+         sUy8dpH9VddB+91NkNombY7AgFltx48xxz8Wa8E7apxxc+HDO1hcPGXwEypjYOTkMB
+         jBMm6Bruwv6OCTtZj6eQs3ZMRsCQKEfOIY5oZxY8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Raul E Rangel <rrangel@chromium.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 100/434] drm/amd/display: fix struct init in update_bounding_box
-Date:   Sun, 29 Dec 2019 18:22:33 +0100
-Message-Id: <20191229172708.239102756@linuxfoundation.org>
+Subject: [PATCH 5.4 102/434] crypto: aegis128-neon - use Clang compatible cflags for ARM
+Date:   Sun, 29 Dec 2019 18:22:35 +0100
+Message-Id: <20191229172708.377116281@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,45 +44,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Raul E Rangel <rrangel@chromium.org>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit 960b6f4f2d2e96d5f7ffe2854e0040b46cafbd36 ]
+[ Upstream commit 2eb2d198bd6cd0083a5363ce66272fb34a19928f ]
 
-dcn20_resource.c:2636:9: error: missing braces around initializer [-Werror=missing-braces]
-  struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES] = {0};
-         ^
+The next version of Clang will start policing compiler command line
+options, and will reject combinations of -march and -mfpu that it
+thinks are incompatible.
 
-Fixes: 7ed4e6352c16f ("drm/amd/display: Add DCN2 HW Sequencer and Resource")
+This results in errors like
 
-Signed-off-by: Raul E Rangel <rrangel@chromium.org>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+  clang-10: warning: ignoring extension 'crypto' because the 'armv7-a'
+  architecture does not support it [-Winvalid-command-line-argument]
+  /tmp/aegis128-neon-inner-5ee428.s: Assembler messages:
+            /tmp/aegis128-neon-inner-5ee428.s:73: Error: selected
+  processor does not support `aese.8 q2,q14' in ARM mode
+
+when buiding the SIMD aegis128 code for 32-bit ARM, given that the
+'armv7-a' -march argument is considered to be compatible with the
+ARM crypto extensions. Instead, we should use armv8-a, which does
+allow the crypto extensions to be enabled.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ crypto/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-index ebe67c34dabf..78b2cc2e122f 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
-@@ -3041,7 +3041,7 @@ static void cap_soc_clocks(
- static void update_bounding_box(struct dc *dc, struct _vcs_dpi_soc_bounding_box_st *bb,
- 		struct pp_smu_nv_clock_table *max_clocks, unsigned int *uclk_states, unsigned int num_states)
- {
--	struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES] = {0};
-+	struct _vcs_dpi_voltage_scaling_st calculated_states[MAX_CLOCK_LIMIT_STATES];
- 	int i;
- 	int num_calculated_states = 0;
- 	int min_dcfclk = 0;
-@@ -3049,6 +3049,8 @@ static void update_bounding_box(struct dc *dc, struct _vcs_dpi_soc_bounding_box_
- 	if (num_states == 0)
- 		return;
+diff --git a/crypto/Makefile b/crypto/Makefile
+index fcb1ee679782..aa740c8492b9 100644
+--- a/crypto/Makefile
++++ b/crypto/Makefile
+@@ -93,7 +93,7 @@ obj-$(CONFIG_CRYPTO_AEGIS128) += aegis128.o
+ aegis128-y := aegis128-core.o
  
-+	memset(calculated_states, 0, sizeof(calculated_states));
-+
- 	if (dc->bb_overrides.min_dcfclk_mhz > 0)
- 		min_dcfclk = dc->bb_overrides.min_dcfclk_mhz;
- 	else
+ ifeq ($(ARCH),arm)
+-CFLAGS_aegis128-neon-inner.o += -ffreestanding -march=armv7-a -mfloat-abi=softfp
++CFLAGS_aegis128-neon-inner.o += -ffreestanding -march=armv8-a -mfloat-abi=softfp
+ CFLAGS_aegis128-neon-inner.o += -mfpu=crypto-neon-fp-armv8
+ aegis128-$(CONFIG_CRYPTO_AEGIS128_SIMD) += aegis128-neon.o aegis128-neon-inner.o
+ endif
 -- 
 2.20.1
 
