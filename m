@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 383B212C72D
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BDA12C741
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732242AbfL2Rym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42658 "EHLO mail.kernel.org"
+        id S1732939AbfL2Rze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731919AbfL2Ryi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:38 -0500
+        id S1732924AbfL2Rza (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:55:30 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9178B21D7E;
-        Sun, 29 Dec 2019 17:54:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 506A42467C;
+        Sun, 29 Dec 2019 17:55:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642077;
-        bh=OSw2OidlEAr8cvvBNF4Jmh30draQsb4AfRlRw2pxhbE=;
+        s=default; t=1577642129;
+        bh=4Mzfrn2wNKIAI1Ihcb5rO6qINSLcOWz1XQG8/ZxA7cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGKoUo53l1Wk5uqvBF3aNP5wwwrOrg64qJ2p6GckCVqhYM7ax9mmxSjTacUEbXnQt
-         VuWyosEM2drqLBBiBuP6e1tMMnDoxJKNM7pPu+A3SFCfKYv/uIeyCPc16I+QpBdW4J
-         tJp5+YR+nXB/JEu2YcIPUcnSXt/dL7nZXPdK7DoY=
+        b=avFHVqn8FtpDbNYZqI27eTJ2yUefxbA1UXY+Tah/ESUZoj4sBMurDjIOx+hZ63YEL
+         RVdUsXwlGKAufuv7D0rVkUne0z6VI2wZqfVx3DRlZU0NWkrwH+o+8qHGi+y5E/jXvo
+         y9vwl6rRHvEw+SR+S5xRQqtPN9iZxB83DLoR5cnk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andriin@fb.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 325/434] selftests, bpf: Workaround an alu32 sub-register spilling issue
-Date:   Sun, 29 Dec 2019 18:26:18 +0100
-Message-Id: <20191229172723.557643742@linuxfoundation.org>
+Subject: [PATCH 5.4 327/434] net: phy: avoid matching all-ones clause 45 PHY IDs
+Date:   Sun, 29 Dec 2019 18:26:20 +0100
+Message-Id: <20191229172723.689874888@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,80 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghong Song <yhs@fb.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 2ea2612b987ad703235c92be21d4e98ee9c2c67c ]
+[ Upstream commit b95e86d846b63b02ecdc94802ddbeaf9005fb6d9 ]
 
-Currently, with latest llvm trunk, selftest test_progs failed obj
-file test_seg6_loop.o with the following error in verifier:
+We currently match clause 45 PHYs using any ID read from a MMD marked
+as present in the "Devices in package" registers 5 and 6.  However,
+this is incorrect.  45.2 says:
 
-  infinite loop detected at insn 76
+  "The definition of the term package is vendor specific and could be
+   a chip, module, or other similar entity."
 
-The byte code sequence looks like below, and noted that alu32 has been
-turned off by default for better generated codes in general:
+so a package could be more or less than the whole PHY - a PHY could be
+made up of several modules instantiated onto a single chip such as the
+Marvell 88x3310, or some of the MMDs could be disabled according to
+chip configuration, such as the Broadcom 84881.
 
-      48:       w3 = 100
-      49:       *(u32 *)(r10 - 68) = r3
-      ...
-  ;             if (tlv.type == SR6_TLV_PADDING) {
-      76:       if w3 == 5 goto -18 <LBB0_19>
-      ...
-      85:       r1 = *(u32 *)(r10 - 68)
-  ;     for (int i = 0; i < 100; i++) {
-      86:       w1 += -1
-      87:       if w1 == 0 goto +5 <LBB0_20>
-      88:       *(u32 *)(r10 - 68) = r1
+In the case of Broadcom 84881, the "Devices in package" registers
+contain 0xc000009b, meaning that there is a PHYXS present in the
+package, but all registers in MMD 4 return 0xffff.  This leads to our
+matching code incorrectly binding this PHY to one of our generic PHY
+drivers.
 
-The main reason for verification failure is due to partial spills at
-r10 - 68 for induction variable "i".
+This patch changes the way we determine whether to attempt to match a
+MMD identifier, or use it to request a module - if the identifier is
+all-ones, then we skip over it. When reading the identifiers, we
+initialise phydev->c45_ids.device_ids to all-ones, only reading the
+device ID if the "Devices in package" registers indicates we should.
 
-Current verifier only handles spills with 8-byte values. The above 4-byte
-value spill to stack is treated to STACK_MISC and its content is not
-saved. For the above example:
+This avoids the generic drivers incorrectly matching on a PHY ID of
+0xffffffff.
 
-    w3 = 100
-      R3_w=inv100 fp-64_w=inv1086626730498
-    *(u32 *)(r10 - 68) = r3
-      R3_w=inv100 fp-64_w=inv1086626730498
-    ...
-    r1 = *(u32 *)(r10 - 68)
-      R1_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff))
-      fp-64=inv1086626730498
-
-To resolve this issue, verifier needs to be extended to track sub-registers
-in spilling, or llvm needs to enhanced to prevent sub-register spilling
-in register allocation phase. The former will increase verifier complexity
-and the latter will need some llvm "hacking".
-
-Let us workaround this issue by declaring the induction variable as "long"
-type so spilling will happen at non sub-register level. We can revisit this
-later if sub-register spilling causes similar or other verification issues.
-
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Andrii Nakryiko <andriin@fb.com>
-Link: https://lore.kernel.org/bpf/20191117214036.1309510-1-yhs@fb.com
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/progs/test_seg6_loop.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/phy/phy_device.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/progs/test_seg6_loop.c b/tools/testing/selftests/bpf/progs/test_seg6_loop.c
-index c4d104428643..69880c1e7700 100644
---- a/tools/testing/selftests/bpf/progs/test_seg6_loop.c
-+++ b/tools/testing/selftests/bpf/progs/test_seg6_loop.c
-@@ -132,8 +132,10 @@ static __always_inline int is_valid_tlv_boundary(struct __sk_buff *skb,
- 	*pad_off = 0;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index adb66a2fae18..14c6b7597b06 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -488,7 +488,7 @@ static int phy_bus_match(struct device *dev, struct device_driver *drv)
  
- 	// we can only go as far as ~10 TLVs due to the BPF max stack size
-+	// workaround: define induction variable "i" as "long" instead
-+	// of "int" to prevent alu32 sub-register spilling.
- 	#pragma clang loop unroll(disable)
--	for (int i = 0; i < 100; i++) {
-+	for (long i = 0; i < 100; i++) {
- 		struct sr6_tlv_t tlv;
+ 	if (phydev->is_c45) {
+ 		for (i = 1; i < num_ids; i++) {
+-			if (!(phydev->c45_ids.devices_in_package & (1 << i)))
++			if (phydev->c45_ids.device_ids[i] == 0xffffffff)
+ 				continue;
  
- 		if (cur_off == *tlv_off)
+ 			if ((phydrv->phy_id & phydrv->phy_id_mask) ==
+@@ -632,7 +632,7 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
+ 		int i;
+ 
+ 		for (i = 1; i < num_ids; i++) {
+-			if (!(c45_ids->devices_in_package & (1 << i)))
++			if (c45_ids->device_ids[i] == 0xffffffff)
+ 				continue;
+ 
+ 			ret = phy_request_driver_module(dev,
+@@ -812,10 +812,13 @@ static int get_phy_id(struct mii_bus *bus, int addr, u32 *phy_id,
+  */
+ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
+ {
+-	struct phy_c45_device_ids c45_ids = {0};
++	struct phy_c45_device_ids c45_ids;
+ 	u32 phy_id = 0;
+ 	int r;
+ 
++	c45_ids.devices_in_package = 0;
++	memset(c45_ids.device_ids, 0xff, sizeof(c45_ids.device_ids));
++
+ 	r = get_phy_id(bus, addr, &phy_id, is_c45, &c45_ids);
+ 	if (r)
+ 		return ERR_PTR(r);
 -- 
 2.20.1
 
