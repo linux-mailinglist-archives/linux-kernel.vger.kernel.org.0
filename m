@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B8CD12C779
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3157512C9A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbfL2RmZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:42:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
+        id S1730566AbfL2SMV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:12:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730265AbfL2RmO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:42:14 -0500
+        id S1730218AbfL2Rlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:41:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 33AA721744;
-        Sun, 29 Dec 2019 17:42:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB3F3206A4;
+        Sun, 29 Dec 2019 17:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641333;
-        bh=I6zI39l6Sk+6XVLTpSxrMkQlRx8BuEn9+5eZRkxxKH4=;
+        s=default; t=1577641309;
+        bh=r3Wb54eQ9Ab0ydwHvmzu9M4M3rsnxMteryXhsQ++IIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S5Oq+QX/eaYbdjrGCvBa7X6RbK4vhaQBip9lBcSiwO0yAPl1VV6XdxPqDazAIuv+M
-         2XVSU3IhTKj9e1PmGKIICrRqkXTbzkzQ3vyximQ4/u6FwI3rHmvg9nwW7OfLt7u8Wx
-         mbeWdECak5ru8mEylfGW51JO6VwUvA+gwOS00nu4=
+        b=H1l6jizZwH7Wi4cT/M8ECLJBHfyZJf1n0hXojB5U8cMekeXRwCDssZGKsmRZ10pcH
+         BTkVUtt6iAoKLxf0oGz1n1QMIVFrn8wJ2DH+XCx+izUhefydryWdoMcVHZEiY9k4h6
+         FJPtSBh0RuF1N0d4zbSqi+lEwbD126j5doWP8QQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
+        stable@vger.kernel.org, Manish Chopra <manishc@marvell.com>,
+        Ariel Elior <aelior@marvell.com>,
+        Michael Chan <michael.chan@broadcom.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 008/434] net: phy: ensure that phy IDs are correctly typed
-Date:   Sun, 29 Dec 2019 18:21:01 +0100
-Message-Id: <20191229172702.855371602@linuxfoundation.org>
+Subject: [PATCH 5.4 013/434] qede: Disable hardware gro when xdp prog is installed
+Date:   Sun, 29 Dec 2019 18:21:06 +0100
+Message-Id: <20191229172703.123415287@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,64 +45,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Manish Chopra <manishc@marvell.com>
 
-[ Upstream commit 7d49a32a66d2215c5b3bf9bc67c9036ea9904111 ]
+[ Upstream commit 4c8dc00503db24deaf0b89dddfa84b7cba7cd4ce ]
 
-PHY IDs are 32-bit unsigned quantities. Ensure that they are always
-treated as such, and not passed around as "int"s.
+commit 18c602dee472 ("qede: Use NETIF_F_GRO_HW.") introduced
+a regression in driver that when xdp program is installed on
+qede device, device's aggregation feature (hardware GRO) is not
+getting disabled, which is unexpected with xdp.
 
-Fixes: 13d0ab6750b2 ("net: phy: check return code when requesting PHY driver module")
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Fixes: 18c602dee472 ("qede: Use NETIF_F_GRO_HW.")
+Signed-off-by: Manish Chopra <manishc@marvell.com>
+Signed-off-by: Ariel Elior <aelior@marvell.com>
+Reviewed-by: Michael Chan <michael.chan@broadcom.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/phy_device.c |    8 ++++----
- include/linux/phy.h          |    2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/qlogic/qede/qede_main.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -552,7 +552,7 @@ static const struct device_type mdio_bus
- 	.pm = MDIO_BUS_PHY_PM_OPS,
- };
- 
--static int phy_request_driver_module(struct phy_device *dev, int phy_id)
-+static int phy_request_driver_module(struct phy_device *dev, u32 phy_id)
- {
- 	int ret;
- 
-@@ -564,15 +564,15 @@ static int phy_request_driver_module(str
- 	 * then modprobe isn't available.
- 	 */
- 	if (IS_ENABLED(CONFIG_MODULES) && ret < 0 && ret != -ENOENT) {
--		phydev_err(dev, "error %d loading PHY driver module for ID 0x%08x\n",
--			   ret, phy_id);
-+		phydev_err(dev, "error %d loading PHY driver module for ID 0x%08lx\n",
-+			   ret, (unsigned long)phy_id);
- 		return ret;
+--- a/drivers/net/ethernet/qlogic/qede/qede_main.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_main.c
+@@ -1406,6 +1406,7 @@ static int qede_alloc_mem_rxq(struct qed
+ 		rxq->rx_buf_seg_size = roundup_pow_of_two(size);
+ 	} else {
+ 		rxq->rx_buf_seg_size = PAGE_SIZE;
++		edev->ndev->features &= ~NETIF_F_GRO_HW;
  	}
  
- 	return 0;
+ 	/* Allocate the parallel driver ring for Rx buffers */
+@@ -1450,6 +1451,7 @@ static int qede_alloc_mem_rxq(struct qed
+ 		}
+ 	}
+ 
++	edev->gro_disable = !(edev->ndev->features & NETIF_F_GRO_HW);
+ 	if (!edev->gro_disable)
+ 		qede_set_tpa_param(rxq);
+ err:
+@@ -1702,8 +1704,6 @@ static void qede_init_fp(struct qede_dev
+ 		snprintf(fp->name, sizeof(fp->name), "%s-fp-%d",
+ 			 edev->ndev->name, queue_id);
+ 	}
+-
+-	edev->gro_disable = !(edev->ndev->features & NETIF_F_GRO_HW);
  }
  
--struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
-+struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
- 				     bool is_c45,
- 				     struct phy_c45_device_ids *c45_ids)
- {
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -993,7 +993,7 @@ int phy_modify_paged_changed(struct phy_
- int phy_modify_paged(struct phy_device *phydev, int page, u32 regnum,
- 		     u16 mask, u16 set);
- 
--struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
-+struct phy_device *phy_device_create(struct mii_bus *bus, int addr, u32 phy_id,
- 				     bool is_c45,
- 				     struct phy_c45_device_ids *c45_ids);
- #if IS_ENABLED(CONFIG_PHYLIB)
+ static int qede_set_real_num_queues(struct qede_dev *edev)
 
 
