@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4810E12C969
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD16412C7F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732016AbfL2SHR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:07:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
+        id S1731545AbfL2Rs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:48:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731482AbfL2Rsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:48:39 -0500
+        id S1731522AbfL2Rsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:48:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE46D207FD;
-        Sun, 29 Dec 2019 17:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADBD621744;
+        Sun, 29 Dec 2019 17:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641718;
-        bh=8p3wRkn4txEMO5tMoKe/eRQ5t6aioeCyxRRMj5b4kzM=;
+        s=default; t=1577641730;
+        bh=zlV9gXt1Og3XOzQDLJ0WVaMtduY/e1aNdRn45bVZsUQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QcXFjUg562rFcJL6XRZWrk3fg7SPQewycaqevJLAhfTtB56vLjGpIWsbe/v5b3X9g
-         ceQSH57m3axr0FBcegI3xvY8weJ2dUhY+Gi47MmMJ2MCVpqLFTa7wghFWpeJFeqVPi
-         YYzo/t8O637xaab/qedS0jZ0Mm6pOUaBHlp44zHI=
+        b=sO9YHA56Znr+4A07i7CAxdy5wCFBKsXaoMk+qEbz5Und8/W8zXEgCnI1Vs14i0BP1
+         x6CG+K0dgJw9acN80mTSexZTuvxdhFIcm4IJEeT9KcVrMBAmqR9ifBkb1VhXbmfxgF
+         DE3nnI+deDTL7H1g7WnOz9gG4kFD3cTZiXK2xh/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jae Hyun Yoo <jae.hyun.yoo@intel.com>,
-        Eddie James <eajames@linux.ibm.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
+        NeilBrown <neilb@suse.com>,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Song Liu <songliubraving@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 181/434] media: aspeed: clear garbage interrupts
-Date:   Sun, 29 Dec 2019 18:23:54 +0100
-Message-Id: <20191229172713.839949368@linuxfoundation.org>
+Subject: [PATCH 5.4 185/434] md/bitmap: avoid race window between md_bitmap_resize and bitmap_file_clear_bit
+Date:   Sun, 29 Dec 2019 18:23:58 +0100
+Message-Id: <20191229172714.106145567@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,80 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jae Hyun Yoo <jae.hyun.yoo@intel.com>
+From: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
 
-[ Upstream commit 65d270acb2d662c3346793663ac3a759eb4491b8 ]
+[ Upstream commit fadcbd2901a0f7c8721f3bdb69eac95c272dc8ed ]
 
-CAPTURE_COMPLETE and FRAME_COMPLETE interrupts come even when these
-are disabled in the VE_INTERRUPT_CTRL register and eventually this
-behavior causes disabling irq itself like below:
+We need to move "spin_lock_irq(&bitmap->counts.lock)" before unmap previous
+storage, otherwise panic like belows could happen as follows.
 
-[10055.108784] irq 23: nobody cared (try booting with the "irqpoll" option)
-[10055.115525] CPU: 0 PID: 331 Comm: swampd Tainted: G        W         5.3.0-4fde000-dirty-d683e2e #1
-[10055.124565] Hardware name: Generic DT based system
-[10055.129355] Backtrace:
-[10055.131854] [<80107d7c>] (dump_backtrace) from [<80107fb0>] (show_stack+0x20/0x24)
-[10055.139431]  r7:00000017 r6:00000001 r5:00000000 r4:9d51dc00
-[10055.145120] [<80107f90>] (show_stack) from [<8074bf50>] (dump_stack+0x20/0x28)
-[10055.152361] [<8074bf30>] (dump_stack) from [<80150ffc>] (__report_bad_irq+0x40/0xc0)
-[10055.160109] [<80150fbc>] (__report_bad_irq) from [<80150f2c>] (note_interrupt+0x23c/0x294)
-[10055.168374]  r9:015b6e60 r8:00000000 r7:00000017 r6:00000001 r5:00000000 r4:9d51dc00
-[10055.176136] [<80150cf0>] (note_interrupt) from [<8014df1c>] (handle_irq_event_percpu+0x88/0x98)
-[10055.184835]  r10:7eff7910 r9:015b6e60 r8:00000000 r7:9d417600 r6:00000001 r5:00000002
-[10055.192657]  r4:9d51dc00 r3:00000000
-[10055.196248] [<8014de94>] (handle_irq_event_percpu) from [<8014df64>] (handle_irq_event+0x38/0x4c)
-[10055.205113]  r5:80b56d50 r4:9d51dc00
-[10055.208697] [<8014df2c>] (handle_irq_event) from [<80151f1c>] (handle_level_irq+0xbc/0x12c)
-[10055.217037]  r5:80b56d50 r4:9d51dc00
-[10055.220623] [<80151e60>] (handle_level_irq) from [<8014d4b8>] (generic_handle_irq+0x30/0x44)
-[10055.229052]  r5:80b56d50 r4:00000017
-[10055.232648] [<8014d488>] (generic_handle_irq) from [<8014d524>] (__handle_domain_irq+0x58/0xb4)
-[10055.241356] [<8014d4cc>] (__handle_domain_irq) from [<801021e4>] (avic_handle_irq+0x68/0x70)
-[10055.249797]  r9:015b6e60 r8:00c5387d r7:00c5387d r6:ffffffff r5:9dd33fb0 r4:9d402380
-[10055.257539] [<8010217c>] (avic_handle_irq) from [<80101e34>] (__irq_usr+0x54/0x80)
-[10055.265105] Exception stack(0x9dd33fb0 to 0x9dd33ff8)
-[10055.270152] 3fa0:                                     015d0530 00000000 00000000 015d0538
-[10055.278328] 3fc0: 015d0530 015b6e60 00000000 00000000 0052c5d0 015b6e60 7eff7910 7eff7918
-[10055.286496] 3fe0: 76ce5614 7eff7908 0050e2f4 76a3a08c 20000010 ffffffff
-[10055.293104]  r5:20000010 r4:76a3a08c
-[10055.296673] handlers:
-[10055.298967] [<79f218a5>] irq_default_primary_handler threaded [<1de88514>] aspeed_video_irq
-[10055.307344] Disabling IRQ #23
+[  902.353802] sdl: detected capacity change from 1077936128 to 3221225472
+[  902.616948] general protection fault: 0000 [#1] SMP
+[snip]
+[  902.618588] CPU: 12 PID: 33698 Comm: md0_raid1 Tainted: G           O    4.14.144-1-pserver #4.14.144-1.1~deb10
+[  902.618870] Hardware name: Supermicro SBA-7142G-T4/BHQGE, BIOS 3.00       10/24/2012
+[  902.619120] task: ffff9ae1860fc600 task.stack: ffffb52e4c704000
+[  902.619301] RIP: 0010:bitmap_file_clear_bit+0x90/0xd0 [md_mod]
+[  902.619464] RSP: 0018:ffffb52e4c707d28 EFLAGS: 00010087
+[  902.619626] RAX: ffe8008b0d061000 RBX: ffff9ad078c87300 RCX: 0000000000000000
+[  902.619792] RDX: ffff9ad986341868 RSI: 0000000000000803 RDI: ffff9ad078c87300
+[  902.619986] RBP: ffff9ad0ed7a8000 R08: 0000000000000000 R09: 0000000000000000
+[  902.620154] R10: ffffb52e4c707ec0 R11: ffff9ad987d1ed44 R12: ffff9ad0ed7a8360
+[  902.620320] R13: 0000000000000003 R14: 0000000000060000 R15: 0000000000000800
+[  902.620487] FS:  0000000000000000(0000) GS:ffff9ad987d00000(0000) knlGS:0000000000000000
+[  902.620738] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  902.620901] CR2: 000055ff12aecec0 CR3: 0000001005207000 CR4: 00000000000406e0
+[  902.621068] Call Trace:
+[  902.621256]  bitmap_daemon_work+0x2dd/0x360 [md_mod]
+[  902.621429]  ? find_pers+0x70/0x70 [md_mod]
+[  902.621597]  md_check_recovery+0x51/0x540 [md_mod]
+[  902.621762]  raid1d+0x5c/0xeb0 [raid1]
+[  902.621939]  ? try_to_del_timer_sync+0x4d/0x80
+[  902.622102]  ? del_timer_sync+0x35/0x40
+[  902.622265]  ? schedule_timeout+0x177/0x360
+[  902.622453]  ? call_timer_fn+0x130/0x130
+[  902.622623]  ? find_pers+0x70/0x70 [md_mod]
+[  902.622794]  ? md_thread+0x94/0x150 [md_mod]
+[  902.622959]  md_thread+0x94/0x150 [md_mod]
+[  902.623121]  ? wait_woken+0x80/0x80
+[  902.623280]  kthread+0x119/0x130
+[  902.623437]  ? kthread_create_on_node+0x60/0x60
+[  902.623600]  ret_from_fork+0x22/0x40
+[  902.624225] RIP: bitmap_file_clear_bit+0x90/0xd0 [md_mod] RSP: ffffb52e4c707d28
 
-To fix this issue, this commit makes the interrupt handler clear
-these garbage interrupts. This driver enables and uses only
-COMP_COMPLETE interrupt instead for frame handling.
+Because mdadm was running on another cpu to do resize, so bitmap_resize was
+called to replace bitmap as below shows.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@intel.com>
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+PID: 38801  TASK: ffff9ad074a90e00  CPU: 0   COMMAND: "mdadm"
+   [exception RIP: queued_spin_lock_slowpath+56]
+   [snip]
+-- <NMI exception stack> --
+ #5 [ffffb52e60f17c58] queued_spin_lock_slowpath at ffffffff9c0b27b8
+ #6 [ffffb52e60f17c58] bitmap_resize at ffffffffc0399877 [md_mod]
+ #7 [ffffb52e60f17d30] raid1_resize at ffffffffc0285bf9 [raid1]
+ #8 [ffffb52e60f17d50] update_size at ffffffffc038a31a [md_mod]
+ #9 [ffffb52e60f17d70] md_ioctl at ffffffffc0395ca4 [md_mod]
+
+And the procedure to keep resize bitmap safe is allocate new storage
+space, then quiesce, copy bits, replace bitmap, and re-start.
+
+However the daemon (bitmap_daemon_work) could happen even the array is
+quiesced, which means when bitmap_file_clear_bit is triggered by raid1d,
+then it thinks it should be fine to access store->filemap since
+counts->lock is held, but resize could change the storage without the
+protection of the lock.
+
+Cc: Jack Wang <jinpu.wang@cloud.ionos.com>
+Cc: NeilBrown <neilb@suse.com>
+Signed-off-by: Guoqing Jiang <guoqing.jiang@cloud.ionos.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/aspeed-video.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/md/md-bitmap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/aspeed-video.c b/drivers/media/platform/aspeed-video.c
-index 84e0650106f5..096a7c9a8963 100644
---- a/drivers/media/platform/aspeed-video.c
-+++ b/drivers/media/platform/aspeed-video.c
-@@ -606,6 +606,16 @@ static irqreturn_t aspeed_video_irq(int irq, void *arg)
- 			aspeed_video_start_frame(video);
- 	}
+diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+index b092c7b5282f..3ad18246fcb3 100644
+--- a/drivers/md/md-bitmap.c
++++ b/drivers/md/md-bitmap.c
+@@ -2139,6 +2139,7 @@ int md_bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 		memcpy(page_address(store.sb_page),
+ 		       page_address(bitmap->storage.sb_page),
+ 		       sizeof(bitmap_super_t));
++	spin_lock_irq(&bitmap->counts.lock);
+ 	md_bitmap_file_unmap(&bitmap->storage);
+ 	bitmap->storage = store;
  
-+	/*
-+	 * CAPTURE_COMPLETE and FRAME_COMPLETE interrupts come even when these
-+	 * are disabled in the VE_INTERRUPT_CTRL register so clear them to
-+	 * prevent unnecessary interrupt calls.
-+	 */
-+	if (sts & VE_INTERRUPT_CAPTURE_COMPLETE)
-+		sts &= ~VE_INTERRUPT_CAPTURE_COMPLETE;
-+	if (sts & VE_INTERRUPT_FRAME_COMPLETE)
-+		sts &= ~VE_INTERRUPT_FRAME_COMPLETE;
-+
- 	return sts ? IRQ_NONE : IRQ_HANDLED;
- }
+@@ -2154,7 +2155,6 @@ int md_bitmap_resize(struct bitmap *bitmap, sector_t blocks,
+ 	blocks = min(old_counts.chunks << old_counts.chunkshift,
+ 		     chunks << chunkshift);
  
+-	spin_lock_irq(&bitmap->counts.lock);
+ 	/* For cluster raid, need to pre-allocate bitmap */
+ 	if (mddev_is_clustered(bitmap->mddev)) {
+ 		unsigned long page;
 -- 
 2.20.1
 
