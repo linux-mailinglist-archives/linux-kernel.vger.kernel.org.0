@@ -2,39 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F44B12C9E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E04C12C9E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbfL2RZo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:25:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45848 "EHLO mail.kernel.org"
+        id S1728062AbfL2RZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:25:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727646AbfL2RZm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:25:42 -0500
+        id S1727706AbfL2RZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:25:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8EB720409;
-        Sun, 29 Dec 2019 17:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC90220409;
+        Sun, 29 Dec 2019 17:25:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640342;
-        bh=mx433DjZrytfBywvkEgPpFDG8hQ7EcwwP1Q+DK/lcS4=;
+        s=default; t=1577640344;
+        bh=/4gVWON24o3gT/sJg+4JO2SrZ5r/nsfaYVwhQp0Oat4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tAlHwAzg1N10cGwKKQYO+04tCduuaydt0817XE5V1VG1pFXvpvnsVj5RJpGQkP+SH
-         UpIPrS7eDVR+tlqeO3v3yq7JUJ4c6coZStHkrlOvAsdY72bB4XCEjke9421qDRsnl6
-         jw2IRW6RHHCva2KfenrjyWz21VHSCxKxYvTF0Hgw=
+        b=u5/ZMhsKjmwBZzqoG6OZtLnKjT4NeVL3yNMPDXWNsiqaUEcgBdhcyispQv0TFTQEe
+         wA1kfZZsKbEuyAtV3qg+sUxfJwtfr6p2dLnQhe1Qpu7VBUcFR/Si1oPKgmBqPr+YTU
+         oIhZyH8/T20rZzF6alqcD7nxyWd8RN+PPLKHRdic=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 117/161] cpufreq: Register drivers only after CPU devices have been registered
-Date:   Sun, 29 Dec 2019 18:19:25 +0100
-Message-Id: <20191229162433.172423934@linuxfoundation.org>
+        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        Borislav Petkov <bp@suse.de>, bhe@redhat.com,
+        d.hatayama@fujitsu.com, dhowells@redhat.com, dyoung@redhat.com,
+        ebiederm@xmission.com, horms@verge.net.au,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        =?UTF-8?q?J=C3=BCrgen=20Gross?= <jgross@suse.com>,
+        kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
+        Tom Lendacky <thomas.lendacky@amd.com>, vgoyal@redhat.com,
+        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 118/161] x86/crash: Add a forward declaration of struct kimage
+Date:   Sun, 29 Dec 2019 18:19:26 +0100
+Message-Id: <20191229162433.898340980@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -47,67 +51,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Lianbo Jiang <lijiang@redhat.com>
 
-[ Upstream commit 46770be0cf94149ca48be87719bda1d951066644 ]
+[ Upstream commit 112eee5d06007dae561f14458bde7f2a4879ef4e ]
 
-The cpufreq core heavily depends on the availability of the struct
-device for CPUs and if they aren't available at the time cpufreq driver
-is registered, we will never succeed in making cpufreq work.
+Add a forward declaration of struct kimage to the crash.h header because
+future changes will invoke a crash-specific function from the realmode
+init path and the compiler will complain otherwise like this:
 
-This happens due to following sequence of events:
+  In file included from arch/x86/realmode/init.c:11:
+  ./arch/x86/include/asm/crash.h:5:32: warning: ‘struct kimage’ declared inside\
+   parameter list will not be visible outside of this definition or declaration
+      5 | int crash_load_segments(struct kimage *image);
+        |                                ^~~~~~
+  ./arch/x86/include/asm/crash.h:6:37: warning: ‘struct kimage’ declared inside\
+   parameter list will not be visible outside of this definition or declaration
+      6 | int crash_copy_backup_region(struct kimage *image);
+        |                                     ^~~~~~
+  ./arch/x86/include/asm/crash.h:7:39: warning: ‘struct kimage’ declared inside\
+   parameter list will not be visible outside of this definition or declaration
+      7 | int crash_setup_memmap_entries(struct kimage *image,
+        |
 
-- cpufreq_register_driver()
-  - subsys_interface_register()
-  - return 0; //successful registration of driver
+ [ bp: Rewrite the commit message. ]
 
-... at a later point of time
-
-- register_cpu();
-  - device_register();
-    - bus_probe_device();
-      - sif->add_dev();
-	- cpufreq_add_dev();
-	  - get_cpu_device(); //FAILS
-  - per_cpu(cpu_sys_devices, num) = &cpu->dev; //used by get_cpu_device()
-  - return 0; //CPU registered successfully
-
-Because the per-cpu variable cpu_sys_devices is set only after the CPU
-device is regsitered, cpufreq will never be able to get it when
-cpufreq_add_dev() is called.
-
-This patch avoids this failure by making sure device structure of at
-least CPU0 is available when the cpufreq driver is registered, else
-return -EPROBE_DEFER.
-
-Reported-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Co-developed-by: Amit Kucheria <amit.kucheria@linaro.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: bhe@redhat.com
+Cc: d.hatayama@fujitsu.com
+Cc: dhowells@redhat.com
+Cc: dyoung@redhat.com
+Cc: ebiederm@xmission.com
+Cc: horms@verge.net.au
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jürgen Gross <jgross@suse.com>
+Cc: kexec@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: vgoyal@redhat.com
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191108090027.11082-4-lijiang@redhat.com
+Link: https://lkml.kernel.org/r/201910310233.EJRtTMWP%25lkp@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/cpufreq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/x86/include/asm/crash.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 480e8c13567c..c798a1233e6a 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2475,6 +2475,13 @@ int cpufreq_register_driver(struct cpufreq_driver *driver_data)
- 	if (cpufreq_disabled())
- 		return -ENODEV;
+diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
+index a7adb2bfbf0b..6b8ad6fa3979 100644
+--- a/arch/x86/include/asm/crash.h
++++ b/arch/x86/include/asm/crash.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_CRASH_H
+ #define _ASM_X86_CRASH_H
  
-+	/*
-+	 * The cpufreq core depends heavily on the availability of device
-+	 * structure, make sure they are available before proceeding further.
-+	 */
-+	if (!get_cpu_device(0))
-+		return -EPROBE_DEFER;
++struct kimage;
 +
- 	if (!driver_data || !driver_data->verify || !driver_data->init ||
- 	    !(driver_data->setpolicy || driver_data->target_index ||
- 		    driver_data->target) ||
+ int crash_load_segments(struct kimage *image);
+ int crash_copy_backup_region(struct kimage *image);
+ int crash_setup_memmap_entries(struct kimage *image,
 -- 
 2.20.1
 
