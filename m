@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F9412C58F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD1E912C5E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730099AbfL2Rgt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:36:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42150 "EHLO mail.kernel.org"
+        id S1730241AbfL2RmE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729212AbfL2Rgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:36:39 -0500
+        id S1729235AbfL2RmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:42:01 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEDD7206CB;
-        Sun, 29 Dec 2019 17:36:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDBA9207FF;
+        Sun, 29 Dec 2019 17:42:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640999;
-        bh=QnVmgWYf3XP6d13kHluYYJy18H9hA7bB6ACGz6kfiSQ=;
+        s=default; t=1577641321;
+        bh=2Hwh34ERCA2MmnwhStwjSU0josaZo/S4rQXvq5foHg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PDOajttRJfonNxUC2JmuFtxH0ub++M7J9lGz3esL+bCnKhQwykMGXdyKDcTK61QA8
-         oiciJ4CGeOfQA7M3NkqoD2OmM+DOb76vYe+aaza0JzTFxlr2iNQ7jHecLVBUcO0qLP
-         R5a7Dc68i23xrvi2XFPmjcC9qJh48/d9zoBIbE60=
+        b=M4rgTX0yVepkbR7dGURishdHi6cgV8J5ogS5NXdqaxsW8/ZtESWddMCNDvJs43y/t
+         ERKPHkShtcuHY9q3VnB5dEXXRjsgoJ1+k5rpbK3zc+JVNdfbzK5J5y0vCCRO5QKAnx
+         wvLKiznApWahXrhKO1DOktBFleVmROn+CY7Iljvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Christie <mchristi@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.19 219/219] nbd: fix shutdown and recv work deadlock v2
-Date:   Sun, 29 Dec 2019 18:20:21 +0100
-Message-Id: <20191229162543.385065589@linuxfoundation.org>
+        stable@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 003/434] mod_devicetable: fix PHY module format
+Date:   Sun, 29 Dec 2019 18:20:56 +0100
+Message-Id: <20191229172702.589890854@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
-References: <20191229162508.458551679@linuxfoundation.org>
+In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
+References: <20191229172702.393141737@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,55 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mike Christie <mchristi@redhat.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit 1c05839aa973cfae8c3db964a21f9c0eef8fcc21 upstream.
+[ Upstream commit d2ed49cf6c13e379c5819aa5ac20e1f9674ebc89 ]
 
-This fixes a regression added with:
+When a PHY is probed, if the top bit is set, we end up requesting a
+module with the string "mdio:-10101110000000100101000101010001" -
+the top bit is printed to a signed -1 value. This leads to the module
+not being loaded.
 
-commit e9e006f5fcf2bab59149cb38a48a4817c1b538b4
-Author: Mike Christie <mchristi@redhat.com>
-Date:   Sun Aug 4 14:10:06 2019 -0500
+Fix the module format string and the macro generating the values for
+it to ensure that we only print unsigned types and the top bit is
+always 0/1. We correctly end up with
+"mdio:10101110000000100101000101010001".
 
-    nbd: fix max number of supported devs
-
-where we can deadlock during device shutdown. The problem occurs if
-the recv_work's nbd_config_put occurs after nbd_start_device_ioctl has
-returned and the userspace app has droppped its reference via closing
-the device and running nbd_release. The recv_work nbd_config_put call
-would then drop the refcount to zero and try to destroy the config which
-would try to do destroy_workqueue from the recv work.
-
-This patch just has nbd_start_device_ioctl do a flush_workqueue when it
-wakes so we know after the ioctl returns running works have exited. This
-also fixes a possible race where we could try to reuse the device while
-old recv_works are still running.
-
-Cc: stable@vger.kernel.org
-Fixes: e9e006f5fcf2 ("nbd: fix max number of supported devs")
-Signed-off-by: Mike Christie <mchristi@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 8626d3b43280 ("phylib: Support phy module autoloading")
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/block/nbd.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/mod_devicetable.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1247,10 +1247,10 @@ static int nbd_start_device_ioctl(struct
- 	mutex_unlock(&nbd->config_lock);
- 	ret = wait_event_interruptible(config->recv_wq,
- 					 atomic_read(&config->recv_threads) == 0);
--	if (ret) {
-+	if (ret)
- 		sock_shutdown(nbd);
--		flush_workqueue(nbd->recv_workq);
--	}
-+	flush_workqueue(nbd->recv_workq);
-+
- 	mutex_lock(&nbd->config_lock);
- 	nbd_bdev_reset(bdev);
- 	/* user requested, ignore socket errors */
+--- a/include/linux/mod_devicetable.h
++++ b/include/linux/mod_devicetable.h
+@@ -587,9 +587,9 @@ struct platform_device_id {
+ #define MDIO_NAME_SIZE		32
+ #define MDIO_MODULE_PREFIX	"mdio:"
+ 
+-#define MDIO_ID_FMT "%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d%d"
++#define MDIO_ID_FMT "%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u%u"
+ #define MDIO_ID_ARGS(_id) \
+-	(_id)>>31, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1,	\
++	((_id)>>31) & 1, ((_id)>>30) & 1, ((_id)>>29) & 1, ((_id)>>28) & 1, \
+ 	((_id)>>27) & 1, ((_id)>>26) & 1, ((_id)>>25) & 1, ((_id)>>24) & 1, \
+ 	((_id)>>23) & 1, ((_id)>>22) & 1, ((_id)>>21) & 1, ((_id)>>20) & 1, \
+ 	((_id)>>19) & 1, ((_id)>>18) & 1, ((_id)>>17) & 1, ((_id)>>16) & 1, \
 
 
