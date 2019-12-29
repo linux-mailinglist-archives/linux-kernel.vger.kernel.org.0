@@ -2,125 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A976D12BFFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:45:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FB0212C002
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbfL2Cpv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 21:45:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33778 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbfL2Cpu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 21:45:50 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 6so16425639pgk.0
-        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 18:45:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6vQfMDnjAnyBecC4EFX4YToQU0vypJ/cCTtTTcCKPbQ=;
-        b=wP8/Z/fA9v6JoO3+Oqg8HNkYly6trwIiyQslwb8eMR0EJflqyY7kQ841eKvzL6t7Tu
-         NHjGwIdu5gfTyen+njsZyiefStSrCKSidxy23jGOx6WzdDsZjYUiqs3mR17+ZsCDOUfV
-         dTXLUe6Z+Mq31YgonJj1j/D6MKfLF6uov9FmqsMOBsCY+lEA7HJzJYHYaH5hRF3Q+wkm
-         i7RbBHkbJhoXMA+zHDVkAGfpmvIi+BBVwkBOOVdIN/mxpYrrANQ/KHdrgROr/CUv+ZFx
-         eURuoD7Zz9CTiwBZL/pM7UcE+qKqtUp5PNPg3OctGlT91iL/YiQ23JjiwqKBgPiEMpe4
-         Sizg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6vQfMDnjAnyBecC4EFX4YToQU0vypJ/cCTtTTcCKPbQ=;
-        b=njYTdRkwonw5qd4ay8MK1rfSrIF3Ab8qi+2wC/4g+Zi96tKhSsiCA9sbcHqUbUsH9S
-         5kRr4TuQ3HqeayFVrAVUBnGQUy01g3QNxSOg8EziSpe4VIhbX85b71rk2U2Yep8JCbit
-         ByLE+a/YOvDyA9djd4Ses9vsStt2CCsicFRusuFibQ5GtTQRv6hkuytCQepqidA3PCpD
-         FCSuOuizepto/fvCdBGP1bJaa79/1wA6OalcQcPJXAAr0JrKrBFG/XGHIiT7nVA2ZIiC
-         ljVoe5bLihrOeeIloy5AHjTSoEOPMiU7YcFUaT13prvQE7HMoeOIxszE5ZvdA/Vx+Sv0
-         EQJw==
-X-Gm-Message-State: APjAAAUh6jZSlnQC1ykmF1Tmy2ANq95mVLqkET5CdhGGckksLkyGmFmE
-        ZsIPwG7rhNwQ4VF+pZ33l2+26w==
-X-Google-Smtp-Source: APXvYqzUR77xdE839/m6l8S88LYUtA1Wd64x+Elee8gvNt2cGvGDlb/OXr1UQYYdYRdHMPZDl3i5Bw==
-X-Received: by 2002:a63:338e:: with SMTP id z136mr64204052pgz.60.1577587550101;
-        Sat, 28 Dec 2019 18:45:50 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id p17sm44724028pfn.31.2019.12.28.18.45.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 18:45:49 -0800 (PST)
-Date:   Sat, 28 Dec 2019 18:45:47 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        id S1726605AbfL2Cse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 21:48:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56764 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfL2Cse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 21:48:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 96E9FAC2C;
+        Sun, 29 Dec 2019 02:48:32 +0000 (UTC)
+Subject: Re: [PATCH v2 0/2] Initial RTD1319 SoC and Realtek PymParticle EVB
+ support
+To:     James Tai <james.tai@realtek.com>
+Cc:     linux-realtek-soc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: qcom: Fix the fixup of PCI_VENDOR_ID_QCOM
-Message-ID: <20191229024547.GH3755841@builder>
-References: <20191227012717.78965-1-bjorn.andersson@linaro.org>
- <9e5ee7e8-aa63-e82c-8135-acc77b476c87@mm-sol.com>
- <38acf5fc-85aa-7090-e666-97a1281e9905@free.fr>
+        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, devicetree@vger.kernel.org
+References: <20191228150553.6210-1-james.tai@realtek.com>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Organization: SUSE Software Solutions Germany GmbH
+Message-ID: <9fbe4392-5028-3718-8c97-547a46efad2a@suse.de>
+Date:   Sun, 29 Dec 2019 03:48:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <38acf5fc-85aa-7090-e666-97a1281e9905@free.fr>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191228150553.6210-1-james.tai@realtek.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 28 Dec 07:41 PST 2019, Marc Gonzalez wrote:
+Hi James,
 
-> On 27/12/2019 09:51, Stanimir Varbanov wrote:
-> 
-> > On 12/27/19 3:27 AM, Bjorn Andersson wrote:
-> >
-> >> There exists non-bridge PCIe devices with PCI_VENDOR_ID_QCOM, so limit
-> >> the fixup to only affect the relevant PCIe bridges.
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> >> ---
-> >>
-> >> Stan, I picked up all the suggested device id's from the previous thread and
-> >> added 0x1000 for QCS404. I looked at creating platform specific defines in
-> >> pci_ids.h, but SDM845 has both 106 and 107... Please let me know if you would
-> >> prefer that I do this anyway.
-> > 
-> > Looks good,
-> > 
-> > Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
-> > 
-> >>  drivers/pci/controller/dwc/pcie-qcom.c | 8 +++++++-
-> >>  1 file changed, 7 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> index 5ea527a6bd9f..138e1a2d21cc 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> >> @@ -1439,7 +1439,13 @@ static void qcom_fixup_class(struct pci_dev *dev)
-> >>  {
-> >>  	dev->class = PCI_CLASS_BRIDGE_PCI << 8;
-> >>  }
-> >> -DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, PCI_ANY_ID, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0101, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0104, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0106, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0107, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0302, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x1000, qcom_fixup_class);
-> >> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x1001, qcom_fixup_class);
-> 
-> Hrmmm... still not CCed on the patch,
+Am 28.12.19 um 16:05 schrieb James Tai:
+> Cc: Andreas Färber <afaerber@suse.de>
 
-You are Cc'ed on the patch, but as usual your mail server responds "451
-too many errors from your ip" and throw my emails away.
+This time you CC'ed me only on the cover letter, so that I didn't get 
+notified of, e.g., Marc's review comments. I wonder why: realtek.yaml is 
+in MAINTAINERS, and so is dts/realtek/, so get_maintainers.pl should've 
+picked me up, even if you forgot to explicitly CC me? Please check what 
+went wrong there and make sure it doesn't happen again for the next 
+submission.
 
-> and still don't think the fixup is required(?) for 0x106 and 0x107.
-> 
+Thanks,
+Andreas
 
-I re-read your reply in my v1 thread. So we know that 0x104 doesn't need
-the fixup, so resumably only 0x101 needs the fixup?
+>   .../devicetree/bindings/arm/realtek.yaml      |   6 +
+>   arch/arm64/boot/dts/realtek/Makefile          |   2 +
+>   .../boot/dts/realtek/rtd1319-pymparticle.dts  |  43 ++++
+>   arch/arm64/boot/dts/realtek/rtd1319.dtsi      |  12 +
+>   arch/arm64/boot/dts/realtek/rtd13xx.dtsi      | 212 ++++++++++++++++++
+>   5 files changed, 275 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts
+>   create mode 100644 arch/arm64/boot/dts/realtek/rtd1319.dtsi
+>   create mode 100644 arch/arm64/boot/dts/realtek/rtd13xx.dtsi
 
-Regards,
-Bjorn
+-- 
+SUSE Software Solutions Germany GmbH
+Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer
+HRB 36809 (AG Nürnberg)
