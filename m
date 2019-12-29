@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D80DD12C682
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F4512C683
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731327AbfL2Rrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:47:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58550 "EHLO mail.kernel.org"
+        id S1731338AbfL2Rrs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:47:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731314AbfL2Rro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:47:44 -0500
+        id S1731323AbfL2Rrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:47:45 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ABCA20718;
-        Sun, 29 Dec 2019 17:47:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17C03208C4;
+        Sun, 29 Dec 2019 17:47:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641663;
-        bh=uE0iH8WzY1QGwFgchLx48TMYteqPSRlGCxrJMQlyC7o=;
+        s=default; t=1577641665;
+        bh=LXYiXgod8Q1KuufpoU54Za2Mw1z6mmO+GcTyh3GQB30=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gSEq/fgYHGhQZZobfO026f9iygFjTVGl6erSUNe2VfVIhAvvyDIpmKZsZDGvTBYLE
-         e+if2HLWy+EReTrc/iQUfu389cB+ILE05LNBEK0KUN1Haaty2M3aJbKqhjYW+dA94s
-         mhA8Xsnw9TgqtxGPe0lySJOql9LiQ+XEMLEym6tw=
+        b=SAHmB7vQZknPXvTwtLtPH/8C6g8X7GPX+Os1IAB25ru+9Nzks+cHJe5fmhQ6kfKHm
+         TQdcXj3MQLWy/4I3gnnboKUd7dINsb85JG1O9tdqA8GzbzvgYpwyTf18WRVBfeqLJj
+         N86zqGLOdDOxAPD/FpgXXt700Xx8mSnAHqM+iNQs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Wang <kevin1.wang@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 160/434] drm/amdgpu: fix amdgpu trace event print string format error
-Date:   Sun, 29 Dec 2019 18:23:33 +0100
-Message-Id: <20191229172712.399273265@linuxfoundation.org>
+Subject: [PATCH 5.4 161/434] staging: iio: ad9834: add a check for devm_clk_get
+Date:   Sun, 29 Dec 2019 18:23:34 +0100
+Message-Id: <20191229172712.466855783@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,114 +46,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Wang <kevin1.wang@amd.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit 2c2fdb8bca290c439e383cfb6857b0c65e528964 ]
+[ Upstream commit a96de139301385e5992768c0f60240ddfbb33325 ]
 
-the trace event print string format error.
-(use integer type to handle string)
+ad9834_probe misses a check for devm_clk_get and may cause problems.
+Add a check like what ad9832 does to fix it.
 
-before:
-amdgpu_test_kev-1556  [002]   138.508781: amdgpu_cs_ioctl:
-sched_job=8, timeline=gfx_0.0.0, context=177, seqno=1,
-ring_name=ffff94d01c207bf0, num_ibs=2
-
-after:
-amdgpu_test_kev-1506  [004]   370.703783: amdgpu_cs_ioctl:
-sched_job=12, timeline=gfx_0.0.0, context=234, seqno=2,
-ring_name=gfx_0.0.0, num_ibs=1
-
-change trace event list:
-1.amdgpu_cs_ioctl
-2.amdgpu_sched_run_job
-3.amdgpu_ib_pipe_sync
-
-Signed-off-by: Kevin Wang <kevin1.wang@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/staging/iio/frequency/ad9834.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-index 77674a7b9616..91899d28fa72 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_trace.h
-@@ -170,7 +170,7 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 			     __field(unsigned int, context)
- 			     __field(unsigned int, seqno)
- 			     __field(struct dma_fence *, fence)
--			     __field(char *, ring_name)
-+			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
- 			     ),
+diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
+index 038d6732c3fd..23026978a5a5 100644
+--- a/drivers/staging/iio/frequency/ad9834.c
++++ b/drivers/staging/iio/frequency/ad9834.c
+@@ -417,6 +417,10 @@ static int ad9834_probe(struct spi_device *spi)
+ 	st = iio_priv(indio_dev);
+ 	mutex_init(&st->lock);
+ 	st->mclk = devm_clk_get(&spi->dev, NULL);
++	if (IS_ERR(st->mclk)) {
++		ret = PTR_ERR(st->mclk);
++		goto error_disable_reg;
++	}
  
-@@ -179,12 +179,12 @@ TRACE_EVENT(amdgpu_cs_ioctl,
- 			   __assign_str(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
- 			   __entry->context = job->base.s_fence->finished.context;
- 			   __entry->seqno = job->base.s_fence->finished.seqno;
--			   __entry->ring_name = to_amdgpu_ring(job->base.sched)->name;
-+			   __assign_str(ring, to_amdgpu_ring(job->base.sched)->name)
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
- 	    TP_printk("sched_job=%llu, timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
- 		      __entry->sched_job_id, __get_str(timeline), __entry->context,
--		      __entry->seqno, __entry->ring_name, __entry->num_ibs)
-+		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
- 
- TRACE_EVENT(amdgpu_sched_run_job,
-@@ -195,7 +195,7 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 			     __string(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
- 			     __field(unsigned int, context)
- 			     __field(unsigned int, seqno)
--			     __field(char *, ring_name)
-+			     __string(ring, to_amdgpu_ring(job->base.sched)->name)
- 			     __field(u32, num_ibs)
- 			     ),
- 
-@@ -204,12 +204,12 @@ TRACE_EVENT(amdgpu_sched_run_job,
- 			   __assign_str(timeline, AMDGPU_JOB_GET_TIMELINE_NAME(job))
- 			   __entry->context = job->base.s_fence->finished.context;
- 			   __entry->seqno = job->base.s_fence->finished.seqno;
--			   __entry->ring_name = to_amdgpu_ring(job->base.sched)->name;
-+			   __assign_str(ring, to_amdgpu_ring(job->base.sched)->name)
- 			   __entry->num_ibs = job->num_ibs;
- 			   ),
- 	    TP_printk("sched_job=%llu, timeline=%s, context=%u, seqno=%u, ring_name=%s, num_ibs=%u",
- 		      __entry->sched_job_id, __get_str(timeline), __entry->context,
--		      __entry->seqno, __entry->ring_name, __entry->num_ibs)
-+		      __entry->seqno, __get_str(ring), __entry->num_ibs)
- );
- 
- 
-@@ -468,7 +468,7 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 	    TP_PROTO(struct amdgpu_job *sched_job, struct dma_fence *fence),
- 	    TP_ARGS(sched_job, fence),
- 	    TP_STRUCT__entry(
--			     __field(const char *,name)
-+			     __string(ring, sched_job->base.sched->name);
- 			     __field(uint64_t, id)
- 			     __field(struct dma_fence *, fence)
- 			     __field(uint64_t, ctx)
-@@ -476,14 +476,14 @@ TRACE_EVENT(amdgpu_ib_pipe_sync,
- 			     ),
- 
- 	    TP_fast_assign(
--			   __entry->name = sched_job->base.sched->name;
-+			   __assign_str(ring, sched_job->base.sched->name)
- 			   __entry->id = sched_job->base.id;
- 			   __entry->fence = fence;
- 			   __entry->ctx = fence->context;
- 			   __entry->seqno = fence->seqno;
- 			   ),
- 	    TP_printk("job ring=%s, id=%llu, need pipe sync to fence=%p, context=%llu, seq=%u",
--		      __entry->name, __entry->id,
-+		      __get_str(ring), __entry->id,
- 		      __entry->fence, __entry->ctx,
- 		      __entry->seqno)
- );
+ 	ret = clk_prepare_enable(st->mclk);
+ 	if (ret) {
 -- 
 2.20.1
 
