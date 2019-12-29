@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0152312C620
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66C9D12C623
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbfL2Rnl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:43:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51130 "EHLO mail.kernel.org"
+        id S1730558AbfL2Rnt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730515AbfL2Rng (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:36 -0500
+        id S1728940AbfL2Rnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:43:46 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93DBF206A4;
-        Sun, 29 Dec 2019 17:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3033820718;
+        Sun, 29 Dec 2019 17:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641416;
-        bh=GK0FX52DVvojoAlPdOEo5GgMAzRbExsRiZMwVHqEfTs=;
+        s=default; t=1577641425;
+        bh=i7pFDxDMxBxFq1gXluXcIXMqojXanOmX46ZyKYyuAJQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BPKAWmNQQuw8uRAy3oeGYNorWxsGgRZxnuxGLXWvdpvrgIBb9od6T+GmaVy2WJeZR
-         ktPj+K6jw0woqAGLWjyN6uIk3e6M2ymncDbOk+a1brBbZVrnMzLQmCP56/eKpNNUcc
-         xSjidpKtJGDiECMiPlyoHq/rve59svITgzxqAuEI=
+        b=dRfIHeTwa8uGxTLVcbgvNqxN2m3NvES6yZQQ452KfL7sqeMGYpqLX7tZRwgTPfLrc
+         m76Ck8SzTxMRa7ciuCnh8w5PAXDBzGoe5C17qAilJri4euUjhRwrS+0Ol2ptXwS6rs
+         TOTKE1vZZZ0MobxMpIHgMwRmvZOPfUSUbNcavMhE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Zhang <Jack.Zhang1@amd.com>,
-        Feifei Xu <Feifei.Xu@amd.com>,
+        stable@vger.kernel.org, Mikita Lipski <mikita.lipski@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 055/434] drm/amdgpu/sriov: add ring_stop before ring_create in psp v11 code
-Date:   Sun, 29 Dec 2019 18:21:48 +0100
-Message-Id: <20191229172705.541439371@linuxfoundation.org>
+Subject: [PATCH 5.4 058/434] drm/amd/display: Rebuild mapped resources after pipe split
+Date:   Sun, 29 Dec 2019 18:21:51 +0100
+Message-Id: <20191229172705.703095248@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,111 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jack Zhang <Jack.Zhang1@amd.com>
+From: Mikita Lipski <mikita.lipski@amd.com>
 
-[ Upstream commit 51c0f58e9f6af3a387d14608033e6796a7ad90ee ]
+[ Upstream commit 387596ef2859c37d564ce15abddbc9063a132e2c ]
 
-psp  v11 code missed ring stop in ring create function(VMR)
-while psp v3.1 code had the code. This will cause VM destroy1
-fail and psp ring create fail.
+[why]
+The issue is specific for linux, as on timings such as 8K@60
+or 4K@144 DSC should be working in combination with ODM Combine
+in order to ensure that we can run those timings. The validation
+for those timings was passing, but when pipe split was happening
+second pipe wasn't being programmed.
 
-For SIOV-VF, ring_stop should not be deleted in ring_create
-function.
+[how]
+Rebuild mapped resources if we split stream for ODM.
 
-Signed-off-by: Jack Zhang <Jack.Zhang1@amd.com>
-Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
+Signed-off-by: Mikita Lipski <mikita.lipski@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/psp_v11_0.c | 61 ++++++++++++++------------
- 1 file changed, 34 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-index 10166104b8a3..d483684db95b 100644
---- a/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c
-@@ -398,6 +398,34 @@ static bool psp_v11_0_support_vmr_ring(struct psp_context *psp)
- 	return false;
- }
- 
-+static int psp_v11_0_ring_stop(struct psp_context *psp,
-+			      enum psp_ring_type ring_type)
-+{
-+	int ret = 0;
-+	struct amdgpu_device *adev = psp->adev;
-+
-+	/* Write the ring destroy command*/
-+	if (psp_v11_0_support_vmr_ring(psp))
-+		WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_101,
-+				     GFX_CTRL_CMD_ID_DESTROY_GPCOM_RING);
-+	else
-+		WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64,
-+				     GFX_CTRL_CMD_ID_DESTROY_RINGS);
-+
-+	/* there might be handshake issue with hardware which needs delay */
-+	mdelay(20);
-+
-+	/* Wait for response flag (bit 31) */
-+	if (psp_v11_0_support_vmr_ring(psp))
-+		ret = psp_wait_for(psp, SOC15_REG_OFFSET(MP0, 0, mmMP0_SMN_C2PMSG_101),
-+				   0x80000000, 0x80000000, false);
-+	else
-+		ret = psp_wait_for(psp, SOC15_REG_OFFSET(MP0, 0, mmMP0_SMN_C2PMSG_64),
-+				   0x80000000, 0x80000000, false);
-+
-+	return ret;
-+}
-+
- static int psp_v11_0_ring_create(struct psp_context *psp,
- 				enum psp_ring_type ring_type)
- {
-@@ -407,6 +435,12 @@ static int psp_v11_0_ring_create(struct psp_context *psp,
- 	struct amdgpu_device *adev = psp->adev;
- 
- 	if (psp_v11_0_support_vmr_ring(psp)) {
-+		ret = psp_v11_0_ring_stop(psp, ring_type);
-+		if (ret) {
-+			DRM_ERROR("psp_v11_0_ring_stop_sriov failed!\n");
-+			return ret;
-+		}
-+
- 		/* Write low address of the ring to C2PMSG_102 */
- 		psp_ring_reg = lower_32_bits(ring->ring_mem_mc_addr);
- 		WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_102, psp_ring_reg);
-@@ -451,33 +485,6 @@ static int psp_v11_0_ring_create(struct psp_context *psp,
- 	return ret;
- }
- 
--static int psp_v11_0_ring_stop(struct psp_context *psp,
--			      enum psp_ring_type ring_type)
--{
--	int ret = 0;
--	struct amdgpu_device *adev = psp->adev;
--
--	/* Write the ring destroy command*/
--	if (psp_v11_0_support_vmr_ring(psp))
--		WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_101,
--				     GFX_CTRL_CMD_ID_DESTROY_GPCOM_RING);
--	else
--		WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64,
--				     GFX_CTRL_CMD_ID_DESTROY_RINGS);
--
--	/* there might be handshake issue with hardware which needs delay */
--	mdelay(20);
--
--	/* Wait for response flag (bit 31) */
--	if (psp_v11_0_support_vmr_ring(psp))
--		ret = psp_wait_for(psp, SOC15_REG_OFFSET(MP0, 0, mmMP0_SMN_C2PMSG_101),
--				   0x80000000, 0x80000000, false);
--	else
--		ret = psp_wait_for(psp, SOC15_REG_OFFSET(MP0, 0, mmMP0_SMN_C2PMSG_64),
--				   0x80000000, 0x80000000, false);
--
--	return ret;
--}
- 
- static int psp_v11_0_ring_destroy(struct psp_context *psp,
- 				 enum psp_ring_type ring_type)
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+index 3980c7b78259..ebe67c34dabf 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn20/dcn20_resource.c
+@@ -2474,6 +2474,7 @@ bool dcn20_fast_validate_bw(
+ 							&context->res_ctx, dc->res_pool,
+ 							pipe, hsplit_pipe))
+ 						goto validate_fail;
++					dcn20_build_mapped_resource(dc, context, pipe->stream);
+ 				} else
+ 					dcn20_split_stream_for_mpc(
+ 						&context->res_ctx, dc->res_pool,
 -- 
 2.20.1
 
