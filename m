@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BEED12C63F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3E912C64A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:54:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfL2Ro7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:44:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53478 "EHLO mail.kernel.org"
+        id S1730891AbfL2RpY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:45:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730816AbfL2Roy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:44:54 -0500
+        id S1730547AbfL2RpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:45:21 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02EF920718;
-        Sun, 29 Dec 2019 17:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF385206A4;
+        Sun, 29 Dec 2019 17:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641494;
-        bh=sARREdcfm0vpuykptTtJgsr9tgcPOczqT4r1+jCHqY0=;
+        s=default; t=1577641521;
+        bh=+dygn76/IYAa2qso1+W1AAo3SPb0oDeGOQgT+IRdVls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NEaW044HN50xDcR9gRsi7J+BCjWpWAqm/VZZzuqi7qjqUGtMcgj9iDb7zvcMDg7Yb
-         MgCi2+Q5QsJuaKSoW+EPpAJPL8D8s4+FbKvxxOtmDcg3jgdRIdv/ijM8UUbN+gG2+r
-         65VM/gFluhU/Gbsbdp0zy6M2ks0FgaFiBIPcHO1E=
+        b=jGmyPA4iOnlX7BDHSet/L+Eqix0d9RxuZNSMptYEr1cxXdbSCmkOK/9xkHfvhJrly
+         WFS/JfGKUtGRt0JbAKzvDkqnWB9dfxFnoKCYlDUQQ3iZk9yB6DG4FPWzKdhzt2x3nH
+         Cmo78PUO9gp4GAt3V3UMRdfXAqbSbaL8SyfiMqHU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
-        Mark Brown <broonie@kernel.org>,
-        kbuild test robot <lkp@intel.com>,
+        stable@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 062/434] spi: Add call to spi_slave_abort() function when spidev driver is released
-Date:   Sun, 29 Dec 2019 18:21:55 +0100
-Message-Id: <20191229172705.916806713@linuxfoundation.org>
+Subject: [PATCH 5.4 063/434] drm/meson: vclk: use the correct G12A frac max value
+Date:   Sun, 29 Dec 2019 18:21:56 +0100
+Message-Id: <20191229172705.970433065@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,47 +44,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukasz Majewski <lukma@denx.de>
+From: Neil Armstrong <narmstrong@baylibre.com>
 
-[ Upstream commit 9f918a728cf86b2757b6a7025e1f46824bfe3155 ]
+[ Upstream commit d56276a13c2b9ea287b9fc7cc78bed4c43b286f9 ]
 
-This change is necessary for spidev devices (e.g. /dev/spidev3.0) working
-in the slave mode (like NXP's dspi driver for Vybrid SoC).
+When calculating the HDMI PLL settings for a DMT mode PHY frequency,
+use the correct max fractional PLL value for G12A VPU.
 
-When SPI HW works in this mode - the master is responsible for providing
-CS and CLK signals. However, when some fault happens - like for example
-distortion on SPI lines - the SPI Linux driver needs a chance to recover
-from this abnormal situation and prepare itself for next (correct)
-transmission.
+With this fix, we can finally setup the 1024x768-60 mode.
 
-This change doesn't pose any threat on drivers working in master mode as
-spi_slave_abort() function checks if SPI slave mode is supported.
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
-Link: https://lore.kernel.org/r/20190924110547.14770-2-lukma@denx.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Reported-by: kbuild test robot <lkp@intel.com>
-Link: https://lore.kernel.org/r/20190925091143.15468-2-lukma@denx.de
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 202b9808f8ed ("drm/meson: Add G12A Video Clock setup")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190828132311.23881-1-narmstrong@baylibre.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spidev.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/meson/meson_vclk.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
-index 255786f2e844..3ea9d8a3e6e8 100644
---- a/drivers/spi/spidev.c
-+++ b/drivers/spi/spidev.c
-@@ -627,6 +627,9 @@ static int spidev_release(struct inode *inode, struct file *filp)
- 		if (dofree)
- 			kfree(spidev);
+diff --git a/drivers/gpu/drm/meson/meson_vclk.c b/drivers/gpu/drm/meson/meson_vclk.c
+index ac491a781952..f690793ae2d5 100644
+--- a/drivers/gpu/drm/meson/meson_vclk.c
++++ b/drivers/gpu/drm/meson/meson_vclk.c
+@@ -638,13 +638,18 @@ static bool meson_hdmi_pll_validate_params(struct meson_drm *priv,
+ 		if (frac >= HDMI_FRAC_MAX_GXBB)
+ 			return false;
+ 	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXM) ||
+-		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXL) ||
+-		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
++		   meson_vpu_is_compatible(priv, VPU_COMPATIBLE_GXL)) {
+ 		/* Empiric supported min/max dividers */
+ 		if (m < 106 || m > 247)
+ 			return false;
+ 		if (frac >= HDMI_FRAC_MAX_GXL)
+ 			return false;
++	} else if (meson_vpu_is_compatible(priv, VPU_COMPATIBLE_G12A)) {
++		/* Empiric supported min/max dividers */
++		if (m < 106 || m > 247)
++			return false;
++		if (frac >= HDMI_FRAC_MAX_G12A)
++			return false;
  	}
-+#ifdef CONFIG_SPI_SLAVE
-+	spi_slave_abort(spidev->spi);
-+#endif
- 	mutex_unlock(&device_list_lock);
  
- 	return 0;
+ 	return true;
 -- 
 2.20.1
 
