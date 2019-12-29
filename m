@@ -2,265 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2387D12C5B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC6212C5A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfL2Rj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:39:59 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:36592 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729294AbfL2RcS (ORCPT
+        id S1729927AbfL2RjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:39:20 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33380 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729420AbfL2RdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:32:18 -0500
-Received: from [172.58.107.62] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1ilcQI-0005a0-Au; Sun, 29 Dec 2019 17:32:15 +0000
-Date:   Sun, 29 Dec 2019 18:32:04 +0100
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Sargun Dhillon <sargun@sargun.me>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Tycho Andersen <tycho@tycho.ws>, Jann Horn <jannh@google.com>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Gian-Carlo Pascutto <gpascutto@mozilla.com>,
-        Emilio Cobos =?utf-8?Q?=C3=81lvarez?= <ealvarez@mozilla.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Jed Davis <jld@mozilla.com>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v7 2/3] pid: Introduce pidfd_getfd syscall
-Message-ID: <20191229173202.55apy2dpv7qj7gov@wittgenstein>
-References: <20191226180334.GA29409@ircssh-2.c.rugged-nimbus-611.internal>
- <20191228100944.kh22bofbr5oe2kvk@wittgenstein>
- <CAMp4zn9LyGw=BNiLNRgZXAbFdi87pSjy1YmDXvFvwmA=u3yDyw@mail.gmail.com>
+        Sun, 29 Dec 2019 12:33:18 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r21so30447764edq.0
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 09:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
+        b=wf71Wq0yMOB58FsNbi2p888B5RLQ+mTavSy4HA7XvUnu6YC98zDS1ey+qK1HxpzbCz
+         6L2tloRWFY4Q7RvQIsEA9ZbK5V1v4V5avPP+9GCeSHiPIbf7Tpmorx0qZXXba7X2DB5W
+         kwmNwUUsBAk2CmQxiD6T2LL+e7bhOpjNvW2pbsPNyLF+/+jQlCa1UL01REnyBo48MJuh
+         JumoHJbyuy81K+RyvAR81dhk9zZwR/fTiDARReOxK4iG/D7vF0f+jbXECX1btRxqyckv
+         0ABHpABgoZ4jGMtVfG/I5hdTjow6AKldsBt3vO0+5UKn1ClaUEw6AKa9x3tu06mRS6wa
+         JArw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
+        b=CMnGkfJA0A1M0AHbbrQPxzJrWlpzQbRt4gldEsCKrEG/S2Yf9QY+xOZEomHoJlZOba
+         D8Ug1KUmn7vzVKjTw5aXDOFnifxsmZesNdT71d27EQJWgaHUtrM9fwCoDisS/gBeZdKH
+         i4nkIhwg+pCe/6+XSzRHO06DICugHFpxtYV5seN2usW8ZXdrh+QjsL1Q8uGGlUXnJ33F
+         7CAx487/xh1Zj0DtA8Fqgm0437UhXnHdcVQ4aa2p6kT/7TTRRnZSh/P9TFAozdcOqPG2
+         YwyCfVT0AmO/609cgXAJMJI1nor1aCaCh1M7o1R9g6CH8ZBJqEL1RcJp3cwS7blKT2iE
+         L9UA==
+X-Gm-Message-State: APjAAAVSEO7BMo2jx2o/KW14ckb0AS3IqH/g2LVpRN8xzI97cI5B4a43
+        4wBb4HOUkSvHbXScZc5rSfA12Q==
+X-Google-Smtp-Source: APXvYqxl8lf/vPqrZynpCjFh+E2DeE1Gmv+uphj+YiOjk0n+Mhaq4H+8GfqCzbvQgw4NmnTE2TrGcg==
+X-Received: by 2002:a17:906:7b96:: with SMTP id s22mr65320610ejo.213.1577640796290;
+        Sun, 29 Dec 2019 09:33:16 -0800 (PST)
+Received: from [192.168.0.104] ([91.139.216.39])
+        by smtp.googlemail.com with ESMTPSA id c19sm5162660edu.76.2019.12.29.09.33.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Dec 2019 09:33:15 -0800 (PST)
+Subject: Re: [PATCH v3 6/6] clk: qcom: Add video clock controller driver for
+ SC7180
+To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
+ <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <8f744444-428c-56e2-2565-35b55f1e4aae@linaro.org>
+Date:   Sun, 29 Dec 2019 19:33:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
+In-Reply-To: <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMp4zn9LyGw=BNiLNRgZXAbFdi87pSjy1YmDXvFvwmA=u3yDyw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 28, 2019 at 08:03:23AM -0500, Sargun Dhillon wrote:
-> On Sat, Dec 28, 2019 at 5:12 AM Christian Brauner
-> <christian.brauner@ubuntu.com> wrote:
-> >
-> > On Thu, Dec 26, 2019 at 06:03:36PM +0000, Sargun Dhillon wrote:
-> > > This syscall allows for the retrieval of file descriptors from other
-> > > processes, based on their pidfd. This is possible using ptrace, and
-> > > injection of parasitic code to inject code which leverages SCM_RIGHTS
-> > > to move file descriptors between a tracee and a tracer. Unfortunately,
-> > > ptrace comes with a high cost of requiring the process to be stopped,
-> > > and breaks debuggers. This does not require stopping the process under
-> > > manipulation.
-> > >
-> > > One reason to use this is to allow sandboxers to take actions on file
-> > > descriptors on the behalf of another process. For example, this can be
-> > > combined with seccomp-bpf's user notification to do on-demand fd
-> > > extraction and take privileged actions. One such privileged action
-> > > is binding a socket to a privileged port.
-> > >
-> > > This also adds the syscall to all architectures at the same time.
-> > >
-> > > /* prototype */
-> > >   /* flags is currently reserved and should be set to 0 */
-> > >   int sys_pidfd_getfd(int pidfd, int fd, unsigned int flags);
-> > >
-> > > /* testing */
-> > > Ran self-test suite on x86_64
-> >
-> > Fyi, I'm likely going to rewrite/add parts of/to this once I apply.
-> >
-> > A few comments below.
-> >
-> > > diff --git a/kernel/pid.c b/kernel/pid.c
-> > > index 2278e249141d..4a551f947869 100644
-> > > --- a/kernel/pid.c
-> > > +++ b/kernel/pid.c
-> > > @@ -578,3 +578,106 @@ void __init pid_idr_init(void)
-> > >       init_pid_ns.pid_cachep = KMEM_CACHE(pid,
-> > >                       SLAB_HWCACHE_ALIGN | SLAB_PANIC | SLAB_ACCOUNT);
-> > >  }
-> > > +
-> > > +static struct file *__pidfd_fget(struct task_struct *task, int fd)
-> > > +{
-> > > +     struct file *file;
-> > > +     int ret;
-> > > +
-> > > +     ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> > > +     if (ret)
-> > > +             return ERR_PTR(ret);
-> > > +
-> > > +     if (!ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS)) {
-> > > +             file = ERR_PTR(-EPERM);
-> > > +             goto out;
-> > > +     }
-> > > +
-> > > +     file = fget_task(task, fd);
-> > > +     if (!file)
-> > > +             file = ERR_PTR(-EBADF);
-> > > +
-> > > +out:
-> > > +     mutex_unlock(&task->signal->cred_guard_mutex);
-> > > +     return file;
-> > > +}
-> >
-> > Looking at this code now a bit closer, ptrace_may_access() and
-> > fget_task() both take task_lock(task) so this currently does:
-> >
-> > task_lock();
-> > /* check access */
-> > task_unlock();
-> >
-> > task_lock();
-> > /* get fd */
-> > task_unlock();
-> >
-> > which doesn't seem great.
-> >
-> > I would prefer if we could do:
-> > task_lock();
-> > /* check access */
-> > /* get fd */
-> > task_unlock();
-> >
-> > But ptrace_may_access() doesn't export an unlocked variant so _shrug_.
-> Right, it seems intentional that __ptrace_may_access isn't exported. We
-> can always change that later?
+Hi Taniya,
 
-Yeah, it's just something I noted and it's not a big deal in my book. It
-just would be nicer to only have to lock once. ptrace would need to
-expose an unlocked variant and fget_task() would need to be removed
-completely and then grabbing the file via fget or sm. But as I said it's
-ok to do it like this rn.
-
+On 12/27/19 8:38 AM, Taniya Das wrote:
+> Add support for the video clock controller found on SC7180
+> based devices. This would allow video drivers to probe
+> and control their clocks.
 > 
-> >
-> > But we can write this a little cleaner without the goto as:
-> >
-> > static struct file *__pidfd_fget(struct task_struct *task, int fd)
-> > {
-> >         struct file *file;
-> >         int ret;
-> >
-> >         ret = mutex_lock_killable(&task->signal->cred_guard_mutex);
-> >         if (ret)
-> >                 return ERR_PTR(ret);
-> >
-> >         if (ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS))
-> >                 file = fget_task(task, fd);
-> >         else
-> >                 file = ERR_PTR(-EPERM);
-> >         mutex_unlock(&task->signal->cred_guard_mutex);
-> >
-> >         return file ?: ERR_PTR(-EBADF);
-> > }
-> >
-> > If you don't like the ?: just do:
-> >
-> > if (!file)
-> >         return ERR_PTR(-EBADF);
-> >
-> > return file;
-> >
-> > though I prefer the shorter ?: syntax which is perfect for shortcutting
-> > returns.
-> >
-> > > +
-> > > +static int pidfd_getfd(struct pid *pid, int fd)
-> > > +{
-> > > +     struct task_struct *task;
-> > > +     struct file *file;
-> > > +     int ret, retfd;
-> > > +
-> > > +     task = get_pid_task(pid, PIDTYPE_PID);
-> > > +     if (!task)
-> > > +             return -ESRCH;
-> > > +
-> > > +     file = __pidfd_fget(task, fd);
-> > > +     put_task_struct(task);
-> > > +     if (IS_ERR(file))
-> > > +             return PTR_ERR(file);
-> > > +
-> > > +     retfd = get_unused_fd_flags(O_CLOEXEC);
-> > > +     if (retfd < 0) {
-> > > +             ret = retfd;
-> > > +             goto out;
-> > > +     }
-> > > +
-> > > +     /*
-> > > +      * security_file_receive must come last since it may have side effects
-> > > +      * and cannot be reversed.
-> > > +      */
-> > > +     ret = security_file_receive(file);
-> >
-> > So I don't understand the comment here. Can you explain what the side
-> > effects are?
-> The LSM can modify the LSM blob, or emit an (audit) event, even though
-> the operation as a whole failed. Smack will report that file_receive
-> successfully happened even though it could not have happened,
-> because we were unable to provision a file descriptor.
-
-So this either sounds like a bug in Smack or a design choice by the LSM
-framework in general and also that it might apply to a lot of other
-hooks too? But I'm not qualified to assess that.
-
-Modifying an LSM blob, emitting an audit event may very well happen but
-there are places all over the kernel were security hooks are called and
-they are not the last point of failure (capable hooks come to mind
-right away). My point being just because an audit event that happened
-from an LSM indicating that e.g. a file receive event happened cannot be
-intended to be equivalent == "was successful". That is not reality right
-now when looking at net/* where security_file_receive() is called too
-and surely can only be guaranteed from the actual codepaths that does the
-file receive.
-So I'd argue let's just use the clean version where we call
-security_file_receive() before allocing the new fd just like net/* does
-and make the code simpler and easier to maintain.
-
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig          |   8 ++
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 268 insertions(+)
+>  create mode 100644 drivers/clk/qcom/videocc-sc7180.c
 > 
-> Apparmor does similar, and also manipulates the LSM blob,
-> although that is undone by closing the file.
-> 
-> 
-> > security_file_receive() is called in two places: net/core/scm.c and
-> > net/compat.c. In both places it is called _before_ get_unused_fd_flags()
-> > so I don't know what's special here that would prevent us from doing the
-> > same. If there's no actual reason, please rewrite this functions as:
-> >
-> > static int pidfd_getfd(struct pid *pid, int fd)
-> > {
-> >         int ret;
-> >         struct task_struct *task;
-> >         struct file *file;
-> >
-> >         task = get_pid_task(pid, PIDTYPE_PID);
-> >         if (!task)
-> >                 return -ESRCH;
-> >
-> >         file = __pidfd_fget(task, fd);
-> >         put_task_struct(task);
-> >         if (IS_ERR(file))
-> >                 return PTR_ERR(file);
-> >
-> >         ret = security_file_receive(file);
-> >         if (ret) {
-> >                 fput(file);
-> >                 return ret;
-> >         }
-> >
-> >         ret = get_unused_fd_flags(O_CLOEXEC);
-> >         if (ret < 0)
-> >                 fput(file);
-> >         else
-> >                 fd_install(ret, file);
-> >
-> >         return ret;
-> > }
+
+<cut>
+
+> +static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
+
+Do you know is this frequency (19.2MHz) has real usage? The lower freq
+I've seen for Venus was 75MHz.
+
+> +	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
+> +	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
+> +	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	{ }
+> +};
+> +
+-- 
+regards,
+Stan
