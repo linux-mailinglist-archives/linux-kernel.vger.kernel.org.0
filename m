@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEA0112C947
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A48412C84E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbfL2SDs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:03:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39874 "EHLO mail.kernel.org"
+        id S1732441AbfL2RxS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729199AbfL2RxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:53:08 -0500
+        id S1732429AbfL2RxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:53:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B997621744;
-        Sun, 29 Dec 2019 17:53:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5804206DB;
+        Sun, 29 Dec 2019 17:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641988;
-        bh=U8FMy6AZUNuYWUbygYpl8wbKdmgI5uEW/QzlKLDWj3E=;
+        s=default; t=1577641995;
+        bh=g3Nn7L7C/8x8ErY7HygVtpVdgu4hSNlrNH+FME2Vqpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YIkhKNfXGNOE8bGJE/MewLimfC/JSAGX4bEd1DmWjrqXX443CC95a+j2iZY4+v/1i
-         tAk90bDbfWMVHdYfMvnxhWf7Lb7xIebZ3KJCa2J2sy+eKT1JOLSnMMB6tUn9g95xaJ
-         hS6YbvFVG/JJhqrBsgU2D3VYqGh+QnDztMpvwMZ8=
+        b=VTngj9R7f0diMclRRl4RBm3lWcuwZlpSw32x1slPDBuyYex6WMKMiHxd7W1k5Xlqc
+         aTUrwvZZS+5NkUhwTFwT2t+H0ZP+AG/HXfc0IDbVq7zYFXTtDqXfLjW0V4NbcSmT2w
+         ZSD0TSbJYsaspgeFmFeWkckCqZCcy2GPIAmZThPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Eduard Hasenleithner <eduard@hasenleithner.at>,
-        Keith Busch <kbusch@kernel.org>,
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Coly Li <colyli@suse.de>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 296/434] nvme: Discard workaround for non-conformant devices
-Date:   Sun, 29 Dec 2019 18:25:49 +0100
-Message-Id: <20191229172721.610375697@linuxfoundation.org>
+Subject: [PATCH 5.4 298/434] bcache: fix static checker warning in bcache_device_free()
+Date:   Sun, 29 Dec 2019 18:25:51 +0100
+Message-Id: <20191229172721.745706720@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,61 +44,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eduard Hasenleithner <eduard@hasenleithner.at>
+From: Coly Li <colyli@suse.de>
 
-[ Upstream commit 530436c45ef2e446c12538a400e465929a0b3ade ]
+[ Upstream commit 2d8869518a525c9bce5f5268419df9dfbe3dfdeb ]
 
-Users observe IOMMU related errors when performing discard on nvme from
-non-compliant nvme devices reading beyond the end of the DMA mapped
-ranges to discard.
+Commit cafe56359144 ("bcache: A block layer cache") leads to the
+following static checker warning:
 
-Two different variants of this behavior have been observed: SM22XX
-controllers round up the read size to a multiple of 512 bytes, and Phison
-E12 unconditionally reads the maximum discard size allowed by the spec
-(256 segments or 4kB).
+    ./drivers/md/bcache/super.c:770 bcache_device_free()
+    warn: variable dereferenced before check 'd->disk' (see line 766)
 
-Make nvme_setup_discard unconditionally allocate the maximum DSM buffer
-so the driver DMA maps a memory range that will always succeed.
+drivers/md/bcache/super.c
+   762  static void bcache_device_free(struct bcache_device *d)
+   763  {
+   764          lockdep_assert_held(&bch_register_lock);
+   765
+   766          pr_info("%s stopped", d->disk->disk_name);
+                                      ^^^^^^^^^
+Unchecked dereference.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=202665 many
-Signed-off-by: Eduard Hasenleithner <eduard@hasenleithner.at>
-[changelog, use existing define, kernel coding style]
-Signed-off-by: Keith Busch <kbusch@kernel.org>
+   767
+   768          if (d->c)
+   769                  bcache_device_detach(d);
+   770          if (d->disk && d->disk->flags & GENHD_FL_UP)
+                    ^^^^^^^
+Check too late.
+
+   771                  del_gendisk(d->disk);
+   772          if (d->disk && d->disk->queue)
+   773                  blk_cleanup_queue(d->disk->queue);
+   774          if (d->disk) {
+   775                  ida_simple_remove(&bcache_device_idx,
+   776                                    first_minor_to_idx(d->disk->first_minor));
+   777                  put_disk(d->disk);
+   778          }
+   779
+
+It is not 100% sure that the gendisk struct of bcache device will always
+be there, the warning makes sense when there is problem in block core.
+
+This patch tries to remove the static checking warning by checking
+d->disk to avoid NULL pointer deferences.
+
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Coly Li <colyli@suse.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/md/bcache/super.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index b4e1e4379f1f..a6b7b242d516 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -611,8 +611,14 @@ static blk_status_t nvme_setup_discard(struct nvme_ns *ns, struct request *req,
- 	struct nvme_dsm_range *range;
- 	struct bio *bio;
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 20ed838e9413..d2654880b7b9 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -761,20 +761,28 @@ static inline int idx_to_first_minor(int idx)
  
--	range = kmalloc_array(segments, sizeof(*range),
--				GFP_ATOMIC | __GFP_NOWARN);
-+	/*
-+	 * Some devices do not consider the DSM 'Number of Ranges' field when
-+	 * determining how much data to DMA. Always allocate memory for maximum
-+	 * number of segments to prevent device reading beyond end of buffer.
-+	 */
-+	static const size_t alloc_size = sizeof(*range) * NVME_DSM_MAX_RANGES;
+ static void bcache_device_free(struct bcache_device *d)
+ {
++	struct gendisk *disk = d->disk;
 +
-+	range = kzalloc(alloc_size, GFP_ATOMIC | __GFP_NOWARN);
- 	if (!range) {
- 		/*
- 		 * If we fail allocation our range, fallback to the controller
-@@ -652,7 +658,7 @@ static blk_status_t nvme_setup_discard(struct nvme_ns *ns, struct request *req,
+ 	lockdep_assert_held(&bch_register_lock);
  
- 	req->special_vec.bv_page = virt_to_page(range);
- 	req->special_vec.bv_offset = offset_in_page(range);
--	req->special_vec.bv_len = sizeof(*range) * segments;
-+	req->special_vec.bv_len = alloc_size;
- 	req->rq_flags |= RQF_SPECIAL_PAYLOAD;
+-	pr_info("%s stopped", d->disk->disk_name);
++	if (disk)
++		pr_info("%s stopped", disk->disk_name);
++	else
++		pr_err("bcache device (NULL gendisk) stopped");
  
- 	return BLK_STS_OK;
+ 	if (d->c)
+ 		bcache_device_detach(d);
+-	if (d->disk && d->disk->flags & GENHD_FL_UP)
+-		del_gendisk(d->disk);
+-	if (d->disk && d->disk->queue)
+-		blk_cleanup_queue(d->disk->queue);
+-	if (d->disk) {
++
++	if (disk) {
++		if (disk->flags & GENHD_FL_UP)
++			del_gendisk(disk);
++
++		if (disk->queue)
++			blk_cleanup_queue(disk->queue);
++
+ 		ida_simple_remove(&bcache_device_idx,
+-				  first_minor_to_idx(d->disk->first_minor));
+-		put_disk(d->disk);
++				  first_minor_to_idx(disk->first_minor));
++		put_disk(disk);
+ 	}
+ 
+ 	bioset_exit(&d->bio_split);
 -- 
 2.20.1
 
