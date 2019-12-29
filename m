@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69FA612C861
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF58512C864
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732589AbfL2RyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41190 "EHLO mail.kernel.org"
+        id S1732612AbfL2RyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732566AbfL2Rxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:53:54 -0500
+        id S1732590AbfL2RyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:02 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69339206A4;
-        Sun, 29 Dec 2019 17:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B407A206A4;
+        Sun, 29 Dec 2019 17:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642033;
-        bh=rloNvJ1sp6nkRYsCpfljBrPrcFA3N1iM3tF9KZ+ySL4=;
+        s=default; t=1577642041;
+        bh=3Af1l8nmbS3U3q49TbezPN6NtAyHIclll5wiQuWtyW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rU8P+ejaug4gSRC0M5QC8waAYPfgdGYmp42X4S26GApMyQ7HUMlAWsA1pYevOV7hP
-         IMzKS93JWsubHxfhgE3aeDQp/oqkJrNbPXzHAK5nCC0tswbbfLIH7Wog/CpAxd+0Pi
-         0XoFL3x9ok0cjs9SRHPFUuauY7dae72uVa7/t4xU=
+        b=lPQusdC016k7qaCe3dIRvuJA5KKQRT//bwNzWj/thjznhjFxT91zk6lDWrX8cjpQp
+         kcmOyXukZdJCEXB4JQ5eTDvuE5hzhkNfvzrmvj0fthrOXpiPdUpBM5wWOgQOLucrWo
+         eiQ07+hfE3DleisUtrix+9J52q/Qhh9bKqwzYpeg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Petar Penkov <ppenkov@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 313/434] tun: fix data-race in gro_normal_list()
-Date:   Sun, 29 Dec 2019 18:26:06 +0100
-Message-Id: <20191229172722.746198342@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Harish Jenny K N <harish_kandiga@mentor.com>
+Subject: [PATCH 5.4 316/434] mmc: tmio: Add MMC_CAP_ERASE to allow erase/discard/trim requests
+Date:   Sun, 29 Dec 2019 18:26:09 +0100
+Message-Id: <20191229172722.946797897@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,90 +49,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Petar Penkov <ppenkov@google.com>
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-[ Upstream commit c39e342a050a4425348e6fe7f75827c0a1a7ebc5 ]
+[ Upstream commit c91843463e9e821dc3b48fe37e3155fa38299f6e ]
 
-There is a race in the TUN driver between napi_busy_loop and
-napi_gro_frags. This commit resolves the race by adding the NAPI struct
-via netif_tx_napi_add, instead of netif_napi_add, which disables polling
-for the NAPI struct.
+Isolated initially to renesas_sdhi_internal_dmac [1], Ulf suggested
+adding MMC_CAP_ERASE to the TMIO mmc core:
 
-KCSAN reported:
-BUG: KCSAN: data-race in gro_normal_list.part.0 / napi_busy_loop
+On Fri, Nov 15, 2019 at 10:27:25AM +0100, Ulf Hansson wrote:
+ -- snip --
+ This test and due to the discussions with Wolfram and you in this
+ thread, I would actually suggest that you enable MMC_CAP_ERASE for all
+ tmio variants, rather than just for this particular one.
 
-write to 0xffff8880b5d474b0 of 4 bytes by task 11205 on cpu 0:
- gro_normal_list.part.0+0x77/0xb0 net/core/dev.c:5682
- gro_normal_list net/core/dev.c:5678 [inline]
- gro_normal_one net/core/dev.c:5692 [inline]
- napi_frags_finish net/core/dev.c:5705 [inline]
- napi_gro_frags+0x625/0x770 net/core/dev.c:5778
- tun_get_user+0x2150/0x26a0 drivers/net/tun.c:1976
- tun_chr_write_iter+0x79/0xd0 drivers/net/tun.c:2022
- call_write_iter include/linux/fs.h:1895 [inline]
- do_iter_readv_writev+0x487/0x5b0 fs/read_write.c:693
- do_iter_write fs/read_write.c:970 [inline]
- do_iter_write+0x13b/0x3c0 fs/read_write.c:951
- vfs_writev+0x118/0x1c0 fs/read_write.c:1015
- do_writev+0xe3/0x250 fs/read_write.c:1058
- __do_sys_writev fs/read_write.c:1131 [inline]
- __se_sys_writev fs/read_write.c:1128 [inline]
- __x64_sys_writev+0x4e/0x60 fs/read_write.c:1128
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ In other words, set the cap in tmio_mmc_host_probe() should be fine,
+ as it seems none of the tmio variants supports HW busy detection at
+ this point.
+ -- snip --
 
-read to 0xffff8880b5d474b0 of 4 bytes by task 11168 on cpu 1:
- gro_normal_list net/core/dev.c:5678 [inline]
- napi_busy_loop+0xda/0x4f0 net/core/dev.c:6126
- sk_busy_loop include/net/busy_poll.h:108 [inline]
- __skb_recv_udp+0x4ad/0x560 net/ipv4/udp.c:1689
- udpv6_recvmsg+0x29e/0xe90 net/ipv6/udp.c:288
- inet6_recvmsg+0xbb/0x240 net/ipv6/af_inet6.c:592
- sock_recvmsg_nosec net/socket.c:871 [inline]
- sock_recvmsg net/socket.c:889 [inline]
- sock_recvmsg+0x92/0xb0 net/socket.c:885
- sock_read_iter+0x15f/0x1e0 net/socket.c:967
- call_read_iter include/linux/fs.h:1889 [inline]
- new_sync_read+0x389/0x4f0 fs/read_write.c:414
- __vfs_read+0xb1/0xc0 fs/read_write.c:427
- vfs_read fs/read_write.c:461 [inline]
- vfs_read+0x143/0x2c0 fs/read_write.c:446
- ksys_read+0xd5/0x1b0 fs/read_write.c:587
- __do_sys_read fs/read_write.c:597 [inline]
- __se_sys_read fs/read_write.c:595 [inline]
- __x64_sys_read+0x4c/0x60 fs/read_write.c:595
- do_syscall_64+0xcc/0x370 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Testing on R-Car H3ULCB-KF doesn't reveal any issues (v5.4-rc7):
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 11168 Comm: syz-executor.0 Not tainted 5.4.0-rc6+ #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+root@rcar-gen3:~# lsblk
+NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+mmcblk0      179:0    0 59.2G  0 disk  <--- eMMC
+mmcblk0boot0 179:8    0    4M  1 disk
+mmcblk0boot1 179:16   0    4M  1 disk
+mmcblk1      179:24   0   30G  0 disk  <--- SD card
 
-Fixes: 943170998b20 ("tun: enable NAPI for TUN/TAP driver")
-Signed-off-by: Petar Penkov <ppenkov@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+root@rcar-gen3:~# time blkdiscard /dev/mmcblk0
+real    0m8.659s
+user    0m0.001s
+sys     0m1.920s
+
+root@rcar-gen3:~# time blkdiscard /dev/mmcblk1
+real    0m1.176s
+user    0m0.001s
+sys     0m0.124s
+
+[1] https://lore.kernel.org/linux-renesas-soc/20191112134808.23546-1-erosca@de.adit-jv.com/
+
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Originally-by: Harish Jenny K N <harish_kandiga@mentor.com>
+Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/tun.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/mmc/host/tmio_mmc_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index a8d3141582a5..16564ebcde50 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -313,8 +313,8 @@ static void tun_napi_init(struct tun_struct *tun, struct tun_file *tfile,
- 	tfile->napi_enabled = napi_en;
- 	tfile->napi_frags_enabled = napi_en && napi_frags;
- 	if (napi_en) {
--		netif_napi_add(tun->dev, &tfile->napi, tun_napi_poll,
--			       NAPI_POLL_WEIGHT);
-+		netif_tx_napi_add(tun->dev, &tfile->napi, tun_napi_poll,
-+				  NAPI_POLL_WEIGHT);
- 		napi_enable(&tfile->napi);
- 	}
- }
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 9b6e1001e77c..dec5a99f52cf 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -1184,7 +1184,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	if (ret == -EPROBE_DEFER)
+ 		return ret;
+ 
+-	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
++	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_4_BIT_DATA | pdata->capabilities;
+ 	mmc->caps2 |= pdata->capabilities2;
+ 	mmc->max_segs = pdata->max_segs ? : 32;
+ 	mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
 -- 
 2.20.1
 
