@@ -2,72 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FB0212C002
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A93312C029
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 03:59:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfL2Cse (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 21:48:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56764 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfL2Cse (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 21:48:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 96E9FAC2C;
-        Sun, 29 Dec 2019 02:48:32 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] Initial RTD1319 SoC and Realtek PymParticle EVB
- support
-To:     James Tai <james.tai@realtek.com>
-Cc:     linux-realtek-soc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org
-References: <20191228150553.6210-1-james.tai@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <9fbe4392-5028-3718-8c97-547a46efad2a@suse.de>
-Date:   Sun, 29 Dec 2019 03:48:31 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        id S1726688AbfL2C73 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 21:59:29 -0500
+Received: from wout1-smtp.messagingengine.com ([64.147.123.24]:36429 "EHLO
+        wout1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726425AbfL2C71 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 21:59:27 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 87E91537;
+        Sat, 28 Dec 2019 21:59:25 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Sat, 28 Dec 2019 21:59:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm1; bh=FlxbmteQj2WfnOCq43+POyjgaR
+        NNd4vGvnrLYbVa018=; b=hP+2x3RwHA3UR0joBco7hsH26HJmyEJjWlsrO+4jbn
+        73sPMUwMW7N27SwXqYlUT7YjbWmyLyghXRwZeTNkaGZOqc1eiEJSxdX5scMblEay
+        lPj0wf09y79VAwkO7Non2mY2yTMnvsCbFgL+OH5nnmKfhVCkFNPOAVAgXOzUbmRG
+        J/bbkGhQUDaw65YxxuSZFOUkiX+J43Jl7wWgQCRppJAQnE36qAPmchd79Ae/9jcQ
+        CpQ0/9+NJ6MhcDN9IzuINTq3pduFZlzYnXhA0SRxWN4/NnMPtmtqxbFLwtnZHzGE
+        C/cx+JrUbCJ+akp4eypRAlZJGkzxpEDC/JGaaY60Uj9Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=FlxbmteQj2WfnOCq4
+        3+POyjgaRNNd4vGvnrLYbVa018=; b=FGozJWtQof7jiY8CiORe8lHSAX4MqcFsB
+        yXh4D1JovsDfDSYUwVSfi+EK2bC1rXPABSe6OWtvaBzkiHZJVi9aepajnn7WhRBL
+        rIOvyp9S2CH2K8ttx4SSQQ1e3Ge93EbimH7CtSw0Gc5xQ3RweaVWfQjRMt1d/V+7
+        LFxbAjz54X1by8HJda6zUL4ci5F6ni/X9UuBTo5Oz4AcZnH0bUOWJVJEQnRqRgYi
+        GN18Z3j7mK8CsKu5YFOiD0wVVqPOytHioefz3ZLuoylt85Zmpxmq3V2TgWCvYiVG
+        oSRh+Byd19Mtccg+lLUBVYThhhpLf1cT/PZiYmQdhPFOCPcd4qrIA==
+X-ME-Sender: <xms:ixYIXljUarw-Gh-lyibCkYHK5EKjk9vYGa2R-0SO4kpC1He6I0QRnQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvdefuddgheduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucffohhmrg
+    hinhepghhithhhuhgsrdgtohhmnecukfhppeejtddrudefhedrudegkedrudehudenucfr
+    rghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:ixYIXr7hUahlrmd6LV4tZ66SzIHFT4r--_GGVqgqR06B3VCk_gRuQQ>
+    <xmx:ixYIXpsOliV2fm9ITGyqHjIpd2PJ2Iahm7QK9I4no4RQsowzSaVd1A>
+    <xmx:ixYIXozCUEblDR0G-Ysnq6vah39iSvK5cWQZXwi5So_hQycbFTzNiQ>
+    <xmx:jRYIXleAogyinq1v7lZxBcr2Wrj5dGTYic4K7xrtHW5k58HAtChB9Q>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 75C793060938;
+        Sat, 28 Dec 2019 21:59:23 -0500 (EST)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Samuel Holland <samuel@sholland.org>
+Subject: [PATCH 0/3] A64/H3/H6 R_CCU clock fixes
+Date:   Sat, 28 Dec 2019 20:59:19 -0600
+Message-Id: <20191229025922.46899-1-samuel@sholland.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <20191228150553.6210-1-james.tai@realtek.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+Hi all,
 
-Am 28.12.19 um 16:05 schrieb James Tai:
-> Cc: Andreas Färber <afaerber@suse.de>
+I was examining the H6 BSP clock driver[1] for guidance when porting an
+AR100 firmware[2] to the H6 SoC. I found some inconsistencies between
+that code and the sunxi-ng driver.
 
-This time you CC'ed me only on the cover letter, so that I didn't get 
-notified of, e.g., Marc's review comments. I wonder why: realtek.yaml is 
-in MAINTAINERS, and so is dts/realtek/, so get_maintainers.pl should've 
-picked me up, even if you forgot to explicitly CC me? Please check what 
-went wrong there and make sure it doesn't happen again for the next 
-submission.
+I don't have a good way to verify the first patch. Someone with an
+oscilloscope could set the divider and check the I2C/RSB frequency.
 
-Thanks,
-Andreas
+Patch 2 should have no functional change.
 
->   .../devicetree/bindings/arm/realtek.yaml      |   6 +
->   arch/arm64/boot/dts/realtek/Makefile          |   2 +
->   .../boot/dts/realtek/rtd1319-pymparticle.dts  |  43 ++++
->   arch/arm64/boot/dts/realtek/rtd1319.dtsi      |  12 +
->   arch/arm64/boot/dts/realtek/rtd13xx.dtsi      | 212 ++++++++++++++++++
->   5 files changed, 275 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/realtek/rtd1319-pymparticle.dts
->   create mode 100644 arch/arm64/boot/dts/realtek/rtd1319.dtsi
->   create mode 100644 arch/arm64/boot/dts/realtek/rtd13xx.dtsi
+Patch 3 was verified by benchmarking. Details are in the commit message.
+
+[1]: https://github.com/Allwinner-Homlet/H6-BSP4.9-linux
+[2]: https://github.com/crust-firmware/crust
+
+Samuel Holland (3):
+  clk: sunxi-ng: sun8i-r: Fix divider on APB0 clock
+  clk: sunxi-ng: h6-r: Simplify R_APB1 clock definition
+  clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
+
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 16 +++-------------
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c     | 21 +++------------------
+ 2 files changed, 6 insertions(+), 31 deletions(-)
 
 -- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+2.23.0
+
