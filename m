@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A30412C991
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2854912C79E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731420AbfL2SKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:10:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52244 "EHLO mail.kernel.org"
+        id S1730682AbfL2RoZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728961AbfL2RoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:44:15 -0500
+        id S1730381AbfL2RoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:44:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D33920718;
-        Sun, 29 Dec 2019 17:44:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63157206A4;
+        Sun, 29 Dec 2019 17:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641454;
-        bh=9OSaqMyXEV1YSYkKHen15K8b+MmvCI0xuHw1grtnIUo=;
+        s=default; t=1577641461;
+        bh=4TdLhCm98y6W11kO/gpRHN9sI3ZrL8C426293eUQ7OY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ktw/HK2FiwAGKR2cp0vZB6KFH0VY+v44XWbmpviUAhnfHyz6jdMqBmMsRAX3fYNiD
-         VREo/yEGk8dDEwLYEYNP9QD4JN7yg2h1rJ5vEpd+YKA74prN/b89fHEL+sBkVdOlav
-         MyU1BdfI3sRng+E5Dvq5Rwf3NWVIEddqzbPFkfog=
+        b=QCfL/3SxoUHfW6nAmU+zCha0IUl66ebR8jEzdWOcSVP+eYyIg/OfTaD1Lkj7rvptN
+         06760A+hAscTvI6ZzJYgDCr1cfNCUad50pgn8Ilrt7pj9EwUrxAC0S5Q41BKCCl2cs
+         KFhZ+PJQhCrx3zL4afRLhjU5G9v6qMt9p9LD3avE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 073/434] spi: gpio: prevent memory leak in spi_gpio_probe
-Date:   Sun, 29 Dec 2019 18:22:06 +0100
-Message-Id: <20191229172706.506071209@linuxfoundation.org>
+Subject: [PATCH 5.4 076/434] media: seco-cec: Add a missing release_region() in an error handling path
+Date:   Sun, 29 Dec 2019 18:22:09 +0100
+Message-Id: <20191229172706.674146529@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,40 +46,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Navid Emamdoost <navid.emamdoost@gmail.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit d3b0ffa1d75d5305ebe34735598993afbb8a869d ]
+[ Upstream commit a9cc4cbcdfd378b65fd4e398800cfa14e3855042 ]
 
-In spi_gpio_probe an SPI master is allocated via spi_alloc_master, but
-this controller should be released if devm_add_action_or_reset fails,
-otherwise memory leaks. In order to avoid leak spi_contriller_put must
-be called in case of failure for devm_add_action_or_reset.
+At the beginning of the probe function, we have a call to
+'request_muxed_region(BRA_SMB_BASE_ADDR, 7, "CEC00001")()'
 
-Fixes: 8b797490b4db ("spi: gpio: Make sure spi_master_put() is called in every error path")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-Link: https://lore.kernel.org/r/20190930205241.5483-1-navid.emamdoost@gmail.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+A corresponding 'release_region()' is performed in the remove function but
+is lacking in the error handling path.
+
+Add it.
+
+Fixes: b03c2fb97adc ("media: add SECO cec driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-gpio.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/seco-cec/seco-cec.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/spi/spi-gpio.c b/drivers/spi/spi-gpio.c
-index 1d3e23ec20a6..f9c5bbb74714 100644
---- a/drivers/spi/spi-gpio.c
-+++ b/drivers/spi/spi-gpio.c
-@@ -371,8 +371,10 @@ static int spi_gpio_probe(struct platform_device *pdev)
- 		return -ENOMEM;
+diff --git a/drivers/media/platform/seco-cec/seco-cec.c b/drivers/media/platform/seco-cec/seco-cec.c
+index 9cd60fe1867c..a86b6e8f9196 100644
+--- a/drivers/media/platform/seco-cec/seco-cec.c
++++ b/drivers/media/platform/seco-cec/seco-cec.c
+@@ -675,6 +675,7 @@ err_notifier:
+ err_delete_adapter:
+ 	cec_delete_adapter(secocec->cec_adap);
+ err:
++	release_region(BRA_SMB_BASE_ADDR, 7);
+ 	dev_err(dev, "%s device probe failed\n", dev_name(dev));
  
- 	status = devm_add_action_or_reset(&pdev->dev, spi_gpio_put, master);
--	if (status)
-+	if (status) {
-+		spi_master_put(master);
- 		return status;
-+	}
- 
- 	if (of_id)
- 		status = spi_gpio_probe_dt(pdev, master);
+ 	return ret;
 -- 
 2.20.1
 
