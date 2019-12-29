@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 971CC12C981
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A98E12C7C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731576AbfL2SJM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:09:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55764 "EHLO mail.kernel.org"
+        id S1730615AbfL2RqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:46:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730731AbfL2RqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:46:12 -0500
+        id S1731052AbfL2RqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:46:19 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 613C8206DB;
-        Sun, 29 Dec 2019 17:46:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90A88206DB;
+        Sun, 29 Dec 2019 17:46:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641571;
-        bh=pliYlUNXHghI6QwxkH/AydJq0XEv46ot49j8tJd7hec=;
+        s=default; t=1577641579;
+        bh=uFNxM7/O65MW/lOtCWv+XHBpUX/dWkTOHmXneIeUm0k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zuzzw/HQQuUJuyd3zFa7DKCBPIeVvqCF14KFXrVcLCuWPR88Axma+lRHX/e4XmaFQ
-         I6gZ8HGLwwHR48yL/9Y+je0Lacyb2yE4eYiUjaNdN25gtQ5uPHe6mapuAkWHsEoKWw
-         CpdXZol5XHJgwZS6zUXreW5DQMMxX2F0w8+GdnoY=
+        b=m2M8jPFfhRpDCPRTfJioySQdhOrr2B5GDGDOhQmwvBTWoM+ga4fNkVEp1PEMmeJJo
+         IEocHu4FmN3NX7z3am7HOc2x87hExyeQRZRsfH+vaJ+/MZB5iC9I+BbLGrMQE2QC3a
+         F4URahW+nAXDI/mc1/6wEH9sh1OKUeie0YnQJ8rQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
-        Hangbin Liu <liuhangbin@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        ci_notify@linaro.org, Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 121/434] team: call RCU read lock when walking the port_list
-Date:   Sun, 29 Dec 2019 18:22:54 +0100
-Message-Id: <20191229172709.730653086@linuxfoundation.org>
+Subject: [PATCH 5.4 124/434] crypto: aegis128/simd - build 32-bit ARM for v8 architecture explicitly
+Date:   Sun, 29 Dec 2019 18:22:57 +0100
+Message-Id: <20191229172709.933326081@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,50 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hangbin Liu <liuhangbin@gmail.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit c17e26ddc79596230834345be80fcad6c619e9ec ]
+[ Upstream commit 830536770f968ab33ece123b317e252c269098db ]
 
-Before reading the team port list, we need to acquire the RCU read lock.
-Also change list_for_each_entry() to list_for_each_entry_rcu().
+Now that the Clang compiler has taken it upon itself to police the
+compiler command line, and reject combinations for arguments it views
+as incompatible, the AEGIS128 no longer builds correctly, and errors
+out like this:
 
-v2:
-repost the patch to net-next and remove fixes flag as this is a cosmetic
-change.
+  clang-10: warning: ignoring extension 'crypto' because the 'armv7-a'
+  architecture does not support it [-Winvalid-command-line-argument]
 
-Suggested-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+So let's switch to armv8-a instead, which matches the crypto-neon-fp-armv8
+FPU profile we specify. Since neither were actually supported by GCC
+versions before 4.8, let's tighten the Kconfig dependencies as well so
+we won't run into errors when building with an ancient compiler.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Reported-by: <ci_notify@linaro.org>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/team/team.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index 8156b33ee3e7..ca70a1d840eb 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -2074,7 +2074,8 @@ static int team_ethtool_get_link_ksettings(struct net_device *dev,
- 	cmd->base.duplex = DUPLEX_UNKNOWN;
- 	cmd->base.port = PORT_OTHER;
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 9e524044d312..29472fb795f3 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -309,6 +309,7 @@ config CRYPTO_AEGIS128
+ config CRYPTO_AEGIS128_SIMD
+ 	bool "Support SIMD acceleration for AEGIS-128"
+ 	depends on CRYPTO_AEGIS128 && ((ARM || ARM64) && KERNEL_MODE_NEON)
++	depends on !ARM || CC_IS_CLANG || GCC_VERSION >= 40800
+ 	default y
  
--	list_for_each_entry(port, &team->port_list, list) {
-+	rcu_read_lock();
-+	list_for_each_entry_rcu(port, &team->port_list, list) {
- 		if (team_port_txable(port)) {
- 			if (port->state.speed != SPEED_UNKNOWN)
- 				speed += port->state.speed;
-@@ -2083,6 +2084,8 @@ static int team_ethtool_get_link_ksettings(struct net_device *dev,
- 				cmd->base.duplex = port->state.duplex;
- 		}
- 	}
-+	rcu_read_unlock();
-+
- 	cmd->base.speed = speed ? : SPEED_UNKNOWN;
- 
- 	return 0;
+ config CRYPTO_AEGIS128_AESNI_SSE2
 -- 
 2.20.1
 
