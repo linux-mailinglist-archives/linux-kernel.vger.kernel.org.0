@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E1E12C73F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2519712C742
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732600AbfL2Rzb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:55:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44128 "EHLO mail.kernel.org"
+        id S1732468AbfL2Rzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732916AbfL2Rz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:55:27 -0500
+        id S1732940AbfL2Rzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:55:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D22B2206DB;
-        Sun, 29 Dec 2019 17:55:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1463421744;
+        Sun, 29 Dec 2019 17:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642127;
-        bh=G7t/WeT4GtFQazJhgcamZZ+TPFgjsgDlQCleZbc2HnU=;
+        s=default; t=1577642134;
+        bh=S8SlpLr8wUiokgeBTGg+8fyV1PcseT48fnzXqTlIk3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZfKDosWvxvtmexSQfRw1OBct8WG8YaeX7qZDqIZcNsSWlLBfVTT8hLKsbsPcPdS7B
-         F+UAhULCWcrppieqVslZFECjqAxCfIjqhVmUnWF8+wj1aR1ZR9zHJn8O9D2xEQf7dR
-         X0q+2COgXYahlEiFVpnwkA2KE16BbTso+nSWlQjc=
+        b=iD7V4SA/0Q0B7Hw5P3V5z68bNO5RigzwQmPynybyCpmUSOy2xFsqY7EEh4tzjYHrz
+         ZBDgs6QYNiUCIvOJz4s0T2zaNcEIsYakQ826ixao7Bhi6RnsHUrCTEoyAHI5Wl4AM0
+         A71jmBYDnhqADpOqVKdYNeYt1WvWkj/vhswNvHds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        stable@vger.kernel.org, Devesh Sharma <devesh.sharma@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 353/434] tools, bpf: Fix build for make -s tools/bpf O=<dir>
-Date:   Sun, 29 Dec 2019 18:26:46 +0100
-Message-Id: <20191229172725.418699596@linuxfoundation.org>
+Subject: [PATCH 5.4 355/434] RDMA/bnxt_re: Fix stat push into dma buffer on gen p5 devices
+Date:   Sun, 29 Dec 2019 18:26:48 +0100
+Message-Id: <20191229172725.550694083@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,53 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quentin Monnet <quentin.monnet@netronome.com>
+From: Devesh Sharma <devesh.sharma@broadcom.com>
 
-[ Upstream commit a89b2cbf71d64b61e79bbe5cb7ff4664797eeaaf ]
+[ Upstream commit 98998ffe5216c7fa2c0225bb5b049ca5cdf8d195 ]
 
-Building selftests with 'make TARGETS=bpf kselftest' was fixed in commit
-55d554f5d140 ("tools: bpf: Use !building_out_of_srctree to determine
-srctree"). However, by updating $(srctree) in tools/bpf/Makefile for
-in-tree builds only, we leave out the case where we pass an output
-directory to build BPF tools, but $(srctree) is not set. This
-typically happens for:
+Due to recent advances in the firmware for Broadcom's gen p5 series of
+adaptors the driver code to report hardware counters has been broken
+w.r.t. roce devices.
 
-    $ make -s tools/bpf O=/tmp/foo
-    Makefile:40: /tools/build/Makefile.feature: No such file or directory
+The new firmware command expects dma length to be specified during stat
+dma buffer allocation.
 
-Fix it by updating $(srctree) in the Makefile not only for out-of-tree
-builds, but also if $(srctree) is empty.
-
-Detected with test_bpftool_build.sh.
-
-Fixes: 55d554f5d140 ("tools: bpf: Use !building_out_of_srctree to determine srctree")
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Link: https://lore.kernel.org/bpf/20191119105626.21453-1-quentin.monnet@netronome.com
+Fixes: 2792b5b95ed5 ("bnxt_en: Update firmware interface spec. to 1.10.0.89.")
+Link: https://lore.kernel.org/r/1574317343-23300-3-git-send-email-devesh.sharma@broadcom.com
+Signed-off-by: Devesh Sharma <devesh.sharma@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/infiniband/hw/bnxt_re/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/bpf/Makefile b/tools/bpf/Makefile
-index 5d1995fd369c..5535650800ab 100644
---- a/tools/bpf/Makefile
-+++ b/tools/bpf/Makefile
-@@ -16,7 +16,13 @@ CFLAGS += -D__EXPORTED_HEADERS__ -I$(srctree)/include/uapi -I$(srctree)/include
- # isn't set and when invoked from selftests build, where srctree
- # is set to ".". building_out_of_srctree is undefined for in srctree
- # builds
-+ifeq ($(srctree),)
-+update_srctree := 1
-+endif
- ifndef building_out_of_srctree
-+update_srctree := 1
-+endif
-+ifeq ($(update_srctree),1)
- srctree := $(patsubst %/,%,$(dir $(CURDIR)))
- srctree := $(patsubst %/,%,$(dir $(srctree)))
- endif
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index b31e21588200..27e2df44d043 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -477,6 +477,7 @@ static int bnxt_re_net_stats_ctx_alloc(struct bnxt_re_dev *rdev,
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_STAT_CTX_ALLOC, -1, -1);
+ 	req.update_period_ms = cpu_to_le32(1000);
+ 	req.stats_dma_addr = cpu_to_le64(dma_map);
++	req.stats_dma_length = cpu_to_le16(sizeof(struct ctx_hw_stats_ext));
+ 	req.stat_ctx_flags = STAT_CTX_ALLOC_REQ_STAT_CTX_FLAGS_ROCE;
+ 	bnxt_re_fill_fw_msg(&fw_msg, (void *)&req, sizeof(req), (void *)&resp,
+ 			    sizeof(resp), DFLT_HWRM_CMD_TIMEOUT);
 -- 
 2.20.1
 
