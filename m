@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FF8712C725
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 383B212C72D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732685AbfL2RyY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42122 "EHLO mail.kernel.org"
+        id S1732242AbfL2Rym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732674AbfL2RyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:21 -0500
+        id S1731919AbfL2Ryi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:38 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C645920748;
-        Sun, 29 Dec 2019 17:54:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9178B21D7E;
+        Sun, 29 Dec 2019 17:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642060;
-        bh=Qi68X8EwhjNhQItLrrrp7bt6hKwH5qQyWhw0sntgeU4=;
+        s=default; t=1577642077;
+        bh=OSw2OidlEAr8cvvBNF4Jmh30draQsb4AfRlRw2pxhbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qh6BdGJv68B/ttquu+HJ1i+WwcE/OLB7BbKHU0/w9u1XjiiyQ6JNXAOMuQPLrCABd
-         dZcfiibEJBhrodomRkFmr3idypRnRWdZ5Kf0QW+j3T64dEzHWyg469t7R/VW/efXnR
-         btGC43PWHkYOYT8bKAWeCwkrRGJ7ZIeNySl7Md9M=
+        b=gGKoUo53l1Wk5uqvBF3aNP5wwwrOrg64qJ2p6GckCVqhYM7ax9mmxSjTacUEbXnQt
+         VuWyosEM2drqLBBiBuP6e1tMMnDoxJKNM7pPu+A3SFCfKYv/uIeyCPc16I+QpBdW4J
+         tJp5+YR+nXB/JEu2YcIPUcnSXt/dL7nZXPdK7DoY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 323/434] perf/core: Fix the mlock accounting, again
-Date:   Sun, 29 Dec 2019 18:26:16 +0100
-Message-Id: <20191229172723.424194731@linuxfoundation.org>
+        stable@vger.kernel.org, Yonghong Song <yhs@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andriin@fb.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 325/434] selftests, bpf: Workaround an alu32 sub-register spilling issue
+Date:   Sun, 29 Dec 2019 18:26:18 +0100
+Message-Id: <20191229172723.557643742@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -53,67 +45,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Yonghong Song <yhs@fb.com>
 
-[ Upstream commit 36b3db03b4741b8935b68fffc7e69951d8d70a89 ]
+[ Upstream commit 2ea2612b987ad703235c92be21d4e98ee9c2c67c ]
 
-Commit:
+Currently, with latest llvm trunk, selftest test_progs failed obj
+file test_seg6_loop.o with the following error in verifier:
 
-  5e6c3c7b1ec2 ("perf/aux: Fix tracking of auxiliary trace buffer allocation")
+  infinite loop detected at insn 76
 
-tried to guess the correct combination of arithmetic operations that would
-undo the AUX buffer's mlock accounting, and failed, leaking the bottom part
-when an allocation needs to be charged partially to both user->locked_vm
-and mm->pinned_vm, eventually leaving the user with no locked bonus:
+The byte code sequence looks like below, and noted that alu32 has been
+turned off by default for better generated codes in general:
 
-  $ perf record -e intel_pt//u -m1,128 uname
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.061 MB perf.data ]
+      48:       w3 = 100
+      49:       *(u32 *)(r10 - 68) = r3
+      ...
+  ;             if (tlv.type == SR6_TLV_PADDING) {
+      76:       if w3 == 5 goto -18 <LBB0_19>
+      ...
+      85:       r1 = *(u32 *)(r10 - 68)
+  ;     for (int i = 0; i < 100; i++) {
+      86:       w1 += -1
+      87:       if w1 == 0 goto +5 <LBB0_20>
+      88:       *(u32 *)(r10 - 68) = r1
 
-  $ perf record -e intel_pt//u -m1,128 uname
-  Permission error mapping pages.
-  Consider increasing /proc/sys/kernel/perf_event_mlock_kb,
-  or try again with a smaller value of -m/--mmap_pages.
-  (current value: 1,128)
+The main reason for verification failure is due to partial spills at
+r10 - 68 for induction variable "i".
 
-Fix this by subtracting both locked and pinned counts when AUX buffer is
-unmapped.
+Current verifier only handles spills with 8-byte values. The above 4-byte
+value spill to stack is treated to STACK_MISC and its content is not
+saved. For the above example:
 
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Acked-by: Peter Zijlstra <peterz@infradead.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+    w3 = 100
+      R3_w=inv100 fp-64_w=inv1086626730498
+    *(u32 *)(r10 - 68) = r3
+      R3_w=inv100 fp-64_w=inv1086626730498
+    ...
+    r1 = *(u32 *)(r10 - 68)
+      R1_w=inv(id=0,umax_value=4294967295,var_off=(0x0; 0xffffffff))
+      fp-64=inv1086626730498
+
+To resolve this issue, verifier needs to be extended to track sub-registers
+in spilling, or llvm needs to enhanced to prevent sub-register spilling
+in register allocation phase. The former will increase verifier complexity
+and the latter will need some llvm "hacking".
+
+Let us workaround this issue by declaring the induction variable as "long"
+type so spilling will happen at non sub-register level. We can revisit this
+later if sub-register spilling causes similar or other verification issues.
+
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Andrii Nakryiko <andriin@fb.com>
+Link: https://lore.kernel.org/bpf/20191117214036.1309510-1-yhs@fb.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/testing/selftests/bpf/progs/test_seg6_loop.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 00a014670ed0..8f66a4833ded 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -5607,10 +5607,8 @@ static void perf_mmap_close(struct vm_area_struct *vma)
- 		perf_pmu_output_stop(event);
+diff --git a/tools/testing/selftests/bpf/progs/test_seg6_loop.c b/tools/testing/selftests/bpf/progs/test_seg6_loop.c
+index c4d104428643..69880c1e7700 100644
+--- a/tools/testing/selftests/bpf/progs/test_seg6_loop.c
++++ b/tools/testing/selftests/bpf/progs/test_seg6_loop.c
+@@ -132,8 +132,10 @@ static __always_inline int is_valid_tlv_boundary(struct __sk_buff *skb,
+ 	*pad_off = 0;
  
- 		/* now it's safe to free the pages */
--		if (!rb->aux_mmap_locked)
--			atomic_long_sub(rb->aux_nr_pages, &mmap_user->locked_vm);
--		else
--			atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
-+		atomic_long_sub(rb->aux_nr_pages - rb->aux_mmap_locked, &mmap_user->locked_vm);
-+		atomic64_sub(rb->aux_mmap_locked, &vma->vm_mm->pinned_vm);
+ 	// we can only go as far as ~10 TLVs due to the BPF max stack size
++	// workaround: define induction variable "i" as "long" instead
++	// of "int" to prevent alu32 sub-register spilling.
+ 	#pragma clang loop unroll(disable)
+-	for (int i = 0; i < 100; i++) {
++	for (long i = 0; i < 100; i++) {
+ 		struct sr6_tlv_t tlv;
  
- 		/* this has to be the last one */
- 		rb_free_aux(rb);
+ 		if (cur_off == *tlv_off)
 -- 
 2.20.1
 
