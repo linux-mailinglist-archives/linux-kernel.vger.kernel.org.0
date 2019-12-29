@@ -2,89 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6143012C92F
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08DAE12C984
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387791AbfL2SB2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:01:28 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33879 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387782AbfL2SBY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 13:01:24 -0500
-Received: by mail-lj1-f193.google.com with SMTP id z22so26540350ljg.1
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 10:01:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZCSyB9m2Zr88NnL3FxL3EFrZeLkiQfHBJKQ2fbjaRy0=;
-        b=Zn1G7f9Wur2twW/A1nhOhlBUw+rZSU4KgagykOVLG/mVxiw8gW/VYpb4eCWoEPdCDx
-         WMZAWZFqvfV/gPJdEmm9Cx7J8/GAo0zBCvZ4o/N2ZAIShtPmuLha94Qq4abIb8F0amMg
-         t9bnShkSiB80XNG5EgOUQb62S+8x7OTRnejH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZCSyB9m2Zr88NnL3FxL3EFrZeLkiQfHBJKQ2fbjaRy0=;
-        b=E4w9A1ku1JRSNoVJ+qeWmxJXjHRkr50f6n9wz65pugClcTQNZOg/IxcYXp3IVRIKgG
-         lHF2gYu6QSTxNMicy0IC59yLH2tdd1HTsu+HnWtJilmv++lPvwAZFgBfcBFZKNsl4CMp
-         hjX2YFRNcaUqve2F9CdHFbOA9AtS8V/TUIeBzcbUkwEB6vR5EO4RVILcbiSLrqOTtfWO
-         98faIp7zNpnsKXEt52SjRq7NoR7uMD3iMgt2ZQzFv7BxrNyqq8NbnA3Szbv1P6dALb2v
-         6v8mRgKduWxgg0EjCed6N4k2X+933OkPdJpWjaiUcVeshHGdJ1HrgOvvdjtAR/Qvw4ZK
-         DtdA==
-X-Gm-Message-State: APjAAAVpiouK5mjcUQwzXBCj6u3ZRmb90B+MAcNTSiA7N3/RNsiun9wq
-        mJ2mkiOaCrhYDp9TWFp6/OMbPWr1hBM=
-X-Google-Smtp-Source: APXvYqxL5CrdqM3dANY+A7BaZzdLczgc1NOuEsa+cFTRn/g3aW9RWRIzZA3awOqa0UnKUCrbWRCEVA==
-X-Received: by 2002:a2e:9e55:: with SMTP id g21mr14234760ljk.245.1577642481624;
-        Sun, 29 Dec 2019 10:01:21 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id m8sm17570464lfp.4.2019.12.29.10.01.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Dec 2019 10:01:20 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id h23so31350144ljc.8
-        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 10:01:20 -0800 (PST)
-X-Received: by 2002:a2e:9041:: with SMTP id n1mr35276819ljg.133.1577642480289;
- Sun, 29 Dec 2019 10:01:20 -0800 (PST)
-MIME-Version: 1.0
-References: <alpine.DEB.2.21.99999.375.1912201332260.21037@trent.utfs.org> <alpine.DEB.2.21.99999.375.1912261445200.21037@trent.utfs.org>
-In-Reply-To: <alpine.DEB.2.21.99999.375.1912261445200.21037@trent.utfs.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 29 Dec 2019 10:01:04 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com>
-Message-ID: <CAHk-=wim6VGnxQmjfK_tDg6fbHYKL4EFkmnTjVr9QnRqjDBAeA@mail.gmail.com>
-Subject: Re: [PATCH] Re: filesystem being remounted supports timestamps until 2038
-To:     Christian Kujau <lists@nerdbynature.de>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Eric Biggers <ebiggers@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1732030AbfL2SJ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:09:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729626AbfL2SJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 13:09:24 -0500
+Received: from localhost.localdomain (unknown [194.230.155.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 754DE206A4;
+        Sun, 29 Dec 2019 18:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577642964;
+        bh=+YBS7n7jqJ53S6HvX93BfgZRfoAttIJ+SIElGBLSgqM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XytEjOEurhjJTShnLSoF6V0pKh8UWSrV3+ocJp0GzOkqtZdJ5E6PGSdOj+2fHjz+V
+         nQr/4bGruIfAdtca2M5HnUq2vsjPxWwLYpsrN3qkznS+R2YbvGVSM+AUz3xBgoMgmZ
+         4wpLCAucYhlvpbMJipEOStNlPUnQkGeA01iDvrwA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] cpuidle: arm: Enable compile testing for some of drivers
+Date:   Sun, 29 Dec 2019 19:09:11 +0100
+Message-Id: <20191229180912.17100-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 5:54 PM Christian Kujau <lists@nerdbynature.de> wrote:
->
->     When file systems are remounted a couple of times per day (e.g. rw/ro for backup
->     purposes), dmesg gets flooded with these messages. Change pr_warn into pr_debug
->     to make it stop.
+Some of cpuidle drivers for ARMv7 can be compile tested on this
+architecture because they do not depend on mach-specific bits.  Enable
+compile testing for big.LITTLE, Kirkwood, Zynq, AT91, Exynos and mvebu
+cpuidle drivers.
 
-How about just doing it once per mount?
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/cpuidle/Kconfig.arm | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-IOW, if your issue is that you re-mount things read-only for backups
-and then remount it rw again soon afterwards, but it's not actually
-_unmounted_, maybe you could instead just add a flag to the 'struct
-super_block' saying "this mount has been warned about already"?
+diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
+index a224d33dda7f..62272ecfa771 100644
+--- a/drivers/cpuidle/Kconfig.arm
++++ b/drivers/cpuidle/Kconfig.arm
+@@ -25,7 +25,7 @@ config ARM_PSCI_CPUIDLE
+ 
+ config ARM_BIG_LITTLE_CPUIDLE
+ 	bool "Support for ARM big.LITTLE processors"
+-	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS
++	depends on ARCH_VEXPRESS_TC2_PM || ARCH_EXYNOS || COMPILE_TEST
+ 	depends on MCPM && !ARM64
+ 	select ARM_CPU_SUSPEND
+ 	select CPU_IDLE_MULTIPLE_DRIVERS
+@@ -51,13 +51,13 @@ config ARM_HIGHBANK_CPUIDLE
+ 
+ config ARM_KIRKWOOD_CPUIDLE
+ 	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
+-	depends on MACH_KIRKWOOD && !ARM64
++	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
+ 	help
+ 	  This adds the CPU Idle driver for Marvell Kirkwood SoCs.
+ 
+ config ARM_ZYNQ_CPUIDLE
+ 	bool "CPU Idle Driver for Xilinx Zynq processors"
+-	depends on ARCH_ZYNQ && !ARM64
++	depends on (ARCH_ZYNQ || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle on Xilinx Zynq processors.
+ 
+@@ -70,19 +70,19 @@ config ARM_U8500_CPUIDLE
+ config ARM_AT91_CPUIDLE
+ 	bool "Cpu Idle Driver for the AT91 processors"
+ 	default y
+-	depends on ARCH_AT91 && !ARM64
++	depends on (ARCH_AT91 || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle for AT91 processors.
+ 
+ config ARM_EXYNOS_CPUIDLE
+ 	bool "Cpu Idle Driver for the Exynos processors"
+-	depends on ARCH_EXYNOS && !ARM64
++	depends on (ARCH_EXYNOS || COMPILE_TEST) && !ARM64
+ 	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
+ 	help
+ 	  Select this to enable cpuidle for Exynos processors.
+ 
+ config ARM_MVEBU_V7_CPUIDLE
+ 	bool "CPU Idle Driver for mvebu v7 family processors"
+-	depends on ARCH_MVEBU && !ARM64
++	depends on (ARCH_MVEBU || COMPILE_TEST) && !ARM64
+ 	help
+ 	  Select this to enable cpuidle on Armada 370, 38x and XP processors.
+-- 
+2.17.1
 
-That would seem to make sense regardless. No? Partoicularly since we
-also don't want to warn multiple times just because the same thing
-gets mounted in multiple places.
-
-Of course, if you actually unmount and completely re-mount a
-filesystem, then that would still warn multiple times, but at that
-point I think it's reasonable to do.
-
-                Linus
