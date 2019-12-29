@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9F1112C9BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E079712C9DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387818AbfL2SNy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:13:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50132 "EHLO mail.kernel.org"
+        id S2387879AbfL2SO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:14:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728452AbfL2R1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:27:38 -0500
+        id S1728152AbfL2R0Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:26:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 212FB207FD;
-        Sun, 29 Dec 2019 17:27:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23EF9207FD;
+        Sun, 29 Dec 2019 17:26:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640457;
-        bh=ErSN2XeBm930ThUzSOLtw9CrlGzqk9HcCu7NpCdJGeU=;
+        s=default; t=1577640375;
+        bh=vorHKAAlo2Q/D/7oNeovywhUHPTU36ycKOYuHV/ww9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cDXDPETlDznTles8iOsU+KiCg7xZUsJhiQ3BHNZNbcLqj1fjDvP2PNivho3Kr3DmF
-         mWPPpduv2v30g42CRyfWM+icL5WeVXVPcK/MaKdqDfVvsfpnKS8MexwHlJEGCeC1MC
-         OaMsctjHShzjQeoxURsdLggI6uMOzzk0fPw1vq7Y=
+        b=ZpDQK4FBT67qWp6u0YIy4mOiWYwJF414x4Fdz2fppYJ+RTKcA+dhtg+cK/CCF7PsG
+         lQEBMow1GcmlKax3m03RbygM83VYvWOopIbwxdVROHz1uvVM1tbLf1ksjykkgp3FFx
+         Tk37sRLvUqXf/c76eSZq5n+KXO92dwaxYtLHw3Zg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
+        stable@vger.kernel.org, Hewenliang <hewenliang4@huawei.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tstoyanov@vmware.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 127/161] iwlwifi: check kasprintf() return value
-Date:   Sun, 29 Dec 2019 18:19:35 +0100
-Message-Id: <20191229162437.413487630@linuxfoundation.org>
+Subject: [PATCH 4.14 133/161] libtraceevent: Fix memory leakage in copy_filter_type
+Date:   Sun, 29 Dec 2019 18:19:41 +0100
+Message-Id: <20191229162439.168651713@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -44,49 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Hewenliang <hewenliang4@huawei.com>
 
-[ Upstream commit 5974fbb5e10b018fdbe3c3b81cb4cc54e1105ab9 ]
+[ Upstream commit 10992af6bf46a2048ad964985a5b77464e5563b1 ]
 
-kasprintf() can fail, we should check the return value.
+It is necessary to free the memory that we have allocated when error occurs.
 
-Fixes: 5ed540aecc2a ("iwlwifi: use mac80211 throughput trigger")
-Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Fixes: ef3072cd1d5c ("tools lib traceevent: Get rid of die in add_filter_type()")
+Signed-off-by: Hewenliang <hewenliang4@huawei.com>
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Link: http://lore.kernel.org/lkml/20191119014415.57210-1-hewenliang4@huawei.com
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/dvm/led.c | 3 +++
- drivers/net/wireless/intel/iwlwifi/mvm/led.c | 3 +++
- 2 files changed, 6 insertions(+)
+ tools/lib/traceevent/parse-filter.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/led.c b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-index 1bbd17ada974..20e16c423990 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
-@@ -185,6 +185,9 @@ void iwl_leds_init(struct iwl_priv *priv)
+diff --git a/tools/lib/traceevent/parse-filter.c b/tools/lib/traceevent/parse-filter.c
+index 5e10ba796a6f..569bceff5f51 100644
+--- a/tools/lib/traceevent/parse-filter.c
++++ b/tools/lib/traceevent/parse-filter.c
+@@ -1492,8 +1492,10 @@ static int copy_filter_type(struct event_filter *filter,
+ 	if (strcmp(str, "TRUE") == 0 || strcmp(str, "FALSE") == 0) {
+ 		/* Add trivial event */
+ 		arg = allocate_arg();
+-		if (arg == NULL)
++		if (arg == NULL) {
++			free(str);
+ 			return -1;
++		}
  
- 	priv->led.name = kasprintf(GFP_KERNEL, "%s-led",
- 				   wiphy_name(priv->hw->wiphy));
-+	if (!priv->led.name)
-+		return;
-+
- 	priv->led.brightness_set = iwl_led_brightness_set;
- 	priv->led.blink_set = iwl_led_blink_set;
- 	priv->led.max_brightness = 1;
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/led.c b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-index b27269504a62..072f80c90ce4 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
-@@ -131,6 +131,9 @@ int iwl_mvm_leds_init(struct iwl_mvm *mvm)
+ 		arg->type = FILTER_ARG_BOOLEAN;
+ 		if (strcmp(str, "TRUE") == 0)
+@@ -1502,8 +1504,11 @@ static int copy_filter_type(struct event_filter *filter,
+ 			arg->boolean.value = 0;
  
- 	mvm->led.name = kasprintf(GFP_KERNEL, "%s-led",
- 				   wiphy_name(mvm->hw->wiphy));
-+	if (!mvm->led.name)
-+		return -ENOMEM;
-+
- 	mvm->led.brightness_set = iwl_led_brightness_set;
- 	mvm->led.max_brightness = 1;
+ 		filter_type = add_filter_type(filter, event->id);
+-		if (filter_type == NULL)
++		if (filter_type == NULL) {
++			free(str);
++			free_arg(arg);
+ 			return -1;
++		}
+ 
+ 		filter_type->filter = arg;
  
 -- 
 2.20.1
