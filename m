@@ -2,40 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB11012C7F2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 562B112C967
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731508AbfL2Rsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:48:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60210 "EHLO mail.kernel.org"
+        id S1732284AbfL2SHI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:07:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729297AbfL2Rsn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:48:43 -0500
+        id S1731275AbfL2Rs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:48:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C6B3207FD;
-        Sun, 29 Dec 2019 17:48:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B18DB207FD;
+        Sun, 29 Dec 2019 17:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641723;
-        bh=r9HNGkrrcvcIgewxqzftcT+iHS7Y814AmtaQcyc85as=;
+        s=default; t=1577641737;
+        bh=vKKbxREr7husoIQusWD141WIoPs6yrN0PW2TYi2k5iY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmenAAszLEMlAjlLR2W+LYlnBMoLwIu9eE0uwUa3vhvp6UUtMAik5r+9vjcMmzMjy
-         WMpxRmgDoAZemHVy7LTyiV+gURbzAdj7BhJn7ZFNv9d7ulHTEhAjicLyPKsqRZhDDh
-         fwoSm1vWTYN6xdUNEI9rlXYg73hvjf6IG3hSry/Y=
+        b=za/zBfnT+wCn2XkfqY59tacbMf7JWG5CxhJt3rEjy0OlMgi6DlVYR8MbLrlgv4ZcQ
+         lNJ5qhuGGqVfxofLmIpcxM9XMHj7JEeJXbKeI/nM/sFZwFwze8+ZNHk0LL0SmPMF3j
+         /Nz3ZhqmBsVeY5fh/8f+SmMOj4i4JteioARhp9EE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Ingo Rohloff <ingo.rohloff@lauterbach.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 147/434] perf test: Avoid infinite loop for task exit case
-Date:   Sun, 29 Dec 2019 18:23:20 +0100
-Message-Id: <20191229172711.515478736@linuxfoundation.org>
+Subject: [PATCH 5.4 149/434] usb: usbfs: Suppress problematic bind and unbind uevents.
+Date:   Sun, 29 Dec 2019 18:23:22 +0100
+Message-Id: <20191229172711.650023512@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -48,65 +43,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Ingo Rohloff <ingo.rohloff@lauterbach.com>
 
-[ Upstream commit 791ce9c48c79210d2ffcdbe69421e7783b32921f ]
+[ Upstream commit abb0b3d96a1f9407dd66831ae33985a386d4200d ]
 
-When executing the task exit testing case, perf gets stuck in an endless
-loop this case and doesn't return back on Arm64 Juno board.
+commit 1455cf8dbfd0 ("driver core: emit uevents when device is bound
+to a driver") added bind and unbind uevents when a driver is bound or
+unbound to a physical device.
 
-After digging into this issue, since Juno board has Arm's big.LITTLE
-CPUs, thus the PMUs are not compatible between the big CPUs and little
-CPUs.  This leads to a PMU event that cannot be enabled properly when
-the traced task is migrated from one variant's CPU to another variant.
-Finally, the test case runs into infinite loop for cannot read out any
-event data after return from polling.
+For USB devices which are handled via the generic usbfs layer (via
+libusb for example), this is problematic:
+Each time a user space program calls
+   ioctl(usb_fd, USBDEVFS_CLAIMINTERFACE, &usb_intf_nr);
+and then later
+   ioctl(usb_fd, USBDEVFS_RELEASEINTERFACE, &usb_intf_nr);
+The kernel will now produce a bind or unbind event, which does not
+really contain any useful information.
 
-Eventually, we need to work out formal solution to allow PMU events can
-be freely migrated from one CPU variant to another, but this is a
-difficult task and a different topic.  This patch tries to fix the Perf
-test case to avoid infinite loop, when the testing detects 1000 times
-retrying for reading empty events, it will directly bail out and return
-failure.  This allows the Perf tool can continue its other test cases.
+This allows a user space program to run a DoS attack against programs
+which listen to uevents (in particular systemd/eudev/upowerd):
+A malicious user space program just has to call in a tight loop
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lore.kernel.org/lkml/20191011091942.29841-2-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+   ioctl(usb_fd, USBDEVFS_CLAIMINTERFACE, &usb_intf_nr);
+   ioctl(usb_fd, USBDEVFS_RELEASEINTERFACE, &usb_intf_nr);
+
+With this loop the malicious user space program floods the kernel and
+all programs listening to uevents with tons of bind and unbind
+events.
+
+This patch suppresses uevents for ioctls USBDEVFS_CLAIMINTERFACE and
+USBDEVFS_RELEASEINTERFACE.
+
+Signed-off-by: Ingo Rohloff <ingo.rohloff@lauterbach.com>
+Link: https://lore.kernel.org/r/20191011115518.2801-1-ingo.rohloff@lauterbach.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/task-exit.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/core/devio.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
-index ca0a6ca43b13..d85c9f608564 100644
---- a/tools/perf/tests/task-exit.c
-+++ b/tools/perf/tests/task-exit.c
-@@ -53,6 +53,7 @@ int test__task_exit(struct test *test __maybe_unused, int subtest __maybe_unused
- 	struct perf_cpu_map *cpus;
- 	struct perf_thread_map *threads;
- 	struct mmap *md;
-+	int retry_count = 0;
- 
- 	signal(SIGCHLD, sig_handler);
- 
-@@ -132,6 +133,13 @@ retry:
- out_init:
- 	if (!exited || !nr_exit) {
- 		evlist__poll(evlist, -1);
+diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+index 3f899552f6e3..6ca40d135430 100644
+--- a/drivers/usb/core/devio.c
++++ b/drivers/usb/core/devio.c
+@@ -764,8 +764,15 @@ static int claimintf(struct usb_dev_state *ps, unsigned int ifnum)
+ 	intf = usb_ifnum_to_if(dev, ifnum);
+ 	if (!intf)
+ 		err = -ENOENT;
+-	else
++	else {
++		unsigned int old_suppress;
 +
-+		if (retry_count++ > 1000) {
-+			pr_debug("Failed after retrying 1000 times\n");
-+			err = -1;
-+			goto out_free_maps;
-+		}
++		/* suppress uevents while claiming interface */
++		old_suppress = dev_get_uevent_suppress(&intf->dev);
++		dev_set_uevent_suppress(&intf->dev, 1);
+ 		err = usb_driver_claim_interface(&usbfs_driver, intf, ps);
++		dev_set_uevent_suppress(&intf->dev, old_suppress);
++	}
+ 	if (err == 0)
+ 		set_bit(ifnum, &ps->ifclaimed);
+ 	return err;
+@@ -785,7 +792,13 @@ static int releaseintf(struct usb_dev_state *ps, unsigned int ifnum)
+ 	if (!intf)
+ 		err = -ENOENT;
+ 	else if (test_and_clear_bit(ifnum, &ps->ifclaimed)) {
++		unsigned int old_suppress;
 +
- 		goto retry;
++		/* suppress uevents while releasing interface */
++		old_suppress = dev_get_uevent_suppress(&intf->dev);
++		dev_set_uevent_suppress(&intf->dev, 1);
+ 		usb_driver_release_interface(&usbfs_driver, intf);
++		dev_set_uevent_suppress(&intf->dev, old_suppress);
+ 		err = 0;
  	}
- 
+ 	return err;
 -- 
 2.20.1
 
