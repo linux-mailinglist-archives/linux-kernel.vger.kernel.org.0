@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1846212C744
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3D6112C74A
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:56:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732969AbfL2Rzm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:55:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44534 "EHLO mail.kernel.org"
+        id S1732767AbfL2Rz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732955AbfL2Rzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:55:39 -0500
+        id S1732995AbfL2Rzt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:55:49 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF328206A4;
-        Sun, 29 Dec 2019 17:55:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 599DC21744;
+        Sun, 29 Dec 2019 17:55:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642139;
-        bh=ru5zyc91JNLFyXH7RTVzArGnqAUwdjz3mnDSV5ry8Kk=;
+        s=default; t=1577642148;
+        bh=qGO+dJN8DQLA7z0WHQvmHEjfA8N94jz8uE3u4QqCzRU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M5BkktKK/gFCnFsuXRPiMPtTyE3tFYLum5++V4YB1An07vhrdrvH8YG4PMBht0Fn3
-         vIVWUK610KPH5mRkFYb8E4oMvmxJW+tUflLyORQNrqtxg4bGAGvxZ3XlfceXLRDrzk
-         CCglsavehaATvwHUjZFf845B8pixYrc/JMBrWu0E=
+        b=JXG5wu5m8dlBPPHk/PX2Ngerj2WaCO93HWG77BbTN5kDK2B78ccslFm+imuLYYRoU
+         bKn3+eX/Ij4+lyldY420BlwpBJa2jPXlRCKwUG841aqPRfzSiOhpVa6UmHcI5LUjB1
+         Wexmj1qHIuvDliKZxBGeJl8VSTdeynd08sCZ+jwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>,
-        Selvin Xavier <selvin.xavier@broadcom.com>,
-        Luke Starrett <luke.starrett@broadcom.com>,
-        Devesh Sharma <devesh.sharma@broadcom.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 357/434] RDMA/bnxt_re: Fix chip number validation Broadcoms Gen P5 series
-Date:   Sun, 29 Dec 2019 18:26:50 +0100
-Message-Id: <20191229172725.681920132@linuxfoundation.org>
+Subject: [PATCH 5.4 361/434] btrfs: dont prematurely free work in reada_start_machine_worker()
+Date:   Sun, 29 Dec 2019 18:26:54 +0100
+Message-Id: <20191229172725.951305544@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -48,54 +45,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luke Starrett <luke.starrett@broadcom.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit e284b159c6881c8bec9713daba2653268f4c4948 ]
+[ Upstream commit e732fe95e4cad35fc1df278c23a32903341b08b3 ]
 
-In the first version of Gen P5 ASIC, chip-id was always set to 0x1750 for
-all adaptor port configurations. This has been fixed in the new chip rev.
+Currently, reada_start_machine_worker() frees the reada_machine_work and
+then calls __reada_start_machine() to do readahead. This is another
+potential instance of the bug in "btrfs: don't prematurely free work in
+run_ordered_work()".
 
-Due to this missing fix users are not able to use adaptors based on latest
-chip rev of Broadcom's Gen P5 adaptors.
+There _might_ already be a deadlock here: reada_start_machine_worker()
+can depend on itself through stacked filesystems (__read_start_machine()
+-> reada_start_machine_dev() -> reada_tree_block_flagged() ->
+read_extent_buffer_pages() -> submit_one_bio() ->
+btree_submit_bio_hook() -> btrfs_map_bio() -> submit_stripe_bio() ->
+submit_bio() onto a loop device can trigger readahead on the lower
+filesystem).
 
-Fixes: ae8637e13185 ("RDMA/bnxt_re: Add chip context to identify 57500 series")
-Link: https://lore.kernel.org/r/1574317343-23300-2-git-send-email-devesh.sharma@broadcom.com
-Signed-off-by: Naresh Kumar PBS <nareshkumar.pbs@broadcom.com>
-Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
-Signed-off-by: Luke Starrett <luke.starrett@broadcom.com>
-Signed-off-by: Devesh Sharma <devesh.sharma@broadcom.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Either way, let's fix it by freeing the work at the end.
+
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/bnxt_re/qplib_res.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/btrfs/reada.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/infiniband/hw/bnxt_re/qplib_res.h b/drivers/infiniband/hw/bnxt_re/qplib_res.h
-index fbda11a7ab1a..aaa76d792185 100644
---- a/drivers/infiniband/hw/bnxt_re/qplib_res.h
-+++ b/drivers/infiniband/hw/bnxt_re/qplib_res.h
-@@ -186,7 +186,9 @@ struct bnxt_qplib_chip_ctx {
- 	u8	chip_metal;
- };
- 
--#define CHIP_NUM_57500          0x1750
-+#define CHIP_NUM_57508		0x1750
-+#define CHIP_NUM_57504		0x1751
-+#define CHIP_NUM_57502		0x1752
- 
- struct bnxt_qplib_res {
- 	struct pci_dev			*pdev;
-@@ -203,7 +205,9 @@ struct bnxt_qplib_res {
- 
- static inline bool bnxt_qplib_is_chip_gen_p5(struct bnxt_qplib_chip_ctx *cctx)
+diff --git a/fs/btrfs/reada.c b/fs/btrfs/reada.c
+index ee6f60547a8d..dd4f9c2b7107 100644
+--- a/fs/btrfs/reada.c
++++ b/fs/btrfs/reada.c
+@@ -752,21 +752,19 @@ static int reada_start_machine_dev(struct btrfs_device *dev)
+ static void reada_start_machine_worker(struct btrfs_work *work)
  {
--	return (cctx->chip_num == CHIP_NUM_57500);
-+	return (cctx->chip_num == CHIP_NUM_57508 ||
-+		cctx->chip_num == CHIP_NUM_57504 ||
-+		cctx->chip_num == CHIP_NUM_57502);
+ 	struct reada_machine_work *rmw;
+-	struct btrfs_fs_info *fs_info;
+ 	int old_ioprio;
+ 
+ 	rmw = container_of(work, struct reada_machine_work, work);
+-	fs_info = rmw->fs_info;
+-
+-	kfree(rmw);
+ 
+ 	old_ioprio = IOPRIO_PRIO_VALUE(task_nice_ioclass(current),
+ 				       task_nice_ioprio(current));
+ 	set_task_ioprio(current, BTRFS_IOPRIO_READA);
+-	__reada_start_machine(fs_info);
++	__reada_start_machine(rmw->fs_info);
+ 	set_task_ioprio(current, old_ioprio);
+ 
+-	atomic_dec(&fs_info->reada_works_cnt);
++	atomic_dec(&rmw->fs_info->reada_works_cnt);
++
++	kfree(rmw);
  }
  
- static inline u8 bnxt_qplib_get_hwq_type(struct bnxt_qplib_res *res)
+ static void __reada_start_machine(struct btrfs_fs_info *fs_info)
 -- 
 2.20.1
 
