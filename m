@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B37A412C71B
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 343B312C71C
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbfL2RyC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41396 "EHLO mail.kernel.org"
+        id S1732620AbfL2RyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732585AbfL2Rx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:53:59 -0500
+        id S1732603AbfL2RyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:04 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5881A20718;
-        Sun, 29 Dec 2019 17:53:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A4B020748;
+        Sun, 29 Dec 2019 17:54:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642038;
-        bh=doqTYewzucexqNabndyd7CtBHmYOg0GVCojdAimXsII=;
+        s=default; t=1577642043;
+        bh=slIrzwraZBUfm6H4g4lg6fDEVVhljIZDF+CRD4sxM20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IjRzeFiiu0qksp8Yr4uCiKbXTZ01kAbeLLLmVH3UKdWrK+A8n5a0uL2Eck5qGV1jW
-         rwy8LTxOPaOYff5MA4nH0qFMtr9UD/RRT8QRGuwilhu+skEqjtZRVkfVT/j1d7g0Oe
-         s3TmzjiXtThtdtBPYyrUB9C0OUXQcMaWl3uAb638=
+        b=GHmmgHa18iGUZEx/5pYzfQM9yRKTcaIGh8jFXyWtBrANyVDk/JAel4Nz7qYttDVWA
+         vmN1ZRSLSKnI18s3Jj33+AcccvQ0h/XeT21gV3sv8NujCvopJE6iOTzAA0resxdEVW
+         Pw6aRaHEAhW8OcmeQqT2oC0iN9+pGWxr5gJAAE0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Gonglei <arei.gonglei@huawei.com>,
-        virtualization@lists.linux-foundation.org,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 315/434] crypto: virtio - deal with unsupported input sizes
-Date:   Sun, 29 Dec 2019 18:26:08 +0100
-Message-Id: <20191229172722.878348386@linuxfoundation.org>
+Subject: [PATCH 5.4 317/434] btrfs: dont prematurely free work in end_workqueue_fn()
+Date:   Sun, 29 Dec 2019 18:26:10 +0100
+Message-Id: <20191229172723.013107086@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -48,65 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 19c5da7d4a2662e85ea67d2d81df57e038fde3ab ]
+[ Upstream commit 9be490f1e15c34193b1aae17da58e14dd9f55a95 ]
 
-Return -EINVAL for input sizes that are not a multiple of the AES
-block size, since they are not supported by our CBC chaining mode.
+Currently, end_workqueue_fn() frees the end_io_wq entry (which embeds
+the work item) and then calls bio_endio(). This is another potential
+instance of the bug in "btrfs: don't prematurely free work in
+run_ordered_work()".
 
-While at it, remove the pr_err() that reports unsupported key sizes
-being used: we shouldn't spam the kernel log with that.
+In particular, the endio call may depend on other work items. For
+example, btrfs_end_dio_bio() can call btrfs_subio_endio_read() ->
+__btrfs_correct_data_nocsum() -> dio_read_error() ->
+submit_dio_repair_bio(), which submits a bio that is also completed
+through a end_workqueue_fn() work item. However,
+__btrfs_correct_data_nocsum() waits for the newly submitted bio to
+complete, thus it depends on another work item.
 
-Fixes: dbaf0624ffa5 ("crypto: add virtio-crypto driver")
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: Gonglei <arei.gonglei@huawei.com>
-Cc: virtualization@lists.linux-foundation.org
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This example currently usually works because we use different workqueue
+helper functions for BTRFS_WQ_ENDIO_DATA and BTRFS_WQ_ENDIO_DIO_REPAIR.
+However, it may deadlock with stacked filesystems and is fragile
+overall. The proper fix is to free the work item at the very end of the
+work function, so let's do that.
+
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/virtio/virtio_crypto_algs.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/btrfs/disk-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
-index 42d19205166b..673fb29fda53 100644
---- a/drivers/crypto/virtio/virtio_crypto_algs.c
-+++ b/drivers/crypto/virtio/virtio_crypto_algs.c
-@@ -105,8 +105,6 @@ virtio_crypto_alg_validate_key(int key_len, uint32_t *alg)
- 		*alg = VIRTIO_CRYPTO_CIPHER_AES_CBC;
- 		break;
- 	default:
--		pr_err("virtio_crypto: Unsupported key length: %d\n",
--			key_len);
- 		return -EINVAL;
- 	}
- 	return 0;
-@@ -484,6 +482,11 @@ static int virtio_crypto_ablkcipher_encrypt(struct ablkcipher_request *req)
- 	/* Use the first data virtqueue as default */
- 	struct data_queue *data_vq = &vcrypto->data_vq[0];
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 402b61bf345c..3895c21853cc 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1657,8 +1657,8 @@ static void end_workqueue_fn(struct btrfs_work *work)
+ 	bio->bi_status = end_io_wq->status;
+ 	bio->bi_private = end_io_wq->private;
+ 	bio->bi_end_io = end_io_wq->end_io;
+-	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
+ 	bio_endio(bio);
++	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
+ }
  
-+	if (!req->nbytes)
-+		return 0;
-+	if (req->nbytes % AES_BLOCK_SIZE)
-+		return -EINVAL;
-+
- 	vc_req->dataq = data_vq;
- 	vc_req->alg_cb = virtio_crypto_dataq_sym_callback;
- 	vc_sym_req->ablkcipher_ctx = ctx;
-@@ -504,6 +507,11 @@ static int virtio_crypto_ablkcipher_decrypt(struct ablkcipher_request *req)
- 	/* Use the first data virtqueue as default */
- 	struct data_queue *data_vq = &vcrypto->data_vq[0];
- 
-+	if (!req->nbytes)
-+		return 0;
-+	if (req->nbytes % AES_BLOCK_SIZE)
-+		return -EINVAL;
-+
- 	vc_req->dataq = data_vq;
- 	vc_req->alg_cb = virtio_crypto_dataq_sym_callback;
- 	vc_sym_req->ablkcipher_ctx = ctx;
+ static int cleaner_kthread(void *arg)
 -- 
 2.20.1
 
