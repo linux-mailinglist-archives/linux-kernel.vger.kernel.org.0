@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 002A512C3B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7362012C3B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfL2RWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:22:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38618 "EHLO mail.kernel.org"
+        id S1727315AbfL2RW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:22:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfL2RWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:22:21 -0500
+        id S1726658AbfL2RW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:22:26 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A924121D7E;
-        Sun, 29 Dec 2019 17:22:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EF58207FD;
+        Sun, 29 Dec 2019 17:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640141;
-        bh=J0M+hVSbn3Atgj5jvsgT6mAvuARmsdyTjsgas4eUwH4=;
+        s=default; t=1577640145;
+        bh=0Gybm7l43eGqhyVETCvyuH6F8el7S/oOIAMXjqiNJeo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bWI2XDaMx60vnNnRlTpsydmUNgazCLsNsgQOwu94sRJzzcU7GZehT38Co49YBFqz8
-         mAmhlEPDGbssPatTTZ48RsnGMdKaOk4+KIqiW43jnPt9QanCiJdSo2o4gvqRrtBC9q
-         gHqoih1llvYTMP458RYlXytXzlSUPXbgppJDi6hQ=
+        b=iV2HjVGP3706P2remmRbykcY1JKKEkU4BC9AWCluDziwGMTckCRWbzP2NeHJEPdk/
+         Y4kZLCAUXo6Pbm3xASM84NX0Yl1AHcQCr7EQg5BpURcgF/O+fAhK/T43/lPQWn1cGM
+         R95QkPvP7uL/0jp63GWq18v1jsRjUmOSCdBlB/Q4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        stable@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 034/161] media: ov6650: Fix stored crop rectangle not in sync with hardware
-Date:   Sun, 29 Dec 2019 18:18:02 +0100
-Message-Id: <20191229162408.819102087@linuxfoundation.org>
+Subject: [PATCH 4.14 036/161] media: venus: core: Fix msm8996 frequency table
+Date:   Sun, 29 Dec 2019 18:18:04 +0100
+Message-Id: <20191229162410.186246630@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -45,56 +45,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+From: Loic Poulain <loic.poulain@linaro.org>
 
-[ Upstream commit 1463b371aff0682c70141f7521db13cc4bbf3016 ]
+[ Upstream commit c690435ed07901737e5c007a65ec59f53b33eb71 ]
 
-The driver stores crop rectangle settings supposed to be in line with
-hardware state in a device private structure.  Since the driver initial
-submission, crop rectangle width and height settings are not updated
-correctly when rectangle offset settings are applied on hardware.  If
-an error occurs while the device is updated, the stored settings my no
-longer reflect hardware state and consecutive calls to .get_selection()
-as well as .get/set_fmt() may return incorrect information.  That in
-turn may affect ability of a bridge device to use correct DMA transfer
-settings if such incorrect informamtion on active frame format returned
-by .get/set_fmt() is used.
+In downstream driver, there are two frequency tables defined,
+one for the encoder and one for the decoder:
 
-Assuming a failed update of the device means its actual settings haven't
-changed, update crop rectangle width and height settings stored in the
-device private structure correctly while the rectangle offset is
-successfully applied on hardware so the stored values always reflect
-actual hardware state to the extent possible.
+/* Encoders /
+<972000 490000000 0x55555555>, / 4k UHD @ 30 /
+<489600 320000000 0x55555555>, / 1080p @ 60 /
+<244800 150000000 0x55555555>, / 1080p @ 30 /
+<108000 75000000 0x55555555>, / 720p @ 30 */
 
-Fixes: 2f6e2404799a ("[media] SoC Camera: add driver for OV6650 sensor")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+/* Decoders /
+<1944000 490000000 0xffffffff>, / 4k UHD @ 60 /
+< 972000 320000000 0xffffffff>, / 4k UHD @ 30 /
+< 489600 150000000 0xffffffff>, / 1080p @ 60 /
+< 244800 75000000 0xffffffff>; / 1080p @ 30 */
+
+It shows that encoder always needs a higher clock than decoder.
+
+In current venus driver, the unified frequency table is aligned
+with the downstream decoder table which causes performance issues
+in encoding scenarios. Fix that by aligning frequency table on
+worst case (encoding).
+
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/ov6650.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/qcom/venus/core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/i2c/ov6650.c b/drivers/media/i2c/ov6650.c
-index 81fa21ed2599..348296be4925 100644
---- a/drivers/media/i2c/ov6650.c
-+++ b/drivers/media/i2c/ov6650.c
-@@ -485,6 +485,7 @@ static int ov6650_set_selection(struct v4l2_subdev *sd,
+diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
+index 769e9e68562d..9360b36b82cd 100644
+--- a/drivers/media/platform/qcom/venus/core.c
++++ b/drivers/media/platform/qcom/venus/core.c
+@@ -345,10 +345,11 @@ static const struct venus_resources msm8916_res = {
+ };
  
- 	ret = ov6650_reg_write(client, REG_HSTRT, sel->r.left >> 1);
- 	if (!ret) {
-+		priv->rect.width += priv->rect.left - sel->r.left;
- 		priv->rect.left = sel->r.left;
- 		ret = ov6650_reg_write(client, REG_HSTOP,
- 				       (sel->r.left + sel->r.width) >> 1);
-@@ -494,6 +495,7 @@ static int ov6650_set_selection(struct v4l2_subdev *sd,
- 		ret = ov6650_reg_write(client, REG_VSTRT, sel->r.top >> 1);
- 	}
- 	if (!ret) {
-+		priv->rect.height += priv->rect.top - sel->r.top;
- 		priv->rect.top = sel->r.top;
- 		ret = ov6650_reg_write(client, REG_VSTOP,
- 				       (sel->r.top + sel->r.height) >> 1);
+ static const struct freq_tbl msm8996_freq_table[] = {
+-	{ 1944000, 490000000 },	/* 4k UHD @ 60 */
+-	{  972000, 320000000 },	/* 4k UHD @ 30 */
+-	{  489600, 150000000 },	/* 1080p @ 60 */
+-	{  244800,  75000000 },	/* 1080p @ 30 */
++	{ 1944000, 520000000 },	/* 4k UHD @ 60 (decode only) */
++	{  972000, 520000000 },	/* 4k UHD @ 30 */
++	{  489600, 346666667 },	/* 1080p @ 60 */
++	{  244800, 150000000 },	/* 1080p @ 30 */
++	{  108000,  75000000 },	/* 720p @ 30 */
+ };
+ 
+ static const struct reg_val msm8996_reg_preset[] = {
 -- 
 2.20.1
 
