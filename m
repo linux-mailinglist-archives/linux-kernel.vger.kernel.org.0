@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CD5212C993
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C8B12C77D
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731463AbfL2SKu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:10:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51728 "EHLO mail.kernel.org"
+        id S1728982AbfL2Rmg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730575AbfL2Rnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:55 -0500
+        id S1730285AbfL2RmY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:42:24 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5DE0206DB;
-        Sun, 29 Dec 2019 17:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1824A20718;
+        Sun, 29 Dec 2019 17:42:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641435;
-        bh=4Vep9hp3oIK/uKvc6QvlfrC9Af+IUlNKIaCjStI4rJ0=;
+        s=default; t=1577641343;
+        bh=SO80qTfhuuZnOKrR0zqMqmPghi9X1Dt0wB0Ee1DHsyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bXHlAlModCN0aIbjVXWMnqWYSUpIOBlhgLEzaU4L8XkRYdbsKfZb9/2rbQdCDnngj
-         BTZgYozbjLdM0qorMC4zSjk5x7ct7JqEoAyWDcRDnKjadloTruZa0pCfj7dd+BVcPf
-         t7uFbIH6CLhBQd9H166PMgHYtVplVRWjqQdMSD4c=
+        b=avqHkO0MKaEBJlkD339mMtDajMW/k15GqcDepOjKZzviJke1TywoNDSiYCeO9gpQm
+         Tmm2zWZTIjz7LWdzVa4QnA4HT3wHxf9EpJ4Aoq3ZaevjZWZw3whyniFUf7HRjdPzqC
+         IeCRejNEdgjpeuhmXGJPf4hTHgda2hKBkYn6PYI0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jayati Sahu <jayati.sahu@samsung.com>,
-        Sriram Dash <sriram.dash@samsung.com>,
-        Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 025/434] net: stmmac: platform: Fix MDIO init for platforms without PHY
-Date:   Sun, 29 Dec 2019 18:21:18 +0100
-Message-Id: <20191229172703.767449167@linuxfoundation.org>
+Subject: [PATCH 5.4 027/434] NFC: nxp-nci: Fix probing without ACPI
+Date:   Sun, 29 Dec 2019 18:21:20 +0100
+Message-Id: <20191229172703.876687020@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,34 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+From: Stephan Gerhold <stephan@gerhold.net>
 
-[ Upstream commit d3e014ec7d5ebe9644b5486bc530b91e62bbf624 ]
+[ Upstream commit 868afbaca1e2a7923e48b5e8c07be34660525db5 ]
 
-The current implementation of "stmmac_dt_phy" function initializes
-the MDIO platform bus data, even in the absence of PHY. This fix
-will skip MDIO initialization if there is no PHY present.
+devm_acpi_dev_add_driver_gpios() returns -ENXIO if CONFIG_ACPI
+is disabled (e.g. on device tree platforms).
+In this case, nxp-nci will silently fail to probe.
 
-Fixes: 7437127 ("net: stmmac: Convert to phylink and remove phylib logic")
-Acked-by: Jayati Sahu <jayati.sahu@samsung.com>
-Signed-off-by: Sriram Dash <sriram.dash@samsung.com>
-Signed-off-by: Padmanabhan Rajanbabu <p.rajanbabu@samsung.com>
+The other NFC drivers only log a debug message if
+devm_acpi_dev_add_driver_gpios() fails.
+Do the same in nxp-nci to fix this problem.
+
+Fixes: ad0acfd69add ("NFC: nxp-nci: Get rid of code duplication in ->probe()")
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c |    2 +-
+ drivers/nfc/nxp-nci/i2c.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -320,7 +320,7 @@ out:
- static int stmmac_dt_phy(struct plat_stmmacenet_data *plat,
- 			 struct device_node *np, struct device *dev)
- {
--	bool mdio = true;
-+	bool mdio = false;
- 	static const struct of_device_id need_mdio_ids[] = {
- 		{ .compatible = "snps,dwc-qos-ethernet-4.10" },
- 		{},
+--- a/drivers/nfc/nxp-nci/i2c.c
++++ b/drivers/nfc/nxp-nci/i2c.c
+@@ -278,7 +278,7 @@ static int nxp_nci_i2c_probe(struct i2c_
+ 
+ 	r = devm_acpi_dev_add_driver_gpios(dev, acpi_nxp_nci_gpios);
+ 	if (r)
+-		return r;
++		dev_dbg(dev, "Unable to add GPIO mapping table\n");
+ 
+ 	phy->gpiod_en = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
+ 	if (IS_ERR(phy->gpiod_en)) {
 
 
