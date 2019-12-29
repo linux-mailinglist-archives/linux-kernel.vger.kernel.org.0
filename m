@@ -2,37 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC60312C9B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E711412C9B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387739AbfL2SNa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:13:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51504 "EHLO mail.kernel.org"
+        id S1731915AbfL2SNQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:13:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728224AbfL2R2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:28:16 -0500
+        id S1728611AbfL2R2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:28:33 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42FC320409;
-        Sun, 29 Dec 2019 17:28:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6632720409;
+        Sun, 29 Dec 2019 17:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640495;
-        bh=lZfQ73VqQQtjsTM7v6sL6jXQFcPPf+p/jvKrLBnmzhs=;
+        s=default; t=1577640512;
+        bh=LwtmkIgA39GSvV8zVmLxiAG9nBKUFUEetSRTfTnyHRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mtEyVHnL6J6RHqpjIwDsZGmZHDY7npoVi8FdfLa+HSalI0AMHiEn5YMwnib3eurBh
-         k+DkfXOr+N1GmDgZfKBii/BCDMArJWsmo1uxUXL3WZFT3+xzDQxCkoyzP1aGZVhZNA
-         D7UnHmDO59nuAP/ROmQ0iNUZXdmA9K59P4uQKpDo=
+        b=IoE0BInqDPdmxT0O8Lg6IQAYIid3dNbEYG7LiAfrEMAWl0/XcpKb1f1HlFGIx7QN1
+         SxqAtM1waPPfVw5TbegrIbEbTkST+SAPR7KHqyG7ligkHqsIVWXFYgwKB1oycikiEy
+         Jsi6dSqnLUl5sarOqsxxN1SDPn5ZE0Pp0u2eUiCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Filipe Manana <fdmanana@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 020/219] btrfs: do not leak reloc root if we fail to read the fs root
-Date:   Sun, 29 Dec 2019 18:17:02 +0100
-Message-Id: <20191229162512.034950201@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 026/219] ALSA: hda/ca0132 - Fix work handling in delayed HP detection
+Date:   Sun, 29 Dec 2019 18:17:08 +0100
+Message-Id: <20191229162512.737476923@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
 References: <20191229162508.458551679@linuxfoundation.org>
@@ -45,37 +42,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit ca1aa2818a53875cfdd175fb5e9a2984e997cce9 upstream.
+commit 42fb6b1d41eb5905d77c06cad2e87b70289bdb76 upstream.
 
-If we fail to read the fs root corresponding with a reloc root we'll
-just break out and free the reloc roots.  But we remove our current
-reloc_root from this list higher up, which means we'll leak this
-reloc_root.  Fix this by adding ourselves back to the reloc_roots list
-so we are properly cleaned up.
+CA0132 has the delayed HP jack detection code that is invoked from the
+unsol handler, but it does a few weird things: it contains the cancel
+of a work inside the work handler, and yet it misses the cancel-sync
+call at (runtime-)suspend.  This patch addresses those issues.
 
-CC: stable@vger.kernel.org # 4.4+
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: 15c2b3cc09a3 ("ALSA: hda/ca0132 - Fix possible workqueue stall")
+Cc: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20191213085111.22855-4-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/relocation.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_ca0132.c |   16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
---- a/fs/btrfs/relocation.c
-+++ b/fs/btrfs/relocation.c
-@@ -4474,6 +4474,7 @@ int btrfs_recover_relocation(struct btrf
- 		fs_root = read_fs_root(fs_info, reloc_root->root_key.offset);
- 		if (IS_ERR(fs_root)) {
- 			err = PTR_ERR(fs_root);
-+			list_add_tail(&reloc_root->root_list, &reloc_roots);
- 			goto out_free;
- 		}
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -6773,11 +6773,10 @@ static void hp_callback(struct hda_codec
+ 	/* Delay enabling the HP amp, to let the mic-detection
+ 	 * state machine run.
+ 	 */
+-	cancel_delayed_work(&spec->unsol_hp_work);
+-	schedule_delayed_work(&spec->unsol_hp_work, msecs_to_jiffies(500));
+ 	tbl = snd_hda_jack_tbl_get(codec, cb->nid);
+ 	if (tbl)
+ 		tbl->block_report = 1;
++	schedule_delayed_work(&spec->unsol_hp_work, msecs_to_jiffies(500));
+ }
+ 
+ static void amic_callback(struct hda_codec *codec, struct hda_jack_callback *cb)
+@@ -7411,12 +7410,25 @@ static void ca0132_reboot_notify(struct
+ 	codec->patch_ops.free(codec);
+ }
+ 
++#ifdef CONFIG_PM
++static int ca0132_suspend(struct hda_codec *codec)
++{
++	struct ca0132_spec *spec = codec->spec;
++
++	cancel_delayed_work_sync(&spec->unsol_hp_work);
++	return 0;
++}
++#endif
++
+ static const struct hda_codec_ops ca0132_patch_ops = {
+ 	.build_controls = ca0132_build_controls,
+ 	.build_pcms = ca0132_build_pcms,
+ 	.init = ca0132_init,
+ 	.free = ca0132_free,
+ 	.unsol_event = snd_hda_jack_unsol_event,
++#ifdef CONFIG_PM
++	.suspend = ca0132_suspend,
++#endif
+ 	.reboot_notify = ca0132_reboot_notify,
+ };
  
 
 
