@@ -2,43 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E04C12C9E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6740312C9C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728062AbfL2RZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:25:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45930 "EHLO mail.kernel.org"
+        id S1732599AbfL2SOY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:14:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727706AbfL2RZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:25:45 -0500
+        id S1728303AbfL2R07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:26:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC90220409;
-        Sun, 29 Dec 2019 17:25:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F6A920409;
+        Sun, 29 Dec 2019 17:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640344;
-        bh=/4gVWON24o3gT/sJg+4JO2SrZ5r/nsfaYVwhQp0Oat4=;
+        s=default; t=1577640418;
+        bh=5Xgie+60FQk0mG+1cCCfl5sMSjJWibgH5/NSrrUPH7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u5/ZMhsKjmwBZzqoG6OZtLnKjT4NeVL3yNMPDXWNsiqaUEcgBdhcyispQv0TFTQEe
-         wA1kfZZsKbEuyAtV3qg+sUxfJwtfr6p2dLnQhe1Qpu7VBUcFR/Si1oPKgmBqPr+YTU
-         oIhZyH8/T20rZzF6alqcD7nxyWd8RN+PPLKHRdic=
+        b=AID1vrl8Ui6/PfIu/Iyl6/A4HspIFw0BLGtsUK5HRt7+c/Fa+CQLnnjgl8N/X4buU
+         WUv8XrpZXyErv+v7H/vUad9VsU0cDWJvqXcJNSfvtnvoeoakEunaOkLdoTST/ZbDTK
+         m2eTuBLXrz9sSC739OHwQKXeFcvo3dDIVenn387A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        Borislav Petkov <bp@suse.de>, bhe@redhat.com,
-        d.hatayama@fujitsu.com, dhowells@redhat.com, dyoung@redhat.com,
-        ebiederm@xmission.com, horms@verge.net.au,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?q?J=C3=BCrgen=20Gross?= <jgross@suse.com>,
-        kexec@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>,
-        Tom Lendacky <thomas.lendacky@amd.com>, vgoyal@redhat.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 118/161] x86/crash: Add a forward declaration of struct kimage
-Date:   Sun, 29 Dec 2019 18:19:26 +0100
-Message-Id: <20191229162433.898340980@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Omar Sandoval <osandov@fb.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 123/161] btrfs: dont prematurely free work in end_workqueue_fn()
+Date:   Sun, 29 Dec 2019 18:19:31 +0100
+Message-Id: <20191229162436.000166789@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -51,67 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lianbo Jiang <lijiang@redhat.com>
+From: Omar Sandoval <osandov@fb.com>
 
-[ Upstream commit 112eee5d06007dae561f14458bde7f2a4879ef4e ]
+[ Upstream commit 9be490f1e15c34193b1aae17da58e14dd9f55a95 ]
 
-Add a forward declaration of struct kimage to the crash.h header because
-future changes will invoke a crash-specific function from the realmode
-init path and the compiler will complain otherwise like this:
+Currently, end_workqueue_fn() frees the end_io_wq entry (which embeds
+the work item) and then calls bio_endio(). This is another potential
+instance of the bug in "btrfs: don't prematurely free work in
+run_ordered_work()".
 
-  In file included from arch/x86/realmode/init.c:11:
-  ./arch/x86/include/asm/crash.h:5:32: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      5 | int crash_load_segments(struct kimage *image);
-        |                                ^~~~~~
-  ./arch/x86/include/asm/crash.h:6:37: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      6 | int crash_copy_backup_region(struct kimage *image);
-        |                                     ^~~~~~
-  ./arch/x86/include/asm/crash.h:7:39: warning: ‘struct kimage’ declared inside\
-   parameter list will not be visible outside of this definition or declaration
-      7 | int crash_setup_memmap_entries(struct kimage *image,
-        |
+In particular, the endio call may depend on other work items. For
+example, btrfs_end_dio_bio() can call btrfs_subio_endio_read() ->
+__btrfs_correct_data_nocsum() -> dio_read_error() ->
+submit_dio_repair_bio(), which submits a bio that is also completed
+through a end_workqueue_fn() work item. However,
+__btrfs_correct_data_nocsum() waits for the newly submitted bio to
+complete, thus it depends on another work item.
 
- [ bp: Rewrite the commit message. ]
+This example currently usually works because we use different workqueue
+helper functions for BTRFS_WQ_ENDIO_DATA and BTRFS_WQ_ENDIO_DIO_REPAIR.
+However, it may deadlock with stacked filesystems and is fragile
+overall. The proper fix is to free the work item at the very end of the
+work function, so let's do that.
 
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: bhe@redhat.com
-Cc: d.hatayama@fujitsu.com
-Cc: dhowells@redhat.com
-Cc: dyoung@redhat.com
-Cc: ebiederm@xmission.com
-Cc: horms@verge.net.au
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jürgen Gross <jgross@suse.com>
-Cc: kexec@lists.infradead.org
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: vgoyal@redhat.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20191108090027.11082-4-lijiang@redhat.com
-Link: https://lkml.kernel.org/r/201910310233.EJRtTMWP%25lkp@intel.com
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Omar Sandoval <osandov@fb.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/crash.h | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/btrfs/disk-io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/crash.h b/arch/x86/include/asm/crash.h
-index a7adb2bfbf0b..6b8ad6fa3979 100644
---- a/arch/x86/include/asm/crash.h
-+++ b/arch/x86/include/asm/crash.h
-@@ -2,6 +2,8 @@
- #ifndef _ASM_X86_CRASH_H
- #define _ASM_X86_CRASH_H
+diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+index 813834552aa1..a8ea56218d6b 100644
+--- a/fs/btrfs/disk-io.c
++++ b/fs/btrfs/disk-io.c
+@@ -1679,8 +1679,8 @@ static void end_workqueue_fn(struct btrfs_work *work)
+ 	bio->bi_status = end_io_wq->status;
+ 	bio->bi_private = end_io_wq->private;
+ 	bio->bi_end_io = end_io_wq->end_io;
+-	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
+ 	bio_endio(bio);
++	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
+ }
  
-+struct kimage;
-+
- int crash_load_segments(struct kimage *image);
- int crash_copy_backup_region(struct kimage *image);
- int crash_setup_memmap_entries(struct kimage *image,
+ static int cleaner_kthread(void *arg)
 -- 
 2.20.1
 
