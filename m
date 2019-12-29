@@ -2,35 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5080C12C75E
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BEF1912C9B8
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbfL2R2J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51008 "EHLO mail.kernel.org"
+        id S2387805AbfL2SNg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:13:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728531AbfL2R2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:28:04 -0500
+        id S1727704AbfL2R2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:28:09 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C53DC208E4;
-        Sun, 29 Dec 2019 17:28:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF37E222C2;
+        Sun, 29 Dec 2019 17:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640483;
-        bh=PdLIJqNP0qhgDm4kjLXmuiOrNEn+UR54zLGQicJ7uMo=;
+        s=default; t=1577640488;
+        bh=iHeHwJ0mrJ2YNVqux37eQpSctb0AIrXFU5exwWDr3ls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NijV9fyXRM0mbrXmUOGO+kTQQ4TL2VcZEUN9h85ceZxT6GWnOPkZLIfkOrJI/vat2
-         PQwc2txmsjZ6NWtN3oAWnXxSinlwWN/+EKRJzbkzbX+9s+xtzdvaVDLTJPIhIAUFib
-         TfK6Oo2cAM8Ue1OVuNbXzKpQOU1cz3FhVUdp85jE=
+        b=ZtIbfLQP4AFFrNO4nQR9RgFImTFkCkirveDXCzLFDoIdexTiISx9fanQOXEGs9FCS
+         b5KZpJiAd+EyR+sRTtopP0VQ3Zbi07psmBHbBmV107HIszgp7DXpVSk2ibema4QeqK
+         s8oHBvY07DGHR4zcFJLtfm+cMB1Z1E3p52uK87eQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+        stable@vger.kernel.org,
+        Christoph Anton Mitterer <calestyo@scientia.net>,
+        Filipe Manana <fdmanana@suse.com>,
+        Anand Jain <anand.jain@oracle.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 015/219] btrfs: do not call synchronize_srcu() in inode_tree_del
-Date:   Sun, 29 Dec 2019 18:16:57 +0100
-Message-Id: <20191229162511.294306894@linuxfoundation.org>
+Subject: [PATCH 4.19 017/219] btrfs: send: remove WARN_ON for readonly mount
+Date:   Sun, 29 Dec 2019 18:16:59 +0100
+Message-Id: <20191229162511.656751723@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
 References: <20191229162508.458551679@linuxfoundation.org>
@@ -43,65 +46,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <josef@toxicpanda.com>
+From: Anand Jain <anand.jain@oracle.com>
 
-commit f72ff01df9cf5db25c76674cac16605992d15467 upstream.
+commit fbd542971aa1e9ec33212afe1d9b4f1106cd85a1 upstream.
 
-Testing with the new fsstress uncovered a pretty nasty deadlock with
-lookup and snapshot deletion.
+We log warning if root::orphan_cleanup_state is not set to
+ORPHAN_CLEANUP_DONE in btrfs_ioctl_send(). However if the filesystem is
+mounted as readonly we skip the orphan item cleanup during the lookup
+and root::orphan_cleanup_state remains at the init state 0 instead of
+ORPHAN_CLEANUP_DONE (2). So during send in btrfs_ioctl_send() we hit the
+warning as below.
 
-Process A
-unlink
- -> final iput
-   -> inode_tree_del
-     -> synchronize_srcu(subvol_srcu)
+  WARN_ON(send_root->orphan_cleanup_state != ORPHAN_CLEANUP_DONE);
 
-Process B
-btrfs_lookup  <- srcu_read_lock() acquired here
-  -> btrfs_iget
-    -> find inode that has I_FREEING set
-      -> __wait_on_freeing_inode()
+WARNING: CPU: 0 PID: 2616 at /Volumes/ws/btrfs-devel/fs/btrfs/send.c:7090 btrfs_ioctl_send+0xb2f/0x18c0 [btrfs]
+::
+RIP: 0010:btrfs_ioctl_send+0xb2f/0x18c0 [btrfs]
+::
+Call Trace:
+::
+_btrfs_ioctl_send+0x7b/0x110 [btrfs]
+btrfs_ioctl+0x150a/0x2b00 [btrfs]
+::
+do_vfs_ioctl+0xa9/0x620
+? __fget+0xac/0xe0
+ksys_ioctl+0x60/0x90
+__x64_sys_ioctl+0x16/0x20
+do_syscall_64+0x49/0x130
+entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-We're holding the srcu_read_lock() while doing the iget in order to make
-sure our fs root doesn't go away, and then we are waiting for the inode
-to finish freeing.  However because the free'ing process is doing a
-synchronize_srcu() we deadlock.
+Reproducer:
+  mkfs.btrfs -fq /dev/sdb
+  mount /dev/sdb /btrfs
+  btrfs subvolume create /btrfs/sv1
+  btrfs subvolume snapshot -r /btrfs/sv1 /btrfs/ss1
+  umount /btrfs
+  mount -o ro /dev/sdb /btrfs
+  btrfs send /btrfs/ss1 -f /tmp/f
 
-Fix this by dropping the synchronize_srcu() in inode_tree_del().  We
-don't need people to stop accessing the fs root at this point, we're
-only adding our empty root to the dead roots list.
+The warning exists because having orphan inodes could confuse send and
+cause it to fail or produce incorrect streams.  The two cases that would
+cause such send failures, which are already fixed are:
 
-A larger much more invasive fix is forthcoming to address how we deal
-with fs roots, but this fixes the immediate problem.
+1) Inodes that were unlinked - these are orphanized and remain with a
+   link count of 0. These caused send operations to fail because it
+   expected to always find at least one path for an inode. However this
+   is no longer a problem since send is now able to deal with such
+   inodes since commit 46b2f4590aab ("Btrfs: fix send failure when root
+   has deleted files still open") and treats them as having been
+   completely removed (the state after an orphan cleanup is performed).
 
-Fixes: 76dda93c6ae2 ("Btrfs: add snapshot/subvolume destroy ioctl")
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
+2) Inodes that were in the process of being truncated. These resulted in
+   send not knowing about the truncation and potentially issue write
+   operations full of zeroes for the range from the new file size to the
+   old file size. This is no longer a problem because we no longer
+   create orphan items for truncation since commit f7e9e8fc792f ("Btrfs:
+   stop creating orphan items for truncate").
+
+As such before these commits, the WARN_ON here provided a clue in case
+something went wrong. Instead of being a warning against the
+root::orphan_cleanup_state value, it could have been more accurate by
+checking if there were actually any orphan items, and then issue a
+warning only if any exists, but that would be more expensive to check.
+Since orphanized inodes no longer cause problems for send, just remove
+the warning.
+
+Reported-by: Christoph Anton Mitterer <calestyo@scientia.net>
+Link: https://lore.kernel.org/linux-btrfs/21cb5e8d059f6e1496a903fa7bfc0a297e2f5370.camel@scientia.net/
+CC: stable@vger.kernel.org # 4.19+
+Suggested-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
 Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/inode.c |    2 --
- 1 file changed, 2 deletions(-)
+ fs/btrfs/send.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -5665,7 +5665,6 @@ static void inode_tree_add(struct inode
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -6639,12 +6639,6 @@ long btrfs_ioctl_send(struct file *mnt_f
+ 	spin_unlock(&send_root->root_item_lock);
  
- static void inode_tree_del(struct inode *inode)
- {
--	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- 	struct btrfs_root *root = BTRFS_I(inode)->root;
- 	int empty = 0;
- 
-@@ -5678,7 +5677,6 @@ static void inode_tree_del(struct inode
- 	spin_unlock(&root->inode_lock);
- 
- 	if (empty && btrfs_root_refs(&root->root_item) == 0) {
--		synchronize_srcu(&fs_info->subvol_srcu);
- 		spin_lock(&root->inode_lock);
- 		empty = RB_EMPTY_ROOT(&root->inode_tree);
- 		spin_unlock(&root->inode_lock);
+ 	/*
+-	 * This is done when we lookup the root, it should already be complete
+-	 * by the time we get here.
+-	 */
+-	WARN_ON(send_root->orphan_cleanup_state != ORPHAN_CLEANUP_DONE);
+-
+-	/*
+ 	 * Userspace tools do the checks and warn the user if it's
+ 	 * not RO.
+ 	 */
 
 
