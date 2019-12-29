@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6861B12C416
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:28:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E975612C415
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:28:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbfL2R0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:26:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
+        id S1728156AbfL2R0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:26:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727734AbfL2R0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:26:11 -0500
+        id S1728123AbfL2R0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:26:13 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46D9420409;
-        Sun, 29 Dec 2019 17:26:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B67A220409;
+        Sun, 29 Dec 2019 17:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640370;
-        bh=9Q1KOpc9Gr9mqP8t/Q9Bi0RQNfaCGH6IfPJ4qLdMIvk=;
+        s=default; t=1577640373;
+        bh=aai5ilbyK01aPMcM1RzUPG+VItremKQRclN3Rtnusxo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cbsHl3Uuy8Qm+3+qqrwRN0/cutP8z2kqpCh4IwvMNlz9k2zXTkR5GR6GRoRXeDI4Z
-         7O7rp8pukC8g1RnQO1GjY9Sl6ohnGNxyAcIhmCavVUONzzeZcTCGUQNX+NZlJXXhn0
-         I2afu6KlM78sYwGM3db+rbI9nrnOUM4HitFGsjaI=
+        b=WAlaKBx+m04jwShOc2Bb1Jk+dvcr6qd0dHVZShIAtDova2UMz1zy1dDZqmkO1riWo
+         AN9ANzKza+1J1rVpxZFka61VNQXsmDqxwu19kIkBiaAB4oZJ/psktp21/bXaP6KNKL
+         wjwjHVZeee4Vi6jvpW78BgCcYnl5s81SYbf0RB5E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Pedersen <thomas@adapt-ip.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 131/161] mac80211: consider QoS Null frames for STA_NULLFUNC_ACKED
-Date:   Sun, 29 Dec 2019 18:19:39 +0100
-Message-Id: <20191229162438.526610307@linuxfoundation.org>
+Subject: [PATCH 4.14 132/161] crypto: vmx - Avoid weird build failures
+Date:   Sun, 29 Dec 2019 18:19:40 +0100
+Message-Id: <20191229162439.074609743@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -44,48 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Pedersen <thomas@adapt-ip.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 08a5bdde3812993cb8eb7aa9124703df0de28e4b ]
+[ Upstream commit 4ee812f6143d78d8ba1399671d78c8d78bf2817c ]
 
-Commit 7b6ddeaf27ec ("mac80211: use QoS NDP for AP probing")
-let STAs send QoS Null frames as PS triggers if the AP was
-a QoS STA.  However, the mac80211 PS stack relies on an
-interface flag IEEE80211_STA_NULLFUNC_ACKED for
-determining trigger frame ACK, which was not being set for
-acked non-QoS Null frames. The effect is an inability to
-trigger hardware sleep via IEEE80211_CONF_PS since the QoS
-Null frame was seemingly never acked.
+In the vmx crypto Makefile we assign to a variable called TARGET and
+pass that to the aesp8-ppc.pl and ghashp8-ppc.pl scripts.
 
-This bug only applies to drivers which set both
-IEEE80211_HW_REPORTS_TX_ACK_STATUS and
-IEEE80211_HW_PS_NULLFUNC_STACK.
+The variable is meant to describe what flavour of powerpc we're
+building for, eg. either 32 or 64-bit, and big or little endian.
 
-Detect the acked QoS Null frame to restore STA power save.
+Unfortunately TARGET is a fairly common name for a make variable, and
+if it happens that TARGET is specified as a command line parameter to
+make, the value specified on the command line will override our value.
 
-Fixes: 7b6ddeaf27ec ("mac80211: use QoS NDP for AP probing")
-Signed-off-by: Thomas Pedersen <thomas@adapt-ip.com>
-Link: https://lore.kernel.org/r/20191119053538.25979-4-thomas@adapt-ip.com
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+In particular this can happen if the kernel Makefile is driven by an
+external Makefile that uses TARGET for something.
+
+This leads to weird build failures, eg:
+  nonsense  at /build/linux/drivers/crypto/vmx/ghashp8-ppc.pl line 45.
+  /linux/drivers/crypto/vmx/Makefile:20: recipe for target 'drivers/crypto/vmx/ghashp8-ppc.S' failed
+
+Which shows that we passed an empty value for $(TARGET) to the perl
+script, confirmed with make V=1:
+
+  perl /linux/drivers/crypto/vmx/ghashp8-ppc.pl  > drivers/crypto/vmx/ghashp8-ppc.S
+
+We can avoid this confusion by using override, to tell make that we
+don't want anything to override our variable, even a value specified
+on the command line. We can also use a less common name, given the
+script calls it "flavour", let's use that.
+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/status.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/crypto/vmx/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/status.c b/net/mac80211/status.c
-index b18466cf466c..fbe7354aeac7 100644
---- a/net/mac80211/status.c
-+++ b/net/mac80211/status.c
-@@ -856,7 +856,8 @@ static void __ieee80211_tx_status(struct ieee80211_hw *hw,
- 			I802_DEBUG_INC(local->dot11FailedCount);
- 	}
+diff --git a/drivers/crypto/vmx/Makefile b/drivers/crypto/vmx/Makefile
+index cab32cfec9c4..709670d2b553 100644
+--- a/drivers/crypto/vmx/Makefile
++++ b/drivers/crypto/vmx/Makefile
+@@ -3,13 +3,13 @@ obj-$(CONFIG_CRYPTO_DEV_VMX_ENCRYPT) += vmx-crypto.o
+ vmx-crypto-objs := vmx.o aesp8-ppc.o ghashp8-ppc.o aes.o aes_cbc.o aes_ctr.o aes_xts.o ghash.o
  
--	if (ieee80211_is_nullfunc(fc) && ieee80211_has_pm(fc) &&
-+	if ((ieee80211_is_nullfunc(fc) || ieee80211_is_qos_nullfunc(fc)) &&
-+	    ieee80211_has_pm(fc) &&
- 	    ieee80211_hw_check(&local->hw, REPORTS_TX_ACK_STATUS) &&
- 	    !(info->flags & IEEE80211_TX_CTL_INJECTED) &&
- 	    local->ps_sdata && !(local->scanning)) {
+ ifeq ($(CONFIG_CPU_LITTLE_ENDIAN),y)
+-TARGET := linux-ppc64le
++override flavour := linux-ppc64le
+ else
+-TARGET := linux-ppc64
++override flavour := linux-ppc64
+ endif
+ 
+ quiet_cmd_perl = PERL $@
+-      cmd_perl = $(PERL) $(<) $(TARGET) > $(@)
++      cmd_perl = $(PERL) $(<) $(flavour) > $(@)
+ 
+ targets += aesp8-ppc.S ghashp8-ppc.S
+ 
 -- 
 2.20.1
 
