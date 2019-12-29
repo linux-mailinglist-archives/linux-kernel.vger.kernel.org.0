@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF58512C864
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 342DC12C869
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732612AbfL2RyE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41476 "EHLO mail.kernel.org"
+        id S1732666AbfL2RyS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:54:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732590AbfL2RyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:02 -0500
+        id S1732655AbfL2RyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:16 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B407A206A4;
-        Sun, 29 Dec 2019 17:54:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E85A20748;
+        Sun, 29 Dec 2019 17:54:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642041;
-        bh=3Af1l8nmbS3U3q49TbezPN6NtAyHIclll5wiQuWtyW8=;
+        s=default; t=1577642055;
+        bh=Drohe3c13LJwpE8DxivQc4cKlz2QZ0vz90HB7vIMBqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lPQusdC016k7qaCe3dIRvuJA5KKQRT//bwNzWj/thjznhjFxT91zk6lDWrX8cjpQp
-         kcmOyXukZdJCEXB4JQ5eTDvuE5hzhkNfvzrmvj0fthrOXpiPdUpBM5wWOgQOLucrWo
-         eiQ07+hfE3DleisUtrix+9J52q/Qhh9bKqwzYpeg=
+        b=u1shSOrU+sbGuIxqVZEuFNZhXXpon2AelE7UPIxHEN5kEOx9eWofqj97MCcLmOctt
+         LFQVL9q6NIxyZbR1zS6bO57o7vKCNHmqedyDG3Fdh6UmXPn6GE03GaV0A1F/POK+gy
+         dnocSndvfS4x25GoWRKAb+9OKGGGxPv2613GmXo8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Harish Jenny K N <harish_kandiga@mentor.com>
-Subject: [PATCH 5.4 316/434] mmc: tmio: Add MMC_CAP_ERASE to allow erase/discard/trim requests
-Date:   Sun, 29 Dec 2019 18:26:09 +0100
-Message-Id: <20191229172722.946797897@linuxfoundation.org>
+        stable@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 321/434] spi: st-ssc4: add missed pm_runtime_disable
+Date:   Sun, 29 Dec 2019 18:26:14 +0100
+Message-Id: <20191229172723.293182064@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -49,71 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniu Rosca <erosca@de.adit-jv.com>
+From: Chuhong Yuan <hslester96@gmail.com>
 
-[ Upstream commit c91843463e9e821dc3b48fe37e3155fa38299f6e ]
+[ Upstream commit cd050abeba2a95fe5374eec28ad2244617bcbab6 ]
 
-Isolated initially to renesas_sdhi_internal_dmac [1], Ulf suggested
-adding MMC_CAP_ERASE to the TMIO mmc core:
+The driver forgets to call pm_runtime_disable in probe failure
+and remove.
+Add the missed calls to fix it.
 
-On Fri, Nov 15, 2019 at 10:27:25AM +0100, Ulf Hansson wrote:
- -- snip --
- This test and due to the discussions with Wolfram and you in this
- thread, I would actually suggest that you enable MMC_CAP_ERASE for all
- tmio variants, rather than just for this particular one.
-
- In other words, set the cap in tmio_mmc_host_probe() should be fine,
- as it seems none of the tmio variants supports HW busy detection at
- this point.
- -- snip --
-
-Testing on R-Car H3ULCB-KF doesn't reveal any issues (v5.4-rc7):
-
-root@rcar-gen3:~# lsblk
-NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
-mmcblk0      179:0    0 59.2G  0 disk  <--- eMMC
-mmcblk0boot0 179:8    0    4M  1 disk
-mmcblk0boot1 179:16   0    4M  1 disk
-mmcblk1      179:24   0   30G  0 disk  <--- SD card
-
-root@rcar-gen3:~# time blkdiscard /dev/mmcblk0
-real    0m8.659s
-user    0m0.001s
-sys     0m1.920s
-
-root@rcar-gen3:~# time blkdiscard /dev/mmcblk1
-real    0m1.176s
-user    0m0.001s
-sys     0m0.124s
-
-[1] https://lore.kernel.org/linux-renesas-soc/20191112134808.23546-1-erosca@de.adit-jv.com/
-
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Originally-by: Harish Jenny K N <harish_kandiga@mentor.com>
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+Link: https://lore.kernel.org/r/20191118024848.21645-1-hslester96@gmail.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/spi/spi-st-ssc4.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 9b6e1001e77c..dec5a99f52cf 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1184,7 +1184,7 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
- 	if (ret == -EPROBE_DEFER)
- 		return ret;
+diff --git a/drivers/spi/spi-st-ssc4.c b/drivers/spi/spi-st-ssc4.c
+index 0c24c494f386..77d26d64541a 100644
+--- a/drivers/spi/spi-st-ssc4.c
++++ b/drivers/spi/spi-st-ssc4.c
+@@ -381,6 +381,7 @@ static int spi_st_probe(struct platform_device *pdev)
+ 	return 0;
  
--	mmc->caps |= MMC_CAP_4_BIT_DATA | pdata->capabilities;
-+	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_4_BIT_DATA | pdata->capabilities;
- 	mmc->caps2 |= pdata->capabilities2;
- 	mmc->max_segs = pdata->max_segs ? : 32;
- 	mmc->max_blk_size = TMIO_MAX_BLK_SIZE;
+ clk_disable:
++	pm_runtime_disable(&pdev->dev);
+ 	clk_disable_unprepare(spi_st->clk);
+ put_master:
+ 	spi_master_put(master);
+@@ -392,6 +393,8 @@ static int spi_st_remove(struct platform_device *pdev)
+ 	struct spi_master *master = platform_get_drvdata(pdev);
+ 	struct spi_st *spi_st = spi_master_get_devdata(master);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	clk_disable_unprepare(spi_st->clk);
+ 
+ 	pinctrl_pm_select_sleep_state(&pdev->dev);
 -- 
 2.20.1
 
