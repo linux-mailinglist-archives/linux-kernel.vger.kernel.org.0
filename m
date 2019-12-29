@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D95412C73C
+	by mail.lfdr.de (Postfix) with ESMTP id C0CA712C73D
 	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732902AbfL2RzY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:55:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43942 "EHLO mail.kernel.org"
+        id S1732920AbfL2Rz1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732879AbfL2RzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:55:21 -0500
+        id S1732908AbfL2RzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:55:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2855222C3;
-        Sun, 29 Dec 2019 17:55:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76045206A4;
+        Sun, 29 Dec 2019 17:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642120;
-        bh=fsAlUN/G6n68DhtQhTV/M/YPqQwOFu4GkGS865YO4OA=;
+        s=default; t=1577642124;
+        bh=7IhDB8fZo0VwcPlFw0jdycofdMzvRlQYJC6mVeFH3Xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y3a/IkRYxpcZcYJaMPntskD3zo3YTXZt3AFR70M/qaSr4pANJUjaWYFwCk4f0tEhG
-         aSzU8PFvoESx62xUlgwdYm1Eidb5B2+lNWIiL769bxQAiMWO2BH5FJndJzoyqfnGiz
-         /OGKbSwr8j8VmvPtF3MEP3kCJQmDaDph9BGT/dOE=
+        b=tS0KLbI1R8mTtI60+lQpboTx78rUKv0+XD/4fwn8Qeg7HED4n67d+02Zz5urJoyAN
+         9gtoyUVvCPj/GhLhO3RpeM2V7Cf65nWJULowDeTkJ/mSm/qbOJFHCwoFXqMd59J32s
+         gmPVTOgMnvFFH4b+zY2OkzqSLDRLAFgMWjNsJWA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Akeem G Abodunrin <akeem.g.abodunrin@intel.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 350/434] ice: Only disable VF state when freeing each VF resources
-Date:   Sun, 29 Dec 2019 18:26:43 +0100
-Message-Id: <20191229172725.220428240@linuxfoundation.org>
+Subject: [PATCH 5.4 352/434] net: phy: initialise phydev speed and duplex sanely
+Date:   Sun, 29 Dec 2019 18:26:45 +0100
+Message-Id: <20191229172725.352306708@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -46,57 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akeem G Abodunrin <akeem.g.abodunrin@intel.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 1f9639d2fb9188a59acafae9dea626391c442a8d ]
+[ Upstream commit a5d66f810061e2dd70fb7a108dcd14e535bc639f ]
 
-It is wrong to set PF disable state flag for all VFs when freeing VF
-resources - Instead, we should set VF disable state flag for each VF with
-its resources being returned to the device. Right now, all VF opcodes,
-mailbox communication to clear its resources as well fails - since we
-already indicate that PF is in disable state, with all VFs not active. In
-addition, we don't need to notify VF that PF is intending to reset it, if
-it is already in disabled state.
+When a phydev is created, the speed and duplex are set to zero and
+-1 respectively, rather than using the predefined SPEED_UNKNOWN and
+DUPLEX_UNKNOWN constants.
 
-Signed-off-by: Akeem G Abodunrin <akeem.g.abodunrin@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+There is a window at initialisation time where we may report link
+down using the 0/-1 values.  Tidy this up and use the predefined
+constants, so debug doesn't complain with:
+
+"Unsupported (update phy-core.c)/Unsupported (update phy-core.c)"
+
+when the speed and duplex settings are printed.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/phy/phy_device.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-index b45797f39b2f..c0637a0cbfe8 100644
---- a/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-+++ b/drivers/net/ethernet/intel/ice/ice_virtchnl_pf.c
-@@ -317,8 +317,9 @@ void ice_free_vfs(struct ice_pf *pf)
- 	pf->num_alloc_vfs = 0;
- 	for (i = 0; i < tmp; i++) {
- 		if (test_bit(ICE_VF_STATE_INIT, pf->vf[i].vf_states)) {
--			/* disable VF qp mappings */
-+			/* disable VF qp mappings and set VF disable state */
- 			ice_dis_vf_mappings(&pf->vf[i]);
-+			set_bit(ICE_VF_STATE_DIS, pf->vf[i].vf_states);
- 			ice_free_vf_res(&pf->vf[i]);
- 		}
- 	}
-@@ -1287,9 +1288,12 @@ static void ice_vc_notify_vf_reset(struct ice_vf *vf)
- 	if (!vf || vf->vf_id >= vf->pf->num_alloc_vfs)
- 		return;
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 14c6b7597b06..cee8724caf2d 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -596,8 +596,8 @@ struct phy_device *phy_device_create(struct mii_bus *bus, int addr, int phy_id,
+ 	mdiodev->device_free = phy_mdio_device_free;
+ 	mdiodev->device_remove = phy_mdio_device_remove;
  
--	/* verify if the VF is in either init or active before proceeding */
--	if (!test_bit(ICE_VF_STATE_INIT, vf->vf_states) &&
--	    !test_bit(ICE_VF_STATE_ACTIVE, vf->vf_states))
-+	/* Bail out if VF is in disabled state, neither initialized, nor active
-+	 * state - otherwise proceed with notifications
-+	 */
-+	if ((!test_bit(ICE_VF_STATE_INIT, vf->vf_states) &&
-+	     !test_bit(ICE_VF_STATE_ACTIVE, vf->vf_states)) ||
-+	    test_bit(ICE_VF_STATE_DIS, vf->vf_states))
- 		return;
- 
- 	pfe.event = VIRTCHNL_EVENT_RESET_IMPENDING;
+-	dev->speed = 0;
+-	dev->duplex = -1;
++	dev->speed = SPEED_UNKNOWN;
++	dev->duplex = DUPLEX_UNKNOWN;
+ 	dev->pause = 0;
+ 	dev->asym_pause = 0;
+ 	dev->link = 0;
 -- 
 2.20.1
 
