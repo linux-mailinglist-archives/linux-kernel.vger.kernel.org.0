@@ -2,35 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB19D12C5F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B6E9712C5DE
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:42:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbfL2Rm2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:42:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48358 "EHLO mail.kernel.org"
+        id S1730208AbfL2Rlo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:41:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730268AbfL2RmQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:42:16 -0500
+        id S1730198AbfL2Rlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:41:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90E50206A4;
-        Sun, 29 Dec 2019 17:42:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE6F524654;
+        Sun, 29 Dec 2019 17:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641336;
-        bh=Ssja3Y0c/d5eWji+2D1G2jA5OFe4e4er6S/JhZowQHI=;
+        s=default; t=1577641302;
+        bh=08HdQwKZUvJ1oXyHSEscem+bEbXWhakOQFgYdODZJdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L4TkgOUinHVO5uv9xGsO5290RGOT1KBXYn1vYU9lrDNktMllx13RUu5bmVg7Odv81
-         t+RBisIhUelYpruxNGfiD/maSYOtKhc5fdyA2K/e+UI/a8lfhFxlyCtmdO0BSYIF/M
-         4PCzHAAbYaPpwXKesklDF+mHQ934KsfxCdA22ybI=
+        b=xaqH4RIu7OGQPiA2ibpWswE8bMabCYyG4OKDDudwO2lWjBoyJcULsF+kD13CVab2M
+         xq9XeMAB3EAMWxsdsUj1zrm7FI/gNcORgPrzjav87H+8/bttN3UzqDjGMqA2BfP4/l
+         KCoPS37kP3QRN2av/u2jKgDr6H/CRKCQtAxKxJ5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 5.4 009/434] net: qlogic: Fix error paths in ql_alloc_large_buffers()
-Date:   Sun, 29 Dec 2019 18:21:02 +0100
-Message-Id: <20191229172702.909224192@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        David Miller <davem@davemloft.net>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jouni Hogander <jouni.hogander@unikie.com>
+Subject: [PATCH 5.4 010/434] net-sysfs: Call dev_hold always in rx_queue_add_kobject
+Date:   Sun, 29 Dec 2019 18:21:03 +0100
+Message-Id: <20191229172702.962912129@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -43,76 +47,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+From: Jouni Hogander <jouni.hogander@unikie.com>
 
-[ Upstream commit cad46039e4c99812db067c8ac22a864960e7acc4 ]
+[ Upstream commit ddd9b5e3e765d8ed5a35786a6cb00111713fe161 ]
 
-ql_alloc_large_buffers() has the usual RX buffer allocation
-loop where it allocates skbs and maps them for DMA.  It also
-treats failure as a fatal error.
+Dev_hold has to be called always in rx_queue_add_kobject.
+Otherwise usage count drops below 0 in case of failure in
+kobject_init_and_add.
 
-There are (at least) three bugs in the error paths:
-
-1. ql_free_large_buffers() assumes that the lrg_buf[] entry for the
-first buffer that couldn't be allocated will have .skb == NULL.
-But the qla_buf[] array is not zero-initialised.
-
-2. ql_free_large_buffers() DMA-unmaps all skbs in lrg_buf[].  This is
-incorrect for the last allocated skb, if DMA mapping failed.
-
-3. Commit 1acb8f2a7a9f ("net: qlogic: Fix memory leak in
-ql_alloc_large_buffers") added a direct call to dev_kfree_skb_any()
-after the skb is recorded in lrg_buf[], so ql_free_large_buffers()
-will double-free it.
-
-The bugs are somewhat inter-twined, so fix them all at once:
-
-* Clear each entry in qla_buf[] before attempting to allocate
-  an skb for it.  This goes half-way to fixing bug 1.
-* Set the .skb field only after the skb is DMA-mapped.  This
-  fixes the rest.
-
-Fixes: 1357bfcf7106 ("qla3xxx: Dynamically size the rx buffer queue ...")
-Fixes: 0f8ab89e825f ("qla3xxx: Check return code from pci_map_single() ...")
-Fixes: 1acb8f2a7a9f ("net: qlogic: Fix memory leak in ql_alloc_large_buffers")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Fixes: b8eb718348b8 ("net-sysfs: Fix reference count leak in rx|netdev_queue_add_kobject")
+Reported-by: syzbot <syzbot+30209ea299c09d8785c9@syzkaller.appspotmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: David Miller <davem@davemloft.net>
+Cc: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Signed-off-by: Jouni Hogander <jouni.hogander@unikie.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qla3xxx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/core/net-sysfs.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -2756,6 +2756,9 @@ static int ql_alloc_large_buffers(struct
- 	int err;
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -919,14 +919,17 @@ static int rx_queue_add_kobject(struct n
+ 	struct kobject *kobj = &queue->kobj;
+ 	int error = 0;
  
- 	for (i = 0; i < qdev->num_large_buffers; i++) {
-+		lrg_buf_cb = &qdev->lrg_buf[i];
-+		memset(lrg_buf_cb, 0, sizeof(struct ql_rcv_buf_cb));
++	/* Kobject_put later will trigger rx_queue_release call which
++	 * decreases dev refcount: Take that reference here
++	 */
++	dev_hold(queue->dev);
 +
- 		skb = netdev_alloc_skb(qdev->ndev,
- 				       qdev->lrg_buffer_len);
- 		if (unlikely(!skb)) {
-@@ -2766,11 +2769,7 @@ static int ql_alloc_large_buffers(struct
- 			ql_free_large_buffers(qdev);
- 			return -ENOMEM;
- 		} else {
--
--			lrg_buf_cb = &qdev->lrg_buf[i];
--			memset(lrg_buf_cb, 0, sizeof(struct ql_rcv_buf_cb));
- 			lrg_buf_cb->index = i;
--			lrg_buf_cb->skb = skb;
- 			/*
- 			 * We save some space to copy the ethhdr from first
- 			 * buffer
-@@ -2792,6 +2791,7 @@ static int ql_alloc_large_buffers(struct
- 				return -ENOMEM;
- 			}
+ 	kobj->kset = dev->queues_kset;
+ 	error = kobject_init_and_add(kobj, &rx_queue_ktype, NULL,
+ 				     "rx-%u", index);
+ 	if (error)
+ 		goto err;
  
-+			lrg_buf_cb->skb = skb;
- 			dma_unmap_addr_set(lrg_buf_cb, mapaddr, map);
- 			dma_unmap_len_set(lrg_buf_cb, maplen,
- 					  qdev->lrg_buffer_len -
+-	dev_hold(queue->dev);
+-
+ 	if (dev->sysfs_rx_queue_group) {
+ 		error = sysfs_create_group(kobj, dev->sysfs_rx_queue_group);
+ 		if (error)
 
 
