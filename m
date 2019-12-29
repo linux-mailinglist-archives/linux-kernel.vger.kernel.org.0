@@ -2,105 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE17D12C3C6
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:23:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54BAB12C38E
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbfL2RXK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:23:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfL2RXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:23:06 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DCEB21744;
-        Sun, 29 Dec 2019 17:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640185;
-        bh=fvMLFG8yuBkK7nSBE8ksWzysVA3V9rPrBM/VglFIglE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0bYr43MBr61yMUM3+p4JP0gDdHj/4y4nJdgu5SuIWyypc8BMlJCd36gRoXViKz2zj
-         9lHd5RmNOEQ6Rls+eBjRqvekykDEZ+FZH4plhLOXW6SmQ2aj59FeEhIMNwklPBkIOa
-         L9wpmkH866adrJkViosZ+sg/n0n+uWmAHriFeJLI=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 054/161] media: ti-vpe: vpe: fix a v4l2-compliance failure causing a kernel panic
-Date:   Sun, 29 Dec 2019 18:18:22 +0100
-Message-Id: <20191229162415.602142716@linuxfoundation.org>
+        id S1726502AbfL2RSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:18:48 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34893 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbfL2RSs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:18:48 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g17so30791003wro.2
+        for <linux-kernel@vger.kernel.org>; Sun, 29 Dec 2019 09:18:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UpAAM2b/CHxiQB2DKqtmYm7Ykwi1N1qoZH/PqNBnd0M=;
+        b=kKByRLLeTxDEtefoUtYPo+bv2p7yrg7SMUW7f9wl3KwyH0gxef+t1lLW8datm3Wiek
+         qRiwagBG3bZga91dBBAfuflOVhuBydqjACD/CQEnSormnRdq3KJ30C4GKCyVQS8q4xaG
+         1vmbcigVjB/5cqzfnJI/8MolKFc1jYxgKtI8oaJ2Xz5EjeEAf2k9ffsohfvhu96eQen/
+         V9kofUswMYY1SLqn2ME3lafET3eeip2vTipN1ojwnBrlrfP5KmzTKF1L2DiByq4J+Col
+         1SgZuZd4N+4Ni4YjwGE6ciA4t16DnW5sTim2jRcUZfGWtAU1N1LhPlSNQwfe59L/5UYA
+         e1XA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UpAAM2b/CHxiQB2DKqtmYm7Ykwi1N1qoZH/PqNBnd0M=;
+        b=W+xY0pdl2BISOWIL3VKxv63nW+3eBNk+Sa1gOxJGVQyoySSlH/9IF2ERuzzqtgKVKJ
+         hGsiPOKsnwfaZituRRb/YkZjT7Opt4DodhOr3WMQEW7omrJS16UfR6O5ns7i6fW6omFF
+         lWyv7DHMhoNk+ZeCKXnvuy7WY5yjn9RQnZAj7q+YJbx5wN2VGmMk4K0g/YKzSXkZCEx5
+         ghSC2k5zdQKdlqG8bdB55Z2R/pnmAFEq4Nv0PnO8+oSu6fCoDm3wzFGKG+uxnWeCNmgM
+         anQewWXz1u4ghq894cWfKFLKWBC+9M8xuS4qGzM6gLrxmojmplPLsNllh4Ehlsn7o/VT
+         Sa2A==
+X-Gm-Message-State: APjAAAX2KgaFJ8l1NBAYIG4MM9lLefMgj+RZySmA9ulLkuH39KrQwoqr
+        hplSjvJ6kNw9J3JD/kkGiYM=
+X-Google-Smtp-Source: APXvYqxebkAwR4SZWD9SHctUHC0BOZEgOG9lGQzYSFXGWzTN+t6ZKRbGNIejNjDCIi0A5RxQU2CKKQ==
+X-Received: by 2002:adf:82e7:: with SMTP id 94mr62731339wrc.60.1577639925992;
+        Sun, 29 Dec 2019 09:18:45 -0800 (PST)
+Received: from archlinux-laptop.lan (5.205.6.51.dyn.plus.net. [51.6.205.5])
+        by smtp.gmail.com with ESMTPSA id o7sm17734006wmh.11.2019.12.29.09.18.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Dec 2019 09:18:45 -0800 (PST)
+From:   rhysperry111 <rhysperry111@gmail.com>
+To:     arnd@arndb.de
+Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        Rhys Perry <rhysperry111@gmail.com>
+Subject: [PATCH] Added AU6625 to list of supported PCI_IDs in drivers/misc/cardreader/alcor_pci.c
+Date:   Sun, 29 Dec 2019 17:18:24 +0000
+Message-Id: <20191229171824.10308-1-rhysperry111@gmail.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
-References: <20191229162355.500086350@linuxfoundation.org>
-User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benoit Parrot <bparrot@ti.com>
+From: Rhys Perry <rhysperry111@gmail.com>
 
-[ Upstream commit a37980ac5be29b83da67bf7d571c6bd9f90f8e45 ]
+I have added the AU6625 PCI_ID to the list of supported IDs:
+alcor_pci.c
+// Added au6625s ID to the array of supported devices
+alcor_pci.h
+// Added entry to define the PCI ID
 
-v4l2-compliance fails with this message:
+Made it fit in with the already submitted code:
+alcor_pci.c
+// Added config entry to that matches the one for au6601
 
-   warn: v4l2-test-formats.cpp(717): \
-   	TRY_FMT cannot handle an invalid pixelformat.
-   test VIDIOC_TRY_FMT: FAIL
+From general usage there seems to be no problems.
 
-This causes the following kernel panic:
-
-Unable to handle kernel paging request at virtual address 56595561
-pgd = ecd80e00
-*pgd=00000000
-Internal error: Oops: 205 [#1] PREEMPT SMP ARM
-...
-CPU: 0 PID: 930 Comm: v4l2-compliance Not tainted \
-	4.14.62-01715-gc8cd67f49a19 #1
-Hardware name: Generic DRA72X (Flattened Device Tree)
-task: ece44d80 task.stack: ecc6e000
-PC is at __vpe_try_fmt+0x18c/0x2a8 [ti_vpe]
-LR is at 0x8
-
-Because the driver fails to properly check the 'num_planes' values for
-proper ranges it ends up accessing out of bound data causing the kernel
-panic.
-
-Since this driver only handle single or dual plane pixel format, make
-sure the provided value does not exceed 2 planes.
-
-Signed-off-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Rhys Perry <rhysperry111@gmail.com>
 ---
- drivers/media/platform/ti-vpe/vpe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/misc/cardreader/alcor_pci.c | 8 +++++++-
+ include/linux/alcor_pci.h           | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/ti-vpe/vpe.c b/drivers/media/platform/ti-vpe/vpe.c
-index a136fb14bf1a..5adafee98e4c 100644
---- a/drivers/media/platform/ti-vpe/vpe.c
-+++ b/drivers/media/platform/ti-vpe/vpe.c
-@@ -1663,7 +1663,7 @@ static int __vpe_try_fmt(struct vpe_ctx *ctx, struct v4l2_format *f,
- 			      &pix->height, MIN_H, MAX_H, H_ALIGN,
- 			      S_ALIGN);
+diff --git a/drivers/misc/cardreader/alcor_pci.c b/drivers/misc/cardreader/alcor_pci.c
+index 259fe1dfe..cd402c891 100644
+--- a/drivers/misc/cardreader/alcor_pci.c
++++ b/drivers/misc/cardreader/alcor_pci.c
+@@ -38,12 +38,18 @@ static const struct alcor_dev_cfg au6621_cfg = {
+ 	.dma = 1,
+ };
  
--	if (!pix->num_planes)
-+	if (!pix->num_planes || pix->num_planes > 2)
- 		pix->num_planes = fmt->coplanar ? 2 : 1;
- 	else if (pix->num_planes > 1 && !fmt->coplanar)
- 		pix->num_planes = 1;
++static const struct alcor_dev_cfg au6625_cfg = {
++	.dma = 0,
++};
++
+ static const struct pci_device_id pci_ids[] = {
+ 	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6601),
+ 		.driver_data = (kernel_ulong_t)&alcor_cfg },
+ 	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6621),
+ 		.driver_data = (kernel_ulong_t)&au6621_cfg },
+-	{ },
++	{ PCI_DEVICE(PCI_ID_ALCOR_MICRO, PCI_ID_AU6625),
++		.driver_data = (kernel_ulong_t)&au6625_cfg },
++	{},
+ };
+ MODULE_DEVICE_TABLE(pci, pci_ids);
+ 
+diff --git a/include/linux/alcor_pci.h b/include/linux/alcor_pci.h
+index 4416df597..8274ed525 100644
+--- a/include/linux/alcor_pci.h
++++ b/include/linux/alcor_pci.h
+@@ -17,6 +17,7 @@
+ #define PCI_ID_ALCOR_MICRO			0x1AEA
+ #define PCI_ID_AU6601				0x6601
+ #define PCI_ID_AU6621				0x6621
++#define PCI_ID_AU6625				0x6625
+ 
+ #define MHZ_TO_HZ(freq)				((freq) * 1000 * 1000)
+ 
 -- 
-2.20.1
-
-
+2.24.1
 
