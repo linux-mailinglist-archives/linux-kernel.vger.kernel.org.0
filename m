@@ -2,172 +2,189 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8D312BFD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 02:23:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B3012BFE3
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 02:33:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726417AbfL2BXr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 20:23:47 -0500
-Received: from mail-dm6nam10on2105.outbound.protection.outlook.com ([40.107.93.105]:52435
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726187AbfL2BXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 20:23:46 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UIVweq+bTF3J0qDrEcz/UPrSQspvDxKMww448jWNKQO3xgxWQ4bZUPzNQORUZvJibGFUhBuR7aeMcjGBm65fd8FnmMw9Ntsf3v2MMMuyELcsrIXwIVIMcPX9+4RoN9MGe1Ojn6IRAthefZs1RIgeOgEqW/YhKcstqyKZ27Pfd0FohMtFycg47kRLKP2TRGtTdIKFfN/69AXWNmJOfglKL5VLiqB9oUCYb90MYw8tnFX/dfgu4KbV/ilctorp4V71pDNSbfkRh31WgA8luxDsodfKc5m39/4+h4vIHzVBy0Dq8x+PyRyJNMGP07sEtvmVsCEDPN4+9xTF+KVBQPSDyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wvuvWvswlAodDkgEWrh9GPcG7I/KKBSDPx7qZizFTOo=;
- b=cIHgBbSxwM1f0dAlHA13IaqNvIHeJnDUHPmPOFcxMu0BuPMR1CmdBMjdefJA0YU+RXAPALl4n7/17AFunU5q7cUQpQF2SVV8JKVp4PE4E6kmSyInUHFWl002YgHDdBpl/Inm/GO1Q12TLj71a49opGpkeIOXcSn+VZa3/Wd8rsXkDiurEHGgbd3zJRuEY9o5rvRhSVQT5kGvVJkjW6pIHi0Qr6JJx3XhKCZLnPrjuuVnQw8h88bnak5NToYPrMcoQ5DuPiZtMaSVYK+4S+zLxxdAiu6HnL9u3zBreAKL2fJVIB3nGvBmlE/oiovS+pWKC/V7Unk1HsaVoxKHmytwHg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wvuvWvswlAodDkgEWrh9GPcG7I/KKBSDPx7qZizFTOo=;
- b=M2Ndw+wxmTTez8e7fJ+bs81gFHg4qoubqype2kAfPelCO4MAhb7sYAKh4wH3NaR3rLBW1W5ypAOjIGn76i84gf/W5o8QXyt+Kz+iCsfapsZ7F/ZMRNxWQ+F92MahzNsZmCIOvkLQ8sJH5JI8oY9MDj0aHAssF5Y8OmLRDPj+7gc=
-Received: from MN2PR21MB1375.namprd21.prod.outlook.com (20.179.23.160) by
- MN2PR21MB1373.namprd21.prod.outlook.com (20.179.21.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2602.6; Sun, 29 Dec 2019 01:23:39 +0000
-Received: from MN2PR21MB1375.namprd21.prod.outlook.com
- ([fe80::d15a:1864:efcd:6215]) by MN2PR21MB1375.namprd21.prod.outlook.com
- ([fe80::d15a:1864:efcd:6215%8]) with mapi id 15.20.2602.009; Sun, 29 Dec 2019
- 01:23:39 +0000
-From:   Haiyang Zhang <haiyangz@microsoft.com>
-To:     Stephen Hemminger <stephen@networkplumber.org>
-CC:     "sashal@kernel.org" <sashal@kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next, 3/3] hv_netvsc: Name NICs based on vmbus offer
- sequence and use async probe
-Thread-Topic: [PATCH net-next, 3/3] hv_netvsc: Name NICs based on vmbus offer
- sequence and use async probe
-Thread-Index: AQHVvdkl/zsjLRjZ6kenAd68dpspsKfQPdgAgAAPEtA=
-Date:   Sun, 29 Dec 2019 01:23:39 +0000
-Message-ID: <MN2PR21MB13754551735F3F2A3639D269CA240@MN2PR21MB1375.namprd21.prod.outlook.com>
-References: <1577576793-113222-1-git-send-email-haiyangz@microsoft.com>
-        <1577576793-113222-4-git-send-email-haiyangz@microsoft.com>
- <20191228161318.4501bb79@hermes.lan>
-In-Reply-To: <20191228161318.4501bb79@hermes.lan>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=haiyangz@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-12-29T01:23:38.1840817Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=ff143648-f089-42a1-a556-6962c426d605;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=haiyangz@microsoft.com; 
-x-originating-ip: [96.61.92.94]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 604cdb14-f510-4678-96f1-08d78bfdbc2c
-x-ms-traffictypediagnostic: MN2PR21MB1373:|MN2PR21MB1373:|MN2PR21MB1373:
-x-ms-exchange-transport-forked: True
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <MN2PR21MB1373081B1BCBCB42CB60B214CA240@MN2PR21MB1373.namprd21.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0266491E90
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(376002)(396003)(39860400002)(189003)(199004)(13464003)(478600001)(2906002)(64756008)(81166006)(81156014)(6916009)(8990500004)(66946007)(7696005)(8936002)(76116006)(66446008)(66476007)(4326008)(66556008)(54906003)(5660300002)(186003)(33656002)(55016002)(6506007)(26005)(9686003)(86362001)(10290500003)(316002)(52536014)(8676002)(53546011)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MN2PR21MB1373;H:MN2PR21MB1375.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kpXwTy/u5+xjbA1DEXc1IfJJfqve/PwIhNLBdF0kS7aKT/zBvYBM+C4BU/AYS1amIiV5f51xQR8Kq0pYFtY68QKS2oke6j8rB/2N8gNUXbLNG221+Afp/4SGJ8Cpo4yZH7BNspgYF7mMYFcXTTLDgJFdxFMiQncQoTu5+uJTgJrWxm+ubhxfh5ra/TpBxlb0sQqsx/qzEkKMxmWC66jmw99oyrqXPdz6+Ku+gA1SwtM1lR2uxfxJYlzvDAiDBhvawp/u0dW68FO7neQe9KNOmM1q5hjynjg4C2q1UJ6S6n6HPxzHGf4ME3PzqhPjudlBb17/rtGdp9jkOVTHGAZOdLCPcQ+TH4qgIqXGeqdit8Hsha6uBH42BPV8Z+pxhYQTyUfffhDiAw+pYuSHS4oyFKiaBZ1SlyYASIaU+n/GJMvlEDCUcRbssV1lhydotNNU3gMGO/I6DYCqubTS9KvxHzY72CzwIhbHmUX0/Pt1WSb6bWUwKzMf6dVSJ/755lVA
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726442AbfL2BdV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 20:33:21 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33767 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726187AbfL2BdU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Dec 2019 20:33:20 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n25so23159765lfl.0
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 17:33:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oxOgqhMXtymlKCx9sWdDrZQ1p0DDEV4Iw4JHMohGHtg=;
+        b=TtTxV8fQD9Irm82p/Y2p8yCZp8HU8E7LZlrKF0zkg3Boqqd20yy9SqLIZdAtjEjAAz
+         QEqX7N+ZEpS6FVOX/SlsvMT4e/oK5/LbN+H6Y6M4E64z5Fe5uv0o+S5lUnY7mJ7wS920
+         e1iu1HqcID7kb/y3h94ZRNfFfZ8qx5FC88CMU72HY+Pe6V2xqIYjnuqG9OcRAMb6telG
+         8Z5xhKkm5BXzaCxR3NLkAzAmMlR44CdRVFrOBC88NCaljw1OIx6O9Kj+i/NlMb1QpIjw
+         vHhbXpdpZFbKFd0vxqT2cpRDLiq2/ftDgi40+Yq26ki1cuI/T45Fug/qe6p0HdF8mXFY
+         OQOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oxOgqhMXtymlKCx9sWdDrZQ1p0DDEV4Iw4JHMohGHtg=;
+        b=eF5D/O9ewhNXsuX0joW0RbgsUbKv2QAyUQUFEcSpcz31OAXdwCjLspFKjR6oBfPT3Q
+         j6mt7kWsxlrFpyf5s5gXkvj6H4Ri2Og4fSTS09+mO3x1Dg4XcvM/hxvr+ani2TOtxpBl
+         SStsGgDobgfXmPsPJFzhOEeu1CMgdnXoXDzwoyh+yMq6clLvkGEhOXMVjyhN0ZukquUW
+         kDaROO1AztWn+wQiArBDvUVeZ1zvvnBWfRE8AawUdHZ2cONg+bMJsZisK18LdSJA1eRT
+         2rYQ8UtHdq2ic/WpM0Gsnhr6fRpxsaoCJs+TG/e38uhZ+GUfpb/w/YDHeg87GQtqyWvB
+         YJ4Q==
+X-Gm-Message-State: APjAAAW9AfkhnTXR0uhuCTS4ZMCpKW3GFCffLmyNZEQLKp8bldm61oyl
+        ZrAJ7htI4eUMisoDqm6M4fN9fD0L9X4=
+X-Google-Smtp-Source: APXvYqzEiHGahLxXrtb4lwCmMarvZXcYbTlKjJX1BYBK1fxnGrBVJlCriV93zhSGGNv7N0KW1CI54g==
+X-Received: by 2002:ac2:5468:: with SMTP id e8mr33443651lfn.113.1577583197756;
+        Sat, 28 Dec 2019 17:33:17 -0800 (PST)
+Received: from localhost.localdomain (c-5ac9225c.014-348-6c756e10.bbcust.telenor.se. [92.34.201.90])
+        by smtp.gmail.com with ESMTPSA id i4sm15350327ljg.102.2019.12.28.17.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Dec 2019 17:33:16 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH] pinctrl: intel: Pass irqchip when adding gpiochip
+Date:   Sun, 29 Dec 2019 02:30:59 +0100
+Message-Id: <20191229013059.495767-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 604cdb14-f510-4678-96f1-08d78bfdbc2c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Dec 2019 01:23:39.5097
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nAvnuOXC/l7QfW0im1w1fUPoAWw9FMVaT29BvG6bGPnR4tsLU7eFL9gFbPdF7RgJHv+emQljNNBwF2j29x5ojw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR21MB1373
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We need to convert all old gpio irqchips to pass the irqchip
+setup along when adding the gpio_chip. For more info see
+drivers/gpio/TODO.
 
+Set up the pin ranges using the new callback.
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Saturday, December 28, 2019 7:13 PM
-> To: Haiyang Zhang <haiyangz@microsoft.com>
-> Cc: sashal@kernel.org; linux-hyperv@vger.kernel.org; netdev@vger.kernel.o=
-rg;
-> KY Srinivasan <kys@microsoft.com>; Stephen Hemminger
-> <sthemmin@microsoft.com>; olaf@aepfle.de; vkuznets
-> <vkuznets@redhat.com>; davem@davemloft.net; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH net-next, 3/3] hv_netvsc: Name NICs based on vmbus of=
-fer
-> sequence and use async probe
->=20
-> On Sat, 28 Dec 2019 15:46:33 -0800
-> Haiyang Zhang <haiyangz@microsoft.com> wrote:
->=20
-> > -	net =3D alloc_etherdev_mq(sizeof(struct net_device_context),
-> > -				VRSS_CHANNEL_MAX);
-> > +	snprintf(name, IFNAMSIZ, "eth%d", dev->channel->dev_num);
-> > +	net =3D alloc_netdev_mqs(sizeof(struct net_device_context), name,
-> > +			       NET_NAME_ENUM, ether_setup,
-> > +			       VRSS_CHANNEL_MAX, VRSS_CHANNEL_MAX);
-> > +
->=20
-> Naming is a hard problem, and best left to userspace.
-> By choosing ethN as a naming policy, you potentially run into naming
-> conflicts with other non netvsc devices like those passed through or
-> SR-IOV devices.
-If the dev_num based naming conflicts with existing device, it will fall ba=
-ck to=20
-the previous scheme: "choose the next available eth* name by specifying eth=
-%d".
-See the fall back code path below:
-        if (ret =3D=3D -EEXIST) {
-                pr_info("NIC name %s exists, request another name.\n",
-                        net->name);
-                strlcpy(net->name, "eth%d", IFNAMSIZ);
-                ret =3D register_netdevice(net);
-        }
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/pinctrl/intel/pinctrl-intel.c | 61 +++++++++++++++------------
+ 1 file changed, 35 insertions(+), 26 deletions(-)
 
-
-> Better to have udev use dev_num and use something like envN or something.
-> Udev also handles SRIOV devices in later versions.
->=20
-> Fighting against systemd, netplan, etc is not going to be make friends.
-
-When netvsc was initially created, it uses "seth*" naming. But with strong =
-requests=20
-from many customers, we switched back to the regular "eth*" naming format.
-
-The results of using dev_num based "eth*" names is same as what we are doin=
-g now --
-The existing synchronous probing already generates "eth*" based on channel =
-offer
-sequence. With my patch, it still generates the same naming, but with async=
-hronous
-probing.
-
-So all the udev, or other user daemons, sees the same name for each device =
-as before.=20
-And, they can still set these names like what they do today.
-
-Thanks,
-- Haiyang
+diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
+index 4860bc9a4e48..ffacd77861f7 100644
+--- a/drivers/pinctrl/intel/pinctrl-intel.c
++++ b/drivers/pinctrl/intel/pinctrl-intel.c
+@@ -1160,8 +1160,8 @@ static irqreturn_t intel_gpio_irq(int irq, void *data)
+ 	return ret;
+ }
+ 
+-static int intel_gpio_add_pin_ranges(struct intel_pinctrl *pctrl,
+-				     const struct intel_community *community)
++static int intel_gpio_add_community_ranges(struct intel_pinctrl *pctrl,
++				const struct intel_community *community)
+ {
+ 	int ret = 0, i;
+ 
+@@ -1181,6 +1181,24 @@ static int intel_gpio_add_pin_ranges(struct intel_pinctrl *pctrl,
+ 	return ret;
+ }
+ 
++static int intel_gpio_add_pin_ranges(struct gpio_chip *gc)
++{
++	struct intel_pinctrl *pctrl = gpiochip_get_data(gc);
++	int ret, i;
++
++	for (i = 0; i < pctrl->ncommunities; i++) {
++		struct intel_community *community = &pctrl->communities[i];
++
++		ret = intel_gpio_add_community_ranges(pctrl, community);
++		if (ret) {
++			dev_err(pctrl->dev, "failed to add GPIO pin range\n");
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
+ static unsigned int intel_gpio_ngpio(const struct intel_pinctrl *pctrl)
+ {
+ 	const struct intel_community *community;
+@@ -1205,7 +1223,8 @@ static unsigned int intel_gpio_ngpio(const struct intel_pinctrl *pctrl)
+ 
+ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ {
+-	int ret, i;
++	int ret;
++	struct gpio_irq_chip *girq;
+ 
+ 	pctrl->chip = intel_gpio_chip;
+ 
+@@ -1214,6 +1233,7 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 	pctrl->chip.label = dev_name(pctrl->dev);
+ 	pctrl->chip.parent = pctrl->dev;
+ 	pctrl->chip.base = -1;
++	pctrl->chip.add_pin_ranges = intel_gpio_add_pin_ranges;
+ 	pctrl->irq = irq;
+ 
+ 	/* Setup IRQ chip */
+@@ -1225,26 +1245,9 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 	pctrl->irqchip.irq_set_wake = intel_gpio_irq_wake;
+ 	pctrl->irqchip.flags = IRQCHIP_MASK_ON_SUSPEND;
+ 
+-	ret = devm_gpiochip_add_data(pctrl->dev, &pctrl->chip, pctrl);
+-	if (ret) {
+-		dev_err(pctrl->dev, "failed to register gpiochip\n");
+-		return ret;
+-	}
+-
+-	for (i = 0; i < pctrl->ncommunities; i++) {
+-		struct intel_community *community = &pctrl->communities[i];
+-
+-		ret = intel_gpio_add_pin_ranges(pctrl, community);
+-		if (ret) {
+-			dev_err(pctrl->dev, "failed to add GPIO pin range\n");
+-			return ret;
+-		}
+-	}
+-
+ 	/*
+-	 * We need to request the interrupt here (instead of providing chip
+-	 * to the irq directly) because on some platforms several GPIO
+-	 * controllers share the same interrupt line.
++	 * On some platforms several GPIO controllers share the same interrupt
++	 * line.
+ 	 */
+ 	ret = devm_request_irq(pctrl->dev, irq, intel_gpio_irq,
+ 			       IRQF_SHARED | IRQF_NO_THREAD,
+@@ -1254,14 +1257,20 @@ static int intel_gpio_probe(struct intel_pinctrl *pctrl, int irq)
+ 		return ret;
+ 	}
+ 
+-	ret = gpiochip_irqchip_add(&pctrl->chip, &pctrl->irqchip, 0,
+-				   handle_bad_irq, IRQ_TYPE_NONE);
++	girq = &pctrl->chip.irq;
++	girq->chip = &pctrl->irqchip;
++	/* This will let us handle the IRQ in the driver */
++	girq->parent_handler = NULL;
++	girq->num_parents = 0;
++	girq->default_type = IRQ_TYPE_NONE;
++	girq->handler = handle_bad_irq;
++
++	ret = devm_gpiochip_add_data(pctrl->dev, &pctrl->chip, pctrl);
+ 	if (ret) {
+-		dev_err(pctrl->dev, "failed to add irqchip\n");
++		dev_err(pctrl->dev, "failed to register gpiochip\n");
+ 		return ret;
+ 	}
+ 
+-	gpiochip_set_chained_irqchip(&pctrl->chip, &pctrl->irqchip, irq, NULL);
+ 	return 0;
+ }
+ 
+-- 
+2.23.0
 
