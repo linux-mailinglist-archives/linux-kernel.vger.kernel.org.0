@@ -2,97 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A12EB12BFE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 02:31:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E19FC12BFED
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 02:59:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbfL2Bbl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Dec 2019 20:31:41 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39492 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726187AbfL2Bbk (ORCPT
+        id S1726378AbfL2B7J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Dec 2019 20:59:09 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:39590 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfL2B7J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Dec 2019 20:31:40 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0C43E8EE0DA;
-        Sat, 28 Dec 2019 17:31:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1577583100;
-        bh=zbW9WWjeZOxIUrHi9cV0hkGSGh9fn/LBCcZFRjsx/Eo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=BPxXS8BVm4iNWQthxVc54Px8MbXMUronXvfS+qIJe9n7MU5v6jgY+bdi41eGNLQ/I
-         lOJtGbs5/oXzj3btPfzdfpW7qDQB83/FItyOLigClUosLNTSsfYa6F/fGB8/yvc7Ch
-         lBTMYOgbiLGgmuV9ue9DuP36FyixXfYtS7klfO8g=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8mcakcWKeBlo; Sat, 28 Dec 2019 17:31:39 -0800 (PST)
-Received: from jarvis.lan (unknown [50.35.76.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4249A8EE007;
-        Sat, 28 Dec 2019 17:31:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1577583099;
-        bh=zbW9WWjeZOxIUrHi9cV0hkGSGh9fn/LBCcZFRjsx/Eo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=f/jP5S5bhWkg9HidRZ3o4rOA2Ptr0sXFqzGTvye0iM2M0CpR0w1yZ2isI5SAdiQXI
-         fErms7c40y+32/icy7WsoWUZfnPpmK42uolC3zC4PBmPFXd30n6QNlHKo5sPxux3hc
-         bjvQ6QilqR3HEoc4V1OiR6u2MH5KrbAjJZqoglug=
-Message-ID: <1577583097.5661.6.camel@HansenPartnership.com>
-Subject: Re: [PATCH] mm/hugetlb: ensure signedness of large numbers
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     isidentical <batuhanosmantaskaya@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 28 Dec 2019 17:31:37 -0800
-In-Reply-To: <20191228103357.23904-1-batuhanosmantaskaya@gmail.com>
-References: <20191228103357.23904-1-batuhanosmantaskaya@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 28 Dec 2019 20:59:09 -0500
+Received: by mail-pj1-f68.google.com with SMTP id t101so6669453pjb.4
+        for <linux-kernel@vger.kernel.org>; Sat, 28 Dec 2019 17:59:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B0YqCZdtASo8W3+DNsZKxEkKUnEoAfpsuE3h6bg+BKA=;
+        b=SUBvHzkDy3ObczV/2Tibqb/J+Bch+J+BkQLTRD7VEq1pgSLY5siprwnL8ItHD8F9X0
+         CLYNPAl6cuX+YtWyUz4Jv6O3q5S6xdwYdxId7gchqdvDjxrpI174YpeyGAVnq5OCLnYu
+         mjnk8FJDiqHP2OyS9LeyMpUTtRHfWnHiSWEIuaxjubiE/JKwwlviZBeCb1t/7K0h+fYh
+         0vjWt+KfOtPAEGUy76eHmG3OAfy6XCIgbDlBxBVQINB4iZl4afyF3PioZAzKOKODRE1X
+         oQLqq8b0HCjpBZ3AJYpqPIprChvuIUnjenWvUp0O9V64bXJNy2P1yqNwOkoX6pEoUsOG
+         rZuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B0YqCZdtASo8W3+DNsZKxEkKUnEoAfpsuE3h6bg+BKA=;
+        b=C7VOqMat63Zep3GMJ2VBtAvFlNKFjB/ZIUadzXWPdAvXFqpmr+LjrMwFh9u/MUqalf
+         hJtdLY3XSf+tQs1TM3USo8wZDonwZS2zscj0UdWrXgMkJrk+cDR6XwgFqige0Gh/CuvL
+         GnXwEEjSpQCz83QQDq4M1qrFqRcvfjHxjFgmHqcQ+0oC81m44crvd++Z0O2TiEemNfFr
+         IUj8pEnjfHLXfegRWmyyN0iUuXZ3mXgF2LjCNTelBHjFCT2wwH32Pbq23hgN4piT6xkl
+         TAKpoqTI2l5aJ+kC34QaySMFcdcpIKDAO70G6V4zhdiVISNhjO1Ls7b9pKQSM9FU9ykH
+         Twlw==
+X-Gm-Message-State: APjAAAULyJH87uDPXLwPxXdIhXACtS+VmvgRzLBykOkDJxHL2bZGjtmq
+        LwVVD5I/Q4KjIVt4EAgZgYn/Og==
+X-Google-Smtp-Source: APXvYqwFD0Z6M2ULKf78TvessQAN+owraVNT/WM/LcoBIbydcpRlk+A9rbJjuwmOeeAvLemOFIwgmw==
+X-Received: by 2002:a17:90b:d94:: with SMTP id bg20mr34993201pjb.99.1577584748559;
+        Sat, 28 Dec 2019 17:59:08 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id p185sm46804599pfg.61.2019.12.28.17.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Dec 2019 17:59:07 -0800 (PST)
+Date:   Sat, 28 Dec 2019 17:59:04 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     jassisinghbrar@gmail.com, nsaenzjulienne@suse.de,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        bcm-kernel-feedback-list@broadcom.com, lftan@altera.com,
+        matthias.bgg@gmail.com, agross@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        nios2-dev@lists.rocketboards.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 03/13] mailbox: qcom-apcs: convert to
+ devm_platform_ioremap_resource
+Message-ID: <20191229015904.GG3755841@builder>
+References: <20191228183538.26189-1-tiny.windzz@gmail.com>
+ <20191228183538.26189-3-tiny.windzz@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191228183538.26189-3-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2019-12-28 at 13:33 +0300, isidentical wrote:
-> This change introduces a sanitity helper for
-> numbers that are larger than 2^5.
+On Sat 28 Dec 10:35 PST 2019, Yangtao Li wrote:
 
-What's the rationale for this ... i.e. what problem are you trying to
-solve?  left to its own devices, gcc will assume int size for all
-literals, so 34<<26 doesn't appear to have a problem, except that it
-will be sign extended as a negative number into a 64 bit variable. 
-However, it's designed use is for an int flags in mmap, so its current
-definition seems to be fine.
-
-> Signed-off-by: isidentical <batuhanosmantaskaya@gmail.com>
-> ---
->  include/uapi/asm-generic/hugetlb_encode.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Use devm_platform_ioremap_resource() to simplify code.
 > 
-> diff --git a/include/uapi/asm-generic/hugetlb_encode.h
-> b/include/uapi/asm-generic/hugetlb_encode.h
-> index b0f8e87235bd..42c06c62ae17 100644
-> --- a/include/uapi/asm-generic/hugetlb_encode.h
-> +++ b/include/uapi/asm-generic/hugetlb_encode.h
-> @@ -31,6 +31,6 @@
->  #define HUGETLB_FLAG_ENCODE_512MB	(29 <<
-> HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_1GB		(30 <<
-> HUGETLB_FLAG_ENCODE_SHIFT)
->  #define HUGETLB_FLAG_ENCODE_2GB		(31 <<
-> HUGETLB_FLAG_ENCODE_SHIFT)
-> -#define HUGETLB_FLAG_ENCODE_16GB	(34 <<
-> HUGETLB_FLAG_ENCODE_SHIFT)
-> +#define HUGETLB_FLAG_ENCODE_16GB	(UINT32_C(34) <<
-> HUGETLB_FLAG_ENCODE_SHIFT)
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 
-And if there is a literal problem here, it can't be solved like this:
-UINT32_C is a Cism which has no analogue in the kernel because we don't
-pull in the /usr/include headers where it is defined.  Usually in the
-kernel we solve this by making the literal type explicit, like 34U, but
-as I said above, I don't see a problem that this would solve.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-James
-
+> ---
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> index eeebafd546e5..0faf69137780 100644
+> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+> @@ -49,7 +49,6 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  {
+>  	struct qcom_apcs_ipc *apcs;
+>  	struct regmap *regmap;
+> -	struct resource *res;
+>  	unsigned long offset;
+>  	void __iomem *base;
+>  	unsigned long i;
+> @@ -64,8 +63,7 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>  	if (!apcs)
+>  		return -ENOMEM;
+>  
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	base = devm_ioremap_resource(&pdev->dev, res);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(base))
+>  		return PTR_ERR(base);
+>  
+> -- 
+> 2.17.1
+> 
