@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F40B612C9B0
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:19:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A96112C768
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732834AbfL2SNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:13:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52578 "EHLO mail.kernel.org"
+        id S1728681AbfL2R2z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:28:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728189AbfL2R2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:28:48 -0500
+        id S1728659AbfL2R2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:28:50 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 717E4222D9;
-        Sun, 29 Dec 2019 17:28:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2339207FF;
+        Sun, 29 Dec 2019 17:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640527;
-        bh=bnwaV+APOXVAf6E6I0r67RmxP57wiQx1xRomaYSLgvg=;
+        s=default; t=1577640530;
+        bh=nMaQmfACss/jy3HnBrRn9mpVLBHDdBvmtGOMhDk4xhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CpdyGQ7cWUO6qtOBTCv/GLjRNv5Hpec9XOki6pgIEazCVDnRwgmf0gKJfE9zjTspd
-         L7IVRDd9hb9axCb+En/MVBqpAb+W8my+R2NBLzpIslHUNJBFw+1eHovPzK53Qpgq/v
-         WI8cX+OvytWW/dqUBmzDwJ3lBXN3xfOreBfH0SME=
+        b=b6tawmtd7xPIuZbmO9uda20ujFquvAVGEDlYuDLtofsvTBLHMe2rr8WNuWgEIdM6Z
+         IE+mcHrLF+AojlQi99yRcKnVXkhaWdpt693JP/tcgI3aY+tVYf8Azi7bEAl0TC8hE2
+         hkZ7RQX3I8vk5K3feJkJwBBKCpzSdyTwTfGQd82U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Chunming Zhou <david1.zhou@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
+        Mark Brown <broonie@kernel.org>,
+        kbuild test robot <lkp@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/219] drm/amdgpu: grab the id mgr lock while accessing passid_mapping
-Date:   Sun, 29 Dec 2019 18:17:13 +0100
-Message-Id: <20191229162513.096198571@linuxfoundation.org>
+Subject: [PATCH 4.19 032/219] spi: Add call to spi_slave_abort() function when spidev driver is released
+Date:   Sun, 29 Dec 2019 18:17:14 +0100
+Message-Id: <20191229162513.286262453@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162508.458551679@linuxfoundation.org>
 References: <20191229162508.458551679@linuxfoundation.org>
@@ -46,62 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian König <christian.koenig@amd.com>
+From: Lukasz Majewski <lukma@denx.de>
 
-[ Upstream commit 6817bf283b2b851095825ec7f0e9f10398e09125 ]
+[ Upstream commit 9f918a728cf86b2757b6a7025e1f46824bfe3155 ]
 
-Need to make sure that we actually dropping the right fence.
-Could be done with RCU as well, but to complicated for a fix.
+This change is necessary for spidev devices (e.g. /dev/spidev3.0) working
+in the slave mode (like NXP's dspi driver for Vybrid SoC).
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+When SPI HW works in this mode - the master is responsible for providing
+CS and CLK signals. However, when some fault happens - like for example
+distortion on SPI lines - the SPI Linux driver needs a chance to recover
+from this abnormal situation and prepare itself for next (correct)
+transmission.
+
+This change doesn't pose any threat on drivers working in master mode as
+spi_slave_abort() function checks if SPI slave mode is supported.
+
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Link: https://lore.kernel.org/r/20190924110547.14770-2-lukma@denx.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Reported-by: kbuild test robot <lkp@intel.com>
+Link: https://lore.kernel.org/r/20190925091143.15468-2-lukma@denx.de
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/spi/spidev.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-index 49fe5084c53d..69fb90d9c485 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
-@@ -700,10 +700,8 @@ int amdgpu_vm_flush(struct amdgpu_ring *ring, struct amdgpu_job *job, bool need_
- 		id->oa_base != job->oa_base ||
- 		id->oa_size != job->oa_size);
- 	bool vm_flush_needed = job->vm_needs_flush;
--	bool pasid_mapping_needed = id->pasid != job->pasid ||
--		!id->pasid_mapping ||
--		!dma_fence_is_signaled(id->pasid_mapping);
- 	struct dma_fence *fence = NULL;
-+	bool pasid_mapping_needed;
- 	unsigned patch_offset = 0;
- 	int r;
- 
-@@ -713,6 +711,12 @@ int amdgpu_vm_flush(struct amdgpu_ring *ring, struct amdgpu_job *job, bool need_
- 		pasid_mapping_needed = true;
+diff --git a/drivers/spi/spidev.c b/drivers/spi/spidev.c
+index c5fe08bc34a0..028725573e63 100644
+--- a/drivers/spi/spidev.c
++++ b/drivers/spi/spidev.c
+@@ -634,6 +634,9 @@ static int spidev_release(struct inode *inode, struct file *filp)
+ 		if (dofree)
+ 			kfree(spidev);
  	}
++#ifdef CONFIG_SPI_SLAVE
++	spi_slave_abort(spidev->spi);
++#endif
+ 	mutex_unlock(&device_list_lock);
  
-+	mutex_lock(&id_mgr->lock);
-+	if (id->pasid != job->pasid || !id->pasid_mapping ||
-+	    !dma_fence_is_signaled(id->pasid_mapping))
-+		pasid_mapping_needed = true;
-+	mutex_unlock(&id_mgr->lock);
-+
- 	gds_switch_needed &= !!ring->funcs->emit_gds_switch;
- 	vm_flush_needed &= !!ring->funcs->emit_vm_flush  &&
- 			job->vm_pd_addr != AMDGPU_BO_INVALID_OFFSET;
-@@ -752,9 +756,11 @@ int amdgpu_vm_flush(struct amdgpu_ring *ring, struct amdgpu_job *job, bool need_
- 	}
- 
- 	if (pasid_mapping_needed) {
-+		mutex_lock(&id_mgr->lock);
- 		id->pasid = job->pasid;
- 		dma_fence_put(id->pasid_mapping);
- 		id->pasid_mapping = dma_fence_get(fence);
-+		mutex_unlock(&id_mgr->lock);
- 	}
- 	dma_fence_put(fence);
- 
+ 	return 0;
 -- 
 2.20.1
 
