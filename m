@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C168712C957
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C582A12C955
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387750AbfL2SFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:05:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36988 "EHLO mail.kernel.org"
+        id S2387776AbfL2SE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 13:04:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732109AbfL2Rvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:51:33 -0500
+        id S1732137AbfL2Rvm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:51:42 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 090DB20718;
-        Sun, 29 Dec 2019 17:51:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93A21208C4;
+        Sun, 29 Dec 2019 17:51:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641892;
-        bh=adoBnTL3c8ascTWuPdS3qgWuYBBmCMjIas475ss7R6c=;
+        s=default; t=1577641902;
+        bh=LE9cdr8eK35EQnzMPDAGO/gXk9BabTnFaFTDvZSMwoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PvgmAt04gfbsDm9vq9BDgGcujw14s1F4dyDCoQhSKofoM7KfogZCSptWorlrxr5Cc
-         QDr8P4Z2SA4/0gdEvQ7Txw/rxa4HWRnJ5b/E77GzYcJA9s2xxC5gs0CXUDQY9CnXW+
-         OIa5+1t1VJp/zFqUeoHLNz6OxJXnGZeg0ak2dTmU=
+        b=q83Xjd2TYW0nIhxzxWJWsMpVZDOjpFZvPcikWHT2rIZenZFZsbU+sWz4SmTILk1TD
+         /lfcEOeHtLuWG/FVQpZLChahx32Fuzpiv7DL/+G0Y+gbqJj1JLajemnOVM83+yLUUk
+         9PDJAdxEKT5Y+lkRx3TdakfUzH/AtZVXGMKG7euI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hawking Zhang <Hawking.Zhang@amd.com>,
-        Candice Li <Candice.Li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 255/434] drm/amdgpu: disallow direct upload save restore list from gfx driver
-Date:   Sun, 29 Dec 2019 18:25:08 +0100
-Message-Id: <20191229172718.864808477@linuxfoundation.org>
+Subject: [PATCH 5.4 259/434] xen/gntdev: Use select for DMA_SHARED_BUFFER
+Date:   Sun, 29 Dec 2019 18:25:12 +0100
+Message-Id: <20191229172719.139077677@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,43 +48,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hawking Zhang <Hawking.Zhang@amd.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-[ Upstream commit 58f46d4b65021083ef4b4d49c6e2c58e5783f626 ]
+[ Upstream commit fa6614d8ef13c63aac52ad7c07c5e69ce4aba3dd ]
 
-Direct uploading save/restore list via mmio register writes breaks the security
-policy. Instead, the driver should pass s&r list to psp.
+DMA_SHARED_BUFFER can not be enabled by the user (it represents a library
+set in the kernel). The kconfig convention is to use select for such
+symbols so they are turned on implicitly when the user enables a kconfig
+that needs them.
 
-For all the ASICs that use rlc v2_1 headers, the driver actually upload s&r list
-twice, in non-psp ucode front door loading phase and gfx pg initialization phase.
-The latter is not allowed.
+Otherwise the XEN_GNTDEV_DMABUF kconfig is overly difficult to enable.
 
-VG12 is the only exception where the driver still keeps legacy approach for S&R
-list uploading. In theory, this can be elimnated if we have valid srcntl ucode
-for VG12.
-
-Signed-off-by: Hawking Zhang <Hawking.Zhang@amd.com>
-Reviewed-by: Candice Li <Candice.Li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 932d6562179e ("xen/gntdev: Add initial support for dma-buf UAPI")
+Cc: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: xen-devel@lists.xenproject.org
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 3 ++-
+ drivers/xen/Kconfig | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-index 97cf0b536873..c9ba2ec6d038 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
-@@ -2930,7 +2930,8 @@ static void gfx_v9_0_init_pg(struct amdgpu_device *adev)
- 	 * And it's needed by gfxoff feature.
- 	 */
- 	if (adev->gfx.rlc.is_rlc_v2_1) {
--		gfx_v9_1_init_rlc_save_restore_list(adev);
-+		if (adev->asic_type == CHIP_VEGA12)
-+			gfx_v9_1_init_rlc_save_restore_list(adev);
- 		gfx_v9_0_enable_save_restore_machine(adev);
- 	}
+diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+index 79cc75096f42..a50dadd01093 100644
+--- a/drivers/xen/Kconfig
++++ b/drivers/xen/Kconfig
+@@ -141,7 +141,8 @@ config XEN_GNTDEV
  
+ config XEN_GNTDEV_DMABUF
+ 	bool "Add support for dma-buf grant access device driver extension"
+-	depends on XEN_GNTDEV && XEN_GRANT_DMA_ALLOC && DMA_SHARED_BUFFER
++	depends on XEN_GNTDEV && XEN_GRANT_DMA_ALLOC
++	select DMA_SHARED_BUFFER
+ 	help
+ 	  Allows userspace processes and kernel modules to use Xen backed
+ 	  dma-buf implementation. With this extension grant references to
 -- 
 2.20.1
 
