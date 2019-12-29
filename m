@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E925E12C975
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7D412C7B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbfL2SIS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:08:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57820 "EHLO mail.kernel.org"
+        id S1730353AbfL2Rpw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:45:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731241AbfL2RrT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:47:19 -0500
+        id S1730680AbfL2Rps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:45:48 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E7E9206A4;
-        Sun, 29 Dec 2019 17:47:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C1F52465A;
+        Sun, 29 Dec 2019 17:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641638;
-        bh=/S7NgkOJJuMHUX3GCVpWEEoT9IoElhjA2uIdrmQAJZ4=;
+        s=default; t=1577641547;
+        bh=NNF78YitIhww+624FtHYFBETyGKdGJ4DoOC56pLn3/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TTd4AcBwHuTtfcyxha7ob2HPnB/t+sLQKE6grybDOJbPtM5EsPXts0G/wgVmz1xt4
-         YpAUlCj55zJ82ITUg0/vUf9E2qLwriCf9OIwP8og9NC/JU+4d2egfDtYo5luqF9nJK
-         zOwBJsTZfehtFsvmtJXrbhYKFnrCq0Y/aokBgI3k=
+        b=ti8bMO/20pIh8m4cIcln+MwRSXem8QLZ3T8me4V1nmcO1duqE57c74acFHepRI5dP
+         IQ3B06vrPvre1bSpjYCh2tdQOgd33LM4/GPvaX2dIESzgfXfcybQoz9CLWR17mcKen
+         A2gsSaFuOcpYL7x4oB6A3n4HS3CmcDRPoCZHXR9U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Daniel T. Lee" <danieltimlee@gmail.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Paul Burton <paul.burton@mips.com>,
+        linux-mips@vger.kernel.org, Huacai Chen <chenhc@lemote.com>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 110/434] samples: pktgen: fix proc_cmd command result check logic
-Date:   Sun, 29 Dec 2019 18:22:43 +0100
-Message-Id: <20191229172708.955863444@linuxfoundation.org>
+Subject: [PATCH 5.4 112/434] MIPS: syscall: Emit Loongson3 sync workarounds within asm
+Date:   Sun, 29 Dec 2019 18:22:45 +0100
+Message-Id: <20191229172709.098659255@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,80 +45,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel T. Lee <danieltimlee@gmail.com>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit 3cad8f911575191fb3b81d8ed0e061e30f922223 ]
+[ Upstream commit e84957e6ae043bb83ad6ae7e949a1ce97b6bbfef ]
 
-Currently, proc_cmd is used to dispatch command to 'pg_ctrl', 'pg_thread',
-'pg_set'. proc_cmd is designed to check command result with grep the
-"Result:", but this might fail since this string is only shown in
-'pg_thread' and 'pg_set'.
+Generate the sync instructions required to workaround Loongson3 LL/SC
+errata within inline asm blocks, which feels a little safer than doing
+it from C where strictly speaking the compiler would be well within its
+rights to insert a memory access between the separate asm statements we
+previously had, containing sync & ll instructions respectively.
 
-This commit fixes this logic by grep-ing the "Result:" string only when
-the command is not for 'pg_ctrl'.
-
-For clarity of an execution flow, 'errexit' flag has been set.
-
-To cleanup pktgen on exit, trap has been added for EXIT signal.
-
-Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Cc: Huacai Chen <chenhc@lemote.com>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/pktgen/functions.sh | 17 +++++++++++------
- 1 file changed, 11 insertions(+), 6 deletions(-)
+ arch/mips/kernel/syscall.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/samples/pktgen/functions.sh b/samples/pktgen/functions.sh
-index 4af4046d71be..40873a5d1461 100644
---- a/samples/pktgen/functions.sh
-+++ b/samples/pktgen/functions.sh
-@@ -5,6 +5,8 @@
- # Author: Jesper Dangaaard Brouer
- # License: GPL
+diff --git a/arch/mips/kernel/syscall.c b/arch/mips/kernel/syscall.c
+index 3f16f3823031..c333e5788664 100644
+--- a/arch/mips/kernel/syscall.c
++++ b/arch/mips/kernel/syscall.c
+@@ -37,6 +37,7 @@
+ #include <asm/signal.h>
+ #include <asm/sim.h>
+ #include <asm/shmparam.h>
++#include <asm/sync.h>
+ #include <asm/sysmips.h>
+ #include <asm/switch_to.h>
  
-+set -o errexit
-+
- ## -- General shell logging cmds --
- function err() {
-     local exitcode=$1
-@@ -58,6 +60,7 @@ function pg_set() {
- function proc_cmd() {
-     local result
-     local proc_file=$1
-+    local status=0
-     # after shift, the remaining args are contained in $@
-     shift
-     local proc_ctrl=${PROC_DIR}/$proc_file
-@@ -73,13 +76,13 @@ function proc_cmd() {
- 	echo "cmd: $@ > $proc_ctrl"
-     fi
-     # Quoting of "$@" is important for space expansion
--    echo "$@" > "$proc_ctrl"
--    local status=$?
-+    echo "$@" > "$proc_ctrl" || status=$?
- 
--    result=$(grep "Result: OK:" $proc_ctrl)
--    # Due to pgctrl, cannot use exit code $? from grep
--    if [[ "$result" == "" ]]; then
--	grep "Result:" $proc_ctrl >&2
-+    if [[ "$proc_file" != "pgctrl" ]]; then
-+        result=$(grep "Result: OK:" $proc_ctrl) || true
-+        if [[ "$result" == "" ]]; then
-+            grep "Result:" $proc_ctrl >&2
-+        fi
-     fi
-     if (( $status != 0 )); then
- 	err 5 "Write error($status) occurred cmd: \"$@ > $proc_ctrl\""
-@@ -105,6 +108,8 @@ function pgset() {
-     fi
- }
- 
-+[[ $EUID -eq 0 ]] && trap 'pg_ctrl "reset"' EXIT
-+
- ## -- General shell tricks --
- 
- function root_check_run_with_sudo() {
+@@ -133,12 +134,12 @@ static inline int mips_atomic_set(unsigned long addr, unsigned long new)
+ 		  [efault] "i" (-EFAULT)
+ 		: "memory");
+ 	} else if (cpu_has_llsc) {
+-		loongson_llsc_mb();
+ 		__asm__ __volatile__ (
+ 		"	.set	push					\n"
+ 		"	.set	"MIPS_ISA_ARCH_LEVEL"			\n"
+ 		"	li	%[err], 0				\n"
+ 		"1:							\n"
++		"	" __SYNC(full, loongson3_war) "			\n"
+ 		user_ll("%[old]", "(%[addr])")
+ 		"	move	%[tmp], %[new]				\n"
+ 		"2:							\n"
 -- 
 2.20.1
 
