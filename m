@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE37112C437
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:29:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEDFB12C439
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:29:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfL2R1f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:27:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49660 "EHLO mail.kernel.org"
+        id S1728470AbfL2R1n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:27:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbfL2R10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:27:26 -0500
+        id S1728460AbfL2R1k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:27:40 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01C0420409;
-        Sun, 29 Dec 2019 17:27:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 857DC20722;
+        Sun, 29 Dec 2019 17:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577640445;
-        bh=ppu/jxCIY9aPqj1mE1YypxmXrF99X1+OVGlMFo6tRcg=;
+        s=default; t=1577640460;
+        bh=H+j2V4YrUD5XH+WPGeBl4dunD0o1oXAokTJAVS9/0po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aKmJQCDQAuTNr6TEqCjWYfLbwFFT8Ld74c6PScL1RGo0cNDLSriPlHm9/Ny4eufsz
-         lUeRRB8p7QXNUBoiaONrSHsRVBMcSkZZ4mnMUMq/8+afINvt6HeZy5lo/ifpCfHnH9
-         SlPVjBGvpyKnSP0grWxCbFlFj5kqGm5KJ296A0Yo=
+        b=u0yA83BQ9LA0p9r0oc8Rk7c79YVeeq/Lda4uDv/6OPt+UMnRibO5S2yzzVvbYokc2
+         wcbLF//GDWWNlROtTZzPlkrN0QRuU5AywyqkYBYvmytKBH9Pe/c7EEeRH+K1J4yyQz
+         MwZIaeB+10iXJL+UR1b/6wPBz2U1tz5htC0ipsBw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tejun Heo <tj@kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Omar Sandoval <osandov@fb.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 124/161] btrfs: dont prematurely free work in run_ordered_work()
-Date:   Sun, 29 Dec 2019 18:19:32 +0100
-Message-Id: <20191229162436.300687958@linuxfoundation.org>
+Subject: [PATCH 4.14 128/161] fbtft: Make sure string is NULL terminated
+Date:   Sun, 29 Dec 2019 18:19:36 +0100
+Message-Id: <20191229162437.756345377@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
 References: <20191229162355.500086350@linuxfoundation.org>
@@ -46,152 +44,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Omar Sandoval <osandov@fb.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-[ Upstream commit c495dcd6fbe1dce51811a76bb85b4675f6494938 ]
+[ Upstream commit 21f585480deb4bcf0d92b08879c35d066dfee030 ]
 
-We hit the following very strange deadlock on a system with Btrfs on a
-loop device backed by another Btrfs filesystem:
+New GCC warns about inappropriate use of strncpy():
 
-1. The top (loop device) filesystem queues an async_cow work item from
-   cow_file_range_async(). We'll call this work X.
-2. Worker thread A starts work X (normal_work_helper()).
-3. Worker thread A executes the ordered work for the top filesystem
-   (run_ordered_work()).
-4. Worker thread A finishes the ordered work for work X and frees X
-   (work->ordered_free()).
-5. Worker thread A executes another ordered work and gets blocked on I/O
-   to the bottom filesystem (still in run_ordered_work()).
-6. Meanwhile, the bottom filesystem allocates and queues an async_cow
-   work item which happens to be the recently-freed X.
-7. The workqueue code sees that X is already being executed by worker
-   thread A, so it schedules X to be executed _after_ worker thread A
-   finishes (see the find_worker_executing_work() call in
-   process_one_work()).
+drivers/staging/fbtft/fbtft-core.c: In function ‘fbtft_framebuffer_alloc’:
+drivers/staging/fbtft/fbtft-core.c:665:2: warning: ‘strncpy’ specified bound 16 equals destination size [-Wstringop-truncation]
+  665 |  strncpy(info->fix.id, dev->driver->name, 16);
+      |  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now, the top filesystem is waiting for I/O on the bottom filesystem, but
-the bottom filesystem is waiting for the top filesystem to finish, so we
-deadlock.
+Later on the copy is being used with the assumption to be NULL terminated.
+Make sure string is NULL terminated by switching to snprintf().
 
-This happens because we are breaking the workqueue assumption that a
-work item cannot be recycled while it still depends on other work. Fix
-it by waiting to free the work item until we are done with all of the
-related ordered work.
-
-P.S.:
-
-One might ask why the workqueue code doesn't try to detect a recycled
-work item. It actually does try by checking whether the work item has
-the same work function (find_worker_executing_work()), but in our case
-the function is the same. This is the only key that the workqueue code
-has available to compare, short of adding an additional, layer-violating
-"custom key". Considering that we're the only ones that have ever hit
-this, we should just play by the rules.
-
-Unfortunately, we haven't been able to create a minimal reproducer other
-than our full container setup using a compress-force=zstd filesystem on
-top of another compress-force=zstd filesystem.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Omar Sandoval <osandov@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Link: https://lore.kernel.org/r/20191120095716.26628-1-andriy.shevchenko@linux.intel.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/async-thread.c | 56 ++++++++++++++++++++++++++++++++---------
- 1 file changed, 44 insertions(+), 12 deletions(-)
+ drivers/staging/fbtft/fbtft-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/async-thread.c b/fs/btrfs/async-thread.c
-index e00c8a9fd5bb..72d7589072f5 100644
---- a/fs/btrfs/async-thread.c
-+++ b/fs/btrfs/async-thread.c
-@@ -265,16 +265,17 @@ out:
- 	}
- }
+diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
+index 0cbcbad8f074..b81c6dfa5b24 100644
+--- a/drivers/staging/fbtft/fbtft-core.c
++++ b/drivers/staging/fbtft/fbtft-core.c
+@@ -780,7 +780,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
+ 	fbdefio->deferred_io =     fbtft_deferred_io;
+ 	fb_deferred_io_init(info);
  
--static void run_ordered_work(struct __btrfs_workqueue *wq)
-+static void run_ordered_work(struct __btrfs_workqueue *wq,
-+			     struct btrfs_work *self)
- {
- 	struct list_head *list = &wq->ordered_list;
- 	struct btrfs_work *work;
- 	spinlock_t *lock = &wq->list_lock;
- 	unsigned long flags;
-+	void *wtag;
-+	bool free_self = false;
- 
- 	while (1) {
--		void *wtag;
--
- 		spin_lock_irqsave(lock, flags);
- 		if (list_empty(list))
- 			break;
-@@ -300,16 +301,47 @@ static void run_ordered_work(struct __btrfs_workqueue *wq)
- 		list_del(&work->ordered_list);
- 		spin_unlock_irqrestore(lock, flags);
- 
--		/*
--		 * We don't want to call the ordered free functions with the
--		 * lock held though. Save the work as tag for the trace event,
--		 * because the callback could free the structure.
--		 */
--		wtag = work;
--		work->ordered_free(work);
--		trace_btrfs_all_work_done(wq->fs_info, wtag);
-+		if (work == self) {
-+			/*
-+			 * This is the work item that the worker is currently
-+			 * executing.
-+			 *
-+			 * The kernel workqueue code guarantees non-reentrancy
-+			 * of work items. I.e., if a work item with the same
-+			 * address and work function is queued twice, the second
-+			 * execution is blocked until the first one finishes. A
-+			 * work item may be freed and recycled with the same
-+			 * work function; the workqueue code assumes that the
-+			 * original work item cannot depend on the recycled work
-+			 * item in that case (see find_worker_executing_work()).
-+			 *
-+			 * Note that the work of one Btrfs filesystem may depend
-+			 * on the work of another Btrfs filesystem via, e.g., a
-+			 * loop device. Therefore, we must not allow the current
-+			 * work item to be recycled until we are really done,
-+			 * otherwise we break the above assumption and can
-+			 * deadlock.
-+			 */
-+			free_self = true;
-+		} else {
-+			/*
-+			 * We don't want to call the ordered free functions with
-+			 * the lock held though. Save the work as tag for the
-+			 * trace event, because the callback could free the
-+			 * structure.
-+			 */
-+			wtag = work;
-+			work->ordered_free(work);
-+			trace_btrfs_all_work_done(wq->fs_info, wtag);
-+		}
- 	}
- 	spin_unlock_irqrestore(lock, flags);
-+
-+	if (free_self) {
-+		wtag = self;
-+		self->ordered_free(self);
-+		trace_btrfs_all_work_done(wq->fs_info, wtag);
-+	}
- }
- 
- static void normal_work_helper(struct btrfs_work *work)
-@@ -337,7 +369,7 @@ static void normal_work_helper(struct btrfs_work *work)
- 	work->func(work);
- 	if (need_order) {
- 		set_bit(WORK_DONE_BIT, &work->flags);
--		run_ordered_work(wq);
-+		run_ordered_work(wq, work);
- 	}
- 	if (!need_order)
- 		trace_btrfs_all_work_done(wq->fs_info, wtag);
+-	strncpy(info->fix.id, dev->driver->name, 16);
++	snprintf(info->fix.id, sizeof(info->fix.id), "%s", dev->driver->name);
+ 	info->fix.type =           FB_TYPE_PACKED_PIXELS;
+ 	info->fix.visual =         FB_VISUAL_TRUECOLOR;
+ 	info->fix.xpanstep =	   0;
 -- 
 2.20.1
 
