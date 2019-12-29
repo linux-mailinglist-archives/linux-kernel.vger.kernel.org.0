@@ -2,36 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AED712C960
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF03712C803
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:15:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbfL2SGd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:06:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33596 "EHLO mail.kernel.org"
+        id S1731744AbfL2RuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:50:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731686AbfL2Rtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:49:41 -0500
+        id S1731436AbfL2Rt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:49:57 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C94C8206A4;
-        Sun, 29 Dec 2019 17:49:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2723206A4;
+        Sun, 29 Dec 2019 17:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641780;
-        bh=NNXekNtXdNf+DdK1b33AJEUCouQqwbzXFl1ip74gVWM=;
+        s=default; t=1577641797;
+        bh=HrMe3ZXnXErzjDN33eld/efIaO1w3g7H5ALJT7FOOQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bihry9P3qmH1mne4/7H4B91cbMAkJN3jn8Qjn5yZqivrhNbczSfVA6AZmxb9n9ist
-         QQSWNHHA+uJJ4Ll5/DF1IbYVXQkkfvpvnJ1qy/solryIkE5L7esbZEDUPDuONvRcRz
-         EzFO2YRQI55R75EXwpwA7i9dv2NqzJ+tbVDHdZKA=
+        b=pNIUe3AZOEN1wqkqQdJwMmR/ZaXXMbYpO5MQQ16vb6X+ZGbZ4hOb63HRFY3WCmOr6
+         OIfEZ1A3EBsgBrHHzjp/AnxLKWcHzJGvXg+IXM6PSKxS0u09Wvr+uHg4Udv6py3Fjg
+         an1Vjva30ctG4nwKQTKYQHK9ZjllUIRkE3KZAGQo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stephan Gerhold <stephan@gerhold.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Vlad Buslov <vladbu@mellanox.com>,
+        Paul Blakey <paulb@mellanox.com>,
+        Roi Dayan <roid@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 208/434] phy: qcom-usb-hs: Fix extcon double register after power cycle
-Date:   Sun, 29 Dec 2019 18:24:21 +0100
-Message-Id: <20191229172715.644527022@linuxfoundation.org>
+Subject: [PATCH 5.4 215/434] net/mlx5e: Verify that rule has at least one fwd/drop action
+Date:   Sun, 29 Dec 2019 18:24:28 +0100
+Message-Id: <20191229172716.113297722@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,69 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephan Gerhold <stephan@gerhold.net>
+From: Vlad Buslov <vladbu@mellanox.com>
 
-[ Upstream commit 64f86b9978449ff05bfa6c64b4c5439e21e9c80b ]
+[ Upstream commit ae2741e2b6ce2bf1b656b1152c4ef147ff35b096 ]
 
-Commit f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-switched from extcon_register_notifier() to the resource-managed
-API, i.e. devm_extcon_register_notifier().
+Currently, mlx5 tc layer doesn't verify that rule has at least one forward
+or drop action which leads to following firmware syndrome when user tries
+to offload such action:
 
-This is problematic in this case, because the extcon notifier
-is dynamically registered/unregistered whenever the PHY is powered
-on/off. The resource-managed API does not unregister the notifier
-until the driver is removed, so as soon as the PHY is power cycled,
-attempting to register the notifier again results in:
+[ 1824.860501] mlx5_core 0000:81:00.0: mlx5_cmd_check:753:(pid 29458): SET_FLOW_TABLE_ENTRY(0x936) op_mod(0x0) failed, status bad parameter(0x3), syndrome (0x144b7a)
 
-	double register detected
-	WARNING: CPU: 1 PID: 182 at kernel/notifier.c:26 notifier_chain_register+0x74/0xa0
-	Call trace:
-	 ...
-	 extcon_register_notifier+0x74/0xb8
-	 devm_extcon_register_notifier+0x54/0xb8
-	 qcom_usb_hs_phy_power_on+0x1fc/0x208
-	 ...
+Add check at the end of parse_tc_fdb_actions() that verifies that resulting
+attribute has action fwd or drop flag set.
 
-... and USB stops working after plugging the cable out and in
-another time.
-
-The easiest way to fix this is to make a partial revert of
-commit f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-and avoid using the resource-managed API in this case.
-
-Fixes: f0b5c2c96370 ("phy: qcom-usb-hs: Replace the extcon API")
-Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Vlad Buslov <vladbu@mellanox.com>
+Reviewed-by: Paul Blakey <paulb@mellanox.com>
+Reviewed-by: Roi Dayan <roid@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/qualcomm/phy-qcom-usb-hs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-usb-hs.c b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-index b163b3a1558d..61054272a7c8 100644
---- a/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-+++ b/drivers/phy/qualcomm/phy-qcom-usb-hs.c
-@@ -158,8 +158,8 @@ static int qcom_usb_hs_phy_power_on(struct phy *phy)
- 		/* setup initial state */
- 		qcom_usb_hs_phy_vbus_notifier(&uphy->vbus_notify, state,
- 					      uphy->vbus_edev);
--		ret = devm_extcon_register_notifier(&ulpi->dev, uphy->vbus_edev,
--				EXTCON_USB, &uphy->vbus_notify);
-+		ret = extcon_register_notifier(uphy->vbus_edev, EXTCON_USB,
-+					       &uphy->vbus_notify);
- 		if (ret)
- 			goto err_ulpi;
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+index c2c7f214a56a..814a4ba4e7fa 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_tc.c
+@@ -3443,6 +3443,12 @@ static int parse_tc_fdb_actions(struct mlx5e_priv *priv,
+ 		attr->action |= MLX5_FLOW_CONTEXT_ACTION_FWD_DEST;
  	}
-@@ -180,6 +180,9 @@ static int qcom_usb_hs_phy_power_off(struct phy *phy)
- {
- 	struct qcom_usb_hs_phy *uphy = phy_get_drvdata(phy);
  
-+	if (uphy->vbus_edev)
-+		extcon_unregister_notifier(uphy->vbus_edev, EXTCON_USB,
-+					   &uphy->vbus_notify);
- 	regulator_disable(uphy->v3p3);
- 	regulator_disable(uphy->v1p8);
- 	clk_disable_unprepare(uphy->sleep_clk);
++	if (!(attr->action &
++	      (MLX5_FLOW_CONTEXT_ACTION_FWD_DEST | MLX5_FLOW_CONTEXT_ACTION_DROP))) {
++		NL_SET_ERR_MSG(extack, "Rule must have at least one forward/drop action");
++		return -EOPNOTSUPP;
++	}
++
+ 	if (attr->split_count > 0 && !mlx5_esw_has_fwd_fdb(priv->mdev)) {
+ 		NL_SET_ERR_MSG_MOD(extack,
+ 				   "current firmware doesn't support split rule for port mirroring");
 -- 
 2.20.1
 
