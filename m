@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89AB912C630
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 08CA012C631
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730674AbfL2RoW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:44:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52382 "EHLO mail.kernel.org"
+        id S1730691AbfL2Ro2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:44:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730666AbfL2RoT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:44:19 -0500
+        id S1730677AbfL2RoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:44:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0749208C4;
-        Sun, 29 Dec 2019 17:44:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C41A620718;
+        Sun, 29 Dec 2019 17:44:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641459;
-        bh=Z5tRASnyDGkVhdf4+Zzm0/UlGnprXXAliUORBedtkMo=;
+        s=default; t=1577641464;
+        bh=tU2GX5+sca3ivMdzwzsrGxtVKUy5coL92TLj6QPC+iI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEv2X8FgahPm8PkiiQAuMID9WV4CeCRgtSuo3qenYw+s7mNLDCarpN1HjjWzQfium
-         AmGYYRYXBXnYEE/NftuzKJmJSIbFJ/kqRfyOerfb5jrADsq57wKxLOMhNTDK5CGe3k
-         udm/6ULbc/2bXE/FOLLiLw4EtQFVJoRYF+E5BTDw=
+        b=jtyu63JBB0OPfmYw8ag28SOHCFSv4UnhsGBdXlqDPdifAXCm372Zo0pgnaIyPyY6c
+         gPdMAz2rgoVb5Kc2cFHHUu6dvRHv9sgj84A5Vq18wah7namaTFQh+JMwYYzkPeHhpr
+         mETEtZIXZ4TFGQwVk7SV1Jr7Q3S0EGS4AwEoRYQ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
+        stable@vger.kernel.org, Jernej Skrabec <jernej.skrabec@siol.net>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 075/434] media: cedrus: fill in bus_info for media device
-Date:   Sun, 29 Dec 2019 18:22:08 +0100
-Message-Id: <20191229172706.617231808@linuxfoundation.org>
+Subject: [PATCH 5.4 077/434] media: vim2m: Fix abort issue
+Date:   Sun, 29 Dec 2019 18:22:10 +0100
+Message-Id: <20191229172706.741138426@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,51 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-[ Upstream commit ae0688f659adb17ae6ae5710c886b20b5406e5c4 ]
+[ Upstream commit c362f77a243bfd1daec21b6c36491c061ee2f31b ]
 
-Fixes this compliance warning:
+Currently, if start streaming -> stop streaming -> start streaming
+sequence is executed, driver will end job prematurely, if ctx->translen
+is higher than 1, because "aborting" flag is still set from previous
+stop streaming command.
 
-$ v4l2-compliance -m0
-v4l2-compliance SHA: b514d615166bdc0901a4c71261b87db31e89f464, 32 bits
+Fix that by clearing "aborting" flag in start streaming handler.
 
-Compliance test for cedrus device /dev/media0:
-
-Media Driver Info:
-        Driver name      : cedrus
-        Model            : cedrus
-        Serial           :
-        Bus info         :
-        Media version    : 5.3.0
-        Hardware revision: 0x00000000 (0)
-        Driver version   : 5.3.0
-
-Required ioctls:
-                warn: v4l2-test-media.cpp(51): empty bus_info
-        test MEDIA_IOC_DEVICE_INFO: OK
-
+Fixes: 96d8eab5d0a1 ("V4L/DVB: [v5,2/2] v4l: Add a mem-to-mem videobuf framework test device")
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/media/sunxi/cedrus/cedrus.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/vim2m.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-index 2d3ea8b74dfd..3439f6ad6338 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-@@ -357,6 +357,8 @@ static int cedrus_probe(struct platform_device *pdev)
+diff --git a/drivers/media/platform/vim2m.c b/drivers/media/platform/vim2m.c
+index acd3bd48c7e2..2d79cdc130c5 100644
+--- a/drivers/media/platform/vim2m.c
++++ b/drivers/media/platform/vim2m.c
+@@ -1073,6 +1073,9 @@ static int vim2m_start_streaming(struct vb2_queue *q, unsigned int count)
+ 	if (!q_data)
+ 		return -EINVAL;
  
- 	dev->mdev.dev = &pdev->dev;
- 	strscpy(dev->mdev.model, CEDRUS_NAME, sizeof(dev->mdev.model));
-+	strscpy(dev->mdev.bus_info, "platform:" CEDRUS_NAME,
-+		sizeof(dev->mdev.bus_info));
- 
- 	media_device_init(&dev->mdev);
- 	dev->mdev.ops = &cedrus_m2m_media_ops;
++	if (V4L2_TYPE_IS_OUTPUT(q->type))
++		ctx->aborting = 0;
++
+ 	q_data->sequence = 0;
+ 	return 0;
+ }
 -- 
 2.20.1
 
