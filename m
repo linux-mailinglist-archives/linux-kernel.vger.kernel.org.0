@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A63212C61C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B40812C61B
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730131AbfL2Rn1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:43:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50486 "EHLO mail.kernel.org"
+        id S1730474AbfL2RnY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:43:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730452AbfL2RnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:17 -0500
+        id S1730460AbfL2RnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:43:20 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D4D5207FD;
-        Sun, 29 Dec 2019 17:43:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B557A206A4;
+        Sun, 29 Dec 2019 17:43:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641396;
-        bh=ue1JsQLc0tV8J5CrdUYqvCo2m/lptz5ZRPhUMwOMwjc=;
+        s=default; t=1577641399;
+        bh=hWSVPFhehnGaofdjBZepM4BylQBTdV/G2Ffh62Sv4Pk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Re7WBTYj/puFN835XIVK5IHfa3q3VfxHjhTAS00/r8b8AC3aFos5/jFMPZg4ZWQs0
-         aX1zRxa9xNOCeyz8Z+EoQ646zLRP9c5xvh3JwBOYIIb3QEMaOl6JAeQ9ldC2Go8QX/
-         e960V2upubh3nZh4XNy+pwSdTQgzSxXrHrDWTBME=
+        b=AOP0aJ4BLTTfc0yzyukY2Iam0g5GIHf6fuOOh6EUJdOvsTs3az+1Q8J3lP8wV4J/B
+         ow+WSsswQN/ekukpUTwmdLC19Ae3qNCb/ZKCF/P/itp7FLNb7hmGQtS6E15473i376
+         xxC/CdQ5i3Q2i00VIw35inQvbIbQgK5azb+OBc2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
+        stable@vger.kernel.org, Dariusz Marcinkiewicz <darekm@google.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 047/434] drm/panel: Add missing drm_panel_init() in panel drivers
-Date:   Sun, 29 Dec 2019 18:21:40 +0100
-Message-Id: <20191229172705.113810375@linuxfoundation.org>
+Subject: [PATCH 5.4 048/434] drm: exynos: exynos_hdmi: use cec_notifier_conn_(un)register
+Date:   Sun, 29 Dec 2019 18:21:41 +0100
+Message-Id: <20191229172705.166874507@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -45,47 +44,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From: Dariusz Marcinkiewicz <darekm@google.com>
 
-[ Upstream commit 65abbda8ed7ca48c8807d6b04a77431b438fa659 ]
+[ Upstream commit 71137bfd98973efb7b762ba168df077b87b34311 ]
 
-Panels must be initialised with drm_panel_init(). Add the missing
-function call in the panel-raspberrypi-touchscreen.c and
-panel-sitronix-st7789v.c drivers.
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill in
+the cec_connector_info.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190823193245.23876-2-laurent.pinchart@ideasonboard.com
+Changes since v7:
+	- err_runtime_disable -> err_rpm_disable
+Changes since v2:
+	- removed unnecessary call to invalidate phys address before
+	deregistering the notifier,
+	- use cec_notifier_phys_addr_invalidate instead of setting
+	invalid address on a notifier.
+
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+[hverkuil-cisco@xs4all.nl: use 'if (!hdata->notifier)' instead of '== NULL']
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190828123415.139441-1-darekm@google.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c | 1 +
- drivers/gpu/drm/panel/panel-sitronix-st7789v.c        | 1 +
- 2 files changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 31 ++++++++++++++++------------
+ 1 file changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index b5b14aa059ea..2aa89eaecf6f 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -426,6 +426,7 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 		return PTR_ERR(ts->dsi);
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index bc1565f1822a..09aa73c0f2ad 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -852,6 +852,10 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
+ 
+ static void hdmi_connector_destroy(struct drm_connector *connector)
+ {
++	struct hdmi_context *hdata = connector_to_hdmi(connector);
++
++	cec_notifier_conn_unregister(hdata->notifier);
++
+ 	drm_connector_unregister(connector);
+ 	drm_connector_cleanup(connector);
+ }
+@@ -935,6 +939,7 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ {
+ 	struct hdmi_context *hdata = encoder_to_hdmi(encoder);
+ 	struct drm_connector *connector = &hdata->connector;
++	struct cec_connector_info conn_info;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = true;
+@@ -957,6 +962,15 @@ static int hdmi_create_connector(struct drm_encoder *encoder)
+ 			DRM_DEV_ERROR(hdata->dev, "Failed to attach bridge\n");
  	}
  
-+	drm_panel_init(&ts->base);
- 	ts->base.dev = dev;
- 	ts->base.funcs = &rpi_touchscreen_funcs;
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	hdata->notifier = cec_notifier_conn_register(hdata->dev, NULL,
++						     &conn_info);
++	if (!hdata->notifier) {
++		ret = -ENOMEM;
++		DRM_DEV_ERROR(hdata->dev, "Failed to allocate CEC notifier\n");
++	}
++
+ 	return ret;
+ }
  
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-index 5e3e92ea9ea6..3b2612ae931e 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-@@ -381,6 +381,7 @@ static int st7789v_probe(struct spi_device *spi)
- 	spi_set_drvdata(spi, ctx);
- 	ctx->spi = spi;
+@@ -1528,8 +1542,8 @@ static void hdmi_disable(struct drm_encoder *encoder)
+ 		 */
+ 		mutex_unlock(&hdata->mutex);
+ 		cancel_delayed_work(&hdata->hotplug_work);
+-		cec_notifier_set_phys_addr(hdata->notifier,
+-					   CEC_PHYS_ADDR_INVALID);
++		if (hdata->notifier)
++			cec_notifier_phys_addr_invalidate(hdata->notifier);
+ 		return;
+ 	}
  
-+	drm_panel_init(&ctx->panel);
- 	ctx->panel.dev = &spi->dev;
- 	ctx->panel.funcs = &st7789v_drm_funcs;
+@@ -2006,12 +2020,6 @@ static int hdmi_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
+-	hdata->notifier = cec_notifier_get(&pdev->dev);
+-	if (hdata->notifier == NULL) {
+-		ret = -ENOMEM;
+-		goto err_hdmiphy;
+-	}
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	audio_infoframe = &hdata->audio.infoframe;
+@@ -2023,7 +2031,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ 
+ 	ret = hdmi_register_audio_device(hdata);
+ 	if (ret)
+-		goto err_notifier_put;
++		goto err_rpm_disable;
+ 
+ 	ret = component_add(&pdev->dev, &hdmi_component_ops);
+ 	if (ret)
+@@ -2034,8 +2042,7 @@ static int hdmi_probe(struct platform_device *pdev)
+ err_unregister_audio:
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-err_notifier_put:
+-	cec_notifier_put(hdata->notifier);
++err_rpm_disable:
+ 	pm_runtime_disable(dev);
+ 
+ err_hdmiphy:
+@@ -2054,12 +2061,10 @@ static int hdmi_remove(struct platform_device *pdev)
+ 	struct hdmi_context *hdata = platform_get_drvdata(pdev);
+ 
+ 	cancel_delayed_work_sync(&hdata->hotplug_work);
+-	cec_notifier_set_phys_addr(hdata->notifier, CEC_PHYS_ADDR_INVALID);
+ 
+ 	component_del(&pdev->dev, &hdmi_component_ops);
+ 	platform_device_unregister(hdata->audio.pdev);
+ 
+-	cec_notifier_put(hdata->notifier);
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	if (!IS_ERR(hdata->reg_hdmi_en))
 -- 
 2.20.1
 
