@@ -2,163 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A8EF12C2B2
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 15:37:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F8512C2D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 15:50:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfL2Ogu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 09:36:50 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33957 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726189AbfL2Ogu (ORCPT
+        id S1726621AbfL2OuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 09:50:13 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:45667 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726230AbfL2OuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 09:36:50 -0500
-Received: by mail-io1-f66.google.com with SMTP id z193so29496906iof.1;
-        Sun, 29 Dec 2019 06:36:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6P+l8FSlWBBte5aUxpeVJfQc+EhiRf7R8DtYJ/9CnDI=;
-        b=Yb35NC83I5I7rr0g/aKTefVU+PtUCvsF58AputPF9VqGwwq7HGoXHrAnRrVrLe38i6
-         Gf+D4lTUnef2r3wkZf8VDdia0LNTt235huRgflqorMssYPMYr4l/m6KB9VUllvTHAePW
-         XZxc3+rT+021SRw9QkIi+UjCsHh8uScYVEdAEpn3zWCGELqGQB8Dw1qIKGvIsB8Z30o3
-         Een5bv+OzDYelHKWETGXB1Y6ckk3cqOgz6cetWgeyFrVQU7yQLgq96zKokez/fP+j1bY
-         EiGvFTHWhctAmC6rvvxPIA2/Xb5MnX1T/0Ee826qf8wcEzcS/R38qKb5dX66aPlORovX
-         AkaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6P+l8FSlWBBte5aUxpeVJfQc+EhiRf7R8DtYJ/9CnDI=;
-        b=dHd+XkXPUYGqM6wCsrnEdg8L8R+9gscNq7oUstvGwKsPlPG0XB5vIg4YfseZ9dNyUE
-         NLBRQdEMjlPzvoZgca+Rint2qy1J2PTXXsMm+dexd+zxZM+9kYv30PSStzjnhXuofNfx
-         5JQlrYsJ+Rn1LzH4ZCN0onNlSFL9ND5Ez/3Qent63JqLnSxt8TO1w0U/FIPpmoldcMm/
-         fHTKTTL3s0fow+ngbx2CET7yvZS1Kg92Y4qpprW+nBI/XLUZT1NSyjVGbsDI/TE+ic19
-         UtzpppOa/7If1FYJC9U9ubq/mhfDgTK+2angkXIFBamQT7aZZnbmA1i0XUfsdPRbedwR
-         mQ7A==
-X-Gm-Message-State: APjAAAUIKY6nOJSRn7em8FFaUBN5rNm51skxDvpdqschSB9AIdigaJej
-        enoYxms5qLoItnGARLNo/MF1mDJsFXC7e98BeHs=
-X-Google-Smtp-Source: APXvYqyNz1FemOTTeZVrJPqsxKYy5wfDrBT8NhLYyVBm5RrFtVEGvc5exe5evt0DbAlmISUi6IF2gqQQe/GiWx36UOg=
-X-Received: by 2002:a02:3ece:: with SMTP id s197mr48415001jas.30.1577630209372;
- Sun, 29 Dec 2019 06:36:49 -0800 (PST)
+        Sun, 29 Dec 2019 09:50:12 -0500
+Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBTEn4GM024237
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 29 Dec 2019 09:49:05 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 83EFA420485; Sun, 29 Dec 2019 09:49:04 -0500 (EST)
+Date:   Sun, 29 Dec 2019 09:49:04 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Stephan Mueller <smueller@chronox.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        "Ahmed S. Darwish" <darwish.07@gmail.com>,
+        Lennart Poettering <mzxreary@0pointer.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Alexander E. Patrakov" <patrakov@gmail.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Willy Tarreau <w@1wt.eu>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] Rework random blocking
+Message-ID: <20191229144904.GB7177@mit.edu>
+References: <20191226140423.GB3158@mit.edu>
+ <4048434.Q8HajmOrkZ@tauon.chronox.de>
+ <20191227130436.GC70060@mit.edu>
+ <15817620.rmTN4T87Wr@tauon.chronox.de>
+ <20191227220857.GD70060@mit.edu>
+ <CALCETrUyVx_qb2yYH8D_z1T2bVu5RAEr71G0MTzEksBKKM1QsA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20191229104325.10132-1-tiny.windzz@gmail.com> <CAMpxmJUggb7srWeLNzkcrb+L1THhP4DNH8nkkDaYDEs316ywDQ@mail.gmail.com>
-In-Reply-To: <CAMpxmJUggb7srWeLNzkcrb+L1THhP4DNH8nkkDaYDEs316ywDQ@mail.gmail.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Sun, 29 Dec 2019 22:36:38 +0800
-Message-ID: <CAEExFWt+8FL45kLMWc3odS4GsCRkskD1Z08q6UAF1sYx32Hf-w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] lib: devres: provide devm_ioremap_resource_nocache()
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        suzuki.poulose@arm.com, saravanak@google.com,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        dan.j.williams@intel.com, Joe Perches <joe@perches.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>, mans@mansr.com,
-        Thomas Gleixner <tglx@linutronix.de>, hdegoede@redhat.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>, ztuowen@gmail.com,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrUyVx_qb2yYH8D_z1T2bVu5RAEr71G0MTzEksBKKM1QsA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 8:11 PM Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
->
-> niedz., 29 gru 2019 o 11:43 Yangtao Li <tiny.windzz@gmail.com> napisa=C5=
-=82(a):
-> >
-> > Provide a variant of devm_ioremap_resource() for nocache ioremap.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  Documentation/driver-api/driver-model/devres.rst |  1 +
-> >  include/linux/device.h                           |  2 ++
-> >  lib/devres.c                                     | 15 +++++++++++++++
-> >  3 files changed, 18 insertions(+)
-> >
-> > diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documen=
-tation/driver-api/driver-model/devres.rst
-> > index 13046fcf0a5d..af1b1b9e3a17 100644
-> > --- a/Documentation/driver-api/driver-model/devres.rst
-> > +++ b/Documentation/driver-api/driver-model/devres.rst
-> > @@ -317,6 +317,7 @@ IOMAP
-> >    devm_ioremap_uc()
-> >    devm_ioremap_wc()
-> >    devm_ioremap_resource() : checks resource, requests memory region, i=
-oremaps
-> > +  devm_ioremap_resource_nocache()
-> >    devm_ioremap_resource_wc()
-> >    devm_platform_ioremap_resource() : calls devm_ioremap_resource() for=
- platform device
-> >    devm_platform_ioremap_resource_wc()
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 96ff76731e93..3aa353aa52e2 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -962,6 +962,8 @@ extern void devm_free_pages(struct device *dev, uns=
-igned long addr);
-> >
-> >  void __iomem *devm_ioremap_resource(struct device *dev,
-> >                                     const struct resource *res);
-> > +void __iomem *devm_ioremap_resource_nocache(struct device *dev,
-> > +                                           const struct resource *res)=
-;
-> >  void __iomem *devm_ioremap_resource_wc(struct device *dev,
-> >                                        const struct resource *res);
-> >
-> > diff --git a/lib/devres.c b/lib/devres.c
-> > index f56070cf970b..a182f8479fbf 100644
-> > --- a/lib/devres.c
-> > +++ b/lib/devres.c
-> > @@ -188,6 +188,21 @@ void __iomem *devm_ioremap_resource(struct device =
-*dev,
-> >  }
-> >  EXPORT_SYMBOL(devm_ioremap_resource);
-> >
-> > +/**
-> > + * devm_ioremap_resource_nocache() - nocache variant of
-> > + *                                   devm_ioremap_resource()
-> > + * @dev: generic device to handle the resource for
-> > + * @res: resource to be handled
-> > + *
-> > + * Returns a pointer to the remapped memory or an ERR_PTR() encoded er=
-ror code
-> > + * on failure.
-> > + */
-> > +void __iomem *devm_ioremap_resource_nocache(struct device *dev,
-> > +                                           const struct resource *res)
-> > +{
-> > +       return __devm_ioremap_resource(dev, res, DEVM_IOREMAP_NC);
-> > +}
-> > +
-> >  /**
-> >   * devm_ioremap_resource_wc() - write-combined variant of
-> >   *                             devm_ioremap_resource()
-> > --
-> > 2.17.1
-> >
->
-> This has been discussed before. The nocache variants of ioremap() are
-> being phased out as they're only ever needed on one obscure
-> architecture IIRC. This is not needed, rather we should convert all
-> nocache calls to regular ioremap().
+On Fri, Dec 27, 2019 at 06:06:56PM -0800, Andy Lutomirski wrote:
+> 
+> I'm thinking of having a real class device and chardev for each hwrng
+> device.  Authentication is entirely in userspace: whatever user code
+> is involved can look at the sysfs hierarchy and decide to what extent
+> it trusts a given source.  This could be done based on bus topology or
+> based on anything else.
 
-Thanks for pointing out!
-I have seen the use of ioremap_nocache in many architectures,
-so they are wrong and should be changed to ioremap?
+Yes, that's what I was thinking.  Another project on my "when I can
+get a round tuit" list is to change how drivers/char/random.c taps
+into the hwrng devices, mixing in a bit from each of these devies in a
+round-robin fashion, instead of just feeding from a single hwrng.
 
-Yangtao
+> The kernel could also separately expose various noise sources, and the
+> user code can do whatever it wants with them.  But these should be
+> explicitly unconditioned, un-entropy-extracted sources -- user code
+> can run its favorite algorithm to extract something it believes to be
+> useful.  The only conceptually tricky bit is keeping user code like
+> this from interfering with the in-kernel RNG.
 
->
-> Bart
+The other problem is the unconditioned values of the noise sources may
+leak unacceptable amounts of information about system operation.  The
+most obvious example of this would be keyboard and mouse sources,
+where today we mix in not only the timing information, but the actual
+input values (e.g., the keyboard scancodes) into the entropy pool.
+Exposing this to userspace, even if it is via a privileged system
+call, would be... unwise.
+
+						- Ted
