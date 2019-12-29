@@ -2,34 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91B9B12C615
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD5F12C616
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:53:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfL2RnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:43:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49952 "EHLO mail.kernel.org"
+        id S1730442AbfL2RnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730405AbfL2RnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:03 -0500
+        id S1730426AbfL2RnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:43:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA838206A4;
-        Sun, 29 Dec 2019 17:43:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECC87206A4;
+        Sun, 29 Dec 2019 17:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641382;
-        bh=KG70q5BwuIoJXG7In5KYx+zi2s79625jSMuz5g1m7e8=;
+        s=default; t=1577641389;
+        bh=h0FbgVNBxjiATtekjNsyvzCRkqeBWOJlRkvl1qaiKRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yebkzLdNa6oZ2yfhh3tF2PKqK5BrmqLw8S3HC3jlC/9p3rv6lbK+wH4OLPfUJRc0r
-         rpppOLkCns2iwhytvrOZOCg14vj0PE6QmQgSd2MXwC9TCeb2i+pAXbEWUgvMlUmr/Y
-         uK4hVraDHYytDwkwDxhVyYaPv9XtuZsNLerBGtg8=
+        b=cqjXItM8WDNGtnwQceO+33RjVAv/TaA/Kc+X0RG2C8H4tKKKkYf51P69zL8035TLV
+         Qt06Ffv+Ue07ueHBjLn5cwBMu434QAFcvA3E2f8li38M0zrz57aTOMtAatynX0EuG6
+         5cjRRoDttnR6DxAL4TTgAu0Uw3dWYLT8wNzhLwlQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.4 042/434] ALSA: hda/ca0132 - Fix work handling in delayed HP detection
-Date:   Sun, 29 Dec 2019 18:21:35 +0100
-Message-Id: <20191229172704.827422730@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 045/434] drm: mst: Fix query_payload ack reply struct
+Date:   Sun, 29 Dec 2019 18:21:38 +0100
+Message-Id: <20191229172705.006759325@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -42,65 +50,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Sean Paul <seanpaul@chromium.org>
 
-commit 42fb6b1d41eb5905d77c06cad2e87b70289bdb76 upstream.
+[ Upstream commit 268de6530aa18fe5773062367fd119f0045f6e88 ]
 
-CA0132 has the delayed HP jack detection code that is invoked from the
-unsol handler, but it does a few weird things: it contains the cancel
-of a work inside the work handler, and yet it misses the cancel-sync
-call at (runtime-)suspend.  This patch addresses those issues.
+Spec says[1] Allocated_PBN is 16 bits
 
-Fixes: 15c2b3cc09a3 ("ALSA: hda/ca0132 - Fix possible workqueue stall")
-Cc: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20191213085111.22855-4-tiwai@suse.de
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[1]- DisplayPort 1.2 Spec, Section 2.11.9.8, Table 2-98
 
+Fixes: ad7f8a1f9ced ("drm/helper: add Displayport multi-stream helper (v0.6)")
+Cc: Lyude Paul <lyude@redhat.com>
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Sean Paul <sean@poorly.run>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190829165223.129662-1-sean@poorly.run
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_ca0132.c |   16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ include/drm/drm_dp_mst_helper.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_ca0132.c
-+++ b/sound/pci/hda/patch_ca0132.c
-@@ -7607,11 +7607,10 @@ static void hp_callback(struct hda_codec
- 	/* Delay enabling the HP amp, to let the mic-detection
- 	 * state machine run.
- 	 */
--	cancel_delayed_work(&spec->unsol_hp_work);
--	schedule_delayed_work(&spec->unsol_hp_work, msecs_to_jiffies(500));
- 	tbl = snd_hda_jack_tbl_get(codec, cb->nid);
- 	if (tbl)
- 		tbl->block_report = 1;
-+	schedule_delayed_work(&spec->unsol_hp_work, msecs_to_jiffies(500));
- }
+diff --git a/include/drm/drm_dp_mst_helper.h b/include/drm/drm_dp_mst_helper.h
+index 2ba6253ea6d3..fc349204a71b 100644
+--- a/include/drm/drm_dp_mst_helper.h
++++ b/include/drm/drm_dp_mst_helper.h
+@@ -334,7 +334,7 @@ struct drm_dp_resource_status_notify {
  
- static void amic_callback(struct hda_codec *codec, struct hda_jack_callback *cb)
-@@ -8457,12 +8456,25 @@ static void ca0132_reboot_notify(struct
- 	codec->patch_ops.free(codec);
- }
- 
-+#ifdef CONFIG_PM
-+static int ca0132_suspend(struct hda_codec *codec)
-+{
-+	struct ca0132_spec *spec = codec->spec;
-+
-+	cancel_delayed_work_sync(&spec->unsol_hp_work);
-+	return 0;
-+}
-+#endif
-+
- static const struct hda_codec_ops ca0132_patch_ops = {
- 	.build_controls = ca0132_build_controls,
- 	.build_pcms = ca0132_build_pcms,
- 	.init = ca0132_init,
- 	.free = ca0132_free,
- 	.unsol_event = snd_hda_jack_unsol_event,
-+#ifdef CONFIG_PM
-+	.suspend = ca0132_suspend,
-+#endif
- 	.reboot_notify = ca0132_reboot_notify,
+ struct drm_dp_query_payload_ack_reply {
+ 	u8 port_number;
+-	u8 allocated_pbn;
++	u16 allocated_pbn;
  };
  
+ struct drm_dp_sideband_msg_req_body {
+-- 
+2.20.1
+
 
 
