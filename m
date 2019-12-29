@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8D7612C88C
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AA1912C88F
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732771AbfL2R4D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:56:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44974 "EHLO mail.kernel.org"
+        id S1733029AbfL2R4I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:56:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732658AbfL2Rzy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:55:54 -0500
+        id S1732681AbfL2Rz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:55:58 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27E9821744;
-        Sun, 29 Dec 2019 17:55:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B6021D7E;
+        Sun, 29 Dec 2019 17:55:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642153;
-        bh=b/hV8Vu8G7wwdS/CvXDnTg35vphamOTHlBhwkOQLbSw=;
+        s=default; t=1577642158;
+        bh=/T7HwT5cQHY2Nk1h2a8PJTQcmCfQYDDMv5go85/bY/o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I0Ffz/CYCvjkgkqM1g1+ArKqqdMfZsCN+azECfgBhKW+WBirgbibS+qt4WrftJi7d
-         ik+DoXW4fBlOOC+F3ABo8mEqJoC7Gq87Ezs+DCBwkkeBZBb+6yWpt5VEwUSriIink6
-         trxnSKgGDVPd0Yhv5plz1PoSefaaLGDzKksP6Kug=
+        b=O1lJMCfOS5NCy+DE8drEiWrMj5El7B00/1H7gJcF1NdGo07UebBk5TLKKR4Jh8FkG
+         BzVfrwqegf2wF8m0vqxGpwlw6D31pRvw7CkZunL/03Dbj7Ht4COG2vUbKEqVk8hkvd
+         ttH3/SD8fhgnwBLYA5UPlg4IhvwVh1bIaZBuNApk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Faiz Abbas <faiz_abbas@ti.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
+        stable@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 5.4 363/434] Revert "mmc: sdhci: Fix incorrect switch to HS mode"
-Date:   Sun, 29 Dec 2019 18:26:56 +0100
-Message-Id: <20191229172726.084696220@linuxfoundation.org>
+Subject: [PATCH 5.4 364/434] mmc: mediatek: fix CMD_TA to 2 for MT8173 HS200/HS400 mode
+Date:   Sun, 29 Dec 2019 18:26:57 +0100
+Message-Id: <20191229172726.150815354@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,42 +44,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Faiz Abbas <faiz_abbas@ti.com>
+From: Chaotian Jing <chaotian.jing@mediatek.com>
 
-commit 07bcc411567cb96f9d1fc84fff8d387118a2920d upstream.
+commit 8f34e5bd7024d1ffebddd82d7318b1be17be9e9a upstream.
 
-This reverts commit c894e33ddc1910e14d6f2a2016f60ab613fd8b37.
+there is a chance that always get response CRC error after HS200 tuning,
+the reason is that need set CMD_TA to 2. this modification is only for
+MT8173.
 
-This commit aims to treat SD High speed and SDR25 as the same while
-setting UHS Timings in HOST_CONTROL2 which leads to failures with some
-SD cards in AM65x. Revert this commit.
-
-The issue this commit was trying to fix can be implemented in a platform
-specific callback instead of common sdhci code.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Link: https://lore.kernel.org/r/20191128110422.25917-1-faiz_abbas@ti.com
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
+Cc: stable@vger.kernel.org
+Fixes: 1ede5cb88a29 ("mmc: mediatek: Use data tune for CMD line tune")
+Link: https://lore.kernel.org/r/20191204071958.18553-1-chaotian.jing@mediatek.com
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/sdhci.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mmc/host/mtk-sd.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1871,9 +1871,7 @@ void sdhci_set_uhs_signaling(struct sdhc
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
- 	else if (timing == MMC_TIMING_UHS_SDR12)
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR12;
--	else if (timing == MMC_TIMING_SD_HS ||
--		 timing == MMC_TIMING_MMC_HS ||
--		 timing == MMC_TIMING_UHS_SDR25)
-+	else if (timing == MMC_TIMING_UHS_SDR25)
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR25;
- 	else if (timing == MMC_TIMING_UHS_SDR50)
- 		ctrl_2 |= SDHCI_CTRL_UHS_SDR50;
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -228,6 +228,7 @@
+ #define MSDC_PATCH_BIT_SPCPUSH    (0x1 << 29)	/* RW */
+ #define MSDC_PATCH_BIT_DECRCTMO   (0x1 << 30)	/* RW */
+ 
++#define MSDC_PATCH_BIT1_CMDTA     (0x7 << 3)    /* RW */
+ #define MSDC_PATCH_BIT1_STOP_DLY  (0xf << 8)    /* RW */
+ 
+ #define MSDC_PATCH_BIT2_CFGRESP   (0x1 << 15)   /* RW */
+@@ -1881,6 +1882,7 @@ static int hs400_tune_response(struct mm
+ 
+ 	/* select EMMC50 PAD CMD tune */
+ 	sdr_set_bits(host->base + PAD_CMD_TUNE, BIT(0));
++	sdr_set_field(host->base + MSDC_PATCH_BIT1, MSDC_PATCH_BIT1_CMDTA, 2);
+ 
+ 	if (mmc->ios.timing == MMC_TIMING_MMC_HS200 ||
+ 	    mmc->ios.timing == MMC_TIMING_UHS_SDR104)
 
 
