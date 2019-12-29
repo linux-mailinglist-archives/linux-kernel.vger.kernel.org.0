@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BA9412C745
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1AA212C748
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:56:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732756AbfL2Ryr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42892 "EHLO mail.kernel.org"
+        id S1733007AbfL2Rzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732448AbfL2Ryp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:45 -0500
+        id S1732361AbfL2Ryr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:47 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC80E20718;
-        Sun, 29 Dec 2019 17:54:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34C4C206DB;
+        Sun, 29 Dec 2019 17:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642084;
-        bh=kRdKq7uCA72m1K+GKFvonx8KbbCs1gZwLyCH7jaiwDE=;
+        s=default; t=1577642086;
+        bh=Alhvg2+72tn+GgYizr728QgHtDo51MC5aDE2hkDjpc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yTyX6ULrIQMKmrKaFsF/WT/0V3aP56ewABRR68Sn6iD0wzmpVbfoKumTiiM3Caud3
-         z+ZfMHY2agloMZrdQIRcP8wbNBzYkdypaq9ElGmoJrTVNBgEMJddEJOj2NbYXRRgRz
-         pq3bb6iVxVrZbuvy8HBVZTrHL6iOzXWjDEIKPZRM=
+        b=HqE3p+nFVkOw4EYWqiThqUrLN+8/eAAdodw5RAg2Eqkg4gb86q96CmsoXvax8WcjM
+         xZ5/HWr21AGV3lAcHHktiUiCtueAhMYE6L51m0IS6+nR1Ilcl+qBonFKcGSfX0R06Z
+         KBLiOm3bT65BxMp5nZada4lJGR4yG7FGmFKwxlo4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 336/434] bnxt_en: Improve RX buffer error handling.
-Date:   Sun, 29 Dec 2019 18:26:29 +0100
-Message-Id: <20191229172724.286405221@linuxfoundation.org>
+Subject: [PATCH 5.4 337/434] iwlwifi: check kasprintf() return value
+Date:   Sun, 29 Dec 2019 18:26:30 +0100
+Message-Id: <20191229172724.354700068@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,77 +44,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 19b3751ffa713d04290effb26fe01009010f2206 ]
+[ Upstream commit 5974fbb5e10b018fdbe3c3b81cb4cc54e1105ab9 ]
 
-When hardware reports RX buffer errors, the latest 57500 chips do not
-require reset.  The packet is discarded by the hardware and the
-ring will continue to operate.
+kasprintf() can fail, we should check the return value.
 
-Also, add an rx_buf_errors counter for this type of error.  It can help
-the user to identify if the aggregation ring is too small.
-
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5ed540aecc2a ("iwlwifi: use mac80211 throughput trigger")
+Fixes: 8ca151b568b6 ("iwlwifi: add the MVM driver")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c         | 8 ++++++--
- drivers/net/ethernet/broadcom/bnxt/bnxt.h         | 1 +
- drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 2 ++
- 3 files changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/dvm/led.c | 3 +++
+ drivers/net/wireless/intel/iwlwifi/mvm/led.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 04ec909e06df..527e1bf93116 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -1767,8 +1767,12 @@ static int bnxt_rx_pkt(struct bnxt *bp, struct bnxt_cp_ring_info *cpr,
+diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/led.c b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
+index dd387aba3317..e8a4d604b910 100644
+--- a/drivers/net/wireless/intel/iwlwifi/dvm/led.c
++++ b/drivers/net/wireless/intel/iwlwifi/dvm/led.c
+@@ -171,6 +171,9 @@ void iwl_leds_init(struct iwl_priv *priv)
  
- 		rc = -EIO;
- 		if (rx_err & RX_CMPL_ERRORS_BUFFER_ERROR_MASK) {
--			netdev_warn(bp->dev, "RX buffer error %x\n", rx_err);
--			bnxt_sched_reset(bp, rxr);
-+			bnapi->cp_ring.rx_buf_errors++;
-+			if (!(bp->flags & BNXT_FLAG_CHIP_P5)) {
-+				netdev_warn(bp->dev, "RX buffer error %x\n",
-+					    rx_err);
-+				bnxt_sched_reset(bp, rxr);
-+			}
- 		}
- 		goto next_rx_no_len;
- 	}
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index d333589811a5..5163bb848618 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -927,6 +927,7 @@ struct bnxt_cp_ring_info {
- 	dma_addr_t		hw_stats_map;
- 	u32			hw_stats_ctx_id;
- 	u64			rx_l4_csum_errors;
-+	u64			rx_buf_errors;
- 	u64			missed_irqs;
+ 	priv->led.name = kasprintf(GFP_KERNEL, "%s-led",
+ 				   wiphy_name(priv->hw->wiphy));
++	if (!priv->led.name)
++		return;
++
+ 	priv->led.brightness_set = iwl_led_brightness_set;
+ 	priv->led.blink_set = iwl_led_blink_set;
+ 	priv->led.max_brightness = 1;
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/led.c b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
+index d104da9170ca..72c4b2b8399d 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/led.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/led.c
+@@ -129,6 +129,9 @@ int iwl_mvm_leds_init(struct iwl_mvm *mvm)
  
- 	struct bnxt_ring_struct	cp_ring_struct;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index 51c140476717..89f95428556e 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -173,6 +173,7 @@ static const char * const bnxt_ring_tpa2_stats_str[] = {
+ 	mvm->led.name = kasprintf(GFP_KERNEL, "%s-led",
+ 				   wiphy_name(mvm->hw->wiphy));
++	if (!mvm->led.name)
++		return -ENOMEM;
++
+ 	mvm->led.brightness_set = iwl_led_brightness_set;
+ 	mvm->led.max_brightness = 1;
  
- static const char * const bnxt_ring_sw_stats_str[] = {
- 	"rx_l4_csum_errors",
-+	"rx_buf_errors",
- 	"missed_irqs",
- };
- 
-@@ -552,6 +553,7 @@ static void bnxt_get_ethtool_stats(struct net_device *dev,
- 		for (k = 0; k < stat_fields; j++, k++)
- 			buf[j] = le64_to_cpu(hw_stats[k]);
- 		buf[j++] = cpr->rx_l4_csum_errors;
-+		buf[j++] = cpr->rx_buf_errors;
- 		buf[j++] = cpr->missed_irqs;
- 
- 		bnxt_sw_func_stats[RX_TOTAL_DISCARDS].counter +=
 -- 
 2.20.1
 
