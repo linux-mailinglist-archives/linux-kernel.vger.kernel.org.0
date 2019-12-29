@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E1B912C730
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D5ED12C731
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 18:55:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732822AbfL2Ryz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 12:54:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43076 "EHLO mail.kernel.org"
+        id S1732819AbfL2RzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:55:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732283AbfL2Ryw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:54:52 -0500
+        id S1732805AbfL2Ry7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:54:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0686720718;
-        Sun, 29 Dec 2019 17:54:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D59D206A4;
+        Sun, 29 Dec 2019 17:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577642091;
-        bh=r4drbKus9o7E4e65lWGg21h6B6VQGYU7jpaonTNlv+U=;
+        s=default; t=1577642098;
+        bh=xYaBwmrPjDEaMean6DSS07QKz2jkf7+r95U8EcJ+mmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D+9YLcbi30Sjzwmxn1NJqSlI0u3/MuycboTUNm9pU9eTBSWrW8vhjm7TXp6rFyHLt
-         jQ3seTGmN7cDmAMT4WoIXs0m8tc9Hg4YI/KK/tY/T0FqjBL/PpTBMa8fy4k1hfMCT6
-         Yd5diClLELPrvNPPEwCbgdVbEgLbVsbTCndDv8uE=
+        b=ldu3v8fJr2BMymh3T751tZQv+Wv3TH0tqJqMpnj21v4g52Ul1+3qjQrG72nBgo0za
+         PHrHZsWygL7j67HBwkBmPRCtPRm0yeowUw4WVqJME4Y1NdD62oqp/Kr1D7yX30Zn1s
+         j4prmHoOI03FOAqQZz2om2Xw5peMaVzBzMyj7W/E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shengjiu Wang <shengjiu.wang@nxp.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 339/434] ASoC: soc-pcm: check symmetry before hw_params
-Date:   Sun, 29 Dec 2019 18:26:32 +0100
-Message-Id: <20191229172724.486261658@linuxfoundation.org>
+Subject: [PATCH 5.4 342/434] s390/cpumf: Adjust registration of s390 PMU device drivers
+Date:   Sun, 29 Dec 2019 18:26:35 +0100
+Message-Id: <20191229172724.686999444@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,60 +44,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 5cca59516de5df9de6bdecb328dd55fb5bcccb41 ]
+[ Upstream commit 6a82e23f45fe0aa821e7a935e39d0acb20c275c0 ]
 
-This reverts commit 957ce0c6b8a1f (ASoC: soc-pcm: check symmetry after
-hw_params).
+Linux-next commit titled "perf/core: Optimize perf_init_event()"
+changed the semantics of PMU device driver registration.
+It was done to speed up the lookup/handling of PMU device driver
+specific events. It also enforces that only one PMU device
+driver will be registered of type PERF_EVENT_RAW.
 
-That commit cause soc_pcm_params_symmetry can't take effect.
-cpu_dai->rate, cpu_dai->channels and cpu_dai->sample_bits
-are updated in the middle of soc_pcm_hw_params, so move
-soc_pcm_params_symmetry to the end of soc_pcm_hw_params is
-not a good solution, for judgement of symmetry in the function
-is always true.
+This change added these line in function perf_pmu_register():
 
-FIXME:
-According to the comments of that commit, I think the case
-described in the commit should disable symmetric_rates
-in Back-End, rather than changing the position of
-soc_pcm_params_symmetry.
+  ...
+  +       ret = idr_alloc(&pmu_idr, pmu, max, 0, GFP_KERNEL);
+  +       if (ret < 0)
+                goto free_pdc;
+  +
+  +       WARN_ON(type >= 0 && ret != type);
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Link: https://lore.kernel.org/r/1573555602-5403-1-git-send-email-shengjiu.wang@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+The warn_on generates a message. We have 3 PMU device drivers,
+each registered as type PERF_TYPE_RAW.
+The cf_diag device driver (arch/s390/kernel/perf_cpumf_cf_diag.c)
+always hits the WARN_ON because it is the second PMU device driver
+(after sampling device driver arch/s390/kernel/perf_cpumf_sf.c)
+which is registered as type 4 (PERF_TYPE_RAW).
+So when the sampling device driver is registered, ret has value 4.
+When cf_diag device driver is registered with type 4,
+ret has value of 5 and WARN_ON fires.
+
+Adjust the PMU device drivers for s390 to support the new
+semantics required by perf_pmu_register().
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-pcm.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/s390/kernel/perf_cpum_cf.c      | 21 ++++++++++-----------
+ arch/s390/kernel/perf_cpum_cf_diag.c | 10 +++++-----
+ 2 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index cdce96a3051b..a6e96cf1d8ff 100644
---- a/sound/soc/soc-pcm.c
-+++ b/sound/soc/soc-pcm.c
-@@ -877,6 +877,11 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
- 	int i, ret = 0;
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 48d48b6187c0..0eb1d1cc53a8 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -199,7 +199,7 @@ static const int cpumf_generic_events_user[] = {
+ 	[PERF_COUNT_HW_BUS_CYCLES]	    = -1,
+ };
  
- 	mutex_lock_nested(&rtd->card->pcm_mutex, rtd->card->pcm_subclass);
-+
-+	ret = soc_pcm_params_symmetry(substream, params);
-+	if (ret)
-+		goto out;
-+
- 	if (rtd->dai_link->ops->hw_params) {
- 		ret = rtd->dai_link->ops->hw_params(substream, params);
- 		if (ret < 0) {
-@@ -958,9 +963,6 @@ static int soc_pcm_hw_params(struct snd_pcm_substream *substream,
+-static int __hw_perf_event_init(struct perf_event *event)
++static int __hw_perf_event_init(struct perf_event *event, unsigned int type)
+ {
+ 	struct perf_event_attr *attr = &event->attr;
+ 	struct hw_perf_event *hwc = &event->hw;
+@@ -207,7 +207,7 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 	int err = 0;
+ 	u64 ev;
+ 
+-	switch (attr->type) {
++	switch (type) {
+ 	case PERF_TYPE_RAW:
+ 		/* Raw events are used to access counters directly,
+ 		 * hence do not permit excludes */
+@@ -294,17 +294,16 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 
+ static int cpumf_pmu_event_init(struct perf_event *event)
+ {
++	unsigned int type = event->attr.type;
+ 	int err;
+ 
+-	switch (event->attr.type) {
+-	case PERF_TYPE_HARDWARE:
+-	case PERF_TYPE_HW_CACHE:
+-	case PERF_TYPE_RAW:
+-		err = __hw_perf_event_init(event);
+-		break;
+-	default:
++	if (type == PERF_TYPE_HARDWARE || type == PERF_TYPE_RAW)
++		err = __hw_perf_event_init(event, type);
++	else if (event->pmu->type == type)
++		/* Registered as unknown PMU */
++		err = __hw_perf_event_init(event, PERF_TYPE_RAW);
++	else
+ 		return -ENOENT;
+-	}
+ 
+ 	if (unlikely(err) && event->destroy)
+ 		event->destroy(event);
+@@ -553,7 +552,7 @@ static int __init cpumf_pmu_init(void)
+ 		return -ENODEV;
+ 
+ 	cpumf_pmu.attr_groups = cpumf_cf_event_group();
+-	rc = perf_pmu_register(&cpumf_pmu, "cpum_cf", PERF_TYPE_RAW);
++	rc = perf_pmu_register(&cpumf_pmu, "cpum_cf", -1);
+ 	if (rc)
+ 		pr_err("Registering the cpum_cf PMU failed with rc=%i\n", rc);
+ 	return rc;
+diff --git a/arch/s390/kernel/perf_cpum_cf_diag.c b/arch/s390/kernel/perf_cpum_cf_diag.c
+index 2654e348801a..e949ab832ed7 100644
+--- a/arch/s390/kernel/perf_cpum_cf_diag.c
++++ b/arch/s390/kernel/perf_cpum_cf_diag.c
+@@ -243,13 +243,13 @@ static int cf_diag_event_init(struct perf_event *event)
+ 	int err = -ENOENT;
+ 
+ 	debug_sprintf_event(cf_diag_dbg, 5,
+-			    "%s event %p cpu %d config %#llx "
++			    "%s event %p cpu %d config %#llx type:%u "
+ 			    "sample_type %#llx cf_diag_events %d\n", __func__,
+-			    event, event->cpu, attr->config, attr->sample_type,
+-			    atomic_read(&cf_diag_events));
++			    event, event->cpu, attr->config, event->pmu->type,
++			    attr->sample_type, atomic_read(&cf_diag_events));
+ 
+ 	if (event->attr.config != PERF_EVENT_CPUM_CF_DIAG ||
+-	    event->attr.type != PERF_TYPE_RAW)
++	    event->attr.type != event->pmu->type)
+ 		goto out;
+ 
+ 	/* Raw events are used to access counters directly,
+@@ -693,7 +693,7 @@ static int __init cf_diag_init(void)
  	}
- 	component = NULL;
+ 	debug_register_view(cf_diag_dbg, &debug_sprintf_view);
  
--	ret = soc_pcm_params_symmetry(substream, params);
--        if (ret)
--		goto component_err;
- out:
- 	mutex_unlock(&rtd->card->pcm_mutex);
- 	return ret;
+-	rc = perf_pmu_register(&cf_diag, "cpum_cf_diag", PERF_TYPE_RAW);
++	rc = perf_pmu_register(&cf_diag, "cpum_cf_diag", -1);
+ 	if (rc) {
+ 		debug_unregister_view(cf_diag_dbg, &debug_sprintf_view);
+ 		debug_unregister(cf_diag_dbg);
 -- 
 2.20.1
 
