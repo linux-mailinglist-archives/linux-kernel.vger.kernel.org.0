@@ -2,36 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 675B612C99A
-	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:18:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DBCD12C789
+	for <lists+linux-kernel@lfdr.de>; Sun, 29 Dec 2019 19:14:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731072AbfL2SL2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 13:11:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50110 "EHLO mail.kernel.org"
+        id S1730487AbfL2Rna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 12:43:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730405AbfL2RnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 12:43:07 -0500
+        id S1726741AbfL2RnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 12:43:22 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A81D321744;
-        Sun, 29 Dec 2019 17:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 019AA208C4;
+        Sun, 29 Dec 2019 17:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577641387;
-        bh=w+vHMWWBPEDgNlWv+B8/qbQJZcT7bi4XD7FJH4FTy5o=;
+        s=default; t=1577641401;
+        bh=5d3QfDrXwgi9KKugVFag//9IUJqnFiwLYU7+XprSpko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MSwamtEqLGY0wkMG0Q0vgEHuEqGsk0W3PbQzDtR2g4FuOWdXQwuTxJn4E2skHcSTY
-         s0QeyFyZgRYtR3qps14V9HCF5EdW1JwsZSFv6Ee+tETTRhokWCnHmIQ1VH6sqHa2jS
-         9TzJhUAdjxMUA0UP1QPchU+BdXkPJITxulCZnJJE=
+        b=ew46ADavzu8m4Yi0GhPw+ipvu2PKfZntcMZLmDQmOUcOhYYRgLih+MFq/Ad2JVnD8
+         GsLwdDf1C/9fPJRnmpoaeN436zdy2Vm8ujiDCHcW7c6BtAJHyXnIJ0abHP+casv5cT
+         TtV9lX0/TNhkP6/q3AnUUWCaR4xbdvc1u7X96UZg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gerd Hoffmann <kraxel@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Chia-I Wu <olvaffe@gmail.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 044/434] drm/virtio: switch virtio_gpu_wait_ioctl() to gem helper.
-Date:   Sun, 29 Dec 2019 18:21:37 +0100
-Message-Id: <20191229172704.939671668@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.4 049/434] drm: Use EOPNOTSUPP, not ENOTSUPP
+Date:   Sun, 29 Dec 2019 18:21:42 +0100
+Message-Id: <20191229172705.220789182@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 References: <20191229172702.393141737@linuxfoundation.org>
@@ -44,71 +51,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gerd Hoffmann <kraxel@redhat.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit 29cf12394c0565d7eb1685bf0c1b4749aa6a8b66 ]
+[ Upstream commit c7581a414d28413c1dd6d116d44859b5a52e0950 ]
 
-Use drm_gem_reservation_object_wait() in virtio_gpu_wait_ioctl().
-This also makes the ioctl run lockless.
+- it's what we recommend in our docs:
 
-v9: fix return value.
-v5: handle lookup failure.
-v2: use reservation_object_test_signaled_rcu for VIRTGPU_WAIT_NOWAIT.
+https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#recommended-ioctl-return-values
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Chia-I Wu <olvaffe@gmail.com>
-Link: http://patchwork.freedesktop.org/patch/msgid/20190829103301.3539-3-kraxel@redhat.com
+- it's the overwhelmingly used error code for "operation not
+  supported", at least in drm core (slightly less so in drivers):
+
+$ git grep EOPNOTSUPP -- drivers/gpu/drm/*c | wc -l
+83
+$ git grep ENOTSUPP -- drivers/gpu/drm/*c | wc -l
+5
+
+- include/linux/errno.h makes it fairly clear that these are for nfsv3
+  (plus they also have error codes above 512, which is the block with
+  some special behaviour ...)
+
+/* Defined for the NFSv3 protocol */
+
+If the above isn't reflecting current practice, then I guess we should
+at least update the docs.
+
+Noralf commented:
+
+Ben Hutchings made this comment[1] in a thread about use of ENOTSUPP in
+drivers:
+
+  glibc's strerror() returns these strings for ENOTSUPP and EOPNOTSUPP
+  respectively:
+
+  "Unknown error 524"
+  "Operation not supported"
+
+So at least for errors returned to userspace EOPNOTSUPP makes sense.
+
+José asked:
+
+> Hopefully this will not break any userspace
+
+None of the functions in drm_edid.c affected by this reach userspace,
+it's all driver internal.
+
+Same for the mipi function, that error code should be handled by
+drivers. Drivers are supposed to remap "the hw is on fire" to EIO when
+reporting up to userspace, but I think if a driver sees this it would
+be a driver bug.
+v2: Augment commit message with comments from Noralf and José
+
+Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+Cc: José Roberto de Souza <jose.souza@intel.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Sean Paul <sean@poorly.run>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Andres Rodriguez <andresx7@gmail.com>
+Cc: Noralf Trønnes <noralf@tronnes.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190904143942.31756-1-daniel.vetter@ffwll.ch
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/virtio/virtgpu_ioctl.c | 28 +++++++++++++++-----------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/drm_edid.c     | 6 +++---
+ drivers/gpu/drm/drm_mipi_dbi.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index 0a88ef11b9d3..a662394f6892 100644
---- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -463,25 +463,29 @@ out:
- }
+diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
+index 6b0177112e18..3f50b8865db4 100644
+--- a/drivers/gpu/drm/drm_edid.c
++++ b/drivers/gpu/drm/drm_edid.c
+@@ -3722,7 +3722,7 @@ cea_db_offsets(const u8 *cea, int *start, int *end)
+ 		if (*end < 4 || *end > 127)
+ 			return -ERANGE;
+ 	} else {
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 	}
  
- static int virtio_gpu_wait_ioctl(struct drm_device *dev, void *data,
--			    struct drm_file *file)
-+				 struct drm_file *file)
- {
- 	struct drm_virtgpu_3d_wait *args = data;
--	struct drm_gem_object *gobj = NULL;
--	struct virtio_gpu_object *qobj = NULL;
-+	struct drm_gem_object *obj;
-+	long timeout = 15 * HZ;
+ 	return 0;
+@@ -4191,7 +4191,7 @@ int drm_edid_to_sad(struct edid *edid, struct cea_sad **sads)
+ 
+ 	if (cea_revision(cea) < 3) {
+ 		DRM_DEBUG_KMS("SAD: wrong CEA revision\n");
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	if (cea_db_offsets(cea, &start, &end)) {
+@@ -4252,7 +4252,7 @@ int drm_edid_to_speaker_allocation(struct edid *edid, u8 **sadb)
+ 
+ 	if (cea_revision(cea) < 3) {
+ 		DRM_DEBUG_KMS("SAD: wrong CEA revision\n");
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
+ 	}
+ 
+ 	if (cea_db_offsets(cea, &start, &end)) {
+diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
+index c4ee2709a6f3..f8154316a3b0 100644
+--- a/drivers/gpu/drm/drm_mipi_dbi.c
++++ b/drivers/gpu/drm/drm_mipi_dbi.c
+@@ -955,7 +955,7 @@ static int mipi_dbi_typec1_command(struct mipi_dbi *dbi, u8 *cmd,
  	int ret;
--	bool nowait = false;
  
--	gobj = drm_gem_object_lookup(file, args->handle);
--	if (gobj == NULL)
-+	obj = drm_gem_object_lookup(file, args->handle);
-+	if (obj == NULL)
- 		return -ENOENT;
+ 	if (mipi_dbi_command_is_read(dbi, *cmd))
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
  
--	qobj = gem_to_virtio_gpu_obj(gobj);
--
--	if (args->flags & VIRTGPU_WAIT_NOWAIT)
--		nowait = true;
--	ret = virtio_gpu_object_wait(qobj, nowait);
-+	if (args->flags & VIRTGPU_WAIT_NOWAIT) {
-+		ret = dma_resv_test_signaled_rcu(obj->resv, true);
-+	} else {
-+		ret = dma_resv_wait_timeout_rcu(obj->resv, true, true,
-+						timeout);
-+	}
-+	if (ret == 0)
-+		ret = -EBUSY;
-+	else if (ret > 0)
-+		ret = 0;
- 
--	drm_gem_object_put_unlocked(gobj);
-+	drm_gem_object_put_unlocked(obj);
- 	return ret;
- }
+ 	MIPI_DBI_DEBUG_COMMAND(*cmd, parameters, num);
  
 -- 
 2.20.1
