@@ -2,83 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 709AC12D003
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:31:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E732612D00D
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:34:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbfL3Mbs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 07:31:48 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46088 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbfL3Mbn (ORCPT
+        id S1727453AbfL3MeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 07:34:19 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:46745 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfL3MeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 07:31:43 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBUCVa09100332;
-        Mon, 30 Dec 2019 06:31:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577709096;
-        bh=NU/rxry6lKNRKG7KKBr3jvZ2rcYxkceQL6qF8JkV+fA=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=KT1NIGdTMEf6Xo2ouarRFsJQczg0WOfU3fBrANPpgQR9EwmSgUodDw5kgt8eQsB4i
-         VE5NCUKOOoGCPsCbUOUsCo3Q2n/Ob3958dM2ZfEVKc5629zwWwXZmXgtUyF0XUBdtf
-         erf5xOkEkOcKIY67bw3kt7VvZkiQxrPA5E6/mjmE=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBUCVa7T095292
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 30 Dec 2019 06:31:36 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 30
- Dec 2019 06:31:35 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Mon, 30 Dec 2019 06:31:35 -0600
-Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBUCVEhT002491;
-        Mon, 30 Dec 2019 06:31:33 -0600
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 7/7] misc: pci_endpoint_test: Enable legacy interrupt
-Date:   Mon, 30 Dec 2019 18:03:15 +0530
-Message-ID: <20191230123315.31037-8-kishon@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191230123315.31037-1-kishon@ti.com>
-References: <20191230123315.31037-1-kishon@ti.com>
+        Mon, 30 Dec 2019 07:34:19 -0500
+Received: from mail-qv1-f44.google.com ([209.85.219.44]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N2Ujn-1jkQEQ1z4B-013xVI; Mon, 30 Dec 2019 13:34:17 +0100
+Received: by mail-qv1-f44.google.com with SMTP id z3so12315547qvn.0;
+        Mon, 30 Dec 2019 04:34:17 -0800 (PST)
+X-Gm-Message-State: APjAAAVxg9/Va+7Lxa53J1oJEUS5unQ0od8K+WOzs4vwlTz68xbQRo/f
+        UZF0ILfphuBq1xjYh+5pNRI0+5T9Zz6pQcGURCM=
+X-Google-Smtp-Source: APXvYqzVAo+ZyEfJF+byazHBzyw1r81fYUkb+lIcfsfvEl5CCNv0HGBgtp71HHEqcuQmiYrP+noYzqN24cAaxpdyDYQ=
+X-Received: by 2002:a0c:8e08:: with SMTP id v8mr37832199qvb.4.1577709256287;
+ Mon, 30 Dec 2019 04:34:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191223130834.GA102399@zx2c4.com> <20191224135404.389039-1-Jason@zx2c4.com>
+ <CAK8P3a1fVFDkHe=gLy55rHxwfZ8YKcUSYvnhSoMbcAgWy6Nm9w@mail.gmail.com> <CAHmME9o07dQV_MmWmtBFCKp=sdsO-scC6-UbXNi=dpU6umCoPg@mail.gmail.com>
+In-Reply-To: <CAHmME9o07dQV_MmWmtBFCKp=sdsO-scC6-UbXNi=dpU6umCoPg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 30 Dec 2019 13:34:00 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a0sWObusG3xO_JE9CXCyNfFN0p6OgPjUyU2CHLBBZNpZw@mail.gmail.com>
+Message-ID: <CAK8P3a0sWObusG3xO_JE9CXCyNfFN0p6OgPjUyU2CHLBBZNpZw@mail.gmail.com>
+Subject: Re: [PATCH] mips: vdso: conditionalize 32-bit time functions on COMPAT_32BIT_TIME
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Christian Brauner <christian.brauner@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:Moo4o+r9ZXyOcQLpJBeMNmEX74RKaHhRTEX+rPGRUfwsVxXGuEO
+ wqPV8DCbcTF5AGcgUSOaKy3SbeHqkLvg4UnsWUzMB+6ucXrwP+3t9votLoo2cAJiwU4/yA1
+ zPLALZCZ3QT3CGJegxuIe70Mu3k6E5tAW2JaDzJuBFCvUs55F3cCq7QYsnOT5zhl4v9RVJ2
+ tqyLiPugFvYVYWQCQ5FzQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yNMXuiXTtMY=:LPMAgjEFvqvDIBLQq2+iLz
+ tVFPJilUKTV1NBbipEgxDabgGPyrKNPhFbahyWC+c1m+OsqrX6NFo6PnhnjaduLdPRIGyR+Rs
+ RLxMhhGBfm/AruwKQXOnSQaV9bDzYEejhqO0vuh/vonmoOJtAo+DJdMv8hibKdDqcgsIIRr0G
+ 0nJBRHX2iYDt950KG7gMsdI4CEXrKL3muy7y5GvaHTviEx3s6l3fPsp808fhXrIdErdzBx5pF
+ vGOoXAc9ZSxWZVR3zTajBEPNIEL4yrov1VzzQtP9qOzOV8aGWy1H3yF/mZoFusEzLsOqFEtNo
+ fHexeGXEYV+C9W10T8FHA3Fo+l3U87HXo00tRgN0OZSRok45UIjtR0TDnrWYWgw/g/aIF15gN
+ ZRv60bKKw/V07IUmwl066S0dJusTL1xAFSFRtJxh2ahvQ4IkP8LsRrUndX2sU4mTEMXHni4pF
+ TuEajA9U87jswJaj3+KUN47zKaiIGbCFp9Vo1Az91XGvEgneAM6DwiLqlLc/ctScK5gGVq2ES
+ GtJim8+tb7dVpt3gn/ZLSP1DLmCtrawDgeOZ9tcnHrSlrLD6TscQiWTO+X4RvkOBvi9T0ftJq
+ BKKt7Z3O1gxA7Q7WJSEDrMjwBTQIO7Ucxp0rGgp564go8V8kdMCMkfrlZClUki8LbGXR1L6Y2
+ fbNMOt5+vE5uL0gamLadYNZw+iZWpHQyLCEUNiBqDyYbPtk85ox4oi64B7lAe8MBMuoYmPFZw
+ WJLkQV4q/0jDkaj5kijhew8SslXA9TeCmxc8VPc75vaqxMkGt7iqtOPTHii8UM++fzQjVTNAH
+ QTRnnAAQcb7tbckDD6gDuihCVVq3YiZCGQSBgr9buRyDgT6adO9JmH6fe9AIXZJ5+H3HNH7jI
+ I+XN9AEENbtOh7gZy70w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PCI core does not enable legacy interrupt if it finds MSI or
-MSIX interrupt. Explicitly enable legacy interrupt here in order
-to perform legacy interrupt tests.
+On Mon, Dec 30, 2019 at 1:27 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> On Mon, Dec 30, 2019 at 12:58 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> > Thanks for the bug report! I'm not completely sure why this fails in
+> > this particular
+> > way though. I assume you are using musl-1.1.20, not a musl-1.2.0 snapshot
+>
+> Yes, that's the one, sorry.
+>
+> > diff --git a/arch/mips/vdso/vdso.lds.S b/arch/mips/vdso/vdso.lds.S
+> > index da4627430aba..0bdc6a026be8 100644
+> > --- a/arch/mips/vdso/vdso.lds.S
+> > +++ b/arch/mips/vdso/vdso.lds.S
+> > @@ -93,9 +93,11 @@ VERSION
+> >         LINUX_2.6 {
+> >  #ifndef DISABLE_MIPS_VDSO
+> >         global:
+> > +#if (_MIPS_SIM == _MIPS_SIM_ABI64) || defined(CONFIG_COMPAT_32BIT_TIME)
+> >                 __vdso_clock_gettime;
+> >                 __vdso_gettimeofday;
+> >                 __vdso_clock_getres;
+> > +#endif
+> >  #if _MIPS_SIM != _MIPS_SIM_ABI64
+> >                 __vdso_clock_gettime64;
+> >  #endif
+> >
+> > That should ensure that no user space can call the old vdso
+> > functions on a kernel that intentionally breaks the actual
+> > syscalls.
+>
+> I can confirm that patch fixes things. Thanks.
 
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
----
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+Ok, that's good news, but I think we still need to answer two questions:
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index dae450c1a653..b2458988939e 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -701,6 +701,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 	}
- 
- 	pci_set_master(pdev);
-+	pci_intx(pdev, true);
- 
- 	if (!(is_am654_pci_dev(pdev) || is_j721e_pci_dev(pdev))) {
- 		if (!pci_endpoint_test_alloc_irq_vectors(test, irq_type))
--- 
-2.17.1
+- Why does it crash in the first place rather than returning -ENOSYS?
 
+- How does it actually work if you run an application built against
+  an old musl version on a kernel that tries to make this not work?
+  Do you just get a random time (uninitialized user space stack) and
+  work with that without checking the error code?
+
+      Arnd
