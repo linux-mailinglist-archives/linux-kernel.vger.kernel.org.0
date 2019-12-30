@@ -2,176 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AECEF12CDAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 09:29:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA1012CDBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 09:32:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfL3I3G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 03:29:06 -0500
-Received: from mout-p-201.mailbox.org ([80.241.56.171]:13618 "EHLO
-        mout-p-201.mailbox.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727175AbfL3I3G (ORCPT
+        id S1727267AbfL3Icl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 03:32:41 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38519 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbfL3Ick (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 03:29:06 -0500
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mout-p-201.mailbox.org (Postfix) with ESMTPS id 47mVvg2XYxzQl95;
-        Mon, 30 Dec 2019 09:29:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by hefe.heinlein-support.de (hefe.heinlein-support.de [91.198.250.172]) (amavisd-new, port 10030)
-        with ESMTP id LksFxLKl0xnj; Mon, 30 Dec 2019 09:28:56 +0100 (CET)
-Date:   Mon, 30 Dec 2019 19:28:47 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        stable <stable@vger.kernel.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC 1/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20191230082847.dkriyisvu7wwxqqu@yavin.dot.cyphar.com>
-References: <20191230052036.8765-1-cyphar@cyphar.com>
- <20191230052036.8765-2-cyphar@cyphar.com>
- <CAHk-=wjHPCQsMeK5bFOJQnrGPfVDXTAFQK4VsBZPj5u=ZgS-QA@mail.gmail.com>
+        Mon, 30 Dec 2019 03:32:40 -0500
+Received: by mail-pg1-f195.google.com with SMTP id a33so17655575pgm.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 00:32:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3s7ohP3Z8i+XydTTvz21BD2f0Cry8Bo5p1LTlT19B4g=;
+        b=EA7HTUbqUnIitOM9hMwC5NmMDjt5Dl9ltD+1qxOpdpPIW9UHf7+tI7Qy/oQwAtA4vW
+         H6HG7HTUJCxGZnGuaxRKAwpEFnEbvqT/ImBccHuptDEIE4FQ9VW0q76DkR3wdHnkWOdi
+         1Pgp9zYBO+fenX2k0p4jKRuM1OBeVz2LRwwGeoZh7J9sFelNo3LBBSDQ14VzONb1FfRh
+         2ddpzvkaDCB/SjXaFrZ2MLI/tNWetR+/WwmDDHlplsZZwcA0P7zS4Q+TLTsk4HOh75sX
+         gdTGlErVdECuB1qagkgC+e6uynre1XT9kVuEnutUu31MJIq47pBHbO9ts8g2c1SV9taI
+         tcxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3s7ohP3Z8i+XydTTvz21BD2f0Cry8Bo5p1LTlT19B4g=;
+        b=DU+DklKJvlrKeCC98vkiyXb7y2/XrAyPQDuQ+caNErN8X4tSekhjwQoTZCcs3PuUlH
+         JSOiC9aaiflHE5iySW/EmJIV37n8KwBb3dMrLICyQCPRj4ioBcOnzQ+WoXMWGeTtW2go
+         q75/uTfPZ9KWhCFso5hAWLKXSe6TVP5RsMHlobLGbO4/PiYiY+nVRjEetkyc4OzdT637
+         1obfhAYWs81UvbbFS9EaLlEixR9SHdHqqfM/R8tuYXpPjHbWvg9yG3sBZ2DV1lzh+b9S
+         0tdf0KYECjJ/Zlpn3c1Bv2g4kjzDe+e4lPYlf/FrDdrXGstp3zMPzbKnR/91NbY71dEB
+         5Yeg==
+X-Gm-Message-State: APjAAAVSnyASrycYUy21vMvyFR3nxW5/FMm4OomoRZqV41SrJne5Hy78
+        K/gWmiHfy5p8/0hqj6yEjwcjaQ==
+X-Google-Smtp-Source: APXvYqxFKKazEmaMHoujQh5jNJgTodqHmA3KCyczG78X9j4EM0Vr0BNNLetv2mkg+9uwCmoNZ4gBDQ==
+X-Received: by 2002:aa7:979a:: with SMTP id o26mr70387114pfp.0.1577694760024;
+        Mon, 30 Dec 2019 00:32:40 -0800 (PST)
+Received: from localhost.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id 17sm51485268pfv.142.2019.12.30.00.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 00:32:39 -0800 (PST)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Corentin Chary <corentin.chary@gmail.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Cc:     acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@endlessm.com, Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] platform/x86: asus-wmi: Fix keyboard brightness cannot be set to 0
+Date:   Mon, 30 Dec 2019 16:30:45 +0800
+Message-Id: <20191230083044.11582-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2ttgeqhlie5hzgct"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjHPCQsMeK5bFOJQnrGPfVDXTAFQK4VsBZPj5u=ZgS-QA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some of ASUS laptops like UX431FL keyboard backlight cannot be set to
+brightness 0. According to ASUS' information, the brightness should be
+0x80 ~ 0x83. This patch fixes it by following the logic.
 
---2ttgeqhlie5hzgct
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: e9809c0b9670 ("asus-wmi: add keyboard backlight support")
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/platform/x86/asus-wmi.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-On 2019-12-29, Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> On Sun, Dec 29, 2019 at 9:21 PM Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > +       if (d_is_symlink(mp->m_dentry) ||
-> > +           d_is_symlink(mnt->mnt.mnt_root))
-> > +               return -EINVAL;
->=20
-> So I don't hate this kind of check in general - overmounting a symlink
-> sounds odd, but at the same time I get the feeling that the real issue
-> is that something went wrong earlier.
->=20
-> Yeah, the mount target kind of _is_ a path, but at the same time, we
-> most definitely want to have the permission to really open the
-> directory in question, don't we, and I don't see that we should accept
-> a O_PATH file descriptor.
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 821b08e01635..982f0cc8270c 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -512,13 +512,7 @@ static void kbd_led_update(struct asus_wmi *asus)
+ {
+ 	int ctrl_param = 0;
+ 
+-	/*
+-	 * bits 0-2: level
+-	 * bit 7: light on/off
+-	 */
+-	if (asus->kbd_led_wk > 0)
+-		ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+-
++	ctrl_param = 0x80 | (asus->kbd_led_wk & 0x7F);
+ 	asus_wmi_set_devstate(ASUS_WMI_DEVID_KBD_BACKLIGHT, ctrl_param, NULL);
+ }
+ 
+-- 
+2.20.1
 
-The new mount API uses O_PATH under the hood (which is a good thing
-since some files you'd like to avoid actually opening -- FIFOs are the
-obvious example) so I'm not sure that's something we could really avoid.
-
-But if we block O_PATH for mounts this will achieve the same thing,
-because the only way to get a file descriptor that references a symlink
-is through (O_PATH | O_NOFOLLOW).
-
-> I feel like the only valid use of "O_PATH" files is to then use them
-> as the base for an openat() and friends (ie fchmodat/execveat() etc).
-
-See below, we use this for all sorts of dirty^Wclever tricks.
-
-> But maybe I'm completely wrong, and people really do want O_PATH
-> handling exactly for mounting too. It does sound a bit odd. By
-> definition, mounting wants permissions to the mount-point, so what's
-> the point of using O_PATH?
-
-When you go through O_PATH, you still get a proper 'struct path' which
-means that for operations such as mount (or open) you will operate on
-the *real* underlying file.
-
-This is part of what makes magic-links so useful (but also quite
-terrifying).
-
-> For example, is the problem that when you do a proper
->=20
->   fd =3D open("somepath", O_PATH);
->=20
-> in one process, and then another thread does
->=20
->    fd =3D open("/proc/<pid>/fd/<opathfd>", O_RDWR);
->=20
-> then we get confused and do bad things on that *second* open? Because
-> now the second open doesn't have O_PATH, and doesn't ghet marked
-> FMODE_PATH, but the underlying file descriptor is one of those limited
-> "is really only useful for openat() and friends".
-
-Actually, this isn't true (for the same reason as above) -- when you do
-a re-open through /proc/$pid/fd/$n you get a real-as-a-heart-attack file
-descriptor. We make lots of use of this in container runtimes in order
-to do some dirty^Wfun tricks that help us harden the runtime against
-malicious container processes.
-
-You might recall that when I was posting the earlier revisions of
-openat2(), I also included a patch for O_EMPTYPATH (which basically did
-a re-open of /proc/self/fd/$dfd but without needing /proc). That had
-precisely the same semantics so that you could do the same operation
-without procfs. That patch was dropped before Al merged openat2(), but I
-am probably going to revive it for the reasons I outlined below.
-
-> I dunno. I haven't thought through the whole thing. But the oopses you
-> quote seem like we're really doing something wrong, and it really does
-> feel like your patch in no way _fixes_ the wrong thing we're doing,
-> it's just hiding the symptoms.
-
-That's fair enough.
-
-I'll be honest, the real reason why I don't want mounts over symlinks to
-be possible is for an entirely different reason. I'm working on a safe
-path resolution library to accompany openat2()[1] -- and one of the
-things I want to do is to harden all of our uses of procfs (such that if
-we are running in a context where procfs has been messed with -- such as
-having files bind-mounted -- we can detect it and abort). The issue with
-symlinks is that we need to be able to operate on magic-links (such as
-/proc/self/fd/$n and /proc/self/exe) -- and if it's possible bind-mount
-over those magic-links then we can't detect it at all.
-
-openat2(RESOLVE_NO_XDEV) would block it, but it also blocks going
-through magic-links which change your mount (which would almost always
-be true). You can't trust /proc/self/mountinfo by definition -- not just
-because of the TOCTOU race but also because you can't depend on /proc to
-harden against a "bad" /proc. All other options such as
-umount2(MNT_EXPIRE) won't help with magic-links because we cannot take
-an O_PATH to a magic-link and follow it -- O_PATHs of symlinks are
-completely stunted in this respect.
-
-If allowing bind-mounts over symlinks is allowed (which I don't have a
-problem with really), it just means we'll need a few more kernel pieces
-to get this hardening to work. But these features would be useful
-outside of the problems I'm dealing with (O_EMPTYPATH and some kind of
-pidfd-based interface to grab the equivalent of /proc/self/exe and a few
-other such magic-link targets).
-
-[1]: https://github.com/openSUSE/libpathrs
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---2ttgeqhlie5hzgct
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCXgm1PAAKCRCdlLljIbnQ
-EgySAP9VrQ+iD1l5aOAWe2wFG8Jw0u9h3RrYrsF6ygoOD7rhYgEAjl6Xtd4ayz7s
-rKcquB9aKdCEYTJMzkPShbvhgHd0rAc=
-=ff9q
------END PGP SIGNATURE-----
-
---2ttgeqhlie5hzgct--
