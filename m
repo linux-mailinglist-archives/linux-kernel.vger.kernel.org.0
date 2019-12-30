@@ -2,93 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B88B12CCEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 06:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D58312CD06
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 06:44:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727282AbfL3FdI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 00:33:08 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37493 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727178AbfL3FdE (ORCPT
+        id S1727161AbfL3Foa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 00:44:30 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:42590 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725834AbfL3Foa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 00:33:04 -0500
-X-UUID: 2c9e0d46941340628726e638ba382d4e-20191230
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=zcqo/uUAToxxvQgNL6zzmxHLy2AwGsR7I5v8srG1wtE=;
-        b=fB8Q1VNy9BkcjMm7a40vQb+NWWUYfksb0Hcl7ikKYWnTxXSRUfL4IJn18v0J2eoYUoGe5pr40OYBs83fMNEkc7n8+7l9EfAnfnofrTMcJG63kxclGriURv6y3hptaurb1sOkdxZOG8ju81fyOAy+cuX4gFXvZMW/TsKtCP8WqGs=;
-X-UUID: 2c9e0d46941340628726e638ba382d4e-20191230
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
-        (envelope-from <stanley.chu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 582843976; Mon, 30 Dec 2019 13:33:00 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 30 Dec 2019 13:32:10 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 30 Dec 2019 13:31:37 +0800
-From:   Stanley Chu <stanley.chu@mediatek.com>
-To:     <linux-scsi@vger.kernel.org>, <martin.petersen@oracle.com>,
-        <avri.altman@wdc.com>, <alim.akhtar@samsung.com>,
-        <pedrom.sousa@synopsys.com>, <jejb@linux.ibm.com>,
-        <matthias.bgg@gmail.com>, <bvanassche@acm.org>,
-        <f.fainelli@gmail.com>
-CC:     <beanhuo@micron.com>, <cang@codeaurora.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <kuohong.wang@mediatek.com>,
-        <peter.wang@mediatek.com>, <chun-hung.wu@mediatek.com>,
-        <andy.teng@mediatek.com>, <leon.chen@mediatek.com>,
-        Stanley Chu <stanley.chu@mediatek.com>
-Subject: [PATCH v2 6/6] scsi: ufs-mediatek: configure and enable clk-gating
-Date:   Mon, 30 Dec 2019 13:32:30 +0800
-Message-ID: <1577683950-1702-7-git-send-email-stanley.chu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1577683950-1702-1-git-send-email-stanley.chu@mediatek.com>
-References: <1577683950-1702-1-git-send-email-stanley.chu@mediatek.com>
+        Mon, 30 Dec 2019 00:44:30 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1ilnqf-0005Om-SW; Mon, 30 Dec 2019 05:44:14 +0000
+Date:   Mon, 30 Dec 2019 05:44:13 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Aleksa Sarai <cyphar@cyphar.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
+ symlinks
+Message-ID: <20191230054413.GX4203@ZenIV.linux.org.uk>
+References: <20191230052036.8765-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 2A150414534660147BE3BB69D4F20D1A8206033647AC2FCC00F343D7FC19C24F2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191230052036.8765-1-cyphar@cyphar.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RW5hYmxlIGNsay1nYXRpbmcgd2l0aCBjdXN0b21pemVkIGRlbGF5ZWQgdGltZXIgdmFsdWUgaW4N
-Ck1lZGlhVGVrIENoaXBzZXRzLg0KDQpDYzogQWxpbSBBa2h0YXIgPGFsaW0uYWtodGFyQHNhbXN1
-bmcuY29tPg0KQ2M6IEF2cmkgQWx0bWFuIDxhdnJpLmFsdG1hbkB3ZGMuY29tPg0KQ2M6IEJhcnQg
-VmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPg0KQ2M6IEJlYW4gSHVvIDxiZWFuaHVvQG1p
-Y3Jvbi5jb20+DQpDYzogQ2FuIEd1byA8Y2FuZ0Bjb2RlYXVyb3JhLm9yZz4NCkNjOiBGbG9yaWFu
-IEZhaW5lbGxpIDxmLmZhaW5lbGxpQGdtYWlsLmNvbT4NCkNjOiBNYXR0aGlhcyBCcnVnZ2VyIDxt
-YXR0aGlhcy5iZ2dAZ21haWwuY29tPg0KU2lnbmVkLW9mZi1ieTogU3RhbmxleSBDaHUgPHN0YW5s
-ZXkuY2h1QG1lZGlhdGVrLmNvbT4NClJldmlld2VkLWJ5OiBBbGltIEFraHRhciA8YWxpbS5ha2h0
-YXJAc2Ftc3VuZy5jb20+DQotLS0NCiBkcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIHwg
-MjIgKysrKysrKysrKysrKysrKysrKysrKw0KIDEgZmlsZSBjaGFuZ2VkLCAyMiBpbnNlcnRpb25z
-KCspDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jIGIvZHJp
-dmVycy9zY3NpL3Vmcy91ZnMtbWVkaWF0ZWsuYw0KaW5kZXggMWYwMjU3MjNiNjFiLi40MWY4MGVl
-YWRhNDYgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQorKysg
-Yi9kcml2ZXJzL3Njc2kvdWZzL3Vmcy1tZWRpYXRlay5jDQpAQCAtMjEwLDYgKzIxMCw5IEBAIHN0
-YXRpYyBpbnQgdWZzX210a19pbml0KHN0cnVjdCB1ZnNfaGJhICpoYmEpDQogCS8qIEVuYWJsZSBy
-dW50aW1lIGF1dG9zdXNwZW5kICovDQogCWhiYS0+Y2FwcyB8PSBVRlNIQ0RfQ0FQX1JQTV9BVVRP
-U1VTUEVORDsNCiANCisJLyogRW5hYmxlIGNsb2NrLWdhdGluZyAqLw0KKwloYmEtPmNhcHMgfD0g
-VUZTSENEX0NBUF9DTEtfR0FUSU5HOw0KKw0KIAkvKg0KIAkgKiB1ZnNoY2Rfdm9wc19pbml0KCkg
-aXMgaW52b2tlZCBhZnRlcg0KIAkgKiB1ZnNoY2Rfc2V0dXBfY2xvY2sodHJ1ZSkgaW4gdWZzaGNk
-X2hiYV9pbml0KCkgdGh1cw0KQEAgLTI5OCw2ICszMDEsMjMgQEAgc3RhdGljIGludCB1ZnNfbXRr
-X3ByZV9saW5rKHN0cnVjdCB1ZnNfaGJhICpoYmEpDQogCXJldHVybiByZXQ7DQogfQ0KIA0KK3N0
-YXRpYyB2b2lkIHVmc19tdGtfc2V0dXBfY2xrX2dhdGluZyhzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0K
-K3sNCisJdW5zaWduZWQgbG9uZyBmbGFnczsNCisJdTMyIGFoX21zOw0KKw0KKwlpZiAodWZzaGNk
-X2lzX2Nsa2dhdGluZ19hbGxvd2VkKGhiYSkpIHsNCisJCWlmICh1ZnNoY2RfaXNfYXV0b19oaWJl
-cm44X3N1cHBvcnRlZChoYmEpICYmIGhiYS0+YWhpdCkNCisJCQlhaF9tcyA9IEZJRUxEX0dFVChV
-RlNIQ0lfQUhJQkVSTjhfVElNRVJfTUFTSywNCisJCQkJCSAgaGJhLT5haGl0KTsNCisJCWVsc2UN
-CisJCQlhaF9tcyA9IDEwOw0KKwkJc3Bpbl9sb2NrX2lycXNhdmUoaGJhLT5ob3N0LT5ob3N0X2xv
-Y2ssIGZsYWdzKTsNCisJCWhiYS0+Y2xrX2dhdGluZy5kZWxheV9tcyA9IGFoX21zICsgNTsNCisJ
-CXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoaGJhLT5ob3N0LT5ob3N0X2xvY2ssIGZsYWdzKTsNCisJ
-fQ0KK30NCisNCiBzdGF0aWMgaW50IHVmc19tdGtfcG9zdF9saW5rKHN0cnVjdCB1ZnNfaGJhICpo
-YmEpDQogew0KIAkvKiBkaXNhYmxlIGRldmljZSBMQ0MgKi8NCkBAIC0zMTMsNiArMzMzLDggQEAg
-c3RhdGljIGludCB1ZnNfbXRrX3Bvc3RfbGluayhzdHJ1Y3QgdWZzX2hiYSAqaGJhKQ0KIAkJCUZJ
-RUxEX1BSRVAoVUZTSENJX0FISUJFUk44X1NDQUxFX01BU0ssIDMpKTsNCiAJfQ0KIA0KKwl1ZnNf
-bXRrX3NldHVwX2Nsa19nYXRpbmcoaGJhKTsNCisNCiAJcmV0dXJuIDA7DQogfQ0KIA0KLS0gDQoy
-LjE4LjANCg==
+On Mon, Dec 30, 2019 at 04:20:35PM +1100, Aleksa Sarai wrote:
 
+> A reasonably detailed explanation of the issues is provided in the patch
+> itself, but the full traces produced by both the oopses and deadlocks is
+> included below (it makes little sense to include them in the commit since we
+> are disabling this feature, not directly fixing the bugs themselves).
+> 
+> I've posted this as an RFC on whether this feature should be allowed at
+> all (and if anyone knows of legitimate uses for it), or if we should
+> work on fixing these other kernel bugs that it exposes.
+
+Umm...  Are all of those traces
+	a) reproducible on mainline and
+	b) reproducible as the first oopsen?
+
+As it is, quite a few might be secondary results of earlier memory
+corruption...
