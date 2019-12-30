@@ -2,102 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8251F12D41A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:46:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CC1812D430
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:56:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfL3Tqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 14:46:32 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45965 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfL3Tqc (ORCPT
+        id S1727703AbfL3T4Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 14:56:16 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33258 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfL3T4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:46:32 -0500
-Received: by mail-oi1-f195.google.com with SMTP id n16so7361835oie.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 11:46:31 -0800 (PST)
+        Mon, 30 Dec 2019 14:56:16 -0500
+Received: by mail-ed1-f67.google.com with SMTP id r21so33700843edq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 11:56:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nhLBznDpPIkcA99MosSeV1eijWyqBw1QQ9xRXNnYWQY=;
-        b=NmO0ccq9LT71pij3I3wXVtkLl7bnRikqwOagCbEDuQ3z4KX2e9cfQBEuxfG1dGfJll
-         LTZmZMCcGour2Lo01PrTULZKJBnAAIqtbY1vc4S0vMmstsMJdIDZbbn+0LnObUG0NVwo
-         7GM6G2cOL6mfs5o6PMkzDqio3xhTbvZl+UxtE=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gO16AQCkNPb14dsCdpkNOICcLP4HpRwvIVTrCALZZko=;
+        b=fzz92Rr5ad/tw0dAyXatXMplVhuQTUMwBoHdS2zFzvNq3breMRsKrqsAxDoCTQvjpj
+         WB5JiebaJGU/chwFRmjzZtX66Re6Rm3vCKvnP2CwjjzBa3yQBa7X3ve2scCY/dC9ljry
+         VJoXuBqYtHvYc2PtO3mdZDZcuEGoGUQigwd0u1XguvL8OcAP2WYRTjUbUeGFMwe3gmgh
+         rOMNHL58k4ZYkEcc7vFiYn3vjtOcnLzwJ6yLVpWjnTGmvagFT0WvPI7Gc8DMp+R3rMms
+         g5+qwkh3pwPpRsSJpRA4BQPwL2prIzuXHCjXa6IH9NViXz6mr2cZsL8ckh8YsSL4Hq2z
+         DdlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nhLBznDpPIkcA99MosSeV1eijWyqBw1QQ9xRXNnYWQY=;
-        b=r2CSMPANIH73kgufFIvpBIiScjMEClw2YiI2+ZQVekJBTJ43ziP+4Rn5ByIrWIkziK
-         KphgY0fWVchElQx+Bo7ckZpRN0YY/rZQ5G5Xb+OZz0IeZBHbmpWgJV7jeykb96yE8FwO
-         e9S7D4LBkkE0duBOWhe9LryeJ9SFKGn1WRouocza/MkdHAebz0H8FPwlFkGE33inZsY+
-         SnJHhfD4A/OP3JeiwWksbXvKGzZ/9CjgTQD/+aIAyiRKi1sIIYFibnGqMO7Y28cmQNej
-         nDK/DujQ/oNwU5BfDiUWo1oTsrFkBCOIxlL4grpMg8Z/fcP69uDWzLLrv6lNS4IwKOes
-         LOqg==
-X-Gm-Message-State: APjAAAWfw/0pjERPPtep8K9WblsEe4orQyYTGOtv2AaWoTO7ThIGUBJZ
-        zm/y/UyiERW98nRcEKHU8pewiA==
-X-Google-Smtp-Source: APXvYqyGIu/RzAxD1rIwLNfFj7XiiK45wLcBNxaGCNxUZ8fr7pV+cv1nJjkKw1U4StoTDg7RZB6YPA==
-X-Received: by 2002:aca:43c1:: with SMTP id q184mr296079oia.116.1577735191691;
-        Mon, 30 Dec 2019 11:46:31 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id c11sm1194282oth.81.2019.12.30.11.46.30
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gO16AQCkNPb14dsCdpkNOICcLP4HpRwvIVTrCALZZko=;
+        b=cfEMkUTKQFMrXVhTQnu4ByvTfdksgiVtF0E9aQx+MzlDEHJQDlEoVb2GjnCf1JjbQN
+         9Yx3XUT7ekBp+8smyV2uybuy0M0MwYi8liAAxskqNyn14TdVr7AxaxpXGJixiGtOZHKO
+         PQf4NwSJvT594vQqrJhO1HIrAEvnjgsFXfNcmnPhJw5uE17DczKcupg2specq/KMrg6O
+         BjqTQViTDZkAEnQItTabfZ80i8qPSAjAuvX7c/97zmh9K/B4IXtT6Reb7AZlj7EetJK0
+         9a/3elifsw4lrIzkh+VTyozni/inQ/gAoNK3CtimMKBfldxToYnOHjMYmXWAsIcW074X
+         ZTQA==
+X-Gm-Message-State: APjAAAVD4XqPn9/BXMhJT23rNCQcl6Hc4BbwTMp6CnKSTMLZZRI1p1nH
+        jsD+ApIAQbPB/rkS/qKaGak=
+X-Google-Smtp-Source: APXvYqyK9+yOm7EZSKgP1CIAOwXYYE/RZODwwHNa9cFvR2LrqE+OdolaLn4Q9Fr4gSKqnvbUjJbFkA==
+X-Received: by 2002:a05:6402:3184:: with SMTP id di4mr73253173edb.59.1577735774170;
+        Mon, 30 Dec 2019 11:56:14 -0800 (PST)
+Received: from localhost.localdomain ([197.254.95.38])
+        by smtp.googlemail.com with ESMTPSA id ba29sm5446185edb.47.2019.12.30.11.56.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 11:46:30 -0800 (PST)
-Date:   Mon, 30 Dec 2019 11:46:29 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     Anton Vorontsov <anton.vorontsov@linaro.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, emamd001@umn.edu
-Subject: Re: [PATCH] pstore/ram: Fix memory leak in persistent_ram_new
-Message-ID: <201912301144.7CCEF23E@keescook>
-References: <20191211191353.14385-1-navid.emamdoost@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191211191353.14385-1-navid.emamdoost@gmail.com>
+        Mon, 30 Dec 2019 11:56:13 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: declare variable as __be16
+Date:   Mon, 30 Dec 2019 22:56:09 +0300
+Message-Id: <20191230195609.12386-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 01:13:51PM -0600, Navid Emamdoost wrote:
-> In the implementation of persistent_ram_new(), if the allocation for prz
-> fails, "label" should be released as part of error handling. Release the
-> label via kfree().
-> 
-> Fixes: 8cf5aff89e59 ("staging: android: persistent_ram: Introduce persistent_ram_new()")
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Declare the temp variable as __be16 to address the following sparse
+warning:
+drivers/gpu/drm/panel/panel-lg-lg4573.c:45:20: warning: incorrect type in initializer (different base types)
+drivers/gpu/drm/panel/panel-lg-lg4573.c:45:20:    expected unsigned short [unsigned] [usertype] temp
+drivers/gpu/drm/panel/panel-lg-lg4573.c:45:20:    got restricted __be16 [usertype] <noident>
 
-You're right about the need to clean up the allocation, but I think it's
-on the caller to do this, not persistent_ram_new(), in case a const char
-string is used in the future.
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
+---
+ drivers/gpu/drm/panel/panel-lg-lg4573.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think the "Fixes" should also be:
-Fixes: 1227daa43bce ("pstore/ram: Clarify resource reservation labels")
-
--Kees
-
-> ---
->  fs/pstore/ram_core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-> index 8823f65888f0..7d2d86999211 100644
-> --- a/fs/pstore/ram_core.c
-> +++ b/fs/pstore/ram_core.c
-> @@ -568,6 +568,7 @@ struct persistent_ram_zone *persistent_ram_new(phys_addr_t start, size_t size,
->  	prz = kzalloc(sizeof(struct persistent_ram_zone), GFP_KERNEL);
->  	if (!prz) {
->  		pr_err("failed to allocate persistent ram zone\n");
-> +		kfree(label);
->  		goto err;
->  	}
->  
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/gpu/drm/panel/panel-lg-lg4573.c b/drivers/gpu/drm/panel/panel-lg-lg4573.c
+index 20235ff0bbc4..b262b53dbd85 100644
+--- a/drivers/gpu/drm/panel/panel-lg-lg4573.c
++++ b/drivers/gpu/drm/panel/panel-lg-lg4573.c
+@@ -42,7 +42,7 @@ static int lg4573_spi_write_u16(struct lg4573 *ctx, u16 data)
+ 	struct spi_transfer xfer = {
+ 		.len = 2,
+ 	};
+-	u16 temp = cpu_to_be16(data);
++	__be16 temp = cpu_to_be16(data);
+ 	struct spi_message msg;
+ 
+ 	dev_dbg(ctx->panel.dev, "writing data: %x\n", data);
 -- 
-Kees Cook
+2.17.1
+
