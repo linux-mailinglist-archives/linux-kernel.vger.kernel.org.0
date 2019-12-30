@@ -2,56 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5855312CC76
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 06:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E27712CC7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 06:04:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfL3FAu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 00:00:50 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:36502 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727188AbfL3FAt (ORCPT
+        id S1727132AbfL3FEz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 00:04:55 -0500
+Received: from mail-pl1-f177.google.com ([209.85.214.177]:38874 "EHLO
+        mail-pl1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbfL3FEz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 00:00:49 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1577682048; h=Content-Transfer-Encoding: MIME-Version:
- References: In-Reply-To: Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=vuuqJ73RYNPZB5++9ydg1fEs2W+tW/hjcTRH47X7J18=; b=LRxE4HB+qVBbzZd4aWXWCtTSD6e/sjpNBi4l6LaR/IWIr8cUYVf7HO5aXbQRF5MzJtVG3ubf
- S1km7ir1CN3u73l/+gph+GNR1qS1OXKkAqU35Q/cAqiU3VsTCmUPhsdQGG/LZNC9odGqppUP
- A4JoKvUkewhTmTx6whZ9YC/XooI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI0MWYwYSIsICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e098475.7ff4dcc09f48-smtp-out-n01;
- Mon, 30 Dec 2019 05:00:37 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B78FDC447AD; Mon, 30 Dec 2019 05:00:36 +0000 (UTC)
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        aws-us-west-2-caf-mail-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.0 tests=ALL_TRUSTED,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E50E0C447B2;
-        Mon, 30 Dec 2019 05:00:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E50E0C447B2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     bjorn.andersson@linaro.org, srinivas.kandagatla@linaro.org,
-        robh+dt@kernel.org, tsoni@codeaurora.org
-Cc:     agross@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v3 3/3] soc: qcom: apr: Add avs/audio tracking functionality
-Date:   Mon, 30 Dec 2019 10:30:08 +0530
-Message-Id: <20191230050008.8143-4-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20191230050008.8143-1-sibis@codeaurora.org>
-References: <20191230050008.8143-1-sibis@codeaurora.org>
+        Mon, 30 Dec 2019 00:04:55 -0500
+Received: by mail-pl1-f177.google.com with SMTP id f20so14188079plj.5;
+        Sun, 29 Dec 2019 21:04:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5wS2IrMaQZTiI9oJtmOwRkQukdb+P4omdMqN1yhWXY0=;
+        b=SsJhNicNBuR0+0m1WCqa3TOIKJdbehKSJ+OcgZ+UNMdRswGsKau5fPieyPoN6otn7e
+         UvbNom9oZ4ijzIIB+lO3Iu1XcVnAJ1BoIUWFzC6Xo9gBG3/iWplqvMoAvFeJFZRj+9yB
+         T5t1Df4TFiA2tja6hiSjO6KIQbIBFGwxa2AvWh/wCYkqKEnzAOX/ONzKbGwoyhlN2kiW
+         pYHC3dtJ0EesYBVsKI4Glwq/zOos/H2zBpJhp+UN3QDypFCXfJBdulUEXvh4Rb8AtVEy
+         Jmk5oYAYDspe+P43S+OJszBAx2HAiY3afziP65UWMpPclQ+TRIack/CCcEcoD8rEZFPS
+         KVyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5wS2IrMaQZTiI9oJtmOwRkQukdb+P4omdMqN1yhWXY0=;
+        b=PgX1PspXNsHB1P4Ey9ZieCIKgvPsvG9v++ZifkWdICphS3erN3ygo4AqNnUH3A2N3l
+         zEZqbbcPDdEgegny9e3gufM/u22OW6zNT/Xt4eiJHUiCL56p/iUXrUo1qn6f+ZHajkE9
+         Dsi4o1WyBqO9vrqkfpLy4Bydz2buaq9z46DhFK1bw3cMP/KpPs+3jzBwWDqZ/GZbNxXt
+         KdIJrizfA52p7AmKwld7wr7wyVybQPuPdepM4/0SIJbvpPtmCb+nt+7vaAhtlXARY/Vc
+         tcep2qVojIm/hIHQ7yXWf1jR0e3Egm97l3AOSeEhKs7QbHST758tvZNtzbIcn5jdWxtP
+         OQLQ==
+X-Gm-Message-State: APjAAAVQKn4E8R4kTObOrZ0LJ8d3odOPVx8Bum87J9P2AqBDSLlFVrJ7
+        exbWpyqZlDOuurkSB/djVv8=
+X-Google-Smtp-Source: APXvYqwCNL+eGFhE9EXNh11lwrXcCRKTQPaNUiZYwK7Fwvolj1nrhVaq5BkIHlAckfQuu8AHr5p1xQ==
+X-Received: by 2002:a17:902:407:: with SMTP id 7mr11012274ple.226.1577682294245;
+        Sun, 29 Dec 2019 21:04:54 -0800 (PST)
+Received: from localhost.localdomain ([2804:14d:72b1:8920:da15:c0bd:33c1:e2ad])
+        by smtp.gmail.com with ESMTPSA id r2sm45054727pgv.16.2019.12.29.21.04.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 29 Dec 2019 21:04:53 -0800 (PST)
+From:   "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
+X-Google-Original-From: Daniel W. S. Almeida
+To:     corbet@lwn.net, mchehab+samsung@kernel.org
+Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH 0/5] Documentation: nfs: convert remaining files to ReST.
+Date:   Mon, 30 Dec 2019 02:04:42 -0300
+Message-Id: <cover.1577681894.git.dwlsalmeida@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,211 +63,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use PDR helper functions to track the protection domains that the apr
-services are dependent upon on SDM845 SoC, specifically the "avs/audio"
-service running on ADSP Q6.
+From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
----
- drivers/soc/qcom/Kconfig     |   1 +
- drivers/soc/qcom/apr.c       | 100 +++++++++++++++++++++++++++++++----
- include/linux/soc/qcom/apr.h |   1 +
- 3 files changed, 91 insertions(+), 11 deletions(-)
+This series completes the conversion of Documentation/filesystems/nfs to ReST.
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 5c4e76837f59b..cacfed945b275 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -202,6 +202,7 @@ config QCOM_APR
- 	tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select QCOM_PDR_HELPERS
- 	help
-           Enable APR IPC protocol support between
-           application processor and QDSP6. APR is
-diff --git a/drivers/soc/qcom/apr.c b/drivers/soc/qcom/apr.c
-index 4fcc32420c474..5234426718e88 100644
---- a/drivers/soc/qcom/apr.c
-+++ b/drivers/soc/qcom/apr.c
-@@ -11,6 +11,7 @@
- #include <linux/workqueue.h>
- #include <linux/of_device.h>
- #include <linux/soc/qcom/apr.h>
-+#include <linux/soc/qcom/pdr.h>
- #include <linux/rpmsg.h>
- #include <linux/of.h>
- 
-@@ -21,6 +22,7 @@ struct apr {
- 	spinlock_t rx_lock;
- 	struct idr svcs_idr;
- 	int dest_domain_id;
-+	struct pdr_handle pdr;
- 	struct workqueue_struct *rxwq;
- 	struct work_struct rx_work;
- 	struct list_head rx_list;
-@@ -289,6 +291,9 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 		  id->svc_id + 1, GFP_ATOMIC);
- 	spin_unlock(&apr->svcs_lock);
- 
-+	of_property_read_string_index(np, "qcom,protection-domain",
-+				      1, &adev->service_path);
-+
- 	dev_info(dev, "Adding APR dev: %s\n", dev_name(&adev->dev));
- 
- 	ret = device_register(&adev->dev);
-@@ -300,14 +305,56 @@ static int apr_add_device(struct device *dev, struct device_node *np,
- 	return ret;
- }
- 
--static void of_register_apr_devices(struct device *dev)
-+static void of_apr_add_pd_lookups(struct device *dev)
- {
-+	const char *service_name, *service_path;
- 	struct apr *apr = dev_get_drvdata(dev);
- 	struct device_node *node;
-+	int ret;
-+
-+	for_each_child_of_node(dev->of_node, node) {
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    0, &service_name);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (ret < 0)
-+			continue;
-+
-+		ret = pdr_add_lookup(&apr->pdr, service_name, service_path);
-+		if (ret && ret != -EALREADY)
-+			dev_err(dev, "pdr add lookup failed: %d\n", ret);
-+	}
-+}
-+
-+static void of_register_apr_devices(struct device *dev, const char *svc_path)
-+{
-+	struct apr *apr = dev_get_drvdata(dev);
-+	struct device_node *node;
-+	const char *service_path;
-+	int ret;
- 
- 	for_each_child_of_node(dev->of_node, node) {
- 		struct apr_device_id id = { {0} };
- 
-+		ret = of_property_read_string_index(node, "qcom,protection-domain",
-+						    1, &service_path);
-+		if (svc_path) {
-+			/* skip APR services that are PD independent */
-+			if (ret)
-+				continue;
-+
-+			/* skip APR services whose PD paths don't match */
-+			if (strcmp(service_path, svc_path))
-+				continue;
-+		} else {
-+			/* skip APR services whose PD lookups are registered */
-+			if (ret == 0)
-+				continue;
-+		}
-+
- 		if (of_property_read_u32(node, "reg", &id.svc_id))
- 			continue;
- 
-@@ -318,6 +365,35 @@ static void of_register_apr_devices(struct device *dev)
- 	}
- }
- 
-+static int apr_remove_device(struct device *dev, void *svc_path)
-+{
-+	struct apr_device *adev = to_apr_device(dev);
-+
-+	if (svc_path) {
-+		if (!strcmp(adev->service_path, (char *)svc_path))
-+			device_unregister(&adev->dev);
-+	} else {
-+		device_unregister(&adev->dev);
-+	}
-+
-+	return 0;
-+}
-+
-+static void apr_pd_status(struct pdr_handle *pdr, struct pdr_service *pds)
-+{
-+	struct apr *apr = container_of(pdr, struct apr, pdr);
-+
-+	switch (pds->state) {
-+	case SERVREG_SERVICE_STATE_UP:
-+		of_register_apr_devices(apr->dev, pds->service_path);
-+		break;
-+	case SERVREG_SERVICE_STATE_DOWN:
-+		device_for_each_child(apr->dev, pds->service_path,
-+				      apr_remove_device);
-+		break;
-+	}
-+}
-+
- static int apr_probe(struct rpmsg_device *rpdev)
- {
- 	struct device *dev = &rpdev->dev;
-@@ -337,26 +413,27 @@ static int apr_probe(struct rpmsg_device *rpdev)
- 	dev_set_drvdata(dev, apr);
- 	apr->ch = rpdev->ept;
- 	apr->dev = dev;
-+
- 	apr->rxwq = create_singlethread_workqueue("qcom_apr_rx");
- 	if (!apr->rxwq) {
- 		dev_err(apr->dev, "Failed to start Rx WQ\n");
- 		return -ENOMEM;
- 	}
- 	INIT_WORK(&apr->rx_work, apr_rxwq);
-+
-+	ret = pdr_handle_init(&apr->pdr, apr_pd_status);
-+	if (ret) {
-+		dev_err(dev, "Failed to init PDR handle\n");
-+		destroy_workqueue(apr->rxwq);
-+		return ret;
-+	}
-+
- 	INIT_LIST_HEAD(&apr->rx_list);
- 	spin_lock_init(&apr->rx_lock);
- 	spin_lock_init(&apr->svcs_lock);
- 	idr_init(&apr->svcs_idr);
--	of_register_apr_devices(dev);
--
--	return 0;
--}
--
--static int apr_remove_device(struct device *dev, void *null)
--{
--	struct apr_device *adev = to_apr_device(dev);
--
--	device_unregister(&adev->dev);
-+	of_apr_add_pd_lookups(dev);
-+	of_register_apr_devices(dev, NULL);
- 
- 	return 0;
- }
-@@ -365,6 +442,7 @@ static void apr_remove(struct rpmsg_device *rpdev)
- {
- 	struct apr *apr = dev_get_drvdata(&rpdev->dev);
- 
-+	pdr_handle_release(&apr->pdr);
- 	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
- 	flush_workqueue(apr->rxwq);
- 	destroy_workqueue(apr->rxwq);
-diff --git a/include/linux/soc/qcom/apr.h b/include/linux/soc/qcom/apr.h
-index c5d52e2cb275f..7f0bc3cf4d610 100644
---- a/include/linux/soc/qcom/apr.h
-+++ b/include/linux/soc/qcom/apr.h
-@@ -85,6 +85,7 @@ struct apr_device {
- 	uint16_t	domain_id;
- 	uint32_t	version;
- 	char name[APR_NAME_SIZE];
-+	const char *service_path;
- 	spinlock_t	lock;
- 	struct list_head node;
- };
+Note that I chose csv-table over list-table because csv files are easier
+to export from other software. 
+
+I did not think these rst files were supposed to be
+in admin-guide, so I left them where they are.
+
+Daniel W. S. Almeida (5):
+  Documentation: nfs: convert pnfs.txt to ReST
+  Documentation: nfs: rpc-cache: convert to ReST
+  Documentation: nfs: rpc-server-gss: convert to ReST
+  Documentation: nfs: nfs41-server: convert to ReST
+  Documentation: nfs: knfsd-stats: convert to ReST
+
+ Documentation/filesystems/index.rst           |   1 +
+ Documentation/filesystems/nfs/index.rst       |  13 ++
+ .../nfs/{knfsd-stats.txt => knfsd-stats.rst}  |  17 +-
+ .../filesystems/nfs/nfs41-server.rst          | 181 ++++++++++++++++++
+ .../filesystems/nfs/nfs41-server.txt          | 173 -----------------
+ .../filesystems/nfs/{pnfs.txt => pnfs.rst}    |  25 ++-
+ .../nfs/{rpc-cache.txt => rpc-cache.rst}      | 136 +++++++------
+ ...{rpc-server-gss.txt => rpc-server-gss.rst} |  19 +-
+ 8 files changed, 306 insertions(+), 259 deletions(-)
+ create mode 100644 Documentation/filesystems/nfs/index.rst
+ rename Documentation/filesystems/nfs/{knfsd-stats.txt => knfsd-stats.rst} (95%)
+ create mode 100644 Documentation/filesystems/nfs/nfs41-server.rst
+ delete mode 100644 Documentation/filesystems/nfs/nfs41-server.txt
+ rename Documentation/filesystems/nfs/{pnfs.txt => pnfs.rst} (87%)
+ rename Documentation/filesystems/nfs/{rpc-cache.txt => rpc-cache.rst} (66%)
+ rename Documentation/filesystems/nfs/{rpc-server-gss.txt => rpc-server-gss.rst} (92%)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.24.1
+
