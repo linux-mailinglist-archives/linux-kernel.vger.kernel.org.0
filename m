@@ -2,93 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EAE412CE26
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 10:17:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0991D12CE2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 10:22:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727313AbfL3JQ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 04:16:59 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37566 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727257AbfL3JQ6 (ORCPT
+        id S1727382AbfL3JWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 04:22:42 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40452 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfL3JWi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 04:16:58 -0500
-Received: by mail-lj1-f195.google.com with SMTP id o13so21259343ljg.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 01:16:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=ZqB7TU8m7QXDhn3F2IbJFbdJIkOd9kjkljW3jw5t9uWQg2rBl3dI/MqdkOnC0E6ptl
-         ftkXlPWHxLHPHoCBOBFQjZ0BwNbAQCFdMtasK4m6MsmhDXZO23PI61CYfNdqFaDnjVkO
-         BLQimp5P+xw3GeU5GuEHdD9bpLI2uKNHB3FBINEgnLJsR/Fe6aIq7ewjAWojxC+F4jpq
-         Zz0Zfw7ofSI+4vpsM7Z5E6r5T4NglIhMVADufwhPsBLUp6YbvrTUEm8X8ddwvaeklckQ
-         nWKTcNDc/gzoUoc0QrtwkOmrsLKqRvhIgH0Iqbb6MoucGvacN6lw1TSiFnlDR/9HO9qD
-         oz0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=okI+WKXZnivApTS1Oqi6dD5Ms0rFCprYxF1H61WduWk=;
-        b=p18CbM1sU73PNUAqNWbgPyngRLOVx59nJcRoPqofXu0cOvvAm4YuL7J7xxQK6oCL3L
-         B+zYJDtYm/3oDyP9Gr6eWBzwhz/n+WMluoYLjy/8V4nyqPoQIi4RoYEUvXhCiA5uCIR2
-         zQ5Y95CjuBKfaCqQWe84hTqhSIuWyz7lECSxsPLWAJw9jQDNSgGcApbxU6dmluPk/Q5g
-         l8NzOewYtGd4WEwQ2TtIZeK2SAq2jBKdKvaxIGDGTgU5I+ROXDpoXC9+pdwz2v1yuH2Z
-         SAB7Zveu/Cp64XwV6xcbb5IzIfAcTn/jb2WRz/fYWoYUUDKRht58z5dz6FIbUxEJfzs0
-         iPrg==
-X-Gm-Message-State: APjAAAUhA9YuqqP1AsL721WipsZPbWBpSTaFwghz4EyGiZBGz1hRLKEy
-        1s6OaDE5hWkW8vi40Z+96PgMaiFtweIjwwHaWt0=
-X-Google-Smtp-Source: APXvYqxH5zovETRAUWjOKPsdBAPj9WUVlrkNmNQo3KwUcLfFqxWbxkwPOtDkI0yVOMUkf8bfPdAkCdmM2jrc6AOR/sY=
-X-Received: by 2002:a2e:94c8:: with SMTP id r8mr36609274ljh.28.1577697416838;
- Mon, 30 Dec 2019 01:16:56 -0800 (PST)
+        Mon, 30 Dec 2019 04:22:38 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBU9MQ5E106905;
+        Mon, 30 Dec 2019 03:22:26 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577697746;
+        bh=sk5S0MGte4P9MP9ui73XhGoTdxKtKisMFY7hjWYkuvI=;
+        h=From:To:CC:Subject:Date;
+        b=xjAuaiR0lCElbE4MHymXNGqBSJTdEhcuV8qi1BE2eg/gC3wantEns9yY8T5pFWCfR
+         HSDlBrbS3HQelG/EdYUgjD+eWpRt94oMhi6NcmeSKgKtFBI7cY0ir3wu2cGBLGQ/ia
+         /UCV5w+RBU1cuNwz2jtTTnin4loi838hKU393wT4=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBU9MQsn044598
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 30 Dec 2019 03:22:26 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 30
+ Dec 2019 03:22:26 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 30 Dec 2019 03:22:26 -0600
+Received: from a0230074-OptiPlex-7010.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBU9MOJi109856;
+        Mon, 30 Dec 2019 03:22:24 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <faiz_abbas@ti.com>, <shawn.lin@rock-chips.com>
+Subject: [PATCH 0/3] Fix issues with command queuing in arasan controllers
+Date:   Mon, 30 Dec 2019 14:53:40 +0530
+Message-ID: <20191230092343.30692-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Received: by 2002:a19:dc54:0:0:0:0:0 with HTTP; Mon, 30 Dec 2019 01:16:56
- -0800 (PST)
-Reply-To: eddywilliam0002@gmail.com
-From:   eddy william <barristerlevi@gmail.com>
-Date:   Mon, 30 Dec 2019 10:16:56 +0100
-Message-ID: <CAEJ6ChdFFHH+ooB4=mKAPd8mu4cupz3HAerHOAvmyjpi=w8QMg@mail.gmail.com>
-Subject: hello
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hallo
+In some Arasan SDHCI controllers, after tuning, the tuning pattern data
+is leftover in the sdhci buffer. This leads to issues with future data
+commands, especially when command queuing is enabled. The following
+patches help fix this issue by resetting data lines after tuning is
+finished. The first two patches have been tested with TI's am65x and
+j721e SoCs using the sdhci_am654 driver.
 
-Mein Name ist Eddy William. Ich bin von Beruf Rechtsanwalt. Ich m=C3=B6chte
-Ihnen anbieten
-die n=C3=A4chsten Verwandten zu meinem Klienten. Sie erben die Summe von
-($8,5 Millionen US-Dollar)
-Dollar, die mein Kunde vor seinem Tod in der Bank gelassen hat.
+I have a strong suspicion that this is the same issue with
+the sdhci-of-arasan driver where they are forced to dump data from the
+buffer before enabling command queuing. I need help from someone with a
+compatible platform to test this.
 
-Mein Mandant ist ein Staatsb=C3=BCrger Ihres Landes, der mit seiner Frau
-bei einem Autounfall ums Leben gekommen ist
-und nur Sohn. Ich werde mit 50% des Gesamtfonds berechtigt sein, w=C3=A4hre=
-nd 50%
-sein f=C3=BCr dich.
-Bitte kontaktieren Sie meine private E-Mail hier f=C3=BCr weitere
-Informationen: eddywilliam0002gmail.com
+Faiz Abbas (3):
+  mmc: sdhci: Add Quirk to reset data lines after tuning
+  mmc: sdhci_am654: Enable Quirk to reset data after tuning
+  mmc: sdhci-of-arasan: Fix Command Queuing enable handling
 
-Vielen Dank im Voraus,
-Mr. Eddy William,
+ drivers/mmc/host/sdhci-of-arasan.c | 21 ++++-----------------
+ drivers/mmc/host/sdhci.c           |  3 +++
+ drivers/mmc/host/sdhci.h           |  4 ++++
+ drivers/mmc/host/sdhci_am654.c     |  9 ++++++---
+ 4 files changed, 17 insertions(+), 20 deletions(-)
 
+-- 
+2.19.2
 
-
-Hello
-
-My name is Eddy William I am a lawyer by profession. I wish to offer you
-the next of kin to my client. You will inherit the sum of ($8.5 Million)
-dollars my client left in the bank before his death.
-
-My client is a citizen of your country who died in auto crash with his wife
-and only son. I will be entitled with 50% of the total fund while 50% will
-be for you.
-Please contact my private email here for more details:eddywilliam0002gmail.=
-com
-
-Many thanks in advance,
-Mr.Eddy William,
