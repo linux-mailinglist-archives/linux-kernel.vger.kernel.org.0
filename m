@@ -2,180 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8DA512D420
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:53:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC8A212D40E
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:41:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfL3Txw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 14:53:52 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:58780 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfL3Txv (ORCPT
+        id S1727687AbfL3TlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 14:41:11 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32774 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbfL3TlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:53:51 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBUJn8jx140757;
-        Mon, 30 Dec 2019 19:52:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2019-08-05;
- bh=q38WciEesnuRJRnd58/bcF+E8f7Yll8x5e78tHW7KKc=;
- b=dQS4kODD52nhn6IIkrqU9jLXPCHRyABE/SR/Y68eNu8jfTZHa8KQQKVhqMN+E2IIZnJf
- YmCy0iiTh2WJx512pTJ8nefrHbIQ5oS1FDhAUseV/FNtn3Zypb9f/2JqNsueNMl0TFyC
- FxCNjh3HH0Fwz81lDwFMIghuzusx+68ANNRms8HMmpzEBcohRI9Ek9SLowzqGt1plwM4
- qPtQ6LzVCAU5LEZBhFbz429aaQ7seygHdYAUYJHNDeOpfkycSfN+YuudNMpWAHZRPRrR
- r/yHTlvysx31iY4R2SJ34BkhLsvmXAi/qLxVq0uFDLNMS+OMIAAjJG298/WkPPumvxdh 3g== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by aserp2120.oracle.com with ESMTP id 2x5y0pexke-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Dec 2019 19:52:48 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBUJmRih115107;
-        Mon, 30 Dec 2019 19:52:47 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2x6gh94hdu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 30 Dec 2019 19:52:47 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id xBUJqZMi009978;
-        Mon, 30 Dec 2019 19:52:35 GMT
-Received: from neelam.us.oracle.com (/10.152.128.16)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 30 Dec 2019 11:52:34 -0800
-From:   Alex Kogan <alex.kogan@oracle.com>
-To:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
-        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
-        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
-        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
-        jglauber@marvell.com
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        alex.kogan@oracle.com, dave.dice@oracle.com
-Subject: [PATCH v8 5/5] locking/qspinlock: Introduce the shuffle reduction optimization into CNA
-Date:   Mon, 30 Dec 2019 14:40:42 -0500
-Message-Id: <20191230194042.67789-6-alex.kogan@oracle.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20191230194042.67789-1-alex.kogan@oracle.com>
-References: <20191230194042.67789-1-alex.kogan@oracle.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9486 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1912300178
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9486 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1912300178
+        Mon, 30 Dec 2019 14:41:10 -0500
+Received: by mail-wr1-f65.google.com with SMTP id b6so33640781wrq.0;
+        Mon, 30 Dec 2019 11:41:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=dXg8oFzBEXS5AG929jnjM1jsF6o4ohe+Wl9/z4Sa0Kk=;
+        b=N3Il+Igx/93EmUIkp4Qn7D4C0qYnr0Zm38eM/RyUnHj3fIu88+MfVRzvu05TtNB1RI
+         owSAEZX27S/3Sj7lup7vXTu9Dz6tr899n2q4V0yVA1XcFvP6PR8doKKHN8OMVPnd0A/9
+         yqiZg1nBjCA7I1vsVt/EINDdHNUXMdQz03cxDmS7nfsJc2I58cMJM38EminOTwOvxV9T
+         kM0yNNarkUhD1T6B0xCVk4Uq6VOVjH30XqIiSw8Ddxhillis6CRNlYSemQ3F8/nr5nKK
+         TMn8U9HLeSXsHPc0N73KXCm+ao9zPZrRviqRUQPXO11ky4G6LnJEyKH7SBP4JDipEcDX
+         LG7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=dXg8oFzBEXS5AG929jnjM1jsF6o4ohe+Wl9/z4Sa0Kk=;
+        b=mT7Ot8sHG9LkMvBUtXtOvV+8Z4pjNR0fwlWl9ijue6SV0iUki1aUDonRb0lNtoEaOp
+         Pc9Vx7O6Z/dnMqm5MgcygnEjZDKPknaqjCRCecbU/ALuZl87bB2rLZ4EsdEQUs/j4vPS
+         mK1UIyVEGVOQp+TGMBmEdO4cqr646QCa9btNnrxX4FF1/z9LwBdgE0HjIAsDFXfCsK59
+         JkcgEl/DaspDlooUYT9GjjuF30TMrRAYrMT2WckZmGe3+P8pMlxMrZr1cRMeL0h6fofm
+         zmnUuCxbDjYeUsOB/zfA2+GOQ8I1khoU5Po4Xet7+jiVUgVYp3VghUnUMxJJDyADVU0b
+         xvpg==
+X-Gm-Message-State: APjAAAVgeLwSR8fsRUF2XnqxjyHN9GSR86ppQG8CUZX07j2z8zAoC/CV
+        kFQgmOGYqDRgfK95O/Uv7L0=
+X-Google-Smtp-Source: APXvYqyvzye3Ooh54UXS218+xZWxHTIG40U09D7tH9MsS86sPq32CvZylveADRnLKxa3J7IKokgM2Q==
+X-Received: by 2002:a5d:4d06:: with SMTP id z6mr67047992wrt.339.1577734868421;
+        Mon, 30 Dec 2019 11:41:08 -0800 (PST)
+Received: from localhost.localdomain ([197.254.95.38])
+        by smtp.googlemail.com with ESMTPSA id p17sm47239785wrx.20.2019.12.30.11.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 11:41:07 -0800 (PST)
+From:   Wambui Karuga <wambui.karugax@gmail.com>
+To:     robdclark@gmail.com, sean@poorly.run, airlied@linux.ie,
+        daniel@ffwll.ch
+Cc:     linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/msm: use BUG_ON macro for debugging.
+Date:   Mon, 30 Dec 2019 22:41:02 +0300
+Message-Id: <20191230194102.2843-1-wambui.karugax@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This performance optimization reduces the probability threads will be
-shuffled between the main and secondary queues when the secondary queue
-is empty. It is helpful when the lock is only lightly contended.
+As the if statement only checks for the value of the offset_name
+variable, it can be replaced by the more conscise BUG_ON macro for error
+reporting.
 
-Signed-off-by: Alex Kogan <alex.kogan@oracle.com>
-Reviewed-by: Steve Sistare <steven.sistare@oracle.com>
+Signed-off-by: Wambui Karuga <wambui.karugax@gmail.com>
 ---
- kernel/locking/qspinlock_cna.h | 46 ++++++++++++++++++++++++++++++++--
- 1 file changed, 44 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/adreno/adreno_gpu.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/kernel/locking/qspinlock_cna.h b/kernel/locking/qspinlock_cna.h
-index 30feff02865d..f21056560104 100644
---- a/kernel/locking/qspinlock_cna.h
-+++ b/kernel/locking/qspinlock_cna.h
-@@ -4,6 +4,7 @@
- #endif
- 
- #include <linux/topology.h>
-+#include <linux/random.h>
- 
- /*
-  * Implement a NUMA-aware version of MCS (aka CNA, or compact NUMA-aware lock).
-@@ -57,6 +58,7 @@ struct cna_node {
- enum {
- 	LOCAL_WAITER_FOUND = 2,	/* 0 and 1 are reserved for @locked */
- 	FLUSH_SECONDARY_QUEUE = 3,
-+	PASS_LOCK_IMMEDIATELY = 4,
- 	MIN_ENCODED_TAIL
- };
- 
-@@ -70,6 +72,34 @@ enum {
-  */
- int intra_node_handoff_threshold __ro_after_init = 1 << 16;
- 
-+/*
-+ * Controls the probability for enabling the scan of the main queue when
-+ * the secondary queue is empty. The chosen value reduces the amount of
-+ * unnecessary shuffling of threads between the two waiting queues when
-+ * the contention is low, while responding fast enough and enabling
-+ * the shuffling when the contention is high.
-+ */
-+#define SHUFFLE_REDUCTION_PROB_ARG  (7)
-+
-+/* Per-CPU pseudo-random number seed */
-+static DEFINE_PER_CPU(u32, seed);
-+
-+/*
-+ * Return false with probability 1 / 2^@num_bits.
-+ * Intuitively, the larger @num_bits the less likely false is to be returned.
-+ * @num_bits must be a number between 0 and 31.
-+ */
-+static bool probably(unsigned int num_bits)
-+{
-+	u32 s;
-+
-+	s = this_cpu_read(seed);
-+	s = next_pseudo_random32(s);
-+	this_cpu_write(seed, s);
-+
-+	return s & ((1 << num_bits) - 1);
-+}
-+
- static void __init cna_init_nodes_per_cpu(unsigned int cpu)
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+index c7441fb8313e..0fe7907f5a7d 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+@@ -315,10 +315,7 @@ OUT_PKT7(struct msm_ringbuffer *ring, uint8_t opcode, uint16_t cnt)
+ static inline bool adreno_reg_check(struct adreno_gpu *gpu,
+ 		enum adreno_regs offset_name)
  {
- 	struct mcs_spinlock *base = per_cpu_ptr(&qnodes[0].mcs, cpu);
-@@ -251,8 +281,11 @@ __always_inline u32 cna_pre_scan(struct qspinlock *lock,
- 	struct cna_node *cn = (struct cna_node *)node;
+-	if (offset_name >= REG_ADRENO_REGISTER_MAX ||
+-			!gpu->reg_offsets[offset_name]) {
+-		BUG();
+-	}
++	BUG_ON(offset_name >= REG_ADRENO_REGISTER_MAX || !gpu->reg_offsets[offset_name]);
  
- 	cn->pre_scan_result =
--		cn->intra_count == intra_node_handoff_threshold ?
--			FLUSH_SECONDARY_QUEUE : cna_scan_main_queue(node, node);
-+		(node->locked <= 1 && probably(SHUFFLE_REDUCTION_PROB_ARG)) ?
-+			PASS_LOCK_IMMEDIATELY :
-+			cn->intra_count == intra_node_handoff_threshold ?
-+				FLUSH_SECONDARY_QUEUE :
-+				cna_scan_main_queue(node, node);
- 
- 	return 0;
- }
-@@ -266,6 +299,14 @@ static inline void cna_pass_lock(struct mcs_spinlock *node,
- 
- 	u32 scan = cn->pre_scan_result;
- 
-+	/*
-+	 * perf. optimization - check if we can skip the logic of triaging
-+	 * through other possible values in @scan (helps under light lock
-+	 * contention)
-+	 */
-+	if (scan == PASS_LOCK_IMMEDIATELY)
-+		goto pass_lock;
-+
  	/*
- 	 * check if a successor from the same numa node has not been found in
- 	 * pre-scan, and if so, try to find it in post-scan starting from the
-@@ -294,6 +335,7 @@ static inline void cna_pass_lock(struct mcs_spinlock *node,
- 		tail_2nd->next = next;
- 	}
- 
-+pass_lock:
- 	arch_mcs_pass_lock(&next_holder->locked, val);
- }
- 
+ 	 * REG_SKIP is a special value that tell us that the register in
 -- 
-2.21.0 (Apple Git-122.2)
+2.17.1
 
