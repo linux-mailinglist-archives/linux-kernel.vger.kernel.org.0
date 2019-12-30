@@ -2,107 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC7F12D47C
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 21:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48DFE12D484
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 21:37:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727744AbfL3U3v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 15:29:51 -0500
-Received: from smtp4-g21.free.fr ([212.27.42.4]:18254 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727695AbfL3U3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 15:29:51 -0500
-Received: from [192.168.1.91] (unknown [77.207.133.132])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id 4F4BA19F5E6;
-        Mon, 30 Dec 2019 21:25:39 +0100 (CET)
-Subject: Re: [PATCH v2] PCI: qcom: Fix the fixup of PCI_VENDOR_ID_QCOM
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20191227012717.78965-1-bjorn.andersson@linaro.org>
- <9e5ee7e8-aa63-e82c-8135-acc77b476c87@mm-sol.com>
- <38acf5fc-85aa-7090-e666-97a1281e9905@free.fr>
- <20191229024547.GH3755841@builder>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <9c7d69cc-29e7-07c5-1e93-e9fdadf370a6@free.fr>
-Date:   Mon, 30 Dec 2019 21:25:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727769AbfL3Ugw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 15:36:52 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:51042 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbfL3Ugv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 15:36:51 -0500
+Received: by mail-pj1-f65.google.com with SMTP id r67so256303pjb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 12:36:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sargun.me; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1YD3ApCiVynjxwfgkOfHl8GiRTjQYPNU0W1gNk2+2jU=;
+        b=CLfXJEjeetcVBBZaNfOnWrbD0OV+HU4IKCHanUt7DYsQvxE770uurz5npTdX/FXOrI
+         cN25sPQPTzyBy9dCf+wokRzQHI7otT7AouDxfwdPTv+pSGAOXDqOBWAOiMsbvd6GJeI7
+         UV/YNRPTCphicwmhSvxE6CKB3lpr/DflQDtUo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1YD3ApCiVynjxwfgkOfHl8GiRTjQYPNU0W1gNk2+2jU=;
+        b=P+DFfpbdUEAr1LkcgBnTGPIlkThAaS480S9Zf94MAq38wnZ0Kt2LPhLP7ybR9wjbyl
+         hXFCTd4oQujSEKTVCR0vMOedxUXnXjtQuiEYZvr157gyRpgs6bHB7CbEFOPFs+3EDhoX
+         qpenQNqDHgf1o2KbTpEaNYsCeL1CvNSt2q5D9Z2wbE09nVMHZ/g0Y7fSvHl5TfNc5rZQ
+         JPM4b/+l2jC4TzQGWDeFaU61X7Ov/yFmbcxLkqqFMvcKhW0tSVLZLCB8nMzyj5/Q4kqD
+         hrRAs3Om9rL065XKgdDA/Is/zUyvikDo3vhneW06mndm/c5EWePLOcUXItC1rqZ1X1QL
+         2PBQ==
+X-Gm-Message-State: APjAAAXZuD0rkq6glz1hkYCtycsRzC+b7txC8SaRdei9v1qBLqRpBi1I
+        JQWBhGLrGiFjN7MLye8lOs6Dl6pKhmN5Dg==
+X-Google-Smtp-Source: APXvYqzD7oQA+CPDxb+La8YBQKvZvp0/qcT/ytJJzEEiq1mKQSnK8H0oDNSpzlMkzRHOLxuvkfypWA==
+X-Received: by 2002:a17:90a:8584:: with SMTP id m4mr1239176pjn.123.1577738210251;
+        Mon, 30 Dec 2019 12:36:50 -0800 (PST)
+Received: from ubuntu.netflix.com (203.20.25.136.in-addr.arpa. [136.25.20.203])
+        by smtp.gmail.com with ESMTPSA id m71sm701884pje.0.2019.12.30.12.36.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 12:36:49 -0800 (PST)
+From:   Sargun Dhillon <sargun@sargun.me>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Aleksa Sarai <cyphar@cyphar.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] samples/seccomp: Zero out datastructures based on seccomp_notif_sizes
+Date:   Mon, 30 Dec 2019 12:35:03 -0800
+Message-Id: <20191230203503.4925-1-sargun@sargun.me>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20191229024547.GH3755841@builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/12/2019 03:45, Bjorn Andersson wrote:
+The sizes by which seccomp_notif and seccomp_notif_resp are allocated are
+based on the SECCOMP_GET_NOTIF_SIZES ioctl. This allows for graceful
+extension of these datastructures. If userspace zeroes out the
+datastructure based on its version, and it is lagging behind the kernel's
+version, it will end up sending trailing garbage. On the other hand,
+if it is ahead of the kernel version, it will write extra zero space,
+and potentially cause corruption.
 
-> On Sat 28 Dec 07:41 PST 2019, Marc Gonzalez wrote:
-> 
->> On 27/12/2019 09:51, Stanimir Varbanov wrote:
->>
->>> On 12/27/19 3:27 AM, Bjorn Andersson wrote:
->>>
->>>> There exists non-bridge PCIe devices with PCI_VENDOR_ID_QCOM, so limit
->>>> the fixup to only affect the relevant PCIe bridges.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>> ---
->>>>
->>>> Stan, I picked up all the suggested device id's from the previous thread and
->>>> added 0x1000 for QCS404. I looked at creating platform specific defines in
->>>> pci_ids.h, but SDM845 has both 106 and 107... Please let me know if you would
->>>> prefer that I do this anyway.
->>>
->>> Looks good,
->>>
->>> Acked-by: Stanimir Varbanov <svarbanov@mm-sol.com>
->>>
->>>>  drivers/pci/controller/dwc/pcie-qcom.c | 8 +++++++-
->>>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
->>>> index 5ea527a6bd9f..138e1a2d21cc 100644
->>>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
->>>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
->>>> @@ -1439,7 +1439,13 @@ static void qcom_fixup_class(struct pci_dev *dev)
->>>>  {
->>>>  	dev->class = PCI_CLASS_BRIDGE_PCI << 8;
->>>>  }
->>>> -DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, PCI_ANY_ID, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0101, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0104, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0106, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0107, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x0302, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x1000, qcom_fixup_class);
->>>> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_QCOM, 0x1001, qcom_fixup_class);
->>
->> Hrmmm... still not CCed on the patch,
-> 
-> You are Cc'ed on the patch, but as usual your mail server responds "451
-> too many errors from your ip" and throw my emails away.
-> 
->> and still don't think the fixup is required(?) for 0x106 and 0x107.
->>
-> 
-> I re-read your reply in my v1 thread. So we know that 0x104 doesn't need
-> the fixup, so presumably only 0x101 needs the fixup?
+Signed-off-by: Sargun Dhillon <sargun@sargun.me>
+Suggested-by: Tycho Andersen <tycho@tycho.ws>
+Cc: Kees Cook <keescook@chromium.org>
+---
+ samples/seccomp/user-trap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I apologize for the tone of my reply. I did not mean to sound
-so snarky.
+diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
+index 3e31ec0cf4a5..20291ec6489f 100644
+--- a/samples/seccomp/user-trap.c
++++ b/samples/seccomp/user-trap.c
+@@ -302,10 +302,10 @@ int main(void)
+ 		resp = malloc(sizes.seccomp_notif_resp);
+ 		if (!resp)
+ 			goto out_req;
+-		memset(resp, 0, sizeof(*resp));
++		memset(resp, 0, sizes.seccomp_notif_resp);
+ 
+ 		while (1) {
+-			memset(req, 0, sizeof(*req));
++			memset(req, 0, sizes.seccomp_notif);
+ 			if (ioctl(listener, SECCOMP_IOCTL_NOTIF_RECV, req)) {
+ 				perror("ioctl recv");
+ 				goto out_resp;
+-- 
+2.20.1
 
-All I can say is that, if I remember correctly, the fixup was
-not necessary on apq8098 (0x0105) and it was probably not
-required on msm8996 and sdm845. For older platforms, all bets
-are off.
-
-Regards.
