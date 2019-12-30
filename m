@@ -2,71 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C11512CBED
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 03:26:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4BF412CBF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 03:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfL3C00 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 21:26:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbfL3C0Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 21:26:25 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B016020718;
-        Mon, 30 Dec 2019 02:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577672785;
-        bh=iiKV+RKqxqnXDNnnnoWIICdP8SMC0mH+QCvS24BGJeY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=J4zfldU5gd81fN8eAivxbQ3P7kK8XeCcVmVX2TWL9QjG2X+B3FtVLJEuPDJjBtTj8
-         b0zAvuBPqtN16VGzDkGnXx8t6gf8TsArW+bHdqk9FqlRDppaL6lXnuXcQRQJY/cbST
-         YvkMTb1lTUt7jTAyxpabgiALEJJ1O9Pg1eqCfNsI=
-Subject: Re: [PATCH 4.14 000/161] 4.14.161-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20191229162355.500086350@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <4a29a98b-d271-2489-1b27-e9654d369aba@kernel.org>
-Date:   Sun, 29 Dec 2019 19:26:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726892AbfL3Ca0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 21:30:26 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8644 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726726AbfL3Ca0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 21:30:26 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A1B6D2CA8BB94C1402C9;
+        Mon, 30 Dec 2019 10:30:23 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Mon, 30 Dec 2019
+ 10:30:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <dhowells@redhat.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>
+CC:     <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] PKCS#7: Use match_string() helper to simplify the code
+Date:   Mon, 30 Dec 2019 10:28:42 +0800
+Message-ID: <20191230022842.22940-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <20191229162355.500086350@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/29/19 10:17 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.161 release.
-> There are 161 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Tue, 31 Dec 2019 16:17:25 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.161-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+match_string() returns the array index of a matching string.
+Use it instead of the open-coded implementation.
 
-Compiled and booted on my test system. No dmesg regressions.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ crypto/asymmetric_keys/pkcs7_verify.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
+index ce49820..0b4d07a 100644
+--- a/crypto/asymmetric_keys/pkcs7_verify.c
++++ b/crypto/asymmetric_keys/pkcs7_verify.c
+@@ -141,11 +141,10 @@ int pkcs7_get_digest(struct pkcs7_message *pkcs7, const u8 **buf, u32 *len,
+ 	*buf = sinfo->sig->digest;
+ 	*len = sinfo->sig->digest_size;
+ 
+-	for (i = 0; i < HASH_ALGO__LAST; i++)
+-		if (!strcmp(hash_algo_name[i], sinfo->sig->hash_algo)) {
+-			*hash_algo = i;
+-			break;
+-		}
++	i = match_string(hash_algo_name, HASH_ALGO__LAST,
++			 sinfo->sig->hash_algo);
++	if (i >= 0)
++		*hash_algo = i;
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
+
