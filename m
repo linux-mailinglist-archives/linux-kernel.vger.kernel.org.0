@@ -2,116 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F086712D40B
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:39:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66D2312D421
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:53:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbfL3Tjt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 14:39:49 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34303 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbfL3Tjt (ORCPT
+        id S1727709AbfL3Txx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 14:53:53 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42748 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727665AbfL3Txw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:39:49 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l18so17599109lfc.1;
-        Mon, 30 Dec 2019 11:39:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b7jcdnKGpQoMXB5jym9bcA+uOYxnISOQKzOGlO5x77I=;
-        b=j2/p99JeknWrOKp0xFKGM5yAu6FCdh6LPVVY18jsceUWp2xjMVWCOZ9BXmJLKaZ2aO
-         D+2dBOrhOA8k/cDLGqBdrSTFdPQhqTnJf5u5MJbTeBzh8gBa1z14gTFmH2UsVe7+37Go
-         Wh2KrO2s9ZCsM3VNkF/5i41UOuLA1o1HhMXp63D+ZDQJ5RUweW93/D0bAHlj6M6oMmsi
-         spwS9Tpu8IU4C/lGzRmePbBUYmRLdylcTqsoP2FagQ3os4Jn40GQy0VW3BVabQUclnf+
-         eWMSHuVw3kL4kwewunhDwM2iDI/dCQfjFVT83hYWIpC2DXmhrZ6PMI5hd3Z3QBoMki2H
-         FmdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b7jcdnKGpQoMXB5jym9bcA+uOYxnISOQKzOGlO5x77I=;
-        b=js5gpYHbJfNIFlIQQwD/zBmuNv3ZXIrWasHuAaFr95RfFN+GQ6toc2IcIdFyuyINpT
-         5Tlhp/w+HUqY/PVsQGkaRzkcKr25+tkXid3Gxn+ebkgnh1VPjy1lBjVTkQiUcglfyr9q
-         /OmdK9iko9plk3L6WCP+U0SPPdQXi/am1iSYq8bOi2Ei02qxrIsVxTvcyOUu97lamTkO
-         cymBQi3ayF0sM+exdAfBqvpBrriaMcW58X7d5elram0jrGaSKoKSmf2TQ37/VIwm+x4b
-         R7NYrK0kxL38GbKG/9QcGAk16leUK+uEgM4ccLidKnxjiENiP9jEfkCcq9nPkFIzBecG
-         p46A==
-X-Gm-Message-State: APjAAAUePvOmJslMb0tjzHJeGV14hFrOhMsM4Ug1+yqvsctO+rRFULqr
-        2YP0YGnFmZqoDy1sdNQKAsl6hiFD
-X-Google-Smtp-Source: APXvYqzlfvKm1U/MKTD9szzVYuXGUuy6aB9vEsrtzpBlRfH4SyGZKISZkKGCnHF6cM6KhnrzvsB6Pw==
-X-Received: by 2002:a19:2486:: with SMTP id k128mr39078871lfk.16.1577734786557;
-        Mon, 30 Dec 2019 11:39:46 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id u9sm18079594lji.49.2019.12.30.11.39.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2019 11:39:46 -0800 (PST)
-Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
- PMC 32KHz blink clock
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
- <c8a847fb-3d23-6e1e-59e2-a2d15b63ce02@gmail.com>
- <b46c21ca-855e-cd81-ab8d-aa96b61ebb56@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9a4a125c-7a39-31c9-4670-4f4a29e18c56@gmail.com>
-Date:   Mon, 30 Dec 2019 22:39:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 30 Dec 2019 14:53:52 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBUJnG2Q139032;
+        Mon, 30 Dec 2019 19:52:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2019-08-05; bh=6tNX/v2fnqChmL5AwO3FwDGjEomCixJM8gJZG+jJ9m8=;
+ b=laerQ0wcN+YnS8ARdZ7JDBGX4A5LqOToQjYUsa6/nB7XAt5fpNM4SyW58sa4QHQ90arl
+ LGew1UhB+ZVy1C3d6+GR6WTuTKWQUsK45gLmPDBsYNC/6MWsvbqgeNen3Y9YgfcbJILK
+ kEC/NOdwga1hc8QsTgo/Yg0gdHBzuEH14LvUV3vOVdWeP7cWZ/MxZ+syT/vrf7gwLBWJ
+ 8mborE5XKt/W6iKvRy73bmRafL9Qx7RabcAskaq9j/BvT4qtcAQCpQZiIZ7a5kizbQ8o
+ wAONrCAY9sEv0TIU+57VK9+PpPrJzvpkLItFck+5kHPo+Gx1yTAV6h7DnktXTPlSVqFl jg== 
+Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
+        by userp2120.oracle.com with ESMTP id 2x5ypqeuag-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Dec 2019 19:52:48 +0000
+Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
+        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xBUJmOi1050740;
+        Mon, 30 Dec 2019 19:52:47 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserp3020.oracle.com with ESMTP id 2x6gk4pv3b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 30 Dec 2019 19:52:47 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xBUJqTph021933;
+        Mon, 30 Dec 2019 19:52:29 GMT
+Received: from neelam.us.oracle.com (/10.152.128.16)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 30 Dec 2019 11:52:29 -0800
+From:   Alex Kogan <alex.kogan@oracle.com>
+To:     linux@armlinux.org.uk, peterz@infradead.org, mingo@redhat.com,
+        will.deacon@arm.com, arnd@arndb.de, longman@redhat.com,
+        linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, bp@alien8.de,
+        hpa@zytor.com, x86@kernel.org, guohanjun@huawei.com,
+        jglauber@marvell.com
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        alex.kogan@oracle.com, dave.dice@oracle.com
+Subject: [PATCH v8 0/5] Add NUMA-awareness to qspinlock
+Date:   Mon, 30 Dec 2019 14:40:37 -0500
+Message-Id: <20191230194042.67789-1-alex.kogan@oracle.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <b46c21ca-855e-cd81-ab8d-aa96b61ebb56@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9486 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1912300178
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9486 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1912300178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-28.12.2019 00:30, Sowjanya Komatineni пишет:
-> 
-> On 12/22/19 1:55 PM, Dmitry Osipenko wrote:
->> 21.12.2019 01:26, Sowjanya Komatineni пишет:
->>> Tegra PMC has blink functionality that allows 32KHz clock out to
->>> blink pin of the Tegra.
->>>
->>> This patch adds id for this blink clock to use for enabling or
->>> disabling blink output through device tree.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>   include/dt-bindings/soc/tegra-pmc.h | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/include/dt-bindings/soc/tegra-pmc.h
->>> b/include/dt-bindings/soc/tegra-pmc.h
->>> index f7c866404456..a99a457471ee 100644
->>> --- a/include/dt-bindings/soc/tegra-pmc.h
->>> +++ b/include/dt-bindings/soc/tegra-pmc.h
->>> @@ -9,7 +9,8 @@
->>>   #define TEGRA_PMC_CLK_OUT_1        0
->>>   #define TEGRA_PMC_CLK_OUT_2        1
->>>   #define TEGRA_PMC_CLK_OUT_3        2
->>> +#define TEGRA_PMC_CLK_BLINK        3
->>>   -#define TEGRA_PMC_CLK_MAX        3
->>> +#define TEGRA_PMC_CLK_MAX        4
->>>     #endif    /* _DT_BINDINGS_SOC_TEGRA_PMC_H */
->>>
->> Could you please explain the reason of separating CLK_OUT and BLINK PMC
->> patches?
-> No specific reason just thought to have BLINK as separate patch as its
-> different register configuration to have fixed 32Khz clock out.
->>
->> Also, you only documented CLK_OUT clocks in the DT binding and no BLINK.
-> missed to add BLINK to dt-binding doc. Will add in v6.
+Minor changes from v7 based on feedback from Longman:
+-----------------------------------------------------
 
-Ok
+- Move __init functions from alternative.c to qspinlock_cna.h
+
+- Introduce enum for return values from cna_pre_scan(), for better
+readability.
+
+- Add/revise a few comments to improve readability.
+
+
+Summary
+-------
+
+Lock throughput can be increased by handing a lock to a waiter on the
+same NUMA node as the lock holder, provided care is taken to avoid
+starvation of waiters on other NUMA nodes. This patch introduces CNA
+(compact NUMA-aware lock) as the slow path for qspinlock. It is
+enabled through a configuration option (NUMA_AWARE_SPINLOCKS).
+
+CNA is a NUMA-aware version of the MCS lock. Spinning threads are
+organized in two queues, a main queue for threads running on the same
+node as the current lock holder, and a secondary queue for threads
+running on other nodes. Threads store the ID of the node on which
+they are running in their queue nodes. After acquiring the MCS lock and
+before acquiring the spinlock, the lock holder scans the main queue
+looking for a thread running on the same node (pre-scan). If found (call
+it thread T), all threads in the main queue between the current lock
+holder and T are moved to the end of the secondary queue.  If such T
+is not found, we make another scan of the main queue after acquiring 
+the spinlock when unlocking the MCS lock (post-scan), starting at the
+node where pre-scan stopped. If both scans fail to find such T, the
+MCS lock is passed to the first thread in the secondary queue. If the
+secondary queue is empty, the MCS lock is passed to the next thread in the
+main queue. To avoid starvation of threads in the secondary queue, those
+threads are moved back to the head of the main queue after a certain
+number of intra-node lock hand-offs.
+
+More details are available at https://arxiv.org/abs/1810.05600.
+
+The series applies on top of v5.5.0-rc2, commit ea200dec51.
+Performance numbers are available in previous revisions
+of the series.
+
+Further comments are welcome and appreciated.
+
+Alex Kogan (5):
+  locking/qspinlock: Rename mcs lock/unlock macros and make them more
+    generic
+  locking/qspinlock: Refactor the qspinlock slow path
+  locking/qspinlock: Introduce CNA into the slow path of qspinlock
+  locking/qspinlock: Introduce starvation avoidance into CNA
+  locking/qspinlock: Introduce the shuffle reduction optimization into
+    CNA
+
+ .../admin-guide/kernel-parameters.txt         |  18 +
+ arch/arm/include/asm/mcs_spinlock.h           |   6 +-
+ arch/x86/Kconfig                              |  20 +
+ arch/x86/include/asm/qspinlock.h              |   4 +
+ arch/x86/kernel/alternative.c                 |   4 +
+ include/asm-generic/mcs_spinlock.h            |   4 +-
+ kernel/locking/mcs_spinlock.h                 |  20 +-
+ kernel/locking/qspinlock.c                    |  82 +++-
+ kernel/locking/qspinlock_cna.h                | 400 ++++++++++++++++++
+ kernel/locking/qspinlock_paravirt.h           |   2 +-
+ 10 files changed, 537 insertions(+), 23 deletions(-)
+ create mode 100644 kernel/locking/qspinlock_cna.h
+
+-- 
+2.21.0 (Apple Git-122.2)
+
