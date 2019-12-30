@@ -2,58 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AA6B12D3AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:01:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A7F912D3B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 20:02:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbfL3TBI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 14:01:08 -0500
-Received: from ms.lwn.net ([45.79.88.28]:60468 "EHLO ms.lwn.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727278AbfL3TBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 14:01:07 -0500
-Received: from lwn.net (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 9AA9E536;
-        Mon, 30 Dec 2019 19:01:06 +0000 (UTC)
-Date:   Mon, 30 Dec 2019 12:01:05 -0700
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     Fengguang Wu <fengguang.wu@intel.com>, lizefan@huawei.com,
-        Harry Wei <harryxiyou@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Kees Cook <keescook@chromium.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] docs/zh_CN: add Chinese version of embargoed
- hardware issues
-Message-ID: <20191230120105.7776cbb4@lwn.net>
-In-Reply-To: <1576811085-30544-1-git-send-email-alex.shi@linux.alibaba.com>
-References: <1576811085-30544-1-git-send-email-alex.shi@linux.alibaba.com>
-Organization: LWN.net
+        id S1727652AbfL3TCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 14:02:11 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36414 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727278AbfL3TCK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 14:02:10 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 19so34850069otz.3
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 11:02:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=lc8hqJlG4Fl7spByFbCsc4Qw8nhBbPP2L4M2JhEsKq8=;
+        b=jG7CSNuXqyRrqwd8edy01miTukkvnvZk0/DAPKg6FTQNAIYvoZI3pgVdZonoL7ZwoH
+         snnGb6NKU6ADc1ljX/QPjqaa8zaQUeWzNJM926M7jFQO0UteO1wsCd1rDnDvKd0CpMoy
+         gjOhNKZttyY8hYS/OQT6cbiyNWtqHYOBibuvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=lc8hqJlG4Fl7spByFbCsc4Qw8nhBbPP2L4M2JhEsKq8=;
+        b=K430aOFwxYCBcDsoVT+Aug2xHchyegjSvw1WO6A38mcp9d7hotqX/SCQptbnzwKOje
+         lnKfgDNi6KVtJG0wowr5ExMuMxU4QFSHlAOqUoftV2jptffKqL0aE64WjuNw1DlQsCSU
+         SEVD7rs7HZxXvH+QTUfqu3mWrLj2ZFOSpLBh3H8F4wFJdDcrfszunokQPgGQH7Gj0w9A
+         RXcnar2mWXPC4Amq+B3tBePeH56hOWdJ7Ql8GzwOTCixPJLza2Mnkowo/O4GuDr2V8wF
+         dBawOLRADUwvcSK9fC3XDmmo72vuaZqzX+8rZBtYrRsJkp+1DB76aRPVAOJ3x0vV6ycb
+         LTZg==
+X-Gm-Message-State: APjAAAU8dS/IOw/7KhwttmbwJpssS/CdUwm0XLbERod4T+ke5KVARAPb
+        Q3FfLlmGfZ4ad8aNgFdibySnFA==
+X-Google-Smtp-Source: APXvYqwQrEkoXFADJgIJtisfcrTml3NDaG7oGpNhn5ebG8qd+4X41OYxQS7xoaiFacPQzshD8CBAtA==
+X-Received: by 2002:a9d:222f:: with SMTP id o44mr62760252ota.51.1577732529981;
+        Mon, 30 Dec 2019 11:02:09 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 67sm8016137oid.30.2019.12.30.11.02.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 11:02:09 -0800 (PST)
+Date:   Mon, 30 Dec 2019 11:02:07 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Nikolai Merinov <n.merinov@inango-systems.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
+        Aleksandr Yashkin <a.yashkin@inango-systems.com>,
+        Ariel Gilman <a.gilman@inango-systems.com>
+Subject: Re: [PATCH] pstore/ram: fix for adding dumps to non-empty zone
+Message-ID: <201912301100.473042C@keescook>
+References: <20191223133816.28155-1-n.merinov@inango-systems.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191223133816.28155-1-n.merinov@inango-systems.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 20 Dec 2019 11:04:43 +0800
-Alex Shi <alex.shi@linux.alibaba.com> wrote:
-
-> Embargoed hardware issues is a necessary process guide, but leak of
-> Chinese version, since there is more Chinese hardware vendors in market.
-> We'd better have a Chinese version of this guide.
+On Mon, Dec 23, 2019 at 06:38:16PM +0500, Nikolai Merinov wrote:
+> From: Aleksandr Yashkin <a.yashkin@inango-systems.com>
 > 
-> This patch translate the guide, add it into toctree. and also add a link
-> stub for the original doc.
+> The circle buffer in ramoops zones has a problem for adding a new
+> oops dump to already an existing one.
+> 
+> The solution to this problem is to reset the circle buffer state before
+> writing a new oops dump.
 
-I've applied this (and the other two as well), thanks.
+Can you describe the real-world problem you're fixing here? Dumps should
+be appended as new records. Are you saying that once the circular list
+is full, it blocks future dumps?
 
-jon
+-Kees
+
+> 
+> Signed-off-by: Aleksandr Yashkin <a.yashkin@inango-systems.com>
+> Signed-off-by: Nikolay Merinov <n.merinov@inango-systems.com>
+> Signed-off-by: Ariel Gilman <a.gilman@inango-systems.com>
+> 
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index 8caff834f002..33fceadbf515 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -407,6 +407,13 @@ static int notrace ramoops_pstore_write(struct pstore_record *record)
+>  
+>  	prz = cxt->dprzs[cxt->dump_write_cnt];
+>  
+> +	/* Clean the buffer from old info.
+> +	 * `ramoops_read_kmsg_hdr' expects to find a header in the beginning of
+> +	 * buffer data, so we must to reset the buffer values, in order to
+> +	 * ensure that the header will be written to the beginning of the buffer
+> +	 */
+> +	persistent_ram_zap(prz);
+> +
+>  	/* Build header and append record contents. */
+>  	hlen = ramoops_write_kmsg_hdr(prz, record);
+>  	if (!hlen)
+> -- 
+> 2.17.1
+> 
+
+-- 
+Kees Cook
