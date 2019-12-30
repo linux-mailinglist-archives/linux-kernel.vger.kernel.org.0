@@ -2,78 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A85212D314
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 19:04:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 392D512D319
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 19:09:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727541AbfL3SEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 13:04:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726602AbfL3SEo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 13:04:44 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E700206CB;
-        Mon, 30 Dec 2019 18:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577729083;
-        bh=PefIuhleT62reL1BGXQA1Kqd0QhpZCj1UPeZANIHGDk=;
-        h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=2GV3WUJ23FqwRWHpgiNTl/gBeW2YfcgSVFxrhVmsATo0HkEcGXIFzRiHNrw/mD+nn
-         YVjGFZcFxWf/f/ZPcBKC2THggoyc9dhBrI+6IDzx1apM7yhOzsTUVmNRaJXTM6l/J4
-         UARnIv23D82aqMx8vuY2SOVWGOoXcnCThVfdc6pc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191227022652.GH1908628@ripper>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org> <20191125135910.679310-8-niklas.cassel@linaro.org> <20191219062339.DC0DE21582@mail.kernel.org> <20191220175616.3wdslb7hm773zb22@flawful.org> <20191224021636.CF47E20643@mail.kernel.org> <20191227022652.GH1908628@ripper>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Niklas Cassel <nks@flawful.org>, Andy Gross <agross@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v3 7/7] clk: qcom: apcs-msm8916: use clk_parent_data to specify the parent
-User-Agent: alot/0.8.1
-Date:   Mon, 30 Dec 2019 10:04:42 -0800
-Message-Id: <20191230180443.9E700206CB@mail.kernel.org>
+        id S1727572AbfL3SI5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 13:08:57 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40527 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfL3SIz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 13:08:55 -0500
+Received: by mail-lj1-f194.google.com with SMTP id u1so34080453ljk.7
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 10:08:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=globallogic.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=E4Vkq84W+k/iQgl5ZIdKywzczQJOG4gyJYT5o4ig5QE=;
+        b=glm3amCpKfaFdtg0Vjtjos+t+rEodY5b14v3ASUNKqlmROOWjizDmW+GNah4gWmKL4
+         kGW9tRrF/fixq/FiStRbySI3eIgC1t6cbyogm9cz/c3TZJsRsF4pjzgQoM4cZ9fgT24P
+         eWHpruxGbM/cUlqSPA68HWz94QDy5qCns4pvSMywwFazcNabvTRJTpiawbzYoOy1g8wx
+         25CXzzplFf2d/TgwLoYp+KTeD1pzPEFzywxHZRz8LszEmzNhtEiiJiDDKa0vL4S55sHr
+         wzQ0Rajabq4+9bgcCR4uAw0FXCpE58vQbQVPZnZgwF9HldXKQNGqQJa5+lowNlX9qNlm
+         o/Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=E4Vkq84W+k/iQgl5ZIdKywzczQJOG4gyJYT5o4ig5QE=;
+        b=afjmE0jPvzb04nU8qvqXuCCv9PZPYtOaXQT6F5KcNy+yNquUCfiBy+8ScNcIfGYJln
+         FJPEqvxzC3qp7/HZCzXyMGMCXiBHwkfvchh6VpLV74RzMAbMSLYjFONSu8dgGHp0ubpj
+         ZkNhloDUx4GCcXA75vHR3GhC3Ll+yg7GWxXx1iKGwTi12JbaWAI88DgANGAD5WQfj/YW
+         6yIsz5fpekkMep3tvtUegsIv55oPG81M56AZgVEAT86MAd4tBZbNffn9XdcxrXYKD7df
+         +6VS0kUupBv9QznHywcpqrlOAg/UEm6Pzka87HgzNYFZbTMkoI1VXJ6VO7mlGl5w7sjg
+         ydDQ==
+X-Gm-Message-State: APjAAAVko683hyk8otUNQS6Xu+kn/jSD3FhfJqeibWIThMzJ4tMy13mW
+        xiutKz9XTFFAIpDTqMQKOdsegQ==
+X-Google-Smtp-Source: APXvYqxf2SXvw5eL5pvZ5dxM3bsOpzB8pE9LizeZsTmQNv9szGCWS938X92XSc8bEFwyUt0tKDOXoA==
+X-Received: by 2002:a2e:9f47:: with SMTP id v7mr18234971ljk.124.1577729333023;
+        Mon, 30 Dec 2019 10:08:53 -0800 (PST)
+Received: from virtualhost-PowerEdge-R810.synapse.com ([195.238.92.107])
+        by smtp.gmail.com with ESMTPSA id q26sm18861980lfc.52.2019.12.30.10.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 10:08:52 -0800 (PST)
+From:   roman.stratiienko@globallogic.com
+To:     mripard@kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        jernej.skrabec@siol.net
+Cc:     Roman Stratiienko <roman.stratiienko@globallogic.com>
+Subject: [PATCH v2 1/2] drm/sun4i: Add alpha property for sun8i UI layer
+Date:   Mon, 30 Dec 2019 20:08:41 +0200
+Message-Id: <20191230180842.13393-1-roman.stratiienko@globallogic.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-12-26 18:26:52)
-> On Mon 23 Dec 18:16 PST 2019, Stephen Boyd wrote:
->=20
-> > Quoting Niklas Cassel (2019-12-20 09:56:16)
-> > > On Wed, Dec 18, 2019 at 10:23:39PM -0800, Stephen Boyd wrote:
-> > > > This is odd. The clks could be registered with of_clk_hw_register()=
- but
-> > > > then we lose the device provider information. Maybe we should searc=
-h up
-> > > > one level to the parent node and if that has a DT node but the
-> > > > clk controller device doesn't we should use that instead?
-> > >=20
-> > > Hello Stephen,
-> > >=20
-> > > Having this in the clk core is totally fine with me,
-> > > since it solves my problem.
-> > >=20
-> > > Will you cook up a patch, or do you want me to do it?
-> > >=20
-> >=20
-> > Can you try the patch I appended to my previous mail? I can write
-> > something up more proper later this week.
-> >=20
->=20
-> Unfortunately we have clocks with no dev, so this fail as below. Adding
-> a second check for dev !=3D NULL to your oneliner works fine though.
->=20
-> I.e. this ugly hack works fine:
->   core->of_node =3D np ? : (dev ? dev_of_node(dev->parent) : NULL);
->=20
+From: Roman Stratiienko <roman.stratiienko@globallogic.com>
 
-Ok, thanks for testing!
+DE2.0 and DE3.0 UI layers supports plane-global alpha channel.
+Add alpha property to the DRM plane and connect it to the
+corresponding registers in mixer.
+
+Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
+---
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 29 ++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.h |  5 +++++
+ 2 files changed, 34 insertions(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+index c87fd842918e..4343ea9f8cf8 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
+@@ -72,6 +72,27 @@ static void sun8i_ui_layer_enable(struct sun8i_mixer *mixer, int channel,
+ 	}
+ }
+ 
++static void sun8i_ui_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
++					int overlay, struct drm_plane *plane)
++{
++	u32 mask, val, ch_base;
++
++	ch_base = sun8i_channel_base(mixer, channel);
++
++	mask = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_MASK |
++		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK;
++
++	val = SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(plane->state->alpha >> 8);
++
++	val |= (plane->state->alpha == DRM_BLEND_ALPHA_OPAQUE) ?
++		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL :
++		SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_COMBINED;
++
++	regmap_update_bits(mixer->engine.regs,
++			   SUN8I_MIXER_CHAN_UI_LAYER_ATTR(ch_base, overlay),
++			   mask, val);
++}
++
+ static int sun8i_ui_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+ 				       int overlay, struct drm_plane *plane,
+ 				       unsigned int zpos)
+@@ -288,6 +309,8 @@ static void sun8i_ui_layer_atomic_update(struct drm_plane *plane,
+ 
+ 	sun8i_ui_layer_update_coord(mixer, layer->channel,
+ 				    layer->overlay, plane, zpos);
++	sun8i_ui_layer_update_alpha(mixer, layer->channel,
++				    layer->overlay, plane);
+ 	sun8i_ui_layer_update_formats(mixer, layer->channel,
+ 				      layer->overlay, plane);
+ 	sun8i_ui_layer_update_buffer(mixer, layer->channel,
+@@ -365,6 +388,12 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
+ 
+ 	plane_cnt = mixer->cfg->ui_num + mixer->cfg->vi_num;
+ 
++	ret = drm_plane_create_alpha_property(&layer->plane);
++	if (ret) {
++		dev_err(drm->dev, "Couldn't add alpha property\n");
++		return ERR_PTR(ret);
++	}
++
+ 	ret = drm_plane_create_zpos_property(&layer->plane, channel,
+ 					     0, plane_cnt - 1);
+ 	if (ret) {
+diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.h b/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
+index f4ab1cf6cded..e3e32ee1178d 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
++++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.h
+@@ -40,6 +40,11 @@
+ #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_MASK	GENMASK(12, 8)
+ #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_FBFMT_OFFSET	8
+ #define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MASK	GENMASK(31, 24)
++#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA(x)		((x) << 24)
++
++#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_PIXEL		((0) << 1)
++#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_LAYER		((1) << 1)
++#define SUN8I_MIXER_CHAN_UI_LAYER_ATTR_ALPHA_MODE_COMBINED	((2) << 1)
+ 
+ struct sun8i_mixer;
+ 
+-- 
+2.17.1
 
