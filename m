@@ -2,118 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B8712CFD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:00:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 78A1D12CFE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:08:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfL3MAv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 07:00:51 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38907 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfL3MAu (ORCPT
+        id S1727426AbfL3MID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 07:08:03 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:39487 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfL3MIC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 07:00:50 -0500
-Received: by mail-pl1-f195.google.com with SMTP id f20so14551659plj.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 04:00:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=loK+/2QBNqR4qI1aKCHvxn+umU8QIBnua/KHI6KiyXg=;
-        b=jnDiCxSk1c87KihAaXtSKthEobvCB6cNk3t6zBEjYl77hfXDNXqmlmu4IGveLG5F4F
-         iy11U7whJDdTG48Kqz2u7IivLRQu8tj1Mr3FQgUXQ0Hx7FE4XSMpFp3MOp1Nwk/zN0t8
-         zPPay9PUqOEdJeBD2ztRaSKQGgH6FIguxcvKE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=loK+/2QBNqR4qI1aKCHvxn+umU8QIBnua/KHI6KiyXg=;
-        b=kINSnQyeOjx7fBkyFcIQaM8xMPruDx+dkIS1i+xEMAgrQvvNJXC8nLjVUajyraQ8FJ
-         am8aHgzo+qXzHk0Zo83c0uWeK2GgElyhOd5/UmGLwkIhHgi80nU5HYUEOrX0Ca727EA7
-         ZRdHWt1N5U2oH8Yvk+7X17U1lzILAT+XRWTrOz9nA5MPZCPBvO+nj4ZC4HDzLKC6k8Rf
-         JypEtCirGVxKtopHsPqLGMQ5q0svDm2kp+Mr2NtNIyayj98751mUTinOLJ3XWLaU2kvQ
-         FcN8J6uzWBd67L5HP1Q8sew1sLzeSauHYgCNFtofzNAs755ikhmSVt4sXJPj0JlAT8GR
-         J+EA==
-X-Gm-Message-State: APjAAAUjFA4vPjUZ/7i6BQVDB6XKsnsgw3TQn92PYgIy3LuahZlm0kLW
-        pPWjNmRDzO2B1Gmi7SQE47eCJA==
-X-Google-Smtp-Source: APXvYqyKEwtlxrFaPIwook1+VfY0lSYSMcZTJ6WguwicU9oNLpY+et1Gxbqgky3XvCnScNe13ALFJQ==
-X-Received: by 2002:a17:902:7c0f:: with SMTP id x15mr28595069pll.267.1577707249818;
-        Mon, 30 Dec 2019 04:00:49 -0800 (PST)
-Received: from localhost.localdomain ([49.206.202.131])
-        by smtp.gmail.com with ESMTPSA id 7sm41894122pfx.52.2019.12.30.04.00.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 04:00:49 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 3/3] ARM: dts: imx6qdl-icore: Add fec phy-handle
-Date:   Mon, 30 Dec 2019 17:30:21 +0530
-Message-Id: <20191230120021.32630-3-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20191230120021.32630-1-jagan@amarulasolutions.com>
-References: <20191230120021.32630-1-jagan@amarulasolutions.com>
+        Mon, 30 Dec 2019 07:08:02 -0500
+Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M3loZ-1imB5X3ixX-000s7o; Mon, 30 Dec 2019 13:08:01 +0100
+Received: by mail-qv1-f53.google.com with SMTP id f16so12280764qvi.4;
+        Mon, 30 Dec 2019 04:08:00 -0800 (PST)
+X-Gm-Message-State: APjAAAVAiYT1SyrwaX0nP7JnD526OQKBqHvToyxBHP5ybX52jLH9Dhel
+        L4MRX7x9qOVnew375bm8HFLufLyWiPYnbjH4XLk=
+X-Google-Smtp-Source: APXvYqwgYmUQwo+iL/k4m54VB6r1wV0E9Nq8yE/j4nb6YZD4J7kjH+UJKaDQYBMfOQwb9P/Z8xhYwMz7551bLxAPNPc=
+X-Received: by 2002:a0c:bd20:: with SMTP id m32mr50936334qvg.197.1577707679673;
+ Mon, 30 Dec 2019 04:07:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1577111363.git.christophe.leroy@c-s.fr> <d0f8dfb26c025d3e3eee1b5f610161ca19b942df.1577111367.git.christophe.leroy@c-s.fr>
+In-Reply-To: <d0f8dfb26c025d3e3eee1b5f610161ca19b942df.1577111367.git.christophe.leroy@c-s.fr>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 30 Dec 2019 13:07:43 +0100
+X-Gmail-Original-Message-ID: <CAK8P3a36OgFuY72b_i6+0xBNGnaxS1SsRid+HrgQHPZtUJp3LQ@mail.gmail.com>
+Message-ID: <CAK8P3a36OgFuY72b_i6+0xBNGnaxS1SsRid+HrgQHPZtUJp3LQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 05/10] lib: vdso: inline do_hres()
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:jDOKdGxcK76WzzT4FAh+MO1q4e3xUlQLbmdYdbLmtxxWBIHJ/HL
+ AWqfVJIHOYCNfF/hNIR+TyMp3ebgudZbn9tYY1SkQvIDEewDaci2GB8uCfFmTn1XKnEnQmh
+ zGS6m1w/fbUv1tLbzRxkELzHwATLt1+D+RF+PG/PvtofNcSoRKS7EWu1LXwfSUmbuDzC27o
+ gduCYI7G+WktYInkzmHpA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xVsLO1llwLY=:3k24IvDRwIWli6yX+yQfJP
+ rwMQO0q+ila9fFJvhyEXqGGdBDLJR6Ef+VmOEGx8RFCJS08qHU3UzR1soing+CxYmooVFDTDa
+ Tdj7MzAbvoqAC0adVVmZCEgloHjUUgnaZJ0NT2/i6DaLQJ48ZwdS+o7jWBGOKKXzCeu/gCABt
+ qmDcqvz8/5mflEhRLGjzLBCp3cAgQUSOpn7eCVQlBd99G4U6tUDgvs76NQWLcHxo0owv9BAwD
+ 8S7yvT6aylYPCpwyhvFJlLBmVO8y9Nfp/mqFmyMzT/dH7q2f1wdrkrV+lOnr4y8tlJo3GwWHn
+ +vnlT1o7tG/Hib4ob1Mc5zzdiyE3uCQUUaZVbw9WzBWffn6SbVzIp9e2YV2/tXTTb/8sJkPpF
+ sTUX++I6h1TsgMq7yxLMNUiul5gChmNXRMyTLxi4liaVL9RWRGxZo15zafy98rkMDoaoiuqmF
+ gC2Y6C2P4GtrQ8kBulmrkChtz+Ev8ZkiZ+dLNfSqcEPSnuO4FZknK/rswvK7hqeXXh/RoK9Jd
+ A5QRf3oUKcQ15LVNHGEWkJaHsXMaw5cFvnbHT2QanH6k2iJBlv95B+G/Wbb5QwFxMeOLywqSf
+ imm1Eg6IHW6gyghCueaZqdtlSiQKONxnQLxVCxIv+eF94Y/OD9I2GNeU64zAeIv8mm8fsNqwp
+ a3JDWA+spiaxQhLkyoPQdk8fPt7QzOktzCcx7WD5fS2SWV/Pb5wVRWFNr5N4NSRJBipELsZTB
+ tLWKsz82ONkBdzweVDx5mKdVoORA/lzHwpMNprk1w57mtAgBXbnRARNHKESb2fRilHRldYuek
+ Kr/OPZ23K3FyC1EKbVo0aLLXvTdn1JZ/wtsLCecO/VwG4uHSold4W9vJkZcuyBmKgZ1q3CDGD
+ K5s+xhcAYEf+XlNDuM4g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
+On Mon, Dec 23, 2019 at 3:31 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
+>
+> do_hres() is called from several places, so GCC doesn't inline
+> it at first.
+>
+> do_hres() takes a struct __kernel_timespec * parameter for
+> passing the result. In the 32 bits case, this parameter corresponds
+> to a local var in the caller. In order to provide a pointer
+> to this structure, the caller has to put it in its stack and
+> do_hres() has to write the result in the stack. This is suboptimal,
+> especially on RISC processor like powerpc.
+>
+> By making GCC inline the function, the struct __kernel_timespec
+> remains a local var using registers, avoiding the need to write and
+> read stack.
+>
+> The improvement is significant on powerpc.
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 
-LAN8720 needs a reset of every clock enable. The reset needs
-to be done at device level, due the flag PHY_RST_AFTER_CLK_EN.
+Good idea, I can see how this ends up being an improvement
+for most of the callers.
 
-So, add phy-handle by creating mdio child node inside fec.
-This will eventually move the phy-reset-gpio which is defined
-in fec node.
-
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Changes for v2:
-- new patch.
-
- arch/arm/boot/dts/imx6qdl-icore.dtsi | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/imx6qdl-icore.dtsi b/arch/arm/boot/dts/imx6qdl-icore.dtsi
-index 7814f1ef0804..756f3a9f1b4f 100644
---- a/arch/arm/boot/dts/imx6qdl-icore.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-icore.dtsi
-@@ -150,10 +150,23 @@
- &fec {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_enet>;
--	phy-reset-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
- 	clocks = <&clks IMX6QDL_CLK_ENET>, <&clks IMX6QDL_CLK_ENET>, <&rmii_clk>;
- 	phy-mode = "rmii";
-+	phy-handle = <&eth_phy>;
- 	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		eth_phy: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0>;
-+			reset-gpios = <&gpio7 12 GPIO_ACTIVE_LOW>;
-+			reset-assert-us = <4000>;
-+			reset-deassert-us = <4000>;
-+		};
-+	};
- };
- 
- &gpmi {
--- 
-2.18.0.321.gffc6fa0e3
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
