@@ -2,73 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ABBF12D28A
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 18:22:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8677612D291
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 18:23:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfL3RW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 12:22:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727490AbfL3RWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 12:22:24 -0500
-Received: from localhost.localdomain (unknown [194.230.155.138])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81EF820730;
-        Mon, 30 Dec 2019 17:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577726544;
-        bh=fW+t00riNY8kM3dJLh4bxka9+sII9/uVpWad+1AZ0Tw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2aHzgfeUvO3iKsjryPcGZoQsMLKJG+87TluSTqLzcnjC1QjcM1ICo2Ev8twpdm5i
-         wUpRmEXSL2pLPWxWogcVHk0Sppn1clpcSnhFRayqIXyjDtB9zeuP3bnSlhwu8OaCP4
-         0ytFHjdnp3pjZhn5eTUQB/kl+CSG34nCH3b27i4M=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 2/2] usb: phy: Enable compile testing for some of drivers
-Date:   Mon, 30 Dec 2019 18:22:15 +0100
-Message-Id: <20191230172215.17370-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191230172215.17370-1-krzk@kernel.org>
-References: <20191230172215.17370-1-krzk@kernel.org>
+        id S1727537AbfL3RW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 12:22:56 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:40730 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfL3RWz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 12:22:55 -0500
+Received: by mail-pj1-f66.google.com with SMTP id bg7so34352pjb.5;
+        Mon, 30 Dec 2019 09:22:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Dx/r3gFYWyu/BL+Nw/dLm9t2W9mKH25PlFJGzDLl3Xk=;
+        b=FGg3wVFusl9S0FEVJd+YH/99VSffQUFVb8LGpdl5LbTCe4Jm3a44EmbdB85YCSqyJH
+         SuSg/gjQFFSBPjBuCDqOiqwCFCnFUSgjt7nMrLr3K7vWud3gjBOQx+gOIAYJfm2AZeH1
+         ybKhfsNvGb+r8E7WQLOq/kdPoxra4pi1/UiS2KRKLShjkaE/9PdLcuWTGi2Kq16toQrJ
+         LhwjvvYqAC/ij9Z4ugV+oCyczYrx7qwWKcCV4CwUIKBVt3p+BohgNau9zUoeAiuOThdh
+         CQPaT0j51beUs+MDf3aOcq20If10C6uVI46btnFonUVMrK843pfFaKz9TeRriIwpIzBK
+         1j3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Dx/r3gFYWyu/BL+Nw/dLm9t2W9mKH25PlFJGzDLl3Xk=;
+        b=pZzarJKbeNUqMaXJG5CSLjJm/wKBx5L3IrJWii+6vq8pHaXzmmwEJy0dPa9uxUp8ly
+         VTrYIOaMCTsvmq76+walLZ8jjYZA+ln1J0jQkDd64qvBwF0dWeSpMOKAGde0zA4t8oZW
+         GPRNAeaBbozUFWc0Fy08OUFkOMe0jLL4iAQNJlnB4eoO8xt+uqdB1Tx1DIppopHwVkdx
+         pUZaROMIdtI+Ch1Kv66QY1TaGTCGu/+UYK/ugQO6k5v7n9f6P6bhzoP2c92ZjLeDO1E7
+         5z4bhBK1Ia2ni0/yjehxb4LfEveRGEVPmfK8QdKKTbfXWbYjw/apW4tmgM1IKVVdP2J4
+         5bAQ==
+X-Gm-Message-State: APjAAAVSThccmOrusMj/lyS2GmZfcBVljhWywNqywpZXFKqY/DUc1GUO
+        jCQHK+av4IcTkoT8RwoVPHw=
+X-Google-Smtp-Source: APXvYqzkegvJ+yuaA5wb2f8jhWMOv5qYgrnEImkTwhTm31b/1rKnVXoJbrBk6meeMfpanhSamnBlfQ==
+X-Received: by 2002:a17:902:8541:: with SMTP id d1mr70946852plo.57.1577726575048;
+        Mon, 30 Dec 2019 09:22:55 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id k10sm48384pjs.13.2019.12.30.09.22.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 30 Dec 2019 09:22:54 -0800 (PST)
+Date:   Mon, 30 Dec 2019 09:22:53 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
+Message-ID: <20191230172253.GD12958@roeck-us.net>
+References: <20191229172702.393141737@linuxfoundation.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the USB phy drivers can be compile tested to increase build
-coverage.
+On Sun, Dec 29, 2019 at 06:20:53PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.7 release.
+> There are 434 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue, 31 Dec 2019 17:25:52 +0000.
+> Anything received after that time might be too late.
+> 
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/usb/phy/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Build results:
+	total: 158 pass: 145 fail: 13
+Failed builds:
+	<all mips>
+Qemu test results:
+	total: 385 pass: 320 fail: 65
+Failed tests:
+	<all mips>
+	<all ppc64_book3s_defconfig>
 
-diff --git a/drivers/usb/phy/Kconfig b/drivers/usb/phy/Kconfig
-index 24b4f091acb8..ff24fca0a2d9 100644
---- a/drivers/usb/phy/Kconfig
-+++ b/drivers/usb/phy/Kconfig
-@@ -162,7 +162,7 @@ config USB_MXS_PHY
- 
- config USB_TEGRA_PHY
- 	tristate "NVIDIA Tegra USB PHY Driver"
--	depends on ARCH_TEGRA
-+	depends on ARCH_TEGRA || COMPILE_TEST
- 	select USB_COMMON
- 	select USB_PHY
- 	select USB_ULPI
-@@ -172,7 +172,7 @@ config USB_TEGRA_PHY
- 
- config USB_ULPI
- 	bool "Generic ULPI Transceiver Driver"
--	depends on ARM || ARM64
-+	depends on ARM || ARM64 || COMPILE_TEST
- 	select USB_ULPI_VIEWPORT
- 	help
- 	  Enable this to support ULPI connected USB OTG transceivers which
--- 
-2.17.1
+mips and ppc64 failures are as with v4.19.y.
 
+Guenter
