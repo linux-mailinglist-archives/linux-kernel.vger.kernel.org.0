@@ -2,100 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4F3A12D318
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 19:08:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E302812D325
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 19:09:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbfL3SIw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 13:08:52 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:35587 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbfL3SIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 13:08:52 -0500
-Received: by mail-yb1-f195.google.com with SMTP id a124so14400797ybg.2
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 10:08:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ygcEd+mjaSKrmBq/UwIfmJMGRSUP47afmC7rxQ+g8j4=;
-        b=mjst4cLscGZODIE7UbwbgrzDoRxVSdO3I/bbcHFxXAQac+bF/lkEoQTB3tX8Oom7TA
-         JvlghNn4OJZ6CS4bqaRb2yoH9ZIxNCdTPe5zlV9VaavRHmE25TZjvOKJ8zT96huqj1tV
-         GP8/bMBQ2uEgIgjCdqaL7UUWo58SiYdJ8UaL+lwtTFiKXwf/aUa/uWgOUxyKQFDQIRYY
-         GTPZLY9DurdLifuqeQ2rg/sD6ct7NUrKSM75KJJPaY/+m0lntc7dDtYSwt/jBs4a9Iz9
-         PGRF8qucfm5hBbZ+TCHvmzu6gq0v50VonvotPCrYJCnX3qgYZYMGnB6GGGfEhOC+mmDN
-         E/Ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to;
-        bh=ygcEd+mjaSKrmBq/UwIfmJMGRSUP47afmC7rxQ+g8j4=;
-        b=iIDLAIJaQiGpKxz6K6cCYoaduyNplpoFa45FS5FTX0UJMcURbFlaaB7vtV0UV43gsq
-         eGdnPpEe6yk6KvHGyeLQufk9fdkPl4SaDElg3dFfF0FmAT3k+gOZOeMFyl5AAlSvsBwt
-         JSJTwH4n4q9VdL4Ic/Z27ryY/9SuCz0KI6tlMT6vMADSv6n4V4wvKkWgJeP2eaCo0rce
-         TNlO0ddBP1WJaUFoldhqtrZqcyd3Pq5Wi+3A8D/zGvXCu8p927ZtGS2agyatseVQFer0
-         TGqaVP7EBxZLqTJET2kpbwbPR40F9eeiGtID4AnUBVcKEJtcETtQ5ZkYyRMjOSnx01nG
-         CaNA==
-X-Gm-Message-State: APjAAAW16tKAYvgI2pD4w3qoCBY+fXb7uBev51NnDVQv8kjB1AMBXyL2
-        5hTi7dZWt50ONR6j10orD043Aw==
-X-Google-Smtp-Source: APXvYqwxwYcMJXoYHEy/yMGknkS1/KFBVaRMibslurcfAySvGWHO2v2vgFSggO48BTEnfUYHoz3osw==
-X-Received: by 2002:a25:774a:: with SMTP id s71mr32294631ybc.189.1577729331013;
-        Mon, 30 Dec 2019 10:08:51 -0800 (PST)
-Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
-        by smtp.gmail.com with ESMTPSA id d143sm18132446ywb.51.2019.12.30.10.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 10:08:50 -0800 (PST)
-Date:   Mon, 30 Dec 2019 12:08:49 -0600
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
-Message-ID: <20191230180849.222x3hg2tnpwz7dn@xps.therub.org>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-References: <20191229172702.393141737@linuxfoundation.org>
- <20191230163437.sz4mb5gh7ed2htfa@xps.therub.org>
- <20191230174522.GA1499079@kroah.com>
+        id S1727631AbfL3SJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 13:09:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38324 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727318AbfL3SJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 13:09:32 -0500
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 257D021D7D;
+        Mon, 30 Dec 2019 18:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577729372;
+        bh=CIxky4h0LVYFSbOfjb+Wx3SNAnNGLt1D4UQk5UmNk1c=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vlN+7jezkIv4FXDqX/nz1VaDVfc0s34AOc7VRoXixFBvyBf2NS7UAvciKl5f4JrS2
+         COyw+4rmt4XdgJO7vLxLwTnzzegkh9+Of/s9YxdiQYIZmhvTVWwkokqMsc0fFhJJxn
+         v3XwBo0Id+PIVVPcAWYLHjWEznXovcBggYYfbJzU=
+Received: by mail-lj1-f169.google.com with SMTP id j26so34086104ljc.12;
+        Mon, 30 Dec 2019 10:09:32 -0800 (PST)
+X-Gm-Message-State: APjAAAX1r2MxcVz5HRDCf84rVfVONk6OlhIApDFY8J6k1TXsCV3Fbssq
+        p7RgpnjCLOe3l4+Nhme5x0PnztDLwNkgyIRrb7s=
+X-Google-Smtp-Source: APXvYqxAdJs6SJdFryPxW5wX+hRhHZJW2xGaMVjcJOAmu8Z8ylrrHPwlJUTmAdPyoyHqqnMnIhBmj+nLKuPGfSg7On4=
+X-Received: by 2002:a2e:a361:: with SMTP id i1mr37666609ljn.29.1577729370158;
+ Mon, 30 Dec 2019 10:09:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191230174522.GA1499079@kroah.com>
+References: <20191230084731.15776-1-yuehaibing@huawei.com> <CAGTfZH36sbTn++gKq+cQOXAutXQbyjbzZ_0VeU2Y037hWnROqA@mail.gmail.com>
+In-Reply-To: <CAGTfZH36sbTn++gKq+cQOXAutXQbyjbzZ_0VeU2Y037hWnROqA@mail.gmail.com>
+From:   Chanwoo Choi <chanwoo@kernel.org>
+Date:   Tue, 31 Dec 2019 03:08:53 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH34ufvwco8w6GN8E=KUuSeCfjFk4bR7PnotbLso0UNzoA@mail.gmail.com>
+Message-ID: <CAGTfZH34ufvwco8w6GN8E=KUuSeCfjFk4bR7PnotbLso0UNzoA@mail.gmail.com>
+Subject: Re: [PATCH -next] PM / devfreq: imx8m-ddrc: Fix inconsistent IS_ERR
+ and PTR_ERR
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Shawn Guo <shawnguo@kernel.org>, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 06:45:22PM +0100, Greg Kroah-Hartman wrote:
-> On Mon, Dec 30, 2019 at 10:34:37AM -0600, Dan Rue wrote:
-> > On Sun, Dec 29, 2019 at 06:20:53PM +0100, Greg Kroah-Hartman wrote:
-> > > This is the start of the stable review cycle for the 5.4.7 release.
-> > > There are 434 patches in this series, all will be posted as a response
-> > > to this one.  If anyone has any issues with these being applied, please
-> > > let me know.
-> > 
-> > Results from Linaro’s test farm.
-> > No regressions on arm64, arm, x86_64, and i386.
-> 
-> Thanks for testing all of these and letting me know.
-> 
-> But didn't you add perf build testing to your builds?  That should have
-> broken things, so I am guessing not :(
+On Tue, Dec 31, 2019 at 2:35 AM Chanwoo Choi <chanwoo@kernel.org> wrote:
+>
+> On Mon, Dec 30, 2019 at 5:58 PM YueHaibing <yuehaibing@huawei.com> wrote:
+> >
+> > Fix inconsistent IS_ERR and PTR_ERR in imx8m_ddrc_probe().
+> > Detected using Coccinelle.
+> >
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > ---
+> >  drivers/devfreq/imx8m-ddrc.c | 24 ++++++++++++++++++------
+> >  1 file changed, 18 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/devfreq/imx8m-ddrc.c b/drivers/devfreq/imx8m-ddrc.c
+> > index 53df792..bc82d36 100644
+> > --- a/drivers/devfreq/imx8m-ddrc.c
+> > +++ b/drivers/devfreq/imx8m-ddrc.c
+> > @@ -395,15 +395,27 @@ static int imx8m_ddrc_probe(struct platform_device *pdev)
+> >         }
+> >
+> >         priv->dram_core = devm_clk_get(dev, "core");
+> > +       if (IS_ERR(priv->dram_core)) {
+> > +               ret = PTR_ERR(priv->dram_core);
+> > +               dev_err(dev, "failed to fetch core clock: %d\n", ret);
+>
+> If there is no special reason, just use 'get' instead of ' fetch' word.
+> s/fetch/get
 
-We do build (and run) perf, and it worked for us. Which patch was the
-problem? I can go look at why our config didn't hit the offending
-code/build path.
+Usually, use 'verb' included in function name to show the debug message.
+But, Again thinking. the original comment used 'fetch' word. Please
+ignore my comment
 
-Dan
+Applied it.
 
--- 
-Linaro LKFT
-https://lkft.linaro.org
+(snip)
+
+Best Regards,
+Chanwoo Choi
