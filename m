@@ -2,72 +2,236 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6909712D28E
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 18:22:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6497912D289
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 18:22:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbfL3RWd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 12:22:33 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:43638 "EHLO vps0.lunn.ch"
+        id S1727480AbfL3RWY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 12:22:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbfL3RWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 12:22:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=LvLtlNVIraZ0K0BvAC5sz2iObsMdXa39MW+pknncAe8=; b=iSv7ysfdrw1VwJYAGLPPJNd9NM
-        KGau6p3kXLxDpdxTm2WplWp0/sl76MT0ivU7mdQUYlrjNbuWITalxN7VLliyisHVL8+sbLagNdeAf
-        UtYhMZd4l4+AJ0mq4Tx4L7TW6YbSLc1BMQlSgwA5uu+0sqrbrScaRXphYxfNFPyAhWKw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ilyk5-0004Ct-AJ; Mon, 30 Dec 2019 18:22:09 +0100
-Date:   Mon, 30 Dec 2019 18:22:09 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Alexander Lobakin <alobakin@dlink.ru>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Paul Blakey <paulb@mellanox.com>,
-        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH RFC net-next 06/19] net: dsa: tag_gswip: fix typo in tag
- name
-Message-ID: <20191230172209.GE13569@lunn.ch>
-References: <20191230143028.27313-1-alobakin@dlink.ru>
- <20191230143028.27313-7-alobakin@dlink.ru>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230143028.27313-7-alobakin@dlink.ru>
+        id S1727207AbfL3RWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 12:22:23 -0500
+Received: from localhost.localdomain (unknown [194.230.155.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD423206DB;
+        Mon, 30 Dec 2019 17:22:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577726542;
+        bh=+KQwNq1Y/RjQXnx3nXcDvZm9kdw7ojpjO2CwlX2HNgY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BjPjsubFm5Hu4kug+I7rcHipqLO1Xe2NpQKmC6/IuFR5t9GwXfiICfH8HB/4rPbjm
+         3mJNlGzv29b+FL49Hw4Fi5ivuOY84DhnGdW+14YBrUC4GPAodwLVkiio7eeN6Px0sW
+         8OeYd6ENvR4MjbGXL4q4YVWYzf7fFqbuxjxBeURQ=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Felipe Balbi <balbi@kernel.org>, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/2] usb: host: Enable compile testing for some of drivers
+Date:   Mon, 30 Dec 2019 18:22:14 +0100
+Message-Id: <20191230172215.17370-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 05:30:14PM +0300, Alexander Lobakin wrote:
-> "gwsip" -> "gswip".
-> 
-> Signed-off-by: Alexander Lobakin <alobakin@dlink.ru>
+Some of the USB host drivers can be compile tested to increase build
+coverage.  Add 'if' conditional to 'default y' so they will not get
+enabled by default on all other architectures.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/usb/host/Kconfig | 54 ++++++++++++++++++++--------------------
+ 1 file changed, 27 insertions(+), 27 deletions(-)
 
-    Andrew
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 8d730180db06..da14a3d16b57 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -186,7 +186,7 @@ config USB_EHCI_FSL
+ 
+ config USB_EHCI_MXC
+ 	tristate "Support for Freescale i.MX on-chip EHCI USB controller"
+-	depends on ARCH_MXC
++	depends on ARCH_MXC || COMPILE_TEST
+ 	select USB_EHCI_ROOT_HUB_TT
+ 	---help---
+ 	  Variation of ARC USB block used in some Freescale chips.
+@@ -210,8 +210,8 @@ config USB_EHCI_HCD_OMAP
+ 
+ config USB_EHCI_HCD_ORION
+ 	tristate  "Support for Marvell EBU on-chip EHCI USB controller"
+-	depends on USB_EHCI_HCD && (PLAT_ORION || ARCH_MVEBU)
+-	default y
++	depends on USB_EHCI_HCD && (PLAT_ORION || ARCH_MVEBU || COMPILE_TEST)
++	default y if (PLAT_ORION || ARCH_MVEBU)
+ 	---help---
+ 	  Enables support for the on-chip EHCI controller on Marvell's
+ 	  embedded ARM SoCs, including Orion, Kirkwood, Dove, Armada XP,
+@@ -221,15 +221,15 @@ config USB_EHCI_HCD_ORION
+ 
+ config USB_EHCI_HCD_SPEAR
+ 	tristate "Support for ST SPEAr on-chip EHCI USB controller"
+-	depends on USB_EHCI_HCD && PLAT_SPEAR
+-	default y
++	depends on USB_EHCI_HCD && (PLAT_SPEAR || COMPILE_TEST)
++	default y if PLAT_SPEAR
+ 	---help---
+ 	  Enables support for the on-chip EHCI controller on
+ 	  ST SPEAr chips.
+ 
+ config USB_EHCI_HCD_STI
+ 	tristate "Support for ST STiHxxx on-chip EHCI USB controller"
+-	depends on ARCH_STI && OF
++	depends on (ARCH_STI || COMPILE_TEST) && OF
+ 	select GENERIC_PHY
+ 	select USB_EHCI_HCD_PLATFORM
+ 	help
+@@ -238,8 +238,8 @@ config USB_EHCI_HCD_STI
+ 
+ config USB_EHCI_HCD_AT91
+ 	tristate  "Support for Atmel on-chip EHCI USB controller"
+-	depends on USB_EHCI_HCD && ARCH_AT91
+-	default y
++	depends on USB_EHCI_HCD && (ARCH_AT91 || COMPILE_TEST)
++	default y if ARCH_AT91
+ 	---help---
+ 	  Enables support for the on-chip EHCI controller on
+ 	  Atmel chips.
+@@ -263,20 +263,20 @@ config USB_EHCI_HCD_PPC_OF
+ 
+ config USB_EHCI_SH
+ 	bool "EHCI support for SuperH USB controller"
+-	depends on SUPERH
++	depends on SUPERH || COMPILE_TEST
+ 	---help---
+ 	  Enables support for the on-chip EHCI controller on the SuperH.
+ 	  If you use the PCI EHCI controller, this option is not necessary.
+ 
+ config USB_EHCI_EXYNOS
+ 	tristate "EHCI support for Samsung S5P/EXYNOS SoC Series"
+-	depends on ARCH_S5PV210 || ARCH_EXYNOS
++	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+ 	help
+ 	  Enable support for the Samsung Exynos SOC's on-chip EHCI controller.
+ 
+ config USB_EHCI_MV
+ 	tristate "EHCI support for Marvell PXA/MMP USB controller"
+-	depends on (ARCH_PXA || ARCH_MMP)
++	depends on ARCH_PXA || ARCH_MMP || COMPILE_TEST
+ 	select USB_EHCI_ROOT_HUB_TT
+ 	---help---
+ 	  Enables support for Marvell (including PXA and MMP series) on-chip
+@@ -289,7 +289,7 @@ config USB_EHCI_MV
+ 
+ config USB_CNS3XXX_EHCI
+ 	bool "Cavium CNS3XXX EHCI Module (DEPRECATED)"
+-	depends on ARCH_CNS3XXX
++	depends on ARCH_CNS3XXX || COMPILE_TEST
+ 	select USB_EHCI_HCD_PLATFORM
+ 	---help---
+ 	  This option is deprecated now and the driver was removed, use
+@@ -309,7 +309,7 @@ config USB_EHCI_HCD_PLATFORM
+ 
+ config USB_OCTEON_EHCI
+ 	bool "Octeon on-chip EHCI support (DEPRECATED)"
+-	depends on CAVIUM_OCTEON_SOC
++	depends on CAVIUM_OCTEON_SOC || COMPILE_TEST
+ 	select USB_EHCI_BIG_ENDIAN_MMIO if CPU_BIG_ENDIAN
+ 	select USB_EHCI_HCD_PLATFORM
+ 	help
+@@ -410,15 +410,15 @@ config USB_OHCI_HCD_OMAP1
+ 
+ config USB_OHCI_HCD_SPEAR
+ 	tristate "Support for ST SPEAr on-chip OHCI USB controller"
+-	depends on USB_OHCI_HCD && PLAT_SPEAR
+-	default y
++	depends on USB_OHCI_HCD && (PLAT_SPEAR || COMPILE_TEST)
++	default y if PLAT_SPEAR
+ 	---help---
+ 	  Enables support for the on-chip OHCI controller on
+ 	  ST SPEAr chips.
+ 
+ config USB_OHCI_HCD_STI
+ 	tristate "Support for ST STiHxxx on-chip OHCI USB controller"
+-	depends on ARCH_STI && OF
++	depends on (ARCH_STI || COMPILE_TEST) && OF
+ 	select GENERIC_PHY
+ 	select USB_OHCI_HCD_PLATFORM
+ 	help
+@@ -427,8 +427,8 @@ config USB_OHCI_HCD_STI
+ 
+ config USB_OHCI_HCD_S3C2410
+ 	tristate "OHCI support for Samsung S3C24xx/S3C64xx SoC series"
+-	depends on USB_OHCI_HCD && (ARCH_S3C24XX || ARCH_S3C64XX)
+-	default y
++	depends on USB_OHCI_HCD && (ARCH_S3C24XX || ARCH_S3C64XX || COMPILE_TEST)
++	default y if (ARCH_S3C24XX || ARCH_S3C64XX)
+ 	---help---
+ 	  Enables support for the on-chip OHCI controller on
+ 	  S3C24xx/S3C64xx chips.
+@@ -453,17 +453,17 @@ config USB_OHCI_HCD_PXA27X
+ 
+ config USB_OHCI_HCD_AT91
+ 	tristate "Support for Atmel on-chip OHCI USB controller"
+-	depends on USB_OHCI_HCD && ARCH_AT91 && OF
+-	default y
++	depends on USB_OHCI_HCD && (ARCH_AT91 || COMPILE_TEST) && OF
++	default y if ARCH_AT91
+ 	---help---
+ 	  Enables support for the on-chip OHCI controller on
+ 	  Atmel chips.
+ 
+ config USB_OHCI_HCD_OMAP3
+ 	tristate "OHCI support for OMAP3 and later chips"
+-	depends on (ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5)
++	depends on ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5 || COMPILE_TEST
+ 	select USB_OHCI_HCD_PLATFORM
+-	default y
++	default y if ARCH_OMAP3 || ARCH_OMAP4 || SOC_OMAP5
+ 	help
+ 	  This option is deprecated now and the driver was removed, use
+ 	  USB_OHCI_HCD_PLATFORM instead.
+@@ -473,10 +473,10 @@ config USB_OHCI_HCD_OMAP3
+ 
+ config USB_OHCI_HCD_DAVINCI
+ 	tristate "OHCI support for TI DaVinci DA8xx"
+-	depends on ARCH_DAVINCI_DA8XX
++	depends on ARCH_DAVINCI_DA8XX || COMPILE_TEST
+ 	depends on USB_OHCI_HCD
+ 	select PHY_DA8XX_USB
+-	default y
++	default y if ARCH_DAVINCI_DA8XX
+ 	help
+ 	  Enables support for the DaVinci DA8xx integrated OHCI
+ 	  controller. This driver cannot currently be a loadable
+@@ -532,7 +532,7 @@ config USB_OHCI_HCD_SSB
+ 
+ config USB_OHCI_SH
+ 	bool "OHCI support for SuperH USB controller (DEPRECATED)"
+-	depends on SUPERH
++	depends on SUPERH || COMPILE_TEST
+ 	select USB_OHCI_HCD_PLATFORM
+ 	---help---
+ 	  This option is deprecated now and the driver was removed, use
+@@ -543,13 +543,13 @@ config USB_OHCI_SH
+ 
+ config USB_OHCI_EXYNOS
+ 	tristate "OHCI support for Samsung S5P/EXYNOS SoC Series"
+-	depends on ARCH_S5PV210 || ARCH_EXYNOS
++	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
+ 	help
+ 	  Enable support for the Samsung Exynos SOC's on-chip OHCI controller.
+ 
+ config USB_CNS3XXX_OHCI
+ 	bool "Cavium CNS3XXX OHCI Module (DEPRECATED)"
+-	depends on ARCH_CNS3XXX
++	depends on ARCH_CNS3XXX || COMPILE_TEST
+ 	select USB_OHCI_HCD_PLATFORM
+ 	---help---
+ 	  This option is deprecated now and the driver was removed, use
+-- 
+2.17.1
+
