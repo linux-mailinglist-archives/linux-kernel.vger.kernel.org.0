@@ -2,73 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF5612D203
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:30:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B248F12D208
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:34:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbfL3Qat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 11:30:49 -0500
-Received: from sonic316-20.consmr.mail.ne1.yahoo.com ([66.163.187.146]:34249
-        "EHLO sonic316-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726597AbfL3Qat (ORCPT
+        id S1727187AbfL3Qek (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 11:34:40 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:44617 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfL3Qek (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 11:30:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1577723447; bh=7XLHrrNeuD3sweOBz5hpItC24D41nUTq/oGvzumZYN0=; h=Date:From:Reply-To:Subject:References:From:Subject; b=XUUcU+irvyE+Q7Lxk/l7D57Hvq6vb327ahoCuT9qdfGACCtl3OHEIV+dj7Oh3lVuq6vjR68z1KVGOKKOOAEQKFTL0t2oBDCCo0J5k2K7OFzB2mCEAIJnAT2d0yZRywJ799euRna3ABoUecZ2TAuKwmEJTA0kYSAjGNcz9cXLaP1D7Ab1f89gCD0poam8IHnmdFzu2j56ksEe+RUTBTpTSsREUwdXqzZaT9IIYmnxrKFsFMeQaFo2ja/gKderfYx8d1ilh7Lt5eTAJOku19q4XYhx8R3IhJnbdTaNwClvoQ24pwLIuGPkqNBU7DKl+7YNh3dpEVYGoyXc2ocYVm0iqw==
-X-YMail-OSG: DHufY0MVM1lGVDx.qwD4OpTbHEh7NUyEtAHTa2SQ07lRzJ5XooIMAXSPVjm8xLX
- nMypIztBAC5L.uoP_wyxpI05oQnYZMB1ahFe0VnFVxDERaMJOCV6.nz9a_7kkcYs4mnPrO_Ke1hO
- ffDSvLTY9552tDO2WhtjMSm7saNuCOIkpljclIcvfF0IRO.XvwOG8plAdW9GCH3pn1_PkJPLLG30
- sSbKNBsaxHainDBHa3AYtlqmM9nQy9kNayn2jniG0agrrHMm6Bd6gXls7JCsPK.OWPrIPzkkduQ3
- dlBRE.WQUhs.azzHp85wrvA8VOjajGjtqPXYnadvgryyHmVAIs2ZsTDNE6gnTrmPAVJo3DnQpWn7
- 3CgypR8giiT0UyQ7ET1osjM_Hju2IXe9DbNZqXXCtm5ltGLZC1zoOepB1FLv6YTOYByN0_o5.Ajf
- mi9b_zp5v9wVLAshVCJ5Anbl6.nqPK9rTjj785UqTz7NNVAqe2Q.IePGMwH.NYCk8m1LQtAWfczV
- 3enJutwjVT8shE_qBcWu3n4II3JMm972NlmJeul9eidvI6wniSPLrpYttwVSz4VjjzVLUgBBcMhs
- s1QSPul2W5kbyJzPS.YevL0V.qwrQwkokUwuncyEqczBzrnjSof8dlyZ5KTI4yhAwDNE2m7n5ZBI
- xJT3.fwKB0GL5D3eAO83IxPy9cKtKFpzLNiP2SxAj7.Mi2ZVN.NlZHuqU0XlFU9hf_crwrmtA6c3
- dcxrrt7JK9HnsyiXVqrsnA6ngsd_dbSB2DbUkOksPIb5aSxELt_ag2ongVM.jkMpuwd9282eA6rw
- Zkp3TfnczdfKqnngpI0ix5dnMJo5SR6R8JlXtbDGLJFa8693KNynCQU7PQ79qGov3WRi2CMqkx4z
- U1.WHjJc.YmN.JROHiYF.c31IiAtp9bTnuw8kdIQpKu1iA5uVANWIe7cSwr.3PQnWaLhMFVWOJK7
- tyzc_xsHpCs5EbhxT5kdwHhIcXMYqb2aZdznWHTkpLB1fwzFGaV0q9HPBCUdzPyVoFNaCwvn0wdL
- zJ.BDd6KlylWFbalIQldgWWXwnlNhpts5.X240OAl25UXMG0.8LQJNV5hCho0xuY9z1eKuuZXrj1
- pOFqQaddjFGifRXP7POA6e66SCtr6t9iFmuhP3MVObaAOS8iY3utcO40.mqcX1jbNaXCH1h16COg
- 652mjAla5Om1VD8aAXwJ5YeQpByv.JyGl2YyJLaGx9TtHdstenxiRwJC_o0MsNMu6kfBWSHceWJ6
- 63VfweTMtiDFfXVUn0nsWLlh47H2EDBO9rcme3JdsjFIdvfkEDNvHGkBhofI6DWu3UiQr_0ilqIj
- .tvTfxFd676dXyV3Vt2x8bveN8AmQ7M8-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 30 Dec 2019 16:30:47 +0000
-Date:   Mon, 30 Dec 2019 16:29:55 +0000 (UTC)
-From:   "Mr.Frank Gouli" <frankgouli9090@gmail.com>
-Reply-To: frankgouli959@gmail.com
-Message-ID: <567990858.4900153.1577723395886@mail.yahoo.com>
-Subject: Dear Beneficiary,
+        Mon, 30 Dec 2019 11:34:40 -0500
+Received: by mail-yb1-f193.google.com with SMTP id f136so11151293ybg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 08:34:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=SifrDRNuZI7FjGGbJzx9F32WU6UCkJPUxer3u46pdDA=;
+        b=Z35wHsyiNpP4RlEFRxabnN4fXuzsizFg+xlvkcOZWkAsXoTppdGT9xoMcEjd35huJZ
+         C+hvSJHTfqVcN2b9qaIV1hXlT4/TU+yvw9AUYGQZGO79zuSBnUZucz/PCzoXHgI/u+Gu
+         IJdQXOcSS6EqM4JMh5sqBPNcNtOVXjbgqOg++zxGi6CeTA8p3KtYcE4Flzmx7krRbxPm
+         PqI/5HdBPZWZgmE2lBdoKJHsWhfTAwKJgY+ys/KiEbJJmKtVL2TT3M0CaDYQGmRtMqmO
+         DdYf/Ll4VMGVqNemtm5z5+pe31O+TD+fX68R4GK253AQ1p1vvPrzLEz+CQx50ywHiovl
+         lcCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=SifrDRNuZI7FjGGbJzx9F32WU6UCkJPUxer3u46pdDA=;
+        b=Q4XOk6/3bruPQPV28s9VZzOKAtCFUbwXs4HoQGZhjP0TiisbVFTuDf4PyzZAMVU3+4
+         ngPRpAfrPwUmehVqLl/k6l3fkHhf99xQR2QlEaCQqz+K3IuHY1qGTFMwuxC82aEdJldc
+         rPINo6JQ/peks9fuOWwh9ra34qyz1sUqY2OXUu/PY/WKGYea61ditzOBUCGTm7C97OvG
+         mqaFtjImH9S4oyvLcQ/He9Tmq5n6UZmesk0pYlHllt0N/BYIot/YWuU/dQdUi8ubGuLS
+         fa5k7rTIQKvJwTe7DQ5D9WPQa/3JkZhJ8E1Nj/x19usEE03K+oYNQYGfJMj8no6liMEp
+         Wh+A==
+X-Gm-Message-State: APjAAAWjUJgkvdYINxknpe0VeP4RXsQGrrypf65AjkqGlFskdK8ODMv/
+        JnZtE/uAbexRjRZhO0vqMuwfA57Hvpg=
+X-Google-Smtp-Source: APXvYqwVL1AGDxGOv9b+LmFFMDFhX73etoc+MAkFLDhsbdHVxQtSeRdSsqK9QQx6kco1isCoQm4JnQ==
+X-Received: by 2002:a5b:38d:: with SMTP id k13mr23670721ybp.147.1577723679224;
+        Mon, 30 Dec 2019 08:34:39 -0800 (PST)
+Received: from localhost (c-75-72-120-115.hsd1.mn.comcast.net. [75.72.120.115])
+        by smtp.gmail.com with ESMTPSA id a189sm18679079ywh.92.2019.12.30.08.34.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 08:34:38 -0800 (PST)
+Date:   Mon, 30 Dec 2019 10:34:37 -0600
+From:   Dan Rue <dan.rue@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
+Message-ID: <20191230163437.sz4mb5gh7ed2htfa@xps.therub.org>
+Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+        patches@kernelci.org, ben.hutchings@codethink.co.uk,
+        lkft-triage@lists.linaro.org, stable@vger.kernel.org
+References: <20191229172702.393141737@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <567990858.4900153.1577723395886.ref@mail.yahoo.com>
-X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191229172702.393141737@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Dec 29, 2019 at 06:20:53PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.4.7 release.
+> There are 434 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Results from Linaro’s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 5.4.7-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-5.4.y
+git commit: 6bc086f94af53b930b413d3cc85fe11061b4a0a2
+git describe: v5.4.6-436-g6bc086f94af5
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-5.4-oe/build/v5.4.6-436-g6bc086f94af5
 
 
-Dear Beneficiary,
+No regressions (compared to build v5.4.6)
 
-Your Over-due ATM Card Payment Compensation fund from United Nations
-Compensation Commission valued US$17,750.000.00 has been deposited here in
-the Bank on your behalf. Therefore, re-confirm your information such
-as,full Name, Address and Telephone Numbers. Also state categorically your
-age, occupations and marital status.
+No fixes (compared to build v5.4.6)
 
-Immediately contact the Coordinator Compensation Unite .Mr.Frank Gouli,, who
-is in position to release your ATM Card to you.
+Ran 22880 total tests in the following environments and test suites.
 
-Mr.Frank Gouli,
-Coordinator
-United Nations Compensation Unite Programe.
-Coris International Bank For Africa Burkina Faso.
-E-mail: frankgouli959@gmail.com
-*****************************
-(United Nations Compensation Commission, MAKING THE WORLD A BETTER PLACE).
+Environments
+--------------
+- dragonboard-410c
+- hi6220-hikey
+- i386
+- juno-r2
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15
+- x86
 
-yours sincerely,
-Mr.Frank Gouli,
+Test Suites
+-----------
+* build
+* install-android-platform-tools-r2600
+* kselftest
+* libgpiod
+* libhugetlbfs
+* linux-log-parser
+* ltp-cap_bounds-tests
+* ltp-commands-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-dio-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* network-basic-tests
+* perf
+* spectre-meltdown-checker-test
+* v4l2-compliance
+* ltp-hugetlb-tests
+* ltp-mm-tests
+* ltp-open-posix-tests
+* ltp-syscalls-tests
+* kvm-unit-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+* ssuite
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
