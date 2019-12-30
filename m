@@ -2,63 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A3F12D1A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 16:59:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC8512D199
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 16:55:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfL3P7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 10:59:45 -0500
-Received: from infomag.iguana.be ([185.87.124.46]:39066 "EHLO
-        infomag.iguana.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727515AbfL3P7p (ORCPT
+        id S1727652AbfL3Pyy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 10:54:54 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53952 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727580AbfL3Pyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 10:59:45 -0500
-X-Greylist: delayed 364 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Dec 2019 10:59:44 EST
-Received: by infomag.iguana.be (Postfix, from userid 1001)
-        id 8BFEC603CACD; Mon, 30 Dec 2019 16:53:38 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 infomag.iguana.be 8BFEC603CACD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iguana.be;
-        s=infomag-20180602; t=1577721218;
-        bh=QWQ3dI0bHOs9NF/+MOj7mZ3u9IcPGxtzzLpiEk++eiY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=maaN5zSWP4jbllr+f2uYJRCgDUm9SL+J/UO3vU4Wig1xdwS0WARrFkptkOEBcNtSi
-         eD2xSoV8kGe/YlehjQCdZmz6qRQyv4wNU/lW1L+fJiUx1sq7R0Zjdvf0OEnnsSmgj4
-         fPf1uXYfBWrIis7ieAJLqIHXPct4vlmFxqQX8ekE=
-Date:   Mon, 30 Dec 2019 16:53:38 +0100
-From:   Wim Van Sebroeck <wim@iguana.be>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Srikanth Krishnakar <skrishnakar@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Signed-off-by missing for commit in the watchdog tree
-Message-ID: <20191230155338.GA19493@infomag.iguana.be>
-References: <20191221142859.59b88b2c@canb.auug.org.au>
+        Mon, 30 Dec 2019 10:54:54 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBUFslYT107724;
+        Mon, 30 Dec 2019 09:54:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1577721287;
+        bh=717YTbPxt9H6OLOqeAdytOQWGa7WnNOXnJX7AvQNYc0=;
+        h=From:To:CC:Subject:Date;
+        b=epJvuCq4AhWIKClnhqjqahRxF6Nl+jO/ft3fjmVY8Zta+yPzB1+Qom7zjDh7x6C8M
+         dxWnA/BxMYcchHx9MBx34fuDKdvNoNp/qvuE2m5KBqg0edKxuhgfdYloTuT3mCKWab
+         FnYk8voaE0zOhsb6/o1ZJfYHPeOUXkWV4EjPOYjc=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBUFslDp031569;
+        Mon, 30 Dec 2019 09:54:47 -0600
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 30
+ Dec 2019 09:54:47 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 30 Dec 2019 09:54:47 -0600
+Received: from legion.dal.design.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBUFsldo090087;
+        Mon, 30 Dec 2019 09:54:47 -0600
+Received: from localhost ([10.250.65.50])
+        by legion.dal.design.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id xBUFsku26998;
+        Mon, 30 Dec 2019 09:54:46 -0600 (CST)
+From:   "Andrew F. Davis" <afd@ti.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH v2] drm: Move radeon and amdgpu Kconfig options into their directories
+Date:   Mon, 30 Dec 2019 10:54:46 -0500
+Message-ID: <20191230155446.11345-1-afd@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191221142859.59b88b2c@canb.auug.org.au>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+Most Kconfig options to enable a driver are in the Kconfig file
+inside the relevant directory, move these two to the same.
 
-> Hi all,
-> 
-> Commit
-> 
->   ad5acedd16f8 ("watchdog: w83627hf_wdt: Fix support NCT6116D")
-> 
-> is missing a Signed-off-by from its author.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+---
 
-Fixed.
+Changes from v1:
+ - Rebased
 
-Kind regards,
-Wim.
+ drivers/gpu/drm/Kconfig            | 34 ------------------------------
+ drivers/gpu/drm/amd/amdgpu/Kconfig | 18 ++++++++++++++++
+ drivers/gpu/drm/radeon/Kconfig     | 18 ++++++++++++++++
+ 3 files changed, 36 insertions(+), 34 deletions(-)
+
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index bfdadc3667e0..714ae842b7ce 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -231,42 +231,8 @@ source "drivers/gpu/drm/i2c/Kconfig"
+ 
+ source "drivers/gpu/drm/arm/Kconfig"
+ 
+-config DRM_RADEON
+-	tristate "ATI Radeon"
+-	depends on DRM && PCI && MMU
+-	select FW_LOADER
+-        select DRM_KMS_HELPER
+-        select DRM_TTM
+-	select POWER_SUPPLY
+-	select HWMON
+-	select BACKLIGHT_CLASS_DEVICE
+-	select INTERVAL_TREE
+-	help
+-	  Choose this option if you have an ATI Radeon graphics card.  There
+-	  are both PCI and AGP versions.  You don't need to choose this to
+-	  run the Radeon in plain VGA mode.
+-
+-	  If M is selected, the module will be called radeon.
+-
+ source "drivers/gpu/drm/radeon/Kconfig"
+ 
+-config DRM_AMDGPU
+-	tristate "AMD GPU"
+-	depends on DRM && PCI && MMU
+-	select FW_LOADER
+-	select DRM_KMS_HELPER
+-	select DRM_SCHED
+-	select DRM_TTM
+-	select POWER_SUPPLY
+-	select HWMON
+-	select BACKLIGHT_CLASS_DEVICE
+-	select INTERVAL_TREE
+-	select CHASH
+-	help
+-	  Choose this option if you have a recent AMD Radeon graphics card.
+-
+-	  If M is selected, the module will be called amdgpu.
+-
+ source "drivers/gpu/drm/amd/amdgpu/Kconfig"
+ 
+ source "drivers/gpu/drm/nouveau/Kconfig"
+diff --git a/drivers/gpu/drm/amd/amdgpu/Kconfig b/drivers/gpu/drm/amd/amdgpu/Kconfig
+index 9375e7f12420..f6100cb193fb 100644
+--- a/drivers/gpu/drm/amd/amdgpu/Kconfig
++++ b/drivers/gpu/drm/amd/amdgpu/Kconfig
+@@ -1,4 +1,22 @@
+ # SPDX-License-Identifier: MIT
++
++config DRM_AMDGPU
++	tristate "AMD GPU"
++	depends on DRM && PCI && MMU
++	select FW_LOADER
++	select DRM_KMS_HELPER
++	select DRM_SCHED
++	select DRM_TTM
++	select POWER_SUPPLY
++	select HWMON
++	select BACKLIGHT_CLASS_DEVICE
++	select INTERVAL_TREE
++	select CHASH
++	help
++	  Choose this option if you have a recent AMD Radeon graphics card.
++
++	  If M is selected, the module will be called amdgpu.
++
+ config DRM_AMDGPU_SI
+ 	bool "Enable amdgpu support for SI parts"
+ 	depends on DRM_AMDGPU
+diff --git a/drivers/gpu/drm/radeon/Kconfig b/drivers/gpu/drm/radeon/Kconfig
+index 6f60f4840cc5..ba67b879d31d 100644
+--- a/drivers/gpu/drm/radeon/Kconfig
++++ b/drivers/gpu/drm/radeon/Kconfig
+@@ -1,4 +1,22 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config DRM_RADEON
++	tristate "ATI Radeon"
++	depends on DRM && PCI && MMU
++	select FW_LOADER
++	select DRM_KMS_HELPER
++	select DRM_TTM
++	select POWER_SUPPLY
++	select HWMON
++	select BACKLIGHT_CLASS_DEVICE
++	select INTERVAL_TREE
++	help
++	  Choose this option if you have an ATI Radeon graphics card.  There
++	  are both PCI and AGP versions.  You don't need to choose this to
++	  run the Radeon in plain VGA mode.
++
++	  If M is selected, the module will be called radeon.
++
+ config DRM_RADEON_USERPTR
+ 	bool "Always enable userptr support"
+ 	depends on DRM_RADEON
+-- 
+2.17.1
 
