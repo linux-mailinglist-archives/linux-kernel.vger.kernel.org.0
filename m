@@ -2,135 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3227A12D1B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:07:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 304BF12D1BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:13:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfL3QHb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 11:07:31 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42836 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbfL3QHb (ORCPT
+        id S1727186AbfL3QNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 11:13:01 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38484 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726675AbfL3QNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 11:07:31 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s64so18198829pgb.9;
-        Mon, 30 Dec 2019 08:07:30 -0800 (PST)
+        Mon, 30 Dec 2019 11:13:01 -0500
+Received: by mail-ed1-f65.google.com with SMTP id i16so32998830edr.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 08:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QQifhEvd0qlOro5mq55/v6MzZxcRB/EQ8GzsSLDvKvQ=;
-        b=NIqxuaZLjE0bnw2trLuyaKCZlOURs2/yVNquCgje//3TbuWs8CCcqgzfTuEQMYq5Gu
-         IdC2MuXxAmVo7Ke2A8LTaJXUKNePtWGOW09awQrpPWIpUBYPlbd9OnRk4BPT8Hdd3vAc
-         KrGMRAF+11XvtTWVQl1VOODUZuEv/qO/0lndaOrPSAaSuZF4DQ75WVukArcZmv2qaMXx
-         SiRVh4bi0dIO96A2XKy1qYT4k8ODlb/W/zB+wBruI55Kdqz+/NHk9yb517H6OAKavRGp
-         ww2lKDNMuyQwY1savCtFsgg1MlFNmm2FehvzRQvRXSn+vTBLRiGLxiNCFtNe9KV+5/CX
-         sM8A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G+IpvNYDr1r8qiuEoCpZSYzbw36vNuYa2znw2miGrDA=;
+        b=WG4La9s5mhcbwYlQ2kAuW8nhMwm1/5+T0FR3m096MJaQPzYLHjRT7xh0wWL6r+JfG0
+         dqvqaKQ7/avtVROEZkFXTwLj+8qXpm+15l4CfZ5e2Qr7l2VziQaJcbx9VzNLbATaH2IN
+         CuaTn8d1qmh24SQEFALHaHPKdxjzpGEstOXDDVFhTZdzQj9li4/h871hduxDHhI66zDt
+         J2ZuN5HuFA1i3KgrEiF7KcbSAVoPqy741saZwRzvwB3kEI1EB7hYukmNVdiSYgpXAcow
+         qDR7oK+104ETHLRk/CrIyTx47c7LF9f2d/Vg9oVyPOFjkgp1Ek5iM58TGTXnsXLtImxF
+         CTxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QQifhEvd0qlOro5mq55/v6MzZxcRB/EQ8GzsSLDvKvQ=;
-        b=Wx9V8BfWuedfE2xTbAS/bFm/fjJq/5RKEeOUMxXd+EMGvRPEQ4rKvGKi3+PDsOzvSv
-         UcwbBBmNGEUFuQKdYoP+uNNVFsgA8GAEbRXZRXx6jv5dmdQZjVJsfShMRC4TPxCJdH8z
-         TgAhiOiI6f6Kgr3asCuoJsU39JlyTgxuCoY5WK4Z9Y1q2izVkdPtEKhTT6TFxZuDtUj2
-         AiG+sZV2oOz6OpZiu461WOdJQ9VNtBYVx9C0MuTkfaR4bsaJOjh0cMu5mi/JXms5A1bd
-         xffqlRiPq0kNvWPK4s+HBMiNyB5RvMZvNXzzsigBpDSNaXljlmP0V2Sl98RukZMeqUEd
-         R1Pg==
-X-Gm-Message-State: APjAAAVr2FJCjYRUdGaqVlq/SkNEjfkmx+UDfqZ208lAQDBUxOiPfYSV
-        2uTcTJ+twExcvBns9/IcmqCX+msW
-X-Google-Smtp-Source: APXvYqw5acYxqgdINUs+FyQDAeNUkty8IHAD+FtPNa+5uPBm42ipxImSwOPnn/wLQLHeIRF091ukpw==
-X-Received: by 2002:a63:6fca:: with SMTP id k193mr75185418pgc.416.1577722050295;
-        Mon, 30 Dec 2019 08:07:30 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id t63sm52734279pfb.70.2019.12.30.08.07.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Dec 2019 08:07:29 -0800 (PST)
-Date:   Mon, 30 Dec 2019 08:07:27 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Douglas Gilbert <dgilbert@interlog.com>
-Cc:     linux-usb@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB-PD tcpm: bad warning+size, PPS adapters
-Message-ID: <20191230160727.GA12958@roeck-us.net>
-References: <20191230033544.1809-1-dgilbert@interlog.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=G+IpvNYDr1r8qiuEoCpZSYzbw36vNuYa2znw2miGrDA=;
+        b=hC0JeoXXjIqN+40iwm7RCCCSVmh4XNg+hr+kdNrhxnPsAA0K7ibAkKWdPLT7ClqpVF
+         3/Cibj7eR291NqID8Vf4FTkG0Roe/tD1yb6fHxnOoK2Y37xKku5N3+qrWCtYhZsitxN9
+         g7lEB2dRaaB6pKXHosydh3lYxBk19Jtz5UCX0KdSjEmRG0q2AZJb+DtqJdfmKf3hsHhK
+         DpmYpcJGLAIRa5eKnuGhU7SVhj2y7Ai39lQ0BH5kzs5nqBpHvSDg+P+U0IwLEOeJBovS
+         qXvi0xDy8FSgbMrb8t4z7jRdm0DEJGcRzktc33X0UrN9yD6NJJJkLzbUcXDweu9RqqjE
+         Euzg==
+X-Gm-Message-State: APjAAAX+Aa/BEgvBhqqeTzlw6SNI8c88xc8Uq5fjozMAgHDqngJTuUDa
+        3JLwdlTbjTBkgSqVgjY0kZ5KCA==
+X-Google-Smtp-Source: APXvYqyQLdXcF5BunDhBXgm6EMm1xV9hVQs1TafRntsrA3F/atajI6uyS4ZbVKz9Z6UkPhnSuI5Jgg==
+X-Received: by 2002:a17:906:4d46:: with SMTP id b6mr69483027ejv.79.1577722379278;
+        Mon, 30 Dec 2019 08:12:59 -0800 (PST)
+Received: from localhost.localdomain ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id dx7sm5624489ejb.81.2019.12.30.08.12.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 08:12:58 -0800 (PST)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH] usb: dwc3: gadget: Fix failure to detect end of transfer
+Date:   Mon, 30 Dec 2019 16:13:21 +0000
+Message-Id: <20191230161321.2738541-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230033544.1809-1-dgilbert@interlog.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 29, 2019 at 10:35:44PM -0500, Douglas Gilbert wrote:
-> Augmented Power Delivery Objects (A)PDO_s are used by USB-C
-> PD power adapters to advertize the voltages and currents
-> they support. There can be up to 7 PDO_s but before PPS
-> (programmable power supply) there were seldom more than 4
-> or 5. Recently Samsung released an optional PPS 45 Watt power
-> adapter (EP-TA485) that has 7 PDO_s. It is for the Galaxy 10+
-> tablet and charges it quicker than the adapter supplied at
-> purchase. The EP-TA485 causes an overzealous WARN_ON to soil
-> the log plus it miscalculates the number of bytes to read.
-> 
-> So this bug has been there for some time but goes
-> undetected for the majority of USB-C PD power adapters on
-> the market today that have 6 or less PDO_s. That may soon
-> change as more USB-C PD adapters with PPS come to market.
-> 
-> Tested on a EP-TA485 and an older Lenovo PN: SA10M13950
-> USB-C 65 Watt adapter (without PPS and has 4 PDO_s) plus
-> several other PD power adapters.
-> 
-> Signed-off-by: Douglas Gilbert <dgilbert@interlog.com>
+A recent bugfix 8c7d4b7b3d43 ("usb: dwc3: gadget: Fix logical condition")
+correctly fixes a logical error in the gadget driver but, exposes a further
+bug in determining when a transfer has completed.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Prior to 8c7d4b7b3d43 we were calling dwc3_gadget_giveback() when we
+shouldn't have been. Afer this change the below test fails to complete on
+my hardware.
 
-> ---
->  drivers/usb/typec/tcpm/tcpci.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
-> index c1f7073a56de..8b4ff9fff340 100644
-> --- a/drivers/usb/typec/tcpm/tcpci.c
-> +++ b/drivers/usb/typec/tcpm/tcpci.c
-> @@ -432,20 +432,30 @@ irqreturn_t tcpci_irq(struct tcpci *tcpci)
->  
->  	if (status & TCPC_ALERT_RX_STATUS) {
->  		struct pd_message msg;
-> -		unsigned int cnt;
-> +		unsigned int cnt, payload_cnt;
->  		u16 header;
->  
->  		regmap_read(tcpci->regmap, TCPC_RX_BYTE_CNT, &cnt);
-> +		/*
-> +		 * 'cnt' corresponds to READABLE_BYTE_COUNT in section 4.4.14
-> +		 * of the TCPCI spec [Rev 2.0 Ver 1.0 October 2017] and is
-> +		 * defined in table 4-36 as one greater than the number of
-> +		 * bytes received. And that number includes the header. So:
-> +		 */
-> +		if (cnt > 3)
-> +			payload_cnt = cnt - (1 + sizeof(msg.header));
-> +		else
-> +			payload_cnt = 0;
->  
->  		tcpci_read16(tcpci, TCPC_RX_HDR, &header);
->  		msg.header = cpu_to_le16(header);
->  
-> -		if (WARN_ON(cnt > sizeof(msg.payload)))
-> -			cnt = sizeof(msg.payload);
-> +		if (WARN_ON(payload_cnt > sizeof(msg.payload)))
-> +			payload_cnt = sizeof(msg.payload);
->  
-> -		if (cnt > 0)
-> +		if (payload_cnt > 0)
->  			regmap_raw_read(tcpci->regmap, TCPC_RX_DATA,
-> -					&msg.payload, cnt);
-> +					&msg.payload, payload_cnt);
->  
->  		/* Read complete, clear RX status alert bit */
->  		tcpci_write16(tcpci, TCPC_ALERT, TCPC_ALERT_RX_STATUS);
-> -- 
-> 2.24.1
-> 
+Host:
+echo "host" > /dev/ttyACM0
+
+Device:
+cat < /dev/ttyGS0
+
+This is caused by the driver incorrectly detecting end of transfer, a
+problem that had previous been masked by the continuous calling of
+dwc3_gadget_giveback() prior to 8c7d4b7b3d43.
+
+Remediate by making the test <= instead of ==
+
+Fixes: e0c42ce590fe ("usb: dwc3: gadget: simplify IOC handling")
+
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ drivers/usb/dwc3/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 0c960a97ea02..464c4d9961c7 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -2467,7 +2467,7 @@ static int dwc3_gadget_ep_reclaim_trb_linear(struct dwc3_ep *dep,
+ 
+ static bool dwc3_gadget_ep_request_completed(struct dwc3_request *req)
+ {
+-	return req->request.actual == req->request.length;
++	return req->request.actual <= req->request.length;
+ }
+ 
+ static int dwc3_gadget_ep_cleanup_completed_request(struct dwc3_ep *dep,
+-- 
+2.24.0
+
