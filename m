@@ -2,88 +2,214 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D48B12CBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 03:13:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9799B12CBCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 03:01:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfL3CNV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 29 Dec 2019 21:13:21 -0500
-Received: from mga06.intel.com ([134.134.136.31]:21692 "EHLO mga06.intel.com"
+        id S1726832AbfL3CBM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 29 Dec 2019 21:01:12 -0500
+Received: from onstation.org ([52.200.56.107]:37582 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbfL3CNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 29 Dec 2019 21:13:21 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Dec 2019 18:13:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,373,1571727600"; 
-   d="scan'208";a="269539410"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by FMSMGA003.fm.intel.com with ESMTP; 29 Dec 2019 18:13:18 -0800
-Date:   Mon, 30 Dec 2019 09:53:12 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     yu kuai <yukuai3@huawei.com>, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yi.zhang@huawe.com,
-        zhengbin13@huawei.com
-Subject: Re: [PATCH] fpga: dfl: afu: remove set but not used variable 'afu'
-Message-ID: <20191230015312.GB6839@hao-dev>
-References: <20191226121533.6017-1-yukuai3@huawei.com>
- <20191227225809.GB1643@archbook>
+        id S1726343AbfL3CBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 29 Dec 2019 21:01:08 -0500
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 80B7B3EE7A;
+        Mon, 30 Dec 2019 02:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1577671266;
+        bh=t0PObDLzsPhcqnRoun2t4cn7CK8IaaEUsOLL32hsp+A=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hAmoq4Npmz3/1IQcX+qOctett7tt7TPaPFnCTIYg2L4+yaM0wk7VV2rrH85EtNsy/
+         AlF/nGb/YkJxqKzRKxv+x14HYwOwENwdBDvGfrnT/xnO1FVuXzO3tNN8BoUvAFh83T
+         6pTNrklhEV5bUK409DI2L7LOlxWMvPDu18MuWTfU=
+From:   Brian Masney <masneyb@onstation.org>
+To:     jeffrey.l.hugo@gmail.com, robdclark@gmail.com
+Cc:     freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        sean@poorly.run
+Subject: [PATCH RFC v2] drm/msm/mdp5: enable autorefresh
+Date:   Sun, 29 Dec 2019 21:00:52 -0500
+Message-Id: <20191230020053.26016-1-masneyb@onstation.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191227225809.GB1643@archbook>
-User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 27, 2019 at 02:58:09PM -0800, Moritz Fischer wrote:
-> On Thu, Dec 26, 2019 at 08:15:33PM +0800, yu kuai wrote:
-> > Fixes gcc '-Wunused-but-set-variable' warning:
-> > 
-> > drivers/fpga/dfl-afu-main.c: In function ‘afu_dev_destroy’:
-> > drivers/fpga/dfl-afu-main.c:816:18: warning: variable ‘afu’
-> > set but not used [-Wunused-but-set-variable]
-> > 
-> > It is never used, and so can be removed.
-> > 
-> > Signed-off-by: yu kuai <yukuai3@huawei.com>
-> > ---
-> >  drivers/fpga/dfl-afu-main.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/fpga/dfl-afu-main.c b/drivers/fpga/dfl-afu-main.c
-> > index e4a34dc7947f..65437b6a6842 100644
-> > --- a/drivers/fpga/dfl-afu-main.c
-> > +++ b/drivers/fpga/dfl-afu-main.c
-> > @@ -813,10 +813,8 @@ static int afu_dev_init(struct platform_device *pdev)
-> >  static int afu_dev_destroy(struct platform_device *pdev)
-> >  {
-> >  	struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
-> > -	struct dfl_afu *afu;
-> >  
-> >  	mutex_lock(&pdata->lock);
-> > -	afu = dfl_fpga_pdata_get_private(pdata);
-> >  	afu_mmio_region_destroy(pdata);
-> >  	afu_dma_region_destroy(pdata);
-> >  	dfl_fpga_pdata_set_private(pdata, NULL);
-> > -- 
-> > 2.17.2
-> > 
-> Acked-by: Moritz Fischer <mdf@kernel.org>
-> 
-> I'll get to the patches in the new year.
+Since the introduction of commit 2d99ced787e3 ("drm/msm: async commit
+support"), command-mode panels began throwing the following errors:
 
-Thanks Kuai and Moritz. :)
+    msm fd900000.mdss: pp done time out, lm=0
 
-Acked-by: Wu Hao <hao.wu@intel.com>
+Let's fix this by enabling the autorefresh feature that's available in
+the MDP starting at version 1.0. This will cause the MDP to
+automatically send a frame to the panel every time the panel invokes the
+TE signal, which will trigger the PP_DONE IRQ. This requires only
+sending a single START signal for command-mode panels.
 
-Hao
-> 
-> Thanks,
-> Moritz
+This gives us a counter for command-mode panels that we can use to
+implement async commit support for the MDP5 in a follow up patch.
+
+Signed-off-by: Brian Masney <masneyb@onstation.org>
+Suggested-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Fixes: 2d99ced787e3 ("drm/msm: async commit support")
+---
+Changes since v1:
+- Send a single start command to kick off the pipeline.
+
+The reason I marked this patch as a RFC is that the display during some
+small percentage of boots will stop updating after a minute or so, and
+the ping pong IRQs stop. Most of the time it works with no issues and I
+haven't been able to find a way to reproduce the issue. I tried
+suspending the phone by toggling /sys/power/state since I thought that
+the issue could potentially be related to power management.
+
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c | 17 ++++++++++++-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c  | 31 ++++++++++++++++++++---
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.h  |  3 +--
+ 3 files changed, 44 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+index 05cc04f729d6..39dd144295b3 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+@@ -436,6 +436,8 @@ static void mdp5_crtc_atomic_disable(struct drm_crtc *crtc,
+ 		spin_unlock_irqrestore(&mdp5_kms->dev->event_lock, flags);
+ 	}
+ 
++	mdp5_ctl_disable(mdp5_cstate->ctl, &mdp5_cstate->pipeline);
++
+ 	mdp5_crtc->enabled = false;
+ }
+ 
+@@ -456,6 +458,7 @@ static void mdp5_crtc_atomic_enable(struct drm_crtc *crtc,
+ {
+ 	struct mdp5_crtc *mdp5_crtc = to_mdp5_crtc(crtc);
+ 	struct mdp5_crtc_state *mdp5_cstate = to_mdp5_crtc_state(crtc->state);
++	struct mdp5_pipeline *pipeline = &mdp5_cstate->pipeline;
+ 	struct mdp5_kms *mdp5_kms = get_kms(crtc);
+ 	struct device *dev = &mdp5_kms->pdev->dev;
+ 
+@@ -493,9 +496,21 @@ static void mdp5_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	mdp_irq_register(&mdp5_kms->base, &mdp5_crtc->err);
+ 
+-	if (mdp5_cstate->cmd_mode)
++	if (mdp5_cstate->cmd_mode) {
+ 		mdp_irq_register(&mdp5_kms->base, &mdp5_crtc->pp_done);
+ 
++		/*
++		 * Enable autorefresh so we get regular ping/pong IRQs.
++		 * - Bit 31 is the enable bit
++		 * - Bits 0-15 represent the frame count, specifically how many
++		 *   TE events before the MDP sends a frame.
++		 */
++		mdp5_write(mdp5_kms,
++			   REG_MDP5_PP_AUTOREFRESH_CONFIG(pipeline->mixer->pp),
++			   BIT(31) | BIT(0));
++		crtc_flush_all(crtc);
++	}
++
+ 	mdp5_crtc->enabled = true;
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+index 030279d7b64b..965757d4f356 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.c
+@@ -50,6 +50,13 @@ struct mdp5_ctl {
+ 	bool flush_pending;
+ 
+ 	struct mdp5_ctl *pair; /* Paired CTL to be flushed together */
++
++	/*
++	 * The command mode panels are ran with autorefresh enabled. Only a
++	 * single START command can be sent so keep track on a per ping pong
++	 * basis.
++	 */
++	bool start_sent_by_pp[4];
+ };
+ 
+ struct mdp5_ctl_manager {
+@@ -191,7 +198,8 @@ static bool start_signal_needed(struct mdp5_ctl *ctl,
+ 	case INTF_WB:
+ 		return true;
+ 	case INTF_DSI:
+-		return intf->mode == MDP5_INTF_DSI_MODE_COMMAND;
++		return intf->mode == MDP5_INTF_DSI_MODE_COMMAND &&
++			!ctl->start_sent_by_pp[pipeline->mixer->pp];
+ 	default:
+ 		return false;
+ 	}
+@@ -204,13 +212,17 @@ static bool start_signal_needed(struct mdp5_ctl *ctl,
+  * executed in order to kick off operation and activate all layers.
+  * e.g.: DSI command mode, Writeback
+  */
+-static void send_start_signal(struct mdp5_ctl *ctl)
++static void send_start_signal(struct mdp5_ctl *ctl,
++			      struct mdp5_pipeline *pipeline)
+ {
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&ctl->hw_lock, flags);
+ 	ctl_write(ctl, REG_MDP5_CTL_START(ctl->id), 1);
+ 	spin_unlock_irqrestore(&ctl->hw_lock, flags);
++
++	if (pipeline->intf->mode == MDP5_INTF_DSI_MODE_COMMAND)
++		ctl->start_sent_by_pp[pipeline->mixer->pp] = true;
+ }
+ 
+ /**
+@@ -234,7 +246,7 @@ int mdp5_ctl_set_encoder_state(struct mdp5_ctl *ctl,
+ 	DBG("intf_%d: %s", intf->num, enabled ? "on" : "off");
+ 
+ 	if (start_signal_needed(ctl, pipeline)) {
+-		send_start_signal(ctl);
++		send_start_signal(ctl, pipeline);
+ 	}
+ 
+ 	return 0;
+@@ -562,7 +574,7 @@ u32 mdp5_ctl_commit(struct mdp5_ctl *ctl,
+ 	}
+ 
+ 	if (start_signal_needed(ctl, pipeline)) {
+-		send_start_signal(ctl);
++		send_start_signal(ctl, pipeline);
+ 	}
+ 
+ 	return curr_ctl_flush_mask;
+@@ -753,3 +765,14 @@ struct mdp5_ctl_manager *mdp5_ctlm_init(struct drm_device *dev,
+ 
+ 	return ERR_PTR(ret);
+ }
++
++void mdp5_ctl_disable(struct mdp5_ctl *ctl, struct mdp5_pipeline *pipeline)
++{
++	int i;
++
++	if (pipeline->intf->mode != MDP5_INTF_DSI_MODE_COMMAND)
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(ctl->start_sent_by_pp); i++)
++		ctl->start_sent_by_pp[i] = false;
++}
+diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.h b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.h
+index c2af68aa77ae..f9bbf1295669 100644
+--- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.h
++++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_ctl.h
+@@ -72,7 +72,6 @@ u32 mdp_ctl_flush_mask_encoder(struct mdp5_interface *intf);
+ u32 mdp5_ctl_commit(struct mdp5_ctl *ctl, struct mdp5_pipeline *pipeline,
+ 		    u32 flush_mask, bool start);
+ u32 mdp5_ctl_get_commit_status(struct mdp5_ctl *ctl);
+-
+-
++void mdp5_ctl_disable(struct mdp5_ctl *ctl, struct mdp5_pipeline *pipeline);
+ 
+ #endif /* __MDP5_CTL_H__ */
+-- 
+2.21.0
+
