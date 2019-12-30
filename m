@@ -2,97 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E18B212D4DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 23:42:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A320C12D4DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 23:46:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfL3Wl5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 17:41:57 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:55732 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727744AbfL3Wl5 (ORCPT
+        id S1727771AbfL3Wqx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 17:46:53 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46211 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727732AbfL3Wqx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 17:41:57 -0500
-Received: by mail-pj1-f68.google.com with SMTP id d5so386215pjz.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 14:41:56 -0800 (PST)
+        Mon, 30 Dec 2019 17:46:53 -0500
+Received: by mail-ot1-f67.google.com with SMTP id k8so30860791otl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 14:46:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=xba8FIFzefmv0Pl2yIOHKi2YLMOHTYOjvq/MJDGzbZk=;
-        b=oaVlu4ZMb4nJbS8ZAIVbkqLg70LBaTIXwRgvcZZv9SZ248sYUojeDA7qhAd886zZac
-         rh9TzFPFxLxPtXU7prskTsr7rL+40M5oYvNuQKFkHgDq1RBNMlak+5SOCJSpFS7YClZY
-         c3MHo8ep6VHp9qeUWmCewR18X79OodEPTizuJvdhuUdB/jGBfRyKT/CLR0Kj449F9dSo
-         Awr5vHUv3bb8kLJVrFqN8VqLk90VYqZQrVorTvzh20YpKWxTOWEjo0VbAV1/WsozKxJW
-         M3WZo8273CPMcm+gw5Bx1T5jRiQnoHQP8MprR5YvRbcakf6ZfvOqfGSUQuPZgdOCAyLd
-         Ycrw==
+        bh=KVG0ZR5whludu2LSxTJJPsDmCMwU7s5sjwPL/Fg7FNM=;
+        b=iQgb6wISYMyhiHn/Zvtp1vRHA1m4RL+tfGKtMDDGSsPpRKYEzxuC/urCzo+TDIGMuT
+         f022i9b9eaKHoKP1MgQx5LEkL1ONKhqtPa8t4F2ecoT4JzINsQdmLTZPEVFAfFgsfXvo
+         fpO2Rx4UH4WOqcPc0f0rCSLkfHXo4+4YgpcuE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xba8FIFzefmv0Pl2yIOHKi2YLMOHTYOjvq/MJDGzbZk=;
-        b=sv2PbyXoXDZUePcz2HseqxA1mSrszOQX5+QxcpZ86ENBK9n2FBxNQ3blhKfhwTKG80
-         pR/kyjTNfsz7CvBfa7qHXbaY1Hw8/lGVCB6zU4bFwDwLbn/mQxDeG9VO2zbfVYRNyBQ7
-         5/gRqrxkj58FFY3bmxLiweIjMNz6/MxNqhzt/RvYqX3BLFatzPPE//AcUwcvwPtfTNav
-         c/w8F15C3amQ1K+pA2MKHn04UaUIygmR5fP4ycmJiqHrzlMLegxZBZLPl5m237sGA0/z
-         59bDl3jyEJq1E4wjpkkBseqEtJmrfaVc2X8vpCZLZM7okySW18EEn+XyHTSVCn5B48dO
-         Qdrw==
-X-Gm-Message-State: APjAAAUUMwebbil4ObZ0uqVaRNUXTzJOLcxXQ83VasSBbqJkqM81hBcF
-        U5T5Qia0P0ogKTgZmSDmZU9P3s5m7Tg=
-X-Google-Smtp-Source: APXvYqxDJQOkw3IpX2MxSfODfbrqMn2AEST8zRa82EX9XuOmIXDLDrUxdaPdU89Cg2vVy5Y5+ZNBDw==
-X-Received: by 2002:a17:902:a5c1:: with SMTP id t1mr47250002plq.87.1577745716055;
-        Mon, 30 Dec 2019 14:41:56 -0800 (PST)
-Received: from debian ([122.164.19.238])
-        by smtp.gmail.com with ESMTPSA id z19sm49933366pfn.49.2019.12.30.14.41.51
+        bh=KVG0ZR5whludu2LSxTJJPsDmCMwU7s5sjwPL/Fg7FNM=;
+        b=g+MN+bNdYweDsWkjVs3yPsHrK6Ed1q1T1vnqiBYIQt0HWdo50itLzsSK/PLAc9BIe/
+         hIls2+I79jtn4MALpg4ZzbVYxg7O6OhN/7mBW8aFUl5TaaXuvBUrP/sfmg+byYzFCZfR
+         414NuTauN4LP/ngxy9cQ20tQdR6/N0D9TBGHqGFV9qcOBkq3gR/PczvbEnUyrcx8xbpm
+         GLDPRl4VROJs7tcqBxvsCh7YaP4BxK5QMjq06GlZ5mdZjgM59UNYl2ZEgo7mtHv4s9NS
+         48xxPYxNwlkfGetto9DrbPWGpvSfOMadvu7BeubX10MDn+clHbdC5vygSa+kseqLojNJ
+         HzpQ==
+X-Gm-Message-State: APjAAAXTVaH+bgs2NhnzQKcJjUtl3AQlgc+6K5X2d61BqD6aoYE2gyOJ
+        THD1snSQiGd69kgg83/t8vZ9s06s5gc=
+X-Google-Smtp-Source: APXvYqx1uSAC8SMnbJijSNU/sEEjLLoG6ebIQO4DqMv6Xn/Zwp5rEtAsnVmiQlSzdP7KVkn0nzeWNA==
+X-Received: by 2002:a05:6830:147:: with SMTP id j7mr78036332otp.44.1577746012664;
+        Mon, 30 Dec 2019 14:46:52 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s83sm14220610oif.33.2019.12.30.14.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 14:41:55 -0800 (PST)
-Date:   Tue, 31 Dec 2019 04:11:43 +0530
-From:   Jeffrin Jose <jeffrin@rajagiritech.edu.in>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org,
-        jeffrin@rajagiritech.edu.in
-Subject: Re: [PATCH 5.4 000/434] 5.4.7-stable review
-Message-ID: <20191230224143.GA3074@debian>
-References: <20191229172702.393141737@linuxfoundation.org>
- <20191230174336.GA1498696@kroah.com>
+        Mon, 30 Dec 2019 14:46:51 -0800 (PST)
+Date:   Mon, 30 Dec 2019 14:46:50 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Alexander Popov <alex.popov@linux.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, notify@kernel.org
+Subject: Re: [PATCH v1 1/1] lkdtm/stackleak: Make the stack erasing test more
+ verbose
+Message-ID: <201912301443.9B8F6CA6@keescook>
+References: <20191219145416.435508-1-alex.popov@linux.com>
+ <201912301034.5C04DC89@keescook>
+ <5bde4de0-875c-536b-67ec-eafebb8b9ab1@linux.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191230174336.GA1498696@kroah.com>
+In-Reply-To: <5bde4de0-875c-536b-67ec-eafebb8b9ab1@linux.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 06:43:36PM +0100, Greg Kroah-Hartman wrote:
-> On Sun, Dec 29, 2019 at 06:20:53PM +0100, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 5.4.7 release.
-> > There are 434 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
+On Tue, Dec 31, 2019 at 01:20:24AM +0300, Alexander Popov wrote:
+> Hello Kees!
+> 
+> On 30.12.2019 21:37, Kees Cook wrote:
+> > On Thu, Dec 19, 2019 at 05:54:16PM +0300, Alexander Popov wrote:
+> >> Make the stack erasing test more verbose about the errors that it
+> >> can detect. BUG() in case of test failure is useful when the test
+> >> is running in a loop.
 > > 
-> > Responses should be made by Tue, 31 Dec 2019 17:25:52 +0000.
-> > Anything received after that time might be too late.
-> > 
-> > The whole patch series can be found in one patch at:
-> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.7-rc1.gz
-> > or in the git tree and branch at:
-> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> > and the diffstat can be found below.
+> > Hi! I try to keep the "success" conditions for LKDTM tests to be a
+> > system exception, so doing "BUG" on a failure is actually against the
+> > design. So, really, a test harness needs to know to check dmesg for the
+> > results here. It almost looks like this check shouldn't live in LKDTM,
 > 
-> I have pushed out -rc2:
->  	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.7-rc2.gz
+> Hm, I see...
 > 
-> to resolve some reported issues.
+> Let me explain why I've decided to use BUG() in case of a failure.
 > 
-> greg k-h
+> Once upon a time I noticed that the stack erasing test failed on a kernel with
+> KASAN enabled. It happened only once, and all my numerous efforts to reproduce
+> it failed. That's why I come with this patch. These changes provide additional
+> information and allow easy detection of a failure when you run the test in a loop.
+> 
+> Is stackleak test the only exception of this kind in LKDTM?
 
-i have compiled 5.4.7-rc2+ related and "dmesg -l err" has no new errors.
-"dmesg -l warn" all clean
+Some of the refcount_t tests don't trigger a WARN(), and there are
+related benchmarking tests that don't either.
 
---
-software engineer
-rajagiri school of engineering and technology
+> > but since it feels like other LKDTM tests, I'm happy to keep it there
+> > for now.
+> 
+> Do you mean that you will apply this patch?
 
+Sorry for my confusing reply! I meant that I don't want to apply the
+patch, but I'm find to leave the stackleak check in LKDTM.
+
+However, if you want to split it out into its own test, I think that
+should be fine; similar to lib/test_user_copy.c if you want it to stand
+alone and have its own semantics, etc.
+
+> > I'll resend my selftests series that adds a real test harness for all
+> > the LKDTM tests and CC you.
+> 
+> Ok!
+> 
+> Maybe you also see how to improve the LKDTM infrastructure and remove this
+> inconsistency. Could you share your ideas?
+
+I don't, unfortunately. The real "difficulty" is that some of the
+crashes are architecture-specific (e.g. how MMU traps are reported
+across different architectures), so it's not too easy to consolidate
+the reporting. As a result, I've taken to trying to do best-effort on
+the test running side. I'll send what I've got...
+
+-- 
+Kees Cook
