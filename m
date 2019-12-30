@@ -2,105 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 304BF12D1BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:13:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF5612D203
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 17:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727186AbfL3QNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 11:13:01 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38484 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726675AbfL3QNB (ORCPT
+        id S1726838AbfL3Qat (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 11:30:49 -0500
+Received: from sonic316-20.consmr.mail.ne1.yahoo.com ([66.163.187.146]:34249
+        "EHLO sonic316-20.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726597AbfL3Qat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 11:13:01 -0500
-Received: by mail-ed1-f65.google.com with SMTP id i16so32998830edr.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 08:13:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G+IpvNYDr1r8qiuEoCpZSYzbw36vNuYa2znw2miGrDA=;
-        b=WG4La9s5mhcbwYlQ2kAuW8nhMwm1/5+T0FR3m096MJaQPzYLHjRT7xh0wWL6r+JfG0
-         dqvqaKQ7/avtVROEZkFXTwLj+8qXpm+15l4CfZ5e2Qr7l2VziQaJcbx9VzNLbATaH2IN
-         CuaTn8d1qmh24SQEFALHaHPKdxjzpGEstOXDDVFhTZdzQj9li4/h871hduxDHhI66zDt
-         J2ZuN5HuFA1i3KgrEiF7KcbSAVoPqy741saZwRzvwB3kEI1EB7hYukmNVdiSYgpXAcow
-         qDR7oK+104ETHLRk/CrIyTx47c7LF9f2d/Vg9oVyPOFjkgp1Ek5iM58TGTXnsXLtImxF
-         CTxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=G+IpvNYDr1r8qiuEoCpZSYzbw36vNuYa2znw2miGrDA=;
-        b=hC0JeoXXjIqN+40iwm7RCCCSVmh4XNg+hr+kdNrhxnPsAA0K7ibAkKWdPLT7ClqpVF
-         3/Cibj7eR291NqID8Vf4FTkG0Roe/tD1yb6fHxnOoK2Y37xKku5N3+qrWCtYhZsitxN9
-         g7lEB2dRaaB6pKXHosydh3lYxBk19Jtz5UCX0KdSjEmRG0q2AZJb+DtqJdfmKf3hsHhK
-         DpmYpcJGLAIRa5eKnuGhU7SVhj2y7Ai39lQ0BH5kzs5nqBpHvSDg+P+U0IwLEOeJBovS
-         qXvi0xDy8FSgbMrb8t4z7jRdm0DEJGcRzktc33X0UrN9yD6NJJJkLzbUcXDweu9RqqjE
-         Euzg==
-X-Gm-Message-State: APjAAAX+Aa/BEgvBhqqeTzlw6SNI8c88xc8Uq5fjozMAgHDqngJTuUDa
-        3JLwdlTbjTBkgSqVgjY0kZ5KCA==
-X-Google-Smtp-Source: APXvYqyQLdXcF5BunDhBXgm6EMm1xV9hVQs1TafRntsrA3F/atajI6uyS4ZbVKz9Z6UkPhnSuI5Jgg==
-X-Received: by 2002:a17:906:4d46:: with SMTP id b6mr69483027ejv.79.1577722379278;
-        Mon, 30 Dec 2019 08:12:59 -0800 (PST)
-Received: from localhost.localdomain ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id dx7sm5624489ejb.81.2019.12.30.08.12.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 08:12:58 -0800 (PST)
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     balbi@kernel.org, gregkh@linuxfoundation.org,
-        linux-usb@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: [PATCH] usb: dwc3: gadget: Fix failure to detect end of transfer
-Date:   Mon, 30 Dec 2019 16:13:21 +0000
-Message-Id: <20191230161321.2738541-1-bryan.odonoghue@linaro.org>
-X-Mailer: git-send-email 2.24.0
+        Mon, 30 Dec 2019 11:30:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1577723447; bh=7XLHrrNeuD3sweOBz5hpItC24D41nUTq/oGvzumZYN0=; h=Date:From:Reply-To:Subject:References:From:Subject; b=XUUcU+irvyE+Q7Lxk/l7D57Hvq6vb327ahoCuT9qdfGACCtl3OHEIV+dj7Oh3lVuq6vjR68z1KVGOKKOOAEQKFTL0t2oBDCCo0J5k2K7OFzB2mCEAIJnAT2d0yZRywJ799euRna3ABoUecZ2TAuKwmEJTA0kYSAjGNcz9cXLaP1D7Ab1f89gCD0poam8IHnmdFzu2j56ksEe+RUTBTpTSsREUwdXqzZaT9IIYmnxrKFsFMeQaFo2ja/gKderfYx8d1ilh7Lt5eTAJOku19q4XYhx8R3IhJnbdTaNwClvoQ24pwLIuGPkqNBU7DKl+7YNh3dpEVYGoyXc2ocYVm0iqw==
+X-YMail-OSG: DHufY0MVM1lGVDx.qwD4OpTbHEh7NUyEtAHTa2SQ07lRzJ5XooIMAXSPVjm8xLX
+ nMypIztBAC5L.uoP_wyxpI05oQnYZMB1ahFe0VnFVxDERaMJOCV6.nz9a_7kkcYs4mnPrO_Ke1hO
+ ffDSvLTY9552tDO2WhtjMSm7saNuCOIkpljclIcvfF0IRO.XvwOG8plAdW9GCH3pn1_PkJPLLG30
+ sSbKNBsaxHainDBHa3AYtlqmM9nQy9kNayn2jniG0agrrHMm6Bd6gXls7JCsPK.OWPrIPzkkduQ3
+ dlBRE.WQUhs.azzHp85wrvA8VOjajGjtqPXYnadvgryyHmVAIs2ZsTDNE6gnTrmPAVJo3DnQpWn7
+ 3CgypR8giiT0UyQ7ET1osjM_Hju2IXe9DbNZqXXCtm5ltGLZC1zoOepB1FLv6YTOYByN0_o5.Ajf
+ mi9b_zp5v9wVLAshVCJ5Anbl6.nqPK9rTjj785UqTz7NNVAqe2Q.IePGMwH.NYCk8m1LQtAWfczV
+ 3enJutwjVT8shE_qBcWu3n4II3JMm972NlmJeul9eidvI6wniSPLrpYttwVSz4VjjzVLUgBBcMhs
+ s1QSPul2W5kbyJzPS.YevL0V.qwrQwkokUwuncyEqczBzrnjSof8dlyZ5KTI4yhAwDNE2m7n5ZBI
+ xJT3.fwKB0GL5D3eAO83IxPy9cKtKFpzLNiP2SxAj7.Mi2ZVN.NlZHuqU0XlFU9hf_crwrmtA6c3
+ dcxrrt7JK9HnsyiXVqrsnA6ngsd_dbSB2DbUkOksPIb5aSxELt_ag2ongVM.jkMpuwd9282eA6rw
+ Zkp3TfnczdfKqnngpI0ix5dnMJo5SR6R8JlXtbDGLJFa8693KNynCQU7PQ79qGov3WRi2CMqkx4z
+ U1.WHjJc.YmN.JROHiYF.c31IiAtp9bTnuw8kdIQpKu1iA5uVANWIe7cSwr.3PQnWaLhMFVWOJK7
+ tyzc_xsHpCs5EbhxT5kdwHhIcXMYqb2aZdznWHTkpLB1fwzFGaV0q9HPBCUdzPyVoFNaCwvn0wdL
+ zJ.BDd6KlylWFbalIQldgWWXwnlNhpts5.X240OAl25UXMG0.8LQJNV5hCho0xuY9z1eKuuZXrj1
+ pOFqQaddjFGifRXP7POA6e66SCtr6t9iFmuhP3MVObaAOS8iY3utcO40.mqcX1jbNaXCH1h16COg
+ 652mjAla5Om1VD8aAXwJ5YeQpByv.JyGl2YyJLaGx9TtHdstenxiRwJC_o0MsNMu6kfBWSHceWJ6
+ 63VfweTMtiDFfXVUn0nsWLlh47H2EDBO9rcme3JdsjFIdvfkEDNvHGkBhofI6DWu3UiQr_0ilqIj
+ .tvTfxFd676dXyV3Vt2x8bveN8AmQ7M8-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Mon, 30 Dec 2019 16:30:47 +0000
+Date:   Mon, 30 Dec 2019 16:29:55 +0000 (UTC)
+From:   "Mr.Frank Gouli" <frankgouli9090@gmail.com>
+Reply-To: frankgouli959@gmail.com
+Message-ID: <567990858.4900153.1577723395886@mail.yahoo.com>
+Subject: Dear Beneficiary,
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <567990858.4900153.1577723395886.ref@mail.yahoo.com>
+X-Mailer: WebService/1.1.14873 YMailNodin Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A recent bugfix 8c7d4b7b3d43 ("usb: dwc3: gadget: Fix logical condition")
-correctly fixes a logical error in the gadget driver but, exposes a further
-bug in determining when a transfer has completed.
 
-Prior to 8c7d4b7b3d43 we were calling dwc3_gadget_giveback() when we
-shouldn't have been. Afer this change the below test fails to complete on
-my hardware.
 
-Host:
-echo "host" > /dev/ttyACM0
+Dear Beneficiary,
 
-Device:
-cat < /dev/ttyGS0
+Your Over-due ATM Card Payment Compensation fund from United Nations
+Compensation Commission valued US$17,750.000.00 has been deposited here in
+the Bank on your behalf. Therefore, re-confirm your information such
+as,full Name, Address and Telephone Numbers. Also state categorically your
+age, occupations and marital status.
 
-This is caused by the driver incorrectly detecting end of transfer, a
-problem that had previous been masked by the continuous calling of
-dwc3_gadget_giveback() prior to 8c7d4b7b3d43.
+Immediately contact the Coordinator Compensation Unite .Mr.Frank Gouli,, who
+is in position to release your ATM Card to you.
 
-Remediate by making the test <= instead of ==
+Mr.Frank Gouli,
+Coordinator
+United Nations Compensation Unite Programe.
+Coris International Bank For Africa Burkina Faso.
+E-mail: frankgouli959@gmail.com
+*****************************
+(United Nations Compensation Commission, MAKING THE WORLD A BETTER PLACE).
 
-Fixes: e0c42ce590fe ("usb: dwc3: gadget: simplify IOC handling")
-
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- drivers/usb/dwc3/gadget.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 0c960a97ea02..464c4d9961c7 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -2467,7 +2467,7 @@ static int dwc3_gadget_ep_reclaim_trb_linear(struct dwc3_ep *dep,
- 
- static bool dwc3_gadget_ep_request_completed(struct dwc3_request *req)
- {
--	return req->request.actual == req->request.length;
-+	return req->request.actual <= req->request.length;
- }
- 
- static int dwc3_gadget_ep_cleanup_completed_request(struct dwc3_ep *dep,
--- 
-2.24.0
-
+yours sincerely,
+Mr.Frank Gouli,
