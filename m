@@ -2,125 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D53B612CFDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31DD412CFD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 30 Dec 2019 13:00:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbfL3MBP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 07:01:15 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:46638 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726196AbfL3MBP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 07:01:15 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 851AD5C8891C7BB89C4D;
-        Mon, 30 Dec 2019 20:01:12 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 30 Dec 2019 20:01:05 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <rjw@rjwysocki.net>, <lenb@kernel.org>
-CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tiantao6@huawei.com>, <jonathan.cameron@huawei.com>,
-        <guohanjun@huawei.com>, <wangxiongfeng2@huawei.com>
-Subject: [PATCH v2] ACPI/PPTT: fixed some parameter type is not right
-Date:   Mon, 30 Dec 2019 19:56:28 +0800
-Message-ID: <1577706988-56848-1-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
+        id S1727426AbfL3MAl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 07:00:41 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38803 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfL3MAl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 30 Dec 2019 07:00:41 -0500
+Received: by mail-pg1-f193.google.com with SMTP id a33so17891352pgm.5
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 04:00:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ezrVDS5UNFy526/k6xxwjbva2ps41hVNTGiteYBwEkE=;
+        b=nKEfuAB6AxAjy1HQQ5U3+ZB9VsG0LkmLXSDo5Wyk3qnHrCDiUqy0E4kNmXeZWLT6JI
+         u0s5HnERvkbFXI3lliq4dAaCUOgywP90OlnMIvmSl7humnVVlTiMcBVuPJmXBRlxCPpa
+         +Aah8BUmEYRwB3Rie2QVCVr22m2FQwGCPF02w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ezrVDS5UNFy526/k6xxwjbva2ps41hVNTGiteYBwEkE=;
+        b=KVEA/EeHgw/xQWSOBI1+Iy2oL6qwD2TnBruR+J5fG4RFYvixQAEVqR2GvOiwyMMwT7
+         PHe9ip/9k/e0Ngc8IqQhQxm+7dCSUjebWvAAFCUaGNCSxVVnoxVyrgRTSxQ40HrZ2PmC
+         dg3B/OygoVL2ngHy1fU9jbDOPSinQDPns/1JttOyTEO5AfNjRUXFSk37c5rEKmQYKOz9
+         D5Mrrr58ujoPDsyle4hrvaFn8BS/Ony2SlJqVhl6dpudF+95S9ljjmuZecKGKqPvX37E
+         lDmarFOa+6T0P96+O/FygMWqmP3xBX/sJmeFCpJJmvR58CCFCxvEYGGhAY2CGF7fI8ZA
+         v0BQ==
+X-Gm-Message-State: APjAAAVs5uZ98MFPWIK1rcv7dSu29sqgEKpUevAwP0EVz4E6KahA/fuo
+        6osi22MyyX6WfshNlcTWi97rIw==
+X-Google-Smtp-Source: APXvYqz3WmGiAkWomBOwfRYvqVaLlN3X2e+0i07536YKbLHagirtJCCzdsXri4tRkucoNaHJ33cBdQ==
+X-Received: by 2002:a63:447:: with SMTP id 68mr73426628pge.364.1577707240026;
+        Mon, 30 Dec 2019 04:00:40 -0800 (PST)
+Received: from localhost.localdomain ([49.206.202.131])
+        by smtp.gmail.com with ESMTPSA id 7sm41894122pfx.52.2019.12.30.04.00.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 04:00:39 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: [PATCH v2 1/3] ARM: dts: imx6q-icore-mipi: Use 1.5 version of i.Core MX6DL
+Date:   Mon, 30 Dec 2019 17:30:19 +0530
+Message-Id: <20191230120021.32630-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tian Tao <tiantao6@huawei.com>
+The EDIMM STARTER KIT i.Core 1.5 MIPI Evaluation is based on
+the 1.5 version of the i.Core MX6 cpu module. The 1.5 version
+differs from the original one for a few details, including the
+ethernet PHY interface clock provider.
 
-The fourth parameter 'level' of function 'acpi_find_cache_level()' is a
-signed interger, but its caller 'acpi_find_cache_node()' passes that
-parameter an unsigned interger. This patch fixes the paramter type
-inconsistency.
+With this commit, the ethernet interface works properly:
+SMSC LAN8710/LAN8720 2188000.ethernet-1:00: attached PHY driver
 
-Signed-off-by: Tian Tao <tiantao6@huawei.com>
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+While before using the 1.5 version, ethernet failed to startup
+do to un-clocked PHY interface:
+fec 2188000.ethernet eth0: could not attach to PHY
 
+Similar fix has merged for i.Core MX6Q but missed to update for DL.
+
+Fixes: a8039f2dd089 ("ARM: dts: imx6dl: Add Engicam i.CoreM6 1.5 Quad/Dual MIPI starter kit support")
+Cc: Jacopo Mondi <jacopo@jmondi.org>
+Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
-v2:	fix the conflicts in the third hunk.
-	Modify the commit information a little bit.
----
- drivers/acpi/pptt.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Changes for v2:
+- Add Michael s-o-b
 
-diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-index f31544d..4ae9335 100644
---- a/drivers/acpi/pptt.c
-+++ b/drivers/acpi/pptt.c
-@@ -98,11 +98,11 @@ static inline bool acpi_pptt_match_type(int table_type, int type)
-  *
-  * Return: The cache structure and the level we terminated with.
-  */
--static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
--				int local_level,
--				struct acpi_subtable_header *res,
--				struct acpi_pptt_cache **found,
--				int level, int type)
-+static unsigned int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
-+					 unsigned int local_level,
-+					 struct acpi_subtable_header *res,
-+					 struct acpi_pptt_cache **found,
-+					 unsigned int level, int type)
- {
- 	struct acpi_pptt_cache *cache;
+ arch/arm/boot/dts/imx6dl-icore-mipi.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/imx6dl-icore-mipi.dts b/arch/arm/boot/dts/imx6dl-icore-mipi.dts
+index e43bccb78ab2..d8f3821a0ffd 100644
+--- a/arch/arm/boot/dts/imx6dl-icore-mipi.dts
++++ b/arch/arm/boot/dts/imx6dl-icore-mipi.dts
+@@ -8,7 +8,7 @@
+ /dts-v1/;
  
-@@ -119,7 +119,7 @@ static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
- 			if (*found != NULL && cache != *found)
- 				pr_warn("Found duplicate cache level/type unable to determine uniqueness\n");
+ #include "imx6dl.dtsi"
+-#include "imx6qdl-icore.dtsi"
++#include "imx6qdl-icore-1.5.dtsi"
  
--			pr_debug("Found cache @ level %d\n", level);
-+			pr_debug("Found cache @ level %u\n", level);
- 			*found = cache;
- 			/*
- 			 * continue looking at this node's resource list
-@@ -132,16 +132,17 @@ static int acpi_pptt_walk_cache(struct acpi_table_header *table_hdr,
- 	return local_level;
- }
- 
--static struct acpi_pptt_cache *acpi_find_cache_level(struct acpi_table_header *table_hdr,
--						     struct acpi_pptt_processor *cpu_node,
--						     int *starting_level, int level,
--						     int type)
-+static struct acpi_pptt_cache *
-+acpi_find_cache_level(struct acpi_table_header *table_hdr,
-+		      struct acpi_pptt_processor *cpu_node,
-+		      unsigned int *starting_level, unsigned int level,
-+		      int type)
- {
- 	struct acpi_subtable_header *res;
--	int number_of_levels = *starting_level;
-+	unsigned int number_of_levels = *starting_level;
- 	int resource = 0;
- 	struct acpi_pptt_cache *ret = NULL;
--	int local_level;
-+	unsigned int local_level;
- 
- 	/* walk down from processor node */
- 	while ((res = acpi_get_pptt_resource(table_hdr, cpu_node, resource))) {
-@@ -321,12 +322,12 @@ static struct acpi_pptt_cache *acpi_find_cache_node(struct acpi_table_header *ta
- 						    unsigned int level,
- 						    struct acpi_pptt_processor **node)
- {
--	int total_levels = 0;
-+	unsigned int total_levels = 0;
- 	struct acpi_pptt_cache *found = NULL;
- 	struct acpi_pptt_processor *cpu_node;
- 	u8 acpi_type = acpi_cache_type(type);
- 
--	pr_debug("Looking for CPU %d's level %d cache type %d\n",
-+	pr_debug("Looking for CPU %d's level %u cache type %d\n",
- 		 acpi_cpu_id, level, acpi_type);
- 
- 	cpu_node = acpi_find_processor_node(table_hdr, acpi_cpu_id);
+ / {
+ 	model = "Engicam i.CoreM6 DualLite/Solo MIPI Starter Kit";
 -- 
-1.7.12.4
+2.18.0.321.gffc6fa0e3
 
