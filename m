@@ -2,64 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D390B12D5A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 03:00:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80D5512D5AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 03:11:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfLaCAn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 21:00:43 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38828 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfLaCAn (ORCPT
+        id S1726603AbfLaCL1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 21:11:27 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41912 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfLaCL1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 21:00:43 -0500
-Received: by mail-ot1-f66.google.com with SMTP id d7so44112936otf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 18:00:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=bFHWIMTxQ5Y+2/Lps2HjQqsb23aKZRWfueEdefFBMqo=;
-        b=v0AqecdGErWfR/UDK5DdT080Iwn6OcQKKc7EJG0ekeRUER7iBbIFSQGN6BhdkjkX89
-         NkTlcexh1TDOwV85ShBkfstViTwDCbpZzXT/zZ+LXDm9lH7dz2HqCklRstR60O5Plt/Q
-         +NtHKOVjE9x9TdcZ+tKhKeiOnt0VRueiAVmDIBklfwsXyUP/+t4C1lhTjoP3L+qtQQDL
-         TgWvn9qdkNQ9kUONVX8UAX7AS2EyudP3L7uXqDc9JsKaeM/EhfgMMXYWz0B224GZEWZP
-         dLMlCNqI2L2sWHv7ae5q2I+F+QbRi9uYnC5b1GCzyxZ1X2SbSBlR1BQpdx+BC5iEfwe0
-         k1ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bFHWIMTxQ5Y+2/Lps2HjQqsb23aKZRWfueEdefFBMqo=;
-        b=P8uFUgs9fTNp9Xd+k6h26HdNrxysU4w0naRMQHoEtkPIYmRwPYS4HQ+wj8y3jqlYdK
-         xVioD/b4eAsO8WCcpqavvI4AIjkvPve/vrejx2aKGjgVG0rzUg5tocsneyDNqkwUFaAO
-         gAQegRAqj7lsRKExmlmJ3lWX2muOll050kEG//cdb1iV1QUFSxcFVN1qEzqIquUXvxUS
-         Ld4R4HdyqwY8c7TLPjSXC/sG2W3iVpdjVlekzAAwNyeCw8iWkAGIprC0Rjwk6+vYtqEG
-         zPtzJIILodO/27pDxVl2L74MZUrr7jSRuoq/h9wkdzxM1O6bI7YIYHC2ATLZf0Ljyny0
-         3kDg==
-X-Gm-Message-State: APjAAAWRgc5n/1hXnc2LuNQjh5uFHUJzrVxa62pOEKaiONq3pJduoFyA
-        5gLbD2A09zWjtEz9gsYZrkqFO5QOYFM=
-X-Google-Smtp-Source: APXvYqz3gOWJRcUQRhkeBzcf+TrPu+EblEw3Zq9a0RtGPmmOGfy0H83e06lsBbx4xj30zIvFExvc3Q==
-X-Received: by 2002:a9d:7e8c:: with SMTP id m12mr79798726otp.346.1577757642042;
-        Mon, 30 Dec 2019 18:00:42 -0800 (PST)
-Received: from ?IPv6:2605:6000:e947:6500:6680:99ff:fe6f:cb54? ([2605:6000:e947:6500:6680:99ff:fe6f:cb54])
-        by smtp.googlemail.com with ESMTPSA id 4sm16651672otu.0.2019.12.30.18.00.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 30 Dec 2019 18:00:41 -0800 (PST)
-Subject: Re: Why is CONFIG_VT forced on?
-From:   Rob Landley <rob@landley.net>
-To:     Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-References: <9b79fb95-f20c-f299-f568-0ffb60305f04@landley.net>
- <b3cf8faf-ef04-2f55-3ccb-772e18a57d7b@infradead.org>
- <ac0e5b3b-6e70-6ab0-0c7f-43175b73058f@landley.net>
- <e55624fa-7112-1733-8ddd-032b134da737@infradead.org>
- <018540ef-0327-78dc-ea5c-a43318f1f640@landley.net>
-Message-ID: <774dfe49-61a0-0144-42b7-c2cbac150687@landley.net>
-Date:   Mon, 30 Dec 2019 20:04:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Mon, 30 Dec 2019 21:11:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=hNTSsqiKyv+nxMzXdDAnZK9rKMztespJdwdLOLLSblM=; b=QMkSUVL3j2oL/sBOLhg4GEYDj
+        B2bPkmPRwVu/7xiPmJrtnMfsXvGxCSu3J0nn2/qpt3V+jIDTa0atOCZBA/PoPqSdVUl7znfQZzHvC
+        sRwc8cANhcufQIIZfTTO+f0sYPnhX1Tg5SHjJPQsJNQ5roC6oOpnuUJ4jeRP6Yhne9HsBCAmRau7L
+        CpEUM15IdwfufGzHwnYXkLmiOZtpHKGetBVITZblqx0y2zPm57gUUzl3W9qo4VxFUxEdiJWe8xMBr
+        +t9GdrWkC7NdnBXsaLiD+oAJ46g/p8ZVcqjQF15JjPhR5oYcHyhC32M6cDs0U0U8sMyObnVhww2rZ
+        bddQcJq6Q==;
+Received: from [2601:1c0:6280:3f0::34d9]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1im70I-0001MA-0O; Tue, 31 Dec 2019 02:11:26 +0000
+Subject: Re: [PATCH] stmmac: debugfs entry name is not be changed when udev
+ rename device name.
+To:     Jiping Ma <jiping.ma2@windriver.com>, peppe.cavallaro@st.com,
+        alexandre.torgue@st.com
+Cc:     joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-kernel@vger.kernel.org
+References: <20191231020302.71792-1-jiping.ma2@windriver.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <5b10a5ff-8428-48c7-a60d-69dd62009716@infradead.org>
+Date:   Mon, 30 Dec 2019 18:11:24 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.1
 MIME-Version: 1.0
-In-Reply-To: <018540ef-0327-78dc-ea5c-a43318f1f640@landley.net>
+In-Reply-To: <20191231020302.71792-1-jiping.ma2@windriver.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -68,67 +51,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 12/30/19 7:45 PM, Rob Landley wrote:
-> On 12/30/19 6:59 PM, Randy Dunlap wrote:
->> #
->> # Character devices
->> #
->> CONFIG_TTY=y
->> # CONFIG_VT is not set
->>
->> But first you must set/enable EXPERT.  See the bool prompt.
+On 12/30/19 6:03 PM, Jiping Ma wrote:
+> Add one notifier for udev changes net device name.
 > 
-> Wait, the if doesn't _disable_ the symbol? It disables _editability_ of the
-> symbol, but the symbol can still be on (and displayed) when the if is false?
-> (Why would...)
+> Signed-off-by: Jiping Ma <jiping.ma2@windriver.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 38 ++++++++++++++++++-
+>  1 file changed, 37 insertions(+), 1 deletion(-)
 > 
-> Ok. Thanks for pointing that out. Any idea why the menuconfig help text has no
-> mention of this?
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index b14f46a57154..c1c877bb4421 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4038,6 +4038,40 @@ static int stmmac_dma_cap_show(struct seq_file *seq, void *v)
+>  }
+>  DEFINE_SHOW_ATTRIBUTE(stmmac_dma_cap);
+>  
+> +/**
 
-So if I disable CONFIG_EXPERT, using miniconfig I then need to manually switch on:
+Just use /* here since this is not a kernel-doc comment.
+/** is reserved for kernel-doc comments/notation.
 
-./init/Kconfig:	bool "Namespaces support" if EXPERT
-./init/Kconfig:	bool "Multiple users, groups and capabilities support" if EXPERT
-./init/Kconfig:	bool "Sysfs syscall support" if EXPERT
-./init/Kconfig:	bool "open by fhandle syscalls" if EXPERT
-./init/Kconfig:	bool "Posix Clocks & timers" if EXPERT
-./init/Kconfig:	bool "Enable support for printk" if EXPERT
-./init/Kconfig:	bool "BUG() support" if EXPERT
-./init/Kconfig:	bool "Enable ELF core dumps" if EXPERT
-./init/Kconfig:	bool "Enable full-sized data structures for core" if EXPERT
-./init/Kconfig:	bool "Enable futex support" if EXPERT
-./init/Kconfig:	bool "Enable eventpoll support" if EXPERT
-./init/Kconfig:	bool "Enable signalfd() system call" if EXPERT
-./init/Kconfig:	bool "Enable timerfd() system call" if EXPERT
-./init/Kconfig:	bool "Enable eventfd() system call" if EXPERT
-./init/Kconfig:	bool "Use full shmem filesystem" if EXPERT
-./init/Kconfig:	bool "Enable AIO support" if EXPERT
-./init/Kconfig:	bool "Enable IO uring support" if EXPERT
-./init/Kconfig:	bool "Enable madvise/fadvise syscalls" if EXPERT
-./init/Kconfig:	bool "Enable membarrier() system call" if EXPERT
-./init/Kconfig:	bool "Load all symbols for debugging/ksymoops" if EXPERT
-./init/Kconfig:	bool "Enable rseq() system call" if EXPERT
-./init/Kconfig:	bool "Enabled debugging of rseq() system call" if EXPERT
-./init/Kconfig:	bool "PC/104 support" if EXPERT
-./init/Kconfig:	bool "Enable VM event counters for /proc/vmstat" if EXPERT
+> + * Use network device events to create/remove/rename
+> + * debugfs file entries
+> + */
+> +static int stmmac_device_event(struct notifier_block *unused,
+> +			       unsigned long event, void *ptr)
+> +{
 
-plus of course
 
-./arch/x86/Kconfig.cpu:	bool "Supported processor vendors" if EXPERT
-./arch/x86/Kconfig:	bool "DMA memory allocation support" if EXPERT
-./arch/x86/Kconfig:	bool "Enable DMI scanning" if EXPERT
-./arch/x86/Kconfig:	bool "Enable support for 16-bit segments" if EXPERT
-./arch/x86/Kconfig:       bool "Enable vsyscall emulation" if EXPERT
-./arch/x86/Kconfig:	bool "Enable the LDT (local descriptor table)" if EXPERT
-./arch/x86/Kconfig:	bool "Read CNB20LE Host Bridge Windows" if EXPERT
-./arch/x86/Kconfig:	bool "ISA bus support on modern systems" if EXPERT
-./arch/x86/Kconfig:	bool "ISA-style DMA support" if (X86_64 && EXPERT)
+> @@ -4050,7 +4084,6 @@ static int stmmac_init_fs(struct net_device *dev)
+>  
+>  		return -ENOMEM;
+>  	}
+> -
+>  	/* Entry to report DMA RX/TX rings */
+>  	priv->dbgfs_rings_status =
+>  		debugfs_create_file("descriptors_status", 0444,
 
-So nobody noticed you have a structural "this config option actually switches
-this thing _off_" implemented via magic symbol then?
+I don't see a problem with the blank line.  Why remove it?
 
-I think the right fix here involves running sed after kconfig does its thing...
 
-Rob
+thanks.
+-- 
+~Randy
+
