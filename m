@@ -2,285 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A41DA12D7EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 11:30:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A25E612D802
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 11:38:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbfLaK3h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 05:29:37 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:60247 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727140AbfLaK3d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 05:29:33 -0500
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from vadimp@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 31 Dec 2019 12:29:29 +0200
-Received: from r-build-lowlevel.mtr.labs.mlnx. (r-build-lowlevel.mtr.labs.mlnx [10.209.0.190])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id xBVATJ7g008518;
-        Tue, 31 Dec 2019 12:29:29 +0200
-From:   Vadim Pasternak <vadimp@mellanox.com>
-To:     andy@infradead.org, dvhart@infradead.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH platform-next v1 9/9] platform/x86: mlx-platform: Add support for next generation systems
-Date:   Tue, 31 Dec 2019 10:29:17 +0000
-Message-Id: <20191231102917.24181-10-vadimp@mellanox.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191231102917.24181-1-vadimp@mellanox.com>
-References: <20191231102917.24181-1-vadimp@mellanox.com>
+        id S1727069AbfLaKiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 05:38:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40130 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726658AbfLaKiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 05:38:17 -0500
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6053420718;
+        Tue, 31 Dec 2019 10:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577788695;
+        bh=m7kqKRaz9I7n5UoZ+mA+Vd26mdg3UIRo076jMwTZUKs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q3XoN1vz6LEKRxchVQUr7q5oeq2tsBMYmGeUf4u/OvhOMxaAKr4vG/QYUDqaVVHwX
+         QGqDAcHdwH5Mob7lbwJF9zVBS0hCj69c3rl/IKR5Ux6RX3MBMMNew0m75CxF8EULHk
+         mjKvIEbQ3et3gumhM7Po42lSgQbrtY8SxP2QHFpg=
+Received: by mail-lj1-f172.google.com with SMTP id m26so33528288ljc.13;
+        Tue, 31 Dec 2019 02:38:15 -0800 (PST)
+X-Gm-Message-State: APjAAAUOUl6/P/jSjsWAuucDcpTpSwbtphSSWFdg5ac4AtyCzxp0WGTe
+        Ww1UOnCCxR1zwOJkyhlN7eLrpoH54RhMZN6ND5M=
+X-Google-Smtp-Source: APXvYqzMKfKZfiRH2jKjUg/iq48Ir3TkHa0dR/6uA47j3MXuIg/2O24VXSsRqlCLUUsAC2Ywf0ObYtS3A/s2A3dYGAc=
+X-Received: by 2002:a05:651c:232:: with SMTP id z18mr37049562ljn.85.1577788693398;
+ Tue, 31 Dec 2019 02:38:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20191220115653.6487-1-a.swigon@samsung.com> <CGME20191220120144eucas1p119ececf161a6d45a6a194e432bbbd1f9@eucas1p1.samsung.com>
+ <20191220115653.6487-5-a.swigon@samsung.com> <20191230154405.GC4918@pi3>
+ <2922135223b01126277ef92a53e6b294bc17bb5c.camel@samsung.com>
+ <20191231092254.GA6939@pi3> <99427c18b1fcca3bc21e69609500abdbbef59167.camel@samsung.com>
+ <20191231100234.GA7024@pi3> <29ed54c7700e35fb95fff4f4f5580eba24ffbb35.camel@samsung.com>
+In-Reply-To: <29ed54c7700e35fb95fff4f4f5580eba24ffbb35.camel@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Tue, 31 Dec 2019 11:38:02 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPezRMb0OnpcRWrRheKbBjyzqNXG3TDX-MQkjAm2sTSr1w@mail.gmail.com>
+Message-ID: <CAJKOXPezRMb0OnpcRWrRheKbBjyzqNXG3TDX-MQkjAm2sTSr1w@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 4/7] arm: dts: exynos: Add interconnect bindings
+ for Exynos4412
+To:     =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chanwoo Choi <cw00.choi@samsung.com>, myungjoo.ham@samsung.com,
+        Inki Dae <inki.dae@samsung.com>,
+        Seung Woo Kim <sw0312.kim@samsung.com>,
+        georgi.djakov@linaro.org, leonard.crestez@nxp.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for new Mellanox system types of basic class VMOD0010,
-containing new Mellanox systems equipped with new switch device
-Spectrum 3 (32x400GbE/64x200G/128x100G Ethernet switch).
-These are the Top of the Rack 1U/2U/4U systems, equipped with
-Mellanox Comex card and with the switch board with Mellanox Spectrum-3
-device.
-This class of devices can be equipped with two PS units for 1U/2U or
-with four PS units for 4U systems.
+On Tue, 31 Dec 2019 at 11:23, Artur =C5=9Awigo=C5=84 <a.swigon@samsung.com>=
+ wrote:
+> >
+> > The order of patches should reflect first of all real dependency.
+> > Whether it compiles, works at all and does not break anything.  Logical
+> > dependency of "when the feature will start working" is
+> > irrelevant to DTS because DTS goes in separate way and driver is
+> > independent of it.
+>
+> The order of patches does indeed reflect real dependency. I can also reor=
+der
+> them (preserving the dependencies) so that DTS patches go first in the se=
+ries
+> if this is the more preferred way.
 
-Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
----
- drivers/platform/x86/mlx-platform.c | 180 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 180 insertions(+)
+It looks wrong then. Driver should not depend on DTS. I cannot find
+the patch changing bindings (should be first in patchset) which could
+also point to this problem.
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index ac789f98c8b8..c27548fd386a 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -163,6 +163,7 @@
- #define MLXPLAT_CPLD_NR_NONE			-1
- #define MLXPLAT_CPLD_PSU_DEFAULT_NR		10
- #define MLXPLAT_CPLD_PSU_MSNXXXX_NR		4
-+#define MLXPLAT_CPLD_PSU_MSNXXXX_NR2		3
- #define MLXPLAT_CPLD_FAN1_DEFAULT_NR		11
- #define MLXPLAT_CPLD_FAN2_DEFAULT_NR		12
- #define MLXPLAT_CPLD_FAN3_DEFAULT_NR		13
-@@ -212,8 +213,24 @@ static const struct resource mlxplat_lpc_resources[] = {
- 			       IORESOURCE_IO),
- };
- 
-+/* Platform i2c next generation systems data */
-+static struct mlxreg_core_data mlxplat_mlxcpld_i2c_ng_items_data[] = {
-+	{
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
-+		.mask = MLXPLAT_CPLD_I2C_CAP_MASK,
-+		.bit = MLXPLAT_CPLD_I2C_CAP_BIT,
-+	},
-+};
-+
-+static struct mlxreg_core_item mlxplat_mlxcpld_i2c_ng_items[] = {
-+	{
-+		.data = mlxplat_mlxcpld_i2c_ng_items_data,
-+	},
-+};
-+
- /* Platform next generation systems i2c data */
- static struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_i2c_ng_data = {
-+	.items = mlxplat_mlxcpld_i2c_ng_items,
- 	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
- 	.mask = MLXPLAT_CPLD_AGGR_MASK_COMEX,
- 	.cell_low = MLXPLAT_CPLD_LPC_REG_AGGRCO_OFFSET,
-@@ -847,6 +864,116 @@ struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_default_ng_data = {
- 	.mask_low = MLXPLAT_CPLD_LOW_AGGR_MASK_LOW,
- };
- 
-+/* Platform hotplug extended system family data */
-+static struct mlxreg_core_data mlxplat_mlxcpld_ext_psu_items_data[] = {
-+	{
-+		.label = "psu1",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
-+		.mask = BIT(0),
-+		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
-+	},
-+	{
-+		.label = "psu2",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
-+		.mask = BIT(1),
-+		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
-+	},
-+	{
-+		.label = "psu3",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
-+		.mask = BIT(2),
-+		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
-+	},
-+	{
-+		.label = "psu4",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
-+		.mask = BIT(3),
-+		.hpdev.nr = MLXPLAT_CPLD_NR_NONE,
-+	},
-+};
-+
-+static struct mlxreg_core_data mlxplat_mlxcpld_ext_pwr_items_data[] = {
-+	{
-+		.label = "pwr1",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
-+		.mask = BIT(0),
-+		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[0],
-+		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR,
-+	},
-+	{
-+		.label = "pwr2",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
-+		.mask = BIT(1),
-+		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[1],
-+		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR,
-+	},
-+	{
-+		.label = "pwr3",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
-+		.mask = BIT(2),
-+		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[0],
-+		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR2,
-+	},
-+	{
-+		.label = "pwr4",
-+		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
-+		.mask = BIT(3),
-+		.hpdev.brdinfo = &mlxplat_mlxcpld_pwr[1],
-+		.hpdev.nr = MLXPLAT_CPLD_PSU_MSNXXXX_NR2,
-+	},
-+};
-+
-+static struct mlxreg_core_item mlxplat_mlxcpld_ext_items[] = {
-+	{
-+		.data = mlxplat_mlxcpld_ext_psu_items_data,
-+		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
-+		.reg = MLXPLAT_CPLD_LPC_REG_PSU_OFFSET,
-+		.mask = MLXPLAT_CPLD_PSU_EXT_MASK,
-+		.capability = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
-+		.count = ARRAY_SIZE(mlxplat_mlxcpld_ext_psu_items_data),
-+		.inversed = 1,
-+		.health = false,
-+	},
-+	{
-+		.data = mlxplat_mlxcpld_ext_pwr_items_data,
-+		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
-+		.reg = MLXPLAT_CPLD_LPC_REG_PWR_OFFSET,
-+		.mask = MLXPLAT_CPLD_PWR_EXT_MASK,
-+		.capability = MLXPLAT_CPLD_LPC_REG_PSU_I2C_CAP_OFFSET,
-+		.count = ARRAY_SIZE(mlxplat_mlxcpld_ext_pwr_items_data),
-+		.inversed = 0,
-+		.health = false,
-+	},
-+	{
-+		.data = mlxplat_mlxcpld_default_ng_fan_items_data,
-+		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
-+		.reg = MLXPLAT_CPLD_LPC_REG_FAN_OFFSET,
-+		.mask = MLXPLAT_CPLD_FAN_NG_MASK,
-+		.count = ARRAY_SIZE(mlxplat_mlxcpld_default_ng_fan_items_data),
-+		.inversed = 1,
-+		.health = false,
-+	},
-+	{
-+		.data = mlxplat_mlxcpld_default_asic_items_data,
-+		.aggr_mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF,
-+		.reg = MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET,
-+		.mask = MLXPLAT_CPLD_ASIC_MASK,
-+		.count = ARRAY_SIZE(mlxplat_mlxcpld_default_asic_items_data),
-+		.inversed = 0,
-+		.health = true,
-+	},
-+};
-+
-+static
-+struct mlxreg_core_hotplug_platform_data mlxplat_mlxcpld_ext_data = {
-+	.items = mlxplat_mlxcpld_ext_items,
-+	.counter = ARRAY_SIZE(mlxplat_mlxcpld_ext_items),
-+	.cell = MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET,
-+	.mask = MLXPLAT_CPLD_AGGR_MASK_NG_DEF | MLXPLAT_CPLD_AGGR_MASK_COMEX,
-+	.cell_low = MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET,
-+	.mask_low = MLXPLAT_CPLD_LOW_AGGR_MASK_LOW,
-+};
-+
- /* Platform led default data */
- static struct mlxreg_core_data mlxplat_mlxcpld_default_led_data[] = {
- 	{
-@@ -2040,6 +2167,13 @@ static const struct reg_default mlxplat_mlxcpld_regmap_comex_default[] = {
- 	{ MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET, 0x00 },
- };
- 
-+static const struct reg_default mlxplat_mlxcpld_regmap_ng400[] = {
-+	{ MLXPLAT_CPLD_LPC_REG_PWM_CONTROL_OFFSET, 0x00 },
-+	{ MLXPLAT_CPLD_LPC_REG_WD1_ACT_OFFSET, 0x00 },
-+	{ MLXPLAT_CPLD_LPC_REG_WD2_ACT_OFFSET, 0x00 },
-+	{ MLXPLAT_CPLD_LPC_REG_WD3_ACT_OFFSET, 0x00 },
-+};
-+
- struct mlxplat_mlxcpld_regmap_context {
- 	void __iomem *base;
- };
-@@ -2106,6 +2240,20 @@ static const struct regmap_config mlxplat_mlxcpld_regmap_config_comex = {
- 	.reg_write = mlxplat_mlxcpld_reg_write,
- };
- 
-+static const struct regmap_config mlxplat_mlxcpld_regmap_config_ng400 = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = 255,
-+	.cache_type = REGCACHE_FLAT,
-+	.writeable_reg = mlxplat_mlxcpld_writeable_reg,
-+	.readable_reg = mlxplat_mlxcpld_readable_reg,
-+	.volatile_reg = mlxplat_mlxcpld_volatile_reg,
-+	.reg_defaults = mlxplat_mlxcpld_regmap_ng400,
-+	.num_reg_defaults = ARRAY_SIZE(mlxplat_mlxcpld_regmap_ng400),
-+	.reg_read = mlxplat_mlxcpld_reg_read,
-+	.reg_write = mlxplat_mlxcpld_reg_write,
-+};
-+
- static struct resource mlxplat_mlxcpld_resources[] = {
- 	[0] = DEFINE_RES_IRQ_NAMED(17, "mlxreg-hotplug"),
- };
-@@ -2258,6 +2406,32 @@ static int __init mlxplat_dmi_comex_matched(const struct dmi_system_id *dmi)
- 	return 1;
- }
- 
-+static int __init mlxplat_dmi_ng400_matched(const struct dmi_system_id *dmi)
-+{
-+	int i;
-+
-+	mlxplat_max_adap_num = MLXPLAT_CPLD_MAX_PHYS_ADAPTER_NUM;
-+	mlxplat_mux_num = ARRAY_SIZE(mlxplat_default_mux_data);
-+	mlxplat_mux_data = mlxplat_default_mux_data;
-+	for (i = 0; i < mlxplat_mux_num; i++) {
-+		mlxplat_mux_data[i].values = mlxplat_msn21xx_channels;
-+		mlxplat_mux_data[i].n_values =
-+				ARRAY_SIZE(mlxplat_msn21xx_channels);
-+	}
-+	mlxplat_hotplug = &mlxplat_mlxcpld_ext_data;
-+	mlxplat_hotplug->deferred_nr =
-+		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
-+	mlxplat_led = &mlxplat_default_ng_led_data;
-+	mlxplat_regs_io = &mlxplat_default_ng_regs_io_data;
-+	mlxplat_fan = &mlxplat_default_fan_data;
-+	for (i = 0; i < ARRAY_SIZE(mlxplat_mlxcpld_wd_set_type2); i++)
-+		mlxplat_wd_data[i] = &mlxplat_mlxcpld_wd_set_type2[i];
-+	mlxplat_i2c = &mlxplat_mlxcpld_i2c_ng_data;
-+	mlxplat_regmap_config = &mlxplat_mlxcpld_regmap_config_ng400;
-+
-+	return 1;
-+}
-+
- static const struct dmi_system_id mlxplat_dmi_table[] __initconst = {
- 	{
- 		.callback = mlxplat_dmi_default_matched,
-@@ -2302,6 +2476,12 @@ static const struct dmi_system_id mlxplat_dmi_table[] __initconst = {
- 		},
- 	},
- 	{
-+		.callback = mlxplat_dmi_ng400_matched,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_NAME, "VMOD0010"),
-+		},
-+	},
-+	{
- 		.callback = mlxplat_dmi_msn274x_matched,
- 		.matches = {
- 			DMI_MATCH(DMI_BOARD_VENDOR, "Mellanox Technologies"),
--- 
-2.11.0
+It seems you added requirement for interconnect properties while it
+should be rather optional.
 
+> > > I still think the order of these patches is the most logical one for =
+someone
+> > > reading this RFC as a whole.
+> >
+> > I am sorry but it brings only confusion. DTS is orthogonal of the
+> > driver code. You could even post the patchset without DTS (although the=
+n
+> > it would raise questions where is the user of it, but still, you
+> > could).
+> >
+> > Further, DTS describes also hardware so you could send certain DTS
+> > patches without driver implementation to describe the hardware.
+> >
+> > Driver code and DTS are kind of different worlds so mixing them up for
+> > logical review does not really make any sense.
+> >
+> > Not mentioning it is different than most of other patches on mailing
+> > lists.
+> >
+> > BTW, it is the same as bindings which should (almost) always go first a=
+s
+> > separate patches.
+>
+> Thanks for elaborating on this, I appreciate it.
+> Regarding your original concern, patches 04 & 06 are separate for several
+> reasons, one of which is that they are related to two different drivers
+> (exynos-bus vs. exynos-mixer).
+
+It's okay then (for them to be split).
+
+>
+> > >
+> > > > In certain cases dependency on DTS changes is ok:
+> > > > 1. Cleaning up deprecated properties,
+> > > > 2. Ignoring the backward compatibility for e.g. new platforms.
+> > > >
+> > > > None of these are applicable here.
+> > > >
+> > > > You need to rework it, put DTS changes at the end. This clearly sho=
+ws
+> > > > that there is no wrong dependency.
+> > > >
+> > > > >
+> > > > > > Adjust the title to match the contents - you are not adding bin=
+dings but
+> > > > > > properties to bus nodes. Also the prefix is ARM: (look at recen=
+t
+> > > > > > commits).
+> > > > >
+> > > > > OK.
+> > > > >
+> > > > > > >
+> > > > > > > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi =
+b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > > > > > index 4ce3d77a6704..d9d70eacfcaf 100644
+> > > > > > > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > > > > > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> > > > > > > @@ -90,6 +90,7 @@
+> > > > > > >  &bus_dmc {
+> > > > > > >     exynos,ppmu-device =3D <&ppmu_dmc0_3>, <&ppmu_dmc1_3>;
+> > > > > > >     vdd-supply =3D <&buck1_reg>;
+> > > > > > > +   #interconnect-cells =3D <0>;
+> > > > > >
+> > > > > > This does not look like property of Odroid but Exynos4412 or Ex=
+ynos4.
+> > > > >
+> > > > > Strangely enough, this file is where the 'exynos,parent-bus' (aka=
+. 'devfreq')
+> > > > > properties are located (and everything in this RFC concerns devfr=
+eq).
+> > > >
+> > > > I cannot find exynos,parent-bus in exynos4412-odroid-common.dtsi. C=
+an
+> > > > you elaborate?
+> > >
+> > > Currently a name change is being made: 'devfreq' -> 'exynos,parent-bu=
+s'
+> > > https://patchwork.kernel.org/patch/11304549/
+> > > (a dependency of this RFC; also available in devfreq-testing branch)
+> >
+> > I see. That property also does not look like board (Odroid) specific so
+> > it should be moved to Exynos4412 DTSI.
+>
+> Makes sense to me. Just from looking at the patch I referenced above, the=
+re is
+> a significant level of code duplication between
+> * arch/arm/boot/dts/exynos4412-itop-scp-core.dtsi
+> * arch/arm/boot/dts/exynos4412-midas.dtsi
+> * arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+> with relation to the devfreq*/exynos,* properties.
+
+If you have in mind all the nodes with "status=3Dokay", it's fine to
+duplicate them.
+
+Best regards,
+Krzysztof
