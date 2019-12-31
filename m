@@ -2,97 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA7F12D9D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 16:33:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B36F12D9E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 16:37:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727116AbfLaPcg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 10:32:36 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35034 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfLaPcg (ORCPT
+        id S1727070AbfLaPhG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 10:37:06 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36658 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfLaPhG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 10:32:36 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f8so35523836edv.2;
-        Tue, 31 Dec 2019 07:32:35 -0800 (PST)
+        Tue, 31 Dec 2019 10:37:06 -0500
+Received: by mail-pg1-f194.google.com with SMTP id k3so19671373pgc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 07:37:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q46sgyzFCoqZCnDvkjuU+q1N3qAm1ojvKT53GL9XfFI=;
-        b=SoKkx8lK10byoSOJpNl6uxfWB0HCqCbEDA9WDSUAIPDUly7zMzwsXjtIEwtX/NQsCK
-         gwsPrha6BEhiaEHw9jJhuUdkaploQVhAy2ln5ukw12SKqh/hOV6c8BNpzDbWMzI/9C57
-         /6V8tgzMmn8dJgRwUc/rzm4bOBA39qrDTi/FWW2UrdLTUSrvPrCeFuyx7doV2ZCeitwz
-         5f1B5ynkAz/M2pBJb3kjL36uhtXjFDmrGrpuEdu7hTfoMX1S8wYpSDsYdsE/Hp8uHLWH
-         8rNBYs7V074V++WTh89g/4y4wHW7RQX7AqeqeJvI6TBM7fMu2rB1eAA2w9fIwFdAeZnw
-         gx5Q==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0zI0gfX4kyMk5ybZJW1MIBaMfCVRpcieMViMTdRuHHU=;
+        b=aelIqqsQqz8e1Oh73A+P3E1dzERA7atsAp3gmXpIRWY6atThTgc5is5iVbjffudSYf
+         kVT4yFnhWcrmbBk/cU2I43bz6/+55DE5sF5opHklS8kiiysK74GdYqGLGlaMzxTQ4FeR
+         B/4W4GSEUYCkTGoUMeIQPppHYhe8d/sxCstIaGLziFCfVWxk8deLawp7dnlIuDCUdUCD
+         zeq23U8KJxHRGMyFHYd+b5fDnFDbknzrVJwoCB1UabrZBGNmu/VtJzAeUT0qCpdHhAVY
+         plKoTi4xbjMfxHnZ5IGYedegyGvlOcQCUm/gUbABffTy36v6j0Z8x7taXgcqM98bN2iS
+         mEbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q46sgyzFCoqZCnDvkjuU+q1N3qAm1ojvKT53GL9XfFI=;
-        b=nUcbVV1UWpBIhWxlS48y6dgIVmM2L/06DCkF/zg960+ps1ZVbYvqZk+UaoDhVF5EaU
-         WqlGmnU1dyYvMeWqG+Uz+cMvGBm9yFj543OBPaoi3JjG1mZflMtuGZXcc6PufZHKyiEh
-         cBMxLyxQ9mUmXa+WVjtQgxWy4zEjrp6DNDrTovta92crV3DqMH+p8pOPcF+RVFwbLk7p
-         Bb12HYgFns2KOvRd7Eivi1EqFStNYS1QLXnV9FOjyjmSwtwMujRXCf8A2XpM3aI4X6U5
-         XPyfqeksBdgCSTjcLuPDGfHkegJK1gOv9ulj7U3UHIcDJa+uCXVgNSlbjQHumvVkOeZK
-         JcqQ==
-X-Gm-Message-State: APjAAAVLdYr8N87ia9yZfwaw5olMUWTvWTME7E+rkrYp+kPMOx0Aia7t
-        hxnD5Jbyu5gwqwkdXWrXIMIj1rU/ss5KbU2/jUE=
-X-Google-Smtp-Source: APXvYqzQloGOdbtCaSjT2mVsGVV5HxAwcWBjMQNtw4CkqOonMP0cX7iFD+FAOQl9Yi3PaCr71gLtv6WZ7zehEa70JJ8=
-X-Received: by 2002:a17:906:19d0:: with SMTP id h16mr69858873ejd.70.1577806354952;
- Tue, 31 Dec 2019 07:32:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0zI0gfX4kyMk5ybZJW1MIBaMfCVRpcieMViMTdRuHHU=;
+        b=k0/DttE9r3iUqGDzbe7uCEdFaqvFBc4Y6lC0cC+p9upe4z02J9ZVrx4bOZucoi7ETD
+         6Q1vDkmiDa7cRwNkfV194Twz0bAzY9RIWmQyzXzA0p0kmyqHoA57nV21Jljwy5VIKolc
+         vENtu5zRk24ug1GAhT7XRNFxXhuzgD/LRdMIZ9oKvONy/umECp3LpkjoA6UWHV6xVmnc
+         +p3ZYSWf5LMDShfmkUroGT0gbgmnKCc17K3tK/E1tss4jhNo/AEhgT2Y028eDqzfMyK5
+         R0UHgqIhGZwxdAULXY6rylOZZ/lC98rknYysTHH5p2U5DqqmIidZeCjrQA2z/A9tlVG0
+         Iz1w==
+X-Gm-Message-State: APjAAAWaTqN2bv1/DNflCvgwTfZQM3HskS8QjnDIuZn1QGK1CwXSQdEU
+        9VL+LnVUnGurIfJ+jd105ZQ=
+X-Google-Smtp-Source: APXvYqz1nAJruoselefeTuSLlMA9yBQydP7F654u4Ya6LKTk2yaP1NtBBWaGzoj4dwB9dWVthE3aBA==
+X-Received: by 2002:a63:483:: with SMTP id 125mr77701373pge.217.1577806625492;
+        Tue, 31 Dec 2019 07:37:05 -0800 (PST)
+Received: from localhost ([49.207.54.121])
+        by smtp.gmail.com with ESMTPSA id m101sm4068910pje.13.2019.12.31.07.37.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 31 Dec 2019 07:37:04 -0800 (PST)
+Date:   Tue, 31 Dec 2019 21:07:03 +0530
+From:   afzal mohammed <afzal.mohd.ma@gmail.com>
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>
+Subject: Re: [RFC PATCH 2/2] ARM: !MMU: v7-M: preemption support
+Message-ID: <20191231153703.GA15302@afzalpc>
+References: <cover.1577705829.git.afzal.mohd.ma@gmail.com>
+ <c24f8d1c8e813eef62d642b5e620e0062c52c9a8.1577705829.git.afzal.mohd.ma@gmail.com>
 MIME-Version: 1.0
-References: <20191230143028.27313-1-alobakin@dlink.ru>
-In-Reply-To: <20191230143028.27313-1-alobakin@dlink.ru>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 31 Dec 2019 17:32:24 +0200
-Message-ID: <CA+h21hq95SmS3BraUQeEytP+3Y7irmShBEwpXqqJv+xOp4ePrg@mail.gmail.com>
-Subject: Re: [PATCH RFC net-next 00/20] net: dsa: add GRO support
-To:     Alexander Lobakin <alobakin@dlink.ru>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Edward Cree <ecree@solarflare.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Song Liu <songliubraving@fb.com>,
-        Matteo Croce <mcroce@redhat.com>,
-        Jakub Sitnicki <jakub@cloudflare.com>,
-        Paul Blakey <paulb@mellanox.com>,
-        Yoshiki Komachi <komachi.yoshiki@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c24f8d1c8e813eef62d642b5e620e0062c52c9a8.1577705829.git.afzal.mohd.ma@gmail.com>
+User-Agent: Mutt/1.9.3 (2018-01-21)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexander,
+Hi,
 
-On Mon, 30 Dec 2019 at 16:31, Alexander Lobakin <alobakin@dlink.ru> wrote:
->
-> I mark this as RFC, and there are the key questions for maintainers,
-> developers, users etc.:
-> - Do we need GRO support for DSA at all?
-> - Which tagger protocols really need it and which don't?
-> - Does this series bring any performance improvements on the
->   affected systems?
+On Mon, Dec 30, 2019 at 05:25:27PM +0530, afzal mohammed wrote:
 
-If these are these questions for maintainers, developers, users etc,
-then what has determined you to make these changes?
+> A. Before this change,
+> 
+> A.1
+> ~ # cat /dev/mymisc
+> [   28.099225] mymisc_open
+> [   28.101625] mymisc_read: enter
+> 
+> command prompt is not usable (expected), interrupts do happen during
+> this time.
 
-Thanks,
--Vladimir
+> B. After this change,
+> 
+> B.1
+> ~ # cat /dev/mymisc
+> [   27.374821] mymisc_open
+> [   27.377349] mymisc_read: enter
+> 
+> though user will not get control back (as expected as it is fg process),
+> entering on prompt causes new line, doesn't know what to make out of
+> this behaviour, this doesn't happen in the A.1 case. Interrupts happen
+> here as well.
+
+Behaviour B.1 (which is how most of the system behaves) seems due to
+serial driver's threaded interrupt handler being able to preempt 'cat'
+process, this can't happen in the case of A.1 as preemption doesn't
+work.
+
+Also it seems that preemption does happen by tracking __schedule() at
+runtime, but issue mentioned in B.2 (below) remains.
+
+So it seems preemption is happening, but is very fragile.
+
+Regards
+afzal
+
+> B.2
+> ~ # cat /dev/mymisc &
+> [1] 41 cat /dev/mymisc
+> ~ # [   44.836417] mymisc_open
+> [   44.838814] mymisc_read: enter
+> 
+> though prompt is available under the control of user, upon typing
+> anything on the prompt (typed character doesn't get echoed), it crashes
+> as follows,
+> 
+> [   44.838814] mymisc_read: enter
+> [   51.710314]
+> [   51.710314] Unhandled exception: IPSR = 00000006 LR = fffffffd
+> [   51.717576] CPU: 0 PID: 37 Comm: sh Not tainted 5.5.0-rc4-00004-g2328d01dbd85 #105
+> [   51.725078] Hardware name: STM32 (Device Tree Support)
+> [   51.730206] PC is at 0x90195958
+> [   51.733329] LR is at 0x901c4df3
+> [   51.736471] pc : [<90195958>]    lr : [<901c4df3>]    psr: 21000000
+> [   51.742713] sp : 901e5a58  ip : 00000000  fp : 901d89fc
+> [   51.747911] r10: 00000000  r9 : 00000000  r8 : 00000001
+> [   51.753143] r7 : 000000a8  r6 : 901e5a58  r5 : 901e5b08  r4 : ffffffff
+> [   51.759643] r3 : 000000a8  r2 : ffffffff  r1 : 00000001  r0 : 00000001
+> [   51.766122] xPSR: 21000000
+> [   51.768866] CPU: 0 PID: 37 Comm: sh Not tainted 5.5.0-rc4-00004-g2328d01dbd85 #105
+> [   51.776369] Hardware name: STM32 (Device Tree Support)
+> [   51.781594] [<0800c0c9>] (unwind_backtrace) from [<0800b25b>] (show_stack+0xb/0xc)
+> [   51.789166] [<0800b25b>] (show_stack) from [<0800b9eb>] (__invalid_entry+0x4b/0x4c)
+> 
+> It is a Usage Fault happening while in thread(user) mode. PC & LR in the
+> dump is strange in the sense that they do not point to text section.
