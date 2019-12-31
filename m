@@ -2,206 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BBD212D885
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 13:06:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F234C12D88D
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 13:13:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfLaMGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 07:06:07 -0500
-Received: from mailoutvs57.siol.net ([185.57.226.248]:47604 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726334AbfLaMGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 07:06:07 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 5A4B05234D4;
-        Tue, 31 Dec 2019 13:06:04 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 2dJjqKlJ9pgR; Tue, 31 Dec 2019 13:06:03 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id DD6FD52345B;
-        Tue, 31 Dec 2019 13:06:03 +0100 (CET)
-Received: from jernej-laptop.localnet (89-212-178-211.dynamic.t-2.net [89.212.178.211])
-        (Authenticated sender: jernej.skrabec@siol.net)
-        by mail.siol.net (Postfix) with ESMTPA id A6E955234B2;
-        Tue, 31 Dec 2019 13:06:03 +0100 (CET)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        roman.stratiienko@globallogic.com
-Cc:     Roman Stratiienko <roman.stratiienko@globallogic.com>
-Subject: Re: [PATCH v2 3/4] drm/sun4i: Use CRTC size instead of PRIMARY plane size as mixer frame.
-Date:   Tue, 31 Dec 2019 13:06:03 +0100
-Message-ID: <6139998.4vTCxPXJkl@jernej-laptop>
-In-Reply-To: <20191229162828.3326-3-roman.stratiienko@globallogic.com>
-References: <20191229162828.3326-1-roman.stratiienko@globallogic.com> <20191229162828.3326-3-roman.stratiienko@globallogic.com>
+        id S1727104AbfLaMNm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 07:13:42 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43534 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726334AbfLaMNm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 07:13:42 -0500
+Received: from zn.tnic (p4FED3FEE.dip0.t-ipconnect.de [79.237.63.238])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C266E1EC0216;
+        Tue, 31 Dec 2019 13:13:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1577794421;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=oR2xbj0U/pPGMoJ8gZOuKTnC6YknArbdAxhM7IvzOgI=;
+        b=L1M0d2MfDvXwB06BInNWbNrRyxXJ4p8eDWXOOC1n/RXs6mpQ2saXsgVesChtYtCn60jG7+
+        SBCfc9UtbWk0c6apV5LWzFHPhERhSr3VoPf1lCSNVyNciCmnC8tHSycqfsu4pL/EZgPGlQ
+        28R/sA9gg+yXZLyaBXZGDBcyGdJlvSI=
+Date:   Tue, 31 Dec 2019 13:11:21 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jann Horn <jannh@google.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: Re: [PATCH v7 3/4] x86/dumpstack: Introduce die_addr() for die()
+ with #GP fault address
+Message-ID: <20191231121121.GA13549@zn.tnic>
+References: <20191218231150.12139-1-jannh@google.com>
+ <20191218231150.12139-3-jannh@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191218231150.12139-3-jannh@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+On Thu, Dec 19, 2019 at 12:11:49AM +0100, Jann Horn wrote:
+> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+> index c8b4ae6aed5b..4c691bb9e0d9 100644
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -621,7 +621,10 @@ do_general_protection(struct pt_regs *regs, long error_code)
+>  				 "maybe for address",
+>  				 gp_addr);
 
-Sorry that I missed few details in first review. Please take a look below.
+ 
+> -		die(desc, regs, error_code);
 
-Dne nedelja, 29. december 2019 ob 17:28:27 CET je 
-roman.stratiienko@globallogic.com napisal(a):
-> From: Roman Stratiienko <roman.stratiienko@globallogic.com>
-> 
-> According to DRM documentation the only difference between PRIMARY
-> and OVERLAY plane is that each CRTC must have PRIMARY plane and
-> OVERLAY are optional.
-> 
-> Allow PRIMARY plane to have dimension different from full-screen.
-> 
-> Fixes: 90212fffa4fc ("drm/sun4i: Use values calculated by atomic check")
+I've added here:
 
-This fixes tag doesn't seem to be a good choice. First time where code in 
-question was introduced was:
+                /*
+                 * KASAN is interested only in the non-canonical case, clear it
+                 * otherwise.
+                 */
 
-9d75b8c0b999 drm/sun4i: add support for Allwinner DE2 mixers
-
-and it was later moved to sun8i_ui_layer.c in:
-
-5bb5f5dafa1a drm/sun4i: Reorganize UI layer code in DE2
-
-Not sure which one is better. You can also include both.
-
-> Signed-off-by: Roman Stratiienko <roman.stratiienko@globallogic.com>
-> ---
-> v2:
-> - Split commit in 2 parts
-> - Add Fixes line to the commit message
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c    | 35 ++++++++++++++++++++++++++
->  drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 30 ----------------------
->  2 files changed, 35 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> b/drivers/gpu/drm/sun4i/sun8i_mixer.c index d306ad5dc093..5d90a95ff855
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -257,6 +257,40 @@ const struct de2_fmt_info *sun8i_mixer_format_info(u32
-> format) return NULL;
->  }
-> 
-> +static void sun8i_mode_set(struct sunxi_engine *engine,
-> +			   struct drm_display_mode *mode)
-> +{
-> +	u32 dst_w = mode->crtc_hdisplay;
-> +	u32 dst_h = mode->crtc_vdisplay;
-
-Now that you moved code in separate function, "dst_" prefix doesn't make sense 
-anymore. Plain "width" and "height" work just fine.
-
-> +	u32 outsize = SUN8I_MIXER_SIZE(dst_w, dst_h);
-> +	bool interlaced = false;
-
-No need to initialize above variable. This value is never used.
-
-> +	u32 val;
-> +	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
-> +	u32 bld_base = sun8i_blender_base(mixer);
-
-Not extremely important, but can you move above two lines to the top? At least 
-I prefer to have those lines sorted from longest to shortest as much as 
-possible.
-
-Once above comments are addressed, code is:
-Reviewed-by: Jernej Skrabec <jernej.skrabec@siol.net>
-
-Best regards,
-Jernej
-
-> +
-> +	DRM_DEBUG_DRIVER("Mode change, updating global size W: %u H: %u\n",
-> +			 dst_w, dst_h);
-> +	regmap_write(mixer->engine.regs,
-> +		     SUN8I_MIXER_GLOBAL_SIZE,
-> +		     outsize);
-> +	regmap_write(mixer->engine.regs,
-> +		     SUN8I_MIXER_BLEND_OUTSIZE(bld_base), outsize);
-> +
-> +	interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
-> +
-> +	if (interlaced)
-> +		val = SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
-> +	else
-> +		val = 0;
-> +
-> +	regmap_update_bits(mixer->engine.regs,
-> +			   SUN8I_MIXER_BLEND_OUTCTL(bld_base),
-> +			   SUN8I_MIXER_BLEND_OUTCTL_INTERLACED,
-> +			   val);
-> +	DRM_DEBUG_DRIVER("Switching display mixer interlaced mode %s\n",
-> +			 interlaced ? "on" : "off");
-> +}
-> +
->  static void sun8i_mixer_commit(struct sunxi_engine *engine)
->  {
->  	struct sun8i_mixer *mixer = engine_to_sun8i_mixer(engine);
-> @@ -356,6 +390,7 @@ static struct drm_plane **sun8i_layers_init(struct
-> drm_device *drm, static const struct sunxi_engine_ops sun8i_engine_ops = {
->  	.commit		= sun8i_mixer_commit,
->  	.layers_init	= sun8i_layers_init,
-> +	.mode_set	= sun8i_mode_set,
->  };
-> 
->  static struct regmap_config sun8i_mixer_regmap_config = {
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c index ee7c13d8710f..23c2f4b68c89
-> 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-> @@ -72,36 +72,6 @@ static int sun8i_ui_layer_update_coord(struct sun8i_mixer
-> *mixer, int channel, insize = SUN8I_MIXER_SIZE(src_w, src_h);
->  	outsize = SUN8I_MIXER_SIZE(dst_w, dst_h);
-> 
-> -	if (plane->type == DRM_PLANE_TYPE_PRIMARY) {
-> -		bool interlaced = false;
-> -		u32 val;
-> -
-> -		DRM_DEBUG_DRIVER("Primary layer, updating global size 
-W: %u H: %u\n",
-> -				 dst_w, dst_h);
-> -		regmap_write(mixer->engine.regs,
-> -			     SUN8I_MIXER_GLOBAL_SIZE,
-> -			     outsize);
-> -		regmap_write(mixer->engine.regs,
-> -			     SUN8I_MIXER_BLEND_OUTSIZE(bld_base), 
-outsize);
-> -
-> -		if (state->crtc)
-> -			interlaced = state->crtc->state-
->adjusted_mode.flags
-> -				& DRM_MODE_FLAG_INTERLACE;
-> -
-> -		if (interlaced)
-> -			val = SUN8I_MIXER_BLEND_OUTCTL_INTERLACED;
-> -		else
-> -			val = 0;
-> -
-> -		regmap_update_bits(mixer->engine.regs,
-> -				   
-SUN8I_MIXER_BLEND_OUTCTL(bld_base),
-> -				   
-SUN8I_MIXER_BLEND_OUTCTL_INTERLACED,
-> -				   val);
-> -
-> -		DRM_DEBUG_DRIVER("Switching display mixer interlaced 
-mode %s\n",
-> -				 interlaced ? "on" : "off");
-> -	}
-> -
->  	/* Set height and width */
->  	DRM_DEBUG_DRIVER("Layer source offset X: %d Y: %d\n",
->  			 state->src.x1 >> 16, state->src.y1 >> 16);
+> +		if (hint != GP_NON_CANONICAL)
+> +			gp_addr = 0;
 
 
+otherwise you have:
 
+	if (hint != GP_NO_HINT)
+		...
 
+	if (hint != GP_NON_CANONICAL)
+		...
+
+which is kinda confusing at a first glance and one has to follow the
+code into die_addr() to figure out the usage of the address argument.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
