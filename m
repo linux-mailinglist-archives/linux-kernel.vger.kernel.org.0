@@ -2,130 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3AA912D7A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 10:47:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 045AF12D7A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 10:47:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726334AbfLaJrJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 04:47:09 -0500
-Received: from gofer.mess.org ([88.97.38.141]:46179 "EHLO gofer.mess.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725770AbfLaJrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 04:47:08 -0500
-Received: by gofer.mess.org (Postfix, from userid 1000)
-        id EDD6D11A001; Tue, 31 Dec 2019 09:47:06 +0000 (GMT)
-Date:   Tue, 31 Dec 2019 09:47:06 +0000
-From:   Sean Young <sean@mess.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>,
-        gregkh@linuxfoundation.org, rfontana@redhat.com,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        skhan@linuxfoundation.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: dvb_dummy_fe: Add error messages in case of
- attach failure
-Message-ID: <20191231094706.GD24469@gofer.mess.org>
-References: <20191107013745.22147-1-dwlsalmeida@gmail.com>
- <20191130075415.5d7ac0b1@kernel.org>
+        id S1726421AbfLaJre (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 04:47:34 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:33013 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbfLaJre (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 04:47:34 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xBV9lMnY002990, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV02.realtek.com.tw[172.21.6.19])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xBV9lMnY002990
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 31 Dec 2019 17:47:22 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTITCASV02.realtek.com.tw (172.21.6.19) with Microsoft SMTP Server (TLS) id
+ 14.3.468.0; Tue, 31 Dec 2019 17:47:22 +0800
+Received: from RTEXMB03.realtek.com.tw (172.21.6.96) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 31 Dec 2019 17:47:22 +0800
+Received: from RTEXMB03.realtek.com.tw ([fe80::71dc:5fb1:bef0:757d]) by
+ RTEXMB03.realtek.com.tw ([fe80::71dc:5fb1:bef0:757d%8]) with mapi id
+ 15.01.1779.005; Tue, 31 Dec 2019 17:47:22 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     =?utf-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+CC:     "linux-realtek-soc@lists.infradead.org" 
+        <linux-realtek-soc@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 00/14] ARM: dts: realtek: Introduce syscon
+Thread-Topic: [PATCH 00/14] ARM: dts: realtek: Introduce syscon
+Thread-Index: AQHVqT1tCIX1ZXSGCk+vaypVa8/P5KfRoTOAgAKGd4A=
+Date:   Tue, 31 Dec 2019 09:47:22 +0000
+Message-ID: <996a6968f411467cb987a14a0764726d@realtek.com>
+References: <20191202182205.14629-1-afaerber@suse.de>
+ <0f4d6872-b764-1c5e-9c2a-4e4e415a4877@suse.de>
+In-Reply-To: <0f4d6872-b764-1c5e-9c2a-4e4e415a4877@suse.de>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.190.187]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191130075415.5d7ac0b1@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel, Mauro,
-
-On Sat, Nov 30, 2019 at 07:54:15AM +0100, Mauro Carvalho Chehab wrote:
-> Em Wed,  6 Nov 2019 22:37:45 -0300
-> "Daniel W. S. Almeida" <dwlsalmeida@gmail.com> escreveu:
-> 
-> > From: "Daniel W. S. Almeida" <dwlsalmeida@gmail.com>
-> > 
-> > Complain if the attach functions fail, for any reason. This is helpful
-> > when debugging.
-> > 
-> > Suggested-by: Shuah Khan <skhan@linuxfoundation.org>
-> > Signed-off-by: Daniel W. S. Almeida <dwlsalmeida@gmail.com>
-> 
-> Looks OK to me.
-> 
-> > ---
-> >  drivers/media/dvb-frontends/dvb_dummy_fe.c | 18 +++++++++++++++---
-> >  1 file changed, 15 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/media/dvb-frontends/dvb_dummy_fe.c b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-> > index 4db679cb70ad..ca86857c3667 100644
-> > --- a/drivers/media/dvb-frontends/dvb_dummy_fe.c
-> > +++ b/drivers/media/dvb-frontends/dvb_dummy_fe.c
-> > @@ -114,12 +114,16 @@ struct dvb_frontend* dvb_dummy_fe_ofdm_attach(void)
-> >  	/* allocate memory for the internal state */
-> >  	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-> >  	if (!state)
-> > -		return NULL;
-> > +		goto err;
-> >  
-> >  	/* create dvb_frontend */
-> >  	memcpy(&state->frontend.ops, &dvb_dummy_fe_ofdm_ops, sizeof(struct dvb_frontend_ops));
-> >  	state->frontend.demodulator_priv = state;
-> >  	return &state->frontend;
-> > +
-> > +err:
-> > +	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-> > +	return NULL;
-> >  }
-
-If kzalloc() fails, it will already complain before returning. Lately we've
-been removing error logs after kmalloc() failures. I'm sure someone will send
-in patches reverting this if it gets merged.
-
-Is this a good idea?
-
-Sean
-
-> >  
-> >  static const struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
-> > @@ -131,12 +135,16 @@ struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
-> >  	/* allocate memory for the internal state */
-> >  	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-> >  	if (!state)
-> > -		return NULL;
-> > +		goto err;
-> >  
-> >  	/* create dvb_frontend */
-> >  	memcpy(&state->frontend.ops, &dvb_dummy_fe_qpsk_ops, sizeof(struct dvb_frontend_ops));
-> >  	state->frontend.demodulator_priv = state;
-> >  	return &state->frontend;
-> > +
-> > +err:
-> > +	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-> > +	return NULL;
-> >  }
-> >  
-> >  static const struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
-> > @@ -148,12 +156,16 @@ struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
-> >  	/* allocate memory for the internal state */
-> >  	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
-> >  	if (!state)
-> > -		return NULL;
-> > +		goto err;
-> >  
-> >  	/* create dvb_frontend */
-> >  	memcpy(&state->frontend.ops, &dvb_dummy_fe_qam_ops, sizeof(struct dvb_frontend_ops));
-> >  	state->frontend.demodulator_priv = state;
-> >  	return &state->frontend;
-> > +
-> > +err:
-> > +	pr_err("%s: DVB Dummy frontend driver attach failed\n", __func__);
-> > +	return NULL;
-> >  }
-> >  
-> >  static const struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops = {
-> 
-> 
-> 
-> Cheers,
-> Mauro
+SGkgQW5kcmVhcywNCg0KPiANCj4gSSdtIHdhaXRpbmcgZm9yIHlvdXIgQWNrZWQtYnkgb2YgdGhl
+IGJsb2NrcyAmIG51bWJlcnMgaW4gdGhlc2UgcGF0Y2hlcy4NCj4gT3RoZXIgUmVhbHRlayBlbmdp
+bmVlcnMgYXJlIGFsc28gaW52aXRlZCB0byByZXNwb25kLCBvZiBjb3Vyc2UuDQoNCkkgaGF2ZSBy
+ZXZpZXdlZCB0aGVzZSBwYXRjaGVzLg0KDQpUaGFuayB5b3UgZm9yIHlvdXIgY29udHJpYnV0aW9u
+Lg0KDQoNClJlZ2FyZHMsDQpKYW1lcw0KDQoNCg==
