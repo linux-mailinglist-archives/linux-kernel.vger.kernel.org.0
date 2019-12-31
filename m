@@ -2,67 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4952012DC1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:27:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C226912DC2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:33:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfLaW1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 17:27:38 -0500
-Received: from mga02.intel.com ([134.134.136.20]:53005 "EHLO mga02.intel.com"
+        id S1727109AbfLaWdd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 17:33:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727071AbfLaW1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 17:27:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:27:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,380,1571727600"; 
-   d="scan'208";a="221519036"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 31 Dec 2019 14:27:35 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1imPzC-0009ev-KJ; Wed, 01 Jan 2020 06:27:34 +0800
-Date:   Wed, 1 Jan 2020 06:26:46 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     kbuild-all@lists.01.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        jmattson@google.com, sean.j.christopherson@intel.com,
-        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
-        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
-Subject: [RFC PATCH] mmu: spp: is_spp_protected() can be static
-Message-ID: <20191231222646.q2fcvpszi772zdox@f53c9c00458a>
-References: <20191231065043.2209-8-weijiang.yang@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191231065043.2209-8-weijiang.yang@intel.com>
-X-Patchwork-Hint: ignore
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1727031AbfLaWdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 17:33:32 -0500
+Received: from localhost.localdomain (c-73-231-172-41.hsd1.ca.comcast.net [73.231.172.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE0E5205ED;
+        Tue, 31 Dec 2019 22:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577831612;
+        bh=QaZbUxjuLY1oPNTNyLwTGDZ9ozsSFFrFCBC1boCwOD0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=b8cExrddR70yQfCVlcvn8ljGEw0XzycDsmGTgca2kgOKJDaKrWquZGTFbI+XFUM0k
+         w/fZgXaPi1gTZHLlh6/5QBCZhmiqqd6yUzuNsxKyceGAysr49rt2A1keUOayLqwdSE
+         8/eB5jjSnDJFLqDVV3V8jqc8ffQwFNZwb3/5mbuY=
+Date:   Tue, 31 Dec 2019 14:33:31 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Gang He <GHe@suse.com>
+Cc:     "mark@fasheh.com" <mark@fasheh.com>,
+        "jlbec@evilplan.org" <jlbec@evilplan.org>,
+        "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>
+Subject: Re: [PATCH] ocfs2: make local header paths relative to C files
+Message-Id: <20191231143331.9b77ee5709f2662c54d76a51@linux-foundation.org>
+In-Reply-To: <20191227022950.14804-1-ghe@suse.com>
+References: <20191227022950.14804-1-ghe@suse.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 27 Dec 2019 02:30:15 +0000 Gang He <GHe@suse.com> wrote:
 
-Fixes: aacd4e33a5dd ("mmu: spp: Enable Lazy mode SPP protection")
-Signed-off-by: kbuild test robot <lkp@intel.com>
----
- spp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: Masahiro Yamada <masahiroy@kernel.org>
+> 
+> Gang He reports the failure of building fs/ocfs2/ as an external module
+> of the kernel installed on the system:
+> 
+>  $ cd fs/ocfs2
+>  $ make -C /lib/modules/`uname -r`/build M=`pwd` modules
+> 
+> If you want to make it work reliably, I'd recommend to remove ccflags-y
+> from the Makefiles, and to make header paths relative to the C files.
+> I think this is the correct usage of the #include "..." directive.
+> 
+> Reported-by: Gang He <ghe@suse.com>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> Reviewed-by: Gang He <ghe@suse.com>
 
-diff --git a/arch/x86/kvm/mmu/spp.c b/arch/x86/kvm/mmu/spp.c
-index a5b881f438b1f..6b0317edf0b08 100644
---- a/arch/x86/kvm/mmu/spp.c
-+++ b/arch/x86/kvm/mmu/spp.c
-@@ -571,7 +571,7 @@ inline u64 construct_spptp(unsigned long root_hpa)
- }
- EXPORT_SYMBOL_GPL(construct_spptp);
- 
--bool is_spp_protected(struct kvm_memory_slot *slot, gfn_t gfn, int level)
-+static bool is_spp_protected(struct kvm_memory_slot *slot, gfn_t gfn, int level)
- {
- 	int page_num = KVM_PAGES_PER_HPAGE(level);
- 	u32 *access;
+Your signed-off-by should appear here, since you were on the patch
+delivery path.  I have made that change, OK?
