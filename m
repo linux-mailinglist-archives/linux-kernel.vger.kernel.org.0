@@ -2,54 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0362B12D54A
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 01:31:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9894412D544
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 01:30:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfLaAbA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 19:31:00 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46400 "EHLO
+        id S1727837AbfLaAap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 19:30:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46324 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727840AbfLaAar (ORCPT
+        with ESMTP id S1727781AbfLaAao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 19:30:47 -0500
+        Mon, 30 Dec 2019 19:30:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=184EGpEW5yA7n8fHpP72Qf+OxowK09wGDDQZ+bqa1ig=; b=OOIGD718NdBy
-        cq/uat5UEXA7R2j8QmHH/Ku6HJpEHVm20C2AxSFJ/uiNNNDC0MKKZbLgz0JI0uDqerQACxSOkJXFg
-        wmnmJHuz1VsDi+aCKOoX7GheKMw6qrhJpb+cZ/GIWOAgt2GNlMmkEFdCDnx7DKgNpeflbwUCJuQSq
-        iNUrs=;
+        List-Archive; bh=q9DgC2JorIRoqJhF31krGorwxtftpf4/q1uLy/wL7Rk=; b=tB/IfDFnF3Fh
+        dMnBqp4+ZZmSaDOKLYo4X2z67JeplcAANmUjrQeNCKSiwjYlm2UZctXBCqeMqxpdmTP/ZR72gN0fE
+        Fdyq9rbtfSWEIEab5wB2YRw0ZFs8E3pGLPtiise0oq1f1ZJczZF4TE5DeoZ1s444yjBO8UmqGfcz0
+        7hPvQ=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1im5Qf-0002nT-ST; Tue, 31 Dec 2019 00:30:33 +0000
+        id 1im5Qg-0002nr-Rs; Tue, 31 Dec 2019 00:30:34 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 66E24D01A4F; Tue, 31 Dec 2019 00:30:33 +0000 (GMT)
+        id 62549D01A24; Tue, 31 Dec 2019 00:30:34 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Ravulapati Vishnu vardhan rao 
-        <Vishnuvardhanrao.Ravulapati@amd.com>
-Cc:     Alexander.Deucher@amd.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, "Cc:"@sirena.org.uk, "Cc:"@sirena.org.uk,
-        Colin Ian King <colin.king@canonical.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>, djkurtz@google.com,
-        Jaroslav Kysela <perex@perex.cz>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam@sirena.org.uk, Mark Brown <broonie@kernel.org>,
-        moderated@sirena.org.uk, "list:SOUND"@sirena.org.uk,
-        -@sirena.org.uk, SOC@sirena.org.uk, LAYER@sirena.org.uk,
-        /@sirena.org.uk, DYNAMIC@sirena.org.uk, AUDIO@sirena.org.uk,
-        open list <linux-kernel@vger.kernel.org>,
-        Takashi@sirena.org.uk, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: Applied "ASoC: amd: Added ACP3x system resume and runtime pm" to the asoc tree
-In-Reply-To: <1577540460-21438-6-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
-Message-Id: <applied-1577540460-21438-6-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com>
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
+        broonie@kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>,
+        ckeepax@opensource.cirrus.com, kernel-janitors@vger.kernel.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
+        Paul.Handrigan@cirrus.com, perex@perex.cz,
+        rf@opensource.cirrus.com, tiwai@suse.com
+Subject: Applied "ASoC: cs47l92: Simplify error handling code in 'cs47l92_probe()'" to the asoc tree
+In-Reply-To: <20191226162907.9490-1-christophe.jaillet@wanadoo.fr>
+Message-Id: <applied-20191226162907.9490-1-christophe.jaillet@wanadoo.fr>
 X-Patchwork-Hint: ignore
-Date:   Tue, 31 Dec 2019 00:30:33 +0000 (GMT)
+Date:   Tue, 31 Dec 2019 00:30:34 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,7 +50,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: amd: Added ACP3x system resume and runtime pm
+   ASoC: cs47l92: Simplify error handling code in 'cs47l92_probe()'
 
 has been applied to the asoc tree at
 
@@ -82,513 +75,41 @@ to this mail.
 Thanks,
 Mark
 
-From 535fd141ef346a3851f6aabc3eacb0d46518eca3 Mon Sep 17 00:00:00 2001
-From: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Date: Sat, 28 Dec 2019 19:10:59 +0530
-Subject: [PATCH] ASoC: amd: Added ACP3x system resume and runtime pm
+From 9ea7a991cc27e9af1099b7a628c0ab210dc70a69 Mon Sep 17 00:00:00 2001
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Date: Thu, 26 Dec 2019 17:29:07 +0100
+Subject: [PATCH] ASoC: cs47l92: Simplify error handling code in
+ 'cs47l92_probe()'
 
-When system wide suspend happens, ACP will be powered off
-and when system resumes,for audio usecase to continue,all
-the runtime configuration data needs to be programmed again.
-Added resume pm call back to ACP pm ops and also added runtime
-PM operations for ACP3x PCM platform device.
-Device will enter into D3 state when there is no activity
-on audio I2S lines.
+If 'madera_init_bus_error_irq()' fails,
+'wm_adsp2_remove(&cs47l92->core.adsp[0])' will be called twice.
+Once in the 'if' block, and once in the error handling path.
+This is harmless, but one of this call can be axed.
 
-Signed-off-by: Ravulapati Vishnu vardhan rao <Vishnuvardhanrao.Ravulapati@amd.com>
-Link: https://lore.kernel.org/r/1577540460-21438-6-git-send-email-Vishnuvardhanrao.Ravulapati@amd.com
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Link: https://lore.kernel.org/r/20191226162907.9490-1-christophe.jaillet@wanadoo.fr
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 149 +-----------------------
- sound/soc/amd/raven/acp3x.h         |   7 ++
- sound/soc/amd/raven/pci-acp3x.c     | 173 +++++++++++++++++++++++++++-
- 3 files changed, 180 insertions(+), 149 deletions(-)
+ sound/soc/codecs/cs47l92.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index c5d7f3558867..151daa996343 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
-+++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -57,106 +57,6 @@ static const struct snd_pcm_hardware acp3x_pcm_hardware_capture = {
- 	.periods_max = CAPTURE_MAX_NUM_PERIODS,
- };
+diff --git a/sound/soc/codecs/cs47l92.c b/sound/soc/codecs/cs47l92.c
+index d50f75f3b3e4..536b7d35d6b2 100644
+--- a/sound/soc/codecs/cs47l92.c
++++ b/sound/soc/codecs/cs47l92.c
+@@ -1959,10 +1959,8 @@ static int cs47l92_probe(struct platform_device *pdev)
+ 		goto error_dsp_irq;
  
--static int acp3x_power_on(void __iomem *acp3x_base, bool on)
--{
--	u16 val, mask;
--	u32 timeout;
--
--	if (on == true) {
--		val = 1;
--		mask = ACP3x_POWER_ON;
--	} else {
--		val = 0;
--		mask = ACP3x_POWER_OFF;
+ 	ret = madera_init_bus_error_irq(&cs47l92->core, 0, wm_adsp2_bus_error);
+-	if (ret != 0) {
+-		wm_adsp2_remove(&cs47l92->core.adsp[0]);
++	if (ret != 0)
+ 		goto error_adsp;
 -	}
--
--	rv_writel(val, acp3x_base + mmACP_PGFSM_CONTROL);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
--		if ((val & ACP3x_POWER_OFF_IN_PROGRESS) == mask)
--			break;
--		if (timeout > 100) {
--			pr_err("ACP3x power state change failure\n");
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_reset(void __iomem *acp3x_base)
--{
--	u32 val, timeout;
--
--	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
--		     timeout > 100) {
--			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--
--	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
--	timeout = 0;
--	while (true) {
--		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
--		if (!val || timeout > 100) {
--			if (!val)
--				break;
--			return -ENODEV;
--		}
--		timeout++;
--		cpu_relax();
--	}
--	return 0;
--}
--
--static int acp3x_init(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* power on */
--	ret = acp3x_power_on(acp3x_base, true);
--	if (ret) {
--		pr_err("ACP3x power on failed\n");
--		return ret;
--	}
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	return 0;
--}
--
--static int acp3x_deinit(void __iomem *acp3x_base)
--{
--	int ret;
--
--	/* Reset */
--	ret = acp3x_reset(acp3x_base);
--	if (ret) {
--		pr_err("ACP3x reset failed\n");
--		return ret;
--	}
--	/* power off */
--	ret = acp3x_power_on(acp3x_base, false);
--	if (ret) {
--		pr_err("ACP3x power off failed\n");
--		return ret;
--	}
--	return 0;
--}
--
- static irqreturn_t i2s_irq_handler(int irq, void *dev_id)
- {
- 	struct i2s_dev_data *rv_i2s_data;
-@@ -479,7 +379,7 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct i2s_dev_data *adata;
- 	unsigned int irqflags;
--	int status, ret;
-+	int status;
  
- 	if (!pdev->dev.platform_data) {
- 		dev_err(&pdev->dev, "platform_data not retrieved\n");
-@@ -511,53 +411,29 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	adata->i2s_irq = res->start;
- 
- 	dev_set_drvdata(&pdev->dev, adata);
--	/* Initialize ACP */
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
--
- 	status = devm_snd_soc_register_component(&pdev->dev,
- 						 &acp3x_i2s_component,
- 						 NULL, 0);
- 	if (status) {
- 		dev_err(&pdev->dev, "Fail to register acp i2s component\n");
--		ret = -ENODEV;
--		goto dev_err;
-+		return -ENODEV;
- 	}
- 	status = devm_request_irq(&pdev->dev, adata->i2s_irq, i2s_irq_handler,
- 				  irqflags, "ACP3x_I2S_IRQ", adata);
- 	if (status) {
- 		dev_err(&pdev->dev, "ACP3x I2S IRQ request failed\n");
--		ret = -ENODEV;
--		goto dev_err;
-+		return -ENODEV;
- 	}
- 
--	pm_runtime_set_autosuspend_delay(&pdev->dev, 5000);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 2000);
- 	pm_runtime_use_autosuspend(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_allow(&pdev->dev);
- 	return 0;
--
--dev_err:
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_dbg(&pdev->dev, "ACP de-initialized\n");
--	return ret;
- }
- 
- static int acp3x_audio_remove(struct platform_device *pdev)
- {
--	struct i2s_dev_data *adata;
--	int ret;
--
--	adata = dev_get_drvdata(&pdev->dev);
--	ret = acp3x_deinit(adata->acp3x_base);
--	if (ret)
--		dev_err(&pdev->dev, "ACP de-init failed\n");
--	else
--		dev_dbg(&pdev->dev, "ACP de-initialized\n");
--
- 	pm_runtime_disable(&pdev->dev);
- 	return 0;
- }
-@@ -565,15 +441,11 @@ static int acp3x_audio_remove(struct platform_device *pdev)
- static int acp3x_resume(struct device *dev)
- {
- 	struct i2s_dev_data *adata;
--	int status;
- 	u32 val, reg_val, frmt_val;
- 
- 	reg_val = 0;
- 	frmt_val = 0;
- 	adata = dev_get_drvdata(dev);
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
- 
- 	if (adata->play_stream && adata->play_stream->runtime) {
- 		struct i2s_stream_instance *rtd =
-@@ -620,14 +492,8 @@ static int acp3x_resume(struct device *dev)
- static int acp3x_pcm_runtime_suspend(struct device *dev)
- {
- 	struct i2s_dev_data *adata;
--	int status;
- 
- 	adata = dev_get_drvdata(dev);
--	status = acp3x_deinit(adata->acp3x_base);
--	if (status)
--		dev_err(dev, "ACP de-init failed\n");
--	else
--		dev_dbg(dev, "ACP de-initialized\n");
- 
- 	rv_writel(0, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 
-@@ -637,12 +503,9 @@ static int acp3x_pcm_runtime_suspend(struct device *dev)
- static int acp3x_pcm_runtime_resume(struct device *dev)
- {
- 	struct i2s_dev_data *adata;
--	int status;
- 
- 	adata = dev_get_drvdata(dev);
--	status = acp3x_init(adata->acp3x_base);
--	if (status)
--		return -ENODEV;
-+
- 	rv_writel(1, adata->acp3x_base + mmACP_EXTERNAL_INTR_ENB);
- 	return 0;
- }
-diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
-index 43213aec7f59..b6a80dc0b641 100644
---- a/sound/soc/amd/raven/acp3x.h
-+++ b/sound/soc/amd/raven/acp3x.h
-@@ -68,6 +68,13 @@
- #define SLOT_WIDTH_16 0x10
- #define SLOT_WIDTH_24 0x18
- #define SLOT_WIDTH_32 0x20
-+#define ACP_PGFSM_CNTL_POWER_ON_MASK	0x01
-+#define ACP_PGFSM_CNTL_POWER_OFF_MASK	0x00
-+#define ACP_PGFSM_STATUS_MASK		0x03
-+#define ACP_POWERED_ON			0x00
-+#define ACP_POWER_ON_IN_PROGRESS	0x01
-+#define ACP_POWERED_OFF			0x02
-+#define ACP_POWER_OFF_IN_PROGRESS	0x03
- 
- struct acp3x_platform_info {
- 	u16 play_i2s_instance;
-diff --git a/sound/soc/amd/raven/pci-acp3x.c b/sound/soc/amd/raven/pci-acp3x.c
-index 94f5f21d9a53..2f9f52905853 100644
---- a/sound/soc/amd/raven/pci-acp3x.c
-+++ b/sound/soc/amd/raven/pci-acp3x.c
-@@ -9,6 +9,8 @@
- #include <linux/io.h>
- #include <linux/platform_device.h>
- #include <linux/interrupt.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/delay.h>
- 
- #include "acp3x.h"
- 
-@@ -19,6 +21,109 @@ struct acp3x_dev_data {
- 	struct platform_device *pdev[ACP3x_DEVS];
- };
- 
-+static int acp3x_power_on(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	int timeout;
-+
-+	val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+
-+	if (val == 0)
-+		return val;
-+
-+	if (!((val & ACP_PGFSM_STATUS_MASK) ==
-+				ACP_POWER_ON_IN_PROGRESS))
-+		rv_writel(ACP_PGFSM_CNTL_POWER_ON_MASK,
-+			acp3x_base + mmACP_PGFSM_CONTROL);
-+	timeout = 0;
-+	while (++timeout < 500) {
-+		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if (!val)
-+			return 0;
-+		udelay(1);
-+	}
-+	return -ETIMEDOUT;
-+}
-+
-+static int acp3x_power_off(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	int timeout;
-+
-+	rv_writel(ACP_PGFSM_CNTL_POWER_OFF_MASK,
-+			acp3x_base + mmACP_PGFSM_CONTROL);
-+	timeout = 0;
-+	while (++timeout < 500) {
-+		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
-+		if ((val & ACP_PGFSM_STATUS_MASK) == ACP_POWERED_OFF)
-+			return 0;
-+		udelay(1);
-+	}
-+	return -ETIMEDOUT;
-+}
-+
-+static int acp3x_reset(void __iomem *acp3x_base)
-+{
-+	u32 val;
-+	int timeout;
-+
-+	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (++timeout < 500) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
-+			break;
-+		cpu_relax();
-+	}
-+	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
-+	timeout = 0;
-+	while (++timeout < 500) {
-+		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
-+		if (!val)
-+			return 0;
-+		cpu_relax();
-+	}
-+	return -ETIMEDOUT;
-+}
-+
-+static int acp3x_init(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* power on */
-+	ret = acp3x_power_on(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power on failed\n");
-+		return ret;
-+	}
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int acp3x_deinit(void __iomem *acp3x_base)
-+{
-+	int ret;
-+
-+	/* Reset */
-+	ret = acp3x_reset(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x reset failed\n");
-+		return ret;
-+	}
-+	/* power off */
-+	ret = acp3x_power_off(acp3x_base);
-+	if (ret) {
-+		pr_err("ACP3x power off failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
- static int snd_acp3x_probe(struct pci_dev *pci,
- 			   const struct pci_device_id *pci_id)
- {
-@@ -64,6 +169,9 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 	}
- 	pci_set_master(pci);
- 	pci_set_drvdata(pci, adata);
-+	ret = acp3x_init(adata->acp3x_base);
-+	if (ret)
-+		goto disable_msi;
- 
- 	val = rv_readl(adata->acp3x_base + mmACP_I2S_PIN_CONFIG);
- 	switch (val) {
-@@ -73,7 +181,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 					  GFP_KERNEL);
- 		if (!adata->res) {
- 			ret = -ENOMEM;
--			goto disable_msi;
-+			goto de_init;
- 		}
- 
- 		adata->res[0].name = "acp3x_i2s_iomem";
-@@ -118,7 +226,7 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		pdevinfo[2].parent = &pci->dev;
- 		pdevinfo[2].num_res = 1;
- 		pdevinfo[2].res = &adata->res[2];
--		for (i = 0; i < ACP3x_DEVS ; i++) {
-+		for (i = 0; i < ACP3x_DEVS; i++) {
- 			adata->pdev[i] =
- 				platform_device_register_full(&pdevinfo[i]);
- 			if (IS_ERR(adata->pdev[i])) {
-@@ -134,12 +242,21 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 		ret = -ENODEV;
- 		goto disable_msi;
- 	}
-+	pm_runtime_set_autosuspend_delay(&pci->dev, 2000);
-+	pm_runtime_use_autosuspend(&pci->dev);
-+	pm_runtime_set_active(&pci->dev);
-+	pm_runtime_put_noidle(&pci->dev);
-+	pm_runtime_enable(&pci->dev);
-+	pm_runtime_allow(&pci->dev);
- 	return 0;
- 
- unregister_devs:
- 	if (val == I2S_MODE)
--		for (i = 0 ; i < ACP3x_DEVS ; i++)
-+		for (i = 0; i < ACP3x_DEVS; i++)
- 			platform_device_unregister(adata->pdev[i]);
-+de_init:
-+	if (acp3x_deinit(adata->acp3x_base))
-+		dev_err(&pci->dev, "ACP de-init failed\n");
- disable_msi:
- 	pci_disable_msi(pci);
- release_regions:
-@@ -150,15 +267,56 @@ static int snd_acp3x_probe(struct pci_dev *pci,
- 	return ret;
- }
- 
-+static int snd_acp3x_suspend(struct device *dev)
-+{
-+	int ret;
-+	struct acp3x_dev_data *adata;
-+
-+	adata = dev_get_drvdata(dev);
-+	ret = acp3x_deinit(adata->acp3x_base);
-+	if (ret)
-+		dev_err(dev, "ACP de-init failed\n");
-+	else
-+		dev_dbg(dev, "ACP de-initialized\n");
-+
-+	return 0;
-+}
-+
-+static int snd_acp3x_resume(struct device *dev)
-+{
-+	int ret;
-+	struct acp3x_dev_data *adata;
-+
-+	adata = dev_get_drvdata(dev);
-+	ret = acp3x_init(adata->acp3x_base);
-+	if (ret) {
-+		dev_err(dev, "ACP init failed\n");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops acp3x_pm = {
-+	.runtime_suspend = snd_acp3x_suspend,
-+	.runtime_resume =  snd_acp3x_resume,
-+	.resume =	snd_acp3x_resume,
-+};
-+
- static void snd_acp3x_remove(struct pci_dev *pci)
- {
--	struct acp3x_dev_data *adata = pci_get_drvdata(pci);
--	int i;
-+	struct acp3x_dev_data *adata;
-+	int i, ret;
- 
-+	adata = pci_get_drvdata(pci);
- 	if (adata->acp3x_audio_mode == ACP3x_I2S_MODE) {
--		for (i = 0 ; i <  ACP3x_DEVS ; i++)
-+		for (i = 0; i < ACP3x_DEVS; i++)
- 			platform_device_unregister(adata->pdev[i]);
- 	}
-+	ret = acp3x_deinit(adata->acp3x_base);
-+	if (ret)
-+		dev_err(&pci->dev, "ACP de-init failed\n");
-+	pm_runtime_disable(&pci->dev);
-+	pm_runtime_get_noresume(&pci->dev);
- 	pci_disable_msi(pci);
- 	pci_release_regions(pci);
- 	pci_disable_device(pci);
-@@ -177,6 +335,9 @@ static struct pci_driver acp3x_driver  = {
- 	.id_table = snd_acp3x_ids,
- 	.probe = snd_acp3x_probe,
- 	.remove = snd_acp3x_remove,
-+	.driver = {
-+		.pm = &acp3x_pm,
-+	}
- };
- 
- module_pci_driver(acp3x_driver);
+ 	madera_init_fll(madera, 1, MADERA_FLL1_CONTROL_1 - 1,
+ 			&cs47l92->fll[0]);
 -- 
 2.20.1
 
