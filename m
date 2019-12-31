@@ -2,74 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAED312DC1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2370512DC20
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:27:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfLaWWA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 17:22:00 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:45327 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727079AbfLaWWA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 17:22:00 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 59so51767007otp.12
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 14:21:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KlT2jnj7z1iFkAKUNQWbQsSo+TR/YWaOOgSod0k7w7Q=;
-        b=SDs1XLSXb/UhPFICpRz+QEz2jdxJ6mnD5z1RgiUjXl2kSN/SRjY9qdkxJyPAomSFTo
-         4W9MT/Op5DGfy6j89Y0CN+wSoO62llB4hEsqZe/GklaDrEVyBKPBfqdEaWhDU8nIxLmJ
-         9G0L5DxAM6OUB020gwJZmEOLfI2umTuE8DSX41pN9b6WJW23421YpX2Wkr4V9QE/5XC1
-         TzPh49oF7f8lsyZ4X7hp8T26FyBOWgQZPAGfV5pzgheLaoIKmuE6AU6YHebo+rk5XUYQ
-         tjdS2jb/XLEk3L/6NONnK54wVAI1n0emlo3so96l7qP/07/oL/REYGzpBJAAD9H4Sk7W
-         lbSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KlT2jnj7z1iFkAKUNQWbQsSo+TR/YWaOOgSod0k7w7Q=;
-        b=GqE+qlzdfL707OoeBYq5ge9UgGY4euC8YPzla52BQGvX6Re7W4eeEHCmySZc7kEjEG
-         9w0uI6i/UHWOi8mhsTfaAA0DHo5P0hcJs0ypyYJ+KlYRloqcsSyctRkKWWNB/HIsC2NV
-         yTqm2pnK/owF8Romr4CpD3exqZpad5iyrAIUkVBlF/1zRPC5joU2GRBL2C2H7xoca2v+
-         bIE/JUmrQKgSZCuT9+sxYxY19jI1YbIt/4pMV9EFXMN46FMHTLoMDUkeru26X7+bbFB1
-         tP4d56TWb8ogNVpjrNp7PHKGlxN4iqlJzLDFr4KCJifMdT4pVyITQlwu3wsBrhsDAxZF
-         GrhA==
-X-Gm-Message-State: APjAAAVIXA8WMIgWzDMRxbHf4DfA+g5Dz1ogx4n4xQWLdCEw5eER02HI
-        jOswj/MUy4hEW7NEFAgURBhakZrv8gi8Yvns4ASsRg==
-X-Google-Smtp-Source: APXvYqy1Nlu/1GbgH0I6iq3zMFnAaxwd8ZFUXv3pxT0OCb9TlTQPfJLMpeN7TKNH/fK7w1/i3uKBuqDIMtTj0BVo/Zw=
-X-Received: by 2002:a9d:4e99:: with SMTP id v25mr84887327otk.363.1577830919298;
- Tue, 31 Dec 2019 14:21:59 -0800 (PST)
+        id S1727122AbfLaW1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 17:27:38 -0500
+Received: from mga18.intel.com ([134.134.136.126]:19577 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbfLaW1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 17:27:37 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:27:36 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,380,1571727600"; 
+   d="scan'208";a="231416403"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 31 Dec 2019 14:27:35 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1imPzC-0009fK-Ms; Wed, 01 Jan 2020 06:27:34 +0800
+Date:   Wed, 1 Jan 2020 06:26:45 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Yang Weijiang <weijiang.yang@intel.com>
+Cc:     kbuild-all@lists.01.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
+        jmattson@google.com, sean.j.christopherson@intel.com,
+        yu.c.zhang@linux.intel.com, alazar@bitdefender.com,
+        edwin.zhai@intel.com, Yang Weijiang <weijiang.yang@intel.com>
+Subject: Re: [PATCH v10 07/10] mmu: spp: Enable Lazy mode SPP protection
+Message-ID: <202001010504.RyikzFRu%lkp@intel.com>
+References: <20191231065043.2209-8-weijiang.yang@intel.com>
 MIME-Version: 1.0
-References: <157773590338.4153451.5898675419563883883.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20191231014630.GA24942@dhcp-128-65.nay.redhat.com> <CAPcyv4heY1CKAWo1AKKifYUtXdKjoUt45dZbCNhB2o59hkXY6g@mail.gmail.com>
-In-Reply-To: <CAPcyv4heY1CKAWo1AKKifYUtXdKjoUt45dZbCNhB2o59hkXY6g@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 31 Dec 2019 14:21:48 -0800
-Message-ID: <CAPcyv4idLx58iH0tA08vrVdvornd-jAwSwHQ6Eha+Z_UQUDDAQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: Fix handling of multiple contiguous efi_fake_mem= entries
-To:     Dave Young <dyoung@redhat.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        Michael Weiser <michael@weiser.dinsnail.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>, kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191231065043.2209-8-weijiang.yang@intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 1:11 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> Perhaps a prettier way to do this is to push the handling of each
-> efi_fake_mem entry into a subroutine. However, I notice when a memmap
-> allocated by efi_memmap_alloc() is replaced by another dynamically
-> allocated memmap the previous one isn't released. I have a series that
-> fixes that up as well.
+Hi Yang,
 
-Available here:
-http://lore.kernel.org/r/157782985777.367056.14741265874314204783.stgit@dwillia2-desk3.amr.corp.intel.com
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on kvm/linux-next]
+[also build test WARNING on vhost/linux-next tip/auto-latest linux/master linus/master v5.5-rc4 next-20191219]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+
+url:    https://github.com/0day-ci/linux/commits/Yang-Weijiang/Enable-Sub-Page-Write-Protection-Support/20191231-145254
+base:   https://git.kernel.org/pub/scm/virt/kvm/kvm.git linux-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-129-g341daf20-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+
+   arch/x86/kvm/mmu/spp.c:202:5: sparse: sparse: symbol 'kvm_spp_level_pages' was not declared. Should it be static?
+   arch/x86/kvm/mmu/spp.c:419:6: sparse: sparse: symbol 'kvm_spp_flush_rmap' was not declared. Should it be static?
+>> arch/x86/kvm/mmu/spp.c:574:6: sparse: sparse: symbol 'is_spp_protected' was not declared. Should it be static?
+   arch/x86/kvm/mmu/mmu.c:4827:57: sparse: sparse: cast truncates bits from constant value (ffffff33 becomes 33)
+   arch/x86/kvm/mmu/mmu.c:4829:56: sparse: sparse: cast truncates bits from constant value (ffffff0f becomes f)
+   arch/x86/kvm/mmu/mmu.c:4831:57: sparse: sparse: cast truncates bits from constant value (ffffff55 becomes 55)
+
+Please review and possibly fold the followup patch.
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
