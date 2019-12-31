@@ -2,50 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B3B12D5C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 03:29:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD30412D5CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 03:33:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726627AbfLaC3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 21:29:02 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:55512 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfLaC3C (ORCPT
+        id S1726596AbfLaCd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 21:33:28 -0500
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:58291 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725536AbfLaCd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 21:29:02 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1im7HH-0001Xw-V2; Tue, 31 Dec 2019 02:29:00 +0000
-Date:   Tue, 31 Dec 2019 02:28:59 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Rob Landley <rob@landley.net>
-Cc:     linux-kernel@vger.kernel.org
+        Mon, 30 Dec 2019 21:33:27 -0500
+Received: from callcc.thunk.org (96-72-102-169-static.hfc.comcastbusiness.net [96.72.102.169] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id xBV2XE93024338
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 30 Dec 2019 21:33:15 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 5BEAF420485; Mon, 30 Dec 2019 21:33:14 -0500 (EST)
+Date:   Mon, 30 Dec 2019 21:33:14 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Rob Landley <rob@landley.net>, linux-kernel@vger.kernel.org
 Subject: Re: Why is CONFIG_VT forced on?
-Message-ID: <20191231022859.GB4203@ZenIV.linux.org.uk>
+Message-ID: <20191231023314.GC3669@mit.edu>
 References: <9b79fb95-f20c-f299-f568-0ffb60305f04@landley.net>
+ <b3cf8faf-ef04-2f55-3ccb-772e18a57d7b@infradead.org>
+ <ac0e5b3b-6e70-6ab0-0c7f-43175b73058f@landley.net>
+ <e55624fa-7112-1733-8ddd-032b134da737@infradead.org>
+ <018540ef-0327-78dc-ea5c-a43318f1f640@landley.net>
+ <774dfe49-61a0-0144-42b7-c2cbac150687@landley.net>
+ <8059d1c4-759d-9911-73c7-211f8576e7f2@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9b79fb95-f20c-f299-f568-0ffb60305f04@landley.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <8059d1c4-759d-9911-73c7-211f8576e7f2@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 06:30:15PM -0600, Rob Landley wrote:
-> On x86-64 menuconfig, CONFIG_VT is forced on (in drivers->char devices->virtual
-> terminal), but the help doesn't mention a "selects", and I didn't spot anything
-> obvious in "find . -name 'Kconfig*' | xargs grep -rw VT".
-> 
-> Congratulations, you've reinvented "come from". I'm mostly familiar with the
-> kconfig plumbing from _before_ you made it turing complete: how do I navigate this?
-> 
-> I'm guessing "stick printfs into the menuconfig binary" is the recommended next
-> step for investigating this? Or is there a trick I'm missing?
+On Mon, Dec 30, 2019 at 06:03:26PM -0800, Randy Dunlap wrote:
+> > 
+> > So if I disable CONFIG_EXPERT, using miniconfig I then need to manually switch on:
+> > 
+> > ./init/Kconfig:	bool "Namespaces support" if EXPERT
+> > 
+> > So nobody noticed you have a structural "this config option actually switches
+> > this thing _off_" implemented via magic symbol then?
 
-config VT
-        bool "Virtual terminal" if EXPERT
+Perhaps because the right thing happens if you enable CONFIG_EXPERT
+using "make menuconfig"?  It also looks like the right thing happens
+if you edit the .config and then run "make oldconfig".
 
-IOW, it's only conrollable if EXPERT is set.  Finding CONFIG_EXPERT, setting it
-and turning CONFIG_VT off is left as an exercise for reader; ceasing the
-indignant whining for long enough to do that might or might not be doable -
-up to you.
+Personally, I never use miniconfig, so it's not anything *I* ever
+noticed in all of my years of kernel development.  Usually, the way
+that I manage configs is "make menuconfig", or editing the .config
+directly, or "make savedefconfig" / "make olddefconfig".
+
+Cheers,
+
+					- Ted
