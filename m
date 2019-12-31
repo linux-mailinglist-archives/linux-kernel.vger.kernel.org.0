@@ -2,84 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D03AA12D6BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 07:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6CF12D6BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 07:57:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfLaGzX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 01:55:23 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45468 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725554AbfLaGzW (ORCPT
+        id S1725980AbfLaG53 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 01:57:29 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37670 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfLaG53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 01:55:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 2so19365619pfg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 22:55:22 -0800 (PST)
+        Tue, 31 Dec 2019 01:57:29 -0500
+Received: by mail-qt1-f193.google.com with SMTP id w47so31125765qtk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 22:57:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uZRHufvw0O7nWhwpHOdeW2xncFsY6V7ai1BYdYAzaho=;
-        b=MRsY3AMt4XIJfmKY4DSpuq3wacUrO4K8O24Ybj3SFY11sr0JfZqJ8pnmp+O/tYwFJJ
-         SPrLILmpxnbR4mfl1UuV/5n3sqCqRy/rrblgngn95owSbI9h56R049N6zKwQPKCtltso
-         gx7wMGtf843iQovlfCE3wLiuESqpbStb9gs+U=
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=XXuus9TOljx+U12bTY0a3cE0q+aFia0Vi9sQcX1cBTk=;
+        b=XviN/9Rp+4y7mgP6CpO2voB4PGcGmu7F/BgsCnR/X48tMMpjGp9i5qICrPl3j/S380
+         nLc5cWPt9mdeujyYeDdrEDO/JfAmnw02QVepVuOC1zz0tQWHlg9Jt3cQ2cFoYaEGWzDQ
+         18/AF27pfNX7TVZrVdAdEYcB2JOvuw21XwLhDIe1qvxc+SxaOcgQZ9NVWDqogFxN2MIz
+         uGmXmqoEQuOEyHBh1c/c5uysmzdiEOyL2IPMG3yHPZsvV6h17FLty9NCYbghwaA4UJri
+         xcj2rSWw7NeDB0d+vQkJ+WUWp+BWyDZ/5Evciv8YODRnjXDbopAfsLb0aJyuW7sVWrza
+         GVbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=uZRHufvw0O7nWhwpHOdeW2xncFsY6V7ai1BYdYAzaho=;
-        b=UjnsXQJY8JA3mmER2tdRF2ZR4C1k9pHYQt1vnaDoMgY8aULNkyQR0rqquaWv0z6PfN
-         rZyeVQWRVIDcTZEukO/XPjrhcO9BJeQUwh0C1szFeoFWT6X08nTl0I5Y/ExoMumBlzIl
-         s4sdQfAZSCuFHTRyQU8iJkyuKEl0HHoTudzNMRHOYTbZGV8B5y3ReDORelIY7AH3H9n5
-         WcauqEC2WkuO1EYdr7uXeTtxtnvGXA1336DTj9tnMGEgovWSF3xPYbFySEBju+Ucy4gs
-         96f047Wtd0uY1OYzwJpF07A4NnV75OvSbHN0gJhacvCcGaBbcSR6DwpKrfywOyUXj/2o
-         iduA==
-X-Gm-Message-State: APjAAAVEljAUf39pkVBvOLPVGsOwjDQ9xdJ2sq+S9j8lNiHvuXI8rC6d
-        vRN0hH6+syqCQU+Q6hKvgcOcbQ==
-X-Google-Smtp-Source: APXvYqyAxa6p0EPOabe3OQTYdhkONSPeiBnwM3ILST7SDRL0Lrr0UEJATAwrhqP3AzOpMFQEaFIUYQ==
-X-Received: by 2002:a63:1666:: with SMTP id 38mr78918147pgw.325.1577775321566;
-        Mon, 30 Dec 2019 22:55:21 -0800 (PST)
-Received: from localhost.localdomain ([49.206.202.115])
-        by smtp.gmail.com with ESMTPSA id c18sm29666552pfr.40.2019.12.30.22.55.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Dec 2019 22:55:20 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH] arm64: defconfig: Enable DRM_SUN6I_DSI
-Date:   Tue, 31 Dec 2019 12:25:08 +0530
-Message-Id: <20191231065508.12649-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=XXuus9TOljx+U12bTY0a3cE0q+aFia0Vi9sQcX1cBTk=;
+        b=t9f1B31yfm5zgaOu/pJ7jaj7RIbfMYiE+GtodAwGtaZ/fY3mGClJ+ylzZOGSWOHKci
+         oDw9TsGTeflaOZb44wag1iDot0uVQx0/FbcZzmoKNqUAAj8NsgDJ3rTJrD8vgxwXRyXH
+         JAO6SOuF5aCP+k9rFgdOfjiZF460JP2S2/pFL45A8LCw6O0FXFyGohrhdR6TJPz0oQ4s
+         vfDpHXBlpQ4HZieMfGQ1Um+msJuBmI5ic8EaQwm4K/abEuT2jh9yddwROi2N1bhH8sFU
+         LIO0AK9q9IFaihnIvlLsWiQbReKhQTUBscwCnp5ylfbluh4Cbt0dp20cjw1OuAkuL4km
+         yOuQ==
+X-Gm-Message-State: APjAAAXbBqQB1gWAdnQyF38mveqNeq1bczEBGW8BbUOQoakbp7EIrS20
+        9Qf11Lx2t1hAt9epVK3hpX3kf/Ka3dbch6XbHdQ=
+X-Google-Smtp-Source: APXvYqzsTLzDY9GiFzYgyUlowlgjRTgvF93Sg8vmwgWKzl25/NgxJKS7Lu9eL23m+rwohPKfJslHPIXrdMy7jhNz3NU=
+X-Received: by 2002:ac8:140c:: with SMTP id k12mr51508675qtj.117.1577775448274;
+ Mon, 30 Dec 2019 22:57:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac8:34d8:0:0:0:0:0 with HTTP; Mon, 30 Dec 2019 22:57:28
+ -0800 (PST)
+Reply-To: aishagaddafiaam@gmail.com
+From:   AISHA GADDAFI <nkipkalya@gmail.com>
+Date:   Tue, 31 Dec 2019 07:57:28 +0100
+Message-ID: <CAJiVTN0PZMjskDsR6Ebzrnacx2cMv9RyVJ6=qKF_710=KTbfiA@mail.gmail.com>
+Subject: Hello Dear Very Confidential,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now, Allwiner MIPI-DSI support is available for ARM64
-Allwinner SoC like A64. So, let's build it as a module.
+Hello Dear Very Confidential,
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index c9a867ac32d4..8583bd3ac52c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -534,6 +534,7 @@ CONFIG_ROCKCHIP_DW_MIPI_DSI=y
- CONFIG_ROCKCHIP_INNO_HDMI=y
- CONFIG_DRM_RCAR_DU=m
- CONFIG_DRM_SUN4I=m
-+CONFIG_DRM_SUN6I_DSI=m
- CONFIG_DRM_SUN8I_DW_HDMI=m
- CONFIG_DRM_SUN8I_MIXER=m
- CONFIG_DRM_MSM=m
--- 
-2.18.0.321.gffc6fa0e3
 
+I am Aisha Gaddafi, Daughter of the former Libyan leader, Col. Muammar
+Gaddafi. I am offering you a partnership proposal in a classified
+monetary transaction, which involves the need to secretly relocate and
+secures some of our family funds concealed in a special escrow dormant
+holding with a financial services company in Africa. I am in a very
+difficult situation and I must immediately relocate this fund for
+safety and investments purposes.
+
+More so, this must be done in such a way that it must not be tied to
+me as a result of my father's death and politics circumstances. More
+details of the transaction will be disclosed to you once you can
+assure me that you can be trusted to handle this. Honesty and trust is
+what I am in quest of, so therefore your assurance of confidentiality
+and trust will be highly appreciated. For further clarification.
+
+I look forward to your earliest response,
+
+Thank you
+
+Aisha  Gaddafi
