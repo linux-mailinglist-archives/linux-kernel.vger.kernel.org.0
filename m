@@ -2,106 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E92D312D719
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 09:33:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF3512D720
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 09:39:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbfLaIdg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 03:33:36 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:43494 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfLaIdg (ORCPT
+        id S1725770AbfLaIjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 03:39:47 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38807 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfLaIjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 03:33:36 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBV8XIpv039830;
-        Tue, 31 Dec 2019 02:33:18 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1577781198;
-        bh=jbOv1LVbSazAXgc+tVdf1lshir3VjpBQ9GhevKwekk8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=r7+o6OffmTxm00zXbxuk2arAa6kz5nEw+UIp4kePDchAbpZ4KlHXxLAdnSOyjpl5O
-         GlwjRBFqjGrIvptP+WgjzySX+BJ2kjZgLx/ejB68e0dB+nxOl0uKDPPWj0eFRKaWU6
-         VE1qelkQVC98qpqL9kaXZNpNtMURAhzlUS+7R/NY=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBV8XHDu082565;
-        Tue, 31 Dec 2019 02:33:17 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 31
- Dec 2019 02:33:17 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 31 Dec 2019 02:33:17 -0600
-Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBV8XEaC127311;
-        Tue, 31 Dec 2019 02:33:15 -0600
-Subject: Re: [PATCH 2/7] misc: pci_endpoint_test: Do not request or allocate
- IRQs in probe
-To:     kbuild test robot <lkp@intel.com>
-CC:     <kbuild-all@lists.01.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20191230123315.31037-3-kishon@ti.com>
- <201912310039.Jef27rlg%lkp@intel.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <b561503f-a753-7750-2a43-78509755eb83@ti.com>
-Date:   Tue, 31 Dec 2019 14:05:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        Tue, 31 Dec 2019 03:39:46 -0500
+Received: by mail-pl1-f194.google.com with SMTP id f20so15693165plj.5
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 00:39:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BQtaeDD9iVM5+b30tZbRI2EHQA2GRCPLt5coFH0Hu7k=;
+        b=QtFPBRgexpYA+27porJnxIo3FiID+P4q/uunZRO1911fhApxltA68KLt3FnSAPmSFg
+         o3vDx3KQLkxMzc+YGjItwPwaa1bI3SccD7XL81cYet5UBwSk23N4Y7viJ7QZRzLkoQFf
+         yDUUNPAO8r7K0glITDJkhKjbu+AYwXc+Digc/rjcCxzb87PeUOHNh2+Pa45hi2ep9t1i
+         qmWznwyLzgGxDQJtw3q8xZTKSjka609jGyiKjnAJdw1sq78SjUUg31drO4vvVuEsRoXj
+         WeLdMpnsodrBZJCTrolRCvvWA353118SUOGicN9U93xl4aZAQ/PCeW6ZDQBwCQOmaIfG
+         eYIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BQtaeDD9iVM5+b30tZbRI2EHQA2GRCPLt5coFH0Hu7k=;
+        b=bDYKkzoe6mMzon9Z8enh7mwAyTX/AEoNV/UvSG7bXDJx3jAEnp124+MBL8uiRI/Nge
+         WbUTarOkg9mEyCK0Yf+jMiUfR1GKbNsTqcn6ES9fv2PvF3/GvZYiT07fAee7U/xszSWD
+         IybAHDAstVtb/7JOguhWhvO9iji/Uo7J++ZL7OxL1yuh21XJxKIcvXAjEewk4wnWw3eZ
+         j4sbemNJ+2+pk+U64V/8g+IhDFEntKQvTpwmKGOJc+y2ix87xISEbppkTPiOLrBIQFmw
+         fIdxQX2g5zMYdNyNw0SZNcMgaIxwIZhLxB5GZh8doqj31hkVQUpU8T0e0yKiEn19AEeb
+         Anzw==
+X-Gm-Message-State: APjAAAVVJNtyzGdcLAbGOtf3Rxyq/+yCACJ1ZoqEwI2dRB1PU7jACpWw
+        8pMJCL6IkuucMR4htuFBH3y4cQ==
+X-Google-Smtp-Source: APXvYqyogbKOzEE1A3fEkjBs2LajnnAHqltAyAdH5gr4gm+XpBJEB1ntQvC/9yctl9aSkv2SZI5teA==
+X-Received: by 2002:a17:90b:258:: with SMTP id fz24mr4782140pjb.6.1577781586060;
+        Tue, 31 Dec 2019 00:39:46 -0800 (PST)
+Received: from starnight.8.8.8.8 (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.gmail.com with ESMTPSA id z30sm56896800pfq.154.2019.12.31.00.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 Dec 2019 00:39:45 -0800 (PST)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Tova Mussai <tova.mussai@intel.com>,
+        Ayala Beker <ayala.beker@intel.com>
+Cc:     Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux@endlessm.com,
+        Jian-Hong Pan <jian-hong@endlessm.com>
+Subject: [PATCH] iwlwifi: mvm: Revert "iwlwifi: mvm: fix scan config command size"
+Date:   Tue, 31 Dec 2019 16:36:06 +0800
+Message-Id: <20191231083604.5639-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-In-Reply-To: <201912310039.Jef27rlg%lkp@intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The Intel(R) Dual Band Wireless AC 9461 WiFi keeps restarting until
+commit 06eb547c4ae4 ("wlwifi: mvm: fix scan config command size") is
+reverted.
 
-On 30/12/19 10:40 PM, kbuild test robot wrote:
-> Hi Kishon,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on char-misc/char-misc-testing]
-> [also build test WARNING on pci/next arm-soc/for-next linus/master v5.5-rc4 next-20191220]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Kishon-Vijay-Abraham-I/Improvements-to-pci_endpoint_test-driver/20191230-203402
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git d1eef1c619749b2a57e514a3fa67d9a516ffa919
-> config: arm-randconfig-a001-20191229 (attached as .config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 7.5.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.5.0 make.cross ARCH=arm 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    In file included from include/linux/kernel.h:11:0,
->                     from include/linux/delay.h:22,
->                     from drivers/[1] -> http://lore.kernel.org/r/20191209092147.22901-1-kishon@ti.commisc/pci_endpoint_test.c:10:
->    drivers/misc/pci_endpoint_test.c: In function 'pci_endpoint_test_probe':
->    drivers/misc/pci_endpoint_test.c:73:22: error: 'PCI_DEVICE_ID_TI_J721E' undeclared (first use in this function); did you mean 'PCI_DEVICE_ID_TI_7510'?
->       ((pdev)->device == PCI_DEVICE_ID_TI_J721E)
+Buglink: https://bugzilla.kernel.org/show_bug.cgi?id=206025
+Fixes: commit 06eb547c4ae4 ("wlwifi: mvm: fix scan config command size")
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The patches in this series should be merged only after [1]. With that
-this error wouldn't be seen.
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+index a046ac9fa852..a5af8f4128b1 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+@@ -1213,7 +1213,7 @@ static int iwl_mvm_legacy_config_scan(struct iwl_mvm *mvm)
+ 		cmd_size = sizeof(struct iwl_scan_config_v2);
+ 	else
+ 		cmd_size = sizeof(struct iwl_scan_config_v1);
+-	cmd_size += num_channels;
++	cmd_size += mvm->fw->ucode_capa.n_scan_channels;
+ 
+ 	cfg = kzalloc(cmd_size, GFP_KERNEL);
+ 	if (!cfg)
+-- 
+2.24.1
 
-[1] -> http://lore.kernel.org/r/20191209092147.22901-1-kishon@ti.com
-
-Thanks
-Kishon
