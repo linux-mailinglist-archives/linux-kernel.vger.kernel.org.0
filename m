@@ -2,110 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBE4412DAC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 19:02:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C9C812DADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 19:13:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfLaSC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 13:02:27 -0500
-Received: from smtprelay0165.hostedemail.com ([216.40.44.165]:39311 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726060AbfLaSC1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 13:02:27 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 60D1718224D8D;
-        Tue, 31 Dec 2019 18:02:25 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::::::,RULES_HIT:41:152:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2198:2199:2393:2559:2562:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3870:3871:3872:4321:5007:6119:6120:7901:7903:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12740:12895:13069:13311:13357:13894:14659:14721:14777:21080:21433:21451:21627:21810:21819:21990:30012:30022:30054:30056:30091,0,RBL:none,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:,MSBL:0,DNSBL:none,Custom_rules:0:0:0,LFtime:2,LUA_SUMMARY:none
-X-HE-Tag: song33_3208bae3f8801
-X-Filterd-Recvd-Size: 2662
-Received: from XPS-9350.home (unknown [47.151.135.224])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Tue, 31 Dec 2019 18:02:23 +0000 (UTC)
-Message-ID: <a6911ca13419af48d7170e4426cd23f22a2824f5.camel@perches.com>
-Subject: Re: [PATCH v8 10/13] exfat: add nls operations
-From:   Joe Perches <joe@perches.com>
-To:     Markus Elfring <Markus.Elfring@web.de>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Valdis =?UTF-8?Q?Kl=C4=93tnieks?= <valdis.kletnieks@vt.edu>,
-        linkinjeon@gmail.com
-Date:   Tue, 31 Dec 2019 10:01:36 -0800
-In-Reply-To: <5b0febd5-642b-83f2-7d81-7a1cbb302e3c@web.de>
-References: <20191220062419.23516-11-namjae.jeon@samsung.com>
-         <5b0febd5-642b-83f2-7d81-7a1cbb302e3c@web.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.1-2 
+        id S1727114AbfLaSNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 13:13:48 -0500
+Received: from mga12.intel.com ([192.55.52.136]:63315 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726720AbfLaSNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 13:13:48 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 10:13:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,380,1571727600"; 
+   d="scan'208";a="216100240"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 31 Dec 2019 10:13:47 -0800
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 4A6F558043C;
+        Tue, 31 Dec 2019 10:13:47 -0800 (PST)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v11 5/8] PCI/AER: Allow clearing Error Status Register in
+ FF mode
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com, Austin.Bolen@dell.com
+References: <20191230235902.GA226371@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <d6986b35-f015-6bb4-f2cd-0baf0a40b163@linux.intel.com>
+Date:   Tue, 31 Dec 2019 10:11:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20191230235902.GA226371@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-12-31 at 15:23 +0100, Markus Elfring wrote:
-> …
-> > +++ b/fs/exfat/nls.c
-> …
-> > +int exfat_nls_cmp_uniname(struct super_block *sb, unsigned short *a,
-> > +		unsigned short *b)
-> > +{
-> > +	int i;
-> > +
-> > +	for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
-> > +		if (exfat_nls_upper(sb, *a) != exfat_nls_upper(sb, *b))
-> 
-> Can it matter to compare run time characteristics with the following
-> code variant?
-> 
-> +	for (i = 0; i < MAX_NAME_LENGTH; i++) {
-> +		if (exfat_nls_upper(sb, a[i]) != exfat_nls_upper(sb, b[i]))
+Hi Bjorn,
 
-Markus, try comparing the object code produced by the compiler first,
-it's likely identical.
+On 12/30/19 3:59 PM, Bjorn Helgaas wrote:
+> [+cc Austin]
+>
+> On Thu, Dec 26, 2019 at 04:39:11PM -0800, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> As per PCI firmware specification r3.2 System Firmware Intermediary
+>> (SFI) _OSC and DPC Updates ECR
+>> (https://members.pcisig.com/wg/PCI-SIG/document/13563),
+> What is the state of this ECR?  I see it in the "PCI Express Review
+> Zone Archive".  I don't know what the usage is of the "Review Zone" vs
+> the "Review Zone Archive / PCI Express Review Zone Archive".  AFAICS,
+> it is not listed in any of the "Documents for 60 Day Member Review".
+>
+> And I think it needs some clarification (for one thing, it needs to
+> say what the red/blue text means).  I've mentioned some other items to
+> Austin, but I haven't read it in detail because it seems like it's not
+> quite baked yet.
+>
+> E.g., there's language about "it may make sense for an embedded system
+> OS to own SFI, but it's recommended that general-purpose OSes never
+> request SFI ownership."  That's useless: Linux is certainly a general
+> purpose OS, but Linux is also often an embedded OS.  So the ECR
+> doesn't provide useful guidance about how an OS should decide whether
+> to request SFI ownership.
+This ECR has merged three different change proposals (SFI related,
+_OSC related updates and update to implementation note of DPC
+handling with EDR support) into a single document.  Out of these
+three changes, we only care about "DPC implementation note update".
 
-If this is actually a performance sensitive path, it might improve
-runtime by having 2 code paths to avoid the testing of
-sbi->options.case_sensitive for each u16 value in the array.
+We already have a ECR specification for Error Disconnect Recover (EDR)
+support (https://members.pcisig.com/wg/PCI-SIG/document/12888) in published
+spec section. But this document has some ambiguous statements / missing 
+details
+which as  clarified in the implementation note section of mentioned ECR.
+>
+> Making code changes based on a published spec or ECN is fine,
+> obviously.  Changes based on an ECR that is well on track to being
+> accepted, e.g., is in the 60-day review period, are probably OK.  I
+> don't yet have warm fuzzies about this ECR because I have no idea how
+> far along it is.
+>
+> We might be able to justify some of these changes based on other
+> specs; it just sounds weird to me to say "based on this Engineering
+> Change Request that might be accepted someday, we must do X".  Anybody
+> can dream up an ECR that says anything at all, so AFAICT, an ECR is
+> not at all authoritative.
+>
+>> sec titled
+>> "DPC Event Handling Implementation Note", page 10, Error Disconnect
+>> Recover (EDR) support allows OS to handle error recovery and clearing
+>> Error Registers even in FF mode. So create exception for FF mode checks
+>> in pci_cleanup_aer_uncorrect_error_status(), pci_aer_clear_fatal_status()
+>> and pci_cleanup_aer_error_status_regs() functions when its being called
+>> from DPC code path.
 
-Something like: (uncompiled, untested, written in email client)
-
-static inline
-unsigned short exfat_sbi_upper(struct exfat_sb_info *sbi, unsigned short a)
-{
-	if (sbi->vol_utbl[a])
-		return sbi->vol_utbl[a];
-	return a;
-}
-
-int exfat_nls_cmp_uniname(struct super_block *sb,
-			  unsigned short *a,
-			  unsigned short *b)
-{
-	int i;
-	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-
-	if (!sbi->options.case_sensitive) {
-		for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
-			if (exfat_sbi_upper(sbi, *a) != exfat_sbi_upper(sbi, *b))
-				return 1;
-			if (*a == 0x0)
-				return 0;
-		}
-	} else {
-		for (i = 0; i < MAX_NAME_LENGTH; i++, a++, b++) {
-			if (*a != *b)
-				return 1;	
-			if (*a == 0x0)
-				return 0;
-		}
-	}
-
-	return 0;
-}
-
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
