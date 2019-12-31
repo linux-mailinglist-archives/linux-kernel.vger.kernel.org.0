@@ -2,122 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03CC312D537
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 01:21:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1885A12D53F
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 01:29:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfLaAVI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 30 Dec 2019 19:21:08 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37214 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727750AbfLaAVH (ORCPT
+        id S1727806AbfLaA3c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 30 Dec 2019 19:29:32 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44134 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbfLaA3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 30 Dec 2019 19:21:07 -0500
-Received: by mail-ed1-f66.google.com with SMTP id cy15so34159908edb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 30 Dec 2019 16:21:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nq2qLM+ldDGbo3KqEbg/2SHDvGelrcv8ab8F/WIjQTk=;
-        b=OrONicy6E3ewJpZEj0f2BfXQ0AGl/3JidHk5elKMBSSKDW937hs+WBQjj9q8LYohkA
-         Zmira+Jncb7oQgSVxBg9efsUhdrlL6E7REPxbuszwg968Iqx6cTt/K0P/EzijizUIq0J
-         WCfyk/ImlXF5RRYvzkuXSrbmxvUbX2wZz1MrliJxdkObh7diHH9w2hM8Dr3cEovR9ot/
-         4uaOwsX4R8r0mEqlZKVQXSaeZyEIwE0709jTQO6jBKhHzhWmSiirH9k/2x+eldtQFrUl
-         OCYwegJ/jz2WyAAG9oV+JCqx4+C6uDwrGvVRMbzpvMUB9Y4xW4bSauwXyDucKR8XweYd
-         fdUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nq2qLM+ldDGbo3KqEbg/2SHDvGelrcv8ab8F/WIjQTk=;
-        b=JEIV2x5QKhT/iMHoya4PagoqDybNtfoCIzk2k94c+EFUyHhwivDW0z+5CZApO+Chgp
-         wFIqi3mHIAzo4aPDvGAXctMMaaVX1QUokAcKry7Q4HYXrcpMEBsuR82rY4LbV1Qess6N
-         /g2s1RtmNBz8O3+KymkFffLt9SNlXO1iChnubMzSmgUeTSfE86lrigm7XVLO9QRv0jJa
-         73SD6w5EwfkGI5oAwPNRXY09n0ZFeDifE5GX1IO9lLl7wCD2rZz4P8EShsCFyg4WwbQn
-         U92AruuNsICPu+LfcCCZ5U3H4La0RJ03/a+DpwiffYhb2wuaKgUankqBKV1Fr6fcxF8K
-         s4xw==
-X-Gm-Message-State: APjAAAV2jw11BJbUno6hExcUV1YnkPKtvip+GP8ObTdO/hORlfj4J1mO
-        csB09ozaN4ADkPVzJJCqBzG0xAoEBuc=
-X-Google-Smtp-Source: APXvYqzNBRSrfS5KQ3SgkmJWdOik57w3b6mvgOpqJAAlYh2kpNHKBwTcXq0jog+Nt701sUg8oHewyw==
-X-Received: by 2002:aa7:da42:: with SMTP id w2mr73419856eds.3.1577751665723;
-        Mon, 30 Dec 2019 16:21:05 -0800 (PST)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id y5sm5221392ejm.57.2019.12.30.16.21.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 30 Dec 2019 16:21:05 -0800 (PST)
-Subject: Re: [PATCH] usb: dwc3: gadget: Fix failure to detect end of transfer
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     balbi@kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191230161321.2738541-1-bryan.odonoghue@linaro.org>
- <20191230185703.GA1763367@kroah.com>
- <e772c382-b820-355d-f2b9-8690a5f85885@linaro.org>
-Message-ID: <0c183570-38cc-c27e-f5ab-606387a88dff@linaro.org>
-Date:   Tue, 31 Dec 2019 00:21:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        Mon, 30 Dec 2019 19:29:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=E2CRVJ0pla31OGboSymJBtJ7FSxHvmOY1w9JQQvCD/A=; b=GrnftHYLdETCv0Vpbc20gNKrT
+        /9Sz3zOodG517fi/mF0KZxhh41t7FO7B809arEewV5h72lnVOgkPVR6GiH9act/hzi/JQtJ/OOQTj
+        BKqkIq3O1ZbRvXunl0PS+sBESQLSd9cYc37b9FCQbpHUvtGmeVZdKsC5HebVUVCGIF+lk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1im5Pd-0002nL-4G; Tue, 31 Dec 2019 00:29:29 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 87AD4D01A22; Tue, 31 Dec 2019 00:29:28 +0000 (GMT)
+Date:   Tue, 31 Dec 2019 00:29:28 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "wuxu.wu" <wuxu.wu@huawei.com>
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        hushiyuan@huawei.com
+Subject: Re: [PATCH] spi: spi-dw: Add lock protect dw_spi rx/tx to prevent
+ concurrent calls
+Message-ID: <20191231002928.GD3897@sirena.org.uk>
+References: <1577418669-34821-1-git-send-email-wuxu.wu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <e772c382-b820-355d-f2b9-8690a5f85885@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="iVCmgExH7+hIHJ1A"
+Content-Disposition: inline
+In-Reply-To: <1577418669-34821-1-git-send-email-wuxu.wu@huawei.com>
+X-Cookie: Programming is an unnatural act.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/12/2019 00:05, Bryan O'Donoghue wrote:
-> On 30/12/2019 18:57, Greg KH wrote:
->> On Mon, Dec 30, 2019 at 04:13:21PM +0000, Bryan O'Donoghue wrote:
->>> A recent bugfix 8c7d4b7b3d43 ("usb: dwc3: gadget: Fix logical 
->>> condition")
->>> correctly fixes a logical error in the gadget driver but, exposes a 
->>> further
->>> bug in determining when a transfer has completed.
->>>
->>> Prior to 8c7d4b7b3d43 we were calling dwc3_gadget_giveback() when we
->>> shouldn't have been. Afer this change the below test fails to 
->>> complete on
->>> my hardware.
->>>
->>> Host:
->>> echo "host" > /dev/ttyACM0
->>>
->>> Device:
->>> cat < /dev/ttyGS0
->>>
->>> This is caused by the driver incorrectly detecting end of transfer, a
->>> problem that had previous been masked by the continuous calling of
->>> dwc3_gadget_giveback() prior to 8c7d4b7b3d43.
->>>
->>> Remediate by making the test <= instead of ==
->>>
->>> Fixes: e0c42ce590fe ("usb: dwc3: gadget: simplify IOC handling")
->>>
->>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> ---
->>>   drivers/usb/dwc3/gadget.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> I think this patch:
->>     https://lore.kernel.org/linux-usb/ac5a3593a94fdaa3d92e6352356b5f7a01ccdc7c.1576291140.git.thinhn@synopsys.com/ 
->>
->>
->> should fix this issue instead, right?
->>
->> If not, do I need to include both of these?
-> 
-> Yep, works fine in isolation.
-> 
 
-I don't have that in my inbox anywhere - not sure why, would have saved 
-me 1/2 a day of work.
+--iVCmgExH7+hIHJ1A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Anyway, please feel free to add my
+On Fri, Dec 27, 2019 at 11:51:09AM +0800, wuxu.wu wrote:
 
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> to Thinh's patch
+>  static void dw_writer(struct dw_spi *dws)
+>  {
+> -	u32 max = tx_max(dws);
+> +	u32 max
+>  	u16 txw = 0;
 
----
-bod
+This is going to break the build, there's a missing ; in the
+declaration of max.  Otherwise this looks good.
+
+--iVCmgExH7+hIHJ1A
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4KlmcACgkQJNaLcl1U
+h9AA4Qf8DzOXFKYiWrGAwiKjNf1jfbj33s54tU8nmpfWwnaLfIgpqwSj0fTRnfwy
+tznV4UozcwcguyMAsbl4vn5Q0OrJOQfeLhwGdVBKXkJYOJLI40cgn0MFC6Ts4Ux3
+il8MXI4Y93xXZ0OJh2BoW+j1MGNsCmAJ8PqtWiGr7yNygcp8aNmyytjXGbuBVooe
+aiKeSt2yCDXUgWkkPS5CEcuLFmjodgumOlHravhrdDpRcAUR00YuTPCooZ28AMpx
+kq+DAG4w0CcSyOsZcm0+ZJjIyO1DY5BYbNlb4TJJNPYQ6wNBi/3buiDZXfeBlGIN
+DwRokHH0vSzHS75GN7ha/Shm8Bq0WQ==
+=UER1
+-----END PGP SIGNATURE-----
+
+--iVCmgExH7+hIHJ1A--
