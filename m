@@ -2,90 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A352212D702
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 09:14:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2010512D70B
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 09:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbfLaIOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 03:14:34 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41948 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725770AbfLaIOd (ORCPT
+        id S1726302AbfLaIUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 03:20:32 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41500 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725497AbfLaIUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 03:14:33 -0500
-Received: by mail-ed1-f66.google.com with SMTP id c26so34714211eds.8
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 00:14:33 -0800 (PST)
+        Tue, 31 Dec 2019 03:20:32 -0500
+Received: by mail-ed1-f68.google.com with SMTP id c26so34723090eds.8
+        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 00:20:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=BA/6ccf7o5PJh07KawasqXwPysbrUNZi9TDVA0trLq0=;
-        b=k506b/hEjujXeZ4raxwZ+kEPIdN3IrdC6dLjv6r4yua3hFOpfZAKaWIjBGeM4prx7L
-         AKV+8SFgW3mvBJm8Nc7/bRtE4IPxIltUScbYilx08wGemvcL6/8ekDW9/MozZXNnFKy5
-         Mr86zMlNUCgESSh5lWqqnc7gjAO6ymxukLGk9wPP5VTUAkZQXUSJNZB6rjMHAfxxs3ac
-         sORu1zHP3lEm3vHURZ2Wvc3NFB69AXTHaBqz1tNJ0KKsOXpEDOpPHva988ADEaogvZPD
-         1PbqlnuBXqm1728i4/h+YyrJOCSUiKgLmGPYPawhggNsSKafLs5sWbrIOrlBqiYd+btN
-         kntw==
-X-Gm-Message-State: APjAAAUGUkYtlMG70x8O4kl6LYiQlv8IxWT8NTcc2sewtKNMEoIz682F
-        seRVxXvI8K3h9YMUESmr2Cs=
-X-Google-Smtp-Source: APXvYqzKNFFiPREmzreH7+QxwMfA39pRqo7Zxb/2Tp90xaIwQj2J582XTApIImaIRCLvqyMzzOzoAw==
-X-Received: by 2002:a17:906:d4a:: with SMTP id r10mr75471357ejh.125.1577780072399;
-        Tue, 31 Dec 2019 00:14:32 -0800 (PST)
+        bh=OCioKZCCJQ7tT73SyyKzkO9RMHazBLb5Wt3QDWkITuY=;
+        b=c8pe6da5culV4fCK/YEMQF6A+9HUwa8avPJWypUWrVIsc45xWq3FcJDC/NOGhuFtRP
+         Jehf2V7B6ZfCxR5IqyrhOgImMVsaVxamhE5k37Nr7e+IcBsJJ/NkDb/6AEwDPX/NTnIR
+         Iyj0qN3J1UKFktwakBEDdmL9zpA9Bu075S+zJzlY8PQ8AfAifSiD6OVgi5oIRwPu1u8A
+         DMRLKX4SHmeomjqNYq0qrgkh+6SewEXmvLj2g1tVJ2n9AdWHoeNPExYLAADBKD9xr1V0
+         oUq1kinSMNR3YFQXk/Zzy5j3qakJlwT8TzBMdJO7y+fN5/Ilsm87TApCByLA5LcLIcdG
+         vc/w==
+X-Gm-Message-State: APjAAAXTh3P1x6Uh1VowMjv4EjanvJEALrV3riNlhUyol7k+HrsT7qNm
+        AUzu9W+DzNBarLq+5S4Jpeo=
+X-Google-Smtp-Source: APXvYqyY2gPXd0BiQQrtUFNJI/5iVX0C/CtQWvEacT6jWsjUbweBcqZjXhfz4qpJbuWs2pkwg5NIgQ==
+X-Received: by 2002:aa7:cf81:: with SMTP id z1mr75335663edx.234.1577780431167;
+        Tue, 31 Dec 2019 00:20:31 -0800 (PST)
 Received: from pi3 ([194.230.155.138])
-        by smtp.googlemail.com with ESMTPSA id v2sm6035132ejj.44.2019.12.31.00.14.30
+        by smtp.googlemail.com with ESMTPSA id r24sm5708609edp.15.2019.12.31.00.20.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Dec 2019 00:14:31 -0800 (PST)
-Date:   Tue, 31 Dec 2019 09:14:29 +0100
+        Tue, 31 Dec 2019 00:20:30 -0800 (PST)
+Date:   Tue, 31 Dec 2019 09:20:28 +0100
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] iommu: Enable compile testing for some of drivers
-Message-ID: <20191231081429.GB6804@pi3>
-References: <20191230172619.17814-3-krzk@kernel.org>
- <201912310916.ScYTgEyR%lkp@intel.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH 2/2] phy: Enable compile testing for some of drivers
+Message-ID: <20191231082028.GC6804@pi3>
+References: <20191230172449.17648-1-krzk@kernel.org>
+ <20191230172449.17648-2-krzk@kernel.org>
+ <791d83ef-faee-d6e6-445e-a8088c5ac654@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <201912310916.ScYTgEyR%lkp@intel.com>
+In-Reply-To: <791d83ef-faee-d6e6-445e-a8088c5ac654@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 31, 2019 at 09:08:38AM +0800, kbuild test robot wrote:
+On Mon, Dec 30, 2019 at 12:10:51PM -0800, Florian Fainelli wrote:
 > Hi Krzysztof,
 > 
-> I love your patch! Yet something to improve:
+> On 12/30/19 9:24 AM, Krzysztof Kozlowski wrote:
+> > Some of the phy drivers can be compile tested to increase build
+> > coverage.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> [auto build test ERROR on iommu/next]
-> [also build test ERROR on v5.5-rc4 next-20191219]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Krzysztof-Kozlowski/iommu-omap-Fix-pointer-cast-Wpointer-to-int-cast-warnings-on-64-bit/20191231-022212
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git next
-> config: sparc64-allmodconfig (attached as .config)
-> compiler: sparc64-linux-gcc (GCC) 7.5.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.5.0 make.cross ARCH=sparc64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
+> This looks fine, you could also consider adding a bunch of other
+> Broadcom PHY drivers which are not currently under COMPILE_TEST, yet
+> build fine:
 
-Thanks, kbuild!
-
-I sent a fix:
-https://lore.kernel.org/linux-arm-kernel/1577779956-7612-1-git-send-email-krzk@kernel.org/
+I'll send a v2 with them as well. They seem to compile fine.
 
 Best regards,
 Krzysztof
 
+> 
+> diff --git a/drivers/phy/broadcom/Kconfig b/drivers/phy/broadcom/Kconfig
+> index d3d983c128ea..d56db6d375e1 100644
+> --- a/drivers/phy/broadcom/Kconfig
+> +++ b/drivers/phy/broadcom/Kconfig
+> @@ -50,7 +50,7 @@ config PHY_BCM_NS_USB3
+> 
+>  config PHY_NS2_PCIE
+>         tristate "Broadcom Northstar2 PCIe PHY driver"
+> -       depends on OF && MDIO_BUS_MUX_BCM_IPROC
+> +       depends on (OF && MDIO_BUS_MUX_BCM_IPROC) || COMPILE_TEST
+>         select GENERIC_PHY
+>         default ARCH_BCM_IPROC
+>         help
+> @@ -83,7 +83,7 @@ config PHY_BRCM_SATA
+> 
+>  config PHY_BRCM_USB
+>         tristate "Broadcom STB USB PHY driver"
+> -       depends on ARCH_BRCMSTB
+> +       depends on ARCH_BRCMSTB || COMPILE_TEST
+>         depends on OF
+>         select GENERIC_PHY
+>         select SOC_BRCMSTB
+> 
