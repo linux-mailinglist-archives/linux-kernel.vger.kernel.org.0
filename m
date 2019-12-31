@@ -2,115 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE1B912DBF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 22:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EEEC412DC0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:20:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbfLaVdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 16:33:03 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43221 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfLaVdD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 16:33:03 -0500
-Received: by mail-ot1-f66.google.com with SMTP id p8so15216737oth.10
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 13:32:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+/nS1bdAxCnLkhXguRUBX1Cxhqk1gjfbFD8rLHJu+no=;
-        b=KSTVd+GfRi/YLpRPtxRRr6LimCHDIj31fr7kYo0b4b//giRCT9jxYhDjG+EpaZ/6RG
-         ap6x1CpzZ2uAw5WUuAPb/JQw/GrBRIdZCijDPXgiPm3KAKUTxgQ2gqadIvSHnpff62V9
-         YGzXRuwvpFgIlDLFHBEdX6qpco0KqrD4fmXNk6SVFluB58AuYTA4NBDtWQ2N8erb1ej0
-         /sk1ewrQjiglHofxjL2m5AZ0i+mDgPyq9kyRQ+kgjFVtcNbopsV+xoK3NMXqfQOcUIZz
-         wUVy48+zKViRQBV5cN1fb7DY/aBoR08KB9TjsGMmE+Pzk5ebWgogWYBp6+nIMqzkd1zx
-         f03w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+/nS1bdAxCnLkhXguRUBX1Cxhqk1gjfbFD8rLHJu+no=;
-        b=RpHaXvJIYGOk7S2J+TyjmyhcBLAwxWdyK+EsNADfdVjPoTA9L1cjgsKktdgKblEVlN
-         ZiYwI+XZibQfmmgjANCWT2b+WQGEkLaDGjAQGb5tUYWRojsvAhkf9EoR5/0ppcZGmiiM
-         rcGj3Z1gb8mtAe8Hc7Aq/zFcrsI4i/XonbXEu+wQVp8pA2nJUXWte0lpeujFHCJHLQan
-         zM2cu/1zTlwEVZkPxee4uISBxcidMN2gG35fVjMcJhjzfAOBqzg1kEV60a0XsasV9Wh7
-         q3Iz4LHZzfoqNgW6eN8Z3SdouvKc30nudCqrwL/Xfou3IvnPmJOSbZcBkm13W7UeOeT9
-         SbQA==
-X-Gm-Message-State: APjAAAXZ3gRv8inuNWzuYqV89gNGjrOM95iwVNjom5Frq1raHOZxQEK1
-        HqoSmtdSLu+te2ZnavAXxuQ5Mg==
-X-Google-Smtp-Source: APXvYqxtZiNK72dgg3cXUoHDp2WuYGKWETZ2MLtVvL1tUGpM54gbYZ+6lBcjsS4utpNZTl51pQWvaw==
-X-Received: by 2002:a9d:7c8f:: with SMTP id q15mr70074856otn.140.1577827977935;
-        Tue, 31 Dec 2019 13:32:57 -0800 (PST)
-Received: from minyard.net ([2001:470:b8f6:1b:d193:7acb:1243:c644])
-        by smtp.gmail.com with ESMTPSA id m68sm15241741oig.50.2019.12.31.13.32.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 31 Dec 2019 13:32:57 -0800 (PST)
-Date:   Tue, 31 Dec 2019 15:32:55 -0600
-From:   Corey Minyard <cminyard@mvista.com>
-To:     Pavel Machek <pavel@denx.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        tony camuso <tcamuso@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 089/219] ipmi: Dont allow device module unload when
- in use
-Message-ID: <20191231213255.GC6497@minyard.net>
-Reply-To: cminyard@mvista.com
-References: <20191229162508.458551679@linuxfoundation.org>
- <20191229162520.260768030@linuxfoundation.org>
- <20191230103218.GA10304@amd>
+        id S1727111AbfLaWUV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 17:20:21 -0500
+Received: from mga02.intel.com ([134.134.136.20]:40298 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727054AbfLaWUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 17:20:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:20:20 -0800
+X-IronPort-AV: E=Sophos;i="5.69,380,1571727600"; 
+   d="scan'208";a="393645183"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:20:19 -0800
+Subject: [PATCH v2 0/4] efi: Fix handling of multiple efi_fake_mem= entries
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     mingo@redhat.com
+Cc:     Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Young <dyoung@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Michael Weiser <michael@weiser.dinsnail.net>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
+        kexec@lists.infradead.org, x86@kernel.org
+Date:   Tue, 31 Dec 2019 14:04:17 -0800
+Message-ID: <157782985777.367056.14741265874314204783.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230103218.GA10304@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 11:32:18AM +0100, Pavel Machek wrote:
-> On Sun 2019-12-29 18:18:11, Greg Kroah-Hartman wrote:
-> > From: Corey Minyard <cminyard@mvista.com>
-> > 
-> > [ Upstream commit cbb79863fc3175ed5ac506465948b02a893a8235 ]
-> > 
-> > If something has the IPMI driver open, don't allow the device
-> > module to be unloaded.  Before it would unload and the user would
-> > get errors on use.
-> > 
-> > This change is made on user request, and it makes it consistent
-> > with the I2C driver, which has the same behavior.
-> > 
-> > It does change things a little bit with respect to kernel users.
-> > If the ACPI or IPMI watchdog (or any other kernel user) has
-> > created a user, then the device module cannot be unloaded.  Before
-> > it could be unloaded,
-> > 
-> > This does not affect hot-plug.  If the device goes away (it's on
-> > something removable that is removed or is hot-removed via sysfs)
-> > then it still behaves as it did before.
-> 
-> I don't think this is good idea for stable. First, it includes
-> unrelated function rename,
+Changes since v1 [1]:
+- Add support for garbage collecting idle efi_memmap_alloc() allocations
 
-Umm, no, that's not unrelated, it was renamed so a defined could be
-done with the original name so the module could be passed in
-automatically.
+- As Dave noticed the same problem of calling efi_memmap_split_count()
+  multiple times with the old map also applies to efi_memmap_insert().
+  Update efi_fake_memmap() to invoke efi_memmap_install() after every
+  efi_memmap_insert() call.
 
-> and second, it does not really fix any bug;
-> it just changes behaviour.
+[1]: https://lore.kernel.org/r/157773590338.4153451.5898675419563883883.stgit@dwillia2-desk3.amr.corp.intel.com/
 
-This is true.  I assume Tony asked for the backport.  I'm ambivolent
-on whether this gets backported.  I'll defer to Tony for justification.
+---
 
--corey
+Copied from patch4:
 
-> 
-> Best regards,
-> 									Pavel
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Dave noticed that when specifying multiple efi_fake_mem= entries only
+the last entry was successfully being reflected in the efi memory map.
+This is due to the fact that the efi_memmap_insert() is being called
+multiple times, but on successive invocations the insertion should be
+applied to the last new memmap rather than the original map at
+efi_fake_memmap() entry.
+
+Rework efi_fake_memmap() to install the new memory map after each
+efi_fake_mem= entry is parsed.
+
+This also fixes an issue in efi_fake_memmap() that caused it to litter
+emtpy entries into the end of the efi memory map. The empty entry causes
+efi_memmap_insert() to attempt more memmap splits / copies than
+efi_memmap_split_count() accounted for when sizing the new map.
+
+    BUG: unable to handle page fault for address: ffffffffff281000
+    [..]
+    RIP: 0010:efi_memmap_insert+0x11d/0x191
+    [..]
+    Call Trace:
+     ? bgrt_init+0xbe/0xbe
+     ? efi_arch_mem_reserve+0x1cb/0x228
+     ? acpi_parse_bgrt+0xa/0xd
+     ? acpi_table_parse+0x86/0xb8
+     ? acpi_boot_init+0x494/0x4e3
+     ? acpi_parse_x2apic+0x87/0x87
+     ? setup_acpi_sci+0xa2/0xa2
+     ? setup_arch+0x8db/0x9e1
+     ? start_kernel+0x6a/0x547
+     ? secondary_startup_64+0xb6/0xc0
+
+Commit af1648984828 "x86/efi: Update e820 with reserved EFI boot
+services data to fix kexec breakage" is listed in Fixes: since it
+introduces more occurrences where efi_memmap_insert() is invoked after
+an efi_fake_mem= configuration has been parsed. Previously the side
+effects of vestigial empty entries were benign, but with commit
+af1648984828 that follow-on efi_memmap_insert() invocation triggers the
+above crash signature.
+
+---
+
+Dan Williams (4):
+      efi: Add a flags parameter to efi_memory_map
+      efi: Add tracking for dynamically allocated memmaps
+      efi: Fix efi_memmap_alloc() leaks
+      efi: Fix handling of multiple efi_fake_mem= entries
 
 
+ arch/x86/platform/efi/efi.c     |    2 +
+ arch/x86/platform/efi/quirks.c  |   11 ++++---
+ drivers/firmware/efi/fake_mem.c |   37 +++++++++++++------------
+ drivers/firmware/efi/memmap.c   |   58 ++++++++++++++++++++++++++++++---------
+ include/linux/efi.h             |   13 +++++++--
+ 5 files changed, 81 insertions(+), 40 deletions(-)
