@@ -2,97 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0C6012D912
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 14:35:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A320112D922
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 14:42:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfLaNfq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 08:35:46 -0500
-Received: from mail-pj1-f66.google.com ([209.85.216.66]:39401 "EHLO
-        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfLaNfp (ORCPT
+        id S1727142AbfLaNmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 08:42:05 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3222 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726060AbfLaNmE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 08:35:45 -0500
-Received: by mail-pj1-f66.google.com with SMTP id t101so1232277pjb.4
-        for <linux-kernel@vger.kernel.org>; Tue, 31 Dec 2019 05:35:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dEit719n2Ik36OhY/hE3/4A9AQeh6rXuvoLsvQp2DrE=;
-        b=izoC2nmZ/zXLGi9aRbnLJsWJYaP4LeBp8QtAfnx+zUT2T8CxRnppRCRNji8J0K4CA8
-         PYDe/gZSqieXnH4mEqfd+EFHUZ6Kq4fbED4NImWxh72N7GNwGIEB6txrOk291AT2g6cz
-         OFzrRzn3wScUNxx9XFNXxCmt7firufX3/QJuw2CxiBGr/8OQDDM8I2mtqvMSlksTouzP
-         pF9Duy1pjVCcqdOeRMjxITT98eDFT7/KjNiFwFgsF0R8ASfUSBjTI02CgoFygEv+s7xq
-         IiI68FLkhCElwGaCQEwzog4T2MZaAfRyZe+ZDjkY6ZfTy+jRY2wDntV9cSo7ec5Wf6Kr
-         Asdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dEit719n2Ik36OhY/hE3/4A9AQeh6rXuvoLsvQp2DrE=;
-        b=VJYwjaIkXZKvY+TXNzV9Djp7PPYQ0uj8FFMirsdpiEHZXna697lwl2CSiDY8FTU6j6
-         7/o29KCiITqOdW7AwvioQEVD9l9ie0/NsAR9Pmb7bVZAY+yuf7iEKsfqi215dKsJxYvA
-         YAQ+D5fhYty2arlz2gtYD7wuENZUrCG80Q3RxRrT6bJkB8MUTGriOI7F9igGXcCOTiu7
-         c6HA3EPiAy3CH7RVy9ujuTPlPF0EaLmbFIexPR+TjHC79jebVeaDS1Z5GuhmDVMc9Ju9
-         5cpyiKr3m0Q8i3TasSZzn/3kkptwzybF7w5awYtubBFh99HtZK6eBs1sSMtCk8WUsR0u
-         wTPw==
-X-Gm-Message-State: APjAAAUMYVTFT//soIozOsT32NlsIR0fr/iyD2Ae37bswXM8QRf/VjxM
-        KPQvvYUUHauZ+meNmvGkyus=
-X-Google-Smtp-Source: APXvYqwzn5JhjM0MgDhpzTd9WBBz3GkKR/NF1IZ58WLZ9wuo9W9MtKDxIZhl5VIadzV54kOpQJ2SjA==
-X-Received: by 2002:a17:90a:35e6:: with SMTP id r93mr6362250pjb.44.1577799345086;
-        Tue, 31 Dec 2019 05:35:45 -0800 (PST)
-Received: from localhost.localdomain ([2408:8025:ad:7e20:f8a1:4793:6c48:941])
-        by smtp.gmail.com with ESMTPSA id e10sm57903910pfj.7.2019.12.31.05.35.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Dec 2019 05:35:44 -0800 (PST)
-From:   chengkaitao <pilgrimtao@gmail.com>
-To:     rostedt@goodmis.org
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org, smuchun@gmail.com,
-        Kaitao Cheng <pilgrimtao@gmail.com>
-Subject: [PATCH] kernel/trace: Fix do not unregister tracepoints when register sched_migrate_task fail
-Date:   Tue, 31 Dec 2019 05:35:30 -0800
-Message-Id: <20191231133530.2794-1-pilgrimtao@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 31 Dec 2019 08:42:04 -0500
+X-UUID: 899694e97fd14460a93cd45b9705dc64-20191231
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=x++Akfe5JkRpAPh9IOfWBiqdOpZR4O4wmNvzoxS/MP0=;
+        b=A82eM1CnU2B9PRysa/XMc7FtaaNwH6ir6Q3V8+/2AWvzYzz7zZ39eDhT7TvJBpUBQT2lhcWM86mL/VsflugwL3BDKf4Wkb6EZgRIXFefjmuikZCSW5CGHltISb3OCPwTNDL6VK1yEdEdWxIy0c7kIjweQQc78MfsY3A94pd2PVo=;
+X-UUID: 899694e97fd14460a93cd45b9705dc64-20191231
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <light.hsieh@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 401010651; Tue, 31 Dec 2019 21:41:56 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 31 Dec 2019 21:41:04 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 31 Dec 2019 21:41:16 +0800
+From:   Light Hsieh <light.hsieh@mediatek.com>
+To:     <linus.walleij@linaro.org>
+CC:     <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sean.wang@kernel.org>,
+        <kuohong.wang@mediatek.com>, Light Hsieh <light.hsieh@mediatek.com>
+Subject: [PATCH v7 1/6] Check gpio pin number and use binary search in mtk_hw_pin_field_lookup()
+Date:   Tue, 31 Dec 2019 21:41:42 +0800
+Message-ID: <1577799707-11855-1-git-send-email-light.hsieh@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 5207F01DB3CE30980E9CA3D8E90B387874F153407A88F81A4AAE3662A242D8AA2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaitao Cheng <pilgrimtao@gmail.com>
-
-In the function, if register_trace_sched_migrate_task() returns error,
-sched_switch/sched_wakeup_new/sched_wakeup won't unregister. That is
-why fail_deprobe_sched_switch was added.
-
-Signed-off-by: Kaitao Cheng <pilgrimtao@gmail.com>
----
- kernel/trace/trace_sched_wakeup.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index 5e43b9664eca..617e297f46dc 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -630,7 +630,7 @@ static void start_wakeup_tracer(struct trace_array *tr)
- 	if (ret) {
- 		pr_info("wakeup trace: Couldn't activate tracepoint"
- 			" probe to kernel_sched_migrate_task\n");
--		return;
-+		goto fail_deprobe_sched_switch;
- 	}
- 
- 	wakeup_reset(tr);
-@@ -648,6 +648,8 @@ static void start_wakeup_tracer(struct trace_array *tr)
- 		printk(KERN_ERR "failed to start wakeup tracer\n");
- 
- 	return;
-+fail_deprobe_sched_switch:
-+	unregister_trace_sched_switch(probe_wakeup_sched_switch, NULL);
- fail_deprobe_wake_new:
- 	unregister_trace_sched_wakeup_new(probe_wakeup, NULL);
- fail_deprobe:
--- 
-2.20.1
+MS4gQ2hlY2sgaWYgZ3BpbyBwaW4gbnVtYmVyIGlzIGluIHZhbGlkIHJhbmdlIHRvIHByZXZlbnQg
+ZnJvbSBnZXQgaW52YWxpZA0KICAgcG9pbnRlciAnZGVzYycgaW4gdGhlIGZvbGxvd2luZyBjb2Rl
+Og0KCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dw
+aW9dOw0KDQoyLiBJbXByb3ZlICBtdGtfaHdfcGluX2ZpZWxkX2xvb2t1cCgpDQoyLjEgTW9kaWZ5
+IG10a19od19waW5fZmllbGRfbG9va3VwKCkgdG8gdXNlIGJpbmFyeSBzZWFyY2ggZm9yIGFjY2Vs
+ZXJhdGluZw0KICAgICBzZWFyY2guDQoyLjIgQ29ycmVjdCBtZXNzYWdlIGFmdGVyIHRoZSBmb2xs
+b3dpbmcgY2hlY2sgZmFpbDoNCiAgICBpZiAoaHctPnNvYy0+cmVnX2NhbCAmJiBody0+c29jLT5y
+ZWdfY2FsW2ZpZWxkXS5yYW5nZSkgew0KCQlyYyA9ICZody0+c29jLT5yZWdfY2FsW2ZpZWxkXTsN
+CiAgICBUaGUgb3JpZ2luYWwgbWVzc2FnZSBpczoNCiAgICAJIk5vdCBzdXBwb3J0IGZpZWxkICVk
+IGZvciBwaW4gJWQgKCVzKVxuIg0KICAgIEhvd2V2ZXIsIHRoZSBjaGVjayBpcyBvbiBzb2MgY2hp
+cCBsZXZlbCwgbm90IG9uIHBpbiBsZXZlbCB5ZXQuDQogICAgU28gdGhlIG1lc3NhZ2UgaXMgY29y
+cmVjdGVkIGFzOg0KICAgIAkiTm90IHN1cHBvcnQgZmllbGQgJWQgZm9yIHRoaXMgc29jXG4iDQoN
+CkNoYW5nZS1JZDogSTQ5OGExOGRmNzNlNmE2OTNlMGUzNTYzNWQ1YjkyYjhkYzljMDYzYWMNCi0t
+LQ0KIGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLW10ay1jb21tb24tdjIuYyB8IDI3
+ICsrKysrKysrKysrKysrKysrKy0tLS0tLQ0KIGRyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5j
+dHJsLXBhcmlzLmMgICAgICAgICB8IDI1ICsrKysrKysrKysrKysrKysrKysrKysNCiAyIGZpbGVz
+IGNoYW5nZWQsIDQ2IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQg
+YS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMgYi9kcml2
+ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMNCmluZGV4IDIwZTFj
+ODkuLmQ2M2UwNWUgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3Ry
+bC1tdGstY29tbW9uLXYyLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJs
+LW10ay1jb21tb24tdjIuYw0KQEAgLTY4LDMyICs2OCw0NCBAQCBzdGF0aWMgaW50IG10a19od19w
+aW5fZmllbGRfbG9va3VwKHN0cnVjdCBtdGtfcGluY3RybCAqaHcsDQogew0KIAljb25zdCBzdHJ1
+Y3QgbXRrX3Bpbl9maWVsZF9jYWxjICpjLCAqZTsNCiAJY29uc3Qgc3RydWN0IG10a19waW5fcmVn
+X2NhbGMgKnJjOw0KKwlpbnQgc3RhcnQgPSAwLCBlbmQsIGNoZWNrOw0KKwlib29sIGZvdW5kID0g
+ZmFsc2U7DQogCXUzMiBiaXRzOw0KIA0KIAlpZiAoaHctPnNvYy0+cmVnX2NhbCAmJiBody0+c29j
+LT5yZWdfY2FsW2ZpZWxkXS5yYW5nZSkgew0KIAkJcmMgPSAmaHctPnNvYy0+cmVnX2NhbFtmaWVs
+ZF07DQogCX0gZWxzZSB7DQogCQlkZXZfZGJnKGh3LT5kZXYsDQotCQkJIk5vdCBzdXBwb3J0IGZp
+ZWxkICVkIGZvciBwaW4gJWQgKCVzKVxuIiwNCi0JCQlmaWVsZCwgZGVzYy0+bnVtYmVyLCBkZXNj
+LT5uYW1lKTsNCisJCQkiTm90IHN1cHBvcnQgZmllbGQgJWQgZm9yIHRoaXMgc29jXG4iLCBmaWVs
+ZCk7DQogCQlyZXR1cm4gLUVOT1RTVVBQOw0KIAl9DQogDQorCWVuZCA9IHJjLT5ucmFuZ2VzIC0g
+MTsNCiAJYyA9IHJjLT5yYW5nZTsNCiAJZSA9IGMgKyByYy0+bnJhbmdlczsNCiANCi0Jd2hpbGUg
+KGMgPCBlKSB7DQotCQlpZiAoZGVzYy0+bnVtYmVyID49IGMtPnNfcGluICYmIGRlc2MtPm51bWJl
+ciA8PSBjLT5lX3BpbikNCisJd2hpbGUgKHN0YXJ0IDw9IGVuZCkgew0KKwkJY2hlY2sgPSAoc3Rh
+cnQgKyBlbmQpID4+IDE7DQorCQlpZiAoZGVzYy0+bnVtYmVyID49IHJjLT5yYW5nZVtjaGVja10u
+c19waW4NCisJCSAmJiBkZXNjLT5udW1iZXIgPD0gcmMtPnJhbmdlW2NoZWNrXS5lX3Bpbikgew0K
+KwkJCWZvdW5kID0gdHJ1ZTsNCisJCQlicmVhazsNCisJCX0gZWxzZSBpZiAoc3RhcnQgPT0gZW5k
+KQ0KIAkJCWJyZWFrOw0KLQkJYysrOw0KKwkJZWxzZSBpZiAoZGVzYy0+bnVtYmVyIDwgcmMtPnJh
+bmdlW2NoZWNrXS5zX3BpbikNCisJCQllbmQgPSBjaGVjayAtIDE7DQorCQllbHNlDQorCQkJc3Rh
+cnQgPSBjaGVjayArIDE7DQogCX0NCiANCi0JaWYgKGMgPj0gZSkgew0KKwlpZiAoIWZvdW5kKSB7
+DQogCQlkZXZfZGJnKGh3LT5kZXYsICJOb3Qgc3VwcG9ydCBmaWVsZCAlZCBmb3IgcGluID0gJWQg
+KCVzKVxuIiwNCiAJCQlmaWVsZCwgZGVzYy0+bnVtYmVyLCBkZXNjLT5uYW1lKTsNCiAJCXJldHVy
+biAtRU5PVFNVUFA7DQogCX0NCiANCisJYyA9IHJjLT5yYW5nZSArIGNoZWNrOw0KKw0KIAlpZiAo
+Yy0+aV9iYXNlID4gaHctPm5iYXNlIC0gMSkgew0KIAkJZGV2X2Vycihody0+ZGV2LA0KIAkJCSJJ
+bnZhbGlkIGJhc2UgZm9yIGZpZWxkICVkIGZvciBwaW4gPSAlZCAoJXMpXG4iLA0KQEAgLTE4Miw2
+ICsxOTQsOSBAQCBpbnQgbXRrX2h3X3NldF92YWx1ZShzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3LCBj
+b25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICpkZXNjLA0KIAlpZiAoZXJyKQ0KIAkJcmV0dXJuIGVy
+cjsNCiANCisJaWYgKHZhbHVlIDwgMCB8fCB2YWx1ZSA+IHBmLm1hc2spDQorCQlyZXR1cm4gLUVJ
+TlZBTDsNCisNCiAJaWYgKCFwZi5uZXh0KQ0KIAkJbXRrX3JtdyhodywgcGYuaW5kZXgsIHBmLm9m
+ZnNldCwgcGYubWFzayA8PCBwZi5iaXRwb3MsDQogCQkJKHZhbHVlICYgcGYubWFzaykgPDwgcGYu
+Yml0cG9zKTsNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1w
+YXJpcy5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMuYw0KaW5kZXgg
+OTIzMjY0ZC4uM2UxM2FlNyAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9w
+aW5jdHJsLXBhcmlzLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9waW5jdHJsLXBh
+cmlzLmMNCkBAIC04MSw2ICs4MSw4IEBAIHN0YXRpYyBpbnQgbXRrX3BpbmNvbmZfZ2V0KHN0cnVj
+dCBwaW5jdHJsX2RldiAqcGN0bGRldiwNCiAJaW50IHZhbCwgdmFsMiwgZXJyLCByZWcsIHJldCA9
+IDE7DQogCWNvbnN0IHN0cnVjdCBtdGtfcGluX2Rlc2MgKmRlc2M7DQogDQorCWlmIChwaW4gPj0g
+aHctPnNvYy0+bnBpbnMpDQorCQlyZXR1cm4gLUVJTlZBTDsNCiAJZGVzYyA9IChjb25zdCBzdHJ1
+Y3QgbXRrX3Bpbl9kZXNjICopJmh3LT5zb2MtPnBpbnNbcGluXTsNCiANCiAJc3dpdGNoIChwYXJh
+bSkgew0KQEAgLTIwNiw2ICsyMDgsMTAgQEAgc3RhdGljIGludCBtdGtfcGluY29uZl9zZXQoc3Ry
+dWN0IHBpbmN0cmxfZGV2ICpwY3RsZGV2LCB1bnNpZ25lZCBpbnQgcGluLA0KIAlpbnQgZXJyID0g
+MDsNCiAJdTMyIHJlZzsNCiANCisJaWYgKHBpbiA+PSBody0+c29jLT5ucGlucykgew0KKwkJZXJy
+ID0gLUVJTlZBTDsNCisJCWdvdG8gZXJyOw0KKwl9DQogCWRlc2MgPSAoY29uc3Qgc3RydWN0IG10
+a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW3Bpbl07DQogDQogCXN3aXRjaCAoKHUzMilwYXJh
+bSkgew0KQEAgLTY5Myw2ICs2OTksOSBAQCBzdGF0aWMgaW50IG10a19ncGlvX2dldF9kaXJlY3Rp
+b24oc3RydWN0IGdwaW9fY2hpcCAqY2hpcCwgdW5zaWduZWQgaW50IGdwaW8pDQogCWNvbnN0IHN0
+cnVjdCBtdGtfcGluX2Rlc2MgKmRlc2M7DQogCWludCB2YWx1ZSwgZXJyOw0KIA0KKwlpZiAoZ3Bp
+byA+IGh3LT5zb2MtPm5waW5zKQ0KKwkJcmV0dXJuIC1FSU5WQUw7DQorDQogCWRlc2MgPSAoY29u
+c3Qgc3RydWN0IG10a19waW5fZGVzYyAqKSZody0+c29jLT5waW5zW2dwaW9dOw0KIA0KIAllcnIg
+PSBtdGtfaHdfZ2V0X3ZhbHVlKGh3LCBkZXNjLCBQSU5DVFJMX1BJTl9SRUdfRElSLCAmdmFsdWUp
+Ow0KQEAgLTcwOCw2ICs3MTcsOSBAQCBzdGF0aWMgaW50IG10a19ncGlvX2dldChzdHJ1Y3QgZ3Bp
+b19jaGlwICpjaGlwLCB1bnNpZ25lZCBpbnQgZ3BpbykNCiAJY29uc3Qgc3RydWN0IG10a19waW5f
+ZGVzYyAqZGVzYzsNCiAJaW50IHZhbHVlLCBlcnI7DQogDQorCWlmIChncGlvID4gaHctPnNvYy0+
+bnBpbnMpDQorCQlyZXR1cm4gLUVJTlZBTDsNCisNCiAJZGVzYyA9IChjb25zdCBzdHJ1Y3QgbXRr
+X3Bpbl9kZXNjICopJmh3LT5zb2MtPnBpbnNbZ3Bpb107DQogDQogCWVyciA9IG10a19od19nZXRf
+dmFsdWUoaHcsIGRlc2MsIFBJTkNUUkxfUElOX1JFR19ESSwgJnZhbHVlKTsNCkBAIC03MjIsNiAr
+NzM0LDkgQEAgc3RhdGljIHZvaWQgbXRrX2dwaW9fc2V0KHN0cnVjdCBncGlvX2NoaXAgKmNoaXAs
+IHVuc2lnbmVkIGludCBncGlvLCBpbnQgdmFsdWUpDQogCXN0cnVjdCBtdGtfcGluY3RybCAqaHcg
+PSBncGlvY2hpcF9nZXRfZGF0YShjaGlwKTsNCiAJY29uc3Qgc3RydWN0IG10a19waW5fZGVzYyAq
+ZGVzYzsNCiANCisJaWYgKGdwaW8gPiBody0+c29jLT5ucGlucykNCisJCXJldHVybjsNCisNCiAJ
+ZGVzYyA9IChjb25zdCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICopJmh3LT5zb2MtPnBpbnNbZ3Bpb107
+DQogDQogCW10a19od19zZXRfdmFsdWUoaHcsIGRlc2MsIFBJTkNUUkxfUElOX1JFR19ETywgISF2
+YWx1ZSk7DQpAQCAtNzI5LDEyICs3NDQsMjIgQEAgc3RhdGljIHZvaWQgbXRrX2dwaW9fc2V0KHN0
+cnVjdCBncGlvX2NoaXAgKmNoaXAsIHVuc2lnbmVkIGludCBncGlvLCBpbnQgdmFsdWUpDQogDQog
+c3RhdGljIGludCBtdGtfZ3Bpb19kaXJlY3Rpb25faW5wdXQoc3RydWN0IGdwaW9fY2hpcCAqY2hp
+cCwgdW5zaWduZWQgaW50IGdwaW8pDQogew0KKwlzdHJ1Y3QgbXRrX3BpbmN0cmwgKmh3ID0gZ3Bp
+b2NoaXBfZ2V0X2RhdGEoY2hpcCk7DQorDQorCWlmIChncGlvID4gaHctPnNvYy0+bnBpbnMpDQor
+CQlyZXR1cm4gLUVJTlZBTDsNCisNCiAJcmV0dXJuIHBpbmN0cmxfZ3Bpb19kaXJlY3Rpb25faW5w
+dXQoY2hpcC0+YmFzZSArIGdwaW8pOw0KIH0NCiANCiBzdGF0aWMgaW50IG10a19ncGlvX2RpcmVj
+dGlvbl9vdXRwdXQoc3RydWN0IGdwaW9fY2hpcCAqY2hpcCwgdW5zaWduZWQgaW50IGdwaW8sDQog
+CQkJCSAgICAgaW50IHZhbHVlKQ0KIHsNCisJc3RydWN0IG10a19waW5jdHJsICpodyA9IGdwaW9j
+aGlwX2dldF9kYXRhKGNoaXApOw0KKw0KKwlpZiAoZ3BpbyA+IGh3LT5zb2MtPm5waW5zKQ0KKwkJ
+cmV0dXJuIC1FSU5WQUw7DQorDQogCW10a19ncGlvX3NldChjaGlwLCBncGlvLCB2YWx1ZSk7DQog
+DQogCXJldHVybiBwaW5jdHJsX2dwaW9fZGlyZWN0aW9uX291dHB1dChjaGlwLT5iYXNlICsgZ3Bp
+byk7DQotLSANCjEuOC4xLjEuZGlydHkNCg==
 
