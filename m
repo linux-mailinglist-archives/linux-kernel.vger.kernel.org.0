@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 769D812D7F5
+	by mail.lfdr.de (Postfix) with ESMTP id 03F6212D7F4
 	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 11:30:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727232AbfLaK3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1727244AbfLaK3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 31 Dec 2019 05:29:55 -0500
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:60198 "EHLO
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:60199 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726677AbfLaK30 (ORCPT
+        with ESMTP id S1726702AbfLaK30 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 31 Dec 2019 05:29:26 -0500
 Received: from Internal Mail-Server by MTLPINE1 (envelope-from vadimp@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 31 Dec 2019 12:29:21 +0200
+        with ESMTPS (AES256-SHA encrypted); 31 Dec 2019 12:29:22 +0200
 Received: from r-build-lowlevel.mtr.labs.mlnx. (r-build-lowlevel.mtr.labs.mlnx [10.209.0.190])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id xBVATJ7Z008518;
-        Tue, 31 Dec 2019 12:29:21 +0200
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id xBVATJ7a008518;
+        Tue, 31 Dec 2019 12:29:22 +0200
 From:   Vadim Pasternak <vadimp@mellanox.com>
 To:     andy@infradead.org, dvhart@infradead.org
 Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH platform-next v1 2/9] Documentation/ABI: Fix attributes for mlxreg-io sysfs interfaces
-Date:   Tue, 31 Dec 2019 10:29:10 +0000
-Message-Id: <20191231102917.24181-3-vadimp@mellanox.com>
+Subject: [PATCH platform-next v1 3/9] Documentation/ABI: Add new attribute for mlxreg-io sysfs interfaces
+Date:   Tue, 31 Dec 2019 10:29:11 +0000
+Message-Id: <20191231102917.24181-4-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20191231102917.24181-1-vadimp@mellanox.com>
 References: <20191231102917.24181-1-vadimp@mellanox.com>
@@ -32,53 +32,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix attribute name from "jtag_enable" to "cpld3_version" and
-extend description for "cpld3_version" attribute.
-
-Add missed "cpld4_version" attribute.
+Add documentation for the new attributes for:
+- Exposing reset causes types asserted by: platform reset, SoC reset,
+  AC power failure, software power off request.
+- Setting and removing system VPD (EEPROM) hardware write protection.
+- Voltage regulator devices configuration update status and firmware
+  version.
+- Setting PCIe ASIC reset to disable or enable state during PCIe root
+  complex reset.
+- System static topology identification, like system's static I2C
+  topology, number and type of FPGA devices within the system and so on.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
 ---
- Documentation/ABI/stable/sysfs-driver-mlxreg-io | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ Documentation/ABI/stable/sysfs-driver-mlxreg-io | 69 +++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
 diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-index 8ca498447aeb..fe30fe505c9b 100644
+index fe30fe505c9b..afb73021a8d8 100644
 --- a/Documentation/ABI/stable/sysfs-driver-mlxreg-io
 +++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
-@@ -29,13 +29,13 @@ Description:	This file shows the system fans direction:
- 
- 		The files are read only.
- 
--What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/jtag_enable
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld3_version
- 
- Date:		November 2018
- KernelVersion:	5.0
- Contact:	Vadim Pasternak <vadimpmellanox.com>
- Description:	These files show with which CPLD versions have been burned
--		on LED board.
-+		on LED or Gearbox board.
- 
- 		The files are read only.
- 
-@@ -121,6 +121,16 @@ Description:	These files show the system reset cause, as following: ComEx
- 
- 		The files are read only.
- 
-+What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/cpld4_version
+@@ -150,3 +150,72 @@ What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_from_asic
+ What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_reload_bios
+ What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_sff_wd
+ What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_swb_wd
 +
-+Date:		November 2018
-+KernelVersion:	5.0
++Date:		December 2019
++KernelVersion:	5.6
 +Contact:	Vadim Pasternak <vadimpmellanox.com>
-+Description:	These files show with which CPLD versions have been burned
-+		on LED board.
++Description:	These files show system static topology identification
++		like system's static I2C topology, number and type of FPGA
++		devices within the system and so on.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/config1
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/config2
 +
 +		The files are read only.
 +
- Date:		June 2019
- KernelVersion:	5.3
- Contact:	Vadim Pasternak <vadimpmellanox.com>
++Date:		December 2019
++KernelVersion:	5.6
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	These files show the system reset causes, as following: reset
++		due to AC power failure, reset invoked from software by
++		assertion reset signal through CPLD. reset caused by signal
++		asserted by SOC through ACPI register, reset invoked from
++		software by assertion power off signal through CPLD.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_ac_pwr_fail
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_platform
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_soc
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/reset_sw_pwr_off
++
++		The files are read only.
++
++Date:		December 2019
++KernelVersion:	5.6
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file allows to retain ASIC up during PCIe root complex
++		reset, when attribute is set 1.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pcie_asic_reset_dis
++
++		The file is read/write.
++
++Date:		December 2019
++KernelVersion:	5.6
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file allows to overwrite system VPD hardware wrtie
++		protection when attribute is set 1.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/vpd_wp
++
++		The file is read/write.
++
++Date:		December 2019
++KernelVersion:	5.6
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file exposes the configuration update status of burnable
++		voltage regulator devices. The status values are as following:
++		0 - OK; 1 - CRC failure; 2 = I2C failure; 3 - in progress.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/voltreg_update_status
++
++		The file is read only.
++
++Date:		December 2019
++KernelVersion:	5.6
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file exposes the firmware version of burnable voltage
++		regulator devices.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/ufm_version
++
++		The file is read only.
 -- 
 2.11.0
 
