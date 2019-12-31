@@ -2,192 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0983C12DC19
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6933F12DBFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 23:06:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727198AbfLaWUm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 17:20:42 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48068 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfLaWUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 17:20:41 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:20:40 -0800
-X-IronPort-AV: E=Sophos;i="5.69,380,1571727600"; 
-   d="scan'208";a="301617925"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga001-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Dec 2019 14:20:40 -0800
-Subject: [PATCH v2 4/4] efi: Fix handling of multiple efi_fake_mem= entries
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     mingo@redhat.com
-Cc:     Dave Young <dyoung@redhat.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        Michael Weiser <michael@weiser.dinsnail.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-efi@vger.kernel.org, kexec@lists.infradead.org,
-        x86@kernel.org
-Date:   Tue, 31 Dec 2019 14:04:38 -0800
-Message-ID: <157782987865.367056.15199592105978588123.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <157782985777.367056.14741265874314204783.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <157782985777.367056.14741265874314204783.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        id S1727106AbfLaWGy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 17:06:54 -0500
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:38867 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727056AbfLaWGx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 17:06:53 -0500
+Received: by mail-pj1-f65.google.com with SMTP id l35so1632147pje.3;
+        Tue, 31 Dec 2019 14:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UyKWBjTYtMhvO9CkUZXNZDev/n9QRhV/4KmWAGx3d9M=;
+        b=BXl4VwVPTLF4wJmXzKQRGjKLNC916gV7fQJmv+Bcfrxb3AYMAMwq5uiSf0LyAt4rHf
+         MgaSse7K2QcJNXjp5m7kxZLoqdkwjVhXCwjJEJZpMqKsMw+PYbI97+4rMU5Bm1nTX+4s
+         r0iX7RqJUGVOQcbGQLW8bdafTQnzqCPINxM6ST3FMLLPlcB7iehwU4E7eP0v0WTuwgZy
+         kDBIcpjyae1f4cke7KvavQiOw7OzhueQNifXvwE9OA6rdP+bO8wk3PeWnuNwZ3qdIa1n
+         QuYKUWomZLLaR25nCLZ6pMpedHYhOkkGvbW+1sWxKxmtJN+8tTQV/m/qhZX8TC6sz1UB
+         3O7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UyKWBjTYtMhvO9CkUZXNZDev/n9QRhV/4KmWAGx3d9M=;
+        b=WwmQ9K/0c+X6DdTmF6myj/YpV8UJJr+71ZzMQdc8wcfgIZtPU1z8ZXjqmrpnlEqoDy
+         PvGk+8ude5TSfbG7VvjGURMLNhjJA9akjl6PHT1/A2iMyIyJr9ak/xPymbRNBFYDjp3r
+         jRW+79vxxhz5eMFSCUElEq//aeWcUxtUKYwsmDqcsD97nZY0ZPklPcL4VZsUn1Klbyoe
+         5Qv2Z/PX5QZ6FuZnKt+NDa5m32XEkcAjlLz6agghPjCK36+sn8x2fYYp6DIRKGJu0nsF
+         ElVrqSSc6VrI8W0ThfDCucN0trRmYUHWnjr3sBkmqTBPQGYgUlw9CJ3f8K/ayckltTTC
+         qwug==
+X-Gm-Message-State: APjAAAVT6PH1d+8t5b+tUM3EYbKOblftSDzoTM0J8YMy7vnw1S/npXc4
+        7LnR6IQ0+kbJv8az1O72X1A=
+X-Google-Smtp-Source: APXvYqybjvAuvXhX2zdUwKAnSrs4yjN/Tdp8vKgaeiN/DvOw2nnIGGWQAFL9xkVY7rgADrIhlamMGw==
+X-Received: by 2002:a17:90b:4004:: with SMTP id ie4mr8971773pjb.49.1577830013234;
+        Tue, 31 Dec 2019 14:06:53 -0800 (PST)
+Received: from [100.71.96.87] ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id 3sm54207358pfi.13.2019.12.31.14.06.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 31 Dec 2019 14:06:52 -0800 (PST)
+Subject: Re: [PATCH v4 1/3] PCI: pciehp: Add support for disabling in-band
+ presence
+From:   Stuart Hayes <stuart.w.hayes@gmail.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Austin Bolen <austin_bolen@dell.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
+        Sinan Kaya <okaya@kernel.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>
+References: <20191025190047.38130-2-stuart.w.hayes@gmail.com>
+ <20191127013613.GA233706@google.com>
+ <CAL5oW00Lh4v2YpX2GcDoRS2fFJjvHRsdhNjtvyYGpWOpgL=TCg@mail.gmail.com>
+Message-ID: <f14d8325-8635-329f-cdc7-fd27a52b2704@gmail.com>
+Date:   Tue, 31 Dec 2019 16:06:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <CAL5oW00Lh4v2YpX2GcDoRS2fFJjvHRsdhNjtvyYGpWOpgL=TCg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave noticed that when specifying multiple efi_fake_mem= entries only
-the last entry was successfully being reflected in the efi memory map.
-This is due to the fact that the efi_memmap_insert() is being called
-multiple times, but on successive invocations the insertion should be
-applied to the last new memmap rather than the original map at
-efi_fake_memmap() entry.
 
-Rework efi_fake_memmap() to install the new memory map after each
-efi_fake_mem= entry is parsed.
 
-This also fixes an issue in efi_fake_memmap() that caused it to litter
-emtpy entries into the end of the efi memory map. The empty entry causes
-efi_memmap_insert() to attempt more memmap splits / copies than
-efi_memmap_split_count() accounted for when sizing the new map.
+On 11/26/19 8:19 PM, Stuart Hayes wrote:
+> On Tue, Nov 26, 2019 at 7:36 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>>
+>> On Fri, Oct 25, 2019 at 03:00:45PM -0400, Stuart Hayes wrote:
+>>> From: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+>>>
+>>> The presence detect state (PDS) is normally a logical or of in-band and
+>>> out-of-band presence. As of PCIe 4.0, there is the option to disable
+>>> in-band presence so that the PDS bit always reflects the state of the
+>>> out-of-band presence.
+>>>
+>>> The recommendation of the PCIe spec is to disable in-band presence
+>>> whenever supported.
+>>
+>> I think I'm fine with this patch, but I would like to include the
+>> specific reference for this recommendation.  If you have it handy, I
+>> can just insert it.
+>>
+> 
+> The PCI Express Base Specification Revision 5.0, Version 1.0, in the
+> implementation note under Appendix I ("Async Hot-Plug Reference
+> Model"), it says "If OOB PD is being used and the associated DSP
+> supports In-Band PD Disable, it is recommended that the In-Band PD
+> Disable bit be Set, ..."
+> 
+> 
 
-    BUG: unable to handle page fault for address: ffffffffff281000
-    [..]
-    RIP: 0010:efi_memmap_insert+0x11d/0x191
-    [..]
-    Call Trace:
-     ? bgrt_init+0xbe/0xbe
-     ? efi_arch_mem_reserve+0x1cb/0x228
-     ? acpi_parse_bgrt+0xa/0xd
-     ? acpi_table_parse+0x86/0xb8
-     ? acpi_boot_init+0x494/0x4e3
-     ? acpi_parse_x2apic+0x87/0x87
-     ? setup_acpi_sci+0xa2/0xa2
-     ? setup_arch+0x8db/0x9e1
-     ? start_kernel+0x6a/0x547
-     ? secondary_startup_64+0xb6/0xc0
-
-Commit af1648984828 "x86/efi: Update e820 with reserved EFI boot
-services data to fix kexec breakage" is listed in Fixes: since it
-introduces more occurrences where efi_memmap_insert() is invoked after
-an efi_fake_mem= configuration has been parsed. Previously the side
-effects of vestigial empty entries were benign, but with commit
-af1648984828 that follow-on efi_memmap_insert() invocation triggers the
-above crash signature.
-
-Fixes: 0f96a99dab36 ("efi: Add 'efi_fake_mem' boot option")
-Fixes: af1648984828 ("x86/efi: Update e820 with reserved EFI boot services...")
-Link: https://lore.kernel.org/r/20191231014630.GA24942@dhcp-128-65.nay.redhat.com
-Reported-by: Dave Young <dyoung@redhat.com>
-Cc: Taku Izumi <izumi.taku@jp.fujitsu.com>
-Cc: Michael Weiser <michael@weiser.dinsnail.net>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- drivers/firmware/efi/fake_mem.c |   32 +++++++++++++++++---------------
- drivers/firmware/efi/memmap.c   |    2 +-
- include/linux/efi.h             |    2 ++
- 3 files changed, 20 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/firmware/efi/fake_mem.c b/drivers/firmware/efi/fake_mem.c
-index 7e53e5520548..68d752d8af21 100644
---- a/drivers/firmware/efi/fake_mem.c
-+++ b/drivers/firmware/efi/fake_mem.c
-@@ -34,26 +34,17 @@ static int __init cmp_fake_mem(const void *x1, const void *x2)
- 	return 0;
- }
- 
--void __init efi_fake_memmap(void)
-+static void __init efi_fake_range(struct efi_mem_range *efi_range)
- {
- 	int new_nr_map = efi.memmap.nr_map;
- 	efi_memory_desc_t *md;
- 	phys_addr_t new_memmap_phy;
- 	unsigned long flags = 0;
- 	void *new_memmap;
--	int i;
--
--	if (!efi_enabled(EFI_MEMMAP) || !nr_fake_mem)
--		return;
- 
- 	/* count up the number of EFI memory descriptor */
--	for (i = 0; i < nr_fake_mem; i++) {
--		for_each_efi_memory_desc(md) {
--			struct range *r = &efi_fake_mems[i].range;
--
--			new_nr_map += efi_memmap_split_count(md, r);
--		}
--	}
-+	for_each_efi_memory_desc(md)
-+		new_nr_map += efi_memmap_split_count(md, &efi_range->range);
- 
- 	/* allocate memory for new EFI memmap */
- 	new_memmap_phy = efi_memmap_alloc(new_nr_map, &flags);
-@@ -64,17 +55,28 @@ void __init efi_fake_memmap(void)
- 	new_memmap = early_memremap(new_memmap_phy,
- 				    efi.memmap.desc_size * new_nr_map);
- 	if (!new_memmap) {
--		memblock_free(new_memmap_phy, efi.memmap.desc_size * new_nr_map);
-+		__efi_memmap_free(new_memmap_phy,
-+				efi.memmap.desc_size * new_nr_map, flags);
- 		return;
- 	}
- 
--	for (i = 0; i < nr_fake_mem; i++)
--		efi_memmap_insert(&efi.memmap, new_memmap, &efi_fake_mems[i]);
-+	efi_memmap_insert(&efi.memmap, new_memmap, efi_range);
- 
- 	/* swap into new EFI memmap */
- 	early_memunmap(new_memmap, efi.memmap.desc_size * new_nr_map);
- 
- 	efi_memmap_install(new_memmap_phy, new_nr_map, flags);
-+}
-+
-+void __init efi_fake_memmap(void)
-+{
-+	int i;
-+
-+	if (!efi_enabled(EFI_MEMMAP) || !nr_fake_mem)
-+		return;
-+
-+	for (i = 0; i < nr_fake_mem; i++)
-+		efi_fake_range(&efi_fake_mems[i]);
- 
- 	/* print new EFI memmap */
- 	efi_print_memmap();
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 188ab3cd5c52..de66c2a0e8f8 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -29,7 +29,7 @@ static phys_addr_t __init __efi_memmap_alloc_late(unsigned long size)
- 	return PFN_PHYS(page_to_pfn(p));
- }
- 
--static void __init __efi_memmap_free(u64 phys, unsigned long size, unsigned long flags)
-+void __init __efi_memmap_free(u64 phys, unsigned long size, unsigned long flags)
- {
- 	if (WARN_ON(slab_is_available() && (flags & EFI_MEMMAP_MEMBLOCK)))
- 		return;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index fa2668a992ae..6ae31e064321 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1061,6 +1061,8 @@ extern void __iomem *efi_lookup_mapped_addr(u64 phys_addr);
- 
- extern phys_addr_t __init efi_memmap_alloc(unsigned int num_entries,
- 		unsigned long *flags);
-+extern void __efi_memmap_free(u64 phys, unsigned long size,
-+		unsigned long flags);
- extern int __init efi_memmap_init_early(struct efi_memory_map_data *data);
- extern int __init efi_memmap_init_late(phys_addr_t addr, unsigned long size);
- extern void __init efi_memmap_unmap(void);
+Is that what you were looking for?  Please let me know if there's anything
+else I can do to help.
 
