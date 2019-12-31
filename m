@@ -2,90 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24F5312D9C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 16:25:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE2F112D9D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 31 Dec 2019 16:33:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfLaPZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 10:25:10 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:23866 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727121AbfLaPZJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 10:25:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577805908;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MmNBZkwBy1szGWacQmXBphuROcFRHJi+XYFCIYFXOoM=;
-        b=cahQE1e/tGGQYumzrcg9OyFbylHXZFouMTi1pAYi6TSEanGJBZSR1kRnCI4gIcT+TtsHrj
-        bDU0z3JjDtw4JqutW9BLdRULLwkMFoUzQiPPtJ03oB2U0GxSQAYIi4zRRZXwV93/0LcKQr
-        pVK3Tsll7Kj4iZaclcGlLDmQ8LS0K1Q=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-253-2Js2s053NvmFzobCKbM2CA-1; Tue, 31 Dec 2019 10:25:05 -0500
-X-MC-Unique: 2Js2s053NvmFzobCKbM2CA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 62D2D1800D4E;
-        Tue, 31 Dec 2019 15:25:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-52.rdu2.redhat.com [10.10.120.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 57F7B5D9E1;
-        Tue, 31 Dec 2019 15:25:03 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 3/3] afs: Fix afs_lookup() to not clobber the version on a
- new dentry
-From:   David Howells <dhowells@redhat.com>
-To:     linux-afs@lists.infradead.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, dhowells@redhat.com
-Date:   Tue, 31 Dec 2019 15:25:02 +0000
-Message-ID: <157780590246.25571.8995170375088979996.stgit@warthog.procyon.org.uk>
-In-Reply-To: <157780588822.25571.7926816048227538205.stgit@warthog.procyon.org.uk>
-References: <157780588822.25571.7926816048227538205.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S1727140AbfLaPdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 10:33:00 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55248 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbfLaPdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 31 Dec 2019 10:33:00 -0500
+Received: from [185.109.153.2] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1imJVm-0004gp-6H; Tue, 31 Dec 2019 16:32:46 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Sandy Huang <hjc@rock-chips.com>,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 10/11] arm64: dts: rockchip: Add PX30 DSI DPHY
+Date:   Tue, 31 Dec 2019 12:56:14 +0100
+Message-ID: <1796464.bE5sXyoQCg@phil>
+In-Reply-To: <20191224143900.23567-11-miquel.raynal@bootlin.com>
+References: <20191224143900.23567-1-miquel.raynal@bootlin.com> <20191224143900.23567-11-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix afs_lookup() to not clobber the version set on a new dentry by
-afs_do_lookup() - especially as it's using the wrong version of the version
-(we need to use the one given to us by whatever op the dir contents
-correspond to rather than what's in the afs_vnode).
+Am Dienstag, 24. Dezember 2019, 15:38:59 CET schrieb Miquel Raynal:
+> Add the PHY which outputs MIPI DSI and LVDS.
+> 
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
-Fixes: 9dd0b82ef530 ("afs: Fix missing dentry data version updating")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+applied for 5.6 (picked early due to it being shared between lvds and dsi)
 
- fs/afs/dir.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Thanks
+Heiko
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 813db1708494..5c794f4b051a 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -952,12 +952,8 @@ static struct dentry *afs_lookup(struct inode *dir, struct dentry *dentry,
- 	afs_stat_v(dvnode, n_lookup);
- 	inode = afs_do_lookup(dir, dentry, key);
- 	key_put(key);
--	if (inode == ERR_PTR(-ENOENT)) {
-+	if (inode == ERR_PTR(-ENOENT))
- 		inode = afs_try_auto_mntpt(dentry, dir);
--	} else {
--		dentry->d_fsdata =
--			(void *)(unsigned long)dvnode->status.data_version;
--	}
- 
- 	if (!IS_ERR_OR_NULL(inode))
- 		fid = AFS_FS_I(inode)->fid;
 
