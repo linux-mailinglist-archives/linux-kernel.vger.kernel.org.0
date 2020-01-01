@@ -2,87 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 142B212DE0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 08:23:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4AE412DE05
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 08:16:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725924AbgAAHXC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 02:23:02 -0500
-Received: from us-smtp-delivery-1.mimecast.com ([207.211.31.120]:43360 "EHLO
-        us-smtp-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725787AbgAAHXC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 02:23:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1577863381;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZkJ1mIbTrrBOlKZUoQPdf32Q2bHvXxd3EaQrbVcK/wk=;
-        b=HMTmPSu5gdMK/K5C9ATTLOARBM7Og2aKuM3vrOVm4lws9KzxwNXrCm+0EM855oDzxcM1bE
-        2pgRk2E6BRZrKuOU0n0kbBo7Iq3fwu/vHy+8N559a3j4VY/HL+2T/2COpK9I4hC3RSvObk
-        KLYhgOqWqaGGd+HSDwtdD0YWboNEE7U=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-52-FPJNVcs3Ocm2QR97esNbTQ-1; Wed, 01 Jan 2020 01:20:58 -0500
-X-MC-Unique: FPJNVcs3Ocm2QR97esNbTQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725970AbgAAHQb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 02:16:31 -0500
+Received: from ozlabs.org ([203.11.71.1]:47605 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbgAAHQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Jan 2020 02:16:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 36F75185432D;
-        Wed,  1 Jan 2020 06:20:56 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-60.pek2.redhat.com [10.72.12.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5BE2A5D9E2;
-        Wed,  1 Jan 2020 06:20:51 +0000 (UTC)
-Date:   Wed, 1 Jan 2020 14:20:47 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Taku Izumi <izumi.taku@jp.fujitsu.com>,
-        Michael Weiser <michael@weiser.dinsnail.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-efi <linux-efi@vger.kernel.org>, kexec@lists.infradead.org,
-        X86 ML <x86@kernel.org>
-Subject: Re: [PATCH v2 4/4] efi: Fix handling of multiple efi_fake_mem=
- entries
-Message-ID: <20200101062047.GA16393@dhcp-128-65.nay.redhat.com>
-References: <157782985777.367056.14741265874314204783.stgit@dwillia2-desk3.amr.corp.intel.com>
- <157782987865.367056.15199592105978588123.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20200101045141.GA15155@dhcp-128-65.nay.redhat.com>
- <CAPcyv4hSB9B5tiKVwtNOgDS6KS2Pj6f962OPBZVZpPjrBt6Z8A@mail.gmail.com>
- <20200101061505.GA15717@dhcp-128-65.nay.redhat.com>
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 47nhLc08Xmz9sPW;
+        Wed,  1 Jan 2020 17:37:59 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1577860680;
+        bh=93Fnsa30PklcDpFSSNiGRs2LS3a6XWqJl1XuNw+iCbs=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PfRxVU9uKUIksJWSdwOWYmFbhLVwm/JBTmRtq4zc3D1erXmAK3MUU5xAFqAd8tcFv
+         wRbACeBibuhC8SQfQFa0BFKTGiOrqcZOFmzFNKtAUNQ94jngNZ6hYmdwWQ0KeYSqMB
+         L3/pQRlQmTrznsySzoSMGO74IoZ2xcM5f+gAlPrPwmZLjzIoUqE/d8MqJOHe+9NChz
+         XkwCc1+2PlergTqvC7LZFJXO108Pm56SwITV31HByIWdGTbzUIjNJrDXmEslYiWyx0
+         FlphcWOSMncvpdASrB+/Tw+kkAJXKC29h/KYKO7zBG2rdJ3X0lFn3Ps2LWNy00M4RO
+         qUgs8iJ88kDqw==
+Date:   Wed, 1 Jan 2020 17:38:01 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the scmi tree
+Message-ID: <20200101173801.2e9a1758@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200101061505.GA15717@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+Content-Type: multipart/signed; boundary="Sig_/7_XYvOjSZ_sYAbguaP_I6MW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Does kexec preserve iomem? I.e. as long as the initial translation of
-> > efi entries to e820, and resulting resource tree, is preserved by
-> > successive kexec cycles then I think we're ok.
-> 
-> It will not preserve them automatically, but that can be fixed if
-> needed.
-> 
-> There are two places:
-> 1. the in kernel loader, we can do similar with below commit (for Soft
-> Reseved instead):
-> commit 980621daf368f2b9aa69c7ea01baa654edb7577b
-> Author: Lianbo Jiang <lijiang@redhat.com>
-> Date:   Tue Apr 23 09:30:07 2019 +0800
-> 
->     x86/crash: Add e820 reserved ranges to kdump kernel's e820 table
+--Sig_/7_XYvOjSZ_sYAbguaP_I6MW
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Oops, that is for kdump only, for kexec, should update the kexec e820
-table.  But before doing that we need first to see if this is necessary. 
+Hi all,
 
-Thanks
-Dave
+Commits
 
+  75ee475c4018 ("drivers: firmware: scmi: Extend SCMI transport layer by tr=
+ace events")
+  60542ecbce11 ("include: trace: Add SCMI header with trace events")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7_XYvOjSZ_sYAbguaP_I6MW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl4MPkkACgkQAVBC80lX
+0Gxbzgf/RDclKyAOMExaFHKCBl+P5RpJySrigWUl6112IofAr0oPjsiznWaCp9Mg
+oN+dbfI4supoUQP6yrlIglCA72E3wlzKAlKxepKgqq/PvTT0MXvs2dWyiz6XWFps
+MtkTH14n7nEYI35ypHCAY/bkOvrl15iUdop9hzvfVkiE2t+ezFeywrvJAxKqX60g
+zMT9e6kh8iGRoXRYyuAhBdey+7SsSBtxGsDuqQsVBomKR3UdOI5XxILELZ0DuMII
+IUXxCFb2Ar5NNHbboxTfVWWUnsIDM4PznD2XwC+0ZMboDCxyXaY7j82068OSOqPp
+Cm3g5/DpSKap7SmxBVHlM28Dkei8pQ==
+=Spr3
+-----END PGP SIGNATURE-----
+
+--Sig_/7_XYvOjSZ_sYAbguaP_I6MW--
