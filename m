@@ -2,67 +2,231 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE0F12DE66
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 10:48:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C82012DE7A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 11:07:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgAAJsG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 04:48:06 -0500
-Received: from frisell.zx2c4.com ([192.95.5.64]:41593 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbgAAJsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 04:48:05 -0500
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 7fc75bb9;
-        Wed, 1 Jan 2020 08:49:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=4nCgc7Qb9E7eYO93853bCxTMK74=; b=kTmOmH
-        49DW4v6oeBQGMPvU1UhSofwORtT15Z7AoFZoynVmQ5w31kigpkKqs3Zc72IN87E+
-        T42lKUZiWuxh1I7CNkssJ4QrzhAp8BuBi4yPnOOUOwEHROW8sR2ANTTBitntG3a/
-        Ib/E6TaoGRfhBXbuurtMlrRtCVkiXOuCXgofX/wMdH+8E6xEQ9Xz4gVmDr67DFgm
-        FJhOagghnZAqwfTHi7exefoXWhDL+LQEAVQ+nwmTAEZNpY2FEPMEmLGz1NRvQ7M0
-        ++/vl6fXkyOgcwgiGWQFXdb7KHWK48oSIjZgF3YCHNzsoqlQgUIy/8+JnIttYY+d
-        +c0E2nhC7O/4cupw==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ed3fc7d3 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
-        Wed, 1 Jan 2020 08:49:43 +0000 (UTC)
-Received: by mail-ot1-f49.google.com with SMTP id a15so52950499otf.1;
-        Wed, 01 Jan 2020 01:48:04 -0800 (PST)
-X-Gm-Message-State: APjAAAXPGtbQwHjcdWCqClv771346epw+OY6wNV0gf6SIX715dAyG8zN
-        RroJ/1eajufMs8/jFK+gF5YczpJ5jhgLa4mKPSc=
-X-Google-Smtp-Source: APXvYqwrDKduC7Zu3uMDHzPtb7RFYOiEYHz9UT3Ywk5GWuJ7cvUOGftCePjlEuapEGhFWIdS6jF9bRrQTaSneCjaWEA=
-X-Received: by 2002:a9d:1e88:: with SMTP id n8mr87394263otn.369.1577872083283;
- Wed, 01 Jan 2020 01:48:03 -0800 (PST)
+        id S1727139AbgAAKHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 05:07:33 -0500
+Received: from Galois.linutronix.de ([193.142.43.55]:52325 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbgAAKHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Jan 2020 05:07:31 -0500
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1imauH-0004P0-MQ; Wed, 01 Jan 2020 11:07:14 +0100
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 169A81C2BFF;
+        Wed,  1 Jan 2020 11:07:13 +0100 (CET)
+Date:   Wed, 01 Jan 2020 10:07:12 -0000
+From:   "tip-bot2 for Jann Horn" <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/kasan: Print original address on #GP
+Cc:     Jann Horn <jannh@google.com>, Borislav Petkov <bp@suse.de>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        kasan-dev@googlegroups.com, "linux-mm" <linux-mm@kvack.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "x86-ml" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20191218231150.12139-4-jannh@google.com>
+References: <20191218231150.12139-4-jannh@google.com>
 MIME-Version: 1.0
-References: <CAHmME9o==nBONywVgSjsmjs2H_A8itgmwibqzPmvivcSocKWRQ@mail.gmail.com>
- <CAK8P3a11g-UXcYdudDtp0TWCQAfotpc-63BqYwn-a9LDxV-b+Q@mail.gmail.com>
- <CAHmME9pnBtjJ86gsWgK8DCYKo_HFpyViHoGpJPTrYBONT01YVA@mail.gmail.com>
- <CAK8P3a0NBuqDX63+920q7Q+yO2xCoSd0O7xUDJv6BBoco2kVOg@mail.gmail.com>
- <CAHmME9rnnoFwh=EHAgdQFM+c33D9mgCoVML_+d=Js=pXPnsxKQ@mail.gmail.com>
- <CAK8P3a1AYGbgf6mmL-863+PXPBQw3AAtp5wQPL5duLCONGhHuw@mail.gmail.com>
- <CAHmME9r2G4viiF4sYqpuYOnFCtjWpjugqenoEeUrsU6MGBeSuQ@mail.gmail.com>
- <CAHmME9rCCei_CL1evDYQ44Eu8erbjx_jDzbpKeXD4jTGBu8v8A@mail.gmail.com>
- <CAHmME9q0z4RBhy7AETo0sPt+SfV7=zFra0iyZ-Sm54c-WG6CVg@mail.gmail.com>
- <20200101041056.xionott76qbrffih@lantea.localdomain> <20200101042500.zmhldrthr3l45trq@lantea.localdomain>
-In-Reply-To: <20200101042500.zmhldrthr3l45trq@lantea.localdomain>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Wed, 1 Jan 2020 10:47:52 +0100
-X-Gmail-Original-Message-ID: <CAHmME9rgH=LmbVeq7Vs-Hxo6s0+gyeB7s5fBFt2fXvgMKw3=3g@mail.gmail.com>
-Message-ID: <CAHmME9rgH=LmbVeq7Vs-Hxo6s0+gyeB7s5fBFt2fXvgMKw3=3g@mail.gmail.com>
-Subject: Re: [PATCH] mips: vdso: conditionalize 32-bit time functions on COMPAT_32BIT_TIME
-To:     Paul Burton <paulburton@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BROADCOM NVRAM DRIVER" <linux-mips@vger.kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Christian Brauner <christian.brauner@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <157787323296.30329.6279558999926427913.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 1, 2020 at 5:22 AM Paul Burton <paulburton@kernel.org> wrote:
-> That makes sense then. What doesn't make sense is how this ever
-> worked. A question for another day...
+The following commit has been merged into the x86/core branch of tip:
 
-In most other cases, calls to the vdso would be followed in the parent
-function immediately by a return, restoring gp then.
+Commit-ID:     2f004eea0fc8f86b45dfc2007add2d4986de8d02
+Gitweb:        https://git.kernel.org/tip/2f004eea0fc8f86b45dfc2007add2d4986de8d02
+Author:        Jann Horn <jannh@google.com>
+AuthorDate:    Thu, 19 Dec 2019 00:11:50 +01:00
+Committer:     Borislav Petkov <bp@suse.de>
+CommitterDate: Tue, 31 Dec 2019 13:15:38 +01:00
+
+x86/kasan: Print original address on #GP
+
+Make #GP exceptions caused by out-of-bounds KASAN shadow accesses easier
+to understand by computing the address of the original access and
+printing that. More details are in the comments in the patch.
+
+This turns an error like this:
+
+  kasan: CONFIG_KASAN_INLINE enabled
+  kasan: GPF could be caused by NULL-ptr deref or user memory access
+  general protection fault, probably for non-canonical address
+      0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
+
+into this:
+
+  general protection fault, probably for non-canonical address
+      0xe017577ddf75b7dd: 0000 [#1] PREEMPT SMP KASAN PTI
+  KASAN: maybe wild-memory-access in range
+      [0x00badbeefbadbee8-0x00badbeefbadbeef]
+
+The hook is placed in architecture-independent code, but is currently
+only wired up to the X86 exception handler because I'm not sufficiently
+familiar with the address space layout and exception handling mechanisms
+on other architectures.
+
+Signed-off-by: Jann Horn <jannh@google.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Konovalov <andreyknvl@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: kasan-dev@googlegroups.com
+Cc: linux-mm <linux-mm@kvack.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sean Christopherson <sean.j.christopherson@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20191218231150.12139-4-jannh@google.com
+---
+ arch/x86/kernel/dumpstack.c |  2 ++-
+ arch/x86/mm/kasan_init_64.c | 21 +-------------------
+ include/linux/kasan.h       |  6 +++++-
+ mm/kasan/report.c           | 40 ++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 48 insertions(+), 21 deletions(-)
+
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index 8995bf1..ae64ec7 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -427,6 +427,8 @@ void die_addr(const char *str, struct pt_regs *regs, long err, long gp_addr)
+ 	int sig = SIGSEGV;
+ 
+ 	__die_header(str, regs, err);
++	if (gp_addr)
++		kasan_non_canonical_hook(gp_addr);
+ 	if (__die_body(str, regs, err))
+ 		sig = 0;
+ 	oops_end(flags, regs, sig);
+diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
+index cf5bc37..763e71a 100644
+--- a/arch/x86/mm/kasan_init_64.c
++++ b/arch/x86/mm/kasan_init_64.c
+@@ -288,23 +288,6 @@ static void __init kasan_shallow_populate_pgds(void *start, void *end)
+ 	} while (pgd++, addr = next, addr != (unsigned long)end);
+ }
+ 
+-#ifdef CONFIG_KASAN_INLINE
+-static int kasan_die_handler(struct notifier_block *self,
+-			     unsigned long val,
+-			     void *data)
+-{
+-	if (val == DIE_GPF) {
+-		pr_emerg("CONFIG_KASAN_INLINE enabled\n");
+-		pr_emerg("GPF could be caused by NULL-ptr deref or user memory access\n");
+-	}
+-	return NOTIFY_OK;
+-}
+-
+-static struct notifier_block kasan_die_notifier = {
+-	.notifier_call = kasan_die_handler,
+-};
+-#endif
+-
+ void __init kasan_early_init(void)
+ {
+ 	int i;
+@@ -341,10 +324,6 @@ void __init kasan_init(void)
+ 	int i;
+ 	void *shadow_cpu_entry_begin, *shadow_cpu_entry_end;
+ 
+-#ifdef CONFIG_KASAN_INLINE
+-	register_die_notifier(&kasan_die_notifier);
+-#endif
+-
+ 	memcpy(early_top_pgt, init_top_pgt, sizeof(early_top_pgt));
+ 
+ 	/*
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index e18fe54..5cde9e7 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -228,4 +228,10 @@ static inline void kasan_release_vmalloc(unsigned long start,
+ 					 unsigned long free_region_end) {}
+ #endif
+ 
++#ifdef CONFIG_KASAN_INLINE
++void kasan_non_canonical_hook(unsigned long addr);
++#else /* CONFIG_KASAN_INLINE */
++static inline void kasan_non_canonical_hook(unsigned long addr) { }
++#endif /* CONFIG_KASAN_INLINE */
++
+ #endif /* LINUX_KASAN_H */
+diff --git a/mm/kasan/report.c b/mm/kasan/report.c
+index 6217821..5ef9f24 100644
+--- a/mm/kasan/report.c
++++ b/mm/kasan/report.c
+@@ -512,3 +512,43 @@ void __kasan_report(unsigned long addr, size_t size, bool is_write, unsigned lon
+ 
+ 	end_report(&flags);
+ }
++
++#ifdef CONFIG_KASAN_INLINE
++/*
++ * With CONFIG_KASAN_INLINE, accesses to bogus pointers (outside the high
++ * canonical half of the address space) cause out-of-bounds shadow memory reads
++ * before the actual access. For addresses in the low canonical half of the
++ * address space, as well as most non-canonical addresses, that out-of-bounds
++ * shadow memory access lands in the non-canonical part of the address space.
++ * Help the user figure out what the original bogus pointer was.
++ */
++void kasan_non_canonical_hook(unsigned long addr)
++{
++	unsigned long orig_addr;
++	const char *bug_type;
++
++	if (addr < KASAN_SHADOW_OFFSET)
++		return;
++
++	orig_addr = (addr - KASAN_SHADOW_OFFSET) << KASAN_SHADOW_SCALE_SHIFT;
++	/*
++	 * For faults near the shadow address for NULL, we can be fairly certain
++	 * that this is a KASAN shadow memory access.
++	 * For faults that correspond to shadow for low canonical addresses, we
++	 * can still be pretty sure - that shadow region is a fairly narrow
++	 * chunk of the non-canonical address space.
++	 * But faults that look like shadow for non-canonical addresses are a
++	 * really large chunk of the address space. In that case, we still
++	 * print the decoded address, but make it clear that this is not
++	 * necessarily what's actually going on.
++	 */
++	if (orig_addr < PAGE_SIZE)
++		bug_type = "null-ptr-deref";
++	else if (orig_addr < TASK_SIZE)
++		bug_type = "probably user-memory-access";
++	else
++		bug_type = "maybe wild-memory-access";
++	pr_alert("KASAN: %s in range [0x%016lx-0x%016lx]\n", bug_type,
++		 orig_addr, orig_addr + KASAN_SHADOW_MASK);
++}
++#endif
