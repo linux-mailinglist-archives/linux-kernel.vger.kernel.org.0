@@ -2,57 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FF4E12DE23
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 09:20:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF7AC12DE56
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 10:34:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbgAAIUb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 03:20:31 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:56955 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727237AbgAAIUT (ORCPT
+        id S1725943AbgAAJci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 04:32:38 -0500
+Received: from out30-54.freemail.mail.aliyun.com ([115.124.30.54]:42992 "EHLO
+        out30-54.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725783AbgAAJci (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 03:20:19 -0500
-X-IronPort-AV: E=Sophos;i="5.69,382,1571695200"; 
-   d="scan'208";a="429578766"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 01 Jan 2020 09:20:08 +0100
-From:   Julia Lawall <Julia.Lawall@inria.fr>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 16/16] pinctrl: nuvoton: npcm7xx: constify copied structure
-Date:   Wed,  1 Jan 2020 08:43:34 +0100
-Message-Id: <1577864614-5543-17-git-send-email-Julia.Lawall@inria.fr>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
-References: <1577864614-5543-1-git-send-email-Julia.Lawall@inria.fr>
+        Wed, 1 Jan 2020 04:32:38 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=wenyang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TmU9qf5_1577871126;
+Received: from localhost(mailfrom:wenyang@linux.alibaba.com fp:SMTPD_---0TmU9qf5_1577871126)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 01 Jan 2020 17:32:14 +0800
+From:   Wen Yang <wenyang@linux.alibaba.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     xlpang@linux.alibaba.com, Wen Yang <wenyang@linux.alibaba.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/page-writeback.c: avoid potential division by zero
+Date:   Wed,  1 Jan 2020 17:32:04 +0800
+Message-Id: <20200101093204.3592-1-wenyang@linux.alibaba.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The npcmgpio_irqchip structure is only copied into another
-structure, so make it const.
+The variables 'min', 'max' and 'bw' are unsigned long and
+do_div truncates them to 32 bits, which means it can test
+non-zero and be truncated to zero for division.
+Fix this issue by using div64_ul() instead.
 
-The opportunity for this change was found using Coccinelle.
+For the two variables 'numerator' and 'denominator',
+though they are declared as long, they should actually be
+unsigned long (according to the implementation of
+the fprop_fraction_percpu() function).
 
-Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-
+Signed-off-by: Wen Yang <wenyang@linux.alibaba.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
 ---
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page-writeback.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index 22077cbe6880..a935065cdac4 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -331,7 +331,7 @@ static unsigned int npcmgpio_irq_startup(struct irq_data *d)
- 	return 0;
- }
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 50055d2..2caf780 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -201,11 +201,11 @@ static void wb_min_max_ratio(struct bdi_writeback *wb,
+ 	if (this_bw < tot_bw) {
+ 		if (min) {
+ 			min *= this_bw;
+-			do_div(min, tot_bw);
++			min = div64_ul(min, tot_bw);
+ 		}
+ 		if (max < 100) {
+ 			max *= this_bw;
+-			do_div(max, tot_bw);
++			max = div64_ul(max, tot_bw);
+ 		}
+ 	}
  
--static struct irq_chip npcmgpio_irqchip = {
-+static const struct irq_chip npcmgpio_irqchip = {
- 	.name = "NPCM7XX-GPIO-IRQ",
- 	.irq_ack = npcmgpio_irq_ack,
- 	.irq_unmask = npcmgpio_irq_unmask,
+@@ -766,7 +766,7 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc)
+ 	struct wb_domain *dom = dtc_dom(dtc);
+ 	unsigned long thresh = dtc->thresh;
+ 	u64 wb_thresh;
+-	long numerator, denominator;
++	unsigned long numerator, denominator;
+ 	unsigned long wb_min_ratio, wb_max_ratio;
+ 
+ 	/*
+@@ -777,7 +777,7 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc)
+ 
+ 	wb_thresh = (thresh * (100 - bdi_min_ratio)) / 100;
+ 	wb_thresh *= numerator;
+-	do_div(wb_thresh, denominator);
++	wb_thresh = div64_ul(wb_thresh, denominator);
+ 
+ 	wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
+ 
+@@ -1102,7 +1102,7 @@ static void wb_update_write_bandwidth(struct bdi_writeback *wb,
+ 	bw = written - min(written, wb->written_stamp);
+ 	bw *= HZ;
+ 	if (unlikely(elapsed > period)) {
+-		do_div(bw, elapsed);
++		bw = div64_ul(bw, elapsed);
+ 		avg = bw;
+ 		goto out;
+ 	}
+-- 
+1.8.3.1
 
