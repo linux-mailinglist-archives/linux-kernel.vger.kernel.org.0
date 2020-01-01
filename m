@@ -2,130 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2914512DC6B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 01:43:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B24112DC74
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 01:57:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727138AbgAAAnn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 31 Dec 2019 19:43:43 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:40824 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgAAAnm (ORCPT
+        id S1727180AbgAAA5t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 31 Dec 2019 19:57:49 -0500
+Received: from egyptian.birch.relay.mailchannels.net ([23.83.209.56]:13180
+        "EHLO egyptian.birch.relay.mailchannels.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727130AbgAAA5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 31 Dec 2019 19:43:42 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1imS6e-00048x-Vr; Wed, 01 Jan 2020 00:43:25 +0000
-Date:   Wed, 1 Jan 2020 00:43:24 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Aleksa Sarai <cyphar@cyphar.com>
-Cc:     David Howells <dhowells@redhat.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        stable@vger.kernel.org,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Serge Hallyn <serge@hallyn.com>, dev@opencontainers.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/1] mount: universally disallow mounting over
- symlinks
-Message-ID: <20200101004324.GA11269@ZenIV.linux.org.uk>
-References: <20191230052036.8765-1-cyphar@cyphar.com>
- <20191230054413.GX4203@ZenIV.linux.org.uk>
- <20191230054913.c5avdjqbygtur2l7@yavin.dot.cyphar.com>
- <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
+        Tue, 31 Dec 2019 19:57:48 -0500
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id E95D27403C1;
+        Wed,  1 Jan 2020 00:49:21 +0000 (UTC)
+Received: from pdx1-sub0-mail-a23.g.dreamhost.com (100-96-85-12.trex.outbound.svc.cluster.local [100.96.85.12])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 7B588740826;
+        Wed,  1 Jan 2020 00:49:21 +0000 (UTC)
+X-Sender-Id: dreamhost|x-authsender|stevie@qrpff.net
+Received: from pdx1-sub0-mail-a23.g.dreamhost.com ([TEMPUNAVAIL].
+ [64.90.62.162])
+        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384)
+        by 0.0.0.0:2500 (trex/5.18.5);
+        Wed, 01 Jan 2020 00:49:21 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|stevie@qrpff.net
+X-MailChannels-Auth-Id: dreamhost
+X-Scare-Towering: 37433ba95e9f52fa_1577839761745_1607478431
+X-MC-Loop-Signature: 1577839761745:3007572954
+X-MC-Ingress-Time: 1577839761745
+Received: from pdx1-sub0-mail-a23.g.dreamhost.com (localhost [127.0.0.1])
+        by pdx1-sub0-mail-a23.g.dreamhost.com (Postfix) with ESMTP id 6CE197F652;
+        Tue, 31 Dec 2019 16:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=qrpff.net; h=mime-version
+        :from:date:message-id:subject:to:cc:content-type; s=qrpff.net;
+         bh=IdDsUeZzxkRY3vzVfF0jYDoTJKs=; b=KdY6uTQrsaT3zFkjw7FyaPIQLf5Y
+        qmrObrfRGro5iyOOSYa6mm1itQbhWL3TMfApfGvZ9OL25fvu/8M0yoS25tWPwNhf
+        5OZUWt9wwDvKy3JcCSNEoC4uuhB/HQQAmJOyJIiMtqpck866sCtXCh14B/j9GPv5
+        Sed+1YmHoQfbQ04=
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stevie@qrpff.net)
+        by pdx1-sub0-mail-a23.g.dreamhost.com (Postfix) with ESMTPSA id 8705C7F651;
+        Tue, 31 Dec 2019 16:49:18 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id a13so37481510ljm.10;
+        Tue, 31 Dec 2019 16:49:18 -0800 (PST)
+X-Gm-Message-State: APjAAAVeQ71tjkq1cLCPHLvfZ+bhtO+8YKSqlDA0sfpiBGtFV+9o3kbf
+        rsD/h30v1pC96klDExCqQqCT752AgfqehejR0pk=
+X-Google-Smtp-Source: APXvYqyadK0g2j37BFcyuvxwrIM6nKkD733uJxbBxdUGAXsFR4ik/VyIXd9Jw5hsreAHgue9Zrn+LV1NZ9N3SOikrow=
+X-Received: by 2002:a2e:9196:: with SMTP id f22mr44373035ljg.18.1577839756557;
+ Tue, 31 Dec 2019 16:49:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230072959.62kcojxpthhdwmfa@yavin.dot.cyphar.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-DH-BACKEND: pdx1-sub0-mail-a23
+From:   Stephen Oberholtzer <stevie@qrpff.net>
+Date:   Tue, 31 Dec 2019 19:49:04 -0500
+X-Gmail-Original-Message-ID: <CAD_xR9eDL+9jzjYxPXJjS7U58ypCPWHYzrk0C3_vt-w26FZeAQ@mail.gmail.com>
+Message-ID: <CAD_xR9eDL+9jzjYxPXJjS7U58ypCPWHYzrk0C3_vt-w26FZeAQ@mail.gmail.com>
+Subject: PROBLEM: Wireless networking goes down on Acer C720P Chromebook (bisected)
+To:     toke@redhat.com
+Cc:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-VR-OUT-STATUS: OK
+X-VR-OUT-SCORE: -100
+X-VR-OUT-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrvdefkedgvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuggftfghnshhusghstghrihgsvgdpffftgfetoffjqffuvfenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepggfhfffkuffvtgesthdtredttddtjeenucfhrhhomhepufhtvghphhgvnhcuqfgsvghrhhholhhtiigvrhcuoehsthgvvhhivgesqhhrphhffhdrnhgvtheqnecukfhppedvtdelrdekhedrvddtkedrudejfeenucfrrghrrghmpehmohguvgepshhmthhppdhhvghlohepmhgrihhlqdhljhduqdhfudejfedrghhoohhglhgvrdgtohhmpdhinhgvthepvddtledrkeehrddvtdekrddujeefpdhrvghtuhhrnhdqphgrthhhpefuthgvphhhvghnucfqsggvrhhhohhlthiivghruceoshhtvghvihgvsehqrhhpfhhfrdhnvghtqedpmhgrihhlfhhrohhmpehsthgvvhhivgesqhhrphhffhdrnhgvthdpnhhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 06:29:59PM +1100, Aleksa Sarai wrote:
-> On 2019-12-30, Aleksa Sarai <cyphar@cyphar.com> wrote:
-> > On 2019-12-30, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > > On Mon, Dec 30, 2019 at 04:20:35PM +1100, Aleksa Sarai wrote:
-> > > 
-> > > > A reasonably detailed explanation of the issues is provided in the patch
-> > > > itself, but the full traces produced by both the oopses and deadlocks is
-> > > > included below (it makes little sense to include them in the commit since we
-> > > > are disabling this feature, not directly fixing the bugs themselves).
-> > > > 
-> > > > I've posted this as an RFC on whether this feature should be allowed at
-> > > > all (and if anyone knows of legitimate uses for it), or if we should
-> > > > work on fixing these other kernel bugs that it exposes.
-> > > 
-> > > Umm...  Are all of those traces
-> > > 	a) reproducible on mainline and
-> > 
-> > This was on viro/for-next, I'll retry it on v5.5-rc4.
-> 
-> The NULL deref oops is reproducible on v5.5-rc4. Strangely it seems
-> harder to reproduce than on viro/for-next (I kept reproducing it there
-> by accident), but I'll double-check if that really is the case.
-> 
-> The simplest reproducer is (using the attached programs and .config):
-> 
->   ln -s . link
->   sudo ./umount_symlink link
+Wireless networking goes down on Acer C720P Chromebook (bisected)
 
-FWIW, the problem with that reproducer is that we *CAN'T* resolve that
-path.  Look: you have /proc/self/fd/3 resolve to ./link.  OK, you've
-asked to follow that.  Got ./link, which is a symlink, so we need to
-follow it further.  Relative to what, though?
+Culprit: 7a89233a ("mac80211: Use Airtime-based Queue Limits (AQL) on
+packet dequeue")
 
-The meaning of symlink is dependent upon the directory you find it in.
-And we don't have any here.
+I found that the newest kernel (5.4) displayed a curious issue on my
+Acer C720P Chromebook: shortly after bringing networking up, all
+connections would suddenly fail.  I discovered that I could
+consistently reproduce the issue by ssh'ing into the machine and
+running 'dmesg' -- on a non-working kernel; I would get partial
+output, and then the connection would completely hang. This was so
+consistent, in fact, that I was able to leverage it to automate the
+process from 'git bisect run'.
 
-The bug is in mountpoint_last() - we have
-        if (unlikely(nd->last_type != LAST_NORM)) {
-                error = handle_dots(nd, nd->last_type);
-                if (error)
-                        return error;
-                path.dentry = dget(nd->path.dentry);
-        } else {
-                path.dentry = d_lookup(dir, &nd->last);
-                if (!path.dentry) {
-                        /*
-                         * No cached dentry. Mounted dentries are pinned in the
-                         * cache, so that means that this dentry is probably
-                         * a symlink or the path doesn't actually point
-                         * to a mounted dentry.
-                         */
-                        path.dentry = lookup_slow(&nd->last, dir,
-                                             nd->flags | LOOKUP_NO_REVAL);
-                        if (IS_ERR(path.dentry))
-                                return PTR_ERR(path.dentry);
-                }
-        }
-        if (d_flags_negative(smp_load_acquire(&path.dentry->d_flags))) {
-                dput(path.dentry);
-                return -ENOENT;
-        }
-        path.mnt = nd->path.mnt;
-        return step_into(nd, &path, 0, d_backing_inode(path.dentry), 0);
-in there, and that ends up with step_into() called in case of LAST_DOT/LAST_DOTDOT
-(where it's harmless) *AND* in case of LAST_BIND.  Where it very much isn't.
+KEYWORDS: c720p, chromebook, wireless, networking, mac80211
 
-I'm not sure if you have caught anything else, but we really, really should *NOT*
-consider the LAST_BIND as "maybe we should follow the result" material.  So
-at least the following is needed; could you check if anything else remains
-with that applied?
+KERNEL: any kernel containing commit 7a89233a ("mac80211: Use
+Airtime-based Queue Limits (AQL) on packet dequeue")
 
-diff --git a/fs/namei.c b/fs/namei.c
-index d6c91d1e88cb..d4fbbda8a7ff 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -2656,10 +2656,7 @@ mountpoint_last(struct nameidata *nd)
- 	nd->flags &= ~LOOKUP_PARENT;
- 
- 	if (unlikely(nd->last_type != LAST_NORM)) {
--		error = handle_dots(nd, nd->last_type);
--		if (error)
--			return error;
--		path.dentry = dget(nd->path.dentry);
-+		return handle_dots(nd, nd->last_type);
- 	} else {
- 		path.dentry = d_lookup(dir, &nd->last);
- 		if (!path.dentry) {
+I find this bit in the offending commit's message suspicious:
+
+> This patch does *not* include any mechanism to wake a throttled TXQ again,
+> on the assumption that this will happen anyway as a side effect of whatever
+>  freed the skb (most commonly a TX completion).
+
+Methinks this assumption is not a fully valid one.
+
+I'll be happy to test any patches. If you need some printk calls, just
+tell me where to put 'em.
+
+This is the card:
+
+01:00.0 Network controller: Qualcomm Atheros AR9462 Wireless Network
+Adapter (rev 01)
+        Subsystem: Foxconn International, Inc. AR9462 Wireless Network Adapter
+        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
+ParErr- Stepping- SERR- FastB2B- DisINTx-
+        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+        Latency: 0, Cache Line Size: 64 bytes
+        Interrupt: pin A routed to IRQ 16
+        Region 0: Memory at e0400000 (64-bit, non-prefetchable) [size=512K]
+        Expansion ROM at e0480000 [disabled] [size=64K]
+        Capabilities: [40] Power Management version 2
+                Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=375mA
+PME(D0+,D1+,D2+,D3hot+,D3cold+)
+                Status: D0 NoSoftRst- PME-Enable- DSel=0 DScale=0 PME-
+        Capabilities: [50] MSI: Enable- Count=1/4 Maskable+ 64bit+
+                Address: 0000000000000000  Data: 0000
+                Masking: 00000000  Pending: 00000000
+        Capabilities: [70] Express (v2) Endpoint, MSI 00
+                DevCap: MaxPayload 128 bytes, PhantFunc 0, Latency L0s
+unlimited, L1 <64us
+                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+
+FLReset- SlotPowerLimit 0.000W
+                DevCtl: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop-
+                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+AuxPwr+ TransPend-
+                LnkCap: Port #0, Speed 2.5GT/s, Width x1, ASPM L0s L1,
+Exit Latency L0s <4us, L1 <64us
+                        ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp-
+                LnkCtl: ASPM L0s L1 Enabled; RCB 64 bytes Disabled- CommClk+
+                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+                LnkSta: Speed 2.5GT/s (ok), Width x1 (ok)
+                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+                DevCap2: Completion Timeout: Not Supported,
+TimeoutDis+, LTR-, OBFF Not Supported
+                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
+                DevCtl2: Completion Timeout: 50us to 50ms,
+TimeoutDis-, LTR-, OBFF Disabled
+                         AtomicOpsCtl: ReqEn-
+                LnkCtl2: Target Link Speed: 2.5GT/s, EnterCompliance- SpeedDis-
+                         Transmit Margin: Normal Operating Range,
+EnterModifiedCompliance- ComplianceSOS-
+                         Compliance De-emphasis: -6dB
+                LnkSta2: Current De-emphasis Level: -6dB,
+EqualizationComplete-, EqualizationPhase1-
+                         EqualizationPhase2-, EqualizationPhase3-,
+LinkEqualizationRequest-
+        Capabilities: [100 v1] Advanced Error Reporting
+                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
+UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
+UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
+                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt-
+UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
+                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
+AdvNonFatalErr-
+                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
+AdvNonFatalErr+
+                AERCap: First Error Pointer: 00, ECRCGenCap-
+ECRCGenEn- ECRCChkCap- ECRCChkEn-
+                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+                HeaderLog: 00000000 00000000 00000000 00000000
+        Capabilities: [140 v1] Virtual Channel
+                Caps:   LPEVC=0 RefClk=100ns PATEntryBits=1
+                Arb:    Fixed- WRR32- WRR64- WRR128-
+                Ctrl:   ArbSelect=Fixed
+                Status: InProgress-
+                VC0:    Caps:   PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
+                        Arb:    Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
+                        Ctrl:   Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
+                        Status: NegoPending- InProgress-
+        Capabilities: [160 v1] Device Serial Number 00-00-00-00-00-00-00-00
+        Kernel driver in use: ath9k
+        Kernel modules: ath9k
+
+
+
+-- 
+-- Stevie-O
+Real programmers use COPY CON PROGRAM.EXE
