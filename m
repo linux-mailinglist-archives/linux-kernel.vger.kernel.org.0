@@ -2,136 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 774A712DFED
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 19:19:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB4212E019
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 19:32:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbgAASTF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 13:19:05 -0500
-Received: from mout.gmx.net ([212.227.15.18]:36953 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727170AbgAASTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 13:19:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1577902738;
-        bh=hpm2OGR91QQ/m5niGl/vEaS3kObf+3M6jFZ61Y1/CY8=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=G8/oZsF9CPIVvIVmeUxBTihG3u6zLZ8zGIYhKv8u079GM9xmjWMmIeappByWQJd+a
-         6bVYoesWtV0yVbbnoXOw8YBYzOgQ2N83qYmL6TM2/H4qWiLHi3IXLaJkFavOjJbHxZ
-         sXouv3VcvcWHpvJDS/XK5+QaXvY3w7RLj3hHeRTA=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([109.90.233.102]) by mail.gmx.com (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MkYc0-1jRnuG0BIc-00m3Qw; Wed, 01
- Jan 2020 19:18:58 +0100
-Date:   Wed, 1 Jan 2020 19:18:57 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     robdclark@gmail.com, bjorn.andersson@linaro.org, joro@8bytes.org,
-        agross@kernel.org, iommu@lists.linux-foundation.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/qcom: fix NULL pointer dereference during probe
- deferral
-Message-ID: <20200101181857.GB2110@latitude>
-References: <20200101033949.755-1-masneyb@onstation.org>
+        id S1727358AbgAAScr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 13:32:47 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46034 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727268AbgAAScq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 1 Jan 2020 13:32:46 -0500
+Received: by mail-qk1-f194.google.com with SMTP id x1so30009594qkl.12
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 10:32:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q2Ccz2OnLgnjl5REhxz8UKHwpG1ptp4cNKXpqe74brI=;
+        b=RfrGBxtnogBHboyuNOlbVwAZmirzY4kuH40QCBn9Sj27oqLMPH+djGRkpJIiVnL1hG
+         yC1qzhgoC40jC4VdSK6xd5ZICyn9Dab1cAFgrtN5TPmg7xqL52Fl7KUn660dqiro0V/F
+         7M094jheYW+9AZ7B8UF6zJ7rKIw+2PTT03SmVKirw4q8N4TxsxBcmJ3s9wbpYbc2/qSC
+         o1YVtzpJVIBrteK/2/6msEEcA+0+074O1WRveoJZ4ZHJjqISRXBD+msbtDZQw0MbFSeC
+         PlTCB/ZApyrR2jkM/wLxz6aNAlCKzA6hyiJOyhP4oHzSlhRPesk98ct3I9+jbXZ38lEU
+         LtpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:date:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q2Ccz2OnLgnjl5REhxz8UKHwpG1ptp4cNKXpqe74brI=;
+        b=Z72caURebMG/0Go1w2JAOLb6zKggUG1o2mWVOQNlO3Yq1zcirEssYbnDwJ7qO2Gj0a
+         4dgJIgqnz698Fdn6YEgG8b51aOzM/5SLbROHXpYvoyd6AJzDm4UgezZrhF3uRMIGyQ4d
+         WM2nqIEPCnJjZxZeFRonhVbJ0juh1ZpaVedennJ2N3VssuPNLW1v3ABJyUmo1musROXK
+         SNCCiiAOZQXniYStzj+AO1x60uIyKUzJHfR/Kua90z+1lx7GFad8Xr6BHGxQyol7KXgE
+         9PQsOGr4Q1UfKpT9xbHlL3i9i33mJ0uTM+5riuklxCv1RMX0yUwfde2MfDgdvIMiZNbs
+         /DIg==
+X-Gm-Message-State: APjAAAWKA7v6FXSbF+e8kZg22pqxAnh46gfAqldZj8VzLfJrFuzuAg/V
+        niy+F93ffoxzLa5L2b0Z22s=
+X-Google-Smtp-Source: APXvYqwiSMCw5qGN+pqwqkFQKeTlZOkxeb8SBmiWlCwk3Q2kPcI1VaMy5ok5+SF2fXjc7+Bm47IcvQ==
+X-Received: by 2002:a05:620a:20c7:: with SMTP id f7mr64250292qka.440.1577903565858;
+        Wed, 01 Jan 2020 10:32:45 -0800 (PST)
+Received: from rani.riverdale.lan ([2001:470:1f07:5f3::b55f])
+        by smtp.gmail.com with ESMTPSA id i23sm14471478qka.113.2020.01.01.10.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jan 2020 10:32:45 -0800 (PST)
+From:   Arvind Sankar <nivedita@alum.mit.edu>
+X-Google-Original-From: Arvind Sankar <arvind@rani.riverdale.lan>
+Date:   Wed, 1 Jan 2020 13:32:44 -0500
+To:     Arvind Sankar <nivedita@alum.mit.edu>
+Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, youling257@gmail.com
+Subject: Re: [PATCH] early init: open /dev/console with O_LARGEFILE
+Message-ID: <20200101183243.GB183871@rani.riverdale.lan>
+References: <20191231150226.GA523748@light.dominikbrodowski.net>
+ <20200101003017.GA116793@rani.riverdale.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200101033949.755-1-masneyb@onstation.org>
+In-Reply-To: <20200101003017.GA116793@rani.riverdale.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:3eYn0RZGHqV1q9jear8kWLgBqk7G/K4ETwM30zDRTCkJUqY6pCy
- K48FKiO3NN3BtpX31To/OcNCQiU4cs6fWV0iKVceLlc5KnL+I8mr+i4/i4F+M/xeEz97yn/
- UA4SezqipJ1XKPN8AV1V8ywBoC66lYeT0Jm636FhQuDnxsNTe3RlNNabqbUbyA7XpuZo7tP
- aJGtkbsuWqLjlmP//fE0g==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:iLkOSE/y0FE=:1U22ENNWgayFiSrwSh3M37
- crbHF62WoA5m10xSN6vB76UxhTot4SEQDASsoFjnvMNUPvQcqmFQc3iNydauQTWZolUv+61k7
- Qkt519I4MnfNNFu0k/J6Drc28aSjyWqBijaWPueID4n6f/coz0erbEKVoHDHUB7quOJUynuSv
- /sIkoJ0MH1poV2JAXjy45ievAPC5tZv+TNtlo4NcPrL2KC7GXi3EI39tvra3Gx9I2NUCYHYwn
- CcBKp0es90e1F6wYYod2sz14wcIGg3X3MHCkj2vDTJfx2B90612PZqoGFqD3p1DeJ3LmB5ZVQ
- xK0iXXBtNMzPM/TAWwiEeLY90kOGQcRuoRG3qGo/NZ1cxHPbNrf/K0das2vaJA94mvdyO1mVK
- DP0YgnQ6hoa4AYrmkUL9sWZuqtIpLbgC3dnMAsusKRnLH1Pue0/XxONNxiMisujb9AVRS9Vva
- +t0rY24oM4H0slQ0/1YzCv80OoGVJAVRb6cIjscIYbwtvx5xLg3zVaBl520CpY36pKauJ82Gx
- kQm4hIvCC1SUo+bz9M/EeqmT2SBcFoHVnQHqtFIV+H+Vh2s8bHpCkAevZVA/0CjIMSUB7LZkd
- ggavJNDaYIsvWVJYB75qf11qS71TyvqfMtLTyr1z16ihOkttdHeAMUkpd/SRg+oC+rPamSz/g
- I5UoEu3dw23UUHecV7rJeA77mBY4JBCYRefUTyvXyMdh0aff2N4XJw3OyQoNntJmyTx9nNmkr
- yTiKoXPuXPpcvS0dvTr1C6IESXlOSBKBx2SLsBFoHOvkd4NPtf1DkvVnPEGjlXQNQlUOPDwvi
- pS1oUVq4XIC++LKAMT269jBcXAV7/VZfIG3AHAAZLZ5ylEM59KD7p57//KOh1lhRls3//qljg
- /wOoXBTGqRvxKuU/LZ7OxgB/XLitYCHNp1xk2FCy1eplMh6t/UFXCAnGKe5yogAFUrBn5wSzF
- RRF4Ht+HY3zAa5nEWZK2LJ0RHA3YCSR0bxrghhuI2kYRdYhylGSZhXgQbmMVRsSiINkYSY84e
- MGhfCAT702ntQ85u/+7dV37wPI84n2KK4Fkq7C4GugmWZ9gf/i6Edl1tRzUfegceDfUJ6le4E
- cWM2PlD570jRpGSTdSjQ3xk2P+BhfJpx8hCZeGCVF+5bb2G+BRwv7UP/W5BFmUzvv/HXb1yFQ
- nQssxjlfnkCkOfN+qzhIdsfKtpQkw3GfmZPw3a1JzMoa/e89fl9/DXykHeScGxqnXIp2tXrcx
- BLNsZroG7655XoznHBk6I5pMt0mwo0CR5XYA+DwRHLhOfoDmicK9c1UKyNhM=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 31, 2019 at 07:30:19PM -0500, Arvind Sankar wrote:
+> On Tue, Dec 31, 2019 at 04:02:26PM +0100, Dominik Brodowski wrote:
+> > If force_o_largefile() is true, /dev/console used to be opened
+> > with O_LARGEFILE. Retain that behaviour.
+> > 
+> 
+> One other thing that used to happen is fsnotify_open() -- I don't know
+> how that might affect this, but it seems like the only thing left that's
+> different.
 
---mP3DRpeJDSE+ciuQ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Dec 31, 2019 at 10:39:49PM -0500, Brian Masney wrote:
-[...]
->     (kernel_init) from ret_from_fork (arch/arm/kernel/entry-common.S:156)
->     Exception stack(0xee89dfb0 to 0xee89dff8)
->     dfa0:                                     00000000 00000000 00000000 =
-00000000
->     dfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 =
-00000000
->     dfe0: 00000000 00000000 00000000 00000000 00000013 00000000
->     Code: e92d4070 e1a04000 e3a01004 e240501c (e5930014)
-
-This looks like ARM code...
-
->     All code
->     =3D=3D=3D=3D=3D=3D=3D=3D
->        0:	70 40                	jo     0x42
->        2:	2d e9 00 40 a0       	sub    $0xa04000e9,%eax
->        7:	e1 04                	loope  0xd
->        9:	10 a0 e3 1c 50 40    	adc    %ah,0x40501ce3(%rax)
->        f:	e2 14                	loop   0x25
->       11:*	00                   	.byte 0x0		<-- trapping instruction
->       12:	93                   	xchg   %eax,%ebx
->       13:	e5                   	.byte 0xe5
-
-=2E.. disassembled as x86 code.
-
-I suspect that scripts/decodecode picked up the wrong architecture
-somehow. Perhaps CROSS_COMPILE wasn't set?
-
->=20
->     Code starting with the faulting instruction
->     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->        0:	14 00                	adc    $0x0,%al
->        2:	93                   	xchg   %eax,%ebx
->        3:	e5                   	.byte 0xe5
-
-
-Greetings and a happy new year,
-Jonathan Neusch=C3=A4fer
-
---mP3DRpeJDSE+ciuQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl4M4ogACgkQCDBEmo7z
-X9uc6xAAt8EnWXrDJbKJksr2JLYDwsRONNkcbseMDFX6lxbaUtMInIzz+lALKI23
-VFFFwmNKK72kxiQYgITNFWV4LC19MBMKdXSXtw8F56MX1vIFgcibvh703Y0n/hEE
-81tMDn3DVlDyuRMN+jTAZrFMqeFB2yywoPYjzesQX9hprI0DyyGZtPbqRHkCpWfN
-aWthJYvX1+QWyMjt8fHinUsLptLA7qtb4ZRUMXg/O8xO+NC3Khn9nVc8wqDeddAH
-A/U9i9bvhFBzQotNQdqaxzn/4mlBGN9xpPR+b2m6evJ+71Di1uNpoZocxrIdEMsv
-NPor1p04QFW8nWL1ZT6qa8MyUPuv+YTRrqBYnaXgPskBMal/KA+0U98WOWzWh84u
-IKxWLYD1O3SL0udQsIXOb6FUE4fSrzXDKIWtgZERhnqM2vrmGooJbRNyE/IeRdXD
-Q8gkOLwxZKX7aRzzXqYVCWbQsBIvE3oUUtJB/kdleY0Q1CRb9l2tYTqrlnMcSjIE
-Qxh9EZim7MgzwX8nmf4CSAV5t7gSSoxlLXiMZOAye2AkhHygdVlGEH0AQk4P17oW
-P6jwyKZ/88PgNai3frPAYOufE+AHS49K/p7iOWcmPbSmyJ3ii6tml6h8kvWA0ff1
-sHXQgCiyZPUKNg3KD5TOZ4rLQwxon85eYlqP+KbB3taO1H6Mwvo=
-=xMEO
------END PGP SIGNATURE-----
-
---mP3DRpeJDSE+ciuQ--
+Also, this shouldn't impact the current issue I think, but won't doing
+filp_open followed by 3 f_dupfd's cause the file->f_count to become 4
+but with only 3 open fd's? Don't we have to do an fd_install for the
+first one and only 2 f_dupfd's?
