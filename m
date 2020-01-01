@@ -2,50 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5C0C12E096
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 22:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D9212E093
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 22:42:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbgAAVmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 16:42:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56738 "EHLO
+        id S1727416AbgAAVmI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 16:42:08 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56504 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgAAVmQ (ORCPT
+        with ESMTP id S1727170AbgAAVmI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 16:42:16 -0500
+        Wed, 1 Jan 2020 16:42:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=79XWKkj31wGwumBYjA54s8OnuOHN68P66X/FOnDTTeE=; b=SbM53CQGUUHc
-        UcUyqxGU/+zizlzxTKG5tvwBu8JOObPRQ445sBf7exavks/y+ZT8NVBRtPDWuCiaJAw7elEC3dxMz
-        Czs41xLyR7ozgeZ7uLoBDKxXQqRZegGECxEzjnQT0QEV+lvS7tuTA/PZZqyzeoWWFcnR6aC5dZnDF
-        hXbjE=;
+        List-Archive; bh=1GJeXqBZgwVZGjKHCG8CUrT1zbGnow5SWLDAyMEOoqA=; b=rrfujMrMQDqx
+        694ngqHc4672jevij1CmPFnBhzJy+5Fvxpv2Nv3EaaEgSD470jKdcT627rGJ+Bp/FQwery4QDsWNA
+        c+jHgtzNwwFSM6iJIHZNUeTXsZPtqT2WVjkyg2kXY16D9R/+KofPO0ceLc64VAqhh16uGS92Kv53Z
+        4Xu4k=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1imlkc-0002aM-4S; Wed, 01 Jan 2020 21:41:58 +0000
+        id 1imlke-0002aP-75; Wed, 01 Jan 2020 21:42:00 +0000
 Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 8030DD057C6; Wed,  1 Jan 2020 21:41:57 +0000 (GMT)
+        id 78EFFD057C6; Wed,  1 Jan 2020 21:41:59 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Julia Lawall <Julia.Lawall@inria.fr>
-Cc:     alsa-devel@alsa-project.org, Fabio Estevam <festevam@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
+Cc:     alsa-devel@alsa-project.org,
+        Banajit Goswami <bgoswami@codeaurora.org>,
         kernel-janitors@vger.kernel.org,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Subject: Applied "ASoC: SOF: imx8: use resource_size" to the asoc tree
-In-Reply-To: <1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr>
-Message-Id: <applied-1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr>
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: qdsp6: q6asm-dai: constify copied structure" to the asoc tree
+In-Reply-To:  <1577864614-5543-11-git-send-email-Julia.Lawall@inria.fr>
+Message-Id:  <applied-1577864614-5543-11-git-send-email-Julia.Lawall@inria.fr>
 X-Patchwork-Hint: ignore
-Date:   Wed,  1 Jan 2020 21:41:57 +0000 (GMT)
+Date:   Wed,  1 Jan 2020 21:41:59 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,11 +50,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: SOF: imx8: use resource_size
+   ASoC: qdsp6: q6asm-dai: constify copied structure
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -78,44 +75,36 @@ to this mail.
 Thanks,
 Mark
 
-From 49f261e273078a5dc0272296a833dc72571efd92 Mon Sep 17 00:00:00 2001
+From 0da390ba86d841b1f9770c0a67bdebb4d8dc8be5 Mon Sep 17 00:00:00 2001
 From: Julia Lawall <Julia.Lawall@inria.fr>
-Date: Wed, 1 Jan 2020 18:49:46 +0100
-Subject: [PATCH] ASoC: SOF: imx8: use resource_size
+Date: Wed, 1 Jan 2020 08:43:28 +0100
+Subject: [PATCH] ASoC: qdsp6: q6asm-dai: constify copied structure
 
-Use resource_size rather than a verbose computation on
-the end and start fields.
+The q6asm_dai_hardware_capture structure is only copied into another
+structure, so make it const.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
-
-<smpl>
-@@ struct resource ptr; @@
-- (ptr.end - ptr.start + 1)
-+ resource_size(&ptr)
-</smpl>
+The opportunity for this change was found using Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
-Link: https://lore.kernel.org/r/1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr
+Link: https://lore.kernel.org/r/1577864614-5543-11-git-send-email-Julia.Lawall@inria.fr
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sof/imx/imx8.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/qcom/qdsp6/q6asm-dai.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
-index aef6ca167b9c..b2556f5e2871 100644
---- a/sound/soc/sof/imx/imx8.c
-+++ b/sound/soc/sof/imx/imx8.c
-@@ -294,8 +294,7 @@ static int imx8_probe(struct snd_sof_dev *sdev)
- 	}
+diff --git a/sound/soc/qcom/qdsp6/q6asm-dai.c b/sound/soc/qcom/qdsp6/q6asm-dai.c
+index 5e2327708772..c0d422d0ab94 100644
+--- a/sound/soc/qcom/qdsp6/q6asm-dai.c
++++ b/sound/soc/qcom/qdsp6/q6asm-dai.c
+@@ -72,7 +72,7 @@ struct q6asm_dai_data {
+ 	long long int sid;
+ };
  
- 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
--							  res.end - res.start +
--							  1);
-+							  resource_size(&res));
- 	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
- 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
- 			base, size);
+-static struct snd_pcm_hardware q6asm_dai_hardware_capture = {
++static const struct snd_pcm_hardware q6asm_dai_hardware_capture = {
+ 	.info =                 (SNDRV_PCM_INFO_MMAP |
+ 				SNDRV_PCM_INFO_BLOCK_TRANSFER |
+ 				SNDRV_PCM_INFO_MMAP_VALID |
 -- 
 2.20.1
 
