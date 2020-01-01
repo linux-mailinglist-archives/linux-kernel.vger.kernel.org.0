@@ -2,117 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B70C512E091
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 22:39:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5C0C12E096
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Jan 2020 22:42:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbgAAVjU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 16:39:20 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35343 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbgAAVjU (ORCPT
+        id S1727435AbgAAVmQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 16:42:16 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56738 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbgAAVmQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 16:39:20 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 15so28802641lfr.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 13:39:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kHPJhXYkezST1Eae4XgEkOOylkj1TqP4v+xkR6EhUQo=;
-        b=UqilqWGwrY43jYSFs+AEUHzfz+SAWFEN1YG/VzXyLpLDfpNuDj6PpNPx2w7OFyyQ/I
-         5/WtkbMq5MccAyUW2aa9c7TeDE7hEsH94zawg7I+II41dAchmZQjcTfyVt2zkXrcQW9I
-         potvW0sBLPVmxr7ahcvSUAHZ/YKSyu+wXDwwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kHPJhXYkezST1Eae4XgEkOOylkj1TqP4v+xkR6EhUQo=;
-        b=Qj4TCFPRVwjujMQBwVG1YcUoGD6wws3m7b+jSsIelOLQ057kmHqS+PRMe+xt8a6G/G
-         6tFOeJ0C6b3pml2o4EY1ELG9zrL1SkKI0MCdeE8V3mfHdEs0rxx65qXpnIgkW/Ong1Xq
-         nDuO3jxm+7HpMcXMnvZnZ5zBxAIShaWIBlnVgeqhCEIbOvS313EDTMMNL5OjgbU8y9BD
-         sJhTHr4+29ezfv3ytMbs432Dih3MOYffeVOF7gTRdnHyd0TraN+PlPsUjOmtAshib8pw
-         IPjAGSiGCJY25unLSdKIRXrfQ4UFw65IUUZtWD5ripoVKl/QmSwSl/LlnIjFbaYVvcBd
-         cMPg==
-X-Gm-Message-State: APjAAAUKTtU7aI5zqAoTdpMODYHqTtpLXKLNuUfp4kiNGbGNz9ApqdTY
-        WL1HkXaMrycgkO/Qmql08paiMSfWQzY=
-X-Google-Smtp-Source: APXvYqyTaI8E2IO55GigVQW95Pen7AgqvgWHKX46LfncQA1budY9+40yYw0g8WxWsTLPbYTAcmMPEg==
-X-Received: by 2002:a19:5007:: with SMTP id e7mr45747475lfb.153.1577914758463;
-        Wed, 01 Jan 2020 13:39:18 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id s1sm15560249ljc.3.2020.01.01.13.39.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jan 2020 13:39:17 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id w1so17067291ljh.5
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Jan 2020 13:39:16 -0800 (PST)
-X-Received: by 2002:a05:651c:239:: with SMTP id z25mr47217329ljn.48.1577914756672;
- Wed, 01 Jan 2020 13:39:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20191231150226.GA523748@light.dominikbrodowski.net>
- <20200101003017.GA116793@rani.riverdale.lan> <20200101183243.GB183871@rani.riverdale.lan>
-In-Reply-To: <20200101183243.GB183871@rani.riverdale.lan>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Jan 2020 13:39:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whzgLPi4szh8xOKysuS9CKaQESngc=n0omBVpwdQ822aw@mail.gmail.com>
-Message-ID: <CAHk-=whzgLPi4szh8xOKysuS9CKaQESngc=n0omBVpwdQ822aw@mail.gmail.com>
-Subject: Re: [PATCH] early init: open /dev/console with O_LARGEFILE
-To:     Arvind Sankar <nivedita@alum.mit.edu>
-Cc:     Dominik Brodowski <linux@dominikbrodowski.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        youling 257 <youling257@gmail.com>
-Content-Type: multipart/mixed; boundary="0000000000008ed5e7059b1ae88f"
+        Wed, 1 Jan 2020 16:42:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=79XWKkj31wGwumBYjA54s8OnuOHN68P66X/FOnDTTeE=; b=SbM53CQGUUHc
+        UcUyqxGU/+zizlzxTKG5tvwBu8JOObPRQ445sBf7exavks/y+ZT8NVBRtPDWuCiaJAw7elEC3dxMz
+        Czs41xLyR7ozgeZ7uLoBDKxXQqRZegGECxEzjnQT0QEV+lvS7tuTA/PZZqyzeoWWFcnR6aC5dZnDF
+        hXbjE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1imlkc-0002aM-4S; Wed, 01 Jan 2020 21:41:58 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 8030DD057C6; Wed,  1 Jan 2020 21:41:57 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Julia Lawall <Julia.Lawall@inria.fr>
+Cc:     alsa-devel@alsa-project.org, Fabio Estevam <festevam@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>, Takashi Iwai <tiwai@suse.com>
+Subject: Applied "ASoC: SOF: imx8: use resource_size" to the asoc tree
+In-Reply-To: <1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr>
+Message-Id: <applied-1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr>
+X-Patchwork-Hint: ignore
+Date:   Wed,  1 Jan 2020 21:41:57 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000008ed5e7059b1ae88f
-Content-Type: text/plain; charset="UTF-8"
+The patch
 
-On Wed, Jan 1, 2020 at 10:32 AM Arvind Sankar <nivedita@alum.mit.edu> wrote:
->
-> Also, this shouldn't impact the current issue I think, but won't doing
-> filp_open followed by 3 f_dupfd's cause the file->f_count to become 4
-> but with only 3 open fd's? Don't we have to do an fd_install for the
-> first one and only 2 f_dupfd's?
+   ASoC: SOF: imx8: use resource_size
 
-I think *this* is the real reason for the odd regression.
+has been applied to the asoc tree at
 
-Because we're leaking a file count, the original /dev/console stays
-open, and we end up never calling file->f_op->release().
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.6
 
-So we don't call tty_release() on that original /dev/console open, and
-one effect of that is that we never then call session_clear_tty(),
-which should make sure that all the processes in that session ID have
-their controlling tty (signal->tty pointer) cleared.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-And if that original controlling tty wasn't cleared, then subsequent
-calls to set the controlling tty won't do anything, and who knows what
-odd session leader confusion we might have.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-youling, can you check if - instead of the revert - this simple 'add
-an fput' fixes your warning.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-I'm not saying that the revert is wrong at this point, but honestly,
-I'd like to avoid the "we revert because we didn't understand what
-went wrong". It would be good to go "Aaaahhhh, _that_ was the
-problem".
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-                 Linus
+Thanks,
+Mark
 
---0000000000008ed5e7059b1ae88f
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k4vtp0lu0>
-X-Attachment-Id: f_k4vtp0lu0
+From 49f261e273078a5dc0272296a833dc72571efd92 Mon Sep 17 00:00:00 2001
+From: Julia Lawall <Julia.Lawall@inria.fr>
+Date: Wed, 1 Jan 2020 18:49:46 +0100
+Subject: [PATCH] ASoC: SOF: imx8: use resource_size
 
-IGluaXQvbWFpbi5jIHwgMiArKwogMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQoKZGlm
-ZiAtLWdpdCBhL2luaXQvbWFpbi5jIGIvaW5pdC9tYWluLmMKaW5kZXggMWVjZmQ0M2VkNDY0Li43
-YjNhY2NiZDIyMTEgMTAwNjQ0Ci0tLSBhL2luaXQvbWFpbi5jCisrKyBiL2luaXQvbWFpbi5jCkBA
-IC0xMTcxLDYgKzExNzEsOCBAQCB2b2lkIGNvbnNvbGVfb25fcm9vdGZzKHZvaWQpCiAJCWlmIChm
-X2R1cGZkKGksIGZpbGUsIDApICE9IGkpCiAJCQlnb3RvIGVycl9vdXQ7CiAJfQorCS8qIHB1dCB0
-aGUgb3JpZ2luYWwgcmVmIGZyb20gZmlscF9vcGVuLCBmX2R1cGZkKCkgaGFzIGluc3RhbGxlZCBu
-ZXcgb25lcyAqLworCWZwdXQoZmlsZSk7CiAKIAlyZXR1cm47CiAK
---0000000000008ed5e7059b1ae88f--
+Use resource_size rather than a verbose computation on
+the end and start fields.
+
+The semantic patch that makes this change is as follows:
+(http://coccinelle.lip6.fr/)
+
+<smpl>
+@@ struct resource ptr; @@
+- (ptr.end - ptr.start + 1)
++ resource_size(&ptr)
+</smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Link: https://lore.kernel.org/r/1577900990-8588-7-git-send-email-Julia.Lawall@inria.fr
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/sof/imx/imx8.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/sound/soc/sof/imx/imx8.c b/sound/soc/sof/imx/imx8.c
+index aef6ca167b9c..b2556f5e2871 100644
+--- a/sound/soc/sof/imx/imx8.c
++++ b/sound/soc/sof/imx/imx8.c
+@@ -294,8 +294,7 @@ static int imx8_probe(struct snd_sof_dev *sdev)
+ 	}
+ 
+ 	sdev->bar[SOF_FW_BLK_TYPE_SRAM] = devm_ioremap_wc(sdev->dev, res.start,
+-							  res.end - res.start +
+-							  1);
++							  resource_size(&res));
+ 	if (!sdev->bar[SOF_FW_BLK_TYPE_SRAM]) {
+ 		dev_err(sdev->dev, "failed to ioremap mem 0x%x size 0x%x\n",
+ 			base, size);
+-- 
+2.20.1
+
