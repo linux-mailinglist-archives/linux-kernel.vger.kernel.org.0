@@ -2,41 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E4E12ED61
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0690512EBF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:14:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbgABW1q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:27:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56470 "EHLO mail.kernel.org"
+        id S1727785AbgABWNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:13:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729761AbgABW1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:27:41 -0500
+        id S1727445AbgABWNn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:13:43 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED60F227BF;
-        Thu,  2 Jan 2020 22:27:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66B4C21D7D;
+        Thu,  2 Jan 2020 22:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004060;
-        bh=KQKVW3kOPEqijQOC3uCUsmVpJX3Z1+YzIy1XRRtZZOQ=;
+        s=default; t=1578003222;
+        bh=Fra8aZasCrfdjr2SqA6CMzh9DAlocZ+YwGMIgLze7jk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jjpwL9SRJPncTHPGdSJJe1xxCYJwHYn7v94HJROw+V9aUL4YXIYhDmvZ+56pg2Zqg
-         /7xgV+f2BQppLFYvO4MhzHqhsHgjejmWDQ6zRB3Qm0TyVxU8RLhv1TYpWBzKJ4jait
-         Yi74zzUk+teqIQ3JzaWS+6Fye+mgtuCPfmugdYQs=
+        b=QaDohJchHauPpddrFOebyQ4AXMViyr72caJvi1Dd2QlRqoCa6BQAr8iGvTk8kr/MC
+         fpYF5eipu/xJO2Ev84T6K56kTuBHcM24c6jstkFjkUMZodk8oqNrmFV+6ciyIdYYiQ
+         8VSxJGrfA00mKDZa7I6CwgvQKRuo214vaX0c3AwU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 021/171] usb: renesas_usbhs: add suspend event support in gadget mode
-Date:   Thu,  2 Jan 2020 23:05:52 +0100
-Message-Id: <20200102220550.032462769@linuxfoundation.org>
+Subject: [PATCH 5.4 071/191] powerpc/book3s/mm: Update Oops message to print the correct translation in use
+Date:   Thu,  2 Jan 2020 23:05:53 +0100
+Message-Id: <20200102215837.517222128@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,87 +47,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
+From: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
 
-[ Upstream commit 39abcc84846bbc0538f13c190b6a9c7e36890cd2 ]
+[ Upstream commit d7e02f7b7991dbe14a2acfb0e53d675cd149001c ]
 
-When R-Car Gen3 USB 2.0 is in Gadget mode, if host is detached an interrupt
-will be generated and Suspended state bit is set in interrupt status
-register. Interrupt handler will call driver->suspend(composite_suspend)
-if suspended state bit is set. composite_suspend will call
-ffs_func_suspend which will post FUNCTIONFS_SUSPEND and will be consumed
-by user space application via /dev/ep0.
+Avoids confusion when printing Oops message like below
 
-To be able to detect host detach, extend the DVSQ_MASK to cover the
-Suspended bit of the DVSQ[2:0] bitfield from the Interrupt Status
-Register 0 (INTSTS0) register and perform appropriate action in the
-DVST interrupt handler (usbhsg_irq_dev_state).
+ Faulting instruction address: 0xc00000000008bdb4
+ Oops: Kernel access of bad area, sig: 11 [#1]
+ LE PAGE_SIZE=64K MMU=Radix MMU=Hash SMP NR_CPUS=2048 NUMA PowerNV
 
-Without this commit, disconnection of the phone from R-Car-H3 ES2.0
-Salvator-X CN9 port is not recognized and reverse role switch does
-not happen. If phone is connected again it does not enumerate.
+This was because we never clear the MMU_FTR_HPTE_TABLE feature flag
+even if we run with radix translation. It was discussed that we should
+look at this feature flag as an indication of the capability to run
+hash translation and we should not clear the flag even if we run in
+radix translation. All the code paths check for radix_enabled() check and
+if found true consider we are running with radix translation. Follow the
+same sequence for finding the MMU translation string to be used in Oops
+message.
 
-With this commit, disconnection will be recognized and reverse role
-switch will happen by a user space application. If phone is connected
-again it will enumerate properly and will become visible in the output
-of 'lsusb'.
-
-Signed-off-by: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Link: https://lore.kernel.org/r/1568207756-22325-3-git-send-email-external.veeraiyan.c@de.adit-jv.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Acked-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Link: https://lore.kernel.org/r/20190711145814.17970-1-aneesh.kumar@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/renesas_usbhs/common.h     |  3 ++-
- drivers/usb/renesas_usbhs/mod_gadget.c | 12 +++++++++---
- 2 files changed, 11 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/traps.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/usb/renesas_usbhs/common.h b/drivers/usb/renesas_usbhs/common.h
-index b8620aa6b72e..8424c165f732 100644
---- a/drivers/usb/renesas_usbhs/common.h
-+++ b/drivers/usb/renesas_usbhs/common.h
-@@ -163,11 +163,12 @@ struct usbhs_priv;
- #define VBSTS	(1 << 7)	/* VBUS_0 and VBUSIN_0 Input Status */
- #define VALID	(1 << 3)	/* USB Request Receive */
- 
--#define DVSQ_MASK		(0x3 << 4)	/* Device State */
-+#define DVSQ_MASK		(0x7 << 4)	/* Device State */
- #define  POWER_STATE		(0 << 4)
- #define  DEFAULT_STATE		(1 << 4)
- #define  ADDRESS_STATE		(2 << 4)
- #define  CONFIGURATION_STATE	(3 << 4)
-+#define  SUSPENDED_STATE	(4 << 4)
- 
- #define CTSQ_MASK		(0x7)	/* Control Transfer Stage */
- #define  IDLE_SETUP_STAGE	0	/* Idle stage or setup stage */
-diff --git a/drivers/usb/renesas_usbhs/mod_gadget.c b/drivers/usb/renesas_usbhs/mod_gadget.c
-index 6898ca1ef98c..b0397bcfe1f6 100644
---- a/drivers/usb/renesas_usbhs/mod_gadget.c
-+++ b/drivers/usb/renesas_usbhs/mod_gadget.c
-@@ -465,12 +465,18 @@ static int usbhsg_irq_dev_state(struct usbhs_priv *priv,
- {
- 	struct usbhsg_gpriv *gpriv = usbhsg_priv_to_gpriv(priv);
- 	struct device *dev = usbhsg_gpriv_to_dev(gpriv);
-+	int state = usbhs_status_get_device_state(irq_state);
- 
- 	gpriv->gadget.speed = usbhs_bus_get_speed(priv);
- 
--	dev_dbg(dev, "state = %x : speed : %d\n",
--		usbhs_status_get_device_state(irq_state),
--		gpriv->gadget.speed);
-+	dev_dbg(dev, "state = %x : speed : %d\n", state, gpriv->gadget.speed);
-+
-+	if (gpriv->gadget.speed != USB_SPEED_UNKNOWN &&
-+	    (state & SUSPENDED_STATE)) {
-+		if (gpriv->driver && gpriv->driver->suspend)
-+			gpriv->driver->suspend(&gpriv->gadget);
-+		usb_gadget_set_state(&gpriv->gadget, USB_STATE_SUSPENDED);
-+	}
- 
- 	return 0;
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index 82f43535e686..014ff0701f24 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -250,15 +250,22 @@ static void oops_end(unsigned long flags, struct pt_regs *regs,
  }
+ NOKPROBE_SYMBOL(oops_end);
+ 
++static char *get_mmu_str(void)
++{
++	if (early_radix_enabled())
++		return " MMU=Radix";
++	if (early_mmu_has_feature(MMU_FTR_HPTE_TABLE))
++		return " MMU=Hash";
++	return "";
++}
++
+ static int __die(const char *str, struct pt_regs *regs, long err)
+ {
+ 	printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
+ 
+-	printk("%s PAGE_SIZE=%luK%s%s%s%s%s%s%s %s\n",
++	printk("%s PAGE_SIZE=%luK%s%s%s%s%s%s %s\n",
+ 	       IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? "LE" : "BE",
+-	       PAGE_SIZE / 1024,
+-	       early_radix_enabled() ? " MMU=Radix" : "",
+-	       early_mmu_has_feature(MMU_FTR_HPTE_TABLE) ? " MMU=Hash" : "",
++	       PAGE_SIZE / 1024, get_mmu_str(),
+ 	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "",
+ 	       IS_ENABLED(CONFIG_SMP) ? " SMP" : "",
+ 	       IS_ENABLED(CONFIG_SMP) ? (" NR_CPUS=" __stringify(NR_CPUS)) : "",
 -- 
 2.20.1
 
