@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E80712EE3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:36:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D34C12EDBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbgABWg0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:36:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47390 "EHLO mail.kernel.org"
+        id S1728352AbgABWbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:31:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730931AbgABWgV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:36:21 -0500
+        id S1730252AbgABWbK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:10 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A376020866;
-        Thu,  2 Jan 2020 22:36:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAD9520866;
+        Thu,  2 Jan 2020 22:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004581;
-        bh=qWspZePQbi8G0U3n4JitokKO6py1iZ/JWW1uP31pH6U=;
+        s=default; t=1578004270;
+        bh=5+zLHn7HrkoGk5mRtLllbP3/vp81iPVrTS2zV/XIP4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZxIngmxDve6ORPSAvGS/1ZNi6ff8laiBvgw6+wf0uKihYIgvcpXIGy/iRPxg2pB0
-         PaUkN+2Tmwlann5Flzt3EoBPNGBK/TAIWFbiBAUNdVi06KdpNsAq7uKru0uV/ypbpF
-         V5Jg7EyXQBgwAr7i64uoEd3Xv0CO8h57TT3ENGdM=
+        b=d6VKee3KApmmxXb2q/MuCApYyok0+O/XoHdL269OQgi070Lc5IjUjXx40aWGUjqgi
+         wLo7PHjrs6tuDjHpEIUoD5FQFlk5zXRbdTo0lvxAVse0UmcQLRi9DTV4ziPhAHVMJ7
+         FVGe1aQPW1qGxiwbbN0X4pTqSHmw1oKpKOioNuQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Henry Lin <henryl@nvidia.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 067/137] usb: xhci: Fix build warning seen with CONFIG_PM=n
+        stable@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 109/171] mmc: sdhci-of-esdhc: fix P2020 errata handling
 Date:   Thu,  2 Jan 2020 23:07:20 +0100
-Message-Id: <20200102220555.569244418@linuxfoundation.org>
+Message-Id: <20200102220602.269257119@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
-References: <20200102220546.618583146@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,49 +43,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Yangbo Lu <yangbo.lu@nxp.com>
 
-[ Upstream commit 6056a0f8ede27b296d10ef46f7f677cc9d715371 ]
+commit fe0acab448f68c3146235afe03fb932e242ec94c upstream.
 
-The following build warning is seen if CONFIG_PM is disabled.
+Two previous patches introduced below quirks for P2020 platforms.
+- SDHCI_QUIRK_RESET_AFTER_REQUEST
+- SDHCI_QUIRK_BROKEN_TIMEOUT_VAL
 
-drivers/usb/host/xhci-pci.c:498:13: warning:
-	unused function 'xhci_pci_shutdown'
+The patches made a mistake to add them in quirks2 of sdhci_host
+structure, while they were defined for quirks.
+	host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
+	host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
 
-Fixes: f2c710f7dca8 ("usb: xhci: only set D3hot for pci device")
-Cc: Henry Lin <henryl@nvidia.com>
-Cc: stable@vger.kernel.org	# all stable releases with f2c710f7dca8
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Link: https://lore.kernel.org/r/20191218011911.6907-1-linux@roeck-us.net
+This patch is to fix them.
+	host->quirks |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
+	host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+
+Fixes: 05cb6b2a66fa ("mmc: sdhci-of-esdhc: add erratum eSDHC-A001 and A-008358 support")
+Fixes: a46e42712596 ("mmc: sdhci-of-esdhc: add erratum eSDHC5 support")
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20191216031842.40068-1-yangbo.lu@nxp.com
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+
 ---
- drivers/usb/host/xhci-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mmc/host/sdhci-of-esdhc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index bda176fa6e48..df86ea308415 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -444,7 +444,6 @@ static int xhci_pci_resume(struct usb_hcd *hcd, bool hibernated)
- 	retval = xhci_resume(xhci, hibernated);
- 	return retval;
- }
--#endif /* CONFIG_PM */
+--- a/drivers/mmc/host/sdhci-of-esdhc.c
++++ b/drivers/mmc/host/sdhci-of-esdhc.c
+@@ -637,8 +637,8 @@ static int sdhci_esdhc_probe(struct plat
+ 		host->quirks &= ~SDHCI_QUIRK_NO_BUSY_IRQ;
  
- static void xhci_pci_shutdown(struct usb_hcd *hcd)
- {
-@@ -457,6 +456,7 @@ static void xhci_pci_shutdown(struct usb_hcd *hcd)
- 	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
- 		pci_set_power_state(pdev, PCI_D3hot);
- }
-+#endif /* CONFIG_PM */
+ 	if (of_find_compatible_node(NULL, NULL, "fsl,p2020-esdhc")) {
+-		host->quirks2 |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
+-		host->quirks2 |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
++		host->quirks |= SDHCI_QUIRK_RESET_AFTER_REQUEST;
++		host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
+ 	}
  
- /*-------------------------------------------------------------------------*/
- 
--- 
-2.20.1
-
+ 	if (of_device_is_compatible(np, "fsl,p5040-esdhc") ||
 
 
