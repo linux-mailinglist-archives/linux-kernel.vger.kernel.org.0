@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DC8B12F045
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:52:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D8C412EE62
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:38:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbgABWwI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:52:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45312 "EHLO mail.kernel.org"
+        id S1731189AbgABWiD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:38:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728308AbgABWXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:23:21 -0500
+        id S1727898AbgABWh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:37:59 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C862520863;
-        Thu,  2 Jan 2020 22:23:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D592C21835;
+        Thu,  2 Jan 2020 22:37:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003800;
-        bh=2UtYePbH9BvFGO0ZBIyEg1YlG7Ppbt5KXfY0NKANhfw=;
+        s=default; t=1578004679;
+        bh=0iw2TG1uCRrbexMNAybi83l3MiKexq2/ZLsmFb6Tu2A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kxzkNpt1NYNhZ/upM/yWuoTfjf8vX/RD3Ziexh5X/Rxu3YvL+JmIrS/epxhBdeMyI
-         IyCn2WqlmrO6VYQO7Csdlkz3WFKORPZaLFyQH9pxFt6vcQSmniEekUhA6EdWDnaxRE
-         dwg10QFTPfoxylY6wRjGNInTBJMtGjXb94oyl0pw=
+        b=LN4Wcg8x2ScH/T0IPISLGo9dSnWl3/UwvNhQ0ObKgPPxhplX9t6vTgkL+ki/vgVU4
+         36r9w09hbuWbcPQ6lFosD+Wsqr+AjzLhfJaa+wfpDeXnN32IEiEAXBRGp3JPC64S4+
+         1koz/1CZBsq5IYoTI6r/SkxNcpzzdmit3/4xf2Hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.19 108/114] tcp: do not send empty skb from tcp_write_xmit()
+        stable@vger.kernel.org, Barry Song <Baohua.Song@csr.com>,
+        Stephan Gerhold <stephan@gerhold.net>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 107/137] mfd: mfd-core: Honour Device Trees request to disable a child-device
 Date:   Thu,  2 Jan 2020 23:08:00 +0100
-Message-Id: <20200102220040.041353549@linuxfoundation.org>
+Message-Id: <20200102220601.538157580@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.618583146@linuxfoundation.org>
+References: <20200102220546.618583146@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,53 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Lee Jones <lee.jones@linaro.org>
 
-[ Upstream commit 1f85e6267caca44b30c54711652b0726fadbb131 ]
+[ Upstream commit 6b5c350648b857047b47acf74a57087ad27d6183 ]
 
-Backport of commit fdfc5c8594c2 ("tcp: remove empty skb from
-write queue in error cases") in linux-4.14 stable triggered
-various bugs. One of them has been fixed in commit ba2ddb43f270
-("tcp: Don't dequeue SYN/FIN-segments from write-queue"), but
-we still have crashes in some occasions.
+Until now, MFD has assumed all child devices passed to it (via
+mfd_cells) are to be registered. It does not take into account
+requests from Device Tree and the like to disable child devices
+on a per-platform basis.
 
-Root-cause is that when tcp_sendmsg() has allocated a fresh
-skb and could not append a fragment before being blocked
-in sk_stream_wait_memory(), tcp_write_xmit() might be called
-and decide to send this fresh and empty skb.
+Well now it does.
 
-Sending an empty packet is not only silly, it might have caused
-many issues we had in the past with tp->packets_out being
-out of sync.
+Link: https://www.spinics.net/lists/arm-kernel/msg366309.html
+Link: https://lkml.org/lkml/2019/8/22/1350
 
-Fixes: c65f7f00c587 ("[TCP]: Simplify SKB data portion allocation with NETIF_F_SG.")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Christoph Paasch <cpaasch@apple.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Cc: Jason Baron <jbaron@akamai.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Barry Song <Baohua.Song@csr.com>
+Reported-by: Stephan Gerhold <stephan@gerhold.net>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Tested-by: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/tcp_output.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/mfd/mfd-core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2376,6 +2376,14 @@ static bool tcp_write_xmit(struct sock *
- 		if (tcp_small_queue_check(sk, skb, 0))
- 			break;
- 
-+		/* Argh, we hit an empty skb(), presumably a thread
-+		 * is sleeping in sendmsg()/sk_stream_wait_memory().
-+		 * We do not want to send a pure-ack packet and have
-+		 * a strange looking rtx queue with empty packet(s).
-+		 */
-+		if (TCP_SKB_CB(skb)->end_seq == TCP_SKB_CB(skb)->seq)
-+			break;
-+
- 		if (unlikely(tcp_transmit_skb(sk, skb, 1, gfp)))
- 			break;
- 
+diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
+index 215bb5eeb5ac..85f4e5582371 100644
+--- a/drivers/mfd/mfd-core.c
++++ b/drivers/mfd/mfd-core.c
+@@ -177,6 +177,11 @@ static int mfd_add_device(struct device *parent, int id,
+ 	if (parent->of_node && cell->of_compatible) {
+ 		for_each_child_of_node(parent->of_node, np) {
+ 			if (of_device_is_compatible(np, cell->of_compatible)) {
++				if (!of_device_is_available(np)) {
++					/* Ignore disabled devices error free */
++					ret = 0;
++					goto fail_alias;
++				}
+ 				pdev->dev.of_node = np;
+ 				pdev->dev.fwnode = &np->fwnode;
+ 				break;
+-- 
+2.20.1
+
 
 
