@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F152E12E216
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:02:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76DF512E20E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 05:02:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgABECs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 1 Jan 2020 23:02:48 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:23623 "EHLO
+        id S1727732AbgABECe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 1 Jan 2020 23:02:34 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:22585 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727666AbgABEC2 (ORCPT
+        with ESMTP id S1727686AbgABECb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 1 Jan 2020 23:02:28 -0500
-X-UUID: 39ae738e339142678703c3ed0a951c40-20200102
+        Wed, 1 Jan 2020 23:02:31 -0500
+X-UUID: 1bd8b0d9da7748a3b90a729d83c0162f-20200102
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=9nkkuYTfa+66MBIYSh5utyJH1bn2eVvXmMxu08xA0J0=;
-        b=L58rDrAkMmpesJ/7k+FPiXUcdDjFYjIL75qiKOtQyWQt+IWBMrjeF3lBun40A/j/ynoA9ws8s2G3fHOYjKoiaLAzYiVp938F41vDbQZrcLYm7ueC9mQN4HzndVO7OIlXwbnE/qnalznq3IA8EfXu2OVSr9SPCXX2gtoKaqyI+Fs=;
-X-UUID: 39ae738e339142678703c3ed0a951c40-20200102
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=IiiRHn3R6Js4Pvfh8uoHNNErfFDcDFJoVtSH9d23T4Y=;
+        b=o3jzMvp86ezHPjkQT3ialNLQ97VPsiPiGH0a/i0i+UFjUEZd+NyKhMgtzz23z01vGKyRx/k3g+XCkSULEVlha/a06SdzAegmxxQgKW894G6dEXzgPDvqgy2oQ6JXu4ysG6Bbq8OGP5G7HSRO9XALRHjc0WBhLgKk5Yb1fNQcOnk=;
+X-UUID: 1bd8b0d9da7748a3b90a729d83c0162f-20200102
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <yongqiang.niu@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 101910972; Thu, 02 Jan 2020 12:02:21 +0800
+        with ESMTP id 490112433; Thu, 02 Jan 2020 12:02:22 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs05n2.mediatek.inc (172.21.101.140) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 2 Jan 2020 12:01:50 +0800
+ mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 2 Jan 2020 12:01:56 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 2 Jan 2020 12:01:39 +0800
+ Transport; Thu, 2 Jan 2020 12:01:40 +0800
 From:   Yongqiang Niu <yongqiang.niu@mediatek.com>
 To:     CK Hu <ck.hu@mediatek.com>, Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -38,9 +38,9 @@ CC:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         Yongqiang Niu <yongqiang.niu@mediatek.com>
-Subject: [PATCH v6, 08/14] drm/mediatek: add connection from RDMA1 to DSI0
-Date:   Thu, 2 Jan 2020 12:00:18 +0800
-Message-ID: <1577937624-14313-9-git-send-email-yongqiang.niu@mediatek.com>
+Subject: [PATCH v6, 09/14] drm/mediatek: add connection from OVL_2L0 to RDMA0
+Date:   Thu, 2 Jan 2020 12:00:19 +0800
+Message-ID: <1577937624-14313-10-git-send-email-yongqiang.niu@mediatek.com>
 X-Mailer: git-send-email 1.8.1.1.dirty
 In-Reply-To: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
 References: <1577937624-14313-1-git-send-email-yongqiang.niu@mediatek.com>
@@ -53,24 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGQgY29ubmVjdGlvbiBmcm9tIFJETUExIHRvIERTSTANCg0KU2lnbmVkLW9m
-Zi1ieTogWW9uZ3FpYW5nIE5pdSA8eW9uZ3FpYW5nLm5pdUBtZWRpYXRlay5jb20+DQpSZXZpZXdl
-ZC1ieTogQ0sgSHUgPGNrLmh1QG1lZGlhdGVrLmNvbT4NCi0tLQ0KIGRyaXZlcnMvZ3B1L2RybS9t
-ZWRpYXRlay9tdGtfZHJtX2RkcC5jIHwgNCArKysrDQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0
-aW9ucygrKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
-ZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KaW5kZXggMzFh
-MDY1MC4uYmI0MTU5NCAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
-ZHJtX2RkcC5jDQorKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0K
-QEAgLTE3Niw2ICsxNzYsNyBAQCBzdHJ1Y3QgbXRrX21tc3lzX3JlZ19kYXRhIHsNCiAJdTMyIHJk
-bWEwX3NvdXRfY29sb3IwOw0KIAl1MzIgcmRtYTFfc291dF9zZWxfaW47DQogCXUzMiByZG1hMV9z
-b3V0X2RwaTA7DQorCXUzMiByZG1hMV9zb3V0X2RzaTA7DQogCXUzMiBkcGkwX3NlbF9pbjsNCiAJ
-dTMyIGRwaTBfc2VsX2luX3JkbWExOw0KIAl1MzIgZHNpMF9zZWxfaW47DQpAQCAtNDQwLDYgKzQ0
-MSw5IEBAIHN0YXRpYyB1bnNpZ25lZCBpbnQgbXRrX2RkcF9zb3V0X3NlbChjb25zdCBzdHJ1Y3Qg
-bXRrX21tc3lzX3JlZ19kYXRhICpkYXRhLA0KIAl9IGVsc2UgaWYgKGN1ciA9PSBERFBfQ09NUE9O
-RU5UX1JETUEwICYmIG5leHQgPT0gRERQX0NPTVBPTkVOVF9DT0xPUjApIHsNCiAJCSphZGRyID0g
-ZGF0YS0+cmRtYTBfc291dF9zZWxfaW47DQogCQl2YWx1ZSA9IGRhdGEtPnJkbWEwX3NvdXRfY29s
-b3IwOw0KKwl9IGVsc2UgaWYgKGN1ciA9PSBERFBfQ09NUE9ORU5UX1JETUExICYmIG5leHQgPT0g
-RERQX0NPTVBPTkVOVF9EU0kwKSB7DQorCQkqYWRkciA9IGRhdGEtPnJkbWExX3NvdXRfc2VsX2lu
-Ow0KKwkJdmFsdWUgPSBkYXRhLT5yZG1hMV9zb3V0X2RzaTA7DQogCX0gZWxzZSB7DQogCQl2YWx1
-ZSA9IDA7DQogCX0NCi0tIA0KMS44LjEuMS5kaXJ0eQ0K
+dGhpcyBwYXRjaCBhZGQgYWRkIGNvbm5lY3Rpb24gZnJvbSBPVkxfMkwwIHRvIFJETUEwDQoNClNp
+Z25lZC1vZmYtYnk6IFlvbmdxaWFuZyBOaXUgPHlvbmdxaWFuZy5uaXVAbWVkaWF0ZWsuY29tPg0K
+UmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL2dw
+dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYyB8IDE0ICsrKysrKysrKysrKysrDQogMSBmaWxl
+IGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19k
+cm1fZGRwLmMNCmluZGV4IGJiNDE1OTQuLmE2ZmVkN2IgMTAwNjQ0DQotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kZHAuYw0KKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlh
+dGVrL210a19kcm1fZGRwLmMNCkBAIC0zMyw2ICszMywxMiBAQA0KICNkZWZpbmUgRElTUF9SRUdf
+Q09ORklHX0RTSV9TRUwJCQkweDA1MA0KICNkZWZpbmUgRElTUF9SRUdfQ09ORklHX0RQSV9TRUwJ
+CQkweDA2NA0KIA0KKyNkZWZpbmUgTVQ4MTgzX0RJU1BfT1ZMMF8yTF9NT1VUX0VOCQkweGYwNA0K
+KyNkZWZpbmUgTVQ4MTgzX0RJU1BfUEFUSDBfU0VMX0lOCQkweGYyNA0KKw0KKyNkZWZpbmUgT1ZM
+MF8yTF9NT1VUX0VOX0RJU1BfUEFUSDAJCQlCSVQoMCkNCisjZGVmaW5lIERJU1BfUEFUSDBfU0VM
+X0lOX09WTDBfMkwJCQkweDENCisNCiAjZGVmaW5lIE1UMjcwMV9ESVNQX01VVEVYMF9NT0QwCQkJ
+MHgyYw0KICNkZWZpbmUgTVQyNzAxX0RJU1BfTVVURVgwX1NPRjAJCQkweDMwDQogDQpAQCAtMzA4
+LDYgKzMxNCwxMCBAQCBzdGF0aWMgdW5zaWduZWQgaW50IG10a19kZHBfbW91dF9lbihjb25zdCBz
+dHJ1Y3QgbXRrX21tc3lzX3JlZ19kYXRhICpkYXRhLA0KIAl9IGVsc2UgaWYgKGN1ciA9PSBERFBf
+Q09NUE9ORU5UX09WTDAgJiYgbmV4dCA9PSBERFBfQ09NUE9ORU5UX09WTF8yTDApIHsNCiAJCSph
+ZGRyID0gZGF0YS0+b3ZsMF9tb3V0X2VuOw0KIAkJdmFsdWUgPSBPVkwwX01PVVRfRU5fT1ZMMF8y
+TDsNCisJfSBlbHNlIGlmIChjdXIgPT0gRERQX0NPTVBPTkVOVF9PVkxfMkwwICYmDQorCQkgICBu
+ZXh0ID09IEREUF9DT01QT05FTlRfUkRNQTApIHsNCisJCSphZGRyID0gTVQ4MTgzX0RJU1BfT1ZM
+MF8yTF9NT1VUX0VOOw0KKwkJdmFsdWUgPSBPVkwwXzJMX01PVVRfRU5fRElTUF9QQVRIMDsNCiAJ
+fSBlbHNlIHsNCiAJCXZhbHVlID0gMDsNCiAJfQ0KQEAgLTM3Myw2ICszODMsMTAgQEAgc3RhdGlj
+IHVuc2lnbmVkIGludCBtdGtfZGRwX3NlbF9pbihjb25zdCBzdHJ1Y3QgbXRrX21tc3lzX3JlZ19k
+YXRhICpkYXRhLA0KIAl9IGVsc2UgaWYgKGN1ciA9PSBERFBfQ09NUE9ORU5UX0JMUyAmJiBuZXh0
+ID09IEREUF9DT01QT05FTlRfRFBJMCkgew0KIAkJKmFkZHIgPSBESVNQX1JFR19DT05GSUdfRFBJ
+X1NFTDsNCiAJCXZhbHVlID0gRFBJX1NFTF9JTl9CTFM7DQorCX0gZWxzZSBpZiAoY3VyID09IERE
+UF9DT01QT05FTlRfT1ZMXzJMMCAmJg0KKwkJICAgICBuZXh0ID09IEREUF9DT01QT05FTlRfUkRN
+QTApIHsNCisJCSphZGRyID0gTVQ4MTgzX0RJU1BfUEFUSDBfU0VMX0lOOw0KKwkJdmFsdWUgPSBE
+SVNQX1BBVEgwX1NFTF9JTl9PVkwwXzJMOw0KIAl9IGVsc2Ugew0KIAkJdmFsdWUgPSAwOw0KIAl9
+DQotLSANCjEuOC4xLjEuZGlydHkNCg==
 
