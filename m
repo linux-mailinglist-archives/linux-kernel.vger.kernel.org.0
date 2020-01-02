@@ -2,44 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 50CE612F061
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8022912EDBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:32:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbgABWWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42404 "EHLO mail.kernel.org"
+        id S1730290AbgABWb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:31:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729102AbgABWWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:22:13 -0500
+        id S1730284AbgABWbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:31:25 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 501D3227BF;
-        Thu,  2 Jan 2020 22:22:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CBDE22525;
+        Thu,  2 Jan 2020 22:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003732;
-        bh=SMEJehBrbJjrA45F280FcI6aUeAE4KdjaoDeYzWp3+0=;
+        s=default; t=1578004284;
+        bh=Dn4bb+91kWSLLy9IAVgEtNkNu7KZvSqnVeXcrvyiIJ8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YumHkAEo0smUq3IAGrV2tITj/44sV/lRKNnJaRCYG50mJ3QRYI1J/80fEhYQMLef1
-         C5NL6E5r7OSPz4sM15HedZbz4hVlXK1S9Sd9SVYpnpesBXH0s7pNAPA0qb6PF3oe++
-         iu5EEisWVcVOxLEtgjqN5BLW2M8wXi9b4kbjlkbA=
+        b=TDSQIDDipdsw31ho/rObBAWKUDFEmvHtbid/n8XwesFpqCv0E9D3zPRXZF1lZrE5h
+         fQImMQ492CAIJ1NhhGad9ROTGapOx5XgV1cIc9VCdWovoEuRJqiYDDv8S1tcwbvRv7
+         +TVGY8tgDLVEvViAH1QDFag8miP/OXP1j9ZiA0IE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "=?UTF-8?q?Jan=20H . =20Sch=C3=B6nherr?=" <jschoenh@amazon.de>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, x86-ml <x86@kernel.org>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        stable@vger.kernel.org, Lee Duncan <lduncan@suse.com>,
+        Mike Christie <mchristi@redhat.com>,
+        David Disseldorp <ddiss@suse.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 074/114] x86/mce: Fix possibly incorrect severity calculation on AMD
+Subject: [PATCH 4.9 115/171] scsi: target: compare full CHAP_A Algorithm strings
 Date:   Thu,  2 Jan 2020 23:07:26 +0100
-Message-Id: <20200102220036.554952288@linuxfoundation.org>
+Message-Id: <20200102220603.063448922@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220029.183913184@linuxfoundation.org>
-References: <20200102220029.183913184@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,46 +46,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan H. Schönherr <jschoenh@amazon.de>
+From: David Disseldorp <ddiss@suse.de>
 
-[ Upstream commit a3a57ddad061acc90bef39635caf2b2330ce8f21 ]
+[ Upstream commit 9cef2a7955f2754257a7cddedec16edae7b587d0 ]
 
-The function mce_severity_amd_smca() requires m->bank to be initialized
-for correct operation. Fix the one case, where mce_severity() is called
-without doing so.
+RFC 2307 states:
 
-Fixes: 6bda529ec42e ("x86/mce: Grade uncorrected errors for SMCA-enabled systems")
-Fixes: d28af26faa0b ("x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()")
-Signed-off-by: Jan H. Schönherr <jschoenh@amazon.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>
-Cc: <stable@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>
-Link: https://lkml.kernel.org/r/20191210000733.17979-4-jschoenh@amazon.de
+  For CHAP [RFC1994], in the first step, the initiator MUST send:
+
+      CHAP_A=<A1,A2...>
+
+   Where A1,A2... are proposed algorithms, in order of preference.
+...
+   For the Algorithm, as stated in [RFC1994], one value is required to
+   be implemented:
+
+       5     (CHAP with MD5)
+
+LIO currently checks for this value by only comparing a single byte in
+the tokenized Algorithm string, which means that any value starting with
+a '5' (e.g. "55") is interpreted as "CHAP with MD5". Fix this by
+comparing the entire tokenized string.
+
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Link: https://lore.kernel.org/r/20190912095547.22427-2-ddiss@suse.de
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/mcheck/mce.c | 2 +-
+ drivers/target/iscsi/iscsi_target_auth.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/mcheck/mce.c b/arch/x86/kernel/cpu/mcheck/mce.c
-index 87ed8462a5c7..1f69b12d5bb8 100644
---- a/arch/x86/kernel/cpu/mcheck/mce.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -812,8 +812,8 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
- 		if (quirk_no_way_out)
- 			quirk_no_way_out(i, m, regs);
+diff --git a/drivers/target/iscsi/iscsi_target_auth.c b/drivers/target/iscsi/iscsi_target_auth.c
+index f0d97305575d..aa3f98994c7d 100644
+--- a/drivers/target/iscsi/iscsi_target_auth.c
++++ b/drivers/target/iscsi/iscsi_target_auth.c
+@@ -74,7 +74,7 @@ static int chap_check_algorithm(const char *a_str)
+ 		if (!token)
+ 			goto out;
  
-+		m->bank = i;
- 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
--			m->bank = i;
- 			mce_read_aux(m, i);
- 			*msg = tmp;
- 			return 1;
+-		if (!strncmp(token, "5", 1)) {
++		if (!strcmp(token, "5")) {
+ 			pr_debug("Selected MD5 Algorithm\n");
+ 			kfree(orig);
+ 			return CHAP_DIGEST_MD5;
 -- 
 2.20.1
 
