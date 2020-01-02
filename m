@@ -2,39 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 171D212EC07
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:15:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8DB312ED77
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:28:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727926AbgABWOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:14:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54806 "EHLO mail.kernel.org"
+        id S1729860AbgABW2k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:28:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbgABWOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:14:31 -0500
+        id S1729892AbgABW2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:28:35 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35D5B22525;
-        Thu,  2 Jan 2020 22:14:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B642222525;
+        Thu,  2 Jan 2020 22:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578003270;
-        bh=6b+sZdMwmOL7UbovoFHfnaF//OginANOAToqmKTpeK8=;
+        s=default; t=1578004115;
+        bh=kl4Ff26FZIbpndBMnWNEJ8X5DcfRqeLex2D91wYf+dI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cYlRzhzX4GA5pchB+aqJ0vRSSixfVh0YNznpwR5qhd9PvAWIgZ9fEhJmIE4OCsVvO
-         /AsNZxunxrRRah3PdlnnXjXpr3Lr6FwHMc48spT8iUnnniNrKUKT/G8mR3GvLLV1zz
-         UKRKi5rQIG82LE1KwCjMQhE6C+JG0XgQ8YCsOgKU=
+        b=yiPWpS/PANE71wI8iU9l841wiEtgKpUBg9Fuyjdq6MUF4MEZWDJr4pwItFMn28C3i
+         lU7UmxpcHxC//TPnm+9owLJm3BiyUnDYKSS+ZHDp/XqUpvweOQ5lQcslkkhpUeKn5G
+         CCv2X5VZO7i3CNtKIY0Nv9BJpw1oflLRbtyS7BsQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.4 065/191] powerpc/pseries/cmm: Implement release() function for sysfs device
+Subject: [PATCH 4.9 016/171] media: am437x-vpfe: Setting STD to current value is not an error
 Date:   Thu,  2 Jan 2020 23:05:47 +0100
-Message-Id: <20200102215836.932643358@linuxfoundation.org>
+Message-Id: <20200102220549.248125902@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
-References: <20200102215829.911231638@linuxfoundation.org>
+In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
+References: <20200102220546.960200039@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +46,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Hildenbrand <david@redhat.com>
+From: Benoit Parrot <bparrot@ti.com>
 
-[ Upstream commit 7d8212747435c534c8d564fbef4541a463c976ff ]
+[ Upstream commit 13aa21cfe92ce9ebb51824029d89f19c33f81419 ]
 
-When unloading the module, one gets
-  ------------[ cut here ]------------
-  Device 'cmm0' does not have a release() function, it is broken and must be fixed. See Documentation/kobject.txt.
-  WARNING: CPU: 0 PID: 19308 at drivers/base/core.c:1244 .device_release+0xcc/0xf0
-  ...
+VIDIOC_S_STD should not return an error if the value is identical
+to the current one.
+This error was highlighted by the v4l2-compliance test.
 
-We only have one static fake device. There is nothing to do when
-releasing the device (via cmm_exit()).
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20191031142933.10779-2-david@redhat.com
+Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Lad Prabhakar <prabhakar.csengg@gmail.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/cmm.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/platform/am437x/am437x-vpfe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/cmm.c b/arch/powerpc/platforms/pseries/cmm.c
-index b33251d75927..572651a5c87b 100644
---- a/arch/powerpc/platforms/pseries/cmm.c
-+++ b/arch/powerpc/platforms/pseries/cmm.c
-@@ -411,6 +411,10 @@ static struct bus_type cmm_subsys = {
- 	.dev_name = "cmm",
- };
+diff --git a/drivers/media/platform/am437x/am437x-vpfe.c b/drivers/media/platform/am437x/am437x-vpfe.c
+index 05489a401c5c..bd500f12d0f7 100644
+--- a/drivers/media/platform/am437x/am437x-vpfe.c
++++ b/drivers/media/platform/am437x/am437x-vpfe.c
+@@ -1847,6 +1847,10 @@ static int vpfe_s_std(struct file *file, void *priv, v4l2_std_id std_id)
+ 	if (!(sdinfo->inputs[0].capabilities & V4L2_IN_CAP_STD))
+ 		return -ENODATA;
  
-+static void cmm_release_device(struct device *dev)
-+{
-+}
++	/* if trying to set the same std then nothing to do */
++	if (vpfe_standards[vpfe->std_index].std_id == std_id)
++		return 0;
 +
- /**
-  * cmm_sysfs_register - Register with sysfs
-  *
-@@ -426,6 +430,7 @@ static int cmm_sysfs_register(struct device *dev)
- 
- 	dev->id = 0;
- 	dev->bus = &cmm_subsys;
-+	dev->release = cmm_release_device;
- 
- 	if ((rc = device_register(dev)))
- 		goto subsys_unregister;
+ 	/* If streaming is started, return error */
+ 	if (vb2_is_busy(&vpfe->buffer_queue)) {
+ 		vpfe_err(vpfe, "%s device busy\n", __func__);
 -- 
 2.20.1
 
