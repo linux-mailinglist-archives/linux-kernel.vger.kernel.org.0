@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AE5912EF71
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:46:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5783212F0FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Jan 2020 23:57:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730577AbgABWqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 2 Jan 2020 17:46:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35934 "EHLO mail.kernel.org"
+        id S1728954AbgABW5S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 2 Jan 2020 17:57:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730246AbgABWbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 2 Jan 2020 17:31:08 -0500
+        id S1728335AbgABWRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 2 Jan 2020 17:17:11 -0500
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4968C20863;
-        Thu,  2 Jan 2020 22:31:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C39A22314;
+        Thu,  2 Jan 2020 22:17:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578004267;
-        bh=zCDTEKqulQ5WWoR3gp/l+LFyviaRUjMFPWj8HUFfsl0=;
+        s=default; t=1578003430;
+        bh=FEU+wb56kXY41/LbKxx41Q+u86Vh8kPfLw7+5HaC4Gw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lmjfm03A7ReXDLAjsauJIRTo+GOHrZ6v5zLQ0rWkIDAjWGb2EQSuKZFtaaweakme7
-         aC/XDkhfwJ4p1ldfiUAkgaw0/XaA/4hueXRyEwh5T5DvrFPgDxV9ZYD2qnvle0Xq8Q
-         UR85oWbT7mSyzKVBcKRFsdyKLvR4I1f3eywPbJOA=
+        b=01GBSuv8yqSmg/qzIO62JyB+FM6o/x35COJ+1rAfDPplkqvLtr7+wW4ECzbDcV1q7
+         sypVXBA7y/n+eP/3KAei0XO/aXXPfH44XKpdTBMwQnMq3UthmduvRa6dSrkQAm+Nyx
+         fLPzJlBA2gDIkMmnv1pBbb9kVVGNCKKAJMiCe7nM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.9 108/171] powerpc/irq: fix stack overflow verification
-Date:   Thu,  2 Jan 2020 23:07:19 +0100
-Message-Id: <20200102220602.146773569@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 5.4 158/191] bnxt_en: Fix MSIX request logic for RDMA driver.
+Date:   Thu,  2 Jan 2020 23:07:20 +0100
+Message-Id: <20200102215846.336461084@linuxfoundation.org>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200102220546.960200039@linuxfoundation.org>
-References: <20200102220546.960200039@linuxfoundation.org>
+In-Reply-To: <20200102215829.911231638@linuxfoundation.org>
+References: <20200102215829.911231638@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,50 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Chan <michael.chan@broadcom.com>
 
-commit 099bc4812f09155da77eeb960a983470249c9ce1 upstream.
+[ Upstream commit 0c722ec0a289c7f6b53f89bad1cfb7c4db3f7a62 ]
 
-Before commit 0366a1c70b89 ("powerpc/irq: Run softirqs off the top of
-the irq stack"), check_stack_overflow() was called by do_IRQ(), before
-switching to the irq stack.
-In that commit, do_IRQ() was renamed __do_irq(), and is now executing
-on the irq stack, so check_stack_overflow() has just become almost
-useless.
+The logic needs to check both bp->total_irqs and the reserved IRQs in
+hw_resc->resv_irqs if applicable and see if both are enough to cover
+the L2 and RDMA requested vectors.  The current code is only checking
+bp->total_irqs and can fail in some code paths, such as the TX timeout
+code path with the RDMA driver requesting vectors after recovery.  In
+this code path, we have not reserved enough MSIX resources for the
+RDMA driver yet.
 
-Move check_stack_overflow() call in do_IRQ() to do the check while
-still on the current stack.
-
-Fixes: 0366a1c70b89 ("powerpc/irq: Run softirqs off the top of the irq stack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/e033aa8116ab12b7ca9a9c75189ad0741e3b9b5f.1575872340.git.christophe.leroy@c-s.fr
+Fixes: 75720e6323a1 ("bnxt_en: Keep track of reserved IRQs.")
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/powerpc/kernel/irq.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/arch/powerpc/kernel/irq.c
-+++ b/arch/powerpc/kernel/irq.c
-@@ -527,8 +527,6 @@ void __do_irq(struct pt_regs *regs)
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ulp.c
+@@ -113,8 +113,10 @@ static int bnxt_req_msix_vecs(struct bnx
+ {
+ 	struct net_device *dev = edev->net;
+ 	struct bnxt *bp = netdev_priv(dev);
++	struct bnxt_hw_resc *hw_resc;
+ 	int max_idx, max_cp_rings;
+ 	int avail_msix, idx;
++	int total_vecs;
+ 	int rc = 0;
  
- 	trace_irq_entry(regs);
+ 	ASSERT_RTNL();
+@@ -142,7 +144,10 @@ static int bnxt_req_msix_vecs(struct bnx
+ 	}
+ 	edev->ulp_tbl[ulp_id].msix_base = idx;
+ 	edev->ulp_tbl[ulp_id].msix_requested = avail_msix;
+-	if (bp->total_irqs < (idx + avail_msix)) {
++	hw_resc = &bp->hw_resc;
++	total_vecs = idx + avail_msix;
++	if (bp->total_irqs < total_vecs ||
++	    (BNXT_NEW_RM(bp) && hw_resc->resv_irqs < total_vecs)) {
+ 		if (netif_running(dev)) {
+ 			bnxt_close_nic(bp, true, false);
+ 			rc = bnxt_open_nic(bp, true, false);
+@@ -156,7 +161,6 @@ static int bnxt_req_msix_vecs(struct bnx
+ 	}
  
--	check_stack_overflow();
--
- 	/*
- 	 * Query the platform PIC for the interrupt & ack it.
- 	 *
-@@ -560,6 +558,8 @@ void do_IRQ(struct pt_regs *regs)
- 	irqtp = hardirq_ctx[raw_smp_processor_id()];
- 	sirqtp = softirq_ctx[raw_smp_processor_id()];
+ 	if (BNXT_NEW_RM(bp)) {
+-		struct bnxt_hw_resc *hw_resc = &bp->hw_resc;
+ 		int resv_msix;
  
-+	check_stack_overflow();
-+
- 	/* Already there ? */
- 	if (unlikely(curtp == irqtp || curtp == sirqtp)) {
- 		__do_irq(regs);
+ 		resv_msix = hw_resc->resv_irqs - bp->cp_nr_rings;
 
 
